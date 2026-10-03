@@ -47,19 +47,22 @@ export interface BackfillSummary {
  */
 export async function runBackfill(
   db: Kysely<DB>,
-  opts: { dryRun?: boolean; } = {},
+  opts: { dryRun?: boolean } = {},
 ): Promise<BackfillSummary> {
   const missing = await db
     .selectFrom("users",)
     .select("id",)
-    .where((eb,) => eb.or([eb("encryption_secret", "is", null,), eb("encryption_secret", "=", ""),],))
+    .where((eb,) => eb.or([eb("encryption_secret", "is", null,), eb("encryption_secret", "=", "",),],))
     .execute();
 
   let updated = 0;
   let skipped = 0;
   for (const row of missing) {
     const secret = generateEncryptionSecret();
-    if (secret === "") { skipped++; continue; }
+    if (secret === "") {
+      skipped++;
+      continue;
+    }
     if (opts.dryRun !== true) {
       await db.updateTable("users",).set({ encryption_secret: secret, },).where("id", "=", row.id,).execute();
     }
@@ -92,10 +95,10 @@ export async function main(): Promise<number> {
   const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
 
   const summary = await runBackfill(db, { dryRun: args.dryRun, },);
-  console.log("--- backfill:users:encryption-secret summary ---");
-  console.log(`missing keys : ${summary.missing}`);
-  console.log(`${summary.dryRun ? "would update" : "updated"} : ${summary.updated}`);
-  console.log(`skipped      : ${summary.skipped}`);
+  console.log("--- backfill:users:encryption-secret summary ---",);
+  console.log(`missing keys : ${summary.missing}`,);
+  console.log(`${summary.dryRun ? "would update" : "updated"} : ${summary.updated}`,);
+  console.log(`skipped      : ${summary.skipped}`,);
   return 0;
 }
 
@@ -105,5 +108,5 @@ if (import.meta.main) {
   // without a host process pre-seeding it.
   const { createLogger, } = await import("../logger");
   createLogger({ level: "info", },);
-  await main().then((code,) => process.exit(code,),);
+  await main().then((code,) => process.exit(code,));
 }

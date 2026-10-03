@@ -59,7 +59,7 @@ async function loadEncryptionSecret(db: Kysely<DB>, userId: string,): Promise<st
     .where("id", "=", userId,)
     .executeTakeFirst();
   const secret = row?.encryption_secret ?? null;
-  return isUsableEncryptionSecret(secret) ? secret : null;
+  return isUsableEncryptionSecret(secret,) ? secret : null;
 }
 interface MessageRow {
   id: string;
@@ -117,7 +117,7 @@ export function createMessageProviders(
   db: Kysely<DB>,
   opts?: MessageProviderOptions,
 ): { exact: TierProvider<MessageHit>; keyword: TierProvider<MessageHit>; token: TierProvider<MessageHit> } {
-  const resolveKey = opts?.resolveKey ?? ((userId: string,) => loadEncryptionSecret(db, userId));
+  const resolveKey = opts?.resolveKey ?? ((userId: string,) => loadEncryptionSecret(db, userId,));
   const exact: TierProvider<MessageHit> = async (query, scope,) => {
     if (scope.kind !== "messages") { return []; }
     const access = accessWhere(scope,);
