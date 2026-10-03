@@ -38377,6 +38377,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/plugin-system.md"
     }
   ],
   "src/views/admin/UserListView.vue": [
@@ -38633,6 +38637,10 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/component-architecture.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/plugin-system.md"
     }
   ],
   "src/views/chat/ChatView.vue": [
