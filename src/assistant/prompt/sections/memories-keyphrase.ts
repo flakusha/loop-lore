@@ -77,19 +77,14 @@ async function recentMessageText(ctx: KeyphraseRecallCtx,): Promise<string> {
     .orderBy("created_at", "desc",)
     .limit(RECENT_MESSAGE_WINDOW,)
     .execute();
-
   const parts: string[] = [];
   for (const row of rows) {
     try {
       parts.push(await resolveMessageContent(ctx.db, { ...row, chat_id: ctx.chat.id, },),);
     } catch (err) {
-      getLogger().child({ module: "memories-keyphrase", },).warn(
-        "skipping unreadable message",
-        { err: err instanceof Error ? err.message : String(err,), },
-      );
+      getLogger().child({ module: "memories-keyphrase", },).warn("skipping unreadable message", err,);
     }
   }
-
   return parts.join("\n",);
 }
 
