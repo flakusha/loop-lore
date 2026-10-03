@@ -77,19 +77,24 @@ export const builderRunState: Partial<ComfyuiBuilder> & ThisType<ComfyuiBuilder>
 
   /** @returns {Promise<void>} */
   async pollRun() {
+    // Capture the job this loop owns. `startRun` replaces `runState` wholesale,
+    // so a superseded loop must never poll or stamp status onto the newer run.
+    const jobId = this.runState.jobId;
     let polls = 0;
     while (polls < MAX_POLLS && LIVE_STATUSES.has(this.runState.status,)) {
+      if (this.runState.jobId !== jobId) { return; }
       if (polls > 0) {
         await new Promise((resolve,) => setTimeout(resolve, POLL_INTERVAL_MS,));
       }
       polls += 1;
       try {
-        const res = await apiFetch(`${BUILDER_PATH}/runs/${this.runState.jobId}`, {
+        const res = await apiFetch(`${BUILDER_PATH}/runs/${jobId}`, {
           headers: { Accept: "application/json", },
         },);
         const data = res.ok
           ? await res.json() as { job?: RunJobBody }
           : null;
+        if (this.runState.jobId !== jobId) { return; }
         const job = data?.job;
         if (!job?.status) {
           this.runState.status = "failed";
@@ -101,13 +106,14 @@ export const builderRunState: Partial<ComfyuiBuilder> & ThisType<ComfyuiBuilder>
         this.runState.completedSteps = job.completedSteps ?? 0;
         this.runState.totalSteps = job.totalSteps ?? 0;
       } catch {
+        if (this.runState.jobId !== jobId) { return; }
         log.warn("Network error polling chain run",);
         this.runState.status = "failed";
         this.runState.error = "Network error polling run";
         return;
       }
     }
-    if (LIVE_STATUSES.has(this.runState.status,)) {
+    if (this.runState.jobId === jobId && LIVE_STATUSES.has(this.runState.status,)) {
       this.runState.status = "failed";
       this.runState.error = "Run polling timed out";
     }
