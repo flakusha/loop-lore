@@ -34,13 +34,6 @@ export const EntityScopeUpdateSchema = t.Union([
   t.Literal("world",),
 ],);
 
-/**
- * Journal keyphrase trigger phrases (TASK-KEYPHRASE-RECALL). Ticket cap is 8
- * per entry; the string cap keeps one phrase from bloating the prompt. Shared
- * by create AND update — a cap that drifts between them reopens the hole on
- * whichever path lost it.
- */
-const Keywords = t.Array(t.String({ maxLength: 120, },), { maxItems: 8, },);
 export const EntityCreateBody = t.Object({
   entityId: t.Optional(t.String({ minLength: 1, },),),
   type: t.Optional(t.String(),),
@@ -52,13 +45,19 @@ export const EntityCreateBody = t.Object({
   pinned: t.Optional(t.Boolean(),),
   reviewStatus: t.Optional(EntityReviewStatusSchema,),
   scope: t.Optional(EntityScopeSchema,),
-  keywords: t.Optional(Keywords,),
 },);
 
 export const EntityUpdateBody = t.Object({
-<<<<<<< ours (Optional)
-  keywords: t.Optional(Keywords,),
-=======
-  keywords: t.Optional(t.Array(t.String(),),),
->>>>>>> theirs (Optional)
+  name: t.Optional(Name,),
+  content: t.Optional(t.String(),),
+  type: t.Optional(t.String(),),
+  data: t.Optional(t.Record(t.String(), t.Any(),),),
+  pinned: t.Optional(t.Boolean(),),
+  reviewStatus: t.Optional(EntityReviewStatusSchema,),
+  // Journal keyphrases (TASK-KEYPHRASE-RECALL). Only entities whose
+  // `fieldMappings` contain `keywords` (actor_memories) persist it — the
+  // update builder ignores fields missing from the mapping. Capped here (the
+  // shared update chokepoint) so an unbounded array cannot reach the
+  // keyphrase scan that injects these strings into prompts.
+  keywords: t.Optional(t.Array(t.String({ maxLength: 120, },), { maxItems: 8, },),),
 },);
