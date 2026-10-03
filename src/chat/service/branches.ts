@@ -11,7 +11,8 @@
 import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { checkChatAccess, } from "./access";
-import { nextAutoName, walkMessagePath, } from "./branch-helpers";
+import { insertForkRow, } from "./branch-fork";
+import { walkMessagePath, } from "./branch-helpers";
 import type { ServiceError, } from "./types";
 
 /** One branch as returned to the caller. */
@@ -87,28 +88,10 @@ export async function forkBranch(
     return { code: "not_found", message: "Fork point message not found in chat", };
   }
 
-  const name = params.name?.trim() || (await nextAutoName(db, chatId,));
   const branchId = crypto.randomUUID();
-  // Display invariant: at most one active branch row per chat. Forking
-  // moves the display to the new branch, demoting the previous active row.
-  await db.transaction().execute(async (tx,) => {
-    await tx
-      .updateTable("chat_branches",)
-      .set({ is_active: 0, },)
-      .where("chat_id", "=", chatId,)
-      .where("is_active", "=", 1,)
-      .execute();
-    await tx
-      .insertInto("chat_branches",)
-      .values({
-        id: branchId,
-        chat_id: chatId,
-        parent_message_id: messageId,
-        name,
-        is_active: 1,
-      },)
-      .execute();
-  },);
+  const inserted = await insertForkRow(db, { chatId, branchId, parentMessageId: messageId, name: params.name, },);
+  if ("code" in inserted) { return inserted; }
+  const name = inserted.name;
 
   const path = await walkMessagePath(db, chatId, messageId,);
   return {

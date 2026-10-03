@@ -21,8 +21,10 @@
  */
 import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { BranchTxAbort, isActiveBranch, } from "./branch-fork";
 import {
   activeBranchId,
+  BRANCH_NOT_FOUND,
   loadBranch,
   walkMessagePath,
   withBranch,
@@ -153,11 +155,11 @@ export async function mergeBranch(
     const target = await loadBranch(db, chatId, targetId,);
     if (!target) { return { code: "not_found", message: "Target branch not found in chat", }; }
     // The source row is deleted below; consuming the displayed branch would
-    // leave the chat pointing at a missing row. BOTH active signals count, the
-    // same rule `deleteBranch` applies — a desynced pair still blocks rather
-    // than orphaning the display.
-    const displayed = await activeBranchId(db, chatId,);
-    if (displayed === branchId || Number(source.is_active,) === 1) {
+    // leave the chat pointing at a missing row. This outer check is only a fast
+    // fail — the AUTHORITATIVE guard re-runs inside the transaction, immediately
+    // before the delete (a concurrent `PATCH /active-branch` between the two
+    // would otherwise slip in and orphan the display).
+    if (await isActiveBranch(db, chatId, branchId,)) {
       return {
         code: "bad_request",
         message: "Cannot merge the active branch; switch to another branch first",
@@ -182,29 +184,51 @@ export async function mergeBranch(
       return { code: "bad_request", message: "Source branch has no messages to merge", };
     }
 
-    await db.transaction().execute(async (tx,) => {
-      // ONLY the subtree root moves. `exclusiveSubtree` discovered every
-      // other node FROM the parent it still has, so their `parent_id` is
-      // already correct — rewriting them would chain the BFS walk order
-      // into a single line and flatten sibling branches onto each other.
-      await tx
-        .updateTable("messages",)
-        .set({ parent_id: target.parent_message_id, },)
-        .where("id", "=", moved[0]!,)
-        .execute();
-      // `exclusiveSubtree` is a BFS, so `moved` is non-decreasing in depth
-      // and its last id is a deepest leaf of the moved subtree — the new tip
-      // of the target's line. Non-empty by the guard above, so it exists.
-      const tip = moved[moved.length - 1]!;
-      await tx
-        .updateTable("chat_branches",)
-        .set({ parent_message_id: tip, },)
-        .where("id", "=", targetId,)
-        .execute();
-      // Consume the source: the re-parenting above is permanent, so a
-      // surviving row would resolve to the target's line, not its own.
-      await tx.deleteFrom("chat_branches",).where("id", "=", branchId,).execute();
-    },);
+    try {
+      await db.transaction().execute(async (tx,) => {
+        // Re-read BOTH active signals through the transaction, immediately
+        // before the delete. Throwing (rather than returning) is what forces
+        // the rollback — a `return` inside `execute` COMMITS the re-parenting.
+        if (await isActiveBranch(tx, chatId, branchId,)) {
+          throw new BranchTxAbort({
+            code: "bad_request",
+            message: "Cannot merge the active branch; switch to another branch first",
+          },);
+        }
+        // ONLY the subtree root moves. `exclusiveSubtree` discovered every
+        // other node FROM the parent it still has, so their `parent_id` is
+        // already correct — rewriting them would chain the BFS walk order
+        // into a single line and flatten sibling branches onto each other.
+        await tx
+          .updateTable("messages",)
+          .set({ parent_id: target.parent_message_id, },)
+          .where("id", "=", moved[0]!,)
+          .execute();
+        // `exclusiveSubtree` is a BFS, so `moved` is non-decreasing in depth
+        // and its last id is a deepest leaf of the moved subtree — the new tip
+        // of the target's line. Non-empty by the guard above, so it exists.
+        const tip = moved[moved.length - 1]!;
+        await tx
+          .updateTable("chat_branches",)
+          .set({ parent_message_id: tip, },)
+          .where("id", "=", targetId,)
+          .execute();
+        // Consume the source: the re-parenting above is permanent, so a
+        // surviving row would resolve to the target's line, not its own. Zero
+        // rows means a concurrent client consumed it first; aborting rolls the
+        // re-parenting back rather than reporting a merge that half happened.
+        const deleted = await tx
+          .deleteFrom("chat_branches",)
+          .where("id", "=", branchId,)
+          .executeTakeFirst();
+        if (Number(deleted?.numDeletedRows ?? 0,) === 0) {
+          throw new BranchTxAbort(BRANCH_NOT_FOUND,);
+        }
+      },);
+    } catch (error) {
+      if (error instanceof BranchTxAbort) { return error.error; }
+      throw error;
+    }
 
     return {
       ok: true,
