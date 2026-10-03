@@ -34,6 +34,13 @@ export const EntityScopeUpdateSchema = t.Union([
   t.Literal("world",),
 ],);
 
+/**
+ * Journal keyphrase trigger phrases (TASK-KEYPHRASE-RECALL). Ticket cap is 8
+ * per entry; the string cap keeps one phrase from bloating the prompt. Shared
+ * by create AND update — a cap that drifts between them reopens the hole on
+ * whichever path lost it.
+ */
+const Keywords = t.Array(t.String({ maxLength: 120, },), { maxItems: 8, },);
 export const EntityCreateBody = t.Object({
   entityId: t.Optional(t.String({ minLength: 1, },),),
   type: t.Optional(t.String(),),
@@ -45,9 +52,10 @@ export const EntityCreateBody = t.Object({
   pinned: t.Optional(t.Boolean(),),
   reviewStatus: t.Optional(EntityReviewStatusSchema,),
   scope: t.Optional(EntityScopeSchema,),
+  keywords: t.Optional(Keywords,),
 },);
 
 export const EntityUpdateBody = t.Object({
 reviewStatus: t.Optional(EntityReviewStatusSchema,),
-  keywords: t.Optional(t.Array(t.String({ maxLength: 120, },), { maxItems: 8, },),),
+  keywords: t.Optional(Keywords,),
 },);
