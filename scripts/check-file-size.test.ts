@@ -88,4 +88,26 @@ describe("sizeAllowFor", () => {
     const body = `${Array.from({ length: 80, }, () => "// filler",).join("\n",)}// size-allow: 900\n`;
     expect(sizeAllowFor(body, 250,),).toBe(250,);
   });
+
+  test("a directive may also LOWER the budget below the default", () => {
+    // The gate's header comment says the directive "bumps" the budget, which
+    // reads as raise-only. It is not: the declared N REPLACES the default, so a
+    // file can opt into a tighter budget than everyone else gets.
+    expect(sizeAllowFor("// size-allow: 100\nconst x = 1;\n", 250,),).toBe(100,);
+  });
+
+  test("size-allow: 0 zeroes the budget — the declared N is not clamped", () => {
+    // AGENTS.md states the declared value is uncapped in both directions. 0 is
+    // the degenerate end: the file is held to no lines at all.
+    expect(sizeAllowFor("// size-allow: 0\n", 250,),).toBe(0,);
+  });
+
+  test("the window is 512 CHARACTERS, not the first 5 lines", () => {
+    // The code comment claimed "within the first 5 lines". The implementation
+    // slices the first 512 chars, so a short-line directive well past line 5 is
+    // still honoured. Pin the real window so the comment cannot drift again.
+    const pastLine5 = `${Array.from({ length: 7, }, () => "// x",).join("\n",)}\n// size-allow: 777\n`;
+    expect(pastLine5.slice(0, pastLine5.indexOf("// size-allow",),).length,).toBeLessThan(512,);
+    expect(sizeAllowFor(pastLine5, 250,),).toBe(777,);
+  });
 });
