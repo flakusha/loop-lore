@@ -110,32 +110,6 @@ describe("actorMemoriesRoutes", () => {
     expect(JSON.parse(row.keywords as string,),).toEqual(["moonstone", "rite",],);
   });
 
-<<<<<<< ours — test_suite `actorMemoriesRoutes` (F, confidence: medium)
-// hint: Logic changed on both sides. Requires understanding intent of each change.
-  test("POST keywords persists on the create path too", async () => {
-    const res = await makeApp(db, "user1",).handle(
-      new Request("http://localhost/api/actors/user1/memories", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({
-          content: "Journal entry created with keyphrases",
-          keywords: ["moonstone", "lantern",],
-        },),
-      },),
-    );
-    expect(res.status,).toBe(201,);
-
-    // `fieldMappings` + `jsonFields` already carry `keywords`, so only the
-    // create-body schema was missing the field — without it Elysia strips the
-    // array and the entry is born with no triggers while PUT keeps them.
-    const row = await db
-      .selectFrom("actor_memories",)
-      .select("keywords",)
-      .where("content", "=", "Journal entry created with keyphrases",)
-      .executeTakeFirstOrThrow();
-    expect(JSON.parse(row.keywords as string,),).toEqual(["moonstone", "lantern",],);
-  });
-
   test("PUT keywords rejects an over-cap array at the trust boundary", async () => {
     const createRes = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/user1/memories", {
@@ -171,30 +145,6 @@ describe("actorMemoriesRoutes", () => {
     expect(JSON.parse(row.keywords as string,),).not.toContain("phrase-8",);
   });
 
-  test("POST keywords rejects an over-cap array at the trust boundary", async () => {
-    // The create body is the path commit 2c7d0e330f repaired, but only the PUT
-    // cap had an assertion. A regression that dropped `maxItems` from
-    // `EntityCreateBody.keywords` alone would store 9 triggers on the create
-    // path while PUT still rejected them.
-    const tooMany = Array.from({ length: 9, }, (_, i,) => `phrase-${i}`,);
-    const res = await makeApp(db, "user1",).handle(
-      new Request("http://localhost/api/actors/user1/memories", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ content: "Journal entry over the cap on create", keywords: tooMany, },),
-      },),
-    );
-    expect(res.status,).toBe(422,);
-    const rows = await db
-      .selectFrom("actor_memories",)
-      .select("id",)
-      .where("content", "=", "Journal entry over the cap on create",)
-      .execute();
-    expect(rows.length,).toBe(0,);
-  });
-
-=======
->>>>>>> theirs — test_suite `actorMemoriesRoutes` (F, confidence: medium)
   it("expand endpoint reconstructs the bound chain", async () => {
     const { createTestDb, } = await import("../test-utils/create-test-db");
     const { insertChats, insertMessages, } = await import("../test-utils/insert-helpers");
