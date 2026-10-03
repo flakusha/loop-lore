@@ -148,6 +148,9 @@ export const memorySection: SectionBuilder = {
       currentKeywords: [],
       averageIntimacy: 50,
       moodModifier: 0,
+      // Test seam: `decide.ts` falls back to `Math.random()` when this is
+      // absent, which makes any `memorySection` end-to-end test probabilistic.
+      randomFn: ctx.randomFn,
     };
 
     const injectionResult = selectMemoriesForInjection(

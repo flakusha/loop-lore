@@ -170,6 +170,13 @@ export interface AssembleContext {
   responseLength?: ResponseLengthConfig | null;
   /** Account tier of the two-tier custom instructions (null when unset). */
   userCustomInstructions?: string | null;
+  /**
+   * Injectable RNG for the probabilistic memory-injection filter, threaded
+   * from here into `InjectionContext.randomFn`. Omitted in production, where
+   * `injection/decide.ts` falls back to `Math.random`. Tests set it so a
+   * `memorySection` end-to-end run is deterministic instead of ~25-35% flaky.
+   */
+  randomFn?: () => number;
 }
 
 /** Builds one prompt section's messages. */
