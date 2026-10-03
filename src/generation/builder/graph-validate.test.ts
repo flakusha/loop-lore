@@ -125,7 +125,7 @@ describe("validateGraph", () => {
 
   test("reports one issue per distinct unknown source, not per edge", () => {
     const result = validateGraph({ a: { class_type: "A", inputs: { x: ["zz", 0,], y: ["zz", 1,], }, }, },);
-    const dangling = result.issues.filter((issue,) => issue.message.includes("unknown node zz",),);
+    const dangling = result.issues.filter((issue,) => issue.message.includes("unknown node zz",));
     expect(dangling,).toHaveLength(1,);
   });
 
