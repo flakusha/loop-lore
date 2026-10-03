@@ -28,6 +28,14 @@
  * A replayed tick is dropped before the charge (the `current_tick` latch), so
  * the same tick twice bills once.
  *
+ * Concurrency: `chargeBudget`'s UPDATE is a compare-and-set on the two columns
+ * it read, so two runners charging one world from one pre-state cannot both be
+ * accepted — the loser's UPDATE matches no row and it returns false. That is a
+ * spurious refusal, never a lost charge: the caller already treats false as
+ * "no action happened". This is complementary to the `current_tick` latch
+ * above, not overlapping — the latch stops a replayed tick billing twice, the
+ * CAS stops two concurrent ticks from under-counting the ledger.
+ *
  * Replay harness trap: `world_travel_budget` is a per-world ledger whose
  * window rolls by tick count, and a refused charge sets `budgetExhausted`
  * and breaks the loop before the movement under test is even attempted. The
@@ -54,7 +62,7 @@ import {
   insertWorlds,
   insertWorldTravelBudget,
 } from "../../test-utils/insert-helpers";
-import { ACTION_COST, } from "./budget";
+import { ACTION_COST, chargeBudget, } from "./budget";
 import { migrateNpc, } from "./migration";
 import { advancePartyTravel, } from "./travel";
 import { type TravelContext, travelDb, } from "./types";
@@ -614,6 +622,36 @@ describe("advancePartyTravel — the budget ledger", () => {
       expect((await readParty(PARTY_ONE,)).route_index,).toBe(0,);
     }
     expect(await readLedger(),).toEqual({ spent: 1, window_start_tick: 1, },);
+  });
+
+  test("two charges racing the last unit of ledger: one is accepted, the loser is told false", async () => {
+    await makeWorld();
+    // Room for exactly one more charge, so BOTH racers clear the ceiling
+    // check and the compare-and-set is the only thing that can separate them.
+    // `spent` sits off the 1e-6 grid on purpose: the unseeded insert stores a
+    // raw `cost`, so a guard built on the micro round-trip would never match.
+    await insertWorldTravelBudget(db, {
+      world_id: WORLD_ID,
+      spent: 0.1 + 0.2,
+      ceiling: 0.4,
+      window_start_tick: 1,
+    },);
+
+    // Genuinely concurrent, and deterministically so — no sleep, no mock.
+    // `bun:sqlite` is synchronous, so both calls issue their SELECT before
+    // either resumes to issue its UPDATE. Both therefore observe
+    // spent = 0.30000000000000004 and compute the same next value.
+    const raced = await Promise.all([
+      chargeBudget(db, WORLD_ID, 1, 0.05, T0, 1,),
+      chargeBudget(db, WORLD_ID, 1, 0.05, T0, 1,),
+    ]);
+
+    // Without the CAS both write that same value from the same pre-state,
+    // both return true, and the ledger records one charge for two actions —
+    // the ceiling under-counts and stops binding. With it, the loser's UPDATE
+    // matches no row and it reports the refusal honestly.
+    expect(raced.filter(Boolean,).length,).toBe(1,);
+    expect(await readLedger(),).toEqual({ spent: 0.35, window_start_tick: 1, },);
   });
 });
 

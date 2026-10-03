@@ -108,14 +108,17 @@ export async function readBudget(
  *
  * Refuses rather than overspends: the caller must treat a false return
  * as "no action happened". Every accepted charge is persisted, so a
- * crash mid-tick cannot mint budget.
+ * crash mid-tick cannot mint budget. The UPDATE is a compare-and-set on
+ * the columns it read, so a concurrent charge that moved the ledger first
+ * loses the CAS and also returns false — a spurious refusal, never an
+ * uncharged action.
  * @param db database handle
  * @param worldId world to charge
  * @param tick the tick being simulated
  * @param cost units to charge
  * @param nowMs instant written to `updated_at`
  * @param defaultCeiling units the window may spend while unseeded
- * @returns true when the charge fit inside the ceiling
+ * @returns true when the charge fit inside the ceiling AND was applied
  */
 export async function chargeBudget(
   db: Kysely<DB>,
@@ -152,12 +155,26 @@ export async function chargeBudget(
   const nextMicro = spentMicro + toMicro(cost,);
   if (nextMicro > toMicro(row.ceiling,)) { return false; }
 
-  await handle
+  // Compare-and-set on both columns this read. `spent` and
+  // `window_start_tick` are the row's whole mutable state, so a concurrent
+  // charge that moved either one leaves this UPDATE matching nothing and the
+  // loser returns false. Without it both runners write `nextMicro` computed
+  // from the same pre-state, the ledger under-counts by a charge, and the
+  // ceiling silently stops binding.
+  //
+  // The predicates re-bind `row.spent` verbatim, NOT `toUnits(spentMicro,)`.
+  // `spent` is REAL and `Math.round(x*1e6)/1e6` is not the identity for a
+  // value off the 1e-6 grid — the unseeded insert above stores the raw
+  // `cost`. A round-tripped guard would never match and would refuse every
+  // later charge. Re-binding the double read out of the column is exact.
+  const applied = await handle
     .updateTable("world_travel_budget",)
     .set({ spent: toUnits(nextMicro,), window_start_tick: windowStartTick, updated_at: toSqlDate(nowMs,), },)
     .where("world_id", "=", worldId,)
-    .execute();
-  return true;
+    .where("window_start_tick", "=", row.window_start_tick,)
+    .where("spent", "=", row.spent,)
+    .executeTakeFirst();
+  return Number(applied?.numUpdatedRows ?? 0,) > 0;
 }
 
 /**
