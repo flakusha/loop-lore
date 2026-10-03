@@ -604,7 +604,7 @@ describe("advancePartyTravel — the budget ledger", () => {
     await makeWorld();
     // Four stops so the party is never `settled` — a settled party is skipped
     // before the charge and would pass this test for the wrong reason.
-    await seedParty(PARTY_ONE, { route: JSON.stringify([LOC_A, LOC_B, LOC_C, LOC_A,],), });
+    await seedParty(PARTY_ONE, { route: JSON.stringify([LOC_A, LOC_B, LOC_C, LOC_A,],), },);
     await insertWorldTravelBudget(db, {
       world_id: WORLD_ID,
       spent: 1,
@@ -644,7 +644,7 @@ describe("advancePartyTravel — the budget ledger", () => {
     const raced = await Promise.all([
       chargeBudget(db, WORLD_ID, 1, 0.05, T0, 1,),
       chargeBudget(db, WORLD_ID, 1, 0.05, T0, 1,),
-    ]);
+    ],);
 
     // Without the CAS both write that same value from the same pre-state,
     // both return true, and the ledger records one charge for two actions —
