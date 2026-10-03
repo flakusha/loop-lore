@@ -3,7 +3,7 @@
 
 # TASK: Route text moderation and prompt-injection verdicts through the classifier role
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ moderation-classifier.ts and prompt-injection step 2 already thread AuxCallOptio
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-03 registry-driven close: git issue 204dfb3 (registry tip: b4309cecf Konstantin Fedotov Close issue)

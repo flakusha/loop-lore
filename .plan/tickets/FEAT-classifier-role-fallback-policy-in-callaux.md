@@ -3,7 +3,7 @@
 
 # FEAT: Classifier-role fallback policy in callAux
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ VALID_ROLES already includes Classifier (src/admin/model-roles.ts) but resolveMo
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-03 registry-driven close: git issue ba371d3 (registry tip: 13c69ac06 Konstantin Fedotov Close issue)
