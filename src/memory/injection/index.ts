@@ -8,6 +8,7 @@
  * public import surface (`injection` / `injection/index`).
  */
 export { shouldInjectMemory, } from "./decide";
+export { extractMessageKeywords, } from "./keywords";
 export { toBasePrivacy, } from "./privacy";
 export { selectMemoriesForInjection, } from "./select";
 export {

@@ -14,8 +14,9 @@
  * Graceful degradation: any failure returns null — callers fall back.
  */
 import type { Kysely, } from "kysely";
-import { resolveModelRole, } from "../admin/model-roles";
+import { type ResolvedModelRole, resolveModelRole, } from "../admin/model-roles";
 import type { Config, } from "../config/schema";
+import { ModelRole, } from "../db/enums-core";
 import type { DB, } from "../db/schema";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getProvider, resolveProvider, } from "../generation/providers/registry";
@@ -34,6 +35,50 @@ const AUX_TELEMETRY_EVENT = "aux.call";
  */
 function getLog() {
   return getLogger().child({ module: "aux-pipeline", },);
+}
+
+/** Tasks that prefer a configured classifier model, falling back to auxiliary. */
+const CLASSIFIER_TASKS: Partial<Record<AuxTaskName, true>> = {
+  intent: true,
+  "injection-check": true,
+  transition: true,
+  "message-action": true,
+  "gm-tool": true,
+  moderation: true,
+  nsfw: true,
+};
+
+/**
+ * Resolve the model role for an AUX call.
+ *
+ * Explicit opts.role wins. Otherwise classifier-preferring tasks try the
+ * classifier role (only when actually configured), falling back to auxiliary.
+ * @param task - Name of the calling task
+ * @param explicitRole - Caller-provided role, if any
+ * @param config - Application config
+ * @param db - Kysely instance
+ * @returns Resolved role, or null when resolution fails
+ */
+async function resolveAuxRole(
+  task: AuxTaskName,
+  explicitRole: ModelRole | undefined,
+  config: Config,
+  db: Kysely<DB>,
+): Promise<ResolvedModelRole | null> {
+  if (explicitRole !== undefined) {
+    return await resolveModelRole(explicitRole, config, db,);
+  }
+  if (CLASSIFIER_TASKS[task]) {
+    try {
+      const classifier = await resolveModelRole(ModelRole.Classifier, config, db,);
+      if (classifier && classifier.source !== "default") {
+        return classifier;
+      }
+    } catch {
+      // Unconfigured classifier — fall through to auxiliary
+    }
+  }
+  return await resolveModelRole(ModelRole.Auxiliary, config, db,);
 }
 
 /**
@@ -56,7 +101,7 @@ export async function callAux(
   opts: AuxCallOptions = {},
 ): Promise<AuxCallResult | null> {
   const {
-    role = "auxiliary",
+    role,
     timeoutMs = DEFAULT_TIMEOUT_MS,
     temperature = DEFAULT_TEMPERATURE,
     maxTokens = DEFAULT_MAX_TOKENS,
@@ -64,9 +109,9 @@ export async function callAux(
     chatId,
   } = opts;
   // Resolve the model role → provider/model; graceful failure => null (BUG-1 fix)
-  let auxRole;
+  let auxRole: ResolvedModelRole | null;
   try {
-    auxRole = await resolveModelRole(role, config, db,);
+    auxRole = await resolveAuxRole(task, role, config, db,);
   } catch {
     return null;
   }
@@ -102,6 +147,7 @@ export async function callAux(
       chatId,
       data: {
         task,
+        role: auxRole.role,
         model: auxRole.model,
         provider: auxRole.provider,
         latencyMs: Date.now() - startedAt,

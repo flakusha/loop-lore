@@ -95,7 +95,15 @@ export function shouldInjectMemory(
     probability *= 1 - comfort.traumaResistance * 0.5;
   }
 
-  // 9. Clamp and final roll
+  // 9. Semantic floor gate — a memory with a KNOWN semantic score below the
+  // configured floor is rejected (fail-open when unscored). Pinned memories
+  // already returned above, so pins bypass this gate by construction.
+  const semanticScore = ctx.semanticScores?.get(memory.id,);
+  if (semanticScore !== undefined && semanticScore < config.semanticFloor) {
+    return { inject: false, probability, reason: "semantic_floor", };
+  }
+
+  // 10. Clamp and final roll
   probability = Math.max(0, Math.min(1, probability,),);
   const finalRoll = ctx.randomFn ? ctx.randomFn() : Math.random();
   const inject = finalRoll <= probability;

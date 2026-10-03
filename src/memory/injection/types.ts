@@ -26,6 +26,8 @@ export interface MemoryInjectionConfig {
   maxPerMessage: number;
   /** Minimum turns between injections of the same memory. */
   cooldownTurns: number;
+  /** Minimum semantic cosine score for a scored memory to inject (fail-open when unscored). */
+  semanticFloor: number;
 }
 
 /** Default injection config. */
@@ -35,6 +37,7 @@ export const DEFAULT_INJECTION_CONFIG: MemoryInjectionConfig = {
   contextBoost: 1.5,
   maxPerMessage: 5,
   cooldownTurns: 3,
+  semanticFloor: 0.15,
 };
 
 /** Character comfort settings affecting memory sharing. */
@@ -95,4 +98,6 @@ export interface InjectionContext {
   moodModifier: number;
   /** Random function for deterministic testing. */
   randomFn?: () => number;
+  /** Known semantic cosine scores (memoryId → score). Absent score = no gate. */
+  semanticScores?: ReadonlyMap<string, number>;
 }

@@ -16,6 +16,7 @@ const config: MemoryInjectionConfig = {
   contextBoost: 1.5,
   maxPerMessage: 5,
   cooldownTurns: 3,
+  semanticFloor: 0.15,
 };
 
 const ctx: InjectionContext = {

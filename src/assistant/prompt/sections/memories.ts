@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 245
 
 /**
  * Memory section — the actor's most important memories, provision-filtered
@@ -17,10 +18,12 @@ import { semanticRecall, } from "../../../memory/embeddings";
 import {
   DEFAULT_COMFORT,
   DEFAULT_INJECTION_CONFIG,
+  extractMessageKeywords,
   type InjectionContext,
   selectMemoriesForInjection,
 } from "../../../memory/injection";
 import { provisionMemories, } from "../../../memory/provision";
+import { touchMemories, } from "../../../memory/purge";
 import type { MemoryEntry, } from "../../../memory/types";
 import { wrapSection, } from "../../xml-utils";
 import type { SectionBuilder, } from "../types";
@@ -90,6 +93,7 @@ export const memorySection: SectionBuilder = {
     // from re-ranking (they always stay at the top).
     const pinned = allAccepted.filter((m,) => m.pinned);
     const mutable = allAccepted.filter((m,) => !m.pinned);
+    const scoreMap = new Map<string, number>();
     if (mutable.length > 0) {
       try {
         const recent = await ctx.db
@@ -109,7 +113,7 @@ export const memorySection: SectionBuilder = {
             0.3,
           );
           if (matched.length > 0) {
-            const scoreMap = new Map(matched.map((m,) => [m.memoryId, m.score,]),);
+            for (const m of matched) { scoreMap.set(m.memoryId, m.score,); }
             mutable.sort((a, b,) => {
               const sa = scoreMap.get(a.id,) ?? 0;
               const sb = scoreMap.get(b.id,) ?? 0;
@@ -138,6 +142,29 @@ export const memorySection: SectionBuilder = {
     if (budgeted.length === 0) { return []; }
 
     // ── Phase 3: Injection filter ──────────────────────────────────────────
+    let currentKeywords: string[] = [];
+    try {
+      const latestUserMessage = await ctx.db
+        .selectFrom("messages",)
+        .select("content",)
+        .where("chat_id", "=", ctx.chat.id,)
+        .where("role", "=", "user",)
+        .orderBy("created_at", "desc",)
+        .limit(1,)
+        .executeTakeFirst();
+      if (latestUserMessage) {
+        currentKeywords = extractMessageKeywords(latestUserMessage.content,);
+      }
+    } catch (err) {
+      getLogger().warn(
+        "memory section: current-message keyword extraction skipped",
+        {
+          err: err instanceof Error ? err.message : String(err,),
+          chatId: ctx.chat.id,
+        },
+      );
+    }
+
     const injectionCtx: InjectionContext = {
       chatId: ctx.chat.id,
       worldId: ctx.chat.world_id,
@@ -145,12 +172,13 @@ export const memorySection: SectionBuilder = {
       isPrivateChat: participantIds.length <= 2,
       participantCount: participantIds.length,
       turnNumber: 0,
-      currentKeywords: [],
+      currentKeywords,
       averageIntimacy: 50,
       moodModifier: 0,
       // Test seam: `decide.ts` falls back to `Math.random()` when this is
       // absent, which makes any `memorySection` end-to-end test probabilistic.
       randomFn: ctx.randomFn,
+      semanticScores: scoreMap,
     };
 
     const injectionResult = selectMemoriesForInjection(
@@ -162,6 +190,21 @@ export const memorySection: SectionBuilder = {
 
     const injected = await applyKeyphraseRecalls(ctx, injectionResult.selected, keyphraseHits,);
     if (injected.length === 0) { return []; }
+
+    // Touch last_accessed on every injected memory (BUG-TOUCHMEMORY). Prompt
+    // assembly must never fail because the touch write fails.
+    try {
+      await touchMemories(ctx.db, injected.map((m,) => m.id),);
+    } catch (err) {
+      getLogger().warn(
+        "memory section: failed to touch injected memories",
+        {
+          err: err instanceof Error ? err.message : String(err,),
+          chatId: ctx.chat.id,
+          memoryIds: injected.map((m,) => m.id),
+        },
+      );
+    }
 
     const memoryText = injected
       .map((m,) => `- [${m.memoryType}] ${m.content}`)

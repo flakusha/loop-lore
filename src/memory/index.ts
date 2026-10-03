@@ -50,7 +50,7 @@ export type {
 } from "./injection";
 export { provisionMemories, } from "./provision";
 export type { ProvisionContext, ProvisionResult, } from "./provision";
-export { applyDecay, purgeStaleMemories, touchMemory, } from "./purge";
+export { applyDecay, purgeStaleMemories, touchMemories, touchMemory, } from "./purge";
 export { evaluateShareability, isMemoryVisible, parseShareability, } from "./shareability";
 export type { ShareabilityConfig, } from "./shareability";
 export type {

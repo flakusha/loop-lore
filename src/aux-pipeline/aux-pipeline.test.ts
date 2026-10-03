@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { Database, } from "bun:sqlite";
-import { describe, expect, test, } from "bun:test";
+import { afterAll, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
+import { ModelRole, } from "../db/enums-core/flags";
 import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { registerProvider, unregisterProvider, } from "../generation/providers/registry";
+import type { GenerateRequest, GenerateResponse, LLMProvider, } from "../generation/providers/types";
+import { createTestDb, } from "../test-utils/create-test-db";
+import { insertModelRoleOverrides, } from "../test-utils/insert-helpers";
 import {
   callAux,
   GM_TOOL_DETECTION_PROMPT,
@@ -75,6 +80,142 @@ describe("aux-pipeline types", () => {
 });
 
 // ── callAux graceful degradation ─────────────────────────────
+
+// ── classifier-role routing ──────────────────────────────────
+
+/** Minimal Config stub sufficient for resolveModelRole + BYO resolution. */
+function makeAuxConfig(): Parameters<typeof callAux>[1] {
+  return {
+    generation: {
+      defaultProvider: "mock",
+      defaultModels: {},
+      providers: { openaiCompatible: [], },
+    },
+    byoKey: { enabled: false, encryptionKey: null, },
+  } as unknown as Parameters<typeof callAux>[1];
+}
+
+/** Stub provider that records each requested model and returns a fixed body. */
+function makeCapturingProvider(requested: string[],): LLMProvider {
+  const response = (req: GenerateRequest,): GenerateResponse => {
+    requested.push(req.model,);
+    return {
+      content: '{"rating":"sfw"}',
+      finishReason: "stop",
+      usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2, },
+    };
+  };
+  return {
+    capabilities: {
+      type: "openai-compatible",
+      label: "Stub",
+      text: true,
+      image: false,
+      embeddings: false,
+      streaming: false,
+      tools: false,
+      thinking: false,
+    },
+    complete: async (req: GenerateRequest,) => response(req,),
+    stream: async (req: GenerateRequest, _handler: never,) => response(req,),
+    healthCheck: async () => ({ status: "ok", model: "mock", }),
+    listModels: async () => [],
+  };
+}
+
+describe("callAux classifier-role routing", () => {
+  afterAll(() => {
+    unregisterProvider("mock",);
+  },);
+
+  test("classifier-preferring task uses configured classifier model", async () => {
+    const testDb = await createTestDb();
+    await insertModelRoleOverrides(testDb.db, "mock", "mock-classifier-model", { role: ModelRole.Classifier, },);
+    const requested: string[] = [];
+    unregisterProvider("mock",);
+    registerProvider("mock", makeCapturingProvider(requested,),);
+    const result = await callAux(
+      "intent",
+      makeAuxConfig(),
+      testDb.db,
+      [{ role: "user", content: "ping", },],
+    );
+    expect(result,).not.toBeNull();
+    expect(result?.model,).toBe("mock-classifier-model",);
+    expect(requested,).toEqual(["mock-classifier-model",],);
+    await testDb.db.destroy();
+  });
+
+  test("unconfigured classifier falls back to auxiliary model", async () => {
+    const testDb = await createTestDb();
+    await insertModelRoleOverrides(testDb.db, "mock", "mock-aux-model", { role: ModelRole.Auxiliary, },);
+    const requested: string[] = [];
+    unregisterProvider("mock",);
+    registerProvider("mock", makeCapturingProvider(requested,),);
+    const result = await callAux(
+      "transition",
+      makeAuxConfig(),
+      testDb.db,
+      [{ role: "user", content: "ping", },],
+    );
+    expect(result,).not.toBeNull();
+    expect(result?.model,).toBe("mock-aux-model",);
+    expect(requested,).toEqual(["mock-aux-model",],);
+    await testDb.db.destroy();
+  });
+
+  test("explicit opts.role wins over classifier preference", async () => {
+    const testDb = await createTestDb();
+    await insertModelRoleOverrides(testDb.db, "mock", "mock-classifier-model", { role: ModelRole.Classifier, },);
+    await insertModelRoleOverrides(testDb.db, "mock", "mock-caption-model", { role: ModelRole.Captioning, },);
+    const requested: string[] = [];
+    unregisterProvider("mock",);
+    registerProvider("mock", makeCapturingProvider(requested,),);
+    const result = await callAux(
+      "intent",
+      makeAuxConfig(),
+      testDb.db,
+      [{ role: "user", content: "ping", },],
+      { role: ModelRole.Captioning, },
+    );
+    expect(result,).not.toBeNull();
+    expect(result?.model,).toBe("mock-caption-model",);
+    expect(requested,).toEqual(["mock-caption-model",],);
+    await testDb.db.destroy();
+  });
+
+  test("moderation task resolves Classifier when configured, Auxiliary when not", async () => {
+    const configuredDb = await createTestDb();
+    await insertModelRoleOverrides(configuredDb.db, "mock", "mock-classifier-model", { role: ModelRole.Classifier, },);
+    const requestedConfigured: string[] = [];
+    unregisterProvider("mock",);
+    registerProvider("mock", makeCapturingProvider(requestedConfigured,),);
+    const configured = await callAux(
+      "moderation",
+      makeAuxConfig(),
+      configuredDb.db,
+      [{ role: "user", content: "ping", },],
+    );
+    expect(configured?.model,).toBe("mock-classifier-model",);
+    expect(requestedConfigured,).toEqual(["mock-classifier-model",],);
+    await configuredDb.db.destroy();
+
+    const unconfiguredDb = await createTestDb();
+    await insertModelRoleOverrides(unconfiguredDb.db, "mock", "mock-aux-model", { role: ModelRole.Auxiliary, },);
+    const requestedUnconfigured: string[] = [];
+    unregisterProvider("mock",);
+    registerProvider("mock", makeCapturingProvider(requestedUnconfigured,),);
+    const unconfigured = await callAux(
+      "moderation",
+      makeAuxConfig(),
+      unconfiguredDb.db,
+      [{ role: "user", content: "ping", },],
+    );
+    expect(unconfigured?.model,).toBe("mock-aux-model",);
+    expect(requestedUnconfigured,).toEqual(["mock-aux-model",],);
+    await unconfiguredDb.db.destroy();
+  });
+});
 
 describe("callAux graceful failure", () => {
   test("returns null when no model role is resolved", async () => {
