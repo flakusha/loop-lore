@@ -196,7 +196,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             expires_at: body.expiresAt ?? null,
           };
           assertValidWrite("shadow_notes", noteRow,);
-          await database.insertInto("shadow_notes",).values(noteRow).execute();
+          await database.insertInto("shadow_notes",).values(noteRow,).execute();
 
           return jsonCreated({ id: noteId, },);
         },

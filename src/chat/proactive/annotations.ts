@@ -133,7 +133,7 @@ export async function createAnnotation(
       expires_at: annotation.ttlUntil,
     };
     assertValidWrite("shadow_notes", noteRow,);
-    await db.insertInto("shadow_notes",).values(noteRow).execute();
+    await db.insertInto("shadow_notes",).values(noteRow,).execute();
     return annotation;
   }
 

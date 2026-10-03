@@ -43,6 +43,17 @@ describe("assertValidWrite — messages", () => {
     }
   });
 
+  test("the legacy exemption does not disable the visibility axis", () => {
+    // Regression: the exemption used to `return` before `visibility` was even
+    // read, so `{ status: "visible", visibility: <anything> }` passed the guard
+    // wholesale — a typo in the second axis rode in unchecked behind the first.
+    // The exemption is scoped to the PAIR check only; each axis is still
+    // validated against its own enum.
+    expect(() => {
+      assertValidWrite("messages", { status: "visible", visibility: "hidden_by_moderatr", },);
+    },).toThrow(/messages\.visibility .* is not a MessageVisibility/,);
+  });
+
   test("rejects a partial write that omits the counterpart axis", () => {
     expect(() => {
       assertValidWrite("messages", { visibility: MessageVisibility.Visible, },);
