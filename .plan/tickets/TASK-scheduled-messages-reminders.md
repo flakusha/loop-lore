@@ -79,6 +79,23 @@ no second helper. A row due inside the window is HELD (left `pending`,
 `send_at` untouched) and goes out on the first pass after the boundary;
 nothing is dropped.
 
+Dispatch isolates per-row failures: each due scheduled row and each due
+reminder is handled inside its own try/catch, so a poison row
+(undecryptable body, actor row removed mid-flight, encryption misconfig) is
+logged with its id and counted in `DispatchSummary.failed` rather than
+aborting the pass. Rows are selected `send_at` ASC, so an uncaught throw
+would have put the same row first on every future tick and starved every
+later due row. A failed scheduled row stays `pending` and retries on the
+next tick; nothing is dropped.
+
+The idempotency key is claimed before the insert: the dispatcher looks the
+key up through the existing `findByIdempotencyKey` and, on a hit, marks the
+row sent and skips the insert. A crash between a successful insert and
+`markScheduledSent` therefore self-heals on the next pass instead of
+delivering the same message twice. `idx_messages_idempotency` is a plain
+index rather than a unique constraint and the shared insert helper does not
+dedupe, so the claim lives in the dispatcher rather than in that helper.
+
 Alpine: one `chat-actions/scheduling.ts` module carrying both halves —
 the composer clock button + `datetime-local` picker (state in
 `chat-types/scheduled-state.ts`, markup in `components/chat/input-area.html`)
@@ -100,8 +117,10 @@ were left untouched.
 
 Tests: dispatcher boundaries (due sends, not-yet-due stays pending,
 quiet-hours hold then delivery past the boundary, canceled never sends,
-no double-delivery, reminder fires exactly once, not-yet-due reminder
-stays armed, re-arm replaces) plus route contract (401 unauth, 404 for a
+no double-delivery, a poison row failing without starving the rows behind
+it, a crash between insert and status-update not delivering twice, reminder
+fires exactly once, not-yet-due reminder stays armed, re-arm replaces) plus
+route contract (401 unauth, 404 for a
 non-participant rather than 403, author-only cancel, empty/unparseable
 input 400s, caller-scoped reminder list and cancel) and the picker's
 datetime-local conversion and guard clauses.
