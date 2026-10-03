@@ -7,11 +7,14 @@
  * that already takes a destructured object, or whose last param is a rest
  * tuple, is not a candidate for the options-object rewrite.
  *
+ * `AssignmentPattern` is absent because the binding is unwrapped first --
+ * `{ c, d } = {}` is an options object with a default, not a positional param,
+ * whereas `opts = {}` unwraps to an `Identifier` and still counts as one.
+ *
  * @type {Record<string, true>}
  */
 const POSITIONAL_PARAM_TYPES = {
   Identifier: true,
-  AssignmentPattern: true,
   ArrayPattern: true,
 };
 
@@ -43,7 +46,7 @@ export const optionsObjectParamsRule = {
      * @param {import("eslint").Rule.Node} node
      */
     function checkFunction(node,) {
-      const fn = /** @type {{ body: unknown; params: { type: string; name?: string }[] }} */ (node);
+      const fn = /** @type {{ body: unknown; params: { type: string; name?: string; left?: { type: string } }[] }} */ (node);
       // Skip signatures without a body (overloads, `declare`, abstract
       // members): there is no implementation to refactor.
       if (!fn.body) { return; }
@@ -52,7 +55,12 @@ export const optionsObjectParamsRule = {
       const params = fn.params[0]?.type === "Identifier" && fn.params[0]?.name === "this"
         ? fn.params.slice(1,)
         : fn.params;
-      const positional = params.filter((param,) => POSITIONAL_PARAM_TYPES[param.type] === true);
+      // Unwrap defaults before counting: `b = 1` is one positional param, but
+      // `{ c, d } = {}` is an options object and must not inflate the count.
+      const positional = params.filter((param,) => {
+        const binding = param.type === "AssignmentPattern" ? param.left : param;
+        return POSITIONAL_PARAM_TYPES[binding.type] === true;
+      },);
       if (positional.length < 3) { return; }
       context.report({ node, messageId: "optionsObject", },);
     }
