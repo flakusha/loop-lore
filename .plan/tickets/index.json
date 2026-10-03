@@ -16239,6 +16239,19 @@
     "title": "LLM-enhance for chat and text windows with leveled rewrites",
     "type": "FEAT"
   },
+  "FEAT-LLM-ENHANCE-OUTSIDE-THE-CHAT-COMPOSER": {
+    "hash": "bd93da5",
+    "git_issue": "bd93da5",
+    "extid": "FEAT-LLM-ENHANCE-OUTSIDE-THE-CHAT-COMPOSER",
+    "type": "FEAT",
+    "title": "LLM-enhance outside the chat composer",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-chat-composer-flows",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md",
+    "status": "Not Started"
+  },
   "FEAT-LLM-REQUEST-COMPLEXITY-CLASSIFICATION": {
     "hash": "27f9dd5",
     "extid": "FEAT-LLM-REQUEST-COMPLEXITY-CLASSIFICATION",

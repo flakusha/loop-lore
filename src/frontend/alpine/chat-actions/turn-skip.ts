@@ -10,6 +10,7 @@
  * the standard `show-toast` channel: 409 (refused_beat), 429 (rate limit),
  * and network failures are status-coded via the rejection thrown by apiFetch.
  */
+import { requireActiveChat, } from "../chat-guards";
 import type { TurnSkipMode, TurnSkipState, } from "../chat-types/turn-skip-state";
 import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
@@ -52,11 +53,7 @@ export const turnSkipActions: Partial<TurnSkipState> & ThisType<TurnSkipCtx> = {
    * @param mode - `hold` records the opt-out; `advance` also cues the next beat.
    */
   async skipTurn(mode: TurnSkipMode,) {
-    if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
-      return;
-    }
-
+    if (!requireActiveChat(this,)) { return; }
     if (this._skipping) { return; }
     this._skipping = true;
     this._turnSkipOpen = false;
@@ -69,7 +66,6 @@ export const turnSkipActions: Partial<TurnSkipState> & ThisType<TurnSkipCtx> = {
           body: jsonBody({ mode, },),
         } as Parameters<typeof apiFetch>[1],
       );
-
       // apiFetch resolves only 2xx — non-2xx reject into the catch below.
       const data = await res.json().catch(() => null) as { deduped?: boolean } | null;
       log.info("turn-skip recorded", { mode, deduped: data?.deduped === true, },);
@@ -77,7 +73,6 @@ export const turnSkipActions: Partial<TurnSkipState> & ThisType<TurnSkipCtx> = {
         type: "success",
         message: mode === "advance" ? t("turnSkip.skippedAdvance",) : t("turnSkip.skipped",),
       },);
-
       await this.loadMessages();
     } catch (error) {
       // feFetch rejects non-2xx with the status attached; the response body

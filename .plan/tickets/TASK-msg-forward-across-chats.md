@@ -9,7 +9,9 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-chat-composer-flows.md (proposed)
+**Epic:** epic-chat-composer-flows.md
+
+**Status Note:** Route/service shipped (commit feb9bfca8 `POST /api/v1/chats/:id/messages/:messageId/forward`); decrypts source then re-encrypts for target, `> Forwarded from <name>` prefix, caller-owned attachments only, idempotency-key replay, 8 route tests. Alpine wiring confirmed: `forwardMessage` in `message-tools.ts:19` is wired in `src/components/chat/message-list.html` at lines 397 (desktop action), 607 (hamburger menu), and 681 (mobile/context-menu — the dead menu item the ticket's Problem described). The epic's "No Alpine Forward-menu wiring yet" note is stale. All ACs met.
 **Type:** Feature | **Priority:** High | **Effort:** M
 
 ## Problem

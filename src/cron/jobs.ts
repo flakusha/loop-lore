@@ -202,6 +202,18 @@ export function defaultJobs(): CronJobDef[] {
       },
     },),
     defineJob({
+      name: "chat.scheduled",
+      // Every minute so a due message lands inside the ticket's 1min window.
+      schedule: "* * * * *",
+      enabled: true,
+      run: async ({ database, config, logger, },) => {
+        const { dispatchDue, } = await import("../chat/scheduled");
+        return dispatchDue(database, config, { logger, },);
+      },
+    },),
+      },
+    },),
+    defineJob({
       name: "nsfw.status-sweep",
       schedule: "*/15 * * * *",
       enabled: true,

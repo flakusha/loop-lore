@@ -286,6 +286,33 @@
           </div>
         </div>
       </template>
+      <!-- Scheduled send: park the draft for a future instant (TASK-scheduled-messages-reminders) -->
+      <button
+        type="button"
+        class="btn btn-ghost"
+        title="Schedule send"
+        :disabled="!activeChat || _scheduling"
+        @click.prevent="toggleSchedulePicker()"
+        data-testid="schedule-button"
+      >🕒</button>
+      <template x-if="_scheduleOpen">
+        <div class="turn-skip-menu schedule-menu" @click.outside="closeSchedulePicker()" data-testid="schedule-menu">
+          <label class="turn-skip-option" for="schedule-at">
+            <input
+              id="schedule-at"
+              type="datetime-local"
+              x-model="_scheduleAt"
+              data-testid="schedule-input"
+            />
+          </label>
+          <button
+            type="button"
+            class="turn-skip-option"
+            @click.prevent="scheduleDraft()"
+            data-testid="schedule-confirm"
+          >Send then</button>
+        </div>
+      </template>
       <!-- Turn skip: hold / advance the beat (epic-actor-turn-skip) -->
       <button
         type="button"

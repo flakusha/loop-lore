@@ -1410,6 +1410,22 @@
     "rateLimited": "Too many skips — try again in a minute.",
     "failed": "Could not skip the turn."
   },
+
+  "scheduled": {
+    "scheduled": "Scheduled — it'll send itself.",
+    "pickTime": "Pick a time to send at.",
+    "emptyDraft": "Type a message before scheduling.",
+    "failed": "Could not schedule that message."
+  },
+
+  "reminders": {
+    "menu": "Remind me",
+    "in10": "in 10 minutes",
+    "in60": "in 1 hour",
+    "in1440": "tomorrow",
+    "armed": "Reminder set.",
+    "failed": "Could not set that reminder."
+  },
   "commands": {
     "help": "Show available commands",
     "roll": "Roll dice (e.g., /roll 2d6+3)",

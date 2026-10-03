@@ -7,6 +7,7 @@ import type { Kysely, } from "kysely";
 import { linkAsset, } from "../../assets/service";
 import type { Config, } from "../../config/schema";
 import { encodeContent, } from "../../content/encode";
+import type { ContentEncoding, } from "../../content/types";
 import {
   encryptAtRest,
   ensureActorKey,
@@ -26,7 +27,7 @@ import { log, } from "./helpers";
 /** Result of preparing a plaintext message body for durable storage. */
 export interface StoredContent {
   storedContent: string;
-  contentEncoding: string;
+  contentEncoding: ContentEncoding;
   storedKeyId: string | null;
   /** Plaintext mirrored to `messages.content_plaintext` (migration 068) so FTS5 indexes at-rest-encrypted chats; null for client-pre-encrypted payloads. */
   storedPlaintext: string | null;

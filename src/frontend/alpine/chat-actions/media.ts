@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { requireActiveChat, } from "../chat-guards";
 import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
 import { jsonBody, } from "../json";
@@ -16,11 +17,7 @@ export const media: Partial<ChatState> & ThisType<ChatState> = {
    */
   async generateImageFromMessage(msgId: string,) {
     log.info("generateImageFromMessage", { messageId: msgId, },);
-    if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
-      return;
-    }
-
+    if (!requireActiveChat(this,)) { return; }
     const msg = this.messages.find((m,) => m.id === msgId);
     const prompt = msg?.content?.slice(0, 500,) ?? "";
     if (!prompt) {
@@ -28,17 +25,14 @@ export const media: Partial<ChatState> & ThisType<ChatState> = {
         type: "warning",
         message: t("toasts.messageNoContentForImage",),
       },);
-
       return;
     }
-
     try {
       const res = await apiFetch("/api/v1/generation/image", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ chatId: this.activeChat, messageId: msgId, prompt, },),
       },);
-
       if (res.ok) {
         this.$dispatch?.("show-toast", { type: "info", message: t("toasts.imageGenerationStarted",), },);
       } else if (res.status === 501) {
@@ -73,7 +67,6 @@ export const media: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noImagesToCaption",), },);
       return;
     }
-
     try {
       const res = await apiFetch("/api/v1/generation/caption", {
         method: "POST",
@@ -84,7 +77,6 @@ export const media: Partial<ChatState> & ThisType<ChatState> = {
           assetIds: Array.from(imageAttachments, (a,) => a.assetId,),
         },),
       },);
-
       if (res.ok) {
         this.$dispatch?.("show-toast", { type: "info", message: t("toasts.captioningStarted",), },);
       } else if (res.status === 501) {

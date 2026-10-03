@@ -1024,6 +1024,22 @@ export interface ActorPlanRevisions {
   created_at: Generated<string>;
 }
 
+export interface ScheduledMessages {
+  id: Generated<string>;
+  chat_id: string;
+  author_id: string;
+  body: string;
+  send_at: string;
+  status: Generated<string>;
+}
+
+export interface MessageReminders {
+  id: Generated<string>;
+  message_id: string;
+  user_id: string;
+  remind_at: string;
+}
+
 // ── chat_mentions ────────────────────────────────────────────
 export interface ChatMentions {
   id: Generated<string>;
