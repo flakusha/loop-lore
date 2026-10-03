@@ -21,4 +21,9 @@ Trade routes and exploration should be organic - discovered by simulation, not s
 - Events written to `world_events` log; display in admin panel.
 - Tests: scheduled caravan fires trade event; exploration decays over time.
 
+<<<<<<< ours — heading `TASK: World Simulation Discovery And Trade Events` (S+F, confidence: low)
+// hint: Structural and logic conflict. Both design and behavior differ.
 **Resolved:** 2026-10-02 registry-driven close: git issue 42327b4 (registry tip: 8b44bf16c Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WORLD-SIMULATION-DISCOVERY-)
+=======
+**Resolved:** 2026-10-03 registry-driven close: git issue 42327b4 (registry tip: 8b44bf16c Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WORLD-SIMULATION-DISCOVERY-)
+>>>>>>> theirs — heading `TASK: World Simulation Discovery And Trade Events` (S+F, confidence: low)
