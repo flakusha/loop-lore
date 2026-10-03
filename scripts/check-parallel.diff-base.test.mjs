@@ -64,6 +64,14 @@ const GIT_ENV = Object.fromEntries(
 );
 GIT_ENV.GIT_CONFIG_GLOBAL = "/dev/null";
 GIT_ENV.GIT_CONFIG_SYSTEM = "/dev/null";
+// Identity via env, not `git config`: with the configs nulled there is no
+// fallback, so every commit here proves it took the env identity. Also keeps
+// the fixture free of any config WRITE — a `git config <key> <value>` call is
+// prohibited outright, and a persisted setting outlives the temp repo anyway.
+GIT_ENV.GIT_AUTHOR_NAME = "Test";
+GIT_ENV.GIT_AUTHOR_EMAIL = "test@example.com";
+GIT_ENV.GIT_COMMITTER_NAME = "Test";
+GIT_ENV.GIT_COMMITTER_EMAIL = "test@example.com";
 
 /** Raw git: no throw, so callers can assert on a non-zero exit. */
 function gitRaw(args, cwd = workDir,) {
@@ -113,8 +121,6 @@ beforeEach(() => {
 
   workDir = mkdtempSync(join(tmpdir(), "loop-lore-diff-base-",),);
   git(["init", "--initial-branch=main", "-q",],);
-  git(["config", "user.email", "test@example.com",],);
-  git(["config", "user.name", "Test",],);
   mkdirSync(join(workDir, "src",), { recursive: true, },);
 
   // Fork point.
@@ -265,8 +271,6 @@ describe("changedFiles — --diff-base scoping", () => {
     const orphan = mkdtempSync(join(tmpdir(), "loop-lore-orphan-",),);
     try {
       git(["init", "-q", "--initial-branch=main", orphan,], workDir,);
-      git(["-C", orphan, "config", "user.email", "test@example.com",], workDir,);
-      git(["-C", orphan, "config", "user.name", "Test",], workDir,);
       git(["-C", orphan, "commit", "-q", "--allow-empty", "-m", "unrelated",], workDir,);
       git(["fetch", "-q", orphan, "main:refs/remotes/orphan/main",],);
 
