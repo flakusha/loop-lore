@@ -49,7 +49,10 @@ export interface KeyphraseCooldownOpts {
 /** Cooldown ledger: `chatId\u0000memoryId` → last injection time (ms). */
 const cooldowns = new Map<string, number>();
 
-/** Bound the ledger so a long-running server cannot grow it without end. */
+/**
+ * Ledger size at which a sweep for expired pairs runs. Not a hard cap —
+ * steady-state size is the number of pairs inside the TTL.
+ */
 const MAX_COOLDOWN_ENTRIES = 5_000;
 
 /**
@@ -103,8 +106,9 @@ export function keyphraseRecallAllowed(opts: KeyphraseCooldownOpts,): boolean {
 }
 
 /**
- * Start the cooldown window for a (chat, memory) pair. Expired entries are
- * pruned opportunistically once the ledger crosses its bound.
+ * Start the cooldown window for a (chat, memory) pair. Expired pairs are swept
+ * once the ledger reaches `MAX_COOLDOWN_ENTRIES`, so the steady-state size is
+ * the number of pairs inside the TTL, not the total ever seen.
  * @param opts
  */
 export function recordKeyphraseRecall(opts: KeyphraseCooldownOpts,): void {

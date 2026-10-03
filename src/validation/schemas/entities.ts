@@ -48,10 +48,6 @@ export const EntityCreateBody = t.Object({
 },);
 
 export const EntityUpdateBody = t.Object({
-  name: t.Optional(Name,),
-  content: t.Optional(t.String(),),
-  type: t.Optional(t.String(),),
-  data: t.Optional(t.Record(t.String(), t.Any(),),),
-  pinned: t.Optional(t.Boolean(),),
-  reviewStatus: t.Optional(EntityReviewStatusSchema,),
+reviewStatus: t.Optional(EntityReviewStatusSchema,),
+  keywords: t.Optional(t.Array(t.String({ maxLength: 120, },), { maxItems: 8, },),),
 },);
