@@ -25240,7 +25240,7 @@
     "label": "task",
     "priority": "High | **Effort:** S",
     "source": ".plan/tickets/TASK-composer-draft-persistence.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Composer draft persistence",
     "type": "TASK"
@@ -31931,7 +31931,7 @@
     "label": "task",
     "priority": "Low-Medium",
     "source": ".plan/tickets/TASK-keyphrase-recall.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Keyphrase-Triggered Memory Recall",
     "type": "TASK"
@@ -34008,7 +34008,7 @@
     "label": "task",
     "priority": "High | **Effort:** M",
     "source": ".plan/tickets/TASK-msg-forward-across-chats.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Message forwarding across chats",
     "type": "TASK"

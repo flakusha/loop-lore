@@ -120,7 +120,7 @@ export async function fetchActorMemories(
     // array shape survives; everything else degrades to "no triggers".
     keywords: (() => {
       const parsed = safeJsonParse<string[]>(r.keywords ?? "[]",);
-      return parsed.ok && Array.isArray(parsed.value) ? parsed.value : [];
+      return parsed.ok && Array.isArray(parsed.value,) ? parsed.value : [];
     })(),
     sourceChatId: r.source_chat_id ?? undefined,
     sourceMessageId: r.source_message_id ?? undefined,

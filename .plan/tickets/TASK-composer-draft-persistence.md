@@ -3,7 +3,7 @@
 
 # TASK: Composer draft persistence
 
-**Status:** Not Started
+**Status:** Done
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
@@ -39,3 +39,5 @@ Local-only v1 in `4d3fbd12a` — `src/frontend/alpine/chat-drafts.ts`
 wired into `chat-send.ts` (save/flush/restore) and `world.ts` (flush+restore
 on chat switch). 47 tests across `chat-drafts`/`chat-send`/`world` suites.
 Server sync deferred per ticket (`// ponytail` marker in code).
+
+**Resolved:** 2026-10-03 registry-driven close: git issue 81cda3c (registry tip: fa0ab1e7b Konstantin Fedotov Auto-closed: appended .md marker marks TASK-COMPOSER-DRAFT-PERSISTENCE )

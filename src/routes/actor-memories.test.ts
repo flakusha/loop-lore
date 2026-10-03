@@ -174,13 +174,13 @@ describe("actorMemoriesRoutes", () => {
     // cap had an assertion. A regression that dropped `maxItems` from
     // `EntityCreateBody.keywords` alone would store 9 triggers on the create
     // path while PUT still rejected them.
-    const tooMany = Array.from({ length: 9 }, (_, i,) => `phrase-${i}`);
-    const res = await makeApp(db, "user1").handle(
+    const tooMany = Array.from({ length: 9, }, (_, i,) => `phrase-${i}`,);
+    const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/user1/memories", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ content: "Journal entry over the cap on create", keywords: tooMany, }),
-      }),
+        body: JSON.stringify({ content: "Journal entry over the cap on create", keywords: tooMany, },),
+      },),
     );
     expect(res.status,).toBe(422,);
     const rows = await db

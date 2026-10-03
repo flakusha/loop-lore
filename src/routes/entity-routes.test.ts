@@ -246,7 +246,7 @@ describe("createEntityRoutes", () => {
     );
     expect(res.status,).toBe(200,);
 
-    const row = await db.selectFrom("actor_notes").select("content").where("id", "=", id,)
+    const row = await db.selectFrom("actor_notes",).select("content",).where("id", "=", id,)
       .executeTakeFirstOrThrow();
     expect(row.content,).toBe("AFTER",);
   });
