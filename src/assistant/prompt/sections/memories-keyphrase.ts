@@ -82,7 +82,10 @@ async function recentMessageText(ctx: KeyphraseRecallCtx,): Promise<string> {
     try {
       parts.push(await resolveMessageContent(ctx.db, { ...row, chat_id: ctx.chat.id, },),);
     } catch (err) {
-      getLogger().child({ module: "memories-keyphrase", },).warn("skipping unreadable message", err,);
+      getLogger().child({ module: "memories-keyphrase", },).warn(
+        "skipping unreadable message",
+        { err: err instanceof Error ? err.message : String(err,), },
+      );
     }
   }
   return parts.join("\n",);

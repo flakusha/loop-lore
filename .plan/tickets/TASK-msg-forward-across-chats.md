@@ -3,7 +3,7 @@
 
 # TASK: Message forwarding across chats
 
-**Status:** Not Started
+**Status:** Done
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
@@ -51,3 +51,5 @@ dropped), idempotency-key replay, no commands/mentions/auto-reply by
 design. 8 route tests. Deviations: single message per call (ticket's cap
 of 5 moot); target-denied returns 404 not 403 (codebase convention hides
 chat existence — same as read paths). No Alpine Forward-menu wiring yet.
+
+**Resolved:** 2026-10-03 registry-driven close: git issue 81414d2 (registry tip: 7ae1817f6 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-MSG-FORWARD-ACROSS-CHATS do)
