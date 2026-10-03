@@ -24,6 +24,7 @@
     "seed:users": "bun run scripts/seed-users.ts",
     "db:sync-types": "bun run scripts/generate-db-types.ts",
     "db:sync-manifest": "bun run scripts/generate-schema-manifest.ts",
+    "eval:prompts": "bun run src/aux-pipeline/eval/cli.ts",
     "openapi": "NODE_ENV=development bun run scripts/generate-openapi.ts",
     "schemas:check": "bun run scripts/check-schemas.ts",
     "schemas:check:fix": "bun run scripts/fix-schemas.ts",

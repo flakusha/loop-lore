@@ -11,7 +11,7 @@
  * (lightweight turn selection). The context parameter carries mode-specific
  * data without coupling strategies to either use case.
  */
-import type { GroupTurnContext, TurnStrategyFn, } from "./types";
+import type { GroupTurnContext, TurnParticipant, TurnStrategyFn, } from "./types";
 
 // ─── Strategy Registry ─────────────────────────────────────────
 
@@ -120,7 +120,32 @@ export const initiativeSelect: TurnStrategyFn = (
 };
 
 /**
- * Quest-driven: round-robin for MVP (quest context plugs in later)
+ * Validate the context's classifier pick against the current candidate set.
+ *
+ * The pick (FEAT-classifier-backed-actor-and-beat-selection) is honored only
+ * when its actorId is among the passed participants (cooldown/mute filtering
+ * already happened upstream, so this also keeps the pick inside the eligible
+ * set) and — consecutive-turn guard — when it is not the previous speaker
+ * while alternatives exist. Anything else falls back to the deterministic
+ * strategy behavior.
+ * @param participants
+ * @param context
+ * @param lastActorId
+ */
+function classifierPickActorId(
+  participants: TurnParticipant[],
+  context: GroupTurnContext | Record<string, unknown> | undefined,
+  lastActorId: string | null | undefined,
+): string | null {
+  const pick = (context as GroupTurnContext | undefined)?.classifierPick;
+  if (!pick) { return null; }
+  if (!participants.some((p,) => p.actorId === pick.actorId)) { return null; }
+  if (pick.actorId === lastActorId && participants.length > 1) { return null; }
+  return pick.actorId;
+}
+
+/**
+ * Quest-driven: classifier-proposed actor + beat first, round-robin fallback.
  * @param participants
  * @param currentActorId
  * @param currentTurn
@@ -136,12 +161,15 @@ export const questDrivenSelect: TurnStrategyFn = (
   context,
   lastActorId,
 ) => {
+  const classifierActorId = classifierPickActorId(participants, context, lastActorId,);
+  if (classifierActorId) { return classifierActorId; }
   // Consecutive-turn guard (BUG-group-cascade-consecutive-turn-guard).
   return roundRobinSelect(participants, currentActorId, currentTurn, turnOrder, context, lastActorId,);
 };
 
 /**
- * Hybrid: scene-based with quest awareness every 5th turn.
+ * Hybrid: classifier/scene selection with quest awareness every 5th turn.
+ * Group-chat priority: @mention → classifier pick → weighted random.
  * @param participants
  * @param currentActorId
  * @param currentTurn
@@ -162,11 +190,15 @@ export const hybridSelect: TurnStrategyFn = (
   if (ctx?.chatMode === "group") {
     // @mention override: if user mentioned someone, they get priority
     // (only honored when the mentioned actor isn't the previous speaker —
-    // BUG-group-cascade-consecutive-turn-guard).
+    // BUG-group-cascade-consecutive-turn-guard). Explicit mentions win over
+    // the classifier pick (FEAT-classifier-backed-actor-and-beat-selection).
     if (ctx.mentionedActorId && ctx.mentionedActorId !== lastActorId) {
       const mentioned = participants.find((p,) => p.actorId === ctx.mentionedActorId);
       if (mentioned) { return mentioned.actorId; }
     }
+    // Classifier-proposed actor (already participant-validated upstream).
+    const classifierActorId = classifierPickActorId(participants, context, lastActorId,);
+    if (classifierActorId) { return classifierActorId; }
     // Context-mention boost: actors mentioned in recent messages get a weight bump
     const boosted = Array.from(participants, (p,) => ({
       ...p,
