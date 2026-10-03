@@ -16,7 +16,7 @@
 - One class/feature per file; `<200` lines preferred; `index.ts` exports public API
 - Feature family grouped in `src/<name>/` with `service.ts | controller.ts | types.ts`
 - Avoid circular imports — import from `enums.ts` barrel, never sibling feature modules
-- **Options-object parameters** — functions with 3+ params take a single destructured object (`function fn({a, b, c, d?})`) over positional args (`function fn(a, b, c, d?)`). Benefits: named at call site, optional without placeholders, auto-declared variable names inside function, extensible without breaking callers. **Enforced** by the local ESLint rule `options-object-params` (warn) -- see `eslint.config.mjs`
+- **Options-object parameters** — functions with 3+ *positional* params take a single destructured object (`function fn({a, b, c, d?})`) over positional args (`function fn(a, b, c, d?)`). Benefits: named at call site, optional without placeholders, auto-declared variable names inside function, extensible without breaking callers. Reported (not blocking) by the local ESLint rule `local/options-object-params` at `warn` over `src/**/*.ts` + `src/**/*.js`; see `eslint.config.mjs` and `src/eslint-rules/options-object-params.mjs`. It counts only `Identifier` / `ArrayPattern` params (unwrapping defaults), so an existing destructured options object, a `...rest`, a TS `this` param and TS parameter properties are all exempt; signatures with no body (overloads, `declare`, `abstract`, interface/type call signatures) are skipped.
 
 ## Error Handling
 
