@@ -287,6 +287,42 @@ describe("comfyuiBuilderRoutes", () => {
     expect(((await valid.json()) as { ok: boolean }).ok,).toBe(true,);
   });
 
+  test("validate endpoint rejects a workflow over the node cap", async () => {
+    const app = makeApp(db, ownerId,);
+    function nodes(count: number, classType: string,): Record<string, unknown> {
+      const out: Record<string, unknown> = {};
+      for (let i = 0; i < count; i++) {
+        out["n" + i] = { class_type: classType, inputs: {}, };
+      }
+      return out;
+    }
+
+    // 101 nodes in the record form - one past the 100-node ceiling that
+    // matches ChainCreateBody's `steps: maxItems: 100`.
+    const tooManyNodes = await app.handle(
+      post("http://localhost/api/comfyui-builder/validate", { workflow: nodes(101, "KSampler",), },),
+    );
+    expect(tooManyNodes.status,).toBe(422,);
+
+    // The node-array form is bounded by the same ceiling.
+    const shortArray = await app.handle(
+      post("http://localhost/api/comfyui-builder/validate", { workflow: [1, 2, 3,], },),
+    );
+    expect(shortArray.status,).toBe(200,);
+    const longArray = await app.handle(
+      post("http://localhost/api/comfyui-builder/validate", {
+        workflow: Array.from({ length: 101, }, (_, i,) => i,),
+      },),
+    );
+    expect(longArray.status,).toBe(422,);
+
+    // Exactly at the cap still validates - the bound does not clip real work.
+    const atCap = await app.handle(
+      post("http://localhost/api/comfyui-builder/validate", { workflow: nodes(100, "Note",), },),
+    );
+    expect(atCap.status,).toBe(200,);
+  });
+
   test("palette handler maps upstream failures to 502 and timeouts to 504", async () => {
     const ok = await handlePalette({
       getNodeInfo: async () => ({ KSampler: { display_name: "KSampler", }, } as never),

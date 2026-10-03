@@ -3,8 +3,9 @@
 
 /**
  * Request schemas for the ComfyUI builder routes (Track A): chain CRUD,
- * chain runs, and the graph validate endpoint. `workflow` stays
- * `Type.Unknown()` — it is validated by `validateGraph`, not TypeBox.
+ * chain runs, and the graph validate endpoint. The validate body's
+ * `workflow` is bounded by node count only; node *shape* is checked by
+ * `validateGraph`, not TypeBox.
  */
 import { type Static, Type, } from "@sinclair/typebox";
 
@@ -35,9 +36,23 @@ export const ChainRunBody = Type.Object({
   messageId: Type.Optional(Type.String({ maxLength: 64, },),),
 },);
 
-/** Graph validate body. */
+/**
+ * Node-count ceiling for the graph validate endpoint, matching the
+ * `steps` cap on `ChainCreateBody` above. A real ComfyUI workflow is tens
+ * of nodes; this exists only to stop an unbounded admin body.
+ */
+const MAX_WORKFLOW_NODES = 100;
+
+/**
+ * Graph validate body. Both forms `validateGraph` accepts are bounded:
+ * the node record by key count, the node array by length. Node *shape*
+ * stays unvalidated here — `validateGraph` reports those as issues.
+ */
 export const GraphValidateBody = Type.Object({
-  workflow: Type.Unknown(),
+  workflow: Type.Union([
+    Type.Record(Type.String(), Type.Unknown(), { maxProperties: MAX_WORKFLOW_NODES, },),
+    Type.Array(Type.Unknown(), { maxItems: MAX_WORKFLOW_NODES, },),
+  ],),
 },);
 
 /** */
