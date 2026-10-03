@@ -52,6 +52,19 @@ describe("video builtin profiles", () => {
     }
   });
 
+  test("json-format bodies render to a single parseable JSON object", () => {
+    for (const mode of ["text2video", "image2video", "scene", "last",] as const) {
+      for (const detail of ["instant", "balanced", "detailed",] as const) {
+        const { template, } = resolveVideoProfile(mode, detail, { profileId: "hunyuan", },);
+        const out = resolveTemplate(template, CTX,);
+        expect(out.startsWith("Output JSON: ",),).toBe(true,);
+        // Trailing prose after the closing brace makes the payload unparseable
+        // and contradicts the "output ONLY a JSON object" system instruction.
+        expect(() => JSON.parse(out.slice("Output JSON: ".length,),)).not.toThrow();
+      }
+    }
+  });
+
   test("declares the ticket variables", () => {
     for (const key of ["subject", "motion", "style", "duration", "aspectRatio", "cameraMovement", "negativePrompt",]) {
       expect(key in VIDEO_TEMPLATE_VARIABLES,).toBe(true,);

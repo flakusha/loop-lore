@@ -47,6 +47,14 @@ function videoTemplates(
   style: string,
 ): Record<VideoGenMode, Record<"instant" | "balanced" | "detailed", string>> {
   const bodies = formatBodies(format,);
+  // The JSON body is self-contained: duration / aspect_ratio / style / camera
+  // already ride as fields inside the object, so the prose suffix below would
+  // land after the closing brace and contradict the "output only a JSON
+  // object" instruction. Detail level is therefore inert for this format.
+  if (format === "json") {
+    const levels = { instant: bodies.text2video, balanced: bodies.text2video, detailed: bodies.text2video, };
+    return { text2video: levels, image2video: levels, scene: levels, last: levels, };
+  }
   const wrap = (body: string,) => ({
     instant: `${body} {{duration}} {{aspectRatio}}.`,
     balanced: `${body} Style: {{style}} (${style}). {{duration}}, {{aspectRatio}}.`,
