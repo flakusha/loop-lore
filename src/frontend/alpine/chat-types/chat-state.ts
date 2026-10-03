@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import type { ChatArchiveState, } from "./archive-state";
 import type { ChatBattleState, } from "./battle-state";
+import type { ChatBranchesState, } from "./branches-state";
 import type { ChatComposerPreSendState, } from "./composer-pre-send-state";
 import type { ChatCoreState, } from "./core";
 import type { GifPickerState, } from "./gif-picker-state";
@@ -28,6 +29,7 @@ export interface ChatState
   extends
     ChatCoreState,
     ChatBattleState,
+    ChatBranchesState,
     ChatRpgState,
     ChatMoodState,
     ChatMemoryState,

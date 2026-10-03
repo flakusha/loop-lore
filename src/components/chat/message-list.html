@@ -136,6 +136,14 @@
                 x-bind:title="t('chats.ownerMessage')"
                 data-testid="owner-badge"
               >👑</span>
+              <!-- Branch indicator: shown on messages branches were forked from (FEAT-047) -->
+              <template x-if="window.branchCountFor(msg.id) > 0">
+                <span
+                  class="branch-indicator"
+                  :title="t('branches.forkPoint') + ' (' + window.branchCountFor(msg.id) + ')'"
+                  data-testid="branch-indicator"
+                >&#11010;</span>
+              </template>
               <span
                 class="time"
                 x-text="msg.group ? formatTimeShort(msg.created_at) : formatTime(msg.created_at)"
@@ -680,6 +688,9 @@
     </template>
     <button @click="forwardMessage(_contextMenu.messageId); closeContextMenu()">
       ➦ {{{t("chats.forward")}}}
+    </button>
+    <button @click="window.forkFromMessage(_contextMenu.messageId); closeContextMenu()" data-testid="context-menu-fork">
+      &#11010; {{{t("branches.fromHere")}}}
     </button>
     <button @click="runMessageAiAction(_contextMenu.messageId, 'summarize'); closeContextMenu()">
       📝 {{{t("chats.aiSummarize")}}}

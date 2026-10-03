@@ -11,6 +11,7 @@ import { turnSkipActions, } from "../chat-actions/turn-skip";
 import { chatActivity, } from "../chat-activity";
 import { chatBackgrounds, } from "../chat-backgrounds";
 import { chatBattle, } from "../chat-battle";
+import { chatBranches, } from "../chat-branches";
 import { chatEditing, } from "../chat-editing";
 import { chatFilters, } from "../chat-filters";
 import { chatGenerations, } from "../chat-generations";
@@ -92,6 +93,7 @@ export function chatState() {
     ...chatMusicEmbed,
     ...chatPins,
     ...chatMusicLinks,
+    ...chatBranches,
     ...messageArchive,
     ...chatInvites,
     ...worldChannels,

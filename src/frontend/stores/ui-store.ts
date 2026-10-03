@@ -13,6 +13,7 @@
  *   3. No other file needs updating — vendor.ts + htmx.ts pick it up automatically
  */
 
+import type { ChatBranchRow, } from "../alpine/chat-types/branches-state";
 export const uiStoreDefinition: Record<string, unknown> = {
   // ── Sidebar / panels ─────────────────────────────────
   showChatList: false,
@@ -57,6 +58,9 @@ export const uiStoreDefinition: Record<string, unknown> = {
   }[],
   newSideChannelName: "",
 
+  // ── Conversation branches (FEAT-047) ───────────────────
+  showBranchMenu: false,
+  branches: [] as ChatBranchRow[],
   // ── Transition-mode picker (location-transition remainder) ──
   showTransitionPicker: false,
   transitionDestinationId: "",
