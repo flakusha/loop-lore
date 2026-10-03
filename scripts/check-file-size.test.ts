@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import { countContentLines, exceedsSizeAllow, } from "./check-file-size";
+import { countContentLines, exceedsSizeAllow, sizeAllowFor, } from "./check-file-size";
 
 /**
  * Resource contract: these tests own NOTHING.
@@ -66,5 +66,26 @@ describe("exceedsSizeAllow", () => {
   test("the default 250L budget holds a 250-line file", () => {
     expect(exceedsSizeAllow(fileOf(250,), 250,),).toBe(false,);
     expect(exceedsSizeAllow(fileOf(251,), 250,),).toBe(true,);
+  });
+});
+
+describe("sizeAllowFor", () => {
+  test("uses the file's own size-allow directive", () => {
+    expect(sizeAllowFor("// size-allow: 300\nconst x = 1;\n", 250,),).toBe(300,);
+  });
+
+  test("accepts any N — the declared budget is not capped", () => {
+    // AGENTS.md documents size-allow as uncapped; a large cohesive file must
+    // not silently fall back to the 250L default.
+    expect(sizeAllowFor("// size-allow: 600\nconst x = 1;\n", 250,),).toBe(600,);
+  });
+
+  test("falls back to the default when no directive is present", () => {
+    expect(sizeAllowFor("const x = 1;\n", 250,),).toBe(250,);
+  });
+
+  test("ignores a directive past the 512-byte header window", () => {
+    const body = `${Array.from({ length: 80, }, () => "// filler",).join("\n",)}// size-allow: 900\n`;
+    expect(sizeAllowFor(body, 250,),).toBe(250,);
   });
 });
