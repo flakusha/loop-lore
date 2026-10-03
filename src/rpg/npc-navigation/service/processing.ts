@@ -50,6 +50,10 @@ export async function processMovementTick(
     .selectFrom("npc_states",)
     .where("world_id", "=", worldId,)
     .select(["actor_id", "location_id", "schedule",],)
+    // Total order: every wander/flee NPC draws from the one shared
+    // `ctx.rng` stream in iteration order, so an unordered read makes a
+    // seeded tick assign draws to different NPCs run to run.
+    .orderBy("actor_id",)
     .execute();
 
   for (const npc of npcs) {

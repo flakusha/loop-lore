@@ -97,4 +97,23 @@ describe("getLocationConnections", () => {
     const solo = await makeLocation(worldId, "Solo",);
     expect(await getLocationConnections(db, solo,),).toEqual([],);
   });
+
+  // The wander/flee leaves pick `connections[floor(rng() * length)]`, so
+  // the ARRAY ORDER is load-bearing for tick reproducibility. Without an
+  // explicit ORDER BY SQLite may satisfy this read through
+  // idx_location_states_world instead of a table scan, returning the same
+  // rows in a different order — a seeded tick then replays to a different
+  // destination. Ids below are inserted in DESCENDING order so the
+  // unsorted read cannot agree with the sorted expectation by luck.
+  test("returns connections in a stable location_id order, not insertion order", async () => {
+    const { worldId, } = await makeWorld("Ordered Realm",);
+    const ids = ["loc-c", "loc-b", "loc-a",];
+    for (const id of ids) {
+      await insertLocations(db, worldId, `Room ${id}`, { id, },);
+      await insertLocationStates(db, id, worldId,);
+    }
+
+    const connections = await getLocationConnections(db, "loc-c",);
+    expect(connections,).toEqual(["loc-a", "loc-b",],);
+  });
 });

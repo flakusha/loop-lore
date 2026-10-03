@@ -67,6 +67,24 @@ async function makeNpc(
   return actorId;
 }
 
+/** Like makeNpc but with a caller-chosen actor id, so a test can force a
+ *  known insertion order relative to actor_id sort order. */
+async function makeNpcWithId(
+  worldId: string,
+  locationId: string,
+  actorId: string,
+  movementPattern: (typeof MovementPattern)[keyof typeof MovementPattern],
+) {
+  await insertActors(db, "NPC " + actorId, {
+    id: actorId,
+    actor_type: "character",
+  },);
+  await insertNpcStates(db, actorId, worldId, {
+    location_id: locationId,
+    schedule: JSON.stringify({ movementPattern, },),
+  },);
+  return actorId;
+}
 beforeEach(async () => {
   ({ db, } = await createTestDb());
 },);
@@ -225,6 +243,36 @@ describe("processMovementTick", () => {
     const schedule = JSON.parse(row.schedule,) as Record<string, unknown>;
     expect(schedule.lastMovedAt,).toBe(new Date(nowMs,).toISOString(),);
     expect(row.updated_at,).toBe(new Date(nowMs,).toISOString(),);
+  });
+
+  // Every wander/flee NPC draws from the ONE shared ctx.rng stream in
+  // iteration order, so the NPC read order decides which draw lands on
+  // which NPC. Without ORDER BY actor_id the plan SQLite picks can hand
+  // back rows in a different order, and a seeded tick then moves a
+  // different NPC to a different place. Actor ids below are inserted in
+  // DESCENDING order so the unsorted read cannot agree by luck.
+  test("iterates NPCs in actor_id order so a seeded stream maps draw to NPC stably", async () => {
+    const { worldId, } = await makeWorld("draw-order",);
+    const loc = await makeLocation(worldId, "plaza",);
+    await makeLocation(worldId, "north",);
+    await makeLocation(worldId, "south",);
+
+    // Two wanderers, one shared stream: first draw 0 -> index 0, second
+    // draw 0.99 -> last index. Whichever NPC is iterated FIRST gets the
+    // 0 draw. Assert it is the lower actor id.
+    const draws = [0, 0.99,];
+    let i = 0;
+    const rng = () => draws[i++] ?? 0;
+
+    // Insert high-id NPC first.
+    const high = await makeNpcWithId(worldId, loc, "npc-b", MovementPattern.Wander,);
+    const low = await makeNpcWithId(worldId, loc, "npc-a", MovementPattern.Wander,);
+
+    const results = await processMovementTick(db, worldId, { rng, },);
+    expect(results,).toHaveLength(2,);
+    // results[0] is the first-iterated NPC; it must be npc-a.
+    expect(results[0]!.actorId,).toBe(low,);
+    expect(results[0]!.actorId,).not.toBe(high,);
   });
 
   test("follow NPC moves to target when target is at different location", async () => {
