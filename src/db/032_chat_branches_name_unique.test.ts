@@ -16,7 +16,7 @@
  * (`dupes.rows` is empty), so it is what this file forces.
  */
 import { Database, } from "bun:sqlite";
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
 
 import { createLogger, } from "../logger";
@@ -26,6 +26,15 @@ import { getMigrationFiles, } from "./migrate";
 import type { DB, } from "./schema";
 
 const MIGRATION = "032_chat_branches_name_unique";
+
+/**
+ * Global key the cross-file warning emitter is published under by
+ * `030_assets_content_hash_unique.test.ts`. The two files must not import each
+ * other, so this literal is the whole contract between them; it is asserted
+ * present (or defaulted) in the cross-file test below and consumed by the
+ * `afterAll` disposer.
+ */
+const FOREIGN_EMITTER = "__ll_foreign_warning_emitter__";
 
 function makeInMemoryDb(): { kysely: Kysely<DB>; raw: Database } {
   const raw = new Database(":memory:",);
@@ -73,6 +82,18 @@ describe(MIGRATION, () => {
   afterEach(async () => {
     await db.destroy();
     raw.close();
+  },);
+
+  afterAll(() => {
+    // Resource contract: this test opens no global of its own, but it is the
+    // teardown point for the cross-file warning emitter that
+    // `030_assets_content_hash_unique.test.ts` starts at module scope. It is
+    // stopped HERE rather than in 030's own `afterAll` because files load and
+    // run in name order: 030's teardown fires before 032's tests have opened
+    // the capture window the emitter exists to attack. The timer is unref'd, so
+    // a run without this file still exits.
+    const dispose = (globalThis as Record<string, unknown>)[FOREIGN_EMITTER];
+    if (typeof dispose === "function") { dispose(); }
   },);
 
   /**
@@ -189,6 +210,47 @@ describe(MIGRATION, () => {
     // so it walks on to (4) rather than overwriting it.
     expect(await idWithName("chat-a", "Branch 1 (4)",),).toBe("c-newest",);
     expect(await namesIn("chat-a", "Branch 1",),).toEqual(["a-oldest",],);
+  });
+
+  test("a warning from ANOTHER test file cannot inflate this capture's count", async () => {
+    // The cross-file half of the warning race. `bun test` runs every file in
+    // one process, so when `030_assets_content_hash_unique.test.ts` is loaded
+    // in the same invocation it leaves an unbounded background emitter running
+    // - a warning every millisecond, in a foreign async context, for the rest
+    // of the process. This capture's window spans a real migration run, so an
+    // unscoped listener collects every one of those ticks and `toHaveLength(1)`
+    // below fails on a warning no other code in this file emitted.
+    //
+    // Strength depends on the invocation, and is NOT asserted here because a
+    // hard requirement would break the legitimate single-file run: co-loaded
+    // with 030 (what `bun test src/db/` does) the foreign stream is continuous
+    // and the count below is the strong property; run alone, with no foreign
+    // emitter, it is only the weaker "the body warns exactly once" claim. The
+    // strong form is the one that fails on the pre-fix helper, and both halves
+    // are in the same directory precisely so the directory run exercises it.
+    //
+    // No `filter` on purpose: the caller is a bare exact-count assertion, and
+    // the point is that it is safe WITHOUT one. The tag-scoped captures
+    // elsewhere in this file filter because they want a narrower shape, not
+    // because an unfiltered count is unsafe.
+    //
+    // `chat-a` is seeded by beforeEach, so the FK chain holds and this stays a
+    // same-named sibling group - the shape 032 actually warns about.
+    await insertBranch("x-oldest", "chat-a", "Fork 1", "2026-01-01 00:00:00",);
+    await insertBranch("y-newest", "chat-a", "Fork 1", "2026-01-02 00:00:00",);
+
+    const warnings = await captureWarnings(async () => {
+      const migrations = await getMigrationFiles();
+      const migration = migrations[MIGRATION];
+      if (!migration) { throw new Error("migration 032 not registered",); }
+      await migration.up(db,);
+    },);
+
+    // Exactly the one warning this body emitted, however many foreign ones
+    // dispatched while it ran. Before the fix this array held every tick from
+    // the other file and the count was in the hundreds.
+    expect(warnings,).toHaveLength(1,);
+    expect(warnings[0],).toMatch(/^\[032_chat_branches_name_unique\]/,);
   });
 
   test("down() drops the unique index and restores the duplicate-tolerant shape", async () => {
