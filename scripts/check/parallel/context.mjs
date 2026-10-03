@@ -170,8 +170,8 @@ function scopedCoveragePaths(files,) {
     },);
 }
 
-export const CHANGED = changedFiles(DIFF_BASE,);
-export const SCOPED_TESTS = scopedTestFiles(CHANGED,);
+const CHANGED = changedFiles(DIFF_BASE,);
+const SCOPED_TESTS = scopedTestFiles(CHANGED,);
 export const SCOPED_COVERAGE_PATHS = scopedCoveragePaths(CHANGED,);
 // BUG-37a3763: floor diff-touched FILES, not whole modules — a scoped lcov
 // only contains files the scoped tests loaded, so module aggregates are

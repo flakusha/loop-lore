@@ -51,7 +51,7 @@ function parseJobs() {
   }
   return parsed;
 }
-export const JOBS = Math.min(parseJobs(), Object.keys(checks,).length,);
+const JOBS = Math.min(parseJobs(), Object.keys(checks,).length,);
 
 // giwt reconciles .plan/ against the git issue CLI by shelling out to
 // `git issue ls --all --format oneline` with a hard 10s budget (~3.2k issues;
