@@ -9,7 +9,7 @@
  */
 
 import { DEFAULT_GATE_TIMEOUT_MS, runGateWithTimeout, } from "../gate-timeout.mjs";
-import { PROJECT_ROOT, } from "./config.mjs";
+import { MAX_OUTPUT_CHARS, PROJECT_ROOT, } from "./config.mjs";
 import { checks, } from "./gates.mjs";
 
 // ── Concurrency cap ────────────────────────────────────────────
