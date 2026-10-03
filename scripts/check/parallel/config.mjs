@@ -22,8 +22,7 @@ export const PROJECT_ROOT = path.resolve(import.meta.dir, "../../..",),
   // `.latest` symlink always points at the per-run filename written for the
   // most recent run, so external tools that don't know RUN_ID can chase a
   // stable filename. Symlink target is updated atomically via temp + rename.
-  REPORT_LATEST_RELATIVE = ".tmp/check-report.latest.json",
-  REPORT_LATEST_PATH = path.resolve(PROJECT_ROOT, REPORT_LATEST_RELATIVE,),
+  REPORT_LATEST_PATH = path.resolve(PROJECT_ROOT, ".tmp/check-report.latest.json",),
   // Per-run retention: how many historical `.tmp/check-report-<RUN_ID>.json`
   // files to keep. Older reports are pruned on each new run. ~200KB per
   // report × 20 = ~4MB worst-case disk footprint per worktree, auto-GC'd.
@@ -45,8 +44,7 @@ export const PROJECT_ROOT = path.resolve(import.meta.dir, "../../..",),
   // gate (`scripts/check/jscpd-ratchet.mjs`).
   COVERAGE_DIR_RELATIVE = `${RUN_TMP_DIR_RELATIVE}/coverage`,
   COVERAGE_DIR = path.resolve(PROJECT_ROOT, COVERAGE_DIR_RELATIVE,),
-  COVERAGE_LCOV_RELATIVE = `${COVERAGE_DIR_RELATIVE}/lcov.info`,
-  COVERAGE_LCOV = path.resolve(PROJECT_ROOT, COVERAGE_LCOV_RELATIVE,),
+  COVERAGE_LCOV = path.resolve(PROJECT_ROOT, COVERAGE_DIR_RELATIVE, "lcov.info",),
   JSCPD_DIR_RELATIVE = `${RUN_TMP_DIR_RELATIVE}/jscpd`,
   JSCPD_DIR = path.resolve(PROJECT_ROOT, JSCPD_DIR_RELATIVE,),
   JSCPD_REPORT_RELATIVE = `${JSCPD_DIR_RELATIVE}/jscpd-report.json`,

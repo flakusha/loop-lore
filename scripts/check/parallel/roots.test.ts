@@ -4,7 +4,6 @@
 import { describe, expect, test, } from "bun:test";
 import { existsSync, } from "node:fs";
 import path from "node:path";
-import { DIFF_ROOT, } from "./context.mjs";
 import {
   COVERAGE_DIR,
   JSCPD_DIR,
@@ -12,6 +11,7 @@ import {
   PROJECT_ROOT,
   REPORT_PATH,
 } from "./config.mjs";
+import { DIFF_ROOT, } from "./context.mjs";
 
 /**
  * Resource contract: these tests own NOTHING.
@@ -45,7 +45,7 @@ describe("PROJECT_ROOT", () => {
   });
 
   test("holds the directories the runner resolves against", () => {
-    expect(existsSync(path.join(PROJECT_ROOT, "package.json"),),).toBe(true,);
+    expect(existsSync(path.join(PROJECT_ROOT, "package.json",),),).toBe(true,);
     expect(existsSync(path.join(PROJECT_ROOT, "scripts",),),).toBe(true,);
     expect(existsSync(path.join(PROJECT_ROOT, "src",),),).toBe(true,);
   });
