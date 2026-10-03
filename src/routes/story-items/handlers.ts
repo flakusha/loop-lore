@@ -6,11 +6,19 @@
 import type { Kysely, } from "kysely";
 import { ItemCategory, ItemRarity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { ItemsService, } from "../../story/items";
+import { DuplicateItemDefinitionError, ItemsService, } from "../../story/items";
 import { can, } from "../../users/permissions";
 import { safeJsonStringify, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
-import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "../http-utils";
+import {
+  conflictResponse,
+  HttpStatus,
+  jsonCreated,
+  jsonError,
+  jsonNoContent,
+  jsonPaginated,
+  jsonResponse,
+} from "../http-utils";
 
 /** Validate a value against an enum's values. Returns the value if valid, fallback otherwise. */
 export function enumOr<T extends string,>(value: unknown, validValues: readonly T[], fallback: T,): T {
@@ -137,26 +145,30 @@ export async function handleDefinitions(
       worldId,
       category ? enumOr(category, Object.values(ItemCategory,), "other",) : undefined,
     );
-
     const total = allDefs.length;
     const paged = allDefs.slice((page - 1) * pageSize, page * pageSize,);
     return jsonPaginated({ data: paged, total, page, pageSize, },);
   }
 
   if (!body?.name) { return jsonError({ message: "name is required", status: HttpStatus.BadRequest, },); }
-  const id = await items.createDefinition({
-    worldId,
-    name: body.name as string,
-    description: (body.description as string) ?? "",
-    category: enumOr(body.category, Object.values(ItemCategory,), "other",),
-    rarity: enumOr(body.rarity, Object.values(ItemRarity,), "common",),
-    stackable: (body.stackable as boolean) ?? false,
-    maxStack: (body.maxStack as number) ?? 1,
-    properties: (body.properties as Record<string, unknown>) ?? {},
-    value: (body.value as number) ?? 0,
-    weight: (body.weight as number) ?? 0,
-  },);
-
+  let id: string;
+  try {
+    id = await items.createDefinition({
+      worldId,
+      name: body.name as string,
+      description: (body.description as string) ?? "",
+      category: enumOr(body.category, Object.values(ItemCategory,), "other",),
+      rarity: enumOr(body.rarity, Object.values(ItemRarity,), "common",),
+      stackable: (body.stackable as boolean) ?? false,
+      maxStack: (body.maxStack as number) ?? 1,
+      properties: (body.properties as Record<string, unknown>) ?? {},
+      value: (body.value as number) ?? 0,
+      weight: (body.weight as number) ?? 0,
+    },);
+  } catch (error) {
+    if (!(error instanceof DuplicateItemDefinitionError)) { throw error; }
+    return conflictResponse(`Item "${body.name as string}" already exists in this world`,);
+  }
   return jsonCreated({ id, },);
 }
 
