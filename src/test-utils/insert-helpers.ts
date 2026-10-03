@@ -4977,6 +4977,47 @@ export async function insertChatWardrobeOverrides(
   return id;
 }
 
+/** Insert a scheduled_messages row. */
+export async function insertScheduledMessages(
+  db: Db,
+  chat_id: string,
+  author_id: string,
+  body: string,
+  send_at: string,
+  opts?: { id?: string; status?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scheduled_messages",).values({
+    id,
+    chat_id,
+    author_id,
+    body,
+    send_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a message_reminders row. */
+export async function insertMessageReminders(
+  db: Db,
+  message_id: string,
+  user_id: string,
+  remind_at: string,
+  opts?: { id?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("message_reminders",).values({
+    id,
+    message_id,
+    user_id,
+    remind_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
 /** Insert a mesh_dek_exports row. */
 export async function insertMeshDekExports(
   db: Db,

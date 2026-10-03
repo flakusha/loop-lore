@@ -8,7 +8,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** High — messenger parity gap
 **Tags:** chat, messenger, forward, drafts, scheduled, reminders
 
@@ -37,9 +37,10 @@ vn-sprite-compositing) or the 25 existing TASK-chat-feature-* tickets.
 
 ## Tickets
 
-- TASK-msg-forward-across-chats.md
-- TASK-composer-draft-persistence.md
+- TASK-msg-forward-across-chats.md (Done — route+service+Alpine wiring shipped; epic "no wiring" note is stale)
+- TASK-composer-draft-persistence.md (Done — ChatDraftStore shipped; ponytail marker added; reply-context inapplicable — implicit threading has no client state)
 - TASK-scheduled-messages-reminders.md
+- FEAT-llm-enhance-outside-the-chat-composer.md (filed 2026-10-03)
 
 ## Anchors
 

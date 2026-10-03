@@ -655,6 +655,12 @@ export const SCHEMA = new SchemaManifest()
     emoji: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("message_reminders", {
+    id: col("text", { primaryKey: true, },),
+    message_id: col("text", { notNull: true, },),
+    user_id: col("text", { notNull: true, },),
+    remind_at: col("text", { notNull: true, },),
+  },)
   .table("message_search_tokens", {
     message_id: col("text", { notNull: true, },),
     token: col("text", { notNull: true, },),
@@ -874,6 +880,14 @@ export const SCHEMA = new SchemaManifest()
     min_value: col("integer",),
     max_value: col("integer",),
     effect: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("scheduled_messages", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    author_id: col("text", { notNull: true, },),
+    body: col("text", { notNull: true, },),
+    send_at: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("seed_audit", {
     id: col("text", { primaryKey: true, },),

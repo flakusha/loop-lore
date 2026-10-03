@@ -3024,8 +3024,32 @@ export const TravelPartiesSchema = t.Object({
   status: t.Optional(t.String(),),
   blocked_until_tick: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
+<<<<<<< ours
   updated_at: t.Optional(t.String(),},
 );
+||||||| base
+  revoked_at: t.Optional(t.String(),),
+},);
+=======
+  revoked_at: t.Optional(t.String(),),
+},);
+<<<<<<< ours
+>>>>>>> theirs
+
+// ── npc_migrations ────────────────────────────────────────────
+export const NpcMigrationsSchema = t.Object({
+  world_id: t.String(),
+  actor_id: t.String(),
+  depart_tick: t.Number(),
+  arrive_tick: t.Number(),
+  origin_location_id: t.Optional(t.String(),),
+  destination_location_id: t.Optional(t.String(),),
+  cadence: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  last_depart_tick: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),},
+});
 
 // ── npc_migrations ────────────────────────────────────────────
 export const NpcMigrationsSchema = t.Object({
@@ -3048,7 +3072,7 @@ export const WorldTravelBudgetSchema = t.Object({
   spent: t.Optional(t.Number(),),
   ceiling: t.Optional(t.Number(),),
   window_start_tick: t.Optional(t.Number(),),
-  updated_at: t.Optional(t.String(),},
+  updated_at: t.Optional(t.String(),),
 });
 
 // ── world_event_log ────────────────────────────────────────────
@@ -3060,8 +3084,8 @@ export const WorldEventLogSchema = t.Object({
   subject_id: t.Optional(t.String(),),
   actor_id: t.Optional(t.String(),),
   payload: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),},
-);
+  created_at: t.Optional(t.String(),),
+});
 
 // ── location_discovery ────────────────────────────────────────────
 export const LocationDiscoverySchema = t.Object({
@@ -3073,5 +3097,21 @@ export const LocationDiscoverySchema = t.Object({
   discovered: t.Optional(t.Number(),),
   discovered_tick: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),},
-);
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── scheduled_messages ────────────────────────────────────────────
+export const ScheduledMessagesSchema = t.Object({
+  chat_id: t.String(),
+  author_id: t.String(),
+  body: t.String(),
+  send_at: t.String(),
+  status: t.Optional(t.String(),),
+},);
+
+// ── message_reminders ────────────────────────────────────────────
+export const MessageRemindersSchema = t.Object({
+  message_id: t.String(),
+  user_id: t.String(),
+  remind_at: t.String(),
+},);
