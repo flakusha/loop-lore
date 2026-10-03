@@ -7889,6 +7889,12 @@
       "source": ".plan/tickets/TASK-delete-the-in-repo-scripts-worktree-fork-giwt-is-the-only-wo.md"
     }
   ],
+  "src/commands/finalize/gates.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-diff-scoped-gates-diff-against-a-stale-merge-base-so-scope-e.md"
+    }
+  ],
   "src/commands/issues.ts": [
     {
       "kind": "ticket",
@@ -23950,6 +23956,10 @@
   "src/middleware/auth/authenticate.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-diff-scoped-gates-diff-against-a-stale-merge-base-so-scope-e.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
     },
     {
@@ -27335,6 +27345,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
+    }
+  ],
+  "src/routes/admin/world-events.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-diff-scoped-gates-diff-against-a-stale-merge-base-so-scope-e.md"
     }
   ],
   "src/routes/admin/worlds.ts": [
@@ -34741,6 +34757,12 @@
       "source": ".plan/epics/epic-weather-environment.md"
     }
   ],
+  "src/rpg/world-travel/budget.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-diff-scoped-gates-diff-against-a-stale-merge-base-so-scope-e.md"
+    }
+  ],
   "src/rpg/xp": [
     {
       "kind": "ticket",
@@ -36010,6 +36032,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-diff-scoped-gates-diff-against-a-stale-merge-base-so-scope-e.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md"
     },
     {
@@ -37047,6 +37073,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-diff-scoped-gates-diff-against-a-stale-merge-base-so-scope-e.md"
     },
     {
       "kind": "ticket",
