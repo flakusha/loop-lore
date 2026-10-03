@@ -1450,6 +1450,22 @@ export interface ChatWardrobeOverrides {
   updated_at: Generated<string>;
 }
 
+export interface ScheduledMessages {
+  id: Generated<string>;
+  chat_id: string;
+  author_id: string;
+  body: string;
+  send_at: string;
+  status: Generated<string>;
+}
+
+export interface MessageReminders {
+  id: Generated<string>;
+  message_id: string;
+  user_id: string;
+  remind_at: string;
+}
+
 // ── task_dependencies ────────────────────────────────────────────
 export interface TaskDependencies {
   task_id: string;

@@ -8,6 +8,7 @@
  * `this` resolves to the full ChatState. Calls POST /api/v1/generation/prompt
  * (the unified prompt-improvement service) and swaps the composer draft.
  */
+import { requireActiveChat, } from "../chat-guards";
 import { t, } from "../i18n";
 import { getLocalEngine, } from "../local-engine";
 import { LocalInferenceUnavailable, runLocalPromptImprove, shouldOffloadTask, } from "../local-inference";
@@ -72,10 +73,7 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
     const text = input?.value.trim() ?? "";
     if (!input || !text) { return; }
     if (this._improving) { return; }
-    if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
-      return;
-    }
+    if (!requireActiveChat(this,)) { return; }
 
     this._improving = true;
     try {
@@ -83,7 +81,6 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
       // the 1:1 chat voice. Explicit levels from the level menu win.
       const requestedLevel = level ??
         (this.isGroupChat ? "style-group" : "style-chat");
-
       // Opt-in browser inference first: eligible levels run locally so the
       // draft never reaches the server. Null → fall through to server.
       const local = await tryLocalImprove(text, requestedLevel,);
@@ -95,29 +92,24 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
         this.$dispatch?.("show-toast", { type: "success", message: t("toasts.promptImproved",), },);
         return;
       }
-
       const result = await requestPrompt({
         mode: "improve",
         level: requestedLevel,
         text,
         chatId: this.activeChat,
       },);
-
       if (!result.ok) {
         const message = result.injectionBlocked
           ? t("toasts.promptInjectionBlocked",)
           : result.message ?? t("toasts.promptImproveFailed",);
-
         this.$dispatch?.("show-toast", { type: "error", message, },);
         return;
       }
-
       const improved = promptContent(result.data,);
       if (!improved) {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.promptImproveFailed",), },);
         return;
       }
-
       this.pushPromptImproveHistory(text,);
       input.value = improved;
       this.autoResize(input,);

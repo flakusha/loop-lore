@@ -198,4 +198,6 @@ export interface DB {
   world_travel_budget: import("./schema-core").WorldTravelBudget;
   world_event_log: import("./schema-core").WorldEventLog;
   location_discovery: import("./schema-core").LocationDiscovery;
+  scheduled_messages: import("./schema-core").ScheduledMessages;
+  message_reminders: import("./schema-core").MessageReminders;
 }
