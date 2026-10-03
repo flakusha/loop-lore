@@ -3,7 +3,7 @@
 
 # BUG: touchMemory never called on memory injection so last_accessed_at stays stale
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ memories.ts injects memories via memorySection but never calls touchMemory (src/
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-03 registry-driven close: git issue 255ff5b (registry tip: 120f7bddd Konstantin Fedotov Close issue)

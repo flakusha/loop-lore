@@ -3,7 +3,7 @@
 
 # TASK: Relevance-aware decay and purge signals in memory purge
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ purge.ts decay and stale-purge rely solely on last_accessed_at and importance. A
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-03 registry-driven close: git issue 660fcca (registry tip: a41d120d7 Konstantin Fedotov Close issue)
