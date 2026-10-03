@@ -208,6 +208,29 @@ describe("applyKeyphraseRecalls", () => {
       f.sqlite.close();
     }
   });
+
+  test("forced hits spanning two actors get one audit row per actor", async () => {
+    const f = await setup({ withMatchMessage: false, },);
+    try {
+      const a1: MemoryEntry = { ...makeEntry("e1", [KEY_PHRASE,],), actorId: "actor-a", };
+      const a2: MemoryEntry = { ...makeEntry("e2", [KEY_PHRASE,],), actorId: "actor-b", };
+      const merged = await applyKeyphraseRecalls(f.ctx, [], [a1, a2,],);
+      expect(merged.map((m,) => m.id),).toEqual(["e1", "e2",],);
+
+      const rows = await f.ctx.db
+        .selectFrom("memory_audit_log",)
+        .select(["actor_id", "details",],)
+        .where("action", "=", "inject",)
+        .execute();
+      const keyphraseRows = rows.filter((row,) => row.details.includes("keyphrase",));
+      // A single row stamped with the FIRST entry's actorId would file
+      // actor-b's memory under actor-a — the audit trail would misattribute it.
+      expect(keyphraseRows.length,).toBe(2,);
+      expect(keyphraseRows.map((row,) => row.actor_id).sort(),).toEqual(["actor-a", "actor-b",],);
+    } finally {
+      f.sqlite.close();
+    }
+  });
 });
 
 describe("memorySection — keyphrase recall end-to-end", () => {

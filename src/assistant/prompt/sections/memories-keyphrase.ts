@@ -22,7 +22,8 @@ import type { Kysely, } from "kysely";
 import { getConfigValue, } from "../../../admin/config";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
-import { recordAuditLog, } from "../../../memory/audit";
+import { getLogger, } from "../../../logger";
+import { type AuditLogEntry, recordAuditLog, } from "../../../memory/audit";
 import {
   DEFAULT_MAX_KEYPHRASE_RECALLS,
   findKeyphraseMatches,
@@ -60,8 +61,8 @@ function parseLimit(raw: string | undefined,): number {
 }
 
 /**
- * Fetch + decrypt the recent message window (user and AI roles), oldest
- * first. Corrupt payloads are skipped — a bad row must not break recall.
+ * Fetch + decrypt the recent message window (user and AI roles), newest
+ * first. Corrupt payloads are skipped and logged — a bad row must not break recall.
  * @param ctx
  * @returns joined message text, or "" when nothing readable exists
  */
@@ -80,8 +81,8 @@ async function recentMessageText(ctx: KeyphraseRecallCtx,): Promise<string> {
   for (const row of rows) {
     try {
       parts.push(await resolveMessageContent(ctx.db, { ...row, chat_id: ctx.chat.id, },),);
-    } catch {
-      /* unreadable payload — skip this row */
+    } catch (err) {
+      getLogger().child({ module: "memories-keyphrase", },).warn("skipping unreadable message", err,);
     }
   }
   return parts.join("\n",);
@@ -140,17 +141,29 @@ export async function applyKeyphraseRecalls(
   for (const entry of forced) {
     recordKeyphraseRecall({ chatId: ctx.chat.id, memoryId: entry.id, now, },);
   }
-  const first = forced[0]!;
-  await recordAuditLog(ctx.db, [{
-    memoryId: first.id,
-    actorId: first.actorId ?? ctx.actor.id,
-    userId: ctx.params.userId ?? null,
-    action: "inject",
-    details: {
-      chatId: ctx.chat.id,
-      keyphrase: true,
-      keyphraseIds: forced.map((entry,) => entry.id),
-    },
-  },],);
+  // One audit row per ACTOR, matching `memories.ts`: a single row stamped with
+  // the first entry's actorId would misattribute every other forced entry's
+  // memory to that actor in the audit trail.
+  const byActor = new Map<string, MemoryEntry[]>();
+  for (const entry of forced) {
+    const actorId = entry.actorId ?? ctx.actor.id;
+    const group = byActor.get(actorId,);
+    if (group) { group.push(entry,); }
+    else { byActor.set(actorId, [entry,],); }
+  }
+  await recordAuditLog(
+    ctx.db,
+    [...byActor,].map(([actorId, group,],): AuditLogEntry => ({
+      memoryId: group[0]!.id,
+      actorId,
+      userId: ctx.params.userId ?? null,
+      action: "inject",
+      details: {
+        chatId: ctx.chat.id,
+        keyphrase: true,
+        keyphraseIds: group.map((entry,) => entry.id),
+      },
+    })),
+  );
   return [...selected, ...forced,];
 }

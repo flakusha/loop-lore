@@ -76,6 +76,74 @@ describe("actorMemoriesRoutes", () => {
     expect(res.status,).toBe(400,);
   });
 
+  test("PUT keywords persists to the row (journal keyphrase round-trip)", async () => {
+    const createRes = await makeApp(db, "user1",).handle(
+      new Request("http://localhost/api/actors/user1/memories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ content: "Journal entry for keyphrase round-trip", },),
+      },),
+    );
+    expect(createRes.status,).toBe(201,);
+    const created = await db
+      .selectFrom("actor_memories",)
+      .select("id",)
+      .where("actor_id", "=", "user1",)
+      .where("content", "=", "Journal entry for keyphrase round-trip",)
+      .executeTakeFirstOrThrow();
+
+    const res = await makeApp(db, "user1",).handle(
+      new Request(`http://localhost/api/actors/user1/memories/${created.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ keywords: ["moonstone", "rite",], },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+
+    // The row must actually change — schema stripping previously ate the field.
+    const row = await db
+      .selectFrom("actor_memories",)
+      .select("keywords",)
+      .where("id", "=", created.id,)
+      .executeTakeFirstOrThrow();
+    expect(JSON.parse(row.keywords as string,),).toEqual(["moonstone", "rite",],);
+  });
+
+  test("PUT keywords rejects an over-cap array at the trust boundary", async () => {
+    const createRes = await makeApp(db, "user1",).handle(
+      new Request("http://localhost/api/actors/user1/memories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ content: "Journal entry for keyphrase cap", },),
+      },),
+    );
+    expect(createRes.status,).toBe(201,);
+    const created = await db
+      .selectFrom("actor_memories",)
+      .select("id",)
+      .where("actor_id", "=", "user1",)
+      .where("content", "=", "Journal entry for keyphrase cap",)
+      .executeTakeFirstOrThrow();
+
+    // Nine phrases — one over the ticket's 8-per-entry cap. Uncapped, this
+    // array is persisted verbatim and then scanned against every prompt.
+    const tooMany = Array.from({ length: 9, }, (_, i,) => `phrase-${i}`,);
+    const res = await makeApp(db, "user1",).handle(
+      new Request(`http://localhost/api/actors/user1/memories/${created.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ keywords: tooMany, },),
+      },),
+    );
+    expect(res.status,).toBe(422,);
+    const row = await db
+      .selectFrom("actor_memories",)
+      .select("keywords",)
+      .where("id", "=", created.id,)
+      .executeTakeFirstOrThrow();
+    expect(JSON.parse(row.keywords as string,),).not.toContain("phrase-8",);
+  });
   it("expand endpoint reconstructs the bound chain", async () => {
     const { createTestDb, } = await import("../test-utils/create-test-db");
     const { insertChats, insertMessages, } = await import("../test-utils/insert-helpers");
