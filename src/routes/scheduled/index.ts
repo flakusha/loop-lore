@@ -90,9 +90,13 @@ export function scheduledRoutes(opts: ScheduledRouteOpts, prefix = "/api",) {
     // ── Cancel a parked message (author only) ────────────────
     .delete(
       `${prefix}/chats/:id/scheduled/:scheduledId`,
-      withChat(database, async (ctx, _chatId, caller,) => {
+      withChat(database, async (ctx, chatId, caller,) => {
         const scheduledId = (ctx as { params: { scheduledId: string } }).params.scheduledId;
+        // The chat `withChat` just authorized is threaded into the service,
+        // so `:scheduledId` is only honored when it names a row in that
+        // same chat — the same binding the reminder arm applies above.
         const result = await cancelScheduledMessage(database, {
+          chatId,
           id: scheduledId,
           requesterId: caller.userId,
         },);
@@ -102,7 +106,7 @@ export function scheduledRoutes(opts: ScheduledRouteOpts, prefix = "/api",) {
         params: cancelParams,
         detail: {
           summary: "Cancel a scheduled message",
-          description: "Cancel a parked message. Only the author can cancel it.",
+          description: "Cancel a parked message in this chat. Only its author can cancel it.",
           tags: ["Chat", "Scheduled",],
         },
       },

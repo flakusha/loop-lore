@@ -107,25 +107,34 @@ export async function listScheduledMessages(
 }
 
 /**
- * Cancel a parked message. Only the author may cancel, and only while the
- * row is still pending — a dispatched message is immutable history.
+ * Cancel a parked message inside the caller's authorized chat. Both the
+ * author check and the chat binding must hold: `chatId` is the chat the
+ * caller was already granted access to, and every read and write is scoped
+ * to it, so a row id that lives in another chat is indistinguishable from
+ * one that does not exist (`not_found`, never `forbidden` — a `forbidden`
+ * would confirm the id is real). Only the author may cancel, and only while
+ * the row is still pending — a dispatched message is immutable history.
  * @param database
  * @param opts
+ * @param opts.chatId Authorized chat; the row must belong to it.
  * @param opts.id
  * @param opts.requesterId
  * @returns {Promise<{ ok: true; canceled: boolean } | { code: "not_found" | "forbidden"; message: string }>}
  */
 export async function cancelScheduledMessage(
   database: Kysely<DB>,
-  opts: { id: string; requesterId: string },
+  opts: { chatId: string; id: string; requesterId: string },
 ): Promise<{ ok: true; canceled: boolean } | { code: "not_found" | "forbidden"; message: string }> {
   const row = await database
     .selectFrom("scheduled_messages",)
     .select(["author_id", "status",],)
     .where("id", "=", opts.id,)
+    .where("chat_id", "=", opts.chatId,)
     .executeTakeFirst();
 
   if (!row) { return { code: "not_found", message: "Scheduled message not found", }; }
+  // Still distinct from `not_found`: the row sits in a chat the caller can
+  // already see, so that chat's list endpoint has revealed it already.
   if (row.author_id !== opts.requesterId) {
     return { code: "forbidden", message: "Not the author of this scheduled message", };
   }
@@ -135,6 +144,7 @@ export async function cancelScheduledMessage(
     .updateTable("scheduled_messages",)
     .set({ status: ScheduledStatus.Canceled, },)
     .where("id", "=", opts.id,)
+    .where("chat_id", "=", opts.chatId,)
     .execute();
   return { ok: true, canceled: true, };
 }
