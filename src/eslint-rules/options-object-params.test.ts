@@ -6,6 +6,9 @@ import { Linter, } from "eslint";
 import tseslint from "typescript-eslint";
 import { optionsObjectParamsRule, } from "./options-object-params.mjs";
 
+// Resource contract: every case is a pure `Linter.verify` call over an inline
+// snippet. No tmp files, ports, databases or cross-test mutable state, so the
+// suite is order-independent and safe under `bun test --parallel --isolate`.
 const linter = new Linter();
 
 const config: Linter.Config = {
