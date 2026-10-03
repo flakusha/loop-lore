@@ -120,12 +120,15 @@ describe(MIGRATION, () => {
     // Not part of a duplicate group — must keep its name verbatim.
     await insertBranch("e-unique", "chat-a", "Branch 9", "2026-01-01 00:00:00",);
 
+    // Scoped to this migration's own tag: `warning` is process-wide, so an
+    // unrelated emitter warning during this window would otherwise land in
+    // `warnings` and break the exact count asserted below.
     const warnings = await captureWarnings(async () => {
       const migrations = await getMigrationFiles();
       const migration = migrations[MIGRATION];
       if (!migration) { throw new Error("migration 032 not registered",); }
       await migration.up(db,);
-    },);
+    }, new RegExp(`^\\[${MIGRATION}\\]`,),);
 
     // The oldest row keeps the name; the losers are RENAMED, not deleted —
     // dropping one would silently remove a fork point the user can see.
@@ -177,7 +180,7 @@ describe(MIGRATION, () => {
       const migration = migrations[MIGRATION];
       if (!migration) { throw new Error("migration 032 not registered",); }
       await migration.up(db,);
-    },);
+    }, new RegExp(`^\\[${MIGRATION}\\]`,),);
 
     // The squatter keeps `Branch 1 (2)`; the first duplicate lands on (3).
     expect(await idWithName("chat-a", "Branch 1 (2)",),).toBe("d-squatter",);
