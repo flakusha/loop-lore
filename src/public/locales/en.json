@@ -1341,7 +1341,9 @@
     "wizardConfirmFailed": "Failed to save entity from wizard",
     "entityCreated": "Entity \"{name}\" created successfully",
     "failedCreateEntity": "Failed to create entity",
-    "networkErrorCreatingEntity": "Network error — could not create entity"
+    "networkErrorCreatingEntity": "Network error — could not create entity",
+    "keyphrasesSaved": "Keyphrases saved ({count})",
+    "keyphrasesSaveFailed": "Keyphrases: {failed} failed, {saved} saved"
   },
   "wizard": {
     "previewTitle": "Create {type} — Preview",
@@ -1429,5 +1431,14 @@
     "sceneDefault": "Scene default",
     "outfitSwitcher": "Outfit",
     "empty": "No outfits yet"
+  },
+  "journalKeyphrases": {
+    "title": "Journal Keyphrases",
+    "hint": "Trigger phrases per journal entry (max 8, comma-separated). When a chat message mentions a phrase, that entry is injected into the next prompt — repeat injections are cooled down per chat.",
+    "loading": "Loading journal entries…",
+    "empty": "No journal entries yet.",
+    "loadFailed": "Failed to load journal entries.",
+    "placeholder": "phrase, another phrase",
+    "save": "Save Keyphrases"
   }
 }

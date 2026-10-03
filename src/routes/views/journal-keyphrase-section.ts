@@ -21,12 +21,12 @@ export function journalKeyphraseSection(
   nonceAttr: string,
 ): string {
   return `        <details class="form-section" data-testid="journal-keyphrase-section" style="margin-top:var(--space-6);border:1px solid var(--border-default);border-radius:var(--radius-md);padding:var(--space-4)">
-          <summary style="cursor:pointer;font-weight:600;font-size:var(--text-lg)">Journal Keyphrases</summary>
+          <summary style="cursor:pointer;font-weight:600;font-size:var(--text-lg)">{{{ t("journalKeyphrases.title") }}}</summary>
           <p class="form-hint" style="color:var(--text-secondary);margin:var(--space-2) 0 var(--space-4)">
-            Trigger phrases per journal entry (max 8, comma-separated). When a chat message mentions a phrase, that entry is injected into the next prompt — repeat injections are cooled down per chat.
+            {{{ t("journalKeyphrases.hint") }}}
           </p>
           <div id="journal-keyphrase-list" data-testid="journal-keyphrase-list">
-            <span style="color:var(--text-secondary);font-size:var(--text-sm)">Loading journal entries…</span>
+            <span style="color:var(--text-secondary);font-size:var(--text-sm)">{{{ t("journalKeyphrases.loading") }}}</span>
           </div>
           <script${nonceAttr}>
             if (typeof globalThis.initJournalKeyphrases === 'function') { globalThis.initJournalKeyphrases('${

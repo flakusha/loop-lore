@@ -26,9 +26,21 @@ if (ISOLATED) {
     getCsrfToken: () => "",
   }),);
 
+  // Minimal `t` with the real interpolation shape (`{name}` placeholders
+  // resolved from `params`, key echoed when absent) so the toast assertions
+  // below still exercise the copy the locale file ships.
+  const TOAST_STRINGS: Record<string, string> = {
+    "toasts.keyphrasesSaved": "Keyphrases saved ({count})",
+    "toasts.keyphrasesSaveFailed": "Keyphrases: {failed} failed, {saved} saved",
+  };
   mock.module("../ui", () => ({
     showToast: (type: string, message: string,) => {
       toastCalls.push({ type, message, },);
+    },
+    t: (key: string, params?: Record<string, string>,) => {
+      const value = TOAST_STRINGS[key] ?? key;
+      if (!params) { return value; }
+      return value.replaceAll(/\{(\w+)\}/g, (_m, name,) => params[name] ?? `{${name}}`,);
     },
   }),);
 }
