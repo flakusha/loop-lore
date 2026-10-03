@@ -22,7 +22,17 @@
  * suite is safe to run concurrently with itself and with other temp-repo suites
  * (the `loop-lore-diff-base-` prefix keeps it clear of the `loop-lore-orphan-`
  * repo the unrelated-histories test builds inline). Nothing is written outside
- * that dir, no fixed path is shared, and no test reads another's fixture.
+ * that dir, no fixed path is shared, and no test reads another's fixture. The
+ * tests that commit extra history (rename/mode/whitespace, delete) own only
+ * their own `workDir`; the mode test's `chmodSync` lands inside it too.
+ *
+ * Host-config contract: every git call goes through `gitRaw`/`git`, which pin
+ * `GIT_CONFIG_GLOBAL`/`GIT_CONFIG_SYSTEM` to /dev/null and strip the `GIT_*`
+ * vars that would redirect the repo. Without that, a developer with
+ * `commit.gpgsign=true` globally gets 12/12 failures here — the fixture's
+ * commits try to sign with the throwaway `Test <test@example.com>` identity and
+ * die on "No secret key". Same class as the weave-damage fixture, which had to
+ * strip the host git env for the same reason.
  */
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
@@ -35,8 +45,33 @@ import { changedFiles, } from "./check-parallel.mjs";
 
 let workDir;
 
+/**
+ * Environment for every git call in this file: no global/system config (so no
+ * inherited `commit.gpgsign`, `core.hooksPath`, `status.showUntrackedFiles`, or
+ * `init.defaultBranch`), and no `GIT_*` var pointing git at another repo.
+ */
+const GIT_ENV = Object.fromEntries(
+  Object.entries(process.env,).filter(([k,],) =>
+    ![
+      "GIT_DIR",
+      "GIT_WORK_TREE",
+      "GIT_INDEX_FILE",
+      "GIT_COMMON_DIR",
+      "GIT_OBJECT_DIRECTORY",
+      "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    ].includes(k,)
+  ),
+);
+GIT_ENV.GIT_CONFIG_GLOBAL = "/dev/null";
+GIT_ENV.GIT_CONFIG_SYSTEM = "/dev/null";
+
+/** Raw git: no throw, so callers can assert on a non-zero exit. */
+function gitRaw(args, cwd = workDir,) {
+  return spawnSync("git", args, { cwd, encoding: "utf8", env: GIT_ENV, },);
+}
+
 function git(args, cwd = workDir,) {
-  const proc = spawnSync("git", args, { cwd, encoding: "utf8", },);
+  const proc = gitRaw(args, cwd,);
   if (proc.status !== 0) {
     throw new Error(`git ${args.join(" ",)} failed: ${proc.stderr}`,);
   }
@@ -52,7 +87,30 @@ function mergeBaseSet() {
   return git(["diff", "--name-only", git(["merge-base", "main", "HEAD",],),],).split("\n",);
 }
 
+/** `GIT_*` vars that redirect git at another repo; see GIT_ENV. */
+const REDIRECT_VARS = [
+  "GIT_DIR",
+  "GIT_WORK_TREE",
+  "GIT_INDEX_FILE",
+  "GIT_COMMON_DIR",
+  "GIT_OBJECT_DIRECTORY",
+  "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+];
+
+/** Saved values for REDIRECT_VARS, restored in `afterEach`. */
+const savedEnv = new Map();
+
 beforeEach(() => {
+  // `changedFiles` is the code under test and runs `execFileSync` IN-PROCESS, so
+  // it reads `process.env` directly — the GIT_ENV above cannot reach it. Scrub
+  // here or a `GIT_DIR` in the ambient environment (a git hook, a CI runner that
+  // exports one) makes git ignore the fixture's `cwd` and resolve `main` against
+  // the host repo. Restored in `afterEach`, so nothing leaks into a sibling file.
+  for (const key of REDIRECT_VARS) {
+    savedEnv.set(key, process.env[key],);
+    delete process.env[key];
+  }
+
   workDir = mkdtempSync(join(tmpdir(), "loop-lore-diff-base-",),);
   git(["init", "--initial-branch=main", "-q",],);
   git(["config", "user.email", "test@example.com",],);
@@ -83,6 +141,14 @@ beforeEach(() => {
 },);
 
 afterEach(() => {
+  // Restore first: a leaked GIT_DIR would poison every later file in the run.
+  for (const [key, value,] of savedEnv) {
+    if (value === undefined) { delete process.env[key]; }
+    else {
+      process.env[key] = value;
+    }
+  }
+  savedEnv.clear();
   rmSync(workDir, { recursive: true, force: true, },);
 },);
 
@@ -130,7 +196,9 @@ describe("changedFiles — --diff-base scoping", () => {
     // folds `git ls-files --others` in, this goes red and the AGENTS.md note
     // gets corrected with it.
     write("src/never-added.ts", "export const n = 1;\n",);
-    expect(git(["status", "--porcelain",],),).toContain("?? src/never-added.ts",);
+    // `-uall` explicit: the proof that the file is untracked must not depend on
+    // the developer's `status.showUntrackedFiles` setting.
+    expect(git(["status", "--porcelain", "-uall",],),).toContain("?? src/never-added.ts",);
     expect(changedFiles("main", workDir,),).not.toContain("src/never-added.ts",);
   });
 
@@ -196,16 +264,14 @@ describe("changedFiles — --diff-base scoping", () => {
     // so this degrades to a result instead of crashing.
     const orphan = mkdtempSync(join(tmpdir(), "loop-lore-orphan-",),);
     try {
-      spawnSync("git", ["init", "-q", "--initial-branch=main", orphan,],);
-      spawnSync("git", ["-C", orphan, "config", "user.email", "test@example.com",],);
-      spawnSync("git", ["-C", orphan, "config", "user.name", "Test",],);
-      spawnSync("git", ["-C", orphan, "commit", "-q", "--allow-empty", "-m", "unrelated",],);
+      git(["init", "-q", "--initial-branch=main", orphan,], workDir,);
+      git(["-C", orphan, "config", "user.email", "test@example.com",], workDir,);
+      git(["-C", orphan, "config", "user.name", "Test",], workDir,);
+      git(["-C", orphan, "commit", "-q", "--allow-empty", "-m", "unrelated",], workDir,);
       git(["fetch", "-q", orphan, "main:refs/remotes/orphan/main",],);
 
       // Pins the pre-fix crash: merge-base finds no common ancestor here.
-      expect(
-        spawnSync("git", ["merge-base", "orphan/main", "HEAD",], { cwd: workDir, },).status,
-      ).not.toBe(0,);
+      expect(gitRaw(["merge-base", "orphan/main", "HEAD",],).status,).not.toBe(0,);
       expect(() => changedFiles("orphan/main", workDir,)).not.toThrow();
     } finally {
       rmSync(orphan, { recursive: true, force: true, },);
