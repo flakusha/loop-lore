@@ -74,7 +74,7 @@ dispatch). The guarantee is reproducibility, not sameness: the seed
 lives at `AutonomyConfig.seed` (`null` = unseeded, the production
 default) and each tick draws from its own stream,
 `mulberry32(hashSeed(seed, worldId, tickIndex))`, derived once in
-`#tickWorld` from the world's `tick_count` — the tick being computed,
+`tickWorld` in ./tick.ts from the world's `tick_count` — the tick being computed,
 not the one just committed — and shared by every target on that tick —
 so a jitter drop in one tick cannot shift the next tick's draws, and
 one tick replays in isolation. `seed: null` (every shipped preset)
@@ -121,7 +121,7 @@ Nothing in the tick loop changes. Two properties the seam guarantees:
   target cannot double-spend — `movementDispatch`'s charge stays inside
   `runNpcMovementTick` (`TICK_LIMIT`). Targets own their own gating.
 
-A target that throws propagates to `#tickWorld`, which records the
+A target that throws propagates to `tickWorld`, which records the
 error on the world's row, backs the world off, and counts it in
 `TickResult.errors` — one broken target cannot stall the loop. A
 short-circuit (e.g. the driver's `disabled`, `jitter`, `budget`) is
@@ -167,7 +167,7 @@ the instants it represents.
 A per-world dispatch failure never throws out of `tickOnce`. The
 error is written to `last_error`, the world is backed off by
 `RETRY_BACKOFF_MS` (5s, fixed — see the `ponytail:` note in
-`index.ts`), and the remaining due worlds still tick. `TickResult.errors`
+`tick.ts`), and the remaining due worlds still tick. `TickResult.errors`
 counts the failures and `last_error` is cleared on the next success.
 
 ## Telemetry
@@ -196,7 +196,10 @@ autonomy.
 
 | File            | Role                                                 |
 | --------------- | ---------------------------------------------------- |
-| `index.ts`      | `AutonomyScheduler` — the tick loop                  |
+| `index.ts`      | `AutonomyScheduler` — the public surface             |
+| `tick.ts`       | the per-world tick it drives                         |
+| `targets.ts`    | the built-in dispatch target and the result fold     |
 | `store.ts`      | `SimulationStore` — all `world_simulation_state` I/O |
+| `telemetry.ts`  | scheduler event names + fire-and-forget emit        |
 | `types.ts`      | Pure shapes                                          |
 | `index.test.ts` | Unit + integration coverage                          |
