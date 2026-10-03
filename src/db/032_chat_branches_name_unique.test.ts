@@ -28,7 +28,7 @@ import type { DB, } from "./schema";
 const MIGRATION = "032_chat_branches_name_unique";
 
 function makeInMemoryDb(): { kysely: Kysely<DB>; raw: Database } {
-  const raw = new Database(":memory:");
+  const raw = new Database(":memory:",);
   const kysely = new Kysely<DB>({ dialect: createSqliteDialect(raw,), },);
   return { kysely, raw, };
 }
@@ -50,7 +50,7 @@ describe(MIGRATION, () => {
     // pre-migration shape: bare `name` with no dedupe index, duplicates
     // allowed within a chat.
     const migrations = await getMigrationFiles();
-    for (const name of Object.keys(migrations).sort()) {
+    for (const name of Object.keys(migrations,).sort()) {
       if (name === MIGRATION) { continue; }
       await migrations[name]!.up(db,);
     }
@@ -87,7 +87,7 @@ describe(MIGRATION, () => {
     name: string,
     createdAt: string,
   ): Promise<void> {
-    const parentMessageId = `msg-${chatId.replace("chat-", "")}`;
+    const parentMessageId = `msg-${chatId.replace("chat-", "",)}`;
     await sql`INSERT INTO chat_branches (id, chat_id, parent_message_id, name, created_at)
       VALUES (${id}, ${chatId}, ${parentMessageId}, ${name}, ${createdAt})`.execute(db,);
   }
@@ -99,7 +99,7 @@ describe(MIGRATION, () => {
   async function namesIn(chatId: string, name: string,): Promise<string[]> {
     const rows = await sql<{ id: string }>`SELECT id FROM chat_branches
       WHERE chat_id = ${chatId} AND name = ${name} ORDER BY id`.execute(db,);
-    return rows.rows.map((r,) => r.id,);
+    return rows.rows.map((r,) => r.id);
   }
 
   /** @param name branch label */
@@ -138,7 +138,7 @@ describe(MIGRATION, () => {
     // Nothing is lost: all three rows still exist, under distinct names.
     const survivors = await sql<{ id: string }>`SELECT id FROM chat_branches
       WHERE chat_id = 'chat-a' ORDER BY id`.execute(db,);
-    expect(survivors.rows.map((r,) => r.id,),).toEqual(["a-oldest", "b-middle", "c-newest", "e-unique",],);
+    expect(survivors.rows.map((r,) => r.id),).toEqual(["a-oldest", "b-middle", "c-newest", "e-unique",],);
 
     // The key is per-chat, so chat-b keeps its own "Branch 1".
     expect(await namesIn("chat-b", "Branch 1",),).toEqual(["d-other-chat",],);
@@ -151,8 +151,8 @@ describe(MIGRATION, () => {
 
     // The index exists ...
     const indexRows = raw.query("PRAGMA index_list(chat_branches)",).all() as { name: string; unique: number }[];
-    expect(indexRows.map((r,) => r.name,),).toContain("uq_chat_branches_chat_name",);
-    expect(indexRows.find((r,) => r.name === "uq_chat_branches_chat_name",)?.unique,).toBe(1,);
+    expect(indexRows.map((r,) => r.name),).toContain("uq_chat_branches_chat_name",);
+    expect(indexRows.find((r,) => r.name === "uq_chat_branches_chat_name")?.unique,).toBe(1,);
 
     // ... and it is enforced: a racing second fork in the same chat now aborts.
     await expect(
@@ -162,7 +162,7 @@ describe(MIGRATION, () => {
     // first half of the key.
     await insertBranch("g-other-chat-ok", "chat-c", "Branch 1", "2026-01-05 00:00:00",);
     expect(await namesIn("chat-c", "Branch 1",),).toEqual(["g-other-chat-ok",],);
-  },);
+  });
 
   test("skips rename candidates already taken instead of colliding with them", async () => {
     // `Branch 1 (2)` is already occupied by a DIFFERENT branch, so the naive
@@ -189,7 +189,7 @@ describe(MIGRATION, () => {
     // so it walks on to (4) rather than overwriting it.
     expect(await idWithName("chat-a", "Branch 1 (4)",),).toBe("c-newest",);
     expect(await namesIn("chat-a", "Branch 1",),).toEqual(["a-oldest",],);
-  },);
+  });
 
   test("down() drops the unique index and restores the duplicate-tolerant shape", async () => {
     const migrations = await getMigrationFiles();
@@ -206,6 +206,6 @@ describe(MIGRATION, () => {
 
     // The index is gone, not merely non-enforcing.
     const indexRows = raw.query("PRAGMA index_list(chat_branches)",).all() as { name: string }[];
-    expect(indexRows.map((r,) => r.name,),).not.toContain("uq_chat_branches_chat_name",);
-  },);
-});
+    expect(indexRows.map((r,) => r.name),).not.toContain("uq_chat_branches_chat_name",);
+  });
+},);
