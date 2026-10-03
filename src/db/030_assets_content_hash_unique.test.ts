@@ -13,10 +13,11 @@
  * empty), so it is what this file forces.
  */
 import { Database, } from "bun:sqlite";
-import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
 
 import { createLogger, } from "../logger";
+import { captureWarnings, } from "../test-utils/capture-warnings";
 import { createSqliteDialect, } from "./index";
 import { getMigrationFiles, } from "./migrate";
 import type { DB, } from "./schema";
@@ -106,18 +107,12 @@ describe(MIGRATION, () => {
     await insertAsset("g-nohash-a", "2026-01-01 00:00:00", null, null,);
     await insertAsset("h-nohash-b", "2026-01-02 00:00:00", null, null,);
 
-    const warnSpy = spyOn(process, "emitWarning",).mockImplementation(() => {},);
-    let warnings: string[] = [];
-    try {
+    const warnings = await captureWarnings(async () => {
       const migrations = await getMigrationFiles();
       const migration = migrations[MIGRATION];
       if (!migration) { throw new Error("migration 030 not registered",); }
       await migration.up(db,);
-      // Read the calls before restoring — mockRestore() clears them.
-      warnings = warnSpy.mock.calls.map((c,) => String(c[0],));
-    } finally {
-      warnSpy.mockRestore();
-    }
+    },);
 
     // Each duplicate group collapses to its oldest row — the one that owns the
     // storage_path any surviving reference points at.
