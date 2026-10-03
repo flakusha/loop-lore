@@ -68,7 +68,10 @@ async function mutateBranch(
 export const chatBranches: Partial<ChatBranchesState> & ThisType<ChatState> = {
   /** @returns {Promise<void>} */
   async loadBranches() {
-    if (!this.activeChat) { return; }
+    // Capture the target chat up front so a rapid selectChat A→B cannot let a
+    // slow A response overwrite B's state (out-of-order fetch race).
+    const chatId = this.activeChat;
+    if (!chatId) { return; }
     try {
       // The list route is keyset-paginated (default page 20). The dropdown and
       // the panel render `$store.ui.branches` wholesale and have no paging
@@ -76,11 +79,14 @@ export const chatBranches: Partial<ChatBranchesState> & ThisType<ChatState> = {
       // cannot see is a branch they cannot switch to.
       // ponytail: hard ceiling at MAX_PAGE_SIZE (100) branches/chat; add cursor
       // paging to the panel when a chat actually exceeds that.
-      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/branches?limit=100`,);
+      const res = await apiFetch(`/api/v1/chats/${chatId}/branches?limit=100`,);
       const body = await res.json() as BranchEnvelope<{ branches?: ChatBranchRow[] }>;
+      // Stale-response guard: the user switched chats while this fetch was in flight.
+      if (this.activeChat !== chatId) { return; }
       const store = uiStore();
       if (store) { store.branches = body.data?.branches ?? []; }
     } catch {
+      if (this.activeChat !== chatId) { return; }
       this.$dispatch?.("show-toast", { type: "error", message: t("branches.failedLoad",), },);
     }
   },

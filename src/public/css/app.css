@@ -3843,8 +3843,11 @@ html {
   color: var(--text-secondary);
 }
 
-/* --- Modal shell for the branch confirmations (mirrors .modal) --- */
-.modal-panel {
+/* --- Modal shell for the branch confirmations (mirrors .modal).
+       Scoped to the branch panel because `.modal-panel` / `.modal-hint`
+       are also used by the pre-existing flag + browse-variants modals
+       in chat/message-list.html, which this feature does not own. --- */
+[data-testid="branch-panel"] .modal-panel {
   background: var(--bg-secondary);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-default);
@@ -3855,7 +3858,7 @@ html {
   overflow-y: auto;
   animation: modalIn 0.2s ease-out;
 }
-.modal-hint {
+[data-testid="branch-panel"] .modal-hint {
   margin: 0 0 var(--space-3);
   font-size: var(--fs-sm);
   color: var(--text-secondary);
