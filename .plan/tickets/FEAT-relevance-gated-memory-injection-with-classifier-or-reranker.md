@@ -3,7 +3,7 @@
 
 # FEAT: Relevance-gated memory injection with classifier or reranker grading
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ Memory selection for context injection is relevance-blind: probabilistic decide.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-03 registry-driven close: git issue ef636a2 (registry tip: fbf9b0e15 Konstantin Fedotov Close issue)

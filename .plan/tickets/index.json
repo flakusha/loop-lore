@@ -6496,7 +6496,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-touchmemory-never-called-on-memory-injection-so-last-accesse.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-TRANSITIONS-TEST-TS-OWNERSHIP-TESTS-FAIL-WITH-FK-CONSTRAINT-": {
     "epic": "",
@@ -14889,7 +14889,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/FEAT-classifier-role-fallback-policy-in-callaux.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-CO-AUTHORING-PRESENCE-LIVE-CURSORS-TYPING-INDICATORS": {
     "epic": "proposed:epic-co-authoring",
@@ -16150,7 +16150,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/FEAT-relevance-gated-memory-injection-with-classifier-or-reranker.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-REPLAYABILITY": {
     "epic": "epic-replayability",
@@ -38566,7 +38566,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-relevance-aware-decay-and-purge-signals-in-memory-purge.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-REMOVE-DEAD-FRONTEND-MODULES": {
     "epic": "epic-frontend-bundle-optimization",
@@ -39154,7 +39154,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-route-text-moderation-and-prompt-injection-verdicts-through-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-RPG-ACTOR-RESOLVED-SKILL-CHECKS-FROM-CHARACTER-SHEETS": {
     "epic": "epic-rpg-mechanics.md",
@@ -42939,7 +42939,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-current-message-keywords-into-memory-injection-context-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-WIRE-ELYSIA-OPENAPI-MOUNT-TO-EMIT-GENERATED-SERVED-SPEC": {
     "epic": "epic-http-protocol-features",

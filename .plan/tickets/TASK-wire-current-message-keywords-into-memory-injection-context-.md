@@ -3,7 +3,7 @@
 
 # TASK: Wire current-message keywords into memory injection context or remove dead relevance boost
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ The relevance grader isContextRelevant (src/memory/injection/relevance.ts) is de
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-03 registry-driven close: git issue f4f2bfd (registry tip: aaa5a7a65 Konstantin Fedotov Close issue)
