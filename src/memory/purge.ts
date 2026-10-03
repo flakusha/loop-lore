@@ -207,3 +207,26 @@ export async function touchMemory(
     .where("id", "=", memoryId,)
     .execute();
 }
+
+/**
+ * Batch variant of {@link touchMemory}: mark many memories as accessed with
+ * one statement. Same semantics per row as the single-memory touch.
+ * @param db - Kysely instance
+ * @param memoryIds - IDs of the memories to touch; empty input is a no-op
+ * @returns {Promise<void>}
+ */
+export async function touchMemories(
+  db: Kysely<DB>,
+  memoryIds: string[],
+): Promise<void> {
+  if (memoryIds.length === 0) { return; }
+  const now = new Date().toISOString();
+  await db
+    .updateTable("actor_memories",)
+    .set((eb,) => ({
+      last_accessed_at: now,
+      strength: eb("strength", "+", 0.1,),
+    }))
+    .where("id", "in", memoryIds,)
+    .execute();
+}
