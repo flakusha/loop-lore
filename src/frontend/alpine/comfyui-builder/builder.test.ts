@@ -395,6 +395,39 @@ describe("pollRun failure branches", () => {
     expect(comfyuiBuilderState.runState.status,).toBe("completed",);
     expect(comfyuiBuilderState.runState.completedSteps,).toBe(2,);
   });
+
+  test("a superseded poll stops instead of stamping onto the newer run", async () => {
+    comfyuiBuilderState.runState = {
+      jobId: "job-A",
+      status: "running",
+      error: "",
+      completedSteps: 0,
+      totalSteps: 2,
+    };
+    let polls = 0;
+    handler = async () => {
+      polls += 1;
+      // Mid-poll a newer run takes the store over — exactly what startRun does
+      // when it replaces runState wholesale.
+      comfyuiBuilderState.runState = {
+        jobId: "job-B",
+        status: "running",
+        error: "",
+        completedSteps: 0,
+        totalSteps: 5,
+      };
+      return Response.json({ job: { status: "completed", completedSteps: 2, totalSteps: 2, }, },);
+    };
+
+    await comfyuiBuilderState.pollRun();
+
+    // A's loop must abandon its job, not report completion against B.
+    expect(polls,).toBe(1,);
+    expect(comfyuiBuilderState.runState.jobId,).toBe("job-B",);
+    expect(comfyuiBuilderState.runState.status,).toBe("running",);
+    expect(comfyuiBuilderState.runState.completedSteps,).toBe(0,);
+    expect(calls.map((call,) => call.url),).toEqual(["/api/v1/comfyui-builder/runs/job-A",],);
+  });
 });
 
 describe("editor open/close and step fallbacks", () => {
