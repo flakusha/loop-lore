@@ -146,6 +146,10 @@
   "src/admin/model-roles.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
     },
     {
@@ -163,6 +167,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-role-fallback-policy-in-callaux.md"
     },
     {
       "kind": "ticket",
@@ -958,6 +966,10 @@
   "src/assets/controller.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     },
     {
@@ -1419,6 +1431,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta.md"
     }
   ],
   "src/assets/service/tags.ts": [
@@ -2375,6 +2391,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-classifier-model-survey-message-intent-memory-ranking-emotio.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-tool-aux-task-has-no-production-consumer-wire-or-remove.md"
     }
   ],
   "src/assistant/guard/judge.test.ts": [
@@ -4313,6 +4333,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-role-fallback-policy-in-callaux.md"
     },
     {
       "kind": "ticket",
@@ -6314,6 +6338,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/IDEA-nli-grounding-classifier-behind-the-hallucination-guard.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-introduction-generation-propagation.md"
     }
   ],
@@ -6523,6 +6551,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-quiet-hours-boundary.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/IDEA-relevance-classified-proactive-messaging-triggers.md"
     },
     {
       "kind": "ticket",
@@ -20364,6 +20396,10 @@
   "src/generation/caption-route.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
     },
     {
@@ -20373,6 +20409,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta.md"
     }
   ],
   "src/generation/context-compactor.ts": [
@@ -23682,6 +23722,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-relevance-gated-memory-injection-with-classifier-or-reranker.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/IDEA-memory-knowledge-isolation-and-world-timeline.md"
     },
     {
@@ -23833,6 +23877,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-context-memory-events.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-current-message-keywords-into-memory-injection-context-.md"
     }
   ],
   "src/memory/injection/select.ts": [
@@ -23937,6 +23985,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-memory-decay-writes-nan-strength.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-touchmemory-never-called-on-memory-injection-so-last-accesse.md"
     },
     {
       "kind": "ticket",
@@ -36548,6 +36600,10 @@
   "src/story/gm/decisions/llm.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-backed-actor-and-beat-selection-for-turn-decision.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-error-handling-gaps-detector-abort-void-promises.md"
     }
   ],
@@ -37763,6 +37819,12 @@
       "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
     }
   ],
+  "src/turning/turn-manager/turn-strategies.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-backed-actor-and-beat-selection-for-turn-decision.md"
+    }
+  ],
   "src/turning/turn-strategies-consecutive.test.ts": [
     {
       "kind": "ticket",
@@ -38229,6 +38291,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-golden-corpus-and-scoring-ratchet-for-prompt-injection-signa.md"
     }
   ],
   "src/validation/schemas": [
