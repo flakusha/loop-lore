@@ -200,6 +200,6 @@ autonomy.
 | `tick.ts`       | the per-world tick it drives                         |
 | `targets.ts`    | the built-in dispatch target and the result fold     |
 | `store.ts`      | `SimulationStore` — all `world_simulation_state` I/O |
-| `telemetry.ts`  | scheduler event names + fire-and-forget emit        |
+| `telemetry.ts`  | scheduler event names + fire-and-forget emit         |
 | `types.ts`      | Pure shapes                                          |
 | `index.test.ts` | Unit + integration coverage                          |
