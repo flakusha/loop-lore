@@ -49,6 +49,7 @@ Total tickets: **3189** — untagged: **2678** — unbound to epic: **1625**
 | action-economy | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | actor | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 // hint: Logic changed on both sides. Requires understanding intent of each change.
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 | actor_action | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | actor_items | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | actor-state | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -1189,6 +1190,7 @@ Total tickets: **3189** — untagged: **2678** — unbound to epic: **1625**
 | epic-accessibility-input | 5 | 1 | 2 | 2 | 0 | 0 | 0 |
 | epic-accessibility-input (Phase 2 Mobile Support, 🟡) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-achievements | 5 | 1 | 1 | 3 | 0 | 0 | 0 |
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 // hint: Logic changed on both sides. Requires understanding intent of each change.
 | epic-actor-autonomy-story-drive | 8 | 8 | 0 | 0 | 0 | 0 | 0 |
 | epic-actor-autonomy-story-drive.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
@@ -2786,6 +2788,7 @@ Total tickets: **3189** — untagged: **2678** — unbound to epic: **1625**
 - `epic-api-governance` (1): TASK-RATE-LIMIT-COVERAGE-EXPANSION
 - `epic-api-governance.md` (2): TASK-OPENAPI-SPECIFICATION, TASK-RATE-LIMITING-TELEMETRY
 - `epic-api-library-distribution.md` (3): TASK-API-FIRST-FOUNDATION, TASK-CREATE-LIBRARY-PACKAGE, TASK-RUNTIME-ABSTRACTION-LAYER
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 - `epic-api-rate-limiting` (1): BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURCING
 - `epic-api-routes` (1): TASK-API-ROUTES
 - `epic-api-task-offloading` (1): TASK-OFFLOADING
