@@ -26,4 +26,9 @@ Source: docs/meta/admin-visibility-research.md workflow-automation section; extr
 - [ ] Unit tests: diamond DAG, cycle rejection, failure-skip, failure-retry
 - [ ] `bun run check` passes
 
+<<<<<<< ours — heading `Acceptance Criteria` (F, confidence: medium)
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 **Resolved:** 2026-10-02 registry-driven close: git issue 328dee7 (registry tip: d07beb65e Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WORKFLOW-DAG-ENGINE-TASK-DE)
+=======
+**Resolved:** 2026-10-03 registry-driven close: git issue 328dee7 (registry tip: d07beb65e Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WORKFLOW-DAG-ENGINE-TASK-DE)
+>>>>>>> theirs — heading `Acceptance Criteria` (F, confidence: medium)
