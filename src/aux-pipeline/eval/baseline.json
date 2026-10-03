@@ -1,0 +1,7 @@
+{
+  "intent": { "accuracy": 0.75, "parseNullRate": 0 },
+  "nsfw": { "accuracy": 1, "parseNullRate": 0 },
+  "transition": { "accuracy": 1, "parseNullRate": 0 },
+  "gm-tool": { "accuracy": 1, "parseNullRate": 0 },
+  "injection-check": { "accuracy": 1, "parseNullRate": 0 }
+}

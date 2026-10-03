@@ -15,6 +15,7 @@ import {
 } from "../../chat";
 import type { TransitionSource, } from "../../chat/types/transitions";
 import type { DB, } from "../../db/schema";
+import { toErrorMessage, } from "../../utils";
 import { log, } from "./helpers";
 
 /**
@@ -90,7 +91,7 @@ export async function applyContextCut(
     log().warn("Context cut memory promotion failed", {
       chatId,
       actorId,
-      error: error instanceof Error ? error.message : String(error,),
+      error: toErrorMessage(error,),
     },);
   }
 

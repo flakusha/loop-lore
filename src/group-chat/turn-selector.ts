@@ -16,8 +16,13 @@
  */
 import type { Kysely, } from "kysely";
 import { isMuted, } from "../chat/moderation";
+import type { Config, } from "../config/schema";
+import { TurnStrategy, } from "../db/enums";
+import type { TurnStrategy as TurnStrategyType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
+import { resolveTurnClassifierPick, } from "../turning/classifier-selection";
+import type { TurnClassifierPick, } from "../turning/classifier-selection";
 import { fetchSkipCooldowns, } from "../turning/skip-cooldown";
 import { TurnManager, } from "../turning/turn-manager";
 import type { GroupTurnContext, } from "../turning/types";
@@ -42,6 +47,14 @@ export interface TurnSelectorOptions {
   chatId: string;
   /** User's message text (for @mention parsing) */
   userMessage?: string;
+  /**
+   * Application config — enables the classifier selection path
+   * (FEAT-classifier-backed-actor-and-beat-selection) for strategies that
+   * consult it (quest_driven / hybrid). Omit for the pure deterministic path.
+   */
+  config?: Config;
+  /** Acting user id — BYO apiKey resolution for the classifier call. */
+  userId?: string;
 }
 
 /**
@@ -50,7 +63,7 @@ export interface TurnSelectorOptions {
  * @returns Actor ID to generate as, or null if no generation should occur
  */
 export async function selectNextGroupActor(options: TurnSelectorOptions,): Promise<string | null> {
-  const { db, chatId, userMessage, } = options;
+  const { db, chatId, userMessage, config, userId, } = options;
 
   // Fetch chat config
   const chat = await db
@@ -119,17 +132,43 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
 
   // Build context for turn strategy
   const recentActorIds = await getRecentActorIds(db, chatId, 5,);
+  const strategy = chat.turn_strategy as TurnStrategyType | undefined;
+
+  // Classifier selection path (FEAT-classifier-backed-actor-and-beat-selection):
+  // only the pick-consulting strategies pay for the aux call. Unset strategy
+  // defaults to hybrid (turn-manager state), so it counts as consulting.
+  // The @mention override above already returned, so explicit mentions
+  // always win over the classifier. On any failure the pick stays null and
+  // the strategy falls back to its deterministic behavior.
+  const strategyConsultsClassifier = strategy === undefined ||
+    strategy === TurnStrategy.QuestDriven ||
+    strategy === TurnStrategy.Hybrid;
+  let classifierPick: TurnClassifierPick | null = null;
+  if (config && strategyConsultsClassifier) {
+    classifierPick = await resolveTurnClassifierPick({
+      config,
+      db,
+      chatId,
+      userId,
+      userMessage,
+      participants: Array.from(
+        aiParticipants,
+        (p,) => ({ actorId: p.actor_id, displayName: p.display_name, }),
+      ),
+    },);
+  }
+
   const context: GroupTurnContext = {
     chatMode: "group",
     isPaused: false,
     recentActorIds,
+    classifierPick: classifierPick ?? undefined,
   };
 
   // Use TurnManager for strategy-based selection
   const turnManager = new TurnManager({ db, chatId, },);
   await turnManager.initialize();
 
-  const strategy = chat.turn_strategy as import("../db/enums").TurnStrategy | undefined;
   const selectedId = await turnManager.selectNextActor(strategy, context,);
 
   if (selectedId) {

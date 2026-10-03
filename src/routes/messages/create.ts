@@ -3,6 +3,7 @@
 
 import { Elysia, t, } from "elysia";
 import { getConfigValue, } from "../../admin/config";
+import { executeGmToolRequest, } from "../../assistant/gm-tool-execution";
 import { computeContextStats, } from "../../chat";
 import { ProactiveMessagingService, } from "../../chat/proactive";
 import { checkChatAccess, updateMessageVisibility, } from "../../chat/service";
@@ -102,6 +103,16 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         // ── Slash command dispatch ────────────────────────────────
         const commandOutcome = await dispatchCommand(database, config, actorId, chatId, effectiveContent,);
         if (commandOutcome.handled) { return commandOutcome.response; }
+
+        // ── GM natural-language tool execution (slash commands win) ──
+        const gmOutcome = await executeGmToolRequest({
+          database,
+          config,
+          actorId,
+          chatId,
+          content: effectiveContent,
+        },);
+        if (gmOutcome.handled) { return gmOutcome.response; }
 
         // Per-chat auto-translation (inbound) — opt-in; degrades to original.
         const storableContent = await translateInboundContent(database, config, chatId, actorId, filteredContent,);
