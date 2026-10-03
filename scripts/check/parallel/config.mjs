@@ -12,7 +12,7 @@ import path from "node:path";
 
 // ── Run checks in parallel ──────────────────────────────────────
 
-export const PROJECT_ROOT = path.resolve(import.meta.dir, "../..",),
+export const PROJECT_ROOT = path.resolve(import.meta.dir, "../../..",),
   // Machine-readable report: written after every run, git-ignored (.tmp/).
   REPORT_DIR_RELATIVE = ".tmp",
   // Canonical (latest-run) report path. Updated atomically on every run;

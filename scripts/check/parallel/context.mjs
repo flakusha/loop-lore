@@ -16,7 +16,7 @@ import { existsSync, readdirSync, statSync, } from "node:fs";
 import path from "node:path";
 
 // ── Diff-scoped mode ────────────────────────────────────────────
-const DIFF_ROOT = path.resolve(import.meta.dir, "../..",);
+export const DIFF_ROOT = path.resolve(import.meta.dir, "../../..",);
 // `--diff-base <ref>` scopes the expensive test gates to the branch diff
 // (lint-staged style): only test files adjacent to changed source files run
 // under `test - unit`, and the coverage gate gates only modules touched by
