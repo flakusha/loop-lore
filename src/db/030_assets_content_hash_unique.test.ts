@@ -24,6 +24,42 @@ import type { DB, } from "./schema";
 
 const MIGRATION = "030_assets_content_hash_unique";
 
+/**
+ * Foreign half of the cross-file warning race. `bun test` runs every test file
+ * in ONE process, so this emitter's warnings dispatch to a capture window
+ * opened by a DIFFERENT file - `032_chat_branches_name_unique.test.ts` runs it
+ * while its own exact-count capture is open. The emitter is deliberately
+ * UNBOUNDED for the whole of this file: if the capture scopes to its own async
+ * context, none of these reach that capture's result and the assertion there
+ * holds; if it does not, they arrive continuously for the whole window and the
+ * count is destroyed. A burst emitter would not prove that - the point is that
+ * the foreign stream is continuous, so no drain can "miss" it.
+ *
+ * The two files share only this global handle, not an import, so the coupling is
+ * the warning stream itself. Both halves must run in the same `bun test`
+ * invocation to mean anything; `bun test src/db/` runs them together.
+ *
+ * Resource contract: this file owns a process-wide timer for its own lifetime.
+ * `032` disposes it in ITS `afterAll` - the first teardown that runs after 032's
+ * tests - because 030 is the alphabetically earlier file and its own teardown
+ * would fire while 032, which loads later, has not opened its window yet. If
+ * 032 is not in the invocation, the timer outlives this file and keeps the
+ * process alive emitting warnings, so it is unref'd: it then never holds the
+ * event loop open, and a process with no other work still exits.
+ */
+const FOREIGN_EMITTER = "__ll_foreign_warning_emitter__";
+let foreignTicks = 0;
+const foreignTimer: ReturnType<typeof setInterval> = setInterval(() => {
+  process.emitWarning(`[foreign-emitter] background tick ${foreignTicks++}`,);
+}, 1,);
+// Unref'd so an unpaired run (030 alone) cannot hang on this timer.
+foreignTimer.unref?.();
+// Published as a disposer, not the handle: the peer file gets a callable with
+// no cast and no way to misuse the timer.
+(globalThis as Record<string, unknown>)[FOREIGN_EMITTER] = (): void => {
+  clearInterval(foreignTimer,);
+};
+
 function makeInMemoryDb(): { kysely: Kysely<DB>; raw: Database } {
   const raw = new Database(":memory:",);
   const kysely = new Kysely<DB>({ dialect: createSqliteDialect(raw,), },);
