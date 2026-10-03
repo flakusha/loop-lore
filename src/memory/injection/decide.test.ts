@@ -96,3 +96,81 @@ describe("shouldInjectMemory — pinned override", () => {
     expect(passDecision.inject,).toBe(true,);
   });
 });
+
+describe("shouldInjectMemory — semantic floor gate", () => {
+  test("rejects when known score is below the floor", () => {
+    const memory = makeMemory({},);
+    const decision = shouldInjectMemory(
+      memory,
+      DEFAULT_INJECTION_CONFIG,
+      { ...ctx, randomFn: () => 0.99, semanticScores: new Map([["mem-1", 0.1,],],), },
+      DEFAULT_COMFORT,
+      -1,
+    );
+    expect(decision.inject,).toBe(false,);
+    expect(decision.reason,).toBe("semantic_floor",);
+    expect(decision.probability,).toBeGreaterThan(0,);
+  });
+
+  test("does not gate when known score is at or above the floor", () => {
+    const memory = makeMemory({},);
+    const decision = shouldInjectMemory(
+      memory,
+      DEFAULT_INJECTION_CONFIG,
+      { ...ctx, randomFn: () => 0, semanticScores: new Map([["mem-1", 0.9,],],), },
+      DEFAULT_COMFORT,
+      -1,
+    );
+    expect(decision.inject,).toBe(true,);
+    expect(decision.reason,).not.toBe("semantic_floor",);
+  });
+
+  test("does not gate when the score is absent (fail-open)", () => {
+    const memory = makeMemory({},);
+    const decision = shouldInjectMemory(
+      memory,
+      DEFAULT_INJECTION_CONFIG,
+      { ...ctx, randomFn: () => 0, semanticScores: new Map<string, number>(), },
+      DEFAULT_COMFORT,
+      -1,
+    );
+    expect(decision.inject,).toBe(true,);
+    expect(decision.reason,).not.toBe("semantic_floor",);
+  });
+
+  test("config floor override is respected", () => {
+    const memory = makeMemory({},);
+    const strictConfig = { ...DEFAULT_INJECTION_CONFIG, semanticFloor: 0.5, };
+    const scores = new Map([["mem-1", 0.3,],],);
+    const rejected = shouldInjectMemory(
+      memory,
+      strictConfig,
+      { ...ctx, randomFn: () => 0.99, semanticScores: scores, },
+      DEFAULT_COMFORT,
+      -1,
+    );
+    expect(rejected.reason,).toBe("semantic_floor",);
+
+    const passed = shouldInjectMemory(
+      memory,
+      DEFAULT_INJECTION_CONFIG,
+      { ...ctx, randomFn: () => 0, semanticScores: scores, },
+      DEFAULT_COMFORT,
+      -1,
+    );
+    expect(passed.reason,).not.toBe("semantic_floor",);
+  });
+
+  test("pinned memory bypasses the semantic floor gate", () => {
+    const memory = makeMemory({ pinned: true, },);
+    const decision = shouldInjectMemory(
+      memory,
+      DEFAULT_INJECTION_CONFIG,
+      { ...ctx, randomFn: () => 0.99, semanticScores: new Map([["mem-1", 0.0,],],), },
+      DEFAULT_COMFORT,
+      -1,
+    );
+    expect(decision.inject,).toBe(true,);
+    expect(decision.reason,).toBe("pinned",);
+  });
+});
