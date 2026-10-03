@@ -8,6 +8,7 @@
  * story mode (TurnManager) and group chat mode (GroupTurnSelector).
  */
 import type { ChatMode, TurnStrategy, } from "../db/enums";
+import type { TurnClassifierPick, } from "./classifier-selection";
 
 // ─── Turn Participant ─────────────────────────────────────────
 
@@ -79,6 +80,13 @@ export interface GroupTurnContext {
   mentionedActorId?: string;
   /** Recent message actor IDs for context-mention detection */
   recentActorIds?: string[];
+  /**
+   * Classifier-proposed actor + beat (FEAT-classifier-backed-actor-and-beat-selection).
+   * Producers validate the pick against the eligible participant set before
+   * attaching it; strategies still re-validate and fall back to their
+   * deterministic behavior when it is absent or stale.
+   */
+  classifierPick?: TurnClassifierPick;
 }
 
 // ─── Turn Strategy Function ───────────────────────────────────

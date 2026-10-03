@@ -135,6 +135,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       type: chat?.type,
       cascadeActorId,
       userMessage,
+      config,
       chatId,
       userId,
     },);

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 270
 
 import type { Kysely, } from "kysely";
 import { parseCommand, } from "../../assistant/command-parser";
@@ -33,9 +34,70 @@ import {
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { stripLeadingMention, } from "../../group-chat/mention-parser";
-import { uid, } from "../../utils";
+import { toErrorMessage, uid, } from "../../utils";
 import { jsonResponse, } from "../http-utils";
 import { log, } from "./helpers";
+
+/**
+ * Persist a command system message into the chat, honoring message
+ * encryption when enabled. Shared by the slash-command dispatch path and
+ * the GM natural-language tool-execution path.
+ * @param database - Kysely instance
+ * @param config - Application config
+ * @param chatId - Target chat
+ * @param actorId - Actor attributed with the system message
+ * @param text - System message text
+ * @throws {Error} When the message insert fails
+ */
+export async function insertCommandSystemMessage(
+  database: Kysely<DB>,
+  config: Config,
+  chatId: string,
+  actorId: string,
+  text: string,
+): Promise<void> {
+  const sysMsgId = uid();
+  let sysStoredContent = text;
+  const sysContentEncoding = "identity";
+  let sysKeyId: string | null = null;
+
+  if (isEncryptionEnabled()) {
+    const smk = getSmk()!;
+    const enc = await encryptMessageContent({
+      database,
+      chatId,
+      actorId,
+      plaintext: text,
+      smk,
+      pipeline: {
+        threshold: config.encryption.compressThreshold,
+        algorithm: config.encryption.compressAlgorithm,
+      },
+    },);
+    sysStoredContent = enc.storedContent;
+    sysKeyId = enc.keyId;
+  }
+
+  await database
+    .insertInto("messages",)
+    .values({
+      id: sysMsgId,
+      chat_id: chatId,
+      actor_id: actorId,
+
+      role: MessageRole.System,
+      content: sysStoredContent,
+      key_id: sysKeyId,
+
+      content_format: MessageContentFormat.Markdown,
+
+      content_type: MessageContentType.Text,
+      content_encoding: sysContentEncoding as ContentEncoding,
+      status: MessageStatus.Confirmed,
+      visibility: "visible",
+    },)
+    .execute();
+}
 
 /**
  * Attempt to dispatch a slash command from the given content.
@@ -154,7 +216,7 @@ export async function dispatchCommand(
     try {
       result = await handler(parsed.args, cmdCtx,);
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error,);
+      const msg = toErrorMessage(error,);
       log().warn("command handler threw", { command: parsed.command, error: msg, },);
       result = { handled: true, systemMessage: `**Command failed:** ${msg}`, };
     }
@@ -192,47 +254,7 @@ export async function dispatchCommand(
   if (!result.handled) { return { handled: false, }; }
 
   if (result.systemMessage) {
-    const sysMsgId = uid();
-    let sysStoredContent = result.systemMessage;
-    const sysContentEncoding = "identity";
-    let sysKeyId: string | null = null;
-
-    if (isEncryptionEnabled()) {
-      const smk = getSmk()!;
-      const enc = await encryptMessageContent({
-        database,
-        chatId,
-        actorId,
-        plaintext: result.systemMessage,
-        smk,
-        pipeline: {
-          threshold: config.encryption.compressThreshold,
-          algorithm: config.encryption.compressAlgorithm,
-        },
-      },);
-      sysStoredContent = enc.storedContent;
-      sysKeyId = enc.keyId;
-    }
-
-    await database
-      .insertInto("messages",)
-      .values({
-        id: sysMsgId,
-        chat_id: chatId,
-        actor_id: actorId,
-
-        role: MessageRole.System as any,
-        content: sysStoredContent,
-        key_id: sysKeyId,
-
-        content_format: MessageContentFormat.Markdown as any,
-
-        content_type: MessageContentType.Text as any,
-        content_encoding: sysContentEncoding as ContentEncoding,
-        status: MessageStatus.Confirmed,
-        visibility: "visible",
-      },)
-      .execute();
+    await insertCommandSystemMessage(database, config, chatId, actorId, result.systemMessage,);
   }
 
   log().info("Command dispatched", { command: commandName, handled: true, },);
