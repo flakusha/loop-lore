@@ -3,9 +3,12 @@
 
 /**
  * Parameter node types counted as "positional". `ObjectPattern` (an options
- * object) and `RestElement` (`...rest`) are deliberately excluded: a function
- * that already takes a destructured object, or whose last param is a rest
- * tuple, is not a candidate for the options-object rewrite.
+ * object) and `RestElement` (`...rest`) are deliberately excluded from the
+ * count -- a rest element is not itself a positional param -- but a function
+ * that has 3+ other positional params is still flagged.
+ *
+ * `TSParameterProperty` is also excluded: parameter properties cannot be
+ * destructured, so the options-object rewrite cannot express them.
  *
  * `AssignmentPattern` is absent because the binding is unwrapped first --
  * `{ c, d } = {}` is an options object with a default, not a positional param,
