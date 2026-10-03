@@ -6485,6 +6485,19 @@
     "title": "LLM tool calls persist in `messages.tool_calls` (migration 037) but no `MessageContentType.ToolResult` exists and no frontend bubble renders them — tool calls appear as raw JSON text in chat",
     "type": "BUG"
   },
+  "BUG-TOUCHMEMORY-NEVER-CALLED-ON-MEMORY-INJECTION-SO-LAST-ACCESSE": {
+    "hash": "255ff5b",
+    "git_issue": "255ff5b",
+    "extid": "BUG-TOUCHMEMORY-NEVER-CALLED-ON-MEMORY-INJECTION-SO-LAST-ACCESSE",
+    "type": "BUG",
+    "title": "touchMemory never called on memory injection so last_accessed_at stays stale",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-touchmemory-never-called-on-memory-injection-so-last-accesse.md",
+    "status": "Not Started"
+  },
   "BUG-TRANSITIONS-TEST-TS-OWNERSHIP-TESTS-FAIL-WITH-FK-CONSTRAINT-": {
     "epic": "",
     "extid": "BUG-TRANSITIONS-TEST-TS-OWNERSHIP-TESTS-FAIL-WITH-FK-CONSTRAINT-",
@@ -14839,6 +14852,19 @@
     "title": "Chat Transfer & Location Change",
     "type": "FEAT"
   },
+  "FEAT-CLASSIFIER-BACKED-ACTOR-AND-BEAT-SELECTION-FOR-TURN-DECISION": {
+    "hash": "243a607",
+    "git_issue": "243a607",
+    "extid": "FEAT-CLASSIFIER-BACKED-ACTOR-AND-BEAT-SELECTION-FOR-TURN-DECISION",
+    "type": "FEAT",
+    "title": "Classifier-backed actor and beat selection for turn decisions",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-classifier-backed-actor-and-beat-selection-for-turn-decision.md",
+    "status": "Not Started"
+  },
   "FEAT-CLASSIFIER-MODEL-SUPPORT-COMPLEMENTARY-TO-AUX-PIPELINE-LAYA-": {
     "epic": "",
     "extid": "FEAT-CLASSIFIER-MODEL-SUPPORT-COMPLEMENTARY-TO-AUX-PIPELINE-LAYA-",
@@ -14851,6 +14877,19 @@
     "tags": [],
     "title": "Classifier model support complementary to AUX pipeline (Laya/Jev)",
     "type": "FEAT"
+  },
+  "FEAT-CLASSIFIER-ROLE-FALLBACK-POLICY-IN-CALLAUX": {
+    "hash": "ba371d3",
+    "git_issue": "ba371d3",
+    "extid": "FEAT-CLASSIFIER-ROLE-FALLBACK-POLICY-IN-CALLAUX",
+    "type": "FEAT",
+    "title": "Classifier-role fallback policy in callAux",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-classifier-role-fallback-policy-in-callaux.md",
+    "status": "Not Started"
   },
   "FEAT-CO-AUTHORING-PRESENCE-LIVE-CURSORS-TYPING-INDICATORS": {
     "epic": "proposed:epic-co-authoring",
@@ -15228,6 +15267,19 @@
     "tags": [],
     "title": "Filtering & Pagination",
     "type": "FEAT"
+  },
+  "FEAT-FIXTURE-DRIVEN-PROMPT-EVAL-HARNESS-FOR-AUX-CLASSIFICATION-TA": {
+    "hash": "5fe4c12",
+    "git_issue": "5fe4c12",
+    "extid": "FEAT-FIXTURE-DRIVEN-PROMPT-EVAL-HARNESS-FOR-AUX-CLASSIFICATION-TA",
+    "type": "FEAT",
+    "title": "Fixture-driven prompt-eval harness for AUX classification tasks",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-fixture-driven-prompt-eval-harness-for-aux-classification-ta.md",
+    "status": "Not Started"
   },
   "FEAT-FORGE-ENGINE-ENERGY-POOL-SAGE-ACTION-ECONOMY": {
     "epic": "proposed:epic-rpg-action-economy",
@@ -15866,6 +15918,19 @@
     "title": "Plugin System & Extensibility (Delayed)",
     "type": "FEAT"
   },
+  "FEAT-PRE-DISPATCH-CLASSIFICATION-SEAM-FOR-IMAGE-GENERATION-PROMPT": {
+    "hash": "3cdebcd",
+    "git_issue": "3cdebcd",
+    "extid": "FEAT-PRE-DISPATCH-CLASSIFICATION-SEAM-FOR-IMAGE-GENERATION-PROMPT",
+    "type": "FEAT",
+    "title": "Pre-dispatch classification seam for image generation prompts",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-pre-dispatch-classification-seam-for-image-generation-prompt.md",
+    "status": "Not Started"
+  },
   "FEAT-PROCEDURAL-ASSET-PIPELINES-MAPS-PORTRAITS-MUSIC-SFX": {
     "epic": "proposed:epic-procedural-assets",
     "extid": "FEAT-PROCEDURAL-ASSET-PIPELINES-MAPS-PORTRAITS-MUSIC-SFX",
@@ -16073,6 +16138,19 @@
     "tags": [],
     "title": "Relationships",
     "type": "FEAT"
+  },
+  "FEAT-RELEVANCE-GATED-MEMORY-INJECTION-WITH-CLASSIFIER-OR-RERANKER": {
+    "hash": "ef636a2",
+    "git_issue": "ef636a2",
+    "extid": "FEAT-RELEVANCE-GATED-MEMORY-INJECTION-WITH-CLASSIFIER-OR-RERANKER",
+    "type": "FEAT",
+    "title": "Relevance-gated memory injection with classifier or reranker grading",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-relevance-gated-memory-injection-with-classifier-or-reranker.md",
+    "status": "Not Started"
   },
   "FEAT-REPLAYABILITY": {
     "epic": "epic-replayability",
@@ -30414,6 +30492,19 @@
     "title": "GM/Assistant Shadow Notes System",
     "type": "TASK"
   },
+  "TASK-GM-TOOL-AUX-TASK-HAS-NO-PRODUCTION-CONSUMER-WIRE-OR-REMOVE": {
+    "hash": "ecde333",
+    "git_issue": "ecde333",
+    "extid": "TASK-GM-TOOL-AUX-TASK-HAS-NO-PRODUCTION-CONSUMER-WIRE-OR-REMOVE",
+    "type": "TASK",
+    "title": "gm-tool AUX task has no production consumer - wire or remove",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gm-tool-aux-task-has-no-production-consumer-wire-or-remove.md",
+    "status": "Not Started"
+  },
   "TASK-GM-TRIGGER-AND-TIMELINE-BACKFILL-PROPAGATION": {
     "epic": "epic-gm-shadow-notes",
     "extid": "TASK-GM-TRIGGER-AND-TIMELINE-BACKFILL-PROPAGATION",
@@ -30443,6 +30534,19 @@
     "tags": [],
     "title": "GM/Assistant Story Whitenotes System",
     "type": "TASK"
+  },
+  "TASK-GOLDEN-CORPUS-AND-SCORING-RATCHET-FOR-PROMPT-INJECTION-SIGNA": {
+    "hash": "f1cfbc8",
+    "git_issue": "f1cfbc8",
+    "extid": "TASK-GOLDEN-CORPUS-AND-SCORING-RATCHET-FOR-PROMPT-INJECTION-SIGNA",
+    "type": "TASK",
+    "title": "Golden corpus and scoring ratchet for prompt-injection signal detector",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-golden-corpus-and-scoring-ratchet-for-prompt-injection-signa.md",
+    "status": "Not Started"
   },
   "TASK-GRAPH-VIEW-OF-PLAN-LINKS-TO-CHATS-STORIES-RAG-ITEMS-ASSETS": {
     "epic": "epic-assistant-step-planning",
@@ -31910,6 +32014,19 @@
     "title": "Karma Display — meter and tiers",
     "type": "TASK"
   },
+  "TASK-KEEP-VS-REGENERATE-GRADING-AND-DEDUP-VERDICT-AT-IMAGE-PERSIS": {
+    "hash": "a05f38e",
+    "git_issue": "a05f38e",
+    "extid": "TASK-KEEP-VS-REGENERATE-GRADING-AND-DEDUP-VERDICT-AT-IMAGE-PERSIS",
+    "type": "TASK",
+    "title": "Keep-vs-regenerate grading and dedup verdict at image persist time",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-keep-vs-regenerate-grading-and-dedup-verdict-at-image-persis.md",
+    "status": "Not Started"
+  },
   "TASK-KEYBOARD-NAVIGATION": {
     "epic": "epic-accessibility-input",
     "extid": "TASK-KEYBOARD-NAVIGATION",
@@ -32090,6 +32207,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-llama-swap-sample-config-finalization-unblocks-rotation-poli.md",
+    "status": "Not Started"
+  },
+  "TASK-LLM-CAPTIONER-TAGPROPOSITIONSOURCE-FOR-ASSET-ALT-TEXT-AND-TA": {
+    "hash": "f9538d2",
+    "git_issue": "f9538d2",
+    "extid": "TASK-LLM-CAPTIONER-TAGPROPOSITIONSOURCE-FOR-ASSET-ALT-TEXT-AND-TA",
+    "type": "TASK",
+    "title": "LLM captioner TagPropositionSource for asset alt-text and tag proposals",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta.md",
     "status": "Not Started"
   },
   "TASK-LLM-ENHANCE-LORE-STYLE-GROUNDING": {
@@ -38425,6 +38555,19 @@
     "title": "Relationships System Implementation",
     "type": "TASK"
   },
+  "TASK-RELEVANCE-AWARE-DECAY-AND-PURGE-SIGNALS-IN-MEMORY-PURGE": {
+    "hash": "660fcca",
+    "git_issue": "660fcca",
+    "extid": "TASK-RELEVANCE-AWARE-DECAY-AND-PURGE-SIGNALS-IN-MEMORY-PURGE",
+    "type": "TASK",
+    "title": "Relevance-aware decay and purge signals in memory purge",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-relevance-aware-decay-and-purge-signals-in-memory-purge.md",
+    "status": "Not Started"
+  },
   "TASK-REMOVE-DEAD-FRONTEND-MODULES": {
     "epic": "epic-frontend-bundle-optimization",
     "extid": "TASK-REMOVE-DEAD-FRONTEND-MODULES",
@@ -38999,6 +39142,19 @@
     "tags": [],
     "title": "Role-scoped assistant command visibility",
     "type": "TASK"
+  },
+  "TASK-ROUTE-TEXT-MODERATION-AND-PROMPT-INJECTION-VERDICTS-THROUGH-": {
+    "hash": "204dfb3",
+    "git_issue": "204dfb3",
+    "extid": "TASK-ROUTE-TEXT-MODERATION-AND-PROMPT-INJECTION-VERDICTS-THROUGH-",
+    "type": "TASK",
+    "title": "Route text moderation and prompt-injection verdicts through the classifier role",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-route-text-moderation-and-prompt-injection-verdicts-through-.md",
+    "status": "Not Started"
   },
   "TASK-RPG-ACTOR-RESOLVED-SKILL-CHECKS-FROM-CHARACTER-SHEETS": {
     "epic": "epic-rpg-mechanics.md",
@@ -39755,7 +39911,7 @@
     "label": "task",
     "priority": "Medium | **Effort:** M",
     "source": ".plan/tickets/TASK-scheduled-messages-reminders.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Scheduled messages + reminders",
     "type": "TASK"
@@ -40893,6 +41049,19 @@
     "tags": [],
     "title": "Extend talkativity to also influence response verbosity (design proposal — separate from selection-rate)",
     "type": "TASK"
+  },
+  "TASK-TASK-AWARE-MOCKLLMPROVIDER-FOR-CLASSIFICATION-PATH-E2E-FLOWS": {
+    "hash": "e055c1b",
+    "git_issue": "e055c1b",
+    "extid": "TASK-TASK-AWARE-MOCKLLMPROVIDER-FOR-CLASSIFICATION-PATH-E2E-FLOWS",
+    "type": "TASK",
+    "title": "Task-aware MockLLMProvider for classification-path e2e flows",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-task-aware-mockllmprovider-for-classification-path-e2e-flows.md",
+    "status": "Not Started"
   },
   "TASK-TELEMETRY-ENDPOINT-TRUSTS-USERID-FROM-REQUEST-BODY": {
     "epic": "",
@@ -42758,6 +42927,19 @@
     "tags": [],
     "title": "Wire Crafting Routes (Expose RecipesService via HTTP)",
     "type": "TASK"
+  },
+  "TASK-WIRE-CURRENT-MESSAGE-KEYWORDS-INTO-MEMORY-INJECTION-CONTEXT-": {
+    "hash": "f4f2bfd",
+    "git_issue": "f4f2bfd",
+    "extid": "TASK-WIRE-CURRENT-MESSAGE-KEYWORDS-INTO-MEMORY-INJECTION-CONTEXT-",
+    "type": "TASK",
+    "title": "Wire current-message keywords into memory injection context or remove dead relevance boost",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-current-message-keywords-into-memory-injection-context-.md",
+    "status": "Not Started"
   },
   "TASK-WIRE-ELYSIA-OPENAPI-MOUNT-TO-EMIT-GENERATED-SERVED-SPEC": {
     "epic": "epic-http-protocol-features",

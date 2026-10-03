@@ -358,3 +358,40 @@ Reply with ONLY JSON: { "emotion": "happy|sad|angry|fearful|surprised|disgusted|
 bun run check
 bun test src/aux-pipeline/
 ```
+
+## Application Surface Review (2026-10-03)
+
+Full-repo review of the classification capability (shared `callAux` runner, 10 AUX tasks, classifier-model cluster) applied across eight product surfaces. Findings filed as tickets under the `classifier` label; existing cluster tickets referenced, not duplicated.
+
+### Stale-fact corrections found during review
+
+- The **captioning role is live** (the M3 note above is stale): `resolveModelRole(ModelRole.Captioning)` at `src/generation/caption-route.ts`, mounted at `src/assets/controller.ts` and consumed by the `/caption` command.
+- **`VALID_ROLES` already contains `Classifier`** (`src/admin/model-roles.ts`) — the role is provisioned but has zero production callers; the `FEAT-classifier-model-support` scope is partially landed.
+- The **`gm-tool` AUX task is a dead end**: implemented and tested, no production consumer (`TASK-gm-tool-aux-task-has-no-production-consumer-wire-or-remove.md`).
+- **`touchMemory` has zero production callers** — injected memories never update `last_accessed_at`, so decay/purge misclassify active memories (`BUG-touchmemory-never-called-on-memory-injection-so-last-accesse.md`).
+- The memory relevance grader `isContextRelevant` is dead in the live path (`currentKeywords` passed empty); memory/rerank scores are computed but rank-only.
+
+### Domain map
+
+| Surface | Current mechanism | Classification applicability | Filings |
+| --- | --- | --- | --- |
+| Internal application flows | Regex/keyword routing (`workflow-routing.ts`, `regex/intent.ts`); intent AUX output only gates short-reply | Intent task output should drive workflow routing (pre-ticketed); transition fallback already classifier-shaped | `TASK-wire-intent-output-to-workflow-runner-startworkflow` (existing); `FEAT-classifier-role-fallback-policy-in-callaux.md` |
+| Application self-testing | Contract-stub unit tests only; no eval harness, no golden corpora | Fixture-driven prompt-eval harness, injection golden corpus, task-aware e2e mock | `FEAT-fixture-driven-prompt-eval-harness-for-aux-classification-ta.md`, `TASK-golden-corpus-and-scoring-ratchet-for-prompt-injection-signa.md`, `TASK-task-aware-mockllmprovider-for-classification-path-e2e-flows.md` |
+| LLM I/O review and validation | `safe-json` parsing, brace-slice verdict extraction, keyword+LLM injection check | Verdicts on the classifier role via zero-shot NLI encoders | `TASK-route-text-moderation-and-prompt-injection-verdicts-through-.md` |
+| Grading / censoring | 5-level NSFW taxonomy (LLM fallback, fail-closed), 2-bucket keyword moderation, masking-only profanity; audits carry no classifier evidence | Rubric-graded multishot ratings with confidence gating; classifier-evidence audit records (follow-ups to `epic-chat-lifecycle-moderation` M5, tracked there) | `FEAT-pre-dispatch-classification-seam-for-image-generation-prompt.md` extends the gate to image prompts |
+| Decision making (actors, assistant) | Weighted-random turn strategies, temporal cooldowns, prose-parsing GM decision, dead `gm-tool` task | Classifier-backed actor/beat selection; wire or remove `gm-tool` | `FEAT-classifier-backed-actor-and-beat-selection-for-turn-decision.md`, `TASK-gm-tool-aux-task-has-no-production-consumer-wire-or-remove.md` |
+| Memory injection relevance | Probabilistic injection + importance-sorted budget; rerank rank-only; relevance grader dead; `touchMemory` never called | Threshold rerank scores or a `memory-grade` AUX task before budget selection; truthful access tracking; relevance-aware decay | `BUG-touchmemory-never-called-on-memory-injection-so-last-accesse.md`, `TASK-wire-current-message-keywords-into-memory-injection-context-.md`, `FEAT-relevance-gated-memory-injection-with-classifier-or-reranker.md`, `TASK-relevance-aware-decay-and-purge-signals-in-memory-purge.md` |
+| Gallery / assets | Binary-header metadata only; tokenized tag propositions; `dedupe:false` at persist; no image analysis | Captioner-backed tag propositions; keep-vs-regenerate grading at persist | `TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta.md`, `TASK-keep-vs-regenerate-grading-and-dedup-verdict-at-image-persis.md` |
+| Main / multimodal LLM integration | Text classifiers all ride the auxiliary role; image path has zero pre/post classification; emotion labels keyword/LLM-text only | Classifier-role precedence in `callAux`; pre-dispatch image-prompt gate; emotion avatar labeling rides `TASK-AUX-LLM-EMOTION-CLASSIFIER` (existing, not duplicated) | `FEAT-classifier-role-fallback-policy-in-callaux.md`, `FEAT-pre-dispatch-classification-seam-for-image-generation-prompt.md` |
+
+### Adjacent ideas (not tied to one surface)
+
+- `IDEA-nli-grounding-classifier-behind-the-hallucination-guard.md` — NLI grounding behind `HallucinationCheckOpts`.
+- `IDEA-relevance-classified-proactive-messaging-triggers.md` — classify outreach-worthiness before proactive sends.
+
+### Research notes (external, qualitative)
+
+- Llama Guard-style taxonomy prompting validates the existing 5-level NSFW rating shape; judge-style grading carries position/scoring bias, favoring single-candidate rubric prompts over pairwise comparisons.
+- Rerank-threshold gating requires score calibration before thresholds are meaningful (MemReranker, arXiv 2605.06132); the existing rank-only rerank stage must be calibrated before `FEAT-relevance-gated-memory-injection-with-classifier-or-reranker.md` can gate on it.
+- Small (1–4B) self-hosted models are viable sub-second routers; encoder classifiers beat generative 0-shot on large label sets but need fine-tuning (Laya limits already recorded in `FEAT-classifier-model-support`).
+- Multimodal quality grading favors regressing a score alongside text over bare classification; apply to keep-vs-regenerate grading.

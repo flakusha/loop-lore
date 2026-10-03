@@ -3,7 +3,7 @@
 
 # TASK: Scheduled messages + reminders
 
-**Status:** Not Started
+**Status:** Done
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
@@ -35,3 +35,5 @@ scheduled delivery to gate. Common messenger expectation.
 ## Non-goals
 
 - Full cron UI (epic-cron-scheduler owns recurrence infra).
+
+**Resolved:** 2026-10-03 registry-driven close: git issue 2afc68e (registry tip: bb20277a7 Konstantin Fedotov Close issue)
