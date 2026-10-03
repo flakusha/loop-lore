@@ -69,6 +69,7 @@ export function toast(message: string, type = "info",): void {
  */
 export function parseQuestBanners(raw: string,): QuestBanner[] {
   const entries = jsonParseOr<{ quest_name?: string; questName?: string; progress?: number }[]>(raw, [],);
+  if (!Array.isArray(entries)) { return []; }
   const banners: QuestBanner[] = [];
   for (const entry of entries) {
     if (typeof entry.progress !== "number") { continue; }
@@ -77,7 +78,6 @@ export function parseQuestBanners(raw: string,): QuestBanner[] {
       progress: Math.round(entry.progress,),
     },);
   }
-
   return banners;
 }
 
@@ -121,6 +121,7 @@ interface QuestRewardShape {
  */
 export function questMilestones(quest: StoryQuest,): QuestMilestone[] {
   const parsed = jsonParseOr<{ progress?: number; narrative?: string }[]>(quest.narrative_hooks ?? "[]", [],);
+  if (!Array.isArray(parsed)) { return []; }
   const milestones: QuestMilestone[] = [];
   for (const entry of parsed) {
     if (typeof entry.progress === "number" && typeof entry.narrative === "string") {
@@ -136,10 +137,16 @@ export function questMilestones(quest: StoryQuest,): QuestMilestone[] {
  * @returns {string[]}
  */
 export function questRewardChips(quest: StoryQuest,): string[] {
+  // The `rewards` column stores whatever JSON the quest create/patch body
+  // carried (no shape validation server-side), so a scalar / array / null
+  // payload must degrade to "no chips" instead of throwing inside an Alpine
+  // `x-for` render, which would blank the whole GM quests tab.
   const rewards = jsonParseOr<QuestRewardShape>(quest.rewards ?? "{}", {},);
+  if (typeof rewards !== "object" || rewards === null) { return []; }
   const chips: string[] = [];
   if (typeof rewards.xp === "number" && rewards.xp > 0) { chips.push(`+${rewards.xp} XP`,); }
-  for (const item of rewards.items ?? []) {
+  for (const item of Array.isArray(rewards.items) ? rewards.items : []) {
+    if (typeof item?.itemId !== "string" || typeof item.quantity !== "number") { continue; }
     chips.push(`${item.itemId} \u00d7${item.quantity}`,);
   }
   return chips;
