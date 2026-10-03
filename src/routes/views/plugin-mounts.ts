@@ -14,7 +14,7 @@ import { getComponentsForMountPoint, } from "../../plugins/mount-points";
 import { registry, } from "../../plugins/registry";
 import type { UIComponentDefinition, } from "../../plugins/types";
 import { jsonStringifyOr, } from "../../utils";
-import { escapeHtml, } from "./layout";
+import { escapeHtml, } from "./escape-html";
 
 /** Match `{{plugin:location}}` mount directives. */
 const PLUGIN_MOUNT_RE = /\{\{plugin:([-\w.]+)\}\}/g;

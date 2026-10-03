@@ -11,6 +11,7 @@ import { detectLocale, } from "../../middleware/i18n";
 import { isFrontendTelemetryEnabled, } from "../../telemetry/service";
 import { jsonStringifyOr, } from "../../utils";
 import { COMPONENTS_DIR, I18N_TEMPLATE_RE, ICONS_DIR, VIEWS_DIR, } from "./constants";
+import { escapeHtml, } from "./escape-html";
 import { resolvePluginMounts, } from "./plugin-mounts";
 
 const viewCache = new Map<string, string>();
@@ -219,17 +220,6 @@ function htmlResponse(body: string,): Response {
   return new Response(body, {
     headers: { "Content-Type": "text/html; charset=utf-8", },
   },);
-}
-
-/**
- * @param str
- */
-function escapeHtml(str: string,): string {
-  return str
-    .replaceAll("&", "&amp;",)
-    .replaceAll("<", "&lt;",)
-    .replaceAll(">", "&gt;",)
-    .replaceAll('"', "&quot;",);
 }
 
 export { escapeHtml, htmlResponse, loadView, notFoundView, respond, };

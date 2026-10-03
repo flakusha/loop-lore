@@ -5,6 +5,7 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { registry, } from "../../plugins/registry";
 import { serveView, } from "./index";
+import { resolvePluginMounts, } from "./plugin-mounts";
 
 /**
  * @param view
@@ -70,5 +71,49 @@ describe("views — plugin mount points", () => {
     const html = await render("chat",);
     expect(html,).not.toContain("data-plugin-component=",);
     expect(html,).not.toContain("{{plugin:",);
+  });
+});
+
+describe("resolvePluginMounts", () => {
+  beforeAll(() => {
+    registry.register({
+      manifest: { name: "unit-plugin", version: "1.0", description: "", author: "test", },
+      origin: "core",
+      directory: "/tmp",
+    },);
+    registry.addUIComponents("unit-plugin", [
+      { type: "web", name: "h1", location: "chat.header", },
+      { type: "web", name: "s1", location: "chat.sidebar", props: { a: 1, }, },
+      { type: "web", name: "s2", location: "chat.sidebar", },
+      { type: "tui", name: "only-tui", location: "chat.composer", },
+    ],);
+  },);
+
+  afterAll(() => {
+    registry.unregisterAll();
+  },);
+
+  test("expands every directive and preserves registration order", () => {
+    const out = resolvePluginMounts("<i>{{plugin:chat.sidebar}}|{{plugin:chat.header}}</i>",);
+    const s1 = out.indexOf('data-plugin-component="s1"',);
+    const s2 = out.indexOf('data-plugin-component="s2"',);
+    const h1 = out.indexOf('data-plugin-component="h1"',);
+    expect(s1,).toBeGreaterThan(-1,);
+    expect(s2,).toBeGreaterThan(s1,);
+    expect(h1,).toBeGreaterThan(s2,);
+  });
+
+  test("a location with only tui components renders nothing", () => {
+    expect(resolvePluginMounts("A{{plugin:chat.composer}}B",),).toBe("AB",);
+  });
+
+  test("component without props omits data-plugin-props", () => {
+    const out = resolvePluginMounts("{{plugin:chat.header}}",);
+    expect(out,).toContain('data-plugin-component="h1"',);
+    expect(out,).not.toContain("data-plugin-props",);
+  });
+
+  test("unknown location renders nothing", () => {
+    expect(resolvePluginMounts("x{{plugin:nope.here}}y",),).toBe("xy",);
   });
 });
