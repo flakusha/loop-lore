@@ -79,9 +79,8 @@ async function parkParty(db: Kysely<DB>, partyId: string, currentTick: number, s
  * nominates as the party's replay guard, the same idea one column over from
  * discovery's `last_explored_tick`. A tick the scheduler replays after a
  * crash matches no row, so a replayed party neither moves a second time nor
- * is billed a second time. Charging and claiming both hang off the write, so
- * each is a consequence of the move rather than a bill for a move a replay
- * would undo.
+ * is billed a second time — the caller drops a replayed row before it charges,
+ * and this guard is the backstop for a concurrent writer.
  * @param db database handle
  * @param partyId the party to advance
  * @param step the walk to persist
@@ -153,7 +152,9 @@ export async function advancePartyTravel(
   const stamp = toSqlDate(ctx.nowMs,);
   const parties = await travelDb(db,)
     .selectFrom("travel_parties",)
-    .select(["id", "route", "route_index", "steps_per_tick", "travel_progress", "blocked_until_tick",],)
+    .select(
+      ["id", "route", "route_index", "steps_per_tick", "travel_progress", "blocked_until_tick", "current_tick",],
+    )
     .where("world_id", "=", worldId,)
     .where("status", "not in", PARKED,)
     .where("blocked_until_tick", "<=", currentTick,)
@@ -206,21 +207,28 @@ export async function advancePartyTravel(
       continue;
     }
 
+    // A replayed tick must not re-bill the world. `current_tick` is the latch
+    // `commitStep` writes, so a party that already advanced on this tick is
+    // dropped BEFORE the charge; the write's own guard stays as the backstop
+    // for a concurrent writer.
+    if (party.current_tick >= currentTick) { continue; }
+
     // A slow party carries less than a whole edge. That carry is real
     // distance covered, so it is persisted and charged — a speed of 0.5
     // that never accumulated would never move at all.
-    if (!(await commitStep(db, party.id, step, currentTick, stamp,))) {
-      // The write is the commit point: a party this tick cannot advance is a
-      // replay, and a replayed party must not re-claim the locations it
-      // already holds — nor re-bill the world for them.
-      continue;
-    }
-
-    for (const locationId of mine) { claims.add(locationId,); }
+    //
+    // Charge BEFORE the move. `chargeBudget` refuses rather than overspends
+    // and a false return means "no action happened": committing first let an
+    // exhausted world advance one party per tick for free, forever, so the
+    // ceiling never bound anything. `migrateNpc` has always charged first.
     if (!(await chargeBudget(db, worldId, currentTick, ACTION_COST, ctx.nowMs, ctx.ceiling,))) {
       result.budgetExhausted = true;
       break;
     }
+
+    if (!(await commitStep(db, party.id, step, currentTick, stamp,))) { continue; }
+
+    for (const locationId of mine) { claims.add(locationId,); }
     result.actions.push({ kind: "party_step", subjectId: party.id, tick: currentTick, cost: ACTION_COST, },);
   }
 

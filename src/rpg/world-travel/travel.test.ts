@@ -20,13 +20,13 @@
  * The replay latch (`current_tick < tick` on the party write) is asserted the
  * right way round at the bottom of this file.
  *
- * Charge ordering: `advancePartyTravel` writes the party's row BEFORE it
- * charges, so a refused charge reports `budgetExhausted` and drops the action
- * while the move has already landed. The budget cases assert what that
- * actually does rather than what a pre-charge ordering would do.
+ * Charge ordering: `advancePartyTravel` charges BEFORE it writes the party's
+ * row, matching `migrateNpc` and `chargeBudget`'s own contract that a refused
+ * charge means "no action happened". The budget cases pin that a party refused
+ * for money does not move — an exhausted ledger must still bound the world.
  *
- * Observed against a live DB, asserted as CURRENT behaviour, and left alone —
- * the ticket that fixes it flips these assertions.
+ * A replayed tick is dropped before the charge (the `current_tick` latch), so
+ * the same tick twice bills once.
  *
  * Replay harness trap: `world_travel_budget` is a per-world ledger whose
  * window rolls by tick count, and a refused charge sets `budgetExhausted`
@@ -539,13 +539,10 @@ describe("advancePartyTravel — the budget ledger", () => {
 
     const result = await advancePartyTravel(db, WORLD_ID, 2, travelContext(),);
     expect(result.budgetExhausted,).toBe(true,);
-    // Charging happens AFTER the move — the charge is a consequence of the
-    // step, not a toll paid before it. So a refused charge reports the
-    // exhaustion and drops the action, but the party's row has already been
-    // written. Asserted as observed, not as designed: see the header note on
-    // charge ordering.
+    // A refused charge means the party did not move: `chargeBudget` refuses
+    // rather than overspends, so the ceiling still bounds the world.
     expect(result.actions,).toEqual([],);
-    expect((await readParty(PARTY_ONE,)).route_index,).toBe(2,);
+    expect((await readParty(PARTY_ONE,)).route_index,).toBe(1,);
 
     const ledger = await travelDb(db,)
       .selectFrom("world_travel_budget",)
@@ -563,12 +560,12 @@ describe("advancePartyTravel — the budget ledger", () => {
     // this test would pass without proving anything about the window.
     await seedParty(PARTY_ONE, { route: JSON.stringify([LOC_A, LOC_B, LOC_C, LOC_A,],), },);
 
-    // Tick 1 is still the same window: spent 1 of 1, nothing left. The party
-    // moves and the charge is refused, so the row advances without a bill.
+    // Tick 1 is still the same window: spent 1 of 1, nothing left. The charge
+    // is refused, so the party holds its ground until the window rolls.
     const blocked = await advancePartyTravel(db, WORLD_ID, 1, travelContext(),);
     expect(blocked.budgetExhausted,).toBe(true,);
     expect(blocked.actions,).toEqual([],);
-    expect((await readParty(PARTY_ONE,)).route_index,).toBe(1,);
+    expect((await readParty(PARTY_ONE,)).route_index,).toBe(0,);
     const afterRefusal = await readLedger();
     expect(afterRefusal?.spent,).toBe(1,);
 
@@ -577,7 +574,8 @@ describe("advancePartyTravel — the budget ledger", () => {
     const fresh = await advancePartyTravel(db, WORLD_ID, 11, travelContext(),);
     expect(fresh.budgetExhausted,).toBe(false,);
     expect(fresh.actions.map((a,) => a.subjectId),).toEqual([PARTY_ONE,],);
-    expect((await readParty(PARTY_ONE,)).route_index,).toBe(2,);
+    // One billed step, not two: the refused tick 1 left the party where it was.
+    expect((await readParty(PARTY_ONE,)).route_index,).toBe(1,);
     expect(await readLedger(),).toEqual({ spent: ACTION_COST, window_start_tick: 11, },);
   });
 
@@ -586,12 +584,36 @@ describe("advancePartyTravel — the budget ledger", () => {
     await seedParty(PARTY_ONE,);
 
     // No ledger row yet: the first charge opens the window, and 0.01 units
-    // cannot pay a 0.05 action. The move still lands — the charge is refused
-    // after the write, not before it.
+    // cannot pay a 0.05 action, so nothing moves and no ledger row is opened.
     const result = await advancePartyTravel(db, WORLD_ID, 1, travelContext(undefined, 0.01,),);
     expect(result.budgetExhausted,).toBe(true,);
     expect(result.actions,).toEqual([],);
-    expect((await readParty(PARTY_ONE,)).route_index,).toBe(1,);
+    expect((await readParty(PARTY_ONE,)).route_index,).toBe(0,);
+    expect((await readParty(PARTY_ONE,)).current_location_id,).toBe(LOC_A,);
+  });
+
+  test("an exhausted ceiling never lets a party advance for free, tick after tick", async () => {
+    await makeWorld();
+    // Four stops so the party is never `settled` — a settled party is skipped
+    // before the charge and would pass this test for the wrong reason.
+    await seedParty(PARTY_ONE, { route: JSON.stringify([LOC_A, LOC_B, LOC_C, LOC_A,],), });
+    await insertWorldTravelBudget(db, {
+      world_id: WORLD_ID,
+      spent: 1,
+      ceiling: 1,
+      window_start_tick: 1,
+    },);
+
+    // Five ticks inside the same window. Under commit-then-charge every one
+    // of these moved the party and billed nothing, so an exhausted world
+    // walked its routes for free, unbounded.
+    for (let tick = 1; tick <= 5; tick += 1) {
+      const result = await advancePartyTravel(db, WORLD_ID, tick, travelContext(),);
+      expect(result.budgetExhausted,).toBe(true,);
+      expect(result.actions,).toEqual([],);
+      expect((await readParty(PARTY_ONE,)).route_index,).toBe(0,);
+    }
+    expect(await readLedger(),).toEqual({ spent: 1, window_start_tick: 1, },);
   });
 });
 
