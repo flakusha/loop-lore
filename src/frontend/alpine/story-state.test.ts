@@ -84,6 +84,24 @@ describeOrSkip("storyState", () => {
       expect(s.questRewardChips(quest,),).toEqual(["+100 XP", "gem ×2",],);
       expect(s.questRewardChips({ progress: 0, } as never,),).toEqual([],);
     });
+
+    test("quest derivations degrade on non-array rewards/hooks payloads", () => {
+      const s = makeState();
+      // quests.rewards / quests.narrative_hooks / story_turns.quest_progress
+      // store whatever JSON the quest create/patch body (or the LLM quest
+      // extractor) carried — no server-side shape validation — so a scalar /
+      // array / null / unparseable column must yield no rows instead of
+      // throwing inside the panel's x-for render.
+      for (const raw of ["{}", "[]", "null", "\"nope\"", "5", "{{{",]) {
+        expect(s.questMilestones({ progress: 0, narrative_hooks: raw, } as never,),).toEqual([],);
+        expect(s.questRewardChips({ progress: 0, rewards: raw, } as never,),).toEqual([],);
+        expect(s._parseQuestBanners(raw,),).toEqual([],);
+      }
+      const badItems = "{\"items\":{}}";
+      expect(s.questRewardChips({ progress: 0, rewards: badItems, } as never,),).toEqual([],);
+      const partialItem = "{\"items\":[{\"itemId\":1}]}";
+      expect(s.questRewardChips({ progress: 0, rewards: partialItem, } as never,),).toEqual([],);
+    });
     test("turnForMessage looks up by parent message id, null when absent", () => {
       const s = makeState();
       s.turnMeta["msg-1"] = { turnNumber: 3, qualityScore: 88, promptSent: "go", status: "completed", };
