@@ -40647,6 +40647,22 @@
     "title": "SQLite Backup Mechanisms Research",
     "type": "TASK"
   },
+  "TASK-SQUASH-DEFAULT-FOR-PLAN-ONLY-FINALIZES-AND-TICKET-SCOPE-ORCH": {
+    "hash": "e325a4e",
+    "git_issue": "e325a4e",
+    "extid": "TASK-SQUASH-DEFAULT-FOR-PLAN-ONLY-FINALIZES-AND-TICKET-SCOPE-ORCH",
+    "type": "TASK",
+    "title": "squash default for plan-only finalizes and ticket-scope orchestration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "finalize",
+      "orchestration"
+    ],
+    "source": ".plan/tickets/TASK-squash-default-for-plan-only-finalizes-and-ticket-scope-orch.md",
+    "status": "Not Started"
+  },
   "TASK-SRC-RPG-MODULE-ROOT-BARREL-AND-ORGANIZATION-NITS": {
     "epic": "",
     "extid": "TASK-SRC-RPG-MODULE-ROOT-BARREL-AND-ORGANIZATION-NITS",
