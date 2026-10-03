@@ -8,7 +8,7 @@ import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, } from "../test-utils/insert-helpers";
-import { applyDecay, purgeStaleMemories, touchMemory, } from "./purge";
+import { applyDecay, purgeStaleMemories, touchMemories, touchMemory, } from "./purge";
 
 /**
  * @param db
@@ -238,6 +238,59 @@ describe("touchMemory", () => {
 
     // 0.3 + 0.1 + 0.1 = 0.5
     expect(updated?.strength,).toBeCloseTo(0.5, 5,);
+  });
+});
+
+describe("touchMemories", () => {
+  let db: Kysely<DB>;
+  let sqlite: { close(): void };
+
+  beforeEach(async () => {
+    createLogger({ level: "error", },);
+    const ctx = await createTestDb();
+    db = ctx.db;
+    sqlite = ctx.sqlite;
+    await insertActors(db, "Test Actor", { id: "actor-1", } as never,);
+  },);
+
+  afterEach(() => {
+    sqlite.close();
+  },);
+
+  it("updates last_accessed_at and boosts strength for every id", async () => {
+    await seedMemory(db, { id: "mem-1", strength: 0.3, decay_rate: 0.1, last_accessed_at: null, },);
+    await seedMemory(db, { id: "mem-2", strength: 0.4, decay_rate: 0.1, last_accessed_at: null, },);
+    await seedMemory(db, { id: "mem-3", strength: 0.5, decay_rate: 0.1, last_accessed_at: null, },);
+
+    await touchMemories(db, ["mem-1", "mem-3",],);
+
+    const rows = await db
+      .selectFrom("actor_memories",)
+      .select(["id", "last_accessed_at", "strength",],)
+      .execute();
+    const byId = new Map(rows.map((r,) => [r.id, r,]),);
+
+    expect(byId.get("mem-1",)?.last_accessed_at,).not.toBeNull();
+    expect(byId.get("mem-1",)?.strength,).toBeCloseTo(0.4, 5,);
+    expect(byId.get("mem-3",)?.last_accessed_at,).not.toBeNull();
+    expect(byId.get("mem-3",)?.strength,).toBeCloseTo(0.6, 5,);
+    // Not-touched rows are untouched — decay/purge must not misclassify them.
+    expect(byId.get("mem-2",)?.last_accessed_at,).toBeNull();
+    expect(byId.get("mem-2",)?.strength,).toBeCloseTo(0.4, 5,);
+  });
+
+  it("is a no-op for an empty id list", async () => {
+    await seedMemory(db, { id: "mem-1", strength: 0.3, decay_rate: 0.1, last_accessed_at: null, },);
+
+    await touchMemories(db, [],);
+
+    const row = await db
+      .selectFrom("actor_memories",)
+      .select(["last_accessed_at", "strength",],)
+      .where("id", "=", "mem-1",)
+      .executeTakeFirst();
+    expect(row?.last_accessed_at,).toBeNull();
+    expect(row?.strength,).toBeCloseTo(0.3, 5,);
   });
 });
 
