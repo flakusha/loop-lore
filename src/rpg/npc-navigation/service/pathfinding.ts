@@ -27,6 +27,12 @@ export async function getLocationConnections(db: Kysely<DB>, locationId: string,
     .where("world_id", "=", location.world_id,)
     .where("location_id", "!=", locationId,)
     .select("location_id",)
+    // Deterministic order: the wander/flee leaves index into this array
+    // with the seeded tick rng, so an unordered read makes a seeded tick
+    // replay differently depending on which index SQLite picks
+    // (idx_location_states_world can be scanned instead of the table).
+    // It also pins the limit(5) window to the 5 lowest ids.
+    .orderBy("location_id",)
     .limit(5,) // Limit to nearby locations
     .execute();
 
@@ -34,6 +40,5 @@ export async function getLocationConnections(db: Kysely<DB>, locationId: string,
   for (const l of nearbyLocations) {
     if (l.location_id) { connections.push(l.location_id,); }
   }
-
   return connections;
 }
