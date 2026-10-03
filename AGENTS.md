@@ -182,7 +182,7 @@ src/
 ├── turning/             # Turn orchestration
 ├── chat/                # Chat service layer (context window, transitions, moderation)
 ├── crypto/              # Encryption
-├── eslint-rules/        # Custom ESLint rules (param-limit)
+├── eslint-rules/        # Custom ESLint rules (options-object-params)
 ├── frontend/            # Bundled htmx + Alpine.js
 ├── views/               # htmx templates (server-rendered)
 ├── public/              # Static assets served at / (CSS, locales)
