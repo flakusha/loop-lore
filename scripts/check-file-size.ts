@@ -81,6 +81,20 @@ export function exceedsSizeAllow(text: string, limit: number,): boolean {
   return countContentLines(text,) > limit;
 }
 
+/**
+ * Effective line budget for a file: its `// size-allow: N` header directive
+ * when present, else `limit`. There is no cap on N — a cohesive file declares
+ * the budget it needs, and the gate only enforces that the file fits it.
+ *
+ * @param text - full file contents
+ * @param limit - default budget when the file declares none
+ * @returns the budget to compare against
+ */
+export function sizeAllowFor(text: string, limit: number,): number {
+  const allowMatch = text.slice(0, HEADER_BYTES,).match(SIZE_ALLOW_RE,);
+  return allowMatch ? parseInt(allowMatch[1], 10,) : limit;
+}
+
 // CLI guard: only scan when executed directly, so the helpers above stay
 // importable by check-file-size.test.ts.
 if (import.meta.main) {
@@ -94,8 +108,7 @@ if (import.meta.main) {
       ) { continue; }
       const text = await Bun.file(file,).text();
       if (text.includes(GENERATED_MARKER,)) { continue; }
-      const allowMatch = text.slice(0, HEADER_BYTES,).match(SIZE_ALLOW_RE,);
-      const fileLimit = allowMatch ? parseInt(allowMatch[1], 10,) : LIMIT;
+      const fileLimit = sizeAllowFor(text, LIMIT,);
       if (exceedsSizeAllow(text, fileLimit,)) {
         const msg = `[size] ${file}: ${countContentLines(text,)}L exceeds ${fileLimit}L limit`;
         if (STRICT) {
