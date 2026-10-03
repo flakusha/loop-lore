@@ -33,8 +33,6 @@ export interface StoryQuest {
   rewards?: string;
   /** Narrative-hook milestone JSON (`{ progress, narrative }[]`) string. */
   narrative_hooks?: string;
-  description?: string | null;
-  completed_at?: string | null;
 }
 
 /** A narrative-hook milestone parsed from a quest's `narrative_hooks`. */
