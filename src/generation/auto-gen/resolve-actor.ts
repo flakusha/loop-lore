@@ -11,6 +11,7 @@
  */
 import type { Kysely, } from "kysely";
 import { isMuted, } from "../../chat/moderation";
+import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { selectNextGroupActor, } from "../../group-chat/turn-selector";
 import { getLogger, } from "../../logger";
@@ -23,6 +24,8 @@ export interface ResolveActorOpts {
   cascadeActorId?: string;
   /** User's message text — used for group-chat turn selection. */
   userMessage?: string;
+  /** Application config — enables the classifier turn-selection path. */
+  config?: Config;
   chatId: string;
   userId: string;
 }
@@ -68,7 +71,13 @@ export async function resolveActor(
       const cascadeName = await actorName(database, cascadeActorId,);
       return { characterId: cascadeActorId, characterName: cascadeName ?? "Unknown", };
     }
-    const selectedId = await selectNextGroupActor({ db: database, chatId, userMessage, },);
+    const selectedId = await selectNextGroupActor({
+      db: database,
+      chatId,
+      userMessage,
+      config: opts.config,
+      userId: opts.userId,
+    },);
     if (!selectedId) { return null; }
     const selectedName = await actorName(database, selectedId,);
     if (!selectedName) { return null; }

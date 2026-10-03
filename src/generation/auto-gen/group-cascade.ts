@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 265
 
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
@@ -35,26 +36,44 @@ export interface GroupCascadeOpts {
 
 /**
  * Pick the next actor in the cascade: @mentions win, else auto-advance.
- * @param aiParticipants Eligible AI participants.
- * @param aiContent Most recent AI message content.
- * @param previousActorId Actor that just generated the message.
- * @param autoAdvance Whether auto-advance mode is on.
- * @param database Active Kysely database.
- * @param chatId Chat id.
- * @param depth Current cascade depth.
- * @param log Logger instance.
+ * @param opts - {@link ResolveNextCascadeActorOpts}
  * @returns Chosen actor id, or null when no eligible actor is found.
  */
+interface ResolveNextCascadeActorOpts {
+  /** Eligible AI participants. */
+  aiParticipants: { actor_id: string; actor_type: string; display_name: string }[];
+  /** Most recent AI message content. */
+  aiContent: string;
+  /** Actor that just generated the message. */
+  previousActorId: string;
+  /** Whether auto-advance mode is on. */
+  autoAdvance: boolean;
+  /** Active Kysely database. */
+  database: Kysely<DB>;
+  /** Chat id. */
+  chatId: string;
+  /** Current cascade depth. */
+  depth: number;
+  /** Logger instance. */
+  log: Logger;
+  /** App config — enables the classifier selection path. */
+  config?: Config;
+  /** Acting user id — BYO apiKey resolution for the classifier call. */
+  userId?: string;
+}
 async function resolveNextCascadeActor(
-  aiParticipants: { actor_id: string; actor_type: string; display_name: string }[],
-  aiContent: string,
-  previousActorId: string,
-  autoAdvance: boolean,
-  database: Kysely<DB>,
-  chatId: string,
-  depth: number,
-  log: Logger,
+  opts: ResolveNextCascadeActorOpts,
 ): Promise<string | null> {
+  const {
+    aiParticipants,
+    aiContent,
+    previousActorId,
+    autoAdvance,
+    database,
+    chatId,
+    depth,
+    log,
+  } = opts;
   // Check for @mentions in the AI response (excluding the actor who just spoke)
   const mentionedIds = extractMentionedActorIds(
     aiContent,
@@ -72,6 +91,8 @@ async function resolveNextCascadeActor(
       db: database,
       chatId,
       userMessage: undefined, // No user message — let strategy decide
+      config: opts.config,
+      userId: opts.userId,
     },);
     if (next === previousActorId) {
       const others: (typeof aiParticipants)[number][] = [];
@@ -164,7 +185,7 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
     return;
   }
 
-  const nextActorId = await resolveNextCascadeActor(
+  const nextActorId = await resolveNextCascadeActor({
     aiParticipants,
     aiContent,
     previousActorId,
@@ -173,7 +194,9 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
     chatId,
     depth,
     log,
-  );
+    config,
+    userId,
+  },);
   if (!nextActorId) { return; }
 
   // Find the last message ID to use as parent for the next generation

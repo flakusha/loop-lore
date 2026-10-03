@@ -21,5 +21,14 @@ export {
   STRATEGY_MAP,
 } from "./turn-strategies";
 
+// ── Classifier Selection ─────────────────────────────────
+export type { ClassifierCandidate, TurnBeatType, TurnClassifierPick, } from "./classifier-selection";
+export {
+  parseTurnSelection,
+  resolveTurnClassifierPick,
+  TURN_BEAT_TYPES,
+  TURN_SELECTION_PROMPT,
+} from "./classifier-selection";
+
 // ── Turn Manager ─────────────────────────────────────────
 export { TurnManager, type TurnManagerOptions, } from "./turn-manager";
