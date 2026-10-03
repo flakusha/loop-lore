@@ -110,6 +110,30 @@ describe("actorMemoriesRoutes", () => {
     expect(JSON.parse(row.keywords as string,),).toEqual(["moonstone", "rite",],);
   });
 
+  test("POST keywords persists on the create path too", async () => {
+    const res = await makeApp(db, "user1",).handle(
+      new Request("http://localhost/api/actors/user1/memories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          content: "Journal entry created with keyphrases",
+          keywords: ["moonstone", "lantern",],
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+
+    // `fieldMappings` + `jsonFields` already carry `keywords`, so only the
+    // create-body schema was missing the field — without it Elysia strips the
+    // array and the entry is born with no triggers while PUT keeps them.
+    const row = await db
+      .selectFrom("actor_memories",)
+      .select("keywords",)
+      .where("content", "=", "Journal entry created with keyphrases",)
+      .executeTakeFirstOrThrow();
+    expect(JSON.parse(row.keywords as string,),).toEqual(["moonstone", "lantern",],);
+  });
+
   test("PUT keywords rejects an over-cap array at the trust boundary", async () => {
     const createRes = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/user1/memories", {
