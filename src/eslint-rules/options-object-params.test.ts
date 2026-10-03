@@ -28,7 +28,7 @@ const config: Linter.Config = {
 // rejected -- i.e. a test that passes without the logic ever running.
 function violations(code: string,): number {
   return linter.verify(code, config,)
-    .filter((message) => message.ruleId === "local/options-object-params")
+    .filter((message,) => message.ruleId === "local/options-object-params")
     .length;
 }
 

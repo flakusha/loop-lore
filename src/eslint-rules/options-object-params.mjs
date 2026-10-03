@@ -46,7 +46,8 @@ export const optionsObjectParamsRule = {
      * @param {import("eslint").Rule.Node} node
      */
     function checkFunction(node,) {
-      const fn = /** @type {{ body: unknown; params: { type: string; name?: string; left?: { type: string } }[] }} */ (node);
+      const fn =
+        /** @type {{ body: unknown; params: { type: string; name?: string; left?: { type: string } }[] }} */ (node);
       // Skip signatures without a body (overloads, `declare`, abstract
       // members): there is no implementation to refactor.
       if (!fn.body) { return; }
