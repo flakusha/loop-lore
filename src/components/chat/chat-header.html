@@ -234,6 +234,58 @@
         </div>
       </div>
     </div>
+    <!-- Conversation branches dropdown (FEAT-047): quick switch between forks -->
+    <div
+      class="side-channels-wrap"
+      x-show="$store.ui.hasActiveChat"
+      x-init="(() => { if ($store.chat?.currentChat?.id) window.loadBranches?.(); $watch('$store.chat?.currentChat?.id', (id) => { if (id) window.loadBranches?.(); }); })()"
+      data-testid="branch-menu-wrap"
+    >
+      <button
+        class="btn-icon"
+        x-bind:title="t('branches.title')"
+        x-bind:aria-label="t('branches.title')"
+        @click="window.toggleBranches()"
+        data-testid="branch-menu-toggle"
+      >
+        &#11010;
+      </button>
+      <div
+        class="side-channels-dropdown-menu"
+        x-show="$store.ui.showBranchMenu"
+        x-cloak
+        @click.outside="$store.ui.showBranchMenu = false"
+        data-testid="branch-menu"
+      >
+        <div class="side-channels-header">
+          <span>{{{t("branches.title")}}}</span>
+        </div>
+        <template x-for="b in $store.ui.branches" :key="b.id">
+          <div
+            class="side-channel-row"
+            @click="window.switchBranch(b.id)"
+            :class="{ 'is-active': b.isActive }"
+            :title="t('branches.messages') + ': ' + b.messageCount"
+            data-testid="branch-row"
+          >
+            <span class="side-channel-name" x-text="b.name"></span>
+            <span class="branch-count" x-text="b.messageCount"></span>
+          </div>
+        </template>
+        <div class="side-channel-empty" x-show="$store.ui.branches.length === 0" data-testid="branch-empty">
+          {{{t("branches.none")}}}
+        </div>
+        <div class="side-channel-create">
+          <button
+            class="btn btn-sm btn-ghost"
+            @click="$store.ui.showBranchMenu = false; window.dispatchEvent(new CustomEvent('open-branches-panel'))"
+            data-testid="branch-manage-open"
+          >
+            {{{t("branches.manage")}}}
+          </button>
+        </div>
+      </div>
+    </div>
     <!--
       Transition-mode picker (location-transition AC6): choose a
       destination + how to get there (in-place / new chat / isolate).
@@ -517,4 +569,7 @@
       </div>
     </div>
   </div>
+
+  <!-- Conversation branch manager sidebar + merge confirmation (FEAT-047) -->
+  {{> chat/branch-list-panel.html }}
 </header>

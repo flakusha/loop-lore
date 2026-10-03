@@ -1,0 +1,140 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Conversation branch manager (FEAT-047): sidebar list of every branch in
+  the active chat plus the merge confirmation modal. Mounted from
+  chat-header.html so it survives every layout (the message list is hidden
+  in visual-novel mode) and reads only `$store.ui` + window helpers — never
+  chatState scope.
+-->
+<div
+  x-data="{ open: false, mergeFor: null, mergeTarget: '', deleteFor: null }"
+  @open-branches-panel.window="open = true; window.loadBranches?.()"
+  data-testid="branch-panel"
+>
+  <div class="panel-backdrop" x-show="open" @click="open = false" x-cloak></div>
+  <aside class="right-panel" :style="{ display: open ? 'flex' : 'none' }" x-cloak data-testid="branch-list-panel">
+    <button class="btn-icon" @click="open = false" x-bind:title="t('common.close')">&times;</button>
+    <div class="panel-content">
+      <div class="nav-section-title">{{{t("branches.title")}}}</div>
+      <div class="side-channel-empty" x-show="$store.ui.branches.length === 0" data-testid="branch-panel-empty">
+        {{{t("branches.none")}}}
+      </div>
+      <template x-for="b in $store.ui.branches" :key="b.id">
+        <div class="panel-item" :class="{ 'is-active': b.isActive }" data-testid="branch-panel-row">
+          <div style="display: grid; gap: 1px; overflow: hidden">
+            <span style="font-weight: 600; font-size: 13px" x-text="b.name"></span>
+            <span style="font-size: 11px; color: var(--text-secondary)" data-testid="branch-panel-forkpoint">
+              <span x-text="t('branches.forkPoint')"></span>
+              <span x-text="' ' + (b.parentMessageId ?? '').slice(0, 8)"></span>
+            </span>
+            <span style="font-size: 11px; color: var(--text-secondary)" data-testid="branch-panel-meta">
+              <span x-text="t('branches.messages') + ': ' + b.messageCount"></span>
+              <span x-show="b.lastActivity" x-text="' · ' + String(b.lastActivity).slice(0, 10)"></span>
+            </span>
+          </div>
+          <div style="display: flex; gap: var(--space-1); align-items: center">
+            <button
+              class="btn-icon btn-xs"
+              x-show="!b.isActive"
+              x-bind:title="t('branches.switch')"
+              @click="window.switchBranch(b.id)"
+              data-testid="branch-panel-switch"
+            >
+              &#8646;
+            </button>
+            <button
+              class="btn-icon btn-xs"
+              x-show="!b.isActive"
+              x-bind:title="t('branches.merge')"
+              @click="mergeTarget = ($store.ui.branches.find((x) => x.isActive) ?? {}).name ?? ''; mergeFor = b.id"
+              data-testid="branch-panel-merge"
+            >
+              &#8617;
+            </button>
+            <button
+              class="btn-icon btn-xs"
+              x-show="!b.isActive"
+              x-bind:title="t('branches.delete')"
+              @click="deleteFor = b.id"
+              data-testid="branch-panel-delete"
+            >
+              &#128465;
+            </button>
+            <span class="branch-active-flag" x-show="b.isActive" data-testid="branch-panel-active">
+              {{{t("branches.active")}}}
+            </span>
+          </div>
+        </div>
+      </template>
+    </div>
+  </aside>
+
+  <!-- Merge confirmation: preview of what lands in the target branch -->
+  <div
+    class="modal-overlay"
+    x-show="mergeFor !== null"
+    @click.self="mergeFor = null"
+    @keydown.escape.window="mergeFor = null"
+    x-cloak
+    data-testid="branch-merge-modal"
+  >
+    <div class="modal-panel" role="dialog" aria-modal="true" :aria-label="t('branches.mergeConfirm')">
+      <div class="modal-header">
+        <h3 x-text="t('branches.mergeConfirm')"></h3>
+        <button class="btn-icon btn-xs" @click="mergeFor = null" x-bind:aria-label="t('common.close')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-hint" x-text="t('branches.mergeHint')"></p>
+        <template x-for="b in $store.ui.branches.filter((x) => x.id === mergeFor)" :key="b.id">
+          <div class="branch-merge-preview" data-testid="branch-merge-preview">
+            <div x-text="t('branches.mergeInto') + ': ' + mergeTarget"></div>
+            <div x-text="t('branches.messages') + ': ' + b.messageCount"></div>
+            <div x-text="t('branches.forkPoint') + ': ' + (b.parentMessageId ?? '').slice(0, 8)"></div>
+          </div>
+        </template>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost btn-sm" @click="mergeFor = null">{{{t("common.cancel")}}}</button>
+        <button
+          class="btn btn-primary btn-sm"
+          @click="window.mergeBranch(mergeFor); mergeFor = null"
+          data-testid="branch-merge-confirm"
+        >
+          {{{t("branches.merge")}}}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirmation: dropping a branch drops its messages for good -->
+  <div
+    class="modal-overlay"
+    x-show="deleteFor !== null"
+    @click.self="deleteFor = null"
+    @keydown.escape.window="deleteFor = null"
+    x-cloak
+    data-testid="branch-delete-modal"
+  >
+    <div class="modal-panel" role="dialog" aria-modal="true" :aria-label="t('branches.delete')">
+      <div class="modal-header">
+        <h3 x-text="t('branches.delete')"></h3>
+        <button class="btn-icon btn-xs" @click="deleteFor = null" x-bind:aria-label="t('common.close')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-hint" x-text="t('branches.deletePrompt')"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost btn-sm" @click="deleteFor = null">{{{t("common.cancel")}}}</button>
+        <button
+          class="btn btn-danger btn-sm"
+          @click="window.deleteBranch(deleteFor); deleteFor = null"
+          data-testid="branch-delete-confirm"
+        >
+          {{{t("branches.delete")}}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
