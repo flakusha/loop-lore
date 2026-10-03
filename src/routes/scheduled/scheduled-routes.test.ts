@@ -12,7 +12,13 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertActors, insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertChats,
+  insertMessages,
+  insertScheduledMessages,
+  insertUsers,
+} from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { scheduledRoutes, } from "./index";
 
@@ -167,6 +173,40 @@ describe("scheduledRoutes", () => {
       .where("id", "=", id,)
       .executeTakeFirst();
     expect(row?.status,).toBe("canceled",);
+  });
+
+  test("a parked row in another chat is a 404 and stays pending", async () => {
+    // Cross-chat IDOR: ownerId authors a parked row in chat B while
+    // belonging only to chat A. DELETE /chats/A/scheduled/<row in B> must
+    // not find — let alone cancel — the row. ownerId authors the row on
+    // purpose: the author check alone would pass, so only the chat binding
+    // can deny this. The DB assertion matters as much as the status, since a
+    // 404 with the row already canceled would be just as broken.
+    const chatBId = uid();
+    await insertChats(db, "Foreign Chat", strangerId, { id: chatBId as never, },);
+    const foreignRowId = await insertScheduledMessages(
+      db,
+      chatBId,
+      ownerId,
+      "mine, but in a chat you cannot reach",
+      isoIn(30,),
+    );
+
+    // Chat A is the shared describe's chat, which ownerId created and can
+    // therefore access; the row lives in chat B, which ownerId is not in.
+    const res = await makeApp(db, ownerId,).handle(
+      new Request(`http://localhost/api/chats/${chatId}/scheduled/${foreignRowId}`, {
+        method: "DELETE",
+      },),
+    );
+    expect(res.status,).toBe(404,);
+
+    const row = await db
+      .selectFrom("scheduled_messages",)
+      .select("status",)
+      .where("id", "=", foreignRowId,)
+      .executeTakeFirst();
+    expect(row?.status,).toBe("pending",);
   });
 
   test("an empty body is a 400 and parks nothing", async () => {
