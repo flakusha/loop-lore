@@ -3292,6 +3292,19 @@
     "source": ".plan/tickets/BUG-giwt-abort-runs-unscoped-git-reset-hard-that-destroys-unrela.md",
     "status": "duplicate-of giwt/.plan/tickets/BUG-abort-hard-resets-dev-when-a-stash-pop-conflicts-destroying-.md"
   },
+  "BUG-GIWT-AUTO-CLOSE-ASSERTS-A-TICKET-IS-DONE-WHEN-NO-MD-MARKER-E": {
+    "hash": "082bb92",
+    "git_issue": "082bb92",
+    "extid": "BUG-GIWT-AUTO-CLOSE-ASSERTS-A-TICKET-IS-DONE-WHEN-NO-MD-MARKER-E",
+    "type": "BUG",
+    "title": "giwt auto-close asserts a ticket is done when no .md marker exists and the work is unmerged",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-giwt-auto-close-asserts-a-ticket-is-done-when-no-md-marker-e.md",
+    "status": "Not Started"
+  },
   "BUG-GIWT-PLAN-GATES-REPORT-112-PHANTOM-ACTIONABLE-ISSUES-WHEN-TH": {
     "epic": "",
     "extid": "BUG-GIWT-PLAN-GATES-REPORT-112-PHANTOM-ACTIONABLE-ISSUES-WHEN-TH",
