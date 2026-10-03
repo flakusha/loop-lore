@@ -244,7 +244,10 @@ async function distributeRewards(
         },);
       } catch (error) {
         if (!(error instanceof DuplicateItemDefinitionError)) { throw error; }
-        getLogger().child({ module: "quest-engine", },).warn("reward item already defined", { worldId, name: item.itemId, },);
+        getLogger().child({ module: "quest-engine", },).warn("reward item already defined", {
+          worldId,
+          name: item.itemId,
+        },);
       }
     }
   }

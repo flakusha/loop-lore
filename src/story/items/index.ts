@@ -42,10 +42,10 @@ import type {
   TransferResult,
 } from "./types";
 
+export { ITEM_POWER_BUDGETS, ItemPowerBudgetError, powerBudgetFor, validateItemPower, } from "./balance";
+export type { ItemPowerBudget, ItemPowerResult, } from "./balance";
 export { InvalidItemEffectsError, } from "./effects";
 export type { ItemEffect, } from "./effects";
-export { ItemPowerBudgetError, ITEM_POWER_BUDGETS, powerBudgetFor, validateItemPower, } from "./balance";
-export type { ItemPowerBudget, ItemPowerResult, } from "./balance";
 export { DuplicateItemDefinitionError, ItemWorldMismatchError, UniqueItemAlreadyExistsError, } from "./types";
 
 export type {
