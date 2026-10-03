@@ -20,6 +20,7 @@ function parseGateFlag(flag,) {
   const idx = process.argv.indexOf(flag,);
   if (idx === -1 || idx + 1 >= process.argv.length) { return null; }
   const raw = process.argv[idx + 1];
+}
 ```
 
 `indexOf("--gates")` never matches the single argv element `"--gates=nonexistent-gate-xyz"`, so the filter is `null` and no whitelist is applied.
