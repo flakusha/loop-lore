@@ -30,23 +30,23 @@ const scripts: Record<string, string> = JSON.parse(
  * filter (bare `bun test` discovers every `*.test.ts` under `tests/e2e/`) or
  * when it is one of the browser entry points.
  */
-function reachesE2e(leg: string): boolean {
-  if (/\bbun run test:e2e\b/.test(leg,)) return true;
-  if (/run-browser-tests\.ts/.test(leg,)) return true;
+function reachesE2e(leg: string,): boolean {
+  if (/\bbun run test:e2e\b/.test(leg,)) { return true; }
+  if (/run-browser-tests\.ts/.test(leg,)) { return true; }
   const invocation = leg.match(/\bbun test\b(.*)$/,)?.[1]?.trim() ?? null;
-  if (invocation === null) return false;
+  if (invocation === null) { return false; }
   return invocation === "" || invocation.includes("tests/e2e",);
 }
 
 describe("e2e safeguard wiring in package.json scripts", () => {
   test("every e2e-reaching leg of test:all carries its own guard", () => {
-    const legs = (scripts["test:all"] ?? "",)
-      .split("&&")
-      .map((leg,) => leg.trim(),)
-      .filter((leg,) => leg.length > 0,);
+    const legs = (scripts["test:all"] ?? "")
+      .split("&&",)
+      .map((leg,) => leg.trim())
+      .filter((leg,) => leg.length > 0);
     const e2e = legs.filter(reachesE2e,);
     expect(
-      e2e.filter((leg,) => !leg.startsWith("E2E_SAFEGUARD=1 ",),),
+      e2e.filter((leg,) => !leg.startsWith("E2E_SAFEGUARD=1 ",)),
       "each e2e-reaching leg needs its own prefix — a chain-leading one binds to the first leg only",
     ).toEqual([],);
     // `build:frontend` is the only non-e2e leg, so more than one e2e leg also
@@ -54,7 +54,7 @@ describe("e2e safeguard wiring in package.json scripts", () => {
     expect(e2e.length,).toBeGreaterThan(1,);
   });
 
-  test.each(["test:e2e", "test:e2e:browser", "test:e2e:smoke",])(
+  test.each(["test:e2e", "test:e2e:browser", "test:e2e:smoke",],)(
     "%s exports the guard",
     (name,) => {
       expect(scripts[name],).toStartWith("E2E_SAFEGUARD=1 ",);
