@@ -96,7 +96,7 @@
 | In Progress | Emotion-Avatar Message Binding | High | Medium | 14 | [epic-emotion-avatar-message-binding.md](/.plan/epics/epic-emotion-avatar-message-binding.md) |
 | In Progress | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
 | In Progress | Encryption UI | Medium | Medium | 0 | [epic-frontend-encryption.md](/.plan/epics/epic-frontend-encryption.md) |
-| In Progress | Encryption Workflow | Medium | Medium | 27 | [epic-encryption-workflow.md](/.plan/epics/epic-encryption-workflow.md) |
+| In Progress | Encryption Workflow | Medium | Medium | 16 | [epic-encryption-workflow.md](/.plan/epics/epic-encryption-workflow.md) |
 | Not Started | Enemies & Monsters Systems | Low | Medium | 27 | [epic-enemies-monsters.md](/.plan/epics/epic-enemies-monsters.md) |
 | Done | Epic 14: Import/Export & Data Portability | Medium | ~~High~~ Low (remaining work) | 3 | [epic-import-export-io.md](/.plan/epics/epic-import-export-io.md) |
 | Not Started | Epic 16: Observability | medium | Medium | 4 | [epic-observability-telemetry.md](/.plan/epics/epic-observability-telemetry.md) |
@@ -3313,4 +3313,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-
