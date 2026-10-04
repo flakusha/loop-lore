@@ -30,14 +30,16 @@ traffic share one process:
    per-key rate limits. Today a 429 surfaces as `ProviderRateLimitError`,
    is retried with backoff (`src/generation/providers/retry.ts:47`), and
    the caller sits through it. Nothing narrows dispatch beforehand.
-3. **Aux vs interactive contention.** `aux-pipeline/runner.ts`,
-   `memory/embeddings.ts`, `memory/rerank.ts`, and auto-gen cascades
-   (`src/generation/auto-gen/call-llm.ts:89`) fire alongside interactive
-   turns (`src/generation/generate-route/handler.ts:57`). FIFO-by-arrival
-   lets a bulk classify job head-block a chat turn and vice versa.
-4. **VRAM contention.** A cheap classifier and a long-context scene land
-   on the same local GPU with no ordering signal; the long run holds the
-   slot while cheap work starves behind it.
+3. **Aux vs interactive contention.** `aux-pipeline/runner.ts` and auto-gen
+   cascades (`src/generation/auto-gen/call-llm.ts:89`) fire alongside interactive
+   turns (`src/generation/generate-route/handler.ts:57`) through the same
+   `callWithFailover` path. FIFO-by-arrival lets a bulk classify job
+   head-block a chat turn and vice versa. Embedding and rerank
+   (`embed-provider.ts`, `rerank.ts`) bypass `callWithFailover` entirely
+   and do not contend on this queue.
+4. **VRAM contention.** A short `aux`-class task and a long-context scene
+   share the same llama-swap slot budget with no ordering signal; the
+   long run holds the slot while cheap work starves behind it.
 
 What exists today gates aliveness, not order: `buildFailoverList`
 (`src/generation/providers/registry.ts:173`) orders providers,
@@ -49,16 +51,20 @@ Nothing delays a live one.
 
 ### requestClass taxonomy
 
-`requestClass` is an explicit label set by the caller, not inferred. Five
-call sites, five values:
+`requestClass` is an explicit label set by the caller, not inferred. Three
+call sites route through `callWithFailover` and carry a class label:
 
-| `requestClass` | Call site |
-|---|---|
-| `interactive` | `src/generation/generate-route/handler.ts` (stream + non-stream paths) |
-| `auto-gen` | `src/generation/auto-gen/call-llm.ts` |
-| `aux` | `src/aux-pipeline/runner.ts` |
-| `embedding` | `src/memory/embeddings.ts` |
-| `rerank` | `src/memory/rerank.ts` |
+| `requestClass` | Call site | Via |
+|---|---|---|
+| `interactive` | `src/generation/generate-route/handler.ts` (stream + non-stream paths) | `callWithFailover` |
+| `auto-gen` | `src/generation/auto-gen/call-llm.ts` | `callWithFailover` |
+| `aux` | `src/aux-pipeline/runner.ts` | `callWithFailover` |
+
+Embedding and rerank use dedicated llama.cpp transports (`embed-provider.ts`,
+`rerank.ts`) that bypass `callWithFailover` entirely. They are not in scope
+for this scheduler — they serve a single provider each and have no failover
+contention to manage. A future pass may add a separate admission layer for
+them if aux-class traffic proves saturating.
 
 A call site that knows it is background work says so. The scheduler MUST
 NOT guess class from prompt text.
@@ -72,9 +78,8 @@ priority = base(requestClass) + sizeTiebreak(promptTokens, maxTokens)
 ```
 
 - `base`: `interactive` → `PriorityLevel.High` (0), `auto-gen` →
-  `PriorityLevel.Normal` (100), `aux`/`embedding`/`rerank` →
-  `PriorityLevel.Low` (200). Constants live in
-  `src/llm/resource-manager-types.ts:14-18`; reuse them, do not redefine.
+  `PriorityLevel.Normal` (100), `aux` → `PriorityLevel.Low` (200).
+  Constants live in `src/llm/resource-manager-types.ts:14-18`; reuse them, do not redefine.
 - `sizeTiebreak`: prompt tokens via existing `estimateTokens`
   (`src/chat/token-utils.ts:23`) plus requested `maxTokens` (slot-hold
   time proxy). Breaks ties *within* a class only; never promotes across
@@ -158,8 +163,6 @@ generation:
       interactive: 0
       auto-gen: 100
       aux: 200
-      embedding: 200
-      rerank: 200
     llamaSwap:
       configPath: configs/config.llama-swap.yaml  # overrides autoStart.llamaSwap.configPath
       excludedModels: []             # not-for-scheduled-traffic (§5)
@@ -179,14 +182,14 @@ already boots with (`LlamaSwapAutoStartConfig.configPath`,
 
 - **Model-set parse.** Parse model names from the swap config at startup;
   re-parse on config reload. loop-lore reads the file, never rewrites it.
-- **Rotation.** A request may trigger a model load. Cheap `aux`/`embedding`
+- **Rotation.** A request may trigger a model load. Background `aux`-class
   work prefers the resident model over causing a swap; `interactive`
-  traffic may trigger one. Preference only — never a hard pin that
-  starves a class.
+  and `auto-gen` traffic may trigger one. Preference only — never a
+  hard pin that starves a class.
 - **Exclusion.** `scheduler.llamaSwap.excludedModels` marks models kept
   warm for interactive-only use (or drafts under evaluation). Scheduled
-  `aux`/`embedding`/`rerank` traffic is never dispatched to an excluded
-  model; `interactive` traffic may use any model.
+  `aux`/`auto-gen` traffic is never dispatched to an excluded model;
+  `interactive` traffic may use any model.
 - **Contract first.** The user sample config is not final (only
   `configs/config.llama-swap.example.yaml` committed). The rotation ticket
   specifies the interface loop-lore needs; the sample finalizes against
@@ -229,7 +232,7 @@ No new telemetry stack, no dashboard in this epic. Benches (§8, tickets
 | Ticket | Scope (one line) |
 |---|---|
 | `TASK-wire-llm-resource-manager-into-generation-dispatch` | Inject shared `ResourceManager` at `callWithFailover` sites, default `Normal`, no policy. |
-| `FEAT-llm-request-complexity-classification` | Pure `requestClass` + score → priority; explicit class at the five call sites. |
+| `FEAT-llm-request-complexity-classification` | Pure `requestClass` + score → priority; explicit class at the three call sites. |
 | `FEAT-llm-scheduler-config-surface` | `[generation.scheduler]` block with env mapping + schema validation. |
 | `FEAT-llm-resource-aware-admission-control` | Slot/token budgets + in-flight caps + reactive 429 narrowing. |
 | `FEAT-llama-swap-rotation-exclusion-policy` | Parse swap model set; rotation preference + exclusion list for scheduled traffic. |
