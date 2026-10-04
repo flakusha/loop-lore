@@ -17,11 +17,10 @@
  */
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
-import { ChatParticipantRole, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { jsonResponse, } from "../routes/http-utils";
-import { insertCommandSystemMessage, } from "../routes/messages/command";
+import { commandActiveChat, fetchChatAndRole, insertCommandSystemMessage, } from "../routes/messages/command";
 import { jsonParseOr, toErrorMessage, } from "../utils";
 import type { CommandContext, CommandResult, } from "./commands/registry";
 import { getCommand, getCommandRequirement, satisfiesRole, } from "./commands/registry";
@@ -86,22 +85,8 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
   const logger = getLogger().child({ module: "gm-tool-execution", },);
   const noop: GmToolOutcome = { handled: false, };
 
-  // Single chat read serves both the GM gate and the command context.
-  const settled = await Promise.allSettled([
-    database
-      .selectFrom("chats",)
-      .select(["id", "mode", "type", "gm_config", "world_id",],)
-      .where("id", "=", chatId,)
-      .executeTakeFirst(),
-    database
-      .selectFrom("chat_participants",)
-      .select("role_in_chat",)
-      .where("chat_id", "=", chatId,)
-      .where("actor_id", "=", actorId,)
-      .executeTakeFirst(),
-  ],);
-  const chatRecord = settled[0]?.status === "fulfilled" ? settled[0].value : undefined;
-  const participant = settled[1]?.status === "fulfilled" ? settled[1].value : undefined;
+  // Single shared helper serves both the GM gate and the command context.
+  const { chat: chatRecord, role: roleInChat, } = await fetchChatAndRole(database, chatId, actorId,);
   if (!chatRecord || !isGmModeChat(chatRecord.gm_config,)) { return noop; }
 
   let detection: GmToolDetection | null = null;
@@ -132,7 +117,6 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
     logger.debug("GM tool command not registered", { command: mapping.command, },);
     return noop;
   }
-  const roleInChat: ChatParticipantRole = participant?.role_in_chat ?? ChatParticipantRole.Member;
   const requiredRole = getCommandRequirement(mapping.command,);
   if (requiredRole && !satisfiesRole(roleInChat, requiredRole,)) {
     logger.debug("GM tool request denied by role gate", { command: mapping.command, },);
@@ -141,12 +125,7 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
 
   const cmdCtx: CommandContext = {
     chatId,
-    activeChat: {
-      id: chatRecord.id,
-      mode: chatRecord.mode ?? undefined,
-      type: chatRecord.type ?? undefined,
-      worldId: chatRecord.world_id ?? undefined,
-    },
+    activeChat: commandActiveChat(chatRecord,),
     roleInChat,
     db: database,
     config,
