@@ -101,7 +101,7 @@ export async function processNpcMovement(
     }
 
     case MovementPattern.Wander: {
-      return processWanderMovement(db, actorId, worldId, currentLocationId, schedule, ctx,);
+      return moveToRandomNeighbor(db, actorId, worldId, currentLocationId, ctx, MovementPattern.Wander,);
     }
 
     case MovementPattern.Follow: {
@@ -109,7 +109,7 @@ export async function processNpcMovement(
     }
 
     case MovementPattern.Flee: {
-      return processFleeMovement(db, actorId, worldId, currentLocationId, schedule, ctx,);
+      return moveToRandomNeighbor(db, actorId, worldId, currentLocationId, ctx, MovementPattern.Flee,);
     }
 
     default: {
@@ -152,14 +152,19 @@ export async function processPatrolMovement(
   };
 }
 
-/** Process wander movement — random movement within radius. */
-export async function processWanderMovement(
+/**
+ * Move to a random connected location — shared by wander and flee.
+ *
+ * Draws the destination from `ctx.rng` so the choice is reproducible under
+ * an injected seed, and stamps `lastMovedAt` from `ctx.nowMs`.
+ */
+async function moveToRandomNeighbor(
   db: Kysely<DB>,
   actorId: string,
   worldId: string,
   currentLocationId: string | null,
-  _schedule: Record<string, unknown>,
   ctx: TickCtx,
+  pattern: MovementPattern,
 ): Promise<MovementResult | null> {
   if (!currentLocationId) { return null; }
 
@@ -183,7 +188,7 @@ export async function processWanderMovement(
     success: true,
     fromLocationId: currentLocationId,
     toLocationId: nextLocationId,
-    pattern: MovementPattern.Wander,
+    pattern,
     errors: [],
   };
 }
@@ -222,42 +227,6 @@ export async function processFollowMovement(
     fromLocationId: currentLocationId,
     toLocationId: targetState.location_id,
     pattern: MovementPattern.Follow,
-    errors: [],
-  };
-}
-
-/** Process flee movement — move away from threat. */
-export async function processFleeMovement(
-  db: Kysely<DB>,
-  actorId: string,
-  worldId: string,
-  currentLocationId: string | null,
-  _schedule: Record<string, unknown>,
-  ctx: TickCtx,
-): Promise<MovementResult | null> {
-  if (!currentLocationId) { return null; }
-
-  // Get connected locations
-  const connections = await getLocationConnections(db, currentLocationId,);
-
-  if (connections.length === 0) { return null; }
-
-  // Pick random connected location (flee to any direction)
-  const randomIndex = Math.floor(ctx.rng() * connections.length,);
-  const nextLocationId = connections[randomIndex];
-
-  if (!nextLocationId || nextLocationId === currentLocationId) { return null; }
-
-  await updateMovementState(db, actorId, worldId, {
-    currentLocationId: nextLocationId,
-    lastMovedAt: toDate(ctx.nowMs,).toISOString(),
-  }, ctx.nowMs,);
-
-  return {
-    success: true,
-    fromLocationId: currentLocationId,
-    toLocationId: nextLocationId,
-    pattern: MovementPattern.Flee,
     errors: [],
   };
 }
