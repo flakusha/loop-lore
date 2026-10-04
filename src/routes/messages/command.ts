@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 270
+// size-allow: 317
 
 import type { Kysely, } from "kysely";
 import { parseCommand, } from "../../assistant/command-parser";
@@ -99,6 +99,60 @@ export async function insertCommandSystemMessage(
     .execute();
 }
 
+/** Chat row shape shared by the command-context helpers. */
+export interface CommandChatRow {
+  id: string;
+  mode: string | null;
+  type: string | null;
+  gm_config: string | null;
+  world_id: string | null;
+}
+
+/** Build the `activeChat` field of a {@link CommandContext} from a chat row. */
+export function commandActiveChat(
+  chatRecord: CommandChatRow | undefined,
+): CommandContext["activeChat"] {
+  if (!chatRecord) { return undefined; }
+  return {
+    id: chatRecord.id,
+    mode: chatRecord.mode ?? undefined,
+    type: chatRecord.type ?? undefined,
+    worldId: chatRecord.world_id ?? undefined,
+  };
+}
+
+/**
+ * Fetch the chat row and the actor's participant role concurrently — the two
+ * reads every command execution path (slash dispatch and GM tool execution)
+ * needs before deciding authority. Rejections degrade to undefined, matching
+ * the fail-open contract of the GM path.
+ * @param database - Kysely instance
+ * @param chatId - Target chat
+ * @param actorId - Acting actor id
+ */
+export async function fetchChatAndRole(
+  database: Kysely<DB>,
+  chatId: string,
+  actorId: string,
+): Promise<{ chat: CommandChatRow | undefined; role: ChatParticipantRole }> {
+  const settled = await Promise.allSettled([
+    database
+      .selectFrom("chats",)
+      .select(["id", "mode", "type", "gm_config", "world_id",],)
+      .where("id", "=", chatId,)
+      .executeTakeFirst(),
+    database
+      .selectFrom("chat_participants",)
+      .select("role_in_chat",)
+      .where("chat_id", "=", chatId,)
+      .where("actor_id", "=", actorId,)
+      .executeTakeFirst(),
+  ],);
+  const chat = settled[0]?.status === "fulfilled" ? settled[0].value : undefined;
+  const participant = settled[1]?.status === "fulfilled" ? settled[1].value : undefined;
+  return { chat, role: participant?.role_in_chat ?? ChatParticipantRole.Member, };
+}
+
 /**
  * Attempt to dispatch a slash command from the given content.
  *
@@ -194,14 +248,7 @@ export async function dispatchCommand(
 
   const cmdCtx: CommandContext = {
     chatId,
-    activeChat: chatRecord
-      ? {
-        id: chatRecord.id,
-        mode: chatRecord.mode ?? undefined,
-        type: chatRecord.type ?? undefined,
-        worldId: chatRecord.world_id ?? undefined,
-      }
-      : undefined,
+    activeChat: commandActiveChat(chatRecord,),
     messages: recentMessages.reverse(),
     roleInChat,
     db: database,
