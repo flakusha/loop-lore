@@ -3,8 +3,6 @@
 
 // src/config/sections/messages.ts — Messages config section
 
-import type { MessagesConfig, } from "../schema";
-
 export const MESSAGES_DEFAULTS = {
   autoHideInvalid: false,
   hideConfirmation: true,
@@ -12,10 +10,10 @@ export const MESSAGES_DEFAULTS = {
   maxGenerationRetries: 3,
   generationTimeoutMs: 30_000,
   idempotencyExpiryHours: 24,
-} satisfies MessagesConfig;
+};
 
 /** */
-export class MessagesSection implements MessagesConfig {
+export class MessagesSection {
   autoHideInvalid = MESSAGES_DEFAULTS.autoHideInvalid;
   hideConfirmation = MESSAGES_DEFAULTS.hideConfirmation;
   maxLength = MESSAGES_DEFAULTS.maxLength;
@@ -26,10 +24,12 @@ export class MessagesSection implements MessagesConfig {
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<MessagesConfig>,) {
+  constructor(overrides?: Partial<MessagesSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type MessagesConfig = MessagesSection;
 
 export const messagesMeta = {
   type: "object" as const,

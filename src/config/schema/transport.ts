@@ -3,10 +3,8 @@
 
 // src/config/schema/transport.ts — Transport protocol / compression / limits config types
 
-import type {
-  CompressionAlgorithm,
-  TransportProtocol,
-} from "../../db/enums";
+import type { CompressionAlgorithm, } from "../../db/enums";
+import type { TransportSection, } from "../sections/transport";
 
 /** */
 export interface TransportCompressionConfig {
@@ -28,20 +26,4 @@ export interface TransportLimitsConfig {
   maxConcurrentStreams: number;
 }
 
-/** */
-export interface TransportConfig {
-  /** Default transport protocol */
-  defaultProtocol: TransportProtocol;
-  /** Enable WebSocket upgrade support */
-  enableWebSocket: boolean;
-  /** Enable WebTransport support (requires H3) */
-  enableWebTransport: boolean;
-  /** Enable HTTP/2 support */
-  enableH2: boolean;
-  /** Enable HTTP/3 support (requires QUIC/Bun support) */
-  enableH3: boolean;
-  /** Compression settings */
-  compression: TransportCompressionConfig;
-  /** Connection limits */
-  limits: TransportLimitsConfig;
-}
+export type TransportConfig = InstanceType<typeof TransportSection>;

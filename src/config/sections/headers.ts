@@ -3,7 +3,7 @@
 
 // src/config/sections/headers.ts — Headers config section
 
-import type { CspConfig, HeadersConfig, } from "../schema";
+import type { CspConfig, } from "../schema";
 
 export const CSP_DEFAULTS: CspConfig = {
   enabled: true,
@@ -27,7 +27,7 @@ export const CSP_DEFAULTS: CspConfig = {
   reportOnly: false,
 };
 
-export const HEADERS_DEFAULTS: HeadersConfig = {
+export const HEADERS_DEFAULTS = {
   enabled: true,
   referrerPolicy: "strict-origin-when-cross-origin",
   xContentTypeOptions: true,
@@ -52,29 +52,29 @@ export const HEADERS_DEFAULTS: HeadersConfig = {
 };
 
 /** */
-export class HeadersSection implements HeadersConfig {
+export class HeadersSection {
   enabled = HEADERS_DEFAULTS.enabled;
   referrerPolicy = HEADERS_DEFAULTS.referrerPolicy;
   xContentTypeOptions = HEADERS_DEFAULTS.xContentTypeOptions;
   xFrameOptions = HEADERS_DEFAULTS.xFrameOptions;
   permissionsPolicy = HEADERS_DEFAULTS.permissionsPolicy;
   csp: CspConfig = { ...HEADERS_DEFAULTS.csp, };
-  crossOriginOpenerPolicy = HEADERS_DEFAULTS.crossOriginOpenerPolicy;
-  crossOriginEmbedderPolicy = HEADERS_DEFAULTS.crossOriginEmbedderPolicy;
-  crossOriginResourcePolicy = HEADERS_DEFAULTS.crossOriginResourcePolicy;
+  crossOriginOpenerPolicy: string | null = HEADERS_DEFAULTS.crossOriginOpenerPolicy;
+  crossOriginEmbedderPolicy: string | null = HEADERS_DEFAULTS.crossOriginEmbedderPolicy;
+  crossOriginResourcePolicy: string | null = HEADERS_DEFAULTS.crossOriginResourcePolicy;
   timingAllowOrigin = HEADERS_DEFAULTS.timingAllowOrigin;
   immutableHashedAssets = HEADERS_DEFAULTS.immutableHashedAssets;
   acceptClientHints = [...HEADERS_DEFAULTS.acceptClientHints,];
   saveData = HEADERS_DEFAULTS.saveData;
   linkPreload = [...HEADERS_DEFAULTS.linkPreload,];
   reportingEndpoints: Record<string, string> = {};
-  nel = HEADERS_DEFAULTS.nel;
+  nel: string | null = HEADERS_DEFAULTS.nel;
   hsts = { ...HEADERS_DEFAULTS.hsts, };
   earlyHints = { ...HEADERS_DEFAULTS.earlyHints, };
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<HeadersConfig>,) {
+  constructor(overrides?: Partial<HeadersSection>,) {
     if (!overrides) { return; }
 
     const { csp, earlyHints, linkPreload, acceptClientHints, reportingEndpoints, ...rest } = overrides;
@@ -82,25 +82,21 @@ export class HeadersSection implements HeadersConfig {
     if (csp) {
       this.csp = { ...this.csp, ...csp, };
     }
-
     if (earlyHints) {
       this.earlyHints = { ...this.earlyHints, ...earlyHints, };
     }
-
     if (linkPreload) {
       this.linkPreload = [...linkPreload,];
     }
-
     if (acceptClientHints) {
       this.acceptClientHints = [...acceptClientHints,];
     }
-
     if (reportingEndpoints) {
       this.reportingEndpoints = { ...reportingEndpoints, };
     }
   }
 }
-
+export type HeadersConfig = HeadersSection;
 export const headersMeta = {
   type: "object" as const,
   description: "Response-header policy (browser security / isolation / perf / observability)",

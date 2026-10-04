@@ -3,7 +3,7 @@
 
 // src/config/sections/dynamic-response.ts — Dynamic response config section
 
-import type { DynamicResponseConfig, } from "../schema";
+import { ResponseCompression, } from "../../db/enums";
 
 export const DYNAMIC_RESPONSE_DEFAULTS = {
   enabled: true,
@@ -12,24 +12,26 @@ export const DYNAMIC_RESPONSE_DEFAULTS = {
   compress: true,
   compressAlgorithm: "auto" as const,
   compressThreshold: 512,
-} satisfies DynamicResponseConfig;
+};
 
 /** */
-export class DynamicResponseSection implements DynamicResponseConfig {
+export class DynamicResponseSection {
   enabled = DYNAMIC_RESPONSE_DEFAULTS.enabled;
   minify = DYNAMIC_RESPONSE_DEFAULTS.minify;
   validate = DYNAMIC_RESPONSE_DEFAULTS.validate;
   compress = DYNAMIC_RESPONSE_DEFAULTS.compress;
-  compressAlgorithm = DYNAMIC_RESPONSE_DEFAULTS.compressAlgorithm;
+  compressAlgorithm: ResponseCompression = DYNAMIC_RESPONSE_DEFAULTS.compressAlgorithm;
   compressThreshold = DYNAMIC_RESPONSE_DEFAULTS.compressThreshold;
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<DynamicResponseConfig>,) {
+  constructor(overrides?: Partial<DynamicResponseSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type DynamicResponseConfig = DynamicResponseSection;
 
 export const dynamicResponseMeta = {
   type: "object" as const,

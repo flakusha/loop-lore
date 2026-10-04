@@ -3,6 +3,8 @@
 
 // src/config/schema/server.ts — HTTP server + TLS config types
 
+import type { ServerSection, } from "../sections/server";
+
 /** */
 export interface TlsConfig {
   /** Path to TLS private key (PEM). Auto-generated if missing. */
@@ -11,26 +13,4 @@ export interface TlsConfig {
   cert: string;
 }
 
-/** */
-export interface ServerConfig {
-  port: number;
-  host: string;
-  /** TLS config. If key/cert paths are set, serve HTTPS too. */
-  tls?: TlsConfig;
-  /**
-   * Honor `X-Forwarded-For` / `X-Real-IP` / `CF-Connecting-IP` for
-   * `getClientIp`. Defaults to `false` because these headers are spoofable
-   * without an enforcing reverse proxy — a malicious client can set them
-   * to any value and bypass per-IP rate limiting / audit logging. Set
-   * `SERVER_TRUST_PROXY=1` only when fronted by an L7 proxy that
-   * overwrites the header on every request.
-   */
-  trustProxy?: boolean;
-  /**
-   * Public origin (scheme + host, e.g. "https://lore.example.com").
-   * Set when running behind a TLS-terminating reverse proxy (Caddy) so
-   * self-referential URLs (federation nodeinfo, redirects) use the public
-   * address instead of the internal host:port. Env: SERVER_PUBLIC_ORIGIN.
-   */
-  publicOrigin?: string;
-}
+export type ServerConfig = InstanceType<typeof ServerSection>;

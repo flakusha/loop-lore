@@ -4,7 +4,6 @@
 // src/config/sections/assets.ts — Assets config section
 
 import { DATA_DIR, } from "../constants";
-import type { AssetsConfig, } from "../schema";
 
 export const ASSETS_DEFAULTS = {
   enabled: true,
@@ -13,24 +12,26 @@ export const ASSETS_DEFAULTS = {
   compression: true,
   signedUrlSecret: "",
   signedUrlExpirySeconds: 900,
-} satisfies AssetsConfig;
+};
 
 /** */
-export class AssetsSection implements AssetsConfig {
+export class AssetsSection {
   enabled = ASSETS_DEFAULTS.enabled;
   uploadDir = ASSETS_DEFAULTS.uploadDir;
   maxFileSize = ASSETS_DEFAULTS.maxFileSize;
   compression = ASSETS_DEFAULTS.compression;
-  signedUrlSecret = ASSETS_DEFAULTS.signedUrlSecret;
-  signedUrlExpirySeconds = ASSETS_DEFAULTS.signedUrlExpirySeconds;
+  signedUrlSecret? = ASSETS_DEFAULTS.signedUrlSecret;
+  signedUrlExpirySeconds? = ASSETS_DEFAULTS.signedUrlExpirySeconds;
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<AssetsConfig>,) {
+  constructor(overrides?: Partial<AssetsSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type AssetsConfig = AssetsSection;
 
 export const assetsMeta = {
   type: "object" as const,

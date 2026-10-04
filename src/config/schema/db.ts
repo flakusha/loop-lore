@@ -5,12 +5,6 @@
 //
 // Exported publicly as `DbConfig` to preserve the original public surface.
 
-import type { DbType as DbTypeT, } from "../../db/enums";
+import type { DatabaseSection, } from "../sections/database";
 
-interface DatabaseConfig {
-  type: DbTypeT;
-  sqliteFilename: string;
-  url?: string;
-}
-
-export type { DatabaseConfig as DbConfig, };
+export type DbConfig = InstanceType<typeof DatabaseSection>;

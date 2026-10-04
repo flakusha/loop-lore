@@ -3,8 +3,6 @@
 
 // src/config/sections/auth.ts — Auth config section
 
-import type { AuthConfig, } from "../schema";
-
 export const AUTH_DEFAULTS = {
   required: false,
   registrationOpen: true,
@@ -18,30 +16,32 @@ export const AUTH_DEFAULTS = {
   csrfSecret: "",
   jwtExpiresIn: 86_400,
   legacyOpaqueTokenFallback: false,
-} satisfies AuthConfig;
+};
 
 /** */
-export class AuthSection implements AuthConfig {
+export class AuthSection {
   required = AUTH_DEFAULTS.required;
   registrationOpen = AUTH_DEFAULTS.registrationOpen;
   sessionTimeoutHours = AUTH_DEFAULTS.sessionTimeoutHours;
   maxSessionsPerUser = AUTH_DEFAULTS.maxSessionsPerUser;
   demoUsername = AUTH_DEFAULTS.demoUsername;
   demoAutoSetup = AUTH_DEFAULTS.demoAutoSetup;
-  adminUsername = AUTH_DEFAULTS.adminUsername;
-  adminPassword = AUTH_DEFAULTS.adminPassword;
-  jwtSecret = AUTH_DEFAULTS.jwtSecret;
-  csrfSecret = AUTH_DEFAULTS.csrfSecret;
-  jwtExpiresIn = AUTH_DEFAULTS.jwtExpiresIn;
-  legacyOpaqueTokenFallback = AUTH_DEFAULTS.legacyOpaqueTokenFallback;
+  adminUsername? = AUTH_DEFAULTS.adminUsername;
+  adminPassword? = AUTH_DEFAULTS.adminPassword;
+  jwtSecret? = AUTH_DEFAULTS.jwtSecret;
+  csrfSecret? = AUTH_DEFAULTS.csrfSecret;
+  jwtExpiresIn? = AUTH_DEFAULTS.jwtExpiresIn;
+  legacyOpaqueTokenFallback? = AUTH_DEFAULTS.legacyOpaqueTokenFallback;
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<AuthConfig>,) {
+  constructor(overrides?: Partial<AuthSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type AuthConfig = AuthSection;
 
 export const authMeta = {
   type: "object" as const,

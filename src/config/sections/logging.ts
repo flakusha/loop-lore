@@ -4,14 +4,13 @@
 // src/config/sections/logging.ts — Logging config section
 
 import { LogLevel, } from "../../db/enums";
-import type { LoggingConfig, } from "../schema";
 
 export const LOGGING_DEFAULTS = {
   level: LogLevel.Debug,
-} satisfies LoggingConfig;
+};
 
 /** */
-export class LoggingSection implements LoggingConfig {
+export class LoggingSection {
   level = LOGGING_DEFAULTS.level;
   jsonlPath?: string;
   jsonlMaxBytes?: number;
@@ -28,10 +27,12 @@ export class LoggingSection implements LoggingConfig {
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<LoggingConfig>,) {
+  constructor(overrides?: Partial<LoggingSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type LoggingConfig = LoggingSection;
 
 export const loggingMeta = {
   type: "object" as const,

@@ -4,27 +4,28 @@
 // src/config/sections/age-gate.ts — Age gate config section
 
 import { AgeGateMode, } from "../../db/enums";
-import type { AgeGateConfig, } from "../schema";
 
 export const AGE_GATE_DEFAULTS = {
   enabled: false,
   minimumAge: 18,
   mode: AgeGateMode.SelfDeclaration,
-} satisfies AgeGateConfig;
+};
 
 /** */
-export class AgeGateSection implements AgeGateConfig {
+export class AgeGateSection {
   enabled = AGE_GATE_DEFAULTS.enabled;
   minimumAge = AGE_GATE_DEFAULTS.minimumAge;
-  mode = AGE_GATE_DEFAULTS.mode;
+  mode: AgeGateMode = AGE_GATE_DEFAULTS.mode;
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<AgeGateConfig>,) {
+  constructor(overrides?: Partial<AgeGateSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type AgeGateConfig = AgeGateSection;
 
 export const ageGateMeta = {
   type: "object" as const,

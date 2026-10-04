@@ -5,12 +5,7 @@
 //
 // (FExBE: browser feature / security / perf / observability)
 
-import type {
-  CrossOriginEmbedderPolicy,
-  CrossOriginOpenerPolicy,
-  CrossOriginResourcePolicy,
-  XFrameOption,
-} from "../../db/enums";
+import type { HeadersSection, } from "../sections/headers";
 
 /**
  * Content-Security-Policy directive set.
@@ -46,44 +41,8 @@ export interface CspConfig {
  * Response-header policy. Centralized, route-aware header injection engine.
  * Per-route behavior is classified at apply time (html / api / static / docs).
  */
-export interface HeadersConfig {
-  /** Master toggle. When false, no headers are added. */
-  enabled: boolean;
-  /** `Referrer-Policy` value. */
-  referrerPolicy: string;
-  /** Emit `X-Content-Type-Options: nosniff`. */
-  xContentTypeOptions: boolean;
-  /** `X-Frame-Options`: "DENY" | "SAMEORIGIN" | null (omit). */
-  xFrameOptions: XFrameOption | null;
-  /** `Permissions-Policy` value (feature delegation). */
-  permissionsPolicy: string;
-  /** CSP directive set (HTML only). */
-  csp: CspConfig;
-  /** `Cross-Origin-Opener-Policy`. null = omit. */
-  crossOriginOpenerPolicy: CrossOriginOpenerPolicy | null;
-  /** `Cross-Origin-Embedder-Policy`. null = omit. */
-  crossOriginEmbedderPolicy: CrossOriginEmbedderPolicy | null;
-  /** `Cross-Origin-Resource-Policy` for static subresources. */
-  crossOriginResourcePolicy: CrossOriginResourcePolicy | null;
-  /** `Timing-Allow-Origin` for resource timing (performance measurement). */
-  timingAllowOrigin: string;
-  /** Append `immutable` to `Cache-Control` for content-hashed assets. */
-  immutableHashedAssets: boolean;
-  /** `Link: <...>; rel=preload` hints emitted on HTML documents. */
-  linkPreload: string[];
-  /** `Accept-CH` / `Critical-CH` client hint tokens emitted on HTML. */
-  acceptClientHints: string[];
-  /** Advertise Save-Data cooperativeness (informational). */
-  saveData: boolean;
-  /** Early Hints (103) — requires transport support. */
-  earlyHints: { enabled: boolean };
-  /** `Reporting-Endpoints` map (name → URL) for frontend telemetry. */
-  reportingEndpoints: Record<string, string>;
-  /** `NEL` policy JSON string (null = omit). */
-  nel: string | null;
-  /** Strict-Transport-Security policy (RFC 6797). Disabled by default to keep plain-HTTP dev working. */
-  hsts: HstsConfig;
-}
+
+export type HeadersConfig = InstanceType<typeof HeadersSection>;
 
 /**
  * Strict-Transport-Security policy. Emitted only on HTTPS requests to

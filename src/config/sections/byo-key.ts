@@ -3,24 +3,24 @@
 
 // src/config/sections/byo-key.ts — BYO API Key config section
 
-import type { ByoKeyConfig, } from "../schema";
-
 export const BYO_KEY_DEFAULTS = {
   enabled: true,
-} satisfies ByoKeyConfig;
+};
 
 /** */
-export class ByoKeySection implements ByoKeyConfig {
+export class ByoKeySection {
   enabled = BYO_KEY_DEFAULTS.enabled;
   encryptionKey?: string;
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<ByoKeyConfig>,) {
+  constructor(overrides?: Partial<ByoKeySection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type ByoKeyConfig = ByoKeySection;
 
 export const byoKeyMeta = {
   type: "object" as const,
