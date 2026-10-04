@@ -25,3 +25,6 @@
 - `epic-observability-telemetry.md`, `epic-analytics-observability.md`
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: f6a9b23

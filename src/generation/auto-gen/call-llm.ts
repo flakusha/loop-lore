@@ -35,6 +35,7 @@ import {
 } from "../assistant-tuning";
 import { activeGenerations, processStreamingChunk, } from "../cancellation-manager";
 import type { ChunkEvent, } from "../providers/types";
+import { AUTO_GEN, } from "../routing/task-signal";
 import type { GenerationMessage, } from "../types";
 import { classifyIntent, } from "./classify-intent";
 import type { GenDeps, } from "./deps";
@@ -131,7 +132,6 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
     chatStreaming,
     requestId,
   } = opts;
-
   const log = getLogger().child({ module: "auto-gen", },);
 
   const shortReply = await detectShortReply({ assistantTuning, userMessage, config, database, log, },);
@@ -146,10 +146,9 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
   const canStream = chatStreaming === 1 ||
     (chatStreaming == null && configDefault === true) ||
     (chatStreaming == null && configDefault == null && providerCapable);
-
   const buffer = parentMessageId ? d.getOrCreateBuffer(chatId,) : undefined;
 
-  const failoverList = d.buildFailoverList(resolved.resolvedProviderName, config,);
+  const failoverList = d.buildFailoverList(resolved.resolvedProviderName, config, AUTO_GEN,);
   log.debug("calling LLM", { streaming: canStream, failoverCount: failoverList.length, requestId, },);
   const genReq = {
     model: resolved.resolvedModel,
@@ -157,6 +156,9 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
     apiKey: resolved.resolvedApiKey,
     params: { temperature, maxTokens, },
     signal: tracking?.abortSignal,
+    // Exec-log context for the auto-gen dispatch (both stream + non-stream
+    // paths share this request).
+    harness: { taskType: AUTO_GEN.taskType, task: "auto-gen", },
   };
 
   const streamSanitizer = canStream ? createStreamingSanitizer() : null;
@@ -167,7 +169,6 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
         requestId,
       },);
     }
-
     const finalResponse = await d.callWithFailover(
       failoverList,
       genReq,
@@ -181,7 +182,6 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
                 log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
               },);
           }
-
           if (buffer && streamSanitizer) {
             const seq = buffer.append(
               "stream-update",
@@ -196,25 +196,21 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
                 },
               ),
             );
-
             bumpLastRendered(tracking?.attemptId, seq,);
           }
         } else if (chunk.type === "thinking" && chunk.content) {
           accumulatedThinking = (accumulatedThinking ?? "") + chunk.content;
         }
-
         // BUG-generation-error-handling-gaps: throwIfAborted AFTER processing
         // each chunk so cancellation terminates accumulation promptly.
         tracking?.abortSignal.throwIfAborted();
       },
     );
-
     tokenUsage = {
       promptTokens: finalResponse.usage.promptTokens,
       completionTokens: finalResponse.usage.completionTokens,
       totalTokens: finalResponse.usage.totalTokens,
     };
-
     finishReason = finalResponse.finishReason;
   } else {
     const response = await d.callWithFailover(failoverList, genReq,);
@@ -225,7 +221,6 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
           log.error("Non-stream response detection failed", error instanceof Error ? error : undefined,);
         },);
     }
-
     accumulatedContent = response.content;
     accumulatedThinking = response.thinking;
     tokenUsage = {
@@ -233,7 +228,6 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
       completionTokens: response.usage.completionTokens,
       totalTokens: response.usage.totalTokens,
     };
-
     finishReason = response.finishReason;
     if (buffer) {
       const seq = buffer.append(
@@ -242,7 +236,6 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
           thinking: accumulatedThinking,
         },),
       );
-
       bumpLastRendered(tracking?.attemptId, seq,);
     }
   }

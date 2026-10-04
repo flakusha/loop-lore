@@ -15,6 +15,8 @@
  */
 import { embedDispatch, } from "../generation/providers/ollama-native/operations";
 import type { OllamaNativeState, } from "../generation/providers/ollama-native/types";
+import { BACKGROUND, toHarnessTaskType, } from "../generation/routing/task-signal";
+import { recordExecRun, } from "../harness/exec-recorder";
 import { safeFetch, } from "../utils/safe-fetch";
 
 // ── Env configuration ───────────────────────────────────────────────────────
@@ -120,14 +122,37 @@ async function embedViaOpenAI(text: string, model: string, baseUrl: string,): Pr
  */
 export async function embedText(text: string,): Promise<Float32Array> {
   const model = resolveEmbedModel();
-  let emb: number[] | undefined;
-  if (process.env.EMBEDDINGS_API === "openai") {
-    emb = await embedViaOpenAI(text, model, resolveEmbeddingsBaseUrl(),);
-  } else {
-    emb = (await embedDispatch(buildOllamaState(), text, model,))[0];
+  // Exec log: embeddings is a background transport (raw HTTP or a provider
+  // dispatch, neither of which passes through callWithFailover), so it records
+  // here. No cost metadata on either transport, so cost stays null (unknown)
+  // rather than being invented.
+  const startedAt = Date.now();
+  try {
+    let emb: number[] | undefined;
+    if (process.env.EMBEDDINGS_API === "openai") {
+      emb = await embedViaOpenAI(text, model, resolveEmbeddingsBaseUrl(),);
+    } else {
+      emb = (await embedDispatch(buildOllamaState(), text, model,))[0];
+    }
+    if (!emb) { throw new Error("Embedding provider returned no embeddings.",); }
+    recordExecRun({
+      taskType: toHarnessTaskType(BACKGROUND.taskType,),
+      model,
+      runMs: Date.now() - startedAt,
+      result: "ok",
+      task: "memory:embeddings",
+    },);
+    // Normalise to unit length so cosine similarity = dot product.
+    return normalise(new Float32Array(emb,),);
+  } catch (error) {
+    recordExecRun({
+      taskType: toHarnessTaskType(BACKGROUND.taskType,),
+      model,
+      runMs: Date.now() - startedAt,
+      result: "error",
+      error: (error as Error).message,
+      task: "memory:embeddings",
+    },);
+    throw error;
   }
-
-  if (!emb) { throw new Error("Embedding provider returned no embeddings.",); }
-  // Normalise to unit length so cosine similarity = dot product.
-  return normalise(new Float32Array(emb,),);
 }

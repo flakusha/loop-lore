@@ -24,3 +24,6 @@
 - `epic-memory-knowledge-systems.md`, `src/db/migrations/README.md` (append-only policy)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 55d6d79

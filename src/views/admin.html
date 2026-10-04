@@ -57,6 +57,14 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'health' }" @click="showTab('health')">
           Health
         </button>
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'harness' }"
+          @click="showTab('harness')"
+          data-testid="admin-tab-harness"
+        >
+          {{{t("harness.tabLabel")}}}
+        </button>
       </div>
 
       <!-- Overview Tab -->
@@ -2613,6 +2621,11 @@
           </div>
         </template>
       </div>
+    </div>
+
+    <!-- Harness Tab (TASK-harness-frontend-consolidation) -->
+    <div x-show="activeTab === 'harness'">
+      {{> harness/admin-harness-panel.html }}
     </div>
   </main>
 </div>

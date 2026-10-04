@@ -24,3 +24,6 @@
 - `epic-security-sandboxing.md`, `epic-plugin-system.md`
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 13bfecb

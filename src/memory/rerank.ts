@@ -9,7 +9,11 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
+import type { GenerationRoutingConfig, } from "../generation/routing/routing-config";
+import { BACKGROUND, toHarnessTaskType, } from "../generation/routing/task-signal";
+import { recordExecRun, } from "../harness/exec-recorder";
 import { safeFetch, } from "../utils/safe-fetch";
+import { resolveBackgroundEndpoint, } from "./background-transport";
 
 /** One rerank result: input document position + model relevance score. */
 export interface RerankHit {
@@ -27,6 +31,8 @@ export interface RerankOptions {
   baseUrl?: string;
   /** Rerank model; defaults to RERANK_MODEL. */
   model?: string;
+  /** Routing policy used to order the endpoint candidates (default: env precedence). */
+  routing?: GenerationRoutingConfig;
 }
 
 /**
@@ -46,40 +52,62 @@ export async function rerankViaLlamaCpp(
   if (docs.length === 0) { return []; }
   const model = opts.model ?? process.env.RERANK_MODEL;
   if (!model) { throw new Error("RERANK_MODEL is not set; rerank is disabled.",); }
-  const baseUrl = opts.baseUrl ?? process.env.RERANK_BASE_URL ??
-    process.env.EMBEDDINGS_BASE_URL ?? process.env.OLLAMA_BASE_URL ??
-    "http://localhost:11434";
-
-  const result = await safeFetch<{ results?: { index?: unknown; relevance_score?: unknown }[] }>(
-    `${baseUrl}/rerank`,
-    {
-      method: "POST",
-      body: { model, query, documents: docs, top_n: opts.topN, },
-      timeout: opts.timeoutMs ?? 2000,
-    },
+  // OFF the chat hot path: declare the `background` task signal so the router
+  // orders these endpoint candidates instead of taking env precedence blindly.
+  const baseUrl = opts.baseUrl ?? resolveBackgroundEndpoint(
+    ["RERANK_BASE_URL", "EMBEDDINGS_BASE_URL", "OLLAMA_BASE_URL",],
+    { routing: opts.routing, model, },
   );
-
-  if (!result.ok) {
-    throw new Error(`Rerank endpoint request failed: ${result.error.message}`,);
-  }
-
-  const payload = result.data;
-  if (!Array.isArray(payload.results,)) {
-    throw new Error("Rerank response is missing a results array.",);
-  }
-
-  return payload.results.map((entry,) => {
-    const { index, relevance_score: score, } = entry;
-    if (typeof index !== "number" || index < 0 || index >= docs.length) {
-      throw new Error(`Rerank result index ${String(index,)} is out of range.`,);
+  // Exec log: rerank is a raw HTTP call, not an LLMProvider dispatch, so it
+  // bypasses callWithFailover and records here. No cost metadata exists on a
+  // raw endpoint call, so the record carries a null (unknown) cost rather than
+  // an invented price.
+  const startedAt = Date.now();
+  const recordExec = (result: "ok" | "error", error: string | null,): void => {
+    recordExecRun({
+      taskType: toHarnessTaskType(BACKGROUND.taskType,),
+      model,
+      runMs: Date.now() - startedAt,
+      result,
+      error,
+      task: "memory:rerank",
+    },);
+  };
+  try {
+    const result = await safeFetch<{ results?: { index?: unknown; relevance_score?: unknown }[] }>(
+      `${baseUrl}/rerank`,
+      {
+        method: "POST",
+        body: { model, query, documents: docs, top_n: opts.topN, },
+        timeout: opts.timeoutMs ?? 2000,
+      },
+    );
+    if (!result.ok) {
+      recordExec("error", result.error.message,);
+      throw new Error(`Rerank endpoint request failed: ${result.error.message}`,);
     }
-
-    if (typeof score !== "number") {
-      throw new Error("Rerank result entry is missing relevance_score.",);
+    const payload = result.data;
+    if (!Array.isArray(payload.results,)) {
+      recordExec("error", "response missing results array",);
+      throw new Error("Rerank response is missing a results array.",);
     }
-
-    return { index, score, };
-  },);
+    recordExec("ok", null,);
+    return payload.results.map((entry,) => {
+      const { index, relevance_score: score, } = entry;
+      if (typeof index !== "number" || index < 0 || index >= docs.length) {
+        recordExec("error", `result index ${String(index,)} out of range`,);
+        throw new Error(`Rerank result index ${String(index,)} is out of range.`,);
+      }
+      if (typeof score !== "number") {
+        recordExec("error", "entry missing relevance_score",);
+        throw new Error("Rerank result entry is missing relevance_score.",);
+      }
+      return { index, score, };
+    },);
+  } catch (error) {
+    recordExec("error", (error as Error).message,);
+    throw error;
+  }
 }
 
 /**

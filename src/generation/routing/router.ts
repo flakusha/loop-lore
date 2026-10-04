@@ -1,0 +1,114 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Model router — order candidates for one request by explicit task signal.
+ *
+ * `route()` is a pure function of (signal, candidates, config): no network,
+ * no clock, no randomness. The same input always yields the same order, so a
+ * route is reproducible and testable. Metadata gaps (no cost, no latency) are
+ * "unknown", never an error — an unannotated model still serves, it just
+ * sorts last among equals.
+ *
+ * `capability-match` is the default because it is a no-op for candidates that
+ * carry no cost/latency annotations: with nothing to score, every candidate
+ * keeps its input order, which is the pre-routing behaviour.
+ */
+import type { GenerationRoutingConfig, ModelRoutingStrategy, } from "./routing-config";
+import type { TaskCapability, TaskSignal, } from "./task-signal";
+
+/** A routable model. Deliberately local to the router — no DB type leaks in. */
+export interface RoutableModel {
+  /** Provider instance name (registry key). */
+  name: string;
+  /** Model id within the provider. */
+  model: string;
+  /** Which provider capabilities the model exposes. */
+  capabilities: Partial<Record<TaskCapability, boolean>>;
+  /** USD per 1k tokens. Absent = unknown. */
+  costPer1kTokens?: number;
+  /** Mean latency in ms. Absent = unknown. */
+  avgLatencyMs?: number;
+  /** Total context window in tokens. Absent = unknown. */
+  contextWindow?: number;
+  /** Max tokens the model can emit. Absent = unknown. */
+  maxOutputTokens?: number;
+}
+
+/** Ordered route: first attempt, then the fallback chain. */
+export interface RouteResult<T extends RoutableModel = RoutableModel,> {
+  primary: T | null;
+  fallbacks: T[];
+}
+
+/** Strategies, in declaration order. `capability-match` is the no-op default. */
+export const ROUTING_STRATEGIES: ModelRoutingStrategy[] = [
+  "capability-match",
+  "cheapest",
+  "fastest",
+  "round-robin",
+];
+
+/**
+ * Rank candidates for one signal. `rrOffset` is a per-instance counter used
+ * only by `round-robin`; every other strategy ignores it, so routing stays
+ * deterministic for a fixed counter value.
+ */
+export class ModelRouter {
+  private rrOffset = 0;
+
+  /**
+   * @param config - `config.generation.routing`; absent = capability-match with no rules.
+   */
+  constructor(private readonly config?: GenerationRoutingConfig,) {}
+
+  /**
+   * Order candidates for a signal: `{ primary, fallbacks }`. Never throws —
+   * an empty candidate set yields a null primary.
+   * @param signal - classified work; a null signal means "no policy, keep input order".
+   * @param candidates - models eligible to serve it, most-preferred first.
+   * @returns Ordered primary + fallbacks.
+   */
+  route<T extends RoutableModel,>(signal: TaskSignal | null, candidates: T[],): RouteResult<T> {
+    if (!signal || candidates.length === 0) {
+      return { primary: candidates[0] ?? null, fallbacks: candidates.slice(1,), };
+    }
+
+    // Fail-open: only an explicit `false` disqualifies a candidate. An
+    // unannotated provider still serves, because dropping it would leave a
+    // model-less caller with no route at all.
+    const eligible = candidates.filter((c,) => {
+      for (const capability of signal.requiresCapabilities ?? []) {
+        if (c.capabilities[capability] === false) { return false; }
+      }
+      return signal.estimatedTokens === undefined || c.contextWindow === undefined ||
+        signal.estimatedTokens <= c.contextWindow;
+    },);
+    if (eligible.length === 0) { return { primary: null, fallbacks: [], }; }
+
+    const rule = this.config?.rules?.find((r,) => r.taskType === signal.taskType);
+    const strategy = rule?.strategy ?? this.config?.strategy ?? "capability-match";
+    const offset = this.rrOffset % eligible.length;
+    this.rrOffset++;
+    const ordered = strategy === "round-robin"
+      ? eligible.slice(offset,).concat(eligible.slice(0, offset,),)
+      : eligible
+        .map((model, index,) => ({
+          model,
+          index,
+          // Unknown metadata sorts last among equals.
+          score: strategy === "cheapest"
+            ? model.costPer1kTokens ?? Number.POSITIVE_INFINITY
+            : strategy === "fastest"
+            ? model.avgLatencyMs ?? Number.POSITIVE_INFINITY
+            : 0,
+        }))
+        .sort((a, b,) => a.score - b.score || a.index - b.index)
+        .map((entry,) => entry.model);
+
+    const primary = ordered[0] ?? null;
+    const rest = ordered.slice(1,);
+    const cap = this.config?.fallbacks;
+    return { primary, fallbacks: cap === undefined ? rest : rest.slice(0, cap,), };
+  }
+}

@@ -24,3 +24,6 @@
 - `src/middleware/nsfw-gate/consent-ledger.ts` (deferred cross-host pattern)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 9154b20

@@ -25,3 +25,6 @@
 - `epic-config-templates.md`, `epic-context-injection-templates.md` (neighbor, not parent)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: b01d03b

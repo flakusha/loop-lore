@@ -24,3 +24,6 @@
 - `src/assistant/prompt-assembler.ts`, `.rtk/filters.toml`, `.agents/references/agent-rules.md` (routing note)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 9ab6eea

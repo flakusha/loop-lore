@@ -24,3 +24,6 @@
 - `epic-recursive-self-improvement.md`, `epic-core-testing-frameworks.md`
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 9e6932e

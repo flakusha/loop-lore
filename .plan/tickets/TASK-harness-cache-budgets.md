@@ -24,3 +24,6 @@
 - `src/chat/prompt-budget.ts`, `compare.ts:33`, `src/telemetry/service.ts` (savedTokens event)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 1bf6c77

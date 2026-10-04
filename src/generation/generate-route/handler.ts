@@ -19,11 +19,13 @@ import { jsonError, } from "../../routes/http-utils";
 import { parseAssistantTuning, resolveAssistantMaxTokens, resolveAssistantTemperature, } from "../assistant-tuning";
 import { hasInFlightGeneration, IdempotencyKeyConflictError, startGenerationTracking, } from "../cancellation-manager";
 import { applyChatFormat, } from "../generate-format";
+import { harnessContext, } from "../providers/harness-context";
 import {
   buildFailoverList,
   resolveProvider,
 } from "../providers/registry";
 import type { ResolvedProvider, } from "../providers/registry";
+import { INTERACTIVE_TURN, type TaskSignal, } from "../routing/task-signal";
 import { appendStylePrompt, buildStylePrompt, } from "../smart-regen";
 import type { GenerationMessage, GenerationOptions, } from "../types";
 import { buildPrompt, } from "./build-prompt";
@@ -93,7 +95,6 @@ export async function handleGenerate({
     .where("actors.actor_type", "<>", "user",)
     .where("chat_participants.actor_id", "<>", input.actorId,)
     .execute();
-
   const groupParticipantIds = participantRows.map((row,) => row.actor_id);
 
   // ── Assemble prompt ───────────────────────────────────
@@ -110,7 +111,6 @@ export async function handleGenerate({
       userId,
       groupParticipantIds,
     },);
-
     messages = built.messages;
     systemPrompt = built.systemPrompt;
   } catch (error) {
@@ -126,7 +126,6 @@ export async function handleGenerate({
     messages = appendStylePrompt(messages, stylePrompt,);
     systemPrompt = systemPrompt === undefined ? stylePrompt : `${systemPrompt}\n\n${stylePrompt}`;
   }
-
   const chatFormat = cfg.templates?.llm?.chatFormats?.[input.format ?? ""];
   if (chatFormat !== undefined) { messages = applyChatFormat(messages, chatFormat,); }
   // Resolution chain: explicit request → chat setting → config default → provider capability
@@ -138,7 +137,6 @@ export async function handleGenerate({
       .select(["streaming",],)
       .where("id", "=", input.chatId,)
       .executeTakeFirst();
-
     const chatStreaming = chatRow?.streaming;
     const configDefault = cfg.generation.defaultStream;
     const providerCapable = resolved.provider.capabilities.streaming;
@@ -146,7 +144,6 @@ export async function handleGenerate({
       (chatStreaming == null && configDefault === true) ||
       (chatStreaming == null && configDefault == null && providerCapable);
   }
-
   // Variant fill (smart-regen) must complete before the HTTP response so the
   // pending row is updated in place — SSE delivery cannot do that.
   if (input.targetMessageId !== undefined) { resolvedStream = false; }
@@ -161,12 +158,10 @@ export async function handleGenerate({
       .select(["gm_config",],)
       .where("id", "=", input.chatId,)
       .executeTakeFirst();
-
     const tuning = parseAssistantTuning(tuningRow?.gm_config ?? null,);
     tuningTemperature = tuning.temperature;
     tuningMaxTokens = tuning.maxTokens;
   }
-
   const temperature = resolveAssistantTemperature(input.temperature, tuningTemperature,);
   const maxTokens = resolveAssistantMaxTokens(input.maxTokens, tuningMaxTokens,);
   const genOptions: GenerationOptions = {
@@ -204,7 +199,6 @@ export async function handleGenerate({
     if (err instanceof IdempotencyKeyConflictError) {
       return jsonError({ message: "A generation with this idempotencyKey is already in flight", status: 409, },);
     }
-
     throw err;
   }
 
@@ -218,8 +212,10 @@ export async function handleGenerate({
     stream: resolvedStream,
   },);
 
-  // Build failover list: primary provider first, then all others
-  const failoverList = buildFailoverList(resolved.resolvedProviderName, cfg,);
+  // Router-ordered failover tail; the exec-log context records both dispatch paths.
+  const turnSignal: TaskSignal = { ...INTERACTIVE_TURN, requiresCapabilities: ["text",], };
+  const failoverList = buildFailoverList(resolved.resolvedProviderName, cfg, turnSignal,);
+  const providerReqWithHarness = { ...providerReq, harness: harnessContext(turnSignal.taskType, "generate-route",), };
 
   // ── Dispatch ──────────────────────────────────────────
 
@@ -233,7 +229,7 @@ export async function handleGenerate({
       attemptId,
       modelId: resolved.resolvedModel,
       providerName: resolved.resolvedProviderName,
-      providerReq,
+      providerReq: providerReqWithHarness,
       failoverList,
     },);
   }
@@ -247,7 +243,7 @@ export async function handleGenerate({
     attemptId,
     modelId: resolved.resolvedModel,
     providerName: resolved.resolvedProviderName,
-    providerReq,
+    providerReq: providerReqWithHarness,
     failoverList,
   },);
 }

@@ -23,3 +23,6 @@
 - `docs/meta/workflow.md`, `scripts/check-migration-ordering.ts`, `scripts/worktree/commands/finalize.ts`
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 0a63dda

@@ -7,6 +7,7 @@
 // See .plan/epics/epic-provider-plugin-ecosystem.md for architecture.
 
 import type { GenerationMessage, } from "../gen-types-options";
+import type { HarnessCallContext, } from "./harness-context";
 
 // ── Capabilities ──────────────────────────────────────────
 
@@ -28,6 +29,14 @@ export interface ProviderCapabilities {
   tools: boolean;
   /** Thinking/reasoning content supported */
   thinking: boolean;
+  /** USD per 1k tokens. Absent = unknown; the router ranks unknown last. */
+  costPer1kTokens?: number;
+  /** Mean latency in ms. Absent = unknown; the router ranks unknown last. */
+  avgLatencyMs?: number;
+  /** Total context window in tokens. Absent = unknown. */
+  contextWindow?: number;
+  /** Max tokens the model can emit. Absent = unknown. */
+  maxOutputTokens?: number;
 }
 
 // ── Request / Response ────────────────────────────────────
@@ -51,6 +60,9 @@ export interface ToolDef {
     parameters: Record<string, unknown>;
   };
 }
+// Re-exported so `from "./types"` keeps resolving it; the definition lives in
+// its own module (see ./harness-context for why).
+export type { HarnessCallContext, } from "./harness-context";
 
 /** */
 export interface GenerateRequest {
@@ -93,6 +105,13 @@ export interface GenerateRequest {
   };
   /** Abort signal for cancellation */
   signal?: AbortSignal;
+  /**
+   * Harness exec-log context. Local metadata only — never serialized to a
+   * provider. Carried here because both generate-route paths spread
+   * `providerReq` into the egress call, so one field reaches every dispatch
+   * site without threading a parameter through the route internals.
+   */
+  harness?: HarnessCallContext;
 }
 
 /** */
