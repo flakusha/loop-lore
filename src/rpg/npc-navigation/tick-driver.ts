@@ -148,6 +148,7 @@ export async function runNpcMovementTick(
       nowMs,
     },
   );
+
   if (!gate.ok) {
     return { skipped: "budget", reason: gate, };
   }
@@ -156,6 +157,7 @@ export async function runNpcMovementTick(
     rng,
     nowMs,
   },);
+
   return {
     results,
     preset: cfg.preset,

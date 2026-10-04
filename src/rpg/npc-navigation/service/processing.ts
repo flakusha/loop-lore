@@ -43,6 +43,7 @@ export async function processMovementTick(
     rng: opts.rng ?? Math.random,
     nowMs: opts.nowMs ?? Date.now(),
   };
+
   const results: MovementResult[] = [];
 
   // Get all NPCs in the world
