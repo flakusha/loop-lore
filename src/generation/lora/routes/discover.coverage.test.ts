@@ -79,6 +79,7 @@ function startStub(handler: (path: string,) => Response,): Stub {
       return handler(path,);
     },
   },);
+
   return {
     origin: `http://127.0.0.1:${server.port}`,
     paths,
@@ -177,6 +178,7 @@ describe("POST /api/lora/discover — auth gate", () => {
     const app = new Elysia()
       .derive(() => ({ userId: "", userRole: "user", }))
       .use(discoverRoutes({} as Config,),);
+
     const res = await app.handle(post("/api/lora/discover", {},),);
     expect(res.status,).toBe(401,);
     const body = await res.json() as DiscoverBody;
@@ -192,6 +194,7 @@ describe("POST /api/lora/discover — single backend", () => {
       const res = await app.handle(
         post("/api/lora/discover", { backend: "comfyui", baseUrl: stub.origin, forceRefresh: true, },),
       );
+
       expect(res.status,).toBe(200,);
       const body = await res.json() as DiscoverBody;
       expect(body.ok,).toBe(true,);
@@ -209,6 +212,7 @@ describe("POST /api/lora/discover — single backend", () => {
           backend: "comfyui",
         },
       ],);
+
       expect(stub.paths,).toEqual(["/object_info",],);
     } finally {
       await stub.stop();
@@ -231,6 +235,7 @@ describe("POST /api/lora/discover — single backend", () => {
           backend: "sd-server",
         },
       ],);
+
       expect(stub.paths,).toEqual(["/sd-api/v1/models",],);
     } finally {
       await stub.stop();
@@ -306,6 +311,7 @@ describe("POST /api/lora/discover — all backends", () => {
     const stub = startStub((path,) =>
       path === "/object_info" ? new Response("boom", { status: 500, },) : Response.json(SDCPP_MODELS,)
     );
+
     try {
       const config = configWithSd([provider("comfyui", stub.origin,), provider("sdcpp", stub.origin,),],);
       const res = await invokeDiscoverHandler(config, { forceRefresh: true, },);

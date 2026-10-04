@@ -38,6 +38,7 @@ describe("captureWarnings", () => {
       process.emitWarning("[test] first",);
       process.emitWarning("[test] second",);
     },);
+
     expect(messages,).toEqual(["[test] first", "[test] second",],);
   });
 
@@ -46,6 +47,7 @@ describe("captureWarnings", () => {
       process.emitWarning("noise from elsewhere",);
       process.emitWarning("[032] the one we want",);
     }, /\[032\]/,);
+
     expect(messages,).toEqual(["[032] the one we want",],);
   });
 
@@ -54,6 +56,7 @@ describe("captureWarnings", () => {
     await captureWarnings(async () => {
       process.emitWarning("[test] passthrough",);
     },);
+
     expect(process.emitWarning,).toBe(real,);
   });
 
@@ -64,6 +67,7 @@ describe("captureWarnings", () => {
         throw new Error("body failed",);
       },),
     ).rejects.toThrow("body failed",);
+
     expect(process.listenerCount("warning",),).toBe(before,);
   });
 
@@ -72,6 +76,7 @@ describe("captureWarnings", () => {
     await captureWarnings(async () => {
       process.emitWarning("[test] x",);
     },);
+
     expect(process.listenerCount("warning",),).toBe(before,);
   });
 
@@ -79,9 +84,11 @@ describe("captureWarnings", () => {
     await captureWarnings(async () => {
       process.emitWarning("[test] first batch",);
     },);
+
     const second = await captureWarnings(async () => {
       process.emitWarning("[test] second batch",);
     },);
+
     expect(second,).toEqual(["[test] second batch",],);
   });
 
@@ -89,6 +96,7 @@ describe("captureWarnings", () => {
     const messages = await captureWarnings(async () => {
       await Promise.resolve();
     },);
+
     expect(messages,).toEqual([],);
   });
 
@@ -100,6 +108,7 @@ describe("captureWarnings", () => {
       const messages = await captureWarnings(async () => {
         process.emitWarning("[test] observed",);
       },);
+
       expect(messages,).toEqual(["[test] observed",],);
       expect(spy,).toHaveBeenCalled();
     } finally {
@@ -168,8 +177,10 @@ describe("captureWarnings", () => {
       setTimeout(() => {
         process.emitWarning("[test] body's own late warning",);
       }, 15,);
+
       await new Promise((resolve,) => setTimeout(resolve, 60,));
     },);
+
     expect(messages,).toEqual(["[test] body's own late warning",],);
   });
 
@@ -182,8 +193,10 @@ describe("captureWarnings", () => {
       const inner = await captureWarnings(async () => {
         process.emitWarning("[test] inner",);
       },);
+
       expect(inner,).toEqual(["[test] inner",],);
     },);
+
     expect(outer,).toEqual(["[test] outer",],);
   });
 });

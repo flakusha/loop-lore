@@ -91,6 +91,7 @@ describe("postPeerJson", () => {
       received = await req.json();
       return Response.json({ stored: true, },);
     },);
+
     const res = await postPeerJson(origin + "/api/mesh-deliver", { id: "e1", }, undefined,);
     expect(method,).toBe("POST",);
     expect(received,).toEqual({ id: "e1", },);

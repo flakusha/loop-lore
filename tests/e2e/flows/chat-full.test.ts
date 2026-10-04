@@ -54,12 +54,14 @@ describe("Chat Full Functionality", () => {
         entityId: SEED.chat.id,
         label: "test-attachment",
       },);
+
       expect(linkRes.ok,).toBe(true,);
 
       // List chat assets via entity filter
       const assetsRes = await api.get<{ data: Array<{ id: string }> }>(
         `/api/v1/assets?entity_type=chat&entity_id=${SEED.chat.id}`,
       );
+
       expect(assetsRes.ok,).toBe(true,);
       expect(assetsRes.data!.data.length,).toBeGreaterThanOrEqual(1,);
       expect(assetsRes.data!.data.some((a,) => a.id === assetId),).toBe(true,);
@@ -94,6 +96,7 @@ describe("Chat Full Functionality", () => {
         "/api/v1/generation/regenerate",
         { chatId: SEED.chat.id, },
       );
+
       expect(regenRes.ok,).toBe(true,);
       expect(regenRes.data!.ok,).toBe(true,);
       expect(regenRes.data!.ready,).toBe(true,);
@@ -102,6 +105,7 @@ describe("Chat Full Functionality", () => {
       const msgsAfter = await api.get<{ data: Array<{ id: string; role: string }> }>(
         `/api/v1/chats/${SEED.chat.id}/messages`,
       );
+
       expect(msgsAfter.ok,).toBe(true,);
       expect(msgsAfter.data!.data.length,).toBeGreaterThanOrEqual(msgsBefore.data!.data.length,);
     });
@@ -130,6 +134,7 @@ describe("Chat Full Functionality", () => {
         `/api/v1/chats/${SEED.chat.id}/messages`,
         { content: "Hello from swipe test", },
       );
+
       expect(msgRes.ok,).toBe(true,);
       expect(msgRes.data!.id,).toBeTruthy();
 
@@ -142,6 +147,7 @@ describe("Chat Full Functionality", () => {
         const variantsRes = await api.get<Array<{ id: string; content: string }>>(
           `/api/v1/messages/${assistantId}/variants`,
         );
+
         expect(variantsRes.ok,).toBe(true,);
         expect(variantsRes.status,).toBe(200,);
         // Should have at least the assistant message itself

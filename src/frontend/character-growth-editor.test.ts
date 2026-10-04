@@ -20,6 +20,7 @@ let fail = false;
 type FetchOpts = Record<string, unknown>;
 let fetchImpl: (url: string, opts?: FetchOpts,) => Promise<Response> = async () =>
   new Response("{}", { status: 200, },);
+
 const realFetch = globalThis.fetch;
 const realDoc = globalThis.document;
 
@@ -31,10 +32,12 @@ beforeEach(() => {
     if (fail) { throw new Error("network",); }
     return new Response("{}", { status: ok ? 200 : 500, },);
   };
+
   (globalThis as { fetch: unknown }).fetch = (url: string, opts?: FetchOpts,) => {
     calls.push({ url, opts: opts as RequestInit, },);
     return fetchImpl(url, opts,);
   };
+
   (globalThis as { document: unknown }).document = {
     querySelector: () => null,
     cookie: "",
@@ -120,6 +123,7 @@ describe("characterGrowthEditor saveMode", () => {
       initialArcDescription: "",
       initialEntries: [],
     },);
+
     await c.saveMode();
     expect(calls[0]!.url,).toBe("/api/v1/actors/a%20b%2Fc",);
   });
@@ -154,6 +158,7 @@ describe("characterGrowthEditor confirm/reject failure paths", () => {
       initialArcDescription: "",
       initialEntries: [{ id: "e 1/2", recordedAt: "t", axis: "a", eventType: "x", reason: "r", status: "pending", },],
     },);
+
     await c.confirmEntry("e 1/2",);
     expect(calls[0]!.url,).toBe("/api/v1/character-growth/growth-log/e%201%2F2/confirm?actorId=a1",);
   });
@@ -177,6 +182,7 @@ describe("characterGrowthEditor option coercion", () => {
       initialArcDescription: "",
       initialEntries: [],
     },);
+
     expect(c.arcStage,).toBe("introduction",);
   });
 
@@ -189,6 +195,7 @@ describe("characterGrowthEditor option coercion", () => {
       initialArcDescription: "",
       initialEntries: null as unknown as GrowthLogEntry[],
     },);
+
     expect(c.entries,).toEqual([],);
   });
 
@@ -201,6 +208,7 @@ describe("characterGrowthEditor option coercion", () => {
       initialArcDescription: "",
       initialEntries: [],
     },);
+
     expect(c.llmAssistEnabled,).toBe(true,);
   });
 });

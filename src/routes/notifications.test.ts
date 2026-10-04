@@ -72,6 +72,7 @@ describe("notificationsRoutes", () => {
         body: JSON.stringify({ read: true, },),
       },),
     );
+
     expect(mk.status,).toBe(200,);
     const countRes = await app.handle(new Request("http://localhost/api/notifications/unread-count",),);
     const countBody = (await countRes.json()) as { count: number };
@@ -80,6 +81,7 @@ describe("notificationsRoutes", () => {
     const del = await app.handle(
       new Request(`http://localhost/api/notifications/${id}`, { method: "DELETE", },),
     );
+
     expect(del.status,).toBe(200,);
   });
 
@@ -91,6 +93,7 @@ describe("notificationsRoutes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/notifications/read-all", { method: "PATCH", },),
     );
+
     expect(res.status,).toBe(200,);
     const countRes = await app.handle(new Request("http://localhost/api/notifications/unread-count",),);
     const countBody = (await countRes.json()) as { count: number };
@@ -109,6 +112,7 @@ describe("notificationsRoutes", () => {
         body: JSON.stringify({ enabled: { world_event: true, }, },),
       },),
     );
+
     expect(patch.status,).toBe(200,);
     const updatedRes = await app.handle(new Request("http://localhost/api/notifications/preferences",),);
     const updated = (await updatedRes.json()) as { enabled: Record<string, boolean> };

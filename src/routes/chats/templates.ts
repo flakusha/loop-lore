@@ -58,6 +58,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
             features: tmpl.features ?? [],
             visibility: tmpl.visibility ?? null,
           }),);
+
           return jsonResponse(payload,);
         },
         { response: { 200: t.Array(ChatSetupTemplateSchema,), }, },
@@ -70,6 +71,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!can(ctx.userRole, "admin.settings",)) {
             return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
           }
+
           const body = ctx.body as typeof ChatSetupTemplateCreateBody.static;
           const result = await createChatSetupTemplate(database, {
             slug: body.slug,
@@ -83,12 +85,15 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
             features: body.features ?? null,
             visibility: body.visibility ?? null,
           },);
+
           if (!result.ok) {
             if (result.code === "conflict") {
               return jsonError({ message: result.message, status: HttpStatus.Conflict, },);
             }
+
             return jsonError({ message: result.message, status: HttpStatus.BadRequest, },);
           }
+
           return jsonCreated(result.template,);
         },
         {
@@ -104,6 +109,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!can(ctx.userRole, "admin.settings",)) {
             return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
           }
+
           const body = ctx.body as typeof ChatSetupTemplateUpdateBody.static | undefined;
           const result = await updateChatSetupTemplate(database, ctx.params.templateId, {
             name: body?.name,
@@ -116,10 +122,12 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
             features: body?.features,
             visibility: body?.visibility,
           },);
+
           if (!result.ok) {
             if (result.code === "not_found") { return notFound("Template not found",); }
             return jsonError({ message: result.message, status: HttpStatus.BadRequest, },);
           }
+
           return jsonResponse(result.template,);
         },
         {
@@ -136,11 +144,13 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!can(ctx.userRole, "admin.settings",)) {
             return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
           }
+
           const result = await deleteChatSetupTemplate(database, ctx.params.templateId,);
           if (!result.ok) {
             if (result.code === "not_found") { return notFound("Template not found",); }
             return jsonError({ message: result.message, status: HttpStatus.BadRequest, },);
           }
+
           return jsonNoContent();
         },
         {

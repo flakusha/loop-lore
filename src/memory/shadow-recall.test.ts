@@ -69,6 +69,7 @@ describe("shared recall excludes shadow notes (AC6)", () => {
     expect(
       entries.some((entry,) => entry.content.includes("silver compass",)),
     ).toBe(true,);
+
     expect(
       entries.some((entry,) => entry.content.includes(SHADOW_MARKER,)),
     ).toBe(false,);

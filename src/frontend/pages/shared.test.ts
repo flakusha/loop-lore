@@ -82,6 +82,7 @@ function makeEl(overrides: Partial<El> = {},): El {
     getHTML: () => escapeText(el.textContent,),
     ...overrides,
   };
+
   return el;
 }
 
@@ -158,6 +159,7 @@ describeOrSkip("filterActors", () => {
       { display_name: "Shield", description: "sturdy", },
       { name: "Potion", description: "heals wounds", },
     ];
+
     expect(filterActors(actors, "   ",),).toEqual([],);
     expect(filterActors(actors, "sw",),).toEqual([actors[0],],);
     expect(filterActors(actors, "STURDY",),).toEqual([actors[1],],);
@@ -329,6 +331,7 @@ describeOrSkip("filterBar", () => {
     feHandler = (
       url,
     ) => (url === "/api/v1/tag-autocomplete" ? jsonResponse({ tags: ["cozy", "dark",], },) : jsonResponse({},));
+
     const enabled = await newState({ showTagFilter: "true", },);
     await flushMicrotasks();
     expect(enabled.tagOptions,).toEqual(["cozy", "dark",],);

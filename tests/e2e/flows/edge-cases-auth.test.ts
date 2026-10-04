@@ -93,6 +93,7 @@ describe("Auth edge-cases E2E", () => {
       headers: { "Content-Type": JSON_CT, Accept: JSON_CT, },
       body: "{not-json",
     },);
+
     expect(res.status,).toBe(400,);
     expect(res.headers.get("content-type",),).toMatch(/application\/json/,);
   });
@@ -103,6 +104,7 @@ describe("Auth edge-cases E2E", () => {
       headers: { "Content-Type": "text/plain", Accept: JSON_CT, },
       body: "username=foo&password=bar",
     },);
+
     expect(res.status,).toBe(400,);
     expect(res.headers.get("content-type",),).toMatch(/application\/json/,);
   });
@@ -114,6 +116,7 @@ describe("Auth edge-cases E2E", () => {
       username: "x".repeat(10_000,),
       password: VALID_PASSWORD,
     },);
+
     expect(res.status,).toBeLessThan(500,);
     expect(res.status,).toBeGreaterThanOrEqual(200,);
     // 401 because no user matches; 5xx would be a crash. Either is fine.
@@ -125,6 +128,7 @@ describe("Auth edge-cases E2E", () => {
       username: VALID_USERNAME,
       password: "x".repeat(102_400,),
     },);
+
     expect(res.status,).toBeLessThan(500,);
     expect(res.status,).toBeGreaterThanOrEqual(200,);
   });
@@ -134,6 +138,7 @@ describe("Auth edge-cases E2E", () => {
       username: VALID_USERNAME,
       password: "x".repeat(1_000_000,),
     },);
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -142,6 +147,7 @@ describe("Auth edge-cases E2E", () => {
       username: "x".repeat(10_000_000,),
       password: VALID_PASSWORD,
     },);
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -152,6 +158,7 @@ describe("Auth edge-cases E2E", () => {
       username: "ж中🐉",
       password: VALID_PASSWORD,
     },);
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -160,6 +167,7 @@ describe("Auth edge-cases E2E", () => {
       username: VALID_USERNAME,
       password: "\u0000\u0007\u0008",
     },);
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -171,6 +179,7 @@ describe("Auth edge-cases E2E", () => {
       "admin'--",
       "x'; DROP TABLE users;--",
     ];
+
     for (const username of probes) {
       const res = await postJson(server, { username, password: "anything", },);
       expect(res.status,).toBeLessThan(500,);
@@ -182,6 +191,7 @@ describe("Auth edge-cases E2E", () => {
       username: { "$gt": "", },
       password: { "$gt": "", },
     },);
+
     // Either rejected at parse time (400) or treated as non-string creds (401/422).
     expect(res.status,).toBeLessThan(500,);
   });
@@ -209,6 +219,7 @@ describe("Auth edge-cases E2E", () => {
       server,
       `username=${encodeURIComponent("nobody",)}&password=${encodeURIComponent("x",)}`,
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-type",),).toMatch(/text\/html/,);
     const body = await res.text();
@@ -234,6 +245,7 @@ describe("Auth edge-cases E2E", () => {
     const res = await fetch(`${server.url}/api/auth/me`, {
       headers: { Authorization: "Bearer " + "x".repeat(1_000_000,), },
     },);
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -241,6 +253,7 @@ describe("Auth edge-cases E2E", () => {
     const res = await fetch(`${server.url}/api/auth/me`, {
       headers: { Authorization: "garbage-no-bearer-prefix", },
     },);
+
     expect(res.status,).toBeLessThan(500,);
     expect([401, 403,],).toContain(res.status,);
   });

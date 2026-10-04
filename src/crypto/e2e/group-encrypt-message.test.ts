@@ -26,6 +26,7 @@ beforeEach(async () => {
     const kp = await generateKeyPair({ extractable: true, },);
     return { id, kp, pubJwk: await exportPublicJwk(kp.publicKey,), };
   };
+
   alice = await mk("alice",);
   bob = await mk("bob",);
   carol = await mk("carol",);
@@ -38,6 +39,7 @@ describe("wrap / unwrap sender chain key", () => {
       chainKey,
       recipients: [{ actorId: bob.id, staticPubJwk: bob.pubJwk, },],
     },);
+
     expect(wraps,).toHaveLength(1,);
     expect(wraps[0]?.recipientActorId,).toBe(bob.id,);
     expect(wraps[0]?.wrappedKey,).toBeTruthy();
@@ -49,6 +51,7 @@ describe("wrap / unwrap sender chain key", () => {
       recipientStaticPriv: bob.kp.privateKey,
       recipientActorId: bob.id,
     },);
+
     expect(recovered,).toEqual(chainKey,);
   });
 
@@ -61,6 +64,7 @@ describe("wrap / unwrap sender chain key", () => {
         { actorId: carol.id, staticPubJwk: carol.pubJwk, },
       ],
     },);
+
     expect(wraps,).toHaveLength(2,);
     expect(wraps[0]!.wrappedKey,).not.toBe(wraps[1]!.wrappedKey,);
     expect(JSON.stringify(wraps[0]!.senderEphPubJwk,),)
@@ -72,12 +76,14 @@ describe("wrap / unwrap sender chain key", () => {
       recipientStaticPriv: bob.kp.privateKey,
       recipientActorId: bob.id,
     },);
+
     const carolRec = await unwrapSenderKey({
       wrappedKey: wraps[1]!.wrappedKey,
       senderEphPubJwk: wraps[1]!.senderEphPubJwk,
       recipientStaticPriv: carol.kp.privateKey,
       recipientActorId: carol.id,
     },);
+
     expect(bobRec,).toEqual(chainKey,);
     expect(carolRec,).toEqual(chainKey,);
   });
@@ -88,6 +94,7 @@ describe("wrap / unwrap sender chain key", () => {
       chainKey,
       recipients: [{ actorId: bob.id, staticPubJwk: bob.pubJwk, },],
     },);
+
     await expect(
       unwrapSenderKey({
         wrappedKey: wraps[0]!.wrappedKey,
@@ -110,6 +117,7 @@ describe("group message encrypt + decrypt", () => {
         { actorId: carol.id, staticPubJwk: carol.pubJwk, },
       ],
     },);
+
     expect(wire.ciphertext,).toBeTruthy();
     expect(wire.nonce,).toBeTruthy();
     expect(wire.chainIndex,).toBe(0,);
@@ -121,6 +129,7 @@ describe("group message encrypt + decrypt", () => {
         recipientActorId: setup.id,
         recipientStaticPriv: setup.kp.privateKey,
       },);
+
       expect(pt,).toBe("hello team",);
     }
   });
@@ -134,6 +143,7 @@ describe("group message encrypt + decrypt", () => {
         { actorId: carol.id, staticPubJwk: carol.pubJwk, },
       ],
     },);
+
     await expect(
       decryptGroupMessage({
         payload: wire,
@@ -152,11 +162,13 @@ describe("group message encrypt + decrypt", () => {
         { actorId: carol.id, staticPubJwk: carol.pubJwk, },
       ],
     },);
+
     const carolWrap = wire.per_recipient["carol"]!;
     const tampered: GroupEncryptedPayload = {
       ...wire,
       per_recipient: { ...wire.per_recipient, bob: carolWrap, },
     };
+
     expect(
       decryptGroupMessage({
         payload: tampered,
@@ -172,6 +184,7 @@ describe("group message encrypt + decrypt", () => {
       chainIndex: 7,
       recipients: [{ actorId: bob.id, staticPubJwk: bob.pubJwk, },],
     },);
+
     const ct = Uint8Array.fromBase64(wire.ciphertext,);
     const idx = Math.min(2, ct.length - 1,);
     ct[idx] = (ct[idx] ?? 0) ^ 0x01;
@@ -190,14 +203,17 @@ describe("group message encrypt + decrypt", () => {
       chainIndex: 0,
       recipients: [{ actorId: bob.id, staticPubJwk: bob.pubJwk, },],
     },);
+
     const w2 = await encryptGroupMessage({
       plaintext: "second",
       chainIndex: 1,
       recipients: [{ actorId: bob.id, staticPubJwk: bob.pubJwk, },],
     },);
+
     expect(w1.per_recipient["bob"]!.wrappedKey,).not.toBe(
       w2.per_recipient["bob"]!.wrappedKey,
     );
+
     expect(
       await decryptGroupMessage({
         payload: w1,
@@ -205,6 +221,7 @@ describe("group message encrypt + decrypt", () => {
         recipientStaticPriv: bob.kp.privateKey,
       },),
     ).toBe("first",);
+
     expect(
       await decryptGroupMessage({
         payload: w2,

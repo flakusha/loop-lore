@@ -189,6 +189,7 @@ describeOrSkip("chatLocation", () => {
           { chatId: "c1", chatName: "Adventurers", participantCount: 3, lastActiveAt: "2026-01-01", },
         ],
       },);
+
       const { state, } = buildCtx({ _selectedLocationId: "loc-2", },);
       await chatLocation.loadLocationJoinable!.call(state,);
       expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/joinable?location=loc-2",);
@@ -281,6 +282,7 @@ describeOrSkip("chatLocation — loadLocations", () => {
         },],
       },
     },);
+
     const { state, } = buildCtx({ _chatCurrentLocationId: "loc-2", },);
     state._selectedLocationId = "";
     await chatLocation.loadLocations!.call(state,);
@@ -341,8 +343,10 @@ describeOrSkip("chatLocation — _locationWorldId", () => {
       if (call === 1) {
         return Response.json({ id: "chat-1", world_id: "world-9", current_location_id: "loc-7", }, { status: 200, },);
       }
+
       return Response.json({ data: { locations: [], }, }, { status: 200, },);
     };
+
     const worldId = await chatLocation._locationWorldId!.call(state,);
     expect(worldId,).toBe("world-9",);
     expect(state._chatCurrentLocationId,).toBe("loc-7",);
@@ -398,6 +402,7 @@ describeOrSkip("chatLocation — changeChatLocation guards", () => {
     state.loadChats = mock(async () => {
       throw new Error("reload failed",);
     },);
+
     await chatLocation.changeChatLocation!.call(state,);
     expect(toasts.some((t,) => t.type === "error"),).toBe(true,);
     expect(state._locationBusy,).toBe(false,);

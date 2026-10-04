@@ -45,39 +45,49 @@ export function getSeductionPrerequisites(
         { skill: "intimidation", minLevel: 70, required: true, },
         { skill: "deception", minLevel: 80, required: true, },
       );
+
       break;
     }
+
     case "unfriendly": {
       // Unfriendly targets require persuasion or empathy
       prerequisites.push(
         { skill: "persuasion", minLevel: 60, required: true, },
         { skill: "empathy", minLevel: 50, required: false, },
       );
+
       break;
     }
+
     case "neutral": {
       // Neutral targets require basic charisma
       prerequisites.push(
         { skill: "charisma", minLevel: 40, required: true, },
         { skill: "seduction", minLevel: 30, required: false, },
       );
+
       break;
     }
+
     case "friendly": {
       // Friendly targets require less
       prerequisites.push(
         { skill: "charisma", minLevel: 20, required: true, },
         { skill: "seduction", minLevel: 20, required: false, },
       );
+
       break;
     }
+
     case "allied": {
       // Allied targets are easier
       prerequisites.push(
         { skill: "seduction", minLevel: 10, required: false, },
       );
+
       break;
     }
+
     case "devoted": {
       // Devoted targets have no prerequisites
       break;

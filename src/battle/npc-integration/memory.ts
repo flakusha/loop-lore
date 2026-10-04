@@ -58,10 +58,12 @@ export function createBattleMemory(
       emotionalImpact = 20 + levelDiff * 2;
       break;
     }
+
     case "defeat": {
       emotionalImpact = -30 - Math.abs(levelDiff,) * 3;
       break;
     }
+
     case "draw": {
       emotionalImpact = 5 + levelDiff;
       break;

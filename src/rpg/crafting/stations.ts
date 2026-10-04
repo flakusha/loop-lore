@@ -70,6 +70,7 @@ export class StationsService {
       created_at: now,
       updated_at: now,
     },).execute();
+
     return id;
   }
 
@@ -82,6 +83,7 @@ export class StationsService {
       .where("id", "=", id,)
       .selectAll()
       .executeTakeFirst();
+
     return row ? mapDef(row,) : null;
   }
 
@@ -97,6 +99,7 @@ export class StationsService {
     let q = worldScoped(this.db, "crafting_station_defs", worldId,)
       .orderBy("tier", "asc",)
       .orderBy("name", "asc",);
+
     if (type) { q = q.where("station_type", "=", type,); }
     const rows = (await q.selectAll().execute()) as unknown as Parameters<typeof mapDef>[0][];
     return Array.from(rows, mapDef,);
@@ -124,6 +127,7 @@ export class StationsService {
       .set(u,)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     return Number(r.numUpdatedRows,) > 0;
   }
 
@@ -135,6 +139,7 @@ export class StationsService {
     const r = await this.db.deleteFrom("crafting_station_defs",)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     return (r.numDeletedRows ?? 0n) > 0n;
   }
 
@@ -158,6 +163,7 @@ export class StationsService {
       created_at: now,
       updated_at: now,
     },).execute();
+
     return id;
   }
 
@@ -172,6 +178,7 @@ export class StationsService {
       .where("world_id", "=", worldId,)
       .selectAll()
       .executeTakeFirst();
+
     return row ? mapInstance(row,) : null;
   }
 
@@ -187,6 +194,7 @@ export class StationsService {
       .where("id", "=", id,)
       .selectAll()
       .executeTakeFirst();
+
     return row ? mapInstance(row,) : null;
   }
 
@@ -201,6 +209,7 @@ export class StationsService {
   ): Promise<StationInstance[]> {
     let q = worldScoped(this.db, "crafting_station_instances", worldId,)
       .orderBy("created_at", "asc",);
+
     if (locationId) { q = q.where("location_id", "=", locationId,); }
     const rows = (await q.selectAll().execute()) as unknown as Parameters<typeof mapInstance>[0][];
     return Array.from(rows, mapInstance,);
@@ -225,6 +234,7 @@ export class StationsService {
       .where("id", "=", id,)
       .where("world_id", "=", worldId,)
       .executeTakeFirst();
+
     return Number(r.numUpdatedRows,) > 0;
   }
 
@@ -238,6 +248,7 @@ export class StationsService {
       .where("id", "=", id,)
       .where("world_id", "=", worldId,)
       .executeTakeFirst();
+
     return (r.numDeletedRows ?? 0n) > 0n;
   }
 }

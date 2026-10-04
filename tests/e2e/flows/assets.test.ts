@@ -33,6 +33,7 @@ describeReal("Assets E2E", () => {
   afterAll(async () => {
     await server.close();
   },);
+
   test("GET /api/v1/assets returns empty list", async () => {
     const res = await api.get<{ data: [] }>("/api/v1/assets",);
     expect(res.ok,).toBe(true,);
@@ -76,12 +77,14 @@ describeReal("Assets E2E", () => {
       entityType: "chat",
       entityId: SEED.chat.id,
     },);
+
     expect(linkRes.ok,).toBe(true,);
 
     // Verify link exists
     const linksRes = await api.get<Array<{ entity_type: string; entity_id: string }>>(
       `/api/v1/assets/${assetId}/links`,
     );
+
     expect(Array.isArray(linksRes.data,),).toBe(true,);
   });
 
@@ -109,6 +112,7 @@ describeReal("Assets E2E", () => {
       entityType: "chat",
       entityId: SEED.chat.id,
     },);
+
     expect(linkRes.ok,).toBe(true,);
 
     // :linkId is the linked entity's id; unknown ids are a 404
@@ -116,18 +120,21 @@ describeReal("Assets E2E", () => {
       entityType: "chat",
       entityId: SEED.chat.id,
     },);
+
     expect(badLinkRes.status,).toBe(404,);
 
     const unlinkRes = await api.del(`/api/v1/assets/${assetId}/links/${SEED.chat.id}`, {
       entityType: "chat",
       entityId: SEED.chat.id,
     },);
+
     expect(unlinkRes.ok,).toBe(true,);
     expect(unlinkRes.status,).toBe(204,);
 
     const linksRes = await api.get<Array<{ entity_type: string; entity_id: string }>>(
       `/api/v1/assets/${assetId}/links`,
     );
+
     expect(linksRes.data,).toEqual([],);
   });
 
@@ -148,17 +155,20 @@ describeReal("Assets E2E", () => {
       entityType: "character",
       entityId: "shared-entity-id",
     },);
+
     expect(charLink.ok,).toBe(true,);
     const worldLink = await api.post(`/api/v1/assets/${assetId}/links`, {
       entityType: "world",
       entityId: "shared-entity-id",
     },);
+
     expect(worldLink.ok,).toBe(true,);
 
     const delRes = await api.del(`/api/v1/assets/${assetId}/links/shared-entity-id`, {
       entityType: "character",
       entityId: "shared-entity-id",
     },);
+
     expect(delRes.status,).toBe(409,);
     expect(delRes.code,).toBe("CONFLICT",);
 
@@ -166,6 +176,7 @@ describeReal("Assets E2E", () => {
     const linksRes = await api.get<Array<{ entity_type: string; entity_id: string }>>(
       `/api/v1/assets/${assetId}/links`,
     );
+
     expect(linksRes.data,).toHaveLength(2,);
   });
 
@@ -195,6 +206,7 @@ describeReal("Assets E2E", () => {
     const mintRes = await api.post<{ url: string; token: string; expiresAt: number }>(
       `/api/v1/assets/${assetId}/signed-url/raw`,
     );
+
     expect(mintRes.ok,).toBe(true,);
     expect(mintRes.data!.url,).toContain(`?expires=`,);
     expect(mintRes.data!.url,).toContain(`&sig=`,);
@@ -214,6 +226,7 @@ describeReal("Assets E2E", () => {
     const anonMint = await fetch(`${server.url}/api/v1/assets/${assetId}/signed-url/raw`, {
       method: "POST",
     },);
+
     expect(anonMint.ok,).toBe(false,);
   });
 },);

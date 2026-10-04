@@ -25,6 +25,7 @@ describe("validateLoRAConfig", () => {
       strength: 0.5,
       backend: "comfyui",
     },);
+
     expect(result,).toBeNull();
   });
 
@@ -47,6 +48,7 @@ describe("validateLoRAConfig", () => {
     expect(validateLoRAConfig({ name: "test", strength: "high", backend: "comfyui", },),).toBe(
       "LoRA strength must be a number",
     );
+
     expect(validateLoRAConfig({ name: "test", strength: 0.05, backend: "comfyui", },),).toContain("must be between",);
     expect(validateLoRAConfig({ name: "test", strength: 1.5, backend: "comfyui", },),).toContain("must be between",);
   });
@@ -71,6 +73,7 @@ describe("validateLoRAModel", () => {
       path: "/models/loras/my_lora.safetensors",
       backend: "comfyui",
     },);
+
     expect(result,).toBeNull();
   });
 
@@ -84,6 +87,7 @@ describe("validateLoRAModel", () => {
       triggerWords: ["character", "portrait",],
       recommendedStrength: 0.6,
     },);
+
     expect(result,).toBeNull();
   });
 
@@ -96,12 +100,15 @@ describe("validateLoRAModel", () => {
     expect(validateLoRAModel({ name: "", filename: "test.safetensors", path: "/test", backend: "comfyui", },),).toBe(
       "Invalid LoRA model name",
     );
+
     expect(validateLoRAModel({ name: "test", filename: "", path: "/test", backend: "comfyui", },),).toBe(
       "Invalid LoRA model filename",
     );
+
     expect(validateLoRAModel({ name: "test", filename: "test.safetensors", path: "", backend: "comfyui", },),).toBe(
       "Invalid LoRA model path",
     );
+
     expect(validateLoRAModel({ name: "test", filename: "test.safetensors", path: "/test", backend: "invalid", },),)
       .toBe("LoRA model backend must be 'comfyui' or 'sd-server'",);
   });
@@ -116,6 +123,7 @@ describe("validateLoRAModel", () => {
         size: "not-a-number",
       },),
     ).toBe("LoRA model size must be a number",);
+
     expect(
       validateLoRAModel({
         name: "test",
@@ -125,6 +133,7 @@ describe("validateLoRAModel", () => {
         triggerWords: "not-array",
       },),
     ).toBe("LoRA triggerWords must be an array",);
+
     expect(
       validateLoRAModel({
         name: "test",
@@ -134,6 +143,7 @@ describe("validateLoRAModel", () => {
         triggerWords: [123,],
       },),
     ).toBe("LoRA triggerWords must contain only strings",);
+
     expect(
       validateLoRAModel({
         name: "test",
@@ -143,6 +153,7 @@ describe("validateLoRAModel", () => {
         recommendedStrength: "high",
       },),
     ).toBe("LoRA recommendedStrength must be a number",);
+
     expect(
       validateLoRAModel({
         name: "test",

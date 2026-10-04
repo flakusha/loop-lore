@@ -85,6 +85,7 @@ export function createMemoryBackend(ttlMs: number,): IdempotencyBackendApi {
         cache.delete(key,);
         return null;
       }
+
       return entry;
     },
     /**
@@ -100,6 +101,7 @@ export function createMemoryBackend(ttlMs: number,): IdempotencyBackendApi {
         startedAt: Date.now(),
         completedAt: null,
       };
+
       cache.set(key, entry,);
       return entry;
     },

@@ -41,6 +41,7 @@ function truncateString(s: string, maxBytes: number, label = "chars",): string {
     if (bytes(s.slice(0, mid,),) <= maxBytes) { lo = mid; }
     else { hi = mid - 1; }
   }
+
   const suffix = `...[truncated ${s.length - lo} ${label}]`;
   return s.slice(0, lo,) + suffix;
 }
@@ -68,9 +69,11 @@ function truncateMeta(
       ? truncateMeta(val as Record<string, unknown>, maxBytes, maxDepth, maxEntries, depth + 1,)
       : val;
   }
+
   if (Object.keys(obj,).length > maxEntries) {
     result["[truncated]"] = `${Object.keys(obj,).length - maxEntries} excess keys`;
   }
+
   // Check total serialized size — drop entries if still too big
   const serializedResult = safeJsonStringify(result,);
   const serialized = serializedResult.ok ? serializedResult.value : "{}";
@@ -87,9 +90,11 @@ function truncateMeta(
       out["[truncated]"] = `meta exceeds ${maxBytes} bytes`;
       break;
     }
+
     out[key] = val;
     size += bytes(pair,) + 1; // +1 for comma
   }
+
   return out;
 }
 
@@ -113,6 +118,7 @@ export function applyLimits(entry: LogEntry, overrides?: Partial<SizeLimits>,): 
       for (const k of keys.slice(0, limits.maxMessageKeys,)) {
         truncated[k] = result.message[k];
       }
+
       truncated["[truncated]"] = `${keys.length - limits.maxMessageKeys} excess keys`;
       result.message = truncated;
     }

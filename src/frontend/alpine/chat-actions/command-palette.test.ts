@@ -65,6 +65,7 @@ describeOrSkip("commandPalette._loadCommandList", () => {
           { name: "insult", descriptionKey: "commands.insult", },
         ],
       },);
+
     await commandPalette.init!();
     expect(calls,).toHaveLength(1,);
     expect(calls[0]!.url,).toBe("/api/v1/commands",);
@@ -72,9 +73,11 @@ describeOrSkip("commandPalette._loadCommandList", () => {
       ["roll", "commands.roll",],
       ["insult", "commands.insult",],
     ],);
+
     for (const entry of commandPalette._commandList!) {
       expect(typeof entry.description,).toBe("string",);
     }
+
     expect(commandPalette._filteredCommands,).toEqual([],);
   });
 
@@ -95,6 +98,7 @@ describeOrSkip("commandPalette._loadCommandList", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await commandPalette._loadCommandList!();
     expect(commandPalette._commandList,).toEqual([],);
   });

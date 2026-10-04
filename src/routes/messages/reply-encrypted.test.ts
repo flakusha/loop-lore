@@ -45,6 +45,7 @@ describe("maybeAutoReply — encrypted assistant reply", () => {
       compressThreshold: 1024,
       compressAlgorithm: "gzip",
     },);
+
     ({ db, } = await createTestDb());
 
     const userId = uid();
@@ -81,6 +82,7 @@ describe("maybeAutoReply — encrypted assistant reply", () => {
       compressThreshold: 1024,
       compressAlgorithm: "gzip",
     },);
+
     await db.destroy();
   },);
 
@@ -94,6 +96,7 @@ describe("maybeAutoReply — encrypted assistant reply", () => {
       "hello",
       new Request("http://localhost/",),
     );
+
     expect(result.replied,).toBe(true,);
     const rows = await db
       .selectFrom("messages",)
@@ -101,6 +104,7 @@ describe("maybeAutoReply — encrypted assistant reply", () => {
       .where("chat_id", "=", chatId,)
       .where("role", "=", MessageRole.Assistant,)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.key_id,).not.toBeNull();
     // NOTE: ciphertext is random bytes — "hello" could theoretically appear

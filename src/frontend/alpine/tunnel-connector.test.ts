@@ -50,6 +50,7 @@ function createFakeSocket(): FakeSocket {
       socket.onclose?.({},);
     },
   } as FakeSocket;
+
   return socket;
 }
 
@@ -59,6 +60,7 @@ function pump(ticks = 20,): Promise<void> {
   for (let i = 0; i < ticks; i += 1) {
     chain = chain.then(() => {},);
   }
+
   return chain;
 }
 
@@ -92,6 +94,7 @@ describe("tunnel-connector lifecycle", () => {
       },
       onStatus: (status,) => seen.push(status,),
     },);
+
     const connected = connector.connect();
     expect(connector.status,).toBe("connecting",);
     sockets[0]?.openIt();
@@ -109,6 +112,7 @@ describe("tunnel-connector lifecycle", () => {
         return socket;
       },
     },);
+
     const connected = connector.connect();
     sockets[0]?.drop();
     await expect(connected,).rejects.toBeInstanceOf(TunnelUnavailable,);
@@ -121,6 +125,7 @@ describe("tunnel-connector lifecycle", () => {
         throw new Error("nope",);
       },
     },);
+
     await expect(connector.connect(),).rejects.toBeInstanceOf(TunnelUnavailable,);
   });
 
@@ -132,6 +137,7 @@ describe("tunnel-connector lifecycle", () => {
         return { ok: true, };
       }) as unknown as typeof fetch,
     },);
+
     expect(await ok.health(),).toBe(true,);
     expect(calls,).toEqual(["http://localhost:8080/t/health",],);
 
@@ -140,6 +146,7 @@ describe("tunnel-connector lifecycle", () => {
         throw new Error("offline",);
       }) as unknown as typeof fetch,
     },);
+
     expect(await down.health(),).toBe(false,);
 
     const bad = createTunnelConnector("nota-url", {},);
@@ -157,6 +164,7 @@ describe("tunnel-connector completion", () => {
         return socket;
       },
     },);
+
     const connected = connector.connect();
     sockets[0]?.openIt();
     await connected;
@@ -193,6 +201,7 @@ describe("tunnel-connector completion", () => {
         return socket;
       },
     },);
+
     const connected = connector.connect();
     sockets[0]?.openIt();
     await connected;
@@ -211,6 +220,7 @@ describe("tunnel-connector completion", () => {
         return socket;
       },
     },);
+
     const connected = connector.connect();
     sockets[0]?.openIt();
     await connected;
@@ -239,6 +249,7 @@ describe("tunnel-connector reconnect", () => {
       },
       onStatus: (status,) => seen.push(status,),
     },);
+
     const connected = connector.connect();
     sockets[0]?.openIt();
     await connected;
@@ -263,6 +274,7 @@ describe("tunnel-connector reconnect", () => {
       sleep: async () => {},
       maxAttempts: 1,
     },);
+
     const connected = connector.connect();
     sockets[0]?.openIt();
     await connected;

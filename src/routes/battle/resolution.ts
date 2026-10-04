@@ -31,6 +31,7 @@ export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api",) {
             isCritical?: boolean;
             damageType?: "physical" | "magical" | "fire" | "ice" | "lightning" | "poison" | "healing";
           };
+
           const result = calculateDamage(body.baseDamage, body.modifiers, body.isCritical, body.damageType,);
           return jsonResponse(result,);
         } catch (error) {
@@ -57,6 +58,7 @@ export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api",) {
             advantage?: boolean;
             disadvantage?: boolean;
           };
+
           const mods: RollModifier[] = [];
           if (body.advantage) { mods.push({ source: "advantage", value: 2, type: "bonus", },); }
           if (body.disadvantage) { mods.push({ source: "disadvantage", value: -2, type: "penalty", },); }
@@ -86,6 +88,7 @@ export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api",) {
             advantage?: boolean;
             disadvantage?: boolean;
           };
+
           const mods: RollModifier[] = [];
           if (body.advantage) { mods.push({ source: "advantage", value: 2, type: "bonus", },); }
           if (body.disadvantage) { mods.push({ source: "disadvantage", value: -2, type: "penalty", },); }
@@ -119,6 +122,7 @@ export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api",) {
             }[];
             currentHP: Record<string, number>;
           };
+
           // Process combat round: each combatant makes an attack against the next
           const actions: { attacker: string; target: string; roll: number; hit: boolean; currentHP: number }[] = [];
           for (let i = 0; i < body.combatants.length; i++) {
@@ -135,6 +139,7 @@ export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api",) {
               currentHP: hp,
             },);
           }
+
           return jsonResponse({ round: 1, actions, summary: `Processed ${actions.length} actions`, },);
         } catch (error) {
           log().error("Failed to process combat round", error instanceof Error ? error : undefined,);

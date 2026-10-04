@@ -59,6 +59,7 @@ export function matchWorkflowTrigger(
       }
     }
   }
+
   return undefined;
 }
 
@@ -104,6 +105,7 @@ export function matchWorkflowIntent(
       best = { target: group.target, confidence: group.confidence, };
     }
   }
+
   if (best === undefined) { return undefined; }
   return routed.find((w,) => w.intent?.target === best.target);
 }
@@ -119,14 +121,18 @@ export function routeAssistantMessage(opts: RouteMessageOptions,): RouteTarget {
   if (slash?.[1] !== undefined) {
     return { kind: "command", name: slash[1], };
   }
+
   const workflow = matchWorkflowTrigger(opts.message, opts.workflows,) ??
     matchWorkflowIntent(opts.message, opts.workflows,);
+
   if (workflow !== undefined) {
     return { kind: "workflow", workflow, };
   }
+
   if (opts.isStoryMode) {
     return { kind: "gm", };
   }
+
   return { kind: "chat", };
 }
 

@@ -34,6 +34,7 @@ export function calculateAvailableActions(profile: BodyProfile,): number {
     [BodyBuild.Curvy]: 0,
     [BodyBuild.Muscular]: 0,
   };
+
   const buildBonus = buildBonuses[profile.build];
   return Math.max(1, base + buildBonus,);
 }

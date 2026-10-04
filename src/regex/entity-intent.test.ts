@@ -66,6 +66,7 @@ describe("buildEntitySeed", () => {
       { kind: "character", name: "", context: "someone arrives", index: 0, },
       "someone arrives",
     );
+
     expect(seed,).toContain("(name unknown)",);
   });
 });

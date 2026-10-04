@@ -24,8 +24,10 @@ export async function createWorldInvite(
     input,
     resolveScope: (i,) => i.worldId,
   },);
+
   if (!result.ok) {
     return result;
   }
+
   return { ok: true, value: toRow(result.value as never,), };
 }

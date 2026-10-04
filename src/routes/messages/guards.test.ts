@@ -41,6 +41,7 @@ function makeClassifierProvider(body: string,): LLMProvider {
     finishReason: "stop",
     usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30, },
   });
+
   return {
     capabilities: {
       type: "openai-compatible",
@@ -87,6 +88,7 @@ describe("enforceInjectionGate", () => {
       "u1",
       "chat1",
     );
+
     expect(result,).toBeNull();
   });
 
@@ -117,6 +119,7 @@ describe("attachAttachmentsOrForbidden", () => {
       [{ assetId: "no-such-asset", order: 0, },],
       "u1",
     );
+
     expect(result?.status,).toBe(403,);
     const body = await result?.json();
     expect(body.error,).toBe("forbidden",);

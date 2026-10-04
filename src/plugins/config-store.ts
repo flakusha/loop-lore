@@ -32,6 +32,7 @@ export async function readStoredPluginConfig(
       .select(["config_json",],)
       .where("name", "=", name,)
       .executeTakeFirst();
+
     return parseStoredPluginConfig(row?.config_json,);
   } catch (error) {
     getLogger().warn({
@@ -39,6 +40,7 @@ export async function readStoredPluginConfig(
       plugin: name,
       error: String(error,),
     },);
+
     return {};
   }
 }

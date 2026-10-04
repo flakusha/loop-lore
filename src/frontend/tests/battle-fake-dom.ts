@@ -117,6 +117,7 @@ export function makeEl(tag = "div",): FakeEl {
     },
     querySelector: (selector,) => query(el, selector,),
   };
+
   // `className` string assignments (render.ts builds class strings) stay in
   // sync with the classList set so tests can read either representation.
   Object.defineProperty(el, "className", {
@@ -126,6 +127,7 @@ export function makeEl(tag = "div",): FakeEl {
       for (const part of value.split(/\s+/,)) { if (part) { classes.add(part,); } }
     },
   },);
+
   return el;
 }
 
@@ -152,6 +154,7 @@ export function pressKey(el: FakeEl, key: string,): boolean {
       prevented = true;
     },
   },);
+
   return prevented;
 }
 
@@ -176,6 +179,7 @@ function find(els: FakeEl[], key: string, value: string,): FakeEl | null {
     const hit = find(el.children, key, value,);
     if (hit) { return hit; }
   }
+
   return null;
 }
 

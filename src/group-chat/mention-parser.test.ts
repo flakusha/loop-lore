@@ -92,6 +92,7 @@ describe("Mention Parser", () => {
         { actorId: "x1", displayName: "A", },
         { actorId: "x2", displayName: "AB", },
       ];
+
       expect(resolveMention("A", p,),).toBe("x1",);
     });
 
@@ -101,14 +102,17 @@ describe("Mention Parser", () => {
         { actorId: "a1", displayName: "Luna", },
         { actorId: "a2", displayName: "Lun", },
       ];
+
       expect(resolveMention("Lun", p,),).toBe("a2",);
     });
+
     test("returns null when prefix matches multiple participants", () => {
       // [Luna, Lunatic] + "Lun" → ambiguous → null
       const p = [
         { actorId: "a1", displayName: "Luna", },
         { actorId: "a3", displayName: "Lunatic", },
       ];
+
       expect(resolveMention("Lun", p,),).toBeNull();
     });
 
@@ -118,6 +122,7 @@ describe("Mention Parser", () => {
         { actorId: "a1", displayName: "Alex", },
         { actorId: "a2", displayName: "Alexa", },
       ];
+
       expect(resolveMention("Alex", p,),).toBe("a1",);
     });
 
@@ -127,6 +132,7 @@ describe("Mention Parser", () => {
         { actorId: "a1", displayName: "Alexa", },
         { actorId: "a2", displayName: "Alexander", },
       ];
+
       expect(resolveMention("Alex", p,),).toBeNull();
     });
 
@@ -136,6 +142,7 @@ describe("Mention Parser", () => {
         { actorId: "a1", displayName: "alex", },
         { actorId: "a2", displayName: "Alexa", },
       ];
+
       expect(resolveMention("ALEX", p,),).toBe("a1",);
     });
   });
@@ -168,6 +175,7 @@ describe("Mention Parser", () => {
         { actorId: "a3", displayName: "Dark Knight", },
         { actorId: "a4", displayName: "Luna", },
       ];
+
       expect(extractMentionedActorIds("@Dark Knight", p,),).toEqual(["a3",],);
     });
   });

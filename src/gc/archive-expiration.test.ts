@@ -72,6 +72,7 @@ describe("archive expiration GC (FEAT-chat-archive-gc-job)", () => {
       user_id: ownerId,
       owner_id: ownerId,
     } as never,);
+
     captured = new CaptureLogger();
   },);
 
@@ -88,6 +89,7 @@ describe("archive expiration GC (FEAT-chat-archive-gc-job)", () => {
       "=",
       chatId,
     ).execute();
+
     return chatId;
   }
 
@@ -107,6 +109,7 @@ describe("archive expiration GC (FEAT-chat-archive-gc-job)", () => {
     expect(
       await db.selectFrom("chats",).select("id",).where("id", "=", oldChat,).executeTakeFirst(),
     ).toBeUndefined();
+
     expect(
       await db.selectFrom("chats",).select("id",).where("id", "=", freshChat,).executeTakeFirst(),
     ).not.toBeUndefined();
@@ -114,6 +117,7 @@ describe("archive expiration GC (FEAT-chat-archive-gc-job)", () => {
     const auditLines = captured.entries.filter((entry,) =>
       entry.message === "archive gc purged chat" && entry.level === "info"
     );
+
     expect(auditLines,).toHaveLength(1,);
     expect(auditLines[0]?.meta?.chatId,).toBe(oldChat,);
 
@@ -123,6 +127,7 @@ describe("archive expiration GC (FEAT-chat-archive-gc-job)", () => {
       .select(["event_type", "entity_type", "entity_id", "user_id",],)
       .where("entity_id", "=", oldChat,)
       .execute();
+
     expect(auditRows,).toHaveLength(1,);
     expect(auditRows[0]?.event_type,).toBe("chat.archive_expired",);
     expect(auditRows[0]?.entity_type,).toBe("chat",);
@@ -144,6 +149,7 @@ describe("archive expiration GC (FEAT-chat-archive-gc-job)", () => {
     expect(
       await db.selectFrom("chats",).select("id",).where("id", "=", chatId,).executeTakeFirst(),
     ).not.toBeUndefined();
+
     // No audit row when nothing was purged.
     const auditRows = await db.selectFrom("log_entries",).select("id",).execute();
     expect(auditRows,).toHaveLength(0,);

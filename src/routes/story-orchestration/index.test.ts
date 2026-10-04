@@ -130,6 +130,7 @@ describe("story-orchestration routes", () => {
       gm_config: GM_CONFIG,
       story_state: opts?.storyState ?? STORY_STATE,
     },);
+
     return chatId;
   }
 
@@ -154,6 +155,7 @@ describe("story-orchestration routes", () => {
       isPaused: boolean;
       isComplete: boolean;
     };
+
     expect(body.chatId,).toBe(chatId,);
     expect(body.currentTurn,).toBe(0,);
     expect(body.isPaused,).toBe(false,);
@@ -164,6 +166,7 @@ describe("story-orchestration routes", () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/chats/${MISSING_CHAT}/story/state`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -187,6 +190,7 @@ describe("story-orchestration routes", () => {
     const res = await makeApp(db,).handle(
       request("POST", `http://localhost/api/chats/${MISSING_CHAT}/story/pause`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -198,6 +202,7 @@ describe("story-orchestration routes", () => {
     const res = await makeApp(db,).handle(
       request("POST", `http://localhost/api/chats/${chatId}/story/step`, { forceActorId: actorId, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { turnId: string; actorId: string; response: string | null };
     expect(body.actorId,).toBe(actorId,);
@@ -217,6 +222,7 @@ describe("story-orchestration routes", () => {
         qualityThresholds: { coherence: 0.5, roleplay: 0.75, },
       },),
     );
+
     expect(res.status,).toBe(200,);
     expect((await res.json() as { ok: boolean }).ok,).toBe(true,);
 
@@ -225,6 +231,7 @@ describe("story-orchestration routes", () => {
       .select(["turn_strategy", "max_turns", "gm_config",],)
       .where("id", "=", chatId,)
       .executeTakeFirstOrThrow();
+
     expect(chat.turn_strategy,).toBe("round_robin",);
     expect(chat.max_turns,).toBe(12,);
     expect(chat.gm_config,).toContain('"coherence":0.5',);
@@ -235,6 +242,7 @@ describe("story-orchestration routes", () => {
     const res = await makeApp(db,).handle(
       request("POST", `http://localhost/api/chats/${chatId}/story/configure`, { turnStrategy: "nonsense", },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -242,6 +250,7 @@ describe("story-orchestration routes", () => {
     const res = await makeApp(db,).handle(
       request("POST", `http://localhost/api/chats/${MISSING_CHAT}/story/configure`, {},),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -251,6 +260,7 @@ describe("story-orchestration routes", () => {
     const res = await makeApp(db,).handle(
       request("POST", `http://localhost/api/chats/${chatId}/story/narration`, { text: "The door creaks.", },),
     );
+
     expect(res.status,).toBe(200,);
     expect((await res.json() as { ok: boolean }).ok,).toBe(true,);
   });
@@ -260,6 +270,7 @@ describe("story-orchestration routes", () => {
     const res = await makeApp(db,).handle(
       request("POST", `http://localhost/api/chats/${chatId}/story/narration`, { text: "hi", },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -275,6 +286,7 @@ describe("story-orchestration routes", () => {
     const res = await makeApp(db,).handle(
       request("POST", `http://localhost/api/chats/${chatId}/gm/escalate`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.json(),).toMatchObject({ ok: true, turnId, status: TurnStatus.Escalated, },);
 
@@ -283,6 +295,7 @@ describe("story-orchestration routes", () => {
       .select("status",)
       .where("id", "=", turnId,)
       .executeTakeFirstOrThrow();
+
     expect(turn.status,).toBe(TurnStatus.Escalated,);
   });
 
@@ -296,6 +309,7 @@ describe("story-orchestration routes", () => {
     const res = await makeApp(db,).handle(
       request("POST", `http://localhost/api/chats/${chatId}/gm/escalate`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -303,6 +317,7 @@ describe("story-orchestration routes", () => {
     const res = await makeApp(db,).handle(
       request("POST", `http://localhost/api/chats/${MISSING_CHAT}/gm/escalate`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 });

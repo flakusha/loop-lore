@@ -99,6 +99,7 @@ describe("analyticsRoutes", () => {
       userId,
       data: { promptTokens: 100, completionTokens: 50, totalTokens: 150, latencyMs: 1000, model: "test-model", },
     },);
+
     await record(db, {
       eventType: "generation.completed",
       chatId,
@@ -181,6 +182,7 @@ describe("analyticsRoutes", () => {
     const url = `http://localhost/api/analytics/chats/${otherChatId}?from=${encodeURIComponent(fromIso,)}&to=${
       encodeURIComponent(toIso,)
     }`;
+
     const res = await app.handle(new Request(url,),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { totalGenerations: number; totalTokens: number; from: string; to: string };
@@ -226,6 +228,7 @@ describe("analyticsRoutes", () => {
       actor_type: "character" as never,
       owner_id: "other-user",
     },);
+
     // Tie on totalTokens with Char A to pin the deterministic tie-break
     // (tokens desc, then id asc).
     const charBId = "test-char-2";
@@ -238,6 +241,7 @@ describe("analyticsRoutes", () => {
     await insertMessages(db, charChatId, charId, MessageRole.Assistant, "longer reply text", {
       token_count_total: 300,
     },);
+
     await insertMessages(db, charChatId, userId, MessageRole.User, "hi", { token_count_total: 50, },);
     // Char B matches Char A's 400 tokens so the tie-break is observable.
     await insertMessages(db, charChatId, charBId, MessageRole.Assistant, "tie one", { token_count_total: 250, },);
@@ -247,6 +251,7 @@ describe("analyticsRoutes", () => {
     await insertMessages(db, otherOwnerChatId, charId, MessageRole.Assistant, "cross owner", {
       token_count_total: 777,
     },);
+
     // Another owner's character in their own chat — excluded by both filters.
     await insertMessages(db, otherOwnerChatId, otherCharId, MessageRole.Assistant, "secret", {
       token_count_total: 9999,
@@ -265,6 +270,7 @@ describe("analyticsRoutes", () => {
         tokensPerMessage: number;
       }[];
     };
+
     const charA = body.characters.find((c,) => c.id === charId);
     expect(charA,).toBeDefined();
     expect(charA?.totalMessages,).toBe(2,);
@@ -284,6 +290,7 @@ describe("analyticsRoutes", () => {
     const body = (await res.json()) as {
       tokensByRole: { user: number; assistant: number; system: number };
     };
+
     // The character test seeded a 50-token user turn and 400 assistant tokens
     // in the caller's chat, so the role split is non-zero.
     expect(body.tokensByRole.user,).toBeGreaterThanOrEqual(50,);

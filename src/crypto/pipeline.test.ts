@@ -41,6 +41,7 @@ describe("round-trip", () => {
         algorithm: "gzip",
       },
     },);
+
     const payload = JSON.parse(encrypted,);
     expect(payload.comp,).toBe(true,);
     expect(payload.compAlgo,).toBe("gzip",);
@@ -59,6 +60,7 @@ describe("round-trip", () => {
         algorithm: "brotli",
       },
     },);
+
     const payload = JSON.parse(encrypted,);
     expect(payload.comp,).toBe(true,);
     expect(payload.compAlgo,).toBe("brotli",);
@@ -77,6 +79,7 @@ describe("round-trip", () => {
         algorithm: "zstd",
       },
     },);
+
     const payload = JSON.parse(encrypted,);
     expect(payload.comp,).toBe(true,);
     expect(payload.compAlgo,).toBe("zstd",);
@@ -91,6 +94,7 @@ describe("round-trip", () => {
       chatKey: cryptoKey,
       keyId: KEY_ID,
     },);
+
     const decrypted = await decryptThenDecompress(encrypted, cryptoKey,);
     expect(decrypted,).toBe(UNICODE_TEXT,);
   });
@@ -116,6 +120,7 @@ describe("threshold", () => {
         algorithm: "gzip",
       },
     },);
+
     // If compression reduces size, comp=true; otherwise false
     // Either is valid — just verify round-trip
     const decrypted = await decryptThenDecompress(encrypted, cryptoKey,);
@@ -133,6 +138,7 @@ describe("threshold", () => {
         algorithm: "gzip",
       },
     },);
+
     const payload = JSON.parse(encrypted,);
     expect(payload.comp,).toBe(false,);
   });
@@ -148,6 +154,7 @@ describe("threshold", () => {
         algorithm: "gzip",
       },
     },);
+
     // With very short text, gzip may not compress — either outcome valid
     const decrypted = await decryptThenDecompress(encrypted, cryptoKey,);
     expect(decrypted,).toBe("hello world this is a test",);
@@ -163,6 +170,7 @@ describe("threshold", () => {
         algorithm: "gzip",
       },
     },);
+
     const payload = JSON.parse(encrypted,);
     expect(payload.comp,).toBe(false,);
   });
@@ -176,6 +184,7 @@ describe("error paths", () => {
       "encrypt",
       "decrypt",
     ],);
+
     const encrypted = await compressThenEncrypt({ plaintext: SHORT_TEXT, chatKey: cryptoKey, keyId: KEY_ID, },);
     await expect(decryptThenDecompress(encrypted, wrongKey,),).rejects.toThrow("Decryption failed",);
   });
@@ -206,6 +215,7 @@ describe("error paths", () => {
       compAlgo?: string;
       key_id: string;
     };
+
     payload.algo = "aes-128-cbc";
     await expect(decryptThenDecompress(JSON.stringify(payload,), cryptoKey,),).rejects.toThrow(
       "Unsupported encryption algorithm",
@@ -222,6 +232,7 @@ describe("error paths", () => {
       compAlgo?: string;
       key_id: string;
     };
+
     // Tamper: flip last base64 char
     const lastChar = payload.enc[payload.enc.length - 1];
     const flipped = lastChar === "A" ? "B" : "A";
@@ -239,6 +250,7 @@ describe("error paths", () => {
       compAlgo?: string;
       key_id: string;
     };
+
     payload.nonce = `${payload.nonce.slice(0, -2,)}AA`;
     await expect(decryptThenDecompress(JSON.stringify(payload,), cryptoKey,),).rejects.toThrow();
   });
@@ -273,6 +285,7 @@ describe("compression algorithm validation", () => {
       keyId: KEY_ID,
       config: { threshold: 128, algorithm: "gzip", },
     },);
+
     const payload = JSON.parse(encrypted,) as {
       enc: string;
       nonce: string;
@@ -301,6 +314,7 @@ describe("compression algorithm validation", () => {
       keyId: KEY_ID,
       config: { threshold: 128, algorithm: "gzip", },
     },);
+
     const payload = JSON.parse(encrypted,) as {
       enc: string;
       nonce: string;
@@ -328,10 +342,12 @@ describe("compression algorithm validation", () => {
       keyId: KEY_ID,
       config: { threshold: 128, algorithm: "gzip", },
     },);
+
     const payload = JSON.parse(encrypted,) as {
       comp: boolean;
       compAlgo?: string;
     };
+
     expect(payload.comp,).toBe(true,);
     expect(payload.compAlgo,).toBe("gzip",);
 
@@ -339,6 +355,7 @@ describe("compression algorithm validation", () => {
     expect(decrypted,).toBe(text,);
   });
 });
+
 describe("isEncryptedPayload strict shape validation (BUG-encrypted-payload-sniffing)", () => {
   test("rejects a forged payload with garbage nonce (not 12 bytes)", () => {
     const forged = '{"enc":"AAAA","nonce":"y","algo":"aes-256-gcm","key_id":"k1"}';
@@ -368,6 +385,7 @@ describe("isEncryptedPayload strict shape validation (BUG-encrypted-payload-snif
       chatKey: cryptoKey,
       keyId: KEY_ID,
     },);
+
     expect(isEncryptedPayload(enc,),).toBe(true,);
   });
 });
@@ -392,6 +410,7 @@ describe("AC1 no-plaintext-leak-path", () => {
       keyId: KEY_ID,
       config: { threshold: 128, algorithm: "gzip", },
     },);
+
     const payload = JSON.parse(enc,) as { enc: string; nonce: string; comp: boolean };
 
     // Below threshold: no compression, so the length reading below is
@@ -417,6 +436,7 @@ describe("AC1 no-plaintext-leak-path", () => {
       cryptoKey,
       encBytes,
     );
+
     expect(new TextDecoder().decode(recovered,),).toBe(plaintext,);
 
     // Belt-and-braces: the strict-shape check must reject the
@@ -445,12 +465,14 @@ describe("AC2 compress-before-encrypt ordering", () => {
       keyId: KEY_ID,
       config: { threshold: 128, algorithm: "gzip", },
     },);
+
     const payload = JSON.parse(enc,) as {
       enc: string;
       nonce: string;
       comp: boolean;
       compAlgo?: string;
     };
+
     expect(payload.comp,).toBe(true,);
     expect(payload.compAlgo,).toBe("gzip",);
 
@@ -462,6 +484,7 @@ describe("AC2 compress-before-encrypt ordering", () => {
       cryptoKey,
       encBytes,
     );
+
     const decryptedBytes = new Uint8Array(decryptedBuf,);
 
     // Negative assertion: the decrypted bytes must NOT round-trip as
@@ -475,6 +498,7 @@ describe("AC2 compress-before-encrypt ordering", () => {
     } catch {
       decodedAsOriginal = false;
     }
+
     expect(decodedAsOriginal,).toBe(false,);
 
     // Positive assertion: the decrypted bytes are the base64 envelope
@@ -507,6 +531,7 @@ describe("AC3 lossless round-trip per recipient", () => {
         "Za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144 " +
         '\u2014 line1\nline2\ttab"quote"\u0000nul',
     );
+
     const originalText = new TextDecoder().decode(messageBytes,);
 
     const recipients = [
@@ -551,6 +576,7 @@ describe("AC3 lossless round-trip per recipient", () => {
         keyId: `${KEY_ID}-${r.name}-large`,
         config: { threshold: 128, algorithm: "gzip", },
       },);
+
       const largePayload = JSON.parse(enc,) as { comp: boolean; compAlgo?: string };
       expect(largePayload.comp,).toBe(true,);
       expect(largePayload.compAlgo,).toBe("gzip",);

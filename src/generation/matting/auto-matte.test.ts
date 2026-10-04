@@ -55,6 +55,7 @@ async function seedAsset(db: Kysely<DB>, ownerId: string,): Promise<string> {
       buffer: makeMinimalPng(2, 1,),
     },
   },);
+
   return asset.id;
 }
 
@@ -129,6 +130,7 @@ describeReal("enqueueAutoMatting", () => {
       ownerId,
       provider: okProvider,
     },);
+
     expect(listJobs(ownerId,).length,).toBe(0,);
   });
 },);

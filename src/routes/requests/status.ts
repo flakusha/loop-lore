@@ -61,6 +61,7 @@ export function requestStatusRoutes(deps: { asyncStore: AsyncStore }, prefix = "
             code: ErrorCode.BadRequest,
           },);
         }
+
         const row = await deps.asyncStore.read(id,);
         if (!row) {
           return jsonError({
@@ -69,6 +70,7 @@ export function requestStatusRoutes(deps: { asyncStore: AsyncStore }, prefix = "
             code: ErrorCode.NotFound,
           },);
         }
+
         // Ownership: BUG-bug-request-status-endpoint-fail-open-when-row-userid-is-nul.
         // Previous `if (row.userId !== null) { … }` skipped the check entirely
         // for anonymous rows, letting any caller who knew the id read the row.
@@ -86,9 +88,11 @@ export function requestStatusRoutes(deps: { asyncStore: AsyncStore }, prefix = "
         if (body === null && row.offloadPath !== null) {
           body = readOffloadedBody(row.offloadPath,);
         }
+
         const responsePayload = row.responseStatus !== null
           ? { status: row.responseStatus, headers: row.responseHeaders ?? {}, body, }
           : null;
+
         return jsonResponse({
           requestId: row.id,
           status: row.status,

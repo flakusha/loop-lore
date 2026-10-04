@@ -91,6 +91,7 @@ describe("earnStoryPoints — happy path", () => {
     await expect(earnStoryPoints(db, { actorId: ACTOR, amount: 0, },),).rejects.toBeInstanceOf(
       InvalidAmountError,
     );
+
     await expect(earnStoryPoints(db, { actorId: ACTOR, amount: -1, },),).rejects.toBeInstanceOf(
       InvalidAmountError,
     );
@@ -265,9 +266,11 @@ describe("earnStoryPoints — concurrency", () => {
     await Promise.allSettled(
       Array.from({ length: 6, }, () => earnStoryPoints(db, { actorId: ACTOR, amount: 1, },),),
     );
+
     const rows = raw
       .query("SELECT COUNT(*) AS n FROM actor_story_points WHERE actor_id = ?",)
       .get(ACTOR,) as { n: number };
+
     expect(rows.n,).toBe(1,);
   });
 });
@@ -386,6 +389,7 @@ describe("spendStoryPoints — concurrency", () => {
     const rows = raw
       .query("SELECT COUNT(*) AS n FROM actor_story_points WHERE actor_id = ?",)
       .get(ACTOR,) as { n: number };
+
     expect(rows.n,).toBe(0,);
   });
 
@@ -398,6 +402,7 @@ describe("spendStoryPoints — concurrency", () => {
     const rows = raw
       .query("SELECT COUNT(*) AS n FROM actor_story_points WHERE actor_id = ?",)
       .get(ACTOR,) as { n: number };
+
     expect(rows.n,).toBe(1,);
     // Whichever order the two took, the row's totals stay consistent.
     const bal = await getStoryPointBalance(db, ACTOR, null,);

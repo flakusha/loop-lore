@@ -18,6 +18,7 @@ function stubFactory(): CronHandle {
     ref: () => handle,
     unref: () => handle,
   };
+
   return handle;
 }
 
@@ -38,6 +39,7 @@ describe("cron default jobs", () => {
       "locations.tick",
       "nsfw.status-sweep",
     ],);
+
     for (const job of jobs) {
       expect(Bun.cron.parse(job.schedule,),).not.toBeNull();
     }
@@ -52,10 +54,12 @@ describe("cron default jobs", () => {
       jobs: defaultJobs(),
       cronImpl: () => stubFactory(),
     },);
+
     try {
       for (const job of defaultJobs()) {
         await scheduler.runOnce(job.name,);
       }
+
       const statuses = scheduler.getStatus();
       expect(statuses.every((s,) => s.runCount === 1 && s.lastError === null),).toBe(true,);
     } finally {
@@ -78,6 +82,7 @@ describe("federation jobs", () => {
         duplication: { mode: "trusted" as const, peers: [], },
       },
     };
+
     const scheduler = startScheduler({
       database: db,
       config,
@@ -85,6 +90,7 @@ describe("federation jobs", () => {
       jobs: defaultJobs(),
       cronImpl: () => stubFactory(),
     },);
+
     try {
       const gossip = await scheduler.runOnce("federation.gossip",) as { tick: number };
       expect(gossip.tick,).toBe(1,);

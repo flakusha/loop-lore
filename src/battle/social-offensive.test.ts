@@ -18,11 +18,13 @@ describe("calculateIntimidationEffect", () => {
     expect(res.margin,).toBe(20,);
     expect(res.moraleEffect,).toBe(-10,);
   });
+
   it("caps the morale drop at 30", () => {
     const res = calculateIntimidationEffect(20, 100, 1, morale(0,),);
     expect(res.success,).toBe(true,);
     expect(res.moraleEffect,).toBe(-30,);
   });
+
   it("leaves morale untouched on failure", () => {
     const before = morale(100,);
     const res = calculateIntimidationEffect(1, 0, 1, before,);

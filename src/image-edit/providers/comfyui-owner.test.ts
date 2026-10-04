@@ -140,6 +140,7 @@ describe("ComfyUI edit asset ownership", () => {
       .select(["id", "owner_id",],)
       .where("id", "in", [a[0]!.id, b[0]!.id,],)
       .execute();
+
     const byId = new Map(rows.map((r,) => [r.id, r.owner_id,]),);
 
     expect(byId.get(a[0]!.id,),).toBe(alice,);
@@ -166,6 +167,7 @@ describe("ComfyUI edit asset ownership", () => {
       .select("owner_id",)
       .where("id", "=", body.data[0]!.id,)
       .executeTakeFirstOrThrow();
+
     expect(row.owner_id,).toBe(bob,);
   });
 });

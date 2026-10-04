@@ -73,6 +73,7 @@ async function isChatOwner(
     .select("created_by",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   return Boolean(chat,) && (chat!.created_by === userId || can(userRole, "admin.chat",));
 }
 
@@ -106,9 +107,11 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
             expiresAt: body.expiresAt ?? null,
             maxUses: body.maxUses ?? null,
           },);
+
           if (!result.ok) {
             return jsonError({ message: result.error.message, status: HttpStatus.BadRequest, },);
           }
+
           log().info("Created chat invite", { chatId, inviteId: result.value.id, },);
           return jsonCreated(result.value,);
         },
@@ -153,6 +156,7 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!result.ok) {
             return jsonError({ message: result.error.message, status: HttpStatus.NotFound, },);
           }
+
           log().info("Revoked chat invite", { chatId, inviteId, },);
           return jsonNoContent();
         },
@@ -173,6 +177,7 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
               : (outcome.error.code === "expired" || outcome.error.code === "used_up"
                 ? HttpStatus.Gone
                 : HttpStatus.BadRequest);
+
             return jsonError({ message: outcome.error.message, status, },);
           }
 
@@ -182,6 +187,7 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("encryption_level",)
             .where("id", "=", outcome.chatId,)
             .executeTakeFirst();
+
           if (chat?.encryption_level === "standard") {
             try {
               const { distributeKeysOnJoin, } = await import("../crypto/key-distribution");
@@ -200,6 +206,7 @@ export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
             userId,
             alreadyMember: outcome.alreadyMember,
           },);
+
           return jsonResponse({ chatId: outcome.chatId, alreadyMember: outcome.alreadyMember, },);
         },
         {

@@ -55,6 +55,7 @@ describe("isLlmGenerationConfigured", () => {
     registerProvider("llm-config-registered", {
       capabilities: {},
     } as unknown as LLMProvider,);
+
     expect(listProviders().some((p,) => p.name === "llm-config-registered"),).toBe(true,);
     expect(isLlmGenerationConfigured(makeConfig({},),),).toBe(true,);
     unregisterProvider("llm-config-registered",);

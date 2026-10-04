@@ -32,6 +32,7 @@ describe("Export E2E", () => {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);
+
       expect(res.ok,).toBe(true,);
       expect(res.headers.get("Content-Type",),).toContain("application/json",);
       expect(res.headers.get("Content-Disposition",),).toContain("attachment; filename=",);
@@ -46,6 +47,7 @@ describe("Export E2E", () => {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);
+
       expect(res.ok,).toBe(true,);
       expect(res.headers.get("Content-Type",),).toContain("text/markdown",);
       expect(res.headers.get("Content-Disposition",),).toContain("attachment; filename=",);
@@ -59,6 +61,7 @@ describe("Export E2E", () => {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);
+
       expect(res.status,).toBe(404,);
     });
   });
@@ -69,6 +72,7 @@ describe("Export E2E", () => {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);
+
       expect(res.ok,).toBe(true,);
       expect(res.headers.get("Content-Type",),).toBe("application/zip",);
       expect(res.headers.get("Content-Disposition",),).toContain("attachment; filename=",);
@@ -114,6 +118,7 @@ describe("Export E2E", () => {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);
+
       expect(res.ok,).toBe(true,);
       expect(res.headers.get("Content-Disposition",),).toContain("attachment; filename=",);
       const text = await res.text();
@@ -125,6 +130,7 @@ describe("Export E2E", () => {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);
+
       expect(res.status,).toBe(404,);
     });
   });

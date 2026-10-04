@@ -19,6 +19,7 @@ function expandPath(path: string,): string {
   if (path.startsWith("~",)) {
     return `${homedir()}${path.slice(1,)}`;
   }
+
   return path;
 }
 
@@ -42,6 +43,7 @@ function appendModelArgs(
         "sd-cpp diffusion model missing llmPath — model may fail to load if it needs a text encoder",
       );
     }
+
     args.push("--diffusion-model", resolve(modelPath,),);
     if (opts.llmPath) { args.push("--llm", resolve(expandPath(opts.llmPath,),),); }
     if (opts.vaePath) { args.push("--vae", resolve(expandPath(opts.vaePath,),),); }
@@ -66,6 +68,7 @@ function appendPathFlags(args: string[], opts: SdCppOptions,): void {
   if (opts.hiresUpscalersDir) {
     args.push("--hires-upscalers-dir", resolve(expandPath(opts.hiresUpscalersDir,),),);
   }
+
   if (opts.embdDir) { args.push("--embd-dir", resolve(expandPath(opts.embdDir,),),); }
   if (opts.photoMakerPath) { args.push("--photo-maker", resolve(expandPath(opts.photoMakerPath,),),); }
   if (opts.upscaleModelPath) { args.push("--upscale-model", resolve(expandPath(opts.upscaleModelPath,),),); }
@@ -101,6 +104,7 @@ function appendValueFlags(args: string[], opts: SdCppOptions,): void {
   if (opts.cacheMode) { args.push("--cache-mode", opts.cacheMode,); }
   if (opts.cacheOption) { args.push("--cache-option", opts.cacheOption,); }
 }
+
 /**
  * Start sd-server on given port.
  *
@@ -120,6 +124,7 @@ export async function startSdCpp(
     host.log.warn("sd-server not found in PATH — skipping auto-start",);
     return null;
   }
+
   if (!(await isPortFree(opts.port,))) {
     host.log.warn("Port in use — skipping sd-cpp auto-start", { port: opts.port, },);
     return null;
@@ -158,6 +163,7 @@ export async function startSdCpp(
     pid: proc.pid,
     startedAt: Date.now(),
   };
+
   host.instances.push(instance,);
   host.log.info("sd-server ready", { port: opts.port, pid: proc.pid, modelType, },);
   return instance;

@@ -60,6 +60,7 @@ function bytesToHex(bytes: Uint8Array,): string {
     out += HEX[(b >>> 4) & 0xf];
     out += HEX[b & 0xf];
   }
+
   return out;
 }
 
@@ -85,6 +86,7 @@ export function browserRandomUUIDv7(opts: BrowserUUIDv7Options = {},): string {
   if (!Number.isFinite(timestamp,) || timestamp < 0 || !Number.isInteger(timestamp,)) {
     throw new RangeError("browserRandomUUIDv7: timestampMs must be a non-negative integer",);
   }
+
   // 48-bit unix_ms + 4-bit version + 12-bit rand_a + 2-bit variant + 62-bit rand_b = 128 bits.
   const buf = new Uint8Array(16,);
   const rng = opts.random ?? crypto.getRandomValues.bind(crypto,);

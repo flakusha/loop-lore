@@ -95,10 +95,12 @@ export function calculateDamage(
   for (let i = 0; i < count; i++) {
     baseDamageValue += Math.floor(Math.random() * sides,) + 1;
   }
+
   // Critical doubles only the rolled dice; the flat bonus is added once.
   if (isCritical) {
     baseDamageValue *= 2;
   }
+
   baseDamageValue += bonus;
 
   // Apply modifiers

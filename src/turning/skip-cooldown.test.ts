@@ -90,6 +90,7 @@ describe("fetchSkipCooldowns", () => {
       "I spoke again after sitting out",
       { created_at: new Date(NOW - 5_000,).toISOString(), },
     );
+
     const cooling = await fetchSkipCooldowns(db, chatId, { now: NOW, },);
     expect(cooling.has(alice,),).toBe(false,);
   });
@@ -108,6 +109,7 @@ describe("fetchSkipCooldowns", () => {
         created_at: spaceStamp,
       },
     );
+
     const cooling = await fetchSkipCooldowns(db, chatId, { now: NOW, },);
     expect(cooling.has(alice,),).toBe(true,);
   });
@@ -135,6 +137,7 @@ describe("fetchSkipCooldowns", () => {
         created_at: new Date(NOW - 1_000,).toISOString(),
       },
     );
+
     const cooling = await fetchSkipCooldowns(db, chatId, { now: NOW, },);
     expect(cooling.size,).toBe(0,);
   });

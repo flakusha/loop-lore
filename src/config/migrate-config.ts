@@ -56,6 +56,7 @@ function parseArgs(): MigrationOptions {
       "toml",
     ),
   },);
+
   const args = runScript(parser, {
     programName: "migrate-config",
     brief: "Split a monolithic config.toml into per-domain config files.",
@@ -82,9 +83,11 @@ function parseConfigFile(filePath: string,): Record<string, unknown> {
   if (ext === "yaml" || ext === "yml") {
     return Bun.YAML.parse(content,) as Record<string, unknown>;
   }
+
   if (ext === "toml") {
     return Bun.TOML.parse(content,) as Record<string, unknown>;
   }
+
   throw new Error(`Unknown config file extension: .${ext}`,);
 }
 
@@ -103,6 +106,7 @@ function extractDomainConfig(
       domainConfig[domainPath] = fullConfig[domainPath];
     }
   }
+
   return domainConfig;
 }
 
@@ -132,6 +136,7 @@ function formatYaml(config: Record<string, unknown>,): string {
       lines.push(`${key}: ${jsonStringifyOr(value, "undefined",)}`,);
     }
   }
+
   return `${lines.join("\n",)}\n`;
 }
 
@@ -147,11 +152,13 @@ function formatToml(config: Record<string, unknown>,): string {
       for (const [subKey, subValue,] of Object.entries(value as Record<string, unknown>,)) {
         lines.push(`${subKey} = ${tomlValue(subValue,)}`,);
       }
+
       lines.push("",);
     } else {
       lines.push(`${key} = ${tomlValue(value,)}`,);
     }
   }
+
   return lines.join("\n",);
 }
 
@@ -203,6 +210,7 @@ function main() {
       writeFileSync(outputPath, content,);
       log.info(`Created: ${outputPath}`,);
     }
+
     migrated++;
   }
 

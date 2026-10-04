@@ -62,6 +62,7 @@ export function proactiveMessagingRoutes(opts: ProactiveRouteOpts, prefix = "/ap
       if (!access.ok) {
         return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, },);
       }
+
       try {
         const configs = await svc().getChatConfigs(chatId,);
         return jsonResponse(configs,);

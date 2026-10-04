@@ -47,6 +47,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
       const res = await apiFetch(`/api/v1/worlds/${this.worldId}/items`, {
         headers: { Accept: "application/json", },
       },);
+
       if (res.ok) {
         const data = await res.json();
         this.items = Array.from(data.data || [], (it: Record<string, unknown>,) => ({
@@ -61,11 +62,13 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
           max_stack: Number(it.max_stack,) || 1,
           properties: (it.properties as Record<string, unknown> | null) ?? null,
         }),);
+
         this.itemsLoaded = true;
       }
     } catch (error) {
       log.warn("loadItems failed", { error: String(error,), },);
     }
+
     this.loadingItems = false;
   },
 
@@ -84,6 +87,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
           weight: Number(this.newItemWeight,) || 0,
         },),
       },);
+
       if (res.ok) {
         this.newItemName = "";
         this.newItemDesc = "";
@@ -107,6 +111,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
       this.expandedItem = "";
       return;
     }
+
     this.expandedItem = itemId;
     const item = this.items.find((it,) => it.id === itemId);
     if (item) {
@@ -133,6 +138,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
           weight: Number(this.editItemWeight,) || 0,
         },),
       },);
+
       if (res.ok) {
         await this.loadItems();
         this.expandedItem = "";
@@ -150,6 +156,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
     if (!confirm(t("worlds.deleteItemConfirm",),)) {
       return;
     }
+
     try {
       const res = await apiFetch(`/api/v1/worlds/${this.worldId}/items/${itemId}`, { method: "DELETE", },);
       if (res.ok) { await this.loadItems(); }
@@ -168,6 +175,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
       const res = await apiFetch(`/api/v1/worlds/${this.worldId}/items/${itemId}/instances`, {
         headers: { Accept: "application/json", },
       },);
+
       if (res.ok) {
         const raw: unknown = await res.json();
         let rows: unknown[] = [];
@@ -177,6 +185,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
           const data = (raw as Record<string, unknown>).data;
           rows = Array.isArray(data,) ? data : [];
         }
+
         this.instances = Array.from(rows, (inst: unknown,) => {
           const rec = (inst && typeof inst === "object" ? inst : {}) as Record<string, unknown>;
           return {
@@ -189,11 +198,13 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
             created_at: (rec.created_at as string) ?? "",
           };
         },);
+
         this.instancesLoaded = true;
       }
     } catch (error) {
       log.warn("loadInstances failed", { error: String(error,), },);
     }
+
     this.loadingInstances = false;
   },
 
@@ -202,6 +213,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
       itemId,
       quantity: Number(this.placeQuantity,) || 1,
     };
+
     if (this.placeLocationId) { body.locationId = this.placeLocationId; }
     try {
       const res = await apiFetch(`/api/v1/worlds/${this.worldId}/item-instances`, {
@@ -209,6 +221,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
       },);
+
       if (res.ok) {
         this.placeQuantity = "1";
         this.placeLocationId = "";
@@ -229,6 +242,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
       const res = await apiFetch(`/api/v1/worlds/${this.worldId}/item-instances/${instanceId}`, {
         method: "DELETE",
       },);
+
       if (res.ok) { await this.loadInstances(this.expandedItem,); }
       else {
         showToast("error", t("toasts.failedDestroyInstance",),);

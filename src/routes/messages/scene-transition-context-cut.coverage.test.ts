@@ -42,6 +42,7 @@ describe("applyContextCut", () => {
       id: chatId,
       context_max_tokens: 5,
     } as never,);
+
     await insertChatParticipants(db, chatId, actorId, {},);
 
     // Long content (>200 chars) scores high enough for promotion.
@@ -65,6 +66,7 @@ describe("applyContextCut", () => {
       .selectFrom("actor_memories",).selectAll()
       .where("source_chat_id", "=", chatId,)
       .execute();
+
     expect(memories.length,).toBeGreaterThan(0,);
   });
 
@@ -80,6 +82,7 @@ describe("applyContextCut", () => {
     const after = await db
       .selectFrom("actor_memories",).selectAll()
       .where("source_chat_id", "=", chatId,).execute();
+
     expect(after,).toHaveLength(before.length,);
   });
 
@@ -89,6 +92,7 @@ describe("applyContextCut", () => {
     const memories = await db
       .selectFrom("actor_memories",).selectAll()
       .where("source_chat_id", "=", "no-such-chat",).execute();
+
     expect(memories,).toHaveLength(0,);
   });
 });

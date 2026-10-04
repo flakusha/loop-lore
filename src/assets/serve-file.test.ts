@@ -30,6 +30,7 @@ describe("serveFile", () => {
       cacheControl: "no-store",
       extraHeaders: { "X-Custom": "yes", },
     },);
+
     expect(res.headers.get("Cache-Control",),).toBe("no-store",);
     expect(res.headers.get("X-Custom",),).toBe("yes",);
   });

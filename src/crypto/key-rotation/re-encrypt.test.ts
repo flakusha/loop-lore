@@ -63,6 +63,7 @@ async function insertEncryptedMessage(
     visibility: opts?.visibility ?? "visible",
     created_at: opts?.createdAt ?? new Date().toISOString(),
   },).execute();
+
   return { id, createdAt: opts?.createdAt ?? "", };
 }
 
@@ -126,6 +127,7 @@ describe("reEncryptChatMessages", () => {
 
     const rows = await db.selectFrom("messages",).select(["id", "content", "key_id",],)
       .where("chat_id", "=", CHAT_ID,).execute();
+
     for (const row of rows) {
       expect(row.key_id,).toBe(keyId,);
       const plaintext = await decryptThenDecompress(row.content, key,);
@@ -152,6 +154,7 @@ describe("reEncryptChatMessages", () => {
 
     const plain = await db.selectFrom("messages",).select("content",).where("id", "=", "msg-plain",)
       .executeTakeFirst();
+
     expect(plain?.content,).toBe("plaintext-visible",);
   });
 
@@ -165,6 +168,7 @@ describe("reEncryptChatMessages", () => {
 
     const hidden = await db.selectFrom("messages",).select(["key_id", "content",],)
       .where("visibility", "=", "hidden_by_user",).executeTakeFirst();
+
     // Hidden message untouched: still decrypts with the same chat key.
     expect(hidden?.key_id,).toBe(keyId,);
   });
@@ -202,6 +206,7 @@ describe("reEncryptChatMessages", () => {
     expect(count,).toBe(0,);
   });
 });
+
 // AC9: re-encrypt full path with rollback semantics pin.
 // Strategy: insert 3 messages where the middle row holds ciphertext that
 // cannot be decrypted with the old key (simulates a row whose stored
@@ -225,14 +230,17 @@ test("reEncryptWithKeys: per-row failure pins partial-state rollback semantics (
     id: "ac9-msg-1",
     createdAt: "2026-01-01T00:00:00.000Z",
   },);
+
   await insertEncryptedMessage("msg-two", oldKey.key, oldKey.keyId, {
     id: "ac9-msg-2",
     createdAt: "2026-01-02T00:00:00.000Z",
   },);
+
   await insertEncryptedMessage("msg-three", oldKey.key, oldKey.keyId, {
     id: "ac9-msg-3",
     createdAt: "2026-01-03T00:00:00.000Z",
   },);
+
   // Corrupt the middle row in place — bypasses the encrypt helper so the
   // stored content cannot be decrypted with the old key, mimicking a row
   // whose underlying blob was independently tampered with or written by
@@ -255,6 +263,7 @@ test("reEncryptWithKeys: per-row failure pins partial-state rollback semantics (
     false,
     ["encrypt", "decrypt",],
   );
+
   const newKey = { key: newCryptoKey, keyId: newKeyId, rawKey: newRawKey, };
 
   // desc order: msg-3 first, msg-2 second (throws), msg-1 third.
@@ -266,6 +275,7 @@ test("reEncryptWithKeys: per-row failure pins partial-state rollback semantics (
   // Partial state in DB: msg-2 still carries oldKey.keyId; msg-1 + msg-3 use newKeyId.
   const rows = await db.selectFrom("messages",).select(["id", "key_id",],)
     .where("chat_id", "=", CHAT_ID,).execute();
+
   const byId = new Map(rows.map((r,) => [r.id, r.key_id,]),);
   expect(byId.get("ac9-msg-1",),).toBe(newKeyId,);
   expect(byId.get("ac9-msg-2",),).toBe(oldKey.keyId,);

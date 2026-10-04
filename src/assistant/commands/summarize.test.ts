@@ -37,6 +37,7 @@ describe("summarize command", () => {
       captured = req;
       return { content: "Users asked about quests; no decisions yet.", };
     };
+
     const result = await runSummarize(["4",], { chatId: "c1", messages: msgs(4,), }, { complete, },);
     expect(captured?.messages[1]?.content,).toContain("message 0 with substance",);
     expect(result.systemMessage,).toContain("Users asked about quests;",);
@@ -50,6 +51,7 @@ describe("summarize command", () => {
       captured = req;
       return { content: "ok", };
     };
+
     await runSummarize(["3",], { chatId: "c1", messages: msgs(6,), }, { complete, },);
     expect(captured?.messages[1]?.content,).toContain("message 5 with substance",);
     expect(captured?.messages[1]?.content,).not.toContain("message 0 with substance",);
@@ -59,6 +61,7 @@ describe("summarize command", () => {
     const complete = async (): Promise<{ content: string }> => {
       throw new Error("provider down",);
     };
+
     const result = await runSummarize([], { chatId: "c1", messages: msgs(2,), }, { complete, },);
     expect(result.systemMessage,).toContain("**User messages:**",);
   });
@@ -73,6 +76,7 @@ describe("summarize command", () => {
     const result = await runSummarize(["5",], { chatId: "c1", messages: msgs(2,), }, {},);
     expect(result.systemMessage,).toContain("(last 2 messages):",);
   });
+
   it("clamps a zero count to the last message", async () => {
     const result = await runSummarize(["0",], { chatId: "c1", messages: msgs(3,), }, {},);
     expect(result.systemMessage,).toContain("(last 1 messages):",);
@@ -90,6 +94,7 @@ describe("summarize command", () => {
       captured = req;
       return { content: "ok", };
     };
+
     const long = "y".repeat(1200,);
     const messages = [{ id: "m1", role: "user", content: long, created_at: new Date().toISOString(), },];
     await runSummarize([], { chatId: "c1", messages, }, { complete, },);
@@ -97,12 +102,14 @@ describe("summarize command", () => {
     expect(transcript,).toContain("y".repeat(500,),);
     expect(transcript,).not.toContain("y".repeat(501,),);
   });
+
   it("maps --format to the system prompt variant", async () => {
     const seen: string[] = [];
     const complete = async (req: GenerateRequest,): Promise<{ content: string }> => {
       seen.push(String(req.messages[0]?.content ?? "",),);
       return { content: "ok", };
     };
+
     const ctx = { chatId: "c1", messages: msgs(2,), };
     await runSummarize(["--format", "tldr",], ctx, { complete, },);
     await runSummarize(["--format", "bullets",], ctx, { complete, },);
@@ -121,6 +128,7 @@ describe("summarize command", () => {
       { chatId: "c1", messages: msgs(2,), },
       { complete, },
     );
+
     expect(result.actionPayload,).toMatchObject({ format: "bullets", },);
   });
 
@@ -130,6 +138,7 @@ describe("summarize command", () => {
       captured = String(req.messages[0]?.content ?? "",);
       return { content: "ok", };
     };
+
     await runSummarize(["--format", "haiku",], { chatId: "c1", messages: msgs(2,), }, { complete, },);
     expect(captured,).toContain("concisely",);
   });
@@ -140,6 +149,7 @@ describe("summarize command", () => {
       { chatId: "c1", messages: msgs(2,), },
       {},
     );
+
     expect(result.systemMessage,).toContain("(last 2 messages):",);
   });
 });

@@ -89,6 +89,7 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
     defaultTtlMs: config.defaultTtlMs ?? DEFAULT_TTL_MS,
     queueLimit: config.queueLimit ?? DEFAULT_QUEUE_LIMIT,
   };
+
   const log = getLogger().child({ module: "async-store", },);
   const queue: Write[] = [];
   let draining = false;
@@ -101,6 +102,7 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
       log.warn("async-store queue full; dropping write", { kind: write.kind, id: "id" in write ? write.id : null, },);
       return;
     }
+
     queue.push(write,);
     void drain();
   };
@@ -180,6 +182,7 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
         .selectAll()
         .where("id", "=", id,)
         .executeTakeFirst();
+
       return row ? rowToResult(row,) : null;
     },
     config: cfg,

@@ -51,6 +51,7 @@ export abstract class TransportBase<
         code: TransportErrorCode.ConnectionClosed,
       },);
     }
+
     return this.connection;
   }
 

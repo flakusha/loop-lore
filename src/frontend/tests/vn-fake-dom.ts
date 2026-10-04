@@ -38,6 +38,7 @@ export function makeAttachment(
     ...overrides,
   };
 }
+
 export { type FakeEl, makeEl, } from "./vn-fake-element";
 
 type Globals = Record<string, unknown>;
@@ -81,6 +82,7 @@ export function installVnFakeDom(): FakeDom {
     requestAnimationFrame: globals.requestAnimationFrame,
     cancelAnimationFrame: globals.cancelAnimationFrame,
   };
+
   const reducedMotion = { value: false, };
   const frames = new Map<number, () => void>();
   let nextFrameId = 0;
@@ -89,9 +91,11 @@ export function installVnFakeDom(): FakeDom {
     ...(originals.document as object),
     createElement: (tag: string,): HTMLElement => makeEl(tag,) as unknown as HTMLElement,
   };
+
   globals.matchMedia = (query: string,): { matches: boolean } => ({
     matches: reducedMotion.value && query.includes("reduce",),
   });
+
   globals.requestAnimationFrame = (cb: () => void,): number => {
     const id = ++nextFrameId;
     frames.set(id, cb,);
@@ -100,8 +104,10 @@ export function installVnFakeDom(): FakeDom {
       frames.delete(id,);
       frame?.();
     }, 0,);
+
     return id;
   };
+
   globals.cancelAnimationFrame = (id: number,): void => {
     frames.delete(id,);
   };

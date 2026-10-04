@@ -22,10 +22,12 @@ describe("emotion-avatar job store", () => {
       baseAvatarId: "avatar-1",
       emotions: [EmotionType.Happy, EmotionType.Sad, EmotionType.Angry,],
     },);
+
     expect(job.status,).toBe("pending",);
     expect(job.results.map((r,) => r.emotion),).toEqual(
       [EmotionType.Happy, EmotionType.Sad, EmotionType.Angry,],
     );
+
     expect(job.results.every((r,) => r.status === "pending"),).toBe(true,);
     expect(job.completedAt,).toBeUndefined();
   });
@@ -37,6 +39,7 @@ describe("emotion-avatar job store", () => {
       baseAvatarId: "avatar-2",
       emotions: [],
     },);
+
     storeJob(job,);
     expect(getJob("job-2" as BatchJobId,)?.id,).toBe("job-2" as BatchJobId,);
     expect(getJob("nope" as BatchJobId,),).toBeUndefined();
@@ -49,6 +52,7 @@ describe("emotion-avatar job store", () => {
       baseAvatarId: "a",
       emotions: [],
     },);
+
     older.startedAt = "2026-01-01T00:00:00Z";
     const newer = createJob({
       id: "job-new" as BatchJobId,
@@ -56,6 +60,7 @@ describe("emotion-avatar job store", () => {
       baseAvatarId: "a",
       emotions: [],
     },);
+
     newer.startedAt = "2026-02-01T00:00:00Z";
     storeJob(older,);
     storeJob(newer,);
@@ -72,6 +77,7 @@ describe("emotion-avatar job store", () => {
       baseAvatarId: "a",
       emotions: [EmotionType.Happy, EmotionType.Sad,],
     },);
+
     job.results[0]!.status = "completed";
     storeJob(job,);
 
@@ -97,6 +103,7 @@ describe("emotion-avatar job store", () => {
         baseAvatarId: "a",
         emotions: [],
       },);
+
       job.status = status;
       storeJob(job,);
       expect(cancelJob(`job-${status}` as BatchJobId,),).toBe(false,);

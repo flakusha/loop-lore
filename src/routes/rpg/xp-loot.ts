@@ -57,6 +57,7 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
           currentLevel?: number;
           currentXp?: number;
         };
+
         const actorId = await requireNsfwActorAccess(database, body.actorId, ctx,);
         if (typeof actorId !== "string") { return actorId; }
         try {
@@ -68,6 +69,7 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
             referenceId: body.referenceId,
             chatId: body.chatId,
           },);
+
           const level = body.currentLevel ?? 1;
           const xp = body.currentXp ?? 0;
           const result = awardXp(level, xp, body.amount,);
@@ -164,6 +166,7 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
             dropCount?: number;
             luckModifier?: number;
           };
+
           const result = generateLoot(body.entries, body.level, body.dropCount ?? 1, body.luckModifier ?? 0,);
           return jsonResponse(result,);
         } catch (error) {
@@ -191,6 +194,7 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
             locationId?: string;
             defaultCategory?: string;
           };
+
           // Trust boundary: loot may only be persisted to the caller's own
           // actor (or by admin/solo). Location drops are world-scoped and
           // covered by the world's own guards downstream.
@@ -198,12 +202,14 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
             const actorErr = await requireNsfwActorAccess(database, body.actorId, ctx,);
             if (typeof actorErr !== "string") { return actorErr; }
           }
+
           const persisted = await persistLoot(database, body.result, {
             worldId: body.worldId,
             actorId: body.actorId,
             locationId: body.locationId,
             defaultCategory: body.defaultCategory as any,
           },);
+
           return jsonResponse(persisted,);
         } catch (error) {
           log().error("Failed to persist loot", error instanceof Error ? error : undefined,);

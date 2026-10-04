@@ -67,6 +67,7 @@ describe("content flag routes", () => {
     const res = await app.handle(
       flagRequest({ contentType: "message", contentId: `m-${uid()}`, chatId: "chat-1", flagReason: "spam", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json();
     const flag = body.data;
@@ -89,6 +90,7 @@ describe("content flag routes", () => {
     const res = await app.handle(
       flagRequest({ reporterId: "victim-user", contentType: "message", contentId: "x", flagReason: "spam", },),
     );
+
     // Schema strips unknown `reporterId` — request succeeds with session user as reporter.
     expect(res.status,).toBe(200,);
     const body = await res.json();

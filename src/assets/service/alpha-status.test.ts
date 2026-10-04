@@ -28,6 +28,7 @@ describe("canTransitionAlphaStatus", () => {
     expect(canTransitionAlphaStatus(AssetAlphaStatus.Raw, AssetAlphaStatus.MattingPending,),).toBe(
       true,
     );
+
     expect(canTransitionAlphaStatus(AssetAlphaStatus.Raw, AssetAlphaStatus.Matted,),).toBe(false,);
   });
 
@@ -35,9 +36,11 @@ describe("canTransitionAlphaStatus", () => {
     expect(canTransitionAlphaStatus(AssetAlphaStatus.MattingPending, AssetAlphaStatus.Matted,),).toBe(
       true,
     );
+
     expect(
       canTransitionAlphaStatus(AssetAlphaStatus.MattingPending, AssetAlphaStatus.MattingFailed,),
     ).toBe(true,);
+
     expect(canTransitionAlphaStatus(AssetAlphaStatus.MattingPending, AssetAlphaStatus.Raw,),).toBe(
       false,
     );
@@ -47,9 +50,11 @@ describe("canTransitionAlphaStatus", () => {
     expect(canTransitionAlphaStatus(AssetAlphaStatus.Matted, AssetAlphaStatus.MattingPending,),).toBe(
       true,
     );
+
     expect(
       canTransitionAlphaStatus(AssetAlphaStatus.MattingFailed, AssetAlphaStatus.MattingPending,),
     ).toBe(true,);
+
     expect(canTransitionAlphaStatus(AssetAlphaStatus.Matted, AssetAlphaStatus.Matted,),).toBe(false,);
   });
 

@@ -44,6 +44,7 @@ async function gotoView(
   } catch {
     // handled by subsequent waits
   }
+
   await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 15_000, },);
 }
 
@@ -64,6 +65,7 @@ async function waitForUiStore(
       retry();
     }
   };
+
   const retry = (): void => {
     if (Date.now() - start > timeoutMs) {
       reject(new Error(`ui store predicate timed out after ${timeoutMs}ms`,),);
@@ -71,6 +73,7 @@ async function waitForUiStore(
       setTimeout(check, 50,);
     }
   };
+
   void check();
   return promise;
 }
@@ -142,6 +145,7 @@ describe("Morph swap state reset", () => {
         await page.evaluate(() => {
           Alpine.store("ui",).showChatList = true;
         },);
+
         let uiState = await getAlpineStore(page, "ui",);
         expect(uiState.showChatList,).toBe(true,);
 
@@ -192,6 +196,7 @@ describe("Panel toggles + Escape key", () => {
             new MouseEvent("click", { bubbles: true, },),
           );
         },);
+
         await waitForUiStore(page, (state,) => state.showChatList === true,);
         let uiState = await getAlpineStore(page, "ui",);
         expect(uiState.showChatList,).toBe(true,);
@@ -315,6 +320,7 @@ describe("Toast rendering", () => {
           type: "success",
           message: "Test toast",
         },);
+
         await page.waitForFunction(
           () => document.querySelectorAll("#toast-container .toast",).length === 1,
           null,
@@ -354,6 +360,7 @@ describe("Toast rendering", () => {
         const messages = await page.evaluate(() =>
           [...document.querySelectorAll("#toast-container .toast .message",),].map((el,) => el.textContent)
         );
+
         expect(messages,).toEqual(["First", "Second",],);
       } finally {
         errors.assert();
@@ -514,6 +521,7 @@ describe("Chat window modals open", () => {
         await page.evaluate(() => {
           Alpine.store("ui",).showChatSettings = true;
         },);
+
         const modal = page.locator("[data-testid='chat-settings-modal']",);
         await modal.waitFor({ state: "visible", timeout: 10_000, },);
         const cls = await modal.getAttribute("class",);
@@ -542,6 +550,7 @@ describe("Chat window modals open", () => {
           state: "attached",
           timeout: 10_000,
         },);
+
         await page.locator("[data-testid='chat-list-panel'] .nav-item",).first().click();
         await waitForAlpineState(
           page,

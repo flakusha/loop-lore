@@ -50,6 +50,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             code: ErrorCode.Forbidden,
           },);
         }
+
         return jsonResponse({
           ...jsonSchema(),
           requires_restart_keys: Object.keys(REQUIRES_RESTART_KEYS,),
@@ -72,12 +73,14 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             code: ErrorCode.Forbidden,
           },);
         }
+
         const format = ctx.query?.format === "toml" ? "toml" : "yaml";
         const rows = await getAllConfig(opts.database,);
         const body: Record<string, string> = {};
         for (const row of rows) {
           body[row.key] = SECRET_KEY_PATTERN.test(row.key,) ? "***REDACTED***" : row.value;
         }
+
         try {
           await opts.database
             .insertInto("log_entries",)
@@ -96,6 +99,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         } catch {
           // Audit trail is best-effort; export still succeeds.
         }
+
         const date = new Date().toISOString().slice(0, 10,);
         if (format === "toml") {
           const toml = Bun.TOML.stringify({ system_config: body, },) as string;
@@ -106,6 +110,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },
           },);
         }
+
         const yaml = yamlDump({ system_config: body, }, { lineWidth: -1, noRefs: true, },);
         return new Response(yaml, {
           headers: {
@@ -131,6 +136,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             code: ErrorCode.Forbidden,
           },);
         }
+
         const configs = await getAllConfig(opts.database,);
         const decorated = configs.map((c,) => decorateConfigEntry(c,));
         return jsonResponse(decorated,);
@@ -153,6 +159,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           const { key, value, description, } = ctx.body as { key: string; value: string; description?: string };
           await setConfig(opts.database, key, value, description,);
           return jsonResponse({ ok: true, },);
@@ -173,6 +180,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           const { format, content, } = ctx.body as { format: "yaml" | "toml"; content: string };
           try {
             const results = await importConfigFromText(opts.database, content, format,);
@@ -195,6 +203,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             } catch {
               // Audit trail is best-effort; import still succeeds.
             }
+
             return jsonResponse({
               imported: results.filter((r,) => r.action === "added").length,
               changed: results.filter((r,) => r.action === "changed").length,
@@ -223,6 +232,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             code: ErrorCode.Forbidden,
           },);
         }
+
         const key = ctx.params.key as string;
         await deleteConfig(opts.database, key,);
         return jsonNoContent();

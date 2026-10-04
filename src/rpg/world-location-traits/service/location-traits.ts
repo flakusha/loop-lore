@@ -86,6 +86,7 @@ export async function updateLocationTrait(
   if (input.effects !== undefined) {
     updates.effects = jsonStringifyOr(input.effects,);
   }
+
   if (input.equipment_override !== undefined) {
     updates.equipment_override = jsonStringifyOr(input.equipment_override,);
   }
@@ -116,5 +117,6 @@ export async function deleteLocationTrait(db: Kysely<any>, id: string,): Promise
     .deleteFrom("character_location_traits",)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   return Number(result?.numDeletedRows ?? 0,) > 0;
 }

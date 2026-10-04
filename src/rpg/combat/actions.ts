@@ -65,12 +65,15 @@ export function canTakeAction(combatant: Combatant, type: ActionType,): boolean 
     case ActionType.Reaction: {
       return combatant.reactions > 0;
     }
+
     case ActionType.BonusAction: {
       return combatant.bonusActions > 0;
     }
+
     case ActionType.FreeAction: {
       return true;
     }
+
     case ActionType.Attack:
     case ActionType.CastSpell:
     case ActionType.UseItem:
@@ -101,13 +104,16 @@ export function consumeAction(combatant: Combatant, type: ActionType,): Combatan
       updated.reactions = Math.max(0, updated.reactions - 1,);
       break;
     }
+
     case ActionType.BonusAction: {
       updated.bonusActions = Math.max(0, updated.bonusActions - 1,);
       break;
     }
+
     case ActionType.FreeAction: {
       break;
     }
+
     case ActionType.Attack:
     case ActionType.CastSpell:
     case ActionType.UseItem:

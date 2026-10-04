@@ -156,6 +156,7 @@ describe("ComfyUIClient", () => {
             { filename: "img1.png", subfolder: "sub", type: "output", },
             { filename: "img2.png", },
           ],);
+
           expect(result.error,).toBeUndefined();
         },
       );
@@ -266,6 +267,7 @@ describe("ComfyUIClient", () => {
             pollIntervalMs: 10,
             timeout: 50,
           },);
+
           try {
             await client.waitForCompletion("p1",);
             expect.unreachable();
@@ -292,6 +294,7 @@ describe("ComfyUIClient", () => {
           await client.cancelExecution("p1",);
         },
       );
+
       expect(capturedUrl,).toBe("http://localhost:8188/interrupt",);
       expect(capturedMethod,).toBe("POST",);
     });
@@ -350,6 +353,7 @@ describe("ComfyUIClient", () => {
           expect(buffer.length,).toBe(3,);
         },
       );
+
       expect(capturedUrl,).toContain("/view?",);
       expect(capturedUrl,).toContain("filename=img.png",);
       expect(capturedUrl,).toContain("type=temp",);
@@ -368,6 +372,7 @@ describe("ComfyUIClient", () => {
           await client.downloadImage("img.png", undefined, "output",);
         },
       );
+
       expect(capturedUrl,).not.toContain("subfolder",);
     });
 
@@ -396,6 +401,7 @@ describe("ComfyUIClient", () => {
           if (url.endsWith("/prompt",)) {
             return jsonResponse({ prompt_id: "p1", },);
           }
+
           if (url.includes("/history/",)) {
             return jsonResponse({
               p1: {
@@ -404,6 +410,7 @@ describe("ComfyUIClient", () => {
               },
             },);
           }
+
           return new Response(new Uint8Array([7, 8,],), { status: 200, },);
         },
         async () => {
@@ -413,6 +420,7 @@ describe("ComfyUIClient", () => {
           expect(buffers[0]?.length,).toBe(2,);
         },
       );
+
       expect(calls.filter((u,) => u.includes("/view?",)),).toHaveLength(2,);
     });
   });

@@ -15,6 +15,7 @@ describe("avatarFocusStyle", () => {
     expect(avatarFocusStyle({ focusX: Number.NaN, focusY: Number.NaN, },),).toBe(
       "object-position: 50% 50%",
     );
+
     expect(avatarFocusStyle({ focusX: Number.NaN, focusY: 20, },),).toBe("object-position: 50% 20%",);
   });
 

@@ -99,6 +99,7 @@ describe("date gaps — serializeDate and formatHuman", () => {
       locale: "en-US",
       tz: "UTC",
     },);
+
     expect((s as string).length,).toBeGreaterThan(0,);
   });
 

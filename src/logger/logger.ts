@@ -59,11 +59,13 @@ export class LoggerImpl implements Logger {
         maxMetaDepth?: number;
         maxStackBytes?: number;
       };
+
       if (c.maxMessageBytes != null) { limitsFromFlat.maxMessageBytes = c.maxMessageBytes; }
       if (c.maxMetaBytes != null) { limitsFromFlat.maxMetaBytes = c.maxMetaBytes; }
       if (c.maxMetaDepth != null) { limitsFromFlat.maxMetaDepth = c.maxMetaDepth; }
       if (c.maxStackBytes != null) { limitsFromFlat.maxStackBytes = c.maxStackBytes; }
     }
+
     this.limits = { ...limitsFromNested, ...limitsFromFlat, };
 
     this.transports = [new ConsoleTransport(),];
@@ -81,6 +83,7 @@ export class LoggerImpl implements Logger {
     this.queue = new AsyncLogQueue(this.transports, {
       queueMaxSize: config?.queueMaxSize ?? 10_000,
     },);
+
     this.queue.start();
   }
 
@@ -228,6 +231,7 @@ export class LoggerImpl implements Logger {
     const results = await Promise.allSettled(
       Array.from(this.transports, (t,) => t.flush(),),
     );
+
     for (const r of results) {
       if (r.status === "rejected") { throw r.reason; }
     }

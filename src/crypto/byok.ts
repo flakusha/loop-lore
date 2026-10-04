@@ -42,6 +42,7 @@ async function deriveKey(secret: string, salt: Uint8Array,): Promise<CryptoKey> 
     false,
     ["deriveBits",],
   );
+
   const bits = await crypto.subtle.deriveBits(
     {
       name: "HKDF",
@@ -54,6 +55,7 @@ async function deriveKey(secret: string, salt: Uint8Array,): Promise<CryptoKey> 
     ikm,
     KEY_LENGTH,
   );
+
   // Copy bits into a fresh Uint8Array<ArrayBuffer> so it satisfies the
   // BufferSource signature; matches the toBufferSource pattern used in
   // src/auth/jwt.ts and src/assets/controller/signed-url.ts.
@@ -106,6 +108,7 @@ export async function decryptValue(encrypted: string, secret: string,): Promise<
     const plaintext = await crypto.subtle.decrypt({ name: ALGORITHM, iv, }, key, data,);
     return new TextDecoder().decode(plaintext,);
   }
+
   if (parts.length === 2) {
     const iv = Uint8Array.fromBase64(parts[0]!,);
     const data = Uint8Array.fromBase64(parts[1]!,);
@@ -113,5 +116,6 @@ export async function decryptValue(encrypted: string, secret: string,): Promise<
     const plaintext = await crypto.subtle.decrypt({ name: ALGORITHM, iv, }, key, data,);
     return new TextDecoder().decode(plaintext,);
   }
+
   throw new Error("Invalid encrypted value format",);
 }

@@ -98,6 +98,7 @@ export function buildFractalState(worldId: string,): FractalState {
           walk(n.children, depth + 1,);
         }
       };
+
       walk(this.tree, 0,);
       return out;
     },
@@ -120,10 +121,12 @@ export function buildFractalState(worldId: string,): FractalState {
         const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations/tree`, {
           headers: { Accept: "application/json", },
         },);
+
         if (!res.ok) {
           this.error = true;
           return;
         }
+
         const body = await res.json();
         this.tree = (body?.data ?? []) as TreeNode[];
         this.loadedTree = true;
@@ -144,6 +147,7 @@ export function buildFractalState(worldId: string,): FractalState {
         const res = await apiFetch(`/api/v1/worlds/${this.worldId}/travel-routes`, {
           headers: { Accept: "application/json", },
         },);
+
         if (!res.ok) { return; }
         const body = await res.json();
         this.routes = (body?.data ?? []) as RouteRow[];
@@ -169,6 +173,7 @@ export function buildFractalState(worldId: string,): FractalState {
         const res = await apiFetch(`/api/v1/worlds/${this.worldId}/travel-routes/${routeId}`, {
           headers: { Accept: "application/json", },
         },);
+
         if (!res.ok) { return; }
         const body = await res.json();
         this.routeDetail = body?.data as RouteDetail;
@@ -195,6 +200,7 @@ export function buildFractalState(worldId: string,): FractalState {
             secondsPerUnit: this.newRoute.secondsPerUnit,
           },),
         },);
+
         if (!res.ok) { return; }
         this.newRoute = { name: "", kind: "sea", loop: false, secondsPerUnit: 60, };
         await this.loadRoutes();
@@ -214,6 +220,7 @@ export function buildFractalState(worldId: string,): FractalState {
           `/api/v1/worlds/${this.worldId}/travel-routes/${this.attachRouteId}/attach/${this.attachLocationId}`,
           { method: "POST", headers: { Accept: "application/json", }, },
         );
+
         if (!res.ok) { return; }
         this.attachLocationId = "";
         await this.loadRoutes();
@@ -232,6 +239,7 @@ export function buildFractalState(worldId: string,): FractalState {
         `/api/v1/worlds/${this.worldId}/travel-routes/${routeId}/attach/${locId}`,
         { method: "DELETE", headers: { Accept: "application/json", }, },
       );
+
       if (res.ok) { await this.loadRoutes(); }
     },
   };

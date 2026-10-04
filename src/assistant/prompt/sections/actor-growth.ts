@@ -65,6 +65,7 @@ export const actorGrowthSection: SectionBuilder = {
           const subject = entry.subjectKind && entry.subjectId
             ? ` (${entry.subjectKind}:${entry.subjectId})`
             : "";
+
           lines.push(`- ${entry.recordedAt} [${entry.axis}/${entry.eventType}]${subject}: ${entry.reason}`,);
         }
       }

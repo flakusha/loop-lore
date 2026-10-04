@@ -47,6 +47,7 @@ export function validateRegenerateBody(
     if (!isValidRegenStyle(b.style,)) { return null; }
     style = b.style;
   }
+
   return {
     chatId: b.chatId,
     messageId: b.messageId,
@@ -104,6 +105,7 @@ export async function handleGetContext(
     .orderBy("created_at", "desc",)
     .limit(1,)
     .executeTakeFirst();
+
   if (maxTokens === null && activeMessage?.provider && activeMessage.model_id) {
     maxTokens = await getContextWindowForModel(
       database,
@@ -111,6 +113,7 @@ export async function handleGetContext(
       activeMessage.model_id,
     );
   }
+
   if (maxTokens === null || maxTokens <= 0) {
     maxTokens = DEFAULT_CONTEXT_WINDOW.maxContextTokens;
   }
@@ -126,6 +129,7 @@ export async function handleGetContext(
       .where("actor_id", "!=", userId,)
       .limit(1,)
       .executeTakeFirst();
+
     actorId = participant?.actor_id ?? null;
   }
 
@@ -137,6 +141,7 @@ export async function handleGetContext(
     .orderBy("created_at", "desc",)
     .limit(100,)
     .execute();
+
   const messageRefs: MessageRef[] = Array.from(recent, (m,) => ({
     messageId: m.id,
     role: m.role,
@@ -144,6 +149,7 @@ export async function handleGetContext(
     tokenCount: estimateTokens(m.content,),
     createdAt: m.created_at,
   }),);
+
   const fallbackUsedTokens = computeContextWindow(messageRefs, maxTokens,).totalTokens;
 
   const result = await computeBudgetResult(
@@ -158,6 +164,7 @@ export async function handleGetContext(
 
   return jsonResponse({ chatId, ...result, },);
 }
+
 /**
  * @param database
  * @param chatId
@@ -228,6 +235,7 @@ export async function handleRegenerateMessage(
     parentId: effectiveParentId,
     cancelled: wasActive,
   },);
+
   return jsonResponse({
     ok: true,
     chatId,

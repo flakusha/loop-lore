@@ -70,6 +70,7 @@ export async function assembleWithTemplate(
   if (def.preset) {
     return assembleFromTemplate(ctx, { sections: def.preset.sections as LlmTemplateSection[], },);
   }
+
   if (def.row.modality !== "llm") { return null; }
   const payload = parseTemplatePayload(def.row.payload, "llm",);
   if (!payload || !Array.isArray((payload as LlmTemplatePayload).sections,)) { return null; }
@@ -112,16 +113,19 @@ export async function assembleFromTemplate(
       const content = substituteVars(section.content, scalars, builtin,);
       built = [{ role: section.role, content, },];
     }
+
     for (const msg of built) {
       if (msg.role === "system" && systemPrompt === undefined) {
         systemPrompt = msg.content;
       }
+
       sections.push({
         name,
         chars: msg.content.length,
         tokens: defaultTokenCount(msg.content,),
         dropped: false,
       },);
+
       messages.push(msg,);
       priorityByName.set(name, section.priority,);
     }
@@ -131,6 +135,7 @@ export async function assembleFromTemplate(
   for (const s of sections) {
     if (!s.dropped) { totalTokens += s.tokens; }
   }
+
   if (totalTokens > ctx.tokenBudget) {
     totalTokens = dropOverBudgetSections(
       sections,
@@ -164,6 +169,7 @@ function collectNeededBuiltins(sections: LlmTemplatePayload["sections"],): Set<s
       if (section.content.includes(`{{${alias}}}`,)) { needed.add(builtinName,); }
     }
   }
+
   return needed;
 }
 
@@ -185,14 +191,17 @@ function substituteVars(
   for (const [key, value,] of Object.entries(scalars,)) {
     result = result.replaceAll(`{{${key}}}`, value,);
   }
+
   for (const [alias, builtinName,] of Object.entries(VARIABLE_ALIASES,)) {
     const joined = (builtin.get(builtinName,) ?? [])
       .map((msg,) => msg.content).join("\n\n",);
+
     result = result.replaceAll(`{{${alias}}}`, joined,);
     if (builtinName !== alias) {
       result = result.replaceAll(`{{${builtinName}}}`, joined,);
     }
   }
+
   return result;
 }
 
@@ -212,6 +221,7 @@ async function resolveScalarVars(ctx: AssembleContext,): Promise<ScalarVars> {
     userName: "",
     userDescription: "",
   };
+
   const userId = ctx.params.userId;
   if (!userId) { return vars; }
   const participant = await ctx.db
@@ -220,6 +230,7 @@ async function resolveScalarVars(ctx: AssembleContext,): Promise<ScalarVars> {
     .where("chat_id", "=", ctx.params.chatId,)
     .where("actor_id", "=", userId,)
     .executeTakeFirst();
+
   if (!participant) { return vars; }
 
   if (participant.impersonate_actor_id) {
@@ -227,17 +238,21 @@ async function resolveScalarVars(ctx: AssembleContext,): Promise<ScalarVars> {
       .select(["display_name", "description",],)
       .where("id", "=", participant.impersonate_actor_id,)
       .executeTakeFirst();
+
     vars.userName = impersonated?.display_name ?? "";
     vars.userDescription = impersonated?.description ?? "";
     return vars;
   }
+
   if (participant.persona_id) {
     const persona = await ctx.db.selectFrom("personas",)
       .select(["name", "description",],)
       .where("id", "=", participant.persona_id,)
       .executeTakeFirst();
+
     vars.userName = persona?.name ?? "";
     vars.userDescription = persona?.description ?? "";
   }
+
   return vars;
 }

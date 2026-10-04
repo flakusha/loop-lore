@@ -72,6 +72,7 @@ export async function start() {
   for (const p of healthResults) {
     if (p.status !== "healthy") { failedProviders.push(p,); }
   }
+
   const startLogger = getLogger();
   if (failedProviders.length > 0) {
     startLogger.warn("providers unreachable on startup", {
@@ -131,6 +132,7 @@ export async function start() {
         tls: { key: Bun.file(tlsFiles.key,), cert: Bun.file(tlsFiles.cert,), },
         fetch: handleRequest,
       },);
+
       serverLogger.info(`HTTPS → https://localhost:${httpsPort}`,);
     } else {
       serverLogger.warn("HTTPS unavailable — serving HTTP only",);
@@ -168,6 +170,7 @@ export async function start() {
         // logger transports). The on-disk values are now the source of truth
         // for the next read of `loadConfig()`.
       },);
+
       (domainConfigWatcher as { __close?: () => void }).__close = () =>
         stopWatchingDomainConfigs(
           domainConfigWatcher as ReturnType<typeof watchDomainConfigs>,
@@ -213,6 +216,7 @@ export async function start() {
       process.stderr.write(`[logger] flush timed out after ${SHUTDOWN_TIMEOUT}ms\n`,);
       process.exit(1,);
     }, SHUTDOWN_TIMEOUT,);
+
     await flushed;
     clearTimeout(timer,);
     process.exit(0,);
@@ -234,6 +238,7 @@ export async function start() {
     } catch {
       /* last resort */
     }
+
     void shutdown("uncaughtException",);
   },);
 
@@ -244,6 +249,7 @@ export async function start() {
     } catch {
       /* last resort */
     }
+
     void shutdown("unhandledRejection",);
   },);
 }

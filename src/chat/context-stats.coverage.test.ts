@@ -55,6 +55,7 @@ describe("computeContextStats", () => {
       critical: 20,
       imminent: 90,
     },);
+
     expect(s.threshold,).toBe("critical",);
     expect(s.will_trim,).toBe(false,);
   });
@@ -81,6 +82,7 @@ describe("computeSections", () => {
       ],
       1000,
     );
+
     expect(out,).toEqual([{ name: "lore", tokens: 200, pct: 20, },],);
   });
 

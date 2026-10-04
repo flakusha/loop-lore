@@ -206,6 +206,7 @@ describe("validateConfig", () => {
     expect(() => {
       validateConfig(config,);
     },).toThrow(/port/,);
+
     config.server.port = 100_000;
     expect(() => {
       validateConfig(config,);
@@ -316,6 +317,7 @@ function isLoadConfigFunctional(): boolean {
     rmSync(dir, { recursive: true, force: true, },);
   }
 }
+
 const describeLoadReal = isLoadConfigFunctional() ? describe : describe.skip;
 
 describeLoadReal("loadConfig integration", () => {
@@ -332,10 +334,12 @@ describeLoadReal("loadConfig integration", () => {
       const dir = join(tmpDir, ...name.split("/",).slice(0, -1,),);
       if (dir !== tmpDir) { dirs.add(dir,); }
     }
+
     mkdirSync(tmpDir, { recursive: true, },);
     for (const dir of dirs) {
       mkdirSync(dir, { recursive: true, },);
     }
+
     for (const [name, content,] of Object.entries(files,)) {
       writeFileSync(join(tmpDir, name,), content,);
     }
@@ -357,6 +361,7 @@ enabled = true
 configPath = "/tmp/llama-swap.yaml"
 `,
     },);
+
     try {
       const config = loadConfig(tmpDir,);
       expect(config.server.port,).toBe(7171,);
@@ -374,6 +379,7 @@ server:
   port: 8282
 `,
     },);
+
     try {
       const config = loadConfig(tmpDir,);
       expect(config.server.port,).toBe(8282,);
@@ -393,6 +399,7 @@ port = 7171
 port = 9999
 `,
     },);
+
     try {
       const config = loadConfig(tmpDir,);
       expect(config.server.port,).toBe(9999,);
@@ -412,6 +419,7 @@ port = 5555
 port = 7171
 `,
     },);
+
     try {
       const config = loadConfig(tmpDir,);
       expect(config.server.port,).toBe(7171,);
@@ -439,6 +447,7 @@ enabled = true
 configPath = "~/models/llama-swap.yaml"
 `,
     },);
+
     try {
       const config = loadConfig(tmpDir,);
       expect(config.generation.autoStart,).toBeDefined();
@@ -457,6 +466,7 @@ server:
   port: 8484
 `,
     },);
+
     try {
       const config = loadConfig(tmpDir,);
       expect(config.observability.telemetry.piiSecret,).toBe("telemetry-flat-secret-from-env-file",);
@@ -475,6 +485,7 @@ observability:
     piiSecret: nested-value
 `,
     },);
+
     try {
       const config = loadConfig(tmpDir,);
       expect(config.observability.telemetry.piiSecret,).toBe("nested-value",);
@@ -489,6 +500,7 @@ observability:
       db: { type: "sqlite", filename: "", },
       _unused: null,
     };
+
     const result = normalizeConfig(input,) as Record<string, unknown>;
     expect(result.server as Record<string, unknown>,).not.toHaveProperty("host",);
     expect(result.server as Record<string, unknown>,).not.toHaveProperty("port",);
@@ -510,6 +522,7 @@ db:
   type: sqlite
 `,
       },);
+
       const config = loadConfig(tmpDir,);
       // host stays empty (normalization is env-layer only)
       expect(config.server.host,).toBe("",);

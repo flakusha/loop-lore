@@ -114,9 +114,11 @@ export function substituteTemplate(
     if (typeof value === "object" && value !== null) {
       return jsonStringifyOr(value, "{}",);
     }
+
     if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
       return String(value,);
     }
+
     return match;
   },);
 }
@@ -209,6 +211,7 @@ export function deleteTemplate(worldId: string, templateId: string,): void {
   for (const t of templates) {
     if (t.id !== templateId) { filtered.push(t,); }
   }
+
   const key = `${STORAGE_PREFIX}${worldId}`;
   localStorage.setItem(key, jsonStringifyOr(filtered,),);
 }
@@ -243,5 +246,6 @@ export function importTemplate(json: string,): VnTemplate | null {
   if (!template?.id || !template.name || !template.worldId) {
     return null;
   }
+
   return template;
 }

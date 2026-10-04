@@ -82,6 +82,7 @@ function resolveGuidedActor(
     const match = context.actors.find(
       (a,) => a.id === guidance.targetCharacter || a.displayName === guidance.targetCharacter,
     );
+
     if (match) { return match.id; }
   }
 
@@ -92,6 +93,7 @@ function resolveGuidedActor(
     for (const [id, level,] of Object.entries(priority,)) {
       if (context.actors.some((a,) => a.id === id)) { ranked.push([id, level,],); }
     }
+
     ranked.sort((a, b,) => (weight[b[1]] ?? 0) - (weight[a[1]] ?? 0));
     const top = ranked[0]?.[0];
     if (top && top !== lastActorId) { return top; }

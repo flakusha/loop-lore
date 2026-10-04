@@ -67,12 +67,14 @@ export function turnSkipRoutes(opts: HandlerOpts, prefix = "/api",) {
             userId,
             userRole,
           },);
+
           if (!result.ok) {
             const status = result.code === "not_found"
               ? HttpStatus.NotFound
               : result.code === "refused_beat"
               ? HttpStatus.Conflict
               : HttpStatus.Forbidden;
+
             return jsonError(result.message, status, result.code as never,);
           }
 
@@ -91,6 +93,7 @@ export function turnSkipRoutes(opts: HandlerOpts, prefix = "/api",) {
               log().error(`triggerAutoGeneration failed: ${String(error,)}`, undefined, { chatId: id, },);
             },);
           }
+
           return jsonResponse({ ok: true, messageId: result.messageId, mode: result.mode, deduped: result.deduped, },);
         },
         { body: TurnSkipBody, params: ChatIdParams, },

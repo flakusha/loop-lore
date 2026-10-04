@@ -56,6 +56,7 @@ export async function buildSkillLevels(
     .select("cha",)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   const chaProxy = stats?.cha ?? 10;
 
   const skills = await getActorSkills(db, actorId,);
@@ -117,6 +118,7 @@ export function classifyApproachCategory(approach: string,): FantasyCategory | u
     degradation: ["degrad", "humiliat",],
     praise: ["praise", "compliment", "beautiful",],
   };
+
   for (const [category, tokens,] of Object.entries(aliases,)) {
     if (
       text.includes(category.replaceAll("_", " ",),) ||
@@ -125,5 +127,6 @@ export function classifyApproachCategory(approach: string,): FantasyCategory | u
       return category as FantasyCategory;
     }
   }
+
   return undefined;
 }

@@ -22,6 +22,7 @@ describe("extractEvents — item transfer direction", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
     expect(item,).toBeDefined();
     expect(item!.data.fromActorId,).toBe(ACTOR,);
@@ -35,6 +36,7 @@ describe("extractEvents — item transfer direction", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
     expect(item,).toBeDefined();
     expect(item!.data.fromActorId,).toBeNull();
@@ -47,6 +49,7 @@ describe("extractEvents — item transfer direction", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
     expect(item,).toBeDefined();
     expect(item!.data.fromActorId,).toBe(ACTOR,);
@@ -60,6 +63,7 @@ describe("extractEvents — item transfer direction", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
     expect(item,).toBeDefined();
     expect(item!.data.fromActorId,).toBe(ACTOR,);
@@ -76,6 +80,7 @@ describe("extractEvents — location change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const loc = events.find((e,) => e.type === WorldEventType.LocationChange);
     expect(loc,).toBeDefined();
     expect(loc!.data.toLocationName,).toBe("the Dark Forest",);
@@ -91,6 +96,7 @@ describe("extractEvents — location change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const loc = events.find((e,) => e.type === WorldEventType.LocationChange);
     expect(loc,).toBeDefined();
     expect(loc!.data.toLocationName,).toBe("The Dark Forest",);
@@ -102,6 +108,7 @@ describe("extractEvents — location change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const loc = events.find((e,) => e.type === WorldEventType.LocationChange);
     expect(loc,).toBeDefined();
     expect(loc!.data.toLocationName,).toBe("Tavern",);
@@ -127,6 +134,7 @@ describe("extractEvents — location change detection", () => {
       ["Sam ventures into the Dark Forest.", "the Dark Forest",],
       ["Sam makes their way to the Tavern.", "the Tavern",],
     ];
+
     for (const [msg, name,] of cases) {
       const events = extractEvents({ messageContent: msg, actorId: ACTOR, currentLocationId: LOC, },);
       const loc = events.find((e,) => e.type === WorldEventType.LocationChange);
@@ -141,6 +149,7 @@ describe("extractEvents — location change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const loc = events.find((e,) => e.type === WorldEventType.LocationChange);
     expect(loc,).toBeDefined();
     expect(loc!.data.toLocationName,).toBe("THE TAVERN",);
@@ -152,6 +161,7 @@ describe("extractEvents — location change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.LocationChange),).toBeUndefined();
   });
 
@@ -161,6 +171,7 @@ describe("extractEvents — location change detection", () => {
       actorId: ACTOR,
       currentLocationId: null,
     },);
+
     const loc = events.find((e,) => e.type === WorldEventType.LocationChange);
     expect(loc,).toBeDefined();
     expect(loc!.locationId,).toBeUndefined();
@@ -173,6 +184,7 @@ describe("extractEvents — location change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.LocationChange),).toBeUndefined();
   });
 });
@@ -186,6 +198,7 @@ describe("extractEvents — time advancement detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const time = events.find((e,) => e.type === WorldEventType.TimeAdvancement);
     expect(time,).toBeDefined();
     expect(time!.data.minutesAdvanced,).toBe(120,);
@@ -225,6 +238,7 @@ describe("extractEvents — time advancement detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.TimeAdvancement),).toBeUndefined();
   });
 });
@@ -238,6 +252,7 @@ describe("extractEvents — combat detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const combat = events.find((e,) => e.type === WorldEventType.CombatEvent);
     expect(combat,).toBeDefined();
     expect(combat!.data.attackerId,).toBe(ACTOR,);
@@ -254,6 +269,7 @@ describe("extractEvents — combat detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const combat = events.find((e,) => e.type === WorldEventType.CombatEvent);
     expect(combat,).toBeDefined();
     expect(combat!.data.defeated,).toBe(true,);
@@ -265,6 +281,7 @@ describe("extractEvents — combat detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const combat = events.find((e,) => e.type === WorldEventType.CombatEvent);
     expect(combat,).toBeDefined();
     expect(combat!.data.defeated,).toBe(false,);
@@ -289,6 +306,7 @@ describe("extractEvents — combat detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.CombatEvent),).toBeDefined();
   });
 
@@ -298,6 +316,7 @@ describe("extractEvents — combat detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.CombatEvent),).toBeDefined();
     const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
     expect(item,).toBeDefined();
@@ -311,6 +330,7 @@ describe("extractEvents — combat detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.CombatEvent),).toBeUndefined();
   });
 });
@@ -324,6 +344,7 @@ describe("extractEvents — NPC state change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const npc = events.find((e,) => e.type === WorldEventType.NpcStateChange);
     expect(npc,).toBeDefined();
     expect(npc!.data.npcActorId,).toBe(ACTOR,);
@@ -336,6 +357,7 @@ describe("extractEvents — NPC state change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.NpcStateChange),).toBeDefined();
   });
 
@@ -345,6 +367,7 @@ describe("extractEvents — NPC state change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.NpcStateChange),).toBeDefined();
   });
 
@@ -354,6 +377,7 @@ describe("extractEvents — NPC state change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.NpcStateChange),).toBeDefined();
     expect(events.find((e,) => e.type === WorldEventType.WorldLoreUpdate),).toBeDefined();
   });
@@ -364,6 +388,7 @@ describe("extractEvents — NPC state change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.NpcStateChange),).toBeUndefined();
   });
 
@@ -373,6 +398,7 @@ describe("extractEvents — NPC state change detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.NpcStateChange),).toBeUndefined();
   });
 });
@@ -386,6 +412,7 @@ describe("extractEvents — lore update detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const lore = events.find((e,) => e.type === WorldEventType.WorldLoreUpdate);
     expect(lore,).toBeDefined();
     expect(lore!.data.newLoreEntry,).toBe("She reveals that the sword is cursed",);
@@ -399,6 +426,7 @@ describe("extractEvents — lore update detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const lore = events.find((e,) => e.type === WorldEventType.WorldLoreUpdate);
     expect(lore,).toBeDefined();
     expect(lore!.data.newLoreEntry,).toBe("According to ancient texts, the mountain sleeps",);
@@ -410,6 +438,7 @@ describe("extractEvents — lore update detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.WorldLoreUpdate),).toBeUndefined();
   });
 
@@ -433,6 +462,7 @@ describe("extractEvents — lore update detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const lore = events.find((e,) => e.type === WorldEventType.WorldLoreUpdate);
     expect(lore,).toBeDefined();
     expect(lore!.data.newLoreEntry,).toBe("She reveals that the sword is cursed",);
@@ -444,6 +474,7 @@ describe("extractEvents — lore update detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const lore = events.find((e,) => e.type === WorldEventType.WorldLoreUpdate);
     expect(lore,).toBeDefined();
     expect(lore!.data.newLoreEntry,).toBe("She reveals that the sword is cursed",);
@@ -455,6 +486,7 @@ describe("extractEvents — lore update detection", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.WorldLoreUpdate),).toBeUndefined();
   });
 });
@@ -469,6 +501,7 @@ describe("extractEvents — item transfer edge cases", () => {
       ["Sam passes the Note to Kara.", "Note",],
       ["Sam trades the Sword for the Shield.", "Sword",],
     ];
+
     for (const [msg, name,] of cases) {
       const events = extractEvents({ messageContent: msg, actorId: ACTOR, currentLocationId: LOC, },);
       const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
@@ -521,6 +554,7 @@ describe("extractEvents — item transfer edge cases", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const items = events.filter((e,) => e.type === WorldEventType.ItemTransfer);
     expect(items,).toHaveLength(2,);
     expect(items[0]!.data.itemName,).toBe("Sword",);
@@ -535,6 +569,7 @@ describe("extractEvents — item transfer edge cases", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.find((e,) => e.type === WorldEventType.ItemTransfer),).toBeUndefined();
   });
 });
@@ -563,6 +598,7 @@ describe("extractEvents — malformed and edge inputs", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     const loc = events.find((e,) => e.type === WorldEventType.LocationChange);
     expect(loc,).toBeDefined();
     expect(loc!.data.toLocationName,).toBe("the Tavern",);
@@ -574,6 +610,7 @@ describe("extractEvents — malformed and edge inputs", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events,).toEqual([],);
   });
 
@@ -583,6 +620,7 @@ describe("extractEvents — malformed and edge inputs", () => {
       actorId: ACTOR,
       currentLocationId: LOC,
     },);
+
     expect(events.map((e,) => e.type),).toEqual([
       WorldEventType.LocationChange,
       WorldEventType.ItemTransfer,

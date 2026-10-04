@@ -16,14 +16,17 @@ describe("categoryToType", () => {
     expect(categoryToType("weapon",),).toBe("weapon",);
     expect(categoryToType("armor",),).toBe("armor",);
   });
+
   test("maps consumable/material", () => {
     expect(categoryToType("consumable",),).toBe("consumable",);
     expect(categoryToType("material",),).toBe("material",);
   });
+
   test("maps key/quest items to quest", () => {
     expect(categoryToType("key_item",),).toBe("quest",);
     expect(categoryToType("quest_item",),).toBe("quest",);
   });
+
   test("maps misc categories to accessory", () => {
     expect(categoryToType("book",),).toBe("accessory",);
     expect(categoryToType("artifact",),).toBe("accessory",);
@@ -36,6 +39,7 @@ describe("categoryToSlot", () => {
     expect(categoryToSlot("weapon",),).toBe("weapon",);
     expect(categoryToSlot("armor",),).toBe("armor",);
   });
+
   test("non-equippable categories have no slot", () => {
     expect(categoryToSlot("consumable",),).toBeUndefined();
     expect(categoryToSlot("book",),).toBeUndefined();
@@ -56,6 +60,7 @@ describe("toEquipmentItem", () => {
       ...base,
       properties: { damage: 8, },
     },);
+
     expect(item.type,).toBe("weapon",);
     expect(item.slot,).toBe("weapon",);
     expect(item.rarity,).toBe("rare",);
@@ -72,6 +77,7 @@ describe("toEquipmentItem", () => {
       category: "armor",
       properties: { ac: 5, bonus: 2, },
     },);
+
     expect(item.modifiers,).toContainEqual({ stat: "defense", value: 5, },);
     expect(item.modifiers,).toContainEqual({ stat: "attack", value: 2, },);
   });
@@ -81,6 +87,7 @@ describe("toEquipmentItem", () => {
       ...base,
       properties: { damage: 4, requiredLevel: 10, },
     },);
+
     expect(item.requiredLevel,).toBe(10,);
   });
 

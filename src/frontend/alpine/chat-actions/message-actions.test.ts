@@ -26,6 +26,7 @@ if (ISOLATED) {
     calls.push({ url, opts: opts ?? {}, },);
     return handler(url, opts,);
   }) satisfies ApiFetchMock;
+
   mock.module("../htmx", () => ({ apiFetch: stub, }),);
   globalThis.apiFetch = stub;
 }
@@ -84,6 +85,7 @@ function buildCtx(overrides?: Partial<ActionCtx>,): ActionCtx {
     },
     ...overrides,
   };
+
   return ctx;
 }
 
@@ -99,9 +101,11 @@ describeOrSkip("messageActions.improveMessage", () => {
       if (url === "/api/v1/generation/prompt") {
         return Response.json({ data: { content: "much better prompt", }, },);
       }
+
       if (url === "/api/v1/messages/m1") {
         return Response.json({ id: "m1", edited_at: true, },);
       }
+
       return Response.json({}, { status: 404, },);
     };
 
@@ -115,6 +119,7 @@ describeOrSkip("messageActions.improveMessage", () => {
       text: "draft prompt",
       chatId: "chat-1",
     },);
+
     expect(calls[1]?.url,).toBe("/api/v1/messages/m1",);
     expect(calls[1]?.opts.method,).toBe("PATCH",);
     expect(JSON.parse(calls[1]?.opts.body as string,),).toEqual({ content: "much better prompt", },);
@@ -188,6 +193,7 @@ describeOrSkip("asset picker kind registry (AC7)", () => {
       { id: "p1", mime_type: "image/png", },
       { id: "a1", type: "audio", mime_type: "audio/mpeg", },
     ];
+
     expect(filterPickerAssets(rows,).map((r,) => r.id),).toEqual(["i1", "p1",],);
   });
 
@@ -196,11 +202,13 @@ describeOrSkip("asset picker kind registry (AC7)", () => {
       { id: "i1", type: "image", },
       { id: "a1", type: "audio", mime_type: "audio/mpeg", },
     ];
+
     const audioKind = {
       kind: "audio",
       label: "Audio",
       matches: (asset: { type?: string },) => asset.type === "audio",
     };
+
     expect(
       filterPickerAssets(rows, [...ASSET_PICKER_KINDS, audioKind,],).map((r,) => r.id),
     ).toEqual(["i1", "a1",],);
@@ -245,6 +253,7 @@ describeOrSkip("messageActions.attachAssetToMessage", () => {
       if (opts?.method === "POST") {
         return Response.json({ data: [{ assetId: "a9", },], }, { status: 201, },);
       }
+
       return Response.json({ attachments: [{ assetId: "a9", },], },);
     };
 

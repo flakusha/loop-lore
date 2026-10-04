@@ -110,5 +110,6 @@ export function extractMessageKeywords(
     keywords.push(token,);
     if (keywords.length >= max) { break; }
   }
+
   return keywords;
 }

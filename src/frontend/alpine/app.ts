@@ -48,6 +48,7 @@ globalThis.app = function() {
       if (savedTheme) {
         this.currentTheme = savedTheme;
       }
+
       this.applyTheme(this.currentTheme,);
 
       // Load saved locale (cookie already set by server)
@@ -68,6 +69,7 @@ globalThis.app = function() {
         const link = $<HTMLLinkElement>(`#theme-${t.id}`,);
         if (link) { link.disabled = t.id !== themeId; }
       }
+
       document.body.classList.toggle("theme-no-icons", themeId === "no-icons",);
       localStorage.setItem("theme-preference", themeId,);
     },

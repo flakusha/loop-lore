@@ -38,6 +38,7 @@ describe("blog RAG sources", () => {
       relevance_score: 0.8,
       snippet: "dragons",
     },);
+
     expect(row.post_id,).toBe("post-1",);
     expect(row.uri,).toBe("https://example.com/lore",);
     expect(row.title,).toBe("Lore",);
@@ -48,6 +49,7 @@ describe("blog RAG sources", () => {
       .selectAll()
       .where("id", "=", row.id,)
       .executeTakeFirst();
+
     expect(stored?.post_id,).toBe("post-1",);
   });
 
@@ -59,6 +61,7 @@ describe("blog RAG sources", () => {
       relevance_score: 0.1,
       snippet: "low",
     },);
+
     await addRAGSource(db, "post-1", {
       source_type: "internal_rag",
       uri: "memory://high",
@@ -66,6 +69,7 @@ describe("blog RAG sources", () => {
       relevance_score: 0.9,
       snippet: "high",
     },);
+
     const rows = await getRAGSources(db, "post-1",);
     expect(rows.map((r,) => r.title),).toEqual(["High", "Low",],);
   });
@@ -83,6 +87,7 @@ describe("blog RAG sources", () => {
       relevance_score: 0.5,
       snippet: "a",
     },);
+
     await addRAGSource(db, "post-2", {
       source_type: "external_web",
       uri: "https://example.com/b",
@@ -90,6 +95,7 @@ describe("blog RAG sources", () => {
       relevance_score: 0.5,
       snippet: "b",
     },);
+
     expect((await getRAGSources(db, "post-1",)).map((r,) => r.title),).toEqual(["A",],);
     expect((await getRAGSources(db, "post-2",)).map((r,) => r.title),).toEqual(["B",],);
   });

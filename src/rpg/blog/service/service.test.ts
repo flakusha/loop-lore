@@ -41,6 +41,7 @@ describe("BlogService posts facade", () => {
       body: "body",
       tags: ["t",],
     },);
+
     expect(row.title,).toBe("Facade",);
 
     const fetched = await svc.getPost(row.id,);
@@ -77,6 +78,7 @@ describe("BlogService comments facade", () => {
       author_id: "actor-commenter",
       body: "Hi",
     },);
+
     expect(comment.body,).toBe("Hi",);
     expect((await svc.getComment(comment.id,))?.body,).toBe("Hi",);
     expect(await svc.getComment("comment-missing",),).toBeUndefined();
@@ -99,17 +101,20 @@ describe("BlogService comments facade", () => {
       title: "P",
       body: "b",
     },);
+
     const parent = await svc.createComment({
       post_id: post.id,
       author_id: "actor-commenter",
       body: "Parent",
     },);
+
     await svc.createComment({
       post_id: post.id,
       author_id: "actor-commenter",
       body: "Reply",
       parent_comment_id: parent.id,
     },);
+
     const tree = await svc.listCommentsThreaded(post.id,);
     expect(tree.length,).toBe(1,);
     expect(tree[0]?.children.map((c,) => c.body),).toEqual(["Reply",],);
@@ -131,6 +136,7 @@ describe("BlogService follows + RAG facade", () => {
     expect(await svc.getFollowStatus("user-follower", "user-author",),).toEqual({
       following: true,
     },);
+
     expect(await svc.getFollowers("user-author",),).toEqual(["user-follower",],);
 
     expect(await svc.unfollow("user-follower", "user-author",),).toBeTrue();
@@ -146,6 +152,7 @@ describe("BlogService follows + RAG facade", () => {
       title: "P",
       body: "b",
     },);
+
     expect(await svc.getRAGSources(post.id,),).toEqual([],);
 
     const row = await svc.addRAGSource(post.id, {
@@ -155,6 +162,7 @@ describe("BlogService follows + RAG facade", () => {
       relevance_score: 0.8,
       snippet: "dragons",
     },);
+
     expect(row.post_id,).toBe(post.id,);
     expect(row.uri,).toBe("https://example.com/lore",);
 

@@ -67,28 +67,34 @@ function attachDom(node: FakeNode,): FakeEl {
     arr.push(fn,);
     el.listeners.set(type, arr,);
   };
+
   el.dispatch = (type, payload,) => {
     const arr = el.listeners.get(type,) ?? [];
     for (const fn of arr) { fn(payload,); }
   };
+
   el.removeChild = (child,) => {
     const i = el.children.indexOf(child,);
     if (i >= 0) {
       el.children.splice(i, 1,);
       child.parent = null;
     }
+
     el.firstChild = el.children[0] ?? null;
     return child;
   };
+
   el.appendChild = (child,) => {
     el.children.push(child,);
     child.parent = el;
     el.firstChild = el.children[0] ?? null;
     return child;
   };
+
   el.append = (...kids: FakeNode[]) => {
     for (const k of kids) { el.appendChild(k,); }
   };
+
   el.innerHTML = "";
   return el;
 }
@@ -110,12 +116,14 @@ function makeDocument(): FakeDocument {
       listeners.set(type, arr,);
     },
   };
+
   return d;
 }
 
 function makeEl(id = "",): FakeEl {
   return attachDom(makeNode({ id, value: "", },),);
 }
+
 const page = globalThis as unknown as {
   addAspiration: () => void;
   removeAspiration: (idx: number,) => void;
@@ -141,9 +149,11 @@ afterEach(() => {
 function registerForm(): void {
   const sliders = "moral-lawful moral-good auto-group auto-solo approach-risk approach-initiative voice-emotional"
     .split(" ",);
+
   const texts =
     "cope-stress cope-failure cope-conflict approach-decision voice-tics voice-vocab voice-structure voice-humor"
       .split(" ",);
+
   for (const id of [...sliders, ...texts,]) { doc.register(makeEl(id,),); }
   for (const id of sliders) { doc.register(makeEl(`${id}-val`,),); }
 }
@@ -211,6 +221,7 @@ describe("aspirations", () => {
         return Promise.resolve(new Response("{}",),);
       }) as unknown as typeof fetch,
     );
+
     void page.saveInternalTraits("actor-1",);
     // The save is async; flush microtasks.
     return Promise.resolve().then(() => {
@@ -270,6 +281,7 @@ describe("loadInternalTraits", () => {
       urls.push(url,);
       return Promise.resolve(new Response(JSON.stringify(fullTraits,),),);
     },);
+
     registerForm();
     const list = doc.register(makeEl("aspirations-list",),);
 
@@ -290,6 +302,7 @@ describe("loadInternalTraits", () => {
     expect(goalInput.value,).toBe(`<script>alert(1)</script>`,);
     expect(list.innerHTML,).not.toContain("<script>",);
   });
+
   test("leaves the form untouched on non-ok responses and network failures", async () => {
     initTraits(async () => new Response("denied", { status: 403, },));
     const lawful = doc.register(makeEl("moral-lawful",),);
@@ -298,6 +311,7 @@ describe("loadInternalTraits", () => {
     initTraits(async () => {
       throw new Error("boom",);
     },);
+
     await expect(page.loadInternalTraits("a1",),).resolves.toBeUndefined();
     expect(lawful.value,).toBe("",);
   });
@@ -321,6 +335,7 @@ describe("saveInternalTraits", () => {
       calls.push({ url, init: init ?? {}, },);
       return Promise.resolve(new Response("{}",),);
     },);
+
     await page.saveInternalTraits("a1",);
 
     expect(calls.length,).toBe(1,);
@@ -331,6 +346,7 @@ describe("saveInternalTraits", () => {
       copingMechanisms: { failure_response?: string };
       voicePatterns: { verbal_tics: string[] };
     };
+
     expect(payload.aspirations.length,).toBe(1,); // only non-empty goals survive
     expect(payload.aspirations[0]!.goal,).toBe(`<script>alert(1)</script>`,);
     expect(payload.aspirations[0]!.progress,).toBe(40,);
@@ -350,6 +366,7 @@ describe("saveInternalTraits", () => {
     initTraits(async () => {
       throw new Error("offline",);
     },);
+
     status.textContent = "";
     await page.saveInternalTraits("a1",);
     expect(status.textContent,).toBe("✗ Failed to save traits",);

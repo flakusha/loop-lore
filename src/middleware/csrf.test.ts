@@ -139,6 +139,7 @@ describe("decideCsrf — disabled mode", () => {
       sessionId: "u",
       requestId: "r-1",
     },);
+
     expect(d.ok,).toBe(true,);
     expect(d.cookieToIssue,).toBeNull();
   });
@@ -156,6 +157,7 @@ describe("decideCsrf — safe methods (issuance path)", () => {
       sessionId: null,
       requestId: "req-abc",
     },);
+
     expect(d.ok,).toBe(true,);
     expect(d.cookieToIssue,).not.toBeNull();
     expect(d.cookieToIssue?.length,).toBeGreaterThan(20,);
@@ -170,6 +172,7 @@ describe("decideCsrf — safe methods (issuance path)", () => {
       sessionId: "user-42",
       requestId: "req-abc",
     },);
+
     expect(d.ok,).toBe(true,);
     expect(d.cookieToIssue,).not.toBeNull();
     // Token must verify against the same sessionId
@@ -188,6 +191,7 @@ describe("decideCsrf — safe methods (issuance path)", () => {
       sessionId,
       requestId: "req-xyz",
     },);
+
     expect(d.ok,).toBe(true,);
     expect(d.cookieToIssue,).toBeNull();
   });
@@ -202,6 +206,7 @@ describe("decideCsrf — safe methods (issuance path)", () => {
       sessionId: "new-session",
       requestId: "req-xyz",
     },);
+
     expect(d.ok,).toBe(true,);
     expect(d.cookieToIssue,).not.toBeNull();
     expect(d.cookieToIssue,).not.toBe(stale,);
@@ -218,6 +223,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       [CSRF_HEADER]: token,
       cookie: `${CSRF_COOKIE}=${token}`,
     },);
+
     const d = decideCsrf(opts, {
       method: "POST",
       routePattern: "/api/chats",
@@ -225,6 +231,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       sessionId,
       requestId: "req-1",
     },);
+
     expect(d.ok,).toBe(true,);
   });
 
@@ -239,6 +246,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       sessionId,
       requestId: "req-2",
     },);
+
     expect(d.ok,).toBe(false,);
   });
 
@@ -253,6 +261,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       sessionId,
       requestId: "req-2b",
     },);
+
     expect(d.ok,).toBe(false,);
   });
 
@@ -264,6 +273,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       [CSRF_HEADER]: a,
       cookie: `${CSRF_COOKIE}=${b}`,
     },);
+
     const d = decideCsrf(opts, {
       method: "POST",
       routePattern: "/api/chats",
@@ -271,6 +281,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       sessionId,
       requestId: "req-3",
     },);
+
     expect(d.ok,).toBe(false,);
   });
 
@@ -284,6 +295,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       sessionId: "user-self",
       requestId: "req-4",
     },);
+
     expect(d.ok,).toBe(false,);
   });
 
@@ -296,6 +308,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       sessionId: "user-x",
       requestId: "req-5",
     },);
+
     expect(d.ok,).toBe(false,);
   });
 
@@ -308,6 +321,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       sessionId: "user-x",
       requestId: "req-6",
     },);
+
     expect(d.ok,).toBe(false,);
   });
 
@@ -317,6 +331,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       [CSRF_HEADER]: token,
       cookie: `${CSRF_COOKIE}=${token}`,
     },);
+
     const d = decideCsrf(opts, {
       method: "POST",
       routePattern: "/api/foo",
@@ -324,6 +339,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       sessionId: null,
       requestId: "req-7",
     },);
+
     expect(d.ok,).toBe(true,);
   });
 
@@ -337,14 +353,17 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       sessionId: null,
       requestId: "req-victim",
     },);
+
     expect(d.ok,).toBe(false,);
   });
+
   test("solo POST (sessionId null + userId set) verifies userId-bound token across requestIds", () => {
     const token = mintCsrfToken(SECRET, "solo::solo-user-1", {},);
     const headers = makeHeaders({
       [CSRF_HEADER]: token,
       cookie: `${CSRF_COOKIE}=${token}`,
     },);
+
     const d = decideCsrf(opts, {
       method: "POST",
       routePattern: "/api/foo",
@@ -353,6 +372,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       userId: "solo-user-1",
       requestId: "req-different",
     },);
+
     expect(d.ok,).toBe(true,);
   });
 
@@ -366,6 +386,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       userId: "solo-user-1",
       requestId: "req-get-1",
     },);
+
     expect(d.cookieToIssue,).not.toBeNull();
     expect(verifyCsrfToken(SECRET, d.cookieToIssue as string, "solo::solo-user-1",),).toBe(true,);
   });
@@ -383,6 +404,7 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       sessionId: null,
       requestId: "req-login-1",
     },);
+
     expect(d.ok,).toBe(true,);
     // Exempt routes still ISSUE a token (bound to anonymous::<requestId>)
     // so the response carries a Set-Cookie that the next GET/POST can use.
@@ -398,6 +420,7 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       sessionId: null,
       requestId: "req-reg-1",
     },);
+
     expect(d.ok,).toBe(true,);
   });
 
@@ -410,6 +433,7 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       sessionId: null,
       requestId: "req-demo-1",
     },);
+
     expect(d.ok,).toBe(true,);
   });
 
@@ -426,6 +450,7 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       sessionId: "user-logout",
       requestId: "req-logout-1",
     },);
+
     expect(d.ok,).toBe(false,);
   });
 
@@ -436,6 +461,7 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       [CSRF_HEADER]: token,
       cookie: `${CSRF_COOKIE}=${token}`,
     },);
+
     const d = decideCsrf(opts, {
       method: "POST",
       routePattern: "/api/auth/logout",
@@ -443,6 +469,7 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       sessionId,
       requestId: "req-logout-ok",
     },);
+
     expect(d.ok,).toBe(true,);
   });
 
@@ -455,6 +482,7 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       sessionId: null,
       requestId: "req-v1-login-1",
     },);
+
     expect(d.ok,).toBe(true,);
     expect(d.cookieToIssue,).not.toBeNull();
   });
@@ -468,6 +496,7 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       sessionId: null,
       requestId: "req-v1-reg-1",
     },);
+
     expect(d.ok,).toBe(true,);
   });
 
@@ -480,6 +509,7 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       sessionId: null,
       requestId: "req-v1-demo-1",
     },);
+
     expect(d.ok,).toBe(true,);
   });
 
@@ -492,6 +522,7 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       sessionId: "user-telemetry",
       requestId: "req-v1-telemetry-1",
     },);
+
     expect(d.ok,).toBe(true,);
   });
 
@@ -504,6 +535,7 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       sessionId: "user-v1-logout",
       requestId: "req-v1-logout-1",
     },);
+
     expect(d.ok,).toBe(false,);
   });
 });
@@ -521,6 +553,7 @@ describe("decideCsrf — method matrix", () => {
         sessionId: "user-m",
         requestId: "req-m",
       },);
+
       expect(d.ok,).toBe(false,);
     });
 
@@ -533,6 +566,7 @@ describe("decideCsrf — method matrix", () => {
         [CSRF_HEADER]: token,
         cookie: `${CSRF_COOKIE}=${token}`,
       },);
+
       const d = decideCsrf(opts, {
         method,
         routePattern: "/api/resource/1",
@@ -540,6 +574,7 @@ describe("decideCsrf — method matrix", () => {
         sessionId,
         requestId: "req-m-pass",
       },);
+
       expect(d.ok,).toBe(true,);
     });
 
@@ -554,6 +589,7 @@ describe("decideCsrf — method matrix", () => {
         sessionId,
         requestId: "req-m-half",
       },);
+
       expect(d.ok,).toBe(false,);
     });
   }
@@ -612,6 +648,7 @@ describe("decideCsrf — logger integration", () => {
     const logger = {
       warn: (event: string, ctx: unknown,) => warns.push({ event, ctx, },),
     } as unknown as { warn: (e: string, c: unknown,) => void };
+
     const opts = { secret: SECRET, enabled: true, logger: logger as any, };
     const headers = makeHeaders({},);
     decideCsrf(opts, {
@@ -621,6 +658,7 @@ describe("decideCsrf — logger integration", () => {
       sessionId: "u",
       requestId: "r",
     },);
+
     expect(warns.length,).toBeGreaterThanOrEqual(1,);
     expect(warns[0]?.event,).toMatch(/csrf\./,);
   });
@@ -630,6 +668,7 @@ describe("decideCsrf — logger integration", () => {
     const logger = {
       warn: (event: string,) => warns.push(event,),
     } as unknown as { warn: (e: string,) => void };
+
     const opts = { secret: SECRET, enabled: true, logger: logger as any, };
     const headers = makeHeaders({},);
     decideCsrf(opts, {
@@ -639,6 +678,7 @@ describe("decideCsrf — logger integration", () => {
       sessionId: "u",
       requestId: "r",
     },);
+
     expect(warns,).toEqual([],);
   });
 });

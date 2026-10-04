@@ -31,6 +31,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
         style.objectFit = "cover";
       }
     }
+
     return style;
   },
 
@@ -70,6 +71,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
       url,
       caption: asset.alt_text || asset.filename || asset.name,
     };
+
     // Mirror into the global preview state so the modal's copy/download
     // actions (which read __previewAsset) act on THIS asset.
     globalThis.__previewAsset = {
@@ -141,6 +143,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
       this.$dispatch?.(`show-toast`, { type: "warning", message: t("toasts.selectChatFirst",), },);
       return;
     }
+
     const input = event.target as HTMLInputElement;
     const files = input.files;
     if (!files?.length) { return; }
@@ -164,12 +167,14 @@ export const chatUtilsGallery: ChatUtilsGallery = {
               message: err?.error || t("toasts.failedUpload", { filename: file.name, },),
             },);
           }
+
           if (assetId) {
             const linkRes = await apiFetch(`/api/v1/assets/${assetId}/links`, {
               method: "POST",
               headers: { "Content-Type": "application/json", },
               body: jsonBody({ entityType: "chat", entityId: activeChat, label: "scene", },),
             },);
+
             if (linkRes.ok) {
               this.$dispatch?.(`show-toast`, {
                 type: "success",
@@ -190,6 +195,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
         }
       },),
     );
+
     input.value = "";
     await this.loadGalleryAssets();
   },

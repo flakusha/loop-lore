@@ -28,8 +28,10 @@ function parseFrames(chunk: string,): Array<{ event: string; data: string }> {
       if (line.startsWith("event: ",)) { event = line.slice(7,); }
       else if (line.startsWith("data: ",)) { data += line.slice(6,); }
     }
+
     if (data) { frames.push({ event, data, },); }
   }
+
   return frames;
 }
 
@@ -48,6 +50,7 @@ async function readFramesUntil(response: Response, count: number,): Promise<Arra
   const stop = () => {
     finish();
   };
+
   const pump = (async () => {
     while (true) {
       const { value, done: rd, } = await reader.read();
@@ -55,6 +58,7 @@ async function readFramesUntil(response: Response, count: number,): Promise<Arra
         stop();
         return;
       }
+
       buf += decoder.decode(value,);
       if (parseFrames(buf,).length >= count) {
         stop();
@@ -62,6 +66,7 @@ async function readFramesUntil(response: Response, count: number,): Promise<Arra
       }
     }
   })();
+
   await done;
   await pump.catch(() => {},);
   await reader.cancel().catch(() => {},);
@@ -98,6 +103,7 @@ describe("NotificationStreamer", () => {
     expect(payload.unreadCount,).toBe(0,);
     expect(payload.items,).toEqual([],);
   });
+
   test("SSE frames ship read as 1/0, matching the strict client schema", async () => {
     const owner = aliceId;
     await db
@@ -114,18 +120,21 @@ describe("NotificationStreamer", () => {
         created_at: new Date().toISOString(),
       },)
       .execute();
+
     const streamer = new NotificationStreamer(db, owner, 60_000,);
     const res = streamer.open();
     const frames = await readFramesUntil(res, 1,);
     const payload = JSON.parse(frames[0]?.data ?? "{}",) as {
       items?: Array<{ read?: unknown }>;
     };
+
     expect(payload.items?.length,).toBeGreaterThan(0,);
     // Regression: raw "unread" string failed Type.Number() parseOr client-side
     // and every frame was dropped (BUG-notifications-sse-frames-never-parse-).
     expect(payload.items?.[0]?.read,).toBe(0,);
     // readFramesUntil already cancelled the stream reader.
   });
+
   test("loadNotificationSnapshot returns live count + items", async () => {
     const snap = await loadNotificationSnapshot(db, user,);
     expect(snap.count,).toBe(0,);
@@ -159,6 +168,7 @@ describe("NotificationStreamer", () => {
       message?: string;
       correlationId?: string;
     };
+
     expect(payload.message,).toBe("stream error, retry",);
     expect(typeof payload.correlationId,).toBe("string",);
     expect(payload.correlationId,).not.toBe("",);

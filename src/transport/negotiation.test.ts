@@ -158,6 +158,7 @@ describe("negotiate", () => {
       ...defaultCaps,
       protocols: [TransportProtocol.Http2, TransportProtocol.Http1_1,],
     };
+
     const req = makeRequest({ accept: "http/2, http/1.1", },);
     const result = negotiate(req, caps,);
     expect(result.protocol,).toBe(TransportProtocol.Http2,);
@@ -168,6 +169,7 @@ describe("negotiate", () => {
       ...defaultCaps,
       protocols: [TransportProtocol.WebSocket, TransportProtocol.Http1_1,],
     };
+
     const req = makeRequest({ accept: "websocket, http/1.1", },);
     const result = negotiate(req, caps,);
     expect(result.protocol,).toBe(TransportProtocol.WebSocket,);
@@ -190,6 +192,7 @@ describe("negotiate", () => {
       ...defaultCaps,
       compression: [CompressionAlgorithm.Gzip,],
     };
+
     const req = makeRequest({ "accept-encoding": "zstd, gzip", },);
     const result = negotiate(req, caps,);
     expect(result.compression,).toBe(CompressionAlgorithm.Gzip,);
@@ -201,6 +204,7 @@ describe("negotiate", () => {
       ...defaultCaps,
       extensions: ["handshake/v1", "compression/zstd",],
     };
+
     const result = negotiate(req, caps,);
     expect(result.extensions,).toContain("handshake/v1",);
     expect(result.extensions,).not.toContain("permessage-deflate",); // not in server caps
@@ -227,11 +231,13 @@ describe("negotiate", () => {
       maxPayload: 0x10_00_00,
       extensions: ["custom/ext",],
     };
+
     const req = makeRequest({
       accept: "http/2",
       "accept-encoding": "br",
       "sec-websocket-extensions": "custom/ext",
     },);
+
     const result = negotiate(req, caps,);
     expect(result.protocol,).toBe(TransportProtocol.Http2,);
     expect(result.compression,).toBe(CompressionAlgorithm.Brotli,);
@@ -245,6 +251,7 @@ describe("negotiate", () => {
       ...defaultCaps,
       protocols: [TransportProtocol.Http2, TransportProtocol.Http1_1,],
     };
+
     const req = makeRequest({ accept: "http/1.1;q=1.0, http/2;q=0.5", },);
     const result = negotiate(req, caps,);
     // Higher q wins despite http/2 being first in caps

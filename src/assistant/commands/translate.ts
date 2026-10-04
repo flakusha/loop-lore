@@ -104,6 +104,7 @@ export async function runTranslate(
         ],
         params: { maxTokens: 512, temperature: 0.7, },
       },);
+
       const translated = result.content.trim();
       if (translated) {
         return {
@@ -145,6 +146,7 @@ registerCommand("translate", async (args, ctx,): Promise<CommandResult> => {
   if (!db || !config) {
     return runTranslate(args, ctx, { complete: async () => ({ content: "", }), },);
   }
+
   try {
     const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
     return runTranslate(args, ctx, {
@@ -162,6 +164,7 @@ registerCommand("tl", async (args, ctx,): Promise<CommandResult> => {
   if (!db || !config) {
     return runTranslate(args, ctx, { complete: async () => ({ content: "", }), },);
   }
+
   try {
     const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
     return runTranslate(args, ctx, {

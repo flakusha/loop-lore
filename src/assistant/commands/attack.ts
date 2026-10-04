@@ -31,6 +31,7 @@ registerCommand("attack", async (args, ctx,): Promise<CommandResult> => {
   if (!db) {
     return { systemMessage: "**Attack unavailable:** command context missing database.", handled: true, };
   }
+
   const userId = ctx.userId;
   if (!userId) {
     return { systemMessage: "**Attack unavailable:** missing user context.", handled: true, };
@@ -56,6 +57,7 @@ registerCommand("attack", async (args, ctx,): Promise<CommandResult> => {
   // combatant as the attack source (the caller isn't a roster combatant).
   const attacker = active.combatants.find((c,) => !c.isNpc) ??
     active.combatants[0];
+
   if (!attacker) {
     return {
       systemMessage: "**Attack:** this battle has no combatants to act with.",
@@ -71,6 +73,7 @@ registerCommand("attack", async (args, ctx,): Promise<CommandResult> => {
       handled: true,
     };
   }
+
   if (target.hp <= 0) {
     return { systemMessage: `**Attack:** ${target.name} is already defeated.`, handled: true, };
   }

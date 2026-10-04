@@ -56,6 +56,7 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
       content: string;
       created_at: string | Date;
     }[] = [];
+
     for (const row of rows) {
       let content: string;
       try {
@@ -63,6 +64,7 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
       } catch {
         content = "[Encrypted — unable to decrypt]";
       }
+
       messages.push({
         id: row.id,
         role: row.role,
@@ -102,5 +104,6 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
       },
     },);
   }
+
   ctx.counts.chats = chats.length;
 }

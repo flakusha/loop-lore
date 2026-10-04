@@ -66,6 +66,7 @@ async function seed(): Promise<{ db: Kysely<DB>; sqlite: Database }> {
     visibility: "visible",
     status: "confirmed",
   } as never,);
+
   await insertMessages(db, CHAT_ID, ACTOR_ID, "assistant", "Response B", {
     id: "m-alt",
     parent_id: PARENT_ID,
@@ -86,6 +87,7 @@ describe("handleRegenerate (messageId → new sibling variant)", () => {
       db,
       { userId: USER_ID, userRole: "user", },
     );
+
     expect(res.status,).toBe(200,);
     const data = (await res.json()) as {
       ok: boolean;
@@ -93,6 +95,7 @@ describe("handleRegenerate (messageId → new sibling variant)", () => {
       swipeIndex: number;
       replayed: boolean;
     };
+
     expect(data.ok,).toBe(true,);
     expect(data.replayed,).toBe(false,);
     expect(data.swipeIndex,).toBe(2,);
@@ -119,6 +122,7 @@ describe("handleRegenerate (messageId → new sibling variant)", () => {
       .where("id", "in", [ORIGINAL_ID, "m-alt",],)
       .orderBy("swipe_index", "asc",)
       .execute();
+
     expect(originals.map((m,) => [m.id, m.swipe_index, m.status,]),).toEqual([
       [ORIGINAL_ID, 0, "confirmed",],
       ["m-alt", 1, "confirmed",],
@@ -150,6 +154,7 @@ describe("handleRegenerate (messageId → new sibling variant)", () => {
       db,
       { userId: OTHER_ID, userRole: "user", },
     );
+
     expect(res.status,).toBe(403,);
 
     // No sibling created.
@@ -159,6 +164,7 @@ describe("handleRegenerate (messageId → new sibling variant)", () => {
       .where("chat_id", "=", CHAT_ID,)
       .where("parent_id", "=", PARENT_ID,)
       .executeTakeFirst();
+
     expect(count?.n,).toBe(2,);
   });
 
@@ -170,6 +176,7 @@ describe("handleRegenerate (messageId → new sibling variant)", () => {
       db,
       { userId: USER_ID, userRole: "user", },
     );
+
     const firstData = (await first.json()) as { variantMessageId: string; replayed: boolean };
 
     // Repeat before the pending variant resolves.
@@ -178,6 +185,7 @@ describe("handleRegenerate (messageId → new sibling variant)", () => {
       db,
       { userId: USER_ID, userRole: "user", },
     );
+
     const secondData = (await second.json()) as {
       variantMessageId: string;
       replayed: boolean;
@@ -194,6 +202,7 @@ describe("handleRegenerate (messageId → new sibling variant)", () => {
       .where("chat_id", "=", CHAT_ID,)
       .where("parent_id", "=", PARENT_ID,)
       .executeTakeFirst();
+
     expect(count?.n,).toBe(3,);
   });
 
@@ -221,6 +230,7 @@ describe("handleRegenerate (messageId → new sibling variant)", () => {
       db,
       { userId: USER_ID, userRole: "user", },
     );
+
     const data = (await res.json()) as { replayed: boolean; swipeIndex: number };
     expect(data.replayed,).toBe(false,);
     expect(data.swipeIndex,).toBe(3,);
@@ -236,12 +246,14 @@ describe("handleRegenerate style threading (BUG-smart-regen-style-not-threaded-t
       db,
       { userId: USER_ID, userRole: "user", },
     );
+
     expect(res.status,).toBe(200,);
     const data = (await res.json()) as {
       variantMessageId: string;
       replayed: boolean;
       style: string | null;
     };
+
     expect(data.replayed,).toBe(false,);
     expect(data.style,).toBe("funnier",);
 
@@ -250,6 +262,7 @@ describe("handleRegenerate style threading (BUG-smart-regen-style-not-threaded-t
       .select(["idempotency_key",],)
       .where("id", "=", data.variantMessageId,)
       .executeTakeFirst();
+
     expect(created?.idempotency_key,).toBe(`regen:variant:${PARENT_ID}:funnier`,);
   });
 
@@ -261,10 +274,12 @@ describe("handleRegenerate style threading (BUG-smart-regen-style-not-threaded-t
       db,
       { userId: USER_ID, userRole: "user", },
     );
+
     const data = (await res.json()) as {
       variantMessageId: string;
       style: string | null;
     };
+
     expect(data.style,).toBeNull();
 
     const created = await db
@@ -272,6 +287,7 @@ describe("handleRegenerate style threading (BUG-smart-regen-style-not-threaded-t
       .select(["idempotency_key",],)
       .where("id", "=", data.variantMessageId,)
       .executeTakeFirst();
+
     expect(created?.idempotency_key,).toBe(`regen:variant:${PARENT_ID}:plain`,);
   });
 
@@ -283,6 +299,7 @@ describe("handleRegenerate style threading (BUG-smart-regen-style-not-threaded-t
       db,
       { userId: USER_ID, userRole: "user", },
     );
+
     const funnierData = (await funnier.json()) as { variantMessageId: string; swipeIndex: number };
 
     const darker = await handleRegenerate(
@@ -290,6 +307,7 @@ describe("handleRegenerate style threading (BUG-smart-regen-style-not-threaded-t
       db,
       { userId: USER_ID, userRole: "user", },
     );
+
     const darkerData = (await darker.json()) as {
       variantMessageId: string;
       replayed: boolean;
@@ -307,6 +325,7 @@ describe("handleRegenerate style threading (BUG-smart-regen-style-not-threaded-t
       .where("chat_id", "=", CHAT_ID,)
       .where("parent_id", "=", PARENT_ID,)
       .executeTakeFirst();
+
     expect(count?.n,).toBe(4,);
   });
 
@@ -318,6 +337,7 @@ describe("handleRegenerate style threading (BUG-smart-regen-style-not-threaded-t
       db,
       { userId: USER_ID, userRole: "user", },
     );
+
     const firstData = (await first.json()) as { variantMessageId: string };
 
     const second = await handleRegenerate(
@@ -325,6 +345,7 @@ describe("handleRegenerate style threading (BUG-smart-regen-style-not-threaded-t
       db,
       { userId: USER_ID, userRole: "user", },
     );
+
     const secondData = (await second.json()) as { variantMessageId: string; replayed: boolean };
     expect(secondData.replayed,).toBe(true,);
     expect(secondData.variantMessageId,).toBe(firstData.variantMessageId,);
@@ -416,6 +437,7 @@ describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-no
     if (getProvider(PROVIDER_NAME,) !== undefined) {
       unregisterProvider(PROVIDER_NAME,);
     }
+
     provider = new CapturingProvider();
     registerProvider(PROVIDER_NAME, provider,);
   },);
@@ -424,6 +446,7 @@ describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-no
     if (getProvider(PROVIDER_NAME,) !== undefined) {
       unregisterProvider(PROVIDER_NAME,);
     }
+
     setTestDatabase(null,);
   },);
 
@@ -437,6 +460,7 @@ describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-no
       { userId: USER_ID, userRole: "user", },
       makeGenConfig(),
     );
+
     expect(res.status,).toBe(200,);
     const data = await res.json() as {
       ok: boolean;
@@ -444,6 +468,7 @@ describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-no
       variantMessageId: string;
       style: string | null;
     };
+
     expect(data.ok,).toBe(true,);
     expect(data.replayed,).toBe(false,);
     expect(data.style,).toBe("funnier",);
@@ -459,6 +484,7 @@ describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-no
       .selectAll()
       .where("id", "=", data.variantMessageId,)
       .executeTakeFirst();
+
     expect(variant?.status,).toBe("confirmed",);
     expect(variant?.content,).toBe("Styled mock response",);
     expect(variant?.idempotency_key,).toBe(`regen:variant:${PARENT_ID}:funnier`,);
@@ -470,6 +496,7 @@ describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-no
       .selectAll()
       .where("id", "=", ORIGINAL_ID,)
       .executeTakeFirst();
+
     expect(original?.status,).toBe("confirmed",);
     expect(original?.content,).toBe("Response A",);
   });
@@ -484,6 +511,7 @@ describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-no
       { userId: USER_ID, userRole: "user", },
       makeGenConfig(),
     );
+
     expect(res.status,).toBe(200,);
     const data = await res.json() as { variantMessageId: string; style: string | null };
     expect(data.style,).toBeNull();
@@ -499,6 +527,7 @@ describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-no
       .selectAll()
       .where("id", "=", data.variantMessageId,)
       .executeTakeFirst();
+
     expect(variant?.status,).toBe("confirmed",);
     expect(variant?.content,).toBe("Styled mock response",);
     expect(variant?.idempotency_key,).toBe(`regen:variant:${PARENT_ID}:plain`,);
@@ -512,6 +541,7 @@ describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-no
       db,
       { userId: USER_ID, userRole: "user", },
     );
+
     expect(res.status,).toBe(400,);
     const data = await res.json() as { error: string };
     expect(data.error,).toContain("Invalid style",);
@@ -529,6 +559,7 @@ describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-no
       { userId: USER_ID, userRole: "user", },
       makeGenConfig(),
     );
+
     expect(res.status,).toBe(200,);
     const data = await res.json() as { ok: boolean; variantMessageId: string; replayed: boolean };
     expect(data.ok,).toBe(true,);
@@ -539,6 +570,7 @@ describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-no
       .selectAll()
       .where("id", "=", data.variantMessageId,)
       .executeTakeFirst();
+
     expect(variant?.status,).toBe("sending",);
     expect(variant?.content,).toBe("Response A",);
   });

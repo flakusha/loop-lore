@@ -23,6 +23,7 @@ export const storyContextSection: SectionBuilder = {
         .select(["name", "description",],)
         .where("id", "=", chat.current_location_id,)
         .executeTakeFirst();
+
       if (location) {
         parts.push(`Current location: ${location.name}`,);
         if (location.description) { parts.push(location.description,); }
@@ -33,6 +34,7 @@ export const storyContextSection: SectionBuilder = {
         .select(["atmosphere", "npcs_present", "time_of_day", "weather",],)
         .where("location_id", "=", chat.current_location_id,)
         .executeTakeFirst();
+
       if (locationState) {
         if (locationState.time_of_day) { parts.push(`Time: ${locationState.time_of_day}`,); }
         if (locationState.weather) { parts.push(`Weather: ${locationState.weather}`,); }

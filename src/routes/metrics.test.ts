@@ -19,6 +19,7 @@ function configWith(metricsEnabled: boolean,): Config {
     metrics: { enabled: metricsEnabled, },
     telemetry: { piiSecret: "", },
   };
+
   return { observability, } as Config;
 }
 
@@ -48,6 +49,7 @@ describe("metricsRoutes", () => {
     const metricLines = body
       .split("\n",)
       .filter((l: string,) => l.length > 0 && !l.startsWith("#",));
+
     expect(metricLines.length,).toBeGreaterThan(0,);
     for (const line of metricLines) {
       const parts = line.split(/\s+/,);
@@ -74,6 +76,7 @@ describe("renderMetrics", () => {
       "loop_lore_process_cpu_user_microseconds",
       "loop_lore_process_cpu_system_microseconds",
     ];
+
     for (const name of names) {
       expect(out,).toContain(name,);
     }

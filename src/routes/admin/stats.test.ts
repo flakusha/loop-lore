@@ -28,6 +28,7 @@ function makeApp(db: Kysely<DB>, opts: { userId?: string | null; userRole?: stri
     userId: opts.userId ?? "",
     userRole: opts.userRole ?? null,
   }));
+
   return app.use(statsRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
@@ -212,6 +213,7 @@ describe("admin stats", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/stats?since=2025-01-01&until=2025-12-31",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.users,).toBe(1,);

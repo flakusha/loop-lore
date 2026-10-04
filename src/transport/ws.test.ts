@@ -52,6 +52,7 @@ function makeFakeWs(
       for (const fn of listeners.get(event,) ?? []) { fn(); }
     },
   };
+
   return ws;
 }
 
@@ -65,14 +66,17 @@ function stubTimers() {
     intervalHandle: {} as unknown,
     cleared: [] as unknown[],
   };
+
   globalThis.setInterval = ((fn: () => void, ms: number,) => {
     state.intervalFn = fn;
     state.intervalMs = ms;
     return state.intervalHandle;
   }) as typeof setInterval;
+
   globalThis.clearInterval = ((h: unknown,) => {
     state.cleared.push(h,);
   }) as typeof clearInterval;
+
   return {
     state,
     restore: () => {
@@ -287,6 +291,7 @@ describe("WsHandler — close", () => {
     } catch (err) {
       expect((err as TransportError).code,).toBe(TransportErrorCode.ConnectionClosed,);
     }
+
     expect(() => handler.get("pingPong",)).toThrow(TransportError,);
   });
 });

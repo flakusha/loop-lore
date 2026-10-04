@@ -36,9 +36,11 @@ function createFakeFactory(data: Map<string, StoredModel>,): IDBFactoryLike {
       onerror: null,
       error: undefined,
     } as unknown as IDBRequestLike<T>;
+
     queueMicrotask(() => request.onsuccess?.({ target: { result, }, },));
     return request;
   };
+
   const objectStore = (): IDBObjectStoreLike => ({
     get: (key,) => makeRequest(data.get(key,),),
     put: (value, key,) => {
@@ -52,11 +54,13 @@ function createFakeFactory(data: Map<string, StoredModel>,): IDBFactoryLike {
     getAll: () => makeRequest([...data.values(),],),
     getAllKeys: () => makeRequest([...data.keys(),],),
   });
+
   const database = {
     transaction: () => ({ objectStore: () => objectStore(), }),
     close: () => {},
     createObjectStore: () => objectStore(),
   } as unknown as IDBDatabaseLike & { createObjectStore(name: string,): IDBObjectStoreLike };
+
   return {
     open: () => {
       const request = {
@@ -65,10 +69,12 @@ function createFakeFactory(data: Map<string, StoredModel>,): IDBFactoryLike {
         onerror: null,
         error: undefined,
       } as unknown as IDBOpenDBRequestLike;
+
       queueMicrotask(() => {
         request.onupgradeneeded?.({ target: { result: database, }, },);
         request.onsuccess?.({ target: { result: database, }, },);
       },);
+
       return request;
     },
   };

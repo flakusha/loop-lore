@@ -46,6 +46,7 @@ export function pagesRoutes(database: Kysely<DB>,) {
         ctx.request,
         ctx.t,
       );
+
       if (result) { return result; }
       return new Response("Not found", { status: 404, },);
     }, {
@@ -61,6 +62,7 @@ export function pagesRoutes(database: Kysely<DB>,) {
         ctx.sessionId,
         ctx.request,
       );
+
       if (result) { return result; }
       return new Response("Not found", { status: 404, },);
     }, {
@@ -77,6 +79,7 @@ export function pagesRoutes(database: Kysely<DB>,) {
         ctx.request,
         ctx.t,
       );
+
       if (result) { return result; }
       return new Response("Not found", { status: 404, },);
     }, {
@@ -102,6 +105,7 @@ export function pagesRoutes(database: Kysely<DB>,) {
         ctx.request,
         ctx.t,
       );
+
       if (result) { return result; }
       return new Response("Not found", { status: 404, },);
     }, {
@@ -118,6 +122,7 @@ export function pagesRoutes(database: Kysely<DB>,) {
         ctx.request,
         ctx.t,
       );
+
       if (result) { return result; }
       return new Response("Not found", { status: 404, },);
     }, {
@@ -147,6 +152,7 @@ export function pagesRoutes(database: Kysely<DB>,) {
           ctx.request,
           ctx.t,
         );
+
         if (result) { return result; }
         return new Response("Not found", { status: 404, },);
       }, {
@@ -164,8 +170,10 @@ export function pagesRoutes(database: Kysely<DB>,) {
         if (ALLOWED_VIEWS.has(cleanName,)) {
           return new Response(null, { status: 302, headers: { Location: `/views/${cleanName}`, }, },);
         }
+
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       if (!ALLOWED_VIEWS.has(name,)) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }

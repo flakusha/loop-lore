@@ -65,6 +65,7 @@ export async function resolveCharacterTraits(
         worldViolations.push(lock,);
         continue;
       }
+
       world[row.trait_name] = row.trait_value;
     }
   }

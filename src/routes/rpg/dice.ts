@@ -32,6 +32,7 @@ export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
               modifier?: number;
               exploding?: boolean;
             };
+
             const result = rollDice(
               body.sides,
               body.count ?? 1,
@@ -87,6 +88,7 @@ export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
             if (!result) {
               return jsonError("Invalid dice notation", 400,);
             }
+
             return jsonResponse(result,);
           } catch (error) {
             log().error("Failed to roll from notation", error instanceof Error ? error : undefined,);
@@ -116,12 +118,14 @@ export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
               modifier?: number;
               advantage?: AdvantageMode;
             };
+
             const result = rollDice(
               20,
               1,
               body.modifier ?? 0,
               body.advantage ?? "normal",
             );
+
             return jsonResponse(result,);
           } catch (error) {
             log().error("Failed to roll with advantage", error instanceof Error ? error : undefined,);

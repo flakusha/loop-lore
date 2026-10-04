@@ -23,6 +23,7 @@ describe("createChat memory carry", () => {
       "Creator",
       { id: "user-create", user_id: "user-create", owner_id: "user-create", } as never,
     );
+
     await insertActors(db, "Alice", { id: "actor-alice", user_id: "user-create", owner_id: "user-create", } as never,);
     await insertActors(db, "Bob", { id: "actor-bob", user_id: "user-create", owner_id: "user-create", } as never,);
   },);
@@ -40,6 +41,7 @@ describe("createChat memory carry", () => {
       await insertActorMemories(db, "actor-alice", content, { id, importance: 1, } as never,);
       ids.push(id,);
     }
+
     return ids;
   }
 
@@ -61,6 +63,7 @@ describe("createChat memory carry", () => {
       createdBy: "user-create",
       participantIds: ["actor-alice",],
     },);
+
     expect(await carriedForChat(chatId,),).toEqual([],);
     expect(ids,).toHaveLength(1,);
   });
@@ -73,6 +76,7 @@ describe("createChat memory carry", () => {
       participantIds: ["actor-alice",],
       memoryCarry: "fresh",
     },);
+
     expect(await carriedForChat(chatId,),).toEqual([],);
   });
 
@@ -84,6 +88,7 @@ describe("createChat memory carry", () => {
       participantIds: ["actor-alice",],
       memoryCarry: "full",
     },);
+
     const carried = await carriedForChat(chatId,);
     expect(carried.map((m,) => m.content).sort((a, b,) => a.localeCompare(b,)),).toEqual(["fact one", "fact two",],);
   });
@@ -97,6 +102,7 @@ describe("createChat memory carry", () => {
       memoryCarry: "selective",
       memoryCarryIds: ["mem-sel-1",],
     },);
+
     const carried = await carriedForChat(chatId,);
     expect(carried.map((m,) => m.content),).toEqual(["keep this",],);
   });
@@ -110,6 +116,7 @@ describe("createChat memory carry", () => {
       memoryCarry: "selective",
       memoryCarryIds: ["does-not-exist",],
     },);
+
     expect(await carriedForChat(chatId,),).toEqual([],);
   });
 
@@ -123,6 +130,7 @@ describe("createChat memory carry", () => {
       memoryCarry: "selective",
       memoryCarryIds: ["mem-bob-1",],
     },);
+
     expect(await carriedForChat(chatId,),).toEqual([],);
   });
 
@@ -134,11 +142,13 @@ describe("createChat memory carry", () => {
       participantIds: ["actor-alice",],
       memoryCarry: "full",
     },);
+
     const rows = await db
       .selectFrom("actor_memories",)
       .select(["source_chat_id",],)
       .where("content", "=", "context",)
       .execute();
+
     expect(rows.some((r,) => r.source_chat_id === chatId),).toBe(true,);
   });
 
@@ -149,11 +159,13 @@ describe("createChat memory carry", () => {
       participantIds: ["actor-alice",],
       memoryCarry: "fresh",
     },);
+
     const participants = await db
       .selectFrom("chat_participants",)
       .select(["actor_id", "role_in_chat",],)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(participants,).toContainEqual({ actor_id: "user-create", role_in_chat: "owner", },);
     expect(participants,).toContainEqual({ actor_id: "actor-alice", role_in_chat: "member", },);
   });

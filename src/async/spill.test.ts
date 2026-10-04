@@ -31,10 +31,12 @@ describe("spill", () => {
     dir = mkdtempSync(path.join(tmpdir(), "loop-lore-spill-",),);
     setOffloadDir(dir,);
   },);
+
   afterEach(() => {
     resetOffloadDir();
     rmSync(dir, { recursive: true, force: true, },);
   },);
+
   test("round-trips a body through disk", async () => {
     const id = `test-${uid()}`;
     const body = '{"status":"done","n":42}';
@@ -51,6 +53,7 @@ describe("spill", () => {
     } finally {
       rmSync(filePath, { force: true, },);
     }
+
     expect(offloadExists(id,),).toBe(false,);
   });
 

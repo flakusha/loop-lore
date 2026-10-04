@@ -43,6 +43,7 @@ function selectMessagesToPrune(
     currentTokens -= msgTokens;
     score.shouldPrune = true;
   }
+
   return toPrune;
 }
 
@@ -70,11 +71,13 @@ function partitionMessages(
       if (score.shouldPromote) {
         promoted.push(msg,);
       }
+
       pruned.push(msg,);
     } else {
       kept.push(msg,);
     }
   }
+
   return { kept, promoted, pruned, };
 }
 

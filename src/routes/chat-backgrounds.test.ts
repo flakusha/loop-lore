@@ -94,6 +94,7 @@ async function insertUser(db: Kysely<DB>, userId: string,): Promise<void> {
       settings: "{}",
     },)
     .execute();
+
   await db
     .insertInto("actors",)
     .values({
@@ -150,6 +151,7 @@ describe("chatBackgroundsRoutes", () => {
         body: JSON.stringify({ name: "Tavern Night", locationId: locId, priority: 5, },),
       },),
     );
+
     expect(created.status,).toBe(201,);
     const bgId = (await created.json()).id as string;
 
@@ -179,6 +181,7 @@ describe("chatBackgroundsRoutes", () => {
         body: JSON.stringify({ backgroundId: bg, },),
       },),
     );
+
     expect(bgAssignRes.status,).toBe(200,);
     const assignBody = await bgAssignRes.json();
     expect(assignBody.data.id,).toBe(bg,);
@@ -189,6 +192,7 @@ describe("chatBackgroundsRoutes", () => {
     const delRes = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/background`, { method: "DELETE", },),
     );
+
     expect(delRes.status,).toBe(200,);
     const afterDel = await app.handle(new Request(`http://localhost/api/chats/${chatId}/background`,),);
     expect((await afterDel.json()).data,).toBeNull();
@@ -209,6 +213,7 @@ describe("chatBackgroundsRoutes", () => {
       .select("chat_backgrounds.name",)
       .where("chat_background_assignments.chat_id", "=", chatId,)
       .executeTakeFirst();
+
     expect(assignment?.name,).toBe("Cave Glow",);
   });
 
@@ -233,10 +238,12 @@ describe("chatBackgroundsRoutes", () => {
         body: JSON.stringify({ locationId: newLoc, },),
       },),
     );
+
     expect(locationRes.status,).toBe(200,);
 
     const chatRow = await db.selectFrom("chats",).select("current_location_id",).where("id", "=", chatId,)
       .executeTakeFirst();
+
     expect(chatRow?.current_location_id,).toBe(newLoc,);
 
     const bgRes = await bgApp(db, userId,).handle(new Request(`http://localhost/api/chats/${chatId}/background`,),);

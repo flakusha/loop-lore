@@ -65,6 +65,7 @@ export async function migrateChat(
     .where("parent_chat_id", "=", chatId,)
     .where("template_id", "is not", null,)
     .executeTakeFirst();
+
   if (existing) {
     return { code: "bad_request", message: "This chat has already been migrated", };
   }
@@ -81,9 +82,11 @@ export async function migrateChat(
   const baseGmConfig = template.gm_config
     ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
     : { ok: false as const, value: null, };
+
   const mergedGmConfig: Record<string, unknown> = {
     ...(baseGmConfig.ok && baseGmConfig.value ? baseGmConfig.value : {}),
   };
+
   const finalGmConfig = Object.keys(mergedGmConfig,).length > 0
     ? jsonStringifyOr(mergedGmConfig,)
     : null;
@@ -198,6 +201,7 @@ export async function injectNarration(
       .where("actor_type", "=", "narrator",)
       .where("agent_type", "=", "narrator",)
       .executeTakeFirst();
+
     if (!narrator) {
       getLogger().warn("injectNarration: no narrator actor found — skipping", { chatId, },);
       return;

@@ -62,12 +62,14 @@ async function seedAuthorized(id: string,): Promise<{ userId: string; actorId: s
     birth_date: "1990-01-01",
     age_gate_accepted_at: "2026-01-01T00:00:00Z",
   },);
+
   await insertActors(db, actorId, {
     id: actorId as never,
     owner_id: userId,
     user_id: userId,
     content_rating: "nsfw_moderate" as never,
   },);
+
   return { userId, actorId, };
 }
 
@@ -80,6 +82,7 @@ function makeApp(userId?: string, config: Config = makeConfig(),) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(seductionRoutes({ database: db, config, },),);
 }
 
@@ -88,6 +91,7 @@ describe("seduction routes — GET /api/nsfw/desire/:actorId", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/nsfw/desire/seduction-test-actor-x",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -96,6 +100,7 @@ describe("seduction routes — GET /api/nsfw/desire/:actorId", () => {
     const res = await makeApp(userId,).handle(
       new Request(`http://localhost/api/nsfw/desire/${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.actorId,).toBe(actorId,);
@@ -110,9 +115,11 @@ describe("seduction routes — GET /api/nsfw/desire/:actorId", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("seduction-other",).handle(
       new Request(`http://localhost/api/nsfw/desire/${actorId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -121,6 +128,7 @@ describe("seduction routes — GET /api/nsfw/desire/:actorId", () => {
     const res = await makeApp(userId, makeConfig({ allowNsfw: false, },),).handle(
       new Request(`http://localhost/api/nsfw/desire/${actorId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -134,6 +142,7 @@ describe("seduction routes — PUT /api/nsfw/desire/:actorId", () => {
         body: JSON.stringify({ turnOns: ["praise",], },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -146,6 +155,7 @@ describe("seduction routes — PUT /api/nsfw/desire/:actorId", () => {
         body: JSON.stringify({ turnOns: ["praise", "touch",], desireDecayRate: 2, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.success,).toBe(true,);
@@ -155,6 +165,7 @@ describe("seduction routes — PUT /api/nsfw/desire/:actorId", () => {
       .select(["turn_ons", "desire_decay_rate",],)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row?.turn_ons,).toBe(JSON.stringify(["praise", "touch",],),);
     expect(row?.desire_decay_rate,).toBe(2,);
   });
@@ -166,6 +177,7 @@ describe("seduction routes — PUT /api/nsfw/desire/:actorId", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("seduction-other-put",).handle(
       new Request(`http://localhost/api/nsfw/desire/${actorId}`, {
         method: "PUT",
@@ -173,6 +185,7 @@ describe("seduction routes — PUT /api/nsfw/desire/:actorId", () => {
         body: JSON.stringify({ turnOns: [], },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -182,6 +195,7 @@ describe("seduction routes — GET /api/nsfw/skills/:actorId", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/nsfw/skills/seduction-test-actor-x",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -190,6 +204,7 @@ describe("seduction routes — GET /api/nsfw/skills/:actorId", () => {
     const res = await makeApp(userId,).handle(
       new Request(`http://localhost/api/nsfw/skills/${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as unknown[];
     expect(Array.isArray(body,),).toBe(true,);
@@ -202,9 +217,11 @@ describe("seduction routes — GET /api/nsfw/skills/:actorId", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("seduction-other-skills",).handle(
       new Request(`http://localhost/api/nsfw/skills/${actorId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -218,6 +235,7 @@ describe("seduction routes — POST /api/nsfw/seduction/attempt", () => {
         body: JSON.stringify({ actorId: "x", targetId: "y", approach: "compliment", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -230,6 +248,7 @@ describe("seduction routes — POST /api/nsfw/seduction/attempt", () => {
       owner_id: userId,
       user_id: userId,
     },);
+
     const res = await makeApp(userId,).handle(
       new Request("http://localhost/api/nsfw/seduction/attempt", {
         method: "POST",
@@ -242,6 +261,7 @@ describe("seduction routes — POST /api/nsfw/seduction/attempt", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body,).toHaveProperty("success",);
@@ -256,6 +276,7 @@ describe("seduction routes — POST /api/nsfw/seduction/attempt", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("seduction-other-attempt",).handle(
       new Request("http://localhost/api/nsfw/seduction/attempt", {
         method: "POST",
@@ -263,6 +284,7 @@ describe("seduction routes — POST /api/nsfw/seduction/attempt", () => {
         body: JSON.stringify({ actorId, targetId: "t", approach: "x", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -272,6 +294,7 @@ describe("seduction routes — GET /api/nsfw/arousal/:actorId", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/nsfw/arousal/seduction-test-actor-x",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -280,6 +303,7 @@ describe("seduction routes — GET /api/nsfw/arousal/:actorId", () => {
     const res = await makeApp(userId,).handle(
       new Request(`http://localhost/api/nsfw/arousal/${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.actorId,).toBe(actorId,);
@@ -293,6 +317,7 @@ describe("seduction routes — GET /api/nsfw/arousal/:actorId", () => {
     const res = await makeApp(userId,).handle(
       new Request(`http://localhost/api/nsfw/arousal/${actorId}?worldId=arousal-world-1`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.worldId,).toBe("arousal-world-1",);
@@ -305,9 +330,11 @@ describe("seduction routes — GET /api/nsfw/arousal/:actorId", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("seduction-other-arousal",).handle(
       new Request(`http://localhost/api/nsfw/arousal/${actorId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -321,6 +348,7 @@ describe("seduction routes — POST /api/nsfw/arousal/:actorId", () => {
         body: JSON.stringify({ delta: 5, },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -333,6 +361,7 @@ describe("seduction routes — POST /api/nsfw/arousal/:actorId", () => {
         body: JSON.stringify({ delta: 10, source: "test", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.level,).toBe(10,);
@@ -342,6 +371,7 @@ describe("seduction routes — POST /api/nsfw/arousal/:actorId", () => {
       .select("level",)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row?.level,).toBe(10,);
   });
 
@@ -354,6 +384,7 @@ describe("seduction routes — POST /api/nsfw/arousal/:actorId", () => {
         body: JSON.stringify({ delta: -5, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.level,).toBe(0,);
@@ -366,6 +397,7 @@ describe("seduction routes — POST /api/nsfw/arousal/:actorId", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("seduction-other-postarousal",).handle(
       new Request(`http://localhost/api/nsfw/arousal/${actorId}`, {
         method: "POST",
@@ -373,6 +405,7 @@ describe("seduction routes — POST /api/nsfw/arousal/:actorId", () => {
         body: JSON.stringify({ delta: 5, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

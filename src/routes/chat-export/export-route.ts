@@ -79,6 +79,7 @@ export function exportChatRoute({ database, config, }: HandlerOpts, prefix = "/a
         } catch {
           content = "[Encrypted — unable to decrypt]";
         }
+
         messages.push({
           id: row.id,
           content,

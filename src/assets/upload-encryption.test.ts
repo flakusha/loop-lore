@@ -29,6 +29,7 @@ async function generateChatKey(): Promise<ChatKey> {
     true,
     ["encrypt", "decrypt",],
   );
+
   const rawKey = new Uint8Array(await crypto.subtle.exportKey("raw", cryptoKey,),);
   return { key: cryptoKey, keyId: KEY_ID, rawKey, };
 }

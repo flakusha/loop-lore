@@ -64,6 +64,7 @@ export function templateApplyRoutes(
             status: HttpStatus.BadRequest,
           },);
         }
+
         const assembler = new PromptAssembler(database,);
         const assembled = await assembler.assembleWithTemplateOverride(
           {
@@ -75,6 +76,7 @@ export function templateApplyRoutes(
           id,
           userId,
         );
+
         if (!assembled) { return notFound("Template is not an LLM template",); }
         return jsonResponse({
           messages: assembled.messages,
@@ -89,9 +91,11 @@ export function templateApplyRoutes(
       if (!payload) {
         return jsonError({ message: "Template payload is malformed", status: HttpStatus.BadRequest, },);
       }
+
       if (modality === "image") {
         return jsonResponse(applyImageTemplate(payload as ImageTemplatePayload, body.context ?? {},),);
       }
+
       // A workflow payload holds a ComfyUI graph, not a prompt body. Falling
       // through to applySimpleTemplate would stringify the graph and hand the
       // operator a nonsense preview, so reject it with a pointer to the real
@@ -102,6 +106,7 @@ export function templateApplyRoutes(
           status: HttpStatus.BadRequest,
         },);
       }
+
       return jsonResponse({ body: applySimpleTemplate(payload as SimpleTemplatePayload, body.context ?? {},), },);
     }, {
       params: ApplyParams,

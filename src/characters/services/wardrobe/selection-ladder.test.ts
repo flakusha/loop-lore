@@ -38,6 +38,7 @@ describe("runOutfitLadder", () => {
       avatar({ id: "armor-joy", outfitId: armor, tags: { emotion: "joy", }, },),
       avatar({ id: "court-joy", outfitId: court, tags: { emotion: "joy", }, },),
     ];
+
     const picked = runOutfitLadder(avatars, { outfitId: armor, emotion: "joy", },);
     expect(picked?.id,).toBe("armor-joy",);
   });
@@ -47,11 +48,13 @@ describe("runOutfitLadder", () => {
       avatar({ id: "base-joy", tags: { emotion: "joy", }, },),
       avatar({ id: "armor-neutral", outfitId: armor, tags: { emotion: "neutral", }, },),
     ];
+
     const picked = runOutfitLadder(avatars, {
       outfitId: armor,
       defaultOutfitId: court,
       emotion: "joy",
     },);
+
     expect(picked?.id,).toBe("armor-neutral",);
   });
 
@@ -60,11 +63,13 @@ describe("runOutfitLadder", () => {
       avatar({ id: "base-joy", tags: { emotion: "joy", }, },),
       avatar({ id: "court-joy", outfitId: court, tags: { emotion: "joy", }, },),
     ];
+
     const picked = runOutfitLadder(avatars, {
       outfitId: armor,
       defaultOutfitId: court,
       emotion: "joy",
     },);
+
     expect(picked?.id,).toBe("court-joy",);
   });
 
@@ -73,6 +78,7 @@ describe("runOutfitLadder", () => {
       avatar({ id: "base-joy", tags: { emotion: "joy", }, },),
       avatar({ id: "base-neutral", tags: { emotion: "neutral", }, },),
     ];
+
     const picked = runOutfitLadder(avatars, { outfitId: armor, emotion: "joy", },);
     expect(picked?.id,).toBe("base-joy",);
   });
@@ -82,6 +88,7 @@ describe("runOutfitLadder", () => {
       avatar({ id: "base-neutral", tags: { emotion: "neutral", }, sortOrder: 0, },),
       avatar({ id: "base-joy", tags: { emotion: "joy", }, sortOrder: 5, },),
     ];
+
     const picked = runOutfitLadder(avatars, { outfitId: armor, emotion: "joy", },);
     expect(picked?.id,).toBe("base-joy",);
   });
@@ -91,6 +98,7 @@ describe("runOutfitLadder", () => {
       avatar({ id: "armor-sad", outfitId: armor, tags: { emotion: "sad", }, },),
       avatar({ id: "base-sad", tags: { emotion: "sad", }, },),
     ];
+
     const picked = runOutfitLadder(avatars, { outfitId: court, emotion: "joy", },);
     expect(picked,).toBeNull();
   });
@@ -100,6 +108,7 @@ describe("runOutfitLadder", () => {
       avatar({ id: "armor-joy", outfitId: armor, tags: { emotion: "joy", }, sortOrder: 0, },),
       avatar({ id: "armor-neutral", outfitId: armor, tags: { emotion: "neutral", }, sortOrder: 5, },),
     ];
+
     const picked = runOutfitLadder(avatars, { outfitId: armor, },);
     expect(picked?.id,).toBe("armor-neutral",);
   });
@@ -116,6 +125,7 @@ describe("runOutfitLadder", () => {
       },),
       avatar({ id: "armor-joy-b", outfitId: armor, tags: { emotion: "joy", }, sortOrder: 2, },),
     ];
+
     const picked = runOutfitLadder(pool, { outfitId: armor, emotion: "joy", },);
     expect(picked?.id,).toBe("armor-joy-primary",);
   });
@@ -124,6 +134,7 @@ describe("runOutfitLadder", () => {
     const avatars = [
       avatar({ id: "armor-joy", outfitId: armor, tags: { emotion: "Joy", }, },),
     ];
+
     const picked = runOutfitLadder(avatars, { outfitId: armor, emotion: "JOY", },);
     expect(picked?.id,).toBe("armor-joy",);
   });
@@ -132,6 +143,7 @@ describe("runOutfitLadder", () => {
     const avatars = [
       avatar({ id: "court-joy", outfitId: court, tags: { emotion: "joy", }, isPrimary: true, },),
     ];
+
     // court is neither resolved outfit nor declared default.
     const picked = runOutfitLadder(avatars, { outfitId: armor, emotion: "joy", },);
     expect(picked,).toBeNull();

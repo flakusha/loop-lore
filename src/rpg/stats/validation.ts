@@ -26,6 +26,7 @@ export function validateStatBlock(stats: StatBlock,): boolean {
       return false;
     }
   }
+
   return true;
 }
 

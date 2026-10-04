@@ -56,6 +56,7 @@ describe("shouldInjectMemory — pinned override", () => {
       DEFAULT_COMFORT,
       -1,
     );
+
     expect(decision.inject,).toBe(true,);
     expect(decision.reason,).toBe("pinned",);
     expect(decision.probability,).toBe(1,);
@@ -71,6 +72,7 @@ describe("shouldInjectMemory — pinned override", () => {
       DEFAULT_COMFORT,
       ctx.turnNumber, // just injected this turn
     );
+
     expect(decision.inject,).toBe(true,);
     expect(decision.reason,).toBe("pinned",);
   });
@@ -84,6 +86,7 @@ describe("shouldInjectMemory — pinned override", () => {
       DEFAULT_COMFORT,
       -1,
     );
+
     expect(failDecision.inject,).toBe(false,);
 
     const passDecision = shouldInjectMemory(
@@ -93,6 +96,7 @@ describe("shouldInjectMemory — pinned override", () => {
       DEFAULT_COMFORT,
       -1,
     );
+
     expect(passDecision.inject,).toBe(true,);
   });
 });
@@ -107,6 +111,7 @@ describe("shouldInjectMemory — semantic floor gate", () => {
       DEFAULT_COMFORT,
       -1,
     );
+
     expect(decision.inject,).toBe(false,);
     expect(decision.reason,).toBe("semantic_floor",);
     expect(decision.probability,).toBeGreaterThan(0,);
@@ -121,6 +126,7 @@ describe("shouldInjectMemory — semantic floor gate", () => {
       DEFAULT_COMFORT,
       -1,
     );
+
     expect(decision.inject,).toBe(true,);
     expect(decision.reason,).not.toBe("semantic_floor",);
   });
@@ -134,6 +140,7 @@ describe("shouldInjectMemory — semantic floor gate", () => {
       DEFAULT_COMFORT,
       -1,
     );
+
     expect(decision.inject,).toBe(true,);
     expect(decision.reason,).not.toBe("semantic_floor",);
   });
@@ -149,6 +156,7 @@ describe("shouldInjectMemory — semantic floor gate", () => {
       DEFAULT_COMFORT,
       -1,
     );
+
     expect(rejected.reason,).toBe("semantic_floor",);
 
     const passed = shouldInjectMemory(
@@ -158,6 +166,7 @@ describe("shouldInjectMemory — semantic floor gate", () => {
       DEFAULT_COMFORT,
       -1,
     );
+
     expect(passed.reason,).not.toBe("semantic_floor",);
   });
 
@@ -170,6 +179,7 @@ describe("shouldInjectMemory — semantic floor gate", () => {
       DEFAULT_COMFORT,
       -1,
     );
+
     expect(decision.inject,).toBe(true,);
     expect(decision.reason,).toBe("pinned",);
   });

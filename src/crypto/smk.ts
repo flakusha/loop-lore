@@ -61,6 +61,7 @@ async function loadSmk(config: EncryptionConfig,): Promise<CryptoKey | null> {
           "Set ENCRYPTION_REQUIRED=false for dev mode (encryption disabled).",
       );
     }
+
     return null; // Dev mode — no encryption
   }
 
@@ -112,7 +113,9 @@ function hexToBytes(hex: string,): Uint8Array {
         `Invalid hex byte at position ${index * 2}: "${cleaned.slice(index * 2, index * 2 + 2,)}"`,
       );
     }
+
     bytes[index] = val;
   }
+
   return bytes;
 }

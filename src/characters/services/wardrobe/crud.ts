@@ -83,6 +83,7 @@ export async function getWardrobeItem(
     .where("id", "=", itemId,)
     .selectAll()
     .executeTakeFirst();
+
   if (!row) { return; }
   // Resource-level authorization: personal items only for their owner,
   // world templates only within the caller's world.
@@ -105,6 +106,7 @@ export async function createWardrobeItem(
   if (!opts.actorId && !opts.worldId) {
     throw new Error("Wardrobe item requires an actor or world scope",);
   }
+
   const id = randomUUID();
   const now = new Date().toISOString();
   await db
@@ -121,6 +123,7 @@ export async function createWardrobeItem(
       updated_at: now,
     },)
     .execute();
+
   return id;
 }
 

@@ -26,6 +26,7 @@ describe("nsfw runtime config store", () => {
   afterEach(() => {
     resetNsfwRuntimeConfig();
   },);
+
   test("init seeds defaults and preserves file-provided values", () => {
     initNsfwRuntimeConfig({
       allowNsfw: false,
@@ -35,6 +36,7 @@ describe("nsfw runtime config store", () => {
       auditLogging: true,
       useLlmClassifier: false,
     },);
+
     const cfg = getRuntimeNsfwConfig();
     expect(cfg.allowNsfw,).toBe(false,);
     expect(cfg.nsfwMinAge,).toBe(21,);
@@ -52,6 +54,7 @@ describe("nsfw runtime config store", () => {
       auditLogging: true,
       useLlmClassifier: false,
     },);
+
     updateRuntimeNsfwConfig({ allowNsfw: false, nsfwMinAge: 21, },);
     const cfg = getRuntimeNsfwConfig();
     expect(cfg.allowNsfw,).toBe(false,);
@@ -70,6 +73,7 @@ describe("nsfw runtime config store", () => {
       auditLogging: true,
       useLlmClassifier: false,
     },);
+
     getRuntimeNsfwConfig().allowNsfw = false;
     expect(getRuntimeNsfwConfig().allowNsfw,).toBe(true,);
   });
@@ -84,6 +88,7 @@ describe("nsfw runtime config store", () => {
       auditLogging: true,
       useLlmClassifier: false,
     },);
+
     await insertConfig(db, "nsfw_allow", "false",);
     await insertConfig(db, "nsfw_min_age", "21",);
 
@@ -103,6 +108,7 @@ describe("nsfw runtime config store", () => {
       auditLogging: true,
       useLlmClassifier: false,
     },);
+
     await insertConfig(db, "nsfw_allow", "not-a-bool",);
     await insertConfig(db, "nsfw_min_age", "99999",);
 

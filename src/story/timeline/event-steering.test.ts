@@ -94,6 +94,7 @@ describe("createSteering", () => {
         timelineId: "dark-age",
         audienceScope: { subject: { kind: "race", race: "elf", }, },
       },);
+
       const row = await readSteering(db, id,);
       expect(row.timeline_id,).toBe("dark-age",);
       expect(JSON.parse(row.conditions!,),).toEqual(["war begins", "king dies",],);
@@ -111,6 +112,7 @@ describe("createSteering", () => {
       await expect(createSteering({ db, worldId, description: "x", manifestProbability: 1.5, },),).rejects.toThrow(
         RangeError,
       );
+
       await expect(createSteering({ db, worldId, description: "x", manifestProbability: -0.1, },),).rejects.toThrow(
         RangeError,
       );
@@ -186,6 +188,7 @@ describe("rollSteering", () => {
         manifestProbability: 1,
         mayManifest: false,
       },);
+
       expect(await rollSteering({ db, id: herring, random: () => 0, },),).toBe(false,);
       expect((await readSteering(db, herring,)).status,).toBe("pending",);
       await expect(rollSteering({ db, id: "nope", random: () => 0, },),).rejects.toThrow();
@@ -257,12 +260,14 @@ describe("getConvergentEvents", () => {
         storyId: "chat-a",
         events: [makeEvent({ description: "Bridge burned.", timestamp: "2024-01-01T00:00:00Z", },),],
       },);
+
       await appendTimelineEvents({
         db,
         worldId,
         storyId: "chat-b",
         events: [makeEvent({ description: "Bridge rebuilt.", timestamp: "2024-02-01T00:00:00Z", },),],
       },);
+
       await appendTimelineEvents({
         db,
         worldId,
@@ -279,6 +284,7 @@ describe("getConvergentEvents", () => {
         excludeStoryId: "chat-b",
         since: "2024-02-01T00:00:00Z",
       },);
+
       expect(since.map((row,) => row.description),).toEqual(["Own scouting.",],);
     } finally {
       await sqlite.close();
@@ -295,6 +301,7 @@ describe("getConvergentEvents", () => {
         storyId: null,
         events: [makeEvent({ description: "World lore.", timestamp: "2024-01-01T00:00:00Z", },),],
       },);
+
       const seen = await getConvergentEvents({ db, worldId, excludeStoryId: "chat-a", },);
       expect(seen.map((row,) => row.description),).toEqual(["World lore.",],);
 

@@ -40,6 +40,7 @@ export async function createDefinition(state: ItemState, def: ItemDefinition,): 
       weight: def.weight,
     },)
     .execute();
+
   return id;
 }
 

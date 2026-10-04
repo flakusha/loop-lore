@@ -31,9 +31,11 @@ let testDb: TestDb;
 beforeAll(async () => {
   testDb = await createTestDb();
 },);
+
 afterAll(async () => {
   await testDb.db.destroy();
 },);
+
 beforeEach(() => {
   resetTestDb(testDb.sqlite,);
 },);
@@ -104,6 +106,7 @@ describe("resolveScopeConfig", () => {
       scope: { kind: "actor", id: actorId, },
       opts: { worldId, },
     },);
+
     expect(cfg.perAgentCap,).toBe(44,);
   });
 
@@ -113,6 +116,7 @@ describe("resolveScopeConfig", () => {
       scope: { kind: "actor", id: actorId, },
       opts: {},
     },);
+
     expect(cfg.preset,).toBe("organic",);
     expect(cfg.perAgentCap,).toBeGreaterThan(0,);
   });
@@ -161,6 +165,7 @@ describe("tryConsume without an explicit cap", () => {
       expect(r.ok,).toBe(true,);
       expect(r.cap,).toBeNull();
     }
+
     // Unbounded consumes never touch the budget table.
     const rows = await testDb.db.selectFrom("autonomy_budget",).selectAll().execute();
     expect(rows.length,).toBe(0,);

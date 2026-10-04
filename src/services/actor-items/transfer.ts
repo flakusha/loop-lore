@@ -60,6 +60,7 @@ export async function transferItems(
       .where("actor_id", "=", fromActorId,)
       .where("id", "=", itemId,)
       .executeTakeFirst();
+
     if (!source) { return { ok: false, reason: "Source item not found", }; }
     if (source.quantity < quantity) { return { ok: false, reason: "Insufficient quantity", }; }
 
@@ -82,6 +83,7 @@ export async function transferItems(
       .where("name", "=", source.name,)
       .where("item_type", "=", source.item_type,)
       .executeTakeFirst();
+
     if (existing) {
       await db
         .updateTable("actor_items",)

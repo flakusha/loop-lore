@@ -83,6 +83,7 @@ export function memoryCarryPlugin(
           .where("id", "=", params.entityId,)
           .where("actor_id", "=", parentId,)
           .executeTakeFirst() as MemoryRow | undefined;
+
         if (!source) { return notFound("Memory not found",); }
 
         await insertCopy(source, body.chatId,);
@@ -117,6 +118,7 @@ export function memoryCarryPlugin(
           .where("actor_id", "=", parentId,)
           .where("source_chat_id", "=", body.chatId,)
           .execute();
+
         const carriedContents = new Set(existingCopies.map((c,) => c.content),);
 
         const sources = await opts.database
@@ -127,10 +129,12 @@ export function memoryCarryPlugin(
           .where("source_chat_id", "is", null,)
           .limit(200,)
           .execute() as MemoryRow[];
+
         const toCarry = sources.filter((s,) => !carriedContents.has(s.content,));
         for (const source of toCarry) {
           await insertCopy(source, body.chatId,);
         }
+
         return jsonResponse({ ok: true, carried: toCarry.length, },);
       },
       {

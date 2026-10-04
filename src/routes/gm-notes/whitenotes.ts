@@ -57,6 +57,7 @@ export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api",) {
             .limit(pageSize,)
             .offset(offset,)
             .execute();
+
           const countResult = await database
             .selectFrom("whitenotes",)
             .select(database.fn.countAll<number>().as("total",),)

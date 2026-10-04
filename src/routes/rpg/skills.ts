@@ -77,6 +77,7 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
           const skills = await svc().getActorSkills(actorId, worldId,);
           return jsonResponse({ skills, },);
         }
+
         let query = database.selectFrom("character_skills",).selectAll();
         if (worldId) { query = query.where("world_id", "=", worldId,); }
         const rows = await query.execute();

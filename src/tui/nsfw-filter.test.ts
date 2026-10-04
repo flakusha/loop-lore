@@ -139,6 +139,7 @@ describe("NsfwFilter default config", () => {
       triggerRatings: ["a",],
       keywords: ["b",],
     };
+
     const filter = new NsfwFilter(full,);
     expect(filter.getMode(),).toBe("blur",);
     expect(filter.isNsfw("anything", "a",),).toBe(true,);

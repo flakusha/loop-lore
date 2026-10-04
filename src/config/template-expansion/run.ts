@@ -63,12 +63,15 @@ export function runTemplateExpansion(
     if (expansion.keywords) {
       result.keywordsAdded = expansion.keywords;
     }
+
     if (expansion.actions) {
       result.actionsAdded = expansion.actions;
     }
+
     if (expansion.emotions) {
       result.emotionsAdded = Object.keys(expansion.emotions,);
     }
+
     if (expansion.intentPatterns) {
       result.patternsAdded = expansion.intentPatterns.length;
     }
@@ -115,6 +118,7 @@ export function validateExpansionConfig(config: AvatarTemplateConfig,): string[]
     if (!patterns.has(key,)) {
       patterns.set(key, [],);
     }
+
     patterns.get(key,)!.push(pattern.pattern,);
   }
 
@@ -136,6 +140,7 @@ export function validateExpansionConfig(config: AvatarTemplateConfig,): string[]
     if (!key || key.trim() === "") {
       errors.push("Empty emotion key found",);
     }
+
     if (!emotion.intent || emotion.intent.trim() === "") {
       errors.push(`Emotion "${key}" has empty intent`,);
     }

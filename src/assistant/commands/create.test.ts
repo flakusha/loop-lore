@@ -69,6 +69,7 @@ describe("/create command — preview flow", () => {
       kind: string;
       data: { name: string; description: string };
     };
+
     expect(payload.kind,).toBe("character",);
     expect(payload.data.name,).toBe("Aragorn",);
     // Model must reach the LLM request (regression guard for empty-model bug).
@@ -114,6 +115,7 @@ describe("/create command — preview flow", () => {
       kind: string;
       data: { name: string; lore: unknown[] };
     };
+
     expect(payload.kind,).toBe("character",);
     expect(payload.data.name,).toBe("The Ancient One",);
     expect(Array.isArray(payload.data.lore,),).toBe(true,);
@@ -121,6 +123,7 @@ describe("/create command — preview flow", () => {
     expect(loreArr[0]!.name,).toBe("First Knowledge",);
     expect(result.systemMessage,).toContain("Lore entries:",);
   });
+
   it("rejects schema-invalid generation without inserting", async () => {
     const { db, } = await createTestDb();
     stubBody = JSON.stringify({ name: "NoDesc", },);
@@ -156,9 +159,11 @@ describe("/create command — preview flow", () => {
       stubComplete,
       "stub-model",
     );
+
     expect(result.action,).toBeUndefined();
     expect(result.systemMessage,).toContain("Usage",);
   });
+
   it("never leaks raw LLM output into chat on parse failure", async () => {
     const { db, } = await createTestDb();
     stubBody = "SECRET-MARKER not json {{{";
@@ -207,6 +212,7 @@ describe("/create command — preview flow", () => {
     const actors = await db.selectFrom("actors",).selectAll().execute();
     expect(actors,).toHaveLength(0,);
   });
+
   it("rejects lore entries with unknown subject kind (B2)", async () => {
     const { db, } = await createTestDb();
     stubBody = JSON.stringify({
@@ -256,6 +262,7 @@ describe("/create command — preview flow", () => {
         stubComplete,
         "stub-model",
       );
+
       expect(_result.handled,).toBe(true,);
       expect(lastReq?.messages[1]?.content,).toContain("lore",);
       expect(lastReq?.messages[1]?.content,).toContain("Example:",);

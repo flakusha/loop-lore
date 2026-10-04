@@ -25,10 +25,12 @@ export async function stop(host: ServerExternalHost, instance: ServerInstance,):
       instance.process.kill("SIGKILL",);
     }
   }
+
   const kept: ServerInstance[] = [];
   for (const i of host.instances) {
     if (i !== instance) { kept.push(i,); }
   }
+
   host.instances = kept;
 }
 
@@ -65,5 +67,6 @@ export function killAllSync(host: ServerExternalHost,): void {
       // already dead — ignore
     }
   }
+
   host.instances.length = 0;
 }

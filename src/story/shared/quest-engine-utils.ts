@@ -39,8 +39,10 @@ export function serializeOrThrow(value: unknown, fieldName: string,): string {
     getLogger()
       .child({ module: "quest-engine", },)
       .error(`safeJsonStringify ${fieldName} failed`, undefined, { error: r.error, },);
+
     throw new Error(`Failed to serialize quest ${fieldName}`,);
   }
+
   return r.value;
 }
 
@@ -63,12 +65,15 @@ export async function requireQuestTransition(
     .select("status",)
     .where("id", "=", questId,)
     .executeTakeFirst();
+
   if (!row) {
     throw new Error(`Quest not found: ${questId}`,);
   }
+
   if (!questStatusMachine.canTransition(row.status, to,)) {
     throw new TransitionError(row.status, to,);
   }
+
   return row.status;
 }
 

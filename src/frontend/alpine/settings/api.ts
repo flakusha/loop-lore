@@ -24,6 +24,7 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
           maxTokens: this.maxTokens,
           temperature: this.temperature,
         };
+
         if (this.apiEndpoint) { payload.apiEndpoint = this.apiEndpoint; }
         if (this.apiKey) { payload.apiKey = this.apiKey; }
         await this.persistSettings(payload,);
@@ -62,9 +63,11 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
             const link = document.querySelector(`#theme-${t.id}`,) as HTMLLinkElement | null;
             if (link) { link.disabled = t.id !== payload.theme; }
           }
+
           document.body.classList.toggle("theme-no-icons", payload.theme === "no-icons",);
           localStorage.setItem("theme-preference", payload.theme as string,);
         }
+
         if (payload.locale) {
           localStorage.setItem("locale", payload.locale as string,);
           // Use new i18n API endpoint for locale
@@ -73,6 +76,7 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
             headers: { "Content-Type": "application/json", Accept: "application/json", },
             body: jsonBody({ locale: payload.locale, },),
           },);
+
           // Reload translations in the app
           const appEl = document.querySelector("[x-data]",) as HTMLElement | null;
           if (appEl) {
@@ -82,11 +86,13 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
             }
           }
         }
+
         const res = await apiFetch("/api/v1/users/me/settings", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", Accept: "application/json", },
           body: jsonBody(payload,),
         },);
+
         if (res.ok && payload.displayName) {
           await apiFetch("/api/v1/users/me", {
             method: "PUT",

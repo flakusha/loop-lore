@@ -60,6 +60,7 @@ describe("views/worlds", () => {
         id: "w-xss" as never,
         description: "<script>s</script>",
       },);
+
       const html = await (await serveWorldsListDb(db, "owner", "user",)).text();
       expect(html,).toContain("&lt;b&gt;X&lt;/b&gt;",);
       expect(html,).toContain("&lt;script&gt;s&lt;/script&gt;",);
@@ -84,6 +85,7 @@ describe("views/worlds", () => {
         id: "template-quest" as never,
         features: JSON.stringify(["combat", "loot",],),
       },);
+
       await insertChats(db, "Campaign", "owner", {
         id: "ch-1" as never,
         world_id: "w-mine",

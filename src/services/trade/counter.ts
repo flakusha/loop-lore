@@ -81,10 +81,12 @@ export async function counterOffer(
   if (offer.status !== "pending" && offer.status !== "countered") {
     return { success: false, reason: `offer is ${offer.status}`, };
   }
+
   if (isExpired(offer.deadline,)) {
     await markOfferExpired(db, opts.offerId,);
     return { success: false, reason: "offer expired", };
   }
+
   const isSeller = offer.crafter_actor_id === opts.counterActorId;
   const isBuyer = offer.requester_actor_id === opts.counterActorId;
   if (!isSeller && !isBuyer) {
@@ -94,9 +96,11 @@ export async function counterOffer(
   const offeredMaterials = opts.buyerItems !== undefined
     ? jsonStringifyOr(opts.buyerItems, "[]",)
     : offer.offered_materials;
+
   const requestedMaterials = opts.sellerItems !== undefined
     ? jsonStringifyOr(opts.sellerItems, "[]",)
     : offer.requested_materials;
+
   const offeredPayment = opts.price ?? offer.offered_payment;
   if (
     offeredMaterials === offer.offered_materials &&

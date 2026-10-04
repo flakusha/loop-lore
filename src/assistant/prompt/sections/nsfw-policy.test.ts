@@ -43,6 +43,7 @@ describe("nsfwPolicySection", () => {
   beforeEach(() => {
     resetNsfwRuntimeConfig();
   },);
+
   test("disabled when nsfw.allowNsfw is false", () => {
     const ctx = makeCtx({ nsfw: { allowNsfw: false, }, },);
     expect(nsfwPolicySection.enabled(ctx,),).toBe(false,);
@@ -70,6 +71,7 @@ describe("nsfwPolicySection", () => {
       nsfw: { allowNsfw: true, },
       templates: { llm: { systemPrompts: { nsfwPolicy: custom, }, }, },
     },);
+
     const msgs = await nsfwPolicySection.build(ctx,);
     expect(msgs,).toHaveLength(1,);
     expect(msgs[0]!.content,).toContain(custom,);

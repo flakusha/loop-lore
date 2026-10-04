@@ -59,8 +59,10 @@ export async function selectNextActor(
       // BUG-group-cascade-consecutive-turn-guard).
       state.currentActorId,
     );
+
     state.currentActorId = selectedId;
   },);
+
   return selectedId;
 }
 
@@ -79,6 +81,7 @@ export async function recordTurn(host: TurnManagerHost,): Promise<void> {
   if (host.state.strategy === TurnStrategy.Initiative && host.state.currentActorId) {
     await decrementInitiative(host, host.state.currentActorId,);
   }
+
   await persistState(host, (state,) => {
     state.lastTurnCompletedAt = completedAt;
   },);

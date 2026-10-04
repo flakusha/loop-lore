@@ -54,6 +54,7 @@ export function narrativeRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", sectionId,)
             .where("chat_id", "=", chatId,)
             .executeTakeFirst();
+
           if (!section) { return notFound("Section not found in this chat",); }
 
           const body = ctx.body as { text: string };

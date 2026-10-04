@@ -33,13 +33,16 @@ export async function uploadImageToComfy(
     body: form,
     timeout: timeoutMs,
   },);
+
   if (!result.ok) {
     throw new Error(
       `ComfyUI image upload failed${result.status ? ` [${result.status}]` : ""}: ${result.error.message}`,
     );
   }
+
   if (!result.data.name) {
     throw new Error("ComfyUI upload returned no filename",);
   }
+
   return result.data.name;
 }

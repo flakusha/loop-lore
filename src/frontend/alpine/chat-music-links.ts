@@ -25,9 +25,11 @@ export const chatMusicLinks: Partial<ChatState & ChatMusicLinksState> & ThisType
     const store = (window as { Alpine?: { store: (n: string,) => Record<string, unknown> } }).Alpine?.store("ui",) as
       | Record<string, boolean>
       | undefined;
+
     if (store && "showMusicLinksPanel" in store) {
       store.showMusicLinksPanel = !store.showMusicLinksPanel;
     }
+
     this._musicLinks = [];
     this._musicLinksConfirmDelete = null;
     this._musicLinkUrl = "";
@@ -52,6 +54,7 @@ export const chatMusicLinks: Partial<ChatState & ChatMusicLinksState> & ThisType
     } catch (error) {
       log.warn("loadMusicLinks failed", { error: String(error,), },);
     }
+
     this._musicLinksLoading = false;
   },
 
@@ -68,6 +71,7 @@ export const chatMusicLinks: Partial<ChatState & ChatMusicLinksState> & ThisType
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ url: this._musicLinkUrl.trim(), },),
       },);
+
       if (res.ok) {
         this._musicLinkUrl = "";
         await this.loadMusicLinks();
@@ -79,6 +83,7 @@ export const chatMusicLinks: Partial<ChatState & ChatMusicLinksState> & ThisType
       log.warn("addMusicLink failed", { error: String(error,), },);
       this._musicLinkError = "Network error";
     }
+
     this._musicLinkSaving = false;
   },
 
@@ -100,6 +105,7 @@ export const chatMusicLinks: Partial<ChatState & ChatMusicLinksState> & ThisType
       const res = await apiFetch(`/api/v1/music-links/${id}`, {
         method: "DELETE",
       },);
+
       if (res.ok) {
         this._musicLinksConfirmDelete = null;
         await this.loadMusicLinks();

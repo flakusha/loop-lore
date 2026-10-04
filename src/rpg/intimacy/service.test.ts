@@ -398,6 +398,7 @@ describe("IntimacyService", () => {
       targetActorId: "actor-2",
       action: { id: "a", name: "Gift", type: "gift", delta: 10, minIntimacy: 0, requiresConsent: false, },
     },);
+
     await service.applyAction({
       database: db,
       actorId: "actor-1",
@@ -516,6 +517,7 @@ describe("IntimacyService", () => {
       .where("actor_id", "=", "actor-2",)
       .selectAll()
       .execute();
+
     expect(events.length,).toBe(1,);
     expect(events[0]!.event_type,).toBe("intimacy.level_changed",);
     expect(events[0]!.source,).toBe("intimacy",);
@@ -546,6 +548,7 @@ describe("IntimacyService", () => {
       .where("actor_id", "=", "actor-2",)
       .selectAll()
       .execute();
+
     expect(events,).toEqual([],);
   });
 });

@@ -66,6 +66,7 @@ import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
       if (this.npcs.length > 0 && !this.selectedNpcId) {
         this.selectedNpcId = this.npcs[0]!.id;
       }
+
       this.loadingNpcs = false;
     },
 
@@ -87,11 +88,14 @@ import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
         ) {
           continue;
         }
+
         if (this.npcFilter !== "all" && n.disposition !== this.npcFilter) {
           continue;
         }
+
         result.push(n,);
       }
+
       return result;
     },
 
@@ -119,6 +123,7 @@ import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
       if (this.factions.length > 0 && !this.selectedFactionId) {
         this.selectedFactionId = this.factions[0]!.id;
       }
+
       this.loadingFactions = false;
     },
 

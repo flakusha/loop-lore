@@ -23,6 +23,7 @@ export function filterReplayHeaders(headers: Record<string, string>,): Record<st
     if (lower === "content-length") { continue; }
     out[name] = value;
   }
+
   return out;
 }
 

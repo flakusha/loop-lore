@@ -36,6 +36,7 @@ describe("actor lore entries service", () => {
       keys: ["silver order", "paladins",],
       priority: 200,
     },);
+
     expect(created.ok,).toBe(true,);
     if (!created.ok) { return; }
     expect(created.entity.enabled,).toBe("enabled",);
@@ -56,6 +57,7 @@ describe("actor lore entries service", () => {
     const res = await createActorLoreEntry(db, actorId, "user-owner", "user", {
       content: "",
     },);
+
     expect(res,).toEqual({ ok: false, code: "bad_request", message: "content is required", },);
   });
 
@@ -64,10 +66,12 @@ describe("actor lore entries service", () => {
       content: "second",
       sortOrder: 2,
     },);
+
     await createActorLoreEntry(db, actorId, "user-owner", "user", {
       content: "first",
       sortOrder: 1,
     },);
+
     await createActorLoreEntry(db, actorId, "user-owner", "user", {
       content: "muted",
       enabled: "disabled",
@@ -90,6 +94,7 @@ describe("actor lore entries service", () => {
       "user",
       { enabled: "enabled", },
     );
+
     expect(enabledOnly.ok,).toBe(true,);
     if (enabledOnly.ok) { expect(enabledOnly.total,).toBe(2,); }
   });
@@ -99,6 +104,7 @@ describe("actor lore entries service", () => {
       content: "lore body",
       keys: ["old",],
     },);
+
     if (!created.ok) { throw new Error("seed failed",); }
 
     const updated = await updateActorLoreEntry(
@@ -109,6 +115,7 @@ describe("actor lore entries service", () => {
       "user",
       { keys: ["new", "keywords",], enabled: "disabled", },
     );
+
     expect(updated.ok,).toBe(true,);
     if (!updated.ok) { return; }
     expect(JSON.parse(updated.entity.keys,),).toEqual(["new", "keywords",],);
@@ -120,12 +127,14 @@ describe("actor lore entries service", () => {
     const created = await createActorLoreEntry(db, actorId, "user-owner", "user", {
       content: "temporary",
     },);
+
     if (!created.ok) { throw new Error("seed failed",); }
 
     const foreignActor = await insertActors(db, "Other", {
       id: "actor-other",
       owner_id: "user-owner",
     } as never,);
+
     const crossActor = await deleteActorLoreEntry(
       db,
       foreignActor,
@@ -133,6 +142,7 @@ describe("actor lore entries service", () => {
       "user-owner",
       "user",
     );
+
     expect(crossActor,).toEqual({ ok: false, code: "not_found", message: "Lore entry not found", },);
 
     const deleted = await deleteActorLoreEntry(
@@ -142,6 +152,7 @@ describe("actor lore entries service", () => {
       "user-owner",
       "user",
     );
+
     expect(deleted,).toEqual({ ok: true, id: created.entity.id, },);
   });
 
@@ -152,11 +163,13 @@ describe("actor lore entries service", () => {
     const created = await createActorLoreEntry(db, actorId, "user-other", "user", {
       content: "x",
     },);
+
     expect(created,).toEqual({ ok: false, code: "forbidden", message: "Not allowed", },);
 
     const admin = await createActorLoreEntry(db, actorId, "user-other", "admin", {
       content: "admin entry",
     },);
+
     expect(admin.ok,).toBe(true,);
   });
 });

@@ -68,6 +68,7 @@ function rollSet(sides: number, count: number,): { rolls: number[]; total: numbe
   for (let i = 0; i < count; i++) {
     rolls.push(Math.floor(Math.random() * sides,) + 1,);
   }
+
   let total = 0;
   for (const r of rolls) { total += r; }
   return { rolls, total, };

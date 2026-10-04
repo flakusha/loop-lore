@@ -66,6 +66,7 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
           actorId,
           userRole: ctx.userRole as string | null,
         },);
+
         if (!loaded.ok) { return loaded.response; }
         const { plaintext, senderName, } = loaded;
 
@@ -83,6 +84,7 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
           .where("entity_id", "=", messageId,)
           .orderBy("sort_order",)
           .execute();
+
         const ownedIds = new Set<string>();
         if (links.length > 0) {
           const assets = await database
@@ -90,18 +92,22 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select(["id", "owner_id",],)
             .where("id", "in", links.map((l,) => l.asset_id),)
             .execute();
+
           for (const a of assets) {
             if (a.owner_id === actorId) { ownedIds.add(a.id,); }
           }
         }
+
         const forwardable = links
           .filter((l,) => ownedIds.has(l.asset_id,))
           .map((l, i,) => ({ assetId: l.asset_id, order: i, label: l.label ?? "message-attachment", }));
+
         const droppedAttachments = links.length - forwardable.length;
 
         if (filteredContent.trim().length === 0 && forwardable.length === 0) {
           return badRequestResponse("Nothing to forward: empty content and no owned attachments.",);
         }
+
         const forwardedContent = `> Forwarded from ${senderName}\n\n${filteredContent}`;
 
         const { storedContent, contentEncoding, storedKeyId, storedPlaintext, } = await prepareContentStorage(
@@ -117,9 +123,11 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
         const existingId = idempotencyKey
           ? await findByIdempotencyKey(database, targetChatId, idempotencyKey,)
           : null;
+
         if (existingId) {
           return jsonCreated({ id: existingId, droppedAttachments: 0, },);
         }
+
         try {
           await insertUserMessageWithRetry(database, {
             id,
@@ -139,6 +147,7 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
               503 as HttpStatusCode,
             );
           }
+
           throw err;
         }
 
@@ -148,6 +157,7 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
             await updateMessageVisibility(database, id, "hidden_by_moderator", "profanity",);
           }
         }
+
         if (forwardable.length > 0) {
           const attachmentRejection = await attachAttachmentsOrForbidden(database, id, forwardable, actorId,);
           if (attachmentRejection) { return attachmentRejection; }

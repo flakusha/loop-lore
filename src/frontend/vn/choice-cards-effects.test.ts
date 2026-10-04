@@ -22,6 +22,7 @@ if (ISOLATED) {
       return apiHandler(url, opts ?? {},);
     },
   }),);
+
   mock.module("../fe-fetch", () => ({
     feFetch: async (url: string, opts?: RequestInit,) => {
       feCalls.push({ url, opts: opts ?? {}, },);
@@ -125,6 +126,7 @@ describeOrSkip("selectChoice effects", () => {
       jsonRes(
         url.includes("/select",) ? { choice: { choice: SEED[0], locationId: "loc-9", }, } : { choices: SEED, },
       );
+
     const result = await selectChoice("c1",);
     expect(result?.locationChanged,).toBe(true,);
     expect(result?.locationId,).toBe("loc-9",);
@@ -140,6 +142,7 @@ describeOrSkip("selectChoice effects", () => {
     const selectPayload = { choice: { choice: SEED[0], locationId: "loc-9", }, };
     apiHandler = (url,) =>
       jsonRes(url.includes("/select",) ? selectPayload : { choices: SEED, }, url.includes("/location",) ? 500 : 200,);
+
     let result = await selectChoice("c1",);
     expect(result?.locationChanged,).toBe(false,);
     expect(result?.choice.id,).toBe("c1",);
@@ -150,6 +153,7 @@ describeOrSkip("selectChoice effects", () => {
       if (url.includes("/location",)) { throw new Error("put",); }
       return jsonRes(url.includes("/select",) ? selectPayload : { choices: SEED, },);
     };
+
     result = await selectChoice("c1",);
     expect(result?.locationChanged,).toBe(false,);
   });
@@ -159,6 +163,7 @@ describeOrSkip("selectChoice effects", () => {
     const branches = [{ locationId: "loc-a", actorIds: ["x",], }, { locationId: "loc-b", actorIds: ["y", "z",], },];
     apiHandler = () =>
       jsonRes({ choice: { choice: { ...SEED[0], consequences: { action: "split", branches, }, }, }, },);
+
     const result = await selectChoice("c1",);
     expect(result?.splitTriggered,).toBe(true,);
     expect(feCalls.length,).toBe(1,);
@@ -188,6 +193,7 @@ describeOrSkip("selectChoice effects", () => {
           },
         },
       },);
+
     const result = await selectChoice("c1",);
     expect(result?.splitTriggered,).toBe(true,);
     expect(JSON.parse(String(feCalls[0]!.opts.body,),),).toEqual({
@@ -204,6 +210,7 @@ describeOrSkip("selectChoice effects", () => {
           },
         },
       },);
+
     feCalls = [];
     const single = await selectChoice("c1",);
     expect(single?.splitTriggered,).toBe(false,);
@@ -216,12 +223,14 @@ describeOrSkip("selectChoice effects", () => {
       action: "split",
       branches: [{ locationId: "a", actorIds: ["x",], }, { locationId: "b", actorIds: ["y",], },],
     };
+
     apiHandler = () => jsonRes({ choice: { choice: { ...SEED[0], consequences: consequence, }, }, },);
     feHandler = () => jsonRes({ error: "no", }, 500,);
     expect((await selectChoice("c1",))?.splitTriggered,).toBe(false,);
     feHandler = () => {
       throw new Error("boom",);
     };
+
     expect((await selectChoice("c1",))?.splitTriggered,).toBe(false,);
   });
 
@@ -231,6 +240,7 @@ describeOrSkip("selectChoice effects", () => {
       jsonRes({
         choice: { choice: { ...SEED[0], consequences: { action: "reunite", secondaryChatId: "chat-2", }, }, },
       },);
+
     const result = await selectChoice("c1",);
     expect(result?.reunionTriggered,).toBe(true,);
     expect(feCalls[0]!.url,).toBe("/api/v1/chats/chat-1/reunite",);
@@ -238,6 +248,7 @@ describeOrSkip("selectChoice effects", () => {
     feHandler = () => {
       throw new Error("boom",);
     };
+
     expect((await selectChoice("c1",))?.reunionTriggered,).toBe(false,);
 
     // Reunion failure modes: non-ok endpoint, thrown fetch, non-string source.
@@ -245,6 +256,7 @@ describeOrSkip("selectChoice effects", () => {
     expect((await selectChoice("c1",))?.reunionTriggered,).toBe(false,);
     apiHandler = () =>
       jsonRes({ choice: { choice: { ...SEED[0], consequences: { action: "reunite", secondaryChatId: 42, }, }, }, },);
+
     feCalls = [];
     expect((await selectChoice("c1",))?.reunionTriggered,).toBe(false,);
     expect(feCalls.length,).toBe(0,);

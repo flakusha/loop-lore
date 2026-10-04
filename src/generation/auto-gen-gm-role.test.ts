@@ -49,6 +49,7 @@ function createMockDeps(): Partial<GenDeps> {
     signalDone: mock(() => {/* noop */},),
     signalError: mock(() => {/* noop */},),
   };
+
   return {
     cancelGenerationByChat: mock(() => false),
     startGenerationTracking: mock(() =>
@@ -134,6 +135,7 @@ async function seedUser(db: Kysely<DB>,): Promise<string> {
       settings: "{}",
     },)
     .execute();
+
   await db
     .insertInto("actors",)
     .values({
@@ -149,6 +151,7 @@ async function seedUser(db: Kysely<DB>,): Promise<string> {
       import_spec: "{}",
     },)
     .execute();
+
   return userId;
 }
 
@@ -173,6 +176,7 @@ async function createAiActor(db: Kysely<DB>, name: string,): Promise<string> {
       import_spec: "{}",
     },)
     .execute();
+
   return id;
 }
 
@@ -200,6 +204,7 @@ async function createDirectChat(
       gm_config: gmConfig,
     },)
     .execute();
+
   await db
     .insertInto("chat_participants",)
     .values([
@@ -207,6 +212,7 @@ async function createDirectChat(
       { chat_id: chatId, actor_id: aiActorId, role_in_chat: "member", },
     ],)
     .execute();
+
   return chatId;
 }
 

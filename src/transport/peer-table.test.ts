@@ -15,6 +15,7 @@ let clock = 0;
 function resetClock() {
   clock = 0;
 }
+
 function advance(ms: number,) {
   clock += ms;
 }

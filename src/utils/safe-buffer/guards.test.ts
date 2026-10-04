@@ -25,10 +25,12 @@ describe("base64url round-trip covers every byte value", () => {
         failures.push(`byte ${i} (${encoded}): ${r.error.message}`,);
         continue;
       }
+
       if (!r.buffer.equals(original,)) {
         failures.push(`byte ${i} (${encoded}): got ${r.buffer.toString("hex",)}`,);
       }
     }
+
     expect(failures,).toEqual([],);
   });
 
@@ -55,6 +57,7 @@ describe("base64url round-trip covers every byte value", () => {
       Buffer.from(Array.from({ length: 256, }, (_, i,) => i,),),
       Buffer.from(crypto.getRandomValues(new Uint8Array(4096,),),),
     ];
+
     for (const p of payloads) {
       expect(mustFromBase64Url(p.toString("base64url",),).equals(p,),).toBe(true,);
     }
@@ -90,6 +93,7 @@ describe("mustFrom* throws the typed error", () => {
     } catch (e) {
       caught = e;
     }
+
     expect(caught,).toBeInstanceOf(SafeBufferError,);
     const err = caught as SafeBufferError;
     expect(err.name,).toBe("SafeBufferError",);
@@ -136,6 +140,7 @@ describe("guards reject whitespace instead of normalizing it away", () => {
         `${CANONICAL_URL}${ws}`,
         `${CANONICAL_URL.slice(0, 4,)}${ws}${CANONICAL_URL.slice(4,)}`,
       ];
+
       for (const candidate of shaped) {
         const r = safeFromBase64Url(candidate,);
         expect(r.ok,).toBe(false,);
@@ -204,6 +209,7 @@ describe("one guard implementation, two shapes", () => {
       } catch {
         threw = true;
       }
+
       expect(threw,).toBe(!asResult.ok,);
     }
   });
@@ -213,6 +219,7 @@ describe("one guard implementation, two shapes", () => {
       const r = safeFromBase64(input,);
       expect(r.ok,).toBe(false,);
     }
+
     expect(mustFromBase64("aGk=",).toString(),).toBe("hi",);
   });
 

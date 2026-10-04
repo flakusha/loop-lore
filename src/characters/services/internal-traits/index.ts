@@ -38,16 +38,19 @@ const DEFAULT_AUTONOMY: AutonomyPreferences = {
   separation_triggers: [],
   reunion_triggers: [],
 };
+
 const DEFAULT_COPING: CopingMechanisms = {
   stress_response: "withdraws",
   failure_response: "tries again",
   conflict_style: "avoids",
 };
+
 const DEFAULT_APPROACH: ApproachTendencies = {
   decision_style: "cautious",
   risk_tolerance: 50,
   initiative_level: 50,
 };
+
 const DEFAULT_VOICE: VoicePatterns = {
   verbal_tics: [],
   vocabulary_level: "average",

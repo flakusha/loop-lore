@@ -30,15 +30,18 @@ function buildMigrationProvider(): {
       const files = readdirSync(dir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const f of files) {
         const mod = (await import(path.join(dir, f,))) as
           | { default?: Migration }
           | Migration;
+
         const candidate = "default" in mod && mod.default ? mod.default : (mod as Migration);
         const key = f.endsWith(".ts",) ? f.slice(0, -3,) : f;
         migrations[key] = candidate;
       }
+
       return migrations;
     },
   };
@@ -51,6 +54,7 @@ beforeAll(async () => {
     compressThreshold: 1024,
     compressAlgorithm: "gzip",
   },);
+
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = OFF",);
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
@@ -96,6 +100,7 @@ describe("Crypto Robustness Tests", () => {
         plaintext: hugeString,
         encryptionLevel: "standard",
       },);
+
       expect(result.wasEncrypted,).toBeTrue();
       expect(isEncryptedPayload(result.storedContent,),).toBeTrue();
 
@@ -105,6 +110,7 @@ describe("Crypto Robustness Tests", () => {
         storedContent: result.storedContent,
         encryptionLevel: "standard",
       },);
+
       expect(roundTrip.length,).toBe(1_000_000,);
       expect(roundTrip,).toBe(hugeString,);
     });
@@ -119,6 +125,7 @@ describe("Crypto Robustness Tests", () => {
         plaintext: randomString,
         encryptionLevel: "standard",
       },);
+
       expect(result.wasEncrypted,).toBeTrue();
 
       const roundTrip = await decryptAtRest({
@@ -127,6 +134,7 @@ describe("Crypto Robustness Tests", () => {
         storedContent: result.storedContent,
         encryptionLevel: "standard",
       },);
+
       expect(roundTrip,).toBe(randomString,);
     });
 
@@ -150,6 +158,7 @@ describe("Crypto Robustness Tests", () => {
         storedContent: "{ invalid: json ",
         encryptionLevel: "standard",
       },);
+
       expect(result,).toBe("{ invalid: json ",);
     });
 
@@ -161,6 +170,7 @@ describe("Crypto Robustness Tests", () => {
         plaintext: "integrity-probe",
         encryptionLevel: "standard",
       },);
+
       expect(enc.keyId,).not.toBeNull();
 
       const payload = JSON.parse(enc.storedContent,) as { enc: string };
@@ -186,6 +196,7 @@ describe("Crypto Robustness Tests", () => {
         storedContent: "{ invalid: json ",
         encryptionLevel: "at-rest",
       },);
+
       expect(result,).toBe("{ invalid: json ",);
     });
   });

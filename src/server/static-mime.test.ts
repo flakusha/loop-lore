@@ -137,6 +137,7 @@ describe("findCompressedVariant", () => {
       path: `${cssPath}.zst`,
       encoding: "zstd",
     },);
+
     rmSync(`${cssPath}.zst`,);
     expect(findCompressedVariant(cssPath, "zstd",),).toBeNull();
   });

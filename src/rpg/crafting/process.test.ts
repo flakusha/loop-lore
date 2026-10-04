@@ -72,6 +72,7 @@ async function seed(opts: SeedOpts = {},): Promise<Seed> {
     status: "active",
     settings: "{}",
   } as never,);
+
   const worldId = uid();
   await insertWorlds(db, userId, "Craft World", { id: worldId, } as never,);
   const actorId = uid();
@@ -103,6 +104,7 @@ async function seed(opts: SeedOpts = {},): Promise<Seed> {
     created_at: now,
     updated_at: now,
   },).execute();
+
   await db.insertInto("crafting_recipe_materials",).values({
     id: uid(),
     recipe_id: recipeId,
@@ -114,9 +116,11 @@ async function seed(opts: SeedOpts = {},): Promise<Seed> {
     sort_order: 1,
     created_at: now,
   },).execute();
+
   await insertActorItems(db, actorId, "Ore", "consumable", {
     quantity: opts.oreQuantity ?? 10,
   } as never,);
+
   return { db, userId, actorId, worldId, recipeId, materialItemId, outputItemId, };
 }
 
@@ -125,6 +129,7 @@ async function stockOf(db: Kysely<DB>, actorId: string, name: string,): Promise<
   const row = await db.selectFrom("actor_items",).select("quantity",)
     .where("actor_id", "=", actorId,).where("name", "=", name,)
     .executeTakeFirst();
+
   return row?.quantity ?? 0;
 }
 
@@ -137,6 +142,7 @@ describe("attemptCraft", () => {
         0,
         () => svc.attemptCraft({ actorId: s.actorId, worldId: s.worldId, recipeId: s.recipeId, },),
       );
+
       expect(result.status,).toBe(CraftingAttemptStatus.Success,);
       expect(result.quality,).toBe(1,);
       expect(result.outputItemId,).toBe(s.outputItemId,);
@@ -161,6 +167,7 @@ describe("attemptCraft", () => {
         0,
         () => svc.attemptCraft({ actorId: s.actorId, worldId: s.worldId, recipeId: s.recipeId, },),
       );
+
       expect(result.status,).toBe(CraftingAttemptStatus.CriticalSuccess,);
       expect(result.quality,).toBe(10,);
     } finally {
@@ -176,6 +183,7 @@ describe("attemptCraft", () => {
         0.99,
         () => svc.attemptCraft({ actorId: s.actorId, worldId: s.worldId, recipeId: s.recipeId, },),
       );
+
       expect(result.status,).toBe(CraftingAttemptStatus.Failure,);
       expect(result.quality,).toBe(0,);
       expect(result.outputItemId,).toBeNull();
@@ -221,6 +229,7 @@ describe("attemptCraft", () => {
       const rows = await s.db.selectFrom("actor_items",).select("id",)
         .where("actor_id", "=", s.actorId,).where("name", "=", "Ore",)
         .execute();
+
       expect(rows,).toEqual([],);
     } finally {
       await s.db.destroy();
@@ -246,6 +255,7 @@ describe("attemptCraft", () => {
       await expect(
         withRandom(0, () => svc.attemptCraft({ actorId: s.actorId, worldId: s.worldId, recipeId: s.recipeId, },),),
       ).rejects.toThrow(/Insufficient Ore: need 2/,);
+
       expect(await svc.listAttempts(s.actorId, s.worldId,),).toEqual([],);
       expect(await stockOf(s.db, s.actorId, "Ore",),).toBe(1,);
     } finally {
@@ -265,6 +275,7 @@ describe("attemptCraft with stations", () => {
       baseSuccessChance: 0,
       stationTypeRequired: CraftingStationType.Anvil,
     },);
+
     const now = new Date().toISOString();
     const defId = uid();
     await insertCraftingStationDefs(s.db, s.worldId, "Anvil", CraftingStationType.Anvil, now, now, {
@@ -272,11 +283,13 @@ describe("attemptCraft with stations", () => {
       station_type: overrides.defType ?? CraftingStationType.Anvil,
       material_saving_chance: overrides.materialSavingChance ?? 0,
     } as never,);
+
     const stationInstanceId = uid();
     await insertCraftingStationInstances(s.db, defId, s.worldId, 100, now, now, {
       id: stationInstanceId,
       is_active: overrides.instanceActive ?? 1,
     } as never,);
+
     return { ...s, stationInstanceId, };
   }
 
@@ -354,6 +367,7 @@ describe("attemptCraft with stations", () => {
           recipeId: s.recipeId,
           stationInstanceId: s.stationInstanceId,
         },),);
+
       expect(result.status,).toBe(CraftingAttemptStatus.Failure,);
       expect(result.materialsSaved,).toEqual([{ itemId: s.materialItemId, quantity: 1, },],);
       // 10 - 2 consumed + 1 refunded.
@@ -373,6 +387,7 @@ describe("getAttempt / listAttempts", () => {
         0,
         () => svc.attemptCraft({ actorId: s.actorId, worldId: s.worldId, recipeId: s.recipeId, },),
       );
+
       const stored = await svc.getAttempt(result.attemptId,);
       expect(stored,).toMatchObject({
         id: result.attemptId,
@@ -388,6 +403,7 @@ describe("getAttempt / listAttempts", () => {
         skillIncrease: 0,
         bonusEffects: "{}",
       },);
+
       expect(typeof stored?.createdAt,).toBe("string",);
       expect(await svc.getAttempt(uid(),),).toBeNull();
     } finally {
@@ -412,6 +428,7 @@ describe("getAttempt / listAttempts", () => {
           materials_used: "[]",
         } as never,
       );
+
       await insertCraftingAttempts(
         s.db,
         s.actorId,
@@ -423,6 +440,7 @@ describe("getAttempt / listAttempts", () => {
           materials_used: "[]",
         } as never,
       );
+
       await insertActors(s.db, "Other", { id: otherActor, user_id: null, } as never,);
       await insertCraftingAttempts(
         s.db,
@@ -435,6 +453,7 @@ describe("getAttempt / listAttempts", () => {
           materials_used: "[]",
         } as never,
       );
+
       await insertWorlds(s.db, s.userId, "Other World", { id: otherWorld, } as never,);
       await insertCraftingAttempts(
         s.db,
@@ -447,11 +466,13 @@ describe("getAttempt / listAttempts", () => {
           materials_used: "[]",
         } as never,
       );
+
       const rows = await svc.listAttempts(s.actorId, s.worldId,);
       expect(rows.map((r,) => r.createdAt),).toEqual([
         "2026-06-01T00:00:00.000Z",
         "2026-01-01T00:00:00.000Z",
       ],);
+
       expect(rows[0]?.materialsUsed,).toEqual([],);
     } finally {
       await s.db.destroy();

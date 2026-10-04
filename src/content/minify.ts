@@ -65,6 +65,7 @@ export function minifyCSS(content: string,): string {
   if (output.errors.length > 0) {
     throw new Error(`CSS minification error: ${output.errors.join(", ",)}`,);
   }
+
   return output.styles;
 }
 

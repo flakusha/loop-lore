@@ -47,6 +47,7 @@ describe("privacy gaps — checkInjectionPrivacy gates", () => {
     expect(checkInjectionPrivacy("absolute", makeCtx(),),).toBe(
       "privacy:absolute_never_shared",
     );
+
     expect(
       checkInjectionPrivacy("absolute", makeCtx({ isPrivateChat: true, worldId: "w", },),),
     ).toBe("privacy:absolute_never_shared",);
@@ -56,6 +57,7 @@ describe("privacy gaps — checkInjectionPrivacy gates", () => {
     expect(checkInjectionPrivacy("isolated", makeCtx(),),).toBe(
       "privacy:isolated_requires_private_chat",
     );
+
     expect(checkInjectionPrivacy("isolated", makeCtx({ isPrivateChat: true, },),),).toBeNull();
   });
 
@@ -63,6 +65,7 @@ describe("privacy gaps — checkInjectionPrivacy gates", () => {
     expect(checkInjectionPrivacy("localized", makeCtx(),),).toBe(
       "privacy:localized_requires_world",
     );
+
     expect(checkInjectionPrivacy("localized", makeCtx({ worldId: "w-1", },),),).toBeNull();
   });
 

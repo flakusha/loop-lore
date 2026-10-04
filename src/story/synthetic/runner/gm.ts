@@ -29,9 +29,11 @@ export async function runGmEscalation(state: RunnerState, c: SyntheticCase,): Pr
       .select(["status",],)
       .where("id", "=", questId,)
       .executeTakeFirst();
+
     if (!quest) {
       return skippedResult(c.expected, `quest ${questId} not found`, { found: false, },);
     }
+
     const escalated = quest.status === QuestStatus.Active;
     const expEsc = c.expected.escalated === true;
     const passed = escalated === expEsc;
@@ -42,6 +44,7 @@ export async function runGmEscalation(state: RunnerState, c: SyntheticCase,): Pr
       reason: passed ? undefined : `escalated ${escalated} vs expected ${expEsc}`,
     };
   }
+
   // Live GM path: keep read-only — defer decision execution to the caller.
   return skippedResult(c.expected, "live GM escalation requires injected decision execution (deferred)",);
 }

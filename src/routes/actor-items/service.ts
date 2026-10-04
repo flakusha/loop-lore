@@ -53,6 +53,7 @@ async function resolveActorOwner(
     .select("user_id",)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   if (!actor) { return notFoundResponse("Actor",); }
   if (actor.user_id !== userId) { return jsonError("Not allowed", 403,); }
   return null;
@@ -149,6 +150,7 @@ export function actorItemsGameplayRoutes({ database, }: { database: Db }, prefix
           ctx.params.itemId,
           quantity,
         );
+
         if (!res.ok) { return badRequestResponse(res.reason ?? "Cannot transfer",); }
         return jsonResponse(res,);
       },);

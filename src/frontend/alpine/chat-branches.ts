@@ -61,6 +61,7 @@ async function mutateBranch(
     state.$dispatch?.("show-toast", { type: "error", message: t(toasts.failed,), },);
     return;
   }
+
   await state.loadBranches();
   state.$dispatch?.("show-toast", { type: "success", message: t(toasts.done,), },);
 }
@@ -192,21 +193,27 @@ const g = globalThis as Record<string, unknown>;
 g.loadBranches = async function() {
   await awaitChatStateAction("loadBranches",);
 };
+
 g.toggleBranches = function() {
   callChatStateAction("toggleBranches",);
 };
+
 g.switchBranch = async function(branchId: string,) {
   await awaitChatStateAction("switchBranch", branchId,);
 };
+
 g.deleteBranch = async function(branchId: string,) {
   await awaitChatStateAction("deleteBranch", branchId,);
 };
+
 g.mergeBranch = async function(branchId: string,) {
   await awaitChatStateAction("mergeBranch", branchId,);
 };
+
 g.forkFromMessage = async function(messageId: string, name?: string,) {
   await awaitChatStateAction("forkFromMessage", messageId, name,);
 };
+
 g.branchCountFor = function(messageId: string,) {
   return callChatStateAction<number>("branchCountFor", messageId,);
 };

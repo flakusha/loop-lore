@@ -230,6 +230,7 @@ export function validateCharacter(character: CanonicalCharacter,): string[] {
           errors.push(`Duplicate outfit id "${o.id}"`,);
           break;
         }
+
         ids.add(o.id,);
       }
     }

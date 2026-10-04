@@ -18,6 +18,7 @@ const withForcedDie = async (value: number, run: () => Promise<void>,): Promise<
       return array;
     },
   },);
+
   try {
     await run();
   } finally {
@@ -52,6 +53,7 @@ describe("interaction commands", () => {
       userId,
       worldId,
     );
+
     expect(relationship,).toMatchObject({
       standing: 5,
       familiarity: 1,
@@ -75,6 +77,7 @@ describe("interaction commands", () => {
       .selectFrom("interaction_logs",)
       .select((eb,) => eb.fn.countAll<string>().as("count",))
       .executeTakeFirstOrThrow();
+
     expect(Number(count.count,),).toBe(0,);
   });
 });

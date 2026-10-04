@@ -73,5 +73,6 @@ export function parseWorkflowTags(tags: readonly string[],): WorkflowTag[] {
     const parsed = parseWorkflowTag(tag,);
     if (parsed) { out.push(parsed,); }
   }
+
   return out;
 }

@@ -51,6 +51,7 @@ if (STRICTLY_ISOLATED) {
     listSideEffectJobs: () => [],
     failGeneration: async () => {/* noop */},
   }),);
+
   mock.module("./persist", () => ({
     /**
      * @param response
@@ -65,10 +66,12 @@ if (STRICTLY_ISOLATED) {
     }),
     storeGenerationResult: async () => "msg-x",
   }),);
+
   mock.module("./tool-execution", () => ({
     executeToolCalls: async () => [],
     MAX_TOOL_ROUNDS: 1,
   }),);
+
   mock.module("../../memory", () => ({
     extractAndStoreMemories: async () => {/* noop */},
   }),);
@@ -90,8 +93,10 @@ const persistProbeOut = buildResultFn({
   finishReason: "stop",
   usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
 } as never, false,) as { content?: string };
+
 const persistSelfCheck = persistProbeOut.content === "__stream_selfcheck__" &&
   !("generationTimeMs" in (persistProbeOut as Record<string, unknown>));
+
 const chunkSelfCheck = await (async () => {
   try {
     return await (chunkFn as unknown as (opts: unknown,) => Promise<unknown>)({
@@ -103,6 +108,7 @@ const chunkSelfCheck = await (async () => {
     return false;
   }
 })();
+
 // This file does NOT mock call-with-failover: the SUT's abort-link runs
 // through the real failover. Another file's `async () => fakeResponse`
 // stub resolves without touching the provider, so the tracker signal never
@@ -116,6 +122,7 @@ const failoverRealCheck = await (async () => {
     return error instanceof Error && error.message.startsWith("All providers failed",);
   }
 })();
+
 const streamSelfOk = persistSelfCheck && chunkSelfCheck && failoverRealCheck;
 const describeSelf = streamSelfOk ? describeOrSkipStrict : describe.skip;
 
@@ -141,13 +148,16 @@ function makeWaitingProvider(state: { calls: number; sawAbort: boolean },): LLMP
           resolve(false,);
           return;
         }
+
         if (sig.aborted) {
           resolve(true,);
           return;
         }
+
         sig.addEventListener("abort", () => resolve(true,), { once: true, },);
         setTimeout(() => resolve(false,), 1500,);
       },);
+
       state.sawAbort = aborted;
       return {
         content: "partial ",
@@ -181,6 +191,7 @@ async function collectEvents(response: Response,): Promise<Event[]> {
       if (line) { events.push(JSON.parse(line.slice(6,),) as Event,); }
     }
   }
+
   return events;
 }
 
@@ -260,10 +271,13 @@ describeSelf("streamToClient — tracker cancel reaches the provider", () => {
               resolve();
               return;
             }
+
             sig.addEventListener("abort", () => resolve(), { once: true, },);
           },);
+
           aborted = true;
         }
+
         // Simulate the underlying SDK surfacing the abort as a thrown error.
         throw new Error("stream aborted",);
       },

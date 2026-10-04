@@ -76,6 +76,7 @@ export async function storeMemories(
     if (existing) {
       continue;
     }
+
     const id = randomUUID();
     await db
       .insertInto("actor_memories",)
@@ -146,10 +147,12 @@ export async function resolveReviewStatus(
       .select("settings",)
       .where("id", "=", opts.userId,)
       .executeTakeFirst();
+
     const settings = jsonParseOr<{ detailLevel?: string }>(user?.settings ?? "{}", {},);
     if (settings.detailLevel === "Basic" || settings.detailLevel === "Detailed") {
       return "pending";
     }
   }
+
   return "committed";
 }

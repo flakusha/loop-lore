@@ -22,10 +22,12 @@ export async function findMissingMaterials(
     .select(["name", "quantity",],)
     .where("actor_id", "=", actorId,)
     .execute();
+
   const available = new Map<string, number>();
   for (const row of rows) {
     available.set(row.name, (available.get(row.name,) ?? 0) + row.quantity,);
   }
+
   return requirements
     .filter((requirement,) => (available.get(requirement.itemName,) ?? 0) < requirement.quantity)
     .map((requirement,) => `${requirement.itemName} x${requirement.quantity}`);

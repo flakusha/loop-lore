@@ -67,6 +67,7 @@ describe("AsyncLogQueue", () => {
     console.error = (...args: unknown[]) => {
       errors.push(args,);
     };
+
     try {
       const failing = captureTransport(() => true);
       const healthy = captureTransport();

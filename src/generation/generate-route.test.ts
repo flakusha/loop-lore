@@ -38,11 +38,13 @@ try {
 } catch (error) {
   failoverPristine = error instanceof Error && error.message.startsWith("All providers failed",);
 }
+
 const persistProbe = buildGenerationResult({
   content: "__generate_route_probe__",
   finishReason: "stop",
   usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
 } as never, false,);
+
 const persistPristine = persistProbe.content === "__generate_route_probe__";
 const toolExecPristine = executeToolCalls.length > 0;
 // The provider registry is also process-global (e.g.
@@ -62,6 +64,7 @@ const registryPristine = (() => {
     return false;
   }
 })();
+
 const generateFlowPristine = failoverPristine && persistPristine && toolExecPristine && registryPristine;
 const describeReal = generateFlowPristine ? describe : describe.skip;
 
@@ -95,6 +98,7 @@ async function seedChat(testDb: Kysely<DB>, overrides?: Partial<Record<string, u
       ...overrides,
     },)
     .execute();
+
   return id;
 }
 
@@ -117,6 +121,7 @@ async function seedActor(testDb: Kysely<DB>, overrides?: Partial<Record<string, 
       ...overrides,
     },)
     .execute();
+
   return id;
 }
 
@@ -149,6 +154,7 @@ async function seedMessage(
       ...overrides,
     },)
     .execute();
+
   return id;
 }
 
@@ -166,6 +172,7 @@ function makeRequest(overrides?: Partial<Record<string, unknown>>,): Record<stri
     ...overrides,
   };
 }
+
 /**
  * Fully deterministic config: schema defaults (not ambient loadConfig(),
  * which can be another file's partial mock in a full-suite run) plus the
@@ -267,6 +274,7 @@ describe("gatePluginToolsByRole", () => {
     parameters: {},
     handler: async () => ({ content: "ok", }),
   };
+
   const toolB: ToolDefinition = {
     name: "play_rps",
     description: "RPS",
@@ -281,11 +289,13 @@ describe("gatePluginToolsByRole", () => {
       origin: "core",
       directory: "/tmp/card-battle",
     },);
+
     registry.register({
       manifest: { name: "rps", version: "1.0.0", description: "", author: "t", },
       origin: "core",
       directory: "/tmp/rps",
     },);
+
     registry.addTools("card-battle", [toolA,],);
     registry.addTools("rps", [toolB,],);
   },);
@@ -304,6 +314,7 @@ describe("gatePluginToolsByRole", () => {
     registry.addAgentRoles("card-battle", [
       { id: "card-battler", name: "Card Battler", description: "", systemPrompt: "", tools: ["play_card_battle",], },
     ],);
+
     const tools = gatePluginToolsByRole("card-battler",);
     expect(tools.map((t,) => t.name),).toEqual(["play_card_battle",],);
   });
@@ -317,6 +328,7 @@ describe("gatePluginToolsByRole", () => {
     registry.addAgentRoles("card-battle", [
       { id: "card-battler", name: "Card Battler", description: "", systemPrompt: "", tools: [], },
     ],);
+
     const tools = gatePluginToolsByRole("card-battler",);
     expect(tools,).toEqual([],);
   });
@@ -349,6 +361,7 @@ describeReal("handleGenerate — non-streaming (complete)", () => {
       prompt: [{ role: "user" as const, content: "Test prompt", },],
       stream: false,
     },);
+
     const config = makeConfig();
     const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
     const data = (await res.json()) as Record<string, unknown>;
@@ -379,6 +392,7 @@ describeReal("handleGenerate — non-streaming (complete)", () => {
       user: "<|im_start|>user\n${content}<|im_end|>",
       assistant: "<|im_start|>assistant\n${content}<|im_end|>",
     };
+
     const body = makeRequest({
       chatId,
       actorId,
@@ -409,6 +423,7 @@ describeReal("handleGenerate — non-streaming (complete)", () => {
       prompt: [{ role: "user" as const, content: "Hi", },],
       stream: false,
     },);
+
     const config = makeConfig();
     await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
 
@@ -439,6 +454,7 @@ describeReal("handleGenerate — non-streaming (complete)", () => {
       prompt: [{ role: "user" as const, content: "Hi", },],
       stream: false,
     },);
+
     const config = makeConfig();
     const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
     expect(res.status,).toBe(500,);
@@ -460,6 +476,7 @@ describeReal("handleGenerate — streaming (SSE)", () => {
       prompt: [{ role: "user" as const, content: "Stream test", },],
       stream: true,
     },);
+
     const config = makeConfig();
     const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
 
@@ -485,6 +502,7 @@ describeReal("handleGenerate — streaming (SSE)", () => {
       prompt: [{ role: "user" as const, content: "Stream test", },],
       stream: true,
     },);
+
     const config = makeConfig();
     const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
 
@@ -502,6 +520,7 @@ describeReal("handleGenerate — streaming (SSE)", () => {
       .selectAll()
       .where("role", "=", "assistant",)
       .execute();
+
     expect(messages,).toHaveLength(1,);
     expect(messages[0]!.content,).toBe("Mock streamed response",);
   });
@@ -521,6 +540,7 @@ describeReal("handleGenerate — streaming (SSE)", () => {
       prompt: [{ role: "user" as const, content: "Stream error", },],
       stream: true,
     },);
+
     const config = makeConfig();
     const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
 
@@ -537,6 +557,7 @@ describeReal("handleGenerate — prompt assembly path", () => {
       id: "actor-prompt-test",
       system_prompt: "You are a test bot.",
     },);
+
     const msgId = await seedMessage(testDb, chatId, actorId, {
       status: "confirmed",
     },);
@@ -548,6 +569,7 @@ describeReal("handleGenerate — prompt assembly path", () => {
       stream: false,
       // No prompt property — triggers PromptAssembler
     },);
+
     const config = makeConfig();
     const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
 

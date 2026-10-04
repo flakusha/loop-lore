@@ -39,6 +39,7 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
       const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations`, {
         headers: { Accept: "application/json", },
       },);
+
       if (res.ok) {
         const data = await res.json();
         this.locations = Array.from(
@@ -57,6 +58,7 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
             connections: l.connections || [],
           }),
         );
+
         this.locationsLoaded = true;
         const nextTick = (this as unknown as { $nextTick?: (callback: () => void,) => void }).$nextTick;
         if (nextTick) { nextTick(() => this.filterLocations()); }
@@ -65,6 +67,7 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
     } catch (error) {
       log.warn("loadLocations failed", { error: String(error,), },);
     }
+
     this.loadingLocations = false;
   },
 
@@ -101,6 +104,7 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
           connections: this.newLocConnections,
         },),
       },);
+
       if (res.ok) {
         this.newLocName = "";
         this.newLocDesc = "";
@@ -125,6 +129,7 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
       this.expandedLoc = "";
       return;
     }
+
     this.expandedLoc = locId;
     const loc = this.locations.find((l,) => l.id === locId);
     if (loc) {
@@ -147,12 +152,14 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
           description: this.editLocDesc.trim() || null,
         },),
       },);
+
       if (res.ok) {
         const loc = this.locations.find((l,) => l.id === locId);
         if (loc) {
           loc.name = this.editLocName.trim();
           loc.description = this.editLocDesc.trim() || null;
         }
+
         this.expandedLoc = "";
         showToast("success", t("toasts.locationUpdated",),);
       } else {

@@ -28,6 +28,7 @@ describe("morale integration", () => {
       modifiers: [],
       lastUpdated: new Date().toISOString(),
     };
+
     const modifier: any = { value: 20, name: "heal", duration: 0, appliedAt: new Date().toISOString(), };
     const result = applyMoraleModifier(state, modifier,);
     expect(result.value,).toBe(70,);

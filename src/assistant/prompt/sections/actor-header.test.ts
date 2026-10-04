@@ -43,6 +43,7 @@ describe("actorHeaderSection", () => {
         scenario: "Aboard the Zephyr.",
       },),
     );
+
     expect(out.length,).toBe(1,);
     expect(out[0]?.role,).toBe("system",);
     const content = out[0]?.content as string;

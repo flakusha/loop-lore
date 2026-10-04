@@ -11,6 +11,7 @@ describe("story/quests/calculators/time (0% -> real)", () => {
       ),
     ).toBe(0,);
   });
+
   it("returns 0 for wrong event", () => {
     expect(
       calculateTimeProgress({ progress: 0, target: 0, }, {
@@ -22,6 +23,7 @@ describe("story/quests/calculators/time (0% -> real)", () => {
     )
       .toBe(0,);
   });
+
   it("returns 50 for 50 of 100 minutes", () => {
     expect(
       calculateTimeProgress(

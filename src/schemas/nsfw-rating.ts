@@ -89,6 +89,7 @@ export function computeEffectiveRating(
       most = current;
     }
   }
+
   return most;
 }
 
@@ -131,6 +132,7 @@ export function createRatingEnforcement(params: {
     params.user_preference,
     params.chat_setting,
   );
+
   return {
     character_rating: params.character_rating,
     user_preference: params.user_preference,

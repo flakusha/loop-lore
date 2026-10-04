@@ -45,6 +45,7 @@ describe("Character edit view E2E", () => {
       },)
       .onConflict((oc,) => oc.column("id",).doNothing())
       .execute();
+
     // Seed a licensing record: the edit form's licensing panel fetches
     // /api/v1/actors/:id/licensing, whose designed 404 ("no license yet") still
     // logs a browser console resource error. Characters configured for
@@ -61,6 +62,7 @@ describe("Character edit view E2E", () => {
       },)
       .onConflict((oc,) => oc.column("id",).doNothing())
       .execute();
+
     // Seed permanent traits (the schema stores these in a side table, not on
     // the actor row). Idempotent on re-runs.
     for (const t of [{ id: "kind", label: "Kind", }, { id: "curious", label: "Curious", },]) {
@@ -89,9 +91,11 @@ describe("Character edit view E2E", () => {
       waitUntil: "domcontentloaded",
       timeout: 30_000,
     },);
+
     await page
       .locator("[data-testid='character-edit-header']",)
       .waitFor({ state: "attached", timeout: 30_000, },);
+
     await page.locator("#character-edit-form",).waitFor({ state: "attached", timeout: 30_000, },);
     // Web-first: wait for the htmx-loaded form's last section to mount
     // instead of a fixed sleep.

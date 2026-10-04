@@ -132,6 +132,7 @@ export class LocationNsfwService {
       .where("world_id", "=", worldId,)
       .select("id",)
       .execute();
+
     const configs = await this.getConfigs(rows.map((row,) => row.id),);
     const byId = new Map(configs.map((config,) => [config.locationId, config,]),);
     const available: LocationNsfwConfig[] = [];
@@ -140,6 +141,7 @@ export class LocationNsfwService {
       const check = await this.isSuitableForEncounter(row.id, minPrivacy,);
       if (check.suitable) { available.push(config,); }
     }
+
     return available;
   }
 

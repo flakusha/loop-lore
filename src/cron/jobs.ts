@@ -100,12 +100,14 @@ export function defaultJobs(): CronJobDef[] {
         for (const peer of config.federation.peers) {
           trustByOrigin[peer.origin] = peer.trust;
         }
+
         const service = getGossipService({
           seeds: config.federation.seeds,
           trusted,
           trustByOrigin,
           selfOrigin: publicOriginOf(config.server,),
         },);
+
         service.start();
         const summary = await service.pollOnce();
         logger.info("federation gossip poll complete", { module: "cron", ...summary, },);
@@ -125,6 +127,7 @@ export function defaultJobs(): CronJobDef[] {
         for (const peer of config.federation.peers) {
           trustByOrigin[peer.origin] = peer.trust;
         }
+
         const summary = await runResyncPass(database, { trustByOrigin, },);
         const expired = await sweepExpiredReservations(database,);
         logger.info("federation resync pass complete", { module: "cron", ...summary, expired, },);
@@ -142,6 +145,7 @@ export function defaultJobs(): CronJobDef[] {
         if (failed.length > 0) {
           logger.warn("providers unreachable on rescan", { module: "cron", failed, },);
         }
+
         return { checked: results.length, failed, };
       },
     },),
@@ -159,6 +163,7 @@ export function defaultJobs(): CronJobDef[] {
         if (result.dueWorldIds.length > 0) {
           logger.info("autonomy world tick complete", { module: "cron", ...result, },);
         }
+
         return result;
       },
     },),

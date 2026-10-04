@@ -28,11 +28,13 @@ describe("createAsset idempotent upload", () => {
       .select("id",)
       .where("username", "=", "idempotent-test",)
       .executeTakeFirstOrThrow()).id;
+
     const otherOwnerId = (await db
       .selectFrom("users",)
       .select("id",)
       .where("username", "=", "other-user",)
       .executeTakeFirstOrThrow()).id;
+
     const buffer = makeMinimalPng(4, 3,);
 
     const base: CreateAssetInput = {
@@ -61,6 +63,7 @@ describe("createAsset idempotent upload", () => {
         input: { ...base, ownerId: otherOwnerId, },
         uploadDir,
       },);
+
       expect(otherOwner.duplicate,).toBe(false,);
       expect(otherOwner.asset.id,).not.toBe(first.asset.id,);
     } finally {
@@ -95,6 +98,7 @@ describe("createAsset idempotent upload", () => {
         },
         uploadDir,
       },);
+
       const second = await createAsset({
         database: db,
         input: {
@@ -127,11 +131,13 @@ describe("createAsset idempotent upload", () => {
       .select("id",)
       .where("username", "=", "edit-owner",)
       .executeTakeFirstOrThrow()).id;
+
     const strangerId = (await db
       .selectFrom("users",)
       .select("id",)
       .where("username", "=", "stranger",)
       .executeTakeFirstOrThrow()).id;
+
     const buffer = makeMinimalPng(4, 3,);
 
     try {
@@ -155,6 +161,7 @@ describe("createAsset idempotent upload", () => {
         .set({ visibility: AssetVisibility.Public, },)
         .where("id", "=", first.asset.id,)
         .execute();
+
       await shareAsset({
         database: db,
         assetId: first.asset.id,

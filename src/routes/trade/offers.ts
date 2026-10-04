@@ -31,6 +31,7 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
           buyerItems: TradeLine[];
           price: number;
         };
+
         const denied = await resolveActorAccess(opts.database, body.buyerActorId, userId,);
         if (denied) { return denied; }
         const id = await opts.svc().createOffer({
@@ -40,6 +41,7 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
           buyerItems: body.buyerItems,
           price: body.price,
         },);
+
         return jsonResponse({ ok: true, offerId: id, },);
       }, {
         params: t.Object({ worldId: Id, },),
@@ -131,6 +133,7 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
           sellerItems?: TradeLine[];
           price?: number;
         };
+
         const denied = await resolveActorAccess(opts.database, body.counterActorId, userId,);
         if (denied) { return denied; }
         const res = await opts.svc().counterOffer({
@@ -140,6 +143,7 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
           sellerItems: body.sellerItems,
           price: body.price,
         },);
+
         if (!res.success) { return badRequestResponse(res.reason ?? "Counter failed",); }
         return jsonResponse({ ok: true, },);
       }, {

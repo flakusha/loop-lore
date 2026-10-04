@@ -48,6 +48,7 @@ export class TransportSection implements TransportConfig {
     if (compression) {
       this.compression = { ...this.compression, ...compression, };
     }
+
     if (limits) {
       this.limits = { ...this.limits, ...limits, };
     }

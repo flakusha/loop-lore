@@ -55,6 +55,7 @@ describe("Wardrobe routes — auth & ownership", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     await db.insertInto("chats",).values({
       id: CHAT,
       name: "Wardrobe Chat",
@@ -68,6 +69,7 @@ describe("Wardrobe routes — auth & ownership", () => {
         body: JSON.stringify({ name: "Armor", descriptor: "plate armor", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     itemId = (await res.json() as { id: string }).id;
   },);
@@ -81,6 +83,7 @@ describe("Wardrobe routes — auth & ownership", () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/actors/${OWNER}/wardrobe`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -88,6 +91,7 @@ describe("Wardrobe routes — auth & ownership", () => {
     const res = await makeApp(db, OTHER_USER, "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER}/wardrobe`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -95,6 +99,7 @@ describe("Wardrobe routes — auth & ownership", () => {
     const res = await makeApp(db, OWNER_USER, "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER}/wardrobe`,),
     );
+
     expect(res.status,).toBe(200,);
     const items = await res.json() as Array<{ id: string; name: string }>;
     expect(items.some((i,) => i.id === itemId),).toBe(true,);
@@ -108,6 +113,7 @@ describe("Wardrobe routes — auth & ownership", () => {
         body: JSON.stringify({ name: "Hacked", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -117,6 +123,7 @@ describe("Wardrobe routes — auth & ownership", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -128,6 +135,7 @@ describe("Wardrobe routes — auth & ownership", () => {
         body: JSON.stringify({ item_instance_id: "instance-1", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -139,6 +147,7 @@ describe("Wardrobe routes — auth & ownership", () => {
         body: JSON.stringify({ name: "", },),
       },),
     );
+
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     expect(res.status,).toBeLessThan(500,);
   });
@@ -151,6 +160,7 @@ describe("Wardrobe routes — auth & ownership", () => {
         body: JSON.stringify({ emotion: "joy", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -162,6 +172,7 @@ describe("Wardrobe routes — auth & ownership", () => {
         body: JSON.stringify({ emotion: "joy", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -173,6 +184,7 @@ describe("Wardrobe routes — auth & ownership", () => {
         body: JSON.stringify({ base_avatar_id: "some-avatar", emotion: "not-a-real-emotion", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -184,6 +196,7 @@ describe("Wardrobe routes — auth & ownership", () => {
         body: JSON.stringify({ base_avatar_id: "some-avatar", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -195,6 +208,7 @@ describe("Wardrobe routes — auth & ownership", () => {
         body: JSON.stringify({ base_avatar_id: "some-avatar", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });
@@ -215,6 +229,7 @@ describe("Wardrobe world template scope", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     await insertWorlds(db, OTHER_USER, "Foreign World", { id: FOREIGN_WORLD as never, },);
     await insertWorlds(db, OWNER_USER, "Own World", { id: OWNED_WORLD as never, },);
   },);
@@ -232,6 +247,7 @@ describe("Wardrobe world template scope", () => {
         body: JSON.stringify({ name: "Intruder Garb", world_id: FOREIGN_WORLD, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -239,6 +255,7 @@ describe("Wardrobe world template scope", () => {
     const res = await makeApp(db, OWNER_USER, "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER}/wardrobe?worldId=${FOREIGN_WORLD}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -250,12 +267,14 @@ describe("Wardrobe world template scope", () => {
         body: JSON.stringify({ name: "Own Guard Uniform", world_id: OWNED_WORLD, },),
       },),
     );
+
     expect(create.status,).toBe(201,);
     const { id, } = await create.json() as { id: string };
 
     const list = await makeApp(db, OWNER_USER, "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER}/wardrobe?worldId=${OWNED_WORLD}`,),
     );
+
     expect(list.status,).toBe(200,);
     const items = await list.json() as Array<{ id: string }>;
     expect(items.some((i,) => i.id === id),).toBe(true,);
@@ -278,6 +297,7 @@ describe("Wardrobe chat override routes", () => {
       user_id: OWNER_USER,
       actor_type: "character",
     },);
+
     await db.insertInto("chats",).values({
       id: CHAT,
       name: "Override Chat",
@@ -291,6 +311,7 @@ describe("Wardrobe chat override routes", () => {
         body: JSON.stringify({ name: "Robes", },),
       },),
     );
+
     itemId = (await res.json() as { id: string }).id;
   },);
 
@@ -307,6 +328,7 @@ describe("Wardrobe chat override routes", () => {
         body: JSON.stringify({ actor_id: OWNER, outfit_id: itemId, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -318,11 +340,13 @@ describe("Wardrobe chat override routes", () => {
         body: JSON.stringify({ actor_id: OWNER, outfit_id: itemId, },),
       },),
     );
+
     expect(set.status,).toBe(200,);
 
     const read = await makeApp(db, OWNER_USER, "user",).handle(
       new Request(`http://localhost/api/chats/${CHAT}/wardrobe-override/${OWNER}`,),
     );
+
     expect(read.status,).toBe(200,);
     expect((await read.json() as { outfit_id: string }).outfit_id,).toBe(itemId,);
   });
@@ -335,11 +359,13 @@ describe("Wardrobe chat override routes", () => {
         body: JSON.stringify({ actor_id: OWNER, outfit_id: null, },),
       },),
     );
+
     expect(clear.status,).toBe(200,);
 
     const read = await makeApp(db, OWNER_USER, "user",).handle(
       new Request(`http://localhost/api/chats/${CHAT}/wardrobe-override/${OWNER}`,),
     );
+
     expect((await read.json() as { outfit_id: string | null }).outfit_id,).toBeNull();
   });
 
@@ -351,6 +377,7 @@ describe("Wardrobe chat override routes", () => {
       user_id: OWNER_USER,
       actor_type: "user",
     },);
+
     const res = await makeApp(db, OWNER_USER, "user", {
       review: () => ({ allowed: false, reason: "bound hands", }),
     },).handle(
@@ -360,6 +387,7 @@ describe("Wardrobe chat override routes", () => {
         body: JSON.stringify({ actor_id: playerActor, outfit_id: itemId, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
     expect(await res.text(),).toContain("bound hands",);
   });
@@ -374,6 +402,7 @@ describe("Wardrobe chat override routes", () => {
         body: JSON.stringify({ actor_id: OWNER, outfit_id: itemId, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -385,6 +414,7 @@ describe("Wardrobe chat override routes", () => {
         body: JSON.stringify({ actor_id: OWNER, outfit_id: "missing-outfit", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });

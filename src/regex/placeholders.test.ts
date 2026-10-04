@@ -26,6 +26,7 @@ describe("placeholders regex", () => {
         DOUBLE_BRACE,
         (_, key: string,) => vars[key] ?? key,
       );
+
       expect(result,).toBe("Hello World, welcome to Loop Lore",);
     });
   });
@@ -194,6 +195,7 @@ describe("placeholders regex", () => {
       const matches = [..."@".matchAll(MENTION,),];
       expect(matches.length,).toBe(0,);
     });
+
     it("captures @a when followed by .b (first segment wins)", () => {
       // Pin: '@a.b' matches '@a' (the regex stops at '.' which is not in
       // the allowed character class). The trailing '.b' is unmatched.

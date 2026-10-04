@@ -80,6 +80,7 @@ export async function getOrCreateSoloUserForAuth(
       .select("id",)
       .where("id", "=", soloId,)
       .executeTakeFirst();
+
     if (!actorExists) {
       await database
         .insertInto("actors",)

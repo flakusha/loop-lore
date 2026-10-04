@@ -38,6 +38,7 @@ export function bulkAssignRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", sectionId,)
             .where("chat_id", "=", chatId,)
             .executeTakeFirst();
+
           if (!section) { return notFound("Section not found in this chat",); }
 
           const body = ctx.body as { fromSectionId?: string | null };
@@ -49,6 +50,7 @@ export function bulkAssignRoutes(opts: HandlerOpts, prefix = "/api",) {
               .where("id", "=", fromSectionId,)
               .where("chat_id", "=", chatId,)
               .executeTakeFirst();
+
             if (!from) { return notFound("Source section not found in this chat",); }
           }
 
@@ -56,9 +58,11 @@ export function bulkAssignRoutes(opts: HandlerOpts, prefix = "/api",) {
             .updateTable("messages",)
             .set({ section_id: sectionId, },)
             .where("chat_id", "=", chatId,);
+
           if (fromSectionId) {
             query = query.where("section_id", "=", fromSectionId,);
           }
+
           const result = await query.execute();
           let updated = 0;
           for (const r of result) { updated += Number(r.numUpdatedRows ?? 0,); }

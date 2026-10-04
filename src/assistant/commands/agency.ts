@@ -72,6 +72,7 @@ registerCommand("agency", async (args, ctx,): Promise<CommandResult> => {
         handled: true,
       };
     }
+
     const amount = parseAmount(args[1],);
     if (amount === null) {
       return {
@@ -79,6 +80,7 @@ registerCommand("agency", async (args, ctx,): Promise<CommandResult> => {
         handled: true,
       };
     }
+
     try {
       const reason = args.slice(2,).join(" ",) || null;
       const ledger = await earnStoryPoints(db, { actorId, worldId, amount, reason, },);
@@ -90,6 +92,7 @@ registerCommand("agency", async (args, ctx,): Promise<CommandResult> => {
       if (err instanceof InvalidAmountError) {
         return { systemMessage: "**Agency earn:** amount must be a positive integer.", handled: true, };
       }
+
       const msg = err instanceof Error ? err.message : String(err,);
       return { systemMessage: `**Agency earn failed:** ${msg}`, handled: true, };
     }
@@ -103,6 +106,7 @@ registerCommand("agency", async (args, ctx,): Promise<CommandResult> => {
         handled: true,
       };
     }
+
     try {
       const reason = args.slice(2,).join(" ",) || null;
       const ledger = await spendStoryPoints(db, { actorId, worldId, amount, reason, },);
@@ -117,9 +121,11 @@ registerCommand("agency", async (args, ctx,): Promise<CommandResult> => {
           handled: true,
         };
       }
+
       if (err instanceof InvalidAmountError) {
         return { systemMessage: "**Agency spend:** amount must be a positive integer.", handled: true, };
       }
+
       const msg = err instanceof Error ? err.message : String(err,);
       return { systemMessage: `**Agency spend failed:** ${msg}`, handled: true, };
     }
@@ -133,6 +139,7 @@ registerCommand("agency", async (args, ctx,): Promise<CommandResult> => {
         handled: true,
       };
     }
+
     const raw = args[1];
     if (raw === undefined) {
       return {
@@ -140,14 +147,17 @@ registerCommand("agency", async (args, ctx,): Promise<CommandResult> => {
         handled: true,
       };
     }
+
     if (raw.toLowerCase() === "clear") {
       await setStoryPointCap(db, actorId, worldId, null,);
       return { systemMessage: "**Story-point cap cleared** (unlimited).", handled: true, };
     }
+
     const amount = parseAmount(raw,);
     if (amount === null) {
       return { systemMessage: "**Agency cap:** must be a positive integer or `clear`.", handled: true, };
     }
+
     await setStoryPointCap(db, actorId, worldId, amount,);
     return { systemMessage: `**Story-point cap set to ${amount}**.`, handled: true, };
   }

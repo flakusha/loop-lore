@@ -107,6 +107,7 @@ export function getDatabase(_databasePath?: string,): Kysely<DB> {
     mkdirSync(path.dirname(dbPath,), { recursive: true, },);
     database = new Kysely<DB>({ dialect: createDialect(dbPath,), },);
   }
+
   return database;
 }
 

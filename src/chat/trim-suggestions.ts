@@ -91,6 +91,7 @@ export function suggestTrims(
   for (const s of sections) {
     if (s.tokens >= minTokens) { eligible.push(s,); }
   }
+
   if (eligible.length === 0) { return []; }
   eligible.sort((a, b,) => b.tokens - a.tokens);
 
@@ -105,5 +106,6 @@ export function suggestTrims(
         : `Section "${s.name}" uses ~${s.tokens.toLocaleString()} tokens — consider trimming it.`,
     },);
   }
+
   return out;
 }

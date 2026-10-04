@@ -57,20 +57,24 @@ describe("step-pipeline", () => {
       .insertInto("users",)
       .values({ id: "user-1", username: "user-1", display_name: "User 1", },)
       .execute();
+
     await db
       .insertInto("actors",)
       .values({ id: "actor-1", display_name: "Actor 1", },)
       .execute();
+
     await db
       .insertInto("chats",)
       .values({ id: "chat-1", name: "Chat 1", created_by: "user-1", },)
       .execute();
+
     await db
       .insertInto("messages",)
       .values(
         { id: "msg-1", chat_id: "chat-1", actor_id: "actor-1", role: "user", content: "hello", },
       )
       .execute();
+
     await db
       .insertInto("generation_attempts",)
       .values({

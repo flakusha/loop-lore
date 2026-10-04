@@ -53,6 +53,7 @@ describe("test-run-id uniqueness under crypto.randomUUID", () => {
       expect(ids.has(id,), `collision at iteration ${i}`,).toBe(false,);
       ids.add(id,);
     }
+
     expect(ids.size,).toBe(1000,);
   });
 });
@@ -66,6 +67,7 @@ describe("sqliteInMemory pragma behavior", () => {
     const row = sqlite
       .query("PRAGMA journal_mode",)
       .get() as { journal_mode: string };
+
     expect(row.journal_mode.toLowerCase(),).toBe("memory",);
     sqlite.close();
   });
@@ -76,6 +78,7 @@ describe("sqliteInMemory pragma behavior", () => {
     const row = sqlite
       .query("PRAGMA foreign_keys",)
       .get() as { foreign_keys: number };
+
     expect(row.foreign_keys,).toBe(1,);
     sqlite.close();
   });

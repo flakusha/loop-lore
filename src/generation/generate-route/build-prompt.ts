@@ -90,6 +90,7 @@ export async function buildPrompt({
     includeExamples: wantsExamples,
     task: "chat-reply",
   },);
+
   let messages = assembled.messages;
   const systemPrompt = assembled.systemPrompt;
 
@@ -100,6 +101,7 @@ export async function buildPrompt({
         messages,
         assembled.tokenBudget,
       );
+
       if (didCompact) {
         messages = compacted;
       }

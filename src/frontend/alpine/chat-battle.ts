@@ -32,6 +32,7 @@ export const chatBattle: Partial<ChatState> & ThisType<ChatState> = {
         await this.executeQuickReply(command,);
       },
     },);
+
     this._battleVisible = true;
   },
 
@@ -44,6 +45,7 @@ export const chatBattle: Partial<ChatState> & ThisType<ChatState> = {
       destroyBattlePanel();
       this._battleRef = null;
     }
+
     this._battleVisible = false;
     this._battle = null;
   },

@@ -79,11 +79,13 @@ export class ResourceManager {
     if (this.liveIds.has(req.id,)) {
       throw new Error(`ResourceManager: duplicate id ${req.id}`,);
     }
+
     this.liveIds.add(req.id,);
     const handle = createInternalHandle<T>(req,);
     handle.onSettled = () => {
       this.liveIds.delete(req.id,);
     };
+
     const queue = this.queueFor(req.provider,);
     queue.push({ key: req.priority, handle: handle as InternalHandle<unknown>, },);
     this.kickDrain(req.provider,);
@@ -106,6 +108,7 @@ export class ResourceManager {
         }
       }
     }
+
     return this.running.cancelById(id, reason ?? "cancelled",);
   }
 
@@ -117,6 +120,7 @@ export class ResourceManager {
         entry.handle.cancel("forgotten provider",);
       }
     }
+
     this.running.cancelAll(provider, "forgotten provider",);
     this.queues.delete(provider,);
     this.limiters.delete(provider,);
@@ -134,6 +138,7 @@ export class ResourceManager {
       q = new PriorityQueue<QueueEntry>({ compare: (a, b,) => a.key - b.key, },);
       this.queues.set(provider, q,);
     }
+
     return q;
   }
 
@@ -148,6 +153,7 @@ export class ResourceManager {
       lim = new ConcurrencyLimiter({ max, },);
       this.limiters.set(provider, lim,);
     }
+
     return lim;
   }
 
@@ -161,6 +167,7 @@ export class ResourceManager {
     const p = this.drainQueue(provider,).finally(() => {
       this.drains.delete(provider,);
     },);
+
     this.drains.set(provider, p,);
     // Drop any rejection from the background drain promise.
     p.then(noop, noop,);
@@ -196,6 +203,7 @@ export class ResourceManager {
         release();
         continue;
       }
+
       queueMicrotask(() => {
         this.runOne(handle, release,)
           .catch(noop,)

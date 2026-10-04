@@ -33,6 +33,7 @@ export async function safeFetchWithRetry<T = unknown,>(
     if (result.status && result.status >= 400 && result.status < 500) {
       return result;
     }
+
     if (result.error.name === "AbortError" || result.error.message.includes("timed out",)) {
       return result;
     }

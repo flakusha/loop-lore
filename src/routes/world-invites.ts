@@ -66,6 +66,7 @@ async function isWorldOwner(
     .select("owner_id",)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   return Boolean(world,) && (world!.owner_id === userId || can(userRole, "admin.world",));
 }
 
@@ -99,9 +100,11 @@ export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api",) {
             expiresAt: body.expiresAt ?? null,
             maxUses: body.maxUses ?? null,
           },);
+
           if (!result.ok) {
             return jsonError({ message: result.error.message, status: HttpStatus.BadRequest, },);
           }
+
           log().info("Created world invite", { worldId, inviteId: result.value.id, },);
           return jsonCreated(result.value,);
         },
@@ -149,6 +152,7 @@ export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!result.ok) {
             return jsonError({ message: result.error.message, status: HttpStatus.NotFound, },);
           }
+
           log().info("Revoked world invite", { worldId, inviteId, },);
           return jsonNoContent();
         },
@@ -172,6 +176,7 @@ export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api",) {
               : (outcome.error.code === "expired" || outcome.error.code === "used_up"
                 ? HttpStatus.Gone
                 : HttpStatus.BadRequest);
+
             return jsonError({ message: outcome.error.message, status, },);
           }
 
@@ -180,6 +185,7 @@ export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api",) {
             userId,
             alreadyMember: outcome.alreadyMember,
           },);
+
           return jsonResponse({ worldId: outcome.worldId, alreadyMember: outcome.alreadyMember, },);
         },
         {

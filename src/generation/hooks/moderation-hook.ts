@@ -131,6 +131,7 @@ export class ModerationHook implements HookHandler {
         flags.llmEscalated = true;
       }
     }
+
     if (!flags) {
       return {
         handled: false,
@@ -218,6 +219,7 @@ export class ModerationHook implements HookHandler {
     if (!this.recorder) {
       this.recorder = this.auditRecorderFactory(context.db,);
     }
+
     return this.recorder;
   }
 

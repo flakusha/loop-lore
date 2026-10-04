@@ -34,6 +34,7 @@ describe("handleImport", () => {
     await insertUsers(db, "handle-import-user", "Handle Import User",);
     userId = (await db.selectFrom("users",).select("id",).where("username", "=", "handle-import-user",)
       .executeTakeFirstOrThrow()).id;
+
     uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-handle-import-",),);
   },);
 
@@ -48,6 +49,7 @@ describe("handleImport", () => {
       headers: { "content-type": "application/json", },
       body: JSON.stringify({},),
     },);
+
     const res = await handleImport(req, db, "",);
     expect(res.status,).toBe(401,);
   });
@@ -58,6 +60,7 @@ describe("handleImport", () => {
       headers: { "content-type": "application/json", },
       body: JSON.stringify({},),
     },);
+
     const res = await handleImport(req, db, userId,);
     expect(res.status,).toBe(400,);
   });
@@ -69,6 +72,7 @@ describe("handleImport", () => {
       method: "POST",
       body: fd,
     },);
+
     const res = await handleImport(req, db, userId,);
     expect(res.status,).toBe(400,);
   });
@@ -97,6 +101,7 @@ describe("handleImport", () => {
       group_only_greetings: [],
       extensions: {},
     },);
+
     const fd = new FormData();
     fd.append("file", new File([card,], "test.json", { type: "application/json", },),);
     const req = new Request("http://localhost/api/import", { method: "POST", body: fd, },);
@@ -124,6 +129,7 @@ describe("handleImport", () => {
       alternate_greetings: [],
       extensions: {},
     } as unknown as Parameters<typeof import("../../characters/charx").createCharx>[0];
+
     const buf = await createCharx(card, [{ path: "portrait.png", data: makeMinimalPng(2, 2,), },],);
     const fd = new FormData();
     fd.append("file", new File([buf as unknown as BlobPart,], "smoke.charx", { type: "application/octet-stream", },),);

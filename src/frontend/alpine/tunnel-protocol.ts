@@ -88,9 +88,11 @@ export function decodeFrame(data: unknown,): TunnelFrame | null {
   if ((type === "token" || type === "done") && "text" in frame && typeof frame.text === "string") {
     return { kind: type, id, text: frame.text, };
   }
+
   if (type === "error" && "message" in frame && typeof frame.message === "string") {
     return { kind: "error", id, message: frame.message, };
   }
+
   return null;
 }
 

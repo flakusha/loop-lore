@@ -91,6 +91,7 @@ export async function checkNsfwEligibility(opts: {
     .select(["content_rating",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   const actorContentRating = (actorRow?.content_rating ?? ContentRating.Sfw) as ContentRating;
 
   // Full pre-LLM gate (consent ledger + participant weakest link + base
@@ -107,6 +108,7 @@ export async function checkNsfwEligibility(opts: {
         "Generation blocked by NSFW precheck",
         { actorId, userId, reason: gate.reason, chatId, },
       );
+
       return { allowed: false, reason: gate.reason, actorContentRating, };
     }
   }
@@ -138,8 +140,10 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
         "Generation blocked by NSFW precheck",
         { actorId: fallbackActorId, userId, reason: eligibility.reason, chatId, },
       );
+
       return { allowed: false, dominantEmotion: undefined, moodShiftDelta: undefined, actorId: fallbackActorId, };
     }
+
     actorContentRating = eligibility.actorContentRating;
   }
 
@@ -151,15 +155,18 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
       .where("actor_id", "=", fallbackActorId,)
       .executeTakeFirst()
     : undefined;
+
   const nsfwPolicy = availability?.nsfw_policy
     ? jsonParseOr<Record<string, unknown>>(availability.nsfw_policy, {},).level as string | undefined
     : undefined;
+
   // Fetch user's max content rating from nsfw_user_preferences
   const userPrefs = await database
     .selectFrom("nsfw_user_preferences",)
     .select(["max_rating",],)
     .where("user_id", "=", userId,)
     .executeTakeFirst();
+
   const maxUserRating = userPrefs?.max_rating;
 
   // Fetch chat-level NSFW override
@@ -168,6 +175,7 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
     .select(["nsfw_override",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   const chatNsfwOverride = chatRow?.nsfw_override;
 
   // Determine which hook event types to run based on config
@@ -177,6 +185,7 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
     enableNsfwHooks: true,
     enableModerationHooks: true,
   };
+
   const enabledEventTypes: HookEventType[] = [];
   if (hooksConfig.enableMoodHooks) { enabledEventTypes.push("mood_shift",); }
   if (hooksConfig.enableEmotionHooks) { enabledEventTypes.push("emotion_change",); }
@@ -207,6 +216,7 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
     getLogger().child({ module: "auto-gen", },).warn("Generation blocked by content hooks", {
       reason: Array.from(hookResult.events, (e,) => e.reason,).join("; ",),
     },);
+
     return {
       allowed: false,
       dominantEmotion: undefined,
@@ -225,6 +235,7 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
   const moodShift = hookResult.events.find(
     (e,) => e.eventType === "mood_shift" && typeof e.data?.delta === "number",
   );
+
   const moodShiftDelta = moodShift && typeof moodShift.data?.delta === "number"
     ? moodShift.data.delta
     : undefined;

@@ -67,10 +67,12 @@ describe("chat-search transfer", () => {
         body: JSON.stringify({ locationId: locationA, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const chat = await db.selectFrom("chats",).select("current_location_id",).where("id", "=", chatId,)
       .executeTakeFirst();
+
     expect(chat?.current_location_id,).toBe(locationA,);
   });
 
@@ -83,6 +85,7 @@ describe("chat-search transfer", () => {
         body: JSON.stringify({ locationId: otherWorldLocation, },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -95,6 +98,7 @@ describe("chat-search transfer", () => {
         body: JSON.stringify({ locationId: locationA, },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -107,6 +111,7 @@ describe("chat-search transfer", () => {
         body: JSON.stringify({ locationId: locationA, },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 });

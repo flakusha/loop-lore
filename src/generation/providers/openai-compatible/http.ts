@@ -95,9 +95,11 @@ export function buildBody(
     if (value === undefined || key === "__proto__" || key === "constructor" || key === "prototype") {
       continue;
     }
+
     if (Object.hasOwn(body, key,) || Object.hasOwn(body, toSnakeCase(key,),)) {
       continue;
     }
+
     body[key] = value;
   }
 
@@ -115,6 +117,7 @@ export function combineAbortSignals(...signals: AbortSignal[]): AbortSignal {
       controller.abort(signal.reason,);
       return controller.signal;
     }
+
     signal.addEventListener(
       "abort",
       () => {
@@ -123,6 +126,7 @@ export function combineAbortSignals(...signals: AbortSignal[]): AbortSignal {
       { once: true, },
     );
   }
+
   return controller.signal;
 }
 
@@ -219,21 +223,26 @@ export async function handleErrorResponse(response: Response,): Promise<never> {
     case 401: {
       throw new ProviderAuthError(message,);
     }
+
     case 429: {
       const retryAfter = response.headers.get("retry-after",);
       throw new ProviderRateLimitError(retryAfter ? Number(retryAfter,) : undefined,);
     }
+
     case 400: {
       throw new ProviderError(message, undefined, 400, false,);
     }
+
     case 422: {
       throw new ProviderError(message, undefined, 422, false,);
     }
+
     case 500:
     case 502:
     case 503: {
       throw new ProviderError(message, undefined, response.status, true,);
     }
+
     default: {
       throw new ProviderError(message, undefined, response.status, response.status >= 500,);
     }

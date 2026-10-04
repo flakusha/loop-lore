@@ -56,6 +56,7 @@ export async function browserEncryptContent(
     key,
     data as Uint8Array<ArrayBuffer>,
   );
+
   return {
     ciphertext: uint8ArrayToBase64(new Uint8Array(encrypted,),),
     nonce: uint8ArrayToBase64(nonce,),
@@ -83,6 +84,7 @@ export async function browserDecryptContent(
     key,
     encryptedData as Uint8Array<ArrayBuffer>,
   );
+
   return uint8ArrayToString(new Uint8Array(decrypted,),);
 }
 

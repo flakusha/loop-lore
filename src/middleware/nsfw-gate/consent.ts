@@ -139,6 +139,7 @@ export async function checkNsfwWithConsent(
 
   const enforcement = context.enforcement ??
     await buildEnforcement(database, actorId, effectiveUserId, chatId,);
+
   const consent = emptyConsent();
   if (context.consentGranted) {
     recordConsentAction(consent, "given", {

@@ -154,6 +154,7 @@ describe("renderCurrentScene structure", () => {
         },),
       ],
     },),], 0,);
+
     await renderCurrentScene(false, spyNavigator().nav,);
     const items = withFiles.querySelector(".vn-attachments-grid",)!.children;
     expect(items,).toHaveLength(2,);

@@ -32,6 +32,7 @@ function buildMigrationProvider() {
       const migrationFiles = readdirSync(migrationDir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const f of migrationFiles) {
         // Dynamic import: the migration filename is runtime-selected from
@@ -40,6 +41,7 @@ function buildMigrationProvider() {
         const mod = await import(path.join(migrationDir, f,));
         migrations[f.endsWith(".ts",) ? f.slice(0, -3,) : f] = mod.default !== undefined ? mod.default : mod;
       }
+
       return migrations;
     },
   };
@@ -57,6 +59,7 @@ async function seedActor(db: Kysely<DB>, id: string, userId: string,): Promise<v
     display_name: userId,
     password_hash: "dummy",
   },).execute();
+
   await db.insertInto("actors",).values({
     id,
     actor_type: "user",
@@ -120,6 +123,7 @@ describe("registerPublicKey", () => {
       actorId: OWNER_ID,
       publicKeyJwk: sampleJwk(1,),
     },);
+
     expect(row.actorId,).toBe(OWNER_ID,);
     expect(row.algorithm,).toBe("ECDH-P256",);
     expect(row.publicKeyJwk.x,).toBe(sampleJwk(1,).x,);
@@ -139,6 +143,7 @@ describe("registerPublicKey", () => {
     // The first row stays in the table, soft-revoked.
     const historical = await db.selectFrom("actor_e2e_pubkeys",).selectAll().where("id", "=", first.id,)
       .executeTakeFirstOrThrow();
+
     expect(historical.revoked_at,).not.toBeNull();
   });
 
@@ -152,6 +157,7 @@ describe("registerPublicKey", () => {
     await registerPublicKey({ database: db, actorId: OWNER_ID, publicKeyJwk: sampleJwk(2,), },);
     const firstRow = await db.selectFrom("actor_e2e_pubkeys",).selectAll().where("id", "=", first.id,)
       .executeTakeFirstOrThrow();
+
     expect(firstRow.revoked_at,).toBe("2026-01-01 00:00:00",);
   });
 
@@ -164,9 +170,11 @@ describe("registerPublicKey", () => {
       .where("actor_id", "=", OWNER_ID,)
       .where("revoked_at", "is", null,)
       .execute();
+
     expect(activeRows.length,).toBe(1,);
     expect(activeRows[0]?.id,).not.toBe(first.id,);
   });
+
   test("returns null when no key registered", async () => {
     const row = await getActivePublicKey({ database: db, actorId: OWNER_ID, },);
     expect(row,).toBeNull();

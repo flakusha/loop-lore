@@ -104,9 +104,11 @@ async function classifyWithAuxLlm(
   const messages: { role: "system" | "user"; content: string }[] = [
     { role: "system" as const, content: resolveSystemPrompt(config.templates.llm, "transition",), },
   ];
+
   for (const m of recentMessages) {
     messages.push({ role: "user" as const, content: m.slice(0, 200,), },);
   }
+
   messages.push({ role: "user" as const, content, },);
 
   // Shared AUX policy: 2s timeout, 0.0 temperature, 100 max tokens, BYO key
@@ -115,6 +117,7 @@ async function classifyWithAuxLlm(
     temperature: 0,
     maxTokens: 100,
   },);
+
   if (!response) {
     return null;
   }

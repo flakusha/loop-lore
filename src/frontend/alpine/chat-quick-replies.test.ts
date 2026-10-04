@@ -82,6 +82,7 @@ function buildCtx(
     // dispatch through the real command path against this ctx.
     executeQuickReply: (command: string,) => chatQuickReplies.executeQuickReply!.call(ctx, command,),
   };
+
   return { ctx, sends, };
 }
 
@@ -100,6 +101,7 @@ describeOrSkip("chatQuickReplies.fireAutoQuickReplies", () => {
         { label: "plan", command: "/plan", trigger: "user", },
       ],
     },);
+
     await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "user",);
     expect(sends,).toEqual(["/hello", "/plan",],);
   });
@@ -109,6 +111,7 @@ describeOrSkip("chatQuickReplies.fireAutoQuickReplies", () => {
       quickReplies: [{ label: "p", command: "/p", trigger: "user", },],
       autoFired: true,
     },);
+
     await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "user",);
     expect(sends,).toEqual([],);
   });
@@ -118,6 +121,7 @@ describeOrSkip("chatQuickReplies.fireAutoQuickReplies", () => {
       quickReplies: [{ label: "p", command: "/p", trigger: "ai", },],
       lastAutoFireAt: Date.now(),
     },);
+
     await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "ai",);
     expect(sends,).toEqual([],);
   });
@@ -127,6 +131,7 @@ describeOrSkip("chatQuickReplies.fireAutoQuickReplies", () => {
       quickReplies: [{ label: "p", command: "/p", trigger: "ai", },],
       lastAutoFireAt: Date.now() - AUTO_FIRE_MIN_INTERVAL_MS - 10,
     },);
+
     await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "ai",);
     expect(sends,).toEqual(["/p",],);
   });
@@ -136,6 +141,7 @@ describeOrSkip("chatQuickReplies.fireAutoQuickReplies", () => {
       quickReplies: [{ label: "p", command: "/p", trigger: "ai", },],
       consecutiveAutoFires: AUTO_FIRE_MAX_CONSECUTIVE,
     },);
+
     await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "ai",);
     expect(sends,).toEqual([],);
   });
@@ -151,6 +157,7 @@ describeOrSkip("chatQuickReplies.fireAutoQuickReplies", () => {
       ],
       consecutiveAutoFires: AUTO_FIRE_MAX_CONSECUTIVE - 1,
     },);
+
     await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "ai",);
     expect(sends,).toEqual(["/p", "/q",],); // batch runs, counter 4→5→6
     await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "ai",);
@@ -249,6 +256,7 @@ describeOrSkip("chatQuickReplies.executeQuickReply — guards", () => {
     ctx.sendMessage = async function() {
       sends.push("/greet",);
     };
+
     await chatQuickReplies.executeQuickReply!.call(ctx, "/greet",);
     expect(sends,).toEqual(["/greet",],);
   });
@@ -261,6 +269,7 @@ describeOrSkip("chatQuickReplies.fireStartupQuickReplies", () => {
     const { ctx, sends, } = buildCtx({
       quickReplies: [{ label: "s", command: "/start", trigger: "startup", },],
     },);
+
     await chatQuickReplies.fireStartupQuickReplies!.call(ctx,);
     expect(sends,).toEqual(["/start",],);
     expect(ctx._startupFiredChat,).toBe("chat-1",);
@@ -275,6 +284,7 @@ describeOrSkip("chatQuickReplies.fireStartupQuickReplies", () => {
         { label: "e", command: "", trigger: "startup", },
       ],
     },);
+
     await chatQuickReplies.fireStartupQuickReplies!.call(ctx,);
     expect(sends,).toEqual([],);
   });
@@ -283,6 +293,7 @@ describeOrSkip("chatQuickReplies.fireStartupQuickReplies", () => {
     const { ctx, sends, } = buildCtx({
       quickReplies: [{ label: "s", command: "/start", trigger: "startup", },],
     },);
+
     ctx.activeChat = "";
     await chatQuickReplies.fireStartupQuickReplies!.call(ctx,);
     expect(sends,).toEqual([],);
@@ -297,6 +308,7 @@ describeOrSkip("chatQuickReplies.fireAutoQuickReplies — guards", () => {
     const { ctx, sends, } = buildCtx({
       quickReplies: [{ label: "p", command: "/p", trigger: "user", },],
     },);
+
     ctx.activeChat = "";
     await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "user",);
     expect(sends,).toEqual([],);
@@ -306,6 +318,7 @@ describeOrSkip("chatQuickReplies.fireAutoQuickReplies — guards", () => {
     const { ctx, sends, } = buildCtx({
       quickReplies: [{ label: "p", command: "/p", trigger: "ai", },],
     },);
+
     await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "user",);
     expect(sends,).toEqual([],);
   });
@@ -348,6 +361,7 @@ describeOrSkip("chatQuickReplies.saveQuickReplies — edges", () => {
     ctx.$dispatch = (event: string, detail?: unknown,) => {
       toasts.push({ event, detail, },);
     };
+
     await chatQuickReplies.saveQuickReplies!.call(ctx,);
     expect(ctx.chats[0]!.quick_replies,).toBe(JSON.stringify([{ label: "greet", command: "/hello", },],),);
     expect(toasts.length,).toBe(1,);
@@ -363,6 +377,7 @@ describeOrSkip("chatQuickReplies.saveQuickReplies — edges", () => {
     ctx.$dispatch = (event: string, detail?: unknown,) => {
       toasts.push({ event, detail, },);
     };
+
     await chatQuickReplies.saveQuickReplies!.call(ctx,);
     expect(toasts.length,).toBe(1,);
     expect(toasts[0]!.event,).toBe("show-toast",);

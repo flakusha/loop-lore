@@ -41,6 +41,7 @@ export const hardcodedDecision: GmDecisionStrategy = (deps, context, actorId,) =
   if (deps.gmGuidance?.constraints?.length) {
     promptParts.push(`GM guidance — constraints: ${deps.gmGuidance.constraints.join("; ",)}`,);
   }
+
   if (deps.gmGuidance?.sceneDescription) {
     promptParts.push(`GM scene direction: ${deps.gmGuidance.sceneDescription}`,);
   }

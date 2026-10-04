@@ -25,6 +25,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(rpgRoutes({ database: db, config: {} as never, },),);
 }
 
@@ -49,6 +50,7 @@ describe("RPG stats routes", () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/rpg/stats/${ACTOR_ID}`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -56,6 +58,7 @@ describe("RPG stats routes", () => {
     const res = await makeApp(db, "user-1", "user",).handle(
       new Request(`http://localhost/api/rpg/stats/${ACTOR_ID}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -63,6 +66,7 @@ describe("RPG stats routes", () => {
     const res = await makeApp(db, "user-2", "user",).handle(
       new Request(`http://localhost/api/rpg/stats/${ACTOR_ID}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -79,6 +83,7 @@ describe("RPG stats routes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json() as { id: string; actorId: string };
     expect(body.id,).toBeDefined();
@@ -89,6 +94,7 @@ describe("RPG stats routes", () => {
     const res = await makeApp(db, "user-1", "user",).handle(
       new Request(`http://localhost/api/rpg/stats/${ACTOR_ID}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { hp: number; maxHp: number; str: number };
     expect(body.hp,).toBe(20,);
@@ -104,6 +110,7 @@ describe("RPG stats routes", () => {
         body: JSON.stringify({ hp: 10, maxHp: 10, ac: 10, },),
       },),
     );
+
     expect(res.status,).toBe(409,);
   });
 
@@ -115,6 +122,7 @@ describe("RPG stats routes", () => {
         body: JSON.stringify({ hp: 15, str: 18, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { hp: number; str: number; maxHp: number };
     expect(body.hp,).toBe(15,);
@@ -130,6 +138,7 @@ describe("RPG stats routes", () => {
         body: JSON.stringify({ hp: 5, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -137,6 +146,7 @@ describe("RPG stats routes", () => {
     const res = await makeApp(db, "admin-user", "admin",).handle(
       new Request(`http://localhost/api/rpg/stats/${ACTOR_ID}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { hp: number };
     expect(body.hp,).toBe(15,); // updated from PATCH test

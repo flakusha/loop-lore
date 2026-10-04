@@ -78,6 +78,7 @@ export const actorWardrobe: ActorWardrobeState = {
         apiFetch(`/api/v1/actors/${actorId}/wardrobe`,),
         apiFetch(`/api/v1/actors/${actorId}/avatars`,),
       ],);
+
       // Rejections keep the old Promise.all semantics: surface loadError.
       if (itemsRes.status === "rejected") { throw itemsRes.reason; }
       if (avatarsRes.status === "rejected") { throw avatarsRes.reason; }
@@ -85,6 +86,7 @@ export const actorWardrobe: ActorWardrobeState = {
         this.loadError = t("status.wardrobeLoadFailed",);
         return;
       }
+
       this.outfits = (await itemsRes.value.json()) as WardrobeOutfit[];
       if (avatarsRes.value.ok) {
         this.variants = (await avatarsRes.value.json()) as WardrobeVariant[];
@@ -120,6 +122,7 @@ export const actorWardrobe: ActorWardrobeState = {
       this.error = t("status.wardrobeNameRequired",);
       return;
     }
+
     this.busy = true;
     this.error = "";
     this.message = "";
@@ -129,20 +132,24 @@ export const actorWardrobe: ActorWardrobeState = {
         descriptor: this.draft.descriptor.trim(),
         tags: parseTagsInput(this.draft.tagsInput,),
       };
+
       const editingId = this.draft.editingId;
       const url = editingId
         ? `/api/v1/actors/${actorId}/wardrobe/${editingId}`
         : `/api/v1/actors/${actorId}/wardrobe`;
+
       const res = await apiFetch(url, {
         method: editingId ? "PUT" : "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(payload,),
       },);
+
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { message?: string };
         this.error = body.message ?? t("status.wardrobeSaveFailed",);
         return;
       }
+
       this.message = editingId ? t("status.wardrobeUpdated",) : t("status.wardrobeCreated",);
       this.draft = emptyDraft();
       await this.load();
@@ -166,6 +173,7 @@ export const actorWardrobe: ActorWardrobeState = {
         this.error = t("status.wardrobeDeleteFailed",);
         return;
       }
+
       if (this.draft.editingId === outfitId) { this.draft = emptyDraft(); }
       await this.load();
     } catch (error) {
@@ -185,6 +193,7 @@ export const actorWardrobe: ActorWardrobeState = {
       if (bucket) { bucket.push(variant,); }
       else { groups.set(key, [variant,],); }
     }
+
     return Array.from(groups.entries(),)
       .map(([outfitId, variants,],) => ({
         outfitId,

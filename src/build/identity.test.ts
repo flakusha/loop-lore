@@ -146,6 +146,7 @@ describe("computeBuildIdentity — sensitivity", () => {
       join(tempDir, "tree", "feature", "src", "index.ts",),
       "export const other = 99;\n",
     );
+
     __resetBuildIdentityForTests();
     const after = await computeBuildIdentity({ projectRoot: tempDir, },);
     expect(after.sourceTreeHash,).toBe(before.sourceTreeHash,);
@@ -193,6 +194,7 @@ describe("buildIdRoutes — public endpoint", () => {
     const res = await app.handle(
       new Request("http://localhost/.well-known/loop-lore/build-id",),
     );
+
     expect(res.status,).toBe(200,);
     const text = await res.text();
     expect(text,).toMatch(/"buildHash":"[0-9a-f]{64}"/,);
@@ -218,6 +220,7 @@ describe("buildIdRoutes — admin endpoint", () => {
     const app = new Elysia()
       .derive(() => ({ userId: "test-admin", userRole: "admin", }))
       .use(buildIdRoutes({ projectRoot: tempDir, },),);
+
     const res = await app.handle(new Request("http://localhost/api/admin/build-id",),);
     expect(res.status,).toBe(200,);
     const text = await res.text();
@@ -232,6 +235,7 @@ describe("buildIdRoutes — admin endpoint", () => {
     const app = new Elysia()
       .derive(() => ({ userId: "test-user", userRole: "user", }))
       .use(buildIdRoutes({ projectRoot: tempDir, },),);
+
     const res = await app.handle(new Request("http://localhost/api/admin/build-id",),);
     expect(res.status,).toBe(403,);
   });

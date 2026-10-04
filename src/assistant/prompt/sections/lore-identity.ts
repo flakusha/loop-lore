@@ -47,6 +47,7 @@ export async function resolveActorIdentity(
         .execute()
       : Promise.resolve([] as { discipline: string }[],),
   ],);
+
   const traitMetaResult = identityResults[0];
   const professionResult = identityResults[1];
   if (traitMetaResult.status === "rejected") { throw traitMetaResult.reason; }
@@ -60,6 +61,7 @@ export async function resolveActorIdentity(
       professions.add(t.trait_value,);
     }
   }
+
   for (const row of professionRows) {
     professions.add(row.discipline,);
   }

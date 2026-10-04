@@ -76,6 +76,7 @@ function buildActive(overrides: Partial<ActiveGeneration> = {},): ActiveGenerati
     ...overrides,
   } as unknown as ActiveGeneration;
 }
+
 /**
  * Register a stub policy detector that always reports a mismatch.
  */
@@ -107,9 +108,11 @@ async function waitForCancelDetail(db: Kysely<DB>, attemptId: string,): Promise<
       .select("cancel_reason_detail",)
       .where("id", "=", attemptId,)
       .executeTakeFirst();
+
     if (row?.cancel_reason_detail) { return row.cancel_reason_detail; }
     await new Promise((resolve,) => setTimeout(resolve, 10,));
   }
+
   return null;
 }
 
@@ -122,11 +125,14 @@ async function seedAttemptParents(db: Kysely<DB>,): Promise<void> {
   await db.insertInto("users",).values(
     { id: "user-x", username: "attempt-user", display_name: "Attempt User", } as never,
   ).orIgnore().execute();
+
   await db.insertInto("actors",).values(
     { id: "actor-1", display_name: "Actor", user_id: "user-x", owner_id: "user-x", } as never,
   ).orIgnore().execute();
+
   await db.insertInto("chats",).values({ id: "chat-1", name: "Chat", created_by: "user-x", } as never,).orIgnore()
     .execute();
+
   await db.insertInto("messages",).values(
     { id: "msg-1", chat_id: "chat-1", actor_id: "actor-1", role: MessageRole.Assistant, content: "parent", } as never,
   ).orIgnore().execute();
@@ -147,6 +153,7 @@ function spyOnWarnings(warnings: string[],): Logger {
     },
     error: () => {},
   } as unknown as Logger;
+
   setGlobalLogger(spy,);
   return previous;
 }
@@ -170,6 +177,7 @@ describe("processStreamingChunk", () => {
       chunk: "hello",
       db,
     },);
+
     expect(result,).toBe(ChunkAction.Complete,);
   });
 
@@ -183,6 +191,7 @@ describe("processStreamingChunk", () => {
       chunk: "ignored",
       db,
     },);
+
     expect(result,).toBe(ChunkAction.Complete,);
   });
 
@@ -209,6 +218,7 @@ describe("processStreamingChunk", () => {
       chunksReceived: 3,
       charsReceived: 100,
     },);
+
     activeGenerations.set(active.attemptId, active,);
 
     const result = await processStreamingChunk({
@@ -230,6 +240,7 @@ describe("processStreamingChunk", () => {
       chunksReceived: 4,
       policyConfig: { expectedPolicy: "" as PolicyType, cancel: true, },
     },);
+
     activeGenerations.set(active.attemptId, active,);
 
     const result = await processStreamingChunk({
@@ -249,6 +260,7 @@ describe("processStreamingChunk", () => {
       chunksReceived: 4,
       policyConfig: { expectedPolicy: PolicyType.Sfw, cancel: true, },
     },);
+
     activeGenerations.set(active.attemptId, active,);
 
     const result = await processStreamingChunk({
@@ -271,6 +283,7 @@ describe("processStreamingChunk", () => {
       attemptId: "rep-cancel",
       status: GenerationStatus.Streaming,
     },);
+
     activeGenerations.set(active.attemptId, active,);
 
     const result = await processStreamingChunk({
@@ -295,6 +308,7 @@ describe("processStreamingChunk", () => {
       attemptId: "rep-mild",
       status: GenerationStatus.Streaming,
     },);
+
     activeGenerations.set(active.attemptId, active,);
 
     const result = await processStreamingChunk({
@@ -314,6 +328,7 @@ describe("processStreamingChunk", () => {
       ChunkAction.CancelResponseLimit,
       ChunkAction.Complete,
     ],).toContain(result,);
+
     if (result === ChunkAction.Continue) {
       expect(activeGenerations.has("rep-mild",),).toBe(true,);
     } else {
@@ -326,6 +341,7 @@ describe("processStreamingChunk", () => {
       onStreamingStart: mock<NonNullable<GenerationEvents["onStreamingStart"]>>(() => {},),
       onChunk: mock<NonNullable<GenerationEvents["onChunk"]>>(() => {},),
     };
+
     const active = buildActive({ attemptId: "events", events, },);
     activeGenerations.set(active.attemptId, active,);
 
@@ -348,6 +364,7 @@ describe("processStreamingChunk", () => {
       attemptId: "rep-event",
       events: { onRepetitionDetected, },
     },);
+
     activeGenerations.set(active.attemptId, active,);
 
     const result = await processStreamingChunk({
@@ -382,6 +399,7 @@ describe("processStreamingChunk", () => {
       chunksReceived: 4,
       policyConfig: { expectedPolicy: PolicyType.Sfw, cancel: true, },
     },);
+
     activeGenerations.set(active.attemptId, active,);
 
     const result = await processStreamingChunk({
@@ -407,6 +425,7 @@ describe("processStreamingChunk", () => {
         chunksReceived: 4,
         policyConfig: { expectedPolicy: PolicyType.Sfw, cancel: false, },
       },);
+
       activeGenerations.set(active.attemptId, active,);
 
       const result = await processStreamingChunk({
@@ -431,6 +450,7 @@ describe("processStreamingChunk", () => {
       chunksReceived: 9,
       policyConfig: { expectedPolicy: PolicyType.Sfw, cancel: true, },
     },);
+
     activeGenerations.set(active.attemptId, active,);
 
     const result = await processStreamingChunk({
@@ -461,6 +481,7 @@ describe("processStreamingChunk", () => {
       chunksReceived: 4,
       policyConfig: { expectedPolicy: PolicyType.Nsfw, cancel: true, },
     },);
+
     activeGenerations.set(active.attemptId, active,);
 
     const result = await processStreamingChunk({
@@ -518,6 +539,7 @@ describe("processStreamingChunk", () => {
       chunksReceived: 4,
       policyConfig: { expectedPolicy: PolicyType.Sfw, cancel: true, },
     },);
+
     activeGenerations.set(active.attemptId, active,);
     await failDb.destroy();
 

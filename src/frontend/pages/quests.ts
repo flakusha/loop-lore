@@ -48,6 +48,7 @@ globalThis.questsPage = function() {
           const wRes = await feFetch(`/api/v1/worlds/${this.worldId}`, {
             headers: { Accept: "application/json", },
           },);
+
           if (!wRes.ok) {
             globalThis.location.assign("/views/quests",);
             return;
@@ -56,6 +57,7 @@ globalThis.questsPage = function() {
           globalThis.location.assign("/views/quests",);
           return;
         }
+
         await this.loadQuests();
       } else {
         await this.loadWorlds();
@@ -86,15 +88,18 @@ globalThis.questsPage = function() {
           `/api/v1/worlds/${this.worldId}/quests?page=${this.page}&pageSize=${this.pageSize}`,
           { headers: { Accept: "application/json", }, },
         );
+
         if (res.ok) {
           const data = await res.json();
           this.quests = data.data || [];
           this.total = data.total || 0;
         }
+
         if (!this.worldName) {
           const wRes = await feFetch(`/api/v1/worlds/${this.worldId}`, {
             headers: { Accept: "application/json", },
           },);
+
           if (wRes.ok) {
             const wData = await wRes.json();
             this.worldName = wData.name || "";
@@ -122,11 +127,13 @@ globalThis.questsPage = function() {
           category: this.createCategory,
           priority: Number(this.createPriority,) || 5,
         };
+
         const res = await feFetch(`/api/v1/worlds/${this.worldId}/quests`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody(body,),
         },);
+
         if (res.ok) {
           showToast("success", "Quest created",);
           this.showCreateForm = false;
@@ -178,6 +185,7 @@ globalThis.questsPage = function() {
         this.expandedQuest = "";
         return;
       }
+
       this.expandedQuest = questId;
       const q = this.quests.find((x: QuestRow,) => x.id === questId);
       if (q) {
@@ -198,6 +206,7 @@ globalThis.questsPage = function() {
             priority: Number(this.editPriority,) || 5,
           },),
         },);
+
         if (res.ok) {
           showToast("success", "Quest updated",);
           this.expandedQuest = "";
@@ -217,6 +226,7 @@ globalThis.questsPage = function() {
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ delta: Number(this.advanceDelta,) || 1, },),
         },);
+
         if (res.ok) {
           const entry = await res.json();
           const q = this.quests.find((x: QuestRow,) => x.id === questId);

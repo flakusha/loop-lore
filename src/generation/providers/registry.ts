@@ -34,6 +34,7 @@ export function registerProvider(name: string, provider: LLMProvider,): void {
   if (registry.has(name,)) {
     return; // Idempotent — already registered (e.g. from test setup or previous init)
   }
+
   registry.set(name, provider,);
 }
 
@@ -195,10 +196,12 @@ export function buildFailoverList(
         result.push({ name: instance.name, provider: registry.get(instance.name,)!, },);
       }
     }
+
     const anthropic = config.generation.providers.anthropic;
     if (anthropic && anthropic.name !== primaryName && registry.has(anthropic.name,)) {
       result.push({ name: anthropic.name, provider: registry.get(anthropic.name,)!, },);
     }
+
     const ollama = config.generation.providers.ollamaNative;
     if (ollama && ollama.name !== primaryName && registry.has(ollama.name,)) {
       result.push({ name: ollama.name, provider: registry.get(ollama.name,)!, },);
@@ -223,11 +226,13 @@ export function initializeProviders(config: Config,): void {
     registerProvider(instance.name, provider,);
     circuitBreaker.register(instance.name,);
   }
+
   if (config.generation.providers.anthropic && !getProvider(config.generation.providers.anthropic.name,)) {
     const provider = new AnthropicProvider(config.generation.providers.anthropic,);
     registerProvider(config.generation.providers.anthropic.name, provider,);
     circuitBreaker.register(config.generation.providers.anthropic.name,);
   }
+
   if (
     config.generation.providers.ollamaNative &&
     !getProvider(config.generation.providers.ollamaNative.name,)

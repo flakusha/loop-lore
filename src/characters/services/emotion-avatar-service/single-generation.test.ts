@@ -46,6 +46,7 @@ if (ISOLATED) {
       if (providerShouldFail) {
         return { ok: false, error: "provider exploded", status: 502, };
       }
+
       return {
         ok: true,
         images: [Buffer.from("fake-png", "utf8",),],
@@ -53,9 +54,11 @@ if (ISOLATED) {
       };
     },
   }),);
+
   mock.module("../../../generation/matting/auto-matte", () => ({
     enqueueAutoMatting: async () => undefined,
   }),);
+
   ({ generateEmotionAvatar, } = await import("./single-generation"));
 }
 
@@ -79,9 +82,11 @@ describeOrSkip("generateEmotionAvatar", () => {
           outfitId: opts.outfitId as string | undefined,
           assetId: opts.assetId as string,
         },);
+
         return `avatar-${createdAvatars.length}`;
       },
     } as unknown as AvatarService;
+
     return {
       db,
       avatarService,
@@ -131,6 +136,7 @@ describeOrSkip("generateEmotionAvatar", () => {
       uploadDir: "/tmp",
       promptPrefix: "a lone traveler",
     },);
+
     expect(calls[0]?.prompt,).toBe(`a lone traveler, mod(${EmotionType.Sad})`,);
   });
 
@@ -143,6 +149,7 @@ describeOrSkip("generateEmotionAvatar", () => {
       uploadDir: "/tmp",
       outfitId,
     },);
+
     expect(calls[0]?.prompt,).toBe(
       `character portrait, flowing crimson silk, mod(${EmotionType.Angry}), detailed face, high quality`,
     );
@@ -158,6 +165,7 @@ describeOrSkip("generateEmotionAvatar", () => {
       promptPrefix: "an anchor",
       outfitId: "outfit-that-was-deleted",
     },);
+
     // Descriptor lookup missed, so the slot collapses to nothing.
     expect(calls[0]?.prompt,).toBe(`an anchor, mod(${EmotionType.Happy})`,);
   });
@@ -178,6 +186,7 @@ describeOrSkip("generateEmotionAvatar", () => {
     } finally {
       providerShouldFail = false;
     }
+
     expect(createdAvatars,).toHaveLength(0,);
   });
 

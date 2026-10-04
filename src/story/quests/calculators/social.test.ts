@@ -18,6 +18,7 @@ describe("story/quests/calculators/social (0% -> real)", () => {
       ),
     ).toBe(0,);
   });
+
   it("returns 0 for wrong event type", () => {
     expect(
       calculateSocialProgress(
@@ -34,6 +35,7 @@ describe("story/quests/calculators/social (0% -> real)", () => {
       ),
     ).toBe(0,);
   });
+
   it("returns 25 for target actor interaction with 4 interactions", () => {
     expect(
       calculateSocialProgress(

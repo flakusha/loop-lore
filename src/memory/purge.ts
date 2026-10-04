@@ -45,6 +45,7 @@ export async function applyDecay(
   const auditEntries: Array<
     { memoryId: string; actorId: string; userId: null; action: "decay"; details: Record<string, unknown> }
   > = [];
+
   for (const mem of memories) {
     // last_accessed_at may be NULL (never accessed / legacy rows). Fall back
     // to created_at, then to now — never the UUID id (new Date(uuid) is
@@ -61,6 +62,7 @@ export async function applyDecay(
         .set({ strength: newStrength, },)
         .where("id", "=", mem.id,)
         .execute();
+
       auditEntries.push({
         memoryId: mem.id,
         actorId: mem.actor_id,
@@ -73,6 +75,7 @@ export async function applyDecay(
           elapsedDays,
         },
       },);
+
       affected++;
     }
   }
@@ -81,6 +84,7 @@ export async function applyDecay(
     getLog().info("Applied memory decay", { affected, },);
     await recordAuditLog(db, auditEntries,);
   }
+
   return affected;
 }
 
@@ -123,6 +127,7 @@ export async function purgeStaleMemories(
     const auditEntries: Array<
       { memoryId: string; actorId: string; userId: null; action: "purge"; details: Record<string, unknown> }
     > = [];
+
     for (const mem of toDelete) {
       await db.deleteFrom("actor_memories",).where("id", "=", mem.id,).execute();
       auditEntries.push({
@@ -132,6 +137,7 @@ export async function purgeStaleMemories(
         action: "purge",
         details: { reason: "hard_delete", staleAfterChats, minConfidence, minStrength, },
       },);
+
       deleted++;
     }
 
@@ -139,6 +145,7 @@ export async function purgeStaleMemories(
       getLog().info("Purged stale memories", { deleted, staleAfterChats, },);
       await recordAuditLog(db, auditEntries,);
     }
+
     return { stale: deleted, deleted, };
   }
 
@@ -161,12 +168,14 @@ export async function purgeStaleMemories(
   const decayAudit: Array<
     { memoryId: string; actorId: string; userId: null; action: "decay"; details: Record<string, unknown> }
   > = [];
+
   for (const mem of toMark) {
     await db
       .updateTable("actor_memories",)
       .set({ confidence: 0.01, },)
       .where("id", "=", mem.id,)
       .execute();
+
     decayAudit.push({
       memoryId: mem.id,
       actorId: mem.actor_id,
@@ -174,6 +183,7 @@ export async function purgeStaleMemories(
       action: "decay",
       details: { reason: "soft_stale", staleAfterChats, minConfidence, minStrength, },
     },);
+
     stale++;
   }
 
@@ -181,6 +191,7 @@ export async function purgeStaleMemories(
     getLog().info("Marked memories as stale", { stale, staleAfterChats, },);
     await recordAuditLog(db, decayAudit,);
   }
+
   return { stale, deleted: 0, };
 }
 

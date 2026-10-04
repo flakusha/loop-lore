@@ -40,6 +40,7 @@ async function nameTaken(
   const taken = await sql<{ n: number }>`
     SELECT COUNT(*) AS n FROM chat_branches WHERE chat_id = ${chatId} AND name = ${name}
   `.execute(database,);
+
   return Number(taken.rows[0]?.n ?? 0,) > 0;
 }
 
@@ -58,11 +59,13 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     process.emitWarning(
       `[032_chat_branches_name_unique] chat ${dupe.chat_id} has ${dupe.n} branches named "${dupe.name}"; renaming all but the oldest.`,
     );
+
     const rows = await sql<{ id: string }>`
       SELECT id FROM chat_branches
       WHERE chat_id = ${dupe.chat_id} AND name = ${dupe.name}
       ORDER BY created_at ASC, id ASC
     `.execute(database,);
+
     // `rows.rows[0]` is the oldest and keeps the name; the rest are renamed.
     for (const [index, row,] of rows.rows.slice(1,).entries()) {
       let suffix = index + 2;
@@ -71,6 +74,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
         suffix += 1;
         candidate = `${dupe.name} (${suffix})`;
       }
+
       await sql`
         UPDATE chat_branches SET name = ${candidate} WHERE id = ${row.id}
       `.execute(database,);

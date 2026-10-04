@@ -31,6 +31,7 @@ describe("API versioning redirects", () => {
       method: "GET",
       redirect: "manual",
     },);
+
     expect(res.status,).toBe(308,);
     expect(res.headers.get("location",),).toBe("/api/v1/no-such-endpoint-xyz",);
   });
@@ -40,6 +41,7 @@ describe("API versioning redirects", () => {
       method: "GET",
       redirect: "manual",
     },);
+
     // /api/v1/* falls through to the v1 barrel, which 404s unknown paths
     expect(res.status,).not.toBe(308,);
     expect(res.status,).toBe(404,);
@@ -50,12 +52,14 @@ describe("API versioning redirects", () => {
       method: "GET",
       redirect: "manual",
     },);
+
     expect(first.status,).toBe(308,);
     const location = first.headers.get("location",) ?? "";
     const second = await fetch(`${server.url}${location}`, {
       method: "GET",
       redirect: "manual",
     },);
+
     // Second hop must not redirect again (v1 barrel 404s unknown paths directly)
     expect(second.status,).not.toBe(308,);
     expect(second.headers.get("location",),).toBeNull();

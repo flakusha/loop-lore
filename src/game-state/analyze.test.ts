@@ -27,6 +27,7 @@ describe("analyzeGameState", () => {
     expect(analysis.movements,).toEqual([
       { entityId: "a", from: { x: 0, y: 0, }, to: { x: 2, y: 3, }, },
     ],);
+
     expect(analysis.added,).toEqual([],);
     expect(analysis.removed,).toEqual([],);
   });
@@ -47,6 +48,7 @@ describe("analyzeGameState", () => {
     expect(analysis.movements,).toEqual([
       { entityId: "a", from: { x: 0, y: 0, }, to: { x: 7, y: 7, }, },
     ],);
+
     expect(analysis.added,).toEqual(["d",],);
     expect(analysis.removed,).toEqual(["b",],);
   });
@@ -56,6 +58,7 @@ describe("analyzeGameState", () => {
       state([entity("a", 0, 0,), entity("a", 5, 5,),],),
       null,
     );
+
     expect(analysis.added,).toEqual(["a",],);
     expect(analysis.movements,).toEqual([],);
 
@@ -63,6 +66,7 @@ describe("analyzeGameState", () => {
       state([entity("a", 0, 0,), entity("a", 5, 5,),],),
       state([entity("a", 0, 0,), entity("a", 6, 6,),],),
     );
+
     expect(movement.movements,).toEqual([
       { entityId: "a", from: { x: 6, y: 6, }, to: { x: 5, y: 5, }, },
     ],);
@@ -74,6 +78,7 @@ describe("analyzeGameState", () => {
       added: [],
       removed: [],
     },);
+
     const empty = state([],);
     expect(analyzeGameState(empty, empty,),).toEqual({
       movements: [],

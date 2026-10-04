@@ -61,6 +61,7 @@ export async function applyStatusEffect(
       meta: opts.meta ? jsonStringifyOr(opts.meta,) : null,
     },)
     .execute();
+
   return id;
 }
 
@@ -100,12 +101,15 @@ export async function getActiveEffects(
         eb("expires_at", ">", now,),
       ],)
     );
+
   if (filter?.category !== undefined) {
     query = query.where("category", "=", filter.category,);
   }
+
   if (filter?.effectId !== undefined) {
     query = query.where("effect_id", "=", filter.effectId,);
   }
+
   const rows = await query.selectAll().execute();
   return rows.map((row,) => ({
     id: row.id,
@@ -133,5 +137,6 @@ export async function sweepExpiredEffects(db: Kysely<DB>,): Promise<number> {
     .where("expires_at", "is not", null,)
     .where("expires_at", "<=", now,)
     .executeTakeFirst();
+
   return Number(result.numDeletedRows ?? 0n,);
 }

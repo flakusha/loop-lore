@@ -32,6 +32,7 @@ export const taskClarificationSection: SectionBuilder = {
       assistantName: ctx.assistantName ?? (isCharacter || isGM ? null : ctx.actor.display_name),
       gmName: ctx.gmName ?? (isGM ? ctx.actor.display_name : null),
     },);
+
     return [{ role: "system", content: wrapSection("task", content,), },];
   },
 };

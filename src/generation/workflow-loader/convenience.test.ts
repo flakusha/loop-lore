@@ -44,6 +44,7 @@ describe("loadComfyUIWorkflow", () => {
     const workflow = await loadComfyUIWorkflow("txt2img", {
       prompt: "prompt-only",
     },);
+
     expect(JSON.stringify(workflow,),).toContain("prompt-only",);
   });
 

@@ -53,6 +53,7 @@ describe("ConcurrencyLimiter", () => {
     await expect(lim.run(async () => {
       throw new Error("boom",);
     },),).rejects.toThrow("boom",);
+
     expect(lim.inUse,).toBe(0,);
   });
 
@@ -64,10 +65,12 @@ describe("ConcurrencyLimiter", () => {
       order.push(1,);
       r();
     },);
+
     const pb = lim.acquire().then((r,) => {
       order.push(2,);
       r();
     },);
+
     await Promise.resolve();
     r1();
     await Promise.all([pa, pb,],);

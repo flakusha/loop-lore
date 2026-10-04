@@ -74,6 +74,7 @@ describe("/context", () => {
         messages: msgs(3,),
       },),
     ) as CommandResult;
+
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("**Context Info:**",);
     expect(result.systemMessage,).toContain("- Chat: `chat-9`",);
@@ -88,6 +89,7 @@ describe("/context", () => {
         currentCharacter: { id: "a1", name: "Borin", display_name: "", },
       },),
     ) as CommandResult;
+
     expect(result.systemMessage,).toContain("- Character: Borin",);
   });
 
@@ -252,6 +254,7 @@ describe("/summarize and /sum", () => {
       ...(msgs(1, "character", "in character",) ?? []),
       ...(msgs(1, "system", "system noise",) ?? []),
     ];
+
     const result = mustGet("summarize",)(["5",], baseCtx({ messages, },),) as CommandResult;
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("**Conversation Summary** (last 5 messages):",);

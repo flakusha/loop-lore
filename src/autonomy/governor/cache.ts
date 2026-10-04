@@ -70,6 +70,7 @@ export class BudgetCache {
       window_count: row.window_count,
       updated_at: row.updated_at,
     };
+
     this.write(scope, limitName, budget, nowMs,);
     return budget;
   }

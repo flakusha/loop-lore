@@ -44,6 +44,7 @@ export async function unfollow(
     .where("follower_id", "=", followerId,)
     .where("author_id", "=", authorId,)
     .executeTakeFirst();
+
   return Number(result?.numDeletedRows ?? 0,) > 0;
 }
 
@@ -61,6 +62,7 @@ export async function getFollowers(
     .select("follower_id",)
     .where("author_id", "=", authorId,)
     .execute();
+
   return Array.from(rows, (r: any,) => r.follower_id as string,);
 }
 
@@ -81,6 +83,7 @@ export async function isFollowing(
     .where("follower_id", "=", followerId,)
     .where("author_id", "=", authorId,)
     .executeTakeFirst();
+
   return !!row;
 }
 

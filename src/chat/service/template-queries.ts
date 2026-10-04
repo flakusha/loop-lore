@@ -44,6 +44,7 @@ export async function getChatSetupTemplate(
     .selectAll()
     .where((eb,) => eb.or([eb("id", "=", templateId,), eb("slug", "=", templateId,),],))
     .executeTakeFirst();
+
   if (!row) { return null; }
   return {
     ...(row as unknown as ChatSetupTemplate),

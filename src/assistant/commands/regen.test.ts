@@ -44,6 +44,7 @@ describe("regen command", () => {
     const result = await runRegenAction(["try-again",], history, {
       complete: async () => ({ content: "tighter reply", }),
     },);
+
     expect(result.systemMessage,).toContain("tighter reply",);
     expect(result.systemMessage,).not.toContain("LLM unavailable",);
   });
@@ -56,6 +57,7 @@ describe("regen command", () => {
         return { content: "short", };
       },
     },);
+
     expect(system,).toContain("concise style",);
   });
 

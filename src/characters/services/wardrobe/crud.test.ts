@@ -76,6 +76,7 @@ describe("wardrobe CRUD — visibility and ownership", () => {
       tags: ["formal", "evening",],
       sortOrder: 7,
     },);
+
     const item = await getWardrobeItem(db, id, actorA,);
     expect(item?.tags,).toEqual(["formal", "evening",],);
     expect(item?.sortOrder,).toBe(7,);
@@ -132,6 +133,7 @@ describe("wardrobe CRUD — visibility and ownership", () => {
       descriptor: "old desc",
       sort_order: 4,
     },);
+
     const before = await getWardrobeItem(db, id, actorA,);
 
     expect(await updateWardrobeItem(db, id, actorA, { name: "Renamed", tags: ["y",], sortOrder: 9, },),).toBe(true,);
@@ -153,6 +155,7 @@ describe("wardrobe CRUD — visibility and ownership", () => {
       .select(["name",],)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     expect(still?.name,).toBe("Untouched",);
   });
 
@@ -177,6 +180,7 @@ describe("wardrobe CRUD — visibility and ownership", () => {
       .select(["id",],)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     expect(still?.id,).toBe(id,);
   });
 });
@@ -259,6 +263,7 @@ describe("wardrobe overrides — chat and location writers", () => {
     await expect(
       setChatOutfitOverride(db, { chatId, actorId: actorA, outfitId: foreign, },),
     ).rejects.toThrow("Wardrobe item not found",);
+
     // The refusal wrote nothing and mutated nothing.
     const after = await overrideRows();
     expect(after,).toHaveLength(before.length,);
@@ -270,6 +275,7 @@ describe("wardrobe overrides — chat and location writers", () => {
     await expect(
       setChatOutfitOverride(db, { chatId, actorId: actorA, outfitId: "missing", },),
     ).rejects.toThrow("Wardrobe item not found",);
+
     expect(await overrideRows(),).toHaveLength(before.length,);
   });
 
@@ -280,12 +286,14 @@ describe("wardrobe overrides — chat and location writers", () => {
       actorId: actorA,
       bindings: { "loc-1": outfit, },
     },);
+
     const row = await db
       .selectFrom("world_avatar_config",)
       .selectAll()
       .where("world_id", "=", worldId,)
       .where("actor_id", "=", actorA,)
       .executeTakeFirst();
+
     expect(row,).toBeDefined();
     expect(JSON.parse(row!.outfit_bindings ?? "{}",),).toEqual({ "loc-1": outfit, },);
     expect(row?.selection_rule_override,).toBeNull();
@@ -300,12 +308,14 @@ describe("wardrobe overrides — chat and location writers", () => {
       actorId: actorA,
       bindings: { "loc-2": second, },
     },);
+
     const rows = await db
       .selectFrom("world_avatar_config",)
       .selectAll()
       .where("world_id", "=", worldId,)
       .where("actor_id", "=", actorA,)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     // Replaced wholesale, not merged.
     expect(JSON.parse(rows[0]!.outfit_bindings ?? "{}",),).toEqual({ "loc-2": second, },);
@@ -320,6 +330,7 @@ describe("wardrobe overrides — chat and location writers", () => {
       .where("world_id", "=", worldId,)
       .where("actor_id", "=", actorA,)
       .executeTakeFirst();
+
     expect(JSON.parse(row!.outfit_bindings ?? "{}",),).toEqual({ "loc-t": template, },);
   });
 
@@ -344,6 +355,7 @@ describe("wardrobe overrides — chat and location writers", () => {
       .where("world_id", "=", worldId,)
       .where("actor_id", "=", actorA,)
       .executeTakeFirst();
+
     expect(JSON.parse(row!.outfit_bindings ?? "{}",),).not.toHaveProperty("loc-good",);
   });
 
@@ -355,6 +367,7 @@ describe("wardrobe overrides — chat and location writers", () => {
       .where("world_id", "=", worldId,)
       .where("actor_id", "=", actorA,)
       .executeTakeFirst();
+
     expect(JSON.parse(row!.outfit_bindings ?? "{}",),).toEqual({},);
   });
 });

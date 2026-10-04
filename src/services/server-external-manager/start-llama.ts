@@ -28,6 +28,7 @@ function expandPath(path: string,): string {
   if (path.startsWith("~",)) {
     return `${homedir()}${path.slice(1,)}`;
   }
+
   return path;
 }
 
@@ -89,6 +90,7 @@ function appendLlamaAdvancedArgs(args: string[], opts: LlamaCppOptions,): void {
   if (opts.reasoningBudget !== undefined) { args.push("--reasoning-budget", String(opts.reasoningBudget,),); }
   if (opts.jinja !== undefined && !opts.jinja) { args.push("--no-jinja",); }
 }
+
 /**
  * Start llama.cpp server on given port.
  * modelPath accepts local path (/path/to/model.gguf) or HuggingFace ID (org/repo:quant).
@@ -106,8 +108,10 @@ export async function startLlamaCpp(
     host.log.warn("llama-server not found in PATH — skipping auto-start", {
       binaryCandidates: BINARY_CANDIDATES["llama-cpp"],
     },);
+
     return null;
   }
+
   if (!(await isPortFree(opts.port,))) {
     host.log.warn("Port in use — skipping llama-cpp auto-start", { port: opts.port, },);
     return null;
@@ -152,6 +156,7 @@ export async function startLlamaCpp(
     pid: proc.pid,
     startedAt: Date.now(),
   };
+
   host.instances.push(instance,);
   host.log.info("llama.cpp ready", { port: opts.port, pid: proc.pid, },);
   return instance;
@@ -199,6 +204,7 @@ export async function startLlamaSwap(
     pid: proc.pid,
     startedAt: Date.now(),
   };
+
   host.instances.push(instance,);
   host.log.info("llama-swap ready", { pid: proc.pid, port, },);
   return instance;
@@ -224,5 +230,6 @@ function resolveLlamaSwapPort(host: ServerExternalHost, configPath: string,): nu
       error: error instanceof Error ? error.message : String(error,),
     },);
   }
+
   return 8080;
 }

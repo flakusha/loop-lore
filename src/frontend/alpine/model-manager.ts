@@ -92,6 +92,7 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
       } catch {
         /* capability unreachable — fail open, the manifest stays fail-closed */
       }
+
       try {
         this.catalog = await loadCatalog();
       } catch {
@@ -115,16 +116,19 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
         this.error = "Model downloads are disabled on this instance.";
         return;
       }
+
       const url = this.downloadUrl.trim();
       if (!/^https?:\/\//.test(url,)) {
         this.error = "Enter an http(s) model file URL.";
         return;
       }
+
       const modelId = this.downloadId.trim() || filenameFromUrl(url,);
       if (!modelId) {
         this.error = "Could not derive a model name — enter one explicitly.";
         return;
       }
+
       const store = deps.store ?? defaultModelStore();
       this.error = null;
       this.downloadingId = modelId;
@@ -142,11 +146,13 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
             this.progress = snapshot;
           },
         },);
+
         await store.save(modelId, {
           bytes,
           sha256: expected ?? await digest(bytes,),
           updatedAt: Date.now(),
         },);
+
         this.downloadUrl = "";
         this.downloadSha = "";
         this.downloadId = "";
@@ -165,11 +171,13 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
         this.error = "Model downloads are disabled on this instance.";
         return;
       }
+
       const entry = this.catalog.find((item,) => item.id === modelId);
       if (!entry) {
         this.error = "Catalog entry is no longer listed.";
         return;
       }
+
       const store = deps.store ?? defaultModelStore();
       this.error = null;
       this.downloadingId = modelId;
@@ -186,6 +194,7 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
             this.progress = snapshot;
           },
         },);
+
         await this.refresh();
       } catch (cause) {
         this.error = cause instanceof Error ? cause.message : "Download failed.";
@@ -218,6 +227,7 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
       return `${(bytes / 1_073_741_824).toFixed(2,)} GB`;
     },
   };
+
   return state;
 }
 

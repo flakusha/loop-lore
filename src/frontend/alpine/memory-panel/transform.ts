@@ -100,12 +100,15 @@ export function memoriesForTab(panel: MemoryPanelState, tab: MemoryPanelState["a
     case "assistant": {
       return panel.assistantMemories;
     }
+
     case "world": {
       return panel.worldMemories;
     }
+
     case "character": {
       return panel.characterMemories;
     }
+
     case "audit": {
       return [];
     }

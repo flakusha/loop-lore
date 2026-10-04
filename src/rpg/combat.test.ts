@@ -120,6 +120,7 @@ describe("makeAttackRoll", () => {
         break;
       }
     }
+
     expect(foundCrit,).toBe(true,);
   });
 
@@ -127,6 +128,7 @@ describe("makeAttackRoll", () => {
     const resistances: DamageResistance[] = [
       { type: "fire", modifier: "resistant", },
     ];
+
     // Run multiple to get at least one hit
     for (let i = 0; i < 200; i++) {
       const result = makeAttackRoll(
@@ -139,14 +141,17 @@ describe("makeAttackRoll", () => {
         0,
         resistances,
       );
+
       if (result.hit && result.damage) {
         expect(result.damage.finalDamage,).toBeLessThanOrEqual(
           result.damage.totalBeforeResist,
         );
+
         // Resistant halves damage (rounded down)
         expect(result.damage.finalDamage,).toBe(
           Math.floor(result.damage.totalBeforeResist / 2,),
         );
+
         break;
       }
     }
@@ -156,6 +161,7 @@ describe("makeAttackRoll", () => {
     const resistances: DamageResistance[] = [
       { type: "ice", modifier: "vulnerable", },
     ];
+
     for (let i = 0; i < 200; i++) {
       const result = makeAttackRoll(
         attacker,
@@ -167,10 +173,12 @@ describe("makeAttackRoll", () => {
         0,
         resistances,
       );
+
       if (result.hit && result.damage) {
         expect(result.damage.finalDamage,).toBe(
           result.damage.totalBeforeResist * 2,
         );
+
         break;
       }
     }
@@ -180,6 +188,7 @@ describe("makeAttackRoll", () => {
     const resistances: DamageResistance[] = [
       { type: "poison", modifier: "immune", },
     ];
+
     for (let i = 0; i < 200; i++) {
       const result = makeAttackRoll(
         attacker,
@@ -191,6 +200,7 @@ describe("makeAttackRoll", () => {
         0,
         resistances,
       );
+
       if (result.hit && result.damage) {
         expect(result.damage.finalDamage,).toBe(0,);
         break;
@@ -209,6 +219,7 @@ describe("makeAttackRoll", () => {
         "physical",
         5,
       );
+
       if (result.hit && result.damage) {
         expect(result.damage.flatBonus,).toBe(5,);
         expect(result.damage.totalBeforeResist,).toBeGreaterThanOrEqual(5,);
@@ -363,6 +374,7 @@ describe("isCombatOver", () => {
       makeTestCombatant({ id: "p1", isNpc: false, hp: 10, },),
       makeTestCombatant({ id: "e1", isNpc: true, hp: 10, },),
     ];
+
     expect(isCombatOver(combatants,).over,).toBe(false,);
   });
 
@@ -371,6 +383,7 @@ describe("isCombatOver", () => {
       makeTestCombatant({ id: "p1", isNpc: false, hp: 0, },),
       makeTestCombatant({ id: "e1", isNpc: true, hp: 10, },),
     ];
+
     const result = isCombatOver(combatants,);
     expect(result.over,).toBe(true,);
     expect(result.winner,).toBe("enemy",);
@@ -381,6 +394,7 @@ describe("isCombatOver", () => {
       makeTestCombatant({ id: "p1", isNpc: false, hp: 10, },),
       makeTestCombatant({ id: "e1", isNpc: true, hp: 0, },),
     ];
+
     const result = isCombatOver(combatants,);
     expect(result.over,).toBe(true,);
     expect(result.winner,).toBe("player",);

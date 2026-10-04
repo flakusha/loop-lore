@@ -44,11 +44,13 @@ describe("carryMemory", () => {
       source_chat_id: sourceChatId,
       importance: 5,
     } as never,);
+
     await insertActorMemories(db, actorId, "source memory two", {
       id: "mem-src-2",
       source_chat_id: sourceChatId,
       importance: 2,
     } as never,);
+
     await insertActorMemories(db, actorId, "unrelated memory", {
       id: "mem-other-1",
       source_chat_id: otherChatId,
@@ -68,6 +70,7 @@ describe("carryMemory", () => {
       .selectAll()
       .where("source_chat_id", "=", targetChatId,)
       .execute();
+
     expect(copied,).toHaveLength(2,);
     expect(copied.map((m,) => m.content).sort(),).toEqual(["source memory one", "source memory two",],);
     // Fresh ids — no id collision with the originals.
@@ -85,6 +88,7 @@ describe("carryMemory", () => {
       .selectAll()
       .where("source_chat_id", "=", sourceChatId,)
       .execute();
+
     expect(source,).toHaveLength(2,);
     expect(source.map((m,) => m.id).sort(),).toEqual(["mem-src-1", "mem-src-2",],);
 
@@ -93,6 +97,7 @@ describe("carryMemory", () => {
       .selectAll()
       .where("source_chat_id", "=", otherChatId,)
       .execute();
+
     expect(other,).toHaveLength(1,);
   });
 
@@ -107,6 +112,7 @@ describe("carryMemory", () => {
       .selectAll()
       .where("source_chat_id", "=", targetChatId,)
       .execute();
+
     expect(still,).toHaveLength(2,);
   });
 });

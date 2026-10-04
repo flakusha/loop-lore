@@ -23,21 +23,27 @@ export function build(state: GeneratorState, type: SyntheticDataType, source: Sy
     case SyntheticDataType.TurnSequence: {
       return buildTurnSequence(state, source,);
     }
+
     case SyntheticDataType.QualityEvaluation: {
       return buildQualityEvaluation(state, source,);
     }
+
     case SyntheticDataType.QuestProgression: {
       return buildQuestProgression(state, source,);
     }
+
     case SyntheticDataType.WorldStateTransition: {
       return buildWorldStateTransition(state, source,);
     }
+
     case SyntheticDataType.RegenerationCase: {
       return buildRegenerationCase(state, source,);
     }
+
     case SyntheticDataType.GmEscalation: {
       return buildGmEscalation(state, source,);
     }
+
     default: {
       return assertNever(type,);
     }
@@ -106,6 +112,7 @@ function buildWorldStateTransition(state: GeneratorState, source: SyntheticSourc
       expected: { consistent: true, },
     },);
   }
+
   return cases;
 }
 
@@ -126,6 +133,7 @@ function buildRegenerationCase(state: GeneratorState, source: SyntheticSource,):
       },);
     }
   }
+
   return failed;
 }
 
@@ -146,5 +154,6 @@ function buildGmEscalation(state: GeneratorState, source: SyntheticSource,): Syn
       },);
     }
   }
+
   return escalatable;
 }

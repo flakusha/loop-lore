@@ -175,6 +175,7 @@ function makeStateWithToasts(state: MockApiState,): { state: MockApiState; toast
   state.$dispatch = (_name: string, detail: Toast,) => {
     toasts.push(detail,);
   };
+
   return { state, toasts, };
 }
 
@@ -211,6 +212,7 @@ describe("chatEditing API flows", () => {
       const { state, toasts, } = makeStateWithToasts(makeState({
         editContent: "  Updated text  ",
       },),);
+
       await chatEditing.saveEdit!.call(state, "msg-1",);
       expect(fetchCalls.length,).toBe(1,);
       expect(fetchCalls[0]?.url,).toBe("/api/v1/messages/msg-1",);
@@ -226,6 +228,7 @@ describe("chatEditing API flows", () => {
         activeChat: null,
         editContent: "text",
       },),);
+
       await chatEditing.saveEdit!.call(state, "msg-1",);
       expect(fetchCalls.length,).toBe(0,);
       expect(toasts.length,).toBe(0,);
@@ -235,6 +238,7 @@ describe("chatEditing API flows", () => {
       const { state, toasts, } = makeStateWithToasts(makeState({
         editContent: "   ",
       },),);
+
       await chatEditing.saveEdit!.call(state, "msg-1",);
       expect(fetchCalls.length,).toBe(0,);
       expect(toasts.length,).toBe(0,);
@@ -245,6 +249,7 @@ describe("chatEditing API flows", () => {
         Promise.resolve(
           new Response(JSON.stringify({ error: "nope", },), { status: 400, },),
         );
+
       const { state, toasts, } = makeStateWithToasts(makeState({ editContent: "text", },),);
       await chatEditing.saveEdit!.call(state, "msg-1",);
       expect(toasts,).toEqual([{ type: "error", message: "toasts.failedSaveEdit", },],);
@@ -255,6 +260,7 @@ describe("chatEditing API flows", () => {
         Promise.resolve(
           new Response(JSON.stringify({ error: "nope", },), { status: 400, },),
         );
+
       const { state, toasts, } = makeStateWithToasts(makeState({ editContent: "text", },),);
       await chatEditing.saveEdit!.call(state, "msg-1",);
       // The server still holds "Hello world"; local state must not claim "text".
@@ -291,6 +297,7 @@ describe("chatEditing API flows", () => {
           stopped = true;
         },
       } as unknown as Event,);
+
       expect(fetchCalls[0]?.url,).toBe("/api/v1/messages/msg-1",);
       expect(fetchCalls[0]?.init?.method,).toBe("DELETE",);
       expect(state.messages.length,).toBe(0,);
@@ -304,6 +311,7 @@ describe("chatEditing API flows", () => {
       await chatEditing.removeMessage!.call(state, "msg-1", {
         stopImmediatePropagation: () => {},
       } as unknown as Event,);
+
       expect(fetchCalls.length,).toBe(0,);
       expect(state.messages.length,).toBe(1,);
       expect(toasts.length,).toBe(0,);
@@ -315,6 +323,7 @@ describe("chatEditing API flows", () => {
       await chatEditing.removeMessage!.call(state, "msg-1", {
         stopImmediatePropagation: () => {},
       } as unknown as Event,);
+
       expect(fetchCalls.length,).toBe(0,);
       expect(toasts.length,).toBe(0,);
     });
@@ -325,10 +334,12 @@ describe("chatEditing API flows", () => {
         Promise.resolve(
           new Response(JSON.stringify({ error: "cannot delete", },), { status: 403, },),
         );
+
       const { state, toasts, } = makeStateWithToasts(makeState(),);
       await chatEditing.removeMessage!.call(state, "msg-1", {
         stopImmediatePropagation: () => {},
       } as unknown as Event,);
+
       expect(state.messages.length,).toBe(1,);
       expect(toasts,).toEqual([{ type: "error", message: "toasts.failedRemove", },],);
     });
@@ -340,6 +351,7 @@ describe("chatEditing API flows", () => {
       await chatEditing.removeMessage!.call(state, "msg-1", {
         stopImmediatePropagation: () => {},
       } as unknown as Event,);
+
       expect(toasts,).toEqual([{ type: "error", message: "toasts.networkErrorRemovingMessage", },],);
     });
   });
@@ -350,6 +362,7 @@ describe("chatEditing API flows", () => {
         expect(content,).toBe("Hello world",);
         return Promise.resolve();
       };
+
       (globalThis as { navigator?: unknown }).navigator = { clipboard: { writeText, }, };
       const button = {
         blurred: false,
@@ -357,10 +370,12 @@ describe("chatEditing API flows", () => {
           this.blurred = true;
         },
       };
+
       const { state, toasts, } = makeStateWithToasts(makeState(),);
       await chatEditing.copyMessage!.call(state, "msg-1", {
         currentTarget: button,
       } as unknown as Event,);
+
       expect(toasts,).toEqual([{ type: "success", message: "toasts.copiedToClipboard", },],);
       expect(button.blurred,).toBe(true,);
     });
@@ -371,10 +386,12 @@ describe("chatEditing API flows", () => {
           writeText: () => Promise.reject(new Error("denied",),),
         },
       };
+
       const { state, toasts, } = makeStateWithToasts(makeState(),);
       await chatEditing.copyMessage!.call(state, "msg-1", {
         currentTarget: null,
       } as unknown as Event,);
+
       expect(toasts,).toEqual([{ type: "error", message: "toasts.failedCopy", },],);
     });
 
@@ -388,10 +405,12 @@ describe("chatEditing API flows", () => {
           },
         },
       };
+
       const { state, toasts, } = makeStateWithToasts(makeState(),);
       await chatEditing.copyMessage!.call(state, "missing", {
         currentTarget: null,
       } as unknown as Event,);
+
       expect(clipboardCalled,).toBe(false,);
       expect(toasts.length,).toBe(0,);
     });
@@ -405,6 +424,7 @@ describe("chatEditing API flows", () => {
           new Response(JSON.stringify({ id: "asset-9", },), { status: 200, },),
         );
       };
+
       const file1 = new File(["a",], "one.png", { type: "image/png", },);
       const file2 = new File(["b",], "two.png", { type: "image/png", },);
       const input = { files: [file1, file2,], value: "/tmp/x", };
@@ -415,6 +435,7 @@ describe("chatEditing API flows", () => {
       (globalThis as Record<string, unknown>).__localeStrings = {
         toasts: { readyToAttach: "Ready: {filename}", },
       };
+
       try {
         await chatEditing.handleAttach!.call(state, {
           target: input,
@@ -422,11 +443,13 @@ describe("chatEditing API flows", () => {
       } finally {
         (globalThis as Record<string, unknown>).__localeStrings = realLocaleStrings;
       }
+
       expect(fetchCalls.length,).toBe(2,);
       expect(state.pendingAssets,).toEqual([
         { assetId: "asset-9", filename: "one.png", },
         { assetId: "asset-9", filename: "two.png", },
       ],);
+
       expect(input.value,).toBe("",);
       expect(toasts.length,).toBe(2,);
       expect(toasts[0]?.type,).toBe("success",);
@@ -438,6 +461,7 @@ describe("chatEditing API flows", () => {
       await chatEditing.handleAttach!.call(state, {
         target: { files: [new File(["a",], "x.png",),], value: "", },
       } as unknown as Event,);
+
       expect(fetchCalls.length,).toBe(0,);
       expect(toasts,).toEqual([{ type: "warning", message: "toasts.selectChatFirst", },],);
     });
@@ -447,6 +471,7 @@ describe("chatEditing API flows", () => {
       await chatEditing.handleAttach!.call(state, {
         target: { files: [], value: "", },
       } as unknown as Event,);
+
       expect(fetchCalls.length,).toBe(0,);
       expect(toasts.length,).toBe(0,);
     });
@@ -456,13 +481,16 @@ describe("chatEditing API flows", () => {
         Promise.resolve(
           new Response(JSON.stringify({ error: "too large", },), { status: 413, },),
         );
+
       const { state, toasts, } = makeStateWithToasts(makeState(),);
       (globalThis as Record<string, unknown>).__localeStrings = {
         toasts: { failedUpload: "Failed to upload {filename}", },
       };
+
       await chatEditing.handleAttach!.call(state, {
         target: { files: [new File(["a",], "big.png",),], value: "", },
       } as unknown as Event,);
+
       // A rejected upload must not leave a phantom pending asset behind.
       expect(state.pendingAssets.length,).toBe(0,);
       expect(toasts,).toEqual([{ type: "error", message: "Failed to upload big.png", },],);
@@ -474,6 +502,7 @@ describe("chatEditing API flows", () => {
       await chatEditing.handleAttach!.call(state, {
         target: { files: [new File(["a",], "x.png",),], value: "", },
       } as unknown as Event,);
+
       expect(toasts,).toEqual([{ type: "error", message: "toasts.networkErrorUploading", },],);
     });
   });

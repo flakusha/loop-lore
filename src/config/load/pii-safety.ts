@@ -26,6 +26,7 @@ function firstSet(...candidates: Array<string | undefined>): string | undefined 
   for (const c of candidates) {
     if (c !== undefined && c.trim() !== "") { return c; }
   }
+
   return undefined;
 }
 
@@ -49,6 +50,7 @@ export function resolvePiiSecret(
     configured,
     ...envNames.map((n,) => process.env[n]),
   );
+
   if (configuredOrEnv !== undefined) { return configuredOrEnv; }
   if (isDevEnv()) { return devFallback; }
   throw new Error(`${missingMessage}\nGenerate with \`openssl rand -base64 48\`.`,);

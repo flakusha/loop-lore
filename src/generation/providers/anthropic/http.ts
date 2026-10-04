@@ -26,6 +26,7 @@ export function combineAbortSignals(...signals: (AbortSignal | undefined)[]): Ab
   for (const signal of signals) {
     if (signal) { defined.push(signal,); }
   }
+
   if (defined.length === 0) { return undefined; }
   const controller = new AbortController();
   for (const signal of defined) {
@@ -33,6 +34,7 @@ export function combineAbortSignals(...signals: (AbortSignal | undefined)[]): Ab
       controller.abort(signal.reason,);
       return controller.signal;
     }
+
     signal.addEventListener(
       "abort",
       () => {
@@ -41,6 +43,7 @@ export function combineAbortSignals(...signals: (AbortSignal | undefined)[]): Ab
       { once: true, },
     );
   }
+
   return controller.signal;
 }
 
@@ -83,6 +86,7 @@ export async function fetchRaw(
     "anthropic-version": API_VERSION,
     ...state.headers,
   };
+
   if (toolCalling) { headers["anthropic-beta"] = TOOLS_BETA; }
 
   try {
@@ -149,13 +153,16 @@ export async function handleErrorResponse(response: Response,): Promise<never> {
   if (status === 401 || status === 403) {
     throw new ProviderError(message, undefined, status, false,);
   }
+
   if (status === 429) {
     const retryAfter = Number(response.headers.get("retry-after",) ?? "0",);
     throw new ProviderError(message, undefined, status, true, retryAfter > 0 ? retryAfter : undefined,);
   }
+
   if (status >= 500) {
     throw new ProviderError(message, undefined, status, true,);
   }
+
   throw new ProviderError(message, undefined, status, false,);
 }
 
@@ -174,14 +181,17 @@ export function mapFinishReason(
     case "pause_turn": {
       return "stop";
     }
+
     case "max_tokens": {
       return "length";
     }
+
     case "refusal":
     case null:
     case undefined: {
       return "stop";
     }
+
     default: {
       return "stop";
     }

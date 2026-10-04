@@ -23,6 +23,7 @@ describe("views — plugin mount points", () => {
       origin: "core",
       directory: "/tmp",
     },);
+
     registry.addUIComponents("mount-test", [
       { type: "web", name: "sidebar-widget", location: "chat.sidebar", props: { label: "Hi", }, },
       { type: "tui", name: "tui-widget", location: "chat.sidebar", },
@@ -52,9 +53,11 @@ describe("views — plugin mount points", () => {
       origin: "core",
       directory: "/tmp",
     },);
+
     registry.addUIComponents("evil-plugin", [
       { type: "web", name: "evil", location: "chat.composer", props: { x: "</script><script>alert(1)</script>", }, },
     ],);
+
     const html = await render("chat",);
     expect(html,).not.toContain("<script>alert(1)</script>",);
     expect(html,).toContain("&lt;script&gt;alert(1)&lt;/script&gt;",);
@@ -81,6 +84,7 @@ describe("resolvePluginMounts", () => {
       origin: "core",
       directory: "/tmp",
     },);
+
     registry.addUIComponents("unit-plugin", [
       { type: "web", name: "h1", location: "chat.header", },
       { type: "web", name: "s1", location: "chat.sidebar", props: { a: 1, }, },

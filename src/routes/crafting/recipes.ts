@@ -49,6 +49,7 @@ async function resolveWorldOwner(
     .select("owner_id",)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   if (!world) { return notFoundResponse("World",); }
   if (world.owner_id !== userId) { return jsonError("Not allowed", 403,); }
   return null;
@@ -73,6 +74,7 @@ export function craftingRecipeRoutes({ database, }: { database: Db }, prefix = "
         discipline: discipline as CraftingDiscipline | undefined,
         tier: tier ? Number(tier,) : undefined,
       },);
+
       const page = recipes.slice(Number(offset,) || 0, (Number(limit,) || 50) + (Number(offset,) || 0),);
       return jsonResponse({ recipes: page, },);
     }, {
@@ -115,6 +117,7 @@ export function craftingRecipeRoutes({ database, }: { database: Db }, prefix = "
         tags: body.tags as string[] | undefined,
         materials: body.materials as never[] ?? [],
       },);
+
       return jsonResponse({ id, }, 201,);
     }, {
       params: t.Object({ worldId: Id, },),

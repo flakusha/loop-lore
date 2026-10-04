@@ -70,6 +70,7 @@ export async function autoSyncChatBackground(
   if (match) {
     await setChatBackground(database, chatId, match.id,);
   }
+
   return match ?? null;
 }
 
@@ -89,5 +90,6 @@ export async function getChatBackground(
     .selectAll("chat_backgrounds",)
     .where("chat_background_assignments.chat_id", "=", chatId,)
     .executeTakeFirst();
+
   return row ?? null;
 }

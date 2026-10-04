@@ -19,6 +19,7 @@ export function isNetworkFilesystem(filePath: string,): boolean {
   if (NETWORK_FS_PREFIXES.some((prefix,) => normalized.startsWith(prefix,))) {
     return true;
   }
+
   // Linux: check /proc/mounts for the path's device
   try {
     const mounts = readFileSync("/proc/mounts", "utf8",);
@@ -44,6 +45,7 @@ export function isNetworkFilesystem(filePath: string,): boolean {
           "fuse.juicefs",
           "fuse.goofys",
         ];
+
         for (const netType of networkTypes) {
           if (fsType === netType) { return true; }
         }
@@ -52,6 +54,7 @@ export function isNetworkFilesystem(filePath: string,): boolean {
   } catch {
     // Not on Linux or /proc not available — fall through to prefix-only check
   }
+
   return false;
 }
 
@@ -67,6 +70,7 @@ export function findConfigFile(cwd: string, fileNames: string[] = CONFIG_FILES,)
   if (mainRoot && mainRoot !== cwd) {
     searchDirs.push(mainRoot, path.join(mainRoot, "configs",),);
   }
+
   for (const dir of searchDirs) {
     for (const name of fileNames) {
       const fullPath = path.join(dir, name,);
@@ -75,6 +79,7 @@ export function findConfigFile(cwd: string, fileNames: string[] = CONFIG_FILES,)
       }
     }
   }
+
   return null;
 }
 
@@ -87,5 +92,6 @@ export function firstExisting(candidates: string[],): string | null {
   for (const candidate of candidates) {
     if (existsSync(candidate,)) { return candidate; }
   }
+
   return null;
 }

@@ -36,6 +36,7 @@ async function resolveBaseAvatar(
     .select(["id", "avatar_asset_id", "created_at", "updated_at",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   if (!actor?.avatar_asset_id) { return null; }
   const now = new Date().toISOString();
   return {
@@ -80,6 +81,7 @@ async function resolveSelectionOutfit(
     worldId,
     locationId: context.locationId,
   },);
+
   if (resolved.outfitId === null) { return null; }
   return {
     outfitId: resolved.outfitId,
@@ -132,6 +134,7 @@ export async function selectAvatar(
   const wardrobeInPlay = context.outfitId !== undefined ||
     context.chatId !== undefined || context.locationId !== undefined ||
     avatars.some((a,) => a.outfitId != null);
+
   if (wardrobeInPlay) {
     const outfit = await resolveSelectionOutfit(db, actorId, context, worldId,);
     if (outfit) {
@@ -140,8 +143,10 @@ export async function selectAvatar(
         defaultOutfitId: outfit.defaultOutfitId,
         emotion: context.emotion,
       },);
+
       if (ladderHit) { return ladderHit; }
     }
+
     // No outfit active (or ladder miss): only outfitless variants and
     // the base portrait remain eligible — never another outfit's variants.
     avatars = avatars.filter((a,) => a.outfitId == null);
@@ -150,11 +155,13 @@ export async function selectAvatar(
   const worldConfig = worldId
     ? await getWorldAvatarConfig(db, actorId, worldId,)
     : undefined;
+
   const defaultConfig = await getAvatarConfig(db, actorId,);
 
   const selectionRule: AvatarSelectionRule = worldConfig?.selectionRuleOverride ??
     defaultConfig?.selectionRule ??
     "emotion_first";
+
   const weights: Record<AvatarTagType, number> = worldConfig?.weightsOverride
     ? { ...defaultConfig?.weights, ...worldConfig.weightsOverride, }
     : defaultConfig?.weights ?? {
@@ -165,6 +172,7 @@ export async function selectAvatar(
       time: 0.05,
       outfit: 0.05,
     };
+
   const fallbackChain: AvatarTagType[] = defaultConfig?.fallbackChain ??
     DEFAULT_FALLBACK_CHAIN;
 
@@ -238,6 +246,7 @@ export function calculateAvatarScore(
         context.location && avatar.tags.location === context.location ||
         context.time && avatar.tags.time === context.time
       ) { score *= 1.5; }
+
       break;
   }
 

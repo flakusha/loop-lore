@@ -48,6 +48,7 @@ describe("history-search", () => {
       "first message here",
       { id: "msg-1", created_at: "2026-01-01T00:00:01Z", } as never,
     );
+
     await insertMessages(
       db,
       "chat-hs",
@@ -56,6 +57,7 @@ describe("history-search", () => {
       "second message here",
       { id: "msg-2", parent_id: "msg-1", created_at: "2026-01-01T00:00:02Z", } as never,
     );
+
     await insertMessages(
       db,
       "chat-hs",
@@ -76,11 +78,13 @@ describe("history-search", () => {
         keywords: [],
       },
     ], { sourceMessageIds: ["msg-3", "msg-1", "msg-2",], sourceChatIds: ["chat-hs",], },);
+
     const row = await db
       .selectFrom("actor_memories",)
       .select("id",)
       .where("actor_id", "=", "actor-hs",)
       .executeTakeFirstOrThrow();
+
     const chain = await reconstructMessageChain(db, row.id,);
     expect(chain.map((m,) => m.id),).toEqual(["msg-1", "msg-2", "msg-3",],);
   });
@@ -106,6 +110,7 @@ describe("history-search", () => {
         updated_at: new Date().toISOString(),
       },)
       .execute();
+
     const chain = await reconstructMessageChain(db, "mem-legacy",);
     expect(chain.map((m,) => m.id),).toEqual(["msg-2",],);
   });
@@ -116,6 +121,7 @@ describe("history-search", () => {
       .set({ key_id: "key-1", content_plaintext: null, },)
       .where("id", "=", "msg-2",)
       .execute();
+
     await storeMemories(db, "actor-hs", "chat-hs", [
       {
         content: "E2E-filtered summary of size",
@@ -125,11 +131,13 @@ describe("history-search", () => {
         keywords: [],
       },
     ], { sourceMessageIds: ["msg-1", "msg-2", "msg-3",], sourceChatIds: ["chat-hs",], },);
+
     const row = await db
       .selectFrom("actor_memories",)
       .select("id",)
       .where("actor_id", "=", "actor-hs",)
       .executeTakeFirstOrThrow();
+
     const chain = await reconstructMessageChain(db, row.id,);
     expect(chain.map((m,) => m.id),).toEqual(["msg-1", "msg-3",],);
   });
@@ -144,11 +152,13 @@ describe("history-search", () => {
         keywords: [],
       },
     ], { sourceMessageIds: ["msg-1", "msg-2", "msg-3",], sourceChatIds: ["chat-hs",], },);
+
     const row = await db
       .selectFrom("actor_memories",)
       .select("id",)
       .where("actor_id", "=", "actor-hs",)
       .executeTakeFirstOrThrow();
+
     const full = await expandMemoryContext(db, row.id,);
     expect(full?.messages,).toHaveLength(3,);
     expect(full?.truncated,).toBe(false,);
@@ -176,6 +186,7 @@ describe("history-search", () => {
         swipe_index: 1,
       } as never,
     );
+
     const down = await walkMessageChain(db, "chat-hs", "msg-1", "down",);
     expect(down.map((m,) => m.id),).toEqual(["msg-1", "msg-2", "msg-3",],);
   });
@@ -200,10 +211,12 @@ describe("history-search", () => {
         } as never,
       );
     }
+
     const padded = [
       ...Array.from({ length: 600, }, (_, i,) => `bulk-${i}`,),
       ...Array.from({ length: 100, }, (_, i,) => `pad-${i}`,),
     ];
+
     await db
       .insertInto("actor_memories",)
       .values({
@@ -222,6 +235,7 @@ describe("history-search", () => {
         updated_at: new Date().toISOString(),
       },)
       .execute();
+
     const chain = await reconstructMessageChain(db, "mem-huge",);
     expect(chain.length,).toBe(500,);
     expect(chain[0]?.id,).toBe("bulk-0",);
@@ -238,11 +252,13 @@ describe("history-search", () => {
         keywords: [],
       },
     ], { sourceMessageIds: ["msg-1",], sourceChatIds: ["chat-hs",], },);
+
     const memRow = await db
       .selectFrom("actor_memories",)
       .select(["id", "content", "confidence", "importance",],)
       .where("actor_id", "=", "actor-hs",)
       .executeTakeFirstOrThrow();
+
     const { DEFAULT_INJECTION_CONFIG, } = await import("./injection/types");
     const result = await selectMemoriesWithExpansion(
       db,
@@ -276,6 +292,7 @@ describe("history-search", () => {
         randomFn: () => 0,
       },
     );
+
     expect(result.expansions.has(memRow.id,),).toBe(true,);
     expect(result.selected.map((m,) => m.id),).toContain(memRow.id,);
   });
@@ -301,11 +318,13 @@ describe("history-search", () => {
         updated_at: new Date().toISOString(),
       },)
       .execute();
+
     const row = await db
       .selectFrom("actor_memories",)
       .select("source_message_ids",)
       .where("id", "=", "mem-backfill",)
       .executeTakeFirstOrThrow();
+
     expect(row.source_message_ids,).toBe('["msg-1"]',);
   });
 });

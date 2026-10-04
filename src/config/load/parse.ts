@@ -19,11 +19,13 @@ export function deepMerge<T extends Record<string, unknown>,>(base: T, overrides
         !Array.isArray(value,) &&
         typeof baseValue === "object" &&
         baseValue != null;
+
       result[k] = isObject
         ? (deepMerge(baseValue as Record<string, unknown>, value as Record<string, unknown>,) as T[keyof T])
         : (value as T[keyof T]);
     }
   }
+
   return result;
 }
 
@@ -41,8 +43,10 @@ export function setByPath(object: Record<string, unknown>, path: string, value: 
     if (!Object.hasOwn(current, part!,) || typeof current[part!] !== "object") {
       current[part!] = {};
     }
+
     current = current[part!] as Record<string, unknown>;
   }
+
   current[parts.at(-1,) as string] = value;
 }
 
@@ -58,6 +62,7 @@ export function coerceValue(value: string, targetType: string,): unknown {
     if (value === "false" || value === "0") { return false; }
     return value;
   }
+
   return value;
 }
 
@@ -73,6 +78,7 @@ export function getTypeOfPath(object: Record<string, unknown>, configPath: strin
     if (typeof current !== "object" || current === null) { return "string"; }
     current = (current as Record<string, unknown>)[part];
   }
+
   return typeof current;
 }
 
@@ -86,9 +92,11 @@ export function parseFileContent(content: string, extension: string,): Record<st
   if (extension === "yaml" || extension === "yml") {
     return Bun.YAML.parse(content,) as Record<string, unknown>;
   }
+
   if (extension === "toml") {
     return Bun.TOML.parse(content,) as Record<string, unknown>;
   }
+
   throw new Error(`Unknown config file extension: .${extension}`,);
 }
 
@@ -109,5 +117,6 @@ export function normalizeConfig(obj: Record<string, unknown>,): Record<string, u
       result[key] = value;
     }
   }
+
   return result;
 }

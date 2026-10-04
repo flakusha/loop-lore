@@ -124,21 +124,25 @@ export function moderationRoutes(opts: HandlerOpts, prefix = "/api",) {
               if (!result.ok) { return badRequestResponse(result.reason ?? "ban rejected",); }
               return jsonResponse(result,);
             }
+
             case "kick": {
               const result = await applyKick(database, sharedOpts,);
               if (!result.ok) { return badRequestResponse(result.reason ?? "kick rejected",); }
               return jsonResponse(result,);
             }
+
             case "mute": {
               const result = await applyMute(database, sharedOpts,);
               if (!result.ok) { return badRequestResponse(result.reason ?? "mute rejected",); }
               return jsonResponse(result,);
             }
+
             case "flag-nsfw": {
               const result = await applyFlag(database, sharedOpts, body.content,);
               if (!result.ok) { return badRequestResponse(result.reason ?? "flag rejected",); }
               return jsonResponse(result,);
             }
+
             case "flag-tox": {
               const result = await applyFlag(database, sharedOpts, body.content,);
               if (!result.ok) { return badRequestResponse(result.reason ?? "flag rejected",); }

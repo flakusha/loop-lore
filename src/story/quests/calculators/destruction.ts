@@ -14,5 +14,6 @@ export const calculateDestructionProgress: ProgressCalculator = (_ctx, config, e
     if (typeof event.data.defenderId !== "string") { return 0; }
     return event.data.defenderId === cfg.targetActorId ? 1 : 0;
   }
+
   return cfg.targetQuantity && cfg.targetQuantity > 0 ? Math.round(100 / cfg.targetQuantity,) : 0;
 };

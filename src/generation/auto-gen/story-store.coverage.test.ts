@@ -50,6 +50,7 @@ afterAll(() => {
   setTestDatabase(null,);
   sqlite.close();
 },);
+
 /**
  * @param db
  * @param overrides
@@ -70,6 +71,7 @@ async function seedActor(
     content_rating: ContentRating.Sfw,
     ...overrides,
   },).execute();
+
   return id;
 }
 
@@ -124,6 +126,7 @@ async function seedScenario(opts?: { actor?: Record<string, unknown> },): Promis
     difficulty_reroll: "none",
     difficulty_state: "normal",
   },).execute();
+
   const chatId = randomUUID();
   await db.insertInto("chats",).values({
     id: chatId,
@@ -133,12 +136,14 @@ async function seedScenario(opts?: { actor?: Record<string, unknown> },): Promis
     created_by: "user-1",
     world_id: worldId,
   },).execute();
+
   const actorId = await seedActor(db, opts?.actor,);
   await db.insertInto("chat_participants",).values({
     chat_id: chatId,
     actor_id: actorId,
     role_in_chat: "member",
   },).execute();
+
   return { chatId, actorId, worldId, };
 }
 
@@ -175,6 +180,7 @@ async function seedMessage(
     swipe_index: swipeIndex,
     emotion: null,
   },).execute();
+
   return id;
 }
 
@@ -199,6 +205,7 @@ test("persists the assistant row with encrypted content and confirmed status", a
   const row = await db
     .selectFrom("messages",).selectAll()
     .where("id", "=", result!.messageId,).executeTakeFirstOrThrow();
+
   expect(row.role,).toBe(MessageRole.Assistant,);
   expect(row.content,).toBe("enc:The wind howls over the pass.",);
   expect(row.status,).toBe(MessageStatus.Confirmed,);
@@ -230,6 +237,7 @@ test("computes swipe_index = max existing sibling swipe + 1 when parent set", as
   const row = await db
     .selectFrom("messages",).selectAll()
     .where("id", "=", result!.messageId,).executeTakeFirstOrThrow();
+
   expect(row.parent_id,).toBe(parentId,);
   expect(row.swipe_index,).toBe(5,);
 });
@@ -255,6 +263,7 @@ test("first variant under a parent gets swipe_index 1", async () => {
   const row = await db
     .selectFrom("messages",).select("swipe_index",)
     .where("id", "=", result!.messageId,).executeTakeFirstOrThrow();
+
   expect(row.swipe_index,).toBe(1,);
 });
 
@@ -274,6 +283,7 @@ test("ensureActorKey runs only when an SMK exists", async () => {
     deps: makeDeps({ smk: "smk-bytes", },),
     log: logger,
   },);
+
   expect(ensuredActorKeys,).toEqual([withSmk.actorId,],);
 
   ensuredActorKeys = [];
@@ -291,6 +301,7 @@ test("ensureActorKey runs only when an SMK exists", async () => {
     deps: makeDeps({ smk: null, },),
     log: logger,
   },);
+
   expect(ensuredActorKeys,).toEqual([],);
 });
 
@@ -306,6 +317,7 @@ test("content-hook denial returns null and persists nothing (fail closed)", asyn
     birth_date: "1990-01-01",
     age_gate_accepted_at: null,
   },).execute();
+
   const { chatId, actorId, } = await seedScenario({
     actor: { content_rating: ContentRating.NsfwMild, },
   },);
@@ -328,5 +340,6 @@ test("content-hook denial returns null and persists nothing (fail closed)", asyn
   const rows = await db
     .selectFrom("messages",).selectAll()
     .where("chat_id", "=", chatId,).execute();
+
   expect(rows,).toHaveLength(0,);
 });

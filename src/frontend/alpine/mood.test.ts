@@ -36,6 +36,7 @@ describe("avatarForMessage (per-message emotion-avatar binding)", () => {
       ],
       currentCharacter: { avatar_asset_id: "base", },
     };
+
     expect(avatarForMessage.call(scope, { role: "assistant", emotion: "happy", },),).toBe("asset-happy",);
   });
 
@@ -47,6 +48,7 @@ describe("avatarForMessage (per-message emotion-avatar binding)", () => {
       ],
       currentCharacter: { avatar_asset_id: "base", },
     };
+
     expect(avatarForMessage.call(scope, { role: "assistant", emotion: "confused", },),).toBe("asset-neutral",);
   });
 
@@ -55,6 +57,7 @@ describe("avatarForMessage (per-message emotion-avatar binding)", () => {
       _emotionAvatars: [{ emotion: "happy", avatarId: "av-1", assetId: "asset-happy", },],
       currentCharacter: { avatar_asset_id: "base", },
     };
+
     expect(avatarForMessage.call(scope, { role: "assistant", emotion: undefined, },),).toBe("base",);
   });
 
@@ -67,6 +70,7 @@ describe("avatarForMessage (per-message emotion-avatar binding)", () => {
       currentCharacter: { avatar_asset_id: "base", },
       _currentEmotionAvatar: "asset-sad",
     };
+
     expect(avatarForMessage.call(scope, { role: "assistant", emotion: "happy", },),).toBe("asset-happy",);
     // The global mood-driven selection stays untouched.
     expect(scope._currentEmotionAvatar,).toBe("asset-sad",);

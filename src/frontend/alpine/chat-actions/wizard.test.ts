@@ -24,6 +24,7 @@ function buildCtx(): WizardCtx {
       }
     },
   };
+
   return ctx;
 }
 
@@ -36,12 +37,14 @@ describe("wizardActionHandlers.wizard-preview", () => {
       label: "New Character",
       fields: { name: "Aria", species: undefined, },
     }, "chat-1",);
+
     expect(ctx.wizardDraft,).toEqual({
       wizardId: "w1",
       entityType: "character",
       label: "New Character",
       fields: { name: "Aria", species: undefined, },
     },);
+
     expect(ctx.wizardPreviewOpen,).toBe(true,);
   });
 
@@ -109,6 +112,7 @@ describe("wizardActionHandlers.create-entity-preview", () => {
       worldId: "world-1",
       warnings: ["low-mana",],
     }, "chat-1",);
+
     const draft = ctx.wizardDraft as Record<string, unknown>;
     expect(draft.entityType,).toBe("entity",);
     expect(draft.label,).toBe("Entity",);

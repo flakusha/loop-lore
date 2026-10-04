@@ -19,6 +19,7 @@ describe("toRow", () => {
       uses: 0,
       status: InviteStatus.Active,
     },);
+
     expect(out,).toEqual({
       id: "inv-1",
       worldId: "world-1",
@@ -44,6 +45,7 @@ describe("toRow", () => {
       uses: 0,
       status: InviteStatus.Revoked,
     },);
+
     expect(out.createdBy,).toBeNull();
     expect(out.expiresAt,).toBeNull();
     expect(out.maxUses,).toBeNull();

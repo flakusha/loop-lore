@@ -46,6 +46,7 @@ beforeAll(async () => {
     status: "active" as never,
     settings: "{}" as never,
   },);
+
   worldId = uid();
   await insertWorlds(db, userId, "TradeService Test World", { id: worldId as never, },);
 
@@ -60,6 +61,7 @@ beforeAll(async () => {
     agent_type: "ai" as never,
     settings: "{}" as never,
   },);
+
   await insertActors(db, "Seller", {
     id: sellerId as never,
     actor_type: "character" as never,
@@ -68,6 +70,7 @@ beforeAll(async () => {
     agent_type: "ai" as never,
     settings: "{}" as never,
   },);
+
   await insertActors(db, "NPC", {
     id: npcId as never,
     actor_type: "npc" as never,
@@ -88,11 +91,13 @@ beforeAll(async () => {
     owner_actor_id: sellerId,
     quantity: 5 as never,
   },);
+
   await insertWorldItems(db, worldId, defItemId, {
     id: npcWorldItemId as never,
     owner_actor_id: npcId,
     quantity: 3 as never,
   },);
+
   await insertWorldItems(db, worldId, defItemId, {
     id: buyerWorldItemId as never,
     owner_actor_id: buyerId,
@@ -151,6 +156,7 @@ describe("TradeService facade delegation", () => {
       sellerItems: [{ worldItemId: sellerWorldItemId, quantity: 1, },],
       price: 20,
     },);
+
     expect(result,).toBeDefined();
     expect(result.success,).toBe(true,);
 
@@ -179,6 +185,7 @@ describe("TradeService facade delegation", () => {
       sellerItems: [{ worldItemId: npcWorldItemId, quantity: 1, },],
       price: 10,
     },);
+
     expect(result.success,).toBe(true,);
     // Buyer paid 10 to the NPC.
     expect(await svc.getBalance(buyerId, worldId,),).toBe(15,);
@@ -193,6 +200,7 @@ describe("TradeService facade delegation", () => {
       buyerItems: [{ worldItemId: buyerWorldItemId, quantity: 1, },],
       price: 5,
     },);
+
     expect(result.success,).toBe(true,);
     // Buyer earned 5 from the NPC.
     expect(await svc.getBalance(buyerId, worldId,),).toBe(20,);

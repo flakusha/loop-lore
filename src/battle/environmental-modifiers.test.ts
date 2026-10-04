@@ -44,10 +44,12 @@ describe("getEnvironmentalModifiers", () => {
     const cover = mods.find((m,) => m.id === "cover_defense");
     expect(cover?.value,).toBe(5,);
   });
+
   it("adds no cover modifier in the open", () => {
     const mods = getEnvironmentalModifiers(PLAIN,);
     expect(mods.some((m,) => m.id === "cover_defense"),).toBe(false,);
   });
+
   it("penalizes speed on difficult terrain", () => {
     const mods = getEnvironmentalModifiers({ ...PLAIN, difficultTerrain: true, },);
     const slow = mods.find((m,) => m.id === "difficult_terrain_speed");
@@ -68,6 +70,7 @@ describe("getEnvironmentalModifiers", () => {
       difficultTerrain: true,
       weather: "storm",
     },);
+
     const ids = mods.map((m,) => m.id);
     expect(ids,).toContain("cover_defense",);
     expect(ids,).toContain("difficult_terrain_speed",);
@@ -82,6 +85,7 @@ describe("applyEnvironmentalModifiers", () => {
     const out = applyEnvironmentalModifiers(STATS, getEnvironmentalModifiers({ ...PLAIN, difficultTerrain: true, },),);
     expect(out.speed,).toBe(20,);
   });
+
   it("clamps health and chances into range", () => {
     const out = applyEnvironmentalModifiers(
       { ...STATS, health: 49, accuracy: 150, },
@@ -95,6 +99,7 @@ describe("applyEnvironmentalModifiers", () => {
         description: "x",
       },],
     );
+
     expect(out.health,).toBe(50,);
     expect(out.accuracy,).toBe(100,);
   });
@@ -111,6 +116,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "noop",
     },],);
+
     expect(out.speed,).toBe(30,);
   });
 
@@ -124,6 +130,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "halved",
     },],);
+
     expect(out.speed,).toBe(15,);
   });
 
@@ -137,6 +144,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "dmg",
     },],);
+
     expect(out.health,).toBe(0,);
   });
 
@@ -164,6 +172,7 @@ describe("applyEnvironmentalModifiers", () => {
         },
       ],
     );
+
     expect(out.mana,).toBe(20,);
     expect(out.stamina,).toBe(10,);
   });
@@ -176,6 +185,7 @@ describe("applyEnvironmentalModifiers", () => {
       // @ts-expect-error testing runtime behavior with invalid weather
       weather: "hurricane_typhoon",
     },);
+
     expect(mods,).toEqual([],);
   });
 });

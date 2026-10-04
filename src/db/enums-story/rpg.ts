@@ -55,6 +55,7 @@ const playerAchievementStatusDef: StateDef<PlayerAchievementStatus> = {
   },
   terminal: ["claimed",],
 };
+
 export const playerAchievementStatusMachine = createMachine(playerAchievementStatusDef,);
 
 const playthroughStatusDef: StateDef<PlaythroughStatus> = {
@@ -66,6 +67,7 @@ const playthroughStatusDef: StateDef<PlaythroughStatus> = {
   },
   terminal: ["completed",],
 };
+
 export const playthroughStatusMachine = createMachine(playthroughStatusDef,);
 
 const skillLockStateDef: StateDef<SkillLockState> = {
@@ -77,6 +79,7 @@ const skillLockStateDef: StateDef<SkillLockState> = {
   },
   terminal: ["unlocked",],
 };
+
 export const skillLockStateMachine = createMachine(skillLockStateDef,);
 
 const vnChoiceStatusDef: StateDef<VnChoiceStatus> = {
@@ -88,4 +91,5 @@ const vnChoiceStatusDef: StateDef<VnChoiceStatus> = {
   },
   terminal: ["selected",],
 };
+
 export const vnChoiceStatusMachine = createMachine(vnChoiceStatusDef,);

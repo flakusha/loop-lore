@@ -72,6 +72,7 @@ describe("Auth session E2E", () => {
         if (!/ERR_ABORTED|frame was detached|navigating/i.test(message,)) { throw error; }
       }
     }
+
     throw lastError;
   }
 
@@ -104,6 +105,7 @@ describe("Auth session E2E", () => {
           const btn = document.querySelector("button[data-testid='nav-logout']",);
           (btn as HTMLElement | undefined)?.click();
         },);
+
         await waitForUrlWithRetry(page, (url,) => url.pathname === "/views/login",);
       } finally {
         errors.assert();

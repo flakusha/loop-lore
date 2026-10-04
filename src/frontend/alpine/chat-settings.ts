@@ -74,6 +74,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
       | "hidden"
       | "collapsed"
       | "visible";
+
     this._chatOnline = Array.isArray(this.messages,) && this.messages.some((m,) => m.status === "confirmed");
     this._groupPaused = this.isChatPaused(chat,);
     await this.loadChatParticipants();
@@ -145,6 +146,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
       const existing = activeChatObj?.gm_config
         ? jsonParseOr<GmConfig>(activeChatObj.gm_config, {},)
         : {};
+
       const gmConfig = buildGmConfig(existing, {
         assistantRole: this._assistantRole,
         vnEnabled: this._vnEnabled,
@@ -172,6 +174,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         outputStylePreset: this._outputStylePreset,
         outputStyleIntensity: this._outputStyleIntensity,
       }, this._actorModels,);
+
       const body: Record<string, unknown> = {
         name: this._chatSettingsName.trim(),
         isPaused: this._groupPaused,
@@ -179,6 +182,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         outputStylePreset: this._outputStylePreset,
         customInstructions: this._customInstructions.trim() || null,
       };
+
       // Key mechanics (mode, turnStrategy, full gmConfig) are immutable once the
       // chat is online — the backend rejects them with 409. Offline (draft) chats
       // send the full gmConfig blob. Online chats send only the presentation
@@ -190,16 +194,19 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
       } else {
         body.gmConfig = presentationGmConfig(gmConfig,);
       }
+
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
       },);
+
       if (!res.ok) {
         const err = await res.json();
         this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSaveSettings",), },);
         return;
       }
+
       const targetLang = this._chatAutoTranslateLang.trim();
       const translateRes = targetLang
         ? await apiFetch(`/api/v1/chats/${this.activeChat}/auto-translate`, {
@@ -208,10 +215,12 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
           body: jsonBody({ targetLang, },),
         },)
         : await apiFetch(`/api/v1/chats/${this.activeChat}/auto-translate`, { method: "DELETE", },);
+
       if (!translateRes.ok) {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSaveAutoTranslate",), },);
         return;
       }
+
       const chats = this.chats;
       const chat = chats.find((c,) => c.id === this.activeChat);
       if (chat) {
@@ -225,6 +234,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
           /* store not ready */
         }
       }
+
       this.activeChatName = this._chatSettingsName.trim();
       const titleEl = document.querySelector("#page-title",);
       if (titleEl) { titleEl.textContent = this.activeChatName; }

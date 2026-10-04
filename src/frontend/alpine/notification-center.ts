@@ -113,6 +113,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
           /* ignore */
         }
       }
+
       if (item.link) { globalThis.location.assign(item.link,); }
     },
 
@@ -130,6 +131,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       } catch {
         /* ignore */
       }
+
       const item = this.items.find((n,) => n.id === id);
       if (item) { item.read = 1; }
     },
@@ -143,6 +145,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       } catch {
         /* ignore */
       }
+
       this.items = Array.from(this.items, (n,) => ({ ...n, read: 1, }),);
     },
 

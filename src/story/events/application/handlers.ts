@@ -35,34 +35,42 @@ export async function applySingleEvent(
       await applyLocationChange(database, event,);
       return { event, applied: true, };
     }
+
     case WorldEventType.NpcStateChange: {
       await applyNpcStateChange(database, event,);
       return { event, applied: true, };
     }
+
     case WorldEventType.TimeAdvancement: {
       await applyTimeAdvancement(database, worldId, event,);
       return { event, applied: true, };
     }
+
     case WorldEventType.LocationModification: {
       await applyLocationModification(database, event,);
       return { event, applied: true, };
     }
+
     case WorldEventType.WorldLoreUpdate: {
       await applyWorldLoreUpdate(database, worldId, event,);
       return { event, applied: true, };
     }
+
     case WorldEventType.CombatEvent: {
       await applyCombatEvent(database, event,);
       return { event, applied: true, };
     }
+
     case WorldEventType.ItemTransfer: {
       await applyItemTransfer(database, items, worldId, event,);
       return { event, applied: true, };
     }
+
     case WorldEventType.QuestProgress: {
       // Quest progress is handled by QuestEngine, not here
       return { event, applied: true, };
     }
+
     default: {
       return assertNever(event.type,);
     }
@@ -105,10 +113,12 @@ export async function applyNpcStateChange(db: Kysely<DB>, event: WorldEvent,): P
     const r = safeJsonStringify(changes.relationships,);
     if (r.ok) { update.relationships = r.value; }
   }
+
   if (changes.knowledge) {
     const r = safeJsonStringify(changes.knowledge,);
     if (r.ok) { update.knowledge = r.value; }
   }
+
   if (Object.keys(update,).length > 0) {
     update.updated_at = new Date().toISOString();
     await db.updateTable("npc_states",).set(update,).where("actor_id", "=", npcActorId,).execute();

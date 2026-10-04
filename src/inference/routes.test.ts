@@ -24,6 +24,7 @@ describe("local inference routes", () => {
       if (!isWllamaEngine(model.engine,)) {
         expect(model.files.length,).toBeGreaterThan(0,);
       }
+
       for (const file of model.files) {
         expect(typeof file.name,).toBe("string",);
         expect(String(file.url,).startsWith("https://",),).toBe(true,);
@@ -41,22 +42,26 @@ describe("local inference routes", () => {
     expect(body.eligibleTasks,).toContain("prompt-analyze",);
     expect(body.downloadsAllowed,).toBe(true,);
   });
+
   test("deny policy flips the capability downloads flag", async () => {
     const app = localInferenceRoutes({
       resolvePolicy: () => ({ allowDownloads: false, }),
     },);
+
     const res = await app.handle(new Request("http://localhost/api/local-inference/capability",),);
     expect(res.status,).toBe(200,);
     const body = await res.json();
     expect(body.downloadsAllowed,).toBe(false,);
     expect(body.models,).toBeUndefined();
   });
+
   test("injected deny policy filters the served catalog", async () => {
     const first = BROWSER_MODEL_CATALOG[0];
     if (!first) { throw new Error("policy test needs a catalog model",); }
     const app = localInferenceRoutes({
       resolvePolicy: () => ({ models: { [first.id]: { allowDownload: false, }, }, }),
     },);
+
     const res = await app.handle(new Request("http://localhost/api/local-inference/manifest",),);
     expect(res.status,).toBe(200,);
     const body = await res.json();

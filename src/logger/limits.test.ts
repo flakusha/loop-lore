@@ -41,6 +41,7 @@ describe("applyLimits", () => {
       { ...baseEntry, meta: large, },
       { maxMetaBytes: 1000, maxMetaDepth: 3, maxMetaEntries: 5, },
     );
+
     expect(result.meta,).toBeDefined();
     expect(Object.keys(result.meta!,).length,).toBeLessThan(300,);
   });
@@ -49,6 +50,7 @@ describe("applyLimits", () => {
     const deep: Record<string, unknown> = {
       a: { b: { c: { d: { e: { f: "val", }, }, }, }, },
     };
+
     const result = applyLimits({ ...baseEntry, meta: deep, }, { maxMetaDepth: 0, },);
     const a = result.meta!.a as Record<string, unknown>;
     // At depth 0, we don't descend

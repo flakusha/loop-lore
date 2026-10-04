@@ -91,6 +91,7 @@ describe("scoreCreativity", () => {
     const s = scoreCreativity(
       ctx({ response: "The ancient forgotten shadow whispered a mysterious warning.", },),
     );
+
     // ancient, forgotten, shadow, whisper, mysterious = +25
     expect(s,).toBe(90,);
   });
@@ -99,6 +100,7 @@ describe("scoreCreativity", () => {
     const s = scoreCreativity(
       ctx({ response: "It was a dark and stormy night and little did they know.", },),
     );
+
     // 65 - 15 - 15
     expect(s,).toBe(35,);
   });
@@ -106,6 +108,7 @@ describe("scoreCreativity", () => {
   test("near-duplicate recent turns penalize repetition", () => {
     const response = `The ancient forgotten shadow whispered a mysterious warning across the
       glimmering hall while the terrifying beast emerged from the unsettling dark.`;
+
     const s = scoreCreativity(ctx({ response, recentTurns: [{ response, },], },),);
     // boosted then -20 for similarity 1.0
     expect(s,).toBeLessThan(100,);
@@ -130,12 +133,14 @@ describe("scoreCreativity", () => {
           "unexpected surprising peculiar strange mysterious unsettling beautiful terrifying ancient forgotten glimmer shadow whisper fade emerge",
       },),
     );
+
     expect(s,).toBe(100,);
   });
 
   test("score never drops below 10", () => {
     const response = `It was a dark and stormy night. Little did they know, the answer was
       inside them all along. It was all a dream in the nick of time. Destiny called.`;
+
     const s = scoreCreativity(ctx({ response, },),);
     expect(s,).toBeGreaterThanOrEqual(10,);
   });
@@ -147,6 +152,7 @@ describe("scoreNarrativeQuality", () => {
     const s = scoreNarrativeQuality(
       ctx({ response: `${words} The cold smell of rain. "Run!" he said. She was running.`, },),
     );
+
     expect(s,).toBeGreaterThan(75,);
   });
 

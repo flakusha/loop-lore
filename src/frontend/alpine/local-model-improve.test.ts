@@ -53,6 +53,7 @@ describe("extractGeneratedText", () => {
       { role: "assistant", content: "first", },
       { role: "assistant", content: "second", },
     ];
+
     expect(extractGeneratedText(raw,),).toBe("second",);
     expect(extractGeneratedText({ generated_text: "  out  ", },),).toBe("out",);
   });

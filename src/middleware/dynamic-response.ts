@@ -151,6 +151,7 @@ export class DynamicResponsePolicy {
         kind,
         error: error instanceof Error ? error.message : String(error,),
       },);
+
       return body;
     }
   }
@@ -165,9 +166,11 @@ export class DynamicResponsePolicy {
       case "html": {
         return minifyHTMLContent(body,);
       }
+
       case "css": {
         return minifyCSS(body,);
       }
+
       case "js": {
         return minifyJS(body,);
       }
@@ -212,13 +215,16 @@ export class DynamicResponsePolicy {
     const accepted = new Set(
       parseAcceptEncoding(accept,).filter((algo,) => algo !== CompressionAlgorithm.None),
     );
+
     // Explicit algorithm: only if the client accepts it.
     if (this.config.compressAlgorithm === "br") {
       return accepted.has(CompressionAlgorithm.Brotli,) ? "br" : null;
     }
+
     if (this.config.compressAlgorithm === "gzip") {
       return accepted.has(CompressionAlgorithm.Gzip,) ? "gzip" : null;
     }
+
     // auto: server preference br > gzip among client-accepted algorithms.
     if (accepted.has(CompressionAlgorithm.Brotli,)) { return "br"; }
     if (accepted.has(CompressionAlgorithm.Gzip,)) { return "gzip"; }

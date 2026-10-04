@@ -34,6 +34,7 @@ function makeFactory(captured: Captured[],): CronFactory {
         return cronHandle;
       },
     };
+
     return cronHandle;
   };
 }
@@ -67,6 +68,7 @@ describe("cron registry", () => {
         defineJob({ name: "b.off", schedule: "@hourly", enabled: false, run: async () => "ok", },),
       ],
     },),);
+
     try {
       expect(captured.length,).toBe(1,);
       expect(captured[0]?.expression,).toBe("@hourly",);
@@ -98,6 +100,7 @@ describe("cron registry", () => {
         },),
       ],
     },),);
+
     try {
       const result = await scheduler.runOnce("a.job",);
       expect(result,).toBe(42,);
@@ -127,6 +130,7 @@ describe("cron registry", () => {
         },),
       ],
     },),);
+
     try {
       await expect(scheduler.runOnce("a.flaky",),).rejects.toThrow("boom",);
       await captured[0]?.callback();
@@ -148,6 +152,7 @@ describe("cron registry", () => {
         cronConfig: { enabled: true, jobs: { "typo.name": { enabled: true, }, }, },
       },),)
     ).toThrow("Unknown cron job override",);
+
     expect(() =>
       startScheduler(makeDeps({
         cronImpl: makeFactory(captured,),
@@ -163,17 +168,20 @@ describe("cron registry", () => {
       jobs: [defineJob({ name: "a.job", schedule: "@hourly", enabled: true, run: async () => {}, },),],
       cronConfig: { enabled: true, jobs: { "a.job": { schedule: "@daily", }, }, },
     },),);
+
     try {
       expect(captured[0]?.expression,).toBe("@daily",);
     } finally {
       on.stop();
     }
+
     const capturedOff: Captured[] = [];
     const off = startScheduler(makeDeps({
       cronImpl: makeFactory(capturedOff,),
       jobs: [defineJob({ name: "a.job", schedule: "@hourly", enabled: true, run: async () => {}, },),],
       cronConfig: { enabled: false, jobs: {}, },
     },),);
+
     try {
       expect(capturedOff.length,).toBe(0,);
       expect(off.getStatus()[0]?.enabled,).toBe(false,);
@@ -188,6 +196,7 @@ describe("cron registry", () => {
       cronImpl: makeFactory(captured,),
       jobs: [defineJob({ name: "a.job", schedule: "@hourly", enabled: true, run: async () => {}, },),],
     },),);
+
     expect(getScheduler(),).toBe(scheduler,);
     scheduler.stop();
     expect(captured[0]?.handle.stopped,).toBe(true,);
@@ -200,6 +209,7 @@ describe("cron registry", () => {
       cronImpl: makeFactory(captured,),
       jobs: [defineJob({ name: "a.ref", schedule: "@hourly", enabled: true, unref: false, run: async () => {}, },),],
     },),);
+
     try {
       expect(captured[0]?.handle.unrefed,).toBe(false,);
     } finally {

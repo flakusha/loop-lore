@@ -59,6 +59,7 @@ export function passesConfidenceFloor(
     /* worldDaysSince: number */ 0,
     cfg,
   );
+
   return confidence >= cfg.min_confidence;
 }
 

@@ -74,6 +74,7 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
     deps,
     log,
   } = opts;
+
   const messageId = uid();
 
   let storedContent = response;
@@ -94,6 +95,7 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
       algorithm: config.encryption.compressAlgorithm,
     },
   },);
+
   storedContent = result.storedContent;
   storedKeyId = result.keyId;
 
@@ -108,13 +110,16 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
       userId,
       content: response,
     },);
+
     if (!hooks.allowed) {
       log.warn("story-mode: generation blocked by content hooks", {
         chatId,
         actorId: hooks.actorId ?? actorId,
       },);
+
       return null;
     }
+
     dominantEmotion = hooks.dominantEmotion ?? null;
     // Prefer the hook payload actorId (mirrors auto-generation.ts); fall back to opts for back-compat.
     effectiveActorId = hooks.actorId ?? actorId;
@@ -127,6 +132,7 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
       error instanceof Error ? error : new Error(String(error,),),
       { chatId, actorId, },
     );
+
     throw error;
   }
 
@@ -139,6 +145,7 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
       .where("chat_id", "=", chatId,)
       .where("parent_id", "=", parentMessageId,)
       .executeTakeFirst();
+
     swipeIndex = (maxSwipe?.max_idx ?? 0) + 1;
   }
 
@@ -163,5 +170,6 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
       emotion: dominantEmotion,
     },)
     .execute();
+
   return { messageId, };
 }

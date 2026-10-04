@@ -32,6 +32,7 @@ export const gmPanelEntities = {
           seed: this.entitySeed.trim(),
         },),
       },);
+
       if (res.ok) {
         const data = await res.json() as { chatId?: string };
         this.entitySeed = "";

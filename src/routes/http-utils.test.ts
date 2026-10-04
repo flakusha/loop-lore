@@ -92,6 +92,7 @@ describe("jsonError", () => {
       status: HttpStatus.Unauthorized,
       code: "UNAUTHORIZED",
     },);
+
     expect(res.status,).toBe(401,);
     expect(await res.json(),).toEqual({ error: "Expired token", code: "UNAUTHORIZED", meta: { api_version: "1", }, },);
   });
@@ -135,6 +136,7 @@ describe("jsonValidationError", () => {
       { field: "name", message: "Required", },
       { field: "age", message: "Must be ≥ 18", },
     ];
+
     const res = jsonValidationError(errors,);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.details,).toHaveLength(2,);

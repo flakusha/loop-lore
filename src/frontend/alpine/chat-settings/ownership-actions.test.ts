@@ -60,6 +60,7 @@ describeOrSkip("ownershipActions.openOwnershipTransferModal", () => {
       _ownershipNewOwnerId: "old-id",
       _ownershipReason: "stale reason",
     },);
+
     ownershipActions.openOwnershipTransferModal!.call(ctx,);
     expect(ctx._ownershipModalOpen,).toBe(true,);
     expect(ctx._ownershipError,).toBe("",);
@@ -81,6 +82,7 @@ describeOrSkip("ownershipActions.closeOwnershipTransferModal", () => {
       _ownershipSubmitting: true,
       _ownershipError: "oops",
     },);
+
     ownershipActions.closeOwnershipTransferModal!.call(ctx,);
     expect(ctx._ownershipModalOpen,).toBe(false,);
     expect(ctx._ownershipSubmitting,).toBe(false,);
@@ -112,6 +114,7 @@ describeOrSkip("ownershipActions.submitOwnershipTransfer", () => {
       autoInvited: true,
       meta: { api_version: "1", },
     },);
+
     let reloaded = 0;
     const ctx = ownershipCtx({
       _ownershipNewOwnerId: "new-owner",
@@ -120,6 +123,7 @@ describeOrSkip("ownershipActions.submitOwnershipTransfer", () => {
         reloaded++;
       },
     },);
+
     await ownershipActions.submitOwnershipTransfer!.call(ctx,);
 
     expect(fetchCalls,).toHaveLength(1,);
@@ -131,6 +135,7 @@ describeOrSkip("ownershipActions.submitOwnershipTransfer", () => {
       confirm: true,
       reason: "stepping down",
     },);
+
     expect(ctx._ownershipModalOpen,).toBe(false,);
     expect(ctx._ownershipSubmitting,).toBe(false,);
     expect(ctx._ownershipError,).toBe("",);
@@ -142,6 +147,7 @@ describeOrSkip("ownershipActions.submitOwnershipTransfer", () => {
     const ctx = ownershipCtx({
       _ownershipNewOwnerId: "new-owner",
     },);
+
     await ownershipActions.submitOwnershipTransfer!.call(ctx,);
     expect(ctx._ownershipError,).toBe("Only the current owner may transfer",);
     expect(ctx._ownershipModalOpen,).toBe(false,); // stays closed on error
@@ -170,6 +176,7 @@ describeOrSkip("ownershipActions.submitOwnershipTransfer", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const ctx = ownershipCtx({ _ownershipNewOwnerId: "new-owner", },);
     await ownershipActions.submitOwnershipTransfer!.call(ctx,);
     expect(ctx._ownershipError,).toBe("offline",);
@@ -181,6 +188,7 @@ describeOrSkip("ownershipActions.submitOwnershipTransfer", () => {
       _ownershipNewOwnerId: "new-owner",
       _ownershipReason: "   ",
     },);
+
     await ownershipActions.submitOwnershipTransfer!.call(ctx,);
     expect(JSON.parse(fetchCalls[0]!.opts.body as string,),).toEqual({ newOwnerId: "new-owner", confirm: true, },);
   });
@@ -190,9 +198,11 @@ describeOrSkip("ownershipActions.canTransferOwnership", () => {
   test("true when activeChat is set", () => {
     expect(ownershipActions.canTransferOwnership!.call(ownershipCtx(),),).toBe(true,);
   });
+
   test("false when no activeChat", () => {
     expect(ownershipActions.canTransferOwnership!.call(ownershipCtx({ activeChat: null, },),),).toBe(false,);
   });
+
   test("false when activeChat is empty string", () => {
     expect(ownershipActions.canTransferOwnership!.call(ownershipCtx({ activeChat: "", },),),).toBe(false,);
   });

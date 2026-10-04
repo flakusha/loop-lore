@@ -27,12 +27,14 @@ async function parseCredentials(
   if (contentType && !contentType.startsWith("application/x-www-form-urlencoded",)) {
     return null;
   }
+
   let body: string;
   try {
     body = await request.text();
   } catch {
     return null;
   }
+
   const trimmed = body.trimStart();
   if (trimmed.startsWith("{",) || trimmed.startsWith("[",)) {
     // Looks like JSON — not a form. Reject so API clients get a 4xx from
@@ -40,6 +42,7 @@ async function parseCredentials(
     // empty-creds success/fail.
     return null;
   }
+
   try {
     return new URLSearchParams(body,);
   } catch {

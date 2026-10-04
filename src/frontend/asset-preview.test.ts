@@ -94,6 +94,7 @@ function makeEl(): FakeEl {
     addEventListener: () => {},
     querySelector: (sel,) => findEl(children, sel,),
   };
+
   return el;
 }
 
@@ -107,6 +108,7 @@ function findEl(els: FakeEl[], sel: string,): FakeEl | null {
     const hit = findEl(el.children, sel,);
     if (hit) { return hit; }
   }
+
   return null;
 }
 
@@ -139,6 +141,7 @@ function makeDocument(): FakeDocument {
         set = new Set();
         keyHandlers.set(t, set,);
       }
+
       set.add(fn,);
     },
     removeEventListener: (t, fn,) => {
@@ -164,6 +167,7 @@ const previewHost = globalThis as unknown as {
   confirm?: (message: string,) => boolean;
   htmx?: { trigger(el: unknown, evt: string,): void };
 };
+
 const originalDocument = docHost.document;
 const originalNavigator = navHost.navigator;
 const originalHtmx = previewHost.htmx;
@@ -186,6 +190,7 @@ function serveAsset(asset: Record<string, unknown>,): void {
     if (url.startsWith(`/api/v1/assets/${asset.id as string}/signed-url/`,)) {
       return jsonResponse({ url: `/signed${url.split("signed-url",)[1]}`, },);
     }
+
     return jsonResponse({}, 404,);
   };
 }
@@ -202,12 +207,14 @@ beforeEach(() => {
       },
     },
   };
+
   previewHost.confirm = () => confirmAnswer;
   previewHost.htmx = {
     trigger: (_el, evt,) => {
       htmxTriggers.push(evt,);
     },
   };
+
   calls = [];
   feHandler = null;
   htmxTriggers = [];
@@ -223,6 +230,7 @@ beforeEach(() => {
     child.setAttribute("data-field", field,);
     modal.append(child,);
   }
+
   doc.register(modal,); // modal already mounted in #modal-container
   for (const id of ["asset-grid", "toast-container",]) {
     const el = makeEl();
@@ -257,6 +265,7 @@ describeOrSkip("openAssetPreview", () => {
     expect(modal.querySelector("[data-field='size']",)!.textContent,).toBe("2.0 KB",);
     expect(modal.querySelector("[data-field='preview-body']",)!.innerHTML,)
       .toBe(`<img src="http://localhost:3000/signed/raw" alt="cat.png" style="width:100%;display:block" />`,);
+
     expect(previewHost.__previewAsset?.id,).toBe("a1",);
   });
 
@@ -265,6 +274,7 @@ describeOrSkip("openAssetPreview", () => {
       if (url === "/api/v1/assets/a1" && !init.method) { return jsonResponse({ ...IMAGE, filename: `&<>"'x`, },); }
       return jsonResponse({ url: 123, },); // non-string url → null → relative fallback
     };
+
     await previewHost.openAssetPreview!("a1",);
     const body = doc.querySelector("#preview-modal",)!.querySelector("[data-field='preview-body']",)!;
     expect(body.innerHTML,).toBe(
@@ -283,6 +293,7 @@ describeOrSkip("openAssetPreview", () => {
     ) {
       feHandler = (url,) =>
         url === "/api/v1/assets/a1" ? jsonResponse({ ...IMAGE, asset_type: assetType, },) : jsonResponse({}, 404,);
+
       await previewHost.openAssetPreview!("a1",);
       const modal = doc.querySelector("#preview-modal",)!;
       expect(modal.querySelector("[data-field='preview-body']",)!.innerHTML.startsWith(prefix,),).toBe(true,);
@@ -296,6 +307,7 @@ describeOrSkip("openAssetPreview", () => {
     for (const [bytes, want,] of [[0, "0 B",], [512, "512 B",], [3_145_728, "3.0 MB",],] as const) {
       feHandler = (url,) =>
         url === "/api/v1/assets/a1" ? jsonResponse({ ...IMAGE, size_bytes: bytes, },) : jsonResponse({}, 404,);
+
       await previewHost.openAssetPreview!("a1",);
       expect(sizeEl(),).toBe(want,);
     }
@@ -312,10 +324,12 @@ describeOrSkip("openAssetPreview", () => {
       if (url.endsWith("/signed-url/raw",)) { throw new Error("net down",); } // signed → null
       return jsonResponse({}, 404,);
     };
+
     await previewHost.openAssetPreview!("a1",); // signing network failure → fallback
     feHandler = () => {
       throw new Error("offline",);
     };
+
     await expect(previewHost.openAssetPreview!("a1",),).resolves.toBeUndefined(); // swallowed
     doc = makeDocument(); // no #modal-container, no #preview-modal
     docHost.document = doc as unknown as Document;
@@ -334,6 +348,7 @@ describeOrSkip("previewEscape", () => {
     trigger.focus = () => {
       focused.el = trigger;
     };
+
     (doc as unknown as { activeElement: FakeEl | null }).activeElement = trigger;
     await previewHost.openAssetPreview!("a1",);
     const modal = doc.querySelector("#preview-modal",)!;
@@ -372,6 +387,7 @@ describeOrSkip("downloadAsset", () => {
       anchors.push(...els,);
       append(...els,);
     };
+
     await previewHost.downloadAsset!();
     expect(anchors[0]!.href,).toBe("http://localhost:3000/signed/download",);
     expect(anchors[0]!.download,).toBe("cat.png",);
@@ -385,6 +401,7 @@ describeOrSkip("downloadAsset", () => {
     doc.body.append = () => {
       throw new Error("no dom",); // download failure → module catch → toast
     };
+
     feHandler = () => jsonResponse({ url: "/signed/dl", },);
     await previewHost.downloadAsset!();
     expect(doc.querySelector("#toast-container",)!.children[0]!.className,).toBe("toast error",);
@@ -404,6 +421,7 @@ describeOrSkip("deleteAssetPreview", () => {
     feHandler = () => {
       throw new Error("offline",); // network failure → module catch → toast
     };
+
     expect(await previewHost.deleteAssetPreview!(),).toBe(false,);
     expect(doc.querySelector("#preview-modal",)!.classList.contains("open",),).toBe(true,);
     expect(doc.querySelector("#toast-container",)!.children[0]!.className,).toBe("toast error",);

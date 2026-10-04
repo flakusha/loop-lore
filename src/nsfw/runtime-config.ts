@@ -110,8 +110,10 @@ export async function applyStoredNsfwConfig(db: Kysely<DB>,): Promise<void> {
     let parsed: boolean | undefined;
     if (allowRaw === "true") { parsed = true; }
     else if (allowRaw === "false") { parsed = false; }
+
     if (parsed !== undefined) { patch.allowNsfw = parsed; }
   }
+
   if (minAgeRaw !== undefined) {
     const parsed = Number(minAgeRaw,);
     if (Number.isFinite(parsed,) && parsed >= 1 && parsed <= 150) { patch.nsfwMinAge = parsed; }

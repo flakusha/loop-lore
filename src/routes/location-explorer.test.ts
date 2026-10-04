@@ -44,6 +44,7 @@ async function insertUser(db: Kysely<DB>, userId: string,): Promise<void> {
       settings: "{}",
     },)
     .execute();
+
   await db
     .insertInto("actors",)
     .values({
@@ -104,12 +105,14 @@ describe("locationExplorerRoutes", () => {
       .set({ connections: enc.value, },)
       .where("id", "=", locTavern,)
       .execute();
+
     await insertLocationStates(db, locTavern, worldId, { atmosphere: "warm", description_override: "Lively tavern", },);
 
     const app = createApp(db, userId,);
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/locations/${locTavern}/details`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()).data;
 

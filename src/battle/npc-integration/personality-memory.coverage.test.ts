@@ -122,6 +122,7 @@ describe("wouldNPCSurrender", () => {
       memory("defeat", -30,),
       memory("defeat", -30,),
     ];
+
     const r = wouldNPCSurrender(personality({ courage: 0, },), 1, 100, defeats,);
     expect(r.confidence,).toBe(95,);
   });

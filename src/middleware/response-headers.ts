@@ -194,6 +194,7 @@ export class ResponseHeaderPolicy {
     if (kind === "html") {
       this.applyHtmlHeaders(headers, request,);
     }
+
     if (kind === "api" && cfg.permissionsPolicy) {
       headers["Permissions-Policy"] = cfg.permissionsPolicy;
     }
@@ -205,6 +206,7 @@ export class ResponseHeaderPolicy {
         headers["Reporting-Endpoints"] = reporting.reporting;
         if (reporting.reportTo) { headers["Report-To"] = reporting.reportTo; }
       }
+
       if (cfg.nel) { headers.NEL = cfg.nel; }
     }
 
@@ -217,6 +219,7 @@ export class ResponseHeaderPolicy {
       if (cfg.hsts.preload) { parts.push("preload",); }
       headers["Strict-Transport-Security"] = parts.join("; ",);
     }
+
     return headers;
   }
 
@@ -232,16 +235,20 @@ export class ResponseHeaderPolicy {
       const headerName = cfg.csp.reportOnly
         ? "Content-Security-Policy-Report-Only"
         : "Content-Security-Policy";
+
       headers[headerName] = this.buildCsp(request,);
     }
+
     if (cfg.crossOriginOpenerPolicy) { headers["Cross-Origin-Opener-Policy"] = cfg.crossOriginOpenerPolicy; }
     if (cfg.crossOriginEmbedderPolicy) {
       headers["Cross-Origin-Embedder-Policy"] = cfg.crossOriginEmbedderPolicy;
     }
+
     if (cfg.permissionsPolicy) { headers["Permissions-Policy"] = cfg.permissionsPolicy; }
     if (cfg.timingAllowOrigin) {
       headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin;
     }
+
     const link = this.buildLinkHeader();
     if (link) { headers.Link = link; }
     if (cfg.acceptClientHints.length > 0) {
@@ -250,6 +257,7 @@ export class ResponseHeaderPolicy {
       headers["Critical-CH"] = hints;
       if (cfg.saveData) { headers["Save-Data"] = "on"; }
     }
+
     // Process-isolation hardening. Routes win via the additive merge in `apply()`.
     headers["Origin-Agent-Cluster"] = ORIGIN_AGENT_CLUSTER_VALUE;
     // Privacy default: opt HTML out of speculative DNS lookups.
@@ -274,6 +282,7 @@ export class ResponseHeaderPolicy {
     const scriptSrc = nonce
       ? [...c.scriptSrc, `'nonce-${nonce}'`,]
       : c.scriptSrc;
+
     push("script-src", scriptSrc,);
 
     push("style-src", c.styleSrc,);
@@ -321,6 +330,7 @@ export class ResponseHeaderPolicy {
       max_age: 86400,
       endpoints: [{ url: firstUrl, },],
     }, "",);
+
     return { reporting, reportTo, };
   }
 

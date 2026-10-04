@@ -39,6 +39,7 @@ describe("classifyIntent — null paths", () => {
       ...loadConfig(),
       generation: undefined as unknown as Config["generation"],
     };
+
     // An absent generation section resolves the auxiliary role to empty,
     // so callAux returns null before any provider lookup.
     await expect(classifyIntent("hello there", config, testDb,),).resolves.toBeNull();
@@ -54,6 +55,7 @@ describe("classifyIntent — null paths", () => {
       ...loadConfig(),
       generation: undefined as unknown as Config["generation"],
     };
+
     await expect(classifyIntent("", config, testDb,),).resolves.toBeNull();
   });
 });

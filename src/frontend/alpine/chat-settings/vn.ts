@@ -86,6 +86,7 @@ export function syncVnRenderer(
   const enabled = config.renderingOverride != null
     ? config.renderingOverride === "visual_novel"
     : (vnEnabled || (config.visualNovel ?? false));
+
   const container = document.querySelector<HTMLElement>("#vn-container",);
 
   if (!enabled || !container) {
@@ -100,6 +101,7 @@ export function syncVnRenderer(
     renderer.destroy();
     return;
   }
+
   syncSceneId(container, chatId,);
   renderer.init(container, vnMessages, config as Record<string, unknown>, chatId,);
 }

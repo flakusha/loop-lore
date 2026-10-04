@@ -70,6 +70,7 @@ export function isNsfwGateReason(value: unknown,): value is NsfwGateReason {
 function effectiveSecret(configured?: string,): string {
   return resolveNsfwPiiSecret({ piiSecret: configured, },);
 }
+
 let cachedSecret: string | null = null;
 /** Resolve (and memoize) the secret; test hook below busts the cache. */
 function secret(configured?: string,): string {
@@ -77,6 +78,7 @@ function secret(configured?: string,): string {
   cachedSecret ??= effectiveSecret();
   return cachedSecret;
 }
+
 /**
  * Bust the memoized secret + key. Test-only; called when env flips mid-process.
  * @returns {void}
@@ -124,8 +126,10 @@ async function getHmacKey(configured?: string,): Promise<CryptoKey> {
       ["sign",],
     );
   }
+
   return hmacKeyPromise;
 }
+
 /** Max allowed size of redacted metadata payloads (1 KiB). */
 export const NSFW_METADATA_MAX_BYTES = 1024;
 
@@ -146,6 +150,7 @@ export async function hashId(value: string, configured?: string,): Promise<strin
     key,
     toBufferSource(new TextEncoder().encode(value,),),
   );
+
   return [...new Uint8Array(signature,),]
     .map((b,) => b.toString(16,).padStart(2, "0",))
     .join("",);
@@ -183,6 +188,7 @@ export function applyNsfwMetadataRedaction(
     if (typeof value === "string" && value.length > 256) { continue; }
     out[key] = value;
   }
+
   const serialized = jsonStringifyOr(out,);
   if (serialized.length <= NSFW_METADATA_MAX_BYTES) { return out; }
   return { _truncated: true, originalKeys: Object.keys(out,), };

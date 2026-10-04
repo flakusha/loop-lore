@@ -119,6 +119,7 @@ describe("npcMovementRoutes", () => {
         body: JSON.stringify(storeBody(msgId, "wander",),),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -130,6 +131,7 @@ describe("npcMovementRoutes", () => {
         body: JSON.stringify({ messageId: msgId, },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -143,6 +145,7 @@ describe("npcMovementRoutes", () => {
         body: JSON.stringify(storeBody(msgId, "wander",),),
       },),
     );
+
     expect(stored.status,).toBe(200,);
     expect(await stored.json(),).toMatchObject({ success: true, },);
 
@@ -161,6 +164,7 @@ describe("npcMovementRoutes", () => {
     const res = await authedApp(db, outsiderId,).handle(
       new Request(`${R}/events?chatId=${chatId}`,),
     );
+
     expect(res.status,).toBe(404,);
     expect(await res.json(),).toMatchObject({ error: "Chat not found", },);
   });
@@ -169,6 +173,7 @@ describe("npcMovementRoutes", () => {
     const res = await authedApp(db, userId,).handle(
       new Request(`${R}/recent/${chatId}?limit=5`,),
     );
+
     expect(res.status,).toBe(200,);
     const events = await res.json() as Array<{ pattern: string }>;
     expect(events.length,).toBeGreaterThan(0,);
@@ -178,6 +183,7 @@ describe("npcMovementRoutes", () => {
     const res = await authedApp(db, outsiderId,).handle(
       new Request(`${R}/recent/${chatId}`,),
     );
+
     expect(res.status,).toBe(404,);
     expect(await res.json(),).toMatchObject({ error: "Chat not found", },);
   });
@@ -190,6 +196,7 @@ describe("npcMovementRoutes", () => {
         body: JSON.stringify(storeBody(msgId, "wander",),),
       },),
     );
+
     expect(res.status,).toBe(500,);
     expect(await res.json(),).toMatchObject({ error: "Internal server error", },);
   });
@@ -198,6 +205,7 @@ describe("npcMovementRoutes", () => {
     const res = await authedApp(brokenMessagesDb(db,), userId,).handle(
       new Request(`${R}/events?chatId=${chatId}`,),
     );
+
     expect(res.status,).toBe(500,);
     expect(await res.json(),).toMatchObject({ error: "Internal server error", },);
   });
@@ -206,6 +214,7 @@ describe("npcMovementRoutes", () => {
     const res = await authedApp(brokenMessagesDb(db,), userId,).handle(
       new Request(`${R}/recent/${chatId}`,),
     );
+
     expect(res.status,).toBe(500,);
     expect(await res.json(),).toMatchObject({ error: "Internal server error", },);
   });

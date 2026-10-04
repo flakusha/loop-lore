@@ -68,10 +68,12 @@ export async function listActorLoreEntries(
     .selectFrom("actor_lore_entries",)
     .select(database.fn.countAll().as("total",),)
     .where("actor_id", "=", actorId,);
+
   let listQuery = database
     .selectFrom("actor_lore_entries",)
     .selectAll()
     .where("actor_id", "=", actorId,);
+
   if (opts.enabled) {
     countQuery = countQuery.where("enabled", "=", opts.enabled,);
     listQuery = listQuery.where("enabled", "=", opts.enabled,);
@@ -135,6 +137,7 @@ export async function createActorLoreEntry(
     .selectAll()
     .where("id", "=", id,)
     .executeTakeFirstOrThrow();
+
   return { ok: true, entity, };
 }
 
@@ -156,6 +159,7 @@ export async function updateActorLoreEntry(
     .where("id", "=", loreId,)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!existing) {
     return { ok: false, code: "not_found", message: "Lore entry not found", };
   }
@@ -163,12 +167,14 @@ export async function updateActorLoreEntry(
   const updates: Updateable<DB["actor_lore_entries"]> = {
     updated_at: new Date().toISOString(),
   };
+
   if (patch.content != null) { updates.content = patch.content; }
   if (patch.name !== undefined) { updates.name = patch.name; }
   if (patch.keys != null) { updates.keys = jsonStringifyOr(patch.keys,); }
   if (patch.secondaryKeys != null) {
     updates.secondary_keys = jsonStringifyOr(patch.secondaryKeys,);
   }
+
   if (patch.selective != null) { updates.selective = patch.selective; }
   if (patch.caseSensitive != null) { updates.case_sensitive = patch.caseSensitive; }
   if (patch.enabled != null) { updates.enabled = patch.enabled; }
@@ -194,6 +200,7 @@ export async function updateActorLoreEntry(
     .selectAll()
     .where("id", "=", loreId,)
     .executeTakeFirstOrThrow();
+
   return { ok: true, entity, };
 }
 
@@ -213,8 +220,10 @@ export async function deleteActorLoreEntry(
     .where("id", "=", loreId,)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!result || Number(result.numDeletedRows ?? 0,) === 0) {
     return { ok: false, code: "not_found", message: "Lore entry not found", };
   }
+
   return { ok: true, id: loreId, };
 }

@@ -131,6 +131,7 @@ export async function handleImport(
     if (!fileBytesResult.ok) {
       return jsonError({ message: fileBytesResult.error.message, status: HttpStatus.BadRequest, },);
     }
+
     const fileBytes = fileBytesResult.buffer;
     const filename = file.name ?? "";
 
@@ -138,6 +139,7 @@ export async function handleImport(
       if (isCharxFile(filename, fileBytes,)) {
         return await importFromCharx(fileBytes, filename, database, userId, uploadDir,);
       }
+
       return await importFromStandard(fileBytes, filename, database, userId, uploadDir,);
     } catch (error) {
       // Handle structured import errors

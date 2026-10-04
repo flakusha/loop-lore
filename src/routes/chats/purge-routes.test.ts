@@ -49,11 +49,13 @@ describe("chats purge-route", () => {
       user_id: OWNER_ID,
       owner_id: OWNER_ID,
     } as never,);
+
     await insertActors(db, "Member", {
       id: MEMBER_ID,
       user_id: MEMBER_ID,
       owner_id: MEMBER_ID,
     } as never,);
+
     await insertChats(db, "Purge Me", OWNER_ID, { id: CHAT_ID, } as never,);
     await insertChatParticipants(db, CHAT_ID, OWNER_ID, { role_in_chat: "owner", },);
     await insertChatParticipants(db, CHAT_ID, MEMBER_ID, { role_in_chat: "member", },);
@@ -68,6 +70,7 @@ describe("chats purge-route", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/purge`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
     expect(
       await db.selectFrom("chats",).select("id",).where("id", "=", CHAT_ID,).executeTakeFirst(),
@@ -80,6 +83,7 @@ describe("chats purge-route", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${missingChatId}/purge`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -88,6 +92,7 @@ describe("chats purge-route", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/purge`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(403,);
     // Chat row is still present after a rejected purge.
     expect(

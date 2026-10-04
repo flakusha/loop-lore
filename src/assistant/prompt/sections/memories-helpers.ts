@@ -37,6 +37,7 @@ async function computeTrustModifier(
       participantId,
       worldId ?? undefined,
     );
+
     if (rel) {
       totalTrust += rel.trust;
       count++;
@@ -168,5 +169,6 @@ export async function chatHasMemoryCopies(
     .where("source_chat_id", "=", chatId,)
     .limit(1,)
     .executeTakeFirst();
+
   return !!row;
 }

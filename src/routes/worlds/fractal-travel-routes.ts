@@ -63,6 +63,7 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
             secondsPerUnit: ctx.body.secondsPerUnit ?? 60,
             waypoints: ctx.body.waypoints,
           },);
+
           return jsonCreated({ id, },);
         } catch (e) {
           return jsonError({ message: e instanceof Error ? e.message : String(e,), status: HttpStatus.BadRequest, },);
@@ -120,6 +121,7 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
             coordY: ctx.body.coordY,
             coordZ: ctx.body.coordZ,
           },);
+
           return jsonCreated({ id: stopId, },);
         } catch (e) {
           return jsonError({ message: e instanceof Error ? e.message : String(e,), status: HttpStatus.BadRequest, },);

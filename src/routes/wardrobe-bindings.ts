@@ -64,6 +64,7 @@ export function wardrobeBindingRoutes(opts: HandlerOpts, prefix = "/api",) {
           itemId,
           ctx.body.item_instance_id,
         );
+
         return jsonCreated({ id, },);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Binding failed";
@@ -93,6 +94,7 @@ export function wardrobeBindingRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (!ok) {
         return jsonError({ message: "Binding not found", status: HttpStatus.NotFound, },);
       }
+
       return jsonResponse({ ok: true, },);
     }, {
       params: WardrobeBindingParams,

@@ -45,6 +45,7 @@ export async function checkRpgEnabled(
 
   return { allowed: true, };
 }
+
 /**
  * Per-mechanic RPG opt-in flags for one world.
  *
@@ -121,6 +122,7 @@ export async function getMechanicsConfig(
     .select(["rpg_enabled", "rpg_dice", "rpg_checks", "rpg_combat", "rpg_xp", "rpg_loot", "rpg_quests",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   if (!world) { return null; }
   const config: MechanicsConfig = {
     dice: Boolean(world.rpg_dice,),
@@ -130,12 +132,14 @@ export async function getMechanicsConfig(
     loot: Boolean(world.rpg_loot,),
     quests: Boolean(world.rpg_quests,),
   };
+
   // Master = OR(mechanics): a mechanic armed while `rpg_enabled` is off
   // is drift; fail loud instead of silently gating on it.
   const master = world.rpg_enabled ? RpgFlagState.On : RpgFlagState.Off;
   for (const mechanic of Object.keys(config,) as RpgMechanic[]) {
     rpgMasterMechanics.assertValid(master, config[mechanic] ? RpgFlagState.On : RpgFlagState.Off,);
   }
+
   return config;
 }
 
@@ -155,11 +159,14 @@ export async function checkMechanicEnabled(
   if (!config) {
     return { allowed: false, reason: "World not found", };
   }
+
   if (!config[mechanic]) {
     return { allowed: false, reason: `RPG ${mechanic} mechanics are not enabled for this world`, };
   }
+
   return { allowed: true, };
 }
+
 /**
  * Gate a chat command on one RPG mechanic.
  *

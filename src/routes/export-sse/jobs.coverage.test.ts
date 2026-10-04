@@ -47,6 +47,7 @@ function stageJob(_db: Kysely<DB>, overrides: Partial<ExportJob> = {},): ExportJ
     ...overrides,
     id,
   };
+
   jobs.set(id, job,);
   return job;
 }
@@ -65,6 +66,7 @@ describe("export-sse jobs helpers", () => {
         jobs.delete(id,);
       }
     }
+
     await db.destroy();
   },);
 
@@ -89,6 +91,7 @@ describe("export-sse jobs helpers", () => {
       headers: { "Content-Type": "application/json", },
       body: JSON.stringify({ include: ["chats",], format: "json", },),
     },);
+
     await processExport(job.id, req, db, "cov-user",);
     const done = jobs.get(job.id,);
     expect(done?.status,).toBe("completed",);
@@ -104,6 +107,7 @@ describe("export-sse jobs helpers", () => {
       headers: { "Content-Type": "application/json", },
       body: "{{{",
     },);
+
     await processExport(job.id, req, db, "cov-user",);
     expect(jobs.get(job.id,)?.status,).toBe("completed",);
     jobs.delete(job.id,);
@@ -120,6 +124,7 @@ describe("export-sse jobs helpers", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await db.insertInto("actors",).values({
       id: `cov-actor-${stamp}`,
       actor_type: "character",
@@ -132,21 +137,25 @@ describe("export-sse jobs helpers", () => {
       visibility: "private",
       import_spec: "{}",
     },).execute();
+
     await db.insertInto("chats",).values({
       id: `cov-chat-${stamp}`,
       name: "Cov Chat",
       created_by: "cov-user",
     },).execute();
+
     await db.insertInto("worlds",).values({
       id: `cov-world-${stamp}`,
       name: "Cov World",
       owner_id: "cov-user",
     },).execute();
+
     await db.insertInto("locations",).values({
       id: `cov-loc-${stamp}`,
       world_id: `cov-world-${stamp}`,
       name: "Cov Location",
     },).execute();
+
     const job = stageJob(db,);
     const req = new Request("http://localhost/api/export/progress", {
       method: "POST",
@@ -156,6 +165,7 @@ describe("export-sse jobs helpers", () => {
         format: "json",
       },),
     },);
+
     await processExport(job.id, req, db, "cov-user",);
     const done = jobs.get(job.id,);
     expect(done?.status,).toBe("completed",);
@@ -171,6 +181,7 @@ describe("export-sse jobs helpers", () => {
       headers: { "Content-Type": "application/json", },
       body: JSON.stringify({},),
     },);
+
     await processExport("cov-missing", req, db, "cov-user",);
     const broken = (await createTestDb()).db;
     await broken.destroy();
@@ -211,6 +222,7 @@ describe("export-sse routes", () => {
         method: "POST",
       },),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-type",),).toContain("text/event-stream",);
     const reader = res.body?.getReader();
@@ -223,8 +235,10 @@ describe("export-sse routes", () => {
       if (chunk?.value) {
         buf += decoder.decode(chunk.value,);
       }
+
       done = chunk?.done ?? true;
     }
+
     expect(buf,).toContain("job_created",);
     expect(buf,).toContain('"type":"completed"',);
     const match = /"jobId":"([^"]+)"/.exec(buf.replaceAll(" ", "",),);
@@ -233,6 +247,7 @@ describe("export-sse routes", () => {
     const status = (await (await app.handle(
       new Request(`http://localhost/api/export/status/${jobId}`,),
     )).json()) as StatusBody;
+
     expect(status.id,).toBe(jobId,);
     expect(status.status,).toBe("completed",);
     jobs.delete(jobId,);
@@ -242,10 +257,12 @@ describe("export-sse routes", () => {
     const status = await app.handle(
       new Request(`http://localhost/api/export/status/${uid()}`,),
     );
+
     expect(status.status,).toBe(404,);
     const download = await app.handle(
       new Request(`http://localhost/api/export/download/${uid()}`,),
     );
+
     expect(download.status,).toBe(404,);
   });
 
@@ -254,10 +271,12 @@ describe("export-sse routes", () => {
     const status = (await (await app.handle(
       new Request(`http://localhost/api/export/status/${job.id}`,),
     )).json()) as StatusBody;
+
     expect(status.percentage,).toBe(0,);
     const download = await app.handle(
       new Request(`http://localhost/api/export/download/${job.id}`,),
     );
+
     expect(download.status,).toBe(400,);
     jobs.delete(job.id,);
   });
@@ -272,13 +291,16 @@ describe("export-sse routes", () => {
       createdAt: new Date("2026-01-02T03:04:05Z",),
       completedAt: new Date(),
     },);
+
     const status = (await (await app.handle(
       new Request(`http://localhost/api/export/status/${job.id}`,),
     )).json()) as StatusBody;
+
     expect(status.percentage,).toBe(100,);
     const download = await app.handle(
       new Request(`http://localhost/api/export/download/${job.id}`,),
     );
+
     expect(download.status,).toBe(200,);
     expect(download.headers.get("content-type",),).toBe("application/zip",);
     expect(download.headers.get("content-disposition",),).toContain("loop-lore-export-2026-01-02.zip",);
@@ -292,9 +314,11 @@ describe("export-sse routes", () => {
     const other = new Elysia({ name: "test-export-idor-other", },)
       .derive({ as: "scoped", }, () => ({ userId: "other-user", userRole: "user", }),)
       .use(statusRoutes({ database: db, },),) as unknown as Elysia;
+
     const res = await other.handle(
       new Request(`http://localhost/api/export/status/${job.id}`,),
     );
+
     expect(res.status,).toBe(404,);
     jobs.delete(job.id,);
   });
@@ -306,12 +330,15 @@ describe("export-sse routes", () => {
       total: 1,
       zipBuffer: Buffer.from("PKfakezip",),
     },);
+
     const other = new Elysia({ name: "test-export-idor-other-dl", },)
       .derive({ as: "scoped", }, () => ({ userId: "other-user", userRole: "user", }),)
       .use(downloadRoutes({ database: db, },),) as unknown as Elysia;
+
     const res = await other.handle(
       new Request(`http://localhost/api/export/download/${job.id}`,),
     );
+
     expect(res.status,).toBe(404,);
     jobs.delete(job.id,);
   });
@@ -321,9 +348,11 @@ describe("export-sse routes", () => {
     const admin = new Elysia({ name: "test-export-idor-admin", },)
       .derive({ as: "scoped", }, () => ({ userId: "admin-1", userRole: "admin", }),)
       .use(statusRoutes({ database: db, },),) as unknown as Elysia;
+
     const res = await admin.handle(
       new Request(`http://localhost/api/export/status/${job.id}`,),
     );
+
     expect(res.status,).toBe(200,);
     jobs.delete(job.id,);
   });
@@ -332,9 +361,11 @@ describe("export-sse routes", () => {
     const job = stageJob(db, { userId: "cov-user", },);
     const anon = new Elysia({ name: "test-export-idor-anon", },)
       .use(statusRoutes({ database: db, },),) as unknown as Elysia;
+
     const res = await anon.handle(
       new Request(`http://localhost/api/export/status/${job.id}`,),
     );
+
     expect(res.status,).toBe(404,);
     jobs.delete(job.id,);
   });

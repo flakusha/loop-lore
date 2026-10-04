@@ -53,6 +53,7 @@ export async function applyRewriteToMessage(
     .select(["id", "actor_id", "chat_id",],)
     .where("id", "=", messageId,)
     .executeTakeFirst();
+
   if (!msg) { return { ok: false, error: "not_found", }; }
   if (msg.chat_id !== chatId) { return { ok: false, error: "cross_chat", }; }
   if (msg.actor_id !== userId && !can(userRole, "admin.chat",)) {
@@ -78,6 +79,7 @@ export async function applyRewriteToMessage(
         algorithm: config.encryption.compressAlgorithm,
       },
     },);
+
     storedContent = enc.storedContent;
     storedKeyId = enc.keyId;
   }
@@ -93,5 +95,6 @@ export async function applyRewriteToMessage(
     },)
     .where("id", "=", messageId,)
     .execute();
+
   return { ok: true, content: storedContent, };
 }

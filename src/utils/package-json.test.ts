@@ -113,6 +113,7 @@ describe("setPackageJsonVersion", () => {
       scripts: { test: "bun test", },
       license: "LGPL-3.0-or-later",
     };
+
     writeFileSync(path, JSON.stringify(original,),);
     setPackageJsonVersion(path, "2.0.0",);
     const after = JSON.parse(readFileSync(path, "utf-8",),);

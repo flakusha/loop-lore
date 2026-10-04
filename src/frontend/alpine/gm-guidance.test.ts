@@ -6,6 +6,7 @@ import "./gm-guidance";
 const fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: (url: string, opts?: RequestInit,) => Promise<Response> = async () =>
   new Response("{}", { status: 200, },);
+
 if (ISOLATED) {
   mock.module("./htmx", () => ({
     apiFetch: async (url: string, opts?: RequestInit,) => {
@@ -76,6 +77,7 @@ describeOrSkip("gmGuidance state", () => {
     (s as { applyGmGuidance?: () => Promise<void> }).applyGmGuidance = async () => {
       applied = true;
     };
+
     await (s.clearGmGuidance as () => Promise<void>).call(s,);
     expect((s._gmGuidance as { constraints: string[] }).constraints.length,).toBe(0,);
     expect((s._gmGuidance as { turnPriority: Record<string, string> }).turnPriority,).toEqual({},);
@@ -140,6 +142,7 @@ describeOrSkip("gmGuidance I/O", () => {
           },),
           { status: 200, },
         );
+
       const s = makeComponent();
       await (s.init as () => Promise<void>).call(s,);
       expect(s._storyMode,).toBe(true,);
@@ -155,6 +158,7 @@ describeOrSkip("gmGuidance I/O", () => {
           },),
           { status: 200, },
         );
+
       const s = makeComponent();
       await (s.init as () => Promise<void>).call(s,);
       expect(fetchCalls.map((c,) => c.url),).toEqual([
@@ -172,6 +176,7 @@ describeOrSkip("gmGuidance I/O", () => {
           },),
           { status: 200, },
         );
+
       const s = makeComponent();
       await (s.init as () => Promise<void>).call(s,);
       expect(fetchCalls.map((c,) => c.url),).toEqual(["/api/v1/chats/chat-1",],);
@@ -193,6 +198,7 @@ describeOrSkip("gmGuidance I/O", () => {
           },),
           { status: 200, },
         );
+
       const s = makeComponent();
       await (s.init as () => Promise<void>).call(s,);
       expect(s._storyMode,).toBe(false,);
@@ -231,6 +237,7 @@ describeOrSkip("gmGuidance I/O", () => {
           ],),
           { status: 200, },
         );
+
       const s = makeComponent();
       await (s.loadGmParticipants as () => Promise<void>).call(s,);
       expect(s._gmParticipants,).toEqual([{ actor_id: "a1", name: "Alice", },],);
@@ -269,6 +276,7 @@ describeOrSkip("gmGuidance I/O", () => {
           dispatches.push({ event, detail, },);
         },
       },);
+
       await (s.applyGmGuidance as () => Promise<void>).call(s,);
       expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/gm-guidance",);
       expect(fetchCalls[0]?.opts.method,).toBe("PUT",);
@@ -276,9 +284,11 @@ describeOrSkip("gmGuidance I/O", () => {
         storyMode: true,
         gmGuidance: { constraints: ["c1",], turnPriority: { "a1": "high", }, },
       },);
+
       expect(dispatches,).toEqual([
         { event: "show-toast", detail: { type: "success", message: "toasts.gmGuidanceApplied", }, },
       ],);
+
       expect(s._gmGuidanceLoading,).toBe(false,);
     });
 
@@ -290,6 +300,7 @@ describeOrSkip("gmGuidance I/O", () => {
           dispatches.push({ event, detail, },);
         },
       },);
+
       await (s.applyGmGuidance as () => Promise<void>).call(s,);
       expect(dispatches,).toEqual([
         { event: "show-toast", detail: { type: "error", message: "bad", }, },
@@ -304,6 +315,7 @@ describeOrSkip("gmGuidance I/O", () => {
           dispatches.push({ event, detail, },);
         },
       },);
+
       await (s.applyGmGuidance as () => Promise<void>).call(s,);
       expect(dispatches,).toEqual([
         { event: "show-toast", detail: { type: "error", message: "toasts.gmGuidanceFailed", }, },
@@ -318,6 +330,7 @@ describeOrSkip("gmGuidance I/O", () => {
           dispatches.push({ event, detail, },);
         },
       },);
+
       await (s.applyGmGuidance as () => Promise<void>).call(s,);
       expect(dispatches,).toEqual([
         { event: "show-toast", detail: { type: "error", message: "toasts.networkErrorSavingSettings", }, },

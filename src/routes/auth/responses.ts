@@ -46,6 +46,7 @@ function wantsJson(request: Request,): boolean {
     if (accept.includes("text/html",)) { return false; }
     return true;
   }
+
   // No Accept header at all → treat as legacy htmx form (default for
   // browsers without XHR). Caller can override with explicit Accept.
   return false;
@@ -70,11 +71,13 @@ function errorJson(status: HttpStatusCode, message: string, t?: TranslatorFn,): 
     [HttpStatus.UnprocessableEntity]: "VALIDATION_ERROR",
     [HttpStatus.TooManyRequests]: "TOO_MANY_REQUESTS",
   };
+
   const body = safeJsonStringify({
     error: resolved,
     code: STATUS_TO_CODE[status] ?? "ERROR",
     meta: { api_version: "1", },
   },);
+
   // Payload is provably JSON-safe (plain strings); serialization failure is
   // unreachable in practice, so fall back to a static minimal body.
   return new Response(body.ok ? body.value : '{"error":"serialization failed"}', {
@@ -105,6 +108,7 @@ function errorResponse(
   if (wantsJson(request,)) {
     return errorJson(status, message, t,);
   }
+
   // htmx / legacy HTML path: 200 + inline error message so the existing
   // UI swap contract is preserved. Use `errorJson` directly when you
   // need a non-200 HTML response (e.g. for the 429 rate-limit path).

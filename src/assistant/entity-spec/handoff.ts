@@ -77,6 +77,7 @@ export async function handoffToEntityCreationChat(
   if (descriptor === undefined) {
     return { ok: false, code: "unknown_kind", message: `Unknown entity kind: ${opts.kind}`, };
   }
+
   const workflow = opts.workflows.find((w,) => w.id === descriptor.workflowId);
   if (workflow === undefined) {
     return {

@@ -90,6 +90,7 @@ const fakeDocument = {
       set = new Set();
       docListeners.set(type, set,);
     }
+
     set.add(fn,);
   },
   removeEventListener(type: string, fn: Listener,): void {
@@ -103,6 +104,7 @@ const fakeDocument = {
         (globalObj.showToast as ((type: string, message: string,) => void) | undefined)?.(detail.type, detail.message,);
       }
     }
+
     return true;
   },
   querySelector(selector: string,): FakeElement | null {
@@ -123,6 +125,7 @@ const toasts: { type: string; message: string }[] = [];
 let sidebarClosed = 0;
 let fetchImpl: (url: string, init?: RequestInit,) => Promise<Response> = () =>
   Promise.resolve(new Response("ok", { status: 200, },),);
+
 const fetchCalls: { url: string; init?: RequestInit }[] = [];
 const locationAssigns: string[] = [];
 const consoleInfo: unknown[][] = [];
@@ -216,8 +219,10 @@ beforeEach(() => {
       set = new Set();
       globalListeners.set(type, set,);
     }
+
     set.add(fn,);
   };
+
   globalObj.htmx = {
     process: (...args: unknown[]) => {
       htmxCalls.push({ fn: "process", args, },);
@@ -229,22 +234,27 @@ beforeEach(() => {
       htmxCalls.push({ fn: "trigger", args, },);
     },
   };
+
   globalObj.Alpine = {
     store: () => ({}),
     initTree: (...args: unknown[]) => {
       alpineCalls.push({ fn: "initTree", args, },);
     },
   };
+
   globalObj.showToast = (type: string, message: string,) => {
     toasts.push({ type, message, },);
   };
+
   globalObj.closeSidebar = () => {
     sidebarClosed += 1;
   };
+
   globalObj.fetch = (url: string, init?: RequestInit,) => {
     fetchCalls.push({ url, init, },);
     return fetchImpl(url, init,);
   };
+
   globalObj.location = {
     pathname: "/chat",
     search: "",
@@ -252,12 +262,15 @@ beforeEach(() => {
       locationAssigns.push(url,);
     },
   };
+
   console.info = (...args: unknown[]) => {
     consoleInfo.push(args,);
   };
+
   console.debug = (...args: unknown[]) => {
     consoleDebug.push(args,);
   };
+
   console.error = (...args: unknown[]) => {
     consoleError.push(args,);
   };
@@ -369,6 +382,7 @@ describe("apiFetch", () => {
         locationAssigns.push(url,);
       },
     };
+
     const mod = await importHtmx("apifetch-401-login-page",);
     await mod.apiFetch("/api/x",).catch(() => {},);
     expect(locationAssigns.length,).toBe(0,);
@@ -440,6 +454,7 @@ describe("htmx:load", () => {
         throw new Error("alpine boom",);
       },
     };
+
     const elt = new FakeElement("div",);
     expect(() => fireDoc("htmx:load", { elt, },)).not.toThrow();
     globalObj.Alpine = savedAlpine;
@@ -458,6 +473,7 @@ describe("htmx:load", () => {
     (globalThis as Record<string, unknown>)["loadNewChatPage"] = () => {
       loaderCalls.push("loadNewChatPage",);
     };
+
     elements.set("#create-chat-form", new FakeElement("form",),);
     fireDoc("htmx:load", { elt: new FakeElement("div",), },);
     expect(loaderCalls,).toEqual(["loadNewChatPage",],);
@@ -470,6 +486,7 @@ describe("htmx:load", () => {
     (globalThis as Record<string, unknown>)["loadNewChatPage"] = () => {
       loaderCalls.push("loadNewChatPage",);
     };
+
     fireDoc("htmx:load", { elt: new FakeElement("div",), },);
     expect(loaderCalls.length,).toBe(0,);
     delete (globalThis as Record<string, unknown>)["loadNewChatPage"];
@@ -521,6 +538,7 @@ describe("htmx:responseError", () => {
     fireDoc("htmx:responseError", {
       xhr: { responseText: JSON.stringify({ error: "bad thing", },), status: 400, },
     },);
+
     expect(lastToast()?.type,).toBe("error",);
     expect(lastToast()?.message,).toBe("bad thing",);
   });
@@ -530,6 +548,7 @@ describe("htmx:responseError", () => {
     fireDoc("htmx:responseError", {
       xhr: { responseText: JSON.stringify({ other: 1, },), status: 500, },
     },);
+
     expect(lastToast()?.message,).toBe("Error 500",);
   });
 
@@ -538,6 +557,7 @@ describe("htmx:responseError", () => {
     fireDoc("htmx:responseError", {
       xhr: { responseText: "<html>oops</html>", status: 502, },
     },);
+
     expect(lastToast()?.message,).toBe("Error 502",);
   });
 
@@ -605,6 +625,7 @@ describe("asset:duplicate", () => {
     (globalThis as Record<string, unknown>).__localeStrings = {
       toasts: { assetAlreadyExists: "File {filename} already exists", },
     };
+
     await importHtmx("asset-duplicate",);
     const modal = new FakeElement("div",);
     modal.classList.add("open",);

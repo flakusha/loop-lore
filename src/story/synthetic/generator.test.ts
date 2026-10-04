@@ -96,10 +96,12 @@ async function seedChatWithData(db: Kysely<DB>,): Promise<{ chatId: string; worl
       target: 0,
     } as never,)
     .execute();
+
   await db
     .insertInto("quest_progress",)
     .values({ id: randomUUID(), quest_id: questId, chat_id: chatId, progress: 40, status: "active", } as never,)
     .execute();
+
   await db
     .insertInto("world_states",)
     .values([
@@ -126,6 +128,7 @@ describe("SyntheticGenerator", () => {
       SyntheticDataType.TurnSequence,
       SyntheticDataType.QuestProgression,
     ],);
+
     expect(ids.length,).toBe(2,);
   });
 
@@ -145,6 +148,7 @@ describe("SyntheticGenerator", () => {
         .selectAll()
         .where("id", "=", id,)
         .executeTakeFirstOrThrow();
+
       expect(row.status,).toBe(SyntheticDataStatus.Generated,);
       const cases = jsonParseOr(row.generated_cases, [],) as Record<string, unknown>[];
       expect(Array.isArray(cases,),).toBe(true,);
@@ -173,6 +177,7 @@ describe("SyntheticGenerator", () => {
       .select(["status", "validated_at", "validated_by",],)
       .where("id", "=", id,)
       .executeTakeFirstOrThrow();
+
     expect(row.status,).toBe(SyntheticDataStatus.Approved,);
     expect(row.validated_at,).not.toBeNull();
     expect(row.validated_by,).toBe("tester",);

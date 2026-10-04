@@ -60,6 +60,7 @@ export class StateMachine<S extends string,> {
     if (!this.canTransition(from, to,)) {
       throw new TransitionError(from, to,);
     }
+
     return to;
   }
 

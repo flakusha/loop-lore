@@ -74,6 +74,7 @@ export function createMoodPanelState(): MoodPanelState {
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ delta, },),
         },);
+
         if (res.ok) {
           const newHappiness = await res.json();
           if (this.mood) {
@@ -115,6 +116,7 @@ export function createMoodPanelState(): MoodPanelState {
       for (const d of this.emotionDefs) {
         defs.set(d.id, d,);
       }
+
       const result: { def: EmotionDefinition; intensity: number }[] = [];
       for (const e of this.emotions) {
         const def = defs.get(e.emotion_id,);
@@ -122,6 +124,7 @@ export function createMoodPanelState(): MoodPanelState {
           result.push({ def, intensity: e.intensity, },);
         }
       }
+
       return result;
     },
 

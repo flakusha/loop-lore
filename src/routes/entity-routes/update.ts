@@ -53,6 +53,7 @@ export function updateRoutes(config: EntityConfig, opts: { database: Db; config:
             .where("id", "=", entityId,)
             .where(config.parentFk, "=", parentId,)
             .executeTakeFirst()) ?? null;
+
           const guard = await config.writeGuard({ body, existing: row, userId, userRole, },);
           if (!guard.ok) {
             return jsonError({ message: guard.message, status: guard.status, },);

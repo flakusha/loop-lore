@@ -80,10 +80,12 @@ export async function preloadImages(urls: string[],): Promise<PreloadResult[]> {
   const settled = await Promise.allSettled(
     Array.from(urls, (url,) => preloadImage(url,),),
   );
+
   const out: PreloadResult[] = [];
   for (const r of settled) {
     if (r.status === "fulfilled") { out.push(r.value,); }
   }
+
   return out;
 }
 
@@ -103,12 +105,14 @@ function collectSceneUrls(scenes: SceneImages[], currentIndex: number, preloadCo
   for (let i = 1; i <= preloadCount; i++) {
     if (currentIndex + i < scenes.length) { indices.push(currentIndex + i,); }
   }
+
   for (const idx of indices) {
     const scene = scenes[idx];
     if (scene?.backgroundUrl) { urls.push(scene.backgroundUrl,); }
     if (scene?.portraitUrl) { urls.push(scene.portraitUrl,); }
     for (const url of scene?.spriteUrls ?? []) { urls.push(url,); }
   }
+
   return [...new Set(urls,),];
 }
 

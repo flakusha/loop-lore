@@ -106,6 +106,7 @@ async function entryIdsOf(db: Kysely<DB>, worldId: string,): Promise<string[]> {
     .select(["id",],)
     .where("world_id", "=", worldId,)
     .execute();
+
   return rows.map((r,) => r.id).sort();
 }
 
@@ -131,6 +132,7 @@ async function postEntry(
       body: JSON.stringify(body,),
     },),
   );
+
   return { res, body: (await res.json()) as LoreEntryPayload | ErrorPayload, };
 }
 
@@ -159,6 +161,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
     const res = await makeApp(db, ownerId, "user",).handle(
       new Request(`http://localhost/api/worlds/${worldId}/lore-entries`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as ListPayload;
     expect(body.data,).toBeInstanceOf(Array,);
@@ -173,6 +176,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
       name: "Ash Gate",
       content: "The gate opens at dusk.",
     },);
+
     expect(res.status,).toBe(201,);
     const created = body as LoreEntryPayload;
     expect(created.name,).toBe("Ash Gate",);
@@ -184,12 +188,14 @@ describe("worldLoreEntriesRoutes — ownership", () => {
       .select(["id", "world_id", "name", "content",],)
       .where("id", "=", created.id,)
       .executeTakeFirst();
+
     expect(row?.world_id,).toBe(worldId,);
     expect(row?.content,).toBe("The gate opens at dusk.",);
 
     const listRes = await makeApp(db, ownerId, "user",).handle(
       new Request(`http://localhost/api/worlds/${worldId}/lore-entries`,),
     );
+
     const listed = (await listRes.json()) as ListPayload;
     expect(listed.pagination.total,).toBe(1,);
     expect(listed.data.map((e,) => e.id),).toEqual([created.id,],);
@@ -202,6 +208,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
     const res = await makeApp(db, ownerId, "user",).handle(
       new Request(`http://localhost/api/worlds/${worldId}/lore-entries/${entryId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as LoreEntryPayload;
     expect(body.id,).toBe(entryId,);
@@ -216,6 +223,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
     const res = await makeApp(db, ownerId, "user",).handle(
       new Request(`http://localhost/api/worlds/${worldId}/lore-entries`,),
     );
+
     expect(res.status,).toBe(404,);
     const body = (await res.json()) as ErrorPayload;
     expect(body.error,).toBe("Lore entry not found",);
@@ -238,6 +246,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
     const res = await makeApp(db, ownerId, "user",).handle(
       new Request(`http://localhost/api/worlds/${worldId}/lore-entries/${entryId}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
     const body = (await res.json()) as ErrorPayload;
     expect(body.error,).toBe("Lore entry not found",);
@@ -250,6 +259,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
     const listRes = await makeApp(db, ownerId, "admin",).handle(
       new Request(`http://localhost/api/worlds/${worldId}/lore-entries`,),
     );
+
     expect(listRes.status,).toBe(200,);
     const listed = (await listRes.json()) as ListPayload;
     expect(listed.pagination.total,).toBe(0,);
@@ -267,6 +277,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
     const listRes = await makeApp(db, ownerId, "user",).handle(
       new Request(`http://localhost/api/worlds/${ghostWorld}/lore-entries`,),
     );
+
     expect(listRes.status,).toBe(404,);
     expect(((await listRes.json()) as ErrorPayload).error,).toBe("Lore entry not found",);
 
@@ -289,6 +300,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
         body: JSON.stringify({ content: "Hijacked", },),
       },),
     );
+
     expect(putRes.status,).toBe(404,);
     expect(((await putRes.json()) as ErrorPayload).error,).toBe("Lore entry not found",);
 
@@ -297,6 +309,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
       .select(["world_id", "content",],)
       .where("id", "=", entryId,)
       .executeTakeFirst();
+
     expect(untouched?.world_id,).toBe(entryWorld,);
     expect(untouched?.content,).toBe("The gate opens at dusk.",);
 
@@ -306,6 +319,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
     const delRes = await makeApp(db, ownerId, "admin",).handle(
       new Request(`http://localhost/api/worlds/${otherWorld}/lore-entries/${entryId}`, { method: "DELETE", },),
     );
+
     expect(delRes.status,).toBe(204,);
     expect(await entryIdsOf(db, entryWorld,),).toEqual([entryId,],);
   });
@@ -321,6 +335,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
         body: JSON.stringify({ content: "The gate opens at dawn.", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as LoreEntryPayload;
     expect(body.content,).toBe("The gate opens at dawn.",);
@@ -330,6 +345,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
       .select(["content",],)
       .where("id", "=", entryId,)
       .executeTakeFirst();
+
     expect(row?.content,).toBe("The gate opens at dawn.",);
   });
 
@@ -340,6 +356,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
     const res = await makeApp(db, ownerId, "user",).handle(
       new Request(`http://localhost/api/worlds/${worldId}/lore-entries/${entryId}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
 
     const row = await db
@@ -347,6 +364,7 @@ describe("worldLoreEntriesRoutes — ownership", () => {
       .select(["id",],)
       .where("id", "=", entryId,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 });

@@ -53,12 +53,14 @@ async function notifyLifecycle(
       .select("actor_id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     const svc = new NotificationService(database,);
     const titleMap: Record<LifecycleKind, string> = {
       chat_archived: "Chat archived",
       chat_restored: "Chat restored",
       chat_purged: "Chat permanently deleted",
     };
+
     for (const row of rows) {
       if (row.actor_id === actorId) { continue; }
       await svc.create({
@@ -205,5 +207,6 @@ export async function isChatArchived(
     .select("is_pinned",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   return row?.is_pinned === PinnedState.Archived;
 }

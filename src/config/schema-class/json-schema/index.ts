@@ -42,12 +42,14 @@ const toPlaceholders = (node: unknown,): unknown => {
   if (typeof node === "string") {
     return node.startsWith(DATA_DIR,) ? node.replace(DATA_DIR, "${DATA_DIR}",) : node;
   }
+
   if (Array.isArray(node,)) { return node.map(toPlaceholders,); }
   if (node !== null && typeof node === "object") {
     return Object.fromEntries(
       Object.entries(node as Record<string, unknown>,).map(([k, v,],) => [k, toPlaceholders(v,),]),
     );
   }
+
   return node;
 };
 

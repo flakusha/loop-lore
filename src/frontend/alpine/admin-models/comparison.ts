@@ -85,17 +85,20 @@ export const comparisonState: ComparisonState = {
         topP: m.topP ? Number(m.topP,) : undefined,
         maxTokens: m.maxTokens ? Number(m.maxTokens,) : undefined,
       }));
+
       const res = await apiFetch("/api/v1/generation/compare", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ prompt: this.comparisonPrompt, models, },),
       },);
+
       if (!res.ok) { return; }
       const data = await res.json() as { id: string; results: ComparisonResult[] };
       this.comparisonResults = data.results.map((result,) => ({
         ...result,
         id: data.id,
       }));
+
       this.comparisonRatings = {};
       await this.loadComparisonHistory();
     } finally {

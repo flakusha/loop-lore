@@ -21,6 +21,7 @@ export async function addTags(
     post_id: postId,
     tag: tag.trim().toLowerCase(),
   }),);
+
   await db.insertInto("blog_tags",).values(rows,).execute();
 }
 
@@ -47,5 +48,6 @@ export async function getTags(db: Kysely<any>, postId: string,): Promise<string[
     .select("tag",)
     .where("post_id", "=", postId,)
     .execute();
+
   return Array.from(rows, (r: any,) => r.tag as string,);
 }

@@ -32,6 +32,7 @@ describe("validateLoRAConfig", () => {
   test("rejects a missing or blank name", () => {
     expect(validateLoRAConfig({ strength: 0.5, backend: "comfyui", },),)
       .toBe("Invalid LoRA name",);
+
     expect(validateLoRAConfig({ name: " ".repeat(3,), strength: 0.5, backend: "comfyui", },),)
       .toBe("Invalid LoRA name",);
   });
@@ -44,6 +45,7 @@ describe("validateLoRAConfig", () => {
   test("rejects non-finite strength (NaN/Infinity)", () => {
     expect(validateLoRAConfig({ name: "x", strength: NaN, backend: "comfyui", },),)
       .toBe("LoRA strength must be a finite number",);
+
     expect(validateLoRAConfig({ name: "x", strength: Infinity, backend: "comfyui", },),)
       .toBe("LoRA strength must be a finite number",);
   });
@@ -51,6 +53,7 @@ describe("validateLoRAConfig", () => {
   test("rejects out-of-range strength", () => {
     expect(validateLoRAConfig({ name: "x", strength: 0.05, backend: "comfyui", },),)
       .toBe("LoRA strength must be between 0.1 and 1",);
+
     expect(validateLoRAConfig({ name: "x", strength: 1.5, backend: "comfyui", },),)
       .toBe("LoRA strength must be between 0.1 and 1",);
   });
@@ -85,6 +88,7 @@ describe("validateLoRAModel", () => {
   test.each(["name", "filename", "path",],)("rejects a blank required %s", (field,) => {
     expect(validateLoRAModel({ ...valid, [field]: "", },),)
       .toBe(`Invalid LoRA model ${field}`,);
+
     expect(validateLoRAModel({ ...valid, [field]: " ".repeat(3,), },),)
       .toBe(`Invalid LoRA model ${field}`,);
   },);
@@ -120,6 +124,7 @@ describe("validateLoRAModel", () => {
   test("rejects out-of-range recommendedStrength", () => {
     expect(validateLoRAModel({ ...valid, recommendedStrength: 2, },),)
       .toBe("LoRA recommendedStrength must be between 0.1 and 1",);
+
     expect(validateLoRAModel({ ...valid, recommendedStrength: "0.5", },),)
       .toBe("LoRA recommendedStrength must be a number",);
   });

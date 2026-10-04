@@ -74,6 +74,7 @@ export const chatProactive: Partial<ChatState> & ThisType<ChatState> = {
         const checkRes = await apiFetch(
           `/api/v1/proactive-messaging/check?chatId=${chatId}&actorId=${cfg.actorId}`,
         );
+
         if (this.activeChat !== chatId) { return; }
         if (!checkRes.ok) { continue; }
         const result = (await checkRes.json()) as { shouldMessage: boolean };
@@ -85,6 +86,7 @@ export const chatProactive: Partial<ChatState> & ThisType<ChatState> = {
             `/api/v1/proactive-messaging/send?chatId=${chatId}&actorId=${cfg.actorId}`,
             { method: "POST", },
           );
+
           if (sendRes.ok || sendRes.status === 409) {
             // Sent, or already-not-due (another tick won the race) — either
             // way the backoff/last_proactive_at advanced server-side.
@@ -93,6 +95,7 @@ export const chatProactive: Partial<ChatState> & ThisType<ChatState> = {
         } finally {
           this._proactiveInFlight = false;
         }
+
         break; // at most one send per tick
       }
     } catch {

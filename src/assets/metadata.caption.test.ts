@@ -44,6 +44,7 @@ describe("extractImageMetadata — JPEG COM caption", () => {
       0x11,
       0x00,
     ],);
+
     const buf = new Uint8Array([...soi, ...com, ...sof0,],);
     const result = extractImageMetadata(buf,);
     expect(result.caption,).toBeUndefined();

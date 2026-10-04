@@ -39,6 +39,7 @@ export async function resolveWorldId(
       .select("world_id",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     if (chat?.world_id) { return chat.world_id; }
   }
 
@@ -65,6 +66,7 @@ export async function resolveOwnerUserId(
     .select("user_id",)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   return actor?.user_id ?? null;
 }
 

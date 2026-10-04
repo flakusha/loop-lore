@@ -16,6 +16,7 @@ const g = globalThis as unknown as {
   notificationCenter?: () => Record<string, unknown>;
   location?: unknown;
 };
+
 const originalFetch = g.apiFetch;
 const originalLocation = g.location;
 
@@ -155,6 +156,7 @@ describe("notificationCenter fetch", () => {
         assigned.push(url,);
       },
     };
+
     const s = fresh();
     const it = item({ read: 0, link: "/views/chat?chatid=x", },);
     await s.onOpen(it,);
@@ -168,6 +170,7 @@ describe("notificationCenter fetch", () => {
         assigned.push(url,);
       },
     };
+
     const s = fresh();
     await s.onOpen(item({ read: 1, link: "/x", },),);
     expect(calls,).toHaveLength(0,);

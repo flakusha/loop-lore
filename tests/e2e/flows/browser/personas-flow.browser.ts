@@ -79,8 +79,10 @@ describe("Personas flow E2E", () => {
           headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf, },
           body: JSON.stringify({ name, description: "created via api", title: "T", },),
         },);
+
         return res.status;
       }, NEW_PERSONA_NAME,);
+
       expect(created,).toBe(201,);
       // Persisted to the DB under the solo user.
       const row = await ctx.db
@@ -88,6 +90,7 @@ describe("Personas flow E2E", () => {
         .select(["id", "user_id", "name",],)
         .where("name", "=", NEW_PERSONA_NAME,)
         .executeTakeFirst();
+
       expect(row,).not.toBeNull();
       expect(row?.user_id,).toBe(SEED.solo.id,);
       // API lists it for the solo user.
@@ -97,6 +100,7 @@ describe("Personas flow E2E", () => {
         const data = await res.json() as Array<{ name: string }>;
         return data.some((p,) => p.name === name);
       }, NEW_PERSONA_NAME,);
+
       expect(listed,).toBe(true,);
     } finally {
       errors.assert();
@@ -130,8 +134,10 @@ describe("Personas flow E2E", () => {
           method: "DELETE",
           headers: { "X-CSRF-Token": csrf, },
         },);
+
         return res.status;
       }, deleteId,);
+
       expect(deleted,).toBe(204,);
 
       const row = await ctx.db
@@ -139,6 +145,7 @@ describe("Personas flow E2E", () => {
         .select(["id",],)
         .where("id", "=", deleteId,)
         .executeTakeFirst();
+
       expect(row,).toBeUndefined();
       const listed = await page.evaluate(async (name,) => {
         const res = await fetch("/api/v1/personas", { headers: { Accept: "application/json", }, },);
@@ -146,6 +153,7 @@ describe("Personas flow E2E", () => {
         const data = (await res.json()) as Array<{ name: string }>;
         return !data.some((p,) => p.name === name);
       }, deleteName,);
+
       expect(listed, "deleted persona should not appear in API list",).toBe(true,);
     } finally {
       errors.assert();

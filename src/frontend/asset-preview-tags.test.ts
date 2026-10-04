@@ -29,6 +29,7 @@ if (ISOLATED) {
     },
     getCsrfToken: () => "",
   }),);
+
   mock.module("./ui", () => ({
     showToast: (_type: string, _message: string,) => {},
   }),);
@@ -87,6 +88,7 @@ function makeEl(overrides: Partial<El> = {},): El {
     querySelectorAll: () => [],
     focus: () => {},
   };
+
   return Object.assign(self, overrides,);
 }
 
@@ -131,6 +133,7 @@ function makeTagDom(): TagDom {
     "[data-autocomplete]": ac,
     "[data-tag-edit]": editSlot,
   };
+
   const many: Record<string, El[]> = {
     "[data-remove-tag]": [removeBtn,],
     "[data-rename-tag]": [renameBtn,],
@@ -138,6 +141,7 @@ function makeTagDom(): TagDom {
     "[data-dismiss-tag]": [dismissBtn,],
     "[data-autocomplete-tag]": [],
   };
+
   panel.querySelector = (sel,) => single[sel] ?? null;
   panel.querySelectorAll = (sel,) => many[sel] ?? [];
   editSlot.querySelector = (sel,) => (sel === "[data-rename-form]" ? renameForm : null);
@@ -225,11 +229,13 @@ beforeEach(() => {
     size: makeEl(),
     "preview-body": makeEl(),
   };
+
   modal.fields = fields;
   modal.querySelector = (sel,) => {
     const match = /data-field=['"]([^'"]+)['"]/.exec(sel,);
     return match ? fields[match[1]!] ?? null : null;
   };
+
   tagDom = makeTagDom();
   doc.byId.set("preview-modal", modal,);
   doc.bySelector.set("[data-field='tags-panel']", tagDom.panel,);
@@ -248,6 +254,7 @@ describeOrSkip("renderTagsPanel", () => {
       [{ id: "t1", tag: "shared", scope: "global", source: "manual", },],
       [{ tag: "cozy", provenance: "alt_text", },],
     );
+
     await previewHost.openAssetPreview!("a1",);
 
     expect(tagDom.panel.innerHTML,).toContain('data-testid="asset-tag-shared"',);
@@ -320,6 +327,7 @@ describeOrSkip("rename wiring", () => {
       ],
       [],
     );
+
     await previewHost.openAssetPreview!("a1",);
     expect(tagDom.panel.innerHTML,).toContain('data-rename-tag="mine"',);
     expect(tagDom.panel.innerHTML,).not.toContain('data-rename-tag="shared"',);
@@ -372,9 +380,11 @@ describeOrSkip("rename wiring", () => {
       if (url === "/api/v1/assets/a1/tags/rename" && init.method === "POST") {
         return new Response("{}", { status: 500, },);
       }
+
       if (url === "/api/v1/assets/a1/tags" && !init.method) {
         return jsonResponse({ tags: [{ id: "t1", tag: "chip", scope: "user", source: "manual", },], },);
       }
+
       return jsonResponse({}, 404,);
     };
 

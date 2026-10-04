@@ -76,6 +76,7 @@ export const personaActions: Partial<ChatState> & ThisType<ChatState> = {
         const me = Array.isArray(participants,)
           ? participants.find((p: any,) => p.role_in_chat === "owner")
           : null;
+
         if (me) {
           this._selectedPersonaId = me.persona_id || null;
           this._impersonatingActorId = me.impersonate_actor_id || null;
@@ -85,6 +86,7 @@ export const personaActions: Partial<ChatState> & ThisType<ChatState> = {
     } catch {
       /* ignore */
     }
+
     await this.loadPersonas();
   },
 };

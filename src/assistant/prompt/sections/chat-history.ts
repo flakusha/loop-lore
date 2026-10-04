@@ -66,8 +66,10 @@ export const chatHistorySection: SectionBuilder = {
         // prompt — surface a placeholder rather than the raw payload.
         content = "[encrypted message unavailable]";
       }
+
       out.push({ role: row.role, content, },);
     }
+
     // Most-recent-first query was reversed so the LLM sees history in
     // chronological order.
     return out.reverse();

@@ -25,8 +25,10 @@ function spriteUrlsForScene(s: VnScene,): string[] | undefined {
     const url = resolveSpriteUrl(entry, s.emotion,);
     if (url) { urls.add(url,); }
   }
+
   return urls.size > 0 ? [...urls,] : undefined;
 }
+
 /**
  * @param msg
  * @returns {VnScene}
@@ -36,6 +38,7 @@ export function msgToScene(msg: VnMessage,): VnScene {
   const speakerId = msg.speakerId ?? (msg.role === "narration"
     ? null
     : (displayName.toLowerCase().replace(/[^a-z0-9]+/g, "-",).replace(/^-+|-+$/g, "",) || msg.role));
+
   return {
     messageId: msg.id,
     backgroundUrl: msg.background_url,

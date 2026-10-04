@@ -85,19 +85,23 @@ describe("recentConversation", () => {
       ...opts,
       created_at: "2026-01-01T00:00:01.000Z",
     },);
+
     await insertMessages(db, "kw-chat", "kw-actor", MessageRole.Assistant, "I bow deeply.", {
       ...opts,
       created_at: "2026-01-01T00:00:02.000Z",
     },);
+
     await insertMessages(db, "kw-chat", "kw-actor", MessageRole.User, "We need swords.", {
       ...opts,
       created_at: "2026-01-01T00:00:03.000Z",
     },);
+
     await insertMessages(db, "kw-chat", "kw-actor", MessageRole.User, "Secret hidden plans.", {
       status: MessageStatus.Confirmed,
       visibility: MessageVisibility.HiddenByUser,
       created_at: "2026-01-01T00:00:04.000Z",
     },);
+
     return { db, };
   }
 

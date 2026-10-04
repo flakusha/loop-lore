@@ -31,6 +31,7 @@ export async function persistInitiative(
     .select("story_state",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   const parsed = jsonParseOr<{ currentSceneId?: string }>(chatRow?.story_state ?? "", {},);
   const currentScene = parsed.currentSceneId ?? "main";
   const existing = await database

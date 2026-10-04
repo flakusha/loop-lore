@@ -71,6 +71,7 @@ export function applyRpgUpdates(body: Record<string, unknown>, updates: Record<s
     updates.rpg_loot = rpgEnabled;
     updates.rpg_quests = rpgEnabled;
   }
+
   const dice = toRpgFlag(body.rpgDice,);
   if (dice != null) { updates.rpg_dice = dice; }
   const checks = toRpgFlag(body.rpgChecks,);

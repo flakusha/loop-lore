@@ -74,6 +74,7 @@ export function locationTraitRoutes(opts: HandlerOpts, prefix = "/api",) {
         penalty: penalty as number | undefined,
         effects: effects as string | undefined,
       },);
+
       return jsonCreated({ id, },);
     }, {
       params: ActorIdLocationParams,
@@ -94,6 +95,7 @@ export function locationTraitRoutes(opts: HandlerOpts, prefix = "/api",) {
         locationId: string;
         traitName: string;
       };
+
       await traitsService.deleteLocationTrait(actorId, locationId, traitName,);
       return jsonNoContent();
     }, {

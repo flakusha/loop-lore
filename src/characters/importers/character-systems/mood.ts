@@ -47,6 +47,7 @@ export async function importMood(
         moodStability: data.moodStability as number,
       },);
     }
+
     result.moodImported = true;
   } catch (error: unknown) {
     result.errors.push(`Failed to import mood: ${errMsg(error,)}`,);

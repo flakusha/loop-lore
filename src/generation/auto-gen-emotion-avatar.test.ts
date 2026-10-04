@@ -58,6 +58,7 @@ function createMockDeps(): Partial<GenDeps> {
     signalDone: mock(() => {/* noop */},),
     signalError: mock(() => {/* noop */},),
   };
+
   const complete = mock(() =>
     Promise.resolve({
       content: EMOTIONAL_CONTENT,
@@ -66,6 +67,7 @@ function createMockDeps(): Partial<GenDeps> {
       usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
     },)
   );
+
   return {
     cancelGenerationByChat: mock(() => false),
     startGenerationTracking: mock(() =>
@@ -135,6 +137,7 @@ async function seedUser(db: Kysely<DB>,): Promise<string> {
       settings: "{}",
     },)
     .execute();
+
   await db
     .insertInto("actors",)
     .values({
@@ -150,6 +153,7 @@ async function seedUser(db: Kysely<DB>,): Promise<string> {
       import_spec: "{}",
     },)
     .execute();
+
   return userId;
 }
 
@@ -174,6 +178,7 @@ async function createAiActor(db: Kysely<DB>, name: string,): Promise<string> {
       import_spec: "{}",
     },)
     .execute();
+
   return id;
 }
 
@@ -199,6 +204,7 @@ async function createDirectChat(
       gm_config: null,
     },)
     .execute();
+
   await db
     .insertInto("chat_participants",)
     .values([
@@ -206,6 +212,7 @@ async function createDirectChat(
       { chat_id: chatId, actor_id: aiActorId, role_in_chat: "member", },
     ],)
     .execute();
+
   return chatId;
 }
 
@@ -249,6 +256,7 @@ describe("emotion avatar content hooks in auto-gen", () => {
       .where("chat_id", "=", chatId,)
       .where("actor_id", "=", aiActorId,)
       .executeTakeFirst();
+
     expect(row,).toBeDefined();
     // Emotional content produced a dominant "happy" (canonical) emotion.
     expect(row?.emotion,).toBe("happy",);
@@ -320,6 +328,7 @@ describe("emotion avatar content hooks in auto-gen", () => {
       .where("chat_id", "=", chatId,)
       .where("actor_id", "=", aiActorId,)
       .executeTakeFirst();
+
     expect(row?.emotion,).toBeNull();
   });
 });

@@ -33,6 +33,7 @@ beforeAll(async () => {
     "encrypt",
     "decrypt",
   ],);
+
   testKeyId = "test-key-001";
 },);
 
@@ -84,12 +85,14 @@ describe("encryptAtRest", () => {
       senderEphPubJwk: { kty: "EC", },
       chainIndex: 0,
     },);
+
     const result = await encryptAtRest({
       database: mockDb,
       chatId: "chat-1",
       plaintext: wire,
       encryptionLevel: "at-rest",
     },);
+
     expect(result.storedContent,).toBe(wire,);
     expect(result.wasEncrypted,).toBe(true,);
   });
@@ -138,12 +141,14 @@ describe("decryptAtRest", () => {
       nonce: "n",
       senderEphPubJwk: { kty: "EC", },
     },);
+
     const result = await decryptAtRest({
       database: mockDb,
       chatId: "chat-1",
       storedContent: wire,
       encryptionLevel: "at-rest",
     },);
+
     expect(result,).toBe(wire,);
   });
 

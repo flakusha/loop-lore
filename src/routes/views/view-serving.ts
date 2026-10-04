@@ -175,6 +175,7 @@ async function serveCharacterEdit(
     .select("id",)
     .where("id", "=", characterId,)
     .executeTakeFirst();
+
   if (!actor) {
     return notFoundView(
       "Character not found",

@@ -51,6 +51,7 @@ describe("seedDynamicContent", () => {
       .select(["id", "modality", "owner_id",],)
       .where("modality", "=", "workflow",)
       .execute();
+
     expect(workflows.length,).toBeGreaterThan(0,);
     for (const w of workflows) {
       expect(w.owner_id,).not.toBeNull();
@@ -79,6 +80,7 @@ describe("seedDynamicContent", () => {
       .select("owner_id",)
       .where("modality", "=", "workflow",)
       .execute();
+
     expect(rows.length,).toBeGreaterThan(0,);
     for (const row of rows) {
       expect(row.owner_id,).toBe(older,);
@@ -94,6 +96,7 @@ describe("seedDynamicContent", () => {
       .select("owner_id",)
       .where("modality", "=", "workflow",)
       .execute();
+
     expect(rows.length,).toBeGreaterThan(0,);
     for (const row of rows) {
       expect(row.owner_id,).toBe(solo,);

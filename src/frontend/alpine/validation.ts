@@ -32,6 +32,7 @@ export function getChecker<T extends TSchema,>(schema: T,): TypeCheck<T> {
     checker = TypeCompiler.Compile(schema,);
     cache.set(schema, checker,);
   }
+
   return checker;
 }
 
@@ -60,6 +61,7 @@ export function parseOr<T extends TSchema,>(
     const first = errors[0];
     console.warn("parseOr: schema mismatch", { path: first?.path, message: first?.message, },);
   }
+
   return fallback;
 }
 

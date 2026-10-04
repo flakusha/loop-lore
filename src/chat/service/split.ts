@@ -191,6 +191,7 @@ export async function reuniteChats(
   if (primary.created_by !== actorId) {
     return { code: "forbidden", message: "Only the primary chat owner can initiate a reunion", };
   }
+
   if (secondary.created_by !== actorId) {
     return { code: "forbidden", message: "Only the secondary chat owner can initiate a reunion", };
   }

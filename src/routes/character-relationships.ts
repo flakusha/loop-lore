@@ -68,6 +68,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
           status: HttpStatus.NotFound,
         },);
       }
+
       return jsonResponse(relationship,);
     }, {
       params: ActorTargetParams,
@@ -116,6 +117,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
         isBidirectional: is_bidirectional ?? false,
         metadata,
       },);
+
       return jsonCreated({ id: relationshipId, },);
     }, {
       params: ActorIdParams,
@@ -145,6 +147,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
         familiarity,
         metadata,
       },);
+
       return jsonResponse({ ok: true, },);
     }, {
       params: ActorTargetParams,
@@ -204,6 +207,7 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
         familiarityDelta: familiarity_delta ?? 0,
         metadata,
       },);
+
       return jsonResponse({ ok: true, },);
     }, {
       params: ActorIdParams,

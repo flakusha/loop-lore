@@ -34,6 +34,7 @@ async function serveWorldsListDb(
   if (userId && !can(userRole, "admin.world",)) {
     qb = qb.where("owner_id", "=", userId,);
   }
+
   const worlds = await qb.execute();
 
   if (worlds.length === 0) {
@@ -79,6 +80,7 @@ async function serveWorldDetailContent(
       <div class="title">World not found</div>
     </div>`,);
   }
+
   if (await requireWorldAccess(database, worldId, userId, userRole,)) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">⚠️</div>
@@ -103,6 +105,7 @@ async function serveWorldDetailContent(
     .select(["id", "slug", "name", "description", "features",],)
     .orderBy("name", "asc",)
     .execute();
+
   const templatesJson = jsonStringifyOr(
     Array.from(templates, (t,) => ({
       id: t.id,
@@ -122,9 +125,11 @@ async function serveWorldDetailContent(
     .where("world_id", "=", worldId,)
     .where("visibility", "=", "public",)
     .execute();
+
   const templateNames = new Map<string, string>(
     Array.from(templates, (t,) => [t.id, t.name,],),
   );
+
   const locationTemplate = new Map<string, { name: string; isDefault: boolean }>();
   for (const chat of worldChats) {
     if (!chat.current_location_id) { continue; }
@@ -132,6 +137,7 @@ async function serveWorldDetailContent(
     const tid = chat.template_id && templateNames.has(chat.template_id,)
       ? chat.template_id
       : null;
+
     locationTemplate.set(chat.current_location_id, {
       name: tid ? templateNames.get(tid,)! : "custom",
       isDefault,

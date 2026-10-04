@@ -120,6 +120,7 @@ export async function handleGetStatus(database: Kysely<DB>, userId?: string | nu
       "GET /api/age-gate/status failed",
       error instanceof Error ? error : undefined,
     );
+
     return jsonError("An error occurred", 500,);
   }
 }
@@ -139,6 +140,7 @@ export async function handleAccept({ database, userId, body, }: HandleAcceptOpts
   if (!userId) {
     return jsonError("Authentication required", 401,);
   }
+
   try {
     const input = body as Record<string, unknown>;
     if (typeof input.birthDate !== "string") {
@@ -157,14 +159,17 @@ export async function handleAccept({ database, userId, body, }: HandleAcceptOpts
     if (error instanceof AgeGateService.UnderageError) {
       return jsonError(error.message, 403,);
     }
+
     if (error instanceof AgeGateService.AgeGateError) {
       return jsonError(error.message, 400,);
     }
+
     // Never leak DB internals to the client — log the real error server-side.
     getLogger().child({ module: "age-gate", },).error(
       "POST /api/age-gate/accept failed",
       error instanceof Error ? error : undefined,
     );
+
     return jsonError("An error occurred", 500,);
   }
 }
@@ -212,17 +217,21 @@ export function handleAdminUpdateConfig(userRole: string | null | undefined, bod
   if (typeof input.enabled === "boolean") {
     updated.enabled = input.enabled;
   }
+
   if (typeof input.minimumAge === "number") {
     if (input.minimumAge < 1 || input.minimumAge > 150) {
       return jsonError("minimumAge must be between 1 and 150", 400,);
     }
+
     updated.minimumAge = input.minimumAge;
   }
+
   if (typeof input.mode === "string") {
     const validModes = [AgeGateMode.None, AgeGateMode.SelfDeclaration, AgeGateMode.Verification,] as const;
     if (!validModes.includes(input.mode as (typeof validModes)[number],)) {
       return jsonError(`mode must be one of: ${validModes.join(", ",)}`, 400,);
     }
+
     updated.mode = input.mode as AgeGateConfig["mode"];
   }
 

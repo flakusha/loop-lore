@@ -148,6 +148,7 @@ describe("renderQaReport", () => {
     const report = runQaCheck([
       scene({ characterName: "", backgroundUrl: undefined, },),
     ],);
+
     expect(report.passed,).toBe(true,);
 
     const children = render(container, report,);

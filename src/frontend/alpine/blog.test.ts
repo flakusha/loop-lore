@@ -139,6 +139,7 @@ describe("blogStore — visiblePosts", () => {
       makePost({ id: "p1", title: "Dragon lore", },),
       makePost({ id: "p2", title: "Tea", body: "quiet", },),
     ];
+
     blogStore._blogFilter = "dragon";
     expect(blogStore.visiblePosts().map((p,) => p.id),).toEqual(["p1",],);
   });
@@ -233,6 +234,7 @@ describe("blogStore — error paths", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     expect(await blogStore.getFollowStatus("a1",),).toBe(true,);
   });
 
@@ -297,6 +299,7 @@ describe("blogStore — createPost / createComment", () => {
       if (call === 1) { return Response.json({ post: makePost({ id: "p-new", },), }, { status: 201, },); }
       return new Response("{}", { status: 200, },);
     };
+
     await blogStore.createPost({ title: "New", body: "Body", },);
     expect(blogStore._blogPosts[0]?.id,).toBe("p-new",);
     expect(dispatched.some((d,) => d.event === "blog-post-created"),).toBe(true,);
@@ -323,8 +326,10 @@ describe("blogStore — createPost / createComment", () => {
       if (call === 1) {
         return Response.json({ id: "c-new", body: "nice", }, { status: 201, },);
       }
+
       return Response.json({ comments: [{ id: "c-new", body: "nice", },], }, { status: 200, },);
     };
+
     await blogStore.createComment("p1", "nice",);
     expect(blogStore._blogComments,).toHaveLength(1,);
     expect(blogStore._blogComments[0]?.id,).toBe("c-new",);

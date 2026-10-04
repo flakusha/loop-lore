@@ -33,6 +33,7 @@ beforeAll(async () => {
   testDb = env.db;
   testSqlite = env.sqlite;
 },);
+
 beforeEach(() => {
   resetNsfwRuntimeConfig();
 },);
@@ -56,6 +57,7 @@ async function seedChat(db: Kysely<DB>, overrides?: Record<string, unknown>,): P
       ...overrides,
     },)
     .execute();
+
   return id;
 }
 
@@ -77,6 +79,7 @@ async function seedWorld(db: Kysely<DB>,): Promise<string> {
       difficulty_state: "normal",
     },)
     .execute();
+
   return id;
 }
 
@@ -137,6 +140,7 @@ async function seedActor(db: Kysely<DB>, overrides?: Record<string, unknown>,): 
       ...overrides,
     },)
     .execute();
+
   return id;
 }
 
@@ -185,6 +189,7 @@ async function seedStoryTurn(
       ...overrides,
     },)
     .execute();
+
   return id;
 }
 
@@ -330,6 +335,7 @@ describe("GameMasterService — constructor & state", () => {
       gmConfig: makeLlmConfig(),
       generateText,
     },);
+
     await gm.initialize();
 
     expect(gm.isPaused,).toBe(false,);
@@ -353,6 +359,7 @@ describe("GameMasterService — executeTurn", () => {
       world_id: worldId,
       current_location_id: locId,
     },);
+
     const actorId = await seedActor(testDb,);
     await seedParticipant(testDb, chatId, actorId,);
     return { chatId, worldId, actorId, };
@@ -418,6 +425,7 @@ describe("GameMasterService — executeTurn", () => {
       generateText,
       appConfig,
     },);
+
     await gm.initialize();
 
     await gm.executeTurn(actorId,);
@@ -451,6 +459,7 @@ describe("GameMasterService — executeTurn", () => {
       generateText,
       appConfig,
     },);
+
     await gm.initialize();
 
     await gm.executeTurn(actorId,);
@@ -475,6 +484,7 @@ describe("GameMasterService — executeTurn", () => {
       gmConfig: makeHumanConfig(),
       generateText,
     },);
+
     await gm.initialize();
 
     const result = await gm.executeTurn();
@@ -546,6 +556,7 @@ describe("GameMasterService — executeTurn", () => {
       gmConfig: makeLlmConfig(),
       generateText,
     },);
+
     await gm.initialize();
 
     await expect(gm.executeTurn(),).rejects.toThrow("No available actors",);
@@ -562,6 +573,7 @@ describe("GameMasterService — executeTurn", () => {
       gmConfig: makeLlmConfig(),
       generateText,
     },);
+
     await gm.initialize();
 
     // Should not throw — falls back to hardcodedPrompt
@@ -579,6 +591,7 @@ describe("GameMasterService — executeTurn", () => {
       world_id: worldId,
       current_location_id: locId,
     },);
+
     const heroId = await seedActor(testDb, { display_name: "Hero", },);
     const villainId = await seedActor(testDb, { display_name: "Villain", },);
     await seedParticipant(testDb, chatId, heroId,);
@@ -590,6 +603,7 @@ describe("GameMasterService — executeTurn", () => {
       sceneDescription: "A storm rages outside the tavern",
       turnPriority: {},
     };
+
     const gm = new GameMasterService({
       db: testDb,
       chatId,
@@ -597,6 +611,7 @@ describe("GameMasterService — executeTurn", () => {
       gmGuidance,
       generateText: () => Promise.resolve("unused",),
     },);
+
     await gm.initialize();
 
     const result = await gm.executeTurn();
@@ -634,6 +649,7 @@ describe("GameMasterService — acceptResponse", () => {
       gmConfig: makeLlmConfig(),
       generateText,
     },);
+
     await gm.initialize();
 
     // Response with good quality markers
@@ -657,6 +673,7 @@ describe("GameMasterService — acceptResponse", () => {
       .selectAll()
       .where("id", "=", turnId,)
       .executeTakeFirst();
+
     expect(turn,).toBeDefined();
     expect(turn?.status,).toBe("accepted",);
     expect(turn?.response_received,).toBe(response,);
@@ -675,6 +692,7 @@ describe("GameMasterService — acceptResponse", () => {
         pendingRegeneration: null,
       },),
     },);
+
     const actorId = await seedActor(testDb, { display_name: "Hero", },);
     const turnId = await seedStoryTurn(testDb, chatId, actorId,);
 
@@ -693,6 +711,7 @@ describe("GameMasterService — acceptResponse", () => {
       generateText,
       qualityThresholds: thresholds,
     },);
+
     await gm.initialize();
 
     // "ok" response scores ~60, which is < 80 (escalate) but >= 30 (regenerate)
@@ -718,6 +737,7 @@ describe("GameMasterService — acceptResponse", () => {
         pendingRegeneration: null,
       },),
     },);
+
     const actorId = await seedActor(testDb, { display_name: "Hero", },);
     const turnId = await seedStoryTurn(testDb, chatId, actorId,);
 
@@ -738,6 +758,7 @@ describe("GameMasterService — acceptResponse", () => {
       generateText,
       qualityThresholds: thresholds,
     },);
+
     await gm.initialize();
 
     const result = await gm.acceptResponse(turnId, "ok",);
@@ -775,6 +796,7 @@ describe("GameMasterService — acceptResponse", () => {
       .selectAll()
       .where("id", "=", turnId,)
       .executeTakeFirst();
+
     expect(turn,).toBeDefined();
     expect(turn?.status,).toBe("accepted",);
     expect(turn?.gm_decision,).toBeDefined();
@@ -822,6 +844,7 @@ describe("GameMasterService — injectNarration", () => {
       .selectAll()
       .where("actor_id", "=", narratorId,)
       .execute();
+
     expect(messages,).toHaveLength(2,); // 2 story-mode chats
     for (const msg of messages) {
       expect(msg.content,).toBe("The wind howls through the valley.",);
@@ -865,6 +888,7 @@ describe("GameMasterService — per-actor multi-LLM model assignment", () => {
       captured.push({ model: params.model, provider: params.provider, },);
       return Promise.resolve("*He acts.*",);
     };
+
     const gm = new GameMasterService({
       db: testDb,
       chatId,
@@ -881,6 +905,7 @@ describe("GameMasterService — per-actor multi-LLM model assignment", () => {
       },
       generateText,
     },);
+
     await gm.initialize();
     await gm.executeTurn(actorId,);
     expect(captured.length,).toBeGreaterThanOrEqual(1,);
@@ -899,6 +924,7 @@ describe("GameMasterService — per-actor multi-LLM model assignment", () => {
       captured.push({ model: params.model, },);
       return Promise.resolve("*He acts.*",);
     };
+
     const gm = new GameMasterService({
       db: testDb,
       chatId,
@@ -914,6 +940,7 @@ describe("GameMasterService — per-actor multi-LLM model assignment", () => {
       },
       generateText,
     },);
+
     await gm.initialize();
     await gm.executeTurn(actorId,);
     expect(captured[0]!.model,).toBe("gm-model",);
@@ -932,6 +959,7 @@ describe("GameMasterService — executeTurn NPC movement tick", () => {
       agent_type: "npc",
       display_name: "Guard",
     },);
+
     await testDb
       .insertInto("npc_states",)
       .values({
@@ -942,6 +970,7 @@ describe("GameMasterService — executeTurn NPC movement tick", () => {
         schedule: JSON.stringify(schedule,),
       },)
       .execute();
+
     return npcId;
   }
 
@@ -965,6 +994,7 @@ describe("GameMasterService — executeTurn NPC movement tick", () => {
       gmConfig: makeLlmConfig(),
       generateText,
     },);
+
     const result = await gm.executeTurn(actorId,);
 
     const move = result.worldEvents.find((e,) => e.type === WorldEventType.LocationChange);
@@ -980,6 +1010,7 @@ describe("GameMasterService — executeTurn NPC movement tick", () => {
       .selectAll()
       .where("actor_id", "=", npcId,)
       .executeTakeFirstOrThrow();
+
     expect(npcRow.location_id,).toBe(locB,);
     const schedule = JSON.parse(npcRow.schedule,) as { patrolIndex: number };
     expect(schedule.patrolIndex,).toBe(1,);
@@ -1000,6 +1031,7 @@ describe("GameMasterService — executeTurn NPC movement tick", () => {
       gmConfig: makeLlmConfig(),
       generateText,
     },);
+
     const result = await gm.executeTurn(actorId,);
 
     expect(result.worldEvents,).toEqual([],);
@@ -1016,6 +1048,7 @@ describe("GameMasterService — executeTurn NPC movement tick", () => {
       agent_type: "npc",
       display_name: "Guard",
     },);
+
     await testDb
       .insertInto("npc_states",)
       .values({
@@ -1034,6 +1067,7 @@ describe("GameMasterService — executeTurn NPC movement tick", () => {
       gmConfig: makeLlmConfig(),
       generateText,
     },);
+
     const result = await gm.executeTurn(actorId,);
 
     expect(result.worldEvents,).toEqual([],);
@@ -1054,6 +1088,7 @@ describe("GameMasterService — executeTurn NPC movement tick", () => {
       gmConfig: makeLlmConfig(),
       generateText,
     },);
+
     const result = await gm.executeTurn(actorId,);
 
     expect(result.worldEvents,).toEqual([],);
@@ -1074,6 +1109,7 @@ describe("GameMasterService — executeTurn NPC movement tick", () => {
       gmConfig: makeLlmConfig(),
       generateText,
     },);
+
     const result = await gm.executeTurn(actorId,);
 
     expect(result.worldEvents,).toEqual([],);
@@ -1091,6 +1127,7 @@ describe("GameMasterService — executeTurn NPC movement tick", () => {
       patrolRoute: [locA, locB,],
       patrolIndex: 0,
     },);
+
     await seedNpc(worldId, locA, { movementPattern: "stationary", },);
 
     const generateText: GenerateTextFn = () => Promise.resolve("*He acts.*",);
@@ -1100,6 +1137,7 @@ describe("GameMasterService — executeTurn NPC movement tick", () => {
       gmConfig: makeLlmConfig(),
       generateText,
     },);
+
     const result = await gm.executeTurn(actorId,);
 
     expect(result.worldEvents,).toHaveLength(1,);
@@ -1119,11 +1157,13 @@ describe("GameMasterService — injectNarration encryption", () => {
       mode: "story",
       encryption_level: "standard",
     },);
+
     const narratorId = await seedActor(testDb, {
       actor_type: "narrator",
       agent_type: "narrator",
       display_name: "Narrator",
     },);
+
     const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
@@ -1141,6 +1181,7 @@ describe("GameMasterService — injectNarration encryption", () => {
         .selectAll()
         .where("actor_id", "=", narratorId,)
         .execute();
+
       expect(messages,).toHaveLength(1,);
       expect(messages[0]!.content,).not.toBe("The wind howls through the valley.",);
       expect(messages[0]!.key_id,).not.toBeNull();
@@ -1156,6 +1197,7 @@ describe("GameMasterService — injectNarration encryption", () => {
         },
         getSmk()!,
       );
+
       expect(plain,).toBe("The wind howls through the valley.",);
     } finally {
       // Reset SMK so other test files in the same bun process see encryption disabled.
@@ -1170,11 +1212,13 @@ describe("GameMasterService — injectNarration encryption", () => {
       mode: "story",
       encryption_level: "standard",
     },);
+
     const narratorId = await seedActor(testDb, {
       actor_type: "narrator",
       agent_type: "narrator",
       display_name: "Narrator",
     },);
+
     const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
@@ -1191,6 +1235,7 @@ describe("GameMasterService — injectNarration encryption", () => {
       .selectAll()
       .where("actor_id", "=", narratorId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
     expect(messages[0]!.content,).toBe("The wind howls through the valley.",);
     expect(messages[0]!.key_id,).toBeNull();

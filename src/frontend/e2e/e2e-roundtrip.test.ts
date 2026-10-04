@@ -30,6 +30,7 @@ const stubbedFetch = mock(async (input: RequestInfo | URL,) => {
   if (!match) {
     return new Response("not found", { status: 404, },);
   }
+
   const actorId = match[1]!;
   const jwk = pubKeyRegistry.get(actorId,);
   if (!jwk) {
@@ -38,6 +39,7 @@ const stubbedFetch = mock(async (input: RequestInfo | URL,) => {
       headers: { "content-type": "application/json", },
     },);
   }
+
   return new Response(JSON.stringify({ publicKeyJwk: jwk, },), {
     status: 200,
     headers: { "content-type": "application/json", },
@@ -89,6 +91,7 @@ async function persistKeyPair(actorId: string,): Promise<JsonWebKey> {
       createdAt: new Date().toISOString(),
     },),
   );
+
   return pubJwk;
 }
 

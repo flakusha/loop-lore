@@ -11,8 +11,10 @@ export const calculateDiscoveryProgress: ProgressCalculator = (ctx, config, even
   if (event.locationId === cfg.targetLocationId) {
     return 100 - ctx.progress;
   }
+
   if (cfg.clues.some((c,) => c.locationId === event.locationId)) {
     return Math.round(100 / (cfg.clues.length + 1),);
   }
+
   return 0;
 };

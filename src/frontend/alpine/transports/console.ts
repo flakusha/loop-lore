@@ -37,6 +37,7 @@ export class BrowserConsoleTransport implements Transport {
     } catch {
       // Never throw from transport
     }
+
     return Promise.resolve();
   }
 

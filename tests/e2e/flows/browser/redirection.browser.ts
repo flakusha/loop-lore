@@ -137,6 +137,7 @@ describe("Redirection E2E — auth required", () => {
         await page.locator("[data-testid='message-list']",).waitFor({ state: "visible", timeout: 2000, },);
         messageListVisible = true;
       } catch { /* never became visible */ }
+
       expect(messageListVisible,).toBe(false,);
     } finally {
       errors.assert();
@@ -171,6 +172,7 @@ describe("Redirection E2E — auth required", () => {
           await fetch("/api/auth/me", { credentials: "include", },);
         },);
       }
+
       // Let any post-401 microtasks settle.
       await page.waitForTimeout(200,);
 

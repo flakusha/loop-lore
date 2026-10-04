@@ -18,6 +18,7 @@ function score(response: string, lore: string | null,): number {
     quests: [],
     recentTurns: [],
   };
+
   return scoreLoreConsistency(ctx,);
 }
 

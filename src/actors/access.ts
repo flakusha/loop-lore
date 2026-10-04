@@ -35,11 +35,14 @@ export async function requireActorOwnership(
     .select("owner_id",)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   if (!actor) {
     return { ok: false, code: "not_found", message: "Actor not found", };
   }
+
   if (actor.owner_id === userId || can(userRole, "admin.character",)) {
     return null;
   }
+
   return { ok: false, code: "forbidden", message: "Not allowed", };
 }

@@ -33,6 +33,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
           const titleEl = document.querySelector("#page-title",);
           if (titleEl) { titleEl.textContent = this.activeChatName; }
         }
+
         this.$dispatch?.("show-toast", { type: "success", message: t("toasts.chatDeleted",), },);
       } else {
         const err = await res.json();
@@ -41,6 +42,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     } catch {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorDeletingChat",), },);
     }
+
     button?.blur();
   },
 
@@ -59,12 +61,14 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
       Alpine.store("ui",).showRenameModal = false;
       return;
     }
+
     try {
       const res = await apiFetch(`/api/v1/chats/${this._renameChatId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ name, },),
       },);
+
       if (res.ok) {
         const chat = this.chats.find((c,) => c.id === this._renameChatId);
         if (chat) { chat.name = name; }
@@ -73,6 +77,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
           const titleEl = document.querySelector("#page-title",);
           if (titleEl) { titleEl.textContent = name; }
         }
+
         Alpine.store("ui",).showRenameModal = false;
         this.$dispatch?.("show-toast", { type: "success", message: t("toasts.chatRenamed",), },);
       } else {
@@ -98,6 +103,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ isPinned: pinned, },),
       },);
+
       if (res.ok) {
         chat.isPinned = pinned ? 1 : 0;
         this.chats = [...this.chats,];
@@ -127,6 +133,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ ids, },),
       },);
+
       if (res.ok) {
         const filtered: typeof this.chats = [];
         for (const c of this.chats) { if (!ids.includes(c.id,)) { filtered.push(c,); } }
@@ -155,6 +162,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ ids, },),
       },);
+
       if (res.ok) {
         const filtered: typeof this.chats = [];
         for (const c of this.chats) { if (!ids.includes(c.id,)) { filtered.push(c,); } }
@@ -166,6 +174,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
           this.messages = [];
           Alpine.store("ui",).hasActiveChat = false;
         }
+
         this.$dispatch?.("show-toast", {
           type: "success",
           message: t("toasts.deletedCount", { count: String(ids.length,), },),
@@ -188,6 +197,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ ids, },),
       },);
+
       if (res.ok) {
         const blob = await res.blob();
         const url = URL.createObjectURL(blob,);

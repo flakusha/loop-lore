@@ -18,6 +18,7 @@ function schemaTables(db: Database,): Set<string> {
   const rows = db
     .query("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'kysely_%'",)
     .all() as { name: string }[];
+
   return new Set(rows.map((r,) => r.name),);
 }
 
@@ -43,6 +44,7 @@ async function loadAllMigrations(): Promise<Record<string, Migration>> {
   for (const name of MIGRATION_NAMES) {
     migrations[name] = await loadMigration(name,);
   }
+
   return migrations;
 }
 
@@ -83,6 +85,7 @@ describe("full migration chain", () => {
     db.close();
     setTestDatabase(null,);
   },);
+
   test("all migrations apply in order without error", async () => {
     for (const name of MIGRATION_NAMES) {
       await migrations[name]!.up(kysely,);
@@ -101,6 +104,7 @@ describe("full migration chain", () => {
     const worldCols = db
       .query("PRAGMA table_info(worlds)",)
       .all() as { name: string; dflt_value: string | null }[];
+
     const worldPub = worldCols.find((c,) => c.name === "publication_status");
     expect(worldPub,).toBeDefined();
     expect(worldPub!.dflt_value,).toContain("draft",);
@@ -108,6 +112,7 @@ describe("full migration chain", () => {
     const locCols = db
       .query("PRAGMA table_info(locations)",)
       .all() as { name: string; dflt_value: string | null }[];
+
     const locPub = locCols.find((c,) => c.name === "publication_status");
     expect(locPub,).toBeDefined();
     expect(locPub!.dflt_value,).toContain("draft",);
@@ -177,9 +182,11 @@ describe("per-migration roundtrip", () => {
       test("down() reverts cleanly (only if up succeeded)", async () => {
         if (!upSucceeded) { return; // Skip — up() failed, nothing to revert
          }
+
         if (migration.down) {
           await migration.down(kysely,);
         }
+
         const names = schemaTables(db,);
         expect(names.size,).toBe(0,);
       });
@@ -187,12 +194,14 @@ describe("per-migration roundtrip", () => {
       test("up() idempotency (only if up succeeded)", async () => {
         if (!upSucceeded) { return; // Skip — up() failed
          }
+
         // Second up may throw for ALTER TABLE migrations — that's expected
         try {
           await migration.up(kysely,);
         } catch (error) {
           if (!isExpectedFreshDbError(error,)) { throw error; }
         }
+
         // DB should still have tables
         const names = schemaTables(db,);
         expect(names.size,).toBeGreaterThan(0,);
@@ -262,6 +271,7 @@ describe("migration consistency flags", () => {
         missingDown.push(name,);
       }
     }
+
     if (missingDown.length > 0) {
       console.log("[migration-consistency] missing down():", missingDown,);
     }
@@ -289,6 +299,7 @@ describe("migration consistency flags", () => {
     for (const name of MIGRATION_NAMES) {
       await allMigrations[name]!.up(kysely,);
     }
+
     const upCount = schemaTables(db,).size;
 
     for (const name of [...MIGRATION_NAMES,].reverse()) {
@@ -296,11 +307,13 @@ describe("migration consistency flags", () => {
         await allMigrations[name]!.down(kysely,);
       }
     }
+
     const downTables = schemaTables(db,);
 
     if (downTables.size > 0) {
       console.log("[migration-consistency] tables remaining after full down:", [...downTables,],);
     }
+
     expect(downTables.size,).toBe(0,);
     expect(upCount,).toBeGreaterThan(10,);
 
@@ -319,6 +332,7 @@ describe("activitypub_actor_keys FK cascades on actor delete", () => {
       for (const name of MIGRATION_NAMES) {
         await migrations[name]!.up(kysely,);
       }
+
       // createTestKysely() enables PRAGMA foreign_keys = ON. Insert a
       // user → actor → activitypub_actor_key chain so we can delete the
       // actor and confirm the key row goes with it.
@@ -330,24 +344,29 @@ describe("activitypub_actor_keys FK cascades on actor delete", () => {
         .execute(
           kysely,
         );
+
       await sql`INSERT INTO worlds (id, owner_id, name, created_at) VALUES (${worldId}, ${userId}, ${worldId}, datetime('now'))`
         .execute(
           kysely,
         );
+
       await sql`INSERT INTO actors (id, user_id, display_name, created_at) VALUES (${actorId}, ${userId}, ${actorId}, datetime('now'))`
         .execute(
           kysely,
         );
+
       await sql`INSERT INTO activitypub_actor_keys (id, actor_id, key_id, public_jwk, encrypted_private_jwk, created_at) VALUES (${keyId}, ${actorId}, ${
         "key:" + keyId
       }, ${"{}"}, ${"{}"}, datetime('now'))`.execute(
         kysely,
       );
+
       const before = await sql<
         { c: number }
       >`SELECT COUNT(*) AS c FROM activitypub_actor_keys WHERE actor_id = ${actorId}`.execute(
         kysely,
       );
+
       expect(Number(before.rows[0]?.c ?? 0,),).toBe(1,);
       // Delete the actor. With onDelete: cascade, the key row is removed
       // automatically. Pre-fix this throws FOREIGN KEY constraint failed.
@@ -357,6 +376,7 @@ describe("activitypub_actor_keys FK cascades on actor delete", () => {
       >`SELECT COUNT(*) AS c FROM activitypub_actor_keys WHERE actor_id = ${actorId}`.execute(
         kysely,
       );
+
       expect(Number(after.rows[0]?.c ?? 0,),).toBe(0,);
     } finally {
       await kysely.destroy();
@@ -384,9 +404,11 @@ describe("migration staleness guard", () => {
       db: kysely,
       provider: { getMigrations: async () => migrations, },
     },);
+
     const { error, } = await migrator.migrateToLatest();
     expect(error,).toBeUndefined();
   },);
+
   afterAll(async () => {
     await kysely.destroy();
     db.close();
@@ -410,6 +432,7 @@ describe("migration staleness guard", () => {
     const { [first]: _dropped, ...filtered } = migrations;
     await expect(assertMigrationsNotStale(kysely, filtered,),).rejects.toThrow(first,);
   });
+
   test("passes on a fresh database without a kysely_migration table", async () => {
     const { db: freshDb, kysely: fresh, } = createTestKysely();
     try {

@@ -82,6 +82,7 @@ export function setLocalInferenceOptIn(optedIn: boolean,): void {
     /* storage unavailable — opt-in stays off */
   }
 }
+
 /**
  * localStorage key recording a successfully loaded model. The composer only
  * attempts local model inference for flagged models — never surprise
@@ -145,9 +146,11 @@ export function detectLocalInferenceSupport(env?: LocalInferenceEnv,): LocalInfe
   const wasm = env?.wasm !== undefined
     ? env.wasm !== null
     : typeof (globalThis as Record<string, unknown>).WebAssembly !== "undefined";
+
   const indexedDB = env?.indexedDB !== undefined
     ? env.indexedDB !== null
     : typeof (globalThis as Record<string, unknown>).indexedDB !== "undefined";
+
   return { webgpu, wasm, indexedDB, };
 }
 
@@ -200,5 +203,6 @@ export function runLocalPromptImprove(opts: { text: string; level: string },): L
   if (!(LOCAL_ONLY_LEVELS as readonly string[]).includes(level,)) {
     throw new LocalInferenceUnavailable(`level "${level}" needs a downloaded model`,);
   }
+
   return { content: cleanupDraftLocally(text,), engine: "local-heuristics", local: true, };
 }

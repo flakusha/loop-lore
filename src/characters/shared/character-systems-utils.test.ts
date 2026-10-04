@@ -31,6 +31,7 @@ describe("toExportFields", () => {
       allow_commercial: false,
       share_alike: true,
     };
+
     const result = toExportFields(row, LICENSING_FIELDS,);
     expect(result,).toEqual({
       licenseType: "cc0",
@@ -70,6 +71,7 @@ describe("toExportFields", () => {
       content_policy: "sfw_only",
       nsfw_policy: "disallow",
     };
+
     const result = toExportFields(row, AVAILABILITY_FIELDS,);
     expect(result,).toEqual({
       status: "active",
@@ -91,6 +93,7 @@ describe("toDbFields", () => {
       allowCommercial: false,
       shareAlike: true,
     };
+
     const result = toDbFields(data, LICENSING_FIELDS,);
     expect(result,).toEqual({
       license_type: "cc0",
@@ -122,6 +125,7 @@ describe("toDbFields", () => {
       content_policy: "sfw_only",
       nsfw_policy: "disallow",
     };
+
     const exported = toExportFields(row, AVAILABILITY_FIELDS,);
     expect(toDbFields(exported, AVAILABILITY_FIELDS,),).toEqual(row,);
   });
@@ -139,6 +143,7 @@ describe("toDbFields", () => {
       allow_commercial: true,
       share_alike: false,
     };
+
     const exported = toExportFields(row, LICENSING_FIELDS,);
     expect(toDbFields(exported, LICENSING_FIELDS,),).toEqual(row,);
   });
@@ -151,6 +156,7 @@ describe("mapTraitForExport", () => {
       trait_name: "brave",
       trait_value: "high",
     },);
+
     expect(result,).toEqual({ category: "personality", name: "brave", value: "high", },);
   });
 
@@ -172,6 +178,7 @@ describe("mapRelationshipForExport", () => {
       isBidirectional: true,
       metadata,
     },);
+
     expect(result,).toEqual({
       targetActorId: "actor-42",
       relationshipType: "ally",
@@ -181,6 +188,7 @@ describe("mapRelationshipForExport", () => {
       isBidirectional: true,
       metadata,
     },);
+
     expect(result.metadata,).toBe(metadata,);
   });
 
@@ -194,6 +202,7 @@ describe("mapRelationshipForExport", () => {
       isBidirectional: false,
       metadata: {},
     },);
+
     expect(result.standing,).toBe(0,);
     expect(result.isBidirectional,).toBe(false,);
     expect(result.metadata,).toEqual({},);
@@ -210,6 +219,7 @@ describe("mapAvatarForExport", () => {
       isPrimary: true,
       sortOrder: 1,
     },);
+
     expect(result,).toEqual({
       assetId: "asset-7",
       label: "Main portrait",
@@ -217,6 +227,7 @@ describe("mapAvatarForExport", () => {
       isPrimary: true,
       sortOrder: 1,
     },);
+
     expect(result.tags,).toBe(tags,);
   });
 
@@ -228,6 +239,7 @@ describe("mapAvatarForExport", () => {
       isPrimary: false,
       sortOrder: 0,
     },);
+
     expect(result.sortOrder,).toBe(0,);
     expect(result.isPrimary,).toBe(false,);
   });

@@ -19,6 +19,7 @@ describe("createMemoryBackend", () => {
   beforeEach(() => {
     vi.useFakeTimers();
   },);
+
   afterEach(() => {
     vi.useRealTimers();
   },);
@@ -44,6 +45,7 @@ describe("createMemoryBackend", () => {
       body: "payload",
       startedAt: Date.now(),
     },);
+
     const entry = backend.get("k",);
     expect(entry?.inFlight,).toBe(false,);
     expect(entry?.status,).toBe(201,);
@@ -67,6 +69,7 @@ describe("createMemoryBackend", () => {
       body: "ok",
       startedAt: Date.now(),
     },);
+
     expect(backend.get("k",)?.body,).toBe("ok",);
     // Advance past the 1s TTL — completedAt is captured at recordResponse
     // time, so advancing the system clock by 2s guarantees expiry.
@@ -83,6 +86,7 @@ describe("createMemoryBackend", () => {
       body: "ok",
       startedAt: Date.now(),
     },);
+
     backend.clear();
     expect(backend.get("a",),).toBeNull();
     expect(backend.get("b",),).toBeNull();

@@ -43,6 +43,7 @@ export function listRoutes(config: EntityConfig, opts: { database: Db; config: C
         .selectFrom(config.tableName,)
         .select(db.fn.countAll().as("total",),)
         .where(config.parentFk, "=", parentId,);
+
       const listQuery = db.selectFrom(config.tableName,).selectAll().where(config.parentFk, "=", parentId,);
 
       if (config.filterField) {
@@ -60,6 +61,7 @@ export function listRoutes(config: EntityConfig, opts: { database: Db; config: C
       for (const ob of config.orderBy) {
         query = query.orderBy(ob.column, ob.dir,);
       }
+
       const entities = await query.limit(pageSize,).offset(offset,).execute();
       const mapped = Array.from(entities, (e,) => applyResponseTransforms(config, e as Record<string, unknown>,),);
 

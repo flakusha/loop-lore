@@ -11,6 +11,7 @@ describe("story/quests/calculators/rescue (0% -> real)", () => {
       ),
     ).toBe(0,);
   });
+
   it("returns 0 for wrong event type", () => {
     expect(
       calculateRescueProgress(
@@ -20,6 +21,7 @@ describe("story/quests/calculators/rescue (0% -> real)", () => {
       ),
     ).toBe(0,);
   });
+
   it("returns 100-progress when actor at safe location", () => {
     expect(
       calculateRescueProgress(

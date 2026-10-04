@@ -110,6 +110,7 @@ export class IntimacyService {
       worldId: worldId ?? null,
       action,
     },);
+
     return result.newScore;
   }
 

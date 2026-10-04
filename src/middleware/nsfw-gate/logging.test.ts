@@ -114,6 +114,7 @@ describe("logNsfwEvent", () => {
       reason: "blocked_by_user_pref",
       metadata: {},
     },);
+
     const row = await db.selectFrom("log_entries",).selectAll().executeTakeFirst();
     expect(row?.user_id,).toBeNull();
     expect(row?.entity_id,).toBeNull();

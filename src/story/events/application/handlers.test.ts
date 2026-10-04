@@ -88,6 +88,7 @@ describe("applyItemTransfer", () => {
     // Source reduced.
     const after = await db.selectFrom("world_items",).select(["quantity", "owner_actor_id",],).where("id", "=", wId,)
       .executeTakeFirst();
+
     expect(after?.quantity,).toBe(before!.quantity - 2,);
 
     // Receiver gained the item.
@@ -97,6 +98,7 @@ describe("applyItemTransfer", () => {
       .where("item_id", "=", itemId,)
       .where("owner_actor_id", "=", actorB,)
       .executeTakeFirst();
+
     expect(dest?.quantity,).toBe(2,);
   });
 
@@ -121,6 +123,7 @@ describe("applyItemTransfer", () => {
       .where("item_id", "=", itemId,)
       .where("owner_actor_id", "=", receiver,)
       .executeTakeFirst();
+
     expect(dest?.quantity,).toBe(3,);
   });
 

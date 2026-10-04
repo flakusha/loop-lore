@@ -126,6 +126,7 @@ export async function resolveForServe(
     ) {
       return forbiddenResponse("Invalid signed URL",);
     }
+
     const result = await verifyAssetUrl({
       secret: opts.signedUrlSecret,
       token: opts.signedUrlToken,
@@ -133,16 +134,20 @@ export async function resolveForServe(
       action: opts.signedUrlAction,
       expiresAt: opts.signedUrlExpires!,
     },);
+
     if (!result.valid) {
       return forbiddenResponse("Invalid or expired signed URL",);
     }
+
     // Token authorizes this asset — load it without the actor gate.
     const asset = await getAsset(opts.database, opts.assetId,);
     if (!asset) {
       return notFoundResponse("Asset not found",);
     }
+
     return { asset, };
   }
+
   return resolveAsset(opts.database, opts.assetId, opts.actorId, opts.actorRole,);
 }
 
@@ -183,6 +188,7 @@ export async function handleServeCompressed({
     signedUrlExpires,
     signedUrlAction,
   },);
+
   if (resolved instanceof Response) { return resolved; }
 
   const fullPath = resolveCompressedVariantPath({
@@ -196,5 +202,6 @@ export async function handleServeCompressed({
   if (!fullPath) {
     return serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path,), resolved.asset.mime_type,);
   }
+
   return serveFile(fullPath, "image/webp",);
 }

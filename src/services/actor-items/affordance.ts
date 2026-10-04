@@ -42,5 +42,6 @@ export async function checkEquipAffordance(
     ctx,
     "equip",
   );
+
   return result.allowed ? null : result.reason;
 }

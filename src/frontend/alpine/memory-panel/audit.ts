@@ -67,6 +67,7 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
         this.memoryPanel.auditHasMore = false;
         return;
       }
+
       const res = await globalThis.apiFetch(url,);
       if (!res.ok) { throw new Error(`audit fetch failed: ${res.status}`,); }
       const page = (await res.json()) as { entries: AuditApiRow[]; nextCursor?: string | null };
@@ -102,6 +103,7 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
         ...this.memoryPanel.auditEntries,
         ...page.entries.map((r,) => toAuditEntry(r,)),
       ];
+
       this.memoryPanel.auditCursor = page.nextCursor ?? null;
       this.memoryPanel.auditHasMore = !!page.nextCursor;
     } catch (err) {

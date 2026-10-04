@@ -49,6 +49,7 @@ describe("createPost", () => {
       title: "Hello",
       body: "World",
     },);
+
     expect(row.title,).toBe("Hello",);
     expect(row.visibility,).toBe(BlogPostVisibility.Public,);
     expect(row.status,).toBe(BlogPostStatus.Draft,);
@@ -67,6 +68,7 @@ describe("createPost", () => {
       body: "body",
       tags: ["alpha", "beta",],
     },);
+
     expect((await getPost(db, row.id,))?.tags.toSorted(),).toEqual(["alpha", "beta",],);
   });
 
@@ -77,6 +79,7 @@ describe("createPost", () => {
       body: "body",
       scheduled_at: new Date(Date.now() + 3_600_000,).toISOString(),
     },);
+
     expect(row.status,).toBe(BlogPostStatus.Scheduled,);
     expect(row.scheduled_at,).not.toBeNull();
   });
@@ -88,11 +91,13 @@ describe("createPost", () => {
       title: "Announcement",
       body: "body",
     },);
+
     const notes = await db
       .selectFrom("notifications",)
       .select(["user_id", "title",],)
       .where("user_id", "=", "user-follower",)
       .execute();
+
     expect(notes.length,).toBeGreaterThanOrEqual(1,);
     expect(notes.some((n,) => n.title === "New blog post: Announcement"),).toBeTrue();
   });
@@ -105,11 +110,13 @@ describe("createPost", () => {
       body: "body",
       visibility: BlogPostVisibility.Private,
     },);
+
     const notes = await db
       .selectFrom("notifications",)
       .select("id",)
       .where("user_id", "=", "user-follower",)
       .execute();
+
     expect(notes,).toEqual([],);
   });
 });
@@ -128,6 +135,7 @@ describe("listPosts", () => {
       body: "b",
       category: "news",
     },);
+
     await createPost(db, {
       author_id: "user-other",
       title: "B1",
@@ -149,18 +157,21 @@ describe("listPosts", () => {
       body: "b",
       visibility: BlogPostVisibility.Followers,
     },);
+
     await createPost(db, {
       author_id: "user-other",
       title: "Stranger",
       body: "b",
       visibility: BlogPostVisibility.Followers,
     },);
+
     await follow(db, "user-follower", "user-author",);
 
     const rows = await listPosts(db, {
       visibility: BlogPostVisibility.Followers,
       userId: "user-follower",
     },);
+
     expect(Array.from(rows, (r,) => r.title,),).toEqual(["Followed",],);
   });
 
@@ -168,6 +179,7 @@ describe("listPosts", () => {
     for (const title of ["P1", "P2", "P3",]) {
       await createPost(db, { author_id: "user-author", title, body: "b", },);
     }
+
     const page1 = await listPosts(db, { limit: 2, offset: 0, },);
     const page2 = await listPosts(db, { limit: 2, offset: 2, },);
     expect(page1.length,).toBe(2,);
@@ -182,6 +194,7 @@ describe("listPosts", () => {
       body: "b",
       tags: ["solo",],
     },);
+
     const rows = await listPosts(db, { author_id: "user-author", },);
     expect(rows[0]!.tags,).toEqual(["solo",],);
   });
@@ -195,6 +208,7 @@ describe("updatePost", () => {
       body: "old body",
       tags: ["stale",],
     },);
+
     const updated = await updatePost(db, row.id, {
       title: "New",
       body: "new body",
@@ -202,6 +216,7 @@ describe("updatePost", () => {
       metadata: { mood: "bright", },
       tags: ["fresh",],
     }, "user-author",);
+
     expect(updated?.title,).toBe("New",);
     expect(updated?.body,).toBe("new body",);
     expect(updated?.category,).toBe("essay",);
@@ -215,6 +230,7 @@ describe("updatePost", () => {
       title: "Draft",
       body: "b",
     },);
+
     const updated = await updatePost(db, row.id, { status: BlogPostStatus.Published, }, "user-author",);
     expect(updated?.status,).toBe(BlogPostStatus.Published,);
     expect(updated?.published_at,).not.toBeNull();
@@ -227,6 +243,7 @@ describe("updatePost", () => {
       body: "b",
       tags: ["x",],
     },);
+
     const updated = await updatePost(db, row.id, { tags: [], }, "user-author",);
     expect(updated?.tags,).toEqual([],);
   });
@@ -241,6 +258,7 @@ describe("updatePost", () => {
       title: "Mine",
       body: "b",
     },);
+
     const updated = await updatePost(db, row.id, { title: "Hax", }, "user-other",);
     expect(updated,).toBeUndefined();
     // post must remain unchanged
@@ -254,6 +272,7 @@ describe("updatePost", () => {
       title: "Original",
       body: "b",
     },);
+
     const updated = await updatePost(db, row.id, { title: "AdminEdit", }, "user-admin", true,);
     expect(updated?.title,).toBe("AdminEdit",);
   });
@@ -266,6 +285,7 @@ describe("deletePost", () => {
       title: "Gone",
       body: "b",
     },);
+
     expect(await deletePost(db, row.id, "user-author",),).toBeTrue();
     expect(await getPost(db, row.id,),).toBeUndefined();
   });
@@ -280,6 +300,7 @@ describe("deletePost", () => {
       title: "Keep",
       body: "b",
     },);
+
     expect(await deletePost(db, row.id, "user-other",),).toBeFalse();
     // post must still exist
     expect((await getPost(db, row.id,))?.id,).toBe(row.id,);
@@ -291,6 +312,7 @@ describe("deletePost", () => {
       title: "Moderated",
       body: "b",
     },);
+
     expect(await deletePost(db, row.id, "user-admin", true,),).toBeTrue();
     expect(await getPost(db, row.id,),).toBeUndefined();
   });
@@ -303,6 +325,7 @@ describe("incrementViewCount", () => {
       title: "Views",
       body: "b",
     },);
+
     await incrementViewCount(db, row.id,);
     await incrementViewCount(db, row.id,);
     expect((await getPost(db, row.id,))?.view_count,).toBe(2,);
@@ -318,6 +341,7 @@ describe("BlogService post dispatch", () => {
       body: "b",
       tags: ["t",],
     },);
+
     expect((await svc.getPost(row.id,))?.title,).toBe("Svc",);
     expect((await svc.listPosts({ author_id: "user-author", },)).length,).toBe(1,);
     expect((await svc.updatePost(row.id, { title: "Svc2", }, "user-author",))?.title,).toBe("Svc2",);
@@ -334,6 +358,7 @@ describe("BlogService post dispatch", () => {
       title: "Owned",
       body: "b",
     },);
+
     expect(await svc.updatePost(row.id, { title: "Hax", }, "user-other",),).toBeUndefined();
     expect((await svc.getPost(row.id,))?.title,).toBe("Owned",);
   });
@@ -345,6 +370,7 @@ describe("BlogService post dispatch", () => {
       title: "Safe",
       body: "b",
     },);
+
     expect(await svc.deletePost(row.id, "user-other",),).toBeFalse();
     expect((await svc.getPost(row.id,))?.id,).toBe(row.id,);
   });

@@ -36,6 +36,7 @@ async function insertUserAndActor(id: string,) {
     settings: "{}",
     format_version: 0,
   },).execute();
+
   await db.insertInto("actors",).values({
     id,
     actor_type: "user",
@@ -67,10 +68,12 @@ beforeAll(async () => {
     created_by: U1,
     encryption_level: "standard",
   },).execute();
+
   for (const u of [U1, U2,]) {
     await db.insertInto("chat_participants",).values({ chat_id: CHAT, actor_id: u, role_in_chat: "member", },)
       .execute();
   }
+
   const smk = getSmk()!;
   await generateActorKey({ database: db, actorId: U1, smk, },);
   await generateActorKey({ database: db, actorId: U2, smk, },);
@@ -88,6 +91,7 @@ describe("double rotation with FKs enforced", () => {
     const rows = await db.selectFrom("rotation_history",).selectAll().execute();
     expect(rows.length,).toBe(1,);
   });
+
   test("second rotation succeeds and writes a second audit row", async () => {
     await rotateKeyOnLeave(db, CHAT, U1,);
     const rows = await db.selectFrom("rotation_history",).selectAll().orderBy("created_at",).execute();

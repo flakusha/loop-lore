@@ -52,6 +52,7 @@ describe(MIGRATION, () => {
     } catch {
       // Logger already initialized — ignore.
     }
+
     const fresh = makeInMemoryDb();
     db = fresh.kysely;
     raw = fresh.raw;
@@ -63,16 +64,20 @@ describe(MIGRATION, () => {
       if (name === MIGRATION) { continue; }
       await migrations[name]!.up(db,);
     }
+
     // chat_branches.parent_message_id references messages, which in turn
     // references chats and actors — seed the whole FK chain.
     await sql`INSERT INTO users (id, username, display_name)
       VALUES ('owner-1', 'owner-1', 'Owner One')`.execute(db,);
+
     await sql`INSERT INTO actors (id, display_name)
       VALUES ('actor-1', 'Actor One')`.execute(db,);
+
     await sql`INSERT INTO chats (id, name, created_by) VALUES
       ('chat-a', 'Chat A', 'owner-1'),
       ('chat-b', 'Chat B', 'owner-1'),
       ('chat-c', 'Chat C', 'owner-1')`.execute(db,);
+
     await sql`INSERT INTO messages (id, chat_id, actor_id, role, content) VALUES
       ('msg-a', 'chat-a', 'actor-1', 'user', 'hello'),
       ('msg-b', 'chat-b', 'actor-1', 'user', 'hello'),
@@ -120,6 +125,7 @@ describe(MIGRATION, () => {
   async function namesIn(chatId: string, name: string,): Promise<string[]> {
     const rows = await sql<{ id: string }>`SELECT id FROM chat_branches
       WHERE chat_id = ${chatId} AND name = ${name} ORDER BY id`.execute(db,);
+
     return rows.rows.map((r,) => r.id);
   }
 
@@ -127,6 +133,7 @@ describe(MIGRATION, () => {
   async function idWithName(chatId: string, name: string,): Promise<string | undefined> {
     const rows = await sql<{ id: string }>`SELECT id FROM chat_branches
       WHERE chat_id = ${chatId} AND name = ${name}`.execute(db,);
+
     return rows.rows[0]?.id;
   }
 
@@ -159,6 +166,7 @@ describe(MIGRATION, () => {
     // Nothing is lost: all three rows still exist, under distinct names.
     const survivors = await sql<{ id: string }>`SELECT id FROM chat_branches
       WHERE chat_id = 'chat-a' ORDER BY id`.execute(db,);
+
     expect(survivors.rows.map((r,) => r.id),).toEqual(["a-oldest", "b-middle", "c-newest", "e-unique",],);
 
     // The key is per-chat, so chat-b keeps its own "Branch 1".
@@ -179,6 +187,7 @@ describe(MIGRATION, () => {
     await expect(
       insertBranch("f-racing-fork", "chat-a", "Branch 1", "2026-01-04 00:00:00",),
     ).rejects.toThrow(/UNIQUE/i,);
+
     // The same label in a different chat is still allowed — chat_id is the
     // first half of the key.
     await insertBranch("g-other-chat-ok", "chat-c", "Branch 1", "2026-01-05 00:00:00",);

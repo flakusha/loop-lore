@@ -90,6 +90,7 @@ function findEarliestUnclosedDangerousOpen(html: string, fromIndex: number,): nu
       i++;
       continue;
     }
+
     const lt = i;
     if (i + 1 < n && lower[i + 1] === "/") {
       // Closing tag `</name>`. Find `>` linearly.
@@ -100,6 +101,7 @@ function findEarliestUnclosedDangerousOpen(html: string, fromIndex: number,): nu
           break;
         }
       }
+
       if (gt === -1) {
         // Incomplete closer at end-of-input (`</script` with no `>`
         // yet) has not actually closed anything: a matching open tag
@@ -107,11 +109,13 @@ function findEarliestUnclosedDangerousOpen(html: string, fromIndex: number,): nu
         i = n;
         continue;
       }
+
       const name = lower.slice(i + 2, gt,).trim();
       open.delete(name,);
       i = gt + 1;
       continue;
     }
+
     // Open tag: read name (stop at whitespace, `>`, `/`, `<`, or end).
     let nameEndIdx = lt + 1;
     while (nameEndIdx < n && isTagNameChar(lower[nameEndIdx],)) { nameEndIdx++; }
@@ -128,6 +132,7 @@ function findEarliestUnclosedDangerousOpen(html: string, fromIndex: number,): nu
       i = nameEndIdx;
       continue;
     }
+
     if (nameEndIdx === n && DANGEROUS_PAIRED_TAG_NAMES.some((d,) => d.startsWith(name,))) {
       // The tag name is still arriving across the chunk boundary: a
       // partial name that could complete into a dangerous tag in the
@@ -140,11 +145,13 @@ function findEarliestUnclosedDangerousOpen(html: string, fromIndex: number,): nu
       i = n;
       continue;
     }
+
     // Non-dangerous tag with a committed name — advance past the NAME
     // only. Any `<` in the attribute region is re-examined by the outer
     // loop as a potential dangerous opener.
     i = nameEndIdx;
   }
+
   // If any dangerous tag is still open at end-of-input, the suffix is
   // potentially inside it. Return leftmostOpen as the safe boundary.
   return open.size === 0 ? lower.length : leftmostOpen;
@@ -171,6 +178,7 @@ export function createStreamingSanitizer(): (accumulated: string,) => string {
       // Caller rewound/reset the buffer (e.g. abort + restart); start fresh.
       emittedEnd = 0;
     }
+
     const heldFrom = findEarliestUnclosedDangerousOpen(sanitized, emittedEnd,);
     emittedEnd = heldFrom;
     return sanitized.slice(0, heldFrom,);

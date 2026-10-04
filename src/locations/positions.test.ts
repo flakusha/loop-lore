@@ -24,6 +24,7 @@ async function makeLoc(worldId: string, kind: string, mobilityMode: string, name
      VALUES (?, ?, ?, '', '[]', 'draft', NULL, ?, ?)`,
     [id, worldId, name, kind, mobilityMode,],
   );
+
   return id;
 }
 

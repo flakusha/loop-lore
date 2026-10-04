@@ -13,6 +13,7 @@ import { formatDisplayDate, } from "./chat-utils/time";
 const fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: (url: string, opts?: RequestInit,) => Promise<Response> = async () =>
   new Response("{}", { status: 200, },);
+
 if (ISOLATED) {
   mock.module("./htmx", () => ({
     apiFetch: async (url: string, opts?: RequestInit,) => {
@@ -21,6 +22,7 @@ if (ISOLATED) {
     },
   }),);
 }
+
 const emptyNarrative = " ".repeat(3,);
 
 const section = (id: string, label: string,) => ({
@@ -96,6 +98,7 @@ describeOrSkip("computeGroupedMessages section breaks", () => {
       { ...msg("m2", "s2",), role: "assistant", },
       { ...msg("m3", "s2",), role: "assistant", },
     ];
+
     const groups = computeGroupedMessages.call({ ...base, messages: msgs, } as any,);
     expect(groups.map((g,) => g.section_id),).toEqual(["s1", "s2", "s2",],);
     // m2 starts a new section → no group; m3 same section → grouped with m2.
@@ -108,6 +111,7 @@ describeOrSkip("computeGroupedMessages section breaks", () => {
       { ...msg("m1", "s1",), role: "assistant", },
       { ...msg("m2", "s1",), role: "assistant", },
     ];
+
     const groups = computeGroupedMessages.call({ ...base, messages: msgs, } as any,);
     expect(groups[1]?.group,).toBe(true,);
   });
@@ -140,6 +144,7 @@ describeOrSkip("chatSectionsNav.sectionMessageCounts", () => {
       ...ctx,
       groupedMessages: [],
     },);
+
     expect(counts.size,).toBe(0,);
   });
 },);
@@ -176,6 +181,7 @@ describeOrSkip("chatSectionsNav.partySplit", () => {
       { ...msg("m1", "s1",), actor_name: "Aria", },
       { ...msg("m2", "s2",), actor_name: "Borin", },
     ],);
+
     expect(getter().get!.call(ctx,),).toBe(true,);
   });
 
@@ -184,6 +190,7 @@ describeOrSkip("chatSectionsNav.partySplit", () => {
       { ...msg("m1", "s1",), actor_name: "Aria", },
       { ...msg("m2", "s1",), actor_name: "Borin", },
     ],);
+
     expect(getter().get!.call(ctx,),).toBe(false,);
   });
 
@@ -192,6 +199,7 @@ describeOrSkip("chatSectionsNav.partySplit", () => {
       { ...msg("m1", "s1",), actor_name: "Aria", },
       { ...msg("m2", null,), actor_name: "Aria", },
     ],);
+
     expect(getter().get!.call(ctx,),).toBe(false,);
   });
 },);
@@ -205,6 +213,7 @@ describeOrSkip("chatSectionsNav.currentSectionName", () => {
       _currentSectionId: "s1",
       sectionLabel: chatSections.sectionLabel,
     },);
+
     expect(getter().get!.call(ctx,),).toBe("Forest",);
   });
 
@@ -263,6 +272,7 @@ describeOrSkip("chatSectionsNav.transferToSection", () => {
         jumped = true;
       },
     },);
+
     await (chatSectionsNav as any).transferToSection.call(ctx, "s1",);
     expect(jumped,).toBe(false,);
   });
@@ -283,6 +293,7 @@ describeOrSkip("chatSectionsNav.trackCurrentSection", () => {
     (globalThis as any).document = {
       querySelector: () => ({ scrollTop: 350, querySelectorAll: qsa, }),
     };
+
     const ctx = Object.create(chatSectionsNav,);
     (chatSectionsNav as any).trackCurrentSection.call(ctx,);
     expect(ctx._currentSectionId,).toBe("s2",);
@@ -293,6 +304,7 @@ describeOrSkip("chatSectionsNav.trackCurrentSection", () => {
     (globalThis as any).document = {
       querySelector: () => ({ scrollTop: 50, querySelectorAll: () => [], }),
     };
+
     const ctx = Object.assign(Object.create(chatSectionsNav,), { _currentSectionId: "s1", },);
     (chatSectionsNav as any).trackCurrentSection.call(ctx,);
     expect(ctx._currentSectionId,).toBeNull();
@@ -317,6 +329,7 @@ describeOrSkip("chatSections.sectionDividerMeta", () => {
         msg("m3", "s2",),
       ],
     },);
+
     const meta = (chatSections as any).sectionDividerMeta.call(ctx, "s1",);
     expect(meta.count,).toBe(2,);
     expect(meta.startTime,).toBe("2024-01-01T00:00:00Z",);
@@ -348,6 +361,7 @@ describeOrSkip("chatSectionsNav.bulkAssignToSection", () => {
         loaded += 1;
       },
     },);
+
     await (chatSectionsNav as any).bulkAssignToSection.call(ctx, "s1",);
     expect(fetchCalls.at(-1,)?.url,).toBe("/api/v1/chats/chat-1/sections/s1/assign-all",);
     expect(loaded,).toBe(2,);
@@ -370,6 +384,7 @@ describeOrSkip("chatSectionsNav.insertNarrative", () => {
         loaded += 1;
       },
     },);
+
     await (chatSectionsNav as any).insertNarrative.call(ctx, "s1", "The party rides north.",);
     expect(fetchCalls.at(-1,)?.url,).toBe("/api/v1/chats/chat-1/sections/s1/narrative",);
     expect(loaded,).toBe(1,);
@@ -404,6 +419,7 @@ describeOrSkip("chatSectionsNav.transition + narrative transfer", () => {
         narratives.push(`${sectionId}:${text}`,);
       },
     },);
+
     await (chatSectionsNav as any).transferToSection.call(ctx, "s1",);
     expect(narratives,).toEqual(["s1:Riders cross the bridge.",],);
     expect(ctx._narrativeText,).toBe("",);
@@ -425,6 +441,7 @@ describeOrSkip("chatSectionsNav.transition + narrative transfer", () => {
         inserted = true;
       },
     },);
+
     await (chatSectionsNav as any).transferToSection.call(ctx, "s1",);
     expect(inserted,).toBe(false,);
   });
@@ -661,6 +678,7 @@ describeOrSkip("chatSections panel + CRUD", () => {
           scrolled = true;
         },
       };
+
       const ctx = makeCtx({
         groupedMessages: [msg("m1", "s1",), msg("m2", "s2",),],
         $el: {
@@ -670,6 +688,7 @@ describeOrSkip("chatSections panel + CRUD", () => {
           },
         },
       },);
+
       // bun has no CSS global — stub the escape used for the selector.
       const realCSS = (globalThis as Record<string, unknown>).CSS;
       (globalThis as Record<string, unknown>).CSS = { escape: (s: string,) => s, };
@@ -678,6 +697,7 @@ describeOrSkip("chatSections panel + CRUD", () => {
       } finally {
         (globalThis as Record<string, unknown>).CSS = realCSS;
       }
+
       expect(selector,).toBe('[data-message-id="m2"]',);
       expect(scrolled,).toBe(true,);
     });

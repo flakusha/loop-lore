@@ -58,12 +58,14 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     } finally {
       this.loadingMessages = false;
     }
+
     if (this.activeChat !== chatId) { return; }
     this.$nextTick?.(() => {
       this.scrollToBottom();
       this.setupInfiniteScroll();
       this.setupScrollDetection();
     },);
+
     await this.loadAllReactions();
     await this.loadAllSeen();
     this.startSeenPolling();
@@ -74,6 +76,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
         detail: { chatId, },
       },),
     );
+
     // Keep the VN scene in sync with the freshly loaded messages.
     this.updateVnMode?.();
   },
@@ -108,6 +111,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     } finally {
       this.loadingOlder = false;
     }
+
     if (el && prevScrollHeight > 0) {
       el.scrollTop = el.scrollHeight - prevScrollHeight;
     }
@@ -121,6 +125,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       this.scrollObserver?.disconnect();
       this.scrollObserver = null;
     }
+
     const sentinel = document.querySelector("#scroll-sentinel",);
     if (!sentinel) { return; }
     this.scrollObserver = new IntersectionObserver(
@@ -131,6 +136,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       },
       { rootMargin: "100px 0px 0px 0px", },
     );
+
     this.scrollObserver?.observe(sentinel,);
   },
 
@@ -161,6 +167,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
       this._isScrolledUp = !atBottom;
     };
+
     el.addEventListener("scroll", this._scrollHandler, { passive: true, },);
   },
 
@@ -197,6 +204,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ emoji, },),
       },);
+
       if (res.ok) {
         await this.loadMessageReactions(msgId,);
       }

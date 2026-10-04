@@ -24,6 +24,7 @@ async function makeTransportKindLoc(worldId: string, mobility: string,): Promise
      VALUES (?, ?, 'ship', '', '[]', 'draft', NULL, 'transport', ?)`,
     [id, worldId, mobility,],
   );
+
   return id;
 }
 
@@ -34,6 +35,7 @@ async function makeStop(worldId: string, name: string,): Promise<string> {
      VALUES (?, ?, ?, '', '[]', 'draft', NULL, 'transit', 'static')`,
     [id, worldId, name,],
   );
+
   return id;
 }
 
@@ -71,6 +73,7 @@ describe("TravelTickEngine", () => {
     const row = testDb.sqlite.query(`SELECT travel_progress FROM locations WHERE id = ?`,).get(ship,) as {
       travel_progress: number;
     };
+
     expect(row.travel_progress,).toBe(1,); // 4 % 3 = 1
   });
 
@@ -85,6 +88,7 @@ describe("TravelTickEngine", () => {
       loop: false,
       secondsPerUnit: 60,
     },);
+
     await routes.addStop({ routeId, locationId: await makeStop(worldId, "x",), stopOrder: 0, },);
     await routes.addStop({ routeId, locationId: await makeStop(worldId, "y",), stopOrder: 1, },);
     await routes.addStop({ routeId, locationId: await makeStop(worldId, "z",), stopOrder: 2, },);
@@ -95,6 +99,7 @@ describe("TravelTickEngine", () => {
     const row = testDb.sqlite.query(`SELECT travel_progress FROM locations WHERE id = ?`,).get(ship,) as {
       travel_progress: number;
     };
+
     expect(row.travel_progress,).toBe(2,);
   });
 
@@ -109,6 +114,7 @@ describe("TravelTickEngine", () => {
       loop: true,
       secondsPerUnit: 60,
     },);
+
     await routes.addStop({ routeId, locationId: await makeStop(worldId, "s1",), stopOrder: 0, },);
     await routes.addStop({ routeId, locationId: await makeStop(worldId, "s2",), stopOrder: 1, },);
     const ship = await makeTransportKindLoc(worldId, "anchored",);
@@ -116,10 +122,12 @@ describe("TravelTickEngine", () => {
     const before = (testDb.sqlite.query(`SELECT travel_progress FROM locations WHERE id = ?`,).get(ship,) as {
       travel_progress: number;
     }).travel_progress;
+
     const summary = await engine.tick({ elapsedSeconds: 60, },);
     const after = (testDb.sqlite.query(`SELECT travel_progress FROM locations WHERE id = ?`,).get(ship,) as {
       travel_progress: number;
     }).travel_progress;
+
     expect(after,).toBe(before,);
     expect(summary.advanced,).toBe(0,);
   });
@@ -135,6 +143,7 @@ describe("TravelTickEngine", () => {
       loop: true,
       secondsPerUnit: 30,
     },);
+
     await routes.addStop({ routeId, locationId: await makeStop(worldId, "a",), stopOrder: 0, },);
     await routes.addStop({ routeId, locationId: await makeStop(worldId, "b",), stopOrder: 1, },);
     const ship = await makeTransportKindLoc(worldId, "free",);

@@ -23,6 +23,7 @@ if (ISOLATED) {
     }) satisfies ApiFetchMock,
   }),);
 }
+
 /** Drive the microtask queue through several cycles so async `load()` chains
  * resolve before assertions run. */
 const flush = async (): Promise<void> => {
@@ -31,6 +32,7 @@ const flush = async (): Promise<void> => {
     queueMicrotask(() => {
       resolve();
     },);
+
     await promise;
   }
 };
@@ -53,8 +55,10 @@ describeOrSkip("actorEntitiesFactory", () => {
           data: [{ id: "n1", title: "Note A", },],
         },);
       }
+
       return Response.json({ data: [], },);
     };
+
     const state = actorEntitiesFactory("actor-1", "notes",);
     await flush();
     expect(state._entKind,).toBe("notes",);
@@ -144,6 +148,7 @@ describeOrSkip("actorEntitiesState.create / save / remove", () => {
       if (opts?.method === "POST") { return Response.json({ id: "new", }, { status: 201, },); }
       return Response.json({ data: [{ id: "new", title: "X", },], },);
     };
+
     const state = baseState();
     state._entActorId = null;
     state.form.title = "Hello";
@@ -223,6 +228,7 @@ describeOrSkip("actorEntitiesState.create / save / remove", () => {
         resolveHandler = r;
         queueMicrotask(() => r(Response.json({ id: "x", }, { status: 201, },),));
       },);
+
     const state = baseState();
     state._entActorId = null;
     state.form.title = "x";

@@ -143,6 +143,7 @@ export async function loadLore(
     const parsed = safeJsonParse<unknown>(rawRules,);
     if (parsed.ok) { parsedRules = parsed.value; }
   }
+
   return {
     entries: [...actorR.value, ...worldR.value,],
     lifecycleConfig: resolveLifecycleConfig(parsedRules,),

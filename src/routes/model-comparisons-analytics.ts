@@ -43,6 +43,7 @@ export function modelComparisonsAnalyticsRoutes(
           status: 400,
         },);
       }
+
       if (typeof referenceModel !== "string" || !referenceModel) {
         return jsonError({
           message: (ctx as any).t?.("modelComparisons.referenceModelRequired",) ??
@@ -50,6 +51,7 @@ export function modelComparisonsAnalyticsRoutes(
           status: 400,
         },);
       }
+
       if (!VALID_PREFERENCES.includes(preference as (typeof VALID_PREFERENCES)[number],)) {
         return jsonError({
           message: (ctx as any).t?.("modelComparisons.invalidPreference",) ??
@@ -57,9 +59,11 @@ export function modelComparisonsAnalyticsRoutes(
           status: 400,
         },);
       }
+
       if (typeof confidence !== "number" || confidence < 0 || confidence > 1) {
         return jsonError({ message: "confidence must be a number between 0 and 1", status: 400, },);
       }
+
       const owned = await database
         .selectFrom("messages",)
         .innerJoin("chats", "chats.id", "messages.chat_id",)
@@ -67,9 +71,11 @@ export function modelComparisonsAnalyticsRoutes(
         .where("messages.id", "=", messageId,)
         .where("chats.created_by", "=", userId,)
         .executeTakeFirst();
+
       if (!owned) {
         return jsonError({ message: "messageId does not belong to the authenticated user", status: 400, },);
       }
+
       const id = uid();
       const now = new Date().toISOString();
       await database.insertInto("model_comparisons",).values({
@@ -81,6 +87,7 @@ export function modelComparisonsAnalyticsRoutes(
         confidence,
         created_at: now,
       },).executeTakeFirst();
+
       return jsonResponse({
         id,
         message_id: messageId,
@@ -116,6 +123,7 @@ export function modelComparisonsAnalyticsRoutes(
         .groupBy("reference_model",)
         .orderBy(sql<number>`count(*)`, "desc",)
         .execute();
+
       const leaderboard = Array.from(rows, (row,) => ({
         reference_model: row.reference_model,
         totalComparisons: row.totalComparisons,
@@ -124,6 +132,7 @@ export function modelComparisonsAnalyticsRoutes(
         sameCount: row.sameCount,
         avgConfidence: row.avgConfidence == null ? null : Math.round(row.avgConfidence * 100,) / 100,
       }),);
+
       return jsonResponse({ leaderboard, },);
     }, {
       response: { 200: SuccessResponse, 401: ErrorResponse, },
@@ -143,6 +152,7 @@ export function modelComparisonsAnalyticsRoutes(
         "created_at",
         "desc",
       ).limit(limit,).execute();
+
       return jsonResponse({ comparisons: rows, },);
     }, {
       response: { 200: SuccessResponse, 401: ErrorResponse, },

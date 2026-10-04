@@ -162,10 +162,12 @@ export async function claimRewards(
         .where("achievement_id", "=", achievementId,)
         .where("claimed_at", "is", null,)
         .execute();
+
       // Bun's sqlite dialect reports `numUpdatedRows` on UpdateResult.
       const affected = Number(
         (claimUpdate[0] as Record<string, unknown> | undefined)?.numUpdatedRows ?? 0n,
       );
+
       if (affected === 0) {
         throw new Error("Rewards already claimed",);
       }

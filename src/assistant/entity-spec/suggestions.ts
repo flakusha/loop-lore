@@ -61,8 +61,10 @@ export function collectEntitySuggestions(
         name: intro.name,
         seed: buildEntitySeed(intro, message.content,),
       },);
+
       if (suggestions.length >= ENTITY_SUGGESTION_LIMIT) { return suggestions; }
     }
   }
+
   return suggestions;
 }

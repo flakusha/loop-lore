@@ -45,6 +45,7 @@ export async function importTraits(
           value: trait.value as string,
         },);
       }
+
       result.traitsImported++;
     } catch (error: unknown) {
       result.errors.push(`Failed to import permanent trait "${String(trait.name,)}": ${errMsg(error,)}`,);
@@ -69,6 +70,7 @@ export async function importTraits(
             value: trait.value as string,
           },);
         }
+
         result.traitsImported++;
       } catch (error: unknown) {
         result.errors.push(`Failed to import world trait "${String(trait.name,)}": ${errMsg(error,)}`,);

@@ -60,6 +60,7 @@ function makeHost(): ServerExternalHost & { logCalls: CapturedLog[] } {
       logCalls.push({ level: "error", msg, meta, },);
     },
   };
+
   return {
     log: log as unknown as ServerExternalHost["log"],
     instances: [],
@@ -159,6 +160,7 @@ describe("probes.checkAllLiveliness", () => {
       pid: 111,
       startedAt: Date.now(),
     };
+
     host.instances.push(inst,);
     await checkAllLiveliness(host,);
     const warns = host.logCalls.filter((c,) => c.level === "warn");
@@ -176,6 +178,7 @@ describe("probes.checkAllLiveliness", () => {
         return new Response("not found", { status: 404, },);
       },
     },);
+
     const port = boundPort(server,);
     try {
       const host = makeHost();
@@ -186,6 +189,7 @@ describe("probes.checkAllLiveliness", () => {
         pid: 222,
         startedAt: Date.now(),
       },);
+
       await checkAllLiveliness(host,);
       const warns = host.logCalls.filter((c,) => c.level === "warn");
       expect(warns,).toHaveLength(0,);
@@ -199,6 +203,7 @@ describe("probes.checkAllLiveliness", () => {
       port: 0,
       fetch: () => new Response("missing", { status: 404, },), // 404 still counts as "alive"
     },);
+
     const port = boundPort(server,);
     try {
       const host = makeHost();
@@ -209,6 +214,7 @@ describe("probes.checkAllLiveliness", () => {
         pid: 333,
         startedAt: Date.now(),
       },);
+
       await checkAllLiveliness(host,);
       const warns = host.logCalls.filter((c,) => c.level === "warn");
       expect(warns,).toHaveLength(0,);
@@ -227,6 +233,7 @@ describe("probes.checkAllLiveliness", () => {
       pid: 444,
       startedAt: Date.now(),
     },);
+
     await checkAllLiveliness(host,);
     const warns = host.logCalls.filter((c,) => c.level === "warn" && c.msg === "External server unresponsive");
     expect(warns.length,).toBe(1,);
@@ -239,6 +246,7 @@ describe("probes.checkAllLiveliness", () => {
     for (let i = 0; i < 3; i++) {
       ports.push(await reservePort(),);
     }
+
     for (const [i, port,] of ports.entries()) {
       host.instances.push({
         type: "llama-cpp",
@@ -248,6 +256,7 @@ describe("probes.checkAllLiveliness", () => {
         startedAt: Date.now(),
       },);
     }
+
     await checkAllLiveliness(host,);
     const warns = host.logCalls.filter((c,) => c.level === "warn");
     expect(warns,).toHaveLength(3,);
@@ -267,6 +276,7 @@ describe("probes.checkAllLiveliness", () => {
         throw new Error("port unavailable",);
       },
     } as unknown as ServerInstance;
+
     host.instances.push(broken,);
     await checkAllLiveliness(host,);
     const warns = host.logCalls.filter((c,) => c.level === "warn");

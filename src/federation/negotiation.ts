@@ -50,12 +50,14 @@ export async function beginNegotiation(
     .select("origin",)
     .where("origin", "=", peerOrigin,)
     .executeTakeFirst();
+
   if (!peer) { throw new Error(`unknown peer: ${peerOrigin}`,); }
   const id = crypto.randomUUID();
   await database
     .insertInto("mesh_negotiations",)
     .values({ id, peer_origin: peerOrigin, state: "idle", },)
     .execute();
+
   return id;
 }
 
@@ -79,12 +81,14 @@ export async function advanceNegotiation(
     .select(["state",],)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   if (!row) { throw new Error(`unknown negotiation: ${id}`,); }
   const current = row.state as NegotiationState;
   const legal = next === "closed" || (current !== "closed" && NEXT[current] === next);
   if (!legal) {
     throw new Error(`illegal negotiation transition: ${current} -> ${next}`,);
   }
+
   await database
     .updateTable("mesh_negotiations",)
     .set({ state: next, updated_at: sql`(datetime('now'))`, },)

@@ -29,6 +29,7 @@ describe("requirePermission", () => {
       userRole: "admin",
       t: (k,) => k,
     },);
+
     expect(result,).toBeUndefined();
   });
 
@@ -40,6 +41,7 @@ describe("requirePermission", () => {
       userRole: "user",
       t: (k,) => `[${k}]`,
     },);
+
     expect(result,).toBeInstanceOf(Response,);
     expect(result!.status,).toBe(403,);
     const body = await result!.json();
@@ -51,6 +53,7 @@ describe("requirePermission", () => {
     const fakeLog = { warn: warnMock, info: () => {}, error: () => {}, debug: () => {}, } as unknown as ReturnType<
       typeof createLogger
     >;
+
     const guard = requirePermission("admin.settings", { logger: fakeLog, },);
     await guard({
       request: new Request("http://localhost/api/admin/secret", { method: "DELETE", },),
@@ -59,6 +62,7 @@ describe("requirePermission", () => {
       requestId: "req-abc",
       t: (k,) => k,
     },);
+
     expect(warnMock,).toHaveBeenCalledTimes(1,);
     const [msg, entry,] = warnMock.mock.calls[0] as unknown as [string, Record<string, unknown>,];
     expect(msg,).toBe("Permission denied",);
@@ -77,6 +81,7 @@ describe("requirePermission", () => {
       userRole: "user",
       t: (k,) => `[tr]${k}`,
     },);
+
     const body = await result!.json();
     expect(body.error,).toBe("[tr]admin.adminAccessRequired",);
   });
@@ -88,6 +93,7 @@ describe("requirePermission", () => {
       userId: "user-1",
       userRole: "user",
     },);
+
     const body = await result!.json();
     expect(body.error,).toBe("Admin access required",);
   });
@@ -98,6 +104,7 @@ describe("requirePermission", () => {
     const fakeLog = { warn: warnMock, info: () => {}, error: () => {}, debug: () => {}, } as unknown as ReturnType<
       typeof createLogger
     >;
+
     const guard = requirePermission("admin.settings", { logger: fakeLog, resolveHandle, },);
 
     // First denial — triggers DB lookup
@@ -107,6 +114,7 @@ describe("requirePermission", () => {
       userRole: "user",
       t: (k,) => k,
     },);
+
     // Second denial — same user — should hit cache, no second DB call
     await guard({
       request: new Request("http://localhost/api/admin/y",),

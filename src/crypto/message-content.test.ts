@@ -34,11 +34,13 @@ function buildMigrationProvider() {
       const files = readdirSync(dir,)
         .filter((f,) => typeof f === "string" && f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const file of files) {
         const mod = await import(path.join(dir, file,));
         migrations[file.replace(/\.ts$/, "",)] = mod.default ?? mod;
       }
+
       return migrations;
     },
   };
@@ -84,6 +86,7 @@ beforeAll(async () => {
       created_by: ACTOR_ID,
       encryption_level: "standard",
     },).execute();
+
     await testDb.insertInto("chat_participants",).values({
       chat_id: chatId,
       actor_id: ACTOR_ID,
@@ -109,6 +112,7 @@ describe("encryptMessageContent / decryptMessageContent", () => {
       plaintext,
       smk,
     },);
+
     expect(enc.keyId,).toBeTruthy();
     expect(enc.storedContent,).not.toContain("dragon",); // not plaintext at rest
 
@@ -118,6 +122,7 @@ describe("encryptMessageContent / decryptMessageContent", () => {
       key_id: enc.keyId,
       chat_id: CHAT_ID,
     };
+
     const decrypted = await decryptMessageContent(testDb, ref, smk,);
     expect(decrypted,).toBe(plaintext,);
   });
@@ -130,6 +135,7 @@ describe("encryptMessageContent / decryptMessageContent", () => {
       key_id: null,
       chat_id: CHAT_ID,
     };
+
     expect(await decryptMessageContent(testDb, ref, smk,),).toBe("hello world",);
   });
 
@@ -151,6 +157,7 @@ describe("encryptMessageContent / decryptMessageContent", () => {
       format_version: 0,
       visibility: "private",
     },).execute();
+
     await testDb.insertInto("chat_participants",).values({
       chat_id: OTHER_CHAT_ID,
       actor_id: newActor,
@@ -164,6 +171,7 @@ describe("encryptMessageContent / decryptMessageContent", () => {
       plaintext: "secrets",
       smk,
     },);
+
     await expect(deriveChatKeyForChat(testDb, OTHER_CHAT_ID, smk,),).resolves.toBeDefined();
     expect(enc.keyId,).toBeTruthy();
   });

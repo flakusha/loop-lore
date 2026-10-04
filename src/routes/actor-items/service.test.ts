@@ -38,6 +38,7 @@ async function makeDb(): Promise<Db> {
       settings text not null
     )`,
   );
+
   sqlite.run(
     `CREATE TABLE actors (
       id text primary key,
@@ -73,6 +74,7 @@ async function makeDb(): Promise<Db> {
       llm_assist_enabled integer not null default 0
     )`,
   );
+
   sqlite.run(
     `CREATE TABLE actor_items (
       id text primary key,
@@ -93,6 +95,7 @@ async function makeDb(): Promise<Db> {
       max_durability integer not null default 100
     )`,
   );
+
   return new Kysely<import("../../db/schema").DB>({ dialect: createSqliteDialect(sqlite,), },);
 }
 
@@ -108,6 +111,7 @@ async function seed(db: Db,): Promise<void> {
       settings: "{}",
     },).execute();
   }
+
   await db.insertInto("actors",).values({
     id: ACTOR,
     display_name: "Hero",
@@ -123,6 +127,7 @@ function makeApp(db: Db, userId: string | null,): Elysia {
   if (userId) {
     app.derive(() => ({ userId, }));
   }
+
   return app.use(actorItemsGameplayRoutes({ database: db, },),);
 }
 
@@ -148,6 +153,7 @@ async function insertItem(
     durability: 100,
     max_durability: 100,
   },).execute();
+
   return id;
 }
 
@@ -175,6 +181,7 @@ describe("actorItemsGameplayRoutes", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     const app = makeApp(db, OWNER,);
     const res = await app.handle(new Request(`${BASE}/equipped`,),);
     expect(res.status,).toBe(404,);
@@ -197,6 +204,7 @@ describe("actorItemsGameplayRoutes", () => {
     const equipRes = await app.handle(
       new Request(`${BASE}/${itemId}/equip`, { method: "POST", },),
     );
+
     expect(equipRes.status,).toBe(200,);
     const equipBody = await equipRes.json() as { ok: boolean };
     expect(equipBody.ok,).toBe(true,);
@@ -210,6 +218,7 @@ describe("actorItemsGameplayRoutes", () => {
     const unequipRes = await app.handle(
       new Request(`${BASE}/${itemId}/unequip`, { method: "POST", },),
     );
+
     expect(unequipRes.status,).toBe(200,);
     const unequipBody = await unequipRes.json() as { ok: boolean };
     expect(unequipBody.ok,).toBe(true,);
@@ -226,6 +235,7 @@ describe("actorItemsGameplayRoutes", () => {
     const res = await app.handle(
       new Request(`${BASE}/${randomUUID()}/equip`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(400,);
     const body = await res.json() as { error?: string; code?: string };
     expect(body.error,).toBeTruthy();
@@ -242,11 +252,13 @@ describe("actorItemsGameplayRoutes", () => {
     const ok = await app.handle(
       new Request(`${BASE}/${first}/equip`, { method: "POST", },),
     );
+
     expect(ok.status,).toBe(200,);
 
     const conflict = await app.handle(
       new Request(`${BASE}/${second}/equip`, { method: "POST", },),
     );
+
     expect(conflict.status,).toBe(400,);
     const body = await conflict.json() as { error?: string };
     expect(body.error,).toMatch(/weapon/i,);
@@ -279,6 +291,7 @@ describe("actorItemsGameplayRoutes", () => {
       owner_id: OWNER,
       settings: "{}",
     },).execute();
+
     const itemId = await insertItem(db, { type: ItemCategory.Consumable, name: "Potion", quantity: 3, },);
     const app = makeApp(db, OWNER,);
 
@@ -289,6 +302,7 @@ describe("actorItemsGameplayRoutes", () => {
         body: JSON.stringify({ toActorId: secondActor, quantity: 2, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { ok: boolean; transferred?: number };
     expect(body.ok,).toBe(true,);
@@ -314,6 +328,7 @@ describe("actorItemsGameplayRoutes", () => {
         body: JSON.stringify({ toActorId: randomUUID(), quantity: 0, },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     const body = await res.json() as { error?: string };
     expect(body.error,).toBeTruthy();

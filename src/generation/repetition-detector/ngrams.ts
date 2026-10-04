@@ -33,6 +33,7 @@ function extractNGrams(text: string, size: number,): NGramFingerprint[] {
   for (const [gram, positions,] of fingerprints) {
     result.push({ gram, positions, },);
   }
+
   return result;
 }
 
@@ -115,6 +116,7 @@ function deduplicatePatterns(patterns: RepetitionPattern[],): RepetitionPattern[
     for (const p of pattern.positions) {
       if (!seenPositions.has(p,)) { uniquePositions.push(p,); }
     }
+
     if (uniquePositions.length < pattern.count * 0.5) { continue; }
 
     // Mark all positions as seen

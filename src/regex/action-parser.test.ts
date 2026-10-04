@@ -71,6 +71,7 @@ describe("parseActionStage1 — verb coverage", () => {
         hide: "I crouch behind the barrel",
         search: "I search the room",
       };
+
       const action = parseActionStage1(sample[verb]!,);
       expect(action,).not.toBeNull();
       expect(action!.verb,).toBe(verb,);
@@ -103,6 +104,7 @@ describe("parseActionStage1 — novel/empty input", () => {
     "lol",
     "I think therefore I am",
   ];
+
   for (const input of NOVEL_INPUTS) {
     test(`returns null for novel: ${JSON.stringify(input,)}`, () => {
       expect(parseActionStage1(input,),).toBeNull();
@@ -128,6 +130,7 @@ describe("parseAction (async) — Stage-2 fallback", () => {
       called = true;
       return { verb: VERB.Examine, agency_mode: "free" as const, confidence: 0.5, parser_stage: "stage1" as const, };
     };
+
     const action = await parseAction("tell me about the moon", stage2,);
     expect(called,).toBe(true,);
     expect(action,).not.toBeNull();
@@ -147,6 +150,7 @@ describe("parseAction (async) — Stage-2 fallback", () => {
       receivedCtx = ctx;
       return null;
     };
+
     await parseAction("novel gibberish", stage2, { inventory: ["sword",], sceneActors: ["bob",], },);
     expect(receivedCtx,).toEqual({ inventory: ["sword",], sceneActors: ["bob",], },);
   });
@@ -161,6 +165,7 @@ describe("actionToLegacyIntent — adapter", () => {
       parser_stage: "stage1",
       target: { kind: "item", displayName: "door", },
     };
+
     expect(actionToLegacyIntent(a,),).toEqual({ intent: "tool_exec", target: "door", confidence: 0.9, },);
   });
 
@@ -189,6 +194,7 @@ describe("actionToLegacyIntent — adapter", () => {
       parser_stage: "stage1",
       target: { kind: "item", displayName: "library", },
     };
+
     expect(actionToLegacyIntent(a,),).toEqual({ intent: "tool_exec", target: "library", confidence: 0.7, },);
   });
 });

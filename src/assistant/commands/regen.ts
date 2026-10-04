@@ -56,6 +56,7 @@ function lastAssistant(ctx: CommandContext,): { id: string; content: string } | 
       return { id: m.id, content: m.content, };
     }
   }
+
   return undefined;
 }
 
@@ -74,12 +75,15 @@ export async function runRegenAction(args: string[], ctx: CommandContext, deps: 
     const names = actions.map((a,) => a.id).join("|",);
     return { systemMessage: `${USAGE}\nAvailable: ${names}.`, handled: true, };
   }
+
   if (!target) {
     return { systemMessage: "**No assistant message to regenerate.**", handled: true, };
   }
+
   if (id === "add-details") {
     return runImprove([target.content, "--level", "expand",], ctx,);
   }
+
   const style = id === "more-concise" ? "concise" : "clear";
   return runRewrite(["--style", style, target.content,], ctx, deps,);
 }
@@ -89,6 +93,7 @@ registerCommand("regen", async (args, ctx,): Promise<CommandResult> => {
   if (!db || !config) {
     return runRegenAction(args, ctx, {},);
   }
+
   try {
     const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
     return runRegenAction(args, ctx, {
