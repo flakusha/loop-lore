@@ -3,7 +3,7 @@
 
 # BUG: ComfyUI edit provider persists nothing: ownerId 'system' violates assets.owner_id FK
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -28,3 +28,11 @@ Acceptance: a ComfyUI edit run persists its output assets; no createAsset call i
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Verified fixed by code reading and focused tests against dev:
+
+- The literal `ownerId: "system"` at comfyui-provider.ts was changed to `ownerId: opts.ownerId`, threading the authenticated requesting user through to `createAsset`.
+- The route handler that calls the provider already has the authenticated user in scope, so the ownerId passed is always a valid `users.id`.
+- Pinned by `src/image-edit/providers/comfyui-owner.test.ts`, which runs a full provider invocation with a real ownerId and verifies the resulting asset row is persisted and readable.

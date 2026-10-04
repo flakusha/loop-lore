@@ -7,7 +7,7 @@
 **Context:** VitePress derives each page's SSR chunk name from the page path relative to `srcDir`, so `BUG-foo.md` and `BUG-FOO.md` yield chunks differing only by case. Vite resolves the collision by renaming one to `...foo2.md.js`, but the page-to-chunk map still expects the original name, so the dynamic import inside `renderPage` throws `ERR_MODULE_NOT_FOUND`.
 **Acceptance Criteria:** [ ] no case-insensitive filename collisions under `.plan/tickets` or `.plan/epics`; [ ] `bun run docs:build` exits 0 and writes `docs/.vitepress/dist/vp-icons.css`; [ ] `bun test ./tests/e2e/flows/browser/docs-mermaid.browser.ts` passes.
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 
@@ -42,3 +42,8 @@ Deleted the thirteen stray UPPERCASE duplicates. After removal `bun run docs:bui
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+## Remaining
+
+The ticket's recurrence-risk note stands: `giwt plan validate` still has no case-insensitive-collision gate. A future ticket creating a ticket from an uppercase extid can reintroduce this break. This is a giwt concern, not a loop-lore concern.
+

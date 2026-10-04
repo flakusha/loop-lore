@@ -3,7 +3,7 @@
 
 # BUG: Asset dedup ignores requested encryption tier and key, returning an unencrypted row
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-asset-platform-capabilities
@@ -29,3 +29,11 @@ Acceptance: an upload requesting tier=chat never returns a row whose encryption_
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Verified fixed by code reading and focused tests against dev:
+
+- The pre-read dedup lookup that bypassed encryption context was removed; the insert now arbitrates directly using `onConflict(...).doNothing()` with the full dedupe key including `encrypted_key_id`.
+- When a conflict occurs, the loser re-reads on the same key as the conflict target, including `encrypted_key_id is null` for the public path, so the correct encryption context is returned.
+- Pinned by `src/assets/service/create-dedup-race.test.ts`, which exercises concurrent uploads with mismatched encryption tiers and verifies each gets its own row with the correct tier and key.
