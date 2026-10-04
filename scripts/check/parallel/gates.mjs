@@ -72,6 +72,12 @@ export const checks = {
   // BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.
   "migrations - ordering": "bun run scripts/check-migration-ordering.ts",
 
+  // Conflict markers: no merge/rebase markers may land or linger in tracked
+  // files — observed twice on dev in one window (82124d0b5 entities.ts,
+  // ab4fc259a locales/UI), both survived typecheck + lint; only the unit
+  // suite noticed.
+  "conflict - markers": "bun run scripts/check/conflict-markers.mjs",
+
   // Backlog index reconciliation (file-map rows ↔ tier files; orphans/phantoms)
   "backlog - index": "bun run plan:backlog:sync",
 
