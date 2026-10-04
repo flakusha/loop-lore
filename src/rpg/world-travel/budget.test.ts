@@ -12,7 +12,6 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, insertWorlds, insertWorldTravelBudget, } from "../../test-utils/insert-helpers";
 import { readBudget, toSqlDate, } from "./budget";
-import { travelDb, } from "./types";
 
 let db: Kysely<DB>;
 
