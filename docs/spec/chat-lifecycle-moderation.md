@@ -11,10 +11,13 @@
 ## 1. Lifecycle (message insert → branches → transitions)
 
 Messages are rows in `messages` with `parent_id` chains. Insert paths:
-`src/chat/service/message-history.ts` (normal send), `src/chat/service/party-narration.ts`
-(party narration), `src/chat/service/crud/turn-skip.ts` (skip markers),
-`src/chat/service/transitions.ts` (split/reunion narration system messages via
-`injectNarration`).
+user send (`src/routes/messages/insert-message.ts` → `swipe-race-insert.ts`),
+assistant store (`src/generation/auto-gen/store-message.ts`, streaming reply in
+`src/routes/messages/reply.ts`), resubmit/branch
+(`src/chat/service/message-history.ts`), party narration
+(`src/chat/service/party-narration.ts`), skip markers
+(`src/chat/service/crud/turn-skip.ts`), and split/reunion narration system
+messages (`src/chat/service/transitions.ts` via `injectNarration`).
 
 Variants are non-destructive siblings: `regenerateMessageVariant`
 (`src/chat/service/write.ts`) creates a new row sharing `parent_id` with
