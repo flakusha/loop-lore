@@ -193,7 +193,6 @@ export async function callAux(
         messages,
         apiKey,
         params: { temperature, maxTokens, },
-        harness: { taskType: signal.taskType, task: `aux:${task}`, },
       },),
       timeoutMs,
     );

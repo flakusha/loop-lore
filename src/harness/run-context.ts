@@ -35,18 +35,31 @@ export function runGit(args: string[],): string {
 }
 
 /**
- * Read branch + sha via one `git rev-parse` call.
- * @returns Branch and short sha, or nulls outside a checkout.
+ * Read branch + sha via two `git` calls: `symbolic-ref --short HEAD` for the
+ * branch, `rev-parse --short HEAD` for the sha.
+ *
+ * They cannot share one invocation: `--abbrev-ref` is a mode flag that applies
+ * to every later revision on the same command line, so
+ * `rev-parse --abbrev-ref HEAD --short HEAD` prints the branch twice.
+ *
+ * `symbolic-ref` also exits non-zero on a detached HEAD — the honest signal
+ * that there is no branch, so no `"HEAD"` sentinel is needed.
+ * @returns Branch and short sha; nulls outside a checkout or on a detached HEAD.
  */
 function readGitContext(): { branch: string | null; gitSha: string | null } {
+  let branch: string | null = null;
   try {
-    const out = runGit(["rev-parse", "--abbrev-ref", "HEAD", "--short", "HEAD",],).split("\n",);
-    const branch = out[0]?.trim() ?? "";
-    const gitSha = out[1]?.trim() ?? "";
-    return { branch: branch === "" ? null : branch, gitSha: gitSha === "" ? null : gitSha, };
+    branch = runGit(["symbolic-ref", "--short", "HEAD",],) || null;
   } catch {
-    return { branch: null, gitSha: null, };
+    branch = null;
   }
+  let gitSha: string | null = null;
+  try {
+    gitSha = runGit(["rev-parse", "--short", "HEAD",],) || null;
+  } catch {
+    gitSha = null;
+  }
+  return { branch, gitSha, };
 }
 /**
  * Current branch and commit for the exec log. Memoized per process.

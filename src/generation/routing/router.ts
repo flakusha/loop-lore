@@ -4,9 +4,10 @@
 /**
  * Model router — order candidates for one request by explicit task signal.
  *
- * `route()` is a pure function of (signal, candidates, config): no network,
- * no clock, no randomness. The same input always yields the same order, so a
- * route is reproducible and testable. Metadata gaps (no cost, no latency) are
+ * `route()` is pure — no network, no clock, no randomness — apart from the
+ * `round-robin` cursor, which is the only state it touches. Every other
+ * strategy yields the same order for the same input, so a route is
+ * reproducible and testable. Metadata gaps (no cost, no latency) are
  * "unknown", never an error — an unannotated model still serves, it just
  * sorts last among equals.
  *
@@ -88,11 +89,15 @@ export class ModelRouter {
 
     const rule = this.config?.rules?.find((r,) => r.taskType === signal.taskType);
     const strategy = rule?.strategy ?? this.config?.strategy ?? "capability-match";
-    const offset = this.rrOffset % eligible.length;
-    this.rrOffset++;
-    const ordered = strategy === "round-robin"
-      ? eligible.slice(offset,).concat(eligible.slice(0, offset,),)
-      : eligible
+    let ordered: T[];
+    if (strategy === "round-robin") {
+      const offset = this.rrOffset % eligible.length;
+      // The cursor is the only state `route()` touches, so it advances here
+      // and nowhere else: every other strategy must leave it alone.
+      this.rrOffset++;
+      ordered = eligible.slice(offset,).concat(eligible.slice(0, offset,),);
+    } else {
+      ordered = eligible
         .map((model, index,) => ({
           model,
           index,
@@ -105,10 +110,37 @@ export class ModelRouter {
         }))
         .sort((a, b,) => a.score - b.score || a.index - b.index)
         .map((entry,) => entry.model);
+    }
 
     const primary = ordered[0] ?? null;
     const rest = ordered.slice(1,);
     const cap = this.config?.fallbacks;
     return { primary, fallbacks: cap === undefined ? rest : rest.slice(0, cap,), };
   }
+}
+
+// True when the policy can change an order. The default — `capability-match`
+// with no rules and no fallback cap — is the pre-routing behaviour, so running
+// it would only add the eligibility filter (dropping a fallback that declares a
+// required capability `false`) to every dispatch. Routing was never asked to
+// change which providers are eligible.
+export function routingReorders(config?: GenerationRoutingConfig,): boolean {
+  if (config === undefined) { return false; }
+  return config.strategy !== "capability-match" ||
+    (config.rules?.length ?? 0) > 0 || config.fallbacks !== undefined;
+}
+
+// The router every production dispatch shares, keyed on the routing config it
+// was built from. A router per call would reset its round-robin cursor to 0 on
+// every dispatch, so `round-robin` would only ever rotate in a test that reuses
+// one instance. The key is the config object itself: a config reload yields a new
+// one, which rebuilds the router (restarting the rotation) instead of routing
+// against a policy that is no longer configured.
+let shared: { routing: GenerationRoutingConfig | undefined; router: ModelRouter } | undefined;
+
+export function sharedRouter(routing?: GenerationRoutingConfig,): ModelRouter {
+  if (shared === undefined || shared.routing !== routing) {
+    shared = { routing, router: new ModelRouter(routing,), };
+  }
+  return shared.router;
 }

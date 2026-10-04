@@ -110,9 +110,9 @@ export async function callWithFailover(
   }
 
   const failure = `All providers failed: ${errors.join("; ",)}`;
-  // Attribute the total failure to the last provider tried. Per-attempt errors
-  // are already in the message; this line makes the dispatch itself findable.
-  const last = providers[providers.length - 1];
-  if (last !== undefined) { logRun(last.name, "error", failure,); }
+  // Attribute the total failure to the last provider tried, or to the model's
+  // own name when the list was empty — "one log line per call, on every path"
+  // has to hold on the empty-list throw too, not just the exhausted one.
+  logRun(providers[providers.length - 1]?.name ?? req.model, "error", failure,);
   throw new Error(failure,);
 }

@@ -9,7 +9,7 @@
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
-import { setExecLogPath, } from "./exec-log";
+import { resetExecLogPath, setExecLogPath, } from "./exec-log";
 import { getRun, listRuns, MAX_LINES, READ_WINDOW_BYTES, stats, } from "./query";
 import { type HarnessRunRecord, serializeRun, toSummary, } from "./types";
 
@@ -72,7 +72,7 @@ describe("harness query (file-backed)", () => {
   },);
 
   afterEach(() => {
-    setExecLogPath(null,);
+    resetExecLogPath();
     rmSync(dir, { recursive: true, force: true, },);
   },);
 
@@ -161,6 +161,32 @@ describe("harness query (file-backed)", () => {
       expect(r.ts,).toBe("2026-10-03T00:00:00Z",);
       expect(r.taskType,).toBe("chat",);
     }
+  });
+
+  it("keeps a complete record when the window starts on a record boundary", async () => {
+    // Equal-length lines and a count whose tail-window offset lands exactly on
+    // a line start — the case where an unconditional `lines.shift()` threw
+    // away a whole, valid record.
+    const lineBytes = 32 * 1024;
+    const count = Math.floor(READ_WINDOW_BYTES / lineBytes,) + 2;
+    const id = (i: number,): string => "b" + String(i,).padStart(3, "0",);
+    const pad = lineBytes - line(rec({ runId: id(0,), msg: "", },),).length;
+    expect(pad,).toBeGreaterThan(0,);
+    const body = Array.from({ length: count, }, (_, i,) => line(rec({ runId: id(i,), msg: "x".repeat(pad,), },),),)
+      .join("",);
+    expect(body.length,).toBe(count * lineBytes,);
+    const start = body.length - READ_WINDOW_BYTES;
+    expect(start % lineBytes,).toBe(0,);
+    expect(start,).toBeLessThan(body.length,);
+    writeFileSync(log, body,);
+    setExecLogPath(log,);
+
+    // Every record from the boundary line onward must survive: the boundary
+    // line is complete, so dropping it would lose a whole record.
+    const first = start / lineBytes;
+    const runs = await listRuns({}, count,);
+    expect(runs,).toHaveLength(count - first,);
+    expect(runs.map((r,) => r.runId),).toContain(id(first,),);
   });
 
   describe("stats rollup math", () => {
