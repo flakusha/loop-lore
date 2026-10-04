@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-llm-queue.md
-**Tags:** llm-queue
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

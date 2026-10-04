@@ -12,8 +12,6 @@
 **Status Note:** ccac5b9d server + fix-review-quickwins clients
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-security-sandboxing.md
-**Tags:** security-sandboxing
 
 ## Summary
 

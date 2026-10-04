@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
-**Epic:** epic-code-quality.md
-**Tags:** tooling, quality
 **Type:** Task
 **Summary:** Introduce a closed 8-token status enum, migrate all 302 distinct values idempotently, add a blocking status-vocab gate.
 **Context:** 302 distinct Status values in .plan/tickets/*.md today (measured 2026-09-26); every downstream consumer re-derives state semantics from prose, so done/Done/✅ Done/✅ Resolved all mean subtly different things and giwt sync reports 16 stale-status drift.

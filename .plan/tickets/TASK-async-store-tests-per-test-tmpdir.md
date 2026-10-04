@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-api-task-offloading.md
-**Tags:** async, offload
 **Type:** Task
 **Summary:** Migrate every `src/async/*test*.ts` to a unique `OFFLOAD_DIR` under `os.tmpdir()/loop-lore-test-<uuid>/` with deterministic teardown.
 **Context:** Broader fix for the same root cause as `BUG-test-async-store-offload-dir-fixed-path-race.md`; `offload.test.ts` already has a dead `tmpRoot` block — actual paths still join the shared `OFFLOAD_DIR`.

@@ -15,8 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:** epic-code-quality.md
-**Tags:** cleanup
+**Epic**:
 **Related**: TASK-reconciliation-plan.md
 
 ## Summary

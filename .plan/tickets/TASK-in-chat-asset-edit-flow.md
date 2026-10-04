@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-asset-consistency-generation.md
-**Tags:** assets
 
 ## Summary
 

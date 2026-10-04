@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** P1 (within EPIC-RESEARCH-AGENCY-QUALITY)
 **Effort:** 1-2 days
-**Epic:** epic-agency-story-points.md
-**Tags:** agency, bdi
 **Parent epic:** `epic-research-agency-quality.md`
 **Related:** `epic-actor-turn-skip.md` (`TurnSkip {actor, beat, mode}` contract - **coordinate, do not duplicate**), `src/db/schema-moderation.ts` (`interaction_logs`), `epic-analytics-observability.md`
 

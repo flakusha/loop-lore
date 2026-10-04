@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium (matrix 🟢 Low severity, "Med difficulty, do not defer — clean pull candidate")
 **Effort:** Medium
-**Epic:** epic-asset-consistency-generation.md
 **Type:** Research
 **Summary:** Matrix gap G21 names asset-consistency generation — reference conditioning + in-chat image edit — as the **only emergent-sweep capability with no P6+ blocker**. The current generation pipeline (ComfyUI per `epic-comfyui-plugin.md`) generates each asset from a fresh prompt; characters and scenes drift visually between generations. No epic owns reference-conditioned re-generation or in-chat img-edit. Inspiration sources: Luma, Runway, Krea, RisuAI dynamic-assets.
 **Context:** Source row: 2026-09-26 epic audit; matrix reference: `matrix-cross-mechanics.md` G21 (2026-08-14 emergent-platform sweep). Existing related: `epic-comfyui-plugin.md` (image generation, lacks reference conditioning), `epic-emotion-avatar-message-binding.md` (avatar regeneration control, narrow scope), `epic-frontend-gallery.md` (display only), `epic-asset-transform-metadata.md` (metadata, not regeneration).

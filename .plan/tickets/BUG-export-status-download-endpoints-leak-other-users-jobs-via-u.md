@@ -12,8 +12,6 @@
 **Status Note:** commit 242b78b44
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-import-export-io.md
-**Tags:** import-export-io
 
 ## Summary
 

@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-2d-sprite-world.md
-**Tags:** 2d-world, review
 **Summary:** Shared seeded-RNG util (mulberry32 + string hash) with tests.
 **Context:** epic-2d-sprite-world procgen; random-events.ts uses Math.random.
 **Acceptance Criteria:** Same seed reproduces; random-events accepts injected RNG.

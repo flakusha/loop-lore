@@ -7,7 +7,6 @@
 **Status Note:** (2026-10-02 re-verify: batch still 2 Done / 9 open. Spot-checked 3 open tickets vs HEAD — unify-roll-RNG (src/assistant/commands/dice.ts:86 Math.random still present; /roll handler never calls logDiceRoll from src/rpg/service/dice-roll.ts), /check breakdown (no registerCommand("check") anywhere in src), timed conditions (no addCondition/statDeltas in src; src/rpg/combat/conditions.ts exports only isIncapacitated/isDead/isCombatOver). All 3 claims still accurate; no member statuses flipped.)
 **Priority:** high
 **Effort:** Small
-**Epic:** epic-worktree-plan-tooling.md
 **Type:** Task
 **Summary:** The 11-issue RPG mechanics opt-in cluster (open-untriaged.md § New clusters) is safety-relevant: the gating ticket (f2b98e3 gate-chat-commands-behind-world-opt-in) must land before any new RPG mechanics ship. This ticket captures the batch and pins the execution order.
 **Context:** Per open-untriaged.md § Suggested home and priority-p6.md § P6 sequencing, the gating ticket is severity-first because un-gated chat commands running in non-RPG chats is a behavior surface. The cluster is bounded under existing epic-mechanics-governance.md (per open-untriaged.md § 2026-09-25, no new epic justified).

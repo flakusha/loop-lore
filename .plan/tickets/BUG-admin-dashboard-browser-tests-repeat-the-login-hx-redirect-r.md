@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-frontend-admin.md
-**Tags:** frontend-admin
 
 **Summary:** admin dashboard browser tests repeat the login hx redirect r
 **Context:** Context: e0ba5f698/c565c81ab.

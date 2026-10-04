@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-nsfw-game-mechanics.md
-**Tags:** nsfw-game-mechanics
 **Summary:** Location on NsfwLocationType + Housing private bonuses + Weather atmosphere.
 **Context:** Gameplay-layer location atmosphere modifiers.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

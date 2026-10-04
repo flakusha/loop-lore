@@ -12,8 +12,6 @@
 **Status Note:** verified landed on dev — `rotateActorKey` performs atomic actor-key expiry with no message re-encrypt step, `messagesReEncrypted: 0`; covered by `rotate.test.ts`
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-generation-flow-control.md
-**Tags:** generation-flow-control
 
 ## Summary
 

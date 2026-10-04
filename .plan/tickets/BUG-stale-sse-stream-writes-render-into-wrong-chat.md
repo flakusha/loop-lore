@@ -12,8 +12,6 @@
 **Status Note:** commit 04411f8 — SSE stream scoped to chat
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-frontend-backend-integration.md
-**Tags:** frontend-backend-integration
 
 ## Summary
 

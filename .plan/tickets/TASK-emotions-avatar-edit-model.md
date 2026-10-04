@@ -12,8 +12,6 @@
 **Status Note:** generation fallback
 **Priority:** Medium
 **Effort:** High
-**Epic:** epic-emotion-avatar-message-binding.md
-**Tags:** emotion-avatar-message-binding
 **Blocked by:** Stable diffusion edit model ecosystem maturity (fallback mitigates)
 
 ## Summary

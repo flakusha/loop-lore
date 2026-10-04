@@ -10,7 +10,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-db-migration-compaction.md
 **Type:** Bug
 **Tags:** e2e, testing, browser, tooling
 

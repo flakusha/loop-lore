@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-rpg-content-systems.md
-**Tags:** rpg-content-systems
 
 ## Summary
 

@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-character-world-setup.md
-**Tags:** character-world-setup
 **Summary:** Type-level boundary between character-owned and world-owned fields; APIs reject cross-boundary writes.
 **Context:** Schema split + migration + API guards.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-battle-action-systems.md
-**Tags:** battle-action-systems
 
 ## Summary
 

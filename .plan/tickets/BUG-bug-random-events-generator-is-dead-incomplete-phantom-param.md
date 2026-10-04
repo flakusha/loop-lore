@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Low
-**Epic:** epic-actor-autonomy-story-drive.md
-**Tags:** actor-autonomy-story-drive
 
 ## Summary
 

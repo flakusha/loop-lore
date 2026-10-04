@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-core-testing-frameworks.md
-**Tags:** core-testing-frameworks
 
 ## Summary
 

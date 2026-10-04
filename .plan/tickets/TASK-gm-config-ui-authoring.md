@@ -15,8 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:** epic-assistant-gm-flows.md
-**Tags:** assistant, gm
+**Epic**:
 **Related**: TASK-assistant-gm-flows-reconciliation.md
 
 ## Summary

@@ -10,8 +10,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-worktree-plan-tooling.md
-**Tags:** tooling, giwt
 
 ## Summary
 

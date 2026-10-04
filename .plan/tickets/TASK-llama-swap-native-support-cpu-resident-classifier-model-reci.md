@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-llm-request-scheduler.md
-**Tags:** llm, llama-swap
 **Summary:** CPU-resident classifier model recipe in llama-swap config that coexists with GPU LLM rotation without eviction.
 **Context:** Config + docs work only — the auto-start schema already spawns the proxy; recipe landed in configs/config.llama-swap.example.yaml, remaining verification noted in ## Summary below.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

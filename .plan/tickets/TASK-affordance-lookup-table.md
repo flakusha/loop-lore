@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** P0 (within EPIC-RESEARCH-AGENCY-AFFORDANCE)
 **Effort:** 1-2 days
-**Epic:** epic-research-agency-affordance.md
-**Tags:** research-agency-affordance
 **Parent epic:** `epic-research-agency-affordance.md`
 **Related:** `TASK-affordance-action-parser` (upstream), `src/services/actor-items.ts` (`ActorItemsService.equip/unequip/transfer`), `src/validation/schemas/actors.ts`, prior-batch `TASK-math-modifier-source-table` (related normalisation work)
 

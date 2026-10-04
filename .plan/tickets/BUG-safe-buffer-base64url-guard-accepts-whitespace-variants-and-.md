@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-crypto.md
-**Tags:** crypto
 **Summary:** Five defects in the safe-buffer base64url work on dev. Two behavioural: `safeFromBase64Url` silently accepts ASCII whitespace, so a value has more than one valid encoded form, and the per-call `maxSize` cap bounds the decoded result rather than the decode work. Three structural: the audit cursor encoder was left unmigrated, three of the four new `mustFrom*` exports have no production caller, and the barrel omits the size constants.
 **Context:** Found by adversarial probe while reviewing cb82193b7, which had already merged to dev. Sections 1-2 are behavioural gaps in code that satisfies the base64 helper ticket's acceptance criteria. Sections 3-5 are the ticket's own criteria (cursor decode/encode migrated, unreachable wrappers removed) applied to what the ticket itself added, which the original review did not cover.
 **Acceptance Criteria:** See the list under `## Acceptance Criteria` below.

@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-rpg-mechanics.md
-**Tags:** rpg-mechanics
 
 **Summary:** Five NITs of src/rpg/ organization drift surfaced while landing the TASK-033..042 NSFW AC #1 barrels (commit 2b12542e5). Survey + proposals only - no code changes in this ticket. Resolutions land in follow-up tickets after the survey is reviewed.
 

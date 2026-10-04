@@ -10,7 +10,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
-**Epic:** epic-code-quality.md
 **Tags:** worktree, migration
 
 ## Context

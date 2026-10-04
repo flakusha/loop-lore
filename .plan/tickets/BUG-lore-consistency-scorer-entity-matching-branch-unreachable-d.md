@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-chat-lifecycle-moderation.md
-**Tags:** chat
 
 ## Summary
 

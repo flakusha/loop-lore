@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-2d-sprite-world.md
-**Tags:** 2d-graph, canvas
 
 **Summary:** Render document/asset relations as a node/edge graph on the shared graph-canvas: assets as nodes, `asset_links` rows as edges. Read-only v1.
 

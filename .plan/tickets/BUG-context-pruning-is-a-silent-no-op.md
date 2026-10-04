@@ -12,8 +12,6 @@
 **Status Note:** fixed 2026-09-05
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-chat-context-optimization.md
-**Tags:** chat-context-optimization
 
 ## Summary
 

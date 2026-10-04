@@ -3,8 +3,6 @@
 
 # TASK-024: Visual novel mode
 
-**Epic:** epic-visual-novel-mode.md
-**Tags:** visual-novel-mode
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

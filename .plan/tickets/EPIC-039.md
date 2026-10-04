@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-stealth-crime.md
-**Tags:** stealth-crime
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

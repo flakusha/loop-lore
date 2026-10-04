@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-items.md
-**Tags:** items
 **Summary:** ItemPowerBudget keyed by ItemCategory; sits above TASK-052/053.
 **Context:** Admin audit endpoint + balance cap enforcement.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

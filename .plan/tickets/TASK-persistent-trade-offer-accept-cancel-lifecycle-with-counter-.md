@@ -12,8 +12,6 @@
 **Status Note:** 2026-09-07, worktree trading-inventory-barter
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-worlds-extension.md
-**Tags:** worlds-extension
 
 ## Summary
 

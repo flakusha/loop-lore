@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-chat-product-features.md
-**Tags:** chat, features
 
 **Summary:** story points mutations double swallow cache refresh failures
 **Context:** Context: 681e6605e.

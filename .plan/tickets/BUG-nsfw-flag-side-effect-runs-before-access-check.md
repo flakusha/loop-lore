@@ -12,8 +12,6 @@
 **Status Note:** fixed 2026-09-05
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-nsfw-moderation-priority.md
-**Tags:** nsfw-moderation-priority
 
 ## Summary
 

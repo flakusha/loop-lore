@@ -7,8 +7,6 @@
 **Status Note:** on dev, 2026-09-27 (NSFW game-mechanics batch closeout)
 **Priority:** high
 **Effort:** Large
-**Epic:** epic-nsfw-game-mechanics.md
-**Tags:** nsfw-game-mechanics
 **Summary:** Seduction on SeductionSkillCategory + ArousalLevel, routed through ResolutionSystem.
 **Context:** Gameplay-layer seduction; skill checks use CHA/WIS.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

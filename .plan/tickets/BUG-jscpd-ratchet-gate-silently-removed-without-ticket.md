@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-code-quality.md
-**Tags:** code-quality
 
 **Summary:** jscpd ratchet gate silently removed without ticket
 **Context:** Context: 82e2b0536 landed blocking jscpd ratchet (scripts/check/jscpd-ratchet.mjs + jscpd-baseline.json + package script); 81343b060 (09-26) deleted all three with no ticket, downgrading duplication checking to advisory trend note (check-parallel.mjs:1241-1303).

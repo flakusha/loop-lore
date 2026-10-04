@@ -13,8 +13,6 @@
 **Priority:** high
 **Epic:** epic-logging
 **Effort:** Medium
-**Epic:** epic-observability-telemetry.md
-**Tags:** observability-telemetry
 
 ## Summary
 
@@ -33,3 +31,4 @@ Fix options: (a) set x-user-id on taggedRequest in createRequestHandler from the
 - [x] Authenticated request produces access-log entry with non-null userId + resolved handle; unauthenticated logs anonymous
 - [x] Spoof attempt (client-set `x-user-id`, no session) cannot attribute another user — header cleared on unauth path
 - [ ] Regression test locking derive-injects/clears behavior (no `src/server/*` test covers it today)
+

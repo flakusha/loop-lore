@@ -13,8 +13,6 @@
 **Priority:** medium
 **Epic:** epic-actors
 **Effort:** Small
-**Epic:** epic-character-core-system.md
-**Tags:** character-core-system
 
 ## Summary
 
@@ -34,3 +32,4 @@ Fixed 2026-09-05 via the ticket's "remove UI option" branch (contingency A1). Pe
 - [x] `ActorTypeSchema` stays `user|character|narrator|system` (`src/validation/db-schemas.ts:12`, re-exported via `src/validation/schemas/primitives.ts` + `actors.ts`)
 - [x] Personas remain a distinct entity with own routes (`src/personas/controller.ts`: `/api/personas`, `/api/personas/:id/convert-to-character`)
 - [x] No regressions: `bun test src/routes/characters/create.test.ts` 3 pass (Resolution 2026-09-05, contingency A1 — fix landed, NOT reopened)
+

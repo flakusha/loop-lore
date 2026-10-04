@@ -7,8 +7,6 @@
 **Status Note:** batch 2
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-battle-action-systems.md
-**Tags:** battle-action-systems
 **Summary:** (see ## Summary)
 **Context:** (see ## Observed / ## Evidence)
 **Acceptance Criteria:** (see ## Acceptance Criteria)

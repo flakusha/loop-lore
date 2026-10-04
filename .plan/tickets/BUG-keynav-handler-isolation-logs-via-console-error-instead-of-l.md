@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-accessibility-input.md
-**Tags:** accessibility-input
 
 **Summary:** keynav handler isolation logs via console error instead of l
 **Context:** Context: 81bf29fc2.

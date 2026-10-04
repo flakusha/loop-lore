@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
-**Epic:** epic-e2e-integration-testing.md
-**Tags:** e2e
 
 ## Summary
 

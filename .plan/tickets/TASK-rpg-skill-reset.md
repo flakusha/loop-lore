@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-rpg-mechanics.md
-**Tags:** rpg
 
 **Summary:** (see ## Summary below)
 **Context:** (see ## Summary — same block)

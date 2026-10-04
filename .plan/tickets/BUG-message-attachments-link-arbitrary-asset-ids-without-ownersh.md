@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-messages.md
-**Tags:** messages
 
 ## Summary
 

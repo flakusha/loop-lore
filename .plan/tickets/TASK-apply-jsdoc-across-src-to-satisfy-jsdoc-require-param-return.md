@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Large (2-3 batches)
-**Epic:** epic-code-quality.md
-**Tags:** code-quality
 
 ## Summary
 

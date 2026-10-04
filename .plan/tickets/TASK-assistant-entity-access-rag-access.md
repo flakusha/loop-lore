@@ -11,7 +11,6 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
-**Epic:** epic-assistant-entity-access.md
 **Type:** Task
 **Tags:** assistant, rag, search, retrieval
 **Related:** `epic-assistant-entity-access.md`, `epic-rag-assets-unified-storage-and-assistant-flows.md`

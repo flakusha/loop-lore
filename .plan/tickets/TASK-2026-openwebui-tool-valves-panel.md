@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-platform-research.md
-**Tags:** openwebui, parity
 **Labels:** frontend, tools, controls
 **Summary:** Add a Chat Controls collapsible Alpine section that lets users pick a tool and override its per-tool parameter fields (valves) declared by the tool's `valvesSpec`. Changes debounce-save to a new endpoint `PATCH /api/tools/:id/valves`. On generation, overrides are injected so tools receive user-customized values.
 

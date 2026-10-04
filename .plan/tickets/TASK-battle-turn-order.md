@@ -15,8 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:** epic-npcs.md
-**Tags:** npc, rpg
+**Epic**:
 **Related**: TASK-battle-state-display.md
 
 ## Summary

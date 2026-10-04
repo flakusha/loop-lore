@@ -7,8 +7,6 @@
 **Status Note:** on dev, 2026-09-27 (NSFW game-mechanics batch closeout)
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-nsfw-game-mechanics.md
-**Tags:** nsfw-game-mechanics
 **Summary:** Pheromones/chemistry as shared StatusEffect consumed by Seduction/Encounter/Disease.
 **Context:** Gameplay-layer aphrodisiacs + heat-cycle chemistry.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

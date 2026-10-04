@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-rpg-content-systems.md
-**Tags:** rpg-content-systems
 
 **Summary:** achievement claimrewards double credit race and lost reward
 **Context:** Context: src/rpg/achievements/service/progress.ts:144-182.

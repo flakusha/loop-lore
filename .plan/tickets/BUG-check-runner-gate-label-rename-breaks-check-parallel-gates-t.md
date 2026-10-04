@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-worktree-plan-tooling.md
-**Tags:** worktree-plan-tooling
 
 **Summary:** commit a190741b8 renamed gate label to 'frontend - banned patterns (ESLint-gap heuristic — non-blocking)' (scripts/check-parallel.mjs:322) but scripts/check-parallel.gates.test.mjs:82 still passes the old '— advisory' label; applyGateFilter exits 2 unknown gate name. Lives in scripts/ so the unit gate never catches it. Fix: update test label string and refresh stale gate-count assertions. Verify: bun test scripts/check-parallel.gates.test.mjs.
 **Context:** Found 2026-09-26 during orchestrated strict review of dev commits 2026-09-19..26; finding verified directly in code before filing.

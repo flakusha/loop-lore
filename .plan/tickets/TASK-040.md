@@ -7,8 +7,6 @@
 **Status Note:** on dev, 2026-09-27 (NSFW game-mechanics batch closeout)
 **Priority:** high
 **Effort:** Large
-**Epic:** epic-nsfw-game-mechanics.md
-**Tags:** nsfw-game-mechanics
 **Summary:** Skills/XP on SeductionSkillCategory routed through the shared XP ledger.
 **Context:** Gameplay-layer skill progression; XP grants on encounter completion.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Low
-**Epic:** epic-message-seen-state.md
-**Tags:** message-seen-state
 
 ## Summary
 

@@ -11,8 +11,6 @@
 **Status Note:** already on dev, 2026-09-21
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-gm-shadow-notes.md
-**Tags:** gm-shadow-notes
 
 ## Summary
 

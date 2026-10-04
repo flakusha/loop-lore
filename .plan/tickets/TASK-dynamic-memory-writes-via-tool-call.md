@@ -12,8 +12,6 @@
 **Status Note:** 23ed39fc, 2026-08-16
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-transport-expansion.md
-**Tags:** transport-expansion
 
 ## Summary
 

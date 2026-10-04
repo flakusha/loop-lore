@@ -12,8 +12,6 @@
 **Status Note:** verified landed on dev — single transaction for re-encrypt + swap, `includeAll: true` covers non-visible messages, failures throw so the route returns 500
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-crypto.md
-**Tags:** crypto
 
 ## Summary
 

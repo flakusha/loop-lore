@@ -12,8 +12,6 @@
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Small
-**Epic:** epic-group-chat.md
-**Tags:** group-chat
 **Area:** chat
 **Source:** reconcile review (Scout Batch A — ISSUE-3)
 

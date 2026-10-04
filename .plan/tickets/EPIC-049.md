@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-conversation-branching.md
-**Tags:** conversation-branching
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

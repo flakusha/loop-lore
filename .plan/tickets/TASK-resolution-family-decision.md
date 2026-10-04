@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** Low
-**Epic:** epic-resolution-system.md
-**Tags:** resolution-system
 **Related:** epic-resolution-system.md, epic-rpg-mechanics.md, epic-battle-action-systems.md
 
 ## Summary

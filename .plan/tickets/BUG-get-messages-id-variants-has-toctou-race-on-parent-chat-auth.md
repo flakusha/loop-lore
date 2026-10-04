@@ -10,8 +10,6 @@
 **Status Note:** (closed 2026-09-20) — re-authorize parent + drop chat_id filter
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-messages.md
-**Tags:** messages
 
 ## Summary
 

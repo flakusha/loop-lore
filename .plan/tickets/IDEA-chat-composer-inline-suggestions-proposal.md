@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-chat-composer-flows.md
-**Tags:** chat-composer-flows
 **Summary:** Inline typing assistance for the chat composer — proactive completion that fires as the user types. Several implementation paths; product decision required before any code.
 **Context:** Loop-lore has no inline typing assistance today. Other UIs (GitHub Copilot, Gmail Smart Compose, ChatGPT composer) ship ghost-text completion — low-confidence suggestion that fills the next phrase. Usefulness vs intrusiveness depends on quality, latency, and dismiss controls. The repo has a related but separate module: `src/chat/proactive/` is server-event timing (when to push a system message), NOT local text completion — do not conflate them. Three implementation paths exist (LLM ghost-text, local n-gram over user history, hybrid) with materially different cost/latency/privacy profiles. Product decision needed before implementation; this ticket holds the proposal until a path is chosen.
 **Acceptance Criteria:** (any path)

@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-assistant-entity-access.md
-**Tags:** assistant, entity-access
 
 ## Summary
 

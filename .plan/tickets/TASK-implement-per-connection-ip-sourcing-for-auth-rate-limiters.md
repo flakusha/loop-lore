@@ -12,8 +12,6 @@
 **Status Note:** 2026-08-25, worktree `fix-ratelimiter-global-bucket`
 **Priority:** critical
 **Effort:** Medium
-**Epic:** epic-api-rate-limiting.md
-**Tags:** api-rate-limiting
 
 ## Summary
 

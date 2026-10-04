@@ -17,8 +17,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-worktree-plan-tooling.md
-**Tags:** tooling, giwt
 **Type:** Task
 **Summary:** Have `giwt show <ID>` and `giwt state <ID>` resolve the lowercase `.plan/tickets/<slug>.md` filename form, not just uppercase extids / hex hashes.
 **Context:** Substring-match resolver in `giwt/src/commands/show.ts:18` (via `resolveExtid`) drops the `.md` suffix and is fragile to ambiguous substring overlap (e.g. `TASK-tui` -> `TASK-TUI-DEDUPE-API-BASE`).

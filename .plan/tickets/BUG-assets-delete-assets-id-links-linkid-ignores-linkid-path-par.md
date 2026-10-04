@@ -7,8 +7,6 @@
 **Status Note:** p3-bugfix-batch, 2026-09-18
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-asset-platform-capabilities.md
-**Tags:** asset-platform-capabilities
 **Summary:** (see ## Summary)
 **Context:** (see ## Observed / ## Evidence)
 **Acceptance Criteria:** (see ## Acceptance Criteria)

@@ -4,8 +4,6 @@
 # BUG: routes/character-avatars subdir is shadowed by flat file; crud/select/config routes never mount
 
 **Effort:** Medium
-**Epic:** epic-asset-platform-capabilities.md
-**Tags:** assets, security
 **Summary:** src/routes/character-avatars/ is unreachable at runtime because the sibling flat file shadows it during module resolution
 **Context:** Bun and Node resolve `X.ts` before `X/index.ts`, so every import of the character-avatars stem loads the flat file and the subdir barrel never executes
 **Acceptance Criteria:** src/routes/character-avatars/ is either deleted (with TASK-frontend-char-avatar-config and BUG-avatar-select-empty-throws-no-frontend-fallback repointed at src/routes/character-avatars.ts) or adopted as the live implementation (with a prefix parameter threaded through characterAvatarsRoutes and its crud/select/config sub-plugins). Either way, `bun require.resolve ./src/routes/character-avatars` and the module actually loaded must agree, and routes/v1 actor avatar routes must continue to mount under /api/v1.

@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-worktree-plan-tooling.md
 **Type:** Task
 **Summary:** `epic-frontend-component-architecture.md` (29 lines, last touched 2026-07-28, only 3 commits) is a placeholder with no Summary, no Tasks, no Acceptance Criteria. Three sibling epics overlap (`epic-frontend-overview.md`, `epic-frontend-components.md`, `epic-frontend-component-architecture.md`). The 2026-09-19 audit (`epic-docs-vs-plan-gap-audit-2026-09-19.md`) flagged overlapping frontend scoping.
 **Context:** This ticket asks the owner to choose ONE of three dispositions before any work starts: ship-as-is, deprecate (merge into a sibling epic), or split into smaller concrete tickets. Source row: 2026-09-26 epic audit under `.plan/epics/epic-frontend-component-architecture.md`.

@@ -15,8 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:** epic-chat-product-features.md
-**Tags:** features
+**Epic**:
 **Related**:
 
 Git issue: `cff75c3`

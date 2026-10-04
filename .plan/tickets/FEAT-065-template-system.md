@@ -7,8 +7,6 @@
 **Status Note:** Reconciliation pass 2026-10-01 — Phases 1–4 shipped (DB table, service, admin routes, image wiring). Public template routes shipped at `/api/v1/templates` (flat, not per-modality nested). LLM static-content `{{var}}` substitution done in `template-render.ts:179-197`; user config (`configs/templates/llm.example.yaml`) variable substitution is not wired — tracked in `TASK-template-unified-variable-engine.md`. Video/audio scaffolds are in flight in `tree/feat-gen-templates-video-audio` (committed). Migration path's `parts/` subdirectory reference is stale (actual: flat `NNN_name.ts` files in `src/db/migrations/`).
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-chat-product-features.md
-**Tags:** features
 **Summary:** Unified prompt template system across LLM/Image/Video/Audio modalities — shared `TemplateRegistry` interface, DB-backed user templates, per-modality registries, model→template auto-matching.
 **Context:** Reconciliation passes 2026-09-13, 2026-09-23, 2026-09-27, 2026-10-01 — bookkeeping; sibling TASK tickets cross-linked below.
 **Acceptance Criteria:** LLM + image modality registries + per-modality `{{var}}` substitution shipped; DB-backed `prompt_templates` shipped (JSON payload, not separate variables table); admin `/api/admin/templates` CRUD shipped; public `/api/v1/templates` routes shipped. Remaining: audio scaffold (in flight), LLM config-layer `{{var}}` substitution (TASK-template-unified-variable-engine.md).

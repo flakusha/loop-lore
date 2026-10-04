@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Med
-**Epic:** epic-testing-qa.md
-**Tags:** e2e, test-gap
 
 ## Summary
 

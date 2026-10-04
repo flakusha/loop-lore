@@ -12,8 +12,6 @@
 **Status Note:** in `adopt-bun-and-elysia-remaining` worktree (2026-08-27). Smoke/e2e pending.
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-security-sandboxing.md
-**Tags:** security-sandboxing
 
 ## Summary
 

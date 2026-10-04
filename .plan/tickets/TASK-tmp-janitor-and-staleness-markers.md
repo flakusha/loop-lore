@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-code-quality.md
-**Tags:** tooling, quality
 **Type:** Task
 **Summary:** Superseded before implementation - re-measurement found 3 of the 4 metrics at zero, and the one real growth bucket is already GC'd by the app.
 **Context:** Premise measured stale. Re-measured 2026-10-01 on the dev checkout: 0 orphan `*.lcov.info.*.tmp` (was 47 / 49.1 MB), oldest artifact 0.1d (was 16d), 1 unreferenced `.tmp/*.md` (was 16). The growth is in `.tmp/async-store/`, swept by `pruneOrphanSpills` on a 24h TTL. The deletion side this ticket deferred to (`giwt clean`) has shipped and reports 0 candidates here.

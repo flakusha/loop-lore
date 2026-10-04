@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-2d-sprite-world.md
-**Tags:** 2d-world, review
 **Summary:** Reconcile shared battle-entrance table with chat initiation path.
 **Context:** battleRoutes + /battle start; current gates are mechanic-only.
 **Acceptance Criteria:** Ordering spec; deterministic gates run first.

@@ -12,8 +12,6 @@
 **Status Note:** validation landed as `assertChatViewShape` (`src/frontend/alpine/store-schema.ts`); required-field assertion replaces silent runtime defaults
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-code-quality.md
-**Tags:** code-quality
 
 ## Summary
 

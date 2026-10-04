@@ -15,8 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:** epic-chat-lifecycle-moderation.md
-**Tags:** chat
+**Epic**:
 **Related**: TASK-cross-tool-data-portability-review.md
 
 ## Summary

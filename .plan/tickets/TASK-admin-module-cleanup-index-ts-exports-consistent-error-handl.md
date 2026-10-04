@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-frontend-backend-integration.md
-**Tags:** frontend
 
 ## Summary
 

@@ -11,7 +11,6 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** Medium
-**Epic:** epic-assistant-entity-access.md
 **Type:** Task
 **Tags:** assistant, world, location, access, crud
 **Related:** `epic-assistant-entity-access.md`, `src/routes/worlds/worlds.ts`

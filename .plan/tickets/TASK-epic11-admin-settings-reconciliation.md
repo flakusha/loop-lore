@@ -12,8 +12,6 @@
 **Status Note:** reconciliation
 **Priority:** —
 **Effort:** —
-**Epic:** epic-frontend-admin.md
-**Tags:** frontend-admin
 **Source:** User-directed reconciliation, 2026-07-19
 
 ## Summary

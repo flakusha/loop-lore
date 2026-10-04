@@ -12,8 +12,6 @@
 **Status Note:** 2026-09-16, tree/admin-config-impl
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-config-file-separation.md
-**Tags:** config-file-separation
 
 ## Summary
 

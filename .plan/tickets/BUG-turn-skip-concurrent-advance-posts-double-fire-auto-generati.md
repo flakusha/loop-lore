@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-actor-turn-skip.md
-**Tags:** turn-skip
 
 **Summary:** turn skip concurrent advance posts double fire auto generati
 **Context:** Context: 93e957dd4/36c26b1e2.

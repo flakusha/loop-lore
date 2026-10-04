@@ -4,8 +4,6 @@
 # FEAT-040: Schema version table
 
 **Status:** Done
-**Epic:** epic-db-migration-compaction.md
-**Tags:** db-migration-compaction
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

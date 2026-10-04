@@ -10,8 +10,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-rpg-mechanics.md
-**Tags:** rpg
 
 **References:**
 - Epic: .plan/epics/epic-character-world-integration.md

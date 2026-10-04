@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-npcs.md
-**Tags:** npc, social
 **Summary:** NPC-initiated dialogue generation: proximity/mood/relationship-gated conversation openers flowing through the autonomy scheduler (not the social-skills check path).
 
 **Context:** `TASK-social-interaction.md` owns mechanics (persuasion/intimidation/deception checks, reputation); this ticket owns the agentic trigger — when an NPC decides to start talking. Consumed by the story-auto-drive scheduler once it lands; until then no autonomous caller exists.

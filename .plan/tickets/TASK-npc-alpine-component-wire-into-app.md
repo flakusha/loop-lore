@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-npc-bdi-autonomy.md
-**Tags:** npc-bdi-autonomy
 **Branch:** npc-management-ui
 **Commit:** dc19c9e
 

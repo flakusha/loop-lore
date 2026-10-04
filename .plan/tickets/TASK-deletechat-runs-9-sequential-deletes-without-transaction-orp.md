@@ -12,8 +12,6 @@
 **Status Note:** chat-bugfix-batch-1
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-chat-lifecycle-moderation.md
-**Tags:** chat-lifecycle-moderation
 
 ## Summary
 

@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-api-versioning.md
-**Tags:** api-versioning
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

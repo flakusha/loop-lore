@@ -12,8 +12,6 @@
 **Priority:** medium
 **Priority Tier:** P3
 **Effort:** Small
-**Epic:** epic-character-core-system.md
-**Tags:** character-core-system
 **Area:** characters
 **Source:** reconcile review (Scout Batch C — CHAR-3)
 

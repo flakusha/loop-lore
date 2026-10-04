@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-worktree-plan-tooling.md
 **Type:** Task
 **Summary:** The 4-issue Item-generation discoverability cluster (open-untriaged.md § New clusters) covers subcommand docs, describe-preview-confirm UI, review parity, and shared draft store. Each has an existing ticket pointer under epic-entity-generation-workflows. This ticket captures the batch into one tracking ticket so P2-C assistant tooling work ships as a coordinated unit.
 **Context:** Per open-untriaged.md § Suggested home, suggested home is P2-C assistant tooling. The 3 of 4 source files already carry the correct Epic: field (per open-untriaged.md § 2026-09-25); index-regeneration is the only remaining bookkeeping step.

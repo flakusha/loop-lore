@@ -4,8 +4,6 @@
 # TASK-PLAN-REGISTER-PAGE: Build registration frontend page
 
 **Status:** Done
-**Epic:** epic-frontend-admin.md
-**Tags:** frontend-admin
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

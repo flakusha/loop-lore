@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-chat-product-features.md
-**Tags:** faction, chat
 
 ## Summary
 

@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-llm-request-scheduler.md
-**Tags:** llm, llama-swap
 **Summary:** Survey dedicated classifier/reranker models per workflow currently grounded in main/aux generative LLMs; deliverable is a per-workflow recommendation table filed as follow-up FEATs.
 **Context:** Workflows: message-action/intent, memory extraction/inclusion ranking, emotion, toxicity/NSFW/injection-check — current grounding and candidates in ## Summary below.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

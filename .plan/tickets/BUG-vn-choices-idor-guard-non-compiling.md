@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** critical
 **Effort:** Small
-**Epic:** epic-visual-novel-mode.md
-**Tags:** visual-novel-mode
 
 ## Summary
 

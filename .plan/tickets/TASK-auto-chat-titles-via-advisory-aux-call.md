@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-aux-enrichment-pipeline.md
-**Tags:** aux-enrichment-pipeline
 
 ## Summary
 

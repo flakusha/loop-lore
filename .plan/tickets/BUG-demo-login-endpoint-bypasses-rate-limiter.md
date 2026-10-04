@@ -13,8 +13,6 @@
 
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-frontend-login.md
-**Tags:** frontend-login
 
 ## Summary
 

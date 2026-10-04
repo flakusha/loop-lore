@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-e2e-integration-testing.md
-**Tags:** e2e-integration-testing
 
 **Summary:** image edit suite releases its dead port before probing it to
 **Context:** Context: 44ddb9b6f.

@@ -8,8 +8,7 @@
 **Priority:** medium
 **Effort:** Trivial
 **Labels:** bug, frontend, testing
-**Epic:** epic-testing-qa.md
-**Tags:** testing-qa
+**Epic:** (none)
 **Related**: git issue 2b8da26
 
 

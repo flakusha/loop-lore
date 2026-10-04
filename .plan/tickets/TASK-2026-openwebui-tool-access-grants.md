@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-platform-research.md
-**Tags:** openwebui, parity
 **Labels:** generation, tools, security, access-control
 **Summary:** Extend `executeToolCalls()` to enforce per-tool `access_grants` (`resource_type='tool'`, `resource_id=toolName`, `permission='execute'`) before invoking any tool. Tools the actor lacks a grant for must return an error tool result — never throw and never silently skip.
 

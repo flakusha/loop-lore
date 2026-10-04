@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Low
-**Epic:** epic-immersion-consistency-gate.md
-**Tags:** immersion-consistency-gate
 
 ## Summary
 

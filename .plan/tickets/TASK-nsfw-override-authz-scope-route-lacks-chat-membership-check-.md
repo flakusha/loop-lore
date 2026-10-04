@@ -12,8 +12,6 @@
 **Status Note:** commit 49731047 — fix(nsfw): gate correctness cluster
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-nsfw-moderation-priority.md
-**Tags:** nsfw-moderation-priority
 
 ## Summary
 

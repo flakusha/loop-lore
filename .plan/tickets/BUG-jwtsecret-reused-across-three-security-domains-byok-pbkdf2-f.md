@@ -9,8 +9,6 @@
 **Priority:** high
 
 **Effort:** Medium
-**Epic:** epic-crypto.md
-**Tags:** crypto
 
 **Type:** BUG
 

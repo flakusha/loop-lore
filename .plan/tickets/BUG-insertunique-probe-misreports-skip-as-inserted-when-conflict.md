@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-data-integrity-acid.md
-**Tags:** data-integrity-acid
 
 **Summary:** insertunique probe misreports skip as inserted when conflict
 **Context:** Context: 3b361a1a4.

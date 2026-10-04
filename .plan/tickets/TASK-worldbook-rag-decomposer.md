@@ -10,8 +10,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-lore-knowledge.md
-**Tags:** lore-knowledge
 
 ## Summary
 

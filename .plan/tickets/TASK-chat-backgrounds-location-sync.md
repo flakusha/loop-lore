@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** Med–High
-**Epic:** epic-chat-lifecycle-moderation.md
-**Tags:** chat
 **Related:** TASK-dynamic-avatars-dota-style, TASK-emotion-intent-detection
 
 ## Summary
