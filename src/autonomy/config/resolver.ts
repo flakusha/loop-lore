@@ -104,6 +104,17 @@ function applyLayer(out: AutonomyConfig, layer: AutonomyConfigOverride,): void {
   }
 }
 
+/** Read all three layers for a scope. Shared by resolveAutonomyLayers and resolveAutonomyConfig. */
+async function readLayers(
+  db: Db,
+  scope: ResolveAutonomyScope,
+): Promise<{ world: AutonomyConfigOverride; chat: AutonomyConfigOverride; actor: AutonomyConfigOverride }> {
+  const world = await readJsonColumn(db, "worlds", scope.worldId,);
+  const chat = await readJsonColumn(db, "chats", scope.chatId,);
+  const actor = scope.actorId ? await readActorOverride(db, scope.actorId,) : {};
+  return { world, chat, actor, };
+}
+
 /**
  * Read every layer for a scope, plus the config they resolve to.
  *
@@ -119,9 +130,7 @@ export async function resolveAutonomyLayers(
   db: Db,
   scope: ResolveAutonomyScope,
 ): Promise<AutonomyLayers> {
-  const world = await readJsonColumn(db, "worlds", scope.worldId,);
-  const chat = await readJsonColumn(db, "chats", scope.chatId,);
-  const actor = scope.actorId ? await readActorOverride(db, scope.actorId,) : {};
+  const { world, chat, actor, } = await readLayers(db, scope,);
   return { layers: { world, chat, actor, }, resolved: mergeLayers(world, chat, actor,), };
 }
 
@@ -172,8 +181,6 @@ export async function resolveAutonomyConfig(
   db: Db,
   scope: ResolveAutonomyScope,
 ): Promise<AutonomyConfig> {
-  const world = await readJsonColumn(db, "worlds", scope.worldId,);
-  const chat = await readJsonColumn(db, "chats", scope.chatId,);
-  const actor = scope.actorId ? await readActorOverride(db, scope.actorId,) : {};
+  const { world, chat, actor, } = await readLayers(db, scope,);
   return mergeLayers(world, chat, actor,);
 }
