@@ -32,6 +32,9 @@ export const QuestResponse = t.Object({
   category: QuestCategorySchema,
   status: t.String(),
   progress: t.Number(),
+  target: t.Number(),
+  rewards: t.String(),
+  narrative_hooks: t.String(),
   created_at: t.String(),
   updated_at: t.String(),
 },);
