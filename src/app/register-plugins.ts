@@ -7,9 +7,9 @@
  * depends on registration order). Extracted from elysia-app.ts so the app
  * builder stays small; behavior is identical.
  */
-import type { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
+import type { Elysia, } from "elysia";
 import { agencyRoutes, } from "../routes/agency";
 import { buildIdRoutes, } from "../routes/build-id";
 import { federationRoutes, } from "../routes/federation";
