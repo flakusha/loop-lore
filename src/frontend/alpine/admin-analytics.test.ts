@@ -56,17 +56,15 @@ function routeResponses(): void {
     if (url.startsWith("/api/v1/telemetry/analytics/summary",)) {
       return Response.json({ total: 5, distinct_sessions: 2, distinct_users: 1, },);
     }
-
     if (url.startsWith("/api/v1/telemetry/analytics/daily",)) {
       return Response.json([
         { date: "2026-10-01", count: 3, active_users: 1, },
         { date: "2026-10-02", count: 6, active_users: 2, },
       ],);
     }
-
     if (url.startsWith("/api/v1/telemetry/analytics/errors",)) { return Response.json([],); }
     if (url.startsWith("/api/v1/telemetry/analytics/purge",)) { return Response.json({ ok: true, },); }
-    if (url === "/api/analytics/overview") {
+    if (url === "/api/v1/analytics/overview") {
       return Response.json({
         totalMessages: 2,
         totalTokens: 300,
@@ -79,8 +77,7 @@ function routeResponses(): void {
         topChats: [],
       },);
     }
-
-    if (url === "/api/analytics/characters") {
+    if (url === "/api/v1/analytics/characters") {
       return Response.json({
         characters: [{
           id: "c1",
@@ -92,7 +89,6 @@ function routeResponses(): void {
         },],
       },);
     }
-
     return new Response("", { status: 404, },);
   };
 }
@@ -120,7 +116,7 @@ describe("adminAnalytics.loadAnalytics", () => {
     const state = makeState();
     routeResponses();
     const base = handler;
-    handler = (url,) => url === "/api/analytics/characters" ? Promise.reject(new Error("offline",),) : base(url,);
+    handler = (url,) => url === "/api/v1/analytics/characters" ? Promise.reject(new Error("offline",),) : base(url,);
     await state.loadAnalytics();
     expect(toasts,).toHaveLength(1,);
     expect(toasts[0]!.type,).toBe("error",);
