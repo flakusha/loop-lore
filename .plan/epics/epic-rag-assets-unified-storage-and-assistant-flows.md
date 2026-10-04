@@ -13,7 +13,7 @@
 **Type:** Feature Epic (cross-cutting bridge)
 **Tags:** rag, assets, extraction, decomposition, hybrid-search, assistant, admin, gallery, model-roles, standards
 **Parents:** `epic-rag-document-processing.md` (RAG pipeline), `epic-asset-platform-capabilities.md` (asset substrate), `epic-assistant-gm-flows.md` (assistant surface)
-**Bridges:** `epic-aux-enrichment-pipeline.md` (ModelRole wiring), `epic-frontend-gallery.md` + `epic-gallery-batch-operations.md` (gallery UI), `epic-byok-local-models.md` (admin-model surface)
+**Bridges:** `epic-aux-enrichment-pipeline.md` (ModelRole wiring), `epic-frontend-gallery.md` + `epic-gallery-batch-operations.md` (gallery UI), `epic-byok-local-models.md` (admin-model surface); search/RAG capability bridge tickets (2026-10-04, per `TASK-search-rag-coverage-bridge.md`): `TASK-search-service-unified.md`, `TASK-gallery-fuzzy-search-pagination.md`, `TASK-assistant-tool-injection-guard.md`, `TASK-assistant-capability-disclosure.md`, `TASK-admin-assistant-tooling-allowlist.md`, `TASK-rag-search-robots-quota.md`
 
 ## Summary
 
@@ -525,3 +525,4 @@ docs/spec/
 - `epic-db-content-versioning.md` — version lineage / FRBR partial adoption
 - `.plan/matrix-emotion-avatar-assets.md` — extend with RAG↔asset references (AV-row for decomposition chips)
 - `epic-rag-evaluation-observability.md` — eval rig + retrieval telemetry + prompt cache (provides NDCG@10 harness cited in B-R4 ACs)
+- `TASK-search-rag-coverage-bridge.md` — cross-ticket glue + execution order for the six search/RAG capability tickets (see Bridges)
