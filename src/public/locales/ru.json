@@ -1411,8 +1411,6 @@
   },
 
   "branches": {
-<<<<<<< ours — object `branches` (S+F, confidence: low)
-// hint: Structural and logic conflict. Both design and behavior differ.
     "title": "Ветки",
     "none": "Веток пока нет",
     "manage": "Управление ветками",
@@ -1439,18 +1437,6 @@
     "failedSwitch": "Не удалось переключить ветку",
     "failedDelete": "Не удалось удалить ветку",
     "failedMerge": "Не удалось влить ветку"
-=======
-    "title": "Branches",
-    "none": "No branches yet",
-    "fromHere": "Branch from here",
-    "forkPrompt": "Branch name (leave empty for auto-name)",
-    "forked": "Branched from message",
-    "failedFork": "Failed to create branch",
-    "switched": "Switched branch",
-    "failedSwitch": "Failed to switch branch",
-    "failedLoad": "Failed to load branches",
-    "forkPoint": "Branch point"
->>>>>>> theirs — object `branches` (S+F, confidence: low)
   },
   "wardrobe": {
     "baseOutfit": "Base outfit",
