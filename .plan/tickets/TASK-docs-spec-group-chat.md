@@ -7,7 +7,7 @@
 **Context:** The group-chat runtime exists (`src/group-chat/`) but was never captured as a first-class epic (`epic-group-chat.md`); the lifecycle spec boundary pointer dangles here; harness IRC builds on group-chat turn selection.
 **Acceptance Criteria:** (see below)
 
-**Status:** Open
+**Status:** Not Started
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-docs-reconciliation
@@ -29,3 +29,6 @@ Write `docs/spec/group-chat.md` with an explicit shipped-vs-open split. Verify e
 - `epic-group-chat.md`
 - `epic-docs-reconciliation.md`
 - `epic-chat-lifecycle-moderation.md` (boundary owner)
+
+
+git issue: 05b8b7b
