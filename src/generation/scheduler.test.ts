@@ -42,6 +42,7 @@ describe("scheduler seam", () => {
         return ok();
       }) as never,
     },);
+
     expect(res.content,).toBe("hi",);
     expect(seen[0]?.providers[0]?.name,).toBe("p",);
     expect(mgr.inFlight,).toBe(0,);
@@ -53,6 +54,7 @@ describe("scheduler seam", () => {
       { name: "primary", provider: {}, },
       { name: "fallback", provider: {}, },
     ] as never;
+
     const order: string[] = [];
     const res = await scheduledCallWithFailover({
       id: "att-2:round-0",
@@ -64,6 +66,7 @@ describe("scheduler seam", () => {
         return ok("fallback-win",);
       }) as never,
     },);
+
     expect(res.content,).toBe("fallback-win",);
     expect(order,).toEqual(["primary", "fallback",],);
   });
@@ -83,6 +86,7 @@ describe("scheduler seam", () => {
           return ok(`v${i}`,);
         }) as never,
       },),);
+
     const out = await Promise.all(jobs,);
     expect(out.map((r,) => r.content),).toEqual(["v0", "v1", "v2", "v3", "v4", "v5",],);
     expect(done.length,).toBe(6,);
@@ -96,6 +100,7 @@ describe("scheduler seam", () => {
       priority: PriorityLevel.Normal,
       run: () => new Promise<string>((r,) => setTimeout(() => r("b",), 50,)),
     },);
+
     const controller = new AbortController();
     const pending = scheduledCallWithFailover({
       id: "queued",
@@ -104,6 +109,7 @@ describe("scheduler seam", () => {
       scheduler: mgr,
       call: (async () => ok()) as never,
     },);
+
     controller.abort(new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, "stop",),);
     await expect(pending,).rejects.toBeInstanceOf(GenerationCancelledError,);
     await blocker.result;

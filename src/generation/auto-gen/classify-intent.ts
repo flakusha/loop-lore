@@ -114,5 +114,6 @@ export async function detectShortReply(opts: {
     confidence: intent.confidence,
     maxTokens: AUTO_GEN_SHORT_REPLY_MAX_TOKENS,
   },);
+
   return true;
 }

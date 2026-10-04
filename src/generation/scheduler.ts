@@ -30,6 +30,7 @@ export function getSchedulerManager(): ResourceManager {
   if (!manager) {
     manager = new ResourceManager({ defaultMax: SCHEDULER_DEFAULT_MAX, },);
   }
+
   return manager;
 }
 
@@ -74,6 +75,7 @@ export async function scheduledCallWithFailover(opts: ScheduledDispatchOpts,): P
     scheduler,
     call = callWithFailover,
   } = opts;
+
   const mgr = scheduler ?? getSchedulerManager();
   // Architecture: submit() keys on ONE provider string but failover takes an
   // ordered list — key by the PRIMARY name and run the whole failover list
@@ -86,10 +88,12 @@ export async function scheduledCallWithFailover(opts: ScheduledDispatchOpts,): P
     priority,
     run: () => call(failoverList, req, handler,),
   },);
+
   const signal = req.signal;
   if (!signal) {
     return handle.result;
   }
+
   const onAbort = (): void => {
     // Only cancel while still queued: once running, the provider observes
     // the same signal and its own abort error preserves the original detail
@@ -97,11 +101,13 @@ export async function scheduledCallWithFailover(opts: ScheduledDispatchOpts,): P
     // mask it with a generic scheduler message.
     if (handle.state === "queued") { mgr.cancel(id, "request aborted",); }
   };
+
   if (signal.aborted) {
     onAbort();
   } else {
     signal.addEventListener("abort", onAbort, { once: true, },);
   }
+
   try {
     return await handle.result;
   } catch (err) {
@@ -114,11 +120,13 @@ export async function scheduledCallWithFailover(opts: ScheduledDispatchOpts,): P
     const queuedCancel = signal.aborted &&
       handle.state === "cancelled" &&
       isSchedulerCancel(err,);
+
     if (queuedCancel) {
       const reason: unknown = signal.reason;
       if (reason instanceof GenerationCancelledError) {
         throw reason;
       }
+
       throw new GenerationCancelledError(
         CancelReason.UserCancel,
         CancelSource.User,
@@ -126,6 +134,7 @@ export async function scheduledCallWithFailover(opts: ScheduledDispatchOpts,): P
         { cause: err, },
       );
     }
+
     throw err;
   } finally {
     signal.removeEventListener("abort", onAbort,);
