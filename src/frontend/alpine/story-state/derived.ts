@@ -73,11 +73,14 @@ export function parseQuestBanners(raw: string,): QuestBanner[] {
   const banners: QuestBanner[] = [];
   for (const entry of entries) {
     if (typeof entry?.progress !== "number") { continue; }
+    const name = entry.quest_name;
+    const altName = entry.questName;
     banners.push({
-      questName: entry.quest_name ?? entry.questName ?? "Quest",
+      questName: typeof name === "string" ? name : typeof altName === "string" ? altName : "Quest",
       progress: Math.round(entry.progress,),
     },);
   }
+
   return banners;
 }
 
@@ -105,6 +108,7 @@ export function questProgressPct(quest: StoryQuest,): number {
   const pct = typeof quest.target === "number" && quest.target > 0
     ? (quest.progress / quest.target) * 100
     : quest.progress;
+
   return Math.max(0, Math.min(100, Math.round(pct,),),);
 }
 
@@ -128,6 +132,7 @@ export function questMilestones(quest: StoryQuest,): QuestMilestone[] {
       milestones.push({ progress: entry.progress, narrative: entry.narrative, },);
     }
   }
+
   return milestones;
 }
 
@@ -149,8 +154,10 @@ export function questRewardChips(quest: StoryQuest,): string[] {
     if (typeof item?.itemId !== "string" || typeof item.quantity !== "number") { continue; }
     chips.push(`${item.itemId} \u00d7${item.quantity}`,);
   }
+
   return chips;
 }
+
 /** Derived state from the latest story turn (or an empty default). */
 export interface TurnSummary {
   turnMeta: Record<string, StoryTurnMeta>;
