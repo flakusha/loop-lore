@@ -8,7 +8,8 @@
  * Used by both Alpine app (chat pages) and vanilla UI (non-chat pages).
  */
 
-import type { Locale, LocaleInfo, PluralTranslation, TranslationMap, TranslationNode, } from "../i18n/types";
+import { isPluralNode, pluralRuleFor, selectVariant, } from "../i18n/plurals";
+import type { Locale, LocaleInfo, TranslationMap, } from "../i18n/types";
 import { TranslationMapSchema, } from "../validation/schemas/responses";
 import { parseOr, } from "./alpine/validation";
 import { feFetch, } from "./fe-fetch";
@@ -36,17 +37,39 @@ export const DEFAULT_LOCALE: Locale = "en";
 export const SUPPORTED_LOCALES = Object.keys(LOCALE_REGISTRY,) as Locale[];
 
 /**
+ * Active UI locale (set by saveLocale); falls back to the default.
+ * Mirrors the same helper in `alpine/chat-utils/time.ts`.
+ * @returns {Locale}
+ */
+function activeLocale(): Locale {
+  const saved = globalThis.currentLocale;
+  return (SUPPORTED_LOCALES as string[]).includes(saved ?? "")
+    ? saved as Locale
+    : DEFAULT_LOCALE;
+}
+
+/**
  * Resolve a dot-notation key against a nested translation map.
+ *
+ * A plural-variant node resolves to the CLDR category for `count` via the
+ * active locale's `Intl.PluralRules`, mirroring the server translator
+ * (`src/i18n/translator.ts`): numeric count selects the variant, no count (or a
+ * non-numeric one) takes `other`, and a category the catalog does not define
+ * also falls back to `other`.
  * @param map
  * @param key
+ * @param count
  * @example
  * resolveKey({ common: { save: "Save" } }, "common.save") // => "Save"
  * resolveKey({ common: { save: "Save" } }, "missing") // => undefined
+ * resolveKey({ i: { item: { one: "{count} item", other: "{count} items" } } }, "i.item", 1)
+ * // => "{count} item"
  * @returns {string | undefined}
  */
 export function resolveKey(
   map: TranslationMap,
   key: string,
+  count?: number,
 ): string | undefined {
   if (typeof key !== "string") { return undefined; }
   const parts = key.split(".",);
@@ -57,6 +80,8 @@ export function resolveKey(
       return undefined;
     }
 
+    // A plural node is a leaf, but a caller may still address a category
+    // directly ("key.one"), so keep walking it as an indexable object.
     const next: string | TranslationMap = current[part] as string | TranslationMap;
     if (next === undefined) {
       return undefined;
@@ -65,7 +90,12 @@ export function resolveKey(
     current = next;
   }
 
-  return typeof current === "string" ? current : undefined;
+  if (typeof current === "string") { return current; }
+  // A plural node is a leaf VALUE, not a missing key: returning `undefined`
+  // here is what made the browser render the raw key instead of "1 item".
+  if (!isPluralNode(current)) { return undefined; }
+  if (count === undefined) { return current.other; }
+  return selectVariant(current, pluralRuleFor(activeLocale(),)(count,),);
 }
 
 /**
@@ -108,6 +138,7 @@ export const INTERPOLATE_RE = /\{(\w+)\}/g;
 
 /**
  * Interpolate {param} placeholders in a translated string.
+ * Accepts numbers so a plural-selected `{count}` renders as "1 item", not "1".
  * @param template
  * @param params
  * @example
@@ -116,9 +147,12 @@ export const INTERPOLATE_RE = /\{(\w+)\}/g;
  */
 export function interpolate(
   template: string,
-  params: Record<string, string>,
+  params: Record<string, string | number>,
 ): string {
-  return template.replaceAll(INTERPOLATE_RE, (_, name,) => params[name] ?? `{${name}}`,);
+  return template.replaceAll(INTERPOLATE_RE, (_, name,) => {
+    const value = params[name];
+    return value === undefined ? `{${name}}` : String(value,);
+  },);
 }
 
 /**
@@ -198,10 +232,11 @@ export function createFrontendTranslator(
   translations: TranslationMap,
   fallbackLocale?: TranslationMap,
 ) {
-  return function t(key: string, params?: Record<string, string>,): string {
-    let value = resolveKey(translations, key,);
+  return function t(key: string, params?: Record<string, string | number>,): string {
+    const count = typeof params?.count === "number" ? params.count : undefined;
+    let value = resolveKey(translations, key, count,);
     if (value === undefined && fallbackLocale) {
-      value = resolveKey(fallbackLocale, key,);
+      value = resolveKey(fallbackLocale, key, count,);
     }
 
     if (value === undefined) {
@@ -216,22 +251,3 @@ export function createFrontendTranslator(
   };
 }
 
-/** Every CLDR plural category a plural-variant node may be keyed by. */
-const PLURAL_CATEGORIES: Record<string, true> = {
-  zero: true,
-  one: true,
-  two: true,
-  few: true,
-  many: true,
-  other: true,
-};
-
-/**
- * A node is plural-variant data when every one of its keys is a CLDR category.
- * Requiring ALL keys keeps a plain enumeration containing `other` a normal subtree.
- */
-function isPluralNode(node: TranslationNode | TranslationMap,): node is PluralTranslation {
-  if (typeof node !== "object" || node === null) { return false; }
-  const keys = Object.keys(node,);
-  return keys.length > 0 && keys.every((key,) => PLURAL_CATEGORIES[key] === true);
-}

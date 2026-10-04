@@ -13,7 +13,7 @@ import { eventCurrentTarget, eventTarget, } from "./dom";
 
 import {
   applyDirection,
-  INTERPOLATE_RE,
+  interpolate,
   loadTranslations,
   resolveKey,
   saveLocale,
@@ -195,14 +195,21 @@ export function getTheme(): string {
   return localStorage.getItem("theme-preference",) || "default";
 }
 
-/** Resolve a translation key against the global locale strings; falls back to the key. */
-export function t(key: string, params?: Record<string, string>,): string {
+/**
+ * Resolve a translation key against the global locale strings; falls back to the key.
+ * A numeric `params.count` drives plural-variant selection, matching the server.
+ * @param key
+ * @param params
+ * @returns {string}
+ */
+export function t(key: string, params?: Record<string, string | number>,): string {
   if (typeof key !== "string") { return ""; }
   const map = (globalThis.__localeStrings ?? {}) as TranslationMap;
-  const value = resolveKey(map, key,);
+  const count = typeof params?.count === "number" ? params.count : undefined;
+  const value = resolveKey(map, key, count,);
   if (value === undefined) { return key; }
   if (params) {
-    return value.replaceAll(INTERPOLATE_RE, (_, name,) => params[name] ?? `{${name}}`,);
+    return interpolate(value, params,);
   }
 
   return value;
