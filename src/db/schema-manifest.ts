@@ -1877,6 +1877,7 @@ export const SCHEMA = new SchemaManifest()
     prompt_template_id: col("text",),
     active_branch_id: col("text",),
     autonomy_config: col("text", { notNull: true, hasDefault: true, },),
+    federation_consented_at: col("text",),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),

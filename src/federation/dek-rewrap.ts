@@ -19,10 +19,10 @@
 // exists only in memory and is never persisted unwrapped, logged, or
 // returned.
 //
-// Ordering constraint: exports happen only AFTER the per-chat federation
-// clearance gate passes (TASK-federation-content-clearance-gate-per-chat-
-// consent-before-me, issue 41f4f83). Callers MUST run that gate first; this
-// module does not duplicate the check.
+// Ordering constraint (TYPE-enforced): exportChatDekForPeer requires a
+// ChatClearance, which can only be produced by authorizeChatExport in
+// ./clearance — the per-chat content-clearance gate (issue 41f4f83). There
+// is no way to call this function without passing the gate first.
 //
 // Rotation on peer removal: revoking/rotating the peer's inbound key (their
 // side, via peer-keys) instantly kills every artifact wrapped under it;
@@ -35,6 +35,7 @@ import { decryptBytes, encryptBytes, } from "../crypto/actor-key-bytes";
 import type { DB, } from "../db/schema";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import { type ContentCipher, pskCipher, } from "./cipher";
+import { type ChatClearance, } from "./clearance";
 import { canonicalOrigin, } from "./peer-fetch";
 
 /** A chat DEK re-wrapped for exactly one recipient peer. */
@@ -53,43 +54,43 @@ export interface RewrappedDek {
 
 /**
  * Re-wrap one chat's DEK for a peer and record the export in the audit log
- * (`mesh_dek_exports`; key material is never stored there). Requires the
- * peer's inbound content key for this sender — i.e. an existing reservation
- * handshake — which binds the artifact to that peer.
+ * (`mesh_dek_exports`; key material is never stored there). Requires a
+ * {@link ChatClearance} from `authorizeChatExport` (./clearance) — chat and
+ * peer identity come from the clearance, so the gate cannot be routed
+ * around. Also requires the peer's inbound content key for this sender —
+ * i.e. an existing reservation handshake — which binds the artifact to
+ * that peer.
  * @param database Sender database handle.
  * @param smk Server master key wrapping chat_keys at rest.
  * @param input
- * @param input.chatId Replicated chat id.
- * @param input.peerOrigin Recipient peer origin (canonicalized internally).
+ * @param input.clearance Gate verdict for this (chat, peer) pair.
  * @param input.senderOrigin This instance's origin.
  * @param input.peerContentKey Base64 inbound key issued by the peer.
  * @returns The artifact to push alongside the replicated content.
- * @throws {Error} When origins are invalid, the chat has no DEK (e.g. an
- *   at-rest chat), or SMK unwrap fails.
+ * @throws {Error} When the sender origin is invalid, the chat has no DEK
+ *   (e.g. an at-rest chat), or SMK unwrap fails.
  */
 export async function exportChatDekForPeer(
   database: Kysely<DB>,
   smk: CryptoKey,
   input: {
-    chatId: string;
-    peerOrigin: string;
+    clearance: ChatClearance;
     senderOrigin: string;
     peerContentKey: string;
   },
 ): Promise<RewrappedDek> {
-  const peer = canonicalOrigin(input.peerOrigin,);
-  if (peer === null) { throw new Error(`invalid peer origin: ${input.peerOrigin}`,); }
+  const { clearance, } = input;
   const sender = canonicalOrigin(input.senderOrigin,);
   if (sender === null) { throw new Error(`invalid sender origin: ${input.senderOrigin}`,); }
 
   const row = await database
     .selectFrom("chat_keys",)
     .selectAll()
-    .where("chat_id", "=", input.chatId,)
+    .where("chat_id", "=", clearance.chatId,)
     .executeTakeFirst();
 
   if (row === undefined || row.encrypted_chat_key === "") {
-    throw new Error(`chat key not found for ${input.chatId}`,);
+    throw new Error(`chat key not found for ${clearance.chatId}`,);
   }
 
   const raw = await decryptBytes(smk, row.encrypted_chat_key,);
@@ -98,15 +99,15 @@ export async function exportChatDekForPeer(
   await database
     .insertInto("mesh_dek_exports",)
     .values({
-      chat_id: input.chatId,
+      chat_id: clearance.chatId,
       key_id: row.id,
-      peer_origin: peer,
+      peer_origin: clearance.peerOrigin,
       sender_origin: sender,
     },)
     .execute();
 
   return {
-    chatId: input.chatId,
+    chatId: clearance.chatId,
     keyId: row.id,
     senderOrigin: sender,
     wrappedKey,
