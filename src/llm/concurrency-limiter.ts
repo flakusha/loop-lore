@@ -32,7 +32,7 @@ export interface SemaphoreOptions {
 
 /** Async semaphore. */
 export class ConcurrencyLimiter {
-  private readonly max: number;
+  private max: number;
   /**
    * Effect Semaphore owns all permit accounting. Abandon safety: `run` wraps
    * the body in `withPermits(1)`, whose release is registered as a fiber exit
@@ -48,6 +48,7 @@ export class ConcurrencyLimiter {
     if (!Number.isInteger(opts.max,) || opts.max < 1) {
       throw new RangeError(`ConcurrencyLimiter: max must be a positive integer, got ${opts.max}`,);
     }
+
     this.max = opts.max;
     this.semaphore = Semaphore.makeUnsafe(opts.max,) as SemaphoreIntrospection;
   }
@@ -75,6 +76,7 @@ export class ConcurrencyLimiter {
     if (!Number.isInteger(max,) || max < 1) {
       throw new RangeError(`ConcurrencyLimiter: max must be a positive integer, got ${max}`,);
     }
+
     this.max = max;
     while (this.held < this.max) {
       const next = this.waiters.shift();
@@ -147,6 +149,7 @@ export function createLimiterRegistry(): LimiterRegistry {
         existing.resize(max,);
         return existing;
       }
+
       const created = new ConcurrencyLimiter({ max, },);
       map.set(key, created,);
       return created;
