@@ -3,9 +3,9 @@
 
 # BUG: proactive quiet-hours off-by-one at boundaries (timing.ts:14-16)
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** `isInQuietHours` used hour-granularity comparisons at window boundaries, excluding the inclusive start hour and including/excluding the end hour incorrectly (e.g. 22:00 excluded from a 22:00–07:00 window, 07:00 handled inconsistently).
+**Context:** Proactive messaging gate in `src/chat/proactive/index.ts:105` calls `isInQuietHours(config.quietHoursStart, config.quietHoursEnd, now)`; window bounds stored as `HH:mm` in `src/chat/proactive/db-helpers.ts` (`quiet_hours_start`/`quiet_hours_end`) and typed in `src/chat/proactive/types.ts:21-22`. Fix in `src/chat/proactive/timing.ts:29-50`, covered by `src/chat/proactive/timing.test.ts`.
+**Acceptance Criteria:** see below (boundary tests pass; minute precision, inclusive start / exclusive end).
 
 
 **Status:** Done
