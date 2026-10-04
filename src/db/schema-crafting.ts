@@ -17,6 +17,7 @@ import type {
   ProfessionTitle,
   QualityLevel,
 } from "./enums";
+import type { AuditColumns, } from "./schema-audit";
 
 // ── crafting_attempts ────────────────────────────────────────────
 export interface CraftingAttempts {
@@ -70,7 +71,7 @@ export interface CraftingRecipeMaterials {
 }
 
 // ── crafting_recipes ────────────────────────────────────────────
-export interface CraftingRecipes {
+export interface CraftingRecipes extends AuditColumns {
   id: Generated<string>;
   world_id: string;
   name: string;
@@ -88,10 +89,6 @@ export interface CraftingRecipes {
   station_type_required: CraftingStationType | null;
   discovered_by_default: Generated<number>;
   tags: Generated<string>;
-  created_at: string;
-  updated_at: string;
-  data_version: Generated<number>;
-  record_hash: Generated<string>;
 }
 
 // ── crafting_station_defs ────────────────────────────────────────────
