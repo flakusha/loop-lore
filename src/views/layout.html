@@ -170,6 +170,19 @@
 
         <a
           class="nav-item"
+          href="/views/config"
+          hx-get="/views/config"
+          hx-target="#app-root"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          x-on:click="window.closeSidebar()"
+          data-testid="nav-config"
+        >
+          <span>⚙</span> <span>{{{t("navigation.config")}}}</span>
+        </a>
+
+        <a
+          class="nav-item"
           href="/views/admin"
           hx-get="/views/admin"
           hx-target="#app-root"

@@ -92,6 +92,7 @@ declare global {
   var personasPage: any;
   var settingsModal: any;
   var settingsPage: any;
+  var configMenu: any;
   var modelManager: () => ModelManagerState;
 
   /* ── Loose / vendor-injected globals ────────────────────────── */
