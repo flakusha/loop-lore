@@ -9,6 +9,12 @@
  * drop the link row of ANY asset attached to actor X, including one owned by
  * somebody else. This is the destructive variant of the same defect, so the
  * test asserts the link row SURVIVES the rejected call, not just the status.
+ *
+ * Resource contract (parallel-safe): owns ONE `:memory:` SQLite from
+ * createTestDb, created in beforeAll and released in afterAll by a teardown
+ * guarded against a failed beforeAll. Fixture ids are file-local constants
+ * over a private DB, so they collide with nothing. No fixed file path, no
+ * port, no process-global, no ordering dependence.
  */
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -54,6 +60,9 @@ describe("DELETE /actors/:actorId/assets/:assetId (asset owner gate)", () => {
   },);
 
   afterAll(async () => {
+    // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
+    // destroy() throws a TypeError here that MASKS the real setup error.
+    if (!db) { return; }
     await db.destroy();
     sqlite.close();
   },);
