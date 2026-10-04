@@ -27533,6 +27533,32 @@
     "title": "docs remove deleted scenario catalog tooling references",
     "type": "TASK"
   },
+  "TASK-DOCS-SPEC-ANALYTICS-OBSERVABILITY": {
+    "hash": "b75700b",
+    "git_issue": "b75700b",
+    "extid": "TASK-DOCS-SPEC-ANALYTICS-OBSERVABILITY",
+    "type": "TASK",
+    "title": "Docs spec — analytics & observability",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-docs-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-spec-analytics-observability.md",
+    "status": "Not Started"
+  },
+  "TASK-DOCS-SPEC-GROUP-CHAT": {
+    "hash": "05b8b7b",
+    "git_issue": "05b8b7b",
+    "extid": "TASK-DOCS-SPEC-GROUP-CHAT",
+    "type": "TASK",
+    "title": "Docs spec — group-chat",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-docs-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-spec-group-chat.md",
+    "status": "Not Started"
+  },
   "TASK-DOCS-UI-ENDPOINT-LINKAGE": {
     "epic": "epic-docs-reconciliation.md",
     "extid": "TASK-DOCS-UI-ENDPOINT-LINKAGE",
