@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 
@@ -21,3 +21,5 @@ handleMe falls back to extractUserIdFromJwt (no signature check) when derivedUse
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue e16fb61 (registry tip: cf5944ff5 Konstantin Fedotov Close issue)
