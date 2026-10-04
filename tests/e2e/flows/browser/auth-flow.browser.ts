@@ -86,10 +86,9 @@ describe("Auth browser E2E", () => {
         // races the htmx POST: once the response lands there is no longer
         // anything to wait for, and the wait can only burn its full timeout.
         const response = page.waitForResponse(
-          (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
+          (res,) => res.url().includes("/api/v1/auth/login",) && res.request().method() === "POST",
           { timeout: 30_000, },
         );
-
         await page.click("[data-testid='login-submit']",);
         await response;
         // The error element should have received a swap (innerHTML changed).

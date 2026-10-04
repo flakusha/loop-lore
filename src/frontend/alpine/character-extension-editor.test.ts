@@ -145,14 +145,13 @@ describe("characterExtensionEditorFactory", () => {
       abilities: { strength: 12, },
       inventory: [{ id: "x", name: "x", type: "weapon", description: "y", quantity: 1, equipped: false, },],
     };
-
     setResponder(() => settingsResponse(seed,));
 
     const state = characterExtensionEditorFactory("actor-aria", FANTASY_RPG_REQUIREMENTS, fetcher,);
     await awaitLoad(state,);
 
     expect(state.loading,).toBe(false,);
-    expect(calls.some((c,) => c.url === "/api/actors/actor-aria" && c.method === "GET"),).toBe(true,);
+    expect(calls.some((c,) => c.url === "/api/v1/actors/actor-aria" && c.method === "GET"),).toBe(true,);
     expect(state.bundleId,).toBe("fantasy-rpg",);
     expect(state.draft.abilities,).toEqual({ strength: 12, },);
     expect(state.validation.valid,).toBe(true,);
@@ -172,11 +171,10 @@ describe("characterExtensionEditorFactory", () => {
       abilities: { strength: 14, },
       inventory: [{ id: "x", name: "x", type: "weapon", description: "y", quantity: 1, equipped: false, },],
     };
-
     state.bundleId = "fantasy-rpg";
     await state.save();
 
-    const put = calls.find((c,) => c.method === "PUT" && c.url === "/api/actors/actor-aria");
+    const put = calls.find((c,) => c.method === "PUT" && c.url === "/api/v1/actors/actor-aria");
     expect(put,).toBeDefined();
     const body = JSON.parse(put!.init!.body as string,) as { settings: string };
     const parsed = JSON.parse(body.settings,) as CharacterExtensionsPayload;
@@ -207,7 +205,6 @@ describe("characterExtensionEditorFactory", () => {
       abilities: { strength: 9, },
       inventory: [{ id: "x", name: "x", type: "weapon", description: "y", quantity: 1, equipped: false, },],
     };
-
     setResponder(() => settingsResponse(seed,));
 
     const state = characterExtensionEditorFactory("actor-aria", undefined, fetcher,);

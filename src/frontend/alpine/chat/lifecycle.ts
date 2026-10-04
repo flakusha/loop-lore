@@ -79,14 +79,12 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     if (storedDetail === "Basic" || storedDetail === "Detailed") {
       this.detailLevel = storedDetail;
     }
-
     this._storageHandler = (e: StorageEvent,) => {
       if (e.key !== "chat-detail-level" || !e.newValue) { return; }
       if (["Immersion", "Basic", "Detailed",].includes(e.newValue,)) {
         this.detailLevel = e.newValue as "Immersion" | "Basic" | "Detailed";
       }
     };
-
     addEventListener("storage", this._storageHandler,);
     // Wire the `show-seen-popover` listener (populates _seenPopoverOpen /
     // _seenPopoverX / _seenPopoverY / _seenPopoverViewers on dispatch).
@@ -114,7 +112,6 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
         globalThis.location.assign("/views/chat",);
         return;
       }
-
       await this.selectChat(chatId,);
       if (params.get("openSettings",)) {
         await this.openChatSettings();
@@ -170,7 +167,7 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
    */
   async loadUserInfo() {
     try {
-      const res = await apiFetch("/api/auth/me",);
+      const res = await apiFetch("/api/v1/auth/me",);
       if (res.ok) {
         const user = await res.json();
         this.userDisplayName = user.display_name || user.username || t("common.user",);
@@ -194,7 +191,6 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
         this.$dispatch("show-toast", { type: "error", message: t("toasts.failedLoadChats",), },);
         return;
       }
-
       const page = parseOr(ChatListResponse, await res.json(), EMPTY_CHAT_PAGE,);
       this.chats = page.data;
     } catch {

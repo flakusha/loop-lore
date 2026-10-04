@@ -18,7 +18,6 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
     host.showError("No active chat. Create or select a chat first.",);
     return;
   }
-
   if (host.isSending) { return; }
 
   host.isSending = true;
@@ -29,7 +28,7 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
     const result = await safeFetch<{
       id: string;
       assistantMessage?: { id: string; content: string };
-    }>(`${API_BASE}/api/chats/${host.chatId}/messages`, {
+    }>(`${API_BASE}/api/v1/chats/${host.chatId}/messages`, {
       method: "POST",
       auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
       body: bodyResult.ok ? bodyResult.value : "{}",
@@ -74,24 +73,20 @@ export async function loadMessages(host: ChatHost,): Promise<void> {
   if (!host.chatId) { return; }
   try {
     const url = host.cursor
-      ? `${API_BASE}/api/chats/${host.chatId}/messages?pageSize=200&cursor=${host.cursor}`
-      : `${API_BASE}/api/chats/${host.chatId}/messages?pageSize=200`;
-
+      ? `${API_BASE}/api/v1/chats/${host.chatId}/messages?pageSize=200&cursor=${host.cursor}`
+      : `${API_BASE}/api/v1/chats/${host.chatId}/messages?pageSize=200`;
     const result = await safeFetch<{ data: ChatMessage[]; cursor: string | null }>(url, {
       auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
       handle401: false,
     },);
-
     if (!result.ok) {
       host.showError(
         result.status !== undefined
           ? `Failed to load messages (HTTP ${result.status})`
           : `Network error loading messages: ${result.error.message}`,
       );
-
       return;
     }
-
     const data = result.data;
     host.cursor = data.cursor ?? host.cursor;
     // Prepend older messages (cursor fetches older)
