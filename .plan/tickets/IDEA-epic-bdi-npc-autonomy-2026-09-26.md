@@ -3,14 +3,8 @@
 
 # IDEA-epic-bdi-npc-autonomy-2026-09-26: NPC BDI Goal-Pursuit Loop (matrix gaps G27/G28/G32)
 
-**Status:** Done
+**Status:** Not Started
 **Priority:** medium (P6+ per matrix, but 🔴 High future severity)
-
-## Resolution (2026-10-01)
-
-Promoted to `.plan/epics/epic-npc-bdi-autonomy.md` — this ticket is `Done` on the strength of that promotion. The proposal's "Suggested epic description" is reproduced verbatim as the canonical epic file, preserving all Open Questions.
-
-Related: `epic-npc-to-npc-social.md` (G29/G30 sibling), `epic-tool-calling-mcp.md` (G42 sibling).
 **Effort:** Large
 **Type:** Research
 **Summary:** Matrix gaps G27, G28, G32 all describe the same root: no **BDI (Belief-Desire-Intention) goal-pursuit loop** for NPCs. Aspirations (from `epic-character-internal-traits.md`), mood (from `TASK-character-mood-happiness.md`), and BDI planning (`TASK-npc-bdi-planning.md`) exist as **disconnected systems** — no epic unifies them into a daily-plan execution loop. Inspiration: Inworld AI, Convai, generative-agents. Existing `epic-actor-autonomy-story-drive.md` covers story-level autonomy; this proposal covers **character-level** day-to-day goal pursuit.
