@@ -64,7 +64,16 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
 
       const { jobId, } = ctx.params as { jobId: string };
       const job = emotionAvatarService.getJobStatus(jobId as any,);
-      if (!job) { return jsonError({ message: "Job not found", status: HttpStatus.NotFound, },); }
+      // checkActorOwnership only proves the caller owns the actor in the PATH.
+      // The job carries its own actor, so owning any single actor would let a
+      // caller read another tenant's job (IDOR).
+      if (!job || job.actorId !== actorId) {
+        return jsonError({
+          message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
+
       return jsonResponse(job,);
     },)
     // ── Cancel a running job ──────────────────────────────────────
@@ -80,9 +89,23 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       }
 
       const { jobId, } = ctx.params as { jobId: string };
+      // ORDER IS LOAD-BEARING: cancelJob returns only a boolean and
+      // irreversibly destroys the job, so a foreign caller must be rejected
+      // before it is invoked.
+      const job = emotionAvatarService.getJobStatus(jobId as any,);
+      if (!job || job.actorId !== actorId) {
+        return jsonError({
+          message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
+
       const cancelled = emotionAvatarService.cancelJob(jobId as any,);
       if (!cancelled) {
-        return jsonError({ message: "Job not found or already completed", status: HttpStatus.NotFound, },);
+        return jsonError({
+          message: ctx.t?.("characters.emotionJobAlreadyCompleted",) ?? "Job not found or already completed",
+          status: HttpStatus.NotFound,
+        },);
       }
 
       return jsonResponse({ ok: true, cancelled: true, },);
