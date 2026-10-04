@@ -9904,6 +9904,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-backfill-of-historical-posts-on-new-follower-unspecified.md"
     },
     {
@@ -23368,6 +23372,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md"
     },
     {
@@ -26286,6 +26294,10 @@
   "src/routes/auth/login.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rate-limit-coverage-expansion.md"
     }
   ],
@@ -26321,6 +26333,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-register-username-race-and-rate-limiter-multi-instance-gap.md"
+    }
+  ],
+
+  "src/routes/auth/request.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
     }
   ],
   "src/routes/auth/session.ts": [
@@ -26442,16 +26461,35 @@
   "src/routes/blog/comments.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-blog-comments-post-accepts-non-public-posts-existence-oracle.md"
     }
   ],
   "src/routes/blog/follows.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-blog-followers-list-no-auth-reveals-follower-ids.md"
     }
   ],
+
+  "src/routes/blog/moderation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+    }
+  ],
   "src/routes/blog/posts.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-blog-post-get-bypasses-visibility-policy.md"
@@ -30672,10 +30710,18 @@
   "src/rpg/blog/service/comments.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-moderatecomment-has-no-authorization-any-caller-can-change-a.md"
     }
   ],
   "src/rpg/blog/service/follows.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-blog-followers-list-no-auth-reveals-follower-ids.md"
@@ -30692,6 +30738,10 @@
     }
   ],
   "src/rpg/blog/service/posts.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-blog-post-get-bypasses-visibility-policy.md"
@@ -36411,6 +36461,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-cross-layer-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md"
     },
     {
       "kind": "ticket",
