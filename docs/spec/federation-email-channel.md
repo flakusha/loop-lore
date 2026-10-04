@@ -21,7 +21,7 @@ All pure JS/TS, no native addons, no separate process. JMAP (RFC 8620) is a futu
 
 ## 2. Interface
 
-`EmailAdapter implements ProtocolAdapter` (`src/integrations/email/adapter.ts` — planned: `TASK-email-integration`), `PgpEncryption implements EncryptionProvider` (`src/integrations/email/encryption.ts` — planned). Deps are optional peer dependencies loaded via dynamic `import()` only when `integrations.email.enabled` — cold start with email unconfigured imports zero email libs (`TASK-email-deps-as-opt-in-lazy-import-nodemailer-imapflow-openpgp`).
+`EmailAdapter` implements `ProtocolAdapter` (`src/integrations/email/adapter.ts` — TASK-email-integration): inbound maps the §4 table onto `AdapterMessage` (redelivery-stable Message-ID synthesis included) and hands it to the wiring, which forwards into `MessageBridge.receive` with the spam gate as the bridge's `inboundGate`; outbound delegates to the pluggable `EmailTransport` seam, and send/connect fail with a typed `not_configured` error when unconfigured (§10). The real SMTP/IMAP clients (nodemailer/imapflow) remain behind the lazy-load rule — `PgpEncryption` (`src/integrations/email/encryption.ts`) is still planned. Deps are optional peer dependencies loaded via dynamic `import()` only when `integrations.email.enabled` — cold start with email unconfigured imports zero email libs (`TASK-email-deps-as-opt-in-lazy-import-nodemailer-imapflow-openpgp`).
 
 ## 3. Auth / secret storage
 
