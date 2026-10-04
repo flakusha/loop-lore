@@ -131,6 +131,7 @@ export async function listBranches(
   for (const row of rows) {
     out.push(await withMeta(db, chatId, row,),);
   }
+
   return { ok: true, branches: out, };
 }
 

@@ -76,6 +76,7 @@ describe("chat branches (FEAT-045)", () => {
       "middle",
       { parent_id: rootId, } as never,
     );
+
     leafId = await insertMessages(db, chatId, ownerId, MessageRole.User, "leaf", { parent_id: midId, } as never,);
     otherChatMessageId = await insertMessages(db, otherChatId, ownerId, MessageRole.User, "other",);
   },);
@@ -90,6 +91,7 @@ describe("chat branches (FEAT-045)", () => {
       messageId: midId,
       actorId: ownerId,
     },);
+
     if ("code" in result) { throw new Error(`Unexpected error: ${result.code} ${result.message}`,); }
     expect(result.branch.name,).toBe("Branch 1",);
     expect(result.branch.parentMessageId,).toBe(midId,);
@@ -103,6 +105,7 @@ describe("chat branches (FEAT-045)", () => {
       messageId: leafId,
       actorId: ownerId,
     },);
+
     if ("code" in second) { throw new Error(`Unexpected error: ${second.code} ${second.message}`,); }
     expect(second.branch.name,).toBe("Branch 2",);
     expect(second.messagePath,).toEqual([rootId, midId, leafId,],);
@@ -115,6 +118,7 @@ describe("chat branches (FEAT-045)", () => {
       actorId: ownerId,
       name: "What if I had said no",
     },);
+
     if ("code" in named) { throw new Error(`Unexpected error: ${named.code} ${named.message}`,); }
     expect(named.branch.name,).toBe("What if I had said no",);
   });
@@ -155,6 +159,7 @@ describe("chat branches (FEAT-045)", () => {
       branchId: firstBranch.id,
       actorId: ownerId,
     },);
+
     if ("code" in result) { throw new Error(`Unexpected error: ${result.code} ${result.message}`,); }
     expect(result.activeBranchId,).toBe(firstBranch.id,);
     const row = await tdb.db
@@ -162,6 +167,7 @@ describe("chat branches (FEAT-045)", () => {
       .select(["active_branch_id" as never,],)
       .where("id", "=", chatId,)
       .executeTakeFirst() as Record<string, unknown> | undefined;
+
     expect(String(row?.["active_branch_id" as never],),).toBe(firstBranch.id,);
   });
 
@@ -196,6 +202,7 @@ describe("chat branches (FEAT-045)", () => {
       messageId: otherChatMessageId,
       actorId: ownerId,
     },);
+
     expect("code" in result && result.code === "not_found",).toBe(true,);
   });
 
@@ -208,6 +215,7 @@ describe("chat branches (FEAT-045)", () => {
       branchId: target,
       actorId: ownerId,
     },);
+
     expect("code" in result && result.code === "not_found",).toBe(true,);
   });
 
@@ -217,6 +225,7 @@ describe("chat branches (FEAT-045)", () => {
       messageId: rootId,
       actorId: memberId,
     },);
+
     if ("code" in result) { throw new Error(`Unexpected error: ${result.code} ${result.message}`,); }
     expect(result.branch.chatId,).toBe(chatId,);
   });
@@ -246,6 +255,7 @@ describe("chat branches (FEAT-045)", () => {
       .where("chat_id", "=", invChatId,)
       .where("is_active", "=", 1,)
       .execute();
+
     expect(actives.map((r,) => r.id),).toEqual([second.branch.id,],);
   });
 
@@ -257,6 +267,7 @@ describe("chat branches (FEAT-045)", () => {
       ownerId,
       { id: invChatId, type: "direct", mode: "direct", } as never,
     );
+
     await insertChatParticipants(tdb.db, invChatId, ownerId, { role_in_chat: ChatParticipantRole.Owner, } as never,);
     const msgA = await insertMessages(tdb.db, invChatId, ownerId, MessageRole.User, "a",);
     const msgB = await insertMessages(
@@ -276,6 +287,7 @@ describe("chat branches (FEAT-045)", () => {
       .select("active_branch_id",)
       .where("id", "=", invChatId,)
       .executeTakeFirst();
+
     expect(chatAfterFirst?.active_branch_id,).toBe(first.branch.id,);
 
     const second = await forkBranch(tdb.db, { chatId: invChatId, messageId: msgB, actorId: ownerId, },);
@@ -286,6 +298,7 @@ describe("chat branches (FEAT-045)", () => {
       .select("active_branch_id",)
       .where("id", "=", invChatId,)
       .executeTakeFirst();
+
     expect(chatAfterSecond?.active_branch_id,).toBe(second.branch.id,);
   });
 
@@ -298,6 +311,7 @@ describe("chat branches (FEAT-045)", () => {
       branchId: target.id,
       actorId: ownerId,
     },);
+
     expect("code" in result,).toBe(false,);
 
     const actives = await tdb.db
@@ -306,6 +320,7 @@ describe("chat branches (FEAT-045)", () => {
       .where("chat_id", "=", chatId,)
       .where("is_active", "=", 1,)
       .execute();
+
     expect(actives.map((r,) => r.id),).toEqual([target.id,],);
   });
 
@@ -322,6 +337,7 @@ describe("chat branches (FEAT-045)", () => {
       "crossing",
       { parent_id: foreignRoot, } as never,
     );
+
     const forked = await forkBranch(tdb.db, { chatId, messageId: crossing, actorId: ownerId, },);
     if ("code" in forked) { throw new Error("expected ok",); }
 
@@ -331,7 +347,7 @@ describe("chat branches (FEAT-045)", () => {
     // The same guard must hold for the branch's advertised metadata.
     const listed = await listBranches(tdb.db, chatId, ownerId,);
     if ("code" in listed) { throw new Error("expected ok",); }
-    const row = listed.branches.find((b,) => b.id === forked.branch.id,);
+    const row = listed.branches.find((b,) => b.id === forked.branch.id);
     expect(row?.messageCount,).toBe(1,);
   });
 
@@ -342,22 +358,24 @@ describe("chat branches (FEAT-045)", () => {
     await insertChatParticipants(tdb.db, invChatId, ownerId, { role_in_chat: ChatParticipantRole.Owner, } as never,);
     const m1 = await insertMessages(tdb.db, invChatId, ownerId, MessageRole.User, "m1", {
       created_at: "2026-03-01T00:00:00.000Z",
-    });
+    },);
+
     const m2 = await insertMessages(tdb.db, invChatId, ownerId, MessageRole.Assistant, "m2", {
       parent_id: m1,
       created_at: "2026-03-02T00:00:00.000Z",
-    });
+    },);
+
     const m3 = await insertMessages(tdb.db, invChatId, ownerId, MessageRole.User, "m3", {
       parent_id: m2,
       created_at: stamp,
-    });
+    },);
 
     await forkBranch(tdb.db, { chatId: invChatId, messageId: m1, actorId: ownerId, },);
     await forkBranch(tdb.db, { chatId: invChatId, messageId: m3, actorId: ownerId, },);
 
     const result = await listBranches(tdb.db, invChatId, ownerId,);
     if ("code" in result) { throw new Error(`Unexpected error: ${result.code} ${result.message}`,); }
-    const byTip = new Map(result.branches.map((b,) => [b.parentMessageId, b,],),);
+    const byTip = new Map(result.branches.map((b,) => [b.parentMessageId, b,]),);
     expect(byTip.get(m1,)?.messageCount,).toBe(1,);
     expect(byTip.get(m3,)?.messageCount,).toBe(3,);
     // lastActivity is the TIP's created_at exactly — a hardcoded literal
