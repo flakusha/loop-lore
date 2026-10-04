@@ -107,6 +107,7 @@ export const schedulingActions: Partial<ScheduledState & ReminderState> & ThisTy
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ body, sendAt, },),
       },);
+
       if (res.ok) {
         this._scheduleOpen = false;
         this._scheduleAt = "";
@@ -146,6 +147,7 @@ export const schedulingActions: Partial<ScheduledState & ReminderState> & ThisTy
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}/scheduled/${id}`, {
         method: "DELETE",
       },);
+
       if (res.ok) { await this.loadScheduled(); }
     } catch (error) {
       log.warn("cancelScheduled failed", { error: String(error,), },);
@@ -169,6 +171,7 @@ export const schedulingActions: Partial<ScheduledState & ReminderState> & ThisTy
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ messageId, remindAt, },),
       },);
+
       if (res.ok) {
         this.$dispatch?.("show-toast", { type: "success", message: t("reminders.armed",), },);
         await this.loadReminders();

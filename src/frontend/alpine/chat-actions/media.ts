@@ -25,14 +25,17 @@ export const media: Partial<ChatState> & ThisType<ChatState> = {
         type: "warning",
         message: t("toasts.messageNoContentForImage",),
       },);
+
       return;
     }
+
     try {
       const res = await apiFetch("/api/v1/generation/image", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ chatId: this.activeChat, messageId: msgId, prompt, },),
       },);
+
       if (res.ok) {
         this.$dispatch?.("show-toast", { type: "info", message: t("toasts.imageGenerationStarted",), },);
       } else if (res.status === 501) {
@@ -67,6 +70,7 @@ export const media: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noImagesToCaption",), },);
       return;
     }
+
     try {
       const res = await apiFetch("/api/v1/generation/caption", {
         method: "POST",
@@ -77,6 +81,7 @@ export const media: Partial<ChatState> & ThisType<ChatState> = {
           assetIds: Array.from(imageAttachments, (a,) => a.assetId,),
         },),
       },);
+
       if (res.ok) {
         this.$dispatch?.("show-toast", { type: "info", message: t("toasts.captioningStarted",), },);
       } else if (res.status === 501) {
