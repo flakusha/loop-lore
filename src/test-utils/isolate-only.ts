@@ -12,6 +12,14 @@ import { describe, } from "bun:test";
  * A bare `bun test src/` runs every file in one shared process and leaves it
  * unset.
  *
+ * Verified on bun 1.4.2 (2026-10-04): `bun test` → unset, `bun test --isolate`
+ * → STILL unset, `bun test --parallel=4 --isolate` → set. `--isolate` alone is
+ * NOT the signal; only `--parallel` is. Every shipped runner passes
+ * `--parallel` (`test`, `test:unit`, `test:coverage`, and ci.yml), so no guarded
+ * suite is lost under normal use — but a hand-run `bun test <file>` DOES skip
+ * them and still exits 0, so a green bare run is not evidence a guarded suite
+ * ran. Read the pass/skip counts, not the exit code.
+ *
  * Do NOT key this on `npm_lifecycle_event`. CI runs
  * `bun test --parallel=4 src/ --isolate` (.github/workflows/ci.yml) with no npm
  * lifecycle var set, so that proxy reported "not isolated" for a genuinely
