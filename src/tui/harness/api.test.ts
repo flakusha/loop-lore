@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterAll, beforeEach, describe, expect, it, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { safeFetch, } from "../../utils";
 import type { FetchResult, SafeFetchOptions, } from "../../utils/safe-fetch/types";
 import { loadRunDetail, loadRuns, loadStats, setFetch, } from "./api";
@@ -12,11 +12,16 @@ interface CallRecord {
 }
 let calls: CallRecord[] = [];
 
-// setFetch swaps a module-level binding with no scope back to it, so without
-// this the last stub stays installed for every later file in the same process.
-// Verified by temporarily deleting this block: a probe file run after this one
-// still got "admin only" back from the 403 stub installed above.
-afterAll(() => {
+/**
+ * Resource contract — each test owns its own `calls` recorder (rebound in
+ * `beforeEach`) and installs its own fetch stub via `setFetch`, which swaps a
+ * module-level binding in api.ts with no scope back to it. Restoring in
+ * `afterEach` rather than once in `afterAll` keeps the binding clean between
+ * tests and later files in the same process even when a test fails partway
+ * through; verified by temporarily deleting the restore: a probe file run after
+ * this one still got "admin only" back from the 403 stub installed here.
+ */
+afterEach(() => {
   setFetch(safeFetch,);
 },);
 
