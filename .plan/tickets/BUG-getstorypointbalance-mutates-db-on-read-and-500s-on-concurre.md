@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-agency-story-points.md
-**Tags:** agency-story-points
 
 **Summary:** getstorypointbalance mutates db on read and 500s on concurre
 **Context:** Context: src/services/agency/story-points/queries.ts:30-52; hit via GET /api/agency/balance (routes/agency/balance.ts:28).

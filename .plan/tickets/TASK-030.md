@@ -7,8 +7,6 @@
 **Status Note:** feature shipped by prior commits (no new code authored in this batch)
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-licensing.md
-**Tags:** licensing
 **Summary:** Character creator picks license (ARR/CC-BY/CC-BY-SA/CC0/Custom); license stored + enforced.
 **Context:** License selector in creator; export/share enforce attribution.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

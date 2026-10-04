@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-items.md
-**Tags:** items
 **Summary:** Item effects via ItemEffect discriminated union — on-use, on-equip, passive, timed.
 **Context:** Coord with body-systems HeatEffects to avoid duplicate timed-effect machinery.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

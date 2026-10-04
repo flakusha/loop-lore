@@ -8,8 +8,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-frontend-backend-integration.md
-**Tags:** platform-adoption, elysia, api
 
 ## Summary
 

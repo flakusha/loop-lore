@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-chat-product-features.md
-**Tags:** chat, features
 **Related:** epic-agency-story-points.md, epic-rpg-mechanics.md
 
 ## Summary

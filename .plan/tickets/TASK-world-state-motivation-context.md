@@ -10,8 +10,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
-**Epic:** epic-player-state-machine.md
-**Tags:** player-state-machine
 
 **References:**
 - Epic: .plan/epics/epic-character-world-integration.md

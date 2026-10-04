@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-data-integrity-acid.md
-**Tags:** data-integrity-acid
 
 ## Summary
 

@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium (budget tracker + UI + telemetry hooks)
-**Epic:** epic-actor-autonomy-story-drive.md
-**Tags:** actor-autonomy-story-drive
 **Summary:** Per-agent and per-user budget caps on autonomy actions — the rate-limiting layer that prevents runaway autonomy ticks from draining generation quota or flooding the chat timeline.
 **Context:** Referenced by `epic-actor-autonomy-story-drive.md` Work Item list as `TASK-autonomy-rate-governor` and Concrete Implementation table row 7 (line 107). Listed as `TBD — needs filing` in the gap-audit (2026-09-23). The governor is a hard requirement of the autonomy subsystem: every `NpcNavigationService` tick and every story auto-drive scheduler beat must check budget before dispatching.
 
@@ -49,6 +47,9 @@ window — it never consumes. The cap for the peek comes from the config the
 same request already resolved, not from a re-resolve, so the ceiling the page
 shows is the one the tick loop charges against. An unbounded scope reports
 `remaining: null` rather than a fake number.
+
+**Epic:** epic-actor-autonomy-story-drive
+**Tags:** autonomy, rate-limiting, budget, governor, telemetry, per-agent, per-user
 **Related:** TASK-autonomy-config-surface, TASK-story-auto-drive-scheduler, epic-actor-autonomy-story-drive.md:70-72
 
 

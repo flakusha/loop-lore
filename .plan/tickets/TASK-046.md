@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-plugin-extension-points.md
-**Tags:** plugin-extension-points
 **Summary:** Plugin override hooks for service-level defaults; per-plugin config schema merge.
 **Context:** Plugin extension-points layer; override pattern for registered services.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

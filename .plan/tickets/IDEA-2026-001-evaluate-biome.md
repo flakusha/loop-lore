@@ -4,8 +4,6 @@
 # IDEA: Evaluate Biome as Complementary Linter/Formatter
 
 **Effort:** Medium
-**Epic:** epic-code-quality.md
-**Tags:** code-quality
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

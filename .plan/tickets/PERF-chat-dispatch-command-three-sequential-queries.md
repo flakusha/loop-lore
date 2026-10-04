@@ -13,8 +13,6 @@
 **Priority:** low
 **Priority Tier:** P6+
 **Effort:** Trivial
-**Epic:** epic-chat-context-optimization.md
-**Tags:** chat-context-optimization
 **Area:** chat
 **Source:** reconcile review (Scout Batch A — ISSUE-5)
 

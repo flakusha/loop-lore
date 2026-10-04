@@ -4,8 +4,6 @@
 # TASK: feat(check): --gates/--skip-gates filter on parallel runner
 
 **Effort:** Medium
-**Epic:** epic-worktree-plan-tooling.md
-**Tags:** worktree-plan-tooling
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

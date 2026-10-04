@@ -7,8 +7,6 @@
 **Status Note:** as-decomposed (bookkeeping 2026-09-19; cross-links re-verified 2026-09-23)
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-story-mode-ui.md
-**Tags:** story-mode-ui
 **Summary:** Turn chat creation presets into data, not code — `ChatSetupTemplate` = validated `ChatCreateBody` preset, selectable on `new-chat.html`. Decomposed into `chat_setup_templates` table + routes + UI binding tasks.
 **Context:** Proposal satisfied via decomposition — backend table + routes shipped; remaining UI/form fields + immutable-bound policy tracked in TASK-fix-chat-setup-templates-visual-novel (P1) and TASK-frontend-chat-setup-templates-edit-delete (P2). Verified 2026-09-23 that both decomposed tickets exist.
 **Acceptance Criteria:** Backend table + routes ✅ shipped; PUT/DELETE wiring + UI binding open (see decomposed TASK tickets).

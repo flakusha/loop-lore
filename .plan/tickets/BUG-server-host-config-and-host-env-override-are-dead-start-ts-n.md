@@ -7,8 +7,6 @@
 **Status Note:** batch 2
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-config-file-separation.md
-**Tags:** config-file-separation
 **Summary:** (see ## Summary)
 **Context:** (see ticket body)
 **Acceptance Criteria:** (see ## Acceptance Criteria)

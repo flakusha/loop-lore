@@ -15,8 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:** epic-frontend-backend-integration.md
-**Tags:** frontend
+**Epic**:
 **Related**: TASK-keyboard-navigation.md
 
 ## Summary

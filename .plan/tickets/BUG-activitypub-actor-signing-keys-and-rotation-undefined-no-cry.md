@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-federation-swarm-sync.md
-**Tags:** federation-swarm-sync
 
 ## Summary
 

@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-assistant-gm-flows.md
-**Tags:** assistant-gm-flows
 
 ## Summary
 

@@ -11,8 +11,6 @@
 **Status:** In Progress
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-timeline-system.md
-**Tags:** timeline-system
 
 ## Summary
 

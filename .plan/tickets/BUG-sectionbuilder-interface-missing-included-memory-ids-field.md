@@ -10,8 +10,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-memory-knowledge-systems.md
-**Tags:** memory-knowledge-systems
 
 ## Summary
 

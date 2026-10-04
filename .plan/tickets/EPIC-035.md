@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-magic-spell-systems.md
-**Tags:** magic-spell-systems
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

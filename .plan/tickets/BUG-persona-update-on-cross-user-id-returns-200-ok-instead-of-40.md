@@ -12,8 +12,6 @@
 **Status Note:** verified fixed on dev; code + regression tests present
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-character-multi-personality.md
-**Tags:** character-multi-personality
 
 ## Summary
 

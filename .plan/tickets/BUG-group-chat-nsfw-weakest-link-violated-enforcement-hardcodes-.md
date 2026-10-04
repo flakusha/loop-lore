@@ -12,8 +12,6 @@
 **Status Note:** commit 49731047 — fix(nsfw): gate correctness cluster
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-group-chat.md
-**Tags:** group-chat
 
 ## Summary
 

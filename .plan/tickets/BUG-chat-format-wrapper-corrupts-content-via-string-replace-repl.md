@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-group-chat.md
-**Tags:** group-chat
 
 **Summary:** chat format wrapper corrupts content via string replace repl
 **Context:** Context: 2a0d9f9c6 (09-25) introduced applyChatFormat.

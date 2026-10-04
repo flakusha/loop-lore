@@ -12,8 +12,6 @@
 **Status Note:** verified 2026-09-07; bookkeeping
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-crypto.md
-**Tags:** crypto
 
 ## Summary
 

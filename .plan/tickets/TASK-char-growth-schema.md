@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** Medium
-**Epic:** epic-character-growth.md
-**Tags:** character, growth
 
 ## Summary
 

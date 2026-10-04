@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-config-templates.md
-**Tags:** config-templates
 
 **Summary:** templates.ts entityTemplatePosition (src/config/templates.ts:74-75) is not validated; any typo resolves to the default 'after' silently. Fix: validate against the allowed literal set at config load and warn on unknown values. Verify: bun test src/config/ template loader tests.
 **Context:** Found 2026-09-26 during orchestrated strict review of dev commits 2026-09-19..26; finding verified directly in code before filing.

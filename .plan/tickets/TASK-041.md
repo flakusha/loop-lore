@@ -7,8 +7,6 @@
 **Status Note:** on dev, 2026-09-27 (NSFW game-mechanics batch closeout)
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-nsfw-game-mechanics.md
-**Tags:** nsfw-game-mechanics
 **Summary:** Mood on Character Core primitives + StatusEffect bridge.
 **Context:** Gameplay-layer mood modifiers feeding intimacy/seduction.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

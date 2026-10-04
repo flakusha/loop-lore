@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-agency-story-points.md
-**Tags:** agency-story-points
 
 **Summary:** earnstorypoints lost update race and raw unique violation on
 **Context:** Context: src/services/agency/story-points/mutations.ts:39-68 (landed 681e6605e).

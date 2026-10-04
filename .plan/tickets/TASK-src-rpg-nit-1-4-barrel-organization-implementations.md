@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-file-splitting.md
-**Tags:** file-splitting
 
 **Summary:** Implements NIT 2-4 from TASK-src-rpg-module-root-barrel-and-organization-nits (merged). NIT 1 was misdiagnosed in the survey (re-audited: 3 of the 5 "pre-existing barrels" are actually canonical classes, not barrels - see Notes). NIT 5 (NSFW opt-in gate audit) is filed separately under TASK-rpg-nsfw-services-add-config-level-opt-in-gate.
 

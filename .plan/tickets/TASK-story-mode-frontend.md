@@ -15,8 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:** epic-chat-product-features.md
-**Tags:** chat, features
+**Epic**:
 **Related**: TASK-assistant-gm-flows-reconciliation.md
 
 ## Summary

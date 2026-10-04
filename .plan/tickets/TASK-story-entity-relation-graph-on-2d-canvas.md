@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-2d-sprite-world.md
-**Tags:** 2d-graph, canvas
 
 **Summary:** Render story relations as a node/edge graph on the shared graph-canvas for a world or chat: actors as nodes, `character_relationships` as edges. Read-only v1.
 

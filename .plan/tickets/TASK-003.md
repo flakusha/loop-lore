@@ -3,8 +3,6 @@
 
 # TASK-003: Chat room filters
 
-**Epic:** epic-chat-lifecycle-moderation.md
-**Tags:** chat-lifecycle-moderation
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

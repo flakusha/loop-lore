@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-blog-system.md
-**Tags:** blog-system
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

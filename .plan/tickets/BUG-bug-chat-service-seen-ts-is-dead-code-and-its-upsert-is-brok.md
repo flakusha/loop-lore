@@ -12,8 +12,6 @@
 **Status Note:** already on dev, 2026-09-04
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-group-chat.md
-**Tags:** group-chat
 
 ## Summary
 

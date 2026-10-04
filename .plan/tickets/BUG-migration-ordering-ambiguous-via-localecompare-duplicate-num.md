@@ -33,8 +33,6 @@
 50/50 pass; `bun run typecheck` green.
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-db-migration-compaction.md
-**Tags:** db-migration-compaction
 
 ## Summary
 

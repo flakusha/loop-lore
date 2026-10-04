@@ -12,8 +12,6 @@
 **Status Note:** sweep 2026-09-10: zero unguarded `body.actorId`/`query.actorId` hits in `src/routes/` (all pass through `resolveActorAccess`); every `world_id` query scoped (`worldScoped` helper or explicit `WHERE world_id = ?`); no migration needed
 **Priority:** critical
 **Effort:** Medium
-**Epic:** epic-code-quality.md
-**Tags:** code-quality
 
 ## Summary
 

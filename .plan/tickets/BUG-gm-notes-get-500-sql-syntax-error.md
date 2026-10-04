@@ -5,8 +5,6 @@
 
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-gm-shadow-notes.md
-**Tags:** gm-shadow-notes
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

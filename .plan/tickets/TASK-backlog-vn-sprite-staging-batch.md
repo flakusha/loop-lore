@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-worktree-plan-tooling.md
 **Type:** Task
 **Summary:** The 6-issue VN sprite staging cluster (open-untriaged.md § New clusters) covers emotion-driven staging, alpha matting, speaker highlight, multi-character ordering, and per-chat roster. Each has an existing ticket pointer (TASK-vn-emotion-mood-and-action-driven-sprite-staging, TASK-vn-sprite-center-face-anchor-setup-and-detection-for-generat, TASK-vn-alpha-extraction-matting-job-for-opaque-character-images, TASK-vn-active-speaker-sprite-highlight-and-dimming, TASK-vn-multi-character-sprite-ordering-and-positioning, TASK-vn-character-sprite-roster-per-chat). This ticket captures the batch into one tracking ticket so the VN follow-ups (P2-A remainder) ship as one workstream, not re-mined piecemeal.
 **Context:** Per priority-p0-p2.md § P2-A details, VN mode is complete; the open follow-ups are gallery-in-scene inheritance and bun test src/story/ verification. The 6 staging tickets are scoped under that follow-up; suggested home is P2-A VN follow-ups.

@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-worktree-plan-tooling.md
 **Type:** Task
 **Summary:** `epic-frontend-encryption.md` (29 lines, 4 commits, last touch 2026-09-18) is a placeholder with no concrete Tasks or Acceptance Criteria. Its name overlaps with `epic-encryption-workflow.md` (which now has 27 tickets and is the operational authority) and `epic-crypto.md` (which owns the cryptographic primitives).
 **Context:** The 2026-09-25 logging hardening cluster surfaced repeated confusion about which epic owns the **send-decrypt UI path**. `epic-frontend-encryption.md` was created as a placeholder for the receive-decrypt + key-management UI; that work has since been split into tickets under `epic-encryption-workflow.md` and `epic-chat-product-features.md` (encryption-key-rotation). Source row: 2026-09-26 epic audit.

@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-frontend-components.md
-**Tags:** frontend-components
 
 ## Summary
 

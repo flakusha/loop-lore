@@ -14,8 +14,6 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** High
-**Epic:** epic-chat-product-features.md
-**Tags:** features
 **Related:** TASK-emotions-avatar-edit-model
 
 ## Summary

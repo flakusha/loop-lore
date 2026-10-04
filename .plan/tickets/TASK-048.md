@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-plugin-extension-points.md
-**Tags:** plugin-extension-points
 **Summary:** Plugin permission boundaries and resource quotas.
 **Context:** Extension-points layer; deeper sandbox deferred to epic-plugin-system.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

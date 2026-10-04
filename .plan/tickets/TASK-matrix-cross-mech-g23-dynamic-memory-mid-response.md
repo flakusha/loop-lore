@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
-**Epic:** epic-matrix-integration.md
 **Type:** Task
 **Summary:** Extend the shipped tool-call SSE so assistants can write durable in-chat memory notes mid-response (multi-message writes allowed, ordered). 0.1.0 quick-win candidate per the matrix.
 **Context:** `matrix-cross-mech.md` G23 is 🟢 Low and an explicit 0.1.0 quick-win. Inspiration: RisuAI dynamic-messages. The matrix says "extend the shipped tool-call SSE toward durable in-chat memory writes — 0.1.0 quick-win candidate." Touches CharCore, Memory, Narrative.

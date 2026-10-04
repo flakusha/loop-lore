@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-security-sandboxing.md
-**Tags:** security-sandboxing
 
 ## Summary
 

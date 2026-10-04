@@ -10,8 +10,6 @@ worktree: lorebook-activation
 ---
 
 
-**Epic:** epic-character-core-system.md
-**Tags:** character-core-system
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

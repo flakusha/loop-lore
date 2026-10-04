@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-db-migration-compaction.md
-**Tags:** db
 
 ## Summary
 

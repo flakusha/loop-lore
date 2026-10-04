@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-accessibility-input.md
-**Tags:** accessibility-input
 
 **Summary:** registerKeynavHandler unsubscribe (src/frontend/alpine/shortcuts.ts:92-97) closes over its set; calling an old unsubscribe after the map entry was replaced deletes the NEW live set (map entry removed, registered handlers orphaned). Double-cleanup is the documented teardown pattern. Fix: guard with keynavHandlers.get(action) === set before delete. Verify: unit test registering, clearing, re-registering, then calling the first unsubscribe.
 **Context:** Found 2026-09-26 during orchestrated strict review of dev commits 2026-09-19..26; finding verified directly in code before filing.

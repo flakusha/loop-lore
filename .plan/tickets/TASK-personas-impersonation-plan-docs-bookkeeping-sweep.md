@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-impersonation.md
-**Tags:** impersonation
 
 ## Summary
 

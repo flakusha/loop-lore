@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-chat-lifecycle-moderation.md
-**Tags:** chat
 
 **Summary:** refund contract invites over admission in peek record flows
 **Context:** Context: fba9dbcd8.

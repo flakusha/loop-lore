@@ -12,8 +12,6 @@
 **Status Note:** 2026-09-05, fix-character-growth-gate-failures worktree
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-logic-reconciliation.md
-**Tags:** logic-reconciliation
 
 ## Summary
 

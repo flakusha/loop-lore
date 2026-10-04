@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-assistant-gm-flows.md
-**Tags:** assistant-gm-flows
 **Summary:** AI Director + GM collaboration. GM override hook (manual tension/pacing/difficulty), AI Director suggestion feed (events, NPC behaviors, story beats), joint operation.
 **Context:** Source: epic-assistant-gm-flows.md § AI Director → Integration with GM System.
 **Acceptance Criteria:** [ ] GM can override TensionState per event; [ ] AI Director suggests events/NPC behaviors to GM; [ ] GM suggestions logged for replay; [ ] joint mode passes GM veto through.

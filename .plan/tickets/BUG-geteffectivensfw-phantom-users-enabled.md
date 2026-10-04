@@ -9,8 +9,6 @@ git issue: 8f7a2ea
 **Acceptance Criteria:** none — REJECTED by strict review (2026-09-24): the `?? true` fallback is deliberate and documented in source (schema default `nsfw_enabled=1` sync); `?? false` re-introduces the regression cited in the code comment. No defect.
 **Priority:** n/a (rejected)
 **Effort:** n/a (rejected)
-**Epic:** epic-nsfw-moderation-priority.md
-**Tags:** nsfw-moderation-priority
 
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->

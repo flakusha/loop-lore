@@ -12,8 +12,6 @@
 **Status Note:** 89cc294a0
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-group-chat.md
-**Tags:** group-chat
 
 ## Summary
 
