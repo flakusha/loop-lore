@@ -7,7 +7,7 @@
 
 
 **Status:** Done
-**Status Note:** S1 PASS (compatibility) and S2 PASS (retry parity, adopted); S3 REJECT — v4 ships no semaphore operator
+**Status Note:** S1 PASS; S2 PASS (ADOPTED — shared provider retry); S3 REJECT (no semaphore); SF REJECT (single copy, +14 LOC); S4 REJECT (bag wins, escape orthogonal); S5 decision: ADOPT-SUBSET (`Schedule` only) — closed 2026-10-04
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Infrastructure Epic
@@ -42,6 +42,15 @@ mostly already yes, in the local idiom. The question is narrow: **does Effect
 replace something we currently pay for, at a cost we can afford?** Three
 specific costs are on the table: the triplicated backoff math, the manual
 wiring bag, and the absence of request/operation spans.
+
+
+## Release status: v4 reached stable
+
+**Update 2026-10-04:** the v4 line is now stable — the npm `latest` dist-tag is
+`4.0.0` (verified against the registry), and this repo's pin was moved from
+`4.0.0-rc.117` to `4.0.0` exact. The RC-era churn constraint below is
+superseded for the core package; the `./unstable/*` ecosystem modules remain
+off-limits for load-bearing paths.
 
 ## Critical constraint: v4 is not released
 
@@ -83,6 +92,7 @@ rejects them at compile time.
 | bounding a retry count | `Effect.retry(effect, { schedule, times, while })` — `Retry.Options` | `times` is the count bound; `while` is the retryability predicate |
 | `Context.Service` shape | `{ make: … }` — an Effect or a thunk, **not** `{ succeed: … }` | Compile error otherwise |
 | `Layer.succeed` | two-argument `Layer.succeed(Tag, service)`; the one-arg form returns a `Layer`, not a function | Calling the result throws |
+| provide-through-inference | `Effect.provide(eff, layer)` needs an explicit narrowing cast when `R` must become `never` — `Layer.mergeAll` does not narrow through inference in 4.0.0 | Found by the S4 harness |
 | `Effect.Semaphore` (or any semaphore/permit operator) | **absent from the whole package** — root and every `./unstable/*` entry | Nothing to migrate `src/llm/concurrency-limiter.ts` onto |
 | `Effect.forkScoped`, `Effect.withSpan`, `Effect.all`, `Effect.runPromise`, `Schedule.exponential` / `recurs` / `spaced` / `jittered` / `modifyDelay`, `Layer`, `Context.Service` | all present | — |
 
@@ -192,8 +202,9 @@ tsgo strict without regressing a `bun run check` gate, the epic closes as
 - [x] S1 — Bun/ESM/typecheck compatibility spike (hard gate) — **PASS**
 - [x] S2 — retry/Schedule parity spike on the provider call path — **PASS, ADOPTED**
 - [x] S3 — scoped concurrency and interruption spike — **REJECT** (no operator exists)
-- [ ] S4 — DI wiring spike versus the `handleOpts` bag
-- [ ] S5 — go/no-go adoption decision
+- [x] SF — safe-fetch retry re-evaluation (result-preserving `Effect.retry` vs the hand-rolled loop) — **REJECT** (parity held, single copy, net-positive LOC)
+- [x] S4 — DI wiring spike versus the `handleOpts` bag — **REJECT** (`Elysia<any>` escape orthogonal, +20% LOC, TS2589 unbounded, typecheck +11%, route typing regresses)
+- [x] S5 — go/no-go adoption decision — **ADOPT-SUBSET**: `Schedule` only, only where backoff loops are duplicated (see Decision)
 
 ## Spike Results
 
@@ -214,12 +225,17 @@ worktree `effect-adoption-dedup`.
 | S2 | abort classification | cancelled signal → `ProviderError("Request cancelled", retryable: false)`; fetch `AbortError` → 504 `"Request timed out"` | identical, moved into the shared module | 0 | parity |
 | S3 | semaphore operator for `src/llm/concurrency-limiter.ts` | ~125-line hand-rolled async semaphore | none — no `Semaphore`/permit operator anywhere in the package | n/a | REJECT |
 | S3 | `Effect.forkScoped` + immediate scope exit | n/a | forked body never ran (`forkBodyRan=false`) | n/a | REJECT — interruption exists, silent work-drop is a live footgun |
-| S4 | DI wiring versus the `handleOpts` bag | not measured | not measured | — | open |
+| SF | `src/utils/safe-fetch/retry.ts` Effect rewrite (failure channel = non-ok `FetchResult`, no throw synthesis) | 51-line loop, single copy | 65-line Effect version, all 8 contract tests pass unmodified | +14 LOC | REJECT — no duplicate copies to collapse (unlike S2's triplication), so the adopted-surface win does not exist here; measured 2026-10-04 on `effect@4.0.0` stable, worktree `effect-migration` |
+| S4 | 6-factory route group wired both ways (closure bag vs `Context.Service` + `Layer`) | 121 LOC | 145 LOC | +24 LOC (+20%) | REJECT — the bag already delivers what the container would |
+| S4 | `Elysia<any>` escape at `registerPlugins` | present | orthogonal — re-typing to bare `Elysia` compiles clean under BOTH wirings; the escape earns its keep at the `elysia-app.ts` app-builder level, which Effect DI does not touch | 0 | REJECT |
+| S4 | Elysia route response typing | handlers return plain objects (TypeBox-visible) | Effect-variant handlers return `Promise<Response>`, opaque to Elysia's route typing | regression | REJECT |
+| S4 | TS2589 instantiation depth under Effect DI | blows at deep un-annotated chains (threshold measured N≈120) | identical threshold — the failure is Elysia plugin-type accumulation, not service wiring | 0 | REJECT |
+| S4 | typecheck time (3 warm runs each, standalone tsc) | 0.92–0.97 s | 1.04–1.08 s | +11% | REJECT |
 
 ### What landed
 
-`effect@4.0.0-rc.117` is now a runtime dependency, pinned exactly (no `^`,
-no `~`) because the line is a release candidate. It is used in exactly one
+`effect@4.0.0` is now a runtime dependency, pinned exactly (no `^`,
+no `~`). It is used in exactly one
 place: `src/generation/providers/retry.ts`, the shared retry policy that the
 three provider `fetchWithRetry` functions call. Nothing else in the repo
 imports it.
@@ -234,9 +250,12 @@ classification moved in with them.
 
 - **`src/utils/safe-fetch/retry.ts`** — same backoff expression, but the loop
   returns a `FetchResult` union (with `status` and `headers`) instead of
-  throwing, and its base delay is caller-configurable. Routing it through the
-  shared throwing helper would mean synthesising a throw and unpacking the
-  result: more code, not less. It keeps its own loop.
+  throwing, and its base delay is caller-configurable. Re-evaluated 2026-10-04
+  with the original objection removed: an `Effect.retry` whose failure channel
+  carries the non-ok `FetchResult` directly (no throw synthesis, no unwrapping)
+  passed all 8 contract tests unmodified — and still lost on size (+14 LOC),
+  because unlike the provider path there is exactly one copy and therefore no
+  triplication to collapse. REJECT confirmed by measurement; it keeps its loop.
 - **`src/llm/concurrency-limiter.ts`** — no Effect operator exists (S3).
 - **The circuit-breaker cooldown, the proactive-message cadence scheduler, and
   the browser reconnect backoff** — not retry policies. The last one would pull
@@ -246,6 +265,32 @@ classification moved in with them.
   cannot express.
 - **TypeBox, Elysia, `src/logger`, the config schema** — structurally off-limits
   per the pillar table above.
+
+
+## Decision (S5, 2026-10-04)
+
+| Pillar | Verdict | Driving number / alternative shipped |
+| ------ | ------- | ------------------------------------- |
+| Retries & scheduling | **ADOPT-SUBSET** — `Schedule` only, only where backoff loops are duplicated | S2: 3 byte-identical loops → 1 shared policy (−~60 LOC, full parity). SF re-eval: single-copy surfaces stay hand-rolled (+14 LOC if converted) |
+| Structured concurrency | **REJECT** | S3: no semaphore operator exists; `forkScoped` silently skips finalizers on early scope exit. Ships instead: existing `src/llm/concurrency-limiter.ts` |
+| Dependency injection | **REJECT** | S4: `Elysia<any>` escape orthogonal to Effect (compiles clean as bare `Elysia` in both wirings), +24 LOC (+20%), typecheck +11%, TS2589 unbounded, route response typing degrades to `Promise<Response>`. Ships instead: the closure bag; app typing via chain splitting / typed `use` boundaries |
+| Typed errors | **REJECT** | Pillar assessment: `{ ok, error }` unions already idiomatic; Effect adds ceremony, not capability. Ships instead: existing Result unions |
+| Resource safety | **REJECT** | Ad-hoc `try/finally` (e.g. `src/async/offload.ts`) is bounded and rarely reached; `acquireRelease` semantics carry the S3 footgun |
+| Observability (spans) | **REJECT for Effect** | Cheaper alternative already ticketed: OpenTelemetry API onto `src/logger` (`TASK-evaluate-elysia-opentelemetry.md`) — folded in, not re-run |
+| Streaming | **REJECT (skip)** | No proven need |
+| Schema validation | **REJECT (never)** | Elysia `t` (TypeBox) is load-bearing for request validation |
+| Configuration | **REJECT (skip)** | `ConfigSchema` + env overrides + secret redaction already shipped |
+| HTTP / framework | **REJECT (never)** | Elysia is the framework |
+
+**RC-risk statement:** the one adopted surface (`Schedule` in
+`src/generation/providers/retry.ts`) uses only stable-v4 API — `effect` is
+pinned `4.0.0` exact (stable as of 2026-10-04; previously `4.0.0-rc.117`), so
+no adopted surface depends on release-candidate API. A future breaking bump
+is caught by the provider retry contract tests.
+
+**Migration owner:** none beyond the landed `Schedule` surface — no follow-up
+migration epic is opened. Any future Effect work must re-open this epic with
+a new spike and a number.
 
 ## Dependencies
 
@@ -272,7 +317,8 @@ classification moved in with them.
 - `src/generation/providers/ollama-native/http.ts`
 - `src/generation/providers/openai-compatible/http.ts`
 - `knip.json` — `effect` added to `ignoreDependencies` (knip does not follow the provider subdirectory index chain)
-- `package.json` / `bun.lock` — `effect@4.0.0-rc.117`, pinned exactly
+- `package.json` / `bun.lock` — `effect@4.0.0`, pinned exactly (stable as of 2026-10-04; previously `4.0.0-rc.117`)
+- `.plan/tickets/TASK-migrate-safe-fetch-retry-loop-to-effect-schedule.md`
 - `.plan/tickets/TASK-effect-v4-bun-esm-typecheck-compatibility-spike.md`
 - `.plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md`
 - `.plan/tickets/TASK-effect-v4-scoped-concurrency-and-interruption-spike.md`
