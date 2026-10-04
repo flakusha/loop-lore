@@ -190,7 +190,7 @@
 | Not Started | Fractal Locations — Recursive Containment + Mobile Transports | High | High | 0 | [epic-fractal-locations.md](/.plan/epics/epic-fractal-locations.md) |
 | Not Started | Framework SDKs | Medium | High | 8 | [epic-framework-sdks.md](/.plan/epics/epic-framework-sdks.md) |
 | Not Started | Fresh.js Alternative Frontend | Medium | High | 8 | [epic-fresh-alternative-frontend.md](/.plan/epics/epic-fresh-alternative-frontend.md) |
-| Done | Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI | High | High | 9 | [epic-frontend-backend-integration.md](/.plan/epics/epic-frontend-backend-integration.md) |
+| In Progress | Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI | High | High | 9 | [epic-frontend-backend-integration.md](/.plan/epics/epic-frontend-backend-integration.md) |
 | Not Started | Frontend Bundle Optimization | High | Medium | 2 | [epic-frontend-bundle-optimization.md](/.plan/epics/epic-frontend-bundle-optimization.md) |
 | Not Started | Frontend Component Architecture | Medium | Medium | 0 | [epic-frontend-component-architecture.md](/.plan/epics/epic-frontend-component-architecture.md) |
 | Not Started | Frontend Emoji (`:...:`) and Message Reactions | medium | Medium | 0 | [epic-frontend-emoji-reactions.md](/.plan/epics/epic-frontend-emoji-reactions.md) |
@@ -2054,7 +2054,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 
 ### Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI
 
-- **Status:** Done
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -3313,4 +3313,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

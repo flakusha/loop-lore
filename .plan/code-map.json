@@ -16455,6 +16455,10 @@
   ],
   "src/frontend/alpine/rpg-stats.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-backend-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-equipment-stat-preview.md"
     },
@@ -34084,6 +34088,10 @@
     }
   ],
   "src/search/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-rag-coverage-bridge.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
