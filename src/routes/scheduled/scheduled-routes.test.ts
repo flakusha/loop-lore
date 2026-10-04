@@ -71,6 +71,7 @@ describe("scheduledRoutes", () => {
         body: JSON.stringify({ body: "hi", sendAt: isoIn(30,), },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -82,6 +83,7 @@ describe("scheduledRoutes", () => {
         body: JSON.stringify({ body: "see you then", sendAt: isoIn(30,), },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json() as { chatId: string; status: string };
     expect(body.chatId,).toBe(chatId,);
@@ -96,6 +98,7 @@ describe("scheduledRoutes", () => {
         body: JSON.stringify({ body: "intruding", sendAt: isoIn(30,), },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -103,6 +106,7 @@ describe("scheduledRoutes", () => {
     const res = await makeApp(db, ownerId,).handle(
       new Request(`http://localhost/api/chats/${chatId}/scheduled`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as unknown[];
     expect(body.some((r,) => (r as { body: string }).body === "see you then"),).toBe(true,);
@@ -112,6 +116,7 @@ describe("scheduledRoutes", () => {
     const res = await makeApp(db, strangerId,).handle(
       new Request(`http://localhost/api/chats/${chatId}/scheduled`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -123,6 +128,7 @@ describe("scheduledRoutes", () => {
         body: JSON.stringify({ body: "mine only", sendAt: isoIn(30,), },),
       },),
     );
+
     const { id, } = await created.json() as { id: string };
 
     // Owner is a participant; a second user is added as one so the failure
@@ -143,6 +149,7 @@ describe("scheduledRoutes", () => {
     const res = await makeApp(db, otherId,).handle(
       new Request(`http://localhost/api/chats/${chatId}/scheduled/${id}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
 
     const row = await db
@@ -150,6 +157,7 @@ describe("scheduledRoutes", () => {
       .select("status",)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     expect(row?.status,).toBe("pending",);
   });
 
@@ -161,17 +169,20 @@ describe("scheduledRoutes", () => {
         body: JSON.stringify({ body: "withdraw me", sendAt: isoIn(30,), },),
       },),
     );
+
     const { id, } = await created.json() as { id: string };
 
     const res = await makeApp(db, ownerId,).handle(
       new Request(`http://localhost/api/chats/${chatId}/scheduled/${id}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
     const row = await db
       .selectFrom("scheduled_messages",)
       .select("status",)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     expect(row?.status,).toBe("canceled",);
   });
 
@@ -199,6 +210,7 @@ describe("scheduledRoutes", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(404,);
 
     const row = await db
@@ -206,6 +218,7 @@ describe("scheduledRoutes", () => {
       .select("status",)
       .where("id", "=", foreignRowId,)
       .executeTakeFirst();
+
     expect(row?.status,).toBe("pending",);
   });
 
@@ -217,6 +230,7 @@ describe("scheduledRoutes", () => {
         body: JSON.stringify({ body: "   ", sendAt: isoIn(30,), },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -228,6 +242,7 @@ describe("scheduledRoutes", () => {
         body: JSON.stringify({ body: "when?", sendAt: "not-a-date", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -239,6 +254,7 @@ describe("scheduledRoutes", () => {
         body: JSON.stringify({ messageId, remindAt: isoIn(45,), },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 
@@ -250,6 +266,7 @@ describe("scheduledRoutes", () => {
         body: JSON.stringify({ messageId, remindAt: isoIn(45,), },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -261,6 +278,7 @@ describe("scheduledRoutes", () => {
         body: JSON.stringify({ messageId: "does-not-exist", remindAt: isoIn(45,), },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -285,6 +303,7 @@ describe("scheduledRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/v1/chats/${chatId}/scheduled`,),
     );
+
     expect(res.status,).toBe(200,);
     // Every parked row for this chat comes back — the same body the
     // unversioned mount returns, proving it is the same handler.
@@ -292,11 +311,13 @@ describe("scheduledRoutes", () => {
     if (!Array.isArray(rows,)) {
       throw new Error(`expected an array, got: ${JSON.stringify(rows,)}`,);
     }
+
     expect(rows.length,).toBeGreaterThan(0,);
     for (const row of rows) {
       if (typeof row !== "object" || row === null || !("chatId" in row)) {
         throw new Error(`unexpected row shape: ${JSON.stringify(row,)}`,);
       }
+
       expect(row.chatId,).toBe(chatId,);
     }
 
@@ -305,6 +326,7 @@ describe("scheduledRoutes", () => {
     const unversioned = await makeApp(db, ownerId,).handle(
       new Request(`http://localhost/api/chats/${chatId}/scheduled`,),
     );
+
     expect(unversioned.status,).toBe(200,);
   });
 
@@ -316,11 +338,13 @@ describe("scheduledRoutes", () => {
     const denied = await makeApp(db, strangerId,).handle(
       new Request(`http://localhost/api/reminders/${id}`, { method: "DELETE", },),
     );
+
     expect(denied.status,).toBe(404,);
 
     const res = await makeApp(db, ownerId,).handle(
       new Request(`http://localhost/api/reminders/${id}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
     const after = await makeApp(db, ownerId,).handle(new Request("http://localhost/api/reminders",),);
     expect((await after.json() as unknown[]).length,).toBe(0,);
