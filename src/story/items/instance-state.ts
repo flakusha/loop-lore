@@ -6,30 +6,8 @@ import type { Transaction, } from "kysely";
 import { ItemRarity, StackableState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
-import { driftCapFor, } from "./balance";
+import { driftCapFor, parseItemDrift, } from "./balance";
 import type { DurabilityResult, ItemDrift, ItemDriftEvent, ItemState, } from "./types";
-
-function driftFrom(properties: string,): ItemDrift {
-  const value = jsonParseOr<Record<string, unknown>>(properties, {},).drift;
-  if (typeof value !== "object" || value === null || Array.isArray(value,)) {
-    return { statMultipliers: {}, battleUses: 0, lastDriftAt: "", };
-  }
-
-  const rawDrift = value as Record<string, unknown>;
-  const rawMultipliers = rawDrift.statMultipliers;
-  const statMultipliers: Record<string, number> = {};
-  if (typeof rawMultipliers === "object" && rawMultipliers !== null && !Array.isArray(rawMultipliers,)) {
-    for (const [stat, amount,] of Object.entries(rawMultipliers,)) {
-      if (typeof amount === "number" && Number.isFinite(amount,)) { statMultipliers[stat] = amount; }
-    }
-  }
-
-  const rawBattleUses = rawDrift.battleUses;
-  const battleUses = typeof rawBattleUses === "number" ? rawBattleUses : 0;
-  const rawLastDriftAt = rawDrift.lastDriftAt;
-  const lastDriftAt = typeof rawLastDriftAt === "string" ? rawLastDriftAt : "";
-  return { statMultipliers, battleUses, lastDriftAt, };
-}
 
 function encodeProperties(properties: Record<string, unknown>,): string {
   const result = safeJsonStringify(properties,);
@@ -105,7 +83,7 @@ export async function applyDrift(
     .executeTakeFirst();
   if (!row) { return null; }
   const properties = jsonParseOr<Record<string, unknown>>(row.properties, {},);
-  const drift = driftFrom(row.properties,);
+  const drift = parseItemDrift(properties.drift,);
   const cap = driftCapFor(row.rarity, row.category,);
   const previous = drift.statMultipliers[event.stat] ?? 0;
   const next = Math.min(cap, Math.max(-cap, previous + event.amount,),);
