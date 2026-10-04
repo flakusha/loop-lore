@@ -33,6 +33,7 @@ export const EntityScopeUpdateSchema = t.Union([
   t.Literal("assistant",),
   t.Literal("world",),
 ],);
+
 /**
  * Journal keyphrase trigger phrases (TASK-KEYPHRASE-RECALL). Ticket cap is 8
  * per entry; the string cap keeps one phrase from bloating the prompt. Shared

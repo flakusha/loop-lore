@@ -66,6 +66,7 @@ export const uiStoreDefinition: Record<string, unknown> = {
   transitionDestinationId: "",
   transitionLocations: [] as { id: string; name: string }[],
   transitionBusy: false,
+
   // ── Active entity refs ───────────────────────────────
   activePersona: null,
 
