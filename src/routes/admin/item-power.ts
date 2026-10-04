@@ -22,8 +22,6 @@ import type { AdminRouteOpts, } from "./types";
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 200;
 
-/** Path params for the power-audit route; shared with `/admin/worlds/:id`. */
-
 /**
  * Parse `?limit=` into a clamped top-N. A non-numeric or non-positive value
  * falls back to the default rather than failing the request.
