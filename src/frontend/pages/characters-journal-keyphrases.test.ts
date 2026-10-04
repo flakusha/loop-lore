@@ -112,6 +112,7 @@ describeOrSkip("characters-journal-keyphrases", () => {
         },),
         { status: 200, },
       );
+
     // Dynamic import: the mocked module seams must be registered first.
     await import("./characters-journal-keyphrases");
     await page.initJournalKeyphrases("actor-9",);
