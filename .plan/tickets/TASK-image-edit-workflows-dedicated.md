@@ -9,6 +9,9 @@
 **Type:** Task
 **Tags:** image-edit, comfyui, workflows, templates, assets
 **Epic:** epic-comfyui-plugin
+**Summary:** See ## Summary below.
+**Context:** See ## Context below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 

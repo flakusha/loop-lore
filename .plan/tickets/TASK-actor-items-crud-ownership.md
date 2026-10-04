@@ -9,6 +9,9 @@
 **Type:** Task
 **Tags:** inventory, actor_items, ownership, transfer, crud
 **Epic:** epic-inventory-system
+**Summary:** See ## Summary below.
+**Context:** See ## Context below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 

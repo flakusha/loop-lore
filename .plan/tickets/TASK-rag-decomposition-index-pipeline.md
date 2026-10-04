@@ -9,6 +9,9 @@
 **Type:** Task
 **Tags:** rag, decomposition, semantic-index, embeddings, hybrid-search
 **Epic:** epic-rag-assets-unified-storage-and-assistant-flows
+**Summary:** See ## Summary below.
+**Context:** See ## Context below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 

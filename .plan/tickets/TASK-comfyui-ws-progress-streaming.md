@@ -9,6 +9,9 @@
 **Type:** Task
 **Tags:** comfyui, websocket, progress, streaming, frontend
 **Epic:** epic-comfyui-plugin
+**Summary:** See ## Summary below.
+**Context:** See ## Context below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 
