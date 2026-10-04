@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 313 epics
+**Total:** 314 epics
 
 ## Summary
 
@@ -15,7 +15,7 @@
 | Not Started | 2D Sprite World | High | Very High total (split across sub-epics below) | 0 | [epic-2d-sprite-world.md](/.plan/epics/epic-2d-sprite-world.md) |
 | Not Started | 3D Asset Generation (Future) | Low | Very High | 25 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
 | In Progress | Accessibility & Input Systems | P0 — Critical | High | 2 | [epic-accessibility-input.md](/.plan/epics/epic-accessibility-input.md) |
-| In Progress | Actor Autonomy & Story Auto-Drive | High | Large | 4 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
+| In Progress | Actor Autonomy & Story Auto-Drive | High | Large | 5 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
 | Done | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 4 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
 | Done | Actors & Entity System | High | High | 12 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | Done | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
@@ -96,7 +96,7 @@
 | In Progress | Emotion-Avatar Message Binding | High | Medium | 14 | [epic-emotion-avatar-message-binding.md](/.plan/epics/epic-emotion-avatar-message-binding.md) |
 | In Progress | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
 | In Progress | Encryption UI | Medium | Medium | 0 | [epic-frontend-encryption.md](/.plan/epics/epic-frontend-encryption.md) |
-| In Progress | Encryption Workflow | Medium | Medium | 16 | [epic-encryption-workflow.md](/.plan/epics/epic-encryption-workflow.md) |
+| In Progress | Encryption Workflow | Medium | Medium | 27 | [epic-encryption-workflow.md](/.plan/epics/epic-encryption-workflow.md) |
 | Not Started | Enemies & Monsters Systems | Low | Medium | 27 | [epic-enemies-monsters.md](/.plan/epics/epic-enemies-monsters.md) |
 | Done | Epic 14: Import/Export & Data Portability | Medium | ~~High~~ Low (remaining work) | 3 | [epic-import-export-io.md](/.plan/epics/epic-import-export-io.md) |
 | Not Started | Epic 16: Observability | medium | Medium | 4 | [epic-observability-telemetry.md](/.plan/epics/epic-observability-telemetry.md) |
@@ -137,7 +137,7 @@
 | Not Started | Epic: Deployment Infrastructure (Docker & Bare Metal) | medium | Medium | 0 | [epic-deployment-infrastructure.md](/.plan/epics/epic-deployment-infrastructure.md) |
 | Not Started | Epic: Desktop App | Low | High | 10 | [epic-desktop-app.md](/.plan/epics/epic-desktop-app.md) |
 | Done | Epic: Docs-vs-Plan Gap Audit (2026-09-19) | P2 | XL (audit + ticket creation) | 1 | [epic-docs-vs-plan-gap-audit-2026-09-19.md](/.plan/epics/epic-docs-vs-plan-gap-audit-2026-09-19.md) |
-| Done | Epic: Effect v4 Adoption Evaluation | Medium | Medium | 0 | [epic-effect-v4-adoption-evaluation.md](/.plan/epics/epic-effect-v4-adoption-evaluation.md) |
+| In Progress | Epic: Effect v4 Adoption Evaluation | Medium | Medium | 2 | [epic-effect-v4-adoption-evaluation.md](/.plan/epics/epic-effect-v4-adoption-evaluation.md) |
 | Not Started | Epic: Embeddable Backend | Low | Medium | 7 | [epic-embeddable-backend.md](/.plan/epics/epic-embeddable-backend.md) |
 | Not Started | Epic: Entity Generation Workflows | High (MVP scoped, post-Gate C) | Medium | 5 | [epic-entity-generation-workflows.md](/.plan/epics/epic-entity-generation-workflows.md) |
 | Not Started | Epic: Federation, Swarm Sync & Decentralized Comms | medium | Medium | 0 | [epic-federation-swarm-sync.md](/.plan/epics/epic-federation-swarm-sync.md) |
@@ -232,7 +232,7 @@
 | Not Started | Matrix Integration | Medium | High | 14 | [epic-matrix-integration.md](/.plan/epics/epic-matrix-integration.md) |
 | Not Started | Mechanics Governance — Per-World Config, Control Levels & Plugin API | Medium | Medium | 5 | [epic-mechanics-governance.md](/.plan/epics/epic-mechanics-governance.md) |
 | Not Started | Memory Profiling & Budgets | High | High | 12 | [epic-memory-profiling-budgets.md](/.plan/epics/epic-memory-profiling-budgets.md) |
-| Done | Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server | medium | Very High | 0 | [epic-mesh-federation-content-sharing.md](/.plan/epics/epic-mesh-federation-content-sharing.md) |
+| Done | Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server | medium | Medium | 0 | [epic-mesh-federation-content-sharing.md](/.plan/epics/epic-mesh-federation-content-sharing.md) |
 | Not Started | Message Seen-State & Viewership Ledger | High | Large | 0 | [epic-message-seen-state.md](/.plan/epics/epic-message-seen-state.md) |
 | Not Started | Messages & Message Pipeline | High | Medium | 0 | [epic-messages.md](/.plan/epics/epic-messages.md) |
 | Done | Middleware — Request Lifecycle, Idempotency & Async Results | Medium | Large | 0 | [epic-middleware-request-lifecycle.md](/.plan/epics/epic-middleware-request-lifecycle.md) |
@@ -637,8 +637,6 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Type:** Feature Epic
 - **Tags:** battle, items, social, npc, weather, resolution, integration
 - **File:** `.plan/epics/epic-battle-integration-gaps.md`
-
-### Current State Assessment
 
 ### Current State Assessment
 
@@ -1522,7 +1520,7 @@ Containerize the loop-lore application and establish deployment strategies for b
 
 ### Epic: Effect v4 Adoption Evaluation
 
-- **Status:** Done
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Infrastructure Epic
@@ -2324,7 +2322,6 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-licensing.md`
 
-
 ### llama-swap Hub (lifecycle, config, rotation/exclusion, bench)
 
 - **Status:** Not Started
@@ -2452,9 +2449,9 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 
 - **Status:** Done
 - **Priority:** medium
-- **Effort:** Very High
-- **Type:** Architecture / Feature Epic
-- **Tags:** mesh, federation, encrypted-sharing, quota, coordinator-server
+- **Effort:** Medium
+- **Type:** epic
+- **Tags:** (none)
 - **File:** `.plan/epics/epic-mesh-federation-content-sharing.md`
 
 ### Message Seen-State & Viewership Ledger
@@ -2602,8 +2599,6 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Type:** Feature Epic
 - **Tags:** nsfw, integration, housing, weather, social, disease, cross-system
 - **File:** `.plan/epics/epic-nsfw-integration-gaps.md`
-
-### Current State Assessment
 
 ### Current State Assessment
 
@@ -3031,8 +3026,6 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
-### Current State Assessment
-
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3330,3 +3323,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+
