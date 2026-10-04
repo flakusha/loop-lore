@@ -8,7 +8,7 @@
 **Acceptance Criteria:** See ## Acceptance Criteria below — all ten pillars carry a verdict with its driving number, every REJECT names its alternative, every ADOPT names a migration owner, the RC-risk statement is written, and the epic Status is updated.
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-effect-v4-adoption-evaluation
@@ -69,3 +69,5 @@ revisited" is not a verdict.
 
 - Blocked by: S1 (hard gate) + S2, S3, S4
 - Reads: the four spike tickets above, plus the two existing OpenTelemetry evaluation tickets
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 2c152fe (registry tip: 505cc5d3e Konstantin Fedotov Auto-closed: appended .md marker marks TASK-EFFECT-V4-GO-NO-GO-ADOPTION)

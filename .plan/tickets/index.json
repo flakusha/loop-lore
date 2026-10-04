@@ -1040,6 +1040,19 @@
     "title": "BUG: CSRF verification accepts cookie-only token, defeating double-submit",
     "type": "BUG"
   },
+  "BUG-BUG-EMOTION-AVATAR-JOB-ROUTES-AUTHORIZE-ONLY-THE-PATH-ACTOR-": {
+    "hash": "4e483df",
+    "git_issue": "4e483df",
+    "extid": "BUG-BUG-EMOTION-AVATAR-JOB-ROUTES-AUTHORIZE-ONLY-THE-PATH-ACTOR-",
+    "type": "BUG",
+    "title": "emotion-avatar job routes authorize only the path actor, so any owner can read and cancel another user's job",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-.md",
+    "status": "Not Started"
+  },
   "BUG-BUG-HALLUCINATION-GUARD-RUNS-OUTSIDE-TRY-CATCH-AFTER-MESSAGE": {
     "epic": "",
     "extid": "BUG-BUG-HALLUCINATION-GUARD-RUNS-OUTSIDE-TRY-CATCH-AFTER-MESSAGE",
@@ -1144,6 +1157,19 @@
     "tags": [],
     "title": "BUG: message-seen re-mark clobbers first-seen timestamp",
     "type": "BUG"
+  },
+  "BUG-BUG-ORPHANED-REMNANTS-OF-THE-REMOVED-GATE-IN-THE-CHECK-RUNNE": {
+    "hash": "f6705a5",
+    "git_issue": "f6705a5",
+    "extid": "BUG-BUG-ORPHANED-REMNANTS-OF-THE-REMOVED-GATE-IN-THE-CHECK-RUNNE",
+    "type": "BUG",
+    "title": "orphaned remnants of the removed `test - unit` gate in the check runner (dead SCOPED_TESTS, stale HEAVY_NAMES entry, stale comment)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-bug-orphaned-remnants-of-the-removed-gate-in-the-check-runne.md",
+    "status": "Not Started"
   },
   "BUG-BUG-RANDOM-EVENTS-GENERATOR-IS-DEAD-INCOMPLETE-PHANTOM-PARAM": {
     "epic": "",
@@ -9622,7 +9648,7 @@
       "evaluation"
     ],
     "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "git_issue": "5bb3855"
   },
   "EPIC-EMAIL-INTEGRATION": {
@@ -27800,7 +27826,7 @@
     "label": "task",
     "priority": "low",
     "source": ".plan/tickets/TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [
       "effect",
       "evaluation",
@@ -27819,7 +27845,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-effect-v4-go-no-go-adoption-decision.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [
       "effect",
       "evaluation",
@@ -34027,7 +34053,7 @@
     "type": "TASK"
   },
   "TASK-MIGRATE-SAFE-FETCH-RETRY-LOOP-TO-EFFECT-SCHEDULE": {
-    "hash": "pending",
+    "hash": "0c6e279",
     "extid": "TASK-MIGRATE-SAFE-FETCH-RETRY-LOOP-TO-EFFECT-SCHEDULE",
     "type": "TASK",
     "title": "Migrate safe-fetch retry loop to Effect Schedule",
@@ -34041,7 +34067,8 @@
       "evaluation"
     ],
     "source": ".plan/tickets/TASK-migrate-safe-fetch-retry-loop-to-effect-schedule.md",
-    "status": "in_progress"
+    "status": "done",
+    "git_issue": "0c6e279"
   },
   "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR": {
     "epic": "",

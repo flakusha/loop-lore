@@ -8,7 +8,7 @@
 **Acceptance Criteria:** See ## Acceptance Criteria below — a 5–10 factory group wired both ways and measured, explicit answers on the `any` escape and the TS2589 class, LOC measured, one of ADOPT/ADOPT-SUBSET/REJECT written, no `src/` change.
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-effect-v4-adoption-evaluation
@@ -80,3 +80,5 @@ If the spike cannot clear all three, the verdict is `REJECT` and the cheaper fix
 
 - Blocked by: `TASK-effect-v4-bun-esm-typecheck-compatibility-spike` (hard gate)
 - Reads: `src/app/register-plugins.ts`, `.plan/tickets/BUG-v1-route-chain-exceeds-ts-instantiation-depth.md`
+
+**Resolved:** 2026-10-04 registry-driven close: git issue d52c2c3 (registry tip: ea91b28a0 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-EFFECT-V4-DI-WIRING-SPIKE-V)
