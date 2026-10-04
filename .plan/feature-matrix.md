@@ -1125,7 +1125,7 @@ Total tickets: **3192** — untagged: **2681** — unbound to epic: **1620**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2681 | 1086 | 59 | 1235 | 36 | 0 | 265 |
+| (untagged) | 2681 | 1088 | 59 | 1235 | 36 | 0 | 263 |
 
 ## By epic × status
 
@@ -1188,7 +1188,7 @@ Total tickets: **3192** — untagged: **2681** — unbound to epic: **1620**
 | epic-accessibility-input | 5 | 1 | 2 | 2 | 0 | 0 | 0 |
 | epic-accessibility-input (Phase 2 Mobile Support, 🟡) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-achievements | 5 | 1 | 1 | 3 | 0 | 0 | 0 |
-| epic-actor-autonomy-story-drive | 8 | 7 | 0 | 0 | 0 | 0 | 1 |
+| epic-actor-autonomy-story-drive | 8 | 8 | 0 | 0 | 0 | 0 | 0 |
 | epic-actor-autonomy-story-drive.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-actor-turn-skip | 5 | 4 | 0 | 1 | 0 | 0 | 0 |
 | epic-actors | 5 | 3 | 0 | 0 | 0 | 0 | 2 |
@@ -1202,7 +1202,7 @@ Total tickets: **3192** — untagged: **2681** — unbound to epic: **1620**
 | epic-api-governance | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-api-governance.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-api-library-distribution.md | 3 | 0 | 0 | 3 | 0 | 0 | 0 |
-| epic-api-rate-limiting | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
+| epic-api-rate-limiting | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
 | epic-api-routes | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-api-task-offloading | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-api-telemetry.md | 3 | 3 | 0 | 0 | 0 | 0 | 0 |

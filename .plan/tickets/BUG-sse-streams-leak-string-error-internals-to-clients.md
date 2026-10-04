@@ -3,7 +3,7 @@
 
 # BUG: SSE streams leak string error internals to clients via "Generation failed" wire message
 
-**Status:** Wontfix
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-api-rate-limiting
@@ -35,3 +35,4 @@ A future change to `failGeneration` could accidentally serialize the full error 
 - [ ] A regression test exercises the non-cancel error path and asserts the persisted error string matches expected safe format
 - [ ] `bun test src/generation/generate-route/stream-to-client.test.ts` green
 
+**Resolved:** 2026-10-04 registry-driven close: git issue 1a3a97a (registry tip: 86af7e6dd Konstantin Fedotov Auto-closed: ticket BUG-SSE-STREAMS-LEAK-STRING-ERROR-INTERNALS-TO-CLIE)
