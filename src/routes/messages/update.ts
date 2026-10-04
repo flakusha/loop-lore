@@ -53,18 +53,19 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
         const access = await checkChatAccess(database, message.chat_id, actorId, ctx.userRole as string | null,);
         if (!access.ok) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
 
-        if (hardDelete) {
-          // GDPR / right-to-be-forgotten path. Only the message author (or a
-          // chat admin) may hard-delete — a member must not wipe rows they
-          // did not write (BUG-any-chat-participant-can-hard-delete-any-message).
-          if (message.actor_id !== actorId && !can(ctx.userRole as string | null, "admin.chat",)) {
-            return jsonError({
-              message: ctx.t?.("messages.cannotEditMessage",) ?? "Cannot edit this message",
-              status: HttpStatus.Forbidden,
-              code: ErrorCode.Forbidden,
-            },);
-          }
+        // Only the message author (or a chat admin) may delete or hide a
+        // message — a member must not wipe or hide rows they did not write
+        // (BUG-any-chat-participant-can-hard-delete-any-message,
+        // BUG-message-soft-delete-lets-any-chat-member-hide-any-member-s).
+        if (message.actor_id !== actorId && !can(ctx.userRole as string | null, "admin.chat",)) {
+          return jsonError({
+            message: ctx.t?.("messages.cannotEditMessage",) ?? "Cannot edit this message",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          },);
+        }
 
+        if (hardDelete) {
           // GDPR / right-to-be-forgotten path: real DELETE wipes the row
           // (ciphertext + plaintext shadow); the migration-068
           // `messages_fts_ad` trigger removes the FTS row, and FK rows in
