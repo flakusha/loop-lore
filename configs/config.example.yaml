@@ -1,6 +1,6 @@
 # loop-lore configuration
 # Supports: YAML (.yaml, .yml) or TOML (.toml)
-# Env vars override values below — see src/config/load.ts for mapping
+# Env vars override values below — see src/config/load/load.ts for mapping
 # $schema: ../schemas/loop-lore-config.schema.json
 #
 # NOTE: paths below are examples for configs/ directory layout.
@@ -209,33 +209,41 @@ headers:
   xContentTypeOptions: true
   xFrameOptions: DENY # DENY | SAMEORIGIN | null
   permissionsPolicy: "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()"
+  crossOriginOpenerPolicy: "same-origin"
+  crossOriginEmbedderPolicy: "credentialless" # require-corp | credentialless | null (credentialless enables SAB/WASM threads while keeping CDN/model loads working)
+  crossOriginResourcePolicy: cross-origin
+  timingAllowOrigin: ""
+  immutableHashedAssets: true
+  linkPreload: ["/alpine-init.js", "/css/app.css"]
+  acceptClientHints: []
+  saveData: false
+  earlyHints:
+    enabled: false # 103 Early Hints — needs transport support (spike)
+  reportingEndpoints: {}
+  # nel: null  # null = omit header (default)
   csp:
     enabled: true
     defaultSrc: ["'self'"]
-    scriptSrc: [
-      "'self'",
-      "'unsafe-inline'",
-      "'unsafe-eval'",
-      "https://cdn.jsdelivr.net",
-    ] # 'unsafe-inline': Alpine.js @x directive; 'unsafe-eval': Alpine.js new Function() for expression evaluation; jsdelivr: lazy wllama/transformers ESM for browser inference
+    scriptSrc: ["'self'", "'unsafe-eval'", "https://cdn.jsdelivr.net"]
     styleSrc: ["'self'", "'unsafe-inline'"] # inline style= attrs need unsafe-inline
     imgSrc: ["'self'", "data:", "blob:"]
     fontSrc: ["'self'"]
     connectSrc: ["'self'", "wss:", "https:"]
+    workerSrc: ["'self'", "blob:"]
     objectSrc: ["'none'"]
     baseUri: ["'self'"]
     frameAncestors: ["'none'"]
+    formAction: ["'self'"]
     upgradeInsecureRequests: true
-  # crossOriginEmbedderPolicy: null    # require-corp | credentialless | null (credentialless enables SAB/WASM threads while keeping CDN/model loads working)
-  # crossOriginOpenerPolicy: null      # same-origin | same-origin-allow-popups | null
-  # crossOriginEmbedderPolicy: null    # require-corp | null  (keep null until wasm/SAB ready)
-  crossOriginResourcePolicy: cross-origin # same-origin | cross-origin
-  immutableHashedAssets: true
-  linkPreload: ["/alpine-init.js", "/pages.js", "/css/app.css"]
-  # acceptClientHints: ["Device-Memory", "RTT"]   # needs HTTPS; opt-in client hints
-  # saveData: false
-  earlyHints:
-    enabled: false # 103 Early Hints — needs transport support (spike)
-# reportingEndpoints:
-#   default: "https://example.com/report"
-# nel: '{ "report_to": "default", "max_age": 31536000 }'
+    reportOnly: false
+
+dynamicResponse:
+  enabled: true
+  minify: true
+  validate: true
+  compress: true
+  compressAlgorithm: auto
+  compressThreshold: 512
+
+frontend:
+  mode: htmx
