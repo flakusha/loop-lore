@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-mesh-federation-content-sharing
@@ -22,3 +22,5 @@ Per-chat explicit consent gate for server-to-server mesh content push (epic-mesh
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 41f4f83 (registry tip: e82ef845e Konstantin Fedotov Auto-closed: appended .md marker marks TASK-FEDERATION-CONTENT-CLEARANC)
