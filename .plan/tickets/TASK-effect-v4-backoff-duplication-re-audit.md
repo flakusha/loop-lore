@@ -4,6 +4,7 @@
 # TASK: Effect v4 backoff duplication re-audit
 
 **Status:** Done
+**Scope:** Effect v4 next adoption set: backoff re-audit extension, S6 resource-safety spike, S7 structured fan-out spike
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-effect-v4-adoption-evaluation

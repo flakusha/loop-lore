@@ -4213,6 +4213,12 @@
       "source": ".plan/tickets/TASK-autonomy-deterministic-turns.md"
     }
   ],
+  "src/autonomy/scheduler/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    }
+  ],
   "src/autonomy/scheduler/telemetry.ts": [
     {
       "kind": "spec",
@@ -5753,6 +5759,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
     },
     {
       "kind": "ticket",
