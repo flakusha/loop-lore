@@ -19767,7 +19767,6 @@
       "source": ".plan/tickets/TASK-response-validation-logic-additions.md"
     }
   ],
-
   "src/generation/generation-actions/fail-generation.ts": [
     {
       "kind": "ticket",
@@ -25598,7 +25597,6 @@
       "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md"
     }
   ],
-
   "src/regex/html-sanitize-core.ts": [
     {
       "kind": "ticket",
@@ -25611,7 +25609,6 @@
       "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
     }
   ],
-
   "src/regex/html-sanitize-streaming.test.ts": [
     {
       "kind": "ticket",
@@ -26470,7 +26467,6 @@
       "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md"
     }
   ],
-
   "src/routes/auth/get-client-ip.unit.test.ts": [
     {
       "kind": "ticket",
