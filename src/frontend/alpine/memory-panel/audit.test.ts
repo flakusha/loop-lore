@@ -28,6 +28,7 @@ function makeState(overrides: Partial<ChatState["memoryPanel"]> = {},): ChatStat
       ...overrides,
     },
   } as unknown as ChatState;
+
   const state = Object.assign(Object.create(memoryPanelAudit,), base,);
   (state as unknown as { _getCharacterActorId: () => string | null })._getCharacterActorId = () => "actor-1";
   return state;
@@ -44,6 +45,7 @@ function mockFetch(responses: Array<{ ok: boolean; body: unknown }>,): { urls: s
     call++;
     return { ok: r.ok, status: 500, json: async () => r.body, } as unknown as Response;
   }) as typeof globalThis.apiFetch;
+
   return {
     urls,
     restore: () => {
@@ -84,6 +86,7 @@ describe("memoryPanelAudit", () => {
     const { urls, restore, } = mockFetch([
       { ok: true, body: { entries: [row("r1",), row("r2",),], nextCursor: "cur-1", }, },
     ],);
+
     try {
       await s.loadAudit();
       expect(urls[0],).toContain("/memories/audit",);
@@ -130,9 +133,11 @@ describe("memoryPanelAudit", () => {
       auditHasMore: true,
       auditCursor: "cur-1",
     },);
+
     const { urls, restore, } = mockFetch([
       { ok: true, body: { entries: [row("r3",),], nextCursor: null, }, },
     ],);
+
     try {
       await s.loadMoreAudit();
       expect(urls[0],).toContain("cursor=cur-1",);
@@ -160,6 +165,7 @@ describe("memoryPanelAudit", () => {
     const { urls, restore, } = mockFetch([
       { ok: true, body: { entries: [row("r9",),], nextCursor: null, }, },
     ],);
+
     try {
       await s.setAuditActionFilter("pin",);
       expect(s.memoryPanel.auditActionFilter,).toBe("pin",);
@@ -209,6 +215,7 @@ describe("memoryPanelAudit", () => {
       ...row("r1",),
       details: JSON.stringify({ memoryIds: ["m1",], actorCount: 2, },),
     } as unknown as ChatState["memoryPanel"]["auditEntries"][number];
+
     expect(s._auditDetailsExpandable(entry,),).toBe(true,);
     expect(s._formatAuditDetails(entry,),).toBe('{\n  "memoryIds": [\n    "m1"\n  ],\n  "actorCount": 2\n}',);
   });

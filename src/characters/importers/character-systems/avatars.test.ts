@@ -40,6 +40,7 @@ async function insertAsset(
     size_bytes: 1024,
     storage_path: storagePath,
   },).execute();
+
   return id;
 }
 
@@ -74,13 +75,16 @@ describe("importAvatars", () => {
       id: crypto.randomUUID(),
       display_name: "Test-Avatars-1",
     },).execute();
+
     await db.insertInto("actors",).values({
       id: crypto.randomUUID(),
       display_name: "Test-Avatars-2",
     },).execute();
+
     const rows = await db.selectFrom("actors",).select(["id",],)
       .where("display_name", "in", ["Test-Avatars-1", "Test-Avatars-2",],)
       .orderBy("display_name",).execute();
+
     actorId = rows[0]!.id;
     otherActorId = rows[1]!.id;
 
@@ -113,6 +117,7 @@ describe("importAvatars", () => {
     expect(result.errors,).toEqual([],);
     const rows = await db.selectFrom("character_avatars",).selectAll()
       .where("actor_id", "=", actorId,).orderBy("sort_order",).execute();
+
     expect(rows.length,).toBe(2,);
     expect(rows[0]!.label,).toBe("primary",);
     expect(rows[0]!.is_primary,).toBe(1,);
@@ -138,6 +143,7 @@ describe("importAvatars", () => {
 
     const rows = await db.selectFrom("character_avatars",).selectAll()
       .where("actor_id", "=", otherActorId,).execute();
+
     expect(rows.length,).toBe(1,);
     expect(rows[0]!.label,).toBe("ok",);
   });
@@ -152,10 +158,12 @@ describe("importAvatars", () => {
         fallbackChain: ["happy", "sad",],
       },
     }, result,);
+
     expect(result.errors,).toEqual([],);
 
     const cfg = await db.selectFrom("character_avatar_config",).selectAll()
       .where("actor_id", "=", actorId,).executeTakeFirst();
+
     expect(cfg,).toBeDefined();
     expect(cfg!.selection_rule,).toBe("weighted_random",);
   });
@@ -168,6 +176,7 @@ describe("importAvatars", () => {
       avatars: [],
       config: { selectionRule: "round_robin", weights: {}, fallbackChain: [], },
     }, result,);
+
     expect(result.errors.length,).toBe(1,);
     expect(result.errors[0]!,).toContain("Failed to import avatar config:",);
     // Recreate for the rest of the suite.

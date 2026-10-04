@@ -48,6 +48,7 @@ export async function resolveActorAccess(
     .select(["user_id", "owner_id",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   if (!actor) { return notFoundResponse("Actor",); }
   if (actor.user_id !== userId && actor.owner_id !== userId) { return jsonError("Not allowed", 403,); }
   return null;
@@ -81,5 +82,6 @@ export async function resolvePrimaryActorId(
     .where("user_id", "=", userId,)
     .where("owner_id", "is", null,)
     .executeTakeFirst();
+
   return row?.id ?? null;
 }

@@ -188,13 +188,16 @@ export function assertNoCrossBoundaryWrite(
   for (const field of kind === "character" ? WORLD_OWNED_FIELDS : CHARACTER_OWNED_FIELDS) {
     foreignOnly[field] = true;
   }
+
   for (const field of kind === "character" ? CHARACTER_OWNED_FIELDS : WORLD_OWNED_FIELDS) {
     delete foreignOnly[field];
   }
+
   const violations = fields.filter((field,) => foreignOnly[field] === true);
   if (violations.length === 0) {
     return { ok: true, value: null, };
   }
+
   const otherSide: BoundarySide = kind === "character" ? "world" : "character";
   const otherApi = kind === "character" ? "PUT /api/worlds/:worldId" : "PUT /api/actors/:actorId";
   const quoted = violations.map((field,) => `"${field}"`).join(", ",);

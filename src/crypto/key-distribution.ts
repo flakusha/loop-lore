@@ -56,6 +56,7 @@ export async function awaitChatKeyLock(chatId: string,): Promise<void> {
   if (!inflight) { return; }
   await inflight;
 }
+
 function log(): Logger {
   return getLogger().child({ module: "key-distribution", },);
 }
@@ -82,6 +83,7 @@ export async function distributeKeysOnJoin(
     newParticipantId,
     keyId: chatKey.keyId,
   },);
+
   return chatKey;
 }
 
@@ -100,6 +102,7 @@ export async function rotateKeyOnLeave(
   const promise = doRotate(database, chatId, departedParticipantId,).finally(() => {
     if (inflightRotations.get(chatId,) === promise) { inflightRotations.delete(chatId,); }
   },);
+
   inflightRotations.set(chatId, promise,);
   return promise;
 }
@@ -142,6 +145,7 @@ async function doRotate(
     true,
     ["encrypt", "decrypt",],
   );
+
   const newChatKey: ChatKey = { key: newKey, keyId: newId, rawKey: newRawKey, };
 
   // Re-encrypt asset files BEFORE opening the transaction.
@@ -183,6 +187,7 @@ async function doRotate(
       RE_ENCRYPT_LIMIT,
       { includeAll: true, },
     );
+
     reEncrypted = result.reEncrypted;
     failures = result.failures;
 

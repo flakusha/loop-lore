@@ -68,12 +68,14 @@ async function setupActor(
       import_spec: "{}",
     },)
     .execute();
+
   await generateActorKey({
     database: db,
     actorId,
     smk,
     name: "primary",
   },);
+
   return { actorId, smk, };
 }
 
@@ -85,6 +87,7 @@ describe("rotateActorKey (BUG-crypto-...sentinel)", () => {
       .select("id",)
       .where("actor_id", "=", actorId,)
       .execute();
+
     const expectedOldId = preKeys[0]?.id ?? "";
     expect(expectedOldId,).not.toBe("rotated",);
     expect(expectedOldId,).not.toBe("unknown",);

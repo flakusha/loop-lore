@@ -219,6 +219,7 @@ describeOrSkipStrict("ServerExternalManager facade", () => {
       llmPath: "/tmp/llm",
       vaePath: "/tmp/vae",
     } as unknown as SdCppOptions,);
+
     expect(instance,).not.toBeNull();
     const cmd = (spawnMock.mock.calls[0]![0] as { cmd: string[] }).cmd;
     expect(cmd,).toContain("--diffusion-model",);
@@ -279,6 +280,7 @@ describeOrSkipStrict("ServerExternalManager.startLlamaSwap path", () => {
     const instance = await mgr.startLlamaSwap({
       configPath: "/tmp/nonexistent-config.yaml",
     } as unknown as { configPath: string },);
+
     expect(instance,).toBeNull();
     expect(mgr.instances,).toHaveLength(0,);
   });
@@ -298,6 +300,7 @@ describeOrSkipStrict("ServerExternalManager.stop dispatch", () => {
       pid: 999,
       startedAt: Date.now(),
     };
+
     mgr.instances.push(inst,);
     await mgr.stop(inst,);
     expect(mgr.instances,).toHaveLength(0,);
@@ -317,6 +320,7 @@ describeOrSkipStrict("ServerExternalManager.stop dispatch", () => {
         startedAt: Date.now(),
       },);
     }
+
     await mgr.stopAll();
     expect(mgr.instances,).toHaveLength(0,);
   });
@@ -335,6 +339,7 @@ describeOrSkipStrict("ServerExternalManager.stop dispatch", () => {
         startedAt: Date.now(),
       },);
     }
+
     mgr.killAllSync();
     expect(mgr.instances,).toHaveLength(0,);
   });

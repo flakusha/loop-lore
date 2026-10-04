@@ -34,6 +34,7 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
     const result = safeJsonStringify(character.alternate_greetings,);
     if (result.ok) { alternateGreetings = result.value; }
   }
+
   let outfits: string | null = null;
   if (character.outfits?.length) {
     const result = safeJsonStringify(character.outfits,);
@@ -83,6 +84,7 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
       uploadDir,
       warnings,
     );
+
     if (avatarCount > 0) {
       warnings.push(`Imported ${avatarCount} avatar(s) from CHARX`,);
     }
@@ -169,8 +171,10 @@ async function importCharxAssets(
         asset.name,
         error instanceof Error ? error.message : "unknown error",
       );
+
       warnings.push(assetError.message,);
     }
   }
+
   return avatarImported;
 }

@@ -146,6 +146,7 @@ describe("detectNsfwWithLlm", () => {
     expect(await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("nsfw_moderate",)),),).toBe(
       "moderate",
     );
+
     expect(await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("nsfw_intense",)),),).toBe("intense",);
     expect(await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("nsfw_extreme",)),),).toBe("extreme",);
   });
@@ -164,6 +165,7 @@ describe("detectNsfwWithLlm", () => {
       promptTokens: 1,
       completionTokens: 1,
     }));
+
     expect(await detectNsfwWithLlm("x", makeCtx(), aux,),).toBe("none",);
   });
 
@@ -178,6 +180,7 @@ describe("detectNsfwWithLlm", () => {
     const aux = makeAux(async () => {
       throw new Error("boom",);
     },);
+
     expect(await detectNsfwWithLlm("x", makeCtx(), aux,),).toBe("none",);
   });
 
@@ -194,6 +197,7 @@ describe("detectNsfwWithLlm", () => {
         templates: { llm: { systemPrompts: { nsfw: "CUSTOM NSFW PROMPT", }, }, },
       } as unknown as Config,
     },);
+
     await detectNsfwWithLlm("x", ctx, aux,);
     expect(aux.mock.calls[0]![3]![0]!.content,).toBe("CUSTOM NSFW PROMPT",);
   });

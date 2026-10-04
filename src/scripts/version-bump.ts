@@ -70,6 +70,7 @@ function getLatestTag(major?: number,): string | null {
       `git tag | grep "${pattern}" | sort -t. -k1 -k2 -k3 -n | tail -1`,
       { encoding: "utf-8", },
     ).trim();
+
     if (tag) { return tag; }
     return null;
   } catch {
@@ -88,6 +89,7 @@ function getCommitsSinceTag(tag: string,): string[] {
       `git log --pretty=format:%s --no-merges ${range}`,
       { encoding: "utf-8", },
     );
+
     return result.split("\n",).filter(Boolean,);
   } catch {
     return [];
@@ -163,6 +165,7 @@ function getTagVersion(): string {
   if (latestTag) {
     return latestTag; // bare `x.y.z` — no prefix to strip
   }
+
   return "0.0.0";
 }
 
@@ -205,9 +208,11 @@ function predictVersion(): string {
   if (bump === "major") {
     return formatVersion({ major: base.major + 1, minor: 0, patch: 0, },);
   }
+
   if (bump === "minor") {
     return formatVersion({ ...base, minor: base.minor + 1, patch: 0, },);
   }
+
   return formatVersion({ ...base, patch: base.patch + 1, },);
 }
 
@@ -235,6 +240,7 @@ function bumpVersion(bumpType: "major" | "minor" | "patch", shouldTag: boolean,)
   } else {
     nextVersion = { ...baseVersion, patch: baseVersion.patch + 1, };
   }
+
   const next = formatVersion(nextVersion,);
 
   console.log(`Bumping ${getTagVersion()} → ${next} (${bumpType})`,);
@@ -280,6 +286,7 @@ function parseCliArgs(): CliArgs {
     type: optional(option("--bump", choice(["major", "minor", "patch",] as const,),),),
     tag: withDefault(flag("--tag",), false,),
   },);
+
   const args = runScript(parser, {
     programName: "version",
     brief: "Predict, bump, or sync the package.json version (git tag is source of truth).",
@@ -289,11 +296,13 @@ function parseCliArgs(): CliArgs {
     showDefault: true,
     help: "option",
   },);
+
   const command: CliArgs["command"] = args.sync
     ? "sync"
     : args.type !== undefined
     ? "bump"
     : "predict";
+
   return { command, type: args.type, tag: args.tag, };
 }
 

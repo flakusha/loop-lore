@@ -81,6 +81,7 @@ export async function encryptMessageContent({
       algorithm: (pipeline?.algorithm ?? "gzip") as "gzip" | "brotli" | "zstd",
     },
   },);
+
   return { storedContent: result.storedContent, keyId: result.keyId, };
 }
 

@@ -61,6 +61,7 @@ function buildCtx(overrides?: Partial<GifCtx>,): GifCtx {
     },
     ...overrides,
   };
+
   // Merge the module's own methods so sibling calls (handleGifKey →
   // moveGifSelection/closeGifPicker/insertGifAtIndex) resolve, mirroring
   // the Alpine merge at runtime. Data fields above win over defaults.
@@ -103,6 +104,7 @@ describeOrSkip("gifPicker.searchGifs", () => {
     expect(calls,).toEqual([],);
     expect(ctx._gifLoading,).toBe(false,);
   });
+
   test("501 surfaces the not-configured info toast", async () => {
     const ctx = buildCtx({ _gifQuery: "cats", },);
     handler = async () => new Response("", { status: 501, },);
@@ -110,17 +112,20 @@ describeOrSkip("gifPicker.searchGifs", () => {
     expect(ctx.toasts,).toEqual([{ type: "info", message: "GIF search is not configured.", },],);
     expect(ctx._gifResults,).toEqual([],);
   });
+
   test("429 surfaces the rate-limit error toast", async () => {
     const ctx = buildCtx({ _gifQuery: "cats", },);
     handler = async () => new Response("", { status: 429, },);
     await gifPicker.searchGifs!.call(ctx as never,);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "GIF search is rate-limited. Try again shortly.", },],);
   });
+
   test("network failure surfaces the search-failed toast", async () => {
     const ctx = buildCtx({ _gifQuery: "cats", },);
     handler = async () => {
       throw new Error("offline",);
     };
+
     await gifPicker.searchGifs!.call(ctx as never,);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "GIF search failed. Try again.", },],);
     expect(ctx._gifLoading,).toBe(false,);
@@ -168,6 +173,7 @@ describeOrSkip("gifPicker.insertGif", () => {
     expect(ctx.toasts,).toEqual([{ type: "warning", message: "Select a chat first.", },],);
     expect(calls,).toEqual([],);
   });
+
   test("failed download surfaces the download toast", async () => {
     const ctx = buildCtx({ _gifOpen: true, },);
     fetchHandler = async () => new Response("", { status: 404, },);
@@ -185,11 +191,13 @@ describeOrSkip("gifPicker.insertGif", () => {
     expect(ctx.toasts,).toEqual([{ type: "error", message: "quota exceeded", },],);
     expect(ctx.pendingAssets,).toEqual([],);
   });
+
   test("network failure surfaces the attach-failed toast", async () => {
     const ctx = buildCtx({ _gifOpen: true, },);
     fetchHandler = async () => {
       throw new Error("offline",);
     };
+
     await gifPicker.insertGif!.call(ctx as never, gif("a",),);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Could not attach a.gif.", },],);
   });

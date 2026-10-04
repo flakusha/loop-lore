@@ -30,6 +30,7 @@ describe("MoodService", () => {
       const moodId = await moodService.createMood({
         actorId: testActorId,
       },);
+
       expect(moodId,).toBeDefined();
     });
   });
@@ -54,6 +55,7 @@ describe("MoodService", () => {
       await moodService.updateMood(testActorId, undefined, {
         happiness: 75,
       },);
+
       const mood = await moodService.getMood(testActorId,);
       expect(mood?.happiness,).toBe(75,);
     });
@@ -72,6 +74,7 @@ describe("MoodService", () => {
       await moodService.updateMood(testActorId, undefined, {
         expressionModifiers: { tone: 0.8, verbosity: 0.5, },
       },);
+
       const mood = await moodService.getMood(testActorId,);
       expect(mood?.expressionModifiers.tone ?? 0,).toBeGreaterThan(0.79,);
       expect(mood?.expressionModifiers.tone ?? 0,).toBeLessThan(0.81,);
@@ -119,6 +122,7 @@ describe("MoodService", () => {
         source: "quest",
         sourceId: "quest-001",
       },);
+
       expect(eventId,).toBeDefined();
     });
 

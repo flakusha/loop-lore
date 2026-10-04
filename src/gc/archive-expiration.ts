@@ -45,6 +45,7 @@ export async function runArchiveExpirationGc(
   const nowMs = nowDate.getTime();
   const retentionDays = opts.retentionDays ??
     resolveRetentionDays(await getConfigValue(database, "archive_retention_days",),);
+
   const cutoffMs = nowMs - retentionDays * 86_400_000;
   const cutoff = toDate(cutoffMs,).toISOString();
 
@@ -65,6 +66,7 @@ export async function runArchiveExpirationGc(
         log.warn("archive gc skipped chat", { chatId: row.id, code: result.code, },);
         continue;
       }
+
       purged += 1;
       log.info("archive gc purged chat", { chatId: row.id, retentionDays, cutoff, },);
       const nowIso = toDate(nowMs,).toISOString();

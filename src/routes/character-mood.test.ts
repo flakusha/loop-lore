@@ -47,6 +47,7 @@ describe("Mood CRUD — owner", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     await insertActors(db, "Other Actor", {
       id: OTHER as never,
       owner_id: OTHER_USER,
@@ -86,6 +87,7 @@ describe("Mood CRUD — owner", () => {
         body: JSON.stringify({ happiness: 70, baseMood: "happy", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = await res.json() as { id: string };
     expect(id,).toBeDefined();
@@ -108,6 +110,7 @@ describe("Mood CRUD — owner", () => {
         body: JSON.stringify({ happiness: 90, currentMood: "excited", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -120,6 +123,7 @@ describe("Mood CRUD — owner", () => {
         body: JSON.stringify({ delta: 10, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -132,6 +136,7 @@ describe("Mood CRUD — owner", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -144,6 +149,7 @@ describe("Mood CRUD — owner", () => {
         body: JSON.stringify({ eventType: "positive", happinessDelta: 5, source: "test", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = await res.json() as { id: string };
     expect(id,).toBeDefined();
@@ -158,6 +164,7 @@ describe("Mood CRUD — owner", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -177,6 +184,7 @@ describe("Mood CRUD — owner", () => {
         body: JSON.stringify({ happiness: 50, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -189,6 +197,7 @@ describe("Mood CRUD — owner", () => {
         body: JSON.stringify({ delta: 5, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -201,6 +210,7 @@ describe("Mood CRUD — owner", () => {
         body: JSON.stringify({ eventType: "positive", happinessDelta: 5, source: "test", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -221,6 +231,7 @@ describe("Mood CRUD — owner", () => {
         body: JSON.stringify({ happiness: "not-a-number", },),
       },),
     );
+
     expect([400, 422,],).toContain(res.status,);
   });
 
@@ -233,6 +244,7 @@ describe("Mood CRUD — owner", () => {
         body: JSON.stringify({ happiness: 10, baseMood: "not-a-real-mood", },),
       },),
     );
+
     // Some routes pass through unknown enums; reject or 5xx — never a 2xx with bad data.
     expect(res.status,).not.toBe(200,);
   });
@@ -257,6 +269,7 @@ describe("Mood — admin/solo bypass", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     // Create a mood for OWNER's actor
     const app = makeApp(db, OWNER_USER, "user",);
     await app.handle(

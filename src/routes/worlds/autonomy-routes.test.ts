@@ -161,6 +161,7 @@ describe("GET /api/worlds/:worldId/autonomy", () => {
       chatId,
       nowMs: Date.now(),
     },);
+
     const data = await readAutonomy(`?scopeKind=user&scopeId=${ownerId}&chatId=${chatId}`,);
     // One consumed, cap 3 leaves two. If the read consumed, this is 1.
     expect(data.budget?.count,).toBe(1,);
@@ -229,6 +230,7 @@ describe("POST /api/worlds/:worldId/autonomy/control", () => {
         body: JSON.stringify({ action: "pause", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
     const after = await readAutonomy();
     expect(after.simulation.paused,).toBe(0,);
@@ -267,6 +269,7 @@ async function addActor(name: string, ownerId: string,): Promise<string> {
     agent_type: "npc",
     owner_id: ownerId,
   },);
+
   await db.insertInto("world_members",).values({ world_id: worldId, actor_id: actorId, },).execute();
   return actorId;
 }
@@ -296,6 +299,7 @@ describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId", () => {
       .select(["aspirations", "autonomy_preferences",],)
       .where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
+
     expect(row.aspirations,).toContain("find the sea",);
     expect(row.autonomy_preferences,).toContain("serene",);
   });
@@ -328,6 +332,7 @@ describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId", () => {
       .select("autonomy_preferences",)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 

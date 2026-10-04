@@ -70,6 +70,7 @@ describe("buildLoraNodes", () => {
       ["1", 1,],
       ["1",],
     );
+
     const [id,] = Object.keys(result.nodes,);
     expect(id,).toBe("2",);
     expect(result.nodes[id!]!.inputs["lora_name"]!,).toBe("detail",);
@@ -90,6 +91,7 @@ describe("buildLoraNodes", () => {
       ["1", 1,],
       ["1",],
     );
+
     const ids = Object.keys(result.nodes,).toSorted();
     expect(ids,).toHaveLength(2,);
     expect(new Set(ids,).size,).toBe(2,);
@@ -112,6 +114,7 @@ describe("buildLoraNodes", () => {
       ["1", 1,],
       ["1", "100", "101",],
     );
+
     for (const id of Object.keys(result.nodes,)) {
       expect(["100", "101",],).not.toContain(id,);
     }
@@ -124,6 +127,7 @@ describe("buildLoraNodes", () => {
       ["1", 1,],
       ["1", "2", "3", "4", "5", "6", "7",],
     );
+
     expect(Object.keys(result.nodes,),).toEqual(["8",],);
   });
 });
@@ -141,6 +145,7 @@ describe("txt2img build", () => {
       seed: 42,
       loras: "",
     },);
+
     expect(wf["1"]!.class_type,).toBe("CheckpointLoaderSimple",);
     expect(wf["2"]!.inputs["text"]!,).toBe("a castle",);
     expect(wf["3"]!.inputs["text"]!,).toBe("blurry",);
@@ -167,6 +172,7 @@ describe("txt2img build", () => {
       sampler: "euler",
       seed: 1,
     };
+
     const wf = txt2img.build({ ...base, loras: "detail:0.8", },);
 
     const loraIds = Object.keys(wf,).filter((id,) => wf[id]!.class_type === "LoraLoader");
@@ -196,6 +202,7 @@ describe("txt2img build", () => {
     for (const id of Object.keys(without,)) {
       expect(wf[id]!.class_type,).toBe(without[id]!.class_type,);
     }
+
     expect(wf["5"]!.class_type,).toBe("KSampler",);
   });
 
@@ -222,6 +229,7 @@ describe("img2img build", () => {
       denoise_strength: 0.5,
       seed: 7,
     },);
+
     expect(wf["4"]!.class_type,).toBe("LoadImage",);
     expect(wf["4"]!.inputs["image"]!,).toBe("in.png",);
     expect(wf["5"]!.class_type,).toBe("VAEEncode",);
@@ -250,6 +258,7 @@ describe("inpaint build", () => {
       cfg_scale: 7,
       seed: 9,
     },);
+
     expect(wf["4"]!.inputs["image"]!,).toBe("face.png",);
     expect(wf["5"]!.inputs["image"]!,).toBe("mask.png",);
     expect(wf["7"]!.inputs["denoise"]!,).toBe(0.6,);
@@ -263,6 +272,7 @@ describe("inpaint build", () => {
       mask_image: "m.png",
       seed: 2,
     },);
+
     expect(wf["7"]!.inputs["denoise"]!,).toBe(0.9,);
   });
 });
@@ -281,6 +291,7 @@ describe("controlnet build", () => {
       cfg_scale: 7,
       seed: 11,
     },);
+
     expect(wf["5"]!.class_type,).toBe("LoadImage",);
     expect(wf["5"]!.inputs["image"]!,).toBe("edge.png",);
     expect(wf["6"]!.class_type,).toBe("ControlNetLoader",);
@@ -307,6 +318,7 @@ describe("upscale build", () => {
       input_image: "small.png",
       upscale_model: "RealESRGAN_x4plus_anime_6B",
     },);
+
     expect(wf["1"]!.class_type,).toBe("LoadImage",);
     expect(wf["1"]!.inputs["image"]!,).toBe("small.png",);
     expect(wf["2"]!.class_type,).toBe("UpscaleModelLoader",);

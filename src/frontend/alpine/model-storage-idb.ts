@@ -74,6 +74,7 @@ export function createIndexedDBStore(factory?: IDBFactoryLike,): ModelByteStore 
     dbPromise ??= openDatabase(idb,);
     return dbPromise;
   };
+
   const store = async (mode: IDBTransactionMode,): Promise<IDBObjectStoreLike> => {
     const database = await db();
     return database.transaction(STORE_NAME, mode,).objectStore(STORE_NAME,);
@@ -109,6 +110,7 @@ export function createIndexedDBStore(factory?: IDBFactoryLike,): ModelByteStore 
         const record = await requestToPromise(objectStore.get(key,),);
         if (record) { entries.push([key, record,],); }
       }
+
       return summarizeRecords(entries,);
     },
   };
@@ -126,9 +128,11 @@ function openDatabase(factory: IDBFactoryLike,): Promise<IDBDatabaseLike> {
     const database = event.target.result as IDBDatabaseLike & {
       createObjectStore(name: string,): IDBObjectStoreLike;
     };
+
     const objectStore = database.createObjectStore(STORE_NAME,);
     objectStore.createIndex?.("by-updated", "updatedAt",);
   };
+
   request.onsuccess = (event,) => resolve(event.target.result,);
   request.onerror = (event,) => reject(request.error ?? event,);
   return promise;

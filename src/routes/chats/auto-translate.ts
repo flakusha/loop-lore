@@ -45,6 +45,7 @@ export function autoTranslateRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("story_state",)
             .where("id", "=", id,)
             .executeTakeFirst();
+
           if (!row) { return notFound(); }
 
           // Explicit codes only: unknown codes are a 400, not a silent clear.
@@ -58,6 +59,7 @@ export function autoTranslateRoutes(opts: HandlerOpts, prefix = "/api",) {
             .set({ story_state: next, },)
             .where("id", "=", id,)
             .execute();
+
           return jsonResponse({ data: { targetLang: resolveTargetLang(next,), }, },);
         },
         { body: ChatAutoTranslateBody, params: ChatIdParams, },
@@ -79,6 +81,7 @@ export function autoTranslateRoutes(opts: HandlerOpts, prefix = "/api",) {
           .select("story_state",)
           .where("id", "=", id,)
           .executeTakeFirst();
+
         if (!row) { return notFound(); }
 
         const next = setChatTargetLang(row.story_state, null,);
@@ -87,6 +90,7 @@ export function autoTranslateRoutes(opts: HandlerOpts, prefix = "/api",) {
           .set({ story_state: next, },)
           .where("id", "=", id,)
           .execute();
+
         return jsonResponse({ data: { targetLang: resolveTargetLang(next,), }, },);
       }, { params: ChatIdParams, },)
   );

@@ -35,6 +35,7 @@ describe("Quests flow E2E", () => {
         publication_status: PublicationStatus.Published,
       },)
       .execute();
+
     await ctx.db
       .insertInto("quests",)
       .values({
@@ -67,6 +68,7 @@ describe("Quests flow E2E", () => {
       waitUntil: "domcontentloaded",
       timeout: 30_000,
     },);
+
     await page.locator("[data-testid='quests-header']",).waitFor({ state: "attached", timeout: 30_000, },);
   }
 
@@ -109,6 +111,7 @@ describe("Quests flow E2E", () => {
         .where("world_id", "=", WORLD_ID,)
         .where("name", "=", NEW_QUEST_NAME,)
         .executeTakeFirst();
+
       expect(row,).not.toBeNull();
       expect(row?.type,).toBe("collection",);
       expect(row?.category,).toBe("bounty",);
@@ -151,8 +154,10 @@ describe("Quests flow E2E", () => {
           headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf, },
           body: JSON.stringify({ delta: 1, },),
         },);
+
         return res.status;
       }, QUEST_ID,);
+
       expect(updated,).toBeLessThan(400,);
 
       const row = await ctx.db
@@ -160,6 +165,7 @@ describe("Quests flow E2E", () => {
         .select(["progress",],)
         .where("id", "=", QUEST_ID,)
         .executeTakeFirstOrThrow();
+
       expect(Number(row.progress,),).toBeGreaterThanOrEqual(1,);
     } finally {
       errors.assert();

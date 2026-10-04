@@ -80,6 +80,7 @@ export function trackSearchError(error: unknown,): never {
   } else if (error instanceof ProviderRateLimitedError) {
     quarantineOnRateLimit(error.provider, error.retryAfterMs,);
   }
+
   throw error;
 }
 
@@ -115,6 +116,7 @@ export async function excludeArchivedChats(
     .where("id", "in", chatIds,)
     .where("is_pinned", "=", PinnedState.Archived,)
     .execute();
+
   if (archived.length === 0) { return chatIds; }
   const blocked = new Set<string>();
   for (const row of archived) { blocked.add(row.id,); }

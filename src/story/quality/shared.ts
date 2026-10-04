@@ -33,6 +33,7 @@ export function extractEntities(text: string,): Set<string> {
       }
     }
   }
+
   return entities;
 }
 
@@ -48,9 +49,11 @@ export function calculateSimilarity(a: string, b: string,): number {
   for (const w of wordsA) {
     if (wordsB.has(w,)) { intersection++; }
   }
+
   let unionSize = wordsA.size;
   for (const w of wordsB) {
     if (!wordsA.has(w,)) { unionSize++; }
   }
+
   return unionSize > 0 ? intersection / unionSize : 0;
 }

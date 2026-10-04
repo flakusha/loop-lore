@@ -38,6 +38,7 @@ export async function birthChild(
       updated_at: now,
     },)
     .execute();
+
   const link = async (from: string, to: string,): Promise<void> => {
     await db
       .insertInto("character_relationships",)
@@ -52,18 +53,21 @@ export async function birthChild(
       },)
       .execute();
   };
+
   await link(characterId, childId,);
   await link(childId, characterId,);
   if (meta.sireId) {
     await link(meta.sireId, childId,);
     await link(childId, meta.sireId,);
   }
+
   await db
     .deleteFrom("status_effect",)
     .where("actor_id", "=", characterId,)
     .where("effect_id", "=", PREGNANCY_EFFECT,)
     .where("category", "=", "pregnancy",)
     .execute();
+
   log.info(`Birth: child ${childId} (${childName}) to carrier ${characterId}`,);
   return childId;
 }

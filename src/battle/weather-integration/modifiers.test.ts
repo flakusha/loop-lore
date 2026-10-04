@@ -145,6 +145,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "test",
     };
+
     expect(applyEnvironmentalModifiers(stats(), [mod,],).defense,).toBe(15,);
   });
 
@@ -158,6 +159,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "test",
     };
+
     expect(applyEnvironmentalModifiers(stats(), [mod,],).magicAttack,).toBe(80,);
   });
 
@@ -171,6 +173,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "test",
     };
+
     const sharp: EnvironmentalModifier = {
       id: "aim",
       source: "weather",
@@ -180,6 +183,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "test",
     };
+
     const result = applyEnvironmentalModifiers(stats(), [over, sharp,],);
     expect(result.health,).toBe(100,);
     expect(result.accuracy,).toBe(100,);
@@ -195,6 +199,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "test",
     };
+
     const bogus: EnvironmentalModifier = {
       id: "bogus",
       source: "weather",
@@ -204,6 +209,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "test",
     };
+
     const result = applyEnvironmentalModifiers(stats(), [drain, bogus,],);
     expect(result.dodgeChance,).toBe(0,);
     expect(result.attack,).toBe(10,);
@@ -213,6 +219,7 @@ describe("applyEnvironmentalModifiers", () => {
     const mods = getEnvironmentalModifiers(
       terrain({ weather: "storm", type: "mountain", cover: "full", difficultTerrain: true, },),
     );
+
     const result = applyEnvironmentalModifiers(stats(), mods,);
     expect(result.accuracy,).toBe(60,);
     expect(result.defense,).toBe(30,);
@@ -248,6 +255,7 @@ describe("applyEnvironmentalModifiers", () => {
         description: "test",
       },
     ];
+
     const result = applyEnvironmentalModifiers(stats(), mods,);
     expect(result.mana,).toBe(0,);
     expect(result.stamina,).toBe(0,);
@@ -263,6 +271,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "test",
     };
+
     const dodgeMod: EnvironmentalModifier = {
       id: "dodge",
       source: "terrain",
@@ -272,6 +281,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "test",
     };
+
     const result = applyEnvironmentalModifiers(stats(), [critMod, dodgeMod,],);
     expect(result.criticalChance,).toBe(100,);
     expect(result.dodgeChance,).toBe(0,);
@@ -287,6 +297,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "test",
     };
+
     const result = applyEnvironmentalModifiers(stats(), [mod,],);
     expect(result.characterId,).toBe("c1",);
   });
@@ -302,6 +313,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "test",
     };
+
     applyEnvironmentalModifiers(base, [mod,],);
     expect(base.defense,).toBe(10,);
   });
@@ -317,6 +329,7 @@ describe("applyEnvironmentalModifiers", () => {
       duration: 0,
       description: "test",
     };
+
     const result = applyEnvironmentalModifiers(stats({ attack: 10, },), [mod,],);
     expect(result.attack,).toBe(5,);
   });

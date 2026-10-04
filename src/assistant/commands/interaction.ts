@@ -38,6 +38,7 @@ const resolveTargetActor = async (
       ],)
     )
     .executeTakeFirst();
+
   return row?.id ?? null;
 };
 
@@ -53,6 +54,7 @@ const getRelationshipModifiers = async (
     actorId,
     worldId,
   );
+
   if (!relationship) { return []; }
   const value = RELATIONSHIP_CHECK_MODIFIERS[getReputationTier(relationship.standing,)];
   return value === 0 ? [] : [{ source: "relationship.standing", value, },];
@@ -71,9 +73,11 @@ const applyRelationshipRipple = async (
   const favorDelta = successful
     ? definition.ripple.favorDelta
     : definition.ripple.failureFavorDelta ?? -Math.abs(definition.ripple.favorDelta,);
+
   const renownDelta = successful
     ? definition.ripple.renownDelta
     : definition.ripple.failureRenownDelta ?? 0;
+
   const relationships = RelationshipsService(database,);
   const relationship = await relationships.getRelationship(targetActorId, actorId, worldId,);
   if (!relationship) {
@@ -85,6 +89,7 @@ const applyRelationshipRipple = async (
       metadata: { source: "interaction", },
     },);
   }
+
   await relationships.logEvent({
     actorId: targetActorId,
     targetActorId: actorId,
@@ -94,6 +99,7 @@ const applyRelationshipRipple = async (
     familiarityDelta: renownDelta,
     metadata: { source: "interaction", command: definition.command, outcome, },
   },);
+
   return {
     relationship: {
       sourceActorId: targetActorId,
@@ -113,6 +119,7 @@ const runInteraction = async (
   if (!ctx.db || !ctx.userId) {
     return { systemMessage: "Interaction commands require an authenticated player and database.", handled: true, };
   }
+
   const denial = await checkCommandMechanic(ctx.db, ctx.activeChat?.worldId, RpgMechanic.Checks,);
   if (denial) { return { systemMessage: denial, handled: true, }; }
 
@@ -132,6 +139,7 @@ const runInteraction = async (
     ctx.userId,
     ctx.activeChat?.worldId ?? null,
   );
+
   const resolution = await InteractionService(ctx.db,).resolve({
     command: definition.command,
     category: definition.category,
@@ -155,6 +163,7 @@ const runInteraction = async (
         )
       : undefined,
   },);
+
   return {
     systemMessage: resolution.systemMessage,
     action: "interaction-resolved",

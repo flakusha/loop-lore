@@ -32,6 +32,7 @@ async function ensureWorld(worldId: string,): Promise<void> {
   await insertWorlds(db, "user-1", `World ${worldId}`, { id: worldId, } as never,);
   knownWorlds.add(worldId,);
 }
+
 /** Resolve the registered /quest handler. */
 function questHandler(): (args: string[], ctx: CommandContext,) => Promise<CommandResult> {
   const handler = getCommand("quest",);
@@ -72,6 +73,7 @@ async function seedQuest(
     narrative_hooks: "[]",
     config: "{}",
   } as never,);
+
   return id;
 }
 
@@ -90,6 +92,7 @@ describe("/quest list", () => {
       target: 5,
       priority: 60,
     },);
+
     await seedQuest(worldId, "Completed errand", { status: QuestStatus.Completed, },);
     await seedQuest("other-world", "Foreign quest", {},);
 
@@ -111,6 +114,7 @@ describe("/quest list", () => {
       description: "d".repeat(180,),
       target: 0,
     },);
+
     const result = await questHandler()(["list",], ctxFor(worldId,),);
     expect(result.systemMessage,).toContain("- **Open-ended vow**\n",);
     expect(result.systemMessage,).not.toContain("/0)",);
@@ -139,6 +143,7 @@ describe("/quest create", () => {
       ["create", "Defeat", "the", "dragon",],
       ctxFor("world-create",),
     );
+
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("**Quest created:** Defeat the dragon",);
     expect(result.action,).toBe("create-quest",);

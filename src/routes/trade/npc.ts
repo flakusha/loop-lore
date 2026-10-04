@@ -30,6 +30,7 @@ export function npcTradeRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
           sellerItems: TradeLine[];
           price: number;
         };
+
         const denied = await resolveActorAccess(opts.database, body.buyerActorId, userId,);
         if (denied) { return denied; }
         const res = await opts.svc().buyFromNpc({
@@ -39,6 +40,7 @@ export function npcTradeRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
           sellerItems: body.sellerItems,
           price: body.price,
         },);
+
         if (!res.success) { return badRequestResponse(res.reason ?? "Trade failed",); }
         return jsonResponse({ ok: true, ...res, },);
       }, {
@@ -72,6 +74,7 @@ export function npcTradeRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
           buyerItems: TradeLine[];
           price: number;
         };
+
         const denied = await resolveActorAccess(opts.database, body.sellerActorId, userId,);
         if (denied) { return denied; }
         const res = await opts.svc().sellToNpc({
@@ -81,6 +84,7 @@ export function npcTradeRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
           buyerItems: body.buyerItems,
           price: body.price,
         },);
+
         if (!res.success) { return badRequestResponse(res.reason ?? "Trade failed",); }
         return jsonResponse({ ok: true, ...res, },);
       }, {

@@ -62,12 +62,14 @@ describe("world channels routes", () => {
       ownerId,
       { id: "wc-chat-a", world_id: worldId, current_location_id: locA, } as never,
     );
+
     await insertChats(
       db,
       "offtopic",
       ownerId,
       { id: "wc-chat-b", world_id: worldId, current_location_id: locB, } as never,
     );
+
     await insertChatParticipants(db, "wc-chat-a", ownerId,);
     await insertChatParticipants(db, "wc-chat-b", ownerId,);
     await insertChatParticipants(db, "wc-chat-a", memberId,);
@@ -135,6 +137,7 @@ describe("world channels routes", () => {
       ownerId,
       { id: "wc-chat-c", world_id: worldId, current_location_id: locB, } as never,
     );
+
     const res = await getWorldChats(authedApp(memberId,),);
     expect(res.status,).toBe(200,);
     const { data, } = (await res.json()) as { data: ChannelRow[] };

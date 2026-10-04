@@ -71,13 +71,16 @@ export function meRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
                 status: HttpStatus.BadRequest,
               },);
             }
+
             updates.birth_date = body.birthDate;
           }
+
           if (body.settings) {
             const settingsResult = safeJsonStringify(body.settings,);
             if (!settingsResult.ok) {
               return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest, },);
             }
+
             updates.settings = settingsResult.value;
           }
 

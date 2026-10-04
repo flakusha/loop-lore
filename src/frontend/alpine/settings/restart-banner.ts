@@ -23,6 +23,7 @@ export function restartBanner(): Partial<SettingsState> & ThisType<SettingsState
         const res = await apiFetch("/api/v1/admin/system-config", {
           headers: { Accept: "application/json", },
         },);
+
         if (!res.ok) { return; }
         const rows = await res.json() as { key: string; requires_restart?: boolean }[];
         this.pendingRestartKeys = rows

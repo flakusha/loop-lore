@@ -9,6 +9,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("world_items",)
     .addColumn("properties", "text", (col,) => col.notNull().defaultTo("{}",),)
     .execute();
+
   await database.schema.alterTable("world_items",).addColumn("max_durability", "integer",).execute();
   await database.schema.alterTable("world_items",).addColumn("current_durability", "integer",).execute();
   await database.schema

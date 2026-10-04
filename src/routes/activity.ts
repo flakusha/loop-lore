@@ -59,6 +59,7 @@ export async function computeActivity(
     .select(["id", "name",],)
     .where("id", "in", chatIds,)
     .execute();
+
   const chatNames = new Map(Array.from(chats, (c,) => [c.id, c.name,],),);
 
   const latestMessages = await database
@@ -68,12 +69,14 @@ export async function computeActivity(
     .where("visibility", "=", "visible",)
     .groupBy("chat_id",)
     .execute();
+
   const latestByChat = new Map(Array.from(latestMessages, (m,) => [m.chat_id, m.latest_created as string | null,],),);
 
   const lastReadIds: string[] = [];
   for (const v of lastReadByChat.values()) {
     if (v) { lastReadIds.push(v,); }
   }
+
   const lastReadMap = new Map<string, string>();
   if (lastReadIds.length > 0) {
     const lastReadMsgs = await database
@@ -81,6 +84,7 @@ export async function computeActivity(
       .select(["id", "created_at",],)
       .where("id", "in", lastReadIds,)
       .execute();
+
     for (const msg of lastReadMsgs) {
       lastReadMap.set(msg.id, msg.created_at,);
     }

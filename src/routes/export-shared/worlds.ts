@@ -33,5 +33,6 @@ export async function exportWorldsToZip(ctx: ExportContext,): Promise<void> {
       size: content.length,
     },);
   }
+
   ctx.counts.worlds = worlds.length;
 }

@@ -41,6 +41,7 @@ describe("flattenTranslations", () => {
       common: { save: "Save", cancel: "Cancel", },
       auth: { login: "Log In", },
     };
+
     const result = flattenTranslations(map,);
 
     expect(result.get("common.save",),).toBe("Save",);

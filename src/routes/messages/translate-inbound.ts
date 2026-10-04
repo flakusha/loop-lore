@@ -30,11 +30,13 @@ export async function translateInboundContent(
     .select("story_state",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   const outcome = await autoTranslateText({
     text: filteredContent,
     storyState: storyRow?.story_state ?? null,
     chatId,
     deps: await buildTranslateDeps(database, config, actorId,),
   },);
+
   return outcome.text;
 }

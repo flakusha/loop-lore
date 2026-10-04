@@ -94,6 +94,7 @@ export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
           const body = (await res.json()) as { error?: string };
           if (body?.error) { message = body.error; }
         } catch { /* non-JSON error body — keep generic message */ }
+
         this._ownershipError = message;
         return;
       }
@@ -104,6 +105,7 @@ export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
         previousOwnerId: string;
         autoInvited: boolean;
       };
+
       log.info("ownership transferred", {
         chatId: this.activeChat,
         previousOwnerId: json.previousOwnerId,
@@ -122,6 +124,7 @@ export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
         chatId: this.activeChat,
         error: err instanceof Error ? err.message : String(err,),
       },);
+
       this._ownershipError = err instanceof Error ? err.message : String(err,);
     } finally {
       this._ownershipSubmitting = false;

@@ -33,6 +33,7 @@ beforeEach(() => {
     calls.push({ url, opts: opts ?? {}, },);
     return handler(url, opts,);
   };
+
   g.showToast = (type, message,) => {
     toasts.push({ type: type as string, message: message as string, },);
   };
@@ -61,6 +62,7 @@ describe("capabilitiesState fetch", () => {
       loadingCapabilities: false,
       capabilityFilter: "p1",
     };
+
     await capabilitiesState.loadModelCapabilities!.call(ctx,);
     expect(calls[0]!.url,).toBe("/api/v1/admin/model-capabilities?provider=p1",);
     expect(ctx.modelCapabilities,).toEqual([],);
@@ -71,9 +73,11 @@ describe("capabilitiesState fetch", () => {
       loadingCapabilities: false,
       capabilityFilter: "",
     };
+
     handler = async () => {
       throw new Error("offline",);
     };
+
     await capabilitiesState.loadModelCapabilities!.call(stale,);
     expect(stale.modelCapabilities,).toHaveLength(1,);
     expect(stale.modelCapabilities[0],).toMatchObject({ providerId: "old", },);
@@ -87,8 +91,10 @@ describe("capabilitiesState fetch", () => {
       if (url.includes("/api/v1/admin/model-capabilities/p/m",) && n === 1) {
         return Response.json({ ok: true, }, { status: 200, },);
       }
+
       return Response.json({ capabilities: [], }, { status: 200, },);
     };
+
     const ctx = { ...capabilitiesState, loadModelCapabilities: capabilitiesState.loadModelCapabilities, };
     await capabilitiesState.saveCapabilityOverride!.call(ctx, "p", "m", { notes: "x", },);
     expect(toasts[0]?.type,).toBe("success",);
@@ -101,6 +107,7 @@ describe("capabilitiesState fetch", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     const ctx = { ...capabilitiesState, };
     await capabilitiesState.clearCapabilityOverride!.call(ctx, "p", "m",);
     expect(toasts[0]?.type,).toBe("error",);
@@ -113,8 +120,10 @@ describe("providerState fetch", () => {
       if (url === "/api/v1/admin/providers") {
         return Response.json({ providers: [{ name: "p1", }, { name: "p2", },], },);
       }
+
       return Response.json({ models: [{ id: `${url}-m`, },], },);
     };
+
     const ctx = { ...providerState, providers: [], providerModels: {}, loadingModels: false, };
     await providerState.loadModels!.call(ctx,);
     expect(ctx.providers,).toHaveLength(2,);
@@ -126,6 +135,7 @@ describe("providerState fetch", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     const ctx = { ...providerState, providerModels: {}, };
     await expect(providerState.loadProviderModels!.call(ctx, "p1",),).resolves.toBeUndefined();
     expect((ctx.providerModels as Record<string, unknown>)["p1"],).toBeUndefined();
@@ -136,14 +146,17 @@ describe("providerState fetch", () => {
       if (url === "/api/v1/admin/providers/rescan") {
         return Response.json({ providers: [{ name: "p1", status: "up", modelCount: 3, },], },);
       }
+
       return Response.json({ models: [], },);
     };
+
     const ctx = {
       ...providerState,
       providers: [{ name: "p1", label: "P1", capabilities: {}, status: "down", modelCount: 0, },],
       providerModels: {},
       scanning: false,
     };
+
     await providerState.rescanProviders!.call(ctx,);
     expect(ctx.providers[0],).toMatchObject({ name: "p1", status: "up", modelCount: 3, },);
     expect(ctx.scanning,).toBe(false,);
@@ -166,12 +179,14 @@ describe("roleState fetch", () => {
       overrides: { chat: { provider: "p1", model: "m1", temperature: 0.5, maxTokens: null, }, },
       validRoles: ["chat", "caption",],
     },);
+
     const ctx = { ...roleState, modelRoleList: [], overrides: {}, roleTuning: {}, };
     await roleState.loadModelRoles!.call(ctx,);
     expect(ctx.modelRoleList,).toEqual([
       { role: "chat", provider: "p1", model: "m1", },
       { role: "caption", provider: "", model: "", },
     ] as never,);
+
     expect((ctx.roleTuning as Record<string, unknown>)["chat"],).toEqual({ temperature: "0.5", maxTokens: "", },);
   });
 
@@ -189,6 +204,7 @@ describe("roleState fetch", () => {
       roleTuning: { chat: { temperature: "", maxTokens: "100", }, },
       loadModelRoles: async () => {},
     };
+
     await roleState.saveModelRole!.call(ctx, "chat",);
     expect(calls[0]!.url,).toBe("/api/v1/admin/model-roles/chat",);
     expect(JSON.parse(calls[0]!.opts.body as string,),).toMatchObject({
@@ -208,6 +224,7 @@ describe("roleState fetch", () => {
         reloaded++;
       },
     };
+
     await roleState.clearModelRole!.call(ctx, "chat",);
     expect(reloaded,).toBe(1,);
     expect(toasts[0]?.type,).toBe("success",);
@@ -232,6 +249,7 @@ describe("pluginState fetch", () => {
         reloaded++;
       },
     };
+
     await pluginState.togglePlugin!.call(ctx, "pl", true,);
     expect(calls[0]!.url,).toBe("/api/v1/plugins/pl/enable",);
     expect(reloaded,).toBe(1,);
@@ -259,6 +277,7 @@ describe("sdState fetch", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     const ctx = { ...sdState, sdStatus: "running", };
     await sdState.loadSdStatus!.call(ctx,);
     expect(ctx.sdStatus,).toBe("unknown",);
@@ -274,6 +293,7 @@ describe("sdState fetch", () => {
       { key: "comfyui_enabled", value: "true", },
       { key: "unknown_key", value: "zzz", },
     ],);
+
     const ctx = {
       ...sdState,
       sdConfig: {
@@ -286,6 +306,7 @@ describe("sdState fetch", () => {
       },
       comfyuiConfig: { url: "http://localhost:8188", enabled: false, },
     };
+
     await sdState.loadSdConfig!.call(ctx,);
     expect(ctx.sdConfig.port,).toBe(9012,);
     expect(ctx.sdConfig.modelType,).toBe("lora",);
@@ -302,6 +323,7 @@ describe("sdState fetch", () => {
       sdConfig: { enabled: true, port: 9010, modelPath: "", modelType: "c", llmPath: "", preferredBackend: "b", },
       comfyuiConfig: { url: "u", enabled: false, },
     };
+
     await sdState.loadSdConfig!.call(ctx,);
     expect(ctx.sdConfig.port,).toBe(9010,);
   });
@@ -320,6 +342,7 @@ describe("sdState fetch", () => {
       },
       comfyuiConfig: { url: "http://localhost:8188", enabled: false, },
     };
+
     await sdState.saveSdConfig!.call(ctx,);
     expect(calls,).toHaveLength(7,);
     expect(JSON.parse(calls[0]!.opts.body as string,),).toMatchObject({ key: "sd_enabled", },);

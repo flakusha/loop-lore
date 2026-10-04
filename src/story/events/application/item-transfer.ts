@@ -54,14 +54,17 @@ export async function applyItemTransfer(
       .where("name", "like", `%${itemName}%`,)
       .limit(2,)
       .execute();
+
     // Only act when the fuzzy match is unambiguous.
     if (fuzzy.length === 1) { def = fuzzy[0]; }
   }
+
   if (!def) {
     getLogger().child({ module: "event-apply", },).warn(
       "item_transfer: no unambiguous matching item definition; skipping",
       { worldId, itemName, },
     );
+
     return;
   }
 
@@ -75,6 +78,7 @@ export async function applyItemTransfer(
       .where("owner_actor_id", "=", fromActorId,)
       .executeTakeFirst()
     : null;
+
   if (!source && event.locationId) {
     source = await db
       .selectFrom("world_items",)
@@ -84,11 +88,13 @@ export async function applyItemTransfer(
       .where("location_id", "=", event.locationId,)
       .executeTakeFirst();
   }
+
   if (!source) {
     getLogger().child({ module: "event-apply", },).warn(
       "item_transfer: no source instance found; skipping",
       { worldId, itemId: def.id, fromActorId, },
     );
+
     return;
   }
 

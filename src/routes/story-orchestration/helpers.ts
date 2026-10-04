@@ -77,6 +77,7 @@ export async function latestOpenTurn(
     .orderBy("created_at", "desc",)
     .limit(1,)
     .execute();
+
   const latest = rows[0];
   if (!latest || TURN_TERMINAL_STATUSES.includes(latest.status,)) { return null; }
   return latest;
@@ -118,6 +119,7 @@ export function createGm(
       ? { escalationThreshold: parsed.escalationThreshold, }
       : {}),
   };
+
   const generateText: GenerateTextFn = async (params,) => {
     const resolved = await resolveProvider({
       userId,
@@ -126,14 +128,17 @@ export function createGm(
       provider: params.provider || undefined,
       model: params.model || undefined,
     },);
+
     const response = await resolved.provider.complete({
       model: resolved.resolvedModel,
       messages: params.messages,
       apiKey: resolved.resolvedApiKey,
       params: { temperature: params.temperature ?? 0.9, maxTokens: params.maxTokens ?? 2048, },
     },);
+
     return response.content;
   };
+
   return new GameMasterService({
     db,
     chatId,

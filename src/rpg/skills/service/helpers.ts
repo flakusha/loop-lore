@@ -46,18 +46,23 @@ export function calculateProficiency(xp: number,): ProficiencyLevel {
   if (xp >= PROFICIENCY_THRESHOLDS[ProficiencyLevel.Grandmaster]) {
     return ProficiencyLevel.Grandmaster;
   }
+
   if (xp >= PROFICIENCY_THRESHOLDS[ProficiencyLevel.Master]) {
     return ProficiencyLevel.Master;
   }
+
   if (xp >= PROFICIENCY_THRESHOLDS[ProficiencyLevel.Expert]) {
     return ProficiencyLevel.Expert;
   }
+
   if (xp >= PROFICIENCY_THRESHOLDS[ProficiencyLevel.Journeyman]) {
     return ProficiencyLevel.Journeyman;
   }
+
   if (xp >= PROFICIENCY_THRESHOLDS[ProficiencyLevel.Apprentice]) {
     return ProficiencyLevel.Apprentice;
   }
+
   return ProficiencyLevel.Novice;
 }
 

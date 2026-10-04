@@ -71,6 +71,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             ],)
             .where("chat_participants.chat_id", "=", id,)
             .execute();
+
           return jsonResponse(participants,);
         },
         { params: ChatIdParams, },
@@ -89,6 +90,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
+
           if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
@@ -109,6 +111,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             actorId: body.actorId,
             role: body.role ?? ChatParticipantRole.Member,
           },);
+
           if ("code" in result) {
             const status = result.code === "not_found" ? HttpStatus.NotFound : HttpStatus.BadRequest;
             return jsonError(result.message, status, result.code as never,);
@@ -171,6 +174,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
+
           if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
@@ -179,18 +183,21 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (typeof body.talkativity === "number") {
             updates.talkativity = Math.min(10, Math.max(1, body.talkativity,),);
           }
+
           if (typeof body.initiative === "number") { updates.initiative = body.initiative; }
           if (typeof body.role === "string") { updates.role_in_chat = body.role; }
 
           if (Object.keys(updates,).length === 0) {
             return jsonError({ message: "No valid fields to update", status: HttpStatus.BadRequest, },);
           }
+
           await database
             .updateTable("chat_participants",)
             .set(updates,)
             .where("chat_id", "=", id,)
             .where("actor_id", "=", actorId,)
             .execute();
+
           return jsonResponse({ ok: true, },);
         },
         { params: ChatParticipantParams, body: ChatParticipantUpdateBody, },
@@ -208,6 +215,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
+
           if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }

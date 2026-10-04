@@ -35,6 +35,7 @@ try {
 } catch {
   createLogger({ level: "error", },);
 }
+
 const log = getLogger().child({ module: "agency/actor-story-points-cache", },);
 
 /**

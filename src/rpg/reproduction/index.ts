@@ -115,6 +115,7 @@ export class ReproductionService {
     ) {
       return null;
     }
+
     if (carrierCap.requiresHeat && carrierRow.currentPhase !== "heat") { return null; }
     // Contraceptive guard: an active contraceptive row blocks conception.
     const guard = await this.db
@@ -130,6 +131,7 @@ export class ReproductionService {
       )
       .select("id",)
       .executeTakeFirst();
+
     if (guard) { return null; }
     // Fertility boost from heat effects (human baseline: 1).
     let fertility = 1;
@@ -139,6 +141,7 @@ export class ReproductionService {
     } catch {
       fertility = 1;
     }
+
     const dc = 100 - (15 + Math.floor(fertility * 10,));
     const roll = rollDice(100, 1,).rawTotal;
     if (roll < dc) { return null; }
@@ -166,6 +169,7 @@ export class ReproductionService {
         },),
       },)
       .execute();
+
     log.info(`Pregnancy conceived: carrier ${carrierId} (encounter ${encounter.id})`,);
     return id;
   }
@@ -201,8 +205,10 @@ export class ReproductionService {
           meta: jsonStringifyOr({ event: COMPLICATION_EVENT, week: next, },),
         },)
         .execute();
+
       log.warn("Reproductive complication emitted", { actor: characterId, week: next, },);
     }
+
     await this.db
       .updateTable("status_effect",)
       .set({
@@ -217,6 +223,7 @@ export class ReproductionService {
       .where("effect_id", "=", PREGNANCY_EFFECT,)
       .where("category", "=", "pregnancy",)
       .execute();
+
     return { ...status, weeksElapsed: next, };
   }
 

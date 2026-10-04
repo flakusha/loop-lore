@@ -105,6 +105,7 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         if (!bundle) {
           return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
         }
+
         const safeName = (bundle.world.name ?? worldId).replaceAll(/[^a-z0-9]/gi, "_",).toLowerCase();
         return new Response(prettyJson(bundle,), {
           headers: {

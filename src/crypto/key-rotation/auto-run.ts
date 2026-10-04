@@ -62,6 +62,7 @@ export async function runAutoRotation(
         actorId,
         smk,
       );
+
       results.push(result,);
     } catch (error) {
       const errMsg = `Failed to rotate key for actor ${actorId}: ${String(error,)}`;

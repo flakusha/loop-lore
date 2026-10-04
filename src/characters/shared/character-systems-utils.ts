@@ -61,6 +61,7 @@ export function toExportFields(
   for (const [dbCol, exportField,] of fieldMap) {
     result[exportField] = row[dbCol];
   }
+
   return result;
 }
 
@@ -80,6 +81,7 @@ export function toDbFields(
       result[dbCol] = data[exportField];
     }
   }
+
   return result;
 }
 

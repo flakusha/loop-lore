@@ -69,6 +69,7 @@ export function aiActionRoutes(opts: HandlerOpts, prefix = "/api",) {
           actorId,
           userRole: ctx.userRole as string | null,
         },);
+
         if (!loaded.ok) { return loaded.response; }
 
         const result = await callAux(
@@ -78,12 +79,14 @@ export function aiActionRoutes(opts: HandlerOpts, prefix = "/api",) {
           [{ role: "user", content: buildAiActionPrompt(body.action, loaded.plaintext,), },],
           { userId: actorId, chatId, maxTokens: 300, },
         );
+
         if (!result) {
           return jsonResponse(
             { error: "ai_unavailable", message: "AI actions are unavailable (no auxiliary model configured).", },
             503 as HttpStatusCode,
           );
         }
+
         return jsonResponse({ action: body.action, result: result.content, },);
       },
       {

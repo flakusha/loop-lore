@@ -60,8 +60,10 @@ export function resetTestDb(sqlite: Database,): void {
          AND name NOT LIKE '%_fts%'`,
     )
     .all() as { name: string }[];
+
   for (const { name, } of tables) {
     sqlite.run(`DELETE FROM "${name}"`,);
   }
+
   sqlite.run("PRAGMA foreign_keys = ON",);
 }

@@ -48,6 +48,7 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
         settings: "{}",
       },)
       .execute();
+
     // Location auto-chat inserts userId as actor_id in chat_participants
     // (FK → actors.id) — user must have a matching actor row.
     await db
@@ -87,10 +88,12 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
         body: JSON.stringify(body,),
       },),
     );
+
     const parsed = (await res.json()) as unknown;
     if (!parsed || typeof parsed !== "object") {
       return { status: res.status, body: {}, };
     }
+
     return { status: res.status, body: parsed as Record<string, unknown>, };
   }
 
@@ -109,6 +112,7 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
     const delRes = await app.handle(
       new Request(`${BASE}/api/worlds/${worldId}/locations/${locId}`, { method: "DELETE", },),
     );
+
     expect(delRes.status,).toBe(204,);
 
     const states = await db
@@ -116,6 +120,7 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
       .select("id",)
       .where("location_id", "=", locId,)
       .execute();
+
     expect(states,).toHaveLength(0,);
 
     const loc = await db
@@ -123,6 +128,7 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
       .select("id",)
       .where("id", "=", locId,)
       .executeTakeFirst();
+
     expect(loc,).toBeUndefined();
   });
 
@@ -141,6 +147,7 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
       .select(db.fn.countAll<number>().as("total",),)
       .where("name", "=", "Crossroads",)
       .executeTakeFirst();
+
     expect(count?.total,).toBe(0,);
   });
 
@@ -162,6 +169,7 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
       .select("connections",)
       .where("id", "=", locId,)
       .executeTakeFirst();
+
     expect(row?.connections,).toBe(JSON.stringify([otherId,],),);
     // Stored value must round-trip as strings only.
     const stored = JSON.parse(row?.connections ?? "[]",) as unknown[];
@@ -192,6 +200,7 @@ describe("locationRoutes — list q filter", () => {
         settings: "{}",
       },)
       .execute();
+
     await db
       .insertInto("actors",)
       .values({

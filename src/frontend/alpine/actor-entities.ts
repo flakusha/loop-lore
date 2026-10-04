@@ -111,6 +111,7 @@ const emptyForm = (kind: EntityKind,): Record<string, string> => {
   for (const f of KIND_CONFIG[kind].fields) { out[f.key] = ""; }
   return out;
 };
+
 /** Build a state with defaults for a given kind, no auto-load. Exported so
  * tests can avoid the factory's auto `load()` side effect. */
 export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
@@ -146,6 +147,7 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
       const v = row[f.key];
       next[f.key] = v === null || v === undefined ? "" : String(v,);
     }
+
     this.form = next;
     this.editingId = row.id;
   },
@@ -161,6 +163,7 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
         this.rowsError = t("status.entitiesLoadFailed",);
         return;
       }
+
       const body = (await res.json()) as { data?: ActorEntityRow[] };
       this.rows = Array.isArray(body.data,) ? body.data : [];
     } catch (error) {
@@ -186,18 +189,22 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
           payload[f.key] = this.form[f.key];
         }
       }
+
       const res = await apiFetch(`/api/v1/actors/${actorId}/${this._entKind}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(payload,),
       },);
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({} as Record<string, unknown>)) as {
           message?: string;
         };
+
         this.rowsError = body.message ?? t("status.entitiesCreateFailed",);
         return;
       }
+
       this.resetForm();
       await this.load();
     } catch (error) {
@@ -224,15 +231,18 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
           payload[f.key] = this.form[f.key];
         }
       }
+
       const res = await apiFetch(`/api/v1/actors/${actorId}/${this._entKind}/${editingId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(payload,),
       },);
+
       if (!res.ok) {
         this.rowsError = t("status.entitiesSaveFailed",);
         return;
       }
+
       this.resetForm();
       await this.load();
     } catch (error) {

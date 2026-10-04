@@ -99,6 +99,7 @@ function rareDownshift(rarity: ItemRarity, partyLevel: number,): ItemRarity | nu
     if (idx <= 0) { return null; }
     current = RARITY_ORDER[idx - 1]!;
   }
+
   return current;
 }
 
@@ -156,6 +157,7 @@ export function enforceLootBudget(
         dropped.push(row,);
         continue;
       }
+
       allowed.push({ ...row, rarity: shifted, },);
       continue;
     }
@@ -165,6 +167,7 @@ export function enforceLootBudget(
       const result = evaluate(m.caps, props, party.world, row.category === "weapon" ? "equip" : "use",);
       return result.allowed;
     },);
+
     if (!anyMemberCanUse) {
       dropped.push(row,);
       continue;
@@ -176,6 +179,7 @@ export function enforceLootBudget(
   const reason = dropped.length === 0
     ? "all loot in budget and afforded"
     : `dropped ${dropped.length} item(s) due to rarity band or party capability`;
+
   return { allowed, dropped, reason, };
 }
 

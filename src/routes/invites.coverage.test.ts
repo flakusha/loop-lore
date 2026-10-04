@@ -95,6 +95,7 @@ describe("invitesRoutes coverage", () => {
         body: JSON.stringify(body,),
       },),
     );
+
     expect(res.status,).toBe(201,);
     return (await res.json()) as InviteBody;
   }
@@ -108,16 +109,19 @@ describe("invitesRoutes coverage", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(create.status,).toBe(401,);
     const list = await app.handle(new Request(`http://localhost/api/chats/${chatId}/invites`,),);
     expect(list.status,).toBe(401,);
     const revoke = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/invites/${uid()}`, { method: "DELETE", },),
     );
+
     expect(revoke.status,).toBe(401,);
     const join = await app.handle(
       new Request("http://localhost/api/invites/abc/join", { method: "POST", },),
     );
+
     expect(join.status,).toBe(401,);
   });
 
@@ -141,6 +145,7 @@ describe("invitesRoutes coverage", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(denied.status,).toBe(404,);
     const app = makeApp(db, owner, "user",);
     const missing = await app.handle(
@@ -150,6 +155,7 @@ describe("invitesRoutes coverage", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(missing.status,).toBe(404,);
   });
 
@@ -165,10 +171,12 @@ describe("invitesRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/invites/${invite.id}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
     const again = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/invites/${invite.id}`, { method: "DELETE", },),
     );
+
     // Revoking twice stays 204 (idempotent revoke path).
     expect(again.status,).toBe(204,);
   });
@@ -180,6 +188,7 @@ describe("invitesRoutes coverage", () => {
     const res = await other.handle(
       new Request(`http://localhost/api/chats/${chatId}/invites/${invite.id}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -190,6 +199,7 @@ describe("invitesRoutes coverage", () => {
     const first = await joinApp.handle(
       new Request(`http://localhost/api/invites/${invite.code}/join`, { method: "POST", },),
     );
+
     expect(first.status,).toBe(200,);
     const firstBody = (await first.json()) as { chatId: string; alreadyMember: boolean };
     expect(firstBody.chatId,).toBe(chatId,);
@@ -197,6 +207,7 @@ describe("invitesRoutes coverage", () => {
     const second = await joinApp.handle(
       new Request(`http://localhost/api/invites/${invite.code}/join`, { method: "POST", },),
     );
+
     expect(second.status,).toBe(200,);
     const secondBody = (await second.json()) as { alreadyMember: boolean };
     expect(secondBody.alreadyMember,).toBe(true,);
@@ -207,15 +218,18 @@ describe("invitesRoutes coverage", () => {
     const unknown = await app.handle(
       new Request("http://localhost/api/invites/does-not-exist/join", { method: "POST", },),
     );
+
     expect(unknown.status,).toBe(404,);
     const ownerApp = makeApp(db, owner, "user",);
     const invite = await createInvite(ownerApp,);
     await ownerApp.handle(
       new Request(`http://localhost/api/chats/${chatId}/invites/${invite.id}`, { method: "DELETE", },),
     );
+
     const revoked = await app.handle(
       new Request(`http://localhost/api/invites/${invite.code}/join`, { method: "POST", },),
     );
+
     expect(revoked.status,).toBe(404,);
   });
 
@@ -227,8 +241,10 @@ describe("invitesRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/invites/${invite.code}/join`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(410,);
   });
+
   test("join 410 once maxUses is exhausted", async () => {
     // Fresh chat: neither joiner is a member, so both redemptions consume a use.
     const freshChat = uid();
@@ -239,11 +255,13 @@ describe("invitesRoutes coverage", () => {
     const ok = await first.handle(
       new Request(`http://localhost/api/invites/${invite.code}/join`, { method: "POST", },),
     );
+
     expect(ok.status,).toBe(200,);
     const second = makeApp(db, lateJoiner, "user",);
     const gone = await second.handle(
       new Request(`http://localhost/api/invites/${invite.code}/join`, { method: "POST", },),
     );
+
     expect(gone.status,).toBe(410,);
   });
 });

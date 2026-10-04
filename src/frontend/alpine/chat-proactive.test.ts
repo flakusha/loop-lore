@@ -59,6 +59,7 @@ function buildCtx(overrides: {
     stopProactiveScheduler: () => {},
     tickProactive: async () => {},
   };
+
   ctx.startProactiveScheduler = chatProactive.startProactiveScheduler!.bind(ctx,);
   ctx.stopProactiveScheduler = chatProactive.stopProactiveScheduler!.bind(ctx,);
   ctx.tickProactive = chatProactive.tickProactive!.bind(ctx,);
@@ -80,6 +81,7 @@ describeOrSkip("chatProactive — scheduler", () => {
       Response.json(due, { status: 200, },),
       Response.json({ triggered: true, }, { status: 200, },),
     ];
+
     let i = 0;
     fetchHandler = () => responses[Math.min(i++,)] ?? new Response("{}", { status: 200, },);
     const ctx = buildCtx();
@@ -100,6 +102,7 @@ describeOrSkip("chatProactive — scheduler", () => {
       Response.json(configs, { status: 200, },),
       Response.json(notDue, { status: 200, },),
     ];
+
     let i = 0;
     fetchHandler = () => responses[Math.min(i++,)] ?? new Response("{}", { status: 200, },);
     const ctx = buildCtx();

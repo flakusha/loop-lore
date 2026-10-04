@@ -97,6 +97,7 @@ export async function findByIdempotencyKey(
     .where("chat_id", "=", chatId,)
     .where("idempotency_key", "=", idempotencyKey,)
     .executeTakeFirst();
+
   return row?.id ?? null;
 }
 
@@ -124,10 +125,12 @@ export async function insertUserMessageWithRetry(
           .where("chat_id", "=", input.chatId,)
           .where("parent_id", "=", input.parentId,)
           .executeTakeFirst();
+
         swipeIndex = (maxSwipe?.max_idx ?? 0) + 1;
       } else {
         swipeIndex = null;
       }
+
       await database
         .insertInto("messages",)
         .values({
@@ -148,12 +151,14 @@ export async function insertUserMessageWithRetry(
           swipe_index: swipeIndex,
         },)
         .execute();
+
       lastError = undefined;
       break;
     } catch (err) {
       lastError = err;
     }
   }
+
   if (lastError !== undefined) { throw new SwipeInsertExhaustedError(); }
   return { id: input.id, swipeIndex, };
 }

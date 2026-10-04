@@ -118,6 +118,7 @@ export async function handleGetPersona({ database, personaId, context, }: GetPer
   if (!persona) {
     return jsonError({ message: "Persona not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
   }
+
   return jsonResponse(persona,);
 }
 
@@ -167,11 +168,13 @@ export async function handleUpdatePersona({
     if (error instanceof Error && error.message === "Persona not found") {
       return jsonError({ message: "Persona not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
     }
+
     getLogger().error({
       msg: "Persona update failed",
       personaId,
       detail: error instanceof Error ? error.message : String(error,),
     },);
+
     return jsonError({
       message: "Failed to update persona",
       status: HttpStatus.InternalServerError,
@@ -229,11 +232,13 @@ export async function handleConvertToCharacter({ database, personaId, context, }
     if (error instanceof Error && error.message === "Persona not found") {
       return jsonError({ message: "Persona not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
     }
+
     getLogger().error({
       msg: "Persona conversion failed",
       personaId,
       detail: error instanceof Error ? error.message : String(error,),
     },);
+
     return jsonError({
       message: "Conversion failed",
       status: HttpStatus.InternalServerError,

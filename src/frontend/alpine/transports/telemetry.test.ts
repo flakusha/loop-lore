@@ -124,6 +124,7 @@ describe("TelemetryTransport curated gate", () => {
     for (let i = 0; i < MAX_EVENTS_PER_SESSION + 2; i++) {
       await transport.write(makeEntry(40, `event-${i}`,),);
     }
+
     expect(bodies.length,).toBe(MAX_EVENTS_PER_SESSION,);
   });
 });

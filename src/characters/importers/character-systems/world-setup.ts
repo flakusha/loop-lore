@@ -43,6 +43,7 @@ export async function importWorldSetup(
       systemPromptOverride: data.systemPromptOverride ?? null,
       initialState: data.initialState ?? {},
     },);
+
     result.worldSetupImported = true;
   } catch (error: unknown) {
     result.errors.push(`Failed to import world setup: ${errMsg(error,)}`,);

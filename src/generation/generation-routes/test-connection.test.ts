@@ -29,6 +29,7 @@ afterAll(() => {
   unregisterProvider("test-conn-degraded",);
   unregisterProvider("test-conn-throwing",);
 },);
+
 describe("handleTestConnection", () => {
   it("returns 401 when the request is unauthenticated", async () => {
     const response = await handleTestConnection({ provider: "anything", },);
@@ -55,6 +56,7 @@ describe("handleTestConnection", () => {
       undefined,
       "user-1",
     );
+
     expect(response.status,).toBe(404,);
     const data = (await response.json()) as Record<string, unknown>;
     expect(data.error,).toBe('Provider "no-such-provider" not found',);
@@ -72,6 +74,7 @@ describe("handleTestConnection", () => {
       undefined,
       "user-1",
     );
+
     expect(response.status,).toBe(200,);
     const data = (await response.json()) as Record<string, unknown>;
     expect(data.ok,).toBe(true,);
@@ -89,6 +92,7 @@ describe("handleTestConnection", () => {
       undefined,
       "user-1",
     );
+
     const data = (await response.json()) as Record<string, unknown>;
     expect(data.ok,).toBe(false,);
     expect(data.status,).toBe("degraded",);
@@ -104,6 +108,7 @@ describe("handleTestConnection", () => {
       undefined,
       "user-1",
     );
+
     expect(response.status,).toBe(200,);
     const data = (await response.json()) as Record<string, unknown>;
     expect(data.ok,).toBe(false,);

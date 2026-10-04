@@ -275,6 +275,7 @@ describe("lorebook import database operations", () => {
       .where("actor_id", "=", actorId,)
       .selectAll()
       .execute();
+
     expect(entries,).toHaveLength(1,);
 
     // Delete actor (should cascade)
@@ -289,6 +290,7 @@ describe("lorebook import database operations", () => {
       .where("actor_id", "=", actorId,)
       .selectAll()
       .execute();
+
     expect(entries,).toHaveLength(0,);
   });
 });

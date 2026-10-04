@@ -30,6 +30,7 @@ function makeApp(userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(blogRoutes({ database: db, },),);
 }
 

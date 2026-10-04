@@ -116,6 +116,7 @@ export async function listMessages(
       if (!groups.has(pid,)) { groups.set(pid, [],); }
       groups.get(pid,)!.push({ id: s.id, swipeIndex: s.swipe_index, createdAt: s.created_at, },);
     }
+
     for (const [pid, items,] of groups) {
       variantCounts.set(pid, items.length,);
       for (const [idx, item,] of items.entries()) { variantIndexes.set(item.id, idx,); }

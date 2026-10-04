@@ -56,6 +56,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     ON prompt_templates (model_family, modality)
     WHERE is_default = 'default' AND model_family IS NOT NULL
   `.execute(database,);
+
   await sql`
     CREATE UNIQUE INDEX uq_prompt_templates_default_global
     ON prompt_templates (modality)
@@ -107,6 +108,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
     )
     WHERE id IN (SELECT id FROM _pt_refs)
   `.execute(database,);
+
   await sql`DROP TABLE _pt_refs`.execute(database,);
 
   await database.schema
@@ -114,6 +116,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
     .on("prompt_templates",)
     .column("owner_id",)
     .execute();
+
   await database.schema
     .createIndex("idx_prompt_templates_modality",)
     .on("prompt_templates",)

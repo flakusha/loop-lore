@@ -60,6 +60,7 @@ export async function insertUserMessageRow(
     idempotencyKey,
     setStatus,
   } = params;
+
   try {
     await database.transaction().execute(async (trx,) => {
       if (parentId !== null) {
@@ -68,15 +69,18 @@ export async function insertUserMessageRow(
           .select("chat_id",)
           .where("id", "=", parentId,)
           .executeTakeFirst();
+
         if (!parent) {
           setStatus(404,);
           throw new ParentMessageNotFoundError();
         }
+
         if (parent.chat_id !== chatId) {
           setStatus(403,);
           throw new ParentMessageNotInChatError();
         }
       }
+
       await insertUserMessageWithRetry(trx, {
         id,
         chatId,
@@ -99,6 +103,7 @@ export async function insertUserMessageRow(
         ),
       };
     }
+
     if (err instanceof ParentMessageNotInChatError) {
       return {
         ok: false,
@@ -108,6 +113,7 @@ export async function insertUserMessageRow(
         ),
       };
     }
+
     if (err instanceof SwipeInsertExhaustedError) {
       return {
         ok: false,
@@ -117,7 +123,9 @@ export async function insertUserMessageRow(
         ),
       };
     }
+
     throw err;
   }
+
   return { ok: true, };
 }

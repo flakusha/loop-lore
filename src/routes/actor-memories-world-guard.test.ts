@@ -52,6 +52,7 @@ describe("actorMemoriesRoutes — world-scope write guard", () => {
         settings: "{}",
       },)
       .execute();
+
     actorId = uid();
     await db
       .insertInto("actors",)
@@ -66,6 +67,7 @@ describe("actorMemoriesRoutes — world-scope write guard", () => {
         import_spec: "{}",
       },)
       .execute();
+
     worldMemId = uid();
     await db
       .insertInto("actor_memories",)
@@ -99,6 +101,7 @@ describe("actorMemoriesRoutes — world-scope write guard", () => {
         body: JSON.stringify({ content: "non-admin world memory", memoryType: "episodic", scope: "world", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -110,6 +113,7 @@ describe("actorMemoriesRoutes — world-scope write guard", () => {
         body: JSON.stringify({ content: "admin world memory", memoryType: "episodic", scope: "world", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const created = (await res.json()) as { id: string };
     const row = await db
@@ -117,6 +121,7 @@ describe("actorMemoriesRoutes — world-scope write guard", () => {
       .select("scope",)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
+
     expect(row.scope,).toBe("world",);
   });
 
@@ -128,6 +133,7 @@ describe("actorMemoriesRoutes — world-scope write guard", () => {
         body: JSON.stringify({ content: "plain character memory", memoryType: "episodic", scope: "character", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 
@@ -139,6 +145,7 @@ describe("actorMemoriesRoutes — world-scope write guard", () => {
         body: JSON.stringify({ pinned: true, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -150,6 +157,7 @@ describe("actorMemoriesRoutes — world-scope write guard", () => {
         body: JSON.stringify({ content: "Canonical world lore (edited)", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -159,6 +167,7 @@ describe("actorMemoriesRoutes — world-scope write guard", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -168,12 +177,14 @@ describe("actorMemoriesRoutes — world-scope write guard", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(204,);
     const gone = await db
       .selectFrom("actor_memories",)
       .select("id",)
       .where("id", "=", worldMemId,)
       .executeTakeFirst();
+
     expect(gone,).toBeUndefined();
   });
 });

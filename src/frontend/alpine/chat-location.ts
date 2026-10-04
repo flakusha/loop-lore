@@ -49,6 +49,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
     if (this._locationFlagTimer) {
       globalThis.clearTimeout(this._locationFlagTimer,);
     }
+
     this._locationFlagTimer = globalThis.setTimeout(() => {
       this._chatRecentLocationChanged = false;
       this._locationFlagTimer = null;
@@ -65,6 +66,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
         this._locations = [];
         return;
       }
+
       const res = await apiFetch(`/api/v1/worlds/${worldId}/location-explorer`,);
       if (res.ok) {
         const body = await res.json();
@@ -76,6 +78,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
       } else {
         this._locations = [];
       }
+
       await this.loadLocationJoinable();
     } catch (error) {
       log.warn("loadLocations failed", { error: String(error,), },);
@@ -92,11 +95,13 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
       world_id?: string | null;
       current_location_id?: string | null;
     } | null;
+
     if (current?.world_id) {
       this._chatWorldId = current.world_id;
       this._chatCurrentLocationId = current.current_location_id ?? null;
       return current.world_id;
     }
+
     try {
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}`,);
       if (!res.ok) { return null; }
@@ -125,6 +130,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "info", message: t("toasts.chatAlreadyInLocation",), },);
       return;
     }
+
     this._locationBusy = true;
     try {
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}/location`, {
@@ -132,6 +138,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ locationId: this._selectedLocationId, },),
       },);
+
       if (res.ok) {
         this._chatCurrentLocationId = this._selectedLocationId;
         this._chatRecentLocationChanged = true;
@@ -163,6 +170,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ locationId: this._selectedLocationId, },),
       },);
+
       if (res.ok) {
         this._chatCurrentLocationId = this._selectedLocationId;
         this._chatRecentLocationChanged = true;
@@ -189,20 +197,24 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
       this._locationJoinableChats = [];
       return;
     }
+
     try {
       const res = await apiFetch(
         `/api/v1/chats/joinable?location=${encodeURIComponent(this._selectedLocationId,)}`,
       );
+
       if (!res.ok) {
         this._locationJoinableChats = [];
         return;
       }
+
       const body = await res.json();
       const data = Array.isArray(body,)
         ? body
         : (body as {
           data?: { chatId: string; chatName: string; participantCount: number; lastActiveAt: string | null }[];
         }).data ?? [];
+
       this._locationJoinableChats = Array.from(data, (r,) => ({
         chatId: r.chatId as string,
         chatName: r.chatName as string,

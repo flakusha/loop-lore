@@ -44,6 +44,7 @@ describe("020_actor_story_points_partial_unique", () => {
     } catch {
       // Logger already initialized — ignore.
     }
+
     const fresh = makeInMemoryDb();
     db = fresh.kysely;
     raw = fresh.raw;
@@ -82,6 +83,7 @@ describe("020_actor_story_points_partial_unique", () => {
         updated_at: "2026-01-01 00:00:00",
       },)
       .execute();
+
     await db
       .insertInto("actor_story_points",)
       .values({
@@ -107,6 +109,7 @@ describe("020_actor_story_points_partial_unique", () => {
       .where("actor_id", "=", "actor-dup",)
       .where("world_id", "is", null,)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     const survivor = rows[0]!;
     expect(survivor.id,).toBe("row-a",);
@@ -136,6 +139,7 @@ describe("020_actor_story_points_partial_unique", () => {
       const msg = err instanceof Error ? err.message : String(err,);
       expect(msg,).toMatch(/UNIQUE/i,);
     }
+
     expect(insertFailed,).toBe(true,);
   });
 
@@ -163,6 +167,7 @@ describe("020_actor_story_points_partial_unique", () => {
         updated_at: "2026-03-01 00:00:00",
       },)
       .execute();
+
     await db
       .insertInto("actor_story_points",)
       .values({
@@ -183,6 +188,7 @@ describe("020_actor_story_points_partial_unique", () => {
       .select("id",)
       .where("actor_id", "=", "actor-revert",)
       .execute();
+
     expect(rows,).toHaveLength(2,);
   });
 });

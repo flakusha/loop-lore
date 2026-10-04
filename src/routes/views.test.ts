@@ -59,6 +59,7 @@ describe("partials redirect without HX-Request", () => {
     const res = await app.handle(
       new Request("http://localhost/partials/modals/settings", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.text();
     expect(body,).not.toContain("<!doctype",);
@@ -96,6 +97,7 @@ describe("views serve with layout wrapping", () => {
     const res = await app.handle(
       new Request("http://localhost/views/chat", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.text();
     expect(body,).not.toContain("<!doctype",);
@@ -125,6 +127,7 @@ describe("chat view mounts modals", () => {
     const res = await app.handle(
       new Request("http://localhost/views/chat", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.text();
     // User preferences modal (was never mounted — bug fix)
@@ -225,6 +228,7 @@ describe("chat list encryption badge", () => {
     const res = await app.handle(
       new Request("http://localhost/dynamic/chats/list", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const html = await res.text();
 

@@ -17,6 +17,7 @@ describe("emitPluginEvent", () => {
       { event: "other", handler: async () => { seen.push(["skip",],); }, },
       { event: "chat.created", handler: async (d: unknown) => { seen.push(["b", d,],); }, },
     ];
+
     const n = await emitPluginEvent(handlers, "chat.created", { id: "1", },);
     expect(n,).toBe(2,);
     expect(seen,).toEqual([["a", { id: "1", },], ["b", { id: "1", },],],);
@@ -30,9 +31,11 @@ describe("emitPluginEvent", () => {
       { event: "e", handler: async () => { throw boom; }, },
       { event: "e", handler: async () => { after = true; }, },
     ];
+
     const n = await emitPluginEvent(handlers, "e", undefined, {
       onError: (error) => { errors.push(error,); },
     },);
+
     expect(n,).toBe(2,);
     expect(after,).toBe(true,);
     expect(errors,).toEqual([boom,],);
@@ -60,6 +63,7 @@ describe("executePluginTool", () => {
       tool({ handler: async (p: Record<string, unknown>) => { got = p; return { content: "ok", metadata: { n: 1, }, }; }, },),
       { q: "hi", },
     );
+
     expect(res,).toEqual({ content: "ok", metadata: { n: 1, }, },);
     expect(got,).toEqual({ q: "hi", },);
   });
@@ -69,6 +73,7 @@ describe("executePluginTool", () => {
       tool({ handler: async () => { throw new Error("bad input",); }, },),
       {},
     );
+
     expect(res.isError,).toBe(true,);
     expect(res.content,).toContain("bad input",);
   });
@@ -78,6 +83,7 @@ describe("executePluginTool", () => {
       tool({ handler: () => { throw new Error("sync input"); }, },),
       {},
     );
+
     expect(res).toEqual({ content: JSON.stringify({ error: "sync input" }), isError: true, });
   });
 
@@ -89,6 +95,7 @@ describe("executePluginTool", () => {
       },),
       {},
     );
+
     expect(res).toEqual({
       content: JSON.stringify({ error: 'Tool "demo" timed out after 5ms', }),
       isError: true,
@@ -103,6 +110,7 @@ describe("getComponentsForMountPoint", () => {
       { type: "tui", name: "b", location: "chat.header", } as const,
       { type: "web", name: "c", location: "chat.sidebar", } as const,
     ];
+
     expect(getComponentsForMountPoint(components, "chat.sidebar",).map((c,) => c.name,),).toEqual(["a", "c",],);
     expect(getComponentsForMountPoint(components, "nowhere",),).toEqual([],);
   });
@@ -149,6 +157,7 @@ describe("routes extension-point override precedence", () => {
       origin: "core",
       directory: "/tmp/a",
     });
+
     registry.register({
       manifest: { name: "b", version: "1", description: "b", author: "t", },
       origin: "community",

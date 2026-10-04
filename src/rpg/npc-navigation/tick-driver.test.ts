@@ -67,6 +67,7 @@ async function makeNpc(
     id: actorId,
     actor_type: "character",
   },);
+
   const schedule: Record<string, unknown> = {};
   if (opts?.movementPattern) { schedule.movementPattern = opts.movementPattern; }
   if (opts?.patrolRoute) { schedule.patrolRoute = opts.patrolRoute; }
@@ -75,6 +76,7 @@ async function makeNpc(
     location_id: locationId,
     schedule: JSON.stringify(schedule,),
   },);
+
   return actorId;
 }
 
@@ -231,14 +233,17 @@ describe("runNpcMovementTick", () => {
         rng: RNG_FIRES,
         governor,
       },);
+
       expect("results" in out,).toBe(true,);
     }
+
     // Third tick: budget exceeded.
     const denied = await runNpcMovementTick(db, worldId, {
       chatId,
       rng: RNG_FIRES,
       governor,
     },);
+
     expect("skipped" in denied && denied.skipped,).toBe("budget",);
     if ("skipped" in denied && denied.skipped === "budget") {
       expect(denied.reason.ok,).toBe(false,);
@@ -264,6 +269,7 @@ describe("runNpcMovementTick", () => {
         rng: RNG_FIRES,
         governor: new AutonomyGovernor(),
       },);
+
       expect("results" in out,).toBe(true,);
       if ("results" in out) {
         expect(out.results[0]!.actorId,).toBe(actorId,);
@@ -295,6 +301,7 @@ describe("runNpcMovementTick", () => {
       rng: RNG_FIRES,
       governor,
     },);
+
     expect("results" in first,).toBe(true,);
 
     // Subsequent ticks within the same window must remain denied.
@@ -304,6 +311,7 @@ describe("runNpcMovementTick", () => {
         rng: RNG_FIRES,
         governor,
       },);
+
       expect("skipped" in out && out.skipped,).toBe("budget",);
     }
   });
@@ -340,6 +348,7 @@ describe("runNpcMovementTick", () => {
       rng: RNG_FIRES,
       governor: new AutonomyGovernor(),
     },);
+
     expect("skipped" in out,).toBe(false,);
 
     // The charged row must be the user-scoped one, holding the user cap.
@@ -348,6 +357,7 @@ describe("runNpcMovementTick", () => {
       .selectAll()
       .where("scope_id", "=", `world:${worldId}`,)
       .execute();
+
     expect(rows.length,).toBe(1,);
     expect(rows[0]!.scope_kind,).toBe("user",);
     expect(rows[0]!.window_count,).toBe(1,);
@@ -376,6 +386,7 @@ describe("runNpcMovementTick", () => {
       rng: RNG_FIRES,
       governor: new AutonomyGovernor(),
     },);
+
     expect("skipped" in out && out.skipped,).toBe("budget",);
   });
 
@@ -386,6 +397,7 @@ describe("runNpcMovementTick", () => {
       chatId,
       rng: RNG_FIRES,
     },);
+
     expect("results" in out,).toBe(true,);
     if ("results" in out) {
       expect(out.results,).toEqual([],);

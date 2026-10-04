@@ -69,6 +69,7 @@ export async function createBrowserTest(
   if (activeBrowserContext) {
     throw new Error("Browser E2E uses process-global app state; create one context per worker process.",);
   }
+
   activeBrowserContext = true;
 
   // Use crypto.randomUUID() so concurrent workers can't collide on
@@ -104,6 +105,7 @@ export async function createBrowserTest(
       const testDir = join("/tmp", testRunId,);
       if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
     }
+
     const failure = teardown.find((result,): result is PromiseRejectedResult => result.status === "rejected");
     if (failure) { throw failure.reason; }
   }
@@ -168,8 +170,10 @@ export async function createBrowserTest(
             svg: "image/svg+xml",
             ico: "image/x-icon",
           };
+
           return new Response(content, { headers: { "Content-Type": mime[ext] ?? "text/plain", }, },);
         }
+
         return new Response("Not found", { status: 404, },);
       },
     },);
@@ -214,8 +218,10 @@ export async function createBrowserTest(
           const closing = page.close().catch(() => {
             abandoned += 1;
           },);
+
           await Promise.race([closing, Bun.sleep(CLOSE_TIMEOUT_MS,),],);
         },),);
+
         openPages.clear();
         if (abandoned > 0) {
           logger.warn(`closeAllPages: ${abandoned} page close(s) abandoned to context teardown`,);

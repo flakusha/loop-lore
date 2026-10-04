@@ -23,6 +23,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(characterAvailabilityRoutes({ database: db, },),);
 }
 
@@ -56,6 +57,7 @@ describe("character-availability routes", () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/availability`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -63,6 +65,7 @@ describe("character-availability routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/api/actors/99999999-9999-4999-8999-999999999999/availability",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -70,6 +73,7 @@ describe("character-availability routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/availability`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -77,6 +81,7 @@ describe("character-availability routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/availability`,),
     );
+
     expect(res.status,).toBe(404,);
     expect((await res.json() as AvailabilityBody).error,).toBeDefined();
   });
@@ -100,6 +105,7 @@ describe("character-availability routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/availability`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as AvailabilityBody;
     expect(body.status,).toBe("available",);
@@ -111,6 +117,7 @@ describe("character-availability routes", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/availability`,),
     );
+
     expect(res.status,).toBe(404,); // member actor has no row yet
   });
 
@@ -118,6 +125,7 @@ describe("character-availability routes", () => {
     const res = await makeApp(db, "solo", "solo",).handle(
       new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/availability`,),
     );
+
     expect(res.status,).toBe(404,); // member actor has no row yet
   });
 
@@ -129,6 +137,7 @@ describe("character-availability routes", () => {
         body: JSON.stringify({ status: "available", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -140,6 +149,7 @@ describe("character-availability routes", () => {
         body: JSON.stringify({ status: "available", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -157,6 +167,7 @@ describe("character-availability routes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
 
     const row = await db
@@ -164,6 +175,7 @@ describe("character-availability routes", () => {
       .select(["actor_id", "status", "usage_policy", "activity_restrictions", "content_policy",],)
       .where("actor_id", "=", MEMBER_ACTOR,)
       .executeTakeFirst();
+
     expect(row?.actor_id,).toBe(MEMBER_ACTOR,);
     expect(row?.status,).toBe("busy",);
     expect(row?.usage_policy,).toBe("personal",);
@@ -179,6 +191,7 @@ describe("character-availability routes", () => {
         body: JSON.stringify({ status: "offline", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as AvailabilityBody;
     expect(body.updated,).toBe(true,);
@@ -189,6 +202,7 @@ describe("character-availability routes", () => {
       .select(["status", "usage_policy",],)
       .where("actor_id", "=", MEMBER_ACTOR,)
       .executeTakeFirst();
+
     expect(row?.status,).toBe("offline",);
     expect(row?.usage_policy,).toBe("personal",); // preserved from prior POST
   });
@@ -197,6 +211,7 @@ describe("character-availability routes", () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/availability`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -204,6 +219,7 @@ describe("character-availability routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/availability`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -211,6 +227,7 @@ describe("character-availability routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/availability`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
     expect((await res.json() as AvailabilityBody).ok,).toBe(true,);
 
@@ -219,6 +236,7 @@ describe("character-availability routes", () => {
       .select("id",)
       .where("actor_id", "=", MEMBER_ACTOR,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 });

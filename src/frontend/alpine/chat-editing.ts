@@ -47,6 +47,7 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ content: this.editContent.trim(), },),
       },);
+
       const msgs = this.messages;
       const msg = msgs.find((m,) => m.id === msgId);
       if (msg) { msg.content = this.editContent.trim(); }
@@ -113,6 +114,7 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     } catch {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedCopy",), },);
     }
+
     button?.blur();
   },
 
@@ -126,6 +128,7 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.selectChatFirst",), },);
       return;
     }
+
     const input = event.target as HTMLInputElement;
     const files = input.files;
     if (!files?.length) { return; }
@@ -154,6 +157,7 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
         },);
       }
     }
+
     input.value = "";
   },
 

@@ -84,6 +84,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
         isPrimary: false,
       },);
+
       return jsonCreated({ id: avatarId, },);
     }, {
       params: ActorIdParams,
@@ -115,6 +116,7 @@ export function characterAvatarsRoutes(opts: HandlerOpts, prefix = "/api",) {
           mood: mood as string | undefined,
         },
       },);
+
       return jsonResponse({ ok: true, },);
     }, {
       params: ActorIdAvatarIdParams,

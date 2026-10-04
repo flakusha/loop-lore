@@ -19,6 +19,7 @@ async function loginAsAdmin(ctx: BrowserTestContext,) {
     // POST lands — benign 401 noise (register-flow convention).
     allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
   },);
+
   try {
     await page.goto(`${ctx.url}/views/login`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     await page.waitForSelector("[data-testid='login-submit']", { timeout: 10_000, },);
@@ -30,6 +31,7 @@ async function loginAsAdmin(ctx: BrowserTestContext,) {
       (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
       { timeout: 30_000, },
     );
+
     await page.click("[data-testid='login-submit']",);
     // The login POST response proves the session cookie was set.
     await loginRes;

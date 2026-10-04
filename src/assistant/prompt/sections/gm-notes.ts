@@ -131,12 +131,14 @@ export const gmNotesSection: SectionBuilder = {
     const assistantRole = ctx.chat.gm_config
       ? jsonParseOr<{ assistantRole?: string }>(ctx.chat.gm_config, {},).assistantRole
       : undefined;
+
     const isGmRole = assistantRole === "gm";
 
     const noteResults = await Promise.allSettled([
       fetchActiveWhitenotes(ctx.db, ctx.chat.id,),
       isGmRole ? fetchUnrevealedShadowNotes(ctx.db, ctx.chat.id,) : Promise.resolve([],),
     ],);
+
     const whitenotesResult = noteResults[0];
     const shadowNotesResult = noteResults[1];
     if (whitenotesResult.status === "rejected") { throw whitenotesResult.reason; }
@@ -150,8 +152,10 @@ export const gmNotesSection: SectionBuilder = {
     if (whitenotes.length > 0) {
       const text = Array.from(whitenotes, (n,) => `- [${n.type}][priority ${n.priority}][${n.scope}] ${n.content}`,)
         .join("\n",);
+
       parts.push(wrapSection("whitenotes", text,),);
     }
+
     if (shadowNotes.length > 0) {
       parts.push(formatShadowSteering(shadowNotes,),);
     }

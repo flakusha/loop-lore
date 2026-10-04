@@ -31,6 +31,7 @@ export function mountPreviewAnchorEditor(body: HTMLElement, assetId: string,): v
   if (body.style.position !== "absolute" && body.style.position !== "relative") {
     body.style.position = "relative";
   }
+
   anchorCleanup = mountAnchorEditor(img, assetId, {
     load: async (id,) => {
       try {
@@ -48,6 +49,7 @@ export function mountPreviewAnchorEditor(body: HTMLElement, assetId: string,): v
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ context: "sprite", focalPointX: point.x, focalPointY: point.y, },),
         },);
+
         return res.ok;
       } catch {
         return false;

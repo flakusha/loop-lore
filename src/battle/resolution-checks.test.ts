@@ -69,6 +69,7 @@ describe("makeCombatSkillCheck", () => {
         sawSuccess = true;
       }
     }
+
     expect(sawSuccess,).toBe(true,);
   });
 
@@ -80,6 +81,7 @@ describe("makeCombatSkillCheck", () => {
       minMargin = Math.min(minMargin, res.margin,);
       maxMargin = Math.max(maxMargin, res.margin,);
     }
+
     // d20: 1..20 + 0 (skill bonus) = 1..20 → margin 1..20.
     expect(minMargin,).toBeGreaterThanOrEqual(1,);
     expect(maxMargin,).toBeLessThanOrEqual(20,);
@@ -99,6 +101,7 @@ describe("makeConcentrationCheck", () => {
     const res = makeConcentrationCheck(2, 30, DC10,);
     expect(res.narration,).toInclude("vs DC 15",);
   });
+
   it("keeps the base DC for small damage", () => {
     const res = makeConcentrationCheck(2, 4, DC10,);
     expect(res.narration,).toInclude("vs DC 10",);
@@ -140,6 +143,7 @@ describe("makeDeathSavingThrow", () => {
       min = Math.min(min, res.roll.total,);
       max = Math.max(max, res.roll.total,);
     }
+
     expect(min,).toBeGreaterThanOrEqual(1,);
     expect(max,).toBeLessThanOrEqual(20,);
   });
@@ -155,6 +159,7 @@ describe("makeDeathSavingThrow", () => {
         break;
       }
     }
+
     expect(sawBranch,).toBe(true,);
   });
 });

@@ -34,6 +34,7 @@ async function insertLocation(worldId: string, name: string, parentId: string | 
        VALUES (?, ?, ?, ?, '[]', 'draft', ?, 'region', 'static')`,
     [newId, worldId, name, "", parentId,],
   );
+
   return newId;
 }
 
@@ -85,6 +86,7 @@ describe("LocationTreeService", () => {
         id: string;
         path: string;
       }>;
+
       const byId = Object.fromEntries(rows.map((r,) => [r.id, r.path,]),);
       expect(byId[rootId],).toBe(`/${rootId}/`,);
       expect(byId[regionId],).toBe(`/${rootId}/${regionId}/`,);
@@ -110,6 +112,7 @@ describe("LocationTreeService", () => {
       expect(descendants.map((d,) => d.id),).toEqual(
         [regionId, settlementId, buildingId, roomId,],
       );
+
       expect(descendants.map((d,) => d.depth),).toEqual([1, 2, 3, 4,],);
     });
 
@@ -131,11 +134,13 @@ describe("LocationTreeService", () => {
       const regionRow = testDb.sqlite.query(
         `SELECT path FROM locations WHERE id = ?`,
       ).get(regionId,) as { path: string };
+
       expect(regionRow.path,).toBe(`/${siblingRootId}/${regionId}/`,);
       // Child paths must also rewrite via trg_locations_path_on_update.
       const roomRow = testDb.sqlite.query(
         `SELECT path FROM locations WHERE id = ?`,
       ).get(roomId,) as { path: string };
+
       expect(roomRow.path,).toBe(
         `/${siblingRootId}/${regionId}/${settlementId}/${buildingId}/${roomId}/`,
       );
@@ -164,6 +169,7 @@ describe("LocationTreeService", () => {
           parentLocationId: parent,
         },);
       }
+
       // The 13th insert must exceed the depth limit.
       expect(
         svc.insertLocation({ worldId, name: "too-deep", parentLocationId: parent, },),
@@ -231,10 +237,12 @@ describe("LocationTreeService", () => {
         mobilityMode: "free",
         parentLocationId: rootId,
       },);
+
       const row = testDb.sqlite.query(
         `SELECT world_id, description, connections, publication_status, kind, mobility_mode, parent_location_id
          FROM locations WHERE id = ?`,
       ).get(newId,) as Record<string, unknown>;
+
       expect(row.world_id,).toBe(worldId,);
       expect(row.description,).toBe("desc",);
       expect(row.connections,).toBe("[]",);
@@ -250,6 +258,7 @@ describe("LocationTreeService", () => {
       const row = testDb.sqlite.query(
         `SELECT description, connections, publication_status, kind, mobility_mode FROM locations WHERE id = ?`,
       ).get(newId,) as Record<string, unknown>;
+
       expect(row.description,).toBe("",);
       expect(row.connections,).toBe("[]",);
       expect(row.publication_status,).toBe("draft",);
@@ -329,11 +338,13 @@ describe("LocationTreeService", () => {
       const rootRow = testDb.sqlite.query(
         `SELECT parent_location_id, path FROM locations WHERE id = ?`,
       ).get(moveRoot,) as { parent_location_id: string | null; path: string };
+
       expect(rootRow.parent_location_id,).toBeNull();
       expect(rootRow.path,).toBe(`/${moveRoot}/`,);
       const childRow = testDb.sqlite.query(
         `SELECT path FROM locations WHERE id = ?`,
       ).get(moveChild,) as { path: string };
+
       expect(childRow.path,).toBe(`/${moveRoot}/${moveChild}/`,);
     });
   });

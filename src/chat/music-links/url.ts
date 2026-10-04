@@ -17,16 +17,20 @@ export function extractTrackId(url: string, _service: MusicService,): string {
       const m = /spotify\.com\/(track|album|playlist)\/([A-Za-z0-9]+)/.exec(url,);
       return (m?.[2] ?? url) as string;
     }
+
     case "youtube_music": {
       const m = /music\.youtube\.com\/watch\?v=([A-Za-z0-9_-]+)/.exec(url,);
       return (m?.[1] ?? url) as string;
     }
+
     case "soundcloud": {
       return url;
     }
+
     case "bandcamp": {
       return url;
     }
+
     case "apple_music": {
       const m = /music\.apple\.com\/[\w-]+\/[\w-]+\/(\d+)/.exec(url,);
       return (m?.[1] ?? url) as string;
@@ -61,8 +65,10 @@ export function toEmbedSrc(url: string, service: MusicService,): string {
       if (m) {
         return `https://embed.music.apple.com/${m[1]}/${m[2]}/${m[3]}`;
       }
+
       return clean;
     }
+
     default:
       return clean;
   }

@@ -50,6 +50,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ isPaused: newPaused, },),
       },);
+
       if (res.ok) {
         if (chat.story_state) {
           const state = jsonParseOr<Record<string, unknown>>(chat.story_state, {},);
@@ -60,6 +61,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
           const serialized = safeJsonStringify({ isPaused: newPaused, },);
           chat.story_state = serialized.ok ? serialized.value : "{}";
         }
+
         this._groupPaused = newPaused;
         if (globalThis.Alpine) {
           try {
@@ -68,6 +70,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
             /* store not ready */
           }
         }
+
         this.$dispatch?.("show-toast", {
           type: "success",
           message: t(newPaused ? "toasts.aiPaused" : "toasts.aiResumed",),
@@ -168,10 +171,12 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
       this.acceptMentionAtIndex(this._mentionActiveIndex,);
       return;
     }
+
     if (this._showCommandPalette && this._filteredCommands.length > 0) {
       this.acceptPaletteAtIndex(this._paletteActiveIndex,);
       return;
     }
+
     void this.sendMessage().catch(() => {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSend",), },);
     },);
@@ -199,18 +204,22 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
         } else if (event.key === "Escape") {
           this.hideMentionAutocomplete();
         }
+
         return;
       }
+
       if (event.key === "Escape") {
         this.hideMentionAutocomplete();
         return;
       }
     }
+
     if (this._showCommandPalette) {
       if (event.key === "Escape") {
         this._showCommandPalette = false;
         return;
       }
+
       if (this._filteredCommands.length === 0) { return; }
       if (event.key === "Tab") {
         event.preventDefault();
@@ -224,12 +233,14 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
         this.movePaletteSelection(-1,);
       }
     }
+
     // ESC when no autocomplete/palette open → flush the debounced draft so
     // the last keystrokes survive a chat switch or reload.
     if (event.key === "Escape") {
       this.flushComposerDraft();
       return;
     }
+
     // Ctrl+Z / Cmd+Z when the textarea is empty → restore the last cleared draft.
     if ((event.ctrlKey || event.metaKey) && event.key === "z") {
       const input = event.target as HTMLTextAreaElement | undefined;

@@ -50,6 +50,7 @@ export async function handleListWorlds(
       .select("world_id",)
       .where("actor_id", "=", userId,)
       .execute();
+
     for (const row of rows) {
       memberWorldIds.push(row.world_id,);
     }
@@ -65,6 +66,7 @@ export async function handleListWorlds(
         eb("visibility", "=", WorldVisibility.Public,),
         ...(memberWorldIds.length > 0 ? [eb("id", "in", memberWorldIds,),] : []),
       ],);
+
     countQuery = countQuery.where(visible,);
     listQuery = listQuery.where(visible,);
   } else {

@@ -92,6 +92,7 @@ export async function recordTurnSkip(
     .where("chat_id", "=", input.chatId,)
     .where("actor_id", "=", input.actorId,)
     .executeTakeFirst();
+
   if (!participant) {
     return { ok: false, code: "not_found", message: "Actor is not a participant of this chat", };
   }
@@ -126,6 +127,7 @@ export async function recordTurnSkip(
       .orderBy(sql`rowid`, "desc",)
       .limit(1,)
       .executeTakeFirst();
+
     if (latest) {
       if (latest.content_type === MessageContentType.TurnSkip) {
         // Already sitting out — replay instead of stacking a second event.
@@ -141,8 +143,10 @@ export async function recordTurnSkip(
             data: { actorId: input.actorId, mode: input.mode, },
           },);
         }
+
         return { ok: true, messageId: latest.id, mode: input.mode, deduped: true, };
       }
+
       if (latest.status === MessageStatus.Rejected) {
         return {
           ok: false,
@@ -177,6 +181,7 @@ export async function recordTurnSkip(
         idempotency_key: dedupKey(input.chatId, input.actorId, input.mode,),
       },)
       .execute();
+
     // Beat budget telemetry (TASK-turn-skip-cascade): each fresh skip
     // consumes one beat from this actor's per-chat budget. The gate
     // interlock (`TASK-turn-skip-gate-interlock`) reads the post-cascade
@@ -196,6 +201,7 @@ export async function recordTurnSkip(
     if (forced) { await auditForcedSkip(database, input,); }
     return { ok: true, messageId: id, mode: input.mode, deduped: false, };
   };
+
   // Claim the slot before waiting so a third caller queues behind us.
   const previous = skipChains.get(chainKey,);
   const gate = Promise.withResolvers<void>();
@@ -239,5 +245,6 @@ export async function countTurnSkipsForActor(
     .where("actor_id", "=", actorId,)
     .where("content_type", "=", MessageContentType.TurnSkip,)
     .executeTakeFirst();
+
   return Number(row?.n ?? 0,);
 }

@@ -96,6 +96,7 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
     cascadeDepth,
     deps,
   } = opts;
+
   const log = getLogger().child({ module: "auto-gen", },);
 
   if (moodShiftDelta != null) {
@@ -115,6 +116,7 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
     score: number;
     flags: readonly { entityName: string; entityType: string; confidence: number }[];
   };
+
   try {
     // Resolve chat-scoped known entity names (participants + current
     // location) so the detector does not flag them as hallucinations.
@@ -187,6 +189,7 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
         thinking,
       },),
     );
+
     buffer?.signalDone();
     d.scheduleBufferCleanup(chatId,);
   }

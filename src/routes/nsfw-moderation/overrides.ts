@@ -37,12 +37,14 @@ export function overridesRoutes(opts: HandlerOpts, prefix = "/api",) {
           userId,
           (ctx.userRole as string | null) ?? null,
         );
+
         if (!access.ok) { return notFound("Chat not found",); }
         try {
           const result = await svc.getEffectiveNsfw(
             ctx.params.chatId,
             userId,
           );
+
           return jsonResponse({ ...SuccessResponse, data: result, },);
         } catch (error: unknown) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
@@ -59,6 +61,7 @@ export function overridesRoutes(opts: HandlerOpts, prefix = "/api",) {
           auth,
           (ctx.userRole as string | null) ?? null,
         );
+
         if (!access.ok) { return notFound("Chat not found",); }
         try {
           const { override, } = ctx.body as { override: "enabled" | "disabled" | null };

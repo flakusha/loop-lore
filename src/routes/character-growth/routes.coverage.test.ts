@@ -62,6 +62,7 @@ describe("characterGrowthRoutes coverage", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await db.insertInto("users",).values({
       id: stranger,
       username: `growth-stranger-${stamp}`,
@@ -71,6 +72,7 @@ describe("characterGrowthRoutes coverage", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await db.insertInto("actors",).values({
       id: actorId,
       actor_type: "character",
@@ -83,6 +85,7 @@ describe("characterGrowthRoutes coverage", () => {
       visibility: "private",
       import_spec: "{}",
     },).execute();
+
     await db.insertInto("growth_log",).values({
       id: uid(),
       actor_id: actorId,
@@ -92,6 +95,7 @@ describe("characterGrowthRoutes coverage", () => {
       reason: "coverage",
       recorded_at: now,
     },).execute();
+
     await db.insertInto("growth_log",).values({
       id: uid(),
       actor_id: actorId,
@@ -101,6 +105,7 @@ describe("characterGrowthRoutes coverage", () => {
       reason: "coverage",
       recorded_at: now,
     },).execute();
+
     app = makeApp(owner,);
   },);
 
@@ -112,6 +117,7 @@ describe("characterGrowthRoutes coverage", () => {
     const anon = await makeApp(null,).handle(
       new Request(`http://localhost/api/character-growth/arc?actorId=${actorId}`,),
     );
+
     expect(anon.status,).toBe(401,);
     const empty = await app.handle(new Request("http://localhost/api/character-growth/arc?actorId=",),);
     expect(empty.status,).toBe(400,);
@@ -120,10 +126,12 @@ describe("characterGrowthRoutes coverage", () => {
     const unknown = await app.handle(
       new Request(`http://localhost/api/character-growth/arc?actorId=${uid()}`,),
     );
+
     expect(unknown.status,).toBe(404,);
     const outsider = await makeApp(stranger,).handle(
       new Request(`http://localhost/api/character-growth/arc?actorId=${actorId}`,),
     );
+
     expect(outsider.status,).toBe(404,);
   });
 
@@ -131,6 +139,7 @@ describe("characterGrowthRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/character-growth/arc?actorId=${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as ArcBody;
     expect(body.arc,).toBeNull();
@@ -142,9 +151,11 @@ describe("characterGrowthRoutes coverage", () => {
     await insertCharacterArc(db, actorId, "crisis", new Date().toISOString(), {
       stage_description: "low point",
     },);
+
     const res = await app.handle(
       new Request(`http://localhost/api/character-growth/arc?actorId=${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as ArcBody;
     expect(body.arc?.currentStage,).toBe("crisis",);
@@ -158,10 +169,12 @@ describe("characterGrowthRoutes coverage", () => {
     const empty = await app.handle(
       new Request("http://localhost/api/character-growth/growth-log?actorId=",),
     );
+
     expect(empty.status,).toBe(400,);
     const unknown = await app.handle(
       new Request(`http://localhost/api/character-growth/growth-log?actorId=${uid()}`,),
     );
+
     expect(unknown.status,).toBe(404,);
     const def = (await (await app.handle(new Request(base,),)).json()) as LogBody;
     expect(def.entries.length,).toBe(1,);
@@ -169,19 +182,23 @@ describe("characterGrowthRoutes coverage", () => {
     const all = (await (await app.handle(
       new Request(`${base}&includePending=true`,),
     )).json()) as LogBody;
+
     expect(all.entries.length,).toBe(2,);
     const pending = (await (await app.handle(
       new Request(`${base}&includePending=true&status=pending`,),
     )).json()) as LogBody;
+
     expect(pending.entries.length,).toBe(1,);
     expect(pending.entries[0]?.axis,).toBe("skill",);
     const trait = (await (await app.handle(
       new Request(`${base}&includePending=true&axis=trait`,),
     )).json()) as LogBody;
+
     expect(trait.entries.length,).toBe(1,);
     const limited = (await (await app.handle(
       new Request(`${base}&includePending=true&limit=1`,),
     )).json()) as LogBody;
+
     expect(limited.entries.length,).toBe(1,);
     const badAxis = await app.handle(new Request(`${base}&axis=bogus`,),);
     expect(badAxis.status,).toBe(422,);
@@ -195,24 +212,28 @@ describe("characterGrowthRoutes coverage", () => {
         body: JSON.stringify({ currentStage: "crisis", },),
       },),
     );
+
     expect(patch.status,).toBe(422,);
     const confirm = await app.handle(
       new Request(`http://localhost/api/character-growth/growth-log/${uid()}/confirm`, {
         method: "POST",
       },),
     );
+
     expect(confirm.status,).toBe(422,);
     const reject = await app.handle(
       new Request(`http://localhost/api/character-growth/growth-log/${uid()}/reject`, {
         method: "POST",
       },),
     );
+
     expect(reject.status,).toBe(422,);
     const authed = await app.handle(
       new Request(`http://localhost/api/character-growth/growth-log/${uid()}/confirm?actorId=${actorId}`, {
         method: "POST",
       },),
     );
+
     expect([200, 404, 409,],).toContain(authed.status,);
   });
 
@@ -224,6 +245,7 @@ describe("characterGrowthRoutes coverage", () => {
         body: JSON.stringify({ currentStage: "crisis", stageDescription: "low", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { currentStage: string };
     expect(body.currentStage,).toBe("crisis",);
@@ -233,11 +255,13 @@ describe("characterGrowthRoutes coverage", () => {
     const pending = await db.selectFrom("growth_log",).select("id",)
       .where("actor_id", "=", actorId,).where("status", "=", "pending",)
       .executeTakeFirstOrThrow();
+
     const res = await app.handle(
       new Request(`http://localhost/api/character-growth/growth-log/${pending.id}/confirm?actorId=${actorId}`, {
         method: "POST",
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -252,11 +276,13 @@ describe("characterGrowthRoutes coverage", () => {
       reason: "coverage-reject",
       recorded_at: new Date().toISOString(),
     },).execute();
+
     const res = await app.handle(
       new Request(`http://localhost/api/character-growth/growth-log/${id}/reject?actorId=${actorId}`, {
         method: "POST",
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 });

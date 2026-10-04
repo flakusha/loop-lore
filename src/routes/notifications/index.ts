@@ -37,6 +37,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
         ...item,
         read: item.read === "read" ? 1 : 0,
       }));
+
       return jsonResponse({ items, },);
     }, {
       response: {
@@ -73,6 +74,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
         if (ctx.body.read === true) {
           await new NotificationService(database,).markRead(ctx.params.id, userId,);
         }
+
         return jsonResponse({ ok: true, },);
       },
       {
@@ -147,6 +149,7 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
           enabled: ctx.body.enabled,
           mutedWorlds: ctx.body.mutedWorlds,
         },);
+
         return jsonResponse(prefs,);
       },
       {

@@ -64,6 +64,7 @@ export async function processStreamingChunk({
     },).catch((error: unknown,) => {
       genLog.error("Failed to update streaming start status", error instanceof Error ? error : undefined,);
     },);
+
     active.events?.onStreamingStart?.(attemptId,);
   }
 
@@ -84,6 +85,7 @@ export async function processStreamingChunk({
             genLog.error("repetition analysis serialization failed", r.error,);
             return null;
           }
+
           return r.value;
         })(),
       },
@@ -109,6 +111,7 @@ export async function processStreamingChunk({
         source: CancelSource.AutoRepetition,
         detail,
       },);
+
       void updateAttemptStatus({
         db,
         attemptId,
@@ -127,6 +130,7 @@ export async function processStreamingChunk({
       },).catch((error: unknown,) => {
         genLog.error("Failed to update repetition-cancel status", error instanceof Error ? error : undefined,);
       },);
+
       return ChunkAction.CancelRepetition;
     }
   }
@@ -159,6 +163,7 @@ export async function processStreamingChunk({
           source: CancelSource.AutoPolicy,
           detail,
         },);
+
         void updateAttemptStatus({
           db,
           attemptId,
@@ -173,6 +178,7 @@ export async function processStreamingChunk({
                 genLog.error("policy analysis serialization failed", r.error,);
                 return null;
               }
+
               return r.value;
             })(),
             completed_at: new Date().toISOString(),

@@ -128,6 +128,7 @@ describeOrSkip("actorEmotionAvatars.listJobs", () => {
     handler = async () => {
       throw new Error("net",);
     };
+
     const ctx = baseCtx();
     ctx._eaActorId = "actor-1";
     await ctx.listJobs();
@@ -206,6 +207,7 @@ describeOrSkip("actorEmotionAvatars.startGeneration", () => {
     handler = async () => {
       throw new Error("net",);
     };
+
     const ctx = baseCtx();
     ctx._eaActorId = "actor-1";
     ctx.baseAvatarId = "av-1";
@@ -235,14 +237,18 @@ describeOrSkip("actorEmotionAvatars.cancelJob", () => {
       if (url.endsWith("/cancel",) && callIdx === 1) {
         return Response.json({ ok: true, },);
       }
+
       if (url.endsWith("/jobs/job-1",)) {
         return Response.json(sampleJob({ status: "cancelled", },),);
       }
+
       if (url.endsWith("/jobs",)) {
         return Response.json([sampleJob({ status: "cancelled", },),],);
       }
+
       return Response.json({},);
     };
+
     const ctx = baseCtx();
     ctx._eaActorId = "actor-1";
     ctx.jobs = [sampleJob(),];

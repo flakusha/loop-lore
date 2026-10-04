@@ -39,12 +39,14 @@ function ctxWith(): AssembleContext {
     mes_example: null,
     agent_role: null,
   };
+
   const chat: AssembleChat = {
     id: "chat-1",
     mode: "story",
     world_id: null,
     current_location_id: null,
   };
+
   return {
     db,
     actor,
@@ -88,6 +90,7 @@ describe("internalTraitsSection", () => {
       voice_patterns: JSON.stringify({ humor_style: "none", verbal_tics: [], },),
       visibility: JSON.stringify(["*",],),
     },);
+
     const out = await internalTraitsSection.build(ctxWith(),);
     expect(Array.isArray(out,) ? out.length : 0,).toBe(1,);
     const msg = (out as { role: string; content: string }[])[0]!;

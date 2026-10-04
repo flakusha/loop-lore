@@ -127,6 +127,7 @@ export function resolveNativeBinaryPath(): string | null {
   if (fileName === undefined) {
     return null;
   }
+
   const repoRoot = join(import.meta.dir, "..", "..",);
   const debugCandidate = join(
     repoRoot,
@@ -136,6 +137,7 @@ export function resolveNativeBinaryPath(): string | null {
     "debug",
     fileName,
   );
+
   const releaseCandidate = join(
     repoRoot,
     "native",
@@ -144,6 +146,7 @@ export function resolveNativeBinaryPath(): string | null {
     "release",
     fileName,
   );
+
   return existsSync(releaseCandidate,) ? releaseCandidate : debugCandidate;
 }
 
@@ -176,10 +179,12 @@ export function getNativeModule(): {
       cachedModule = null;
       return cachedModule;
     }
+
     cachedModule = { handle, version, };
   } catch {
     cachedModule = null;
   }
+
   return cachedModule;
 }
 

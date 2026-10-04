@@ -74,6 +74,7 @@ async function seedActor(agentRole: string | null,): Promise<string> {
     format_version: 0,
     import_spec: "{}",
   },).execute();
+
   return id;
 }
 
@@ -90,6 +91,7 @@ describe("buildProviderRequest", () => {
       abortSignal: controller.signal,
       stream: true,
     },);
+
     expect(req.model,).toBe("prov-model",);
     expect(req.apiKey,).toBe("prov-key",);
     expect(req.messages,).toBe(messages,);
@@ -111,6 +113,7 @@ describe("buildProviderRequest", () => {
       abortSignal: new AbortController().signal,
       stream: false,
     },);
+
     // In isolation no plugin tools are registered, so the gated list is
     // empty and the request carries no tools array.
     expect(req.tools,).toBeUndefined();
@@ -126,6 +129,7 @@ describe("buildProviderRequest", () => {
       abortSignal: new AbortController().signal,
       stream: false,
     },);
+
     expect(req.model,).toBe("prov-model",);
     expect(req.tools,).toBeUndefined();
   });
@@ -139,6 +143,7 @@ describe("buildProviderRequest", () => {
       abortSignal: new AbortController().signal,
       stream: false,
     },);
+
     expect(req.model,).toBe("prov-model",);
   });
 
@@ -152,6 +157,7 @@ describe("buildProviderRequest", () => {
       abortSignal: new AbortController().signal,
       stream: false,
     },);
+
     expect(req.model,).toBe("prov-model",);
     expect(req.params.stream,).toBe(false,);
   });

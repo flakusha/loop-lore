@@ -47,14 +47,17 @@ describe("NSFW moderation view E2E", () => {
     const errors = trackPageErrors(page, {
       allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
     },);
+
     try {
       await page.goto(`${ctx.url}/views/nsfw-moderation`, {
         waitUntil: "domcontentloaded",
         timeout: 30_000,
       },);
+
       await page
         .locator("[data-testid='nsfw-moderation-header']",)
         .waitFor({ state: "visible", timeout: 30_000, },);
+
       // Consent audit table is server-rendered.
       await page.locator("table.admin-table",).first().waitFor({ state: "visible", timeout: 15_000, },);
     } finally {
@@ -70,11 +73,13 @@ describe("NSFW moderation view E2E", () => {
     const errors = trackPageErrors(page, {
       allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
     },);
+
     try {
       const response = await page.goto(`${ctx.url}/views/nsfw-moderation`, {
         waitUntil: "domcontentloaded",
         timeout: 30_000,
       },);
+
       expect(response?.status(),).toBe(403,);
       expect(await page.locator("[data-testid='nsfw-moderation-header']",).count(),).toBe(0,);
     } finally {

@@ -30,15 +30,18 @@ function buildMigrationProvider(): {
       const files = readdirSync(dir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const f of files) {
         const mod = (await import(path.join(dir, f,))) as
           | { default?: Migration }
           | Migration;
+
         const candidate = "default" in mod && mod.default ? mod.default : (mod as Migration);
         const key = f.endsWith(".ts",) ? f.slice(0, -3,) : f;
         migrations[key] = candidate;
       }
+
       return migrations;
     },
   };
@@ -51,6 +54,7 @@ beforeAll(async () => {
     compressThreshold: 1024,
     compressAlgorithm: "gzip",
   },);
+
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = OFF",);
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
@@ -95,6 +99,7 @@ describe("Crypto Edge Case Tests", () => {
         plaintext: "original_plaintext",
         encryptionLevel: "standard",
       },);
+
       expect(first.wasEncrypted,).toBeTrue();
       expect(isEncryptedPayload(first.storedContent,),).toBeTrue();
 
@@ -104,6 +109,7 @@ describe("Crypto Edge Case Tests", () => {
         plaintext: first.storedContent,
         encryptionLevel: "standard",
       },);
+
       expect(second.wasEncrypted,).toBeTrue();
       expect(second.storedContent,).toBe(first.storedContent,);
       expect(second.keyId,).toBe(first.keyId,);
@@ -114,6 +120,7 @@ describe("Crypto Edge Case Tests", () => {
         storedContent: second.storedContent,
         encryptionLevel: "standard",
       },);
+
       expect(roundTrip,).toBe("original_plaintext",);
     });
 
@@ -125,6 +132,7 @@ describe("Crypto Edge Case Tests", () => {
         plaintext: "secret",
         encryptionLevel: "standard",
       },);
+
       expect(level1.wasEncrypted,).toBeTrue();
 
       const level2 = await encryptAtRest({
@@ -149,6 +157,7 @@ describe("Crypto Edge Case Tests", () => {
         plaintext: "",
         encryptionLevel: "standard",
       },);
+
       expect(result.wasEncrypted,).toBeTrue();
       expect(isEncryptedPayload(result.storedContent,),).toBeTrue();
 
@@ -158,6 +167,7 @@ describe("Crypto Edge Case Tests", () => {
         storedContent: result.storedContent,
         encryptionLevel: "standard",
       },);
+
       expect(roundTrip,).toBe("",);
     });
 
@@ -170,6 +180,7 @@ describe("Crypto Edge Case Tests", () => {
         plaintext: weirdChars,
         encryptionLevel: "standard",
       },);
+
       expect(result.wasEncrypted,).toBeTrue();
 
       const roundTrip = await decryptAtRest({
@@ -178,6 +189,7 @@ describe("Crypto Edge Case Tests", () => {
         storedContent: result.storedContent,
         encryptionLevel: "standard",
       },);
+
       expect(roundTrip,).toBe(weirdChars,);
     });
 

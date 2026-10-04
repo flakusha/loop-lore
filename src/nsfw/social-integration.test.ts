@@ -26,6 +26,7 @@ describe("calculateEncounterReputationChange", () => {
       "private",
       6,
     );
+
     expect(change.reputationChange,).toBe(8,); // 5 + floor(6/2)
     expect(change.reason,).toBe("successful_intimacy",);
     expect(change.socialContext,).toBe("private",);
@@ -39,6 +40,7 @@ describe("calculateEncounterReputationChange", () => {
       "public",
       6,
     );
+
     expect(change.reputationChange,).toBe(4,); // floor(8 * 0.5)
     expect(change.reason,).toBe("public_intimacy",);
   });
@@ -51,6 +53,7 @@ describe("calculateEncounterReputationChange", () => {
       "group",
       4,
     );
+
     expect(change.reputationChange,).toBe(10,); // floor((5+2) * 1.5)
     expect(change.reason,).toBe("group_intimacy",);
   });
@@ -63,6 +66,7 @@ describe("calculateEncounterReputationChange", () => {
       "private",
       0,
     );
+
     expect(change.reputationChange,).toBe(-10,);
     expect(change.reason,).toBe("failed_seduction",);
   });
@@ -75,6 +79,7 @@ describe("calculateEncounterReputationChange", () => {
       "public",
       0,
     );
+
     expect(change.reputationChange,).toBe(-20,);
     expect(change.reason,).toBe("public_failed_seduction",);
   });
@@ -86,6 +91,7 @@ describe("getSeductionPrerequisites", () => {
     expect(prereqs,).toContainEqual(
       { skill: "intimidation", minLevel: 70, required: true, },
     );
+
     expect(prereqs,).toContainEqual(
       { skill: "deception", minLevel: 80, required: true, },
     );
@@ -114,6 +120,7 @@ describe("checkPrerequisites", () => {
       charisma: 0,
       seduction: 0,
     },);
+
     expect(result.met,).toBe(true,);
     expect(result.missing,).toEqual([],);
   });
@@ -128,6 +135,7 @@ describe("checkPrerequisites", () => {
       charisma: 0,
       seduction: 0,
     },);
+
     expect(result.met,).toBe(false,);
     expect(result.missing,).toEqual([
       { skill: "persuasion", minLevel: 60, required: true, },
@@ -144,6 +152,7 @@ describe("checkPrerequisites", () => {
       charisma: 50,
       seduction: 0, // optional, below min
     },);
+
     expect(result.met,).toBe(true,);
   });
 });
@@ -158,6 +167,7 @@ describe("reputation apply + decay lifecycle", () => {
       "group",
       8,
     );
+
     const updated = applyReputationChange(base, change,);
 
     expect(updated.value,).toBe(100,); // clamped

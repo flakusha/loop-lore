@@ -23,6 +23,7 @@ function driftFrom(properties: string,): ItemDrift {
   if (typeof value !== "object" || value === null || Array.isArray(value,)) {
     return { statMultipliers: {}, battleUses: 0, lastDriftAt: "", };
   }
+
   const rawDrift = value as Record<string, unknown>;
   const rawMultipliers = rawDrift.statMultipliers;
   const statMultipliers: Record<string, number> = {};
@@ -31,6 +32,7 @@ function driftFrom(properties: string,): ItemDrift {
       if (typeof amount === "number" && Number.isFinite(amount,)) { statMultipliers[stat] = amount; }
     }
   }
+
   const rawBattleUses = rawDrift.battleUses;
   const battleUses = typeof rawBattleUses === "number" ? rawBattleUses : 0;
   const rawLastDriftAt = rawDrift.lastDriftAt;
@@ -66,10 +68,12 @@ export async function decrementDurability(
     .where("id", "=", worldItemId,)
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
+
   if (!row) { return { remaining: null, broken: true, }; }
   if (row.current_durability === null || !Number.isFinite(amount,) || amount <= 0) {
     return { remaining: row.current_durability, broken: false, };
   }
+
   const remaining = Math.max(0, row.current_durability - amount,);
   await db
     .updateTable("world_items",)
@@ -77,6 +81,7 @@ export async function decrementDurability(
     .where("id", "=", worldItemId,)
     .where("world_id", "=", worldId,)
     .execute();
+
   return { remaining, broken: remaining === 0, };
 }
 
@@ -99,6 +104,7 @@ export async function applyDrift(
   if (typeof event.stat !== "string" || event.stat.trim().length === 0 || !Number.isFinite(event.amount,)) {
     return null;
   }
+
   const db = trx ?? state.db;
   const row = await db
     .selectFrom("world_items",)
@@ -107,6 +113,7 @@ export async function applyDrift(
     .where("world_items.id", "=", worldItemId,)
     .where("world_items.world_id", "=", worldId,)
     .executeTakeFirst();
+
   if (!row) { return null; }
   const properties = jsonParseOr<Record<string, unknown>>(row.properties, {},);
   const drift = driftFrom(row.properties,);
@@ -123,6 +130,7 @@ export async function applyDrift(
     .where("id", "=", worldItemId,)
     .where("world_id", "=", worldId,)
     .execute();
+
   return drift;
 }
 

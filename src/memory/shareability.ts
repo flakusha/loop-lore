@@ -57,12 +57,15 @@ export function isMemoryVisible(
     case "public": {
       return true;
     }
+
     case "shared": {
       return true;
     }
+
     case "private": {
       return ownerId === viewerId;
     }
+
     case "secret": {
       return ownerId === viewerId || trustedActorIds.includes(viewerId,);
     }

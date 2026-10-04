@@ -26,6 +26,7 @@ function provider(label: string, fail = false,): LLMProvider {
       usage: { promptTokens: 0, completionTokens: 10, totalTokens: 10, },
     };
   };
+
   return {
     capabilities: {
       type: "openai-compatible",
@@ -66,6 +67,7 @@ async function createRun(app: Elysia, prompt: string,): Promise<{ id: string; re
       },),
     },),
   );
+
   expect(response.status,).toBe(200,);
   return await response.json() as { id: string; results: { status: string }[] };
 }
@@ -96,6 +98,7 @@ describe("comparison routes", () => {
     expect(run.results.map((result,) => result.status),).toEqual(["success", "error",],);
     const row = await database.selectFrom("model_comparison_runs",).selectAll().where("id", "=", run.id,)
       .executeTakeFirstOrThrow();
+
     expect(row.user_id,).toBe(userId,);
     expect(row.prompt,).toBe("persist this",);
     expect(JSON.parse(row.results,),).toHaveLength(2,);
@@ -125,6 +128,7 @@ describe("comparison routes", () => {
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ rating: 4, notes: "Clear winner", },),
       },);
+
     const response = await app.handle(request(),);
     expect(response.status,).toBe(200,);
     const body = await response.json() as { ratings: { overall?: { rating: number; notes: string } } };
@@ -143,9 +147,11 @@ describe("comparison routes", () => {
       ratings: {},
       metadata: { modelCount: 2, },
     },);
+
     const markdown = await app.handle(
       new Request(`http://localhost/api/v1/comparisons/${run.id}/export?format=markdown`,),
     );
+
     expect(markdown.headers.get("content-type",),).toContain("text/markdown",);
     const text = await markdown.text();
     for (const section of ["# Model comparison", "## Prompt", "## Results", "## Ratings", "## Metadata",]) {

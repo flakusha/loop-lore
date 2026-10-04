@@ -158,6 +158,7 @@ describe("resolveLifecycleConfig", () => {
     expect(
       resolveLifecycleConfig({ lifecycle_config: { min_confidence: 500, }, },).min_confidence,
     ).toBe(100,);
+
     expect(
       resolveLifecycleConfig({ lifecycle_config: { min_confidence: -10, }, },).min_confidence,
     ).toBe(0,);
@@ -228,6 +229,7 @@ describe("resolveDisputedState", () => {
     expect(resolveDisputedState({ ...base, distortion_level: 24, disputed: 0, }, custom,),).toBe(
       DisputedState.Undisputed,
     );
+
     expect(resolveDisputedState({ ...base, distortion_level: 25, disputed: 0, }, custom,),).toBe(
       DisputedState.Disputed,
     );

@@ -90,6 +90,7 @@ export function generationCompareRoutes(
             metadata: isSweep ? { kind: "sweep", } : { kind: "ab", },
           };
         }
+
         return {
           model: { provider: model.provider, name: model.model, },
           response: "",
@@ -115,6 +116,7 @@ export function generationCompareRoutes(
         metadata: metadataJson.ok ? metadataJson.value : "{}",
         created_at: createdAt,
       },).execute();
+
       return jsonResponse({ id, createdAt, results: out, sweep: isSweep, },);
     }, {
       body: CompareBody,
@@ -172,6 +174,7 @@ async function runOne(
       maxTokens: m.maxTokens,
     },
   },);
+
   const latencyMs = Date.now() - startedAt;
 
   const tokenCount = response.usage.totalTokens;

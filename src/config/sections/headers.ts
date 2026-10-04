@@ -82,15 +82,19 @@ export class HeadersSection implements HeadersConfig {
     if (csp) {
       this.csp = { ...this.csp, ...csp, };
     }
+
     if (earlyHints) {
       this.earlyHints = { ...this.earlyHints, ...earlyHints, };
     }
+
     if (linkPreload) {
       this.linkPreload = [...linkPreload,];
     }
+
     if (acceptClientHints) {
       this.acceptClientHints = [...acceptClientHints,];
     }
+
     if (reportingEndpoints) {
       this.reportingEndpoints = { ...reportingEndpoints, };
     }

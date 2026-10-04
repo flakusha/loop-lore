@@ -33,11 +33,13 @@ export function validateEntityTemplatePosition(llm: Record<string, unknown>,): v
   ) {
     return;
   }
+
   process.emitWarning(
     `entityTemplatePosition must be one of ${LEGAL_ENTITY_TEMPLATE_POSITIONS.join("|",)}, got ${
       jsonStringifyOr(position, "unknown",)
     } — falling back to "${DEFAULT_ENTITY_TEMPLATE_POSITION}".`,
     "TemplateConfigWarning",
   );
+
   llm.entityTemplatePosition = DEFAULT_ENTITY_TEMPLATE_POSITION;
 }

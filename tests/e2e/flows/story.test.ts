@@ -23,6 +23,7 @@ describe("Story E2E", () => {
     const locRes = await api.post<{ id: string }>(`/api/v1/worlds/${worldId}/locations`, {
       name: "Story Location",
     },);
+
     locationId = locRes.data!.id;
   },);
 
@@ -49,6 +50,7 @@ describe("Story E2E", () => {
       rarity: "uncommon",
       stackable: false,
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
     itemDefId = res.data!.id;
@@ -72,6 +74,7 @@ describe("Story E2E", () => {
     const res = await api.put(`/api/v1/worlds/${worldId}/items/${itemDefId}`, {
       name: "Updated Sword",
     },);
+
     expect(res.ok,).toBe(true,);
 
     const getRes = await api.get<{ name: string }>(`/api/v1/worlds/${worldId}/items/${itemDefId}`,);
@@ -84,6 +87,7 @@ describe("Story E2E", () => {
       locationId,
       quantity: 1,
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
     itemInstanceId = res.data!.id;
@@ -113,6 +117,7 @@ describe("Story E2E", () => {
     const res = await api.post<{ id: string }>(`/api/v1/worlds/${worldId}/states`, {
       description: "Test snapshot",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
   });

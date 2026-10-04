@@ -108,6 +108,7 @@ describe("readGmSettings", () => {
       responseLengthCustom: 42,
       outputStyle: { preset: "noir", intensity: 1, },
     } as GmConfig;
+
     const fields = readGmSettings(config,);
     expect(fields.assistantRole,).toBe("helper",);
     expect(fields.vnLayout,).toBe("below",);
@@ -138,6 +139,7 @@ describe("buildGmConfig", () => {
       temperature: 0.3,
       maxTokens: 4096,
     },);
+
     expect(out.actorModels,).toEqual({ a1: { model: "m1", provider: "p1", }, },);
     expect(out.responseLengthPreset,).toBe("custom",);
     expect(out.responseLengthCustom,).toBe(777,);
@@ -153,6 +155,7 @@ describe("buildGmConfig", () => {
       outputStylePreset: "",
       vnEnabled: false,
     };
+
     const out = buildGmConfig({}, fields, {},);
     expect(out.renderingOverride,).toBeNull();
     expect("humanGM" in out,).toBe(false,);
@@ -183,6 +186,7 @@ describe("buildGmConfig", () => {
       keep: { model: "m", provider: "", },
       blank: { model: "  ", provider: "p", },
     },);
+
     expect(out.actorModels,).toEqual({ keep: { model: "m", provider: "", }, },);
     const none = buildGmConfig({}, fields, { blank: { model: "", provider: "p", }, },);
     expect("actorModels" in none,).toBe(false,);
@@ -211,6 +215,7 @@ describe("presentationGmConfig", () => {
       llmConfig: { model: "m", },
       responseLengthPreset: "long",
     },);
+
     expect(out,).toEqual({ renderingOverride: "visual_novel", responseLengthPreset: "long", },);
     expect(Object.keys(out,).every((k,) => (GM_CONFIG_PRESENTATION_KEYS as readonly string[]).includes(k,)),).toBe(
       true,
@@ -253,6 +258,7 @@ describe("clampAssistantTemperature", () => {
     expect(clampAssistantTemperature(2,),).toBe(2,);
     expect(clampAssistantTemperature(1.2,),).toBe(1.2,);
   });
+
   test("rejects out-of-range and non-numeric input", () => {
     expect(clampAssistantTemperature(-0.1,),).toBeNull();
     expect(clampAssistantTemperature(2.1,),).toBeNull();
@@ -267,6 +273,7 @@ describe("clampAssistantMaxTokens", () => {
     expect(clampAssistantMaxTokens(1,),).toBe(1,);
     expect(clampAssistantMaxTokens(3000,),).toBe(3000,);
   });
+
   test("rejects zero, negatives, fractions and non-numbers", () => {
     expect(clampAssistantMaxTokens(0,),).toBeNull();
     expect(clampAssistantMaxTokens(-5,),).toBeNull();
@@ -282,10 +289,12 @@ describe("readAssistantTuning", () => {
       temperature: null,
       maxTokens: null,
     },);
+
     expect(
       readAssistantTuning({ assistantTuning: { temperature: 9, maxTokens: -1, }, } as unknown as GmConfig,),
     ).toEqual({ temperature: null, maxTokens: null, },);
   });
+
   test("keeps a partial override (one side null)", () => {
     expect(readAssistantTuning({ assistantTuning: { temperature: 1.5, }, } as unknown as GmConfig,),).toEqual({
       temperature: 1.5,
@@ -300,6 +309,7 @@ describe("effectiveAssistantParams", () => {
       temperature: ASSISTANT_TUNING_DEFAULTS.temperature,
       maxTokens: ASSISTANT_TUNING_DEFAULTS.maxTokens,
     },);
+
     expect(effectiveAssistantParams({ temperature: 0.2, maxTokens: null, },),).toEqual({
       temperature: 0.2,
       maxTokens: ASSISTANT_TUNING_DEFAULTS.maxTokens,
@@ -314,6 +324,7 @@ describe("assistantTuning round-trip", () => {
     expect(fields.assistantTemperature,).toBe(1.2,);
     expect(fields.assistantMaxTokens,).toBe(3000,);
   });
+
   test("null fields prune a previously persisted override", () => {
     const seeded = buildGmConfig({}, fullFields, {},);
     const cleared = buildGmConfig(seeded as unknown as GmConfig, {
@@ -321,8 +332,10 @@ describe("assistantTuning round-trip", () => {
       assistantTemperature: null,
       assistantMaxTokens: null,
     }, {},);
+
     expect("assistantTuning" in cleared,).toBe(false,);
   });
+
   test("out-of-range fields are dropped instead of persisted", () => {
     const out = buildGmConfig({}, { ...fullFields, assistantTemperature: 9, assistantMaxTokens: -4, }, {},);
     expect("assistantTuning" in out,).toBe(false,);

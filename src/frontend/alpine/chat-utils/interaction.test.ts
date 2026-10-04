@@ -22,6 +22,7 @@ const g = globalThis as unknown as {
   t?: (key: string, params?: Record<string, unknown>,) => string;
   showToast?: (type: string, message: string,) => void;
 };
+
 const original = { window: g.window, t: g.t, showToast: g.showToast, };
 let toasts: { type: string; message: string }[] = [];
 
@@ -77,6 +78,7 @@ describeOrSkip("chatUtilsInteraction context menu", () => {
       clientX: 5000,
       clientY: 4000,
     } as unknown as MouseEvent;
+
     chatUtilsInteraction.openContextMenu!.call(ctx as never, event, "m1",);
     expect(ctx._contextMenu,).toEqual({ visible: true, messageId: "m1", x: 800, y: 500, },);
     chatUtilsInteraction.closeContextMenu!.call(ctx as never,);
@@ -114,6 +116,7 @@ describeOrSkip("chatUtilsInteraction flag dialog", () => {
       _flagDialog: { open: true, contentType: "message", contentId: "m1", chatId: "chat-1", },
       _flagReason: "spam",
     },);
+
     await chatUtilsInteraction.submitFlag!.call(ctx as never,);
     expect(calls,).toHaveLength(1,);
     expect(calls[0]!.url,).toBe("/api/v1/nsfw/moderation/flags",);
@@ -124,6 +127,7 @@ describeOrSkip("chatUtilsInteraction flag dialog", () => {
       chatId: "chat-1",
       flagReason: "spam",
     },);
+
     expect(toasts,).toEqual([{ type: "success", message: "chats.flagSubmitted", },],);
     expect(ctx._flagDialog.open,).toBe(false,);
     expect(ctx._flagBusy,).toBe(false,);
@@ -135,6 +139,7 @@ describeOrSkip("chatUtilsInteraction flag dialog", () => {
       _flagReason: "other",
       _flagOther: "  too spicy  ",
     },);
+
     await chatUtilsInteraction.submitFlag!.call(ctx as never,);
     expect(calls,).toHaveLength(1,);
     const body = JSON.parse(String(calls[0]!.opts.body,),) as Record<string, unknown>;
@@ -147,6 +152,7 @@ describeOrSkip("chatUtilsInteraction flag dialog", () => {
       _flagDialog: { open: true, contentType: "message", contentId: "m1", chatId: null, },
       _flagReason: "spam",
     },);
+
     handler = async () => Response.json({ message: "flag rejected", }, { status: 400, },);
     await chatUtilsInteraction.submitFlag!.call(ctx as never,);
     expect(toasts,).toEqual([{ type: "error", message: "flag rejected", },],);
@@ -158,12 +164,14 @@ describeOrSkip("chatUtilsInteraction flag dialog", () => {
       _flagDialog: { open: true, contentType: "message", contentId: "m1", chatId: null, },
       _flagReason: "spam",
     },);
+
     handler = async () => new Response("not-json", { status: 500, },);
     await chatUtilsInteraction.submitFlag!.call(ctx as never,);
     expect(toasts,).toEqual([{ type: "error", message: "chats.flagFailed", },],);
     handler = async () => {
       throw new Error("offline",);
     };
+
     await chatUtilsInteraction.submitFlag!.call(ctx as never,);
     expect(toasts,).toHaveLength(2,);
     expect(toasts[1]!.message,).toBe("chats.flagFailed",);
@@ -177,6 +185,7 @@ describeOrSkip("chatUtilsInteraction reaction picker", () => {
     const event = {
       target: { getBoundingClientRect: () => ({ left: 900, top: 5, }), },
     } as unknown as Event;
+
     chatUtilsInteraction.showReactionPicker!.call(ctx as never, "m1", event,);
     expect(ctx._reactionPicker,).toEqual({ visible: true, messageId: "m1", x: 760, y: 8, },);
     chatUtilsInteraction.closeReactionPicker!.call(ctx as never,);

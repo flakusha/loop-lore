@@ -34,6 +34,7 @@ export function sortByInitiative(combatants: Combatant[],): Combatant[] {
     if (b.initiative !== a.initiative) {
       return b.initiative - a.initiative;
     }
+
     return b.stats.dex - a.stats.dex;
   },);
 }

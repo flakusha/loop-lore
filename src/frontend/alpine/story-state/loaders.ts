@@ -84,6 +84,7 @@ export const loaders = {
       this.worldState.atmosphere = state.atmosphere;
       this.worldState.description = state.description;
     }
+
     // NPCs present at the current location.
     if (worldId) {
       const npcs = await fetchNpcsAt(worldId, locationId,);

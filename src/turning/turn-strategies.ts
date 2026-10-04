@@ -34,6 +34,7 @@ function weightedRandomSelect(
   const filtered = skipActorId && participants.length > 1
     ? participants.filter((p,) => p.actorId !== skipActorId)
     : participants;
+
   if (filtered.length === 0) { return participants[0]!.actorId; }
 
   let totalWeight = 0;
@@ -45,6 +46,7 @@ function weightedRandomSelect(
     roll -= p.talkativity;
     if (roll <= 0) { return p.actorId; }
   }
+
   return filtered[filtered.length - 1]!.actorId;
 }
 
@@ -77,6 +79,7 @@ export const roundRobinSelect: TurnStrategyFn = (
     if (!participants.some((p,) => p.actorId === candidateId)) { continue; }
     if (candidateId !== lastActorId || participants.length < 2) { return candidateId; }
   }
+
   // Stale order (nothing matched) or every candidate is the last speaker:
   // first non-last participant, else the first participant.
   return participants.find((p,) => p.actorId !== lastActorId)?.actorId ?? participants[0]!.actorId;
@@ -96,8 +99,10 @@ export const sceneBasedSelect: TurnStrategyFn = (
     const narrator = participants.find((p,) => p.agentType === "narrator");
     if (narrator && narrator.actorId !== lastActorId) { return narrator.actorId; }
   }
+
   return roundRobinSelect(participants, currentActorId, currentTurn, turnOrder, context, lastActorId,);
 };
+
 export const initiativeSelect: TurnStrategyFn = (
   participants,
   _currentActorId,
@@ -114,8 +119,10 @@ export const initiativeSelect: TurnStrategyFn = (
       actorId: p.actorId,
       talkativity: p.talkativity + ((p as { initiativeScore?: number }).initiativeScore ?? 0) * 3,
     }),);
+
     return weightedRandomSelect(boosted, lastActorId,);
   }
+
   return weightedRandomSelect(participants, lastActorId,);
 };
 
@@ -196,6 +203,7 @@ export const hybridSelect: TurnStrategyFn = (
       const mentioned = participants.find((p,) => p.actorId === ctx.mentionedActorId);
       if (mentioned) { return mentioned.actorId; }
     }
+
     // Classifier-proposed actor (already participant-validated upstream).
     const classifierActorId = classifierPickActorId(participants, context, lastActorId,);
     if (classifierActorId) { return classifierActorId; }
@@ -204,12 +212,15 @@ export const hybridSelect: TurnStrategyFn = (
       ...p,
       talkativity: p.talkativity + (ctx.recentActorIds?.includes(p.actorId,) ? 3 : 0),
     }),);
+
     return weightedRandomSelect(boosted, lastActorId,);
   }
+
   // Story mode: scene-based with quest triggers
   if (currentTurn % 5 === 0) {
     return questDrivenSelect(participants, currentActorId, currentTurn, turnOrder, context, lastActorId,);
   }
+
   return sceneBasedSelect(participants, currentActorId, currentTurn, turnOrder, context, lastActorId,);
 };
 

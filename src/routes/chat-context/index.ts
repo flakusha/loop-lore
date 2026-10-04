@@ -64,6 +64,7 @@ export function chatContextRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
         if (!input) {
           return jsonError({ message: "chatId and messageId are required", status: HttpStatus.BadRequest, },);
         }
+
         const auth = ctx as unknown as AuthContext;
         return handleRegenerateMessage(
           database,

@@ -51,10 +51,12 @@ describe("search/token-store (encrypted rows)", () => {
     expect(matches.map((m,) => m.messageId),).toContain(messageId,);
     expect(matches[0]?.hits,).toBeGreaterThanOrEqual(2,);
   });
+
   test("scope isolates users: other scope sees nothing", () => {
     const query = deriveSearchTokens("tavern", USER_KEY,);
     expect(query.then((t,) => matchMessageIdsByTokens(db, t, "someone-else",)),).resolves.toEqual([],);
   });
+
   test("reindex is idempotent and delete removes all rows", async () => {
     await reindexMessageTokens(db, messageId, PLAINTEXT, USER_KEY, userId,);
     await reindexMessageTokens(db, messageId, PLAINTEXT, USER_KEY, userId,);
@@ -63,6 +65,7 @@ describe("search/token-store (encrypted rows)", () => {
     await deleteMessageTokens(db, messageId,);
     expect(matchMessageIdsByTokens(db, query, userId,),).resolves.toEqual([],);
   });
+
   test("empty token query short-circuits", () => {
     expect(matchMessageIdsByTokens(db, [], userId,),).resolves.toEqual([],);
   });

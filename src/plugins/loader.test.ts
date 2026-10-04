@@ -126,6 +126,7 @@ function makePluginDir(files: Record<string, string>,): string {
   for (const [name, content] of Object.entries(files,)) {
     writeFileSync(join(dir, name,), content,);
   }
+
   return dir;
 }
 
@@ -173,6 +174,7 @@ function stubDb(options: StubDbOptions = {},): Kysely<DB> {
                 return { doNothing: () => "do-nothing", };
               },
             },);
+
             return {
               execute: async () => {
                 if (options.insertThrows) { throw new Error("db unavailable",); }
@@ -227,6 +229,7 @@ beforeEach(() => {
       priorLogger = null;
     }
   }
+
   setGlobalLogger(nullLogger,);
 });
 
@@ -234,10 +237,12 @@ afterEach(async () => {
   for (const dir of tempDirs) {
     rmSync(dir, { recursive: true, force: true, },);
   }
+
   tempDirs = [];
   for (const key of ["__llFixtureCtx", "__llUnloadOrder", "__llUnloadCount",]) {
     delete globals()[key];
   }
+
   await unloadAllPlugins();
   // Restore a real logger: leaving `nullLogger` installed makes every later
   // test file in this process inherit a stub instead of the real one.
@@ -271,6 +276,7 @@ describe("loadSinglePlugin", () => {
     const capture = (level: string,) => (entry: unknown,) => {
       seen.push({ level, entry, },);
     };
+
     setGlobalLogger({
       ...nullLogger,
       info: capture("info",),
@@ -278,6 +284,7 @@ describe("loadSinglePlugin", () => {
       error: capture("error",),
       debug: capture("debug",),
     },);
+
     const db = stubDb();
     const dir = makePluginDir({ "plugin.ts": FULL_PLUGIN, });
 
@@ -295,10 +302,12 @@ describe("loadSinglePlugin", () => {
       || (s.entry as { message?: string })?.message === "bad"
       || (s.entry as { message?: string })?.message === "detail"
     );
+
     expect(hookLogs.map((s,) => s.level,),).toEqual(["info", "warn", "error", "debug",]);
     for (const { entry, } of hookLogs) {
       expect(entry,).toMatchObject({ plugin: "fixture-full", });
     }
+
     expect(hookLogs[0]?.entry,).toMatchObject({ message: "loading", step: 1, });
     // The hook received the live db handle (own fixture shape, so a named cast is enough).
     const fixtureCtx = globals().__llFixtureCtx as { db: unknown; config: Record<string, unknown> };
@@ -370,6 +379,7 @@ describe("loadSinglePlugin", () => {
     expect(
       registry.listPlugins().filter((p,) => p.manifest.name === "fixture-dup",),
     ).toHaveLength(1,);
+
     expect(registry.getPlugin("fixture-dup")?.manifest.version,).toBe("2.0.0",);
     expect(inserts,).toHaveLength(2,);
     // Both persists target the name column with do-nothing on conflict.
@@ -400,6 +410,7 @@ describe("loadSinglePlugin", () => {
       ...nullLogger,
       warn: (entry: unknown,) => { warns.push(entry,); },
     },);
+
     const db = stubDb({ configRow: { config_json: "{ not json", }, });
     const dir = makePluginDir({ "plugin.ts": FULL_PLUGIN, });
 
@@ -456,11 +467,13 @@ describe("dispatchPluginRoute", () => {
         },],
       };\n`,
     });
+
     await loadSinglePlugin(stubDb(), "fixture-dispatch", dir, "local");
 
     const res = await dispatchPluginRoute(
       new Request("http://x/fixture-dispatch/ping", { method: "GET" }),
     );
+
     expect(res).not.toBeNull();
     expect(await res!.text()).toBe("pong");
   });
@@ -479,11 +492,13 @@ describe("dispatchPluginRoute", () => {
         },],
       };\n`,
     });
+
     await loadSinglePlugin(stubDb(), "fixture-dispatch-miss", dir, "local");
 
     const res = await dispatchPluginRoute(
       new Request("http://x/b", { method: "GET" }),
     );
+
     expect(res).toBeNull();
   });
 
@@ -501,11 +516,13 @@ describe("dispatchPluginRoute", () => {
         },],
       };\n`,
     });
+
     await loadSinglePlugin(stubDb(), "fixture-dispatch-method", dir, "local");
 
     const res = await dispatchPluginRoute(
       new Request("http://x/a", { method: "POST" }),
     );
+
     expect(res).toBeNull();
   });
 
@@ -523,12 +540,14 @@ describe("dispatchPluginRoute", () => {
         },],
       };\n`,
     });
+
     await loadSinglePlugin(stubDb(), "fixture-dispatch-off", dir, "local");
     registry.setEnabled("fixture-dispatch-off", false);
 
     const res = await dispatchPluginRoute(
       new Request("http://x/off", { method: "GET" }),
     );
+
     expect(res).toBeNull();
   });
 });

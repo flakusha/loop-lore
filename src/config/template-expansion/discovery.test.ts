@@ -122,6 +122,7 @@ describe("parseExpansionFile", () => {
         "",
       ].join("\n",),
     );
+
     expect(parseExpansionFile(filePath,),).toEqual({ merge: "extend", keywords: ["k1",], },);
   });
 
@@ -144,6 +145,7 @@ describe("parseExpansionFile", () => {
         "",
       ].join("\n",),
     );
+
     expect(parseExpansionFile(filePath,),).toEqual({
       merge: "extend",
       emotions: { calm: { asset: "calm.png", }, },

@@ -30,6 +30,7 @@ export async function carryState(
     .selectAll()
     .where("chat_id", "=", sourceChatId,)
     .execute();
+
   for (const t of turns) {
     await database
       .insertInto("story_turns",)
@@ -61,6 +62,7 @@ export async function carryState(
     .selectAll()
     .where("chat_id", "=", sourceChatId,)
     .execute();
+
   for (const q of quests) {
     await database
       .insertInto("quest_progress",)
@@ -84,6 +86,7 @@ export async function carryState(
     .selectAll()
     .where("chat_id", "=", sourceChatId,)
     .execute();
+
   for (const i of initiatives) {
     await database
       .insertInto("group_initiatives",)

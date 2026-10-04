@@ -79,6 +79,7 @@ export function combatStatusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia
             type: ActionType;
             consume?: boolean;
           };
+
           const allowed = canTakeAction(body.combatant, body.type,);
           const updated = body.consume ? consumeAction(body.combatant, body.type,) : body.combatant;
           return jsonResponse({ allowed, updated, },);
@@ -109,6 +110,7 @@ export function combatStatusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia
             ac: number;
             isNpc: boolean;
           };
+
           const combatant = initCombatant(
             body.id,
             body.name,
@@ -118,6 +120,7 @@ export function combatStatusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia
             body.ac,
             body.isNpc,
           );
+
           return jsonResponse({ combatant, },);
         } catch (error) {
           log().error("Failed to init combatant", error instanceof Error ? error : undefined,);

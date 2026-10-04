@@ -103,6 +103,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           if (ctx.body.confirmation !== "PURGE") {
             return jsonError({
               message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
@@ -110,6 +111,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.ValidationError,
             },);
           }
+
           await audit("Audit log purge requested", "purge-audit",);
           await db.deleteFrom("log_entries",).execute();
           return jsonResponse({ purged: true, },);
@@ -137,6 +139,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           if (ctx.body.confirmation !== "RESET") {
             return jsonError({
               message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
@@ -144,6 +147,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.ValidationError,
             },);
           }
+
           await audit("System settings reset requested", "reset-settings",);
           await db.deleteFrom("system_config",).execute();
           const { seedDefaults, } = await import("../../admin/config");
@@ -173,6 +177,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           if (ctx.body.confirmation !== "DELETE ALL") {
             return jsonError({
               message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
@@ -180,6 +185,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.ValidationError,
             },);
           }
+
           await audit("Factory reset requested", "factory-reset",);
           // Errors propagate to the route handler boundary, where they are
           // translated to a 500 response with a logged cause. The DB call
@@ -190,6 +196,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
                 await trx.deleteFrom(table,).execute();
               }
             },);
+
             await seedDefaultActors(db, config,);
           } catch (error) {
             log().error("Factory reset failed", error as Error,);
@@ -199,6 +206,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.ServerError,
             },);
           }
+
           return jsonResponse({ reset: true, },);
         },
         {

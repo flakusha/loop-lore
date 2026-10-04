@@ -49,6 +49,7 @@ interface SwitcherOutfit {
         const found = this.outfits.find((o,) => o.id === this.overrideId);
         if (found) { return found.name; }
       }
+
       return t("wardrobe.sceneDefault",);
     },
 
@@ -63,6 +64,7 @@ interface SwitcherOutfit {
         activeChat?: string | null;
         currentCharacter?: { id?: string } | null;
       };
+
       const chatId = data.activeChat ?? null;
       const actorId = data.currentCharacter?.id ?? null;
       this.chatId = chatId;
@@ -72,6 +74,7 @@ interface SwitcherOutfit {
         this.overrideId = null;
         return;
       }
+
       this.loading = true;
       this.error = "";
       try {
@@ -79,12 +82,14 @@ interface SwitcherOutfit {
           apiFetch(`/api/v1/actors/${actorId}/wardrobe`,),
           apiFetch(`/api/v1/chats/${chatId}/wardrobe-override/${actorId}`,),
         ],);
+
         // Rejections keep the old Promise.all semantics: surface error.
         if (itemsRes.status === "rejected") { throw itemsRes.reason; }
         if (overrideRes.status === "rejected") { throw overrideRes.reason; }
         this.outfits = itemsRes.value.ok
           ? ((await itemsRes.value.json()) as SwitcherOutfit[]).map((o,) => ({ id: o.id, name: o.name, }))
           : [];
+
         this.overrideId = overrideRes.value.ok
           ? ((await overrideRes.value.json()) as { outfit_id: string | null }).outfit_id
           : null;
@@ -111,11 +116,13 @@ interface SwitcherOutfit {
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ actor_id: this.actorId, outfit_id: outfitId, },),
         },);
+
         if (!res.ok) {
           const body = (await res.json().catch(() => ({}))) as { message?: string };
           this.error = body.message ?? t("status.wardrobeSaveFailed",);
           return;
         }
+
         this.overrideId = outfitId;
         this.open = false;
       } catch (error) {
@@ -131,6 +138,7 @@ interface SwitcherOutfit {
       this._refreshHandler = () => {
         void this.load();
       };
+
       document.addEventListener("chat-context-refresh", this._refreshHandler,);
       void this.load();
     },

@@ -83,6 +83,7 @@ describe("createReputationScore", () => {
       initial_value: 250,
       decay_rate: 0.5,
     });
+
     expect(score.value).toBe(100);
     expect(score.tier).toBe("devoted");
     expect(score.decay_rate).toBe(0.5);

@@ -60,6 +60,7 @@ globalThis.document = {
   ...originalDocument,
   createElement: () => new FakeElement(),
 } as unknown as Document;
+
 globalThis.Image = FakeImage as unknown as typeof Image;
 afterAll(() => {
   globalThis.document = originalDocument;
@@ -167,6 +168,7 @@ describe("preloadSceneImages", () => {
       { backgroundUrl: url(3,), },
       { portraitUrl: url(2,), },
     ];
+
     const pending = preloadSceneImages(scenes, 0, 2,);
     expect(FakeImage.instances,).toHaveLength(3,); // window = scenes 0-2; dup portrait dropped
     for (const img of FakeImage.instances) { img.dispatch("load",); }
@@ -203,6 +205,7 @@ describe("cache management", () => {
     for (let i = 0; i < 52; i++) {
       await loadUrl(`https://cdn.test/bulk-${i}.png`,);
     }
+
     expect(getCacheSize(),).toBe(50,);
     expect(isImageCached("https://cdn.test/bulk-0.png",),).toBe(false,);
     expect(isImageCached("https://cdn.test/bulk-1.png",),).toBe(false,);

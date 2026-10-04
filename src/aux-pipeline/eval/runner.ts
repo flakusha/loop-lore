@@ -48,6 +48,7 @@ async function classifyFixture(fixture: EvalFixture, env: EvalEnv,): Promise<str
     case "intent": {
       return LABEL_EXTRACTORS.intent(await classifyIntent(fixture.input, config, db,),);
     }
+
     case "nsfw": {
       const context: HookContext = {
         chatId: "eval-chat",
@@ -65,18 +66,23 @@ async function classifyFixture(fixture: EvalFixture, env: EvalEnv,): Promise<str
         },
         db,
       };
+
       return LABEL_EXTRACTORS.nsfw(await detectNsfwWithLlm(fixture.input, context, callAux,),);
     }
+
     case "transition": {
       return LABEL_EXTRACTORS.transition(await classifyTransition(fixture.input, [], config, db,),);
     }
+
     case "gm-tool": {
       return LABEL_EXTRACTORS["gm-tool"](await detectGmTool(fixture.input, config, db,),);
     }
+
     case "injection-check": {
       const verdict = await confirmInjectionWithLlm(fixture.input, { config, db, },);
       return LABEL_EXTRACTORS["injection-check"](verdict,);
     }
+
     default: {
       return null;
     }
@@ -102,9 +108,11 @@ export async function runPromptEval(
     for (const fixture of fixtures.filter((f,) => f.task === task)) {
       results.push({ expected: fixture.expected, actual: await classifyFixture(fixture, env,), },);
     }
+
     if (results.length > 0) {
       reports.push(scoreTask(task, results,),);
     }
   }
+
   return reports;
 }

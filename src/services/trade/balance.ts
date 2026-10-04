@@ -46,6 +46,7 @@ export async function ensureBalanceRow(
       balance: 0,
     },)
     .execute();
+
   return 0;
 }
 
@@ -70,6 +71,7 @@ export async function getBalance(
     .where("world_id", "=", worldId,)
     .where("currency_type", "=", currency,)
     .executeTakeFirst();
+
   return row?.balance ?? 0;
 }
 
@@ -103,6 +105,7 @@ export async function credit(
     .where("world_id", "=", worldId,)
     .where("currency_type", "=", currency,)
     .execute();
+
   return next;
 }
 
@@ -137,6 +140,7 @@ export async function debit(
     .where("world_id", "=", worldId,)
     .where("currency_type", "=", currency,)
     .execute();
+
   return true;
 }
 

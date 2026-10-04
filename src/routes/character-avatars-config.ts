@@ -45,6 +45,7 @@ export function characterAvatarsConfigPlugin(
           status: HttpStatus.NotFound,
         },);
       }
+
       return jsonResponse(config,);
     }, {
       params: ActorIdParams,
@@ -69,6 +70,7 @@ export function characterAvatarsConfigPlugin(
       const configId = await avatarService.upsertAvatarConfig(actorId, {
         selectionRule: selection_rule_override as any,
       },);
+
       return jsonCreated({ id: configId, },);
     }, {
       params: ActorIdParams,

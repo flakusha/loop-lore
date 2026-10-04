@@ -86,6 +86,7 @@ async function resolveOwner(database: Kysely<DB>,): Promise<string | null> {
     .where("role", "in", ["solo", "admin",],)
     .orderBy("created_at", "asc",)
     .executeTakeFirst();
+
   ownerId = owner?.id ?? "";
   return ownerId === "" ? null : ownerId;
 }
@@ -159,6 +160,7 @@ export async function seedWorkflowLibrary(
       .select("id",)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     if (existing) {
       // Already in the library — the DB wins, always. Not an error.
       outcome.skipped.push({ id, reason: "already in library", },);
@@ -191,6 +193,7 @@ export async function seedWorkflowLibrary(
         payload: jsonStringifyOr(validated.payload,),
       },)
       .execute();
+
     outcome.imported.push(id,);
     log.info("imported workflow into library", { id, },);
   }

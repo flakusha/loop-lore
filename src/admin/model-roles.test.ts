@@ -75,6 +75,7 @@ const registryPristine = (() => {
     return false;
   }
 })();
+
 const describeReal = registryPristine ? describe : describe.skip;
 
 describeReal("model-roles", () => {
@@ -134,6 +135,7 @@ describeReal("model-roles", () => {
         {} as unknown as Config,
         db,
       );
+
       expect(resolved.source,).toBe("default",);
       expect(resolved.provider,).toBe("",);
       expect(resolved.model,).toBe("",);

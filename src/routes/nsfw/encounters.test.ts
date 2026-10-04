@@ -64,12 +64,14 @@ async function seedAuthorized(id: string,): Promise<{ userId: string; actorId: s
     birth_date: "1990-01-01",
     age_gate_accepted_at: "2026-01-01T00:00:00Z",
   },);
+
   await insertActors(db, actorId, {
     id: actorId as never,
     owner_id: userId,
     user_id: userId,
     content_rating: "nsfw_moderate" as never,
   },);
+
   await insertWorlds(db, userId, `Encounters Test World ${id}`, { id: worldId as never, },);
   return { userId, actorId, worldId, };
 }
@@ -83,6 +85,7 @@ function makeApp(userId?: string, config: Config = makeConfig(),) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(encounterRoutes({ database: db, config, },),);
 }
 
@@ -91,6 +94,7 @@ describe("encounter routes — GET /api/nsfw/encounters/:id", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/nsfw/encounters/enc-x",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -99,6 +103,7 @@ describe("encounter routes — GET /api/nsfw/encounters/:id", () => {
     const res = await makeApp(userId,).handle(
       new Request("http://localhost/api/nsfw/encounters/no-such-encounter",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -117,12 +122,14 @@ describe("encounter routes — GET /api/nsfw/encounters/:id", () => {
         },),
       },),
     );
+
     expect(createRes.status,).toBe(200,);
     const encounter = await createRes.json() as Record<string, unknown>;
 
     const res = await app.handle(
       new Request(`http://localhost/api/nsfw/encounters/${String(encounter.id,)}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.id,).toBe(encounter.id,);
@@ -139,6 +146,7 @@ describe("encounter routes — POST /api/nsfw/encounters/:id/advance", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -151,6 +159,7 @@ describe("encounter routes — POST /api/nsfw/encounters/:id/advance", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.complete,).toBe(true,);
@@ -171,6 +180,7 @@ describe("encounter routes — POST /api/nsfw/encounters/:id/advance", () => {
         },),
       },),
     );
+
     const encounter = await createRes.json() as Record<string, unknown>;
     const encId = String(encounter.id,);
 
@@ -182,6 +192,7 @@ describe("encounter routes — POST /api/nsfw/encounters/:id/advance", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(first.status,).toBe(200,);
     const firstBody = await first.json() as Record<string, unknown>;
     expect(firstBody.complete,).toBe(false,);
@@ -194,6 +205,7 @@ describe("encounter routes — POST /api/nsfw/encounters/:id/advance", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(second.status,).toBe(200,);
     const secondBody = await second.json() as Record<string, unknown>;
     expect(secondBody.complete,).toBe(false,);
@@ -206,6 +218,7 @@ describe("encounter routes — POST /api/nsfw/encounters/:id/advance", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(third.status,).toBe(200,);
     const thirdBody = await third.json() as Record<string, unknown>;
     expect(thirdBody.complete,).toBe(true,);
@@ -216,6 +229,7 @@ describe("encounter routes — POST /api/nsfw/encounters/:id/advance", () => {
       .select("status",)
       .where("id", "=", encId,)
       .executeTakeFirst();
+
     expect(row?.status,).toBe("completed",);
   });
 });
@@ -225,6 +239,7 @@ describe("encounter routes — GET /api/nsfw/encounters/world/:worldId", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/nsfw/encounters/world/world-x",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -245,11 +260,14 @@ describe("encounter routes — GET /api/nsfw/encounters/world/:worldId", () => {
           },),
         },),
       );
+
       expect(createRes.status,).toBe(200,);
     }
+
     const res = await app.handle(
       new Request(`http://localhost/api/nsfw/encounters/world/${worldId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as unknown[];
     expect(body,).toHaveLength(2,);
@@ -260,6 +278,7 @@ describe("encounter routes — GET /api/nsfw/encounters/world/:worldId", () => {
     const res = await makeApp(userId,).handle(
       new Request(`http://localhost/api/nsfw/encounters/world/${worldId}`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.json(),).toEqual([],);
   });

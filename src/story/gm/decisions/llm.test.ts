@@ -103,6 +103,7 @@ describe("llmDecision — fallback surfacing", () => {
     const failingGenerateText = async () => {
       throw new Error("provider down",);
     };
+
     const deps = makeDeps(failingGenerateText,);
 
     // The PromptAssembler is invoked synchronously inside llmDecision and

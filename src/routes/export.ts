@@ -118,6 +118,7 @@ export function exportRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
       format,
       include,
     },);
+
     const timestamp = now.toISOString().slice(0, 10,);
 
     return new Response(new Uint8Array(zipBuffer,), {

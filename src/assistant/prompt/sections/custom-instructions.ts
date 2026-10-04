@@ -61,6 +61,7 @@ export const customInstructionsSection: SectionBuilder = {
       "",
       ...parts,
     ].join("\n",);
+
     return [{ role: "system", content: wrapSteering("user.custom_instructions", body,), },];
   },
 };

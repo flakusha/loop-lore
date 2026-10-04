@@ -62,6 +62,7 @@ async function member(name: string, actorType: string, agentType: string,): Prom
     actor_type: actorType,
     agent_type: agentType,
   } as never,);
+
   await insertWorldMembers(db, worldId, id,);
   return id;
 }
@@ -113,6 +114,7 @@ describe("initializeCharacterWorldSetup", () => {
       .select(["starting_inventory", "lore_entries", "initial_state",],)
       .where("actor_id", "=", actor,)
       .executeTakeFirstOrThrow();
+
     expect(row.starting_inventory,).toBe("[]",);
     expect(row.lore_entries,).toBe("[]",);
     expect(row.initial_state,).toBe("{}",);
@@ -148,6 +150,7 @@ describe("seedStartingInventory", () => {
       .select(["quantity", "owner_actor_id",],)
       .where("item_id", "=", defId,)
       .executeTakeFirstOrThrow();
+
     expect(row.quantity,).toBe(2,);
     expect(row.owner_actor_id,).toBe(actor,);
   });
@@ -160,6 +163,7 @@ describe("seedStartingInventory", () => {
       .set({ starting_inventory: JSON.stringify([{ item_id: uid(), quantity: 1, },],), },)
       .where("world_id", "=", worldId,)
       .execute();
+
     expect(await seedStartingInventory(state, worldId,),).toBe(0,);
   });
 
@@ -173,6 +177,7 @@ describe("seedStartingInventory", () => {
       .set({ starting_inventory: JSON.stringify([{ item_id: defId, quantity: 1, },],), },)
       .where("actor_id", "=", actor,)
       .execute();
+
     expect(await seedStartingInventory(state, worldId,),).toBe(1,);
     // Second run: the actor now carries items, so nothing more is granted.
     expect(await seedStartingInventory(state, worldId,),).toBe(0,);
@@ -188,12 +193,14 @@ describe("seedStartingInventory", () => {
       .set({ starting_inventory: JSON.stringify([{ item_id: defId, quantity: 0, },],), },)
       .where("world_id", "=", worldId,)
       .execute();
+
     expect(await seedStartingInventory(state, worldId,),).toBe(1,);
     const row = await db
       .selectFrom("world_items",)
       .select("quantity",)
       .where("item_id", "=", defId,)
       .executeTakeFirstOrThrow();
+
     expect(row.quantity,).toBe(1,);
   });
 
@@ -205,6 +212,7 @@ describe("seedStartingInventory", () => {
       .set({ starting_inventory: "{not-json", },)
       .where("world_id", "=", worldId,)
       .execute();
+
     expect(await seedStartingInventory(state, worldId,),).toBe(0,);
   });
 
@@ -225,6 +233,7 @@ describe("initializeLocationStates", () => {
       .select(["location_id", "time_of_day", "npcs_present", "hazards",],)
       .where("world_id", "=", worldId,)
       .execute();
+
     expect(rows,).toHaveLength(2,);
     for (const r of rows) {
       expect(r.time_of_day,).toBe("morning",);

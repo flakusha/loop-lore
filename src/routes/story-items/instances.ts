@@ -78,6 +78,7 @@ export function storyItemInstanceRoutes({ database, }: { database: Kysely<DB> },
       if (locationId) {
         query = query.where("location_id", "=", locationId,);
       }
+
       const instances = await query.execute();
       return jsonResponse(instances,);
     }, {

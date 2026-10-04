@@ -116,6 +116,7 @@ export async function resolveRequestContext(args: RequestContextArgs,): Promise<
   const base = evaluateNsfwBase(config.nsfw, inputs.get(userId,), {
     ignoreModeration: skip?.moderation,
   },);
+
   if (!base.allowed) {
     return { allowed: false, reason: base.reason, base, consent: "not_required", consentGranted: false, };
   }
@@ -130,6 +131,7 @@ export async function resolveRequestContext(args: RequestContextArgs,): Promise<
         participantId: blocked.userId,
         reason: blocked.reason,
       },);
+
       return {
         allowed: false,
         reason,
@@ -155,6 +157,7 @@ export async function resolveRequestContext(args: RequestContextArgs,): Promise<
         consentGranted: false,
       };
     }
+
     consent = "granted";
   }
 
@@ -162,6 +165,7 @@ export async function resolveRequestContext(args: RequestContextArgs,): Promise<
   if (!skip?.enforcement && args.buildEnforcement) {
     context.enforcement = await args.buildEnforcement({ actorId, userId, chatId, },);
   }
+
   return context;
 }
 
@@ -185,11 +189,13 @@ function findBlockedParticipantFrom(
   if (others.length === 0) {
     return null;
   }
+
   for (const id of others) {
     const decision = evaluateNsfwBase(gateConfig, inputs.get(id,),);
     if (!decision.allowed) {
       return { userId: id, reason: decision.reason ?? "unknown", };
     }
   }
+
   return null;
 }

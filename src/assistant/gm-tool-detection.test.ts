@@ -80,6 +80,7 @@ describe("parseGmToolDetection", () => {
     const result = parseGmToolDetection(
       '{"toolCall":{"name":"roll_dice","params":{},"confidence":1.5}}',
     );
+
     expect(result?.confidence,).toBe(1,);
   });
 
@@ -87,6 +88,7 @@ describe("parseGmToolDetection", () => {
     const result = parseGmToolDetection(
       '{"toolCall":{"name":"roll_dice","params":{},"confidence":-0.5}}',
     );
+
     expect(result?.confidence,).toBe(0,);
   });
 
@@ -94,6 +96,7 @@ describe("parseGmToolDetection", () => {
     const result = parseGmToolDetection(
       '{"toolCall":{"name":"roll_dice","params":{},"confidence":"0.9"}}',
     );
+
     expect(result?.confidence,).toBe(0.5,);
   });
 
@@ -101,6 +104,7 @@ describe("parseGmToolDetection", () => {
     const result = parseGmToolDetection(
       '{"toolCall":{"name":"roll_dice","params":{},"confidence":null}}',
     );
+
     expect(result?.confidence,).toBe(0.5,);
   });
 });

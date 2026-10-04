@@ -9,6 +9,7 @@ describe("rpg/loot/table (real logic)", () => {
     expect(table[0]!.rarity,).toBe("rare",);
     expect(table[0]!.weight,).toBe(10,);
   });
+
   it("mergeLootTables combines entries", () => {
     const merged = mergeLootTables(
       [{
@@ -36,6 +37,7 @@ describe("rpg/loot/table (real logic)", () => {
         maxQuantity: 1,
       },],
     );
+
     expect(merged,).toHaveLength(2,);
     expect(merged.map((e,) => e.name),).toContain("A",);
     expect(merged.map((e,) => e.name),).toContain("B",);

@@ -72,11 +72,13 @@ describe("Notifications flow E2E", () => {
       await page
         .locator("[data-testid='notifications-mark-all-read']",)
         .waitFor({ state: "hidden", timeout: 15_000, },);
+
       const row = await ctx.db
         .selectFrom("notifications",)
         .select(["read",],)
         .where("id", "=", NOTIF_ID,)
         .executeTakeFirst();
+
       expect(row,).not.toBeNull();
       expect(row!.read,).toBe("read",);
     } finally {

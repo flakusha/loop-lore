@@ -53,6 +53,7 @@ export function transitionScene(
     if (outgoing) {
       outgoing.style.display = "none";
     }
+
     incoming.style.display = "";
     incoming.style.opacity = "1";
     incoming.style.transform = "";
@@ -69,21 +70,25 @@ export function transitionScene(
           outgoing.style.transition = `opacity ${duration}ms ease`;
           outgoing.style.opacity = "0";
         }
+
         incoming.style.transition = `opacity ${duration}ms ease`;
         incoming.style.opacity = "1";
         break;
       }
+
       case "slide": {
         if (outgoing) {
           outgoing.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
           outgoing.style.transform = "translateX(-100%)";
           outgoing.style.opacity = "0";
         }
+
         incoming.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
         incoming.style.transform = "translateX(0)";
         incoming.style.opacity = "1";
         break;
       }
+
       case "wipe": {
         incoming.style.clipPath = "inset(0 100% 0 0)";
         incoming.style.transition = `clip-path ${duration}ms ease`;
@@ -94,6 +99,7 @@ export function transitionScene(
         incoming.style.opacity = "1";
         break;
       }
+
       case "dissolve": {
         // Simulated dissolve via opacity + filter
         incoming.style.filter = "blur(8px)";
@@ -120,6 +126,7 @@ export function transitionScene(
         outgoing.style.transform = "";
         outgoing.style.filter = "";
       }
+
       incoming.style.transition = "";
       incoming.style.clipPath = "";
       incoming.style.filter = "";

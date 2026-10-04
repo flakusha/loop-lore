@@ -82,6 +82,7 @@ describe("extractImageMetadata", () => {
         0x42,
         0x50, // "WEBP"
       ],);
+
       const result = extractImageMetadata(buf,);
       expect(result.format,).toBe("webp",);
     });
@@ -112,6 +113,7 @@ describe("extractImageMetadata", () => {
         ...wh,
         ...rest,
       ],);
+
       const result = extractImageMetadata(buf,);
       expect(result.format,).toBe("webp",);
       expect(result.width,).toBe(320,);
@@ -143,6 +145,7 @@ describe("extractImageMetadata", () => {
         ...bits,
         ...rest,
       ],);
+
       const result = extractImageMetadata(buf,);
       expect(result.format,).toBe("webp",);
       expect(result.width,).toBe(320,);
@@ -174,6 +177,7 @@ describe("extractImageMetadata", () => {
         ...widthLE,
         ...heightLE,
       ],);
+
       const result = extractImageMetadata(buf,);
       expect(result.format,).toBe("webp",);
       expect(result.width,).toBe(1024,);

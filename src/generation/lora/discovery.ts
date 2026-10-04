@@ -69,10 +69,12 @@ export async function discoverLoras(
       result = await discoverComfyUILoras(baseUrl, options?.timeoutMs,);
       break;
     }
+
     case "sd-server": {
       result = await discoverSdCppLoras(baseUrl, options?.timeoutMs,);
       break;
     }
+
     default: {
       result = {
         models: [],
@@ -121,10 +123,12 @@ export async function discoverAllLoras(
   const settled = await Promise.allSettled(
     Array.from(backends, ({ backend, baseUrl, },) => discoverLoras(backend, baseUrl, options,),),
   );
+
   const results: LoRADiscoveryResult[] = [];
   for (const r of settled) {
     if (r.status === "fulfilled") { results.push(r.value,); }
   }
+
   return results;
 }
 

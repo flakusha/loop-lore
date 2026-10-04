@@ -29,6 +29,7 @@ export async function carryMemory(
     .selectAll()
     .where("source_chat_id", "=", sourceChatId,)
     .execute();
+
   for (const m of memories) {
     await database
       .insertInto("actor_memories",)

@@ -50,9 +50,11 @@ describe("getClientIp bucket key", () => {
     expect(
       getClientIp(req({ "x-real-ip": "198.51.100.4", },), cfg(true,), "10.0.0.1",),
     ).toBe("198.51.100.4",);
+
     expect(
       getClientIp(req({ "CF-Connecting-IP": "198.51.100.5", },), cfg(true,), "10.0.0.1",),
     ).toBe("198.51.100.5",);
+
     expect(getClientIp(req(), cfg(true,), "10.0.0.2",),).toBe("10.0.0.2",);
   });
 

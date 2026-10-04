@@ -62,12 +62,14 @@ async function seedAuthorized(id: string,): Promise<{ userId: string; actorId: s
     birth_date: "1990-01-01",
     age_gate_accepted_at: "2026-01-01T00:00:00Z",
   },);
+
   await insertActors(db, actorId, {
     id: actorId as never,
     owner_id: userId,
     user_id: userId,
     content_rating: "nsfw_moderate" as never,
   },);
+
   return { userId, actorId, };
 }
 
@@ -80,12 +82,14 @@ async function seedTarget(id: string,): Promise<string> {
     birth_date: "1990-01-01",
     age_gate_accepted_at: "2026-01-01T00:00:00Z",
   },);
+
   await insertActors(db, targetId, {
     id: targetId as never,
     owner_id: ownerId,
     user_id: ownerId,
     content_rating: "nsfw_moderate" as never,
   },);
+
   return targetId;
 }
 
@@ -98,6 +102,7 @@ function makeApp(userId?: string, config: Config = makeConfig(),) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(intimacyRoutes({ database: db, config, },),);
 }
 
@@ -106,6 +111,7 @@ describe("intimacy routes — GET /api/nsfw/intimacy/:actorId/:targetId", () => 
     const res = await makeApp().handle(
       new Request("http://localhost/api/nsfw/intimacy/intimacy-test-actor-x/intimacy-test-target-x",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -115,6 +121,7 @@ describe("intimacy routes — GET /api/nsfw/intimacy/:actorId/:targetId", () => 
     const res = await makeApp(userId,).handle(
       new Request(`http://localhost/api/nsfw/intimacy/${actorId}/${targetId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.actorId,).toBe(actorId,);
@@ -130,9 +137,11 @@ describe("intimacy routes — GET /api/nsfw/intimacy/:actorId/:targetId", () => 
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("intimacy-other",).handle(
       new Request(`http://localhost/api/nsfw/intimacy/${actorId}/${targetId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -142,6 +151,7 @@ describe("intimacy routes — GET /api/nsfw/intimacy/:actorId/:targetId", () => 
     const res = await makeApp(userId, makeConfig({ allowNsfw: false, },),).handle(
       new Request(`http://localhost/api/nsfw/intimacy/${actorId}/${targetId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -162,6 +172,7 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -184,6 +195,7 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.applied,).toBe(true,);
@@ -197,6 +209,7 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("intimacy-other-put",).handle(
       new Request("http://localhost/api/nsfw/intimacy/action", {
         method: "POST",
@@ -211,6 +224,7 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -221,6 +235,7 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
     await insertChats(db, "Intimacy Chat", userId, {
       id: chatId as never,
     },);
+
     await insertChatParticipants(db, chatId, actorId,);
     await insertChatParticipants(db, chatId, targetId,);
     const res = await makeApp(userId,).handle(
@@ -240,6 +255,7 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -250,6 +266,7 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
     await insertChats(db, "Intimacy Chat", userId, {
       id: chatId as never,
     },);
+
     await insertChatParticipants(db, chatId, actorId,);
     await insertChatParticipants(db, chatId, targetId,);
     await insertNsfwConsentState(db, userId, chatId, "given", "2026-01-01T00:00:00Z",);
@@ -270,6 +287,7 @@ describe("intimacy routes — POST /api/nsfw/intimacy/action", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.applied,).toBe(true,);

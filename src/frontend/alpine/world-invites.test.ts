@@ -10,6 +10,7 @@ const g = globalThis as unknown as {
   apiFetch?: (url: string | URL, opts?: RequestInit,) => Promise<Response>;
   showToast?: (...args: unknown[]) => void;
 };
+
 const originalApiFetch = g.apiFetch;
 const originalShowToast = g.showToast;
 const originalConfirm = globalThis.confirm;
@@ -39,9 +40,11 @@ beforeEach(() => {
     if (!fetchHandler) { return new Response("{}", { status: 500, },); }
     return fetchHandler(String(url,), opts ?? {},);
   };
+
   g.showToast = (type, message,) => {
     toasts.push({ type: type as string, message: message as string, },);
   };
+
   globalThis.confirm = () => true;
 },);
 
@@ -113,6 +116,7 @@ describe("worldInvites.createInvite", () => {
       showInviteForm: true,
       copyInviteCode: async () => {},
     },);
+
     await c.createInvite();
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toEqual({ maxUses: null, },);
     expect(c.invites,).toHaveLength(1,);
@@ -128,6 +132,7 @@ describe("worldInvites.createInvite", () => {
       invites: [{ id: "i1", code: "OLD", },] as never,
       copyInviteCode: async () => {},
     },);
+
     await c.createInvite();
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toEqual({ maxUses: 5, },);
     expect(c.invites[0],).toMatchObject({ code: "招待-12", },);
@@ -154,6 +159,7 @@ describe("worldInvites.copyInviteCode", () => {
         /* read-only navigator — early-return path still holds */
       }
     }
+
     const c = ctx();
     await expect(c.copyInviteCode("ABC",),).resolves.toBeUndefined();
     if (nav && hadClipboard !== undefined) {
@@ -171,6 +177,7 @@ describe("worldInvites.copyInviteCode", () => {
     if (!nav) {
       return;
     }
+
     const prev = nav.clipboard;
     try {
       nav.clipboard = {
@@ -181,6 +188,7 @@ describe("worldInvites.copyInviteCode", () => {
     } catch {
       return;
     }
+
     const c = ctx();
     await c.copyInviteCode("HELLO",);
     expect(written,).toEqual(["HELLO",],);
@@ -196,6 +204,7 @@ describe("worldInvites.copyInviteCode", () => {
     if (!nav) {
       return;
     }
+
     const prev = nav.clipboard;
     try {
       nav.clipboard = {
@@ -206,6 +215,7 @@ describe("worldInvites.copyInviteCode", () => {
     } catch {
       return;
     }
+
     const c = ctx();
     await expect(c.copyInviteCode("ABC",),).resolves.toBeUndefined();
     try {

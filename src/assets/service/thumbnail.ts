@@ -61,6 +61,7 @@ export async function writeThumbnail(
   } catch {
     return null;
   }
+
   const subDir = `${assetId.slice(0, 2,)}/${assetId.slice(2, 4,)}`;
   const relativePath = `compressed/${subDir}/${assetId}_thumb.webp`;
   const absolutePath = join(resolveUploadDir(uploadDir,), relativePath,);

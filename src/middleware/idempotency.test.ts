@@ -61,12 +61,14 @@ describe("idempotent (memory backend)", () => {
       status: 201,
       headers: { "Content-Type": "application/json", "X-Trace": "abc", },
     },);
+
     idem.recordResponse({
       method: "POST",
       route: "/api/x",
       requestId: "r-2",
       response,
     },);
+
     await flushMicrotasks();
     const replay = await idem.beforeHandle(makeCtx("POST", "/api/x", "r-2",),);
     expect(replay?.status,).toBe(201,);
@@ -82,6 +84,7 @@ describe("idempotent (memory backend)", () => {
       status: 200,
       headers: { "Set-Cookie": "session=xyz", "X-Trace": "t", },
     },);
+
     idem.recordResponse({ method: "POST", route: "/api/x", requestId: "r-3", response, },);
     await flushMicrotasks();
     const replay = await idem.beforeHandle(makeCtx("POST", "/api/x", "r-3",),);
@@ -107,6 +110,7 @@ describe("idempotent (memory backend)", () => {
       userId: "user-A",
       response: new Response("A's payload", { status: 200, },),
     },);
+
     await flushMicrotasks();
     // User B submits the same request id — must NOT see A's cached body or slot.
     const replay = await idem.beforeHandle({ ...makeCtx("POST", "/api/x", "shared",), userId: "user-B", },);
@@ -138,6 +142,7 @@ describe("idempotent (memory backend)", () => {
       route: "/api/x",
       requestId: "has space",
     };
+
     expect(await idem.beforeHandle(ctx,),).toBeUndefined();
   });
 });
@@ -157,6 +162,7 @@ describe("idempotent (memory backend) — recordResponse failure recovery", () =
         controller.error(new Error("stream error",),);
       },
     },);
+
     const erroringResponse = new Response(errorStream, { status: 200, },);
     idem.recordResponse({
       method: "POST",
@@ -164,6 +170,7 @@ describe("idempotent (memory backend) — recordResponse failure recovery", () =
       requestId: "r-body-err",
       response: erroringResponse,
     },);
+
     // Yield so `.text()` rejects and `.catch` runs `release()`.
     await flushMicrotasks();
     await flushMicrotasks();
@@ -183,6 +190,7 @@ describe("idempotent (memory backend) — recordResponse failure recovery", () =
       requestId: "r-body-ok",
       response: new Response("hello", { status: 200, },),
     },);
+
     await flushMicrotasks();
     // Slot is completed; the next request must replay from cache.
     const replay = await idem.beforeHandle(makeCtx("POST", "/api/x", "r-body-ok",),);
@@ -206,6 +214,7 @@ describe("idempotent (memory backend) — recordResponse failure recovery", () =
       },
       async flush(): Promise<void> {},
     };
+
     const log = createLogger({ level: "warn", },);
     log.addTransport(capturingTransport,);
     // Capture the prior global logger for restoration in finally. Without
@@ -217,6 +226,7 @@ describe("idempotent (memory backend) — recordResponse failure recovery", () =
     } catch {
       // No global logger yet — fine.
     }
+
     setGlobalLogger(log,);
     try {
       const idem = idempotent({ backend: "memory", },);
@@ -227,6 +237,7 @@ describe("idempotent (memory backend) — recordResponse failure recovery", () =
           controller.error(new Error("stream error",),);
         },
       },);
+
       idem.recordResponse({
         method: "POST",
         route: "/api/x",
@@ -234,6 +245,7 @@ describe("idempotent (memory backend) — recordResponse failure recovery", () =
         userId: "user-secret-7a3b",
         response: new Response(errorStream, { status: 200, },),
       },);
+
       // Yield so .text() rejects and .catch fires the warn log.
       await flushMicrotasks();
       await flushMicrotasks();
@@ -256,6 +268,7 @@ describe("idempotent (memory backend) — recordResponse failure recovery", () =
     }
   });
 });
+
 // AC8: idempotency rejects duplicate rotation triggers.
 // The DELETE participant route in src/routes/chats/participants.ts triggers
 // `rotateKeyOnLeave`. Two requests with the same Idempotency-Key on this
@@ -274,12 +287,14 @@ describe("idempotent (memory backend) — rotation trigger dedup (AC8)", () => {
       JSON.stringify({ eventId, rotatedMessages: 3, rotatedAssets: 1, },),
       { status: 200, headers: { "Content-Type": "application/json", }, },
     );
+
     idem.recordResponse({
       method: "DELETE",
       route: ROTATION_ROUTE,
       requestId: "rotate-key-1",
       response,
     },);
+
     await flushMicrotasks();
     const secondCtx = makeCtx("DELETE", ROTATION_ROUTE, "rotate-key-1",);
     const replay = await idem.beforeHandle(secondCtx,);

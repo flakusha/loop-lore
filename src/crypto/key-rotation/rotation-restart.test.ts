@@ -64,6 +64,7 @@ async function seedFixtures(database: Kysely<DB>,): Promise<void> {
       format_version: 0,
     },)
     .execute();
+
   await database
     .insertInto("chats",)
     .values({
@@ -75,6 +76,7 @@ async function seedFixtures(database: Kysely<DB>,): Promise<void> {
       encryption_level: "standard",
     },)
     .execute();
+
   await database
     .insertInto("actors",)
     .values({
@@ -92,6 +94,7 @@ async function seedFixtures(database: Kysely<DB>,): Promise<void> {
       visibility: "private",
     },)
     .execute();
+
   await database
     .insertInto("chat_keys",)
     .values({ id: NEW_KEY_ID, chat_id: CHAT_ID, encrypted_chat_key: "new", expires_at: null, },)
@@ -127,6 +130,7 @@ describe("rotation history survives a restart (AC7)", () => {
       .selectAll()
       .where("chat_id", "=", CHAT_ID,)
       .execute();
+
     expect(before,).toHaveLength(1,);
 
     // ── Restart: drop the handle entirely. Nothing in-process survives. ──
@@ -170,6 +174,7 @@ describe("rotation history survives a restart (AC7)", () => {
       .where("chat_id", "=", CHAT_ID,)
       .orderBy("created_at", "asc",)
       .execute();
+
     expect(rows,).toHaveLength(2,);
     expect(rows.every((r,) => r.reason === "leave"),).toBe(true,);
     expect(rows.map((r,) => r.messages_re_encrypted),).toEqual([3, 1,],);

@@ -109,6 +109,7 @@ export function computeContextWindow(
         trimmed.push(msg,);
       }
     }
+
     trimmed.sort((a, b,) => a.createdAt.localeCompare(b.createdAt,));
     totalTokens = trimmedTokens;
     retained.length = 0;

@@ -87,6 +87,7 @@ export function addToRoster(roster: SpriteRoster, entry: SpriteRosterEntry,): vo
     roster.entries.push({ visible: true, ...entry, },);
     return;
   }
+
   roster.entries[at] = { visible: true, ...entry, };
 }
 
@@ -135,6 +136,7 @@ export function resolveSpriteUrl(entry: SpriteRosterEntry, emotion?: string,): s
   const variant = emotion && variants
     ? Object.entries(variants,).find(([key,],) => key.toLowerCase() === emotion.toLowerCase())?.[1]
     : undefined;
+
   return getPortraitUrl(variant ?? entry.avatarAssetId,);
 }
 
@@ -188,11 +190,13 @@ export function buildStageElement(staged: StagedSprite, emotion?: string,): HTML
     avatarUrl: resolveSpriteUrl(staged.entry, emotion,),
     position: "center",
   },);
+
   el.classList.add("vn-stage-sprite", `vn-slot-${staged.slot}`,);
   el.dataset["characterId"] = staged.entry.characterId;
   const variant = emotion && staged.entry.emotionVariants
     ? Object.entries(staged.entry.emotionVariants,).find(([key,],) => key.toLowerCase() === emotion.toLowerCase())?.[1]
     : undefined;
+
   const ref = variant ?? staged.entry.avatarAssetId;
   if (isAssetIdRef(ref,)) { el.dataset["assetId"] = ref; }
   applyStageHighlight(el, staged,);

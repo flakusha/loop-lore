@@ -29,10 +29,12 @@ export function parseAcceptProtocols(accept: string | null,): TransportProtocol[
     if (!Object.hasOwn(map, key,)) {
       continue;
     }
+
     // q<=0 means "not acceptable" (RFC 7231) — exclude from negotiation.
     if (q <= 0) { continue; }
     parsed.push({ protocol: map[key]!, q, },);
   }
+
   const sorted = parsed.toSorted((a, b,) => b.q - a.q);
   return Array.from(sorted, (entry,) => entry.protocol,);
 }
@@ -60,10 +62,12 @@ export function parseAcceptEncoding(acceptEncoding: string | null,): Compression
     if (!Object.hasOwn(map, key,)) {
       continue;
     }
+
     // q<=0 means "not acceptable" (RFC 7231) — exclude from negotiation.
     if (q <= 0) { continue; }
     parsed.push({ algorithm: map[key]!, q, },);
   }
+
   const sorted = parsed.toSorted((a, b,) => b.q - a.q);
   return Array.from(sorted, (entry,) => entry.algorithm,);
 }

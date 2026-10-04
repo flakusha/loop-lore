@@ -123,6 +123,7 @@ export async function bootstrapChainKey(senderActorId: string, recipientActorId:
   if (!recipientPub) {
     throw new Error(`recipient ${recipientActorId} has no active E2E public key`,);
   }
+
   const recipientCryptoKey = await importPublicKey(recipientPub,);
   return deriveSharedBytes({
     privateKey: cryptoKeyPair.privateKey,
@@ -149,5 +150,6 @@ function xorBytes(a: Uint8Array, b: Uint8Array,): Uint8Array {
   for (let i = 0; i < len; i++) {
     out[i] = (a[i] ?? 0) ^ (b[i] ?? 0);
   }
+
   return out;
 }

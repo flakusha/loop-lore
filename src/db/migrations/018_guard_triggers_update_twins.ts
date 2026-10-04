@@ -64,9 +64,11 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await sql`DROP TRIGGER IF EXISTS world_lore_entries_distortion_check_update`.execute(
     database,
   );
+
   await sql`DROP TRIGGER IF EXISTS world_lore_entries_confidence_check_update`.execute(
     database,
   );
+
   await sql`DROP TRIGGER IF EXISTS memory_audit_log_action_check_update`.execute(
     database,
   );

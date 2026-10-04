@@ -56,6 +56,7 @@ export async function createPost(
       .select("follower_id",)
       .where("author_id", "=", post.author_id,)
       .execute();
+
     for (const f of followers) {
       if (f.follower_id === post.author_id) { continue; }
       await notifyBlogPost(db, {
@@ -125,15 +126,19 @@ export async function listPosts(
   if (filters.author_id) {
     query = query.where("author_id", "=", filters.author_id,);
   }
+
   if (filters.visibility) {
     query = query.where("visibility", "=", filters.visibility,);
   }
+
   if (filters.status) {
     query = query.where("status", "=", filters.status,);
   }
+
   if (filters.category) {
     query = query.where("category", "=", filters.category,);
   }
+
   if (filters.world_id) {
     query = query.where("world_id", "=", filters.world_id,);
   }
@@ -198,6 +203,7 @@ export async function updatePost(
     .select("author_id",)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   if (!owner || (owner.author_id !== callerUserId && !isAdmin)) { return undefined; }
 
   const updates: Record<string, unknown> = {
@@ -213,6 +219,7 @@ export async function updatePost(
       updates.published_at = new Date().toISOString();
     }
   }
+
   if (input.category !== undefined) { updates.category = input.category; }
   if (input.metadata !== undefined) {
     updates.metadata = jsonStringifyOr(input.metadata,);

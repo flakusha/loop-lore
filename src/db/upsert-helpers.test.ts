@@ -39,6 +39,7 @@ describe("insertUnique", () => {
       },
       ["username",],
     );
+
     expect(first,).toBe("inserted",);
 
     // Second call with the same unique column but a different id — the
@@ -54,6 +55,7 @@ describe("insertUnique", () => {
       },
       ["username",],
     );
+
     expect(second,).toBe("skipped",);
 
     // Confirm only one row exists, and it has the first caller's id.
@@ -62,6 +64,7 @@ describe("insertUnique", () => {
       .select(["id", "display_name",],)
       .where("username", "=", `alice-${id1}`,)
       .executeTakeFirst();
+
     expect(row?.id,).toBe(id1,);
     expect(row?.display_name,).toBe("Alice",);
   });
@@ -78,6 +81,7 @@ describe("insertUnique", () => {
       },
       ["id",],
     );
+
     expect(first,).toBe("inserted",);
 
     // Same id → genuine conflict on the id column itself. The probe would
@@ -92,6 +96,7 @@ describe("insertUnique", () => {
       },
       ["id",],
     );
+
     expect(second,).toBe("skipped",);
   });
 
@@ -107,6 +112,7 @@ describe("insertUnique", () => {
       },
       ["username",],
     );
+
     expect(result,).toBe("inserted",);
   });
 
@@ -140,6 +146,7 @@ describe("insertUnique", () => {
       },
       ["username",],
     );
+
     expect(result,).toBe("skipped",);
 
     // The seeded row must still be there with its original id.
@@ -148,6 +155,7 @@ describe("insertUnique", () => {
       .select("id",)
       .where("username", "=", username,)
       .executeTakeFirst();
+
     expect(row?.id,).toBe(seedId,);
   });
 });
@@ -182,6 +190,7 @@ describe("upsertByUnique", () => {
       .selectAll()
       .where("username", "=", username,)
       .executeTakeFirst();
+
     expect(row?.display_name,).toBe("Carol",);
     expect(row?.settings,).toBe('{"first":true}',);
   });
@@ -263,6 +272,7 @@ describe("upsertByUnique", () => {
       .select(["display_name", "settings",],)
       .where("username", "=", username,)
       .executeTakeFirst();
+
     expect(row?.display_name,).toBe("Erin Two",);
     expect(row?.settings,).toBe('{"v":2}',);
   });
@@ -274,9 +284,11 @@ describe("upsertByUniqueWith", () => {
   beforeAll(async () => {
     ({ db, } = await createTestDb());
   },);
+
   afterAll(async () => {
     await db.destroy();
   },);
+
   test("supports custom update expressions (raw SQL arithmetic)", async () => {
     // Mirrors the original messages/reply.ts use site: on conflict, the
     // existing row's column gets `excluded.column + 1`. The helper must
@@ -316,6 +328,7 @@ describe("upsertByUniqueWith", () => {
       .select(["display_name", "format_version",],)
       .where("username", "=", username,)
       .executeTakeFirst();
+
     // display_name should be untouched (we did not list it in updateSet).
     expect(row?.display_name,).toBe("Frank",);
     // format_version should be the bumped value (0 + 1 = 1).

@@ -63,6 +63,7 @@ async function inheritedHiddenAssetIds(
       hidden.add(link.asset_id,);
     }
   }
+
   return hidden;
 }
 
@@ -113,6 +114,7 @@ async function serveGalleryGrid(
   // Filter by linked entity when entityType/entityId provided
   const entityTypeValid = entityTypeParam !== null &&
     Object.values(AssetLinkEntity,).includes(entityTypeParam as AssetLinkEntity,);
+
   if (entityTypeValid && entityId) {
     qb = qb
       .innerJoin("asset_links", "asset_links.asset_id", "assets.id",)
@@ -200,12 +202,15 @@ function renderCards(
       case "image": {
         return `<img src="/api/assets/${a.id}/thumb" alt="${escapeHtml(a.filename,)}" loading="lazy" />`;
       }
+
       case "audio": {
         return `<div class="file-icon">🎵</div>`;
       }
+
       case "video": {
         return `<div class="file-icon">🎬</div>`;
       }
+
       case "other":
       case "memory": {
         return `<div class="file-icon">📄</div>`;
@@ -228,6 +233,7 @@ function renderCards(
     </div>`,
     );
   }
+
   return cards.join("",);
 }
 

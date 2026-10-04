@@ -33,6 +33,7 @@ function classifyFailure(cause: unknown, signal?: AbortSignal,): unknown {
   if (cause instanceof Error && cause.name === "AbortError") {
     return new ProviderError("Request timed out", undefined, 504, false,);
   }
+
   return cause;
 }
 

@@ -90,6 +90,7 @@ describe("computeRecordHash", () => {
       author_id: "u2",
       chat_id: "c1",
     };
+
     expect(computeRecordHash(table, pk, inputs,),).toBe(computeRecordHash(table, pk, reordered,),);
   });
 

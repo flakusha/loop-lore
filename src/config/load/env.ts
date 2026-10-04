@@ -21,6 +21,7 @@ export function applyEnvironmentOverrides(config: Config, environmentMap: Record
       setByPath(result, configPath, coerced,);
     }
   }
+
   return result as unknown as Config;
 }
 
@@ -31,6 +32,7 @@ function hasPath(obj: Record<string, unknown>, path: string,): boolean {
     if (typeof current !== "object" || current === null) { return false; }
     current = (current as Record<string, unknown>)[part];
   }
+
   return current !== undefined;
 }
 
@@ -56,9 +58,11 @@ export function liftFlatEnvKeys(
       delete parsed[environmentVariable];
       continue;
     }
+
     setByPath(parsed, configPath, flatValue,);
     delete parsed[environmentVariable];
   }
+
   return parsed;
 }
 
@@ -86,11 +90,13 @@ export function applyProviderEnvVars(config: Config,): void {
     allowUserApiKey: process.env.LLM_PROVIDER_ALLOW_USER_KEY !== "false",
     models: {},
   };
+
   config.generation.providers.openaiCompatible.push(provider,);
 
   if (!config.generation.defaultProvider && process.env.LLM_DEFAULT_PROVIDER) {
     config.generation.defaultProvider = process.env.LLM_DEFAULT_PROVIDER;
   }
+
   if (!config.generation.defaultProvider) {
     config.generation.defaultProvider = provider.name;
   }

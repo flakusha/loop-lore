@@ -120,6 +120,7 @@ describe("enum barrel", () => {
         k !== "createMachine" &&
         k !== "StateDef",
     );
+
     // Check that expected names are subset of actual names
     for (const name of expectedNames) {
       expect(actualNames,).toContain(name,);

@@ -77,6 +77,7 @@ describe("AROUSAL_CEILING", () => {
       ContentIntensity.Intense,
       ContentIntensity.Extreme,
     ] as const;
+
     for (let i = 1; i < ladder.length; i++) {
       expect(AROUSAL_CEILING[ladder[i]!],)
         .toBeGreaterThanOrEqual(AROUSAL_CEILING[ladder[i - 1]!]!,);
@@ -88,6 +89,7 @@ describe("AROUSAL_CEILING", () => {
       expect(ceiling,).toBeGreaterThanOrEqual(0,);
       expect(ceiling,).toBeLessThanOrEqual(100,);
     }
+
     // Vanilla caps below the top of the scale — extreme arousal is out of tier.
     expect(AROUSAL_CEILING[ContentIntensity.Vanilla],).toBeLessThan(100,);
     expect(AROUSAL_CEILING[ContentIntensity.Extreme],).toBe(100,);

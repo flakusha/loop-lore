@@ -48,6 +48,7 @@ export async function requestPrompt(
       body: jsonBody(request,),
     } as RequestInit,
   );
+
   if (!res.ok) {
     const error = await res.json().catch(() => ({ message: undefined, })) as { message?: string };
     return {
@@ -57,6 +58,7 @@ export async function requestPrompt(
       injectionBlocked: res.status === 403 && (error as { error?: string })?.error === "injection_detected",
     };
   }
+
   const payload = await res.json() as { data?: unknown };
   return { ok: true, data: payload?.data, };
 }

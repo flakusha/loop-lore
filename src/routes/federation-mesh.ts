@@ -53,6 +53,7 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
           code: ErrorCode.ServiceUnavailable,
         },);
       }
+
       const request = body as {
         senderOrigin?: unknown;
         contentHash?: unknown;
@@ -60,6 +61,7 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
         contentType?: unknown;
         ttlMs?: unknown;
       } | null;
+
       if (
         !request || typeof request.senderOrigin !== "string" ||
         typeof request.contentHash !== "string" ||
@@ -71,6 +73,7 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
           code: ErrorCode.BadRequest,
         },);
       }
+
       try {
         const reservationId = await createInboundReservation(opts.database, {
           senderOrigin: request.senderOrigin,
@@ -79,6 +82,7 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
           contentType: typeof request.contentType === "string" ? request.contentType : undefined,
           ttlMs: typeof request.ttlMs === "number" ? request.ttlMs : undefined,
         },);
+
         // Hand the sender our inbound key for its origin (single-writer:
         // only the receiver mints these). Issued only over a sealed wire —
         // direct TLS or a TLS-terminating proxy — since the key travels in
@@ -90,6 +94,7 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
         const contentKey = smk === null || !wireSealed
           ? undefined
           : await getOrCreateInboundKey(opts.database, smk, request.senderOrigin,);
+
         return jsonResponse(
           contentKey === undefined ? { reservationId, } : { reservationId, contentKey, },
         );
@@ -100,11 +105,13 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
           : message.includes("capacity exhausted",)
           ? HttpStatus.Conflict
           : HttpStatus.BadRequest;
+
         const code = status === HttpStatus.Forbidden
           ? ErrorCode.Forbidden
           : status === HttpStatus.Conflict
           ? ErrorCode.Conflict
           : ErrorCode.BadRequest;
+
         return jsonError({ message, status, code, },);
       }
     },
@@ -128,10 +135,12 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
           code: ErrorCode.ServiceUnavailable,
         },);
       }
+
       const request = body as {
         envelope?: Partial<ContentEnvelope> | null;
         reservationId?: unknown;
       } | null;
+
       const envelope = request?.envelope;
       if (
         !envelope || typeof envelope.id !== "string" || typeof envelope.origin !== "string" ||
@@ -145,14 +154,17 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
           code: ErrorCode.BadRequest,
         },);
       }
+
       const reservationId = typeof request?.reservationId === "string"
         ? request.reservationId
         : undefined;
+
       const ciphers = await createMeshEncryption(secret,).receiverCiphers(
         opts.database,
         envelope.origin,
         getSmk(),
       );
+
       let verdict: DeliveryVerdict | null = null;
       for (const cipher of ciphers) {
         try {
@@ -162,11 +174,13 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
             cipher,
             reservationId === undefined ? {} : { reservationId, },
           );
+
           break;
         } catch {
           // Try the next cipher (current → grace previous → PSK fallback).
         }
       }
+
       if (verdict === null) {
         return jsonError({
           message: "envelope failed integrity verification",
@@ -174,6 +188,7 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
           code: ErrorCode.BadRequest,
         },);
       }
+
       meshClock.observe(envelope.clock,);
       return jsonResponse({ verdict, },);
     },

@@ -23,6 +23,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       return await serveCharactersGrid(database,);
     }, {
       response: { 200: SuccessResponse, },
@@ -32,6 +33,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       const url = new URL(ctx.request.url,);
       return await serveGalleryGrid(
         database,
@@ -47,6 +49,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       return await serveWorldsListDb(database, ctx.userId as string | null, (ctx.userRole as string | null) ?? null,);
     }, {
       response: { 200: SuccessResponse, },
@@ -57,6 +60,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       const url = new URL(ctx.request.url,);
       return await serveGallerySearch(
         database,
@@ -72,6 +76,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       const url = new URL(ctx.request.url,);
       return await serveCharactersSearch(database, url.searchParams,);
     }, {
@@ -82,6 +87,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       const url = new URL(ctx.request.url,);
       return await serveWorldsSearch(
         database,
@@ -97,6 +103,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       const url = new URL(ctx.request.url,);
       return await serveChatsListDb(database, url.searchParams,);
     }, {
@@ -107,6 +114,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       const url = new URL(ctx.request.url,);
       return await serveChatsSearch(database, url.searchParams,);
     }, {
@@ -117,6 +125,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       return await serveWorldDetailContent(
         ctx.params.id,
         database,
@@ -131,6 +140,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       return await serveCharacterEditForm(ctx.params.id, database, ctx.request,);
     }, {
       response: { 200: SuccessResponse, },
@@ -140,6 +150,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       return await serveCharacterChatListDb(ctx.params.id, database,);
     }, {
       response: { 200: SuccessResponse, },

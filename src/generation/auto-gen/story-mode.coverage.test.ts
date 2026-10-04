@@ -132,6 +132,7 @@ async function seedUser(
     birth_date: opts.birthDate ?? null,
     age_gate_accepted_at: opts.ageGateAcceptedAt ?? null,
   },).execute();
+
   return id;
 }
 
@@ -150,6 +151,7 @@ async function seedWorld(db: Kysely<DB>,): Promise<string> {
     difficulty_reroll: "none",
     difficulty_state: "normal",
   },).execute();
+
   return id;
 }
 
@@ -165,6 +167,7 @@ async function seedLocation(db: Kysely<DB>, worldId: string,): Promise<string> {
     name: "Tavern",
     connections: "[]",
   },).execute();
+
   await db.insertInto("location_states",).values({
     location_id: id,
     world_id: worldId,
@@ -173,6 +176,7 @@ async function seedLocation(db: Kysely<DB>, worldId: string,): Promise<string> {
     items_available: "[]",
     hazards: "[]",
   },).execute();
+
   return id;
 }
 
@@ -196,6 +200,7 @@ async function seedActor(
     content_rating: ContentRating.Sfw,
     ...overrides,
   },).execute();
+
   return id;
 }
 
@@ -235,6 +240,7 @@ async function seedChat(
     current_location_id: locationId,
     ...overrides,
   },).execute();
+
   return id;
 }
 
@@ -269,6 +275,7 @@ async function seedParentMessage(
     swipe_index: swipeIndex,
     emotion: null,
   },).execute();
+
   return id;
 }
 
@@ -372,6 +379,7 @@ describeOrSkip("triggerStoryModeGeneration", () => {
       "=",
       chatId,
     ).execute();
+
     const assistant = messages.find((m,) => m.role === MessageRole.Assistant);
     expect(assistant,).toBeDefined();
     expect(assistant?.content,).toBe("stored-content",);
@@ -395,6 +403,7 @@ describeOrSkip("triggerStoryModeGeneration", () => {
       "=",
       chatId,
     ).execute();
+
     expect(messages,).toHaveLength(0,);
     expect(capturedAcceptResponse,).toBeNull();
   });
@@ -410,6 +419,7 @@ describeOrSkip("triggerStoryModeGeneration", () => {
       "=",
       chatId,
     ).execute();
+
     expect(messages.some((m,) => m.role === MessageRole.Assistant),).toBe(true,);
     expect(capturedAcceptResponse,).not.toBeNull();
   });
@@ -426,6 +436,7 @@ describeOrSkip("triggerStoryModeGeneration", () => {
       "=",
       chatId,
     ).execute();
+
     const assistant = messages.find((m,) => m.role === MessageRole.Assistant);
     expect(assistant,).toBeDefined();
     expect(assistant?.parent_id,).toBe(parentId,);
@@ -439,10 +450,12 @@ describeOrSkip("triggerStoryModeGeneration", () => {
       birthDate: "1990-01-01",
       ageGateAcceptedAt: null,
     },);
+
     const { chatId, actorId, worldId, } = await seedScenario({
       chat: { created_by: gatelessUser, },
       actor: { content_rating: ContentRating.NsfwMild, },
     },);
+
     mockActorId = actorId;
 
     await runTurn({ chatId, worldId, userId: gatelessUser, },);
@@ -452,6 +465,7 @@ describeOrSkip("triggerStoryModeGeneration", () => {
       "=",
       chatId,
     ).execute();
+
     expect(messages,).toHaveLength(0,);
     expect(capturedAcceptResponse,).toBeNull();
   });

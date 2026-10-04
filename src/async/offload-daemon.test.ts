@@ -45,6 +45,7 @@ beforeEach(() => {
   spillDirForTest = mkdtempSync(path.join(tmpdir(), "loop-lore-daemon-",),);
   setOffloadDir(spillDirForTest,);
 },);
+
 afterEach(() => {
   resetOffloadDir();
   rmSync(spillDirForTest, { recursive: true, force: true, },);
@@ -146,6 +147,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       completedAt: minutesAgo(10,),
       responseBody: "x".repeat(64,),
     },);
+
     // Small body stays inline.
     await seedRequest(db, {
       id: "small-1",
@@ -153,6 +155,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       completedAt: minutesAgo(10,),
       responseBody: "tiny",
     },);
+
     // Null body is skipped (daemon cannot spill what is not there).
     await seedRequest(db, {
       id: "empty-1",
@@ -160,6 +163,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       completedAt: minutesAgo(10,),
       responseBody: null,
     },);
+
     // Pending rows are never offload candidates.
     await seedRequest(db, {
       id: "pending-1",
@@ -179,6 +183,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       .select(["response_body", "offloaded_at", "offload_path",],)
       .where("id", "=", "big-1",)
       .executeTakeFirst();
+
     expect(big?.response_body,).toBeNull();
     expect(big?.offload_path,).toBeTypeOf("string",);
     expect(big?.offloaded_at,).toBeTypeOf("string",);
@@ -193,6 +198,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       .select(["response_body", "offload_path", "status",],)
       .where("id", "=", "small-1",)
       .executeTakeFirst();
+
     expect(small?.response_body,).toBe("tiny",);
     expect(small?.offload_path,).toBeNull();
     expect(small?.status,).toBe("complete",);
@@ -202,6 +208,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       .select("response_body",)
       .where("id", "=", "pending-1",)
       .executeTakeFirst();
+
     expect(pending?.response_body,).toBe("x".repeat(64,),);
 
     daemon.stop();
@@ -224,6 +231,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       .select("response_body",)
       .where("id", "=", "fresh-1",)
       .executeTakeFirst();
+
     expect(row?.response_body,).toBe("x".repeat(64,),);
     daemon.stop();
   });
@@ -241,6 +249,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       minAgeMs: 0,
       maxInlineBytes: 10,
     },);
+
     const result = await daemon.runOnce();
     expect(result.offloaded,).toBe(1,);
     daemon.stop();
@@ -253,6 +262,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       completedAt: minutesAgo(10,),
       responseBody: "z".repeat(20,),
     },);
+
     // No daemon maxInlineBytes → AsyncStoreConfig.maxInlineBytes (10) applies.
     const daemon = startOffloadDaemon(db, { maxInlineBytes: 10, }, { minAgeMs: 0, },);
     const result = await daemon.runOnce();
@@ -276,6 +286,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       .select("response_body",)
       .where("id", "=", "boundary-1",)
       .executeTakeFirst();
+
     expect(row?.response_body,).toBe("b".repeat(10,),);
     daemon.stop();
   });
@@ -291,6 +302,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       completedAt: minutesAgo(10,),
       responseBody: "x".repeat(64,),
     },);
+
     await seedRequest(db, {
       id: "good-1",
       status: "complete",
@@ -309,6 +321,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
         .select(["offload_path", "response_body",],)
         .where("id", "=", id,)
         .executeTakeFirst();
+
       expect(row?.response_body,).toBeNull();
       expect(row?.offload_path,).toBeTypeOf("string",);
       if (row?.offload_path) {
@@ -318,6 +331,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
         rmSync(row.offload_path, { force: true, },);
       }
     }
+
     daemon.stop();
   });
 
@@ -328,12 +342,14 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       completedAt: minutesAgo(10,),
       responseBody: "q".repeat(64,),
     },);
+
     await seedRequest(db, {
       id: "tx-ok",
       status: "complete",
       completedAt: minutesAgo(10,),
       responseBody: "r".repeat(64,),
     },);
+
     // Abort the phase-1 UPDATE for one row: the transaction must roll
     // back AND the freshly spilled file must be unlinked — otherwise the
     // row keeps its inline body while an orphan file lingers on disk.
@@ -353,6 +369,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       .select(["response_body", "offload_path", "offloaded_at",],)
       .where("id", "=", "tx-fail",)
       .executeTakeFirst();
+
     expect(failedRow?.response_body,).toBe("q".repeat(64,),);
     expect(failedRow?.offload_path,).toBeNull();
     expect(failedRow?.offloaded_at,).toBeNull();
@@ -362,11 +379,13 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       .select("offload_path",)
       .where("id", "=", "tx-ok",)
       .executeTakeFirst();
+
     expect(okRow?.offload_path,).toBeTypeOf("string",);
     if (okRow?.offload_path) { filePaths.push(okRow.offload_path,); }
     daemon.stop();
   });
 });
+
 describe("OffloadDaemon.runOnce — phase 2: TTL expiry", () => {
   let db: Kysely<DB>;
   let sqlite: { close(): void };
@@ -389,18 +408,21 @@ describe("OffloadDaemon.runOnce — phase 2: TTL expiry", () => {
       completedAt: minutesAgo(30,),
       responseBody: "stale-body",
     },);
+
     await seedRequest(db, {
       id: "old-failed",
       status: "failed",
       completedAt: minutesAgo(30,),
       responseBody: "failed-body",
     },);
+
     await seedRequest(db, {
       id: "fresh-complete",
       status: "complete",
       completedAt: minutesAgo(0.1,),
       responseBody: "fresh-body",
     },);
+
     await seedRequest(db, { id: "old-pending", status: "pending", completedAt: minutesAgo(30,), },);
 
     const daemon = startOffloadDaemon(db, {}, { ttlMs: 60 * 1000, minAgeMs: 0, maxInlineBytes: 10, },);
@@ -412,6 +434,7 @@ describe("OffloadDaemon.runOnce — phase 2: TTL expiry", () => {
       .selectFrom("request_results",)
       .select(["id", "status", "response_body",],)
       .execute();
+
     const byId = new Map(Array.from(statuses, (r,) => [r.id, r,],),);
     expect(byId.get("old-complete",)?.status,).toBe("expired",);
     expect(byId.get("old-complete",)?.response_body,).toBeNull();
@@ -429,6 +452,7 @@ describe("OffloadDaemon.runOnce — phase 2: TTL expiry", () => {
       completedAt: minutesAgo(0.001,),
       responseBody: null,
     },);
+
     const daemon = startOffloadDaemon(db, {}, { ttlMs: 0, minAgeMs: 0, },);
     const result = await daemon.runOnce();
     expect(result.expired,).toBeGreaterThanOrEqual(1,);
@@ -471,6 +495,7 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
       completedAt: minutesAgo(60,),
       offloadPath: goneFile,
     },);
+
     // Recently expired (within 2× ttl) → file must stay.
     await seedRequest(db, {
       id: "expired-recent",
@@ -478,6 +503,7 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
       completedAt: minutesAgo(0.5,),
       offloadPath: staysFile,
     },);
+
     // Long expired without a spill path → nothing to clean.
     await seedRequest(db, {
       id: "expired-nopath",
@@ -497,12 +523,14 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
       .select("offload_path",)
       .where("id", "=", "expired-old",)
       .executeTakeFirst();
+
     expect(oldRow?.offload_path,).toBeNull();
     const recentRow = await db
       .selectFrom("request_results",)
       .select("offload_path",)
       .where("id", "=", "expired-recent",)
       .executeTakeFirst();
+
     expect(recentRow?.offload_path,).toBe(staysFile,);
     daemon.stop();
   });
@@ -524,6 +552,7 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
       .select("offload_path",)
       .where("id", "=", "expired-missing-file",)
       .executeTakeFirst();
+
     expect(row?.offload_path,).toBeNull();
     daemon.stop();
   });
@@ -539,6 +568,7 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
       completedAt: minutesAgo(60,),
       offloadPath: keptFile,
     },);
+
     // Abort the phase-3 UPDATE: the transaction rolls back, so the row
     // must KEEP its offload_path and the file must survive — deleting
     // the file first (the old ordering) would leave the DB pointing at
@@ -561,6 +591,7 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
       .select("offload_path",)
       .where("id", "=", "expired-tx-fail",)
       .executeTakeFirst();
+
     expect(failedRow?.offload_path,).toBe(keptFile,);
   });
 });
@@ -594,6 +625,7 @@ describe("OffloadDaemon lifecycle", () => {
       minAgeMs: 0,
       maxInlineBytes: 10,
     },);
+
     try {
       // Double start must not throw or spawn a second timer.
       daemon.start();
@@ -612,6 +644,7 @@ describe("OffloadDaemon lifecycle", () => {
       .select(["response_body", "offload_path",],)
       .where("id", "=", "daemon-tick-1",)
       .executeTakeFirst();
+
     expect(row?.response_body,).toBeNull();
     expect(row?.offload_path,).toBeTypeOf("string",);
     if (row?.offload_path) { rmSync(row.offload_path, { force: true, },); }
@@ -700,6 +733,7 @@ describe("pruneOrphanSpills — retention cap for unreferenced spill files", () 
         ttlMs: TTL_MS,
         dir: path.join(sweepDir, "missing",),
       },);
+
       expect(pruned,).toBe(0,);
     } finally {
       await ctx.db.destroy();

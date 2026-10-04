@@ -60,6 +60,7 @@ async function seedUser(id: string,): Promise<string> {
     birth_date: "1990-01-01",
     age_gate_accepted_at: "2026-01-01T00:00:00Z",
   },);
+
   return userId;
 }
 
@@ -73,6 +74,7 @@ async function seedLocation(id: string,): Promise<string> {
     birth_date: "1990-01-01",
     age_gate_accepted_at: "2026-01-01T00:00:00Z",
   },);
+
   await insertWorlds(db, userId, `Location Test World ${id}`, { id: worldId as never, },);
   await insertLocations(db, worldId, `Location ${id}`, { id: locationId as never, },);
   return locationId;
@@ -87,6 +89,7 @@ function makeApp(userId?: string, config: Config = makeConfig(),) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(locationRoutes({ database: db, config, },),);
 }
 
@@ -95,6 +98,7 @@ describe("location routes — GET /api/nsfw/location/:locationId", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/nsfw/location/loc-x",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -104,6 +108,7 @@ describe("location routes — GET /api/nsfw/location/:locationId", () => {
     const res = await makeApp(userId,).handle(
       new Request(`http://localhost/api/nsfw/location/${locationId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.locationId,).toBe(locationId,);
@@ -116,6 +121,7 @@ describe("location routes — GET /api/nsfw/location/:locationId", () => {
       .select("privacy_level",)
       .where("location_id", "=", locationId,)
       .executeTakeFirst();
+
     expect(row?.privacy_level,).toBe("private",);
   });
 
@@ -124,6 +130,7 @@ describe("location routes — GET /api/nsfw/location/:locationId", () => {
     const res = await makeApp(userId, makeConfig({ allowNsfw: false, },),).handle(
       new Request("http://localhost/api/nsfw/location/loc-get-2",),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -137,6 +144,7 @@ describe("location routes — PUT /api/nsfw/location/:locationId", () => {
         body: JSON.stringify({ privacyLevel: "public", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -154,6 +162,7 @@ describe("location routes — PUT /api/nsfw/location/:locationId", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.success,).toBe(true,);
@@ -163,6 +172,7 @@ describe("location routes — PUT /api/nsfw/location/:locationId", () => {
       .select(["privacy_level", "location_type", "discovery_chance",],)
       .where("location_id", "=", locationId,)
       .executeTakeFirst();
+
     expect(row?.privacy_level,).toBe("public",);
     expect(row?.location_type,).toBe("tavern",);
     expect(row?.discovery_chance,).toBe(50,);
@@ -178,6 +188,7 @@ describe("location routes — PUT /api/nsfw/location/:locationId", () => {
         body: JSON.stringify({ atmosphere: { romantic: 90, }, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const row = await db
@@ -185,6 +196,7 @@ describe("location routes — PUT /api/nsfw/location/:locationId", () => {
       .select("atmosphere",)
       .where("location_id", "=", locationId,)
       .executeTakeFirst();
+
     const atmosphere = JSON.parse(row?.atmosphere ?? "{}",) as Record<string, number>;
     expect(atmosphere.romantic,).toBe(90,);
     // Untouched keys keep their defaults.
@@ -200,6 +212,7 @@ describe("location routes — PUT /api/nsfw/location/:locationId", () => {
         body: JSON.stringify({ privacyLevel: "public", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

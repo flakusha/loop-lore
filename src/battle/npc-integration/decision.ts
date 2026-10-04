@@ -106,27 +106,33 @@ function generateDecisionReasoning(
       if (personality.courage > 80) { return "High courage emboldens attack"; }
       return "Sees opportunity to strike";
     }
+
     case "defend": {
       if (personality.caution > 70) { return "Cautious nature favors defense"; }
       if (healthPercent < 50) { return "Wounded, needs to protect self"; }
       return "Defensive posture chosen";
     }
+
     case "flee": {
       if (personality.courage < 30) { return "Low courage prompts retreat"; }
       if (isOutnumbered) { return "Outnumbered, tactical retreat"; }
       return "Assesses situation as unfavorable";
     }
+
     case "negotiate": {
       if (personality.intelligence > 70) { return "Intelligent approach to avoid conflict"; }
       if (personality.loyalty > 60) { return "Values relationships over violence"; }
       return "Seeks diplomatic solution";
     }
+
     case "special": {
       return "Deploys a special ability";
     }
+
     case "use_item": {
       return "Uses an item from inventory";
     }
+
     default: {
       return "Unknown decision";
     }

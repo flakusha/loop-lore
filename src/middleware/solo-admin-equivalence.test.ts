@@ -56,6 +56,7 @@ describe("verify seeding of admin (solo/demo mode)", () => {
       .select("id",)
       .where("id", "=", res.context.userId!,)
       .executeTakeFirst();
+
     expect(actor,).toBeDefined();
   });
 

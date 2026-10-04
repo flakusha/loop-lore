@@ -50,6 +50,7 @@ const messagesDocument = {
   },
   querySelector: null,
 } as any;
+
 globalThis.document = messagesDocument;
 afterAll(() => {
   globalThis.document = originalDocument;
@@ -114,8 +115,10 @@ describe("chatMessages", () => {
         if (url === "/api/v1/messages/msg-1/reactions" && opts?.method === "POST") {
           return Response.json({ toggled: true, emoji: "👍", },);
         }
+
         return Response.json([{ emoji: "👍", count: 1, userReacted: true, },], { status: 200, },);
       };
+
       const state: ReactionState = {
         activeChat: "chat-1",
         messages: [mockMessage("msg-1",),],
@@ -146,6 +149,7 @@ describe("chatMessages", () => {
         messages: [],
         loadMessageReactions: chatMessages.loadMessageReactions,
       };
+
       await expect(chatMessages.toggleReaction!.call(state, "msg-1", "👍",),).resolves.toBeUndefined();
     });
   });
@@ -184,6 +188,7 @@ describe("loadMessages stale-response guard", () => {
       fetchHandler = null;
       fetchCalls = [];
     },);
+
     const state = {
       activeChat: "chat-a" as string | null,
       messages: [] as Message[],
@@ -212,6 +217,7 @@ describe("loadMessages stale-response guard", () => {
       data: [{ ...mockMessage("m1",), },],
       pagination: { total: 1, page: 1, pageSize: 50, totalPages: 1, },
     },),);
+
     await pending;
 
     // Stale response must not clobber the new chat's (empty) message list.
@@ -243,6 +249,7 @@ describe("chatMessages coverage", () => {
         $dispatch: () => {},
         $refs: { messageList: { scrollHeight: 0, scrollTop: 0, } as any, },
       } as unknown as ChatState;
+
       // Capture prev scrollHeight before fetch resolves.
       // scrollHeight grows when the messages array is prepended (proxy to messages.length).
       Object.defineProperty(state.$refs.messageList, "scrollHeight", {
@@ -256,6 +263,7 @@ describe("chatMessages coverage", () => {
         data: olderMessages,
         pagination: { total: 9, page: 2, pageSize: 50, totalPages: 3, },
       },);
+
       await chatMessages.loadOlderMessages!.call(state as ChatState,);
 
       // Older messages are prepended (oldest first).
@@ -281,6 +289,7 @@ describe("chatMessages coverage", () => {
         $dispatch: () => {},
         $refs: {},
       } as unknown as ChatState;
+
       await chatMessages.loadOlderMessages!.call(state as ChatState,);
       expect(fetchCalls,).toHaveLength(0,);
     });
@@ -296,6 +305,7 @@ describe("chatMessages coverage", () => {
         $dispatch: () => {},
         $refs: {},
       } as unknown as ChatState;
+
       await chatMessages.loadOlderMessages!.call(state as ChatState,);
       expect(fetchCalls,).toHaveLength(0,);
     });
@@ -311,6 +321,7 @@ describe("chatMessages coverage", () => {
         $dispatch: () => {},
         $refs: {},
       } as unknown as ChatState;
+
       await chatMessages.loadOlderMessages!.call(state as ChatState,);
       expect(fetchCalls,).toHaveLength(0,);
     });
@@ -326,10 +337,12 @@ describe("chatMessages coverage", () => {
         $dispatch: () => {},
         $refs: {},
       } as unknown as ChatState;
+
       mockFetch(200, {
         data: [],
         pagination: { total: 1, page: 4, pageSize: 50, totalPages: 3, },
       },);
+
       await chatMessages.loadOlderMessages!.call(state as ChatState,);
       expect(state.hasMoreMessages,).toBe(false,);
       expect(state.loadingOlder,).toBe(false,);
@@ -343,6 +356,7 @@ describe("chatMessages coverage", () => {
         new Promise<Response>((resolve,) => {
           release = resolve;
         },);
+
       const state = {
         activeChat: "chat-a",
         messages: [mockMessage("keep",),],
@@ -353,12 +367,14 @@ describe("chatMessages coverage", () => {
         $dispatch: () => {},
         $refs: {},
       } as unknown as ChatState;
+
       const pending = chatMessages.loadOlderMessages!.call(state as ChatState,);
       state.activeChat = "chat-b";
       release!(Response.json({
         data: [mockMessage("stale",),],
         pagination: { total: 1, page: 2, pageSize: 50, totalPages: 3, },
       },),);
+
       await pending;
       // Stale response must NOT mutate state.
       expect(state.messages.map((m,) => m.id),).toEqual(["keep",],);
@@ -370,6 +386,7 @@ describe("chatMessages coverage", () => {
       fetchHandler = () => {
         throw new Error("network down",);
       };
+
       const toasts: Array<{ type: string; message: string }> = [];
       const state = {
         activeChat: "chat-1",
@@ -383,6 +400,7 @@ describe("chatMessages coverage", () => {
         },
         $refs: {},
       } as unknown as ChatState;
+
       await chatMessages.loadOlderMessages!.call(state as ChatState,);
       expect(state.loadingOlder,).toBe(false,);
       expect(toasts,).toHaveLength(1,);
@@ -427,6 +445,7 @@ describe("chatMessages coverage", () => {
             triggered.push("called",);
           },
         };
+
         chatMessages.setupInfiniteScroll!.call(state2 as any,);
         // Reach into the captured constructor to fire the callback.
         // Pull the entries handler from the constructor mock — easier: use lastInstance directly.
@@ -436,6 +455,7 @@ describe("chatMessages coverage", () => {
           capturedHandler = cb;
           return new FakeObserver();
         };
+
         (globalThis as any).IntersectionObserver = CapturingObserver;
         const state3 = {
           scrollObserver: null as any,
@@ -443,6 +463,7 @@ describe("chatMessages coverage", () => {
             triggered.push("called",);
           },
         };
+
         chatMessages.setupInfiniteScroll!.call(state3 as any,);
         capturedHandler!([{ isIntersecting: true, },],);
         expect(triggered,).toContain("called",);
@@ -471,6 +492,7 @@ describe("chatMessages coverage", () => {
           scrollTopSet = v;
         },
       };
+
       globalThis.document.querySelector = ((sel: string,) => sel === "#message-list" ? fakeEl : null) as any;
       try {
         scrollHeightRead = 1234;
@@ -502,6 +524,7 @@ describe("chatMessages coverage", () => {
           return this._scrollTop;
         },
       };
+
       Object.defineProperty(fakeEl, "clientHeight", { value: 900, configurable: true, },);
       globalThis.document.querySelector = ((sel: string,) => sel === "#message-list" ? fakeEl : null) as any;
       try {
@@ -540,6 +563,7 @@ describe("chatMessages coverage", () => {
         clientHeight: 200,
         addEventListener: () => {},
       };
+
       globalThis.document.querySelector = ((sel: string,) => sel === "#message-list" ? fakeEl : null) as any;
       try {
         const state: any = {};
@@ -572,6 +596,7 @@ describe("chatMessages coverage", () => {
           scrollToArg = opts;
         },
       };
+
       globalThis.document.querySelector = ((sel: string,) => sel === "#message-list" ? fakeEl : null) as any;
       try {
         const state: any = { _isScrolledUp: true, };
@@ -580,6 +605,7 @@ describe("chatMessages coverage", () => {
           top: 800,
           behavior: "smooth",
         },);
+
         expect(state._isScrolledUp,).toBe(false,);
       } finally {
         globalThis.document.querySelector = realQS;

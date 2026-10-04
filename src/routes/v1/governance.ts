@@ -50,6 +50,7 @@ export function governanceGuard(opts: { enabled?: () => boolean } = {},) {
           HttpStatus.TooManyRequests,
           Date.now() - (ctx.__governanceStart as number),
         );
+
         const body = jsonError("Rate limit exceeded", HttpStatus.TooManyRequests, ErrorCode.TooManyRequests,);
         const headers = new Headers(body.headers,);
         headers.set("x-ratelimit-hit", "1",);
@@ -70,6 +71,7 @@ export function governanceGuard(opts: { enabled?: () => boolean } = {},) {
         // again would double-report rate-limited traffic.
         return response;
       }
+
       const status = response instanceof Response ? response.status : HttpStatus.OK;
       metrics.recordRequest(normalizeRoute(url.pathname,), status, Date.now() - (ctx.__governanceStart as number),);
       return response;
@@ -100,6 +102,7 @@ export function governanceEndpoints(prefix = "/api/v1",) {
           } catch {
             target = url;
           }
+
           const policy = policyForRoute(target.pathname,);
           const verdict = governanceRateLimiter.peek(`${userId}:${policy.name}`, policy,);
           return Response.json({
@@ -119,6 +122,7 @@ export function governanceEndpoints(prefix = "/api/v1",) {
           if (!can(userRole, "admin.system",)) {
             return jsonError("Admin access required", HttpStatus.Forbidden, ErrorCode.Forbidden,);
           }
+
           return new Response(renderPrometheus(metrics,), {
             headers: { "content-type": "text/plain; version=0.0.4; charset=utf-8", },
           },);

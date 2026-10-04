@@ -55,6 +55,7 @@ export async function skipOldChain(state: DhRatchetStateReadonly, untilCounter: 
       messageKeyBytes: step.messageKeyBytes,
     },);
   }
+
   return skipped;
 }
 

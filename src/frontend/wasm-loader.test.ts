@@ -21,6 +21,7 @@ if (ISOLATED) {
     getCsrfToken: () => "",
   }),);
 }
+
 /** Scripted C ABI exports backed by a real WebAssembly.Memory. */
 function fakeModule(overrides: Record<string, unknown> = {},): {
   instance: WebAssembly.Instance;
@@ -68,6 +69,7 @@ function fakeModule(overrides: Record<string, unknown> = {},): {
     },
     ...overrides,
   };
+
   return {
     instance: { exports, } as unknown as WebAssembly.Instance,
     memory,
@@ -171,10 +173,12 @@ describeOrSkip("wasm-loader — gguf wrapper", () => {
       ...(instance.exports as unknown as Record<string, unknown>),
       ll_gguf_probe: () => -2,
     };
+
     const failing = __buildWasmWrapperForTest(
       { exports: failingExports, } as unknown as WebAssembly.Instance,
       memory,
     );
+
     expect(failing.gguf.probe(new Uint8Array([0x47,],),),).toBeNull();
   });
 },);

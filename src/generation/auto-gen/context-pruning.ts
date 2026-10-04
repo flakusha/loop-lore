@@ -44,6 +44,7 @@ export async function checkAndPruneContext(
   for (const m of recentMessages) {
     totalTokens += m.token_count_total || estimateTokens(m.content,);
   }
+
   const threshold = getThresholdState(
     MAX_TOKENS > 0 ? Math.round((totalTokens / MAX_TOKENS) * 100,) : 0,
   );
@@ -72,6 +73,7 @@ export async function checkAndPruneContext(
     const idByKey = new Map(
       recentMessages.map((m,) => [`${m.role}:${m.content}`, m.id,]),
     );
+
     // Persist the pruning decision: soft-hide (visibility="auto_hidden"),
     // matching the soft-delete convention used elsewhere. Per-message update
     // (no bulk builder) keeps the write simple and idempotent.
@@ -84,6 +86,7 @@ export async function checkAndPruneContext(
         .where("id", "=", id,)
         .execute();
     }
+
     log.info("context pruned", {
       pruned: pruneResult.pruned.length,
       promoted: pruneResult.promoted.length,

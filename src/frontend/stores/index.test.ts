@@ -66,6 +66,7 @@ describe("initAlpineStores — chat store defaults", () => {
     expect(() => {
       void (chat.children as { length: number } | undefined)?.length;
     },).not.toThrow();
+
     expect(() => {
       void (chat.visibility as string | undefined)?.length;
     },).not.toThrow();

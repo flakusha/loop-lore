@@ -25,12 +25,14 @@ export async function checkQuestAccess(
     .select(["world_id",],)
     .where("id", "=", questId,)
     .executeTakeFirst();
+
   if (!questRow) { return null; }
   const worldCheck = await database
     .selectFrom("worlds",)
     .select(["owner_id",],)
     .where("id", "=", questRow.world_id,)
     .executeTakeFirst();
+
   if (!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId)) { return null; }
   return questRow;
 }
@@ -46,6 +48,7 @@ export async function checkWorldAccess(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   return !(!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId));
 }
 
@@ -68,6 +71,7 @@ export async function handleListQuests(
     .where("world_id", "=", worldId,)
     .where("status", "=", "active",)
     .executeTakeFirst();
+
   const total = countResult?.total ?? 0;
 
   const quests = await database
@@ -131,6 +135,7 @@ export async function handleQuest(
       .selectAll()
       .where("id", "=", questId,)
       .executeTakeFirst();
+
     return quest ? jsonResponse(quest,) : notFound("Quest not found",);
   }
 
@@ -154,6 +159,7 @@ export async function handleQuest(
     .selectAll()
     .where("id", "=", questId,)
     .executeTakeFirst();
+
   void notifyQuestUpdate(database, {
     worldId: questRow.world_id,
     questName: updated?.name ?? "Quest",
@@ -161,6 +167,7 @@ export async function handleQuest(
     // Quest-update notification failure is non-fatal — swallow.
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     .catch(() => {},);
+
   return jsonResponse(updated,);
 }
 
@@ -203,6 +210,7 @@ export async function handleProgress(
     .select("name",)
     .where("id", "=", questId,)
     .executeTakeFirst();
+
   void notifyQuestUpdate(database, {
     worldId: questRow.world_id,
     chatId: body?.chatId as string | undefined,
@@ -211,5 +219,6 @@ export async function handleProgress(
     // Quest-progress notification failure is non-fatal — swallow.
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     .catch(() => {},);
+
   return jsonResponse(entry,);
 }

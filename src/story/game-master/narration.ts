@@ -58,6 +58,7 @@ export async function injectNarration(state: GmState, worldId: string, text: str
         plaintext: text,
         smk,
       },);
+
       storedContent = enc.storedContent;
       storedKeyId = enc.keyId;
     }

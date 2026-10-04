@@ -78,9 +78,11 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
   if (typeof plaintext !== "string") {
     throw new TypeError(`encryptAtRest requires plaintext string, got ${typeof plaintext}`,);
   }
+
   if (isEncryptedPayload(plaintext,)) {
     return { storedContent: plaintext, keyId: extractKeyIdFromPayload(plaintext,), wasEncrypted: true, };
   }
+
   switch (encryptionLevel) {
     case "none":
       return { storedContent: plaintext, keyId: null, wasEncrypted: false, };
@@ -97,6 +99,7 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
       const stored = await compressThenEncrypt({ plaintext, chatKey: chatKey.key, keyId: chatKey.keyId, config, },);
       return { storedContent: stored, keyId: chatKey.keyId, wasEncrypted: true, };
     }
+
     case "at-rest":
       // Wire passthrough. The server does not transform the payload —
       // encryption responsibility sits with the caller (client-side E2E
@@ -127,6 +130,7 @@ export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
   if (typeof storedContent !== "string") {
     throw new TypeError(`decryptAtRest requires storedContent string, got ${typeof storedContent}`,);
   }
+
   switch (encryptionLevel) {
     case "none":
       return storedContent;
@@ -135,6 +139,7 @@ export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
       if (!isEncryptionEnabled()) {
         throw new Error("Content is encrypted but encryption is not enabled on this server",);
       }
+
       const smk = getSmk();
       if (!smk) { throw new Error("standard tier requires SMK — set SERVER_ENCRYPTION_KEY",); }
       const keyId = extractKeyIdFromPayload(storedContent,);
@@ -143,6 +148,7 @@ export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
       if (!chatKey) { throw new Error(`Chat key not found for id ${keyId} — rotation may have failed`,); }
       return decryptThenDecompress(storedContent, chatKey.key,);
     }
+
     case "at-rest":
       // Wire passthrough. The server does not attempt to decrypt: it
       // returns the stored content verbatim so the upstream reader (the
@@ -176,6 +182,7 @@ export async function getChatEncryptionLevel(database: Kysely<DB>, chatId: strin
     .select("encryption_level",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   return (row?.encryption_level as EncryptionLevel) ?? "none";
 }
 

@@ -92,6 +92,7 @@ describe("battles service", () => {
       createdBy,
       combatants: [makeCombatant("a", "A", false,),],
     },);
+
     await expect(startBattle({ database: db, }, {
       chatId,
       createdBy,
@@ -161,6 +162,7 @@ describe("battles service", () => {
       ...makeCombatant("alice", "Alice", false, 30,),
       hp: 10,
     };
+
     const battle = await startBattle({ database: db, }, {
       chatId,
       createdBy,
@@ -182,6 +184,7 @@ describe("battles service", () => {
       targetId: "alice",
       amount: 100,
     },);
+
     expect(clamped.healed,).toBe(5,);
     expect(clamped.combatant.hp,).toBe(30,);
 
@@ -250,6 +253,7 @@ describe("battles service", () => {
         damageSides: 6,
         extraDamage: 10,
       },);
+
       result = r;
       if (r.over) { break; }
     }

@@ -74,6 +74,7 @@ describe("parseLengthConfig", () => {
     const config = parseLengthConfig(
       { responseLength: { preset: "custom", customMin: 50, customMax: 750, }, },
     );
+
     expect(config.maxTokens,).toBe(750,);
   });
 });
@@ -138,6 +139,7 @@ describe("resolveResponseLength", () => {
       preset: "custom",
       maxTokens: 750,
     },);
+
     expect(resolveResponseLength("custom", 9999, null, "medium",).maxTokens,).toBe(2000,);
     expect(resolveResponseLength("custom", null, null, "medium",).maxTokens,).toBe(
       LENGTH_PRESETS.medium.max,

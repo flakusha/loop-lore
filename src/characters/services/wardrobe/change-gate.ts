@@ -75,5 +75,6 @@ export async function requestOutfitChange(
   if (request.initiator === OutfitChangeInitiator.Npc || request.initiator === OutfitChangeInitiator.WorldRule) {
     return { allowed: true, bypassed: true, };
   }
+
   return await gate.review(request,);
 }

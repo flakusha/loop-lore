@@ -25,6 +25,7 @@ function makeApp(db: Kysely<DB>, userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, }));
   }
+
   return app.use(activityStreamRoutes({ database: db, },),);
 }
 
@@ -119,6 +120,7 @@ describe("activity-stream routes", () => {
     const timeout = new Promise<{ done: boolean; value?: undefined }>((resolve,) => {
       setTimeout(() => resolve({ done: true, value: undefined, },), ms,);
     },);
+
     return await Promise.race([reader.read(), timeout,],) as
       | { done: boolean; value?: Uint8Array }
       | { done: true; value?: undefined };

@@ -34,6 +34,7 @@ describe("Smoke E2E", () => {
     } catch {
       // navigation errors are handled by subsequent element waits
     }
+
     // Wait for app-root (layout wraps all views)
     await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 15_000, },);
   }
@@ -148,9 +149,11 @@ describe("Smoke E2E", () => {
           state: "detached",
           timeout: 10_000,
         },);
+
         const resolved = await page
           .locator("[data-testid='asset-grid'], [data-testid='gallery-empty']",)
           .count();
+
         expect(resolved,).toBeGreaterThan(0,);
       } finally {
         errors.assert();
@@ -347,6 +350,7 @@ describe("Smoke E2E", () => {
         expect(await page.locator("[data-testid='nav-characters']",).getAttribute("hx-get",),).toBe(
           "/views/characters",
         );
+
         expect(await page.locator("[data-testid='nav-gallery']",).getAttribute("hx-get",),).toBe("/views/gallery",);
         expect(await page.locator("[data-testid='nav-worlds']",).getAttribute("hx-get",),).toBe("/views/worlds",);
       } finally {

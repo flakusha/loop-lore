@@ -39,6 +39,7 @@ export function buildOwnershipAuditMeta(event: OwnershipTransferEvent,): string 
     auto_invited: event.autoInvited,
     reason: event.reason,
   },);
+
   return result.ok ? result.value : "{}";
 }
 
@@ -63,6 +64,7 @@ export function emitOwnershipTransferNotifications(
     link: `/chat/${chatId}`,
     data: { chatId, newOwnerId, autoInvited, reason, },
   },);
+
   notifier.emit({
     userId: newOwnerId,
     type: NotificationType.System,
@@ -73,6 +75,7 @@ export function emitOwnershipTransferNotifications(
     link: `/chat/${chatId}`,
     data: { chatId, previousOwnerId, reason, },
   },);
+
   getLogger().child({ module: "chat-ownership", },).info("ownership transferred", {
     chatId,
     previousOwnerId,

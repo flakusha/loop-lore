@@ -19,6 +19,7 @@ function makeApp(db: Kysely<DB>, userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, }));
   }
+
   return app.use(actorItemsRoutes({ database: db, config: {} as never, },),);
 }
 
@@ -35,6 +36,7 @@ describe("actorItemsRoutes", () => {
       actor_type: "user" as never,
       user_id: "user1" as never,
     },);
+
     await insertActors(db, "User Two", {
       id: "user2" as never,
       actor_type: "user" as never,
@@ -57,6 +59,7 @@ describe("actorItemsRoutes", () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/actor-does-not-exist/items",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -68,6 +71,7 @@ describe("actorItemsRoutes", () => {
         body: JSON.stringify({ name: "Sword", quantity: 1, },),
       },),
     );
+
     const body = await res.json() as { name: string; quantity: number };
     expect(body.name,).toBe("Sword",);
   });
@@ -80,12 +84,15 @@ describe("actorItemsRoutes", () => {
         body: JSON.stringify({ name: "", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
+
   test("list returns items for owner", async () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/user1/items",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: unknown[]; pagination: { total: number } };
     expect(Array.isArray(body.data,),).toBe(true,);
@@ -96,6 +103,7 @@ describe("actorItemsRoutes", () => {
     const res = await makeApp(db, "user2",).handle(
       new Request("http://localhost/api/actors/user1/items",),
     );
+
     expect(res.status,).toBe(404,);
   });
 });

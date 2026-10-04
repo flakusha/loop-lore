@@ -126,6 +126,7 @@ const log = rootLog.child({ module: "story-state", },);
         this.notify(result.message ?? "story control failed", "error",);
         return;
       }
+
       this.running = !this.running;
     },
 
@@ -169,6 +170,7 @@ const log = rootLog.child({ module: "story-state", },);
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ name: name.trim(), type: "composite", },),
         },);
+
         if (res.ok) {
           await this._loadQuests();
           this.notify("Quest created",);
@@ -194,6 +196,7 @@ const log = rootLog.child({ module: "story-state", },);
             const quest = quests[i];
             if (quest?.id === questId) { quests.splice(i, 1,); }
           }
+
           this.notify("Quest deleted",);
         } else {
           this.notify("Quest deletion failed", "error",);
@@ -228,5 +231,6 @@ const log = rootLog.child({ module: "story-state", },);
       return parseQuestBanners(raw,);
     },
   };
+
   return component;
 };

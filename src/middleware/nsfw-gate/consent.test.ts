@@ -55,6 +55,7 @@ describe("recordNsfwConsent (persisted)", () => {
       action: "given",
       reason: "I am OK with this",
     },);
+
     const row = await getLatestConsent(db, "chat-row", "user-row",);
     expect(row,).not.toBeNull();
     expect(row!.action,).toBe("given",);
@@ -69,6 +70,7 @@ describe("recordNsfwConsent (persisted)", () => {
       userId: "user-revoke",
       action: "given",
     },);
+
     await recordNsfwConsent({
       database: db,
       chatId: "chat-revoke",
@@ -76,6 +78,7 @@ describe("recordNsfwConsent (persisted)", () => {
       action: "revoked",
       reason: "changed my mind",
     },);
+
     const row = await getLatestConsent(db, "chat-revoke", "user-revoke",);
     expect(row?.action,).toBe("revoked",);
     expect(hasActiveConsent(row,),).toBe(false,);
@@ -90,6 +93,7 @@ describe("recordNsfwConsent (persisted)", () => {
       action: "given",
       reason: huge,
     },);
+
     const row = await getLatestConsent(db, "chat-trim", "user-trim",);
     expect(row?.reason?.length,).toBe(500,);
   });
@@ -122,6 +126,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       chatId: "chat-1",
       actorId: "actor-1",
     },);
+
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toBe("nsfw_disabled",);
   });
@@ -135,6 +140,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       chatId: "chat-1",
       actorId: "actor-1",
     },);
+
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toBe("auth_required",);
   });
@@ -148,6 +154,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       chatId: "chat-1",
       actorId: "actor-1",
     },);
+
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toBe("user_not_found",);
   });
@@ -158,6 +165,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: null,
     },);
+
     const config = makeConfig();
     const result = await checkNsfwWithConsent({
       database: db,
@@ -166,6 +174,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       chatId: "chat-1",
       actorId: "actor-1",
     },);
+
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toBe("age_gate_not_accepted",);
   });
@@ -176,10 +185,12 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     await insertActors(db, "actor-nsfw-noauto", {
       id: "actor-nsfw-noauto" as never,
       content_rating: "nsfw_moderate" as never,
     },);
+
     const config = makeConfig({ consentRequired: true, },);
     const result = await checkNsfwWithConsent({
       database: db,
@@ -188,6 +199,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       chatId: "chat-noauto",
       actorId: "actor-nsfw-noauto",
     },);
+
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toBe("consent_required",);
   });
@@ -199,11 +211,13 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const actorId = "actor-nsfw-grant";
     await insertActors(db, actorId, {
       id: actorId as never,
       content_rating: "nsfw_moderate" as never,
     },);
+
     const config = makeConfig({ consentRequired: true, },);
     // Persist an explicit grant
     await recordNsfwConsent({
@@ -212,6 +226,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       userId,
       action: "given",
     },);
+
     const result = await checkNsfwWithConsent({
       database: db,
       config,
@@ -219,6 +234,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       chatId: "chat-grant",
       actorId,
     },);
+
     expect(result.allowed,).toBe(true,);
     // Real enforcement uses user's persisted max_rating (DB default NSFW_MILD),
     // not the legacy hard-coded EXTREME — effective_limit is min(MILD, MODERATE).
@@ -234,23 +250,27 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const actorId = "actor-nsfw-revoked";
     await insertActors(db, actorId, {
       id: actorId as never,
       content_rating: "nsfw_moderate" as never,
     },);
+
     await recordNsfwConsent({
       database: db,
       chatId: "chat-revoked-flow",
       userId,
       action: "given",
     },);
+
     await recordNsfwConsent({
       database: db,
       chatId: "chat-revoked-flow",
       userId,
       action: "revoked",
     },);
+
     const config = makeConfig({ consentRequired: true, },);
     const result = await checkNsfwWithConsent({
       database: db,
@@ -259,6 +279,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       chatId: "chat-revoked-flow",
       actorId,
     },);
+
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toBe("consent_revoked",);
   });
@@ -270,11 +291,13 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const actorId = "actor-nsfw-no-consent-cfg";
     await insertActors(db, actorId, {
       id: actorId as never,
       content_rating: "nsfw_moderate" as never,
     },);
+
     const config = makeConfig({ consentRequired: false, },);
     const result = await checkNsfwWithConsent({
       database: db,
@@ -283,6 +306,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       chatId: "chat-no-consent-cfg",
       actorId,
     },);
+
     expect(result.allowed,).toBe(true,);
   });
 
@@ -294,11 +318,13 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     await insertUsers(db, userB, "Weakest B", {
       id: userB as never,
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     await insertNsfwUserPreferences(db, userA, { max_rating: "nsfw_extreme" as never, },);
     await insertNsfwUserPreferences(db, userB, { max_rating: "nsfw_mild" as never, },);
     await insertChats(db, "weakest", userA, { id: "chat-weakest" as never, },);
@@ -309,10 +335,12 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       user_id: userA,
       content_rating: "nsfw_extreme" as never,
     },);
+
     await insertActors(db, actorB, {
       id: actorB as never,
       user_id: userB,
     },);
+
     await insertChatParticipants(db, "chat-weakest", actorA,);
     await insertChatParticipants(db, "chat-weakest", actorB,);
 
@@ -324,6 +352,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       chatId: "chat-weakest",
       actorId: actorA,
     },);
+
     expect(result.allowed,).toBe(true,);
     // Participant B's NSFW_MILD ceiling wins over A's EXTREME preference.
     expect(result.enforcement.user_preference,).toBe(NSFWContentRating.NSFW_MILD,);
@@ -338,11 +367,13 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     await insertUsers(db, userD, "Gate No", {
       id: userD as never,
       birth_date: "1990-01-01",
       age_gate_accepted_at: null,
     },);
+
     await insertChats(db, "gate-link", userC, { id: "chat-gate-link" as never, },);
     const actorC = "actor-gate-ok";
     const actorD = "actor-gate-no";
@@ -356,6 +387,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toBe("participant_blocked:age_gate_not_accepted",);
   });
+
   test("participant without age gate is denied by the consent gate (weakest-link deny)", async () => {
     const userE = "u-deny-ok";
     const userF = "u-deny-no";
@@ -364,11 +396,13 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     await insertUsers(db, userF, "Deny No", {
       id: userF as never,
       birth_date: "1990-01-01",
       age_gate_accepted_at: null,
     },);
+
     await insertChats(db, "deny-link", userE, { id: "chat-deny-link" as never, },);
     const actorE = "actor-deny-ok";
     const actorF = "actor-deny-no";
@@ -385,6 +419,7 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
       chatId: "chat-deny-link",
       actorId: actorE,
     },);
+
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toBe("participant_blocked:age_gate_not_accepted",);
   });

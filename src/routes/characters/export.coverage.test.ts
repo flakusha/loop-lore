@@ -40,6 +40,7 @@ describe("characters exportRoutes coverage", () => {
       .derive({ as: "scoped", }, () => ({ userId, userRole, }),)
       .use(exportRoutes({ database: db, },),) as unknown as Elysia;
   }
+
   let app: Elysia;
   const fixtureDir = (): string => join(process.cwd(), ".tmp", "char-export-cover",);
 
@@ -56,6 +57,7 @@ describe("characters exportRoutes coverage", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await db.insertInto("users",).values({
       id: stranger,
       username: `exp-stranger-${stamp}`,
@@ -82,18 +84,21 @@ describe("characters exportRoutes coverage", () => {
       format_version: 0,
       import_spec: "{}",
     };
+
     await db.insertInto("actors",).values({
       ...base,
       id: actorId,
       display_name: "Aldric the Brave",
       visibility: "private",
     },).execute();
+
     await db.insertInto("actors",).values({
       ...base,
       id: publicActorId,
       display_name: "Public Hero",
       visibility: "public",
     },).execute();
+
     await db.insertInto("actors",).values({
       ...base,
       id: rawYamlId,
@@ -102,6 +107,7 @@ describe("characters exportRoutes coverage", () => {
       data_source_format: "yaml",
       data_raw: "name: Raw Yaml\ndescription: kept verbatim\n",
     },).execute();
+
     await db.insertInto("actors",).values({
       ...base,
       id: rawTomlId,
@@ -110,6 +116,7 @@ describe("characters exportRoutes coverage", () => {
       data_source_format: "toml",
       data_raw: 'name = "Raw Toml"\n',
     },).execute();
+
     await db.insertInto("actors",).values({
       ...base,
       id: brokenGreetingsId,
@@ -117,6 +124,7 @@ describe("characters exportRoutes coverage", () => {
       visibility: "private",
       alternate_greetings: "not-json{{{",
     },).execute();
+
     app = makeApp(owner, "user",);
   },);
 
@@ -129,20 +137,24 @@ describe("characters exportRoutes coverage", () => {
     const missing = await app.handle(
       new Request(`http://localhost/api/actors/${uid()}/export`,),
     );
+
     expect(missing.status,).toBe(404,);
     const outsider = makeApp(stranger, "user",);
     const denied = await outsider.handle(
       new Request(`http://localhost/api/actors/${actorId}/export`,),
     );
+
     expect(denied.status,).toBe(404,);
     const anon = makeApp(null, null,);
     const anonDenied = await anon.handle(
       new Request(`http://localhost/api/actors/${actorId}/export`,),
     );
+
     expect(anonDenied.status,).toBe(404,);
     const badId = await app.handle(
       new Request("http://localhost/api/actors/not-a-uuid/export",),
     );
+
     expect(badId.status,).toBe(422,);
   });
 
@@ -151,11 +163,13 @@ describe("characters exportRoutes coverage", () => {
     const pub = await outsider.handle(
       new Request(`http://localhost/api/actors/${publicActorId}/export`,),
     );
+
     expect(pub.status,).toBe(200,);
     const admin = makeApp(stranger, "admin",);
     const byAdmin = await admin.handle(
       new Request(`http://localhost/api/actors/${actorId}/export`,),
     );
+
     expect(byAdmin.status,).toBe(200,);
   });
 
@@ -164,6 +178,7 @@ describe("characters exportRoutes coverage", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/actors/${actorId}/export${suffix}`,),
       );
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("content-type",),).toContain("application/json",);
       expect(res.headers.get("content-disposition",),).toContain(".json",);
@@ -176,6 +191,7 @@ describe("characters exportRoutes coverage", () => {
     const yaml = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/export?format=yaml`,),
     );
+
     expect(yaml.status,).toBe(200,);
     expect(yaml.headers.get("content-type",),).toContain("text/yaml",);
     expect(yaml.headers.get("content-disposition",),).toContain(".yaml",);
@@ -183,6 +199,7 @@ describe("characters exportRoutes coverage", () => {
     const toml = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/export?format=toml`,),
     );
+
     expect(toml.status,).toBe(200,);
     expect(toml.headers.get("content-type",),).toContain("text/plain",);
     expect(toml.headers.get("content-disposition",),).toContain(".toml",);
@@ -193,11 +210,13 @@ describe("characters exportRoutes coverage", () => {
     const yaml = await app.handle(
       new Request(`http://localhost/api/actors/${rawYamlId}/export?format=yaml`,),
     );
+
     expect(yaml.status,).toBe(200,);
     expect(await yaml.text(),).toBe("name: Raw Yaml\ndescription: kept verbatim\n",);
     const toml = await app.handle(
       new Request(`http://localhost/api/actors/${rawTomlId}/export?format=toml`,),
     );
+
     expect(toml.status,).toBe(200,);
     expect(await toml.text(),).toBe('name = "Raw Toml"\n',);
   });
@@ -206,6 +225,7 @@ describe("characters exportRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/export?format=png`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-type",),).toBe("image/png",);
     expect(res.headers.get("content-disposition",),).toContain(".png",);
@@ -217,6 +237,7 @@ describe("characters exportRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/export?format=charx`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-type",),).toBe("application/zip",);
     expect(res.headers.get("content-disposition",),).toContain(".charx",);
@@ -228,6 +249,7 @@ describe("characters exportRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${brokenGreetingsId}/export`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.text(),).toContain("Broken Greetings",);
   });
@@ -247,14 +269,17 @@ describe("characters exportRoutes coverage", () => {
       size_bytes: 7,
       storage_path: storagePath,
     },).execute();
+
     await db.insertInto("asset_links",).values({
       asset_id: assetId,
       entity_type: "actor",
       entity_id: actorId,
     },).execute();
+
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/export?format=charx`,),
     );
+
     expect(res.status,).toBe(200,);
     const bytes = new Uint8Array(await res.arrayBuffer(),);
     expect([...bytes.slice(0, 2,),],).toEqual([80, 75,],);
@@ -278,12 +303,14 @@ describe("characters exportRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/export`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("x-license-type",),).toBe("cc_by",);
     expect(res.headers.get("x-license-warning",),).toContain("attribution",);
     const body = await res.json() as {
       data: { extensions: { license: { license_type: string; attribution: null } } };
     };
+
     expect(body.data.extensions.license.license_type,).toBe("cc_by",);
     expect(body.data.extensions.license.attribution,).toBeNull();
   });
@@ -292,6 +319,7 @@ describe("characters exportRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${publicActorId}/export`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("x-license-type",),).toBeNull();
     expect(res.headers.get("x-license-warning",),).toBeNull();

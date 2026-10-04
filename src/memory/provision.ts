@@ -74,6 +74,7 @@ export function provisionMemories(
       rejected.push({ memory, reason: rejection, },);
       continue;
     }
+
     accepted.push(memory,);
   }
 
@@ -119,6 +120,7 @@ function evaluateMemory(
       trustModifier: ctx.trustModifier,
       randomFn: ctx.randomFn,
     },);
+
     if (decision === "withhold") { return "privacy:secret_not_shared"; }
     return null; // trusted or probability passed — skip scope check
   }
@@ -156,13 +158,16 @@ function checkScope(
       if (privacy === "public") { return null; }
       return "scope:character_not_owner";
     }
+
     case "world": {
       if (!ctx.worldId || memory.worldId !== ctx.worldId) { return "scope:world_mismatch"; }
       return null;
     }
+
     case "assistant": {
       return null;
     }
+
     default: {
       return "scope:unknown";
     }

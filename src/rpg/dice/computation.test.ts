@@ -11,6 +11,7 @@ describe("dice/real-computation", () => {
       expect(Number.isInteger(v,),).toBe(true,);
     }
   });
+
   it("rollD20WithAdvantage Normal returns value 1-20 with correct flags", () => {
     for (let i = 0; i < 30; i++) {
       const result = rollD20WithAdvantage(AdvantageMode.Normal,);
@@ -21,16 +22,19 @@ describe("dice/real-computation", () => {
       expect(result.advantageMode,).toBe(AdvantageMode.Normal,);
     }
   });
+
   it("rollD20WithAdvantage Advantage takes max of 2 rolls", () => {
     const r = rollD20WithAdvantage(AdvantageMode.Advantage,);
     expect(r.value,).toBe(Math.max(r.rawRolls[0]!, r.rawRolls[1]!,),);
     expect(r.rawRolls,).toHaveLength(2,);
   });
+
   it("rollD20WithAdvantage Disadvantage takes min of 2 rolls", () => {
     const r = rollD20WithAdvantage(AdvantageMode.Disadvantage,);
     expect(r.value,).toBe(Math.min(r.rawRolls[0]!, r.rawRolls[1]!,),);
     expect(r.rawRolls,).toHaveLength(2,);
   });
+
   it("rollD20WithAdvantage flags critical hits correctly", () => {
     for (let i = 0; i < 50; i++) {
       const r = rollD20WithAdvantage(AdvantageMode.Normal,);

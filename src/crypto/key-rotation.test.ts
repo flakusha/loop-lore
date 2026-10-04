@@ -71,6 +71,7 @@ describe("findExpiredKeys", () => {
         { actor_id: "actor-2", },
       ],)
     );
+
     const mockChain = createMockChain([],);
     mockChain.execute = mockExpire;
     mockSelectFrom.mockReturnValue(mockChain,);

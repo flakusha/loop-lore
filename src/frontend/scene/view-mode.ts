@@ -126,6 +126,7 @@ function attachSceneWatcher(state: ViewModeState,): void {
     lastId = id;
     if (hadScene) { state.reset(); }
   },);
+
   sceneWatcher.observe(target, { attributes: true, attributeFilter: [SCENE_ID_ATTR,], },);
 }
 
@@ -178,6 +179,7 @@ export function viewMode(): ViewModeState {
       attachSceneWatcher(this,);
     },
   };
+
   return state;
 }
 

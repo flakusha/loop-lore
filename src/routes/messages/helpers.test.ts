@@ -30,6 +30,7 @@ describe("parseToolCalls", () => {
         function: { name: "getWeather", arguments: '{"city":"Tokyo"}', },
       },],),
     );
+
     expect(calls,).toEqual([
       { id: "call_1", type: "function", function: { name: "getWeather", arguments: '{"city":"Tokyo"}', }, },
     ],);
@@ -42,6 +43,7 @@ describe("parseToolCalls", () => {
         { id: "b", type: "function", function: { name: "f2", arguments: "{}", }, },
       ],),
     );
+
     expect(calls,).toHaveLength(2,);
     expect(calls?.[0]?.function.name,).toBe("f1",);
     expect(calls?.[1]?.function.name,).toBe("f2",);
@@ -90,6 +92,7 @@ describe("resolveMessageContentForRender (BUG-regex-transform-runs-at-store-time
         { content: "hello   world", content_encoding: ContentEncoding.Identity, key_id: null, chat_id: "c1", },
         [],
       );
+
       expect(result,).toBe("hello   world",);
     } finally {
       sqlite.close();
@@ -104,6 +107,7 @@ describe("resolveMessageContentForRender (BUG-regex-transform-runs-at-store-time
         { content: "hello   world", content_encoding: ContentEncoding.Identity, key_id: null, chat_id: "c1", },
         [{ name: "collapse spaces", pattern: "\\s+", replacement: " ", enabled: true, },],
       );
+
       expect(result,).toBe("hello world",);
     } finally {
       sqlite.close();
@@ -121,11 +125,13 @@ describe("resolveMessageContentForRender (BUG-regex-transform-runs-at-store-time
         stored,
         [{ name: "lower-to-X", pattern: "[a-z]+", replacement: "X", enabled: true, },],
       );
+
       const upperToY = await resolveMessageContentForRender(
         db as unknown as import("kysely").Kysely<DB>,
         stored,
         [{ name: "upper-to-Y", pattern: "[A-Z]+", replacement: "Y", enabled: true, },],
       );
+
       expect(lowerToX,).toBe("AA X CC",);
       expect(upperToY,).toBe("Y bb Y",);
       expect(stored.content,).toBe("AA bb CC",);
@@ -149,6 +155,7 @@ describe("enrichMessageForList (BUG-regex-transform-runs-at-store-time-not-rende
         },
         [{ name: "collapse spaces", pattern: "\\s+", replacement: " ", enabled: true, },],
       );
+
       expect(result["content"],).toBe("hello world",);
     } finally {
       sqlite.close();
@@ -168,6 +175,7 @@ describe("enrichMessageForList (BUG-regex-transform-runs-at-store-time-not-rende
         },
         [],
       );
+
       expect(result["content"],).toBe("hello   world",);
     } finally {
       sqlite.close();
@@ -188,6 +196,7 @@ describe("enrichMessageForList (BUG-regex-transform-runs-at-store-time-not-rende
         },
         [{ name: "noop", pattern: "x", replacement: "y", enabled: true, },],
       );
+
       expect(result["content"],).toBe("[Encrypted — unable to decrypt]",);
     } finally {
       sqlite.close();
@@ -210,6 +219,7 @@ describe("enrichMessageForList (BUG-regex-transform-runs-at-store-time-not-rende
         },
         [{ name: "upper", pattern: "world", replacement: "WORLD", enabled: true, },],
       );
+
       expect(result["content"],).toBe("hello WORLD",);
     } finally {
       sqlite.close();

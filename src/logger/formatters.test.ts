@@ -75,6 +75,7 @@ describe("formatConsole", () => {
       ...baseEntry,
       message: "safe [\x1b[31mFAKE\x1b[0m] \n[FATAL] forged line\r\nanother",
     };
+
     const result = formatConsole(entry, false,);
     // No raw newline survives — a single logical line only.
     expect(result,).not.toContain("\n[FATAL] forged",);
@@ -90,6 +91,7 @@ describe("formatConsole", () => {
       module: "auth\x1b[31m",
       error: "boom\ninjected",
     };
+
     const result = formatConsole(entry, false,);
     expect(result,).not.toContain("\u{1B}[31m",);
     // The error's newline must be collapsed (single logical line).
@@ -118,6 +120,7 @@ describe("formatJSONL", () => {
       error: "err",
       meta: { key: "val", },
     };
+
     const result = formatJSONL(entry,);
     const parsed = JSON.parse(result,);
     expect(parsed.module,).toBe("db",);

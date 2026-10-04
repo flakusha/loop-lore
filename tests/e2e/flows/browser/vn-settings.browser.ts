@@ -37,6 +37,7 @@ async function openChatSettings(page: Awaited<ReturnType<BrowserTestContext["bro
     state: "attached",
     timeout: 10_000,
   },);
+
   await page.locator("[data-testid='chat-list-panel'] .nav-item",).first().click();
   await waitForAlpineState(
     page,
@@ -44,6 +45,7 @@ async function openChatSettings(page: Awaited<ReturnType<BrowserTestContext["bro
     (state,) => !!(state as Record<string, unknown>).activeChat,
     10_000,
   );
+
   await page.click("[data-testid='toggle-chat-settings']",);
   const modal = page.locator("[data-testid='chat-settings-modal']",);
   await modal.waitFor({ state: "visible", timeout: 10_000, },);
@@ -109,6 +111,7 @@ describe("VN settings block in chat-settings modal", () => {
           (s,) => (s as Record<string, unknown>)._vnEnabled === true,
           5_000,
         );
+
         expect((state as Record<string, unknown>)._vnLayout,).toBe("overlay",);
         expect((state as Record<string, unknown>)._vnTransition,).toBe("fade",);
         expect((state as Record<string, unknown>)._vnTypewriter,).toBe(true,);
@@ -150,6 +153,7 @@ describe("VN settings block in chat-settings modal", () => {
             (s as Record<string, unknown>)._vnTransition === "cut",
           5_000,
         );
+
         expect((state as Record<string, unknown>)._vnLayout,).toBe("split",);
         expect((state as Record<string, unknown>)._vnTransition,).toBe("cut",);
       } finally {
@@ -214,6 +218,7 @@ describe("VN settings block in chat-settings modal", () => {
           (s,) => (s as Record<string, unknown>)._vnAutoAdvance === true,
           5_000,
         );
+
         expect((state as Record<string, unknown>)._vnAutoAdvance,).toBe(true,);
       } finally {
         errors.assert();

@@ -89,6 +89,7 @@ export function validateAuthSafety(config: Config,): void {
         "(auth.required = false for solo mode).",
     );
   }
+
   if (secret.length < MIN_JWT_SECRET_LENGTH) {
     throw new Error(
       `AUTH SAFETY: auth.required = true but auth.jwtSecret is only ` +
@@ -112,6 +113,7 @@ export function validateAuthSafety(config: Config,): void {
     /^example$/i,
     /^loop.?lore/i,
   ];
+
   if (suspiciousPatterns.some((re,) => re.test(secret,))) {
     getLogger().child({ module: "config-safety", },).warn(
       "AUTH SAFETY: auth.jwtSecret matches a known placeholder pattern. " +

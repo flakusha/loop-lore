@@ -30,6 +30,7 @@ function makeApp(userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(nsfwModerationRoutes({ database: db, },),);
 }
 
@@ -52,6 +53,7 @@ describe("nsfwModerationRoutes barrel", () => {
     const res = await makeApp("u1",).handle(
       new Request("http://localhost/api/nsfw/moderation/preferences/u1",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { data: { userId: string; nsfwEnabled: boolean } };
     expect(body.data.userId,).toBe("u1",);
@@ -68,6 +70,7 @@ describe("nsfwModerationRoutes barrel", () => {
         body: JSON.stringify({ nsfwEnabled: false, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { data: { nsfwEnabled: boolean } };
     expect(body.data.nsfwEnabled,).toBe(false,);
@@ -77,6 +80,7 @@ describe("nsfwModerationRoutes barrel", () => {
     const res = await makeApp("u1",).handle(
       new Request("http://localhost/api/nsfw/moderation/preferences/not-a-valid-uuid",),
     );
+
     expect([400, 403, 404, 422,],).toContain(res.status,);
   });
 
@@ -85,6 +89,7 @@ describe("nsfwModerationRoutes barrel", () => {
     const res = await makeApp("u1",).handle(
       new Request(`http://localhost/api/nsfw/moderation/preferences/${huge}`,),
     );
+
     expect([400, 403, 404, 414, 422,],).toContain(res.status,);
   });
 
@@ -96,6 +101,7 @@ describe("nsfwModerationRoutes barrel", () => {
         body: "{not-valid-json",
       },),
     );
+
     expect([400, 403, 422,],).toContain(res.status,);
   });
 });

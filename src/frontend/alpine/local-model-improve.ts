@@ -51,16 +51,20 @@ function textOf(value: unknown,): string | null {
       const text = textOf(value[index],);
       if (text) { return text; }
     }
+
     return null;
   }
+
   if (value && typeof value === "object") {
     if ("generated_text" in value) {
       const text = textOf(value.generated_text,);
       if (text) { return text; }
     }
+
     if ("content" in value) { return textOf(value.content,); }
     return null;
   }
+
   return null;
 }
 
@@ -96,14 +100,17 @@ export async function runLocalModelImprove(
   if (!instruction) {
     throw new LocalInferenceUnavailable(`level "${opts.level}" has no local model prompt`,);
   }
+
   const modelId = opts.modelId ?? DEFAULT_LOCAL_MODEL_ID;
   if (!isModelReady(modelId,)) {
     throw new LocalInferenceUnavailable(`model "${modelId}" is not downloaded`,);
   }
+
   const descriptor = BROWSER_MODEL_CATALOG.find((m,) => m.id === modelId);
   if (!descriptor) {
     throw new LocalInferenceUnavailable(`unknown browser model "${modelId}"`,);
   }
+
   await engine.loadModel(modelId,);
   const raw = await engine.generate(
     [
@@ -112,6 +119,7 @@ export async function runLocalModelImprove(
     ],
     opts.maxTokens ?? 256,
   );
+
   const content = extractGeneratedText(raw, opts.text,);
   if (!content) { throw new LocalInferenceUnavailable("model returned empty text",); }
   markModelReady(modelId,);

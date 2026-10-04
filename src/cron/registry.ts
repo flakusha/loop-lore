@@ -52,6 +52,7 @@ function assertValidSchedule(name: string, schedule: string,): void {
     const reason = error instanceof Error ? error.message : String(error,);
     throw new Error(`Invalid cron schedule for job "${name}": ${schedule} (${reason})`,);
   }
+
   if (parsed === null) {
     throw new Error(`Invalid cron schedule for job "${name}": ${schedule}`,);
   }
@@ -112,6 +113,7 @@ export function startScheduler(deps: SchedulerDeps,): Scheduler {
       lastError: null,
       runCount: 0,
     };
+
     live.set(def.name, job,);
     if (!enabled) { continue; }
 
@@ -121,11 +123,13 @@ export function startScheduler(deps: SchedulerDeps,): Scheduler {
       config,
       logger: logger.child({ module: `cron:${def.name}`, },),
     };
+
     const handle = cronImpl(schedule, () => {
       void invoke(job, ctx,).catch(() => {
         // Recorded + logged in invoke(); must not escape into the scheduler.
       },);
     },);
+
     if (def.unref !== false) { handle.unref(); }
     job.handle = handle;
     logger.info(`cron job scheduled: ${def.name}`, { module: "cron", schedule, },);
@@ -151,6 +155,7 @@ export function startScheduler(deps: SchedulerDeps,): Scheduler {
         job.handle?.stop();
         job.handle = null;
       }
+
       if (getScheduler() === scheduler) { setScheduler(null,); }
     },
     getStatus,
@@ -169,6 +174,7 @@ export function startScheduler(deps: SchedulerDeps,): Scheduler {
       },);
     },
   };
+
   setScheduler(scheduler,);
   return scheduler;
 }

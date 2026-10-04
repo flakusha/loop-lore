@@ -265,6 +265,7 @@ describe("age-gate controller", () => {
         userId: "user-1",
         body,
       },);
+
       expect(res.status,).toBe(400,);
       if (checkError) {
         const data = (await res.json()) as { error: string };
@@ -282,6 +283,7 @@ describe("age-gate controller", () => {
         userId: "user-1",
         body: { birthDate: "2020-01-01", },
       },);
+
       expect(res.status,).toBe(200,);
     },);
 
@@ -291,6 +293,7 @@ describe("age-gate controller", () => {
         userId: "user-1",
         body: { birthDate: "2020-01-01", },
       },);
+
       expect(res.status,).toBe(403,);
     });
 
@@ -301,6 +304,7 @@ describe("age-gate controller", () => {
         userId: "user-1",
         body: { birthDate: "2000-01-01", },
       },);
+
       expect(res.status,).toBe(200,);
       const data = (await res.json()) as { ok: boolean };
       expect(data.ok,).toBe(true,);
@@ -313,6 +317,7 @@ describe("age-gate controller", () => {
         userId: "user-1",
         body: { birthDate: "2000-01-01", },
       },);
+
       expect(res.status,).toBe(500,);
     });
   });
@@ -369,6 +374,7 @@ describe("age-gate controller", () => {
         minimumAge: 21,
         mode: AgeGateMode.Verification,
       },);
+
       expect(res.status,).toBe(200,);
       const data = (await res.json()) as { enabled: boolean; minimumAge: number; mode: AgeGateMode };
       expect(data.enabled,).toBe(true,);
@@ -392,6 +398,7 @@ describe("age-gate controller", () => {
         headers: { "content-type": "application/json", },
         body: JSON.stringify({ birthDate: "2000-01-01", },),
       },);
+
       const res = await app.handle(req,);
       expect(res,).toBeInstanceOf(Response,);
     });
@@ -410,6 +417,7 @@ describe("age-gate controller", () => {
         headers: { "content-type": "application/json", },
         body: JSON.stringify({ enabled: true, },),
       },);
+
       const res = await app.handle(req,);
       expect(res.status,).toBe(200,);
     });

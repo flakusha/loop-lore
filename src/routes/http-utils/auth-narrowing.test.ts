@@ -14,6 +14,7 @@ describe("withUserAuth", () => {
     const result = await withUserAuth({ userId: "u-1", }, async (uid,) => {
       return `hello ${uid}`;
     },);
+
     expect(result,).toBe("hello u-1",);
   });
 
@@ -44,6 +45,7 @@ describe("withOwnerAuth", () => {
       async () => null, // allowed
       async (uid,) => `ok ${uid}`,
     );
+
     expect(result,).toBe("ok u-1",);
   });
 
@@ -54,6 +56,7 @@ describe("withOwnerAuth", () => {
       async () => denial,
       async () => "should-not-run",
     );
+
     expect(result,).toBe(denial,);
   });
 
@@ -67,6 +70,7 @@ describe("withOwnerAuth", () => {
       },
       async () => "should-not-run",
     );
+
     expect(resolveCalled,).toBe(false,);
     expect(result,).toBeInstanceOf(Response,);
     expect((result as Response).status,).toBe(401,);
@@ -82,6 +86,7 @@ describe("withOwnerAuth", () => {
       },
       async () => undefined,
     );
+
     expect(seen,).toEqual(["u-42",],);
   });
 });

@@ -94,10 +94,12 @@ export async function createSteering(
   if (!description.trim()) {
     throw new Error("Steering description must not be empty.",);
   }
+
   const probability = manifestProbability ?? 0.5;
   if (!Number.isFinite(probability,) || probability < 0 || probability > 1) {
     throw new RangeError(`manifestProbability must be within 0–1, got ${manifestProbability}.`,);
   }
+
   const id = randomUUID();
   await db
     .insertInto("world_event_steerings",)
@@ -112,6 +114,7 @@ export async function createSteering(
       audience_scope: audienceScope ? serializeOrThrow(audienceScope, "audienceScope",) : null,
     },)
     .execute();
+
   return id;
 }
 
@@ -133,9 +136,11 @@ export async function listPendingSteerings(
     .selectAll()
     .where("world_id", "=", worldId,)
     .where("status", "=", SteeringStatus.Pending,);
+
   if (timelineId !== undefined) {
     query = query.where("timeline_id", "=", timelineId,);
   }
+
   return query
     .orderBy("created_at", "asc",)
     .limit(limit ?? 20,)
@@ -160,25 +165,31 @@ export async function rollSteering(
     .selectAll()
     .where("id", "=", id,)
     .executeTakeFirst();
+
   if (!row) {
     throw new Error(`Unknown steering ${id}.`,);
   }
+
   if (row.status !== SteeringStatus.Pending) {
     return row.status === SteeringStatus.Manifested;
   }
+
   if (row.may_manifest === 0) {
     return false;
   }
+
   const roll = (random ?? Math.random)();
   if (!(roll < row.manifest_probability)) {
     return false;
   }
+
   const now = new Date().toISOString();
   await db
     .updateTable("world_event_steerings",)
     .set({ status: SteeringStatus.Manifested, resolved_at: now, },)
     .where("id", "=", id,)
     .execute();
+
   await appendTimelineEvents({
     db,
     worldId: row.world_id,
@@ -190,6 +201,7 @@ export async function rollSteering(
       data: { steeringId: id, },
     },],
   },);
+
   return true;
 }
 
@@ -211,21 +223,26 @@ export async function resolveSteering(
     .select(["may_manifest", "status", "world_id", "description",],)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   if (!row) {
     throw new Error(`Unknown steering ${id}.`,);
   }
+
   if (row.status !== SteeringStatus.Pending) {
     throw new Error(`Steering ${id} is already ${row.status}.`,);
   }
+
   if (manifest && row.may_manifest === 0) {
     throw new Error(`Steering ${id} is a red herring and cannot manifest; dismiss it instead.`,);
   }
+
   const now = new Date().toISOString();
   await db
     .updateTable("world_event_steerings",)
     .set({ status: manifest ? SteeringStatus.Manifested : SteeringStatus.Dismissed, resolved_at: now, },)
     .where("id", "=", id,)
     .execute();
+
   if (manifest) {
     await appendTimelineEvents({
       db,

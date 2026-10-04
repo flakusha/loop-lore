@@ -68,6 +68,7 @@ async function resolveAuxRole(
   if (explicitRole !== undefined) {
     return await resolveModelRole(explicitRole, config, db,);
   }
+
   if (CLASSIFIER_TASKS[task]) {
     try {
       const classifier = await resolveModelRole(ModelRole.Classifier, config, db,);
@@ -78,6 +79,7 @@ async function resolveAuxRole(
       // Unconfigured classifier — fall through to auxiliary
     }
   }
+
   return await resolveModelRole(ModelRole.Auxiliary, config, db,);
 }
 
@@ -108,6 +110,7 @@ export async function callAux(
     userId,
     chatId,
   } = opts;
+
   // Resolve the model role → provider/model; graceful failure => null (BUG-1 fix)
   let auxRole: ResolvedModelRole | null;
   try {
@@ -115,9 +118,11 @@ export async function callAux(
   } catch {
     return null;
   }
+
   if (!auxRole || !auxRole.provider || !auxRole.model) {
     return null;
   }
+
   // BYO apiKey parity: user key → chat/actor override → server default
   let apiKey: string | undefined;
   try {
@@ -128,6 +133,7 @@ export async function callAux(
       config,
       db,
     },);
+
     apiKey = resolved.resolvedApiKey;
   } catch {
     // Non-fatal — fall back to the provider instance's configured key
@@ -186,6 +192,7 @@ export async function callAux(
       promptTokens: result.promptTokens,
       completionTokens: result.completionTokens,
     },);
+
     return result;
   } catch (error) {
     recordCall(false, { error: (error as Error).message, },);
@@ -208,6 +215,7 @@ async function withTimeout<T,>(promise: Promise<T>, ms: number,): Promise<T | nu
     timer = setTimeout(() => resolve(null,), ms,);
     timer.unref?.();
   },);
+
   try {
     return await Promise.race([promise, timeout,],);
   } finally {

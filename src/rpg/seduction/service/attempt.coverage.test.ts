@@ -77,6 +77,7 @@ describe("attemptSeduction", () => {
       skillCategory: "communication",
       approach: "a Blood Magic ritual under moonlight",
     },);
+
     expect(result,).toEqual({
       success: false,
       roll: 0,
@@ -87,10 +88,12 @@ describe("attemptSeduction", () => {
       description: "Hard limit triggered — seduction rejected.",
       hardLimitTriggered: true,
     },);
+
     const arousal = await db.selectFrom("character_arousal",)
       .where("actor_id", "=", targetId,)
       .selectAll()
       .execute();
+
     expect(arousal,).toEqual([],);
   });
 
@@ -109,6 +112,7 @@ describe("attemptSeduction", () => {
       NOW,
       { level: 5, xp: 0, xp_to_next: 1000, },
     );
+
     // roll = d100 crypto roll in [1,100] + CHA modifier (all-10 → 0);
     // retry until success — dc 35 vs d100 succeeds with p=0.66, so this
     // terminates almost surely (bounded at 50 tries to fail loudly, not
@@ -122,6 +126,7 @@ describe("attemptSeduction", () => {
         skillCategory: "communication",
         approach: "telling them they are beautiful, offering fresh roses with a smile",
       },);
+
       // dc = 50 - 15 (praise fantasy flag) = 35 on every try.
       expect(candidate.dc,).toBe(35,);
       if (candidate.success) {
@@ -129,6 +134,7 @@ describe("attemptSeduction", () => {
         break;
       }
     }
+
     expect(result?.success,).toBe(true,);
     if (result === undefined) { throw new Error("unreachable: asserted above",); }
     // arousalDelta = 10 + floor(5 * 0.3) = 11; intimacy = 3 + floor(5 * 0.1) = 3.
@@ -142,18 +148,21 @@ describe("attemptSeduction", () => {
     expect(result.description,).toBe(
       "Seduction successful! telling them they are beautiful, offering fresh roses with a smile resonated with the target.",
     );
+
     expect(result.hardLimitTriggered,).toBe(false,);
 
     const arousal = await db.selectFrom("character_arousal",)
       .where("actor_id", "=", targetId,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(arousal.level,).toBe(11,);
 
     const skill = await db.selectFrom("character_seduction_skills",)
       .where("actor_id", "=", actorId,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(skill.xp,).toBeGreaterThanOrEqual(22,);
   });
 
@@ -175,6 +184,7 @@ describe("attemptSeduction", () => {
         skillCategory: "communication",
         approach: "an awkward hello",
       },);
+
       // Fresh pair every try: zero arousal/desire, no fantasy rows.
       expect(candidate.dc,).toBe(50,);
       if (!candidate.success) {
@@ -183,6 +193,7 @@ describe("attemptSeduction", () => {
         break;
       }
     }
+
     expect(result?.success,).toBe(false,);
     if (result === undefined || pair === undefined) { throw new Error("unreachable: asserted above",); }
     expect(result.dc,).toBe(50,);
@@ -192,6 +203,7 @@ describe("attemptSeduction", () => {
     expect(result.description,).toBe(
       "Seduction failed. an awkward hello didn't land as intended.",
     );
+
     expect(result.hardLimitTriggered,).toBe(false,);
 
     // Negative delta on a zero baseline clamps at zero.
@@ -199,6 +211,7 @@ describe("attemptSeduction", () => {
       .where("actor_id", "=", pair.targetId,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(arousal.level,).toBe(0,);
 
     // No matching skill: no skill row is created for the actor.
@@ -206,6 +219,7 @@ describe("attemptSeduction", () => {
       .where("actor_id", "=", pair.actorId,)
       .selectAll()
       .execute();
+
     expect(skills,).toEqual([],);
   });
 
@@ -219,6 +233,7 @@ describe("attemptSeduction", () => {
       skillCategory: "communication",
       approach: "a LOUD party entrance",
     },);
+
     expect(result.dc,).toBe(65,);
   });
 
@@ -235,6 +250,7 @@ describe("attemptSeduction", () => {
       skillCategory: "communication",
       approach: "a calm respectful greeting",
     },);
+
     expect(result.dc,).toBe(10,);
   });
 
@@ -250,6 +266,7 @@ describe("attemptSeduction", () => {
       NOW,
       { level: 20, xp: 7, xp_to_next: 1000, },
     );
+
     // Level-20 massage skill is ignored for a communication attempt;
     // xpGained mirrors the level-1 path but the massage row is untouched.
     const result = await attemptSeduction(db, {
@@ -259,12 +276,14 @@ describe("attemptSeduction", () => {
       skillCategory: "communication",
       approach: "polite conversation",
     },);
+
     expect(result.xpGained,).toBeGreaterThan(0,);
 
     const skill = await db.selectFrom("character_seduction_skills",)
       .where("actor_id", "=", actorId,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(skill.xp,).toBe(7,);
     expect(skill.level,).toBe(20,);
   });
@@ -280,6 +299,7 @@ describe("attemptSeduction", () => {
       approach: "a dark persuasive whisper",
       reputationTier: "hostile",
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.roll,).toBe(0,);
     expect(result.dc,).toBe(0,);
@@ -293,6 +313,7 @@ describe("attemptSeduction", () => {
       .where("actor_id", "=", targetId,)
       .selectAll()
       .execute();
+
     expect(arousal,).toEqual([],);
   });
 
@@ -308,6 +329,7 @@ describe("attemptSeduction", () => {
       NOW,
       { level: 7, xp: 0, xp_to_next: 1000, },
     );
+
     const result = await attemptSeduction(db, {
       database: db,
       actorId,
@@ -316,6 +338,7 @@ describe("attemptSeduction", () => {
       approach: "an imperious demand",
       reputationTier: "hostile",
     },);
+
     expect(result.prerequisiteBlocked,).toBe(true,);
     // intimidation level 7×10 = 70 ≥ 70 passes; deception (CHA 10) < 80 blocks.
     expect(result.missingPrerequisite?.map((p,) => p.skill),).toEqual(["deception",],);
@@ -333,6 +356,7 @@ describe("attemptSeduction", () => {
       NOW,
       { level: 4, xp: 0, xp_to_next: 1000, },
     );
+
     // charisma proxy = 4×10 = 40 ≥ 20 → no prerequisite block.
     // Retry until the d100 roll beats the DC (unseeded crypto RNG).
     let result: SeductionResult | undefined;
@@ -345,12 +369,14 @@ describe("attemptSeduction", () => {
         approach: "warm friendly conversation",
         reputationTier: "friendly",
       },);
+
       expect(candidate.prerequisiteBlocked ?? false,).toBe(false,);
       if (candidate.success) {
         result = candidate;
         break;
       }
     }
+
     expect(result?.success,).toBe(true,);
   });
 
@@ -382,6 +408,7 @@ describe("attemptSeduction", () => {
       turnOns: ["silk", "velvet", "roses", "intelligence",],
       currentDesire: 100,
     },);
+
     await insertCharacterArousal(db, targetId, NOW, NOW, NOW, { level: 100, },);
     await insertCharacterSeductionSkills(
       db,
@@ -392,6 +419,7 @@ describe("attemptSeduction", () => {
       NOW,
       { level: 1, xp: 0, xp_to_next: 1000, },
     );
+
     const result = await attemptSeduction(db, {
       database: db,
       actorId,
@@ -399,6 +427,7 @@ describe("attemptSeduction", () => {
       skillCategory: "communication",
       approach: "soft silk velvet roses with intelligence and care",
     },);
+
     expect(result.dc,).toBe(10,);
   });
 
@@ -412,6 +441,7 @@ describe("attemptSeduction", () => {
       skillCategory: "communication",
       approach: "fire play on skin",
     },);
+
     // Early return: zeroed roll/DC shape proves no dice were consumed.
     expect(result.hardLimitTriggered,).toBe(true,);
     expect(result.roll,).toBe(0,);
@@ -430,6 +460,7 @@ describe("attemptSeduction", () => {
       approach: "a loving whisper",
       reputationTier: "devoted",
     },);
+
     expect(result.prerequisiteBlocked ?? false,).toBe(false,);
     expect(result.hardLimitTriggered,).toBe(false,);
   });
@@ -457,6 +488,7 @@ describe("attemptSeduction", () => {
       NOW,
       { level: 1, xp: 0, xp_to_next: 1000, },
     );
+
     // Unseeded d100 — retry until success (dc 50 → p≈0.51, bounded).
     let result: SeductionResult | undefined;
     for (let attempt = 0; attempt < 50; attempt++) {
@@ -467,11 +499,13 @@ describe("attemptSeduction", () => {
         skillCategory: "communication",
         approach: "a respectful compliment",
       },);
+
       if (candidate.success) {
         result = candidate;
         break;
       }
     }
+
     expect(result?.success,).toBe(true,);
     if (result === undefined) { throw new Error("unreachable: asserted above",); }
 
@@ -483,6 +517,7 @@ describe("attemptSeduction", () => {
       .where("source", "=", "nsfw_seduction",)
       .selectAll()
       .execute();
+
     expect(ledger.length,).toBeGreaterThanOrEqual(1,);
     const total = ledger.reduce((sum, row,) => sum + row.amount, 0,);
     expect(total,).toBeGreaterThanOrEqual(result.xpGained,);
@@ -497,6 +532,7 @@ describe("attemptSeduction", () => {
       .where("actor_id", "=", targetId,)
       .selectAll()
       .execute();
+
     expect(
       events.some((row,) => row.event_type === "seduction.success" && row.source === "seduction"),
     ).toBe(true,);
@@ -514,6 +550,7 @@ describe("attemptSeduction", () => {
       skillCategory: "communication",
       approach: "offering fresh roses with a smile",
     },);
+
     expect(result.dc,).toBe(50,);
   });
 });

@@ -30,6 +30,7 @@ function makeApp(userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(characterEmotionsRoutes({ database: db, },),);
 }
 
@@ -48,6 +49,7 @@ describe("characterEmotionsRoutes barrel", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/actors/123e4567-e89b-12d3-a456-426614174000/emotions",),
     );
+
     expect(res.status,).toBe(401,);
   });
 });

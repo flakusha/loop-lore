@@ -108,6 +108,7 @@ describe("completeDispatch", () => {
         expect(result.toolCalls,).toEqual([
           { id: "call_1", type: "function", function: { name: "get_weather", arguments: '{"city":"x"}', }, },
         ],);
+
         expect(result.finishReason,).toBe("error",);
       },
     );
@@ -173,6 +174,7 @@ describe("streamDispatch", () => {
     const handler: StreamHandler = (chunk,) => {
       events.push(`${chunk.type}:${chunk.content ?? chunk.finishReason ?? ""}`,);
     };
+
     const lines = [
       'data: {"choices":[{"delta":{"content":"Hel"}}]}',
       'data: {"choices":[{"delta":{"content":"lo"}}]}',
@@ -201,6 +203,7 @@ describe("streamDispatch", () => {
     const handler: StreamHandler = (chunk,) => {
       if (chunk.type === "thinking") { events.push(chunk.content ?? "",); }
     };
+
     const lines = [
       'data: {"choices":[{"delta":{"reasoning_content":"one"}}]}',
       'data: {"choices":[{"delta":{"reasoning_content":"two"}}]}',
@@ -214,6 +217,7 @@ describe("streamDispatch", () => {
         expect(result.thinking,).toBe("onetwo",);
       },
     );
+
     expect(events,).toEqual(["one", "two",],);
   });
 
@@ -226,6 +230,7 @@ describe("streamDispatch", () => {
         );
       }
     };
+
     const lines = [
       JSON.stringify({
         choices: [{
@@ -251,6 +256,7 @@ describe("streamDispatch", () => {
         ],);
       },
     );
+
     expect(toolCalls,).toEqual([
       'call_a:one:{"a":1}',
       'call_b:two:{"b":',
@@ -262,6 +268,7 @@ describe("streamDispatch", () => {
     const handler: StreamHandler = (chunk,) => {
       events.push(chunk.type,);
     };
+
     await withMockFetch(
       async () => sseResponse(["data: [DONE]",],),
       async () => {
@@ -270,6 +277,7 @@ describe("streamDispatch", () => {
         expect(result.finishReason,).toBe("stop",);
       },
     );
+
     expect(events,).toEqual(["done",],);
   });
 
@@ -291,6 +299,7 @@ describe("streamDispatch", () => {
       "data: {not json",
       'data: {"choices":[{"delta":{"content":"ok"}}]}',
     ];
+
     await withMockFetch(
       async () => sseResponse(lines,),
       async () => {

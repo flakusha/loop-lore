@@ -23,6 +23,7 @@ function withEnv(vars: Record<string, string | undefined>,): () => void {
     if (value === undefined) { delete process.env[key]; }
     else { process.env[key] = value; }
   }
+
   return () => {
     for (const [key, value,] of saved) {
       if (value === undefined) { delete process.env[key]; }
@@ -76,6 +77,7 @@ describe("applyEnvironmentOverrides", () => {
         LL_TEST_C: "server.trustProxy",
         LL_TEST_D: "server.trustProxy",
       },);
+
       expect(result.server.trustProxy,).toBe(false,);
     } finally {
       restore();
@@ -130,6 +132,7 @@ describe("applyEnvironmentOverrides", () => {
         LL_TEST_HOST: "server.host",
         LL_TEST_PORT: "server.port",
       },);
+
       expect(result.server.host,).toBe("example.com",);
       expect(result.server.port,).toBe(4321,);
     } finally {
@@ -167,6 +170,7 @@ describe("liftFlatEnvKeys", () => {
       TELEMETRY_PII_SECRET: "flat-value",
       observability: { telemetry: { piiSecret: "nested-value", }, },
     };
+
     const result = liftFlatEnvKeys(parsed, { TELEMETRY_PII_SECRET: "observability.telemetry.piiSecret", },);
     expect((result as Record<string, unknown>).observability,).toEqual({ telemetry: { piiSecret: "nested-value", }, },);
     expect("TELEMETRY_PII_SECRET" in (result as Record<string, unknown>),).toBe(false,);
@@ -239,6 +243,7 @@ describe("applyProviderEnvVars", () => {
         allowUserApiKey: true,
         models: {},
       },);
+
       expect(config.generation.defaultProvider,).toBe("default",);
     } finally {
       restore();
@@ -256,6 +261,7 @@ describe("applyProviderEnvVars", () => {
       LLM_PROVIDER_RETRIES: "7",
       LLM_PROVIDER_ALLOW_USER_KEY: "false",
     },);
+
     try {
       const config = freshConfig();
       applyProviderEnvVars(config,);
@@ -269,6 +275,7 @@ describe("applyProviderEnvVars", () => {
         retries: 7,
         allowUserApiKey: false,
       },);
+
       expect(config.generation.defaultProvider,).toBe("custom",);
     } finally {
       restore();
@@ -281,6 +288,7 @@ describe("applyProviderEnvVars", () => {
       LLM_PROVIDER_TIMEOUT: "not-a-number",
       LLM_PROVIDER_RETRIES: "NaN-ish",
     },);
+
     try {
       const config = freshConfig();
       applyProviderEnvVars(config,);
@@ -340,6 +348,7 @@ describe("applyProviderEnvVars", () => {
         allowUserApiKey: false,
         models: {},
       },);
+
       applyProviderEnvVars(config,);
       expect(config.generation.providers.openaiCompatible.length,).toBe(2,);
       expect(config.generation.providers.openaiCompatible[0]?.name,).toBe("preexisting",);

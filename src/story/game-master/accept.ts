@@ -94,6 +94,7 @@ export async function acceptResponse(state: GmState, turnId: string, response: s
         regenerationSuggested: true,
       },);
     }
+
     escalated = true;
   }
 
@@ -102,6 +103,7 @@ export async function acceptResponse(state: GmState, turnId: string, response: s
     if (!turnStatusMachine.canTransition(turn.status, TurnStatus.Accepted,)) {
       throw new TransitionError(turn.status, TurnStatus.Accepted,);
     }
+
     await state.db
       .updateTable("story_turns",)
       .set({
@@ -159,6 +161,7 @@ export async function humanOverride(
     .select("status",)
     .where("id", "=", turnId,)
     .executeTakeFirst();
+
   if (!turn) { throw new Error(`Turn ${turnId} not found`,); }
   if (!turnStatusMachine.canTransition(turn.status, TurnStatus.Accepted,)) {
     throw new TransitionError(turn.status, TurnStatus.Accepted,);

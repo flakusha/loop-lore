@@ -104,6 +104,7 @@ const FLAG_DESCRIPTION_MAX = 1000;
 export function resolveReporterHashSecret(configured?: { piiSecret?: string; reporterHashSecret?: string },): string {
   return resolveSharedReporterHashSecret(configured,);
 }
+
 let cachedReporterSecret: string | null = null;
 /** Resolve (and memoize) the secret; test hook below busts the cache. */
 function reporterSecret(configured?: { piiSecret?: string; reporterHashSecret?: string },): string {
@@ -111,6 +112,7 @@ function reporterSecret(configured?: { piiSecret?: string; reporterHashSecret?: 
   cachedReporterSecret ??= resolveSharedReporterHashSecret();
   return cachedReporterSecret;
 }
+
 /**
  * Bust the memoized reporter secret. Test-only; called when env flips mid-process.
  * @returns {void}

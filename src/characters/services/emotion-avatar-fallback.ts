@@ -85,6 +85,7 @@ export async function extractAvatarMetadata(
         .select("description",)
         .where("id", "=", opts.actorId,)
         .executeTakeFirst();
+
       if (actor?.description) {
         caption = actor.description;
       }
@@ -96,6 +97,7 @@ export async function extractAvatarMetadata(
       .where("actor_id", "=", opts.actorId,)
       .where("asset_id", "=", assetId,)
       .executeTakeFirst();
+
     if (avatarRow) {
       const parsed = safeJsonParse<Record<string, unknown>>(avatarRow.tags,);
       if (parsed.ok && parsed.value && typeof parsed.value === "object" && !Array.isArray(parsed.value,)) {
@@ -103,10 +105,12 @@ export async function extractAvatarMetadata(
         for (const [k, v,] of Object.entries(parsed.value,)) {
           if (typeof v === "string") { sanitized[k] = v; }
         }
+
         tags = sanitized;
       }
     }
   }
+
   // Drop-in compat: only surface `tags` when the caller passed `actorId`,
   // Otherwise callers using the old single-arg signature get an unchanged
   // shape (no `tags: undefined` key).

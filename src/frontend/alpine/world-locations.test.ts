@@ -11,6 +11,7 @@ const g = globalThis as unknown as {
   apiFetch?: (url: string | URL, opts?: RequestInit,) => Promise<Response>;
   showToast?: (...args: unknown[]) => void;
 };
+
 const originalApiFetch = g.apiFetch;
 const originalShowToast = g.showToast;
 const originalConfirm = globalThis.confirm;
@@ -38,6 +39,7 @@ beforeEach(() => {
     if (!fetchHandler) { return new Response("{}", { status: 500, },); }
     return fetchHandler(String(url,), opts ?? {},);
   };
+
   g.showToast = () => {};
   globalThis.confirm = () => true;
 },);
@@ -54,6 +56,7 @@ describe("worldLocations.loadLocations", () => {
     mockFetch(200, {
       data: [{ id: "l1", name: "Town", description: "hub", parent_location_id: null, connections: ["l2",], },],
     },);
+
     const c = ctx();
     await c.loadLocations();
     expect(c.locations,).toHaveLength(1,);
@@ -104,6 +107,7 @@ describe("worldLocations.addLocation", () => {
       name: "Tavern",
       parentLocationId: "l1",
     },);
+
     expect(c.newLocName,).toBe("",);
     expect(c.newLocConnections,).toEqual([],);
   });
@@ -146,6 +150,7 @@ describe("worldLocations.expandLoc", () => {
       expandedLoc: "",
       editLocDesc: "old",
     },);
+
     c.expandLoc("l1",);
     expect(c.editLocDesc,).toBe("",);
   });
@@ -160,12 +165,14 @@ describe("worldLocations.saveLocation", () => {
       editLocName: "  New Town  ",
       editLocDesc: "  ",
     },);
+
     await c.saveLocation("l1",);
     expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/locations/l1",);
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toEqual({
       name: "New Town",
       description: null,
     },);
+
     expect(c.locations[0]!.name,).toBe("New Town",);
     expect(c.expandedLoc,).toBe("",);
   });
@@ -178,6 +185,7 @@ describe("worldLocations.saveLocation", () => {
       editLocName: "酒場・影",
       editLocDesc: "灯り",
     },);
+
     await c.saveLocation("l1",);
     expect(c.locations[0]!.name,).toBe("酒場・影",);
   });
@@ -216,6 +224,7 @@ describe("worldLocations.filterLocations", () => {
         return null;
       },
     }));
+
     (globalThis as any).document = {
       querySelector: (sel: string,) => {
         if (sel === "#location-search") { return searchValue === null ? null : { value: searchValue, }; }
@@ -233,6 +242,7 @@ describe("worldLocations.filterLocations", () => {
         getHTML: () => "",
       }),
     };
+
     return elements;
   }
 
@@ -245,6 +255,7 @@ describe("worldLocations.filterLocations", () => {
       { name: "Tavern", desc: "cozy hall", },
       { name: "Forest", desc: "dark woods", },
     ],);
+
     ctx().filterLocations();
     expect(elements[0]!.style.display,).toBe("",);
     expect(elements[1]!.style.display,).toBe("none",);
@@ -255,6 +266,7 @@ describe("worldLocations.filterLocations", () => {
       { name: "Tavern", desc: "cozy hall", },
       { name: "Forest", desc: "dark woods", },
     ],);
+
     ctx({ locationSearch: "TAVERN", },).filterLocations();
     expect(elements[0]!.style.display,).toBe("",);
     expect(elements[1]!.style.display,).toBe("none",);
@@ -265,6 +277,7 @@ describe("worldLocations.filterLocations", () => {
       { name: "Tavern", desc: "cozy hall", },
       { name: "Forest", desc: "dark woods", },
     ],);
+
     ctx().filterLocations();
     expect(descMatch[0]!.style.display,).toBe("",);
     expect(descMatch[1]!.style.display,).toBe("none",);
@@ -273,6 +286,7 @@ describe("worldLocations.filterLocations", () => {
       { name: "Tavern", desc: "cozy hall", },
       { name: "Forest", desc: "dark woods", },
     ],);
+
     ctx().filterLocations();
     expect(empty[0]!.style.display,).toBe("",);
     expect(empty[1]!.style.display,).toBe("",);
@@ -294,6 +308,7 @@ describe("worldLocations.filterLocations", () => {
         fn();
       },
     } as Partial<WorldEditState>,);
+
     await c.loadLocations();
     expect(ticked,).toBe(true,);
     expect(c.locationsLoaded,).toBe(true,);

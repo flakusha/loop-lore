@@ -54,6 +54,7 @@ function buildCtx(overrides?: Partial<DraftCtx>,): DraftCtx {
     _draftTimer: null,
     ...overrides,
   };
+
   return ctx;
 }
 
@@ -105,6 +106,7 @@ describe("draft storage helpers", () => {
     for (let i = 0; i < DRAFT_MAX_CHATS + 1; i += 1) {
       writeDraft(store, `c${i}`, `text-${i}`,);
     }
+
     expect(readDraftIndex(store,),).toHaveLength(DRAFT_MAX_CHATS,);
     expect(readDraftIndex(store,)[0],).toBe(`c${DRAFT_MAX_CHATS}`,);
     expect(readDraft(store, "c0",),).toBeNull();

@@ -24,6 +24,7 @@ describe("MusicLinkCreateBody", () => {
       url: "https://open.spotify.com/track/abc",
       sectionId: UUID_A,
     };
+
     expect(Value.Check(MusicLinkCreateBody, body,)).toBe(true,);
   });
 
@@ -31,6 +32,7 @@ describe("MusicLinkCreateBody", () => {
     const body = {
       url: "https://open.spotify.com/track/abc",
     };
+
     expect(Value.Check(MusicLinkCreateBody, body,)).toBe(true,);
   });
 
@@ -39,6 +41,7 @@ describe("MusicLinkCreateBody", () => {
       url: "https://open.spotify.com/track/abc",
       chatId: "chat-other",
     };
+
     // Value.Clean drops keys that are not part of the schema. The
     // resulting object must NOT carry `chatId`; consumers should not be
     // able to round-trip a chat id through the body even if they
@@ -52,6 +55,7 @@ describe("MusicLinkCreateBody", () => {
     const body = {
       sectionId: UUID_A,
     };
+
     expect(Value.Check(MusicLinkCreateBody, body,)).toBe(false,);
   });
 
@@ -59,6 +63,7 @@ describe("MusicLinkCreateBody", () => {
     const body = {
       url: "not-a-url",
     };
+
     expect(Value.Check(MusicLinkCreateBody, body,)).toBe(false,);
   });
 
@@ -138,6 +143,7 @@ describe("MusicLinkCreateBody", () => {
       debug: true,
       nested: { evil: "yes", },
     };
+
     const cleaned = Value.Clean(MusicLinkCreateBody, body,) as { url?: string; sectionId?: string };
     expect(Object.keys(cleaned,).sort(),).toEqual(["sectionId", "url",]);
     expect(Value.Check(MusicLinkCreateBody, cleaned,)).toBe(true,);

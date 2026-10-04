@@ -42,6 +42,7 @@ describe("worldChannels", () => {
           ],
         },
       };
+
       const groups = worldChannels.worldChatGroups!.call(ctx, "w1",);
       expect(groups,).toHaveLength(2,);
       expect(groups[0],).toEqual({
@@ -52,6 +53,7 @@ describe("worldChannels", () => {
           { id: "c2", name: "off-topic", current_location_id: "loc-a", location_name: "Town Square", },
         ],
       },);
+
       expect(groups[1],).toEqual({
         locationId: "loc-b",
         locationName: "The Tavern",
@@ -68,6 +70,7 @@ describe("worldChannels", () => {
           ],
         },
       };
+
       const groups = worldChannels.worldChatGroups!.call(ctx, "w1",);
       expect(groups,).toHaveLength(1,);
       expect(groups[0]!.locationId,).toBe("unlocated",);
@@ -82,6 +85,7 @@ describe("worldChannels", () => {
           w2: [{ id: "c2", name: "hall", current_location_id: "loc-a", location_name: "Town", },],
         },
       };
+
       const groups = worldChannels.worldChatGroups!.call(ctx, "w1",);
       expect(groups[0]!.chats,).toHaveLength(1,);
       expect(groups[0]!.chats[0]!.id,).toBe("c1",);
@@ -107,6 +111,7 @@ describe("worldChannels", () => {
         expect(url,).toBe("/api/v1/world-invites/ABCDEF12/join",);
         return Response.json({ worldId: "w1", alreadyMember: false, }, { status: 200, },);
       },);
+
       const ctx = toastCtx({ worldJoinCode: "ABCDEF12", },);
       await worldChannels.joinWorldByCode!.call(ctx,);
       expect(ctx.worldJoinCode,).toBe("",);
@@ -138,6 +143,7 @@ describe("worldChannels", () => {
       g.apiFetch = mock(async () => {
         throw new Error("offline",);
       },);
+
       const ctx = toastCtx({ worldJoinCode: "ABCDEF12", },);
       await worldChannels.joinWorldByCode!.call(ctx,);
       expect(ctx.toasts,).toEqual([{ type: "error", message: "Network error", },],);

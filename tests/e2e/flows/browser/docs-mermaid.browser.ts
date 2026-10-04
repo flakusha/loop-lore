@@ -43,10 +43,12 @@ function ensureDocsBuild(): void {
   if (existsSync(join(DIST_DIR, "index.html",),) && existsSync(join(DIST_DIR, "hashmap.json",),)) {
     return;
   }
+
   const result = spawnSync("bun", ["run", "docs:build",], {
     stdio: ["ignore", "pipe", "pipe",],
     cwd: REPO_ROOT,
   },);
+
   if (result.status !== 0) {
     throw new Error(
       `docs:build failed (exit ${result.status ?? "unknown"}): ${result.stderr?.toString() ?? ""}`,
@@ -67,6 +69,7 @@ function findHtmlFiles(dir: string,): string[] {
       out.push(p,);
     }
   }
+
   return out;
 }
 
@@ -83,6 +86,7 @@ function findMermaidPages(distDir: string,): string[] {
       mermaidPages.push(`/docs/${rel}`,);
     }
   }
+
   mermaidPages.sort();
   return mermaidPages;
 }
@@ -119,6 +123,7 @@ function startDocsServer(): DocsServer {
           headers: { "Content-Type": MIME.html as string, },
         },);
       }
+
       if (url.pathname.startsWith("/docs/",)) {
         const rel = url.pathname.slice("/docs/".length,);
         const filePath = join(DIST_DIR, rel,);
@@ -130,9 +135,11 @@ function startDocsServer(): DocsServer {
           },);
         }
       }
+
       return new Response("Not found", { status: 404, },);
     },
   },);
+
   return {
     url: `http://localhost:${server.port}`,
     stop: () => server.stop(true,),
@@ -182,6 +189,7 @@ describe("Docs site mermaid renderer", () => {
           waitUntil: "domcontentloaded",
           timeout: 30_000,
         },);
+
         // Renderer runs after DOMContentLoaded via MutationObserver; wait
         // until every .mermaid has an svg child (15s budget).
         await page.waitForFunction(() => {
@@ -189,6 +197,7 @@ describe("Docs site mermaid renderer", () => {
           if (blocks.length === 0) { return false; }
           return Array.from(blocks,).every((el,) => el.querySelector("svg",));
         }, { timeout: 15_000, },);
+
         const svgCount = await page.locator(".mermaid svg",).count();
         expect(svgCount,).toBeGreaterThan(0,);
         // Sanity: every .mermaid block rendered at least one svg

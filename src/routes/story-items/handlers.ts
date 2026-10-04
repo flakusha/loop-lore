@@ -30,6 +30,7 @@ export async function checkWorldOwnership(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   return !(!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId));
 }
 
@@ -50,6 +51,7 @@ export async function handleInstances(
     .where("world_id", "=", worldId,)
     .where("item_id", "=", itemId,)
     .execute();
+
   return jsonResponse(instances,);
 }
 
@@ -85,6 +87,7 @@ export async function handleDefinition(
     const r = safeJsonStringify(body.properties,);
     if (r.ok) { updates.properties = r.value; }
   }
+
   updates.updated_at = new Date().toISOString();
   await database
     .updateTable("items",)
@@ -134,6 +137,7 @@ export async function handleDefinitions(
       worldId,
       category ? enumOr(category, Object.values(ItemCategory,), "other",) : undefined,
     );
+
     const total = allDefs.length;
     const paged = allDefs.slice((page - 1) * pageSize, page * pageSize,);
     return jsonPaginated({ data: paged, total, page, pageSize, },);
@@ -152,6 +156,7 @@ export async function handleDefinitions(
     value: (body.value as number) ?? 0,
     weight: (body.weight as number) ?? 0,
   },);
+
   return jsonCreated({ id, },);
 }
 
@@ -176,6 +181,7 @@ export async function handleTransfer(
     (body?.toLocationId as string) ?? undefined,
     (body?.toActorId as string) ?? undefined,
   );
+
   return jsonResponse(result,);
 }
 

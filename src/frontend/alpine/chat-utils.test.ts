@@ -98,6 +98,7 @@ describe("chatUtils", () => {
       const evt = {
         target: { files: [new File(["x",], name,),], value: "C:\\fakepath", },
       };
+
       return evt as unknown as Event;
     };
 
@@ -118,12 +119,15 @@ describe("chatUtils", () => {
         if (url === "/api/v1/assets" && opts?.method === "POST") {
           return Response.json({ id: "a1", }, { status: 201, },);
         }
+
         if (url === "/api/v1/assets/a1/links" && opts?.method === "POST") {
           return Response.json({ id: "a1", }, { status: 201, },);
         }
+
         if (url.startsWith("/api/v1/assets?entity_type=chat",)) {
           return Response.json({ data: [{ id: "a1", },], }, { status: 200, },);
         }
+
         return Response.json({ error: "not found", }, { status: 404, },);
       };
 
@@ -134,6 +138,7 @@ describe("chatUtils", () => {
           const res = await globalThis.apiFetch(
             `/api/v1/assets?entity_type=chat&entity_id=${this.activeChat}&pageSize=200`,
           );
+
           const data = await res.json();
           this.galleryAssets = data.data || [];
         },
@@ -164,6 +169,7 @@ describe("chatUtils", () => {
           this.galleryAssets = [];
         },
       };
+
       const self = state as unknown as ChatState;
       await chatUtils.uploadChatAssets!.call(self, fileInput("img.png",),);
 

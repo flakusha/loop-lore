@@ -73,5 +73,6 @@ export function policyForRoute(pathname: string,): RatePolicy {
   for (const [prefix, policy,] of routePolicies) {
     if (pathname.startsWith(prefix,)) { return policy; }
   }
+
   return defaultPolicy;
 }

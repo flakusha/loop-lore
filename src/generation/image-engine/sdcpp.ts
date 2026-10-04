@@ -29,6 +29,7 @@ export async function generateSDCPP(
     const found = discovered.models.some(
       (m: LoRAModel,) => m.name === opts.lora!.name,
     );
+
     if (found) {
       effectivePrompt = injectSdCppLora(
         opts.prompt,
@@ -42,6 +43,7 @@ export async function generateSDCPP(
       );
     }
   }
+
   const sdcppPayload = safeJsonStringify({
     prompt: effectivePrompt,
     negative_prompt: opts.negativePrompt ?? sdConfig.defaults.negativePrompt,
@@ -57,6 +59,7 @@ export async function generateSDCPP(
     hr_scale: opts.hrScale,
     denoising_strength: opts.denoisingStrength,
   },);
+
   // Job status carries base64 images — can exceed safeFetch's default size cap.
   const submitResult = await safeFetch<{ id: string }>(sdcppUrl, {
     method: "POST",
@@ -106,6 +109,7 @@ export async function generateSDCPP(
       if (!statusData.images || statusData.images.length === 0) {
         return failure("sd.cpp job completed but returned no images", 502,);
       }
+
       jobImages = statusData.images;
       jobDone = true;
     } else if (statusData.status === "failed" || statusData.status === "cancelled") {

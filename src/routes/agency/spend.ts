@@ -48,6 +48,7 @@ export function agencySpendRoute(
         if (body.actor_id !== authUserId) {
           return forbiddenResponse("actor_id must match the authenticated session",);
         }
+
         try {
           const ledger = await spendStoryPoints(database, {
             actorId: body.actor_id,
@@ -55,6 +56,7 @@ export function agencySpendRoute(
             amount: body.amount,
             reason: body.reason ?? null,
           },);
+
           return jsonResponse(ledger,);
         } catch (err) {
           if (err instanceof InsufficientStoryPointsError) {
@@ -63,6 +65,7 @@ export function agencySpendRoute(
               status: 400,
             },);
           }
+
           const msg = err instanceof Error ? err.message : String(err,);
           return jsonError({ message: `spend failed: ${msg}`, status: 500, },);
         }

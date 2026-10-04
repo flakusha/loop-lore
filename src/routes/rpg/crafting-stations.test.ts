@@ -85,6 +85,7 @@ describe("Crafting routes", () => {
       output_quantity: 1 as never,
       station_type_required: "anvil",
     },);
+
     await insertCraftingRecipeMaterials(db, RCP, ORE, NOW, { quantity: 2 as never, },);
   },);
 
@@ -96,6 +97,7 @@ describe("Crafting routes", () => {
     const r = await app(db, U,).handle(
       new Request(`http://localhost/api/rpg/crafting/stations?worldId=${W}`,),
     );
+
     expect(r.status,).toBe(200,);
     expect((await r.json() as { data: unknown[] }).data,).toHaveLength(0,);
   });
@@ -108,6 +110,7 @@ describe("Crafting routes", () => {
         stationType: "anvil",
       },),
     );
+
     expect(noAuth.status,).toBe(401,);
     const wrong = await app(db, U2,).handle(
       post("http://localhost/api/rpg/crafting/stations", {
@@ -116,6 +119,7 @@ describe("Crafting routes", () => {
         stationType: "anvil",
       },),
     );
+
     expect(wrong.status,).toBe(403,);
   });
 
@@ -128,12 +132,14 @@ describe("Crafting routes", () => {
         tier: 2,
       },),
     );
+
     expect(cr.status,).toBe(201,);
     defId = (await cr.json() as { id: string }).id;
 
     const get = await app(db, U,).handle(
       new Request(`http://localhost/api/rpg/crafting/stations/${defId}`,),
     );
+
     expect(get.status,).toBe(200,);
     const g = await get.json() as { name: string; stationType: string };
     expect(g.name,).toBe("Iron Anvil",);
@@ -145,6 +151,7 @@ describe("Crafting routes", () => {
         tier: 3,
       },),
     );
+
     expect(up.status,).toBe(200,);
     expect((await up.json() as { name: string }).name,).toBe("Steel Anvil",);
 
@@ -153,6 +160,7 @@ describe("Crafting routes", () => {
         method: "DELETE",
       },),
     );
+
     expect(notOwner.status,).toBe(403,);
 
     const del = await app(db, U,).handle(
@@ -160,6 +168,7 @@ describe("Crafting routes", () => {
         method: "DELETE",
       },),
     );
+
     expect(del.status,).toBe(200,);
     expect((await del.json() as { deleted: boolean }).deleted,).toBe(true,);
   });
@@ -168,6 +177,7 @@ describe("Crafting routes", () => {
     const r = await app(db, U,).handle(
       new Request("http://localhost/api/rpg/crafting/stations/00000000-0000-4000-8000-999999999999",),
     );
+
     expect(r.status,).toBe(404,);
   });
 
@@ -183,6 +193,7 @@ describe("Crafting routes", () => {
         maxDurability: 200,
       },),
     );
+
     const dId = (await crDef.json() as { id: string }).id;
 
     const cr = await app(db, U,).handle(
@@ -191,12 +202,14 @@ describe("Crafting routes", () => {
         worldId: W,
       },),
     );
+
     expect(cr.status,).toBe(201,);
     instId = (await cr.json() as { id: string }).id;
 
     const list = await app(db, U,).handle(
       new Request(`http://localhost/api/rpg/crafting/station-instances?worldId=${W}`,),
     );
+
     expect(list.status,).toBe(200,);
     expect((await list.json() as { data: { id: string }[] }).data
       .some(i => i.id === instId),).toBe(true,);
@@ -206,6 +219,7 @@ describe("Crafting routes", () => {
         isActive: false,
       },),
     );
+
     expect(up.status,).toBe(200,);
     expect((await up.json() as { isActive: boolean }).isActive,).toBe(false,);
 
@@ -214,6 +228,7 @@ describe("Crafting routes", () => {
         method: "DELETE",
       },),
     );
+
     expect(noDel.status,).toBe(403,);
 
     const del = await app(db, U,).handle(
@@ -221,6 +236,7 @@ describe("Crafting routes", () => {
         method: "DELETE",
       },),
     );
+
     expect(del.status,).toBe(200,);
   });
 
@@ -230,10 +246,12 @@ describe("Crafting routes", () => {
     const noAuth = await app(db,).handle(
       post("http://localhost/api/rpg/craft", { actorId: A, recipeId: RCP, },),
     );
+
     expect(noAuth.status,).toBe(401,);
     const wrong = await app(db, U2,).handle(
       post("http://localhost/api/rpg/craft", { actorId: A, recipeId: RCP, },),
     );
+
     expect(wrong.status,).toBe(403,);
     const missing = await app(db, U,).handle(
       post("http://localhost/api/rpg/craft", {
@@ -241,6 +259,7 @@ describe("Crafting routes", () => {
         recipeId: "00000000-0000-4000-8000-999999999999",
       },),
     );
+
     expect(missing.status,).toBe(404,);
   });
 
@@ -253,6 +272,7 @@ describe("Crafting routes", () => {
         stationType: "anvil",
       },),
     );
+
     const dId = (await crDef.json() as { id: string }).id;
     const crInst = await app(db, U,).handle(
       post("http://localhost/api/rpg/crafting/station-instances", {
@@ -260,6 +280,7 @@ describe("Crafting routes", () => {
         worldId: W,
       },),
     );
+
     const sId = (await crInst.json() as { id: string }).id;
 
     const r = await app(db, U,).handle(
@@ -269,12 +290,14 @@ describe("Crafting routes", () => {
         stationInstanceId: sId,
       },),
     );
+
     expect(r.status,).toBe(200,);
     const body = await r.json() as {
       status: string;
       outputItemId: string | null;
       materialsConsumed: { quantity: number }[];
     };
+
     expect(["success", "critical_success",],).toContain(body.status,);
     expect(body.outputItemId,).toBe(SWORD,);
     expect(body.materialsConsumed[0]!.quantity,).toBe(2,);
@@ -289,6 +312,7 @@ describe("Crafting routes", () => {
         stationType: "anvil",
       },),
     );
+
     const dId = (await crDef.json() as { id: string }).id;
     const crInst = await app(db, U,).handle(
       post("http://localhost/api/rpg/crafting/station-instances", {
@@ -296,6 +320,7 @@ describe("Crafting routes", () => {
         worldId: W,
       },),
     );
+
     const sId = (await crInst.json() as { id: string }).id;
     // Actor started with 10 ore, used 2 in prior test → 8 left.
     // Drain remaining: 4 more crafts × 2 = 8 ore.
@@ -308,6 +333,7 @@ describe("Crafting routes", () => {
         },),
       );
     }
+
     const r = await app(db, U,).handle(
       post("http://localhost/api/rpg/craft", {
         actorId: A,
@@ -315,6 +341,7 @@ describe("Crafting routes", () => {
         stationInstanceId: sId,
       },),
     );
+
     expect(r.status,).toBe(400,);
     expect((await r.json() as { error: string }).error,).toContain("Insufficient",);
   });

@@ -111,6 +111,16 @@ const tsRules = {
   "sort-keys": "off",
   // Allow `== null` (nullish check) but forbid all other loose equality.
   "eqeqeq": ["error", "smart"],
+  // Paragraph navigation: blank line after every multiline statement, so dense
+  // declaration blocks (objects, calls, literals) read as separated paragraphs.
+  // Autofixable; oxlint has no equivalent (ESLint-only). Blank lines are exempt
+  // from the size gate, so padding never tips the 250L budget.
+  "padding-line-between-statements": ["error",
+    { "blankLine": "always", "prev": "multiline-block-like", "next": "*" },
+    { "blankLine": "always", "prev": "multiline-expression", "next": "*" },
+    { "blankLine": "always", "prev": "multiline-const", "next": "*" },
+    { "blankLine": "always", "prev": "multiline-let", "next": "*" },
+  ],
 };
 
 // Stub rules for rules referenced in eslint-disable comments in scripts.
@@ -316,6 +326,9 @@ export default [
       "jsdoc/require-param": "off",
       "jsdoc/require-returns": "off",
       "jsdoc/require-throws": "off",
+      // Generated verbatim by `bun run db:sync-*`; autofix output would be
+      // undone by the next generator run, so padding is exempt here.
+      "padding-line-between-statements": "off",
       // insert-helpers.ts is 169 of the rule's 1247 findings (13.6%) and is
       // emitted verbatim by `bun run db:sync-types`; rewriting its signatures
       // would be undone by the next generator run.

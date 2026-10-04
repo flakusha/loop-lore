@@ -29,6 +29,7 @@ describe("renderStreamMessageWithSanitizer", () => {
       markedParse,
       sanitizer,
     );
+
     expect(includes(html, "<p>Hello world</p>",),).toBe(true,);
     expect(includes(html, 'data-message-id="attempt-1"',),).toBe(true,);
     expect(includes(html, 'data-streaming="true"',),).toBe(true,);
@@ -49,6 +50,7 @@ describe("renderStreamMessageWithSanitizer", () => {
       markedParse,
       sanitizer,
     );
+
     expect(includes(chunk1Html, "<script",),).toBe(false,);
     expect(includes(chunk1Html, "alert(1)",),).toBe(false,);
     expect(includes(chunk1Html, "<p>safe</p>",),).toBe(true,);
@@ -62,6 +64,7 @@ describe("renderStreamMessageWithSanitizer", () => {
       markedParse,
       sanitizer,
     );
+
     expect(includes(chunk2Html, "<script",),).toBe(false,);
     expect(includes(chunk2Html, "alert(1)",),).toBe(false,);
     expect(includes(chunk2Html, "after",),).toBe(true,);
@@ -81,6 +84,7 @@ describe("renderStreamMessageWithSanitizer", () => {
       markedParse,
       sanitizer,
     );
+
     const finalHtml = renderStreamMessage(
       "Bob",
       "<p>part1</p><script>alert(1)</script>part2",
@@ -88,6 +92,7 @@ describe("renderStreamMessageWithSanitizer", () => {
       markedParse,
       { isFinal: true, },
     );
+
     expect(includes(finalHtml, "<script",),).toBe(false,);
     expect(includes(finalHtml, "alert(1)",),).toBe(false,);
     expect(includes(finalHtml, "<p>part1</p>",),).toBe(true,);
@@ -106,6 +111,7 @@ describe("renderStreamMessageWithSanitizer", () => {
       sanitizer,
       { thinking: "<script>leak()</script>thoughts", },
     );
+
     expect(includes(html, "<script",),).toBe(false,);
     expect(includes(html, "thoughts",),).toBe(true,);
   });

@@ -40,6 +40,7 @@ beforeEach(async () => {
     status: "active",
     settings: "{}",
   },).execute();
+
   await insertActors(db, "Alice", {
     id: ACTOR_ID,
     actor_type: "character",
@@ -49,6 +50,7 @@ beforeEach(async () => {
     import_spec: "raw",
     data_raw: null,
   } as never,);
+
   await db.insertInto("chats",).values({
     id: CHAT_ID,
     name: "Encrypt Stored",
@@ -57,6 +59,7 @@ beforeEach(async () => {
     created_by: USER_ID,
     encryption_level: "standard",
   } as never,).execute();
+
   await db.insertInto("chat_participants",).values({
     chat_id: CHAT_ID,
     actor_id: ACTOR_ID,
@@ -92,6 +95,7 @@ test("seals content under the chat key and round-trips when encryption is enable
     compressThreshold: 128,
     compressAlgorithm: "gzip",
   },);
+
   const smk = getSmk();
   if (!smk) { throw new Error("SMK not loaded — test setup failed",); }
   await generateActorKey({ database: db, actorId: ACTOR_ID, smk, name: "primary", },);
@@ -116,5 +120,6 @@ test("seals content under the chat key and round-trips when encryption is enable
     key_id: storedKeyId,
     chat_id: CHAT_ID,
   }, smk,);
+
   expect(round,).toBe(plaintext,);
 });

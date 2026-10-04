@@ -74,6 +74,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
         this.jobsError = t("status.emotionAvatarsLoadFailed",);
         return;
       }
+
       const body = (await res.json()) as { data?: EmotionAvatarJob[] } | EmotionAvatarJob[];
       this.jobs = Array.isArray(body,) ? body : (body.data ?? []);
     } catch (error) {
@@ -97,6 +98,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
       this.error = t("status.emotionAvatarsBaseRequired",);
       return false;
     }
+
     this.busy = true;
     this.error = "";
     this.message = "";
@@ -111,13 +113,16 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
           negativePrompt: this.negativePrompt || undefined,
         },),
       },);
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({} as Record<string, unknown>)) as {
           message?: string;
         };
+
         this.error = body.message ?? t("status.emotionAvatarsStartFailed",);
         return false;
       }
+
       this.message = t("status.emotionAvatarsStarted",);
       await this.listJobs();
       this.startPolling();
@@ -141,13 +146,16 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
         `/api/v1/actors/${actorId}/emotion-avatars/jobs/${jobId}/cancel`,
         { method: "POST", },
       );
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({} as Record<string, unknown>)) as {
           message?: string;
         };
+
         this.error = body.message ?? t("status.emotionAvatarsCancelFailed",);
         return;
       }
+
       await this.refreshJob(jobId,);
       this.stopPolling();
       await this.listJobs();
@@ -168,6 +176,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
         `/api/v1/actors/${actorId}/emotion-avatars/jobs/${jobId}`,
         {},
       );
+
       if (!res.ok) { return; }
       const job = (await res.json()) as EmotionAvatarJob;
       const idx = this.jobs.findIndex((j,) => j.id === job.id);
@@ -186,13 +195,16 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
         this.stopPolling();
         return;
       }
+
       for (const job of active) { await this.refreshJob(job.id,); }
       const stillActive = this.jobs.some(this.isJobActive,);
       if (!stillActive) { this.stopPolling(); }
     };
+
     this._pollInterval = setInterval(() => {
       void tick();
     }, this.pollIntervalMs,);
+
     this._pollHandle = setTimeout(() => {
       // First tick fires sooner so the UI updates without waiting for the
       // full interval; the interval handle keeps polling alive.
@@ -205,6 +217,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
       clearTimeout(this._pollHandle,);
       this._pollHandle = null;
     }
+
     if (this._pollInterval) {
       clearInterval(this._pollInterval,);
       this._pollInterval = null;

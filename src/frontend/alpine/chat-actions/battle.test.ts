@@ -15,6 +15,7 @@ function buildCtx(): PanelCtx {
       ctx.rendered.push(view,);
     },
   };
+
   return ctx;
 }
 
@@ -71,6 +72,7 @@ describe("battleActionHandlers rendering actions", () => {
         ],
       },
     }, "chat-1",);
+
     const view = ctx.rendered[0] as { combatants: unknown[] };
     expect(view.combatants,).toEqual([{ id: "ok", name: "Fine", hp: 1, maxHp: 2, initiative: 0, },],);
   });
@@ -82,15 +84,19 @@ describe("battleActionHandlers rendering actions", () => {
     battleActionHandlers["battle-started"]!(ctx, {
       battle: { id: "b3", status: "weird", round: 1, turnIndex: 0, combatants: [], },
     }, "chat-1",);
+
     battleActionHandlers["battle-started"]!(ctx, {
       battle: { id: 42, status: "active", round: 1, turnIndex: 0, combatants: [], },
     }, "chat-1",);
+
     battleActionHandlers["battle-started"]!(ctx, {
       battle: { id: "b4", status: "active", round: "1", turnIndex: 0, combatants: [], },
     }, "chat-1",);
+
     battleActionHandlers["battle-started"]!(ctx, {
       battle: { id: "b5", status: "active", round: 1, turnIndex: 0, combatants: "[]", },
     }, "chat-1",);
+
     expect(ctx.rendered,).toEqual([],);
   });
 

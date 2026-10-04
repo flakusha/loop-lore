@@ -94,6 +94,7 @@ class PluginRegistry {
     for (const plugin of this.plugins.values()) {
       if (plugin.origin === origin) { out.push(plugin); }
     }
+
     return out;
   }
 

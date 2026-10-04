@@ -60,12 +60,14 @@ async function seedAuthorized(id: string,): Promise<{ userId: string; actorId: s
     birth_date: "1990-01-01",
     age_gate_accepted_at: "2026-01-01T00:00:00Z",
   },);
+
   await insertActors(db, actorId, {
     id: actorId as never,
     owner_id: userId,
     user_id: userId,
     content_rating: "nsfw_moderate" as never,
   },);
+
   return { userId, actorId, };
 }
 
@@ -78,6 +80,7 @@ function makeApp(userId?: string, config: Config = makeConfig(),) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(bodyRoutes({ database: db, config, },),);
 }
 
@@ -86,6 +89,7 @@ describe("body routes — GET /api/nsfw/body/:actorId", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/nsfw/body/body-test-actor-x",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -94,6 +98,7 @@ describe("body routes — GET /api/nsfw/body/:actorId", () => {
     const res = await makeApp(userId,).handle(
       new Request(`http://localhost/api/nsfw/body/${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.actorId,).toBe(actorId,);
@@ -109,9 +114,11 @@ describe("body routes — GET /api/nsfw/body/:actorId", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("body-other",).handle(
       new Request(`http://localhost/api/nsfw/body/${actorId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -120,6 +127,7 @@ describe("body routes — GET /api/nsfw/body/:actorId", () => {
     const res = await makeApp(userId, makeConfig({ allowNsfw: false, },),).handle(
       new Request(`http://localhost/api/nsfw/body/${actorId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -133,6 +141,7 @@ describe("body routes — PUT /api/nsfw/body/:actorId", () => {
         body: JSON.stringify({ stamina: 80, },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -150,6 +159,7 @@ describe("body routes — PUT /api/nsfw/body/:actorId", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.success,).toBe(true,);
@@ -159,6 +169,7 @@ describe("body routes — PUT /api/nsfw/body/:actorId", () => {
       .select(["stamina", "size_category", "build", "scent",],)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row?.stamina,).toBe(80,);
     expect(row?.size_category,).toBe("petite",);
     expect(row?.build,).toBe("athletic",);
@@ -174,6 +185,7 @@ describe("body routes — PUT /api/nsfw/body/:actorId", () => {
         body: JSON.stringify({ stamina: 0, },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -186,6 +198,7 @@ describe("body routes — PUT /api/nsfw/body/:actorId", () => {
         body: JSON.stringify({ stamina: 101, },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -198,6 +211,7 @@ describe("body routes — PUT /api/nsfw/body/:actorId", () => {
         body: JSON.stringify({ actorId: "evil", id: "evil", stamina: 70, },),
       },),
     );
+
     // TypeBox strips unknown keys; the whitelisted stamina still applies.
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
@@ -208,6 +222,7 @@ describe("body routes — PUT /api/nsfw/body/:actorId", () => {
       .select("stamina",)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row?.stamina,).toBe(70,);
   });
 
@@ -218,6 +233,7 @@ describe("body routes — PUT /api/nsfw/body/:actorId", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("body-other-put",).handle(
       new Request(`http://localhost/api/nsfw/body/${actorId}`, {
         method: "PUT",
@@ -225,6 +241,7 @@ describe("body routes — PUT /api/nsfw/body/:actorId", () => {
         body: JSON.stringify({ stamina: 60, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

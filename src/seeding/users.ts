@@ -39,6 +39,7 @@ export function resolvePasswordReference(value: string,): string {
         "refusing to seed with an empty password",
     );
   }
+
   return resolved;
 }
 
@@ -60,6 +61,7 @@ export async function seedConfiguredUsers(
   if (!config.seeding.enabled || config.seeding.users.length === 0) {
     return 0;
   }
+
   if (!config.auth.required) {
     log.debug("Auth not required (solo mode) — skipping configured user seeding",);
     return 0;
@@ -70,6 +72,7 @@ export async function seedConfiguredUsers(
     const createdId = await seedSingleUser(database, seedUser, log,);
     if (createdId) { created += 1; }
   }
+
   return created;
 }
 
@@ -94,6 +97,7 @@ async function seedSingleUser(
     .select("id",)
     .where("username", "=", seedUser.username,)
     .executeTakeFirst();
+
   if (existing) {
     log.debug(`User "${seedUser.username}" already exists — skipping`,);
     return null;
@@ -106,8 +110,10 @@ async function seedSingleUser(
     log.warn(
       `Skipping seed for "${seedUser.username}": ${error instanceof Error ? error.message : String(error,)}`,
     );
+
     return null;
   }
+
   const userId = uid();
   const passwordHash = await Bun.password.hash(password,);
 

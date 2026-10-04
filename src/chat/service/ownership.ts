@@ -44,6 +44,7 @@ async function executeTransferTx(
     .where("id", "=", chatId,)
     .where("created_by", "=", previousOwnerId,)
     .executeTakeFirst();
+
   if (Number(flipped.numUpdatedRows ?? 0,) === 0) {
     throw new Error(CONCURRENT_MODIFICATION,);
   }
@@ -111,6 +112,7 @@ async function runPostTransferHooks(
     autoInvited: outcome.autoInvited,
     reason,
   },);
+
   try {
     await reconcileModeratorGrants(db, chatId, outcome.previousOwnerId, outcome.newOwnerId,);
   } catch (reconcileErr) {
@@ -134,21 +136,26 @@ function interpretTransferError(
       attemptedNewOwnerId: ctx.newOwnerId,
       previousOwnerId: ctx.previousOwnerId,
     },);
+
     const concurrentError: ServiceError = {
       code: "bad_request",
       message: "Chat ownership changed concurrently; refresh and retry",
     };
+
     return { ok: false, error: concurrentError, };
   }
+
   ownershipLogger().error(
     "ownership transfer failed",
     err instanceof Error ? err : new Error(String(err,),),
     { chatId: ctx.chatId, },
   );
+
   const transferFailedError: ServiceError = {
     code: "bad_request",
     message: "Transfer failed; transaction rolled back",
   };
+
   return { ok: false, error: transferFailedError, };
 }
 
@@ -184,6 +191,7 @@ export async function transferOwnership(
   // Sequential reads so a missing chat surfaces before we probe participants.
   const chat = await db.selectFrom("chats",).select(["id", "created_by",],).where("id", "=", chatId,)
     .executeTakeFirst();
+
   const newOwnerParticipant = await db.selectFrom("chat_participants",).select(["actor_id", "role_in_chat",],).where(
     "chat_id",
     "=",
@@ -213,8 +221,10 @@ export async function transferOwnership(
       code: "forbidden",
       message: "Only the current owner or an admin may transfer ownership",
     };
+
     return { ok: false, error: forbiddenError, };
   }
+
   if (!newOwnerParticipant) {
     // Up-front FK guard (post-authority, so outsiders cannot probe actor ids):
     // a bogus newOwnerId would otherwise die on chat_participants.actor_id →
@@ -224,6 +234,7 @@ export async function transferOwnership(
       .select("id",)
       .where("id", "=", newOwnerId,)
       .executeTakeFirst();
+
     if (!actorExists) {
       const actorMissingError: ServiceError = { code: "not_found", message: "New owner actor not found", };
       return { ok: false, error: actorMissingError, };
@@ -239,6 +250,7 @@ export async function transferOwnership(
     const outcome: TransferOwnershipResult = await db.transaction().execute((trx,) =>
       executeTransferTx(trx, { chatId, previousOwnerId, newOwnerId, autoInvited, now, auditMeta, requesterId, },)
     );
+
     await runPostTransferHooks(db, outcome, reason, chatId,);
     return { ok: true, result: outcome, };
   } catch (err) {

@@ -77,9 +77,11 @@ describe("deriveStageDirectives", () => {
     expect(deriveStageDirectives(null, view(["rin",], "rin",),),).toEqual([
       { kind: "enter", characterId: "rin", },
     ],);
+
     expect(deriveStageDirectives(null, view(["rin",], "ghost", "happy",),),).toEqual([
       { kind: "enter", characterId: "rin", },
     ],);
+
     expect(deriveStageDirectives(null, view([], null, "happy",),),).toEqual([],);
   });
 });
@@ -91,6 +93,7 @@ describe("applyStageDirectives", () => {
       { kind: "enter", characterId: "kai", },
       { kind: "exit", characterId: "rin", },
     ],);
+
     expect(roster.entries.find((e,) => e.characterId === "kai")?.visible,).toBe(true,);
     expect(roster.entries.find((e,) => e.characterId === "rin")?.visible,).toBe(false,);
   });
@@ -102,6 +105,7 @@ describe("applyStageDirectives", () => {
       { kind: "exit", characterId: "ghost", },
       { kind: "swap", characterId: "rin", emotion: "happy", },
     ],);
+
     expect(roster.entries,).toHaveLength(1,);
     expect(roster.entries[0]?.visible,).toBe(true,);
   });
@@ -114,9 +118,11 @@ describe("applyStageDirectives", () => {
         const known = roster.entries.some((e,) => e.characterId === member.characterId);
         if (!known) { roster.entries.push({ ...member, visible: true, },); }
       }
+
       applyStageDirectives(roster, deriveStageDirectives(prev, scene,),);
       prev = scene;
     }
+
     expect(roster.entries.find((e,) => e.characterId === "rin")?.visible,).toBe(false,);
     expect(roster.entries.find((e,) => e.characterId === "kai")?.visible,).toBe(true,);
   });

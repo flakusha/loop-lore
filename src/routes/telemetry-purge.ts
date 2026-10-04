@@ -61,6 +61,7 @@ export async function purgeTelemetryEvents(
     .deleteFrom("telemetry_events",)
     .where("created_at", "<", cutoff,)
     .execute();
+
   const count = Number(result[0]?.numDeletedRows ?? 0n,);
 
   // Audit row — captured BEFORE the response so the action is traceable.

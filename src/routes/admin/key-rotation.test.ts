@@ -23,6 +23,7 @@ function makeApp(db: Kysely<DB>, userRole: string | null, config?: Config,) {
     userId: userRole ? `test-user-${userRole}` : null,
     userRole,
   }));
+
   return app.use(keyRotationRoutes({ database: db, config: config ?? {} as Config, }, "/api",),);
 }
 
@@ -45,6 +46,7 @@ describe("admin key-rotation route", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/rotate-expired-keys", { method: "POST", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -53,6 +55,7 @@ describe("admin key-rotation route", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/rotate-expired-keys", { method: "POST", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -62,6 +65,7 @@ describe("admin key-rotation route", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/rotate-expired-keys", { method: "POST", },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -70,6 +74,7 @@ describe("admin key-rotation route", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/rotate-expired-keys", { method: "POST", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -79,6 +84,7 @@ describe("admin key-rotation route", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/rotate-expired-keys", { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
   });
 });

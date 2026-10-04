@@ -128,6 +128,7 @@ describe("AvatarService", () => {
       const avatar = await avatarService.selectAvatar(testActorId, {
         emotion: "happy",
       },);
+
       expect(avatar,).not.toBeNull();
       expect(avatar?.tags.emotion,).toBe("happy",);
     });
@@ -145,6 +146,7 @@ describe("AvatarService", () => {
       const avatar = await avatarService.selectAvatar(testActorId, {
         emotion: "angry",
       },);
+
       expect(avatar,).not.toBeNull();
       // The chain returns the first avatar in sort_order ASC order that
       // carries the chain tag's value. Pre-existing tests mutated the
@@ -177,6 +179,7 @@ describe("AvatarService", () => {
           visibility: "private",
         },)
         .execute();
+
       await db
         .updateTable("actors",)
         .set({ avatar_asset_id: baseAssetId, },)
@@ -214,6 +217,7 @@ describe("AvatarService", () => {
         isPrimary: true,
         sortOrder: 1,
       },);
+
       await avatarService.createAvatar({
         actorId: chainActorId,
         assetId: testAssetId2,
@@ -222,6 +226,7 @@ describe("AvatarService", () => {
         isPrimary: false,
         sortOrder: 2,
       },);
+
       // Chain order: action before emotion. With a context that matches
       // neither avatar's tag values, primaryScore < 1 and the chain walk
       // picks the first avatar tagged with `action` (Attack pose).
@@ -237,6 +242,7 @@ describe("AvatarService", () => {
         mood: "brooding",
         location: "forest",
       },);
+
       expect(avatar,).not.toBeNull();
       expect(avatar?.label,).toBe("Attack pose",);
     });
@@ -263,6 +269,7 @@ describe("AvatarService", () => {
         .selectAll()
         .where("id", "=", assetId,)
         .executeTakeFirst();
+
       expect(asset,).toBeDefined();
       expect(asset?.id,).toBe(assetId,);
     });
@@ -299,6 +306,7 @@ describe("AvatarService", () => {
       await avatarService.upsertAvatarConfig(actorId, {
         selectionRule: "emotion_first",
       },);
+
       await avatarService.upsertAvatarConfig(actorId, {
         selectionRule: "action_first",
       },);
@@ -317,6 +325,7 @@ describe("AvatarService", () => {
         selectionRuleOverride: "mood_first",
         weightsOverride: { mood: 0.9, },
       },);
+
       expect(configId.length,).toBeGreaterThan(0,);
       const read = await avatarService.getWorldAvatarConfig(actorId, worldId,);
       expect(read?.selectionRuleOverride,).toBe("mood_first",);
@@ -329,9 +338,11 @@ describe("AvatarService", () => {
       const first = await avatarService.upsertWorldAvatarConfig(actorId, worldId, {
         selectionRuleOverride: "emotion_first",
       },);
+
       const second = await avatarService.upsertWorldAvatarConfig(actorId, worldId, {
         selectionRuleOverride: "action_first",
       },);
+
       expect(second,).toBe(first,);
       expect((await avatarService.getWorldAvatarConfig(actorId, worldId,))?.selectionRuleOverride,)
         .toBe("action_first",);

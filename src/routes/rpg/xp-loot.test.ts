@@ -43,6 +43,7 @@ describe("XP & loot (auth-gated)", () => {
       "XPUser",
       { id: userId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     worldId = uid();
     await insertWorlds(db, userId, "XP World", { id: worldId, } as never,);
     await insertActors(db, userId, {
@@ -89,6 +90,7 @@ describe("XP & loot (auth-gated)", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json<{ ledgerId: string }>(res,);
     expect(typeof body.ledgerId,).toBe("string",);
@@ -103,6 +105,7 @@ describe("XP & loot (auth-gated)", () => {
         body: JSON.stringify({ xp: 2700, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json<{ level: number }>(res,);
     expect(body.level,).toBe(4,);
@@ -117,6 +120,7 @@ describe("XP & loot (auth-gated)", () => {
         body: JSON.stringify({ currentLevel: 1, currentXp: 0, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json<{ xpToNextLevel: number }>(res,);
     expect(body.xpToNextLevel,).toBe(300,);
@@ -146,6 +150,7 @@ describe("XP & loot (auth-gated)", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json<{ drops: unknown[] }>(res,);
     expect(Array.isArray(body.drops,),).toBe(true,);
@@ -160,6 +165,7 @@ describe("XP & loot (auth-gated)", () => {
         body: JSON.stringify({ name: "Test Table", sourceType: "world", sourceId: worldId, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json<{ id: string }>(res,);
     expect(typeof body.id,).toBe("string",);
@@ -170,6 +176,7 @@ describe("XP & loot (auth-gated)", () => {
       .derive({ as: "scoped", }, () => ({ userId: null, userRole: null, }),)
       .use(xpLootRoutes({ database: db, } as any,),)
       .use(xpLootTablesRoutes({ database: db, } as any,),) as any;
+
     const res = await app.handle(
       new Request("http://localhost/api/rpg/xp/level", {
         method: "POST",
@@ -177,6 +184,7 @@ describe("XP & loot (auth-gated)", () => {
         body: JSON.stringify({ xp: 100, },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 

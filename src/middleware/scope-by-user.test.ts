@@ -43,6 +43,7 @@ describe("requireActorFromSession", () => {
     const result = requireActorFromSession(
       { userId: null, t: (k: string,) => `localized:${k}`, },
     );
+
     expect(result,).toBeInstanceOf(Response,);
     expect((result as Response).status,).toBe(401,);
   });

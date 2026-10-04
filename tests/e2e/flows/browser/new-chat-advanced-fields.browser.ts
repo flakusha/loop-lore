@@ -107,6 +107,7 @@ describe("New chat advanced fields E2E", () => {
         (res,) => res.url().includes("/api/v1/chats",) && res.request().method() === "POST",
         { timeout: 15_000, },
       );
+
       // Start the body read NOW, not after the assertions below. A successful
       // create navigates to the chat view, and Playwright discards the response
       // body once that navigation commits. Awaiting `createRes` and only then
@@ -133,6 +134,7 @@ describe("New chat advanced fields E2E", () => {
         .select(["id", "name", "mode", "created_by",],)
         .where("id", "=", createdId!,)
         .executeTakeFirst();
+
       expect(row,).not.toBeNull();
       expect(row!.name,).toBe(name,);
       expect(row!.mode,).toBe("story",);
@@ -144,6 +146,7 @@ describe("New chat advanced fields E2E", () => {
         .where("chat_id", "=", createdId!,)
         .where("actor_id", "=", SEED.user.id,)
         .executeTakeFirst();
+
       expect(link?.persona_id, "persona should be linked to participant",).toBe(personaId,);
 
       await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 30_000, },);

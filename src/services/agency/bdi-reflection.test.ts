@@ -30,6 +30,7 @@ describe("applyReflectionCheckpoint — priority shift", () => {
       after: "high",
       reason: "test",
     },);
+
     expect(result.emitted,).toBe(true,);
     expect(result.revisionId,).toBeDefined();
 
@@ -47,12 +48,14 @@ describe("applyReflectionCheckpoint — priority shift", () => {
       after: "normal",
       reason: "no actual change",
     },);
+
     expect(result.emitted,).toBe(false,);
     expect(result.revisionId,).toBeUndefined();
 
     const count = raw.query("SELECT COUNT(*) AS c FROM actor_plan_revisions WHERE plan_id='plan1'",).get() as {
       c: number;
     };
+
     expect(count.c,).toBe(0,);
   });
 
@@ -63,15 +66,18 @@ describe("applyReflectionCheckpoint — priority shift", () => {
       after: "high",
       reason: "a",
     },);
+
     await applyReflectionCheckpoint(db, "plan1", {
       revision_kind: "priority_shift",
       before: "high",
       after: "low",
       reason: "b",
     },);
+
     const count = raw.query("SELECT COUNT(*) AS c FROM actor_plan_revisions WHERE plan_id='plan1'",).get() as {
       c: number;
     };
+
     expect(count.c,).toBe(2,);
   });
 });

@@ -19,6 +19,7 @@ export function normalizeHeaderSlot() {
     if (h && appRoot.contains(h,)) {
       appRoot.parentElement?.insertBefore(h, appRoot,);
     }
+
     return;
   }
 
@@ -26,6 +27,7 @@ export function normalizeHeaderSlot() {
   for (const h of remaining) {
     if (h !== newest) { h.remove(); }
   }
+
   if (newest && appRoot.contains(newest,)) {
     appRoot.parentElement?.insertBefore(newest, appRoot,);
   }
@@ -43,6 +45,7 @@ function selectNewestSlot(slots: HTMLElement[], appRoot: HTMLElement,): HTMLElem
       newest = h;
     }
   }
+
   if (newest) { return newest; }
 
   newest = slots[0] ?? null;
@@ -51,5 +54,6 @@ function selectNewestSlot(slots: HTMLElement[], appRoot: HTMLElement,): HTMLElem
       newest = h;
     }
   }
+
   return newest;
 }

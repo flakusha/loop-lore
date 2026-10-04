@@ -23,6 +23,7 @@ const BASE = "http://localhost";
 const testConfig = {
   encryption: { compressThreshold: 1024, compressAlgorithm: "gzip", },
 } as unknown as Config;
+
 /**
  * Auth-context app via derive, mirroring message-search helpers.
  * @param db
@@ -34,6 +35,7 @@ function actionApp(db: Kysely<DB>, userId: string | null, userRole: string | nul
     .derive(() => ({ userId, userRole, }))
     .use(aiActionRoutes({ database: db, config: testConfig, },),) as unknown as Elysia;
 }
+
 /**
  * @param app
  * @param req
@@ -41,6 +43,7 @@ function actionApp(db: Kysely<DB>, userId: string | null, userRole: string | nul
 async function appHandle(app: Elysia, req: Request,): Promise<Response> {
   return (app as unknown as { handle: (r: Request,) => Promise<Response> }).handle(req,);
 }
+
 /**
  * @param path
  * @param body
@@ -52,6 +55,7 @@ function post(path: string, body: unknown,): Request {
     body: JSON.stringify(body,),
   },);
 }
+
 describe("aiActionRoutes", () => {
   let db: Kysely<DB>;
   let sqlite: TestDb["sqlite"];
@@ -75,6 +79,7 @@ describe("aiActionRoutes", () => {
       settings: "{}",
       format_version: 0,
     } as never);
+
     await insertActors(db, "Owner", actorOpts(ownerId,),);
     await insertActors(db, "Outsider", actorOpts(outsiderId,),);
     await insertChats(db, "Action Chat", ownerId, {},);
@@ -85,52 +90,64 @@ describe("aiActionRoutes", () => {
       id: sourceMsg,
     },);
   },);
+
   afterAll(async () => {
     await sqlite.close();
   },);
+
   test("returns 401 without userId", async () => {
     const app = actionApp(db, null, null,);
     const res = await appHandle(
       app,
       post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "summarize", },),
     );
+
     expect(res.status,).toBe(401,);
   });
+
   test("returns 404 for an unknown message", async () => {
     const app = actionApp(db, ownerId, "user",);
     const res = await appHandle(
       app,
       post(`/api/chats/${chatId}/messages/${uid()}/ai-action`, { action: "summarize", },),
     );
+
     expect(res.status,).toBe(404,);
   });
+
   test("denies a caller with no chat access", async () => {
     const app = actionApp(db, outsiderId, "user",);
     const res = await appHandle(
       app,
       post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "summarize", },),
     );
+
     expect([403, 404,],).toContain(res.status,);
   });
+
   test("rejects an unknown action", async () => {
     const app = actionApp(db, ownerId, "user",);
     const res = await appHandle(
       app,
       post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "translate", },),
     );
+
     expect(res.status,).toBe(422,);
   });
+
   test("returns 503 when no auxiliary model is configured", async () => {
     const app = actionApp(db, ownerId, "user",);
     const res = await appHandle(
       app,
       post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "action-items", },),
     );
+
     expect(res.status,).toBe(503,);
     const body = (await res.json()) as { error: string };
     expect(body.error,).toBe("ai_unavailable",);
   });
 });
+
 describe("buildAiActionPrompt", () => {
   test("each action embeds its instruction and the source", async () => {
     expect(buildAiActionPrompt("summarize", "dragon hoard",),).toContain("dragon hoard",);
@@ -138,6 +155,7 @@ describe("buildAiActionPrompt", () => {
     expect(buildAiActionPrompt("action-items", "fix the gate",),).toContain("action items",);
     expect(buildAiActionPrompt("explain", "quantum gate",),).toContain("simple terms",);
   });
+
   test("caps long sources", async () => {
     const prompt = buildAiActionPrompt("summarize", "x".repeat(5000,),);
     expect(prompt.length,).toBeLessThan(5000,);

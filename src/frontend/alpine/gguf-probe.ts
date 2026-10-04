@@ -72,6 +72,7 @@ class Cursor {
     if (len > this.rest) {
       throw new GgufProbeError(-3, `gguf header truncated (need ${len}, have ${this.rest})`,);
     }
+
     const start = this.pos;
     this.pos += len;
     return this.bytes.subarray(start, start + len,);
@@ -102,6 +103,7 @@ class Cursor {
     if (hi >= 2097152) {
       return Number.POSITIVE_INFINITY;
     }
+
     return lo + hi * 4294967296;
   }
 
@@ -115,6 +117,7 @@ class Cursor {
       const code: GgufProbeCode = len > MAX_SPAN ? -4 : -3;
       throw new GgufProbeError(code, `gguf span out of range (len ${len}, rest ${this.rest})`,);
     }
+
     this.pos += len;
   }
 
@@ -150,6 +153,7 @@ function skipValue(cursor: Cursor, tag: number,): void {
     if (elem === 9 || count > MAX_SPAN) {
       throw new GgufProbeError(-4, `gguf nested array or excessive count (${count})`,);
     }
+
     for (let i = 0; i < count; i += 1) {
       skipValue(cursor, elem,);
     }
@@ -174,28 +178,34 @@ export function probeGgufSync(data: Uint8Array,): GgufSummary {
   ) {
     throw new GgufProbeError(-2, "not a GGUF blob (bad magic)",);
   }
+
   const version = cursor.u32();
   const tensorCount = cursor.u64();
   const kvCount = cursor.u64();
   if (tensorCount > MAX_SPAN || kvCount > MAX_SPAN) {
     throw new GgufProbeError(-4, "gguf absurd tensor/kv counts",);
   }
+
   for (let i = 0; i < kvCount; i += 1) {
     cursor.ggufString();
     skipValue(cursor, cursor.u32(),);
   }
+
   for (let i = 0; i < tensorCount; i += 1) {
     cursor.ggufString();
     const nDims = cursor.u32();
     if (nDims > 4) {
       throw new GgufProbeError(-4, `gguf tensor has ${nDims} dims (max 4)`,);
     }
+
     for (let d = 0; d < nDims; d += 1) {
       cursor.u64();
     }
+
     cursor.u32(); // ggml type
     cursor.u64(); // offset
   }
+
   return { version, tensorCount, kvCount, };
 }
 
@@ -212,5 +222,6 @@ export async function probeGguf(data: Uint8Array,): Promise<GgufSummary> {
   if (viaWasm !== null) {
     return viaWasm;
   }
+
   return probeGgufSync(data,);
 }

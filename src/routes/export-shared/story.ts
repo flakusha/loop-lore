@@ -21,6 +21,7 @@ export async function buildWorldBundle(database: Kysely<DB>, worldId: string,): 
     .selectAll()
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   if (!world) { return null; }
 
   const [locationsRes, loreEntriesRes, questsRes, worldStatesRes, locationStatesRes,] = await Promise.allSettled([
@@ -81,5 +82,6 @@ export async function exportStoryToZip(ctx: ExportContext,): Promise<void> {
       },
     },);
   }
+
   ctx.counts.story = worlds.length;
 }

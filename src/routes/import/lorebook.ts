@@ -49,6 +49,7 @@ export async function importLorebook(
           sort_order: entry.id ?? imported,
         },)
         .execute();
+
       imported++;
     } catch (error) {
       const entryName = entry.name ?? `#${entry.id}`;

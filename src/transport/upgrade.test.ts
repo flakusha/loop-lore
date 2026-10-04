@@ -236,6 +236,7 @@ describe("upgradeConnection", () => {
         targetProtocol: TransportProtocol.Tls,
         config: { protocol: TransportProtocol.Tls, port: 3000, },
       },);
+
       expect.unreachable();
     } catch (error) {
       expect(error,).toBeInstanceOf(TransportError,);
@@ -272,6 +273,7 @@ describe("upgrade paths", () => {
           targetProtocol: to,
           config: { protocol: to, port: 3000, },
         },);
+
         const conn = await newHandler.connect();
         expect(conn.protocol,).toBe(to,);
         await newHandler.close();

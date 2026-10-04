@@ -63,6 +63,7 @@ export async function getOrCreateInboundKey(
     .select(["encrypted_key",],)
     .where("peer_origin", "=", origin,)
     .executeTakeFirst();
+
   if (row) {
     const plain = safeFromUint8Array(await decryptBytes(smk, row.encrypted_key,),);
     if (!plain.ok) { throw plain.error; }
@@ -70,6 +71,7 @@ export async function getOrCreateInboundKey(
     if (!b64.ok) { throw b64.error; }
     return b64.buffer;
   }
+
   const key = generateInboundKey();
   const wrap = safeFromBase64(key,);
   if (!wrap.ok) { throw wrap.error; }
@@ -78,6 +80,7 @@ export async function getOrCreateInboundKey(
     .values({ peer_origin: origin, encrypted_key: await encryptBytes(smk, wrap.buffer,), },)
     .onConflict((oc,) => oc.column("peer_origin",).doNothing())
     .execute();
+
   // Re-read: a concurrent reserve may have won the insert; either way the
   // stored key is authoritative — never hand out an unstored key.
   const raced = await database
@@ -85,6 +88,7 @@ export async function getOrCreateInboundKey(
     .select(["encrypted_key",],)
     .where("peer_origin", "=", origin,)
     .executeTakeFirstOrThrow();
+
   const racedPlain = safeFromUint8Array(await decryptBytes(smk, raced.encrypted_key,),);
   if (!racedPlain.ok) { throw racedPlain.error; }
   const racedB64 = safeToBase64(racedPlain.buffer,);
@@ -116,6 +120,7 @@ export async function rotateInboundKey(
     .select(["encrypted_key",],)
     .where("peer_origin", "=", origin,)
     .executeTakeFirst();
+
   const key = generateInboundKey();
   const keyBytes = safeFromBase64(key,);
   if (!keyBytes.ok) { throw keyBytes.error; }
@@ -126,13 +131,16 @@ export async function rotateInboundKey(
       .set({ encrypted_key: encrypted, previous_encrypted_key: row.encrypted_key, },)
       .where("peer_origin", "=", origin,)
       .execute();
+
     return key;
   }
+
   await database
     .insertInto("mesh_inbound_keys",)
     .values({ peer_origin: origin, encrypted_key: encrypted, },)
     .onConflict((oc,) => oc.column("peer_origin",).doNothing())
     .execute();
+
   // Re-read: a concurrent rotate may have won the insert; either way the
   // stored key is authoritative — never hand out an unstored key.
   const stored = await database
@@ -140,12 +148,14 @@ export async function rotateInboundKey(
     .select(["encrypted_key",],)
     .where("peer_origin", "=", origin,)
     .executeTakeFirstOrThrow();
+
   const storedPlain = safeFromUint8Array(await decryptBytes(smk, stored.encrypted_key,),);
   if (!storedPlain.ok) { throw storedPlain.error; }
   const storedB64 = safeToBase64(storedPlain.buffer,);
   if (!storedB64.ok) { throw storedB64.error; }
   return storedB64.buffer;
 }
+
 /**
  * Revoke our inbound key for one sender: delete current + grace previous.
  * Takes effect immediately — envelopes sealed under the revoked keys no
@@ -191,10 +201,12 @@ export async function inboundCiphers(
     .select(["encrypted_key", "previous_encrypted_key",],)
     .where("peer_origin", "=", origin,)
     .executeTakeFirst();
+
   if (!row) { return []; }
   const encrypted = row.previous_encrypted_key !== null
     ? [row.encrypted_key, row.previous_encrypted_key,]
     : [row.encrypted_key,];
+
   const ciphers: ContentCipher[] = [];
   for (const value of encrypted) {
     const plain = safeFromUint8Array(await decryptBytes(smk, value,),);
@@ -203,6 +215,7 @@ export async function inboundCiphers(
     if (!b64.ok) { throw b64.error; }
     ciphers.push(pskCipher(b64.buffer,),);
   }
+
   return ciphers;
 }
 

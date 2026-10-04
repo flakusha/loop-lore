@@ -40,6 +40,7 @@ async function setupContext(db: Kysely<DB>, includeExamples: boolean,): Promise<
     "Storyteller",
     { mes_example: MES_EXAMPLE, } as unknown as Partial<Generated<never>> as never,
   );
+
   const actor = await db.selectFrom("actors",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
   await insertChats(db, "Examples Chat", user.id,);
   const chat = await db.selectFrom("chats",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
@@ -86,6 +87,7 @@ describe("examplesSection — mes_example few-shot injection", () => {
     } catch {
       // Already initialized — ignore.
     }
+
     const { db, sqlite, } = await createTestDb();
     try {
       const ctx = await setupContext(db, true,);
@@ -108,6 +110,7 @@ describe("examplesSection — mes_example few-shot injection", () => {
     } catch {
       // Already initialized — ignore.
     }
+
     const { db, sqlite, } = await createTestDb();
     try {
       const ctx = await setupContext(db, false,);
@@ -152,6 +155,7 @@ describe("examplesSection — mes_example few-shot injection", () => {
       isStory: false,
       tokenBudget: 4096,
     };
+
     expect(examplesSection.enabled(ctx,),).toBe(false,);
     expect(examplesSection.build(ctx,),).toEqual([],);
   });

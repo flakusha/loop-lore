@@ -50,6 +50,7 @@ describe("FTS lifecycle on messages.content_plaintext (migration 068)", () => {
         import_spec: "{}",
       },)
       .execute();
+
     chatId = uid();
     await insertChats(db, "FTS Test Chat", actorId, { id: chatId, } as never,);
   },);
@@ -66,6 +67,7 @@ describe("FTS lifecycle on messages.content_plaintext (migration 068)", () => {
     const row = await sql<{ content: string }>`
       SELECT content FROM messages_fts WHERE message_id = ${messageId}
     `.execute(db,);
+
     return row.rows[0]?.content ?? null;
   };
 
@@ -90,6 +92,7 @@ describe("FTS lifecycle on messages.content_plaintext (migration 068)", () => {
       .select(["content", "content_plaintext",],)
       .where("id", "=", id,)
       .executeTakeFirstOrThrow();
+
     expect(row.content,).toBe("CIPHERTEXT_PLACEHOLDER",);
     expect(row.content_plaintext,).toBe(plaintext,);
 
@@ -111,6 +114,7 @@ describe("FTS lifecycle on messages.content_plaintext (migration 068)", () => {
       contentEncoding: "utf8" as ContentEncoding,
       idempotencyKey: null,
     },);
+
     expect(await ftsContentFor(id,),).toBe("original token",);
 
     // PATCH /messages/:id rewrites both content and content_plaintext.
@@ -162,6 +166,7 @@ describe("FTS lifecycle on messages.content_plaintext (migration 068)", () => {
       contentEncoding: "utf8" as ContentEncoding,
       idempotencyKey: null,
     },);
+
     expect(await ftsContentFor(id,),).toBe("doomed token",);
 
     await db.deleteFrom("messages",).where("id", "=", id,).execute();
@@ -192,6 +197,7 @@ describe("FTS lifecycle on messages.content_plaintext (migration 068)", () => {
     const hits = await sql<{ message_id: string }>`
       SELECT message_id FROM messages_fts WHERE messages_fts MATCH 'knoxneedle'
     `.execute(db,);
+
     const ids = hits.rows.map((row,) => row.message_id);
     expect(ids,).toContain(id,);
     // No hit against the ciphertext sentinel — the trigger no longer
@@ -221,6 +227,7 @@ describe("FTS lifecycle on messages.content_plaintext (migration 068)", () => {
       .select(["content_plaintext",],)
       .where("id", "=", id,)
       .executeTakeFirstOrThrow();
+
     expect(row.content_plaintext,).toBeNull();
 
     // MATCH on a token only present in the ciphertext must NOT find this
@@ -228,6 +235,7 @@ describe("FTS lifecycle on messages.content_plaintext (migration 068)", () => {
     const hits = await sql<{ message_id: string }>`
       SELECT message_id FROM messages_fts WHERE messages_fts MATCH 'OPAQUE_CIPHERTEXT'
     `.execute(db,);
+
     const ids = hits.rows.map((r,) => r.message_id);
     expect(ids,).not.toContain(id,);
   });
@@ -261,6 +269,7 @@ describe("insertMessages helper (used by tests + migrateChat carry) writes conte
         import_spec: "{}",
       },)
       .execute();
+
     chatId = uid();
     await insertChats(db, "Carry FTS Chat", actorId, { id: chatId, } as never,);
   },);
@@ -286,6 +295,7 @@ describe("insertMessages helper (used by tests + migrateChat carry) writes conte
       .select(["content", "content_plaintext",],)
       .where("id", "=", id,)
       .executeTakeFirstOrThrow();
+
     expect(row.content,).toBe("raw content for ssl test",);
     expect(row.content_plaintext,).toBe("ssl fingerprint marker",);
 
@@ -293,6 +303,7 @@ describe("insertMessages helper (used by tests + migrateChat carry) writes conte
     const fts = await sql<{ content: string }>`
       SELECT content FROM messages_fts WHERE message_id = ${id}
     `.execute(db,);
+
     expect(fts.rows[0]?.content,).toBe("ssl fingerprint marker",);
   });
 });

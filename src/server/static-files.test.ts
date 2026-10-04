@@ -42,6 +42,7 @@ if (ISOLATED) {
       if (s === PUBLIC_DIR || s.startsWith(`${PUBLIC_DIR}/`,)) { return pub + s.slice(PUBLIC_DIR.length,); }
       return s;
     };
+
     return {
       ...actual,
       existsSync: (p: unknown,) => actual.existsSync(redirect(p,),),
@@ -194,6 +195,7 @@ describeOrSkip("handleDocsRequest", () => {
       ...docsRequest("/docs/guide/", { headers: { "if-none-match": etag as string, }, },),
       {},
     );
+
     expect(second?.status,).toBe(304,);
     expect(second?.headers.get("content-length",),).toBe("0",);
   });
@@ -214,6 +216,7 @@ describeOrSkip("handleDocsRequest", () => {
       ...docsRequest("/docs/guide/", { headers: { "if-none-match": `other, ${etag}`, }, },),
       {},
     );
+
     expect(res?.status,).toBe(304,);
   });
 
@@ -247,6 +250,7 @@ describeOrSkip("handleDocsRequest", () => {
     expect(handleDocsRequest(...docsRequest("/docs/icon.svg",), {},)?.headers.get("content-type",),).toBe(
       "image/svg+xml",
     );
+
     expect(handleDocsRequest(...docsRequest("/docs/data.bin",), {},)?.headers.get("content-type",),).toBe(
       "text/plain",
     );
@@ -319,6 +323,7 @@ describeOrSkip("createNonApiHandler", () => {
     const res = await createNonApiHandler({},)(
       new Request("http://localhost/app.js", { headers: { "accept-encoding": "gzip", }, },),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-encoding",),).toBe("gzip",);
     expect(await res.text(),).toBe("gz-bytes",);
@@ -333,6 +338,7 @@ describeOrSkip("createNonApiHandler", () => {
     const second = await handler(
       new Request("http://localhost/", { headers: { "if-none-match": etag as string, }, },),
     );
+
     expect(second.status,).toBe(304,);
   });
 
@@ -367,6 +373,7 @@ describeOrSkip("createNonApiHandler", () => {
     const res = await createNonApiHandler({},)(
       new Request("http://localhost/app.js", { headers: { "accept-encoding": "gzip, br", }, },),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-encoding",),).toBe("br",);
     expect(await res.text(),).toBe("br-bytes",);

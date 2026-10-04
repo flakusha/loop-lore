@@ -27,6 +27,7 @@ export function getReasoning(dimension: QualityDimension, score: number,): strin
         return "Good quality";
     }
   }
+
   if (score >= 50) {
     switch (dimension) {
       case QualityDimension.CharacterVoice:
@@ -45,6 +46,7 @@ export function getReasoning(dimension: QualityDimension, score: number,): strin
         return "Acceptable quality";
     }
   }
+
   switch (dimension) {
     case QualityDimension.CharacterVoice:
       return "Weak or absent character voice";

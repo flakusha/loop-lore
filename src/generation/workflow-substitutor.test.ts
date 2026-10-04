@@ -15,10 +15,12 @@ describe("substituteWorkflow", () => {
     expect(substituteWorkflow("a {{prompt}} b", { prompt: "cat", },),).toBe("a cat b",);
     expect(substituteWorkflow("a {{nope}} b", { prompt: "cat", },),).toBe("a  b",);
   });
+
   it("replaces through nested objects and arrays", () => {
     const out = substituteWorkflow({ n: { text: "{{prompt}}", deep: ["{{x}}", 5,], }, }, { prompt: "hi", x: "y", },);
     expect(out,).toEqual({ n: { text: "hi", deep: ["y", 5,], }, },);
   });
+
   it("passes numbers, booleans, and null through", () => {
     expect(substituteWorkflow(7, {},),).toBe(7,);
     expect(substituteWorkflow(null, {},),).toBeNull();
@@ -52,6 +54,7 @@ describe("substituteWorkflow", () => {
       "5": { class_type: "KSampler", inputs: { seed: "{{seed}}", steps: "{{steps}}", cfg: "{{cfg}}", }, },
       "6": { class_type: "SaveImage", inputs: { filename_prefix: "a-{{seed}}", }, },
     };
+
     const out = substituteWorkflow(wf, { width: 768, height: 512, seed: 42, steps: 25, cfg: 7, },);
 
     expect(out["4"].inputs.width,).toBe(768,);
@@ -71,6 +74,7 @@ describe("applyNodeOverrides", () => {
     expect(out,).not.toBe(workflow,);
     expect(out["5"]?.inputs,).toEqual({ text: "new", cfg: 1, },);
   });
+
   it("ignores unknown nodes and empty override maps", () => {
     expect(applyNodeOverrides(workflow, new Map(),),).toBe(workflow,);
     expect(applyNodeOverrides(workflow, new Map([["9", { text: "x", },],],),)["5"],).toBe(workflow["5"],);
@@ -85,6 +89,7 @@ describe("buildSubstitutionVars", () => {
     expect(vars.steps,).toBe(20,);
     expect(vars.sampler,).toBe("euler",);
   });
+
   it("passes explicit values and extras through", () => {
     const vars = buildSubstitutionVars({ prompt: "cat", width: 768, seed: 42, model: "m", },);
     expect(vars.width,).toBe(768,);

@@ -35,6 +35,7 @@ export async function get({ thisL, userId, }: GetPreferencesArgs,): Promise<Nsfw
     .where("user_id", "=", userId,)
     .selectAll()
     .executeTakeFirst();
+
   return row ? mapPrefs(row,) : null;
 }
 

@@ -38,6 +38,7 @@ describe("create_item tool", () => {
       { name: "Iron Sword", description: "A reliable blade.", worldId: "world-a", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).not.toBe(true,);
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, worldId: "world-a", },);
 
@@ -46,6 +47,7 @@ describe("create_item tool", () => {
       .selectAll()
       .where("name", "=", "Iron Sword",)
       .executeTakeFirstOrThrow();
+
     expect(row.world_id,).toBe("world-a",);
     expect(row.category,).toBe("other",);
     expect(row.rarity,).toBe("common",);
@@ -58,6 +60,7 @@ describe("create_item tool", () => {
       { name: "Potion", category: "consumable", rarity: "rare", stackable: "stackable", worldId: "world-a", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, },);
 
     const row = await db
@@ -65,6 +68,7 @@ describe("create_item tool", () => {
       .select(["category", "rarity", "stackable",],)
       .where("name", "=", "Potion",)
       .executeTakeFirstOrThrow();
+
     expect(row.category,).toBe("consumable",);
     expect(row.rarity,).toBe("rare",);
     expect(row.stackable,).toBe("stackable",);
@@ -81,6 +85,7 @@ describe("create_item tool", () => {
       },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, },);
 
     const row = await db
@@ -88,6 +93,7 @@ describe("create_item tool", () => {
       .select(["category", "rarity", "stackable",],)
       .where("name", "=", "Mystery",)
       .executeTakeFirstOrThrow();
+
     expect(row.category,).toBe("other",);
     expect(row.rarity,).toBe("common",);
     expect(row.stackable,).toBe("unique",);
@@ -99,6 +105,7 @@ describe("create_item tool", () => {
       { name: "Scroll", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, worldId: "chat-world", },);
   });
 
@@ -107,6 +114,7 @@ describe("create_item tool", () => {
       { description: "no name", worldId: "world-a", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).toBe(true,);
     expect(await db.selectFrom("items",).select("id",).execute(),).toHaveLength(0,);
   });

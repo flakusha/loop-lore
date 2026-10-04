@@ -33,6 +33,7 @@ function makeEl(tag: string, characterId: string | null = null,): FakeEl {
         if (tag === "btn" || tag === "modal") { return makeEl("ctx", characterId,); }
         return null;
       }
+
       return null;
     },
     getAttribute: function(name: string,) {
@@ -59,6 +60,7 @@ let htmxCalls: unknown[][] = [];
 type FetchOpts = Record<string, unknown>;
 let fetchImpl: (url: string, opts?: FetchOpts,) => Promise<Response> = async () =>
   new Response("{}", { status: 200, },);
+
 const realFetch = globalThis.fetch;
 const realHtmx = (globalThis as { htmx?: unknown }).htmx;
 
@@ -174,6 +176,7 @@ function el(tag: string, qs: Record<string, El> = {}, closest: (sel: string,) =>
     _qs: qs,
     _closest: closest,
   };
+
   return node;
 }
 
@@ -213,6 +216,7 @@ function makeModal(withName = true,): El {
   ) {
     qs[`[data-field='${f}']`] = el("div",);
   }
+
   if (withName) { qs["[data-field='name']"] = el("div",); }
   qs["[data-action='start-chat']"] = el("button",);
   qs["[data-action='edit-char']"] = el("button",);
@@ -226,6 +230,7 @@ function routeFetch(routes: Record<string, () => Response>,): void {
     for (const [prefix, fn,] of entries) {
       if (url.startsWith(prefix,)) { return fn(); }
     }
+
     return new Response("{}", { status: 200, },);
   };
 }
@@ -258,19 +263,23 @@ describe("characters.ts exportCharacter", () => {
         captured.push(url,);
       },
     };
+
     (globalThis as { confirm: unknown }).confirm = () => confirmResult;
     (globalThis as { closeModal: unknown }).closeModal = (el: unknown,) => {
       closeModalCalls.push(el,);
     };
+
     (globalThis as { htmx: unknown }).htmx = {
       ajax: (...args: unknown[]) => {
         htmxCalls.push(args,);
       },
     };
+
     (globalThis as { fetch: unknown }).fetch = (url: string, opts?: FetchOpts,) => {
       fetchCalls.push({ url, opts, },);
       return fetchImpl(url, opts,);
     };
+
     mod = await import("./characters");
   },);
 
@@ -326,19 +335,23 @@ describe("characters.ts page actions", () => {
         captured.push(url,);
       },
     };
+
     (globalThis as { confirm: unknown }).confirm = () => confirmResult;
     (globalThis as { closeModal: unknown }).closeModal = (el: unknown,) => {
       closeModalCalls.push(el,);
     };
+
     (globalThis as { htmx: unknown }).htmx = {
       ajax: (...args: unknown[]) => {
         htmxCalls.push(args,);
       },
     };
+
     (globalThis as { fetch: unknown }).fetch = (url: string, opts?: FetchOpts,) => {
       fetchCalls.push({ url, opts, },);
       return fetchImpl(url, opts,);
     };
+
     mod = await import("./characters");
   },);
 
@@ -363,6 +376,7 @@ describe("characters.ts page actions", () => {
       container.querySelector = (
         sel: string,
       ) => (sel === ".empty-state" ? (container.children.find((c,) => c.className === "empty-state") ?? null) : null);
+
       doc.selectors.set("#character-grid", container,);
       doc.all.set("#character-grid .character-card", cards,);
       return container;
@@ -444,6 +458,7 @@ describe("characters.ts page actions", () => {
           jsonResponse({ display_name: "Alice", description: "Brave", system_prompt: "SP", avatar_asset_id: "av1", },),
         "/api/v1/actors/a1/mood": () => jsonResponse({ currentMood: "happy", happiness: 80, },),
       },);
+
       await mod.selectCharacterCard("a1",);
       const modal = doc.selectors.get("#character-detail-modal",)!;
       expect(modal._qs["[data-field='name']"]!.textContent,).toBe("Alice",);
@@ -494,6 +509,7 @@ describe("characters.ts page actions", () => {
         "/api/v1/actors/a1": () => jsonResponse({ display_name: "Alice", },),
         "/api/v1/actors/a1/avatars": () => jsonResponse({}, 500,),
       },);
+
       await mod.selectCharacterCard("a1",);
       expect(modal._qs["[data-field='gallery']"]!.innerHTML,).toContain("Failed to load gallery.",);
     });
@@ -505,6 +521,7 @@ describe("characters.ts page actions", () => {
         "/api/v1/actors/a1": () => jsonResponse({ display_name: "Alice", },),
         "/api/v1/actors/a1/avatars": () => jsonResponse([],),
       },);
+
       await mod.selectCharacterCard("a1",);
       expect(modal._qs["[data-field='gallery']"]!.innerHTML,).toContain("No linked assets.",);
     });
@@ -517,6 +534,7 @@ describe("characters.ts page actions", () => {
         if (url.endsWith("/avatars",)) { throw new Error("net",); }
         return jsonResponse({ display_name: "Alice", },);
       };
+
       await mod.selectCharacterCard("a1",);
       expect(modal._qs["[data-field='gallery']"]!.innerHTML,).toContain("Failed to load gallery.",);
     });
@@ -529,6 +547,7 @@ describe("characters.ts page actions", () => {
         "/api/v1/actors/a1/avatars": () => jsonResponse([],),
         "/api/v1/actors/a1/mood": () => jsonResponse({}, 404,),
       },);
+
       await mod.selectCharacterCard("a1",);
       expect(modal._qs["[data-field='mood-section']"]!.style.display,).not.toBe("block",);
     });
@@ -560,6 +579,7 @@ describe("characters.ts page actions", () => {
         mode: "direct",
         participantIds: ["a1",],
       },);
+
       expect(captured,).toEqual(["/views/chat?chatid=chat%201",],);
     });
 
@@ -573,6 +593,7 @@ describe("characters.ts page actions", () => {
       fetchImpl = async () => {
         throw new Error("net",);
       };
+
       await mod.startChatFromChar(chatBtn("a1",) as unknown as HTMLElement,);
       expect(toasts(doc,),).toEqual([{ type: "error", message: "Failed to start chat", },],);
     });
@@ -648,6 +669,7 @@ describe("characters.ts page actions", () => {
       fetchImpl = async () => {
         throw new Error("net",);
       };
+
       await mod.deleteCharacter(deleteBtn("a1",) as unknown as HTMLElement,);
       expect(toasts(doc,),).toEqual([],);
     });
@@ -662,6 +684,7 @@ describe("characters.ts page actions", () => {
       if (opts.format !== undefined) {
         modal._qs['input[name="export-format"]:checked'] = Object.assign(el("input",), { value: opts.format, },);
       }
+
       const ancestor = opts.ancestorId !== undefined ? el("div",) : null;
       if (ancestor) { ancestor.attributes["data-character-id"] = opts.ancestorId!; }
       return el("button", {}, (sel: string,) => {
@@ -729,6 +752,7 @@ describe("characters.ts page actions", () => {
         "/api/v1/actors/a1/assets/av1": () => new Response(null, { status: 204, },),
         "/api/v1/actors/a1/avatars": () => jsonResponse([{ id: "2", assetId: "av2", label: "Two", },],),
       },);
+
       await mod.unlinkCharacterAsset(b as unknown as HTMLElement,);
       expect(fetchCalls.map((c,) => c.url),).toEqual(["/api/v1/actors/a1/assets/av1", "/api/v1/actors/a1/avatars",],);
       expect(fetchCalls[0]!.opts?.method,).toBe("DELETE",);
@@ -749,6 +773,7 @@ describe("characters.ts page actions", () => {
       fetchImpl = async () => {
         throw new Error("net",);
       };
+
       await mod.unlinkCharacterAsset(b as unknown as HTMLElement,);
       expect(toasts(doc,),).toEqual([{ type: "error", message: "Failed to unlink asset", },],);
     });

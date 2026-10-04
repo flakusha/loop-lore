@@ -75,6 +75,7 @@ export async function assembleBudgetSections(
       .where("actors.actor_type", "<>", "user",)
       .where("chat_participants.actor_id", "<>", actorId,)
       .execute();
+
     const groupParticipantIds = participantRows.map((row,) => row.actor_id);
     const assembled = await new PromptAssembler(database,).assemble({
       actorId,
@@ -86,6 +87,7 @@ export async function assembleBudgetSections(
       groupParticipantIds,
       task: "chat-reply",
     },);
+
     return {
       sections: computeSections(assembled.sections, maxTokens,),
       usedTokens: assembled.tokenCount,
@@ -130,6 +132,7 @@ export async function computeBudgetResult(
       userId,
       maxTokens,
     );
+
     sections = assembled.sections;
     if (sections.length > 0) { usedTokens = assembled.usedTokens; }
   }

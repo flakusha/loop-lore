@@ -61,6 +61,7 @@ describeOrSkip("suggestChatTitle (fallback)", () => {
       db: mockDb,
       firstMessage: "Tell me about the haunted castle",
     },);
+
     expect(result,).toBe("Tell me about the haunted castle",);
   });
 
@@ -70,6 +71,7 @@ describeOrSkip("suggestChatTitle (fallback)", () => {
       db: mockDb,
       firstMessage: "   ",
     },);
+
     expect(result,).toBe("New chat",);
   });
 },);
@@ -93,6 +95,7 @@ describeOrSkip("suggestChatTitle (mocked AUX)", () => {
       db: mockDb,
       firstMessage: "Tell me about the haunted castle",
     },);
+
     expect(result,).toBe("The Haunted Castle",);
   });
 
@@ -103,6 +106,7 @@ describeOrSkip("suggestChatTitle (mocked AUX)", () => {
       db: mockDb,
       firstMessage: "hello",
     },);
+
     expect(result,).toBe(`${"b".repeat(60,)}…`,);
   });
 
@@ -113,6 +117,7 @@ describeOrSkip("suggestChatTitle (mocked AUX)", () => {
       db: mockDb,
       firstMessage: "Explore the dark forest",
     },);
+
     expect(result,).toBe("Explore the dark forest",);
   });
 
@@ -123,6 +128,7 @@ describeOrSkip("suggestChatTitle (mocked AUX)", () => {
       db: mockDb,
       firstMessage: "Explore the dark forest",
     },);
+
     expect(result,).toBe("Explore the dark forest",);
   });
 },);
@@ -164,6 +170,7 @@ describeOrSkip("titleUntitledChatFromFirstMessage", () => {
       chatRecord: { name: "New Chat", mode: "group", },
       firstMessage: "Explore the dark forest",
     },);
+
     expect(captured.name,).toBe("Explore the dark forest",);
   });
 
@@ -176,6 +183,7 @@ describeOrSkip("titleUntitledChatFromFirstMessage", () => {
       chatRecord: { name: "My Campaign", mode: "group", },
       firstMessage: "hello",
     },);
+
     expect(captured.name,).toBeUndefined();
   });
 
@@ -188,6 +196,7 @@ describeOrSkip("titleUntitledChatFromFirstMessage", () => {
       chatRecord: { name: "New Chat", mode: "direct", },
       firstMessage: "hello",
     },);
+
     expect(captured.name,).toBeUndefined();
   });
 

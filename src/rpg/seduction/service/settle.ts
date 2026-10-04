@@ -47,6 +47,7 @@ export async function settleAttempt(args: {
     xpGained,
     intensityTier,
   } = args;
+
   // Apply arousal change to target (TASK-034): tier ceiling enforced.
   if (arousalDelta !== 0) {
     await modifyArousal(db, targetId, arousalDelta, worldId, `seduction:${skillCategory}`, intensityTier,);

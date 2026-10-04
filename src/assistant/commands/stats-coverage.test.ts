@@ -55,6 +55,7 @@ async function seedIds(): Promise<{ chatId: string; userActorId: string; charAct
     status: "active",
     settings: "{}",
   },).execute();
+
   await testDb.insertInto("chats",).values({
     id: chatId,
     name: "Stats Chat",
@@ -62,6 +63,7 @@ async function seedIds(): Promise<{ chatId: string; userActorId: string; charAct
     mode: "direct",
     created_by: "stats-user",
   },).execute();
+
   await testDb.insertInto("actors",).values({
     id: userActorId,
     actor_type: "user",
@@ -71,6 +73,7 @@ async function seedIds(): Promise<{ chatId: string; userActorId: string; charAct
     format_version: 0,
     import_spec: "{}",
   },).execute();
+
   await testDb.insertInto("actors",).values({
     id: charActorId,
     actor_type: "character",
@@ -80,6 +83,7 @@ async function seedIds(): Promise<{ chatId: string; userActorId: string; charAct
     format_version: 0,
     import_spec: "{}",
   },).execute();
+
   return { chatId, userActorId, charActorId, };
 }
 
@@ -138,6 +142,7 @@ describe("/stats handler branches", () => {
       maxMp: 9,
       ac: 13,
     },);
+
     const ctx: CommandContext = { chatId, userId: userActorId, db: testDb, };
     const result = await mustGet()([], ctx,) as CommandResult;
     expect(result.handled,).toBe(true,);
@@ -158,6 +163,7 @@ describe("/stats handler branches", () => {
       maxHp: 10,
       ac: 10,
     },);
+
     const ctx: CommandContext = { chatId, userId: userActorId, db: testDb, };
     const result = await mustGet()([], ctx,) as CommandResult;
     expect(result.action,).toBe("show-stats",);

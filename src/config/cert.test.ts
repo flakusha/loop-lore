@@ -119,6 +119,7 @@ describe("ensureTlsCerts — generation path", () => {
       if (callIndex === 1) {
         throw new Error("binary not found",);
       }
+
       expect(cmd[0],).toBe("openssl",);
       writeFileSync(keyPath, "k",);
       writeFileSync(certPath, "c",);

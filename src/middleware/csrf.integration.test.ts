@@ -44,6 +44,7 @@ function buildApp(opts: SetupOpts,) {
     secret: opts.secret ?? SECRET,
     enabled: opts.enabled ?? true,
   };
+
   return new Elysia()
     .derive(requestIdMiddleware(),)
     .derive((ctx: { request: Request },) => ({
@@ -58,6 +59,7 @@ function buildApp(opts: SetupOpts,) {
         sessionId: ctx.sessionId ?? null,
         requestId: ctx.requestId ?? "anon",
       },);
+
       if (!decision.ok) {
         ctx.set.status = 403;
         return new Response(JSON.stringify({ error: "csrf_verification_failed", },), {
@@ -65,6 +67,7 @@ function buildApp(opts: SetupOpts,) {
           headers: { "content-type": "application/json", },
         },);
       }
+
       return undefined;
     },)
     .onAfterHandle((ctx: any,) => {
@@ -76,6 +79,7 @@ function buildApp(opts: SetupOpts,) {
         sessionId: ctx.sessionId ?? null,
         requestId: ctx.requestId ?? "anon",
       },);
+
       const cookieHeader = cookieForDecision(decision, csrfOpts,);
       if (cookieHeader === null) { return; }
       ctx.set.headers["set-cookie"] = cookieHeader;
@@ -121,6 +125,7 @@ describe("csrf integration — issuance path", () => {
         headers: { cookie: `${CSRF_COOKIE}=${token}`, },
       },),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("set-cookie",),).toBeNull();
   });
@@ -137,6 +142,7 @@ describe("csrf integration — issuance path", () => {
         headers: { cookie: `${CSRF_COOKIE}=${stale}`, },
       },),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("set-cookie",),).not.toBeNull();
     // The new cookie's value must NOT equal the stale token (a freshly bound one).
@@ -154,6 +160,7 @@ describe("csrf integration — verification path", () => {
       app,
       new Request("http://localhost/api/things", { method: "POST", body: "{}", },),
     );
+
     expect(res.status,).toBe(403,);
     const body = await res.json();
     expect(body.error,).toBe("csrf_verification_failed",);
@@ -173,6 +180,7 @@ describe("csrf integration — verification path", () => {
         },
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -190,6 +198,7 @@ describe("csrf integration — verification path", () => {
         },
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 
@@ -207,6 +216,7 @@ describe("csrf integration — verification path", () => {
         },
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -230,6 +240,7 @@ describe("csrf integration — verification path", () => {
         },
       },),
     );
+
     expect(replay.status,).toBe(403,);
   });
 });
@@ -244,6 +255,7 @@ describe("csrf integration — auth-route exemption", () => {
         body: "username=demo&password=x",
       },),
     );
+
     // Exempt — must NOT be 403.
     expect(res.status,).not.toBe(403,);
   });
@@ -256,6 +268,7 @@ describe("csrf integration — disabled mode", () => {
       app,
       new Request("http://localhost/api/things", { method: "POST", body: "{}", },),
     );
+
     expect(res.status,).not.toBe(403,);
   });
 
@@ -268,6 +281,7 @@ describe("csrf integration — disabled mode", () => {
       app,
       new Request("http://localhost/api/things", { method: "POST", body: "{}", },),
     );
+
     // With an empty secret, Bun.CSRF uses its per-thread default; tokens from
     // generation round-trips within the same process (per-thread default secret
     // is stable for the lifetime of the worker). Result: 403 because no token
@@ -290,6 +304,7 @@ describe("csrf integration — logout (no longer exempt)", () => {
         body: "{}",
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -307,6 +322,7 @@ describe("csrf integration — logout (no longer exempt)", () => {
         },
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 });
@@ -332,12 +348,14 @@ describe("csrf integration — production wiring (csrfPlugin + LL_COOKIE_SECURE)
           sessionId: ctx.sessionId ?? null,
           requestId: ctx.requestId ?? "anon",
         },);
+
         if (!decision.ok) {
           return new Response(JSON.stringify({ error: "csrf_verification_failed", },), {
             status: 403,
             headers: { "content-type": "application/json", },
           },);
         }
+
         return undefined;
       },)
       .onAfterHandle((ctx: any,) => {
@@ -352,11 +370,13 @@ describe("csrf integration — production wiring (csrfPlugin + LL_COOKIE_SECURE)
           sessionId: ctx.sessionId ?? null,
           requestId: ctx.requestId ?? "anon",
         },);
+
         const cookieHeader = cookieForDecision(decision, {
           secret: SECRET,
           enabled: true,
           cookieSecureOverride,
         },);
+
         if (cookieHeader === null) { return; }
         ctx.set.headers["set-cookie"] = cookieHeader;
       },)
@@ -371,11 +391,14 @@ describe("csrf integration — production wiring (csrfPlugin + LL_COOKIE_SECURE)
     const savedLL = process.env["LL_COOKIE_SECURE"];
     if (envSnapshot.nodeEnv === undefined) { delete process.env["NODE_ENV"]; }
     else { process.env["NODE_ENV"] = envSnapshot.nodeEnv; }
+
     if (envSnapshot.llCookieSecure === undefined) { delete process.env["LL_COOKIE_SECURE"]; }
     else { process.env["LL_COOKIE_SECURE"] = envSnapshot.llCookieSecure; }
+
     return body().finally(() => {
       if (savedNodeEnv === undefined) { delete process.env["NODE_ENV"]; }
       else { process.env["NODE_ENV"] = savedNodeEnv; }
+
       if (savedLL === undefined) { delete process.env["LL_COOKIE_SECURE"]; }
       else { process.env["LL_COOKIE_SECURE"] = savedLL; }
     },);

@@ -61,6 +61,7 @@ describeOrSkip("personaActions.loadPersonas", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const ctx = personaCtx();
     await expect(personaActions.loadPersonas!.call(ctx,),).resolves.toBeUndefined();
   });
@@ -92,6 +93,7 @@ describeOrSkip("personaActions.setPersona", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const ctx = personaCtx();
     await expect(personaActions.setPersona!.call(ctx,),).resolves.toBeUndefined();
   });
@@ -145,12 +147,14 @@ describeOrSkip("personaActions.loadImpersonationState", () => {
       { role_in_chat: "member", persona_id: "px", impersonate_actor_id: null, },
       { role_in_chat: "owner", persona_id: "p7", impersonate_actor_id: "actor-7", },
     ],);
+
     let personasLoaded = 0;
     const ctx = personaCtx({
       loadPersonas: async () => {
         personasLoaded++;
       },
     },);
+
     await personaActions.loadImpersonationState!.call(ctx,);
     expect(ctx._impersonationLoaded,).toBe(true,);
     expect(ctx._selectedPersonaId,).toBe("p7",);
@@ -175,6 +179,7 @@ describeOrSkip("personaActions.loadImpersonationState", () => {
         personasLoaded++;
       },
     },);
+
     await personaActions.loadImpersonationState!.call(ctx,);
     expect(ctx._impersonationLoaded,).toBe(true,);
     expect(personasLoaded,).toBe(1,);
@@ -188,6 +193,7 @@ describeOrSkip("personaActions.loadImpersonationState", () => {
         personasLoaded++;
       },
     },);
+
     await personaActions.loadImpersonationState!.call(ctx,);
     expect(personasLoaded,).toBe(1,);
   });
@@ -196,6 +202,7 @@ describeOrSkip("personaActions.loadImpersonationState", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const ctx = personaCtx({ loadPersonas: async () => {}, },);
     await personaActions.loadImpersonationState!.call(ctx,);
     expect(ctx._impersonationLoaded,).toBe(true,);

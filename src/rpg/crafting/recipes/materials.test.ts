@@ -46,6 +46,7 @@ async function seedRecipe(db: Kysely<DB>, worldId: string, outputItemId: string,
     created_at: now,
     updated_at: now,
   },).execute();
+
   return recipeId;
 }
 
@@ -64,6 +65,7 @@ async function seedWorld(): Promise<{
     status: "active",
     settings: "{}",
   } as never,);
+
   const worldId = uid();
   await insertWorlds(db, userId, "Craft World", { id: worldId, } as never,);
   const itemA = uid();
@@ -96,10 +98,12 @@ describe("replaceMaterials", () => {
       expect(await materialRows(db, recipeId,),).toEqual([
         { item_id: itemA, quantity: 2, slot_type: "required", },
       ],);
+
       await replaceMaterials(db, recipeId, [
         { itemId: itemB, quantity: 5, slotType: "optional", sortOrder: 2, },
         { itemId: itemA, quantity: 1, sortOrder: 1, },
       ],);
+
       // Old row gone; new rows present with fields mapped.
       expect(await materialRows(db, recipeId,),).toEqual([
         { item_id: itemA, quantity: 1, slot_type: "required", },
@@ -132,6 +136,7 @@ describe("replaceMaterials", () => {
       expect(await materialRows(db, first,),).toEqual([
         { item_id: itemA, quantity: 2, slot_type: "required", },
       ],);
+
       expect(await materialRows(db, second,),).toEqual([
         { item_id: itemB, quantity: 3, slot_type: "required", },
       ],);
@@ -180,6 +185,7 @@ describe("rowToRecipeWithMaterials", () => {
       created_at: "2026-01-01T00:00:00.000Z",
       updated_at: "2026-01-01T00:00:00.000Z",
     } as unknown as RecipeRow;
+
     const materials = [{
       id: "m1",
       recipe_id: "r1",
@@ -190,6 +196,7 @@ describe("rowToRecipeWithMaterials", () => {
       bonus_effect: null,
       sort_order: 1,
     },] as RecipeMaterialDbRow[];
+
     const out = rowToRecipeWithMaterials(recipe, materials,);
     expect(out.worldId,).toBe("w1",);
     expect(out.discoveredByDefault,).toBe(true,);

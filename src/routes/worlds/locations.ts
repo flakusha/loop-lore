@@ -45,6 +45,7 @@ export async function handleListLocations(
     .selectFrom("locations",)
     .select(database.fn.countAll<number>().as("total",),)
     .where("world_id", "=", worldId,);
+
   let listQuery = database
     .selectFrom("locations",)
     .selectAll()
@@ -145,6 +146,7 @@ export async function handleCreateLocation(
       failure,
       { worldId, locationId: id, },
     );
+
     return jsonError({
       message: "Failed to create location with its public chat",
       status: HttpStatus.InternalServerError,
@@ -221,8 +223,10 @@ export async function handleUpdateLocation(
     if (!connectionsResult.ok) {
       return jsonError({ message: "Invalid connections data", status: HttpStatus.BadRequest, },);
     }
+
     updates.connections = connectionsResult.value;
   }
+
   updates.updated_at = new Date().toISOString();
 
   await database
@@ -231,5 +235,6 @@ export async function handleUpdateLocation(
     .where("id", "=", locId,)
     .where("world_id", "=", worldId,)
     .execute();
+
   return jsonResponse({ ok: true, },);
 }

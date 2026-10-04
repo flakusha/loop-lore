@@ -39,6 +39,7 @@ export function assignRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", messageId,)
             .where("chat_id", "=", chatId,)
             .executeTakeFirst();
+
           if (!message) { return notFound("Message not found",); }
 
           if (sectionId) {
@@ -48,6 +49,7 @@ export function assignRoutes(opts: HandlerOpts, prefix = "/api",) {
               .where("id", "=", sectionId,)
               .where("chat_id", "=", chatId,)
               .executeTakeFirst();
+
             if (!section) { return notFound("Section not found in this chat",); }
           }
 

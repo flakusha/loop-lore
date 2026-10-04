@@ -33,6 +33,7 @@ export function bindSubmitHandler(ctx: NewChatCtx,): void {
         headers: { "Content-Type": "application/json", },
         body: jsonBody(payload,),
       },);
+
       if (res.ok) {
         await handleCreateSuccess(
           res,
@@ -67,10 +68,12 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
   const impersonateId = ctx.impersonateToggle?.checked && ctx.selected.length === 1
     ? ctx.selected[0].id
     : undefined;
+
   const memoryCarryMode = $<HTMLInputElement>('input[name="memory_carry"]:checked',)?.value || "full";
   const memoryCarryIds = memoryCarryMode === "selective"
     ? Array.from(ctx.selectedMemoryIds,)
     : undefined;
+
   const templateId = $<HTMLSelectElement>("#chat-template",)?.value || undefined;
   const mode = $<HTMLSelectElement>("#chat-mode",)?.value ?? "direct";
   const gmGuided = $<HTMLInputElement>("#gm-guided-toggle",)?.checked ?? false;
@@ -135,6 +138,7 @@ async function handleCreateSuccess(
       /* persona attach is best-effort; still open the chat */
     }
   }
+
   if (impersonateId) {
     try {
       await feFetch(`/api/v1/chats/${d.id}/impersonate`, {
@@ -146,5 +150,6 @@ async function handleCreateSuccess(
       /* impersonation attach is best-effort; still open the chat */
     }
   }
+
   location.assign(`/views/chat?chatid=${encodeURIComponent(d.id,)}${gmGuided ? "&openSettings=1" : ""}`,);
 }

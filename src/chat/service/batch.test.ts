@@ -67,6 +67,7 @@ describe("batch chat operations", () => {
         .select(["id", "is_pinned",],)
         .where("id", "in", [ownedChat, ownedChat2,],)
         .execute();
+
       for (const row of rows) {
         expect(row.is_pinned,).toBe("archived",);
       }
@@ -81,6 +82,7 @@ describe("batch chat operations", () => {
         .select("is_pinned",)
         .where("id", "=", foreignChat,)
         .executeTakeFirst();
+
       expect(row?.is_pinned,).not.toBe("archived",);
     });
 
@@ -133,6 +135,7 @@ describe("batch chat operations", () => {
       expect((exported?.[0]?.chat as { id: string }).id,).toBe(ownedChat2,);
     });
   });
+
   describe("batchExportChats — query budget", () => {
     test("issues ≤3 queries regardless of chat count (no N+1)", async () => {
       // Insert many owned chats plus messages and participants for each.
@@ -194,5 +197,6 @@ async function countRows(
     .select(db.fn.countAll().as("count",),)
     .where(column, "=", value,)
     .executeTakeFirst();
+
   return Number(row?.count ?? 0,);
 }

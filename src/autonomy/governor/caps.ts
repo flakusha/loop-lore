@@ -36,6 +36,7 @@ async function resolveWorldId(
   const result = await sql<{ world_id: string | null }>`
     SELECT world_id FROM chats WHERE id = ${opts.chatId} LIMIT 1
   `.execute(db,);
+
   return result.rows[0]?.world_id ?? null;
 }
 

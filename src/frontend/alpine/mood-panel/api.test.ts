@@ -42,6 +42,7 @@ describeOrSkip("fetchMood", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await expect(fetchMood("a1",),).resolves.toBeNull();
   });
 },);
@@ -59,6 +60,7 @@ describeOrSkip("fetchEmotions", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await expect(fetchEmotions("a2",),).resolves.toEqual([],);
   });
 },);
@@ -76,6 +78,7 @@ describeOrSkip("fetchEmotionDefs", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await expect(fetchEmotionDefs(),).resolves.toEqual([],);
   });
 },);
@@ -101,6 +104,7 @@ describeOrSkip("applyHappinessDelta", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await expect(applyHappinessDelta("a3", 1,),).resolves.toBeNull();
   });
 },);

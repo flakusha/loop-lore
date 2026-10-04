@@ -62,6 +62,7 @@ export function annotationRoutes(opts: HandlerOpts, prefix = "/api",) {
           userId,
           ctx.userRole as string | null,
         );
+
         if (!access.ok) { return notFound("Chat not found",); }
 
         if (!isAnnotationKind(body.kind,)) {
@@ -69,9 +70,11 @@ export function annotationRoutes(opts: HandlerOpts, prefix = "/api",) {
             `Annotation kind must be one of: ${ANNOTATION_KINDS.join(", ",)}`,
           );
         }
+
         if (typeof body.body !== "string" || body.body.length === 0) {
           return badRequest("Annotation body cannot be empty",);
         }
+
         const ttlMs = typeof body.ttlMs === "number" ? body.ttlMs : undefined;
         if (ttlMs !== undefined && (!Number.isFinite(ttlMs,) || ttlMs < 0)) {
           return badRequest("ttlMs must be a non-negative finite number",);
@@ -84,6 +87,7 @@ export function annotationRoutes(opts: HandlerOpts, prefix = "/api",) {
           body: body.body,
           ttlMs,
         },);
+
         return jsonCreated({ data: annotation, },);
       },
       {
@@ -118,6 +122,7 @@ export function annotationRoutes(opts: HandlerOpts, prefix = "/api",) {
           userId,
           ctx.userRole as string | null,
         );
+
         if (!access.ok) { return notFound("Chat not found",); }
 
         // AC2 (notes-shadow-carriage): shadow notes are a GM-tier surface —
@@ -128,6 +133,7 @@ export function annotationRoutes(opts: HandlerOpts, prefix = "/api",) {
           userId,
           ctx.userRole as string | null,
         );
+
         const shadowRows = gmAccess.ok
           ? await database
             .selectFrom("shadow_notes",)
@@ -135,6 +141,7 @@ export function annotationRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("chat_id", "=", chatId,)
             .execute()
           : [];
+
         const shadowAnnotations = shadowRows.map((row,) => ({
           id: row.id,
           chatId: row.chat_id,
@@ -144,6 +151,7 @@ export function annotationRoutes(opts: HandlerOpts, prefix = "/api",) {
           createdAt: row.created_at,
           ttlUntil: null,
         }));
+
         const memory = listMemoryAnnotations(chatId,);
         return jsonResponse({ data: [...shadowAnnotations, ...memory,], },);
       },

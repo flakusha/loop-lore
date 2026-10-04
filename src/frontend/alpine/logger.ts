@@ -69,12 +69,15 @@ class LightLogger implements Logger {
         message,
         ...this.bindings,
       };
+
       if (error) {
         entry.error = error.stack ?? error.message;
       }
+
       if (meta && Object.keys(meta,).length > 0) {
         entry.meta = meta;
       }
+
       this.queue.enqueue(entry,);
     } else {
       const prefix = this.bindings.module ? `[${this.bindings.module}]` : "";
@@ -88,6 +91,7 @@ class LightLogger implements Logger {
       } else {
         fn = console.debug;
       }
+
       if (error) {
         fn(prefix, message, error, meta ?? "",);
       } else {

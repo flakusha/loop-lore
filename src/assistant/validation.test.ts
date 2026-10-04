@@ -16,6 +16,7 @@ describe("validateGeneratedEntity", () => {
       { name: "Kaelen", description: "A bold knight.", personality: "Brave.", appearance: "Tall with a scar.", },
       "character",
     );
+
     expect(r,).toEqual({ valid: true, errors: [], },);
   });
 
@@ -23,6 +24,7 @@ describe("validateGeneratedEntity", () => {
     expect(
       validateGeneratedEntity({ name: "W", description: "D.", lore: "Old.", }, "world",).valid,
     ).toBe(true,);
+
     expect(
       validateGeneratedEntity({ name: "I", description: "D.", }, "item",).valid,
     ).toBe(true,);

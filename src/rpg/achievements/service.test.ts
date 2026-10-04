@@ -38,6 +38,7 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Bronze,
         unlockCondition: { type: "counter", target: "wins", count: 1, },
       },);
+
       expect(achievement.id,).toBeTruthy();
       expect(achievement.icon,).toBeNull();
       expect(achievement.isSecret,).toBe(false,);
@@ -64,6 +65,7 @@ describe("AchievementsService", () => {
         rewards: [{ type: "experience", value: 100, description: "+100 XP", },],
         metadata: { origin: "core", },
       },);
+
       expect(achievement.icon,).toBe("coins",);
       expect(achievement.isSecret,).toBe(true,);
       expect(achievement.isHidden,).toBe(true,);
@@ -93,6 +95,7 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Bronze,
         unlockCondition: { type: "simple", },
       },);
+
       await service.createAchievement({
         name: "c2",
         description: "",
@@ -100,6 +103,7 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Silver,
         unlockCondition: { type: "simple", },
       },);
+
       await service.createAchievement({
         name: "s1",
         description: "",
@@ -107,6 +111,7 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Bronze,
         unlockCondition: { type: "simple", },
       },);
+
       await service.createAchievement({
         name: "sec",
         description: "",
@@ -115,6 +120,7 @@ describe("AchievementsService", () => {
         isSecret: true,
         unlockCondition: { type: "simple", },
       },);
+
       expect(await service.listAchievements(),).toHaveLength(3,);
       expect(await service.listAchievements(AchievementCategory.Combat,),).toHaveLength(2,);
       expect(await service.listAchievements(undefined, true,),).toHaveLength(4,);
@@ -130,6 +136,7 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Bronze,
         unlockCondition: { type: "simple", },
       },);
+
       const renamed = await service.updateAchievement(achievement.id, { name: "After", },);
       expect(renamed.name,).toBe("After",);
       expect(renamed.description,).toBe("desc",);
@@ -137,6 +144,7 @@ describe("AchievementsService", () => {
       const withRewards = await service.updateAchievement(achievement.id, {
         rewards: [{ type: "item", value: "sword", description: "Sword", },],
       },);
+
       expect(withRewards.rewards,).toHaveLength(1,);
       expect(withRewards.name,).toBe("After",);
     });
@@ -151,12 +159,14 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Bronze,
         unlockCondition: { type: "simple", },
       },);
+
       await insertUsers(db, "player-1", "Player 1", { id: "player-1", },);
       await insertPlayerAchievements(db, "player-1", achievement.id, {
         progress: 0,
         max_progress: 1,
         status: "locked",
       },);
+
       await service.deleteAchievement(achievement.id,);
       expect(await service.getAchievement(achievement.id,),).toBeNull();
       expect(await service.getPlayerAchievement("player-1", achievement.id,),).toBeNull();
@@ -184,6 +194,7 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Bronze,
         unlockCondition: { type: "counter", target: "steps", count: 5, },
       },);
+
       await insertUsers(db, "player-2", "Player 2", { id: "player-2", },);
       const result = await service.updateProgress("player-2", achievement.id,);
       expect(result,).toMatchObject({ oldProgress: 0, newProgress: 1, unlocked: false, },);
@@ -204,6 +215,7 @@ describe("AchievementsService", () => {
         unlockCondition: { type: "counter", target: "steps", count: 3, },
         rewards: [{ type: "experience", value: 50, description: "+50 XP", },],
       },);
+
       await insertUsers(db, "player-3", "Player 3", { id: "player-3", },);
       const first = await service.updateProgress("player-3", achievement.id, 2,);
       expect(first,).toMatchObject({ newProgress: 2, unlocked: false, },);
@@ -225,6 +237,7 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Bronze,
         unlockCondition: { type: "counter", target: "steps", count: 1, },
       },);
+
       await insertUsers(db, "player-4", "Player 4", { id: "player-4", },);
       await service.updateProgress("player-4", achievement.id,);
       const again = await service.updateProgress("player-4", achievement.id, 5,);
@@ -248,6 +261,7 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Bronze,
         unlockCondition: { type: "simple", },
       },);
+
       await expect(service.claimRewards("ghost", achievement.id,),).rejects.toThrow("Player achievement not found",);
     });
 
@@ -261,12 +275,14 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Bronze,
         unlockCondition: { type: "simple", },
       },);
+
       await insertUsers(db, "player-6", "Player 6", { id: "player-6", },);
       await insertPlayerAchievements(db, "player-6", achievement.id, {
         progress: 0,
         max_progress: 1,
         status: "locked",
       },);
+
       await expect(service.claimRewards("player-6", achievement.id,),).rejects.toThrow("Achievement not unlocked",);
     });
 
@@ -281,6 +297,7 @@ describe("AchievementsService", () => {
         unlockCondition: { type: "simple", },
         rewards: [{ type: "experience", value: 25, description: "+25 XP", },],
       },);
+
       await insertUsers(db, "player-7", "Player 7", { id: "player-7", },);
       await insertPlayerAchievements(db, "player-7", achievement.id, {
         progress: 1,
@@ -288,6 +305,7 @@ describe("AchievementsService", () => {
         status: "unlocked",
         unlocked_at: "2026-01-01",
       },);
+
       const rewards = await service.claimRewards("player-7", achievement.id,);
       expect(rewards,).toHaveLength(1,);
       const progress = await service.getPlayerAchievement("player-7", achievement.id,);
@@ -306,6 +324,7 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Bronze,
         unlockCondition: { type: "simple", },
       },);
+
       await insertUsers(db, "player-8", "Player 8", { id: "player-8", },);
       expect(await service.isUnlocked("player-8", achievement.id,),).toBe(false,);
       await insertPlayerAchievements(db, "player-8", achievement.id, {
@@ -314,6 +333,7 @@ describe("AchievementsService", () => {
         status: "unlocked",
         unlocked_at: "2026-01-01",
       },);
+
       expect(await service.isUnlocked("player-8", achievement.id,),).toBe(true,);
     });
 
@@ -334,6 +354,7 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Bronze,
         unlockCondition: { type: "simple", },
       },);
+
       await service.createAchievement({
         name: "s",
         description: "",
@@ -341,6 +362,7 @@ describe("AchievementsService", () => {
         tier: AchievementTier.Silver,
         unlockCondition: { type: "simple", },
       },);
+
       await insertUsers(db, "player-9", "Player 9", { id: "player-9", },);
       await insertPlayerAchievements(db, "player-9", combat.id, {
         progress: 1,
@@ -348,6 +370,7 @@ describe("AchievementsService", () => {
         status: "unlocked",
         unlocked_at: "2026-01-01",
       },);
+
       const stats = await service.getPlayerStats("player-9",);
       expect(stats.totalUnlocked,).toBe(1,);
       expect(stats.totalAvailable,).toBe(2,);

@@ -32,11 +32,13 @@ describe("runNightlyReflectionCycle — first-night creation", () => {
         ],
       }),
     },);
+
     expect(result.processed,).toBe(1,);
     expect(result.revisionsEmitted,).toBe(0,);
     const rows = raw.query("SELECT * FROM actor_daily_plans WHERE actor_id='actor1'",).all() as Array<
       Record<string, unknown>
     >;
+
     expect(rows.length,).toBe(1,);
     expect(rows[0]!.priority,).toBe("high",);
     const acts = raw.query("SELECT * FROM actor_planned_activities",).all() as Array<Record<string, unknown>>;
@@ -61,6 +63,7 @@ describe("runNightlyReflectionCycle — first-night creation", () => {
     const row = raw.query("SELECT world_id FROM actor_daily_plans WHERE actor_id='actor1'",).get() as {
       world_id: string | null;
     } | null;
+
     expect(row?.world_id,).toBe("world-7",);
   });
 
@@ -73,6 +76,7 @@ describe("runNightlyReflectionCycle — first-night creation", () => {
     const row = raw.query("SELECT world_id FROM actor_daily_plans WHERE actor_id='loner'",).get() as {
       world_id: string | null;
     } | null;
+
     expect(row?.world_id,).toBeNull();
   });
 });
@@ -82,11 +86,13 @@ describe("runNightlyReflectionCycle — same priority → no revision", () => {
     raw.exec(
       `INSERT INTO actor_daily_plans(id, actor_id, plan_date, summary, priority, created_at) VALUES ('plan1', 'actor1', '2026-09-25', 'old', 'normal', datetime('now'));`,
     );
+
     const result = await runNightlyReflectionCycle(db, ["actor1",], {
       budgetApprove: async () => true,
       planRecompute: async () => ({ summary: "new", priority: "normal", activities: [], }),
       today: "2026-09-25",
     },);
+
     expect(result.processed,).toBe(1,);
     expect(result.revisionsEmitted,).toBe(0,);
     const revs = raw.query("SELECT * FROM actor_plan_revisions",).all();
@@ -99,11 +105,13 @@ describe("runNightlyReflectionCycle — priority shift emits revision", () => {
     raw.exec(
       `INSERT INTO actor_daily_plans(id, actor_id, plan_date, summary, priority, created_at) VALUES ('plan1', 'actor1', '2026-09-25', 'old', 'normal', datetime('now'));`,
     );
+
     const result = await runNightlyReflectionCycle(db, ["actor1",], {
       budgetApprove: async () => true,
       planRecompute: async () => ({ summary: "new", priority: "high", activities: [], }),
       today: "2026-09-25",
     },);
+
     expect(result.processed,).toBe(1,);
     expect(result.revisionsEmitted,).toBe(1,);
     const rev = raw.query("SELECT * FROM actor_plan_revisions WHERE plan_id='plan1'",).get() as Record<string, unknown>;
@@ -118,6 +126,7 @@ describe("runNightlyReflectionCycle — budget-exceeded skip", () => {
       budgetApprove: async (id,) => id !== "actor2", // only actor1 allowed
       planRecompute: async () => ({ summary: "x", priority: "high", activities: [], }),
     },);
+
     expect(result.processed,).toBe(1,);
     expect(result.skippedBudget,).toBe(1,);
     const plans = raw.query("SELECT * FROM actor_daily_plans",).all();
@@ -156,6 +165,7 @@ describe("recordChatTurn — cooldown + consecutive cap", () => {
       const r = await recordChatTurn(db, "a1", "a2", next,);
       expect(r.allowed,).toBe(true,);
     }
+
     const blocked = await recordChatTurn(db, "a1", "a2", new Date(t0.getTime() + 3 * 17 * 60_000,),);
     expect(blocked.allowed,).toBe(false,);
     expect(blocked.reason,).toBe("consecutive_cap",);

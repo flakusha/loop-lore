@@ -26,6 +26,7 @@ function resolveComfyClient(config: Config,): ComfyUIClient | null {
   const comfyProviders = (config.generation.providers.sd ?? []).filter(
     (provider,) => provider.apiFamily === ImageApiFamily.Comfyui,
   );
+
   const provider = pickSdProvider(comfyProviders, "edit",);
   if (!provider) { return null; }
   return new ComfyUIClient({
@@ -71,6 +72,7 @@ function pickBackend(
         ? createComfyMattingProvider({ client, model: matting.model, },)
         : null;
     }
+
     default:
       return null;
   }
@@ -98,5 +100,6 @@ export function resolveMattingProvider(config: Config,): MattingProvider | null 
         pickBackend("http", matting, config,)
     );
   }
+
   return pickBackend(matting.backend, matting, config,);
 }

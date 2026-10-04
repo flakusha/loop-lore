@@ -90,6 +90,7 @@ describe("FileTransport", () => {
     for (let i = 0; i < 5; i++) {
       await t.write(entry(20, `drop ${i}`,),);
     }
+
     const files = (await readdir(dir,)).filter((f,) => f.startsWith("drop.log",));
     expect(files,).toEqual(["drop.log",],);
   });

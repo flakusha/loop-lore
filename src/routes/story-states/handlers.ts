@@ -24,6 +24,7 @@ export async function handleNpcState(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   if (!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId)) {
     return jsonError({ message: "NPC state not found", status: HttpStatus.NotFound, },);
   }
@@ -47,9 +48,11 @@ export async function handleNpcState(
   for (const [k, col,] of Object.entries(intFields,)) {
     if (body?.[k] != null) { updates[col] = body[k]; }
   }
+
   for (const [k, col,] of Object.entries(strFields,)) {
     if (body?.[k] != null) { updates[col] = body[k]; }
   }
+
   for (const [k, col,] of Object.entries(jsonFields,)) {
     if (body?.[k] == null) {
       continue;
@@ -58,6 +61,7 @@ export async function handleNpcState(
     const r = safeJsonStringify(body[k],);
     if (r.ok) { updates[col] = r.value; }
   }
+
   if (body?.locationId != null) { updates.location_id = body.locationId; }
   updates.updated_at = new Date().toISOString();
 
@@ -76,6 +80,7 @@ export async function handleNpcState(
     // GM-action notification failure is non-fatal — swallow.
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     .catch(() => {},);
+
   return jsonResponse(updated,);
 }
 
@@ -91,6 +96,7 @@ export async function handleNpcsAtLocation(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   if (!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId)) {
     return jsonError({ message: "Location not found", status: HttpStatus.NotFound, },);
   }
@@ -114,6 +120,7 @@ export async function handleLocationState(
     .select(["worlds.owner_id",],)
     .where("location_states.location_id", "=", locationId,)
     .executeTakeFirst();
+
   if (!locWorld || (!can(userRole, "admin.world",) && locWorld.owner_id !== userId)) {
     return jsonError({ message: "Location not found", status: HttpStatus.NotFound, },);
   }
@@ -136,6 +143,7 @@ export async function handleLocationState(
   for (const f of strFields) {
     if (body?.[f] != null) { updates[f] = body[f]; }
   }
+
   for (const [k, col,] of Object.entries(jsonFields,)) {
     if (body?.[k] == null) {
       continue;
@@ -144,6 +152,7 @@ export async function handleLocationState(
     const r = safeJsonStringify(body[k],);
     if (r.ok) { updates[col] = r.value; }
   }
+
   updates.updated_at = new Date().toISOString();
 
   await database.updateTable("location_states",).set(updates,).where("location_id", "=", locationId,).execute();
@@ -152,6 +161,7 @@ export async function handleLocationState(
     .select("world_id",)
     .where("location_id", "=", locationId,)
     .executeTakeFirst();
+
   if (locWorldRow) {
     void notifyGmAction(database, {
       worldId: locWorldRow.world_id,
@@ -161,6 +171,7 @@ export async function handleLocationState(
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       .catch(() => {},);
   }
+
   const updated = await state.getLocationState(locationId,);
   return jsonResponse(updated,);
 }
@@ -180,6 +191,7 @@ export async function handleWorldStates(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   if (!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId)) {
     return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
   }
@@ -192,6 +204,7 @@ export async function handleWorldStates(
       .select(database.fn.countAll<number>().as("total",),)
       .where("world_id", "=", worldId,)
       .executeTakeFirst();
+
     const total = countResult?.total ?? 0;
     const snapshots = await database
       .selectFrom("world_states",)
@@ -201,6 +214,7 @@ export async function handleWorldStates(
       .limit(pageSize,)
       .offset(offset,)
       .execute();
+
     return jsonPaginated({ data: snapshots, total, page, pageSize, },);
   }
 
@@ -210,5 +224,6 @@ export async function handleWorldStates(
     (body?.messageId as string) ?? undefined,
     (body?.description as string) ?? undefined,
   );
+
   return jsonCreated({ id, },);
 }

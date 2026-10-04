@@ -39,6 +39,7 @@ const KIND_LABELS: Record<EntityKind, string> = {
   world: "World",
   item: "Item",
 };
+
 /**
  * Lazy logger — only resolved when first used (avoids crash when logger
  * not initialized in tests).
@@ -62,6 +63,7 @@ async function resolveWorldContext(
     .select(["name", "description",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   return row ? { name: row.name, description: row.description, } : undefined;
 }
 
@@ -94,6 +96,7 @@ export async function runCreateGeneration(
       handled: true,
     };
   }
+
   if (!description) {
     return {
       systemMessage: `Usage: /create ${token} <description>`,
@@ -133,6 +136,7 @@ export async function runCreateGeneration(
       const cleaned = content
         .replace(/^```(?:json)?\s*\n?/, "",)
         .replace(/\n?```\s*$/, "",);
+
       const parsed = safeJsonParse<Record<string, unknown>>(cleaned,);
       if (!parsed.ok) { throw parsed.error; }
       raw = parsed.value;
@@ -194,6 +198,7 @@ export async function runCreateGeneration(
       `**${KIND_LABELS[kind]} preview** — review before saving:\n\n`,
       `**Name:** ${entity.name}\n`,
     ];
+
     if (entity.description) { parts.push(`**Description:** ${entity.description}\n`,); }
     if (entity.personality) { parts.push(`**Personality:** ${entity.personality}\n`,); }
     if (entity.scenario) { parts.push(`**Scenario:** ${entity.scenario}\n`,); }
@@ -203,11 +208,13 @@ export async function runCreateGeneration(
         for (const entry of entity.lore) {
           parts.push(`  - **${entry.name}**: ${entry.content}\n`,);
         }
+
         parts.push(`\n`,);
       } else {
         parts.push(`**Lore:** ${entity.lore}\n`,);
       }
     }
+
     if (warnings.length > 0) { parts.push(`\n⚠️ ${warnings.join(" ",)}`,); }
     const summary = parts.join("",);
 
@@ -232,6 +239,7 @@ export async function runCreateGeneration(
       error instanceof Error ? error : undefined,
       { kind, },
     );
+
     return {
       systemMessage: `**${KIND_LABELS[kind]} creation failed.** Nothing was saved — retry in a moment.`,
       handled: true,
@@ -244,6 +252,7 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
   if (!db || !config) {
     return runCreateGeneration(args, ctx, async () => ({ content: "", }), "",);
   }
+
   const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
   return runCreateGeneration(args, ctx, (req,) => resolved.provider.complete(req,), resolved.resolvedModel,);
 }, { requiredRole: ChatParticipantRole.Owner, },);

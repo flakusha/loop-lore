@@ -68,10 +68,12 @@ describe("buildMattingWorkflow", () => {
     expect(byClass.get("LoadBackgroundRemovalModel",)?.inputs,).toMatchObject({
       bg_removal_name: "birefnet.safetensors",
     },);
+
     expect(byClass.get("RemoveBackground",)?.inputs,).toMatchObject({
       image: ["1", 0,],
       bg_removal_model: ["2", 0,],
     },);
+
     expect(byClass.get("SaveImage",)?.inputs,).toMatchObject({ images: ["5", 0,], },);
   });
 });
@@ -102,6 +104,7 @@ describe("createComfyMattingProvider", () => {
     const provider = createComfyMattingProvider({
       client: fakeClient(info, { uploadedName: null, workflow: null, },),
     },);
+
     await expect(provider.removeBackground(Buffer.from([1,],),),).rejects.toThrow(
       "missing the background-removal nodes",
     );

@@ -72,6 +72,7 @@ export const chatMusicEmbed: ChatMusicEmbed = {
       const thumb = msg.thumbnailUrl
         ? `<img src="${safeUrl(msg.thumbnailUrl,)}" alt="${escAttr(msg.title,)}" class="music-embed-thumb" />`
         : "";
+
       return `<div class="music-embed-card">
         ${thumb}
         <a href="${safeUrl(msg.serviceUrl,)}" target="_blank" rel="noopener" class="music-embed-link">

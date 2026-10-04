@@ -49,6 +49,7 @@ describe("resolveBackendUrls", () => {
         provider("sdcpp", "http://localhost:9320",),
       ],),
     );
+
     expect(urls.comfyUrl,).toBe("http://localhost:8288",);
     expect(urls.sdServerUrl,).toBe("http://localhost:9320",);
     expect(urls.comfyUrl,).not.toBe(urls.sdServerUrl,);
@@ -58,6 +59,7 @@ describe("resolveBackendUrls", () => {
     const urls = resolveBackendUrls(
       configWithSd([provider("comfyui", "http://localhost:8288",),],),
     );
+
     expect(urls.comfyUrl,).toBe("http://localhost:8288",);
     expect(urls.sdServerUrl,).toBe("http://localhost:9010",);
   });

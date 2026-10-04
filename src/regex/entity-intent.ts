@@ -80,6 +80,7 @@ export function detectStoryEntityIntroductions(text: string,): StoryEntityIntrod
       },);
     }
   }
+
   return found.sort((a, b,) => a.index - b.index);
 }
 

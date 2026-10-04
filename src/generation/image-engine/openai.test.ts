@@ -54,6 +54,7 @@ describe("generateOpenAI", () => {
       n: 1,
       outputFormat: "png",
     },);
+
     expect(outcome.ok,).toBe(false,);
     if (!outcome.ok) {
       expect(outcome.status,).toBe(502,);
@@ -68,6 +69,7 @@ describe("generateOpenAI", () => {
       n: 1,
       outputFormat: "png",
     },);
+
     expect(outcome.ok,).toBe(true,);
     if (outcome.ok) {
       expect(outcome.mimeType,).toBe("image/png",);
@@ -83,6 +85,7 @@ describe("generateOpenAI", () => {
       n: 2,
       outputFormat: "jpeg",
     },);
+
     expect(outcome.ok,).toBe(true,);
     if (outcome.ok) {
       expect(outcome.mimeType,).toBe("image/jpeg",);
@@ -97,6 +100,7 @@ describe("generateOpenAI", () => {
         url: String(url,),
         body: typeof init?.body === "string" ? init.body : "",
       };
+
       return new Response(JSON.stringify({ data: [], },), { status: 200, },);
     }) as typeof fetch;
 

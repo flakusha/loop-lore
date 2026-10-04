@@ -34,6 +34,7 @@ function buildCtx(overrides?: Partial<ToolsCtx>,): ToolsCtx {
     },
     ...overrides,
   };
+
   return ctx;
 }
 
@@ -59,6 +60,7 @@ describeOrSkip("messageTools.forwardMessage", () => {
     } finally {
       (globalThis as Record<string, unknown>).prompt = orig;
     }
+
     expect(calls,).toEqual([],);
   });
 
@@ -72,6 +74,7 @@ describeOrSkip("messageTools.forwardMessage", () => {
     } finally {
       (globalThis as Record<string, unknown>).prompt = orig;
     }
+
     expect(calls[0]?.url,).toBe("/api/v1/chats/chat-1/messages/m1/forward",);
     expect(calls[0]?.opts.method,).toBe("POST",);
     expect(JSON.parse(calls[0]?.opts.body as string,),).toEqual({ targetChatId: "chat-2", },);
@@ -88,6 +91,7 @@ describeOrSkip("messageTools.forwardMessage", () => {
     } finally {
       (globalThis as Record<string, unknown>).prompt = orig;
     }
+
     expect(ctx.toasts[0]?.type,).toBe("warning",);
   });
 },);

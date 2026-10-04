@@ -32,6 +32,7 @@ export function removeRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           await database.deleteFrom("chat_sections",).where("id", "=", sectionId,).where("chat_id", "=", chatId,)
             .execute();
+
           return jsonResponse({ ok: true, },);
         },
         {

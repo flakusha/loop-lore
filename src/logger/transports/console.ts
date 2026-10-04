@@ -37,6 +37,7 @@ export class ConsoleTransport implements Transport {
     } catch {
       // Silently ignore write errors — logging must not crash the app
     }
+
     return Promise.resolve();
   }
 

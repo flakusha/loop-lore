@@ -54,6 +54,7 @@ beforeAll(async () => {
     user_id: userId,
     owner_id: userId,
   } as never,);
+
   chatId = crypto.randomUUID();
   await insertChats(db, "Carriage Route Chat", adminId, { id: chatId, } as never,);
   await insertChatParticipants(db, chatId, userId, { role_in_chat: "member", },);
@@ -74,6 +75,7 @@ describe("GET /api/admin/chats/:id/carriage", () => {
     const res = await app.handle(
       new Request(`${BASE}/api/admin/chats/${chatId}/carriage`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { data: Array<{ scope: string; payload: string }> };
     expect(body.data,).toHaveLength(1,);
@@ -86,6 +88,7 @@ describe("GET /api/admin/chats/:id/carriage", () => {
     const res = await app.handle(
       new Request(`${BASE}/api/admin/chats/${chatId}/carriage`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -94,6 +97,7 @@ describe("GET /api/admin/chats/:id/carriage", () => {
     const res = await app.handle(
       new Request(`${BASE}/api/admin/chats/${crypto.randomUUID()}/carriage`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -109,9 +113,11 @@ describe("GET /api/admin/chats/:id/carriage", () => {
         "/api",
       ),
     ) as unknown as Elysia;
+
     const res = await wired.handle(
       new Request(`${BASE}/api/chats/${chatId}/annotations`,),
     );
+
     expect(res.status,).toBe(200,);
     const text = await res.text();
     expect(text,).not.toContain(MARKER,);

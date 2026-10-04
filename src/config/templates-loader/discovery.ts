@@ -38,6 +38,7 @@ export function findTemplateFiles(cwd: string,): Map<string, string> {
     path.join(cwd, "configs", "templates",),
     path.join(cwd, "templates",),
   ];
+
   if (mainRoot && mainRoot !== cwd) {
     searchDirs.push(
       path.join(mainRoot, "configs", "templates",),
@@ -86,12 +87,14 @@ export function findWorkflowFiles(cwd: string,): string[] {
     path.join(cwd, "configs", "templates", "workflows",),
     path.join(cwd, "templates", "workflows",),
   ];
+
   if (mainRoot && mainRoot !== cwd) {
     searchDirs.push(
       path.join(mainRoot, "configs", "templates", "workflows",),
       path.join(mainRoot, "templates", "workflows",),
     );
   }
+
   const found: string[] = [];
   const seen: Record<string, true> = {};
   for (const dir of searchDirs) {
@@ -104,6 +107,7 @@ export function findWorkflowFiles(cwd: string,): string[] {
       found.push(fullPath,);
     }
   }
+
   return found;
 }
 
@@ -119,5 +123,6 @@ export function parseTemplateFile(filePath: string,): Record<string, unknown> {
   if (ext === "toml") {
     return Bun.TOML.parse(content,) as Record<string, unknown>;
   }
+
   return Bun.YAML.parse(content,) as Record<string, unknown>;
 }

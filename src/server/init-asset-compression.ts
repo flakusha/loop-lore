@@ -28,6 +28,7 @@ export async function initAssetCompression(logger: Logger,): Promise<void> {
     const result = spawnSync("bun", ["run", "build:frontend",], {
       stdio: ["ignore", "inherit", "inherit",],
     },);
+
     if (result.status === 0) {
       logger.info({ message: "Frontend build complete", },);
     } else {
@@ -56,6 +57,7 @@ export async function initAssetCompression(logger: Logger,): Promise<void> {
       const destStat = statSync(destPath,);
       if (srcStat.mtimeMs > destStat.mtimeMs) { return true; }
     }
+
     return false;
   }
 
@@ -67,12 +69,14 @@ export async function initAssetCompression(logger: Logger,): Promise<void> {
       compressionJobs.push({ label: "public", src: sourcePublicDirectory, dest: destinationPublicDirectory, },);
     }
   }
+
   if (existsSync(sourceViewsDirectory,)) {
     copyDirectory(sourceViewsDirectory, destinationPublicDirectory,);
     if (needsCompression(sourceViewsDirectory, destinationPublicDirectory,)) {
       compressionJobs.push({ label: "views", src: sourceViewsDirectory, dest: destinationPublicDirectory, },);
     }
   }
+
   if (existsSync(DOCS_PATH,)) {
     compressionJobs.push({ label: "docs", src: DOCS_PATH, dest: DOCS_PATH, },);
   }
@@ -96,6 +100,7 @@ export async function initAssetCompression(logger: Logger,): Promise<void> {
         })(),
       );
     }
+
     const results = await Promise.allSettled(promises,);
     for (const r of results) {
       if (r.status === "rejected") {

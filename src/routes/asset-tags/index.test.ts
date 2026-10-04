@@ -95,6 +95,7 @@ describe("GET /api/assets/:id/tags", () => {
       `/api/assets/${assetId}/tags`,
       json("POST", { tag: "shared", scope: "global", },),
     );
+
     await handle(
       appAs(viewerId, "user",),
       `/api/assets/${assetId}/tags`,
@@ -123,6 +124,7 @@ describe("POST /api/assets/:id/tags (add)", () => {
       `/api/assets/${assetId}/tags`,
       json("POST", { tag: "mine", scope: "user", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { tag: AssetTagRecord };
     expect(body.tag.tag,).toBe("mine",);
@@ -135,6 +137,7 @@ describe("POST /api/assets/:id/tags (add)", () => {
       `/api/assets/${assetId}/tags`,
       json("POST", { tag: "shared", scope: "global", },),
     );
+
     expect(denied.status,).toBe(403,);
 
     const allowed = await handle(
@@ -142,6 +145,7 @@ describe("POST /api/assets/:id/tags (add)", () => {
       `/api/assets/${assetId}/tags`,
       json("POST", { tag: "shared", scope: "global", },),
     );
+
     expect(allowed.status,).toBe(200,);
   });
 
@@ -151,6 +155,7 @@ describe("POST /api/assets/:id/tags (add)", () => {
       `/api/assets/${assetId}/tags`,
       json("POST", { tag: "shared", scope: "global", },),
     );
+
     expect(res.status,).toBe(200,);
   });
 });
@@ -162,16 +167,19 @@ describe("DELETE /api/assets/:id/tags (remove)", () => {
       `/api/assets/${assetId}/tags`,
       json("POST", { tag: "mine", scope: "user", },),
     );
+
     const res = await handle(
       appAs(viewerId, "user",),
       `/api/assets/${assetId}/tags`,
       json("DELETE", { tag: "mine", scope: "user", },),
     );
+
     expect(res.status,).toBe(204,);
 
     const list = (await (await handle(appAs(viewerId, "user",), `/api/assets/${assetId}/tags`,)).json()) as {
       tags: AssetTagRecord[];
     };
+
     expect(list.tags,).toEqual([],);
   });
 
@@ -181,11 +189,13 @@ describe("DELETE /api/assets/:id/tags (remove)", () => {
       `/api/assets/${assetId}/tags`,
       json("POST", { tag: "shared", scope: "global", },),
     );
+
     const res = await handle(
       appAs(viewerId, "user",),
       `/api/assets/${assetId}/tags`,
       json("DELETE", { tag: "shared", scope: "global", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -197,11 +207,13 @@ describe("POST /api/assets/:id/tags/rename", () => {
       `/api/assets/${assetId}/tags`,
       json("POST", { tag: "old", scope: "user", },),
     );
+
     const res = await handle(
       appAs(viewerId, "user",),
       `/api/assets/${assetId}/tags/rename`,
       json("POST", { oldTag: "old", newTag: "new", scope: "user", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { tag: AssetTagRecord };
     expect(body.tag.tag,).toBe("new",);
@@ -211,6 +223,7 @@ describe("POST /api/assets/:id/tags/rename", () => {
       `/api/assets/${assetId}/tags/rename`,
       json("POST", { oldTag: "new", newTag: "new", scope: "user", },),
     );
+
     expect(bad.status,).toBe(400,);
   });
 });
@@ -221,6 +234,7 @@ describe("GET + DELETE /api/assets/:id/tag-propositions", () => {
       (await (await handle(appAs(viewerId, "user",), `/api/assets/${assetId}/tag-propositions`,)).json()) as {
         propositions: { tag: string; provenance: string }[];
       };
+
     expect(before.propositions.map((p,) => p.tag),).toEqual(["cozy", "tavern", "hall",],);
 
     const dismiss = await handle(
@@ -228,12 +242,14 @@ describe("GET + DELETE /api/assets/:id/tag-propositions", () => {
       `/api/assets/${assetId}/tag-propositions`,
       json("DELETE", { tag: "cozy", },),
     );
+
     expect(dismiss.status,).toBe(204,);
 
     const after =
       (await (await handle(appAs(viewerId, "user",), `/api/assets/${assetId}/tag-propositions`,)).json()) as {
         propositions: { tag: string }[];
       };
+
     expect(after.propositions.map((p,) => p.tag),).toEqual(["tavern", "hall",],);
   });
 });
@@ -245,6 +261,7 @@ describe("GET /api/tag-autocomplete", () => {
       `/api/assets/${assetId}/tags`,
       json("POST", { tag: "tavern", scope: "global", },),
     );
+
     await handle(
       appAs(viewerId, "user",),
       `/api/assets/${assetId}/tags`,
@@ -257,6 +274,7 @@ describe("GET /api/tag-autocomplete", () => {
     const narrow = (await (await handle(appAs(viewerId, "user",), `/api/tag-autocomplete?q=t`,)).json()) as {
       tags: string[];
     };
+
     expect(narrow.tags,).toEqual(["tavern",],);
   });
 });
@@ -275,6 +293,7 @@ describe("private-asset access (add/remove/rename)", () => {
       `/api/assets/${privateId}/tags`,
       json("POST", { tag: "sneak", scope: "user", },),
     );
+
     expect(add.status,).toBe(404,);
 
     const remove = await handle(
@@ -282,6 +301,7 @@ describe("private-asset access (add/remove/rename)", () => {
       `/api/assets/${privateId}/tags`,
       json("DELETE", { tag: "sneak", scope: "user", },),
     );
+
     expect(remove.status,).toBe(404,);
 
     const rename = await handle(
@@ -289,6 +309,7 @@ describe("private-asset access (add/remove/rename)", () => {
       `/api/assets/${privateId}/tags/rename`,
       json("POST", { oldTag: "sneak", newTag: "quiet", scope: "user", },),
     );
+
     expect(rename.status,).toBe(404,);
 
     const rows = await db.selectFrom("asset_tags",).select("id",).where("asset_id", "=", privateId,).execute();
@@ -303,11 +324,13 @@ describe("tag integrity (empty tags)", () => {
       `/api/assets/${assetId}/tags`,
       json("POST", { tag: "   ", scope: "user", },),
     );
+
     expect(res.status,).toBe(422,);
 
     const list = (await (await handle(appAs(viewerId, "user",), `/api/assets/${assetId}/tags`,)).json()) as {
       tags: AssetTagRecord[];
     };
+
     expect(list.tags,).toEqual([],);
   });
 
@@ -317,11 +340,13 @@ describe("tag integrity (empty tags)", () => {
       `/api/assets/${assetId}/tags`,
       json("POST", { tag: "old", scope: "user", },),
     );
+
     const res = await handle(
       appAs(viewerId, "user",),
       `/api/assets/${assetId}/tags/rename`,
       json("POST", { oldTag: "old", newTag: "  ", scope: "user", },),
     );
+
     expect(res.status,).toBe(422,);
   });
 });

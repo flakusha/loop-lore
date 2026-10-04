@@ -54,6 +54,7 @@ function readStoredFilters(): StoredFilters {
     if (
       !parsed.ok || parsed.value === null || typeof parsed.value !== "object" || Array.isArray(parsed.value,)
     ) { return {}; }
+
     return parsed.value;
   } catch {
     return {};
@@ -80,6 +81,7 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
     } catch {
       store = null;
     }
+
     if (!store) { return; }
     const stored = readStoredFilters();
     if (stored.type === "direct" || stored.type === "group") { this._chatType = stored.type; }
@@ -87,6 +89,7 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
     if (stored.sort === "name" || stored.sort === "unread" || stored.sort === "pinned-first") {
       this._chatSort = stored.sort;
     }
+
     if (typeof stored.world === "string") { this._chatWorld = stored.world; }
     if (typeof stored.minMessages === "string") { this._chatMinMessages = stored.minMessages; }
     if (typeof stored.maxMessages === "string") { this._chatMaxMessages = stored.maxMessages; }
@@ -104,6 +107,7 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
     } catch {
       store = null;
     }
+
     if (!store) { return; }
     const payload: StoredFilters = {};
     if (this._chatType !== "all") { payload.type = this._chatType; }
@@ -152,6 +156,7 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
       const world = (this._worlds ?? []).find((w,) => w.id === this._chatWorld);
       chips.push({ key: "world", label: world?.name ?? this._chatWorld, },);
     }
+
     if (this._chatMinMessages) { chips.push({ key: "minMessages", label: `≥ ${this._chatMinMessages} msgs`, },); }
     if (this._chatMaxMessages) { chips.push({ key: "maxMessages", label: `≤ ${this._chatMaxMessages} msgs`, },); }
     if (this._chatUpdatedSince) { chips.push({ key: "updatedSince", label: `since ${this._chatUpdatedSince}`, },); }
@@ -169,31 +174,38 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
         this._chatType = "all";
         break;
       }
+
       case "status": {
         this._chatStatus = "all";
         break;
       }
+
       case "sort": {
         this._chatSort = "recent";
         break;
       }
+
       case "world": {
         this._chatWorld = "";
         break;
       }
+
       case "minMessages": {
         this._chatMinMessages = "";
         break;
       }
+
       case "maxMessages": {
         this._chatMaxMessages = "";
         break;
       }
+
       case "updatedSince": {
         this._chatUpdatedSince = "";
         break;
       }
     }
+
     await this.applyChatFilters();
   },
 

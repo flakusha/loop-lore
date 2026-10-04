@@ -43,10 +43,12 @@ describe("Message edge-cases E2E", () => {
       content: "",
       role: "user",
     },);
+
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     expect(res.status,).toBeLessThan(500,);
   });
+
   test("POST message with whitespace-only content is rejected (400)", async () => {
     // BUG-message-whitespace-only-accepted fixed: route now trims and
     // rejects whitespace-only payloads before any side effect.
@@ -54,9 +56,11 @@ describe("Message edge-cases E2E", () => {
       content: "   \n\t  ",
       role: "user",
     },);
+
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(400,);
   });
+
   test("POST message with leading/trailing whitespace is accepted (trimmed, not rejected)", async () => {
     // BUG-message-whitespace-only-accepted fixed: trailing/leading whitespace
     // is trimmed at the route boundary, so the message is persisted with
@@ -67,16 +71,19 @@ describe("Message edge-cases E2E", () => {
       content: "   hello world\n\n",
       role: "user",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.status,).toBe(201,);
     const created = (res.data ?? {}) as { id?: string };
     expect(typeof created.id,).toBe("string",);
   });
+
   test("POST message with unknown role is rejected (4xx)", async () => {
     const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "hi",
       role: "moderator-impersonator",
     },);
+
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     expect(res.status,).toBeLessThan(500,);
@@ -87,6 +94,7 @@ describe("Message edge-cases E2E", () => {
       content: { "$gt": "", },
       role: "user",
     },);
+
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     expect(res.status,).toBeLessThan(500,);
@@ -100,6 +108,7 @@ describe("Message edge-cases E2E", () => {
       content: huge,
       role: "user",
     },);
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -111,6 +120,7 @@ describe("Message edge-cases E2E", () => {
       content: sent,
       role: "user",
     },);
+
     expect(res.ok,).toBe(true,);
 
     const list = await api.get<{ data: Array<{ content: string }> }>(`/api/v1/chats/${SEED.chat.id}/messages`,);
@@ -125,6 +135,7 @@ describe("Message edge-cases E2E", () => {
       content: text,
       role: "user",
     },);
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -135,6 +146,7 @@ describe("Message edge-cases E2E", () => {
       content: "'; DROP TABLE messages; --",
       role: "user",
     },);
+
     expect(res.status,).toBeLessThan(500,);
     // Table must still exist:
     const probe = await server.db
@@ -142,6 +154,7 @@ describe("Message edge-cases E2E", () => {
       .select("id",)
       .limit(1,)
       .executeTakeFirst();
+
     expect(probe,).toBeTruthy();
   });
 
@@ -160,12 +173,14 @@ describe("Message edge-cases E2E", () => {
         settings: "{}",
       },)
       .execute();
+
     const apiB = createClient(server.url,);
     await apiB.loginAs("edgeOther", "password",);
     const res = await apiB.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "I should not post here",
       role: "user",
     },);
+
     expect([403, 404,],).toContain(res.status,);
   });
 
@@ -196,6 +211,7 @@ describe("Message edge-cases E2E", () => {
       content: "to-delete",
       role: "user",
     },);
+
     const msgId = createRes.data!.id;
 
     const delRes = await api.del(`/api/v1/messages/${msgId}`,);
@@ -211,6 +227,7 @@ describe("Message edge-cases E2E", () => {
       content: "double-delete",
       role: "user",
     },);
+
     const msgId = createRes.data!.id;
 
     await api.del(`/api/v1/messages/${msgId}`,);
@@ -226,6 +243,7 @@ describe("Message edge-cases E2E", () => {
       content: xss,
       role: "user",
     },);
+
     expect(res.ok,).toBe(true,);
 
     const list = await api.get<{ data: Array<{ content: string }> }>(`/api/v1/chats/${SEED.chat.id}/messages`,);

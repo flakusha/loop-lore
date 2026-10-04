@@ -65,6 +65,7 @@ describe("story-items handlers coverage", () => {
     const worldsApp = new Elysia({ name: "test-story-items-world", },)
       .derive({ as: "scoped", }, () => ({ userId: owner, userRole: "user", }),)
       .use(worldsRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
+
     const res = await worldsApp.handle(
       new Request("http://localhost/api/worlds", {
         method: "POST",
@@ -72,6 +73,7 @@ describe("story-items handlers coverage", () => {
         body: JSON.stringify({ name: "Item World", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const created: { id: string } = await res.json();
     worldId = created.id;
@@ -112,6 +114,7 @@ describe("story-items handlers coverage", () => {
       undefined,
       { name: "Sword", category: "weapon", rarity: "rare", },
     );
+
     expect(created.status,).toBe(201,);
     const createdBody: { id: string } = await created.json();
     expect(createdBody.id.length,).toBeGreaterThan(0,);
@@ -131,6 +134,7 @@ describe("story-items handlers coverage", () => {
     const deniedPost = await handleDefinitions(db, "POST", worldId, stranger, "user", 1, 20, undefined, {
       name: "X",
     },);
+
     expect(deniedPost.status,).toBe(404,);
     const missing = await handleDefinitions(db, "GET", uid(), owner, "user", 1, 20,);
     expect(missing.status,).toBe(404,);
@@ -148,6 +152,7 @@ describe("story-items handlers coverage", () => {
       undefined,
       { name: "Shield", },
     );
+
     const createdBody: { id: string } = await created.json();
 
     const fetched = await handleDefinition(db, "GET", worldId, createdBody.id, owner, "user",);
@@ -159,6 +164,7 @@ describe("story-items handlers coverage", () => {
       name: "Aegis",
       properties: { defense: 5, },
     },);
+
     expect(updated.status,).toBe(200,);
     const updatedBody: { name: string } = await updated.json();
     expect(updatedBody.name,).toBe("Aegis",);
@@ -176,6 +182,7 @@ describe("story-items handlers coverage", () => {
       undefined,
       { name: "Helm", },
     );
+
     const createdBody: { id: string } = await created.json();
 
     const denied = await handleDefinition(db, "GET", worldId, createdBody.id, stranger, "user",);
@@ -187,6 +194,7 @@ describe("story-items handlers coverage", () => {
     const deniedPut = await handleDefinition(db, "PUT", worldId, createdBody.id, stranger, "user", {
       name: "Z",
     },);
+
     expect(deniedPut.status,).toBe(404,);
   });
 
@@ -202,6 +210,7 @@ describe("story-items handlers coverage", () => {
       undefined,
       { name: "Doomed", },
     );
+
     const createdBody: { id: string } = await created.json();
     const denied = await handleDeleteDefinition(db, worldId, createdBody.id, stranger, "user",);
     expect(denied.status,).toBe(404,);
@@ -223,6 +232,7 @@ describe("story-items handlers coverage", () => {
       undefined,
       { name: "Potion", category: "consumable", },
     );
+
     const createdBody: { id: string } = await created.json();
     const instanceId = uid();
     await insertWorldItems(db, worldId, createdBody.id, { id: instanceId, } as never,);
@@ -248,6 +258,7 @@ describe("story-items handlers coverage", () => {
       undefined,
       { name: "Ring", },
     );
+
     const createdBody: { id: string } = await created.json();
     const instanceId = uid();
     await insertWorldItems(db, worldId, createdBody.id, { id: instanceId, quantity: 2, } as never,);
@@ -255,11 +266,13 @@ describe("story-items handlers coverage", () => {
     const deniedTransfer = await handleTransfer(db, worldId, instanceId, stranger, "user", {
       quantity: 1,
     },);
+
     expect(deniedTransfer.status,).toBe(404,);
     const moved = await handleTransfer(db, worldId, instanceId, owner, "user", {
       quantity: 1,
       toActorId: owner,
     },);
+
     expect(moved.status,).toBe(200,);
 
     const deniedDestroy = await handleInstance(db, worldId, instanceId, stranger, "user",);
@@ -275,6 +288,7 @@ describe("story-items handlers coverage", () => {
     const res = await handleDefinitions(db, "POST", worldId, owner, "user", 1, 20, undefined, {
       name: hugeName,
     },);
+
     expect(res.status,).toBe(201,);
     const body: { id: string } = await res.json();
     const fetched = await handleDefinition(db, "GET", worldId, body.id, owner, "user",);
@@ -287,6 +301,7 @@ describe("story-items handlers coverage", () => {
     const res = await handleDefinitions(db, "POST", worldId, owner, "user", 1, 20, undefined, {
       name: weirdName,
     },);
+
     expect(res.status,).toBe(201,);
   });
 
@@ -295,6 +310,7 @@ describe("story-items handlers coverage", () => {
     const res = await handleDefinitions(db, "POST", worldId, owner, "user", 1, 20, undefined, {
       name: unicode,
     },);
+
     expect(res.status,).toBe(201,);
     const body: { id: string } = await res.json();
     const fetched = await handleDefinition(db, "GET", worldId, body.id, owner, "user",);
@@ -307,6 +323,7 @@ describe("story-items handlers coverage", () => {
       name: "Mystery",
       category: "definitely-not-valid",
     },);
+
     expect(res.status,).toBe(201,);
     const body: { id: string } = await res.json();
     const fetched = await handleDefinition(db, "GET", worldId, body.id, owner, "user",);
@@ -320,6 +337,7 @@ describe("story-items handlers coverage", () => {
       name: "Nested",
       properties: deep,
     },);
+
     expect(res.status,).toBe(201,);
     const body: { id: string } = await res.json();
     const fetched = await handleDefinition(db, "GET", worldId, body.id, owner, "user",);

@@ -70,20 +70,24 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
     if (!query || this._gifLoading) {
       return;
     }
+
     this._gifLoading = true;
     try {
       const res = await apiFetch(
         `/api/v1/gifs/search?q=${encodeURIComponent(query,)}&limit=${GIF_SEARCH_LIMIT}`,
       );
+
       if (!res.ok) {
         const message = res.status === 501
           ? t("gifPicker.notConfigured",)
           : res.status === 429
           ? t("gifPicker.rateLimited",)
           : t("gifPicker.searchFailed",);
+
         this.$dispatch?.("show-toast", { type: res.status === 501 ? "info" : "error", message, },);
         return;
       }
+
       const body = await res.json() as { data?: GifResult[] };
       this._gifResults = Array.isArray(body.data,) ? body.data : [];
       this._gifActiveIndex = 0;
@@ -104,6 +108,7 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
     if (count === 0) {
       return;
     }
+
     this._gifActiveIndex = (this._gifActiveIndex + delta + count) % count;
   },
 
@@ -115,6 +120,7 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
     if (!this._gifOpen) {
       return;
     }
+
     if (event.key === "ArrowDown") {
       event.preventDefault();
       this.moveGifSelection(1,);
@@ -138,6 +144,7 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
     if (!result) {
       return;
     }
+
     await this.insertGif(result,);
   },
 
@@ -151,6 +158,7 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
       this.$dispatch?.("show-toast", { type: "warning", message: t("gifPicker.noActiveChat",), },);
       return;
     }
+
     try {
       // safeFetch is text/JSON-only; the GIF binary re-upload needs Response.blob().
       // eslint-disable-next-line no-restricted-syntax
@@ -159,6 +167,7 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
         this.$dispatch?.("show-toast", { type: "error", message: t("gifPicker.downloadFailed",), },);
         return;
       }
+
       const blob = await downloaded.blob();
       const formData = new FormData();
       formData.append("file", new File([blob,], filename, { type: "image/gif", },),);
@@ -170,8 +179,10 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
           type: "error",
           message: err?.error ?? t("gifPicker.attachFailed", { filename, },),
         },);
+
         return;
       }
+
       const asset = await res.json() as { id: string };
       this.pendingAssets = [...this.pendingAssets, { assetId: asset.id, filename, },];
       this._gifOpen = false;

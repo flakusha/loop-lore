@@ -80,6 +80,7 @@ export function buildIdRoutes(opts: BuildIdRouteOpts = {},): Elysia {
           tags: ["Federation", "BuildId", "Admin",],
         },
       },);
+
       return sub;
     },
   );

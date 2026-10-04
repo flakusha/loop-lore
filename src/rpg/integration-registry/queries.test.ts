@@ -132,6 +132,7 @@ describe("getEdge / getGap", () => {
       target: "social",
       gap: { gapId: "G1", severity: "high", resolved: false, },
     },);
+
     const plain = edge({ source: "battle", target: "items", },);
     registry.addEdge(gapped,);
     registry.addEdge(plain,);
@@ -149,21 +150,25 @@ describe("getUnresolvedGaps", () => {
       target: "items",
       gap: { gapId: "G-low", severity: "low", resolved: false, },
     },),);
+
     registry.addEdge(edge({
       source: "crime",
       target: "social",
       gap: { gapId: "G-high", severity: "high", resolved: false, },
     },),);
+
     registry.addEdge(edge({
       source: "magic",
       target: "weather",
       gap: { gapId: "G-med", severity: "medium", resolved: false, },
     },),);
+
     registry.addEdge(edge({
       source: "economy",
       target: "housing",
       gap: { gapId: "G-done", severity: "high", resolved: true, },
     },),);
+
     const ids = registry.getUnresolvedGaps().map((e,) => e.gap?.gapId);
     expect(ids,).toEqual(["G-high", "G-med", "G-low",],);
   });
@@ -179,6 +184,7 @@ describe("getEvents", () => {
       source: "items",
       target: "battle",
     },);
+
     const other = event({ id: "weather.changed", source: "weather", target: "exploration", },);
     registry.addEdge(edge({ source: "battle", target: "items", events: [emitted, subscribed,], },),);
     registry.addEdge(edge({ source: "weather", target: "exploration", events: [other,], },),);
@@ -212,6 +218,7 @@ describe("getStateLayers / getGraph", () => {
       target: "battle",
       direction: EdgeDirection.Bidirectional,
     },),);
+
     const graph = registry.getGraph();
     expect(graph.get("battle",),).toEqual(["items", "crafting",],);
     expect(graph.get("crafting",),).toEqual(["battle",],);

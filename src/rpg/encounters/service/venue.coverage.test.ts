@@ -131,6 +131,7 @@ describe("resolveAtmosphereBonus", () => {
       log,
       enc,
     );
+
     expect(bonus,).toBe(0,);
     expect(log.warns.length,).toBe(1,);
     expect(log.warns[0],).toContain(enc,);

@@ -132,6 +132,7 @@ export async function spill(id: string, body: string,): Promise<string> {
     mkdirSync(spillDir, { recursive: true, },);
     writeFileSync(filePath, compressed,);
   }
+
   return filePath;
 }
 
@@ -174,5 +175,6 @@ export function offloadDiskBytes(): number {
       total += statSync(path.join(spillDir, name,),).size;
     } catch { /* raced with another writer */ }
   }
+
   return total;
 }

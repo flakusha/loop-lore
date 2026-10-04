@@ -41,6 +41,7 @@ async function worldOwnershipCheck({
     .select("owner_id",)
     .where("id", "=", parentId,)
     .executeTakeFirst();
+
   if (!world || (!can(userRole, "admin.world",) && world.owner_id !== userId)) { return false; }
 
   const entityId = _entityId;
@@ -51,8 +52,10 @@ async function worldOwnershipCheck({
       .where("id", "=", entityId,)
       .where("world_id", "=", parentId,)
       .executeTakeFirst();
+
     return !!entry;
   }
+
   return true;
 }
 

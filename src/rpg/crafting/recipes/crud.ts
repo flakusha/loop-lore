@@ -106,6 +106,7 @@ export async function listRecipes(
   if (opts?.discipline) {
     query = query.where("discipline", "=", opts.discipline,);
   }
+
   if (opts?.tier) {
     query = query.where("tier", "=", opts.tier,);
   }

@@ -89,6 +89,7 @@ describeReal("Real-Server Generation E2E", () => {
         ctxSize: 8192,
         extraArgs: ["--alias", "e2e-model",],
       },);
+
       log.info(
         llamaInstance
           ? `llama.cpp ready :${llamaPort}`
@@ -102,6 +103,7 @@ describeReal("Real-Server Generation E2E", () => {
         modelPath: sdModel,
         extraArgs: ["--rng", "cpu", "--sampler-rng", "cpu",],
       },);
+
       log.info(
         sdInstance
           ? `sd-server ready :${sdPort}`
@@ -238,6 +240,7 @@ describeReal("Real-Server Generation E2E", () => {
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({},),
       },);
+
       expect(res.status,).toBeGreaterThanOrEqual(400,);
       expect(res.status,).toBeLessThan(500,);
     });

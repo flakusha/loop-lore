@@ -55,6 +55,7 @@ globalThis.personasPage = function() {
           if (p.status !== "healthy") { continue; }
           await this._collectModelsForProvider(p.name, models,);
         }
+
         this.personaAvailableModels = models;
       } catch {
         /* network error — keep empty */
@@ -71,6 +72,7 @@ globalThis.personasPage = function() {
         const modelsRes = await apiFetch(`/api/v1/admin/providers/${providerName}/models`, {
           headers: { Accept: "application/json", },
         },);
+
         if (!modelsRes.ok) { return; }
         const modelsData = await modelsRes.json();
         const discovered = modelsData.models || [];
@@ -97,6 +99,7 @@ globalThis.personasPage = function() {
       } catch (error) {
         log.warn("loadPersonas failed", { error: String(error,), },);
       }
+
       this.loading = false;
     },
 
@@ -109,6 +112,7 @@ globalThis.personasPage = function() {
         this.filtered = this.personas;
         return;
       }
+
       const out: PersonaItem[] = [];
       const personas = this.personas;
       for (const p of personas) { if (p.name.toLowerCase().includes(q,)) { out.push(p,); } }
@@ -178,6 +182,7 @@ globalThis.personasPage = function() {
       } catch (error) {
         log.warn("savePersona failed", { error: String(error,), },);
       }
+
       this.saving = false;
     },
 

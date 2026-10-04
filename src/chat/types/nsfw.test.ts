@@ -20,6 +20,7 @@ describe("nsfw types rating wiring (B4)", () => {
       rating: NSFWContentRating.NSFW_EXTREME,
       timestamp: new Date(),
     };
+
     expect(action.rating,).toBe(NSFWContentRating.NSFW_EXTREME,);
   });
 
@@ -32,6 +33,7 @@ describe("nsfw types rating wiring (B4)", () => {
       internal: true,
       timestamp: new Date(),
     };
+
     expect(action.rating,).toBeUndefined();
   });
 

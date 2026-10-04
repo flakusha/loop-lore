@@ -29,6 +29,7 @@ function createApp(
   const config = {
     auth: { jwtSecret: "test-jwt-secret", jwtExpiresIn: 86_400, },
   } as unknown as Config;
+
   return new Elysia({ name: "test-sessions", },)
     .derive(() => ({ userId, userRole, sessionId, }))
     .use(sessionsRoutes({ database: db, },),)
@@ -203,6 +204,7 @@ describe("sessionsRoutes", () => {
       isCurrent: boolean;
       token_hash?: string;
     };
+
     expect(body.id,).toBe(sessionId,);
     expect(body.userId,).toBe(userId,);
     expect(body.ip,).toBe("127.0.0.1",);
@@ -301,6 +303,7 @@ describe("sessionsRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/sessions/${targetSessionId}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
 
     const session = await db
@@ -308,6 +311,7 @@ describe("sessionsRoutes", () => {
       .select("id",)
       .where("id", "=", targetSessionId,)
       .executeTakeFirst();
+
     expect(session,).toBeUndefined();
   });
 
@@ -329,6 +333,7 @@ describe("sessionsRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/sessions/${currentSessionId}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(400,);
     const body = (await res.json()) as { error: string };
     expect(body.error,).toContain("current session",);
@@ -352,6 +357,7 @@ describe("sessionsRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/sessions/${otherSessionId}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -397,6 +403,7 @@ describe("sessionsRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/sessions/${targetSessionId}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
 
     const session = await db
@@ -404,6 +411,7 @@ describe("sessionsRoutes", () => {
       .select("id",)
       .where("id", "=", targetSessionId,)
       .executeTakeFirst();
+
     expect(session,).toBeUndefined();
   });
 
@@ -412,6 +420,7 @@ describe("sessionsRoutes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/sessions/nonexistent-id", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -420,6 +429,7 @@ describe("sessionsRoutes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/sessions/x/switch", { method: "POST", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -450,10 +460,12 @@ describe("sessionsRoutes", () => {
         },
       ],)
       .execute();
+
     const app = createApp(db, userId, "user", currentId,);
     const res = await app.handle(
       new Request(`http://localhost/api/sessions/${targetId}/switch`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
     const setCookie = res.headers.get("Set-Cookie",) ?? "";
     const token = setCookie.split(";",).at(0,)?.split("=",).at(1,) ?? "";
@@ -463,6 +475,7 @@ describe("sessionsRoutes", () => {
     if (verified.valid) { expect(verified.payload.sid,).toBe(targetId,); }
     const row = await db.selectFrom("sessions",).select("last_activity",).where("id", "=", targetId,)
       .executeTakeFirstOrThrow();
+
     expect(Date.parse(row.last_activity as string,),).toBeGreaterThan(Date.parse(staleActivity,),);
   });
 
@@ -479,10 +492,12 @@ describe("sessionsRoutes", () => {
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
       },],)
       .execute();
+
     const app = createApp(db, userId, "user",);
     const res = await app.handle(
       new Request(`http://localhost/api/sessions/${foreignId}/switch`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -499,10 +514,12 @@ describe("sessionsRoutes", () => {
         expires_at: new Date(Date.now() - 60_000,).toISOString(),
       },],)
       .execute();
+
     const app = createApp(db, userId, "user",);
     const res = await app.handle(
       new Request(`http://localhost/api/sessions/${staleId}/switch`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(410,);
     const row = await db.selectFrom("sessions",).select("id",).where("id", "=", staleId,).executeTakeFirst();
     expect(row,).toBeUndefined();

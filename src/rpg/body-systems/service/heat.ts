@@ -184,5 +184,6 @@ export async function getHeatEffects(
       desireIntensity: 1,
     };
   }
+
   return cycle.effects;
 }

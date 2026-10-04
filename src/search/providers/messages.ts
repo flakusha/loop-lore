@@ -67,6 +67,7 @@ function accessWhere(scope: Extract<SearchScope, { kind: "messages" }>,): Return
       SELECT id FROM chats WHERE created_by = ${scope.userId}
     )`,);
   }
+
   if (scope.chatId !== undefined) { parts.push(sql`m.chat_id = ${scope.chatId}`,); }
   if (parts.length === 0) { return sql`1 = 1`; }
   return sql.join(parts, sql` AND `,);
@@ -105,6 +106,7 @@ export function createMessageProviders(
       SELECT m.id, m.chat_id, m.role, m.content_plaintext, m.created_at
       FROM messages m WHERE m.id = ${query.q} AND ${access} LIMIT 1
     `.execute(db,);
+
     const row = rows.rows[0];
     if (row === undefined) { return []; }
     return [{ ...toHit(row, 1,), source: "db", },];
@@ -125,6 +127,7 @@ export function createMessageProviders(
       WHERE messages_fts MATCH ${ftsQuery} AND ${access}
       ORDER BY rank ASC LIMIT ${topK}
     `.execute(db,);
+
     return rows.rows.map((row,) => toHit(row, bm25ToScore(-row.rank,), row.snippet,));
   };
 
@@ -144,6 +147,7 @@ export function createMessageProviders(
       SELECT m.id, m.chat_id, m.role, m.content_plaintext, m.created_at
       FROM messages m WHERE m.id IN (${idList}) AND ${access}
     `.execute(db,);
+
     const byId = new Map(rows.rows.map((row,) => [row.id, row,]),);
     const ceiling = matches[0]?.hits ?? 1;
     const hits: SearchHit<MessageHit>[] = [];
@@ -153,6 +157,7 @@ export function createMessageProviders(
         hits.push({ ...toHit(row, match.hits / ceiling,), source: "token", encryptedMatch: true, },);
       }
     }
+
     return hits;
   };
 

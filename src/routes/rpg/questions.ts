@@ -45,6 +45,7 @@ async function checkChatOwnership(
   const chat = await database.selectFrom("chats",).select(["created_by",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   return !!chat && (chat.created_by === userId || can(userRole, "admin.chat",));
 }
 
@@ -66,6 +67,7 @@ async function checkEmitterActor(
   const actor = await database.selectFrom("actors",).select(["owner_id", "user_id",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   if (!actor) { return false; }
   return actor.owner_id === userId || actor.user_id === userId;
 }
@@ -82,8 +84,10 @@ function questionErrorResponse(error: unknown, fallback: string,): Response {
       : error.code === "not_open"
       ? HttpStatus.Conflict
       : HttpStatus.BadRequest;
+
     return jsonError({ message: error.message, status, },);
   }
+
   log().error("RPG question request failed", error instanceof Error ? error : undefined,);
   return jsonError({ message: fallback, status: HttpStatus.InternalServerError, },);
 }
@@ -106,6 +110,7 @@ export function questionsRoutes({ database, }: HandlerOpts, prefix = "/api",): E
       if (!(await checkChatOwnership(database, chatId, userId, ctx.userRole ?? null,))) {
         return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, },);
       }
+
       try {
         const body = ctx.body as {
           actorId: string;
@@ -119,9 +124,11 @@ export function questionsRoutes({ database, }: HandlerOpts, prefix = "/api",): E
           timeLimit?: number | null;
           requiredChoice?: number;
         };
+
         if (!(await checkEmitterActor(database, body.actorId, userId, ctx.userRole ?? null,))) {
           return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
         }
+
         const question = await createQuestion(database, {
           chatId,
           actorId: body.actorId,
@@ -135,6 +142,7 @@ export function questionsRoutes({ database, }: HandlerOpts, prefix = "/api",): E
           timeLimit: body.timeLimit ?? null,
           requiredChoice: body.requiredChoice ?? 1,
         },);
+
         return jsonResponse(question, HttpStatus.Created,);
       } catch (error) {
         return questionErrorResponse(error, "Failed to create question",);
@@ -157,6 +165,7 @@ export function questionsRoutes({ database, }: HandlerOpts, prefix = "/api",): E
       if (!(await checkChatOwnership(database, chatId, userId, ctx.userRole ?? null,))) {
         return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, },);
       }
+
       const questions = await getOpenQuestions(database, chatId,);
       return jsonResponse({ questions, },);
     }, {
@@ -176,16 +185,19 @@ export function questionsRoutes({ database, }: HandlerOpts, prefix = "/api",): E
         if (!answeredBy) {
           return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
         }
+
         const { optionId, value, } = ctx.body as {
           optionId?: string;
           value?: string | number;
         };
+
         const answered = await answerQuestion(
           database,
           ctx.params.id as string,
           { optionId, value, },
           answeredBy,
         );
+
         return jsonResponse(answered,);
       } catch (error) {
         return questionErrorResponse(error, "Failed to answer question",);

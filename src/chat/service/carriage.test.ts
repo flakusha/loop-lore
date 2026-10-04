@@ -59,6 +59,7 @@ describe("carriage service", () => {
       scope: "session",
       payload: { step: 1, },
     },);
+
     await new Promise((resolve,) => setTimeout(resolve, 5,));
     const second = await recordCarriage(db, {
       chatId,
@@ -86,6 +87,7 @@ describe("carriage service", () => {
         payload: {},
       },),
     ).rejects.toThrow("Invalid carriage scope",);
+
     expect(isCarriageScope("section",),).toBe(true,);
     expect(isCarriageScope("nope",),).toBe(false,);
   });
@@ -108,6 +110,7 @@ describe("carriage service", () => {
       await recordCarriage(db, { chatId, scope: "section", payload: { i, }, },);
       await new Promise((resolve,) => setTimeout(resolve, 5,));
     }
+
     const capped = await listCarriage(db, chatId, { limit: 1, },);
     expect(capped,).toHaveLength(1,);
     const clamped = await listCarriage(db, chatId, { limit: 9_999, },);
@@ -145,6 +148,7 @@ describe("emitter wiring", () => {
       .insertInto("chat_sections",)
       .values({ id: crypto.randomUUID(), chat_id: sourceChatId, label: "Journey 1", },)
       .execute();
+
     await db
       .insertInto("chat_sections",)
       .values({ id: crypto.randomUUID(), chat_id: sourceChatId, label: "Journey 2", },)
@@ -172,11 +176,13 @@ describe("emitter wiring", () => {
       actor_type: "narrator",
       agent_type: "narrator",
     } as never,);
+
     await insertChats(db, "Party Dungeon", OWNER_ID, {
       id: srcChatId,
       type: "group",
       mode: "group",
     } as never,);
+
     await insertChatParticipants(db, srcChatId, OWNER_ID, { role_in_chat: ChatParticipantRole.Owner, },);
     await insertChatParticipants(db, srcChatId, heroId, { role_in_chat: ChatParticipantRole.Member, },);
     await insertChatParticipants(db, srcChatId, rogueId, { role_in_chat: ChatParticipantRole.Member, },);
@@ -194,6 +200,7 @@ describe("emitter wiring", () => {
         { locationId: "cave", actorIds: [rogueId,], name: "Main", },
       ],
     },);
+
     expect("ok" in result && result.ok,).toBe(true,);
 
     const rows = await listCarriage(db, srcChatId,);
@@ -202,6 +209,7 @@ describe("emitter wiring", () => {
     const payload = JSON.parse(rows[0]?.payload ?? "{}",) as {
       branches: Array<{ locationId: string }>;
     };
+
     expect(payload.branches,).toHaveLength(2,);
     expect(payload.branches.map((b,) => b.locationId).sort(),).toEqual(["cave", "forest",],);
   });
@@ -214,6 +222,7 @@ describe("emitter wiring", () => {
       "Carriage Template",
       { mode: "direct", } as never,
     );
+
     await insertChats(db, "To Migrate", OWNER_ID, { id: sourceChatId, } as never,);
 
     const result = await migrateChat(db, sourceChatId, {
@@ -222,6 +231,7 @@ describe("emitter wiring", () => {
       name: "Migrated",
       carry: {},
     },);
+
     expect("ok" in result && result.ok,).toBe(true,);
     if (!("ok" in result)) {
       return;

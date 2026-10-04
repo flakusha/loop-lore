@@ -57,6 +57,7 @@ async function seedUser(db: Kysely<DB>,): Promise<string> {
     user_id: userId,
     owner_id: userId,
   } as never,);
+
   return userId;
 }
 
@@ -93,11 +94,13 @@ async function seedChat(
     is_pinned: opts.isPinned ?? "unpinned",
     updated_at: opts.updatedAt,
   } as never,);
+
   await insertChatParticipants(db, chatId, userId, {},);
   await insertActors(db, opts.characterName ?? "Bot Character", {
     id: characterId,
     actor_type: "character",
   } as never,);
+
   await insertChatParticipants(db, chatId, characterId, {},);
   return chatId;
 }
@@ -110,6 +113,7 @@ describe("searchRoutes — GET /api/chats/search", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=group",),
     );
+
     expect(res.status,).toBe(401,);
     await db.destroy();
   });
@@ -123,6 +127,7 @@ describe("searchRoutes — GET /api/chats/search", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=group",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     expect(body.data,).toEqual([],);
@@ -143,6 +148,7 @@ describe("searchRoutes — GET /api/chats/search", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=group",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     expect(body.data.map((r,) => r.chatId),).toContain(chatId,);
@@ -162,6 +168,7 @@ describe("searchRoutes — GET /api/chats/search", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=group",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     const ids = body.data.map((r,) => r.chatId);
@@ -186,6 +193,7 @@ describe("searchRoutes — GET /api/chats/search", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/search?type=group&world=${worldA}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     const ids = body.data.map((r,) => r.chatId);
@@ -203,6 +211,7 @@ describe("searchRoutes — GET /api/chats/search", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=invalid",),
     );
+
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     await db.destroy();
   });
@@ -215,6 +224,7 @@ describe("searchRoutes — GET /api/chats/search", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=group&world=not-a-uuid",),
     );
+
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     await db.destroy();
   });
@@ -234,6 +244,7 @@ describe("searchRoutes — GET /api/chats/search", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=group",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     expect(body.pagination.total,).toBe(0,);
@@ -251,6 +262,7 @@ describe("searchRoutes — GET /api/chats/search", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=group&limit=5",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     expect(body.pagination.pageSize,).toBe(5,);
@@ -270,6 +282,7 @@ describe("searchRoutes — GET /api/chats/search", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=direct",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     const ids = body.data.map((r,) => r.chatId);
@@ -298,11 +311,13 @@ describe("searchRoutes — include_archived + search_priority", () => {
       isPinned: "archived",
       updatedAt: "2024-01-01T00:00:00.000Z",
     },);
+
     const liveId = await seedChat(db, userId, {
       name: liveName,
       isPinned: "unpinned",
       updatedAt: "2026-01-01T00:00:00.000Z",
     },);
+
     return { archivedId, liveId, };
   }
 
@@ -316,6 +331,7 @@ describe("searchRoutes — include_archived + search_priority", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=group",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     const ids = body.data.map((r,) => r.chatId);
@@ -335,6 +351,7 @@ describe("searchRoutes — include_archived + search_priority", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=group&includeArchived=true",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     const ids = body.data.map((r,) => r.chatId);
@@ -354,6 +371,7 @@ describe("searchRoutes — include_archived + search_priority", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/search?type=group&includeArchived=true",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     const order = body.data.map((r,) => r.chatId);
@@ -375,6 +393,7 @@ describe("searchRoutes — include_archived + search_priority", () => {
         "http://localhost/api/chats/search?type=group&includeArchived=true&searchPriority=archive_first",
       ),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     const order = body.data.map((r,) => r.chatId);
@@ -400,6 +419,7 @@ describe("searchRoutes — include_archived + search_priority", () => {
         "http://localhost/api/chats/search?type=group&searchPriority=archive_first",
       ),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
     expect(body.data,).toEqual([],);
@@ -417,6 +437,7 @@ describe("searchRoutes — include_archived + search_priority", () => {
         "http://localhost/api/chats/search?type=group&includeArchived=true&searchPriority=invalid",
       ),
     );
+
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     await db.destroy();
   });

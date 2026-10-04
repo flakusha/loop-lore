@@ -58,6 +58,7 @@ describe("select gaps — ordering and caps", () => {
       makeMemory({ id: "low", importance: 0.2, },),
       makeMemory({ id: "high", importance: 0.9, },),
     ];
+
     const { selected, rejected, } = selectMemoriesForInjection(memories, config, ctx,);
     expect(selected.map((m,) => m.id),).toEqual(["high", "low",],);
     expect(rejected,).toEqual([],);
@@ -68,11 +69,13 @@ describe("select gaps — ordering and caps", () => {
       makeMemory({ id: "a", importance: 0.9, },),
       makeMemory({ id: "b", importance: 0.5, },),
     ];
+
     const { selected, rejected, } = selectMemoriesForInjection(
       memories,
       { ...config, maxPerMessage: 1, },
       ctx,
     );
+
     expect(selected.map((m,) => m.id),).toEqual(["a",],);
     expect(rejected,).toHaveLength(1,);
     expect(rejected[0]?.memory.id,).toBe("b",);
@@ -99,6 +102,7 @@ describe("select gaps — ordering and caps", () => {
       DEFAULT_COMFORT,
       history,
     );
+
     expect(selected,).toEqual([],);
     expect(rejected[0]?.reason,).toBe("cooldown: 2 turns remaining",);
   });

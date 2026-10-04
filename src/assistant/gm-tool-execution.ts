@@ -96,15 +96,19 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
     logger.debug("GM tool detection threw; skipping execution", {
       error: toErrorMessage(error,),
     },);
+
     return noop;
   }
+
   if (!detection || detection.name === "none" || detection.confidence < CONFIDENCE_THRESHOLD) {
     logger.debug("GM tool detection not actionable", {
       name: detection?.name ?? null,
       confidence: detection?.confidence ?? null,
     },);
+
     return noop;
   }
+
   const toolName: GmToolName = detection.name;
   const mapping = TOOL_COMMANDS[toolName];
   if (!mapping) {
@@ -117,6 +121,7 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
     logger.debug("GM tool command not registered", { command: mapping.command, },);
     return noop;
   }
+
   const requiredRole = getCommandRequirement(mapping.command,);
   if (requiredRole && !satisfiesRole(roleInChat, requiredRole,)) {
     logger.debug("GM tool request denied by role gate", { command: mapping.command, },);
@@ -141,12 +146,15 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
       command: mapping.command,
       error: toErrorMessage(error,),
     },);
+
     return noop;
   }
+
   if (!result.handled || !result.systemMessage) {
     logger.debug("GM tool command produced no system message; treating as no-op", {
       command: mapping.command,
     },);
+
     return noop;
   }
 

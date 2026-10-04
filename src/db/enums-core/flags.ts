@@ -161,6 +161,7 @@ const pluginStatusDef: StateDef<PluginStatus> = {
   },
   terminal: [],
 };
+
 export const pluginStatusMachine = createMachine(pluginStatusDef,);
 
 const notificationStatusDef: StateDef<NotificationStatus> = {
@@ -173,6 +174,7 @@ const notificationStatusDef: StateDef<NotificationStatus> = {
   },
   terminal: ["archived",],
 };
+
 export const notificationStatusMachine = createMachine(notificationStatusDef,);
 
 const inviteStatusDef: StateDef<InviteStatus> = {
@@ -186,6 +188,7 @@ const inviteStatusDef: StateDef<InviteStatus> = {
   },
   terminal: ["revoked", "expired", "exhausted",],
 };
+
 export const inviteStatusMachine = createMachine(inviteStatusDef,);
 
 // ── Message Seen State ──────────────────────────────────
@@ -207,4 +210,5 @@ const messageSeenStateDef: StateDef<MessageSeenState> = {
   },
   terminal: [],
 };
+
 export const messageSeenStateMachine = createMachine(messageSeenStateDef,);

@@ -16,6 +16,7 @@ function mount(role: string | null,) {
   const app = new Elysia()
     .derive(() => ({ userId: "admin-1", userRole: role, }))
     .use(cronRoutes({ database: {} as Db, config: configSchema.defaults, },),);
+
   return app;
 }
 
@@ -31,6 +32,7 @@ describe("admin cron routes", () => {
         return handle;
       },
     },);
+
     try {
       const app = mount("admin",);
       const list = await app.handle(new Request("http://localhost/api/admin/cron/jobs",),);
@@ -41,11 +43,13 @@ describe("admin cron routes", () => {
       const run = await app.handle(
         new Request("http://localhost/api/admin/cron/jobs/a.job/run", { method: "POST", },),
       );
+
       expect(run.status,).toBe(200,);
 
       const missing = await app.handle(
         new Request("http://localhost/api/admin/cron/jobs/nope/run", { method: "POST", },),
       );
+
       expect(missing.status,).toBe(404,);
 
       const denied = await mount("user",).handle(new Request("http://localhost/api/admin/cron/jobs",),);

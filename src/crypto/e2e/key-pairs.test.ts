@@ -59,6 +59,7 @@ describe("ECDH shared-secret derivation", () => {
       aliceSession,
       new TextEncoder().encode(plaintext,),
     );
+
     const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv, }, bobSession, ciphertext,);
     expect(new TextDecoder().decode(decrypted,),).toBe(plaintext,);
   });
@@ -96,12 +97,14 @@ describe("Key pair import (JWK round-trip)", () => {
       publicKey: await exportPublicJwk(aliceOriginal.publicKey,),
       privateKey: await exportPrivateJwk(aliceOriginal.privateKey,),
     };
+
     const aliceReimported = await importKeyPair(aliceJwk,);
 
     const original = await deriveSharedSecret({
       privateKey: aliceOriginal.privateKey,
       publicKey: bobOriginal.publicKey,
     },);
+
     const reimported = await deriveSharedSecret({
       privateKey: aliceReimported.privateKey,
       publicKey: bobOriginal.publicKey,

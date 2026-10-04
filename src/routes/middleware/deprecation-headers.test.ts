@@ -70,6 +70,7 @@ describe("deprecationAfterHandle", () => {
     const set: { headers: Record<string, string> } = {
       headers: { "x-custom": "keep", },
     };
+
     hook({ set, } as any,);
     expect(set.headers["x-custom"],).toBe("keep",);
     expect(set.headers["Sunset"],).toBe(OPTIONS.sunset,);

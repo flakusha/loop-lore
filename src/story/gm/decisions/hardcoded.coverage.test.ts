@@ -133,6 +133,7 @@ describe("hardcodedDecision", () => {
         },
       ],
     },);
+
     const d = await hardcodedDecision(deps(), ctx, "actor-1",);
     expect(d.turnPrompt,).toContain("Health: 42/100. Mental state: wary.",);
     expect(d.turnPrompt,).toContain("Carrying: Torch×2, Dagger.",);
@@ -170,6 +171,7 @@ describe("hardcodedDecision", () => {
         },
       ],
     },);
+
     const d = await hardcodedDecision(deps(), ctx, "actor-1",);
     expect(d.turnPrompt,).toContain('Active quest: "Find the key" (1/3).',);
     expect(d.turnPrompt,).toContain('Previous: Hero said/did: "I search the cellar."',);
@@ -185,6 +187,7 @@ describe("hardcodedDecision", () => {
       context(),
       "actor-1",
     );
+
     expect(d.turnPrompt,).toContain("GM guidance — constraints: no violence; stay inside",);
     expect(d.turnPrompt,).toContain("GM scene direction: Rain hammers the roof.",);
   });
@@ -200,6 +203,7 @@ describe("hardcodedDecision", () => {
       context(),
       "actor-1",
     );
+
     expect(d.turnConstraints.maxTokens,).toBe(123,);
   });
 });

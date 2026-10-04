@@ -90,6 +90,7 @@ describe("NotificationService", () => {
       mentionedActorIds: [userB,],
       messageId: "m1",
     },);
+
     expect(await svc.getUnreadCount(userB,),).toBe(1,);
     expect(await svc.getUnreadCount(userA,),).toBe(0,);
   });

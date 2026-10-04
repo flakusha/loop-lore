@@ -47,6 +47,7 @@ async function insertUser(db: Kysely<DB>, userId: string, username: string,): Pr
       settings: "{}",
     },)
     .execute();
+
   await db
     .insertInto("actors",)
     .values({
@@ -108,6 +109,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ label: "Entering the Forest", locationId: locId, },),
       },),
     );
+
     expect(created.status,).toBe(201,);
     const sectionId = (await created.json()).id as string;
 
@@ -118,6 +120,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ label: "The Clearing", },),
       },),
     );
+
     expect(created2.status,).toBe(201,);
     const sectionId2 = (await created2.json()).id as string;
 
@@ -135,6 +138,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ label: "The Dark Forest", },),
       },),
     );
+
     expect(patched.status,).toBe(200,);
 
     const assign = await app.handle(
@@ -144,9 +148,11 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ sectionId, },),
       },),
     );
+
     expect(assign.status,).toBe(200,);
     const msgRow = await db.selectFrom("messages",).select("section_id",).where("id", "=", messageId,)
       .executeTakeFirst();
+
     expect(msgRow?.section_id,).toBe(sectionId,);
 
     const reordered = await app.handle(
@@ -156,6 +162,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ sectionIds: [sectionId2, sectionId,], },),
       },),
     );
+
     expect(reordered.status,).toBe(200,);
     const reListed = await app.handle(new Request(`http://localhost/api/chats/${chatId}/sections`,),);
     const reLabels = ((await reListed.json()).data as { label: string }[]).map((s,) => s.label);
@@ -164,6 +171,7 @@ describe("chatSectionsRoutes", () => {
     const deleted = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/sections/${sectionId2}`, { method: "DELETE", },),
     );
+
     expect(deleted.status,).toBe(200,);
     const afterDel = await app.handle(new Request(`http://localhost/api/chats/${chatId}/sections`,),);
     expect(((await afterDel.json()).data as unknown[]).length,).toBe(1,);
@@ -178,9 +186,11 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ sectionId: null, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const msgRow = await db.selectFrom("messages",).select("section_id",).where("id", "=", messageId,)
       .executeTakeFirst();
+
     expect(msgRow?.section_id,).toBeNull();
   });
 
@@ -201,6 +211,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ label: "", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -214,6 +225,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ label: "Bulk Target", },),
       },),
     );
+
     expect(created.status,).toBe(201,);
     const sectionId = (await created.json()).id as string;
 
@@ -224,6 +236,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { ok: boolean; count: number };
     expect(body.ok,).toBe(true,);
@@ -242,6 +255,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ label: "Source", },),
       },),
     );
+
     const dstRes = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/sections`, {
         method: "POST",
@@ -249,6 +263,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ label: "Destination", },),
       },),
     );
+
     const src = (await srcRes.json()) as { id: string };
     const dst = (await dstRes.json()) as { id: string };
 
@@ -265,6 +280,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ fromSectionId: src.id, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const rows = await db.selectFrom("messages",).select("section_id",).where("chat_id", "=", chatId,).execute();
@@ -280,6 +296,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ label: "Other", },),
       },),
     );
+
     const otherId = (await other.json()).id as string;
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/sections/${otherId}/assign-all`, {
@@ -288,6 +305,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ fromSectionId: "missing-section", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -300,6 +318,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ label: "Narrative Target", },),
       },),
     );
+
     expect(created.status,).toBe(201,);
     const sectionId = (await created.json()).id as string;
 
@@ -310,6 +329,7 @@ describe("chatSectionsRoutes", () => {
         body: JSON.stringify({ text: "The party rides north.", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { ok: boolean; id: string; section_id: string };
     expect(body.ok,).toBe(true,);
@@ -317,6 +337,7 @@ describe("chatSectionsRoutes", () => {
 
     const row = await db.selectFrom("messages",).select(["role", "content_type", "content", "section_id",],)
       .where("id", "=", body.id,).executeTakeFirst();
+
     expect(row?.role,).toBe("system",);
     expect(row?.content_type,).toBe("narration",);
     expect(row?.content,).toBe("The party rides north.",);

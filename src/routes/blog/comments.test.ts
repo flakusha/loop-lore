@@ -44,9 +44,11 @@ async function seedPost(visibility: BlogPostVisibility, status: BlogPostStatus,)
     body: "Comment route seed body",
     visibility,
   },);
+
   if (status !== "draft") {
     await svc.updatePost(post.id, { status, }, AUTHOR, false,);
   }
+
   return post.id;
 }
 
@@ -154,6 +156,7 @@ describe("GET /api/blog/posts/:id/comments", () => {
     const res = await makeApp(null, null,).handle(
       new Request(`http://localhost/api/blog/posts/${id}/comments`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -165,6 +168,7 @@ describe("GET /api/blog/posts/:id/comments", () => {
       author_id: AUTHOR,
       body: "root comment",
     },);
+
     await svc.createComment({
       post_id: id,
       author_id: READER,
@@ -175,11 +179,13 @@ describe("GET /api/blog/posts/:id/comments", () => {
     const res = await makeApp(READER, "user",).handle(
       new Request(`http://localhost/api/blog/posts/${id}/comments`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as {
       comments?: { id: string; children: { id: string }[] }[];
       count?: number;
     };
+
     expect(body.count,).toBe(1,);
     expect(body.comments?.[0]?.id,).toBe(root.id,);
     expect(body.comments?.[0]?.children,).toHaveLength(1,);
@@ -193,6 +199,7 @@ describe("GET /api/blog/posts/:id/comments", () => {
     const res = await makeApp(READER, "user",).handle(
       new Request(`http://localhost/api/blog/posts/${id}/comments`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 });
@@ -210,6 +217,7 @@ describe("GET /api/blog/posts/:id/comments/:commentId", () => {
     const res = await makeApp(READER, "user",).handle(
       new Request(`http://localhost/api/blog/posts/${id}/comments/${comment.id}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { comment?: { id: string; body: string } };
     expect(body.comment?.id,).toBe(comment.id,);
@@ -224,6 +232,7 @@ describe("GET /api/blog/posts/:id/comments/:commentId", () => {
     const res = await makeApp(READER, "user",).handle(
       new Request(`http://localhost/api/blog/posts/${id}/comments/${comment.id}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -232,6 +241,7 @@ describe("GET /api/blog/posts/:id/comments/:commentId", () => {
     const res = await makeApp(READER, "user",).handle(
       new Request(`http://localhost/api/blog/posts/${id}/comments/11111111-1111-4111-8111-111111111111`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 });

@@ -52,11 +52,13 @@ export function resolveTemplateAvatar(
       return null;
     }
   }
+
   // type === "default" — deterministic SVG placeholder
   const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">' +
     '<rect width="256" height="256" fill="#4b5563"/>' +
     '<circle cx="128" cy="104" r="52" fill="#d1d5db"/>' +
     '<path d="M32 240c12-52 56-76 96-76s84 24 96 76z" fill="#d1d5db"/></svg>';
+
   return { buffer: Buffer.from(svg, "utf8",), mimeType: "image/svg+xml", filename: "default-avatar.svg", };
 }
 
@@ -73,6 +75,7 @@ export const SYSTEM_USER_ID = "system-user";
 export async function ensureSystemUser(database: Kysely<DB>,): Promise<string> {
   const existing = await database.selectFrom("users",).select("id",).where("id", "=", SYSTEM_USER_ID,)
     .executeTakeFirst();
+
   if (existing) { return existing.id; }
   await database
     .insertInto("users",)
@@ -87,5 +90,6 @@ export async function ensureSystemUser(database: Kysely<DB>,): Promise<string> {
       format_version: 0,
     },)
     .execute();
+
   return SYSTEM_USER_ID;
 }

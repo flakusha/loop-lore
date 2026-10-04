@@ -43,6 +43,7 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
       if (!msg.section_id) { continue; }
       counts.set(msg.section_id, (counts.get(msg.section_id,) ?? 0) + 1,);
     }
+
     return counts;
   },
 
@@ -63,6 +64,7 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
       if (msg.section_id !== sectionId) { continue; }
       if (msg.actor_name) { names.add(msg.actor_name,); }
     }
+
     return Array.from(names,);
   },
 
@@ -72,6 +74,7 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
     for (const msg of this.groupedMessages) {
       if (msg.section_id && msg.actor_name) { occupied.add(msg.section_id,); }
     }
+
     return occupied.size > 1;
   },
 
@@ -89,6 +92,7 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
       this._currentSectionId = null;
       return;
     }
+
     const top = el.scrollTop + 80;
     let found: string | null = null;
     for (const div of dividers) {
@@ -98,6 +102,7 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
         break;
       }
     }
+
     this._currentSectionId = found;
   },
 
@@ -120,10 +125,12 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
     globalThis.setTimeout(() => {
       this._transferFx = false;
     }, 400,);
+
     if (this._transitionType === "narrative" && this._narrativeText.trim()) {
       await this.insertNarrative(sectionId, this._narrativeText.trim(),);
       this._narrativeText = "";
     }
+
     if (section.location_id) {
       this._selectedLocationId = section.location_id;
       await this.changeChatLocation();
@@ -156,6 +163,7 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
           body: jsonBody({ fromSectionId: fromSectionId ?? null, },),
         },
       );
+
       if (res.ok) {
         await this.loadMessages?.();
         await this.loadSections();
@@ -182,6 +190,7 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
           body: jsonBody({ text, },),
         },
       );
+
       if (res.ok) { await this.loadMessages?.(); }
     } catch (error) {
       log.warn("insertNarrative failed", { error: String(error,), },);

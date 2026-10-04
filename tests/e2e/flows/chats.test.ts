@@ -34,6 +34,7 @@ describe("Chats E2E", () => {
   afterAll(async () => {
     await server.close();
   },);
+
   test("GET /api/v1/chats returns empty list when no chats", async () => {
     await api.login();
     const res = await api.get<{ data: [] }>("/api/v1/chats",);
@@ -49,6 +50,7 @@ describe("Chats E2E", () => {
       type: "direct",
       mode: "direct",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
   });
@@ -78,6 +80,7 @@ describe("Chats E2E", () => {
       type: "direct",
       mode: "direct",
     },);
+
     expect(createRes.ok,).toBe(true,);
     const chatId = createRes.data!.id;
 
@@ -93,6 +96,7 @@ describe("Chats E2E", () => {
       name: "Old Name",
       type: "direct",
     },);
+
     const chatId = createRes.data!.id;
 
     const updateRes = await api.put(`/api/v1/chats/${chatId}`, { name: "Updated Name", },);
@@ -108,6 +112,7 @@ describe("Chats E2E", () => {
       name: "To Delete",
       type: "direct",
     },);
+
     const chatId = createRes.data!.id;
 
     const deleteRes = await api.del(`/api/v1/chats/${chatId}`,);

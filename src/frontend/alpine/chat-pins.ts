@@ -38,6 +38,7 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
     } catch (error) {
       log.warn("loadPins failed", { error: String(error,), },);
     }
+
     this._pinsLoading = false;
   },
 
@@ -54,6 +55,7 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
         // eslint-disable-next-line no-restricted-syntax
         body: JSON.stringify({ messageId, },),
       },);
+
       if (res.ok) { await this.loadPins(); }
     } catch (error) {
       log.warn("pinMessage failed", { error: String(error,), },);
@@ -70,6 +72,7 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}/pins/${pinId}`, {
         method: "DELETE",
       },);
+
       if (res.ok) { await this.loadPins(); }
     } catch (error) {
       log.warn("unpinMessage failed", { error: String(error,), },);
@@ -84,6 +87,7 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
     const el = document.querySelector<HTMLElement>(
       `[data-message-id="${CSS.escape(messageId,)}"]`,
     );
+
     el?.scrollIntoView({ behavior: "smooth", block: "center", },);
   },
 };

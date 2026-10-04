@@ -41,6 +41,7 @@ export const chatMovement: ChatMovement = {
       idle: "⏸",
       move: "➡️",
     };
+
     return icons[pattern] ?? "📍";
   },
 };

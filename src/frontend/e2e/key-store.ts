@@ -86,6 +86,7 @@ export async function loadOrCreateKeyPair(opts: LoadOrCreateOpts,): Promise<Load
     algorithm: DEFAULT_ALGORITHM,
     createdAt: new Date().toISOString(),
   };
+
   persistStoredKeyPair(stored,);
 
   // Re-import as non-extractable for runtime use.
@@ -133,6 +134,7 @@ export function listStoredActorIds(): string[] {
       ids.push(key.slice(`${STORAGE_PREFIX}:`.length,),);
     }
   }
+
   return ids;
 }
 
@@ -153,6 +155,7 @@ function persistStoredKeyPair(stored: StoredKeyPair,): void {
     // responsibility via the export flow.
     return;
   }
+
   try {
     localStorage.setItem(storageKey(stored.actorId,), r.value,);
   } catch {

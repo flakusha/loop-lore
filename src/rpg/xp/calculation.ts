@@ -25,6 +25,7 @@ export function xpToNextLevel(currentLevel: number, currentXp: number,): number 
   if (currentLevel >= MAX_LEVEL) {
     return Infinity;
   }
+
   return xpForLevel(currentLevel + 1,) - currentXp;
 }
 
@@ -38,6 +39,7 @@ export function canLevelUp(currentLevel: number, currentXp: number,): boolean {
   if (currentLevel >= MAX_LEVEL) {
     return false;
   }
+
   return currentXp >= xpForLevel(currentLevel + 1,);
 }
 
@@ -56,6 +58,7 @@ export function levelFromXp(totalXp: number,): number {
       break;
     }
   }
+
   return level;
 }
 

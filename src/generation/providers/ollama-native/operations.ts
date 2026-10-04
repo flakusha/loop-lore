@@ -50,6 +50,7 @@ export async function healthCheckDispatch(state: OllamaNativeState,): Promise<{
     if (!response.ok) {
       await handleErrorResponse(response,);
     }
+
     const data = (await response.json()) as OllamaVersionResponse;
     const latencyMs = Date.now() - start;
 

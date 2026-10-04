@@ -29,6 +29,7 @@ async function reservePort(): Promise<number> {
     await holder.stop();
     throw new Error("reservePort: kernel did not assign a port",);
   }
+
   const port = holder.port;
   await holder.stop();
   return port;
@@ -38,6 +39,7 @@ function boundPort(server: { port: number | undefined },): number {
   if (server.port === undefined) { throw new Error("boundPort: server has no port",); }
   return server.port;
 }
+
 describe("isHuggingFaceRef", () => {
   test("accepts canonical org/repo:file references", () => {
     expect(isHuggingFaceRef("user/repo:model",),).toBe(true,);
@@ -147,6 +149,7 @@ describe("isPortFree", () => {
       port: 0,
       fetch: () => new Response("ok",),
     },);
+
     const port = boundPort(server,);
     try {
       expect(isPortFree(port,),).toBe(false,);
@@ -165,6 +168,7 @@ describe("waitForHealth", () => {
         return new Response("not found", { status: 404, },);
       },
     },);
+
     const port = boundPort(server,);
     try {
       const ok = await waitForHealth(`http://127.0.0.1:${port}/health`, { timeoutMs: 5_000, },);
@@ -186,6 +190,7 @@ describe("waitForHealth", () => {
       port: 0,
       fetch: () => new Response("ok",),
     },);
+
     const port = boundPort(server,);
     try {
       const start = Date.now();
@@ -193,6 +198,7 @@ describe("waitForHealth", () => {
         timeoutMs: 2_000,
         intervalMs: 100,
       },);
+
       const elapsed = Date.now() - start;
       expect(ok,).toBe(true,);
       // First poll should succeed; the call returns well before the timeout.
@@ -209,6 +215,7 @@ describe("waitForPort", () => {
       port: 0,
       fetch: () => new Response("anything", { status: 503, },), // 503 still counts as "port is serving"
     },);
+
     const port = boundPort(server,);
     try {
       const ok = await waitForPort(port, { timeoutMs: 5_000, },);

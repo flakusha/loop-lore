@@ -45,6 +45,7 @@ describe("importActor", () => {
     await insertUsers(db, "direct-importer", "Direct Importer",);
     userId = (await db.selectFrom("users",).select("id",).where("username", "=", "direct-importer",)
       .executeTakeFirstOrThrow()).id;
+
     uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-import-actor-",),);
   },);
 
@@ -89,11 +90,13 @@ describe("importActor", () => {
       database: db,
       userId,
     },);
+
     expect(res.status,).toBe(201,);
     expect(warnings.join("\n",),).toContain("Imported 1 lore entries",);
     const { id, } = (await res.json()) as { id: string };
     const row = await db.selectFrom("actor_lore_entries",).selectAll().where("actor_id", "=", id,)
       .executeTakeFirst();
+
     expect(row?.content,).toBe("A kingdom.",);
   });
 
@@ -120,6 +123,7 @@ describe("importActor", () => {
       charxAssets,
       uploadDir,
     },);
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as { assets_imported: number };
     expect(body.assets_imported,).toBe(2,);
@@ -140,6 +144,7 @@ describe("importActor", () => {
       charxAssets: [{ name: "fresh-broken.png", type: "avatar", data: makeMinimalPng(11, 9,), },],
       uploadDir: fileAsDir,
     },);
+
     expect(res.status,).toBe(201,);
     expect(warnings.some((w,) => w.includes("Failed to import asset",)),).toBe(true,);
     expect(warnings.join("\n",),).not.toContain("avatar(s) from CHARX",);
@@ -155,6 +160,7 @@ describe("importActor", () => {
       userId,
       charxAssets: [{ name: "avatar.png", type: "avatar", data: makeMinimalPng(2, 1,), },],
     },);
+
     expect(res.status,).toBe(201,);
     expect(warnings.join("\n",),).not.toContain("avatar(s) from CHARX",);
   });

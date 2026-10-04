@@ -49,6 +49,7 @@ const log = rootLog.child({ module: "world-edit", },);
             kind: data.kind ?? "rpg",
             visibility: data.visibility ?? "private",
           };
+
           if (data.settings) {
             const settings = jsonParseOr<{ tags?: string[] }>(data.settings, {},);
             this.tagsStr = (settings.tags || []).join(", ",);
@@ -58,6 +59,7 @@ const log = rootLog.child({ module: "world-edit", },);
         log.warn("loadWorld failed", { error: String(error,), },);
         this.error = true;
       }
+
       this.loading = false;
     },
 
@@ -73,6 +75,7 @@ const log = rootLog.child({ module: "world-edit", },);
           if (trimmed) { tags.push(trimmed,); }
         }
       }
+
       const settings = this.tagsStr ? { tags, } : {};
       try {
         const res = await apiFetch(`/api/v1/worlds/${this.worldId}`, {
@@ -80,6 +83,7 @@ const log = rootLog.child({ module: "world-edit", },);
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ ...this.world, settings: jsonBody(settings,), },),
         },);
+
         if (res.ok) { showToast("success", t("toasts.worldSaved",),); }
         else {
           const err = await res.json();
@@ -88,6 +92,7 @@ const log = rootLog.child({ module: "world-edit", },);
       } catch {
         showToast("error", t("toasts.networkError",),);
       }
+
       this.saving = false;
     },
 

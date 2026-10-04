@@ -38,11 +38,13 @@ function validateRegenerate(
     if (typeof b.messageId !== "string" || !b.messageId) { return null; }
     messageId = b.messageId;
   }
+
   let style: RegenStyle = null;
   if (b.style !== undefined && b.style !== null) {
     if (!isValidRegenStyle(b.style,)) { return null; }
     style = b.style;
   }
+
   return { chatId: b.chatId, messageId, style, };
 }
 
@@ -141,12 +143,14 @@ export async function handleRegenerate(
     const raw = body as Record<string, unknown> | null;
     const styleRejected = raw !== null && typeof raw === "object" &&
       raw.style !== undefined && raw.style !== null && !isValidRegenStyle(raw.style,);
+
     if (styleRejected) {
       return jsonError({
         message: `Invalid style. Valid styles: ${Object.keys(VALID_REGEN_STYLES,).join(", ",)}`,
         status: 400,
       },);
     }
+
     return jsonError({ message: "chatId is required", status: 400, },);
   }
 
@@ -212,6 +216,7 @@ export async function handleRegenerate(
         userId,
         userRole,
       );
+
       if (!genResponse.ok) {
         logDegradation(
           `Regen variant generation did not complete (chat ${chatId}, variant ${okResult.variantMessageId}, status ${genResponse.status})`,

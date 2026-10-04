@@ -63,6 +63,7 @@ describe("updateRecipe", () => {
     expect(
       await updateRecipe(db, "recipe-1", { discoveredByDefault: true, tags: ["sharp", "metal",], },),
     ).toBe(true,);
+
     const after = await row();
     expect(after?.discovered_by_default,).toBe(1,);
     expect(JSON.parse((after?.tags ?? "[]") as string,),).toEqual(["sharp", "metal",],);

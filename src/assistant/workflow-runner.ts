@@ -86,6 +86,7 @@ export function buildStep(
   if (step === undefined) {
     throw new Error(`unknown step "${stepId}" for workflow "${workflow.id}"`,);
   }
+
   run.values[stepId] = validateStepValue(workflow.id, step, value,);
   return run;
 }
@@ -105,6 +106,7 @@ export function assemblePrompt(workflow: AssistantWorkflowConfig, run: WorkflowR
     const rendered = Array.isArray(value,) ? value.join(", ",) : value;
     parts.push(step.formatTemplate.replace("{value}", rendered,),);
   }
+
   return parts.join("\n",);
 }
 
@@ -124,20 +126,24 @@ export function confirmAndDispatch(
   const missing = workflow.steps
     .filter((step,) => step.required !== false && run.values[step.id] === undefined)
     .map((step,) => step.id);
+
   if (missing.length > 0) {
     throw new Error(
       `workflow "${workflow.id}" missing steps: ${missing.join(", ",)}`,
     );
   }
+
   if ((workflow.approval?.type ?? "confirm") === "confirm" && !run.confirmed) {
     throw new Error(`workflow "${workflow.id}" requires confirmation before dispatch`,);
   }
+
   const payload: Record<string, unknown> = {};
   for (const [key, template,] of Object.entries(workflow.dispatch.payloadTemplate,)) {
     payload[key] = typeof template === "string"
       ? template.replace("{prompt}", prompt,)
       : template;
   }
+
   return {
     backend: workflow.dispatch.backend,
     target: workflow.dispatch.target,
@@ -173,9 +179,11 @@ function validateStepValue(
     const list = Array.isArray(value,)
       ? value
       : String(value,).split(",",).map((v,) => v.trim()).filter((v,) => v !== "");
+
     if (list.length === 0) {
       throw new Error(`${where} requires at least one selection`,);
     }
+
     if (step.options !== undefined) {
       for (const item of list) {
         if (!step.options.includes(item,)) {
@@ -183,23 +191,30 @@ function validateStepValue(
         }
       }
     }
+
     return list;
   }
+
   if (Array.isArray(value,)) {
     throw new Error(`${where} expects a single value, got a list`,);
   }
+
   const text = value.trim();
   if (text === "") {
     throw new Error(`${where} must not be empty`,);
   }
+
   if (step.type === "choice" && step.options !== undefined && !step.options.includes(text,)) {
     throw new Error(`${where} invalid option "${text}"`,);
   }
+
   if (step.minLength !== undefined && text.length < step.minLength) {
     throw new Error(`${where} must be at least ${step.minLength} characters`,);
   }
+
   if (step.maxLength !== undefined && text.length > step.maxLength) {
     throw new Error(`${where} must be at most ${step.maxLength} characters`,);
   }
+
   return text;
 }

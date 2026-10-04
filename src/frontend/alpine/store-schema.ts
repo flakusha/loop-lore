@@ -66,6 +66,7 @@ export function assertChatViewShape(store: unknown,): void {
       `[store-schema] chat store must be an object, got ${store === null ? "null" : typeof store}`,
     );
   }
+
   const draft = store as Record<string, unknown>;
   for (const field of REQUIRED_FIELDS) {
     if (!(field in draft)) {
@@ -74,11 +75,13 @@ export function assertChatViewShape(store: unknown,): void {
       );
     }
   }
+
   if (!Array.isArray(draft.children,)) {
     throw new TypeError(
       `[store-schema] chat.children must be an array, got ${typeof draft.children}`,
     );
   }
+
   if (typeof draft.visibility !== "string" || draft.visibility === "") {
     throw new TypeError(
       `[store-schema] chat.visibility must be a non-empty string, got ${safeJsonStringify(draft.visibility,)}`,

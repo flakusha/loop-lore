@@ -42,8 +42,10 @@ function makeApp() {
         requestId: ctx.requestId,
         header: ctx.request.headers.get("x-request-id",),
       };
+
       return body;
     },);
+
   return { app, getSeen: () => seen, };
 }
 
@@ -53,6 +55,7 @@ describe("requestIdMiddleware (Elysia derive integration)", () => {
     const res = await app.handle(
       new Request("http://localhost/echo", { headers: { "x-request-id": "client-abc-123", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as EchoBody;
     expect(body.requestId,).toBe("client-abc-123",);
@@ -73,6 +76,7 @@ describe("requestIdMiddleware (Elysia derive integration)", () => {
     const res = await app.handle(
       new Request("http://localhost/echo", { headers: { "x-request-id": "has space;DROP", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as EchoBody;
     expect(body.requestId,).toMatch(UUID_RE,);
@@ -84,6 +88,7 @@ describe("requestIdMiddleware (Elysia derive integration)", () => {
     const res = await app.handle(
       new Request("http://localhost/echo", { headers: { "x-request-id": "a".repeat(200,), }, },),
     );
+
     const body = await res.json() as EchoBody;
     expect(body.requestId,).toMatch(UUID_RE,);
   });
@@ -93,6 +98,7 @@ describe("requestIdMiddleware (Elysia derive integration)", () => {
     const res = await app.handle(
       new Request("http://localhost/echo", { headers: { "idempotency-key": "idem-key-7", }, },),
     );
+
     const body = await res.json() as EchoBody;
     expect(body.requestId,).toBe("idem-key-7",);
     expect(body.header,).toBe("idem-key-7",); // canonical header set from alias
@@ -105,6 +111,7 @@ describe("requestIdMiddleware (Elysia derive integration)", () => {
         headers: { "x-request-id": "primary", "idempotency-key": "fallback", },
       },),
     );
+
     const body = await res.json() as EchoBody;
     expect(body.requestId,).toBe("primary",);
   });
@@ -114,6 +121,7 @@ describe("requestIdMiddleware (Elysia derive integration)", () => {
     await app.handle(
       new Request("http://localhost/echo", { headers: { "x-request-id": "downstream-check", }, },),
     );
+
     expect(getSeen(),).toBe("downstream-check",);
   });
 
@@ -125,6 +133,7 @@ describe("requestIdMiddleware (Elysia derive integration)", () => {
       const body = await res.json() as EchoBody;
       seen.add(body.requestId,);
     }
+
     expect(seen.size,).toBe(5,); // all distinct
   });
 });

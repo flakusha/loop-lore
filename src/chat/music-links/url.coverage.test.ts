@@ -77,10 +77,12 @@ describe("toEmbedSrc", () => {
       toEmbedSrc("https://music.apple.com/us/album/123456789", "apple_music",),
     ).toBe("https://embed.music.apple.com/us/album/123456789",);
   });
+
   test("leaves unparseable Apple URLs (and other services) alone", () => {
     expect(toEmbedSrc("https://music.apple.com/broken", "apple_music",),).toBe(
       "https://music.apple.com/broken",
     );
+
     const sc = "https://soundcloud.com/a/b";
     expect(toEmbedSrc(sc, "soundcloud",),).toBe(sc,);
     const sp = "https://open.spotify.com/track/1";

@@ -55,6 +55,7 @@ export async function deriveAssetSubkey(chatKey: ChatKey, assetId: string,): Pro
     false,
     ["deriveKey",],
   );
+
   const salt = new TextEncoder().encode(assetId,);
   const info = new TextEncoder().encode(ASSET_HKDF_INFO,);
   return crypto.subtle.deriveKey(
@@ -104,6 +105,7 @@ export async function encryptAssetBlob(
     config,
     aId: assetId,
   },);
+
   const dataBuf = safeFromString(encryptedJson, "utf8",);
   if (!dataBuf.ok) { throw new Error(`Encrypted asset payload too large: ${dataBuf.error.message}`,); }
 
@@ -133,6 +135,7 @@ export async function decryptAssetBlob(
   if (!parsed.ok || typeof parsed.value !== "object" || parsed.value === null) {
     throw new Error("Asset blob is not a valid encrypted payload",);
   }
+
   const payloadAId = parsed.value.a_id;
   const isV2 = typeof payloadAId === "string" && payloadAId.length > 0;
   const subkeySource = isV2 && payloadAId ? payloadAId : assetId;

@@ -35,6 +35,7 @@ export async function handleGenerationError(
       await d.failGeneration({ attemptId, error: error as Error, db: database, },);
     } catch { /* Best-effort */ }
   }
+
   if (isTelemetryEnabled()) {
     void record(database, {
       eventType: "generation.failed",
@@ -48,6 +49,7 @@ export async function handleGenerationError(
       },
     },);
   }
+
   try {
     const buf = d.getOrCreateBuffer(chatId,);
     buf.signalError((error as Error).message,);

@@ -76,6 +76,7 @@ export async function findSession(opts: FindSessionOpts,): Promise<E2eSessionRow
     .selectAll()
     .where("id", "=", opts.sessionId,)
     .executeTakeFirst();
+
   return row ? rowToSession(row as E2eSessionsDbRow,) : null;
 }
 
@@ -97,6 +98,7 @@ export async function findActiveSession(
     .orderBy("created_at", "desc",)
     .limit(1,)
     .executeTakeFirst();
+
   return row ? rowToSession(row as E2eSessionsDbRow,) : null;
 }
 
@@ -124,6 +126,7 @@ export async function ensureActiveSession(
       senderActorId: opts.senderActorId,
       recipientActorId: opts.recipientActorId,
     },);
+
     if (existing) { return existing; }
   } else {
     const existing = await opts.database
@@ -136,6 +139,7 @@ export async function ensureActiveSession(
       .orderBy("created_at", "desc",)
       .limit(1,)
       .executeTakeFirst();
+
     if (existing) { return rowToSession(existing as E2eSessionsDbRow,); }
   }
 
@@ -152,11 +156,13 @@ export async function ensureActiveSession(
       sender_actor_id: opts.senderActorId,
       kind,
     };
+
     if (kind === "pair") {
       values.recipient_actor_id = opts.recipientActorId;
     } else if (opts.chatId) {
       values.chat_id = opts.chatId;
     }
+
     await opts.database
       .insertInto("e2e_sessions",)
       .values(values,)
@@ -180,13 +186,16 @@ export async function ensureActiveSession(
         .limit(1,)
         .executeTakeFirst()
         .then((row,) => (row ? rowToSession(row as E2eSessionsDbRow,) : null));
+
     if (raced) { return raced; }
     throw err;
   }
+
   const created = await findSession({ database: opts.database, sessionId: id, },);
   if (!created) {
     throw new Error(`e2e-session: insert succeeded but row ${id} not found`,);
   }
+
   return created;
 }
 
@@ -218,5 +227,6 @@ export async function revokeSession(opts: RevokeSessionOpts,): Promise<boolean> 
     .where("id", "=", opts.sessionId,)
     .where("revoked_at", "is", null,)
     .executeTakeFirst();
+
   return (result?.numUpdatedRows ?? 0) > 0;
 }

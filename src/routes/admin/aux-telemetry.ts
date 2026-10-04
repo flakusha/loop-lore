@@ -71,6 +71,7 @@ const MAX_SINCE_MS = 7 * 24 * 60 * 60 * 1000;
 function effectiveSecret(configured?: string,): string {
   return resolveSharedTelemetryPiiSecret({ piiSecret: configured, },);
 }
+
 let cachedSecret: string | null = null;
 /** Resolve (and memoize) the secret; test hook below busts the cache. */
 function secret(configured?: string,): string {
@@ -78,6 +79,7 @@ function secret(configured?: string,): string {
   cachedSecret ??= effectiveSecret();
   return cachedSecret;
 }
+
 /**
  * Bust the memoized secret + key. Test-only; called when env flips mid-process.
  * @returns {void}
@@ -104,6 +106,7 @@ async function getHmacKey(configured?: string,): Promise<CryptoKey> {
       ["sign",],
     );
   }
+
   return hmacKeyPromise;
 }
 
@@ -117,6 +120,7 @@ async function hashId(value: string, configured?: string,): Promise<string> {
     key,
     new TextEncoder().encode(value,) as unknown as Uint8Array<ArrayBuffer>,
   );
+
   return [...new Uint8Array(sig,),]
     .slice(0, 8,)
     .map((b,) => b.toString(16,).padStart(2, "0",))
@@ -150,6 +154,7 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         Math.max(Number(ctx.query?.limit,) || DEFAULT_LIMIT, 1,),
         MAX_LIMIT,
       );
+
       const task = typeof ctx.query?.task === "string" ? ctx.query.task : undefined;
 
       const sinceParam = typeof ctx.query?.since === "string" ? ctx.query.since : undefined;
@@ -162,6 +167,7 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           const t = parseExpiryMs(sinceParam,);
           sinceMsParsed = t;
         }
+
         if (sinceMsParsed === null) {
           return jsonError({
             message: ctx.t?.("admin.invalidSince",) ?? "Invalid `since` parameter",
@@ -169,6 +175,7 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             code: ErrorCode.BadRequest,
           },);
         }
+
         if (Date.now() - sinceMsParsed > MAX_SINCE_MS) {
           return jsonError({
             message: ctx.t?.("admin.sinceWindowTooLarge",) ?? "`since` window exceeds 7d",
@@ -177,6 +184,7 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           },);
         }
       }
+
       const sinceMs = sinceMsParsed ?? (Date.now() - DEFAULT_SINCE_MS);
       const sinceIso = new Date(sinceMs,).toISOString();
 
@@ -196,6 +204,7 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         if (row.user_id) { userIds.add(row.user_id,); }
         if (row.chat_id) { chatIds.add(row.chat_id,); }
       }
+
       const userHashMap = new Map<string, string>();
       const chatHashMap = new Map<string, string>();
       await Promise.allSettled([
@@ -244,14 +253,18 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             totalPromptTokens: 0,
             totalCompletionTokens: 0,
           };
+
           taskMap.set(ev.task, agg,);
         }
+
         agg.totalCalls++;
         if (ev.success) { agg.successCount++; }
         else { agg.failureCount++; }
+
         agg.totalPromptTokens += ev.promptTokens;
         agg.totalCompletionTokens += ev.completionTokens;
       }
+
       const taskTotals = new Map<string, { sum: number; count: number }>();
       for (const ev of events) {
         const totals = taskTotals.get(ev.task,) ?? { sum: 0, count: 0, };
@@ -259,6 +272,7 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         totals.count++;
         taskTotals.set(ev.task, totals,);
       }
+
       for (const [taskName, agg,] of taskMap) {
         const totals = taskTotals.get(taskName,);
         agg.avgLatencyMs = totals ? Math.round(totals.sum / totals.count,) : 0;
@@ -329,20 +343,24 @@ function classifyError(raw: unknown,): "timeout" | "rate_limit" | "schema_valida
   if (lower.includes("timeout",) || lower.includes("etimedout",) || lower.includes("aborted",)) {
     return "timeout";
   }
+
   if (lower.includes("rate limit",) || lower.includes("429",) || lower.includes("too many requests",)) {
     return "rate_limit";
   }
+
   if (
     lower.includes("json",) || lower.includes("schema",) || lower.includes("parse",) ||
     lower.includes("invalid_request",)
   ) {
     return "schema_validation";
   }
+
   if (
     lower.includes("auth",) || lower.includes("unauthorized",) || lower.includes("401",) || lower.includes("403",) ||
     lower.includes("api key",)
   ) {
     return "auth_failure";
   }
+
   return "other";
 }

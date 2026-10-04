@@ -28,6 +28,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(statsRoutes({ database: db, config: {} as never, },),);
 }
 
@@ -50,6 +51,7 @@ describe("RPG stat-block operation routes", () => {
     const res = await makeApp(db, "user-1", "user",).handle(
       postStats("http://localhost/api/rpg/stats/calculate", { stats: STATS, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, number>;
     expect(body.strMod,).toBe(3,);
@@ -64,6 +66,7 @@ describe("RPG stat-block operation routes", () => {
     const res = await makeApp(db, "user-1", "user",).handle(
       postStats("http://localhost/api/rpg/stats/calculate", {},),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -71,6 +74,7 @@ describe("RPG stat-block operation routes", () => {
     const res = await makeApp(db,).handle(
       postStats("http://localhost/api/rpg/stats/calculate", { stats: STATS, },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -78,6 +82,7 @@ describe("RPG stat-block operation routes", () => {
     const res = await makeApp(db, "user-1", "user",).handle(
       postStats("http://localhost/api/rpg/stats/validate", { stats: STATS, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { valid: boolean };
     expect(body.valid,).toBe(true,);
@@ -89,6 +94,7 @@ describe("RPG stat-block operation routes", () => {
         stats: { ...STATS, str: 99, },
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { valid: boolean };
     expect(body.valid,).toBe(false,);
@@ -98,6 +104,7 @@ describe("RPG stat-block operation routes", () => {
     const res = await makeApp(db, "user-1", "user",).handle(
       postStats("http://localhost/api/rpg/stats/validate", {},),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -105,6 +112,7 @@ describe("RPG stat-block operation routes", () => {
     const res = await makeApp(db,).handle(
       postStats("http://localhost/api/rpg/stats/validate", { stats: STATS, },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -112,6 +120,7 @@ describe("RPG stat-block operation routes", () => {
     const res = await makeApp(db, "user-1", "user",).handle(
       postStats("http://localhost/api/rpg/stats/generate", { method: "standard_array", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { method: string; array: number[] };
     expect(body.method,).toBe("standard_array",);
@@ -122,12 +131,14 @@ describe("RPG stat-block operation routes", () => {
     const res = await makeApp(db, "user-1", "user",).handle(
       postStats("http://localhost/api/rpg/stats/generate", { method: "4d6_drop_lowest", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as {
       method: string;
       stats: Record<string, number>;
       rolls: number[];
     };
+
     expect(body.method,).toBe("4d6_drop_lowest",);
     expect(body.rolls.length,).toBe(6,);
     const abilities = ["str", "dex", "con", "int", "wis", "cha",];
@@ -144,6 +155,7 @@ describe("RPG stat-block operation routes", () => {
         allocation: { str: 7, dex: 6, con: 5, int: 4, wis: 2, cha: 0, },
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { method: string; stats: Record<string, number> };
     expect(body.method,).toBe("point_buy",);
@@ -154,6 +166,7 @@ describe("RPG stat-block operation routes", () => {
     const res = await makeApp(db, "user-1", "user",).handle(
       postStats("http://localhost/api/rpg/stats/generate", { method: "point_buy", },),
     );
+
     expect(res.status,).toBe(400,);
     const body = await res.json() as { error: string };
     expect(body.error,).toBe("Point-buy requires allocation",);
@@ -166,6 +179,7 @@ describe("RPG stat-block operation routes", () => {
         allocation: { str: 7, dex: 7, con: 7, int: 7, wis: 7, cha: 7, },
       },),
     );
+
     expect(res.status,).toBe(400,);
     const body = await res.json() as { error: string };
     expect(body.error,).toBe("Invalid point-buy allocation (must total 27 points)",);
@@ -175,6 +189,7 @@ describe("RPG stat-block operation routes", () => {
     const res = await makeApp(db, "user-1", "user",).handle(
       postStats("http://localhost/api/rpg/stats/generate", { method: "rolled_luck", },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -182,6 +197,7 @@ describe("RPG stat-block operation routes", () => {
     const res = await makeApp(db,).handle(
       postStats("http://localhost/api/rpg/stats/generate", { method: "standard_array", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 });

@@ -41,6 +41,7 @@ export class FormatDetectionError extends ImportError {
       ErrorCode.BadRequest,
       { filename, suggestion: "Ensure file is JSON, YAML, TOML, PNG with embedded data, or CHARX bundle", },
     );
+
     this.name = "FormatDetectionError";
   }
 }
@@ -58,6 +59,7 @@ export class CharacterValidationError extends ImportError {
       ErrorCode.ValidationError,
       { validationErrors: errors, },
     );
+
     this.name = "CharacterValidationError";
     this.validationErrors = errors;
   }
@@ -135,6 +137,7 @@ export class UnsupportedExportFormatError extends ExportError {
       ErrorCode.BadRequest,
       { format, supportedFormats, },
     );
+
     this.name = "UnsupportedExportFormatError";
   }
 }
@@ -151,6 +154,7 @@ export class ExportDataNotFoundError extends ExportError {
       ErrorCode.NotFound,
       { entity, userId, },
     );
+
     this.name = "ExportDataNotFoundError";
   }
 }
@@ -203,27 +207,35 @@ function getHttpStatusFromErrorCode(code: ErrorCode,): number {
     case ErrorCode.BadRequest: {
       return 400;
     }
+
     case ErrorCode.Unauthorized: {
       return 401;
     }
+
     case ErrorCode.Forbidden: {
       return 403;
     }
+
     case ErrorCode.NotFound: {
       return 404;
     }
+
     case ErrorCode.ValidationError: {
       return 422;
     }
+
     case ErrorCode.TooManyRequests: {
       return 429;
     }
+
     case ErrorCode.ServerError: {
       return 500;
     }
+
     case ErrorCode.NotImplemented: {
       return 501;
     }
+
     default: {
       return 500;
     }

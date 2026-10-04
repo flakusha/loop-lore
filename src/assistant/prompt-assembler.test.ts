@@ -96,6 +96,7 @@ describe("PromptAssembler emotion wiring", () => {
       description: "A wandering swordsman.",
       personality: "Brooding but honorable.",
     },);
+
     // The human user's participant row carries the impersonation target.
     await insertChatParticipants(db, chatId, userId, { impersonate_actor_id: heroId, },);
     const assembler = new PromptAssembler(db,);
@@ -140,6 +141,7 @@ describe("PromptAssembler per-chat prompt override", () => {
       "=",
       chatId,
     ).execute();
+
     const assembler = new PromptAssembler(db,);
     const assembled = await assembler.assemble({ actorId, chatId, modelId: "mock", },);
     const systemMsg = assembled.messages.find((m,) => m.role === "system");
@@ -186,11 +188,13 @@ describe("PromptAssembler outfit wiring", () => {
       .set({ default_outfit: "armor", outfits: JSON.stringify([{ id: "armor", name: "Plate Armor", },],), },)
       .where("id", "=", actorId,)
       .execute();
+
     const assembler = new PromptAssembler(db,);
     const assembled = await assembler.assemble({ actorId, chatId, modelId: "mock", },);
     const outfitMsg = assembled.messages.find(
       (m,) => typeof m.content === "string" && m.content.includes("outfit_context",),
     );
+
     expect(outfitMsg,).toBeDefined();
     expect(String(outfitMsg?.content,),).toContain("Plate Armor",);
     expect(assembled.sections.some((s,) => s.name === "outfitContext" && !s.dropped),).toBe(true,);
@@ -225,6 +229,7 @@ describe("PromptAssembler template override entry", () => {
         modality: "llm",
         payload: { sections: [{ identifier: "system", role: "system", content: "", enabled: true, priority: 0, },], },
       },);
+
       const assembler = new PromptAssembler(db,);
       const params = { actorId: aId, chatId: cId, modelId: "mock", };
       const owned = await assembler.assembleWithTemplateOverride(params, row.id, ownerId,);
@@ -237,6 +242,7 @@ describe("PromptAssembler template override entry", () => {
     }
   });
 });
+
 describe("PromptAssembler two-tier custom instructions", () => {
   let db: Kysely<DB>;
   let sqlite: Database;
@@ -273,11 +279,13 @@ describe("PromptAssembler two-tier custom instructions", () => {
       .set({ settings: JSON.stringify({ customInstructions: "ACCOUNT-STEER", },), },)
       .where("id", "=", userId,)
       .execute();
+
     await db
       .updateTable("chats",)
       .set({ custom_instructions: "STORY-STEER", },)
       .where("id", "=", chatId,)
       .execute();
+
     const assembled = await assembleCi();
     const ciMsg = assembled.messages.find((m,) => m.content.includes("custom_instructions",));
     expect(ciMsg,).toBeDefined();
@@ -294,11 +302,13 @@ describe("PromptAssembler two-tier custom instructions", () => {
       .set({ settings: JSON.stringify({},), },)
       .where("id", "=", userId,)
       .execute();
+
     await db
       .updateTable("chats",)
       .set({ custom_instructions: null, },)
       .where("id", "=", chatId,)
       .execute();
+
     const assembled = await assembleCi();
     expect(assembled.messages.some((m,) => m.content.includes("custom_instructions",)),).toBe(false,);
   });
@@ -309,6 +319,7 @@ describe("PromptAssembler two-tier custom instructions", () => {
       .set({ custom_instructions: "STORY-ONLY", },)
       .where("id", "=", chatId,)
       .execute();
+
     const assembled = await assembleCi();
     const ciMsg = assembled.messages.find((m,) => m.content.includes("STORY-ONLY",));
     expect(ciMsg,).toBeDefined();
@@ -339,6 +350,7 @@ describe("PromptAssembler post-history position", () => {
         post_history_instructions: "Always respond in character.",
       } as never,
     );
+
     await insertChats(db, "Post-history chat", userId, { id: chatId, } as never,);
     await insertChatParticipants(db, chatId, actorId,);
     // Seed chat history — confirmed, visible messages. Order matters:
@@ -352,11 +364,13 @@ describe("PromptAssembler post-history position", () => {
       visibility: visible,
       created_at: "2025-01-01T00:00:00.000Z",
     },);
+
     await insertMessages(db, chatId, actorId, MessageRole.Assistant, "first assistant turn", {
       status: confirmed,
       visibility: visible,
       created_at: "2025-01-01T00:00:01.000Z",
     },);
+
     await insertMessages(db, chatId, actorId, MessageRole.User, "second user turn", {
       status: confirmed,
       visibility: visible,
@@ -378,6 +392,7 @@ describe("PromptAssembler post-history position", () => {
     const postHistoryIdx = assembled.messages.findIndex(
       (m,) => typeof m.content === "string" && m.content.includes("<post_history>",),
     );
+
     expect(postHistoryIdx,).toBeGreaterThanOrEqual(0,);
 
     // The chat-history content must appear in the assembled prompt.

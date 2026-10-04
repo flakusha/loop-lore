@@ -90,6 +90,7 @@ beforeAll(async () => {
       settings: "{}",
     },)
     .execute();
+
   service = new PersonasService(db,);
 },);
 

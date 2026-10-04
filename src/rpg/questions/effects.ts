@@ -90,6 +90,7 @@ async function applyQuestEffect(
 ): Promise<string | null> {
   const quest = await db.selectFrom("quests",).selectAll()
     .where("id", "=", questEffect.questId,).executeTakeFirst();
+
   if (!quest) {
     getLog().warn("Question effect: quest not found", { questId: questEffect.questId, },);
     return null;
@@ -123,16 +124,19 @@ async function applyQuestEffect(
       effectsApplied.push(`quest:${quest.id}:progress`,);
       messageParts.push(`Quest "${quest.name}" progress ${newProgress}/${quest.target}`,);
     }
+
     if (completed) {
       effectsApplied.push(`quest:${quest.id}:complete`,);
       messageParts.push(`Quest "${quest.name}" completed`,);
     }
+
     return quest.world_id;
   } catch (error) {
     getLog().warn("Question effect: quest update skipped", {
       questId: quest.id,
       error: error instanceof Error ? error.message : String(error,),
     },);
+
     return null;
   }
 }
@@ -153,6 +157,7 @@ async function applyItemGrant(
 ): Promise<void> {
   const item = await db.selectFrom("items",).selectAll()
     .where("id", "=", grantItemId,).executeTakeFirst();
+
   if (!item) {
     getLog().warn("Question effect: item definition not found", { grantItemId, },);
     return;
@@ -163,13 +168,16 @@ async function applyItemGrant(
   if (!worldId) {
     const chat = await db.selectFrom("chats",).select("world_id",)
       .where("id", "=", chatId,).executeTakeFirst();
+
     worldId = chat?.world_id ?? null;
   }
+
   if (!worldId) {
     getLog().warn("Question effect: no world context for item grant", {
       chatId,
       grantItemId,
     },);
+
     return;
   }
 

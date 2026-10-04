@@ -52,12 +52,14 @@ describe("providerState pure helpers", () => {
       modelRoleList: [{ role: "chat", provider: "p1", model: "m1", },],
       providerModels: { p1: models, },
     },);
+
     expect(providerState.getModelsForRole!.call(ctx, "chat",),).toEqual(models,);
     expect(providerState.getModelsForRole!.call(ctx, "missing",),).toEqual([],);
     const ctxNoProvider = providerCtx({
       modelRoleList: [{ role: "chat", provider: "", model: "", },],
       providerModels: { p1: models, },
     },);
+
     expect(providerState.getModelsForRole!.call(ctxNoProvider, "chat",),).toEqual([],);
   });
 
@@ -67,12 +69,14 @@ describe("providerState pure helpers", () => {
       modelRoleList: [{ role: "chat", provider: "p1", model: "m2", },],
       providerModels: { p1: models, },
     },);
+
     expect(providerState.getSelectedModel!.call(ctx, "chat",),).toEqual({ id: "m2", },);
     expect(providerState.getSelectedModel!.call(ctx, "other",),).toBeUndefined();
     const ctxEmpty = providerCtx({
       modelRoleList: [{ role: "chat", provider: "p1", model: "", },],
       providerModels: { p1: models, },
     },);
+
     expect(providerState.getSelectedModel!.call(ctxEmpty, "chat",),).toBeUndefined();
   });
 
@@ -88,6 +92,7 @@ describe("providerState pure helpers", () => {
         modalities: ["text", "image",],
       },),
     ).toBe("8B · 32000 ctx · thinking · tools · text/image",);
+
     expect(providerState.modelSummary!.call({}, { id: "m", },),).toBe("",);
   });
 
@@ -167,6 +172,7 @@ describe("fineTuneState", () => {
         },
       ],
     };
+
     const out = fineTuneState.fineTuneCandidates!.call(ctx,);
     expect(out,).toHaveLength(2,);
     expect(out[0],).toMatchObject({ provider: "p1", model: "m1", paramSize: "8", },);
@@ -182,6 +188,7 @@ describe("fineTuneState", () => {
       providerModels: { "p-日本語": [{ id: "モデル-α", },], },
       modelCapabilities: [],
     };
+
     const rows = fineTuneState.fineTuneCandidates!.call(ctx,);
     expect(rows,).toHaveLength(1,);
     expect(rows[0],).toMatchObject({ provider: "p-日本語", model: "モデル-α", },);
@@ -199,11 +206,13 @@ describe("fineTuneState", () => {
       toolCalling: false,
       ownedBy: null,
     };
+
     // Plain "13" and suffixed "13B" both parse to the same size.
     expect(fineTuneState.fineTuneReadiness!.call({}, { ...base, paramSize: "13", },),).toContain("large param",);
     expect(fineTuneState.fineTuneReadiness!.call({}, { ...base, contextWindow: 64_000, },),).toContain(
       "large context",
     );
+
     expect(fineTuneState.fineTuneReadiness!.call({}, { ...base, paramSize: "7", },),).toContain("mid-size",);
     expect(fineTuneState.fineTuneReadiness!.call({}, base,),).toContain("prefer a larger model",);
   });
@@ -220,6 +229,7 @@ describe("fineTuneState", () => {
       toolCalling: false,
       ownedBy: null,
     };
+
     expect(fineTuneState.fineTuneReadiness!.call({}, base,),).toContain("prefer a larger model",);
     expect(
       fineTuneState.fineTuneReadiness!.call({}, { ...base, paramSize: "13B", contextWindow: 64_000, },),

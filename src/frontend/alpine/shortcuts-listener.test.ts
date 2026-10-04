@@ -45,12 +45,14 @@ beforeAll(async () => {
   ) => {
     if (type === "keydown") { keydown = fn as (e: FakeEvent,) => void; }
   };
+
   // Fresh instance so the keydown listener registers with the recorder above.
   // The specifier is computed so TypeScript does not try to resolve the
   // cache-busting query suffix (it cannot); bun resolves it at runtime.
   const busted = "./shortcuts" + "?listener-test";
   shortcuts = await import(busted);
 },);
+
 afterAll(() => {
   (globalThis as { window?: unknown }).window = _origWindow;
   (globalThis.document as { addEventListener: unknown }).addEventListener = _origAddEventListener;
@@ -65,6 +67,7 @@ function captureWindowEvent(type: string,) {
   const listener = (e: Event,) => {
     received.push({ detail: (e as CustomEvent).detail, },);
   };
+
   window.addEventListener(type, listener,);
   return {
     received,
@@ -105,16 +108,19 @@ beforeEach(() => {
   (globalThis as { toggleSidebar?: unknown }).toggleSidebar = () => {
     toggleSidebarCalls.push(1,);
   };
+
   (globalThis as { location?: unknown }).location = {
     assign: (url: string,) => {
       assignedUrls.push(url,);
     },
   };
+
   (globalThis as { localStorage?: unknown }).localStorage = {
     getItem: (k: string,) => (k === "keynav" && keynavEnabled ? "1" : null),
     setItem: () => {},
     removeItem: () => {},
   };
+
   (globalThis.document as { querySelector: (sel: string,) => unknown }).querySelector = (sel: string,) => {
     if (Object.hasOwn(querySelectorResults, sel,)) { return querySelectorResults[sel]; }
     if (sel === '[href="/views/new-chat"]') {
@@ -124,6 +130,7 @@ beforeEach(() => {
         },
       };
     }
+
     if (sel === "#message-input, .input-row textarea") {
       return {
         focus: () => {
@@ -131,6 +138,7 @@ beforeEach(() => {
         },
       };
     }
+
     if (sel === '.list-search, [type="search"]') {
       return {
         focus: () => {
@@ -138,9 +146,11 @@ beforeEach(() => {
         },
       };
     }
+
     return null;
   };
 },);
+
 afterEach(() => {
   (globalThis as { toggleSidebar?: unknown }).toggleSidebar = origToggleSidebar;
   (globalThis as { location?: unknown }).location = origLocation;
@@ -297,6 +307,7 @@ describe("keynav enabled", () => {
     const unsub = shortcuts.registerKeynavHandler("goto-chatlist", () => {
       handlerCalls += 1;
     },);
+
     const cap = captureWindowEvent("keynav:action",);
     try {
       fire({ key: "g", },);

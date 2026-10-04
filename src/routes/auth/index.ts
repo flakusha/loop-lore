@@ -135,9 +135,11 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, pre
         const userId = "userId" in rest && typeof rest.userId === "string"
           ? rest.userId
           : null;
+
         const sessionId = "sessionId" in rest && typeof rest.sessionId === "string"
           ? rest.sessionId
           : null;
+
         return handleLogout(request, database, userId, sessionId,);
       },
       {
@@ -158,6 +160,7 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, pre
         const userId = "userId" in rest && typeof rest.userId === "string"
           ? rest.userId
           : null;
+
         return handleMe(request, database, userId,);
       },
       {

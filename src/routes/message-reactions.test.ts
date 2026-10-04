@@ -184,6 +184,7 @@ describe("messageReactionsRoutes access checks", () => {
         body: JSON.stringify({ emoji: "", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 });

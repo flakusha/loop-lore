@@ -37,6 +37,7 @@ const HOLD_RULE = "An absent actor is NOT narrated into autonomous action. " +
 const ADVANCE_RULE = "An absent actor is NOT narrated into autonomous action. " +
   "You may elapse scene time past their inaction (move location, mark a " +
   "time skip), but the actor's own choices remain unwritten.";
+
 interface RecentSkip {
   actor_id: string;
   mode: string | null;
@@ -83,6 +84,7 @@ export const turnSkipAbsenceSection: SectionBuilder = {
       if (s.mode === "advance") { advanceCount++; }
       else if (s.mode === "hold") { holdCount++; }
     }
+
     const parts: string[] = [];
     if (holdCount > 0) {
       parts.push(
@@ -92,6 +94,7 @@ export const turnSkipAbsenceSection: SectionBuilder = {
         ),
       );
     }
+
     if (advanceCount > 0) {
       parts.push(
         wrapSection(
@@ -100,6 +103,7 @@ export const turnSkipAbsenceSection: SectionBuilder = {
         ),
       );
     }
+
     return [{ role: "system", content: parts.join("\n\n",), },];
   },
 };

@@ -61,6 +61,7 @@ function validateSystemPrompts(systemPrompts: unknown,): void {
   if (typeof systemPrompts !== "object" || systemPrompts === null) {
     throw new Error("systemPrompts must be an object mapping purpose -> string",);
   }
+
   for (const [purpose, value,] of Object.entries(systemPrompts as Record<string, unknown>,)) {
     if (typeof value !== "string") {
       throw new TypeError(`systemPrompts.${purpose} must be a string, got ${typeof value}`,);
@@ -77,10 +78,12 @@ function validateChatFormats(chatFormats: unknown,): void {
   if (typeof chatFormats !== "object" || chatFormats === null) {
     throw new Error("chatFormats must be an object mapping name -> {system,user,assistant}",);
   }
+
   for (const [name, value,] of Object.entries(chatFormats as Record<string, unknown>,)) {
     if (typeof value !== "object" || value === null) {
       throw new Error(`chatFormats.${name} must be an object`,);
     }
+
     const fmt = value as Partial<ChatFormatTemplate>;
     for (const role of ["system", "user", "assistant",] as const) {
       if (typeof fmt[role] !== "string") {
@@ -106,29 +109,36 @@ export function validateSdConfig(raw: Record<string, unknown>,): void {
     if (typeof raw.profiles !== "object" || raw.profiles === null || Array.isArray(raw.profiles,)) {
       throw new Error("profiles must be an object mapping profileId -> profile",);
     }
+
     for (const [id, value,] of Object.entries(raw.profiles as Record<string, unknown>,)) {
       if (typeof value !== "object" || value === null) {
         throw new Error(`profiles.${id} must be an object`,);
       }
+
       const p = value as Partial<{ name: unknown; promptFormat: unknown; maxTokenHint: unknown; defaults: unknown }>;
       if (p.name !== undefined && typeof p.name !== "string") {
         throw new TypeError(`profiles.${id}.name must be a string`,);
       }
+
       if (p.promptFormat !== undefined && typeof p.promptFormat !== "string") {
         throw new TypeError(`profiles.${id}.promptFormat must be a string`,);
       }
+
       if (p.maxTokenHint !== undefined && typeof p.maxTokenHint !== "number") {
         throw new TypeError(`profiles.${id}.maxTokenHint must be a number`,);
       }
+
       if (p.defaults !== undefined && (typeof p.defaults !== "object" || p.defaults === null)) {
         throw new TypeError(`profiles.${id}.defaults must be an object`,);
       }
     }
   }
+
   if (raw.modelMatching !== undefined) {
     if (!Array.isArray(raw.modelMatching,)) {
       throw new Error("modelMatching must be an array of {pattern, profileId}",);
     }
+
     for (const [i, rule,] of raw.modelMatching.entries()) {
       const r = rule as Partial<{ pattern: unknown; profileId: unknown }>;
       if (typeof r.pattern !== "string" || typeof r.profileId !== "string") {
@@ -147,19 +157,23 @@ export function validateAvatarConfig(raw: Record<string, unknown>,): void {
     if (typeof raw.emotions !== "object" || raw.emotions === null || Array.isArray(raw.emotions,)) {
       throw new Error("emotions must be an object mapping emotion -> {asset, intent}",);
     }
+
     for (const [emotion, value,] of Object.entries(raw.emotions as Record<string, unknown>,)) {
       if (typeof value !== "object" || value === null) {
         throw new Error(`emotions.${emotion} must be an object with asset + intent`,);
       }
+
       const e = value as Partial<{ asset: unknown; intent: unknown }>;
       if (typeof e.asset !== "string") {
         throw new TypeError(`emotions.${emotion}.asset must be a string`,);
       }
+
       if (e.intent !== undefined && typeof e.intent !== "string") {
         throw new TypeError(`emotions.${emotion}.intent must be a string`,);
       }
     }
   }
+
   if (raw.intentPatterns !== undefined && !Array.isArray(raw.intentPatterns,)) {
     throw new Error("intentPatterns must be an array",);
   }
@@ -174,10 +188,12 @@ export function validateImageEditConfig(raw: Record<string, unknown>,): void {
     if (typeof raw.workflows !== "object" || raw.workflows === null || Array.isArray(raw.workflows,)) {
       throw new Error("workflows must be an object mapping slug -> workflow",);
     }
+
     for (const [slug, value,] of Object.entries(raw.workflows as Record<string, unknown>,)) {
       if (typeof value !== "object" || value === null) {
         throw new Error(`workflows.${slug} must be an object`,);
       }
+
       const w = value as Partial<{ id: unknown; name: unknown; category: unknown; backend: unknown }>;
       for (const field of ["name", "category", "backend",] as const) {
         if (w[field] !== undefined && typeof w[field] !== "string") {
@@ -229,7 +245,9 @@ function levenshtein(a: string, b: string,): number {
       const diag = prev[j - 1] ?? 0;
       curr[j] = Math.min(above + 1, left + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1),);
     }
+
     prev = curr;
   }
+
   return prev[b.length] ?? 0;
 }

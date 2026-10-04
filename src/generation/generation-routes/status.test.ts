@@ -99,6 +99,7 @@ function seedActive(overrides: {
     chunksReceived: overrides.chunksReceived ?? 3,
     charsReceived: overrides.charsReceived ?? 42,
   } as ActiveGeneration,);
+
   chatToAttempt.set(chatId, attemptId,);
   return attemptId;
 }
@@ -124,6 +125,7 @@ describe("handleGenerationStatus", () => {
         charsReceived: number;
       } | null;
     };
+
     expect(data.isActive,).toBe(true,);
     expect(data.attemptId,).toBe(attemptId,);
     expect(data.generation,).not.toBeNull();
@@ -146,6 +148,7 @@ describe("handleGenerationStatus", () => {
       attemptId: string | null;
       generation: { status: GenerationStatus } | null;
     };
+
     expect(data.isActive,).toBe(false,);
     expect(data.attemptId,).toBe(attemptId,);
     expect(data.generation?.status,).toBe(GenerationStatus.Cancelled,);

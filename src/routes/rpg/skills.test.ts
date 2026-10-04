@@ -46,6 +46,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
       "Skillmaster",
       { id: userId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     worldId = uid();
     await insertWorlds(db, userId, "Skill World", { id: worldId, } as never,);
     actorId = uid();
@@ -80,6 +81,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
     if (typeof body === "object" && body !== null && "id" in body && typeof body.id === "string") {
       return body.id;
     }
+
     throw new Error("response missing string id",);
   }
 
@@ -92,6 +94,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
         body: JSON.stringify({ actorId, worldId, name: "Swordsmanship", category: "combat", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     skillId = readId(await json(res,),);
     expect(skillId,).toBeString();
@@ -102,6 +105,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/skills/${skillId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { name?: string };
     expect(body.name,).toBe("Swordsmanship",);
@@ -112,6 +116,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/skills/actors/${actorId}?worldId=${worldId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { skills?: unknown[] };
     expect(Array.isArray(body.skills,),).toBe(true,);
@@ -123,6 +128,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/skills/actors/${actorId}/category/combat?worldId=${worldId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { skills?: unknown[] };
     expect(Array.isArray(body.skills,),).toBe(true,);
@@ -134,6 +140,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/skills/actors/${actorId}/tree?worldId=${worldId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { tree?: unknown[] };
     expect(Array.isArray(body.tree,),).toBe(true,);
@@ -148,6 +155,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
         body: JSON.stringify({ xpAmount: 600, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { xpGained?: number; newProficiency?: string };
     expect(body.xpGained,).toBe(600,);
@@ -163,6 +171,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
         body: JSON.stringify({ specialization: "Heavy Blades", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { specialization?: string };
     expect(body.specialization,).toBe("Heavy Blades",);
@@ -177,6 +186,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
         body: JSON.stringify({ name: "Master Swordsmanship", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { name?: string };
     expect(body.name,).toBe("Master Swordsmanship",);
@@ -191,6 +201,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
         body: JSON.stringify({ actorId, prerequisites: [skillId,], worldId, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { met?: boolean; missing?: unknown[] };
     expect(typeof body.met,).toBe("boolean",);
@@ -203,6 +214,7 @@ describe("skills CRUD + progression (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/skills/actors/${actorId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -211,11 +223,13 @@ describe("skills CRUD + progression (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/skills/${skillId}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
 
     const afterRes = await app.handle(
       new Request(`http://localhost/api/rpg/skills/${skillId}`,),
     );
+
     expect(afterRes.status,).toBe(404,);
   });
 });

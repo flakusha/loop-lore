@@ -39,12 +39,14 @@ async function main() {
       "./src/components",
     ),
   },);
+
   const args = runScript(parser, {
     programName: "compress",
     brief: "Copy + minify + compress built artifacts in dist/.",
     showDefault: true,
     help: "option",
   },);
+
   const { directory, sourcePublic, sourceViews, sourceComponents, } = args;
 
   if (!existsSync(directory,)) {
@@ -93,6 +95,7 @@ async function main() {
     const why = STRIP_TEST_IDS ? "minification + data-testid strip" : "minification";
     log.info(`After ${why}: ${totalAfter} bytes (${pct}% savings)`,);
   }
+
   log.info(
     `Compressed sizes - gzip: ${compressedBytes.gz}, zstd: ${compressedBytes.zst}, brotli: ${compressedBytes.br}`,
   );
@@ -151,6 +154,7 @@ async function minifyHtml(file: string, content: Buffer, log: Logger,): Promise<
     if (STRIP_TEST_IDS) {
       processed = stripTestIds(processed,);
     }
+
     if (processed.length < original.length) {
       writeFileSync(file, processed, "utf8",);
     }
@@ -173,6 +177,7 @@ function stripSvgTestIds(file: string, content: Buffer,): void {
   if (STRIP_TEST_IDS) {
     processed = stripTestIds(processed,);
   }
+
   if (processed.length < content.length) {
     writeFileSync(file, processed, "utf8",);
   }

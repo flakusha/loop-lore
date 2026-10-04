@@ -43,6 +43,7 @@ async function resolveLocation(
     .where("world_id", "=", worldId,)
     .where("name", "=", locationName,)
     .executeTakeFirst();
+
   if (exact) { return exact; }
   const likeMatches = await database
     .selectFrom("locations",)
@@ -119,6 +120,7 @@ export async function handleSceneTransitions(
         locationName,
         worldId: chatRecord.world_id,
       },);
+
       return;
     }
 
@@ -184,6 +186,7 @@ export async function handleSceneTransitions(
       source: classification.source,
       confidence: classification.confidence,
     },);
+
     return;
   }
 

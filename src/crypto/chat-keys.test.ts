@@ -43,10 +43,12 @@ beforeAll(async () => {
           const mod = await import(path.join(dir, fileName,));
           migrations[fileName.replace(/\.ts$/, "",)] = mod.default ?? mod;
         }
+
         return migrations;
       },
     },
   },);
+
   const { error, } = await migrator.migrateToLatest();
   if (error) { throw new Error("Migration failed: " + JSON.stringify(error,),); }
   await sql`PRAGMA foreign_keys = OFF`.execute(db,);
@@ -219,6 +221,7 @@ describe("deriveChatKeyForChat", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]!.id,).toBe(results[0]!.keyId,);
   });

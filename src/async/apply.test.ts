@@ -20,6 +20,7 @@ beforeEach(() => {
   spillDirForTest = mkdtempSync(path.join(tmpdir(), "loop-lore-apply-",),);
   setOffloadDir(spillDirForTest,);
 },);
+
 afterEach(() => {
   resetOffloadDir();
   rmSync(spillDirForTest, { recursive: true, force: true, },);
@@ -90,6 +91,7 @@ function makeMockDb(): {
       const q: RecordedQuery = {
         insert: { table, values, onConflict: false, },
       };
+
       queries.push(q,);
       return {
         onConflict(
@@ -104,6 +106,7 @@ function makeMockDb(): {
         execute: async (): Promise<void> => undefined,
       };
     }
+
     return { values, };
   }
 
@@ -118,6 +121,7 @@ function makeMockDb(): {
       const q: RecordedQuery = {
         update: { table, set, where: { column: "", value: undefined, }, whereCalls: [], },
       };
+
       queries.push(q,);
       const builder: UpdateBuilderMock = {
         where(column: string, _op: string, value: unknown,): UpdateBuilderMock {
@@ -125,14 +129,17 @@ function makeMockDb(): {
             q.update.where = { column, value, };
             q.update.whereCalls.push({ column, value, },);
           }
+
           // Return `this` so production code can chain a second `.where()`
           // (e.g. `where("id", ...).where("user_id", ...)`). Mirrors Kysely.
           return builder;
         },
         execute: async (): Promise<void> => undefined,
       };
+
       return builder;
     }
+
     return { set, };
   }
 
@@ -162,6 +169,7 @@ describe("apply()", () => {
       userId: "alice",
       startedAt: "2026-08-27T00:00:00Z",
     };
+
     await apply(mock, write, cfg,);
     expect(queries,).toHaveLength(1,);
     expect(queries[0]?.insert?.table,).toBe("request_results",);
@@ -183,6 +191,7 @@ describe("apply()", () => {
       status: "in_progress",
       progress: { step: "tokens", n: 42, },
     };
+
     await apply(mock, write, cfg,);
     expect(queries[0]?.update?.table,).toBe("request_results",);
     expect(queries[0]?.update?.set.status,).toBe("in_progress",);
@@ -225,6 +234,7 @@ describe("apply()", () => {
         body: "ok",
       },
     };
+
     await apply(mock, write, cfg,);
     expect(queries[0]?.update?.set.status,).toBe("complete",);
     expect(queries[0]?.update?.set.response_status,).toBe(201,);
@@ -246,6 +256,7 @@ describe("apply()", () => {
       userId: "alice",
       response: { status: 200, headers: {}, body: bigBody, },
     };
+
     await apply(mock, write, cfg,);
     const set = queries[0]?.update?.set;
     // The inline column is nulled (the daemon would otherwise skip it), but
@@ -297,6 +308,7 @@ describe("apply()", () => {
       userId: "alice",
       startedAt: "2026-09-03T00:00:00Z",
     }, cfg,);
+
     await apply(mock, {
       kind: "upsert",
       id: "r-shared",
@@ -305,6 +317,7 @@ describe("apply()", () => {
       userId: "bob",
       startedAt: "2026-09-03T00:00:01Z",
     }, cfg,);
+
     expect(queries[0]?.insert?.values.user_id,).toBe("alice",);
     expect(queries[1]?.insert?.values.user_id,).toBe("bob",);
     expect(queries[0]?.insert?.onConflict,).toBe(true,);
@@ -315,12 +328,14 @@ describe("apply()", () => {
       userId: "bob",
       response: { status: 200, headers: {}, body: "bob-body-leak", },
     }, cfg,);
+
     const bUpdate = queries[2]?.update;
     expect(bUpdate,).toBeDefined();
     expect(bUpdate?.whereCalls,).toEqual([{ column: "id", value: "r-shared", }, {
       column: "user_id",
       value: "bob",
     },],);
+
     expect(bUpdate?.set.response_body,).toBe("bob-body-leak",);
     expect(bUpdate?.set.status,).toBe("complete",);
   });

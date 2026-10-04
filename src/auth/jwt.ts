@@ -103,6 +103,7 @@ function base64urlDecode(str: string,): Uint8Array {
 function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
   return arr as unknown as Uint8Array<ArrayBuffer>;
 }
+
 /**
  * Derive the JWT-signing HMAC key from the shared auth secret.
  *
@@ -201,6 +202,7 @@ export async function verifyJwt(opts: VerifyJwtOpts,): Promise<JwtResult> {
     if (!parsed.ok || !parsed.value || typeof parsed.value !== "object" || Array.isArray(parsed.value,)) {
       return { valid: false, error: "Invalid payload", };
     }
+
     const payload = parsed.value;
 
     // Required claims — token is useless without a subject, role, or session.
@@ -220,6 +222,7 @@ export async function verifyJwt(opts: VerifyJwtOpts,): Promise<JwtResult> {
     ) {
       return { valid: false, error: "Missing or invalid exp claim", };
     }
+
     const now = Math.floor(Date.now() / 1000,);
     if (payload.exp <= now) {
       return { valid: false, error: "Token expired", };

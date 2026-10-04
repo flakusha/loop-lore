@@ -95,12 +95,15 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await sql`DROP INDEX IF EXISTS idx_world_lore_lifecycle`.execute(
     database,
   );
+
   await sql`DROP TRIGGER IF EXISTS world_lore_entries_distortion_check`.execute(
     database,
   );
+
   await sql`DROP TRIGGER IF EXISTS world_lore_entries_confidence_check`.execute(
     database,
   );
+
   await database.schema.alterTable("world_lore_entries",).dropColumn("disputed",).execute();
   await database.schema.alterTable("world_lore_entries",).dropColumn("distortion_level",).execute();
   await database.schema.alterTable("world_lore_entries",).dropColumn("source_count",).execute();

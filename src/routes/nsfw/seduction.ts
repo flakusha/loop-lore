@@ -57,6 +57,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
               ctx.params.actorId,
               body,
             );
+
             return jsonResponse({ success, },);
           } catch (error) {
             log().error("Failed to update desire profile", error instanceof Error ? error : undefined,);
@@ -100,6 +101,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
               chatId,
               actorId,
             },);
+
             if (!consent.ok) { return nsfwAccessErrorResponse(consent.reason,); }
 
             const result = await seductionService.attemptSeduction({
@@ -111,6 +113,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
               worldId: (body.worldId as string) ?? null,
               reputationTier: (body.reputationTier as ReputationTier) ?? undefined,
             },);
+
             return jsonResponse(result,);
           } catch (error) {
             log().error("Failed to attempt seduction", error instanceof Error ? error : undefined,);
@@ -154,6 +157,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
               (body.worldId as string) ?? null,
               body.source as string | undefined,
             );
+
             return jsonResponse({ level: newLevel, },);
           } catch (error) {
             log().error("Failed to modify arousal", error instanceof Error ? error : undefined,);

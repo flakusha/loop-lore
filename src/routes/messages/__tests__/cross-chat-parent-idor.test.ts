@@ -69,9 +69,11 @@ async function runGuard(
         .select("chat_id",)
         .where("id", "=", parentId,)
         .executeTakeFirst();
+
       if (!parent) { throw new ParentMessageNotFoundError(); }
       if (parent.chat_id !== chatId) { throw new ParentMessageNotInChatError(); }
     }
+
     await trx.insertInto("messages",).values(row as never,).execute();
   },);
 }
@@ -130,6 +132,7 @@ describe("cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR)", () => 
     await insertMessages(db, chatA, actorA, MessageRole.User, "parent in A", {
       id: parentInA as never,
     },);
+
     await insertMessages(db, chatB, actorB, MessageRole.User, "parent in B", {
       id: parentInB as never,
     },);

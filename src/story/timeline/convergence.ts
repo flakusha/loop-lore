@@ -38,9 +38,11 @@ export async function getConvergentEvents(
         eb("story_id", "is", null,),
       ],)
     );
+
   if (since !== undefined) {
     query = query.where("occurred_at", ">", since,);
   }
+
   return query
     .orderBy("occurred_at", "desc",)
     .limit(limit ?? 20,)

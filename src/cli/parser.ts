@@ -79,6 +79,7 @@ export function runScript<
     showDefault: options.showDefault,
     errorExitCode: options.errorExitCode,
   };
+
   return run(parser, runOptions,) as InferValue<T>;
 }
 

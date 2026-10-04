@@ -48,10 +48,12 @@ describe("comparisonsExportRoutes", () => {
         metadata: { kind: "ab", },
       },
     ],);
+
     const ratings = JSON.stringify({
       "m1": { rating: 5, notes: "clearer", },
       "m2": { rating: 3, notes: "verbose", },
     },);
+
     const metadata = JSON.stringify({ sweep: false, modelCount: 2, },);
     await db
       .insertInto("model_comparison_runs",)
@@ -77,6 +79,7 @@ describe("comparisonsExportRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/v1/comparisons/${runId}/export`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -85,6 +88,7 @@ describe("comparisonsExportRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/v1/comparisons/${uid()}/export`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -93,6 +97,7 @@ describe("comparisonsExportRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/v1/comparisons/${runId}/export`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -101,6 +106,7 @@ describe("comparisonsExportRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/v1/comparisons/${runId}/export`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-type",),).toContain("application/json",);
     const body = (await res.json()) as {
@@ -111,6 +117,7 @@ describe("comparisonsExportRoutes", () => {
       metadata: Record<string, unknown>;
       createdAt: string;
     };
+
     expect(body.id,).toBe(runId,);
     expect(body.prompt,).toBe("compare these models",);
     expect(body.results.length,).toBe(2,);
@@ -126,6 +133,7 @@ describe("comparisonsExportRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/v1/comparisons/${runId}/export?format=markdown`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-type",),).toContain("text/markdown",);
     expect(res.headers.get("content-disposition",),).toContain("attachment",);

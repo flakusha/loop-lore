@@ -107,6 +107,7 @@ export async function requireNsfwRouteAccess(
       chatId: opts.chatId,
       actorId: opts.actorId,
     },);
+
     if (!gate.allowed) {
       return { ok: false, reason: toNsfwRouteAccessFailure(gate.reason,), };
     }
@@ -124,5 +125,6 @@ export function nsfwAccessErrorResponse(reason: NsfwRouteAccessFailure,): Respon
   if (reason === "auth_required") {
     return jsonError("Authentication required", 401,);
   }
+
   return jsonError(`NSFW access denied: ${reason}`, 403,);
 }

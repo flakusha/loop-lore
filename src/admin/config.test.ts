@@ -129,6 +129,7 @@ describe("seedDefaults", () => {
         defaultModels: { openai: "gpt-4o-mini", },
       },
     } as unknown as Config;
+
     await seedDefaults(db, cfg,);
     await expect(seedDefaults(db, cfg,),).resolves.toBeUndefined();
   });
@@ -146,6 +147,7 @@ describe("seedDefaults", () => {
         defaultModels: { openai: "gpt-4o-mini", },
       },
     } as unknown as Config;
+
     await seedDefaults(db, cfg,);
     const rows = await db.selectFrom("system_config",).selectAll().execute();
     const keys = rows.map((r,) => r.key);
@@ -163,10 +165,12 @@ describe("seedDefaults", () => {
       "spam_detection",
       "max_flags_before_hide",
     ];
+
     for (const k of expectedKeys) {
       expect(keys,).toContain(k,);
     }
   });
+
   test("seeded values match the config passed to seedDefaults", async () => {
     const cfg = {
       auth: {
@@ -180,6 +184,7 @@ describe("seedDefaults", () => {
         defaultModels: { openai: "gpt-4o-mini", },
       },
     } as unknown as Config;
+
     await seedDefaults(db, cfg,);
     // Verify seeded values match what seedDefaults writes from the config
     const authEnabled = await getConfig(db, "registration_open",);
@@ -240,6 +245,7 @@ describe("seedDefaults", () => {
       ) {
         expect(keys,).toContain(k,);
       }
+
       for (
         const k of [
           "registration_open",
@@ -263,6 +269,7 @@ describe("seedDefaults", () => {
         },
         assets: { maxFileSize: 10485760, },
       } as unknown as Config;
+
       await expect(seedDefaults(db, cfg,),).resolves.toBeUndefined();
       const rows = await db.selectFrom("system_config",).selectAll().execute();
       const keys = rows.map((r,) => r.key);
@@ -276,6 +283,7 @@ describe("seedDefaults", () => {
       ) {
         expect(keys,).toContain(k,);
       }
+
       expect(keys,).not.toContain("default_provider",);
       expect(keys,).not.toContain("default_model",);
     });
@@ -287,6 +295,7 @@ describe("seedDefaults", () => {
           defaultModels: { openai: "gpt-4o-mini", },
         },
       } as unknown as Config;
+
       await expect(seedDefaults(db, cfg,),).resolves.toBeUndefined();
       const rows = await db.selectFrom("system_config",).selectAll().execute();
       const keys = rows.map((r,) => r.key);
@@ -308,6 +317,7 @@ describe("seedDefaults", () => {
       const cfg = {
         generation: { defaultProvider: "openai", },
       } as unknown as Config;
+
       await expect(seedDefaults(db, cfg,),).resolves.toBeUndefined();
       const provider = await getConfig(db, "default_provider",);
       expect(provider?.value,).toBe("openai",);

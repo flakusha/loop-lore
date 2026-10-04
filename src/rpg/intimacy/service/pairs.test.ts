@@ -16,6 +16,7 @@ describe("rpg/intimacy/service/pairs (real logic)", () => {
       created_at: "2026-01-01",
       updated_at: "2026-01-02",
     };
+
     const pair = rowToPair(row,);
     expect(pair.id,).toBe("p1",);
     expect(pair.actorId,).toBe("a1",);
@@ -36,6 +37,7 @@ describe("rpg/intimacy/service/pairs (real logic)", () => {
       created_at: "2026-01-01",
       updated_at: "2026-01-02",
     };
+
     const pair = rowToPair(row,);
     expect(pair.worldId,).toBeNull();
   });
@@ -54,6 +56,7 @@ describe("rpg/intimacy/service/pairs (real logic)", () => {
       created_at: "2026-01-01",
       updated_at: "2026-01-02",
     };
+
     const pair = rowToPair(row,);
     expect(pair.actionHistory.length,).toBe(1,);
     expect(pair.actionHistory[0]!.actionName,).toBe("Gift",);
@@ -72,6 +75,7 @@ describe("rpg/intimacy/service/pairs (real logic)", () => {
       created_at: "2026-01-01",
       updated_at: "2026-01-02",
     };
+
     const pair = rowToPair(row,);
     expect(pair.actionHistory,).toEqual([],);
     expect(pair.unlockedThresholds,).toEqual([],);
@@ -89,6 +93,7 @@ describe("rpg/intimacy/service/pairs (real logic)", () => {
       created_at: "2026-01-01",
       updated_at: "2026-01-02",
     };
+
     const pair = rowToPair(row,);
     expect(pair.score,).toBe(-50,);
   });

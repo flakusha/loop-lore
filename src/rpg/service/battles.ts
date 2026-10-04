@@ -45,6 +45,7 @@ export async function startBattle(
     ...c,
     initiative: rollInitiative(c,).total,
   }),);
+
   const sorted = sortByInitiative(withInitiative,);
   const serialized = safeJsonStringify(sorted,);
   if (!serialized.ok) {

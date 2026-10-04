@@ -73,6 +73,7 @@ describe("getOrCreateSoloUserForAuth — actor creation", () => {
       .select(db.fn.countAll<number>().as("n",),)
       .where("id", "=", solo!.id,)
       .executeTakeFirst();
+
     expect(actorCount?.n,).toBe(1,);
   });
 });

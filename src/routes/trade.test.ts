@@ -49,6 +49,7 @@ describe("trade routes (auth-gated)", () => {
       "Trade Owner",
       { id: userId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     worldId = uid();
     await insertWorlds(db, userId, "Trade World", { id: worldId, } as never,);
     buyer = uid();
@@ -86,11 +87,13 @@ describe("trade routes (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/trade/balance?actorId=${buyer}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json();
     if (typeof body !== "object" || body === null || !("balance" in body)) {
       throw new Error("balance response missing field",);
     }
+
     expect(body.balance,).toBe(100,);
   });
 
@@ -102,13 +105,16 @@ describe("trade routes (auth-gated)", () => {
       "Stranger User",
       { id: strangerUser, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     const stranger = uid();
     await db.insertInto("actors",).values({ id: stranger, display_name: "Stranger", user_id: strangerUser, },)
       .execute();
+
     const app = authedApp();
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/trade/balance?actorId=${stranger}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -127,11 +133,13 @@ describe("trade routes (auth-gated)", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json();
     if (typeof body !== "object" || body === null || !("ok" in body)) {
       throw new Error("execute response missing field",);
     }
+
     expect(body.ok,).toBe(true,);
     expect(await new TradeService(db,).getBalance(buyer, worldId,),).toBe(75,);
     expect(await new TradeService(db,).getBalance(seller, worldId,),).toBe(75,);
@@ -160,6 +168,7 @@ describe("trade routes (auth-gated)", () => {
         },),
       },),
     );
+
     expect(counterRes.status,).toBe(200,);
 
     const acceptRes = await app.handle(
@@ -169,6 +178,7 @@ describe("trade routes (auth-gated)", () => {
         body: JSON.stringify({ actorId: buyer, },),
       },),
     );
+
     expect(acceptRes.status,).toBe(200,);
     expect(await svc.getBalance(buyer, worldId,),).toBe(buyerBalBefore - 12,);
   });
@@ -183,6 +193,7 @@ describe("trade routes (auth-gated)", () => {
       buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
       price: 10,
     },);
+
     const strangerUser = uid();
     await insertUsers(db, `sx-${strangerUser}`, "Stranger", {
       id: strangerUser,
@@ -190,9 +201,11 @@ describe("trade routes (auth-gated)", () => {
       status: "active",
       settings: "{}",
     } as never,);
+
     const stranger = uid();
     await db.insertInto("actors",).values({ id: stranger, display_name: "Stranger", user_id: strangerUser, },)
       .execute();
+
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/trade/offers/${offerId}/counter`, {
         method: "POST",
@@ -200,6 +213,7 @@ describe("trade routes (auth-gated)", () => {
         body: JSON.stringify({ counterActorId: stranger, price: 1, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -218,6 +232,7 @@ describe("trade routes (auth-gated)", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 });

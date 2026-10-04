@@ -46,6 +46,7 @@ describe("growth-service arc + confirm", () => {
       subject_id: "t1",
       recorded_at: new Date().toISOString(),
     },).execute();
+
     const confirmed = await confirmGrowthEntry(db, { entryId, actorId, confirmedBy: "u1", },);
     expect(confirmed.status,).toBe("applied",);
     await expect(rejectGrowthEntry(db, { entryId, actorId, rejectedBy: "u1", },),).rejects.toBeInstanceOf(
@@ -87,6 +88,7 @@ describe("growth-service insert/list", () => {
     await db.updateTable("actors",).set({ growth_mode: "static", },).where("id", "=", actorId,).execute();
     await expect(insertGrowthLog(db, { actorId, axis: "trait", eventType: "trait_drifted", },),)
       .rejects.toMatchObject({ code: "static_mode_forbidden", },);
+
     const arc = await insertGrowthLog(db, { actorId, axis: "arc", eventType: "arc_stage_set", },);
     expect(arc.status,).toBe("applied",);
   });
@@ -126,6 +128,7 @@ describe("growth-service facade (index.ts)", () => {
       eventType: "trait_drifted",
       status: "pending",
     },);
+
     const confirmed = await svc.confirmGrowthEntry({ entryId: pending.id, actorId, confirmedBy: "u1", },);
     expect(confirmed.status,).toBe("applied",);
     const pending2 = await svc.insertGrowthLog({
@@ -134,6 +137,7 @@ describe("growth-service facade (index.ts)", () => {
       eventType: "trait_drifted",
       status: "pending",
     },);
+
     const rejected = await svc.rejectGrowthEntry({ entryId: pending2.id, actorId, rejectedBy: "u1", },);
     expect(rejected.status,).toBe("rejected",);
   });

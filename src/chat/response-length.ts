@@ -53,6 +53,7 @@ export function computeMaxTokens(preset: LengthPreset, customMax?: number,): num
   if (preset === "custom") {
     return Math.max(1, customMax ?? LENGTH_PRESETS.medium.max,);
   }
+
   return LENGTH_PRESETS[preset].max;
 }
 
@@ -133,6 +134,7 @@ export function resolveResponseLength(
     const customTokens = clampTokenCount(chatCustom ?? LENGTH_PRESETS.medium.max,);
     return { preset: "custom", maxTokens: customTokens, };
   }
+
   return { preset, maxTokens: LENGTH_PRESETS[preset].max, };
 }
 

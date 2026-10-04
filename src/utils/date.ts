@@ -46,6 +46,7 @@ export function tzOffset(date?: Date, tz?: string,): string {
         minute: "2-digit",
         second: "2-digit",
       },).formatToParts(d,);
+
       const offsetPart = parts.find((p,) => p.type === "timeZoneName")?.value;
       if (offsetPart) {
         // "GMT+02:00" → "+02:00", "GMT-05:00" → "-05:00", "GMT" → "+00:00"
@@ -121,6 +122,7 @@ export function formatTime(options?: {
       fractionalSecondDigits: 3,
       timeZoneName: "longOffset",
     },);
+
     const parts = fmt.formatToParts(d,);
     const get = (type: string,): number => Number(parts.find((p,) => p.type === type)?.value ?? 0,);
 
@@ -190,6 +192,7 @@ export function sqliteUtcToIso(value: string,): string {
   } else if (!/([zZ]|[+-]\d{2}:?\d{2})$/.test(value,)) {
     return "";
   }
+
   const ms = Date.parse(zoned,);
   if (Number.isNaN(ms,)) { return ""; }
   return new Date(ms,).toISOString();
@@ -272,6 +275,7 @@ export function serializeDate(
     // Mirror formatHuman: display formats yield "" for invalid input; unix yields NaN.
     return format === "unix" ? NaN : "";
   }
+
   if (format === "unix") { return d.getTime(); }
   if (format === "human") { return formatHuman(input, options,); }
   const style: "compact" | "standard" = format === "compact" ? "compact" : "standard";

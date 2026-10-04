@@ -55,6 +55,7 @@ export async function getAssetData(
     if (!chatKey) {
       throw new Error("Chat key required to decrypt encrypted asset",);
     }
+
     return decryptAssetBlob(fileData, chatKey, asset.id,);
   }
 
@@ -155,10 +156,12 @@ export async function listAssets(
       countQuery = countQuery.where("asset_links.entity_type", "=", options.entityType,);
       listQuery = listQuery.where("asset_links.entity_type", "=", options.entityType,);
     }
+
     if (options.entityId) {
       countQuery = countQuery.where("asset_links.entity_id", "=", options.entityId,);
       listQuery = listQuery.where("asset_links.entity_id", "=", options.entityId,);
     }
+
     if (options.label) {
       countQuery = countQuery.where("asset_links.label", "=", options.label,);
       listQuery = listQuery.where("asset_links.label", "=", options.label,);
@@ -236,7 +239,9 @@ export async function canAccessAsset(
       .where("asset_id", "=", assetId,)
       .where("shared_with_id", "=", actorId,)
       .executeTakeFirst();
+
     if (share) { return true; }
   }
+
   return false;
 }

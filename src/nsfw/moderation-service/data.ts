@@ -88,18 +88,22 @@ export async function exportUserData(
     thisL.getPreferences(userId,),
     thisL.getAuditLog(userId,),
   ],);
+
   const flagRows = await thisL.db.selectFrom("content_flags",).where("reporter_id", "=", userId,).orderBy(
     "created_at",
     "desc",
   ).selectAll().execute();
+
   const flags = Array.from(flagRows, (r,) => mapFlag(r,),).map((f,) => ({
     ...f,
     description: previewText(f.description ?? null,),
   }));
+
   const sanitizedActions = (actions.status === "fulfilled" ? actions.value : []).map((a,) => ({
     ...a,
     reason: previewText(a.reason,),
   }));
+
   return {
     preferences: preferences.status === "fulfilled" ? preferences.value : null as NsfwUserPrefs | null,
     actions: sanitizedActions,
@@ -135,6 +139,7 @@ export async function deleteUserData(
     .where("target_user_id", "=", userId,)
     .where("deleted_at", "is", null,)
     .execute();
+
   // Hard-delete user-owned rows: NSFW preferences + reporter's own flags.
   await thisL.db.deleteFrom("content_flags",).where("reporter_id", "=", userId,).execute();
   await thisL.db.deleteFrom("nsfw_user_preferences",).where("user_id", "=", userId,).execute();
@@ -160,5 +165,6 @@ export async function deleteUserData(
     action: "delete-user-data",
     created_at: now,
   },).execute();
+
   thisL.log.warn("Moderation data deleted (audit preserved) for user", { userId, deletedBy, },);
 }

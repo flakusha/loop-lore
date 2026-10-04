@@ -136,6 +136,7 @@ describe("moderation action routes — moderator gating", () => {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },).execute();
+
     const forged = { targetUserId: targetId, reason: "test", performedBy: impersonated, };
     const app = createApp(db, caller, "admin",);
     const res = await app.handle(actionRequest("/api/nsfw/moderation/block", forged,),);
@@ -144,6 +145,7 @@ describe("moderation action routes — moderator gating", () => {
       .selectAll()
       .where("target_user_id", "=", targetId,)
       .execute();
+
     expect(rows.length,).toBe(1,);
     expect(rows[0]?.performed_by,).toBe(caller,);
     expect(rows[0]?.performed_by,).not.toBe(impersonated,);

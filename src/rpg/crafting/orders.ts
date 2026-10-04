@@ -99,6 +99,7 @@ export class CraftingOrderService {
       updated_at: now,
       trade_type: input.tradeType ?? "crafting",
     },).execute();
+
     return id;
   }
 
@@ -111,6 +112,7 @@ export class CraftingOrderService {
     let query = this.db.selectFrom("crafting_orders",)
       .selectAll()
       .where("world_id", "=", worldId,);
+
     if (actorId) {
       query = query.where((eb,) =>
         eb.or([
@@ -119,6 +121,7 @@ export class CraftingOrderService {
         ],)
       );
     }
+
     const rows = await query.execute();
     return Array.from(rows, (r,) => this.toCraftingOrder(r,),);
   }
@@ -135,6 +138,7 @@ export class CraftingOrderService {
       .where("id", "=", orderId,)
       .where("status", "=", "open",)
       .executeTakeFirst();
+
     return Number(res?.numUpdatedRows ?? 0,) > 0;
   }
 
@@ -148,6 +152,7 @@ export class CraftingOrderService {
       .selectAll()
       .where("id", "=", orderId,)
       .executeTakeFirst();
+
     if (!order) { return { ok: false, reason: "order not found", }; }
     if (order.status !== "accepted" || !order.crafter_actor_id) {
       return { ok: false, reason: "order is not accepted by a crafter", };
@@ -173,6 +178,7 @@ export class CraftingOrderService {
         sellerItems: [],
         price: order.offered_payment,
       },);
+
       if (!paid.success) { return { ok: false, reason: "payment failed", }; }
     }
 
@@ -180,6 +186,7 @@ export class CraftingOrderService {
       .set({ status: "fulfilled", updated_at: new Date().toISOString(), },)
       .where("id", "=", orderId,)
       .execute();
+
     return { ok: true, attemptId: attempt.attemptId, };
   }
 
@@ -193,6 +200,7 @@ export class CraftingOrderService {
       .selectAll()
       .where("id", "=", orderId,)
       .executeTakeFirst();
+
     if (!order) { return false; }
     if (order.requester_actor_id !== actorId) { return false; }
     if (order.status !== "open" && order.status !== "accepted") { return false; }
@@ -202,6 +210,7 @@ export class CraftingOrderService {
       .where("requester_actor_id", "=", actorId,)
       .where("status", "in", ["open", "accepted",],)
       .executeTakeFirst();
+
     return Number(res?.numUpdatedRows ?? 0,) > 0;
   }
 

@@ -31,6 +31,7 @@ beforeAll(async () => {
     status: "active" as never,
     settings: "{}" as never,
   },);
+
   fromActor = uid();
   toActor = uid();
   await insertActors(db, "Source", {
@@ -41,6 +42,7 @@ beforeAll(async () => {
     agent_type: "ai" as never,
     settings: "{}" as never,
   },);
+
   await insertActors(db, "Target", {
     id: toActor as never,
     actor_type: "character" as never,
@@ -49,6 +51,7 @@ beforeAll(async () => {
     agent_type: "ai" as never,
     settings: "{}" as never,
   },);
+
   // Seed an item with 10 quantity for the source actor.
   await insertActorItems(db, fromActor, "Healing Potion", "consumable", { quantity: 10, },);
   const rows = await db
@@ -56,6 +59,7 @@ beforeAll(async () => {
     .select("id",)
     .where("actor_id", "=", fromActor,)
     .execute();
+
   itemId = rows[0]!.id;
 },);
 
@@ -118,6 +122,7 @@ describe("transferItems — target stacking", () => {
       .where("actor_id", "=", toActor,)
       .where("name", "=", "Healing Potion",)
       .execute();
+
     const targetId = targetRows[0]!.id;
     const beforeQty = targetRows[0]!.quantity;
 
@@ -130,6 +135,7 @@ describe("transferItems — target stacking", () => {
       .select("quantity",)
       .where("id", "=", targetId,)
       .executeTakeFirst();
+
     expect(after?.quantity,).toBe(beforeQty + 3,);
 
     const sourceAfter = await db
@@ -137,6 +143,7 @@ describe("transferItems — target stacking", () => {
       .select("quantity",)
       .where("id", "=", itemId,)
       .executeTakeFirst();
+
     expect(sourceAfter?.quantity,).toBe(10 - 3,);
 
     // No duplicate row inserted on the target.
@@ -146,6 +153,7 @@ describe("transferItems — target stacking", () => {
       .where("actor_id", "=", toActor,)
       .where("name", "=", "Healing Potion",)
       .execute();
+
     expect(allTargetRows.length,).toBe(1,);
   });
 });
@@ -159,6 +167,7 @@ describe("transferItems — full-quantity transfer", () => {
       .where("actor_id", "=", fromActor,)
       .where("name", "=", "Solo Scroll",)
       .execute();
+
     const soloId = rows[0]!.id;
 
     const result = await transferItems(db, fromActor, toActor, soloId, 4,);
@@ -171,6 +180,7 @@ describe("transferItems — full-quantity transfer", () => {
       .select("id",)
       .where("id", "=", soloId,)
       .executeTakeFirst();
+
     expect(sourceAfter,).toBeUndefined();
 
     // Target holds the moved quantity in a single row.
@@ -180,6 +190,7 @@ describe("transferItems — full-quantity transfer", () => {
       .where("actor_id", "=", toActor,)
       .where("name", "=", "Solo Scroll",)
       .execute();
+
     expect(targetRows.length,).toBe(1,);
     expect(targetRows[0]!.quantity,).toBe(4,);
   });

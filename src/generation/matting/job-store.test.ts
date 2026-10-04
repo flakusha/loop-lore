@@ -53,6 +53,7 @@ describe("matting job store", () => {
         },
         uploadDir,
       },);
+
       return asset.id;
     };
 
@@ -72,6 +73,7 @@ describe("matting job store", () => {
     if (idA) {
       expect(getJob(idA,)?.ownerId,).toBe(ownerA,);
     }
+
     await db.destroy();
   });
 
@@ -86,6 +88,7 @@ describe("matting job store", () => {
       name: "hung",
       removeBackground: () => new Promise<Buffer>(() => {},),
     };
+
     const hungService = new MattingService({
       database: db,
       uploadDir,
@@ -108,6 +111,7 @@ describe("matting job store", () => {
       },
       uploadDir,
     },);
+
     void linkAsset;
     const started = await hungService.startMatting({ assetId: asset.id, ownerId: owner, },);
     if (!started.ok) { throw new Error("expected enqueue to succeed",); }

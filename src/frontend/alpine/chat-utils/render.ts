@@ -25,6 +25,7 @@ export const chatUtilsRender: ChatUtilsRender = {
       div.textContent = content;
       return div.getHTML();
     }
+
     const html = marked.parse(content,) as string;
     return DOMPurify.sanitize(html, {
       ALLOWED_TAGS: [

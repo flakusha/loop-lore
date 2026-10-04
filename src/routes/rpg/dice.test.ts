@@ -42,6 +42,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(diceRoutes({ database: db, config: {} as never, },),);
 }
 
@@ -72,6 +73,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/roll", { sides: 20, count: 2, modifier: 3, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await jsonOf(res,);
     expect(body.dice.length,).toBe(2,);
@@ -79,6 +81,7 @@ describe("RPG dice routes", () => {
       expect(die.sides,).toBe(20,);
       expect(die.value >= 1 && die.value <= 20,).toBe(true,);
     }
+
     const sum = body.dice.reduce((acc, die,) => acc + die.value, 0,);
     expect(body.rawTotal,).toBe(sum,);
     expect(body.total,).toBe(sum + 3,);
@@ -91,14 +94,17 @@ describe("RPG dice routes", () => {
       .select(db.fn.countAll<number>().as("total",),)
       .where("user_id", "=", "dice-user",)
       .executeTakeFirst();
+
     await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/roll", { sides: 6, },),
     );
+
     const after = await db
       .selectFrom("dice_roll_history",)
       .select(db.fn.countAll<number>().as("total",),)
       .where("user_id", "=", "dice-user",)
       .executeTakeFirst();
+
     expect((after?.total ?? 0) - (before?.total ?? 0),).toBe(1,);
   });
 
@@ -106,6 +112,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/roll", { sides: 8, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await jsonOf(res,);
     expect(body.dice.length,).toBe(1,);
@@ -116,6 +123,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/roll", { sides: 6, count: 3, exploding: true, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await jsonOf(res,);
     expect(body.dice.length >= 3,).toBe(true,);
@@ -125,6 +133,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/roll", { sides: 7, },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -132,6 +141,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/roll", { sides: 6, count: 0, },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -139,6 +149,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db,).handle(
       postDice("http://localhost/api/rpg/dice/roll", { sides: 20, },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -146,6 +157,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/notation", { notation: "2d6+3", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await jsonOf(res,);
     expect(body.dice.length,).toBe(2,);
@@ -156,6 +168,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/notation", { notation: "zzz", },),
     );
+
     expect(res.status,).toBe(400,);
     const body = await res.json() as { error: string };
     expect(body.error,).toBe("Invalid dice notation",);
@@ -165,6 +178,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/notation", { notation: "", },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -172,6 +186,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db,).handle(
       postDice("http://localhost/api/rpg/dice/notation", { notation: "d20", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -179,6 +194,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/advantage", { advantage: "advantage", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await jsonOf(res,);
     expect(body.advantageMode,).toBe("advantage",);
@@ -189,6 +205,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/advantage", { advantage: "disadvantage", modifier: 2, },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await jsonOf(res,);
     expect(body.advantageMode,).toBe("disadvantage",);
@@ -199,6 +216,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/advantage", {},),
     );
+
     expect(res.status,).toBe(200,);
     const body = await jsonOf(res,);
     expect(body.advantageMode,).toBe("normal",);
@@ -209,6 +227,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db, "dice-user", "user",).handle(
       postDice("http://localhost/api/rpg/dice/advantage", { advantage: "luck", },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -216,6 +235,7 @@ describe("RPG dice routes", () => {
     const res = await makeApp(db,).handle(
       postDice("http://localhost/api/rpg/dice/advantage", { advantage: "advantage", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 });

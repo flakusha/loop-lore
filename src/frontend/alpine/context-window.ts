@@ -41,15 +41,19 @@ interface ContextWindowState {
         case "healthy": {
           return "bg-green-500";
         }
+
         case "warning": {
           return "bg-yellow-500";
         }
+
         case "critical": {
           return "bg-orange-500";
         }
+
         case "imminent": {
           return "bg-red-600";
         }
+
         default: {
           return "bg-green-500";
         }
@@ -65,12 +69,15 @@ interface ContextWindowState {
         case "system": {
           return "ctx-seg-system";
         }
+
         case "lore": {
           return "ctx-seg-lore";
         }
+
         case "memories": {
           return "ctx-seg-memories";
         }
+
         default: {
           return "ctx-seg-history";
         }
@@ -92,15 +99,19 @@ interface ContextWindowState {
         case "healthy": {
           return "Plenty of room";
         }
+
         case "warning": {
           return "Approaching limit";
         }
+
         case "critical": {
           return "Near limit — pruning may trigger";
         }
+
         case "imminent": {
           return "At capacity — pruning active";
         }
+
         default: {
           return "";
         }
@@ -134,6 +145,7 @@ interface ContextWindowState {
         const res = await apiFetch(`/api/v1/chats/${chatId}/context`, {
           headers: { Accept: "application/json", },
         },);
+
         if (res.ok) {
           const data = await res.json();
           this.currentTokens = data.currentTokens ?? this.currentTokens;
@@ -172,6 +184,7 @@ interface ContextWindowState {
         if (chatId) { this.chatId = chatId; }
         void this.refresh();
       };
+
       document.addEventListener("chat-context-refresh", this._refreshHandler,);
       // Cold restore: on a full page load the header may mount after
       // loadMessages() already dispatched, so pick up the open chat here
@@ -205,6 +218,7 @@ interface ContextWindowState {
           message: `Context window at ${this.percentage}% — consider pruning or summarizing.`,
         },
       },);
+
       document.dispatchEvent(event,);
     },
   };

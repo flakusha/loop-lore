@@ -25,6 +25,7 @@ function matchIntent(
         if (!best || confidence > best.confidence) {
           best = { intent, confidence, };
         }
+
         break;
       }
     }

@@ -26,6 +26,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(dynamicRoutes(db,),);
 }
 
@@ -41,6 +42,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
       owner_id: "owner",
       actor_type: "character" as never,
     },);
+
     await insertWorlds(db, "owner", "Elm", { id: "world-elm" as never, },);
     await insertChats(db, "Alpha Chat", "owner", { id: "chat-a" as never, world_id: "world-elm", },);
     await insertAssets(db, "owner", "x.png", "image/png", "image", 100, "p/x", { id: "g1" as never, },);
@@ -68,6 +70,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
       "/dynamic/characters/actor-aria/edit-form",
       "/dynamic/characters/actor-aria/chat-list",
     ];
+
     for (const path of endpoints) {
       const res = await makeApp(db, "owner", "user",).handle(new Request(`http://localhost${path}`,),);
       expect(res.status,).toBe(302,);
@@ -79,6 +82,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db,).handle(
       new Request("http://localhost/dynamic/characters/grid", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const html = await res.text();
     expect(html,).toContain("actor-aria",);
@@ -88,6 +92,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/gallery/grid", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const html = await res.text();
     expect(html,).toContain("g1",);
@@ -97,6 +102,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/worlds/search", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const html = await res.text();
     expect(html,).toContain("world-elm",);
@@ -106,6 +112,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/worlds/list", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.text(),).toContain("world-elm",);
   });
@@ -114,6 +121,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db,).handle(
       new Request("http://localhost/dynamic/gallery/search", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -121,6 +129,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db,).handle(
       new Request("http://localhost/dynamic/characters/search?q=aria", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.text(),).toContain("actor-aria",);
   });
@@ -129,6 +138,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db,).handle(
       new Request("http://localhost/dynamic/chats/list", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const html = await res.text();
     expect(html,).toContain("chat-a",);
@@ -138,6 +148,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db,).handle(
       new Request("http://localhost/dynamic/chats/search?q=alpha", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const html = await res.text();
     expect(html,).toContain("chat-a",);
@@ -147,6 +158,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/worlds/world-elm/detail", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const html = await res.text();
     expect(html,).toContain("Elm",);
@@ -156,6 +168,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db, "other", "user",).handle(
       new Request("http://localhost/dynamic/worlds/world-elm/detail", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -163,6 +176,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/worlds/does-not-exist/detail", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.text(),).toContain("World not found",);
   });
@@ -171,6 +185,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db,).handle(
       new Request("http://localhost/dynamic/characters/actor-aria/edit-form", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
     const html = await res.text();
     expect(html,).toContain("character-edit-form",);
@@ -180,6 +195,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     const res = await makeApp(db,).handle(
       new Request("http://localhost/dynamic/characters/actor-aria/chat-list", { headers: { "HX-Request": "true", }, },),
     );
+
     expect(res.status,).toBe(200,);
   });
 });

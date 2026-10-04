@@ -23,6 +23,7 @@ export function safeParseInt(text: string,): NumberResult {
   if (trimmed === "" || !Number.isInteger(asNumber,)) {
     return { ok: false, error: new TypeError(`Not a valid integer: "${text}"`,), };
   }
+
   return { ok: true, value: asNumber, };
 }
 
@@ -37,6 +38,7 @@ export function safeParseFloat(text: string,): NumberResult {
   if (trimmed === "" || !Number.isFinite(asNumber,)) {
     return { ok: false, error: new TypeError(`Not a valid finite number: "${text}"`,), };
   }
+
   return { ok: true, value: asNumber, };
 }
 

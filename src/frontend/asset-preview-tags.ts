@@ -55,6 +55,7 @@ export async function renderTagsPanel(assetId: string,): Promise<void> {
   const tags: PreviewTag[] = tagsRes?.ok
     ? ((await tagsRes.json()).tags as PreviewTag[] | undefined) ?? []
     : [];
+
   const propositions: TagProposition[] = propRes?.ok
     ? ((await propRes.json()).propositions as TagProposition[] | undefined) ?? []
     : [];
@@ -147,6 +148,7 @@ function showRenameEditor(assetId: string, oldTag: string, slot: HTMLElement,): 
   }" autocomplete="off" style="flex:1" />
       <button type="submit" class="btn btn-ghost">Rename</button>
     </form>`;
+
   const form = slot.querySelector<HTMLFormElement>("[data-rename-form]",)!;
   form.addEventListener("submit", async (e,) => {
     e.preventDefault();
@@ -164,6 +166,7 @@ async function renderAutocomplete(query: string, container: HTMLElement,): Promi
     container.innerHTML = "";
     return;
   }
+
   try {
     const res = await feFetch(`/api/v1/tag-autocomplete?q=${encodeURIComponent(q,)}`,);
     if (!res.ok) { return; }
@@ -174,6 +177,7 @@ async function renderAutocomplete(query: string, container: HTMLElement,): Promi
         `<button type="button" class="tag" data-autocomplete-tag="${escapeHtml(t,)}">${escapeHtml(t,)}</button>`
       )
       .join("",);
+
     container.style.display = tags.length > 0 ? "flex" : "none";
     container.querySelectorAll<HTMLButtonElement>("[data-autocomplete-tag]",).forEach((btn,) => {
       btn.addEventListener("click", () => {
@@ -196,6 +200,7 @@ async function submitTag(assetId: string, tag: string, scope: "user" | "global",
       headers: { "Content-Type": "application/json", },
       body: jsonStringifyOr({ tag, scope, },),
     },);
+
     if (!res.ok) { throw new Error("failed",); }
     await renderTagsPanel(assetId,);
   } catch {
@@ -211,6 +216,7 @@ async function removeTag(assetId: string, tag: string, scope: "user" | "global",
       headers: { "Content-Type": "application/json", },
       body: jsonStringifyOr({ tag, scope, },),
     },);
+
     if (!res.ok) { throw new Error("failed",); }
     await renderTagsPanel(assetId,);
   } catch {
@@ -230,6 +236,7 @@ async function renameTag(assetId: string, oldTag: string, newTag: string,): Prom
       headers: { "Content-Type": "application/json", },
       body: jsonStringifyOr({ oldTag, newTag, scope: "user", },),
     },);
+
     if (!res.ok) { throw new Error("failed",); }
     await renderTagsPanel(assetId,);
   } catch {
@@ -245,6 +252,7 @@ async function dismissTag(assetId: string, tag: string,): Promise<void> {
       headers: { "Content-Type": "application/json", },
       body: jsonStringifyOr({ tag, },),
     },);
+
     if (!res.ok) { throw new Error("failed",); }
     await renderTagsPanel(assetId,);
   } catch {

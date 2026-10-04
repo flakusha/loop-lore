@@ -45,9 +45,11 @@ export function rateLimitHeaders(
     "X-RateLimit-Remaining": String(Math.max(0, result.remaining,),),
     "X-RateLimit-Reset": String(result.resetSec,),
   };
+
   if (!result.allowed && retryAfterSec !== undefined) {
     headers["Retry-After"] = String(Math.max(1, Math.ceil(retryAfterSec,),),);
   }
+
   return headers;
 }
 
@@ -105,6 +107,7 @@ export function createRateLimiter(config: RateLimitConfig,) {
       queue = [];
       timestamps.set(key, queue,);
     }
+
     pruneExpired(queue, cutoff,);
 
     if (queue.length >= config.maxRequests) {
@@ -156,12 +159,14 @@ export function createRateLimiter(config: RateLimitConfig,) {
         resetSec: Math.max(1, Math.ceil(config.windowMs / 1000,),),
       };
     }
+
     pruneExpired(queue, cutoff,);
     const wouldBlock = queue.length >= config.maxRequests;
     const oldest = queue[0];
     const resetMs = oldest === undefined
       ? config.windowMs
       : oldest + config.windowMs - now;
+
     return {
       allowed: !wouldBlock,
       limit: config.maxRequests,
@@ -187,6 +192,7 @@ export function createRateLimiter(config: RateLimitConfig,) {
       queue = [];
       timestamps.set(key, queue,);
     }
+
     pruneExpired(queue, cutoff,);
     queue.push(now,);
   }

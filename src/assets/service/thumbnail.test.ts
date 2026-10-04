@@ -47,6 +47,7 @@ async function ownerIdFor(db: Kysely<DB>, username: string,): Promise<string> {
     .select("id",)
     .where("username", "=", username,)
     .executeTakeFirstOrThrow();
+
   return row.id;
 }
 
@@ -66,6 +67,7 @@ describe("createAsset thumbnail generation", () => {
         sizeBytes: buffer.length,
         buffer,
       };
+
       const result = await createAsset({ database: db, input, uploadDir, },);
       expect(result.duplicate,).toBe(false,);
       expect(result.asset.thumbnail_path,).not.toBeNull();
@@ -98,6 +100,7 @@ describe("createAsset thumbnail generation", () => {
         sizeBytes: buffer.length,
         buffer,
       };
+
       const result = await createAsset({ database: db, input, uploadDir, },);
       expect(result.duplicate,).toBe(false,);
       expect(result.asset.thumbnail_path,).toBeNull();
@@ -125,6 +128,7 @@ describe("createAsset thumbnail generation", () => {
         sizeBytes: buffer.length,
         buffer,
       };
+
       const first = await createAsset({ database: db, input, uploadDir, },);
       const thumbPath = first.asset.thumbnail_path!;
       const fullThumbPath = join(uploadDir, thumbPath,);
@@ -158,6 +162,7 @@ describe("createAsset thumbnail generation", () => {
         sizeBytes: buffer.length,
         buffer,
       };
+
       const created = await createAsset({ database: db, input, uploadDir, },);
       const asset = await getAsset(db, created.asset.id,);
       expect(asset?.thumbnail_path,).not.toBeNull();
@@ -170,6 +175,7 @@ describe("createAsset thumbnail generation", () => {
         actorId: ownerId,
         actorRole: "user",
       },);
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("Content-Type",),).toBe("image/webp",);
       const body = Buffer.from(await res.arrayBuffer(),);

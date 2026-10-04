@@ -138,6 +138,7 @@ export class NsfwFilter {
     for (const kw of this.config.keywords) {
       if (kw !== keyword) { kept.push(kw,); }
     }
+
     this.config.keywords = kept;
   }
 }

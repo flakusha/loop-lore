@@ -46,18 +46,21 @@ import { jsonBody, } from "./json";
         payload.theme = this.theme;
         await this.applyTheme();
       }
+
       if (section === "chat" || this.tab === "chat") {
         payload.detailLevel = this.detailLevel;
         localStorage.setItem("chat-enter-to-send", this.enterToSend ? "1" : "0",);
         localStorage.setItem("chat-auto-scroll", this.autoScroll ? "1" : "0",);
         localStorage.setItem("chat-detail-level", this.detailLevel,);
       }
+
       if (section === "api" || this.tab === "generation") {
         payload.provider = this.provider;
         payload.model = this.model;
         payload.temperature = this.temperature;
         payload.customInstructions = this.customInstructions.trim() || null;
       }
+
       try {
         await apiFetch("/api/v1/settings", {
           method: "PATCH",
@@ -79,6 +82,7 @@ import { jsonBody, } from "./json";
         const link = document.querySelector(`#theme-${t.id}`,) as HTMLLinkElement | null;
         if (link) { link.disabled = t.id !== this.theme; }
       }
+
       document.body.classList.toggle("theme-no-icons", this.theme === "no-icons",);
       localStorage.setItem("theme-preference", this.theme,);
     },

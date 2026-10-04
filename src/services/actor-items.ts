@@ -59,6 +59,7 @@ export class ActorItemsService {
       .select("settings",)
       .where("id", "=", actorId,)
       .executeTakeFirst();
+
     const settings = jsonParseOr<{ strength?: number }>(actor?.settings ?? "{}", {},);
     const str = Math.max(1, Math.min(30, Number(settings.strength,) || 10,),);
     return 50 + str * 10;
@@ -74,10 +75,12 @@ export class ActorItemsService {
       .select(["weight", "quantity",],)
       .where("actor_id", "=", actorId,)
       .execute();
+
     let total = 0;
     for (const r of rows) {
       total += (r.weight ?? 0) * r.quantity;
     }
+
     return total;
   }
 
@@ -90,6 +93,7 @@ export class ActorItemsService {
       this.getCarriedWeight(actorId,),
       this.capacityFor(actorId,),
     ],);
+
     if (carriedResult.status === "rejected") { throw carriedResult.reason; }
     if (capacityResult.status === "rejected") { throw capacityResult.reason; }
     const carried = carriedResult.value;
@@ -100,6 +104,7 @@ export class ActorItemsService {
       : (ratio <= 1
         ? ENCUMBRANCE.Medium
         : ENCUMBRANCE.Overloaded);
+
     const threshold = encumbrance === ENCUMBRANCE.Light ? Math.floor(capacity * 0.8,) : capacity;
     return {
       carried,
@@ -163,6 +168,7 @@ export class ActorItemsService {
       .where("id", "!=", itemId,)
       .where("item_type", "=", item.item_type,)
       .executeTakeFirst();
+
     if (conflict) {
       return { ok: false, itemId, reason: `Another ${slot} is already equipped`, };
     }
@@ -172,6 +178,7 @@ export class ActorItemsService {
       .set({ equipped: EquipState.Equipped, },)
       .where("id", "=", itemId,)
       .execute();
+
     return { ok: true, itemId, };
   }
 
@@ -188,6 +195,7 @@ export class ActorItemsService {
       .set({ equipped: EquipState.Unequipped, },)
       .where("id", "=", itemId,)
       .execute();
+
     return { ok: true, itemId, };
   }
 

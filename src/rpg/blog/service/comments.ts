@@ -40,12 +40,14 @@ export async function createComment(
     .select(["author_id", "title",],)
     .where("id", "=", comment.post_id,)
     .executeTakeFirst();
+
   if (post && post.author_id !== comment.author_id) {
     const commenter = await db
       .selectFrom("actors",)
       .select("display_name",)
       .where("id", "=", comment.author_id,)
       .executeTakeFirst();
+
     await notifyBlogComment(db, {
       userId: post.author_id,
       postId: comment.post_id,
@@ -182,6 +184,7 @@ export async function moderateComment(
     ],)
     .where("blog_comments.id", "=", id,)
     .executeTakeFirst();
+
   if (!comment) { return false; }
 
   const isModerator = can(caller.role, "moderation.action",);
@@ -194,5 +197,6 @@ export async function moderateComment(
     .set({ status, },)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   return Number(result?.numUpdatedRows ?? 0,) > 0;
 }

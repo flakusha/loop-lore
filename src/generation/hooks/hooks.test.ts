@@ -153,6 +153,7 @@ describe("MoodHook", () => {
       content: "I am so happy and joyful today!",
       actorContentRating: "nsfw_intense",
     },);
+
     const result = await hook.execute("I am so happy and joyful today!", ctx,);
     expect(result.handled,).toBe(true,);
     // NSFW actor: base delta 5 * 1.5 = 7.5 → Math.round → 8
@@ -164,6 +165,7 @@ describe("MoodHook", () => {
       content: "I am so happy and joyful today!",
       actorContentRating: "sfw",
     },);
+
     const result = await hook.execute("I am so happy and joyful today!", ctx,);
     expect(result.handled,).toBe(true,);
     // SFW actor: base delta 5 (no amplification)
@@ -265,6 +267,7 @@ describe("NsfwHook", () => {
         useLlmClassifier: false,
       },
     },);
+
     expect(await hook.canHandle("This is suggestive content with enough length.", ctx,),).toBe(false,);
   });
 
@@ -280,6 +283,7 @@ describe("NsfwHook", () => {
         useLlmClassifier: false,
       },
     },);
+
     expect(await hook.canHandle("bad", ctx,),).toBe(true,);
   });
 
@@ -295,6 +299,7 @@ describe("NsfwHook", () => {
         useLlmClassifier: false,
       },
     },);
+
     expect(await hook.canHandle("This is suggestive content with enough length.", ctx,),).toBe(true,);
   });
 
@@ -311,6 +316,7 @@ describe("NsfwHook", () => {
         useLlmClassifier: false,
       },
     },);
+
     const result = await hook.execute("The graphic and explicit scene was brutal and violent.", ctx,);
     expect(result.handled,).toBe(true,);
     expect(result.suppressContent,).toBe(true,);
@@ -331,6 +337,7 @@ describe("NsfwHook", () => {
         useLlmClassifier: false,
       },
     },);
+
     const result = await hook.execute("The suggestive and provocative dance was steamy.", ctx,);
     expect(result.handled,).toBe(true,);
     expect(result.suppressContent,).toBeFalsy();
@@ -351,6 +358,7 @@ describe("NsfwHook", () => {
         useLlmClassifier: false,
       },
     },);
+
     const result = await hook.execute("They walked through the garden and admired the flowers.", ctx,);
     expect(result.handled,).toBe(false,);
   });
@@ -368,6 +376,7 @@ describe("NsfwHook", () => {
         useLlmClassifier: false,
       },
     },);
+
     const result = await hook.execute("The graphic and explicit scene was brutal beyond belief.", ctx,);
     // Graphic terms map to the intense tier, not a hard-named extreme keyword tier.
     expect(result.handled,).toBe(true,);
@@ -389,6 +398,7 @@ describe("NsfwHook", () => {
         useLlmClassifier: false,
       },
     },);
+
     const result = await hook.execute("The graphic and explicit scene was brutal and violent.", ctx,);
     expect(result.handled,).toBe(true,);
     expect(result.data?.actorId,).toBe("actor-1",);
@@ -402,6 +412,7 @@ describe("NsfwHook", () => {
         recordAction: async () => ({}) as never,
       } as unknown as NsfwModerationService,
     },);
+
     const ctx = makeContext({ chatId: "chat-9", actorId: "actor-9", },);
     const result = await overriddenHook.execute("Whatever content here", ctx,);
     expect(result.handled,).toBe(true,);
@@ -420,6 +431,7 @@ describe("NsfwHook", () => {
         recordAction: async () => ({}) as never,
       } as unknown as NsfwModerationService,
     },);
+
     const ctx = makeContext({ chatId: "chat-9", actorId: "actor-9", },);
     const result = await errorHook.execute("Whatever content here", ctx,);
     expect(result.handled,).toBe(true,);
@@ -428,6 +440,7 @@ describe("NsfwHook", () => {
     expect(result.data?.actorId,).toBe("actor-9",);
     expect(result.data?.chatId,).toBe("chat-9",);
   });
+
   test("contract enforcement: blocks content exceeding user max_rating", async () => {
     const ctx = makeContext({
       content: "The suggestive and provocative dance was steamy.",
@@ -443,6 +456,7 @@ describe("NsfwHook", () => {
         useLlmClassifier: false,
       },
     },);
+
     const result = await hook.execute("The suggestive and provocative dance was steamy.", ctx,);
     // moderate content > effective_limit(mild) → blocked
     expect(result.handled,).toBe(true,);
@@ -465,6 +479,7 @@ describe("NsfwHook", () => {
         useLlmClassifier: false,
       },
     },);
+
     const result = await hook.execute("The suggestive and provocative dance was steamy.", ctx,);
     // moderate content <= effective_limit(min(extreme, intense, extreme)=intense) → allowed
     expect(result.handled,).toBe(true,);
@@ -509,6 +524,7 @@ describe("NsfwHook", () => {
       const aux = mock(async () => ({
         content: JSON.stringify({ rating: "nsfw_intense", confidence: 0.9, },),
       }));
+
       const llmHook = makeNsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
       const ctx = llmLlContext("The two embraced in a long, lingering way.",);
 
@@ -524,6 +540,7 @@ describe("NsfwHook", () => {
       const aux = mock(async () => ({
         content: JSON.stringify({ rating: "nsfw_extreme", confidence: 0.9, },),
       }));
+
       const llmHook = makeNsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
       const ctx = llmLlContext("The scene escalated beyond the keyword pass.",);
 
@@ -542,6 +559,7 @@ describe("NsfwHook", () => {
       const aux = mock(async () => ({
         content: JSON.stringify({ rating: "nsfw_extreme", confidence: 0.9, },),
       }));
+
       const llmHook = makeNsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
       const ctx = llmLlContext("The graphic and explicit scene escalated beyond belief.",);
 
@@ -556,6 +574,7 @@ describe("NsfwHook", () => {
       const aux = mock(async () => ({
         content: JSON.stringify({ rating: "sfw", confidence: 0.9, },),
       }));
+
       const llmHook = makeNsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
       const ctx = llmLlContext("They discussed the weather at length today.",);
 
@@ -576,6 +595,7 @@ describe("NsfwHook", () => {
       const aux = mock(async () => ({
         content: JSON.stringify({ rating: "nsfw_extreme", confidence: 0.9, },),
       }));
+
       const llmHook = makeNsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
       const ctx = makeContext({
         content: "They discussed neutral things for a while.",
@@ -643,6 +663,7 @@ describe("ModerationHook", () => {
       "The plan is still rudimentary.",
       makeContext({ content: "The plan is still rudimentary.", },),
     );
+
     expect(result.handled,).toBe(false,);
   });
 
@@ -651,6 +672,7 @@ describe("ModerationHook", () => {
       "Do not harass anyone in this group.",
       makeContext({ content: "Do not harass anyone in this group.", },),
     );
+
     expect(result.handled,).toBe(true,);
     expect(result.data?.severity,).toBe("severe",);
     expect(result.data?.score,).toBe(3,);
@@ -661,6 +683,7 @@ describe("ModerationHook", () => {
       "The violence and offensive rants were troubling.",
       makeContext({ content: "The violence and offensive rants were troubling.", },),
     );
+
     expect(result.data?.severity,).toBe("severe",);
     expect(result.data?.score,).toBe(5,);
     expect(result.suppressContent,).toBe(true,);
@@ -671,12 +694,14 @@ describe("ModerationHook", () => {
       "That is a direct threat.",
       makeContext({ content: "That is a direct threat.", },),
     );
+
     expect(severe.suppressContent,).toBe(true,);
 
     const moderate = await hook.execute(
       "That was a rude remark.",
       makeContext({ content: "That was a rude remark.", },),
     );
+
     expect(moderate.suppressContent,).toBeFalsy();
     expect(moderate.data?.severity,).toBe("moderate",);
     expect(moderate.data?.flags,).toContain("moderate",);
@@ -692,10 +717,12 @@ describe("ModerationHook", () => {
         },
       }),
     },);
+
     await auditHook.execute(
       "This is a hate-filled threat of violence.",
       makeContext({ content: "This is a hate-filled threat of violence.", },),
     );
+
     expect(calls,).toHaveLength(1,);
     expect(calls[0]!.actionType,).toBe("content_blocked",);
     expect(calls[0]!.reason,).toContain("severe",);
@@ -733,6 +760,7 @@ describe("runHookChain", () => {
         useLlmClassifier: false,
       },
     },);
+
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
     expect(result.allowed,).toBe(true,);
     expect(result.suppressedContent,).toBe(false,);
@@ -751,6 +779,7 @@ describe("runHookChain", () => {
         useLlmClassifier: false,
       },
     },);
+
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
     expect(result.allowed,).toBe(false,);
     expect(result.suppressedContent,).toBe(true,);
@@ -770,6 +799,7 @@ describe("runHookChain", () => {
         useLlmClassifier: false,
       },
     },);
+
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
     expect(result.allowed,).toBe(true,);
     const eventTypes = result.events.map((e,) => e.eventType);
@@ -790,6 +820,7 @@ describe("runHookChain", () => {
         useLlmClassifier: false,
       },
     },);
+
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
     // Only the mood hook matches the targeted event type.
     expect(result.results.map((r,) => r.eventType),).toEqual(["mood_shift",],);

@@ -101,6 +101,7 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
             speed?: number;
           };
         };
+
         await svc().setMovementPattern(ctx.params.actorId, body.worldId, body.pattern, body.config,);
         return jsonResponse({ ok: true, },);
       } catch (error) {

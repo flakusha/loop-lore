@@ -53,6 +53,7 @@ async function seedImage(db: Kysely<DB>, ownerId: string,): Promise<string> {
       buffer,
     },
   },);
+
   return asset.id;
 }
 
@@ -78,6 +79,7 @@ describe("asset transforms", () => {
     expect(row?.zoom,).toBe(2,);
     const rows = await db.selectFrom("asset_transforms",).select("context",)
       .where("asset_id", "=", assetId,).execute();
+
     expect(rows.map((r,) => r.context).sort(),).toEqual(["default", "sprite",],);
   });
 

@@ -274,8 +274,10 @@ describeOrSkip("dispatchCommandAction", () => {
         if (url === "/api/v1/chats/chat-1") {
           return Response.json({ id: "chat-1", world_id: "world-42", }, { status: 200, },);
         }
+
         return Response.json({}, { status: 200, },);
       };
+
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
         ctx as any,
@@ -297,8 +299,10 @@ describeOrSkip("dispatchCommandAction", () => {
         if (url === "/api/v1/chats/chat-1") {
           return Response.json({ id: "chat-1", world_id: null, }, { status: 200, },);
         }
+
         return Response.json({}, { status: 200, },);
       };
+
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
         ctx as any,
@@ -316,8 +320,10 @@ describeOrSkip("dispatchCommandAction", () => {
         if (url === "/api/v1/chats/chat-1") {
           return Response.json({ id: "chat-1", world_id: "w1", }, { status: 200, },);
         }
+
         return Response.json({}, { status: 200, },);
       };
+
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
         ctx as any,
@@ -334,8 +340,10 @@ describeOrSkip("dispatchCommandAction", () => {
         if (url === "/api/v1/chats/chat-1") {
           return Response.json({ id: "chat-1", world_id: "w1", }, { status: 200, },);
         }
+
         return Response.json({ error: "db error", }, { status: 500, },);
       };
+
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
         ctx as any,
@@ -432,6 +440,7 @@ describeOrSkip("handleCommandInput", () => {
     _filteredCommands: [],
     _commandList: seededCommandList,
   });
+
   const invokeHandle = (state: CommandInputState, value: string,) => {
     const event: Event = { target: { value, }, } as unknown as Event;
     // handleCommandInput is typed as `Partial<ChatState>`; the test exercises
@@ -521,6 +530,7 @@ describeOrSkip("dispatchCommandAction link-asset", () => {
       { assetId: "a1", filename: "castle.png", entityType: "chat", entityId: "chat-1", },
       "chat-1",
     );
+
     expect(fetchCalls.length,).toBe(1,);
     expect(fetchCalls[0]?.url,).toBe("/api/v1/assets/a1/links",);
     expect(fetchCalls[0]?.opts.method,).toBe("POST",);
@@ -538,6 +548,7 @@ describeOrSkip("dispatchCommandAction link-asset", () => {
       { assetId: "a1", filename: "castle.png", entityType: "chat", entityId: "chat-1", },
       "chat-1",
     );
+
     expect(fetchCalls.length,).toBe(0,);
     expect(ctx.toasts,).toEqual([],);
   });
@@ -560,6 +571,7 @@ describeOrSkip("dispatchCommandAction link-asset", () => {
       { assetId: "a1", filename: "castle.png", entityType: "chat", entityId: "chat-1", },
       "chat-1",
     );
+
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to link castle.png", },],);
   });
 },);
@@ -585,6 +597,7 @@ describeOrSkip("dispatchCommandAction impersonate", () => {
     ctx.toggleImpersonate = async () => {
       toggled = true;
     };
+
     await chatActions.dispatchCommandAction!.call(ctx, "impersonate-toggle", null, "chat-1",);
     expect(toggled,).toBe(true,);
     expect(fetchCalls.length,).toBe(0,);
@@ -595,8 +608,10 @@ describeOrSkip("dispatchCommandAction impersonate", () => {
       if (url.endsWith("/participants",)) {
         return Response.json([{ display_name: "Aria", actor_type: "character", actor_id: "c1", },], { status: 200, },);
       }
+
       return Response.json({}, { status: 200, },);
     };
+
     const ctx = buildCtx() as any;
     await chatActions.dispatchCommandAction!.call(
       ctx,
@@ -604,6 +619,7 @@ describeOrSkip("dispatchCommandAction impersonate", () => {
       { characterName: "aria", },
       "chat-1",
     );
+
     expect(fetchCalls.length,).toBe(2,);
     expect(ctx.impersonationActive,).toBe(true,);
     expect(ctx.impersonatingActorId,).toBe("c1",);
@@ -618,6 +634,7 @@ describeOrSkip("dispatchCommandAction impersonate", () => {
       { characterName: "Nobody", },
       "chat-1",
     );
+
     expect(fetchCalls.length,).toBe(1,);
     expect(ctx.toasts.length,).toBe(1,);
     expect(ctx.toasts[0]?.type,).toBe("warning",);

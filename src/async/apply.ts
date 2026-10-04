@@ -110,8 +110,10 @@ export async function apply(
         // no-op (we don't want to clobber an in-flight row's progress).
         .onConflict((oc,) => oc.column("id",).doNothing())
         .execute();
+
       return;
     }
+
     case "progress": {
       // Chain two `.where()` calls: first by `id`, then by `user_id` when
       // the write is authenticated. Kysely's fluent builder narrows the
@@ -124,9 +126,11 @@ export async function apply(
           progress: write.progress === null ? null : jsonStringifyOr(write.progress,) ?? null,
         },)
         .where("id", "=", write.id,);
+
       await executeScopedByUser(where, write.userId,);
       return;
     }
+
     case "complete": {
       // Bodies within the inline threshold are stored in `response_body`
       // directly. Larger bodies are spilled to disk (gzip) immediately so
@@ -145,6 +149,7 @@ export async function apply(
         offloadPath = await spill(write.id, write.response.body,);
         responseBody = null;
       }
+
       const where = database
         .updateTable("request_results",)
         .set({
@@ -159,9 +164,11 @@ export async function apply(
           offload_path: offloadPath,
         },)
         .where("id", "=", write.id,);
+
       await executeScopedByUser(where, write.userId,);
       return;
     }
+
     case "fail": {
       const where = database
         .updateTable("request_results",)
@@ -171,6 +178,7 @@ export async function apply(
           completed_at: new Date().toISOString(),
         },)
         .where("id", "=", write.id,);
+
       await executeScopedByUser(where, write.userId,);
       return;
     }

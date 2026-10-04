@@ -46,6 +46,7 @@ async function seed(db: Kysely<DB>,): Promise<{ ownerId: string; peerId: string;
     "raw/b1/a2/shared.png",
     { id: ASSET_ID as never, },
   );
+
   return { ownerId, peerId, thirdId, };
 }
 
@@ -93,11 +94,13 @@ describe("updateAssetVisibility", () => {
         visibility: AssetVisibility.Public,
         actorId: ownerId,
       },);
+
       expect(updated,).not.toBeNull();
       expect(updated!.visibility,).toBe("public",);
       expect(updated!.id,).toBe(ASSET_ID,);
       const row = await db.selectFrom("assets",).select("visibility",).where("id", "=", ASSET_ID,)
         .executeTakeFirstOrThrow();
+
       expect(row.visibility,).toBe("public",);
     } finally {
       sqlite.close();
@@ -135,6 +138,7 @@ describe("shareAsset", () => {
           sharedById: peerId,
         },),
       ).toBeNull();
+
       expect(await getAssetShares(db, ASSET_ID,),).toEqual([],);
     } finally {
       sqlite.close();
@@ -151,6 +155,7 @@ describe("shareAsset", () => {
         sharedWithId: peerId,
         sharedById: ownerId,
       },);
+
       expect(share,).not.toBeNull();
       expect(share!.asset_id,).toBe(ASSET_ID,);
       expect(share!.shared_with_id,).toBe(peerId,);
@@ -159,6 +164,7 @@ describe("shareAsset", () => {
       expect(share!.created_at,).toBeTruthy();
       const asset = await db.selectFrom("assets",).select("visibility",).where("id", "=", ASSET_ID,)
         .executeTakeFirstOrThrow();
+
       expect(asset.visibility,).toBe("shared",);
       const rows = await getAssetShares(db, ASSET_ID,);
       expect(rows,).toHaveLength(1,);
@@ -178,9 +184,11 @@ describe("shareAsset", () => {
         sharedWithId: peerId,
         sharedById: ownerId,
       },);
+
       expect(share,).not.toBeNull();
       const asset = await db.selectFrom("assets",).select("visibility",).where("id", "=", ASSET_ID,)
         .executeTakeFirstOrThrow();
+
       expect(asset.visibility,).toBe("public",);
     } finally {
       sqlite.close();

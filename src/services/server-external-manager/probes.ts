@@ -22,6 +22,7 @@ export function startLivenessProbes(host: ServerExternalHost,): void {
       }
     })();
   }, host.PROBE_INTERVAL_MS,);
+
   host.log.debug("Liveliness probes started", { intervalMs: host.PROBE_INTERVAL_MS, },);
 }
 
@@ -69,20 +70,25 @@ async function probeInstance(instance: ServerInstance,): Promise<boolean> {
         timeout: 5_000,
         parseJson: false,
       },);
+
       return result.ok;
     }
+
     if (instance.type === "llama-swap") {
       // No guaranteed /health route; probe the OpenAI models endpoint.
       const result = await safeFetch(`http://127.0.0.1:${instance.port}/v1/models`, {
         timeout: 5_000,
       },);
+
       // Any HTTP response (any status) means the server is alive.
       return result.ok || result.status !== undefined;
     }
+
     // sd-cpp: any TCP response = alive
     const result = await safeFetch(`http://127.0.0.1:${instance.port}/`, {
       timeout: 5_000,
     },);
+
     return result.ok || result.status !== undefined;
   } catch {
     return false;

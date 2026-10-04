@@ -27,6 +27,7 @@ function makeApp(db: Kysely<DB>, userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, }));
   }
+
   return app.use(activityRoutes({ database: db, },),);
 }
 
@@ -78,6 +79,7 @@ describe("activityRoutes", () => {
     const body = await res.json() as {
       chats: Record<string, { unseenCount: number; chatName: string; lastMessageCreatedAt: string | null }>;
     };
+
     const chatA = body.chats["chat-a"];
     expect(chatA,).toBeDefined();
     if (chatA === undefined) { throw new Error("chat-a missing from response",); }
@@ -85,6 +87,7 @@ describe("activityRoutes", () => {
     expect(chatA.unseenCount,).toBe(2,);
     expect(chatA.lastMessageCreatedAt,).not.toBeNull();
   });
+
   test("ignores non-visible messages when counting unseen", async () => {
     await insertChats(db, "Chat Hidden", "user1", { id: "chat-hidden" as never, },);
     await insertChatParticipants(db, "chat-hidden", "user1",);
@@ -98,6 +101,7 @@ describe("activityRoutes", () => {
     const body = await res.json() as {
       chats: Record<string, { unseenCount: number }>;
     };
+
     const hidden = body.chats["chat-hidden"];
     expect(hidden,).toBeDefined();
     if (hidden === undefined) { throw new Error("chat-hidden missing from response",); }

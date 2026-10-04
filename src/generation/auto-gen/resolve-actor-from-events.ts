@@ -16,5 +16,6 @@ export function resolveActorIdFromEvents(
       return event.data.actorId;
     }
   }
+
   return undefined;
 }

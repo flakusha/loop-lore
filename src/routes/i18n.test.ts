@@ -19,6 +19,7 @@ function makeApp(db: Kysely<DB>, userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, }));
   }
+
   return app.use(i18nRoutes({ database: db, },),);
 }
 
@@ -52,6 +53,7 @@ describe("i18n routes", () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/i18n/locales",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as LocaleListBody;
     expect(body.default,).toBe("en",);
@@ -71,6 +73,7 @@ describe("i18n routes", () => {
     const res = await makeApp(db,).handle(
       new Request("http://localhost/api/i18n/locales",),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -82,6 +85,7 @@ describe("i18n routes", () => {
         body: JSON.stringify({ locale: "ja", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
     expect((await res.json() as LocaleListBody).error,).toBeDefined();
   });
@@ -94,6 +98,7 @@ describe("i18n routes", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -105,6 +110,7 @@ describe("i18n routes", () => {
         body: JSON.stringify({ locale: "", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     expect((await res.json() as LocaleListBody).error,).toBeDefined();
   });
@@ -117,6 +123,7 @@ describe("i18n routes", () => {
         body: JSON.stringify({ locale: "xx", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     expect((await res.json() as LocaleListBody).error,).toBeDefined();
   });
@@ -129,6 +136,7 @@ describe("i18n routes", () => {
         body: JSON.stringify({ locale: "ja", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     expect((await res.json() as LocaleListBody).locale,).toBe("ja",);
 
@@ -137,6 +145,7 @@ describe("i18n routes", () => {
       .select("settings",)
       .where("id", "=", "user1",)
       .executeTakeFirst();
+
     const settings = JSON.parse(user?.settings ?? "{}",) as Record<string, unknown>;
     expect(settings.locale,).toBe("ja",);
   });
@@ -155,6 +164,7 @@ describe("i18n routes", () => {
         body: JSON.stringify({ locale: "fr", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const user = await db
@@ -162,6 +172,7 @@ describe("i18n routes", () => {
       .select("settings",)
       .where("id", "=", "user2",)
       .executeTakeFirst();
+
     const settings = JSON.parse(user?.settings ?? "{}",) as Record<string, unknown>;
     expect(settings.locale,).toBe("fr",);
     expect(settings.theme,).toBe("dark",);

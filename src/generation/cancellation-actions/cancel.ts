@@ -49,6 +49,7 @@ export function cancelGeneration({ attemptId, reason, source, detail, }: CancelG
     to: GenerationStatus.Cancelled,
     log: getLogger().child({ module: "generation", },),
   },);
+
   active.abortController.abort(new GenerationCancelledError(reason, source, detail,),);
 
   // Fan-out: cancel any registered side-effect jobs (TTS / image-queue).

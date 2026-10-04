@@ -93,6 +93,7 @@ export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
               ctx.params.actorId,
               ctx.body,
             );
+
             return jsonResponse({ success, },);
           } catch (error) {
             log().error("Failed to update body profile", error instanceof Error ? error : undefined,);

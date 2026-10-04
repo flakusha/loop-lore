@@ -46,6 +46,7 @@ export function createTunnelConnector(url: string, deps: TunnelConnectorDeps = {
 } {
   const openSocket = deps.openSocket ??
     ((target: string,): TunnelSocket => new WebSocket(target,) as unknown as TunnelSocket);
+
   const fetchImpl = deps.fetchImpl ?? fetch;
   const sleep = deps.sleep ?? ((ms: number,): Promise<void> => new Promise((resolve,) => setTimeout(resolve, ms,)));
   const maxAttempts = deps.maxAttempts ?? 5;
@@ -71,6 +72,7 @@ export function createTunnelConnector(url: string, deps: TunnelConnectorDeps = {
     health,
     complete,
   };
+
   return api;
 
   /**
@@ -95,6 +97,7 @@ export function createTunnelConnector(url: string, deps: TunnelConnectorDeps = {
         reject(new TunnelUnavailable(`tunnel open failed: ${detail}`,),);
         return;
       }
+
       socket.onopen = (): void => {
         settled = true;
         attempts = 0;
@@ -102,14 +105,17 @@ export function createTunnelConnector(url: string, deps: TunnelConnectorDeps = {
         connecting = null;
         resolve();
       };
+
       socket.onmessage = (event,): void => {
         handleFrame(event.data,);
       };
+
       const fail = (): void => {
         if (settled) {
           void scheduleReconnect();
           return;
         }
+
         settled = true;
         connecting = null;
         if (attempts > 0) {
@@ -118,12 +124,15 @@ export function createTunnelConnector(url: string, deps: TunnelConnectorDeps = {
           void scheduleReconnect();
           return;
         }
+
         setStatus("closed",);
         reject(new TunnelUnavailable("tunnel connection failed",),);
       };
+
       socket.onclose = fail;
       socket.onerror = fail;
     },);
+
     return connecting;
   }
 
@@ -137,11 +146,13 @@ export function createTunnelConnector(url: string, deps: TunnelConnectorDeps = {
     } catch {
       /* already gone */
     }
+
     socket = null;
     connecting = null;
     for (const [, request,] of pending) {
       request.reject(new TunnelUnavailable("tunnel disconnected",),);
     }
+
     pending.clear();
     setStatus("closed",);
   }
@@ -167,21 +178,25 @@ export function createTunnelConnector(url: string, deps: TunnelConnectorDeps = {
     if (status !== "open" || !socket) {
       throw new TunnelUnavailable("tunnel is not connected",);
     }
+
     const id = (requestSeq += 1);
     const frame = encodeCompleteFrame(id, prompt, params,);
     if (!frame) {
       throw new TunnelUnavailable("tunnel send failed: unserializable prompt",);
     }
+
     const current = socket;
     const result = new Promise<string>((resolve, reject,): void => {
       pending.set(id, { onToken, resolve, reject, },);
     },);
+
     try {
       current.send(frame,);
     } catch (cause) {
       pending.delete(id,);
       throw new TunnelUnavailable(`tunnel send failed: ${String(cause,)}`,);
     }
+
     return result;
   }
 
@@ -198,11 +213,13 @@ export function createTunnelConnector(url: string, deps: TunnelConnectorDeps = {
       request.onToken(frame.text,);
       return;
     }
+
     pending.delete(frame.id,);
     if (frame.kind === "done") {
       request.resolve(frame.text,);
       return;
     }
+
     request.reject(new TunnelUnavailable(`tunnel error: ${frame.message}`,),);
   }
 
@@ -216,9 +233,11 @@ export function createTunnelConnector(url: string, deps: TunnelConnectorDeps = {
       for (const [, request,] of pending) {
         request.reject(new TunnelUnavailable("tunnel unreachable after retries",),);
       }
+
       pending.clear();
       return;
     }
+
     attempts += 1;
     setStatus("reconnecting",);
     await sleep(reconnectDelayMs(attempts,),);

@@ -29,6 +29,7 @@ function matchIntent(
       if (cmd && APPROVED_TOOLS[cmd]) {
         return { intent: "tool_exec", target: cmd, confidence: 0.95, };
       }
+
       // Unknown slash command → chat (not pattern-matched)
       return null;
     }
@@ -42,6 +43,7 @@ function matchIntent(
         if (!best || confidence > best.confidence) {
           best = { intent, target, confidence, };
         }
+
         break;
       }
     }

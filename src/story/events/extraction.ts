@@ -135,6 +135,7 @@ function detectLocationChange(
       };
     }
   }
+
   return null;
 }
 
@@ -155,6 +156,7 @@ function detectTimeAdvancement(content: string, actorId: string, timestamp: stri
       };
     }
   }
+
   return null;
 }
 
@@ -183,6 +185,7 @@ function detectCombat(content: string, actorId: string, timestamp: string,): Wor
       };
     }
   }
+
   return null;
 }
 
@@ -203,6 +206,7 @@ function detectNpcStateChange(content: string, actorId: string, timestamp: strin
       };
     }
   }
+
   return null;
 }
 
@@ -239,6 +243,7 @@ function detectItemTransfers(
       },);
     }
   }
+
   return events;
 }
 
@@ -262,5 +267,6 @@ function detectLoreUpdate(content: string, actorId: string, timestamp: string,):
       };
     }
   }
+
   return null;
 }

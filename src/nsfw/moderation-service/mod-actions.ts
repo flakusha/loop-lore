@@ -42,11 +42,13 @@ export async function blockUser({ thisL, targetUserId, performedBy, reason, }: B
   if (!nsfwAccessStatusMachine.canTransition(prefs.accessStatus, "blocked",)) {
     throw new Error(`Cannot block user in state ${prefs.accessStatus}.`,);
   }
+
   await thisL.db.updateTable("nsfw_user_preferences",).set({
     access_status: "blocked" as NsfwAccessStatus,
     block_reason: reason,
     updated_at: now,
   },).where("user_id", "=", targetUserId,).execute();
+
   thisL.log.info("NSFW block applied", { targetUserId, performedBy, reason, },);
   return thisL.recordAction({
     actionType: "block",
@@ -82,6 +84,7 @@ export async function unblockUser({ thisL, targetUserId, performedBy, reason, }:
     block_reason: null,
     updated_at: now,
   },).where("user_id", "=", targetUserId,).execute();
+
   thisL.log.info("NSFW block removed", { targetUserId, performedBy, },);
   return thisL.recordAction({
     actionType: "unblock",
@@ -119,6 +122,7 @@ export async function banUser({ thisL, targetUserId, performedBy, reason, }: Ban
   if (!nsfwAccessStatusMachine.canTransition(prefs.accessStatus, "banned",)) {
     throw new Error(`Cannot ban user in state ${prefs.accessStatus}.`,);
   }
+
   await thisL.db.updateTable("nsfw_user_preferences",).set({
     access_status: "banned" as NsfwAccessStatus,
     banned_at: now,
@@ -126,6 +130,7 @@ export async function banUser({ thisL, targetUserId, performedBy, reason, }: Ban
     block_reason: reason,
     updated_at: now,
   },).where("user_id", "=", targetUserId,).execute();
+
   thisL.log.warn("NSFW ban applied", { targetUserId, performedBy, reason, },);
   return thisL.recordAction({ actionType: "ban", targetUserId, performedBy, reason, scope: "nsfw", scopeId: null, },);
 }
@@ -156,6 +161,7 @@ export async function unbanUser({ thisL, targetUserId, performedBy, reason, }: U
     block_reason: null,
     updated_at: now,
   },).where("user_id", "=", targetUserId,).execute();
+
   thisL.log.info("NSFW ban removed", { targetUserId, performedBy, },);
   return thisL.recordAction({
     actionType: "unban",
@@ -191,6 +197,7 @@ export async function shadowUser({ thisL, targetUserId, performedBy, reason, }: 
     "=",
     targetUserId,
   ).execute();
+
   thisL.log.info("NSFW shadow applied", { targetUserId, performedBy, },);
   return thisL.recordAction({
     actionType: "shadow",
@@ -228,6 +235,7 @@ export async function unshadowUser(
     "=",
     targetUserId,
   ).execute();
+
   thisL.log.info("NSFW shadow removed", { targetUserId, performedBy, },);
   return thisL.recordAction({
     actionType: "unshadow",

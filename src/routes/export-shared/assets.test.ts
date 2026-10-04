@@ -72,6 +72,7 @@ describe("exportAssetsToZip", () => {
       format: "json",
       counts: {},
     };
+
     await exportAssetsToZip(ctx,);
 
     expect(ctx.counts.assets,).toBe(1,);

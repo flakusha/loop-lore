@@ -21,6 +21,7 @@ export function runTurnSequence(state: RunnerState, c: SyntheticCase,): CaseResu
   if (!state.turnManagerFactory) {
     return skippedResult(c.expected, "turn orchestration replay requires a turnManagerFactory",);
   }
+
   const nextActorId = c.expected.nextActorId;
   const wellFormed = nextActorId === null || typeof nextActorId === "string";
   return {

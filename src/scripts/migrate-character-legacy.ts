@@ -124,18 +124,21 @@ export async function runMigration(
       perActor.push({ actorId: row.id, status: "skipped", reason: "data_raw empty", },);
       continue;
     }
+
     const parsedResult = safeJsonParse(raw,);
     if (!parsedResult.ok) {
       skipped++;
       perActor.push({ actorId: row.id, status: "skipped", reason: "data_raw not JSON (yaml/toml?)", },);
       continue;
     }
+
     const parsed: unknown = parsedResult.value;
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed,)) {
       skipped++;
       perActor.push({ actorId: row.id, status: "skipped", reason: "data_raw is not a JSON object", },);
       continue;
     }
+
     candidates++;
 
     const step = migrateCanonicalExtensions(parsed as Record<string, unknown>,);
@@ -154,6 +157,7 @@ export async function runMigration(
       perActor.push({ actorId: row.id, status: "skipped", reason: "data_raw could not be serialized", },);
       continue;
     }
+
     const nextRaw = stringifyResult.value;
     await database
       .updateTable("actors",)
@@ -164,6 +168,7 @@ export async function runMigration(
     for (const f of step.fieldsAdded) {
       fieldsAdded[f] = (fieldsAdded[f] ?? 0) + 1;
     }
+
     changed++;
     perActor.push({ actorId: row.id, status: "changed", fieldsAdded: step.fieldsAdded, },);
   }
@@ -191,6 +196,7 @@ export async function main(): Promise<number> {
     console.error("migrate:character:legacy requires a real on-disk DB; got:", sqliteFilename,);
     return 1;
   }
+
   const sqlite = new Database(sqliteFilename,);
   sqlite.run("PRAGMA foreign_keys = ON",);
   const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
@@ -209,6 +215,7 @@ export async function main(): Promise<number> {
       console.log(`  ${field}: ${count}`,);
     }
   }
+
   return 0;
 }
 

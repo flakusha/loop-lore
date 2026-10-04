@@ -22,9 +22,11 @@ export const moodStateEmotions: Partial<ChatState> & ThisType<ChatState> = {
         apiFetch(`/api/v1/actors/${actorId}/emotions`,),
         apiFetch(`/api/v1/emotions`,),
       ],);
+
       if (activeRes.status !== "fulfilled" || defsRes.status !== "fulfilled") {
         throw new Error("emotion load failed",);
       }
+
       if (!activeRes.value.ok || !defsRes.value.ok) { return; }
 
       const active = await activeRes.value.json();
@@ -44,6 +46,7 @@ export const moodStateEmotions: Partial<ChatState> & ThisType<ChatState> = {
           outEmotions.push({ def, intensity: e.intensity ?? 0.5, },);
         }
       }
+
       this._activeEmotions = outEmotions;
     } catch (error) {
       log.error("Failed to load active emotions", error instanceof Error ? error : undefined, {},);

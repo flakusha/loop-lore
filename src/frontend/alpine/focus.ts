@@ -11,6 +11,7 @@ export function getFirstFocusable(container: Element,): HTMLElement | null {
   const focusables = container.querySelectorAll<HTMLElement>(
     'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"]), [role="button"], [role="link"]',
   );
+
   return focusables[0] ?? null;
 }
 
@@ -23,6 +24,7 @@ export function getLastFocusable(container: Element,): HTMLElement | null {
   const focusables = container.querySelectorAll<HTMLElement>(
     'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"]), [role="button"], [role="link"]',
   );
+
   return focusables[focusables.length - 1] ?? null;
 }
 
@@ -155,6 +157,7 @@ export function focusIntoView(element: HTMLElement, offset = 0,): void {
   if (offset !== 0) {
     window.scrollBy(0, offset,);
   }
+
   if (isInViewport(element,)) {
     element.focus();
   }
@@ -186,6 +189,7 @@ export class FocusPortal {
     if (this.previousActiveElement) {
       this.previousActiveElement.focus();
     }
+
     this.previousActiveElement = null;
   }
 }

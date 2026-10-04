@@ -46,6 +46,7 @@ export function renderMetrics(): string {
       "Resident set size in bytes.",
     ),
   );
+
   lines.push(
     gauge(
       "loop_lore_process_heap_total_bytes",
@@ -53,6 +54,7 @@ export function renderMetrics(): string {
       "Total heap allocated in bytes.",
     ),
   );
+
   lines.push(
     gauge(
       "loop_lore_process_heap_used_bytes",
@@ -60,6 +62,7 @@ export function renderMetrics(): string {
       "Heap used in bytes.",
     ),
   );
+
   lines.push(
     gauge(
       "loop_lore_process_external_memory_bytes",
@@ -67,6 +70,7 @@ export function renderMetrics(): string {
       "External (C++) memory in bytes.",
     ),
   );
+
   lines.push(
     gauge(
       "loop_lore_process_cpu_user_microseconds",
@@ -74,6 +78,7 @@ export function renderMetrics(): string {
       "User CPU time in microseconds.",
     ),
   );
+
   lines.push(
     gauge(
       "loop_lore_process_cpu_system_microseconds",
@@ -81,6 +86,7 @@ export function renderMetrics(): string {
       "System CPU time in microseconds.",
     ),
   );
+
   lines.push(
     gauge(
       "loop_lore_node_active_handles",
@@ -88,6 +94,7 @@ export function renderMetrics(): string {
       "Active libuv handles.",
     ),
   );
+
   return lines.join("",);
 }
 

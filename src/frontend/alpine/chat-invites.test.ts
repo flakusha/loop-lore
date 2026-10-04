@@ -54,6 +54,7 @@ function buildCtx(
       }
     },
   };
+
   Object.assign(base, chatInvites,);
   return base as unknown as ChatState;
 }
@@ -145,6 +146,7 @@ describeOrSkip("chatInvites", () => {
           selected.value = id;
         },
       },);
+
       ctx._chatJoinCode = "ABCDEF12";
       await chatInvites.joinChatByCode!.call(ctx,);
       expect(fetchCalls[0]!.url,).toBe("/api/v1/invites/ABCDEF12/join",);

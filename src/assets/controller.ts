@@ -104,6 +104,7 @@ async function requireAssetOwner(
     .selectAll()
     .where("id", "=", assetId,)
     .executeTakeFirst();
+
   if (!asset) { return notFoundResponse("Asset not found",); }
   if (asset.owner_id !== userId) { return notOwnerResponse("Asset",); }
   return asset;
@@ -145,6 +146,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           actorId: userId,
           actorRole: userRole,
         },);
+
         return jsonPaginated({ data: result.data, total: result.total, page, pageSize, },);
       },)
       // NOTE: POST /api/assets is registered directly in elysia-app.ts (not here)
@@ -164,6 +166,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const matted = resolved.asset.alpha_status === AssetAlphaStatus.Matted
           ? await findMattedDerivative(database, resolved.asset.id,)
           : null;
+
         return jsonResponse({
           ...resolved.asset,
           matted_asset_id: matted?.asset_id ?? null,
@@ -189,9 +192,11 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           visibility: body.visibility as AssetVisibility,
           actorId: userId,
         },);
+
         if (!updated) {
           return notOwnerResponse("Asset",);
         }
+
         return jsonResponse({ id: updated.id, visibility: updated.visibility, },);
       },)
       .delete(`${prefix}/assets/:id`, async (ctx,) => {
@@ -206,9 +211,11 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           assetId: ctx.params.id,
           uploadDir: config.assets.uploadDir,
         },);
+
         if (!deleted) {
           return notFoundResponse("Asset not found",);
         }
+
         return jsonNoContent();
       },)
       // -- Transform routes (face-anchor / framing metadata) ----
@@ -218,12 +225,14 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         if (!(Object.values(TransformContext,) as string[]).includes(context,)) {
           return badRequestResponse("Invalid context",);
         }
+
         const resolved = await resolveAsset(
           database,
           ctx.params.id,
           (ctx as any).userId ?? null,
           (ctx as any).userRole ?? null,
         );
+
         if (resolved instanceof Response) { return resolved; }
         const transform = await resolveAssetTransform(database, ctx.params.id, context as TransformContext,);
         if (!transform) { return notFoundResponse("No transform for this context",); }
@@ -238,13 +247,16 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const unknownKeys = Object.keys(values,).filter((key,) =>
           !["cropX", "cropY", "cropW", "cropH", "zoom", "rotation", "focalPointX", "focalPointY",].includes(key,)
         );
+
         if (unknownKeys.length > 0) {
           return badRequestResponse(`Unknown transform keys: ${unknownKeys.join(", ",)}`,);
         }
+
         const context = rawContext ?? TransformContext.Default;
         if (!(Object.values(TransformContext,) as string[]).includes(context,)) {
           return badRequestResponse("Invalid context",);
         }
+
         try {
           const row = await upsertAssetTransform(database, ctx.params.id, context as TransformContext, values,);
           return jsonResponse(row,);
@@ -330,6 +342,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           action: actionParam,
           expiresInSeconds,
         },);
+
         const url = `${prefix}/assets/${ctx.params.id}/${actionParam}?expires=${signed.expiresAt}&sig=${signed.token}`;
         return jsonResponse({ url, token: signed.token, expiresAt: signed.expiresAt, action: actionParam, },);
       },)
@@ -354,6 +367,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           assetId: ctx.params.id,
           link: body,
         },);
+
         return jsonCreated({ id: ctx.params.id, },);
       },)
       .delete(`${prefix}/assets/:id/links/:linkId`, async (ctx,) => {
@@ -371,9 +385,11 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
             assetId: ctx.params.id,
             linkId: ctx.params.linkId,
           },);
+
           if (!deleted) {
             return notFoundResponse("Link not found",);
           }
+
           return jsonNoContent();
         } catch (err) {
           // deleteAssetLink throws when the (asset_id, entity_id) pair
@@ -383,6 +399,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           if (err instanceof Error && err.message.startsWith("Ambiguous link delete:",)) {
             return conflictResponse(err.message,);
           }
+
           throw err;
         }
       },)
@@ -401,9 +418,11 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           sharedWithId: body.actor_id,
           sharedById: userId,
         },);
+
         if (!share) {
           return notOwnerResponse("Asset",);
         }
+
         return jsonCreated(share,);
       },)
       .delete(`${prefix}/assets/:id/share`, async (ctx,) => {
@@ -469,6 +488,7 @@ export async function handleUpload({
   if (!file || !(file instanceof File)) {
     return badRequestResponse("file field is required",);
   }
+
   const bufferResult = safeFromUint8Array(new Uint8Array(await file.arrayBuffer(),),);
   if (!bufferResult.ok) { return badRequestResponse(bufferResult.error.message,); }
   const buffer = bufferResult.buffer;
@@ -540,6 +560,7 @@ export async function handleUpload({
       },
     },);
   }
+
   return Response.json(body, {
     status: HttpStatus.Created,
     headers: {

@@ -54,6 +54,7 @@ describe("generateComfyUI", () => {
       { ...CONFIG, baseUrl: "not-a-url", },
       OPTS,
     );
+
     expect(outcome.ok,).toBe(false,);
     if (!outcome.ok) {
       expect(outcome.status,).toBe(400,);
@@ -70,6 +71,7 @@ describe("generateComfyUI", () => {
       (outcome,) => ({ ok: outcome.ok, error: outcome.ok ? "" : outcome.error, }),
       (error: unknown,) => ({ ok: false as const, error: (error as Error).message, }),
     );
+
     expect(settled.ok,).toBe(false,);
     expect(settled.error.length,).toBeGreaterThan(0,);
   });
@@ -83,6 +85,7 @@ describe("generateComfyUI", () => {
         submitted = typeof init?.body === "string" ? init.body : "";
         return new Response(JSON.stringify({ prompt_id: "p-1", },), { status: 200, },);
       }
+
       if (target.includes("/history/",)) {
         // Completed execution with one output image on node "9".
         return new Response(
@@ -98,9 +101,11 @@ describe("generateComfyUI", () => {
           { status: 200, },
         );
       }
+
       if (target.includes("/view",)) {
         return new Response(png, { status: 200, headers: { "Content-Type": "image/png", }, },);
       }
+
       throw new Error(`unexpected stub call: ${target}`,);
     }) as typeof fetch;
 
@@ -112,9 +117,11 @@ describe("generateComfyUI", () => {
       expect(outcome.images,).toHaveLength(1,);
       expect(outcome.images[0]?.toString("utf8",),).toBe("comfy-png",);
     }
+
     const parsed = JSON.parse(submitted,) as {
       prompt: Record<string, { inputs: Record<string, unknown>; class_type: string }>;
     };
+
     expect(parsed.prompt["2"]?.inputs.text,).toBe("a tiny castle",);
     expect(parsed.prompt["2"]?.class_type,).toBe("CLIPTextEncode",);
     expect(parsed.prompt["1"]?.class_type,).toBe("CheckpointLoaderSimple",);
@@ -135,16 +142,19 @@ describe("generateComfyUI", () => {
           { status: 200, },
         );
       }
+
       if (target.endsWith("/prompt",)) {
         submitted = typeof init?.body === "string" ? init.body : "";
         return new Response(JSON.stringify({ prompt_id: "p-2", },), { status: 200, },);
       }
+
       if (target.includes("/history/",)) {
         return new Response(
           JSON.stringify({ "p-2": { prompt_id: "p-2", status: "completed", outputs: {}, }, },),
           { status: 200, },
         );
       }
+
       throw new Error(`unexpected stub call: ${target}`,);
     }) as typeof fetch;
 
@@ -157,6 +167,7 @@ describe("generateComfyUI", () => {
     const parsed = JSON.parse(submitted,) as {
       prompt: Record<string, { inputs: Record<string, unknown>; class_type: string }>;
     };
+
     const loraNodes = Object.values(parsed.prompt,).filter((n,) => n.class_type === "LoraLoader");
     expect(loraNodes,).toHaveLength(1,);
     expect(loraNodes[0]?.inputs.lora_name,).toBe("char",);
@@ -177,16 +188,19 @@ describe("generateComfyUI", () => {
           { status: 200, },
         );
       }
+
       if (target.endsWith("/prompt",)) {
         submitted = typeof init?.body === "string" ? init.body : "";
         return new Response(JSON.stringify({ prompt_id: "p-3", },), { status: 200, },);
       }
+
       if (target.includes("/history/",)) {
         return new Response(
           JSON.stringify({ "p-3": { prompt_id: "p-3", status: "completed", outputs: {}, }, },),
           { status: 200, },
         );
       }
+
       throw new Error(`unexpected stub call: ${target}`,);
     }) as typeof fetch;
 

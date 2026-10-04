@@ -44,11 +44,13 @@ describe("chat archive service", () => {
       user_id: ownerId,
       owner_id: ownerId,
     } as never,);
+
     await insertActors(db, "Member", {
       id: memberId,
       user_id: memberId,
       owner_id: memberId,
     } as never,);
+
     await insertChats(db, "Archive Me", ownerId, { id: chatId, } as never,);
     await insertChatParticipants(db, chatId, ownerId, { role_in_chat: "owner", },);
     await insertChatParticipants(db, chatId, memberId, { role_in_chat: "member", },);
@@ -66,6 +68,7 @@ describe("chat archive service", () => {
       .select("is_pinned",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     expect(row?.is_pinned,).toBe(PinnedState.Archived,);
   });
 
@@ -87,6 +90,7 @@ describe("chat archive service", () => {
       .select("is_pinned",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     expect(row?.is_pinned,).toBe(PinnedState.Unpinned,);
   });
 
@@ -98,6 +102,7 @@ describe("chat archive service", () => {
       .select("is_pinned",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     expect(row?.is_pinned,).toBe(PinnedState.Unpinned,);
   });
 
@@ -107,6 +112,7 @@ describe("chat archive service", () => {
       code: "forbidden",
       message: "Only the chat creator, an Owner, or a GM can change settings",
     },);
+
     expect(await isChatArchived(db, chatId,),).toBe(false,);
   });
 
@@ -146,11 +152,13 @@ describe("chat archive asset-links cascade (FEAT-chat-archive-asset-cascade)", (
       user_id: ownerId,
       owner_id: ownerId,
     } as never,);
+
     await insertChats(db, "Asset Cascade", ownerId, { id: chatId, } as never,);
     await insertChatParticipants(db, chatId, ownerId, { role_in_chat: "owner", },);
     await insertAssets(db, ownerId, "asset.png", "image/png", "image", 1, "asset.png", {
       id: assetId,
     },);
+
     await insertAssetLinks(db, assetId, "chat", chatId,);
   },);
 
@@ -168,6 +176,7 @@ describe("chat archive asset-links cascade (FEAT-chat-archive-asset-cascade)", (
       .where("entity_type", "=", "chat",)
       .where("entity_id", "=", chatId,)
       .executeTakeFirst();
+
     expect(link?.archived_at,).not.toBeNull();
     expect(typeof link?.archived_at,).toBe("string",);
   });
@@ -183,6 +192,7 @@ describe("chat archive asset-links cascade (FEAT-chat-archive-asset-cascade)", (
       .where("entity_type", "=", "chat",)
       .where("entity_id", "=", chatId,)
       .executeTakeFirst();
+
     expect(link?.archived_at,).toBeNull();
   });
 
@@ -198,6 +208,7 @@ describe("chat archive asset-links cascade (FEAT-chat-archive-asset-cascade)", (
       .where("entity_type", "=", "chat",)
       .where("entity_id", "=", chatId,)
       .execute();
+
     expect(links,).toHaveLength(0,);
   });
 });
@@ -218,11 +229,13 @@ describe("chat archive / purge notifications (FEAT-chat-archive-purge-notificati
       user_id: ownerId,
       owner_id: ownerId,
     } as never,);
+
     await insertActors(db, "Member", {
       id: memberId,
       user_id: memberId,
       owner_id: memberId,
     } as never,);
+
     await insertChats(db, "Notify Me", ownerId, { id: chatId, } as never,);
     await insertChatParticipants(db, chatId, ownerId, { role_in_chat: "owner", },);
     await insertChatParticipants(db, chatId, memberId, { role_in_chat: "member", },);
@@ -240,6 +253,7 @@ describe("chat archive / purge notifications (FEAT-chat-archive-purge-notificati
       .select(["user_id", "type", "title", "data",],)
       .where("user_id", "=", memberId,)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.type,).toBe("system",);
     expect(rows[0]?.title,).toBe("Chat archived",);
@@ -249,6 +263,7 @@ describe("chat archive / purge notifications (FEAT-chat-archive-purge-notificati
       .select("id",)
       .where("user_id", "=", ownerId,)
       .execute();
+
     expect(actorRows,).toHaveLength(0,);
   });
 
@@ -263,6 +278,7 @@ describe("chat archive / purge notifications (FEAT-chat-archive-purge-notificati
       .select(["user_id", "title",],)
       .where("user_id", "=", memberId,)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.title,).toBe("Chat restored",);
   });
@@ -276,6 +292,7 @@ describe("chat archive / purge notifications (FEAT-chat-archive-purge-notificati
       .select(["user_id", "title",],)
       .where("user_id", "=", memberId,)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.title,).toBe("Chat permanently deleted",);
   });
@@ -295,6 +312,7 @@ describe("chat archive / purge notifications (FEAT-chat-archive-purge-notificati
       .select("id",)
       .where("user_id", "=", memberId,)
       .execute();
+
     expect(rows,).toHaveLength(0,);
   });
 });

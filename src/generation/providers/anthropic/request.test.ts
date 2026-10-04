@@ -57,6 +57,7 @@ describe("buildMessages", () => {
       { role: "user", content: "Hi", },
       { role: "system", content: "Be concise.", },
     ],);
+
     expect(system,).toBe("You are helpful.\n\nBe concise.",);
     expect(messages,).toEqual([{ role: "user", content: "Hi", },],);
   });
@@ -66,6 +67,7 @@ describe("buildMessages", () => {
       { role: "system", content: "", },
       { role: "user", content: "Hi", },
     ],);
+
     expect(system,).toBe("",);
     expect(messages,).toHaveLength(1,);
   });
@@ -74,6 +76,7 @@ describe("buildMessages", () => {
     const { messages, } = buildMessages([
       { role: "character", content: "speaking as the hero", },
     ],);
+
     expect(messages,).toEqual([{ role: "assistant", content: "speaking as the hero", },],);
   });
 
@@ -82,6 +85,7 @@ describe("buildMessages", () => {
       { role: "assistant", content: "Let me check.", },
       { role: "tool", content: "sunny, 21C", tool_call_id: "tool-1", },
     ],);
+
     expect(messages,).toEqual([
       { role: "assistant", content: "Let me check.", },
       {
@@ -95,6 +99,7 @@ describe("buildMessages", () => {
     const { messages, } = buildMessages([
       { role: "tool", content: "orphan result", },
     ],);
+
     expect(messages,).toEqual([
       { role: "user", content: [{ type: "tool_result", tool_use_id: "", content: "orphan result", },], },
     ],);
@@ -105,6 +110,7 @@ describe("buildMessages", () => {
       { role: "tool", content: "one", tool_call_id: "t1", },
       { role: "tool", content: "two", tool_call_id: "t2", },
     ],);
+
     expect(messages,).toHaveLength(1,);
     expect(messages[0],).toEqual({
       role: "user",
@@ -120,6 +126,7 @@ describe("buildMessages", () => {
       { role: "assistant", content: "working on it", },
       { role: "tool", content: "done", tool_call_id: "t9", },
     ],);
+
     expect(messages,).toEqual([
       { role: "assistant", content: "working on it", },
       { role: "user", content: [{ type: "tool_result", tool_use_id: "t9", content: "done", },], },
@@ -130,6 +137,7 @@ describe("buildMessages", () => {
     const { messages, } = buildMessages([
       { role: "user", content: "", },
     ],);
+
     expect(messages,).toEqual([{ role: "user", content: "", },],);
   });
 });
@@ -171,6 +179,7 @@ describe("buildBody", () => {
       makeReq({ messages: [{ role: "system", content: "sys", },], },),
       false,
     );
+
     expect(body.system,).toBe("sys",);
   });
 
@@ -180,6 +189,7 @@ describe("buildBody", () => {
       makeReq({ params: { temperature: 0.5, topP: 0.9, stop: ["END",], }, },),
       false,
     );
+
     expect(body.temperature,).toBe(0.5,);
     expect(body.top_p,).toBe(0.9,);
     expect(body.stop_sequences,).toEqual(["END",],);
@@ -212,6 +222,7 @@ describe("buildBody", () => {
       },),
       false,
     );
+
     expect(body.grammar,).toBe('{"type":"object"}',);
     expect(body.responseFormat,).toEqual({ type: "json_object", },);
     expect(body.cachePrompt,).toBe(true,);
@@ -244,6 +255,7 @@ describe("buildBody", () => {
       },),
       false,
     );
+
     // Mapped fields keep their Anthropic names.
     expect(body.temperature,).toBe(0.1,);
     expect(body.max_tokens,).toBe(100,);

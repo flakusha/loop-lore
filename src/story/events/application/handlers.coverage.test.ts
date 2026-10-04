@@ -63,6 +63,7 @@ beforeEach(async () => {
     health: 80,
     mental_state: "neutral",
   } as never,);
+
   await insertLocationStates(db, locA, worldId, { time_of_day: "morning", },);
 },);
 
@@ -96,6 +97,7 @@ async function npcHealth(): Promise<{ health: number; mental_state: string; loca
     .select(["health", "mental_state", "location_id",],)
     .where("actor_id", "=", actorId,)
     .executeTakeFirstOrThrow();
+
   return {
     health: row.health,
     mental_state: row.mental_state ?? "",
@@ -124,6 +126,7 @@ describe("applyLocationChange", () => {
       db,
       event(WorldEventType.LocationChange, {}, { actorId: uid(), locationId: locB, },),
     );
+
     expect((await npcHealth()).location_id,).toBe(locA,);
   });
 });
@@ -137,6 +140,7 @@ describe("applyNpcStateChange", () => {
         changes: { health: 30, mental_state: "hostile", },
       },),
     );
+
     const npc = await npcHealth();
     expect(npc.health,).toBe(30,);
     expect(npc.mental_state,).toBe("hostile",);
@@ -147,6 +151,7 @@ describe("applyNpcStateChange", () => {
       db,
       event(WorldEventType.NpcStateChange, { changes: { health: 10, }, }, { actorId, },),
     );
+
     expect((await npcHealth()).health,).toBe(10,);
   });
 
@@ -158,11 +163,13 @@ describe("applyNpcStateChange", () => {
         changes: { relationships: { friend: 5, }, knowledge: { rumor: "x", }, },
       },),
     );
+
     const row = await db
       .selectFrom("npc_states",)
       .select(["relationships", "knowledge",],)
       .where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
+
     expect(JSON.parse(String(row.relationships ?? "{}",),),).toEqual({ friend: 5, },);
     expect(JSON.parse(String(row.knowledge ?? "{}",),),).toEqual({ rumor: "x", },);
   });
@@ -177,6 +184,7 @@ describe("applyNpcStateChange", () => {
         changes: { health: 55, relationships: circular, },
       },),
     );
+
     // Scalar change still applied; corrupt map skipped.
     expect((await npcHealth()).health,).toBe(55,);
   });
@@ -201,6 +209,7 @@ describe("applyTimeAdvancement", () => {
       .select("time_of_day",)
       .where("location_id", "=", locA,)
       .executeTakeFirstOrThrow();
+
     expect(row.time_of_day,).toBe("morning",);
   });
 
@@ -211,6 +220,7 @@ describe("applyTimeAdvancement", () => {
       .select("time_of_day",)
       .where("location_id", "=", locA,)
       .executeTakeFirstOrThrow();
+
     expect(row.time_of_day,).toBe("afternoon",);
   });
 
@@ -221,6 +231,7 @@ describe("applyTimeAdvancement", () => {
       .select("time_of_day",)
       .where("location_id", "=", locA,)
       .executeTakeFirstOrThrow();
+
     expect(row.time_of_day,).toBe("morning",);
   });
 
@@ -232,6 +243,7 @@ describe("applyTimeAdvancement", () => {
       .select("time_of_day",)
       .where("location_id", "=", locB,)
       .executeTakeFirstOrThrow();
+
     expect(row.time_of_day,).toBe("morning",);
   });
 
@@ -242,6 +254,7 @@ describe("applyTimeAdvancement", () => {
       .select("time_of_day",)
       .where("location_id", "=", locA,)
       .executeTakeFirstOrThrow();
+
     expect(row.time_of_day,).toBe("morning",);
   });
 });
@@ -260,11 +273,13 @@ describe("applyLocationModification", () => {
         },
       },),
     );
+
     const row = await db
       .selectFrom("location_states",)
       .select(["description_override", "atmosphere", "weather", "hazards",],)
       .where("location_id", "=", locA,)
       .executeTakeFirstOrThrow();
+
     expect(row.description_override,).toBe("Burned gate",);
     expect(row.atmosphere,).toBe("tense",);
     expect(row.weather,).toBe("rain",);
@@ -276,11 +291,13 @@ describe("applyLocationModification", () => {
       db,
       event(WorldEventType.LocationModification, { changes: { atmosphere: "calm", }, }, { locationId: locA, },),
     );
+
     const row = await db
       .selectFrom("location_states",)
       .select("atmosphere",)
       .where("location_id", "=", locA,)
       .executeTakeFirstOrThrow();
+
     expect(row.atmosphere,).toBe("calm",);
   });
 
@@ -296,6 +313,7 @@ describe("applyWorldLoreUpdate", () => {
       worldId,
       event(WorldEventType.WorldLoreUpdate, { newLoreEntry: "A dragon passed overhead.", },),
     );
+
     const world = await db.selectFrom("worlds",).select("lore",).where("id", "=", worldId,).executeTakeFirstOrThrow();
     expect(world.lore,).toContain("Old lore",);
     expect(world.lore,).toContain("A dragon passed overhead.",);
@@ -307,11 +325,13 @@ describe("applyWorldLoreUpdate", () => {
       worldId,
       event(WorldEventType.WorldLoreUpdate, { newLoreEntry: "Promoted fact.", },),
     );
+
     const rows = await db
       .selectFrom("world_lore_entries",)
       .select("content",)
       .where("world_id", "=", worldId,)
       .execute();
+
     expect(rows.map((r,) => r.content),).toContain("Promoted fact.",);
   });
 
@@ -321,11 +341,13 @@ describe("applyWorldLoreUpdate", () => {
       worldId,
       event(WorldEventType.WorldLoreUpdate, { newLoreEntry: "Unpromoted.", promoteToLore: false, },),
     );
+
     const rows = await db
       .selectFrom("world_lore_entries",)
       .select("content",)
       .where("world_id", "=", worldId,)
       .execute();
+
     expect(rows,).toEqual([],);
   });
 
@@ -350,6 +372,7 @@ describe("applyCombatEvent", () => {
       db,
       event(WorldEventType.CombatEvent, { defenderId: actorId, damage: 30, },),
     );
+
     const npc = await npcHealth();
     expect(npc.health,).toBe(50,);
     expect(npc.mental_state,).toBe("hostile",);
@@ -360,6 +383,7 @@ describe("applyCombatEvent", () => {
       db,
       event(WorldEventType.CombatEvent, { defenderId: actorId, damage: 5, defeated: true, },),
     );
+
     const npc = await npcHealth();
     expect(npc.health,).toBe(0,);
     expect(npc.mental_state,).toBe("defeated",);
@@ -370,6 +394,7 @@ describe("applyCombatEvent", () => {
       db,
       event(WorldEventType.CombatEvent, { defenderId: actorId, damage: 9999, },),
     );
+
     const npc = await npcHealth();
     expect(npc.health,).toBe(0,);
     expect(npc.mental_state,).toBe("defeated",);
@@ -402,11 +427,13 @@ describe("applySingleEvent dispatch", () => {
       event(WorldEventType.CombatEvent, { defenderId: actorId, damage: 1, },),
       event(WorldEventType.QuestProgress, { progress: 1, },),
     ];
+
     for (const e of cases) {
       const res = await applySingleEvent(db, worldId, items, e,);
       expect(res.applied,).toBe(true,);
       expect(res.event,).toBe(e,);
     }
+
     expect((await npcHealth()).location_id,).toBe(locB,);
   });
 

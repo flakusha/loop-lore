@@ -119,12 +119,14 @@ export function replayabilityPlaythroughRoutes(svc: () => ReplayabilityService, 
           endingType: EndingType;
           completionTime: number;
         };
+
         const playthrough = await svc().completePlaythrough(
           ctx.params.id,
           body.endingId,
           body.endingType,
           body.completionTime,
         );
+
         return jsonResponse(playthrough,);
       } catch (error) {
         log().error("Failed to complete playthrough", error instanceof Error ? error : undefined,);

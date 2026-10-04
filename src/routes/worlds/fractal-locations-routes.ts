@@ -55,6 +55,7 @@ export function fractalLocationsRoutes(opts: HandleOpts, prefix = "/api",) {
           "=",
           ctx.body.physicalLocationId,
         ).executeTakeFirst();
+
         if (!physLoc) { return jsonError({ message: "physical location not found", status: HttpStatus.NotFound, },); }
         const worldErr = await requireWorldOwner(database, physLoc.world_id, userId, userRole,);
         if (worldErr) { return worldErr; }

@@ -19,6 +19,7 @@ describe("updateGmGuidance", () => {
       "GM Creator",
       { id: "user-gm", user_id: "user-gm", owner_id: "user-gm", } as never,
     );
+
     chatId = await createChat(db, {
       name: "GM Story",
       type: "group",
@@ -39,6 +40,7 @@ describe("updateGmGuidance", () => {
       .select("gm_config",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     return row?.gm_config ? JSON.parse(row.gm_config,) : null;
   }
 
@@ -47,6 +49,7 @@ describe("updateGmGuidance", () => {
       storyMode: true,
       gmGuidance: { constraints: ["stay in character",], turnPriority: { "a1": "high", }, },
     },);
+
     expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.storyMode,).toBe(true,);
@@ -62,6 +65,7 @@ describe("updateGmGuidance", () => {
     await updateGmGuidance(db, chatId, {
       gmGuidance: { constraints: ["a",], turnPriority: {}, },
     },);
+
     await updateGmGuidance(db, chatId, { storyMode: true, },);
     const parsed = await gmConfigOf();
     expect((parsed?.gmGuidance as { constraints: string[] }).constraints,).toEqual(["a",],);

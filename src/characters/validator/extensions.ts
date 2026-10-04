@@ -67,8 +67,10 @@ function validateInventory(
         message: "Each inventory item must be an object",
         value: item,
       },);
+
       continue;
     }
+
     const it = item as Record<string, unknown>;
     if (!it.name || typeof it.name !== "string") {
       errors.push({
@@ -78,6 +80,7 @@ function validateInventory(
         value: it.name,
       },);
     }
+
     if (typeof it.quantity !== "number" || it.quantity < 0) {
       const code = "INVALID_VALUE";
       const message = `Inventory item quantity ${mode === "strict" ? "must" : "should"} be a non-negative number`;
@@ -85,6 +88,7 @@ function validateInventory(
       if (mode === "strict") { errors.push(entry,); }
       else { warnings.push(entry,); }
     }
+
     const validRarities = new Set(["common", "uncommon", "rare", "epic", "legendary",],);
     if (it.rarity !== undefined && (typeof it.rarity !== "string" || !validRarities.has(it.rarity,))) {
       errors.push({
@@ -94,6 +98,7 @@ function validateInventory(
         value: it.rarity,
       },);
     }
+
     if (it.weight !== undefined && (typeof it.weight !== "number" || it.weight < 0)) {
       const code = "INVALID_VALUE";
       const message = `Inventory item weight ${mode === "strict" ? "must" : "should"} be a non-negative number`;
@@ -130,6 +135,7 @@ function validateRelationships(
     "debt",
     "grudge",
   ];
+
   const validTargetTypes = new Set(["character", "faction", "place", "object",],);
   for (const [i, rel,] of relationships.entries()) {
     if (!rel || typeof rel !== "object") {
@@ -139,8 +145,10 @@ function validateRelationships(
         message: "Each relationship must be an object",
         value: rel,
       },);
+
       continue;
     }
+
     const r = rel as Record<string, unknown>;
     if (r.type && !validTypes.includes(r.type as string,)) {
       errors.push({
@@ -150,6 +158,7 @@ function validateRelationships(
         value: r.type,
       },);
     }
+
     if (typeof r.strength !== "number" || r.strength < 0 || r.strength > 100) {
       const code = "INVALID_VALUE";
       const message = `Relationship strength ${mode === "strict" ? "must" : "should"} be a number between 0 and 100`;
@@ -157,6 +166,7 @@ function validateRelationships(
       if (mode === "strict") { errors.push(entry,); }
       else { warnings.push(entry,); }
     }
+
     if (r.target_type !== undefined && !validTargetTypes.has(r.target_type as string,)) {
       errors.push({
         field: `extensions.relationships[${i}].target_type`,
@@ -201,6 +211,7 @@ export function validateFeatureFlags(
         value: flags[key as keyof CharacterFeatureFlags],
       },);
     }
+
     const value = (flags as Record<string, unknown>)[key];
     if (typeof value !== "boolean") {
       if (mode === "strict") {

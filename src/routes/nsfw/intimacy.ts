@@ -39,6 +39,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
               ctx.params.targetId,
               worldId,
             );
+
             return jsonResponse(pair,);
           } catch (error) {
             log().error("Failed to get intimacy pair", error instanceof Error ? error : undefined,);
@@ -61,6 +62,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
               ctx.params.actorId,
               worldId,
             );
+
             return jsonResponse(pairs,);
           } catch (error) {
             log().error("Failed to get actor pairs", error instanceof Error ? error : undefined,);
@@ -86,6 +88,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
               chatId,
               actorId,
             },);
+
             if (!consent.ok) { return nsfwAccessErrorResponse(consent.reason,); }
 
             const result = await intimacyService.applyAction({
@@ -103,6 +106,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
               },
               context: body.context as string | undefined,
             },);
+
             return jsonResponse(result,);
           } catch (error) {
             log().error("Failed to apply intimacy action", error instanceof Error ? error : undefined,);

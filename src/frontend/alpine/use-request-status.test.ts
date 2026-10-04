@@ -38,6 +38,7 @@ describeOrSkip("useRequestStatus", () => {
       onUpdate: (p,) => rec.updates.push(p.status,),
       onTerminal: (p,) => rec.terminals.push(p.status,),
     },);
+
     subscribe("r1",);
     await new Promise<void>((resolve,) => setTimeout(resolve, 0,)); // let the first poll settle
     expect(seenUrls,).toEqual(["/api/v1/requests/r1/status",],);
@@ -53,6 +54,7 @@ describeOrSkip("useRequestStatus", () => {
       onUpdate: (p,) => rec.updates.push(p.error ?? "",),
       onTerminal: (p,) => rec.terminals.push(p.status,),
     },);
+
     subscribe("r1",);
     await new Promise<void>((resolve,) => setTimeout(resolve, 0,));
     expect(rec.updates[0],).toContain("500",);
@@ -65,10 +67,12 @@ describeOrSkip("useRequestStatus", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     const { subscribe, cancel, } = useRequestStatus({
       onUpdate: (p,) => rec.updates.push(p.error ?? "",),
       onTerminal: (p,) => rec.terminals.push(p.status,),
     },);
+
     subscribe("r1",);
     await new Promise<void>((resolve,) => setTimeout(resolve, 0,));
     expect(rec.updates,).toEqual(["offline",],);
@@ -83,6 +87,7 @@ describeOrSkip("useRequestStatus", () => {
       maxDurationMs: 0,
       onTerminal: (p,) => rec.terminals.push(p.status,),
     },);
+
     subscribe("r1",);
     await new Promise<void>((resolve,) => setTimeout(resolve, 0,));
     expect(seenUrls,).toHaveLength(1,);
@@ -99,14 +104,17 @@ describeOrSkip("useRequestStatus", () => {
       if (fetchCount === 1) {
         return Response.json({ requestId: "r1", status: "in_progress", },);
       }
+
       await gate.promise;
       return Response.json({ requestId: "r1", status: "complete", },);
     };
+
     const { subscribe, cancel, } = useRequestStatus({
       intervalMs: 1,
       onUpdate: (p,) => rec.updates.push(p.status,),
       onTerminal: (p,) => rec.terminals.push(p.status,),
     },);
+
     subscribe("r1",);
     await new Promise<void>((resolve,) => setTimeout(resolve, 0,)); // first poll done, timer pending
     expect(rec.updates,).toEqual(["in_progress",],);
@@ -126,10 +134,12 @@ describeOrSkip("useRequestStatus — odd failure payloads", () => {
     handler = async () => {
       throw "boom-str";
     };
+
     const { subscribe, cancel, } = useRequestStatus({
       onUpdate: (p,) => rec.updates.push(p.error ?? "",),
       onTerminal: (p,) => rec.terminals.push(p.status,),
     },);
+
     subscribe("r1",);
     await new Promise<void>((resolve,) => setTimeout(resolve, 0,));
     expect(rec.updates,).toEqual(["boom-str",],);

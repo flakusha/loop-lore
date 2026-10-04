@@ -75,6 +75,7 @@ export async function applyReputationLeg(
       : encounter.encounterType === "group"
       ? "group"
       : "private";
+
     const success = outcome.type === "satisfaction" || outcome.type === "bonding";
     for (const participant of encounter.participants) {
       const change = calculateEncounterReputationChange(
@@ -84,6 +85,7 @@ export async function applyReputationLeg(
         socialContext,
         outcome.effects.intimacyChange,
       );
+
       await insertFanOutEffect(db, {
         id: `reputation:${encounter.id}:${outcome.type}:${participant}`,
         actorId: participant,
@@ -101,6 +103,7 @@ export async function applyReputationLeg(
         },),
       },);
     }
+
     log.info(`Reputation recorded for ${encounter.id} (${outcome.type}, ${socialContext})`,);
   } catch (cause) {
     log.warn(`Reputation fan-out skipped for ${encounter.id}:`, {

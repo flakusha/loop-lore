@@ -26,10 +26,12 @@ export const scoreCreativity: Scorer = ({ response, recentTurns, },) => {
     "fade",
     "emerge",
   ];
+
   let evocativeCount = 0;
   for (const w of evocativeWords) {
     if (lowerResponse.includes(w,)) { evocativeCount++; }
   }
+
   score += evocativeCount * 5;
 
   if (recentTurns && recentTurns.length > 0) {
@@ -54,6 +56,7 @@ export const scoreCreativity: Scorer = ({ response, recentTurns, },) => {
     "in the nick of time",
     "destiny called",
   ];
+
   for (const cliche of cliches) {
     if (lowerResponse.includes(cliche,)) { score -= 15; }
   }

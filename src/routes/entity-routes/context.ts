@@ -48,11 +48,13 @@ export async function checkOwnership(
       userRole,
     },);
   }
+
   const owner = await (database as any)
     .selectFrom(config.ownershipTable,)
     .select(config.ownershipFkColumn,)
     .where("id", "=", parentId,)
     .executeTakeFirst();
+
   return (
     !!owner && (owner[config.ownershipFkColumn] === userId || can(userRole, "admin.character",))
   );

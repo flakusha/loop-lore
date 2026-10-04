@@ -32,6 +32,7 @@ function makeApp(db: Kysely<DB>, userRole: string | null,) {
     userId: userRole ? `test-user-${userRole}` : null,
     userRole,
   }));
+
   return app.use(systemConfigRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
@@ -90,6 +91,7 @@ describe("admin system-config routes", () => {
         body: JSON.stringify({ key: "patched.key", value: "patched-value", description: "desc", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -102,6 +104,7 @@ describe("admin system-config routes", () => {
         body: JSON.stringify({ wrong: "shape", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -114,6 +117,7 @@ describe("admin system-config routes", () => {
         body: JSON.stringify({ key: "k", value: "v", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -123,6 +127,7 @@ describe("admin system-config routes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/system-config/delete.me", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
   });
 
@@ -131,6 +136,7 @@ describe("admin system-config routes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/system-config/anything", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -161,6 +167,7 @@ describe("admin system-config routes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/system-config/export?format=yaml",),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-type",),).toContain("application/yaml",);
     expect(res.headers.get("content-disposition",),).toContain(".yaml",);
@@ -176,6 +183,7 @@ describe("admin system-config routes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/system-config/export?format=toml",),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-disposition",),).toContain(".toml",);
     const text = await res.text();
@@ -188,6 +196,7 @@ describe("admin system-config routes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/system-config/export?format=yaml",),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -220,6 +229,7 @@ describe("admin system-config routes", () => {
   import.k1: v1
   import.k2: v2
 `;
+
     const app = makeApp(db, "admin",);
     const res = await app.handle(
       new Request("http://localhost/api/admin/system-config/import", {
@@ -228,6 +238,7 @@ describe("admin system-config routes", () => {
         body: JSON.stringify({ format: "yaml", content: yamlBody, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as {
       imported: number;
@@ -235,10 +246,12 @@ describe("admin system-config routes", () => {
       skipped: number;
       results: { key: string; action: string }[];
     };
+
     expect(body.imported,).toBe(2,);
     expect(body.results.map((r,) => r.key).sort(),).toEqual(["import.k1", "import.k2",],);
     expect(body.results.every((r,) => r.action === "added"),).toBe(true,);
   });
+
   test("POST /api/admin/system-config/import toml round-trips and reports changed", async () => {
     await setConfig(db, "import.toml.pre", "old",);
     // Bun.TOML export uses quoted dotted keys to keep them flat on parse.
@@ -251,6 +264,7 @@ describe("admin system-config routes", () => {
         body: JSON.stringify({ format: "toml", content: tomlBody, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { changed: number; results: { key: string; action: string }[] };
     expect(body.changed,).toBe(1,);
@@ -267,6 +281,7 @@ describe("admin system-config routes", () => {
         body: JSON.stringify({ format: "yaml", content: yamlBody, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { skipped: number; results: { key: string; action: string }[] };
     expect(body.skipped,).toBeGreaterThanOrEqual(1,);
@@ -283,6 +298,7 @@ describe("admin system-config routes", () => {
         body: JSON.stringify({ format: "yaml", content: "{ this: is: invalid", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -295,6 +311,7 @@ describe("admin system-config routes", () => {
         body: JSON.stringify({ format: "yaml", content: "system_config: {}", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

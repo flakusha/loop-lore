@@ -109,6 +109,7 @@ function decodeCursor(cursor: string,): { createdAt: string; id: string } | null
   if (typeof obj.c === "string" && obj.c.length > 0 && typeof obj.i === "string" && obj.i.length > 0) {
     return { createdAt: obj.c, id: obj.i, };
   }
+
   return null;
 }
 
@@ -156,6 +157,7 @@ export async function recordAuditLog(
     details: jsonStringifyOr(e.details ?? {},),
     created_at: now,
   }));
+
   try {
     await db.insertInto("memory_audit_log",).values(rows,).execute();
   } catch (error) {
@@ -227,6 +229,7 @@ export async function listAuditLog(
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed,)) {
       details = parsed as Record<string, unknown>;
     }
+
     entries.push({
       id: r.id,
       memoryId: r.memory_id,

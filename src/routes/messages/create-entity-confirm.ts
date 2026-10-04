@@ -71,6 +71,7 @@ export function createEntityConfirmRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (!body.kind || !ALLOWED_KINDS[body.kind]) {
           return jsonResponse({ error: "Invalid entity kind.", }, 400,);
         }
+
         if (!body.data || typeof body.data.name !== "string" || !body.data.name.trim()) {
           return jsonResponse({ error: "Entity data missing a name.", }, 400,);
         }
@@ -99,6 +100,7 @@ export function createEntityConfirmRoutes(opts: HandlerOpts, prefix = "/api",) {
           description: body.description ?? "",
           worldId: body.worldId ?? undefined,
         }, actorId,);
+
         return jsonCreated({
           id: inserted.id,
           kind: inserted.kind,

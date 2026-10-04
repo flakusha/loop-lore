@@ -90,9 +90,11 @@ async function insertTag(
     .where("asset_id", "=", assetId,)
     .where("tag", "=", tag,)
     .where("scope", "=", scope,);
+
   if (scope === AssetTagScope.User) {
     existingQuery = existingQuery.where("owner_id", "=", ownerId ?? "",);
   }
+
   const existing = await existingQuery.executeTakeFirst();
 
   if (existing) {
@@ -161,9 +163,11 @@ export async function removeAssetTag(
     .where("asset_id", "=", assetId,)
     .where("tag", "=", tag,)
     .where("scope", "=", scope,);
+
   if (scope === AssetTagScope.User) {
     deleteQuery = deleteQuery.where("owner_id", "=", ownerId ?? "",);
   }
+
   await deleteQuery.execute();
 }
 

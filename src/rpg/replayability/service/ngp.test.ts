@@ -42,6 +42,7 @@ describe("startNewGamePlus", () => {
       worldId: "world-1",
       previousPlaythroughId: "run-done",
     },);
+
     expect(out.isCompleted,).toBe(false,);
     expect(out.difficulty,).toBe(PlusDifficulty.Hard,);
     expect(out.metadata,).toMatchObject({
@@ -61,6 +62,7 @@ describe("startNewGamePlus", () => {
       carryOverChoices: false,
       carryOverItems: true,
     },);
+
     expect(out.difficulty,).toBe(PlusDifficulty.Nightmare,);
     expect(out.metadata,).toMatchObject({ carryOverChoices: false, carryOverItems: true, },);
   });

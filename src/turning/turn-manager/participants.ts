@@ -83,6 +83,7 @@ export async function refreshTurnOrder(
     const bOrder = typeOrder[b.agentType] ?? 99;
     return aOrder - bOrder;
   },);
+
   host.state.turnOrder = Array.from(participants, (p,) => p.actorId,);
 }
 

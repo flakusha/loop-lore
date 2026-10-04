@@ -51,6 +51,7 @@ describe("Settings flow E2E", () => {
           (res,) => res.url().includes("/api/v1/users/me",) && res.request().method() === "PUT",
           { timeout: 30_000, },
         );
+
         await page.click("[data-testid='save-general']",);
         await saveRes;
 
@@ -60,6 +61,7 @@ describe("Settings flow E2E", () => {
           .select(["display_name",],)
           .where("id", "=", SEED.solo.id,)
           .executeTakeFirst();
+
         expect(row,).not.toBeNull();
         expect(row!.display_name,).toBe(displayName,);
       } finally {
@@ -81,6 +83,7 @@ describe("Settings flow E2E", () => {
           (res,) => res.url().includes("/api/v1/users/me/settings",) && res.request().method() === "PATCH",
           { timeout: 30_000, },
         );
+
         await page.selectOption("[data-testid='theme-select']", theme,);
         await settingsRes;
 
@@ -89,6 +92,7 @@ describe("Settings flow E2E", () => {
           .select(["settings",],)
           .where("id", "=", SEED.solo.id,)
           .executeTakeFirst();
+
         expect(row,).not.toBeNull();
         expect(row!.settings,).toContain(theme,);
 
@@ -134,12 +138,14 @@ describe("Settings flow E2E", () => {
         { label: "Keys", panel: "settings-keys", },
         { label: "Models", panel: "settings-models", },
       ];
+
       for (const tab of tabs) {
         await page
           .locator(".world-edit-tab",)
           .filter({ hasText: tab.label, },)
           .first()
           .click();
+
         await page.waitForTimeout(300,);
         await page
           .locator(`[data-testid='${tab.panel}']`,)
@@ -173,6 +179,7 @@ describe("Settings flow E2E", () => {
         .select(["settings",],)
         .where("id", "=", SEED.solo.id,)
         .executeTakeFirstOrThrow();
+
       const parsed = JSON.parse(row.settings ?? "{}",) as Record<string, unknown>;
       expect(parsed,).toHaveProperty("temperature",);
     } finally {
@@ -221,6 +228,7 @@ describe("Settings flow E2E", () => {
         .select(["settings",],)
         .where("id", "=", SEED.solo.id,)
         .executeTakeFirstOrThrow();
+
       const parsed = JSON.parse(row.settings ?? "{}",) as Record<string, unknown>;
       expect(parsed,).toHaveProperty("autoScroll",);
       expect(parsed.autoScroll,).toBe(!before,);

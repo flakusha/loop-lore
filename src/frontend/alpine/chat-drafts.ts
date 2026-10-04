@@ -102,6 +102,7 @@ export function writeDraft(store: DraftStore, chatId: string, text: string,): vo
     clearDraft(store, chatId,);
     return;
   }
+
   const payload = safeJsonStringify({ text: trimmed, savedAt: new Date().toISOString(), },);
   if (!payload.ok) { return; }
   try {
@@ -109,6 +110,7 @@ export function writeDraft(store: DraftStore, chatId: string, text: string,): vo
   } catch {
     return;
   }
+
   const index = readDraftIndex(store,).filter((id,) => id !== chatId);
   index.unshift(chatId,);
   for (const evicted of index.slice(DRAFT_MAX_CHATS,)) {
@@ -118,6 +120,7 @@ export function writeDraft(store: DraftStore, chatId: string, text: string,): vo
       /* keep evicting the rest */
     }
   }
+
   const encoded = safeJsonStringify(index.slice(0, DRAFT_MAX_CHATS,),);
   if (!encoded.ok) { return; }
   try {
@@ -138,6 +141,7 @@ export function clearDraft(store: DraftStore, chatId: string,): void {
   } catch {
     return;
   }
+
   try {
     const index = readDraftIndex(store,).filter((id,) => id !== chatId);
     const encoded = safeJsonStringify(index,);
@@ -157,6 +161,7 @@ export const chatDraftMethods: Partial<ChatState> & ThisType<ChatState> = {
       clearTimeout(this._draftTimer,);
       this._draftTimer = null;
     }
+
     const target = store ?? defaultDraftStore();
     if (!this.activeChat || !target) { return; }
     const chatId = this.activeChat;
@@ -165,6 +170,7 @@ export const chatDraftMethods: Partial<ChatState> & ThisType<ChatState> = {
       const input = this.$refs.messageInput as HTMLTextAreaElement | undefined;
       writeDraft(target, chatId, input?.value ?? "",);
     }, DRAFT_DEBOUNCE_MS,);
+
     // Never hold a test runner open for a UI debounce.
     const unref = (timer as unknown as { unref?: () => void }).unref;
     if (typeof unref === "function") { unref.call(timer,); }
@@ -180,6 +186,7 @@ export const chatDraftMethods: Partial<ChatState> & ThisType<ChatState> = {
       clearTimeout(this._draftTimer,);
       this._draftTimer = null;
     }
+
     if (!this.activeChat) { return; }
     const target = store ?? defaultDraftStore();
     if (!target) { return; }
@@ -212,6 +219,7 @@ export const chatDraftMethods: Partial<ChatState> & ThisType<ChatState> = {
       clearTimeout(this._draftTimer,);
       this._draftTimer = null;
     }
+
     if (!this.activeChat) { return; }
     const target = store ?? defaultDraftStore();
     if (!target) { return; }

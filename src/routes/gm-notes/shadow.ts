@@ -69,6 +69,7 @@ async function injectShadowRevealNarration(
       plaintext: text,
       smk,
     },);
+
     storedContent = enc.storedContent;
     storedKeyId = enc.keyId ?? null;
   }
@@ -129,6 +130,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             .limit(pageSize,)
             .offset(offset,)
             .execute();
+
           const countResult = await database
             .selectFrom("shadow_notes",)
             .select(database.fn.countAll<number>().as("total",),)

@@ -31,6 +31,7 @@ describe("serializeTemplateInput", () => {
       modality: "image",
       payload: { templateBody: "{{subject}}", },
     },);
+
     expect(res.ok,).toBe(true,);
   });
 
@@ -41,9 +42,11 @@ describe("serializeTemplateInput", () => {
         { name: "T", modality: "image", detail_level: "ultra" as never, payload: { templateBody: "x", }, },
       ).ok,
     ).toBe(false,);
+
     expect(serializeTemplateInput({ name: "  ", modality: "image", payload: { templateBody: "x", }, },).ok,).toBe(
       false,
     );
+
     expect(serializeTemplateInput({ name: "T", modality: "image", payload: {}, },).ok,).toBe(false,);
   });
 });
@@ -70,6 +73,7 @@ describe("template service CRUD", () => {
       description: "d",
       payload: { templateBody: "{{subject}}, dramatic", negativePrompt: "lowres", },
     },);
+
     expect(getOwnedTemplate(db, row.id, userId,),).resolves.toMatchObject({ name: "Svc Image", },);
     expect(getOwnedTemplate(db, row.id, otherId,),).resolves.toBeNull();
 
@@ -92,6 +96,7 @@ describe("template service CRUD", () => {
       modality: "image",
       payload: { templateBody: "x", },
     },);
+
     await expect(updateTemplate(db, row.id, userId, { payload: {}, },),).rejects.toBeInstanceOf(Error,);
   });
 
@@ -104,6 +109,7 @@ describe("template service CRUD", () => {
       modality: "audio",
       payload: { body: "{{mood}} ambience", },
     },);
+
     const def = await resolveTemplateDef(db, row.id, userId,);
     expect(def?.row?.id,).toBe(row.id,);
     expect(await resolveTemplateDef(db, "tmpl-nope", userId,),).toBeNull();
@@ -126,6 +132,7 @@ describe("payload rendering", () => {
       { templateBody: "{{a}} / {{missing}}", negativePrompt: "blurry", },
       { a: "alpha", },
     );
+
     expect(res.prompt,).toBe("alpha / ",);
     expect(res.negativePrompt,).toBe("blurry",);
   });
@@ -135,6 +142,7 @@ describe("payload rendering", () => {
       { body: "{{mood}} {{temp}}", params: { mood: "calm", temp: "20", }, },
       { temp: "30", },
     );
+
     expect(body,).toBe("calm 30",);
   });
 });

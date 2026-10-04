@@ -34,12 +34,15 @@ export async function fetchRecipientPublicKey(actorId: string,): Promise<JsonWeb
     credentials: "include",
     handle401: false,
   },);
+
   if (!result.ok) {
     if (result.status === 404) { return null; }
     throw new Error(`recipient pubkey fetch failed: ${result.error.message}`,);
   }
+
   if (!result.data.publicKeyJwk) {
     throw new Error("recipient pubkey response missing publicKeyJwk",);
   }
+
   return result.data.publicKeyJwk;
 }

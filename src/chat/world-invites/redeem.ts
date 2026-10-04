@@ -46,6 +46,7 @@ export async function redeemWorldInvite(
         .where("world_id", "=", invite.world_id,)
         .where("actor_id", "=", actorId,)
         .executeTakeFirst();
+
       return existing !== undefined;
     },
     insertMemberAndConsumeUse: (invite, actorId,) =>
@@ -59,6 +60,7 @@ export async function redeemWorldInvite(
               actor_id: actorId,
             },)
             .execute();
+
           await trx
             .updateTable("world_invites",)
             .set({ uses: invite.uses + 1, },)
@@ -71,5 +73,6 @@ export async function redeemWorldInvite(
   if (!result.ok) {
     return result;
   }
+
   return { ok: true, worldId: result.invite.world_id, alreadyMember: result.alreadyMember, };
 }

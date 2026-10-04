@@ -80,6 +80,7 @@ export async function applyAction(
           error: escalation instanceof Error ? escalation.message : String(escalation,),
         },);
       }
+
       throw cause;
     }
   }

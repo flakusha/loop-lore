@@ -25,11 +25,13 @@ describe("PROGRESS_CALCULATORS registry", () => {
       trackInGameTime: true,
       milestones: [],
     };
+
     const result = PROGRESS_CALCULATORS[QuestType.Time](
       { progress: 0, target: 100, },
       cfg,
       makeEvent(WorldEventType.TimeAdvancement, { minutesAdvanced: 60, },),
     );
+
     expect(result,).toBe(50,);
   });
 
@@ -42,11 +44,13 @@ describe("PROGRESS_CALCULATORS registry", () => {
       ],
       sources: [],
     };
+
     const matched = PROGRESS_CALCULATORS[QuestType.Collection](
       { progress: 0, target: 100, },
       cfg,
       makeEvent(WorldEventType.ItemTransfer, { itemName: "Iron Sword", },),
     );
+
     // totalQuantity = 3, name matches "sword" → round(100 / 3) = 33
     expect(matched,).toBe(33,);
   });
@@ -57,11 +61,13 @@ describe("PROGRESS_CALCULATORS registry", () => {
       items: [{ itemId: "Sword", quantity: 2, },],
       sources: [],
     };
+
     const missed = PROGRESS_CALCULATORS[QuestType.Collection](
       { progress: 0, target: 100, },
       cfg,
       makeEvent(WorldEventType.ItemTransfer, { itemName: "Potion", },),
     );
+
     expect(missed,).toBe(0,);
   });
 
@@ -72,11 +78,13 @@ describe("PROGRESS_CALCULATORS registry", () => {
       trackInGameTime: true,
       milestones: [],
     };
+
     const wrongEvent = PROGRESS_CALCULATORS[QuestType.Time](
       { progress: 0, target: 100, },
       cfg,
       makeEvent(WorldEventType.CombatEvent,),
     );
+
     expect(wrongEvent,).toBe(0,);
   });
 
@@ -86,6 +94,7 @@ describe("PROGRESS_CALCULATORS registry", () => {
       null,
       makeEvent(WorldEventType.TimeAdvancement, { minutesAdvanced: 60, },),
     );
+
     expect(noConfig,).toBe(0,);
   });
 });

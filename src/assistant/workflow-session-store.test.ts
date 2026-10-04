@@ -54,6 +54,7 @@ describe("workflow session store", () => {
       user_id: userId,
       owner_id: userId,
     } as never,);
+
     await insertChats(db, "Store Chat", userId, { id: chatId, } as never,);
     clearSessions();
   },);
@@ -76,6 +77,7 @@ describe("workflow session store", () => {
       .set({ updated_at: "2020-01-01 00:00:00", },)
       .where("chat_id", "=", chatId,)
       .execute();
+
     clearSessions();
     expect(await loadPersistedSession(db, chatId, [WORKFLOW,],),).toBeUndefined();
     const row = await db
@@ -83,6 +85,7 @@ describe("workflow session store", () => {
       .selectAll()
       .where("chat_id", "=", chatId,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 

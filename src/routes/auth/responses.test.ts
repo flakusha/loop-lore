@@ -93,6 +93,7 @@ describe("errorResponse — single content-negotiating error path", () => {
       undefined,
       "Invalid username or password",
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.text();
     expect(body,).toContain("Invalid username or password",);
@@ -106,6 +107,7 @@ describe("errorResponse — single content-negotiating error path", () => {
       (key,) => key === "auth.bad-request" ? "translated text" : key,
       "fallback",
     );
+
     expect(await res.text(),).toContain("translated",);
   });
 

@@ -176,6 +176,7 @@ class WorkflowLoader {
             file: filename,
             deadNodes,
           },);
+
           continue;
         }
 
@@ -221,6 +222,7 @@ export function getWorkflowLoader(workflowsDir?: string,): WorkflowLoader {
   if (!_instance) {
     _instance = new WorkflowLoader(workflowsDir,);
   }
+
   return _instance;
 }
 

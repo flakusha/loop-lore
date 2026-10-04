@@ -46,6 +46,7 @@ export async function classifyIntent(
       temperature: 0,
       maxTokens: 100,
     },);
+
     if (!response) { return null; }
 
     return parseIntentClassification(response.content,);

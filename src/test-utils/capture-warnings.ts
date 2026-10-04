@@ -84,6 +84,7 @@ export async function captureWarnings(
       messages.push(warning.message,);
     }
   };
+
   process.on("warning", onWarning,);
   try {
     // The body runs INSIDE the scope, and the drain below too, so a warning
@@ -106,5 +107,6 @@ export async function captureWarnings(
     // killed runner skips this, which is why the orphaned listener is inert.
     process.off("warning", onWarning,);
   }
+
   return messages;
 }

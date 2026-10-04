@@ -30,10 +30,12 @@ describe("views/gallery", () => {
     expect(formatSize(10,),).toBe("10 B",);
     expect(formatSize(7,),).toBe("7 B",);
   });
+
   test("kilobytes", () => {
     expect(formatSize(2048,),).toBe("2.0 KB",);
     expect(formatSize(2048,),).toBe("2.0 KB",);
   });
+
   test("megabytes", () => {
     expect(formatSize(3_145_728,),).toBe("3.0 MB",);
   });
@@ -49,6 +51,7 @@ describe("views/gallery", () => {
       id: "asset-1" as never,
       visibility: "public" as never,
     },);
+
     const res = await serveGalleryGrid(db, undefined, "bob", "user",);
     const html = await res.text();
     expect(html,).toContain("asset-card-asset-1",);
@@ -59,6 +62,7 @@ describe("views/gallery", () => {
     await insertAssets(db, "owner", "b-pix.png", "image/png", "image", 2048, "path/b", {
       id: "asset-2" as never,
     },);
+
     const res = await serveGalleryGrid(db, undefined, "bob", "admin",);
     const html = await res.text();
     expect(html,).toContain("asset-card-asset-2",);
@@ -83,6 +87,7 @@ describe("views/gallery — tag facets", () => {
       id: "pg1" as never,
       visibility: "public" as never,
     },);
+
     await insertAssets(db2, "towner", "mine.png", "image/png", "image", 8, "p/mine", { id: "tg2" as never, },);
     await insertAssetTags(db2, "pg1", "cozy", { scope: "global", },);
     await insertAssetTags(db2, "pg1", "mine", { scope: "user", owner_id: "towner", },);
@@ -140,6 +145,7 @@ describe("views/gallery — tag facets", () => {
       scope: "global",
       ownerId: null,
     },);
+
     const stale = await serveGalleryGrid(db2, new URLSearchParams({ tag: "cozy", },), "towner", "user",);
     expect(await stale.text(),).toContain("gallery-empty",);
     const fresh = await serveGalleryGrid(db2, new URLSearchParams({ tag: "homely", },), "towner", "user",);

@@ -184,6 +184,7 @@ export function choicesRoutes(opts: VnGenerateRouteOpts,) {
                 },)
                 .execute();
             }
+
             log().info("Persisted generated VN choices", {
               chatId,
               sceneIndex: result.sceneIndex ?? body.sceneIndex,

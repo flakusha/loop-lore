@@ -49,9 +49,11 @@ export async function resubmitMessage(
     .select(["id", "chat_id", "actor_id", "role", "parent_id",],)
     .where("id", "=", input.messageId,)
     .executeTakeFirst();
+
   if (!source) {
     return { ok: false, code: "not_found", message: "Source message not found", };
   }
+
   if (source.chat_id !== input.chatId) {
     return { ok: false, code: "cross_chat", message: "Source message is not in this chat", };
   }
@@ -63,9 +65,11 @@ export async function resubmitMessage(
       .select(["id", "chat_id",],)
       .where("id", "=", input.branchFromId,)
       .executeTakeFirst();
+
     if (!branchAnchor) {
       return { ok: false, code: "not_found", message: "Branch ancestor not found", };
     }
+
     if (branchAnchor.chat_id !== input.chatId) {
       return { ok: false, code: "cross_chat", message: "Branch ancestor is not in this chat", };
     }

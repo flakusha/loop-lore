@@ -61,6 +61,7 @@ describe("resolveRequestContext", () => {
       chatId: "chat-x",
       actorId: "actor-x",
     },);
+
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toBe("auth_required",);
     expect(result.consentGranted,).toBe(false,);
@@ -78,6 +79,7 @@ describe("resolveRequestContext", () => {
       actorId: "actor-ctx-ok",
       buildEnforcement: async () => ({} as never),
     },);
+
     expect(result.allowed,).toBe(true,);
     expect(result.consent,).toBe("granted",);
     expect(result.consentGranted,).toBe(true,);
@@ -94,6 +96,7 @@ describe("resolveRequestContext", () => {
       chatId: "chat-ctx-nc",
       actorId: "actor-ctx-nc",
     },);
+
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toBe("consent_required",);
     expect(result.consent,).toBe("required",);
@@ -110,6 +113,7 @@ describe("resolveRequestContext", () => {
       actorId: "actor-ctx-sc",
       skip: { consent: true, },
     },);
+
     expect(result.allowed,).toBe(true,);
     expect(result.consent,).toBe("not_required",);
     expect(result.consentGranted,).toBe(false,);
@@ -132,6 +136,7 @@ describe("resolveRequestContext", () => {
       chatId: "chat-ctx-part",
       actorId: "actor-ctx-req",
     },);
+
     expect(full.allowed,).toBe(false,);
     expect(full.reason,).toBe("participant_blocked:blocked",);
     expect(full.participantDenial?.userId,).toBe("u-ctx-blocked",);
@@ -144,6 +149,7 @@ describe("resolveRequestContext", () => {
       actorId: "actor-ctx-req",
       skip: { participants: true, },
     },);
+
     expect(skipped.allowed,).toBe(true,);
     expect(skipped.participantDenial,).toBeUndefined();
   });
@@ -158,6 +164,7 @@ describe("resolveRequestContext", () => {
       chatId: "chat-ctx-ban",
       actorId: "actor-ctx-ban",
     },);
+
     expect(denied.allowed,).toBe(false,);
     expect(denied.reason,).toBe("banned",);
 
@@ -169,6 +176,7 @@ describe("resolveRequestContext", () => {
       actorId: "actor-ctx-ban",
       skip: { moderation: true, },
     },);
+
     expect(provisioned.allowed,).toBe(true,);
     expect(provisioned.base.allowed,).toBe(true,);
   });
@@ -186,6 +194,7 @@ describe("resolveRequestContext", () => {
         throw new Error("must not build",);
       },
     },);
+
     expect(result.allowed,).toBe(true,);
     expect(result.enforcement,).toBeUndefined();
   });

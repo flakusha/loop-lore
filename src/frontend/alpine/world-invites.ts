@@ -47,6 +47,7 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
     } catch (error) {
       log.warn("loadInvites failed", { error: String(error,), },);
     }
+
     this.loadingInvites = false;
   },
 
@@ -61,12 +62,14 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
       showToast("error", t("toasts.maxUsesPositiveInteger",),);
       return;
     }
+
     try {
       const res = await apiFetch(`/api/v1/worlds/${this.worldId}/invites`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ maxUses, },),
       },);
+
       if (res.ok) {
         const invite = (await res.json()) as WorldInviteRow;
         this.invites = [invite, ...this.invites,];
@@ -109,11 +112,13 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
       const res = await apiFetch(`/api/v1/worlds/${this.worldId}/invites/${inviteId}`, {
         method: "DELETE",
       },);
+
       if (res.ok) {
         const remaining: WorldInviteRow[] = [];
         for (const row of this.invites) {
           if (row.id !== inviteId) { remaining.push(row,); }
         }
+
         this.invites = remaining;
         showToast("success", t("toasts.inviteRevoked",),);
       } else {

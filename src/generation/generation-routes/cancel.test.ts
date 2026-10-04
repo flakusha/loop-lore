@@ -89,6 +89,7 @@ function seedActive(overrides: { chatId?: string; aborted?: boolean } = {},): st
   if (overrides.aborted) {
     abortController.abort(new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, "already",),);
   }
+
   activeGenerations.set(
     attemptId,
     {
@@ -111,6 +112,7 @@ function seedActive(overrides: { chatId?: string; aborted?: boolean } = {},): st
       deliveryConfirmed: false,
     } satisfies ActiveGeneration,
   );
+
   chatToAttempt.set(targetChat, attemptId,);
   return attemptId;
 }
@@ -143,6 +145,7 @@ describe("handleCancelGeneration", () => {
       { chatId: "c", source: [], },
       { chatId: "c", detail: true, },
     ];
+
     for (const body of bodies) {
       const res = await handleCancelGeneration(body, testDb!, ownerId,);
       expect(res.status,).toBe(400,);
@@ -206,6 +209,7 @@ describe("handleCancelGeneration", () => {
       testDb!,
       ownerId,
     );
+
     expect(res.status,).toBe(200,);
     const data = (await res.json()) as { reason: string; source: string; detail: string };
     expect(data.reason,).toBe(CancelReason.ChatSwitch,);

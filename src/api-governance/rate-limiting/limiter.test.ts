@@ -12,6 +12,7 @@ describe("GovernanceRateLimiter", () => {
     for (let i = 0; i < 5; i++) {
       expect(limiter.consume("u1", generationPolicy,).allowed,).toBe(true,);
     }
+
     limiter.destroy();
   });
 
@@ -22,6 +23,7 @@ describe("GovernanceRateLimiter", () => {
     for (let i = 0; i < 5; i++) {
       expect(limiter.consume("u2", generationPolicy,).allowed,).toBe(true,);
     }
+
     const blocked = limiter.consume("u2", generationPolicy,);
     expect(blocked.allowed,).toBe(false,);
     expect(blocked.retryAfterSec,).toBeGreaterThan(0,);

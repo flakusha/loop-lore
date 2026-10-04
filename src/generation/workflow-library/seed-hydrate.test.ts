@@ -54,6 +54,7 @@ async function workflowRowById(id: string,) {
     .selectAll()
     .where("id", "=", id,)
     .executeTakeFirstOrThrow();
+
   return row;
 }
 
@@ -95,6 +96,7 @@ describe("seedWorkflowLibrary", () => {
         "2": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
       },),
     );
+
     await writeFile(
       join(dir, "deadnode.json",),
       JSON.stringify({
@@ -102,6 +104,7 @@ describe("seedWorkflowLibrary", () => {
         "2": { class_type: "CLIPLoader", inputs: { clip_name: "c", }, },
       },),
     );
+
     await writeFile(join(dir, "notjson.json",), "{ this is not json",);
 
     const outcome = await seedWorkflowLibrary(db, dir,);
@@ -144,6 +147,7 @@ describe("rowToTemplate", () => {
       .select(["id", "payload",],)
       .where("modality", "=", "workflow",)
       .execute();
+
     const img2img = stored.find((r,) => r.id === "img2img");
     const parsed = JSON.parse(img2img?.payload ?? "{}",) as { category?: string };
     expect(parsed.category,).toBe("img2img",);
@@ -163,6 +167,7 @@ describe("rowToTemplate", () => {
       parameters: [],
       requiredNodes: [],
     };
+
     expect(() => buildWorkflowGraph(payload, {},)).toThrow(/unresolved placeholders: prompt/,);
   });
 
@@ -173,6 +178,7 @@ describe("rowToTemplate", () => {
       parameters: [param("prompt", "string", true,),],
       requiredNodes: [],
     };
+
     const graph = buildWorkflowGraph(payload, { prompt: "a cat", },);
     expect(graph["1"]?.inputs.text,).toBe("a cat",);
   });
@@ -191,6 +197,7 @@ describe("rowToTemplate", () => {
       ],
       requiredNodes: [],
     };
+
     const graph = buildWorkflowGraph(payload, { prompt: "a cat", },);
     expect(graph["1"]?.inputs.negative,).toBe("",);
   });
@@ -207,6 +214,7 @@ describe("rowToTemplate", () => {
       lora_slots: null,
       min_vram: null,
     },);
+
     expect(template,).toBeNull();
   });
 });
@@ -230,6 +238,7 @@ describe("buildWorkflowGraph", () => {
       width: 1024,
       seed: 7,
     },);
+
     // width lives on EmptyLatentImage, seed on KSampler, in the shipped graph.
     const latent = inputsOf(graph, "EmptyLatentImage",);
     const sampler = inputsOf(graph, "KSampler",);
@@ -276,6 +285,7 @@ describe("hydrateWorkflowRegistry", () => {
       .set({ enabled: "disabled", },)
       .where("id", "=", row.id,)
       .execute();
+
     try {
       const registry = new TemplateRegistry();
       await hydrateWorkflowRegistry(db, registry,);

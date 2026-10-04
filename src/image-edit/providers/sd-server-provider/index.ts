@@ -90,6 +90,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
         handle401: false,
         parseJson: false,
       },);
+
       return result.ok;
     } catch {
       return false;
@@ -109,6 +110,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
       if ("controlNetPath" in cfg && cfg.controlNetPath) {
         caps.push("controlnet",);
       }
+
       // Upscale available if upscaler models configured
       if ("hiresUpscalersDir" in cfg && cfg.hiresUpscalersDir) {
         caps.push("upscale",);
@@ -154,12 +156,15 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
       case "txt2img": {
         return executeTxt2ImgDispatch(this, request.params, cfg, onProgress,);
       }
+
       case "img2img": {
         return executeImg2ImgDispatch(this, request.params, cfg, onProgress,);
       }
+
       case "upscale": {
         return executeUpscaleDispatch(this, request.params, onProgress,);
       }
+
       case "inpaint":
       case "controlnet": {
         throw new Error(`sd-server does not support category: ${template.category}`,);

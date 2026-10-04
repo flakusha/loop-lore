@@ -33,6 +33,7 @@ function configFor(meshPsk: string,): Config {
     meshPsk,
     duplication: { mode: "trusted", peers: [], },
   };
+
   return {
     server: { host: "localhost", port: 3000, tls: undefined, trustProxy: true, },
     auth: { registrationOpen: false, },
@@ -52,6 +53,7 @@ function postToApp(app: MeshApp,): PeerPost {
         body: JSON.stringify(body,),
       },),
     );
+
     const parsed: unknown = await response.json().catch(() => null);
     return {
       ok: response.status >= 200 && response.status < 300,
@@ -69,6 +71,7 @@ describe("A→B mesh transfer", () => {
       compressThreshold: 128,
       compressAlgorithm: "gzip",
     },);
+
     const { db: dbA, } = await createTestDb();
     const { db: dbB, } = await createTestDb();
     await upsertPeer(dbA, { origin: B_ORIGIN, state: "trusted", },);
@@ -77,6 +80,7 @@ describe("A→B mesh transfer", () => {
       state: "trusted",
       capacityBytes: 1_000,
     },);
+
     const appB = federationRoutes({ config: configFor(PSK,), database: dbB satisfies Db, },);
     const postToB = postToApp(appB,);
 
@@ -95,6 +99,7 @@ describe("A→B mesh transfer", () => {
       contentHash: probe.hash,
       sizeBytes: probe.size,
     },);
+
     expect(typeof reservationId,).toBe("string",);
     expect(typeof contentKey,).toBe("string",);
 
@@ -106,6 +111,7 @@ describe("A→B mesh transfer", () => {
       content: plaintext,
       cipher: pskCipher(contentKey!,),
     },);
+
     expect(envelope.hash,).toBe(probe.hash,);
     expect(await pushEnvelope(postToB, B_ORIGIN, envelope, reservationId,),).toBe("stored",);
 
@@ -114,6 +120,7 @@ describe("A→B mesh transfer", () => {
       .select(["content_hash", "clock", "origin",],)
       .where("content_id", "=", "transfer-1",)
       .executeTakeFirstOrThrow();
+
     expect({ ...stored, },).toEqual({
       content_hash: envelope.hash,
       clock: 42,
@@ -125,6 +132,7 @@ describe("A→B mesh transfer", () => {
       .select(["state",],)
       .where("id", "=", reservationId,)
       .executeTakeFirstOrThrow();
+
     expect(reservation.state,).toBe("confirmed",);
   });
 
@@ -140,20 +148,24 @@ describe("A→B mesh transfer", () => {
       content: "secret",
       cipher: pskCipher(PSK,),
     },);
+
     const bytes = new TextEncoder().encode(envelope.ciphertext,);
     bytes[0] = bytes[0] === 65 ? 66 : 65;
     const tampered = {
       ...envelope,
       ciphertext: new TextDecoder().decode(bytes,),
     };
+
     await expect(pushEnvelope(postToB, B_ORIGIN, tampered,),).rejects.toThrow(
       "delivery refused",
     );
+
     const rows = await dbB
       .selectFrom("mesh_deliveries",)
       .select(["content_id",],)
       .where("content_id", "=", "transfer-tampered",)
       .execute();
+
     expect(rows,).toEqual([],);
   });
 });

@@ -22,6 +22,7 @@ async function makeWorld(): Promise<string> {
   await insertWorlds(testDb.db, OWNER, `world-${worldId.slice(0, 8,)}`, { id: worldId, },);
   return worldId;
 }
+
 async function rawInsertLoc(worldId: string, parentId: string | null = null, name = "loc",): Promise<string> {
   const id = randomUUID();
   testDb.sqlite.run(
@@ -29,21 +30,26 @@ async function rawInsertLoc(worldId: string, parentId: string | null = null, nam
      VALUES (?, ?, ?, '', '[]', 'draft', ?)`,
     [id, worldId, name, parentId,],
   );
+
   return id;
 }
+
 beforeAll(async () => {
   testDb = await createTestDb();
   await insertUsers(testDb.db, OWNER, "Owner", { id: OWNER, },);
 },);
+
 afterAll(async () => {
   await testDb.db.destroy();
   testDb.sqlite.close();
 },);
+
 describe("fractal locations invariants", () => {
   beforeEach(async () => {
     await resetTestDb(testDb.sqlite,);
     await insertUsers(testDb.db, OWNER, "Owner", { id: OWNER, },);
   },);
+
   test("trigger: rejects self-parent on insert", async () => {
     const worldId = await makeWorld();
     const id = randomUUID();
@@ -55,6 +61,7 @@ describe("fractal locations invariants", () => {
       )
     ).toThrow();
   });
+
   test("trigger: rejects cross-world parent", async () => {
     const wA = await makeWorld();
     const wB = await makeWorld();
@@ -67,6 +74,7 @@ describe("fractal locations invariants", () => {
       )
     ).toThrow(/cross.world/i,);
   });
+
   test("trigger: path materializes on insert for root and child", async () => {
     const worldId = await makeWorld();
     const root = await rawInsertLoc(worldId, null, "R",);
@@ -74,10 +82,12 @@ describe("fractal locations invariants", () => {
     const gc = await rawInsertLoc(worldId, child, "GC",);
     const get = (id: string,): { path: string } =>
       testDb.sqlite.query(`SELECT path FROM locations WHERE id = ?`,).get(id,) as { path: string };
+
     expect(get(root,).path,).toBe(`/${root}/`,);
     expect(get(child,).path,).toBe(`/${root}/${child}/`,);
     expect(get(gc,).path,).toBe(`/${root}/${child}/${gc}/`,);
   });
+
   test("trigger: path rewrites on parent_location_id update", async () => {
     const worldId = await makeWorld();
     const r1 = await rawInsertLoc(worldId, null, "r1",);
@@ -87,6 +97,7 @@ describe("fractal locations invariants", () => {
     const row = testDb.sqlite.query(`SELECT path FROM locations WHERE id = ?`,).get(c,) as { path: string };
     expect(row.path,).toBe(`/${r2}/${c}/`,);
   });
+
   test("service: rejects move that would create a cycle", async () => {
     const worldId = await makeWorld();
     const tree = new LocationTreeService(testDb.db,);
@@ -95,6 +106,7 @@ describe("fractal locations invariants", () => {
     const c = await rawInsertLoc(worldId, b, "c",);
     await expect(tree.moveSubtree(b, c,),).rejects.toThrow(/cycle/i,);
   });
+
   test("service: rejects move across worlds", async () => {
     const wA = await makeWorld();
     const wB = await makeWorld();
@@ -103,6 +115,7 @@ describe("fractal locations invariants", () => {
     const b = await rawInsertLoc(wB, null, "b",);
     await expect(tree.moveSubtree(a, b,),).rejects.toThrow(/cross.world/i,);
   });
+
   test("routes: rejects cross-world stop", async () => {
     const wA = await makeWorld();
     const wB = await makeWorld();
@@ -114,9 +127,11 @@ describe("fractal locations invariants", () => {
       loop: false,
       secondsPerUnit: 60,
     },);
+
     const stopInB = await rawInsertLoc(wB, null, "foreign",);
     await expect(routes.addStop({ routeId, locationId: stopInB, stopOrder: 0, },),).rejects.toThrow(/world/i,);
   });
+
   test("routes: stops order is unique per route", async () => {
     const worldId = await makeWorld();
     const routes = new TravelRouteService(testDb.db,);
@@ -127,11 +142,13 @@ describe("fractal locations invariants", () => {
       loop: false,
       secondsPerUnit: 60,
     },);
+
     const a = await rawInsertLoc(worldId, null, "a",);
     const b = await rawInsertLoc(worldId, null, "b",);
     await routes.addStop({ routeId, locationId: a, stopOrder: 0, },);
     await expect(routes.addStop({ routeId, locationId: b, stopOrder: 0, },),).rejects.toThrow();
   });
+
   test("positions: rejects actor placement in two different worlds", async () => {
     const wA = await makeWorld();
     const wB = await makeWorld();
@@ -140,6 +157,7 @@ describe("fractal locations invariants", () => {
     const b = await rawInsertLoc(wB, null, "b",);
     await expect(positions.setPosition("actor-1", a, b,),).rejects.toThrow(/world/i,);
   });
+
   test("positions: same physical and spatial is allowed (static location)", async () => {
     const worldId = await makeWorld();
     const positions = new ActorPositionService(testDb.db,);
@@ -150,6 +168,7 @@ describe("fractal locations invariants", () => {
     expect(pos!.physicalLocationId,).toBe(a,);
     expect(pos!.spatialLocationId,).toBe(a,);
   });
+
   test("attach: transport must be in the same world as the route", async () => {
     const wA = await makeWorld();
     const wB = await makeWorld();
@@ -161,10 +180,12 @@ describe("fractal locations invariants", () => {
       loop: false,
       secondsPerUnit: 60,
     },);
+
     const shipInB = await rawInsertLoc(wB, null, "ship",);
     testDb.sqlite.run(`UPDATE locations SET kind = 'transport', mobility_mode = 'free' WHERE id = ?`, [shipInB,],);
     await expect(routes.attachTransport(shipInB, routeId,),).rejects.toThrow(/world/i,);
   });
+
   test("attach: only kind=transport with mobility_mode != 'static' may attach", async () => {
     const worldId = await makeWorld();
     const routes = new TravelRouteService(testDb.db,);
@@ -175,6 +196,7 @@ describe("fractal locations invariants", () => {
       loop: false,
       secondsPerUnit: 60,
     },);
+
     const ship = await rawInsertLoc(worldId, null, "ship",);
     await expect(routes.attachTransport(ship, routeId,),).rejects.toThrow(/transport|mobility/i,);
   });

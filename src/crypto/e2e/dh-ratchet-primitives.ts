@@ -83,6 +83,7 @@ export async function deriveChainKeyFromRoot(rootKey: Uint8Array,): Promise<Arra
     false,
     ["deriveBits",],
   );
+
   return crypto.subtle.deriveBits(
     {
       name: "HKDF",
@@ -130,6 +131,7 @@ export async function chainStep(chainKey: Uint8Array,): Promise<{
     hkdfKey,
     KEY_BYTES * 8,
   );
+
   const messageKeyBits = await crypto.subtle.deriveBits(
     {
       name: "HKDF",
@@ -169,11 +171,13 @@ export async function decryptWithMessageKey(keyBytes: Uint8Array, payload: DhMes
     false,
     ["decrypt",],
   );
+
   const plaintext = await crypto.subtle.decrypt(
     { name: "AES-GCM", iv: fromBase64(payload.nonce,) as Uint8Array<ArrayBuffer>, },
     key,
     fromBase64(payload.ciphertext,) as Uint8Array<ArrayBuffer>,
   );
+
   return new TextDecoder().decode(plaintext,);
 }
 

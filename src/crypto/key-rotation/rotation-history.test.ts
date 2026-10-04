@@ -111,6 +111,7 @@ async function seedFixtures(): Promise<{ chatId: string; actorId: string; oldKey
     .insertInto("chat_keys",)
     .values({ id: NEW_KEY_ID, chat_id: CHAT_ID, encrypted_chat_key: "new", expires_at: null, },)
     .execute();
+
   return { chatId: CHAT_ID, actorId: ACTOR_ID, oldKeyId: OLD_KEY_ID, newKeyId: NEW_KEY_ID, };
 }
 
@@ -124,6 +125,7 @@ describe("recordRotationAuditLeave", () => {
       newKeyId,
       messagesReEncrypted: 7,
     },);
+
     const rows = await db.selectFrom("rotation_history",).selectAll().execute();
     expect(rows.length,).toBe(1,);
     expect(rows[0]!.chat_id,).toBe(chatId,);
@@ -146,6 +148,7 @@ describe("recordRotationAuditLeave", () => {
       newKeyId,
       messagesReEncrypted: 0,
     },);
+
     const rows = await db.selectFrom("rotation_history",).selectAll().execute();
     expect(rows.length,).toBe(1,);
     expect(rows[0]!.actor_id,).toBeNull();
@@ -164,6 +167,7 @@ describe("recordRotationAuditLeave", () => {
         messagesReEncrypted: 0,
       },),
     ).resolves.toBeUndefined();
+
     const rows = await db.selectFrom("rotation_history",).selectAll().execute();
     expect(rows.length,).toBe(0,);
   });
@@ -184,6 +188,7 @@ describe("recordRotationAuditLeave", () => {
         },
       };
     },);
+
     (db as unknown as { insertInto: (table: unknown,) => unknown }).insertInto = stubInsertInto;
     await expect(
       recordRotationAuditLeave(db, {
@@ -194,6 +199,7 @@ describe("recordRotationAuditLeave", () => {
         messagesReEncrypted: 0,
       },),
     ).resolves.toBeUndefined();
+
     // Restore so afterAll cleanup works cleanly.
     (db as unknown as { insertInto: typeof originalInsertInto }).insertInto = originalInsertInto;
   });

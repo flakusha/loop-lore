@@ -49,6 +49,7 @@ export async function sealContent(input: {
   const bytes = typeof input.content === "string"
     ? new TextEncoder().encode(input.content,)
     : input.content;
+
   const hash = createHash("sha256",).update(bytes,).digest("hex",);
   return {
     id: input.id,
@@ -77,8 +78,10 @@ export async function openEnvelope(
   if (hash !== envelope.hash) {
     throw new Error(`content hash mismatch for ${envelope.id}`,);
   }
+
   if (bytes.length !== envelope.size) {
     throw new Error(`content size mismatch for ${envelope.id}`,);
   }
+
   return bytes;
 }

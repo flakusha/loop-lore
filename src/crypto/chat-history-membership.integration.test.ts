@@ -45,11 +45,13 @@ function buildMigrationProvider() {
       const fileNames = readdirSync(dir,)
         .filter((f,) => f?.endsWith(".ts",) ?? false)
         .sort((a, b,) => (a ?? "") < (b ?? "") ? -1 : ((a ?? "") > (b ?? "") ? 1 : 0));
+
       const migrations: Record<string, Migration> = {};
       for (const fileName of fileNames) {
         const mod = await import(path.join(dir, fileName,));
         migrations[fileName.replace(/\.ts$/, "",)] = mod.default ?? mod;
       }
+
       return migrations;
     },
   };
@@ -137,6 +139,7 @@ async function encryptMessage(chatId: string, plaintext: string, actorId: string
     chatKey: chatKey.key,
     keyId: chatKey.keyId,
   },);
+
   await db.insertInto("messages",).values({
     id: crypto.randomUUID(),
     chat_id: chatId,
@@ -188,6 +191,7 @@ describe("Chat history survival across membership changes", () => {
       .select(["id", "content", "key_id",],)
       .where("chat_id", "=", CHAT_ID,)
       .execute();
+
     expect(msgs.length,).toBe(2,);
     for (const msg of msgs) {
       expect(msg.key_id,).not.toBeNull();
@@ -213,6 +217,7 @@ describe("Chat history survival across membership changes", () => {
     const decrypted = await Promise.all(
       msgs.map((msg,) => decryptByKeyId(msg.content, msg.key_id ?? "",)),
     );
+
     expect(decrypted,).toContain("Hello from USER_1",);
     expect(decrypted,).toContain("Hello from USER_2",);
   });

@@ -45,9 +45,11 @@ export function joinRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select(["owner_id", "visibility",],)
             .where("id", "=", chatWorld.world_id,)
             .executeTakeFirst();
+
           const userRole = ctx.userRole as string | null;
           const isOwnerOrAdmin = world !== undefined &&
             (world.owner_id === userId || can(userRole, "admin.chat",));
+
           const isPublicWorld = world?.visibility === WorldVisibility.Public;
           if (!isOwnerOrAdmin && !isPublicWorld) {
             const member = await database
@@ -56,6 +58,7 @@ export function joinRoutes(opts: HandlerOpts, prefix = "/api",) {
               .where("world_id", "=", chatWorld.world_id,)
               .where("actor_id", "=", userId,)
               .executeTakeFirst();
+
             if (!member) {
               return forbidden("You are not a member of this world",);
             }

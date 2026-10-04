@@ -59,6 +59,7 @@ export async function callWithFailover(
           cause: err,
         },);
       }
+
       circuitBreaker.onFailure(name, err.retryAfter ? err.retryAfter * 1000 : undefined,);
       errors.push(`${name}: ${err.message}`,);
     }

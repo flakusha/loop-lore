@@ -58,6 +58,7 @@ async function readAll(response: Response,): Promise<string> {
     if (done) { break; }
     out += decoder.decode(value, { stream: true, },);
   }
+
   out += decoder.decode();
   return out;
 }
@@ -169,6 +170,7 @@ describe("handleGenerationStream", () => {
         if (done) { break; }
         chunks.push(decoder.decode(value, { stream: true, },),);
       }
+
       chunks.push(decoder.decode(),);
     })();
 
@@ -199,6 +201,7 @@ describe("handleGenerationStream", () => {
         if (done) { break; }
         chunks.push(decoder.decode(value, { stream: true, },),);
       }
+
       chunks.push(decoder.decode(),);
     })();
 

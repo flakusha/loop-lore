@@ -116,6 +116,7 @@ describe("handleGetContext max-tokens resolution", () => {
       id: chatId,
       context_max_tokens: opts?.context_max_tokens ?? null,
     } as never,);
+
     return chatId;
   }
 

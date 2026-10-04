@@ -32,6 +32,7 @@ describe("LLM_PROMPT_DEFAULTS", () => {
     for (const purpose of PROMPT_PURPOSES) {
       expect(LLM_PROMPT_DEFAULTS[purpose], `${purpose} default missing`,).toBeTruthy();
     }
+
     // Every default key must be a typed purpose — no orphaned keys.
     expect(Object.keys(LLM_PROMPT_DEFAULTS,).sort((a, b,) => a.localeCompare(b,)),).toEqual(
       [...PROMPT_PURPOSES,].sort((a, b,) => a.localeCompare(b,)),
@@ -91,6 +92,7 @@ describe("resolveSystemPrompt", () => {
       },
       chatFormats: {},
     };
+
     expect(resolveSystemPrompt(config, "chat",),).toBe("custom chat",);
     expect(resolveSystemPrompt(config, "gm",),).toBe(GM_SYSTEM_PROMPT,);
   });

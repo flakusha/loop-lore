@@ -47,9 +47,11 @@ export async function fetchPeerAdvertisement(
     handle401: false,
     tls: trust?.caBundle ? { ca: [trust.caBundle,], } : undefined,
   },);
+
   if (!result.ok) {
     return { ok: false, status: result.status ?? 0, body: null, };
   }
+
   return { ok: true, status: result.status, body: result.data, };
 }
 
@@ -66,6 +68,7 @@ export function canonicalOrigin(raw: unknown,): string | null {
   } catch {
     return null;
   }
+
   if (url.protocol !== "http:" && url.protocol !== "https:") { return null; }
   if (url.username !== "" || url.password !== "") { return null; }
   if (url.hostname === "") { return null; }
@@ -106,8 +109,10 @@ export async function postPeerJson(
   } catch {
     return { ok: false, status: 0, body: null, };
   }
+
   if (!result.ok) {
     return { ok: false, status: result.status ?? 0, body: null, };
   }
+
   return { ok: true, status: result.status, body: result.data, };
 }

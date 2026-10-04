@@ -166,6 +166,7 @@ export class PromptAssembler {
         .where("id", "=", params.chatId,)
         .executeTakeFirstOrThrow(),
     ],);
+
     const actorResult = projectionResults[0];
     const chatResult = projectionResults[1];
     if (actorResult.status === "rejected") { throw actorResult.reason; }
@@ -200,6 +201,7 @@ export class PromptAssembler {
       userOutputStylePreset,
       params.config?.generation?.chatDefaults?.outputStyle ?? null,
     );
+
     const rawChatPreset: unknown = chat.response_length_preset;
     const chatPreset = typeof rawChatPreset === "string" && isValidPreset(rawChatPreset,) ? rawChatPreset : null;
     const resolvedResponseLength = buildLengthConfig(
@@ -220,12 +222,14 @@ export class PromptAssembler {
         .where("actor_id", "=", params.actorId,)
         .where("world_id", "=", chat.world_id,)
         .executeTakeFirst();
+
       if (setup && (setup.scenario_override !== null || setup.system_prompt_override !== null)) {
         effectiveActor = {
           ...actor,
           scenario: setup.scenario_override ?? actor.scenario,
           system_prompt: setup.system_prompt_override ?? actor.system_prompt,
         };
+
         worldSystemPromptOverride = setup.system_prompt_override;
       }
     }
@@ -247,6 +251,7 @@ export class PromptAssembler {
       const registryBudget = await getContextWindowForModel(this.db, params.providerId, params.modelId,);
       if (registryBudget !== null) { tokenBudget = registryBudget; }
     }
+
     tokenBudget ??= 32_000;
 
     // Wire the emotion prompt-injection loop: the emotionAvatar section fires
@@ -287,6 +292,7 @@ export class PromptAssembler {
       userCustomInstructions,
       isStory,
     };
+
     return { ctx, resolvedResponseLength, };
   }
   /**

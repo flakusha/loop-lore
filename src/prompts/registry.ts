@@ -111,5 +111,6 @@ export function resolveSystemPrompt(
   if (configured !== undefined && configured !== "") {
     return configured;
   }
+
   return LLM_PROMPT_DEFAULTS[purpose] ?? "";
 }

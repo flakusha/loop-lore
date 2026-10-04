@@ -34,10 +34,12 @@ describe("spill filename safety", () => {
     dir = mkdtempSync(path.join(tmpdir(), "loop-lore-spillfn-",),);
     setOffloadDir(dir,);
   },);
+
   afterEach(() => {
     resetOffloadDir();
     rmSync(dir, { recursive: true, force: true, },);
   },);
+
   test("round-trips a body under a real idempotency cache key id", async () => {
     // Exactly what makeKey() produces for a routed GET.
     const id = makeKey(
@@ -46,6 +48,7 @@ describe("spill filename safety", () => {
       "a0000001-0000-4000-a000-000000000000",
       "87394d0f-cf63-45a5-83d6-5b0846dd5304",
     );
+
     expect(id,).toContain("/",);
     const body = JSON.stringify({ messages: [{ content: "x".repeat(2048,), },], },);
 

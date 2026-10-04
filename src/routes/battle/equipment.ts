@@ -60,15 +60,18 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!Array.isArray(body.itemIds,) || body.itemIds.length === 0) {
             return jsonError("itemIds must be a non-empty array", 400,);
           }
+
           const rows = await database
             .selectFrom("items",)
             .select(["id", "name", "description", "category", "rarity", "properties",],)
             .where("id", "in", body.itemIds,)
             .execute();
+
           const byId = new Map<string, (typeof rows)[number]>();
           for (const row of rows) {
             byId.set(row.id, row,);
           }
+
           const equipment: EquipmentItem[] = [];
           for (const id of body.itemIds) {
             const row = byId.get(id,);
@@ -81,9 +84,11 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
               rarity: row.rarity,
               properties: jsonParseOr<Record<string, unknown>>(row.properties, {},),
             },);
+
             if (body.equipped?.[id]) { item.equipped = true; }
             equipment.push(item,);
           }
+
           return jsonResponse(calculateEquipmentModifiers(equipment,),);
         } catch (error) {
           log().error("Failed to calculate modifiers from item IDs", error instanceof Error ? error : undefined,);
@@ -108,6 +113,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
             characterLevel: number;
             characterStats: CombatStats;
           };
+
           const result = canEquipItem(body.item, body.characterLevel, body.characterStats,);
           return jsonResponse(result,);
         } catch (error) {
@@ -154,6 +160,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
             repairAmount: number;
             goldCost: number;
           };
+
           const result = repairItem(body.item, body.repairAmount, body.goldCost,);
           return jsonResponse(result,);
         } catch (error) {
@@ -181,6 +188,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
             actorId?: string;
             locationId?: string;
           };
+
           const { lootTable, monsterLevel, worldId, actorId, locationId, } = body;
           const loot = generateLoot(lootTable, monsterLevel,);
           // Persistence path requires authentication and ownership proofs.
@@ -190,6 +198,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!worldId || (!actorId && !locationId)) {
             return jsonResponse(loot,);
           }
+
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           const deny = await assertWorldOwner(database, userId, worldId,);
@@ -202,9 +211,11 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
               .select("world_id",)
               .where("id", "=", locationId,)
               .executeTakeFirst();
+
             if (!location) {
               return jsonError("Location not found", HttpStatus.NotFound,);
             }
+
             if (location.world_id !== worldId) {
               return jsonError("Location does not belong to world", HttpStatus.BadRequest,);
             }
@@ -213,6 +224,7 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
             // that the caller cannot drop loot into a foreign world by
             // mismatching the two ids.
           }
+
           // Persist drops that reference real item definitions.
           const items = new ItemsService(database,);
           const worldItemIds: string[] = [];
@@ -220,8 +232,10 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
             const id = actorId
               ? await items.giveToNpc(drop.itemId, actorId, worldId, drop.quantity,)
               : await items.placeInLocation(drop.itemId, locationId!, worldId, drop.quantity,);
+
             worldItemIds.push(id,);
           }
+
           return jsonResponse({ loot, worldItemIds, },);
         } catch (error) {
           log().error("Failed to generate loot", error instanceof Error ? error : undefined,);

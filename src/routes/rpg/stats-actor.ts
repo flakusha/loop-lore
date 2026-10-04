@@ -53,6 +53,7 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
             if (!stats) {
               return notFoundResponse("Character stats not found",);
             }
+
             return jsonResponse(stats,);
           } catch (error) {
             log().error("Failed to get character stats", error instanceof Error ? error : undefined,);
@@ -80,6 +81,7 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
                 return jsonError(gate.reason ?? "RPG not enabled", 403,);
               }
             }
+
             const body = ctx.body as {
               hp: number;
               maxHp: number;
@@ -90,10 +92,12 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
               maxMp?: number;
               speed?: number;
             };
+
             const existing = await getCharacterStats(deps, ctx.params.actorId,);
             if (existing) {
               return jsonError("Character stats already exist — use PATCH to update", 409,);
             }
+
             const statsId = await createCharacterStats(deps, {
               actorId: ctx.params.actorId,
               hp: body.hp,
@@ -110,6 +114,7 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
               wis: body.stats?.wis,
               cha: body.stats?.cha,
             },);
+
             return jsonCreated({ id: statsId, actorId: ctx.params.actorId, },);
           } catch (error) {
             log().error("Failed to create character stats", error instanceof Error ? error : undefined,);
@@ -136,6 +141,7 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
             if (!existing) {
               return notFoundResponse("Character stats not found — use POST to create",);
             }
+
             const updated = await updateCharacterStats(deps, existing.id, {
               hp: body.hp,
               maxHp: body.maxHp,
@@ -154,9 +160,11 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
               xp: body.xp,
               xpToNext: body.xpToNext,
             },);
+
             if (!updated) {
               return jsonError("No fields to update", 400,);
             }
+
             const refreshed = await getCharacterStats(deps, ctx.params.actorId,);
             return jsonResponse(refreshed,);
           } catch (error) {

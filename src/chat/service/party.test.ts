@@ -46,6 +46,7 @@ describe("party join/leave (C7)", () => {
       actor_type: "character",
       agent_type: "ai",
     } as never,);
+
     // A narrator actor so VN narration can be emitted.
     await insertActors(db, "Narrator", {
       id: narratorId,
@@ -64,6 +65,7 @@ describe("party join/leave (C7)", () => {
         gm_config: JSON.stringify({ renderingOverride: "visual_novel", },),
       } as never,
     );
+
     await insertChats(
       db,
       "Plain Group",
@@ -99,6 +101,7 @@ describe("party join/leave (C7)", () => {
         .where("chat_id", "=", plainChatId,)
         .where("actor_id", "=", heroActorId,)
         .executeTakeFirst();
+
       expect(row?.role_in_chat,).toBe("member",);
       expect(row?.talkativity,).toBe(5,);
     });
@@ -109,6 +112,7 @@ describe("party join/leave (C7)", () => {
         actorId: companionActorId,
         role: ChatParticipantRole.Guest,
       },);
+
       expect(result,).toEqual({
         ok: true,
         participant: { actorId: companionActorId, role: "guest", talkativity: 5, },
@@ -120,6 +124,7 @@ describe("party join/leave (C7)", () => {
         .where("chat_id", "=", plainChatId,)
         .where("actor_id", "=", companionActorId,)
         .executeTakeFirst();
+
       expect(row?.role_in_chat,).toBe("guest",);
     });
 
@@ -134,6 +139,7 @@ describe("party join/leave (C7)", () => {
         .where("chat_id", "=", plainChatId,)
         .where("actor_id", "=", heroActorId,)
         .execute();
+
       expect(rows,).toHaveLength(1,);
     });
 
@@ -151,6 +157,7 @@ describe("party join/leave (C7)", () => {
         .where("chat_id", "=", vnChatId,)
         .where("content_type", "=", MessageContentType.Narration,)
         .execute();
+
       expect(narration,).toHaveLength(1,);
       expect(narration[0]?.role,).toBe(MessageRole.System,);
       expect(narration[0]?.actor_id,).toBe(narratorId,);
@@ -175,6 +182,7 @@ describe("party join/leave (C7)", () => {
         .where("chat_id", "=", plainChatId,)
         .where("actor_id", "=", companionActorId,)
         .executeTakeFirst();
+
       expect(row,).toBeUndefined();
     });
 
@@ -190,6 +198,7 @@ describe("party join/leave (C7)", () => {
         .where("content_type", "=", MessageContentType.Narration,)
         .orderBy("created_at", "asc",)
         .execute();
+
       const join = narrations.find((n,) => n.content?.includes("joined",));
       const leave = narrations.find((n,) => n.content?.includes("left",));
       expect(join,).toBeDefined();

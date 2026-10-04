@@ -17,6 +17,7 @@ describe("StreamBuffer", () => {
     const unsub = buf.subscribe((e,) => {
       seen.push(e.html,);
     },);
+
     buf.append("stream-update", "a",);
     buf.append("stream-done", "{}",);
     expect(seen,).toEqual(["a", "{}",],);
@@ -30,6 +31,7 @@ describe("StreamBuffer", () => {
     for (let i = 0; i < 501; i++) {
       buf.append("stream-update", `e${i}`,);
     }
+
     expect(buf.replay().length,).toBe(500,);
     // Oldest (sequence 0) was evicted
     expect(buf.replay(0,)[0]?.sequence,).toBe(1,);
@@ -60,6 +62,7 @@ describe("StreamBuffer", () => {
       () => (done = true),
       () => (live = true),
     );
+
     buf.signalDone();
     expect(buf.isDone,).toBe(true,);
     expect(done,).toBe(true,);
@@ -74,6 +77,7 @@ describe("StreamBuffer", () => {
       () => void 0,
       (e,) => (err = e),
     );
+
     buf.signalError("boom",);
     expect(buf.hasError,).toBe("boom",);
     expect(err,).toBe("boom",);

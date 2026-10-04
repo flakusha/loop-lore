@@ -36,6 +36,7 @@ describe("VARIANT_DEFAULTS — 12-variant canonical taxonomy", () => {
       string,
       true
     >;
+
     for (const v of CHAT_VARIANTS) {
       const d = VARIANT_DEFAULTS[v];
       expect(validTypes[d.chat_type],).toBe(true,);
@@ -76,11 +77,14 @@ describe("VARIANT_DEFAULTS — 12-variant canonical taxonomy", () => {
         const allowedPairs: Array<[ChatVariant, ChatVariant,]> = [
           ["user_group", "user_group_admin",],
         ];
+
         const ok = allowedPairs.some((pair,) =>
           (pair[0] === prev && pair[1] === v) || (pair[1] === prev && pair[0] === v)
         );
+
         expect(ok,).toBe(true,);
       }
+
       seen.set(key, v,);
     }
   });
@@ -123,6 +127,7 @@ describe("getVariantDefaults", () => {
   it("returns the entry for a known variant", () => {
     expect(getVariantDefaults("assistant",),).toBe(VARIANT_DEFAULTS.assistant,);
   });
+
   it("returns undefined for an unknown variant", () => {
     expect(getVariantDefaults("nonexistent",),).toBeUndefined();
   });
@@ -186,6 +191,7 @@ describe("ChatMode enum — adds battle for variants 6/7/12", () => {
     expect(ChatMode.Group,).toBe("group",);
     expect(ChatMode.Story,).toBe("story",);
   });
+
   it("adds battle", () => {
     expect(ChatMode.Battle,).toBe("battle",);
   });

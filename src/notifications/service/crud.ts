@@ -87,6 +87,7 @@ export async function getUnreadCount(db: Kysely<DB>, userId: string,): Promise<n
     .where("user_id", "=", userId,)
     .where("read", "=", "unread",)
     .executeTakeFirst();
+
   return row?.count ?? 0;
 }
 
@@ -164,5 +165,6 @@ export async function buildRecentEvents(
     const bodyPart = r.body ? `: ${r.body}` : "";
     return `- ${r.title}${bodyPart}`;
   },);
+
   return `[Recent Events]\n${lines.join("\n",)}`;
 }

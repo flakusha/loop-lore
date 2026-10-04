@@ -70,17 +70,21 @@ describe("commandButtons.runCommand impersonate dispatch", () => {
         if (name === "chat") {
           return { impersonate: impersonateMock, };
         }
+
         if (name === "ui") {
           return {};
         }
+
         return {};
       },
     };
+
     textArea = {
       value: "",
       focus: () => {},
       dispatchEvent: () => true,
     };
+
     originalQuerySelector = document.querySelector;
     document.querySelector = ((sel: string,) =>
       sel === "#message-input" ? (textArea as unknown as Element) : null) as typeof document.querySelector;
@@ -92,6 +96,7 @@ describe("commandButtons.runCommand impersonate dispatch", () => {
     } else {
       delete (globalThis as { Alpine?: { store: (n: string,) => unknown } }).Alpine;
     }
+
     document.querySelector = originalQuerySelector;
   },);
 
@@ -135,6 +140,7 @@ describe("commandButtons.filteredButtons", () => {
     (globalThis as { Alpine?: { store: (n: string,) => unknown } }).Alpine = {
       store: (name: string,) => (name === "ui" ? { userRole: "owner", } : {}),
     };
+
     const api = loadCommandButtons() as unknown as { filteredButtons: { role: string }[] };
     expect(api.filteredButtons.length,).toBe(19,);
     expect(api.filteredButtons.filter((b,) => b.role === "gm").length,).toBe(6,);
@@ -145,6 +151,7 @@ describe("commandButtons.filteredButtons", () => {
     (globalThis as { Alpine?: { store: (n: string,) => unknown } }).Alpine = {
       store: (name: string,) => (name === "ui" ? { userRole: "player", } : {}),
     };
+
     const api = loadCommandButtons() as unknown as { filteredButtons: { role: string }[] };
     expect(api.filteredButtons.length,).toBe(13,);
     expect(api.filteredButtons.filter((b,) => b.role === "gm").length,).toBe(0,);
@@ -164,6 +171,7 @@ describe("commandButtons.filteredButtons", () => {
         throw new Error("store unavailable",);
       },
     };
+
     const api = loadCommandButtons() as unknown as { filteredButtons: { role: string }[] };
     expect(api.filteredButtons.length,).toBe(13,);
   });
@@ -188,6 +196,7 @@ describe("commandButtons.runCommand GM guidance and guards", () => {
     } else {
       delete (globalThis as { Alpine?: { store: (n: string,) => unknown } }).Alpine;
     }
+
     document.querySelector = originalQuerySelector;
   },);
 
@@ -196,6 +205,7 @@ describe("commandButtons.runCommand GM guidance and guards", () => {
     (globalThis as { Alpine?: { store: (n: string,) => unknown } }).Alpine = {
       store: (name: string,) => (name === "ui" ? ui : {}),
     };
+
     const api = loadCommandButtons();
     api.runCommand("guide",);
     expect(ui.showGmGuidance,).toBe(true,);
@@ -207,6 +217,7 @@ describe("commandButtons.runCommand GM guidance and guards", () => {
     (globalThis as { Alpine?: { store: (n: string,) => unknown } }).Alpine = {
       store: () => undefined,
     };
+
     const api = loadCommandButtons();
     api.runCommand("guide",);
     expect(textArea.value,).toBe("",);
@@ -216,6 +227,7 @@ describe("commandButtons.runCommand GM guidance and guards", () => {
     (globalThis as { Alpine?: { store: (n: string,) => unknown } }).Alpine = {
       store: () => ({}),
     };
+
     const api = loadCommandButtons();
     api.runCommand("impersonate",);
     expect(textArea.value,).toBe("",);
@@ -225,6 +237,7 @@ describe("commandButtons.runCommand GM guidance and guards", () => {
     (globalThis as { Alpine?: { store: (n: string,) => unknown } }).Alpine = {
       store: () => ({}),
     };
+
     document.querySelector = (() => null) as typeof document.querySelector;
     const api = loadCommandButtons();
     api.runCommand("image",);

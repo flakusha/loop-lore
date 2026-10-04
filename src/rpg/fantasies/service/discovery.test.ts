@@ -36,6 +36,7 @@ describe("attemptDiscovery", () => {
       "mystical moonlit bondage ritual tonight",
       1,
     );
+
     expect(first.discovered,).toBeTrue();
     expect(await attemptDiscovery(db, "actor-hero", "mystical moonlit bondage ritual tonight", 1,),)
       .toEqual({ discovered: false, reason: "Already known", },);
@@ -56,6 +57,7 @@ describe("attemptDiscovery", () => {
       "mystical moonlit bondage ritual tonight",
       1,
     );
+
     expect(result.discovered,).toBeTrue();
     expect(result.fantasy?.name,).toBe("Mystical moonlit bondage",);
     expect(result.fantasy?.intensity,).toBe("mild",);

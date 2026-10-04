@@ -61,6 +61,7 @@ export function attachRoutes(opts: HandlerOpts, prefix = "/api",) {
           .select(["id", "chat_id", "attachments",],)
           .where("id", "=", id,)
           .executeTakeFirst();
+
         if (!message) { return notFoundResponse("Message not found",); }
 
         const access = await checkChatAccess(database, message.chat_id, userId, userRole,);
@@ -72,6 +73,7 @@ export function attachRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (err instanceof AttachmentOwnershipError) {
             return badRequestResponse("Asset not found or not owned by you.",);
           }
+
           throw err;
         }
 
@@ -86,6 +88,7 @@ export function attachRoutes(opts: HandlerOpts, prefix = "/api",) {
           ...existing,
           { assetId, order: existing.length, caption: "", label: "message-attachment", },
         ];
+
         const serialized = safeJsonStringify(merged,);
         if (!serialized.ok) {
           return badRequestResponse("Failed to serialize attachments.",);
@@ -97,6 +100,7 @@ export function attachRoutes(opts: HandlerOpts, prefix = "/api",) {
             assetId,
             link: { entityType: "message", entityId: id, label: "message-attachment", },
           },);
+
           await database
             .updateTable("messages",)
             .set({ attachments: serialized.value, },)

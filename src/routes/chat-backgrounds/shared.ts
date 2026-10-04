@@ -40,5 +40,6 @@ export async function chatAccess(
     .select("created_by",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   return !!chat && (chat.created_by === userId || can(userRole, "admin.chat",));
 }

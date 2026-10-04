@@ -43,6 +43,7 @@ async function drainTelemetry(): Promise<void> {
 async function soleEventData(db: Kysely<DB>, eventType: string,): Promise<Record<string, unknown>> {
   const rows = await db.selectFrom("telemetry_events",).select("event_data",)
     .where("event_type", "=", eventType,).execute();
+
   expect(rows.length,).toBe(1,);
   return JSON.parse(rows[0]!.event_data,) as Record<string, unknown>;
 }
@@ -87,6 +88,7 @@ runOrSkip("generation telemetry fields", () => {
         isGroupChat: false,
         cascadeDepth: 0,
       },);
+
       await drainTelemetry();
       const data = await soleEventData(db, "generation.completed",);
       expect(data["model"],).toBe("latency-model",);
@@ -108,6 +110,7 @@ runOrSkip("generation telemetry fields", () => {
         undefined,
         { model: "fail-model", provider: "fail-provider", },
       );
+
       await drainTelemetry();
       const data = await soleEventData(db, "generation.failed",);
       expect(data["model"],).toBe("fail-model",);
@@ -128,6 +131,7 @@ runOrSkip("generation telemetry fields", () => {
         crypto.randomUUID(),
         undefined,
       );
+
       await drainTelemetry();
       const data = await soleEventData(db, "generation.failed",);
       expect("model" in data,).toBe(false,);

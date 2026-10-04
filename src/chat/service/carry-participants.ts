@@ -28,6 +28,7 @@ export async function carryParticipants(
     .selectAll()
     .where("chat_id", "=", sourceChatId,)
     .execute();
+
   for (const p of participants) {
     await database
       .insertInto("chat_participants",)

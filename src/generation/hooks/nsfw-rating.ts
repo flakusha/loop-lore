@@ -25,18 +25,22 @@ export function levelToRating(level: string,): NSFWContentRating {
     case "nsfw_extreme": {
       return NSFWContentRating.NSFW_EXTREME;
     }
+
     case "intense":
     case "nsfw_intense": {
       return NSFWContentRating.NSFW_INTENSE;
     }
+
     case "moderate":
     case "nsfw_moderate": {
       return NSFWContentRating.NSFW_MODERATE;
     }
+
     case "mild":
     case "nsfw_mild": {
       return NSFWContentRating.NSFW_MILD;
     }
+
     default: {
       // Fail closed: an unknown level string is treated as the strictest
       // rating (NSFW_EXTREME), never downgraded to SFW. A classifier tag
@@ -57,9 +61,11 @@ export function computeEffectiveLimit(context: HookContext,): NSFWContentRating 
   const actorRating = context.actorContentRating
     ? levelToRating(context.actorContentRating,)
     : undefined;
+
   const userRating = context.maxUserRating
     ? levelToRating(context.maxUserRating,)
     : undefined;
+
   const chatRating = context.chatNsfwOverride
     ? levelToRating(context.chatNsfwOverride,)
     : undefined;

@@ -19,16 +19,19 @@ describe("calculateCollectionProgress", () => {
       ),
     ).toBe(0,);
   });
+
   it("splits 100 across total quantity on item match", () => {
     const config = { type: "collection", sources: [], items: [{ itemId: "iron", quantity: 4, },], } as never;
     const event = { type: "item_transfer", data: { itemName: "Iron Ingot", }, } as never;
     expect(calculateCollectionProgress(CTX, config, event,),).toBe(25,);
   });
+
   it("returns 0 when the item does not match", () => {
     const config = { type: "collection", sources: [], items: [{ itemId: "iron", quantity: 4, },], } as never;
     const event = { type: "item_transfer", data: { itemName: "Oak Log", }, } as never;
     expect(calculateCollectionProgress(CTX, config, event,),).toBe(0,);
   });
+
   it("falls back to category quantity", () => {
     const config = { type: "collection", sources: [], categoryQuantity: 5, } as never;
     const event = { type: "item_transfer", data: {}, } as never;

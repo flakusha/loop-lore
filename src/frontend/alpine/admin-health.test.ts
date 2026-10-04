@@ -7,6 +7,7 @@ const globalState = globalThis as unknown as {
   apiFetch?: ApiFetchMock;
   showToast?: (type: string, message: string,) => void;
 };
+
 const originalFetch = globalState.apiFetch;
 const originalToast = globalState.showToast;
 let calls: { url: string; opts: RequestInit }[] = [];
@@ -21,6 +22,7 @@ beforeEach(() => {
     calls.push({ url, opts: opts ?? {}, },);
     return handler(url, opts,);
   };
+
   globalState.showToast = (type, message,) => {
     toasts.push({ type, message, },);
   };
@@ -52,11 +54,13 @@ function routeResponses(opts?: {
             { status: "ok", uptime: 99, timestamp: "ts-1", providers: [{ name: "p1", status: "up", },], },
         );
     }
+
     if (url.startsWith("/api/v1/admin/telemetry/aux",)) {
       return opts?.auxStatus
         ? new Response("", { status: opts.auxStatus, },)
         : Response.json(opts?.aux ?? { aggregates: [{ task: "chat", },], events: [{ id: "e1", },], total: 7, },);
     }
+
     if (url.startsWith("/api/v1/admin/providers/",)) {
       if (opts?.rejectProviderModels) { throw new Error("offline",); }
       const name = url.split("/",)[5];
@@ -64,6 +68,7 @@ function routeResponses(opts?: {
         ? new Response("", { status: opts.providerModelsStatus, },)
         : Response.json(opts?.providerModels?.[name ?? ""] ?? { models: [`models-${name}`,], },);
     }
+
     return new Response("", { status: 404, },);
   };
 }
@@ -131,6 +136,7 @@ describe("healthPanelMethods.refreshHealthWithRescan", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await panel.refreshHealthWithRescan();
     expect(toasts[0]!.type,).toBe("error",);
     expect(panel.loadingHealth,).toBe(false,);
@@ -146,6 +152,7 @@ describe("healthPanelMethods.loadAuxTelemetry", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await panel.loadAuxTelemetry();
     expect(panel.loadingAuxTelemetry,).toBe(false,);
   });
@@ -172,6 +179,7 @@ describe("healthPanelMethods NSFW config", () => {
       url === "/api/v1/admin/nsfw"
         ? Response.json({ allowNsfw: false, nsfwMinAge: 21, },)
         : new Response("", { status: 404, },);
+
     await panel.loadNsfwConfig();
     expect(panel.nsfwConfig,).toEqual({ allowNsfw: false, nsfwMinAge: 21, },);
     handler = async () => new Response("", { status: 500, },);
@@ -181,6 +189,7 @@ describe("healthPanelMethods NSFW config", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await stale.loadNsfwConfig();
     expect(stale.loadingNsfw,).toBe(false,);
   });
@@ -205,6 +214,7 @@ describe("healthPanelMethods NSFW config", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await panel.saveNsfwConfig();
     expect(toasts[3]!.type,).toBe("error",);
   });

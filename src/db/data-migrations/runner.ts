@@ -19,6 +19,7 @@ async function isApplied(db: Kysely<DB>, table: string, toVersion: number,): Pro
     .where("table_name", "=", table,)
     .where("to_version", "=", toVersion,)
     .executeTakeFirst();
+
   return row !== undefined;
 }
 
@@ -79,6 +80,7 @@ export async function discoverMigrations(baseDir: string = __dirname,): Promise<
     for (const f of readdirSync(dirPath,)) {
       if (f.startsWith("v",) && f.endsWith(".ts",)) { matched.push(f,); }
     }
+
     const files = matched.toSorted(compareVersionNames,);
 
     for (const file of files) {
@@ -142,6 +144,7 @@ export async function runDataMigrations(db: Kysely<DB>, logProgress = true,): Pr
         description: migration.description,
       },);
     }
+
     applied++;
   }
 

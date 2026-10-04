@@ -16,7 +16,9 @@ export const calculateCollectionProgress: ProgressCalculator = (_ctx, config, ev
       totalQuantity += i.quantity;
       if (itemName?.includes(i.itemId.toLowerCase(),)) { hasMatch = true; }
     }
+
     return hasMatch ? Math.round(100 / totalQuantity,) : 0;
   }
+
   return cfg.categoryQuantity ? Math.round(100 / cfg.categoryQuantity,) : 10;
 };

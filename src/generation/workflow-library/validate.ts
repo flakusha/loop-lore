@@ -47,10 +47,12 @@ function nodeShapeErrors(graph: ComfyUIWorkflow,): string[] {
     if (typeof node?.class_type !== "string" || node.class_type.length === 0) {
       errors.push(`node ${nodeId}: missing class_type`,);
     }
+
     if (typeof node?.inputs !== "object" || node.inputs === null) {
       errors.push(`node ${nodeId}: missing inputs object`,);
     }
   }
+
   return errors;
 }
 
@@ -63,14 +65,17 @@ function parameterErrors(parameters: TemplateParameter[], placeholders: Set<stri
       errors.push("parameter with empty name",);
       continue;
     }
+
     if (seen.has(param.name,)) {
       errors.push(`duplicate parameter ${param.name}`,);
     }
+
     seen.add(param.name,);
     if (!placeholders.has(param.name,)) {
       errors.push(`parameter ${param.name} has no matching {{placeholder}} in the graph`,);
     }
   }
+
   return errors;
 }
 
@@ -87,12 +92,14 @@ function loraSlotErrors(payload: WorkflowPayload,): string[] {
       errors.push(`loraSlots[${index}]: no node ${String(slot?.nodeId,)} in graph`,);
       continue;
     }
+
     if (slot?.classType && node.class_type !== slot.classType) {
       errors.push(
         `loraSlots[${index}]: node ${nodeId} is ${node.class_type}, declared ${slot.classType}`,
       );
     }
   }
+
   return errors;
 }
 
@@ -101,18 +108,21 @@ function payloadShapeErrors(value: unknown,): string[] | null {
   if (typeof value !== "object" || value === null || Array.isArray(value,)) {
     return ["payload must be an object",];
   }
+
   const record = value as Record<string, unknown>;
   const errors: string[] = [];
   const body = record.body;
   if (typeof body !== "object" || body === null || Array.isArray(body,)) {
     errors.push("body must be an object",);
   }
+
   if (
     typeof record.category !== "string" ||
     !CATEGORIES.includes(record.category as ImageEditCategory,)
   ) {
     errors.push(`category must be one of ${CATEGORIES.join(", ",)}`,);
   }
+
   if (!Array.isArray(record.parameters,)) { errors.push("parameters must be an array",); }
   if (!Array.isArray(record.requiredNodes,)) { errors.push("requiredNodes must be an array",); }
   return errors.length > 0 ? errors : null;
@@ -140,6 +150,7 @@ export function validateWorkflowPayload(value: unknown,): ValidationResult {
   const badRequired = payload.requiredNodes.some(
     (required,) => typeof required !== "string" || required.length === 0,
   );
+
   if (badRequired) { errors.push("requiredNodes must be non-empty strings",); }
 
   errors.push(...parameterErrors(payload.parameters, collectPlaceholders(graph,),),);

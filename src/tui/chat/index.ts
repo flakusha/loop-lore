@@ -104,6 +104,7 @@ export class ChatWidget implements ChatHost {
       if (value.trim() && !this.isSending) {
         void this.handleSend(value.trim(),);
       }
+
       // Clear after handleSend completes (avoid race)
       this.inputBox.clearValue();
       this.inputBox.focus();
@@ -117,6 +118,7 @@ export class ChatWidget implements ChatHost {
       } else {
         this.inputBox.focus();
       }
+
       screen.render();
     },);
   }
@@ -188,6 +190,7 @@ export class ChatWidget implements ChatHost {
     if (this.itemCount > 0) {
       this.messageList.select(this.itemCount - 1,);
     }
+
     this.screen.render();
   }
 
@@ -210,6 +213,7 @@ export class ChatWidget implements ChatHost {
       this.messageList.popItem();
       this.itemCount--;
     }
+
     this.screen.render();
   }
 

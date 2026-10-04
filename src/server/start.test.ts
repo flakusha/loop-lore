@@ -43,6 +43,7 @@ if (ISOLATED) {
     setBindings: () => {},
     flush: async () => {},
   };
+
   const fakeDb = {};
   const fakeApp = {};
   const fakeHandler = () => new Response("ok",);
@@ -62,16 +63,19 @@ if (ISOLATED) {
     getLogger: () => fakeLogger,
     setGlobalLogger: () => {},
   }),);
+
   mock.module("../nsfw/runtime-config", () => ({
     applyStoredNsfwConfig: async () => {},
     initNsfwRuntimeConfig: () => {},
   }),);
+
   mock.module("../plugins", () => ({ loadAllPlugins: async () => {}, unloadAllPlugins: async () => {}, }),);
   mock.module("../seeding", () => ({
     applyEnvironmentOverrides: (cfg: unknown,) => cfg,
     seedConfiguredContent: async () => {},
     seedConfiguredUsers: async () => {},
   }),);
+
   mock.module("../services/server-external-manager", () => ({
     ServerExternalManager: class {
       constructor(..._args: unknown[]) {}
@@ -80,6 +84,7 @@ if (ISOLATED) {
       async stopAll() {}
     },
   }),);
+
   mock.module("./boot-seed", () => ({ seedDynamicContent: async () => {}, }),);
   mock.module("./handler", () => ({ createRequestHandler: () => fakeHandler, handleApiRequest: fakeHandler, }),);
   mock.module("./init-asset-compression", () => ({ initAssetCompression: async () => {}, }),);
@@ -91,6 +96,7 @@ if (ISOLATED) {
     discoverBackends: async () => [],
     backendToConfig: () => ({}),
   }),);
+
   mock.module("../admin/provider-health", () => ({ scanAllProviders: async () => [], }),);
   mock.module("../admin/config", () => ({ seedDefaults: async () => {}, }),);
   mock.module("../logger/transports/db", () => ({ DBTransport: class {}, }),);
@@ -119,6 +125,7 @@ async function fetchWithRetry(url: string, retries = 20,): Promise<Response> {
       await new Promise((resolve,) => setTimeout(resolve, 50,));
     }
   }
+
   throw new Error(`server did not start at ${url}`,);
 }
 

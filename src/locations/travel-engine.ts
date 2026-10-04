@@ -102,14 +102,17 @@ export class TravelTickEngine {
         } else {
           next = target;
         }
+
         await this.db.updateTable("locations",).where("id", "=", row.id,).set({
           travel_progress: next,
         } as never,).execute();
+
         advanced += 1;
       } catch {
         capped += 1;
       }
     }
+
     return { advanced, arrived, capped, skipped: 0, };
   }
 }

@@ -61,6 +61,7 @@ export function renderChoiceCards(container: HTMLElement, choices: VnChoice[], o
     card.addEventListener("click", () => {
       void onSelect(c.id,);
     },);
+
     choiceList.append(card,);
   }
 

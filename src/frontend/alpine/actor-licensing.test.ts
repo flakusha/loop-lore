@@ -37,6 +37,7 @@ const baseCtx = (): ActorLicensingState & Record<string, unknown> => {
     allow_commercial: false,
     share_alike: false,
   };
+
   state.licenseLoading = false;
   state.licenseSaving = false;
   state.licenseError = "";
@@ -50,6 +51,7 @@ const flush = async (): Promise<void> => {
   queueMicrotask(() => {
     resolve();
   },);
+
   await promise;
 };
 
@@ -128,6 +130,7 @@ describeOrSkip("actorLicensing.loadLicensing", () => {
     handler = async () => {
       throw new Error("net",);
     };
+
     const ctx = baseCtx();
     ctx.setActorId("actor-1",);
     await flush();
@@ -158,6 +161,7 @@ describeOrSkip("actorLicensing.save", () => {
         updated_at: "",
       },);
     };
+
     const ctx = baseCtx();
     ctx._licActorId = "actor-1";
     ctx.licenseForm.license_type = "cc0";
@@ -181,6 +185,7 @@ describeOrSkip("actorLicensing.save", () => {
     handler = async () => {
       throw new Error("net",);
     };
+
     const ctx = baseCtx();
     ctx._licActorId = "actor-1";
     await ctx.save();
@@ -205,6 +210,7 @@ describeOrSkip("actorLicensing.remove", () => {
       created_at: "",
       updated_at: "",
     };
+
     await ctx.remove();
     expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/v1/actors/actor-1/licensing"),).toBe(true,);
     expect(ctx.license,).toBeNull();
@@ -263,6 +269,7 @@ describeOrSkip("actorLicensingFactory", () => {
         created_at: "",
         updated_at: "",
       },);
+
     const state = actorLicensingFactory("actor-1",);
     await flush();
     expect(state._licActorId,).toBe("actor-1",);
@@ -291,6 +298,7 @@ describeOrSkip("actorLicensing.loadLicenseHistory", () => {
           created_at: "2026-01-02T00:00:00.000Z",
         },
       ],);
+
     ctx.setActorId("actor-1",);
     await flush();
     expect(ctx.licenseHistory.length,).toBeGreaterThanOrEqual(1,);

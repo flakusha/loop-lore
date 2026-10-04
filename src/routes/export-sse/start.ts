@@ -43,6 +43,7 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
         currentStep: "Queued...",
         createdAt: new Date(),
       };
+
       jobs.set(jobId, job,);
 
       // Start processing in background
@@ -101,6 +102,7 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
             const percentage = currentJob.total > 0
               ? Math.round((currentJob.progress / currentJob.total) * 100,)
               : 0;
+
             safeEnqueue(encoder.encode(sseData({
               type: "progress",
               jobId,
@@ -109,6 +111,7 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
               percentage,
               currentStep: currentJob.currentStep,
             },),),);
+
             if (closed) { return; }
 
             // Send completion event
@@ -120,6 +123,7 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
                 totalItems: currentJob.total,
                 completedAt: currentJob.completedAt?.toISOString(),
               },),),);
+
               teardown();
             } else if (currentJob.status === "failed") {
               safeEnqueue(encoder.encode(sseData({
@@ -127,6 +131,7 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
                 jobId,
                 error: currentJob.error,
               },),),);
+
               teardown();
             }
           }

@@ -49,6 +49,7 @@ export async function createInviteRow<Input extends InviteCreateCommon,>(
   if (input.maxUses !== null && input.maxUses !== undefined && input.maxUses < 1) {
     return { ok: false, error: { code: "bad_request", message: "maxUses must be at least 1", }, };
   }
+
   if (input.expiresAt != null && parseExpiryMs(input.expiresAt,) === null) {
     return { ok: false, error: { code: "bad_request", message: "Invalid expiresAt", }, };
   }
@@ -86,20 +87,24 @@ export async function createInviteRow<Input extends InviteCreateCommon,>(
           },)
           .execute();
       }
+
       const row = await database
         .selectFrom(table,)
         .selectAll()
         .where("id", "=", id,)
         .executeTakeFirst();
+
       if (!row) {
         return { ok: false, error: { code: "not_found", message: "Invite not found after insert", }, };
       }
+
       return { ok: true, value: row, };
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error,);
       if (msg.includes("UNIQUE",) || msg.includes("constraint",)) {
         continue;
       }
+
       throw error;
     }
   }

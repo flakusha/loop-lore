@@ -87,6 +87,7 @@ export function shouldInjectMemory(
         reason: `intimacy:${ctx.averageIntimacy} < threshold:${comfort.intimacyThreshold}`,
       };
     }
+
     probability *= comfort.secretSharingProbability;
   }
 

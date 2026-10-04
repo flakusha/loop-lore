@@ -52,6 +52,7 @@ export async function buildProviderRequest(opts: {
   } catch {
     // Role lookup is best-effort — default to exposing all plugin tools.
   }
+
   const pluginTools = gatePluginToolsByRole(roleRow?.agent_role ?? null,);
 
   const tools = pluginTools.length > 0

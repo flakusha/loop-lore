@@ -109,6 +109,7 @@ describe("completeDispatch", () => {
         expect(result.toolCalls,).toEqual([
           { id: "toolu_1", type: "function", function: { name: "get_weather", arguments: '{"city":"x"}', }, },
         ],);
+
         expect(result.finishReason,).toBe("stop",);
         expect(result.content,).toBe("",);
       },
@@ -154,6 +155,7 @@ describe("streamDispatch", () => {
     const handler: StreamHandler = (chunk,) => {
       events.push(`${chunk.type}:${chunk.content ?? chunk.finishReason ?? ""}`,);
     };
+
     const streamed = [
       ["message_start", { type: "message_start", message: { usage: { input_tokens: 10, }, }, },],
       ["content_block_delta", { type: "content_block_delta", index: 0, delta: { type: "text_delta", text: "Hel", }, },],
@@ -179,6 +181,7 @@ describe("streamDispatch", () => {
     const handler: StreamHandler = (chunk,) => {
       if (chunk.type === "thinking") { events.push(chunk.content ?? "",); }
     };
+
     const streamed = [
       ["content_block_delta", {
         type: "content_block_delta",
@@ -200,6 +203,7 @@ describe("streamDispatch", () => {
         expect(result.thinking,).toBe("onetwo",);
       },
     );
+
     expect(events,).toEqual(["one", "two",],);
   });
 
@@ -210,6 +214,7 @@ describe("streamDispatch", () => {
         toolCalls.push(`${chunk.toolCall.function.name}:${chunk.toolCall.function.arguments}`,);
       }
     };
+
     const streamed = [
       ["content_block_start", {
         type: "content_block_start",
@@ -238,6 +243,7 @@ describe("streamDispatch", () => {
         ],);
       },
     );
+
     expect(toolCalls,).toEqual(['get_weather:{"city":"x"}',],);
   });
 
@@ -261,6 +267,7 @@ describe("streamDispatch", () => {
   test("ignores missing and invalid event/data pairs", async () => {
     const body =
       'event: message_start\ndata: {not json\nevent: content_block_delta\ndata: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ok"}}\n';
+
     await withMockFetch(
       async () => new Response(`${body}\n`, { headers: { "Content-Type": "text/event-stream", }, },),
       async () => {

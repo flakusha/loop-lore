@@ -54,6 +54,7 @@ describe("world invites service", () => {
         expiresAt: future,
         maxUses: 3,
       },);
+
       expect(created.ok,).toBe(true,);
       if (!created.ok) { return; }
       expect(created.value.expiresAt,).toBe(future,);
@@ -116,6 +117,7 @@ describe("world invites service", () => {
         .where("world_id", "=", worldId,)
         .where("actor_id", "=", "user-joiner",)
         .executeTakeFirst();
+
       expect(member,).toBeTruthy();
     });
 
@@ -126,6 +128,7 @@ describe("world invites service", () => {
         "Joiner",
         { id: "user-joiner", user_id: "user-joiner", owner_id: "user-joiner", } as never,
       );
+
       const created = await createWorldInvite(db, { worldId, createdBy: "user-owner", },);
       if (!created.ok) { return; }
       await redeemWorldInvite(db, { code: created.value.code, actorId: "user-joiner", },);
@@ -140,6 +143,7 @@ describe("world invites service", () => {
         "Joiner",
         { id: "user-joiner", user_id: "user-joiner", owner_id: "user-joiner", } as never,
       );
+
       const created = await createWorldInvite(db, { worldId, createdBy: "user-owner", maxUses: 1, },);
       if (!created.ok) { return; }
       await redeemWorldInvite(db, { code: created.value.code, actorId: "user-joiner", },);
@@ -173,6 +177,7 @@ describe("world invites service", () => {
         createdBy: "user-owner",
         expiresAt: new Date(Date.now() - 1000,).toISOString(),
       },);
+
       if (!created.ok) { return; }
       const outcome = await redeemWorldInvite(db, { code: created.value.code, actorId: "user-owner", },);
       expect(outcome.ok,).toBe(false,);
@@ -186,6 +191,7 @@ describe("world invites service", () => {
         "Joiner",
         { id: "user-joiner", user_id: "user-joiner", owner_id: "user-joiner", } as never,
       );
+
       const created = await createWorldInvite(db, { worldId, createdBy: "user-owner", maxUses: 1, },);
       if (!created.ok) { return; }
       await redeemWorldInvite(db, { code: created.value.code, actorId: "user-joiner", },);
@@ -195,6 +201,7 @@ describe("world invites service", () => {
         "Joiner2",
         { id: "user-joiner2", user_id: "user-joiner2", owner_id: "user-joiner2", } as never,
       );
+
       const outcome = await redeemWorldInvite(db, { code: created.value.code, actorId: "user-joiner2", },);
       expect(outcome.ok,).toBe(false,);
       if (!outcome.ok) { expect(outcome.error.code,).toBe("used_up",); }

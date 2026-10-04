@@ -43,20 +43,25 @@ export function serializeTemplateInput(
   if (!MODALITIES.includes(input.modality,)) {
     return { ok: false, error: `Invalid modality: ${String(input.modality,)}`, };
   }
+
   const detail = input.detail_level ?? "balanced";
   if (!DETAIL_LEVELS.includes(detail,)) {
     return { ok: false, error: `Invalid detail_level: ${String(detail,)}`, };
   }
+
   if (typeof input.name !== "string" || input.name.trim().length === 0) {
     return { ok: false, error: "name is required", };
   }
+
   if (typeof input.payload !== "object" || input.payload === null) {
     return { ok: false, error: "payload object is required", };
   }
+
   const probe = parseTemplatePayload(jsonStringifyOr(input.payload,), input.modality,);
   if (!probe) {
     return { ok: false, error: `payload does not match the ${input.modality} template shape`, };
   }
+
   if (input.modality === "workflow") {
     // The shape probe above cannot see a dead node or a parameter that has no
     // placeholder, and either one fails later inside a generation queue.
@@ -65,6 +70,7 @@ export function serializeTemplateInput(
       return { ok: false, error: ingested.errors.join("; ",), };
     }
   }
+
   return { ok: true, payload: jsonStringifyOr(input.payload,), };
 }
 
@@ -99,6 +105,7 @@ export async function listTemplates(
       },);
     }
   }
+
   return summaries;
 }
 
@@ -116,6 +123,7 @@ export async function getOwnedTemplate(
 ): Promise<PromptTemplateRow | null> {
   const row = await db.selectFrom("prompt_templates",).selectAll()
     .where("id", "=", id,).where("owner_id", "=", userId,).executeTakeFirst();
+
   return row ?? null;
 }
 
@@ -147,6 +155,7 @@ export async function createTemplate(
     created_at: now,
     updated_at: now,
   };
+
   await db.insertInto("prompt_templates",).values(row,).execute();
   return row;
 }
@@ -180,6 +189,7 @@ export async function updateTemplate(
       ? patch.payload
       : parseTemplatePayload(existing.payload, existing.modality,) ?? {},
   };
+
   const serialized = serializeTemplateInput(merged,);
   if (!serialized.ok) { throw new Error(serialized.error,); }
 
@@ -194,6 +204,7 @@ export async function updateTemplate(
     },)
     .where("id", "=", id,).where("owner_id", "=", userId,)
     .execute();
+
   return getOwnedTemplate(db, id, userId,);
 }
 
@@ -208,6 +219,7 @@ export async function deleteTemplate(db: Kysely<DB>, id: string, userId: string,
   const result = await db.deleteFrom("prompt_templates",)
     .where("id", "=", id,).where("owner_id", "=", userId,)
     .executeTakeFirst();
+
   return (result.numDeletedRows ?? 0n) > 0n;
 }
 

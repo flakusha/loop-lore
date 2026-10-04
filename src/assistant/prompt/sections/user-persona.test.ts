@@ -96,6 +96,7 @@ describe("userPersonaSection", () => {
       description: `${displayName} description`,
       personality: `${displayName} personality`,
     },);
+
     return id;
   }
 
@@ -133,6 +134,7 @@ describe("userPersonaSection", () => {
       .select(["id",],)
       .where("user_id", "=", userId,)
       .executeTakeFirstOrThrow();
+
     await insertChatParticipants(db, chatId, userId, { persona_id: persona.id, },);
     const built = await userPersonaSection.build(ctxFor(chatId,),);
     expect(built,).toHaveLength(1,);
@@ -150,10 +152,12 @@ describe("userPersonaSection", () => {
       .select(["id",],)
       .where("user_id", "=", userId,)
       .executeTakeFirstOrThrow();
+
     await insertChatParticipants(db, chatId, userId, {
       impersonate_actor_id: heroId,
       persona_id: persona.id,
     },);
+
     const built = await userPersonaSection.build(ctxFor(chatId,),);
     expect(built,).toHaveLength(1,);
     const content = String(built[0]?.content,);

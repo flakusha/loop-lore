@@ -76,6 +76,7 @@ export async function renameBranch(
     if (params.name !== undefined && !name) {
       return { code: "bad_request", message: "Branch name must not be blank", };
     }
+
     if (name !== undefined && name !== row.name) {
       try {
         await db.updateTable("chat_branches",).set({ name, },).where("id", "=", branchId,).execute();
@@ -86,10 +87,12 @@ export async function renameBranch(
         return { code: "bad_request", message: `A branch named "${name}" already exists in this chat`, };
       }
     }
+
     if (params.activate === true) {
       const switched = await switchActiveBranch(db, { chatId, branchId, actorId, },);
       if ("code" in switched) { return switched; }
     }
+
     const fresh = await loadBranch(db, chatId, branchId,);
     if (!fresh) { return BRANCH_NOT_FOUND; }
     return { ok: true, branch: await withMeta(db, chatId, fresh,), };
@@ -123,6 +126,7 @@ export async function deleteBranch(
             message: "Cannot delete the active branch; switch to another branch first",
           },);
         }
+
         // Zero rows means a concurrent client deleted it first (double-submit,
         // retry after a timeout). Kysely does not raise on an empty match, so
         // the count is the only evidence — without it a retry reports success
@@ -136,6 +140,7 @@ export async function deleteBranch(
       if (error instanceof BranchTxAbort) { return error.error; }
       throw error;
     }
+
     return { ok: true, deletedBranchId: branchId, };
   },);
 }

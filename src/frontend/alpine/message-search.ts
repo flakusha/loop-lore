@@ -84,16 +84,19 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
       const url = `/api/v1/messages/search?chatId=${encodeURIComponent(chatId,)}&q=${
         encodeURIComponent(q,)
       }&limit=${SEARCH_LIMIT}`;
+
       const res = await apiFetch(url,);
       if (!res.ok) {
         this._msgSearchMatches = [];
         this._msgSearchTotal = 0;
         return;
       }
+
       const body = (await res.json()) as {
         results?: { messageId: string }[];
         total?: number;
       };
+
       this._msgSearchMatches = Array.from(body.results ?? [], (r,) => r.messageId,);
       this._msgSearchTotal = body.total ?? this._msgSearchMatches.length;
       this._msgSearchIndex = 0;
@@ -117,6 +120,7 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
     scope.querySelectorAll<HTMLElement>(".search-match-active",).forEach((el,) =>
       el.classList.remove("search-match-active",)
     );
+
     const matches = this._msgSearchMatches;
     if (matches.length > 0) {
       const selector = Array.from(matches, (id,) => `[data-message-id="${CSS.escape(id,)}"]`,).join(",",);
@@ -136,6 +140,7 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
     if (!current) { return; }
     const el = this.$refs.messageList?.querySelector<HTMLElement>(`[data-message-id="${CSS.escape(current,)}"]`,) ??
       document.querySelector<HTMLElement>(`[data-message-id="${CSS.escape(current,)}"]`,);
+
     el?.classList.add("search-match-active",);
   },
 
@@ -148,6 +153,7 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
     if (!id) { return; }
     const el = this.$refs.messageList?.querySelector<HTMLElement>(`[data-message-id="${CSS.escape(id,)}"]`,) ??
       document.querySelector<HTMLElement>(`[data-message-id="${CSS.escape(id,)}"]`,);
+
     el?.scrollIntoView({ behavior: "smooth", block: "center", },);
   },
 

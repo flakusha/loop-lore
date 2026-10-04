@@ -33,6 +33,7 @@ export function normalizeCharacterAI(data: Record<string, unknown>,): CanonicalC
     // Append definition to description, preserving macro syntax
     description = description ? `${description}\n\n${cardData.definition}` : cardData.definition;
   }
+
   // ponytail: heuristic fallbacks (definition→personality, description→appearance,
   // synthesized default outfit) so legacy CAI cards pass the import gate;
   // replace with LLM-assist extraction when a real wardrobe signal exists.

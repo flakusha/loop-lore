@@ -94,6 +94,7 @@ describe("Worlds flow E2E", () => {
           state: "attached",
           timeout: 10_000,
         },);
+
         await page.locator("[data-testid='create-world-form'] button[type='submit']",).waitFor({
           state: "attached",
           timeout: 10_000,
@@ -117,6 +118,7 @@ describe("Worlds flow E2E", () => {
           state: "attached",
           timeout: 30_000,
         },);
+
         const worldNames = await page.locator("[data-testid='world-list'] .world-name",).allTextContents();
         expect(worldNames.some((n: string,) => n.includes("API Created World",)),).toBe(true,);
       } finally {
@@ -155,6 +157,7 @@ describe("Worlds flow E2E", () => {
         await page.evaluate(() => {
           (document.querySelector("[data-testid='nav-characters']",) as HTMLElement)?.click();
         },);
+
         await page.locator("[data-testid='characters-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/characters",);
       } finally {
@@ -195,6 +198,7 @@ describe("Worlds flow E2E", () => {
       const dlRes = await fetch(`${ctx.url}/api/v1/worlds/${sourceId}/export`, {
         headers: { Cookie: `ll_token=${client.token ?? ""}`, },
       },);
+
       expect(dlRes.status,).toBe(200,);
       expect(dlRes.headers.get("content-disposition",),).toContain("attachment",);
       const bundle = await dlRes.text();
@@ -225,6 +229,7 @@ describe("Worlds flow E2E", () => {
           before.length,
           { timeout: 30_000, },
         );
+
         const names = await page.locator("[data-testid='world-list'] .world-name",).allTextContents();
         expect(names.filter((n: string,) => n.includes("Source Export World",)).length,)
           .toBeGreaterThan(before.filter((n: string,) => n.includes("Source Export World",)).length,);
@@ -265,6 +270,7 @@ describe("Worlds flow E2E", () => {
           page.waitForEvent("download", { timeout: 15_000, },),
           exportBtn.click(),
         ],);
+
         expect(download.suggestedFilename(),).toMatch(/\.world\.json$/i,);
         const stream = await download.createReadStream();
         expect(stream,).not.toBeNull();
@@ -273,9 +279,11 @@ describe("Worlds flow E2E", () => {
           stream?.on("data", (chunk: Buffer,) => {
             data += chunk.toString();
           },);
+
           stream?.on("end", () => resolve(data,),);
           stream?.on("error", reject,);
         },);
+
         const parsed = JSON.parse(body,) as { schema_version: string; world: { id: string; name: string } };
         expect(parsed.schema_version,).toBe("1.0",);
         expect(parsed.world.id,).toBe(worldId,);

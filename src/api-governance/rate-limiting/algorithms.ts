@@ -50,6 +50,7 @@ export function slidingWindow(
     fresh.push(nowMs,);
     return { allowed: true, remaining: max - fresh.length, retryAfterSec: 0, kept: fresh, };
   }
+
   const oldest = fresh[0]!;
   return {
     allowed: false,
@@ -81,6 +82,7 @@ export function tokenBucket(
   if (tokens >= cost) {
     return { allowed: true, state: { tokens: tokens - cost, lastRefillMs: nowMs, }, retryAfterSec: 0, };
   }
+
   const deficit = cost - tokens;
   return {
     allowed: false,

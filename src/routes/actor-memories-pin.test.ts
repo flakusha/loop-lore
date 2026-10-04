@@ -76,6 +76,7 @@ describe("actorMemoriesRoutes — pinned persistence", () => {
         body: JSON.stringify({ content: "A memory to pin", memoryType: "episodic", },),
       },),
     );
+
     expect(memCreateRes.status,).toBe(201,);
     const created = (await memCreateRes.json()) as { id: string; pinned: boolean };
     expect(created.pinned,).toBe(false,);
@@ -87,6 +88,7 @@ describe("actorMemoriesRoutes — pinned persistence", () => {
         body: JSON.stringify({ pinned: true, },),
       },),
     );
+
     expect(putRes.status,).toBe(200,);
 
     // Verify persistence directly in the DB (deterministic, independent of response shape).
@@ -95,12 +97,14 @@ describe("actorMemoriesRoutes — pinned persistence", () => {
       .select("pinned",)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
+
     expect(dbRow.pinned,).toBe("pinned",);
 
     // And via GET response shape.
     const memGetRes = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/memories/${created.id}`,),
     );
+
     const fetched = (await memGetRes.json()) as { pinned: boolean };
     expect(fetched.pinned,).toBe(true,);
   });
@@ -115,12 +119,14 @@ describe("actorMemoriesRoutes — pinned persistence", () => {
         body: JSON.stringify({ content: "Another memory", memoryType: "episodic", pinned: true, },),
       },),
     );
+
     const created = (await memCreateRes.json()) as { id: string };
     const initialRow = await db
       .selectFrom("actor_memories",)
       .select("pinned",)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
+
     expect(initialRow.pinned,).toBe("pinned",);
 
     const putRes = await app.handle(
@@ -130,6 +136,7 @@ describe("actorMemoriesRoutes — pinned persistence", () => {
         body: JSON.stringify({ pinned: false, },),
       },),
     );
+
     expect(putRes.status,).toBe(200,);
 
     const clearedRow = await db
@@ -137,6 +144,7 @@ describe("actorMemoriesRoutes — pinned persistence", () => {
       .select("pinned",)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
+
     expect(clearedRow.pinned,).toBe("unpinned",);
   });
 });

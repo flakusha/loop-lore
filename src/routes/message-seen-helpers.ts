@@ -35,6 +35,7 @@ export async function resolveMessageAccess(
     .select(["chat_id", "id",],)
     .where("id", "=", messageId,)
     .executeTakeFirst();
+
   if (!msg) { return jsonError("Message not found", HttpStatus.NotFound, ErrorCode.NotFound,); }
 
   const access = await checkChatAccess(database, msg.chat_id, userId, userRole,);

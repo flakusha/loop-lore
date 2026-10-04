@@ -75,8 +75,10 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
             raw,
             strategy,
           );
+
           break;
         }
+
         case "sd": {
           validateSdConfig(raw,);
           config.sd = mergeSdConfig(
@@ -84,8 +86,10 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
             raw,
             strategy,
           );
+
           break;
         }
+
         case "avatar": {
           validateAvatarConfig(raw,);
           config.avatar = mergeAvatarConfig(
@@ -93,8 +97,10 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
             raw,
             strategy,
           );
+
           break;
         }
+
         case "imageEdit": {
           validateImageEditConfig(raw,);
           config.imageEdit = mergeImageEditConfig(
@@ -102,8 +108,10 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
             raw,
             strategy,
           );
+
           break;
         }
+
         case "character": {
           validateCharacterConfig(raw,);
           config.character = mergeCharacterConfig(
@@ -111,6 +119,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
             raw,
             strategy,
           );
+
           break;
         }
       }
@@ -154,12 +163,14 @@ function loadWorkflowFile(
     if (presets !== undefined) {
       validateEntityTypeConfig({ entityTypes: presets, },);
     }
+
     validateWorkflowConfig(workflowRaw as Record<string, unknown>,);
     const table = {
       ...(workflowRaw.workflows !== undefined
         ? workflowRaw.workflows as Record<string, unknown>
         : workflowRaw as Record<string, unknown>),
     };
+
     delete table.merge;
     return mergeWorkflowConfig(
       current,

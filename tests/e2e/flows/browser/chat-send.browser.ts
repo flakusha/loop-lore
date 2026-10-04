@@ -59,6 +59,7 @@ describe("Chat send round-trip (plaintext)", () => {
     const errors = trackPageErrors(page, {
       allowlist: [/404 \(Not Found\)/, /401 \(Unauthorized\)/, /Failed to load resource/,],
     },);
+
     try {
       await openAndSelectChat(page, ctx.url,);
 
@@ -76,6 +77,7 @@ describe("Chat send round-trip (plaintext)", () => {
         .where("chat_id", "=", SEED.soloChat.id,)
         .where("content", "=", sent,)
         .executeTakeFirst();
+
       expect(row,).not.toBeNull();
       expect(row!.key_id,).toBeNull();
     } finally {
@@ -90,6 +92,7 @@ describe("Chat send round-trip (plaintext)", () => {
     const errors = trackPageErrors(page, {
       allowlist: [/404 \(Not Found\)/, /401 \(Unauthorized\)/, /Failed to load resource/,],
     },);
+
     try {
       await openAndSelectChat(page, ctx.url,);
 
@@ -114,6 +117,7 @@ describe("Chat send round-trip (plaintext)", () => {
         .select(ctx.db.fn.countAll().as("count",),)
         .where("chat_id", "=", SEED.soloChat.id,)
         .executeTakeFirstOrThrow();
+
       expect(Number(after.count,),).toBe(Number(before.count,),);
     } finally {
       errors.assert();
@@ -137,6 +141,7 @@ describe("Chat encryption flow (SMK configured)", () => {
         serverEncryptionKey: VALID_HEX_KEY,
       },
     },);
+
     await seedAll(ctx.db,);
 
     // The seeded solo chat is public-tier with no actor keys. Encryption
@@ -161,6 +166,7 @@ describe("Chat encryption flow (SMK configured)", () => {
     const errors = trackPageErrors(page, {
       allowlist: [/404 \(Not Found\)/, /401 \(Unauthorized\)/, /Failed to load resource/,],
     },);
+
     try {
       await openAndSelectChat(page, ctx.url,);
 
@@ -186,6 +192,7 @@ describe("Chat encryption flow (SMK configured)", () => {
         .where("chat_id", "=", SEED.soloChat.id,)
         .orderBy("created_at", "desc",)
         .executeTakeFirst();
+
       expect(row,).not.toBeNull();
       expect(row!.content,).not.toContain(secret,);
       expect(row!.key_id,).not.toBeNull();

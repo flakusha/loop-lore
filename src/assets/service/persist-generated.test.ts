@@ -37,6 +37,7 @@ describeReal("persistGeneratedImages", () => {
         "=",
         "gen-owner",
       ).executeTakeFirstOrThrow()).id;
+
       const images = [makeMinimalPng(2, 2,), makeMinimalPng(3, 3,),];
 
       const persisted = await persistGeneratedImages({
@@ -74,6 +75,7 @@ describeReal("persistGeneratedImages", () => {
         "=",
         "dup-owner",
       ).executeTakeFirstOrThrow()).id;
+
       const opts = {
         database: db,
         uploadDir,
@@ -84,6 +86,7 @@ describeReal("persistGeneratedImages", () => {
         link: { entityType: AssetLinkEntity.Character, entityId: "char-8", },
         makeFilename: () => "repeat.png",
       } as const;
+
       const first = await persistGeneratedImages({ ...opts, images: [...opts.images,], },);
       const second = await persistGeneratedImages({ ...opts, images: [...opts.images,], },);
 
@@ -114,6 +117,7 @@ describeReal("persistGeneratedImages", () => {
         link: { entityType: AssetLinkEntity.Character, entityId: "char-0", },
         makeFilename: () => "nothing.png",
       },);
+
       expect(persisted,).toEqual([],);
     } finally {
       sqlite.close();

@@ -59,6 +59,7 @@ function buildCtx(): { ctx: Record<string, unknown>; toasts: { type: string; mes
     },
     toasts,
   };
+
   return { ctx, toasts, };
 }
 
@@ -71,6 +72,7 @@ describeOrSkip("creationWizard.confirmWizard", () => {
       label: "Char",
       fields: { name: "Alice", },
     };
+
     ctx.wizardPreviewOpen = true;
 
     await creationWizard.confirmWizard!.call(ctx as never, "wiz-stale",);
@@ -92,6 +94,7 @@ describeOrSkip("creationWizard.confirmWizard", () => {
       label: "Char",
       fields: { name: "Alice", },
     };
+
     ctx.wizardPreviewOpen = true;
 
     await creationWizard.confirmWizard!.call(ctx as never, "wiz-A",);
@@ -113,6 +116,7 @@ describeOrSkip("creationWizard.cancelWizard", () => {
       label: "Char",
       fields: { name: "Alice", },
     };
+
     ctx.wizardPreviewOpen = true;
 
     await creationWizard.cancelWizard!.call(ctx as never,);
@@ -139,6 +143,7 @@ describeOrSkip("creation-wizard.cancelWizard signature", () => {
       path.join(import.meta.dir, "creation-wizard.ts",),
       "utf8",
     );
+
     expect(src,).toMatch(/async cancelWizard\(\):\s*Promise<void>/,);
     expect(src,).not.toMatch(/async cancelWizard\(_wizardId: string/,);
   });
@@ -152,6 +157,7 @@ describeOrSkip("creation-wizard.cancelWizard signature", () => {
       ),
       "utf8",
     );
+
     expect(src,).toMatch(/cancelWizard\(\):\s*Promise<void>/,);
     expect(src,).not.toMatch(/cancelWizard\(wizardId: string/,);
   });
@@ -168,6 +174,7 @@ describeOrSkip("creation-wizard.cancelWizard signature", () => {
       ),
       "utf8",
     );
+
     expect(src,).toContain('@click="cancelWizard()"',);
     expect(src,).not.toContain("cancelWizard(wizardDraft",);
   });
@@ -177,6 +184,7 @@ describeOrSkip("creation-wizard.cancelWizard signature", () => {
       path.join(import.meta.dir, "creation-wizard.ts",),
       "utf8",
     );
+
     expect(src,).toContain("BUG-character-creation-wizard-bug-wizardid-unused",);
   });
 },);

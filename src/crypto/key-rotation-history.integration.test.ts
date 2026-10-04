@@ -167,6 +167,7 @@ describe("rotateActorKey — stable per-chat keys", () => {
       .where("chat_id", "=", CHAT_ID,)
       .orderBy("id", "asc",)
       .execute();
+
     expect(messages.length,).toBe(5,);
 
     for (const [i, row,] of messages.entries()) {
@@ -182,6 +183,7 @@ describe("rotateActorKey — stable per-chat keys", () => {
       .select("status",)
       .where("id", "=", result.newKeyId,)
       .executeTakeFirst();
+
     expect(newKeyRow?.status,).toBe("active",);
   });
 
@@ -205,6 +207,7 @@ describe("rotateActorKey — stable per-chat keys", () => {
         chatKey: chatKey.key,
         keyId: chatKey.keyId,
       },);
+
       await db.insertInto("messages",).values({
         id: `r1-msg-${i}`,
         chat_id: CHAT_ID,
@@ -225,6 +228,7 @@ describe("rotateActorKey — stable per-chat keys", () => {
     for (let i = 0; i < 3; i++) {
       const row = await db.selectFrom("messages",).select("content",).where("id", "=", `r1-msg-${i}`,)
         .executeTakeFirst();
+
       expect(row,).toBeDefined();
       const plaintext = await decryptThenDecompress(row!.content, chatKey.key,);
       expect(plaintext,).toBe(`round-1-msg-${i}`,);
@@ -237,6 +241,7 @@ describe("rotateActorKey — stable per-chat keys", () => {
         chatKey: chatKey.key,
         keyId: chatKey.keyId,
       },);
+
       await db.insertInto("messages",).values({
         id: `r2-msg-${i}`,
         chat_id: CHAT_ID,
@@ -257,12 +262,15 @@ describe("rotateActorKey — stable per-chat keys", () => {
     for (let i = 0; i < 3; i++) {
       const row = await db.selectFrom("messages",).select("content",).where("id", "=", `r1-msg-${i}`,)
         .executeTakeFirst();
+
       const plaintext = await decryptThenDecompress(row!.content, chatKey.key,);
       expect(plaintext,).toBe(`round-1-msg-${i}`,);
     }
+
     for (let i = 0; i < 2; i++) {
       const row = await db.selectFrom("messages",).select("content",).where("id", "=", `r2-msg-${i}`,)
         .executeTakeFirst();
+
       const plaintext = await decryptThenDecompress(row!.content, chatKey.key,);
       expect(plaintext,).toBe(`round-2-msg-${i}`,);
     }

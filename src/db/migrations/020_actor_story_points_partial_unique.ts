@@ -46,12 +46,14 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     process.emitWarning(
       `[020_actor_story_points_partial_unique] actor ${dup.actor_id} has ${dup.n} duplicate NULL-world rows; collapsing to oldest.`,
     );
+
     const survivor = await sql<{ id: string }>`
       SELECT id FROM actor_story_points
       WHERE actor_id = ${dup.actor_id} AND world_id IS NULL
       ORDER BY created_at ASC, id ASC
       LIMIT 1
     `.execute(database,);
+
     const survivorId = survivor.rows[0]?.id;
     if (!survivorId) { continue; }
     await sql`
@@ -77,6 +79,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
         updated_at = datetime('now')
       WHERE id = ${survivorId}
     `.execute(database,);
+
     await sql`
       DELETE FROM actor_story_points
       WHERE actor_id = ${dup.actor_id} AND world_id IS NULL AND id != ${survivorId}
@@ -105,6 +108,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .dropIndex("uq_actor_story_points_actor_global",)
     .execute();
+
   await database.schema
     .dropIndex("uq_actor_story_points_actor_world_set",)
     .execute();

@@ -37,6 +37,7 @@ export async function compactPromptHistory(
     compacted: didCompact,
     summary,
   } = await compactor.compact(messages, tokenBudget,);
+
   if (!didCompact) { return undefined; }
 
   // Replace the message list contents with the compacted version
@@ -75,6 +76,7 @@ export function dropOverBudgetSections(
       ordered.push({ ...s, index: si, },);
     }
   }
+
   ordered.sort((a, b,) => priorityOf(b.name,) - priorityOf(a.name,));
 
   let remaining = totalTokens;
@@ -84,6 +86,7 @@ export function dropOverBudgetSections(
     sections[section.index]!.dropped = true;
     remaining -= section.tokens;
   }
+
   return remaining;
 }
 
@@ -112,5 +115,6 @@ export function reorderPromptMessages(
       finalMessages.push(msg,);
     }
   }
+
   return finalMessages;
 }

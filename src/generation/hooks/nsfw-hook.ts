@@ -124,9 +124,11 @@ export class NsfwHook implements HookHandler {
         "nsfw-hook: effective-NSFW lookup failed; failing closed",
         error instanceof Error ? error : new Error(String(error,),),
       );
+
       await logGateDecision(_context, "blocked", "admin_emergency_block", {
         error: String(error,),
       },);
+
       return {
         handled: true,
         eventType: "nsfw_gate",
@@ -193,9 +195,11 @@ export class NsfwHook implements HookHandler {
     if (this.injectedModService) {
       return this.injectedModService;
     }
+
     if (!this.modService) {
       this.modService = new NsfwModerationService(context.db,);
     }
+
     return this.modService;
   }
 

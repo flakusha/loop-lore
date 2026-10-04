@@ -24,6 +24,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
       const npc = Array.isArray(participants,)
         ? participants.find((p: any,) => p.role_in_chat === "member" && p.actor_type !== "user")
         : null;
+
       if (!npc?.actor_id) { return; }
 
       // Resolve the chat's world so mood is read from the world-scoped record
@@ -46,6 +47,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
         // (src/routes/character-mood/state.ts); only real failures propagate.
         if ((error as Error & { status?: number }).status !== 404) { throw error; }
       }
+
       if (moodRes?.ok) {
         const mood = await moodRes.json();
         this._mood = {
@@ -56,6 +58,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
           lastMoodChange: mood.last_mood_change ?? "",
           expressionModifiers: mood.expression_modifiers ?? {},
         };
+
         this._moodSliderValue = this._mood.happiness;
       }
 
@@ -88,6 +91,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
       const npc = Array.isArray(participants,)
         ? participants.find((p: any,) => p.role_in_chat === "member" && p.actor_type !== "user")
         : null;
+
       if (!npc?.actor_id) { return; }
 
       await apiFetch(`/api/v1/actors/${npc.actor_id}/mood`, {
@@ -121,6 +125,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
       const npc = Array.isArray(participants,)
         ? participants.find((p: any,) => p.role_in_chat === "member" && p.actor_type !== "user")
         : null;
+
       if (!npc?.actor_id) { return; }
 
       const moodRes = await apiFetch(`/api/v1/actors/${npc.actor_id}/mood/delta`, {
@@ -177,6 +182,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
       loving: "😍",
       bored: "😴",
     };
+
     return emojis[mood] ?? "😐";
   },
 

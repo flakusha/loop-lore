@@ -51,6 +51,7 @@ export async function createChatSetupTemplate(
     .select("id",)
     .where("slug", "=", params.slug,)
     .executeTakeFirst();
+
   if (slugExists) {
     return { ok: false, code: "conflict", message: "Template slug already exists", };
   }
@@ -71,16 +72,19 @@ export async function createChatSetupTemplate(
         const merged: Record<string, unknown> = params.renderingOverride !== undefined
           ? { ...base, renderingOverride: params.renderingOverride, }
           : { ...base, };
+
         return Object.keys(merged,).length > 0 ? jsonStringifyOr(merged, "{}",) : null;
       })(),
       features: params.features ? jsonStringifyOr(params.features, "[]",) : "[]",
       visibility: params.visibility ?? null,
     },)
     .execute();
+
   const created = await getChatSetupTemplate(database, id,);
   if (!created) {
     return { ok: false, code: "bad_request", message: "Failed to create template", };
   }
+
   return { ok: true, template: created, };
 }
 
@@ -131,16 +135,20 @@ export async function updateChatSetupTemplate(
     const existingGmConfig = existing.gm_config
       ? safeJsonParse<Record<string, unknown>>(existing.gm_config,)
       : null;
+
     const base = existingGmConfig?.ok ? existingGmConfig.value : {};
     const merged: Record<string, unknown> = params.gmConfig
       ? { ...base, ...params.gmConfig, }
       : { ...base, };
+
     if (params.renderingOverride !== undefined) { merged.renderingOverride = params.renderingOverride; }
     updates.gm_config = Object.keys(merged,).length > 0 ? jsonStringifyOr(merged, "{}",) : null;
   }
+
   if (params.features !== undefined) {
     updates.features = params.features ? jsonStringifyOr(params.features, "[]",) : "[]";
   }
+
   if (params.visibility !== undefined) { updates.visibility = params.visibility; }
 
   await database
@@ -148,10 +156,12 @@ export async function updateChatSetupTemplate(
     .set(updates,)
     .where("id", "=", existing.id,)
     .execute();
+
   const updated = await getChatSetupTemplate(database, existing.id,);
   if (!updated) {
     return { ok: false, code: "bad_request", message: "Failed to update template", };
   }
+
   return { ok: true, template: updated, };
 }
 
@@ -170,9 +180,11 @@ export async function deleteChatSetupTemplate(
   if (!existing) {
     return { ok: false, code: "not_found", message: "Template not found", };
   }
+
   await database
     .deleteFrom("chat_setup_templates",)
     .where("id", "=", existing.id,)
     .execute();
+
   return { ok: true, template: existing, };
 }

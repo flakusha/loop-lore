@@ -83,6 +83,7 @@ document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>,) => {
       /* Alpine may fail on partial swaps */
     }
   }
+
   triggerPageLoaders();
   normalizeHeaderSlot();
 },);

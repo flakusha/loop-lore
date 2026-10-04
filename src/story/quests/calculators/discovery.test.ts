@@ -12,6 +12,7 @@ describe("story/quests/calculators/discovery (0% -> real)", () => {
     )
       .toBe(0,);
   });
+
   it("returns 0 for non-location-change events", () => {
     expect(
       calculateDiscoveryProgress(
@@ -21,6 +22,7 @@ describe("story/quests/calculators/discovery (0% -> real)", () => {
       ),
     ).toBe(0,);
   });
+
   it("returns 100-progress for target location", () => {
     expect(
       calculateDiscoveryProgress(
@@ -30,6 +32,7 @@ describe("story/quests/calculators/discovery (0% -> real)", () => {
       ),
     ).toBe(80,);
   });
+
   it("returns clue progress", () => {
     expect(
       calculateDiscoveryProgress(

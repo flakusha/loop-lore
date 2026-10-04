@@ -65,6 +65,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api
         .limit(limit,)
         .offset(offset,)
         .execute();
+
       return jsonResponse({ comparisons: rows.map(parseRun,), limit, offset, },);
     }, {
       response: { 200: SuccessResponse, 401: ErrorResponse, },
@@ -77,15 +78,18 @@ export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api
       if (typeof body.rating !== "number" || body.rating < 1 || body.rating > 5) {
         return jsonError({ message: "rating must be a number between 1 and 5", status: 400, },);
       }
+
       if (body.notes !== undefined && typeof body.notes !== "string") {
         return jsonError({ message: "notes must be a string", status: 400, },);
       }
+
       const existing = await database
         .selectFrom("model_comparison_runs",)
         .select(["ratings",],)
         .where("id", "=", id,)
         .where("user_id", "=", userId,)
         .executeTakeFirst();
+
       if (!existing) { return jsonError({ message: "Comparison not found", status: 404, },); }
       const ratings = parseObject(existing.ratings,);
       ratings.overall = { rating: body.rating, notes: body.notes ?? "", };
@@ -96,6 +100,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api
         .where("id", "=", id,)
         .where("user_id", "=", userId,)
         .execute();
+
       return jsonResponse({ id, ratings, },);
     }, {
       body: t.Object({ rating: t.Number({ minimum: 1, maximum: 5, },), notes: t.Optional(t.String(),), },),

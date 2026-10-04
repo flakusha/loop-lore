@@ -51,6 +51,7 @@ describe("admin-template update/remove gate", () => {
         body: JSON.stringify({ detail: "balanced", mode: "yourself", template: "x", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -62,6 +63,7 @@ describe("admin-template update/remove gate", () => {
         body: JSON.stringify({ cfgScale: 9, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -69,6 +71,7 @@ describe("admin-template update/remove gate", () => {
     const res = await user.handle(
       new Request("http://localhost/api/admin/templates/sdxl", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -80,10 +83,12 @@ describe("admin-template update/remove gate", () => {
         body: JSON.stringify({ detail: "balanced", mode: "yourself", template: "x", },),
       },),
     );
+
     expect(put.status,).toBe(401,);
     const del = await anon.handle(
       new Request("http://localhost/api/admin/templates/sdxl", { method: "DELETE", },),
     );
+
     expect(del.status,).toBe(401,);
   });
 
@@ -95,6 +100,7 @@ describe("admin-template update/remove gate", () => {
         body: JSON.stringify({ detail: "balanced", mode: "last", template: "gate-admin-write", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 });

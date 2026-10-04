@@ -50,11 +50,13 @@ describeOrSkip("EmotionAvatarService.startBatchGeneration", () => {
       },
       uploadDir,
     },);
+
     avatarId = await createAvatar(db, {
       actorId,
       assetId: asset.id,
       label: "base",
     },);
+
     service = new EmotionAvatarService(db,);
   },);
 
@@ -64,6 +66,7 @@ describeOrSkip("EmotionAvatarService.startBatchGeneration", () => {
       baseAvatarId: avatarId,
       emotions: [EmotionType.Happy, EmotionType.Sad,],
     },);
+
     expect(jobId.length,).toBeGreaterThan(0,);
 
     let status: string | undefined;
@@ -71,6 +74,7 @@ describeOrSkip("EmotionAvatarService.startBatchGeneration", () => {
       await Bun.sleep(20,);
       status = service.getJobStatus(jobId,)?.status;
     }
+
     expect(status === "completed" || status === "failed",).toBe(true,);
 
     // Ownership guard: a foreign actor cannot start from someone's avatar.
@@ -97,11 +101,13 @@ describeOrSkip("EmotionAvatarService.startBatchGeneration", () => {
         removeBackground: async () => Buffer.from([137, 80, 78, 71,],),
       },
     },);
+
     let status: string | undefined;
     for (let i = 0; i < 100 && status !== "completed" && status !== "failed"; i++) {
       await Bun.sleep(20,);
       status = service.getJobStatus(jobId,)?.status;
     }
+
     expect(status === "completed" || status === "failed",).toBe(true,);
   },);
 

@@ -54,6 +54,7 @@ describe("LoRA routes — unauthenticated callers get 401", () => {
       strength: 0.5,
       backend: "comfyui",
     },),);
+
     expect(res.status,).toBe(401,);
     const body = await res.json() as { error: string; code: string };
     expect(body.code,).toBe("UNAUTHORIZED",);
@@ -95,6 +96,7 @@ describe("LoRA routes — authenticated in-memory paths", () => {
       strength: 0.5,
       backend: "comfyui",
     },),);
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { ok: boolean; config: { name: string } };
     expect(body.ok,).toBe(true,);

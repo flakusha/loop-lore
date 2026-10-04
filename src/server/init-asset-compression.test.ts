@@ -51,6 +51,7 @@ if (ISOLATED) {
       srcViews: join(tmpdir(), `ll-iap-views-${Math.random().toString(36,).slice(2, 10,)}`,),
       docs: join(tmpdir(), `ll-iap-docs-${Math.random().toString(36,).slice(2, 10,)}`,),
     };
+
     (globalThis as { __iapFixtures?: Fixtures }).__iapFixtures = fx;
     const redirect = (p: unknown,): string => {
       const s = String(p,);
@@ -58,11 +59,14 @@ if (ISOLATED) {
         DOCS,
         fx.docs,
       ],] as const;
+
       for (const [real, fixture,] of map) {
         if (s === real || s.startsWith(`${real}/`,)) { return fixture + s.slice(real.length,); }
       }
+
       return s;
     };
+
     return {
       ...actual,
       existsSync: (p: unknown,) => actual.existsSync(redirect(p,),),
@@ -110,6 +114,7 @@ function makeLogger(): { logger: Logger; calls: LogCall[] } {
   const rec = (level: string,) => (message: unknown,): void => {
     calls.push({ level, message, },);
   };
+
   const logger = {
     trace: rec("trace",),
     debug: rec("debug",),
@@ -122,6 +127,7 @@ function makeLogger(): { logger: Logger; calls: LogCall[] } {
     setBindings: () => {},
     flush: async () => {},
   };
+
   return { logger: logger as unknown as Logger, calls, };
 }
 

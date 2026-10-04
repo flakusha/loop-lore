@@ -33,6 +33,7 @@ export function validatePreSend(
       .filter((p,) => mentionedActorIds.includes(p.actorId,))
       .map((p,) => p.displayName.toLowerCase()),
   );
+
   const tokenRegex = /@([A-Za-z0-9_-]+)/g;
   const unresolvedMentions: string[] = [];
   let match = tokenRegex.exec(text,);
@@ -41,6 +42,7 @@ export function validatePreSend(
     if (!resolvedNames.has(name.toLowerCase(),)) { unresolvedMentions.push(name,); }
     match = tokenRegex.exec(text,);
   }
+
   const { isInitiative, } = parseInitiativeFlag(text,);
   const knownAssets = new Set(pendingAssetIds,);
   const assetTokenRegex = /asset:([A-Za-z0-9-]+)/g;
@@ -50,6 +52,7 @@ export function validatePreSend(
     if (!knownAssets.has(assetMatch[1]!,)) { unknownAssetRefs.push(assetMatch[1]!,); }
     assetMatch = assetTokenRegex.exec(text,);
   }
+
   return {
     ok,
     mentionedActorIds,

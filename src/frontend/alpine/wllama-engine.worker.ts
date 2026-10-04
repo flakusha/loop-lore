@@ -93,6 +93,7 @@ function toMessages(input: unknown,): { role: string; content: string }[] {
         content: typeof entry.content === "string" ? entry.content : "",
       }));
   }
+
   return [{ role: "user", content: String(input ?? "",), },];
 }
 
@@ -106,9 +107,11 @@ async function loadModel(request: LoadRequest,): Promise<string> {
   if (!request.modelSource) {
     throw new Error("wllama load needs a GGUF modelSource (repo + file)",);
   }
+
   if (!request.wasmUrl) {
     throw new Error("wllama load needs a wasmUrl for the runtime",);
   }
+
   const cdnUrl: string = request.cdn;
   // Dynamic import is load-bearing here: the CDN URL is runtime-selected
   // (test seam + version bumps without rebuilds), and wllama must never be
@@ -121,6 +124,7 @@ async function loadModel(request: LoadRequest,): Promise<string> {
       scope.postMessage({ kind: "progress", loaded: record.loaded, total: record.total, },);
     }
   };
+
   const attempts = request.device === "webgpu" ? ["webgpu", "wasm",] : ["wasm",];
   let lastError: unknown = null;
   for (const device of attempts) {
@@ -129,6 +133,7 @@ async function loadModel(request: LoadRequest,): Promise<string> {
         { default: request.wasmUrl, },
         { logger: module.LoggerWithoutDebug, },
       );
+
       // Direct resolve URL: loadModelFromHF hits the HF API, which rejects
       // anonymous callers (401). Same bytes, no API round-trip.
       const directUrl = `https://huggingface.co/${request.modelSource.repo}/resolve/main/${request.modelSource.file}`;
@@ -138,6 +143,7 @@ async function loadModel(request: LoadRequest,): Promise<string> {
         ...(device === "wasm" ? { n_gpu_layers: 0, } : {}),
         progressCallback,
       },);
+
       wllama?.exit().catch(() => undefined);
       wllama = instance;
       loadedModel = request.model;
@@ -146,6 +152,7 @@ async function loadModel(request: LoadRequest,): Promise<string> {
       lastError = error;
     }
   }
+
   throw lastError ?? new Error("wllama load failed",);
 }
 
@@ -166,16 +173,20 @@ scope.onmessage = (event: { data: unknown },): void => {
           scope.postMessage({ kind: "unloaded", id, },);
         },
       );
+
       return;
     }
+
     scope.postMessage({ kind: "unloaded", id, },);
     return;
   }
+
   if (message.kind === "load") {
     if (loadedModel === message.model && wllama) {
       scope.postMessage({ kind: "ready", id, engine: "wllama-cached", },);
       return;
     }
+
     loadModel(message,).then(
       (engine,) => {
         scope.postMessage({ kind: "ready", id, engine: `wllama-${engine}`, },);
@@ -185,12 +196,15 @@ scope.onmessage = (event: { data: unknown },): void => {
         scope.postMessage({ kind: "error", id, message: `model load failed: ${detail}`, },);
       },
     );
+
     return;
   }
+
   if (!wllama) {
     scope.postMessage({ kind: "error", id, message: "no browser model loaded", },);
     return;
   }
+
   const active = wllama;
   const messages = toMessages(message.input,);
   const maxTokens = message.maxTokens;
@@ -207,5 +221,6 @@ scope.onmessage = (event: { data: unknown },): void => {
       },
     );
 };
+
 /** Module marker: keeps this worker's globals out of the shared global scope (sibling workers declare the same names). */
 export {};

@@ -25,6 +25,7 @@ export function applyImageTemplate(
   for (const [key, value,] of Object.entries(ctx,)) {
     prompt = prompt.replaceAll(`{{${key}}}`, value ?? "",);
   }
+
   // Unknown variables render empty — same contract as resolveTemplate().
   prompt = prompt.replace(/\{\{[^}]+\}\}/g, "",);
   return { prompt, negativePrompt: payload.negativePrompt, };
@@ -46,5 +47,6 @@ export function applySimpleTemplate(
   for (const [key, value,] of Object.entries(merged,)) {
     body = body.replaceAll(`{{${key}}}`, value,);
   }
+
   return body;
 }

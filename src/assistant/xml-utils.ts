@@ -42,6 +42,7 @@ export function getSessionNonce(): string {
       .replace(/=+$/, "",)
       .slice(0, 12,);
   }
+
   return _sessionNonce;
 }
 
@@ -65,6 +66,7 @@ function escapeFence(content: string,): { escaped: string; fenceLen: number } {
       if (run.length > maxBackticks) { maxBackticks = run.length; }
     }
   }
+
   const fenceLen = Math.max(3, maxBackticks + 1,);
   return { escaped: content, fenceLen, };
 }
@@ -124,9 +126,11 @@ export function wrapContent(tag: string, content: string, format: WrapperFormat 
     case "fence": {
       return wrapFence(tag, content,);
     }
+
     case "sentinel": {
       return wrapSentinel(tag, content,);
     }
+
     case "xml":
     default: {
       return wrapXml(tag, content,);

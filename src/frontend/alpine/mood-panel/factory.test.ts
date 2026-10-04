@@ -47,6 +47,7 @@ describeOrSkip("createMoodPanelState", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await state.loadMood("a1",);
     expect(state.mood,).toBeNull();
   });
@@ -57,6 +58,7 @@ describeOrSkip("createMoodPanelState", () => {
       url === "/api/v1/actors/a1/emotions"
         ? Response.json([{ emotion_id: "joy", intensity: 1, },],)
         : Response.json([{ id: "joy", display_name: "Joy", icon: null, },],);
+
     await state.loadEmotions("a1",);
     await state.loadEmotionDefs();
     expect(state.emotions,).toEqual([{ emotion_id: "joy", intensity: 1, },] as never,);
@@ -99,11 +101,13 @@ describeOrSkip("createMoodPanelState", () => {
       { id: "joy", display_name: "Joy", icon: "i", },
       { id: "calm", display_name: "Calm", icon: null, },
     ] as never;
+
     state.emotions = [
       { emotion_id: "joy", intensity: 0.8, },
       { emotion_id: "ghost", intensity: 1, },
       { emotion_id: "calm", intensity: 0.2, },
     ] as never;
+
     expect(state.getActiveEmotions(),).toEqual([
       { def: { id: "joy", display_name: "Joy", icon: "i", }, intensity: 0.8, },
       { def: { id: "calm", display_name: "Calm", icon: null, }, intensity: 0.2, },
@@ -128,6 +132,7 @@ describeOrSkip("createMoodPanelState — rejection paths", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await state.loadEmotions("a1",);
     expect(state.emotions,).toEqual([{ emotion_id: "calm", intensity: 0.5, },] as never,);
     expect(state.loading,).toBe(false,);
@@ -139,6 +144,7 @@ describeOrSkip("createMoodPanelState — rejection paths", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await state.loadEmotionDefs();
     expect(state.emotionDefs,).toEqual([{ id: "joy", display_name: "Joy", icon: null, },] as never,);
   });
@@ -149,6 +155,7 @@ describeOrSkip("createMoodPanelState — rejection paths", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await state.applyHappinessDelta("a1", 20,);
     expect(state.mood,).toEqual({ happiness: 70, currentMood: "happy", } as never,);
   });

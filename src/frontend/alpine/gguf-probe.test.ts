@@ -16,18 +16,22 @@ function minimalBlob(): Uint8Array {
   const u32 = (v: number,): void => {
     parts.push(v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (v >>> 24) & 0xff,);
   };
+
   const u64 = (v: number,): void => {
     u32(v >>> 0,);
     u32(Math.floor(v / 4294967296,),);
   };
+
   const raw = (bytes: number[],): void => {
     parts.push(...bytes,);
   };
+
   const text = (s: string,): void => {
     const encoded = new TextEncoder().encode(s,);
     u64(encoded.length,);
     raw(Array.from(encoded,),);
   };
+
   raw([0x47, 0x47, 0x55, 0x46,],); // magic
   u32(3,); // version
   u64(1,); // n_tensors
@@ -57,6 +61,7 @@ function expectProbeCode(data: Uint8Array, code: -2 | -3 | -4,): void {
     expect((error as GgufProbeError).code,).toBe(code,);
     return;
   }
+
   throw new Error(`expected probe to throw ${code}`,);
 }
 
@@ -75,15 +80,18 @@ describe("gguf-probe — valid headers", () => {
     const u32 = (v: number,): void => {
       parts.push(v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (v >>> 24) & 0xff,);
     };
+
     const u64 = (v: number,): void => {
       u32(v >>> 0,);
       u32(0,);
     };
+
     const text = (s: string,): void => {
       const encoded = new TextEncoder().encode(s,);
       u64(encoded.length,);
       parts.push(...encoded,);
     };
+
     parts.push(0x47, 0x47, 0x55, 0x46,);
     u32(3,);
     u64(0,);

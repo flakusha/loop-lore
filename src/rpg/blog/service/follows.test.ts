@@ -76,6 +76,7 @@ describe("blog follows", () => {
     expect(await getFollowStatus(db, "user-follower", "user-author",),).toEqual({
       following: false,
     },);
+
     await follow(db, "user-follower", "user-author",);
     expect(await getFollowStatus(db, "user-follower", "user-author",),).toEqual({
       following: true,

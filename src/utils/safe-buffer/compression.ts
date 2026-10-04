@@ -41,10 +41,12 @@ export function safeDecompress(
         decompressed = gunzipSync(data,);
         break;
       }
+
       case "brotli": {
         decompressed = brotliDecompressSync(data,);
         break;
       }
+
       case "zstd": {
         // zstd decompression via Bun runtime
         const bun = Bun as { zstdDecompressSync?: (data: Buffer,) => Buffer };
@@ -52,9 +54,11 @@ export function safeDecompress(
         if (!fn) {
           return { ok: false, error: new Error("zstd decompression not available",), };
         }
+
         decompressed = fn(data,);
         break;
       }
+
       default: {
         return { ok: false, error: new Error(`Unknown algorithm: ${algorithm as string}`,), };
       }
@@ -114,19 +118,23 @@ export function safeCompress(
         compressed = gzipSync(data,);
         break;
       }
+
       case "brotli": {
         compressed = brotliCompressSync(data,);
         break;
       }
+
       case "zstd": {
         const bun = Bun as { zstdCompressSync?: (data: Buffer,) => Buffer };
         const fn = bun.zstdCompressSync;
         if (!fn) {
           return { ok: false, error: new Error("zstd compression not available",), };
         }
+
         compressed = fn(data,);
         break;
       }
+
       default: {
         return { ok: false, error: new Error(`Unknown algorithm: ${algorithm as string}`,), };
       }

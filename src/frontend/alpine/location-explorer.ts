@@ -138,6 +138,7 @@ const safeParseList = (raw: string,): string[] => {
           const inDesc = (l.description || "").toLowerCase().includes(q,);
           if (!inName && !inDesc) { continue; }
         }
+
         // Status
         if (status && l.publication_status !== status) { continue; }
         // Top-level only
@@ -151,6 +152,7 @@ const safeParseList = (raw: string,): string[] => {
         if (timeOfDay && state?.time_of_day !== timeOfDay) { continue; }
         out.push(l,);
       }
+
       return out;
     },
 
@@ -180,10 +182,12 @@ const safeParseList = (raw: string,): string[] => {
         const res = await apiFetch(`/api/v1/worlds/${this.worldId}/location-explorer`, {
           headers: { Accept: "application/json", },
         },);
+
         if (!res.ok) {
           this.error = true;
           return;
         }
+
         const body = await res.json();
         this.locations = (body.data?.locations as ExplorerLocation[]) || [];
         this.states = (body.data?.states as ExplorerLocationState[]) || [];
@@ -196,6 +200,7 @@ const safeParseList = (raw: string,): string[] => {
         log.warn("location explorer load failed", { error: String(error,), },);
         this.error = true;
       }
+
       this.loading = false;
     },
 
@@ -211,10 +216,12 @@ const safeParseList = (raw: string,): string[] => {
         this.detail = cached;
         return;
       }
+
       try {
         const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations/${locId}/details`, {
           headers: { Accept: "application/json", },
         },);
+
         if (!res.ok) { return; }
         const body = await res.json();
         const detail = body.data as ExplorerDetail;

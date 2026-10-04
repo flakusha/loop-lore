@@ -85,6 +85,7 @@ export const adminUsers = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ role: this.editRoleValue, },),
       },);
+
       if (res.ok) {
         showToast("success", t("toasts.roleUpdated",),);
         this.cancelEditRole();

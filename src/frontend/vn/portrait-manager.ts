@@ -35,13 +35,16 @@ export function getPortraitPosition(
     case "assistant": {
       return "left";
     }
+
     case "user": {
       return "right";
     }
+
     case "system":
     case "narration": {
       return "center";
     }
+
     default: {
       return "none";
     }

@@ -65,6 +65,7 @@ async function main(): Promise<void> {
       // exit (batch timer), and the report IS the CLI's contract.
       process.stdout.write(`${line}\n`,);
     }
+
     if (updateBaseline) {
       const baseline = Object.fromEntries(reports.map((r,) => [r.task, reportMetrics(r,),]),);
       const serialized = safeJsonStringify(baseline,);
@@ -72,10 +73,12 @@ async function main(): Promise<void> {
       log.info("baseline updated",);
       return;
     }
+
     const regressions = diffBaseline(reports, await readBaseline(),);
     for (const r of regressions) {
       log.info(`REGRESSION ${r.task}: ${r.kind} baseline=${r.baseline} current=${r.current}`,);
     }
+
     if (regressions.length > 0) {
       process.exitCode = 1;
     }

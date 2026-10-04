@@ -47,6 +47,7 @@ export async function enqueueAutoMatting({
     uploadDir,
     resolveProvider: () => provider ?? null,
   },);
+
   const enqueued = await matting.startMatting({ assetId, ownerId, },);
   if (!enqueued.ok) {
     getLogger().warn({ event: "matting.auto_enqueue_skipped", assetId, reason: enqueued.error, },);

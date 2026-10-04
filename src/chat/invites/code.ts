@@ -16,5 +16,6 @@ export function generateInviteCode(): string {
   for (let i = 0; i < CODE_LENGTH; i++) {
     code += CODE_ALPHABET[bytes[i]! % CODE_ALPHABET.length]!;
   }
+
   return code;
 }

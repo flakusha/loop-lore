@@ -36,6 +36,7 @@ export function generateLoot(
       eligible.push(entry,);
     }
   }
+
   if (eligible.length === 0) {
     return { drops: [], totalGoldValue: 0, hasRareDrop: false, worldItemIds: [], };
   }
@@ -127,6 +128,7 @@ function rollQuantity(min: number, max: number,): number {
   if (min >= max) {
     return min;
   }
+
   const range = max - min + 1;
   return min + (rollDie(Math.min(range, 100,) as DiceSides,) - 1);
 }

@@ -27,6 +27,7 @@ export async function finalizeExportZip(input: FinalizeExportInput,): Promise<Bu
     includes: include,
     item_count: itemCount,
   };
+
   const schemaVersion = {
     schema_version: "1.0",
     export_format_version: "1.0",
@@ -55,6 +56,7 @@ export async function finalizeExportZip(input: FinalizeExportInput,): Promise<Bu
     contents: counts,
     checksums,
   };
+
   const manifest = assetManifest ? { ...manifestBase, asset_manifest: assetManifest, } : manifestBase;
   const manifestStr = prettyJson(manifest,);
   zip.file("manifest.json", manifestStr,);

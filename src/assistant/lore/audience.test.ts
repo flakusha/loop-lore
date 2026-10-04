@@ -86,6 +86,7 @@ describe("isLoreVisibleTo — location subject", () => {
     const scope: LoreScope = {
       subject: { kind: "location", locationId: "castle-underground", },
     };
+
     expect(isLoreVisibleTo(entry(scope,), human,),).toBeTrue();
   });
 
@@ -107,6 +108,7 @@ describe("isLoreVisibleTo — location subject", () => {
       subject: { kind: "location", locationId: "castle-underground", },
       requires_presence: false,
     };
+
     const away: ActorIdentity = { ...human, locationId: "castle-surface", };
     expect(isLoreVisibleTo(entry(scope,), away,),).toBeTrue();
   });

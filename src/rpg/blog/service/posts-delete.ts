@@ -21,11 +21,13 @@ export async function deletePost(
     .select("author_id",)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   if (!owner || (owner.author_id !== callerUserId && !isAdmin)) { return false; }
 
   const result = await db
     .deleteFrom("blog_posts",)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   return Number(result?.numDeletedRows ?? 0,) > 0;
 }

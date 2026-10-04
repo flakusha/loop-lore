@@ -44,15 +44,18 @@ export async function transfer(
     .where("id", "=", worldItemId,)
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
+
   if (!source || !Number.isInteger(quantity,) || quantity <= 0 || (toLocationId && toActorId)) {
     return { success: false, fromRemaining: 0, toQuantity: 0, transferred: 0, };
   }
+
   const definition = await db
     .selectFrom("items",)
     .select("id",)
     .where("id", "=", source.item_id,)
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
+
   if (!definition) { return { success: false, fromRemaining: source.quantity, toQuantity: 0, transferred: 0, }; }
   if (toLocationId) {
     const location = await db
@@ -61,8 +64,10 @@ export async function transfer(
       .where("id", "=", toLocationId,)
       .where("world_id", "=", worldId,)
       .executeTakeFirst();
+
     if (!location) { return { success: false, fromRemaining: source.quantity, toQuantity: 0, transferred: 0, }; }
   }
+
   const actualTransfer = Math.min(quantity, source.quantity,);
   const remaining = source.quantity - actualTransfer;
   if (remaining <= 0) {
@@ -82,6 +87,7 @@ export async function transfer(
       .selectAll()
       .where("item_id", "=", source.item_id,)
       .where("world_id", "=", worldId,);
+
     if (toLocationId) { query = query.where("location_id", "=", toLocationId,); }
     if (toActorId) { query = query.where("owner_actor_id", "=", toActorId,); }
     const existing = await query.executeTakeFirst();
@@ -113,6 +119,7 @@ export async function transfer(
         .execute();
     }
   }
+
   return { success: true, fromRemaining: remaining, toQuantity: actualTransfer, transferred: actualTransfer, };
 }
 
@@ -137,6 +144,7 @@ export async function destroy(
   if (quantity === undefined) {
     const result = await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,)
       .execute();
+
     return (result[0]?.numDeletedRows ?? 0) > 0;
   }
 

@@ -17,6 +17,7 @@ export function renderSelected(ctx: NewChatCtx,): void {
     const chip = document.createElement("span",);
     chip.style.cssText =
       "display:inline-flex;align-items:center;gap:var(--space-1);padding:2px var(--space-2);background:var(--bg-tertiary);border-radius:var(--radius-sm);font-size:13px";
+
     chip.textContent = a.display_name || a.name || "Unknown";
     const btn = document.createElement("button",);
     btn.type = "button";
@@ -28,6 +29,7 @@ export function renderSelected(ctx: NewChatCtx,): void {
       const fn = (globalThis as Record<string, unknown>)["removeParticipant"];
       if (typeof fn === "function") { (fn as (id: string,) => void)(a.id,); }
     },);
+
     chip.appendChild(btn,);
     ctx.selectedEl.appendChild(chip,);
   }
@@ -48,24 +50,29 @@ export function renderResults(ctx: NewChatCtx, filtered: any[],): void {
     ctx.resultsEl.appendChild(empty,);
     return;
   }
+
   for (const a of filtered) {
     const disabled = isGroup(ctx,) && ctx.selected.find((s: any,) => s.id === a.id);
     const row = document.createElement("div",);
     const cursorAndOpacity = disabled ? "opacity:0.4;cursor:default" : "cursor:pointer";
     row.style.cssText =
       `padding:var(--space-2) var(--space-3);${cursorAndOpacity};display:flex;align-items:center;gap:var(--space-2)`;
+
     row.addEventListener("mouseenter", () => {
       row.style.background = "var(--bg-tertiary)";
     },);
+
     row.addEventListener("mouseleave", () => {
       row.style.background = "";
     },);
+
     if (!disabled) {
       row.addEventListener("click", () => {
         const fn = (globalThis as Record<string, unknown>)["selectActorFromList"];
         if (typeof fn === "function") { (fn as (id: string,) => void)(a.id,); }
       },);
     }
+
     const avatar = document.createElement("span",);
     avatar.style.fontSize = "16px";
     avatar.textContent = a.avatar_asset_id ? "" : "👤";
@@ -84,6 +91,7 @@ export function renderResults(ctx: NewChatCtx, filtered: any[],): void {
       tag.textContent = "added";
       row.appendChild(tag,);
     }
+
     ctx.resultsEl.appendChild(row,);
   }
 }
@@ -115,6 +123,7 @@ export function removeParticipant(ctx: NewChatCtx, id: string,): void {
   for (const a of ctx.selected) {
     if (a.id !== id) { next.push(a,); }
   }
+
   ctx.selected = next;
   renderSelected(ctx,);
   updateMemoryCarryVisibility(ctx,);
@@ -136,6 +145,7 @@ export function selectActor(ctx: NewChatCtx, actor: any,): void {
   } else {
     ctx.selected = [actor,];
   }
+
   renderSelected(ctx,);
   updateMemoryCarryVisibility(ctx,);
   if (ctx.searchInput) { ctx.searchInput.value = ""; }
@@ -175,6 +185,7 @@ export function bindSelectionHandlers(ctx: NewChatCtx,): void {
       if (ctx.resultsEl) { ctx.resultsEl.style.display = "none"; }
       return;
     }
+
     renderResults(ctx, filterActors(ctx.actors, q,),);
   },);
 

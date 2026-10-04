@@ -67,6 +67,7 @@ async function seedUser(
       age_gate_accepted_at: opts.ageGateAcceptedAt ?? null,
     },)
     .execute();
+
   return userId;
 }
 
@@ -95,6 +96,7 @@ async function createAiActor(
       content_rating,
     },)
     .execute();
+
   return actorId;
 }
 
@@ -121,6 +123,7 @@ describe("checkNsfwEligibility (pre-LLM NSFW gate)", () => {
       birthDate: null,
       ageGateAcceptedAt: null,
     },);
+
     const actorId = await createAiActor(db, ContentRating.Sfw,);
 
     const result = await checkNsfwEligibility({
@@ -155,6 +158,7 @@ describe("checkNsfwEligibility (pre-LLM NSFW gate)", () => {
       birthDate: "1990-01-01",
       ageGateAcceptedAt: null,
     },);
+
     const actorId = await createAiActor(db, ContentRating.NsfwMild,);
 
     const result = await checkNsfwEligibility({
@@ -174,6 +178,7 @@ describe("checkNsfwEligibility (pre-LLM NSFW gate)", () => {
       birthDate: "2015-01-01",
       ageGateAcceptedAt: "2025-01-01T00:00:00Z",
     },);
+
     const actorId = await createAiActor(db, ContentRating.NsfwIntense,);
 
     const result = await checkNsfwEligibility({
@@ -233,6 +238,7 @@ describe("checkNsfwEligibility (pre-LLM NSFW gate)", () => {
         userId: adultUserId,
         chatId: "test-chat",
       },);
+
       expect(result.allowed,).toBe(true,);
     }
   });

@@ -48,6 +48,7 @@ export async function autoRenameChat(
       .select("settings",)
       .where("id", "=", chatRecord.created_by,)
       .executeTakeFirst();
+
     const ownerSettings = owner?.settings ? jsonParseOr<Record<string, unknown>>(owner.settings, {},) : {};
     if (ownerSettings["auto_rename_enabled"] === false) {
       log().debug("Auto-rename disabled by owner setting", { chatId, },);
@@ -70,6 +71,7 @@ export async function autoRenameChat(
       .select("name",)
       .where("id", "=", chatRecord.current_location_id,)
       .executeTakeFirst();
+
     locationName = loc?.name ?? null;
   }
 

@@ -22,6 +22,7 @@ try {
 } catch {
   createLogger({ level: "error", },);
 }
+
 const log = getLogger().child({ module: "agency/quality-metrics", },);
 
 /**
@@ -41,6 +42,7 @@ export async function recordAgencyMode(
     .set({ agency_mode: mode, },)
     .where("id", "=", logId,)
     .execute();
+
   log.debug("agency_mode recorded", { logId, mode, },);
 }
 
@@ -137,6 +139,7 @@ export async function queryAgencyMetrics(
     total += r.total;
     meaningful += r.meaningful;
   }
+
   return { total, meaningful, byDimension, };
 }
 

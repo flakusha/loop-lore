@@ -48,6 +48,7 @@ function makeConfig(overrides: Partial<HeadersConfig> = {},): HeadersConfig {
     nel: null,
     hsts: { enabled: false, maxAge: 31536000, includeSubDomains: true, preload: false, },
   };
+
   return { ...base, ...overrides, };
 }
 
@@ -112,17 +113,20 @@ describe("ResponseHeaderPolicy.apply — classification", () => {
       ...makeConfig(),
       csp: { ...CSP_DEFAULTS, enabled: true, },
     },);
+
     const request = req("GET", "https://x/",);
     const nonce = generateNonce(request,);
     const out = policy.apply({
       request,
       response: res(200, { "content-type": "text/html", }, "<html></html>",),
     },);
+
     const csp = out.headers.get("Content-Security-Policy",) ?? "";
     const scriptSrc = csp
       .split(";",)
       .map(s => s.trim())
       .find(s => s.startsWith("script-src",)) ?? "";
+
     expect(scriptSrc,).not.toMatch(/'unsafe-inline'/,);
     expect(csp,).toContain(`'nonce-${nonce}'`,);
   });
@@ -152,6 +156,7 @@ describe("ResponseHeaderPolicy.apply — precedence", () => {
       "x-frame-options": "SAMEORIGIN",
       "cache-control": "public, max-age=60",
     },);
+
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("content-type",),).toBe("text/html; charset=utf-8",);
     expect(out.headers.get("x-frame-options",),).toBe("SAMEORIGIN",);
@@ -166,6 +171,7 @@ describe("ResponseHeaderPolicy.apply — immutable augmentation", () => {
       "content-type": "application/javascript",
       "cache-control": "public, max-age=31536000",
     },);
+
     const out = policy.apply({ request: req("GET", "https://x/alpine-tx4kdwfm.js",), response, },);
     expect(out.headers.get("cache-control",),).toBe("public, max-age=31536000, immutable",);
   });
@@ -176,6 +182,7 @@ describe("ResponseHeaderPolicy.apply — immutable augmentation", () => {
       "content-type": "application/javascript",
       "cache-control": "public, max-age=60",
     },);
+
     const out = policy.apply({ request: req("GET", "https://x/app.js",), response, },);
     expect(out.headers.get("cache-control",),).toBe("public, max-age=60",);
   });
@@ -189,6 +196,7 @@ describe("ResponseHeaderPolicy.apply — isolation toggles", () => {
         crossOriginEmbedderPolicy: "require-corp",
       },),
     );
+
     const response = res(200, { "content-type": "text/html", }, "<html></html>",);
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("Cross-Origin-Opener-Policy",),).toBe("same-origin",);
@@ -202,6 +210,7 @@ describe("ResponseHeaderPolicy.apply — isolation toggles", () => {
         crossOriginEmbedderPolicy: "credentialless",
       },),
     );
+
     const response = res(200, { "content-type": "text/html", }, "<html></html>",);
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("Cross-Origin-Opener-Policy",),).toBe("same-origin-allow-popups",);
@@ -227,6 +236,7 @@ describe("ResponseHeaderPolicy.apply — observability + client hints", () => {
         saveData: true,
       },),
     );
+
     const response = res(200, { "content-type": "text/html", }, "<html></html>",);
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("Reporting-Endpoints",),).toBe('default="https://x/report"',);
@@ -246,6 +256,7 @@ describe("ResponseHeaderPolicy.apply — streaming safe", () => {
         controller.close();
       },
     },);
+
     const response = new Response(stream, { status: 200, headers: { "content-type": "text/html", }, },);
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("Content-Security-Policy",),).not.toBeNull();
@@ -314,6 +325,7 @@ describe("ResponseHeaderPolicy.apply — HSTS (BUG-hsts-header-missing-from-resp
         hsts: { enabled: true, maxAge: 31536000, includeSubDomains: true, preload: false, },
       },),
     );
+
     const response = res(200, { "content-type": "text/html", }, "<html></html>",);
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("Strict-Transport-Security",),).toBe(
@@ -327,6 +339,7 @@ describe("ResponseHeaderPolicy.apply — HSTS (BUG-hsts-header-missing-from-resp
         hsts: { enabled: true, maxAge: 31536000, includeSubDomains: true, preload: false, },
       },),
     );
+
     const response = res(200, { "content-type": "text/html", }, "<html></html>",);
     const out = policy.apply({ request: req("GET", "http://x/",), response, },);
     expect(out.headers.get("Strict-Transport-Security",),).toBeNull();
@@ -345,6 +358,7 @@ describe("ResponseHeaderPolicy.apply — HSTS (BUG-hsts-header-missing-from-resp
         hsts: { enabled: true, maxAge: 63072000, includeSubDomains: true, preload: true, },
       },),
     );
+
     const response = res(200, { "content-type": "text/html", }, "<html></html>",);
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("Strict-Transport-Security",),).toBe(
@@ -370,6 +384,7 @@ describe("ResponseHeaderPolicy — task additions (TASK-headers-additional-usefu
       statusText: "Not Found",
       headers: { "content-type": "text/html; charset=utf-8", },
     },);
+
     const out = policy.apply({ request: req("GET", "https://x/missing",), response: original, },);
     expect(out.status,).toBe(404,);
     expect(out.statusText,).toBe("Not Found",);
@@ -381,6 +396,7 @@ describe("ResponseHeaderPolicy — task additions (TASK-headers-additional-usefu
       status: 200,
       headers: { "content-type": "text/html; charset=utf-8", },
     },);
+
     const out = policy.apply({ request: req("GET", "https://x/",), response: original, },);
     expect(typeof out.statusText,).toBe("string",);
   });
@@ -407,6 +423,7 @@ describe("ResponseHeaderPolicy — task additions (TASK-headers-additional-usefu
       "content-type": "text/html; charset=utf-8",
       "origin-agent-cluster": "?0",
     }, "<html></html>",);
+
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("Origin-Agent-Cluster",),).toBe("?0",);
   });
@@ -417,11 +434,13 @@ describe("ResponseHeaderPolicy — task additions (TASK-headers-additional-usefu
         reportingEndpoints: { default: "https://reports.example.com/ingest", },
       },),
     );
+
     const response = res(200, { "content-type": "text/html", }, "<html></html>",);
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("Reporting-Endpoints",),).toBe(
       'default="https://reports.example.com/ingest"',
     );
+
     const reportTo = out.headers.get("Report-To",);
     expect(reportTo,).toContain('"group":"default"',);
     expect(reportTo,).toContain('"url":"https://reports.example.com/ingest"',);
@@ -448,6 +467,7 @@ describe("ResponseHeaderPolicy — task additions (TASK-headers-additional-usefu
       "content-type": "application/json",
       "cache-control": "public, max-age=60",
     }, "{}",);
+
     const out = policy.apply({ request: req("GET", "https://x/api/chats",), response, },);
     expect(out.headers.get("Cache-Control",),).toBe("public, max-age=60",);
   });
@@ -458,6 +478,7 @@ describe("ResponseHeaderPolicy — task additions (TASK-headers-additional-usefu
       "content-type": "image/png",
       "cache-control": "public, max-age=31536000, immutable",
     }, new Uint8Array(1,),);
+
     const out = policy.apply({ request: req("GET", "https://x/api/assets/abc.png",), response, },);
     expect(out.headers.get("Cache-Control",),).toBe(
       "public, max-age=31536000, immutable",

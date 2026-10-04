@@ -37,6 +37,7 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
   if (!db) {
     return { systemMessage: "**Battle unavailable:** command context missing database.", handled: true, };
   }
+
   const userId = ctx.userId;
   if (!userId) {
     return { systemMessage: "**Battle unavailable:** missing user context.", handled: true, };
@@ -56,6 +57,7 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
         handled: true,
       };
     }
+
     return {
       systemMessage: formatBattle(active,),
       action: "battle-status",
@@ -85,6 +87,7 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
         createdBy: userId,
         combatants,
       },);
+
       const names = formatRosterNames(battle.combatants,);
       return {
         systemMessage: `**Battle started!**\n\nCombatants: ${names}\n\n${formatBattle(battle,)}`,
@@ -106,6 +109,7 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
     if (!active) {
       return { systemMessage: "**Battle:** no active encounter to end.", handled: true, };
     }
+
     await endBattle({ database: db, }, active.id, BattleStatus.Abandoned,);
     return {
       systemMessage: "**Battle ended.**",
@@ -165,6 +169,7 @@ async function alignCombatant(
     .set({ combat_alignment: side, },)
     .where("actor_id", "=", target.id,)
     .execute();
+
   return {
     systemMessage: `**${target.name}** is now a **${side}** combatant. Run \`/battle start\` to rebuild the roster.`,
     handled: true,
@@ -182,18 +187,22 @@ export function formatBattle(battle: BattleWithRoster,): string {
     `**Battle — Round ${battle.round}** (${battle.status})`,
     "",
   ];
+
   for (const c of battle.combatants) {
     const marker = c.id === acting?.id ? "➤ " : "  ";
     const gone = c.hp <= 0 ? " 💀" : "";
     lines.push(`${marker}**${c.name}** — HP ${Math.max(0, c.hp,)}/${c.maxHp} · AC ${c.ac}${gone}`,);
   }
+
   if (acting) {
     lines.push("", `_${acting.name}'s turn._`,);
   }
+
   const nonEmpty: string[] = [];
   for (const line of lines) {
     if (line) { nonEmpty.push(line,); }
   }
+
   return nonEmpty.join("\n",);
 }
 
@@ -216,6 +225,7 @@ export function serializeBattle(battle: BattleWithRoster,): {
     maxHp: c.maxHp,
     initiative: c.initiative,
   }),);
+
   return {
     id: battle.id,
     status: battle.status,

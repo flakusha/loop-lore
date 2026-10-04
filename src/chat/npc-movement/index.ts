@@ -103,6 +103,7 @@ export class NpcMovementIndicatorService {
         (row.metadata as string) ?? "{}",
         {},
       );
+
       if (metadata.movement) {
         for (const event of metadata.movement) {
           if (!query.actorId || event.actorId === query.actorId) {

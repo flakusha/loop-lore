@@ -40,6 +40,7 @@ const craftResultSchema = t.Object({
   materialsConsumed: t.Array(materialRecordSchema,),
   materialsSaved: t.Array(materialRecordSchema,),
 },);
+
 const craftAttemptSchema = t.Object({
   id: Id,
   actorId: Id,
@@ -83,6 +84,7 @@ export function craftingAttemptRoutes({ database, }: { database: Db }, prefix = 
         recipeId: body.recipeId,
         stationInstanceId: body.stationInstanceId,
       },);
+
       return jsonResponse(result,);
     }, {
       params: t.Object({ worldId: Id, },),

@@ -69,6 +69,7 @@ async function seed(db: Kysely<DB>,): Promise<void> {
     type: "group",
     mode: "group",
   } as never,);
+
   await insertChatParticipants(db, CHAT_ID, OWNER_ID, {} as never,);
 }
 
@@ -101,6 +102,7 @@ describe("partySplitRoutes — ownership derived from session, not body", () => 
       .select("id",)
       .where("parent_chat_id", "=", CHAT_ID,)
       .execute();
+
     expect(branches,).toHaveLength(0,);
 
     await db.destroy();
@@ -157,6 +159,7 @@ describe("partySplitRoutes — ownership derived from session, not body", () => 
       .select("id",)
       .where("parent_chat_id", "=", CHAT_ID,)
       .execute();
+
     expect(branches,).toHaveLength(2,);
 
     await db.destroy();

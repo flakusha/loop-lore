@@ -99,6 +99,7 @@ describe("pointBuy", () => {
       wis: 2,
       cha: 0,
     };
+
     const stats = pointBuy(allocation,);
     expect(stats,).not.toBeNull();
     expect(stats!.str,).toBe(15,);
@@ -118,6 +119,7 @@ describe("pointBuy", () => {
       wis: 0,
       cha: 0,
     };
+
     expect(pointBuy(allocation,),).toBeNull();
   });
 
@@ -130,6 +132,7 @@ describe("pointBuy", () => {
       wis: 2,
       cha: 0,
     };
+
     expect(pointBuy(allocation,),).toBeNull();
   });
 
@@ -142,6 +145,7 @@ describe("pointBuy", () => {
       wis: 0,
       cha: 0,
     };
+
     expect(pointBuy(allocation,),).toBeNull();
   });
 });
@@ -175,6 +179,7 @@ describe("rollStats4d6", () => {
       const stats = rollStats4d6();
       allStats.push(...stats,);
     }
+
     const avg = allStats.reduce((a, b,) => a + b, 0,) / allStats.length;
     expect(avg,).toBeGreaterThan(11,);
     expect(avg,).toBeLessThan(14,);

@@ -65,10 +65,12 @@ export async function listActorNotes(
     .selectFrom("actor_notes",)
     .select(database.fn.countAll().as("total",),)
     .where("actor_id", "=", actorId,);
+
   let listQuery = database
     .selectFrom("actor_notes",)
     .selectAll()
     .where("actor_id", "=", actorId,);
+
   if (opts.category) {
     countQuery = countQuery.where("category", "=", opts.category,);
     listQuery = listQuery.where("category", "=", opts.category,);
@@ -131,6 +133,7 @@ export async function createActorNote(
     .selectAll()
     .where("id", "=", id,)
     .executeTakeFirstOrThrow();
+
   return { ok: true, entity, };
 }
 
@@ -161,6 +164,7 @@ export async function updateActorNote(
     .where("id", "=", noteId,)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!existing) {
     return { ok: false, code: "not_found", message: "Note not found", };
   }
@@ -168,12 +172,14 @@ export async function updateActorNote(
   const updates: Updateable<DB["actor_notes"]> = {
     updated_at: new Date().toISOString(),
   };
+
   if (patch.title != null) { updates.title = patch.title; }
   if (patch.content != null) { updates.content = patch.content; }
   if (patch.category != null) { updates.category = patch.category; }
   if (patch.pinned != null) {
     updates.pinned = patch.pinned ? PinnedState.Pinned : PinnedState.Unpinned;
   }
+
   if (patch.sortOrder != null) { updates.sort_order = patch.sortOrder; }
 
   if (Object.keys(updates,).length === 1) { return { ok: true, entity: existing, }; }
@@ -189,6 +195,7 @@ export async function updateActorNote(
     .selectAll()
     .where("id", "=", noteId,)
     .executeTakeFirstOrThrow();
+
   return { ok: true, entity, };
 }
 
@@ -216,8 +223,10 @@ export async function deleteActorNote(
     .where("id", "=", noteId,)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!result || Number(result.numDeletedRows ?? 0,) === 0) {
     return { ok: false, code: "not_found", message: "Note not found", };
   }
+
   return { ok: true, id: noteId, };
 }

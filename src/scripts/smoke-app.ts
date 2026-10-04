@@ -28,6 +28,7 @@ const app = createApp({
   handleNonApiRequest: async () => new Response("Not found", { status: 404, },),
   handleApiRequest: async () => new Response("Not found", { status: 404, },),
 },);
+
 console.log("createApp succeeded",);
 
 const server = Bun.serve({ port: 0, fetch: app.fetch, },);

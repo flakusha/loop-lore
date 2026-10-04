@@ -58,6 +58,7 @@ async function postAsAdmin(
       body: JSON.stringify(body,),
     },),
   );
+
   const text = await res.text();
   return { status: res.status, json: text ? JSON.parse(text,) : {}, };
 }
@@ -149,6 +150,7 @@ describe("admin ComfyUI workflow routes — create", () => {
       "2": { inputs: { clip: ["1", 0,], }, class_type: "SaveImage", },
       "9": { inputs: {}, class_type: "CLIPTextEncode", },
     },);
+
     expect(status,).toBe(400,);
     expect(String(json.error,),).toContain("dead node",);
     expect(String(json.error,),).toContain("9",);
@@ -160,6 +162,7 @@ describe("admin ComfyUI workflow routes — create", () => {
       ...GRAPH,
       parameters: [{ name: "prompt", },],
     },);
+
     // `prompt` has a placeholder, so this one passes; the negative case is the
     // parameter the graph never references.
     expect(status,).toBe(201,);
@@ -170,6 +173,7 @@ describe("admin ComfyUI workflow routes — create", () => {
       ...GRAPH,
       parameters: [{ name: "steps", },],
     },);
+
     expect(bad.status,).toBe(400,);
     expect(String(bad.json.error,),).toContain("steps has no matching {{placeholder}}",);
   });
@@ -226,6 +230,7 @@ describe("admin ComfyUI workflow routes — enabled flag", () => {
     const listed = await appFor("admin",).handle(
       new Request(`http://localhost${BASE}?enabled=disabled`,),
     );
+
     const listJson = await listed.json() as { total: number };
     expect(listJson.total,).toBe(1,);
 
@@ -257,6 +262,7 @@ describe("admin ComfyUI workflow routes — read one / update", () => {
         body: JSON.stringify({ name: "New", category: "inpaint", min_vram: 12288, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const row = await rowById(id,);
@@ -282,6 +288,7 @@ describe("admin ComfyUI workflow routes — read one / update", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     expect((await rowById(id,))?.name,).toBe("Keep",);
   });
@@ -314,6 +321,7 @@ describe("admin ComfyUI workflow routes — modality scoping", () => {
       detail_level: "balanced",
       payload: JSON.stringify({ sections: [], },),
     },).execute();
+
     expect((await rowById("llm-1",))?.modality,).toBe("llm",);
 
     const listed = await appFor("admin",).handle(new Request(`http://localhost${BASE}`,),);
@@ -323,6 +331,7 @@ describe("admin ComfyUI workflow routes — modality scoping", () => {
     const del = await appFor("admin",).handle(
       new Request(`http://localhost${BASE}/llm-1`, { method: "DELETE", },),
     );
+
     expect(del.status,).toBe(404,);
     expect((await rowById("llm-1",))?.name,).toBe("Chat",);
   });

@@ -61,6 +61,7 @@ describe("get", () => {
       .select("user_id",)
       .where("user_id", "=", "ghost-user",)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 });
@@ -76,6 +77,7 @@ describe("getOrCreateOwn", () => {
       .selectAll()
       .where("user_id", "=", "fresh-user",)
       .executeTakeFirst();
+
     expect(row?.user_id,).toBe("fresh-user",);
   });
 
@@ -94,9 +96,11 @@ describe("updatePreferences", () => {
       userId: "self-user",
       updates: { nsfwEnabled: true, },
     },);
+
     expect(prefs.nsfwEnabled,).toBe(true,);
   });
 });
+
 describe("NsfwModerationService.getOrCreateOwn wiring", () => {
   test("class binds getOrCreateOwn — instance method exists and delegates to dispatcher", async () => {
     const svc = new NsfwModerationService(db,);

@@ -80,6 +80,7 @@ export function statsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             .where("created_at", ">=", dayStart,)
             .executeTakeFirst(),
         ],);
+
         // Counts are best-effort: a failed query yields 0 for that metric.
         const userCount = userCountResult.status === "fulfilled" ? userCountResult.value : undefined;
         const chatCount = chatCountResult.status === "fulfilled" ? chatCountResult.value : undefined;

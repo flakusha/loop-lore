@@ -73,10 +73,12 @@ export function mergeCharacterConfig(
     for (const t of base.templates) {
       merged.set(t.name.toLowerCase(), t,);
     }
+
     const overrideTemplates = override.templates ?? [];
     for (const t of overrideTemplates) {
       merged.set(t.name.toLowerCase(), t,);
     }
+
     return {
       ...base,
       ...override,
@@ -90,6 +92,7 @@ export function mergeCharacterConfig(
   for (const t of base.templates) {
     merged.set(t.name.toLowerCase(), t,);
   }
+
   const overrideTemplates = override.templates ?? [];
   for (const t of overrideTemplates) {
     const key = t.name.toLowerCase();
@@ -97,6 +100,7 @@ export function mergeCharacterConfig(
       merged.set(key, t,);
     }
   }
+
   return {
     merge: base.merge,
     templates: Array.from(merged.values(),),
@@ -126,6 +130,7 @@ export function mergeWorkflowConfig(
       entityTypes: overrideTypes,
     };
   }
+
   if (strategy === "override") {
     return {
       ...base,
@@ -135,6 +140,7 @@ export function mergeWorkflowConfig(
       entityTypes: { ...base.entityTypes, ...overrideTypes, },
     };
   }
+
   return {
     merge: base.merge,
     workflows: { ...overrideWorkflows, ...base.workflows, },

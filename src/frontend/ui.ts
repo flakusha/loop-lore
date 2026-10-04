@@ -29,6 +29,7 @@ export function toggleSidebar(): void {
     backdrop.style.display = isOpen ? "none" : "block";
     backdrop.classList.toggle("open",);
   }
+
   document.body.classList.toggle("sidebar-open",);
   if (globalThis.Alpine) {
     Alpine.store("sidebar",).open = !isOpen;
@@ -43,6 +44,7 @@ export function closeSidebar(): void {
     backdrop.style.display = "none";
     backdrop.classList.remove("open",);
   }
+
   document.body.classList.remove("sidebar-open",);
   if (globalThis.Alpine) {
     Alpine.store("sidebar",).open = false;
@@ -83,6 +85,7 @@ export function showToast(type: string, message: string,): void {
   const dismiss = (): void => {
     if (toast.parentNode) { toast.remove(); }
   };
+
   close.addEventListener("click", dismiss,);
 
   toast.append(iconEl, msgEl, close,);
@@ -123,6 +126,7 @@ export function openModal(id: string,): void {
   if (!modal.getAttribute("role",)) {
     modal.setAttribute("role", "dialog",);
   }
+
   if (!modal.getAttribute("aria-modal",)) {
     modal.setAttribute("aria-modal", "true",);
   }
@@ -131,6 +135,7 @@ export function openModal(id: string,): void {
   const first = modal.querySelector<HTMLElement>(
     'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
   );
+
   first?.focus();
 }
 
@@ -181,6 +186,7 @@ export function applyTheme(themeId: string,): void {
     const link = document.querySelector<HTMLLinkElement>(`#theme-${t.id}`,);
     if (link) { link.disabled = t.id !== themeId; }
   }
+
   document.body.classList.toggle("theme-no-icons", themeId === "no-icons",);
   localStorage.setItem("theme-preference", themeId,);
 }
@@ -198,6 +204,7 @@ export function t(key: string, params?: Record<string, string>,): string {
   if (params) {
     return value.replaceAll(INTERPOLATE_RE, (_, name,) => params[name] ?? `{${name}}`,);
   }
+
   return value;
 }
 

@@ -78,15 +78,18 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                   loraSlots: meta.loraSlots ?? current.loraSlots,
                 },),
               );
+
               if (!validated.ok) { return workflowInvalid(validated.errors,); }
 
               const name = typeof body.name === "string" ? body.name.trim() : row.name;
               const description = body.description === undefined
                 ? row.description
                 : String(body.description,);
+
               const modelFamily = body.model_family === undefined
                 ? row.model_family
                 : String(body.model_family,);
+
               const serialized = serializeTemplateInput({
                 modality: "workflow",
                 name,
@@ -95,6 +98,7 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                 detail_level: row.detail_level,
                 payload: validated.payload,
               },);
+
               if (!serialized.ok) { return workflowInvalid([serialized.error,],); }
 
               await database.updateTable("prompt_templates",).set({

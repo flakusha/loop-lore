@@ -46,6 +46,7 @@ export async function reindexMessageTokens(
     .insertInto("message_search_tokens",)
     .values(tokens.map((token,) => ({ message_id: messageId, token, scope, })),)
     .execute();
+
   return tokens.length;
 }
 
@@ -83,5 +84,6 @@ export async function matchMessageIdsByTokens(
     .orderBy(sql`count(*)`, "desc",)
     .limit(limit,)
     .execute();
+
   return rows.map((row,) => ({ messageId: row.message_id, hits: Number(row.hits,), }));
 }

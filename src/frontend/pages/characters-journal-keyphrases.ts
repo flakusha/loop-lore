@@ -35,16 +35,20 @@ function parseKeywords(raw: unknown,): string[] {
   if (Array.isArray(raw,)) {
     return raw.filter((entry,) => typeof entry === "string") as string[];
   }
+
   if (typeof raw === "string" && raw !== "") {
     const parsed = safeJsonParse<unknown>(raw,);
     if (parsed.ok) {
       if (Array.isArray(parsed.value,)) {
         return parsed.value.filter((entry,) => typeof entry === "string") as string[];
       }
+
       return [];
     }
+
     return [raw,];
   }
+
   return [];
 }
 
@@ -74,6 +78,7 @@ globalThis.initJournalKeyphrases = async function(characterId: string,) {
       el.innerHTML = `<p style="color:var(--text-secondary)">${escapeHtml(t("journalKeyphrases.empty",),)}</p>`;
       return;
     }
+
     const rows = items.map((memory,) => {
       const phrases = parseKeywords(memory.keywords,).join(", ",);
       return `<div class="journal-keyphrase-row" data-memory-id="${
@@ -89,10 +94,12 @@ globalThis.initJournalKeyphrases = async function(characterId: string,) {
       }" placeholder="${escapeHtml(t("journalKeyphrases.placeholder",),)}" />
       </div>`;
     },).join("",);
+
     el.innerHTML = rows +
       `<button type="button" class="btn btn-primary btn-sm" data-testid="save-keyphrases">${
         escapeHtml(t("journalKeyphrases.save",),)
       }</button>`;
+
     el.querySelector<HTMLButtonElement>("[data-testid='save-keyphrases']",)?.addEventListener(
       "click",
       () => {
@@ -108,6 +115,7 @@ globalThis.saveJournalKeyphrases = async function(characterId: string,) {
   const rows = document.querySelectorAll<HTMLElement>(
     "#journal-keyphrase-list .journal-keyphrase-row",
   );
+
   let saved = 0;
   let failed = 0;
   for (const row of rows) {
@@ -120,12 +128,14 @@ globalThis.saveJournalKeyphrases = async function(characterId: string,) {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ keywords: splitKeyphrases(input.value,), },),
       },);
+
       if (res.ok) { saved++; }
       else { failed++; }
     } catch {
       failed++;
     }
   }
+
   if (failed === 0) {
     showToast("success", t("toasts.keyphrasesSaved", { count: String(saved,), },),);
   } else {

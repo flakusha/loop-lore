@@ -54,6 +54,7 @@ export async function runAnalyze(
     ...profile.issues.map((issue,) => `- ⚠ ${issue}`),
     ...profile.suggestions.map((suggestion,) => `- → ${suggestion}`),
   ];
+
   return {
     systemMessage: lines.join("\n",),
     actionPayload: { original: text, ...profile, },

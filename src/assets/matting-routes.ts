@@ -77,6 +77,7 @@ export async function findMattedDerivative(
     .where("label", "=", MATTING_SOURCE_LABEL,)
     .orderBy("asset_links.asset_id", "desc",)
     .executeTakeFirst();
+
   return row ?? null;
 }
 
@@ -110,6 +111,7 @@ async function handleServeMatted(opts: ServeMattedOpts,): Promise<Response> {
     signedUrlExpires: opts.signedUrlExpires,
     signedUrlAction: opts.signedUrlAction as never,
   },);
+
   if (resolved instanceof Response) { return resolved; }
   const { asset, } = resolved;
 
@@ -119,6 +121,7 @@ async function handleServeMatted(opts: ServeMattedOpts,): Promise<Response> {
       asset.mime_type,
     );
   }
+
   if (asset.alpha_status !== AssetAlphaStatus.Matted) {
     return notFoundResponse("No matted derivative available",);
   }
@@ -127,6 +130,7 @@ async function handleServeMatted(opts: ServeMattedOpts,): Promise<Response> {
   if (!derivative) {
     return notFoundResponse("Matted derivative not found",);
   }
+
   return serveFile(
     getAssetFilePath(opts.uploadDir, derivative.storage_path,),
     derivative.mime_type,
@@ -175,11 +179,13 @@ export function mattingRoutes(
             "Matting is not configured (generation.matting)",
           );
         }
+
         const service = new MattingService({
           database,
           uploadDir: config.assets.uploadDir,
           resolveProvider: () => provider,
         },);
+
         const assetId: string = ctx.params.id;
         let started = await service.startMatting({ assetId, ownerId: userId, },);
 
@@ -195,6 +201,7 @@ export function mattingRoutes(
                 (job.status === "pending" || job.status === "running"),
             )
             : false;
+
           if (
             asset &&
             asset.alpha_status === AssetAlphaStatus.MattingPending &&
@@ -205,6 +212,7 @@ export function mattingRoutes(
               .set({ alpha_status: AssetAlphaStatus.MattingFailed, },)
               .where("id", "=", assetId,)
               .execute();
+
             started = await service.startMatting({ assetId, ownerId: userId, },);
           }
         }
@@ -222,6 +230,7 @@ export function mattingRoutes(
               },);
           }
         }
+
         return jsonCreated({ jobId: started.jobId, },);
       },)
       .get(`${prefix}/assets/:id/matte`, async (ctx: any,) => {
@@ -231,9 +240,11 @@ export function mattingRoutes(
         const job = listJobs(userId,).find(
           (candidate,) => candidate.assetId === ctx.params.id,
         );
+
         if (!job) {
           return notFoundResponse("No matting job for this asset",);
         }
+
         return jsonResponse({
           jobId: job.id,
           status: job.status,

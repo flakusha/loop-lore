@@ -16,6 +16,7 @@ async function participantActorIds(db: Kysely<DB>, chatId: string,): Promise<str
     .select("actor_id",)
     .where("chat_id", "=", chatId,)
     .execute();
+
   return Array.from(rows, (r,) => r.actor_id,);
 }
 
@@ -30,6 +31,7 @@ async function worldParticipantActorIds(db: Kysely<DB>, worldId: string,): Promi
     .innerJoin("chats", "chats.id", "chat_participants.chat_id",)
     .where("chats.world_id", "=", worldId,)
     .execute();
+
   return [...new Set(Array.from(rows, (r,) => r.actor_id,),),];
 }
 
@@ -51,6 +53,7 @@ export async function notifyMention(
     db.selectFrom("chats",).select("name",).where("id", "=", opts.chatId,).executeTakeFirst(),
     db.selectFrom("actors",).select("display_name",).where("id", "=", opts.senderId,).executeTakeFirst(),
   ],);
+
   const senderName = senderResult.status === "fulfilled" ? senderResult.value?.display_name ?? "Someone" : "Someone";
   const chatName = chatResult.status === "fulfilled" ? chatResult.value?.name ?? "a chat" : "a chat";
   const svc = new NotificationService(db,);
@@ -83,6 +86,7 @@ export async function notifyChatInvite(
     db.selectFrom("chats",).select("name",).where("id", "=", opts.chatId,).executeTakeFirst(),
     db.selectFrom("actors",).select("display_name",).where("id", "=", opts.inviterId,).executeTakeFirst(),
   ],);
+
   const inviterName = inviterResult.status === "fulfilled" ? inviterResult.value?.display_name ?? "Someone" : "Someone";
   const chatName = chatResult.status === "fulfilled" ? chatResult.value?.name ?? "a group chat" : "a group chat";
   await new NotificationService(db,).create({
@@ -113,6 +117,7 @@ export async function notifyQuestUpdate(
     : (opts.worldId
       ? await worldParticipantActorIds(db, opts.worldId,)
       : []);
+
   for (const userId of userIds) {
     await svc.create({
       userId,

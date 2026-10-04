@@ -47,12 +47,14 @@ function ctxWith(note: string | null,): AssembleContext {
     mes_example: null,
     agent_role: null,
   };
+
   const chat: AssembleChat = {
     id: "chat-1",
     mode: "story",
     world_id: null,
     current_location_id: null,
   };
+
   return {
     db: DUMMY_DB,
     actor,

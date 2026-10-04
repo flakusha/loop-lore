@@ -31,9 +31,11 @@ export function detectScope(
   if (role === "system" || role === "assistant") {
     return "assistant";
   }
+
   if (worldId) {
     return "world";
   }
+
   return "character";
 }
 

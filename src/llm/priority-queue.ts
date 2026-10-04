@@ -50,6 +50,7 @@ export class PriorityQueue<T,> {
     if (this.cap !== undefined && this.heap.length >= this.cap) {
       throw new RangeError(`PriorityQueue: cap ${this.cap} reached`,);
     }
+
     const seq = this.seq++;
     this.heap.push(item,);
     this.entrySeq.push(seq,);
@@ -70,6 +71,7 @@ export class PriorityQueue<T,> {
       this.entrySeq[0] = lastSeq;
       this.siftDown(0,);
     }
+
     return top;
   }
 

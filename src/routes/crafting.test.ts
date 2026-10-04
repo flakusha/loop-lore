@@ -45,6 +45,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
       "Crafter",
       { id: userId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     worldId = uid();
     await insertWorlds(db, userId, "Craft World", { id: worldId, } as never,);
     outputItemId = uid();
@@ -82,6 +83,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
     if (typeof body === "object" && body !== null && "id" in body && typeof body.id === "string") {
       return body.id;
     }
+
     throw new Error("response missing string id",);
   }
 
@@ -102,6 +104,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await json(res,);
     expect(readId(body,),).toBeString();
@@ -123,16 +126,19 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         },),
       },),
     );
+
     const id = readId(await json(createResponse,),);
 
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json(res,);
     if (typeof body !== "object" || body === null || !("name" in body) || !("materials" in body)) {
       throw new Error("recipe response missing fields",);
     }
+
     expect(body.name,).toBe("Forge Axe",);
     expect(Array.isArray(body.materials,),).toBe(true,);
     expect((body.materials as unknown[]).length,).toBe(1,);
@@ -143,6 +149,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes?discipline=smithing`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { recipes: unknown[] };
     expect(Array.isArray(body.recipes,),).toBe(true,);
@@ -165,6 +172,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         },),
       },),
     );
+
     const id = readId(await json(createResponse,),);
 
     const upRes = await app.handle(
@@ -174,6 +182,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         body: JSON.stringify({ tier: 3, },),
       },),
     );
+
     expect(upRes.status,).toBe(200,);
 
     const matRes = await app.handle(
@@ -183,15 +192,18 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         body: JSON.stringify({ materials: [{ itemId: materialItemId, quantity: 4, },], },),
       },),
     );
+
     expect(matRes.status,).toBe(200,);
 
     const getResponse = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`,),
     );
+
     const body = await json(getResponse,);
     if (typeof body !== "object" || body === null || !("tier" in body) || !("materials" in body)) {
       throw new Error("recipe response missing fields",);
     }
+
     expect(body.tier,).toBe(3,);
     const mats = body.materials as unknown[];
     if (mats[0] && typeof mats[0] === "object" && "quantity" in mats[0]) {
@@ -216,16 +228,19 @@ describe("crafting recipe CRUD (auth-gated)", () => {
         },),
       },),
     );
+
     const id = readId(await json(createResponse,),);
 
     const delRes = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`, { method: "DELETE", },),
     );
+
     expect(delRes.status,).toBe(200,);
 
     const getResponse = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes/${id}`,),
     );
+
     expect(getResponse.status,).toBe(404,);
   });
 
@@ -235,6 +250,7 @@ describe("crafting recipe CRUD (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/recipes`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

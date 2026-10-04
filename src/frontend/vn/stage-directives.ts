@@ -47,15 +47,18 @@ export function deriveStageDirectives(prev: SceneCastView | null, next: SceneCas
   for (const id of after) {
     if (!before.has(id,)) { directives.push({ kind: "enter", characterId: id, },); }
   }
+
   for (const id of before) {
     if (!after.has(id,)) { directives.push({ kind: "exit", characterId: id, },); }
   }
+
   if (
     next.emotion && next.speakerId && after.has(next.speakerId,) &&
     (prev?.speakerId !== next.speakerId || prev?.emotion !== next.emotion)
   ) {
     directives.push({ kind: "swap", characterId: next.speakerId, emotion: next.emotion, },);
   }
+
   return directives;
 }
 

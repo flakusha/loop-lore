@@ -29,6 +29,7 @@ describeOrSkip("mesh encryption provider", () => {
     const sealed = await encryption.contentCipher(KEY,).seal(
       new TextEncoder().encode("key-sealed",),
     );
+
     // Issued-key ciphertext never opens under the PSK …
     await expect(encryption.psk.open(sealed,),).rejects.toThrow();
     // … but opens under the issued key.

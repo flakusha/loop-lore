@@ -28,6 +28,7 @@ export function catalogRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (typeof userId !== "string") { return userId; }
           const backgrounds = await database.selectFrom("chat_backgrounds",).selectAll().orderBy("name", "asc",)
             .execute();
+
           return jsonResponse({ data: backgrounds, },);
         },
         {
@@ -55,6 +56,7 @@ export function catalogRoutes(opts: HandlerOpts, prefix = "/api",) {
             config?: string | null;
             priority?: number | null;
           };
+
           const name = (body.name ?? "").trim();
           if (!name) { return jsonResponse({ error: "name is required", }, 400,); }
           if (body.type && !BACKGROUND_TYPES.includes(body.type,)) {

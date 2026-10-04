@@ -40,17 +40,21 @@ function summarize(state: GameStatePayload,): string[] {
   if (state.grid?.w != null && state.grid?.h != null) {
     parts.push(`Grid: ${state.grid.w}x${state.grid.h}.`,);
   }
+
   if (state.entities?.length) {
     const ents = state.entities
       .map((e,) => `${e.id ?? "?"} (${e.name ?? "?"}, ${e.kind ?? "object"}) at (${e.x ?? "?"},${e.y ?? "?"})`)
       .join("; ",);
+
     parts.push(`Entities: ${ents}.`,);
   }
+
   if (state.analysis) {
     parts.push(`Last analysis: ${state.analysis}`,);
   } else if (state.caption) {
     parts.push(`Caption: ${state.caption}`,);
   }
+
   return parts;
 }
 

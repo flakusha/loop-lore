@@ -74,6 +74,7 @@ describe("worldInvitesRoutes coverage", () => {
     const worldsApp = new Elysia({ name: "test-world-create-coverage", },)
       .derive({ as: "scoped", }, () => ({ userId: owner, userRole: "user", }),)
       .use(worldsRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
+
     const res = await worldsApp.handle(
       new Request("http://localhost/api/worlds", {
         method: "POST",
@@ -81,6 +82,7 @@ describe("worldInvitesRoutes coverage", () => {
         body: JSON.stringify({ name: "Invite World", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const created: { id: string } = await res.json();
     worldId = created.id;
@@ -107,6 +109,7 @@ describe("worldInvitesRoutes coverage", () => {
         body: JSON.stringify(body,),
       },),
     );
+
     expect(res.status,).toBe(201,);
     return (await res.json()) as WorldInviteBody;
   }
@@ -116,6 +119,7 @@ describe("worldInvitesRoutes coverage", () => {
     const worldsApp = new Elysia({ name: "test-world-create-more", },)
       .derive({ as: "scoped", }, () => ({ userId: owner, userRole: "user", }),)
       .use(worldsRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
+
     const res = await worldsApp.handle(
       new Request("http://localhost/api/worlds", {
         method: "POST",
@@ -123,6 +127,7 @@ describe("worldInvitesRoutes coverage", () => {
         body: JSON.stringify({ name, },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const created: { id: string } = await res.json();
     return created.id;
@@ -137,18 +142,22 @@ describe("worldInvitesRoutes coverage", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(create.status,).toBe(401,);
     const list = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/invites`,),
     );
+
     expect(list.status,).toBe(401,);
     const revoke = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/invites/${uid()}`, { method: "DELETE", },),
     );
+
     expect(revoke.status,).toBe(401,);
     const join = await app.handle(
       new Request("http://localhost/api/world-invites/abc/join", { method: "POST", },),
     );
+
     expect(join.status,).toBe(401,);
   });
 
@@ -160,6 +169,7 @@ describe("worldInvitesRoutes coverage", () => {
     const list = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/invites`,),
     );
+
     expect(list.status,).toBe(200,);
     const parsed = (await list.json()) as { data: WorldInviteBody[] };
     expect(parsed.data.some((i,) => i.id === invite.id),).toBe(true,);
@@ -174,10 +184,12 @@ describe("worldInvitesRoutes coverage", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(deniedCreate.status,).toBe(404,);
     const deniedList = await other.handle(
       new Request(`http://localhost/api/worlds/${worldId}/invites`,),
     );
+
     expect(deniedList.status,).toBe(404,);
     const app = makeApp(db, owner, "user",);
     const missing = await app.handle(
@@ -187,6 +199,7 @@ describe("worldInvitesRoutes coverage", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(missing.status,).toBe(404,);
   });
 
@@ -198,12 +211,14 @@ describe("worldInvitesRoutes coverage", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(204,);
     const again = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/invites/${invite.id}`, {
         method: "DELETE",
       },),
     );
+
     expect(again.status,).toBe(204,);
     const fresh = await createInvite(app,);
     const other = makeApp(db, joiner, "user",);
@@ -212,6 +227,7 @@ describe("worldInvitesRoutes coverage", () => {
         method: "DELETE",
       },),
     );
+
     expect(denied.status,).toBe(404,);
   });
 
@@ -222,6 +238,7 @@ describe("worldInvitesRoutes coverage", () => {
     const first = await joinApp.handle(
       new Request(`http://localhost/api/world-invites/${invite.code}/join`, { method: "POST", },),
     );
+
     expect(first.status,).toBe(200,);
     const firstBody = (await first.json()) as { worldId: string; alreadyMember: boolean };
     expect(firstBody.worldId,).toBe(worldId,);
@@ -229,6 +246,7 @@ describe("worldInvitesRoutes coverage", () => {
     const second = await joinApp.handle(
       new Request(`http://localhost/api/world-invites/${invite.code}/join`, { method: "POST", },),
     );
+
     expect(second.status,).toBe(200,);
     expect(((await second.json()) as { alreadyMember: boolean }).alreadyMember,).toBe(true,);
   });
@@ -238,15 +256,18 @@ describe("worldInvitesRoutes coverage", () => {
     const unknown = await app.handle(
       new Request("http://localhost/api/world-invites/does-not-exist/join", { method: "POST", },),
     );
+
     expect(unknown.status,).toBe(404,);
     const ownerApp = makeApp(db, owner, "user",);
     const invite = await createInvite(ownerApp,);
     await ownerApp.handle(
       new Request(`http://localhost/api/worlds/${worldId}/invites/${invite.id}`, { method: "DELETE", },),
     );
+
     const revoked = await app.handle(
       new Request(`http://localhost/api/world-invites/${invite.code}/join`, { method: "POST", },),
     );
+
     expect(revoked.status,).toBe(404,);
   });
 
@@ -258,6 +279,7 @@ describe("worldInvitesRoutes coverage", () => {
     const gone = await app.handle(
       new Request(`http://localhost/api/world-invites/${expired.code}/join`, { method: "POST", },),
     );
+
     expect(gone.status,).toBe(410,);
 
     const freshWorld = await createWorld("Single Use World",);
@@ -266,11 +288,13 @@ describe("worldInvitesRoutes coverage", () => {
     const ok = await first.handle(
       new Request(`http://localhost/api/world-invites/${single.code}/join`, { method: "POST", },),
     );
+
     expect(ok.status,).toBe(200,);
     const second = makeApp(db, lateJoiner, "user",);
     const used = await second.handle(
       new Request(`http://localhost/api/world-invites/${single.code}/join`, { method: "POST", },),
     );
+
     expect(used.status,).toBe(410,);
   });
 });

@@ -44,6 +44,7 @@ export function readPackageJson(packageJsonPath: string,): PackageJsonReadResult
       error: error instanceof Error ? error : new Error(String(error,),),
     };
   }
+
   return safeJsonParse<PackageJson>(text,);
 }
 
@@ -72,10 +73,12 @@ export function setPackageJsonVersion(packageJsonPath: string, version: string,)
     if (code === "ENOENT") {
       throw new Error(`Missing package.json at ${packageJsonPath}`,);
     }
+
     throw new Error(
       `Cannot read package.json at ${packageJsonPath}: ${result.error.message}`,
     );
   }
+
   result.value.version = version;
   const serialized = safeJsonStringify(result.value, 2,);
   if (!serialized.ok) {
@@ -83,5 +86,6 @@ export function setPackageJsonVersion(packageJsonPath: string, version: string,)
       `Cannot serialize package.json at ${packageJsonPath}: ${serialized.error.message}`,
     );
   }
+
   writeFileSync(packageJsonPath, `${serialized.value}\n`,);
 }

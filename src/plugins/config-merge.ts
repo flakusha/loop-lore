@@ -44,11 +44,13 @@ export function mergePluginConfig(
       ? mergePluginConfig(base, value)
       : value;
   }
+
   for (const key of schema?.required ?? []) {
     if (merged[key] === undefined) {
       throw new Error(`Plugin config missing required key: "${key}"`);
     }
   }
+
   return merged;
 }
 
@@ -64,5 +66,6 @@ export function parseStoredPluginConfig(raw: string | null | undefined,): Record
   if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed,)) {
     throw new Error("stored plugin config must be a JSON object",);
   }
+
   return parsed as Record<string, unknown>;
 }

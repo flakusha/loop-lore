@@ -57,6 +57,7 @@ function forgeTokenWithSub(sub: string,): string {
     iat: 0,
     exp: Math.floor(Date.now() / 1000,) + 3600,
   },),).toString("base64url",);
+
   // Arbitrary signature — must NOT be accepted by verifyJwt.
   const sigB64 = Buffer.from("forged-signature",).toString("base64url",);
   return `${headerB64}.${payloadB64}.${sigB64}`;
@@ -77,6 +78,7 @@ describe("handleMe — forged-cookie impersonation (regression)", () => {
       db,
       null,
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -86,6 +88,7 @@ describe("handleMe — forged-cookie impersonation (regression)", () => {
       db,
       "user-alice",
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { id: string };
     expect(body.id,).toBe("user-alice",);
@@ -127,6 +130,7 @@ describe("handleLogout — forged-cookie session deletion (regression)", () => {
       null,
       null,
     );
+
     expect(res.status,).toBe(200,);
 
     // The real session must still exist — a forged cookie cannot delete it.
@@ -159,10 +163,12 @@ describe("handleLogout — forged-cookie session deletion (regression)", () => {
       "user-alice",
       mallorySessionId,
     );
+
     expect(res.status,).toBe(200,);
 
     const mallorySession = await db.selectFrom("sessions",).selectAll().where("id", "=", mallorySessionId,)
       .executeTakeFirst();
+
     expect(mallorySession,).toBeDefined();
   });
 
@@ -187,6 +193,7 @@ describe("handleLogout — forged-cookie session deletion (regression)", () => {
       "user-alice",
       sessionId,
     );
+
     expect(res.status,).toBe(200,);
 
     const row = await db.selectFrom("sessions",).selectAll().where("id", "=", sessionId,).executeTakeFirst();

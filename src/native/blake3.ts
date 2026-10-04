@@ -37,6 +37,7 @@ export function blake3Hash(data: Uint8Array,): Uint8Array {
     }
     // ABI contract violation at runtime — never trust the binary; degrade.
   }
+
   return fallbackBlake3(data,);
 }
 

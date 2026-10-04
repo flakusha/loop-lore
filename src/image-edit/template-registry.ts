@@ -61,6 +61,7 @@ export class TemplateRegistry {
     for (const id of this.managed.get(source,) ?? []) {
       this.templates.delete(id,);
     }
+
     this.managed.set(source, new Set(),);
     for (const template of templates) {
       this.templates.set(template.id, template,);
@@ -122,6 +123,7 @@ export class TemplateRegistry {
         out.push(t,);
       }
     }
+
     return out;
   }
 
@@ -172,6 +174,7 @@ export function registerConfigWorkflows(
       parameters: [],
       build: () => (workflow.nodes as ComfyUIWorkflow) ?? {},
     };
+
     registry.register(template,);
   }
 }
@@ -189,5 +192,6 @@ export function registerBuiltinTemplates(registry: TemplateRegistry = templateRe
   for (const template of builtinTemplates) {
     registry.register(template,);
   }
+
   builtinTemplatesRegistered = true;
 }

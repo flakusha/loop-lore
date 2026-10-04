@@ -182,6 +182,7 @@ export async function reEncryptChatAssets(
         pipelineConfig,
         "at-rest",
       );
+
       if (result.encrypted) {
         writeFileSync(filePath, result.data,);
         reEncrypted++;

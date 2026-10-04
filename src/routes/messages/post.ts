@@ -70,6 +70,7 @@ export async function prepareContentStorage(
         algorithm: config.encryption.compressAlgorithm,
       },
     },);
+
     return {
       storedContent: result.storedContent,
       contentEncoding: "identity",
@@ -88,6 +89,7 @@ export async function prepareContentStorage(
       storedPlaintext: plaintext,
     };
   }
+
   return { storedContent: plaintext, contentEncoding: "identity", storedKeyId: null, storedPlaintext: plaintext, };
 }
 
@@ -114,6 +116,7 @@ export async function attachMessageAttachments(
       assetId: a.assetId,
       link: { entityType: "message", entityId: messageId, label: a.label ?? "message-attachment", },
     },);
+
     attachData.push({
       assetId: a.assetId,
       order: a.order ?? i,
@@ -121,6 +124,7 @@ export async function attachMessageAttachments(
       label: a.label ?? "message-attachment",
     },);
   }
+
   await database
     .updateTable("messages",)
     .set({
@@ -167,10 +171,12 @@ export async function persistMentions(
     .select(["chat_participants.actor_id", "actors.display_name",],)
     .where("chat_participants.chat_id", "=", chatId,)
     .execute();
+
   const mentionedActorIds = extractMentionedActorIds(
     filteredContent,
     Array.from(participants, (p,) => ({ actorId: p.actor_id, displayName: p.display_name, }),),
   );
+
   if (mentionedActorIds.length === 0) { return result; }
 
   // Persist per-actor mention rows. Aggregate results so callers see counts.
@@ -181,6 +187,7 @@ export async function persistMentions(
           .insertInto("chat_mentions",)
           .values({ id: uid(), message_id: messageId, actor_id: actorId, },)
           .execute();
+
         return actorId;
       } catch (err) {
         log().warn("persistMentions: insert failed", { chatId, actorId, err, },);
@@ -216,11 +223,13 @@ export async function persistMentions(
       mentionedActorIds: persistedActorIds,
       messageId,
     },);
+
     result.notified = persistedActorIds.length;
   } catch (err) {
     log().warn("persistMentions: notifyMention failed", { chatId, senderId, err, },);
     result.failed += persistedActorIds.length;
   }
+
   return result;
 }
 

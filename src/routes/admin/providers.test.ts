@@ -31,6 +31,7 @@ function makeAppWithRole(database: Kysely<DB>, userRole: string | null,) {
     userId: userRole ? `test-user-${userRole}` : null,
     userRole,
   }));
+
   return app.use(providersRoutes({ database, },),);
 }
 
@@ -65,6 +66,7 @@ describe("providers routes", () => {
       const body = await res.json() as {
         providers: { name: string; label: string; status: string }[];
       };
+
       for (const p of body.providers) {
         expect(typeof p.name,).toBe("string",);
         expect(typeof p.label,).toBe("string",);
@@ -79,6 +81,7 @@ describe("providers routes", () => {
           headers: { Accept: "application/json", },
         },),
       );
+
       expect(res.status,).toBe(200,);
     });
 
@@ -88,6 +91,7 @@ describe("providers routes", () => {
       const body = await res.json() as {
         providers: { name: string; label: string; status: string; models?: unknown[] }[];
       };
+
       for (const p of body.providers) {
         // Public endpoint should NOT expose models array or capabilities
         expect(p.models,).toBeUndefined();
@@ -121,6 +125,7 @@ describe("providers routes", () => {
       const body = await res.json() as {
         providers: { name: string; label: string; capabilities: unknown; status: string }[];
       };
+
       expect(Array.isArray(body.providers,),).toBe(true,);
       for (const p of body.providers) {
         expect(typeof p.name,).toBe("string",);
@@ -136,6 +141,7 @@ describe("providers routes", () => {
       const body = await res.json() as {
         providers: { capabilities: { label?: string } }[];
       };
+
       const withCaps = body.providers.filter((p,) => p.capabilities !== null && typeof p.capabilities === "object");
       expect(withCaps.length,).toBe(body.providers.length,);
     });
@@ -147,6 +153,7 @@ describe("providers routes", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/admin/providers/${FAKE_NAME}/models`,),
       );
+
       expect(res.status,).toBe(401,);
     });
 
@@ -155,6 +162,7 @@ describe("providers routes", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/admin/providers/${FAKE_NAME}/models`,),
       );
+
       expect(res.status,).toBe(403,);
     });
 
@@ -163,6 +171,7 @@ describe("providers routes", () => {
       const res = await app.handle(
         new Request("http://localhost/api/admin/providers/unknown-provider-xyz/models",),
       );
+
       expect(res.status,).toBe(404,);
     });
   });
@@ -173,6 +182,7 @@ describe("providers routes", () => {
       const res = await app.handle(
         new Request("http://localhost/api/admin/providers/rescan", { method: "POST", },),
       );
+
       expect(res.status,).toBe(401,);
     });
 
@@ -181,6 +191,7 @@ describe("providers routes", () => {
       const res = await app.handle(
         new Request("http://localhost/api/admin/providers/rescan", { method: "POST", },),
       );
+
       expect(res.status,).toBe(403,);
     });
 
@@ -189,6 +200,7 @@ describe("providers routes", () => {
       const res = await app.handle(
         new Request("http://localhost/api/admin/providers/rescan", { method: "POST", },),
       );
+
       expect(res.status,).toBe(403,);
     });
 
@@ -197,6 +209,7 @@ describe("providers routes", () => {
       const res = await app.handle(
         new Request("http://localhost/api/admin/providers/rescan", { method: "POST", },),
       );
+
       expect(res.status,).toBe(200,);
       const body = await res.json() as { providers: unknown[] };
       expect(Array.isArray(body.providers,),).toBe(true,);

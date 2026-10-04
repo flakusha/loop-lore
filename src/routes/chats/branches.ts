@@ -103,6 +103,7 @@ function handleList(database: Kysely<DB>,) {
       if (!/^\d+$/.test(query.limit,) || Number.parseInt(query.limit, 10,) < 1) {
         return jsonError("limit must be a positive integer", HttpStatus.BadRequest,);
       }
+
       limit = Number.parseInt(query.limit, 10,);
     }
 

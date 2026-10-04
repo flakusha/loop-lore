@@ -72,6 +72,7 @@ export async function getBehavioralModifiers(
     if (!row.trait_name.startsWith("behavioral_modifier:",)) {
       continue;
     }
+
     const name = row.trait_name.slice("behavioral_modifier:".length,);
     modifiers[name] = row.trait_value;
   }

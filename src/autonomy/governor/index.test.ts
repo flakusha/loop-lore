@@ -27,9 +27,11 @@ let testDb: TestDb;
 beforeAll(async () => {
   testDb = await createTestDb();
 },);
+
 afterAll(async () => {
   await testDb.db.destroy();
 },);
+
 beforeEach(() => {
   resetTestDb(testDb.sqlite,);
 },);
@@ -45,6 +47,7 @@ const telemetryPristine = await (async () => {
       .select("id",)
       .limit(1,)
       .execute();
+
     return rows.length === 1;
   } catch {
     return false;
@@ -52,6 +55,7 @@ const telemetryPristine = await (async () => {
     probe.sqlite.close();
   }
 })();
+
 const describeReal = telemetryPristine ? describe : describe.skip;
 
 async function setupScope(): Promise<{
@@ -81,15 +85,18 @@ describe("AutonomyGovernor.tryConsume", () => {
         chatId,
         nowMs: 1_000 + i,
       },);
+
       expect(r.ok,).toBe(true,);
       expect(r.count,).toBe(i,);
       expect(r.remaining,).toBe(cap - i,);
     }
+
     const denied = await gov.tryConsume(testDb.db, scope, "per_minute_generation", {
       cap,
       chatId,
       nowMs: 1_010,
     },);
+
     expect(denied.ok,).toBe(false,);
     expect(denied.remaining,).toBe(0,);
   });
@@ -105,13 +112,16 @@ describe("AutonomyGovernor.tryConsume", () => {
         cap,
         chatId,
       },);
+
       expect(r.ok,).toBe(true,);
     }
+
     // User counter untouched.
     const u = await gov.tryConsume(testDb.db, { kind: "user", id: userId, }, "per_hour_beat_dispatch", {
       cap,
       chatId,
     },);
+
     expect(u.ok,).toBe(true,);
     expect(u.count,).toBe(1,);
   });
@@ -129,6 +139,7 @@ describe("AutonomyGovernor.tryConsume", () => {
       chatId,
       nowMs: t0,
     },);
+
     expect(r1.ok,).toBe(true,);
     expect(r1.count,).toBe(1,);
     expect(r1.resetAt,).toBe(t0 + limit.windowMs,);
@@ -138,6 +149,7 @@ describe("AutonomyGovernor.tryConsume", () => {
       chatId,
       nowMs: t0 + 100,
     },);
+
     expect(denied.ok,).toBe(false,);
 
     const afterReset = await gov.tryConsume(testDb.db, scope, "per_minute_generation", {
@@ -145,6 +157,7 @@ describe("AutonomyGovernor.tryConsume", () => {
       chatId,
       nowMs: t0 + limit.windowMs + 1,
     },);
+
     expect(afterReset.ok,).toBe(true,);
     expect(afterReset.count,).toBe(1,);
   });
@@ -156,10 +169,12 @@ describe("AutonomyGovernor.tryConsume", () => {
       cap: null,
       chatId,
     },);
+
     expect(r.ok,).toBe(true,);
     expect(r.cap,).toBe(null,);
     const row = await testDb.db.selectFrom("autonomy_budget",)
       .selectAll().execute();
+
     expect(row.length,).toBe(0,);
   });
 
@@ -179,14 +194,17 @@ describe("AutonomyGovernor.tryConsume", () => {
         cap,
         chatId,
       },);
+
       if (r.ok) { accepted++; }
       else { denied++; }
     }
+
     expect(accepted,).toBe(cap,);
     expect(denied,).toBe(10 - cap,);
 
     const rows = await testDb.db.selectFrom("autonomy_budget",)
       .selectAll().execute();
+
     // exactly one row for this scope/limit, no leakage
     expect(rows.length,).toBe(1,);
     expect(rows[0]?.window_count,).toBe(cap,);
@@ -203,6 +221,7 @@ describe("AutonomyGovernor.tryConsume", () => {
         cap,
         chatId,
       },);
+
       expect(r.ok,).toBe(true,);
       expect(r.count,).toBe(i + 1,);
     }
@@ -215,6 +234,7 @@ describe("AutonomyGovernor.tryConsume", () => {
       cap,
       chatId,
     },);
+
     expect(r.ok,).toBe(true,);
     expect(r.count,).toBe(4,); // persisted count survives
   });
@@ -230,6 +250,7 @@ describe("AutonomyGovernor.tryConsume", () => {
         cap,
         chatId,
       },); // accept
+
       await gov.tryConsume(testDb.db, scope, "per_minute_generation", {
         cap,
         chatId,
@@ -242,6 +263,7 @@ describe("AutonomyGovernor.tryConsume", () => {
         .selectAll()
         .where("event_type", "=", "governor.budget.exceeded",)
         .execute();
+
       expect(events.length,).toBeGreaterThanOrEqual(1,);
       const last = events[events.length - 1]!;
       const data = JSON.parse(last.event_data,);

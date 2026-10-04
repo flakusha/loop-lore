@@ -47,12 +47,14 @@ function buildMigrationProvider() {
       const files = readdirSync(dir,)
         .filter((f,) => typeof f === "string" && f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const file of files) {
         const mod = await import(path.join(dir, file,));
         const name = file.replace(/\.ts$/, "",);
         migrations[name] = mod.default ?? mod;
       }
+
       return migrations;
     },
   };
@@ -187,6 +189,7 @@ describe("Step 3: Chat creation and participant setup", () => {
 
     const row = await db.selectFrom("chats",).select("encryption_level",)
       .where("id", "=", CHAT_ID,).executeTakeFirst();
+
     expect(row?.encryption_level,).toBe("standard",);
   });
 
@@ -431,6 +434,7 @@ test("AC6 in-flight send observes post-rotation key", async () => {
     format_version: 0,
     visibility: "private",
   },).execute();
+
   await db.insertInto("actors",).values({
     id: AC6_SENDER,
     actor_type: "user",
@@ -454,11 +458,13 @@ test("AC6 in-flight send observes post-rotation key", async () => {
     created_by: AC6_SENDER,
     encryption_level: "standard",
   },).execute();
+
   await db.insertInto("chat_participants",).values({
     chat_id: AC6_CHAT,
     actor_id: AC6_LEAVER,
     role_in_chat: "member",
   },).execute();
+
   await db.insertInto("chat_participants",).values({
     chat_id: AC6_CHAT,
     actor_id: AC6_SENDER,
@@ -486,6 +492,7 @@ test("AC6 in-flight send observes post-rotation key", async () => {
     plaintext: "send racing rotation",
     smk,
   },);
+
   await db.insertInto("messages",).values({
     id: crypto.randomUUID(),
     chat_id: AC6_CHAT,
@@ -510,6 +517,7 @@ test("AC6 in-flight send observes post-rotation key", async () => {
   // The message decrypts cleanly under the post-rotation key.
   const stored = await db.selectFrom("messages",).select(["content", "key_id",],)
     .where("chat_id", "=", AC6_CHAT,).executeTakeFirstOrThrow();
+
   expect(stored.key_id,).toBe(postKey.keyId,);
   const { decryptAtRest, } = await import("./at-rest");
   const plaintext = await decryptAtRest({
@@ -518,5 +526,6 @@ test("AC6 in-flight send observes post-rotation key", async () => {
     storedContent: stored.content,
     encryptionLevel: "standard",
   },);
+
   expect(plaintext,).toBe("send racing rotation",);
 });

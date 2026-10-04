@@ -101,9 +101,11 @@ async function embedViaOpenAI(text: string, model: string, baseUrl: string,): Pr
     `${baseUrl}/v1/embeddings`,
     { method: "POST", body: { model, input: text, }, timeout: 30_000, },
   );
+
   if (!result.ok) {
     throw new Error(`OpenAI embeddings request failed: ${result.error.message}`,);
   }
+
   const emb = result.data.data?.[0]?.embedding;
   if (!emb) { throw new Error("Embedding provider returned no embeddings.",); }
   return emb;
@@ -124,6 +126,7 @@ export async function embedText(text: string,): Promise<Float32Array> {
   } else {
     emb = (await embedDispatch(buildOllamaState(), text, model,))[0];
   }
+
   if (!emb) { throw new Error("Embedding provider returned no embeddings.",); }
   // Normalise to unit length so cosine similarity = dot product.
   return normalise(new Float32Array(emb,),);

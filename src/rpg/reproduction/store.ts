@@ -44,6 +44,7 @@ export async function getPregnancy(
     sireId: null,
     expiresAt: null,
   };
+
   const row = await db
     .selectFrom("status_effect",)
     .where("actor_id", "=", characterId,)
@@ -51,6 +52,7 @@ export async function getPregnancy(
     .where("category", "=", "pregnancy",)
     .selectAll()
     .executeTakeFirst();
+
   if (!row) { return empty; }
   if (row.expires_at !== null && row.expires_at <= new Date().toISOString()) { return empty; }
   const meta = await getPregnancyMeta(db, characterId,);
@@ -82,12 +84,14 @@ export async function getPregnancyMeta(
     .where("category", "=", "pregnancy",)
     .select("meta",)
     .executeTakeFirst();
+
   if (!row?.meta) { return fallback; }
   const parsed = jsonParseOr(row.meta, {} as {
     sire_id?: unknown;
     weeks_elapsed?: unknown;
     gestation_weeks?: unknown;
   },);
+
   return {
     sireId: typeof parsed.sire_id === "string" ? parsed.sire_id : null,
     weeksElapsed: typeof parsed.weeks_elapsed === "number" ? parsed.weeks_elapsed : 0,

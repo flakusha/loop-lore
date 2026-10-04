@@ -38,6 +38,7 @@ beforeEach(() => {
       return {};
     },
   };
+
   globalThis.confirm = () => true;
 },);
 
@@ -148,6 +149,7 @@ describeOrSkip("chatManagement.openRenameModal", () => {
         opened.push(id,);
       },
     },);
+
     await chatManagement.renameChat!.call(ctx, "c9",);
     expect(opened,).toEqual(["c9",],);
   });
@@ -180,6 +182,7 @@ describeOrSkip("chatManagement.confirmRenameChat", () => {
       _renameChatId: "c1",
       _renameChatName: "  New Name  ",
     },);
+
     await chatManagement.confirmRenameChat!.call(ctx,);
     expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/c1",);
     expect(chats[0]!.name,).toBe("New Name",);
@@ -194,6 +197,7 @@ describeOrSkip("chatManagement.confirmRenameChat", () => {
       _renameChatId: "c1",
       _renameChatName: "New",
     },);
+
     await chatManagement.confirmRenameChat!.call(ctx,);
     expect((ctx.toasts as { type: string; message: string }[])[0],).toMatchObject({
       type: "error",
@@ -215,6 +219,7 @@ describeOrSkip("chatManagement.batchArchive", () => {
       chats: [chatRow("c1",), chatRow("c2",),],
       selectedChats: ["c1",],
     },);
+
     await chatManagement.batchArchive!.call(ctx,);
     expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/batch/archive",);
     expect((ctx.chats as Record<string, unknown>[]).map((c,) => c.id),).toEqual(["c2",],);
@@ -252,6 +257,7 @@ describeOrSkip("chatManagement.batchDelete", () => {
       activeChat: "c2",
       selectedChats: ["c1",],
     },);
+
     await chatManagement.batchDelete!.call(ctx,);
     expect((ctx.chats as Record<string, unknown>[]).map((c,) => c.id),).toEqual(["c2",],);
     expect(ctx.selectedChats,).toEqual([],);
@@ -266,6 +272,7 @@ describeOrSkip("chatManagement.batchDelete", () => {
       messages: [{ id: "m1", },],
       selectedChats: ["c1",],
     },);
+
     await chatManagement.batchDelete!.call(ctx,);
     expect(ctx.activeChat,).toBeNull();
     expect(ctx.messages,).toEqual([],);
@@ -276,6 +283,7 @@ describeOrSkip("chatManagement.batchDelete", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const ctx = mgmtCtx({ chats: [chatRow("c1",),], selectedChats: ["c1",], },);
     await chatManagement.batchDelete!.call(ctx,);
     expect((ctx.toasts as { type: string }[])[0]?.type,).toBe("error",);
@@ -300,6 +308,7 @@ describeOrSkip("chatManagement.batchExport", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const ctx = mgmtCtx({ selectedChats: ["c1",], },);
     await chatManagement.batchExport!.call(ctx,);
     expect((ctx.toasts as { type: string }[])[0]?.type,).toBe("error",);
@@ -345,6 +354,7 @@ describeOrSkip("chatManagement.deleteChat", () => {
       activeChat: "c1",
       messages: [{ id: "m1", },],
     },);
+
     await chatManagement.deleteChat!.call(ctx, "c1", event,);
     expect(ctx.activeChat,).toBeNull();
     expect(ctx.messages,).toEqual([],);
@@ -376,6 +386,7 @@ describeOrSkip("chatManagement.deleteChat", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const { event, } = delEvent();
     const ctx = mgmtCtx({ chats: [chatRow("c1",),], },);
     await chatManagement.deleteChat!.call(ctx, "c1", event,);

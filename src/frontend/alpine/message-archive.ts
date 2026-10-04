@@ -22,11 +22,13 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
       const res = await apiFetch(`/api/v1/messages/${messageId}/archive`, {
         method: "POST",
       },);
+
       if (res.ok) {
         const filtered = [];
         for (const m of this.messages) {
           if (m.id !== messageId) { filtered.push(m,); }
         }
+
         this.messages = filtered;
         this.$dispatch?.("show-toast", { type: "success", message: "Message archived", },);
       } else {
@@ -36,6 +38,7 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
       log.warn("archiveMessage failed", { error: String(error,), },);
       this.$dispatch?.("show-toast", { type: "error", message: "Failed to archive message", },);
     }
+
     this._archiveConfirmOpen = false;
     this._archiveConfirmId = null;
   },
@@ -50,6 +53,7 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
       const res = await apiFetch(`/api/v1/messages/${messageId}/restore`, {
         method: "POST",
       },);
+
       if (res.ok) {
         this.$dispatch?.("show-toast", { type: "success", message: "Message restored", },);
       } else {

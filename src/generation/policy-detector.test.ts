@@ -55,6 +55,7 @@ describe("policy-detector registry", () => {
       ...DEFAULT_POLICY_DETECTION,
       enabled: false,
     },);
+
     expect(result.detected,).toBe(false,);
   });
 

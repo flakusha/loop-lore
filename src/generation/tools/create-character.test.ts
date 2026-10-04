@@ -44,6 +44,7 @@ describe("create_character tool", () => {
       },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).not.toBe(true,);
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, name: "Lyra", },);
 
@@ -52,6 +53,7 @@ describe("create_character tool", () => {
       .selectAll()
       .where("display_name", "=", "Lyra",)
       .executeTakeFirstOrThrow();
+
     expect(row.actor_type,).toBe("character",);
     expect(row.agent_type,).toBe("ai",);
     expect(row.owner_id,).toBe(userId,);
@@ -68,12 +70,14 @@ describe("create_character tool", () => {
       { description: "no name", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).toBe(true,);
     const created = await db
       .selectFrom("actors",)
       .select("id",)
       .where("import_spec", "=", "assistant-wizard",)
       .execute();
+
     expect(created,).toHaveLength(0,);
   });
 
@@ -82,6 +86,7 @@ describe("create_character tool", () => {
       { name: " ".repeat(3,), },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).toBe(true,);
   });
 

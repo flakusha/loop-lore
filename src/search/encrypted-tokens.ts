@@ -43,6 +43,7 @@ export function tokenizeForSearch(plaintext: string,): string[] {
   for (const raw of plaintext.toLowerCase().split(/[^a-z0-9]+/,)) {
     if (raw.length >= MIN_TOKEN_LENGTH && !seen.has(raw,)) { seen.add(raw,); }
   }
+
   return Array.from(seen,);
 }
 
@@ -82,5 +83,6 @@ export async function deriveSearchTokens(
     for (const b of digest) { hex += b.toString(16,).padStart(2, "0",); }
     out.push(hex.slice(0, TOKEN_HEX_LENGTH,),);
   }
+
   return out;
 }

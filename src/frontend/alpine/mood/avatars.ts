@@ -23,6 +23,7 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
       const npc = Array.isArray(participants,)
         ? participants.find((p: any,) => p.role_in_chat === "member" && p.actor_type !== "user")
         : null;
+
       if (!npc?.actor_id) { return; }
 
       const avatarsRes = await apiFetch(`/api/v1/actors/${npc.actor_id}/avatars`,);
@@ -38,6 +39,7 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
             },);
           }
         }
+
         this._emotionAvatars = emotionAvatars;
 
         // Select the avatar matching current mood
@@ -64,6 +66,7 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
       const npc = Array.isArray(participants,)
         ? participants.find((p: any,) => p.role_in_chat === "member" && p.actor_type !== "user")
         : null;
+
       if (!npc?.actor_id) { return; }
 
       const baseAvatarId = this.currentCharacter?.avatar_asset_id ?? null;
@@ -80,14 +83,17 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ baseAvatarId, },),
         },);
+
         let genBody: { message?: string; jobId?: string | null } = {};
         try {
           genBody = (await genRes.json()) as { message?: string; jobId?: string | null };
         } catch { /* non-JSON error body */ }
+
         if (!genRes.ok) {
           this._emotionGenStatus = genBody.message ?? t("status.generationFailedToStart",);
           return;
         }
+
         this._emotionGenJobId = genBody.jobId ?? null;
         this._emotionGenStatus = t("status.generatingEmotionAvatars",);
         await this._pollEmotionJob(npc.actor_id, this._emotionGenJobId,);
@@ -111,6 +117,7 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
       this._emotionGenStatus = t("status.generationNoJobId",);
       return;
     }
+
     const deadline = Date.now() + 5 * 60 * 1000;
     while (Date.now() < deadline) {
       await new Promise((resolve,) => setTimeout(resolve, 2000,));
@@ -124,12 +131,14 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
           await this.loadEmotionAvatars();
           return;
         }
+
         if (status === "failed" || status === "cancelled") {
           this._emotionGenStatus = t("status.generationOutcome", { status, },);
           return;
         }
       } catch { /* keep polling */ }
     }
+
     this._emotionGenStatus = t("status.generationTimedOut",);
   },
 
@@ -154,6 +163,7 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
       if (neutral) { return neutral.assetId; }
       if (this._emotionAvatars[0]) { return this._emotionAvatars[0].assetId; }
     }
+
     return this.currentCharacter?.avatar_asset_id ?? null;
   },
 

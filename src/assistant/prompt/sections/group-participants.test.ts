@@ -43,9 +43,11 @@ describe("groupParticipantsSection", () => {
     await insertActors(db, "Solo", { id: "actor-bare-1", },);
     const actors = await db.selectFrom("actors",).select(["id", "display_name",],)
       .orderBy("display_name",).execute();
+
     const byName: Record<string, string> = Object.fromEntries(
       actors.map((a,) => [a.display_name!, a.id,]),
     );
+
     alphaId = byName["Alpha"]!;
     betaId = byName["Beta"]!;
     gammaId = byName["Gamma"]!;

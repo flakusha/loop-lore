@@ -49,6 +49,7 @@ export function createHttpMattingProvider(config: MattingProviderConfig,): Matti
           status: response.status,
           detail: detail.slice(0, 200,),
         },);
+
         throw new Error(`Matting provider returned HTTP ${response.status}`,);
       }
 
@@ -59,6 +60,7 @@ export function createHttpMattingProvider(config: MattingProviderConfig,): Matti
       if (!looksLikePng(payload,)) {
         throw new Error("Matting provider returned a non-PNG payload",);
       }
+
       return payload;
     },
   };
@@ -122,6 +124,7 @@ export function createRembgMattingProvider(config: RembgMattingProviderConfig,):
         new Blob([new Uint8Array(buffer,),], { type: "application/octet-stream", },),
         "image.png",
       );
+
       form.append("model", model,);
       form.append("dc", decontaminate ? "true" : "false",);
 
@@ -138,6 +141,7 @@ export function createRembgMattingProvider(config: RembgMattingProviderConfig,):
           status: response.status,
           detail: detail.slice(0, 200,),
         },);
+
         throw new Error(`rembg returned HTTP ${response.status}`,);
       }
 
@@ -147,6 +151,7 @@ export function createRembgMattingProvider(config: RembgMattingProviderConfig,):
       if (!looksLikePng(sized.buffer,)) {
         throw new Error("rembg returned a non-PNG payload",);
       }
+
       return sized.buffer;
     },
   };

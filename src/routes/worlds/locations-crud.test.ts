@@ -50,6 +50,7 @@ describe("locationRoutes — create/get/update", () => {
         settings: "{}",
       },)
       .execute();
+
     await db
       .insertInto("actors",)
       .values({
@@ -83,6 +84,7 @@ describe("locationRoutes — create/get/update", () => {
         body: JSON.stringify({ description: "no name", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -98,12 +100,14 @@ describe("locationRoutes — create/get/update", () => {
         body: JSON.stringify({ name: "Tavern", description: "Cozy", },),
       },),
     );
+
     expect(created.status,).toBe(201,);
     const { id: locId, } = (await created.json()) as { id: string };
 
     const fetched = await app.handle(
       new Request(`${BASE}/api/worlds/${worldId}/locations/${locId}`,),
     );
+
     expect(fetched.status,).toBe(200,);
     const body = (await fetched.json()) as { name: string; description: string };
     expect(body.name,).toBe("Tavern",);
@@ -118,6 +122,7 @@ describe("locationRoutes — create/get/update", () => {
     const res = await app.handle(
       new Request(`${BASE}/api/worlds/${worldId}/locations/${uid()}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -133,6 +138,7 @@ describe("locationRoutes — create/get/update", () => {
     const res = await app.handle(
       new Request(`${BASE}/api/worlds/${worldB}/locations/${locId}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -150,6 +156,7 @@ describe("locationRoutes — create/get/update", () => {
         body: JSON.stringify({ name: "New Name", description: "Updated", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const row = await db
@@ -157,6 +164,7 @@ describe("locationRoutes — create/get/update", () => {
       .select(["name", "description",],)
       .where("id", "=", locId,)
       .executeTakeFirst();
+
     expect(row?.name,).toBe("New Name",);
     expect(row?.description,).toBe("Updated",);
   });
@@ -175,6 +183,7 @@ describe("locationRoutes — create/get/update", () => {
         body: JSON.stringify({ connections: [123,], },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -194,6 +203,7 @@ describe("locationRoutes — create/get/update", () => {
         body: JSON.stringify({ connections: [otherId,], },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const row = await db
@@ -201,6 +211,7 @@ describe("locationRoutes — create/get/update", () => {
       .select("connections",)
       .where("id", "=", locId,)
       .executeTakeFirst();
+
     expect(row?.connections,).toBe(JSON.stringify([otherId,],),);
   });
 });

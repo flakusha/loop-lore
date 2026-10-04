@@ -70,6 +70,7 @@ export async function recordSkillAcquisition(
     level: skill.level,
     proficiency: skill.proficiency,
   },);
+
   const entry = await insertGrowthLog(db, {
     actorId: opts.input.actorId,
     axis: "skill",
@@ -80,5 +81,6 @@ export async function recordSkillAcquisition(
     reason: opts.reason,
     sourceEventId: opts.sourceEventId ?? null,
   },);
+
   return { skill, growthEntryId: entry.id, };
 }

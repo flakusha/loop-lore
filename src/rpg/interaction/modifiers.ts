@@ -57,6 +57,7 @@ export async function getAbilityModifier(
     .select(["str", "dex", "con", "int", "wis", "cha",],)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!stats) { return []; }
   return [{ source: `ability.${ability}`, value: abilityModifier(stats[ability],), },];
 }

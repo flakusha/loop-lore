@@ -33,12 +33,14 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
             targetLevel: number;
             targetMorale: MoraleState;
           };
+
           const result = calculateIntimidationEffect(
             body.attackerLevel,
             body.attackerIntimidation,
             body.targetLevel,
             body.targetMorale,
           );
+
           return jsonResponse(result,);
         } catch (error) {
           log().error("Failed to calculate intimidation", error instanceof Error ? error : undefined,);
@@ -63,11 +65,13 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
             targetMorale: MoraleState;
             targetPersonality: "aggressive" | "cautious" | "neutral";
           };
+
           const result = calculateTauntEffect(
             body.attackerCharisma,
             body.targetMorale,
             body.targetPersonality,
           );
+
           return jsonResponse(result,);
         } catch (error) {
           log().error("Failed to calculate taunt", error instanceof Error ? error : undefined,);
@@ -92,11 +96,13 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
             attackerReputation: number;
             targetHealthPercent: number;
           };
+
           const result = calculateSurrenderChance(
             body.targetMorale,
             body.attackerReputation,
             body.targetHealthPercent,
           );
+
           return jsonResponse(result,);
         } catch (error) {
           log().error("Failed to calculate surrender", error instanceof Error ? error : undefined,);
@@ -121,11 +127,13 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
             leaderLevel: number;
             allyMorale: MoraleState;
           };
+
           const result = calculateRallyEffect(
             body.leaderCharisma,
             body.leaderLevel,
             body.allyMorale,
           );
+
           return jsonResponse(result,);
         } catch (error) {
           log().error("Failed to calculate rally", error instanceof Error ? error : undefined,);
@@ -150,11 +158,13 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
             leaderInspiration: number;
             allyMorale: MoraleState;
           };
+
           const result = calculateInspireEffect(
             body.leaderCharisma,
             body.leaderInspiration,
             body.allyMorale,
           );
+
           return jsonResponse(result,);
         } catch (error) {
           log().error("Failed to calculate inspire", error instanceof Error ? error : undefined,);
@@ -179,11 +189,13 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
             attackerLevel: number;
             targetMorale: MoraleState;
           };
+
           const result = calculateDemoralizeEffect(
             body.attackerIntimidation,
             body.attackerLevel,
             body.targetMorale,
           );
+
           return jsonResponse(result,);
         } catch (error) {
           log().error("Failed to calculate demoralize", error instanceof Error ? error : undefined,);

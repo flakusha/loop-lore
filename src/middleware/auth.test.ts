@@ -48,6 +48,7 @@ describe("extractBearerToken", () => {
     const req = new Request("http://localhost", {
       headers: { Authorization: "Bearer abc123", },
     },);
+
     expect(extractBearerToken(req,),).toBe("abc123",);
   });
 
@@ -55,6 +56,7 @@ describe("extractBearerToken", () => {
     const req = new Request("http://localhost", {
       headers: { Authorization: "Bearer   abc123  ", },
     },);
+
     expect(extractBearerToken(req,),).toBe("abc123",);
   });
 
@@ -62,6 +64,7 @@ describe("extractBearerToken", () => {
     const req = new Request("http://localhost", {
       headers: { Authorization: "Basic abc123", },
     },);
+
     expect(extractBearerToken(req,),).toBeNull();
   });
 
@@ -74,6 +77,7 @@ describe("extractBearerToken", () => {
     const req = new Request("http://localhost", {
       headers: { Authorization: "Bearer ", },
     },);
+
     expect(extractBearerToken(req,),).toBeNull();
   });
 });
@@ -104,6 +108,7 @@ describe("resolveUserIdFromRequest", () => {
     resetSoloUserCache();
     if (prevLegacyFallback === undefined) { delete process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK; }
     else { process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = prevLegacyFallback; }
+
     await db.destroy();
   },);
 
@@ -120,6 +125,7 @@ describe("resolveUserIdFromRequest", () => {
         settings: "{}",
       },)
       .execute();
+
     await db
       .insertInto("actors",)
       .values({
@@ -402,6 +408,7 @@ describe("resolveUserIdFromRequest", () => {
       await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),
     ).toBe(userId,);
   });
+
   it("uses the authConfig 4th-arg over env when DI is provided (BUG-resolveuseridfromrequest-authconfig-di)", async () => {
     // With AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK=1 set globally (via beforeEach),
     // a caller without DI would consult the legacy sha256(token) path. When a

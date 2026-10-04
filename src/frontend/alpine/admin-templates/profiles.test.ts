@@ -8,6 +8,7 @@ const globalState = globalThis as unknown as {
   apiFetch?: ApiFetchMock;
   showToast?: (type: string, message: string,) => void;
 };
+
 const originalFetch = globalState.apiFetch;
 const originalToast = globalState.showToast;
 let calls: { url: string; opts: RequestInit }[] = [];
@@ -23,6 +24,7 @@ beforeEach(() => {
     calls.push({ url, opts: opts ?? {}, },);
     return handler(url, opts,);
   };
+
   globalState.showToast = (type, message,) => {
     toasts.push({ type, message, },);
   };
@@ -84,6 +86,7 @@ describe("adminTemplates.profiles.loadTemplates", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await profiles.loadTemplates();
     expect(profiles.loadingTemplates,).toBe(false,);
   });
@@ -105,6 +108,7 @@ describe("adminTemplates.profiles.selectProfile / clearSelection", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await profiles.selectProfile("p2",);
     expect(profiles.selectedProfile!.id,).toBe("keep",);
   });
@@ -139,6 +143,7 @@ describe("adminTemplates.profiles.deleteProfile", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await profiles.deleteProfile("p9",);
     expect(toasts[1]!.type,).toBe("error",);
   });
@@ -161,6 +166,7 @@ describe("adminTemplates.profiles.createProfile", () => {
       promptFormat: "tags",
       maxTokenHint: 200,
     };
+
     profiles.showCreateModal = true;
     await profiles.createProfile();
     const post = calls.find((c,) => c.opts.method === "POST")!;
@@ -172,6 +178,7 @@ describe("adminTemplates.profiles.createProfile", () => {
       promptFormat: "tags",
       maxTokenHint: 200,
     },);
+
     expect(toasts[0]!.type,).toBe("success",);
     expect(profiles.showCreateModal,).toBe(false,);
     expect(profiles.newProfile,).toEqual({ id: "", name: "", families: "", promptFormat: "tags", maxTokenHint: 150, },);
@@ -181,6 +188,7 @@ describe("adminTemplates.profiles.createProfile", () => {
   test("surfaces the server error on rejection", async () => {
     handler = async (_url, opts,) =>
       opts?.method === "POST" ? Response.json({ error: "duplicate", }, { status: 400, },) : Response.json({},);
+
     profiles.newProfile = { id: "x", name: "X", families: "", promptFormat: "tags", maxTokenHint: 150, };
     await profiles.createProfile();
     expect(toasts,).toEqual([{ type: "error", message: "duplicate", },],);
@@ -190,12 +198,14 @@ describe("adminTemplates.profiles.createProfile", () => {
   test("falls back to a generic message and tolerates network errors", async () => {
     handler = async (_url, opts,) =>
       opts?.method === "POST" ? Response.json({}, { status: 500, },) : Response.json({},);
+
     profiles.newProfile = { id: "x", name: "X", families: "", promptFormat: "tags", maxTokenHint: 150, };
     await profiles.createProfile();
     expect(toasts[0]!.type,).toBe("error",);
     handler = async () => {
       throw new Error("offline",);
     };
+
     await profiles.createProfile();
     expect(toasts[1]!.type,).toBe("error",);
   });

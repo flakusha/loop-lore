@@ -49,11 +49,13 @@ describe("chats archive-routes", () => {
       user_id: OWNER_ID,
       owner_id: OWNER_ID,
     } as never,);
+
     await insertActors(db, "Member", {
       id: MEMBER_ID,
       user_id: MEMBER_ID,
       owner_id: MEMBER_ID,
     } as never,);
+
     await insertChats(db, "Archive Me", OWNER_ID, { id: CHAT_ID, } as never,);
     await insertChatParticipants(db, CHAT_ID, OWNER_ID, { role_in_chat: "owner", },);
     await insertChatParticipants(db, CHAT_ID, MEMBER_ID, { role_in_chat: "member", },);
@@ -68,6 +70,7 @@ describe("chats archive-routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/archive`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { ok: boolean; chatId: string };
     expect(body.ok,).toBe(true,);
@@ -80,6 +83,7 @@ describe("chats archive-routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${missingChatId}/archive`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -88,6 +92,7 @@ describe("chats archive-routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/archive`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -96,6 +101,7 @@ describe("chats archive-routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/archive`, { method: "POST", },),
     );
+
     // requireUserId short-circuits with a JSON error envelope.
     expect(res.status,).toBeGreaterThanOrEqual(400,);
   });
@@ -106,12 +112,14 @@ describe("chats archive-routes", () => {
     const archiveRes = await archiveApp.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/archive`, { method: "POST", },),
     );
+
     expect(archiveRes.status,).toBe(200,);
 
     const unarchiveApp = makeApp(OWNER_ID,);
     const res = await unarchiveApp.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/unarchive`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { ok: boolean; chatId: string };
     expect(body.ok,).toBe(true,);
@@ -124,6 +132,7 @@ describe("chats archive-routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${missingChatId}/unarchive`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -132,6 +141,7 @@ describe("chats archive-routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/unarchive`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

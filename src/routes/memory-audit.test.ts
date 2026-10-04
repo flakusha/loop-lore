@@ -24,6 +24,7 @@ function makeApp(db: Kysely<DB>, userId: string | null = "user1",) {
   if (userId !== null) {
     app.derive(() => ({ userId, userRole: null, }));
   }
+
   return app.use(memoryAuditRoutes({ database: db, },),);
 }
 
@@ -36,6 +37,7 @@ async function getAudit(
   const res = await makeApp(db,).handle(
     new Request(`http://localhost/api/actors/${actorId}/memories/mem1/audit${query}`,),
   );
+
   return {
     status: res.status,
     body: await res.json() as { entries: Array<Record<string, unknown>>; nextCursor?: string | null },
@@ -54,6 +56,7 @@ describe("memoryAuditRoutes", () => {
       actor_type: "user" as never,
       user_id: "user1" as never,
     },);
+
     await recordAuditLog(db, [
       { memoryId: "mem1", actorId: "user1", userId: "user1", action: "create", details: { source: "test", }, },
       { memoryId: "mem2", actorId: "user1", userId: "user1", action: "pin", details: {}, },
@@ -117,6 +120,7 @@ describe("memoryAuditRoutes", () => {
       "user1",
       "?since=2000-01-01T00:00:00Z&until=2100-01-01T00:00:00Z",
     );
+
     expect(status,).toBe(200,);
     expect(body.entries.length,).toBe(3,);
   });

@@ -36,6 +36,7 @@ export async function overviewHandler(db: Kysely<DB>, ctx: AnalyticsCtx,): Promi
         .as("systemTokens",),
     ],)
     .execute();
+
   const totalMessages = overview.reduce((sum, row,) => sum + Number(row.totalMessages ?? 0,), 0,);
   const messageTotalTokens = overview.reduce((sum, row,) => sum + Number(row.totalTokens ?? 0,), 0,);
   const tokensByRole = {
@@ -91,12 +92,14 @@ export async function overviewHandler(db: Kysely<DB>, ctx: AnalyticsCtx,): Promi
         .as("b5",),
     ],)
     .executeTakeFirst();
+
   const failed = await db
     .selectFrom("telemetry_events",)
     .where("user_id", "=", telemetryUserId,)
     .where("event_type", "=", "generation.failed",)
     .select(sql<number>`count(*)`.as("failedGenerations",),)
     .executeTakeFirst();
+
   const totalGenerationTokens = Number(completed?.totalTokens ?? 0,);
   const totalTokens = totalGenerationTokens || messageTotalTokens;
   const bucketCounts = [
@@ -106,6 +109,7 @@ export async function overviewHandler(db: Kysely<DB>, ctx: AnalyticsCtx,): Promi
     completed?.b4,
     completed?.b5,
   ];
+
   const latencyBuckets = LATENCY_BUCKETS.map((label, index,) => ({
     label,
     count: Number(bucketCounts[index] ?? 0,),

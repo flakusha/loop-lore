@@ -33,6 +33,7 @@ export async function tagVocabulary(
   if (prefix === "") {
     return [...new Set(tags,),];
   }
+
   return [...new Set(tags.filter((tag,) => tag.startsWith(prefix,)),),];
 }
 

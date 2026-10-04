@@ -33,6 +33,7 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (!contentType.includes("application/json",)) {
           return;
         }
+
         const text = await ctx.request.text();
         (ctx as { rawBodyText?: string }).rawBodyText = text;
         const parsed = safeJsonParse(text,);

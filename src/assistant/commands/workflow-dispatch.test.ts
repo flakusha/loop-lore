@@ -56,6 +56,7 @@ const VIDEO_WORKFLOW: AssistantWorkflowConfig = {
   },
   approval: { type: "confirm", preview: true, },
 };
+
 const ENTITY_WORKFLOW: AssistantWorkflowConfig = {
   id: "test-character",
   name: "Test character",
@@ -145,6 +146,7 @@ describe("workflow dispatch via message route", () => {
       user_id: CALLER_ID,
       owner_id: CALLER_ID,
     } as never,);
+
     await insertChats(db, "Workflow Chat", CALLER_ID, { id: chatId, } as never,);
     await insertChatParticipants(db, chatId, CALLER_ID, { role_in_chat: "member", } as never,);
   },);
@@ -224,6 +226,7 @@ describe("workflow dispatch via message route", () => {
     const progress = await send(db, chatId, "neon alley at night",);
     expect(progress.body?.action,).toBe("workflow-progress",);
   });
+
   test("status with no active run reports empty", async () => {
     const status = await send(db, chatId, "/workflow status",);
     expect(String(status.body?.systemMessage ?? "",),).toContain("No active workflow",);

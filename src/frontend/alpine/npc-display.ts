@@ -14,24 +14,31 @@ export const npcDisplay = {
       case "hostile": {
         return "var(--accent-red)";
       }
+
       case "unfriendly": {
         return "var(--accent-orange)";
       }
+
       case "neutral": {
         return "var(--text-muted)";
       }
+
       case "friendly": {
         return "var(--accent-green)";
       }
+
       case "honored": {
         return "var(--accent-blue)";
       }
+
       case "revered": {
         return "var(--accent-purple)";
       }
+
       case "exalted": {
         return "var(--accent-gold)";
       }
+
       default: {
         return "var(--text-muted)";
       }
@@ -47,18 +54,23 @@ export const npcDisplay = {
       case "friend": {
         return "var(--accent-green)";
       }
+
       case "ally": {
         return "var(--accent-blue)";
       }
+
       case "rival": {
         return "var(--accent-orange)";
       }
+
       case "enemy": {
         return "var(--accent-red)";
       }
+
       case "mentor": {
         return "var(--accent-purple)";
       }
+
       default: {
         return "var(--text-muted)";
       }
@@ -85,6 +97,7 @@ export const npcDisplay = {
     for (const tier of STANDING_TIERS) {
       if (standing >= tier.min && standing <= tier.max) { return tier.color; }
     }
+
     return "var(--text-muted)";
   },
 
@@ -92,6 +105,7 @@ export const npcDisplay = {
     for (const tier of STANDING_TIERS) {
       if (standing >= tier.min && standing <= tier.max) { return tier.name; }
     }
+
     return "Neutral";
   },
 

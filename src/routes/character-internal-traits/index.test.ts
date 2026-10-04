@@ -51,6 +51,7 @@ describe("character-internal-traits IDOR authz", () => {
       id: ACTOR_OWNED_BY_OWNER as never,
       owner_id: OWNER as never,
     },);
+
     await insertActors(db, "Other's Hero", {
       id: ACTOR_OWNED_BY_OTHER as never,
       owner_id: OTHER as never,
@@ -67,6 +68,7 @@ describe("character-internal-traits IDOR authz", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -78,6 +80,7 @@ describe("character-internal-traits IDOR authz", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -89,6 +92,7 @@ describe("character-internal-traits IDOR authz", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -100,6 +104,7 @@ describe("character-internal-traits IDOR authz", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -109,6 +114,7 @@ describe("character-internal-traits IDOR authz", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -118,6 +124,7 @@ describe("character-internal-traits IDOR authz", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -125,6 +132,7 @@ describe("character-internal-traits IDOR authz", () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/character-internal-traits?actorId=${ACTOR_OWNED_BY_OWNER}`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -132,6 +140,7 @@ describe("character-internal-traits IDOR authz", () => {
     const res = await makeApp(db, OTHER, "user",).handle(
       new Request(`http://localhost/api/character-internal-traits?actorId=${ACTOR_OWNED_BY_OWNER}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -139,6 +148,7 @@ describe("character-internal-traits IDOR authz", () => {
     const res = await makeApp(db, OWNER, "user",).handle(
       new Request(`http://localhost/api/character-internal-traits?actorId=${ACTOR_OWNED_BY_OWNER}`,),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -148,6 +158,7 @@ describe("character-internal-traits IDOR authz", () => {
         `http://localhost/api/character-internal-traits/prompt?actorId=${ACTOR_OWNED_BY_OWNER}&includeHidden=true`,
       ),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -155,6 +166,7 @@ describe("character-internal-traits IDOR authz", () => {
     const res = await makeApp(db, OWNER, "user",).handle(
       new Request(`http://localhost/api/character-internal-traits/prompt?actorId=${ACTOR_OWNED_BY_OWNER}`,),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -166,6 +178,7 @@ describe("character-internal-traits IDOR authz", () => {
         body: JSON.stringify({ traits: [], },),
       },),
     );
+
     expect([400, 404, 422,],).toContain(res.status,);
   });
 
@@ -177,6 +190,7 @@ describe("character-internal-traits IDOR authz", () => {
         body: JSON.stringify({ traits: "not-an-array", },),
       },),
     );
+
     expect([200, 400, 422,],).toContain(res.status,);
   });
 
@@ -189,6 +203,7 @@ describe("character-internal-traits IDOR authz", () => {
         body: JSON.stringify({ traits: [{ name: "huge", value: huge, },], },),
       },),
     );
+
     expect([200, 400, 413, 422,],).toContain(res.status,);
   });
 });

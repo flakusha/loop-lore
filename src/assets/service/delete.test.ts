@@ -34,6 +34,7 @@ async function seedWithFile(db: Kysely<DB>, uploadDir: string,): Promise<void> {
     STORAGE_PATH,
     { id: ASSET_ID as never, },
   );
+
   await insertAssetLinks(db, ASSET_ID, "character", "char-1",);
   const fileDir = join(uploadDir, "raw", "c1", "a2",);
   mkdirSync(fileDir, { recursive: true, },);
@@ -80,6 +81,7 @@ describe("deleteAsset", () => {
       await insertUsers(db, OWNER, "Delete Owner",);
       const owner = await db.selectFrom("users",).select("id",).where("username", "=", OWNER,)
         .executeTakeFirstOrThrow();
+
       await insertAssets(
         db,
         owner.id,
@@ -90,6 +92,7 @@ describe("deleteAsset", () => {
         "raw/ff/ee/missing.png",
         { id: ASSET_ID as never, },
       );
+
       expect(existsSync(join(uploadDir, "raw",),),).toBe(false,);
 
       expect(await deleteAsset({ database: db, assetId: ASSET_ID, uploadDir, },),).toBe(true,);
@@ -108,16 +111,19 @@ describe("deleteAsset", () => {
       await insertUsers(db, OWNER, "Delete Owner",);
       const owner = await db.selectFrom("users",).select("id",).where("username", "=", OWNER,)
         .executeTakeFirstOrThrow();
+
       const sourceId = "00000000-0000-4000-8000-0000000000a1";
       const derivativeId = "00000000-0000-4000-8000-0000000000a2";
       await insertAssets(db, owner.id, "source.png", "image/png", "image" as never, 8, "raw/00/source.png", {
         id: sourceId as never,
         alpha_status: AssetAlphaStatus.Raw,
       },);
+
       await insertAssets(db, owner.id, "matted.png", "image/png", "image" as never, 8, "raw/00/matted.png", {
         id: derivativeId as never,
         alpha_status: AssetAlphaStatus.Matted,
       },);
+
       await insertAssetLinks(db, derivativeId, AssetLinkEntity.Asset, sourceId, {
         label: MATTING_SOURCE_LABEL,
       },);
@@ -140,14 +146,17 @@ describe("deleteAsset", () => {
       await insertUsers(db, OWNER, "Delete Owner",);
       const owner = await db.selectFrom("users",).select("id",).where("username", "=", OWNER,)
         .executeTakeFirstOrThrow();
+
       const parentId = "00000000-0000-4000-8000-0000000000b1";
       const childId = "00000000-0000-4000-8000-0000000000b2";
       await insertAssets(db, owner.id, "parent.png", "image/png", "image" as never, 8, "raw/00/parent.png", {
         id: parentId as never,
       },);
+
       await insertAssets(db, owner.id, "child.png", "image/png", "image" as never, 8, "raw/00/child.png", {
         id: childId as never,
       },);
+
       await insertAssetLinks(db, childId, AssetLinkEntity.Asset, parentId,);
 
       expect(await deleteAsset({ database: db, assetId: parentId, uploadDir, },),).toBe(true,);
@@ -173,6 +182,7 @@ describe("deleteAsset", () => {
       await insertUsers(db, OWNER, "Delete Owner",);
       const owner = await db.selectFrom("users",).select("id",).where("username", "=", OWNER,)
         .executeTakeFirstOrThrow();
+
       await insertAssets(
         db,
         owner.id,
@@ -183,6 +193,7 @@ describe("deleteAsset", () => {
         "raw/aa/bb/connected.png",
         { id: ASSET_ID as never, },
       );
+
       await insertAssetLinks(db, ASSET_ID, "character", "char-9",);
 
       await db.insertInto("asset_transforms",).values({
@@ -202,6 +213,7 @@ describe("deleteAsset", () => {
         shared_with_id: shareTarget,
         shared_by_id: sharer,
       },).execute();
+
       await db.insertInto("personas",).values({
         user_id: owner.id,
         name: "Avatar Persona",
@@ -214,6 +226,7 @@ describe("deleteAsset", () => {
       expect(links,).toEqual([],);
       const transforms = await db.selectFrom("asset_transforms",).selectAll().where("asset_id", "=", ASSET_ID,)
         .execute();
+
       expect(transforms,).toEqual([],);
       const shares = await db.selectFrom("asset_shares",).selectAll().where("asset_id", "=", ASSET_ID,).execute();
       expect(shares,).toEqual([],);

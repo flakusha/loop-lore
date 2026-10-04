@@ -83,6 +83,7 @@ describe("Permanent traits — owner", () => {
         body: JSON.stringify({ trait_category: "personality", trait_name: "brave", value: "true", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = await res.json() as { id: string };
     expect(id,).toBeDefined();
@@ -97,6 +98,7 @@ describe("Permanent traits — owner", () => {
         body: JSON.stringify({ trait_category: "personality", trait_name: "wise", value: "true", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -109,6 +111,7 @@ describe("Permanent traits — owner", () => {
         body: JSON.stringify({ value: "false", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -121,6 +124,7 @@ describe("Permanent traits — owner", () => {
         body: JSON.stringify({ value: "false", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -129,6 +133,7 @@ describe("Permanent traits — owner", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/traits/brave`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });
@@ -170,6 +175,7 @@ describe("Permanent traits — admin/solo bypass", () => {
         body: JSON.stringify({ trait_category: "skill", trait_name: "swordsmanship", value: "expert", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 });
@@ -196,6 +202,7 @@ describe("World traits", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/traits/world/${WORLD}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -208,6 +215,7 @@ describe("World traits", () => {
         body: JSON.stringify({ trait_category: "reputation", trait_name: "hero", value: "loved", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 
@@ -220,6 +228,7 @@ describe("World traits", () => {
         body: JSON.stringify({ trait_category: "reputation", trait_name: "villain", value: "hated", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -230,6 +239,7 @@ describe("World traits", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });
@@ -257,6 +267,7 @@ describe("Location traits", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/traits/location/${LOCATION}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -269,6 +280,7 @@ describe("Location traits", () => {
         body: JSON.stringify({ trait_category: "comfort", trait_name: "comfort", value: "high", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 
@@ -281,6 +293,7 @@ describe("Location traits", () => {
         body: JSON.stringify({ trait_category: "safety", trait_name: "danger", value: "low", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -291,6 +304,7 @@ describe("Location traits", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });

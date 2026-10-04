@@ -37,16 +37,19 @@ async function seedBase(): Promise<void> {
     status: "active",
     settings: "{}",
   },).execute();
+
   await db.insertInto("worlds",).values({
     id: "world-1",
     owner_id: "user-1",
     name: "Test World",
   },).execute();
+
   await db.insertInto("locations",).values({
     id: "loc-1",
     world_id: "world-1",
     name: "Old Forest",
   },).execute();
+
   await db.insertInto("chats",).values({
     id: "chat-rich",
     name: "Rich Chat",
@@ -55,6 +58,7 @@ async function seedBase(): Promise<void> {
     created_by: "user-1",
     current_location_id: "loc-1",
   },).execute();
+
   await db.insertInto("chats",).values({
     id: "chat-empty",
     name: "Empty Chat",
@@ -62,6 +66,7 @@ async function seedBase(): Promise<void> {
     mode: "direct",
     created_by: "user-1",
   },).execute();
+
   await db.insertInto("actors",).values({
     id: "actor-1",
     actor_type: "character",
@@ -71,6 +76,7 @@ async function seedBase(): Promise<void> {
     format_version: 0,
     import_spec: "{}",
   },).execute();
+
   await db.insertInto("chat_participants",).values({
     chat_id: "chat-rich",
     actor_id: "actor-1",
@@ -106,6 +112,7 @@ describe("fireRandomEvent", () => {
       .selectAll()
       .where("chat_id", "=", "chat-empty",)
       .execute();
+
     expect(rows,).toEqual([],);
   });
 
@@ -126,6 +133,7 @@ describe("fireRandomEvent", () => {
       .selectAll()
       .where("chat_id", "=", "chat-rich",)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.event_id,).toBe(event.id,);
     expect(rows[0]?.content,).toBe(event.content,);
@@ -147,6 +155,7 @@ describe("fireRandomEvent", () => {
       .selectAll()
       .where("chat_id", "=", "chat-rich",)
       .execute();
+
     expect(rows.length,).toBe(2,);
   });
 });

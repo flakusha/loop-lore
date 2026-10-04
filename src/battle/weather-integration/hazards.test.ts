@@ -22,6 +22,7 @@ describe("generateEnvironmentalHazard", () => {
       avoidable: true,
       avoidanceDC: 15,
     },);
+
     expect(typeof hazard?.id,).toBe("string",);
   });
 

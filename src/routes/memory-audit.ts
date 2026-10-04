@@ -79,6 +79,7 @@ export function memoryAuditRoutes(opts: { database: Db }, prefix = "/api",): Ely
         userId,
         userRole,
       );
+
       if (!ownershipOk) { return jsonError("Memory not found", 404,); }
 
       const query = ctx.query as {
@@ -88,6 +89,7 @@ export function memoryAuditRoutes(opts: { database: Db }, prefix = "/api",): Ely
         cursor?: string;
         limit?: string;
       };
+
       const action = AUDIT_ACTIONS.find((a,) => a === query.action);
       const limit = query.limit ? Number.parseInt(query.limit, 10,) : undefined;
 
@@ -98,6 +100,7 @@ export function memoryAuditRoutes(opts: { database: Db }, prefix = "/api",): Ely
         cursor: query.cursor,
         limit: Number.isFinite(limit,) ? limit : undefined,
       },);
+
       return jsonResponse(result,);
     }, {
       query: t.Object({

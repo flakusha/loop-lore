@@ -37,6 +37,7 @@ export async function importAvatars(
         isPrimary: avatar.isPrimary as boolean,
         sortOrder: avatar.sortOrder as number,
       },);
+
       result.avatarsImported++;
     } catch (error: unknown) {
       result.errors.push(`Failed to import avatar "${String(avatar.label,)}": ${errMsg(error,)}`,);

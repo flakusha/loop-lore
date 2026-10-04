@@ -15,15 +15,18 @@ export const interactionContextSection: SectionBuilder = {
       const changes = Object.keys(interaction.stateChanges,).length > 0
         ? `; changes ${jsonStringifyOr(interaction.stateChanges,)}`
         : "";
+
       const modifiers = interaction.modifiers.length === 0
         ? "none"
         : interaction.modifiers.map((modifier,) =>
           `${modifier.source} ${modifier.value >= 0 ? "+" : ""}${modifier.value}`
         ).join(", ",);
+
       return `- /${interaction.command}: ${interaction.outcome} (${
         interaction.rollTotal ?? "blocked"
       } vs DC ${interaction.difficulty}; advantage ${interaction.advantage}; modifiers ${modifiers})${changes}`;
     },);
+
     return [{
       role: "user",
       content: `[Recent game interactions]\n${lines.join("\n",)}`,

@@ -46,6 +46,7 @@ export const editing = {
           body: jsonBody({ detail, mode, template: value, },),
         },
       );
+
       if (res.ok) {
         (globalThis as any).showToast("success", t("toasts.templateSaved",),);
         // Update local state
@@ -53,8 +54,10 @@ export const editing = {
           if (!this.selectedProfile.templates[detail]) {
             this.selectedProfile.templates[detail] = {};
           }
+
           this.selectedProfile.templates[detail][mode] = value;
         }
+
         this.editingTemplate = null;
         // Refresh list counts
         await this.loadTemplates();
@@ -93,6 +96,7 @@ export const editing = {
           },),
         },
       );
+
       if (res.ok) {
         (globalThis as any).showToast("success", t("toasts.defaultsSaved",),);
         await this.loadTemplates();

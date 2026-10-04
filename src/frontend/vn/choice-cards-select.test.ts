@@ -25,6 +25,7 @@ if (ISOLATED) {
       return apiHandler(url, opts ?? {},);
     },
   }),);
+
   // choice-cards.ts imports feFetch directly (split/reunite); mock the seam so
   // the real fe-fetch → utils barrel never loads in this suite.
   mock.module("../fe-fetch", () => ({
@@ -69,6 +70,7 @@ function makeEl(): FakeEl {
     },
     setAttribute() {},
   };
+
   return el;
 }
 
@@ -148,6 +150,7 @@ describeOrSkip("selectChoice", () => {
           ? { choice: { choice: { ...SEED[0], relationship_impact: { rival: 1, }, }, }, }
           : { choices: SEED, },
       );
+
     const result = await selectChoice("c1",);
     expect(result,).toEqual({
       choice: { ...SEED[0]!, relationship_impact: { rival: 1, }, },
@@ -156,6 +159,7 @@ describeOrSkip("selectChoice", () => {
       reunionTriggered: false,
       locationChanged: false,
     },);
+
     const call = apiCalls.find((c,) => c.url.endsWith("/select",))!;
     expect(call.url,).toBe("/api/v1/chats/chat-1/vn-choices/c1/select",);
     expect(call.opts.method,).toBe("POST",);
@@ -173,6 +177,7 @@ describeOrSkip("selectChoice", () => {
           ? { data: { choice: SEED[0], }, }
           : { choices: SEED, },
       );
+
     expect((await selectChoice("c1",))?.choice.id,).toBe("c1",);
   });
 
@@ -185,6 +190,7 @@ describeOrSkip("selectChoice", () => {
       if (url.includes("/select",)) { throw new Error("boom",); }
       return jsonRes({ choices: SEED, },);
     };
+
     expect(await selectChoice("c1",),).toBeNull();
   });
 
@@ -196,6 +202,7 @@ describeOrSkip("selectChoice", () => {
           ? { choice: { choice: SEED[0], }, }
           : { choices: SEED, },
       );
+
     const card = container.children[0]!.children[0]!;
     card.listeners["click"]![0]!();
     // The mocked apiFetch records the POST synchronously when invoked.

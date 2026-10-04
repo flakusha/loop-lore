@@ -57,6 +57,7 @@ describe("crafting attempt lifecycle", () => {
       "Crafter Owner",
       { id: userId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     worldId = uid();
     await insertWorlds(db, userId, "Attempt World", { id: worldId, } as never,);
     actorId = uid();
@@ -135,6 +136,7 @@ describe("crafting attempt lifecycle", () => {
         body: JSON.stringify({ actorId, recipeId, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as {
       attemptId: string;
@@ -144,6 +146,7 @@ describe("crafting attempt lifecycle", () => {
       outputQuantity: number;
       materialsConsumed: { itemId: string; quantity: number }[];
     };
+
     expect(body.attemptId,).toBeString();
     expect(["pending", "success", "failure", "critical_success",],).toContain(body.status,);
     expect(typeof body.quality,).toBe("number",);
@@ -155,6 +158,7 @@ describe("crafting attempt lifecycle", () => {
       .where("actor_id", "=", actorId,)
       .where("name", "=", "Ore",)
       .executeTakeFirst();
+
     expect(ore?.quantity,).toBe(8,);
   });
 
@@ -163,6 +167,7 @@ describe("crafting attempt lifecycle", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/actors/${actorId}/craft-attempts`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { attempts: { id: string; recipeId: string }[] };
     expect(body.attempts.length,).toBeGreaterThanOrEqual(1,);
@@ -174,11 +179,13 @@ describe("crafting attempt lifecycle", () => {
     const listRes = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/actors/${actorId}/craft-attempts`,),
     );
+
     const listBody = (await json(listRes,)) as { attempts: { id: string }[] };
     const attemptId = listBody.attempts[0]!.id;
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/craft-attempts/${attemptId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { id: string };
     expect(body.id,).toBe(attemptId,);
@@ -192,6 +199,7 @@ describe("crafting attempt lifecycle", () => {
       "Stranger",
       { id: strangerUser, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     const app = authedApp(strangerUser,);
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/craft`, {
@@ -200,6 +208,7 @@ describe("crafting attempt lifecycle", () => {
         body: JSON.stringify({ actorId, recipeId, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

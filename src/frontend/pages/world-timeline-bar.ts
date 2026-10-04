@@ -83,6 +83,7 @@ function worldTimelineBarImpl(
       if (!detail) { return; }
       const url = `/dynamic/worlds/${this.worldId}/detail?timeline=` +
         `${encodeURIComponent(this.selectedTimeline,)}`;
+
       htmx.ajax("GET", url, { target: "#world-detail", swap: "innerHTML", },);
     },
 
@@ -101,6 +102,7 @@ function worldTimelineBarImpl(
           },),
           /* eslint-enable no-restricted-syntax */
         },);
+
         if (res.ok) {
           const data = (await res.json()) as { data: WorldTimeline };
           this.timelines.push(data.data,);

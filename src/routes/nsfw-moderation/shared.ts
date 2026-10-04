@@ -28,6 +28,7 @@ export function requireAdmin(ctx: any,): string | Response {
   if (!can(ctx.userRole, "admin.system",)) {
     return forbiddenResponse();
   }
+
   return userId;
 }
 
@@ -46,6 +47,7 @@ export function requireAdminUsers(ctx: any,): string | Response {
   if (!can(ctx.userRole, "admin.users",)) {
     return forbiddenResponse();
   }
+
   return userId;
 }
 
@@ -67,6 +69,7 @@ export function requireModerationReview(ctx: any,): string | Response {
   if (!can(ctx.userRole, "moderation.review",) && !can(ctx.userRole, "admin.system",)) {
     return forbiddenResponse();
   }
+
   return userId;
 }
 
@@ -89,6 +92,7 @@ export function requireModerationAction(ctx: any,): string | Response {
   if (!can(ctx.userRole, "moderation.action",) && !can(ctx.userRole, "admin.system",)) {
     return forbiddenResponse();
   }
+
   return userId;
 }
 
@@ -104,6 +108,7 @@ export function requireOwnOrAdmin(ctx: any, targetUserId: string,): string | Res
   if (targetUserId !== userId && !can(ctx.userRole, "admin.system",)) {
     return forbiddenResponse();
   }
+
   return userId;
 }
 

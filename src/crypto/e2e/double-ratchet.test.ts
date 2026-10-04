@@ -35,10 +35,12 @@ let aliceKp: CryptoKeyPair = {
   publicKey: { type: "public", } as unknown as CryptoKey,
   privateKey: { type: "private", } as unknown as CryptoKey,
 };
+
 let bobKp: CryptoKeyPair = {
   publicKey: { type: "public", } as unknown as CryptoKey,
   privateKey: { type: "private", } as unknown as CryptoKey,
 };
+
 let alicePubJwk: JsonWebKey = { kty: "EC", };
 let bobPubJwk: JsonWebKey = { kty: "EC", };
 
@@ -77,6 +79,7 @@ describe("per-message ephemeral ECDH (encrypt + decrypt)", () => {
       payload: wire,
       receiverStaticPriv: bobKp.privateKey,
     },);
+
     expect(plaintext,).toBe("hello bob",);
   });
 
@@ -85,11 +88,13 @@ describe("per-message ephemeral ECDH (encrypt + decrypt)", () => {
     for (let i = 0; i < 5; i++) {
       wire.push(await encrypt(`message ${i}`, i,),);
     }
+
     for (let i = 0; i < 5; i++) {
       const plain = await decodeEphemeralPayload({
         payload: wire[i]!,
         receiverStaticPriv: bobKp.privateKey,
       },);
+
       expect(plain,).toBe(`message ${i}`,);
     }
   });
@@ -129,6 +134,7 @@ describe("per-message ephemeral ECDH (encrypt + decrypt)", () => {
       expect(seen.has(key,),).toBeFalse();
       seen.add(key,);
     }
+
     expect(seen.size,).toBe(10,);
   });
 
@@ -190,6 +196,7 @@ describe("per-message ephemeral ECDH — forward-secrecy claims", () => {
           payload: messages[i]!.wire,
           receiverStaticPriv: attackerBobPriv,
         },);
+
         expect(pt,).toBe(messages[i]!.plaintext,);
       }
     },

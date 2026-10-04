@@ -58,6 +58,7 @@ const probe = await generateImages(
   { ...BASE, baseUrl: "not-a-url", apiFamily: "openai", },
   OPTS,
 );
+
 const dispatchIsReal = probe.ok === false;
 
 const itRealDispatch = it.skipIf(!dispatchIsReal,);
@@ -68,6 +69,7 @@ describe("generateImages", () => {
       { ...BASE, baseUrl: "not-a-url", apiFamily: "openai", },
       OPTS,
     );
+
     expect(outcome.ok,).toBe(false,);
     const failure = outcome as ImageGenFailure;
     expect(failure.status,).toBe(400,);
@@ -79,6 +81,7 @@ describe("generateImages", () => {
       { ...BASE, apiFamily: "carrier-pigeon", } as unknown as ImageProviderConfig,
       OPTS,
     );
+
     expect(outcome.ok,).toBe(false,);
     const failure = outcome as ImageGenFailure;
     expect(failure.status,).toBe(501,);
@@ -102,6 +105,7 @@ describe("generateImages", () => {
       (outcome,) => ({ ok: outcome.ok, error: outcome.ok ? "" : outcome.error, }),
       (error: unknown,) => ({ ok: false as const, error: (error as Error).message, }),
     );
+
     expect(settled.ok,).toBe(false,);
     expect(settled.error.length,).toBeGreaterThan(0,);
   },);

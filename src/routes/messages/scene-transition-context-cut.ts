@@ -64,6 +64,7 @@ export async function applyContextCut(
         .where("chat_id", "=", chatId,)
         .execute(),
     ],);
+
     if (promotionCandidatesResult.status !== "fulfilled") { throw promotionCandidatesResult.reason; }
     if (chatCtxResult.status !== "fulfilled") { throw chatCtxResult.reason; }
     if (participantsResult.status !== "fulfilled") { throw participantsResult.reason; }

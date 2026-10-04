@@ -19,8 +19,10 @@ async function sealed(overrides: Partial<ContentEnvelope> = {},): Promise<Conten
     content: "hello mesh",
     cipher: CIPHER,
   },);
+
   return { ...envelope, ...overrides, };
 }
+
 describe("content envelopes", () => {
   test("seal → open roundtrips bytes with hash and size", async () => {
     const envelope = await sealContent({
@@ -29,6 +31,7 @@ describe("content envelopes", () => {
       content: "hello mesh",
       cipher: CIPHER,
     },);
+
     expect(envelope.hash,).toHaveLength(64,);
     expect(envelope.size,).toBe(10,);
     expect(envelope.ciphertext,).not.toContain("hello",);

@@ -33,6 +33,7 @@ beforeEach(async () => {
   for (const actor of ["actor-owner", "actor-member", "actor-existing",]) {
     await insertActors(db, actor, { id: actor, user_id: "user-1", } as never,);
   }
+
   await insertChats(db, "src", "user-1", { id: "chat-src", },);
   await insertChats(db, "dst", "user-1", { id: "chat-dst", },);
 },);
@@ -44,6 +45,7 @@ async function participantFields(chatId: string,) {
     .where("chat_id", "=", chatId,)
     .orderBy("actor_id",)
     .execute();
+
   return rows;
 }
 
@@ -52,10 +54,12 @@ describe("carryParticipants", () => {
     await insertChatParticipants(db, "chat-src", "actor-owner", {
       role_in_chat: ChatParticipantRole.Owner,
     },);
+
     await insertChatParticipants(db, "chat-src", "actor-member", {
       role_in_chat: ChatParticipantRole.Member,
       impersonate_actor_id: "actor-owner",
     },);
+
     await carryParticipants(db, "chat-src", "chat-dst",);
     expect(await participantFields("chat-dst",),).toEqual(
       await participantFields("chat-src",),
@@ -66,6 +70,7 @@ describe("carryParticipants", () => {
     await insertChatParticipants(db, "chat-dst", "actor-existing", {
       role_in_chat: ChatParticipantRole.Member,
     },);
+
     await carryParticipants(db, "chat-src", "chat-dst",);
     expect(await participantFields("chat-dst",),).toHaveLength(1,);
   });

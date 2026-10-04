@@ -57,6 +57,7 @@ describe("GET /api/requests/:id/status", () => {
       headers: { "Content-Type": "application/json", },
       body: JSON.stringify({ ok: true, },),
     },);
+
     await store.flush();
 
     const app = buildApp(store, "alice",);
@@ -67,6 +68,7 @@ describe("GET /api/requests/:id/status", () => {
       status: string;
       response: { status: number } | null;
     };
+
     expect(body.requestId,).toBe("req-owned",);
     expect(body.status,).toBe("complete",);
     expect(body.response?.status,).toBe(200,);

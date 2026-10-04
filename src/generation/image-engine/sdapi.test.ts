@@ -46,6 +46,7 @@ describe("generateSDAPI", () => {
       n: 1,
       outputFormat: "png",
     },);
+
     expect(outcome.ok,).toBe(false,);
     if (!outcome.ok) {
       expect(outcome.status,).toBe(502,);

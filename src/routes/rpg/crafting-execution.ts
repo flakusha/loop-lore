@@ -44,6 +44,7 @@ export function craftingExecutionRoutes(opts: HandlerOpts, prefix = "/api",): El
           recipeId: string;
           stationInstanceId?: string;
         };
+
         // Actor ownership check — shared trust-boundary guard.
         const denied = await resolveActorAccess(opts.database, body.actorId, userId,);
         if (denied) { return denied; }
@@ -51,6 +52,7 @@ export function craftingExecutionRoutes(opts: HandlerOpts, prefix = "/api",): El
         // Get worldId from recipe
         const recipe = await opts.database.selectFrom("crafting_recipes",)
           .select("world_id",).where("id", "=", body.recipeId,).executeTakeFirst();
+
         if (!recipe) { return jsonError("Recipe not found", HttpStatus.NotFound,); }
 
         const svc = new CraftingProcessService(opts.database,);
@@ -61,6 +63,7 @@ export function craftingExecutionRoutes(opts: HandlerOpts, prefix = "/api",): El
             stationInstanceId: body.stationInstanceId,
             worldId: recipe.world_id,
           },);
+
           return jsonResponse(result,);
         } catch (error) {
           const msg = error instanceof Error ? error.message : "Craft failed";
@@ -68,6 +71,7 @@ export function craftingExecutionRoutes(opts: HandlerOpts, prefix = "/api",): El
           if (msg.includes("not found",) || msg.includes("Insufficient",) || msg.includes("required",)) {
             return jsonError(msg, HttpStatus.BadRequest,);
           }
+
           return jsonError("Internal server error", HttpStatus.InternalServerError,);
         }
       }, {

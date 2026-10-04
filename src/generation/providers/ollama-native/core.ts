@@ -122,6 +122,7 @@ export async function streamDispatch(
       for (const line of lines) {
         if (applyStreamLine(line, signal, handler, acc,)) { break; }
       }
+
       if (signal?.aborted) {
         acc.finishReason = "cancelled";
         break;
@@ -209,6 +210,7 @@ function applyStreamLine(
         totalTokens: (chunk.prompt_eval_count ?? 0) + (chunk.eval_count ?? 0),
       };
     }
+
     handler({ type: "done", finishReason: acc.finishReason, usage: acc.usage, },);
     return true;
   }

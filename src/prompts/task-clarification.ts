@@ -64,23 +64,30 @@ export function buildTaskClarification(input: TaskClarificationInput,): string {
   const parts: string[] = [
     `[Task] You are now performing: ${label}.`,
   ];
+
   if (input.chatMode) {
     parts.push(`Chat context: mode=${input.chatMode}.`,);
   }
+
   if (input.characterName) {
     parts.push(`Character in role: ${input.characterName}.`,);
   }
+
   if (input.assistantName) {
     parts.push(`Assistant persona: ${input.assistantName}.`,);
   }
+
   if (input.gmName) {
     parts.push(`Game master: ${input.gmName}.`,);
   }
+
   if (input.action) {
     parts.push(`Action context: ${input.action}.`,);
   }
+
   parts.push(
     "Keep this task framing in mind for your output. Do not reference this instruction in your response.",
   );
+
   return parts.join(" ",);
 }

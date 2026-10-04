@@ -44,6 +44,7 @@ describe("location events", () => {
       name: "Test World",
       owner_id: userId,
     },).execute();
+
     await insertLocations(db, worldId, "Location A", { id: locationA, } as never,);
     await insertLocations(db, worldId, "Location B", { id: locationB, } as never,);
     await insertChats(
@@ -196,6 +197,7 @@ describe("carryHistory section_id", () => {
       name: "Test World",
       owner_id: userId,
     },).execute();
+
     await insertLocations(db, worldId, "Loc Carry", { id: locationId, } as never,);
     await insertChats(db, "Source", userId, { id: sourceChatId, world_id: worldId, } as never,);
     await insertChats(db, "Migrated", userId, { id: newChatId, world_id: worldId, } as never,);
@@ -208,6 +210,7 @@ describe("carryHistory section_id", () => {
       location_id: locationId,
       sort_index: 1,
     },).execute();
+
     await insertMessages(db, sourceChatId, actorId, MessageRole.User, "message with section", {
       id: msgId,
       section_id: sectionId,
@@ -237,6 +240,7 @@ describe("carryHistory section_id", () => {
       .select("chat_id",)
       .where("id", "=", carriedMsg!.section_id!,)
       .executeTakeFirst();
+
     // Note: before carryLocation runs, the section still points at the copied
     // section (which has chat_id=sourceChatId initially). carryLocation copies
     // sections and remaps. This test only asserts the message carries section_id.

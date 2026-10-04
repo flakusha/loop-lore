@@ -78,6 +78,7 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
           sellerItems: never[];
           price: number;
         };
+
         // The caller must control at least one side of the trade.
         const buyerDenied = await resolveActorAccess(database, body.buyerActorId, userId,);
         const sellerDenied = await resolveActorAccess(database, body.sellerActorId, userId,);
@@ -90,6 +91,7 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
           sellerItems: body.sellerItems,
           price: body.price,
         },);
+
         if (!res.success) { return badRequestResponse(res.reason ?? "Trade failed",); }
         return jsonResponse({ ok: true, ...res, },);
       }, {
@@ -116,6 +118,7 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
           set.status = 404;
           return { error: "Resource not found", };
         }
+
         if (code === "VALIDATION") {
           set.status = 400;
           const result = safeJsonStringify(error,);

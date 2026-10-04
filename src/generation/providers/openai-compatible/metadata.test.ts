@@ -30,6 +30,7 @@ describe("modelInfoFromOpenAi", () => {
       tool_calling: false,
       modalities: ["text", "image",],
     },);
+
     expect(info.id,).toBe("llama-3.1-70B",);
     expect(info.ownedBy,).toBe("meta",);
     expect(info.contextWindow,).toBe(131072,);
@@ -53,6 +54,7 @@ describe("modelInfoFromOpenAi", () => {
       modalities: "text",
       context_length: "big",
     },);
+
     expect(info.ownedBy,).toBeUndefined();
     expect(info.modalities,).toBeUndefined();
     expect(info.contextWindow,).toBeUndefined();

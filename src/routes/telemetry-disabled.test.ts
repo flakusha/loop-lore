@@ -55,6 +55,7 @@ describeOrSkip("telemetry routes — disabled", () => {
         body: JSON.stringify({ type: "frontend.page_view", data: { path: "/", }, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { ok?: boolean; dropped?: string };
     expect(body.ok,).toBe(true,);
@@ -64,6 +65,7 @@ describeOrSkip("telemetry routes — disabled", () => {
       .selectFrom("telemetry_events",)
       .select("id",)
       .execute();
+
     expect(rows,).toHaveLength(0,);
   });
 
@@ -71,6 +73,7 @@ describeOrSkip("telemetry routes — disabled", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/summary",),
     );
+
     expect(res.status,).toBe(404,);
     const body = await res.json() as { error?: string };
     expect(body.error,).toContain("disabled",);
@@ -80,6 +83,7 @@ describeOrSkip("telemetry routes — disabled", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/models",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -87,6 +91,7 @@ describeOrSkip("telemetry routes — disabled", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/errors",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -94,6 +99,7 @@ describeOrSkip("telemetry routes — disabled", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/daily",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -101,6 +107,7 @@ describeOrSkip("telemetry routes — disabled", () => {
     const res = await makeApp(db, "user1", "user",).handle(
       new Request("http://localhost/api/telemetry/analytics/purge", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 },);

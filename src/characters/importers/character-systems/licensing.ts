@@ -28,6 +28,7 @@ export async function importLicensing(
   try {
     const existing = await db.selectFrom("character_licensing",).where("actor_id", "=", actorId,).select("id",)
       .executeTakeFirst();
+
     const now = new Date().toISOString();
     if (existing) {
       await db.updateTable("character_licensing",).set({
@@ -53,6 +54,7 @@ export async function importLicensing(
         updated_at: now,
       },).execute();
     }
+
     result.licensingImported = true;
   } catch (error: unknown) {
     result.errors.push(`Failed to import licensing: ${errMsg(error,)}`,);

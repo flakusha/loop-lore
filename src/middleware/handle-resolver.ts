@@ -81,6 +81,7 @@ export function createHandleResolver(
       const firstKey = cache.keys().next().value;
       if (firstKey !== undefined) { cache.delete(firstKey,); }
     }
+
     cache.set(userId, { handle, expiresAt: now + ttlMs, },);
     return handle;
   }

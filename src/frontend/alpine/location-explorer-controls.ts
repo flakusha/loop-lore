@@ -50,6 +50,7 @@ export const locationExplorerControls = {
       if (s.weather) { weathers.add(s.weather,); }
       if (s.time_of_day) { times.add(s.time_of_day,); }
     }
+
     this.atmosphereOptions = Array.from(atmospheres,).sort();
     this.weatherOptions = Array.from(weathers,).sort();
     this.timeOfDayOptions = Array.from(times,).sort();

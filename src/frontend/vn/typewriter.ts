@@ -99,6 +99,7 @@ export function skipTypewrite(container: HTMLElement, fullText: string,): void {
     cancelAnimationFrame(activeAnimation,);
     activeAnimation = null;
   }
+
   container.textContent = fullText;
   activeResolve?.();
   activeResolve = null;

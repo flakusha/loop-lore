@@ -57,12 +57,15 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             name: body.name,
             carry: body.carry,
           },);
+
           if ("code" in result) {
             const status = result.code === "not_found"
               ? HttpStatus.NotFound
               : (result.code === "forbidden" ? HttpStatus.Forbidden : HttpStatus.BadRequest);
+
             return jsonError(result.message, status, result.code as never,);
           }
+
           return jsonCreated({ newChatId: result.newChatId, sourceChatId: result.sourceChatId, },);
         },
         { body: ChatMigrateBody, params: ChatIdParams, },
@@ -104,6 +107,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (rawText) {
             rawBody = jsonParseOr(rawText, {},);
           }
+
           const hasExplicit = (key: string,) => key in rawBody;
 
           const result = await updateChat(database, id, {
@@ -124,15 +128,18 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             autonomyConfig: hasExplicit("autonomyConfig",) ? body.autonomyConfig : undefined,
             userRole,
           },);
+
           if ("code" in result) {
             const statusMap: Record<string, HttpStatusCode> = {
               not_found: HttpStatus.NotFound,
               forbidden: HttpStatus.Forbidden,
               key_mechanic_conflict: HttpStatus.Conflict,
             };
+
             const status = statusMap[result.code] ?? HttpStatus.BadRequest;
             return jsonError(result.message, status, result.code as never,);
           }
+
           return jsonResponse({ ok: true, },);
         },
         { body: ChatUpdateBody, params: ChatIdParams, },
@@ -162,6 +169,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("name", "=", body.name,)
             .where("id", "!=", id,)
             .executeTakeFirst();
+
           if (existing) {
             return jsonError(
               "A chat with this name is already in use",
@@ -201,8 +209,10 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             const status = result.code === "not_found"
               ? HttpStatus.NotFound
               : HttpStatus.Forbidden;
+
             return jsonError(result.message, status, result.code as never,);
           }
+
           return jsonNoContent();
         },
         { params: ChatIdParams, },

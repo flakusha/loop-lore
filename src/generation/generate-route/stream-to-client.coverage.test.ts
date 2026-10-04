@@ -75,6 +75,7 @@ if (STRICTLY_ISOLATED) {
         state.chunkRejectOnce = false;
         throw new Error("detect down",);
       }
+
       return "continue";
     },
     cancelGeneration: (...args: unknown[]) => {
@@ -172,6 +173,7 @@ async function collectEvents(response: Response,): Promise<Event[]> {
       if (line) { events.push(JSON.parse(line.slice(6,),) as Event,); }
     }
   }
+
   return events;
 }
 
@@ -216,6 +218,7 @@ function textProvider(
     healthCheck: async () => ({ status: "ok" as const, }),
     listModels: async () => [],
   } as unknown as LLMProvider;
+
   return { provider, seen, };
 }
 
@@ -256,6 +259,7 @@ function run(
     } as ProviderRequest,
     failoverList: [{ name: providerName, provider, },],
   },);
+
   return { response, attemptId, chatId, };
 }
 
@@ -278,6 +282,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       ],
       { content: "Hello world", finishReason: "stop", },
     );
+
     const { response, attemptId, } = run(provider, "cov-p-success", undefined, true,);
     const events = await collectEvents(response,);
 
@@ -285,9 +290,11 @@ describeOrSkipStrict("streamToClient coverage", () => {
       "Hello ",
       "world",
     ],);
+
     expect(events.filter((e,) => e.type === "thinking").map((e,) => e.content),).toEqual([
       "hmm",
     ],);
+
     const done = events.find((e,) => e.type === "done");
     expect(done?.cancelled,).toBe(false,);
     expect(done?.finishReason,).toBe("stop",);
@@ -300,6 +307,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
     expect(state.telemetryEvents.map((e,) => e.eventType),).toEqual([
       "generation.completed",
     ],);
+
     expect(state.memoryCalls.length,).toBe(1,);
   });
 
@@ -310,6 +318,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       [{ type: "content", content: "hi", },],
       { content: "hi", finishReason: "stop", },
     );
+
     const events = await collectEvents(run(provider, "cov-p-chunkfail",).response,);
     const done = events.find((e,) => e.type === "done");
     expect(done?.cancelled,).toBe(false,);
@@ -327,6 +336,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       type: "function",
       function: { name: "lookup", arguments: '{"q":"x"}', },
     };
+
     const provider = {
       capabilities: { streaming: true, },
       complete: async () => {
@@ -338,11 +348,13 @@ describeOrSkipStrict("streamToClient coverage", () => {
           handler({ type: "content", content: "part1 ", },);
           return { content: "part1 ", toolCalls: [toolCall,], finishReason: "stop", usage: USAGE, };
         }
+
         return { content: "part1 done", finishReason: "stop", usage: USAGE, };
       },
       healthCheck: async () => ({ status: "ok" as const, }),
       listModels: async () => [],
     } as unknown as LLMProvider;
+
     state.toolResults = [{ role: "tool", content: "tool-out", tool_call_id: "tc-1", },];
     const events = await collectEvents(run(provider, "cov-p-tools",).response,);
 
@@ -362,6 +374,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       type: "function",
       function: { name: "loop", arguments: "{}", },
     };
+
     const looping = {
       capabilities: { streaming: true, },
       complete: async () => {
@@ -376,6 +389,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       healthCheck: async () => ({ status: "ok" as const, }),
       listModels: async () => [],
     } as unknown as LLMProvider;
+
     const events = await collectEvents(run(looping, "cov-p-maxrounds",).response,);
     expect(state.toolCallsArgs.length,).toBe(5,);
     const err = events.find((e,) => e.type === "error");
@@ -400,6 +414,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       [{ type: "content", content: "partial", },],
       { content: "partial", finishReason: "cancelled", },
     );
+
     const { response, attemptId, } = run(provider, "cov-p-cancelled", undefined, true,);
     const events = await collectEvents(response,);
     const done = events.find((e,) => e.type === "done");
@@ -409,6 +424,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
     expect(state.telemetryEvents.map((e,) => e.eventType),).toEqual([
       "generation.truncated",
     ],);
+
     expect(state.memoryCalls.length,).toBe(0,);
   });
 
@@ -420,6 +436,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       [{ type: "content", content: "late ", },],
       { content: "late ", finishReason: "cancelled", },
     );
+
     const events = await collectEvents(run(provider, "cov-p-preabort", tracker.signal,).response,);
     expect(seen.calls,).toBe(1,);
     expect(events.some((e,) => e.type === "content"),).toBe(false,);
@@ -450,6 +467,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
           // abort below fires long before it.
           setTimeout(() => resolve(false,), 500,);
         }
+
         const aborted = await promise;
         seen.sawAbort = aborted;
         return {
@@ -461,6 +479,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       healthCheck: async () => ({ status: "ok" as const, }),
       listModels: async () => [],
     } as unknown as LLMProvider;
+
     const { response, } = run(provider, "cov-p-midabort", tracker.signal,);
     const eventsPromise = collectEvents(response,);
     await tick();
@@ -486,6 +505,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
         req.signal?.addEventListener("abort", () => {
           seen.sawAbort = true;
         }, { once: true, },);
+
         // Never resolves: the disconnect parks start() mid-provider-call,
         // so no post-cancel enqueue can race the cancelled reader.
         await Promise.withResolvers<void>().promise;
@@ -494,6 +514,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       healthCheck: async () => ({ status: "ok" as const, }),
       listModels: async () => [],
     } as unknown as LLMProvider;
+
     const ctrl = new AbortController();
     const { response, attemptId, } = run(provider, "cov-p-disconnect", ctrl.signal, true,);
     const reader = response.body!.getReader();
@@ -517,6 +538,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       [{ type: "content", content: "ok", },],
       { content: "ok", finishReason: "stop", },
     );
+
     const { response, } = run(provider, "cov-p-swallow", undefined, true,);
     const events = await collectEvents(response,);
     expect(events.find((e,) => e.type === "done")?.cancelled,).toBe(false,);
@@ -538,6 +560,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       healthCheck: async () => ({ status: "ok" as const, }),
       listModels: async () => [],
     } as unknown as LLMProvider;
+
     const events = await collectEvents(run(provider, "cov-p-fail",).response,);
     const err = events.find((e,) => e.type === "error");
     expect(err?.error,).toBe("Generation failed",);
@@ -554,6 +577,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       ],
       { content: "", finishReason: "stop", },
     );
+
     const { response, } = run(provider, "cov-p-fallback", undefined, true,);
     const events = await collectEvents(response,);
     expect(events.find((e,) => e.type === "error"),).toBeUndefined();
@@ -571,6 +595,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       [{ type: "thinking", content: "chunk-thought", },],
       { content: "hi", thinking: "final-thought", finishReason: "stop", },
     );
+
     const { response, } = run(provider, "cov-p-think1", undefined, true,);
     await collectEvents(response,);
     const stored = state.storeCalls[0] as { result: { thinking: string | null } };
@@ -583,6 +608,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       [{ type: "thinking", content: "hmm", },],
       { content: "hi", finishReason: "stop", },
     );
+
     const { response, } = run(provider, "cov-p-think2", undefined, true,);
     await collectEvents(response,);
     const stored = state.storeCalls[0] as { result: { thinking: string | null } };
@@ -596,6 +622,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       [{ type: "content", content: "ok", },],
       { content: "ok", finishReason: "stop", },
     );
+
     const { response, } = run(provider, "cov-p-telshape", undefined, true,);
     await collectEvents(response,);
     expect(state.telemetryEvents.length,).toBe(1,);
@@ -606,6 +633,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       promptTokens: number;
       finishReason: string;
     };
+
     expect(data.latencyMs,).toBeGreaterThanOrEqual(0,);
     expect(data.deliveryConfirmed,).toBe(true,);
     expect(data.lastRenderedChunkIndex,).toBeGreaterThanOrEqual(0,);
@@ -619,6 +647,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       [{ type: "content", content: "ok", },],
       { content: "ok", finishReason: "stop", },
     );
+
     const { response, chatId, } = run(provider, "cov-p-memshape", undefined, true,);
     await collectEvents(response,);
     expect(state.memoryCalls.length,).toBe(1,);
@@ -634,6 +663,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
         userId: string;
       },
     ];
+
     expect(args[1].actorId,).toBe("cov-actor",);
     expect(args[1].chatId,).toBe(chatId,);
     expect(args[1].messageId,).toBe("msg-cov-1",);
@@ -650,6 +680,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       [{ type: "content", content: "partial", },],
       { content: "partial", finishReason: "cancelled", },
     );
+
     const { response, } = run(provider, "cov-p-teltrunc", undefined, true,);
     await collectEvents(response,);
     expect(state.telemetryEvents.length,).toBe(1,);
@@ -658,6 +689,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
       lastRenderedChunkIndex: number;
       finishReason: string;
     };
+
     expect(data.deliveryConfirmed,).toBe(false,);
     expect(data.lastRenderedChunkIndex,).toBeGreaterThanOrEqual(0,);
     expect(data.finishReason,).toBe("cancelled",);

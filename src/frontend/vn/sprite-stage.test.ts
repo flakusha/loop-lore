@@ -24,6 +24,7 @@ let dom: FakeDom;
 beforeEach(() => {
   dom = installVnFakeDom();
 },);
+
 afterEach(() => {
   dom.restore();
 },);
@@ -66,6 +67,7 @@ describe("resolveSpriteUrl", () => {
       avatarAssetId: "base-1",
       emotionVariants: { happy: "happy-9", },
     };
+
     expect(resolveSpriteUrl(entry, "happy",),).toBe("/api/v1/assets/happy-9/thumb",);
     expect(resolveSpriteUrl(entry, "sad",),).toBe("/api/v1/assets/base-1/thumb",);
     expect(resolveSpriteUrl(entry,),).toBe("/api/v1/assets/base-1/thumb",);
@@ -82,6 +84,7 @@ describe("resolveSpriteUrl", () => {
       avatarAssetId: "base-1",
       emotionVariants: { Happy: "happy-9", },
     };
+
     expect(resolveSpriteUrl(entry, "happy",),).toBe("/api/v1/assets/happy-9/thumb",);
     expect(resolveSpriteUrl(entry, "HAPPY",),).toBe("/api/v1/assets/happy-9/thumb",);
   });
@@ -96,6 +99,7 @@ describe("assignStageSlots", () => {
       "center",
       "right",
     ],);
+
     expect(assignStageSlots(rosterOf(["a", "b", "c", "d", "e",],), "c",).map((s,) => s.slot),).toEqual([
       "far-left",
       "left",
@@ -139,6 +143,7 @@ describe("stage elements", () => {
       style: Record<string, string>;
       dataset: Record<string, string>;
     };
+
     expect(el.className,).toContain("vn-stage-sprite",);
     expect(el.className,).toContain("vn-slot-center",);
     expect(el.className,).toContain("vn-speaker-active",);
@@ -155,6 +160,7 @@ describe("stage elements", () => {
       classList: { contains: (cls: string,) => boolean };
       style: Record<string, string>;
     };
+
     expect(el.classList.contains("vn-speaker-dimmed",),).toBe(true,);
 
     applyStageHighlight(el as unknown as HTMLElement, { ...first!, active: true, dimmed: false, },);

@@ -252,6 +252,7 @@ describe("export-shared routines", () => {
         difficulty_state: "normal",
       },)
       .execute();
+
     const locId = uid();
     await db
       .insertInto("locations",)
@@ -287,6 +288,7 @@ describe("export-shared routines", () => {
       name: "Throne Room",
       format: "json",
     },);
+
     expect(checksums[`locations/${worldId}/${locId}.json`],).toMatch(/^sha256:[a-f0-9]{64}$/,);
   });
 
@@ -304,6 +306,7 @@ describe("export-shared routines", () => {
         difficulty_state: "normal",
       },)
       .execute();
+
     // quests.creator_id references actors.id
     await insertCharacter(userId, "Test User",);
     const locId = uid();
@@ -315,6 +318,7 @@ describe("export-shared routines", () => {
         name: "Dungeon",
       },)
       .execute();
+
     const questId = uid();
     await db
       .insertInto("quests",)
@@ -327,6 +331,7 @@ describe("export-shared routines", () => {
         target: 1,
       },)
       .execute();
+
     await db
       .insertInto("world_lore_entries",)
       .values({
@@ -335,6 +340,7 @@ describe("export-shared routines", () => {
         content: "The dragon sleeps.",
       },)
       .execute();
+
     await db
       .insertInto("world_states",)
       .values({
@@ -343,6 +349,7 @@ describe("export-shared routines", () => {
         snapshot: "{}",
       },)
       .execute();
+
     await db
       .insertInto("location_states",)
       .values({
@@ -381,6 +388,7 @@ describe("export-shared routines", () => {
       world_states: unknown[];
       location_states: unknown[];
     };
+
     expect(bundle.schema_version,).toBe("1.0",);
     expect(bundle.world.name,).toBe("Story World",);
     expect(bundle.locations[0]?.name,).toBe("Dungeon",);

@@ -14,6 +14,7 @@ async function requireDefinition(state: ItemState, itemId: string, worldId: stri
     .where("id", "=", itemId,)
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
+
   if (!definition) { throw new ItemWorldMismatchError(itemId, worldId,); }
   return definition;
 }
@@ -28,6 +29,7 @@ async function requireUniqueSlot(state: ItemState, itemId: string, worldId: stri
     .where("items.stackable", "=", StackableState.Unique,)
     .where("items.rarity", "in", [ItemRarity.Unique, ItemRarity.Artifact,],)
     .executeTakeFirst();
+
   if (existing) { throw new UniqueItemAlreadyExistsError(existing.id,); }
 }
 
@@ -38,6 +40,7 @@ function durabilityValues(
   if (definition.stackable === StackableState.Stackable || definition.category === ItemCategory.Consumable) {
     return { current: null, max: null, };
   }
+
   const requestedMax = override?.max ?? Math.max(override?.current ?? 0, 100,);
   const max = Number.isFinite(requestedMax,) ? Math.max(0, requestedMax,) : 100;
   const requestedCurrent = override?.current ?? max;
@@ -66,9 +69,11 @@ export function isItemInstanceStateConsistent(
 ): boolean {
   const durable = definition.stackable !== StackableState.Stackable &&
     definition.category !== ItemCategory.Consumable;
+
   if (!durable) {
     return durabilityState.current === null && durabilityState.max === null && isActive === 1;
   }
+
   const { current, max, } = durabilityState;
   if (current === null || max === null) { return false; }
   if (current < 0 || current > max) { return false; }
@@ -107,6 +112,7 @@ export async function placeInLocation(
     .where("id", "=", locationId,)
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
+
   if (!location) { throw new ItemWorldMismatchError(locationId, worldId,); }
   await requireUniqueSlot(state, itemId, worldId,);
   const id = uid();
@@ -119,8 +125,10 @@ export async function placeInLocation(
       ...durabilityState,
       isActive,
     },);
+
     throw new Error(`world_items instance violates the 016 invariant: ${detail.ok ? detail.value : "{}"}`,);
   }
+
   await state.db
     .insertInto("world_items",)
     .values({
@@ -138,6 +146,7 @@ export async function placeInLocation(
       is_active: isActive,
     },)
     .execute();
+
   return id;
 }
 
@@ -172,8 +181,10 @@ export async function giveToNpc(
       ...durabilityState,
       isActive,
     },);
+
     throw new Error(`world_items instance violates the 016 invariant: ${detail.ok ? detail.value : "{}"}`,);
   }
+
   await state.db
     .insertInto("world_items",)
     .values({
@@ -192,6 +203,7 @@ export async function giveToNpc(
       is_active: isActive,
     },)
     .execute();
+
   return id;
 }
 

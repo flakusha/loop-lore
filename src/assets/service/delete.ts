@@ -35,6 +35,7 @@ export async function deleteAsset({ database, assetId, uploadDir, }: DeleteAsset
       .where("entity_type", "=", AssetLinkEntity.Asset,)
       .where("label", "=", MATTING_SOURCE_LABEL,)
       .executeTakeFirst();
+
     if (sourceLink) {
       await database
         .updateTable("assets",)
@@ -72,6 +73,7 @@ export async function deleteAsset({ database, assetId, uploadDir, }: DeleteAsset
     for (const table of ["actors", "characters", "personas",] as const) {
       await trx.updateTable(table,).set({ avatar_asset_id: null, },).where("avatar_asset_id", "=", assetId,).execute();
     }
+
     await deleteAssetTags(trx, assetId,);
     await trx.deleteFrom("assets",).where("id", "=", assetId,).execute();
   },);

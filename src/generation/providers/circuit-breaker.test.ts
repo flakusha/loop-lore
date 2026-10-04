@@ -27,6 +27,7 @@ describe("CircuitBreaker", () => {
     cb.onFailure("p",);
     expect(cb.allowRequest("p",),).toBe(true,);
   });
+
   it("opens after threshold failures and blocks", () => {
     const cb = breaker();
     cb.onFailure("p",);
@@ -34,6 +35,7 @@ describe("CircuitBreaker", () => {
     expect(cb.getState("p",)?.state,).toBe("open",);
     expect(cb.allowRequest("p",),).toBe(false,);
   });
+
   it("half-opens after cooldown and closes on probe success", () => {
     const cb = breaker();
     cb.onFailure("p",);
@@ -45,6 +47,7 @@ describe("CircuitBreaker", () => {
     expect(cb.getState("p",)?.state,).toBe("closed",);
     expect(cb.allowRequest("p",),).toBe(true,);
   });
+
   it("resets to closed on demand", () => {
     const cb = breaker();
     cb.onFailure("p",);

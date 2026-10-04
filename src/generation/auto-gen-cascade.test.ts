@@ -26,6 +26,7 @@ const mockStartGenerationTracking = mock(() =>
     abortSignal: new AbortController().signal,
   },)
 );
+
 const mockCompleteGeneration = mock(() => Promise.resolve());
 const mockFailGeneration = mock(() => Promise.resolve());
 
@@ -36,6 +37,7 @@ function createMockDeps(): Partial<GenDeps> {
     signalDone: mock(() => {/* noop */},),
     signalError: mock(() => {/* noop */},),
   };
+
   return {
     cancelGenerationByChat: mockCancelGenerationByChat,
     startGenerationTracking: mockStartGenerationTracking,
@@ -137,6 +139,7 @@ async function seedUser(db: Kysely<DB>,) {
       settings: "{}",
     },)
     .execute();
+
   await db
     .insertInto("actors",)
     .values({
@@ -152,6 +155,7 @@ async function seedUser(db: Kysely<DB>,) {
       import_spec: "{}",
     },)
     .execute();
+
   return userId;
 }
 
@@ -179,6 +183,7 @@ async function createAiActor(
       import_spec: "{}",
     },)
     .execute();
+
   return id;
 }
 
@@ -213,6 +218,7 @@ async function createGroupChat(
       story_state: opts.storyState ?? null,
     },)
     .execute();
+
   // Add the user as a participant
   await db
     .insertInto("chat_participants",)
@@ -222,6 +228,7 @@ async function createGroupChat(
       role_in_chat: "owner",
     },)
     .execute();
+
   return chatId;
 }
 
@@ -274,6 +281,7 @@ async function insertMessage(
       visibility: "visible",
     },)
     .execute();
+
   return msgId;
 }
 
@@ -320,6 +328,7 @@ describe("triggerGroupCascade edge cases", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
     expect(messages[0]!.id,).toBe(msgId,);
   });
@@ -351,6 +360,7 @@ describe("triggerGroupCascade edge cases", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
   });
 
@@ -381,6 +391,7 @@ describe("triggerGroupCascade edge cases", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
   });
 
@@ -410,6 +421,7 @@ describe("triggerGroupCascade edge cases", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
   });
 
@@ -438,6 +450,7 @@ describe("triggerGroupCascade edge cases", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
   });
 
@@ -447,6 +460,7 @@ describe("triggerGroupCascade edge cases", () => {
       maxTurns: 3,
       storyState: JSON.stringify({ isPaused: true, },),
     },);
+
     const actorA = await createAiActor(db, "Alice",);
     const actorB = await createAiActor(db, "Bob",);
     await addParticipant(db, chatId, actorA,);
@@ -469,6 +483,7 @@ describe("triggerGroupCascade edge cases", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
   });
 
@@ -488,6 +503,7 @@ describe("triggerGroupCascade edge cases", () => {
         settings: "{}",
       },)
       .execute();
+
     await db
       .insertInto("actors",)
       .values({
@@ -503,6 +519,7 @@ describe("triggerGroupCascade edge cases", () => {
         import_spec: "{}",
       },)
       .execute();
+
     await addParticipant(db, chatId, userId2,);
     await insertMessage(db, chatId, userId, "Hello",);
 
@@ -522,6 +539,7 @@ describe("triggerGroupCascade edge cases", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
   });
 
@@ -531,6 +549,7 @@ describe("triggerGroupCascade edge cases", () => {
       maxTurns: 3,
       autoAdvance: 0,
     },);
+
     const actorA = await createAiActor(db, "Alice",);
     const actorB = await createAiActor(db, "Bob",);
     await addParticipant(db, chatId, actorA,);
@@ -553,6 +572,7 @@ describe("triggerGroupCascade edge cases", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
   });
 
@@ -562,6 +582,7 @@ describe("triggerGroupCascade edge cases", () => {
       maxTurns: 3,
       autoAdvance: 0,
     },);
+
     const actorA = await createAiActor(db, "Alice",);
     const actorB = await createAiActor(db, "Bob",);
     await addParticipant(db, chatId, actorA,);
@@ -585,6 +606,7 @@ describe("triggerGroupCascade edge cases", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
   });
 
@@ -594,6 +616,7 @@ describe("triggerGroupCascade edge cases", () => {
       maxTurns: 3,
       autoAdvance: 1,
     },);
+
     const actorA = await createAiActor(db, "Alice",);
     await addParticipant(db, chatId, actorA,);
     await insertMessage(db, chatId, actorA, "Speaking to myself",);
@@ -614,6 +637,7 @@ describe("triggerGroupCascade edge cases", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
   });
 
@@ -623,6 +647,7 @@ describe("triggerGroupCascade edge cases", () => {
       maxTurns: 2, // depth=0 → depth+1=1 < 2 → cascade proceeds
       autoAdvance: 1,
     },);
+
     const actorA = await createAiActor(db, "Alice",);
     const actorB = await createAiActor(db, "Bob",);
     const actorC = await createAiActor(db, "Carol",);
@@ -790,6 +815,7 @@ describe("triggerGroupCascade edge cases", () => {
       ...createMockDeps(),
       decryptAtRest: mock(async () => "nothing to add [PASS]"),
     };
+
     mockStartGenerationTracking.mockClear();
     await triggerGroupCascade({
       database: db,
@@ -840,6 +866,7 @@ describe("triggerGroupCascade edge cases", () => {
         throw new Error("Chat key not found",);
       },),
     };
+
     mockStartGenerationTracking.mockClear();
     await triggerGroupCascade({
       database: db,
@@ -873,10 +900,12 @@ describe("triggerGroupCascade edge cases", () => {
       entered: 0,
       signal: undefined,
     };
+
     let onFirstEntry: () => void = () => {};
     const firstEntry = new Promise<void>((resolve,) => {
       onFirstEntry = resolve;
     },);
+
     const deps = createMockDeps();
     deps.callWithFailover = (async (_providers: unknown[], req: { signal?: AbortSignal },) => {
       seen.entered += 1;
@@ -888,6 +917,7 @@ describe("triggerGroupCascade edge cases", () => {
         err.name = "AbortError";
         throw err;
       }
+
       await new Promise<never>((_resolve, reject,) => {
         signal?.addEventListener("abort", () => {
           const err = new Error(String(signal.reason,),);
@@ -934,6 +964,7 @@ describe("triggerGroupCascade edge cases", () => {
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(messages,).toHaveLength(1,);
   });
 });

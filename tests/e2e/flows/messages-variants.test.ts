@@ -20,6 +20,7 @@ describe("Message Variants, Visibility, Status E2E", () => {
       content: "Parent message",
       role: "user",
     },);
+
     parentMsgId = r1.data!.id;
 
     const r2 = await api.post<{ id: string }>(`/api/v1/chats/${SEED.chat.id}/messages`, {
@@ -27,6 +28,7 @@ describe("Message Variants, Visibility, Status E2E", () => {
       role: "assistant",
       parentId: parentMsgId,
     },);
+
     variantMsgId = r2.data!.id;
 
     await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
@@ -65,6 +67,7 @@ describe("Message Variants, Visibility, Status E2E", () => {
     const res = await api.put(`/api/v1/messages/${SEED.message.id}/visibility`, {
       visibility: "hidden_by_user",
     },);
+
     expect(res.ok,).toBe(true,);
 
     const getRes = await api.get<{ visibility: string }>(`/api/v1/messages/${SEED.message.id}`,);
@@ -75,6 +78,7 @@ describe("Message Variants, Visibility, Status E2E", () => {
     const res = await api.put(`/api/v1/messages/${SEED.message.id}/visibility`, {
       visibility: "invalid",
     },);
+
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(422,);
   });

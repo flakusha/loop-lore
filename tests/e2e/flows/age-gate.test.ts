@@ -19,6 +19,7 @@ describe("Age Gate E2E", () => {
     server = await createTestServer({
       ageGate: { enabled: true, minimumAge: 18, mode: "self-declaration", },
     },);
+
     api = createClient(server.url,);
   },);
 
@@ -36,6 +37,7 @@ describe("Age Gate E2E", () => {
       type: "direct",
       mode: "direct",
     },);
+
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(403,);
     expect(res.error,).toContain("Age gate",);
@@ -45,6 +47,7 @@ describe("Age Gate E2E", () => {
     const acceptRes = await api.post("/api/v1/age-gate/accept", {
       birthDate: "2000-01-01",
     },);
+
     expect(acceptRes.ok,).toBe(true,);
 
     // Now chat creation should succeed
@@ -53,6 +56,7 @@ describe("Age Gate E2E", () => {
       type: "direct",
       mode: "direct",
     },);
+
     expect(res2.ok,).toBe(true,);
     expect(res2.data!.id,).toBeDefined();
   });

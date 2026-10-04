@@ -42,20 +42,24 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectAll()
           .where("id", "=", id,)
           .executeTakeFirst();
+
         if (!message) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
         const chat = await database
           .selectFrom("chats",)
           .select("created_by",)
           .where("id", "=", message.chat_id,)
           .executeTakeFirst();
+
         if (!chat || (chat.created_by !== userId && !can(ctx.userRole as string | null, "admin.chat",))) {
           return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",);
         }
+
         await database
           .updateTable("messages",)
           .set({ archived_at: new Date().toISOString(), visibility: "auto_hidden", },)
           .where("id", "=", id,)
           .execute();
+
         return jsonResponse({ ok: true, },);
       },
       { params: MessageIdParams, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
@@ -72,20 +76,24 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectAll()
           .where("id", "=", id,)
           .executeTakeFirst();
+
         if (!message) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
         const chat = await database
           .selectFrom("chats",)
           .select("created_by",)
           .where("id", "=", message.chat_id,)
           .executeTakeFirst();
+
         if (!chat || (chat.created_by !== userId && !can(ctx.userRole as string | null, "admin.chat",))) {
           return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",);
         }
+
         await database
           .updateTable("messages",)
           .set({ archived_at: null, visibility: "visible", },)
           .where("id", "=", id,)
           .execute();
+
         return jsonResponse({ ok: true, },);
       },
       { params: MessageIdParams, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
@@ -102,9 +110,11 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
           .select("created_by",)
           .where("id", "=", chatId,)
           .executeTakeFirst();
+
         if (!chat || (chat.created_by !== userId && !can(ctx.userRole as string | null, "admin.chat",))) {
           return notFound(ctx.t?.("messages.chatNotFound",) ?? "Chat not found",);
         }
+
         const retentionDays = resolveArchiveRetentionDays(await getConfigValue(database, "archive_retention_days",),);
         const cutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000,).toISOString();
         const result = await database
@@ -113,6 +123,7 @@ export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
           .where("archived_at", "is not", null,)
           .where("archived_at", "<", cutoff,)
           .execute();
+
         return jsonResponse({ ok: true, purged: Number(result[0]?.numDeletedRows ?? 0,), },);
       },
       { params: ChatIdParams, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },

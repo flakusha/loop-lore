@@ -59,6 +59,7 @@ describe("generateLoot", () => {
         rareCount++;
       }
     }
+
     // At level 15, should get some non-common items
     expect(rareCount,).toBeGreaterThan(0,);
   });
@@ -113,6 +114,7 @@ describe("generateLoot", () => {
         metadata: {},
       },
     ];
+
     // Both eligible entries are rare, so every non-empty roll yields a rare+ drop.
     // (Using a mixed rare/common table would make this assertion probabilistic and flaky.)
     const result = generateLoot(rareTable, 20, 5,);
@@ -126,6 +128,7 @@ describe("createLootTable", () => {
       { name: "Sword", rarity: "common", },
       { name: "Shield", rarity: "uncommon", weight: 5, minLevel: 3, },
     ],);
+
     expect(table.length,).toBe(2,);
     expect(table[0]!.name,).toBe("Sword",);
     expect(table[0]!.rarity,).toBe("common",);

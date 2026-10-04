@@ -89,6 +89,7 @@ function requiredParamsFor(templateId: string,): Record<string, string> {
   for (const parameter of templateRegistry.get(templateId,)?.parameters ?? []) {
     if (parameter.required) { params[parameter.name] = "coverage"; }
   }
+
   return params;
 }
 
@@ -116,9 +117,11 @@ async function reserveDeadPort(): Promise<number> {
       await dead.stop(true,);
       continue;
     }
+
     await dead.stop(true,);
     if (await isConnectionRefused(port,)) { return port; }
   }
+
   throw new Error("could not reserve an unreachable port: every candidate was reclaimed",);
 }
 
@@ -131,6 +134,7 @@ function isConnectionRefused(port: number,): Promise<boolean> {
     socket.destroy();
     resolve(refused,);
   };
+
   socket.once("connect", () => settle(false,),);
   socket.once("error", (err: NodeJS.ErrnoException,) => settle(err.code === "ECONNREFUSED",),);
   return promise;
@@ -164,6 +168,7 @@ beforeAll(async () => {
       },
     }),
   }),);
+
   const testDb = await createTestDb();
   db = testDb.db;
   setTestDatabase(db,);
@@ -183,6 +188,7 @@ beforeAll(async () => {
     actor_type: "user",
     user_id: strangerId,
   } as never,);
+
   await insertChats(db, "Edit Chat", ownerId, { id: chatId, } as never,);
   await insertChats(db, "Foreign Chat", strangerId, { id: foreignChatId, } as never,);
   await insertChatParticipants(db, chatId, ownerId, { role_in_chat: "owner", } as never,);
@@ -191,6 +197,7 @@ beforeAll(async () => {
     id: messageId,
     swipe_index: 0,
   } as never,);
+
   await insertMessages(db, foreignChatId, strangerId, MessageRole.User, "not yours", {
     id: foreignMessageId,
     swipe_index: 0,
@@ -265,6 +272,7 @@ describe("GET /api/v1/image-edit/capabilities", () => {
     const body = (await res.json()) as Envelope<
       Record<string, { healthy: boolean; features: string[] }>
     >;
+
     const comfyui = body.data.comfyui;
     const sdServer = body.data["sd-server"];
 
@@ -293,6 +301,7 @@ describe("POST /api/v1/image-edit/run — authz gates (handleImageGeneration par
     const res = await app.handle(
       jsonRequest(`${BASE}/run`, "POST", { template_id: "txt2img", backend: "comfyui", params: {}, },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -305,6 +314,7 @@ describe("POST /api/v1/image-edit/run — authz gates (handleImageGeneration par
         chatId: foreignChatId,
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -317,6 +327,7 @@ describe("POST /api/v1/image-edit/run — authz gates (handleImageGeneration par
         messageId: foreignMessageId,
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -329,6 +340,7 @@ describe("POST /api/v1/image-edit/run — authz gates (handleImageGeneration par
         messageId: "missing-message",
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -342,6 +354,7 @@ describe("POST /api/v1/image-edit/run", () => {
         body: "{ not json",
       },),
     );
+
     expect(res.status,).toBe(400,);
     expect(await res.json(),).toMatchObject({ error: "Invalid request body", },);
   });
@@ -350,6 +363,7 @@ describe("POST /api/v1/image-edit/run", () => {
     const res = await authedApp.handle(
       jsonRequest(`${BASE}/run`, "POST", { backend: "comfyui", },),
     );
+
     expect(res.status,).toBe(400,);
 
     const body = (await res.json()) as ErrorEnvelope;
@@ -360,6 +374,7 @@ describe("POST /api/v1/image-edit/run", () => {
     const res = await authedApp.handle(
       jsonRequest(`${BASE}/run`, "POST", { template_id: "txt2img", },),
     );
+
     expect(res.status,).toBe(400,);
 
     const body = (await res.json()) as ErrorEnvelope;
@@ -370,6 +385,7 @@ describe("POST /api/v1/image-edit/run", () => {
     const res = await authedApp.handle(
       jsonRequest(`${BASE}/run`, "POST", { template_id: "no-such-template", backend: "comfyui", },),
     );
+
     expect(res.status,).toBe(404,);
 
     const body = (await res.json()) as ErrorEnvelope;
@@ -380,6 +396,7 @@ describe("POST /api/v1/image-edit/run", () => {
     const comfyuiOnly = templateRegistry
       .listForBackend("comfyui",)
       .find((t,) => !t.backends.includes("sd-server",));
+
     if (!comfyuiOnly) {
       throw new Error("Expected a ComfyUI-only template in the builtin registry",);
     }
@@ -387,6 +404,7 @@ describe("POST /api/v1/image-edit/run", () => {
     const res = await authedApp.handle(
       jsonRequest(`${BASE}/run`, "POST", { template_id: comfyuiOnly.id, backend: "sd-server", },),
     );
+
     expect(res.status,).toBe(400,);
 
     const body = (await res.json()) as ErrorEnvelope;
@@ -400,6 +418,7 @@ describe("POST /api/v1/image-edit/run", () => {
     const res = await authedApp.handle(
       jsonRequest(`${BASE}/run`, "POST", { template_id: "txt2img", backend: "comfyui", params: {}, },),
     );
+
     expect(res.status,).toBe(400,);
 
     const body = (await res.json()) as ErrorEnvelope;
@@ -416,6 +435,7 @@ describe("POST /api/v1/image-edit/run", () => {
         params: requiredParams,
       },),
     );
+
     expect(res.status,).toBe(500,);
 
     const body = (await res.json()) as ErrorEnvelope;
@@ -426,14 +446,17 @@ describe("POST /api/v1/image-edit/run", () => {
     const sdTemplate = templateRegistry
       .listForBackend("sd-server",)
       .find((t,) => t.parameters.some((p,) => p.required));
+
     if (!sdTemplate) {
       throw new Error("Expected an sd-server template with required parameters",);
     }
+
     const params = requiredParamsFor(sdTemplate.id,);
 
     const res = await authedApp.handle(
       jsonRequest(`${BASE}/run`, "POST", { template_id: sdTemplate.id, backend: "sd-server", params, },),
     );
+
     expect(res.status,).toBe(500,);
 
     const body = (await res.json()) as ErrorEnvelope;
@@ -451,12 +474,14 @@ describe("POST /api/v1/image-edit/run", () => {
       parameters: [],
       build: () => ({}),
     };
+
     templateRegistry.register(template,);
 
     try {
       const res = await authedApp.handle(
         jsonRequest(`${BASE}/run`, "POST", { template_id: template.id, backend: template.backends[0], },),
       );
+
       // `getProvider` throws before handleRun's own try/catch, so Elysia's
       // error handler renders the 500 with the raw message as the body.
       expect(res.status,).toBe(500,);
@@ -483,6 +508,7 @@ describe("exported handlers", () => {
       jsonRequest(`${BASE}/run`, "POST", { template_id: "txt2img", chatId, },),
       { database: db, userId: ownerId, userRole: "user", },
     );
+
     expect(scopedRes.status,).toBe(400,);
   });
 });

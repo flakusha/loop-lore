@@ -110,6 +110,7 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
               ORDER BY bm25(messages_fts) ASC
               LIMIT ${limit} OFFSET ${offset}
             `.execute(database,);
+
             rows = result.rows;
 
             counted = await sql<{ total: number }>`
@@ -145,6 +146,7 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
               ORDER BY m.created_at DESC
               LIMIT ${limit} OFFSET ${offset}
             `.execute(database,);
+
             rows = result.rows;
 
             counted = await sql<{ total: number }>`
@@ -183,9 +185,11 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
                 } catch {
                   resolved = "[Encrypted — unable to decrypt]";
                 }
+
                 const snippet = row.contentPlaintext
                   ? (row.matchContext ?? "").slice(0, SNIPPET_LENGTH * 4,)
                   : "";
+
                 return {
                   messageId: row.messageId,
                   chatId: row.chatId,

@@ -37,6 +37,7 @@ function makeLogger(): { logger: Logger; warns: WarnCall[] } {
   const noop = (): void => {
     /* intentionally empty */
   };
+
   const logger = {
     debug: noop,
     info: noop,
@@ -48,6 +49,7 @@ function makeLogger(): { logger: Logger; warns: WarnCall[] } {
       return logger;
     },
   } as unknown as Logger;
+
   return { logger, warns, };
 }
 
@@ -113,6 +115,7 @@ describe("DynamicResponsePolicy — validate", () => {
       makeConfig({ minify: false, validate: true, compress: false, },),
       logger,
     );
+
     const body = `<div>  keep  spaces  </div>`;
     const result = await policy.apply({ request: req(), response: htmlResponse(body,), },);
     expect(await result.text(),).toBe(body,);
@@ -162,6 +165,7 @@ describe("DynamicResponsePolicy — compress", () => {
     const res = new Response(big, {
       headers: { "Content-Type": "text/html", "Content-Encoding": "gzip", },
     },);
+
     const result = await policy.apply({ request: req("br",), response: res, },);
     expect(result.headers.get("Content-Encoding",),).toBe("gzip",);
   });

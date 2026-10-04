@@ -26,6 +26,7 @@ describe("NSFW PII redaction secret resolution", () => {
     } else {
       process.env["NODE_ENV"] = ORIGINAL_NODE_ENV;
     }
+
     if (ORIGINAL_SECRET === undefined) {
       delete process.env["NSFW_PII_SECRET"];
     } else {

@@ -26,6 +26,7 @@ beforeEach(async () => {
   raw.exec(
     `INSERT INTO chats(id, name, created_by, created_at) VALUES ('chat1', 'Test Chat', 'qm-user-id', datetime('now'));`,
   );
+
   raw.exec(`INSERT INTO actors(id, display_name, created_at) VALUES ('actor1', 'A', datetime('now'));`,);
   raw.exec(
     `INSERT INTO interaction_logs(id, chat_id, actor_id, command, category, skill, difficulty, outcome, agency_mode, created_at) VALUES ('log1', 'chat1', 'actor1', 'attack', 'combat', 'melee', 10, 'success', 'free', datetime('now'));`,
@@ -49,6 +50,7 @@ describe("recordAgencyMode", () => {
       const row = raw.query("SELECT agency_mode FROM interaction_logs WHERE id='log1'",).get() as {
         agency_mode: string;
       };
+
       expect(row.agency_mode,).toBe(mode,);
     }
   });
@@ -57,6 +59,7 @@ describe("recordAgencyMode", () => {
     raw.exec(
       `INSERT INTO interaction_logs(id, chat_id, actor_id, command, category, skill, difficulty, outcome, created_at) VALUES ('log2', 'chat1', 'actor1', 'move', 'social', 'movement', 0, 'success', datetime('now'));`,
     );
+
     const row = raw.query("SELECT agency_mode FROM interaction_logs WHERE id='log2'",).get() as { agency_mode: string };
     expect(row.agency_mode,).toBe("free",);
   });
@@ -72,6 +75,7 @@ describe("incrementDimensionCounter — six-dimension coverage", () => {
         hourBucket: "2026-09-25T12",
         meaningful: false,
       },);
+
       const metrics = await queryAgencyMetrics(db, "worldA", "2026-09-01",);
       expect(metrics.byDimension[dim].total,).toBeGreaterThan(0,);
     });
@@ -85,6 +89,7 @@ describe("incrementDimensionCounter — six-dimension coverage", () => {
       hourBucket: "2026-09-25T13",
       meaningful: true,
     },);
+
     const metrics = await queryAgencyMetrics(db, "worldA", "2026-09-01",);
     expect(metrics.byDimension[AgencyDimension.Social].meaningful,).toBeGreaterThan(0,);
     expect(metrics.meaningful,).toBeGreaterThan(0,);
@@ -98,6 +103,7 @@ describe("incrementDimensionCounter — six-dimension coverage", () => {
       hourBucket: "2026-09-25T14",
       meaningful: false,
     },);
+
     const metrics = await queryAgencyMetrics(db, "worldB", "2026-09-01",);
     expect(metrics.byDimension[AgencyDimension.Narrative].total,).toBeGreaterThan(0,);
     expect(metrics.byDimension[AgencyDimension.Narrative].meaningful,).toBe(0,);

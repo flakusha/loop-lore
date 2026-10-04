@@ -54,6 +54,7 @@ describeOrSkip("outfitSwitcher.load", () => {
       url.includes("/wardrobe-override/",)
         ? Response.json({ outfit_id: "o2", },)
         : Response.json([{ id: "o1", name: "Travel Cloak", }, { id: "o2", name: "Court Dress", },],);
+
     await s.load();
     expect(s.chatId,).toBe("c1",);
     expect(s.actorId,).toBe("a1",);
@@ -81,6 +82,7 @@ describeOrSkip("outfitSwitcher.load", () => {
     fetchHandler = () => {
       throw new Error("boom",);
     };
+
     await s.load();
     expect(s.error,).not.toBe("",);
     expect(s.loading,).toBe(false,);
@@ -93,6 +95,7 @@ describeOrSkip("outfitSwitcher.load", () => {
       url.includes("/wardrobe-override/",)
         ? Response.json({}, { status: 500, },)
         : Response.json([{ id: "o1", name: "Cloak", },],);
+
     await s.load();
     expect(s.outfits,).toHaveLength(1,);
     expect(s.overrideId,).toBeNull();
@@ -115,6 +118,7 @@ describeOrSkip("outfitSwitcher.select", () => {
       actor_id: "a1",
       outfit_id: "o9",
     },);
+
     expect(s.overrideId,).toBe("o9",);
     expect(s.open,).toBe(false,);
     expect(s.saving,).toBe(false,);
@@ -172,11 +176,13 @@ describeOrSkip("outfitSwitcher.init/destroy", () => {
     (document as any).addEventListener = (type: string, handler: EventListener,) => {
       listeners.push({ type, handler, },);
     };
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (document as any).removeEventListener = (type: string, handler: EventListener,) => {
       const idx = listeners.findIndex((l,) => l.type === type && l.handler === handler);
       if (idx >= 0) { listeners.splice(idx, 1,); }
     };
+
     try {
       mockChatScope(null, null,);
       s.init();
@@ -186,6 +192,7 @@ describeOrSkip("outfitSwitcher.init/destroy", () => {
         url.includes("/wardrobe-override/",)
           ? Response.json({ outfit_id: null, },)
           : Response.json([{ id: "ox", name: "Armor", },],);
+
       listeners[0]!.handler(new CustomEvent("chat-context-refresh",),);
       await new Promise<void>((resolve,) => setTimeout(resolve, 10,));
       expect(s.chatId,).toBe("c7",);
@@ -214,9 +221,11 @@ function mockChatScope(chatId: string | null, actorId: string | null,): void {
     activeChat: chatId,
     currentCharacter: actorId ? { id: actorId, } : null,
   };
+
   const doc = globalThis.document as unknown as {
     querySelector: (sel: string,) => unknown;
   };
+
   doc.querySelector = (sel: string,) => sel === "[x-data='chatState()']" ? root : null;
   (globalThis as unknown as { Alpine?: unknown }).Alpine = {
     $data: () => scope,

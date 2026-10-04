@@ -48,6 +48,7 @@ describe("createAnnotation — kind discriminator", () => {
         kind,
         body: `body-${kind}`,
       },);
+
       expect(annotation.kind,).toBe(kind,);
       expect(annotation.body,).toBe(`body-${kind}`,);
       expect(annotation.chatId,).toBe("chat-kind",);
@@ -78,11 +79,13 @@ describe("createAnnotation — shadow persistence", () => {
       kind: "shadow",
       body: "secret fact",
     },);
+
     const row = await db
       .selectFrom("shadow_notes",)
       .selectAll()
       .where("id", "=", annotation.id,)
       .executeTakeFirst();
+
     expect(row,).not.toBeNull();
     expect(row?.chat_id,).toBe("chat-shadow",);
     expect(row?.content,).toBe("secret fact",);
@@ -99,12 +102,14 @@ describe("createAnnotation — shadow persistence", () => {
       kind: "note",
       body: "remember the bread",
     },);
+
     const quest = await createAnnotation(db, {
       chatId: "chat-mem",
       actorId: "user-1",
       kind: "quest",
       body: "retrieve the sword",
     },);
+
     const memory = listMemoryAnnotations("chat-mem",);
     expect(memory.map((a: Annotation,) => a.id).sort(),).toEqual([note.id, quest.id,].sort(),);
 
@@ -113,6 +118,7 @@ describe("createAnnotation — shadow persistence", () => {
       .select(["id",],)
       .where("id", "=", note.id,)
       .executeTakeFirst();
+
     expect(noteRow,).toBeUndefined();
   });
 });
@@ -126,6 +132,7 @@ describe("createAnnotation — TTL semantics", () => {
       kind: "note",
       body: "permanent",
     },);
+
     expect(noTtl.ttlUntil,).toBeNull();
 
     const future = await createAnnotation(db, {
@@ -135,6 +142,7 @@ describe("createAnnotation — TTL semantics", () => {
       body: "ephemeral",
       ttlMs: 60_000,
     },);
+
     expect(future.ttlUntil,).not.toBeNull();
     const futureMs = Date.parse(future.ttlUntil!,);
     const createdMs = Date.parse(future.createdAt,);
@@ -170,6 +178,7 @@ describe("createAnnotation — TTL semantics", () => {
       body: "no expiry",
       ttlMs: 0,
     },);
+
     expect(annotation.ttlUntil,).toBeNull();
   });
 });

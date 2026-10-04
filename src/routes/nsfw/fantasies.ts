@@ -58,6 +58,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
               chatId,
               actorId,
             },);
+
             if (!consent.ok) { return nsfwAccessErrorResponse(consent.reason,); }
 
             const fantasy = await fantasyService.createFantasy({
@@ -68,6 +69,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
               intensity: body.intensity as any,
               discoveredThrough: body.discoveredThrough as string | undefined,
             },);
+
             return jsonResponse(fantasy,);
           } catch (error) {
             log().error("Failed to create fantasy", error instanceof Error ? error : undefined,);
@@ -92,6 +94,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
               chatId,
               actorId,
             },);
+
             if (!consent.ok) { return nsfwAccessErrorResponse(consent.reason,); }
 
             const result = await fantasyService.attemptDiscovery(
@@ -99,6 +102,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
               body.context as string,
               (body.discoveryChance as number) ?? 0.1,
             );
+
             return jsonResponse(result,);
           } catch (error) {
             log().error("Failed to discover fantasy", error instanceof Error ? error : undefined,);
@@ -119,6 +123,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
               ctx.params.id,
               body.feeling as string | undefined,
             );
+
             return jsonResponse({ success, },);
           } catch (error) {
             log().error("Failed to record exploration", error instanceof Error ? error : undefined,);

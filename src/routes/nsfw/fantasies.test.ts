@@ -61,12 +61,14 @@ async function seedAuthorized(id: string,): Promise<{ userId: string; actorId: s
     birth_date: "1990-01-01",
     age_gate_accepted_at: "2026-01-01T00:00:00Z",
   },);
+
   await insertActors(db, actorId, {
     id: actorId as never,
     owner_id: userId,
     user_id: userId,
     content_rating: "nsfw_moderate" as never,
   },);
+
   return { userId, actorId, };
 }
 
@@ -79,6 +81,7 @@ function makeApp(userId?: string, config: Config = makeConfig(),) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(fantasyRoutes({ database: db, config, },),);
 }
 
@@ -96,6 +99,7 @@ describe("fantasy routes — GET /api/nsfw/fantasies/:actorId", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/nsfw/fantasies/fantasies-test-actor-x",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -104,6 +108,7 @@ describe("fantasy routes — GET /api/nsfw/fantasies/:actorId", () => {
     const res = await makeApp(userId,).handle(
       new Request(`http://localhost/api/nsfw/fantasies/${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.json(),).toEqual([],);
   });
@@ -120,11 +125,14 @@ describe("fantasy routes — GET /api/nsfw/fantasies/:actorId", () => {
           body: JSON.stringify({ actorId, name, category: "bondage", intensity: "mild", },),
         },),
       );
+
       expect(createRes.status,).toBe(200,);
     }
+
     const res = await app.handle(
       new Request(`http://localhost/api/nsfw/fantasies/${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as unknown[];
     expect(body,).toHaveLength(2,);
@@ -137,9 +145,11 @@ describe("fantasy routes — GET /api/nsfw/fantasies/:actorId", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("fantasies-other",).handle(
       new Request(`http://localhost/api/nsfw/fantasies/${actorId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -148,6 +158,7 @@ describe("fantasy routes — GET /api/nsfw/fantasies/:actorId", () => {
     const res = await makeApp(userId, makeConfig({ allowNsfw: false, },),).handle(
       new Request(`http://localhost/api/nsfw/fantasies/${actorId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -161,6 +172,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies", () => {
         body: JSON.stringify({ actorId: "x", name: "N", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -179,6 +191,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.name,).toBe("Praise Kink",);
@@ -191,6 +204,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies", () => {
       .select("fantasy_name",)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row?.fantasy_name,).toBe("Praise Kink",);
   });
 
@@ -201,6 +215,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("fantasies-other-create",).handle(
       new Request("http://localhost/api/nsfw/fantasies", {
         method: "POST",
@@ -208,6 +223,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies", () => {
         body: JSON.stringify({ actorId, name: "N", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -221,6 +237,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/discover", () => {
         body: JSON.stringify({ actorId: "x", context: "y", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -235,6 +252,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/discover", () => {
           body: JSON.stringify({ actorId, context: "bondage and restraint play", },),
         },),
       );
+
       expect(res.status,).toBe(200,);
       const body = await res.json() as Record<string, unknown>;
       expect(body.discovered,).toBe(true,);
@@ -255,6 +273,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/discover", () => {
           body: JSON.stringify({ actorId, context: "bondage and restraint play", },),
         },),
       );
+
       expect(res.status,).toBe(200,);
       const body = await res.json() as Record<string, unknown>;
       expect(body.discovered,).toBe(false,);
@@ -265,6 +284,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/discover", () => {
         .select("id",)
         .where("actor_id", "=", actorId,)
         .execute();
+
       expect(count,).toHaveLength(0,);
     } finally {
       restore();
@@ -281,6 +301,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/discover", () => {
         body: JSON.stringify({ actorId, name: "Bondage", category: "bondage", },),
       },),
     );
+
     const restore = pinRandom(0,);
     try {
       const res = await makeApp(userId,).handle(
@@ -290,6 +311,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/discover", () => {
           body: JSON.stringify({ actorId, context: "bondage session", },),
         },),
       );
+
       expect(res.status,).toBe(200,);
       const body = await res.json() as Record<string, unknown>;
       expect(body.discovered,).toBe(false,);
@@ -306,6 +328,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/discover", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     const res = await makeApp("fantasies-other-discover",).handle(
       new Request("http://localhost/api/nsfw/fantasies/discover", {
         method: "POST",
@@ -313,6 +336,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/discover", () => {
         body: JSON.stringify({ actorId, context: "bondage", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -326,6 +350,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/:id/explore", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -338,6 +363,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/:id/explore", () => {
         body: JSON.stringify({ feeling: "love", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.success,).toBe(false,);
@@ -352,6 +378,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/:id/explore", () => {
         body: JSON.stringify({ actorId, name: "Voyeurism", category: "voyeurism", },),
       },),
     );
+
     const fantasy = await createRes.json() as Record<string, unknown>;
 
     const res = await makeApp(userId,).handle(
@@ -361,6 +388,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/:id/explore", () => {
         body: JSON.stringify({ feeling: "like", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
     expect(body.success,).toBe(true,);
@@ -370,6 +398,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/:id/explore", () => {
       .select(["times_explored", "current_feeling",],)
       .where("id", "=", String(fantasy.id,),)
       .executeTakeFirst();
+
     expect(row?.times_explored,).toBe(1,);
     expect(row?.current_feeling,).toBe("like",);
   });
@@ -383,6 +412,7 @@ describe("fantasy routes — POST /api/nsfw/fantasies/:id/explore", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

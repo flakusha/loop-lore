@@ -115,12 +115,14 @@ async function signRaw(headerB64: string, payloadB64: string, secret: string,): 
     false,
     ["sign",],
   );
+
   const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(`${headerB64}.${payloadB64}`,),);
   const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig,),),).replaceAll("+", "-",).replaceAll("/", "_",)
     .replace(
       /=+$/,
       "",
     );
+
   return `${headerB64}.${payloadB64}.${sigB64}`;
 }
 
@@ -194,6 +196,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       sessionId: sid,
       expiresInSeconds: 3600,
     },);
+
     await insertSession(db, sid, jwtUserId, "jwt:" + sid, futureExpiry(),);
     await insertSession(db, "legacy-sid", legacyUserId, sha256Hex(token,), futureExpiry(),);
     const resolved = await resolveUserIdFromRequest(
@@ -202,6 +205,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       "demo",
       JWT_PLUS_LEGACY_CONFIG,
     );
+
     expect(resolved,).toBe(jwtUserId,);
   });
 
@@ -218,6 +222,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       "demo",
       JWT_PLUS_LEGACY_CONFIG,
     );
+
     expect(resolved,).toBe(userId,);
   });
 
@@ -234,6 +239,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       "demo",
       JWT_PLUS_LEGACY_CONFIG,
     );
+
     expect(resolved,).toBe(userId,);
   });
 
@@ -250,6 +256,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       "demo",
       JWT_PLUS_LEGACY_CONFIG,
     );
+
     expect(resolved,).toBe(userId,);
   });
 
@@ -291,6 +298,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       sessionId: sid,
       expiresInSeconds: 3600,
     },);
+
     const solo = await getOrCreateSoloUserForAuth(db, "demo",);
     expect(await resolveUserIdFromRequest(requestWithCookie(`ll_token=${token}`,), db, "demo", JWT_CONFIG,),).toBe(
       solo?.id ?? null,
@@ -305,6 +313,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       sessionId: "s",
       expiresInSeconds: -3600,
     },);
+
     await expectSoloForToken(token,);
   });
 
@@ -316,6 +325,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       sessionId: "s",
       expiresInSeconds: 0,
     },);
+
     await expectSoloForToken(token,);
   });
 
@@ -327,6 +337,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       sessionId: "s",
       expiresInSeconds: 3600,
     },);
+
     await expectSoloForToken(token,);
   });
 
@@ -346,6 +357,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
     const token = await tokenWithPayload(
       JSON.stringify({ sub: "u", role: "user", exp: Math.floor(Date.now() / 1000,) + 3600, },),
     );
+
     await expectSoloForToken(token,);
   });
 
@@ -425,6 +437,7 @@ describe("resolveUserIdFromRequest — legacy session edges", () => {
       "demo",
       LEGACY_ONLY_CONFIG,
     );
+
     expect(resolved,).toBe(firstId,);
   });
 });

@@ -56,6 +56,7 @@ export function formatWorkflowPreview(session: WorkflowSession,): string {
     const opts = step.options !== undefined ? ` [${step.options.join(" | ",)}]` : "";
     lines.push(`- **${step.name}**: ${step.description ?? ""}${opts}${recs}\n`,);
   }
+
   lines.push("\nReply with the first step, or `/workflow cancel` to abort.",);
   return lines.join("",);
 }
@@ -76,6 +77,7 @@ export function formatWorkflowProgress(session: WorkflowSession,): string {
       `Reply \`/workflow confirm\` to dispatch, or \`/workflow cancel\` to abort.`
     );
   }
+
   const step = session.workflow.steps.find((s,) => s.id === next)!;
   return `**${session.workflow.name}** — step ${filled + 1}/${total} saved. Next: **${step.name}**${
     step.description ? ` — ${step.description}` : ""
@@ -93,12 +95,14 @@ export function fillNextStep(session: WorkflowSession, value: string,): string {
   if (next === undefined) {
     return "All steps are filled — reply `/workflow confirm` to dispatch, or `/workflow cancel` to abort.";
   }
+
   try {
     buildStep(session.workflow, session.run, next, value,);
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error,);
     return `**Step rejected:** ${msg}`;
   }
+
   return formatWorkflowProgress(session,);
 }
 
@@ -137,6 +141,7 @@ export async function confirmSession(
       handled: true,
     };
   }
+
   confirmRun(session.run,);
   let prompt = assemblePrompt(session.workflow, session.run,);
   prompt = withShadowSteering(prompt, await loadShadowSteering(ctx,),);
@@ -147,6 +152,7 @@ export async function confirmSession(
     const msg = error instanceof Error ? error.message : String(error,);
     return { systemMessage: `**Dispatch failed:** ${msg}`, handled: true, };
   }
+
   if (dispatch.backend !== "assistant-create") {
     cancelSession(ctx.chatId,);
     if (ctx.db) { await deletePersistedSession(ctx.db, ctx.chatId,); }
@@ -157,6 +163,7 @@ export async function confirmSession(
       handled: true,
     };
   }
+
   const token = dispatch.target.split(" ",)[1] ?? "";
   const { db, config, } = ctx;
   if (!db || !config) {
@@ -165,6 +172,7 @@ export async function confirmSession(
       handled: true,
     };
   }
+
   let complete: Parameters<typeof runCreateGeneration>[2];
   let model: string | undefined;
   try {
@@ -175,11 +183,13 @@ export async function confirmSession(
     const msg = error instanceof Error ? error.message : String(error,);
     return { systemMessage: `**Entity creation unavailable:** ${msg}`, handled: true, };
   }
+
   const result = await runCreateGeneration([token, prompt,], ctx, complete, model,);
   if (result.action === "create-entity-preview") {
     cancelSession(ctx.chatId,);
     await deletePersistedSession(db, ctx.chatId,);
   }
+
   return result;
 }
 
@@ -197,9 +207,11 @@ async function loadShadowSteering(ctx: CommandContext,): Promise<string> {
     .select("gm_config",)
     .where("id", "=", ctx.chatId,)
     .executeTakeFirst();
+
   const role = chat?.gm_config
     ? jsonParseOr<{ assistantRole?: string }>(chat.gm_config, {},).assistantRole
     : undefined;
+
   if (role !== "gm") { return ""; }
   return formatShadowSteering(await fetchUnrevealedShadowNotes(db, ctx.chatId,),);
 }
@@ -214,6 +226,7 @@ registerCommand("workflow", async (args, ctx,): Promise<CommandResult> => {
     const had = hadMemory || hadPersisted;
     return { systemMessage: had ? "**Workflow cancelled.**" : "No active workflow run in this chat.", handled: true, };
   }
+
   if (!session) {
     return {
       systemMessage:
@@ -221,6 +234,7 @@ registerCommand("workflow", async (args, ctx,): Promise<CommandResult> => {
       handled: true,
     };
   }
+
   if (sub === "confirm") { return confirmSession(session, ctx,); }
   return { systemMessage: formatWorkflowProgress(session,), handled: true, };
 }, { requiredRole: ChatParticipantRole.Member, },);

@@ -16,6 +16,7 @@ describe("getCombatDC", () => {
     expect(getCombatDC("shove", 11,).value,).toBe(15,);
     expect(getCombatDC("shove", 1,).value,).toBe(10,);
   });
+
   test("unknown action falls through and returns undefined", () => {
     expect(getCombatDC("snipe" as "aim", 10,),).toBeUndefined();
   });

@@ -78,18 +78,21 @@ async function setup(opts: { withMatchMessage: boolean; keywords?: string[] | st
       status: MessageStatus.Confirmed,
     } as never,);
   }
+
   const memoryId = await insertActorMemories(db, charId, MARKER, {
     scope: "character",
     privacy: "public",
     pinned: "unpinned",
     keywords: JSON.stringify(opts.keywords ?? [KEY_PHRASE,],),
   } as never,);
+
   const ctx: KeyphraseRecallCtx = {
     db,
     chat: { id: chat.id, },
     actor: { id: charId, },
     params: { userId, },
   };
+
   const assembleCtx: AssembleContext = {
     db,
     actor: {
@@ -111,6 +114,7 @@ async function setup(opts: { withMatchMessage: boolean; keywords?: string[] | st
     // the journal entry on its own, so only a keyphrase hit can inject it.
     randomFn: () => 0.999,
   };
+
   return { ctx, assembleCtx, memoryId, sqlite, };
 }
 
@@ -120,6 +124,7 @@ async function keyphraseAuditCount(ctx: KeyphraseRecallCtx,): Promise<number> {
     .select(["details",],)
     .where("action", "=", "inject",)
     .execute();
+
   return rows.filter((row,) => row.details.includes("keyphrase",)).length;
 }
 
@@ -129,6 +134,7 @@ beforeEach(() => {
   } catch {
     // Already initialized — ignore.
   }
+
   clearKeyphraseRecallCooldowns();
 },);
 
@@ -145,12 +151,14 @@ describe("collectKeyphraseHits", () => {
     } finally {
       hit.sqlite.close();
     }
+
     const miss = await setup({ withMatchMessage: true, },);
     try {
       expect(await collectKeyphraseHits(miss.ctx, [makeEntry("e2", ["unrelated phrase",],),],),).toEqual([],);
     } finally {
       miss.sqlite.close();
     }
+
     const noMessage = await setup({ withMatchMessage: false, },);
     try {
       expect(await collectKeyphraseHits(noMessage.ctx, [makeEntry("e3", [KEY_PHRASE,],),],),).toEqual([],);
@@ -165,6 +173,7 @@ describe("collectKeyphraseHits", () => {
       await f.ctx.db.insertInto("system_config",)
         .values({ key: "memory_keyphrase_recall", value: "false", },)
         .execute();
+
       expect(await collectKeyphraseHits(f.ctx, [makeEntry("e1", [KEY_PHRASE,],),],),).toEqual([],);
     } finally {
       f.sqlite.close();
@@ -177,10 +186,12 @@ describe("collectKeyphraseHits", () => {
       await f.ctx.db.insertInto("system_config",)
         .values({ key: "memory_keyphrase_recall_limit", value: "1", },)
         .execute();
+
       const hits = await collectKeyphraseHits(f.ctx, [
         makeEntry("e1", [KEY_PHRASE,],),
         makeEntry("e2", [KEY_PHRASE,],),
       ],);
+
       expect(hits,).toHaveLength(1,);
     } finally {
       f.sqlite.close();
@@ -209,6 +220,7 @@ describe("applyKeyphraseRecalls", () => {
         makeEntry("e1", [KEY_PHRASE,],),
         makeEntry("e2", [KEY_PHRASE,],),
       ],);
+
       expect(merged.map((m,) => m.id),).toEqual(["e1", "e2",],);
       expect(await keyphraseAuditCount(f.ctx,),).toBe(1,);
       const plain = await applyKeyphraseRecalls(f.ctx, selected, [],);
@@ -232,6 +244,7 @@ describe("applyKeyphraseRecalls", () => {
         .select(["actor_id", "details",],)
         .where("action", "=", "inject",)
         .execute();
+
       const keyphraseRows = rows.filter((row,) => row.details.includes("keyphrase",));
       // A single row stamped with the FIRST entry's actorId would file
       // actor-b's memory under actor-a — the audit trail would misattribute it.

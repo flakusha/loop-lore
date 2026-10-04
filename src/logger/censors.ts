@@ -40,12 +40,15 @@ function isGlobMatch(pattern: string, value: string,): boolean {
   if (lowerPattern.startsWith("*",) && lowerPattern.endsWith("*",)) {
     return lowerValue.includes(lowerPattern.slice(1, -1,),);
   }
+
   if (lowerPattern.startsWith("*",)) {
     return lowerValue.endsWith(lowerPattern.slice(1,),);
   }
+
   if (lowerPattern.endsWith("*",)) {
     return lowerValue.startsWith(lowerPattern.slice(0, -1,),);
   }
+
   return lowerValue === lowerPattern;
 }
 
@@ -68,6 +71,7 @@ function censorScalar(val: unknown, rule: CensorRule,): unknown {
   if (typeof val === "string" && rule.pattern) {
     return rule.pattern.test(val,) ? (rule.replacement ?? PLACEHOLDER) : val;
   }
+
   return rule.replacement ?? PLACEHOLDER;
 }
 
@@ -106,6 +110,7 @@ function censorObject(
       result[key] = val;
     }
   }
+
   return result;
 }
 

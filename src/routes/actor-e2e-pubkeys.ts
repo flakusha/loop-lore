@@ -76,6 +76,7 @@ export function actorE2EPubkeyRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (!row) {
         return jsonError({ message: "No active public key for actor", status: HttpStatus.NotFound, },);
       }
+
       return jsonResponse(row,);
     }, {
       params: ActorIdE2EParams,
@@ -103,6 +104,7 @@ export function actorE2EPubkeyRoutes(opts: HandlerOpts, prefix = "/api",) {
         ...(ctx.body.algorithm !== undefined ? { algorithm: ctx.body.algorithm, } : {}),
         ...(ctx.body.expiresAt !== undefined ? { expiresAt: ctx.body.expiresAt, } : {}),
       },);
+
       return jsonResponse(row, HttpStatus.Created,);
     }, {
       params: ActorIdE2EParams,
@@ -129,6 +131,7 @@ export function actorE2EPubkeyRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (!revoked) {
         return jsonError({ message: "No active public key to revoke", status: HttpStatus.NotFound, },);
       }
+
       return jsonResponse({ ok: true, revoked: true, },);
     }, {
       params: ActorIdE2EParams,

@@ -61,6 +61,7 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
     (typeof globalThis !== "undefined" && "localStorage" in globalThis
       ? (globalThis as { localStorage?: Storage }).localStorage ?? null
       : null);
+
   const now = deps.now ?? Date.now;
 
   return {
@@ -95,6 +96,7 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
           if (cleanupJson.ok) { storage.setItem(DRAFT_STORAGE_KEY, cleanupJson.value,); }
           return null;
         }
+
         return decoded.text;
       } catch {
         return null;
@@ -113,11 +115,13 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
         const loadResult = safeJsonParse<Record<string, unknown>>(raw,);
         if (loadResult.ok) { map = loadResult.value; }
       }
+
       if (text.trim().length === 0) {
         delete map[chatId];
       } else {
         map[chatId] = { chatId, text, savedAt: now(), } satisfies StoredDraft;
       }
+
       const persistJson = safeJsonStringify(map,);
       if (persistJson.ok) { storage.setItem(DRAFT_STORAGE_KEY, persistJson.value,); }
     },

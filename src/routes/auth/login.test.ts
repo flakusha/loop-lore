@@ -89,11 +89,13 @@ async function seedUsers(): Promise<void> {
     id: USER_ID,
     password_hash: passwordHash,
   } as never,);
+
   await insertUsers(db, "disabled-user", "Disabled", {
     id: "user-disabled",
     password_hash: passwordHash,
     status: "disabled",
   } as never,);
+
   // Solo/demo user: getOrCreateSoloUserForAuth caches the id per DB instance,
   // so the row must exist across resets or session inserts hit a stale FK.
   await insertUsers(db, "demo", "Demo", {
@@ -132,10 +134,12 @@ describe("handleLogin — credential validation", () => {
         controller.error(new Error("stream failed",),);
       },
     },);
+
     const req = new Request("http://localhost/api/auth/login", {
       method: "POST",
       body: brokenStream as BodyInit,
     },);
+
     const res = await handleLogin(req, db, makeConfig(), undefined, null, loginLimiter,);
     expect(res.status,).toBe(400,);
   });
@@ -149,6 +153,7 @@ describe("handleLogin — credential validation", () => {
       null,
       loginLimiter,
     );
+
     const body = await res.text();
     expect(body,).toContain("Invalid username or password",);
   });
@@ -162,6 +167,7 @@ describe("handleLogin — credential validation", () => {
       null,
       loginLimiter,
     );
+
     expect(await res.text(),).toContain("Account is disabled",);
   });
 
@@ -174,6 +180,7 @@ describe("handleLogin — credential validation", () => {
       null,
       loginLimiter,
     );
+
     expect(await res.text(),).toContain("Invalid username or password",);
   });
 });
@@ -188,6 +195,7 @@ describe("handleLogin — success", () => {
       null,
       loginLimiter,
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("HX-Redirect",),).toBe("/views/chat",);
     const cookie = res.headers.get("Set-Cookie",);
@@ -216,8 +224,10 @@ describe("handleLogin — rate limiting", () => {
         null,
         loginLimiter,
       );
+
       expect(res.status,).toBe(200,);
     }
+
     const blocked = await handleLogin(
       makeRequest(loginBody(USERNAME, "wrong",),),
       db,
@@ -226,6 +236,7 @@ describe("handleLogin — rate limiting", () => {
       null,
       loginLimiter,
     );
+
     expect(blocked.status,).toBe(429,);
     expect(await blocked.text(),).toContain("Too many attempts",);
   });
@@ -235,6 +246,7 @@ describe("handleLogin — rate limiting", () => {
     for (let i = 0; i < 10; i++) {
       await handleLogin(makeRequest(loginBody(USERNAME, "wrong",),), db, makeConfig(), undefined, null, loginLimiter,);
     }
+
     const blocked = await handleLogin(
       makeRequest(loginBody(USERNAME, "wrong",),),
       db,
@@ -243,6 +255,7 @@ describe("handleLogin — rate limiting", () => {
       null,
       loginLimiter,
     );
+
     expect(blocked.status,).toBe(429,);
     expect(blocked.headers.get("Retry-After",),).toBeDefined();
     expect(blocked.headers.get("X-RateLimit-Limit",),).toBe("10",);
@@ -259,6 +272,7 @@ describe("handleLogin — rate limiting", () => {
       null,
       loginLimiter,
     );
+
     expect(res.status,).toBe(200,);
     // No Retry-After on 200 — only X-RateLimit-* informational headers.
     expect(res.headers.get("Retry-After",),).toBeNull();
@@ -276,6 +290,7 @@ describe("handleDemoLogin", () => {
 
     const soloUser = await db.selectFrom("users",).select("username",)
       .where("username", "=", "demo",).executeTakeFirst();
+
     expect(soloUser?.username,).toBe("demo",);
   });
 
@@ -288,6 +303,7 @@ describe("handleDemoLogin", () => {
       null,
       demoLimiter,
     );
+
     expect(res.status,).toBe(500,);
   });
 
@@ -297,16 +313,19 @@ describe("handleDemoLogin", () => {
       const res = await handleDemoLogin(makeRequest(), db, makeConfig(), undefined, null, demoLimiter,);
       expect(res.status,).toBe(200,);
     }
+
     const blocked = await handleDemoLogin(makeRequest(), db, makeConfig(), undefined, null, demoLimiter,);
     expect(blocked.status,).toBe(429,);
     expect(await blocked.text(),).toContain("Too many attempts",);
     expect(blocked.headers.get("Retry-After",),).toBeDefined();
   });
+
   test("demo-login limiter is per-IP — a different peer keeps a fresh budget", async () => {
     // Exhaust one peer
     for (let i = 0; i < 5; i++) {
       await handleDemoLogin(makeRequest(), db, makeConfig(), undefined, "10.0.0.1", demoLimiter,);
     }
+
     const blocked = await handleDemoLogin(makeRequest(), db, makeConfig(), undefined, "10.0.0.1", demoLimiter,);
     expect(blocked.status,).toBe(429,);
     // A different peer keeps its own budget
@@ -344,6 +363,7 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
+
     const cookie = res.headers.get("Set-Cookie",) ?? "";
     expect(cookie,).not.toContain("Secure",);
     expect(cookie,).toContain("HttpOnly",);
@@ -361,6 +381,7 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
+
     expect(res.headers.get("Set-Cookie",),).toContain("Secure",);
   });
 
@@ -375,6 +396,7 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
+
     expect(res.headers.get("Set-Cookie",),).toContain("Secure",);
   });
 
@@ -389,6 +411,7 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
+
     expect(res.headers.get("Set-Cookie",),).not.toContain("Secure",);
   });
 });

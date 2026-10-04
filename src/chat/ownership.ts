@@ -52,6 +52,7 @@ export async function requireChatParticipant(
       `Actor ${actorId} is not a participant of chat ${chatId}`,
     );
   }
+
   return participant as { actor_id: string; role_in_chat: string };
 }
 

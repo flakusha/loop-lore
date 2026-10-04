@@ -31,6 +31,7 @@ describe("audit transform", () => {
       details: { source: "extraction", },
       createdAt: "2026-09-19T12:00:00.000Z",
     };
+
     const entry = toAuditEntry(row,);
     expect(entry,).toEqual({
       id: "row-1",
@@ -53,6 +54,7 @@ describe("audit transform", () => {
       details: {},
       createdAt: "2026-09-19T12:00:00.000Z",
     },);
+
     expect(entry.userId,).toBeNull();
     expect(entry.action,).toBe("pin",);
   });
@@ -138,6 +140,7 @@ describe("audit transform", () => {
       mkEntry("pin",),
       mkEntry("delete",),
     ];
+
     expect(auditEntriesForFilter(entries, null,),).toEqual(entries,);
   });
 
@@ -148,6 +151,7 @@ describe("audit transform", () => {
       mkEntry("create",),
       mkEntry("delete",),
     ];
+
     const filtered = auditEntriesForFilter(entries, "create",);
     expect(filtered,).toHaveLength(2,);
     expect(filtered.every((e,) => e.action === "create"),).toBe(true,);
@@ -186,6 +190,7 @@ describe("injectAuditKinds", () => {
       busy: false,
     };
   }
+
   function mem(id: string, extractionKind: MemoryEntry["extractionKind"],): MemoryEntry {
     return {
       id,
@@ -199,6 +204,7 @@ describe("injectAuditKinds", () => {
       extractionKind,
     };
   }
+
   function injectEntry(memoryIds: string[],): AuditEntry {
     return {
       id: "audit-1",
@@ -234,6 +240,7 @@ describe("injectAuditKinds", () => {
       mem("m2", "single_response",),
       mem("m3", "manual",),
     ];
+
     expect(injectAuditKinds(injectEntry(["m1", "m2", "m3",],), panel,),).toEqual(["manual", "single_response",],);
   });
 
@@ -297,6 +304,7 @@ describe("memory transform", () => {
       source_message_ids: '["msg-1","msg-2"]',
       extraction_kind: "compaction",
     }, "assistant",);
+
     expect(entry.id,).toBe("m1",);
     expect(entry.extractionKind,).toBe("compaction",);
     expect(entry.sourceMessageId,).toBe("msg-1",);
@@ -317,6 +325,7 @@ describe("memory transform", () => {
       created_at: "2026-09-19",
       source_message_ids: [],
     }, "world",);
+
     expect(entry.scope,).toBe("world",);
   });
 
@@ -355,6 +364,7 @@ describe("memory transform", () => {
       tokenBudget: 0,
       busy: false,
     };
+
     expect(memoriesForTab(panel, "character",)[0]?.id,).toBe("c1",);
     expect(memoriesForTab(panel, "assistant",)[0]?.id,).toBe("a1",);
     expect(memoriesForTab(panel, "world",)[0]?.id,).toBe("w1",);

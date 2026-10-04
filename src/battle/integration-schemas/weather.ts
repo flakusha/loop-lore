@@ -48,6 +48,7 @@ export function getCombatWeatherModifiers(
       // Clear skies / snowfall — no combat modifiers modeled.
       break;
     }
+
     case "rain": {
       modifiers.push({
         id: "rain_accuracy",
@@ -66,8 +67,10 @@ export function getCombatWeatherModifiers(
         duration: 0,
         description: "Rain weakens fire magic",
       },);
+
       break;
     }
+
     case "storm": {
       modifiers.push({
         id: "storm_accuracy",
@@ -86,8 +89,10 @@ export function getCombatWeatherModifiers(
         duration: 0,
         description: "Storm hampers movement",
       },);
+
       break;
     }
+
     case "fog": {
       modifiers.push({
         id: "fog_accuracy",
@@ -106,8 +111,10 @@ export function getCombatWeatherModifiers(
         duration: 0,
         description: "Fog provides concealment",
       },);
+
       break;
     }
+
     case "wind": {
       modifiers.push({
         id: "wind_ranged",
@@ -118,8 +125,10 @@ export function getCombatWeatherModifiers(
         duration: 0,
         description: "Wind affects ranged attacks",
       },);
+
       break;
     }
+
     case "heatwave": {
       modifiers.push({
         id: "heat_stamina",
@@ -130,8 +139,10 @@ export function getCombatWeatherModifiers(
         duration: 0,
         description: "Heat drains stamina faster",
       },);
+
       break;
     }
+
     case "cold_snap": {
       modifiers.push({
         id: "cold_speed",
@@ -150,6 +161,7 @@ export function getCombatWeatherModifiers(
         duration: 0,
         description: "Cold stiffens muscles",
       },);
+
       break;
     }
   }

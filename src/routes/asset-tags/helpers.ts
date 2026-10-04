@@ -48,5 +48,6 @@ export async function resolveAccessibleAsset(
   if (!(await canAccessAsset(database, id, userId, userRole,))) {
     return notFoundResponse("Asset not found",);
   }
+
   return asset;
 }

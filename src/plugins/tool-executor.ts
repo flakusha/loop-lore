@@ -42,6 +42,7 @@ export async function executePluginTool(
       const timer = setTimeout(() => {
         reject(new Error(`Tool "${tool.name}" timed out after ${timeoutMs}ms`));
       }, timeoutMs);
+
       handler.then(
         (result) => { clearTimeout(timer); resolve(result); },
         (error: unknown) => { clearTimeout(timer); reject(error); },

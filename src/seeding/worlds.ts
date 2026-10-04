@@ -47,6 +47,7 @@ export async function seedWorlds(
       .where("owner_id", "=", ownerId,)
       .where("name", "=", world.name,)
       .executeTakeFirst();
+
     if (existing) {
       log.debug(`World "${world.name}" already exists — skipping`,);
       continue;
@@ -65,11 +66,13 @@ export async function seedWorlds(
         kind: "rpg",
       },)
       .execute();
+
     await recordSeedAudit(database, "world", worldId, {
       name: world.name,
       creator: world.creator,
       locations: world.locations?.length ?? 0,
     },);
+
     created += 1;
 
     const locations = world.locations ?? [];
@@ -92,6 +95,7 @@ export async function seedWorlds(
 
     log.info(`Seeded world "${world.name}" (creator ${world.creator})`,);
   }
+
   return created;
 }
 

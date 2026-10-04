@@ -60,6 +60,7 @@ function removeAspiration(idx: number,): void {
   aspirationsData.splice(idx, 1,);
   renderAspirations();
 }
+
 (globalThis as Record<string, unknown>).removeAspiration = removeAspiration;
 /**
  * @returns {void}
@@ -78,11 +79,13 @@ export function renderAspirations() {
     container.appendChild(empty,);
     return;
   }
+
   aspirationsData.forEach((a, i,) => {
     const row = document.createElement("div",);
     row.className = "aspiration-row";
     row.style.cssText =
       "display:flex;gap:var(--space-2);align-items:flex-start;margin-bottom:var(--space-2);padding:var(--space-2);background:var(--bg-secondary);border-radius:var(--radius-sm)";
+
     row.dataset["aspirationIndex"] = String(i,);
 
     const goal = document.createElement("input",);
@@ -105,6 +108,7 @@ export function renderAspirations() {
       if (a.priority === v) { opt.selected = true; }
       priority.appendChild(opt,);
     }
+
     priority.addEventListener("change", () => {
       aspirationsData[i]!.priority = priority.value;
     },);
@@ -119,6 +123,7 @@ export function renderAspirations() {
       if (a.visibility === v) { opt.selected = true; }
       visibility.appendChild(opt,);
     }
+
     visibility.addEventListener("change", () => {
       aspirationsData[i]!.visibility = visibility.value;
     },);
@@ -145,6 +150,7 @@ function sliderVal(id: string,): number {
   const el = document.querySelector<HTMLInputElement>(`#${id}`,);
   return el ? parseFloatOr(el.value, 0,) : 0;
 }
+
 /**
  * @param id
  */
@@ -195,6 +201,7 @@ function hydrateSliders(entries: Array<[string, string | number | boolean,]>, up
     const el = document.querySelector<HTMLInputElement>(selector,);
     if (el && val != null) { el.value = String(val,); }
   }
+
   if (update) { updateSliderDisplays(); }
 }
 
@@ -207,23 +214,27 @@ function hydrateSliders(entries: Array<[string, string | number | boolean,]>, up
       aspirationsData = data.aspirations;
       renderAspirations();
     }
+
     if (data.moralDisposition) {
       hydrateSliders([
         ["#moral-lawful", data.moralDisposition.lawful_chaotic ?? 0,],
         ["#moral-good", data.moralDisposition.good_evil ?? 0,],
       ],);
     }
+
     if (data.autonomyPreferences) {
       hydrateSliders([
         ["#auto-group", data.autonomyPreferences.group_comfort ?? 0.5,],
         ["#auto-solo", data.autonomyPreferences.solo_comfort ?? 0.5,],
       ],);
     }
+
     if (data.copingMechanisms) {
       setVal("#cope-stress", data.copingMechanisms.stress_response,);
       setVal("#cope-failure", data.copingMechanisms.failure_response,);
       setVal("#cope-conflict", data.copingMechanisms.conflict_style,);
     }
+
     if (data.approachTendencies) {
       setVal("#approach-decision", data.approachTendencies.decision_style,);
       hydrateSliders([
@@ -231,6 +242,7 @@ function hydrateSliders(entries: Array<[string, string | number | boolean,]>, up
         ["#approach-initiative", data.approachTendencies.initiative_level ?? 0.5,],
       ],);
     }
+
     if (data.voicePatterns) {
       setVal("#voice-tics", (data.voicePatterns.verbal_tics ?? []).join(", ",),);
       setVal("#voice-vocab", data.voicePatterns.vocabulary_level,);
@@ -251,11 +263,13 @@ function buildTraitsPayload() {
   for (const a of aspirationsData) {
     if (a.goal.trim() !== "") { activeAspirations.push(a,); }
   }
+
   const voiceTics: string[] = [];
   for (const s of textVal("voice-tics",).split(",",)) {
     const trimmed = s.trim();
     if (trimmed) { voiceTics.push(trimmed,); }
   }
+
   return {
     aspirations: activeAspirations,
     moralDisposition: {
@@ -294,6 +308,7 @@ function buildTraitsPayload() {
       headers: { "Content-Type": "application/json", },
       body: jsonBody(buildTraitsPayload(),),
     },);
+
     if (res.ok) {
       if (status) {
         status.textContent = "✓ Internal traits saved";

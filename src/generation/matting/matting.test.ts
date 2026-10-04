@@ -59,6 +59,7 @@ async function seedAsset(db: Kysely<DB>, ownerId: string, buffer: Buffer,): Prom
       buffer,
     },
   },);
+
   return asset.id;
 }
 
@@ -118,6 +119,7 @@ describeReal("matting job lifecycle", () => {
 
     const derivative = await db.selectFrom("assets",).selectAll().where("id", "=", job!.mattedAssetId!,)
       .executeTakeFirstOrThrow();
+
     expect(derivative.filename,).toBe("sprite-matted.png",);
     expect(derivative.alpha_status,).toBe(AssetAlphaStatus.Native,);
 

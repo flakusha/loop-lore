@@ -40,6 +40,7 @@ describe("assertInputSize", () => {
     } catch (err) {
       caught = err;
     }
+
     expect(caught,).toBeInstanceOf(RegexInputTooLargeError,);
     expect(caught,).toBeInstanceOf(Error,);
     // Distinct from a plain Error so callers can branch on it.
@@ -90,6 +91,7 @@ describe("safeRegexExec — lastIndex reset", () => {
       } else {
         expect(result,).toBeNull();
       }
+
       // Always reset for the next caller.
       expect(pattern.lastIndex,).toBeLessThanOrEqual(input.length,);
     }
@@ -159,6 +161,7 @@ describe("INTENT_PATTERNS — amplification cap", () => {
         p.test(big,);
       }
     }
+
     const elapsed = performance.now() - start;
     // Without the cap, INTENT_PATTERNS tested 30+ patterns against the full
     // string. With it, we still scan but with a known bound. Threshold is
@@ -180,8 +183,10 @@ describe("INTENT_PATTERNS — amplification cap", () => {
           break;
         }
       }
+
       if (matched) { break; }
     }
+
     expect(matched,).toBe("character",);
   });
 

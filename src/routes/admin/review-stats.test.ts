@@ -22,6 +22,7 @@ function makeApp(db: Kysely<DB>, userRole: string | null,) {
     userId: userRole ? `test-user-${userRole}` : null,
     userRole,
   }));
+
   return app.use(reviewStatsRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
@@ -64,6 +65,7 @@ describe("admin review-stats route", () => {
       daily: unknown[];
       topContentTypes: unknown[];
     };
+
     expect(body.pending,).toBe(0,);
     expect(body.total,).toBe(0,);
     expect(body.falsePositiveRate,).toBe(0,);

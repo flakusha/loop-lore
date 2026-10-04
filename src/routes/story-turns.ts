@@ -35,6 +35,7 @@ async function checkChatOwnership(
     .select(["created_by",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   return !!chat && (chat.created_by === userId || can(userRole, "admin.chat",));
 }
 
@@ -57,6 +58,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
         userId as string | null,
         userRole as string | null,
       );
+
       if (!hasAccess) {
         return error(HttpStatus.NotFound, { message: ctx.t?.("chats.chatNotFound",) ?? "Chat not found", },);
       }
@@ -71,6 +73,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
         .select(opts.database.fn.countAll().as("total",),)
         .where("chat_id", "=", chatId,)
         .executeTakeFirst();
+
       const total = countResult?.total ?? 0;
 
       const turns = await opts.database
@@ -107,6 +110,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
         userId as string | null,
         userRole as string | null,
       );
+
       if (!hasAccess) {
         return error(HttpStatus.NotFound, {
           message: ctx.t?.("story.storyTurnNotFound",) ?? "Story turn not found",
@@ -123,6 +127,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
       if (!turn) {
         return notFound("Story turn not found",);
       }
+
       return jsonResponse(turn,);
     }, {
       response: {

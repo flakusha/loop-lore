@@ -59,11 +59,13 @@ describe("importLorebook", () => {
       },],),
       warnings,
     );
+
     expect(count,).toBe(1,);
     expect(warnings,).toHaveLength(0,);
 
     const row = await db.selectFrom("actor_lore_entries",).selectAll().where("actor_id", "=", "char-1",)
       .executeTakeFirst();
+
     expect(row!.name,).toBe("Kingdom",);
     expect(row!.content,).toBe("A kingdom.",);
     expect(row!.keys,).toContain("kingdom",);
@@ -98,10 +100,12 @@ describe("importLorebook", () => {
       },],),
       warnings,
     );
+
     const rows = await db.selectFrom("actor_lore_entries",).selectAll().where("actor_id", "=", "char-1",).orderBy(
       "sort_order",
       "asc",
     ).execute();
+
     const row = rows[1]!;
     expect(row.name,).toBeNull();
     expect(row.enabled,).toBe("disabled",);
@@ -145,6 +149,7 @@ describe("importLorebook", () => {
       ],),
       warnings,
     );
+
     expect(count,).toBe(2,);
     // FK failure when actor is missing
     const warnings2: string[] = [];
@@ -166,6 +171,7 @@ describe("importLorebook", () => {
       },],),
       warnings2,
     );
+
     expect(warnings2,).toHaveLength(1,);
     expect(warnings2[0],).toContain("Failed to import lore entry",);
     expect(warnings2[0],).toContain("Orphan",);

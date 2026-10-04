@@ -77,6 +77,7 @@ async function seedActor(opts?: {
     welcome_message: opts?.welcomeMessage ?? null,
     created_at: opts?.createdAt,
   } as never,);
+
   return id;
 }
 
@@ -118,6 +119,7 @@ describe("/review character", () => {
       welcomeMessage: "Welcome, traveler.",
       createdAt: "2026-01-01T00:00:00.000Z",
     },);
+
     const result = await reviewHandler()([], ctxFor(),);
     expect(result.systemMessage,).toContain("**Character Review: Aria**",);
     expect(result.systemMessage,).toContain("well-defined",);
@@ -133,6 +135,7 @@ describe("/review character", () => {
       description: "too brief",
       createdAt: "2026-01-02T00:00:00.000Z",
     },);
+
     const result = await reviewHandler()(["character",], ctxFor(),);
     expect(result.systemMessage,).toContain("**Warnings (3):**",);
     expect(result.systemMessage,).toContain("⚠️ personality: Missing personality traits",);
@@ -178,6 +181,7 @@ describe("/review world", () => {
       description: "x".repeat(120,),
       lore: "An ancient history of fallen empires.",
     },).where("id", "=", "rich-world",).execute();
+
     await seedLocation("rich-world", { count: 3, },);
     const result = await reviewHandler()(["world",], ctxFor("rich-world",),);
     expect(result.systemMessage,).toContain("well-defined",);
@@ -213,6 +217,7 @@ describe("/review location", () => {
       description: "A bridge of ropestone over the misty gorge, and then some more words to pass fifty characters.",
       connections: "{not valid json,,",
     },);
+
     const result = await reviewHandler()(["location",], ctxFor("loc-damaged",),);
     expect(result.systemMessage,).toContain("⚠️ connections: No connections to other locations",);
     expect(result.systemMessage,).not.toContain("Missing location description",);
@@ -224,6 +229,7 @@ describe("/review location", () => {
       description: "too short",
       connections: JSON.stringify(["loc-bare", "loc-damaged",],),
     },);
+
     const result = await reviewHandler()(["location",], ctxFor("loc-linked",),);
     expect(result.systemMessage,).toContain("💡 description: Description is brief",);
     expect(result.systemMessage,).not.toContain("connections:",);

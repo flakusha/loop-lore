@@ -73,12 +73,15 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
       if (ctx.turnStrategySelect) {
         ctx.turnStrategySelect.value = t?.turnStrategy ?? "";
       }
+
       if (ctx.worldSelect) {
         ctx.worldSelect.value = t?.worldId ?? "";
       }
+
       if (ctx.visibilitySelect) {
         ctx.visibilitySelect.value = t?.visibility ?? "";
       }
+
       if (ctx.visualNovelCheckbox) {
         ctx.visualNovelCheckbox.checked = t?.visualNovel === true;
       }
@@ -92,15 +95,19 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
           li.textContent = feature;
           ctx.templateFeaturesList.append(li,);
         }
+
         ctx.templateFeaturesList.ariaBusy = "false";
       }
+
       if (ctx.templateFeaturesGroup) {
         ctx.templateFeaturesGroup.style.display = t && t.features.length > 0 ? "block" : "none";
       }
+
       if (ctx.fineTuneGroup) {
         ctx.fineTuneGroup.style.display = t ? "block" : "none";
       }
     };
+
     ctx.templateSelect.addEventListener("change", function() {
       renderTemplate(this.value,);
     },);
@@ -156,6 +163,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
       gmGuidedGroup.style.display = modeSelect.value === "story" ? "block" : "none";
     }
   };
+
   modeSelect?.addEventListener("change", syncGmGuidedVisibility,);
   syncGmGuidedVisibility();
   gmGuidedToggle?.addEventListener("change", function() {

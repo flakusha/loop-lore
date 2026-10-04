@@ -44,15 +44,18 @@ function buildMigrationProvider(): {
       const files = readdirSync(dir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const f of files) {
         const mod = (await import(path.join(dir, f,))) as
           | { default?: Migration }
           | Migration;
+
         const candidate = "default" in mod && mod.default ? mod.default : (mod as Migration);
         const key = f.endsWith(".ts",) ? f.slice(0, -3,) : f;
         migrations[key] = candidate;
       }
+
       return migrations;
     },
   };
@@ -66,6 +69,7 @@ beforeAll(async () => {
     compressThreshold: 1024,
     compressAlgorithm: "gzip",
   },);
+
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = OFF",);
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
@@ -88,6 +92,7 @@ afterAll(async () => {
     compressThreshold: 1024,
     compressAlgorithm: "gzip",
   },);
+
   await db.destroy();
 },);
 
@@ -106,12 +111,14 @@ describe("encryptAtRest — tier-aware path", () => {
       created_by: USER_ID,
       encryption_level: "none",
     },).execute();
+
     const result = await encryptAtRest({
       database: db,
       chatId,
       plaintext: "hello world",
       encryptionLevel: "none",
     },);
+
     expect(result.storedContent,).toBe("hello world",);
     expect(result.wasEncrypted,).toBe(false,);
     expect(result.keyId,).toBeNull();
@@ -127,6 +134,7 @@ describe("encryptAtRest — tier-aware path", () => {
       created_by: USER_ID,
       encryption_level: "standard",
     },).execute();
+
     // Spaces/hyphens are outside the base64 alphabet, so a stored
     // envelope can only contain this string via a plaintext leak.
     const plaintext = "standard-tier outbound message";
@@ -136,6 +144,7 @@ describe("encryptAtRest — tier-aware path", () => {
       plaintext,
       encryptionLevel: "standard",
     },);
+
     expect(result.wasEncrypted,).toBe(true,);
     expect(typeof result.keyId,).toBe("string",);
     expect(isEncryptedPayload(result.storedContent,),).toBe(true,);
@@ -146,6 +155,7 @@ describe("encryptAtRest — tier-aware path", () => {
       storedContent: result.storedContent,
       encryptionLevel: "standard",
     },);
+
     expect(recovered,).toBe(plaintext,);
   });
 });
@@ -161,6 +171,7 @@ describe("at-rest tier — wire-passthrough semantics", () => {
       created_by: USER_ID,
       encryption_level: "at-rest",
     },).execute();
+
     const wire = JSON.stringify({
       e2e: true,
       ciphertext: "opaque-blob",
@@ -168,12 +179,14 @@ describe("at-rest tier — wire-passthrough semantics", () => {
       senderEphPubJwk: { kty: "EC", },
       chainIndex: 0,
     },);
+
     const result = await encryptAtRest({
       database: db,
       chatId,
       plaintext: wire,
       encryptionLevel: "at-rest",
     },);
+
     expect(result.storedContent,).toBe(wire,);
     expect(result.wasEncrypted,).toBe(true,);
     expect(result.keyId,).toBeNull();
@@ -187,6 +200,7 @@ describe("at-rest tier — wire-passthrough semantics", () => {
       plaintext: wire,
       encryptionLevel: "at-rest",
     },);
+
     expect(out.storedContent,).toBe(wire,);
     expect(out.wasEncrypted,).toBe(true,);
   });
@@ -203,6 +217,7 @@ describe("getChatEncryptionLevel", () => {
       created_by: USER_ID,
       encryption_level: "standard",
     },).execute();
+
     const level = await getChatEncryptionLevel(db, chatId,);
     expect(level,).toBe("standard",);
   });

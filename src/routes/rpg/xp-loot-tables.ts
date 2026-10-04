@@ -37,6 +37,7 @@ export function xpLootTablesRoutes({ database, }: HandlerOpts, prefix = "/api",)
             sourceType: body.sourceType,
             sourceId: body.sourceId,
           },);
+
           return jsonResponse({ id, },);
         } catch (error) {
           log().error("Failed to create loot table", error instanceof Error ? error : undefined,);
@@ -67,6 +68,7 @@ export function xpLootTablesRoutes({ database, }: HandlerOpts, prefix = "/api",)
             minLevel?: number;
             metadata?: Record<string, unknown>;
           };
+
           const id = await addLootEntry(deps, {
             lootTableId: ctx.params.id,
             itemName: body.itemName,
@@ -79,6 +81,7 @@ export function xpLootTablesRoutes({ database, }: HandlerOpts, prefix = "/api",)
             minLevel: body.minLevel,
             metadata: body.metadata,
           },);
+
           return jsonResponse({ id, },);
         } catch (error) {
           log().error("Failed to add loot entry", error instanceof Error ? error : undefined,);

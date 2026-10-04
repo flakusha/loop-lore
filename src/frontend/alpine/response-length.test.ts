@@ -41,6 +41,7 @@ function installMemoryStorage(): { store: Map<string, string>; restore: () => vo
       return store.size;
     },
   } as Storage;
+
   return {
     store,
     restore: () => {
@@ -54,6 +55,7 @@ let storage: ReturnType<typeof installMemoryStorage>;
 beforeEach(() => {
   storage = installMemoryStorage();
 },);
+
 afterAll(() => {
   storage.restore();
 },);

@@ -42,6 +42,7 @@ async function seedAsset(opts: { filename?: string; alt_text?: string } = {},): 
     visibility: AssetVisibility.Public,
     alt_text: opts.alt_text ?? null,
   },);
+
   return assetId;
 }
 
@@ -79,8 +80,10 @@ describe("staticTagPropositionSource", () => {
       filename: "cozy tavern.png",
       alt_text: "a warm tavern hall",
     },);
+
     expect(tokens,).toEqual(["warm", "tavern", "hall", "cozy",],); // single-char "a" dropped
   });
+
   test("drops single-char tokens", () => {
     const tokens = staticTagPropositionSource.propose({ filename: "a b.png", alt_text: null, },);
     expect(tokens,).toEqual([],);
@@ -118,6 +121,7 @@ describe("empty-tag rejection", () => {
     expect(
       await addAssetTag({ database: db, assetId, tag: "  \t ", scope: "user", ownerId: viewerId, },),
     ).toBeNull();
+
     expect(await listAssetTags(db, assetId, viewerId,),).toEqual([],);
   });
 
@@ -134,6 +138,7 @@ describe("empty-tag rejection", () => {
         ownerId: viewerId,
       },),
     ).toBeNull();
+
     expect((await listAssetTags(db, assetId, viewerId,)).map((t,) => t.tag),).toEqual(["old",],);
   });
 });
@@ -150,6 +155,7 @@ describe("renameAssetTag", () => {
       scope: "user",
       ownerId: viewerId,
     },);
+
     expect(renamed?.tag,).toBe("new",);
     expect((await listAssetTags(db, assetId, viewerId,)).map((t,) => t.tag),).toEqual(["new",],);
   });

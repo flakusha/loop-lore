@@ -40,6 +40,7 @@ async function checkAgeGate(database: HandlerOpts["database"], userId: string,):
     .select(["birth_date", "age_gate_accepted_at",],)
     .where("id", "=", userId,)
     .executeTakeFirst();
+
   const st = getStatus(config, user ?? null,);
   return st.hasPassed ? null : forbidden("Age gate not passed",);
 }
@@ -151,6 +152,7 @@ async function checkNsfwAccessForParticipants(
       return forbidden(`NSFW access denied: ${userAccess.reason}`,);
     }
   }
+
   return null;
 }
 
@@ -194,6 +196,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             hasExplicit,
             template?.mode ?? undefined,
           );
+
           if (variantOverride.error) { return badRequest(variantOverride.error,); }
           const resolvedType = variantOverride.resolvedType;
           const resolvedMode = variantOverride.resolvedMode;

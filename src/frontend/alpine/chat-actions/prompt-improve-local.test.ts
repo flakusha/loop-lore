@@ -17,6 +17,7 @@ const globals = globalThis as unknown as {
   apiFetch?: ApiFetchMock;
   localStorage?: Storage;
 };
+
 const originalFetch = globals.apiFetch;
 const originalStorage = globals.localStorage;
 
@@ -49,6 +50,7 @@ function buildCtx(text: string,): ImproveCtx {
       ctx.dispatched.push({ event, detail, },);
     },
   };
+
   return ctx;
 }
 
@@ -62,6 +64,7 @@ beforeEach(() => {
     fetchCalls.push(url,);
     return Promise.resolve(Response.json({ data: { content: "server-polished", }, },),);
   };
+
   globals.localStorage = {
     getItem: (k,) => store.get(k,) ?? null,
     setItem: (k, v,) => {
@@ -77,10 +80,12 @@ beforeEach(() => {
     },
   } as Storage;
 },);
+
 afterEach(() => {
   globals.apiFetch = originalFetch;
   globals.localStorage = originalStorage;
 },);
+
 afterAll(() => {
   globals.apiFetch = originalFetch;
   globals.localStorage = originalStorage;
@@ -123,12 +128,14 @@ describe("improvePrompt local-first", () => {
     expect(fetchCalls,).toEqual(["/api/v1/generation/prompt",],);
   });
 });
+
 describe("improvePrompt guards + server errors", () => {
   test("empty draft returns without a call", async () => {
     const ctx = buildCtx("   ",);
     await improve(ctx, "spellcheck",);
     expect(fetchCalls,).toEqual([],);
   });
+
   test("missing chat warns without a call", async () => {
     const ctx = buildCtx("hello",);
     ctx.activeChat = null;
@@ -136,25 +143,30 @@ describe("improvePrompt guards + server errors", () => {
     expect(fetchCalls,).toEqual([],);
     expect(ctx.dispatched[0]?.event,).toBe("show-toast",);
   });
+
   test("server error surfaces message + resets flag", async () => {
     globals.apiFetch = (url,) => {
       fetchCalls.push(url,);
       return Promise.resolve(new Response(JSON.stringify({ message: "bad", },), { status: 500, },),);
     };
+
     const ctx = buildCtx("hello",);
     await improve(ctx, "wording",);
     expect(ctx.$refs.messageInput.value,).toBe("hello",);
     expect(ctx._improving,).toBe(false,);
   });
+
   test("empty server content surfaces failure", async () => {
     globals.apiFetch = (url,) => {
       fetchCalls.push(url,);
       return Promise.resolve(Response.json({ data: {}, },),);
     };
+
     const ctx = buildCtx("hello",);
     await improve(ctx, "wording",);
     expect(ctx._promptImproveHistory,).toEqual([],);
   });
+
   test("network throw surfaces failure + resets flag", async () => {
     globals.apiFetch = () => Promise.reject(new Error("down",),);
     const ctx = buildCtx("hello",);
@@ -163,6 +175,7 @@ describe("improvePrompt guards + server errors", () => {
     expect(ctx.dispatched.at(-1,)?.event,).toBe("show-toast",);
   });
 });
+
 describe("restorePromptDraft", () => {
   test("pops one level per undo, then no-ops when the stack is empty", () => {
     const ctx = buildCtx("new",);
@@ -185,6 +198,7 @@ describe("improvePrompt undo stack", () => {
       fetchCalls.push(url,);
       return Promise.resolve(Response.json({ data: { content: reply, }, },),);
     };
+
     const ctx = buildCtx("original",);
     await improve(ctx, "wording",);
     expect(ctx.$refs.messageInput.value,).toBe("improve-1",);
@@ -205,6 +219,7 @@ describe("improvePrompt undo stack", () => {
     for (const draft of ["draft-0", "draft-1", "draft-2", "draft-3", "draft-4", "draft-5", "draft-6",]) {
       promptImproveActions.pushPromptImproveHistory!.call(ctx as unknown as ChatState, draft,);
     }
+
     expect(ctx._promptImproveHistory,).toEqual([
       "draft-2",
       "draft-3",

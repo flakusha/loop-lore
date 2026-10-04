@@ -44,6 +44,7 @@ describe("assertNoCrossBoundaryWrite", () => {
     const error = expectViolation(
       assertNoCrossBoundaryWrite("character", ["displayName", "lore", "rpgCombat",],),
     );
+
     expect(error.message,).toContain('"lore"',);
     expect(error.message,).toContain('"rpgCombat"',);
     expect(error.message,).not.toContain("displayName",);
@@ -55,6 +56,7 @@ describe("assertNoCrossBoundaryWrite", () => {
     const error = expectViolation(
       assertNoCrossBoundaryWrite("world", ["personality", "displayName", "lore",],),
     );
+
     expect(error.message,).toContain('"personality"',);
     expect(error.message,).toContain('"displayName"',);
     expect(error.message,).not.toContain('"lore"',);
@@ -73,6 +75,7 @@ describe("assertNoCrossBoundaryWrite", () => {
     const onCharacter = expectViolation(
       assertNoCrossBoundaryWrite("character", ["tempHp", "conditions",],),
     );
+
     expect(onCharacter.message,).toContain('"tempHp"',);
     expect(onCharacter.message,).toContain('"conditions"',);
     // Story transients are world-side state: a world update may carry them.
@@ -83,6 +86,7 @@ describe("assertNoCrossBoundaryWrite", () => {
     for (const field of CHARACTER_OWNED_FIELDS) {
       expect(assertNoCrossBoundaryWrite("character", [field,],).ok,).toBe(true,);
     }
+
     for (const field of WORLD_OWNED_FIELDS) {
       expect(assertNoCrossBoundaryWrite("world", [field,],).ok,).toBe(true,);
     }

@@ -43,6 +43,7 @@ export async function applySingleAchievementReward(
       amount: Math.floor(amount,),
       reason: `achievement:${ctx.achievementId}`,
     },);
+
     return true;
   } catch (err) {
     getLog().warn("story_points reward application failed", {
@@ -51,6 +52,7 @@ export async function applySingleAchievementReward(
       amount,
       err: err instanceof Error ? err.message : String(err,),
     },);
+
     return false;
   }
 }

@@ -111,6 +111,7 @@ describe("ensureActorKey", () => {
       smk,
       name: "primary",
     },);
+
     const ensuredId = await ensureActorKey({ database: db, actorId: "actor-ensure", smk, },);
     expect(ensuredId,).toBe(existingId,);
   });
@@ -197,6 +198,7 @@ describe("rotateActorKey", () => {
       .select("status",)
       .where("id", "=", oldKeyId,)
       .executeTakeFirst();
+
     expect(oldRow!.status,).toBe("expired",);
 
     // New key should be active
@@ -205,6 +207,7 @@ describe("rotateActorKey", () => {
       .select("status",)
       .where("id", "=", newKeyId,)
       .executeTakeFirst();
+
     expect(newRow!.status,).toBe("active",);
   });
 });

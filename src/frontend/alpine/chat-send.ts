@@ -42,6 +42,7 @@ async function buildSendBody(
       body.content = text;
     }
   }
+
   const lastMsg = msgs.findLast((m,) => !m.id.startsWith(TEMP_PREFIX,));
   if (lastMsg) { body.parentId = lastMsg.id; }
   if (pendingAssets.length > 0) {
@@ -51,6 +52,7 @@ async function buildSendBody(
       label: "message-attachment",
     }),);
   }
+
   return body;
 }
 
@@ -99,6 +101,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
       content: text || "(attached media)",
       created_at: new Date().toISOString(),
     },);
+
     // Optimistic clear — restored below when the send fails so typed text is
     // never lost (BUG-chat-input-fills-up-but-send-is-impossible).
     input.value = "";
@@ -111,6 +114,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         this.autoResize(input,);
       }
     };
+
     this.$nextTick?.(() => this.scrollToBottom());
 
     const body = await buildSendBody(this, text, msgs, pendingAssets,);
@@ -126,6 +130,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
           idempotencyKey: true,
         } as Parameters<typeof apiFetch>[1],
       );
+
       if (res.ok) {
         this.pendingAssets = [];
         this.clearComposerDraft();
@@ -139,6 +144,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         } else {
           await this.sendWithPreferredMode(this.activeChat,);
         }
+
         await this.loadMessages();
         await this.loadChats();
         // Finalize an automated send: count it for the loop-guard cap and
@@ -146,6 +152,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         if (this._autoFired) {
           this._consecutiveAutoFires += 1;
         }
+
         this._autoFired = false;
         // A human send triggers `user`-triggered automation (auto sends do not).
         if (!this._autoFired && this._consecutiveAutoFires === 0) {

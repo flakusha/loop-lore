@@ -53,11 +53,13 @@ export async function runLlmAssist(
     .where("id", "=", opts.actorId,)
     .select(["growth_mode", "llm_assist_enabled",],)
     .executeTakeFirst();
+
   if (!actorRow) { return { entryId: null, }; }
 
   if (!actorRow.llm_assist_enabled) {
     return { entryId: null, };
   }
+
   if (actorRow.growth_mode === "static") {
     return { entryId: null, };
   }
@@ -72,5 +74,6 @@ export async function runLlmAssist(
     status: "pending",
     reason: "LLM-assist stub: replace with aux-pipeline summarizer output.",
   },);
+
   return { entryId: entry.id, };
 }

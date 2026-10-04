@@ -8,6 +8,7 @@ describe("xp/sources (real logic)", () => {
       expect(XP_BY_CR[crs[i]!]!,).toBeGreaterThan(XP_BY_CR[crs[i - 1]!]!,);
     }
   });
+
   it("XP per CR is always positive", () => {
     for (const [, xp,] of Object.entries(XP_BY_CR,)) {
       expect(xp,).toBeGreaterThan(0,);

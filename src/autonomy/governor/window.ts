@@ -43,5 +43,6 @@ export function effectiveWindow(
   if (nowMs >= startMs + limit.windowMs) {
     return { startMs: nowMs, count: 0, resetAtMs: nowMs + limit.windowMs, };
   }
+
   return { startMs, count: row.window_count, resetAtMs: startMs + limit.windowMs, };
 }

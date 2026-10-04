@@ -19,6 +19,7 @@ function makeApp(db: Kysely<DB>, userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, }));
   }
+
   return app.use(actorMemoriesRoutes({ database: db, config: {} as never, },),);
 }
 
@@ -51,6 +52,7 @@ describe("actorMemoriesRoutes", () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/nonexistent/memories",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -62,6 +64,7 @@ describe("actorMemoriesRoutes", () => {
         body: JSON.stringify({ content: "Some memory content", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 
@@ -73,6 +76,7 @@ describe("actorMemoriesRoutes", () => {
         body: JSON.stringify({ content: "", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -84,6 +88,7 @@ describe("actorMemoriesRoutes", () => {
         body: JSON.stringify({ content: "Journal entry for keyphrase round-trip", },),
       },),
     );
+
     expect(createRes.status,).toBe(201,);
     const created = await db
       .selectFrom("actor_memories",)
@@ -99,6 +104,7 @@ describe("actorMemoriesRoutes", () => {
         body: JSON.stringify({ keywords: ["moonstone", "rite",], },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     // The row must actually change — schema stripping previously ate the field.
@@ -107,6 +113,7 @@ describe("actorMemoriesRoutes", () => {
       .select("keywords",)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
+
     expect(JSON.parse(row.keywords as string,),).toEqual(["moonstone", "rite",],);
   });
 
@@ -121,6 +128,7 @@ describe("actorMemoriesRoutes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
 
     // `fieldMappings` + `jsonFields` already carry `keywords`, so only the
@@ -131,6 +139,7 @@ describe("actorMemoriesRoutes", () => {
       .select("keywords",)
       .where("content", "=", "Journal entry created with keyphrases",)
       .executeTakeFirstOrThrow();
+
     expect(JSON.parse(row.keywords as string,),).toEqual(["moonstone", "lantern",],);
   });
 
@@ -142,6 +151,7 @@ describe("actorMemoriesRoutes", () => {
         body: JSON.stringify({ content: "Journal entry for keyphrase cap", },),
       },),
     );
+
     expect(createRes.status,).toBe(201,);
     const created = await db
       .selectFrom("actor_memories",)
@@ -160,12 +170,14 @@ describe("actorMemoriesRoutes", () => {
         body: JSON.stringify({ keywords: tooMany, },),
       },),
     );
+
     expect(res.status,).toBe(422,);
     const row = await db
       .selectFrom("actor_memories",)
       .select("keywords",)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
+
     expect(JSON.parse(row.keywords as string,),).not.toContain("phrase-8",);
   });
 
@@ -182,12 +194,14 @@ describe("actorMemoriesRoutes", () => {
         body: JSON.stringify({ content: "Journal entry over the cap on create", keywords: tooMany, },),
       },),
     );
+
     expect(res.status,).toBe(422,);
     const rows = await db
       .selectFrom("actor_memories",)
       .select("id",)
       .where("content", "=", "Journal entry over the cap on create",)
       .execute();
+
     expect(rows.length,).toBe(0,);
   });
 
@@ -207,6 +221,7 @@ describe("actorMemoriesRoutes", () => {
       "expandable message here",
       { id: "msg-exp-1", } as never,
     );
+
     await storeMemories(edb, "user-exp", "chat-exp", [
       {
         content: "Expandable summary of length",
@@ -216,15 +231,18 @@ describe("actorMemoriesRoutes", () => {
         keywords: [],
       },
     ], { sourceMessageIds: ["msg-exp-1",], sourceChatIds: ["chat-exp",], },);
+
     const row = await edb
       .selectFrom("actor_memories",)
       .select("id",)
       .where("actor_id", "=", "user-exp",)
       .executeTakeFirstOrThrow();
+
     const app = makeApp(edb, "user-exp",);
     const res = await app.handle(
       new Request(`http://localhost/api/actors/user-exp/memories/${row.id}/expand`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { summary: string; messages: { id: string }[]; truncated: boolean };
     expect(body.summary,).toContain("Expandable",);
@@ -248,6 +266,7 @@ describe("actorMemoriesRoutes", () => {
       "private message here",
       { id: "msg-own-1", } as never,
     );
+
     await storeMemories(edb, "user-own", "chat-own", [
       {
         content: "Private summary of length",
@@ -257,14 +276,17 @@ describe("actorMemoriesRoutes", () => {
         keywords: [],
       },
     ], { sourceMessageIds: ["msg-own-1",], sourceChatIds: ["chat-own",], },);
+
     const row = await edb
       .selectFrom("actor_memories",)
       .select("id",)
       .where("actor_id", "=", "user-own",)
       .executeTakeFirstOrThrow();
+
     const res = await makeApp(edb, "intruder",).handle(
       new Request(`http://localhost/api/actors/user-own/memories/${row.id}/expand`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -283,6 +305,7 @@ describe("actorMemoriesRoutes", () => {
       "real message here",
       { id: "msg-inj-1", } as never,
     );
+
     // Simulate any writer storing a hostile JSON array in the bound-chain
     // column: SQL-syntax payloads must stay bound parameters, never text
     // spliced into the query.
@@ -308,9 +331,11 @@ describe("actorMemoriesRoutes", () => {
         updated_at: new Date().toISOString(),
       },)
       .execute();
+
     const res = await makeApp(sdb, "user-inj",).handle(
       new Request("http://localhost/api/actors/user-inj/memories/mem-inj/expand",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { messages: { id: string }[] };
     // Only the real id resolves; payloads were compared literally.
@@ -324,6 +349,7 @@ describe("actorMemoriesRoutes", () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/user1/memories",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: unknown[] };
     expect(Array.isArray(body.data,),).toBe(true,);

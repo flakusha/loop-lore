@@ -17,6 +17,7 @@ export const characterTraitsSection: SectionBuilder = {
       const worldParts = await buildWorldTraitParts(ctx,);
       parts.push(...worldParts,);
     }
+
     if (ctx.chat.current_location_id) {
       const locationParts = await buildLocationTraitParts(ctx,);
       parts.push(...locationParts,);
@@ -51,6 +52,7 @@ async function buildWorldTraitParts(ctx: AssembleContext,): Promise<string[]> {
     const lines: string[] = Array.from(traits, (t,) => `${t.trait_name}: ${t.trait_value}`,);
     parts.push(`[${cat}] ${lines.join(", ",)}`,);
   }
+
   return parts;
 }
 
@@ -79,6 +81,7 @@ async function buildLocationTraitParts(ctx: AssembleContext,): Promise<string[]>
     const mod = mods.length > 0 ? ` (${mods.join("/",)})` : "";
     lines.push(`${t.trait_name}: ${t.trait_value}${mod}`,);
   }
+
   parts.push(`[location] ${lines.join("; ",)}`,);
   return parts;
 }

@@ -36,6 +36,7 @@ describe("TraitsService", () => {
         name: "species",
         value: "elf",
       },);
+
       expect(traitId,).toBeDefined();
     });
 
@@ -55,6 +56,7 @@ describe("TraitsService", () => {
         name: "species",
         value: "dark elf",
       },);
+
       const trait = await traitsService.getPermanentTrait(testActorId, "species",);
       expect(trait?.trait_value,).toBe("dark elf",);
     });
@@ -66,6 +68,7 @@ describe("TraitsService", () => {
         name: "friendliness",
         value: "75",
       },);
+
       await traitsService.deletePermanentTrait(testActorId, "friendliness",);
       const trait = await traitsService.getPermanentTrait(testActorId, "friendliness",);
       expect(trait,).toBeUndefined();
@@ -79,6 +82,7 @@ describe("TraitsService", () => {
           name: "species",
           value: "human",
         },);
+
         expect(true,).toBe(false,); // Should not reach
       } catch (error: any) {
         expect(error.message,).toContain("already exists",);
@@ -95,6 +99,7 @@ describe("TraitsService", () => {
         name: "clothes",
         value: "royal gown",
       },);
+
       expect(traitId,).toBeDefined();
     });
 
@@ -113,6 +118,7 @@ describe("TraitsService", () => {
         name: "clothes",
         value: "leather armor",
       },);
+
       const trait = await traitsService.getWorldTrait(testActorId, "test-world-001", "clothes",);
       expect(trait?.trait_value,).toBe("leather armor",);
     });
@@ -136,6 +142,7 @@ describe("TraitsService", () => {
         penalty: 0,
         effects: JSON.stringify({ warmth: true, },),
       },);
+
       expect(traitId,).toBeDefined();
     });
 
@@ -158,6 +165,7 @@ describe("TraitsService", () => {
         penalty: 0,
         effects: JSON.stringify({ warmth: true, luxury: true, },),
       },);
+
       const trait = await traitsService.getLocationTrait(testActorId, "test-location-001", "comfort_level",);
       expect(trait?.trait_value,).toBe("90",);
       expect(trait?.bonus,).toBe(15,);

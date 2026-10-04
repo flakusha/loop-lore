@@ -66,18 +66,21 @@ export function hasSafeShape(pattern: string,): boolean {
       i++;
       continue;
     }
+
     if (ch === "(") {
       groupStack.push({ body, emptyBranch, },);
       body = "";
       emptyBranch = false;
       continue;
     }
+
     if (ch === "|") {
       // Empty branch when nothing precedes this "|" (start or after "|").
       if (body.length === 0 || body.endsWith("|",)) { emptyBranch = true; }
       body += "|";
       continue;
     }
+
     if (ch === ")") {
       // Empty trailing branch: body ends with "|" (e.g. "(a|)").
       if (body.length === 0 || body.endsWith("|",)) { emptyBranch = true; }
@@ -91,10 +94,13 @@ export function hasSafeShape(pattern: string,): boolean {
       if (groupQuantified && (GROUP_BODY_QUANTIFIER.test(unescaped,) || closedEmpty)) {
         return false;
       }
+
       emptyBranch = outer.emptyBranch || closedEmpty;
       continue;
     }
+
     body += ch;
   }
+
   return true;
 }

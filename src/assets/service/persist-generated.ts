@@ -63,12 +63,15 @@ export async function persistGeneratedImages(
       },
       uploadDir: opts.uploadDir,
     },);
+
     await linkAsset({
       database: opts.database,
       assetId: asset.id,
       link: opts.link,
     },);
+
     persisted.push({ asset, duplicate, },);
   }
+
   return persisted;
 }

@@ -149,6 +149,7 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("pinned_by",)
             .where("id", "=", pinId,)
             .executeTakeFirst();
+
           if (!pin) { return notFound("Pin not found",); }
 
           const chat = await database
@@ -156,6 +157,7 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", chatId,)
             .executeTakeFirst();
+
           if (!chat) { return notFound("Chat not found",); }
 
           const isPinner = pin.pinned_by === userId;

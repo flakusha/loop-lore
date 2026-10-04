@@ -6,10 +6,12 @@ describe("rpg/xp/levelup (real logic)", () => {
     expect(hpOnLevelUp(8, 2, true,),).toBe(10,);
     expect(hpOnLevelUp(6, -1, true,),).toBe(5,);
   });
+
   it("subsequent levels use average + con mod (min 1)", () => {
     expect(hpOnLevelUp(8, 2,),).toBeGreaterThanOrEqual(1,);
     expect(hpOnLevelUp(6, -10,),).toBe(1,); // clamped
   });
+
   it("grantsAsi at specific levels", () => {
     expect(grantsAsi(4,),).toBe(true,);
     expect(grantsAsi(5,),).toBe(false,);

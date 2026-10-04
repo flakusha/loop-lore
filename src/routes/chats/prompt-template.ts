@@ -69,6 +69,7 @@ export function promptTemplateRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select(["system_prompt", "display_name",],)
             .where("id", "=", actorId,)
             .executeTakeFirst();
+
           if (actor) {
             characterPrompt = actor.system_prompt ?? null;
             characterName = actor.display_name ?? null;

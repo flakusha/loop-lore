@@ -60,11 +60,13 @@ export function zstdCompress(data: Uint8Array, level: number = DEFAULT_ZSTD_LEVE
     if (status >= 0) {
       return out.slice(0, status,);
     }
+
     if (status !== ERR_ARGS && status !== ERR_LEVEL) {
       throw new Error(`zstd compress failed (native code ${status})`,);
     }
     // Bad args / bad level — fall through to Bun rather than fail.
   }
+
   return bunZstd.zstdCompressSync(data, { level, },);
 }
 
@@ -84,13 +86,16 @@ export function zstdDecompress(data: Uint8Array,): Uint8Array {
     if (bound < 0) {
       throw new Error("zstd decompress failed: unknown or corrupt frame",);
     }
+
     const out = new Uint8Array(Math.max(bound, 1,),);
     const status = native.handle.ll_zstd_decompress(data, data.length, out, out.length,);
     if (status >= 0) {
       return out.slice(0, status,);
     }
+
     throw new Error(`zstd decompress failed (native code ${status})`,);
   }
+
   return bunZstd.zstdDecompressSync(data,);
 }
 

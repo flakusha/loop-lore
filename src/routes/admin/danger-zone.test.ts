@@ -23,6 +23,7 @@ function makeApp(db: Kysely<DB>, userRole: string | null, config: Config = {} as
     userId: userRole ? `test-user-${userRole}` : null,
     userRole,
   }));
+
   return app.use(dangerZoneRoutes({ database: db, config, }, "/api",),);
 }
 
@@ -53,6 +54,7 @@ describe("admin danger-zone — auth gates", () => {
         body: JSON.stringify({ confirmation: "PURGE", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -65,6 +67,7 @@ describe("admin danger-zone — auth gates", () => {
         body: JSON.stringify({ confirmation: "PURGE", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -77,6 +80,7 @@ describe("admin danger-zone — auth gates", () => {
         body: JSON.stringify({ confirmation: "RESET", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -89,6 +93,7 @@ describe("admin danger-zone — auth gates", () => {
         body: JSON.stringify({ confirmation: "RESET", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -101,6 +106,7 @@ describe("admin danger-zone — auth gates", () => {
         body: JSON.stringify({ confirmation: "DELETE ALL", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -113,6 +119,7 @@ describe("admin danger-zone — auth gates", () => {
         body: JSON.stringify({ confirmation: "DELETE ALL", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -127,6 +134,7 @@ describe("admin danger-zone — purge", () => {
         body: JSON.stringify({ confirmation: "WRONG", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -142,6 +150,7 @@ describe("admin danger-zone — purge", () => {
       event_type: "test",
       entity_type: "test",
     },).execute();
+
     const app = makeApp(db, "admin",);
     const res = await app.handle(
       new Request("http://localhost/api/admin/audit/purge", {
@@ -150,6 +159,7 @@ describe("admin danger-zone — purge", () => {
         body: JSON.stringify({ confirmation: "PURGE", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { purged: boolean };
     expect(body.purged,).toBe(true,);
@@ -168,6 +178,7 @@ describe("admin danger-zone — settings reset", () => {
         body: JSON.stringify({ confirmation: "WRONG", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -180,6 +191,7 @@ describe("admin danger-zone — settings reset", () => {
         body: JSON.stringify({ confirmation: "RESET", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { reset: boolean };
     expect(body.reset,).toBe(true,);
@@ -196,6 +208,7 @@ describe("admin danger-zone — factory reset", () => {
         body: JSON.stringify({ confirmation: "WRONG", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -208,6 +221,7 @@ describe("admin danger-zone — factory reset", () => {
         body: JSON.stringify({ confirmation: "DELETE ALL", },),
       },),
     );
+
     expect([200, 500,],).toContain(res.status,);
   });
 });

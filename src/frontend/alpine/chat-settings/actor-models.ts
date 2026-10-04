@@ -17,6 +17,7 @@ export const actorModelActions: Partial<ChatState> & ThisType<ChatState> = {
     for (const p of this._chatParticipants) {
       actorModels[p.actor_id] = config.actorModels?.[p.actor_id] ?? { model: "", provider: "", };
     }
+
     this._actorModels = actorModels;
   },
 

@@ -91,6 +91,7 @@ export function findKeyphraseMatches(opts: FindKeyphraseMatchesOpts,): Keyphrase
       out.push(entry,);
     }
   }
+
   return out;
 }
 
@@ -119,6 +120,7 @@ export function recordKeyphraseRecall(opts: KeyphraseCooldownOpts,): void {
       if (now - at >= ttl) { cooldowns.delete(key,); }
     }
   }
+
   cooldowns.set(cooldownKey(opts,), opts.now ?? Date.now(),);
 }
 

@@ -56,6 +56,7 @@ function advance(container: FakeEl, slot: string,): void {
     if (focusSlot() === slot) { return; }
     pressKey(container, "ArrowRight",);
   }
+
   throw new Error(`focus never reached ${slot} (stuck on ${focusSlot()})`,);
 }
 
@@ -92,6 +93,7 @@ describe("arrow key focus cycle", () => {
         { id: "orc", name: "Orc Grunt", hp: 0, maxHp: 20, initiative: 5, },
       ],
     },),);
+
     expect(tile(container, "orc",).disabled,).toBe(true,);
     advance(container, "alice",);
     advance(container, "attack",);
@@ -162,6 +164,7 @@ describe("focus preservation", () => {
     for (const key of ["Escape", "ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "Enter", " ",]) {
       pressKey(container, key,);
     }
+
     expect(sent,).toEqual([],);
   });
 });

@@ -60,6 +60,7 @@ export function characterAvatarsExtraPlugin(opts: HandlerOpts, prefix = "/api",)
       if (!avatar || avatar.actorId !== actorId) {
         return jsonError({ message: "Avatar not found", status: HttpStatus.NotFound, },);
       }
+
       return jsonResponse(avatar,);
     }, {
       params: ActorIdAvatarIdParams,
@@ -89,6 +90,7 @@ export function characterAvatarsExtraPlugin(opts: HandlerOpts, prefix = "/api",)
         entityType: AssetLinkEntity.Actor,
         entityId: actorId,
       },);
+
       return jsonNoContent();
     }, {
       params: ActorIdAssetIdParams,
@@ -121,6 +123,7 @@ export function characterAvatarsExtraPlugin(opts: HandlerOpts, prefix = "/api",)
       if (!config) {
         return jsonError({ message: "World avatar config not found", status: HttpStatus.NotFound, },);
       }
+
       return jsonResponse(config,);
     }, {
       params: WorldActorParams,
@@ -162,6 +165,7 @@ export function characterAvatarsExtraPlugin(opts: HandlerOpts, prefix = "/api",)
       await avatarService.upsertWorldAvatarConfig(actorId, worldId, {
         selectionRuleOverride: selection_rule_override as AvatarSelectionRule | undefined,
       },);
+
       return jsonResponse({ ok: true, },);
     }, {
       params: WorldActorParams,

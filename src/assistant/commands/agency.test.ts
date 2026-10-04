@@ -70,6 +70,7 @@ describe("/agency", () => {
       ["earn", "5",],
       ctxFor({ userId: NON_OWNER, roleInChat: ChatParticipantRole.Member, },),
     );
+
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("owner-only",);
   });
@@ -95,6 +96,7 @@ describe("/agency", () => {
       ["spend", "999",],
       ctxFor({ userId: NON_OWNER, roleInChat: ChatParticipantRole.Member, },),
     );
+
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("Not enough story points",);
   });
@@ -119,6 +121,7 @@ describe("/agency", () => {
       ["cap", "3",],
       ctxFor({ userId: NON_OWNER, roleInChat: ChatParticipantRole.Member, },),
     );
+
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("owner-only",);
   });
@@ -129,6 +132,7 @@ describe("/agency", () => {
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("Usage",);
   });
+
   test("reports missing actor", async () => {
     const handler = getCommand("agency",)!;
     const result = await handler([], ctxFor({ userId: undefined, db, roleInChat: ChatParticipantRole.Owner, },),);
@@ -175,6 +179,7 @@ describe("/agency", () => {
       ["spend", "5",],
       ctxFor({ userId: NON_OWNER, roleInChat: ChatParticipantRole.Member, },),
     );
+
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("**Not enough story points.**",);
     expect(result.systemMessage,).toContain("have 0",);

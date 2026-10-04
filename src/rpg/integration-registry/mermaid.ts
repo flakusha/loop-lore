@@ -28,6 +28,7 @@ export function renderIntegrationMermaid(): string {
       if (p !== l.owner) { producerEdgesParts.push(`'${p}' -.->|'produces ${l.id}'|('${l.id}'),`,); }
     }
   }
+
   const producerEdges = producerEdgesParts.join("\n",);
 
   const ownerNodes = Array.from(owners, (o,) => `'${o}',`,).join("\n",);

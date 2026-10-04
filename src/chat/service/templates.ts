@@ -64,6 +64,7 @@ export function loadConfigChatSetupTemplates(cwd?: string,): ChatSetupTemplateDe
     const t = toTemplateDefault(item,);
     if (t) { templates.push(t,); }
   }
+
   return templates;
 }
 
@@ -91,6 +92,7 @@ function findTemplateCandidates(
       }
     }
   }
+
   return candidates;
 }
 
@@ -145,6 +147,7 @@ export async function listChatSetupTemplates(
     .selectAll()
     .orderBy("name", "asc",)
     .execute();
+
   return Array.from(rows, (row,) => ({
     ...(row as unknown as ChatSetupTemplate),
     features: parseFeatures((row as { features?: string | null }).features ?? null,),
@@ -170,6 +173,7 @@ export async function seedChatSetupTemplates(
     .selectFrom("chat_setup_templates",)
     .select(["id", "slug",],)
     .execute();
+
   const existingSlugs = new Set(Array.from(existing, (t,) => t.slug,),);
 
   let created = 0;
@@ -189,8 +193,10 @@ export async function seedChatSetupTemplates(
         visibility: t.visibility ?? null,
       },)
       .execute();
+
     created++;
   }
+
   return created;
 }
 

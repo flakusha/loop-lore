@@ -52,6 +52,7 @@ export function expandAvatarConfig(
       const exists = mergedPatterns.some(
         (p,) => p.pattern === pattern.pattern && p.emotion === pattern.emotion,
       );
+
       if (!exists) {
         mergedPatterns.push(pattern,);
       }

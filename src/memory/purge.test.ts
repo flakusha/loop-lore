@@ -268,6 +268,7 @@ describe("touchMemories", () => {
       .selectFrom("actor_memories",)
       .select(["id", "last_accessed_at", "strength",],)
       .execute();
+
     const byId = new Map(rows.map((r,) => [r.id, r,]),);
 
     expect(byId.get("mem-1",)?.last_accessed_at,).not.toBeNull();
@@ -289,6 +290,7 @@ describe("touchMemories", () => {
       .select(["last_accessed_at", "strength",],)
       .where("id", "=", "mem-1",)
       .executeTakeFirst();
+
     expect(row?.last_accessed_at,).toBeNull();
     expect(row?.strength,).toBeCloseTo(0.3, 5,);
   });
@@ -317,6 +319,7 @@ describe("purgeStaleMemories", () => {
       last_accessed_at: null,
       confidence: 0.1,
     },);
+
     await seedMemory(db, {
       id: "mem-pinned",
       strength: 0.05,
@@ -333,6 +336,7 @@ describe("purgeStaleMemories", () => {
       .select("id",)
       .where("id", "=", "mem-pinned",)
       .executeTakeFirst();
+
     expect(survived,).toBeDefined();
   });
 
@@ -342,6 +346,7 @@ describe("purgeStaleMemories", () => {
       strength: 0.05,
       last_accessed_at: null,
     },);
+
     await seedMemory(db, {
       id: "mem-pinned",
       strength: 0.05,
@@ -356,6 +361,7 @@ describe("purgeStaleMemories", () => {
       .selectFrom("actor_memories",)
       .select(["id", "confidence",],)
       .execute();
+
     const unpinnedRow = rows.find((r,) => r.id === "mem-unpinned");
     const pinnedRow = rows.find((r,) => r.id === "mem-pinned");
     expect(unpinnedRow?.confidence,).toBeCloseTo(0.01, 5,);

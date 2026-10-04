@@ -55,6 +55,7 @@ function buildCtx(overrides?: Partial<VariantsCtx>,): VariantsCtx {
     },
     ...overrides,
   };
+
   return ctx;
 }
 
@@ -64,6 +65,7 @@ const domHost = globalThis as unknown as {
   CSS?: unknown;
   document?: { querySelector: (selector: string,) => unknown };
 };
+
 const realDocument = domHost.document;
 const realCss = domHost.CSS;
 let messageEl: { dataset: { actorId?: string }; classList: { add: (name: string,) => void } } | null = null;
@@ -133,6 +135,7 @@ describeOrSkip("chatVariants.selectVariantByIndex", () => {
     ctx.loadMessages = async () => {
       reloads++;
     };
+
     handler = async () => Response.json({ id: "v2", },);
     await chatVariants.selectVariantByIndex!.call(ctx as never, "m1", 1,);
     expect(reloads,).toBe(1,);
@@ -146,6 +149,7 @@ describeOrSkip("chatVariants.selectVariantByIndex", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await chatVariants.selectVariantByIndex!.call(ctx as never, "m1", 1,);
     expect(ctx.toasts[0]?.type,).toBe("error",);
   });
@@ -159,6 +163,7 @@ describeOrSkip("chatVariants.closeVariants", () => {
       _variantsFor: "m1",
       _variants: [{ id: "v1", content: "A", },],
     },);
+
     chatVariants.closeVariants!.call(ctx as never,);
     expect(ctx._variantsOpen,).toBe(false,);
     expect(ctx._variantsLoading,).toBe(false,);
@@ -207,6 +212,7 @@ describeOrSkip("chatVariants.regenerateResponse", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await chatVariants.regenerateResponse!.call(ctx as never,);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to regenerate", },],);
   });
@@ -226,6 +232,7 @@ describeOrSkip("chatVariants.regenerateVariant", () => {
     ctx.loadMessages = async () => {
       reloads++;
     };
+
     handler = async () => Response.json({ ok: true, },);
     await chatVariants.regenerateVariant!.call(ctx as never, "m1",);
     expect(JSON.parse(calls[0]?.opts.body as string,),).toEqual({ chatId: "c1", messageId: "m1", },);
@@ -240,6 +247,7 @@ describeOrSkip("chatVariants.regenerateVariant", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await chatVariants.regenerateVariant!.call(ctx as never, "m1",);
     expect(ctx.isGenerating,).toBe(false,);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to regenerate variant", },],);
@@ -265,6 +273,7 @@ describeOrSkip("chatVariants.continueMessage", () => {
       chatId: "c1",
       actorId: "actor-7",
     },);
+
     expect(classes,).toEqual(["continued",],);
     expect(ctx.continuingMessageId,).toBe("m1",);
     expect(ctx.isContinuing,).toBe(true,);
@@ -281,6 +290,7 @@ describeOrSkip("chatVariants.continueMessage", () => {
       chatId: "c1",
       actorId: "unknown",
     },);
+
     expect(ctx.toasts,).toEqual([{ type: "error", message: "busy", },],);
     expect(ctx.isContinuing,).toBe(false,);
   });
@@ -290,6 +300,7 @@ describeOrSkip("chatVariants.continueMessage", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await chatVariants.continueMessage!.call(ctx as never, "m1",);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Network error continuing message", },],);
   });
@@ -332,6 +343,7 @@ describeOrSkip("chatVariants.retryFromPoint", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await chatVariants.retryFromPoint!.call(ctx as never, "a1", 1,);
     expect(ctx.toasts[0]?.type,).toBe("error",);
   });

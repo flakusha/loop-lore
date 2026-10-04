@@ -64,6 +64,7 @@ export async function seedConfiguredContent(
     log.debug("Auth not required (solo mode) — skipping content seeding",);
     return 0;
   }
+
   if (!data.characters?.length && !data.worlds?.length && !data.chats?.length) {
     return 0;
   }
@@ -73,12 +74,15 @@ export async function seedConfiguredContent(
   if (data.characters?.length) {
     created += await seedCharacters(database, data.characters, userById, log,);
   }
+
   if (data.worlds?.length) {
     created += await seedWorlds(database, data.worlds, userById, log,);
   }
+
   if (data.chats?.length) {
     created += await seedChats(database, data.chats, userById, log,);
   }
+
   return created;
 }
 
@@ -91,6 +95,7 @@ async function buildUserById(database: Kysely<DB>,): Promise<Map<string, string>
     .selectFrom("users",)
     .select(["id", "username",],)
     .execute();
+
   const map = new Map<string, string>();
   for (const row of rows) { map.set(row.username, row.id,); }
   return map;

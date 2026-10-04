@@ -69,6 +69,7 @@ describe("DB Insertion Validation E2E", () => {
       actorType: "character",
       agentType: "ai",
     },);
+
     expect(res.ok,).toBe(true,);
 
     const row = await server.db
@@ -109,12 +110,14 @@ describe("DB Insertion Validation E2E", () => {
       type: "direct",
       mode: "direct",
     },);
+
     expect(chatRes.ok,).toBe(true,);
 
     const msgRes = await api.post<{ id: string }>(`/api/v1/chats/${chatRes.data!.id}/messages`, {
       content,
       role: "user",
     },);
+
     expect(msgRes.ok,).toBe(true,);
 
     const row = await server.db
@@ -159,6 +162,7 @@ describe("DB Insertion Validation E2E", () => {
       actorType: "character",
       agentType: "ai",
     },);
+
     expect(res.ok,).toBe(true,);
 
     const row = await server.db

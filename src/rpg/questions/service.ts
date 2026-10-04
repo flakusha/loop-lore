@@ -75,17 +75,21 @@ function assertValidInput(input: CreateQuestionInput,): void {
   if (!input.prompt.trim()) {
     throw new QuestionError("Question prompt must not be empty", "invalid_input",);
   }
+
   if (!Array.isArray(input.options,) || input.options.length === 0) {
     throw new QuestionError("Question requires at least one option", "invalid_input",);
   }
+
   const ids = new Set<string>();
   for (const option of input.options) {
     if (!option.id.trim() || !option.text.trim()) {
       throw new QuestionError("Option id and text must not be empty", "invalid_input",);
     }
+
     if (ids.has(option.id,)) {
       throw new QuestionError(`Duplicate option id: ${option.id}`, "invalid_input",);
     }
+
     ids.add(option.id,);
   }
 
@@ -98,6 +102,7 @@ function assertValidInput(input: CreateQuestionInput,): void {
   ) {
     throw new QuestionError("Numeric minValue must not exceed maxValue", "invalid_input",);
   }
+
   assertValidEffect(input.effect ?? {},);
 }
 
@@ -119,10 +124,12 @@ export async function createQuestion(
   if (!serialized.ok) {
     throw new QuestionError("Question options must be serializable", "invalid_input",);
   }
+
   const effectJson = safeJsonStringify(input.effect ?? {},);
   if (!effectJson.ok) {
     throw new QuestionError("Question effect must be serializable", "invalid_input",);
   }
+
   const row: InsertObject<DB, "rpg_questions"> = {
     id,
     chat_id: input.chatId,
@@ -143,6 +150,7 @@ export async function createQuestion(
   getLog().info("Question created", { id, chatId: input.chatId, type: input.type, },);
   const created = await db.selectFrom("rpg_questions",).selectAll()
     .where("id", "=", id,).executeTakeFirst();
+
   return rowToQuestion(created!,);
 }
 
@@ -161,6 +169,7 @@ export async function getOpenQuestions(
     .where("status", "=", RpgQuestionStatus.Open,)
     .orderBy("created_at", "asc",)
     .execute();
+
   return rows.map(rowToQuestion,);
 }
 
@@ -193,9 +202,11 @@ export async function answerQuestion(
   const row = await db.selectFrom("rpg_questions",).selectAll()
     .where("id", "=", questionId,)
     .executeTakeFirst();
+
   if (!row) {
     throw new QuestionError(`Question not found: ${questionId}`, "not_found",);
   }
+
   if (row.status !== RpgQuestionStatus.Open) {
     throw new QuestionError(`Question ${questionId} is not open`, "not_open",);
   }

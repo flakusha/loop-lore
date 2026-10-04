@@ -36,6 +36,7 @@ async function actionCount(): Promise<number> {
     .selectFrom("moderation_actions",)
     .select(db.fn.countAll<number>().as("total",),)
     .executeTakeFirst();
+
   return row?.total ?? 0;
 }
 
@@ -53,6 +54,7 @@ describe("flagNsfwUserMessage", () => {
       .selectFrom("moderation_actions",)
       .select(["action_type", "target_user_id", "scope", "scope_id",],)
       .executeTakeFirst();
+
     expect(row?.action_type,).toBe("user_nsfw_warning",);
     expect(row?.target_user_id,).toBe("user-flagger",);
     expect(row?.scope,).toBe("chat",);

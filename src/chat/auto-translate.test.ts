@@ -89,6 +89,7 @@ describe("autoTranslateText", () => {
         },
       },
     },);
+
     expect(out,).toEqual({ text: "hello", translated: false, targetLang: null, },);
     expect(calls,).toBe(0,);
   });
@@ -107,6 +108,7 @@ describe("autoTranslateText", () => {
         },
       },
     },);
+
     expect(out.translated,).toBe(false,);
     expect(out.text,).toBe("こんにちは世界",);
     expect(calls,).toBe(0,);
@@ -120,6 +122,7 @@ describe("autoTranslateText", () => {
       chatId: "c1",
       deps: { complete: async () => ({ content: "hola mundo", }), },
     },);
+
     expect(out,).toEqual({ text: "hola mundo", translated: true, targetLang: "es", },);
   });
 
@@ -135,6 +138,7 @@ describe("autoTranslateText", () => {
         },
       },
     },);
+
     expect(out,).toEqual({ text: "hello world", translated: false, targetLang: "es", },);
   });
 
@@ -152,6 +156,7 @@ describe("autoTranslateText", () => {
         },
       },
     },);
+
     expect(sent,).toContain("I want to travel",);
     expect(out,).toEqual({ text: "quiero viajar", translated: true, targetLang: "es", },);
   });
@@ -169,6 +174,7 @@ describe("autoTranslateText", () => {
       chatId: "c1",
       deps: { complete: async () => ({ content: "hola", }), },
     },);
+
     expect(out,).toEqual({ text: "hello", translated: false, targetLang: null, },);
   });
 
@@ -180,6 +186,7 @@ describe("autoTranslateText", () => {
       chatId: "c1",
       deps: { complete: async () => ({ content: "  ", }), },
     },);
+
     expect(out.text,).toBe("hello world",);
     expect(out.translated,).toBe(false,);
   });

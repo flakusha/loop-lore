@@ -81,11 +81,13 @@ describe("fetchRaw", () => {
         await fetchRaw(state, url, { a: 1, },);
       },
     );
+
     expect(captured.length,).toBe(2,);
     for (const headers of captured) {
       expect(headers.get("x-api-key",),).toBe("sk-ant-test",);
       expect(headers.get("anthropic-version",),).not.toBeNull();
     }
+
     expect(captured[0]?.get("anthropic-beta",),).toContain("tools-",);
     expect(captured[1]?.get("anthropic-beta",),).toBeNull();
   });
@@ -191,6 +193,7 @@ describe("fetchWithRetry", () => {
         expect(data,).toEqual({ content: "hi", },);
       },
     );
+
     expect(calls,).toBe(1,);
   });
 
@@ -206,6 +209,7 @@ describe("fetchWithRetry", () => {
         expect(data,).toEqual({ content: "recovered", },);
       },
     );
+
     expect(calls,).toBe(2,);
   }, 15_000,);
 
@@ -225,6 +229,7 @@ describe("fetchWithRetry", () => {
         );
       },
     );
+
     expect(calls,).toBe(1,);
   });
 });

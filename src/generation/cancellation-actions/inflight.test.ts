@@ -34,6 +34,7 @@ async function seedParents(): Promise<void> {
     status: "active",
     settings: "{}",
   },).execute();
+
   await db.insertInto("chats",).values({
     id: "chat-1",
     name: "Test Chat",
@@ -41,6 +42,7 @@ async function seedParents(): Promise<void> {
     mode: "direct",
     created_by: "user-1",
   },).execute();
+
   await db.insertInto("actors",).values({
     id: "actor-1",
     actor_type: "character",
@@ -50,6 +52,7 @@ async function seedParents(): Promise<void> {
     format_version: 0,
     import_spec: "{}",
   },).execute();
+
   await db.insertInto("messages",).values({
     id: "msg-1",
     chat_id: "chat-1",

@@ -31,6 +31,7 @@ async function findNarrator(
     .where("actor_type", "=", "narrator",)
     .where("agent_type", "=", "narrator",)
     .executeTakeFirst();
+
   return narrator ?? null;
 }
 
@@ -63,6 +64,7 @@ export async function injectPartyNarration(
         plaintext: text,
         smk,
       },);
+
       storedContent = enc.storedContent;
       storedKeyId = enc.keyId;
     }

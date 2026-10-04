@@ -96,6 +96,7 @@ async function applyOptimisticUpdate(
   for (const [column, value,] of entries) {
     assignments.push(sql`${sql.ref(column,)} = ${sql.val(value,)}`,);
   }
+
   const result = await sql`
     update ${sql.table(table,)}
     set ${sql.join(assignments, sql`, `,)}

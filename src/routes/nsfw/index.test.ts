@@ -55,12 +55,14 @@ async function seedAuthorized(id: string,): Promise<{ userId: string; actorId: s
     birth_date: "1990-01-01",
     age_gate_accepted_at: "2026-01-01T00:00:00Z",
   },);
+
   await insertActors(db, actorId, {
     id: actorId as never,
     owner_id: userId,
     user_id: userId,
     content_rating: "nsfw_moderate" as never,
   },);
+
   return { userId, actorId, };
 }
 
@@ -73,6 +75,7 @@ function makeApp(userId?: string, config: Config = makeConfig(),) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(nsfwRoutes({ database: db, config, },),);
 }
 
@@ -95,6 +98,7 @@ describe("nsfwRoutes barrel", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/nsfw/intimacy/actor-1/actor-2",),
     );
+
     expect(res.status,).toBe(401,);
   });
 });
@@ -104,6 +108,7 @@ describe("N2 — /api/nsfw route access matrix", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/nsfw/desire/nsfw-test-actor",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -113,6 +118,7 @@ describe("N2 — /api/nsfw route access matrix", () => {
     const res = await makeApp("nsfw-test-user-disabled", config,).handle(
       new Request("http://localhost/api/nsfw/desire/nsfw-test-actor-disabled",),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -122,14 +128,17 @@ describe("N2 — /api/nsfw route access matrix", () => {
       birth_date: "2012-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     await insertActors(db, "nsfw-underage-actor", {
       id: "nsfw-underage-actor" as never,
       owner_id: "nsfw-underage",
       user_id: "nsfw-underage",
     },);
+
     const res = await makeApp("nsfw-underage",).handle(
       new Request("http://localhost/api/nsfw/desire/nsfw-underage-actor",),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -153,6 +162,7 @@ describe("N2 — /api/nsfw route access matrix", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -164,6 +174,7 @@ describe("N2 — /api/nsfw route access matrix", () => {
       owner_id: userId,
       user_id: userId,
     },);
+
     await insertChats(db, "nsfw-chat-granted", userId, { id: "nsfw-chat-granted" as never, },);
     await insertChatParticipants(db, "nsfw-chat-granted", "nsfw-test-actor-granted",);
     await insertNsfwConsentState(
@@ -178,6 +189,7 @@ describe("N2 — /api/nsfw route access matrix", () => {
     const res = await makeApp(userId,).handle(
       new Request("http://localhost/api/nsfw/desire/nsfw-test-actor-granted",),
     );
+
     // desire GET is not actor-pair-targeted, so it passes with just authZ.
     expect(res.status,).toBe(200,);
 
@@ -200,6 +212,7 @@ describe("N2 — /api/nsfw route access matrix", () => {
         },),
       },),
     );
+
     // applyAction runs against the (auto-created) pair → success.
     expect(actionRes.status,).toBe(200,);
   });
@@ -211,6 +224,7 @@ describe("N2 — /api/nsfw route access matrix", () => {
     await insertLocations(db, "enc-world-suit", "Private Den", {
       id: "enc-loc-suit" as never,
     },);
+
     await insertChats(db, "enc-chat-suit", userId, { id: "enc-chat-suit" as never, },);
     await insertChatParticipants(db, "enc-chat-suit", "nsfw-test-actor-encsuit",);
     await insertNsfwConsentState(db, userId, "enc-chat-suit", "given", "2026-01-01T00:00:00Z",);
@@ -228,6 +242,7 @@ describe("N2 — /api/nsfw route access matrix", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -238,6 +253,7 @@ describe("N2 — /api/nsfw route access matrix", () => {
     await insertLocations(db, "enc-world-unsuit", "Town Square", {
       id: "enc-loc-unsuit" as never,
     },);
+
     // Default config is `private`; lower it to `public`.
     await new LocationNsfwService(db,).updateConfig("enc-loc-unsuit", { privacyLevel: "public", },);
     await insertChats(db, "enc-chat-unsuit", userId, { id: "enc-chat-unsuit" as never, },);
@@ -257,6 +273,7 @@ describe("N2 — /api/nsfw route access matrix", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 });

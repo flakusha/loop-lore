@@ -60,6 +60,7 @@ export async function fetchCatalog(
       return models;
     }
   }
+
   return [];
 }
 
@@ -84,6 +85,7 @@ export async function fetchCapability(
   } catch {
     /* offline or unreachable — keep current behavior */
   }
+
   return { downloadsAllowed: true, };
 }
 
@@ -128,6 +130,7 @@ export function catalogTotalBytes(model: CatalogModel,): number | undefined {
     if (file.sizeBytes === undefined) { return undefined; }
     total += file.sizeBytes;
   }
+
   return total;
 }
 
@@ -190,6 +193,7 @@ export function orderSplitFiles(model: CatalogModel,): CatalogModelFile[] | null
     if (byIndex.has(part.index,)) { return null; }
     byIndex.set(part.index, file,);
   }
+
   if (byIndex.size !== total) { return null; }
   const ordered: CatalogModelFile[] = [];
   for (let index = 1; index <= total; index++) {
@@ -197,6 +201,7 @@ export function orderSplitFiles(model: CatalogModel,): CatalogModelFile[] | null
     if (!file) { return null; }
     ordered.push(file,);
   }
+
   return ordered;
 }
 

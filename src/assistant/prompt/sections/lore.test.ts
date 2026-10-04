@@ -261,6 +261,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
       cooldown_seconds: noCooldown,
       ...loreOpts,
     },);
+
     const built = await loreSection.build(ctxFor(db, worldId, actorId,),);
     return built.map((m,) => m.content).join("\n",);
   }
@@ -277,6 +278,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         "Elara is the rightful queen.",
         { key_type: "regex", keys: JSON.stringify([String.raw`\bElara\b`,],), },
       );
+
       expect(text,).toContain("Elara is the rightful queen.",);
     } finally {
       sqlite.close();
@@ -295,6 +297,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         "Unreachable lore.",
         { key_type: "regex", keys: JSON.stringify(["[",],), },
       );
+
       expect(text,).not.toContain("Unreachable lore.",);
     } finally {
       sqlite.close();
@@ -313,6 +316,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         "Forest wolf lore.",
         { key_groups: JSON.stringify([["wolf", "forest",], ["beast",],],), },
       );
+
       expect(text,).toContain("Forest wolf lore.",);
     } finally {
       sqlite.close();
@@ -331,6 +335,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         "Beast lore.",
         { key_groups: JSON.stringify([["wolf", "forest",], ["beast",],],), },
       );
+
       expect(text,).toContain("Beast lore.",);
     } finally {
       sqlite.close();
@@ -349,6 +354,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         "Lost lore.",
         { key_groups: JSON.stringify([["wolf", "forest",], ["beast",],],), },
       );
+
       expect(text,).not.toContain("Lost lore.",);
     } finally {
       sqlite.close();
@@ -369,6 +375,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         "Deep forest lore.",
         { keys: JSON.stringify(["forest",],), },
       );
+
       expect(text,).not.toContain("Deep forest lore.",);
     } finally {
       sqlite.close();
@@ -388,6 +395,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         "Deep forest lore.",
         { keys: JSON.stringify(["forest",],), scan_depth: 2, },
       );
+
       expect(text,).toContain("Deep forest lore.",);
     } finally {
       sqlite.close();
@@ -407,6 +415,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         "Deep forest lore.",
         { keys: JSON.stringify(["forest",],), scan_depth: 99, },
       );
+
       // Clamped max 10 still covers the 2-message window → activates.
       expect(text,).toContain("Deep forest lore.",);
     } finally {
@@ -426,6 +435,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         "Always lore.",
         { keys: JSON.stringify(["wolf",],), activation_chance: 1, },
       );
+
       expect(text,).toContain("Always lore.",);
     } finally {
       sqlite.close();
@@ -444,6 +454,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         "Never lore.",
         { keys: JSON.stringify(["wolf",],), activation_chance: 0, },
       );
+
       expect(text,).not.toContain("Never lore.",);
     } finally {
       sqlite.close();
@@ -478,6 +489,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         cooldown_seconds: noCooldown,
         priority: 1,
       } as never,);
+
       await insertWorldLoreEntries(db, worldId, "High priority lore.", {
         keys: '["wolf"]',
         selective: selectiveOne,
@@ -490,6 +502,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
 
       const text = (await loreSection.build(ctxFor(db, worldId, actorId,),))
         .map((m,) => m.content).join("\n",);
+
       const lowIdx = text.indexOf("Low priority lore.",);
       const highIdx = text.indexOf("High priority lore.",);
       expect(lowIdx,).toBeGreaterThan(-1,);
@@ -580,6 +593,7 @@ describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
       const rules = JSON.stringify({
         lifecycle_config: { min_confidence: 80, decay_per_day: 0, distortion_cap: 100, },
       },);
+
       const { worldId, actorId, } = await setupWorld(db, rules,);
 
       await insertWorldLoreEntries(db, worldId, "Keep me.", {
@@ -589,6 +603,7 @@ describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
         cooldown_seconds: noCooldown,
         priority: 100,
       },);
+
       await insertWorldLoreEntries(db, worldId, "Drop me.", {
         enabled,
         constant: constantOne,
@@ -600,6 +615,7 @@ describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
 
       const text = (await loreSection.build(ctxFor(db, worldId, actorId,),))
         .map((m,) => m.content).join("\n",);
+
       expect(text,).toContain("Keep me.",);
       expect(text,).not.toContain("Drop me.",);
     } finally {
@@ -614,6 +630,7 @@ describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
       const rules = JSON.stringify({
         lifecycle_config: { min_confidence: 0, decay_per_day: 0, distortion_cap: 50, },
       },);
+
       const { worldId, actorId, } = await setupWorld(db, rules,);
 
       await insertWorldLoreEntries(db, worldId, "Plain lore.", {
@@ -623,6 +640,7 @@ describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
         cooldown_seconds: noCooldown,
         priority: 100,
       },);
+
       await insertWorldLoreEntries(db, worldId, "Heavily distorted lore.", {
         enabled,
         constant: constantOne,
@@ -634,6 +652,7 @@ describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
 
       const text = (await loreSection.build(ctxFor(db, worldId, actorId,),))
         .map((m,) => m.content).join("\n",);
+
       expect(text,).toContain("Plain lore.",);
       expect(text,).toContain("[disputed] Heavily distorted lore.",);
       expect(text,).not.toContain("[disputed] Plain lore.",);
@@ -654,8 +673,10 @@ describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
         cooldown_seconds: noCooldown,
         priority: 100,
       },);
+
       const text = (await loreSection.build(ctxFor(db, worldId, actorId,),))
         .map((m,) => m.content).join("\n",);
+
       expect(text,).toContain("Legacy default lore.",);
       expect(text,).not.toContain("<disputed>",);
     } finally {
@@ -683,6 +704,7 @@ describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
         .select(["last_verified", "last_activated",],)
         .where("world_id", "=", worldId,)
         .executeTakeFirstOrThrow();
+
       expect(beforeRender.last_verified,).toBeNull();
       expect(beforeRender.last_activated,).toBeNull();
 
@@ -693,6 +715,7 @@ describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
         .select(["last_verified", "last_activated",],)
         .where("world_id", "=", worldId,)
         .executeTakeFirstOrThrow();
+
       // Both timestamps are set together by the producer path.
       expect(afterRender.last_activated,).not.toBeNull();
       expect(afterRender.last_verified,).not.toBeNull();

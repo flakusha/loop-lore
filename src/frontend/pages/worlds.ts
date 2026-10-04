@@ -41,6 +41,7 @@ globalThis.createWorld = async function(event: Event,) {
   formData.forEach((value, key,) => {
     data[key] = value;
   },);
+
   pageLog.debug("createWorld", { data, },);
   try {
     const res = await feFetch("/api/v1/worlds", {
@@ -48,6 +49,7 @@ globalThis.createWorld = async function(event: Event,) {
       headers: { "Content-Type": "application/json", },
       body: jsonBody(data,),
     },);
+
     pageLog.debug("createWorld response", { status: res.status, },);
     if (res.ok) {
       const data = await res.json();
@@ -99,9 +101,11 @@ globalThis.worldDetail = function(initial: {
           /* ignore — default template still works server-side */
         }
       }
+
       this.newLocationTemplateId = this.templates.some((t,) => t.id === "template-world")
         ? "template-world"
         : (this.templates[0]?.id ?? "template-world");
+
       this.onTemplateChange();
     },
 
@@ -126,6 +130,7 @@ globalThis.worldDetail = function(initial: {
         this.expandedLoc = "";
         return;
       }
+
       this.expandedLoc = locId;
       const loc = this.locations.find((l: LocationData,) => l.id === locId);
       if (loc) {
@@ -148,12 +153,14 @@ globalThis.worldDetail = function(initial: {
             description: this.editLocDesc.trim() || null,
           },),
         },);
+
         if (res.ok) {
           const loc = this.locations.find((l: LocationData,) => l.id === locId);
           if (loc) {
             loc.name = this.editLocName.trim();
             loc.description = this.editLocDesc.trim() || null;
           }
+
           this.expandedLoc = "";
           showToast("success", "Location updated",);
         } else {
@@ -180,6 +187,7 @@ globalThis.worldDetail = function(initial: {
             templateId: this.newLocationTemplateId,
           },),
         },);
+
         if (res.ok) {
           const data = await res.json();
           this.locations.push({
@@ -188,6 +196,7 @@ globalThis.worldDetail = function(initial: {
             description: this.newLocationDesc.trim() || null,
             world_id: this.worldId,
           },);
+
           this.showCreateLocation = false;
           this.newLocationName = "";
           this.newLocationDesc = "";
@@ -213,6 +222,7 @@ globalThis.worldDetail = function(initial: {
           for (const l of this.locations) {
             if (l.id !== locId) { remaining.push(l,); }
           }
+
           this.locations = remaining;
           showToast("success", "Location deleted",);
         } else {

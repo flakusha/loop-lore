@@ -43,17 +43,20 @@ export function switchSessionRoutes(opts: SwitchOpts, prefix = "/api",): Elysia 
         .where("id", "=", targetId,)
         .where("user_id", "=", userId,)
         .executeTakeFirst();
+
       if (!row) { return notFound("Session not found",); }
       const expiresAtMs = parseExpiryMs(row.expires_at,);
       if (expiresAtMs === null || expiresAtMs <= Date.now()) {
         await database.deleteFrom("sessions",).where("id", "=", targetId,).execute();
         return jsonError({ message: "Session expired", status: HttpStatus.Gone, },);
       }
+
       const user = await database
         .selectFrom("users",)
         .select(["id", "role",],)
         .where("id", "=", userId,)
         .executeTakeFirst();
+
       if (!user) { return notFound("Session not found",); }
       const jwtSecret = config.auth.jwtSecret;
       if (!jwtSecret) {
@@ -62,11 +65,13 @@ export function switchSessionRoutes(opts: SwitchOpts, prefix = "/api",): Elysia 
           status: HttpStatus.InternalServerError,
         },);
       }
+
       await database
         .updateTable("sessions",)
         .set({ last_activity: new Date().toISOString(), },)
         .where("id", "=", targetId,)
         .execute();
+
       const jwtExpiresIn = config.auth.jwtExpiresIn ?? 86_400;
       const token = await signJwt({
         secret: jwtSecret,
@@ -75,6 +80,7 @@ export function switchSessionRoutes(opts: SwitchOpts, prefix = "/api",): Elysia 
         sessionId: targetId,
         expiresInSeconds: jwtExpiresIn,
       },);
+
       log.info("Session switched", { sessionId: targetId, byUserId: userId, },);
       return new Response("OK", {
         status: HttpStatus.OK,

@@ -71,6 +71,7 @@ describe("recordMessageSeen — first-seen semantics", () => {
         created_at: seenAt,
       },)
       .execute();
+
     return { messageId, seenAt, };
   }
 
@@ -82,6 +83,7 @@ describe("recordMessageSeen — first-seen semantics", () => {
       .where("message_id", "=", messageId,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     return row?.seen_at ?? null;
   }
 
@@ -93,6 +95,7 @@ describe("recordMessageSeen — first-seen semantics", () => {
       .where("message_id", "=", messageId,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     return row?.state ?? null;
   }
 
@@ -160,6 +163,7 @@ describe("recordMessageSeen — first-seen semantics", () => {
         "Second Actor",
         { id: otherActorId, user_id: otherUserId, owner_id: otherUserId, } as never,
       );
+
       await insertChatParticipants(db, chatId, otherActorId, {},);
     },);
 

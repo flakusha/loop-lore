@@ -63,6 +63,7 @@ export function parseMentions(text: string,): ParsedMention[] {
       start: match.index,
       end: match.index + match[0].length,
     },);
+
     match = mentionRegex.exec(text,);
   }
 
@@ -143,6 +144,7 @@ export function parseInitiativeFlag(input: string,): { isInitiative: boolean; cl
     const cleanMessage = trimmed.slice(2,).trim();
     return { isInitiative: true, cleanMessage, };
   }
+
   return { isInitiative: false, cleanMessage: trimmed, };
 }
 
@@ -210,8 +212,10 @@ export function parseAssetMentions(text: string,): string[] {
       seen.add(id,);
       ids.push(id,);
     }
+
     match = ASSET_MENTION_REGEX.exec(text,);
   }
+
   return ids;
 }
 

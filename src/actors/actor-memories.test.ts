@@ -35,6 +35,7 @@ describe("actor memories service", () => {
       content: "The innkeeper owes her a favor",
       importance: 3,
     },);
+
     expect(created.ok,).toBe(true,);
     if (!created.ok) { return; }
     expect(created.entity.actor_id,).toBe(actorId,);
@@ -54,6 +55,7 @@ describe("actor memories service", () => {
     const res = await createActorMemory(db, actorId, "user-owner", "user", {
       content: "",
     },);
+
     expect(res,).toEqual({ ok: false, code: "bad_request", message: "content is required", },);
   });
 
@@ -62,6 +64,7 @@ describe("actor memories service", () => {
       content: "a",
       memoryType: "episodic",
     },);
+
     await createActorMemory(db, actorId, "user-owner", "user", {
       content: "b",
       memoryType: "semantic",
@@ -71,6 +74,7 @@ describe("actor memories service", () => {
       page: 2,
       pageSize: 1,
     },);
+
     expect(page.ok,).toBe(true,);
     if (page.ok) {
       expect(page.total,).toBe(2,);
@@ -80,6 +84,7 @@ describe("actor memories service", () => {
     const semantic = await listActorMemories(db, actorId, "user-owner", "user", {
       memoryType: "semantic",
     },);
+
     expect(semantic.ok,).toBe(true,);
     if (semantic.ok) {
       expect(semantic.total,).toBe(1,);
@@ -91,6 +96,7 @@ describe("actor memories service", () => {
     const created = await createActorMemory(db, actorId, "user-owner", "user", {
       content: "before",
     },);
+
     if (!created.ok) { throw new Error("seed failed",); }
 
     const updated = await updateActorMemory(
@@ -101,6 +107,7 @@ describe("actor memories service", () => {
       "user",
       { content: "after", pinned: true, },
     );
+
     expect(updated.ok,).toBe(true,);
     if (!updated.ok) { return; }
     expect(updated.entity.content,).toBe("after",);
@@ -112,6 +119,7 @@ describe("actor memories service", () => {
     const created = await createActorMemory(db, actorId, "user-owner", "user", {
       content: "fleeting",
     },);
+
     if (!created.ok) { throw new Error("seed failed",); }
 
     const deleted = await deleteActorMemory(
@@ -121,6 +129,7 @@ describe("actor memories service", () => {
       "user-owner",
       "user",
     );
+
     expect(deleted,).toEqual({ ok: true, id: created.entity.id, },);
 
     const again = await deleteActorMemory(
@@ -130,6 +139,7 @@ describe("actor memories service", () => {
       "user-owner",
       "user",
     );
+
     expect(again,).toEqual({ ok: false, code: "not_found", message: "Memory not found", },);
   });
 
@@ -137,6 +147,7 @@ describe("actor memories service", () => {
     const created = await createActorMemory(db, "no-actor", "user-owner", "user", {
       content: "x",
     },);
+
     expect(created,).toEqual({ ok: false, code: "not_found", message: "Actor not found", },);
 
     const listed = await listActorMemories(db, "no-actor", "user-owner", "user",);
@@ -147,6 +158,7 @@ describe("actor memories service", () => {
     const created = await createActorMemory(db, actorId, "user-other", "user", {
       content: "x",
     },);
+
     expect(created,).toEqual({ ok: false, code: "forbidden", message: "Not allowed", },);
 
     const listed = await listActorMemories(db, actorId, "user-other", "user",);
@@ -158,6 +170,7 @@ describe("actor memories service", () => {
     const adminCreate = await createActorMemory(db, actorId, "user-other", "admin", {
       content: "admin write",
     },);
+
     expect(adminCreate.ok,).toBe(true,);
   });
 
@@ -166,6 +179,7 @@ describe("actor memories service", () => {
       content: "world memory",
       scope: "world",
     },);
+
     expect(denied,).toEqual(
       { ok: false, code: "forbidden", message: "World memories are admin-managed", },
     );
@@ -174,6 +188,7 @@ describe("actor memories service", () => {
       content: "world memory",
       scope: "world",
     },);
+
     expect(admin.ok,).toBe(true,);
   });
 
@@ -191,6 +206,7 @@ describe("actor memories service", () => {
       "user",
       { content: "hijack", },
     );
+
     expect(ownerEdit,).toEqual(
       { ok: false, code: "forbidden", message: "World memories are admin-managed", },
     );
@@ -203,6 +219,7 @@ describe("actor memories service", () => {
       "user",
       { scope: "character", },
     );
+
     expect(demote,).toEqual(
       { ok: false, code: "forbidden", message: "World memories are admin-managed", },
     );
@@ -215,6 +232,7 @@ describe("actor memories service", () => {
       "admin",
       { content: "admin edit", },
     );
+
     expect(adminEdit.ok,).toBe(true,);
   });
 
@@ -231,6 +249,7 @@ describe("actor memories service", () => {
       "user-owner",
       "user",
     );
+
     expect(ownerDelete,).toEqual(
       { ok: false, code: "forbidden", message: "World memories are admin-managed", },
     );
@@ -240,6 +259,7 @@ describe("actor memories service", () => {
       .select("id",)
       .where("id", "=", seeded,)
       .executeTakeFirst();
+
     expect(stillThere,).toBeDefined();
 
     const adminDelete = await deleteActorMemory(
@@ -249,6 +269,7 @@ describe("actor memories service", () => {
       "user-owner",
       "admin",
     );
+
     expect(adminDelete,).toEqual({ ok: true, id: seeded, },);
   });
 });

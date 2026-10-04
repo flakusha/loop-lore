@@ -112,15 +112,18 @@ describe("Navigation E2E", () => {
           const btn = document.querySelector("[data-testid='hamburger']",);
           if (btn instanceof HTMLElement) { btn.click(); }
         },);
+
         // Wait for Alpine to add 'open' class to the sidebar.
         await page.waitForFunction(
           () => document.querySelector("[data-testid='sidebar']",)?.classList.contains("open",) ?? false,
           null,
           { timeout: 10_000, },
         );
+
         const hasOpen = await page.evaluate(() => {
           return document.querySelector("[data-testid='sidebar']",)?.classList.contains("open",) ?? false;
         },);
+
         expect(hasOpen,).toBe(true,);
       } finally {
         errors.assert();
@@ -195,6 +198,7 @@ describe("Navigation E2E", () => {
           const loader = (globalThis as { loadNewChatPage?: () => Promise<void> }).loadNewChatPage;
           await loader?.();
         },);
+
         await page.locator("[data-testid='chat-name-input']",).fill("Browser Test Chat",);
         await page.locator("[data-testid='create-chat-btn']",).click();
         await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 15_000, },);

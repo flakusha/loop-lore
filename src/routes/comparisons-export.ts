@@ -48,6 +48,7 @@ export function comparisonsExportRoutes(
         .where("id", "=", id,)
         .where("user_id", "=", userId,)
         .executeTakeFirst();
+
       if (run) {
         const report = {
           id: run.id,
@@ -57,6 +58,7 @@ export function comparisonsExportRoutes(
           metadata: jsonParseOr(run.metadata, {},),
           createdAt: run.created_at,
         };
+
         if (format === "markdown") {
           return new Response(renderRunMarkdown(report,), {
             status: 200,
@@ -66,6 +68,7 @@ export function comparisonsExportRoutes(
             },
           },);
         }
+
         return jsonResponse(report,);
       }
 
@@ -99,6 +102,7 @@ export function comparisonsExportRoutes(
           confidence: row.confidence,
           createdAt: row.created_at,
         },);
+
         return new Response(md, {
           status: 200,
           headers: {
@@ -163,6 +167,7 @@ function renderRunMarkdown(report: RunReport,): string {
     "## Results",
     "",
   ];
+
   for (const result of Array.isArray(report.results,) ? report.results : []) {
     const item = result as {
       model?: { provider?: string; name?: string };
@@ -172,6 +177,7 @@ function renderRunMarkdown(report: RunReport,): string {
       cost?: number;
       status?: string;
     };
+
     lines.push(
       `### ${item.model?.provider ?? "unknown"} / ${item.model?.name ?? "unknown"}`,
       "",
@@ -184,6 +190,7 @@ function renderRunMarkdown(report: RunReport,): string {
       "",
     );
   }
+
   const ratingsJson = safeJsonStringify(report.ratings, 2,);
   const metadataJson = safeJsonStringify(report.metadata, 2,);
   lines.push("## Ratings", "", "```json", ratingsJson.ok ? ratingsJson.value : "{}", "```", "",);

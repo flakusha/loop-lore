@@ -23,6 +23,7 @@ function makeApp(db: Kysely<DB>, userRole: string | null,) {
     userId: userRole ? `test-user-${userRole}` : null,
     userRole,
   }));
+
   return app.use(usersRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
@@ -92,6 +93,7 @@ describe("admin users routes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/users/00000000-0000-0000-0000-000000000999",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -110,6 +112,7 @@ describe("admin users routes", () => {
         body: JSON.stringify({ role: "viewer", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -122,6 +125,7 @@ describe("admin users routes", () => {
         body: JSON.stringify({ role: "not-a-real-role", },),
       },),
     );
+
     // Runtime enum check (schema is a plain string — see AdminRoleUpdateBody):
     // out-of-enum values are a 400, never a silent write.
     expect(res.status,).toBe(400,);
@@ -132,6 +136,7 @@ describe("admin users routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/admin/users/${OTHER_USER}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
   });
 
@@ -140,6 +145,7 @@ describe("admin users routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/admin/users/${TEST_USER}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

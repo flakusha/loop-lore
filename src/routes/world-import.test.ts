@@ -29,6 +29,7 @@ function createApp(db: Kysely<DB>,): Elysia {
     demoAutoSetup: false,
     jwtSecret: "test-secret",
   };
+
   return new Elysia({ name: "test-world-import", },)
     .use(worldImportRoutes({ database: db, config: { auth, }, },),);
 }
@@ -48,6 +49,7 @@ async function exportBundleForWorld(db: Kysely<DB>, userId: string, worldId: str
     format: "json",
     counts: {},
   },);
+
   const raw = await zip.file(`story/${worldId}.json`,)?.async("text",);
   if (!raw) { throw new Error(`No story bundle exported for ${worldId}`,); }
   return JSON.parse(raw,) as WorldBundle;
@@ -133,6 +135,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
         target: 1,
       },)
       .execute();
+
     await db
       .insertInto("world_lore_entries",)
       .values({
@@ -141,6 +144,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
         content: "The relic lies beneath the Keep.",
       },)
       .execute();
+
     await db
       .insertInto("world_states",)
       .values({
@@ -149,6 +153,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
         snapshot: "{}",
       },)
       .execute();
+
     await db
       .insertInto("location_states",)
       .values({
@@ -171,6 +176,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
       world_states: 1,
       location_states: 1,
     },);
+
     expect(worldId,).not.toBe(sourceWorldId,);
 
     const world = await db
@@ -178,6 +184,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
       .selectAll()
       .where("id", "=", worldId,)
       .executeTakeFirst();
+
     expect(world?.name,).toBe("Source Realm",);
     expect(world?.owner_id,).toBe(userId,);
 
@@ -186,6 +193,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
       .selectAll()
       .where("world_id", "=", worldId,)
       .execute();
+
     expect(locs,).toHaveLength(2,);
     const keep = locs.find((l,) => l.name === "Keep");
     const cave = locs.find((l,) => l.name === "Cave");
@@ -199,6 +207,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
       .selectAll()
       .where("world_id", "=", worldId,)
       .execute();
+
     expect(quests,).toHaveLength(1,);
 
     const locationStates = await db
@@ -206,6 +215,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
       .selectAll()
       .where("world_id", "=", worldId,)
       .execute();
+
     expect(locationStates[0]?.location_id,).toBe(keep?.id,);
     expect(locationStates[0]?.atmosphere,).toBe("candlelit",);
 
@@ -214,6 +224,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
       .selectAll()
       .where("world_id", "=", worldId,)
       .execute();
+
     expect(lore[0]?.content,).toBe("The relic lies beneath the Keep.",);
   });
 
@@ -224,6 +235,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
       world: { name: "Via Route", },
       locations: [],
     };
+
     const res = await app.handle(
       new Request("http://localhost/api/import/world", {
         method: "POST",
@@ -247,8 +259,10 @@ describe("worldImportRoutes — POST /api/import/world", () => {
         body: JSON.stringify({ locations: [], },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
+
   test("route returns 400/422 on malformed payload (not an object)", async () => {
     const app = createApp(db,);
     const res = await app.handle(
@@ -258,6 +272,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
         body: JSON.stringify("not-an-object",),
       },),
     );
+
     expect([400, 422,],).toContain(res.status,);
   });
 
@@ -270,8 +285,10 @@ describe("worldImportRoutes — POST /api/import/world", () => {
         body: JSON.stringify({ world: { name: "no-version", }, },),
       },),
     );
+
     expect([201, 400, 422,],).toContain(res.status,);
   });
+
   test("route accepts unicode world name", async () => {
     const app = createApp(db,);
     const res = await app.handle(
@@ -285,6 +302,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const parsed = (await res.json()) as { id: string };
     const w = await db.selectFrom("worlds",).select(["name",],).where("id", "=", parsed.id,).executeTakeFirst();
@@ -305,6 +323,7 @@ describe("worldImportRoutes — POST /api/import/world", () => {
         },),
       },),
     );
+
     // Should succeed or fail validation; should not crash the process.
     expect([201, 400, 413, 422,],).toContain(res.status,);
   });

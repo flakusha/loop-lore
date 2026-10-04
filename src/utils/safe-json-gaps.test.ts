@@ -55,6 +55,7 @@ describe("safe-json gaps — stringify options", () => {
         throw "string-error";
       },
     };
+
     const r = safeJsonStringify(bad,);
     expect(r.ok,).toBe(false,);
     if (!r.ok) {

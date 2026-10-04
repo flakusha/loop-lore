@@ -47,6 +47,7 @@ async function seedStates(db: Kysely<DB>, chatId: string, count: number,): Promi
       messageId: null,
       content: block(snapshot([entity("hero", i, i,),],),),
     },);
+
     if (id === null) { throw new Error(`seed row ${i} failed`,); }
   }
 }
@@ -109,6 +110,7 @@ describe("gameStateRoutes", () => {
     const body = (await res.json()) as {
       data: { messageId: string | null; createdAt: string; state: GameState; analysis: unknown };
     };
+
     expect(body.data.state.grid,).toEqual({ width: 10, height: 10, },);
     expect(body.data.state.entities,).toEqual([entity("hero", 1, 1,),],);
     expect(body.data.analysis,).not.toBeNull();

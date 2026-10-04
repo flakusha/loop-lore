@@ -71,6 +71,7 @@ function collectTsFiles(dir: string,): string[] {
   } catch {
     return out;
   }
+
   for (const entry of entries) {
     const full = join(dir, entry,);
     let st;
@@ -79,12 +80,14 @@ function collectTsFiles(dir: string,): string[] {
     } catch {
       continue;
     }
+
     if (st.isDirectory()) {
       out.push(...collectTsFiles(full,),);
     } else if (st.isFile() && entry.endsWith(".ts",)) {
       out.push(full,);
     }
   }
+
   return out;
 }
 
@@ -109,10 +112,12 @@ describe("EncryptionLevel rename — source-tree grep guard", () => {
         }
       }
     }
+
     if (offenders.length > 0) {
       const formatted = offenders
         .map((o,) => `  ${o.file}:${o.line}  ${o.text.trim()}`)
         .join("\n",);
+
       throw new Error(
         `Found ${offenders.length} reference(s) to EncryptionLevel.Private in src/:\n${formatted}\n` +
           `The rename to EncryptionLevel.AtRest must be clean — no @deprecated alias.`,

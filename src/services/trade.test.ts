@@ -38,6 +38,7 @@ describe("TradeService — offer lifecycle", () => {
       status: "active" as never,
       settings: "{}" as never,
     },);
+
     worldId = uid();
     await insertWorlds(db, userId, "Trade World", { id: worldId as never, },);
     buyer = uid();
@@ -57,11 +58,13 @@ describe("TradeService — offer lifecycle", () => {
       owner_actor_id: buyer,
       quantity: 10 as never,
     },);
+
     await insertWorldItems(db, worldId, defB, {
       id: sellerItem as never,
       owner_actor_id: seller,
       quantity: 5 as never,
     },);
+
     // Fund both actors.
     await new TradeService(db,).credit(buyer, worldId, 200,);
     await new TradeService(db,).credit(seller, worldId, 100,);
@@ -82,6 +85,7 @@ describe("TradeService — offer lifecycle", () => {
       buyerItems: [{ worldItemId: buyerItem, quantity: 3, },],
       price: 50,
     },);
+
     expect(id,).toBeTruthy();
     expect(typeof id,).toBe("string",);
   });
@@ -167,6 +171,7 @@ describe("TradeService — offer lifecycle", () => {
       .select(["owner_actor_id", "quantity",],)
       .where("id", "=", buyerItem,)
       .executeTakeFirst();
+
     expect(originalItem!.owner_actor_id,).toBe(buyer,);
     expect(originalItem!.quantity,).toBe(8,); // 10 - 2
 
@@ -175,6 +180,7 @@ describe("TradeService — offer lifecycle", () => {
       .where("owner_actor_id", "=", seller,)
       .where("item_id", "=", defA,)
       .execute();
+
     expect(sellerItems.length,).toBeGreaterThanOrEqual(1,);
     expect(sellerItems.some(i => i.quantity === 2),).toBe(true,);
 
@@ -197,6 +203,7 @@ describe("TradeService — offer lifecycle", () => {
       buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
       price: 5,
     },);
+
     await svc.acceptOffer(offerId, seller,);
     const again = await svc.acceptOffer(offerId, seller,);
     expect(again.success,).toBe(false,);
@@ -215,6 +222,7 @@ describe("TradeService — offer lifecycle", () => {
       sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 15,
     },);
+
     expect(result.success,).toBe(true,);
     expect(result.pricePaid,).toBe(15,);
 
@@ -239,6 +247,7 @@ describe("TradeService — offer lifecycle", () => {
       buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
       price: 10,
     },);
+
     expect(result.success,).toBe(true,);
     expect(result.pricePaid,).toBe(10,);
 
@@ -272,6 +281,7 @@ describe("TradeService — offer lifecycle", () => {
       counterActorId: stranger,
       price: 999,
     },);
+
     expect(strangerCounter.success,).toBe(false,);
     expect(strangerCounter.reason,).toContain("participants",);
 
@@ -282,6 +292,7 @@ describe("TradeService — offer lifecycle", () => {
       sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 25,
     },);
+
     expect(counter.success,).toBe(true,);
 
     const listed = await svc.listOffers(worldId, buyer,);
@@ -310,6 +321,7 @@ describe("TradeService — offer lifecycle", () => {
       .where("owner_actor_id", "=", buyer,)
       .where("item_id", "=", defB,)
       .execute();
+
     const totalSwords = buyerSwords.reduce((n, i,) => n + i.quantity, 0,);
     expect(totalSwords,).toBe(2,);
   });
@@ -323,6 +335,7 @@ describe("TradeService — offer lifecycle", () => {
       buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
       price: 10,
     },);
+
     expect((await svc.counterOffer({ offerId, counterActorId: seller, price: 15, },)).success,).toBe(true,);
     expect((await svc.counterOffer({ offerId, counterActorId: buyer, price: 12, },)).success,).toBe(true,);
 
@@ -369,6 +382,7 @@ describe("TradeService — offer lifecycle", () => {
       buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
       price: 8,
     },);
+
     const noop = await svc.counterOffer({ offerId, counterActorId: seller, },);
     expect(noop.success,).toBe(false,);
     expect(noop.reason,).toContain("no changes",);
@@ -387,6 +401,7 @@ describe("TradeService — offer lifecycle", () => {
       buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
       price: 8,
     },);
+
     expect((await svc.counterOffer({ offerId, counterActorId: seller, price: 9, },)).success,).toBe(true,);
     const cancel = await svc.cancelOffer(offerId, buyer,);
     expect(cancel.success,).toBe(true,);

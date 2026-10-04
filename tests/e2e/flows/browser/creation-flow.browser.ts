@@ -60,6 +60,7 @@ describe("Creation flows E2E", () => {
           .select(["id", "display_name",],)
           .where("display_name", "=", name,)
           .executeTakeFirst();
+
         expect(row,).toBeDefined();
         expect(row!.display_name,).toBe(name,);
 
@@ -96,6 +97,7 @@ describe("Creation flows E2E", () => {
           .select(["id", "name",],)
           .where("name", "=", name,)
           .executeTakeFirst();
+
         expect(row,).not.toBeNull();
         expect(row!.name,).toBe(name,);
 
@@ -129,6 +131,7 @@ describe("Creation flows E2E", () => {
           .select(["id", "owner_id",],)
           .where("name", "=", worldName,)
           .executeTakeFirst();
+
         expect(worldRow,).not.toBeNull();
 
         // The create form ALREADY redirects to the new world's edit page
@@ -155,8 +158,10 @@ describe("Creation flows E2E", () => {
           const toggle = [...document.querySelectorAll("button",),].find((b,) =>
             b.textContent?.trim()?.toLowerCase().includes("add location",)
           );
+
           (toggle as HTMLElement | undefined)?.click();
         },);
+
         await page.locator("#loc-name",).waitFor({ state: "visible", timeout: 15_000, },);
 
         const locName = `Browser-Loc-${Date.now()}`;
@@ -166,6 +171,7 @@ describe("Creation flows E2E", () => {
           state: "visible",
           timeout: 15_000,
         },);
+
         // Bind via the Alpine data stack — guards against x-model races
         // and the disabled state binding (`!newLocName.trim()`) silently
         // swallowing the click if the model never saw the fill event.
@@ -189,6 +195,7 @@ describe("Creation flows E2E", () => {
           .select(["id", "name", "world_id",],)
           .where("name", "=", locName,)
           .executeTakeFirst();
+
         expect(row,).toBeDefined();
         expect(row!.name,).toBe(locName,);
         expect(row!.world_id,).toBe(worldRow!.id,);

@@ -96,6 +96,7 @@ export async function getAuditLog({ thisL, targetUserId, options, }: GetAuditLog
     .offset(offset,)
     .selectAll()
     .execute();
+
   return Array.from(rows, (r,) => mapAction(r,),);
 }
 
@@ -121,6 +122,7 @@ export async function notifyUser(
     shadow: "Your NSFW access has been restricted",
     unshadow: "Your NSFW access restrictions have been lifted",
   };
+
   const title = titles[actionType] ?? `Moderation action: ${actionType}`;
   // BUG-nsfw-modservice-notify-user-leaks-admin-reason: canned body map
   // mirrors `titles`. The admin's verbatim `reason` is intentionally NEVER
@@ -133,6 +135,7 @@ export async function notifyUser(
     shadow: "Some of your NSFW interactions have been limited.",
     unshadow: "Your NSFW access restrictions have been lifted.",
   };
+
   const body = (bodies[actionType] ?? `A moderation action was applied to your account: ${actionType}.`).slice(0, 500,);
   await deps.db.insertInto("notifications",).values({
     id: crypto.randomUUID(),

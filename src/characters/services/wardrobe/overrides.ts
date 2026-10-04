@@ -37,6 +37,7 @@ export async function setChatOutfitOverride(
       .where("chat_id", "=", opts.chatId,)
       .where("actor_id", "=", opts.actorId,)
       .execute();
+
     return;
   }
 
@@ -46,6 +47,7 @@ export async function setChatOutfitOverride(
     .where("id", "=", outfitId,)
     .where((eb,) => eb.or([eb("actor_id", "=", opts.actorId,), eb("actor_id", "is", null,),],))
     .executeTakeFirst();
+
   if (!outfit) { throw new Error("Wardrobe item not found",); }
 
   await db
@@ -95,6 +97,7 @@ export async function setLocationOutfitBindings(
         ],)
       )
       .executeTakeFirst();
+
     if (!visible) { throw new Error(`Wardrobe item ${outfitId} not visible in world`,); }
   }
 
@@ -113,6 +116,7 @@ export async function setLocationOutfitBindings(
       .set({ outfit_bindings: serialized, updated_at: now, },)
       .where("id", "=", existing.id,)
       .execute();
+
     return;
   }
 

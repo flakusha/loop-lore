@@ -65,6 +65,7 @@ describe("Group-chat matrix UI (C1)", () => {
       .select(["id",],)
       .where("id", "=", "11000001-0000-4000-a000-000000000001",)
       .executeTakeFirst();
+
     groupId = chat!.id;
   }, 90_000,);
 
@@ -80,6 +81,7 @@ describe("Group-chat matrix UI (C1)", () => {
       waitUntil: "domcontentloaded",
       timeout: 30_000,
     },);
+
     await page.locator("[data-testid='chat-header']",).waitFor({ state: "attached", timeout: 30_000, },);
   }
 

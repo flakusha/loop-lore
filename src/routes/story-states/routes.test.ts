@@ -41,6 +41,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(storyStatesRoutes({ database: db, },),);
 }
 
@@ -89,6 +90,7 @@ describe("story-state routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/locations/${LOCATION_ID}/state`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { location_id: string; weather: string };
     expect(body.location_id,).toBe(LOCATION_ID,);
@@ -103,6 +105,7 @@ describe("story-state routes", () => {
         state_value: "sunny",
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { id: string; location_id: string; updated_at: string };
     expect(body.location_id,).toBe(LOCATION_ID,);
@@ -113,6 +116,7 @@ describe("story-state routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       putJson(`http://localhost/api/locations/${LOCATION_ID}/state`, {},),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -120,14 +124,17 @@ describe("story-state routes", () => {
     const missing = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/locations/${MISSING_ID}/state`,),
     );
+
     expect(missing.status,).toBe(404,);
     const foreign = await makeApp(db, "stranger", "user",).handle(
       new Request(`http://localhost/api/locations/${LOCATION_ID}/state`,),
     );
+
     expect(foreign.status,).toBe(404,);
     const anon = await makeApp(db,).handle(
       new Request(`http://localhost/api/locations/${LOCATION_ID}/state`,),
     );
+
     expect(anon.status,).toBe(404,);
   });
 
@@ -135,6 +142,7 @@ describe("story-state routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/npc-states/${NPC_ID}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { actor_id: string; world_id: string; health: number };
     expect(body.actor_id,).toBe(NPC_ID,);
@@ -150,6 +158,7 @@ describe("story-state routes", () => {
         state_value: 7,
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { actor_id: string; updated_at: string };
     expect(body.actor_id,).toBe(NPC_ID,);
@@ -160,6 +169,7 @@ describe("story-state routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       putJson(`http://localhost/api/worlds/${WORLD_ID}/npc-states/${NPC_ID}`, {},),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -167,14 +177,17 @@ describe("story-state routes", () => {
     const missing = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/npc-states/${MISSING_ID}`,),
     );
+
     expect(missing.status,).toBe(404,);
     const foreign = await makeApp(db, "stranger", "user",).handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/npc-states/${NPC_ID}`,),
     );
+
     expect(foreign.status,).toBe(404,);
     const anon = await makeApp(db,).handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/npc-states/${NPC_ID}`,),
     );
+
     expect(anon.status,).toBe(404,);
   });
 
@@ -182,6 +195,7 @@ describe("story-state routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/npcs-at/${LOCATION_ID}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { actor_id: string; display_name: string }[];
     expect(body.length,).toBe(1,);
@@ -193,10 +207,12 @@ describe("story-state routes", () => {
     const missing = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/worlds/${MISSING_ID}/npcs-at/${LOCATION_ID}`,),
     );
+
     expect(missing.status,).toBe(404,);
     const anon = await makeApp(db,).handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/npcs-at/${LOCATION_ID}`,),
     );
+
     expect(anon.status,).toBe(404,);
   });
 
@@ -205,6 +221,7 @@ describe("story-state routes", () => {
     const empty = await authed.handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/states`,),
     );
+
     expect(empty.status,).toBe(200,);
     const emptyBody = await empty.json() as { data: unknown[]; pagination: { total: number } };
     expect(emptyBody.pagination.total,).toBe(0,);
@@ -213,6 +230,7 @@ describe("story-state routes", () => {
     const created = await authed.handle(
       postJson(`http://localhost/api/worlds/${WORLD_ID}/states`, { description: "snap-1", },),
     );
+
     expect(created.status,).toBe(201,);
     const createdBody = await created.json() as { id: string };
     expect(typeof createdBody.id,).toBe("string",);
@@ -220,11 +238,13 @@ describe("story-state routes", () => {
     const listed = await authed.handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/states`,),
     );
+
     expect(listed.status,).toBe(200,);
     const listedBody = await listed.json() as {
       data: { id: string }[];
       pagination: { total: number };
     };
+
     expect(listedBody.pagination.total,).toBe(1,);
     expect(listedBody.data[0]!.id,).toBe(createdBody.id,);
   });
@@ -233,14 +253,17 @@ describe("story-state routes", () => {
     const missing = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/worlds/${MISSING_ID}/states`,),
     );
+
     expect(missing.status,).toBe(404,);
     const missingPost = await makeApp(db, "owner", "user",).handle(
       postJson(`http://localhost/api/worlds/${MISSING_ID}/states`, { description: "x", },),
     );
+
     expect(missingPost.status,).toBe(404,);
     const anon = await makeApp(db,).handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/states`,),
     );
+
     expect(anon.status,).toBe(404,);
   });
 });

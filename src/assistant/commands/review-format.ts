@@ -47,10 +47,12 @@ export function formatReviewReport(entityLabel: string, entityName: string, issu
     report += `**Errors (${errors.length}):**\n`;
     report += `${formatIssueLines(errors, "❌",)}\n\n`;
   }
+
   if (warnings.length > 0) {
     report += `**Warnings (${warnings.length}):**\n`;
     report += `${formatIssueLines(warnings, "⚠️",)}\n\n`;
   }
+
   if (info.length > 0) {
     report += `**Suggestions (${info.length}):**\n`;
     report += `${formatIssueLines(info, "💡",)}\n\n`;

@@ -30,6 +30,7 @@ describe("Species", () => {
       "beast",
       "dragon",
     ],);
+
     // Sentinel consumed by heat-cycle defaults must not move.
     expect(Species.Human,).toBe("human",);
   });
@@ -40,6 +41,7 @@ describe("Species", () => {
       requiresHeat: false,
       crossFertile: true,
     };
+
     for (const flag of Object.values(capability,)) {
       expect(typeof flag,).toBe("boolean",);
     }

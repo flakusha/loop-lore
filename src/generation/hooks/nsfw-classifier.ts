@@ -32,12 +32,15 @@ export function detectNsfwLevel(content: string,): NsfwLevel {
   for (const kw of intenseKeywords) {
     if (lower.includes(kw,)) { return "intense"; }
   }
+
   for (const kw of moderateKeywords) {
     if (lower.includes(kw,)) { return "moderate"; }
   }
+
   for (const kw of mildKeywords) {
     if (lower.includes(kw,)) { return "mild"; }
   }
+
   return "none";
 }
 
@@ -64,12 +67,14 @@ export async function detectNsfwWithLlm(
       },
       { role: "user" as const, content: content.slice(0, 500,), },
     ];
+
     const response = await callAuxFn("nsfw", context.config, context.db, messages, {
       userId: context.userId,
       chatId: context.chatId,
       temperature: 0,
       maxTokens: 50,
     },);
+
     if (!response) { return "none"; }
 
     const parsed = jsonParseOr<{ rating?: string }>(response.content, {},);
@@ -78,18 +83,23 @@ export async function detectNsfwWithLlm(
       case "nsfw_mild": {
         return "mild";
       }
+
       case "nsfw_moderate": {
         return "moderate";
       }
+
       case "nsfw_intense": {
         return "intense";
       }
+
       case "nsfw_extreme": {
         return "extreme";
       }
+
       case undefined: {
         return "none"; // rating missing
       }
+
       default: {
         return "none"; // sfw or unparseable
       }
@@ -98,6 +108,7 @@ export async function detectNsfwWithLlm(
     getLogger()
       .child({ module: "nsfw-hook", },)
       .debug("nsfw-hook: LLM classifier failed, falling back to none",);
+
     return "none";
   }
 }

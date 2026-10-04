@@ -13,6 +13,7 @@ describe("age-gate getStatus", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2024-01-01",
     },);
+
     expect(s.isEnabled,).toBe(false,);
   });
 
@@ -21,6 +22,7 @@ describe("age-gate getStatus", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2024-01-01",
     },);
+
     expect(s.isEnabled,).toBe(true,);
     expect(s.hasPassed,).toBe(true,);
   });
@@ -30,6 +32,7 @@ describe("age-gate getStatus", () => {
       birth_date: null,
       age_gate_accepted_at: "2024-01-01",
     },);
+
     expect(s.hasPassed,).toBe(false,);
   });
 });

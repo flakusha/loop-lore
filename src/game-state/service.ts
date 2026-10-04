@@ -81,6 +81,7 @@ export async function extractAndStore(
       state: jsonStringifyOr(state, "{}",),
     },)
     .execute();
+
   return id;
 }
 
@@ -104,6 +105,7 @@ export async function getLatestGameState(
     .orderBy(sql`rowid`, "desc",)
     .limit(2,)
     .execute();
+
   if (rows.length === 0) { return null; }
 
   const latest = rows[0];
@@ -115,8 +117,10 @@ export async function getLatestGameState(
       chatId: args.chatId,
       error: latestParsed.error.message,
     },);
+
     return null;
   }
+
   const state = latestParsed.value;
   let priorState: GameState | null = null;
   if (previous) {
@@ -126,8 +130,10 @@ export async function getLatestGameState(
         chatId: args.chatId,
         error: priorParsed.error.message,
       },);
+
       return null;
     }
+
     priorState = priorParsed.value;
   }
 
@@ -155,6 +161,7 @@ export async function getGameStateHistory(
     .orderBy(sql`rowid`, "desc",)
     .limit(args.limit ?? 20,)
     .execute();
+
   return rows.map((row,) => ({
     id: row.id,
     messageId: row.message_id,
@@ -176,15 +183,19 @@ function safeParse(payload: string, chatId: string,): GameState | null {
       chatId,
       error: result.error.message,
     },);
+
     return null;
   }
+
   const parsed = result.value;
   const { width, height, } = parsed.grid ?? {};
   const dimensionsValid = Number.isInteger(width,) && width > 0 &&
     Number.isInteger(height,) && height > 0;
+
   if (!dimensionsValid || !Array.isArray(parsed.entities,)) {
     getLogger().warn("game-state: payload failed sanity check", { chatId, },);
     return null;
   }
+
   return parsed;
 }

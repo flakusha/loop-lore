@@ -34,6 +34,7 @@ async function loginAsAdmin(ctx: BrowserTestContext,) {
         res.url().includes("/api/auth/login",) && res.request().method() === "POST",
       { timeout: 30_000, },
     );
+
     await page.click("[data-testid='login-submit']",);
     // The login POST response proves the session cookie was set.
     await loginRes;
@@ -67,6 +68,7 @@ async function seedPopulatedData(db: BrowserTestContext["db"],) {
       created_at: new Date().toISOString(),
     },)
     .execute();
+
   await db
     .insertInto("model_capabilities",)
     .values({
@@ -138,6 +140,7 @@ describe("Admin dashboard panels — populated", () => {
       (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
       { timeout: 30_000, },
     );
+
     await page.click("[data-testid='login-submit']",);
     await loginRes;
     // The POST returning is not the login navigation finishing — the client still

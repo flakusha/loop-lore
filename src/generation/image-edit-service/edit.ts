@@ -75,6 +75,7 @@ export async function editImage(
       entries: [],
       currentEntryIndex: -1,
     };
+
     editHistories.set(sourceAssetId, history,);
   }
 

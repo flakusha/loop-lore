@@ -40,6 +40,7 @@ async function seed(db: Kysely<DB>,): Promise<void> {
     id: ASSET_ID,
     visibility: AssetVisibility.Private,
   },);
+
   await seedBaseTransform(db, ASSET_ID,);
 }
 
@@ -50,6 +51,7 @@ describe("GET /api/assets/:id/transform", () => {
     const res = await makeApp(db, OWNER_ID,).handle(
       new Request(`http://localhost/api/assets/${ASSET_ID}/transform?context=sprite`,),
     );
+
     expect(res.status,).toBe(200,);
     const json = (await res.json()) as { context: string; focal_point_x: number; focal_point_y: number };
     expect(json.context,).toBe(TransformContext.Default,);
@@ -65,6 +67,7 @@ describe("GET /api/assets/:id/transform", () => {
     const res = await makeApp(db, OWNER_ID,).handle(
       new Request(`http://localhost/api/assets/${ASSET_ID}/transform?context=sprite`,),
     );
+
     expect(res.status,).toBe(404,);
     await db.destroy();
   });
@@ -75,6 +78,7 @@ describe("GET /api/assets/:id/transform", () => {
     const res = await makeApp(db, OWNER_ID,).handle(
       new Request(`http://localhost/api/assets/${ASSET_ID}/transform?context=bogus`,),
     );
+
     expect(res.status,).toBe(400,);
     await db.destroy();
   });
@@ -85,6 +89,7 @@ describe("GET /api/assets/:id/transform", () => {
     const res = await makeApp(db, OUTSIDER_ID,).handle(
       new Request(`http://localhost/api/assets/${ASSET_ID}/transform?context=sprite`,),
     );
+
     expect(res.status,).toBe(404,);
     await db.destroy();
   });
@@ -101,6 +106,7 @@ describe("PUT /api/assets/:id/transform", () => {
         body: JSON.stringify({ context: TransformContext.Sprite, focalPointX: 0.4, focalPointY: 0.3, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const row = await getAssetTransform(db, ASSET_ID, TransformContext.Sprite,);
     expect(row?.focal_point_x,).toBe(0.4,);
@@ -118,6 +124,7 @@ describe("PUT /api/assets/:id/transform", () => {
         body: JSON.stringify({ focalPointX: 0.4, },),
       },),
     );
+
     expect(res.status,).toBe(401,);
     await db.destroy();
   });
@@ -132,6 +139,7 @@ describe("PUT /api/assets/:id/transform", () => {
         body: JSON.stringify({ focalPointX: 0.4, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
     await db.destroy();
   });
@@ -146,9 +154,11 @@ describe("PUT /api/assets/:id/transform", () => {
         body: JSON.stringify({ focalPointX: 2, },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     await db.destroy();
   });
+
   test("400 on unknown snake_case keys (focal_x must not silently drop)", async () => {
     const { db, } = await createTestDb();
     await seed(db,);
@@ -159,6 +169,7 @@ describe("PUT /api/assets/:id/transform", () => {
         body: JSON.stringify({ focal_x: 0.4, focal_y: 0.3, },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     await db.destroy();
   });
@@ -173,6 +184,7 @@ describe("PUT /api/assets/:id/transform", () => {
         body: JSON.stringify({ context: "bogus", focalPointX: 0.4, },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     await db.destroy();
   });

@@ -42,6 +42,7 @@ describe("blog comments", () => {
       author_id: "actor-commenter",
       body: "First!",
     },);
+
     expect(comment.post_id,).toBe("post-1",);
     expect(comment.author_id,).toBe("actor-commenter",);
     expect(comment.body,).toBe("First!",);
@@ -56,12 +57,14 @@ describe("blog comments", () => {
       author_id: "actor-commenter",
       body: "Parent",
     },);
+
     const reply = await createComment(db, {
       post_id: "post-1",
       author_id: "actor-commenter",
       body: "Reply",
       parent_comment_id: parent.id,
     },);
+
     expect(reply.parent_comment_id,).toBe(parent.id,);
   });
 
@@ -71,11 +74,13 @@ describe("blog comments", () => {
       author_id: "actor-commenter",
       body: "Nice post",
     },);
+
     const rows = await db
       .selectFrom("notifications",)
       .selectAll()
       .where("user_id", "=", "user-author",)
       .execute();
+
     expect(rows.length,).toBe(1,);
     expect(rows[0]?.type,).toBe("blog_comment",);
     expect(rows[0]?.title,).toBe("Commenter commented on your post",);
@@ -88,11 +93,13 @@ describe("blog comments", () => {
       author_id: "user-author",
       body: "My own note",
     },);
+
     const rows = await db
       .selectFrom("notifications",)
       .selectAll()
       .where("user_id", "=", "user-author",)
       .execute();
+
     expect(rows,).toEqual([],);
   });
 
@@ -102,11 +109,13 @@ describe("blog comments", () => {
       author_id: "actor-ghost",
       body: "Boo",
     },);
+
     const rows = await db
       .selectFrom("notifications",)
       .selectAll()
       .where("user_id", "=", "user-author",)
       .execute();
+
     expect(rows.length,).toBe(1,);
     expect(rows[0]?.title,).toBe("Someone commented on your post",);
   });
@@ -136,11 +145,13 @@ describe("blog comments", () => {
       author_id: "user-author",
       body: "Gone",
     },);
+
     const flagged = await createComment(db, {
       post_id: "post-1",
       author_id: "user-author",
       body: "Flagged",
     },);
+
     expect(await moderateComment(db, gone.id, "deleted", { userId: "user-author", role: "user", },),).toBeTrue();
     expect(await moderateComment(db, flagged.id, "hidden", { userId: "user-author", role: "user", },),).toBeTrue();
     const rows = await listComments(db, "post-1",);
@@ -153,6 +164,7 @@ describe("blog comments", () => {
       author_id: "user-author",
       body: "Hello",
     },);
+
     expect((await getComment(db, comment.id,))?.body,).toBe("Hello",);
     expect(await getComment(db, "comment-missing",),).toBeUndefined();
     await moderateComment(db, comment.id, "deleted", { userId: "user-author", role: "user", },);
@@ -171,11 +183,13 @@ describe("blog comments", () => {
       author_id: "user-author",
       body: "Locked",
     },);
+
     // Stranger is neither post author, comment author, nor a moderator.
     const ok = await moderateComment(db, comment.id, "deleted", {
       userId: "user-stranger",
       role: "user",
     },);
+
     expect(ok,).toBeFalse();
     expect((await getComment(db, comment.id,))?.status,).toBe("visible",);
   });
@@ -187,10 +201,12 @@ describe("blog comments", () => {
       author_id: "user-author",
       body: "Off-topic",
     },);
+
     const ok = await moderateComment(db, comment.id, "hidden", {
       userId: "user-mod",
       role: "moderator",
     },);
+
     expect(ok,).toBeTrue();
     expect((await getComment(db, comment.id,))?.status,).toBe("hidden",);
   });
@@ -201,6 +217,7 @@ describe("blog comments", () => {
       author_id: "user-author",
       body: "Root A",
     },);
+
     await createComment(db, { post_id: "post-1", author_id: "user-author", body: "Root B", },);
     const reply = await createComment(db, {
       post_id: "post-1",
@@ -208,12 +225,14 @@ describe("blog comments", () => {
       body: "Reply to A",
       parent_comment_id: rootA.id,
     },);
+
     await createComment(db, {
       post_id: "post-1",
       author_id: "user-author",
       body: "Nested",
       parent_comment_id: reply.id,
     },);
+
     const tree = await listCommentsThreaded(db, "post-1",);
     expect(tree.map((c,) => c.body).toSorted(),).toEqual(["Root A", "Root B",],);
     const nodeA = tree.find((c,) => c.body === "Root A");
@@ -228,6 +247,7 @@ describe("blog comments", () => {
       author_id: "user-author",
       body: "Doomed",
     },);
+
     await moderateComment(db, comment.id, "deleted", { userId: "user-author", role: "user", },);
     expect(await listCommentsThreaded(db, "post-1",),).toEqual([],);
   });

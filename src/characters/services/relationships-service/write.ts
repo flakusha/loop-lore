@@ -38,6 +38,7 @@ export async function createRelationship(
     targetActorId: opts.targetActorId,
     worldId: opts.worldId,
   },);
+
   guardNotExists(existing, "Relationship", `${opts.actorId}->${opts.targetActorId}`,);
 
   const id = randomUUID();
@@ -114,6 +115,7 @@ export async function updateRelationship(
     targetActorId,
     worldId,
   },);
+
   if (!existing) {
     throw new Error(
       `Relationship not found between ${actorId} and ${targetActorId}`,
@@ -128,15 +130,19 @@ export async function updateRelationship(
   if (opts.relationshipType !== undefined) {
     updateData.relationship_type = opts.relationshipType;
   }
+
   if (opts.standing !== undefined) {
     updateData.standing = Math.max(-100, Math.min(100, opts.standing,),);
   }
+
   if (opts.trust !== undefined) {
     updateData.trust = Math.max(-100, Math.min(100, opts.trust,),);
   }
+
   if (opts.familiarity !== undefined) {
     updateData.familiarity = Math.max(0, Math.min(100, opts.familiarity,),);
   }
+
   if (opts.metadata !== undefined) {
     updateData.metadata = jsonStringifyOr(opts.metadata,);
   }
@@ -188,6 +194,7 @@ export async function deleteRelationship(
     targetActorId,
     worldId,
   },);
+
   if (!existing) {
     throw new Error(
       `Relationship not found between ${actorId} and ${targetActorId}`,

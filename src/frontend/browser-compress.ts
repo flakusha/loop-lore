@@ -151,6 +151,7 @@ async function tryZstdDecompress(data: Uint8Array, zstd?: WasmZstdModule | null,
     if (result !== null) { return result; }
     capacity *= 2;
   }
+
   return null;
 }
 
@@ -191,19 +192,23 @@ export async function browserEncodeContent(
   if (encoding === "identity" || !plaintext) {
     return { encoded: plaintext, encoding: "identity", };
   }
+
   const uint8 = stringToUint8Array(plaintext,);
   if (uint8.length < 128) {
     return { encoded: plaintext, encoding: "identity", };
   }
+
   for (const algo of getEncoderPriority(encoding,)) {
     let result: Uint8Array | null;
     if (algo === "zstd") { result = await tryZstdCompress(uint8, options.zstd,); }
     else if (algo === "brotli") { result = await tryBrotliCompress(uint8,); }
     else { result = await tryGzipCompress(uint8,); }
+
     if (result && result.length < uint8.length) {
       return { encoded: uint8ArrayToBase64(result,), encoding: algo, };
     }
   }
+
   return { encoded: plaintext, encoding: "identity", };
 }
 
@@ -226,8 +231,10 @@ export async function browserDecodeContent(
     if (algo === "zstd") { result = await tryZstdDecompress(uint8, options.zstd,); }
     else if (algo === "brotli") { result = await tryBrotliDecompress(uint8,); }
     else { result = await tryGzipDecompress(uint8,); }
+
     if (result) { return uint8ArrayToString(result,); }
   }
+
   // Declared non-identity content that no decoder could open is corruption,
   // not plaintext — surfacing it as "decoded" would render base64 soup.
   throw new Error(`browserDecodeContent: failed to decode ${encoding} content (all decoders returned null)`,);

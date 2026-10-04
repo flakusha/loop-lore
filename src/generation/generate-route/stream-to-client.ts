@@ -113,6 +113,7 @@ export function streamToClient({
             }, { once: true, },);
           }
         }
+
         let currentMessages = messages;
         let finalResponse: Awaited<ReturnType<typeof callWithFailover>> | null = null;
         const allToolResults: GenerationMessage[] = [];
@@ -132,6 +133,7 @@ export function streamToClient({
                   .catch((error: unknown,) => {
                     log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
                   },);
+
                 const seq = flushChunk(controller, buffer, sseData({ type: "content", content: chunk.content, },),);
                 recordLastRendered(attemptId, seq,);
               } else if (chunk.type === "thinking" && chunk.content) {
@@ -140,6 +142,7 @@ export function streamToClient({
                 const seq = flushChunk(controller, buffer, sseData({ type: "thinking", content: chunk.content, },),);
                 recordLastRendered(attemptId, seq,);
               }
+
               // BUG-generation-error-handling-gaps: throwIfAborted AFTER
               // processing each chunk so cancellation terminates accumulation
               // promptly (not only at start).
@@ -173,6 +176,7 @@ export function streamToClient({
             actorId: input.actorId,
             chatId: input.chatId,
           },);
+
           currentMessages = [...currentMessages, ...toolResults,];
           allToolResults.push(...toolResults,);
         }
@@ -227,6 +231,7 @@ export function streamToClient({
           cancelled: isCancelled,
           lastRenderedChunkIndex: activeForDone?.lastRenderedChunkIndex ?? -1,
         },);
+
         const doneSeq = flushChunk(controller, buffer, doneFrame,);
         if (activeForDone) {
           activeForDone.lastRenderedChunkIndex = doneSeq;
@@ -278,6 +283,7 @@ export function streamToClient({
             log.error("Telemetry truncation record failed", error instanceof Error ? error : undefined,);
           },);
         }
+
         // BUG-generation-error-handling-gaps: explicit .catch on memory.
         // Memory extraction runs only when the full response was delivered —
         // we don't want to memorize partial output the user never saw.
@@ -309,6 +315,7 @@ export function streamToClient({
         const isCancel = err instanceof GenerationCancelledError ||
           err.name === "AbortError" ||
           (err.cause instanceof GenerationCancelledError);
+
         if (isCancel) {
           await streamCancelCleanup({
             db: database,
@@ -320,6 +327,7 @@ export function streamToClient({
             buffer,
             controller,
           },);
+
           return;
         }
 

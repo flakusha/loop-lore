@@ -56,6 +56,7 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
       input.pipelineConfig,
       encryptionTier,
     );
+
     if (result.encrypted) {
       storageBuffer = result.data;
       encryptedKeyId = result.keyId;
@@ -244,5 +245,6 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
   if (input.mimeType.startsWith("image/",)) {
     await seedBaseTransform(database, id,);
   }
+
   return { asset, duplicate: false, };
 }

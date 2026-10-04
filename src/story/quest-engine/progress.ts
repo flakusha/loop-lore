@@ -159,6 +159,7 @@ async function applyProgress(
     if (h.progress <= quest.progress && (!oldMilestone || h.progress > oldMilestone.progress)) {
       oldMilestone = h;
     }
+
     if (
       h.progress <= newProgress &&
       h.progress > quest.progress &&

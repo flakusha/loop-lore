@@ -49,6 +49,7 @@ export function moraleRoutes(_opts: HandlerOpts, prefix = "/api",) {
             state: MoraleState;
             modifier: { reason: string; value: number; duration: number; appliedAt: string };
           };
+
           const updated = applyMoraleModifier(body.state, body.modifier,);
           return jsonResponse(updated,);
         } catch (error) {

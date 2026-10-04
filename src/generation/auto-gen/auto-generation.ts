@@ -119,6 +119,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       .select(["type", "turn_strategy", "mode", "gm_config", "world_id", "streaming",],)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     const mode = await resolveMode({
       d,
       database,
@@ -128,6 +129,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       userId,
       chat,
     },);
+
     if (mode.handled) { return; }
     const { systemPromptOverride, } = mode;
 
@@ -139,6 +141,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       chatId,
       userId,
     },);
+
     if (!actor) { return; }
     const { characterId, characterName, } = actor;
 
@@ -152,6 +155,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       userId,
       chatId,
     },);
+
     if (!nsfwEligibility.allowed) {
       log.info("auto-gen: blocked before generation by NSFW precheck", {
         chatId,
@@ -159,6 +163,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
         userId,
         reason: nsfwEligibility.reason,
       },);
+
       return;
     }
 
@@ -179,6 +184,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       isGroupChat: chat?.type === "group",
       systemPromptOverride,
     },);
+
     const { resolved, prompt, } = prepared;
     resolvedModel = resolved.resolvedModel;
     resolvedProviderName = resolved.resolvedProviderName;
@@ -221,6 +227,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       userId,
       content: llm.content,
     },);
+
     if (!hooks.allowed) { return; }
 
     emitProgress("storing",);
@@ -237,6 +244,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       dominantEmotion: hooks.dominantEmotion,
       thinking: llm.thinking,
     },);
+
     log.debug("message stored", { messageId: stored.messageId, contentLength: llm.content.length, requestId, },);
     // BUG-regex-transform-runs-at-store-time-not-render-time: the store
     // path no longer applies transforms (they run at render-time in
@@ -277,6 +285,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       // Scope by userId — see BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
       asyncStore.fail(requestId, { userId, }, String(error,),);
     }
+
     await handleGenerationError(error, database, d, chatId, userId, attemptId, {
       model: resolvedModel,
       provider: resolvedProviderName,

@@ -74,11 +74,13 @@ describe("readRoutes coverage", () => {
     await insertMessages(db, chatId, owner, MessageRole.User, "hello", {
       id: firstMessageId,
     } as never,);
+
     parentId = uid();
     await insertMessages(db, chatId, owner, MessageRole.User, "parent", {
       id: parentId,
       swipe_index: 0,
     } as never,);
+
     swipeA = uid();
     swipeB = uid();
     await insertMessages(db, chatId, owner, MessageRole.Assistant, "swipe one", {
@@ -86,6 +88,7 @@ describe("readRoutes coverage", () => {
       parent_id: parentId,
       swipe_index: 1,
     } as never,);
+
     await insertMessages(db, chatId, owner, MessageRole.Assistant, "swipe two", {
       id: swipeB,
       parent_id: parentId,
@@ -106,6 +109,7 @@ describe("readRoutes coverage", () => {
     const variants = await app.handle(
       new Request(`http://localhost/api/messages/${swipeA}/variants`,),
     );
+
     expect(variants.status,).toBe(401,);
     const select = await app.handle(
       new Request(`http://localhost/api/messages/${swipeA}/variant`, {
@@ -114,6 +118,7 @@ describe("readRoutes coverage", () => {
         body: JSON.stringify({ variantIndex: 0, },),
       },),
     );
+
     expect(select.status,).toBe(401,);
   });
 
@@ -125,6 +130,7 @@ describe("readRoutes coverage", () => {
       data: { id: string; content: string }[];
       pagination: { total: number; page: number; pageSize: number };
     };
+
     expect(parsed.pagination.total,).toBeGreaterThanOrEqual(4,);
     expect(parsed.data.length,).toBeGreaterThan(0,);
     const first = parsed.data.find((m,) => m.id === firstMessageId);
@@ -136,12 +142,14 @@ describe("readRoutes coverage", () => {
     const page = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/messages?page=1&pageSize=1`,),
     );
+
     expect(page.status,).toBe(200,);
     const pageBody = (await page.json()) as { data: unknown[]; pageSize: number };
     expect(pageBody.data,).toHaveLength(1,);
     const filtered = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/messages?parentId=${parentId}`,),
     );
+
     expect(filtered.status,).toBe(200,);
     const filteredBody = (await filtered.json()) as { data: { id: string }[] };
     const ids = filteredBody.data.map((m,) => m.id);
@@ -174,6 +182,7 @@ describe("readRoutes coverage", () => {
     const page1 = await app.handle(
       new Request(`http://localhost/api/chats/${deepChatId}/messages?page=1&pageSize=${pageSize}`,),
     );
+
     expect(page1.status,).toBe(200,);
     const first = (await page1.json()) as {
       data: { content: string }[];
@@ -196,6 +205,7 @@ describe("readRoutes coverage", () => {
     const lastRes = await app.handle(
       new Request(`http://localhost/api/chats/${deepChatId}/messages?page=${lastPage}&pageSize=${pageSize}`,),
     );
+
     expect(lastRes.status,).toBe(200,);
     const last = (await lastRes.json()) as { data: { content: string }[] };
     expect(last.data.map((m,) => m.content),).toContain("deep-24",);
@@ -206,11 +216,13 @@ describe("readRoutes coverage", () => {
     const missing = await app.handle(
       new Request(`http://localhost/api/chats/${uid()}/messages`,),
     );
+
     expect(missing.status,).toBe(404,);
     const other = makeApp(db, stranger, "user",);
     const denied = await other.handle(
       new Request(`http://localhost/api/chats/${chatId}/messages`,),
     );
+
     expect(denied.status,).toBe(404,);
   });
 
@@ -230,12 +242,14 @@ describe("readRoutes coverage", () => {
       content_type: MessageContentType.ToolResult,
       metadata: JSON.stringify({ tool_call_id: "tc-9", tool_name: "stub_tool", tool_error: true, },),
     } as never,);
+
     const app = makeApp(db, owner, "user",);
     const res = await app.handle(new Request(`http://localhost/api/chats/${chatId}/messages?page=1&pageSize=50`,),);
     expect(res.status,).toBe(200,);
     const parsed = (await res.json()) as {
       data: { id: string; tool_name: string | null; tool_error: boolean }[];
     };
+
     const row = parsed.data.find((m,) => m.id === toolRowId);
     expect(row?.tool_name,).toBe("stub_tool",);
     expect(row?.tool_error,).toBe(true,);
@@ -252,6 +266,7 @@ describe("readRoutes coverage", () => {
     const denied = await other.handle(
       new Request(`http://localhost/api/messages/${firstMessageId}`,),
     );
+
     expect(denied.status,).toBe(404,);
   });
 
@@ -281,6 +296,7 @@ describe("readRoutes coverage", () => {
         body: JSON.stringify({ variantIndex: 1, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const parsed = (await res.json()) as { id: string };
     expect(parsed.id,).toBe(swipeB,);
@@ -295,6 +311,7 @@ describe("readRoutes coverage", () => {
         body: JSON.stringify({ variantIndex: 99, },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -307,6 +324,7 @@ describe("readRoutes coverage", () => {
         body: JSON.stringify({ variantIndex: 0, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });

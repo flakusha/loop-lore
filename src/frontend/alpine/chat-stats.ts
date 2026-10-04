@@ -29,6 +29,7 @@ export function formattedTokensPerSecond(msg: {
     const tps = msg.token_count_total / (msg.generation_time_ms / 1000);
     return `${tps.toFixed(1,)} t/s`;
   }
+
   return "";
 }
 

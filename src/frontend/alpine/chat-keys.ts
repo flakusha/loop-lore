@@ -29,6 +29,7 @@ export const chatKeys = {
       globalThis.__chatKeyId = null;
       return;
     }
+
     try {
       const res = await apiFetch(`/api/v1/chats/${chatId}/encryption-key`,);
       if (!res.ok) {
@@ -39,6 +40,7 @@ export const chatKeys = {
         globalThis.__chatKeyId = null;
         return;
       }
+
       const data = await res.json();
       this._chatKey = await browserImportKey(data.rawKey,);
       this._keyId = data.keyId;

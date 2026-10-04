@@ -46,6 +46,7 @@ describe("applyRewriteToMessage", () => {
         },)
         .execute();
     }
+
     chatId = uid();
     otherChatId = uid();
     await insertChats(db, "Rewrite Chat", owner, { id: chatId, } as never,);
@@ -83,9 +84,11 @@ describe("applyRewriteToMessage", () => {
       content: "rewritten text",
       config: testConfig,
     },);
+
     expect(result.ok,).toBe(true,);
     const row = await db.selectFrom("messages",).select(["content", "edited_at",],).where("id", "=", id,)
       .executeTakeFirst();
+
     expect(row?.content,).toBe("rewritten text",);
     expect(row?.edited_at,).not.toBeNull();
   });
@@ -99,6 +102,7 @@ describe("applyRewriteToMessage", () => {
       content: "x",
       config: testConfig,
     },);
+
     expect(result,).toEqual({ ok: false, error: "not_found", },);
   });
 
@@ -112,6 +116,7 @@ describe("applyRewriteToMessage", () => {
       content: "hijacked",
       config: testConfig,
     },);
+
     expect(result,).toEqual({ ok: false, error: "forbidden", },);
   });
 
@@ -125,6 +130,7 @@ describe("applyRewriteToMessage", () => {
       content: "hijacked",
       config: testConfig,
     },);
+
     expect(result,).toEqual({ ok: false, error: "cross_chat", },);
   });
 
@@ -139,9 +145,11 @@ describe("applyRewriteToMessage", () => {
       content: payload,
       config: testConfig,
     },);
+
     expect(result,).toEqual({ ok: true, content: payload, },);
     const row = await db.selectFrom("messages",).select(["content", "key_id", "content_plaintext",],)
       .where("id", "=", id,).executeTakeFirst();
+
     expect(row?.content,).toBe(payload,);
     expect(row?.key_id,).toBe("k9",);
     expect(row?.content_plaintext,).toBeNull();
@@ -154,6 +162,7 @@ describe("applyRewriteToMessage", () => {
       compressThreshold: 1024,
       compressAlgorithm: "gzip",
     },);
+
     expect(isEncryptionEnabled(),).toBe(true,);
     try {
       const encChatId = uid();
@@ -167,11 +176,13 @@ describe("applyRewriteToMessage", () => {
         content: "rewritten secret",
         config: testConfig,
       },);
+
       expect(result.ok,).toBe(true,);
       if (!result.ok) { throw new Error("expected ok",); }
       expect(result.content,).not.toBe("rewritten secret",);
       const row = await db.selectFrom("messages",).select(["content", "key_id", "content_plaintext",],)
         .where("id", "=", id,).executeTakeFirst();
+
       expect(row?.key_id,).not.toBeNull();
       expect(row?.content_plaintext,).toBe("rewritten secret",); // plaintext shadow mirrors PATCH edit route
     } finally {

@@ -41,6 +41,7 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
         return service;
       }
     }
+
     return null;
   }
 
@@ -191,6 +192,7 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
       .where("chat_id", "=", chatId,)
       .orderBy("created_at", "asc",)
       .execute();
+
     return rows as MusicLinkRow[];
   }
 

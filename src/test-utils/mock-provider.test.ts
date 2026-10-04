@@ -6,6 +6,7 @@ describe("test-utils mock-provider", () => {
   test("MockLLMProvider is a constructor", () => {
     expect(typeof MockLLMProvider,).toBe("function",);
   });
+
   test("MockLLMProvider can be instantiated", () => {
     const instance = new MockLLMProvider();
     expect(instance,).toBeDefined();

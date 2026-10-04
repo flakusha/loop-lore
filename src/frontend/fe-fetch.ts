@@ -84,6 +84,7 @@ export async function feFetch(
       if (path === "/views/login" || path === "/views/register") {
         return;
       }
+
       const redirect = encodeURIComponent(location.pathname + location.search,);
       location.assign(`/views/login?redirect=${redirect}`,);
     },
@@ -93,12 +94,14 @@ export async function feFetch(
     if (result.status === 401) {
       throw new Error("Unauthorized",);
     }
+
     // Attach the HTTP status so callers can distinguish expected states
     // (e.g. a designed 404 = "not created yet") from real failures in their
     // catch blocks — the Response is never surfaced for non-2xx bodies.
     if (result.error instanceof Error) {
       (result.error as Error & { status?: number }).status = result.status;
     }
+
     throw result.error;
   }
 
@@ -112,6 +115,7 @@ export async function feFetch(
   const body: BodyInit | null = [204, 205, 304,].includes(result.status,)
     ? null
     : result.data;
+
   return new Response(body, {
     status: result.status,
     headers: result.headers,

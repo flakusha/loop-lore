@@ -24,6 +24,7 @@ function rollOutcomes(outcomes: EncounterOutcome[],): EncounterOutcome[] {
       triggered.push(outcome,);
     }
   }
+
   return triggered;
 }
 
@@ -57,11 +58,14 @@ async function applyOutcomes(
         outcome.effects.intimacyChange > 0 ? "+" : ""
       }${outcome.effects.intimacyChange})`,
     );
+
     const intimacyDelta = outcome.effects.intimacyChange +
       await resolveAtmosphereBonus(db, locations, log, encounter.id,);
+
     for (const participant of encounter.participants) {
       await applyParticipantLegs(db, { intimacy, mood, log, encounter, outcome, intimacyDelta, participant, },);
     }
+
     await applyReputationLeg(db, log, encounter, outcome,);
   }
 }

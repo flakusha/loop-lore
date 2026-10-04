@@ -26,6 +26,7 @@ export const scoreLoreConsistency: Scorer = ({ response, lore, },) => {
         }
       }
     }
+
     const matchRatio = matchCount / responseEntities.size;
     if (matchRatio > 0.5) { score += 15; }
     else if (matchRatio > 0.2) { score += 8; }

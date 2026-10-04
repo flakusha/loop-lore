@@ -76,6 +76,7 @@ async function seedChat(
     world_id: worldId,
     current_location_id: opts.currentLocationId ?? null,
   },);
+
   // Seed at least one participant so the INNER JOIN keeps the chat visible.
   await insertChatParticipants(db, id, otherActorId,);
   return id;
@@ -107,6 +108,7 @@ describe("joinableRoutes", () => {
       owner_id: userId,
       actor_type: "user",
     },);
+
     await insertActors(db, "User B Actor", {
       id: otherUserId,
       user_id: otherUserId,
@@ -134,6 +136,7 @@ describe("joinableRoutes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/joinable",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -143,6 +146,7 @@ describe("joinableRoutes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/joinable",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as JoinableBody;
     expect(body.data,).toEqual([],);
@@ -159,6 +163,7 @@ describe("joinableRoutes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/joinable",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as JoinableBody;
     const ids = body.data.map((c,) => c.chatId);
@@ -174,6 +179,7 @@ describe("joinableRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/joinable?world=${worldA}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as JoinableBody;
     const ids = body.data.map((r,) => r.chatId);
@@ -188,6 +194,7 @@ describe("joinableRoutes", () => {
     const chatLocA = await seedChat(db, "LocA Chat", otherUserId, worldA, otherUserId, {
       currentLocationId: locationA,
     },);
+
     const chatLocB = await seedChat(db, "LocB Chat", otherUserId, worldB, otherUserId, {
       currentLocationId: locationB,
     },);
@@ -196,6 +203,7 @@ describe("joinableRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/joinable?location=${locationA}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as JoinableBody;
     const ids = body.data.map((r,) => r.chatId);
@@ -207,9 +215,11 @@ describe("joinableRoutes", () => {
     const both = await seedChat(db, "Both", otherUserId, worldA, otherUserId, {
       currentLocationId: locationA,
     },);
+
     const rightWorld = await seedChat(db, "Right world wrong loc", otherUserId, worldA, otherUserId, {
       currentLocationId: locationB,
     },);
+
     const rightLoc = await seedChat(db, "Right loc wrong world", otherUserId, worldB, otherUserId, {
       currentLocationId: locationA,
     },);
@@ -218,6 +228,7 @@ describe("joinableRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/joinable?world=${worldA}&location=${locationA}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as JoinableBody;
     const ids = body.data.map((r,) => r.chatId);
@@ -235,6 +246,7 @@ describe("joinableRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/joinable?world=${worldA}&limit=1&offset=0`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as JoinableBody;
     expect(body.data,).toHaveLength(1,);
@@ -248,6 +260,7 @@ describe("joinableRoutes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/joinable",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as JoinableBody;
     expect(body.pagination.pageSize,).toBe(20,);

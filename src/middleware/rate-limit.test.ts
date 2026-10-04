@@ -154,6 +154,7 @@ describe("createRateLimiter", () => {
     vi.advanceTimersByTime(100,);
     expect(limiter.check("k",),).toBe(true,);
   });
+
   test("sliding-window: 1 request per window stays under budget", () => {
     const limiter = makeLimiter(1000, 1,);
     expect(limiter.check("k",),).toBe(true,);
@@ -196,6 +197,7 @@ describe("createRateLimiter", () => {
     for (let i = 0; i < 100; i++) {
       expect(limiter.consume("ip", 0,).allowed,).toBe(true,);
     }
+
     // Within the window the 101st is still blocked at any t in [0, windowMs).
     expect(limiter.consume("ip", 0,).allowed,).toBe(false,);
     // Exactly at the boundary: still blocked (cutoff=0 keeps the t=0 stamps).
@@ -282,6 +284,7 @@ describe("createRateLimiter", () => {
       remaining: 0,
       resetSec: 1,
     };
+
     const headers = rateLimitHeaders(result, 0,);
     expect(headers["Retry-After"],).toBe("1",);
   });
@@ -341,6 +344,7 @@ describe("createRateLimiter", () => {
       expect(limiter.peek("ip",).allowed,).toBe(true,);
       limiter.record("ip",);
     }
+
     expect(limiter.peek("ip",).remaining,).toBe(0,);
     expect(limiter.peek("ip",).allowed,).toBe(false,);
     expect(limiter.consume("ip",).allowed,).toBe(false,);

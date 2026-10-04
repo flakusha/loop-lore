@@ -48,6 +48,7 @@ describe("PersonasService", () => {
         description: "Bad guy",
         title: "Dark Lord",
       },);
+
       const persona = await service.getById(id, userId,);
       expect(persona,).toBeTruthy();
       expect(persona!.name,).toBe("Villain",);
@@ -123,6 +124,7 @@ describe("PersonasService", () => {
         .where("user_id", "=", userId,)
         .where("is_default", "=", "default",)
         .execute();
+
       expect(defaults,).toHaveLength(1,);
       expect(defaults[0]!.id,).toBe(id2,);
     });
@@ -142,6 +144,7 @@ describe("PersonasService", () => {
         .where("user_id", "=", userId,)
         .where("is_default", "=", "default",)
         .executeTakeFirst();
+
       expect(def,).toBeTruthy();
       expect(def!.id,).toBe(id,);
     });
@@ -159,6 +162,7 @@ describe("PersonasService", () => {
         .where("user_id", "=", userId,)
         .where("is_default", "=", "default",)
         .executeTakeFirst();
+
       expect(def!.id,).toBe(id2,);
     });
   });
@@ -172,6 +176,7 @@ describe("PersonasService", () => {
         maxTokens: 4000,
         model: "gpt-4o",
       },);
+
       const persona = await service.getById(id, userId,);
       expect(persona,).toBeTruthy();
       expect(persona!.temperature!,).toBeCloseTo(0.8,);
@@ -186,6 +191,7 @@ describe("PersonasService", () => {
         maxTokens: 8000,
         model: "claude-3",
       }, userId,);
+
       const persona = await service.getById(id, userId,);
       expect(persona!.temperature!,).toBeCloseTo(1.2,);
       expect(persona!.max_tokens,).toBe(8000,);
@@ -200,11 +206,13 @@ describe("PersonasService", () => {
         maxTokens: 2000,
         model: "llama",
       },);
+
       await service.update(id, {
         temperature: null,
         maxTokens: null,
         model: null,
       }, userId,);
+
       const persona = await service.getById(id, userId,);
       expect(persona!.temperature,).toBeNull();
       expect(persona!.max_tokens,).toBeNull();

@@ -50,6 +50,7 @@ globalThis.document = {
   ...originalDocument,
   createElement: (tag: string,) => new FakeElement(tag,),
 } as unknown as Document;
+
 afterAll(() => {
   globalThis.document = originalDocument;
 },);

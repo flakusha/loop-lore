@@ -58,11 +58,13 @@ export function normalizeAudienceScope(value: unknown,): LoreScope | null {
     if (typeof locationId !== "string" || !isValidUuid(locationId,)) { return null; }
     normalized.subject = { kind: "location" as const, locationId, };
   }
+
   if (kind === "profession") {
     const profession = subject.profession;
     if (typeof profession !== "string" || profession.trim() === "") { return null; }
     normalized.subject = { kind: "profession" as const, profession, };
   }
+
   if (kind === "race") {
     const race = subject.race;
     if (typeof race !== "string" || race.trim() === "") { return null; }
@@ -96,6 +98,7 @@ export async function promoteEventToLore(
   const content = typeof event.data.newLoreEntry === "string"
     ? event.data.newLoreEntry.trim()
     : event.description?.trim();
+
   if (!content) { return null; }
 
   const name = typeof event.data.name === "string" ? event.data.name : null;

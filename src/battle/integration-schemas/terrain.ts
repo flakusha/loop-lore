@@ -43,8 +43,10 @@ export function getCombatTerrainModifiers(
         duration: 0,
         description: "Trees obstruct ranged attacks",
       },);
+
       break;
     }
+
     case "mountain": {
       modifiers.push({
         id: "mountain_defense",
@@ -63,8 +65,10 @@ export function getCombatTerrainModifiers(
         duration: 0,
         description: "Difficult terrain",
       },);
+
       break;
     }
+
     case "open":
     case "desert":
     case "urban":
@@ -72,6 +76,7 @@ export function getCombatTerrainModifiers(
       // Open ground / arid / built-up / enclosed — no combat modifiers modeled.
       break;
     }
+
     case "swamp": {
       modifiers.push({
         id: "swamp_speed",
@@ -90,8 +95,10 @@ export function getCombatTerrainModifiers(
         duration: 0,
         description: "Limited maneuverability",
       },);
+
       break;
     }
+
     case "underwater": {
       modifiers.push({
         id: "water_speed",
@@ -110,6 +117,7 @@ export function getCombatTerrainModifiers(
         duration: 0,
         description: "Water amplifies ice/water magic",
       },);
+
       break;
     }
   }

@@ -30,6 +30,7 @@ describe("API Keys E2E", () => {
         },
       },
     },);
+
     api = createClient(server.url,);
     await seedUsers(server.db,);
     await api.loginAs(SEED.user.username, SEED.user.password,);
@@ -51,6 +52,7 @@ describe("API Keys E2E", () => {
       provider: "test-provider",
       api_key: "sk-test-key-12345",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.provider,).toBe("test-provider",);
   });
@@ -73,6 +75,7 @@ describe("API Keys E2E", () => {
       provider: "nonexistent",
       api_key: "sk-test",
     },);
+
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(400,);
   });
@@ -81,6 +84,7 @@ describe("API Keys E2E", () => {
     const res = await api.get<Array<{ provider_name: string; created_at: string }>>(
       "/api/v1/user-api-keys",
     );
+
     expect(res.ok,).toBe(true,);
     const keys = res.data!;
     expect(keys.some((k,) => k.provider_name === "test-provider"),).toBe(true,);
@@ -95,6 +99,7 @@ describe("API Keys E2E", () => {
       provider: "test-provider",
       api_key: "sk-updated-key",
     },);
+
     expect(res.ok,).toBe(true,);
   });
 

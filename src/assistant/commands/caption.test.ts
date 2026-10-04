@@ -48,6 +48,7 @@ const registryPristine = (() => {
     return false;
   }
 })();
+
 const describeReal = registryPristine ? describe : describe.skip;
 
 let db: Kysely<DB>;
@@ -82,6 +83,7 @@ function makeStubProvider(caption: string,): LLMProvider {
     finishReason: "stop",
     usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2, },
   });
+
   return {
     capabilities: {
       type: "openai-compatible",
@@ -118,6 +120,7 @@ async function seedMessage(messageId: string,): Promise<string> {
     await insertChats(db, "Caption Chat", USER, { id: "chat-1", } as never,);
     chatSeeded = true;
   }
+
   await insertMessages(db, "chat-1", "caption-actor", MessageRole.User, "look at this", { id: messageId, } as never,);
   return messageId;
 }
@@ -128,6 +131,7 @@ async function seedImageAsset(messageId: string, ownerId?: string,): Promise<str
   await insertAssets(db, ownerId ?? USER, `${assetId}.png`, "image/png", AssetType.Image, 64, `/data/${assetId}.png`, {
     id: assetId,
   } as never,);
+
   await insertAssetLinks(db, assetId, AssetLinkEntity.Message, messageId,);
   return assetId;
 }
@@ -163,6 +167,7 @@ describeReal("/caption", () => {
       "an image",
       { id: withImage, } as never,
     );
+
     await seedImageAsset(withImage,);
 
     const result = await captionHandler()(

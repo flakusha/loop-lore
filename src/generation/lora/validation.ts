@@ -34,6 +34,7 @@ function validateRequiredString(
   if (typeof value !== "string" || value.trim().length === 0) {
     return `Invalid LoRA model ${label}`;
   }
+
   return null;
 }
 
@@ -46,14 +47,17 @@ function validateTriggerWords(words: unknown,): string | null {
   if (words === undefined) {
     return null;
   }
+
   if (!Array.isArray(words,)) {
     return "LoRA triggerWords must be an array";
   }
+
   for (const word of words) {
     if (typeof word !== "string") {
       return "LoRA triggerWords must contain only strings";
     }
   }
+
   return null;
 }
 
@@ -66,12 +70,15 @@ function validateRecommendedStrength(value: unknown,): string | null {
   if (value === undefined) {
     return null;
   }
+
   if (typeof value !== "number") {
     return "LoRA recommendedStrength must be a number";
   }
+
   if (value < LORA_STRENGTH_MIN || value > LORA_STRENGTH_MAX) {
     return `LoRA recommendedStrength must be between ${LORA_STRENGTH_MIN} and ${LORA_STRENGTH_MAX}`;
   }
+
   return null;
 }
 
@@ -190,6 +197,7 @@ export function isLoRAFilename(filename: string,): boolean {
       return true;
     }
   }
+
   return false;
 }
 

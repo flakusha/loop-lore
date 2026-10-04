@@ -76,6 +76,7 @@ describe("usersRoutes", () => {
         body: JSON.stringify({ displayName: "Updated Name", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { ok: boolean };
     expect(body.ok,).toBe(true,);
@@ -93,6 +94,7 @@ describe("usersRoutes", () => {
         body: JSON.stringify({ displayName: "No Auth", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -107,6 +109,7 @@ describe("usersRoutes", () => {
         body: JSON.stringify({ theme: "dark", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { ok: boolean };
     expect(body.ok,).toBe(true,);
@@ -155,6 +158,7 @@ describe("usersRoutes", () => {
         body: JSON.stringify({ displayName: "Self Updated", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const user = await db.selectFrom("users",).selectAll().where("id", "=", userId,).executeTakeFirst();
@@ -183,6 +187,7 @@ describe("usersRoutes", () => {
         body: JSON.stringify({ displayName: "Hacked", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -212,6 +217,7 @@ describe("usersRoutes", () => {
     const res = await adminApp.handle(
       new Request(`http://localhost/api/users/${targetId}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
 
     const user = await db.selectFrom("users",).selectAll().where("id", "=", targetId,).executeTakeFirst();

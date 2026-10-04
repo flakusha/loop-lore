@@ -41,26 +41,32 @@ export async function executeCase(
       out = runQuality(state, c, mode, mutationParams,);
       break;
     }
+
     case SyntheticDataType.TurnSequence: {
       out = runTurnSequence(state, c,);
       break;
     }
+
     case SyntheticDataType.QuestProgression: {
       out = await runQuestProgression(state, c,);
       break;
     }
+
     case SyntheticDataType.WorldStateTransition: {
       out = runWorldStateTransition(state, c,);
       break;
     }
+
     case SyntheticDataType.RegenerationCase: {
       out = runGeneric(c, regenerationLogic(state, c,),);
       break;
     }
+
     case SyntheticDataType.GmEscalation: {
       out = await runGmEscalation(state, c,);
       break;
     }
+
     default: {
       out = skippedResult(c.expected, `unsupported scenario type: ${String(row.type,)}`,);
     }

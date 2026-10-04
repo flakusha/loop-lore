@@ -39,6 +39,7 @@ export function exportBaseFields(character: CanonicalCharacter,): Record<string,
   if (character.alternate_greetings?.length) {
     data.alternate_greetings = character.alternate_greetings;
   }
+
   if (character.tags?.length) {
     data.tags = character.tags;
   }
@@ -93,6 +94,7 @@ export function exportLorebookEntries(
     if (options.includeUseRegex && entry.use_regex !== undefined) {
       mapped.use_regex = entry.use_regex;
     }
+
     if (entry.extensions !== undefined) {
       mapped.extensions = entry.extensions;
     }

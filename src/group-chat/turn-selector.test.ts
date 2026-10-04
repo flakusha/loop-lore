@@ -58,12 +58,14 @@ describe("selectNextGroupActor", () => {
         type: ChatType.Group,
         story_state: '{"isPaused":true}',
       },);
+
       const actorId = uid();
       await insertActors(db, "Luna", {
         id: actorId,
         actor_type: ActorType.Character,
         agent_type: AgentType.Ai,
       },);
+
       await insertChatParticipants(db, chatId, actorId,);
       expect(await selectNextGroupActor({ db, chatId, },),).toBeNull();
     } finally {
@@ -82,6 +84,7 @@ describe("selectNextGroupActor", () => {
         actor_type: ActorType.User,
         agent_type: AgentType.Ai,
       },);
+
       await insertChatParticipants(db, chatId, actorId,);
       expect(await selectNextGroupActor({ db, chatId, },),).toBeNull();
     } finally {
@@ -101,11 +104,13 @@ describe("selectNextGroupActor", () => {
         actor_type: ActorType.Character,
         agent_type: AgentType.Ai,
       },);
+
       await insertActors(db, "Max", {
         id: max,
         actor_type: ActorType.Character,
         agent_type: AgentType.Ai,
       },);
+
       await insertChatParticipants(db, chatId, luna,);
       await insertChatParticipants(db, chatId, max,);
       expect(await selectNextGroupActor({ db, chatId, userMessage: "@Max your turn", },),).toBe(
@@ -125,6 +130,7 @@ describe("selectNextGroupActor", () => {
         type: ChatType.Group,
         turn_strategy: TurnStrategy.RoundRobin,
       },);
+
       const luna = uid();
       const max = uid();
       await insertActors(db, "Luna", {
@@ -132,11 +138,13 @@ describe("selectNextGroupActor", () => {
         actor_type: ActorType.Character,
         agent_type: AgentType.Ai,
       },);
+
       await insertActors(db, "Max", {
         id: max,
         actor_type: ActorType.Character,
         agent_type: AgentType.Ai,
       },);
+
       await insertChatParticipants(db, chatId, luna,);
       await insertChatParticipants(db, chatId, max,);
       const selected = await selectNextGroupActor({ db, chatId, },);
@@ -159,6 +167,7 @@ describe("skip cooldown + mute parity (turn-talkativity-skip AC6 / moderation AC
       type: ChatType.Group,
       turn_strategy: TurnStrategy.RoundRobin,
     },);
+
     const luna = uid();
     const max = uid();
     await insertActors(db, "Luna", {
@@ -166,11 +175,13 @@ describe("skip cooldown + mute parity (turn-talkativity-skip AC6 / moderation AC
       actor_type: ActorType.Character,
       agent_type: AgentType.Ai,
     },);
+
     await insertActors(db, "Max", {
       id: max,
       actor_type: ActorType.Character,
       agent_type: AgentType.Ai,
     },);
+
     await insertChatParticipants(db, chatId, luna,);
     await insertChatParticipants(db, chatId, max,);
     return { chatId, luna, max, };
@@ -199,11 +210,13 @@ describe("skip cooldown + mute parity (turn-talkativity-skip AC6 / moderation AC
         "skips this beat (hold)",
         { content_type: MessageContentType.TurnSkip, },
       );
+
       const selected = await selectNextGroupActor({
         db,
         chatId,
         userMessage: "@Max, your turn",
       },);
+
       expect(selected,).toBe(luna,);
     } finally {
       await db.destroy();
@@ -220,6 +233,7 @@ describe("skip cooldown + mute parity (turn-talkativity-skip AC6 / moderation AC
         chatId,
         userMessage: "@Max, your turn",
       },);
+
       expect(selected,).toBe(luna,);
     } finally {
       await db.destroy();
@@ -235,6 +249,7 @@ describe("skip cooldown + mute parity (turn-talkativity-skip AC6 / moderation AC
         const selected = await selectNextGroupActor({ db, chatId, },);
         expect(selected,).toBe(luna,);
       }
+
       await mute(db, chatId, luna,);
       expect(await selectNextGroupActor({ db, chatId, },),).toBeNull();
     } finally {

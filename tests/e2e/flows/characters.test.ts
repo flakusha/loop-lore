@@ -30,12 +30,14 @@ describe("Characters E2E", () => {
         settings: "{}",
       },)
       .execute();
+
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);
 
   afterAll(async () => {
     await server.close();
   },);
+
   test("GET /api/v1/actors returns list", async () => {
     const res = await api.get<{ data: Array<{ id: string; display_name: string }> }>("/api/v1/actors",);
     expect(res.ok,).toBe(true,);
@@ -48,6 +50,7 @@ describe("Characters E2E", () => {
       actorType: "character",
       description: "A test character",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
   });
@@ -63,6 +66,7 @@ describe("Characters E2E", () => {
     const res = await api.get<{ id: string; display_name: string }>(
       `/api/v1/actors/${SEED.character.id}`,
     );
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.display_name,).toBe(SEED.character.name,);
   });
@@ -71,6 +75,7 @@ describe("Characters E2E", () => {
     const res = await api.get<{ spec: string; data: { name: string } }>(
       `/api/v1/actors/${SEED.character.id}/card`,
     );
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.spec,).toBe("chara_card_v2",);
     expect(res.data!.data.name,).toBe(SEED.character.name,);
@@ -81,6 +86,7 @@ describe("Characters E2E", () => {
       displayName: "Updated Character Name",
       dataVersion: 0,
     },);
+
     expect(res.ok,).toBe(true,);
 
     const getRes = await api.get<{ display_name: string }>(`/api/v1/actors/${SEED.character.id}`,);
@@ -92,6 +98,7 @@ describe("Characters E2E", () => {
     const createRes = await api.post<{ id: string }>("/api/v1/actors", {
       displayName: "To Delete",
     },);
+
     const actorId = createRes.data!.id;
 
     const deleteRes = await api.del(`/api/v1/actors/${actorId}`,);

@@ -85,9 +85,11 @@ export function createAssetProviders(
       .selectFrom("assets",)
       .select(["id", "filename", "alt_text", "asset_type", "mime_type", "visibility",],)
       .where("id", "=", query.q,);
+
     if (!isAdmin(scope, userRole,)) {
       qb = qb.where((eb,) => visibleAssetFilter(eb, scope.userId,));
     }
+
     const row = await qb.executeTakeFirst();
     if (row === undefined) { return []; }
     return [toHit(row, 1, "db",),];
@@ -101,9 +103,11 @@ export function createAssetProviders(
       .select(["id", "filename", "alt_text", "asset_type", "mime_type", "visibility",],)
       .orderBy("created_at", "desc",)
       .limit(ASSET_FUZZY_CANDIDATE_CAP,);
+
     if (!isAdmin(scope, userRole,)) {
       qb = qb.where((eb,) => visibleAssetFilter(eb, scope.userId,));
     }
+
     if (scope.visibility !== undefined) { qb = qb.where("visibility", "=", scope.visibility,); }
     if (assetType !== null) { qb = qb.where("asset_type", "=", assetType,); }
     const rows = await qb.execute();

@@ -35,6 +35,7 @@ export function safeTransition({ active, to, log, }: TransitionOpts,): void {
   if (!generationStatusMachine.canTransition(from, to,)) {
     log.warn("Invalid generation status transition", { from, to, attemptId: active.attemptId, },);
   }
+
   active.status = to;
 }
 
