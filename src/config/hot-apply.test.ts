@@ -107,6 +107,26 @@ describe("applyHotConfig", () => {
     expect(entries,).toContain(40,);
   },);
 
+  test("children created before setLevel see the new level", async () => {
+    const entries: number[] = [];
+    const root = getLogger();
+    const child = root.child({ module: "test", },);
+    child.addTransport({
+      name: "probe",
+      write: async (entry) => { entries.push(entry.level,); },
+      flush: async () => {},
+    },);
+
+    root.setLevel("error",);
+
+    child.debug("suppressed",);
+    child.error("emitted",);
+    await child.flush();
+
+    expect(entries,).not.toContain(10,);
+    expect(entries,).toContain(40,);
+  },);
+
   test("applies ageGate.enabled live", () => {
     const config = makeConfig();
     config.ageGate.enabled = true;

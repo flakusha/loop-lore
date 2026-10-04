@@ -26,8 +26,7 @@ class LightLogger implements Logger {
   private bindings: LoggerBindings;
   private readonly transports: Transport[];
   private readonly queue: AsyncLogQueue | null;
-  private threshold: number;
-  private levelString: LogLevel;
+  private levelBox: { name: LogLevel; threshold: number };
 
   /**
    * @param config
@@ -35,8 +34,7 @@ class LightLogger implements Logger {
    */
   constructor(config?: LightLoggerConfig, bindings?: LoggerBindings,) {
     this.bindings = bindings ?? {};
-    this.levelString = config?.level ?? "debug";
-    this.threshold = levelFromConfig(this.levelString,);
+    this.levelBox = { name: config?.level ?? "debug", threshold: levelFromConfig(config?.level ?? "debug"), };
     this.transports = config?.transports ?? [];
     if (this.transports.length > 0) {
       this.queue = new AsyncLogQueue(this.transports,);
@@ -59,7 +57,7 @@ class LightLogger implements Logger {
     meta?: Record<string, unknown>,
   ): void {
     const numericLevel = LogLevelNumeric[level];
-    if (!shouldEmit(numericLevel, this.threshold,)) { return; }
+    if (!shouldEmit(numericLevel, this.levelBox.threshold,)) { return; }
 
     if (this.queue) {
       const entry: LogEntry = {
@@ -154,10 +152,12 @@ class LightLogger implements Logger {
    * @param bindings
    */
   child(bindings: LoggerBindings,): Logger {
-    return new LightLogger(
-      { level: this.levelString, transports: this.transports, },
+    const child = new LightLogger(
+      { level: this.levelBox.name, transports: this.transports, },
       { ...this.bindings, ...bindings, },
     );
+    child.levelBox = this.levelBox;
+    return child;
   }
 
   /** */
@@ -185,8 +185,8 @@ class LightLogger implements Logger {
    * @param level
    */
   setLevel(level: LogLevel,): void {
-    this.levelString = level;
-    this.threshold = levelFromConfig(level,);
+    this.levelBox.name = level;
+    this.levelBox.threshold = levelFromConfig(level,);
   }
 }
 
