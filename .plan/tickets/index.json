@@ -77,6 +77,22 @@
     "source": ".plan/tickets/BUG-achievement-claimrewards-double-credit-race-and-lost-reward-.md",
     "status": "Done"
   },
+  "BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS": {
+    "hash": "707ea1a",
+    "git_issue": "707ea1a",
+    "extid": "BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS",
+    "type": "BUG",
+    "title": "activitypub_actor_keys table and src/crypto/activitypub-keys.ts have no production reader",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "federation",
+      "dead-code"
+    ],
+    "source": ".plan/tickets/BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys.md",
+    "status": "Not Started"
+  },
   "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY": {
     "epic": "",
     "extid": "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY",
@@ -1040,6 +1056,19 @@
     "title": "BUG: CSRF verification accepts cookie-only token, defeating double-submit",
     "type": "BUG"
   },
+  "BUG-BUG-EMOTION-AVATAR-JOB-ROUTES-AUTHORIZE-ONLY-THE-PATH-ACTOR-": {
+    "hash": "4e483df",
+    "git_issue": "4e483df",
+    "extid": "BUG-BUG-EMOTION-AVATAR-JOB-ROUTES-AUTHORIZE-ONLY-THE-PATH-ACTOR-",
+    "type": "BUG",
+    "title": "emotion-avatar job routes authorize only the path actor, so any owner can read and cancel another user's job",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-.md",
+    "status": "Not Started"
+  },
   "BUG-BUG-HALLUCINATION-GUARD-RUNS-OUTSIDE-TRY-CATCH-AFTER-MESSAGE": {
     "epic": "",
     "extid": "BUG-BUG-HALLUCINATION-GUARD-RUNS-OUTSIDE-TRY-CATCH-AFTER-MESSAGE",
@@ -1144,6 +1173,19 @@
     "tags": [],
     "title": "BUG: message-seen re-mark clobbers first-seen timestamp",
     "type": "BUG"
+  },
+  "BUG-BUG-ORPHANED-REMNANTS-OF-THE-REMOVED-GATE-IN-THE-CHECK-RUNNE": {
+    "hash": "f6705a5",
+    "git_issue": "f6705a5",
+    "extid": "BUG-BUG-ORPHANED-REMNANTS-OF-THE-REMOVED-GATE-IN-THE-CHECK-RUNNE",
+    "type": "BUG",
+    "title": "orphaned remnants of the removed `test - unit` gate in the check runner (dead SCOPED_TESTS, stale HEAVY_NAMES entry, stale comment)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-bug-orphaned-remnants-of-the-removed-gate-in-the-check-runne.md",
+    "status": "Not Started"
   },
   "BUG-BUG-RANDOM-EVENTS-GENERATOR-IS-DEAD-INCOMPLETE-PHANTOM-PARAM": {
     "epic": "",
@@ -1469,6 +1511,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o.md",
     "status": "done"
+  },
+  "BUG-CHARACTERS-FLOW-BROWSER-E2E-TRIPS-ON-THE-BY-DESIGN-GAME-STAT": {
+    "hash": "3a5a9ab",
+    "git_issue": "3a5a9ab",
+    "extid": "BUG-CHARACTERS-FLOW-BROWSER-E2E-TRIPS-ON-THE-BY-DESIGN-GAME-STAT",
+    "type": "BUG",
+    "title": "characters-flow browser e2e trips on the by-design game-state 404",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-characters-flow-browser-e2e-trips-on-the-by-design-game-stat.md",
+    "status": "Not Started"
   },
   "BUG-CHARACTERS-RESOLVECHARACTERTRAITS-SILENTLY-DROPS-WORLD-LAYER": {
     "epic": "",
@@ -3240,6 +3295,19 @@
     "title": "getClientIp is untestable without a live Bun server — IP source not injectable",
     "type": "BUG"
   },
+  "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURCING": {
+    "hash": "29eca13",
+    "extid": "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURCING",
+    "type": "BUG",
+    "title": "getClientIp is untestable without a live Bun server — IP sourcing has no unit-level seam",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-api-rate-limiting",
+    "tags": [],
+    "source": ".plan/tickets/BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing.md",
+    "status": "Not Started",
+    "git_issue": "29eca13"
+  },
   "BUG-GETCLIENTIP-TRUSTS-SPOOFABLE-PROXY-HEADERS-UNCONDITIONALLY": {
     "epic": "",
     "extid": "BUG-GETCLIENTIP-TRUSTS-SPOOFABLE-PROXY-HEADERS-UNCONDITIONALLY",
@@ -4350,6 +4418,22 @@
     "title": "mention-parser regex fails on multi-word names",
     "type": "BUG"
   },
+  "BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI": {
+    "hash": "4b503b5",
+    "git_issue": "4b503b5",
+    "extid": "BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI",
+    "type": "BUG",
+    "title": "mesh-deliver accepts envelopes from untrusted or unknown origins without a peer-trust check",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "security",
+      "federation"
+    ],
+    "source": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md",
+    "status": "Not Started"
+  },
   "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH": {
     "epic": "",
     "extid": "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH",
@@ -5395,6 +5479,19 @@
     "title": "Rate-limiter module singletons shared across test files cause cross-file flakiness",
     "type": "BUG"
   },
+  "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER": {
+    "hash": "e09e0f9",
+    "extid": "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER",
+    "type": "BUG",
+    "title": "Raw Buffer.allocUnsafe/alloc exists in src/ alongside SafeBuffer guards — inconsistency at 0 sites",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-api-validation-guardrails",
+    "tags": [],
+    "source": ".plan/tickets/BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer.md",
+    "status": "Not Started",
+    "git_issue": "e09e0f9"
+  },
   "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER-65-SITES": {
     "epic": "epic-code-quality",
     "extid": "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER-65-SITES",
@@ -5407,6 +5504,19 @@
     "tags": [],
     "title": "raw Buffer.from/alloc inconsistent with safe-buffer — 65 sites",
     "type": "BUG"
+  },
+  "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON": {
+    "hash": "e7be482",
+    "extid": "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON",
+    "type": "BUG",
+    "title": "Raw JSON.parse used outside safeJson — 3 sites need audit for untrusted input handling",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-api-validation-guardrails",
+    "tags": [],
+    "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json.md",
+    "status": "Not Started",
+    "git_issue": "e7be482"
   },
   "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON-3-SITES": {
     "epic": "epic-code-quality",
@@ -6875,6 +6985,19 @@
     "tags": [],
     "title": "workflow confirm session treats optional steps as required",
     "type": "BUG"
+  },
+  "BUG-WORKTREE-COMMAND-SCRIPTS-SPAWN-GIT-WITH-NO-ISOLATED-ENV": {
+    "hash": "90793fc",
+    "git_issue": "90793fc",
+    "extid": "BUG-WORKTREE-COMMAND-SCRIPTS-SPAWN-GIT-WITH-NO-ISOLATED-ENV",
+    "type": "BUG",
+    "title": "worktree command scripts spawn git with no isolated env",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-worktree-command-scripts-spawn-git-with-no-isolated-env.md",
+    "status": "done"
   },
   "BUG-WORKTREE-FINALIZE-MUST-HARD-FAIL-ON-NON-MERGEABLE-OR-MULTI-M": {
     "epic": "epic-tooling-improvement",
@@ -20936,6 +21059,18 @@
     "title": "Assistant/GM Flows Reconciliation",
     "type": "TASK"
   },
+  "TASK-ASSISTANT-GM-HANDOFF": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-GM-HANDOFF",
+    "type": "TASK",
+    "title": "Assistant-GM handoff",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-assistant-gm-flows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-gm-handoff.md",
+    "status": "Not Started"
+  },
   "TASK-ASSISTANT-LOREBOOK-TOOLS": {
     "epic": "",
     "extid": "TASK-ASSISTANT-LOREBOOK-TOOLS",
@@ -21378,6 +21513,19 @@
     "tags": [],
     "title": "Audit follow-up: worktree finalize reapStale() void dead code",
     "type": "TASK"
+  },
+  "TASK-AUDIT-ISOLATION-FOR-KNOWN-INFORMATION-ASYMMETRY-CASES": {
+    "hash": "c01549d",
+    "git_issue": "c01549d",
+    "extid": "TASK-AUDIT-ISOLATION-FOR-KNOWN-INFORMATION-ASYMMETRY-CASES",
+    "type": "TASK",
+    "title": "Audit isolation for known information-asymmetry cases",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-audit-isolation-for-known-information-asymmetry-cases.md",
+    "status": "Not Started"
   },
   "TASK-AUDIT-NEW-TEST-FILES-FOR-CROSS-FILE-PROCESS-COLLISIONS-BEFOR": {
     "hash": "b6c8aa8",
@@ -27518,6 +27666,32 @@
     "title": "docs remove deleted scenario catalog tooling references",
     "type": "TASK"
   },
+  "TASK-DOCS-SPEC-ANALYTICS-OBSERVABILITY": {
+    "hash": "b75700b",
+    "git_issue": "b75700b",
+    "extid": "TASK-DOCS-SPEC-ANALYTICS-OBSERVABILITY",
+    "type": "TASK",
+    "title": "Docs spec — analytics & observability",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-docs-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-spec-analytics-observability.md",
+    "status": "Not Started"
+  },
+  "TASK-DOCS-SPEC-GROUP-CHAT": {
+    "hash": "05b8b7b",
+    "git_issue": "05b8b7b",
+    "extid": "TASK-DOCS-SPEC-GROUP-CHAT",
+    "type": "TASK",
+    "title": "Docs spec — group-chat",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-docs-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-spec-group-chat.md",
+    "status": "Not Started"
+  },
   "TASK-DOCS-UI-ENDPOINT-LINKAGE": {
     "epic": "epic-docs-reconciliation.md",
     "extid": "TASK-DOCS-UI-ENDPOINT-LINKAGE",
@@ -27542,6 +27716,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-document-asset-relation-graph-on-2d-canvas.md",
+    "status": "Not Started"
+  },
+  "TASK-DOCUMENT-MEMORY-ISOLATION-CONTRACT-IN-DOCS-SPEC-MEMORY-SYSTE": {
+    "hash": "488ff5f",
+    "git_issue": "488ff5f",
+    "extid": "TASK-DOCUMENT-MEMORY-ISOLATION-CONTRACT-IN-DOCS-SPEC-MEMORY-SYSTE",
+    "type": "TASK",
+    "title": "Document memory isolation contract in docs/spec/memory-system.md",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-document-memory-isolation-contract-in-docs-spec-memory-syste.md",
     "status": "Not Started"
   },
   "TASK-DOCUMENT-PROCESSING-PIPELINE": {
@@ -28315,6 +28502,19 @@
     "tags": [],
     "title": "Enemies & Monsters Systems",
     "type": "TASK"
+  },
+  "TASK-ENFORCE-VIEWER-ID-CONTRACT-IN-MEMORY-INJECTION": {
+    "hash": "b64e902",
+    "git_issue": "b64e902",
+    "extid": "TASK-ENFORCE-VIEWER-ID-CONTRACT-IN-MEMORY-INJECTION",
+    "type": "TASK",
+    "title": "Enforce viewer-id contract in memory injection",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-enforce-viewer-id-contract-in-memory-injection.md",
+    "status": "Not Started"
   },
   "TASK-ENHANCE-PREVIEW-SHARED-DRAFT-STORE": {
     "epic": "",
@@ -32256,6 +32456,19 @@
     "title": "Licensing",
     "type": "TASK"
   },
+  "TASK-LINK-MEMORIES-TO-WORLD-TIMELINE-EVENTS": {
+    "hash": "d6df60b",
+    "git_issue": "d6df60b",
+    "extid": "TASK-LINK-MEMORIES-TO-WORLD-TIMELINE-EVENTS",
+    "type": "TASK",
+    "title": "Link memories to world-timeline events",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-link-memories-to-world-timeline-events.md",
+    "status": "Not Started"
+  },
   "TASK-LINK-NPC-INVENTORY": {
     "epic": "epic-item-systems-unification",
     "extid": "TASK-LINK-NPC-INVENTORY",
@@ -33691,6 +33904,19 @@
     "title": "Memory Selection UI",
     "type": "TASK"
   },
+  "TASK-MEMORY-SNAPSHOT-RESTORE-WITH-WORLD-STATE-VERSION": {
+    "hash": "47e6692",
+    "git_issue": "47e6692",
+    "extid": "TASK-MEMORY-SNAPSHOT-RESTORE-WITH-WORLD-STATE-VERSION",
+    "type": "TASK",
+    "title": "Memory snapshot/restore with world-state version",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-memory-snapshot-restore-with-world-state-version.md",
+    "status": "Not Started"
+  },
   "TASK-MEMORY-TIMESCAPE": {
     "epic": "`epic-memory-knowledge-systems.md` (FEA-2026-058)",
     "extid": "TASK-MEMORY-TIMESCAPE",
@@ -34080,6 +34306,24 @@
     "tags": [],
     "title": "Wire `requestIdMiddleware` into Elysia `.derive()` chain",
     "type": "TASK"
+  },
+  "TASK-MIGRATE-SAFE-FETCH-RETRY-LOOP-TO-EFFECT-SCHEDULE": {
+    "hash": "0c6e279",
+    "extid": "TASK-MIGRATE-SAFE-FETCH-RETRY-LOOP-TO-EFFECT-SCHEDULE",
+    "type": "TASK",
+    "title": "Migrate safe-fetch retry loop to Effect Schedule",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-effect-v4-adoption-evaluation",
+    "tags": [
+      "effect",
+      "retry",
+      "refactor",
+      "evaluation"
+    ],
+    "source": ".plan/tickets/TASK-migrate-safe-fetch-retry-loop-to-effect-schedule.md",
+    "status": "done",
+    "git_issue": "0c6e279"
   },
   "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR": {
     "epic": "",
@@ -34643,6 +34887,19 @@
     "tags": [],
     "title": "NPC Behavior State Machine Foundation",
     "type": "TASK"
+  },
+  "TASK-NPC-BOSS-RETINUE-LORE-ACCESS-GATING-TEST": {
+    "hash": "538be86",
+    "git_issue": "538be86",
+    "extid": "TASK-NPC-BOSS-RETINUE-LORE-ACCESS-GATING-TEST",
+    "type": "TASK",
+    "title": "NPC-boss retinue lore-access gating test",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-boss-retinue-lore-access-gating-test.md",
+    "status": "Not Started"
   },
   "TASK-NPC-BOSS-RETINUE-LORE-AND-RELATIONSHIP-SERVICE": {
     "epic": "epic-npcs",
@@ -42753,6 +43010,19 @@
     "source": ".plan/tickets/TASK-video-template-schema.md",
     "status": "Not Started"
   },
+  "TASK-VISIBILITY-REPORT-FOR-CHAT-ADMINS": {
+    "hash": "6b3558a",
+    "git_issue": "6b3558a",
+    "extid": "TASK-VISIBILITY-REPORT-FOR-CHAT-ADMINS",
+    "type": "TASK",
+    "title": "Visibility report for chat admins",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-visibility-report-for-chat-admins.md",
+    "status": "Not Started"
+  },
   "TASK-VISUAL-NOVEL-MODE": {
     "epic": "Epic Immersion & Presentation (sub-task)",
     "extid": "TASK-VISUAL-NOVEL-MODE",
@@ -44238,275 +44508,5 @@
     "tags": [],
     "title": "nsfw-audit view route has no inline authz guard",
     "type": "WIRE"
-  },
-  "BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS": {
-    "hash": "707ea1a",
-    "git_issue": "707ea1a",
-    "extid": "BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS",
-    "type": "BUG",
-    "title": "activitypub_actor_keys table and src/crypto/activitypub-keys.ts have no production reader",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [
-      "federation",
-      "dead-code"
-    ],
-    "source": ".plan/tickets/BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys.md",
-    "status": "Not Started"
-  },
-  "BUG-BUG-EMOTION-AVATAR-JOB-ROUTES-AUTHORIZE-ONLY-THE-PATH-ACTOR-": {
-    "hash": "4e483df",
-    "git_issue": "4e483df",
-    "extid": "BUG-BUG-EMOTION-AVATAR-JOB-ROUTES-AUTHORIZE-ONLY-THE-PATH-ACTOR-",
-    "type": "BUG",
-    "title": "emotion-avatar job routes authorize only the path actor, so any owner can read and cancel another user's job",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-.md",
-    "status": "Not Started"
-  },
-  "BUG-BUG-ORPHANED-REMNANTS-OF-THE-REMOVED-GATE-IN-THE-CHECK-RUNNE": {
-    "hash": "f6705a5",
-    "git_issue": "f6705a5",
-    "extid": "BUG-BUG-ORPHANED-REMNANTS-OF-THE-REMOVED-GATE-IN-THE-CHECK-RUNNE",
-    "type": "BUG",
-    "title": "orphaned remnants of the removed `test - unit` gate in the check runner (dead SCOPED_TESTS, stale HEAVY_NAMES entry, stale comment)",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-bug-orphaned-remnants-of-the-removed-gate-in-the-check-runne.md",
-    "status": "Not Started"
-  },
-  "BUG-CHARACTERS-FLOW-BROWSER-E2E-TRIPS-ON-THE-BY-DESIGN-GAME-STAT": {
-    "hash": "3a5a9ab",
-    "git_issue": "3a5a9ab",
-    "extid": "BUG-CHARACTERS-FLOW-BROWSER-E2E-TRIPS-ON-THE-BY-DESIGN-GAME-STAT",
-    "type": "BUG",
-    "title": "characters-flow browser e2e trips on the by-design game-state 404",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-characters-flow-browser-e2e-trips-on-the-by-design-game-stat.md",
-    "status": "Not Started"
-  },
-  "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURCING": {
-    "hash": "29eca13",
-    "extid": "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURCING",
-    "type": "BUG",
-    "title": "getClientIp is untestable without a live Bun server — IP sourcing has no unit-level seam",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "epic-api-rate-limiting",
-    "tags": [],
-    "source": ".plan/tickets/BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing.md",
-    "status": "Not Started",
-    "git_issue": "29eca13"
-  },
-  "BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI": {
-    "hash": "4b503b5",
-    "git_issue": "4b503b5",
-    "extid": "BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI",
-    "type": "BUG",
-    "title": "mesh-deliver accepts envelopes from untrusted or unknown origins without a peer-trust check",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [
-      "security",
-      "federation"
-    ],
-    "source": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md",
-    "status": "Not Started"
-  },
-  "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER": {
-    "hash": "e09e0f9",
-    "extid": "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER",
-    "type": "BUG",
-    "title": "Raw Buffer.allocUnsafe/alloc exists in src/ alongside SafeBuffer guards — inconsistency at 0 sites",
-    "label": "bug",
-    "priority": "high",
-    "epic": "epic-api-validation-guardrails",
-    "tags": [],
-    "source": ".plan/tickets/BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer.md",
-    "status": "Not Started",
-    "git_issue": "e09e0f9"
-  },
-  "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON": {
-    "hash": "e7be482",
-    "extid": "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON",
-    "type": "BUG",
-    "title": "Raw JSON.parse used outside safeJson — 3 sites need audit for untrusted input handling",
-    "label": "bug",
-    "priority": "high",
-    "epic": "epic-api-validation-guardrails",
-    "tags": [],
-    "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json.md",
-    "status": "Not Started",
-    "git_issue": "e7be482"
-  },
-  "BUG-WORKTREE-COMMAND-SCRIPTS-SPAWN-GIT-WITH-NO-ISOLATED-ENV": {
-    "hash": "90793fc",
-    "git_issue": "90793fc",
-    "extid": "BUG-WORKTREE-COMMAND-SCRIPTS-SPAWN-GIT-WITH-NO-ISOLATED-ENV",
-    "type": "BUG",
-    "title": "worktree command scripts spawn git with no isolated env",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-worktree-command-scripts-spawn-git-with-no-isolated-env.md",
-    "status": "done"
-  },
-  "TASK-ASSISTANT-GM-HANDOFF": {
-    "hash": "pending",
-    "extid": "TASK-ASSISTANT-GM-HANDOFF",
-    "type": "TASK",
-    "title": "Assistant-GM handoff",
-    "label": "task",
-    "priority": "high",
-    "epic": "epic-assistant-gm-flows",
-    "tags": [],
-    "source": ".plan/tickets/TASK-assistant-gm-handoff.md",
-    "status": "Not Started"
-  },
-  "TASK-AUDIT-ISOLATION-FOR-KNOWN-INFORMATION-ASYMMETRY-CASES": {
-    "hash": "c01549d",
-    "git_issue": "c01549d",
-    "extid": "TASK-AUDIT-ISOLATION-FOR-KNOWN-INFORMATION-ASYMMETRY-CASES",
-    "type": "TASK",
-    "title": "Audit isolation for known information-asymmetry cases",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-memory-knowledge-systems",
-    "tags": [],
-    "source": ".plan/tickets/TASK-audit-isolation-for-known-information-asymmetry-cases.md",
-    "status": "Not Started"
-  },
-  "TASK-DOCS-SPEC-ANALYTICS-OBSERVABILITY": {
-    "hash": "b75700b",
-    "git_issue": "b75700b",
-    "extid": "TASK-DOCS-SPEC-ANALYTICS-OBSERVABILITY",
-    "type": "TASK",
-    "title": "Docs spec — analytics & observability",
-    "label": "task",
-    "priority": "Medium",
-    "epic": "epic-docs-reconciliation",
-    "tags": [],
-    "source": ".plan/tickets/TASK-docs-spec-analytics-observability.md",
-    "status": "Not Started"
-  },
-  "TASK-DOCS-SPEC-GROUP-CHAT": {
-    "hash": "05b8b7b",
-    "git_issue": "05b8b7b",
-    "extid": "TASK-DOCS-SPEC-GROUP-CHAT",
-    "type": "TASK",
-    "title": "Docs spec — group-chat",
-    "label": "task",
-    "priority": "High",
-    "epic": "epic-docs-reconciliation",
-    "tags": [],
-    "source": ".plan/tickets/TASK-docs-spec-group-chat.md",
-    "status": "Not Started"
-  },
-  "TASK-DOCUMENT-MEMORY-ISOLATION-CONTRACT-IN-DOCS-SPEC-MEMORY-SYSTE": {
-    "hash": "488ff5f",
-    "git_issue": "488ff5f",
-    "extid": "TASK-DOCUMENT-MEMORY-ISOLATION-CONTRACT-IN-DOCS-SPEC-MEMORY-SYSTE",
-    "type": "TASK",
-    "title": "Document memory isolation contract in docs/spec/memory-system.md",
-    "label": "task",
-    "priority": "low",
-    "epic": "epic-memory-knowledge-systems",
-    "tags": [],
-    "source": ".plan/tickets/TASK-document-memory-isolation-contract-in-docs-spec-memory-syste.md",
-    "status": "Not Started"
-  },
-  "TASK-ENFORCE-VIEWER-ID-CONTRACT-IN-MEMORY-INJECTION": {
-    "hash": "b64e902",
-    "git_issue": "b64e902",
-    "extid": "TASK-ENFORCE-VIEWER-ID-CONTRACT-IN-MEMORY-INJECTION",
-    "type": "TASK",
-    "title": "Enforce viewer-id contract in memory injection",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-memory-knowledge-systems",
-    "tags": [],
-    "source": ".plan/tickets/TASK-enforce-viewer-id-contract-in-memory-injection.md",
-    "status": "Not Started"
-  },
-  "TASK-LINK-MEMORIES-TO-WORLD-TIMELINE-EVENTS": {
-    "hash": "d6df60b",
-    "git_issue": "d6df60b",
-    "extid": "TASK-LINK-MEMORIES-TO-WORLD-TIMELINE-EVENTS",
-    "type": "TASK",
-    "title": "Link memories to world-timeline events",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-memory-knowledge-systems",
-    "tags": [],
-    "source": ".plan/tickets/TASK-link-memories-to-world-timeline-events.md",
-    "status": "Not Started"
-  },
-  "TASK-MEMORY-SNAPSHOT-RESTORE-WITH-WORLD-STATE-VERSION": {
-    "hash": "47e6692",
-    "git_issue": "47e6692",
-    "extid": "TASK-MEMORY-SNAPSHOT-RESTORE-WITH-WORLD-STATE-VERSION",
-    "type": "TASK",
-    "title": "Memory snapshot/restore with world-state version",
-    "label": "task",
-    "priority": "low",
-    "epic": "epic-memory-knowledge-systems",
-    "tags": [],
-    "source": ".plan/tickets/TASK-memory-snapshot-restore-with-world-state-version.md",
-    "status": "Not Started"
-  },
-  "TASK-MIGRATE-SAFE-FETCH-RETRY-LOOP-TO-EFFECT-SCHEDULE": {
-    "hash": "0c6e279",
-    "extid": "TASK-MIGRATE-SAFE-FETCH-RETRY-LOOP-TO-EFFECT-SCHEDULE",
-    "type": "TASK",
-    "title": "Migrate safe-fetch retry loop to Effect Schedule",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-effect-v4-adoption-evaluation",
-    "tags": [
-      "effect",
-      "retry",
-      "refactor",
-      "evaluation"
-    ],
-    "source": ".plan/tickets/TASK-migrate-safe-fetch-retry-loop-to-effect-schedule.md",
-    "status": "done",
-    "git_issue": "0c6e279"
-  },
-  "TASK-NPC-BOSS-RETINUE-LORE-ACCESS-GATING-TEST": {
-    "hash": "538be86",
-    "git_issue": "538be86",
-    "extid": "TASK-NPC-BOSS-RETINUE-LORE-ACCESS-GATING-TEST",
-    "type": "TASK",
-    "title": "NPC-boss retinue lore-access gating test",
-    "label": "task",
-    "priority": "low",
-    "epic": "epic-memory-knowledge-systems",
-    "tags": [],
-    "source": ".plan/tickets/TASK-npc-boss-retinue-lore-access-gating-test.md",
-    "status": "Not Started"
-  },
-  "TASK-VISIBILITY-REPORT-FOR-CHAT-ADMINS": {
-    "hash": "6b3558a",
-    "git_issue": "6b3558a",
-    "extid": "TASK-VISIBILITY-REPORT-FOR-CHAT-ADMINS",
-    "type": "TASK",
-    "title": "Visibility report for chat admins",
-    "label": "task",
-    "priority": "low",
-    "epic": "epic-memory-knowledge-systems",
-    "tags": [],
-    "source": ".plan/tickets/TASK-visibility-report-for-chat-admins.md",
-    "status": "Not Started"
   }
 }
