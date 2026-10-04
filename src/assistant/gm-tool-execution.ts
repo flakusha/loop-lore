@@ -16,7 +16,6 @@
  * runs after `dispatchCommand` declined the message.
  */
 import type { Kysely, } from "kysely";
-import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { jsonResponse, } from "../routes/http-utils";
@@ -42,7 +41,8 @@ const TOOL_COMMANDS: Partial<Record<GmToolName, { command: string; prefixArgs?: 
 /** Options for {@link executeGmToolRequest}. */
 export interface GmToolRequestOptions {
   database: Kysely<DB>;
-  config: Config;
+  /** App config — typed as the detector accepts it (single source of truth). */
+  config: Parameters<typeof detectGmTool>[1];
   actorId: string;
   chatId: string;
   content: string;

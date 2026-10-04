@@ -16,6 +16,7 @@ import type { AuxTaskName, } from "./types";
 const TASK_MARKERS: readonly (readonly [AuxTaskName, string,])[] = [
   ["transition", "transition detector",],
   ["intent", "Classify the user message intent",],
+  ["intent", "You are a turn director for a roleplay chat",],
   ["gm-tool", "GM tool detector",],
   ["nsfw", "content rating classifier",],
   ["moderation", "content moderation classifier",],

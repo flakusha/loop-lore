@@ -18,7 +18,7 @@
  * configured, falling back to the auxiliary role.
  */
 import type { Kysely, } from "kysely";
-import { callAux, } from "../aux-pipeline";
+import { callAux, } from "../aux-pipeline/index";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
