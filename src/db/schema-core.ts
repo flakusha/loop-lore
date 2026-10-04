@@ -2269,3 +2269,13 @@ export interface ChatWardrobeOverrides {
   updated_at: Generated<string>;
 }
 
+// ── mesh_dek_exports ────────────────────────────────────────────
+export interface MeshDekExports {
+  id: Generated<string>;
+  chat_id: string;
+  key_id: string;
+  peer_origin: string;
+  sender_origin: string;
+  created_at: Generated<string>;
+  revoked_at: string | null;
+}
