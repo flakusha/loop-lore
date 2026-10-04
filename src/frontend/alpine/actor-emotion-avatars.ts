@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 335
+// size-allow: 345
 
 // ── Character-scoped emotion avatar batch generation panel.
 // Drives:
@@ -80,8 +80,19 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
         this.jobsError = t("status.emotionAvatarsLoadFailed",);
         return;
       }
+
       const body = (await res.json()) as { data?: EmotionAvatarJob[] } | EmotionAvatarJob[];
+      const oldProgress = new Map<string, JobProgress>();
+      for (const j of this.jobs) {
+        if (j.progress) { oldProgress.set(j.id, j.progress,); }
+      }
+
       this.jobs = Array.isArray(body,) ? body : (body.data ?? []);
+      for (const j of this.jobs) {
+        const p = oldProgress.get(j.id,);
+        if (p) { j.progress = p; }
+      }
+
       // Live progress over SSE; polling below remains the fallback.
       this._connectActiveJobStreams();
     } catch (error) {
@@ -105,6 +116,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
       this.error = t("status.emotionAvatarsBaseRequired",);
       return false;
     }
+
     this.busy = true;
     this.error = "";
     this.message = "";
@@ -119,13 +131,16 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
           negativePrompt: this.negativePrompt || undefined,
         },),
       },);
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({} as Record<string, unknown>)) as {
           message?: string;
         };
+
         this.error = body.message ?? t("status.emotionAvatarsStartFailed",);
         return false;
       }
+
       this.message = t("status.emotionAvatarsStarted",);
       await this.listJobs();
       this.startPolling();
@@ -149,13 +164,16 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
         `/api/v1/actors/${actorId}/emotion-avatars/jobs/${jobId}/cancel`,
         { method: "POST", },
       );
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({} as Record<string, unknown>)) as {
           message?: string;
         };
+
         this.error = body.message ?? t("status.emotionAvatarsCancelFailed",);
         return;
       }
+
       await this.refreshJob(jobId,);
       this.stopPolling();
       await this.listJobs();
@@ -176,6 +194,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
         `/api/v1/actors/${actorId}/emotion-avatars/jobs/${jobId}`,
         {},
       );
+
       if (!res.ok) { return; }
       const job = (await res.json()) as EmotionAvatarJob;
       const idx = this.jobs.findIndex((j,) => j.id === job.id);
@@ -200,13 +219,16 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
         this.stopPolling();
         return;
       }
+
       for (const job of active) { await this.refreshJob(job.id,); }
       const stillActive = this.jobs.some(this.isJobActive,);
       if (!stillActive) { this.stopPolling(); }
     };
+
     this._pollInterval = setInterval(() => {
       void tick();
     }, this.pollIntervalMs,);
+
     this._pollHandle = setTimeout(() => {
       // First tick fires sooner so the UI updates without waiting for the
       // full interval; the interval handle keeps polling alive.
@@ -219,6 +241,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
       clearTimeout(this._pollHandle,);
       this._pollHandle = null;
     }
+
     if (this._pollInterval) {
       clearInterval(this._pollInterval,);
       this._pollInterval = null;
@@ -237,6 +260,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     const source = new EventSource(
       `/api/v1/actors/${actorId}/emotion-avatars/jobs/${jobId}/stream`,
     );
+
     this._eaStreams.set(jobId, source,);
     source.addEventListener("progress", (event,) => {
       // Stale guard: ignore events that arrive after the actor switched.
@@ -245,6 +269,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
         String((event as MessageEvent).data,),
         null,
       );
+
       if (!parsed) { return; }
       const job = this.jobs.find((j,) => j.id === jobId);
       if (!job) { return; }
@@ -255,6 +280,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
         total: typeof parsed.total === "number" ? parsed.total : 0,
         status: status as JobStatus,
       };
+
       job.progress = progress;
       // Terminal status: close the stream and pull the final job state.
       // (EventSource would otherwise reconnect to a finished job forever.)
@@ -263,11 +289,13 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
         void this.refreshJob(jobId,);
       }
     },);
+
     source.addEventListener("done", () => {
       if (this._eaActorId !== actorId) { return; }
       this._closeJobStream(jobId,);
       void this.refreshJob(jobId,);
     },);
+
     source.onerror = () => {
       // A dead stream (server restart, vanished job) must not reconnect
       // forever; polling remains the fallback.
@@ -299,7 +327,10 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
   },
 };
 
-/** Build the Alpine scope for the emotion avatars panel. */
+/**
+ * Build the Alpine scope for the emotion avatars panel.
+ * @param actorId
+ */
 export function actorEmotionAvatarsFactory(actorId: string,): ActorEmotionAvatarsState {
   const state = Object.create(actorEmotionAvatars,) as ActorEmotionAvatarsState;
   state._eaActorId = null;

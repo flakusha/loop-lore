@@ -55,13 +55,6 @@ export function handleJobStream(job: BatchGenerationJob,): Response {
         }
       };
 
-      send("progress", jobProgress(job,),);
-      if (isTerminalStatus(job.status,)) {
-        send("done", {},);
-        controller.close();
-        return;
-      }
-
       unsubscribe = subscribeJob(job.id, (progress,) => {
         send("progress", progress,);
         if (!isTerminalStatus(progress.status,)) { return; }
@@ -70,10 +63,18 @@ export function handleJobStream(job: BatchGenerationJob,): Response {
           clearInterval(keepalive,);
           keepalive = undefined;
         }
+
         unsubscribe?.();
         unsubscribe = undefined;
         controller.close();
       },);
+
+      send("progress", jobProgress(job,),);
+      if (isTerminalStatus(job.status,)) {
+        send("done", {},);
+        controller.close();
+        return;
+      }
 
       keepalive = setInterval(() => {
         try {
@@ -91,6 +92,7 @@ export function handleJobStream(job: BatchGenerationJob,): Response {
         clearInterval(keepalive,);
         keepalive = undefined;
       }
+
       unsubscribe?.();
       unsubscribe = undefined;
     },
