@@ -68,6 +68,7 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
             key: t.String(),
             title: t.String(),
             description: t.Optional(t.String(),),
+            group: t.Optional(t.String(),),
             scope: t.Union([t.Literal("admin"), t.Literal("user"),],),
             fields: t.Array(t.Object({
               key: t.String(),
@@ -82,6 +83,7 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
               perChat: t.Boolean(),
               editable: t.Boolean(),
               scope: t.String(),
+              options: t.Optional(t.Array(t.String(),),),
             },),),
           },),),
         },),

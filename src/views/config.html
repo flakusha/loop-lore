@@ -1,113 +1,214 @@
 <!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-<!-- Config Menu Page -->
+<!-- Config Menu Page — one panel per catalog section, grouped into tabs. -->
 <div class="app-layout" x-data="configMenu()" x-init="init()">
   <header class="main-header" data-page="config" data-testid="config-header">
     <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger" aria-label="Toggle sidebar">
       ☰
     </button>
-    <span class="title">Config</span>
+    <span class="title" data-testid="config-title" x-text="role === 'admin' ? 'Configuration' : 'Preferences'"></span>
     <div class="actions">
-      <button class="btn btn-primary" @click="saveAll()" :disabled="!dirty" data-testid="save-config">
+      <span
+        x-show="saveState === 'saved'"
+        data-testid="config-saved"
+        style="font-size: 12px; color: var(--color-success, #2e7d32); margin-right: var(--space-3)"
+      >Saved</span>
+      <span
+        x-show="saveState === 'saving'"
+        data-testid="config-saving"
+        style="font-size: 12px; color: var(--text-secondary); margin-right: var(--space-3)"
+      >Saving…</span>
+      <button class="btn btn-primary" @click="saveAll()" :disabled="!dirty || saveState === 'saving'" data-testid="save-config">
         Save
       </button>
     </div>
   </header>
 
   <main class="main-content">
-    <div class="chat-area" style="max-width: 960px; margin: 0 auto; width: 100%">
-      <div x-show="loading" class="empty-state" style="padding: var(--space-12)">
+    <div class="chat-area" style="max-width: 1100px; margin: 0 auto; width: 100%">
+      <div x-show="loading" class="empty-state" style="padding: var(--space-12)" data-testid="config-loading">
         <div class="icon">⏳</div>
         <div class="title">Loading configuration...</div>
       </div>
+
+      <div
+        x-show="saveState === 'error' && errorMessage"
+        role="alert"
+        data-testid="config-error"
+        style="margin: var(--space-4); padding: var(--space-3) var(--space-4); background: #ffd8d8; border: 1px solid #e6a0a0; border-radius: var(--radius-md); color: #6b0a0a; font-size: 13px"
+        x-text="errorMessage"
+      ></div>
+
       <template x-if="!loading">
         <div>
-          <!-- Section Nav -->
-          <div class="world-edit-tabs" style="flex-wrap: wrap; gap: 2px" role="tablist" aria-label="Config sections">
-            <template x-for="s in sections" :key="s.key">
+          <!-- Group tabs (domains) -->
+          <div class="world-edit-tabs" role="tablist" aria-label="Config groups" data-testid="config-groups">
+            <template x-for="g in groups" :key="g.group">
+              <button
+                class="world-edit-tab"
+                :class="{ active: activeGroup === g.group }"
+                @click="selectSection(g.sections[0].key)"
+                role="tab"
+                :aria-selected="activeGroup === g.group"
+                :data-testid="'config-group-' + g.group"
+              >
+                <span x-text="g.group"></span>
+              </button>
+            </template>
+          </div>
+
+          <!-- Section tabs within the active group -->
+          <div
+            class="world-edit-tabs"
+            role="tablist"
+            aria-label="Config sections"
+            style="flex-wrap: wrap; gap: 2px; border-bottom: none; margin-top: var(--space-2)"
+            data-testid="config-sections"
+          >
+            <template x-for="s in activeGroupSections()" :key="s.key">
               <button
                 class="world-edit-tab"
                 :class="{ active: activeSection === s.key }"
-                @click="activeSection = s.key"
+                @click="selectSection(s.key)"
                 role="tab"
                 :aria-selected="activeSection === s.key"
+                :data-testid="'config-section-' + s.key"
               >
                 <span x-text="s.title"></span>
               </button>
             </template>
           </div>
 
-          <!-- Section Content -->
+          <!-- Panel for the active section -->
           <template x-for="s in sections" :key="s.key">
-            <div x-show="activeSection === s.key" style="padding: var(--space-6)">
-              <p x-show="s.description" style="font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-4)" x-text="s.description"></p>
+            <div
+              x-show="activeSection === s.key"
+              role="tabpanel"
+              :data-testid="'config-panel-' + s.key"
+              style="padding: var(--space-6) 0"
+            >
+              <h2 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-1)" x-text="s.title"></h2>
+              <p
+                x-show="s.description"
+                style="font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-4)"
+                x-text="s.description"
+              ></p>
+
               <div style="display: grid; gap: var(--space-4)">
                 <template x-for="f in s.fields" :key="f.key">
-                  <div style="display: grid; grid-template-columns: 200px 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-3); border-bottom: 1px solid var(--border-default, #e9ecef)">
+                  <div
+                    style="display: grid; grid-template-columns: 240px 1fr auto; gap: var(--space-3); align-items: start; padding: var(--space-3); border-bottom: 1px solid var(--border-default, #e9ecef)"
+                    :data-testid="'config-field-' + f.key"
+                  >
                     <div>
-                      <span x-text="f.label" style="font-weight: 500; font-size: 13px"></span>
+                      <label :for="'cf-' + f.key" style="font-weight: 500; font-size: 13px" x-text="f.label"></label>
                       <span
                         x-show="f.restart"
                         title="Requires server restart"
+                        data-testid="badge-restart"
                         style="display: inline-block; margin-left: 6px; padding: 1px 6px; font-size: 10px; font-weight: 600; color: #6b5400; background: #fff3cd; border: 1px solid #ffc107; border-radius: 999px; vertical-align: middle"
                       >restart</span>
                       <span
                         x-show="f.secret"
                         title="Secret value"
+                        data-testid="badge-secret"
                         style="display: inline-block; margin-left: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; color: #6b0a0a; background: #ffd8d8; border: 1px solid #e6a0a0; border-radius: 999px; vertical-align: middle"
                       >secret</span>
+                      <span
+                        x-show="f.perChat"
+                        title="Can be overridden per chat"
+                        style="display: inline-block; margin-left: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; color: #0a4b6b; background: #d8ecff; border: 1px solid #a0c8e6; border-radius: 999px; vertical-align: middle"
+                      >per-chat</span>
+                      <span
+                        x-show="!f.editable"
+                        title="Read-only in this catalog"
+                        style="display: inline-block; margin-left: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; color: var(--text-secondary); background: var(--bg-tertiary); border: 1px solid var(--border-default); border-radius: 999px; vertical-align: middle"
+                      >read-only</span>
                       <div
                         x-text="f.description"
-                        style="font-size: 11px; color: var(--text-secondary)"
+                        style="font-size: 11px; color: var(--text-secondary); margin-top: 2px"
                         x-show="f.description"
                       ></div>
                     </div>
-                    <!-- Boolean -->
-                    <template x-if="f.type === 'boolean'">
-                      <div style="display: flex; align-items: center; gap: var(--space-2)">
-                        <input type="checkbox" :id="'cf-' + f.key" x-model="values[f.key]" @change="markDirty(f.key)" style="width: 16px; height: 16px" />
-                        <span style="font-size: 12px; color: var(--text-secondary)" x-text="values[f.key] ? 'Enabled' : 'Disabled'"></span>
-                      </div>
-                    </template>
-                    <!-- Number -->
-                    <template x-if="f.type === 'number'">
-                      <input
-                        type="number"
-                        class="form-input"
-                        style="font-size: 13px"
-                        :id="'cf-' + f.key"
-                        x-model="values[f.key]"
-                        @input="markDirty(f.key)"
-                      />
-                    </template>
-                    <!-- Enum -->
-                    <template x-if="f.type === 'enum'">
-                      <select
-                        class="form-input"
-                        style="font-size: 13px"
-                        :id="'cf-' + f.key"
-                        x-model="values[f.key]"
-                        @change="markDirty(f.key)"
-                      >
-                        <option value="Immersion">Immersion</option>
-                        <option value="Basic">Basic</option>
-                        <option value="Detailed">Detailed</option>
-                      </select>
-                    </template>
-                    <!-- String / default -->
-                    <template x-if="f.type === 'string' || f.type === 'array' || f.type === 'object'">
-                      <input
-                        type="text"
-                        class="form-input"
-                        style="font-size: 13px"
-                        :id="'cf-' + f.key"
-                        x-model="values[f.key]"
-                        @input="markDirty(f.key)"
-                      />
-                    </template>
+
                     <div>
-                      <span x-show="dirtyKeys.has(f.key)" style="font-size: 11px; color: var(--color-warning, #f0ad4e)">●</span>
+                      <!-- Boolean -->
+                      <template x-if="f.type === 'boolean'">
+                        <div style="display: flex; align-items: center; gap: var(--space-2)">
+                          <input
+                            type="checkbox"
+                            :id="'cf-' + f.key"
+                            :checked="values[f.key]"
+                            :disabled="!f.editable"
+                            @change="setValue(f, $event.target.checked)"
+                            style="width: 16px; height: 16px"
+                          />
+                          <span style="font-size: 12px; color: var(--text-secondary)" x-text="values[f.key] ? 'Enabled' : 'Disabled'"></span>
+                        </div>
+                      </template>
+                      <!-- Number -->
+                      <template x-if="f.type === 'number'">
+                        <input
+                          type="number"
+                          class="form-input"
+                          style="font-size: 13px"
+                          :id="'cf-' + f.key"
+                          :value="values[f.key]"
+                          :disabled="!f.editable"
+                          @input="setValue(f, $event.target.value)"
+                        />
+                      </template>
+                      <!-- Enum -->
+                      <template x-if="f.type === 'enum'">
+                        <select
+                          class="form-input"
+                          style="font-size: 13px"
+                          :id="'cf-' + f.key"
+                          :value="values[f.key]"
+                          :disabled="!f.editable"
+                          @change="setValue(f, $event.target.value)"
+                        >
+                          <template x-for="opt in (f.options || [])" :key="opt">
+                            <option :value="opt" x-text="opt"></option>
+                          </template>
+                        </select>
+                      </template>
+                      <!-- Array / object (JSON text) -->
+                      <template x-if="f.type === 'array' || f.type === 'object'">
+                        <textarea
+                          class="form-input"
+                          style="font-size: 12px; font-family: monospace; min-height: 60px"
+                          :id="'cf-' + f.key"
+                          :value="values[f.key]"
+                          :disabled="!f.editable"
+                          @input="setValue(f, $event.target.value)"
+                        ></textarea>
+                      </template>
+                      <!-- String / default -->
+                      <template x-if="f.type === 'string'">
+                        <input
+                          :type="f.secret ? 'password' : 'text'"
+                          class="form-input"
+                          style="font-size: 13px"
+                          autocomplete="off"
+                          :id="'cf-' + f.key"
+                          :value="values[f.key]"
+                          :disabled="!f.editable"
+                          @input="setValue(f, $event.target.value)"
+                        />
+                      </template>
+                      <div
+                        x-show="fieldError(f)"
+                        x-text="fieldError(f)"
+                        role="alert"
+                        data-testid="field-error"
+                        style="font-size: 11px; color: #b3261e; margin-top: 4px"
+                      ></div>
+                    </div>
+
+                    <div>
+                      <span x-show="isDirty(f.key)" style="font-size: 11px; color: var(--color-warning, #f0ad4e)" data-testid="field-dirty">●</span>
                     </div>
                   </div>
                 </template>

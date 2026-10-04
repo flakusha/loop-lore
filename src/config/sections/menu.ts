@@ -31,12 +31,16 @@ export interface ConfigMenuField {
   perChat: boolean;
   editable: boolean;
   scope: ConfigMenuScope;
+  /** Allowed values when type is "enum" (from the JSON schema). */
+  options?: string[];
 }
 
 export interface ConfigMenuSection {
   key: string;
   title: string;
   description?: string;
+  /** UI grouping bucket (domain) for navigable panels. */
+  group?: string;
   scope: ConfigMenuScope;
   fields: ConfigMenuField[];
 }
@@ -70,6 +74,39 @@ const STANDALONE_KEYS: { key: string; label: string; type: ConfigMenuField["type
   { key: "wardrobe_loadout_bridge", label: "Wardrobe Loadout Bridge", type: "boolean", description: "Auto-switch outfit from equipped items", section: "characters" },
 ];
 
+/**
+ * Domain grouping for the section navigator. Sections absent from the map land
+ * in "Other" — the UI renders one nav group per bucket, one panel per section.
+ */
+const SECTION_GROUPS: Record<string, string> = {
+  server: "Core",
+  db: "Core",
+  frontend: "Core",
+  transport: "Core",
+  observability: "Core",
+  auth: "Security & Access",
+  encryption: "Security & Access",
+  headers: "Security & Access",
+  ageGate: "Security & Access",
+  byoKey: "Security & Access",
+  generation: "Content & Generation",
+  assistant: "Content & Generation",
+  templates: "Content & Generation",
+  dynamicResponse: "Content & Generation",
+  messages: "Content & Generation",
+  characters: "Content & Generation",
+  nsfw: "Moderation",
+  assets: "Assets",
+  federation: "Platform",
+  hooks: "Platform",
+  idempotency: "Platform",
+  cron: "Platform",
+  seeding: "Platform",
+  docs: "Platform",
+  logging: "Platform",
+  tui: "Platform",
+};
+
 /** User settings field types. */
 const USER_FIELD_TYPES: Record<string, ConfigMenuField["type"]> = {
   theme: "string",
@@ -98,10 +135,30 @@ function humanize(key: string,): string {
     .trim();
 }
 
+/** String-only enum options (the JSON schema may carry a null sentinel). */
+function enumOptions(values: unknown[] | undefined,): string[] | undefined {
+  if (!values || values.length === 0) { return undefined; }
+  return values.filter((v,): v is string => typeof v === "string",);
+}
+
+/** Allowed values for user-settings enums keyed by setting name. */
+const USER_FIELD_OPTIONS: Record<string, string[]> = {
+  detailLevel: ["Immersion", "Basic", "Detailed",],
+};
+
 function buildAdminSections(): ConfigMenuSection[] {
   const schema = jsonSchema();
-  const props = (schema.properties ?? {}) as Record<string, { type?: string; description?: string; properties?: Record<string, { type?: string; description?: string; default?: unknown; enum?: string[] }> }>;
+  const props = (schema.properties ?? {}) as Record<
+    string,
+    {
+      type?: string;
+      description?: string;
+      properties?: Record<string, { type?: string; description?: string; default?: unknown; enum?: unknown[] }>;
+    }
+  >;
+
   const sections: ConfigMenuSection[] = [];
+  const consumedStandalone = new Set<string>();
 
   for (const [sectionKey, sectionMeta] of Object.entries(props,)) {
     if (sectionMeta.type !== "object" || !sectionMeta.properties) { continue; }
@@ -128,10 +185,12 @@ function buildAdminSections(): ConfigMenuSection[] {
         perChat,
         editable,
         scope: "admin",
+        options: enumOptions(fieldMeta.enum,),
       },);
     }
 
     for (const sk of STANDALONE_KEYS.filter((s,) => s.section === sectionKey,)) {
+      consumedStandalone.add(sk.key,);
       fields.push({
         key: sk.key,
         label: sk.label,
@@ -151,8 +210,40 @@ function buildAdminSections(): ConfigMenuSection[] {
         key: sectionKey,
         title: humanize(sectionKey,),
         description: sectionMeta.description,
+        group: SECTION_GROUPS[sectionKey] ?? "Other",
         scope: "admin",
         fields,
+      },);
+    }
+  }
+
+  // Standalone keys whose nominal section has no JSON-schema object (e.g.
+  // "moderation") would otherwise vanish from the catalog. Emit one synthetic
+  // section per orphan bucket so every editable key stays reachable.
+  for (const sk of STANDALONE_KEYS.filter((s,) => !consumedStandalone.has(s.key,))) {
+    const existing = sections.find((s,) => s.key === sk.section,);
+    const field: ConfigMenuField = {
+      key: sk.key,
+      label: sk.label,
+      type: sk.type,
+      description: sk.description,
+      required: false,
+      secret: SECRET_KEY_PATTERN.test(sk.key,),
+      restart: REQUIRES_RESTART_KEYS[sk.key] === true,
+      perChat: PER_CHAT_OVERRIDABLE_KEYS[sk.key] === true,
+      editable: true,
+      scope: "admin",
+    };
+
+    if (existing) {
+      existing.fields.push(field,);
+    } else {
+      sections.push({
+        key: sk.section,
+        title: humanize(sk.section,),
+        group: SECTION_GROUPS[sk.section] ?? "Other",
+        scope: "admin",
+        fields: [field,],
       },);
     }
   }
@@ -171,6 +262,7 @@ function buildUserSections(): ConfigMenuSection[] {
     perChat: false,
     editable: true,
     scope: "user" as const,
+    options: USER_FIELD_OPTIONS[key],
   }),);
 
   return [
@@ -178,6 +270,7 @@ function buildUserSections(): ConfigMenuSection[] {
       key: "preferences",
       title: "Preferences",
       description: "Your personal settings",
+      group: "Preferences",
       scope: "user",
       fields,
     },
