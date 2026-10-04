@@ -1128,7 +1128,7 @@ Total tickets: **3216** — untagged: **2702** — unbound to epic: **1623**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2702 | 1098 | 59 | 1234 | 36 | 0 | 275 |
+| (untagged) | 2702 | 1099 | 59 | 1234 | 36 | 0 | 274 |
 
 ## By epic × status
 
@@ -1329,7 +1329,7 @@ Total tickets: **3216** — untagged: **2702** — unbound to epic: **1623**
 | epic-e2e-integration-testing.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-e2e-integration-testing.md (Pillar 3 — real-server tier) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-economy-trading | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
-| epic-effect-v4-adoption-evaluation | 10 | 9 | 0 | 0 | 0 | 0 | 1 |
+| epic-effect-v4-adoption-evaluation | 10 | 10 | 0 | 0 | 0 | 0 | 0 |
 | epic-email-integration | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-email-integration.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-embeddable-engine | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
