@@ -23,9 +23,11 @@ let testDb: TestDb;
 beforeAll(async () => {
   testDb = await createTestDb();
 },);
+
 afterAll(async () => {
   await testDb.db.destroy();
 },);
+
 beforeEach(() => {
   resetTestDb(testDb.sqlite,);
 },);
@@ -84,6 +86,7 @@ describe("WorkflowDagEngine — hydrate from stored edges", () => {
       T0,
       RNG,
     );
+
     expect(result.ran.toSorted(),).toEqual(["A", "B", "C", "D",],);
     expect(order.indexOf("A",),).toBeLessThan(order.indexOf("B",),);
     expect(order.indexOf("B",),).toBeLessThan(order.indexOf("D",),);
@@ -236,6 +239,7 @@ describe("WorkflowDagEngine — SQL injection surface", () => {
     await expect(
       engine.addDependency("B", "A", "retry'; DROP TABLE task_dependencies; --" as never,),
     ).rejects.toThrow();
+
     const rows = await testDb.db.selectFrom("task_dependencies",).selectAll().execute();
     expect(rows,).toHaveLength(0,);
   });
@@ -372,6 +376,7 @@ describe("WorkflowDagEngine — status surface", () => {
       T0,
       RNG,
     );
+
     expect(result.failed,).toEqual(["A",],);
   });
 

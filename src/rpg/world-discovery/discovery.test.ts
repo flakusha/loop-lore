@@ -110,6 +110,7 @@ async function readRow(actorId: string, locationId: string,) {
     .where("location_id", "=", locationId,)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!row) { throw new Error(`no location_discovery row for ${locationId}/${actorId}`,); }
   return row;
 }

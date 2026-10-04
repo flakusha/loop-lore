@@ -119,6 +119,7 @@ export async function runDiscoveryTick(
       payload: { location_id: row.location_id, actor_id: row.actor_id, progress: next.progress, },
       dedupeKey: discoveredKey(worldId, row.location_id,),
     },);
+
     if (landed) { events++; }
     discovered++;
     await latch(db, worldId, row, currentTick, nowMs,);

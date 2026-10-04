@@ -110,6 +110,7 @@ async function runBeat(
       nowMs: ctx.nowMs,
     },
   );
+
   if (!gate.ok) { return { skipped: SKIP_BUDGET, }; }
 
   const outcome = await runGmBeat(ctx.db, ctx.worldId, createGm,);

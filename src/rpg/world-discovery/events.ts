@@ -113,6 +113,7 @@ export async function listWorldEvents(db: DiscoveryDb, query: WorldEventListQuer
     .limit(pageSize,)
     .offset((page - 1) * pageSize,)
     .execute();
+
   const counted = await rows.select((eb,) => eb.fn.countAll<string>().as("total",)).executeTakeFirst();
 
   return { data, total: Number(counted?.total ?? 0,), page, pageSize, };

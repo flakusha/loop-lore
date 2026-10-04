@@ -158,6 +158,7 @@ describe("resolveAutonomyConfig — seed", () => {
     const { worldId, chatId, actorId, } = await setupScope(
       JSON.stringify({ autonomy: { seed: 3, }, },),
     );
+
     await setColumn("worlds", worldId, JSON.stringify({ seed: 1, },),);
     await setColumn("chats", chatId, JSON.stringify({ seed: 2, },),);
 
@@ -213,6 +214,7 @@ describe("resolveAutonomyConfig — seed", () => {
     expect(cfg.preset,).toBe("brisk",);
   });
 });
+
 describe("dev-only gating", () => {
   test("unlimited-stress preset returns definition outside production", () => {
     const prev = process.env.NODE_ENV;

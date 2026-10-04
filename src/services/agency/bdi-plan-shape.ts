@@ -141,8 +141,10 @@ function normalizeActivities(
       description: description.slice(0, MAX_TEXT_CHARS,),
       score: Math.round(clamp(score, 0, 100,),),
     },);
+
     if (out.length >= maxActivities) { break; }
   }
+
   return out;
 }
 
@@ -159,6 +161,7 @@ export function fallbackPlan(facts: PlanFacts | null,): DailyPlan {
   const urgent = facts !== null &&
     ((facts.health !== null && facts.health <= 30) || facts.mentalState === "hostile" ||
       facts.mentalState === "afraid");
+
   return {
     summary: facts === null
       ? "Hold position; not enough state to plan a richer day."

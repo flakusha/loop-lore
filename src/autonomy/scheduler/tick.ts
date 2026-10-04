@@ -96,6 +96,7 @@ export async function tickWorld(deps: TickDeps, entry: WorldScheduleEntry, nowMs
       worldId,
       tickIndex: state.tick_count,
     },);
+
     const outcome = await dispatch(deps, worldId, chatId, nowMs, cfg, rng,);
     const nextTickAt = await advance(deps.store, worldId, state, nowMs, cfg.tickIntervalMs,);
     emitSchedulerEvent(deps.db, EV_COMPLETED, {
@@ -104,6 +105,7 @@ export async function tickWorld(deps: TickDeps, entry: WorldScheduleEntry, nowMs
       next_tick_at: nextTickAt,
       tick_count: state.tick_count + 1,
     },);
+
     return { worldId, nextTickAt, outcome, };
   } catch (err) {
     return await onWorldError(deps, worldId, state, err, nowMs,);
@@ -141,10 +143,12 @@ async function dispatch(
     rng,
     governor: deps.governor,
   };
+
   const results: AutonomyDispatchResult[] = [];
   for (const target of deps.dispatchTargets) {
     results.push(await target.run(ctx,),);
   }
+
   return aggregate(results,);
 }
 
@@ -173,6 +177,7 @@ async function advance(
     last_error: null,
     tick_count: state.tick_count + 1,
   },);
+
   return nextTickAt;
 }
 
@@ -206,6 +211,7 @@ async function onWorldError(
       .child({ module: "autonomy.scheduler", },)
       .warn("Failed to persist scheduler error state", { worldId, error: String(writeErr,), },);
   }
+
   emitSchedulerEvent(deps.db, EV_ERROR, { world_id: worldId, error: message, next_tick_at: nextTickAt, },);
   return { worldId, nextTickAt, outcome: { skipped: "error", }, error: message, };
 }

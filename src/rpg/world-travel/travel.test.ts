@@ -141,6 +141,7 @@ async function readParty(id: string,) {
     .selectAll()
     .where("id", "=", id,)
     .executeTakeFirst();
+
   if (!row) { throw new Error(`no travel_parties row for ${id}`,); }
   return row;
 }
@@ -152,6 +153,7 @@ async function readMigration(id: string,) {
     .selectAll()
     .where("id", "=", id,)
     .executeTakeFirst();
+
   if (!row) { throw new Error(`no npc_migrations row for ${id}`,); }
   return row;
 }
@@ -164,6 +166,7 @@ async function readNpcLocation(): Promise<string | null> {
     .where("actor_id", "=", NPC_ID,)
     .where("world_id", "=", WORLD_ID,)
     .executeTakeFirstOrThrow();
+
   return row.location_id;
 }
 
@@ -174,6 +177,7 @@ async function readLedger(): Promise<{ spent: number; window_start_tick: number 
     .select(["spent", "window_start_tick",],)
     .where("world_id", "=", WORLD_ID,)
     .executeTakeFirst();
+
   return row ?? null;
 }
 
@@ -192,6 +196,7 @@ describe("advancePartyTravel — walking a route", () => {
     expect((await advancePartyTravel(db, WORLD_ID, 1, ctx,)).actions,).toEqual([
       { kind: "party_step", subjectId: PARTY_ONE, tick: 1, cost: ACTION_COST, },
     ],);
+
     let party = await readParty(PARTY_ONE,);
     expect(party.route_index,).toBe(1,);
     expect(party.current_location_id,).toBe(LOC_B,);
@@ -213,6 +218,7 @@ describe("advancePartyTravel — walking a route", () => {
       deferred: 0,
       budgetExhausted: false,
     },);
+
     expect((await readParty(PARTY_ONE,)).route_index,).toBe(2,);
   });
 
@@ -266,6 +272,7 @@ describe("advancePartyTravel — walking a route", () => {
       deferred: 0,
       budgetExhausted: false,
     },);
+
     expect((await readParty(PARTY_ONE,)).route_index,).toBe(0,);
     expect((await readParty(PARTY_TWO,)).route_index,).toBe(0,);
     // Neither party was charged: no ledger row was opened at all.
@@ -274,6 +281,7 @@ describe("advancePartyTravel — walking a route", () => {
       .selectAll()
       .where("world_id", "=", WORLD_ID,)
       .executeTakeFirst();
+
     expect(ledger,).toBeUndefined();
   });
 
@@ -325,6 +333,7 @@ describe("advancePartyTravel — the arrival collision rule", () => {
     // Tick 2: the loser re-contests and gets the edge it missed.
     expect((await advancePartyTravel(db, WORLD_ID, 2, ctx,)).actions.map((a,) => a.subjectId),)
       .toEqual([PARTY_ONE, PARTY_TWO,],);
+
     expect((await readParty(PARTY_TWO,)).route_index,).toBe(1,);
     expect((await readParty(PARTY_TWO,)).current_location_id,).toBe(LOC_B,);
     expect((await readParty(PARTY_TWO,)).status,).toBe("traveling",);
@@ -336,6 +345,7 @@ describe("advancePartyTravel — the arrival collision rule", () => {
     // Tick 3 it walks the last edge with nothing contending for LOC_C.
     expect((await advancePartyTravel(db, WORLD_ID, 3, ctx,)).actions.map((a,) => a.subjectId),)
       .toEqual([PARTY_TWO,],);
+
     expect((await readParty(PARTY_TWO,)).route_index,).toBe(2,);
     expect((await readParty(PARTY_TWO,)).status,).toBe("resting",);
   });
@@ -421,6 +431,7 @@ describe("advancePartyTravel — routes that cannot be walked", () => {
       .select("spent",)
       .where("world_id", "=", WORLD_ID,)
       .executeTakeFirst();
+
     expect(ledger,).toBeUndefined();
   });
 
@@ -473,6 +484,7 @@ describe("advancePartyTravel — routes that cannot be walked", () => {
     // shape that must take the same path as unparseable text.
     expect((await advancePartyTravel(db, WORLD_ID, 1, travelContext(),)).actions.map((a,) => a.subjectId),)
       .toEqual(["party-three",],);
+
     for (const id of [PARTY_ONE, PARTY_TWO,]) {
       expect((await readParty(id,)).route_index,).toBe(0,);
       expect((await readParty(id,)).travel_progress,).toBe(0,);
@@ -515,6 +527,7 @@ describe("advancePartyTravel — the budget ledger", () => {
       .select(["spent", "ceiling", "window_start_tick",],)
       .where("world_id", "=", WORLD_ID,)
       .executeTakeFirstOrThrow();
+
     expect(ledger.spent,).toBe(ACTION_COST,);
     expect(ledger.ceiling,).toBe(1,);
     expect(ledger.window_start_tick,).toBe(1,);
@@ -525,6 +538,7 @@ describe("advancePartyTravel — the budget ledger", () => {
       .select("spent",)
       .where("world_id", "=", WORLD_ID,)
       .executeTakeFirstOrThrow();
+
     // 0.05 twice is exactly 0.1, not 0.10000000000000001 — the ledger counts
     // in micro-units precisely so money never becomes a float.
     expect(window.spent,).toBe(ACTION_COST * 2,);
@@ -540,6 +554,7 @@ describe("advancePartyTravel — the budget ledger", () => {
       ceiling: 1,
       window_start_tick: 1,
     },);
+
     await seedParty(PARTY_ONE,);
 
     expect((await advancePartyTravel(db, WORLD_ID, 1, travelContext(),)).budgetExhausted,).toBe(false,);
@@ -557,6 +572,7 @@ describe("advancePartyTravel — the budget ledger", () => {
       .select("spent",)
       .where("world_id", "=", WORLD_ID,)
       .executeTakeFirstOrThrow();
+
     expect(ledger.spent,).toBe(1,);
   });
 
@@ -621,6 +637,7 @@ describe("advancePartyTravel — the budget ledger", () => {
       expect(result.actions,).toEqual([],);
       expect((await readParty(PARTY_ONE,)).route_index,).toBe(0,);
     }
+
     expect(await readLedger(),).toEqual({ spent: 1, window_start_tick: 1, },);
   });
 
@@ -676,6 +693,7 @@ describe("migrateNpc — the relocation schedule", () => {
       status: opts.status ?? "planned",
       last_depart_tick: opts.lastDepartTick ?? 0,
     },);
+
     return id;
   }
 
@@ -693,6 +711,7 @@ describe("migrateNpc — the relocation schedule", () => {
     expect((await migrateNpc(db, WORLD_ID, 2, ctx,)).actions,).toEqual([
       { kind: "npc_depart", subjectId: NPC_ID, tick: 2, cost: ACTION_COST, },
     ],);
+
     let row = await readMigration("mig-sched",);
     expect(row.status,).toBe("in_transit",);
     expect(row.last_depart_tick,).toBe(2,);
@@ -706,6 +725,7 @@ describe("migrateNpc — the relocation schedule", () => {
     expect((await migrateNpc(db, WORLD_ID, 5, ctx,)).actions,).toEqual([
       { kind: "npc_arrive", subjectId: NPC_ID, tick: 5, cost: ACTION_COST, },
     ],);
+
     row = await readMigration("mig-sched",);
     expect(row.status,).toBe("arrived",);
     expect(row.depart_tick,).toBe(2,);
@@ -727,6 +747,7 @@ describe("migrateNpc — the relocation schedule", () => {
     expect((await migrateNpc(db, WORLD_ID, 9, travelContext(),)).actions,).toEqual([
       { kind: "npc_depart", subjectId: NPC_ID, tick: 9, cost: ACTION_COST, },
     ],);
+
     expect((await readMigration("mig-late",)).status,).toBe("in_transit",);
 
     expect((await migrateNpc(db, WORLD_ID, 10, travelContext(),)).actions[0]?.kind,).toBe("npc_arrive",);
@@ -812,6 +833,7 @@ describe("migrateNpc — the relocation schedule", () => {
       .selectAll()
       .where("world_id", "=", WORLD_ID,)
       .executeTakeFirst();
+
     expect(ledger,).toBeUndefined();
   });
 
@@ -921,6 +943,7 @@ describe("replaying a tick must not apply a party's move twice", () => {
       .select("spent",)
       .where("world_id", "=", WORLD_ID,)
       .executeTakeFirstOrThrow();
+
     expect(ledger.spent,).toBe(ACTION_COST,);
   });
 

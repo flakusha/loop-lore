@@ -56,6 +56,7 @@ export async function addEdge(
   if (taskId === dependsOnTaskId) {
     throw new Error(`task ${jsonStringifyOr(taskId,)} cannot depend on itself`,);
   }
+
   if (graph.wouldCycle(taskId, dependsOnTaskId,)) {
     throw new Error(
       `cycle rejected: ${jsonStringifyOr(taskId,)} -> ${jsonStringifyOr(dependsOnTaskId,)} — ` +

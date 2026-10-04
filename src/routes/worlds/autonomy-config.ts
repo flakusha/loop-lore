@@ -27,6 +27,7 @@ function badSeed(raw: unknown,): Response | null {
     if (!parsed.ok) { return null; }
     blob = parsed.value;
   }
+
   if (typeof blob !== "object" || blob === null) { return null; }
   const seed = (blob as Record<string, unknown>).seed;
   if (seed === undefined || seed === null) { return null; }
@@ -36,6 +37,7 @@ function badSeed(raw: unknown,): Response | null {
     status: HttpStatus.BadRequest,
   },);
 }
+
 /**
  * Normalise an `autonomyConfig` request field for the `worlds.autonomy_config`
  * TEXT column.
@@ -64,15 +66,18 @@ export function autonomyUpdate(raw: unknown,): AutonomyUpdateResult {
         },),
       };
     }
+
     const seedError = badSeed(raw,);
     if (seedError) { return { ok: false, error: seedError, }; }
     return { ok: true, value: raw, };
   }
+
   if (typeof raw === "object") {
     const seedError = badSeed(raw,);
     if (seedError) { return { ok: false, error: seedError, }; }
     return { ok: true, value: jsonStringifyOr(raw,), };
   }
+
   return {
     ok: false,
     error: jsonError({

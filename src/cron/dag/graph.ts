@@ -51,6 +51,7 @@ export function reaches(
         `DAG reachability probe exceeded ${MAX_PROBE_NODES} nodes from "${from}"; graph is corrupt`,
       );
     }
+
     for (const next of edges.get(node,) ?? []) {
       if (next === to) { return true; }
       if (seen.has(next,)) { continue; }
@@ -58,6 +59,7 @@ export function reaches(
       stack.push(next,);
     }
   }
+
   return false;
 }
 
@@ -118,6 +120,7 @@ export class DagGraph {
       deps = new Set<string>();
       this.#deps.set(taskId, deps,);
     }
+
     deps.add(dependsOnTaskId,);
 
     let dependents = this.#dependents.get(dependsOnTaskId,);
@@ -125,6 +128,7 @@ export class DagGraph {
       dependents = new Map<string, FailurePolicy>();
       this.#dependents.set(dependsOnTaskId, dependents,);
     }
+
     dependents.set(taskId, onFailure,);
 
     this.#known.add(taskId,);
@@ -147,6 +151,7 @@ export class DagGraph {
       if (policy !== "skip" || isFinished(dependent,)) { continue; }
       out.push(dependent,);
     }
+
     return out.toSorted((a, b,) => a.localeCompare(b,));
   }
 
@@ -159,6 +164,7 @@ export class DagGraph {
     for (const dep of this.#deps.get(taskId,) ?? []) {
       if (!isDone(dep,)) { return false; }
     }
+
     return true;
   }
 }
