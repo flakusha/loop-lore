@@ -3,6 +3,11 @@
 
 # BUG: actorType persona 422 on valid UI input
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Done
 **Status Note:** fixed 2026-09-05
 **Priority:** medium
