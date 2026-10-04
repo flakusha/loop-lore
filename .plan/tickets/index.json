@@ -44117,5 +44117,23 @@
     "tags": [],
     "title": "nsfw-audit view route has no inline authz guard",
     "type": "WIRE"
+  },
+  "TASK-QUICK-EMOJIS-PREFERENCE-ENDPOINT-HAS-NO-FRONTEND-CONSUMER": {
+    "epic": "epic-frontend-backend-integration",
+    "extid": "TASK-QUICK-EMOJIS-PREFERENCE-ENDPOINT-HAS-NO-FRONTEND-CONSUMER",
+    "git_issue": "8a786e2",
+    "hash": "8a786e2",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-quick-emojis-preference-endpoint-has-no-frontend-consumer.md",
+    "status": "open",
+    "tags": [
+      "quick-emojis",
+      "frontend",
+      "wiring",
+      "preferences"
+    ],
+    "title": "Quick Emojis preference endpoint has no frontend consumer",
+    "type": "TASK"
   }
 }
