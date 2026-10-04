@@ -54,6 +54,7 @@ export async function initBackgroundServices(
             skipped: result.skipped,
           },);
         }
+
         if (result.errors.length > 0) {
           logger.warn("character template seeding had errors", { module: "server", errors: result.errors, },);
         }
@@ -85,20 +86,24 @@ export async function initBackgroundServices(
                 models: {},
               },),
             );
+
             if (!config.generation.defaultProvider) {
               config.generation.defaultProvider = name;
             }
+
             config.generation.defaultModels[name] ??= name;
           }
         })(),
       );
     }
+
     const llamaSwapCfg = autoStart?.llamaSwap;
     if (llamaSwapCfg?.enabled) {
       logger.info("auto-starting llama-swap", {
         module: "server",
         configPath: llamaSwapCfg.configPath,
       },);
+
       initPromises.push(
         (async () => {
           const instance = await serverManager.startLlamaSwap({ configPath: llamaSwapCfg.configPath, },);
@@ -110,6 +115,7 @@ export async function initBackgroundServices(
         })(),
       );
     }
+
     const sdCppCfg = autoStart?.sdCpp;
     if (sdCppCfg?.enabled) {
       logger.info("auto-starting sd-cpp", { module: "server", port: sdCppCfg.port, },);
@@ -134,6 +140,7 @@ export async function initBackgroundServices(
         logger.warn("regex telemetry flush failed", { module: "server", error: String(error,), },);
       },);
     }, 60_000,);
+
     flushTimer.unref();
   }
 

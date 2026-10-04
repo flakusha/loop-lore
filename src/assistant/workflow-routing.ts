@@ -104,10 +104,12 @@ export function matchWorkflowIntent(
     if (
       !group.patterns.some((p,) => safeRegexExec(p, message, `intent:${group.intent}:${group.target}`,) !== null)
     ) { continue; }
+
     if (best === undefined || group.confidence > best.confidence) {
       best = { target: group.target, confidence: group.confidence, };
     }
   }
+
   if (best === undefined) { return undefined; }
   return routed.find((w,) => w.intent?.target === best.target);
 }
