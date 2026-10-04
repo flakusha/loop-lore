@@ -26518,6 +26518,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-char-emotion-types-and-prompt-modifier.md"
     },
     {
@@ -36329,6 +36333,12 @@
       "source": ".plan/tickets/TASK-tui.md"
     }
   ],
+  "src/utils/safe-fetch/retry.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migrate-safe-fetch-retry-loop-to-effect-schedule.md"
+    }
+  ],
   "src/utils/safe-fetch/retry.ts": [
     {
       "kind": "epic",
@@ -36337,6 +36347,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migrate-safe-fetch-retry-loop-to-effect-schedule.md"
     }
   ],
   "src/utils/safe-json.ts": [
