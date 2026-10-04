@@ -293,7 +293,7 @@ Total tickets: **3240** — untagged: **2726** — unbound to epic: **1647**
 | data-integrity | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | data-lifecycle | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | data-model | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| database | 13 | 2 | 0 | 0 | 2 | 0 | 9 |
+| database | 13 | 3 | 0 | 0 | 2 | 0 | 8 |
 | day-night | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | db | 10 | 1 | 0 | 7 | 0 | 0 | 2 |
 | db-types | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -365,7 +365,7 @@ Total tickets: **3240** — untagged: **2726** — unbound to epic: **1647**
 | email | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | embeddable | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | embedding | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| embeddings | 5 | 0 | 0 | 0 | 0 | 0 | 5 |
+| embeddings | 5 | 1 | 0 | 0 | 0 | 0 | 4 |
 | emergence | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | emotion | 3 | 0 | 1 | 0 | 0 | 0 | 2 |
 | emotion-impact | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -509,7 +509,7 @@ Total tickets: **3240** — untagged: **2726** — unbound to epic: **1647**
 | integration | 10 | 1 | 0 | 0 | 1 | 0 | 8 |
 | integration-testing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | integrations | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
-| integrity | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
+| integrity | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
 | intent | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | intent-detection | 3 | 0 | 1 | 0 | 1 | 0 | 1 |
 | interactable | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -958,7 +958,7 @@ Total tickets: **3240** — untagged: **2726** — unbound to epic: **1647**
 | steering | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | steganography | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | step-up | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| storage | 5 | 0 | 0 | 0 | 2 | 0 | 3 |
+| storage | 5 | 1 | 0 | 0 | 2 | 0 | 2 |
 | story | 3 | 0 | 2 | 0 | 0 | 0 | 1 |
 | story-coherence | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | story-drive | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1128,7 +1128,7 @@ Total tickets: **3240** — untagged: **2726** — unbound to epic: **1647**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2726 | 1103 | 59 | 1230 | 36 | 0 | 298 |
+| (untagged) | 2726 | 1112 | 59 | 1230 | 36 | 0 | 289 |
 
 ## By epic × status
 
@@ -1218,7 +1218,7 @@ Total tickets: **3240** — untagged: **2726** — unbound to epic: **1647**
 | epic-api-versioning | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-architecture | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-archival-workflow | 7 | 6 | 0 | 1 | 0 | 0 | 0 |
-| epic-asset-platform-capabilities | 6 | 1 | 0 | 0 | 0 | 0 | 5 |
+| epic-asset-platform-capabilities | 6 | 6 | 0 | 0 | 0 | 0 | 0 |
 | epic-asset-support-expansion | 4 | 3 | 0 | 1 | 0 | 0 | 0 |
 | epic-assets-attribution | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-assets-media-pipeline | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1315,7 +1315,7 @@ Total tickets: **3240** — untagged: **2726** — unbound to epic: **1647**
 | epic-db-asset-snapshot-recovery | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
 | epic-db-cold-storage-high-perf | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-db-content-versioning | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| epic-db-growth-tiered-storage | 7 | 1 | 0 | 0 | 0 | 0 | 6 |
+| epic-db-growth-tiered-storage | 7 | 2 | 0 | 0 | 0 | 0 | 5 |
 | epic-db-migration-compaction | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-deno-support | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-deno-support (future Deno parity) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1597,7 +1597,7 @@ Total tickets: **3240** — untagged: **2726** — unbound to epic: **1647**
 | Visual Novel Mode; Immersion & Presentation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Wardrobe / Loadout Avatar Variants | 8 | 4 | 0 | 4 | 0 | 0 | 0 |
 | World & Locations | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| (unbound) | 1647 | 659 | 57 | 529 | 50 | 0 | 352 |
+| (unbound) | 1647 | 663 | 57 | 529 | 50 | 0 | 348 |
 
 ## Ticket detail
 

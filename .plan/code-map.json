@@ -1261,6 +1261,16 @@
       "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
     }
   ],
+  "src/assets/service/create-dedup-race.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md"
+    }
+  ],
   "src/assets/service/create.coverage.test.ts": [
     {
       "kind": "epic",
@@ -10989,6 +10999,12 @@
       "source": ".plan/tickets/TASK-gate-world-lore-lifecycle-confidence-distortion-disputed-tri.md"
     }
   ],
+  "src/db/024_memory_embeddings_cascade_fk.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-embeddings-orphaned-on-actor-delete.md"
+    }
+  ],
   "src/db/__tests__/schema-roundtrip.test.ts": [
     {
       "kind": "epic",
@@ -12331,6 +12347,12 @@
       "source": ".plan/tickets/TASK-fix-db-migrations.md"
     }
   ],
+  "src/db/migrations/024_memory_embeddings_cascade_fk.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-embeddings-orphaned-on-actor-delete.md"
+    }
+  ],
   "src/db/migrations/025-invite-codes.ts": [
     {
       "kind": "ticket",
@@ -12369,6 +12391,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-lore-structured-generation-via-assistant.md"
+    }
+  ],
+  "src/db/migrations/030_assets_content_hash_unique.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md"
     }
   ],
   "src/db/migrations/031_chat_sections.ts": [
@@ -21820,6 +21852,14 @@
   "src/image-edit/providers/comfyui-owner.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-new-test-files-for-cross-file-process-collisions-befor.md"
     }
   ],
@@ -21827,6 +21867,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md"
     },
     {
       "kind": "ticket",
@@ -27054,6 +27098,12 @@
     }
   ],
   "src/routes/character-avatars": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-routes-character-avatars-subdir-is-shadowed-by-flat-file-cru.md"
+    }
+  ],
+  "src/routes/character-avatars.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-routes-character-avatars-subdir-is-shadowed-by-flat-file-cru.md"
