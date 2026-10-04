@@ -68,7 +68,9 @@ function createV1App(db: Kysely<DB>, userId: string | null,): Elysia {
     .derive(() => ({ userId, userRole: userId ? "admin" : null, sessionId: null, locale: "en", t, }))
     // Injected predicate, NOT a process.env mutation: the guard must be live for
     // this file without E2E_SAFEGUARD being cleared process-wide.
-    .use(v1Routes({ database: db, config: {} as never, asyncStore: stubAsyncStore(), governanceEnabled: () => true, },),) as unknown as Elysia;
+    .use(
+      v1Routes({ database: db, config: {} as never, asyncStore: stubAsyncStore(), governanceEnabled: () => true, },),
+    ) as unknown as Elysia;
 }
 
 describe("v1 governance guard is mounted by the real route tree", () => {
@@ -93,7 +95,9 @@ describe("v1 governance guard is mounted by the real route tree", () => {
 
   afterAll(async () => {
     // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
-    // destroy() throws a TypeError here that MASKS the real setup error.
+    // destroy() throws a TypeError that bun reports as an EXTRA spurious
+    // failure alongside the real setup error. Exit status is unchanged; this
+    // removes the noise, it does not hide anything.
     if (!db) { return; }
     await db.destroy();
   },);
@@ -103,6 +107,7 @@ describe("v1 governance guard is mounted by the real route tree", () => {
   beforeEach(() => {
     metrics.reset();
   },);
+
   afterEach(() => {
     governanceRateLimiter.destroy();
   },);
@@ -119,8 +124,8 @@ describe("v1 governance guard is mounted by the real route tree", () => {
     // very first call would make the rest of this test vacuous.
     expect(statuses[0],).toBe(200,);
     // The barrel throttles — impossible without the guard mounted on it.
-    expect(statuses.at(-1),).toBe(429,);
-  },);
+    expect(statuses.at(-1,),).toBe(429,);
+  });
 
   test("a different policy prefix is not throttled by the auth policy (policyForRoute ran per-prefix)", async () => {
     const app = createV1App(db, userId,);
@@ -133,7 +138,7 @@ describe("v1 governance guard is mounted by the real route tree", () => {
     // per user regardless of prefix — would 429 this too.
     const health = await app.handle(new Request("http://localhost/api/v1/health",),);
     expect(health.status,).toBe(200,);
-  },);
+  });
 
   test("the throttled request reaches the real /metrics Prometheus surface (onAfterHandle → collector)", async () => {
     const app = createV1App(db, userId,);
@@ -152,7 +157,7 @@ describe("v1 governance guard is mounted by the real route tree", () => {
     // rate_limited counter matches the 429s actually served.
     expect(body,).toContain(`loop_lore_route_requests_total{route="/api/v1/auth/me"} 11`,);
     expect(body,).toContain(`loop_lore_rate_limited_total ${throttled}`,);
-  },);
+  });
 
   test("the 429 carries the guard's own x-ratelimit-hit marker (not a route-level 429)", async () => {
     const app = createV1App(db, userId,);
@@ -166,5 +171,5 @@ describe("v1 governance guard is mounted by the real route tree", () => {
     expect(throttled?.status,).toBe(429,);
     expect(throttled?.headers.get("x-ratelimit-hit",),).toBe("1",);
     expect(throttled?.headers.get("ratelimit-remaining",),).toBe("0",);
-  },);
+  });
 });
