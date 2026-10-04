@@ -29,11 +29,9 @@ describe("views/search — gallery", () => {
     await insertAssets(db, "owner", "theme.mp3", "audio/mpeg", "audio", 3_000_000, "path/b", {
       id: "asset-2" as never,
     },);
-
     await insertAssets(db, "owner", "intro.mp4", "video/mp4", "video", 10_000_000, "path/c", {
       id: "asset-3" as never,
     },);
-
     await insertAssetTags(db, "asset-1", "cozy", { scope: "global", },);
   },);
 
@@ -90,7 +88,7 @@ describe("views/search — gallery", () => {
   test("renders per-type thumbnails", async () => {
     const res = await serveGallerySearch(db, new URLSearchParams(),);
     const html = await res.text();
-    expect(html,).toContain("/api/assets/asset-1/thumb",); // image
+    expect(html,).toContain("/api/v1/assets/asset-1/thumb",); // image
     expect(html,).toContain("🎵",); // audio
     expect(html,).toContain("🎬",); // video
   });
@@ -109,7 +107,6 @@ describe("views/search — gallery", () => {
         created_at: new Date().toISOString(),
       },)
       .execute();
-
     const res = await serveGallerySearch(db, new URLSearchParams({ q: "script", },),);
     const html = await res.text();
     expect(html,).not.toContain("<script>alert(1)</script>",);
