@@ -6,8 +6,9 @@
 // Outbound: resolve the target via the registry, run the outbound moderation
 // gate, stamp a loop-lore idempotency key, delegate to the adapter. Inbound:
 // `receive` is the single ingestion point (adapter wiring / the webhook
-// surface call it); it dedups on (adapter, protocol message id) before
-// dispatching to the `onMessage` handler.
+// surface call it); it dedups on (adapter, protocol message id), consults
+// the optional inbound policy gate (spam, allow/block lists), then dispatches
+// to the `onMessage` handler.
 //
 // Retry/backoff and degradation policy are follow-up work: the Result
 // shapes below are the extension points — send() never throws. Health
@@ -25,6 +26,16 @@ export type ModerationVerdict =
 
 /** Outbound moderation-gate hook; invoked before every send. */
 export type ModerationGate = (message: AdapterMessage,) => Promise<ModerationVerdict>;
+
+/** Inbound gate verdict — `ok: false` drops the message before dispatch. */
+export type InboundGateVerdict =
+  | { ok: true }
+  | { ok: false; code: "inbound_blocked"; message: string };
+
+/** Synchronous inbound policy gate (spam, allow/block lists); consulted
+ * after dedup, before dispatch. The email family supplies the spam gate
+ * (src/integrations/email/spam-gate.ts). */
+export type InboundGate = (message: AdapterMessage,) => InboundGateVerdict;
 
 /** Typed failure of `MessageBridge.send` — never a throw. */
 export type BridgeSendError =
@@ -48,6 +59,8 @@ export interface MessageBridgeOptions {
   health?: AdapterHealth;
   /** Per-(adapter, target) rate limiter; gates every outbound send. */
   rateLimiter?: AdapterRateLimiter;
+  /** Inbound policy gate; a not-ok verdict drops the message before dispatch. */
+  inboundGate?: InboundGate;
   /** Clock injection for tests; default `Date.now`. */
   now?: () => number;
 }
@@ -59,8 +72,10 @@ export interface MessageBridge {
   send(target: string, message: AdapterMessage,): Promise<BridgeSendResult>;
   /** Register the inbound handler (replaces any previous). */
   onMessage(handler: AdapterMessageHandler,): void;
-  /** Ingest an inbound message from `adapterName`; dedup on (adapter, id).
-   * @returns true when dispatched to the handler, false when dropped as a duplicate. */
+  /** Ingest an inbound message from `adapterName`; dedup on (adapter, id),
+   * then consult the inbound policy gate.
+   * @returns true when dispatched to the handler, false when dropped as a
+   * duplicate or blocked by the inbound gate. */
   receive(adapterName: string, message: AdapterMessage,): boolean;
 }
 
@@ -85,6 +100,7 @@ export function createMessageBridge(
   const now = options.now ?? (() => Date.now());
   const health = options.health;
   const rateLimiter = options.rateLimiter;
+  const inboundGate = options.inboundGate;
   const seen = new Map<string, number>();
   let handler: AdapterMessageHandler | null = null;
 
@@ -164,6 +180,13 @@ export function createMessageBridge(
       if (expiresAt !== undefined && expiresAt > nowMs) { return false; }
 
       seen.set(key, nowMs + dedupTtlMs,);
+
+      // Inbound policy gate (spam/allow/block lists): dedup runs first so a
+      // delivery retry cannot re-trip the gate or re-file quarantine; a
+      // gate-blocked message never dispatches and does not mark success.
+      const gateVerdict = inboundGate?.(message,);
+      if (gateVerdict !== undefined && !gateVerdict.ok) { return false; }
+
       handler?.(message,);
       health?.markSuccess(adapterName,);
       return true;

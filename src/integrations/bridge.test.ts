@@ -349,3 +349,52 @@ describe("MessageBridge health + rate-limit wiring", () => {
     expect(health.get("matrix",)?.verdict,).toBe("ok",);
   });
 });
+
+describe("MessageBridge inbound gate", () => {
+  test("a not-ok verdict drops the message before dispatch", () => {
+    const received: AdapterMessage[] = [];
+    const gateCalls: string[] = [];
+    const registry = createBridgeRegistry();
+    registry.register(makeSendingAdapter("matrix", [],),);
+    const bridge = createMessageBridge(registry, {
+      inboundGate: (message,) => {
+        gateCalls.push(message.id,);
+        return message.author === "@alice:example.org"
+          ? { ok: true, }
+          : { ok: false, code: "inbound_blocked", message: "spam gate: blocked_sender", };
+      },
+    },);
+
+    bridge.onMessage((message,) => {
+      received.push(message,);
+    },);
+
+    expect(bridge.receive("matrix", inbound("evt-1",),),).toBe(true,);
+    expect(bridge.receive("matrix", { ...inbound("evt-2",), author: "@spam:evil.example", },),).toBe(false,);
+    expect(received.map((message,) => message.id),).toEqual(["evt-1",],);
+    expect(gateCalls,).toEqual(["evt-1", "evt-2",],);
+  });
+
+  test("dedup short-circuits before the gate, and a block never marks success", () => {
+    const gateCalls: string[] = [];
+    const registry = createBridgeRegistry();
+    registry.register(makeSendingAdapter("matrix", [],),);
+    const health = createAdapterHealth();
+    health.markFailure("matrix", "crash",);
+    const bridge = createMessageBridge(registry, {
+      health,
+      inboundGate: (message,) => {
+        gateCalls.push(message.id,);
+        return { ok: false, code: "inbound_blocked", message: "blocked", };
+      },
+    },);
+
+    bridge.onMessage(() => {},);
+
+    expect(health.isHealthy("matrix",),).toBe(false,);
+    expect(bridge.receive("matrix", inbound("evt-1",),),).toBe(false,);
+    expect(bridge.receive("matrix", inbound("evt-1",),),).toBe(false,);
+    expect(gateCalls,).toEqual(["evt-1",],);
+    expect(health.isHealthy("matrix",),).toBe(false,);
+  });
+});
