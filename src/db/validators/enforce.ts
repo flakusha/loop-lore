@@ -66,16 +66,18 @@ function readAxis(row: Record<string, unknown>, table: string, column: string,):
 }
 
 /**
- * Read a 0/1 integer axis column.
- * @throws {Error} when the column is absent or not 0/1.
+ * Read a 0/1 integer axis column. Booleans are accepted and normalised to 0/1
+ * (the importer's card-file data carries booleans; sqlite binds them as 0/1).
+ * @throws {Error} when the column is absent or not 0/1/true/false.
  */
 function readFlag(row: Record<string, unknown>, table: string, column: string,): 0 | 1 {
-  const value = row[column];
+  const raw = row[column];
+  const value = raw === true ? 1 : raw === false ? 0 : raw;
   if (value !== 0 && value !== 1) {
     // safeJsonStringify, not bare JSON.stringify: the latter is banned repo-wide.
-    const quoted = safeJsonStringify(value,);
+    const quoted = safeJsonStringify(raw,);
     throw new Error(
-      `assertValidWrite: ${table}.${column} must be 0 or 1 on the write, got ${quoted.ok ? quoted.value : value}`,
+      `assertValidWrite: ${table}.${column} must be 0 or 1 on the write, got ${quoted.ok ? quoted.value : raw}`,
     );
   }
   return value;
