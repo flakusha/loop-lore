@@ -16,7 +16,7 @@
  *      the FORMATTED line (no runId anywhere in it), so the lookup always missed
  *      and every click showed row 1's detail.
  */
-import { afterAll, beforeAll, beforeEach, expect, it, mock, } from "bun:test";
+import { afterEach, beforeAll, beforeEach, expect, it, mock, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { safeFetch, } from "../../utils";
 import type { FetchResult, SafeFetchOptions, } from "../../utils/safe-fetch/types";
@@ -113,8 +113,24 @@ beforeAll(async () => {
   setFetchFn = (await import("./api")).setFetch;
 },);
 
-afterAll(() => {
-  // setFetch mutates a module-level binding with no scope back to it.
+/**
+ * Resource contract — each test owns:
+ *   - its own `HarnessView` and widget stubs (`buildView()`, never shared)
+ *   - its own `requestedPaths` / `requestedTokens` recorders (rebound per test)
+ *   - the `api.ts` fetch seam, which is process-global: installed in
+ *     `beforeEach`, restored here in `afterEach`
+ *
+ * `refresh()` and `showDetail()` are fire-and-forget (`void`), so a detail
+ * fetch belonging to THIS test can still settle after the test ends. Draining
+ * those microtasks before the next `beforeEach` rebinds the recorders keeps a
+ * late request out of the next test's array — without it the `toEqual([...])`
+ * and request-count assertions see phantom entries that depend on test order.
+ */
+afterEach(async () => {
+  // A never-true predicate makes `flushUntil` drain its full tick budget.
+  await flushUntil(() => false,);
+  // Per-test rather than once in `afterAll`: a failing test must not leave its
+  // stub installed for everything that runs after it.
   setFetchFn(safeFetch,);
 },);
 
