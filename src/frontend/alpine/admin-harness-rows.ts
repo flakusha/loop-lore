@@ -2,21 +2,28 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Display shaping for the Harness tab: wire rows -> pre-formatted view models.
+ * Display shaping for the Harness tab's LIST views: wire rows -> pre-formatted
+ * row models (stat cards, runs table, per-model rollup, tooling gaps).
  *
  * Kept apart from `admin-harness.ts` so the component holds only state +
  * fetch, and so the formatters are unit-testable without an Alpine object.
  * The template binds these values directly — no formatting lives in markup.
+ *
+ * The detail panel's view model lives in ./admin-harness-detail-view and the
+ * shared cell formatters in ./admin-harness-format; both are re-exported here
+ * so existing `from "./admin-harness-rows"` imports keep working.
  */
 import type { Static, } from "@sinclair/typebox";
+import { formatDuration, formatRunTs, formatUsd, textOrDash, } from "./admin-harness-format";
 import {
   HarnessRunDetailSchema,
   HarnessRunSummarySchema,
   HarnessStatsSchema,
 } from "./admin-harness-schema";
-import { formatDisplayDate, } from "./chat-utils/time";
 import { t, } from "./i18n";
 
+// Formatters and the detail-view builder live in sibling modules; re-exported
+// here so existing `from "./admin-harness-rows"` imports keep working.
 /** One run row as `GET /api/v1/harness/runs` serves it. */
 export type HarnessRunSummary = Static<typeof HarnessRunSummarySchema>;
 /** One run as `GET /api/v1/harness/runs/:runId` serves it. */
@@ -64,38 +71,6 @@ export interface HarnessGapRow {
   toolingGap: string;
   count: number;
 }
-
-/** The activity/detail view for a single run. */
-export interface HarnessDetailView {
-  runId: string;
-  ts: string;
-  task: string;
-  msg: string;
-  result: string;
-  failed: boolean;
-  pattern: string;
-  patternDetail: string;
-  toolingGap: string;
-  tools: string[];
-  duration: string;
-  cost: string;
-  model: string;
-  branch: string;
-  gitSha: string;
-  pid: string;
-}
-
-/** Render an optional wire value for a text cell.
- *
- * A dash, matching the TUI detail panel, not an empty string: these rows are
- * searched by `filteredHarnessRuns()`, where `${row.branch}` on a null would
- * stringify to the literal text `null` and match every branchless run.
- * @param value - The wire value, which may be null or absent
- * @returns The value, or the dash placeholder when there is nothing to show
- */
-function textOrDash(value: string | number | null | undefined,): string {
-  return value === null || value === undefined || value === "" ? "\u2014" : String(value,);
-}
 /**
  * Build the `/runs` query string from the current filter values. Empty filters
  * are omitted rather than sent blank, so the server applies no filter.
@@ -121,40 +96,6 @@ export function buildRunsQuery(taskType: string, result: string, limit: number,)
 export function isStale(selectedRunId: string, requestedRunId: string,): boolean {
   return selectedRunId !== requestedRunId;
 }
-
-/**
- * Format a millisecond span for a stat card or table cell.
- * @param ms - Duration in milliseconds
- * @returns Compact human string, e.g. `340ms` / `1.2s` / `4m`
- */
-export function formatDuration(ms: number,): string {
-  if (!Number.isFinite(ms,)) { return "-"; }
-  if (ms < 1000) { return `${Math.round(ms,)}ms`; }
-  if (ms < 60_000) { return `${(ms / 1000).toFixed(1,)}s`; }
-  return `${Math.round(ms / 60_000,)}m`;
-}
-
-/**
- * Format a USD amount at cent precision. Sub-cent spend still reads `$0.00`
- * rather than an empty cell.
- * @param usd - Amount in US dollars
- * @returns `$`-prefixed amount with two decimals
- */
-export function formatUsd(usd: number,): string {
-  if (!Number.isFinite(usd,)) { return "$0.00"; }
-  return `$${usd.toFixed(2,)}`;
-}
-
-/**
- * Render a wire timestamp for display, falling back to the raw value when the
- * formatter cannot parse it — a malformed ts must not blank the cell.
- * @param ts - ISO timestamp from the wire
- * @returns Localized date-time, or the raw string
- */
-function formatRunTs(ts: string,): string {
-  return formatDisplayDate(ts, "datetime",) || ts;
-}
-
 /**
  * Roll the stats totals into the stat-card model.
  * @param stats - Decoded `/api/v1/harness/stats` payload
@@ -220,30 +161,10 @@ export function buildGapRows(gaps: HarnessStats["toolingGaps"],): HarnessGapRow[
   return gaps.map((gap,) => ({ toolingGap: gap.toolingGap, count: gap.count, }));
 }
 
-/**
- * Shape the activity/detail view for one run.
- * @param detail - Decoded run detail record
- * @returns Flat view model; `toolingGap` is "" when the run has no gap
- */
-export function buildDetailView(detail: HarnessRunDetail,): HarnessDetailView {
-  return {
-    runId: detail.runId,
-    ts: formatRunTs(detail.ts,),
-    task: detail.task,
-    // `msg`/`toolingGap` are null on the wire for a run that recorded none;
-    // the view model is a string so the template binds them without a guard.
-    msg: detail.msg ?? "",
-    result: detail.result,
-    failed: detail.result !== "ok",
-    pattern: detail.pattern,
-    patternDetail: detail.patternDetail,
-    toolingGap: detail.toolingGap ?? "",
-    tools: detail.tools,
-    duration: formatDuration(detail.durationMs,),
-    cost: formatUsd(detail.costUsd,),
-    model: detail.model,
-    branch: textOrDash(detail.branch,),
-    gitSha: textOrDash(detail.gitSha,),
-    pid: textOrDash(detail.pid,),
-  };
-}
+export { buildDetailView, type HarnessDetailView, } from "./admin-harness-detail-view";
+
+export { buildDetailView, type HarnessDetailView, } from "./admin-harness-detail-view";
+
+export { formatDuration, formatUsd, } from "./admin-harness-format";
+
+export { formatDuration, formatUsd, } from "./admin-harness-format";

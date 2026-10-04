@@ -65,6 +65,7 @@ describe("formatRunLine", () => {
     branch: "main",
     gitSha: "abc123def456",
     pid: 12345,
+    turnId: "turn-1",
     ...overrides,
   });
 
@@ -137,6 +138,7 @@ describe("formatRunDetail", () => {
     branch: null,
     gitSha: null,
     pid: null,
+    turnId: null,
     tools: ["read", "write", "bash", "grep", "edit",],
     pattern: "agent.edit",
     // "" is what the server actually sends for a run with no pattern detail:
@@ -222,6 +224,14 @@ describe("formatRunDetail", () => {
   it("renders null pid as dash", () => {
     const detail = formatRunDetail(makeDetail({ pid: null, },),);
     expect(detail,).toContain("{bold}PID:{/bold} —",);
+  });
+
+  it("shows the turn id so a turn's rounds are recognizable", () => {
+    expect(formatRunDetail(makeDetail({ turnId: "turn-7", },),),).toContain("{bold}Turn:{/bold} turn-7",);
+  });
+
+  it("renders a null turn id as a dash", () => {
+    expect(formatRunDetail(makeDetail({ turnId: null, },),),).toContain("{bold}Turn:{/bold} —",);
   });
 
   it("renders an empty patternDetail without a trailing separator", () => {

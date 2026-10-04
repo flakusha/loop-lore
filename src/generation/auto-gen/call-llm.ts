@@ -158,8 +158,10 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
     params: { temperature, maxTokens, },
     signal: tracking?.abortSignal,
     // Exec-log context for the auto-gen dispatch (both stream + non-stream
-    // paths share this request).
-    harness: { taskType: AUTO_GEN.taskType, task: "auto-gen", },
+    // paths share this request). `tracking` is undefined for an initial
+    // greeting with no parent message: that logs turn_id null, never a
+    // fabricated id.
+    harness: { taskType: AUTO_GEN.taskType, task: "auto-gen", turnId: tracking?.attemptId, },
   };
 
   const streamSanitizer = canStream ? createStreamingSanitizer() : null;

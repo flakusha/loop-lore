@@ -93,7 +93,7 @@ export function formatRunDetail(detail: HarnessRunDetail,): string {
     `{bold}Branch:{/bold} ${detail.branch ?? "—"}  {bold}SHA:{/bold} ${
       detail.gitSha ? detail.gitSha.slice(0, 7,) : "—"
     }`,
-    `{bold}PID:{/bold} ${detail.pid != null ? detail.pid : "—"}`,
+    `{bold}PID:{/bold} ${detail.pid != null ? detail.pid : "—"}  {bold}Turn:{/bold} ${detail.turnId ?? "—"}`,
   );
 
   if (detail.msg) {
