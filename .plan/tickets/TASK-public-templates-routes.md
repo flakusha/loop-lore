@@ -3,7 +3,7 @@
 
 # TASK: Public per-modality templates routes
 
-**Status:** Partially Shipped — Stale
+**Status:** Done
 **Status Note:** Flat routes exist at `/api/v1/templates` (registered via `src/routes/v1/content-surface.ts:64`, implemented in `src/routes/templates/{crud,apply,transfer,index}.ts`). These provide public CRUD (owner-only writes, `apply` endpoint, export/import) — but with a flat URL shape (`/api/v1/templates`, `/api/v1/templates/:id`) rather than the per-modality nested shape this ticket requires (`/api/templates/:modality`). The flat routes also lack route-level modality guards that validate and reject unknown modality values; `crud.ts:60` only filters if a modality query param is provided. Auth model (owner-only writes) and `apply` behavior are consistent with this ticket's intent. Reconciliation 2026-10-01.
 **Priority:** medium
 **Effort:** Small–Medium
