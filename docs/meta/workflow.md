@@ -199,7 +199,7 @@ git merge --ff-only dev
 
 ## Generation scheduler seam
 
-One shared `ResourceManager` is injected at the `callWithFailover` sites
+One shared `ResourceManager` will be injected at the `callWithFailover` sites
 (`src/generation/providers/call-with-failover.ts`). Requests enter with
 priority defaulting to Normal until classification lands; the manager routes
 them through the scheduler before any provider adapter, enforcing budget and

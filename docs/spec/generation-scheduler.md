@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-License-Identifier: Apache-2.0 OR MIT OR CC-BY-4.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # Spec: Generation Scheduler
@@ -12,10 +12,11 @@ this doc is the build contract. On conflict, this doc wins for behavior,
 the epic wins for scope.
 
 Insertion point: `callWithFailover`
-(`src/generation/providers/call-with-failover.ts:29`). Every LLM
-completion routes through it; the scheduler sits in front of it and
-decides *when* each request goes out. No second queue, no second
-dispatcher.
+(`src/generation/providers/call-with-failover.ts:29`). Interactive and
+auto-gen completions route through it; the scheduler sits in front of it
+and decides *when* each request goes out. Aux issues a direct provider
+call and bypasses it today — wiring it through the manager is part of the
+first wiring ticket (§2). No second queue, no second dispatcher.
 
 ## 1. Problem
 
@@ -31,12 +32,13 @@ traffic share one process:
    is retried with backoff (`src/generation/providers/retry.ts:47`), and
    the caller sits through it. Nothing narrows dispatch beforehand.
 3. **Aux vs interactive contention.** `aux-pipeline/runner.ts` and auto-gen
-   cascades (`src/generation/auto-gen/call-llm.ts:89`) fire alongside interactive
-   turns (`src/generation/generate-route/handler.ts:57`) through the same
-   `callWithFailover` path. FIFO-by-arrival lets a bulk classify job
-   head-block a chat turn and vice versa. Embedding and rerank
-   (`embed-provider.ts`, `rerank.ts`) bypass `callWithFailover` entirely
-   and do not contend on this queue.
+   cascades (`src/generation/auto-gen/call-llm.ts`) fire alongside interactive
+   turns (`src/generation/generate-route/handler.ts`) contending on the
+   same providers/GPU. Aux issues a direct provider call (bypassing
+   `callWithFailover`); auto-gen and interactive route through it.
+   FIFO-by-arrival lets a bulk classify job head-block a chat turn and
+   vice versa. Embedding and rerank (`embed-provider.ts`, `rerank.ts`)
+   bypass `callWithFailover` entirely and do not contend on this queue.
 4. **VRAM contention.** A short `aux`-class task and a long-context scene
    share the same llama-swap slot budget with no ordering signal; the
    long run holds the slot while cheap work starves behind it.
@@ -51,14 +53,14 @@ Nothing delays a live one.
 
 ### requestClass taxonomy
 
-`requestClass` is an explicit label set by the caller, not inferred. Three
-call sites route through `callWithFailover` and carry a class label:
+`requestClass` is an explicit label set by the caller, not inferred.
+Three call sites carry a class label:
 
 | `requestClass` | Call site | Via |
 |---|---|---|
 | `interactive` | `src/generation/generate-route/handler.ts` (stream + non-stream paths) | `callWithFailover` |
 | `auto-gen` | `src/generation/auto-gen/call-llm.ts` | `callWithFailover` |
-| `aux` | `src/aux-pipeline/runner.ts` | `callWithFailover` |
+| `aux` | `src/aux-pipeline/runner.ts` | direct `provider.complete` (bypasses `callWithFailover`; wiring needed) |
 
 Embedding and rerank use dedicated llama.cpp transports (`embed-provider.ts`,
 `rerank.ts`) that bypass `callWithFailover` entirely. They are not in scope
@@ -87,12 +89,12 @@ priority = base(requestClass) + sizeTiebreak(promptTokens, maxTokens)
 - No LLM call during classification. A scheduler that needs an LLM call
   to decide whether to make an LLM call is a deadlock.
 
-### TaskSignal shape
+### Failover list input
 
-The harness epic (routing policy, `src/generation/routing/`) emits an
-ordered failover list per request via `buildFailoverList`. The scheduler
-treats that list as opaque input: it orders *when* the list is attempted,
-never *which* provider is first. Routing policy stays in the harness;
+`buildFailoverList` (`src/generation/providers/registry.ts`) emits an
+ordered failover list per request. The scheduler treats that list as
+opaque input: it orders *when* the list is attempted, never *which*
+provider is first. Routing policy stays in the registry;
 ordering/admission stays here (§7).
 
 ### ResourceManager role
@@ -213,9 +215,10 @@ No new telemetry stack, no dashboard in this epic. Benches (§8, tickets
 
 ## 7. Non-goals
 
-- **Routing policy.** `generation/routing/` (harness epic) owns which
-  provider is primary and in what failover order. The scheduler owns
-  ordering/admission only and MUST NOT reorder a failover list.
+- **Routing policy.** `buildFailoverList`
+  (`src/generation/providers/registry.ts`) owns which provider is primary
+  and in what failover order. The scheduler owns ordering/admission only
+  and MUST NOT reorder a failover list.
 - **Replacing breaker/retry.** Breaker decides aliveness, retry handles
   transient faults, scheduler orders + admits. Three layers, three jobs.
 - **Distributed scheduling.** Single-node, in-process. Multi-node belongs
