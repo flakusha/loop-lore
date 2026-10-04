@@ -1411,8 +1411,6 @@
   },
 
   "branches": {
-<<<<<<< ours — object `branches` (S+F, confidence: low)
-// hint: Structural and logic conflict. Both design and behavior differ.
     "title": "분기",
     "none": "아직 분기가 없습니다",
     "manage": "분기 관리",
@@ -1439,18 +1437,6 @@
     "failedSwitch": "분기를 전환하지 못했습니다",
     "failedDelete": "분기를 삭제하지 못했습니다",
     "failedMerge": "분기를 병합하지 못했습니다"
-=======
-    "title": "Branches",
-    "none": "No branches yet",
-    "fromHere": "Branch from here",
-    "forkPrompt": "Branch name (leave empty for auto-name)",
-    "forked": "Branched from message",
-    "failedFork": "Failed to create branch",
-    "switched": "Switched branch",
-    "failedSwitch": "Failed to switch branch",
-    "failedLoad": "Failed to load branches",
-    "forkPoint": "Branch point"
->>>>>>> theirs — object `branches` (S+F, confidence: low)
   },
   "wardrobe": {
     "baseOutfit": "Base outfit",
