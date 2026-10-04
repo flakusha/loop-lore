@@ -7,7 +7,7 @@
 import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { checkChatAccess, } from "./access";
-import type { ChatBranchWithMeta, } from "./branches";
+import type { ChatBranchWithMeta, ListBranchesResult, } from "./branches";
 import type { ServiceError, } from "./types";
 /** Shared 404 for a branch row that is missing or owned by another chat. */
 export const BRANCH_NOT_FOUND: ServiceError = {
@@ -113,7 +113,7 @@ export async function listBranches(
   db: Kysely<DB>,
   chatId: string,
   actorId: string,
-): Promise<import("./branches").ListBranchesResult> {
+): Promise<ListBranchesResult> {
   const access = await checkChatAccess(db, chatId, actorId, null,);
   if (!access.ok) { return access.error; }
 
@@ -124,7 +124,7 @@ export async function listBranches(
     .orderBy("created_at", "asc",)
     .execute();
 
-  const out: import("./branches").ChatBranchWithMeta[] = [];
+  const out: ChatBranchWithMeta[] = [];
   for (const row of rows) {
     const tip = row.parent_message_id;
     const tipRow = await db
@@ -272,5 +272,3 @@ export async function withMeta(
     lastActivity: tipRow?.created_at ?? null,
   };
 }
-
-export type { ChatBranchWithMeta, ListBranchesResult, } from "./branches";
