@@ -103,9 +103,6 @@ override.
 `autonomy-panel.browser.ts` drives both real surfaces — the world tab writes a
 character's `autonomy_preferences`; the chat modal writes
 `chats.autonomy_config` and stays hidden for a world-less chat.
-
-**Epic:** epic-actor-autonomy-story-drive
-**Tags:** autonomy, config, presets, chat-settings, world-settings, ui, layering
 **Related:** TASK-autonomy-rate-governor, TASK-story-auto-drive-scheduler, epic-actor-autonomy-story-drive.md:70-72, epics-index.md (EPIC-RESEARCH-AGENCY-DECISION)
 
 
