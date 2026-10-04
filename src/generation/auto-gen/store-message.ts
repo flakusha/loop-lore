@@ -21,6 +21,10 @@ import type { DB, } from "../../db/schema";
 import { extractAndStore, } from "../../game-state";
 import { getLogger, } from "../../logger";
 import { uid, } from "../../utils";
+import {
+  isSwipeIndexUniqueViolation,
+  retryBounded,
+} from "../../utils/swipe-retry";
 import type { GenDeps, } from "./deps";
 
 /** */
@@ -118,20 +122,21 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
   // rethrown: retrying would mask the real cause.
   const messageId = uid();
   await database.transaction().execute(async (trx,) => {
-    let resolvedSwipeIndex: number | null = parentMessageId ? 1 : null;
-    let lastError: unknown;
-    for (let attempt = 0; attempt < 8; attempt++) {
-      const maxSwipe = parentMessageId
-        ? await trx
-          .selectFrom("messages",)
-          .select(trx.fn.max("swipe_index",).as("max_idx",),)
-          .where("chat_id", "=", chatId,)
-          .where("parent_id", "=", parentMessageId,)
-          .executeTakeFirst()
-        : undefined;
+    const outcome = await retryBounded({
+      attempts: 8,
+      isRetryable: (err,) => isSwipeIndexUniqueViolation(err,),
+      onAttempt: async () => {
+        // Recompute MAX(swipe_index) each attempt inside the transaction.
+        const maxSwipe = parentMessageId
+          ? await trx
+            .selectFrom("messages",)
+            .select(trx.fn.max("swipe_index",).as("max_idx",),)
+            .where("chat_id", "=", chatId,)
+            .where("parent_id", "=", parentMessageId,)
+            .executeTakeFirst()
+          : undefined;
 
-      const candidate = parentMessageId ? (maxSwipe?.max_idx ?? 0) + 1 : null;
-      try {
+        const candidate = parentMessageId ? (maxSwipe?.max_idx ?? 0) + 1 : null;
         await trx
           .insertInto("messages",)
           .values({
@@ -158,32 +163,13 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
           },)
           .execute();
 
-        resolvedSwipeIndex = candidate;
-        lastError = undefined;
-        break;
-      } catch (err) {
-        // Only the swipe-index UNIQUE race is retryable. Anything else
-        // (FK violation, encryption error, DB down, schema mismatch) is
-        // a real error — rethrow to surface the actual cause.
-        const msg = err instanceof Error ? err.message : String(err,);
-        if (
-          !/UNIQUE constraint failed:\s*messages\.(chat_id|parent_id|swipe_index)\b/i.test(msg,) &&
-          !/SQLITE_CONSTRAINT(?:_UNIQUE)?\b.*idx_messages_swipe_unique/i.test(msg,)
-        ) {
-          throw err;
-        }
+        return candidate;
+      },
+    },);
 
-        lastError = err;
-        // bump candidate for the next attempt
-        if (candidate !== null) { resolvedSwipeIndex = candidate + 1; }
-      }
-    }
+    if (!outcome.ok) { throw outcome.lastError; }
 
-    if (lastError !== undefined) {
-      throw lastError;
-    }
-
-    return { swipeIndex: resolvedSwipeIndex, };
+    return { swipeIndex: outcome.value ?? null, };
   },);
 
   // Game-state extraction (FEAT-game-state-extraction-and-analysis-pipeline):

@@ -35,6 +35,7 @@ import {
 } from "../../db/enums";
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { retryBounded, } from "../../utils/swipe-retry";
 
 export const MAX_INSERT_ATTEMPTS = 8;
 
@@ -114,10 +115,14 @@ export async function insertUserMessageWithRetry(
   database: Kysely<DB>,
   input: SwipeInsertInput,
 ): Promise<SwipeInsertResult> {
-  let swipeIndex: number | null = null;
-  let lastError: unknown;
-  for (let attempt = 0; attempt < MAX_INSERT_ATTEMPTS; attempt++) {
-    try {
+  // NOTE: this site retries ANY error (`isRetryable: () => true`) — a
+  // pre-existing inconsistency versus the other swipe sites, kept verbatim
+  // to preserve semantics.
+  const outcome = await retryBounded({
+    attempts: MAX_INSERT_ATTEMPTS,
+    isRetryable: () => true,
+    onAttempt: async () => {
+      let swipeIndex: number | null = null;
       if (input.parentId) {
         const maxSwipe = await database
           .selectFrom("messages",)
@@ -127,8 +132,6 @@ export async function insertUserMessageWithRetry(
           .executeTakeFirst();
 
         swipeIndex = (maxSwipe?.max_idx ?? 0) + 1;
-      } else {
-        swipeIndex = null;
       }
 
       await database
@@ -152,13 +155,10 @@ export async function insertUserMessageWithRetry(
         },)
         .execute();
 
-      lastError = undefined;
-      break;
-    } catch (err) {
-      lastError = err;
-    }
-  }
+      return swipeIndex;
+    },
+  },);
 
-  if (lastError !== undefined) { throw new SwipeInsertExhaustedError(); }
-  return { id: input.id, swipeIndex, };
+  if (!outcome.ok) { throw new SwipeInsertExhaustedError(); }
+  return { id: input.id, swipeIndex: outcome.value ?? null, };
 }
