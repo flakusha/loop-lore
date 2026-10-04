@@ -55,6 +55,28 @@ files. Indexes (`priority.md`, `open.md`) hold file maps + status; tier files ho
 - **Detail lives in `tickets/` + `epics/`**; category files are status views, not specs.
 - **Active items** referenced by git issues point at their `.plan/backlog/*.md` source.
 
+## Ticket Priority (`/find-work` contract)
+
+`/find-work` (omp-plugins) resolves a ticket's priority via a three-step chain:
+
+1. **Explicit label** — frontmatter `labels:` or a `**Labels:**`/`**Tags:**` header
+   line carrying `p0`–`p6`, `priority: pN`, or a severity word
+   (`critical`/`blocker`→P0, `high`/`urgent`→P1, `medium`/`normal`→P2,
+   `low`/`minor`/`trivial`→P3).
+2. **Backlog tier placement** — when no label carries a priority, the ticket's
+   listing in a `backlog/priority-*.md` tier file decides: the `## P<n>` section
+   (sub-tiers like `P1.5`/`P2-A` round to the integer part) sets the priority.
+   Tickets referenced in multiple tier files take the FIRST file's tier
+   (sorted: `p0-p2` before `p3-p5` before `p6` before `release-010`).
+3. **Default** — otherwise `P3`.
+
+**Convention:** keep tier files authoritative — place a ticket in the right
+`priority-*.md` section and you are done. Add an explicit `pN`/severity label
+only to OVERRIDE tier placement (e.g. a hotfix riding in a P3 tier file).
+Ticket refs in tier files must use the exact spec filename form
+`` `TASK-<slug>.md` `` (also `BUG-`/`FEAT-`/`EPIC-`/`WIRE-`/`AUX-`) — that is
+what the tier parser keys on.
+
 ## Git Issue Integration
 
 Git issues track active work. Each issue references its spec:
