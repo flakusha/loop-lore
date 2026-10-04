@@ -43,7 +43,7 @@ if (res.ok) {
 }
 ```
 
-2. The 404 is **by design, and is the second of two 404s in the handler** — `src/routes/game-state.ts:66-70`:
+1. The 404 is **by design, and is the second of two 404s in the handler** — `src/routes/game-state.ts:66-70`:
 
 ```ts
 const access = await checkChatAccess(database, chatId, userId, ctx.userRole ?? null,);
@@ -53,9 +53,9 @@ const latest = await getLatestGameState({ database, chatId, },);
 if (!latest) { return notFound("Game state not found",); }
 ```
 
-3. A brand-new chat has **no `game_states` row, and will not get one** until an assistant turn emits a fenced ```game-state block. The production INSERT lives in `extractAndStore` (`src/game-state/service.ts:76`), and its only production call site is the message-store path (`src/generation/auto-gen/store-message.ts:189`). Chat creation writes nothing there. The one other writer of the table is test-only: `insertGameStates` (`src/test-utils/insert-helpers.ts:4653`).
+1. A brand-new chat has **no `game_states` row, and will not get one** until an assistant turn emits a fenced ```game-state block. The production INSERT lives in `extractAndStore` (`src/game-state/service.ts:76`), and its only production call site is the message-store path (`src/generation/auto-gen/store-message.ts:189`). Chat creation writes nothing there. The one other writer of the table is test-only: `insertGameStates` (`src/test-utils/insert-helpers.ts:4653`).
 
-4. **The client deliberately treats the 404 as an empty state**, not an error — `src/frontend/alpine/game-canvas/index.ts:101-105`:
+2. **The client deliberately treats the 404 as an empty state**, not an error — `src/frontend/alpine/game-canvas/index.ts:101-105`:
 
 ```ts
 if (res.status === 404) {
@@ -66,9 +66,9 @@ if (res.status === 404) {
 }
 ```
 
-5. The fetch fires on **every** chat page load, so "the request fired too early" cannot be the mechanism. `src/components/chat/game-canvas.html:10-14` mounts `x-data="gameCanvas()"`; Alpine calls `init()`; `init()` ends in `return component.refresh()` (`src/frontend/alpine/game-canvas/index.ts:71`); `refresh()` resolves the id via `activeChatId()` (`src/frontend/alpine/story-state/derived.ts:28-38`), which falls back to the `?chatid=` query param.
+1. The fetch fires on **every** chat page load, so "the request fired too early" cannot be the mechanism. `src/components/chat/game-canvas.html:10-14` mounts `x-data="gameCanvas()"`; Alpine calls `init()`; `init()` ends in `return component.refresh()` (`src/frontend/alpine/game-canvas/index.ts:71`); `refresh()` resolves the id via `activeChatId()` (`src/frontend/alpine/story-state/derived.ts:28-38`), which falls back to the `?chatid=` query param.
 
-6. The test harness **already exports an allowlist naming this exact endpoint** — `tests/e2e/helpers/htmx-alpine.ts:47-49`, whose docstring at lines 29-46 cites `GET /api/v1/chats/:id/game-state` and this very failure class. The sibling test for the identical flow already opts in, `tests/e2e/flows/browser/navigation.browser.ts:182-184`:
+2. The test harness **already exports an allowlist naming this exact endpoint** — `tests/e2e/helpers/htmx-alpine.ts:47-49`, whose docstring at lines 29-46 cites `GET /api/v1/chats/:id/game-state` and this very failure class. The sibling test for the identical flow already opts in, `tests/e2e/flows/browser/navigation.browser.ts:182-184`:
 
 ```ts
 // The game canvas fetches /api/v1/chats/:id/game-state, which 404s by
@@ -76,7 +76,7 @@ if (res.status === 404) {
 const errors = trackPageErrors(page, { allowlist: EXPECTED_404_NOISE_ALLOWLIST, },);
 ```
 
-7. `tests/e2e/flows/browser/characters-flow.browser.ts:212` calls `trackPageErrors(page)` with **no allowlist**, and line 223 asserts the resulting blanket list. That single omission is the bug.
+1. `tests/e2e/flows/browser/characters-flow.browser.ts:212` calls `trackPageErrors(page)` with **no allowlist**, and line 223 asserts the resulting blanket list. That single omission is the bug.
 
 **Why it is intermittent (~1-in-6).** Not request ordering — a harness timing race. `errors.assert()` runs in the `finally` immediately after `chat-header` attaches (`characters-flow.browser.ts:220-223`), while the game-state 404 is recorded by the `page.on("response", ...)` handler (`htmx-alpine.ts:119-125`). Whether that response event lands before the assert is a coin flip on a ~150ms gap. Measured with a throwaway probe over 5 isolated runs: `chat-header` attached at 696-788ms and the game-state 404 arrived at 821-952ms — 0 errors recorded at the assert point, 1 error present 2500ms later, in 5/5 runs.
 
