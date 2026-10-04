@@ -108,15 +108,6 @@ describe("New chat advanced fields E2E", () => {
         { timeout: 15_000, },
       );
 
-      // Start the body read NOW, not after the assertions below. A successful
-      // create navigates to the chat view, and Playwright discards the response
-      // body once that navigation commits. Awaiting `createRes` and only then
-      // calling `res.json()` leaves an intervening `expect` for that navigation
-      // to slip into, which is what made this fail under load when the 34-file
-      // e2e batch runs concurrently. Attaching the read before the click puts it
-      // in flight the moment the response arrives.
-      const bodyPromise = createRes.then((res,) => res.json().catch(() => null));
-
       const name = `Advanced-Chat-${Date.now()}`;
       await page.fill("[data-testid='chat-name-input']", name,);
       await page.locator("[data-testid='chat-mode-select']",).selectOption("story",);
@@ -125,27 +116,45 @@ describe("New chat advanced fields E2E", () => {
 
       const res = await createRes;
       expect(res.status(), `chat create should succeed (got ${res.status()})`,).toBeLessThan(400,);
-      const body = (await bodyPromise) as { id?: string; data?: { id?: string } } | null;
-      const createdId = body?.id ?? body?.data?.id;
-      expect(createdId, "create response should carry chat id",).toBeDefined();
 
+      // The create response body is NOT the id source: handleCreateSuccess reads
+      // it, attaches the persona and then calls location.assign(), and Playwright
+      // discards the body once that navigation commits - so a read racing the
+      // navigation resolves to null under load. The unique name above is what
+      // the create POST committed, so match the row on it instead.
       const row = await ctx.db
         .selectFrom("chats",)
         .select(["id", "name", "mode", "created_by",],)
-        .where("id", "=", createdId!,)
+        .where("name", "=", name,)
         .executeTakeFirst();
 
-      expect(row,).not.toBeNull();
+      expect(row, `create should commit a chat row named ${name}`,).not.toBeNull();
+      const createdId = row!.id;
       expect(row!.name,).toBe(name,);
       expect(row!.mode,).toBe("story",);
       expect(row!.created_by,).toBe(SEED.user.id,);
 
-      const link = await ctx.db
-        .selectFrom("chat_participants",)
-        .select(["persona_id",],)
-        .where("chat_id", "=", createdId!,)
-        .where("actor_id", "=", SEED.user.id,)
-        .executeTakeFirst();
+      // The persona is attached by a SECOND client request (PUT
+      // /api/v1/chats/:id/persona, best-effort in submit.ts handleCreateSuccess),
+      // not by the create POST. One read races that PUT and returns null, so poll
+      // for the link within a bounded 30 x 200ms = 6s budget and stop on the first
+      // match. The attempt count is the bound: the loop cannot hang.
+      let link: { persona_id: string | null } | undefined;
+      for (let attempt = 0; attempt < 30; attempt++) {
+        const candidate = await ctx.db
+          .selectFrom("chat_participants",)
+          .select(["persona_id",],)
+          .where("chat_id", "=", createdId,)
+          .where("actor_id", "=", SEED.user.id,)
+          .executeTakeFirst();
+
+        if (candidate?.persona_id === personaId) {
+          link = candidate;
+          break;
+        }
+
+        await new Promise((resolve,) => setTimeout(resolve, 200,));
+      }
 
       expect(link?.persona_id, "persona should be linked to participant",).toBe(personaId,);
 
