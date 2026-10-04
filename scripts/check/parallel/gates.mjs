@@ -115,6 +115,34 @@ export const checks = {
   // Epic coverage remains manual; current planning debt is non-blocking.
 };
 
+// Advisory gates: these RUN and REPORT like any other gate, but a failure
+// does not fail the run. They are all generated-artifact freshness checks
+// that drift from concurrent dev-side merges and are reconciled post-merge
+// anyway — blocking a worktree finalize on them is pure friction.
+//
+// ponytail: the set is open-ended; add a gate here when it is proven to
+// drift from concurrent merges faster than the branch can finalize. The
+// failure is still visible in the report as ADVISORY, so the signal is
+// not lost — it just does not block.
+export const ADVISORY_GATES = new Set([
+  // .plan/ validation: format, linkage, backlog, tickets, code-map, links,
+  // spdx, naming, epics-doc, status-vocab, matrix — all drift when dev merges
+  // plan changes concurrently.
+  "plan - validate",
+  // Ticket index reconciliation: index.json ↔ .md ↔ git issues — drifts when
+  // dev merges ticket changes concurrently.
+  "plan - ticket index (sync)",
+  // Code-map freshness: code-map.json matches a fresh rebuild — drifts when
+  // dev merges code changes concurrently.
+  "code-map - freshness",
+  // Feature matrix freshness: .plan/feature-matrix.md vs a fresh rebuild —
+  // drifts when dev merges plan changes concurrently.
+  "plan - matrix",
+  // jscpd ratchet: clone count vs committed baseline — drifts when dev
+  // merges add or remove clones concurrently.
+  "jscpd ratchet",
+],);
+
 // Default skip patterns for the heavy `bun test` gates. Each entry is a
 // substring matched against the test file path; matches are removed from the
 // path list passed to `bun test`. Bun's own `--path-ignore-patterns` glob

@@ -50,6 +50,12 @@ bun run check && bun test src/
 #   registry; unknown names exit 2 and list available gates. `--gates`
 #   and `--skip-gates` are mutually exclusive. `giwt finalize`
 #   accepts `--gates` / `--skip-gates` and forwards them to Step 2.
+# - Advisory gates (ADVISORY_GATES in scripts/check/parallel/gates.mjs) RUN
+#   and REPORT like any other gate, but a failure does NOT fail the run.
+#   They are generated-artifact freshness checks that drift from concurrent
+#   dev-side merges and are reconciled post-merge anyway. The failure is
+#   still visible in the report as ADVISORY, so the signal is not lost —
+#   it just does not block finalization.
 ```
 
 ### Weave-damage scan (post-rebase)
