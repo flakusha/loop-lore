@@ -17,6 +17,7 @@
  * in the flat file — registering them here too would double-register.
  */
 import { Elysia, } from "elysia";
+import { requireAssetOwner, } from "../assets/controller";
 import { unlinkAsset, } from "../assets/service";
 import { AvatarService, } from "../characters/services/avatar-service";
 import { AvatarSelectionRule, } from "../db/enums";
@@ -83,7 +84,13 @@ export function characterAvatarsExtraPlugin(opts: HandlerOpts, prefix = "/api",)
       const userId = await requireActorAccess(ctx, database,);
       if (userId instanceof Response) { return userId; }
 
+      // requireActorAccess only proves the caller owns the ACTOR. unlinkAsset
+      // deletes on asset_id alone, so owning the actor must not grant the right
+      // to unlink somebody else's asset. Gate the asset too.
       const { actorId, assetId, } = ctx.params;
+      const owned = await requireAssetOwner(database, assetId, userId,);
+      if (owned instanceof Response) { return owned; }
+
       await unlinkAsset({
         database,
         assetId,

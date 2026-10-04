@@ -94,7 +94,7 @@ export interface UploadOpts {
  * @param userId
  * @returns void
  */
-async function requireAssetOwner(
+export async function requireAssetOwner(
   database: Kysely<DB>,
   assetId: string,
   userId: string,
@@ -105,8 +105,10 @@ async function requireAssetOwner(
     .where("id", "=", assetId,)
     .executeTakeFirst();
 
-  if (!asset) { return notFoundResponse("Asset not found",); }
-  if (asset.owner_id !== userId) { return notOwnerResponse("Asset",); }
+  // "Missing" and "not yours" must be indistinguishable, or the differing
+  // message is itself an existence oracle on arbitrary asset ids. Same shape
+  // both ways, matching the guard in routes/asset-tags/helpers.ts.
+  if (!asset || asset.owner_id !== userId) { return notOwnerResponse("Asset",); }
   return asset;
 }
 
@@ -351,6 +353,10 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
+        // getAssetLinks keys on asset_id alone, so ownership is enforced here.
+        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+        if (owned instanceof Response) { return owned; }
+
         const links = await getAssetLinks(database, ctx.params.id,);
         return jsonResponse(links,);
       },)
@@ -443,6 +449,10 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       .get(`${prefix}/assets/:id/shares`, async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+
+        // getAssetShares keys on asset_id alone, so ownership is enforced here.
+        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+        if (owned instanceof Response) { return owned; }
 
         const shares = await getAssetShares(database, ctx.params.id,);
         return jsonResponse(shares,);
