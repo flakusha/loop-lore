@@ -11,7 +11,25 @@
  */
 import { Type, } from "@sinclair/typebox";
 
-/** One row of `GET /api/v1/harness/runs`. */
+/**
+ * One row of `GET /api/v1/harness/runs`.
+ *
+ * `branch`, `gitSha` and `pid` are nullable, not string/number: they are the
+ * git provenance a run records, and a run logged outside a checkout (or a
+ * hand-written / legacy JSONL line) has none. `HarnessRunSummary` declares
+ * them `string | null` / `number | null` and the server passes the nulls
+ * straight through, so a non-nullable schema here made `parseOr` reject the
+ * WHOLE response for a run with no branch - the admin tab then rendered an
+ * "unexpected shape" error instead of the row.
+ *
+ * `taskType` and `result` stay `Type.String()` even though the server types
+ * them as closed unions: `deserializeRun` does `w.task_type ?? "other"` with
+ * no union check, so a legacy line carrying `"WEIRD_RESULT"` reaches the API
+ * verbatim. A `Type.Union` of literals here would reject the entire runs
+ * response over one odd historical row, turning a cosmetic anomaly into a
+ * blank table. The unknown value renders fine - `failed` is a `!== "ok"`
+ * comparison, so an unrecognised result is simply counted as a failure.
+ */
 export const HarnessRunSummarySchema = Type.Object({
   runId: Type.String(),
   ts: Type.String(),
@@ -25,9 +43,10 @@ export const HarnessRunSummarySchema = Type.Object({
   costUsd: Type.Number(),
   tokensIn: Type.Number(),
   tokensOut: Type.Number(),
-  branch: Type.String(),
-  gitSha: Type.String(),
-  pid: Type.Number(),
+  // Git provenance, absent when the run had no checkout to read it from.
+  branch: Type.Union([Type.String(), Type.Null(),],),
+  gitSha: Type.Union([Type.String(), Type.Null(),],),
+  pid: Type.Union([Type.Number(), Type.Null(),],),
 },);
 
 /**
