@@ -3,7 +3,7 @@
 
 # BUG: createAsset content-hash dedup is a check-then-act race with no unique index
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-asset-platform-capabilities
@@ -31,3 +31,11 @@ Acceptance: N concurrent identical uploads by one owner yield exactly 1 row; the
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Verified fixed by code reading and focused tests against dev:
+
+- `createAsset` now uses `onConflict(...).doNothing()` and detects the loser via `numInsertedOrUpdatedRows === 0`, converting the check-then-act into an atomic upsert.
+- Migration `src/db/migrations/030_assets_content_hash_unique.ts` backs the dedupe key with two partial unique indexes (one for public, one for non-null encrypted_key_id), ensuring SQLite enforces uniqueness even under concurrent inserts.
+- Pinned by the concurrent-insert test path in `src/assets/service/create-dedup-race.test.ts`, which exercises 8 simultaneous identical uploads and verifies exactly 1 row results.

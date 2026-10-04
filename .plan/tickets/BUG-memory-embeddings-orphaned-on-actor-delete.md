@@ -3,7 +3,7 @@
 
 # BUG: memory_embeddings rows are orphaned on actor/memory deletion
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-db-growth-tiered-storage
@@ -44,3 +44,11 @@ Option 1 is the root-cause fix (the schema stops permitting orphans). Option 2 a
 
 
 git issue: fc8d36e
+
+## Resolution
+
+Verified fixed by code reading and focused tests against dev:
+
+- Migration `src/db/migrations/024_memory_embeddings_cascade_fk.ts` rebuilds the `memory_embeddings` table with `memory_id` as primary key referencing `actor_memories.id` with `ON DELETE CASCADE`.
+- By construction, all three delete paths (delete memory, delete actor, cascade from actor delete to its memories) automatically remove the corresponding embedding rows — no production call-site hook needed.
+- Pinned by `src/db/024_memory_embeddings_cascade_fk.test.ts`, which exercises all three delete paths and asserts zero orphan embedding rows remain in each case.

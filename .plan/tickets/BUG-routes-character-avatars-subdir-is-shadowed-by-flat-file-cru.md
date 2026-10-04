@@ -9,7 +9,7 @@
 **Acceptance Criteria:** src/routes/character-avatars/ is either deleted (with TASK-frontend-char-avatar-config and BUG-avatar-select-empty-throws-no-frontend-fallback repointed at src/routes/character-avatars.ts) or adopted as the live implementation (with a prefix parameter threaded through characterAvatarsRoutes and its crud/select/config sub-plugins). Either way, `bun require.resolve ./src/routes/character-avatars` and the module actually loaded must agree, and routes/v1 actor avatar routes must continue to mount under /api/v1.
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Labels:** routes, module-resolution, dead-code
 
@@ -34,3 +34,11 @@ Also applies to src/routes/character-traits/ (index.ts barrel was dead for the s
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Verified fixed by code reading and focused tests against dev:
+
+- The shadowed `src/routes/character-avatars/` subdirectory has been deleted.
+- The flat `src/routes/character-avatars.ts` mounts the avatar routes via its config and extra plugins, with the prefix parameter correctly threaded through from `routes/v1/actors-surface.ts`.
+- Pinned by `src/routes/character-avatars.test.ts`, which resolves the module and asserts the routes mount at the correct `/api/v1` prefix.
