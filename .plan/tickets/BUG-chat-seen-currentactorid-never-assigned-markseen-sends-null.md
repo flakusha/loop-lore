@@ -3,9 +3,9 @@
 
 # BUG: chat-seen-currentActorId-never-assigned-markSeen-sends-null
 
-**Summary:** Frontend `markSeen` POSTed `actorId: this.currentActorId` (always null — field declared but never assigned); server read actorId from the client body instead of the session, inverting the trust boundary.
-**Context:** Server fix in `src/routes/message-seen.ts:109-120` (POST derives actor via `resolvePrimaryActorId(database, userId)`; reads only `{ state }` from `ctx.body`); DELETE branch already used `requireActorFromSession` (`src/middleware/scope-by-user.ts`). Frontend `src/frontend/alpine/chat-seen.ts:50-54` no longer sends `actorId`. Regression evidence in `src/frontend/alpine/chat-seen.test.ts` (body assertion confirms `actorId` absent). Related interface fields (`currentActorId` in `src/frontend/alpine/chat-types/participants-state.ts`, `SendGateInputs.currentActorId` in `src/frontend/alpine/composer-pre-send/send-gate.ts`) are separate turn-order surfaces, not the markSeen trust boundary.
-**Acceptance Criteria:** see below (server derives actor from session; body carries state only; tests passing).
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
 
 
 **Status:** Done
