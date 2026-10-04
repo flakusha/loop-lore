@@ -27,8 +27,6 @@ export interface BackfillSummary {
   missing: number;
   /** Rows written this pass (0 on a no-op or dry run). */
   updated: number;
-  /** Users left keyless because encryption is unavailable — reported, not silently passed. */
-  skipped: number;
   /** True when no write was attempted. */
   dryRun: boolean;
 }
@@ -38,7 +36,7 @@ export interface BackfillSummary {
  *
  * @param db - typed Kysely instance
  * @param opts - `dryRun` reports counts without writing
- * @returns counts of rows considered, written, and skipped
+ * @returns counts of rows considered and written
  * @example
  * ```ts
  * const first = await runBackfill(db, {});
@@ -56,20 +54,15 @@ export async function runBackfill(
     .execute();
 
   let updated = 0;
-  let skipped = 0;
   for (const row of missing) {
     const secret = generateEncryptionSecret();
-    if (secret === "") {
-      skipped++;
-      continue;
-    }
     if (opts.dryRun !== true) {
       await db.updateTable("users",).set({ encryption_secret: secret, },).where("id", "=", row.id,).execute();
     }
     updated++;
   }
 
-  return { missing: missing.length, updated, skipped, dryRun: opts.dryRun === true, };
+  return { missing: missing.length, updated, dryRun: opts.dryRun === true, };
 }
 
 /**
@@ -98,7 +91,6 @@ export async function main(): Promise<number> {
   console.log("--- backfill:users:encryption-secret summary ---",);
   console.log(`missing keys : ${summary.missing}`,);
   console.log(`${summary.dryRun ? "would update" : "updated"} : ${summary.updated}`,);
-  console.log(`skipped      : ${summary.skipped}`,);
   return 0;
 }
 
