@@ -1438,7 +1438,7 @@
     "scene": "GM: set the scene description (/scene <description>)",
     "priority": "GM: set a character's turn priority (/priority <character> <high|medium|low>)",
     "skip": "GM: skip a character's turn (/skip <character>)"
-  }
+  },
 
   "branches": {
     "title": "Branches",
@@ -1467,6 +1467,36 @@
     "failedSwitch": "Failed to switch branch",
     "failedDelete": "Failed to delete branch",
     "failedMerge": "Failed to merge branch"
+  },
+  "commands": {
+    "help": "Show available commands",
+    "roll": "Roll dice (e.g., /roll 2d6+3)",
+    "summarize": "Summarize recent messages",
+    "impersonate": "Play as a character",
+    "narrate": "Inject narration text",
+    "ooc": "Out-of-character message",
+    "debug": "Toggle prompt debug view",
+    "detail": "Set detail level (immersion/basic/detailed)",
+    "improve": "Improve text with AI",
+    "context": "Show conversation context",
+    "image": "Generate image from prompt",
+    "quest": "Manage quests (list/create/status)",
+    "video": "Generate video from prompt",
+    "sfx": "Generate sound effect",
+    "sound": "Alias for /sfx",
+    "music": "Generate music or link external source",
+    "caption": "Caption the last image",
+    "create": "Create char/loc/world/item",
+    "review": "Review entity data for completeness",
+    "clear": "Clear chat",
+    "stats": "Show chat statistics",
+    "link": "Attach a gallery asset to this chat",
+    "guide": "GM: give narrative direction (/guide <direction>)",
+    "target": "GM: pick the character to respond next (/target <character>)",
+    "constraint": "GM: add a narrative constraint (/constraint <rule>)",
+    "scene": "GM: set the scene description (/scene <description>)",
+    "priority": "GM: set a character's turn priority (/priority <character> <high|medium|low>)",
+    "skip": "GM: skip a character's turn (/skip <character>)"
   },
   "wardrobe": {
     "baseOutfit": "Base outfit",

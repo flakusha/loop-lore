@@ -72,7 +72,7 @@ export function parseQuestBanners(raw: string,): QuestBanner[] {
   if (!Array.isArray(entries,)) { return []; }
   const banners: QuestBanner[] = [];
   for (const entry of entries) {
-    if (typeof entry.progress !== "number") { continue; }
+    if (typeof entry?.progress !== "number") { continue; }
     banners.push({
       questName: entry.quest_name ?? entry.questName ?? "Quest",
       progress: Math.round(entry.progress,),
@@ -124,7 +124,7 @@ export function questMilestones(quest: StoryQuest,): QuestMilestone[] {
   if (!Array.isArray(parsed,)) { return []; }
   const milestones: QuestMilestone[] = [];
   for (const entry of parsed) {
-    if (typeof entry.progress === "number" && typeof entry.narrative === "string") {
+    if (typeof entry?.progress === "number" && typeof entry.narrative === "string") {
       milestones.push({ progress: entry.progress, narrative: entry.narrative, },);
     }
   }

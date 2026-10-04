@@ -101,6 +101,14 @@ describeOrSkip("storyState", () => {
       expect(s.questRewardChips({ progress: 0, rewards: badItems, } as never,),).toEqual([],);
       const partialItem = '{"items":[{"itemId":1}]}';
       expect(s.questRewardChips({ progress: 0, rewards: partialItem, } as never,),).toEqual([],);
+      // Array payloads whose ELEMENTS are null/scalars must also degrade — the
+      // `Array.isArray` guard only covers the container, so a bare `[null]`
+      // would still throw on the element property read.
+      for (const raw of ["[null]", "[5]", "[{}]",]) {
+        expect(s.questMilestones({ progress: 0, narrative_hooks: raw, } as never,),).toEqual([],);
+        expect(s._parseQuestBanners(raw,),).toEqual([],);
+      }
+      expect(s.questRewardChips({ progress: 0, rewards: '{"items":[null]}', } as never,),).toEqual([],);
     });
     test("turnForMessage looks up by parent message id, null when absent", () => {
       const s = makeState();
