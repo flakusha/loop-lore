@@ -70,3 +70,17 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 ### Security
 
 - Actor-scoped access control on RPG routes (`requireActorAccess`); pre-push hook blocks agent pushes (human-attested release pushes).
+
+
+### Fixed
+
+- **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
+- **Non-retryable provider errors keep their identity when the request is cancelled** — `withProviderRetry` classified an aborted signal before checking whether the failure was already a non-retryable `ProviderError`, so a 401 raised in the same tick as a user cancel surfaced as `Request cancelled` (no status) instead of the auth error. `callWithFailover` maps the two down different paths, which would have swallowed auth failures. Precedence now matches the hand-rolled loops these call sites replaced, and `retry.test.ts` pins it.
+
+- **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
+
+### Fixed
+
+- `versionRedirect` double-prefix loop for `/api/v1/*` paths.
+- Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
+
