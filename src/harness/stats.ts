@@ -96,8 +96,10 @@ export function rollupStats(records: readonly HarnessRunRecord[],): HarnessStats
     if (failed) { totals.failures++; }
     totals.ms += record.runMs;
     // A null cost is unknown, not zero: it contributes nothing to the sum and
-    // the rollup reports the cost of the runs that declared a price.
-    if (record.costUsd !== null) { totals.costUsd = round4(totals.costUsd + record.costUsd,); }
+    // the rollup reports the cost of the runs that declared a price. Rounding
+    // happens once at the end — per-record rounding drops every sub-$0.00005
+    // call to zero, so 20k cheap runs would roll up as free.
+    if (record.costUsd !== null) { totals.costUsd += record.costUsd; }
     totals.tokensIn += record.tokensIn;
     totals.tokensOut += record.tokensOut;
 
@@ -108,7 +110,7 @@ export function rollupStats(records: readonly HarnessRunRecord[],): HarnessStats
       models.set(modelKey, model,);
     }
     bump(model, record.runMs, failed,);
-    if (record.costUsd !== null) { model.costUsd = round4(model.costUsd + record.costUsd,); }
+    if (record.costUsd !== null) { model.costUsd += record.costUsd; }
     model.tokensIn += record.tokensIn;
     model.tokensOut += record.tokensOut;
 
@@ -133,7 +135,10 @@ export function rollupStats(records: readonly HarnessRunRecord[],): HarnessStats
     }
   }
 
+  // Round once, on the accumulated float — see the note in the loop above.
   totals.avgMs = mean(totals.ms, totals.runs,);
+  totals.costUsd = round4(totals.costUsd,);
+  for (const model of models.values()) { model.costUsd = round4(model.costUsd,); }
   const byModel: HarnessByModel[] = rollup(models,)
     .sort((a, b,) => b.runs - a.runs || a.model.localeCompare(b.model,));
   const byTaskType: HarnessByTaskType[] = rollup(taskTypes,)

@@ -21,6 +21,8 @@ import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { MockLLMProvider, } from "../../test-utils/mock-provider";
+import type { GenerationRoutingConfig, } from "../routing/routing-config";
+import type { TaskSignal, } from "../routing/task-signal";
 import {
   buildFailoverList,
   getProvider,
@@ -30,6 +32,7 @@ import {
   resolveProvider,
   unregisterProvider,
 } from "./registry";
+import type { ProviderCapabilities, } from "./types";
 
 /** Base generation config with no providers and an unresolvable default. */
 function emptyConfig(): Config {
@@ -57,6 +60,49 @@ function registerMock(name: string,): MockLLMProvider {
   return mock;
 }
 
+/**
+ * Register a mock carrying price metadata, which is what the router ranks on.
+ * `capabilities` is readonly on the mock, so it is written through a widened
+ * view of the same instance — the registry keeps the real provider object.
+ * @param name - unique provider name
+ * @param costPer1kTokens - price the router should rank this provider by
+ * @returns the registered mock
+ */
+function registerPriced(name: string, costPer1kTokens: number,): MockLLMProvider {
+  const mock = registerMock(name,);
+  const priced = mock as unknown as { capabilities: ProviderCapabilities };
+  priced.capabilities = { ...mock.capabilities, costPer1kTokens, };
+  return mock;
+}
+
+/**
+ * Config carrying a routing policy, with `names` as the configured secondaries
+ * (the primary is passed separately, so it never appears in this list).
+ * @param strategy - the ordering policy under test
+ * @param names - configured secondary provider instances
+ * @returns a config whose `generation.routing` is set
+ */
+function routingConfig(
+  strategy: GenerationRoutingConfig["strategy"],
+  names: string[],
+): Config {
+  const config = emptyConfig();
+  config.generation.routing = { strategy, };
+  config.generation.providers.openaiCompatible = names.map((name,) => ({
+    name,
+    label: name,
+    baseUrl: "http://localhost:8080/v1",
+    model: "m",
+    timeout: 1000,
+    retries: 0,
+    allowUserApiKey: false,
+    models: {},
+  }));
+  return config;
+}
+
+/** A chat turn signal — the production shape a generate dispatch carries. */
+const TURN: TaskSignal = { taskType: "interactive-turn", };
 let testDb: Kysely<DB>;
 let testSqlite: Database;
 
@@ -85,9 +131,16 @@ afterAll(() => {
       "sm-cov-byo-a",
       "sm-cov-byo-b",
       "sm-cov-init-a",
+      "sm-cov-route-a",
+      "sm-cov-route-b",
+      "sm-cov-route-c",
+      "sm-cov-rr-a",
+      "sm-cov-rr-b",
+      "sm-cov-rr-c",
+      "sm-cov-noop-a",
+      "sm-cov-noop-b",
     ]
   ) { unregisterProvider(name,); }
-
   testSqlite.close();
 },);
 
@@ -175,6 +228,57 @@ describe("buildFailoverList", () => {
     ];
     const list = buildFailoverList("sm-cov-fail-b", config,);
     expect(list.map((e,) => e.name),).toEqual(["sm-cov-fail-b", "sm-cov-fail-c",],);
+  });
+
+  /**
+   * BUG: the old tail was `[result[0], ...routed.fallbacks]` — the caller's
+   * primary plus the router's chain. With A primary, B and C configured and C
+   * cheapest, the router returned `{ primary: C, fallbacks: [B, A] }` and this
+   * function emitted `[A, B, A]`: C was never attempted and A was retried,
+   * burning a second timeout and a second `circuitBreaker.onFailure`.
+   */
+  test("emits the router's whole order, with the cheapest provider exactly once", () => {
+    registerPriced("sm-cov-route-a", 0.03,);
+    registerPriced("sm-cov-route-b", 0.02,);
+    registerPriced("sm-cov-route-c", 0.01,);
+    const config = routingConfig("cheapest", ["sm-cov-route-b", "sm-cov-route-c",],);
+    const names = buildFailoverList("sm-cov-route-a", config, TURN,).map((e,) => e.name);
+    expect(names,).toEqual(["sm-cov-route-c", "sm-cov-route-b", "sm-cov-route-a",],);
+    expect(new Set(names,).size,).toBe(3,);
+  });
+
+  /**
+   * BUG: `buildFailoverList` built `new ModelRouter(...)` per call, so the
+   * round-robin cursor was always 0 and the strategy never rotated outside a
+   * test that reused one instance. Driven through the production entry point so
+   * the regression cannot hide behind a hand-built router again.
+   */
+  test("round-robin rotates the primary across sequential dispatches", () => {
+    registerPriced("sm-cov-rr-a", 0.01,);
+    registerPriced("sm-cov-rr-b", 0.01,);
+    registerPriced("sm-cov-rr-c", 0.01,);
+    const config = routingConfig("round-robin", ["sm-cov-rr-b", "sm-cov-rr-c",],);
+    const primaries = [0, 1, 2, 0,].map(() => buildFailoverList("sm-cov-rr-a", config, TURN,)[0]!.name);
+    expect(primaries,).toEqual(["sm-cov-rr-a", "sm-cov-rr-b", "sm-cov-rr-c", "sm-cov-rr-a",],);
+  });
+
+  /**
+   * The shipped default (`capability-match`, no rules, no cap) is the
+   * pre-routing behaviour. Running the router on it would drop a fallback that
+   * declares a required capability `false` — an eligibility change no caller
+   * ever asked for.
+   */
+  test("the default policy leaves the config order untouched, ineligible fallbacks included", () => {
+    registerPriced("sm-cov-noop-a", 0.01,);
+    const fallback = registerPriced("sm-cov-noop-b", 0.02,);
+    const noTools = fallback as unknown as { capabilities: ProviderCapabilities };
+    noTools.capabilities = { ...fallback.capabilities, tools: false, };
+    const config = routingConfig("capability-match", ["sm-cov-noop-b",],);
+    const names = buildFailoverList("sm-cov-noop-a", config, {
+      ...TURN,
+      requiresCapabilities: ["tools",],
+    },).map((e,) => e.name);
+    expect(names,).toEqual(["sm-cov-noop-a", "sm-cov-noop-b",],);
   });
 });
 

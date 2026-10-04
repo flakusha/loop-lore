@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { HarnessRunDetail, HarnessRunSummary, } from "./types";
+import type { HarnessResult, HarnessRunDetail, HarnessRunSummary, } from "./types";
 
 const MAX_TASK_LEN = 48;
+/** Highest ms that still renders as `NN.Ns`; 59_950 rounds up to a full minute. */
+const LAST_SUB_MINUTE_MS = 59_950;
 
 /**
  * Format duration in milliseconds to a human-readable string.
@@ -11,7 +13,7 @@ const MAX_TASK_LEN = 48;
  */
 export function formatDuration(ms: number,): string {
   if (ms < 1000) { return `${ms}ms`; }
-  if (ms < 60_000) { return `${(ms / 1000).toFixed(1,)}s`; }
+  if (ms < LAST_SUB_MINUTE_MS) { return `${(ms / 1000).toFixed(1,)}s`; }
   const m = Math.floor(ms / 60_000,);
   const s = Math.floor((ms % 60_000) / 1000,);
   return `${m}m${s}s`;
@@ -31,8 +33,8 @@ export function truncateTask(task: string,): string {
  * Result marker character: ✔ for success, ✘ for failure.
  * @param summary
  */
-export function resultMarker(summary: { result: string; error: string | null },): string {
-  return summary.error !== null ? "{red-fg}✘{/red-fg}" : "{green-fg}✔{/green-fg}";
+export function resultMarker(summary: { result: HarnessResult },): string {
+  return summary.result !== "ok" ? "{red-fg}✘{/red-fg}" : "{green-fg}✔{/green-fg}";
 }
 
 /**
@@ -47,9 +49,9 @@ export function formatRunLine(summary: HarnessRunSummary,): string {
   const model = summary.model;
   const result = summary.result;
   const tokens = summary.tokensIn + summary.tokensOut;
-  const cost = (summary.costUsd ?? 0) < 0.001
+  const cost = summary.costUsd < 0.001
     ? "$<0.001"
-    : `$${(summary.costUsd ?? 0).toFixed((summary.costUsd ?? 0) < 0.01 ? 3 : 2,)}`;
+    : `$${summary.costUsd.toFixed(summary.costUsd < 0.01 ? 3 : 2,)}`;
 
   return `${marker}  ${dur}  ${task}  {blue-fg}[${model}]{/blue-fg}  ${result}  +${tokens}t  ${cost}`;
 }
@@ -77,7 +79,7 @@ export function formatRunDetail(detail: HarnessRunDetail,): string {
 
   lines.push(
     `{bold}Tokens:{/bold} +${detail.tokensIn}in / +${detail.tokensOut}out  {bold}Cost:{/bold} $${
-      (detail.costUsd ?? 0).toFixed(4,)
+      detail.costUsd.toFixed(4,)
     }`,
     `{bold}Tools:{/bold} ${detail.toolCount} (${detail.tools.join(", ",)})`,
     `{bold}Pattern:{/bold} ${detail.pattern}${detail.patternDetail ? ` / ${detail.patternDetail}` : ""}`,

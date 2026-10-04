@@ -90,14 +90,12 @@ export class HarnessView {
       style: { fg: "white", },
     },);
 
-    this.list.on("select", (el: blessed.Widgets.BlessedElement,) => {
-      const idx = this.runs.findIndex((r,) => r.runId === el.content);
-      if (idx !== -1) { this.currentIndex = idx; }
+    // blessed emits the selected INDEX as the second arg (lib/widgets/list.js:586).
+    // The row content is the FORMATTED line, which carries no runId, so the old
+    // `el.content` lookup always missed and currentIndex never moved.
+    this.list.on("select", (_el: blessed.Widgets.BlessedElement, index: number,) => {
+      if (index >= 0 && index < this.runs.length) { this.currentIndex = index; }
       void this.showDetail(this.currentIndex,);
-    },);
-
-    screen.key(["f3",], () => {
-      this.toggle();
     },);
 
     screen.key(["up", "down",], (_ch: string, key: { name: string },) => {

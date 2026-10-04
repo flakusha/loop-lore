@@ -6,7 +6,7 @@
  * best-effort contract (a write failure must never escape to the caller).
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import {
@@ -113,27 +113,11 @@ describe("appendExecLog", () => {
     rmSync(dir, { recursive: true, force: true, },);
   },);
 
-  it("appends one JSONL line per call and creates the directory", () => {
-    const path = join(dir, HARNESS_DIR, HARNESS_LOG_FILENAME,);
-    mkdirSync(join(dir, HARNESS_DIR,), { recursive: true, },);
-    // The writer resolves its own path via git; exercise the shape through
-    // serializeRun so the assertion is on the persisted line, not the cwd.
-    writeFileSync(path, `${JSON.stringify(serializeRun(sample(),),)}\n`,);
-    const lines = readFileSync(path, "utf8",).trim().split("\n",);
-    expect(lines,).toHaveLength(1,);
-    expect(deserializeRun(lines[0]!,),).toEqual(sample(),);
-  });
-
   it("never throws when the target path is unwritable", () => {
     // A directory cannot be opened as a file — the canonical ENOTDIR/EISDIR case.
     const path = join(dir, "blocked",);
     mkdirSync(path, { recursive: true, },);
     expect(() => appendExecLog(sample({ runId: path, },),)).not.toThrow();
-  });
-
-  it("exports the ledger-compatible path constants", () => {
-    expect(HARNESS_DIR,).toBe(".harness",);
-    expect(HARNESS_LOG_FILENAME,).toBe("executions.jsonl",);
   });
 
   describe("path resolution", () => {

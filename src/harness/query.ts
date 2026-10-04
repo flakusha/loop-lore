@@ -62,7 +62,7 @@ async function streamNewestFirst(): Promise<HarnessRunRecord[]> {
   const path = getExecLogPath();
   if (path === null) { return []; }
 
-  // ponytail: reads at most READ_WINDOW_BYTES from the END of the file, not
+  // ponytail: reads at most READ_WINDOW_BYTES + 1 from the END of the file, not
   // the whole thing — the log is append-only and unbounded, and a dashboard
   // poll must not turn a long-running process into an OOM. Seeks to the tail
   // (not the head) because callers want the newest runs, not the oldest.
@@ -81,12 +81,17 @@ async function streamNewestFirst(): Promise<HarnessRunRecord[]> {
     const { size, } = await handle.stat();
     if (size === 0) { return []; }
     const start = size > READ_WINDOW_BYTES ? size - READ_WINDOW_BYTES : 0;
-    const length = size - start;
+    // Start one byte EARLIER so a seek that happens to land on a record
+    // boundary includes that newline: the split then yields a leading ""
+    // (already skipped below) rather than a complete record we would drop.
+    const from = start > 0 ? start - 1 : 0;
+    const length = size - from;
     const buf = Buffer.alloc(length,);
-    await handle.read(buf, 0, length, start,);
+    await handle.read(buf, 0, length, from,);
 
     const lines = buf.toString("utf8",).split("\n",);
-    // A mid-line seek lands on a partial record: drop it.
+    // A mid-line seek lands on a partial record: drop it. On a clean boundary
+    // this drops the empty prefix instead, losing nothing.
     if (start > 0) { lines.shift(); }
     for (const line of lines) {
       if (line.trim().length === 0) { continue; }
