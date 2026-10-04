@@ -23,9 +23,9 @@ Mock-first soak bench for the wired scheduler queue. Default path submits N conc
 **Acceptance Criteria:**
 
 - [ ] New `tests/benchmarks/scheduler-soak.bench.ts` auto-discovered by `scripts/run-benchmarks.ts` (`BENCH_GLOB = /\.bench\.ts$/`); `bun run bench scheduler-soak` exits 0 on pass.
-- [ ] Load shape: N concurrent `ResourceManager.submit` calls (`src/llm/resource-manager.ts:78`) spread across `PriorityLevel.High/Normal/Low` (`src/llm/resource-manager-types.ts:14-20`); mock `run` bodies use `MockLLMProvider` (`src/test-utils/mock-provider.ts:35`). No `MockScenarioProvider` exists — do not invent one.
+- [ ] Load shape: N concurrent `ResourceManager.submit` calls (`src/llm/resource-manager.ts:78`) spread across `PriorityLevel.High/Normal/Low` (`src/llm/resource-manager-types.ts:14-20`); mock `run` bodies use `MockLLMProvider` (`src/test-utils/mock-provider.ts:40`). No `MockScenarioProvider` exists — do not invent one.
 - [ ] Reports queue-wait p50/p95 per priority class, denial count, low-priority max-wait — reported, no threshold asserted.
 - [ ] Consumes `scheduler.queue.wait_ms` + `scheduler.admission.denied` via telemetry `record` (`src/telemetry/service.ts:65`) once TASK-llm-scheduler-observability lands; until then computes wait from submit/dequeue timestamps locally. Defines no new event types.
 - [ ] llama-swap variant gated `LL_BENCH_LLM=1`, lands after TASK-llm-generation-bench-via-local-llama-swap-opt-in; unset flag runs mock-only path and exits 0. CI-safe default touches no network.
 
-**Reuse refs:** `src/llm/resource-manager.ts:78` (`submit`), `src/llm/resource-manager-types.ts:14-20` (`PriorityLevel`), `src/test-utils/mock-provider.ts:35` (`MockLLMProvider`), `src/telemetry/service.ts:65` (`record`), `scripts/run-benchmarks.ts:25` (auto-discovery), normative contract §6/§8 (read-only: `tree/feat-llm-scheduler-docs/docs/spec/generation-scheduler.md`).
+**Reuse refs:** `src/llm/resource-manager.ts:78` (`submit`), `src/llm/resource-manager-types.ts:14-20` (`PriorityLevel`), `src/test-utils/mock-provider.ts:40` (`MockLLMProvider`), `src/telemetry/service.ts:65` (`record`), `scripts/run-benchmarks.ts:25` (auto-discovery), normative contract §6/§8 (read-only: `tree/feat-llm-scheduler-docs/docs/spec/generation-scheduler.md`).
