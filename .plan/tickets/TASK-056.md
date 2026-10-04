@@ -3,14 +3,14 @@
 
 # TASK-056: Overpowered Item Management
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** ItemPowerBudget keyed by ItemCategory; sits above TASK-052/053.
 **Context:** Admin audit endpoint + balance cap enforcement.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**: items, rpg, balance, security
 **Epic**: epic-items
@@ -50,3 +50,5 @@ Caps and audits item power so generated/imported items cannot break balance. Add
 - Power budget defaults are TBD pending balance pass; start conservative and tune in epic.
 - Per-rarity budget overrides (`ItemRarity.Unique` may exceed normal budget) — coordinate with TASK-054 unique tracking.
 - Audit endpoint must respect existing `requireUserId`/RBAC authz (see `src/middleware/`).
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 78fd61b (registry tip: 782336168 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-056 done)
