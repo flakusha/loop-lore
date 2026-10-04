@@ -7,7 +7,7 @@
 
 
 **Status:** Done
-**Status Note:** S1 PASS; S2 PASS (ADOPTED — shared provider retry); S3 REJECT (no semaphore); SF REJECT (single copy, +14 LOC); S4 REJECT (bag wins, escape orthogonal); S5 decision: ADOPT-SUBSET (`Schedule` only) — closed 2026-10-04
+**Status Note:** S1 PASS; S2 PASS (ADOPTED — shared provider retry); S3 REJECT at rc.117 (Semaphore ADDED in stable 4.0.0 — see S9); SF REJECT (single copy, +14 LOC); S4 REJECT (bag wins, escape orthogonal); S5 decision: ADOPT-SUBSET (`Schedule` only); S8 REJECT (no targets); S9 ADOPT-SUBSET (`Semaphore` for limiter site — follow-up ticket owns the rewrite); S10 REJECT for current path (guidance recorded). Next adoption set concluded 2026-10-04
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Infrastructure Epic
@@ -93,7 +93,7 @@ rejects them at compile time.
 | `Context.Service` shape | `{ make: … }` — an Effect or a thunk, **not** `{ succeed: … }` | Compile error otherwise |
 | `Layer.succeed` | two-argument `Layer.succeed(Tag, service)`; the one-arg form returns a `Layer`, not a function | Calling the result throws |
 | provide-through-inference | `Effect.provide(eff, layer)` needs an explicit narrowing cast when `R` must become `never` — `Layer.mergeAll` does not narrow through inference in 4.0.0 | Found by the S4 harness |
-| `Effect.Semaphore` (or any semaphore/permit operator) | **absent from the whole package** — root and every `./unstable/*` entry | Nothing to migrate `src/llm/concurrency-limiter.ts` onto |
+| `Effect.Semaphore` (or any semaphore/permit operator) | **absent in rc.117** (S3 probed 2026-09-27) — **ADDED in stable 4.0.0**: `Semaphore.make(n)` + `sem.withPermits(1)(task)`, verified 2026-10-04 by the S6 harness | re-opens the S3 surface for the limiter site only; still no per-key registry, introspection, or priority scheduling |
 | `Effect.forkScoped`, `Effect.withSpan`, `Effect.all`, `Effect.runPromise`, `Schedule.exponential` / `recurs` / `spaced` / `jittered` / `modifyDelay`, `Layer`, `Context.Service` | all present | — |
 
 Two behavioural findings that change how a harness must be written:
@@ -205,6 +205,9 @@ tsgo strict without regressing a `bun run check` gate, the epic closes as
 - [x] SF — safe-fetch retry re-evaluation (result-preserving `Effect.retry` vs the hand-rolled loop) — **REJECT** (parity held, single copy, net-positive LOC)
 - [x] S4 — DI wiring spike versus the `handleOpts` bag — **REJECT** (`Elysia<any>` escape orthogonal, +20% LOC, TS2589 unbounded, typecheck +11%, route typing regresses)
 - [x] S5 — go/no-go adoption decision — **ADOPT-SUBSET**: `Schedule` only, only where backoff loops are duplicated (see Decision)
+- [x] S8 — backoff-duplication re-audit (2026-10-04) — **REJECT (no targets)**: zero new duplicated retry loops vs the known-five
+- [x] S9 — resource-safety spike (`Semaphore`/`acquireRelease` vs `try/finally`) — **ADOPT-SUBSET**: limiter site −38 LOC (−72%) with full finalizer-matrix parity; production rewrite scoped as follow-up ticket
+- [x] S10 — structured fan-out spike (`Effect.forEach` bounded vs sequential/limiter) — **REJECT for the current path** (parity-only +27 LOC); subset guidance recorded
 
 ## Spike Results
 
@@ -225,6 +228,9 @@ worktree `effect-adoption-dedup`.
 | S2 | abort classification | cancelled signal → `ProviderError("Request cancelled", retryable: false)`; fetch `AbortError` → 504 `"Request timed out"` | identical, moved into the shared module | 0 | parity |
 | S3 | semaphore operator for `src/llm/concurrency-limiter.ts` | ~125-line hand-rolled async semaphore | none — no `Semaphore`/permit operator anywhere in the package | n/a | REJECT |
 | S3 | `Effect.forkScoped` + immediate scope exit | n/a | forked body never ran (`forkBodyRan=false`) | n/a | REJECT — interruption exists, silent work-drop is a live footgun |
+| S8 | backoff-duplication re-audit 2026-10-04 (sweeps: `2 ** attempt` / `baseDelay * 2` / `setTimeout(resolve, delay)` / `delay *=` / `1000 * 2` / `for (let attempt` across `src/`) | known-five from 2026-09-26 | zero new duplicated retry loops; only new hit is `src/autonomy/scheduler/index.ts:232` — a FLAT-delay state cursor (`nowMs + RETRY_BACKOFF_MS`, no loop, no exponential math), same non-retry class as breaker/cadence | 0 | REJECT (no targets) — the S2 consolidation is still complete |
+| S9 | `ConcurrencyLimiter` acquire/release shape vs `Semaphore.make`/`withPermits` (replica harness, 16 cells × 4 stable runs; measured 2026-10-04, `effect@4.0.0` stable) | 53 code lines | 15 code lines, full matrix parity — abandon-midflight BETTER (interrupt releases the permit); immediate-scope-exit loses body start (lost work, not a leak — acquire never ran); re-entrancy parity | −38 (−72%) | ADOPT-SUBSET — `Semaphore` for the limiter site only; OffloadDaemon/flag-guard/timer `finally`s keep `try/finally` (Effect renames the bookkeeping, no LOC win). Production rewrite is scoped as follow-up ticket: the harness validated a faithful replica, and the real limiter's registry/introspection features are retained around the Effect core |
+| S10 | `Effect.forEach(…, { concurrency: N })` vs the sequential variant fan-out at `src/characters/services/emotion-avatar-service/generation.ts:92-187` (parity harness 62/62 × 3 runs; measured 2026-10-04) | 96-line sequential body (bound = 1 by construction, per-unit best-effort failure, cooperative cancel at iteration boundaries) | full parity: per-unit failure matrix, mid-unit cancel incl. post-cancel overwrite nuance, bounded-cancel no-op case, bound held (peak = N) both sides; abort-mid-flight is Effect-only capability, NOT adopted (would change semantics) | parity-only wiring **+27 LOC**; −33 only when also covering a hypothetical bounded-N need | REJECT for migration now — the current path is sequential and the ADOPT bar (net-negative vs current) fails. Guidance recorded: when a bounded fan-out IS required, use `Effect.forEach({ concurrency })` (measured −33 vs `Promise.all`+limiter wiring, parity matrix green). The limiter itself is NOT replaced (no Effect counterpart for introspection/registry/priority) — see S9's scoped follow-up for the limiter core only |
 | SF | `src/utils/safe-fetch/retry.ts` Effect rewrite (failure channel = non-ok `FetchResult`, no throw synthesis) | 51-line loop, single copy | 65-line Effect version, all 8 contract tests pass unmodified | +14 LOC | REJECT — no duplicate copies to collapse (unlike S2's triplication), so the adopted-surface win does not exist here; measured 2026-10-04 on `effect@4.0.0` stable, worktree `effect-migration` |
 | S4 | 6-factory route group wired both ways (closure bag vs `Context.Service` + `Layer`) | 121 LOC | 145 LOC | +24 LOC (+20%) | REJECT — the bag already delivers what the container would |
 | S4 | `Elysia<any>` escape at `registerPlugins` | present | orthogonal — re-typing to bare `Elysia` compiles clean under BOTH wirings; the escape earns its keep at the `elysia-app.ts` app-builder level, which Effect DI does not touch | 0 | REJECT |
@@ -291,6 +297,22 @@ is caught by the provider retry contract tests.
 **Migration owner:** none beyond the landed `Schedule` surface — no follow-up
 migration epic is opened. Any future Effect work must re-open this epic with
 a new spike and a number.
+
+## Re-opened: next adoption set (2026-10-04)
+
+Re-opened by owner directive. Same discipline as before: every candidate
+carries a success bar, and only a measurement overturns the default REJECT.
+Boundaries from the S5 decision remain binding (no typed errors, no Schema,
+no HTTP, no config, no spans — OTel owns that).
+
+| Candidate | Surface | Success bar (ADOPT requires all) | Tickets |
+| --------- | ------- | -------------------------------- | ------- |
+| Backoff re-audit | extend the adopted `Schedule` surface | a NEW duplicated retry loop exists vs the 2026-09-26 known-five; routing it through the shared policy is net-negative LOC; adjacent tests pass unmodified | `TASK-effect-v4-backoff-duplication-re-audit` |
+| S6 — resource safety | `Effect.acquireRelease`/`Scope` vs `try/finally` on `src/async/offload.ts` and other finally-heavy leaves | net-negative LOC **and** finalizer parity on happy/throw/scope-exit paths (the S3 forkScoped footgun is an explicit case) | `TASK-effect-v4-s6-resource-safety-spike` |
+| S7 — structured fan-out | `Effect.all`/`Effect.forEach` (bounded) vs `Promise.all` + `concurrency-limiter` on one real batch path | net-negative LOC **and** identical partial-failure/cancellation semantics **and** the limiter itself is not replaced (S3 stands) | `TASK-effect-v4-s7-structured-fan-out-spike` |
+
+Verdicts are recorded in *Spike Results* as rows S8 (re-audit), S9 (S6),
+S10 (S7); the epic closes again when all three are measured.
 
 ## Dependencies
 
