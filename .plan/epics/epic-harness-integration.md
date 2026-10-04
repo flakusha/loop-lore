@@ -187,6 +187,13 @@ agent skills). New code MUST NOT reuse these bare names.
   gaps, cost per task type, top tools on failures, avg duration per type) —
   documented in the ticket, no query service until volume demands it.
 
+- **Shipped as turn correlation, not an agent tree.** The implemented slice adds
+  a `turn_id` field to every exec-log record, so a dispatch correlates back to
+  the turn that caused it and the provenance chain is closed. It is NOT a
+  subagent `parentRunId` agent tree: no run spawns another run, so a
+  parent/child hierarchy cannot be reconstructed from the log today. The agent
+  tree remains unbuilt and is owned by `TASK-harness-subagent-delegation`.
+
 ### 9. Polyglot + skills + backlog + external integrations
 
 - Polyglot: `runtime` field on `PluginManifest` (default `"bun"`) + runtime
