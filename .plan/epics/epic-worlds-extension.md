@@ -39,7 +39,7 @@ Hub epic for the social / temporal / spatial / interaction layers on top of the 
 
 Extends the World & Locations foundation (see `epic-world-locations.md`, which
 already covers cataclysms, events, and propagation). This epic adds the
-_social / temporal / spatial / interaction_ layers that epic does not:
+*social / temporal / spatial / interaction* layers that epic does not:
 
 - **Shareability** — license, attribution, allowed/prohibited use
 - **Global time scale** — epochs, scale size, related memories
@@ -357,7 +357,7 @@ Speculative concepts for reusing existing chat, world, and location features in 
 
 ---
 
-_These ideas are intentionally speculative and should be revisited during planning sessions to assess feasibility and alignment with project goals._
+*These ideas are intentionally speculative and should be revisited during planning sessions to assess feasibility and alignment with project goals._
 
 ---
 
