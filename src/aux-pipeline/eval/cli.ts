@@ -67,7 +67,8 @@ async function main(): Promise<void> {
     }
     if (updateBaseline) {
       const baseline = Object.fromEntries(reports.map((r,) => [r.task, reportMetrics(r,),]),);
-      await Bun.write(BASELINE_URL, `${safeJsonStringify(baseline,).value ?? "{}"}\n`,);
+      const serialized = safeJsonStringify(baseline,);
+      await Bun.write(BASELINE_URL, `${serialized.ok ? serialized.value : "{}"}\n`,);
       log.info("baseline updated",);
       return;
     }
