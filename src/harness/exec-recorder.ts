@@ -47,14 +47,30 @@ export interface ExecRunInput {
  * `costPer1kTokens` yields null, which means "unknown" and is never treated as
  * "free".
  * @param input - the run, for its price and token counts
- * @returns USD rounded to 6dp, or null when unpriced.
+ * @returns USD rounded to 6dp, or null when unpriced or the token count is negative.
  */
 export function computeCostUsd(input: ExecRunInput,): number | null {
   const rate = input.costPer1kTokens;
   if (rate === undefined || !Number.isFinite(rate,) || rate < 0) { return null; }
   if (input.usage === undefined) { return null; }
-  const tokens = (input.usage.promptTokens + input.usage.completionTokens) / 1000;
-  return Math.round(rate * tokens * 1_000_000,) / 1_000_000;
+  // Providers report -1 for "usage unavailable" on a failed call — the exact
+  // case this log exists to capture. A negative count is unknown, not a rebate.
+  const tokens = input.usage.promptTokens + input.usage.completionTokens;
+  if (!Number.isFinite(tokens,) || tokens < 0) { return null; }
+  return Math.round(rate * (tokens / 1000) * 1_000_000,) / 1_000_000;
+}
+
+/**
+ * A provider's token count, floored at 0 and coerced to 0 when unusable.
+ *
+ * `-1` is the common "usage unavailable" sentinel on a failed call, and
+ * NaN/Infinity are the other way a bad adapter reports it. All three mean
+ * "unknown", which the rollup can only carry as 0.
+ * @param v - the raw count from the provider, or undefined when unreported
+ * @returns a finite, non-negative count.
+ */
+function tokenCount(v: number | undefined,): number {
+  return typeof v === "number" && Number.isFinite(v,) ? Math.max(0, v,) : 0;
 }
 
 /**
@@ -80,8 +96,12 @@ export function buildRunRecord(input: ExecRunInput,): HarnessRunRecord {
     error: input.error ?? null,
     toolingGap: input.toolingGap ?? null,
     costUsd: computeCostUsd(input,),
-    tokensIn: input.usage?.promptTokens ?? 0,
-    tokensOut: input.usage?.completionTokens ?? 0,
+    // Clamped for the same reason the cost is nulled: a -1 sentinel must not
+    // reach the rollup as a negative count. `Math.max(0, NaN)` is NaN, so the
+    // finiteness check has to come first — otherwise a NaN usage number
+    // serializes to `null` in the API and breaks the `Type.Number()` contract.
+    tokensIn: tokenCount(input.usage?.promptTokens,),
+    tokensOut: tokenCount(input.usage?.completionTokens,),
     branch,
     gitSha,
     pid: LOG_PID,
