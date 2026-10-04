@@ -6,6 +6,9 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Summary:** See ## Summary below.
+**Context:** (none captured)
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 

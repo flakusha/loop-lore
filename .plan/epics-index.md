@@ -639,8 +639,6 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Current State Assessment
 
-### Current State Assessment
-
 ### Benchmark CI & Performance Regression Detection
 
 - **Status:** In Progress
@@ -2285,7 +2283,6 @@ Player housing and base building system — personal homes, guild halls, craftin
 - **Tags:** inventory, trading, items, ui, frontend
 - **File:** `.plan/epics/epic-inventory-ui.md`
 
-
 ### Inventory System (Hub)
 
 - **Status:** Not Started
@@ -2592,8 +2589,6 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Type:** Feature Epic
 - **Tags:** nsfw, integration, housing, weather, social, disease, cross-system
 - **File:** `.plan/epics/epic-nsfw-integration-gaps.md`
-
-### Current State Assessment
 
 ### Current State Assessment
 
@@ -3021,8 +3016,6 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
-### Current State Assessment
-
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3320,3 +3313,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+
