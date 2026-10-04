@@ -30,6 +30,7 @@ import type {
   WorldKind,
   WorldVisibility,
 } from "./enums";
+import type { AuditColumns, } from "./schema-audit";
 
 // ── location_states ────────────────────────────────────────────
 export interface LocationStates {
@@ -48,7 +49,7 @@ export interface LocationStates {
 }
 
 // ── locations ────────────────────────────────────────────
-export interface Locations {
+export interface Locations extends AuditColumns {
   id: Generated<string>;
   world_id: string;
   name: string;
@@ -56,8 +57,6 @@ export interface Locations {
   connections: Generated<string>;
   publication_status: Generated<PublicationStatus>;
   parent_location_id: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
   kind: Generated<LocationKind>;
   mobility_mode: Generated<MobilityMode>;
   path: Generated<string>;
@@ -66,8 +65,6 @@ export interface Locations {
   coord_z: number | null;
   current_route_id: string | null;
   travel_progress: Generated<number>;
-  data_version: Generated<number>;
-  record_hash: Generated<string>;
 }
 
 // ── world_items ────────────────────────────────────────────
@@ -90,7 +87,7 @@ export interface WorldItems {
 }
 
 // ── world_lore_entries ────────────────────────────────────────────
-export interface WorldLoreEntries {
+export interface WorldLoreEntries extends AuditColumns {
   id: Generated<string>;
   world_id: string;
   name: string | null;
@@ -106,8 +103,6 @@ export interface WorldLoreEntries {
   priority: Generated<number>;
   comment: string | null;
   sort_order: Generated<number>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
   cooldown_seconds: Generated<number>;
   last_activated: string | null;
   audience_scope: string | null;
@@ -120,8 +115,6 @@ export interface WorldLoreEntries {
   source_count: Generated<number>;
   distortion_level: Generated<number>;
   disputed: Generated<number>;
-  data_version: Generated<number>;
-  record_hash: Generated<string>;
 }
 
 // ── world_states ────────────────────────────────────────────
@@ -136,7 +129,7 @@ export interface WorldStates {
 }
 
 // ── worlds ────────────────────────────────────────────
-export interface Worlds {
+export interface Worlds extends AuditColumns {
   id: Generated<string>;
   owner_id: string;
   name: string;
@@ -150,12 +143,8 @@ export interface Worlds {
   difficulty_modifier: Generated<number>;
   difficulty_reroll: Generated<DifficultyReroll>;
   difficulty_state: Generated<DifficultyState>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
   nsfw_override: string | null;
   rpg_enabled: Generated<number>;
-  data_version: Generated<number>;
-  record_hash: Generated<string>;
   rpg_dice: Generated<number>;
   rpg_checks: Generated<number>;
   rpg_combat: Generated<number>;
@@ -167,7 +156,7 @@ export interface Worlds {
 }
 
 // ── actor_lore_entries ────────────────────────────────────────────
-export interface ActorLoreEntries {
+export interface ActorLoreEntries extends AuditColumns {
   id: Generated<string>;
   actor_id: string;
   name: string | null;
@@ -183,8 +172,6 @@ export interface ActorLoreEntries {
   priority: Generated<number>;
   comment: string | null;
   sort_order: Generated<number>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
   cooldown_seconds: Generated<number>;
   last_activated: string | null;
   audience_scope: string | null;
@@ -193,8 +180,6 @@ export interface ActorLoreEntries {
   key_groups: string | null;
   scan_depth: number | null;
   activation_chance: number | null;
-  data_version: Generated<number>;
-  record_hash: Generated<string>;
 }
 
 // ── story_turns ────────────────────────────────────────────
@@ -220,7 +205,7 @@ export interface StoryTurns {
 }
 
 // ── items ────────────────────────────────────────────
-export interface Items {
+export interface Items extends AuditColumns {
   id: Generated<string>;
   world_id: string;
   name: string;
@@ -232,10 +217,6 @@ export interface Items {
   properties: Generated<string>;
   value: Generated<number>;
   weight: Generated<number>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-  data_version: Generated<number>;
-  record_hash: Generated<string>;
 }
 
 // ── npc_states ────────────────────────────────────────────
@@ -269,7 +250,7 @@ export interface QuestProgress {
 }
 
 // ── quests ────────────────────────────────────────────
-export interface Quests {
+export interface Quests extends AuditColumns {
   id: Generated<string>;
   world_id: string;
   creator_id: string;
@@ -287,11 +268,7 @@ export interface Quests {
   time_location_id: string | null;
   rewards: Generated<string>;
   narrative_hooks: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
   completed_at: string | null;
-  data_version: Generated<number>;
-  record_hash: Generated<string>;
 }
 
 // ── actor_memories ────────────────────────────────────────────

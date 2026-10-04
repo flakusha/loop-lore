@@ -45,6 +45,7 @@ import type {
   UserStatus,
   VnChoiceStatus,
 } from "./enums";
+import type { AuditColumns, } from "./schema-audit";
 
 // ── data_migrations ────────────────────────────────────────────
 export interface DataMigrations {
@@ -518,7 +519,7 @@ export interface CharacterStats {
 }
 
 // ── characters ────────────────────────────────────────────
-export interface Characters {
+export interface Characters extends AuditColumns {
   id: Generated<string>;
   owner_id: string;
   name: string;
@@ -527,12 +528,8 @@ export interface Characters {
   system_prompt: string | null;
   agent_type: Generated<AgentType>;
   settings: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
   agent_role: string | null;
   federation_consent: Generated<number>;
-  data_version: Generated<number>;
-  record_hash: Generated<string>;
 }
 
 // ── chat_background_assignments ────────────────────────────────────────────
@@ -653,7 +650,7 @@ export interface ChatSetupTemplates {
 }
 
 // ── chats ────────────────────────────────────────────
-export interface Chats {
+export interface Chats extends AuditColumns {
   id: Generated<string>;
   name: string;
   type: Generated<ChatType>;
@@ -672,8 +669,6 @@ export interface Chats {
   response_length_preset: Generated<string>;
   response_length_custom: number | null;
   context_max_tokens: number | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
   streaming: number | null;
   nsfw_override: string | null;
   name_source: string | null;
@@ -683,8 +678,6 @@ export interface Chats {
   quick_replies: string | null;
   prompt_override: string | null;
   output_style_preset: string | null;
-  data_version: Generated<number>;
-  record_hash: Generated<string>;
   custom_instructions: string | null;
   prompt_template_id: string | null;
   active_branch_id: string | null;

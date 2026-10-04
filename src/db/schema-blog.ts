@@ -5,6 +5,7 @@
  * DO NOT EDIT MANUALLY — run `bun run db:sync-types` to regenerate.
  */
 import type { Generated, } from "kysely";
+import type { AuditColumns, } from "./schema-audit";
 
 // ── blog_comments ────────────────────────────────────────────
 export interface BlogComments {
@@ -26,7 +27,7 @@ export interface BlogFollows {
 }
 
 // ── blog_posts ────────────────────────────────────────────
-export interface BlogPosts {
+export interface BlogPosts extends AuditColumns {
   id: Generated<string>;
   author_id: string;
   title: string;
@@ -41,10 +42,6 @@ export interface BlogPosts {
   published_at: string | null;
   view_count: Generated<number>;
   metadata: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-  data_version: Generated<number>;
-  record_hash: Generated<string>;
 }
 
 // ── blog_rag_sources ────────────────────────────────────────────
