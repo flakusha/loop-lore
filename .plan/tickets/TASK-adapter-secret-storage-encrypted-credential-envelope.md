@@ -3,7 +3,7 @@
 
 # TASK: Adapter secret storage: encrypted credential envelope
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-integrations-core
@@ -21,3 +21,5 @@ Adopted component: ground-up (storage) over src/crypto/ envelope primitives. Sea
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 0b3db58 (registry tip: d2f498694 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ADAPTER-SECRET-STORAGE-ENCR)

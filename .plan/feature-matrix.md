@@ -1128,7 +1128,7 @@ Total tickets: **3216** — untagged: **2702** — unbound to epic: **1623**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2702 | 1089 | 59 | 1235 | 36 | 0 | 283 |
+| (untagged) | 2702 | 1097 | 59 | 1235 | 36 | 0 | 275 |
 
 ## By epic × status
 
@@ -1329,7 +1329,7 @@ Total tickets: **3216** — untagged: **2702** — unbound to epic: **1623**
 | epic-e2e-integration-testing.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-e2e-integration-testing.md (Pillar 3 — real-server tier) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-economy-trading | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
-| epic-effect-v4-adoption-evaluation | 10 | 6 | 0 | 0 | 0 | 0 | 4 |
+| epic-effect-v4-adoption-evaluation | 10 | 9 | 0 | 0 | 0 | 0 | 1 |
 | epic-email-integration | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-email-integration.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-embeddable-engine | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1391,8 +1391,8 @@ Total tickets: **3216** — untagged: **2702** — unbound to epic: **1623**
 | epic-import-export-io\ | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-instance-federation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-instance-federation.md | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| epic-integrations-core | 5 | 0 | 0 | 0 | 0 | 0 | 5 |
-| epic-integrations-core.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-integrations-core | 5 | 4 | 0 | 0 | 0 | 0 | 1 |
+| epic-integrations-core.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-inventory | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | epic-inventory-system | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-inventory-ui | 3 | 1 | 0 | 2 | 0 | 0 | 0 |

@@ -3,7 +3,7 @@
 
 # TASK: Adapter health monitoring and per-protocol rate limiting
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-integrations-core
@@ -21,3 +21,5 @@ Adopted component: ground-up (bridge policy). Seam: src/integrations/bridge.ts (
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue fe24ae2 (registry tip: 65848fa8e Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ADAPTER-HEALTH-MONITORING-A)
