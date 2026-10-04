@@ -114,6 +114,18 @@ describe("assertValidWrite — character_licensing", () => {
       assertValidWrite("character_licensing", { allow_derivatives: 2, share_alike: 0, },);
     },).toThrow(/allow_derivatives must be 0 or 1/,);
   });
+
+  test("accepts boolean rights flags from card-file data", () => {
+    // The importer's card-file data carries booleans (the importer's own fixture
+    // uses `allowDerivatives: true`). sqlite binds booleans as 0/1, so the
+    // guard must accept them rather than throwing on a legitimate import.
+    expect(() => {
+      assertValidWrite("character_licensing", { allow_derivatives: true, share_alike: false, },);
+    },).not.toThrow();
+    expect(() => {
+      assertValidWrite("character_licensing", { allow_derivatives: false, share_alike: true, },);
+    },).toThrow(/not a legal state pair/,);
+  });
 });
 
 describe("assertValidWrite — unguarded tables", () => {
