@@ -76,3 +76,5 @@ near-duplicate detection is not implemented — the ticket marks it speculative
 and the `(worldId, name, category)` gate satisfies the stated criteria. The
 `forceReplace: true` re-roll flag from Notes is also not implemented; the gate is
 currently reject-only, which is the safe default.
+
+**Resolved:** 2026-10-04 registry-driven close: git issue c598f22 (registry tip: 1258a3a0b Konstantin Fedotov Auto-closed: appended .md marker marks TASK-055 done)
