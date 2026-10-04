@@ -259,8 +259,14 @@ describe("advanceProgress", () => {
     },);
 
     await withItems.advanceProgress(id, chatId, 10,);
-    const rows = await db.selectFrom("items",).select("name",).where("world_id", "=", worldId,).execute();
-    expect(rows.filter((r,) => r.name === "reward-blade"),).toHaveLength(2,);
+    const rows = await db.selectFrom("items",).select(["name", "max_stack",],).where("world_id", "=", worldId,)
+      .execute();
+
+    const rewardRows = rows.filter((r,) => r.name === "reward-blade");
+    // One template per (world, name, category) carrying the quantity as
+    // max_stack — a re-issued reward reuses the row (TASK-055).
+    expect(rewardRows,).toHaveLength(1,);
+    expect(rewardRows[0].max_stack,).toBe(2,);
   });
 
   test("empty rewards distribute nothing and still complete", async () => {
