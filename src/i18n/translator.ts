@@ -24,28 +24,18 @@ const PLURAL_CATEGORIES: Record<string, true> = {
 
 /**
  * A node is plural-variant data when every one of its keys is a CLDR category.
- * Requiring ALL keys to be categories is what keeps a plain enumeration such as
- * `chat.flagReason` (`inappropriate`/`spam`/`other`/...) a normal subtree.
- * @param node - candidate translation node
- * @returns true when the node is a plural-variant object.
+ * Requiring ALL keys keeps a plain enumeration containing `other` a normal subtree.
  */
 function isPluralNode(node: TranslationNode | TranslationMap,): node is Exclude<TranslationNode, string> {
   if (typeof node !== "object" || node === null) { return false; }
   const keys = Object.keys(node,);
-  return keys.length > 0 && keys.every((key,) => PLURAL_CATEGORIES[key] === true,);
+  return keys.length > 0 && keys.every((key,) => PLURAL_CATEGORIES[key] === true);
 }
 
 /**
  * Flatten a nested translation map into dot-notation keys.
- *
  * Plural-variant objects are LEAVES: the walk stops there and stores the whole
- * variant object under its own key, so `inventory.item` resolves to a
- * `PluralTranslation` instead of `inventory.item.one` / `inventory.item.other`.
- * @param map - nested `TranslationMap`
- * @returns flat map of `"a.b.c"` keys to string or plural-variant values.
- * @example
- * flatten({ auth: { login: "Log In" } })
- * // => Map { "auth.login" => "Log In" }
+ * variant object under its own key.
  */
 export function flattenTranslations(map: TranslationMap,): FlatTranslationMap {
   const flat = new Map<string, TranslationNode>();
@@ -72,13 +62,7 @@ export function flattenTranslations(map: TranslationMap,): FlatTranslationMap {
 
 /**
  * Pick the variant for `category` from a plural node.
- *
- * Falls back to the CLDR-required `other` when the selected category is absent
- * from the catalog, so a partial plural table still renders instead of leaking
- * `undefined` into the output.
- * @param variants - plural-variant entry stored for the key
- * @param category - category chosen by the locale's plural rule
- * @returns the variant string.
+ * Falls back to `other` when the selected category is absent from the catalog.
  */
 function selectVariant(
   variants: Exclude<TranslationNode, string>,
@@ -103,8 +87,6 @@ export interface ResolveKeyOptions {
 
 /**
  * Resolve a dot-notation key from a flat translation map.
- * @param options - map, key, and optional plural-selection inputs.
- * @returns translated string, or `undefined` if the key is not present.
  */
 export function resolveKey(options: ResolveKeyOptions,): string | undefined {
   const { translations, key, count, rule, } = options;
@@ -132,7 +114,7 @@ export function interpolate(
 ): string {
   return template.replaceAll(/\{(\w+)\}/g, (match, paramName,) => {
     const value = params[paramName];
-    return value === undefined ? match : String(value);
+    return value === undefined ? match : String(value,);
   },);
 }
 
@@ -153,19 +135,8 @@ export interface TranslatorOptions {
 
 /**
  * Create a translator function.
- *
- * Lookup order:
- * 1. Primary translations (user's locale)
- * 2. Fallback translations (e.g., English)
- * 3. Raw key (return key as-is)
- *
- * When `params.count` is a number and the resolved entry is a plural-variant
- * object, `count` picks the category through the locale's `Intl.PluralRules`
- * (`pluralRuleFor(locale)`, or an explicit `pluralRule` override). A missing
- * category falls back to `other`; a primary entry that is a plain string is
- * returned as-is even when a count is supplied.
- * @param options - primary + optional fallback translations, locale, optional plural rule
- * @returns a `TranslatorFn(key, params?)` returning the resolved string.
+ * Lookup order: primary, fallback, raw key.
+ * A numeric `params.count` picks the plural category via `Intl.PluralRules`.
  */
 export function createTranslator(options: TranslatorOptions,): TranslatorFn {
   const { primary, fallback, locale, pluralRule, } = options;
