@@ -45,20 +45,7 @@ bun run check && bun test src/
 #   changes are still listed, and only TRACKED worktree changes are seen, so an
 #   untracked new file is not gated. `giwt finalize` Step 2 passes the ref
 #   automatically; static gates always run project-wide.
-# - `bun run check --diff-base <ref>` scopes the COVERAGE gate to the diff
-#   between `<ref>` and HEAD, plus uncommitted working-tree changes: each
-#   diff-touched `src/` file is floored individually against a test run covering
-#   the modules it lives in. No other gate is scoped (the registry has no
-#   `test - unit` entry). A file holding identical content on both sides is NOT
-#   scoped in, even when the branch edited it earlier and `<ref>` has since
-#   reproduced the same content — landing the branch would not change it. The
-#   list is a superset of the merge, never a subset: rename-only and mode-only
-#   changes are still listed, and only TRACKED worktree changes are seen, so an
-#   untracked new file is not gated. `giwt finalize` Step 2 passes the ref
-#   automatically; static gates always run project-wide.
-#   files whose CONTENT differs between `<ref>` and HEAD, plus uncommitted
-#   working-tree changes: test files adjacent to changed src files run under
-#   `test - unit`, and the coverage gate floors only those changed src files.
+# - `bun run check --gates <csv>` / `--skip-gates <csv>` runs a subset of
 #   the registered gates. Names are matched verbatim against the runner's check
 #   registry; unknown names exit 2 and list available gates. `--gates`
 #   and `--skip-gates` are mutually exclusive. `giwt finalize`

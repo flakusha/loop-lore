@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 /**
- * Regression tests for `changedFiles()` in `scripts/check-parallel.mjs` —
+ * Regression tests for `changedFiles()` in `scripts/check/parallel/context.mjs` —
  * the file set `--diff-base` scopes the unit + coverage gates to.
  *
  * Regression target: `changedFiles` resolved `git merge-base <base> HEAD` and
@@ -41,7 +41,7 @@ import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
-import { changedFiles, } from "./check-parallel.mjs";
+import { changedFiles, } from "./check/parallel/context.mjs";
 
 let workDir;
 
