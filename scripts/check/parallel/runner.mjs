@@ -10,6 +10,7 @@
 
 import { DEFAULT_GATE_TIMEOUT_MS, runGateWithTimeout, } from "../gate-timeout.mjs";
 import { MAX_OUTPUT_CHARS, PROJECT_ROOT, } from "./config.mjs";
+import { NOOP_OK, } from "./context.mjs";
 import { ADVISORY_GATES, checks, } from "./gates.mjs";
 
 // ── Concurrency cap ────────────────────────────────────────────
@@ -131,15 +132,26 @@ async function runCheck(name, command,) {
           JSON.stringify(name,)
         } exceeded its ${timeoutMs}ms budget and was killed. Raise the budget with CHECK_GATE_TIMEOUT_MS=<ms>.`
         : gateOutput;
+    // A NOOP command is a gate that could not be evaluated, exactly like the
+    // giwt case above: `true # diff-scope: no matching files` exits 0, so it
+    // graded as PASS having run zero tests, and a `--diff-base` scope that
+    // matched nothing printed `=== All checks passed ===`. AGENTS.md is the
+    // governing convention — a gate that could not be evaluated is SKIPPED,
+    // never passed — so the flag is set from an exact command match on NOOP_OK,
+    // the marker the gate table already emits, with no parallel mechanism.
+    //
+    // `passed` is forced false alongside it because buildReport derives
+    // failedCount as `total - passed - skipped`; a result that counted as both
+    // would report a negative failed count. The giwt path keeps its existing
+    // shape (already `!gate.ok`, so the two are disjoint there).
+    const skipped = !gate.timedOut && (command === NOOP_OK ||
+      (!gate.ok && gateOutput.includes(GIWT_ISSUE_CLI_UNAVAILABLE,)));
     // oxlint-disable-next-line sort-keys
     return {
       name,
       command,
-      passed: gate.ok,
-      // A timed-out gate is a failure, not an unevaluable gate: never let the
-      // giwt-unavailable skip path mask a kill.
-      skipped: !gate.timedOut && !gate.ok && gateOutput.includes(GIWT_ISSUE_CLI_UNAVAILABLE,),
-      advisory: ADVISORY_GATES.has(name,),
+      passed: !skipped && gate.ok,
+      skipped,
       output,
       exitCode: gate.exitCode,
       durationMs: gate.durationMs,
@@ -153,7 +165,6 @@ async function runCheck(name, command,) {
       command,
       passed: false,
       skipped: false,
-      advisory: ADVISORY_GATES.has(name,),
       output: error.message,
       exitCode: 1,
       durationMs: Math.round(performance.now() - startedAt,),
