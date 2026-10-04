@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "loop-lore-config.integrations.schema.json",
+  "title": "Loop Lore Integrations Config",
+  "description": "Domain-specific configuration for integrations",
+  "type": "object",
+  "properties": {
+    "integrations": {
+      "type": "object",
+      "description": "External integrations (email, Matrix, XMPP, Telegram, Discord, IRC, Nostr)",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Master switch. No adapter loads unless this is true."
+        },
+        "email": {
+          "type": "object",
+          "description": "Email (IMAP/SMTP) integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "imapHost": { "type": "string", "default": "" },
+            "imapPort": { "type": "integer", "default": 993 },
+            "imapUser": { "type": "string", "default": "" },
+            "imapPass": {
+              "type": "string",
+              "default": "",
+              "description": "IMAP password. Env-only: EMAIL_IMAP_PASS. SECRET — never log or echo."
+            },
+            "smtpHost": { "type": "string", "default": "" },
+            "smtpPort": { "type": "integer", "default": 587 },
+            "smtpUser": { "type": "string", "default": "" },
+            "smtpPass": {
+              "type": "string",
+              "default": "",
+              "description": "SMTP password. Env-only: EMAIL_SMTP_PASS. SECRET — never log or echo."
+            },
+            "pgpEnabled": { "type": "boolean", "default": false }
+          },
+          "required": [
+            "enabled",
+            "imapHost",
+            "imapPort",
+            "imapUser",
+            "imapPass",
+            "smtpHost",
+            "smtpPort",
+            "smtpUser",
+            "smtpPass",
+            "pgpEnabled"
+          ]
+        },
+        "matrix": {
+          "type": "object",
+          "description": "Matrix integration (client or appservice). Opt-in; disabled by default.",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "homeserver": { "type": "string", "default": "" },
+            "accessToken": {
+              "type": "string",
+              "default": "",
+              "description": "Matrix access token. Env-only: MATRIX_ACCESS_TOKEN. SECRET — never log or echo."
+            },
+            "appservice": { "type": "boolean", "default": false }
+          },
+          "required": ["enabled", "homeserver", "accessToken", "appservice"]
+        },
+        "xmpp": {
+          "type": "object",
+          "description": "XMPP integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "jid": { "type": "string", "default": "" },
+            "password": {
+              "type": "string",
+              "default": "",
+              "description": "XMPP password. Env-only: XMPP_PASSWORD. SECRET — never log or echo."
+            }
+          },
+          "required": ["enabled", "jid", "password"]
+        },
+        "telegram": {
+          "type": "object",
+          "description": "Telegram bot integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "botToken": {
+              "type": "string",
+              "default": "",
+              "description": "Telegram bot token. Env-only: TELEGRAM_BOT_TOKEN. SECRET — never log or echo."
+            }
+          },
+          "required": ["enabled", "botToken"]
+        },
+        "discord": {
+          "type": "object",
+          "description": "Discord bot integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "botToken": {
+              "type": "string",
+              "default": "",
+              "description": "Discord bot token. Env-only: DISCORD_BOT_TOKEN. SECRET — never log or echo."
+            }
+          },
+          "required": ["enabled", "botToken"]
+        },
+        "irc": {
+          "type": "object",
+          "description": "IRC integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "server": { "type": "string", "default": "" },
+            "nick": { "type": "string", "default": "" },
+            "password": {
+              "type": "string",
+              "default": "",
+              "description": "Optional SASL password. Env-only: IRC_PASSWORD. SECRET — never log or echo."
+            }
+          },
+          "required": ["enabled", "server", "nick", "password"]
+        },
+        "nostr": {
+          "type": "object",
+          "description": "Nostr integration. Opt-in; disabled by default.",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "relayUrls": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": []
+            }
+          },
+          "required": ["enabled", "relayUrls"]
+        }
+      },
+      "required": [
+        "enabled",
+        "email",
+        "matrix",
+        "xmpp",
+        "telegram",
+        "discord",
+        "irc",
+        "nostr"
+      ]
+    }
+  },
+  "required": [
+    "integrations"
+  ]
+}
