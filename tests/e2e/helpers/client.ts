@@ -47,7 +47,6 @@ export function createClient(baseUrl: string,) {
     const raws: string[] = typeof res.headers.getSetCookie === "function"
       ? res.headers.getSetCookie()
       : [res.headers.get("Set-Cookie",) ?? "",];
-
     for (const raw of raws) {
       const lm = /(?:^|,\s*)ll_token=([^;]+)/.exec(raw,);
       if (lm) { token = lm[1] ?? null; }
@@ -92,7 +91,6 @@ export function createClient(baseUrl: string,) {
     if (cookies.length > 0) {
       headers["Cookie"] = cookies.join("; ",);
     }
-
     if (isUnsafe && csrfToken) {
       headers["X-CSRF-Token"] = csrfToken;
     }
@@ -140,7 +138,7 @@ export function createClient(baseUrl: string,) {
 
   /** One authenticated GET so the server re-issues a session-bound CSRF token. */
   async function bootstrapCsrf(): Promise<void> {
-    await request<unknown>("GET", "/api/auth/me",);
+    await request<unknown>("GET", "/api/v1/auth/me",);
   }
 
   return {
@@ -196,12 +194,11 @@ export function createClient(baseUrl: string,) {
       if (res.ok) {
         await bootstrapCsrf();
       }
-
       return res.ok;
     },
 
     /**
-     * Authenticate as a specific user via /api/auth/login.
+     * Authenticate as a specific user via /api/v1/auth/login.
      * Returns true on success.
      */
     async loginAs(username: string, password: string,): Promise<boolean> {
@@ -213,18 +210,16 @@ export function createClient(baseUrl: string,) {
       const { resetLoginRateLimiter, } = await import("@/routes/auth");
       resetLoginRateLimiter();
       carriedSession = token !== null;
-      const res = await fetch(`${baseUrl}/api/auth/login`, {
+      const res = await fetch(`${baseUrl}/api/v1/auth/login`, {
         method: "POST",
         headers,
         body: formBody,
         redirect: "manual",
       },);
-
       absorbCookies(res,);
       if (res.ok) {
         await bootstrapCsrf();
       }
-
       return res.ok;
     },
 
