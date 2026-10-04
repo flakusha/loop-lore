@@ -8,6 +8,7 @@ import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { checkChatAccess, } from "./access";
 // hint: Logic and cosmetic changes overlap. Resolve logic first, then reformat.
+// hint: Logic and cosmetic changes overlap. Resolve logic first, then reformat.
 import type { ChatBranchWithMeta, ListBranchesResult, } from "./branches";
 import type { ServiceError, } from "./types";
 /** Shared 404 for a branch row that is missing or owned by another chat. */

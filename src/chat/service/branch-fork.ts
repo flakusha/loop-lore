@@ -123,8 +123,9 @@ export async function insertForkRow(
             is_active: 1,
           },)
           .execute();
-        // Keep chats.active_branch_id in lockstep with the new active row so
-        // the display invariant holds for a forking caller too.
+        // FK to chat_branches.id — runs after the insert above. Keeps
+        // `chats.active_branch_id` in lockstep with the per-row `is_active`
+        // flag, the same invariant `switchActiveBranch` maintains.
         await tx
           .updateTable("chats",)
           .set({ active_branch_id: branchId, },)

@@ -6,7 +6,6 @@
  *
  * `messages` has no per-message branch column — a branch is a `parent_id`
  * fork point — so merge is re-parenting rather than a tree merge: the
-// hint: Logic and cosmetic changes overlap. Resolve logic first, then reformat.
  * ROOT of the source branch's exclusive subtree hangs off the target's
  * tip, and every other node keeps the parent it already had. Sibling
  * branches under the fork point therefore stay siblings instead of being
@@ -142,8 +141,6 @@ export interface MergeBranchParams {
  * No conflict resolution. The chat's active branch is refused, and a source
  * subtree over `MAX_MERGE_NODES` is rejected before anything is re-parented.
  * @param db
-// hint: Logic and cosmetic changes overlap. Resolve logic first, then reformat.
-// hint: Logic and cosmetic changes overlap. Resolve logic first, then reformat.
  * @param params
  * @returns {Promise<MergeBranchResult>}
  */
