@@ -6,6 +6,12 @@
  * /api/* — those requests must get the 308 version redirect — while the
  * intentionally unversioned infra/federation surfaces (health, agency,
  * views) still answer directly.
+ *
+ * Resource contract (parallel-safe): each run gets its own in-memory
+ * SQLite via createTestDb (no shared paths, ports, or tmp dirs — the app
+ * is exercised via app.handle(), never Bun.serve); the cron scheduler is
+ * disabled; config is loadConfig()-derived but read-only; no ordering
+ * dependence.
  */
 import { beforeAll, describe, expect, test, } from "bun:test";
 import type { Elysia, } from "elysia";
