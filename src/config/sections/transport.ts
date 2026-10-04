@@ -49,6 +49,7 @@ export class TransportSection {
     if (compression) {
       this.compression = { ...this.compression, ...compression, };
     }
+
     if (limits) {
       this.limits = { ...this.limits, ...limits, };
     }
