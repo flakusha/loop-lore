@@ -16,7 +16,7 @@ import type { GmConfig, } from "../types";
  * Channel: the existing `gm_config` JSON column (`assistantTuning` sub-key),
  * persisted through the chat PUT `gmConfig` payload — no new migration, no new
  * column. Backend consumption: the manual route
- * (`src/generation/generate-route/handler.ts`) resolves the override into the
+ * (`src/generation/generate-route/resolve-options.ts`) resolves the override into the
  * generate options (`parseAssistantTuning` + `resolveAssistant*`), and the
  * regular auto-gen path (`src/generation/auto-gen/call-llm.ts`) resolves it
  * via `resolveAutoGenSamplingParams` — a per-chat override beats both the
