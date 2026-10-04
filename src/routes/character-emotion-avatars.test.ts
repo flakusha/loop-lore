@@ -72,7 +72,7 @@ const OTHER = "00000000-0000-4000-8000-000000000002";
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-emotion-avatars", },);
   if (userId) {
-    app.derive(() => ({ userId, userRole, }));
+    app.derive(() => ({ userId, userRole, t: (key: string) => `t:${key}`, }));
   }
 
   return app.use(characterEmotionAvatarsRoutes({ database: db, },),) as unknown as Elysia;
@@ -225,6 +225,106 @@ describeOrSkip("character-emotion-avatars routes", () => {
     expect(cancelRes.status,).toBe(200,);
     const cancelBody = await cancelRes.json() as JobBody;
     expect(cancelBody.cancelled,).toBe(true,);
+  });
+
+  test("GET job returns 404 for a job owned by another actor", async () => {
+    const createRes = await makeApp(db, "other", "user",).handle(
+      new Request(`http://localhost/api/actors/${OTHER}/emotion-avatars`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ baseAvatarId: "av-1", emotions: ["happy",], },),
+      },),
+    );
+
+    const { jobId, } = await createRes.json() as JobBody;
+    expect(jobId,).toBeDefined();
+
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/${jobId}`,),
+    );
+
+    expect(res.status,).toBe(404,);
+    const text = await res.text();
+    expect(text,).toContain("characters.emotionJobNotFound",);
+    expect(text,).not.toContain(OTHER,);
+    expect(text,).not.toContain(jobId!,);
+
+    // Not an enumeration oracle: identical body to an unknown job id.
+    const unknownRes = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/no-such-job`,),
+    );
+
+    expect(unknownRes.status,).toBe(404,);
+    expect(await unknownRes.text(),).toBe(text,);
+  });
+
+  test("POST cancel returns 404 for a job owned by another actor and leaves it running", async () => {
+    const createRes = await makeApp(db, "other", "user",).handle(
+      new Request(`http://localhost/api/actors/${OTHER}/emotion-avatars`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ baseAvatarId: "av-1", emotions: ["happy",], },),
+      },),
+    );
+
+    const { jobId, } = await createRes.json() as JobBody;
+    expect(jobId,).toBeDefined();
+
+    const cancelRes = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/${jobId}/cancel`, {
+        method: "POST",
+      },),
+    );
+
+    expect(cancelRes.status,).toBe(404,);
+    const cancelText = await cancelRes.text();
+    expect(cancelText,).toContain("characters.emotionJobNotFound",);
+
+    // Not an enumeration oracle: identical body to an unknown job id.
+    const unknownCancelRes = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/no-such-job/cancel`, {
+        method: "POST",
+      },),
+    );
+
+    expect(unknownCancelRes.status,).toBe(404,);
+    expect(await unknownCancelRes.text(),).toBe(cancelText,);
+
+    // The rejected cancel must NOT have destroyed the victim's job.
+    const rereadRes = await makeApp(db, "other", "user",).handle(
+      new Request(`http://localhost/api/actors/${OTHER}/emotion-avatars/jobs/${jobId}`,),
+    );
+
+    expect(rereadRes.status,).toBe(200,);
+    expect((await rereadRes.json() as JobBody).status,).toBe("running",);
+  });
+
+  test("owner can still read and cancel their own job", async () => {
+    const createRes = await makeApp(db, "other", "user",).handle(
+      new Request(`http://localhost/api/actors/${OTHER}/emotion-avatars`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ baseAvatarId: "av-1", emotions: ["happy",], },),
+      },),
+    );
+
+    const { jobId, } = await createRes.json() as JobBody;
+
+    const readRes = await makeApp(db, "other", "user",).handle(
+      new Request(`http://localhost/api/actors/${OTHER}/emotion-avatars/jobs/${jobId}`,),
+    );
+
+    expect(readRes.status,).toBe(200,);
+    expect((await readRes.json() as JobBody).status,).toBe("running",);
+
+    const cancelRes = await makeApp(db, "other", "user",).handle(
+      new Request(`http://localhost/api/actors/${OTHER}/emotion-avatars/jobs/${jobId}/cancel`, {
+        method: "POST",
+      },),
+    );
+
+    expect(cancelRes.status,).toBe(200,);
+    expect((await cancelRes.json() as JobBody).cancelled,).toBe(true,);
   });
 
   test("GET prompt-modifier returns modifier for valid emotion", async () => {
