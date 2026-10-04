@@ -2337,10 +2337,20 @@
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
     }
   ],
+  "src/assistant/entity-spec/entity-spec-kinds.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-gm-handoff.md"
+    }
+  ],
   "src/assistant/entity-spec/handoff.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-gm-handoff.md"
     }
   ],
   "src/assistant/gm-tool-detection.test.ts": [
@@ -27413,6 +27423,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
+    }
+  ],
+  "src/routes/chats/generate-entity.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-gm-handoff.md"
     }
   ],
   "src/routes/chats/index.ts": [
