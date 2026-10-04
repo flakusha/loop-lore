@@ -146,6 +146,8 @@ export function modalityTemplateRoutes(
       const existing = await ownedMatchingRow(ctx.params.id, userId,);
       if (!existing) { return notFound("Template not found",); }
       try {
+        const existing = await ownedMatchingRow(ctx.params.id, userId,);
+        if (!existing) { return notFound("Template not found",); }
         const row = await updateTemplate(database, ctx.params.id, userId, patch,);
         if (!row) { return notFound("Template not found",); }
         return jsonResponse({
