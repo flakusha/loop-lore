@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 033_scheduled_messages_reminders
+ * 034_scheduled_messages_reminders
  *
  * Messenger-parity composer cluster (TASK-scheduled-messages-reminders):
  *
