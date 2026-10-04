@@ -17,6 +17,7 @@
 
 import { createHash, X509Certificate, } from "node:crypto";
 import * as tls from "node:tls";
+import { safeJsonStringify, } from "../utils/safe-json";
 import { canonicalOrigin, } from "./peer-fetch";
 
 /** Base64 SPKI pin, bare (`<base64>`) or prefixed (`sha256:<base64>`). */
@@ -108,7 +109,7 @@ export function probeSpkiPin(opts: {
       }
     },);
 
-    socket.setTimeout(timeoutMs, () => {
+    socket.setTimeout(timeoutMs > 0 ? timeoutMs : PIN_PROBE_TIMEOUT_MS, () => {
       socket.destroy(new Error(`spki probe timed out after ${timeoutMs}ms`,),);
     },);
 
@@ -200,8 +201,10 @@ export function createPeerPinVerifier(opts: {
     if (target === null) { return false; }
     const cacheOrigin = canonicalOrigin(origin,);
     if (cacheOrigin === null) { return false; }
-    // Key on origin + pin set so a reconfigured pin set always re-probes.
-    const key = `${cacheOrigin}|${[...target.pins,].sort().join(",",)}`;
+    // Key on origin + pin set so a reconfigured pin set always re-probes;
+    // JSON escaping keeps distinct pin sets from colliding on a join char.
+    const encoded = safeJsonStringify([...target.pins,].sort(),);
+    const key = `${cacheOrigin}|${encoded.ok ? encoded.value : "[]"}`;
     const hit = verified.get(key,);
     if (hit !== undefined && now() < hit.expiresAt) { return true; }
     try {
