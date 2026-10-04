@@ -24,6 +24,7 @@ export const RUN = {
   branch: "feat/x",
   gitSha: "abc1234",
   pid: 4242,
+  turnId: "turn-1",
 } satisfies HarnessRunSummary;
 
 /** A `GET /api/v1/harness/runs/:runId` record derived from `RUN`. */

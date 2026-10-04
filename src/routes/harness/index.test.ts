@@ -61,6 +61,7 @@ const RECORD: HarnessRunRecord = {
   pid: 99,
   gitSha: "deadbee",
   msg: null,
+  turnId: "turn-1",
 };
 
 /** Stats derived from RECORD, so the numbers are checkable by hand. */

@@ -1468,6 +1468,7 @@
       "pid": "PID",
       "pattern": "Muster",
       "patternDetail": "Musterdetails",
+      "turnId": "Turn-ID",
       "toolingGap": "Tooling-Lücke",
       "tools": "Werkzeuge",
       "message": "Nachricht"

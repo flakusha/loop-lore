@@ -38,6 +38,12 @@ export interface ExecRunInput {
   costPer1kTokens?: number;
   /** Free-form note about the outcome. */
   msg?: string | null;
+  /**
+   * Correlation id of the user turn this call belongs to. Every tool round of
+   * one turn passes the same value. Omitted when the dispatch site has no turn
+   * in scope; the record then carries null, never a fabricated id.
+   */
+  turnId?: string | null;
 }
 
 /**
@@ -106,6 +112,7 @@ export function buildRunRecord(input: ExecRunInput,): HarnessRunRecord {
     gitSha,
     pid: LOG_PID,
     msg: input.msg ?? null,
+    turnId: input.turnId ?? null,
   };
 }
 

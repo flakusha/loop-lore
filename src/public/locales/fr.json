@@ -1468,6 +1468,7 @@
       "pid": "PID",
       "pattern": "Motif",
       "patternDetail": "Détail du motif",
+      "turnId": "ID du tour",
       "toolingGap": "Manque d'outil",
       "tools": "Outils",
       "message": "Message"

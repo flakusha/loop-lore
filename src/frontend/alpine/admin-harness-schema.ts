@@ -47,6 +47,9 @@ export const HarnessRunSummarySchema = Type.Object({
   branch: Type.Union([Type.String(), Type.Null(),],),
   gitSha: Type.Union([Type.String(), Type.Null(),],),
   pid: Type.Union([Type.Number(), Type.Null(),],),
+  // Turn correlation id; null on every line written before turns were
+  // correlated, and on paths with no turn in scope (an initial greeting).
+  turnId: Type.Union([Type.String(), Type.Null(),],),
 },);
 
 /**

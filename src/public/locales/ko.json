@@ -1468,6 +1468,7 @@
       "pid": "PID",
       "pattern": "패턴",
       "patternDetail": "패턴 상세",
+      "turnId": "턴 ID",
       "toolingGap": "도구 부족",
       "tools": "도구",
       "message": "메시지"

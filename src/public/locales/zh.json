@@ -1468,6 +1468,7 @@
       "pid": "PID",
       "pattern": "模式",
       "patternDetail": "模式详情",
+      "turnId": "轮次 ID",
       "toolingGap": "工具缺失",
       "tools": "工具",
       "message": "消息"

@@ -1468,6 +1468,7 @@
       "pid": "PID",
       "pattern": "Padrão",
       "patternDetail": "Detalhe do padrão",
+      "turnId": "ID do turno",
       "toolingGap": "Lacuna de ferramenta",
       "tools": "Ferramentas",
       "message": "Mensagem"

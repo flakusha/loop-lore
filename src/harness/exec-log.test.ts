@@ -42,6 +42,7 @@ function sample(overrides: Partial<HarnessRunRecord> = {},): HarnessRunRecord {
     pid: 4242,
     gitSha: "abc1234",
     msg: null,
+    turnId: "turn-1",
     ...overrides,
   };
 }
@@ -76,6 +77,7 @@ describe("harness types", () => {
       "tooling_gap",
       "tools",
       "ts",
+      "turn_id",
     ],);
   });
 
@@ -97,6 +99,46 @@ describe("harness types", () => {
     expect(record?.taskType,).toBe("other",);
     // An absent cost_usd means "unknown", not "free" — it must NOT coerce to 0.
     expect(record?.costUsd,).toBeNull();
+  });
+
+  it("reads a pre-turn_id line as turnId null instead of rejecting it", () => {
+    // A line written before this key existed, verbatim: full identity fields,
+    // every other optional field present, and NO turn_id key at all. It has to
+    // survive the parse — dropping every historical line would blank the log.
+    const legacy = JSON.stringify({
+      run_id: "run-legacy",
+      ts: "2026-09-01T10:00:00Z",
+      run_ms: 812,
+      task: "generate",
+      task_type: "chat",
+      model: "gpt-legacy",
+      tools: ["read",],
+      tool_count: 1,
+      pattern: "none",
+      pattern_detail: "",
+      result: "ok",
+      error: null,
+      tooling_gap: null,
+      cost_usd: 0.001,
+      tokens_in: 10,
+      tokens_out: 5,
+      branch: "main",
+      pid: 99,
+      git_sha: "deadbee",
+      msg: null,
+    },);
+    const record = deserializeRun(legacy,);
+    expect(record,).not.toBeNull();
+    expect(record?.runId,).toBe("run-legacy",);
+    expect(record?.turnId,).toBeNull();
+  });
+
+  it("never lets a non-string turn_id through as a turn id", () => {
+    // Same defensive style as branch/git_sha: a hand-written 123 must not
+    // surface as a truthy turnId that no record was ever written under.
+    expect(deserializeRun('{"run_id":"r","ts":"t","turn_id":123}',)?.turnId,).toBeNull();
+    expect(deserializeRun('{"run_id":"r","ts":"t","turn_id":{"a":1}}',)?.turnId,).toBeNull();
+    expect(deserializeRun('{"run_id":"r","ts":"t","turn_id":"turn-9"}',)?.turnId,).toBe("turn-9",);
   });
 });
 
