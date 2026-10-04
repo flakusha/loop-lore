@@ -137,7 +137,6 @@ describe("Redirection E2E — auth required", () => {
         await page.locator("[data-testid='message-list']",).waitFor({ state: "visible", timeout: 2000, },);
         messageListVisible = true;
       } catch { /* never became visible */ }
-
       expect(messageListVisible,).toBe(false,);
     } finally {
       errors.assert();
@@ -169,10 +168,9 @@ describe("Redirection E2E — auth required", () => {
       // previously appended a nested ?redirect= entry, growing the param.
       for (let i = 0; i < 5; i++) {
         await page.evaluate(async () => {
-          await fetch("/api/auth/me", { credentials: "include", },);
+          await fetch("/api/v1/auth/me", { credentials: "include", },);
         },);
       }
-
       // Let any post-401 microtasks settle.
       await page.waitForTimeout(200,);
 

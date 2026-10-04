@@ -64,7 +64,7 @@ describe("autonomyPanelFactory", () => {
   test("loads the world scope when mounted on the world layer", async () => {
     const state = autonomyPanelFactory({ worldId: "w1", layer: "world", },);
     await state.init();
-    expect(calls[0]?.url,).toBe("/api/worlds/w1/autonomy",);
+    expect(calls[0]?.url,).toBe("/api/v1/worlds/w1/autonomy",);
     expect(state.autoData?.resolved.preset,).toBe("brisk",);
   });
 
@@ -104,7 +104,7 @@ describe("autonomyPanelFactory", () => {
     expect(state.autoDirty(),).toBe(true,);
     await state.save();
     const put = calls.find((c,) => c.method === "PUT");
-    expect(put?.url,).toBe("/api/worlds/w1",);
+    expect(put?.url,).toBe("/api/v1/worlds/w1",);
     expect(JSON.parse(put?.body ?? "{}",).autonomyConfig,).toEqual({
       preset: "brisk",
       perUserCap: 5,
@@ -138,7 +138,7 @@ describe("autonomyPanelFactory", () => {
 
     await state.saveActor();
     const put = calls.find((c,) => c.method === "PUT");
-    expect(put?.url,).toBe("/api/worlds/w1/autonomy/actor/a1",);
+    expect(put?.url,).toBe("/api/v1/worlds/w1/autonomy/actor/a1",);
     expect(JSON.parse(put?.body ?? "",),).toEqual({ autonomy: { perUserCap: 2, }, },);
   });
 
@@ -154,7 +154,7 @@ describe("autonomyPanelFactory", () => {
     await state.init();
     await state.control("pause",);
     const post = calls.find((c,) => c.method === "POST");
-    expect(post?.url,).toBe("/api/worlds/w1/autonomy/control",);
+    expect(post?.url,).toBe("/api/v1/worlds/w1/autonomy/control",);
     expect(JSON.parse(post?.body ?? "{}",).action,).toBe("pause",);
     // A POST that did not reread would leave the status line stale.
     expect(calls.filter((c,) => c.method === "GET").length,).toBe(2,);

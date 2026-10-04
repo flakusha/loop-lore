@@ -165,7 +165,7 @@ describe("handleSend", () => {
     const host = makeHost({ sessionToken: "tok-abc", },);
     await handleSend(host, "hello world",);
     const captured = getCaptured();
-    expect(captured.url,).toBe("http://localhost:3000/api/chats/chat-1/messages",);
+    expect(captured.url,).toBe("http://localhost:3000/api/v1/chats/chat-1/messages",);
     expect(captured.method,).toBe("POST",);
     expect(captured.headers["authorization"],).toBe("Bearer tok-abc",);
     expect(captured.headers["content-type"],).toBe("application/json",);
@@ -174,7 +174,6 @@ describe("handleSend", () => {
       { id: "msg-1", role: "user", content: "hello world", },
       { id: "msg-2", role: "assistant", content: "hi back", },
     ],);
-
     expect(host.isSending,).toBe(false,);
   });
 
@@ -208,7 +207,6 @@ describe("handleSend", () => {
     setFetch(async () => {
       throw new Error("ECONNREFUSED",);
     },);
-
     const host = makeHost({ sessionToken: "tok", },);
     await handleSend(host, "hi",);
     expect(host.showErrorMessages,).toEqual(["ECONNREFUSED",],);
@@ -229,10 +227,9 @@ describe("loadMessages", () => {
       data: [{ id: "m1", role: "user", content: "hi", }, { id: "m2", role: "assistant", content: "yo", },],
       cursor: null,
     },);
-
     await loadMessages(makeHost({ sessionToken: "tok", },),);
     const captured = getCaptured();
-    expect(captured.url,).toBe("http://localhost:3000/api/chats/chat-1/messages?pageSize=200",);
+    expect(captured.url,).toBe("http://localhost:3000/api/v1/chats/chat-1/messages?pageSize=200",);
     expect(captured.method,).toBe("GET",);
     expect(captured.headers["authorization"],).toBe("Bearer tok",);
   });
@@ -242,7 +239,9 @@ describe("loadMessages", () => {
     const host = makeHost({ cursor: "current-cursor", },);
     await loadMessages(host,);
     const captured = getCaptured();
-    expect(captured.url,).toBe("http://localhost:3000/api/chats/chat-1/messages?pageSize=200&cursor=current-cursor",);
+    expect(captured.url,).toBe(
+      "http://localhost:3000/api/v1/chats/chat-1/messages?pageSize=200&cursor=current-cursor",
+    );
   });
 
   it("prepends older messages when host.messages is non-empty", async () => {
@@ -278,7 +277,6 @@ describe("loadMessages", () => {
     setFetch(async () => {
       throw new Error("netfail",);
     },);
-
     const host = makeHost();
     await loadMessages(host,);
     expect(host.showErrorMessages,).toEqual(["Network error loading messages: netfail",],);

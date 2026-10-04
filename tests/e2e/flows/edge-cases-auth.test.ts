@@ -5,7 +5,7 @@
  * E2E: Auth Edge-Cases
  *
  * HTTP+DB integration tests against the real test server. Drives
- * /api/auth/login and /api/auth/me with adversarial payloads to verify
+ * /api/v1/auth/login and /api/v1/auth/me with adversarial payloads to verify
  * the content-negotiating error contract:
  *
  * - htmx form posts (`HX-Request: true` or no explicit Accept) → 200+
@@ -33,7 +33,7 @@ async function postJson(
   server: TestServer,
   body: unknown,
 ): Promise<Response> {
-  return fetch(`${server.url}/api/auth/login`, {
+  return fetch(`${server.url}/api/v1/auth/login`, {
     method: "POST",
     headers: { "Content-Type": JSON_CT, Accept: JSON_CT, },
     body: globalThis.JSON.stringify(body,),
@@ -44,7 +44,7 @@ async function postForm(
   server: TestServer,
   body: string,
 ): Promise<Response> {
-  return fetch(`${server.url}/api/auth/login`, {
+  return fetch(`${server.url}/api/v1/auth/login`, {
     method: "POST",
     headers: { "Content-Type": FORM, },
     body,
@@ -88,23 +88,21 @@ describe("Auth edge-cases E2E", () => {
   });
 
   test("POST malformed JSON returns 400 JSON", async () => {
-    const res = await fetch(`${server.url}/api/auth/login`, {
+    const res = await fetch(`${server.url}/api/v1/auth/login`, {
       method: "POST",
       headers: { "Content-Type": JSON_CT, Accept: JSON_CT, },
       body: "{not-json",
     },);
-
     expect(res.status,).toBe(400,);
     expect(res.headers.get("content-type",),).toMatch(/application\/json/,);
   });
 
   test("POST wrong Content-Type (text/plain) returns 400 JSON", async () => {
-    const res = await fetch(`${server.url}/api/auth/login`, {
+    const res = await fetch(`${server.url}/api/v1/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "text/plain", Accept: JSON_CT, },
       body: "username=foo&password=bar",
     },);
-
     expect(res.status,).toBe(400,);
     expect(res.headers.get("content-type",),).toMatch(/application\/json/,);
   });
@@ -116,7 +114,6 @@ describe("Auth edge-cases E2E", () => {
       username: "x".repeat(10_000,),
       password: VALID_PASSWORD,
     },);
-
     expect(res.status,).toBeLessThan(500,);
     expect(res.status,).toBeGreaterThanOrEqual(200,);
     // 401 because no user matches; 5xx would be a crash. Either is fine.
@@ -128,7 +125,6 @@ describe("Auth edge-cases E2E", () => {
       username: VALID_USERNAME,
       password: "x".repeat(102_400,),
     },);
-
     expect(res.status,).toBeLessThan(500,);
     expect(res.status,).toBeGreaterThanOrEqual(200,);
   });
@@ -138,7 +134,6 @@ describe("Auth edge-cases E2E", () => {
       username: VALID_USERNAME,
       password: "x".repeat(1_000_000,),
     },);
-
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -147,7 +142,6 @@ describe("Auth edge-cases E2E", () => {
       username: "x".repeat(10_000_000,),
       password: VALID_PASSWORD,
     },);
-
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -158,7 +152,6 @@ describe("Auth edge-cases E2E", () => {
       username: "ж中🐉",
       password: VALID_PASSWORD,
     },);
-
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -167,7 +160,6 @@ describe("Auth edge-cases E2E", () => {
       username: VALID_USERNAME,
       password: "\u0000\u0007\u0008",
     },);
-
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -179,7 +171,6 @@ describe("Auth edge-cases E2E", () => {
       "admin'--",
       "x'; DROP TABLE users;--",
     ];
-
     for (const username of probes) {
       const res = await postJson(server, { username, password: "anything", },);
       expect(res.status,).toBeLessThan(500,);
@@ -191,7 +182,6 @@ describe("Auth edge-cases E2E", () => {
       username: { "$gt": "", },
       password: { "$gt": "", },
     },);
-
     // Either rejected at parse time (400) or treated as non-string creds (401/422).
     expect(res.status,).toBeLessThan(500,);
   });
@@ -219,41 +209,38 @@ describe("Auth edge-cases E2E", () => {
       server,
       `username=${encodeURIComponent("nobody",)}&password=${encodeURIComponent("x",)}`,
     );
-
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-type",),).toMatch(/text\/html/,);
     const body = await res.text();
     expect(body,).toContain("Invalid username or password",);
   });
 
-  // ── /api/auth/me ─────────────────────────────────────────────
+  // ── /api/v1/auth/me ─────────────────────────────────────────────
 
-  test("/api/auth/me without cookie returns 401 JSON", async () => {
+  test("/api/v1/auth/me without cookie returns 401 JSON", async () => {
     const api = createClient(server.url,);
-    const res = await api.get("/api/auth/me",);
+    const res = await api.get("/api/v1/auth/me",);
     expect(res.status,).toBe(401,);
   });
 
-  test("/api/auth/me with logged-in cookie returns 200", async () => {
+  test("/api/v1/auth/me with logged-in cookie returns 200", async () => {
     const api = createClient(server.url,);
     await api.loginAs(VALID_USERNAME, VALID_PASSWORD,);
-    const res = await api.get("/api/auth/me",);
+    const res = await api.get("/api/v1/auth/me",);
     expect(res.status,).toBe(200,);
   });
 
-  test("/api/auth/me with 1MB Authorization header is bounded (not 5xx)", async () => {
-    const res = await fetch(`${server.url}/api/auth/me`, {
+  test("/api/v1/auth/me with 1MB Authorization header is bounded (not 5xx)", async () => {
+    const res = await fetch(`${server.url}/api/v1/auth/me`, {
       headers: { Authorization: "Bearer " + "x".repeat(1_000_000,), },
     },);
-
     expect(res.status,).toBeLessThan(500,);
   });
 
-  test("/api/auth/me without Bearer prefix is rejected cleanly", async () => {
-    const res = await fetch(`${server.url}/api/auth/me`, {
+  test("/api/v1/auth/me without Bearer prefix is rejected cleanly", async () => {
+    const res = await fetch(`${server.url}/api/v1/auth/me`, {
       headers: { Authorization: "garbage-no-bearer-prefix", },
     },);
-
     expect(res.status,).toBeLessThan(500,);
     expect([401, 403,],).toContain(res.status,);
   });

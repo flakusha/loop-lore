@@ -202,7 +202,7 @@ export class AssetView {
     }
 
     try {
-      const url = `${API_BASE}/api/assets?entity_type=chat&entity_id=${this.chatId}&pageSize=100`;
+      const url = `${API_BASE}/api/v1/assets?entity_type=chat&entity_id=${this.chatId}&pageSize=100`;
       const result = await safeFetch<{ data?: LinkedAsset[] }>(url, {
         handle401: false,
       },);

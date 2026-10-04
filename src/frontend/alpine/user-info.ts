@@ -21,14 +21,13 @@ async function loadUserInfo(): Promise<void> {
   if (!nameEl && !roleEl) { return; }
 
   try {
-    const res = await apiFetch("/api/auth/me",);
+    const res = await apiFetch("/api/v1/auth/me",);
     if (!res.ok) { return; }
     const user = (await res.json()) as {
       display_name?: string;
       username?: string;
       role?: string;
     };
-
     if (nameEl) { nameEl.textContent = user.display_name || user.username || t("common.user",); }
     if (roleEl) { roleEl.textContent = user.role || "solo"; }
   } catch {

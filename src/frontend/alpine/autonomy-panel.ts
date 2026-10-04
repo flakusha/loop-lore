@@ -42,9 +42,8 @@ function readUrl(worldId: string, chatId: string, actorId: string, scopeId: stri
     qs.set("scopeKind", "user",);
     qs.set("scopeId", scopeId,);
   }
-
   const suffix = qs.toString();
-  return `/api/worlds/${worldId}/autonomy${suffix ? `?${suffix}` : ""}`;
+  return `/api/v1/worlds/${worldId}/autonomy${suffix ? `?${suffix}` : ""}`;
 }
 
 const panelState: AutonomyPanelState = {
@@ -74,7 +73,6 @@ const panelState: AutonomyPanelState = {
       const res = await apiFetch(
         readUrl(this._autoWorldId, this._autoChatId, this._autoActorId, this._autoScopeId,),
       );
-
       const data = (await res.json()) as AutonomyPayload;
       this.autoData = data;
       // Editing starts from this layer's own values, not the merged ones:
@@ -97,13 +95,12 @@ const panelState: AutonomyPanelState = {
     try {
       // The world and chat layers already accept this on their existing PUTs.
       const isChat = this._autoLayer === "chat";
-      const url = isChat ? `/api/v1/chats/${this._autoChatId}` : `/api/worlds/${this._autoWorldId}`;
+      const url = isChat ? `/api/v1/chats/${this._autoChatId}` : `/api/v1/worlds/${this._autoWorldId}`;
       await apiFetch(url, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ autonomyConfig: this.autoDraft, },),
       },);
-
       await this.load();
     } catch (error) {
       log.warn("Failed to save autonomy config", { error: String(error,), },);
@@ -119,14 +116,13 @@ const panelState: AutonomyPanelState = {
     this.autoError = "";
     try {
       await apiFetch(
-        `/api/worlds/${this._autoWorldId}/autonomy/actor/${this._autoActorId}`,
+        `/api/v1/worlds/${this._autoWorldId}/autonomy/actor/${this._autoActorId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ autonomy: this.autoActorDraft, },),
         },
       );
-
       await this.load();
     } catch (error) {
       log.warn("Failed to save actor autonomy", { error: String(error,), },);
@@ -140,12 +136,11 @@ const panelState: AutonomyPanelState = {
     if (!this._autoWorldId) { return; }
     this.autoError = "";
     try {
-      await apiFetch(`/api/worlds/${this._autoWorldId}/autonomy/control`, {
+      await apiFetch(`/api/v1/worlds/${this._autoWorldId}/autonomy/control`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ action, },),
       },);
-
       await this.load();
     } catch (error) {
       log.warn("Autonomy control failed", { error: String(error,), action, },);

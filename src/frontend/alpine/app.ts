@@ -17,32 +17,7 @@ const log = rootLog.child({ module: "app", },);
 globalThis.app = function() {
   return {
     toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
-    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+
     currentTheme: "default",
     sidebarOpen: false,
     currentLocale: getSavedLocale(),
@@ -184,7 +159,7 @@ globalThis.app = function() {
      */
     async logout() {
       try {
-        await apiFetch("/api/auth/logout", { method: "POST", },);
+        await apiFetch("/api/v1/auth/logout", { method: "POST", },);
       } catch {
         // best-effort: clear client session regardless of response
       } finally {

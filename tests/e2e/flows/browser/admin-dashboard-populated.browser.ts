@@ -31,10 +31,9 @@ async function loginAsAdmin(ctx: BrowserTestContext,) {
     // htmx POST and degenerates into a guaranteed timeout under load.
     const loginRes = page.waitForResponse(
       (res: import("playwright").Response,) =>
-        res.url().includes("/api/auth/login",) && res.request().method() === "POST",
+        res.url().includes("/api/v1/auth/login",) && res.request().method() === "POST",
       { timeout: 30_000, },
     );
-
     await page.click("[data-testid='login-submit']",);
     // The login POST response proves the session cookie was set.
     await loginRes;
@@ -137,10 +136,9 @@ describe("Admin dashboard panels — populated", () => {
     // Arm the waiter before the click: attaching it afterwards races the
     // htmx POST and degenerates into a guaranteed timeout under load.
     const loginRes = page.waitForResponse(
-      (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
+      (res,) => res.url().includes("/api/v1/auth/login",) && res.request().method() === "POST",
       { timeout: 30_000, },
     );
-
     await page.click("[data-testid='login-submit']",);
     await loginRes;
     // The POST returning is not the login navigation finishing — the client still
