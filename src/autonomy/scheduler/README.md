@@ -189,8 +189,6 @@ autonomy.
 - `giwt sim pause/resume/step` CLI surface — the primitives exist on
   the class; wiring them is a separate ticket (the CLI lives outside
   this module).
-- BDI reflection / GM beat dispatch — see the split-out tickets named
-  above.
 
 ## Files
 

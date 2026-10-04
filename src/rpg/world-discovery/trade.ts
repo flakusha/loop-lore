@@ -17,8 +17,8 @@
  * `route_index` on the way through. This target is registered after it, so
  * the status it reads is the one travel just wrote — a convoy that arrived
  * this tick has already been counted as moving. That ordering is a property
- * of the composition root (`createAutonomyScheduler` in
- * `src/autonomy/index.ts`, owned by the orchestrator), not of this file.
+ * of the composition root (`src/cron/jobs.ts`, owned by the orchestrator),
+ * not of this file.
  * A party that reached the end of its route is `resting` and correctly
  * fires nothing.
  *
