@@ -1,0 +1,121 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- Config Menu Page -->
+<div class="app-layout" x-data="configMenu()" x-init="init()">
+  <header class="main-header" data-page="config" data-testid="config-header">
+    <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger" aria-label="Toggle sidebar">
+      ☰
+    </button>
+    <span class="title">Config</span>
+    <div class="actions">
+      <button class="btn btn-primary" @click="saveAll()" :disabled="!dirty" data-testid="save-config">
+        Save
+      </button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="chat-area" style="max-width: 960px; margin: 0 auto; width: 100%">
+      <div x-show="loading" class="empty-state" style="padding: var(--space-12)">
+        <div class="icon">⏳</div>
+        <div class="title">Loading configuration...</div>
+      </div>
+      <template x-if="!loading">
+        <div>
+          <!-- Section Nav -->
+          <div class="world-edit-tabs" style="flex-wrap: wrap; gap: 2px" role="tablist" aria-label="Config sections">
+            <template x-for="s in sections" :key="s.key">
+              <button
+                class="world-edit-tab"
+                :class="{ active: activeSection === s.key }"
+                @click="activeSection = s.key"
+                role="tab"
+                :aria-selected="activeSection === s.key"
+              >
+                <span x-text="s.title"></span>
+              </button>
+            </template>
+          </div>
+
+          <!-- Section Content -->
+          <template x-for="s in sections" :key="s.key">
+            <div x-show="activeSection === s.key" style="padding: var(--space-6)">
+              <p x-show="s.description" style="font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-4)" x-text="s.description"></p>
+              <div style="display: grid; gap: var(--space-4)">
+                <template x-for="f in s.fields" :key="f.key">
+                  <div style="display: grid; grid-template-columns: 200px 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-3); border-bottom: 1px solid var(--border-default, #e9ecef)">
+                    <div>
+                      <span x-text="f.label" style="font-weight: 500; font-size: 13px"></span>
+                      <span
+                        x-show="f.restart"
+                        title="Requires server restart"
+                        style="display: inline-block; margin-left: 6px; padding: 1px 6px; font-size: 10px; font-weight: 600; color: #6b5400; background: #fff3cd; border: 1px solid #ffc107; border-radius: 999px; vertical-align: middle"
+                      >restart</span>
+                      <span
+                        x-show="f.secret"
+                        title="Secret value"
+                        style="display: inline-block; margin-left: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; color: #6b0a0a; background: #ffd8d8; border: 1px solid #e6a0a0; border-radius: 999px; vertical-align: middle"
+                      >secret</span>
+                      <div
+                        x-text="f.description"
+                        style="font-size: 11px; color: var(--text-secondary)"
+                        x-show="f.description"
+                      ></div>
+                    </div>
+                    <!-- Boolean -->
+                    <template x-if="f.type === 'boolean'">
+                      <div style="display: flex; align-items: center; gap: var(--space-2)">
+                        <input type="checkbox" :id="'cf-' + f.key" x-model="values[f.key]" @change="markDirty(f.key)" style="width: 16px; height: 16px" />
+                        <span style="font-size: 12px; color: var(--text-secondary)" x-text="values[f.key] ? 'Enabled' : 'Disabled'"></span>
+                      </div>
+                    </template>
+                    <!-- Number -->
+                    <template x-if="f.type === 'number'">
+                      <input
+                        type="number"
+                        class="form-input"
+                        style="font-size: 13px"
+                        :id="'cf-' + f.key"
+                        x-model="values[f.key]"
+                        @input="markDirty(f.key)"
+                      />
+                    </template>
+                    <!-- Enum -->
+                    <template x-if="f.type === 'enum'">
+                      <select
+                        class="form-input"
+                        style="font-size: 13px"
+                        :id="'cf-' + f.key"
+                        x-model="values[f.key]"
+                        @change="markDirty(f.key)"
+                      >
+                        <option value="Immersion">Immersion</option>
+                        <option value="Basic">Basic</option>
+                        <option value="Detailed">Detailed</option>
+                      </select>
+                    </template>
+                    <!-- String / default -->
+                    <template x-if="f.type === 'string' || f.type === 'array' || f.type === 'object'">
+                      <input
+                        type="text"
+                        class="form-input"
+                        style="font-size: 13px"
+                        :id="'cf-' + f.key"
+                        x-model="values[f.key]"
+                        @input="markDirty(f.key)"
+                      />
+                    </template>
+                    <div>
+                      <span x-show="dirtyKeys.has(f.key)" style="font-size: 11px; color: var(--color-warning, #f0ad4e)">●</span>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+  </main>
+</div>
