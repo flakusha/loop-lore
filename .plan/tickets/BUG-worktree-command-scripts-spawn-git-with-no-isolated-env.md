@@ -1,5 +1,5 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
-<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # BUG: worktree command scripts spawn git with no isolated env
 
@@ -11,11 +11,11 @@
 
 Worktree git helpers under `scripts/worktree/commands/*` spawn git directly with `Bun.spawnSync` instead of going through `gitSync`/`gitSyncQuiet`, so a hook-exported `GIT_DIR` / `GIT_INDEX_FILE` could redirect them. Highest severity was `finalize.ts` — routinely invoked from git hooks — where `merge --abort`, `reset --hard`, `stash push`/`pop` and `branch -d` acting on the wrong repository is data-destructive, not merely wrong-output.
 
-giwt had already done this migration in its own tree; the fork was brought in line by `f28c3ca24`.
+giwt had already done this migration in its own tree; the fork was brought in line by `f8a2aba71`.
 
 **Context:**
 
-This ticket was salvaged from the abandoned `fix-open-bug-tickets` branch, where it was filed but never landed. The defect it describes was fixed on `dev` by `f28c3ca24`, so it is filed directly as Done rather than re-filed as open work.
+This ticket was salvaged from the abandoned `fix-open-bug-tickets` branch, where it was filed but never landed. The defect it describes was fixed on `dev` by `f8a2aba71`, so it is filed directly as Done rather than re-filed as open work.
 
 **Acceptance Criteria:**
 
@@ -30,14 +30,14 @@ This ticket was salvaged from the abandoned `fix-open-bug-tickets` branch, where
 Re-verified every callsite mechanically rather than trusting the branch's line
 numbers, which have since drifted (`dev` has moved ~150 commits since):
 
-- `finalize.ts` — all 19 direct git spawns carry an isolated env, including the
+- `finalize.ts` — all 18 direct git spawns carry an isolated env, including the
   four named as data-destructive: `merge --abort` (:351), `stash push` (:477),
-  `stash pop` (:515), `reset --hard` (:530), and `branch -d`/`-D` (:1078, :1086).
+  `stash pop` (:515), `reset --hard` (:530), and `branch -d`/`-D` (:1085, :1093).
 - The other files the ticket enumerates are fully covered:
-  `merge.ts` 3/3, `abort.ts` 3/3, `remove.ts` 3/3, `rebase.ts` 3/3, `commit.ts` 3/3,
+  `merge.ts` 3/3, `abort.ts` 2/2, `remove.ts` 3/3, `rebase.ts` 3/3, `commit.ts` 3/3,
   `commit-branch.ts` 3/3, `cleanup.ts` 1/1, `create.ts` 1/1, `new-branch.ts` 1/1,
-  `prs.ts` 1/1.
-- Repo-wide sweep of `scripts/worktree/`: 42 git spawns, 42 isolated, 0 without.
+  `prs.ts` 1/1, `git.ts` 2/2.
+- Repo-wide sweep of `scripts/worktree/`: 41 git spawns, 41 isolated, 0 without.
 
 The tests backing the `isolatedGitEnv` contract live in
 `scripts/worktree/utils/git.test.ts` and are mutation-checked — neutering the
