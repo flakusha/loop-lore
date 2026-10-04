@@ -106,6 +106,10 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
           return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden,);
         }
 
+        if (!field.editable) {
+          return jsonError(`Config key is not editable: ${key}`, HttpStatus.BadRequest, ErrorCode.BadRequest,);
+        }
+
         const coerced = coerceValue(body?.value, field.type,);
 
         if (field.scope === "admin") {
