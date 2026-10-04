@@ -14195,10 +14195,6 @@
   ],
   "src/federation/coordinator.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-mesh-federation-content-sharing.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-defederation-admin-operations-peer-state-block-al.md"
     },
@@ -20087,10 +20083,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-lora-discovery-application.md"
     },
     {
       "kind": "ticket",
@@ -27895,12 +27887,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/IDEA-cross-instance-conversation-threading-mention-inreplyto.md"
-    }
-  ],
-  "src/routes/federation-mesh.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-mesh-federation-content-sharing.md"
     }
   ],
   "src/routes/federation-transfer.test.ts": [
