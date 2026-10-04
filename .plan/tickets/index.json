@@ -10768,6 +10768,25 @@
     "title": "Licensing",
     "type": "EPIC"
   },
+  "EPIC-LLAMA-SWAP": {
+    "hash": "pending",
+    "extid": "EPIC-LLAMA-SWAP",
+    "type": "EPIC",
+    "title": "llama-swap Hub (lifecycle, config, rotation/exclusion, bench)",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "llama-swap",
+      "lifecycle",
+      "config",
+      "rotation",
+      "scheduler",
+      "bench"
+    ],
+    "source": ".plan/epics/epic-llama-swap.md",
+    "status": "Not Started"
+  },
   "EPIC-LLM-QUEUE": {
     "epic": "",
     "extid": "EPIC-LLM-QUEUE",
@@ -20258,6 +20277,30 @@
     "tags": [],
     "title": "Asset Attribution Chain",
     "type": "TASK"
+  },
+  "TASK-ASSET-B1-BLAKE3-CONTENT-STORE": {
+    "hash": "pending",
+    "extid": "TASK-ASSET-B1-BLAKE3-CONTENT-STORE",
+    "type": "TASK",
+    "title": "Asset B1 — BLAKE3 content-addressed store (blob + refcount)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-asset-platform-capabilities` (Batch B1)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-b1-blake3-content-store.md",
+    "status": "Not Started"
+  },
+  "TASK-ASSET-B1-RENDITION-PIPELINE": {
+    "hash": "pending",
+    "extid": "TASK-ASSET-B1-RENDITION-PIPELINE",
+    "type": "TASK",
+    "title": "Asset B1 — rendition pipeline (`asset_renditions` + thumbs/LQIP)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-asset-platform-capabilities` (Batch B1)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-b1-rendition-pipeline.md",
+    "status": "Not Started"
   },
   "TASK-ASSET-CONTEXT-INCLUSION-BUDGET-POLICY": {
     "epic": "",
@@ -32473,6 +32516,18 @@
     "title": "Local Swarm Router — in-host process manage/filter/balance",
     "type": "TASK"
   },
+  "TASK-LOCATION-CRUD-TREE-CONNECTIONS": {
+    "hash": "pending",
+    "extid": "TASK-LOCATION-CRUD-TREE-CONNECTIONS",
+    "type": "TASK",
+    "title": "Location CRUD + tree service + connection validation hardening",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-locations`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-location-crud-tree-connections.md",
+    "status": "Not Started"
+  },
   "TASK-LOCATION-DETAILS": {
     "epic": "epic-world-management-ui.md",
     "extid": "TASK-LOCATION-DETAILS",
@@ -40181,6 +40236,18 @@
     "title": "Screen Reader Support",
     "type": "TASK"
   },
+  "TASK-SD-CPP-PROVIDER": {
+    "hash": "pending",
+    "extid": "TASK-SD-CPP-PROVIDER",
+    "type": "TASK",
+    "title": "sd.cpp provider — secondary-backend adapter (Phase 1)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-assistant-generation-extensions` (Phase 1)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sd-cpp-provider.md",
+    "status": "Not Started"
+  },
   "TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE": {
     "epic": "epic-e2e-integration-testing.md (Pillar 3 — real-server tier)",
     "extid": "TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE",
@@ -42650,6 +42717,42 @@
     "title": "verifyJwt accepts malformed or claimless payload as valid",
     "type": "TASK"
   },
+  "TASK-VIDEO-GEN-ROUTE": {
+    "hash": "pending",
+    "extid": "TASK-VIDEO-GEN-ROUTE",
+    "type": "TASK",
+    "title": "Video generation route (`POST /api/generation/video`)",
+    "label": "task",
+    "priority": "low",
+    "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-video-gen-route.md",
+    "status": "Not Started"
+  },
+  "TASK-VIDEO-PROVIDER-MINIMAX-H3": {
+    "hash": "pending",
+    "extid": "TASK-VIDEO-PROVIDER-MINIMAX-H3",
+    "type": "TASK",
+    "title": "Video provider — MiniMax H3 dispatch",
+    "label": "task",
+    "priority": "low",
+    "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-video-provider-minimax-h3.md",
+    "status": "Not Started"
+  },
+  "TASK-VIDEO-TEMPLATE-SCHEMA": {
+    "hash": "pending",
+    "extid": "TASK-VIDEO-TEMPLATE-SCHEMA",
+    "type": "TASK",
+    "title": "Video prompt template schema (FEAT-065 video slice)",
+    "label": "task",
+    "priority": "low",
+    "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-video-template-schema.md",
+    "status": "Not Started"
+  },
   "TASK-VISUAL-NOVEL-MODE": {
     "epic": "Epic Immersion & Presentation (sub-task)",
     "extid": "TASK-VISUAL-NOVEL-MODE",
@@ -44404,109 +44507,6 @@
     "epic": "epic-memory-knowledge-systems",
     "tags": [],
     "source": ".plan/tickets/TASK-visibility-report-for-chat-admins.md",
-    "status": "Not Started"
-  },
-  "EPIC-LLAMA-SWAP": {
-    "hash": "pending",
-    "extid": "EPIC-LLAMA-SWAP",
-    "type": "EPIC",
-    "title": "llama-swap Hub (lifecycle, config, rotation/exclusion, bench)",
-    "label": "epic",
-    "priority": "medium",
-    "epic": "",
-    "tags": [
-      "llama-swap",
-      "lifecycle",
-      "config",
-      "rotation",
-      "scheduler",
-      "bench"
-    ],
-    "source": ".plan/tickets/epic-llama-swap.md",
-    "status": "Not Started"
-  },
-  "TASK-ASSET-B1-BLAKE3-CONTENT-STORE": {
-    "hash": "pending",
-    "extid": "TASK-ASSET-B1-BLAKE3-CONTENT-STORE",
-    "type": "TASK",
-    "title": "Asset B1 — BLAKE3 content-addressed store (blob + refcount)",
-    "label": "task",
-    "priority": "medium",
-    "epic": "`epic-asset-platform-capabilities` (Batch B1)",
-    "tags": [],
-    "source": ".plan/tickets/TASK-asset-b1-blake3-content-store.md",
-    "status": "Not Started"
-  },
-  "TASK-ASSET-B1-RENDITION-PIPELINE": {
-    "hash": "pending",
-    "extid": "TASK-ASSET-B1-RENDITION-PIPELINE",
-    "type": "TASK",
-    "title": "Asset B1 — rendition pipeline (`asset_renditions` + thumbs/LQIP)",
-    "label": "task",
-    "priority": "medium",
-    "epic": "`epic-asset-platform-capabilities` (Batch B1)",
-    "tags": [],
-    "source": ".plan/tickets/TASK-asset-b1-rendition-pipeline.md",
-    "status": "Not Started"
-  },
-  "TASK-LOCATION-CRUD-TREE-CONNECTIONS": {
-    "hash": "pending",
-    "extid": "TASK-LOCATION-CRUD-TREE-CONNECTIONS",
-    "type": "TASK",
-    "title": "Location CRUD + tree service + connection validation hardening",
-    "label": "task",
-    "priority": "high",
-    "epic": "`epic-locations`",
-    "tags": [],
-    "source": ".plan/tickets/TASK-location-crud-tree-connections.md",
-    "status": "Not Started"
-  },
-  "TASK-SD-CPP-PROVIDER": {
-    "hash": "pending",
-    "extid": "TASK-SD-CPP-PROVIDER",
-    "type": "TASK",
-    "title": "sd.cpp provider — secondary-backend adapter (Phase 1)",
-    "label": "task",
-    "priority": "medium",
-    "epic": "`epic-assistant-generation-extensions` (Phase 1)",
-    "tags": [],
-    "source": ".plan/tickets/TASK-sd-cpp-provider.md",
-    "status": "Not Started"
-  },
-  "TASK-VIDEO-GEN-ROUTE": {
-    "hash": "pending",
-    "extid": "TASK-VIDEO-GEN-ROUTE",
-    "type": "TASK",
-    "title": "Video generation route (`POST /api/generation/video`)",
-    "label": "task",
-    "priority": "low",
-    "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
-    "tags": [],
-    "source": ".plan/tickets/TASK-video-gen-route.md",
-    "status": "Not Started"
-  },
-  "TASK-VIDEO-PROVIDER-MINIMAX-H3": {
-    "hash": "pending",
-    "extid": "TASK-VIDEO-PROVIDER-MINIMAX-H3",
-    "type": "TASK",
-    "title": "Video provider — MiniMax H3 dispatch",
-    "label": "task",
-    "priority": "low",
-    "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
-    "tags": [],
-    "source": ".plan/tickets/TASK-video-provider-minimax-h3.md",
-    "status": "Not Started"
-  },
-  "TASK-VIDEO-TEMPLATE-SCHEMA": {
-    "hash": "pending",
-    "extid": "TASK-VIDEO-TEMPLATE-SCHEMA",
-    "type": "TASK",
-    "title": "Video prompt template schema (FEAT-065 video slice)",
-    "label": "task",
-    "priority": "low",
-    "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
-    "tags": [],
-    "source": ".plan/tickets/TASK-video-template-schema.md",
     "status": "Not Started"
   }
 }
