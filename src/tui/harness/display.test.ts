@@ -182,6 +182,7 @@ describe("formatRunDetail", () => {
       pattern: "agent.edit",
       patternDetail: "inline patch",
     },),);
+
     expect(detail,).toContain("agent.edit / inline patch",);
   });
 

@@ -50,6 +50,12 @@ export interface HandleGenerateOpts {
 }
 
 /**
+ * @param root0
+ * @param root0.body
+ * @param root0.database
+ * @param root0.config
+ * @param root0.userId
+ * @param root0.userRole
  * @throws {Error}
  * @returns {Promise<Response>}
  */
@@ -96,6 +102,7 @@ export async function handleGenerate({
     .where("actors.actor_type", "<>", "user",)
     .where("chat_participants.actor_id", "<>", input.actorId,)
     .execute();
+
   const groupParticipantIds = participantRows.map((row,) => row.actor_id);
 
   // ── Assemble prompt ───────────────────────────────────
@@ -112,6 +119,7 @@ export async function handleGenerate({
       userId,
       groupParticipantIds,
     },);
+
     messages = built.messages;
     systemPrompt = built.systemPrompt;
   } catch (error) {
@@ -127,6 +135,7 @@ export async function handleGenerate({
     messages = appendStylePrompt(messages, stylePrompt,);
     systemPrompt = systemPrompt === undefined ? stylePrompt : `${systemPrompt}\n\n${stylePrompt}`;
   }
+
   const chatFormat = cfg.templates?.llm?.chatFormats?.[input.format ?? ""];
   if (chatFormat !== undefined) { messages = applyChatFormat(messages, chatFormat,); }
   const { genOptions, temperature, maxTokens, resolvedStream, } = await resolveOptions({
@@ -150,6 +159,7 @@ export async function handleGenerate({
     if (err instanceof IdempotencyKeyConflictError) {
       return jsonError({ message: "A generation with this idempotencyKey is already in flight", status: 409, },);
     }
+
     throw err;
   }
 

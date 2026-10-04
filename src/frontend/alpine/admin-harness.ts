@@ -77,6 +77,7 @@ export const adminHarness = {
         apiFetch(`${RUNS_URL}${query}`, JSON_HEADERS,),
         apiFetch(STATS_URL, JSON_HEADERS,),
       ],);
+
       if (runsRes.status === "fulfilled") { await this.applyRuns(runsRes.value,); }
       if (statsRes.status === "fulfilled") { await this.applyStats(statsRes.value,); }
       if (runsRes.status === "rejected" || statsRes.status === "rejected") {
@@ -100,9 +101,11 @@ export const adminHarness = {
       this.harnessError = failure;
       return;
     }
+
     const data = parseOr(HarnessRunsResponse, await res.json(), { items: [] as HarnessRunSummary[], }, () => {
       showToast("error", t("harness.errorShape",),);
     },);
+
     this.harnessRunRows = buildRunRows(data.items,);
   },
 
@@ -117,9 +120,11 @@ export const adminHarness = {
       this.harnessError = failure;
       return;
     }
+
     const data = parseOr(HarnessStatsSchema, await res.json(), EMPTY_STATS, () => {
       showToast("error", t("harness.errorShape",),);
     },);
+
     this.harnessStatCards = buildStatCards(data,);
     this.harnessModelRows = buildModelRows(data.byModel,);
     this.harnessGapRows = buildGapRows(data.toolingGaps,);
@@ -141,8 +146,10 @@ export const adminHarness = {
     for (const row of this.harnessRunRows) {
       const haystack = `${row.task} ${row.taskType} ${row.model} ${row.result} ${row.branch} ${row.gitSha}`
         .toLowerCase();
+
       if (haystack.includes(query,)) { out.push(row,); }
     }
+
     return out;
   },
 

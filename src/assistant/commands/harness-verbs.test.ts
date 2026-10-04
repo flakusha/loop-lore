@@ -84,6 +84,7 @@ describe("harness verb registration", () => {
     for (const verb of ["orchestrate", "workflowz", "omp",]) {
       expect(getCommandRequirement(verb,),).toBe(ChatParticipantRole.Member,);
     }
+
     expect(getCommandRequirement("workflow",),).toBe(ChatParticipantRole.Member,);
   });
 });
@@ -132,6 +133,7 @@ describe("workflow resolution", () => {
       chatId: "chat-empty",
       config: { templates: { workflows: { workflows: {}, }, }, } as unknown as CommandContext["config"],
     } as CommandContext;
+
     const out = await handler([], emptyCtx,);
     expect(out.handled,).toBe(true,);
     expect(out.action,).toBeUndefined();

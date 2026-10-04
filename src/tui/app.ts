@@ -54,6 +54,7 @@ export class TUIApp {
       tags: true,
       style: { bg: "blue", fg: "white", },
     },);
+
     this.updateStatus("initializing...",);
     this.chat = new ChatWidget(this.screen, {
       sessionToken,
@@ -105,6 +106,7 @@ export class TUIApp {
             getLogger()
               .child({ module: "tui", },)
               .error("loadMessages failed", error instanceof Error ? error : new Error(String(error,),),);
+
             this.updateStatus("load failed",);
           }
         } else {

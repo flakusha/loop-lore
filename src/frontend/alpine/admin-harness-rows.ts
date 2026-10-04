@@ -96,6 +96,7 @@ export function buildRunsQuery(taskType: string, result: string, limit: number,)
 export function isStale(selectedRunId: string, requestedRunId: string,): boolean {
   return selectedRunId !== requestedRunId;
 }
+
 /**
  * Roll the stats totals into the stat-card model.
  * @param stats - Decoded `/api/v1/harness/stats` payload
@@ -162,9 +163,5 @@ export function buildGapRows(gaps: HarnessStats["toolingGaps"],): HarnessGapRow[
 }
 
 export { buildDetailView, type HarnessDetailView, } from "./admin-harness-detail-view";
-
-export { buildDetailView, type HarnessDetailView, } from "./admin-harness-detail-view";
-
-export { formatDuration, formatUsd, } from "./admin-harness-format";
 
 export { formatDuration, formatUsd, } from "./admin-harness-format";

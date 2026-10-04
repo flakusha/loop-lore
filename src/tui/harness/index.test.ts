@@ -135,6 +135,7 @@ function installFetchStub(): void {
     const body = u.pathname === "/api/harness/runs" ? runsResponse : detailResponse;
     return body as FetchResult<T>;
   };
+
   setFetchFn(stub as unknown as typeof safeFetch,);
 }
 
@@ -323,6 +324,7 @@ describeOrSkip("HarnessView", () => {
       makeSummary({ runId: "run-b", task: "bravo", },),
       makeSummary({ runId: "run-c", task: "charlie", },),
     );
+
     detailResponse = okDetail(makeDetail("run-a",),);
     const fixture = buildView();
     fixture.view.show();
@@ -365,6 +367,7 @@ describeOrSkip("HarnessView", () => {
       makeSummary({ runId: "run-b", },),
       makeSummary({ runId: "run-c", },),
     );
+
     detailResponse = okDetail(makeDetail("run-a",),);
     const fixture = buildView();
     fixture.view.show();

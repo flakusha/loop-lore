@@ -42,6 +42,7 @@ describe("buildStatCards", () => {
       ...STATS,
       totals: { runs: 0, failures: 0, costUsd: 0, tokensIn: 0, tokensOut: 0, avgMs: 0, },
     },);
+
     expect(cards.map((card,) => card.value),).toEqual([
       "0",
       "0",
@@ -59,6 +60,7 @@ describe("buildRunRows", () => {
       RUN,
       { ...RUN, runId: "run-2", result: "error", error: "boom", },
     ],);
+
     expect(row?.runId,).toBe("run-1",);
     expect(row?.duration,).toBe("1.5s",);
     expect(row?.cost,).toBe("$0.25",);
@@ -71,6 +73,7 @@ describe("buildRunRows", () => {
       RUN,
       { ...RUN, runId: "run-2", result: "error", error: "boom", },
     ],);
+
     expect(failed?.runId,).toBe("run-2",);
     expect(failed?.failed,).toBe(true,);
   });
@@ -93,6 +96,7 @@ describe("buildModelRows / buildGapRows", () => {
       tokensIn: 600,
       tokensOut: 200,
     },);
+
     expect(rows[1]?.avg,).toBe("5.4s",);
   });
 
@@ -122,6 +126,7 @@ describe("buildDetailView", () => {
       toolingGap: "no-web-search",
       msg: "finished",
     };
+
     const view = buildDetailView(detail,);
     expect(view,).toMatchObject({
       runId: "run-1",
@@ -159,6 +164,7 @@ describe("null git provenance decodes", () => {
     const decoded = parseOr(HarnessRunSummarySchema, NO_GIT_RUN, REJECTED as never, (e,) => {
       errors = e;
     },);
+
     expect(errors,).toBeNull();
     expect(decoded,).not.toBe(REJECTED,);
     expect(decoded,).toMatchObject({ branch: null, gitSha: null, pid: null, },);
@@ -173,10 +179,12 @@ describe("null git provenance decodes", () => {
       toolingGap: null,
       msg: null,
     };
+
     let errors: unknown = null;
     const decoded = parseOr(HarnessRunDetailSchema, detail, REJECTED as never, (e,) => {
       errors = e;
     },);
+
     expect(errors,).toBeNull();
     expect(decoded,).not.toBe(REJECTED,);
     expect(decoded,).toMatchObject({ branch: null, gitSha: null, pid: null, },);
@@ -208,6 +216,7 @@ describe("absent provenance renders as a dash, never the word null", () => {
       toolingGap: null,
       msg: null,
     };
+
     const view = buildDetailView(detail,);
     expect(view.branch,).toBe("—",);
     expect(view.gitSha,).toBe("—",);
@@ -223,6 +232,7 @@ describe("absent provenance renders as a dash, never the word null", () => {
       toolingGap: null,
       msg: null,
     },);
+
     expect(view.pid,).toBe("4242",);
     expect(view.branch,).toBe("feat/x",);
   });

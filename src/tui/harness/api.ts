@@ -14,13 +14,6 @@ export { API_BASE, } from "../chat";
 export type HarnessFetchResult<T,> =
   | { ok: true; data: T }
   | { ok: false; error: string; status?: number };
-/**
- * Discriminated result for harness API calls. Named `HarnessFetchResult` so it
- * does not collide with the server's run-result union re-exported by ./types.
- */
-export type HarnessFetchResult<T,> =
-  | { ok: true; data: T }
-  | { ok: false; error: string; status?: number };
 let _fetch = _realFetch;
 
 export function setFetch(fn: typeof _realFetch,): void {
@@ -32,12 +25,14 @@ function buildResult<T,>(result: { ok: boolean; data?: T; error?: Error; status?
     if (result.status === 403) {
       return { ok: false, error: "admin only", status: 403, };
     }
+
     return {
       ok: false,
       error: result.status !== undefined ? `HTTP ${result.status}` : result.error!.message,
       status: result.status,
     };
   }
+
   return { ok: true, data: result.data as T, };
 }
 
@@ -46,6 +41,7 @@ async function doFetch<T,>(url: string, sessionToken: string | undefined,): Prom
     auth: sessionToken ? { sessionToken, } : undefined,
     handle401: false,
   },);
+
   return buildResult(result,);
 }
 

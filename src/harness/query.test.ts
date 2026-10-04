@@ -105,6 +105,7 @@ describe("harness query (file-backed)", () => {
       rec({ runId: "b", taskType: "chat", result: "error", },),
       rec({ runId: "c", taskType: "aux", result: "error", },),
     ],);
+
     // Results are newest-first, so file order a,b,c comes back b,a / c,b.
     expect((await listRuns({ taskType: "chat", }, 10,)).map((r,) => r.runId),).toEqual(["b", "a",],);
     expect((await listRuns({ result: "error", }, 10,)).map((r,) => r.runId),).toEqual(["c", "b",],);
@@ -119,10 +120,12 @@ describe("harness query (file-backed)", () => {
       rec({ runId: "t2-r1", turnId: "turn-b", },),
       rec({ runId: "legacy", turnId: null, },),
     ],);
+
     // One user turn's three tool rounds come back as one node, newest first.
     expect((await listRuns({ turnId: "turn-a", }, 10,)).map((r,) => r.runId),).toEqual(
       ["t1-r3", "t1-r2", "t1-r1",],
     );
+
     // Exact match only: a prefix must not quietly return a partial turn.
     expect(await listRuns({ turnId: "turn", }, 10,),).toEqual([],);
     // A pre-correlation run belongs to no turn, so it matches no turn filter.
@@ -195,6 +198,7 @@ describe("harness query (file-backed)", () => {
     expect(pad,).toBeGreaterThan(0,);
     const body = Array.from({ length: count, }, (_, i,) => line(rec({ runId: id(i,), msg: "x".repeat(pad,), },),),)
       .join("",);
+
     expect(body.length,).toBe(count * lineBytes,);
     const start = body.length - READ_WINDOW_BYTES;
     expect(start % lineBytes,).toBe(0,);
@@ -242,6 +246,7 @@ describe("harness query (file-backed)", () => {
           toolingGap: "g1",
         },),
       ],);
+
       const s = await stats();
       expect(s.totals.runs,).toBe(3,);
       expect(s.totals.failures,).toBe(2,);
@@ -283,6 +288,7 @@ describe("harness query (file-backed)", () => {
         rec({ runId: "2", costUsd: 0.002, },),
         rec({ runId: "3", costUsd: 0.0005, },),
       ],);
+
       const s = await stats();
       expect(s.totals.costUsd,).toBe(0.0035,);
     });
@@ -294,6 +300,7 @@ describe("harness query (file-backed)", () => {
         rec({ runId: "1", model: "priced", costUsd: 0.002, },),
         rec({ runId: "2", model: "unpriced", costUsd: null, },),
       ],);
+
       const s = await stats();
       expect(s.totals.costUsd,).toBe(0.002,);
       expect(s.byModel.find((m,) => m.model === "unpriced")?.costUsd,).toBe(0,);

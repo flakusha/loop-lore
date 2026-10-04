@@ -88,6 +88,7 @@ const localPlugin = {
 // Shared plugins
 const tsPlugins = {
   "@typescript-eslint": tseslint.plugin,
+  // v77 dropped the `flat/` prefix; `configs.recommended` IS the flat config.
   unicorn: unicorn.configs.recommended.plugins.unicorn,
   sonarjs: sonarjs.configs.recommended.plugins.sonarjs,
   import: importPlugin,
