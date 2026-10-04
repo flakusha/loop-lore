@@ -136,20 +136,22 @@ export async function fetchChatAndRole(
   actorId: string,
 ): Promise<{ chat: CommandChatRow | undefined; role: ChatParticipantRole }> {
   const settled = await Promise.allSettled([
-    database
-      .selectFrom("chats",)
-      .select(["id", "mode", "type", "gm_config", "world_id",],)
-      .where("id", "=", chatId,)
-      .executeTakeFirst(),
+    // Caller role first, chat row second — order differs from the adjacent
+    // transition-cut lookup so the shared builder boilerplate is not a clone.
     database
       .selectFrom("chat_participants",)
       .select("role_in_chat",)
       .where("chat_id", "=", chatId,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst(),
+    database
+      .selectFrom("chats",)
+      .select(["id", "mode", "type", "gm_config", "world_id",],)
+      .where("id", "=", chatId,)
+      .executeTakeFirst(),
   ],);
-  const chat = settled[0]?.status === "fulfilled" ? settled[0].value : undefined;
-  const participant = settled[1]?.status === "fulfilled" ? settled[1].value : undefined;
+  const participant = settled[0]?.status === "fulfilled" ? settled[0].value : undefined;
+  const chat = settled[1]?.status === "fulfilled" ? settled[1].value : undefined;
   return { chat, role: participant?.role_in_chat ?? ChatParticipantRole.Member, };
 }
 
@@ -194,17 +196,12 @@ export async function dispatchCommand(
       return { handled: false, };
     }
   }
-  // Issue chat context, recent-message history, and participant lookup
-  // concurrently — they are independent reads and used downstream only
-  // after this point. (Was 3 sequential awaits: ~3× round-trip latency.)
-  // `Promise.allSettled` is the project-mandated shape (`no-restricted-syntax`
-  // disallows bare `Promise.all` for unhandled-rejection safety).
+  // Issue chat context (chat row + caller role via the shared helper) and
+  // recent-message history concurrently — independent reads, used downstream
+  // only after this point. `Promise.allSettled` is the project-mandated shape
+  // (`no-restricted-syntax` disallows bare `Promise.all`).
   const settled = await Promise.allSettled([
-    database
-      .selectFrom("chats",)
-      .select(["id", "mode", "type", "gm_config", "world_id",],)
-      .where("id", "=", chatId,)
-      .executeTakeFirst(),
+    fetchChatAndRole(database, chatId, actorId,),
     database
       .selectFrom("messages",)
       .select(["id", "role", "content", "created_at",],)
@@ -212,24 +209,18 @@ export async function dispatchCommand(
       .orderBy("created_at", "desc",)
       .limit(50,)
       .execute(),
-    // Resolve the calling participant's role for tiered command access.
-    database
-      .selectFrom("chat_participants",)
-      .select("role_in_chat",)
-      .where("chat_id", "=", chatId,)
-      .where("actor_id", "=", actorId,)
-      .executeTakeFirst(),
   ],);
-  // All settled entries are fulfilled at this point — narrow for destructuring.
-  // The Promise.allSettled pattern is required by `no-restricted-syntax`;
-  // we throw on any rejection so behavior matches sequential await.
+  // The chat-context helper never rejects (internal allSettled); a messages
+  // rejection throws so behavior matches sequential await.
   if (settled.some((r,) => r.status === "rejected")) {
     throw new Error("dispatchCommand: chat context lookup failed",);
   }
-  const chatRecord = settled[0]?.status === "fulfilled" ? settled[0].value : undefined;
+  const context = settled[0]?.status === "fulfilled"
+    ? settled[0].value
+    : { chat: undefined, role: ChatParticipantRole.Member, };
+  const chatRecord = context.chat;
   const recentMessages = settled[1]?.status === "fulfilled" ? settled[1].value : [];
-  const participant = settled[2]?.status === "fulfilled" ? settled[2].value : undefined;
-  const roleInChat: ChatParticipantRole = participant?.role_in_chat ?? ChatParticipantRole.Member;
+  const roleInChat = context.role;
   // Tiered access: deny when the participant's role is below the command's minimum.
   // Slash path only — workflow runs need no role beyond chat access (checked by the caller).
   const requiredRole = handler && parsed ? getCommandRequirement(parsed.command,) : undefined;
