@@ -53,4 +53,4 @@ Alternatively (or additionally): add a guard to `giwt close` that verifies the c
 - [ ] The gate does NOT modify any file — it only reports failure.
 - [ ] `BUG-test-e2e-env-default-mismatch.md` (f511378) is updated to cite the correct commit `b53b1b7b8` at closure.
 
-git issue: f511378
+git issue: 83bdf58
