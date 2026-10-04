@@ -78,6 +78,7 @@ async function chatIsQuiet(
  * @param opts.now - Injectable clock; defaults to the wall clock.
  * @param opts.logger
  * @returns {Promise<DispatchSummary>}
+ * @throws never - all errors are caught and counted in `DispatchSummary.failed`
  */
 export async function dispatchDue(
   database: Kysely<DB>,
