@@ -145,6 +145,16 @@ describe("EmailAdapter.ingest", () => {
     expect(envelope.target,).toBe("inbox@loop.example",);
   });
 
+  test("normalizes a mixed-case configured mailbox for routing", async () => {
+    const adapter = createEmailAdapter();
+    await adapter.connect({ smtpUser: "Bot@Loop.example", mailboxAddress: "Inbox@Loop.example", },);
+    expect(adapter.mailboxAddress,).toBe("inbox@loop.example",);
+    expect(adapter.fromAddress,).toBe("bot@loop.example",);
+
+    const envelope = adapter.ingest(inboundMail({ to: ["other@x.test", "inbox@loop.example",], },),);
+    expect(envelope.target,).toBe("inbox@loop.example",);
+  });
+
   test("falls back to the first recipient without a configured mailbox", async () => {
     const adapter = createEmailAdapter();
     await adapter.connect({ smtpUser: "bot@loop.example", },);
