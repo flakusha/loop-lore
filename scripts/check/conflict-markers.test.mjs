@@ -37,13 +37,18 @@ test("look-alike legal lines do not register", () => {
  * root from its own location). Removed in `finally` so a failed assertion
  * cannot leak it. Returns the copied gate's exit code and stdout.
  *
- * Git runs with GIT_* stripped and global/system config disabled: a host
- * GIT_DIR/GIT_WORK_TREE (plausible under the finalize hooks) would redirect
- * the fixture into the caller's repo and scan the wrong tree.
+ * Git runs with GIT_* stripped: a host GIT_DIR/GIT_WORK_TREE (plausible
+ * under the finalize hooks) would redirect the fixture into the caller's
+ * repo and scan the wrong tree. No config writes — the fixture only inits
+ * and stages, which need no user identity.
+ *
+ * Parallel-safe: every call owns a unique mkdtemp repo (no fixed paths, no
+ * ports, no shared globals) and removes it in `finally`, so a failed
+ * assertion cannot leak into sibling tests.
  */
 function scanFixture(files,) {
   const root = mkdtempSync(join(tmpdir(), "conflict-markers-",),);
-  const env = { ...process.env, GIT_CONFIG_GLOBAL: "/dev/null", GIT_CONFIG_SYSTEM: "/dev/null", };
+  const env = { ...process.env, };
   for (const key of Object.keys(env,)) {
     if (key.startsWith("GIT_",)) { delete env[key]; }
   }
