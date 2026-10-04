@@ -98,6 +98,11 @@ describe("signDkim", () => {
     expect(verify(alice,),).toBe(false,);
   });
 
+  test("title-case h= names match and emit lowercase", () => {
+    const result = signDkim({ ...FIXTURE, signHeaders: ["From", "TO", "Subject", "Cc",], },);
+    expect(result,).toEqual(signFixture(),);
+  });
+
   test("an unusable key returns a typed invalid_key failure", () => {
     const result = signDkim({ ...FIXTURE, privateKeyPem: "not a key", },);
     expect(result.ok,).toBe(false,);

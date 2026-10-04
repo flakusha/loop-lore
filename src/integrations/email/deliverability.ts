@@ -35,7 +35,8 @@ export interface DkimSignRequest {
   /** DNS selector — the `s=` tag (`<selector>._domainkey.<domain>` TXT). */
   selector: string;
   /** Header names to sign, in `h=` order (RFC 6376 §5.4 recommendation:
-   * From, then the rest actually present on the message). */
+   * From, then the rest actually present on the message). Matched
+   * case-insensitively and emitted lowercase in `h=`. */
   signHeaders: readonly string[];
   /** Raw header lines already on the message, `Name: value` (each on one
    * logical line — fold continuation lines before calling). */
@@ -101,18 +102,21 @@ export function signDkim(request: DkimSignRequest,): DkimSignResult {
 
   // Signed headers are taken last-occurrence-first (RFC 6376 §5.4.2);
   // a listed header absent from the message signs as empty (`name:`).
+  // h= names are matched and emitted lowercased so title-case callers
+  // ("From") resolve against the lowercased header index.
+  const signHeaders = request.signHeaders.map((name,) => name.toLowerCase());
   const byName = request.headers.map((line,) => {
     const canonical = relaxHeaderLine(line,);
     return { name: canonical.slice(0, canonical.indexOf(":",),), canonical, };
   },);
 
-  const signedLines = request.signHeaders.map((name,) => {
+  const signedLines = signHeaders.map((name,) => {
     const match = byName.findLast((part,) => part.name === name);
     return match === undefined ? `${name}:` : match.canonical;
   },);
 
   const unsignedHeader = `v=1; a=${DKIM_ALGORITHM}; c=${DKIM_CANONICALIZATION}; d=${request.domain};` +
-    ` s=${request.selector}; t=${timestamp}; h=${request.signHeaders.join(":",)};` +
+    ` s=${request.selector}; t=${timestamp}; h=${signHeaders.join(":",)};` +
     ` bh=${bodyHash}; b=`;
 
   const data = `${signedLines.join("\r\n",)}\r\n${relaxHeaderLine(`DKIM-Signature: ${unsignedHeader}`,)}`;
