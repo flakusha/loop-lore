@@ -24,3 +24,6 @@
 - `scripts/gpg-unlock.mjs`, `scripts/check-changelog.ts` (derive-from-artifact precedent)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: f279c9f

@@ -1,0 +1,263 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Harness Tab: agent-harness run history + telemetry (TASK-harness-frontend-consolidation).
+  Reuses the admin shell: state lives in `adminHarness` (frontend/alpine/admin-harness.ts),
+  row values arrive pre-formatted, and the tab is loaded by adminPage.showTab('harness').
+-->
+<!--
+  Reuses the shared loading/empty partials: hand-rolling the same
+  empty-state markup twice was a jscpd clone, and a third copy would drift.
+-->
+<div x-show="loadingHarness" data-loading-title="harness.loading">
+  {{> loading-state.html}}
+</div>
+
+<div x-show="harnessError !== ''" class="empty-state" style="padding: var(--space-12)" data-testid="harness-error">
+  <div class="icon">⚠️</div>
+  <div class="title">{{{t("harness.loadFailed")}}}</div>
+  <div class="description" x-text="harnessError"></div>
+  <div style="margin-top: var(--space-4)">
+    <button class="btn btn-secondary btn-sm" @click="loadHarness()" data-testid="harness-retry">
+      {{{t("common.retry")}}}
+    </button>
+  </div>
+</div>
+
+<!--
+  Content is hidden while loading and whenever a load failed, so an error
+  state never renders beside a "no data yet" empty state.
+-->
+<div x-show="!loadingHarness && harnessError === ''" style="padding: var(--space-6)">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4); flex-wrap: wrap; gap: var(--space-2)">
+    <h3 style="font-size: 16px; font-weight: 600">{{{t("harness.title")}}}</h3>
+    <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap">
+      <input
+        class="form-input"
+        style="font-size: 12px; width: 200px"
+        type="search"
+        x-model="harnessSearch"
+        @keyup.enter="searchHarness()"
+        placeholder='{{{t("harness.searchPlaceholder")}}}'
+        aria-label='{{{t("harness.searchPlaceholder")}}}'
+        data-testid="harness-search"
+      />
+      <select
+        class="form-select"
+        style="font-size: 12px; width: auto"
+        x-model="harnessTaskType"
+        @change="searchHarness()"
+        aria-label='{{{t("harness.filterTaskType")}}}'
+        data-testid="harness-filter-task-type"
+      >
+        <option value="">{{{t("harness.allTaskTypes")}}}</option>
+        <option value="harnessCode">{{{t("harness.taskType.harnessCode")}}}</option>
+        <option value="harnessEdit">{{{t("harness.taskType.harnessEdit")}}}</option>
+        <option value="harnessReview">{{{t("harness.taskType.harnessReview")}}}</option>
+        <option value="harnessCreative">{{{t("harness.taskType.harnessCreative")}}}</option>
+      </select>
+      <select
+        class="form-select"
+        style="font-size: 12px; width: auto"
+        x-model="harnessResult"
+        @change="searchHarness()"
+        aria-label='{{{t("harness.filterResult")}}}'
+        data-testid="harness-filter-result"
+      >
+        <option value="">{{{t("harness.allResults")}}}</option>
+        <option value="ok">{{{t("harness.resultOk")}}}</option>
+        <option value="error">{{{t("harness.resultError")}}}</option>
+      </select>
+      <button class="btn btn-secondary btn-xs" @click="clearHarnessFilters()" data-testid="harness-clear-filters">
+        {{{t("harness.clearFilters")}}}
+      </button>
+      <button class="btn btn-primary btn-xs" @click="loadHarness()" data-testid="harness-refresh">
+        {{{t("harness.refresh")}}}
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat cards from /api/v1/harness/stats totals -->
+  <div
+    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6)"
+    data-testid="harness-stat-cards"
+  >
+    <template x-for="card in harnessStatCards" :key="card.key">
+      <div class="admin-stat-card">
+        <div class="admin-stat-value" x-text="card.value"></div>
+        <div class="admin-stat-label" x-text="card.label"></div>
+      </div>
+    </template>
+  </div>
+
+  <!-- Runs table from /api/v1/harness/runs -->
+  <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">{{{t("harness.recentRuns")}}}</h3>
+  <div x-show="harnessRunsEmpty()" class="empty-state" style="padding: var(--space-8)" data-testid="harness-runs-empty">
+    <div class="icon">📋</div>
+    <div class="title">{{{t("harness.noRuns")}}}</div>
+  </div>
+  <table x-show="!harnessRunsEmpty()" class="admin-table" data-testid="harness-runs-table">
+    <thead>
+      <tr>
+        <th>{{{t("harness.column.time")}}}</th>
+        <th>{{{t("harness.column.task")}}}</th>
+        <th>{{{t("harness.column.type")}}}</th>
+        <th>{{{t("harness.column.model")}}}</th>
+        <th>{{{t("harness.column.result")}}}</th>
+        <th>{{{t("harness.column.duration")}}}</th>
+        <th>{{{t("harness.column.cost")}}}</th>
+        <th>{{{t("harness.column.tokens")}}}</th>
+        <th>{{{t("harness.column.branch")}}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template x-for="row in filteredHarnessRuns()" :key="row.runId">
+        <tr style="cursor: pointer" @click="openHarnessRun(row.runId)" data-testid="harness-run-row">
+          <td x-text="row.ts"></td>
+          <td x-text="row.task"></td>
+          <td x-text="row.taskType"></td>
+          <td x-text="row.model"></td>
+          <td>
+            <span
+              style="font-size: 11px; padding: 2px 6px; border-radius: 4px"
+              :style="row.failed ? 'background:#dc354522;color:#dc3545' : 'background:#28a74522;color:#28a745'"
+              x-text="row.result"
+              :data-testid="row.failed ? 'harness-run-failed' : 'harness-run-ok'"
+            ></span>
+          </td>
+          <td x-text="row.duration"></td>
+          <td x-text="row.cost"></td>
+          <td x-text="row.tokens"></td>
+          <td x-text="row.branch"></td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  <!-- Per-model rollup from /api/v1/harness/stats byModel -->
+  <h3 style="font-size: 14px; font-weight: 600; margin: var(--space-6) 0 var(--space-3)">{{{t("harness.byModel")}}}</h3>
+  <div
+    x-show="harnessModelsEmpty()"
+    class="empty-state"
+    style="padding: var(--space-8)"
+    data-testid="harness-models-empty"
+  >
+    <div class="icon">🧠</div>
+    <div class="title">{{{t("harness.noModelStats")}}}</div>
+  </div>
+  <table x-show="!harnessModelsEmpty()" class="admin-table" data-testid="harness-model-table">
+    <thead>
+      <tr>
+        <th>{{{t("harness.column.model")}}}</th>
+        <th>{{{t("harness.column.runs")}}}</th>
+        <th>{{{t("harness.column.failures")}}}</th>
+        <th>{{{t("harness.column.avg")}}}</th>
+        <th>{{{t("harness.column.cost")}}}</th>
+        <th>{{{t("harness.column.tokensIn")}}}</th>
+        <th>{{{t("harness.column.tokensOut")}}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template x-for="row in harnessModelRows" :key="row.model">
+        <tr data-testid="harness-model-row">
+          <td x-text="row.model"></td>
+          <td x-text="row.runs"></td>
+          <td x-text="row.failures"></td>
+          <td x-text="row.avg"></td>
+          <td x-text="row.cost"></td>
+          <td x-text="row.tokensIn"></td>
+          <td x-text="row.tokensOut"></td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  <!-- Tooling gaps from /api/v1/harness/stats toolingGaps -->
+  <h3 style="font-size: 14px; font-weight: 600; margin: var(--space-6) 0 var(--space-3)">
+    {{{t("harness.toolingGaps")}}}
+  </h3>
+  <div x-show="harnessGapsEmpty()" class="empty-state" style="padding: var(--space-8)" data-testid="harness-gaps-empty">
+    <div class="icon">🔧</div>
+    <div class="title">{{{t("harness.noToolingGaps")}}}</div>
+  </div>
+  <table x-show="!harnessGapsEmpty()" class="admin-table" data-testid="harness-gaps-table">
+    <thead>
+      <tr>
+        <th>{{{t("harness.column.gap")}}}</th>
+        <th>{{{t("harness.column.count")}}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template x-for="gap in harnessGapRows" :key="gap.toolingGap">
+        <tr data-testid="harness-gap-row">
+          <td x-text="gap.toolingGap"></td>
+          <td x-text="gap.count"></td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+</div>
+
+<!-- Activity/detail view: one run, fetched on row click -->
+<div x-show="harnessRunId !== ''" style="padding: 0 var(--space-6) var(--space-6)">
+  <div
+    style="border: 1px solid var(--border-color); border-radius: 6px; padding: var(--space-4); background: var(--bg-secondary)"
+    data-testid="harness-detail"
+  >
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3)">
+      <h3 style="font-size: 14px; font-weight: 600">{{{t("harness.runDetail")}}}</h3>
+      <button class="btn btn-secondary btn-xs" @click="closeHarnessRun()" data-testid="harness-detail-close">
+        {{{t("common.close")}}}
+      </button>
+    </div>
+    <div x-show="loadingHarnessDetail" data-loading-style="padding: var(--space-6)">
+      {{> loading-state.html}}
+    </div>
+    <template x-if="!loadingHarnessDetail && harnessDetail">
+      <div>
+        <dl style="display: grid; grid-template-columns: 140px 1fr; gap: var(--space-2) var(--space-3); font-size: 12px; margin: 0">
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.runId")}}}</dt>
+          <dd style="margin: 0; font-family: monospace" x-text="harnessDetail.runId"></dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.time")}}}</dt>
+          <dd style="margin: 0" x-text="harnessDetail.ts"></dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.task")}}}</dt>
+          <dd style="margin: 0" x-text="harnessDetail.task"></dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.model")}}}</dt>
+          <dd style="margin: 0" x-text="harnessDetail.model"></dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.result")}}}</dt>
+          <dd style="margin: 0" x-text="harnessDetail.result"></dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.duration")}}}</dt>
+          <dd style="margin: 0" x-text="harnessDetail.duration"></dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.cost")}}}</dt>
+          <dd style="margin: 0" x-text="harnessDetail.cost"></dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.branch")}}}</dt>
+          <dd style="margin: 0; font-family: monospace" x-text="harnessDetail.branch"></dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.sha")}}}</dt>
+          <dd style="margin: 0; font-family: monospace" x-text="harnessDetail.gitSha"></dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.pid")}}}</dt>
+          <dd style="margin: 0" x-text="harnessDetail.pid"></dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.pattern")}}}</dt>
+          <dd style="margin: 0" x-text="harnessDetail.pattern"></dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.patternDetail")}}}</dt>
+          <dd style="margin: 0" x-text="harnessDetail.patternDetail"></dd>
+          <dt x-show="harnessDetail.toolingGap" style="color: var(--text-secondary)">
+            {{{t("harness.column.toolingGap")}}}
+          </dt>
+          <dd
+            x-show="harnessDetail.toolingGap"
+            style="margin: 0; color: var(--color-danger, #dc3545)"
+            x-text="harnessDetail.toolingGap"
+          >
+          </dd>
+          <dt style="color: var(--text-secondary)">{{{t("harness.column.tools")}}}</dt>
+          <dd style="margin: 0; font-family: monospace" x-text="harnessDetail.tools.join(', ')"></dd>
+        </dl>
+        <div x-show="harnessDetail.msg" style="margin-top: var(--space-3); font-size: 12px">
+          <span style="color: var(--text-secondary)">{{{t("harness.column.message")}}}: </span>
+          <span style="font-family: monospace" x-text="harnessDetail.msg"></span>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>

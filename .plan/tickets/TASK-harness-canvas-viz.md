@@ -24,3 +24,6 @@
 - `src/locations/tree.ts`, `src/chat/service/branches.ts`, `branch-helpers.ts`, `src/story/timeline/world-timeline.ts`, `src/memory/history-search.ts`, `injection/select.ts`
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: daa7934

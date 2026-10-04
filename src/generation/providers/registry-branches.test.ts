@@ -122,6 +122,31 @@ describe("buildFailoverList", () => {
     expect(list.map((e,) => e.name),).toEqual(["sm-cov-fail-a",],);
   });
 
+  // BUG: a partial Config (tests build stubs; `callAux` forwards whatever it
+  // was handed) must degrade to the primary-only list. Dereferencing
+  // `config.generation.providers` unguarded threw a TypeError that aborted
+  // the dispatch and was swallowed by the caller's catch, turning a working
+  // memory extraction into a silent empty result.
+  test("degrades to primary-only for a partial config with no providers block", () => {
+    registerMock("sm-cov-partial",);
+    const partial = { generation: {}, } as unknown as Config;
+    expect(() => buildFailoverList("sm-cov-partial", partial,)).not.toThrow();
+    expect(buildFailoverList("sm-cov-partial", partial,).map((e,) => e.name),).toEqual(["sm-cov-partial",],);
+  });
+
+  test("degrades to primary-only when generation is absent entirely", () => {
+    registerMock("sm-cov-no-gen",);
+    const partial = {} as Config;
+    expect(buildFailoverList("sm-cov-no-gen", partial,).map((e,) => e.name),).toEqual(["sm-cov-no-gen",],);
+  });
+
+  test("routes without throwing when a signal accompanies a partial config", () => {
+    registerMock("sm-cov-sig",);
+    const partial = { generation: { providers: {}, }, } as unknown as Config;
+    const list = buildFailoverList("sm-cov-sig", partial, { taskType: "interactive-turn", },);
+    expect(list.map((e,) => e.name),).toEqual(["sm-cov-sig",],);
+  });
+
   test("adds only registered secondaries from config", () => {
     registerMock("sm-cov-fail-b",);
     registerMock("sm-cov-fail-c",);
@@ -148,7 +173,6 @@ describe("buildFailoverList", () => {
         models: {},
       },
     ];
-
     const list = buildFailoverList("sm-cov-fail-b", config,);
     expect(list.map((e,) => e.name),).toEqual(["sm-cov-fail-b", "sm-cov-fail-c",],);
   });

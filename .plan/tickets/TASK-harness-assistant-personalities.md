@@ -25,3 +25,6 @@
 - `epic-character-multi-personality.md`, `epic-config-templates.md` (FEAT-065 cascade)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 949aa8a

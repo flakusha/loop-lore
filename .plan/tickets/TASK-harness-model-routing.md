@@ -25,3 +25,6 @@
 - `.plan/epics/epic-llm-request-scheduler.md` (scheduler seam this feeds)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: ca8751c

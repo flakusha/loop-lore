@@ -19,7 +19,9 @@ import type { Config, } from "../config/schema";
 import { ModelRole, } from "../db/enums-core";
 import type { DB, } from "../db/schema";
 import type { GenerationMessage, } from "../generation/gen-types-options";
-import { getProvider, resolveProvider, } from "../generation/providers/registry";
+import { buildFailoverList, resolveProvider, } from "../generation/providers/registry";
+import { toHarnessTaskType, toTaskSignal, } from "../generation/routing/task-signal";
+import { recordExecRun, } from "../harness/exec-recorder";
 import { getLogger, } from "../logger";
 import { isTelemetryEnabled, record, } from "../telemetry/service";
 import type { AuxCallOptions, AuxCallResult, AuxTaskName, } from "./types";
@@ -110,7 +112,6 @@ export async function callAux(
     userId,
     chatId,
   } = opts;
-
   // Resolve the model role → provider/model; graceful failure => null (BUG-1 fix)
   let auxRole: ResolvedModelRole | null;
   try {
@@ -118,11 +119,9 @@ export async function callAux(
   } catch {
     return null;
   }
-
   if (!auxRole || !auxRole.provider || !auxRole.model) {
     return null;
   }
-
   // BYO apiKey parity: user key → chat/actor override → server default
   let apiKey: string | undefined;
   try {
@@ -133,13 +132,17 @@ export async function callAux(
       config,
       db,
     },);
-
     apiKey = resolved.resolvedApiKey;
   } catch {
     // Non-fatal — fall back to the provider instance's configured key
   }
 
-  const provider = getProvider(auxRole.provider,);
+  // Task-signal routing: the resolved Auxiliary provider stays primary, and the
+  // router orders the remaining configured providers for this specific job
+  // (a cheap classifier wants the cheapest/fastest capable candidate).
+  const signal = toTaskSignal(task,);
+  const auxCandidates = buildFailoverList(auxRole.provider, config, signal,);
+  const provider = auxCandidates[0]?.provider;
   if (!provider) {
     return null;
   }
@@ -163,6 +166,26 @@ export async function callAux(
     },);
   };
 
+  // The AUX runner calls the provider directly (it has a hard per-task timeout
+  // and no failover loop), so it records its own exec-log lines here rather
+  // than through callWithFailover.
+  const recordExec = (
+    result: "ok" | "error" | "timeout",
+    error: string | null,
+    usage?: { promptTokens: number; completionTokens: number },
+  ): void => {
+    recordExecRun({
+      taskType: toHarnessTaskType(signal.taskType,),
+      model: auxRole.model,
+      runMs: Date.now() - startedAt,
+      result,
+      error,
+      usage,
+      task: `aux:${task}`,
+      costPer1kTokens: provider.capabilities.costPer1kTokens,
+    },);
+  };
+
   try {
     const response = await withTimeout(
       provider.complete({
@@ -170,11 +193,13 @@ export async function callAux(
         messages,
         apiKey,
         params: { temperature, maxTokens, },
+        harness: { taskType: signal.taskType, task: `aux:${task}`, },
       },),
       timeoutMs,
     );
 
     if (!response) {
+      recordExec("timeout", `AUX ${task} timed out after ${timeoutMs}ms`,);
       recordCall(false, { error: "timeout", },);
       return null;
     }
@@ -188,13 +213,17 @@ export async function callAux(
       completionTokens: response.usage.completionTokens,
     };
 
+    recordExec("ok", null, {
+      promptTokens: response.usage.promptTokens,
+      completionTokens: response.usage.completionTokens,
+    },);
     recordCall(true, {
       promptTokens: result.promptTokens,
       completionTokens: result.completionTokens,
     },);
-
     return result;
   } catch (error) {
+    recordExec("error", (error as Error).message,);
     recordCall(false, { error: (error as Error).message, },);
     getLog().debug("AUX call failed", { task, error: (error as Error).message, },);
     return null;

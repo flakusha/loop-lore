@@ -22,6 +22,7 @@
  * embed time, so similarity = dot product (single pass, no divide).
  */
 import type { Kysely, } from "kysely";
+import { loadConfig, } from "../config/load";
 import type { DB, } from "../db";
 import { getLogger, } from "../logger";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
@@ -208,14 +209,19 @@ export async function semanticRecall(
   const shortlist = ranked.slice(0, Math.max(topK * 4, topK,),);
   try {
     const documents = await fetchMemoryTexts(db, shortlist.map((m,) => m.memoryId),);
-    const hits = await rerankViaLlamaCpp(queryText, documents, { model: rerankModel, topN: topK, },);
+    // `routing` lets the router order the rerank endpoint candidates for the
+    // `background` task signal; absent it, env precedence wins unchanged.
+    const hits = await rerankViaLlamaCpp(queryText, documents, {
+      model: rerankModel,
+      topN: topK,
+      routing: loadConfig().generation.routing,
+    },);
     const reordered: SemanticMatch[] = [];
     for (const { index, score, } of hits) {
       const match = shortlist[index];
       if (!match) { throw new Error(`Rerank index ${index} outside the shortlist.`,); }
       reordered.push({ memoryId: match.memoryId, score, },);
     }
-
     return reordered.slice(0, topK,);
   } catch (error) {
     getLogger()
@@ -223,7 +229,6 @@ export async function semanticRecall(
       .debug("Rerank failed; keeping cosine order", {
         error: error instanceof Error ? error.message : String(error,),
       },);
-
     return ranked;
   }
 }
