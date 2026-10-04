@@ -3,7 +3,7 @@
 
 # BUG: Asset dedup collapses all users' edits onto one system-owned row
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Large
 **Epic:** epic-asset-platform-capabilities
@@ -29,3 +29,11 @@ Acceptance: two users generating byte-identical images get two distinct asset ro
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Verified fixed by code reading and focused tests against dev:
+
+- `src/image-edit/providers/comfyui-provider.ts` now passes `ownerId: opts.ownerId` (the authenticated requesting user), not the literal `"system"`, so each user's edit is owned by that user.
+- The dedupe key is owner-scoped via `dedupeKeyColumns` in `src/assets/service/create.ts` and backed by two partial unique indexes in `src/db/migrations/030_assets_content_hash_unique.ts`, so two owners uploading byte-identical content get distinct rows.
+- Pinned by `src/image-edit/providers/comfyui-owner.test.ts`: two owners, same bytes, distinct rows; route-level owner readback confirms each row is readable by its creating user and no other.
