@@ -40223,7 +40223,7 @@
     "label": "task",
     "priority": "High (planning only)",
     "source": ".plan/tickets/TASK-search-rag-coverage-bridge.md",
-    "status": "open",
+    "status": "Done",
     "tags": [],
     "title": "Search/RAG Coverage Bridge — epic recommendation + cross-ticket glue",
     "type": "TASK"
