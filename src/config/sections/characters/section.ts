@@ -1,22 +1,23 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { CharactersConfig, } from "../../schema";
 import { CHARACTERS_DEFAULTS, } from "./defaults.js";
 import type { CharacterTemplate, } from "./types.js";
 
 /** */
-export class CharactersSection implements CharactersConfig {
+export class CharactersSection {
   enabled = CHARACTERS_DEFAULTS.enabled;
   templates: CharacterTemplate[] = CHARACTERS_DEFAULTS.templates;
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<CharactersConfig>,) {
+  constructor(overrides?: Partial<CharactersSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type CharactersConfig = CharactersSection;
 
 export const charactersMeta = {
   type: "object" as const,
