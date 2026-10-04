@@ -27,6 +27,7 @@ function provider(overrides: Partial<LLMProvider> = {},): LLMProvider {
     finishReason: "stop",
     usage: { promptTokens: 100, completionTokens: 50, totalTokens: 150, },
   };
+
   return {
     capabilities: {
       type: "openai-compatible",
@@ -92,6 +93,7 @@ describe("harness exec recorder", () => {
         result: "ok" as const,
         usage: { promptTokens: 10, completionTokens: 5, },
       };
+
       expect(cost(base,),).toBeNull();
       expect(cost({ ...base, costPer1kTokens: Number.NaN, },),).toBeNull();
       expect(cost({ ...base, costPer1kTokens: -1, },),).toBeNull();
@@ -114,6 +116,7 @@ describe("harness exec recorder", () => {
           usage: { promptTokens: -1000, completionTokens: 0, },
         },),
       ).toBeNull();
+
       expect(
         cost({
           taskType: "chat",
@@ -158,6 +161,7 @@ describe("harness exec recorder", () => {
           usage: { promptTokens, completionTokens, },
           costPer1kTokens: 3,
         },);
+
       // Math.max(0, NaN) is NaN, which would serialize to null and break the
       // Type.Number() contract on the summary row.
       for (const r of [usage(-1, -1,), usage(Number.NaN, 5,), usage(Number.POSITIVE_INFINITY, 0,),]) {
@@ -183,6 +187,7 @@ describe("harness exec recorder", () => {
         pattern: "p",
         patternDetail: "d",
       },);
+
       const runs = await listRuns({}, 10,);
       expect(runs,).toHaveLength(1,);
       const r = runs[0]!;
@@ -219,6 +224,7 @@ describe("harness exec recorder", () => {
           harness: { taskType: INTERACTIVE_TURN.taskType, task: "generate-route", },
         },
       );
+
       const runs = await listRuns({}, 10,);
       expect(runs,).toHaveLength(1,);
       expect(runs[0]?.result,).toBe("ok",);
@@ -233,6 +239,7 @@ describe("harness exec recorder", () => {
         [{ name: "p1", provider: provider(), },],
         { model: "m1", messages: [], params: {}, harness: { taskType: toTaskSignal("intent",).taskType, }, },
       );
+
       expect((await listRuns({}, 10,))[0]?.taskType,).toBe("aux",);
     });
 
@@ -260,6 +267,7 @@ describe("harness exec recorder", () => {
       } catch {
         // the cancellation propagates, as it must
       }
+
       const runs = await listRuns({}, 10,);
       expect(runs[0]?.result,).toBe("cancelled",);
     });
@@ -270,12 +278,14 @@ describe("harness exec recorder", () => {
           throw new Error("boom",);
         },
       },);
+
       await expect(
         callWithFailover(
           [{ name: "p1", provider: failing, },],
           { model: "m1", messages: [], params: {}, harness: { taskType: "interactive-turn", }, },
         ),
       ).rejects.toThrow("All providers failed",);
+
       const runs = await listRuns({}, 10,);
       expect(runs[0]?.result,).toBe("error",);
       expect(runs[0]?.error,).toContain("All providers failed",);
@@ -286,6 +296,7 @@ describe("harness exec recorder", () => {
         [{ name: "p1", provider: provider(), },],
         { model: "m1", messages: [], params: {}, },
       );
+
       expect(await listRuns({}, 10,),).toEqual([],);
     });
 
@@ -294,6 +305,7 @@ describe("harness exec recorder", () => {
         [{ name: "p1", provider: provider(), },],
         { model: "m1", messages: [], params: {}, harness: { taskType: "interactive-turn", }, },
       );
+
       const [first,] = await listRuns({}, 10,);
       expect((await getRun(first!.runId,))?.model,).toBe("m1",);
       expect(await getRun("no-such-run",),).toBeNull();

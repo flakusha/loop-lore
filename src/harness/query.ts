@@ -109,6 +109,7 @@ async function streamNewestFirst(): Promise<HarnessRunRecord[]> {
     // cannot affect the records we parsed, so it is deliberately ignored.
     await handle.close().catch(() => {/* noop */},);
   }
+
   out.reverse();
   return out;
 }
@@ -131,6 +132,7 @@ export async function listRuns(
     out.push(record,);
     if (out.length >= capped) { break; }
   }
+
   return out;
 }
 

@@ -24,7 +24,10 @@ interface EndpointCandidate extends RoutableModel {
   baseUrl: string;
 }
 
-/** Read a non-empty env var, treating blank as unset. */
+/**
+ * Read a non-empty env var, treating blank as unset.
+ * @param name
+ */
 function envUrl(name: string,): string | undefined {
   const value = process.env[name];
   return value !== undefined && value.trim() !== "" ? value : undefined;
@@ -48,6 +51,7 @@ export function resolveBackgroundEndpoint(
     const baseUrl = envUrl(name,);
     if (baseUrl) { candidates.push({ name, model: opts.model ?? "", baseUrl, capabilities: {}, },); }
   }
+
   if (candidates.length === 0) { return DEFAULT_ENDPOINT; }
   if (candidates.length === 1) { return candidates[0]!.baseUrl; }
   return new ModelRouter(opts.routing,).route(BACKGROUND, candidates,).primary?.baseUrl ??

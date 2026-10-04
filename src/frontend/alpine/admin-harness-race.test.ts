@@ -51,6 +51,7 @@ describe("adminHarness.openHarnessRun concurrency", () => {
       const { promise, resolve, } = Promise.withResolvers<Response>();
       return { promise, resolve, };
     };
+
     const gates: Record<string, Gate> = { "run-slow": makeGate(), "run-fast": makeGate(), };
     globalState.apiFetch = (url,) => {
       const id = url.split("/",).pop() ?? "";
@@ -58,6 +59,7 @@ describe("adminHarness.openHarnessRun concurrency", () => {
       if (!found) { throw new Error(`unexpected url ${url}`,); }
       return found.promise;
     };
+
     const state = freshState();
     const slow = state.openHarnessRun("run-slow",);
     const fast = state.openHarnessRun("run-fast",);

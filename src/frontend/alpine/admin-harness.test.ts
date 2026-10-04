@@ -16,6 +16,7 @@ const globalState = globalThis as unknown as {
   apiFetch?: ApiFetchMock;
   showToast?: (type: string, message: string,) => void;
 };
+
 const originalFetch = globalState.apiFetch;
 const originalToast = globalState.showToast;
 const localeHost = globalThis as unknown as { __localeStrings?: unknown };
@@ -39,6 +40,7 @@ beforeEach(() => {
     calls.push(url,);
     return handler(url,);
   };
+
   globalState.showToast = (type, message,) => {
     toasts.push({ type, message, },);
   };
@@ -69,16 +71,19 @@ function route(opts: {
           { ...RUN, tools: ["read", "edit",], pattern: "p1", patternDetail: "d", toolingGap: "", msg: "done", },
       );
     }
+
     if (url.startsWith("/api/v1/harness/runs",)) {
       if (opts.rejectRuns) { throw new Error("offline",); }
       if (opts.runsStatus) { return new Response("", { status: opts.runsStatus, },); }
       return Response.json(opts.runs ?? { items: [RUN,], },);
     }
+
     if (url.startsWith("/api/v1/harness/stats",)) {
       if (opts.rejectStats) { throw new Error("offline",); }
       if (opts.statsStatus) { return new Response("", { status: opts.statsStatus, },); }
       return Response.json(opts.stats ?? STATS,);
     }
+
     return new Response("", { status: 404, },);
   };
 }
@@ -177,6 +182,7 @@ describe("adminHarness.filteredHarnessRuns", () => {
     route({
       runs: { items: [RUN, { ...RUN, runId: "run-2", task: "write docs", model: "opus", branch: "main", },], },
     },);
+
     const state = freshState();
     await state.loadHarness();
 
@@ -228,6 +234,7 @@ describe("adminHarness.openHarnessRun", () => {
       if (url.startsWith("/api/v1/harness/runs/",)) { throw new Error("offline",); }
       return handler(url,);
     };
+
     const state = freshState();
     await state.openHarnessRun("run-1",);
 
