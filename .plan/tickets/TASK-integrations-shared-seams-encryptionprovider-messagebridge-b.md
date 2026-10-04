@@ -3,7 +3,7 @@
 
 # TASK: Integrations shared seams: EncryptionProvider, MessageBridge, BridgeRegistry
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-integrations-core.md
@@ -21,3 +21,5 @@ Implement the three planning-only seams from epic-integrations-core.md against t
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 2dbd2f3 (registry tip: 2bf7e8551 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-INTEGRATIONS-SHARED-SEAMS-E)
