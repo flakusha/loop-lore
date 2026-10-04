@@ -271,10 +271,53 @@ describe("migration consistency flags", () => {
         missingDown.push(name,);
       }
     }
-
     if (missingDown.length > 0) {
       console.log("[migration-consistency] missing down():", missingDown,);
     }
+  });
+
+  test("no migration adds an index that duplicates an existing one", async () => {
+    const redundant = async (names: string[],): Promise<Set<string>> => {
+      const { db, kysely, } = createTestKysely();
+      const allMigrations = await loadAllMigrations();
+      for (const name of names) {
+        await allMigrations[name]!.up(kysely,);
+      }
+
+      const seen = new Set<string>();
+      const duplicates = new Set<string>();
+      for (const table of schemaTables(db,)) {
+        const indexes = db
+          .query("SELECT name, partial FROM pragma_index_list(?)",)
+          .all(table,) as { name: string; partial: number }[];
+        for (const index of indexes) {
+          if (index.name.startsWith("sqlite_autoindex_",)) { continue; }
+          const columns = (db
+            .query("SELECT name FROM pragma_index_info(?)",)
+            .all(index.name,) as { name: string }[])
+            .map((c,) => c.name)
+            .join(",",);
+          // A partial index serves a strict subset of its columns' queries, so
+          // it never counts as a redundant twin of a full one.
+          const signature = `${table}${index.partial ? " PARTIAL" : ""}(${columns},)`;
+          if (seen.has(signature,)) { duplicates.add(signature,); }
+          else { seen.add(signature,); }
+        }
+      }
+
+      await kysely.destroy();
+      db.close();
+      return duplicates;
+    };
+
+    // Baseline is every migration before the hot-path sweep. Pairs that
+    // already existed — including partial unique indexes the column list
+    // cannot distinguish — are pre-existing debt, not this sweep's doing.
+    const sweepStart = MIGRATION_NAMES.indexOf("032_hot_path_indexes",);
+    const before = await redundant(MIGRATION_NAMES.slice(0, sweepStart,),);
+    const after = await redundant(MIGRATION_NAMES,);
+
+    expect([...after,].filter((s,) => !before.has(s,)),).toEqual([],);
   });
 
   test("001_init down() reverts all sub-parts", async () => {
@@ -299,7 +342,6 @@ describe("migration consistency flags", () => {
     for (const name of MIGRATION_NAMES) {
       await allMigrations[name]!.up(kysely,);
     }
-
     const upCount = schemaTables(db,).size;
 
     for (const name of [...MIGRATION_NAMES,].reverse()) {
@@ -307,13 +349,11 @@ describe("migration consistency flags", () => {
         await allMigrations[name]!.down(kysely,);
       }
     }
-
     const downTables = schemaTables(db,);
 
     if (downTables.size > 0) {
       console.log("[migration-consistency] tables remaining after full down:", [...downTables,],);
     }
-
     expect(downTables.size,).toBe(0,);
     expect(upCount,).toBeGreaterThan(10,);
 
