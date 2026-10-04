@@ -85,11 +85,12 @@ export interface EmailSpamGate {
 }
 
 /** Extract and normalize the bare address from a From envelope
- * (`Display Name <user@host>` → `user@host`), lowercased.
+ * (`Display Name <user@host>` → `user@host`), lowercased. Shared by the
+ * family: the spam gate scores on it, the adapter maps From → author.
  * @param raw Raw author/from value.
  * @returns The bare lowercase address, or the empty-ish raw value.
  */
-function senderAddress(raw: string,): string {
+export function senderAddress(raw: string,): string {
   const angled = /<([^>]*)>/.exec(raw,);
   return (angled === null ? raw : angled[1] ?? raw).trim().toLowerCase();
 }
