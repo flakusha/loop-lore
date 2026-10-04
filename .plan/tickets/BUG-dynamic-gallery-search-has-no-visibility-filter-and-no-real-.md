@@ -20,3 +20,7 @@ POST /dynamic/gallery/search (src/views/search.ts:31) applies no visibility filt
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+PARTIAL. Fixed on dev: serveGallerySearch now receives viewer identity (src/routes/views/plugin-dynamic.ts:65-70), applies tag owner-scope (src/routes/views/search.ts:56-71) and G6 visibility inheritance via inheritedHiddenAssetIds (src/routes/views/search.ts:79-88), hiding private-character assets. Still open: no requireUserId/auth gate - ctx.userId is cast and may be null (src/routes/views/plugin-dynamic.ts:68); and the query has no base visibility WHERE - src/routes/views/search.ts:31-33 selects all assets, unlike the grid's public/owned/shared + public-character filter (src/routes/views/gallery.ts:94-112), so private/shared-only non-character-linked assets still leak to any caller. No worktree touches these files functionally (git log --all on them: only lint/versioning/G6-from-August commits).

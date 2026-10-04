@@ -20,3 +20,7 @@ POST /actors/:actorId/emotion-avatars (src/routes/character-emotion-avatars.ts:1
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - src/routes/character-emotion-avatars.ts:105-123 accepts an uncapped emotions array (enum-validity only, :114-119); no cap, no rate policy. Candidate commits 9ae3f9708 (uncapped-array fix) and 3198909a4 (rate policies for actor image-gen) are dangling - git branch --contains returns nothing - and no worktree's on-disk file caps the array.

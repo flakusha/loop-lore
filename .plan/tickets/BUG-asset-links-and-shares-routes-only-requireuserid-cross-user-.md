@@ -20,3 +20,7 @@ GET /assets/:id/links (src/assets/controller.ts:350) and GET /assets/:id/shares 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+Fix verified in worktree fix-asset-acl-guards (commit cf4f66f80 "fix(assets): gate asset routes on asset ownership": requireAssetOwner guard before GET links at src/assets/controller.ts:356-359 and GET shares at :453-456; missing and foreign unified into notOwnerResponse -> 404 via src/routes/http-utils/errors.ts:55-58, closing the existence oracle; dev HEAD :350-356/:443-449 still call only requireUserId); keep open until that branch finalizes/merges, then close. Note: the branch ships a strict owner check rather than the ticket's suggested canAccessAsset (src/assets/service/read.ts:223-247) - explicitly-shared non-owner viewers can no longer list links/shares either; enumeration bug is closed, capability nuance differs.

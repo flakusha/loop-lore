@@ -20,3 +20,7 @@ src/middleware/api-governance/rate-limiting/policies.ts:55-65 defines no rate po
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - src/api-governance/rate-limiting/policies.ts:55-65 (the ticket's src/middleware path has moved to src/api-governance) routePolicies covers only /auth, /generation, /chats, /messages - no emotion-avatar or matting prefixes; only one generationPolicy exists. No worktree policies.ts mentions emotion-avatars/matting.
