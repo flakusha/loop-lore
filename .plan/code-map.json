@@ -22227,6 +22227,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-email-deliverability-spf-dkim-dmarc-and-inbound-spam-gate.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-email-channel.md"
     }
   ],
   "src/integrations/email/imap.ts": [
@@ -22257,6 +22261,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-email-deliverability-spf-dkim-dmarc-and-inbound-spam-gate.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-email-channel.md"
     }
   ],
   "src/integrations/encryption.ts": [
@@ -22413,6 +22421,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adapter-secret-storage-encrypted-credential-envelope.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-email-channel.md"
     }
   ],
   "src/integrations/xmpp/auth.ts": [
