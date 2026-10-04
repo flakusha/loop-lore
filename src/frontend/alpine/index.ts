@@ -12,6 +12,7 @@ import "./actor-systems";
 import "./actor-traits";
 import "./actor-wardrobe";
 import "./autonomy-panel";
+import "./config-menu";
 import "./character-extension-editor";
 import "./admin";
 import "./app";
