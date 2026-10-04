@@ -24,6 +24,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("items",)
     .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
+
   await database.schema
     .alterTable("items",)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
@@ -33,6 +34,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("world_lore_entries",)
     .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
+
   await database.schema
     .alterTable("world_lore_entries",)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
@@ -42,6 +44,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("actor_lore_entries",)
     .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
+
   await database.schema
     .alterTable("actor_lore_entries",)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
@@ -51,6 +54,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("quests",)
     .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
+
   await database.schema
     .alterTable("quests",)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
@@ -60,6 +64,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("locations",)
     .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
+
   await database.schema
     .alterTable("locations",)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
@@ -69,6 +74,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("blog_posts",)
     .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
+
   await database.schema
     .alterTable("blog_posts",)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
@@ -78,6 +84,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("shadow_notes",)
     .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
+
   await database.schema
     .alterTable("shadow_notes",)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
@@ -87,6 +94,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("whitenotes",)
     .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
+
   await database.schema
     .alterTable("whitenotes",)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
@@ -96,6 +104,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("crafting_recipes",)
     .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
+
   await database.schema
     .alterTable("crafting_recipes",)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)

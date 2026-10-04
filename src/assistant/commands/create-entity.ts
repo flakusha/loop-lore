@@ -36,6 +36,7 @@ registerContentVersion("items", 0, [
   "value",
   "weight",
 ],);
+
 registerContentVersion("locations", 0, [
   "world_id",
   "name",
