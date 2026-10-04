@@ -55,7 +55,7 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
     // Synthetic burst client: the e2e harness fires hundreds of requests per
     // user in milliseconds — per-user windows would 429 every flow. Same
     // opt-out shape as deprecationAfterHandle above.
-    .use(governanceGuard({ enabled: () => process.env.E2E_SAFEGUARD !== "1", },),)
+    .use(governanceGuard({ enabled: opts.governanceEnabled ?? (() => process.env.E2E_SAFEGUARD !== "1"), },),)
     .use(baseSurface(opts,),)
     .use(chatsSurface(opts,),)
     .use(actorsSurface(opts,),)
