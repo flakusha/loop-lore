@@ -4,6 +4,21 @@
 /**
  * Governance guard + endpoint tests: per-user route-policy limiting and
  * the /rate-limit/status + /metrics endpoints.
+ *
+ * Resource contract (parallel-safe):
+ *  - db/file/port: NONE. Every app is an in-process `new Elysia()` driven by
+ *    `app.handle()`; no Bun.serve, no fixed path, no fixture on disk.
+ *  - process-global singletons: `governanceRateLimiter` and `metrics` are
+ *    SHARED MODULE STATE, not owned by this file. The file-level `afterEach`
+ *    destroys the limiter after EVERY test, and the one test that reads
+ *    `metrics.snapshot()` resets it first, so no rate-limit window or counter
+ *    survives into the next file. Do NOT move either reset into `beforeAll`:
+ *    `governance-integration.test.ts` resets the same two singletons and both
+ *    files must stay correct when they share one module registry (verified
+ *    under `bun test --parallel=1 --no-isolate`, both file orders, 12 pass).
+ *  - rate-limit keys are per-test user strings ("user-gov-N", "admin-gov-4"),
+ *    so two tests can never bill the same bucket.
+ *  - no ordering dependence: no test reads state another test wrote.
  */
 import { afterEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
