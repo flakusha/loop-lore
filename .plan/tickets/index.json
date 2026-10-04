@@ -1512,6 +1512,19 @@
     "source": ".plan/tickets/BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o.md",
     "status": "done"
   },
+  "BUG-CHARACTERS-FLOW-BROWSER-E2E-TRIPS-ON-THE-BY-DESIGN-GAME-STAT": {
+    "hash": "3a5a9ab",
+    "git_issue": "3a5a9ab",
+    "extid": "BUG-CHARACTERS-FLOW-BROWSER-E2E-TRIPS-ON-THE-BY-DESIGN-GAME-STAT",
+    "type": "BUG",
+    "title": "characters-flow browser e2e trips on the by-design game-state 404",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-characters-flow-browser-e2e-trips-on-the-by-design-game-stat.md",
+    "status": "Not Started"
+  },
   "BUG-CHARACTERS-RESOLVECHARACTERTRAITS-SILENTLY-DROPS-WORLD-LAYER": {
     "epic": "",
     "extid": "BUG-CHARACTERS-RESOLVECHARACTERTRAITS-SILENTLY-DROPS-WORLD-LAYER",
