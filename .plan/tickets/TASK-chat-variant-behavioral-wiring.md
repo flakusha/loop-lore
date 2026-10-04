@@ -9,6 +9,9 @@
 **Type:** Feature Ticket
 **Tags:** chat, variant, taxonomy, creation, behavioral
 **Epic:** epic-chat-variants-taxonomy
+**Summary:** See ## Summary below.
+**Context:** See ## Context below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 
