@@ -54,6 +54,7 @@ class CaptureLogger implements Logger {
   }
   addTransport(): void {}
   setBindings(): void {}
+  setLevel(): void {}
   async flush(): Promise<void> {}
 }
 

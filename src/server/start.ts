@@ -6,6 +6,8 @@ import { join, } from "node:path";
 import { initAgeGate, } from "../age-gate/controller";
 import { flushActiveStore, } from "../async";
 import { ensureTlsCerts, } from "../config/cert";
+import { applyConfigChange, initConfigHotApply, onConfigChange, } from "../config/hot-apply";
+import { applyHotConfig, } from "../config/hot-apply-consumers";
 import { loadConfig, } from "../config/load";
 import type { Config, } from "../config/schema";
 import { getScheduler, } from "../cron";
@@ -38,6 +40,10 @@ export async function start() {
   setGlobalLogger(createLogger(config.logging,),);
   initAgeGate(config.ageGate,);
   initNsfwRuntimeConfig(config.nsfw,);
+  // Seed the hot-apply snapshot and register live consumers so config edits
+  // re-apply without a restart (see src/config/hot-apply.ts).
+  initConfigHotApply(config,);
+  onConfigChange(applyHotConfig,);
   await initSmk(config.encryption,);
   initAnonymousMode(config,);
 
@@ -164,11 +170,12 @@ export async function start() {
     const { existsSync, } = await import("node:fs");
     if (existsSync(configsDir,)) {
       const { watchDomainConfigs, stopWatchingDomainConfigs, } = await import("../config/hot-reload");
-      domainConfigWatcher = watchDomainConfigs(configsDir, (domain: string, _updated: Config,) => {
+      domainConfigWatcher = watchDomainConfigs(configsDir, (domain: string, updated: Config,) => {
         logger.info(`domain config reloaded: ${domain}`, { module: "hot-reload", domain, },);
-        // Domain-specific handlers can subscribe here (provider registry,
-        // logger transports). The on-disk values are now the source of truth
-        // for the next read of `loadConfig()`.
+        // Diff against the previous snapshot, classify changed paths, and
+        // re-apply the hot-applicable ones to live consumers. Restart-required
+        // paths are flagged on the change and surfaced by the admin API.
+        applyConfigChange(domain, updated,);
       },);
 
       (domainConfigWatcher as { __close?: () => void }).__close = () =>
