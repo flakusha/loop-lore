@@ -78,11 +78,6 @@ export class ConcurrencyLimiter {
     }
 
     this.max = max;
-    while (this.held < this.max) {
-      const next = this.waiters.shift();
-      if (!next) { return; }
-      next();
-    }
   }
 
   /**
