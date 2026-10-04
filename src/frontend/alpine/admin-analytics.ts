@@ -65,12 +65,14 @@ export const adminAnalytics = {
         apiFetch("/api/v1/analytics/overview", { headers: { Accept: "application/json", }, },),
         apiFetch("/api/v1/analytics/characters", { headers: { Accept: "application/json", }, },),
       ],);
+
       if (
         summaryRes.status !== "fulfilled" || dailyRes.status !== "fulfilled" || errorsRes.status !== "fulfilled" ||
         conversationRes.status !== "fulfilled" || charactersRes.status !== "fulfilled"
       ) {
         throw new Error("analytics load failed",);
       }
+
       if (summaryRes.value.ok) { this.analyticsSummary = await summaryRes.value.json(); }
       if (dailyRes.value.ok) { this.dailyStats = await dailyRes.value.json(); }
       if (errorsRes.value.ok) { this.errorEvents = await errorsRes.value.json(); }
@@ -89,12 +91,14 @@ export const adminAnalytics = {
           },
           { role: "system", label: t("admin.roleSystem",), tokens: roles.system, color: ROLE_COLORS.system, },
         ].map((seg,) => ({ ...seg, pct: roleTotal > 0 ? Math.round(seg.tokens / roleTotal * 100,) : 0, }));
+
         const maxDaily = Math.max(1, ...this.dailyStats.map((d,) => d.count),);
         this.analyticsDailyBars = this.dailyStats.map((d,) => ({
           date: d.date,
           count: d.count,
           pct: Math.round(d.count / maxDaily * 100,),
         }));
+
         const buckets = overview.latencyBuckets ?? [];
         const maxLatency = Math.max(1, ...buckets.map((b,) => b.count),);
         this.analyticsLatencyBars = buckets.map((b,) => ({
@@ -103,6 +107,7 @@ export const adminAnalytics = {
           pct: Math.round(b.count / maxLatency * 100,),
         }));
       }
+
       if (charactersRes.value.ok) {
         const chars = await charactersRes.value.json() as { characters?: CharacterStat[] };
         this.analyticsCharacters = chars.characters ?? [];

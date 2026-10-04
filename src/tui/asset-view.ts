@@ -79,6 +79,7 @@ export class AssetView {
       if (!this.box.visible || this.assets.length === 0) { return; }
       this.currentIndex = (key.name === "left" ? this.currentIndex - 1 + this.assets.length : this.currentIndex + 1) %
         this.assets.length;
+
       this.renderCurrent();
       screen.render();
     },);
@@ -206,14 +207,17 @@ export class AssetView {
       const result = await safeFetch<{ data?: LinkedAsset[] }>(url, {
         handle401: false,
       },);
+
       if (!result.ok) {
         this.renderInfo(
           result.status !== undefined
             ? `Failed to load (HTTP ${result.status})`
             : `Error: ${result.error.message}`,
         );
+
         return;
       }
+
       this.assets = result.data.data ?? [];
       this.currentIndex = 0;
       this.renderCurrent();

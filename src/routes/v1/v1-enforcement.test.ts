@@ -58,6 +58,7 @@ describe("v1 API enforcement (unversioned /api/* must redirect)", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     const config = loadConfig();
     config.cron.enabled = false;
     app = createApp({
