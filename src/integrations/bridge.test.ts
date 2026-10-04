@@ -375,7 +375,8 @@ describe("MessageBridge inbound gate", () => {
     expect(gateCalls,).toEqual(["evt-1", "evt-2",],);
   });
 
-  test("dedup short-circuits before the gate, and a block never marks success", () => {
+  test("a blocked message stays unrecorded, so a policy change dispatches on redelivery", () => {
+    const received: AdapterMessage[] = [];
     const gateCalls: string[] = [];
     const registry = createBridgeRegistry();
     registry.register(makeSendingAdapter("matrix", [],),);
@@ -385,16 +386,50 @@ describe("MessageBridge inbound gate", () => {
       health,
       inboundGate: (message,) => {
         gateCalls.push(message.id,);
-        return { ok: false, code: "inbound_blocked", message: "blocked", };
+        return message.author === "@alice:example.org"
+          ? { ok: true, }
+          : { ok: false, code: "inbound_blocked", message: "spam gate: blocked_sender", };
       },
     },);
 
-    bridge.onMessage(() => {},);
+    bridge.onMessage((message,) => {
+      received.push(message,);
+    },);
 
     expect(health.isHealthy("matrix",),).toBe(false,);
-    expect(bridge.receive("matrix", inbound("evt-1",),),).toBe(false,);
-    expect(bridge.receive("matrix", inbound("evt-1",),),).toBe(false,);
-    expect(gateCalls,).toEqual(["evt-1",],);
+    expect(bridge.receive("matrix", { ...inbound("evt-1",), author: "@spam:evil.example", },),).toBe(false,);
+    expect(received,).toEqual([],);
     expect(health.isHealthy("matrix",),).toBe(false,);
+
+    // Policy changes take effect when the provider redelivers the same id.
+    expect(bridge.receive("matrix", inbound("evt-1",),),).toBe(true,);
+    expect(received.map((message,) => message.id),).toEqual(["evt-1",],);
+    expect(gateCalls,).toEqual(["evt-1", "evt-1",],);
+  });
+
+  test("a gate failure never swallows the id; dispatch dedups", () => {
+    let boom = true;
+    const received: AdapterMessage[] = [];
+    const registry = createBridgeRegistry();
+    registry.register(makeSendingAdapter("matrix", [],),);
+    const bridge = createMessageBridge(registry, {
+      inboundGate: () => {
+        if (boom) { throw new Error("gate down",); }
+        return { ok: true, };
+      },
+    },);
+
+    bridge.onMessage((message,) => {
+      received.push(message,);
+    },);
+
+    expect(() => bridge.receive("matrix", inbound("evt-1",),)).toThrow("gate down",);
+    boom = false;
+    expect(bridge.receive("matrix", inbound("evt-1",),),).toBe(true,);
+    expect(received.map((message,) => message.id),).toEqual(["evt-1",],);
+
+    // After dispatch the id is deduped like any other delivery.
+    expect(bridge.receive("matrix", inbound("evt-1",),),).toBe(false,);
+    expect(received,).toHaveLength(1,);
   });
 });
