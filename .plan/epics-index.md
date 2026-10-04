@@ -231,7 +231,7 @@
 | Not Started | Matrix Integration | Medium | High | 14 | [epic-matrix-integration.md](/.plan/epics/epic-matrix-integration.md) |
 | Not Started | Mechanics Governance — Per-World Config, Control Levels & Plugin API | Medium | Medium | 5 | [epic-mechanics-governance.md](/.plan/epics/epic-mechanics-governance.md) |
 | Not Started | Memory Profiling & Budgets | High | High | 12 | [epic-memory-profiling-budgets.md](/.plan/epics/epic-memory-profiling-budgets.md) |
-| In Progress | Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server | medium | Medium | 0 | [epic-mesh-federation-content-sharing.md](/.plan/epics/epic-mesh-federation-content-sharing.md) |
+| In Progress | Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server | medium | Very High | 0 | [epic-mesh-federation-content-sharing.md](/.plan/epics/epic-mesh-federation-content-sharing.md) |
 | Not Started | Message Seen-State & Viewership Ledger | High | Large | 0 | [epic-message-seen-state.md](/.plan/epics/epic-message-seen-state.md) |
 | Not Started | Messages & Message Pipeline | High | Medium | 0 | [epic-messages.md](/.plan/epics/epic-messages.md) |
 | Done | Middleware — Request Lifecycle, Idempotency & Async Results | Medium | Large | 0 | [epic-middleware-request-lifecycle.md](/.plan/epics/epic-middleware-request-lifecycle.md) |
@@ -2439,9 +2439,9 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 
 - **Status:** In Progress
 - **Priority:** medium
-- **Effort:** Medium
-- **Type:** epic
-- **Tags:** (none)
+- **Effort:** Very High
+- **Type:** Architecture / Feature Epic
+- **Tags:** mesh, federation, encrypted-sharing, quota, coordinator-server
 - **File:** `.plan/epics/epic-mesh-federation-content-sharing.md`
 
 ### Message Seen-State & Viewership Ledger
