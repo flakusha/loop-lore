@@ -7,7 +7,7 @@
 **Context:** `analyticsRoutes` + `modelComparisonsRoutes` are mounted and tested, but the route layout moved (`src/routes/analytics/` barrel) and the epic still cites stale single-file paths; FEA-056/057 shipped, 058 + gap-audit E10/11/13/14 aspirational.
 **Acceptance Criteria:** (see below)
 
-**Status:** Open
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-docs-reconciliation
@@ -28,3 +28,6 @@ Write the shipped-vs-open spec for analytics routes (target: `docs/spec/analytic
 
 - `epic-analytics-observability.md`
 - `epic-docs-reconciliation.md`
+
+
+git issue: b75700b
