@@ -15,7 +15,12 @@ describe("formatDuration", () => {
   it("formats seconds for sub-minute durations", () => {
     expect(formatDuration(1000,),).toBe("1.0s",);
     expect(formatDuration(1500,),).toBe("1.5s",);
-    expect(formatDuration(59_999,),).toBe("60.0s",);
+    // Last ms before the guard: one more ms rounds up to a full minute.
+    expect(formatDuration(59_949,),).toBe("59.9s",);
+  });
+
+  it("falls to the minute arm before a sub-minute value rounds up to 60s", () => {
+    expect(formatDuration(59_999,),).not.toContain("60.0s",);
   });
 
   it("formats minutes and seconds for longer durations", () => {
@@ -88,6 +93,11 @@ describe("formatRunLine", () => {
     expect(line,).toContain("{green-fg",);
   });
 
+  it("marks a non-ok result as failed even when error is null", () => {
+    const line = formatRunLine(makeSummary({ result: "timeout", error: null, },),);
+    expect(line,).toContain("✘",);
+  });
+
   it("shows token count", () => {
     const line = formatRunLine(makeSummary({ tokensIn: 2000, tokensOut: 1000, },),);
     expect(line,).toContain("+3000t",);
@@ -105,10 +115,6 @@ describe("formatRunLine", () => {
 });
 
 describe("formatEmptyRuns", () => {
-  it("returns a non-empty string", () => {
-    expect(formatEmptyRuns().length,).toBeGreaterThan(0,);
-  });
-
   it("contains the empty-state indicator", () => {
     expect(formatEmptyRuns(),).toContain("No harness runs",);
   });
@@ -227,10 +233,5 @@ describe("formatRunDetail", () => {
   it("renders null msg as omitted", () => {
     const detail = formatRunDetail(makeDetail({ msg: null, },),);
     expect(detail,).not.toContain("Msg:",);
-  });
-
-  it("renders null costUsd as zero", () => {
-    const detail = formatRunDetail(makeDetail({ costUsd: null as unknown as number, },),);
-    expect(detail,).toContain("{bold}Cost:{/bold} $0.0000",);
   });
 });

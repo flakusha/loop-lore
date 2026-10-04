@@ -8,7 +8,7 @@
 import { describe, expect, it, } from "bun:test";
 import { ModelRouter, type RoutableModel, } from "./router";
 import type { GenerationRoutingConfig, } from "./routing-config";
-import { INTERACTIVE_TURN, type TaskSignal, } from "./task-signal";
+import { AUTO_GEN, INTERACTIVE_TURN, type TaskSignal, } from "./task-signal";
 
 /** A candidate with no cost/latency annotations — the common case. */
 function bare(name: string,): RoutableModel {
@@ -91,6 +91,17 @@ describe("ModelRouter", () => {
       router.route(INTERACTIVE_TURN, [bare("x",),],);
       const result = router.route(INTERACTIVE_TURN, [bare("x",), bare("y",),],);
       expect(order(result,),).toEqual(["y", "x",],);
+    });
+
+    // The cursor used to advance on every call, so one rule-overridden route
+    // silently consumed a round-robin slot and rotated the next one early.
+    it("does not spend a slot on a call routed by a rule override", () => {
+      const router = new ModelRouter({
+        strategy: "round-robin",
+        rules: [{ taskType: "interactive-turn", strategy: "cheapest", },],
+      },);
+      router.route(INTERACTIVE_TURN, [bare("a",), bare("b",),],);
+      expect(order(router.route(AUTO_GEN, [bare("a",), bare("b",),],),),).toEqual(["a", "b",],);
     });
   });
 

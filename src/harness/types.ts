@@ -12,20 +12,39 @@
 import { safeJsonParse, } from "../utils/safe-json";
 import type { HarnessRunDetail, HarnessRunSummary, } from "./read-models";
 
+/**
+ * Every task type, as a runtime list. The union below is DERIVED from this so
+ * the wire-side check in `deserializeRun` cannot drift from the type.
+ */
+export const HARNESS_TASK_TYPES = [
+  "chat",
+  "auto-gen",
+  "aux",
+  "embeddings",
+  "rerank",
+  "memory",
+  "workflow",
+  "handoff",
+  "sandbox",
+  "harness",
+  "eval",
+  "other",
+] as const;
+
 /** What a run was doing, independent of the model. */
-export type HarnessTaskType =
-  | "chat"
-  | "auto-gen"
-  | "aux"
-  | "embeddings"
-  | "rerank"
-  | "memory"
-  | "workflow"
-  | "handoff"
-  | "sandbox"
-  | "harness"
-  | "eval"
-  | "other";
+export type HarnessTaskType = (typeof HARNESS_TASK_TYPES)[number];
+
+/** Runtime membership test for the union, for values that came off the wire. */
+const TASK_TYPE_SET: ReadonlySet<string> = new Set<string>(HARNESS_TASK_TYPES,);
+
+/**
+ * Coerce an untrusted wire value to a known task type.
+ * @param v - the raw `task_type` from the JSONL
+ * @returns the value when it is a union member, otherwise `"other"`.
+ */
+function toTaskType(v: unknown,): HarnessTaskType {
+  return typeof v === "string" && TASK_TYPE_SET.has(v,) ? (v as HarnessTaskType) : "other";
+}
 
 /** How the run ended. `"error"` is the only failure value, so `jq` can count it. */
 export type HarnessResult = "ok" | "error" | "timeout" | "cancelled";
@@ -148,12 +167,14 @@ export function deserializeRun(line: string,): HarnessRunRecord | null {
   if (typeof w.run_id !== "string" || typeof w.ts !== "string") { return null; }
   const str = (v: unknown,): string => (typeof v === "string" ? v : "");
   const num = (v: unknown,): number => (typeof v === "number" && Number.isFinite(v,) ? v : 0);
+  // `??` only catches null/undefined, so a hand-written `"task_type": 123`
+  // would sail through and then blow up in the stats sort's localeCompare.
   return {
     runId: w.run_id,
     ts: w.ts,
     runMs: num(w.run_ms,),
     task: str(w.task,),
-    taskType: w.task_type ?? "other",
+    taskType: toTaskType(w.task_type,),
     model: str(w.model,),
     tools: Array.isArray(w.tools,) ? w.tools.filter((t,) => typeof t === "string") : [],
     toolCount: num(w.tool_count,),
@@ -167,7 +188,7 @@ export function deserializeRun(line: string,): HarnessRunRecord | null {
     tokensIn: num(w.tokens_in,),
     tokensOut: num(w.tokens_out,),
     branch: typeof w.branch === "string" ? w.branch : null,
-    pid: typeof w.pid === "number" ? w.pid : null,
+    pid: typeof w.pid === "number" && Number.isFinite(w.pid,) ? w.pid : null,
     gitSha: typeof w.git_sha === "string" ? w.git_sha : null,
     msg: typeof w.msg === "string" ? w.msg : null,
   };

@@ -15,7 +15,7 @@ import { decryptValue, } from "../../crypto";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { ModelRouter, } from "../routing/router";
+import { routingReorders, sharedRouter, } from "../routing/router";
 import type { TaskSignal, } from "../routing/task-signal";
 import { AnthropicProvider, } from "./anthropic";
 import { circuitBreaker, } from "./circuit-breaker";
@@ -178,9 +178,9 @@ export async function resolveProvider({
  * from config that differ from the primary. Does NOT include all
  * registered providers — only those explicitly configured.
  *
- * With a `signal`, the tail is reordered through `ModelRouter` using the
- * capability/cost/latency metadata on each provider's `capabilities`.
- * Without one, the list is exactly the pre-routing config order.
+ * With a `signal` AND a routing policy that can reorder, the router owns the
+ * whole order — primary included. Otherwise the list is exactly the
+ * pre-routing config order.
  * @param primaryName
  * @param config
  * @param signal
@@ -218,24 +218,26 @@ export function buildFailoverList(
     result.push({ name: ollama.name, provider: registry.get(ollama.name,)!, },);
   }
 
-  if (!signal) { return result; }
+  const routing = config?.generation?.routing;
+  if (!signal || !routingReorders(routing,)) { return result; }
 
-  // The primary stays first (it is the caller's explicit choice); only the
-  // fallback tail is scored. Unknown metadata sorts last, so an unannotated
-  // fleet keeps its configured order under the default strategy.
-  const router = new ModelRouter(config?.generation?.routing,);
   const candidates = result.map((entry,) => ({
     name: entry.name,
     model: config?.generation?.defaultModels?.[entry.name] ?? "",
     capabilities: entry.provider.capabilities,
-    costPer1kTokens: entry.provider.capabilities.costPer1kTokens,
-    avgLatencyMs: entry.provider.capabilities.avgLatencyMs,
-    contextWindow: entry.provider.capabilities.contextWindow,
-    maxOutputTokens: entry.provider.capabilities.maxOutputTokens,
+    // The router's scoring fields (cost/latency/window) already live on
+    // `capabilities`; restating them per field is a copy that can drift.
+    ...entry.provider.capabilities,
   }));
-  const routed = router.route(signal, candidates,);
+  const routed = sharedRouter(routing,).route(signal, candidates,);
   const byName = new Map(result.map((entry,) => [entry.name, entry,] as const),);
-  return [result[0]!, ...routed.fallbacks.map((m,) => byName.get(m.name,)).filter((e,) => e !== undefined),];
+  // The router owns the whole order, primary included: emitting the caller's
+  // primary first AND the router's chain would dispatch one provider twice and
+  // never attempt the one the router actually chose. A null primary means
+  // every candidate was ineligible — keep the config order rather than
+  // dispatch nothing.
+  if (routed.primary === null) { return result; }
+  return [routed.primary, ...routed.fallbacks,].map((m,) => byName.get(m.name,)).filter((e,) => e !== undefined);
 }
 
 /**

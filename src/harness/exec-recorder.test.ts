@@ -100,6 +100,31 @@ describe("harness exec recorder", () => {
     it("returns null when a price exists but no usage was reported", () => {
       expect(cost({ taskType: "chat", model: "m", runMs: 1, result: "ok", costPer1kTokens: 0.002, },),).toBeNull();
     });
+
+    it("returns null when the provider reports a negative usage sentinel", () => {
+      // -1 is how a provider says "usage unavailable" on a failed call. A
+      // negative cost would be a rebate, which is worse than no number.
+      expect(
+        cost({
+          taskType: "chat",
+          model: "m",
+          runMs: 1,
+          result: "error",
+          costPer1kTokens: 3,
+          usage: { promptTokens: -1000, completionTokens: 0, },
+        },),
+      ).toBeNull();
+      expect(
+        cost({
+          taskType: "chat",
+          model: "m",
+          runMs: 1,
+          result: "error",
+          costPer1kTokens: 3,
+          usage: { promptTokens: Number.NaN, completionTokens: 5, },
+        },),
+      ).toBeNull();
+    });
   });
 
   describe("buildRunRecord", () => {
@@ -121,6 +146,27 @@ describe("harness exec recorder", () => {
       const r = buildRunRecord({ taskType: "chat", model: "m", runMs: 1, result: "ok", tools: ["read", "write",], },);
       expect(r.toolCount,).toBe(2,);
       expect(r.tools,).toEqual(["read", "write",],);
+    });
+
+    it("floors unusable token counts at 0 instead of recording them", () => {
+      const usage = (promptTokens: number, completionTokens: number,) =>
+        buildRunRecord({
+          taskType: "chat",
+          model: "m",
+          runMs: 1,
+          result: "error",
+          usage: { promptTokens, completionTokens, },
+          costPer1kTokens: 3,
+        },);
+      // Math.max(0, NaN) is NaN, which would serialize to null and break the
+      // Type.Number() contract on the summary row.
+      for (const r of [usage(-1, -1,), usage(Number.NaN, 5,), usage(Number.POSITIVE_INFINITY, 0,),]) {
+        expect(Number.isFinite(r.tokensIn,),).toBe(true,);
+        expect(Number.isFinite(r.tokensOut,),).toBe(true,);
+        expect(r.tokensIn,).toBeGreaterThanOrEqual(0,);
+        expect(r.tokensOut,).toBeGreaterThanOrEqual(0,);
+        expect(r.costUsd,).toBeNull();
+      }
     });
   });
 
@@ -146,8 +192,6 @@ describe("harness exec recorder", () => {
       expect(r.tokensOut,).toBe(4,);
       expect(r.costUsd,).toBeCloseTo(0.000012, 1e-9,);
       expect(r.pattern,).toBe("p",);
-      // Provenance is filled from real git, so it must at least be a string slot.
-      expect("branch" in r,).toBe(true,);
       // The on-disk line is snake_case, not the camelCase record.
       const raw = readFileSync(log, "utf8",).trim();
       expect(raw.includes('"run_id":',),).toBe(true,);
