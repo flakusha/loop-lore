@@ -82,9 +82,20 @@ export interface HarnessDetailView {
   model: string;
   branch: string;
   gitSha: string;
-  pid: number;
+  pid: string;
 }
 
+/** Render an optional wire value for a text cell.
+ *
+ * A dash, matching the TUI detail panel, not an empty string: these rows are
+ * searched by `filteredHarnessRuns()`, where `${row.branch}` on a null would
+ * stringify to the literal text `null` and match every branchless run.
+ * @param value - The wire value, which may be null or absent
+ * @returns The value, or the dash placeholder when there is nothing to show
+ */
+function textOrDash(value: string | number | null | undefined,): string {
+  return value === null || value === undefined || value === "" ? "\u2014" : String(value,);
+}
 /**
  * Build the `/runs` query string from the current filter values. Empty filters
  * are omitted rather than sent blank, so the server applies no filter.
@@ -178,8 +189,8 @@ export function buildRunRows(runs: HarnessRunSummary[],): HarnessRunRow[] {
     cost: formatUsd(run.costUsd,),
     tokens: `${run.tokensIn}/${run.tokensOut}`,
     tools: run.toolCount,
-    branch: run.branch,
-    gitSha: run.gitSha,
+    branch: textOrDash(run.branch,),
+    gitSha: textOrDash(run.gitSha,),
   }));
 }
 
@@ -219,8 +230,8 @@ export function buildDetailView(detail: HarnessRunDetail,): HarnessDetailView {
     runId: detail.runId,
     ts: formatRunTs(detail.ts,),
     task: detail.task,
-    // `msg` is null on the wire for a run that recorded no note; the view
-    // model is a string so the template can bind it without a guard.
+    // `msg`/`toolingGap` are null on the wire for a run that recorded none;
+    // the view model is a string so the template binds them without a guard.
     msg: detail.msg ?? "",
     result: detail.result,
     failed: detail.result !== "ok",
@@ -231,8 +242,8 @@ export function buildDetailView(detail: HarnessRunDetail,): HarnessDetailView {
     duration: formatDuration(detail.durationMs,),
     cost: formatUsd(detail.costUsd,),
     model: detail.model,
-    branch: detail.branch,
-    gitSha: detail.gitSha,
-    pid: detail.pid,
+    branch: textOrDash(detail.branch,),
+    gitSha: textOrDash(detail.gitSha,),
+    pid: textOrDash(detail.pid,),
   };
 }
