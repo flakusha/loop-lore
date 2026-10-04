@@ -41,10 +41,12 @@ export const adminWorldEvents = {
       this.worldEventsTotal = 0;
       return;
     }
+
     this.loadingWorldEvents = true;
     try {
       let url = `/api/v1/admin/world-events?world_id=${encodeURIComponent(this.worldEventsWorldId.trim(),)}` +
-        `&page=${this.worldEventsPage}&pageSize=${(this as any).pageSize}`;
+        `&page=${this.worldEventsPage}&pageSize=${(this as unknown as { pageSize: number }).pageSize}`;
+
       if (this.worldEventsType) { url += `&event_type=${encodeURIComponent(this.worldEventsType,)}`; }
       const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
@@ -53,6 +55,7 @@ export const adminWorldEvents = {
           await res.json(),
           EMPTY_WORLD_EVENTS,
         );
+
         this.worldEvents = data.data;
         this.worldEventsTotal = data.total;
       }
@@ -69,7 +72,7 @@ export const adminWorldEvents = {
   // already bites `auditPages` / `worldPages` in the sibling tabs — see the
   // component root in admin.ts.
   worldEventPages(): number {
-    return Math.ceil(this.worldEventsTotal / (this as any).pageSize,) || 1;
+    return Math.ceil(this.worldEventsTotal / (this as unknown as { pageSize: number }).pageSize,) || 1;
   },
   /**
    * @param {number} p
