@@ -164,8 +164,8 @@ export class AutonomyScheduler {
 /** Scheduler options — derived from the class ctor (single source). */
 export type AutonomySchedulerOptions = NonNullable<ConstructorParameters<typeof AutonomyScheduler>[1]>;
 
+export type {
   AutonomyDispatch,
-
   AutonomyDispatchResult,
-
   AutonomyDispatchContext,
+} from "./types";
