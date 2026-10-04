@@ -6,13 +6,15 @@
 **Status:** Partially shipped — lifecycle/context/transitions + NSFW/moderation hardening shipped; discovery + moderation remainder open.
 **Epic:** `.plan/epics/epic-chat-lifecycle-moderation.md`
 **Date:** 2026-10-02
+**Authoritative source:** `src/` and `AGENTS.md`
 
 ## 1. Lifecycle (message insert → branches → transitions)
 
 Messages are rows in `messages` with `parent_id` chains. Insert paths:
 `src/chat/service/message-history.ts` (normal send), `src/chat/service/party-narration.ts`
 (party narration), `src/chat/service/crud/turn-skip.ts` (skip markers),
-`src/chat/service/transitions.ts` (transitional system messages).
+`src/chat/service/transitions.ts` (split/reunion narration system messages via
+`injectNarration`).
 
 Variants are non-destructive siblings: `regenerateMessageVariant`
 (`src/chat/service/write.ts`) creates a new row sharing `parent_id` with
@@ -27,8 +29,10 @@ the displayed branch.
 Transitions (`src/chat/transitions.ts`, classifier in
 `src/chat/transition-classifier.ts`): regex-first fast path (`REGEX_PATTERNS`),
 AUX-LLM fallback (`classifyWithAuxLlm`), types `description | context_cut |
-location_change`. Location change appends a transitional system message and
-carries location sections on migration (`src/chat/service/carry-location.ts`
+location_change`. Location change updates `chats.current_location_id`, records a
+`chat_location_events` row, and connects a `chat_sections` row to the triggering
+message (`handleSceneTransitions` in `src/routes/messages/`); chat migration
+carries location sections via `carryLocation` (`src/chat/service/carry-location.ts`
 copies `chat_sections` + re-points `messages.section_id`).
 
 ## 2. Context continuity (sliding window, memory promotion on cuts)
@@ -49,18 +53,23 @@ world-scoped if `worldId` else `character`). Ownership guard:
 last defense against memory poisoning (forged `actorId/chatId` pairs).
 
 Score-based pruning (`src/chat/pruning/prune.ts` + `score.ts`): removes
-lowest `combinedScore` first, never below 80% of target, promotes
-high-importance removals to memory, inserts a pruning system note.
-Related-memory/event injection: `injectMemories` / `injectEvents` attach
-`MemoryRef[]` / `EventRef[]` to the window. Ambient events are side-effect
-free (`src/chat/random-events.ts`); caller persists and routes via
-`injectEvents` (no `chat_random_events` table yet — see epic audit B5).
+lowest `combinedScore` first, never below 80% of target, buckets high-importance
+removals as promotion candidates, and returns a summary string. The auto-gen
+caller (`src/generation/auto-gen/context-pruning.ts`) soft-hides pruned messages
+as `visibility="auto_hidden"` and logs the summary; the memory write and note
+insertion are deferred (not wired).
+Related-memory/event injection helpers `injectMemories` / `injectEvents` attach
+`MemoryRef[]` / `EventRef[]` to the window but have no production caller yet.
+Ambient events are side-effect free (`src/chat/random-events.ts`); the auto-gen
+caller persists them to `chat_random_events` (`fire-random-event.ts`) and the
+events prompt section (`src/assistant/prompt/sections/events.ts`) reads that
+table directly.
 
 ## 3. Reconciliation guards
 
 - Repetition: `StreamingRepetitionDetector`
   (`src/generation/cancellation-tracker/`, `repetition-detector/`), wired in
-  `src/generation/auto-gen/cancellation-actions/streaming.ts` — scores streamed
+  `src/generation/cancellation-actions/streaming.ts` — scores streamed
   chunks, cancels with `CancelSource.AutoRepetition` above threshold, captures
   partial content on cancel.
 - Hallucination: `detectHallucinations` (`src/chat/hallucination-guard/detect.ts`)
@@ -87,7 +96,7 @@ free (`src/chat/random-events.ts`); caller persists and routes via
 | Pure permission/state helpers (block/ban/shadow/collapse checks) | shipped | `src/chat/moderation.ts` (`checkModerationPermission`, `isBlocked`, `isBanned`, `getShadowState`, `isMuted`, `isParticipantBanned`) |
 | Message visibility (hide/flag) | shipped | `src/chat/service/visibility.ts` (`updateMessageVisibility`) |
 | `ModelRole.Moderation` wired to hook | open | Exists in `src/db/enums-core/flags.ts` but excluded from `VALID_ROLES` (`src/admin/model-roles.ts`) — unresolvable; hook uses AUX directly |
-| DB-backed block / shadow apply | open | No `applyBlock`/`applyShadow`; pure helpers only |
+| DB-backed block / shadow apply (chat) | open | No `applyBlock`/`applyShadow` in `src/chat/moderation.ts`; NSFW block/shadow ship separately (`src/nsfw/moderation-service/mod-actions.ts`) |
 | `/api/moderation/report` endpoint, auto-mod rules, mod dashboard | open | Per epic gap-audit E12 |
 
 Discrepancy notes (spec follows `src/`, not epic aspirations): the epic's
