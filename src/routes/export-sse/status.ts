@@ -3,7 +3,7 @@
 
 import { Elysia, t, } from "elysia";
 import { ErrorResponse, } from "../../validation/schemas";
-import { extractAuth, HttpStatus, jsonError, } from "../http-utils";
+import { emotionJobNotFoundResponse, extractAuth, } from "../http-utils";
 import { jobs, } from "./jobs";
 import type { HandlerOpts, } from "./types";
 
@@ -20,10 +20,7 @@ export function statusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
       const job = jobs.get(jobId,);
 
       if (!job) {
-        return jsonError({
-          message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
-          status: HttpStatus.NotFound,
-        },);
+        return emotionJobNotFoundResponse(ctx.t,);
       }
 
       // Ownership: only the owning user (or an admin) may read a job's status.
@@ -31,10 +28,7 @@ export function statusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
       // from "job you may not read" (IDOR: unguessable id is not authorization).
       const { userId, userRole, } = extractAuth(ctx,);
       if (job.userId !== userId && userRole !== "admin") {
-        return jsonError({
-          message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
-          status: HttpStatus.NotFound,
-        },);
+        return emotionJobNotFoundResponse(ctx.t,);
       }
 
       return {
