@@ -2,43 +2,36 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, } from "bun:test";
+import { readFileSync, } from "node:fs";
 
 /**
  * True when each test file owns a fresh global and module registry, i.e. when
  * Bun runs the suite with per-file isolation.
  *
- * Bun sets `BUN_TEST_WORKER_ID` inside every `--parallel` worker, and
- * `--parallel` implies `--isolate` — so that variable is the reliable signal.
- * A bare `bun test src/` runs every file in one shared process and leaves it
- * unset.
+ * `bun test` exposes no in-process signal for `--isolate`: with and without the
+ * flag the process env, `process.argv`, the `globalThis` key set, the
+ * `globalThis` symbol set and every `Bun.*` key are byte-identical (measured,
+ * bun 1.4.2), so a fresh-global marker cannot tell an isolated single file
+ * from a shared single file. The runner's own argv is the only reliable
+ * carrier; `BUN_TEST_WORKER_ID` is the portable half of it, set by Bun
+ * exactly when `--parallel` was passed.
  *
- * Verified on bun 1.4.2 (2026-10-04): `bun test` → unset, `bun test --isolate`
- * → STILL unset, `bun test --parallel=4 --isolate` → set. `--isolate` alone is
- * NOT the signal; only `--parallel` is. Every shipped runner passes
- * `--parallel` (`test`, `test:unit`, `test:coverage`, and ci.yml), so no guarded
- * suite is lost under normal use — but a hand-run `bun test <file>` DOES skip
- * them and still exits 0, so a green bare run is not evidence a guarded suite
- * ran. Read the pass/skip counts, not the exit code.
- *
- * Do NOT key this on `npm_lifecycle_event`. CI runs
- * `bun test --parallel=4 src/ --isolate` (.github/workflows/ci.yml) with no npm
- * lifecycle var set, so that proxy reported "not isolated" for a genuinely
- * isolated run and silently skipped every guarded suite.
+ * A shared-process run (`bun test src/`, `bun test --coverage`) carries
+ * neither, so guarded suites skip. Where procfs is missing a bare
+ * `bun test --isolate <file>` is indistinguishable from a shared run: the
+ * suite skips and says so out loud instead of vanishing from the summary.
  */
-export const ISOLATED = process.env.BUN_TEST_WORKER_ID !== undefined;
-
-/**
- * `describe` when run via the isolated gate, otherwise `describe.skip`. Lets a
- * plain `bun test src/` skip tests that intentionally replace shared modules
- * via `mock.module` — those mocks leak across files without `--isolate`.
- */
+export const ISOLATED = process.env.BUN_TEST_WORKER_ID !== undefined || requestsPerFileIsolation(runnerCmdline,);
+  const globals = globalThis as Record<string, unknown>;
 export const describeOrSkip = ISOLATED ? describe : describe.skip;
 
 /**
- * True only under `bun run test:unit` (`bun test src/ --isolate`, one module
- * registry per file). `bun run test:coverage` shares one process across all
- * files, so stubs that pin a module to fixed fakes (provider registry) must
- * stay off there — even though ISOLATED is also set for that run.
+ * True only under `bun run test:unit` (package.json: `bun test --parallel=4
+ * src/ --isolate`). `bun run test:coverage` ALSO runs `--parallel=4 --isolate`,
+ * so `ISOLATED` is true there too — what separates the two is this env-var
+ * key, not the isolation mode. Suites whose `mock.module` doubles pin a module
+ * to fixed fakes (provider registry) must not run under the coverage gate's
+ * own stubs, hence the separate, deliberately narrower signal.
  */
 export const STRICTLY_ISOLATED = process.env.npm_lifecycle_event === "test:unit";
 
@@ -48,3 +41,16 @@ export const STRICTLY_ISOLATED = process.env.npm_lifecycle_event === "test:unit"
  * shared process (fixed-fake pins that poison later files).
  */
 export const describeOrSkipStrict = STRICTLY_ISOLATED ? describe : describe.skip;
+
+let runnerCmdline = "";
+
+/**
+ * True when a `bun test` argv asks for per-file isolation: `--isolate` gives
+ * every file a fresh global and module registry, and `--parallel` does the
+ * same (each worker hands the next file a fresh global). NUL-anchored so
+ * `--no-isolate` and paths that merely contain the word do not match.
+ * @param cmdline NUL-separated argv of the `bun test` process
+ * @returns whether that invocation isolates test files from each other
+ */
+export const requestsPerFileIsolation = (cmdline: string,): boolean =>
+  /(^|\0)(--isolate|--parallel)(=|\0|$)/.test(cmdline,);

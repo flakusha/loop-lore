@@ -4,6 +4,7 @@
 # BUG: Browser e2e asserts absence of a decrypt-failure marker across the whole page body
 
 **Status:** Done
+**Status Note:** fixed on dev (commit afeb16b88, "stabilize three browser flows that flake under load") — `tests/e2e/flows/browser/encryption-flow.browser.ts` scopes the decrypt-failure read to the secret's own bubble (`xpath=ancestor::div[contains(@class,'bubble')][1]`) instead of `document.body.textContent`, so a sibling bubble's decrypt failure can no longer fail this assertion. Verified 2026-10-04.
 **Priority:** high
 **Effort:** Medium
 
