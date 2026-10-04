@@ -504,7 +504,7 @@ export const SCHEMA = new SchemaManifest()
     recorded_at: col("text", { notNull: true, },),
     confirmed_at: col("text",),
     confirmed_by: col("text",),
-    created_at: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text",),
     updated_at: col("text",),
   },)
   .table("interaction_logs", {
@@ -792,7 +792,7 @@ export const SCHEMA = new SchemaManifest()
     discovery_method: col("text", { notNull: true, },),
     discovered_at: col("text", { notNull: true, },),
     mastery_level: col("integer", { notNull: true, hasDefault: true, },),
-    created_at: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text",),
     updated_at: col("text",),
   },)
   .table("request_results", {
@@ -876,7 +876,7 @@ export const SCHEMA = new SchemaManifest()
     started_at: col("text", { notNull: true, },),
     expires_at: col("text",),
     meta: col("text",),
-    created_at: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text",),
     updated_at: col("text",),
   },)
   .table("synthetic_data", {
@@ -931,7 +931,7 @@ export const SCHEMA = new SchemaManifest()
     coord_x: col("real",),
     coord_y: col("real",),
     coord_z: col("real",),
-    created_at: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text",),
     updated_at: col("text",),
   },)
   .table("travel_routes", {
@@ -1701,7 +1701,7 @@ export const SCHEMA = new SchemaManifest()
     id: col("text", { primaryKey: true, },),
     post_id: col("text", { notNull: true, },),
     tag: col("text", { notNull: true, },),
-    created_at: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text",),
     updated_at: col("text",),
   },)
   // ── Core: Chats & Messages ──────────────────────────────────────────────
@@ -1782,7 +1782,7 @@ export const SCHEMA = new SchemaManifest()
     message_id: col("text", { notNull: true, },),
     pinned_by: col("text", { notNull: true, },),
     pinned_at: col("text", { notNull: true, hasDefault: true, },),
-    created_at: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text",),
     updated_at: col("text",),
   },)
   .table("chat_random_events", {
@@ -1795,7 +1795,7 @@ export const SCHEMA = new SchemaManifest()
     fired_at: col("integer", { notNull: true, },),
     expires_at: col("integer", { notNull: true, },),
     fired_count: col("integer", { notNull: true, hasDefault: true, },),
-    created_at: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text",),
     updated_at: col("text",),
   },)
   .table("chat_sections", {

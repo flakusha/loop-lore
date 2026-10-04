@@ -440,7 +440,7 @@ export interface GrowthLog {
   recorded_at: string;
   confirmed_at: string | null;
   confirmed_by: string | null;
-  created_at: Generated<string>;
+  created_at: string | null;
   updated_at: string | null;
 }
 
@@ -619,7 +619,7 @@ export interface ChatPins {
   message_id: string;
   pinned_by: string;
   pinned_at: Generated<string>;
-  created_at: Generated<string>;
+  created_at: string | null;
   updated_at: string | null;
 }
 
@@ -702,7 +702,7 @@ export interface ChatRandomEvents {
   fired_at: number;
   expires_at: number;
   fired_count: Generated<number>;
-  created_at: Generated<string>;
+  created_at: string | null;
   updated_at: string | null;
 }
 
@@ -1210,7 +1210,7 @@ export interface TravelRouteStops {
   coord_x: number | null;
   coord_y: number | null;
   coord_z: number | null;
-  created_at: Generated<string>;
+  created_at: string | null;
   updated_at: string | null;
 }
 
@@ -1246,7 +1246,7 @@ export interface StatusEffect {
   started_at: string;
   expires_at: string | null;
   meta: string | null;
-  created_at: Generated<string>;
+  created_at: string | null;
   updated_at: string | null;
 }
 
