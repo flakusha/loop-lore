@@ -18,6 +18,7 @@ import { GENERATION_DEFAULTS, } from "./generation";
 import { HEADERS_SECTION_DEFAULTS, } from "./headers";
 import { HOOKS_DEFAULTS, } from "./hooks";
 import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
+import { INTEGRATIONS_DEFAULTS, } from "./integrations";
 import { LOGGING_DEFAULTS, } from "./logging";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
@@ -55,6 +56,7 @@ export const envMap = (): EnvMap => {
     frontend: FRONTEND_DEFAULTS,
     cron: CRON_DEFAULTS,
     federation: FEDERATION_DEFAULTS,
+    integrations: INTEGRATIONS_DEFAULTS,
   };
 
   const add = (prefix: string, obj: Record<string, unknown>,) => {
@@ -92,6 +94,7 @@ export const envMap = (): EnvMap => {
   add("frontend", s.frontend,);
   add("cron", s.cron,);
   add("federation", s.federation,);
+  add("integrations", s.integrations,);
 
   // Manual overrides for renamed/mapped env vars
   map.PORT = "server.port";
@@ -172,6 +175,34 @@ export const envMap = (): EnvMap => {
   map.NSFW_FLAG_REPORTER_HASH_SECRET = "nsfw.reporterHashSecret";
   map.NSFW_MODERATION_HMAC_SECRET = "nsfw.reporterHashSecret";
   map.TELEMETRY_PII_SECRET = "observability.telemetry.piiSecret";
+
+  // Integrations: family-prefixed env names (spec integrations-architecture §8.2)
+  map.EMAIL_IMAP_HOST = "integrations.email.imapHost";
+  map.EMAIL_IMAP_PORT = "integrations.email.imapPort";
+  map.EMAIL_IMAP_USER = "integrations.email.imapUser";
+  map.EMAIL_IMAP_PASS = "integrations.email.imapPass";
+  map.EMAIL_SMTP_HOST = "integrations.email.smtpHost";
+  map.EMAIL_SMTP_PORT = "integrations.email.smtpPort";
+  map.EMAIL_SMTP_USER = "integrations.email.smtpUser";
+  map.EMAIL_SMTP_PASS = "integrations.email.smtpPass";
+  map.EMAIL_PGP_ENABLED = "integrations.email.pgpEnabled";
+  map.MATRIX_ENABLED = "integrations.matrix.enabled";
+  map.MATRIX_HOMESERVER = "integrations.matrix.homeserver";
+  map.MATRIX_ACCESS_TOKEN = "integrations.matrix.accessToken";
+  map.MATRIX_APPSERVICE = "integrations.matrix.appservice";
+  map.XMPP_ENABLED = "integrations.xmpp.enabled";
+  map.XMPP_JID = "integrations.xmpp.jid";
+  map.XMPP_PASSWORD = "integrations.xmpp.password";
+  map.TELEGRAM_ENABLED = "integrations.telegram.enabled";
+  map.TELEGRAM_BOT_TOKEN = "integrations.telegram.botToken";
+  map.DISCORD_ENABLED = "integrations.discord.enabled";
+  map.DISCORD_BOT_TOKEN = "integrations.discord.botToken";
+  map.IRC_ENABLED = "integrations.irc.enabled";
+  map.IRC_SERVER = "integrations.irc.server";
+  map.IRC_NICK = "integrations.irc.nick";
+  map.IRC_PASSWORD = "integrations.irc.password";
+  map.NOSTR_ENABLED = "integrations.nostr.enabled";
+  map.NOSTR_RELAY_URLS = "integrations.nostr.relayUrls";
 
   return map;
 };

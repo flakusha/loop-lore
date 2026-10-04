@@ -302,3 +302,47 @@ compressThreshold = 512
 
 [frontend]
 mode = "htmx"
+
+[integrations]
+enabled = false # master switch; default off
+
+[integrations.email]
+enabled = false
+imapHost = "" # empty = unconfigured
+imapPort = 993
+imapUser = ""
+imapPass = "" # ⚠ SECRET
+smtpHost = ""
+smtpPort = 587
+smtpUser = ""
+smtpPass = "" # ⚠ SECRET
+pgpEnabled = false
+
+[integrations.matrix]
+enabled = false
+homeserver = ""
+accessToken = "" # ⚠ SECRET
+appservice = false
+
+[integrations.xmpp]
+enabled = false
+jid = ""
+password = "" # ⚠ SECRET
+
+[integrations.telegram]
+enabled = false
+botToken = "" # ⚠ SECRET
+
+[integrations.discord]
+enabled = false
+botToken = "" # ⚠ SECRET
+
+[integrations.irc]
+enabled = false
+server = ""
+nick = ""
+# password = ""                 # ⚠ SECRET — optional SASL password
+
+[integrations.nostr]
+enabled = false
+relayUrls = []

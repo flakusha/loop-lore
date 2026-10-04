@@ -28,6 +28,7 @@ import { GENERATION_DEFAULTS, } from "./generation";
 import { HEADERS_SECTION_DEFAULTS, } from "./headers";
 import { HOOKS_DEFAULTS, } from "./hooks";
 import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
+import { INTEGRATIONS_DEFAULTS, } from "./integrations";
 import { LOGGING_DEFAULTS, } from "./logging";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
@@ -88,6 +89,7 @@ export const createConfigSchema = () => {
     federation: deepClone(FEDERATION_DEFAULTS,),
     seeding: deepClone(SEEDING_DEFAULTS,),
     cron: deepClone(CRON_DEFAULTS,),
+    integrations: deepClone(INTEGRATIONS_DEFAULTS,),
   };
 
   return {
@@ -120,6 +122,7 @@ export const createConfigSchema = () => {
         cron: sections.cron,
         templates: TEMPLATES_DEFAULTS,
         characters: CHARACTERS_DEFAULTS,
+        integrations: sections.integrations,
       };
     },
   };
