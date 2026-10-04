@@ -13707,7 +13707,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-047.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# FEAT-047: Branch UI controls",
     "type": "FEAT"
