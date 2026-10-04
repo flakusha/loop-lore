@@ -225,7 +225,16 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         );
 
         if (reply.replied) {
-          return jsonCreated({ ...(await reply.response?.json?.()), context, },);
+          const generation = reply.response;
+          // A failed generation (e.g. assistant swipe retries exhausted)
+          // surfaces as a non-2xx jsonError Response. Propagate it verbatim
+          // instead of re-wrapping it into a 201 whose body lacks the
+          // declared id (BUG-message-create-re-wraps-a-503-reply-into-201-jsoncreated).
+          if (generation && (generation.status < 200 || generation.status >= 300)) {
+            return generation;
+          }
+
+          return jsonCreated({ ...(await generation?.json?.()), context, },);
         }
 
         return jsonCreated({ id, context, },);
