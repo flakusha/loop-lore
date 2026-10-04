@@ -82,3 +82,9 @@ template** in `epic-assistant-creative-studio-workflows.md` §7.6. The `location
 workflow (`TASK-assistant-creative-studio-workflow-location.md`) wraps `/create location`
 with step building, `entity_type_presets.location` validation (geography consistency
 against the parent world), and schema/consistency/duplicate quality gates.
+
+## CRUD & Tree Hardening
+
+Route writes bypass canonical path materialization, `moveSubtree` has no
+route, and create-path connection validation has a self-link gap. Tracked by
+`TASK-location-crud-tree-connections`.
