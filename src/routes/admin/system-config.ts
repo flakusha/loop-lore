@@ -12,6 +12,7 @@ import {
   SECRET_KEY_PATTERN,
   setConfig,
 } from "../../admin/config";
+import { HOT_APPLY_PATHS, } from "../../config/hot-apply";
 import { jsonSchema, } from "../../config/schema-class";
 import { can, } from "../../users/permissions";
 import {
@@ -54,6 +55,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         return jsonResponse({
           ...jsonSchema(),
           requires_restart_keys: Object.keys(REQUIRES_RESTART_KEYS,),
+          hot_apply_paths: Object.keys(HOT_APPLY_PATHS,),
         },);
       }, {
         response: {
@@ -162,7 +164,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
           const { key, value, description, } = ctx.body as { key: string; value: string; description?: string };
           await setConfig(opts.database, key, value, description,);
-          return jsonResponse({ ok: true, },);
+          return jsonResponse({ ok: true, requires_restart: REQUIRES_RESTART_KEYS[key] === true, },);
         },
         { body: AdminSystemConfigBody, response: { 200: SuccessResponse, 403: ErrorResponse, }, },
       )
