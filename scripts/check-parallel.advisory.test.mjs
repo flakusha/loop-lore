@@ -12,12 +12,12 @@
  */
 
 import { describe, expect, test, } from "bun:test";
-import { reportResults, buildReport, } from "./check/parallel/report.mjs";
 import { ADVISORY_GATES, } from "./check/parallel/gates.mjs";
+import { buildReport, reportResults, } from "./check/parallel/report.mjs";
 
 // ── Helpers ──────────────────────────────────────────────────────
 
-function makeResult(name, { passed = true, skipped = false, advisory = false, timedOut = false, } = {}) {
+function makeResult(name, { passed = true, skipped = false, advisory = false, timedOut = false, } = {},) {
   return {
     name,
     command: `bun run ${name}`,
@@ -36,7 +36,9 @@ function makeResult(name, { passed = true, skipped = false, advisory = false, ti
 function captureOutput(fn,) {
   const original = console.log;
   const lines = [];
-  console.log = (...args) => { lines.push(args.join(" ",),); };
+  console.log = (...args) => {
+    lines.push(args.join(" ",),);
+  };
   try {
     fn();
   } finally {
@@ -70,7 +72,9 @@ describe("advisory gate failure does NOT fail the run", () => {
       makeResult("lint - eslint", { passed: true, },),
     ];
     let failed;
-    captureOutput(() => { failed = reportResults(results,); },);
+    captureOutput(() => {
+      failed = reportResults(results,);
+    },);
     expect(failed,).toBe(0,);
   });
 
@@ -80,7 +84,9 @@ describe("advisory gate failure does NOT fail the run", () => {
       makeResult("plan - validate", { passed: true, advisory: true, },),
     ];
     let failed;
-    captureOutput(() => { failed = reportResults(results,); },);
+    captureOutput(() => {
+      failed = reportResults(results,);
+    },);
     expect(failed,).toBe(1,);
   });
 
@@ -91,7 +97,9 @@ describe("advisory gate failure does NOT fail the run", () => {
       makeResult("lint - eslint", { passed: false, },),
     ];
     let failed;
-    captureOutput(() => { failed = reportResults(results,); },);
+    captureOutput(() => {
+      failed = reportResults(results,);
+    },);
     expect(failed,).toBe(1,);
   });
 });
@@ -101,7 +109,9 @@ describe("advisory failures appear in the report", () => {
     const results = [
       makeResult("plan - validate", { passed: false, advisory: true, },),
     ];
-    const output = captureOutput(() => { reportResults(results,); },);
+    const output = captureOutput(() => {
+      reportResults(results,);
+    },);
     expect(output,).toContain("ADVISORY: plan - validate",);
     expect(output,).not.toContain("FAIL: plan - validate",);
   });
@@ -112,7 +122,9 @@ describe("advisory failures appear in the report", () => {
       makeResult("jscpd ratchet", { passed: false, advisory: true, },),
       makeResult("lint - eslint", { passed: true, },),
     ];
-    const output = captureOutput(() => { reportResults(results,); },);
+    const output = captureOutput(() => {
+      reportResults(results,);
+    },);
     expect(output,).toContain("Advisory: 2",);
     expect(output,).toContain("Failed: 0",);
   });
@@ -159,7 +171,9 @@ describe("advisory failures appear in the report", () => {
       makeResult("lint - eslint", { passed: true, },),
     ];
     let failed;
-    const output = captureOutput(() => { failed = reportResults(results,); },);
+    const output = captureOutput(() => {
+      failed = reportResults(results,);
+    },);
     expect(failed,).toBe(0,);
     expect(output,).toContain("SKIP:",);
     expect(output,).not.toContain("ADVISORY:",);
