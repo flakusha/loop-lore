@@ -89,7 +89,7 @@ Total tickets: **3201** — untagged: **2690** — unbound to epic: **1621**
 | anomalies | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | anonymous | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | anthropic | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| api | 14 | 1 | 4 | 0 | 1 | 0 | 8 |
+| api | 14 | 2 | 4 | 0 | 1 | 0 | 7 |
 | api-contracts | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | api-keys | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | api-surface | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -846,7 +846,7 @@ Total tickets: **3201** — untagged: **2690** — unbound to epic: **1621**
 | role-contract | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | romance | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | rotation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| routes | 9 | 2 | 3 | 1 | 0 | 0 | 3 |
+| routes | 9 | 3 | 3 | 1 | 0 | 0 | 2 |
 | routing | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | rpg | 24 | 1 | 3 | 1 | 5 | 0 | 14 |
 | rpg-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -990,7 +990,7 @@ Total tickets: **3201** — untagged: **2690** — unbound to epic: **1621**
 | technical-debt | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | telegram | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | telemetry | 10 | 0 | 1 | 0 | 1 | 0 | 8 |
-| templates | 8 | 0 | 3 | 0 | 1 | 0 | 4 |
+| templates | 8 | 1 | 3 | 0 | 1 | 0 | 3 |
 | terrain | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | territory | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | test | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1284,7 +1284,7 @@ Total tickets: **3201** — untagged: **2690** — unbound to epic: **1621**
 | epic-companion-pet-mount | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | epic-config-extensions | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | epic-config-extensions.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-config-templates | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
+| epic-config-templates | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
 | epic-configs-path-resolution | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-content-hashing-distributed-integrity | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
 | epic-content-hashing-distributed-integrity (cross-cuts with `epic-database-backup-recovery`, `epic-multi-instance-reconciliation`, `epic-federation-swarm-sync`) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
