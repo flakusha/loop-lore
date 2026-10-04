@@ -132,7 +132,7 @@ function installFetchStub(): void {
     const u = new URL(url,);
     requestedPaths.push(u.pathname,);
     requestedTokens.push((opts?.auth as { sessionToken?: string } | undefined)?.sessionToken,);
-    const body = u.pathname === "/api/harness/runs" ? runsResponse : detailResponse;
+    const body = u.pathname === "/api/v1/harness/runs" ? runsResponse : detailResponse;
     return body as FetchResult<T>;
   };
 
@@ -342,7 +342,7 @@ describeOrSkip("HarnessView", () => {
     await flushUntil(() => fixture.detailLabel.content.includes("run-c",));
 
     expect(fixture.detailLabel.content,).toContain("run-c",);
-    expect(requestedPaths,).toContain("/api/harness/runs/run-c",);
+    expect(requestedPaths,).toContain("/api/v1/harness/runs/run-c",);
   });
 
   it("select() ignores an out-of-range index rather than reading a stale row", async () => {
@@ -454,7 +454,7 @@ describeOrSkip("HarnessView", () => {
     await fixture.view.refresh();
     await flushUntil(() => requestedPaths.length > 1);
 
-    expect(requestedPaths,).toEqual(["/api/harness/runs",],);
+    expect(requestedPaths,).toEqual(["/api/v1/harness/runs",],);
     expect(fixture.detailLabel.content,).toBe("",);
   });
 
