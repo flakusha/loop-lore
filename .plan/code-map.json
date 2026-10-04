@@ -3704,6 +3704,10 @@
   "src/async/offload-daemon.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md"
     },
     {

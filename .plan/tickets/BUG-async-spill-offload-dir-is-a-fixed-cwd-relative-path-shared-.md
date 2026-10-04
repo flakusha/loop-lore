@@ -4,6 +4,7 @@
 # BUG: Async spill offload dir is a fixed CWD-relative path shared by every worktree
 
 **Status:** Done
+**Status Note:** verified present on dev 2026-10-02 — `src/async/spill.ts` exports `SPILL_ROOT` (repo-local `.tmp/async-store`, CWD-relative so each worktree keeps its own) and a per-process namespace `SPILL_ROOT/<pid>` via `offloadDir()`, with `setOffloadDir`/`resetOffloadDir` as the per-suite seam; `pruneOrphanSpills` sweeps the root across namespaces and `removeEmptyNamespaces` bounds the entry count. Covered by `src/async/offload.test.ts` and `src/async/offload-daemon.test.ts`.
 **Priority:** medium
 **Effort:** Medium
 

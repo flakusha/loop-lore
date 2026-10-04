@@ -4,6 +4,7 @@
 # BUG: Characters flow browser e2e flakes on a game-state 404 and on browser-process death
 
 **Status:** Done
+**Status Note:** signature (1) fixed on dev (commit afeb16b88, "stabilize three browser flows that flake under load") — the `trackPageErrors` call for the "start chat button" test in `tests/e2e/flows/browser/characters-flow.browser.ts` passes the existing `EXPECTED_404_NOISE_ALLOWLIST`, so the by-design `GET /api/v1/chats/:id/game-state` 404 no longer fails that otherwise-green test; non-404 responses, request failures and JS page errors still fail `errors.assert()`. Signature (2) (browser process reaped mid-file, `newPage: Protocol error (Target.createTarget): Not supported`) is not a defect in this file — it is the page-leak cascade already tracked by `TASK-browser-test-isolation`, and it is left there rather than papered over with sleeps or retries. Verified 2026-10-04.
 **Priority:** high
 **Effort:** Medium
 

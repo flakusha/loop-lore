@@ -4,6 +4,7 @@
 # BUG: chat-sections loadSections leaves _sectionsLoading=true forever on HTTP failure
 
 **Status:** Done
+**Status Note:** fixed on dev (commit 255ddb81e, "clear _sectionsLoading via finally in loadSections") — `loadSections` clears `_sectionsLoading` in a `finally` block, so the `!res.ok` early return no longer leaves the flag set. Pinned by two tests in `src/frontend/alpine/chat-sections.test.ts`: "clears the loading flag on non-ok response" and "clears the loading flag when fetch throws". Verified 2026-10-04.
 **Priority:** medium
 **Effort:** Medium
 

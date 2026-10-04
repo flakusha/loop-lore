@@ -8,9 +8,9 @@
  * the `getNativeModule() !== null` branches need an injected fake handle.
  * Isolated-gate only: `mock.module` must not serve the fake handle to
  * unrelated suites in shared-process runs (bare `bun test`). Gated on
- * `ISOLATED` from `test-utils/isolate-only`, which detects per-file
- * isolation via `BUN_TEST_WORKER_ID` — set in every `--parallel` worker,
- * and `--parallel` implies `--isolate`.
+ * `ISOLATED` from `test-utils/isolate-only`, which reads the runner's own
+ * argv for `--isolate` / `--parallel` (plus `BUN_TEST_WORKER_ID`, which Bun
+ * sets exactly when `--parallel` was passed).
  */
 
 import { expect, mock, test, } from "bun:test";

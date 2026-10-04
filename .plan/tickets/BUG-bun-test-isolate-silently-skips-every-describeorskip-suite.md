@@ -4,6 +4,7 @@
 # BUG: bun test --isolate silently skips every describeOrSkip suite
 
 **Status:** Done
+**Status Note:** fixed 2026-10-02 in worktree `p3-verify-close-batch` — `src/test-utils/isolate-only.ts` no longer proxies `--parallel`. `ISOLATED` is now `BUN_TEST_WORKER_ID !== undefined || requestsPerFileIsolation(<runner argv>)`, reading `/proc/self/cmdline` (NUL-anchored, so `--no-isolate` and paths containing `--isolate` do not match) with a documented degradation to skip+warn where procfs is absent. Both fix options are covered: the direct probe runs guarded suites under a bare `--isolate`, and a non-isolated run emits one `process.emitWarning` per process (latched on `globalThis`) so the skip is no longer silent. `describeOrSkipStrict` keeps its `npm_lifecycle_event === "test:unit"` gate. Measured after the fix: `bun test --isolate src/frontend/alpine/chat-sections.test.ts` → 67 pass / 0 skip; `bun test <same file>` → 0 pass / 67 skip plus the warning.
 **Priority:** high
 **Effort:** Medium
 
