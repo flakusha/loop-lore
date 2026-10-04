@@ -4,7 +4,7 @@
 # Template System — Unified Architecture Spec
 
 **Status:** In Progress
-**Status Note:** Reconciliation pass 2026-10-01 — Phases 1–4 shipped (DB table, service, admin routes, image wiring). Public template routes shipped at `/api/v1/templates` (flat, not per-modality nested). LLM static-content `{{var}}` substitution done in `template-render.ts:179-197`; user config (`configs/templates/llm.example.yaml`) variable substitution is not wired — tracked in `TASK-template-unified-variable-engine.md`. Video/audio scaffolds are in flight in `tree/feat-gen-templates-video-audio` (uncommitted). Migration path's `parts/` subdirectory reference is stale (actual: flat `NNN_name.ts` files in `src/db/migrations/`).
+**Status Note:** Reconciliation pass 2026-10-01 — Phases 1–4 shipped (DB table, service, admin routes, image wiring). Public template routes shipped at `/api/v1/templates` (flat, not per-modality nested). LLM static-content `{{var}}` substitution done in `template-render.ts:179-197`; user config (`configs/templates/llm.example.yaml`) variable substitution is not wired — tracked in `TASK-template-unified-variable-engine.md`. Video/audio scaffolds are in flight in `tree/feat-gen-templates-video-audio` (committed). Migration path's `parts/` subdirectory reference is stale (actual: flat `NNN_name.ts` files in `src/db/migrations/`).
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Unified prompt template system across LLM/Image/Video/Audio modalities — shared `TemplateRegistry` interface, DB-backed user templates, per-modality registries, model→template auto-matching.
@@ -26,11 +26,11 @@ git issue: dc95659
 - ✅ **LLM static-content `{{var}}` substitution shipped** — `substituteVars()` at `template-render.ts:179-197` substitutes `{{charName}}`, `{{userName}}`, `{{charPersonality}}`, `{{charScenario}}` on static section content. `resolveScalarVars()` at `template-render.ts:206-243` plumbs actor/persona data into the scalar map.
 - 🟡 **LLM config-layer `{{var}}` substitution NOT wired** — `configs/templates/llm.example.yaml` contains `{{charName}}` tokens (line 18 `chat: "You are {{charName}}. {{charDescription}}"`) but `resolveSystemPrompt()` does not route config-returned strings through `substituteVars()`. Tracked in `TASK-template-unified-variable-engine.md`.
 - 🟡 **Registry hardening** — tracked in `TASK-prompt-template-registry.md`, design `.plan/epics/epic-config-templates.md`.
-- 🟡 **Video scaffold in flight** — `tree/feat-gen-templates-video-audio/src/generation/video-prompt-profiles.ts` and `video-prompt-templates.ts` exist uncommitted; `src/generation/modality-templates/shared.ts` provides shared `resolveModalityTemplate()` + `ModalityProfileRegistry`. See `FEAT-065-sub-video.md`.
+- 🟡 **Video scaffold in flight** — `tree/feat-gen-templates-video-audio/src/generation/video-prompt-profiles.ts` and `video-prompt-templates.ts` exist committed; `src/generation/modality-templates/shared.ts` provides shared `resolveModalityTemplate()` + `ModalityProfileRegistry`. See `FEAT-065-sub-video.md`.
 - ⬜ **Audio scaffold** — not started. `FEAT-065-sub-audio.md` open.
 - 📌 **Follow-up tickets:**
   - `TASK-public-templates-routes.md` — Status: Not Started. Planned shape (`/api/templates/:modality`) differs from current flat `/api/v1/templates`.
-  - `FEAT-065-sub-video.md` — Status: Not Started. Code in progress (uncommitted in `tree/feat-gen-templates-video-audio`).
+  - `FEAT-065-sub-video.md` — Status: Not Started. Code in progress (committed in `tree/feat-gen-templates-video-audio`).
   - `FEAT-065-sub-audio.md` — Status: Not Started. Not covered by the in-flight worktree.
   - `TASK-template-unified-variable-engine.md` — Status: Not Started. Gap confirmed: config-layer `{{var}}` not resolved.
 
@@ -211,7 +211,7 @@ Resolution order: explicit `profileId` → `modelName` pattern match (first matc
 | 3     | API routes                                               | `src/routes/admin-templates/` + `src/routes/templates/` (flat `/api/v1/templates`) |
 | 4     | Image wiring                                             | `src/generation/image-gen-route.ts:94` (`applyImageTemplate`)  |
 | 5     | LLM wiring                                               | `src/assistant/prompt/template-render.ts` — static section substitution done; config-layer not wired |
-| 6     | Video scaffold                                           | `src/generation/video-prompt-templates.ts` (in flight, `tree/feat-gen-templates-video-audio`, uncommitted) |
+| 6     | Video scaffold                                           | `src/generation/video-prompt-templates.ts` (in flight, `tree/feat-gen-templates-video-audio`, committed) |
 | 7     | Audio scaffold                                           | Not started                                                    |
 
 > **Note:** The original migration path referenced `src/db/migrations/parts/NNN_templates.ts`. The `parts/` subdirectory does not exist. Migrations are flat `NNN_name.ts` files in `src/db/migrations/` (confirmed 2026-10-01).
