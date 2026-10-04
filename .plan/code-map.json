@@ -26315,10 +26315,6 @@
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-tool-calling-mcp.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-plugin-tool-gating-empty-role-bypass.md"
     },
@@ -38108,10 +38104,6 @@
     }
   ],
   "src/tools/registry.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-tool-calling-mcp.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/IDEA-epic-tool-calling-mcp-2026-09-26.md"
