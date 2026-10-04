@@ -135,6 +135,7 @@ describe("createLimiterRegistry", () => {
       second = true;
       return r;
     },);
+
     await Promise.resolve();
     await Promise.resolve();
     expect(second,).toBe(false,);
