@@ -40661,7 +40661,7 @@
       "orchestration"
     ],
     "source": ".plan/tickets/TASK-squash-default-for-plan-only-finalizes-and-ticket-scope-orch.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-SRC-RPG-MODULE-ROOT-BARREL-AND-ORGANIZATION-NITS": {
     "epic": "",
