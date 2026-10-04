@@ -44,6 +44,7 @@ function registerLoreContentVersion(table: string, extraColumns: string[],): voi
     ...extraColumns,
   ],);
 }
+
 registerLoreContentVersion("world_lore_entries", ["world_id",],);
 registerLoreContentVersion("actor_lore_entries", ["actor_id", "world_id",],);
 

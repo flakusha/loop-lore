@@ -41,6 +41,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .on("shadow_notes",)
     .columns(["chat_id", "status",],)
     .execute();
+
   await database.schema
     .createIndex("idx_shadow_notes_expires",)
     .on("shadow_notes",)
@@ -95,6 +96,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .on("telemetry_events",)
     .columns(["user_id", "created_at",],)
     .execute();
+
   await database.schema
     .createIndex("idx_telemetry_events_chat_created",)
     .on("telemetry_events",)
