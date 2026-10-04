@@ -30,8 +30,8 @@ import { LogLevelNumeric, } from "./types";
 export class LoggerImpl implements Logger {
   private transports: Transport[];
   private readonly queue: AsyncLogQueue;
-  private readonly threshold: number;
-  private readonly levelString: LogLevel;
+  private threshold: number;
+  private levelString: LogLevel;
   private bindings: LoggerBindings;
   private readonly censorEnabled: boolean;
   private readonly censorFields: string[];
@@ -219,6 +219,14 @@ export class LoggerImpl implements Logger {
    */
   setBindings(partial: LoggerBindings,): void {
     this.bindings = { ...this.bindings, ...partial, };
+  }
+
+  /**
+   * @param level
+   */
+  setLevel(level: LogLevel,): void {
+    this.levelString = level;
+    this.threshold = levelFromConfig(level,);
   }
 
   /** */
