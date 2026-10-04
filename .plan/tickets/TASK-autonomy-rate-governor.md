@@ -49,9 +49,6 @@ window — it never consumes. The cap for the peek comes from the config the
 same request already resolved, not from a re-resolve, so the ceiling the page
 shows is the one the tick loop charges against. An unbounded scope reports
 `remaining: null` rather than a fake number.
-
-**Epic:** epic-actor-autonomy-story-drive
-**Tags:** autonomy, rate-limiting, budget, governor, telemetry, per-agent, per-user
 **Related:** TASK-autonomy-config-surface, TASK-story-auto-drive-scheduler, epic-actor-autonomy-story-drive.md:70-72
 
 
