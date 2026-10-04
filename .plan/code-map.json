@@ -18090,6 +18090,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-010-plurals.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-codemod-fetch-json-safe-utils.md"
     }
   ],
@@ -22181,6 +22185,12 @@
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
     }
   ],
+  "src/i18n/__tests/translator.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-010-plurals.md"
+    }
+  ],
   "src/i18n/__tests__/translator.test.ts": [
     {
       "kind": "ticket",
@@ -22197,6 +22207,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
+    }
+  ],
+  "src/i18n/plurals.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-010-plurals.md"
     }
   ],
   "src/i18n/translator.ts": [
@@ -25833,6 +25849,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
+    }
+  ],
+  "src/public/locales": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-010-plurals.md"
     }
   ],
   "src/public/locales/en.json": [
