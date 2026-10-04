@@ -30,6 +30,12 @@ interface StatusBody {
   percentage: number;
 }
 
+interface ErrorBody {
+  error: string;
+  code: string;
+  meta: { api_version: string };
+}
+
 /**
  * Stage a job in the shared registry for status/download tests.
  * @param db owning database (unused, kept for call symmetry)
@@ -259,11 +265,19 @@ describe("export-sse routes", () => {
     );
 
     expect(status.status,).toBe(404,);
+    const statusBody = (await status.json()) as ErrorBody;
+    expect(statusBody.error,).toBe("Job not found",);
+    expect(statusBody.code,).toBe("NOT_FOUND",);
+    expect(statusBody.meta.api_version,).toBe("1",);
     const download = await app.handle(
       new Request(`http://localhost/api/export/download/${uid()}`,),
     );
 
     expect(download.status,).toBe(404,);
+    const downloadBody = (await download.json()) as ErrorBody;
+    expect(downloadBody.error,).toBe("Job not found",);
+    expect(downloadBody.code,).toBe("NOT_FOUND",);
+    expect(downloadBody.meta.api_version,).toBe("1",);
   });
 
   test("queued jobs report zero progress and are not downloadable", async () => {
@@ -320,6 +334,19 @@ describe("export-sse routes", () => {
     );
 
     expect(res.status,).toBe(404,);
+    const text = await res.text();
+    const statusBody = JSON.parse(text,) as ErrorBody;
+    expect(statusBody.error,).toBe("Job not found",);
+    expect(statusBody.code,).toBe("NOT_FOUND",);
+    expect(statusBody.meta.api_version,).toBe("1",);
+
+    // Not an enumeration oracle: identical body to an unknown job id.
+    const unknownRes = await other.handle(
+      new Request(`http://localhost/api/export/status/${uid()}`,),
+    );
+
+    expect(unknownRes.status,).toBe(404,);
+    expect(await unknownRes.text(),).toBe(text,);
     jobs.delete(job.id,);
   });
 
@@ -340,6 +367,19 @@ describe("export-sse routes", () => {
     );
 
     expect(res.status,).toBe(404,);
+    const text = await res.text();
+    const downloadBody = JSON.parse(text,) as ErrorBody;
+    expect(downloadBody.error,).toBe("Job not found",);
+    expect(downloadBody.code,).toBe("NOT_FOUND",);
+    expect(downloadBody.meta.api_version,).toBe("1",);
+
+    // Not an enumeration oracle: identical body to an unknown job id.
+    const unknownRes = await other.handle(
+      new Request(`http://localhost/api/export/download/${uid()}`,),
+    );
+
+    expect(unknownRes.status,).toBe(404,);
+    expect(await unknownRes.text(),).toBe(text,);
     jobs.delete(job.id,);
   });
 
