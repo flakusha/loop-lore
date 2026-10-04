@@ -84,6 +84,7 @@ export async function forkBranch(
     .select(["id", "chat_id",],)
     .where("id", "=", messageId,)
     .executeTakeFirst();
+
   if (!message || message.chat_id !== chatId) {
     return { code: "not_found", message: "Fork point message not found in chat", };
   }

@@ -24,6 +24,7 @@ if (ISOLATED) {
       const res = fetchHandler ? fetchHandler(url, opts ?? {},) : new Response("{}", {
         status: 200,
       },);
+
       if (!res.ok) { throw new Error(`HTTP ${res.status}`,); }
       return res;
     },
@@ -67,12 +68,14 @@ function buildCtx(
       }
     },
   };
+
   for (const name of Object.getOwnPropertyNames(chatBranches,)) {
     const desc = Object.getOwnPropertyDescriptor(chatBranches, name,);
     if (!desc) { continue; }
     if ("value" in desc) { base[name] = desc.value; }
     else { Object.defineProperty(base, name, desc,); }
   }
+
   return base as unknown as ChatState;
 }
 
@@ -130,6 +133,7 @@ describeOrSkip("chatBranches — loadBranches", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const toasts: Toast[] = [];
     await chatBranches.loadBranches!.call(buildCtx({ toasts, },),);
     expect(toasts.some((t,) => t.type === "error"),).toBe(true,);
@@ -145,6 +149,7 @@ describeOrSkip("chatBranches — loadBranches", () => {
     const gate = new Promise<void>((resolve,) => {
       release = resolve;
     },);
+
     fetchHandler = () => {
       const res = Response.json({ data: { branches: [BRANCH,], }, }, { status: 200, },);
       // Hold the body open so the chat switch lands mid-flight.
@@ -152,8 +157,10 @@ describeOrSkip("chatBranches — loadBranches", () => {
         await gate;
         return { data: { branches: [BRANCH,], }, };
       };
+
       return res;
     };
+
     const ctx = buildCtx({ activeChat: "chat-1", },);
     const pending = chatBranches.loadBranches!.call(ctx,);
     ctx.activeChat = "chat-2";
@@ -168,14 +175,17 @@ describeOrSkip("chatBranches — loadBranches", () => {
     const gate = new Promise<void>((resolve,) => {
       release = resolve;
     },);
+
     fetchHandler = () => {
       const res = new Response("{}", { status: 200, },);
       res.json = async () => {
         await gate;
         throw new Error("offline",);
       };
+
       return res;
     };
+
     const toasts: Toast[] = [];
     const ctx = buildCtx({ toasts, },);
     const pending = chatBranches.loadBranches!.call(ctx,);
@@ -204,6 +214,7 @@ describeOrSkip("chatBranches — forkFromMessage", () => {
       messageId: "m1",
       name: "Alt path",
     },);
+
     expect(fetchCalls[1]?.url,).toBe("/api/v1/chats/chat-1/branches?limit=100",);
     expect(toasts.some((t,) => t.type === "success"),).toBe(true,);
   });
@@ -384,6 +395,7 @@ describeOrSkip("branch header globals", () => {
     g.document = {
       querySelector: () => el,
     } as unknown as Document;
+
     g.Alpine = {
       store: () => ({}),
       $data: (e: unknown,) =>
@@ -402,6 +414,7 @@ describeOrSkip("branch header globals", () => {
           }
           : {},
     };
+
     try {
       await (g.loadBranches as () => Promise<void>)();
       await (g.forkFromMessage as (id: string, n?: string,) => Promise<void>)("m1", "Alt",);

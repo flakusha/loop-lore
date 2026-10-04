@@ -2,10 +2,12 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 // size-allow: 280
 // ── Chat page (chat.html) — reactive state object builder ────
-import type { AlpineState, ChatState, } from "../types";
-import { actorModelActions, } from "../chat-settings/actor-models";
-import { attachValidateDraft, createComposerPreSend, } from "../composer-pre-send";
 import { chatActions, } from "../chat-actions";
+import { gifPicker, } from "../chat-actions/gif-picker";
+import { messageActions, } from "../chat-actions/message-actions";
+import { promptAnalyzeActions, } from "../chat-actions/prompt-analyze";
+import { promptImproveActions, } from "../chat-actions/prompt-improve";
+import { turnSkipActions, } from "../chat-actions/turn-skip";
 import { chatActivity, } from "../chat-activity";
 import { chatBackgrounds, } from "../chat-backgrounds";
 import { chatBattle, } from "../chat-battle";
@@ -14,14 +16,11 @@ import { chatEditing, } from "../chat-editing";
 import { chatFilters, } from "../chat-filters";
 import { chatGenerations, } from "../chat-generations";
 import { chatGroup, } from "../chat-group";
-import { chatInlineState, } from "./inline-state";
 import { chatInvites, } from "../chat-invites";
 import { chatKeys, } from "../chat-keys";
-import { chatLifecycle, } from "./lifecycle";
 import { chatLocation, } from "../chat-location";
 import { chatManagement, } from "../chat-management";
 import { chatMessages, } from "../chat-messages";
-import { chatMusicEmbed, } from "./music-embed";
 import { chatPanels, } from "../chat-panels";
 import { chatParticipants, } from "../chat-participants";
 import { chatPins, } from "../chat-pins";
@@ -31,24 +30,25 @@ import { chatQuickReplies, } from "../chat-quick-replies";
 import { chatSections, } from "../chat-sections";
 import { chatSectionsNav, } from "../chat-sections-nav";
 import { chatSettings, } from "../chat-settings";
+import { actorModelActions, } from "../chat-settings/actor-models";
 import { chatSideChannels, } from "../chat-side-channels";
 import { chatUtils, } from "../chat-utils";
 import { chatVariants, } from "../chat-variants";
-import { chatWorld, } from "./world";
+import { attachValidateDraft, createComposerPreSend, } from "../composer-pre-send";
 import { creationWizard, } from "../creation-wizard";
-import { gifPicker, } from "../chat-actions/gif-picker";
-import { messageActions, } from "../chat-actions/message-actions";
 import { messageArchive, } from "../message-archive";
 import { messageSearch, } from "../message-search";
-import { promptAnalyzeActions, } from "../chat-actions/prompt-analyze";
-import { promptImproveActions, } from "../chat-actions/prompt-improve";
-import { turnSkipActions, } from "../chat-actions/turn-skip";
+import type { AlpineState, ChatState, } from "../types";
 import { worldChannels, } from "../world-channels";
+import { chatInlineState, } from "./inline-state";
+import { chatLifecycle, } from "./lifecycle";
+import { chatMusicEmbed, } from "./music-embed";
+import { chatWorld, } from "./world";
 
 import { chatMusicLinks, } from "../chat-music-links";
-import { mergeReactiveSource, } from "./merge-reactive";
-import { slashAutocomplete, } from "../slash-autocomplete";
 import { transitionPicker, } from "../chat-transition-picker";
+import { slashAutocomplete, } from "../slash-autocomplete";
+import { mergeReactiveSource, } from "./merge-reactive";
 
 /** Build the chat page's reactive Alpine state (registry entry = chatState).
  * @returns The merged Alpine state for the chat page.
@@ -75,7 +75,6 @@ export function chatState() {
     ...chatGroup,
     ...chatSettings,
     ...chatBackgrounds,
-    ...chatBranches,
     ...messageSearch,
     ...chatMessages,
     ...chatGenerations,
