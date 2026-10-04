@@ -60,6 +60,7 @@ export function reportResults(results,) {
   let passed = 0;
   let failed = 0;
   let skipped = 0;
+  let advisory = 0;
 
   for (const result of results) {
     if (result.skipped) {
@@ -73,6 +74,30 @@ export function reportResults(results,) {
     } else if (result.passed) {
       console.log(`PASS: ${result.name}`,);
       passed++;
+    } else if (result.advisory) {
+      // Advisory gates run and report but do not fail the run. Print as
+      // ADVISORY so the signal is visible without blocking finalization.
+      console.log(`ADVISORY: ${result.name}${result.timedOut ? " (timed out, killed)" : ""}`,);
+      const outputLines = result.output.split("\n",),
+        head = outputLines.slice(0, 5,),
+        tail = outputLines.slice(-20,);
+      console.log(
+        `  Output: ${[...new Set([...head, ...(outputLines.length > 25 ? ["...",] : []), ...tail,],)].join("\n  ",)}`,
+      );
+      const slug = result.name.replace(/[^a-z0-9]+/gi, "-",).replace(/^-|-$/g, "",).toLowerCase();
+      const logPath = path.join(RUN_TMP_DIR, `check-fail-${slug}.log`,);
+      try {
+        mkdirSync(RUN_TMP_DIR, { recursive: true, },);
+        writeFileSync(logPath, result.output,);
+        console.log(`  Full output: ${logPath}`,);
+      } catch (error) {
+        console.log(
+          `  Full output unavailable (${String(error,)}). Re-run \`bun run ${
+            result.command.replace(/^bun run /, "",)
+          }\` directly.`,
+        );
+      }
+      advisory++;
     } else {
       // A timeout is a distinct failure mode from "the gate ran and said no":
       // the gate never got to render a verdict, so say so on the summary line.
@@ -108,6 +133,7 @@ export function reportResults(results,) {
   console.log(`Total: ${results.length}`,);
   console.log(`Passed: ${passed}`,);
   console.log(`Skipped: ${skipped}`,);
+  console.log(`Advisory: ${advisory}`,);
   console.log(`Failed: ${failed}`,);
 
   return failed;
@@ -122,7 +148,8 @@ export function reportResults(results,) {
 export function buildReport({ exitCode, checks, nonBlocking, gpgPrecheck, },) {
   const passedCount = checks.filter((check,) => check.passed).length;
   const skippedCount = checks.filter((check,) => check.skipped).length;
-  const failedCount = checks.length - passedCount - skippedCount;
+  const advisoryCount = checks.filter((check,) => check.advisory === true).length;
+  const failedCount = checks.length - passedCount - skippedCount - advisoryCount;
   const durationMs = checks.reduce((sum, check,) => sum + (check.durationMs ?? 0), 0,);
 
   return {
@@ -149,6 +176,7 @@ export function buildReport({ exitCode, checks, nonBlocking, gpgPrecheck, },) {
       total: checks.length,
       passed: passedCount,
       skipped: skippedCount,
+      advisory: advisoryCount,
       failed: failedCount,
       durationMs,
     },
@@ -156,6 +184,7 @@ export function buildReport({ exitCode, checks, nonBlocking, gpgPrecheck, },) {
       command: check.command,
       passed: check.passed,
       skipped: check.skipped === true,
+      advisory: check.advisory === true,
       // True when the gate blew its budget and was killed; the failure output
       // names the gate and the budget (see runCheck).
       timedOut: check.timedOut === true,

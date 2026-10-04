@@ -10,7 +10,7 @@
 
 import { DEFAULT_GATE_TIMEOUT_MS, runGateWithTimeout, } from "../gate-timeout.mjs";
 import { MAX_OUTPUT_CHARS, PROJECT_ROOT, } from "./config.mjs";
-import { checks, } from "./gates.mjs";
+import { ADVISORY_GATES, checks, } from "./gates.mjs";
 
 // ── Concurrency cap ────────────────────────────────────────────
 // Resolve the per-run concurrency cap with priority: --jobs flag > CHECK_JOBS
@@ -139,6 +139,7 @@ async function runCheck(name, command,) {
       // A timed-out gate is a failure, not an unevaluable gate: never let the
       // giwt-unavailable skip path mask a kill.
       skipped: !gate.timedOut && !gate.ok && gateOutput.includes(GIWT_ISSUE_CLI_UNAVAILABLE,),
+      advisory: ADVISORY_GATES.has(name,),
       output,
       exitCode: gate.exitCode,
       durationMs: gate.durationMs,
@@ -152,6 +153,7 @@ async function runCheck(name, command,) {
       command,
       passed: false,
       skipped: false,
+      advisory: ADVISORY_GATES.has(name,),
       output: error.message,
       exitCode: 1,
       durationMs: Math.round(performance.now() - startedAt,),
