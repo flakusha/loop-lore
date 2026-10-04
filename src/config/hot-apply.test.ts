@@ -7,6 +7,7 @@ import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { getRuntimeNsfwConfig, resetNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import {
   applyConfigChange,
+  applyConfigWrite,
   classifyConfigPath,
   initConfigHotApply,
   onConfigChange,
@@ -142,4 +143,33 @@ describe("applyHotConfig", () => {
     applyConfigChange("nsfw", config,);
     expect(getRuntimeNsfwConfig().allowNsfw,).toBe(false,);
   },);
+});
+
+describe("applyConfigWrite", () => {
+  test("hot path applies live and returns true", () => {
+    const applied = applyConfigWrite("ageGate.enabled", "true",);
+    expect(applied,).toBe(true,);
+    expect(ageGateConfig.get().enabled,).toBe(true,);
+  });
+
+  test("coerces string value to the leaf type", () => {
+    const applied = applyConfigWrite("nsfw.allowNsfw", "false",);
+    expect(applied,).toBe(true,);
+    expect(getRuntimeNsfwConfig().allowNsfw,).toBe(false,);
+  });
+
+  test("restart-required key returns false and does not emit", () => {
+    const changes: ConfigChange[] = [];
+    const unsub = onConfigChange((c,) => { changes.push(c,); },);
+    const applied = applyConfigWrite("server.port", "8080",);
+    expect(applied,).toBe(false,);
+    expect(changes.length,).toBe(0,);
+    unsub();
+  });
+
+  test("no snapshot returns false", () => {
+    resetConfigHotApply();
+    const applied = applyConfigWrite("logging.level", "error",);
+    expect(applied,).toBe(false,);
+  });
 });

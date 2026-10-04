@@ -163,8 +163,8 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           }
 
           const { key, value, description, } = ctx.body as { key: string; value: string; description?: string };
-          await setConfig(opts.database, key, value, description,);
-          return jsonResponse({ ok: true, requires_restart: REQUIRES_RESTART_KEYS[key] === true, },);
+          const classification = await setConfig(opts.database, key, value, description,);
+          return jsonResponse({ ok: true, requires_restart: classification === "restart", },);
         },
         { body: AdminSystemConfigBody, response: { 200: SuccessResponse, 403: ErrorResponse, }, },
       )
