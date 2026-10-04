@@ -81,6 +81,7 @@ async function makeNpc(name: string,) {
     mental_state: "calm",
     schedule: JSON.stringify({ movementPattern: "patrol", },),
   },);
+
   return { worldId, actorId, locationId, };
 }
 
@@ -92,6 +93,7 @@ function canned(raw: string,) {
     calls.push({ actorId: req.actorId, actorName: req.actorName, userMessage: user?.content ?? "", },);
     return Promise.resolve(raw,);
   };
+
   return { generate, calls, };
 }
 
@@ -111,6 +113,7 @@ describe("createPlanRecompute — well-formed model output", () => {
       },),
       "```",
     ].join("\n",);
+
     const { generate, calls, } = canned(fenced,);
 
     const plan = await createPlanRecompute({ db, generate, },)(actorId, worldId, "2026-10-02",);
@@ -121,6 +124,7 @@ describe("createPlanRecompute — well-formed model output", () => {
       { description: "walk the perimeter", score: 70, },
       { description: "drink something", score: 12, },
     ],);
+
     expect(calls.length,).toBe(1,);
   });
 
@@ -276,6 +280,7 @@ describe("runNightlyReflectionCycle — budget denial", () => {
       .selectFrom("actor_daily_plans",)
       .select(["actor_id", "world_id", "summary", "priority",],)
       .execute();
+
     expect(plans.length,).toBe(1,);
     expect(plans[0]?.actor_id,).toBe(allowed.actorId,);
     expect(plans[0]?.world_id,).toBe(allowed.worldId,);
@@ -302,6 +307,7 @@ describe("runNightlyReflectionCycle — budget denial", () => {
       .select(["summary", "priority",],)
       .where("actor_id", "=", npc.actorId,)
       .executeTakeFirstOrThrow();
+
     expect(PRIORITY_VOCABULARY,).toContain(plan.priority,);
     expect(plan.summary,).toContain("persisted Square",);
   });

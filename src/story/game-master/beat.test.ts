@@ -90,6 +90,7 @@ async function makePatrolWorld(name: string,) {
     current_location_id: locA,
     gm_config: JSON.stringify({ type: GameMasterType.Llm, },),
   },);
+
   await db
     .insertInto("chat_participants",)
     .values({ chat_id: chatId, actor_id: actorId, role_in_chat: "member", },)
@@ -126,6 +127,7 @@ async function npcAt(npcId: string,): Promise<{ locationId: string | null; patro
     .select(["location_id", "schedule",],)
     .where("actor_id", "=", npcId,)
     .executeTakeFirstOrThrow();
+
   const schedule = JSON.parse(row.schedule ?? "{}",) as { patrolIndex?: number };
   return { locationId: row.location_id, patrolIndex: schedule.patrolIndex ?? 0, };
 }
@@ -204,6 +206,7 @@ describe("AutonomyScheduler.tickOnce — movement + GM beat on one tick", () => 
         },),
       ],
     },);
+
     await sched.tickOnce(T0,);
 
     const turns = await db
@@ -211,6 +214,7 @@ describe("AutonomyScheduler.tickOnce — movement + GM beat on one tick", () => 
       .select(["chat_id", "turn_number", "prompt_sent",],)
       .where("chat_id", "=", world.chatId,)
       .execute();
+
     expect(turns.length,).toBe(1,);
     expect(turns[0]?.turn_number,).toBe(1,);
     expect(turns[0]?.prompt_sent,).toBe("*The guard walks the wall.*",);
@@ -235,6 +239,7 @@ describe("executeTurn — moveNpcs opt-out", () => {
       },
       generateText: () => Promise.resolve("*The guard walks the wall.*",),
     },);
+
     await gm.initialize();
 
     const result = await gm.executeTurn(undefined, { moveNpcs: false, },);
@@ -259,6 +264,7 @@ describe("executeTurn — moveNpcs opt-out", () => {
       },
       generateText: () => Promise.resolve("*The guard walks the wall.*",),
     },);
+
     await gm.initialize();
 
     const result = await gm.executeTurn(undefined,);

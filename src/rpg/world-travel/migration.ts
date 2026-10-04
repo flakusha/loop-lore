@@ -82,6 +82,7 @@ export async function migrateNpc(
       : row.status === "in_transit" && currentTick >= row.arrive_tick
       ? "npc_arrive"
       : null;
+
     if (!kind) { continue; }
 
     if (kind === "npc_arrive") {
@@ -98,6 +99,7 @@ export async function migrateNpc(
         .set({ status: "arrived", updated_at: stamp, },)
         .where("id", "=", row.id,)
         .execute();
+
       continue;
     }
 
@@ -124,6 +126,7 @@ export async function migrateNpc(
           .where("world_id", "=", worldId,)
           .execute();
       }
+
       await handle
         .updateTable("npc_migrations",)
         .set({ ...reschedule(row, currentTick, destination, stamp,), },)
@@ -171,6 +174,7 @@ function reschedule(
       updated_at: stamp,
     };
   }
+
   // The span is the leg's own SCHEDULED length, `arrive - depart`.
   // `last_depart_tick` is NOT the right anchor: the depart write lands a tick
   // after arrival, so subtracting it shrinks every leg by one (10, 10, 9, 8,

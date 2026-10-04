@@ -91,6 +91,7 @@ async function resolveBeatChats(
     .orderBy("id", "asc",)
     .limit(RESOLUTION_LIMIT,)
     .execute();
+
   return rows.map((row,) => ({ id: row.id, gmConfig: row.gm_config, createdBy: row.created_by, }));
 }
 

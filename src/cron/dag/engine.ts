@@ -177,6 +177,7 @@ export class WorkflowDagEngine {
       this.#states.fail(taskId, `no task body registered for ${taskId}`,);
       return false;
     }
+
     const ctx: TaskRunContext = { taskId, nowMs, rng, attempt, };
     try {
       await body(ctx,);
@@ -199,6 +200,7 @@ export class WorkflowDagEngine {
     for (const taskId of this.#graph.nodes()) {
       nodes[taskId] = this.#states.statusFor(taskId,);
     }
+
     return { nodes, };
   }
 
@@ -230,6 +232,7 @@ export class WorkflowDagEngine {
       const state = this.#states.get(dependent,)?.state;
       return state === "done" || state === "skipped";
     },);
+
     for (const dependent of dependents) {
       if (this.#states.get(dependent,) === undefined) { continue; }
       this.#states.skip(dependent,);

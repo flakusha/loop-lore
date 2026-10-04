@@ -92,6 +92,7 @@ export class AutonomyScheduler {
     for (const entry of due) {
       worlds.push(await this.#tickWorld(entry, nowMs,),);
     }
+
     return {
       nowMs,
       dueWorldIds: due.map((e,) => e.worldId),
@@ -166,6 +167,6 @@ export type AutonomySchedulerOptions = NonNullable<ConstructorParameters<typeof 
 
 export type {
   AutonomyDispatch,
-  AutonomyDispatchResult,
   AutonomyDispatchContext,
+  AutonomyDispatchResult,
 } from "./types";

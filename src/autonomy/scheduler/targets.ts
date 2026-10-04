@@ -36,6 +36,7 @@ export const movementDispatch: AutonomyDispatch = {
       governor: ctx.governor,
       paused: false,
     },);
+
     if ("skipped" in out) { return { skipped: out.skipped, }; }
     return { dispatched: out.results.length, };
   },
@@ -62,9 +63,11 @@ export function aggregate(results: AutonomyDispatchResult[],): WorldTickOutcome 
       firstSkip ??= result.skipped;
       continue;
     }
+
     ran = true;
     dispatched += result.dispatched;
   }
+
   if (ran) { return { dispatched, }; }
   if (firstSkip !== undefined) { return { skipped: firstSkip, }; }
   throw new Error("aggregate: no dispatch target produced a result",);

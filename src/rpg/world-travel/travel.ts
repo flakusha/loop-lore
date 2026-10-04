@@ -112,6 +112,7 @@ async function commitStep(
     .where("id", "=", partyId,)
     .where("current_tick", "<", currentTick,)
     .executeTakeFirst();
+
   return Number(moved?.numUpdatedRows ?? 0,) === 1;
 }
 
@@ -201,6 +202,7 @@ export async function advancePartyTravel(
         .where("id", "=", party.id,)
         .where("current_tick", "<", currentTick,)
         .executeTakeFirst();
+
       // A replay matched no row, so it defers nobody — counting it would
       // make the tick report more deferrals than the world actually has.
       if (Number(deferred?.numUpdatedRows ?? 0,) === 1) { result.deferred += 1; }

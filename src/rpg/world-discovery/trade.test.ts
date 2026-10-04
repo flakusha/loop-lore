@@ -156,6 +156,7 @@ describe("runTradeTick — convoys in motion", () => {
       `trade-route:${WORLD_ID}:5:${PARTY_A}`,
       `trade-route:${WORLD_ID}:6:${PARTY_A}`,
     ],);
+
     expect(events.map((e,) => e.tick_index),).toEqual([5, 6,],);
   });
 
@@ -219,6 +220,7 @@ describe("runTradeTick — convoys in motion", () => {
       current_location_id: LOC_B,
       status: "resting",
     },);
+
     await insertTravelParties(db, WORLD_ID, "Disbanded", {
       id: PARTY_B,
       route: JSON.stringify([LOC_A, LOC_B,],),
@@ -274,6 +276,7 @@ describe("runTradeTick — convoys in motion", () => {
       current_location_id: LOC_A,
       status: "traveling",
     },);
+
     await movingParty(PARTY_A,);
 
     // Both worlds have a moving convoy; only this world's is reported here,
@@ -292,6 +295,7 @@ describe("runTradeTick — convoys in motion", () => {
       .select(["world_id", "subject_id",],)
       .orderBy("world_id", "asc",)
       .execute();
+
     // Two rows, same tick index, one per world — the world id is part of the
     // dedupe key, so neither displaced the other.
     expect(all,).toEqual([
@@ -322,6 +326,7 @@ describe("emitWorldEvent — the storage-layer idempotency", () => {
       .selectFrom("world_event_log",)
       .select(["event_type", "subject_id", "tick_index", "payload",],)
       .execute();
+
     expect(rows,).toEqual([{
       event_type: TRADE_ROUTE,
       subject_id: PARTY_A,
@@ -343,6 +348,7 @@ describe("emitWorldEvent — the storage-layer idempotency", () => {
         dedupeKey: tradeRouteKey(WORLD_ID, 1, PARTY_A,),
       },),
     ).toBe(true,);
+
     expect(
       await emitWorldEvent(log, {
         ...base,
@@ -351,6 +357,7 @@ describe("emitWorldEvent — the storage-layer idempotency", () => {
         dedupeKey: tradeRouteKey(WORLD_ID, 1, PARTY_B,),
       },),
     ).toBe(true,);
+
     expect(
       await emitWorldEvent(log, {
         ...base,
@@ -359,6 +366,7 @@ describe("emitWorldEvent — the storage-layer idempotency", () => {
         dedupeKey: tradeRouteKey(WORLD_ID, 2, PARTY_A,),
       },),
     ).toBe(true,);
+
     expect(await log.selectFrom("world_event_log",).selectAll().execute(),).toHaveLength(3,);
   });
 });
@@ -410,6 +418,7 @@ describe("listWorldEvents — the admin listing", () => {
       page: 1,
       pageSize: 10,
     },);
+
     expect(page.data.map((r,) => r.subject_id),).toEqual(["s-a", "s-c",],);
     expect(page.total,).toBe(2,);
   });

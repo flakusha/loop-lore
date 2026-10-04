@@ -62,6 +62,7 @@ export async function loadDependencies(
     .orderBy("task_id",)
     .orderBy("depends_on_task_id",)
     .execute();
+
   return rows.map((row,) => ({
     taskId: row.task_id,
     dependsOnTaskId: row.depends_on_task_id,

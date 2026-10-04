@@ -145,6 +145,7 @@ async function makeWanderWorld(seed: number | null,): Promise<void> {
     id: WORLD_ID,
     autonomy_config: JSON.stringify({ jitterRatio: 0, seed, },),
   },);
+
   await insertChats(db, "chat-seed", ownerId, { world_id: WORLD_ID, },);
 
   await insertLocations(db, WORLD_ID, "A", { id: LOC_A, },);
@@ -190,6 +191,7 @@ async function resetWorld(): Promise<void> {
     location_id: LOC_A,
     schedule: JSON.stringify({ movementPattern: MovementPattern.Wander, },),
   },);
+
   await db.deleteFrom("autonomy_budget",).execute();
   await setCursor(0,);
 }
@@ -220,6 +222,7 @@ async function runTick(): Promise<string | null> {
     .select("location_id",)
     .where("actor_id", "=", NPC_ID,)
     .executeTakeFirstOrThrow();
+
   return row.location_id;
 }
 
@@ -262,6 +265,7 @@ describe("AutonomyScheduler — seeded replay", () => {
       expect(first,).not.toBe(LOC_A,);
       observed.push(first ?? "null",);
     }
+
     // The sweep is not degenerate: the NPC really did visit more than one
     // place across it, so "all ticks agree" is not the shape of the data.
     expect(new Set(observed,).size,).toBeGreaterThan(1,);
@@ -279,6 +283,7 @@ describe("AutonomyScheduler — seeded replay", () => {
         .set({ autonomy_config: JSON.stringify({ jitterRatio: 0, seed: 101, },), },)
         .where("id", "=", WORLD_ID,)
         .execute();
+
       await resetWorld();
       await setCursor(tick.tick,);
       const fromSeed101 = await runTick();
@@ -289,6 +294,7 @@ describe("AutonomyScheduler — seeded replay", () => {
         .set({ autonomy_config: JSON.stringify({ jitterRatio: 0, seed: 202, },), },)
         .where("id", "=", WORLD_ID,)
         .execute();
+
       await resetWorld();
       await setCursor(tick.tick,);
       const fromSeed202 = await runTick();

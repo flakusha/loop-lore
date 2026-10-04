@@ -163,6 +163,7 @@ async function tradeVolume(db: Kysely<DB>, worldId: string,): Promise<number> {
     .select((eb,) => eb.fn.countAll<string>().as("total",))
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
+
   return Number(row?.total ?? 0,);
 }
 
@@ -206,6 +207,7 @@ export async function runTradeTick(db: Kysely<DB>, worldId: string, currentTick:
       },
       dedupeKey: tradeRouteKey(worldId, currentTick, convoy.id,),
     },);
+
     if (landed) { events++; }
   }
 
