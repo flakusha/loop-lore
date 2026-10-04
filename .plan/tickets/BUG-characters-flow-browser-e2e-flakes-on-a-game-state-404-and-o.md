@@ -9,7 +9,7 @@
 
 **Summary:**
 
-File: `tests/e2e/flows/browser/characters-flow.browser.ts`. Reproduced 2026-10-01 across two independent finalize attempts. Rate: ~1 failure in 6 consecutive isolated runs of this file, same worktree, same code, same env (`E2E_SAFEGUARD=1 HTTP_PROXY= NO_PROXY=*`, exactly what `scripts/run-browser-tests.ts:29-30` sets). It is a peer of two sibling flakes already filed: `BUG-BROWSER-E2E-ASSERTS-ABSENCE-OF-A-DECRYPT-FAILURE-MARKER-ACRO` (8b4b4c1) and `BUG-LOGOUT-BROWSER-E2E-RACES-ITS-OWN-NAVIGATION-AND-NEEDS-RETRY-` (e845b8e).
+File: `tests/e2e/flows/browser/characters-flow.browser.ts`. Reproduced 2026-10-01 across two independent finalize attempts. Rate: ~1 failure in 6 consecutive isolated runs of this file, same worktree, same code, same env (`E2E_SAFEGUARD=1 HTTP_PROXY= NO_PROXY=*`, exactly what `scripts/run-browser-tests.ts:30-32` sets). It is a peer of two sibling flakes already filed: `BUG-BROWSER-E2E-ASSERTS-ABSENCE-OF-A-DECRYPT-FAILURE-MARKER-ACRO` (8b4b4c1) and `BUG-LOGOUT-BROWSER-E2E-RACES-ITS-OWN-NAVIGATION-AND-NEEDS-RETRY-` (e845b8e).
 
 TWO DISTINCT SIGNATURES, both observed:
 
@@ -53,7 +53,7 @@ const latest = await getLatestGameState({ database, chatId, },);
 if (!latest) { return notFound("Game state not found",); }
 ```
 
-3. A brand-new chat has **no `game_states` row, and will not get one** until an assistant turn emits a fenced ```game-state block. The production INSERT lives in `extractAndStore` (`src/game-state/service.ts:76`), and its only production call site is the message-store path (`src/generation/auto-gen/store-message.ts:189`). Chat creation writes nothing there. The one other writer of the table is test-only: `insertGameStates` (`src/test-utils/insert-helpers.ts:4647`).
+3. A brand-new chat has **no `game_states` row, and will not get one** until an assistant turn emits a fenced ```game-state block. The production INSERT lives in `extractAndStore` (`src/game-state/service.ts:76`), and its only production call site is the message-store path (`src/generation/auto-gen/store-message.ts:189`). Chat creation writes nothing there. The one other writer of the table is test-only: `insertGameStates` (`src/test-utils/insert-helpers.ts:4653`).
 
 4. **The client deliberately treats the 404 as an empty state**, not an error — `src/frontend/alpine/game-canvas/index.ts:101-105`:
 
@@ -80,7 +80,7 @@ const errors = trackPageErrors(page, { allowlist: EXPECTED_404_NOISE_ALLOWLIST, 
 
 **Why it is intermittent (~1-in-6).** Not request ordering — a harness timing race. `errors.assert()` runs in the `finally` immediately after `chat-header` attaches (`characters-flow.browser.ts:220-223`), while the game-state 404 is recorded by the `page.on("response", ...)` handler (`htmx-alpine.ts:119-125`). Whether that response event lands before the assert is a coin flip on a ~150ms gap. Measured with a throwaway probe over 5 isolated runs: `chat-header` attached at 696-788ms and the game-state 404 arrived at 821-952ms — 0 errors recorded at the assert point, 1 error present 2500ms later, in 5/5 runs.
 
-**Reproduction attempt (honest).** 10 isolated runs of the single file with the exact env `scripts/run-browser-tests.ts:29-30` sets (`E2E_SAFEGUARD=1 HTTP_PROXY= NO_PROXY=*`): **NOT REPRODUCED — 11 pass / 0 fail on all 10 runs.** The probe is the substitute evidence and is stronger than a red run: it observes the 404 on 5/5 runs and captures the response body.
+**Reproduction attempt (honest).** 10 isolated runs of the single file with the exact env `scripts/run-browser-tests.ts:30-32` sets (`E2E_SAFEGUARD=1 HTTP_PROXY= NO_PROXY=*`): **NOT REPRODUCED — 11 pass / 0 fail on all 10 runs.** The probe is the substitute evidence and is stronger than a red run: it observes the 404 on 5/5 runs and captures the response body.
 
 ```
 404 @952ms .../api/v1/chats/<id>/game-state BODY={"error":"Game state not found","code":"NOT_FOUND","meta":{"api_version":"1"}}
@@ -129,7 +129,7 @@ Decision made 2026-10-02 by root-causing this ticket before writing any fix. Tic
 2. **Fix the test by polling for the game-state row, mirroring `encryption-flow.browser.ts:154-175`.** Rejected — the precedent does not transfer and following it would actively break the test. `encryption-flow`'s poll is correct there because that test just triggered a write and the poll waits for *that* INSERT, asserting on the found row rather than on "whatever is newest". Here no write is pending: a new chat gains a `game_states` row only after an assistant turn emits a fence, which this test never triggers. Polling would spin to the 15s deadline and then fail. Same-sounding symptom, different mechanism — this is the one alternative most likely to be chosen by mistake, so it is called out explicitly.
 3. **Widen to a retry, or treat the 404 as expected without an allowlist.** Rejected as the primary fix: retrying a designed 404 retries a permanent condition. "Treat as expected" is right but must be scoped to the designed 404 via `EXPECTED_404_NOISE_ALLOWLIST`, not blanket-suppressed — a blanket ignore would also swallow a real 500. Retry does remain the right shape for the sibling logout ticket (e845b8e), where the abort is genuinely transient; that is why the two must not be merged.
 4. **Treat (1) and (2) as one shared suite-stabilization problem.** Rejected. (1) is one stray console line from a healthy page; (2) is the browser process dying, failing 8 of 11 tests with `Target.createTarget: Not supported` and `Target page, context or browser has been closed`. Different mechanisms, different blast radius, different fixes. Further, a grep for `dangling process` across `src/`, `tests/`, `scripts/` **and the entire `node_modules` tree returns no matches** — the `killed 1 dangling process` line is emitted by the test runner / host reaper, not by loop-lore code, so there is no loop-lore call site to stabilize.
-5. **Seed a `game_states` row for the new chat so the endpoint returns 200.** Rejected — the shape the test needs makes it impossible. The chat id is minted server-side and is only revealed in the POST response (`characters.ts:181`, `data.id`), so there is no id to seed before the navigation, and seeding afterwards would fabricate the very state the test is supposed to reach naturally. Recorded because the helper does exist (`src/test-utils/insert-helpers.ts:4647`, `insertGameStates`) and a fixer hunting for an allowlist-free option will find it first.
+5. **Seed a `game_states` row for the new chat so the endpoint returns 200.** Rejected — the shape the test needs makes it impossible. The chat id is minted server-side and is only revealed in the POST response (`characters.ts:181`, `data.id`), so there is no id to seed before the navigation, and seeding afterwards would fabricate the very state the test is supposed to reach naturally. Recorded because the helper does exist (`src/test-utils/insert-helpers.ts:4653`, `insertGameStates`) and a fixer hunting for an allowlist-free option will find it first.
 
 **Answer on signature (2) and suite stabilization.**
 
