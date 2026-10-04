@@ -24,6 +24,7 @@ export * from "./frontend";
 export * from "./generation";
 export * from "./headers";
 export * from "./hooks";
+export * from "./integrations";
 export * from "./logging";
 export * from "./messages";
 export * from "./nsfw";

@@ -34,9 +34,9 @@ Transport-level fetch (federation gossip `PeerFetch`, swarm sync) is NOT an adap
 
 `src/integrations/adapter.ts`. The single message-level contract. Capability-gated optional surface (`ChannelCapable`, `PresenceCapable`, `ReactionCapable`, `MessageEditCapable`) advertised via `capabilities()` against the `ADAPTER_CAPABILITIES` registry (`channels`, `presence`, `reactions`, `message-edit`, `auth-challenge`, `auth-approval`). `AdapterMessage` is the minimal envelope: `{ id, author, target, body, timestamp }` — all protocol-side ids opaque to the core. Full contract: `src/integrations/adapter.ts` (authoritative).
 
-### 2.2 `MessageBridge` — PLANNED
+### 2.2 `MessageBridge` — IMPLEMENTED
 
-`src/integrations/bridge.ts` (planned — `TASK-integrations-shared-seams-encryptionprovider-messagebridge-b`). Contract:
+`src/integrations/bridge.ts` — implemented (`TASK-integrations-shared-seams-encryptionprovider-messagebridge-b`); health + per-(adapter, target) rate limiting wired from `src/integrations/health.ts` (`TASK-adapter-health-monitoring-and-per-protocol-rate-limiting`). Contract:
 
 ```ts
 export interface MessageBridge {
@@ -49,9 +49,9 @@ export interface MessageBridge {
 
 The bridge owns: chat ↔ adapter-target resolution, outbound moderation gate invocation, idempotency/dedup, rate-limit enforcement, and retry/degradation (§4). It must NOT own protocol framing (adapter) or byte transport (handler).
 
-### 2.3 `EncryptionProvider` — PLANNED
+### 2.3 `EncryptionProvider` — IMPLEMENTED
 
-`src/integrations/encryption.ts` (planned — same ticket). Contract per `epic-integrations-core.md`:
+`src/integrations/encryption.ts` (implemented — same ticket). Contract per `epic-integrations-core.md`:
 
 ```ts
 export interface EncryptionProvider {
@@ -63,7 +63,7 @@ export interface EncryptionProvider {
 
 Concrete providers live in their owning sub-epics: `MatrixEncryption` (Olm/Megolm), `OmemoEncryption` (XMPP), `PgpEncryption` (email). Key material comes from `epic-crypto.md`. Do NOT conflate with `MeshEncryptionProvider` in `src/federation/encryption.ts` (mesh-specific, separate).
 
-### 2.4 `BridgeRegistry` — PLANNED
+### 2.4 `BridgeRegistry` — IMPLEMENTED
 
 `src/integrations/` (same ticket + `FEAT-messaging-bridge-extensions`). Registers/unregisters `ProtocolAdapter` instances with declared capabilities; the bridge resolves targets through it. Capability negotiation: a send to a target whose owning adapter lacks `message-edit` degrades to delete+resend rather than failing.
 
@@ -81,7 +81,7 @@ All new routes follow the existing mounting pattern: an Elysia sub-app factory i
 | WebFinger | `GET /.well-known/webfinger?resource=acct:user@host` | same (NodeInfo already lives here) | `FEAT-activitypub-federation` |
 | NodeInfo | `GET /nodeinfo/2.1` + `/.well-known/nodeinfo` | `src/routes/federation.ts` — IMPLEMENTED | — |
 | Matrix appservice registration | `PUT /_matrix/app/v1/transactions/:txnId` (inbound; caller = remote homeserver, authenticated via appservice `hs_token` in the Authorization header — default-deny, no token → 401) + client-side registration against the admin's homeserver | `src/routes/matrix.ts` (new) | `TASK-matrix-integration` |
-| Webhook ingestion | `POST /api/v1/integrations/webhooks/:adapter` (HMAC-verified, per-adapter secret; missing/invalid signature → 401, payload never processed — default-deny) | `src/routes/v1/integrations-surface.ts` (new) | `TASK-inbound-webhook-ingestion-surface-hmac-verified-default-deny` |
+| Webhook ingestion | `POST /api/v1/integrations/webhooks/:adapter` (HMAC-verified, per-adapter secret; missing/invalid signature → 401, payload never processed — default-deny) — IMPLEMENTED (`src/routes/v1/integrations-surface.ts`) | `src/routes/v1/integrations-surface.ts` | `TASK-inbound-webhook-ingestion-surface-hmac-verified-default-deny` |
 | OpenAPI/REST for external tools | `/api/v1/*` + `/api/v1/openapi.json` | `src/routes/v1/` — IMPLEMENTED (`openapi.ts`) | — |
 | MCP bridge | MCP stdio/HTTP server exposing the tool registry (stdio = local-user trust boundary, no network auth needed; HTTP variant is loopback-only or authenticated — never exposed unauthenticated) | `src/integrations/mcp/` (new) | `TASK-workspace-mcp-bridge-on-openclaw-serve-registry-pattern` |
 

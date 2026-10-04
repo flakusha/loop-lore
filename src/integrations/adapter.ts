@@ -27,6 +27,9 @@ export interface AdapterMessage {
   body: string;
   /** Send timestamp (ms since epoch). */
   timestamp: number;
+  /** Bridge-stamped loop-lore idempotency key (spec §4.3); dedup-capable
+   * adapters echo it. Absent on foreign inbound messages. */
+  idempotencyKey?: string;
 }
 
 /** Inbound message handler registered via `onMessage`. */
@@ -66,6 +69,10 @@ export interface ProtocolAdapter {
   isEncrypted(): boolean;
   /** Capability ids this adapter implements (subset of ADAPTER_CAPABILITIES). */
   capabilities(): AdapterCapability[];
+
+  /** Declare ownership of an opaque target (e.g. `@user:matrix.org`) for
+   * bridge routing (spec §2.4); absent/false means the adapter never owns it. */
+  ownsTarget?(target: string,): boolean;
 
   /** Send a message; resolves with the protocol-side message id. */
   sendMessage(target: string, message: Omit<AdapterMessage, "id" | "target">,): Promise<string>;
