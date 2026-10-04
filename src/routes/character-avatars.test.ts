@@ -636,6 +636,38 @@ describe("Authorization — resource-level (IDOR)", () => {
     expect(await res.text(),).not.toContain("secret-emotion",);
   });
 
+  test("cannot update another actor's avatar through an actor it owns (IDOR)", async () => {
+    // Caller owns OWNER but PUTs a body onto an avatar that belongs to OTHER.
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/avatars/${victimAvatarId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ emotion: "PWNED", },),
+      },),
+    );
+
+    expect(res.status,).not.toBe(200,);
+    expect(res.status,).toBe(404,);
+
+    const untouched = await avatarService.getAvatar(victimAvatarId,);
+    expect(untouched?.label,).toBe("private",);
+    expect(untouched?.tags.emotion,).toBe("secret-emotion",);
+  });
+
+  test("cannot delete another actor's avatar through an actor it owns (IDOR)", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/avatars/${victimAvatarId}`, {
+        method: "DELETE",
+      },),
+    );
+
+    expect(res.status,).not.toBe(204,);
+    expect(res.status,).toBe(404,);
+    expect(await avatarService.getAvatar(victimAvatarId,),).toBeDefined();
+  });
+
   test("can read an avatar belonging to an actor it owns", async () => {
     const own = await avatarService.createAvatar({
       actorId: OWNER,

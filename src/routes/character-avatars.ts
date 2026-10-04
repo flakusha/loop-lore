@@ -117,7 +117,18 @@ export function characterAvatarsRoutes(opts: HandlerOpts, prefix = "/api",) {
       const userId = await requireActorAccess(ctx, database,);
       if (userId instanceof Response) { return userId; }
 
-      const { avatarId, } = ctx.params;
+      const { actorId, avatarId, } = ctx.params;
+      // The avatar row carries its own actor, which requireActorAccess cannot
+      // see: without this a caller owning any actor could rewrite another
+      // user's avatar by guessing its id (IDOR).
+      const avatar = await avatarService.getAvatar(avatarId,);
+      if (!avatar || avatar.actorId !== actorId) {
+        return jsonError({
+          message: ctx.t?.("characters.avatarNotFound",) ?? "Avatar not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
+
       const { emotion, mood, } = ctx.body ?? {};
 
       await avatarService.updateAvatar(avatarId, {
@@ -149,7 +160,17 @@ export function characterAvatarsRoutes(opts: HandlerOpts, prefix = "/api",) {
       const userId = await requireActorAccess(ctx, database,);
       if (userId instanceof Response) { return userId; }
 
-      const { avatarId, } = ctx.params;
+      const { actorId, avatarId, } = ctx.params;
+      // Same IDOR as PUT: the path actor is authorized, the avatar row carries
+      // its own actor, and a guessable avatarId must not delete a stranger's row.
+      const avatar = await avatarService.getAvatar(avatarId,);
+      if (!avatar || avatar.actorId !== actorId) {
+        return jsonError({
+          message: ctx.t?.("characters.avatarNotFound",) ?? "Avatar not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
+
       await avatarService.deleteAvatar(avatarId,);
       return jsonNoContent();
     }, {
