@@ -7,7 +7,7 @@ import { rankItemPower, } from "../../story/items/balance";
 import type { ItemDefinition, ItemInstance, } from "../../story/items/types";
 import { can, } from "../../users/permissions";
 import { jsonParseOr, } from "../../utils";
-import { ErrorResponse, } from "../../validation/schemas";
+import { ErrorResponse, WorldIdParams, } from "../../validation/schemas";
 import {
   ErrorCode,
   extractAuth,
@@ -22,12 +22,7 @@ import type { AdminRouteOpts, } from "./types";
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 200;
 
-/**
- * Path params for the power-audit route. `WorldIdParams` is reused elsewhere for
- * `/worlds/:id` and constrains `id` to a uuid — world ids are not uuids, so this
- * route declares its own permissive shape.
- */
-const PowerAuditParams = t.Object({ worldId: t.String({ minLength: 1, },), },);
+/** Path params for the power-audit route; shared with `/admin/worlds/:id`. */
 
 /**
  * Parse `?limit=` into a clamped top-N. A non-numeric or non-positive value
@@ -43,7 +38,7 @@ function parseLimit(raw: string | null,): number {
 /**
  * Admin item power audit routes.
  *
- * GET /api/admin/worlds/:worldId/items/power-audit — top-N most powerful
+ * GET /api/admin/worlds/:id/items/power-audit — top-N most powerful
  * world items in a world, ranked by
  * `(maxStatDelta + sum(drift) + maxDurability)`.
  * @param opts
@@ -54,7 +49,7 @@ export function itemPowerRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-item-power", },)
       .get(
-        `${prefix}/admin/worlds/:worldId/items/power-audit`,
+        `${prefix}/admin/worlds/:id/items/power-audit`,
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -67,14 +62,7 @@ export function itemPowerRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           }
 
-          const { worldId, } = ctx.params as { worldId: string };
-          if (!worldId) {
-            return jsonError({
-              message: "worldId is required",
-              status: HttpStatus.BadRequest,
-              code: ErrorCode.BadRequest,
-            },);
-          }
+          const { id: worldId, } = ctx.params as { id: string };
 
           const url = new URL(ctx.request.url,);
           const limit = parseLimit(url.searchParams.get("limit",),);
@@ -128,7 +116,7 @@ export function itemPowerRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
           return jsonResponse({ worldId, limit, items: rankItemPower(definitionById, instances,).slice(0, limit,), },);
         },
-        { params: PowerAuditParams, response: { 200: t.Any(), 403: ErrorResponse, 400: ErrorResponse, }, },
+        { params: WorldIdParams, response: { 200: t.Any(), 403: ErrorResponse, }, },
       )
   );
 }
