@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High (planning only)
 **Effort:** Low (planning + glue tasks; no implementation in this ticket)
 **Type:** Recommendation Task
@@ -133,3 +133,5 @@ Acceptance check against ticket's own Acceptance Criteria:
 - [ ] Order-of-execution reflected in `.plan/backlog/priority.md`: NOT YET — pending.
 
 **Status verdict (2026-09-23):** Planning deliverable = DONE. Implementation tickets = open, work continues under each. This ticket closes; downstream tickets carry the rest.
+
+**Resolved:** 2026-10-04 registry-driven close: git issue d5f5cb2 (registry tip: 85842faf0 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-SEARCH-RAG-COVERAGE-BRIDGE )
