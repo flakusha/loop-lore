@@ -14,6 +14,7 @@
  */
 
 import { t, } from "elysia";
+import type { Context, } from "elysia";
 import type { Kysely, } from "kysely";
 import { resolveAutonomyLayers, } from "../../autonomy/config";
 import type { AutonomyConfigOverride, } from "../../autonomy/config/types";
@@ -62,7 +63,7 @@ const AutonomyOverrideBody = t.Object(
  */
 export async function autonomyControl(
   database: Kysely<DB>,
-  ctx: any,
+  ctx: Context,
 ) {
   const { userId, userRole, } = extractAuth(ctx,);
   const { worldId, } = ctx.params as { worldId: string };
@@ -94,7 +95,7 @@ export async function autonomyControl(
  */
 export async function setActorAutonomy(
   database: Kysely<DB>,
-  ctx: any,
+  ctx: Context,
 ) {
   const { userId, userRole, } = extractAuth(ctx,);
   const { worldId, actorId, } = ctx.params as { worldId: string; actorId: string };
@@ -108,6 +109,7 @@ export async function setActorAutonomy(
     { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
     database,
   );
+
   if (access instanceof Response) { return access; }
 
   const { autonomy, } = ctx.body as { autonomy?: AutonomyConfigOverride };
