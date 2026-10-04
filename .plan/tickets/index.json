@@ -37311,7 +37311,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-public-templates-routes.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [
       "templates",
       "routes",
