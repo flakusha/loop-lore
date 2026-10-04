@@ -1,6 +1,6 @@
 # loop-lore configuration (TOML format)
 # Supports: YAML (.yaml, .yml) or TOML (.toml)
-# Env vars override values below — see src/config/load.ts for mapping
+# Env vars override values below — see src/config/load/load.ts for mapping
 # $schema: ../schemas/loop-lore-config.toml.schema.json
 #
 # NOTE: paths below are examples for configs/ directory layout.
@@ -257,32 +257,48 @@ enabled = true
 referrerPolicy = "strict-origin-when-cross-origin"
 xContentTypeOptions = true
 xFrameOptions = "DENY"
-permissionsPolicy = "accelerometer=(), camera=(), geolocation=(), microphone=(), usb=()"
+permissionsPolicy = "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()"
+crossOriginOpenerPolicy = "same-origin"
+crossOriginEmbedderPolicy = "credentialless" # require-corp | credentialless (credentialless enables SAB/WASM threads while keeping CDN/model loads working)
+crossOriginResourcePolicy = "cross-origin"
+timingAllowOrigin = ""
+immutableHashedAssets = true
+linkPreload = ["/alpine-init.js", "/css/app.css"]
+acceptClientHints = []
+saveData = false
+earlyHints = { enabled = false }
+reportingEndpoints = {}
+# nel = null  # null = omit header (default)
 
 [headers.csp]
 enabled = true
 defaultSrc = ["'self'"]
-scriptSrc = [
-  "'self'",
-  "'unsafe-inline'",
-  "'unsafe-eval'",
-  "https://cdn.jsdelivr.net",
-] # 'unsafe-inline': Alpine.js @x directive; 'unsafe-eval': Alpine.js new Function() for expression evaluation; jsdelivr: lazy wllama/transformers ESM for browser inference
-styleSrc = ["'self'", "'unsafe-inline'"] # inline style= attrs need unsafe-inline
+scriptSrc = ["'self'", "'unsafe-eval'", "https://cdn.jsdelivr.net"]
+styleSrc = ["'self'", "'unsafe-inline'"]
 imgSrc = ["'self'", "data:", "blob:"]
 fontSrc = ["'self'"]
 connectSrc = ["'self'", "wss:", "https:"]
+workerSrc = ["'self'", "blob:"]
 objectSrc = ["'none'"]
 baseUri = ["'self'"]
 frameAncestors = ["'none'"]
+formAction = ["'self'"]
 upgradeInsecureRequests = true
-# reportOnly = false                  # true = emit Content-Security-Policy-Report-Only (observe, don't enforce)
+reportOnly = false
 
-# crossOriginEmbedderPolicy = ""      # require-corp | credentialless | "" (omit; credentialless enables SAB/WASM threads while keeping CDN/model loads working)
-# crossOriginEmbedderPolicy = ""      # require-corp | "" (omit; keep off until wasm/SAB ready)
-crossOriginResourcePolicy = "cross-origin"
-immutableHashedAssets = true
-linkPreload = ["/alpine-init.js", "/pages.js", "/css/app.css"]
-# acceptClientHints = ["Device-Memory", "RTT"]
-earlyHints = { enabled = false }
-# nel = '{ "report_to": "default", "max_age": 31536000 }'
+[headers.hsts]
+enabled = false
+maxAge = 31536000
+includeSubDomains = true
+preload = false
+
+[dynamicResponse]
+enabled = true
+minify = true
+validate = true
+compress = true
+compressAlgorithm = "auto"
+compressThreshold = 512
+
+[frontend]
+mode = "htmx"

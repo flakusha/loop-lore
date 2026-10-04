@@ -15,4 +15,4 @@ demoAutoSetup = true
 
 # Optional: JWT settings
 # jwtSecret = "generate-with-openssl-rand-hex-32"
-# jwtExpiresIn = "7d"
+# jwtExpiresIn = 86400  # integer seconds, e.g. 86400 = 24h

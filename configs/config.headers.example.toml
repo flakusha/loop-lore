@@ -6,31 +6,36 @@ enabled = true
 referrerPolicy = "strict-origin-when-cross-origin"
 xContentTypeOptions = true
 xFrameOptions = "DENY" # DENY | SAMEORIGIN
-permissionsPolicy = "camera=(), microphone=(), geolocation=()"
+permissionsPolicy = "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()"
 crossOriginOpenerPolicy = "same-origin"
 crossOriginEmbedderPolicy = "credentialless" # require-corp | credentialless (credentialless keeps CDN/model loads working)
-crossOriginResourcePolicy = "same-origin"
+crossOriginResourcePolicy = "cross-origin"
 timingAllowOrigin = ""
 immutableHashedAssets = true
+acceptClientHints = []
+saveData = false
+earlyHints = { enabled = false }
+reportingEndpoints = {}
+# nel = null  # null = omit header (default)
 
 [headers.csp]
 enabled = true
 defaultSrc = ["'self'"]
-scriptSrc = ["'self'"]
+scriptSrc = ["'self'", "'unsafe-eval'", "https://cdn.jsdelivr.net"]
 styleSrc = ["'self'", "'unsafe-inline'"]
 imgSrc = ["'self'", "data:", "blob:"]
 fontSrc = ["'self'"]
 connectSrc = ["'self'", "wss:", "https:"]
+workerSrc = ["'self'", "blob:"]
 objectSrc = ["'none'"]
 baseUri = ["'self'"]
 frameAncestors = ["'none'"]
+formAction = ["'self'"]
 upgradeInsecureRequests = true
+reportOnly = false
 
-# Optional: client hints and early hints
-# acceptClientHints = ["sec-ch-ua", "sec-ch-ua-platform"]
-# saveData = true
-# earlyHints = { enabled = false }
-
-# Optional: reporting
-# reportingEndpoints = { csp = "/report/csp" }
-# nel = { enabled = false, reportTo = "default" }
+[headers.hsts]
+enabled = false
+maxAge = 31536000
+includeSubDomains = true
+preload = false

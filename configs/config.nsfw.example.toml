@@ -4,7 +4,7 @@
 [nsfw]
 allowNsfw = true
 nsfwMinAge = 18
-defaultNsfwScope = "none" # none | user | session | global
+defaultNsfwScope = "chat" # chat | user | world
 consentRequired = true
 auditLogging = false
 useLlmClassifier = true # LLM safety filter for extreme content — on by default
