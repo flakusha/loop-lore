@@ -18,16 +18,18 @@ globalThis.__ = function(key: string, fallback?: string,): string {
  * Client-side translator used by Alpine components.
  *
  * Resolves a dot-notation key against the server-injected `__localeStrings`
- * map and interpolates `{param}` placeholders. Falls back to the key itself
- * when the catalog is empty (e.g. in unit tests without locale setup), which
- * keeps components renderable while still surfacing missing keys.
+ * map and interpolates `{param}` placeholders. A numeric `params.count` also
+ * drives plural-variant selection, matching the server translator. Falls back to
+ * the key itself when the catalog is empty (e.g. in unit tests without locale
+ * setup), which keeps components renderable while still surfacing missing keys.
  * @param key
  * @param params
  * @returns {string}
  */
-export function t(key: string, params?: Record<string, string>,): string {
+export function t(key: string, params?: Record<string, string | number>,): string {
   const map = (globalThis.__localeStrings ?? {}) as TranslationMap;
-  const value = resolveKey(map, key,);
+  const count = typeof params?.count === "number" ? params.count : undefined;
+  const value = resolveKey(map, key, count,);
   if (value === undefined) { return key; }
   return params ? interpolate(value, params,) : value;
 }

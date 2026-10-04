@@ -8,29 +8,12 @@
  * Supports nested key lookup, plural selection, interpolation, and fallback chains.
  */
 
-import { pluralRuleFor, } from "./plurals";
+// `isPluralNode` + `selectVariant` are shared with the browser-side resolver in
+// `src/frontend/i18n.ts` — both import them from here (see `src/i18n/plurals.ts`)
+// so the server and the browser can never disagree about which node is plural.
+import { isPluralNode, pluralRuleFor, selectVariant, } from "./plurals";
 import type { PluralRuleFn, } from "./plurals";
 import type { FlatTranslationMap, Locale, TranslationMap, TranslationNode, TranslatorFn, } from "./types";
-
-/** Every CLDR plural category `Intl.PluralRules.select` can return. */
-const PLURAL_CATEGORIES: Record<string, true> = {
-  zero: true,
-  one: true,
-  two: true,
-  few: true,
-  many: true,
-  other: true,
-};
-
-/**
- * A node is plural-variant data when every one of its keys is a CLDR category.
- * Requiring ALL keys keeps a plain enumeration containing `other` a normal subtree.
- */
-function isPluralNode(node: TranslationNode | TranslationMap,): node is Exclude<TranslationNode, string> {
-  if (typeof node !== "object" || node === null) { return false; }
-  const keys = Object.keys(node,);
-  return keys.length > 0 && keys.every((key,) => PLURAL_CATEGORIES[key] === true);
-}
 
 /**
  * Flatten a nested translation map into dot-notation keys.
@@ -58,19 +41,6 @@ export function flattenTranslations(map: TranslationMap,): FlatTranslationMap {
 
   walk(map, prefix,);
   return flat;
-}
-
-/**
- * Pick the variant for `category` from a plural node.
- * Falls back to `other` when the selected category is absent from the catalog.
- */
-function selectVariant(
-  variants: Exclude<TranslationNode, string>,
-  category: string,
-): string {
-  const selected = variants[category as keyof typeof variants];
-  if (typeof selected === "string") { return selected; }
-  return variants.other;
 }
 
 /** Options for {@link resolveKey}. */
