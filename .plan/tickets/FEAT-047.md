@@ -1,6 +1,6 @@
 ---
 title: "FEAT-047: Branch UI controls"
-status: Not Started
+status: Done
 priority: medium
 labels: [feature, chat, frontend]
 epic: epic-conversation-branching
@@ -8,7 +8,7 @@ related: [FEAT-045, FEAT-046]
 ---
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -58,3 +58,5 @@ The backend (FEAT-045 + FEAT-046) provides branching data and API. Users need an
 
 - Blocked by: FEAT-045 (data model), FEAT-046 (API)
 - Blocks: nothing
+
+**Resolved:** 2026-10-04 registry-driven close: git issue e9da913 (registry tip: 2d7e9b0fb Konstantin Fedotov Auto-closed: appended .md marker marks FEAT-047 done)
