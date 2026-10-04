@@ -40,6 +40,7 @@ function isoIn(minutes: number,): string {
 function alwaysQuietWindow(now: Date,): { start: string; end: string } {
   const hhmm = (d: Date,): string =>
     `${String(d.getHours(),).padStart(2, "0",)}:${String(d.getMinutes(),).padStart(2, "0",)}`;
+
   const start = new Date(now.getTime() - 60 * MINUTE,);
   const end = new Date(now.getTime() + 60 * MINUTE,);
   return { start: hhmm(start,), end: hhmm(end,), };
@@ -69,6 +70,7 @@ describe("dispatchDue — scheduled messages", () => {
       body: opts.body,
       sendAt: isoIn(opts.minutes,),
     },);
+
     if (!("ok" in result)) { throw new Error(`park failed: ${result.message}`,); }
     return result.scheduled.id;
   }
@@ -81,6 +83,7 @@ describe("dispatchDue — scheduled messages", () => {
       .where("chat_id", "=", chatId,)
       .where("content", "=", body,)
       .execute();
+
     return rows.length;
   }
 
@@ -95,6 +98,7 @@ describe("dispatchDue — scheduled messages", () => {
       .selectFrom("scheduled_messages",)
       .select("status",)
       .executeTakeFirst();
+
     expect(row?.status,).toBe("sent",);
   });
 
@@ -109,6 +113,7 @@ describe("dispatchDue — scheduled messages", () => {
       .selectFrom("scheduled_messages",)
       .select("status",)
       .executeTakeFirst();
+
     expect(row?.status,).toBe("pending",);
   });
 
@@ -145,6 +150,7 @@ describe("dispatchDue — scheduled messages", () => {
       .selectFrom("scheduled_messages",)
       .select("status",)
       .executeTakeFirst();
+
     expect(stillPending?.status,).toBe("pending",);
 
     // One minute past the window's end the same row goes out.
@@ -198,6 +204,7 @@ describe("dispatchDue — scheduled messages", () => {
       .select("status",)
       .where("id", "=", rowId,)
       .executeTakeFirst();
+
     expect(row?.status,).toBe("sent",);
   });
 });
@@ -230,6 +237,7 @@ describe("dispatchDue — per-row failure isolation", () => {
       body,
       sendAt: isoIn(minutes,),
     },);
+
     if (!("ok" in result)) { throw new Error(`park failed: ${result.message}`,); }
     return result.scheduled.id;
   }
@@ -254,6 +262,7 @@ describe("dispatchDue — per-row failure isolation", () => {
       .select("content",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(delivered.map((m,) => m.content),).toEqual(["healthy",],);
 
     // The failed row is still pending — retried next tick, never dropped,
@@ -262,6 +271,7 @@ describe("dispatchDue — per-row failure isolation", () => {
       .selectFrom("scheduled_messages",)
       .select(["id", "status",],)
       .execute();
+
     expect(statuses.find((r,) => r.id === poisonId)?.status,).toBe("pending",);
     expect(statuses.find((r,) => r.id === healthyId)?.status,).toBe("sent",);
   });
@@ -293,6 +303,7 @@ describe("dispatchDue — reminders", () => {
       .select("id",)
       .where("user_id", "=", userId,)
       .execute();
+
     return rows.length;
   }
 
@@ -358,6 +369,7 @@ describe("dispatchDue — at-rest encryption", () => {
       compressThreshold: 1024,
       compressAlgorithm: "gzip",
     },);
+
     try {
       const parked = await scheduleMessage(db, {
         chatId,
@@ -365,6 +377,7 @@ describe("dispatchDue — at-rest encryption", () => {
         body: "the launch codes are here",
         sendAt: new Date(Date.now() - 60_000,).toISOString(),
       },);
+
       if (!("ok" in parked)) { throw new Error(`park failed: ${parked.message}`,); }
 
       const summary = await dispatchDue(db, testConfig,);
@@ -397,6 +410,7 @@ describe("dispatchDue — at-rest encryption", () => {
       body: "nothing secret",
       sendAt: new Date(Date.now() - 60_000,).toISOString(),
     },);
+
     if (!("ok" in parked)) { throw new Error(`park failed: ${parked.message}`,); }
 
     const summary = await dispatchDue(db, testConfig,);
@@ -407,6 +421,7 @@ describe("dispatchDue — at-rest encryption", () => {
       .select(["content", "key_id",],)
       .where("chat_id", "=", plainChat,)
       .executeTakeFirst();
+
     expect(row?.content,).toBe("nothing secret",);
     expect(row?.key_id,).toBeNull();
   });

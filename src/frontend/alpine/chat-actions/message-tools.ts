@@ -24,6 +24,7 @@ export const messageTools: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
       return;
     }
+
     const targetChatId = prompt(t("chats.forwardTargetPrompt",),)?.trim() ?? "";
     if (!targetChatId) { return; }
     try {
@@ -33,6 +34,7 @@ export const messageTools: Partial<ChatState> & ThisType<ChatState> = {
         body: jsonBody({ targetChatId, },),
         idempotencyKey: true,
       },);
+
       if (res.ok) {
         const body = await res.json() as { droppedAttachments?: number };
         this.$dispatch?.("show-toast", {
@@ -68,6 +70,7 @@ export const messageTools: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ action, },),
       },);
+
       if (res.ok) {
         const body = await res.json() as { result?: string };
         this.$dispatch?.("show-toast", {

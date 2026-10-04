@@ -53,9 +53,11 @@ function buildHost(overrides?: Partial<Host>,): Host {
     ...schedulingActions,
     ...overrides,
   } as Host;
+
   host.$dispatch = (event, detail,) => {
     if (event === "show-toast") { host.toasts.push(detail as Toast,); }
   };
+
   return host;
 }
 
@@ -65,6 +67,7 @@ function withDraft(value: string,): void {
   const stub = {
     querySelector: (sel: string,): unknown => (sel === "[data-testid=message-input]" ? el : null),
   };
+
   Object.defineProperty(globalThis, "document", { value: stub, configurable: true, writable: true, },);
 }
 
@@ -152,8 +155,10 @@ describeOrSkip("schedule picker", () => {
       if (opts?.method === "POST") {
         return Response.json({ data: { id: "s1", }, }, { status: 201, },);
       }
+
       return Response.json({ data: [{ id: "s1", },], },);
     };
+
     const h = buildHost({ _scheduleAt: "2026-10-03T14:30", _scheduleOpen: true, },);
 
     await h.scheduleDraft!();
@@ -187,6 +192,7 @@ describeOrSkip("schedule picker", () => {
     handler = () => {
       throw new Error("offline",);
     };
+
     const h = buildHost({ _scheduleAt: "2026-10-03T14:30", },);
 
     await h.scheduleDraft!();
@@ -214,6 +220,7 @@ describeOrSkip("scheduled list + cancel", () => {
     handler = () => {
       throw new Error("offline",);
     };
+
     const h = buildHost();
     await h.loadScheduled!();
     expect(h._scheduled,).toEqual([],);
@@ -230,6 +237,7 @@ describeOrSkip("scheduled list + cancel", () => {
       if (opts?.method === "DELETE") { return Response.json({ ok: true, },); }
       return Response.json({ data: [], },);
     };
+
     const h = buildHost({ _scheduled: [{ id: "s1", },], },);
 
     await h.cancelScheduled!("s1",);
@@ -253,6 +261,7 @@ describeOrSkip("scheduled list + cancel", () => {
     handler = () => {
       throw new Error("offline",);
     };
+
     const h = buildHost();
     await h.cancelScheduled!("s1",);
     expect(calls.length,).toBe(1,);
@@ -282,8 +291,10 @@ describeOrSkip("reminder ladder", () => {
       if (opts?.method === "POST") {
         return Response.json({ data: { id: "r1", }, }, { status: 201, },);
       }
+
       return Response.json({ data: [{ id: "r1", },], },);
     };
+
     const h = buildHost();
     h.openReminderPicker!("msg-1",);
 
@@ -311,6 +322,7 @@ describeOrSkip("reminder ladder", () => {
     handler = () => {
       throw new Error("offline",);
     };
+
     const h = buildHost();
     h.openReminderPicker!("msg-1",);
 
@@ -340,6 +352,7 @@ describeOrSkip("reminder ladder", () => {
     handler = () => {
       throw new Error("offline",);
     };
+
     const h = buildHost();
     await h.loadReminders!();
     expect(h._reminders,).toEqual([],);
@@ -350,6 +363,7 @@ describeOrSkip("reminder ladder", () => {
       if (opts?.method === "DELETE") { return Response.json({ ok: true, },); }
       return Response.json({ data: [], },);
     };
+
     const h = buildHost({ activeChat: null, },);
 
     await h.cancelReminder!("r1",);
@@ -363,6 +377,7 @@ describeOrSkip("reminder ladder", () => {
       if (opts?.method === "DELETE") { return Response.json({ ok: true, },); }
       return Response.json({ data: [], },);
     };
+
     const h = buildHost({ _reminders: [{ id: "r1", },], },);
 
     await h.cancelReminder!("r1",);
@@ -384,6 +399,7 @@ describeOrSkip("reminder ladder", () => {
     handler = () => {
       throw new Error("offline",);
     };
+
     const h = buildHost();
     await h.cancelReminder!("r1",);
     expect(calls.length,).toBe(1,);

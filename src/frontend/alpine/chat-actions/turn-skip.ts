@@ -66,6 +66,7 @@ export const turnSkipActions: Partial<TurnSkipState> & ThisType<TurnSkipCtx> = {
           body: jsonBody({ mode, },),
         } as Parameters<typeof apiFetch>[1],
       );
+
       // apiFetch resolves only 2xx — non-2xx reject into the catch below.
       const data = await res.json().catch(() => null) as { deduped?: boolean } | null;
       log.info("turn-skip recorded", { mode, deduped: data?.deduped === true, },);
@@ -73,6 +74,7 @@ export const turnSkipActions: Partial<TurnSkipState> & ThisType<TurnSkipCtx> = {
         type: "success",
         message: mode === "advance" ? t("turnSkip.skippedAdvance",) : t("turnSkip.skipped",),
       },);
+
       await this.loadMessages();
     } catch (error) {
       // feFetch rejects non-2xx with the status attached; the response body

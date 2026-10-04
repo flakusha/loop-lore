@@ -59,6 +59,7 @@ export function scheduledRoutes(opts: ScheduledRouteOpts, prefix = "/api",) {
           body,
           sendAt,
         },);
+
         if (!("ok" in result)) { return scheduledError(result,); }
         return jsonResponse(result.scheduled, HttpStatus.Created,);
       },),
@@ -100,6 +101,7 @@ export function scheduledRoutes(opts: ScheduledRouteOpts, prefix = "/api",) {
           id: scheduledId,
           requesterId: caller.userId,
         },);
+
         return respond(result,);
       },),
       {
@@ -124,6 +126,7 @@ export function scheduledRoutes(opts: ScheduledRouteOpts, prefix = "/api",) {
           .select("chat_id",)
           .where("id", "=", messageId,)
           .executeTakeFirst();
+
         if (!message) { return notFound("Message not found",); }
         const access = await requireChatAccess(database, ctx, message.chat_id,);
         if (access instanceof Response) { return access; }
@@ -133,6 +136,7 @@ export function scheduledRoutes(opts: ScheduledRouteOpts, prefix = "/api",) {
           userId: access.userId,
           remindAt,
         },);
+
         if (!("ok" in result)) { return scheduledError(result,); }
         return jsonResponse(result.reminder, HttpStatus.Created,);
       },
@@ -171,6 +175,7 @@ export function scheduledRoutes(opts: ScheduledRouteOpts, prefix = "/api",) {
           id: ctx.params.id,
           userId: auth.userId,
         },);
+
         return respond(result,);
       },
       {

@@ -69,29 +69,35 @@ export const promptAnalyzeActions: Partial<AnalyzeCtx> & ThisType<AnalyzeCtx> = 
           suggestions: [local.content,],
           confidence: 0,
         };
+
         log.debug("Prompt analyzed locally, server bypassed", { engine: local.engine, },);
         this.$dispatch?.("show-toast", { type: "success", message: `${t("analyze.ready",)}: ${local.content}`, },);
         return;
       }
+
       const result = await requestPrompt({
         mode: "analyze",
         text,
         chatId: this.activeChat,
       },);
+
       if (!result.ok) {
         const message = result.injectionBlocked
           ? t("toasts.promptInjectionBlocked",)
           : result.status === 503
           ? t("analyze.unavailable",)
           : result.message ?? t("analyze.failed",);
+
         this.$dispatch?.("show-toast", { type: "error", message, },);
         return;
       }
+
       const analysis: unknown = (result.data as { analysis?: unknown } | undefined)?.analysis;
       if (!isAnalysisProfile(analysis,)) {
         this.$dispatch?.("show-toast", { type: "error", message: t("analyze.failed",), },);
         return;
       }
+
       // Display-only: the draft stays untouched; the panel reads this state.
       this._promptAnalysis = analysis;
       const detail = analysis.suggestions[0] ?? analysis.issues[0] ?? "";

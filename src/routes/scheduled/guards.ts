@@ -41,6 +41,7 @@ export function scheduledError(error: ServiceError,): Response {
   if (error.code === "bad_request") {
     return jsonError({ message: error.message, status: HttpStatus.BadRequest, },);
   }
+
   return notFound(error.message,);
 }
 

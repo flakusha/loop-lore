@@ -64,6 +64,7 @@ async function chatIsQuiet(
     .select(["quiet_hours_start", "quiet_hours_end",],)
     .where("chat_id", "=", chatId,)
     .execute();
+
   return rows.some((r,) => isInQuietHours(r.quiet_hours_start, r.quiet_hours_end, now,));
 }
 
@@ -105,6 +106,7 @@ export async function dispatchDue(
       summary.held += 1;
       continue;
     }
+
     // Per-row isolation: a throw here (undecryptable body, actor row deleted
     // mid-flight, encryption misconfig) must not abort the pass. Rows are
     // selected send_at ASC, so an uncaught throw would put the same row first
@@ -119,6 +121,7 @@ export async function dispatchDue(
         await markScheduledSent(database, row.id,);
         continue;
       }
+
       // The author IS the message's actor: the parked body was written by the
       // same user who will appear as the speaker when it lands. Storage runs
       // through prepareContentStorage so a chat with encryptAtRest persists an
@@ -130,6 +133,7 @@ export async function dispatchDue(
         row.author_id,
         row.body,
       );
+
       await insertUserMessageWithRetry(database, {
         id: crypto.randomUUID(),
         chatId: row.chat_id,
@@ -141,6 +145,7 @@ export async function dispatchDue(
         contentEncoding: stored.contentEncoding,
         idempotencyKey: key,
       },);
+
       await markScheduledSent(database, row.id,);
       summary.sent += 1;
     } catch (err) {
@@ -171,6 +176,7 @@ export async function dispatchDue(
         link: `/views/chat?chatid=${encodeURIComponent(reminder.chat_id,)}`,
         data: { messageId: reminder.message_id, chatId: reminder.chat_id, },
       },);
+
       summary.reminded += 1;
     } catch (err) {
       // The row is already deleted, so this one is dropped, not retried —
@@ -187,5 +193,6 @@ export async function dispatchDue(
   if (summary.sent > 0 || summary.held > 0 || summary.reminded > 0 || summary.failed > 0) {
     log.info("scheduled dispatch complete", { ...summary, },);
   }
+
   return summary;
 }

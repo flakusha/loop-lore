@@ -55,6 +55,7 @@ export async function scheduleMessage(
   if (body.length === 0) {
     return { code: "bad_request", message: "Message body cannot be empty", };
   }
+
   const sendAt = toDate(params.sendAt,);
   if (Number.isNaN(sendAt.getTime(),)) {
     return { code: "bad_request", message: "sendAt must be a valid ISO-8601 instant", };
@@ -103,6 +104,7 @@ export async function listScheduledMessages(
     .where("chat_id", "=", chatId,)
     .orderBy("send_at", "asc",)
     .execute() as ScheduledRow[];
+
   return rows.map(toRecord,);
 }
 
@@ -138,6 +140,7 @@ export async function cancelScheduledMessage(
   if (row.author_id !== opts.requesterId) {
     return { code: "forbidden", message: "Not the author of this scheduled message", };
   }
+
   if (row.status !== ScheduledStatus.Pending) { return { ok: true, canceled: false, }; }
 
   await database
@@ -146,6 +149,7 @@ export async function cancelScheduledMessage(
     .where("id", "=", opts.id,)
     .where("chat_id", "=", opts.chatId,)
     .execute();
+
   return { ok: true, canceled: true, };
 }
 
@@ -167,6 +171,7 @@ export async function selectDueScheduledMessages(
     .where("send_at", "<=", now.toISOString(),)
     .orderBy("send_at", "asc",)
     .execute();
+
   return rows as ScheduledRow[];
 }
 
