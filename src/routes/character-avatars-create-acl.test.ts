@@ -58,9 +58,11 @@ describe("POST /actors/:actorId/avatars (asset owner gate)", () => {
       owner_id: ATTACKER_USER,
       user_id: ATTACKER_USER,
     },);
+
     await insertAssets(db, VICTIM_USER, "victim.png", "image/png", "image", 1024, "/victim.png", {
       id: VICTIM_ASSET as never,
     },);
+
     await insertAssets(db, ATTACKER_USER, "own.png", "image/png", "image", 1024, "/own.png", {
       id: OWN_ASSET as never,
     },);
@@ -68,7 +70,9 @@ describe("POST /actors/:actorId/avatars (asset owner gate)", () => {
 
   afterAll(async () => {
     // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
-    // destroy() throws a TypeError here that MASKS the real setup error.
+    // destroy() throws a TypeError that bun reports as an EXTRA spurious
+    // failure alongside the real setup error. Exit status is unchanged; this
+    // removes the noise, it does not hide anything.
     if (!db) { return; }
     await db.destroy();
     sqlite.close();
