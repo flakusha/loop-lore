@@ -10,6 +10,9 @@
 **Type:** Feature Ticket
 **Tags:** persona, impersonation, lifecycle, contract
 **Epic:** epic-impersonation
+**Summary:** See ## Summary below.
+**Context:** See ## Context below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 

@@ -9,6 +9,9 @@
 **Type:** Feature Ticket
 **Tags:** context, token-budget, lossless, lossy, prompt
 **Epic:** epic-chat-context-optimization
+**Summary:** See ## Summary below.
+**Context:** See ## Context below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 
