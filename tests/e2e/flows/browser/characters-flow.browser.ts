@@ -3,7 +3,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { trackPageErrors, } from "../../helpers/htmx-alpine";
+import { EXPECTED_404_NOISE_ALLOWLIST, trackPageErrors, } from "../../helpers/htmx-alpine";
 import { SEED, } from "../../helpers/seed";
 
 describe("Characters flow E2E", () => {
@@ -209,7 +209,11 @@ describe("Characters flow E2E", () => {
 
     test("start chat button in detail modal redirects to chat", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
+      // The chat view fetches /api/v1/chats/:id/game-state, which 404s by
+      // design until the chat has an extracted state (the client handles it).
+      // Allow that expected noise — a bare trackPageErrors tripped on it
+      // intermittently when the canvas fetch lost the race against teardown.
+      const errors = trackPageErrors(page, { allowlist: EXPECTED_404_NOISE_ALLOWLIST, },);
       try {
         await gotoCharacters(page,);
         await page.locator("[data-testid='character-grid']",).waitFor({ state: "attached", timeout: 15_000, },);
