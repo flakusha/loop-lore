@@ -1123,7 +1123,7 @@ Total tickets: **3181** — untagged: **2674** — unbound to epic: **1621**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2674 | 1085 | 59 | 1238 | 36 | 0 | 256 |
+| (untagged) | 2674 | 1086 | 59 | 1237 | 36 | 0 | 256 |
 
 ## By epic × status
 
@@ -1458,7 +1458,7 @@ Total tickets: **3181** — untagged: **2674** — unbound to epic: **1621**
 | epic-quests-encounters | 6 | 4 | 0 | 1 | 1 | 0 | 0 |
 | epic-quests-encounters.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-rag-assets-unified-storage-and-assistant-flows | 4 | 1 | 0 | 2 | 0 | 0 | 1 |
-| epic-rag-assets-unified-storage-and-assistant-flows.md (recommended as bridge) + epic-rag-document-processing.md (core) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| epic-rag-assets-unified-storage-and-assistant-flows.md (recommended as bridge) + epic-rag-document-processing.md (core) | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-rag-context-sources.md (extends `TASK-rag-search-providers.md`, `TASK-rag-search-robots-quota.md`) | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | epic-rag-context-sources.md (extends `TASK-rag-search-providers.md`) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-rag-document-processing.md | 15 | 2 | 1 | 12 | 0 | 0 | 0 |
