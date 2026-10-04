@@ -20,7 +20,7 @@ Shipped:
   (disease↔weather, disease↔nsfw; e.g. waterborne spread, STDs, pregnancy complications).
 - **Shared status-effect model:** `src/battle/integration-schemas/status.ts` — `StatusEffectType`
   (shared by RPG, Magic, Disease, Social).
-- **State layers:** `src/rpg/player-state-layers.ts` — disease owns the `PhysicalState` layer.
+- **State layers:** `src/rpg/integration-registry/player-state-layers.ts` — disease owns the `PhysicalState` layer.
 - **Reproduction hook:** `src/rpg/reproduction/index.ts` emits `disease.reproductive_complication`
   status rows.
 - **Antidote item:** `src/rpg/loot/templates.ts` — `Antidote` with
@@ -42,7 +42,7 @@ Open (owner epic, Not Started):
 
 - `src/rpg/integration-registry/edges/disease.ts` — weather/nsfw edges.
 - `src/battle/integration-schemas/status.ts` — shared status-effect type.
-- `src/rpg/player-state-layers.ts` — `PhysicalState` layer.
+- `src/rpg/integration-registry/player-state-layers.ts` — `PhysicalState` layer.
 - `src/rpg/loot/templates.ts` — antidote consumable.
 
 ## Related Epics
