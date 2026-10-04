@@ -103,6 +103,34 @@ describe("signDkim", () => {
     expect(result,).toEqual(signFixture(),);
   });
 
+  test("duplicate h= names sign occurrences back-to-front", () => {
+    const result = signDkim({
+      ...FIXTURE,
+      signHeaders: ["from", "from", "to", "subject",],
+      headers: [...FIXTURE.headers, "From: Bob <bob@sender.example>",],
+    },);
+
+    if (!result.ok) { throw new Error(result.message,); }
+    const bh = createHash("sha256",).update(RELAXED_BODY,).digest("base64",);
+    const unsigned = `v=1; a=${DKIM_ALGORITHM}; c=${DKIM_CANONICALIZATION}; d=sender.example;` +
+      ` s=test; t=1700000000; h=from:from:to:subject; bh=${bh}; b=`;
+
+    expect(result.headerValue.startsWith(unsigned,),).toBe(true,);
+    const signature = result.headerValue.slice(unsigned.length,);
+    const verify = (data: string,) => createVerify("RSA-SHA256",).update(data,).verify(publicKey, signature, "base64",);
+
+    // First h= entry signs Bob (last instance), second walks back to Alice.
+    const data = "from:Bob <bob@sender.example>\r\nfrom:Alice <alice@sender.example>\r\n" +
+      `to:user@loop.example\r\nsubject:Hello world\r\ndkim-signature:${unsigned}`;
+
+    expect(verify(data,),).toBe(true,);
+
+    const reversed = "from:Alice <alice@sender.example>\r\nfrom:Bob <bob@sender.example>\r\n" +
+      `to:user@loop.example\r\nsubject:Hello world\r\ndkim-signature:${unsigned}`;
+
+    expect(verify(reversed,),).toBe(false,);
+  });
+
   test("an unusable key returns a typed invalid_key failure", () => {
     const result = signDkim({ ...FIXTURE, privateKeyPem: "not a key", },);
     expect(result.ok,).toBe(false,);
