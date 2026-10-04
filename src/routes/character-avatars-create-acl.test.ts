@@ -17,6 +17,12 @@
  *
  * The PUT/DELETE `:avatarId` routes share the sibling gap but are fixed on a
  * separate branch (`fix-avatar-idor`); this file deliberately covers only POST.
+ *
+ * Resource contract (parallel-safe): owns ONE `:memory:` SQLite from
+ * createTestDb, created in beforeAll and released in afterAll by a teardown
+ * guarded against a failed beforeAll. Fixture ids are file-local constants
+ * over a private DB, so they collide with nothing. No fixed file path, no
+ * port, no process-global, no ordering dependence.
  */
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -61,6 +67,9 @@ describe("POST /actors/:actorId/avatars (asset owner gate)", () => {
   },);
 
   afterAll(async () => {
+    // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
+    // destroy() throws a TypeError here that MASKS the real setup error.
+    if (!db) { return; }
     await db.destroy();
     sqlite.close();
   },);

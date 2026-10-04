@@ -12,6 +12,13 @@
  * Each test covers the denial (outsider gets nothing) and the positive path
  * (the owner still reads their own graph), because a guard that also blocks the
  * owner is not a fix.
+ *
+ * Resource contract (parallel-safe): PER-TEST resources, not per-file. Every
+ * test seeds its OWN `:memory:` SQLite plus its OWN mkdtemp upload dir and
+ * releases both in a `finally`, so a failing test cannot poison the next one.
+ * User/actor ids are randomUUID and asset paths are uid-derived, so nothing is
+ * fixed and nothing is shared. No port, no process-global, no ordering
+ * dependence.
  */
 import { describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";

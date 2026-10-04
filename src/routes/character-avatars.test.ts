@@ -1,5 +1,12 @@
 /**
  * Tests for character avatar routes — CRUD, selection, and config.
+ *
+ * Resource contract (parallel-safe): each of the seven DB-backed describes owns
+ * its OWN `:memory:` SQLite from createTestDb, created in that describe's
+ * beforeAll and released in its afterAll by a teardown guarded against a
+ * failed beforeAll. Fixture ids repeat across describes on purpose and are
+ * still safe: every describe has a private DB. No fixed file path, no port, no
+ * process-global, no ordering dependence.
  */
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -86,6 +93,9 @@ describe("Avatar CRUD — owner", () => {
   },);
 
   afterAll(async () => {
+    // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
+    // destroy() throws a TypeError here that MASKS the real setup error.
+    if (!db) { return; }
     await db.destroy();
     sqlite.close();
   },);
@@ -188,6 +198,9 @@ describe("Avatar CRUD — admin/solo bypass", () => {
   },);
 
   afterAll(async () => {
+    // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
+    // destroy() throws a TypeError here that MASKS the real setup error.
+    if (!db) { return; }
     await db.destroy();
     sqlite.close();
   },);
@@ -262,6 +275,9 @@ describe("Avatar config", () => {
   },);
 
   afterAll(async () => {
+    // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
+    // destroy() throws a TypeError here that MASKS the real setup error.
+    if (!db) { return; }
     await db.destroy();
     sqlite.close();
   },);
@@ -329,6 +345,9 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
   },);
 
   afterAll(async () => {
+    // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
+    // destroy() throws a TypeError here that MASKS the real setup error.
+    if (!db) { return; }
     await db.destroy();
     sqlite.close();
   },);
@@ -502,6 +521,9 @@ describe("Prefix parameterisation", () => {
   },);
 
   afterAll(async () => {
+    // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
+    // destroy() throws a TypeError here that MASKS the real setup error.
+    if (!db) { return; }
     await db.destroy();
     sqlite.close();
   },);
@@ -582,6 +604,9 @@ describe("Authorization — resource-level (IDOR)", () => {
   },);
 
   afterAll(async () => {
+    // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
+    // destroy() throws a TypeError here that MASKS the real setup error.
+    if (!db) { return; }
     await db.destroy();
     sqlite.close();
   },);
@@ -724,6 +749,9 @@ describe("Avatar select, update, delete", () => {
   },);
 
   afterAll(async () => {
+    // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
+    // destroy() throws a TypeError here that MASKS the real setup error.
+    if (!db) { return; }
     await db.destroy();
     sqlite.close();
   },);
