@@ -287,7 +287,7 @@ function generateDomainFiles(tables: Map<string, Record<string, ColumnDef>>,): v
 
     // Check if any table in this domain uses AuditColumns
     const usesAudit = [...domainTables.values(),].some(cols =>
-      ["created_at", "updated_at", "data_version", "record_hash",].every(c => c in cols,)
+      ["created_at", "updated_at", "data_version", "record_hash",].every(c => c in cols)
     );
     if (usesAudit) {
       lines.push(`import type { AuditColumns, } from "./schema-audit";`,);
@@ -301,35 +301,11 @@ function generateDomainFiles(tables: Map<string, Record<string, ColumnDef>>,): v
 
       // Check if this table has all 4 audit columns — if so, use shared type
       const auditCols = ["created_at", "updated_at", "data_version", "record_hash",];
-      const hasAllAudit = auditCols.every(c => c in cols,);
+      const hasAllAudit = auditCols.every(c => c in cols);
       if (hasAllAudit) {
         lines.push(`export interface ${interfaceName} extends AuditColumns {`,);
       } else {
         lines.push(`export interface ${interfaceName} {`,);
-      }
-
-      for (const [colName, colDef,] of Object.entries(cols,)) {
-        if (hasAllAudit && auditCols.includes(colName,)) { continue; }
-        const type = tsType(colDef, name, colName,);
-        lines.push(`  ${colName}: ${type};`,);
-      }
-
-      lines.push(`}`,);
-      lines.push(``,);
-    }
-
-    lines.push(``,);
-
-    for (const [name, cols,] of domainTables) {
-      const interfaceName = pascalCase(name,);
-      lines.push(`// ── ${name} ────────────────────────────────────────────`,);
-      lines.push(`export interface ${interfaceName} {`,);
-
-      // Check if this table has all 4 audit columns — if so, use shared type
-      const auditCols = ["created_at", "updated_at", "data_version", "record_hash",];
-      const hasAllAudit = auditCols.every(c => c in cols,);
-      if (hasAllAudit) {
-        lines.push(`  ...AuditColumns;`,);
       }
 
       for (const [colName, colDef,] of Object.entries(cols,)) {
