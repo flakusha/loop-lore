@@ -202,6 +202,6 @@ export interface RecipeDiscoveries {
   discovery_method: DiscoveryMethod;
   discovered_at: string;
   mastery_level: Generated<number>;
-  created_at: Generated<string>;
+  created_at: string | null;
   updated_at: string | null;
 }

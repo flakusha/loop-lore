@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 032_hot_path_indexes
+ * 035_hot_path_indexes
  *
  * Read-path index sweep from the DB field-audit (2026-09-25). Every index
  * here accelerates a lookup the schema already implies via existing columns;
