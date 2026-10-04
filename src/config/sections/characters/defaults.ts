@@ -4,7 +4,7 @@
 
 import type { CharacterTemplate, } from "./types.js";
 
-export const CHARACTERS_DEFAULTS: { enabled: boolean; templates: CharacterTemplate[]; } = {
+export const CHARACTERS_DEFAULTS: { enabled: boolean; templates: CharacterTemplate[] } = {
   enabled: true,
   templates: [
     // ── Starter Trio ────────────────────────────────────────
@@ -262,4 +262,4 @@ export const CHARACTERS_DEFAULTS: { enabled: boolean; templates: CharacterTempla
       is_default: true,
     },
   ],
-} satisfies { enabled: boolean; templates: CharacterTemplate[]; };
+} satisfies { enabled: boolean; templates: CharacterTemplate[] };
