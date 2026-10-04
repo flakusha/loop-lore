@@ -25,13 +25,15 @@ export const EMAIL_ADAPTER_NAME = "email";
 /** Domain used for synthesized Message-IDs when none is available. */
 export const EMAIL_SYNTHETIC_DOMAIN = "loop-lore.local";
 
-/** Typed adapter failure (spec §10); `not_configured` is the unconfigured
- * case — zero transport, zero address — never a crash. */
+/** Typed adapter failures (spec §10): `not_configured` is the unconfigured
+ * case — zero transport, zero address, ingest before connect — never a
+ * crash; `invalid_recipient` is an envelope with no usable loop-lore
+ * recipient in To/Cc. */
 export class EmailAdapterError extends Error {
   /** Failure kind. */
-  readonly code: "not_configured";
+  readonly code: "not_configured" | "invalid_recipient";
 
-  constructor(code: "not_configured", message: string,) {
+  constructor(code: "not_configured" | "invalid_recipient", message: string,) {
     super(message,);
     this.name = "EmailAdapterError";
     this.code = code;
@@ -87,7 +89,9 @@ export interface EmailAdapter extends ProtocolAdapter {
   /** Map one inbound mail onto the bridge envelope (§4) and hand it to the
    * registered handler. Pure aside from the handler call — the WIRING
    * forwards the envelope into MessageBridge.receive with the spam gate
-   * as the bridge's inboundGate. */
+   * as the bridge's inboundGate.
+   * @throws {EmailAdapterError} `not_configured` when the adapter is not
+   * connected; `invalid_recipient` when To/Cc has no usable address. */
   ingest(raw: InboundEmail,): AdapterMessage;
 }
 
@@ -217,15 +221,29 @@ export function createEmailAdapter(options: EmailAdapterOptions = {},): EmailAda
     },
 
     ingest(raw,) {
+      // Mirrors sendMessage's guard: the wiring connects the adapter (from
+      // the email config section) before any ingest — a webhook relay or
+      // IMAP poll loop runs against a connected adapter only.
+      if (!connected) {
+        throw new EmailAdapterError("not_configured", "email adapter ingest: not connected/configured",);
+      }
+
       const recipients = raw.to.map(senderAddress,);
       const mailbox = mailboxAddress !== undefined && recipients.includes(mailboxAddress,)
         ? mailboxAddress
         : recipients[0];
 
+      if (mailbox === undefined || mailbox === "") {
+        throw new EmailAdapterError(
+          "invalid_recipient",
+          `email adapter ingest: no usable loop-lore recipient in To/Cc (${raw.to.length} entries)`,
+        );
+      }
+
       const envelope: AdapterMessage = {
         id: raw.messageId ?? stableMessageId(raw,),
         author: senderAddress(raw.from,),
-        target: mailbox ?? "",
+        target: mailbox,
         body: raw.subject === undefined ? raw.body : `${raw.subject}\n\n${raw.body}`,
         timestamp: raw.date ?? now(),
       };

@@ -124,9 +124,10 @@ export function createEmailSpamGate(options: EmailSpamGateOptions = {},): EmailS
         return { action: "reject", code: "blocked_sender", score: 0, reasons: ["sender is blocklisted",], };
       }
 
-      // Bucket key: sender as the adapter dimension, a fixed target — the
-      // budget is per sender, shared across all inbound targets.
-      const budget = limiter.consume(sender, "email", "inbound",);
+      // health.ts keys buckets per (adapter, target): the email adapter as
+      // the instance, the sender as the target — the budget is per sender,
+      // shared across all inbound recipients of that sender.
+      const budget = limiter.consume("email", "email", sender,);
       if (!budget.ok) {
         return {
           action: "reject",

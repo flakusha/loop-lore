@@ -127,8 +127,43 @@ describe("EmailAdapter.sendMessage", () => {
 });
 
 describe("EmailAdapter.ingest", () => {
-  test("maps the §4 table onto the bridge envelope", () => {
+  test("rejects typed not_configured when ingesting before connect", () => {
     const adapter = createEmailAdapter();
+    const error = (() => {
+      try {
+        adapter.ingest(inboundMail(),);
+        return null;
+      } catch (cause) {
+        return cause;
+      }
+    })();
+
+    expect(error,).toBeInstanceOf(EmailAdapterError,);
+    expect((error as EmailAdapterError).code,).toBe("not_configured",);
+  });
+
+  test("rejects typed invalid_recipient when To/Cc has no usable address", async () => {
+    const adapter = createEmailAdapter();
+    await adapter.connect({ smtpUser: "bot@loop.example", },);
+
+    for (const to of [[], ["<>",],]) {
+      const error = (() => {
+        try {
+          adapter.ingest(inboundMail({ to, },),);
+          return null;
+        } catch (cause) {
+          return cause;
+        }
+      })();
+
+      expect(error,).toBeInstanceOf(EmailAdapterError,);
+      expect((error as EmailAdapterError).code,).toBe("invalid_recipient",);
+    }
+  });
+
+  test("maps the §4 table onto the bridge envelope", async () => {
+    const adapter = createEmailAdapter();
+    await adapter.connect({ smtpUser: "bot@loop.example", },);
     expect(adapter.ingest(inboundMail(),),).toEqual({
       id: "<abc@sender.example>",
       author: "alice@sender.example",
@@ -162,21 +197,24 @@ describe("EmailAdapter.ingest", () => {
     expect(envelope.target,).toBe("a@b.test",);
   });
 
-  test("synthesizes a redelivery-stable id when Message-ID is missing", () => {
+  test("synthesizes a redelivery-stable id when Message-ID is missing", async () => {
     const adapter = createEmailAdapter();
+    await adapter.connect({ smtpUser: "bot@loop.example", },);
     const first = adapter.ingest(inboundMail({ messageId: undefined, },),);
     const second = adapter.ingest(inboundMail({ messageId: undefined, },),);
     expect(first.id,).toBe(second.id,);
     expect(first.id,).toMatch(new RegExp(`^<[0-9a-f]{32}@${EMAIL_SYNTHETIC_DOMAIN.replace(".", "\\.",)}>$`,),);
   });
 
-  test("uses the injected clock when Date is absent", () => {
+  test("uses the injected clock when Date is absent", async () => {
     const adapter = createEmailAdapter({ now: () => 7, },);
+    await adapter.connect({ smtpUser: "bot@loop.example", },);
     expect(adapter.ingest(inboundMail({ date: undefined, },),).timestamp,).toBe(7,);
   });
 
-  test("hands the envelope to the registered handler", () => {
+  test("hands the envelope to the registered handler", async () => {
     const adapter = createEmailAdapter();
+    await adapter.connect({ smtpUser: "bot@loop.example", },);
     const received: AdapterMessage[] = [];
     adapter.onMessage((message,) => {
       received.push(message,);
@@ -186,8 +224,9 @@ describe("EmailAdapter.ingest", () => {
     expect(received,).toEqual([envelope,],);
   });
 
-  test("is a no-op on the handler path when nothing is registered", () => {
+  test("is a no-op on the handler path when nothing is registered", async () => {
     const adapter = createEmailAdapter();
+    await adapter.connect({ smtpUser: "bot@loop.example", },);
     expect(adapter.ingest(inboundMail(),).id,).toBe("<abc@sender.example>",);
   });
 });
