@@ -97,7 +97,15 @@ export class GossipService {
       if (canonical !== null) { this.table.trustPeer(canonical,); }
     }
 
-    this.trustByOrigin = opts.trustByOrigin ?? {};
+    this.trustByOrigin = {};
+    // Config origins may be non-canonical (upper-case host, explicit default
+    // port) while table origins are canonical — key mismatch would silently
+    // bypass trust overrides, so canonicalize keys at the seam.
+    for (const [raw, trust,] of Object.entries(opts.trustByOrigin ?? {},)) {
+      const canonical = canonicalOrigin(raw,);
+      if (canonical !== null) { this.trustByOrigin[canonical] = trust; }
+    }
+
     this.selfOrigin = opts.selfOrigin;
     this.maxPayloadPeers = opts.maxPayloadPeers ?? MAX_PAYLOAD_PEERS;
     this.maxTableSize = opts.maxTableSize ?? MAX_TABLE_SIZE;
