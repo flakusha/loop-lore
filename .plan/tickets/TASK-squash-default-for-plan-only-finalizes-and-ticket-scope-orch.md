@@ -3,7 +3,7 @@
 
 # TASK: squash default for plan-only finalizes and ticket-scope orchestration
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** squash default for plan-only finalizes
 **Priority:** medium
 **Effort:** Small
