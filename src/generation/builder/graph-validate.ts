@@ -71,18 +71,22 @@ function normalizeNodes(value: unknown, issues: GraphIssue[],): NormalizedNode[]
         issues.push({ kind: "invalid_shape", message: `nodes[${index}] must be an object`, },);
         continue;
       }
+
       const node = entry as Record<string, unknown>;
       if (typeof node.id !== "string" || node.id.length === 0) {
         issues.push({ kind: "invalid_shape", message: `nodes[${index}] requires a non-empty id`, },);
         continue;
       }
+
       if (seenIds.has(node.id,)) {
         issues.push({ kind: "duplicate_id", message: `duplicate node id ${node.id}`, },);
         continue;
       }
+
       seenIds.add(node.id,);
       nodes.push(normalizeNode(node.id, node,),);
     }
+
     return nodes;
   }
 
@@ -91,8 +95,10 @@ function normalizeNodes(value: unknown, issues: GraphIssue[],): NormalizedNode[]
       issues.push({ kind: "invalid_shape", message: `node ${id} must be an object`, },);
       continue;
     }
+
     nodes.push(normalizeNode(id, entry as Record<string, unknown>,),);
   }
+
   return nodes;
 }
 
@@ -100,6 +106,7 @@ function normalizeNode(id: string, node: Record<string, unknown>,): NormalizedNo
   const inputs = typeof node.inputs === "object" && node.inputs !== null && !Array.isArray(node.inputs,)
     ? node.inputs as Record<string, unknown>
     : null;
+
   return { id, classType: node.class_type, inputs, };
 }
 
@@ -119,18 +126,22 @@ function inspectNodes(
     if (typeof node.classType !== "string" || node.classType.length === 0) {
       issues.push({ kind: "invalid_shape", message: `node ${node.id}: missing class_type`, },);
     }
+
     if (!node.inputs) {
       issues.push({ kind: "missing_input", message: `node ${node.id}: missing inputs`, },);
       record[node.id] = { inputs: {}, class_type: String(node.classType ?? "",), };
       continue;
     }
+
     for (const value of Object.values(node.inputs,)) {
       if (!isEdge(value,)) { continue; }
       const [source,] = value;
       edges.push({ from: source, to: node.id, },);
     }
+
     record[node.id] = { inputs: node.inputs, class_type: String(node.classType ?? "",), };
   }
+
   return { edges, record, };
 }
 
@@ -151,6 +162,7 @@ function missingSourceIssues(
     reported.add(edge.from,);
     issues.push({ kind: "missing_input", message: `input links to unknown node ${edge.from}`, },);
   }
+
   return issues;
 }
 
@@ -171,6 +183,7 @@ function cycleIssues(nodes: NormalizedNode[], edges: Array<{ from: string; to: s
     targets.push(edge.to,);
     outgoing.set(edge.from, targets,);
   }
+
   const queue = [...indegree.entries(),].filter(([_, degree,],) => degree === 0).map(([id,],) => id);
   let visited = 0;
   while (queue.length > 0) {
@@ -182,6 +195,7 @@ function cycleIssues(nodes: NormalizedNode[], edges: Array<{ from: string; to: s
       if (next === 0) { queue.push(target,); }
     }
   }
+
   if (visited === indegree.size) { return []; }
   const stuck = [...indegree.entries(),].filter(([_, degree,],) => degree > 0).map(([id,],) => id);
   return [{ kind: "cycle", message: `cycle detected among nodes: ${stuck.join(", ",)}`, },];
@@ -207,5 +221,6 @@ export function validateGraph(value: unknown,): GraphValidation {
   for (const id of findDeadNodes(record,)) {
     issues.push({ kind: "dead_node", message: `dead node not linked into the graph: ${id}`, },);
   }
+
   return { ok: issues.length === 0, issues, };
 }

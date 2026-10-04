@@ -65,6 +65,7 @@ export const builderFormState: Partial<ComfyuiBuilder> & ThisType<ComfyuiBuilder
         params[param.name] = "";
       }
     }
+
     this.steps.push({ id: nextStepId(), templateId: template.id, params, },);
   },
 
@@ -83,6 +84,7 @@ export const builderFormState: Partial<ComfyuiBuilder> & ThisType<ComfyuiBuilder
     if (index < 0 || index >= this.steps.length || target < 0 || target >= this.steps.length) {
       return;
     }
+
     const [step,] = this.steps.splice(index, 1,);
     if (step) { this.steps.splice(target, 0, step,); }
   },
@@ -103,10 +105,12 @@ export const builderFormState: Partial<ComfyuiBuilder> & ThisType<ComfyuiBuilder
       step.params[name] = Number.isFinite(num,) ? num : 0;
       return;
     }
+
     if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
       step.params[name] = value;
       return;
     }
+
     step.params[name] = value === undefined || value === null ? "" : String(value,);
   },
 
@@ -117,6 +121,7 @@ export const builderFormState: Partial<ComfyuiBuilder> & ThisType<ComfyuiBuilder
       this.saveError = "Name is required";
       return;
     }
+
     this.savingChain = true;
     this.saveError = "";
     try {
@@ -125,20 +130,24 @@ export const builderFormState: Partial<ComfyuiBuilder> & ThisType<ComfyuiBuilder
         description: this.editDescription.trim() || null,
         steps: this.steps,
       };
+
       const url = this.editingId
         ? `${BUILDER_PATH}/chains/${this.editingId}`
         : `${BUILDER_PATH}/chains`;
+
       const res = await apiFetch(url, {
         method: this.editingId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
       },);
+
       if (res.ok) {
         showToast("success", "Chain saved",);
         this.showEditor = false;
         await this.loadChains();
         return;
       }
+
       const data = await res.json().catch(() => null) as { error?: string; message?: string } | null;
       this.saveError = data?.error ?? data?.message ?? "Failed to save chain";
     } catch {

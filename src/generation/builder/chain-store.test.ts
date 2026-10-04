@@ -44,6 +44,7 @@ describe("chain-store", () => {
       description: "txt2img then upscale",
       steps: STEPS,
     },);
+
     expect(created.id.length,).toBeGreaterThan(0,);
     expect(created.steps,).toHaveLength(2,);
     expect(created.steps[0]!.params.steps,).toBe(20,);
@@ -58,6 +59,7 @@ describe("chain-store", () => {
       .select(["modality", "payload",],)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
+
     expect(row.modality,).toBe("workflow",);
     expect(JSON.parse(row.payload,) as { kind: string; steps: ChainStep[] },).toEqual({
       kind: "chain",
@@ -98,6 +100,7 @@ describe("chain-store", () => {
       name: "After",
       steps: [STEPS[0]!,],
     },);
+
     expect(updated,).not.toBeNull();
     expect(updated!.name,).toBe("After",);
     expect(updated!.steps,).toHaveLength(1,);

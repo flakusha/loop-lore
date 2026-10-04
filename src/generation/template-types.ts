@@ -134,10 +134,12 @@ export function parseTemplatePayload(
     if (!Array.isArray(record.sections,)) { return null; }
     return value as LlmTemplatePayload;
   }
+
   if (modality === "image") {
     if (typeof record.templateBody !== "string") { return null; }
     return value as ImageTemplatePayload;
   }
+
   // `workflow.body` is a graph object, not a template string — it must be
   // branched on before the generic `body` string check below, or a graph
   // would fail the string probe and a workflow row would be unreadable.
@@ -149,6 +151,7 @@ export function parseTemplatePayload(
     if (!isWorkflowPayloadShape(record,)) { return null; }
     return value as WorkflowPayload;
   }
+
   if (typeof record.body !== "string") { return null; }
   return value as SimpleTemplatePayload;
 }
