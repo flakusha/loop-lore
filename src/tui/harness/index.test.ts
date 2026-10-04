@@ -128,7 +128,7 @@ beforeAll(async () => {
  */
 afterEach(async () => {
   // A never-true predicate makes `flushUntil` drain its full tick budget.
-  await flushUntil(() => false,);
+  await flushUntil(() => false);
   // Per-test rather than once in `afterAll`: a failing test must not leave its
   // stub installed for everything that runs after it.
   setFetchFn(safeFetch,);
