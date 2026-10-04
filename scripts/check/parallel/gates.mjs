@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 270
+// size-allow: 340
 
 /**
  * The gate table and its command builders: every named check the runner can
@@ -21,6 +21,7 @@ import {
   TEST_JOBS,
 } from "./config.mjs";
 import {
+  CHANGED_FILES,
   DIFF_BASE,
   NOOP_OK,
   SCOPED_COVERAGE_PATHS,
@@ -117,7 +118,9 @@ export const checks = {
   // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
   "frontend - innerHTML xss": "bun run scripts/check-frontend-innerhtml-xss.ts",
   // Browser baseline: one serial gate runs the complete Playwright surface.
-  "e2e - browser (baseline)": "bun run test:e2e:browser",
+  // Built lazily in `e2eBrowserCommand()` below, like the coverage gate, so
+  // it can narrow to the specs `--diff-base` touched.
+  "e2e - browser (baseline)": NOOP_OK, // placeholder; replaced before run
   // Banned-pattern findings are collected in the non-blocking report below.
   // Epic coverage remains manual; current planning debt is non-blocking.
 };
@@ -202,7 +205,13 @@ function coverageCommand() {
   const filesFlag = SCOPED_DIFF_SRC_FILES.length > 0
     ? ` --files=${SCOPED_DIFF_SRC_FILES.join(",",)}`
     : "";
-  return `bun test --parallel=${TEST_JOBS} --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
+  // E2E_SAFEGUARD=1 here for the same reason as the plain branch above: the
+  // scoped path list can include `tests/e2e/**` (any changed non-src file maps
+  // to its own top-level name), and the e2e suite refuses to run against
+  // anything but an in-memory DB / /tmp uploads without it. It was missing,
+  // so a scoped run that reached the e2e helpers failed on the safeguard
+  // rather than on the change under test.
+  return `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
     filteredPaths.join(" ",)
   } && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${filesFlag}${skipNote}`;
 }
@@ -233,6 +242,64 @@ function walkTestFiles(root, dir,) {
 }
 
 checks["coverage - per-module line %"] = coverageCommand();
+
+// Browser specs live in one flat directory; this is the same filter the
+// plain-mode runner script uses, kept here so the scoped builder and the full
+// run can never disagree about what a "spec" is.
+const BROWSER_SPEC_DIR = "tests/e2e/flows/browser/";
+
+/**
+ * Build the browser baseline command. Beside `coverageCommand()` because it
+ * reads the same diff-scope inputs; the checks table carries a NOOP
+ * placeholder and this assignment is the "replaced before run" step.
+ *
+ * Plain mode is byte-identical to the package script it replaces
+ * (`test:e2e:browser` = `E2E_SAFEGUARD=1 bun run scripts/run-browser-tests.ts`),
+ * env prefix included — the script also sets E2E_SAFEGUARD/HTTP_PROXY/NO_PROXY
+ * on each spawned spec, so the scoped form inherits that protection.
+ *
+ * The scoped form runs only the specs the diff touched. Narrowing is allowed
+ * ONLY when the mapping is unambiguous: every changed path is either a spec
+ * that still exists, or a file under `tests/e2e/` whose change is confined to
+ * the e2e harness itself.
+ *
+ * ponytail: ceiling — "confined to the harness" is a path-prefix rule, not
+ * an import graph. It cannot tell whether an `src/` change breaks a spec, so
+ * ANY changed non-spec, non-e2e file falls back to the FULL suite; so does a
+ * deleted or renamed spec (git reports the destination alone, so the old
+ * path is invisible and its spec is simply gone), and so does a spec that no
+ * longer exists on disk. That bias is deliberate: a wrong narrowing is a
+ * FALSE GREEN, and a slow browser gate is merely slow. The win is the common
+ * case — a branch that only edits browser specs. Any richer mapping (a real
+ * import graph, coverage-driven spec selection) would need the suite to run
+ * once to build, which is the thing this builder exists to avoid.
+ *
+ * @returns The gate command, or NOOP_OK when the diff-scope matches nothing.
+ */
+function e2eBrowserCommand() {
+  const full = "E2E_SAFEGUARD=1 bun run test:e2e:browser";
+  if (!DIFF_BASE) { return full; }
+  if (CHANGED_FILES.length === 0) { return NOOP_OK; }
+  const specs = CHANGED_FILES.filter((f,) => f.startsWith(BROWSER_SPEC_DIR,) && f.endsWith(".browser.ts",));
+  // Narrow ONLY on a SPEC-ONLY diff, i.e. `specs` covers EVERY changed path.
+  // The equality IS the guard: an earlier version narrowed on `specs.length > 0`
+  // alone, so a diff touching one spec AND an `src/` file ran only that spec --
+  // a false green, since the src change could break any of the other specs. A
+  // wrong narrowing is far worse than a slow gate, so ambiguity runs all of them.
+  const specOnly = specs.length > 0 && specs.length === CHANGED_FILES.length;
+  // A changed spec that is gone from disk (delete/rename) is not runnable, and
+  // its disappearance can break the harness: fall back rather than guess.
+  const specGone = specs.some((f,) => !existsSync(path.resolve(PROJECT_ROOT, f,),));
+  if (specOnly && !specGone) {
+    return `E2E_SAFEGUARD=1 bun test --max-concurrency=1 ${specs.join(" ",)}`;
+  }
+  // Ambiguous: no spec changed, a spec was deleted, or anything else rode along
+  // with the specs. There is no narrower answer than "all of them" -- whether
+  // the diff touched the harness or the app, the set of specs it can break is
+  // every spec.
+  return full;
+}
+checks["e2e - browser (baseline)"] = e2eBrowserCommand();
 
 /**
  * Blocking jscpd ratchet gate: run jscpd into the per-RUN scratch dir, then

@@ -208,12 +208,24 @@ describe("changedFiles — --diff-base scoping", () => {
     expect(changedFiles("main", workDir,),).not.toContain("src/never-added.ts",);
   });
 
-  test("a missing base ref throws", () => {
-    // `execFileSync` propagates git's non-zero exit, and this runs at module
-    // init — before `main()` — so it is not caught by the runner's error
-    // handler. `resolveDiffBase` (finalize) validates the ref first, which is
-    // why the production path still gets a readable message.
-    expect(() => changedFiles("no-such-ref", workDir,)).toThrow();
+  test("a missing base ref throws an Error naming the ref", () => {
+    // `changedFiles` still throws (the module-init call site catches it and
+    // exits), but the throw now carries an actionable message instead of a raw
+    // `execFileSync` dump: the runner used to die with a Bun stack trace and NO
+    // check report when a `--diff-base` ref did not resolve. Pin both halves —
+    // that it throws, and that the message names the ref and a valid ref shape.
+    let thrown;
+    try {
+      changedFiles("no-such-ref", workDir,);
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown,).toBeInstanceOf(Error,);
+    expect(thrown.message,).toContain("no-such-ref",);
+    expect(thrown.message,).toContain("commit sha",);
+    // One line: the runner prints this verbatim, so a multi-line message
+    // re-creates the wall-of-noise failure this wrap was meant to remove.
+    expect(thrown.message.split("\n",).length,).toBe(1,);
   });
 
   test("a base equal to HEAD yields an empty diff", () => {
@@ -253,10 +265,10 @@ describe("changedFiles — --diff-base scoping", () => {
   test("a deleted source file is listed without breaking the scope", () => {
     // A deleted `src/x.ts` has no adjacent test to run and no module dir to
     // scan. It is listed (it IS a change) but every downstream consumer must
-    // tolerate it: `scopedTestFiles` exists-checks before adding, and
-    // `coverage.mjs --files=` reports a file absent from lcov as SKIP rather
-    // than 0%. This pins the listing half; the tolerance halves are asserted by
-    // the coverage gate's own behaviour.
+    // tolerate it: `scopedCoveragePaths` filters the module to dirs that still
+    // exist, and `coverage.mjs --files=` reports a file absent from lcov as SKIP
+    // rather than 0%. This pins the listing half; the tolerance halves are
+    // asserted by the coverage gate's own behaviour.
     git(["rm", "-q", "src/converged.ts",],);
     git(["commit", "-q", "-m", "delete a source file",],);
     expect(changedFiles("HEAD~1", workDir,),).toContain("src/converged.ts",);

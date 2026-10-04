@@ -33,6 +33,7 @@ import {
   RUN_ID,
   RUN_TMP_DIR,
 } from "./config.mjs";
+import { NOOP_OK, } from "./context.mjs";
 import { GIT_CONTEXT, } from "./git-context.mjs";
 import { pruneOldReports, pruneOldRunTmpDirs, } from "./retention.mjs";
 import { GIWT_ISSUE_CLI_UNAVAILABLE, } from "./runner.mjs";
@@ -65,11 +66,26 @@ export function reportResults(results,) {
   for (const result of results) {
     if (result.skipped) {
       console.log(`SKIP: ${result.name}`,);
-      console.log(
-        `  ${GIWT_ISSUE_CLI_UNAVAILABLE} - the gate could not be evaluated. Re-run \`bun run ${
-          result.command.replace(/^bun run /, "",)
-        }\` on an idle host to check it.`,
-      );
+      // Two distinct causes reach this branch (see runCheck): the issue CLI
+      // being unreachable, and a NOOP_OK command. Printing the giwt marker for
+      // both would attribute a no-op gate to giwt, so they get separate lines.
+      // NOOP_OK is deliberately cause-agnostic - the weave gate emits it when
+      // WEAVE_BASE is unset, the coverage/e2e builders emit it when the diff
+      // scope matches nothing - so this line names the condition, not a cause
+      // it cannot actually see. A skip that misattributes itself is worse
+      // than one that stays general.
+      if (result.command === NOOP_OK) {
+        console.log(
+          `  no-op gate (${NOOP_OK}) - nothing to evaluate. ` +
+            `Re-run without --diff-base, or with a base that touches this gate.`,
+        );
+      } else {
+        console.log(
+          `  ${GIWT_ISSUE_CLI_UNAVAILABLE} - the gate could not be evaluated. Re-run \`bun run ${
+            result.command.replace(/^bun run /, "",)
+          }\` on an idle host to check it.`,
+        );
+      }
       skipped++;
     } else if (result.passed) {
       console.log(`PASS: ${result.name}`,);
