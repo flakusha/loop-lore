@@ -7,6 +7,8 @@ import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { initConfigHotApply, resetConfigHotApply, } from "../config/hot-apply";
+import { createConfigSchema, } from "../config/schema-class";
 import { deleteConfig, getAllConfig, getConfig, seedDefaults, setConfig, } from "./config";
 
 describe("getAllConfig", () => {
@@ -82,6 +84,20 @@ describe("setConfig", () => {
     await setConfig(db, "new_key", "updated_value",);
     const entry = await getConfig(db, "new_key",);
     expect(entry!.value,).toBe("updated_value",);
+  });
+
+  test("returns hot classification for hot-applicable key", async () => {
+    initConfigHotApply(structuredClone(createConfigSchema().defaults,),);
+    const result = await setConfig(db, "logging.level", "error",);
+    expect(result,).toBe("hot",);
+    resetConfigHotApply();
+  });
+
+  test("returns restart classification for restart-required key", async () => {
+    initConfigHotApply(structuredClone(createConfigSchema().defaults,),);
+    const result = await setConfig(db, "server.port", "8080",);
+    expect(result,).toBe("restart",);
+    resetConfigHotApply();
   });
 });
 

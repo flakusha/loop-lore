@@ -17,8 +17,11 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { setConfig, } from "../../admin/config";
+import { initConfigHotApply, onConfigChange, resetConfigHotApply, type ConfigChange, } from "../../config/hot-apply";
+import { createConfigSchema, } from "../../config/schema-class";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
+import { createLogger, getLogger, setGlobalLogger, } from "../../logger";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { systemConfigRoutes, } from "./system-config";
 
@@ -119,6 +122,57 @@ describe("admin system-config routes", () => {
     );
 
     expect(res.status,).toBe(403,);
+  });
+
+  test("PATCH hot path returns requires_restart false and applies live", async () => {
+    setGlobalLogger(createLogger({ level: "debug", },),);
+    initConfigHotApply(structuredClone(createConfigSchema().defaults,),);
+    const changes: ConfigChange[] = [];
+    const unsub = onConfigChange((c,) => { changes.push(c,); },);
+
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config", {
+        method: "PATCH",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ key: "logging.level", value: "error", },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { ok: boolean; requires_restart: boolean };
+    expect(body.requires_restart,).toBe(false,);
+    expect(changes.length,).toBeGreaterThan(0,);
+    expect(changes[0]?.hotPaths,).toContain("logging.level",);
+
+    unsub();
+    resetConfigHotApply();
+    getLogger().setLevel("error",);
+  });
+
+  test("PATCH restart-required key returns requires_restart true and does not emit", async () => {
+    setGlobalLogger(createLogger({ level: "debug", },),);
+    initConfigHotApply(structuredClone(createConfigSchema().defaults,),);
+    const changes: ConfigChange[] = [];
+    const unsub = onConfigChange((c,) => { changes.push(c,); },);
+
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config", {
+        method: "PATCH",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ key: "server.port", value: "8080", },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { ok: boolean; requires_restart: boolean };
+    expect(body.requires_restart,).toBe(true,);
+    expect(changes.length,).toBe(0,);
+
+    unsub();
+    resetConfigHotApply();
+    getLogger().setLevel("error",);
   });
 
   test("DELETE /api/admin/system-config/:key returns 204", async () => {

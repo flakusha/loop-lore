@@ -15,6 +15,7 @@
 // else is restart-required by default. `requiresRestart` is surfaced to the
 // admin API so the UI can flag edits that need a restart.
 
+import { coerceValue, getTypeOfPath, setByPath, } from "./load/parse";
 import type { Config, } from "./schema/config";
 
 /** How a changed config path takes effect. */
@@ -153,4 +154,21 @@ export function applyConfigChange(domain: string, config: Config,): ConfigChange
     for (const handler of handlers) { handler(change,); }
   }
   return change;
+}
+
+/**
+ * Apply a single config write to the live snapshot and emit a change.
+ * No-op (returns false) for restart-required keys or when no snapshot exists.
+ * @param key - Dotted config path (e.g. "logging.level").
+ * @param value - String value to coerce to the path's leaf type.
+ * @returns true when the write was hot-applied, false otherwise.
+ */
+export function applyConfigWrite(key: string, value: string,): boolean {
+  if (previous === null || classifyConfigPath(key,) === "restart") { return false; }
+  const next = structuredClone(previous,);
+  const targetType = getTypeOfPath(next as unknown as Record<string, unknown>, key,);
+  const coerced = coerceValue(value, targetType,);
+  setByPath(next as unknown as Record<string, unknown>, key, coerced,);
+  applyConfigChange("system_config", next,);
+  return true;
 }

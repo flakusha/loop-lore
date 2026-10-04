@@ -12,6 +12,7 @@
 import { load as yamlLoad, } from "js-yaml";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
+import { applyConfigWrite, classifyConfigPath, type ConfigChangeClass, } from "../config/hot-apply";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { SECRET_KEY_PATTERN, } from "./config-keys";
@@ -56,13 +57,16 @@ export async function getConfigValue(db: Kysely<DB>, key: string,): Promise<stri
 /**
  * Insert or update a config entry.
  * Updates updated_at on conflict.
+ * After persisting, hot-applies the write to live consumers when the key
+ * is hot-applicable (no-op for restart-required keys).
+ * @returns The classification of the written key.
  */
 export async function setConfig(
   db: Kysely<DB>,
   key: string,
   value: string,
   description?: string,
-): Promise<void> {
+): Promise<ConfigChangeClass> {
   await db
     .insertInto("system_config",)
     .values({ key, value, description: description ?? null, },)
@@ -72,6 +76,8 @@ export async function setConfig(
         .doUpdateSet({ value, description: description ?? null, updated_at: new Date().toISOString(), },)
     )
     .execute();
+  applyConfigWrite(key, value,);
+  return classifyConfigPath(key,);
 }
 
 /** Delete a config entry by key. */
