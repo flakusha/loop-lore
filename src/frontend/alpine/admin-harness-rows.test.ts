@@ -17,6 +17,11 @@ import {
 
 import { RUN, STATS, } from "./admin-harness-fixtures";
 import type { HarnessRunDetail, } from "./admin-harness-rows";
+import { HarnessRunDetailSchema, HarnessRunSummarySchema, } from "./admin-harness-schema";
+import { parseOr, } from "./validation";
+
+/** A row as `toSummary()` actually serves it for a run with no git context. */
+const NO_GIT_RUN = { ...RUN, runId: "run-no-git", branch: null, gitSha: null, pid: null, };
 
 describe("buildStatCards", () => {
   test("maps every total to a card with a pre-formatted value", () => {
@@ -130,7 +135,95 @@ describe("buildDetailView", () => {
       tools: ["read", "edit",],
       msg: "finished",
       gitSha: "abc1234",
-      pid: 4242,
+      pid: "4242",
     },);
+  });
+});
+
+/**
+ * A run logged outside a checkout carries no git provenance: `toSummary()`
+ * passes `branch`/`gitSha`/`pid` nulls straight through. The schema once
+ * declared all three non-nullable, so `parseOr` rejected the WHOLE runs
+ * response over one such row and the tab showed "unexpected shape" instead of
+ * the table. These assert the DECODE OUTCOME, not the type's existence: a
+ * null-provenance payload must come back accepted, with the nulls intact.
+ */
+describe("null git provenance decodes", () => {
+  /** `parseOr` needs a fallback of the schema's own type; this is a sentinel
+   * that can never equal a decoded row, so `decoded === REJECTED` is proof the
+   * payload was refused. */
+  const REJECTED = Symbol("rejected",);
+
+  test("a summary with null branch/gitSha/pid is accepted and keeps its nulls", () => {
+    let errors: unknown = null;
+    const decoded = parseOr(HarnessRunSummarySchema, NO_GIT_RUN, REJECTED as never, (e,) => {
+      errors = e;
+    },);
+    expect(errors,).toBeNull();
+    expect(decoded,).not.toBe(REJECTED,);
+    expect(decoded,).toMatchObject({ branch: null, gitSha: null, pid: null, },);
+  });
+
+  test("the detail schema inherits the same nullability from the summary", () => {
+    const detail: HarnessRunDetail = {
+      ...NO_GIT_RUN,
+      tools: ["read",],
+      pattern: "",
+      patternDetail: "",
+      toolingGap: null,
+      msg: null,
+    };
+    let errors: unknown = null;
+    const decoded = parseOr(HarnessRunDetailSchema, detail, REJECTED as never, (e,) => {
+      errors = e;
+    },);
+    expect(errors,).toBeNull();
+    expect(decoded,).not.toBe(REJECTED,);
+    expect(decoded,).toMatchObject({ branch: null, gitSha: null, pid: null, },);
+  });
+
+  test("a populated provenance still decodes - the union is not just null", () => {
+    const decoded = parseOr(HarnessRunSummarySchema, RUN, REJECTED as never,);
+    expect(decoded,).not.toBe(REJECTED,);
+    expect(decoded,).toMatchObject({ branch: "feat/x", pid: 4242, },);
+  });
+});
+
+describe("absent provenance renders as a dash, never the word null", () => {
+  test("the runs table substitutes the placeholder", () => {
+    const [row,] = buildRunRows([NO_GIT_RUN,],);
+    expect(row?.branch,).toBe("—",);
+    expect(row?.gitSha,).toBe("—",);
+    // filteredHarnessRuns() interpolates these into a search haystack, so a
+    // literal "null" would make a search for that word match every such run.
+    expect(`${row?.branch} ${row?.gitSha}`,).not.toContain("null",);
+  });
+
+  test("the activity view substitutes the placeholder, pid included", () => {
+    const detail: HarnessRunDetail = {
+      ...NO_GIT_RUN,
+      tools: ["read",],
+      pattern: "",
+      patternDetail: "",
+      toolingGap: null,
+      msg: null,
+    };
+    const view = buildDetailView(detail,);
+    expect(view.branch,).toBe("—",);
+    expect(view.gitSha,).toBe("—",);
+    expect(view.pid,).toBe("—",);
+  });
+
+  test("a populated pid still renders its number", () => {
+    const view = buildDetailView({
+      ...RUN,
+      tools: ["read",],
+      pattern: "",
+      patternDetail: "",
+      toolingGap: null,
+      msg: null,
+    },);
+    expect(view.pid,).toBe("4242",);
+    expect(view.branch,).toBe("feat/x",);
   });
 });

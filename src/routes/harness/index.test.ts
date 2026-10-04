@@ -27,6 +27,15 @@ import { harnessRoutes, } from "./index";
  * Fixtures live under the repo's .tmp/, matching src/harness/query.test.ts:
  * the real-path tests below must read a real file inside the project, and a
  * stray system-temp file can never be inspected when a test fails.
+ *
+ * Resource contract: `TMP_ROOT` is only the shared PARENT. Each test owns a
+ * `mkdtempSync(TMP_ROOT, "fixture-")` directory created in `beforeEach` and
+ * removed in `afterEach`, so tests never collide on a fixed path and a failed
+ * test's leftover cannot poison a sibling. `setExecLogPath` is a process-wide
+ * pointer reset to null in `afterEach`. `bun test --parallel=N --isolate`
+ * (the repo default) gives each file its own registry, and `mock.module` state
+ * never crosses files; within a file the tests are order-independent because
+ * every one of them re-establishes the log path and the query overrides itself.
  */
 const TMP_ROOT = ".tmp/harness-routes";
 
