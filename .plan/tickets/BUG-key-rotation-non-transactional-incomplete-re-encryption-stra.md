@@ -12,8 +12,6 @@
 **Status Note:** verified landed on dev — `rotateKeyOnLeave` wraps message re-encrypt + key swap in one Kysely transaction, calls `reEncryptChatAssets` pre-transaction, `RE_ENCRYPT_LIMIT = MAX_SAFE_INTEGER` with `includeAll: true`
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-crypto.md
-**Tags:** crypto
 
 ## Summary
 

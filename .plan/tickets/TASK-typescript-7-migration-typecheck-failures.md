@@ -12,8 +12,6 @@
 **Status Note:** closed 2026-09-15; all 19 errors resolved on dev
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-code-quality.md
-**Tags:** code-quality
 **Labels:** bug, typescript7, migration, typecheck
 
 ## Summary

@@ -12,8 +12,6 @@
 **Priority:** low
 **Priority Tier:** P5
 **Effort:** Small
-**Epic:** epic-testing-qa.md
-**Tags:** testing-qa
 **Area:** characters
 **Source:** reconcile review (Scout Batch C — CHAR-2)
 

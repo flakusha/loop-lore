@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-npcs.md
-**Tags:** npc, social
 **Summary:** Chat cooldown + buffer management over `actor_chat_buffers` (migration 011, shipped): per-partner cooldown, max consecutive chats before forced break, topic-repetition break detection.
 
 **Context:** Buffer rows exist; `enforceChatBuffer` runs in `src/services/agency/bdi-nightly.ts`. Remaining work is the live enforcement gate consulted before autonomous initiation (used by `TASK-npc-social-conversation.md`).

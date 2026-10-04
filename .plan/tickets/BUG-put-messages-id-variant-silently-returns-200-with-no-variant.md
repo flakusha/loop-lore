@@ -10,8 +10,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-messages.md
-**Tags:** messages
 
 ## Summary
 

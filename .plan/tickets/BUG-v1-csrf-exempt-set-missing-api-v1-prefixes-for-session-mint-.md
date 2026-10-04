@@ -10,8 +10,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-api-versioning.md
-**Tags:** api-versioning
 **Labels:** security
 
 ## Summary

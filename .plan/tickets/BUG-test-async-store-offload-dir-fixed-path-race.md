@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
-**Epic:** epic-api-task-offloading.md
-**Tags:** async, offload
 **Type:** Bug
 **Summary:** Add an immediate `beforeEach` guard that fails any async-store test pointing at the shared `OFFLOAD_DIR`.
 **Context:** Parallel-safety defect (`src/async/spill.ts:12` defines a fixed `OFFLOAD_DIR = path.resolve(".tmp", "async-store")`); concurrent tests race on shared file ops and leak residue into the running app's spill dir.

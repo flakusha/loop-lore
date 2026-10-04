@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-db-content-versioning.md
-**Tags:** db-content-versioning
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

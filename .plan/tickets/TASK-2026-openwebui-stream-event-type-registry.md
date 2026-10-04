@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-platform-research.md
-**Tags:** openwebui, parity
 **Labels:** generation, streaming, types
 **Summary:** Replace the `string`-typed `type` field on `StreamBuffer.append()` and the SSE emitter with a typed `StreamEventType` const enum / literal union covering the full open-webui-style namespaced event vocabulary.
 

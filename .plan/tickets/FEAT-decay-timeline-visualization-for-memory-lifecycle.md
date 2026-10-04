@@ -10,8 +10,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-memory-knowledge-systems.md
-**Tags:** memory, visualization
 
 ## Summary
 

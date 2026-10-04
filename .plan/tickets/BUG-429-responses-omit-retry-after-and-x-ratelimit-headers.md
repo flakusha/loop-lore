@@ -13,8 +13,6 @@
 **Priority:** medium
 **Epic:** epic-api-rate-limiting
 **Effort:** Medium
-**Epic:** epic-api-rate-limiting.md
-**Tags:** api-rate-limiting
 
 ## Summary
 
@@ -27,3 +25,4 @@ src/routes/auth/login.ts (L23-31) and src/routes/auth/register.ts (L70-78) retur
 - [x] Register skip paths refund slot: 409 duplicate-username, 422 bad form, 500 rollback cost no budget (`src/routes/auth/register.ts`)
 - [x] 200 path emits no `Retry-After` (informational headers only)
 - [x] `bun test src/routes/auth/login.test.ts` green incl 429-header cases (17 pass, verified in-worktree)
+

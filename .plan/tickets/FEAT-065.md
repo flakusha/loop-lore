@@ -11,8 +11,6 @@ related: [FEAT-065-IMG, FEAT-065-AUD, FEAT-065-VID, FEAT-065-LLM, FEAT-055]
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-chat-product-features.md
-**Tags:** features
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

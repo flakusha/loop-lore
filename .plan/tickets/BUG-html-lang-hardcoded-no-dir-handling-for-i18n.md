@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-accessibility-input.md
-**Tags:** accessibility-input
 
 ## Summary
 

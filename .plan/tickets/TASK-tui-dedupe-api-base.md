@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** trivial
-**Epic:** epic-frontend-backend-integration.md
-**Tags:** frontend
 
 ## Summary
 

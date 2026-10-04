@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-items.md
-**Tags:** items
 **Summary:** Per-world uniqueness tracking; at most one instance of a unique-def item per world.
 **Context:** Cross-world uniqueness not enforced (consistent with TASK-050).
 **Acceptance Criteria:** See ## Acceptance Criteria below.

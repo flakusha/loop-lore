@@ -11,8 +11,6 @@
 **Status:** Done (2026-10-01)
 **Priority:** Low-Medium
 **Effort:** Low-Medium
-**Epic:** epic-memory-knowledge-systems.md
-**Tags:** memory, visualization
 **Created:** 2026-08-14
 **Source:** Platform research deep-dive (Kindroid journals)
 

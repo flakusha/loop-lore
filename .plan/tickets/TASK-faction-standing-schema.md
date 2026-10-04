@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-chat-product-features.md
-**Tags:** faction, chat
 **Related:** epic-faction-reputation.md, epic-worlds-extension.md, epic-social-interaction.md
 
 **Summary:**

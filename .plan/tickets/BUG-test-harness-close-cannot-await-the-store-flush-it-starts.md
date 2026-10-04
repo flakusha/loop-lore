@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-testing-qa.md
-**Tags:** testing
 
 ## Summary
 

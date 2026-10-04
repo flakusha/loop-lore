@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-item-system-extensions.md
-**Tags:** item-system-extensions
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

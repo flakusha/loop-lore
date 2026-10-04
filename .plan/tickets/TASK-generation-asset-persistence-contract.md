@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-chat-product-features.md
-**Tags:** generation
 
 ## Summary
 

@@ -12,8 +12,6 @@
 **Status Note:** commit `4a1f56b8`
 **Priority:** medium
 **Effort:** Trivial
-**Epic:** epic-frontend-chat-commands.md
-**Tags:** frontend-chat-commands
 
 ## Summary
 

@@ -12,8 +12,6 @@
 **Status Note:** 2026-09-10 (worktree `core-hardening`, commit `86cee0c`): `tests/e2e/helpers/client.ts` `login()` now calls the pre-existing `resetDemoLoginRateLimiter()` (exported from `@/routes/auth`, previously never called) before each demo-login POST. Full `E2E_SAFEGUARD=1 bun test tests/e2e/` 251 pass / 0 fail across 30 files.
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-frontend-login.md
-**Tags:** frontend-login
 
 ## Summary
 

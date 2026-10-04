@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** Trivial
-**Epic:** epic-testing-qa.md
-**Tags:** testing, coverage-waiver
 
 ## Summary:
 

@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-code-quality.md
-**Tags:** code-quality
 
 ## Summary
 

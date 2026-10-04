@@ -4,8 +4,6 @@
 
 **Priority:** High
 **Effort:** Small
-**Epic:** epic-api-task-offloading.md
-**Tags:** api-task-offloading
 **Status:** Done
 **Severity:** high
 **Files:** src/async/offload.ts:124-133

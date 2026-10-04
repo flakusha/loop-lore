@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-api-rate-limiting.md
-**Tags:** api-rate-limiting
 
 **Summary:** rate limit status endpoint 500s on hostile path query
 **Context:** Context: v1 governance surface landed this week (routes/v1/governance.ts:89).

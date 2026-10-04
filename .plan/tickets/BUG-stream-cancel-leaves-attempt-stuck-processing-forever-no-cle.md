@@ -12,8 +12,6 @@
 **Status Note:** 2026-09-06
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-generation-flow-control.md
-**Tags:** generation-flow-control
 
 ## Summary
 

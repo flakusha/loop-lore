@@ -5,8 +5,6 @@
 
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-chat-lifecycle-moderation.md
-**Tags:** chat-lifecycle-moderation
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

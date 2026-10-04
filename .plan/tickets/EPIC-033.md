@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-plugin-system.md
-**Tags:** plugin-system
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -11,7 +11,6 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** Medium
-**Epic:** epic-assistant-entity-access.md
 **Type:** Task
 **Tags:** assistant, assets, gallery, search
 **Related:** `epic-assistant-entity-access.md`, `epic-asset-platform-capabilities.md`

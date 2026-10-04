@@ -12,8 +12,6 @@
 **Status Note:** adopted in `adopt-bun-features`
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-platform-research.md
-**Tags:** platform-adoption, bun, runtime
 
 ## Summary
 

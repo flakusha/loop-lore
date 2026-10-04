@@ -11,7 +11,6 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
-**Epic:** epic-assistant-entity-access.md
 **Type:** Task
 **Tags:** assistant, tests, unit, entity-access
 **Related:** `epic-assistant-entity-access.md`

@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-frontend-notifications.md
-**Tags:** frontend-notifications
 
 **Summary:** notifications sse frames never parse read shipped as string
 **Context:** Context: pre-existing (schema from cd17af3fc), worsened this week when e0ba5f698 fixed only the REST twin (routes/notifications/index.ts:35-38 maps read->1/0).

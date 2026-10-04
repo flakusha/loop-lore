@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-worktree-plan-tooling.md
 **Type:** Task
 **Summary:** `epic-use-case-agentic-workspace.md` (29 lines, 4 commits, last touch 2026-09-18) is a placeholder pointing at `docs/spec/use-case-agentic-workspace.md` (3.7 KB, substantive). The "agentic workspace" concept — an LLM-driven workspace with tool-calling + autonomous agent execution — overlaps significantly with `epic-assistant-gm-flows.md`, `epic-workflow-engine.md`, and matrix gap G42 (Tool-Calling / MCP).
 **Context:** The 2026-09-19 audit flagged that "agentic" is overloaded across the codebase (agentic NPC, agentic workspace, agentic GM). Without clarifying ownership, tickets may land in the wrong epic and integration gaps will widen. Source row: 2026-09-26 epic audit; matrix reference: `matrix-cross-mechanics.md` G42.

@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-visual-novel-mode.md
-**Tags:** visual-novel-mode
 
 ## Summary
 

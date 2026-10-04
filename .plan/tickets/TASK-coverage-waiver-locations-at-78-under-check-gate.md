@@ -8,8 +8,6 @@
 **Priority:** Medium
 
 **Effort:** Medium
-**Epic:** epic-testing-qa.md
-**Tags:** testing, coverage-waiver
 
 **Summary:** Coverage waiver for `src/locations/` (78.81%) + `src/locations/routes.ts` (65%) under diff-base scoped check gate.
 

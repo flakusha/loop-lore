@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-auth-access.md
-**Tags:** auth
 
 ## Summary
 

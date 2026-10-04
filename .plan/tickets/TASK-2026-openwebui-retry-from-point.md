@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-platform-research.md
-**Tags:** openwebui, parity
 **Labels:** frontend, generation, retry
 **Summary:** Add a structured retry path: on generation failure the UI shows a "Retry" button. `retryFromPoint(attemptId, step)` (existing stub at `src/frontend/alpine/chat-types/core.ts:261`) calls a new server endpoint `POST /api/generation/retry` that replays any buffered content from `StreamBuffer` for the failed attempt and then resumes the generation. The SSE stream prepends already-confirmed content so the user does not see duplicates.
 

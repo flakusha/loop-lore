@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Small
-**Epic:** epic-prompt-improvement.md
-**Tags:** prompt-improvement
 **Tags:** idea, frontend
 **Context:** Composer prompt-improve kept a single `_promptImproveBackup`; a second Improve discarded the original draft. Replaced with a bounded 5-level `_promptImproveHistory` stack (src/frontend/alpine/chat-actions/prompt-improve.ts).
 

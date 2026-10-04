@@ -12,8 +12,6 @@
 **Status Note:** already on dev, 2026-09-03
 **Priority:** critical
 **Effort:** Medium
-**Epic:** epic-security-sandboxing.md
-**Tags:** security-sandboxing
 
 ## Summary
 

@@ -11,8 +11,6 @@
 **Status:** Wontfix
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-config-templates.md
-**Tags:** config-templates
 
 ## Summary
 

@@ -3,7 +3,6 @@
 
 # BUG: Auth rate-limiter tests seed per-IP buckets via getClientIp internals — no direct bucket isolation
 
-// hint: All three dimensions conflict. Manual review required.
 **Status:** Done
 **Priority:** low
 **Effort:** Medium

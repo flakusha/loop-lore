@@ -26,10 +26,10 @@ and mid-describe inserts are discovered in this environment.
 **Priority:** medium
 
 **Effort:** Small
-**Epic:** epic-asset-platform-capabilities.md
-**Tags:** asset-platform-capabilities
 
 **Type:** BUG
+
+**Epic:** epic-assets-media-pipeline
 
 **Files:** src/assets/metadata.ts (VP8X parse)
 

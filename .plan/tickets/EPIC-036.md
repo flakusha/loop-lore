@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-crafting-professions.md
-**Tags:** crafting-professions
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

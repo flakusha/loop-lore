@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small (composite validator + call-site wiring + unit test)
-**Epic:** epic-rpg-mechanics.md
 **Summary:** `worlds` `rpg_enabled` + `rpg_dice`/`rpg_checks`/`rpg_combat`/`rpg_xp`/`rpg_loot`/`rpg_quests` drift via raw `Boolean()` casts (`src/rpg/service/world-gate.ts:41,94-99`). Add a `CompositeValidator` with master=`OR(mechanics)` semantics; call `assertValid` in the `checkMechanicEnabled`/`getMechanicsConfig` paths. Unit test. No column changes.
 **Context:** DB schema-gate audit (2026-09-25, db-migration-fixes session). Individual mechanic flags can be true while the master gate is false (or vice versa) with no validation; the composite makes the invariant executable.
 

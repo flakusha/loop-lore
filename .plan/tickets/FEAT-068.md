@@ -9,8 +9,6 @@ related: [FEAT-067, FEAT-055, FEAT-059]
 
 
 **Status:** Done
-**Epic:** epic-chat-context-optimization.md
-**Tags:** chat-context-optimization
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

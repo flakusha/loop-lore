@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-platform-research.md
-**Tags:** openwebui, parity
 
 ## Summary
 

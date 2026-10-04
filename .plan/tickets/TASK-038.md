@@ -7,8 +7,6 @@
 **Status Note:** on dev, 2026-09-27 (NSFW game-mechanics batch closeout)
 **Priority:** medium
 **Effort:** Large
-**Epic:** epic-nsfw-game-mechanics.md
-**Tags:** nsfw-game-mechanics
 **Summary:** Pregnancy/reproduction on species flags + Relationship parentage.
 **Context:** Gameplay-layer reproductive cycle + species interaction.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

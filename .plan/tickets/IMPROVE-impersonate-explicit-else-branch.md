@@ -13,8 +13,6 @@
 **Priority:** low
 **Priority Tier:** P6+
 **Effort:** Trivial
-**Epic:** epic-impersonation.md
-**Tags:** impersonation
 **Area:** impersonation
 **Source:** reconcile review (Scout Batch C — IMP-4)
 

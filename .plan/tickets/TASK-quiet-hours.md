@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** Low
-**Epic:** epic-frontend-notifications.md
-**Tags:** frontend-notifications
 **Created:** 2026-08-14
 **Source:** Platform research deep-dive (Nomi.ai)
 

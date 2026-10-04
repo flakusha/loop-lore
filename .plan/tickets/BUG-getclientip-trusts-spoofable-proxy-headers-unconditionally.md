@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-middleware-request-lifecycle.md
-**Tags:** middleware-request-lifecycle
 
 ## Summary
 

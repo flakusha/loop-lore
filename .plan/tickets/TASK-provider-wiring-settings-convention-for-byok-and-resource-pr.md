@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-platform-integrations.md
-**Tags:** providers
 
 ## Summary
 

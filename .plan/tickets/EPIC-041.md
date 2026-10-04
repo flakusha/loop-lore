@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-social-interaction.md
-**Tags:** social-interaction
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

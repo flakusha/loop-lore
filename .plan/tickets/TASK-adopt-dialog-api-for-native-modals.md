@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-frontend-admin.md
-**Tags:** platform-adoption, web-platform, frontend
 
 ## Summary
 

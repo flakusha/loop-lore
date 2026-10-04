@@ -7,8 +7,6 @@
 **Status Note:** on dev, 2026-09-27 (NSFW game-mechanics batch closeout)
 **Priority:** medium
 **Effort:** Large
-**Epic:** epic-nsfw-game-mechanics.md
-**Tags:** nsfw-game-mechanics
 **Summary:** Fantasy/kink on FantasyCategory with content-warning triggers.
 **Context:** Gameplay-layer fantasy discovery + fulfillment.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

@@ -12,8 +12,6 @@
 **Status Note:** mitigation shipped (skip-by-default) and root-cause migration bug fixed (`016_fts.ts` down() trigger drops, 2026-09-18); remaining fanout investigation items are optional next steps
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-testing-qa.md
-**Tags:** testing, coverage-waiver
 
 ## Summary
 

@@ -12,8 +12,6 @@
 **Status Note:** verified landed on dev — `rotateKeyOnLeave` calls `reEncryptChatAssets` with explicit old+new keys before the swap; asset failures abort rotation
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-crypto.md
-**Tags:** crypto
 
 ## Summary
 

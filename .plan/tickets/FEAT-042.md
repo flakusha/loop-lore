@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** already on dev, 2026-09-20
-**Epic:** epic-content-hashing-distributed-integrity.md
-**Tags:** content-hashing-distributed-integrity
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Registry + batch runner for `data_version` columns.

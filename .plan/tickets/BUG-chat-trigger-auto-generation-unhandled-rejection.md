@@ -13,8 +13,6 @@
 **Priority:** low
 **Priority Tier:** P6+
 **Effort:** Trivial
-**Epic:** epic-group-chat.md
-**Tags:** group-chat
 **Area:** chat
 **Source:** reconcile review (Scout Batch A — ISSUE-4)
 

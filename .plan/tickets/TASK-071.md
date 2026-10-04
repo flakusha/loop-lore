@@ -15,8 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:** epic-chat-product-features.md
-**Tags:** features
+**Epic**:
 **Related**:
 
 Git issue: `0d07f56`

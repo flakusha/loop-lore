@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
-**Epic:** epic-character-core-system.md
-**Tags:** character-core-system
 
 ## Summary
 

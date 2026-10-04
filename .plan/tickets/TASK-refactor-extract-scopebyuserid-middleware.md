@@ -12,8 +12,6 @@
 **Status Note:** landed on dev as `resolveActorAccess` + `resolvePrimaryActorId` (`src/routes/actor-access.ts`); sweep 2026-09-10: all `body.actorId`/`query.actorId` production hits guarded (participants, battle durability, crafting attempt/orders, trade offers/history/index, message-seen POST/DELETE)
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-code-quality.md
-**Tags:** code-quality
 
 ## Summary
 

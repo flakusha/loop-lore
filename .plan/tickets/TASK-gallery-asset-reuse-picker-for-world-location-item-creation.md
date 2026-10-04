@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-frontend-gallery.md
-**Tags:** image-backends, gallery
 
 ## Summary
 

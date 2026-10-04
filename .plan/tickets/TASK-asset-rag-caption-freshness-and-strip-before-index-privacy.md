@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-asset-platform-capabilities.md
-**Tags:** assets, security
 
 ## Summary
 

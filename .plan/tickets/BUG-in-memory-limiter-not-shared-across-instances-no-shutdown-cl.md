@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-api-rate-limiting.md
-**Tags:** api-rate-limiting
 
 ## Summary
 

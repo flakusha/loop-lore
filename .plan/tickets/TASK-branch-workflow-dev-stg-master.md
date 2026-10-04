@@ -12,8 +12,6 @@
 **Status Note:** in `docs/meta/workflow.md` (Branch tiers section)
 **Priority:** Low
 **Effort:** Med
-**Epic:** epic-worktree-plan-tooling.md
-**Tags:** worktree-plan-tooling
 
 > The three-tier dev → stg → master promotion convention is now documented at
 > `docs/meta/workflow.md#branch-tiers`. This ticket is closed; future work on

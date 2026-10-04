@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-worktree-plan-tooling.md
-**Tags:** worktree-plan-tooling
 
 ## Summary
 

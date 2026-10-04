@@ -15,8 +15,6 @@ git issue: 680817d
 **Status:** Done
 **Priority:** High
 **Effort:** Small
-**Epic:** epic-blog-system.md
-**Tags:** blog-system
 
 ## Summary
 

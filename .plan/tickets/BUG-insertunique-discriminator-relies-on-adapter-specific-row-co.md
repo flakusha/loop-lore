@@ -6,8 +6,6 @@
 **Status:** Done (commit 3b361a1a4 — disambiguator at src/db/upsert-helpers.ts:216-238, probe SELECT on conflict columns with tenant-leak guard.)
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-data-integrity-acid.md
-**Tags:** data-integrity-acid
 **Summary:** src/db/upsert-helpers.ts insertUnique read `result[0].numInsertedOrUpdatedRows` to discriminate 'inserted' vs 'skipped'. The current SQLite path works (Bun returns `{changes}` which Kysely's SqliteDialect maps correctly), but the helper is dialect-agnostic and the PG path reports inserted-vs-attempted rows inconsistently across adapter versions for partial unique indexes. Add a guard SELECT on a unique-by-conflict-column (e.g. username) after the insert to make the discriminator unambiguous across SQLite and PG. Caught from post-merge audit of ba2871422.
 **Context:** Filed as a followup to BUG-register-non-atomic-user-actor-key-insert (commit a14ebc174). The two followups sat unaddressed while the data-corruption path was prioritized. Addressed in the register-idempotency-tx worktree (finalized 2026-09-27, merged to dev as 3b361a1a4 plus the 3f6329b02 size refactor).
 **Acceptance Criteria:**

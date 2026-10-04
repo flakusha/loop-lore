@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Low–Med
-**Epic:** epic-aux-enrichment-pipeline.md
-**Tags:** aux-enrichment-pipeline
 **Completed:** 2026-07-31
 
 ## Summary

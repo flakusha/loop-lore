@@ -12,8 +12,6 @@
 **Status Note:** landed on `authz-bug-cluster` (commit `a714a4376`)
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-code-quality.md
-**Tags:** code-quality
 
 ## Summary
 

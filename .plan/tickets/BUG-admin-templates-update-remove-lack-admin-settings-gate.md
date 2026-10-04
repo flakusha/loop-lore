@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-frontend-admin.md
-**Tags:** frontend-admin
 
 ## Summary
 

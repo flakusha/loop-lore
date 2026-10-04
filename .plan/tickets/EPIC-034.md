@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-nsfw-game-mechanics.md
-**Tags:** nsfw-game-mechanics
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

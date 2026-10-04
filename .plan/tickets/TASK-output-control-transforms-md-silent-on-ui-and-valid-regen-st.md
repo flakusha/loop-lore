@@ -10,8 +10,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-output-control-transforms.md
-**Tags:** output-control-transforms
 
 ## Summary
 

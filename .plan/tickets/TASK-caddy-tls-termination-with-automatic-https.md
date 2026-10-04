@@ -12,8 +12,6 @@
 **Status Note:** landed on dev, 2026-09-18
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-deployment-infrastructure.md
-**Tags:** deployment-infrastructure
 
 ## Summary
 

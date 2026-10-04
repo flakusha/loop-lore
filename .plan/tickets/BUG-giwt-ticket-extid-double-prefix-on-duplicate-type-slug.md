@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-worktree-plan-tooling.md
-**Tags:** worktree-plan-tooling
 **Summary:** Extid derived from `giwt ticket` title doubles the prefix when the title contains the type-name twice.
 **Context:** Backfilled 22 orphan git issues on 2026-09-20; 8 of them were double-prefixed bestiary tickets; renamed them via `git issue edit` to match the .md filename. This ticket records the root cause for giwt upstream.
 **Acceptance Criteria:** Single source of truth for extid; repro test added; giwt upstream PR landed.

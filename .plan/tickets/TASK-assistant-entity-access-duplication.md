@@ -11,7 +11,6 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** Medium
-**Epic:** epic-assistant-entity-access.md
 **Type:** Task
 **Tags:** assistant, duplication, clone, copy
 **Related:** `epic-assistant-entity-access.md`, `src/assistant/adapter/duplicate.ts`

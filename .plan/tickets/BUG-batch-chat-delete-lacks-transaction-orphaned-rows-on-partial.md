@@ -12,8 +12,6 @@
 **Status Note:** already on dev, 2026-09-04
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-chat-lifecycle-moderation.md
-**Tags:** chat-lifecycle-moderation
 
 ## Summary
 

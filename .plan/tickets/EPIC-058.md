@@ -4,8 +4,6 @@
 # EPIC-058: 058: Chat Lifecycle & Moderation
 
 **Status:** Done
-**Epic:** epic-chat-lifecycle-moderation.md
-**Tags:** chat-lifecycle-moderation
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

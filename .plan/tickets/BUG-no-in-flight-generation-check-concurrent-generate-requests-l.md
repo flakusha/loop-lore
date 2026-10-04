@@ -4,8 +4,6 @@
 # BUG: No in-flight generation check — concurrent generate requests last-wins abort
 
 **Effort:** Medium
-**Epic:** epic-generation-flow-control.md
-**Tags:** generation-flow-control
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

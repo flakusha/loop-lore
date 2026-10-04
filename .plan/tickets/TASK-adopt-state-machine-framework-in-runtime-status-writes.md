@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Large
-**Epic:** epic-security-sandboxing.md
-**Tags:** security-sandboxing
 **Related:** TASK-quest-status-transitions-bypass-state-machine
 
 ## Summary

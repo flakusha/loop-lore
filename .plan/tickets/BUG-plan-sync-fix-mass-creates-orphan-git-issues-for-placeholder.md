@@ -12,8 +12,6 @@
 **Status Note:** commit `4a1f56b8`
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-worktree-plan-tooling.md
-**Tags:** worktree-plan-tooling
 
 ## Summary
 

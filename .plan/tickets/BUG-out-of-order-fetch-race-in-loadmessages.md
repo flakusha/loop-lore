@@ -12,8 +12,6 @@
 **Status Note:** commit 04411f8 — loadMessages ordering
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-frontend-components.md
-**Tags:** frontend-components
 
 ## Summary
 

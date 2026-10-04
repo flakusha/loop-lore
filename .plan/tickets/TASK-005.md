@@ -3,8 +3,6 @@
 
 # TASK-005: Chat auto-renaming
 
-**Epic:** epic-aux-enrichment-pipeline.md
-**Tags:** aux-enrichment-pipeline
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

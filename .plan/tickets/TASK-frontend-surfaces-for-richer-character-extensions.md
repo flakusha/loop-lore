@@ -11,8 +11,6 @@
 **Status Note:** open (partial; JSON extension editor is mounted and round-trips the canonical payload; field-level editors remain open).
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-frontend-backend-integration.md
-**Tags:** frontend
 
 ## Summary
 

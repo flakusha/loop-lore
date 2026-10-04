@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small (state machine wrap + unit test)
-**Epic:** epic-rpg-mechanics.md
 **Summary:** `world_lore_entries` `confidence` × `distortion_level` → `disputed` (migration `005`) is computed in `assistant/lore/lifecycle.ts:isDisputed` but unwrapped at the DB boundary. Convert disputed reads to a `DisputedState` machine + `CompositeValidator` wrapping the existing resolver. Unit test. No column changes.
 **Context:** DB schema-gate audit (2026-09-25, db-migration-fixes session). Builds on the merged world-lore-lifecycle work (`TASK-world-lore-lifecycle-confidence-decay-distortion`, `190a6ea9b`) — this hardens the boundary, not the logic.
 

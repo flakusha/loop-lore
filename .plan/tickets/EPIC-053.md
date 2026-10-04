@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-output-control-transforms.md
-**Tags:** output-control-transforms
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

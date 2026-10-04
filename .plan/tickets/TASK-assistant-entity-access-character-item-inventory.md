@@ -11,7 +11,6 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
-**Epic:** epic-assistant-entity-access.md
 **Type:** Task
 **Tags:** assistant, character, item, inventory, access
 **Related:** `epic-assistant-entity-access.md`, `src/routes/story-items/handlers.ts`, `epic-character-npc-lore-access.md`

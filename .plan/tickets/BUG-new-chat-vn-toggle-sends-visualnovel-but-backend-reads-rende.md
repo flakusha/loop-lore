@@ -12,8 +12,6 @@
 **Status Note:** 4835dcaf, 2026-09-04
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-visual-novel-mode.md
-**Tags:** visual-novel-mode
 
 ## Summary
 

@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Small
-**Epic:** epic-code-quality.md
-**Tags:** code-quality
 **Related:** TASK-quest-status-transitions-bypass-state-machine, TASK-data-migrations-atomicity-and-concurrency-guard
 
 ## Summary

@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-plugin-extension-points.md
-**Tags:** plugin-extension-points
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

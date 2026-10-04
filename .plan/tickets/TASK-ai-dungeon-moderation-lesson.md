@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Low
-**Epic:** epic-chat-lifecycle-moderation.md
-**Tags:** chat-lifecycle-moderation
 **Related:** epic-chat-lifecycle-moderation.md, epic-nsfw-game-mechanics.md, epic-age-gate (age-gate/)
 
 ## Summary
