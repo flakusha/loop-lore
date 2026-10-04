@@ -4,7 +4,6 @@
 // src/config/schema/tui.ts — TUI config type
 
 /** */
-export interface TuiConfig {
-  enabled: boolean;
-  sessionToken?: string;
-}
+import type { TuiSection, } from "../sections/tui";
+
+export type TuiConfig = InstanceType<typeof TuiSection>;

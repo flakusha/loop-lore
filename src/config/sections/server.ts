@@ -7,7 +7,7 @@
 // Single source of truth for this section's shape and defaults.
 
 import { DATA_DIR, } from "../constants";
-import type { ServerConfig, TlsConfig, } from "../schema";
+import type { TlsConfig, } from "../schema";
 
 export const SERVER_DEFAULTS = {
   port: 3000,
@@ -17,20 +17,20 @@ export const SERVER_DEFAULTS = {
     key: `${DATA_DIR}/certs/key.pem`,
     cert: `${DATA_DIR}/certs/cert.pem`,
   },
-} satisfies ServerConfig;
+};
 
 /** */
-export class ServerSection implements ServerConfig {
+export class ServerSection {
   port = SERVER_DEFAULTS.port;
   host = SERVER_DEFAULTS.host;
-  trustProxy = SERVER_DEFAULTS.trustProxy;
+  trustProxy? = SERVER_DEFAULTS.trustProxy;
   publicOrigin?: string;
-  tls: TlsConfig = { ...SERVER_DEFAULTS.tls, };
+  tls?: TlsConfig = { ...SERVER_DEFAULTS.tls, };
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<ServerConfig>,) {
+  constructor(overrides?: Partial<ServerSection>,) {
     if (!overrides) { return; }
 
     const { tls, ...rest } = overrides;
@@ -40,6 +40,8 @@ export class ServerSection implements ServerConfig {
     }
   }
 }
+
+export type ServerConfig = ServerSection;
 
 /** Schema metadata for JSON Schema auto-generation */
 export const serverMeta = {

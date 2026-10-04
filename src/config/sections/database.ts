@@ -5,26 +5,27 @@
 
 import { DbType, } from "../../db/enums";
 import { DATA_DIR, } from "../constants";
-import type { DbConfig as DatabaseConfig, } from "../schema";
 
 export const DATABASE_DEFAULTS = {
   type: DbType.Sqlite,
   sqliteFilename: `${DATA_DIR}/loop-lore.db`,
-} satisfies DatabaseConfig;
+};
 
 /** */
-export class DatabaseSection implements DatabaseConfig {
-  type = DATABASE_DEFAULTS.type;
+export class DatabaseSection {
+  type: DbType = DATABASE_DEFAULTS.type;
   sqliteFilename = DATABASE_DEFAULTS.sqliteFilename;
   url?: string;
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<DatabaseConfig>,) {
+  constructor(overrides?: Partial<DatabaseSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type DbConfig = DatabaseSection;
 
 export const databaseMeta = {
   type: "object" as const,
