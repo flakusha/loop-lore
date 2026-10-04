@@ -174,6 +174,7 @@ describe("handleSend", () => {
       { id: "msg-1", role: "user", content: "hello world", },
       { id: "msg-2", role: "assistant", content: "hi back", },
     ],);
+
     expect(host.isSending,).toBe(false,);
   });
 
@@ -207,6 +208,7 @@ describe("handleSend", () => {
     setFetch(async () => {
       throw new Error("ECONNREFUSED",);
     },);
+
     const host = makeHost({ sessionToken: "tok", },);
     await handleSend(host, "hi",);
     expect(host.showErrorMessages,).toEqual(["ECONNREFUSED",],);
@@ -227,6 +229,7 @@ describe("loadMessages", () => {
       data: [{ id: "m1", role: "user", content: "hi", }, { id: "m2", role: "assistant", content: "yo", },],
       cursor: null,
     },);
+
     await loadMessages(makeHost({ sessionToken: "tok", },),);
     const captured = getCaptured();
     expect(captured.url,).toBe("http://localhost:3000/api/v1/chats/chat-1/messages?pageSize=200",);
@@ -277,6 +280,7 @@ describe("loadMessages", () => {
     setFetch(async () => {
       throw new Error("netfail",);
     },);
+
     const host = makeHost();
     await loadMessages(host,);
     expect(host.showErrorMessages,).toEqual(["Network error loading messages: netfail",],);

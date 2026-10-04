@@ -202,12 +202,15 @@ function renderCards(
       case "image": {
         return `<img src="/api/v1/assets/${a.id}/thumb" alt="${escapeHtml(a.filename,)}" loading="lazy" />`;
       }
+
       case "audio": {
         return `<div class="file-icon">🎵</div>`;
       }
+
       case "video": {
         return `<div class="file-icon">🎬</div>`;
       }
+
       case "other":
       case "memory": {
         return `<div class="file-icon">📄</div>`;
@@ -230,6 +233,7 @@ function renderCards(
     </div>`,
     );
   }
+
   return cards.join("",);
 }
 
