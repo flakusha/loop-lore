@@ -71,10 +71,13 @@ and TASK-053 (drift), which were left untouched.
   tighter of the rarity cap and the category budget. `applyDrift` now clamps
   through it — `src/story/items/instance-state.ts:104`. A unique item's rarity
   cap is `Infinity` by design, so the category budget is what bounds it.
-- Admin audit endpoint `GET /api/admin/worlds/:worldId/items/power-audit`
+- Admin audit endpoint `GET /api/admin/worlds/:id/items/power-audit`
   (`requireUserId` + `can(role, "admin.system")` authz, matching sibling admin
-  routes) — `src/routes/admin/item-power.ts:57`; registered at
-  `src/routes/admin/index.ts`.
+  routes; the path param is `:id` to match `/admin/worlds/:id` — memoirist
+  rejects two names at the same path position) — `src/routes/admin/item-power.ts`;
+  registered at `src/routes/admin/index.ts`.
+- Route tests: `src/routes/admin/item-power.test.ts` (401/403, ranking,
+  empty world, `?limit=` clamping, 422 on a non-uuid id).
 - Ranking helper `rankItemPower` (score = `maxStatDelta + sum(drift) +
   maxDurability`, ties broken on `worldItemId`) at `src/story/items/balance.ts:191`.
   Definitions are resolved by `itemId`, never by name.
