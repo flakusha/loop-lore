@@ -80,6 +80,7 @@ function app(role: string | null,): Elysia {
   const built = new Elysia({},)
     .derive(() => ({ userId: "u1", userRole: role, }))
     .use(harnessRoutes(),);
+
   return built as unknown as Elysia;
 }
 
@@ -143,6 +144,7 @@ describe("harnessRoutes", () => {
           return Promise.resolve([],);
         },
       },);
+
       const res = await get("admin", "/api/v1/harness/runs?limit=7&taskType=chat&result=error",);
       expect(res.status,).toBe(200,);
       expect(seen,).toEqual([{ taskType: "chat", result: "error", }, 7,],);
@@ -219,6 +221,7 @@ describe("harnessRoutes", () => {
         pattern: "agent.edit",
         patternDetail: "two edits",
       },);
+
       runId = record.runId;
       writeFileSync(log, `${JSON.stringify(serializeRun(record,),)}\n`, "utf8",);
       setExecLogPath(log,);
@@ -264,6 +267,7 @@ describe("harnessRoutes", () => {
       const list = await (await get("admin", "/api/v1/harness/runs",)).json() as {
         items: Record<string, unknown>[];
       };
+
       const item = list.items[0];
       expect(item,).toBeDefined();
       // Pinned together on purpose: a future change that renames the field on
@@ -271,6 +275,7 @@ describe("harnessRoutes", () => {
       expect(Object.keys(detail,).filter((k,) => k === "durationMs" || k === "runMs"),).toEqual(
         Object.keys(item!,).filter((k,) => k === "durationMs" || k === "runMs"),
       );
+
       expect(detail.durationMs,).toBe(item!.durationMs,);
       expect(detail,).not.toHaveProperty("runMs",);
       expect(item!,).not.toHaveProperty("runMs",);
@@ -281,6 +286,7 @@ describe("harnessRoutes", () => {
       const list = await (await get("admin", "/api/v1/harness/runs",)).json() as {
         items: Record<string, unknown>[];
       };
+
       // The stored line really does have a null cost: no price was declared.
       // `toSummary` already coalesces it to 0; the detail mapper must not
       // reintroduce the null, or the web `Type.Number()` decode rejects the row

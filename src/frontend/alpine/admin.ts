@@ -100,22 +100,27 @@ import { apiFetch, } from "./htmx";
           this.loadOverview();
           break;
         }
+
         case "users": {
           this.loadUsers();
           break;
         }
+
         case "worlds": {
           this.loadWorlds();
           break;
         }
+
         case "chats": {
           this.loadChats();
           break;
         }
+
         case "audit": {
           this.loadAudit();
           break;
         }
+
         case "models": {
           this.loadModels();
           this.loadModelRoles();
@@ -125,35 +130,43 @@ import { apiFetch, } from "./htmx";
           this.loadComparisonHistory();
           break;
         }
+
         case "review": {
           this.loadReview();
           break;
         }
+
         case "templates": {
           this.loadTemplates();
           break;
         }
+
         case "workflows": {
           this.loadWorkflows();
           break;
         }
+
         case "plugins": {
           this.loadPlugins();
           break;
         }
+
         case "system": {
           this.loadSystemConfig();
           this.loadNsfwConfig();
           break;
         }
+
         case "analytics": {
           this.loadAnalytics();
           break;
         }
+
         case "health": {
           this.loadHealth();
           break;
         }
+
         case "harness": {
           this.loadHarness();
           break;

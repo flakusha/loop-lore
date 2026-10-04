@@ -85,6 +85,7 @@ export function rollupStats(records: readonly HarnessRunRecord[],): HarnessStats
     avgMs: 0,
     ms: 0,
   };
+
   const models = new Map<string, HarnessByModel & { ms: number }>();
   const taskTypes = new Map<string, HarnessByTaskType & { ms: number }>();
   const patterns = new Map<string, HarnessByPattern>();
@@ -109,6 +110,7 @@ export function rollupStats(records: readonly HarnessRunRecord[],): HarnessStats
       model = { model: modelKey, runs: 0, failures: 0, avgMs: 0, costUsd: 0, tokensIn: 0, tokensOut: 0, ms: 0, };
       models.set(modelKey, model,);
     }
+
     bump(model, record.runMs, failed,);
     if (record.costUsd !== null) { model.costUsd += record.costUsd; }
     model.tokensIn += record.tokensIn;
@@ -119,6 +121,7 @@ export function rollupStats(records: readonly HarnessRunRecord[],): HarnessStats
       taskType = { taskType: record.taskType, runs: 0, failures: 0, avgMs: 0, ms: 0, };
       taskTypes.set(record.taskType, taskType,);
     }
+
     bump(taskType, record.runMs, failed,);
 
     const patternKey = record.pattern === "" ? "(none)" : record.pattern;
@@ -127,6 +130,7 @@ export function rollupStats(records: readonly HarnessRunRecord[],): HarnessStats
       pattern = { pattern: patternKey, runs: 0, failures: 0, };
       patterns.set(patternKey, pattern,);
     }
+
     pattern.runs++;
     if (failed) { pattern.failures++; }
 
@@ -141,13 +145,17 @@ export function rollupStats(records: readonly HarnessRunRecord[],): HarnessStats
   for (const model of models.values()) { model.costUsd = round4(model.costUsd,); }
   const byModel: HarnessByModel[] = rollup(models,)
     .sort((a, b,) => b.runs - a.runs || a.model.localeCompare(b.model,));
+
   const byTaskType: HarnessByTaskType[] = rollup(taskTypes,)
     .sort((a, b,) => b.runs - a.runs || a.taskType.localeCompare(b.taskType,));
+
   const byPattern: HarnessByPattern[] = [...patterns.values(),]
     .sort((a, b,) => b.runs - a.runs || a.pattern.localeCompare(b.pattern,));
+
   const toolingGaps: HarnessToolingGap[] = [...gaps.entries(),]
     .map(([toolingGap, count,],) => ({ toolingGap, count, }))
     .sort((a, b,) => b.count - a.count || a.toolingGap.localeCompare(b.toolingGap,));
+
   const { ms: _ms, ...totalsOut } = totals;
   return { totals: totalsOut, byModel, byTaskType, byPattern, toolingGaps, };
 }

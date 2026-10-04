@@ -127,6 +127,7 @@ describe("harness types", () => {
       git_sha: "deadbee",
       msg: null,
     },);
+
     const record = deserializeRun(legacy,);
     expect(record,).not.toBeNull();
     expect(record?.runId,).toBe("run-legacy",);
@@ -172,6 +173,7 @@ describe("appendExecLog", () => {
         expect(resolved.endsWith(`${HARNESS_DIR}/${HARNESS_LOG_FILENAME}`,),).toBe(true,);
         expect(resolved.startsWith("/",),).toBe(true,);
       }
+
       // Memoized: a second call returns the identical value without re-running git.
       expect(getExecLogPath(),).toBe(resolved,);
     });

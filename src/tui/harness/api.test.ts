@@ -27,6 +27,7 @@ function makeMockSafeFetch<T,>(response: FetchResult<T>,) {
       url: u.pathname,
       limit: u.searchParams.has("limit",) ? Number(u.searchParams.get("limit",),) : undefined,
     },);
+
     return response;
   };
 }
@@ -43,6 +44,7 @@ describe("loadRuns", () => {
       status: 200,
       headers: new Headers(),
     };
+
     setFetch(makeMockSafeFetch(mockResult,) as Parameters<typeof setFetch>[0],);
     await loadRuns(42, undefined,);
     expect(calls.length,).toBe(1,);
@@ -57,6 +59,7 @@ describe("loadRuns", () => {
       status: 200,
       headers: new Headers(),
     };
+
     setFetch(makeMockSafeFetch(mockResult,) as Parameters<typeof setFetch>[0],);
     const result = await loadRuns(25, "tok123",);
     expect(result.ok,).toBe(true,);
@@ -69,6 +72,7 @@ describe("loadRuns", () => {
       status: 403,
       headers: new Headers(),
     };
+
     setFetch(makeMockSafeFetch(mockResult,) as Parameters<typeof setFetch>[0],);
     const result = await loadRuns(25, undefined,);
     expect(result.ok,).toBe(false,);
@@ -84,6 +88,7 @@ describe("loadRuns", () => {
       error: new Error("ECONNREFUSED",),
       headers: new Headers(),
     };
+
     setFetch(makeMockSafeFetch(mockResult,) as Parameters<typeof setFetch>[0],);
     const result = await loadRuns(25, undefined,);
     expect(result.ok,).toBe(false,);
@@ -101,11 +106,13 @@ describe("loadRuns", () => {
       status: 200,
       headers: new Headers(),
     };
+
     const mockSf = async (_url: string, opts?: SafeFetchOptions,) => {
       const auth = opts?.auth as { sessionToken?: string } | undefined;
       capturedToken = auth?.sessionToken;
       return mockResult;
     };
+
     setFetch(mockSf as Parameters<typeof setFetch>[0],);
     await loadRuns(10, "my-super-secret-token",);
     expect(capturedToken,).toBe("my-super-secret-token",);
@@ -124,6 +131,7 @@ describe("loadRunDetail", () => {
       status: 200,
       headers: new Headers(),
     };
+
     setFetch(makeMockSafeFetch(mockResult,) as Parameters<typeof setFetch>[0],);
     await loadRunDetail("run-99", undefined,);
     expect(calls.length,).toBe(1,);
@@ -137,6 +145,7 @@ describe("loadRunDetail", () => {
       status: 403,
       headers: new Headers(),
     };
+
     setFetch(makeMockSafeFetch(mockResult,) as Parameters<typeof setFetch>[0],);
     const result = await loadRunDetail("run-x", undefined,);
     expect(result.ok,).toBe(false,);
@@ -169,12 +178,14 @@ describe("loadRunDetail", () => {
       gitSha: null,
       pid: null,
     };
+
     const mockResult: FetchResult<typeof detail> = {
       ok: true,
       data: detail,
       status: 200,
       headers: new Headers(),
     };
+
     setFetch(makeMockSafeFetch(mockResult,) as Parameters<typeof setFetch>[0],);
     const result = await loadRunDetail("run-5", undefined,);
     expect(result.ok,).toBe(true,);
@@ -194,6 +205,7 @@ describe("loadStats", () => {
       status: 200,
       headers: new Headers(),
     };
+
     setFetch(makeMockSafeFetch(mockResult,) as Parameters<typeof setFetch>[0],);
     await loadStats(undefined,);
     expect(calls.length,).toBe(1,);
@@ -207,6 +219,7 @@ describe("loadStats", () => {
       status: 403,
       headers: new Headers(),
     };
+
     setFetch(makeMockSafeFetch(mockResult,) as Parameters<typeof setFetch>[0],);
     const result = await loadStats(undefined,);
     expect(result.ok,).toBe(false,);

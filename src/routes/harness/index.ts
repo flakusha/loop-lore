@@ -67,6 +67,7 @@ export function harnessRoutes(prefix = "/api/v1",) {
             { taskType: asTaskType(q.taskType,), result: asResult(q.result,), },
             Number.isFinite(limit,) ? limit : undefined,
           );
+
           return jsonResponse({ items: items.map(toSummary,), },);
         }, {
           query: t.Object({
@@ -86,6 +87,7 @@ export function harnessRoutes(prefix = "/api/v1",) {
               code: ErrorCode.NotFound,
             },);
           }
+
           return jsonResponse(toDetail(record,),);
         }, {
           params: t.Object({ runId: t.String({},), },),

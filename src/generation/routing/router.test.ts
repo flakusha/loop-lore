@@ -36,6 +36,7 @@ describe("ModelRouter", () => {
         { ...bare("yes-tools",), capabilities: { tools: true, }, },
         bare("unknown",),
       ],);
+
       expect(order(result,),).toEqual(["yes-tools", "unknown",],);
     });
 
@@ -56,6 +57,7 @@ describe("ModelRouter", () => {
         { ...bare("cheap",), costPer1kTokens: 0.001, },
         { ...bare("mid",), costPer1kTokens: 0.01, },
       ],);
+
       expect(order(result,),).toEqual(["cheap", "mid", "pricey", "unknown",],);
     });
 
@@ -74,6 +76,7 @@ describe("ModelRouter", () => {
         bare("unknown",),
         { ...bare("fast",), avgLatencyMs: 120, },
       ],);
+
       expect(order(result,),).toEqual(["fast", "slow", "unknown",],);
     });
   });
@@ -100,6 +103,7 @@ describe("ModelRouter", () => {
         strategy: "round-robin",
         rules: [{ taskType: "interactive-turn", strategy: "cheapest", },],
       },);
+
       router.route(INTERACTIVE_TURN, [bare("a",), bare("b",),],);
       expect(order(router.route(AUTO_GEN, [bare("a",), bare("b",),],),),).toEqual(["a", "b",],);
     });
@@ -111,11 +115,13 @@ describe("ModelRouter", () => {
         strategy: "cheapest",
         rules: [{ taskType: "interactive-turn", strategy: "fastest", },],
       };
+
       const router = new ModelRouter(config,);
       const result = router.route(INTERACTIVE_TURN, [
         { ...bare("slow",), avgLatencyMs: 900, costPer1kTokens: 0.0001, },
         { ...bare("fast",), avgLatencyMs: 100, costPer1kTokens: 0.05, },
       ],);
+
       expect(order(result,),).toEqual(["fast", "slow",],);
     });
 
@@ -126,6 +132,7 @@ describe("ModelRouter", () => {
         { ...bare("b",), costPer1kTokens: 2, },
         { ...bare("c",), costPer1kTokens: 1, },
       ],);
+
       expect(order(result,),).toEqual(["c", "b",],);
     });
   });
@@ -148,6 +155,7 @@ describe("ModelRouter", () => {
         { ...bare("b",), costPer1kTokens: 1, avgLatencyMs: 90, },
         bare("c",),
       ];
+
       for (const strategy of ["capability-match", "cheapest", "fastest",] as const) {
         const router = new ModelRouter({ strategy, },);
         const first = order(router.route(INTERACTIVE_TURN, candidates,),);

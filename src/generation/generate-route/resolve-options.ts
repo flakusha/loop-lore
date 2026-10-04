@@ -69,6 +69,7 @@ export async function resolveOptions({
       .select(["streaming",],)
       .where("id", "=", input.chatId,)
       .executeTakeFirst();
+
     const chatStreaming = chatRow?.streaming;
     const configDefault = cfg.generation.defaultStream;
     const providerCapable = resolved.provider.capabilities.streaming;
@@ -76,6 +77,7 @@ export async function resolveOptions({
       (chatStreaming == null && configDefault === true) ||
       (chatStreaming == null && configDefault == null && providerCapable);
   }
+
   // Variant fill (smart-regen) must complete before the HTTP response so the
   // pending row is updated in place — SSE delivery cannot do that.
   if (input.targetMessageId !== undefined) { resolvedStream = false; }
@@ -90,10 +92,12 @@ export async function resolveOptions({
       .select(["gm_config",],)
       .where("id", "=", input.chatId,)
       .executeTakeFirst();
+
     const tuning = parseAssistantTuning(tuningRow?.gm_config ?? null,);
     tuningTemperature = tuning.temperature;
     tuningMaxTokens = tuning.maxTokens;
   }
+
   const temperature = resolveAssistantTemperature(input.temperature, tuningTemperature,);
   const maxTokens = resolveAssistantMaxTokens(input.maxTokens, tuningMaxTokens,);
   const genOptions: GenerationOptions = {
@@ -118,5 +122,6 @@ export async function resolveOptions({
     stepIndex: input.stepIndex,
     totalSteps: input.totalSteps,
   };
+
   return { genOptions, temperature, maxTokens, resolvedStream, };
 }

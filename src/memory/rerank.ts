@@ -58,6 +58,7 @@ export async function rerankViaLlamaCpp(
     ["RERANK_BASE_URL", "EMBEDDINGS_BASE_URL", "OLLAMA_BASE_URL",],
     { routing: opts.routing, model, },
   );
+
   // Exec log: rerank is a raw HTTP call, not an LLMProvider dispatch, so it
   // bypasses callWithFailover and records here. No cost metadata exists on a
   // raw endpoint call, so the record carries a null (unknown) cost rather than
@@ -73,6 +74,7 @@ export async function rerankViaLlamaCpp(
       task: "memory:rerank",
     },);
   };
+
   try {
     const result = await safeFetch<{ results?: { index?: unknown; relevance_score?: unknown }[] }>(
       `${baseUrl}/rerank`,
@@ -82,15 +84,18 @@ export async function rerankViaLlamaCpp(
         timeout: opts.timeoutMs ?? 2000,
       },
     );
+
     if (!result.ok) {
       recordExec("error", result.error.message,);
       throw new Error(`Rerank endpoint request failed: ${result.error.message}`,);
     }
+
     const payload = result.data;
     if (!Array.isArray(payload.results,)) {
       recordExec("error", "response missing results array",);
       throw new Error("Rerank response is missing a results array.",);
     }
+
     recordExec("ok", null,);
     return payload.results.map((entry,) => {
       const { index, relevance_score: score, } = entry;
@@ -98,10 +103,12 @@ export async function rerankViaLlamaCpp(
         recordExec("error", `result index ${String(index,)} out of range`,);
         throw new Error(`Rerank result index ${String(index,)} is out of range.`,);
       }
+
       if (typeof score !== "number") {
         recordExec("error", "entry missing relevance_score",);
         throw new Error("Rerank result entry is missing relevance_score.",);
       }
+
       return { index, score, };
     },);
   } catch (error) {

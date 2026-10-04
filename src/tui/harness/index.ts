@@ -22,6 +22,7 @@ const DETAIL_TOP = 3;
 const RUN_LIMIT = 25;
 
 /**
+ * @param screen
  * @param sessionToken - admin session token for the harness API
  */
 export function createHarnessView(
@@ -105,6 +106,7 @@ export class HarnessView {
       } else {
         this.currentIndex = (this.currentIndex + 1) % this.runs.length;
       }
+
       this.list.select(this.currentIndex,);
       void this.showDetail(this.currentIndex,);
     },);
@@ -178,9 +180,11 @@ export class HarnessView {
       this.screen.render();
       return;
     }
+
     for (const run of this.runs) {
       this.list.add(formatRunLine(run,),);
     }
+
     this.list.select(0,);
   }
 
@@ -190,6 +194,7 @@ export class HarnessView {
       this.screen.render();
       return;
     }
+
     const run = this.runs[index];
     if (!run) { return; }
 
@@ -198,6 +203,7 @@ export class HarnessView {
       this.detailLabel.setContent(
         `{red-fg}Failed to load detail: ${result.error}{/red-fg}`,
       );
+
       this.screen.render();
       return;
     }

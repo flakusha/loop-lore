@@ -32,6 +32,7 @@ export function truncateTask(task: string,): string {
 /**
  * Result marker character: ✔ for success, ✘ for failure.
  * @param summary
+ * @param summary.result
  */
 export function resultMarker(summary: { result: HarnessResult },): string {
   return summary.result !== "ok" ? "{red-fg}✘{/red-fg}" : "{green-fg}✔{/green-fg}";

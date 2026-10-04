@@ -73,13 +73,16 @@ export async function loadHarnessDetail(state: HarnessDetailState, runId: string
       state.harnessError = t("harness.errorForbidden",);
       return;
     }
+
     if (!res.ok) {
       state.harnessError = await getErrorMessage(res, t("harness.errorLoadRun",),);
       return;
     }
+
     const detail = parseOr(HarnessRunDetailNullable, await res.json(), null, () => {
       showToast("error", t("harness.errorShape",),);
     },);
+
     if (isStale(state.harnessRunId, runId,)) { return; }
     state.harnessDetail = detail === null ? null : buildDetailView(detail,);
   } catch (error) {

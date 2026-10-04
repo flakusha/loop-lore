@@ -158,6 +158,7 @@ describe("resolveOptions stream resolution chain", () => {
       makeCfg(true,),
       true,
     );
+
     expect(resolvedStream,).toBe(false,);
   });
 

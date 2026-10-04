@@ -209,10 +209,12 @@ export function buildFailoverList(
       result.push({ name: instance.name, provider: registry.get(instance.name,)!, },);
     }
   }
+
   const anthropic = providers?.anthropic;
   if (anthropic && anthropic.name !== primaryName && registry.has(anthropic.name,)) {
     result.push({ name: anthropic.name, provider: registry.get(anthropic.name,)!, },);
   }
+
   const ollama = providers?.ollamaNative;
   if (ollama && ollama.name !== primaryName && registry.has(ollama.name,)) {
     result.push({ name: ollama.name, provider: registry.get(ollama.name,)!, },);
@@ -229,6 +231,7 @@ export function buildFailoverList(
     // `capabilities`; restating them per field is a copy that can drift.
     ...entry.provider.capabilities,
   }));
+
   const routed = sharedRouter(routing,).route(signal, candidates,);
   const byName = new Map(result.map((entry,) => [entry.name, entry,] as const),);
   // The router owns the whole order, primary included: emitting the caller's
