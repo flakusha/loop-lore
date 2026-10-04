@@ -62,6 +62,7 @@ export async function createReminder(
     .select("id",)
     .where("id", "=", params.messageId,)
     .executeTakeFirst();
+
   if (!message) { return { code: "not_found", message: "Message not found", }; }
 
   const remindAt = at.toISOString();
@@ -78,6 +79,7 @@ export async function createReminder(
       .set({ remind_at: remindAt, },)
       .where("id", "=", existing.id,)
       .execute();
+
     return {
       ok: true,
       reminder: { id: existing.id, messageId: params.messageId, userId: params.userId, remindAt, },
@@ -89,6 +91,7 @@ export async function createReminder(
     .insertInto("message_reminders",)
     .values({ id, message_id: params.messageId, user_id: params.userId, remind_at: remindAt, },)
     .execute();
+
   return { ok: true, reminder: { id, messageId: params.messageId, userId: params.userId, remindAt, }, };
 }
 
@@ -108,6 +111,7 @@ export async function listReminders(
     .where("user_id", "=", userId,)
     .orderBy("remind_at", "asc",)
     .execute() as ReminderRow[];
+
   return rows.map(toRecord,);
 }
 
@@ -129,6 +133,7 @@ export async function cancelReminder(
     .where("id", "=", opts.id,)
     .where("user_id", "=", opts.userId,)
     .executeTakeFirst();
+
   const deleted = Number(result.numDeletedRows ?? 0,);
   if (deleted === 0) { return { code: "not_found", message: "Reminder not found", }; }
   return { ok: true, deleted, };
@@ -160,6 +165,7 @@ export async function selectDueReminders(
     .where("message_reminders.remind_at", "<=", now.toISOString(),)
     .orderBy("message_reminders.remind_at", "asc",)
     .execute();
+
   return rows as DueReminder[];
 }
 
@@ -175,5 +181,6 @@ export async function deleteFiredReminder(database: Kysely<DB>, id: string,): Pr
     .deleteFrom("message_reminders",)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   return Number(result.numDeletedRows ?? 0,);
 }
