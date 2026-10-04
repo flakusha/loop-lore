@@ -19,6 +19,11 @@ import { insertChatKeys, insertChats, insertUsers, } from "../test-utils/insert-
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import { pskCipher, } from "./cipher";
 import {
+  authorizeChatExport,
+  type ChatClearance,
+  grantChatFederationConsent,
+} from "./clearance";
+import {
   exportChatDekForPeer,
   importChatDek,
   openRewrappedDek,
@@ -59,7 +64,7 @@ async function randomDek(): Promise<Uint8Array> {
   return crypto.getRandomValues(new Uint8Array(32,),);
 }
 
-/** Create the chat + its SMK-wrapped DEK; returns [keyId, rawDek]. */
+/** Create the chat + its SMK-wrapped DEK + federation consent; returns [keyId, rawDek]. */
 async function seedChat(database: Kysely<DB>, chatId: string,): Promise<[string, Uint8Array,]> {
   const user = await insertUsers(database, `u-${chatId}`, "U",);
   await insertChats(database, `chat ${chatId}`, user, { id: chatId, encryption_level: "standard", },);
@@ -70,7 +75,14 @@ async function seedChat(database: Kysely<DB>, chatId: string,): Promise<[string,
     await encryptBytes(await smk(), raw,),
   );
 
+  await grantChatFederationConsent(database, chatId,);
+
   return [keyId, raw,];
+}
+
+/** Run the clearance gate for one chat toward B (consent already granted by seedChat). */
+async function clearFor(database: Kysely<DB>, chatId: string,): Promise<ChatClearance> {
+  return authorizeChatExport(database, { chatId, peerOrigin: B_ORIGIN, },);
 }
 
 function toB64(bytes: Uint8Array,): string {
@@ -84,8 +96,7 @@ describeOrSkip("DEK re-wrap — sender export", () => {
     const peerKey = generateInboundKey();
 
     const artifact = await exportChatDekForPeer(db, await smk(), {
-      chatId: "chat-x",
-      peerOrigin: B_ORIGIN,
+      clearance: await clearFor(db, "chat-x",),
       senderOrigin: A_ORIGIN,
       peerContentKey: peerKey,
     },);
@@ -118,8 +129,7 @@ describeOrSkip("DEK re-wrap — sender export", () => {
     const { db, } = await createTestDb();
     await seedChat(db, "chat-bind",);
     const artifact = await exportChatDekForPeer(db, await smk(), {
-      chatId: "chat-bind",
-      peerOrigin: B_ORIGIN,
+      clearance: await clearFor(db, "chat-bind",),
       senderOrigin: A_ORIGIN,
       peerContentKey: generateInboundKey(),
     },);
@@ -129,36 +139,46 @@ describeOrSkip("DEK re-wrap — sender export", () => {
     );
   });
 
-  test("rejects unknown chats, at-rest-empty keys, and invalid origins", async () => {
+  test("gate denials surface first; empty keys fail at export", async () => {
     const { db, } = await createTestDb();
     const key = await smk();
-    await expect(exportChatDekForPeer(db, key, {
-      chatId: "chat-missing",
-      peerOrigin: B_ORIGIN,
-      senderOrigin: A_ORIGIN,
-      peerContentKey: generateInboundKey(),
-    },),).rejects.toThrow("chat key not found",);
 
+    // Unknown chat: the gate denies before export is ever reachable.
+    await expect(clearFor(db, "chat-missing",),).rejects.toMatchObject({ reason: "chat-missing", },);
+
+    // Consented but non-standard tiers are denied by the gate.
+    const noneUser = await insertUsers(db, "u-none", "U",);
+    await insertChats(db, "chat none", noneUser, { id: "chat-none-tier", encryption_level: "none", },);
+    await grantChatFederationConsent(db, "chat-none-tier",);
+    await expect(authorizeChatExport(db, { chatId: "chat-none-tier", peerOrigin: B_ORIGIN, },),)
+      .rejects.toMatchObject({ reason: "tier-not-exportable", },);
+
+    const restUser = await insertUsers(db, "u-rest", "U",);
+    await insertChats(db, "chat rest", restUser, { id: "chat-rest-tier", encryption_level: "at-rest", },);
+    await grantChatFederationConsent(db, "chat-rest-tier",);
+    await expect(authorizeChatExport(db, { chatId: "chat-rest-tier", peerOrigin: B_ORIGIN, },),)
+      .rejects.toMatchObject({ reason: "tier-not-exportable", },);
+
+    // Standard + consented, but the chat_keys row is empty: the gate passes
+    // (tier + consent are its mandate) and export fails on the missing DEK.
     const emptyUser = await insertUsers(db, "u-empty", "U",);
     await insertChats(db, "chat empty", emptyUser, { id: "chat-empty", encryption_level: "standard", },);
     await insertChatKeys(db, "chat-empty", "",);
+    await grantChatFederationConsent(db, "chat-empty",);
     await expect(exportChatDekForPeer(db, key, {
-      chatId: "chat-empty",
-      peerOrigin: B_ORIGIN,
+      clearance: await clearFor(db, "chat-empty",),
       senderOrigin: A_ORIGIN,
       peerContentKey: generateInboundKey(),
     },),).rejects.toThrow("chat key not found",);
 
-    await expect(exportChatDekForPeer(db, key, {
-      chatId: "chat-x",
-      peerOrigin: "not a url",
-      senderOrigin: A_ORIGIN,
-      peerContentKey: generateInboundKey(),
-    },),).rejects.toThrow("invalid peer origin",);
+    // Invalid peer origin is caught by the gate.
+    await seedChat(db, "chat-x",);
+    await expect(authorizeChatExport(db, { chatId: "chat-x", peerOrigin: "not a url", },),)
+      .rejects.toMatchObject({ reason: "invalid-peer-origin", },);
 
+    // Invalid sender origin remains an export-level error.
     await expect(exportChatDekForPeer(db, key, {
-      chatId: "chat-x",
-      peerOrigin: B_ORIGIN,
+      clearance: await clearFor(db, "chat-x",),
       senderOrigin: "ftp://bad",
       peerContentKey: generateInboundKey(),
     },),).rejects.toThrow("invalid sender origin",);
@@ -171,8 +191,7 @@ describeOrSkip("DEK re-wrap — sender export", () => {
     await seedChat(db, "chat-r2",);
     for (const chatId of ["chat-r1", "chat-r2",]) {
       await exportChatDekForPeer(db, key, {
-        chatId,
-        peerOrigin: B_ORIGIN,
+        clearance: await clearFor(db, chatId,),
         senderOrigin: A_ORIGIN,
         peerContentKey: generateInboundKey(),
       },);
@@ -205,8 +224,7 @@ describeOrSkip("DEK re-wrap — receiver import", () => {
     const peerContentKey = await getOrCreateInboundKey(receiver.db, rKey, A_ORIGIN,);
 
     const artifact = await exportChatDekForPeer(sender.db, await smk(), {
-      chatId: "chat-rt",
-      peerOrigin: B_ORIGIN,
+      clearance: await clearFor(sender.db, "chat-rt",),
       senderOrigin: A_ORIGIN,
       peerContentKey,
     },);
@@ -233,8 +251,7 @@ describeOrSkip("DEK re-wrap — receiver import", () => {
     const sender = await createTestDb();
     await seedChat(sender.db, "chat-fk",);
     const artifact = await exportChatDekForPeer(sender.db, await smk(), {
-      chatId: "chat-fk",
-      peerOrigin: B_ORIGIN,
+      clearance: await clearFor(sender.db, "chat-fk",),
       senderOrigin: A_ORIGIN,
       peerContentKey: generateInboundKey(),
     },);
@@ -254,8 +271,7 @@ describeOrSkip("DEK re-wrap — receiver import", () => {
     const sender = await createTestDb();
     await seedChat(sender.db, "chat-rot-src",);
     const artifact: RewrappedDek = await exportChatDekForPeer(sender.db, await smk(), {
-      chatId: "chat-rot-src",
-      peerOrigin: B_ORIGIN,
+      clearance: await clearFor(sender.db, "chat-rot-src",),
       senderOrigin: A_ORIGIN,
       peerContentKey: oldPeerKey,
     },);
@@ -283,8 +299,7 @@ describeOrSkip("DEK re-wrap — receiver import", () => {
     const sender = await createTestDb();
     await seedChat(sender.db, "chat-win",);
     const artifact = await exportChatDekForPeer(sender.db, await smk(), {
-      chatId: "chat-win",
-      peerOrigin: B_ORIGIN,
+      clearance: await clearFor(sender.db, "chat-win",),
       senderOrigin: A_ORIGIN,
       peerContentKey,
     },);

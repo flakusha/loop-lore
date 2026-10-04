@@ -1731,6 +1731,7 @@ export const ChatsSchema = t.Object({
   prompt_template_id: t.Optional(t.String(),),
   active_branch_id: t.Optional(t.String(),),
   autonomy_config: t.Optional(t.String(),),
+  federation_consented_at: t.Optional(t.String(),),
 },);
 
 // ── chat_random_events ────────────────────────────────────────────
