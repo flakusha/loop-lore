@@ -64,6 +64,6 @@ export interface BlogTags {
   id: Generated<string>;
   post_id: string;
   tag: string;
-  created_at: Generated<string>;
+  created_at: string | null;
   updated_at: string | null;
 }
