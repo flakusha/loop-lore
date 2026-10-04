@@ -46,9 +46,59 @@ export const optionsObjectParamsRule = {
   },
   create(context,) {
     /**
+     * True when a type annotation already pins this function's arity, so the
+     * options-object rewrite would break assignability instead of fixing it.
+     *
+     * Deliberately narrow -- TWO declaration shapes, matched directly on the
+     * annotated node. A looser "some ancestor is annotated" test would also
+     * match every method inside a typed class (102 findings), most of which are
+     * genuinely refactorable; class members are excluded structurally, because
+     * their parent is `MethodDefinition`/`PropertyDefinition`, never `Property`.
+     *
+     * Known cost, accepted: this permanently hides someone appending a 4th
+     * parameter to a typed callback slot. That edit lands on the interface or
+     * the type alias, where a reviewer is already looking, and tsc rejects any
+     * implementor that did not follow -- the leak is mitigated, not closed.
+     *
+     * @param {import("eslint").Rule.Node} node
+     * @returns {boolean}
+     */
+    function isTypedConstSlot(node,) {
+      // `const f: T = (a, b, c) => {}`
+      const d = node.parent;
+      return d?.type === "VariableDeclarator" && d.init === node &&
+        d.id.type === "Identifier" && d.id.typeAnnotation != null;
+    }
+    /**
+     * A method of an object literal whose shape is dictated by an annotation:
+     * either the literal IS the direct `return { ... }` of an annotated function
+     * (`function f(): T`), or it is bound by an annotated const
+     * (`const self: T = { ... }`) inside one -- the latter is how the factory
+     * services here express the same idea. A local built now and returned later
+     * is NOT exempt: nothing pins its members.
+     *
+     * @param {import("eslint").Rule.Node} node
+     * @returns {boolean}
+     */
+    function isTypedObjectLiteralSlot(node,) {
+      const prop = node.parent;
+      if (prop?.type !== "Property" || prop.value !== node) { return false; }
+      const literal = prop.parent;
+      if (literal?.type !== "ObjectExpression") { return false; }
+      const slot = literal.parent;
+      if (slot?.type === "VariableDeclarator" && slot.init === literal) {
+        return slot.id.type === "Identifier" && slot.id.typeAnnotation != null;
+      }
+      if (slot?.type !== "ReturnStatement" || slot.argument !== literal) { return false; }
+      const block = slot.parent;
+      const fn = block?.parent;
+      return block?.type === "BlockStatement" && "returnType" in (fn ?? {}) && fn.returnType != null;
+    }
+    /**
      * @param {import("eslint").Rule.Node} node
      */
     function checkFunction(node,) {
+      if (isTypedConstSlot(node,) || isTypedObjectLiteralSlot(node,)) { return; }
       const fn =
         /** @type {{ body: unknown; params: { type: string; name?: string; left?: { type: string } }[] }} */ (node);
       // Skip signatures without a body (overloads, `declare`, abstract
