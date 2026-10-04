@@ -25,3 +25,6 @@
 - `src/autonomy/governor/` (budget gate), `epic-local-process-swarm.md` (this record is the single-process precursor)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 5d928d3

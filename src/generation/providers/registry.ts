@@ -15,6 +15,8 @@ import { decryptValue, } from "../../crypto";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { ModelRouter, } from "../routing/router";
+import type { TaskSignal, } from "../routing/task-signal";
 import { AnthropicProvider, } from "./anthropic";
 import { circuitBreaker, } from "./circuit-breaker";
 import { OllamaNativeProvider, } from "./ollama-native";
@@ -175,40 +177,65 @@ export async function resolveProvider({
  * Returns the primary provider first, then any additional providers
  * from config that differ from the primary. Does NOT include all
  * registered providers — only those explicitly configured.
+ *
+ * With a `signal`, the tail is reordered through `ModelRouter` using the
+ * capability/cost/latency metadata on each provider's `capabilities`.
+ * Without one, the list is exactly the pre-routing config order.
  * @param primaryName
  * @param config
+ * @param signal
  * @returns {{ name: string; provider: LLMProvider; }[]}
  */
 export function buildFailoverList(
   primaryName: string,
   config?: Config,
+  signal?: TaskSignal,
 ): { name: string; provider: LLMProvider }[] {
   const primary = getProvider(primaryName,);
   if (!primary) { return []; }
 
   const result: { name: string; provider: LLMProvider }[] = [{ name: primaryName, provider: primary, },];
 
-  // Add other configured providers as fallbacks (skip primary)
-  // Only include providers that are actually registered in the registry
-  if (config) {
-    for (const instance of config.generation.providers.openaiCompatible) {
-      if (instance.name !== primaryName && registry.has(instance.name,)) {
-        result.push({ name: instance.name, provider: registry.get(instance.name,)!, },);
-      }
-    }
-
-    const anthropic = config.generation.providers.anthropic;
-    if (anthropic && anthropic.name !== primaryName && registry.has(anthropic.name,)) {
-      result.push({ name: anthropic.name, provider: registry.get(anthropic.name,)!, },);
-    }
-
-    const ollama = config.generation.providers.ollamaNative;
-    if (ollama && ollama.name !== primaryName && registry.has(ollama.name,)) {
-      result.push({ name: ollama.name, provider: registry.get(ollama.name,)!, },);
+  // Add other configured providers as fallbacks (skip primary).
+  // Only providers actually registered in the registry are included.
+  //
+  // The whole path is optional-chained: callers legitimately pass a partial
+  // Config (tests build a stub, `callAux` forwards whatever it was handed).
+  // A missing `generation.providers` must degrade to the primary-only list,
+  // never throw — a throw here aborts the dispatch it was meant to describe.
+  const providers = config?.generation?.providers;
+  for (const instance of providers?.openaiCompatible ?? []) {
+    if (instance.name !== primaryName && registry.has(instance.name,)) {
+      result.push({ name: instance.name, provider: registry.get(instance.name,)!, },);
     }
   }
+  const anthropic = providers?.anthropic;
+  if (anthropic && anthropic.name !== primaryName && registry.has(anthropic.name,)) {
+    result.push({ name: anthropic.name, provider: registry.get(anthropic.name,)!, },);
+  }
+  const ollama = providers?.ollamaNative;
+  if (ollama && ollama.name !== primaryName && registry.has(ollama.name,)) {
+    result.push({ name: ollama.name, provider: registry.get(ollama.name,)!, },);
+  }
 
-  return result;
+  if (!signal) { return result; }
+
+  // The primary stays first (it is the caller's explicit choice); only the
+  // fallback tail is scored. Unknown metadata sorts last, so an unannotated
+  // fleet keeps its configured order under the default strategy.
+  const router = new ModelRouter(config?.generation?.routing,);
+  const candidates = result.map((entry,) => ({
+    name: entry.name,
+    model: config?.generation?.defaultModels?.[entry.name] ?? "",
+    capabilities: entry.provider.capabilities,
+    costPer1kTokens: entry.provider.capabilities.costPer1kTokens,
+    avgLatencyMs: entry.provider.capabilities.avgLatencyMs,
+    contextWindow: entry.provider.capabilities.contextWindow,
+    maxOutputTokens: entry.provider.capabilities.maxOutputTokens,
+  }));
+  const routed = router.route(signal, candidates,);
+  const byName = new Map(result.map((entry,) => [entry.name, entry,] as const),);
+  return [result[0]!, ...routed.fallbacks.map((m,) => byName.get(m.name,)).filter((e,) => e !== undefined),];
 }
 
 /**

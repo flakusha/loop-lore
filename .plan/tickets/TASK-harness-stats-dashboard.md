@@ -25,3 +25,6 @@
 - `src/llm/resource-manager.ts`, `src/nsfw/telemetry-id-hashes.ts`
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 9349634

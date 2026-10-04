@@ -15,6 +15,7 @@ import { sdTemplatesRoutes, } from "../admin/sd-templates";
 import { commandsRoutes, } from "../commands";
 import { exportRoutes, } from "../export";
 import { exportSseRoutes, } from "../export-sse";
+import { harnessRoutes, } from "../harness";
 import { importRoutes, } from "../import";
 import { pluginRoutes, } from "../plugins";
 import { worldImportRoutes, } from "../world-import";
@@ -38,6 +39,10 @@ export function adminSurface(opts: RegisterPluginsOpts,) {
     .use(adminComfyuiWorkflowRoutes({ database, }, prefix,),)
     .use(adminNsfwRoutes({ database, }, prefix,),)
     .use(commandsRoutes({ prefix, },),)
+    // ── Harness exec log ──────────────────────────────────────
+    // Admin-gated like the rest of this surface, so it mounts versioned
+    // under /api/v1; the unversioned /api/harness/* path 308s here.
+    .use(harnessRoutes(prefix,),)
     // ── Import / export ──────────────────────────────────────
     .use(importRoutes(handleOpts, prefix,),)
     .use(exportRoutes({ database, }, prefix,),)

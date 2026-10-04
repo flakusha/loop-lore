@@ -72,6 +72,9 @@ configs/templates/*.yml
 .omp
 .serena
 
+# Harness exec log (append-only run records, per-host)
+.harness/
+
 # Session harvest artifacts (HTML dumps in repo root break the dprint gate)
 omp-session-*.html
 

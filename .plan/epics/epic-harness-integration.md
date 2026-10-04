@@ -3,6 +3,8 @@
 
 # Epic: Harness Integration (Agent Runtime Consolidation)
 
+**Overview:** (see sections below)
+
 **Status:** Draft
 **Priority:** High
 **Effort:** Very High (phased; each phase ships standalone value)
@@ -389,3 +391,6 @@ agent skills). New code MUST NOT reuse these bare names.
 - `epic-security-sandboxing.md` (sandbox policy neighbor)
 - `epic-character-multi-personality.md` (character-side personalities)
 - `epic-recursive-self-improvement.md` (consumer of logs + eval)
+
+
+git issue: 9085399

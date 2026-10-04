@@ -24,3 +24,6 @@
 - `.tmp/harness-research-pi-opencode.md` (reuse shortlist)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: a893dc4

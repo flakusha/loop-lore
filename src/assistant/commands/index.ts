@@ -33,6 +33,7 @@ import "./translate";
 import "./analyze";
 import "./regen";
 import "./workflow";
+import "./harness-verbs";
 import "./interaction";
 import "./agency";
 

@@ -24,3 +24,6 @@
 - `src/assistant/commands/registry.ts`, `workflow.ts`, `workflow-runner.ts`, `workflow-session-store.ts`, `src/routes/messages/command.ts`
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 4ae6238

@@ -4,6 +4,7 @@
 // src/config/schema/generation.ts — Generation config type
 
 import type { OutputStylePreset, } from "../../chat/output-style";
+import type { GenerationRoutingConfig, } from "../../generation/routing/routing-config";
 import type { AutoStartConfig, } from "./auto-start";
 import type { GenerationProvidersConfig, } from "./providers";
 
@@ -107,6 +108,8 @@ export interface GenerationConfig {
     /** Dedicated encoder classifier (Laya/Jev-class); unset resolves via the default provider chain */
     classifier?: ModelRoleAssignment;
   };
+  /** Model routing policy (see generation/routing/). Default is a no-op. */
+  routing?: GenerationRoutingConfig;
   /** Regex transforms applied to LLM output before display */
   regexTransforms?: RegexTransform[];
   /** Emotion avatar generation settings */

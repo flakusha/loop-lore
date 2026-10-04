@@ -24,3 +24,6 @@
 - `src/group-chat/mention-parser.ts` (@ collision doc), `docs/meta/workflow.md`
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: cd6c8b5
