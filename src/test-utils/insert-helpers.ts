@@ -2260,6 +2260,7 @@ export async function insertChats(
     prompt_template_id?: string | null;
     active_branch_id?: string | null;
     autonomy_config?: string;
+    federation_consented_at?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
