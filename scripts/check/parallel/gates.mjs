@@ -253,10 +253,16 @@ const BROWSER_SPEC_DIR = "tests/e2e/flows/browser/";
  * reads the same diff-scope inputs; the checks table carries a NOOP
  * placeholder and this assignment is the "replaced before run" step.
  *
- * Plain mode is byte-identical to the package script it replaces
- * (`test:e2e:browser` = `E2E_SAFEGUARD=1 bun run scripts/run-browser-tests.ts`),
- * env prefix included — the script also sets E2E_SAFEGUARD/HTTP_PROXY/NO_PROXY
- * on each spawned spec, so the scoped form inherits that protection.
+ * Plain mode delegates to the package script it replaces (`test:e2e:browser`
+ * = `E2E_SAFEGUARD=1 bun run scripts/run-browser-tests.ts`), so it inherits the
+ * per-spec env that script sets on each spawned child.
+ *
+ * The SCOPED form calls `bun test` directly and therefore inherits NOTHING —
+ * it must carry that env prefix itself. `run-browser-tests.ts` gives each child
+ * E2E_SAFEGUARD=1, HTTP_PROXY="" and NO_PROXY="*"; without the last two here,
+ * a host with a proxy configured sends browser-spec fetches through it. `*` is
+ * quoted because this string is executed through a shell — the script uses
+ * Bun.spawn with an env object, where no quoting is needed.
  *
  * The scoped form runs only the specs the diff touched. Narrowing is allowed
  * ONLY when the mapping is unambiguous: every changed path is either a spec
@@ -291,7 +297,7 @@ function e2eBrowserCommand() {
   // its disappearance can break the harness: fall back rather than guess.
   const specGone = specs.some((f,) => !existsSync(path.resolve(PROJECT_ROOT, f,),));
   if (specOnly && !specGone) {
-    return `E2E_SAFEGUARD=1 bun test --max-concurrency=1 ${specs.join(" ",)}`;
+    return `E2E_SAFEGUARD=1 HTTP_PROXY= NO_PROXY='*' bun test --max-concurrency=1 ${specs.join(" ",)}`;
   }
   // Ambiguous: no spec changed, a spec was deleted, or anything else rode along
   // with the specs. There is no narrower answer than "all of them" -- whether
