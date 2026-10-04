@@ -14,10 +14,9 @@
  * share a token" but not the token value; per-user keys prevent cross-user
  * leakage.
  *
- * PREREQUISITE (not yet landed): `users.encryption_secret` column + the
- * `message_search_tokens` table (`parts/NNN_search_tokens.ts`). Until the
- * migration lands, callers pass an out-of-band key; the derivation itself
- * is stable so stored tokens survive the migration unchanged.
+ * The `users.encryption_secret` column and `message_search_tokens` table
+ * both exist; the derivation is stable so stored tokens survive any future
+ * migration unchanged.
  *
  * Isomorphic (WebCrypto only, no Buffer) — mirrors `src/utils/hkdf.ts`.
  */
