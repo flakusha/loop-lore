@@ -266,7 +266,7 @@ describe("advanceProgress", () => {
     // One template per (world, name, category) carrying the quantity as
     // max_stack — a re-issued reward reuses the row (TASK-055).
     expect(rewardRows,).toHaveLength(1,);
-    expect(rewardRows[0].max_stack,).toBe(2,);
+    expect(rewardRows[0]?.max_stack,).toBe(2,);
   });
 
   test("empty rewards distribute nothing and still complete", async () => {
