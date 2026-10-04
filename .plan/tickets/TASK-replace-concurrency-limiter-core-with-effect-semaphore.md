@@ -3,7 +3,7 @@
 
 # TASK: Replace concurrency-limiter core with Effect Semaphore
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-effect-v4-adoption-evaluation
@@ -21,3 +21,5 @@ Follow-up from spike S9 (epic-effect-v4-adoption-evaluation, Spike Results row S
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 89f038e (registry tip: 284fcd6ed Konstantin Fedotov Auto-closed: appended .md marker marks TASK-REPLACE-CONCURRENCY-LIMITER)
