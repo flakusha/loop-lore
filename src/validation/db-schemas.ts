@@ -3031,3 +3031,13 @@ export const ChatWardrobeOverridesSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── mesh_dek_exports ────────────────────────────────────────────
+export const MeshDekExportsSchema = t.Object({
+  chat_id: t.String(),
+  key_id: t.String(),
+  peer_origin: t.String(),
+  sender_origin: t.String(),
+  created_at: t.Optional(t.String(),),
+  revoked_at: t.Optional(t.String(),),
+},);

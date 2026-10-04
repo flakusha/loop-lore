@@ -190,4 +190,5 @@ export interface DB {
   wardrobe_items: import("./schema-core").WardrobeItems;
   actor_wardrobe: import("./schema-core").ActorWardrobe;
   chat_wardrobe_overrides: import("./schema-core").ChatWardrobeOverrides;
+  mesh_dek_exports: import("./schema-core").MeshDekExports;
 }
