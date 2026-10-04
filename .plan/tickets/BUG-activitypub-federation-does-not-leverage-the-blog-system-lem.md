@@ -3,6 +3,11 @@
 
 # BUG: ActivityPub federation does not leverage the blog system (Lemmy/Mastodon primitive)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
