@@ -94,7 +94,9 @@ describe("Avatar CRUD — owner", () => {
 
   afterAll(async () => {
     // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
-    // destroy() throws a TypeError here that MASKS the real setup error.
+    // destroy() throws a TypeError that bun reports as an EXTRA spurious
+    // failure alongside the real setup error. Exit status is unchanged; this
+    // removes the noise, it does not hide anything.
     if (!db) { return; }
     await db.destroy();
     sqlite.close();
@@ -191,6 +193,7 @@ describe("Avatar CRUD — admin/solo bypass", () => {
     },);
     // The admin below acts as userId "admin"; it needs its OWN asset, since
     // the create route now gates the asset with the strict owner-only guard.
+
     await insertUsers(db, "admin-user", "Admin", { id: "admin" as never, },);
     await insertAssets(db, "admin", "admin.png", "image/png", "image", 1024, "/assets/admin.png", {
       id: ADMIN_ASSET as never,
@@ -199,7 +202,9 @@ describe("Avatar CRUD — admin/solo bypass", () => {
 
   afterAll(async () => {
     // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
-    // destroy() throws a TypeError here that MASKS the real setup error.
+    // destroy() throws a TypeError that bun reports as an EXTRA spurious
+    // failure alongside the real setup error. Exit status is unchanged; this
+    // removes the noise, it does not hide anything.
     if (!db) { return; }
     await db.destroy();
     sqlite.close();
@@ -255,6 +260,7 @@ describe("Avatar CRUD — admin/solo bypass", () => {
       .where("asset_id", "=", ASSET,)
       .where("entity_id", "=", OWNER,)
       .execute();
+
     expect(links,).toHaveLength(0,);
   });
 });
@@ -276,7 +282,9 @@ describe("Avatar config", () => {
 
   afterAll(async () => {
     // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
-    // destroy() throws a TypeError here that MASKS the real setup error.
+    // destroy() throws a TypeError that bun reports as an EXTRA spurious
+    // failure alongside the real setup error. Exit status is unchanged; this
+    // removes the noise, it does not hide anything.
     if (!db) { return; }
     await db.destroy();
     sqlite.close();
@@ -346,7 +354,9 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
 
   afterAll(async () => {
     // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
-    // destroy() throws a TypeError here that MASKS the real setup error.
+    // destroy() throws a TypeError that bun reports as an EXTRA spurious
+    // failure alongside the real setup error. Exit status is unchanged; this
+    // removes the noise, it does not hide anything.
     if (!db) { return; }
     await db.destroy();
     sqlite.close();
@@ -522,7 +532,9 @@ describe("Prefix parameterisation", () => {
 
   afterAll(async () => {
     // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
-    // destroy() throws a TypeError here that MASKS the real setup error.
+    // destroy() throws a TypeError that bun reports as an EXTRA spurious
+    // failure alongside the real setup error. Exit status is unchanged; this
+    // removes the noise, it does not hide anything.
     if (!db) { return; }
     await db.destroy();
     sqlite.close();
@@ -605,7 +617,9 @@ describe("Authorization — resource-level (IDOR)", () => {
 
   afterAll(async () => {
     // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
-    // destroy() throws a TypeError here that MASKS the real setup error.
+    // destroy() throws a TypeError that bun reports as an EXTRA spurious
+    // failure alongside the real setup error. Exit status is unchanged; this
+    // removes the noise, it does not hide anything.
     if (!db) { return; }
     await db.destroy();
     sqlite.close();
@@ -750,7 +764,9 @@ describe("Avatar select, update, delete", () => {
 
   afterAll(async () => {
     // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
-    // destroy() throws a TypeError here that MASKS the real setup error.
+    // destroy() throws a TypeError that bun reports as an EXTRA spurious
+    // failure alongside the real setup error. Exit status is unchanged; this
+    // removes the noise, it does not hide anything.
     if (!db) { return; }
     await db.destroy();
     sqlite.close();

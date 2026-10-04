@@ -54,6 +54,7 @@ describe("DELETE /actors/:actorId/assets/:assetId (asset owner gate)", () => {
       id: VICTIM_ASSET as never,
     },);
     // Belongs to the attacker — the positive path must still work.
+
     await insertAssets(db, ATTACKER_USER, "own.png", "image/png", "image", 1024, "/own.png", {
       id: OWN_ASSET as never,
     },);
@@ -61,7 +62,9 @@ describe("DELETE /actors/:actorId/assets/:assetId (asset owner gate)", () => {
 
   afterAll(async () => {
     // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
-    // destroy() throws a TypeError here that MASKS the real setup error.
+    // destroy() throws a TypeError that bun reports as an EXTRA spurious
+    // failure alongside the real setup error. Exit status is unchanged; this
+    // removes the noise, it does not hide anything.
     if (!db) { return; }
     await db.destroy();
     sqlite.close();
@@ -114,6 +117,7 @@ describe("DELETE /actors/:actorId/assets/:assetId (asset owner gate)", () => {
     await insertAssets(db, VICTIM_USER, "v3.png", "image/png", "image", 1024, "/v3.png", {
       id: adminAsset as never,
     },);
+
     await insertAssetLinks(db, adminAsset, AssetLinkEntity.Actor, ATTACKER_ACTOR,);
 
     const res = await unlinkAs(adminAsset, "admin", "admin",);
@@ -136,6 +140,7 @@ describe("DELETE /actors/:actorId/assets/:assetId (asset owner gate)", () => {
     await insertAssets(db, VICTIM_USER, "v2.png", "image/png", "image", 1024, "/v2.png", {
       id: victimAsset as never,
     },);
+
     await insertAssetLinks(db, victimAsset, AssetLinkEntity.Actor, ATTACKER_ACTOR,);
 
     const res = await unlink(victimAsset, VICTIM_USER,);
