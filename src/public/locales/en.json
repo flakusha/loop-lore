@@ -1524,6 +1524,7 @@
       "pid": "PID",
       "pattern": "Pattern",
       "patternDetail": "Pattern detail",
+      "turnId": "Turn ID",
       "toolingGap": "Tooling gap",
       "tools": "Tools",
       "message": "Message"

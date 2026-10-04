@@ -65,6 +65,9 @@ export async function callWithFailover(
       error,
       tools: toolNames,
       task: harness.task ?? name,
+      // Undefined when the dispatch site had no turn in scope; the record
+      // coalesces it to null rather than inventing a correlation id.
+      turnId: harness.turnId,
       pattern: harness.pattern,
       patternDetail: harness.patternDetail,
       // Null cost unless the provider publishes costPer1kTokens — never a

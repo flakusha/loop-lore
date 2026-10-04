@@ -1468,6 +1468,7 @@
       "pid": "PID",
       "pattern": "パターン",
       "patternDetail": "パターン詳細",
+      "turnId": "ターンID",
       "toolingGap": "ツールの不足",
       "tools": "ツール",
       "message": "メッセージ"

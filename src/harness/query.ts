@@ -51,6 +51,9 @@ function matches(record: HarnessRunRecord, filter: HarnessRunFilter,): boolean {
   if (filter.result !== undefined && record.result !== filter.result) { return false; }
   if (filter.task !== undefined && record.task !== filter.task) { return false; }
   if (filter.model !== undefined && record.model !== filter.model) { return false; }
+  // Exact match, like every other filter: a turn id is opaque, so a prefix or
+  // path query over it would be guesswork that quietly returns a partial turn.
+  if (filter.turnId !== undefined && record.turnId !== filter.turnId) { return false; }
   return true;
 }
 

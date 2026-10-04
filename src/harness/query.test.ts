@@ -45,6 +45,7 @@ function rec(overrides: Partial<HarnessRunRecord>,): HarnessRunRecord {
     pid: null,
     gitSha: null,
     msg: null,
+    turnId: null,
     ...overrides,
   };
 }
@@ -108,6 +109,26 @@ describe("harness query (file-backed)", () => {
     expect((await listRuns({ taskType: "chat", }, 10,)).map((r,) => r.runId),).toEqual(["b", "a",],);
     expect((await listRuns({ result: "error", }, 10,)).map((r,) => r.runId),).toEqual(["c", "b",],);
     expect((await listRuns({ taskType: "chat", result: "error", }, 10,)).map((r,) => r.runId),).toEqual(["b",],);
+  });
+
+  it("filters by turn id exactly, returning one turn's whole run", async () => {
+    write([
+      rec({ runId: "t1-r1", turnId: "turn-a", tools: ["read",], },),
+      rec({ runId: "t1-r2", turnId: "turn-a", tools: ["edit",], },),
+      rec({ runId: "t1-r3", turnId: "turn-a", tools: ["write",], },),
+      rec({ runId: "t2-r1", turnId: "turn-b", },),
+      rec({ runId: "legacy", turnId: null, },),
+    ],);
+    // One user turn's three tool rounds come back as one node, newest first.
+    expect((await listRuns({ turnId: "turn-a", }, 10,)).map((r,) => r.runId),).toEqual(
+      ["t1-r3", "t1-r2", "t1-r1",],
+    );
+    // Exact match only: a prefix must not quietly return a partial turn.
+    expect(await listRuns({ turnId: "turn", }, 10,),).toEqual([],);
+    // A pre-correlation run belongs to no turn, so it matches no turn filter.
+    expect(await listRuns({ turnId: "legacy", }, 10,),).toEqual([],);
+    // Omitted filter leaves turnId alone — the new field is not a new default.
+    expect((await listRuns({}, 10,)).length,).toBe(5,);
   });
 
   it("fetches one run by id and returns null for a miss", async () => {

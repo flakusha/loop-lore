@@ -8,7 +8,8 @@
  * request → dispatch to non-streaming (JSON) or streaming (SSE).
  *
  * Extracted from generate-route.ts (pure refactor, no behavior change).
- * Request validation + chat-access authorization live in ./validate.ts.
+ * Request validation + chat-access authorization live in ./validate.ts;
+ * stream-flag + sampling-param resolution lives in ./resolve-options.ts.
  */
 
 import type { Kysely, } from "kysely";
@@ -16,7 +17,6 @@ import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { jsonError, } from "../../routes/http-utils";
-import { parseAssistantTuning, resolveAssistantMaxTokens, resolveAssistantTemperature, } from "../assistant-tuning";
 import { hasInFlightGeneration, IdempotencyKeyConflictError, startGenerationTracking, } from "../cancellation-manager";
 import { applyChatFormat, } from "../generate-format";
 import { harnessContext, } from "../providers/harness-context";
@@ -27,10 +27,11 @@ import {
 import type { ResolvedProvider, } from "../providers/registry";
 import { INTERACTIVE_TURN, type TaskSignal, } from "../routing/task-signal";
 import { appendStylePrompt, buildStylePrompt, } from "../smart-regen";
-import type { GenerationMessage, GenerationOptions, } from "../types";
+import type { GenerationMessage, } from "../types";
 import { buildPrompt, } from "./build-prompt";
 import { runNonStreaming, } from "./non-stream";
 import { buildProviderRequest, } from "./provider-request";
+import { resolveOptions, } from "./resolve-options";
 import { streamToClient, } from "./stream-to-client";
 import type { GenerateRequest, } from "./types";
 import { validateGenerateRequest, } from "./validate";
@@ -128,64 +129,14 @@ export async function handleGenerate({
   }
   const chatFormat = cfg.templates?.llm?.chatFormats?.[input.format ?? ""];
   if (chatFormat !== undefined) { messages = applyChatFormat(messages, chatFormat,); }
-  // Resolution chain: explicit request → chat setting → config default → provider capability
-  let resolvedStream = input.stream;
-  if (resolvedStream === undefined) {
-    // Load chat's streaming setting
-    const chatRow = await database
-      .selectFrom("chats",)
-      .select(["streaming",],)
-      .where("id", "=", input.chatId,)
-      .executeTakeFirst();
-    const chatStreaming = chatRow?.streaming;
-    const configDefault = cfg.generation.defaultStream;
-    const providerCapable = resolved.provider.capabilities.streaming;
-    resolvedStream = chatStreaming === 1 ||
-      (chatStreaming == null && configDefault === true) ||
-      (chatStreaming == null && configDefault == null && providerCapable);
-  }
-  // Variant fill (smart-regen) must complete before the HTTP response so the
-  // pending row is updated in place — SSE delivery cannot do that.
-  if (input.targetMessageId !== undefined) { resolvedStream = false; }
-
-  // Sampling params: explicit request → per-chat gm_config.assistantTuning →
-  // provider default. The extra chat read is skipped when both are explicit.
-  let tuningTemperature: number | null = null;
-  let tuningMaxTokens: number | null = null;
-  if (input.temperature === undefined || input.maxTokens === undefined) {
-    const tuningRow = await database
-      .selectFrom("chats",)
-      .select(["gm_config",],)
-      .where("id", "=", input.chatId,)
-      .executeTakeFirst();
-    const tuning = parseAssistantTuning(tuningRow?.gm_config ?? null,);
-    tuningTemperature = tuning.temperature;
-    tuningMaxTokens = tuning.maxTokens;
-  }
-  const temperature = resolveAssistantTemperature(input.temperature, tuningTemperature,);
-  const maxTokens = resolveAssistantMaxTokens(input.maxTokens, tuningMaxTokens,);
-  const genOptions: GenerationOptions = {
-    chatId: input.chatId,
-    parentMessageId: input.parentMessageId,
-    actorId: input.actorId,
-    modelId: resolved.resolvedModel,
-    provider: resolved.resolvedProviderName,
-    prompt: messages,
-    temperature,
-    maxTokens,
-    topP: input.topP,
+  const { genOptions, temperature, maxTokens, resolvedStream, } = await resolveOptions({
+    input,
+    database,
+    cfg,
+    resolved,
+    messages,
     systemPrompt,
-    stream: resolvedStream,
-    idempotencyKey: input.idempotencyKey,
-    repetitionDetection: input.repetitionDetection,
-    policyDetection: input.policyDetection,
-    responseLimit: input.responseLimit,
-    parentAttemptId: input.parentAttemptId,
-    continuationNumber: input.continuationNumber,
-    partialContent: input.partialContent,
-    stepIndex: input.stepIndex,
-    totalSteps: input.totalSteps,
-  };
+  },);
 
   // Idempotency guard (DB pre-check); the in-memory TOCTOU backstop lives in startGenerationTracking.
   if (await hasInFlightGeneration(database, input.idempotencyKey,)) {
@@ -215,7 +166,13 @@ export async function handleGenerate({
   // Router-ordered failover tail; the exec-log context records both dispatch paths.
   const turnSignal: TaskSignal = { ...INTERACTIVE_TURN, requiresCapabilities: ["text",], };
   const failoverList = buildFailoverList(resolved.resolvedProviderName, cfg, turnSignal,);
-  const providerReqWithHarness = { ...providerReq, harness: harnessContext(turnSignal.taskType, "generate-route",), };
+  // The exec-log context is built ONCE per request and spread into every tool
+  // round's provider call, so stamping it with the attempt id here is what
+  // makes all of a turn's exec-log lines land on one `turn_id`.
+  const providerReqWithHarness = {
+    ...providerReq,
+    harness: harnessContext({ taskType: turnSignal.taskType, task: "generate-route", turnId: attemptId, },),
+  };
 
   // ── Dispatch ──────────────────────────────────────────
 
