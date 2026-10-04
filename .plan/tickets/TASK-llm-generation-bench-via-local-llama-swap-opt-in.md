@@ -15,7 +15,7 @@
 
 ## Acceptance Criteria
 
-- [ ] New `tests/benchmarks/llm-generation.bench.ts`, auto-discovered by `scripts/run-benchmarks.ts` (no runner change; follows the `*.bench.ts` convention in `tests/benchmarks/`).
+- [ ] New `tests/benchmarks/llm-generation.bench.ts`, auto-discovered by `scripts/run-benchmarks.ts` (no runner change; follows the `*.bench.ts` convention in `tests/benchmarks/`). Add it to the `ignore` list in `knip.json` alongside `blake3.bench.ts`/`zstd.bench.ts` — standalone bench entrypoints are never imported, so the `dead - code (knip)` gate flags them otherwise.
 - [ ] Gated on `LL_BENCH_LLM=1`; when unset, or when the llama-swap binary / model path is absent, prints `skip: <reason>` and exits 0 — never fails CI.
 - [ ] Reports per-model round-trip p50/p95/p99, tokens/sec from `GenerateResponse.usage`, and rotation cost (cold-model first request vs warm repeat) against the models in `configs/config.llama-swap.example.yaml`.
 - [ ] No invented baselines: output is raw numbers + host note, no pass/fail threshold in v1.

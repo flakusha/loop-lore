@@ -15,11 +15,11 @@
 
 ## Acceptance Criteria
 
-- [ ] New `tests/benchmarks/scheduler-soak.bench.ts`, auto-discovered by `scripts/run-benchmarks.ts`; always runs in CI (mock variant has no external deps).
+- [ ] New `tests/benchmarks/scheduler-soak.bench.ts`, auto-discovered by `scripts/run-benchmarks.ts`; mock variant carries no env gate, so it always executes when the bench suite runs (`bun run bench`). Add it to the `ignore` list in `knip.json` alongside `blake3.bench.ts`/`zstd.bench.ts` — standalone bench entrypoints are never imported, so the `dead - code (knip)` gate flags them otherwise.
 - [ ] Mock variant: N concurrent `ResourceManager.submit()` calls across `PriorityLevel.High/Normal/Low` against `MockLLMProvider` (`src/test-utils/mock-provider.ts`); reports queue-wait p50/p95 per class, denial count, and low-priority max wait.
 - [ ] Starvation check: low-priority max wait is bounded (finite, reported) under sustained high-priority pressure — documents the fairness posture, no invented threshold.
 - [ ] llama-swap variant gated on `LL_BENCH_LLM=1` (same skip-and-exit-0 posture as the LLM bench ticket); runs only after `TASK-llm-generation-bench-via-local-llama-swap-opt-in` lands.
-- [ ] Consumes the observability events (`scheduler.queue.wait_ms`, `scheduler.admission.denied`); defines no new ones.
+- [ ] Reads the observability metrics `TASK-llm-scheduler-observability` emits (`queueWaitMs`, `admit`/`deny`); defines no new telemetry events.
 - [ ] `bun run check` green; SPDX header per convention.
 
 ## Reuse refs
