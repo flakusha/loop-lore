@@ -150,7 +150,7 @@
 | Done | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
 | Not Started | Epic: Inventory | High | High | 4 | [epic-inventory.md](/.plan/epics/epic-inventory.md) |
 | Not Started | Epic: Items | High | High | 4 | [epic-items.md](/.plan/epics/epic-items.md) |
-| Not Started | Epic: Locations | High | High | 4 | [epic-locations.md](/.plan/epics/epic-locations.md) |
+| Not Started | Epic: Locations | High | High | 5 | [epic-locations.md](/.plan/epics/epic-locations.md) |
 | Not Started | Epic: Lore Knowledge System | High\ | Medium\ | 6 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
 | In Progress | Epic: Memory & Knowledge Systems | High | High | 12 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
 | Not Started | Epic: Memory Propagation | High\ | Medium\ | 5 | [epic-memory-propagation.md](/.plan/epics/epic-memory-propagation.md) |
@@ -219,6 +219,7 @@
 | Not Started | Item System Extensions | High | High | 0 | [epic-item-system-extensions.md](/.plan/epics/epic-item-system-extensions.md) |
 | In Progress | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
 | Not Started | Licensing | Low | Medium | 6 | [epic-licensing.md](/.plan/epics/epic-licensing.md) |
+| Not Started | llama-swap Hub (lifecycle, config, rotation/exclusion, bench) | medium | Large | 5 | [epic-llama-swap.md](/.plan/epics/epic-llama-swap.md) |
 | Proposed | LLM Request Scheduler — Complexity, Resources, Model Rotation | high | Large | 0 | [epic-llm-request-scheduler.md](/.plan/epics/epic-llm-request-scheduler.md) |
 | Not Started | LLM Request Throughput & Message Scheduling | Medium | Large | 13 | [epic-llm-queue.md](/.plan/epics/epic-llm-queue.md) |
 | Not Started | Local Process Swarm (Bun-Managed Multi-Process Decomposition) | Medium | Very High | 0 | [epic-local-process-swarm.md](/.plan/epics/epic-local-process-swarm.md) |
@@ -636,6 +637,8 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Type:** Feature Epic
 - **Tags:** battle, items, social, npc, weather, resolution, integration
 - **File:** `.plan/epics/epic-battle-integration-gaps.md`
+
+### Current State Assessment
 
 ### Current State Assessment
 
@@ -2321,6 +2324,16 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-licensing.md`
 
+
+### llama-swap Hub (lifecycle, config, rotation/exclusion, bench)
+
+- **Status:** Not Started
+- **Priority:** medium
+- **Effort:** Large
+- **Type:** Coordination Hub Epic
+- **Tags:** llama-swap, lifecycle, config, rotation, scheduler, bench
+- **File:** `.plan/epics/epic-llama-swap.md`
+
 ### LLM Request Scheduler — Complexity, Resources, Model Rotation
 
 - **Status:** Proposed
@@ -2589,6 +2602,8 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Type:** Feature Epic
 - **Tags:** nsfw, integration, housing, weather, social, disease, cross-system
 - **File:** `.plan/epics/epic-nsfw-integration-gaps.md`
+
+### Current State Assessment
 
 ### Current State Assessment
 
@@ -3013,6 +3028,8 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 - **Type:** Feature Epic
 - **Tags:** schemas, reputation, consent, nsfw, shared, cross-system
 - **File:** `.plan/epics/epic-shared-schemas.md`
+
+### Current State Assessment
 
 ### Current State Assessment
 
