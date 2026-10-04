@@ -18,7 +18,7 @@
 | In Progress | Actor Autonomy & Story Auto-Drive | High | Large | 5 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
 | Done | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 4 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
 | Done | Actors & Entity System | High | High | 12 | [epic-actors.md](/.plan/epics/epic-actors.md) |
-| In Progress | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
+| Done | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | Not Started | Age Gate & Content Warnings | Medium | Medium | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
 | Not Started | Anonymity & Decentralization — Epic | medium | Medium | 27 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
@@ -85,9 +85,9 @@
 | Not Started | Deno Support (Possible Node) | Low | Medium | 20 | [epic-deno-support.md](/.plan/epics/epic-deno-support.md) |
 | Not Started | Design: Memory Knowledge Isolation and World Timeline | Low | Large | 0 | [epic-memory-isolation-design.md](/.plan/epics/epic-memory-isolation-design.md) |
 | Not Started | Disease & Poison Systems | Medium | High | 0 | [epic-disease-poison.md](/.plan/epics/epic-disease-poison.md) |
-| Design (research complete) | Distributed Computing & Sharing (Contributor Compute Network) | Medium | Very High | 7 | [epic-distributed-compute-sharing.md](/.plan/epics/epic-distributed-compute-sharing.md) |
+| Done | Distributed Computing & Sharing (Contributor Compute Network) | Medium | Very High | 7 | [epic-distributed-compute-sharing.md](/.plan/epics/epic-distributed-compute-sharing.md) |
 | In Progress | Documentation Reconciliation & UX | Medium | Medium | 6 | [epic-docs-reconciliation.md](/.plan/epics/epic-docs-reconciliation.md) |
-| In Progress | E2E & Integration Testing Reliability | High | Medium | 4 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
+| Done | E2E & Integration Testing Reliability | High | Medium | 4 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
 | Not Started | Economy & Trading Systems | Medium | Very High | 0 | [epic-economy-trading.md](/.plan/epics/epic-economy-trading.md) |
 | Not Started | Email Integration | Medium | Medium | 11 | [epic-email-integration.md](/.plan/epics/epic-email-integration.md) |
 | Not Started | Embeddable Engine & 2D/3D Game Frontend (Far Fetched) | Low | Very High (split into 5 sub-epics) | 0 | [epic-embeddable-engine-game-frontend.md](/.plan/epics/epic-embeddable-engine-game-frontend.md) |
@@ -111,7 +111,7 @@
 | Not Started | EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy | medium | Medium (turn budget table + Bennies table + dispatch enforcement) | 0 | [epic-math-economy.md](/.plan/epics/epic-math-economy.md) |
 | Not Started | EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections | medium | Large (event table + projection rebuild + tests) | 0 | [epic-math-ledger.md](/.plan/epics/epic-math-ledger.md) |
 | Not Started | EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution | medium | Large (multiple sub-tickets, see Sub-systems) | 0 | [epic-math-resolution.md](/.plan/epics/epic-math-resolution.md) |
-| In Progress | Epic: Achievements | Medium | Medium | 13 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
+| Done | Epic: Achievements | Medium | Medium | 13 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
 | Not Started | Epic: Ambient, Music & Sound Effects | Medium | High | 14 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
 | Not Started | Epic: Analytics & Observability | High | Medium | 5 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | Not Started | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
@@ -194,8 +194,8 @@
 | Not Started | Frontend Bundle Optimization | High | Medium | 2 | [epic-frontend-bundle-optimization.md](/.plan/epics/epic-frontend-bundle-optimization.md) |
 | Not Started | Frontend Component Architecture | Medium | Medium | 0 | [epic-frontend-component-architecture.md](/.plan/epics/epic-frontend-component-architecture.md) |
 | Not Started | Frontend Emoji (`:...:`) and Message Reactions | medium | Medium | 0 | [epic-frontend-emoji-reactions.md](/.plan/epics/epic-frontend-emoji-reactions.md) |
-| In Progress | Frontend Gallery & Media Viewer | Medium | Medium | 2 | [epic-frontend-gallery.md](/.plan/epics/epic-frontend-gallery.md) |
-| In Progress | Frontend HTML Deduplication & HTMX AJAX Reuse | Medium | Medium | 4 | [epic-frontend-html-dedup-htmx-reuse.md](/.plan/epics/epic-frontend-html-dedup-htmx-reuse.md) |
+| Done | Frontend Gallery & Media Viewer | Medium | Medium | 2 | [epic-frontend-gallery.md](/.plan/epics/epic-frontend-gallery.md) |
+| Done | Frontend HTML Deduplication & HTMX AJAX Reuse | Medium | Medium | 4 | [epic-frontend-html-dedup-htmx-reuse.md](/.plan/epics/epic-frontend-html-dedup-htmx-reuse.md) |
 | Not Started | Frontend Overview | Medium | Medium | 0 | [epic-frontend-overview.md](/.plan/epics/epic-frontend-overview.md) |
 | Not Started | Frontend Slash Commands (`/...`) for Chat, Group Chat, Assistant | medium | Medium | 0 | [epic-frontend-chat-commands.md](/.plan/epics/epic-frontend-chat-commands.md) |
 | Not Started | Fuzzing Infrastructure | Medium | Medium | 9 | [epic-fuzzing-infrastructure.md](/.plan/epics/epic-fuzzing-infrastructure.md) |
@@ -226,12 +226,12 @@
 | In Progress | Logging & Telemetry — Complete Level Set + Canonical JSONL | High | Medium | 5 | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md) |
 | In Progress | Logic Reconciliation (Permanently Ongoing) | High | Continuous | 0 | [epic-logic-reconciliation.md](/.plan/epics/epic-logic-reconciliation.md) |
 | Not Started | Login & Authentication UI | Medium | Medium | 0 | [epic-frontend-login.md](/.plan/epics/epic-frontend-login.md) |
-| In Progress | LoRA Discovery & Application | High | Medium | 12 | [epic-lora-discovery-application.md](/.plan/epics/epic-lora-discovery-application.md) |
+| Done | LoRA Discovery & Application | High | Medium | 12 | [epic-lora-discovery-application.md](/.plan/epics/epic-lora-discovery-application.md) |
 | Not Started | Magic & Spell Systems | Medium | Very High | 0 | [epic-magic-spell-systems.md](/.plan/epics/epic-magic-spell-systems.md) |
 | Not Started | Matrix Integration | Medium | High | 14 | [epic-matrix-integration.md](/.plan/epics/epic-matrix-integration.md) |
 | Not Started | Mechanics Governance — Per-World Config, Control Levels & Plugin API | Medium | Medium | 5 | [epic-mechanics-governance.md](/.plan/epics/epic-mechanics-governance.md) |
 | Not Started | Memory Profiling & Budgets | High | High | 12 | [epic-memory-profiling-budgets.md](/.plan/epics/epic-memory-profiling-budgets.md) |
-| In Progress | Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server | medium | Very High | 0 | [epic-mesh-federation-content-sharing.md](/.plan/epics/epic-mesh-federation-content-sharing.md) |
+| Done | Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server | medium | Very High | 0 | [epic-mesh-federation-content-sharing.md](/.plan/epics/epic-mesh-federation-content-sharing.md) |
 | Not Started | Message Seen-State & Viewership Ledger | High | Large | 0 | [epic-message-seen-state.md](/.plan/epics/epic-message-seen-state.md) |
 | Not Started | Messages & Message Pipeline | High | Medium | 0 | [epic-messages.md](/.plan/epics/epic-messages.md) |
 | Done | Middleware — Request Lifecycle, Idempotency & Async Results | Medium | Large | 0 | [epic-middleware-request-lifecycle.md](/.plan/epics/epic-middleware-request-lifecycle.md) |
@@ -388,7 +388,7 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 
 ### Admin Panel & Dashboard
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Frontend Epic
@@ -1023,7 +1023,7 @@ Disease and poison mechanics — afflictions, symptoms, cures, resistance, and h
 
 ### Distributed Computing & Sharing (Contributor Compute Network)
 
-- **Status:** Design (research complete)
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Very High
 - **Type:** Feature Epic
@@ -1041,7 +1041,7 @@ Disease and poison mechanics — afflictions, symptoms, cures, resistance, and h
 
 ### E2E & Integration Testing Reliability
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Infrastructure Epic
@@ -1263,7 +1263,7 @@ Multi-system epic combining:
 
 ### Epic: Achievements
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -2090,7 +2090,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 
 ### Frontend Gallery & Media Viewer
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -2099,7 +2099,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 
 ### Frontend HTML Deduplication & HTMX AJAX Reuse
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Optimization Epic
@@ -2386,7 +2386,7 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 
 ### LoRA Discovery & Application
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -2437,7 +2437,7 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 
 ### Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** medium
 - **Effort:** Very High
 - **Type:** Architecture / Feature Epic
@@ -3313,3 +3313,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+
