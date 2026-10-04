@@ -45,15 +45,15 @@ tickets are filed.
 
 ## Overview
 
-| Step | Action                                                                            |
-| ---- | --------------------------------------------------------------------------------- |
-| 1    | Audit: read ticket file → grep current dev source → record evidence               |
-| 2    | Per-bucket worktree: `bun run scripts/worktree/ new fix-bucket-X-bookkeeping`     |
-| 3    | Per-ticket: swap `**Status:**` line + inject `## Resolution` section              |
-| 4    | Single GPG-signed commit per bucket via `bun run scripts/worktree/ commit-branch` |
-| 5    | `bun run scripts/worktree/ finalize --force` (docs-only)                          |
-| 6    | `bun run plan:sync` → expect zero actionable issues                               |
-| 7    | Engram session summary; mark todos done                                           |
+| Step | Action                                                               |
+| ---- | -------------------------------------------------------------------- |
+| 1    | Audit: read ticket file → grep current dev source → record evidence  |
+| 2    | Per-bucket worktree: `giwt new fix-bucket-X-bookkeeping`             |
+| 3    | Per-ticket: swap `**Status:**` line + inject `## Resolution` section |
+| 4    | Single GPG-signed commit per bucket via `giwt commit-wt`             |
+| 5    | `giwt finalize --force` (docs-only)                                  |
+| 6    | `bun run plan:sync` → expect zero actionable issues                  |
+| 7    | Engram session summary; mark todos done                              |
 
 ---
 
@@ -80,18 +80,18 @@ a normal fix per `loop-lore-tasks` — not this skill.
 
 **Always** spin up a dedicated worktree from `dev` for each bucket. The
 mutating operations rule from `AGENTS.md` (`git commit`, `git merge`,
-`bun run scripts/worktree/ commit-branch`, `bun run scripts/worktree/
+`giwt commit-wt`, `bun run scripts/worktree/
 finalize`) only run inside `tree/<worktree-name>/`. **Never** commit
 bookkeeping directly on `dev` even though `AGENTS.md` allowed one exception
 in the original session — that exception was for the user's explicit
 single-file TASK-ticket filing case, not for batch bookkeeping.
 
 ```bash
-bun run scripts/worktree/ new fix-bucket-X-bookkeeping
+giwt new fix-bucket-X-bookkeeping
 cd tree/fix-bucket-X-bookkeeping
 ```
 
-**Worktree creation gotcha:** invoking `bun run scripts/worktree/ new` from
+**Worktree creation gotcha:** invoking `giwt new` from
 inside an existing worktree subshell hits the MCP 30s send timeout. Always
 `cd /home/flak/git-ai/loop-lore` first, then invoke.
 
@@ -123,7 +123,7 @@ No code change required.
 the resolved files in one shot via `write` (overwrite is safe — the ticket
 files are short stubs at most).
 
-**Do NOT** use `bun run scripts/worktree/ ticket <TYPE> ...` inside the
+**Do NOT** use `giwt ticket <TYPE> ...` inside the
 bucket worktree to **modify** existing tickets — that CLI is for **creating**
 new tickets. For mutations, edit the `.md` file directly.
 
@@ -133,7 +133,7 @@ Stage only the files the audit verified. Each bucket is one commit:
 
 ```bash
 git add .plan/tickets/BUG-1.md .plan/tickets/BUG-2.md ...
-bun run scripts/worktree/ commit-branch fix-bucket-X-bookkeeping \
+giwt commit-wt fix-bucket-X-bookkeeping \
   "chore(plan): mark Bucket X BUGs resolved (<short summary>)"
 ```
 
@@ -142,7 +142,7 @@ bun run scripts/worktree/ commit-branch fix-bucket-X-bookkeeping \
 ## Step 5 — Finalize (Docs-Only: `--force`)
 
 ```bash
-bun run scripts/worktree/ finalize fix-bucket-X-bookkeeping --force
+giwt finalize fix-bucket-X-bookkeeping --force
 ```
 
 `--force` is acceptable **only when the commit is 100% `.plan/tickets/*.md`
@@ -188,7 +188,7 @@ engram mem_save --title "Bucket X bookkeeping complete" --type convention \
 When `bunx tsc --noEmit -p tsconfig.backend.json` finds new errors on `dev`
 that have no ticket, file them. Pattern from Bucket D (2026-09-03):
 
-1. **Do NOT use `bun run scripts/worktree/ ticket`** in a parallel-session
+1. **Do NOT use `giwt ticket`** in a parallel-session
    environment. It creates the `.md` stub + git issue + index entry, but
    `plan:sync:fix` from a parallel session can wipe the `.md` between your
    write and your commit, leaving orphan git issues.
@@ -215,7 +215,7 @@ that have no ticket, file them. Pattern from Bucket D (2026-09-03):
 
 ### Cleanup orphan git issues from failed ticket-filing attempts
 
-When `bun run scripts/worktree/ ticket` succeeded but the `.md` file got
+When `giwt ticket` succeeded but the `.md` file got
 wiped by parallel-session sync, the git issue persists as orphan. Clean up:
 
 ```bash
@@ -281,11 +281,11 @@ file a TASK and implement it in `scripts/`.
 `git add`. Parallel sessions may have left untracked files (refactor
 tickets, open-debt updates) — they go in their own commit, not yours.
 
-❌ **Running `plan:sync:fix` after `bun run scripts/worktree/ ticket`** in a
+❌ **Running `plan:sync:fix` after `giwt ticket`** in a
 parallel-session environment. The phantom-spawn race will create orphans.
 Patch index.json manually and commit with `--no-verify`.
 
-❌ **Using `bun run scripts/worktree/ ticket` to modify existing tickets.**
+❌ **Using `giwt ticket` to modify existing tickets.**
 That CLI creates new tickets only. For mutations, edit the `.md` file
 directly.
 
@@ -308,7 +308,7 @@ grep -n "symbol" src/path/to/file.ts
 sed -n "10,20p" src/path/to/file.ts
 
 # Spin up bucket worktree (from dev root):
-bun run scripts/worktree/ new fix-bucket-X-bookkeeping
+giwt new fix-bucket-X-bookkeeping
 
 # Edit ticket files (from inside worktree):
 # Use edit tool with PUT N.=N: (status line) and PUT >N: (resolution block)
@@ -316,11 +316,11 @@ bun run scripts/worktree/ new fix-bucket-X-bookkeeping
 
 # Stage + commit (from inside worktree):
 git add .plan/tickets/BUG-*.md
-bun run scripts/worktree/ commit-branch fix-bucket-X-bookkeeping \
+giwt commit-wt fix-bucket-X-bookkeeping \
   "chore(plan): mark Bucket X BUGs resolved ()"
 
 # Finalize (docs-only: --force):
-bun run scripts/worktree/ finalize fix-bucket-X-bookkeeping --force
+giwt finalize fix-bucket-X-bookkeeping --force
 
 # Verify:
 cd /home/flak/git-ai/loop-lore

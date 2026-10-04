@@ -144,7 +144,7 @@ bun run plan:sync
 bun run plan:sync:fix
 
 # Same fix via the worktree CLI dispatch
-bun run scripts/worktree/ sync
+giwt sync
 
 # Create single git issue for orphan
 git issue create -m "See: .plan/tickets/TASK-NEW.md" "TASK-NEW: Title"

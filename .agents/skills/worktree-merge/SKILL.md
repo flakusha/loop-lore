@@ -14,7 +14,7 @@ description: >
 ## Overview
 
 Loop-lore uses git worktrees for parallel development. The worktree CLI
-(`bun run scripts/worktree/ <command>`) manages merge/rebase operations
+(`giwt <command>`) manages merge/rebase operations
 within the `tree/` directory.
 
 **Default base branch**: `dev` (protected branches: master, main, stg, dev).
@@ -28,13 +28,13 @@ within the `tree/` directory.
 Merges a source branch into a worktree's current branch:
 
 ```bash
-bun run scripts/worktree/ merge <worktree-branch> <source-branch>
+giwt merge <worktree-branch> <source-branch>
 ```
 
 Example:
 
 ```bash
-bun run scripts/worktree/ merge feat feature-api
+giwt merge feat feature-api
 # Merges 'feature-api' into the 'feat' worktree's branch
 ```
 
@@ -44,14 +44,14 @@ Rebases a worktree's branch onto a target (default: the main checkout's
 current branch, typically `dev`):
 
 ```bash
-bun run scripts/worktree/ rebase <worktree-branch> [onto]
+giwt rebase <worktree-branch> [onto]
 ```
 
 Example:
 
 ```bash
-bun run scripts/worktree/ rebase feat         # rebase feat onto default base
-bun run scripts/worktree/ rebase feat develop # rebase feat onto develop
+giwt rebase feat         # rebase feat onto default base
+giwt rebase feat develop # rebase feat onto develop
 ```
 
 > Worktree-layout commands (`new`, `create`, `merge`, `rebase`, `remove`,
@@ -111,13 +111,13 @@ git rebase --abort
 
 **All commits — including merge commits — must be GPG-signed.**
 
-The worktree CLI auto-signs merge commits via `gpgMergeFlags()`.
+giwt auto-signs merge commits (and all `commit-wt` / `finalize` commits).
 When `AGENT_GPG_KEY_ID` is set in `.credentials.env` and the secret key
 is available, `merge` and `finalize` pass `-c commit.gpgsign=true
 -c user.signingkey=<key>` to git automatically.
 
 If `/tmp/gpg-loopback` exists (non-TTY wrapper), it is used as
-`gpg.program` for merge commits. See `commit-branch` skill for details.
+`gpg.program` for merge commits. See `.agents/skills/giwt-usage/SKILL.md` for details.
 
 ### Verification
 
@@ -153,26 +153,26 @@ git -c user.signingkey=<AGENT_GPG_KEY_ID> \
 bun run scripts/gpg-unlock.mjs
 
 # 1. Create feature worktree (from repo root)
-bun run scripts/worktree/ new feature-xyz dev
+giwt new feature-xyz dev
 
 # 2. Work on feature (commits happen in tree/feature-xyz)
 cd tree/feature-xyz
 # ... implement feature ...
-# Commit with GPG signing (commit-branch skill)
+# Commit with GPG signing (giwt commit-wt)
 
 # 3. Sync with dev before merge (back at repo root)
-bun run scripts/worktree/ rebase feature-xyz dev
+giwt rebase feature-xyz dev
 
 # 4. Or merge another branch in (auto-signed)
-bun run scripts/worktree/ merge feature-xyz other-feature
+giwt merge feature-xyz other-feature
 
 # 5. Verify signature after commit
 cd tree/feature-xyz
 git log --show-signature -1
 
 # 6. Finalize: run checks, signed merge to base, remove worktree
-bun run scripts/worktree/ finalize feature-xyz
-# Or: bun run scripts/worktree/ agent-merge feature-xyz
+giwt finalize feature-xyz
+# Or: giwt agent-merge feature-xyz
 ```
 
 ---
