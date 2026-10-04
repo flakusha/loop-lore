@@ -9241,6 +9241,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-llama-swap-native-support-cpu-resident-classifier-model-reci.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llama-swap-sample-config-finalization-unblocks-rotation-poli.md"
     }
   ],
   "src/config/schema/characters.ts": [
@@ -20103,6 +20107,12 @@
       "source": ".plan/tickets/BUG-safe-buffer-base64url-guard-accepts-whitespace-variants-and-.md"
     }
   ],
+  "src/generation/image-engine/index.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-generation-bench-via-local-llama-swap-opt-in.md"
+    }
+  ],
   "src/generation/image-engine/index.ts": [
     {
       "kind": "epic",
@@ -22283,6 +22293,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-scheduler-load-soak-bench-queued-llm-traffic.md"
     }
   ],
   "src/llm/resource-manager.test.ts": [
@@ -22307,6 +22321,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-llm-scheduler-observability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-scheduler-load-soak-bench-queued-llm-traffic.md"
     },
     {
       "kind": "ticket",
@@ -34802,6 +34820,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-llama-swap-sample-config-finalization-unblocks-rotation-poli.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-generation-bench-via-local-llama-swap-opt-in.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
     }
   ],
@@ -35561,6 +35587,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-admin-analytics-latency-p50-p95-p99-trends-sse-live-push-cha.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-scheduler-load-soak-bench-queued-llm-traffic.md"
     }
   ],
   "src/telemetry/telemetry.test.ts": [
@@ -35717,6 +35747,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-scheduler-load-soak-bench-queued-llm-traffic.md"
     }
   ],
   "src/test/worktree.test.ts": [
