@@ -6074,7 +6074,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md",
-    "status": "Done",
+    "status": "Wontfix",
     "tags": [],
     "title": "SSE streams leak String(error) internals to clients",
     "type": "BUG"
@@ -43408,7 +43408,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-workflow-dag-engine-task-dependencies.md",
-    "status": "done",
+    "status": "Wontfix",
     "tags": [],
     "title": "Workflow DAG engine — task dependencies",
     "type": "TASK"
