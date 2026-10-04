@@ -91,6 +91,6 @@ The dependency chain is clean: traits → BDI (separate epic) → relationships 
 7. **Quality of generated conversation** — generative-agents can produce repetitive or nonsensical NPC dialogue. Quality bar is hard to enforce. Manual review of generated logs as part of acceptance?
 
 **Tags:** idea, matrix-gap, g29, g30, npc-social, generative-agents, ai-town, risuai, cross-cutting
-**Related:** .plan/matrix-cross-mechanics.md (G29, G30), .plan/epics/epic-relationships.md, .plan/epics/epic-memory-knowledge-systems.md, .plan/epics/epic-group-chat.md, .plan/tickets/TASK-npc-to-npc-social.md, .plan/epics/IDEA-epic-bdi-npc-autonomy.md
+**Related:** .plan/matrix-cross-mechanics.md (G29, G30), .plan/epics/epic-relationships.md, .plan/epics/epic-memory-knowledge-systems.md, .plan/epics/epic-group-chat.md, .plan/tickets/TASK-npc-to-npc-social.md, .plan/tickets/IDEA-epic-bdi-npc-autonomy-2026-09-26.md
 
 git issue: 00000000
