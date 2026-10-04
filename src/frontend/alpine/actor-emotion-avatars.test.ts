@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, expect, mock, test, } from "bun:test";
+import { afterAll, afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import {
   actorEmotionAvatars,
@@ -55,7 +55,8 @@ class FakeEventSource {
   }
 }
 
-(globalThis as { EventSource?: unknown }).EventSource = FakeEventSource;
+const realEventSource = (globalThis as Record<string, unknown>)["EventSource"];
+(globalThis as Record<string, unknown>)["EventSource"] = FakeEventSource;
 
 const baseCtx = (): ActorEmotionAvatarsState => {
   const state = Object.create(actorEmotionAvatars,) as ActorEmotionAvatarsState;
@@ -81,6 +82,14 @@ afterEach(() => {
   calls = [];
   handler = async () => Response.json({},);
   FakeEventSource.instances = [];
+},);
+
+afterAll(() => {
+  if (realEventSource === undefined) {
+    delete (globalThis as Record<string, unknown>)["EventSource"];
+  } else {
+    (globalThis as Record<string, unknown>)["EventSource"] = realEventSource;
+  }
 },);
 
 const sampleJob = (over: Partial<EmotionAvatarJob> = {},): EmotionAvatarJob => ({
