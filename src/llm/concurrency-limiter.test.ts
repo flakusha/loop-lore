@@ -85,6 +85,20 @@ describe("ConcurrencyLimiter", () => {
     r();
     expect(lim.inUse,).toBe(0,);
   });
+
+  test("abandoned rejected run does not leak the permit", async () => {
+    const lim = new ConcurrencyLimiter({ max: 1, },);
+    // Dropped (only .catch'd to silence unhandled rejection) failing run:
+    // the permit must return to the semaphore on fiber exit regardless.
+    lim.run(async () => {
+      throw new Error("abandoned",);
+    },).catch(() => {},);
+
+    // Deterministic: a fresh run must acquire without any extra pumping.
+    const result = await lim.run(async () => "after");
+    expect(result,).toBe("after",);
+    expect(lim.inUse,).toBe(0,);
+  });
 });
 
 describe("createLimiterRegistry", () => {

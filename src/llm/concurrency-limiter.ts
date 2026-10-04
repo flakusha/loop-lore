@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/llm/concurrency-limiter.ts — async semaphore.
+// src/llm/concurrency-limiter.ts — async semaphore (Effect-backed).
 //
 // Caps concurrent execution of an async operation. `acquire` resolves once a
 // slot is free; `release` returns it. `run` is the convenience wrapper that
@@ -9,6 +9,20 @@
 //
 // ponytail: single-process; no cross-process coordination. Per-provider
 // caps live on a `Map<string, ConcurrencyLimiter>` keyed by provider name.
+
+import { Effect, Semaphore, } from "effect";
+
+/**
+ * Effect's `SemaphoreImpl` runtime counters (public fields in effect@4, but
+ * not part of the `Semaphore` interface). Used only for the `inUse`/`pending`
+ * introspection getters so accounting stays coherent across both the manual
+ * `acquire` path and the `withPermits`-wrapped `run` path. Pinned by
+ * `bun.lock`; any field drift surfaces as a test failure here.
+ */
+type SemaphoreIntrospection = Semaphore.Semaphore & {
+  readonly taken: number;
+  readonly waiters: Set<() => void>;
+};
 
 /** */
 export interface SemaphoreOptions {
@@ -19,8 +33,16 @@ export interface SemaphoreOptions {
 /** Async semaphore. */
 export class ConcurrencyLimiter {
   private readonly max: number;
-  private held = 0;
-  private readonly waiters: Array<() => void> = [];
+  /**
+   * Effect Semaphore owns all permit accounting. Abandon safety: `run` wraps
+   * the body in `withPermits(1)`, whose release is registered as a fiber exit
+   * hook inside the Effect runtime — a body that rejects (even when the caller
+   * drops the resulting promise) releases its permit on exit, so an abandoned
+   * `run` can never wedge the limiter. `acquire` uses manual
+   * `take`/`release`; there the caller remains contract-bound to invoke the
+   * releaser exactly once (JS cannot observe a dropped closure), as before.
+   */
+  private readonly semaphore: SemaphoreIntrospection;
 
   constructor(opts: SemaphoreOptions,) {
     if (!Number.isInteger(opts.max,) || opts.max < 1) {
@@ -28,11 +50,12 @@ export class ConcurrencyLimiter {
     }
 
     this.max = opts.max;
+    this.semaphore = Semaphore.makeUnsafe(opts.max,) as SemaphoreIntrospection;
   }
 
   /** Current slots in use. */
   get inUse(): number {
-    return this.held;
+    return this.semaphore.taken;
   }
 
   /** Configured maximum. */
@@ -42,7 +65,7 @@ export class ConcurrencyLimiter {
 
   /** Number of waiters queued. */
   get pending(): number {
-    return this.waiters.length;
+    return this.semaphore.waiters.size;
   }
 
   /**
@@ -50,17 +73,15 @@ export class ConcurrencyLimiter {
    * the caller once (use `run` to make this automatic).
    */
   async acquire(): Promise<() => void> {
-    if (this.held < this.max) {
-      this.held++;
-      return this.makeReleaser();
-    }
-
-    return new Promise<() => void>((resolve,) => {
-      this.waiters.push(() => {
-        this.held++;
-        resolve(this.makeReleaser(),);
-      },);
-    },);
+    await Effect.runPromise(this.semaphore.take(1,),);
+    let called = false;
+    return () => {
+      if (called) { return; }
+      called = true;
+      // runSync so `inUse` drops synchronously, as the previous
+      // hand-rolled releaser did; blocked waiters are woken by Effect.
+      Effect.runSync(this.semaphore.release(1,),);
+    };
   }
 
   /**
@@ -68,26 +89,13 @@ export class ConcurrencyLimiter {
    * @throws whatever `fn` throws.
    */
   async run<T,>(fn: () => Promise<T>,): Promise<T> {
-    const release = await this.acquire();
-    try {
-      return await fn();
-    } finally {
-      release();
-    }
-  }
-
-  /**
-   * @returns {() => void}
-   */
-  private makeReleaser(): () => void {
-    let called = false;
-    return () => {
-      if (called) { return; }
-      called = true;
-      this.held--;
-      const next = this.waiters.shift();
-      if (next) { next(); }
-    };
+    return Effect.runPromise(
+      this.semaphore.withPermits(1,)(
+        // `catch` passes the rejection value through unchanged so `runPromise`
+        // rejects with the original error, preserving the old contract.
+        Effect.tryPromise({ try: fn, catch: (error,) => error, },),
+      ),
+    );
   }
 }
 
