@@ -3,7 +3,7 @@
 
 # TASK: Task-aware MockLLMProvider for classification-path e2e flows
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ tests/e2e mock-llm-provider returns one canned string regardless of task. Extend
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue e055c1b (registry tip: 354106dc1 Konstantin Fedotov Close issue)
