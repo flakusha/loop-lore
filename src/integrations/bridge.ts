@@ -72,8 +72,12 @@ export interface MessageBridge {
   send(target: string, message: AdapterMessage,): Promise<BridgeSendResult>;
   /** Register the inbound handler (replaces any previous). */
   onMessage(handler: AdapterMessageHandler,): void;
-  /** Ingest an inbound message from `adapterName`; dedup on (adapter, id),
-   * then consult the inbound policy gate.
+  /** Ingest an inbound message from `adapterName`: dedup on (adapter, id)
+   * against already-dispatched deliveries, then consult the inbound policy
+   * gate BEFORE recording — a blocked message stays unrecorded for
+   * redelivery (policy changes apply on retry), a dispatch dedups.
+   * @throws {Error} Propagates `inboundGate`/handler failures; the message
+   * stays unrecorded, so gate implementations should be total functions.
    * @returns true when dispatched to the handler, false when dropped as a
    * duplicate or blocked by the inbound gate. */
   receive(adapterName: string, message: AdapterMessage,): boolean;
@@ -179,14 +183,17 @@ export function createMessageBridge(
       const expiresAt = seen.get(key,);
       if (expiresAt !== undefined && expiresAt > nowMs) { return false; }
 
-      seen.set(key, nowMs + dedupTtlMs,);
-
-      // Inbound policy gate (spam/allow/block lists): dedup runs first so a
-      // delivery retry cannot re-trip the gate or re-file quarantine; a
-      // gate-blocked message never dispatches and does not mark success.
+      // Inbound policy gate (spam/allow/block lists): consulted BEFORE the
+      // delivery is recorded, so a blocked message stays unrecorded — a
+      // policy change takes effect when the provider redelivers the same
+      // id, while a true duplicate (already dispatched) is deduped above.
+      // A gate throw propagates (no silent swallow): the message remains
+      // unrecorded for redelivery, and the message never dispatches here
+      // without a pass verdict. Gate-blocked mail does not mark success.
       const gateVerdict = inboundGate?.(message,);
       if (gateVerdict !== undefined && !gateVerdict.ok) { return false; }
 
+      seen.set(key, nowMs + dedupTtlMs,);
       handler?.(message,);
       health?.markSuccess(adapterName,);
       return true;
