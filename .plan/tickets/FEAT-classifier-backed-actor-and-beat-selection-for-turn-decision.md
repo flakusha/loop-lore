@@ -3,7 +3,7 @@
 
 # FEAT: Classifier-backed actor and beat selection for turn decisions
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ Turn selection is mechanical: weighted-random talkativity (src/turning/turn-mana
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 243a607 (registry tip: bf0cef4aa Konstantin Fedotov Close issue)

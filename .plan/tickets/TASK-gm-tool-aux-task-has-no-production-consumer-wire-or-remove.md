@@ -3,7 +3,7 @@
 
 # TASK: gm-tool AUX task has no production consumer - wire or remove
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ detectGmTool (src/assistant/gm-tool-detection.ts, callAux gm-tool at :118) is im
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue ecde333 (registry tip: 8486963a6 Konstantin Fedotov Close issue)

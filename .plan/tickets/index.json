@@ -14863,7 +14863,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/FEAT-classifier-backed-actor-and-beat-selection-for-turn-decision.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-CLASSIFIER-MODEL-SUPPORT-COMPLEMENTARY-TO-AUX-PIPELINE-LAYA-": {
     "epic": "",
@@ -15279,7 +15279,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/FEAT-fixture-driven-prompt-eval-harness-for-aux-classification-ta.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-FORGE-ENGINE-ENERGY-POOL-SAGE-ACTION-ECONOMY": {
     "epic": "proposed:epic-rpg-action-economy",
@@ -30503,7 +30503,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-gm-tool-aux-task-has-no-production-consumer-wire-or-remove.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-GM-TRIGGER-AND-TIMELINE-BACKFILL-PROPAGATION": {
     "epic": "epic-gm-shadow-notes",
@@ -41077,7 +41077,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-task-aware-mockllmprovider-for-classification-path-e2e-flows.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-TELEMETRY-ENDPOINT-TRUSTS-USERID-FROM-REQUEST-BODY": {
     "epic": "",
