@@ -148,7 +148,7 @@ export function reportResults(results,) {
 export function buildReport({ exitCode, checks, nonBlocking, gpgPrecheck, },) {
   const passedCount = checks.filter((check,) => check.passed).length;
   const skippedCount = checks.filter((check,) => check.skipped).length;
-  const advisoryCount = checks.filter((check,) => check.advisory === true).length;
+  const advisoryCount = checks.filter((check,) => check.advisory === true && !check.passed && !check.skipped).length;
   const failedCount = checks.length - passedCount - skippedCount - advisoryCount;
   const durationMs = checks.reduce((sum, check,) => sum + (check.durationMs ?? 0), 0,);
 

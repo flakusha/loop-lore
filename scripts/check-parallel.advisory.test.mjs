@@ -141,6 +141,18 @@ describe("advisory failures appear in the report", () => {
     expect(report.summary.failed,).toBe(1,);
   });
 
+  test("passing advisory gate does not corrupt failedCount", () => {
+    const results = [
+      makeResult("plan - validate", { passed: true, advisory: true, },),
+      makeResult("lint - eslint", { passed: true, },),
+    ];
+    const report = buildReport({ exitCode: 0, checks: results, nonBlocking: [], gpgPrecheck: null, },);
+    expect(report.passed,).toBe(true,);
+    expect(report.summary.advisory,).toBe(0,);
+    expect(report.summary.failed,).toBe(0,);
+    expect(report.summary.passed,).toBe(2,);
+  });
+
   test("skipped gates are not affected by advisory logic", () => {
     const results = [
       makeResult("plan - ticket index (sync)", { passed: false, skipped: true, advisory: true, },),
