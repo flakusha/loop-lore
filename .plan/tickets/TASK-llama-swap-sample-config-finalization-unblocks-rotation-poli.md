@@ -11,6 +11,7 @@
 **Summary:** Finalize the user-prepared llama-swap sample config against the Part-1 contract in `FEAT-llama-swap-rotation-exclusion-policy` (model set, per-model footprint, reload semantics), then promote it to a tested fixture input for the rotation parser. Until this lands, the rotation/exclusion parser has no target shape. Prerequisite input — not a scheduler build ticket.
 
 **Context:** Only `configs/config.llama-swap.example.yaml` is committed; no live config exists yet. The example already documents group-engine rotation (`llm-rotation` exclusive/swap group, `helpers` persistent group), TTL/offload mechanics, and startup preload — finalization verifies that shape against the contract rather than inventing a new one.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Acceptance Criteria
 

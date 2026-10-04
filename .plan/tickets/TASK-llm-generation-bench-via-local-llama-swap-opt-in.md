@@ -11,6 +11,7 @@
 **Summary:** Opt-in bench in `tests/benchmarks/` measuring real LLM round-trip latency (p50/p95/p99), token rate, and model-rotation cost against the local llama-swap + llama-server binaries already present on the dev host. Default-off behind `LL_BENCH_LLM=1` with graceful skip when binaries or models are missing. Standalone latency numbers land first (no scheduler attribution); queue-wait attribution is layered on after the wire ticket lands.
 
 **Context:** Admission tuning (slot caps) and the rotation policy (`FEAT-llama-swap-rotation-exclusion-policy`) need at least one real number — how long a swap actually costs vs a warm hit — or the policy gates on a guessed threshold. The e2e performance ticket (`FEAT-e2e-performance-benchmarks`) measures unqueued paths and cannot supply it.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Acceptance Criteria
 
