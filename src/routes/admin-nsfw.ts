@@ -17,7 +17,7 @@ import type { Kysely, } from "kysely";
 import { setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
-import { getRuntimeNsfwConfig, updateRuntimeNsfwConfig, } from "../nsfw/runtime-config";
+import { getRuntimeNsfwConfig, } from "../nsfw/runtime-config";
 import { can, } from "../users/permissions";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
@@ -26,9 +26,9 @@ function log(): Logger {
   return getLogger().child({ module: "admin-nsfw", },);
 }
 
-/** Config keys */
-const NSFW_ALLOW_KEY = "nsfw_allow";
-const NSFW_MIN_AGE_KEY = "nsfw_min_age";
+/** Config keys (dotted paths matching HOT_APPLY_PATHS) */
+const NSFW_ALLOW_KEY = "nsfw.allowNsfw";
+const NSFW_MIN_AGE_KEY = "nsfw.nsfwMinAge";
 
 interface NsfwAdminConfig {
   allowNsfw: boolean;
@@ -88,26 +88,19 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix 
         };
 
         try {
+          let requiresRestart = false;
           if (body.allowNsfw !== undefined) {
-            await setConfig(database, NSFW_ALLOW_KEY, String(body.allowNsfw,), "Allow NSFW content in chats",);
+            requiresRestart = await setConfig(database, NSFW_ALLOW_KEY, String(body.allowNsfw,), "Allow NSFW content in chats",);
           }
 
           if (body.nsfwMinAge !== undefined) {
             const age = Math.max(13, Math.min(25, body.nsfwMinAge,),);
-            await setConfig(database, NSFW_MIN_AGE_KEY, String(age,), "Minimum age for NSFW content",);
+            const rr = await setConfig(database, NSFW_MIN_AGE_KEY, String(age,), "Minimum age for NSFW content",);
+            requiresRestart = requiresRestart || rr;
           }
-
-          // Apply to the live runtime store so the toggle takes effect immediately.
-          const patch: Parameters<typeof updateRuntimeNsfwConfig>[0] = {};
-          if (body.allowNsfw !== undefined) { patch.allowNsfw = body.allowNsfw; }
-          if (body.nsfwMinAge !== undefined) {
-            patch.nsfwMinAge = Math.max(13, Math.min(25, body.nsfwMinAge,),);
-          }
-
-          updateRuntimeNsfwConfig(patch,);
 
           log().info(`NSFW config updated by ${userId}`,);
-          return jsonResponse({ ok: true, },);
+          return jsonResponse({ ok: true, requires_restart: requiresRestart, },);
         } catch (error) {
           log().error(`Failed to update NSFW config: ${String(error,)}`,);
           return jsonError({
