@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-message-seen-state.md
-**Tags:** message-seen-state
 
 **Summary:** seen poller starves shared default rate limit bucket
 **Context:** Context: BUG-rate-limit-policies-starve half-fixed; chatPolicy comment (policies.ts:31) claims seen-poller coverage but routePolicies (policies.ts:51-55) only matches /auth /generation /chats.

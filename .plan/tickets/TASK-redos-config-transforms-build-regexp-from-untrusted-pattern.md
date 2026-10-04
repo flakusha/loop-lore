@@ -12,8 +12,6 @@
 **Status Note:** already fixed on dev
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-security-sandboxing.md
-**Tags:** security-sandboxing
 
 ## Summary
 

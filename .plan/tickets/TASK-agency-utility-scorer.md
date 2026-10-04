@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** P0 (within EPIC-RESEARCH-AGENCY-DECISION)
 **Effort:** 2 days
-**Epic:** epic-agency-story-points.md
-**Tags:** agency-story-points
 **Parent epic:** `epic-research-agency-decision.md`
 **Related:** `epic-character-internal-traits.md` (D7 coping, D8 approach, D9 autonomy), `src/characters/services/personality-service/`, `src/characters/services/character-systems/`, `epic-agency-story-points.md` (ReactionDecision type), `epic-actor-autonomy-story-drive.md` (reaction dispatch)
 

@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Small
-**Epic:** epic-encryption-workflow.md
-**Tags:** encryption-workflow
 
 ## Summary
 

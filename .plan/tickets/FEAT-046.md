@@ -11,8 +11,6 @@ related: [FEAT-045, FEAT-047]
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-chat-product-features.md
-**Tags:** features
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

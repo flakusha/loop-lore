@@ -7,8 +7,6 @@
 **Status Note:** author self-declared 'too much effort now' (2026-09); blocked on FEAT-message-swipe-replay-branch stabilizing the swipe/variant model. File preserved for design intent only (bookkeeping 2026-09-19)
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-messages.md
-**Tags:** messages
 **Summary:** Idea candidate — remap message tree + preserve swipe variants on `migrateChat`. Self-deferred by author; depends on swipe/variant model stability.
 **Context:** (none captured)
 **Acceptance Criteria:** Deferred — see FEAT-message-swipe-replay-branch for the unblocking work.

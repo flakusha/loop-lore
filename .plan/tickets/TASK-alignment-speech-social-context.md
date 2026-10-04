@@ -10,8 +10,6 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-npcs.md
-**Tags:** npc, rpg
 
 **References:**
 - Epic: .plan/epics/epic-character-world-integration.md

@@ -12,8 +12,6 @@
 **Status Note:** fixed by f69d0229
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-content-hashing-distributed-integrity.md
-**Tags:** content-hashing-distributed-integrity
 
 ## Summary
 

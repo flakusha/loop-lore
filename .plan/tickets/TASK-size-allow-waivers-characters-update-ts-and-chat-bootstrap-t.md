@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-code-quality.md
-**Tags:** code-quality
 **Summary:** Size-allow waivers documenting pre-existing file-size ceiling breaches on dev.
 **Context:** check-file-size --strict blocks every finalize; this waives two pre-existing files.
 **Acceptance Criteria:** Waivers applied; owners document split-and-remove path.

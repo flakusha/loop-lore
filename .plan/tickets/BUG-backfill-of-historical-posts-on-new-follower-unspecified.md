@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-blog-system.md
-**Tags:** blog-system
 
 ## Summary
 

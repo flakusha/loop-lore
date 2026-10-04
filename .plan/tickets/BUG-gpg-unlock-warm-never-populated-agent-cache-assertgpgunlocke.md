@@ -12,8 +12,6 @@
 **Status Note:** already on dev, 2026-09-14
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-worktree-plan-tooling.md
-**Tags:** worktree-plan-tooling
 
 ## Summary
 

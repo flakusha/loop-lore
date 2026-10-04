@@ -7,8 +7,6 @@
 **Status Note:** closed on dev, 2026-09-27 (NSFW game-mechanics batch closeout)
 **Priority:** high
 **Effort:** Large
-**Epic:** epic-nsfw-game-mechanics.md
-**Tags:** nsfw-game-mechanics
 **Summary:** Intimacy progression layered on the canonical IntimacyLevel enum, gated by NSFW rating + consent.
 **Context:** Gameplay-layer intimacy axis; tier transitions emit intimacy.level_changed.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

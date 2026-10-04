@@ -11,8 +11,6 @@
 **Status:** In Progress
 **Priority:** Medium
 **Effort:** Med
-**Epic:** epic-crypto.md
-**Tags:** crypto
 **Parent:** TASK-epic17-encryption-e2e-expansion
 **Blocked by:** TASK-encryption-wire-message-pipeline
 

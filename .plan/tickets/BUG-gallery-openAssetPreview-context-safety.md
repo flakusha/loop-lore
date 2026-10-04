@@ -12,8 +12,6 @@
 **Priority:** medium
 **Priority Tier:** P3
 **Effort:** Small
-**Epic:** epic-frontend-gallery.md
-**Tags:** frontend-gallery
 **Area:** gallery
 **Source:** reconcile review (Scout Batch C — GAL-3)
 

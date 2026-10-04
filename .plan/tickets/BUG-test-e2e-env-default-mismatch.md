@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
-**Epic:** epic-testing-qa.md
-**Tags:** e2e, test-gap
 **Type:** Bug
 **Summary:** Wire `E2E_SAFEGUARD=1` into the four developer-facing npm scripts (or single-source the default) so canonical e2e shape goes green without the env var.
 **Context:** With `E2E_SAFEGUARD` unset the v1 `governanceGuard` flips ON and 429s 29/277 e2e tests; `ci` and the check-runner already export `E2E_SAFEGUARD=1`, but `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, `test:all` do not.

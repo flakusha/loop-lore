@@ -7,8 +7,6 @@
 **Status Note:** resolved in fix-assets-v1-upload-route branch — `POST /api/v1/assets` registered alongside legacy `/api/assets` so the v1 path is no longer caught by the wildcard fallback
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-asset-platform-capabilities.md
-**Tags:** asset-platform-capabilities
 **Tags:** assets, e2e, coverage-gate
 
 **Summary:** All 8 e2e tests in `tests/e2e/flows/assets.test.ts` fail with `TypeError: null is not an object (evaluating '(await api.upload("/api/v1/assets", formData)).data.id')`. The `POST /api/v1/assets` upload endpoint returns a non-2xx response, so `res.ok === false` and `res.data === null`. 1 of 8 tests passes (the GET list when empty).

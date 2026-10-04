@@ -3,8 +3,6 @@
 
 # TASK-026: Quest System Implementation
 
-**Epic:** epic-rpg-content-systems.md
-**Tags:** rpg-content-systems
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

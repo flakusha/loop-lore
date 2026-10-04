@@ -12,8 +12,6 @@
 **Status Note:** fix-post-history-instruction-position @ ed1844be+3
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-prompt-improvement.md
-**Tags:** prompt-improvement
 
 ## Summary
 

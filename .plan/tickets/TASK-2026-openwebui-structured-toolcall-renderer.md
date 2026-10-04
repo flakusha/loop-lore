@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
-**Epic:** epic-platform-research.md
-**Tags:** openwebui, parity
 **Labels:** frontend, streaming, tools
 **Summary:** Render SSE `event: tool_call` payloads as a live, in-place interactive tool-call block in the chat UI (Alpine `x-data` updates the block as the tool runs) rather than the current generic `stream-update` HTML bubble. On `event: tool_result`, replace the block with the result.
 

@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** High
-**Epic:** epic-db-migration-compaction.md
-**Tags:** db, migration
 
 ## Summary
 

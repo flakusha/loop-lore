@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium (P6+ per matrix, but 🔴 High future impact)
 **Effort:** Large
-**Epic:** epic-tool-calling-mcp.md
 **Type:** Research
 **Summary:** `matrix-cross-mechanics.md` G42 names Tool-Calling / MCP as the "broadest integration gap — touches entire matrix." No epic owns the cross-cutting tool schema, the agent runtime, or the MCP client/server surfaces. `epic-platform-integrations.md` covers provider adapters (LLM/image/voice) but **not** agent-facing tool schemas (inventory, combat, quest, social, asset). This ticket proposes a new epic to close the gap.
 **Context:** Source row: 2026-09-26 epic audit; matrix reference: `matrix-cross-mechanics.md` G42; inspiration source: Convai tool-calling / MCP connectors (research sweep 2026-08-14). Existing related work: `epic-workflow-engine.md` (internal Run sessions), `epic-assistant-gm-flows.md` (in-character autonomous behavior), `epic-byok-api-keys.md` (per-user provider keys).

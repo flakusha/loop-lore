@@ -11,8 +11,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-chat-product-features.md
-**Tags:** chat-product-features
 
 ## Resolution
 

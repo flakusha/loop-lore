@@ -12,8 +12,6 @@
 **Status Note:** reconciliation
 **Priority:** —
 **Effort:** —
-**Epic:** epic-import-export-io.md
-**Tags:** import-export-io
 **Source:** User-directed reconciliation, 2026-07-19
 
 ## Summary

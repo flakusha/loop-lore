@@ -12,8 +12,6 @@
 
 **Priority Tier:** P2
 **Effort:** Medium
-**Epic:** epic-impersonation.md
-**Tags:** impersonation
 **Source:** reconcile review (Scout Batch C — IMP-3)
 `src/frontend/alpine/command-buttons.ts:73-92` — `runCommand(cmd)` handles only `"guide"` and `"scene"`. When `cmd === "impersonate"` or `"char"`, it falls through to `input.value = \`/${cmd} \` (types into chat input). The `actionPayload` from `buildImpersonateResult` is never read, never dispatched.
 User sees `/impersonate Eldon` typed into the chat input instead of actual impersonation. The impersonation flow is completely dead on the FE side.

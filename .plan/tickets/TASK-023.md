@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-3d-generation.md
-**Tags:** 3d-generation
 **Summary:** Three camera modes (orbit / first-person / cinematic) bound to a single control.
 **Context:** Frontend view controller + camera state; persists in session and reflects in URL.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

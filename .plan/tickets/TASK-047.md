@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-plugin-extension-points.md
-**Tags:** plugin-extension-points
 **Summary:** Public plugin API surface — tool executor, event bus, UI component mount points.
 **Context:** Stabilizes the plugin↔core contract via existing API surfaces.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

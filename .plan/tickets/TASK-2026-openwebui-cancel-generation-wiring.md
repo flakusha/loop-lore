@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
-**Epic:** epic-platform-research.md
-**Tags:** openwebui, parity
 **Labels:** frontend, streaming, generation
 **Summary:** Wire the existing `cancelGeneration()` stub in `src/frontend/alpine/chat-types/core.ts:261` to the already-implemented server endpoint `DELETE /api/generation/cancel/:chatId` at `src/generation/generation-routes/cancel.ts`, then close the SSE `EventSource` and reset `isGenerating`.
 

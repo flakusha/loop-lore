@@ -12,8 +12,6 @@
 **Status Note:** 2026-09-04
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-logging-telemetry.md
-**Tags:** logging-telemetry
 
 ## Summary
 

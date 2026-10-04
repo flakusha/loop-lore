@@ -11,8 +11,6 @@
 **Status:** Not Started
 **Priority:** P6+ (Deferred)
 **Effort:** High
-**Epic:** epic-assistant-gm-flows.md
-**Tags:** assistant, gm
 **Created:** 2026-08-14
 **Source:** Platform research deep-dive (Convai)
 

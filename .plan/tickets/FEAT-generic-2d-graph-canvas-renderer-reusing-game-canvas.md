@@ -6,8 +6,6 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-2d-sprite-world.md
-**Tags:** 2d-graph, canvas
 
 **Summary:** Extract a generic node/edge 2D canvas renderer from the existing game-canvas so every relationship-graph ticket in this batch shares one draw and interaction layer instead of forking it.
 

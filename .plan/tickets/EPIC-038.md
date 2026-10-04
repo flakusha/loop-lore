@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-housing-base-building.md
-**Tags:** housing-base-building
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

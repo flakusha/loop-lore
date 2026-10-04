@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (one migration + opt-in `registerContentVersion` calls in 7 services)
-**Epic:** epic-schema.md
 **Summary:** Extend the existing `data_version` + `record_hash` pattern (already on `assets`, `characters`, `chats`, `messages`, `worlds`, `actors`) to 7 additional content-heavy tables: `items`, `world_lore_entries`, `actor_lore_entries`, `quests`, `locations`, `blog_posts`, `shadow_notes`, `whitenotes`, `crafting_recipes`. Schema-only adds; the `registerContentVersion` hookup is opt-in per service to avoid breaking existing writers.
 **Context:** DB field-audit 2026-09-25 found that user-edited or LLM-derived content tables lack tamper-detection digests and stable version tracking for export/import diff. The infrastructure already exists: `src/db/content-version.ts` provides `registerContentVersion`, `getContentEnvelope`, `computeRowHash`, `runBatchRefresh`. Migrations 002-006 added `data_version` columns to a small set of tables; this ticket extends the pattern systematically. Purely additive; existing rows default to `data_version=0` and `record_hash=""` until the owning service calls `runBatchRefresh` once. The registry hookup lives in service code so each domain can stage rollout independently.
 

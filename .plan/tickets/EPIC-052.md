@@ -5,8 +5,6 @@
 
 **Status:** Done
 **Status Note:** duplicate
-**Epic:** epic-analytics-observability.md
-**Tags:** analytics-observability
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

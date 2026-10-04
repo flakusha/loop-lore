@@ -10,8 +10,6 @@
 **Status Note:** (closed 2026-09-20) — flush on attach + bounded queue
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-transport-expansion.md
-**Tags:** transport-expansion
 
 ## Summary
 

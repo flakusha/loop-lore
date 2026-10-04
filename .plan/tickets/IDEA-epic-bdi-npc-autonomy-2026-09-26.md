@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium (P6+ per matrix, but 🔴 High future severity)
 **Effort:** Large
-**Epic:** epic-npc-bdi-autonomy.md
 **Type:** Research
 **Summary:** Matrix gaps G27, G28, G32 all describe the same root: no **BDI (Belief-Desire-Intention) goal-pursuit loop** for NPCs. Aspirations (from `epic-character-internal-traits.md`), mood (from `TASK-character-mood-happiness.md`), and BDI planning (`TASK-npc-bdi-planning.md`) exist as **disconnected systems** — no epic unifies them into a daily-plan execution loop. Inspiration: Inworld AI, Convai, generative-agents. Existing `epic-actor-autonomy-story-drive.md` covers story-level autonomy; this proposal covers **character-level** day-to-day goal pursuit.
 **Context:** Source row: 2026-09-26 epic audit; matrix reference: `matrix-cross-mechanics.md` G27, G28, G32 (2026-08-14 research sweep). The matrix documents that BDI planning needs aspiration data, mood data, and between-session persistence — none of which are currently wired. Three related tickets exist as orphaned stubs (`TASK-npc-bdi-planning.md`, `TASK-character-mood-happiness.md`, `TASK-living-world-persistence.md`); no epic owns the integration.

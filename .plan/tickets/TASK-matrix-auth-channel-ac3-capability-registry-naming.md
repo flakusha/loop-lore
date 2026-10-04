@@ -6,7 +6,6 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-matrix-integration.md
 **Type:** Task
 **Summary:** Close `matrix-authentication-channels.md` open decision `[WAC1]` by aligning the `auth-challenge` capability flag in `src/integrations/` with the canonical integrations-core capability registry (string vs symbol, namespacing, single-source enum).
 **Context:** AC3 (provisioning × integrations-core) is doc-resolved except for `[WAC1]`: "capability enum naming must match core epic's registry shape when it lands". Until then, OTP delivery has no canonical enum entry. This ticket is the small fix that lands once the registry shape is fixed.

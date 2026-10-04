@@ -6,8 +6,6 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-items.md
-**Tags:** items
 **Summary:** Quest reward ledger — persist LootDrop[] as world_items; reconcile stackable vs unique.
 **Context:** Items-slice of quest lifecycle; full quest engine lives in epic-rpg-content-systems.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
