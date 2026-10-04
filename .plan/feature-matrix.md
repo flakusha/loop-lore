@@ -410,7 +410,7 @@ Total tickets: **3173** — untagged: **2674** — unbound to epic: **1620**
 | federation | 9 | 1 | 1 | 0 | 1 | 0 | 6 |
 | ffi | 2 | 0 | 2 | 0 | 0 | 0 | 0 |
 | file-split | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| finalize | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| finalize | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | flagging | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | flake-rate | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | flashback | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -671,7 +671,7 @@ Total tickets: **3173** — untagged: **2674** — unbound to epic: **1620**
 | openapi | 7 | 1 | 1 | 0 | 0 | 0 | 5 |
 | openspec | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | opentelemetry | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| orchestration | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| orchestration | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | outfit | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | overlay | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | ownership | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1578,7 +1578,7 @@ Total tickets: **3173** — untagged: **2674** — unbound to epic: **1620**
 | Visual Novel Mode; Immersion & Presentation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Wardrobe / Loadout Avatar Variants | 8 | 4 | 0 | 4 | 0 | 0 | 0 |
 | World & Locations | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| (unbound) | 1620 | 651 | 57 | 535 | 50 | 0 | 327 |
+| (unbound) | 1620 | 652 | 57 | 535 | 50 | 0 | 326 |
 
 ## Ticket detail
 
