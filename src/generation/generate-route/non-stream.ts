@@ -29,13 +29,14 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { CancelReason, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import type { ResourceManager, } from "../../llm";
 import { getLogger, } from "../../logger";
 import { extractAndStoreMemories, } from "../../memory";
 import { jsonError, jsonResponse, } from "../../routes/http-utils";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import { activeGenerations, failGeneration, } from "../cancellation-manager";
-import { callWithFailover, } from "../providers/call-with-failover";
-import type { GenerateRequest as ProviderRequest, LLMProvider, } from "../providers/types";
+import type { GenerateRequest as ProviderRequest, GenerateResponse, LLMProvider, } from "../providers/types";
+import { scheduledCallWithFailover, } from "../scheduler";
 import type { GenerationMessage, } from "../types";
 import { buildGenerationResult, storeGenerationResult, } from "./persist";
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
@@ -53,6 +54,8 @@ export interface RunNonStreamingOpts {
   providerName: string;
   providerReq: ProviderRequest;
   failoverList: { name: string; provider: LLMProvider }[];
+  /** Scheduler override (tests); production uses the process-wide manager. */
+  scheduler?: ResourceManager;
 }
 
 /**
@@ -67,6 +70,7 @@ export interface RunNonStreamingOpts {
  * @param root0.providerName
  * @param root0.providerReq
  * @param root0.failoverList
+ * @param root0.scheduler
  * @throws {Error}
  * @throws {Error}
  * @returns {Promise<Response>}
@@ -82,18 +86,26 @@ export async function runNonStreaming({
   providerName,
   providerReq,
   failoverList,
+  scheduler,
 }: RunNonStreamingOpts,): Promise<Response> {
   const log = getLogger().child({ module: "generate-route", },);
   try {
     const startedAt = Date.now();
     let currentMessages = messages;
-    let finalResponse: Awaited<ReturnType<typeof callWithFailover>> | null = null;
+    let finalResponse: GenerateResponse | null = null;
 
     const allToolResults: GenerationMessage[] = [];
     for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-      const response = await callWithFailover(failoverList, {
-        ...providerReq,
-        messages: currentMessages,
+      // Scheduler id: stable per attempt+round (manager rejects live
+      // duplicates; each tool round is a distinct dispatch).
+      const response = await scheduledCallWithFailover({
+        id: `${attemptId}:round-${round}`,
+        failoverList,
+        req: {
+          ...providerReq,
+          messages: currentMessages,
+        },
+        scheduler,
       },);
 
       if (!response.toolCalls || response.toolCalls.length === 0) {
@@ -119,7 +131,6 @@ export async function runNonStreaming({
         actorId: input.actorId,
         chatId: input.chatId,
       },);
-
       currentMessages = [...currentMessages, ...toolResults,];
       allToolResults.push(...toolResults,);
     }
@@ -140,7 +151,6 @@ export async function runNonStreaming({
         attemptId,
         finishReason: finalResponse.finishReason,
       },);
-
       throw new Error(`LLM returned empty content (finishReason=${finalResponse.finishReason})`,);
     }
 
@@ -190,7 +200,6 @@ export async function runNonStreaming({
         log.error("Telemetry record failed", error instanceof Error ? error : undefined,);
       },);
     }
-
     // BUG-generation-error-handling-gaps: explicit .catch on memory void.
     void extractAndStoreMemories(database, {
       actorId: input.actorId,
@@ -227,7 +236,6 @@ export async function runNonStreaming({
     } catch {
       // failGeneration already logs errors
     }
-
     return jsonError({ message: `Generation failed: ${errMsg}`, status: 500, },);
   }
 }

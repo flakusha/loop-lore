@@ -5,8 +5,10 @@ import type { Kysely, } from "kysely";
 import { callAux, } from "../../aux-pipeline";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
+import type { Logger, } from "../../logger";
 import { resolveSystemPrompt, } from "../../prompts";
 import { clampUnit, jsonParseOr, } from "../../utils";
+import { type AssistantTuningOverride, AUTO_GEN_SHORT_REPLY_MAX_TOKENS, } from "../assistant-tuning";
 
 /**
  * Pre-generation intent check using the auxiliary model.
@@ -82,4 +84,35 @@ export function parseIntentClassification(content: string,): IntentClassificatio
     confidence: clampUnit(rawConfidence,),
     shortReply: parsed.shortReply ?? false,
   };
+}
+
+/**
+ * Short-reply heuristic: skip the main model when the per-chat override pins
+ * maxTokens or the user message classifies as a low-confidence short reply.
+ * Moved out of call-llm.ts so that file stays under the 250L size gate.
+ * @param opts
+ * @param opts.assistantTuning
+ * @param opts.userMessage
+ * @param opts.config
+ * @param opts.database
+ * @param opts.log
+ * @returns true when the short-reply sampling path applies
+ */
+export async function detectShortReply(opts: {
+  assistantTuning?: AssistantTuningOverride;
+  userMessage?: string;
+  config: Config;
+  database: Kysely<DB>;
+  log: Logger;
+},): Promise<boolean> {
+  if ((opts.assistantTuning?.maxTokens ?? null) !== null) { return false; }
+  if (!opts.userMessage) { return false; }
+  const intent = await classifyIntent(opts.userMessage, opts.config, opts.database,);
+  if (!intent?.shortReply || intent.confidence <= 0.7) { return false; }
+  opts.log.info("Auxiliary model: short reply detected", {
+    intent: intent.intent,
+    confidence: intent.confidence,
+    maxTokens: AUTO_GEN_SHORT_REPLY_MAX_TOKENS,
+  },);
+  return true;
 }

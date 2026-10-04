@@ -118,9 +118,31 @@ describe("createLimiterRegistry", () => {
     expect(reg.size,).toBe(0,);
   });
 
-  test("mismatch on existing key throws", () => {
+  test("mismatched max resizes instead of throwing (hot-reload)", () => {
     const reg = createLimiterRegistry();
-    reg.get("openai", 3,);
-    expect(() => reg.get("openai", 4,)).toThrow(/capacity mismatch/,);
+    const a = reg.get("openai", 3,);
+    const b = reg.get("openai", 4,);
+    expect(b,).toBe(a,);
+    expect(a.capacity,).toBe(4,);
+  });
+
+  test("resize rejects junk and wakes parked waiters", async () => {
+    const lim = new ConcurrencyLimiter({ max: 1, },);
+    expect(() => lim.resize(0,)).toThrow(RangeError,);
+    const r1 = await lim.acquire();
+    let second = false;
+    const p = lim.acquire().then((r,) => {
+      second = true;
+      return r;
+    },);
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(second,).toBe(false,);
+    lim.resize(2,);
+    const r2 = await p;
+    expect(second,).toBe(true,);
+    expect(lim.capacity,).toBe(2,);
+    r1();
+    r2();
   });
 });
