@@ -28045,6 +28045,18 @@
     "title": "Economy & Trading Systems",
     "type": "TASK"
   },
+  "TASK-EFFECT-V4-BACKOFF-DUPLICATION-RE-AUDIT": {
+    "hash": "pending",
+    "extid": "TASK-EFFECT-V4-BACKOFF-DUPLICATION-RE-AUDIT",
+    "type": "TASK",
+    "title": "Effect v4 backoff duplication re-audit",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-effect-v4-adoption-evaluation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-effect-v4-backoff-duplication-re-audit.md",
+    "status": "Not Started"
+  },
   "TASK-EFFECT-V4-BUN-ESM-TYPECHECK-COMPATIBILITY-SPIKE": {
     "epic": "epic-effect-v4-adoption-evaluation",
     "extid": "TASK-EFFECT-V4-BUN-ESM-TYPECHECK-COMPATIBILITY-SPIKE",
@@ -28118,6 +28130,30 @@
     ],
     "title": "Effect v4 retry/Schedule parity spike on the provider call path",
     "type": "TASK"
+  },
+  "TASK-EFFECT-V4-S6-RESOURCE-SAFETY-SPIKE": {
+    "hash": "pending",
+    "extid": "TASK-EFFECT-V4-S6-RESOURCE-SAFETY-SPIKE",
+    "type": "TASK",
+    "title": "Effect v4 S6 resource safety spike",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-effect-v4-adoption-evaluation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-effect-v4-s6-resource-safety-spike.md",
+    "status": "Not Started"
+  },
+  "TASK-EFFECT-V4-S7-STRUCTURED-FAN-OUT-SPIKE": {
+    "hash": "pending",
+    "extid": "TASK-EFFECT-V4-S7-STRUCTURED-FAN-OUT-SPIKE",
+    "type": "TASK",
+    "title": "Effect v4 S7 structured fan-out spike",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-effect-v4-adoption-evaluation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-effect-v4-s7-structured-fan-out-spike.md",
+    "status": "Not Started"
   },
   "TASK-EFFECT-V4-SCOPED-CONCURRENCY-AND-INTERRUPTION-SPIKE": {
     "epic": "epic-effect-v4-adoption-evaluation",
@@ -39159,6 +39195,19 @@
     "tags": [],
     "title": "Repetition & Hallucination Guards",
     "type": "TASK"
+  },
+  "TASK-REPLACE-CONCURRENCY-LIMITER-CORE-WITH-EFFECT-SEMAPHORE": {
+    "hash": "89f038e",
+    "git_issue": "89f038e",
+    "extid": "TASK-REPLACE-CONCURRENCY-LIMITER-CORE-WITH-EFFECT-SEMAPHORE",
+    "type": "TASK",
+    "title": "Replace concurrency-limiter core with Effect Semaphore",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-effect-v4-adoption-evaluation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-replace-concurrency-limiter-core-with-effect-semaphore.md",
+    "status": "Not Started"
   },
   "TASK-REPLACE-KNIP-GLOBAL-TYPES-EXCLUSION-WITH-PER-SYMBOL-KNIPIGNO": {
     "epic": "",
