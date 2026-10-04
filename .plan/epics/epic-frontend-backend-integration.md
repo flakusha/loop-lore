@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** 2026-10-04 audit — 13 of 21 catalogued subsystems verified wired (Discovery table + Audit section updated); epic reopened — 7 subsystems still lack a frontend consumer, 2 partially wired.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -22,22 +23,22 @@ Frontend review found **~150 frontend call sites** all resolve to real backend r
 
 | Subsystem                     | Backend Routes                                                                                                                                          | Frontend Status                                                        |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| **RPG Stats**                 | `/api/rpg/*` (dice, stats, combat, xp, loot)                                                                                                            | Mock data in `rpg-stats.ts` — no API call                              |
-| **NSFW**                      | `/api/nsfw/*` (intimacy, desire, arousal, encounters, fantasies, moderation)                                                                            | No frontend at all — see `TASK-nsfw-frontend-integration.md`           |
+| **RPG Stats** | `/api/rpg/*` (dice, stats, combat, xp, loot) | Wired — `rpg-stats.ts` calls `/api/v1/rpg/stats/:actorId`, panel in character-info-panel (audited 2026-10-04) |
+| **NSFW** | `/api/nsfw/*` (intimacy, desire, arousal, encounters, fantasies, moderation) | Intimacy/body-state UI still missing (only moderation endpoints wired) — see `TASK-nsfw-frontend-integration.md` |
 | **Housing**                   | `/api/housing/*` (backend not yet implemented)                                                                                                          | Standalone domain — see `epic-housing.md` + `TASK-housing-frontend.md` |
 | **Battle**                    | `/api/battle/*` (equipment, social, NPC, weather, resolution, morale)                                                                                   | No frontend at all                                                     |
-| **Analytics**                 | `/api/analytics/*` (chat analytics, overview, comparisons, leaderboard)                                                                                 | No frontend — admin has its own stats                                  |
-| **Blog**                      | `/api/blog/*` (posts, comments, follow, sources)                                                                                                        | No frontend at all                                                     |
-| **Export Job**                | `/api/export`, `/api/export/download/:jobId`, `/api/export/status/:jobId`                                                                               | No frontend progress UI                                                |
-| **Actor Sub-resources**       | `/api/actors/:actorId/traits`, `/relationships`, `/licensing`, `/availability`, `/emotion-avatars/*`, `/systems/*`, `/notes`, `/items`, `/lore-entries` | No frontend at all                                                     |
+| **Analytics** | `/api/analytics/*` (chat analytics, overview, comparisons, leaderboard) | Wired — admin analytics dashboard (`admin-analytics.ts`, admin.html tab); comparisons/leaderboard still unwired (audited 2026-10-04) |
+| **Blog** | `/api/blog/*` (posts, comments, follow, sources) | Wired — reader + authoring UI (`blog.ts`, blog.html); moderation/follower UI open (audited 2026-10-04) |
+| **Export Job** | `/api/export`, `/api/export/download/:jobId`, `/api/export/status/:jobId` | Wired — progress + download UI (`export-progress.ts`, settings export panel) (audited 2026-10-04) |
+| **Actor Sub-resources** | `/api/actors/:actorId/traits`, `/relationships`, `/licensing`, `/availability`, `/emotion-avatars/*`, `/systems/*`, `/notes`, `/items`, `/lore-entries` | Wired: traits, licensing, emotion-avatars, systems export/import, notes/items/lore-entries; missing: relationships (mock data in npc.ts), availability (audited 2026-10-04) |
 | **World Lore**                | `/api/worlds/:worldId/lore-entries`                                                                                                                     | No frontend at all                                                     |
-| **Chat Pins**                 | `/api/chats/:id/pins*`                                                                                                                                  | No frontend at all                                                     |
-| **Chat Transfers**            | `/api/chats/:id/transfer`                                                                                                                               | No frontend at all                                                     |
-| **Chat Location**             | `/api/chats/:id/location`                                                                                                                               | No frontend at all                                                     |
-| **Chat Story Turns**          | `/api/chats/:id/story-turns*`                                                                                                                           | No frontend at all                                                     |
-| **Message Archive/Restore**   | `/api/messages/:id/archive`, `/restore`                                                                                                                 | No frontend at all                                                     |
-| **Message Variants**          | `/api/messages/:id/variants`                                                                                                                            | `chat-variants.ts` uses `/variant` (singular) — partially wired        |
-| **Message Quick Emojis**      | `/api/messages/quick-emojis`                                                                                                                            | No frontend at all                                                     |
+| **Chat Pins** | `/api/chats/:id/pins*` | Wired — pins panel (`chat-pins.ts`, pins-panel.html) |
+| **Chat Transfers** | `/api/chats/:id/transfer` | Wired — ownership transfer (`chat-settings/ownership.ts`) |
+| **Chat Location** | `/api/chats/:id/location` | Wired — location panel (`chat-location.ts`, location-panel.html) |
+| **Chat Story Turns** | `/api/chats/:id/story-turns*` | Wired — turn list (`story-state/api.ts`); single-turn navigation open |
+| **Message Archive/Restore** | `/api/messages/:id/archive`, `/restore` | Wired — `message-archive.ts` + archive-confirm modal |
+| **Message Variants** | `/api/messages/:id/variants` | Wired — GET `/variants` + PUT `/variant` both match backend routes; earlier "singular mismatch" note stale (audited 2026-10-04) |
+| **Message Quick Emojis** | `/api/messages/quick-emojis` | Reaction picker wired (message-list.html); `/api/messages/quick-emojis` preference endpoint still has no frontend |
 | **Admin Character Overrides** | `/api/admin/character-overrides`                                                                                                                        | No frontend at all                                                     |
 | **LoRA Discovery**            | `/api/lora/*` (discover, list, status, clear, validate)                                                                                                 | No frontend at all                                                     |
 | **Sessions**                  | `/api/sessions`                                                                                                                                         | Server-internal only                                                   |
@@ -77,7 +78,7 @@ Frontend review found **~150 frontend call sites** all resolve to real backend r
 
 | Task                                  | Priority | Status | Subsystem                                       |
 | ------------------------------------- | -------- | ------ | ----------------------------------------------- |
-| `TASK-rpg-stats-frontend-wiring.md`   | P0       | ⬜     | RPG — wire `rpg-stats.ts` to `/api/rpg/stats/*` |
+| `TASK-rpg-stats-frontend-wiring.md`   | P0       | 🔶 In Progress | RPG — wire `rpg-stats.ts` to `/api/rpg/stats/*` |
 | `TASK-battle-frontend-integration.md` | P0       | ⬜     | Battle — create battle screen + action selector |
 | `TASK-nsfw-frontend-integration.md`   | P0       | ⬜     | NSFW — create intimacy + body state UI          |
 
@@ -87,33 +88,33 @@ Frontend review found **~150 frontend call sites** all resolve to real backend r
 
 | Task                                   | Priority | Status | Subsystem                                  |
 | -------------------------------------- | -------- | ------ | ------------------------------------------ |
-| `TASK-analytics-frontend-dashboard.md` | P1       | ⬜     | Analytics — chat cost + overview dashboard |
-| `TASK-blog-frontend-authoring.md`      | P1       | ⬜     | Blog — post creation + comment UI          |
-| `TASK-export-frontend-progress.md`     | P1       | ⬜     | Export — progress bar + download UI        |
+| `TASK-analytics-frontend-dashboard.md` | P1       | 🔶 In Progress | Analytics — chat cost + overview dashboard |
+| `TASK-blog-frontend-authoring.md`      | P1       | 🔶 In Progress | Blog — post creation + comment UI          |
+| `TASK-export-frontend-progress.md`     | P1       | ✅ Done | Export — progress bar + download UI        |
 
 ### Phase 3 — Actor & World Sub-resources (P2)
 
 | Task                                      | Priority | Status | Subsystem                                |
 | ----------------------------------------- | -------- | ------ | ---------------------------------------- |
-| `TASK-actor-traits-frontend.md`           | P2       | ⬜     | Traits — traits display + management     |
+| `TASK-actor-traits-frontend.md`           | P2       | ✅ Done | Traits — traits display + management     |
 | `TASK-actor-relationships-frontend.md`    | P2       | ⬜     | Relationships — relationship map UI      |
-| `TASK-actor-licensing-frontend.md`        | P2       | ⬜     | Licensing — license display              |
+| `TASK-actor-licensing-frontend.md`        | P2       | ✅ Done | Licensing — license display              |
 | `TASK-actor-availability-frontend.md`     | P2       | ⬜     | Availability — availability calendar     |
-| `TASK-actor-emotion-avatars-frontend.md`  | P2       | ⬜     | Emotion Avatars — batch generation UI    |
-| `TASK-actor-systems-export-frontend.md`   | P2       | ⬜     | Systems Export/Import — export/import UI |
-| `TASK-actor-notes-items-lore-frontend.md` | P2       | ⬜     | Actor Notes/Items/Lore — CRUD UI         |
+| `TASK-actor-emotion-avatars-frontend.md`  | P2       | ✅ Done | Emotion Avatars — batch generation UI    |
+| `TASK-actor-systems-export-frontend.md`   | P2       | ✅ Done | Systems Export/Import — export/import UI |
+| `TASK-actor-notes-items-lore-frontend.md` | P2       | ✅ Done | Actor Notes/Items/Lore — CRUD UI         |
 | `TASK-world-lore-entries-frontend.md`     | P2       | ⬜     | World Lore — lore browser                |
 
 ### Phase 4 — Chat Enhancements (P2)
 
 | Task                                         | Priority | Status | Subsystem                                    |
 | -------------------------------------------- | -------- | ------ | -------------------------------------------- |
-| `TASK-chat-pins-frontend.md`                 | P2       | ⬜     | Pins — pin/unpin messages                    |
-| `TASK-chat-transfer-frontend.md`             | P2       | ⬜     | Transfer — transfer chat ownership           |
-| `TASK-chat-location-frontend.md`             | P2       | ⬜     | Location — set/view chat location            |
-| `TASK-chat-story-turns-frontend.md`          | P2       | ⬜     | Story Turns — turn navigation                |
-| `TASK-message-archive-restore-frontend.md`   | P2       | ⬜     | Archive/Restore — archive + restore messages |
-| `TASK-message-quick-emojis-frontend.md`      | P2       | ⬜     | Quick Emojis — emoji reaction picker         |
+| `TASK-chat-pins-frontend.md`                 | P2       | ✅ Done | Pins — pin/unpin messages                    |
+| `TASK-chat-transfer-frontend.md`             | P2       | ✅ Done | Transfer — transfer chat ownership           |
+| `TASK-chat-location-frontend.md`             | P2       | ✅ Done | Location — set/view chat location            |
+| `TASK-chat-story-turns-frontend.md`          | P2       | 🔶 In Progress | Story Turns — turn navigation                |
+| `TASK-message-archive-restore-frontend.md`   | P2       | ✅ Done | Archive/Restore — archive + restore messages |
+| `TASK-message-quick-emojis-frontend.md`      | P2       | ✅ Done (picker) | Quick Emojis — emoji reaction picker         |
 | `TASK-admin-character-overrides-frontend.md` | P2       | ⬜     | Admin Overrides — override management UI     |
 
 ## Implementation Strategy
@@ -154,6 +155,34 @@ Each phase follows the pattern:
 - [ ] No broken wiring (all frontend calls map to real backend routes)
 - [ ] Tests pass for all new components
 
+## Audit (2026-10-04)
+
+Repo-state audit to avoid re-implementing existing functionality. Verdicts grounded in `feFetch`/`apiFetch` call-site evidence:
+
+| Subsystem | Verdict | Evidence |
+| --- | --- | --- |
+| RPG stats | Wired | `src/frontend/alpine/rpg-stats.ts:45` → `/api/v1/rpg/stats/:actorId`, rendered in `character-info-panel.html` |
+| Battle | Missing | no frontend consumer of `/api/battle/*` |
+| NSFW intimacy/body | Missing | only moderation endpoints wired (`admin-review.ts`, `chat-utils/interaction.ts`, settings) |
+| Analytics | Wired (core) | `admin-analytics.ts:64-66`, `admin.html:1609-1770`; comparisons/leaderboard unwired |
+| Blog | Wired (core) | `blog.ts` + `blog.html`; moderation/follower UI open |
+| Export | Wired | `export-progress.ts:139,154,169,230` + settings panel |
+| Actor traits/licensing/emotion-avatars/systems/notes/items/lore | Wired | `actor-traits.ts`, `actor-licensing.ts`, `actor-emotion-avatars.ts`, `actor-systems.ts`, `actor-entities.ts` via `character-panels-section.ts` |
+| Actor relationships | Missing | `npc.ts` renders `MOCK_RELATIONSHIPS`, no API call |
+| Actor availability | Missing | no frontend consumer of `/api/actors/:id/availability` |
+| World lore entries | Missing | no frontend consumer of `/api/worlds/:id/lore-entries` |
+| Chat pins/transfer/location | Wired | `chat-pins.ts`, `chat-settings/ownership.ts`, `chat-location.ts` |
+| Chat story turns | Wired (list) | `story-state/api.ts:55`; single-turn nav open |
+| Message archive/restore | Wired | `message-archive.ts:22,50` |
+| Message variants | Wired | `chat-variants.ts:29` GET `/variants` + `:68` PUT `/variant` — both match backend; earlier "singular mismatch" note stale |
+| Message quick emojis | Wired (picker) | reaction chips + picker in `message-list.html`; `/api/messages/quick-emojis` preference endpoint unfetched (separate gap; its ticket's scope was picker-only) |
+| Admin character overrides | Missing | no frontend consumer |
+| LoRA discovery | Missing | no frontend consumer |
+
+**Epic status ruling:** `Done` was inaccurate — 7 subsystems still lack a frontend consumer (battle, NSFW intimacy/body, relationships, availability, world lore, admin overrides, LoRA) and analytics/blog/story-turns are partially wired. Reopened to In Progress.
+
+**Ticket corrections this audit:** `TASK-rpg-stats-frontend-wiring.md` (implemented core, stale mock-data claim — In Progress), `TASK-analytics-frontend-dashboard.md` (dashboard landed — In Progress), `TASK-chat-story-turns-frontend.md` (list endpoint wired — In Progress). `TASK-message-quick-emojis-frontend.md` stays Done — its scope was the reaction picker, which is wired; the unfetched `/api/messages/quick-emojis` preference endpoint is a separate, unfiled gap.
+
 ## Related Epics
 
 - `epic-rpg-mechanics.md` — Backend RPG systems
@@ -193,3 +222,4 @@ Each phase follows the pattern:
 | ----- | --------- | ------- |
 | — | — | Server-rendered htmx request/response only; no cross-system event bus |
 
+**Resolved:** 2026-10-04 registry-driven close: git issue bd5eaa3 (registry tip: 5e6ceed69 Konstantin Fedotov Close issue)

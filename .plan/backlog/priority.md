@@ -35,6 +35,7 @@ story P2-Da done — merged to `dev`). **Sep-10 refresh: NSFW pipeline + consent
 | [`priority-p3-p5.md`](./priority-p3-p5.md) | **P3–P5** — 0.1.0 core foundation value tiers, core experience, wiring/search/polish |
 | [`priority-p6.md`](./priority-p6.md) | **P6+** — post-0.1.0 systems (RPG, Memory, Agentic — deferred, non-blocking), waves P6-0…P6-H, sequencing rationale |
 | [`priority-release-010.md`](./priority-release-010.md) | **Post-P3 → 0.1.0** — road to happy 0.1.0, release artifacts, hardening, 0.1.0 Quick Wins (emergent-platform analysis) |
+| [recommendation-search-rag-capabilities-no-new-epic](recommendation-search-rag-capabilities-no-new-epic.md) | |
 
 `../open.md` holds in-flight/debt/unwired/deferred queues — see `../open.md` index.
 
@@ -46,3 +47,8 @@ story P2-Da done — merged to `dev`). **Sep-10 refresh: NSFW pipeline + consent
 | Gate B | Post-P1 | Import/Export + Admin with encryption; NSFW + Battle integrations; Data Integrity 2; memory tiers + cross-chat | ✅     |
 | Gate C | Post-P2 | VN wired; chat functional; assistant + tool calling; GM flows; GM-guided story; auth/access; gallery usable    | ✅ **All core ✅ + GM-guided story (P2-Da) done 2026-08-14** — Gate C complete |
 | Gate D | Post-P3 | P3–P5 value tiers operational; P6+ non-blocking                                                                | ⬜     |
+
+## Search/RAG capabilities — execution order (per TASK-search-rag-coverage-bridge.md)
+
+Decision (2026-09-07, recorded here 2026-10-04): no new epic — six tickets filed under existing epics.
+Execution order: 1. `TASK-assistant-tool-injection-guard` (defines CapabilityTag) → 2. `TASK-search-service-unified` (SearchMode; In Progress — `src/search/`, `message_search_tokens`, `/api/assets/search` backend landed) → 3. `TASK-gallery-fuzzy-search-pagination` → 4. `TASK-assistant-capability-disclosure` → 5. `TASK-admin-assistant-tooling-allowlist` → 6. `TASK-rag-search-robots-quota` (independent of 1–5). Full rationale: [recommendation-search-rag-capabilities-no-new-epic.md](./recommendation-search-rag-capabilities-no-new-epic.md).

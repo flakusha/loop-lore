@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** 2026-10-04 audit — dashboard landed (commit 7c0dfbd47): `admin-analytics.ts` calls `/api/analytics/overview` + `/api/analytics/characters` (+ telemetry errors), rendered in the admin.html analytics tab; per-chat `/chats/:id` backend landed. Comparisons submission + leaderboard remain unwired.
 **Priority:** P1
 **Effort:** Medium
 **Epic:** epic-frontend-backend-integration
