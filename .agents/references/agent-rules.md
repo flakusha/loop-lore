@@ -69,7 +69,7 @@ Verify the patterns match the real path layout — a condition like `plan/…`
 
 ## 6. Worktree CLI must run from the repo root
 
-The worktree CLI (`bun run scripts/worktree/ <cmd>`) resolves the main repo
+The worktree CLI (`giwt <cmd>`) resolves the main repo
 root itself, but tree-mutating commands (`new`, `create`, `merge`, `rebase`,
 `remove`, `cleanup`) are **rejected** when launched from inside a `tree/*`
 worktree. Issue/ticket commands and read-only queries (list, status, branches,
