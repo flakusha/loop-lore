@@ -18,7 +18,7 @@ import { uid, } from "../../utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
 // Base `data_version` 0 projection for `quests` (columns added by migration
-// 031). Declared beside the module that creates and completes quests.
+// 034). Declared beside the module that creates and completes quests.
 registerContentVersion("quests", 0, [
   "world_id",
   "name",
