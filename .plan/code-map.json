@@ -16525,6 +16525,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-browser-chatflow-upload-deferred.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-quick-emojis-preference-endpoint-has-no-frontend-consumer.md"
     }
   ],
   "src/frontend/alpine/chat/music-embed.test.ts": [
