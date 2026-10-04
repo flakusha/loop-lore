@@ -3928,6 +3928,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-s6-resource-safety-spike.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-effect-v4-scoped-concurrency-and-interruption-spike.md"
     },
     {
@@ -24100,7 +24104,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-s7-structured-fan-out-spike.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-effect-v4-scoped-concurrency-and-interruption-spike.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-replace-concurrency-limiter-core-with-effect-semaphore.md"
     }
   ],
   "src/llm/index.ts": [
