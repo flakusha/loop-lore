@@ -24523,6 +24523,24 @@
     "title": "Chat Variant — Assistant Group Chat",
     "type": "TASK"
   },
+  "TASK-CHAT-VARIANT-BEHAVIORAL-WIRING": {
+    "hash": "pending",
+    "extid": "TASK-CHAT-VARIANT-BEHAVIORAL-WIRING",
+    "type": "TASK",
+    "title": "Chat variant behavioral wiring",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-chat-variants-taxonomy",
+    "tags": [
+      "chat",
+      "variant",
+      "taxonomy",
+      "creation",
+      "behavioral"
+    ],
+    "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md",
+    "status": "Not Started"
+  },
   "TASK-CHAT-VARIANT-CHARACTER": {
     "epic": "epic-chat-variants-taxonomy",
     "extid": "TASK-CHAT-VARIANT-CHARACTER",
@@ -25621,6 +25639,24 @@
     "tags": [],
     "title": "Single-assembly dedup across carriage, notes, quests, memory injection",
     "type": "TASK"
+  },
+  "TASK-CONTEXT-LOSSLESS-LOSSY-TIERING": {
+    "hash": "pending",
+    "extid": "TASK-CONTEXT-LOSSLESS-LOSSY-TIERING",
+    "type": "TASK",
+    "title": "Context lossless/lossy tiering contract",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-chat-context-optimization",
+    "tags": [
+      "context",
+      "token-budget",
+      "lossless",
+      "lossy",
+      "prompt"
+    ],
+    "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md",
+    "status": "Not Started"
   },
   "TASK-CONTEXT-WINDOW-MONITOR": {
     "epic": "Epic 36 (Chat Lifecycle)",
@@ -35976,6 +36012,23 @@
     "tags": [],
     "title": "Two-sided trade counter-offers + offer deadline enforcement + trade-window UI (barter/swap)",
     "type": "TASK"
+  },
+  "TASK-PERSONA-LIFECYCLE-CONTRACT": {
+    "hash": "pending",
+    "extid": "TASK-PERSONA-LIFECYCLE-CONTRACT",
+    "type": "TASK",
+    "title": "Persona lifecycle contract (setDefault + invalid-id + tuning fields)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-impersonation",
+    "tags": [
+      "persona",
+      "impersonation",
+      "lifecycle",
+      "contract"
+    ],
+    "source": ".plan/tickets/TASK-persona-lifecycle-contract.md",
+    "status": "done"
   },
   "TASK-PERSONA-SETDEFAULT-GETDEFAULT-UNWIRED-DELETE-OR-WIRE": {
     "epic": "",
