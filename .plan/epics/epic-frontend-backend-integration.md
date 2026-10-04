@@ -164,7 +164,7 @@ Repo-state audit to avoid re-implementing existing functionality. Verdicts groun
 | RPG stats | Wired | `src/frontend/alpine/rpg-stats.ts:45` → `/api/v1/rpg/stats/:actorId`, rendered in `character-info-panel.html` |
 | Battle | Missing | no frontend consumer of `/api/battle/*` |
 | NSFW intimacy/body | Missing | only moderation endpoints wired (`admin-review.ts`, `chat-utils/interaction.ts`, settings) |
-| Analytics | Wired (core) | `admin-analytics.ts:64-66`, `admin.html:1609-1770`; comparisons/leaderboard unwired |
+| Analytics | Wired (core) | `admin-analytics.ts:65-66`, `admin.html:1609-1770`; comparisons/leaderboard unwired |
 | Blog | Wired (core) | `blog.ts` + `blog.html`; moderation/follower UI open |
 | Export | Wired | `export-progress.ts:139,154,169,230` + settings panel |
 | Actor traits/licensing/emotion-avatars/systems/notes/items/lore | Wired | `actor-traits.ts`, `actor-licensing.ts`, `actor-emotion-avatars.ts`, `actor-systems.ts`, `actor-entities.ts` via `character-panels-section.ts` |
