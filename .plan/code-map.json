@@ -22297,6 +22297,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adapter-health-monitoring-and-per-protocol-rate-limiting.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/integrations/im/adapter.ts": [
