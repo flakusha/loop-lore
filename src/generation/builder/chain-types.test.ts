@@ -40,6 +40,7 @@ describe("validateChainPayload", () => {
       kind: "chain",
       steps: [{ id: "", templateId: "t", params: {}, },],
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.errors.join("; ",),).toContain("non-empty id",);
@@ -53,6 +54,7 @@ describe("validateChainPayload", () => {
         { id: "s1", templateId: "t2", params: {}, },
       ],
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.errors.join("; ",),).toContain("duplicate step id s1",);
@@ -63,6 +65,7 @@ describe("validateChainPayload", () => {
       kind: "chain",
       steps: [{ id: "s1", templateId: "", params: {}, },],
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.errors.join("; ",),).toContain("non-empty templateId",);
@@ -73,12 +76,14 @@ describe("validateChainPayload", () => {
       kind: "chain",
       steps: [{ id: "s1", templateId: "t", params: [1, 2,], },],
     },);
+
     expect(arrayParams.ok,).toBe(false,);
 
     const nestedValue = validateChainPayload({
       kind: "chain",
       steps: [{ id: "s1", templateId: "t", params: { deep: { n: 1, }, }, },],
     },);
+
     expect(nestedValue.ok,).toBe(false,);
     if (nestedValue.ok) { return; }
     expect(nestedValue.errors.join("; ",),).toContain("param deep",);
@@ -92,6 +97,7 @@ describe("validateChainPayload", () => {
         "not-an-object",
       ],
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.errors.length,).toBeGreaterThanOrEqual(2,);
