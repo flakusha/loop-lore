@@ -20990,6 +20990,18 @@
     "title": "Assistant/GM Flows Reconciliation",
     "type": "TASK"
   },
+  "TASK-ASSISTANT-GM-HANDOFF": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-GM-HANDOFF",
+    "type": "TASK",
+    "title": "Assistant-GM handoff",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-assistant-gm-flows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-gm-handoff.md",
+    "status": "Not Started"
+  },
   "TASK-ASSISTANT-LOREBOOK-TOOLS": {
     "epic": "",
     "extid": "TASK-ASSISTANT-LOREBOOK-TOOLS",
