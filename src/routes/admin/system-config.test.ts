@@ -161,7 +161,7 @@ describe("admin system-config routes", () => {
       new Request("http://localhost/api/admin/system-config", {
         method: "PATCH",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ key: "server.port", value: "8080", },),
+        body: JSON.stringify({ key: "default_provider", value: "openai", },),
       },),
     );
 

@@ -86,17 +86,17 @@ describe("setConfig", () => {
     expect(entry!.value,).toBe("updated_value",);
   });
 
-  test("returns hot classification for hot-applicable key", async () => {
+  test("returns false (not restart-required) for hot-applicable key", async () => {
     initConfigHotApply(structuredClone(createConfigSchema().defaults,),);
     const result = await setConfig(db, "logging.level", "error",);
-    expect(result,).toBe("hot",);
+    expect(result,).toBe(false,);
     resetConfigHotApply();
   });
 
-  test("returns restart classification for restart-required key", async () => {
+  test("returns true (restart-required) for restart-required key", async () => {
     initConfigHotApply(structuredClone(createConfigSchema().defaults,),);
-    const result = await setConfig(db, "server.port", "8080",);
-    expect(result,).toBe("restart",);
+    const result = await setConfig(db, "default_provider", "openai",);
+    expect(result,).toBe(true,);
     resetConfigHotApply();
   });
 });

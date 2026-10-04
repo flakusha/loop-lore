@@ -15,11 +15,13 @@
 // else is restart-required by default. `requiresRestart` is surfaced to the
 // admin API so the UI can flag edits that need a restart.
 
+import { REQUIRES_RESTART_KEYS, } from "../admin/config-keys";
+import { getLogger, } from "../logger";
 import { coerceValue, getTypeOfPath, setByPath, } from "./load/parse";
 import type { Config, } from "./schema/config";
 
 /** How a changed config path takes effect. */
-export type ConfigChangeClass = "hot" | "restart";
+export type ConfigChangeClass = "hot" | "restart" | "none";
 
 /**
  * Config paths applied to live consumers without a restart.
@@ -37,12 +39,14 @@ export const HOT_APPLY_PATHS: Readonly<Record<string, true>> = {
 };
 
 /**
- * Classify a dotted config path.
+ * Classify a config path (dotted or flat).
  * @param path
- * @returns "hot" when a live consumer applies it, else "restart".
+ * @returns "hot" when a live consumer applies it, "restart" when in REQUIRES_RESTART_KEYS, else "none".
  */
 export function classifyConfigPath(path: string,): ConfigChangeClass {
-  return HOT_APPLY_PATHS[path] === true ? "hot" : "restart";
+  if (HOT_APPLY_PATHS[path] === true) { return "hot"; }
+  if (REQUIRES_RESTART_KEYS[path] === true) { return "restart"; }
+  return "none";
 }
 
 /** A classified config change emitted to subscribers. */
@@ -151,7 +155,11 @@ export function applyConfigChange(domain: string, config: Config,): ConfigChange
   };
 
   if (changedPaths.length > 0) {
-    for (const handler of handlers) { handler(change,); }
+    for (const handler of handlers) {
+      try { handler(change,); } catch (error) {
+        getLogger().error("config change handler failed", error instanceof Error ? error : new Error(String(error,),),);
+      }
+    }
   }
   return change;
 }
@@ -164,7 +172,7 @@ export function applyConfigChange(domain: string, config: Config,): ConfigChange
  * @returns true when the write was hot-applied, false otherwise.
  */
 export function applyConfigWrite(key: string, value: string,): boolean {
-  if (previous === null || classifyConfigPath(key,) === "restart") { return false; }
+  if (previous === null || classifyConfigPath(key,) !== "hot") { return false; }
   const next = structuredClone(previous,);
   const targetType = getTypeOfPath(next as unknown as Record<string, unknown>, key,);
   const coerced = coerceValue(value, targetType,);

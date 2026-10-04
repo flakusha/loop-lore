@@ -44,9 +44,9 @@ describe("classifyConfigPath", () => {
   },);
 
   test("restart-required bindings default to restart", () => {
-    expect(classifyConfigPath("server.port",),).toBe("restart",);
-    expect(classifyConfigPath("db.type",),).toBe("restart",);
-    expect(classifyConfigPath("generation.providers",),).toBe("restart",);
+    expect(classifyConfigPath("default_provider",),).toBe("restart",);
+    expect(classifyConfigPath("default_model",),).toBe("restart",);
+    expect(classifyConfigPath("registration_open",),).toBe("restart",);
   },);
 },);
 
@@ -64,14 +64,12 @@ describe("applyConfigChange", () => {
     const config = makeConfig();
     config.logging.level = "warn";
     config.nsfw.allowNsfw = false;
-    config.server.port = 8080;
     const change = applyConfigChange("logging", config,);
     expect(change.changedPaths,).toContain("logging.level",);
     expect(change.changedPaths,).toContain("nsfw.allowNsfw",);
-    expect(change.changedPaths,).toContain("server.port",);
     expect(change.hotPaths,).toContain("logging.level",);
-    expect(change.restartPaths,).toContain("server.port",);
-    expect(change.requiresRestart,).toBe(true,);
+    expect(change.hotPaths,).toContain("nsfw.allowNsfw",);
+    expect(change.requiresRestart,).toBe(false,);
   },);
 
   test("subscribers receive the change", () => {
