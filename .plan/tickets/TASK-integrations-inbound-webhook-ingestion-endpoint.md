@@ -3,7 +3,7 @@
 
 # TASK: Integrations inbound webhook ingestion endpoint
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-integrations-core
@@ -21,3 +21,5 @@ Adopted component: ground-up (HTTP surface). Seam: src/routes/v1/integrations-su
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 9d39ebf (registry tip: 8e3054648 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-INTEGRATIONS-INBOUND-WEBHOO)

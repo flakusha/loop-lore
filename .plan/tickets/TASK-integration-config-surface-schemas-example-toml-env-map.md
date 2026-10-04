@@ -3,7 +3,7 @@
 
 # TASK: Integration config surface: schemas, example toml, env map
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-integrations-core
@@ -21,3 +21,5 @@ Adopted component: ground-up (config only). Seam: src/config/sections/integratio
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 60115d0 (registry tip: fbb6ff118 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-INTEGRATION-CONFIG-SURFACE-)

@@ -18670,7 +18670,7 @@
     "epic": "epic-integrations-core",
     "tags": [],
     "source": ".plan/tickets/TASK-adapter-health-monitoring-and-per-protocol-rate-limiting.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-ADAPTER-SECRET-STORAGE-ENCRYPTED-CREDENTIAL-ENVELOPE": {
     "hash": "0b3db58",
@@ -18683,7 +18683,7 @@
     "epic": "epic-integrations-core",
     "tags": [],
     "source": ".plan/tickets/TASK-adapter-secret-storage-encrypted-credential-envelope.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-ADAPTIVE-AUDIO": {
     "epic": "",
@@ -28046,7 +28046,7 @@
     "type": "TASK"
   },
   "TASK-EFFECT-V4-BACKOFF-DUPLICATION-RE-AUDIT": {
-    "hash": "pending",
+    "hash": "1ee3f43",
     "extid": "TASK-EFFECT-V4-BACKOFF-DUPLICATION-RE-AUDIT",
     "type": "TASK",
     "title": "Effect v4 backoff duplication re-audit",
@@ -28055,7 +28055,8 @@
     "epic": "epic-effect-v4-adoption-evaluation",
     "tags": [],
     "source": ".plan/tickets/TASK-effect-v4-backoff-duplication-re-audit.md",
-    "status": "Not Started"
+    "status": "Done",
+    "git_issue": "1ee3f43"
   },
   "TASK-EFFECT-V4-BUN-ESM-TYPECHECK-COMPATIBILITY-SPIKE": {
     "epic": "epic-effect-v4-adoption-evaluation",
@@ -28132,7 +28133,7 @@
     "type": "TASK"
   },
   "TASK-EFFECT-V4-S6-RESOURCE-SAFETY-SPIKE": {
-    "hash": "pending",
+    "hash": "e6766b5",
     "extid": "TASK-EFFECT-V4-S6-RESOURCE-SAFETY-SPIKE",
     "type": "TASK",
     "title": "Effect v4 S6 resource safety spike",
@@ -28141,10 +28142,11 @@
     "epic": "epic-effect-v4-adoption-evaluation",
     "tags": [],
     "source": ".plan/tickets/TASK-effect-v4-s6-resource-safety-spike.md",
-    "status": "Not Started"
+    "status": "Done",
+    "git_issue": "e6766b5"
   },
   "TASK-EFFECT-V4-S7-STRUCTURED-FAN-OUT-SPIKE": {
-    "hash": "pending",
+    "hash": "4c4d8bc",
     "extid": "TASK-EFFECT-V4-S7-STRUCTURED-FAN-OUT-SPIKE",
     "type": "TASK",
     "title": "Effect v4 S7 structured fan-out spike",
@@ -28153,7 +28155,8 @@
     "epic": "epic-effect-v4-adoption-evaluation",
     "tags": [],
     "source": ".plan/tickets/TASK-effect-v4-s7-structured-fan-out-spike.md",
-    "status": "Not Started"
+    "status": "Done",
+    "git_issue": "4c4d8bc"
   },
   "TASK-EFFECT-V4-SCOPED-CONCURRENCY-AND-INTERRUPTION-SPIKE": {
     "epic": "epic-effect-v4-adoption-evaluation",
@@ -31986,7 +31989,7 @@
     "epic": "epic-integrations-core",
     "tags": [],
     "source": ".plan/tickets/TASK-integration-config-surface-schemas-example-toml-env-map.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-INTEGRATION-INFRASTRUCTURE": {
     "epic": "epic-communications-integrations.md",
@@ -32012,7 +32015,7 @@
     "epic": "epic-integrations-core",
     "tags": [],
     "source": ".plan/tickets/TASK-integrations-inbound-webhook-ingestion-endpoint.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-INTEGRATIONS-SHARED-SEAMS-ENCRYPTIONPROVIDER-MESSAGEBRIDGE-B": {
     "hash": "2dbd2f3",
@@ -32025,7 +32028,7 @@
     "epic": "epic-integrations-core.md",
     "tags": [],
     "source": ".plan/tickets/TASK-integrations-shared-seams-encryptionprovider-messagebridge-b.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-INTELLECT-GROWTH-INTERACTIONS": {
     "epic": "epic-character-growth",
