@@ -26,39 +26,26 @@ import type { GeneratedEntityLoreEntry, } from "../quality/entity-creation";
 // migration 034). Declared beside the writer so `computeRowHash` /
 // `runBatchRefresh` can hash generated lore rows. Projection is the
 // content-defining set this module actually populates — not every column.
-registerContentVersion("world_lore_entries", 0, [
-  "name",
-  "content",
-  "keys",
-  "secondary_keys",
-  "comment",
-  "enabled",
-  "constant",
-  "selective",
-  "case_sensitive",
-  "priority",
-  "insertion_order",
-  "cooldown_seconds",
-  "audience_scope",
-  "world_id",
-],);
-registerContentVersion("actor_lore_entries", 0, [
-  "name",
-  "content",
-  "keys",
-  "secondary_keys",
-  "comment",
-  "enabled",
-  "constant",
-  "selective",
-  "case_sensitive",
-  "priority",
-  "insertion_order",
-  "cooldown_seconds",
-  "audience_scope",
-  "actor_id",
-  "world_id",
-],);
+function registerLoreContentVersion(table: string, extraColumns: string[],): void {
+  registerContentVersion(table, 0, [
+    "name",
+    "content",
+    "keys",
+    "secondary_keys",
+    "comment",
+    "enabled",
+    "constant",
+    "selective",
+    "case_sensitive",
+    "priority",
+    "insertion_order",
+    "cooldown_seconds",
+    "audience_scope",
+    ...extraColumns,
+  ],);
+}
+registerLoreContentVersion("world_lore_entries", ["world_id",],);
+registerLoreContentVersion("actor_lore_entries", ["actor_id", "world_id",],);
 
 /**
  * Map an EntityKind to its target lore table.
