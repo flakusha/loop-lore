@@ -1,0 +1,22 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+
+# BUG: Emotion-avatar emotions array uncapped x default rate policy
+
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+
+**Summary:**
+
+POST /actors/:actorId/emotion-avatars (src/routes/character-emotion-avatars.ts:114) accepts an UNcapped emotions array; each entry fans out into a generation job under the default rate policy, so a single request can enqueue unbounded image-gen work. Fix: cap emotions length in the request schema and give actor image-gen routes an explicit rate policy (see companion governance ticket for the missing policies).
+
+**Context:**
+
+(fill in before starting: why this change, constraints, alternatives considered.)
+
+**Acceptance Criteria:**
+
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
