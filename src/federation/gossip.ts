@@ -16,6 +16,7 @@
 //   entry today; signature-based promotion is future work (actor-key infra).
 
 import type { FederationPeerTrustConfig, ServerConfig, } from "../config/schema";
+import { getLogger, type Logger, } from "../logger";
 import { type PeerEntry, PeerTable, } from "../transport/peer-table";
 import {
   canonicalOrigin,
@@ -23,6 +24,10 @@ import {
   type InstanceAdvertisement,
   type PeerFetch,
 } from "./peer-fetch";
+import { createPeerPinVerifier, type PeerPinVerifier, } from "./spki-pin";
+
+/** Lazy logger — resolved on first use (tests may never initialize one). */
+const getLog = (): Logger => getLogger().child({ module: "federation.gossip", },);
 
 /** Cap on membership entries accepted from one advertisement. */
 const MAX_PAYLOAD_PEERS = 128;
@@ -61,6 +66,8 @@ export interface GossipServiceOptions {
   now?: () => number;
   /** Fetch seam (injectable for tests). */
   fetchImpl?: PeerFetch;
+  /** Pin-verdict seam (injectable for tests); default: cached node:tls SPKI pre-flight. */
+  pinVerify?: PeerPinVerifier;
 }
 
 /** Mesh gossip driver: polls advertisements, feeds the peer table. */
@@ -71,6 +78,7 @@ export class GossipService {
   private readonly fetchImpl: PeerFetch;
   private readonly maxPayloadPeers: number;
   private readonly maxTableSize: number;
+  private readonly pinVerify: PeerPinVerifier;
   private tick = 0;
 
   /** @param opts */
@@ -94,6 +102,7 @@ export class GossipService {
     this.maxPayloadPeers = opts.maxPayloadPeers ?? MAX_PAYLOAD_PEERS;
     this.maxTableSize = opts.maxTableSize ?? MAX_TABLE_SIZE;
     this.fetchImpl = opts.fetchImpl ?? fetchPeerAdvertisement;
+    this.pinVerify = opts.pinVerify ?? createPeerPinVerifier({ ttlMs: opts.ttl, },);
   }
 
   /** Start the table eviction sweep. Idempotent. */
@@ -148,6 +157,8 @@ export class GossipService {
     // allSettled: a throwing custom fetchImpl still resolves the round
     // (the default seam never throws, but injected ones may).
     await Promise.allSettled(known.map(async (peer,) => {
+      if (!(await this.pinOk(peer,))) { return; }
+
       let body: unknown = null;
       let ok = false;
       try {
@@ -179,6 +190,21 @@ export class GossipService {
 
     this.table.sweep();
     return { tick, polled: known.length, alive, discovered, };
+  }
+
+  /**
+   * Pre-fetch SPKI pin gate. Peers without configured pins pass; a failed or
+   * mismatching verdict skips the fetch — no heartbeat, so the peer goes
+   * stale and the sweep evicts it after the TTL (never a plaintext
+   * downgrade). Spec log event: `peer.tls.failure`.
+   */
+  private async pinOk(peer: PeerEntry,): Promise<boolean> {
+    const trust = this.trustByOrigin[peer.origin];
+    if (trust?.spkiPins === undefined || trust.spkiPins.length === 0) { return true; }
+    const pinned = await this.pinVerify(peer.origin, trust.spkiPins,);
+    if (pinned) { return true; }
+    getLog().warn("peer.tls.failure", { origin: peer.origin, reason: "spki-pin", },);
+    return false;
   }
 }
 
