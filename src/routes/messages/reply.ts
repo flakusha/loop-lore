@@ -23,27 +23,16 @@ import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generat
 import { checkPaused, } from "../../group-chat/turn-selector";
 import { filter as filterProfanity, } from "../../profanity/service";
 import { uid, } from "../../utils";
+import {
+  isSwipeIndexUniqueViolation,
+  retryBounded,
+} from "../../utils/swipe-retry";
 import { ErrorCode, jsonCreated, jsonError, } from "../http-utils";
 import { log, } from "./helpers";
 
-/**
- * Detect whether an error from the swipe-index INSERT path is the unique
- * violation we expect to retry. Matches BOTH the Kysely/SQLite text form
- * (`UNIQUE constraint failed: messages.swipe_index`) AND a more specific
- * guard against the unique index name (`idx_messages_swipe_unique`) in
- * case the driver changes the message text. Scoped to the columns covered
- * by the unique index so we never accidentally swallow an unrelated unique
- * violation (e.g. `idx_messages_idempotency` on a colliding idempotency_key —
- * that is a real conflict and must NOT trigger a swipe_index retry).
- * @param err
- * @returns {boolean}
- */
-export function isSwipeIndexUniqueViolation(err: unknown,): boolean {
-  if (!(err instanceof Error)) { return false; }
-  const msg = err.message;
-  return /UNIQUE constraint failed:\s*messages\.(chat_id|parent_id|swipe_index)\b/i.test(msg,) ||
-    /SQLITE_CONSTRAINT(?:_UNIQUE)?\b.*idx_messages_swipe_unique/i.test(msg,);
-}
+// Classifier shared with the other swipe INSERT sites; re-exported so the
+// existing reply-swipe-unique tests keep importing from this module.
+export { isSwipeIndexUniqueViolation, } from "../../utils/swipe-retry";
 
 /**
  * Trigger post-create generation: kick off async LLM auto-generation when
@@ -170,12 +159,14 @@ export async function maybeAutoReply(
       // (FK violation, encryption error, DB down, schema mismatch) is
       // a real error and must surface as-is — retrying just masks the
       // cause and then mislabels it as concurrency 503.
-      let candidate = 1;
-      let lastError: unknown;
-      let inserted = false;
-      let assistantId: string | null = null;
-      for (let attempt = 0; attempt < 8; attempt++) {
-        try {
+      // Candidate starts at 1 and bumps on each retryable collision
+      // (incremented at the top of each attempt).
+      let candidate = 0;
+      const attempt = await retryBounded({
+        attempts: 8,
+        isRetryable: (err,) => isSwipeIndexUniqueViolation(err,),
+        onAttempt: async () => {
+          candidate++;
           const attemptId = uid();
           await database
             .insertInto("messages",)
@@ -196,28 +187,12 @@ export async function maybeAutoReply(
             },)
             .execute();
 
-          inserted = true;
-          assistantId = attemptId;
-          lastError = undefined;
-          break;
-        } catch (err) {
-          // Only the specific swipe-index unique-constraint race is
-          // retryable. Everything else (FK violation, encryption error,
-          // DB down, schema mismatch, idempotency_key collision, etc.)
-          // is a real error — rethrow so Elysia's handler surfaces the
-          // original cause as a 5xx instead of mislabeling it as
-          // "high concurrency 503" after 8 silent retries.
-          if (!isSwipeIndexUniqueViolation(err,)) {
-            throw err;
-          }
+          return attemptId;
+        },
+      },);
 
-          lastError = err;
-          candidate++;
-        }
-      }
-
-      if (!inserted) {
-        log().warn("Assistant reply swipe retry exhausted", { chatId, parentMessageId, err: lastError, },);
+      if (!attempt.ok) {
+        log().warn("Assistant reply swipe retry exhausted", { chatId, parentMessageId, err: attempt.lastError, },);
         return {
           replied: true,
           response: jsonError(
@@ -227,6 +202,8 @@ export async function maybeAutoReply(
           ),
         };
       }
+
+      const assistantId = attempt.value;
 
       return {
         replied: true,
