@@ -145,6 +145,7 @@ const seed: CharacterExtensionEditorState = {
         this.error = `Load failed (${res.status})`;
         return;
       }
+
       const body = (await res.json()) as { data?: { settings?: string } };
       // The server exposes canonical extensions through `settings` (the
       // UI/persona JSON blob); it may be undefined for new actors.
@@ -187,6 +188,7 @@ const seed: CharacterExtensionEditorState = {
       this.error = `Bundle requirements unmet: ${report.missing.join(", ",)}`;
       return;
     }
+
     this.saving = true;
     this.error = "";
     this.message = "";
@@ -197,10 +199,12 @@ const seed: CharacterExtensionEditorState = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody(payload,),
       },);
+
       if (!res.ok) {
         this.error = `Save failed (${res.status})`;
         return;
       }
+
       this.current = structuredClone(this.draft,) as CharacterExtensionsPayload;
       this.message = "Saved";
     } catch (e) {

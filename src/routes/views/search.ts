@@ -35,6 +35,7 @@ async function serveGallerySearch(
   // Filter by linked entity when entityType/entityId provided
   const entityTypeValid = entityType !== null &&
     Object.values(AssetLinkEntity,).includes(entityType as AssetLinkEntity,);
+
   if (entityTypeValid && entityId) {
     qb = qb
       .innerJoin("asset_links", "asset_links.asset_id", "assets.id",)
@@ -45,6 +46,7 @@ async function serveGallerySearch(
   if (query) {
     qb = qb.where("filename", "like", `%${query}%`,);
   }
+
   if (type !== "all" && Object.values(AssetType,).includes(type as AssetType,)) {
     qb = qb.where("asset_type", "=", type as AssetType,);
   }
@@ -103,12 +105,15 @@ async function serveGallerySearch(
       case "image": {
         return `<img src="/api/v1/assets/${a.id}/thumb" alt="${escapeHtml(a.filename,)}" loading="lazy" />`;
       }
+
       case "audio": {
         return `<div class="file-icon">🎵</div>`;
       }
+
       case "video": {
         return `<div class="file-icon">🎬</div>`;
       }
+
       case "other":
       case "memory": {
         return `<div class="file-icon">📄</div>`;
@@ -164,6 +169,7 @@ async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchPara
     const avatar = c.avatar_asset_id
       ? `<img src="/api/v1/assets/${c.avatar_asset_id}/thumb" alt="Avatar" />`
       : "<span>👤</span>";
+
     const name = escapeHtml(c.display_name,);
     const desc = escapeHtml(c.description || "",);
     return `<div class="character-card" x-on:click="window.selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
