@@ -10619,6 +10619,24 @@
     "title": "Inventory",
     "type": "EPIC"
   },
+  "EPIC-INVENTORY-SYSTEM": {
+    "hash": "pending",
+    "extid": "EPIC-INVENTORY-SYSTEM",
+    "type": "EPIC",
+    "title": "Inventory System (Hub)",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "inventory",
+      "items",
+      "ownership",
+      "transfer",
+      "trading"
+    ],
+    "source": ".plan/epics/epic-inventory-system.md",
+    "status": "Not Started"
+  },
   "EPIC-INVENTORY-UI": {
     "epic": "",
     "extid": "EPIC-INVENTORY-UI",
@@ -18325,6 +18343,24 @@
     "title": "Actor Item Service (Equip/Unequip, Weight, Trade)",
     "type": "TASK"
   },
+  "TASK-ACTOR-ITEMS-CRUD-OWNERSHIP": {
+    "hash": "pending",
+    "extid": "TASK-ACTOR-ITEMS-CRUD-OWNERSHIP",
+    "type": "TASK",
+    "title": "actor_items CRUD + Ownership + Transfer",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-inventory-system",
+    "tags": [
+      "inventory",
+      "actor_items",
+      "ownership",
+      "transfer",
+      "crud"
+    ],
+    "source": ".plan/tickets/TASK-actor-items-crud-ownership.md",
+    "status": "Not Started"
+  },
   "TASK-ACTOR-LICENSING-FRONTEND": {
     "epic": "epic-frontend-backend-integration",
     "extid": "TASK-ACTOR-LICENSING-FRONTEND",
@@ -25289,6 +25325,24 @@
     "status": "Not Started",
     "git_issue": "cefeb42"
   },
+  "TASK-COMFYUI-WS-PROGRESS-STREAMING": {
+    "hash": "pending",
+    "extid": "TASK-COMFYUI-WS-PROGRESS-STREAMING",
+    "type": "TASK",
+    "title": "ComfyUI /ws Progress Streaming to Frontend",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "websocket",
+      "progress",
+      "streaming",
+      "frontend"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-ws-progress-streaming.md",
+    "status": "Not Started"
+  },
   "TASK-COMPANION-BONDING-QUESTS": {
     "epic": "epic-companion-pet-mount",
     "extid": "TASK-COMPANION-BONDING-QUESTS",
@@ -31207,6 +31261,24 @@
     ],
     "title": "Image backends x gallery: provenance filter + backend attribution validation",
     "type": "TASK"
+  },
+  "TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED": {
+    "hash": "pending",
+    "extid": "TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED",
+    "type": "TASK",
+    "title": "Image-Edit Workflows as First-Class (builtin templates → edit provider → asset)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "image-edit",
+      "comfyui",
+      "workflows",
+      "templates",
+      "assets"
+    ],
+    "source": ".plan/tickets/TASK-image-edit-workflows-dedicated.md",
+    "status": "Not Started"
   },
   "TASK-IMMERSION-PRESENTATION": {
     "epic": "epic-immersion-presentation",
@@ -37198,6 +37270,24 @@
     "tags": [],
     "title": "# TASK-rag-context-schema: RAG shared context-source schema + sync framework",
     "type": "TASK"
+  },
+  "TASK-RAG-DECOMPOSITION-INDEX-PIPELINE": {
+    "hash": "pending",
+    "extid": "TASK-RAG-DECOMPOSITION-INDEX-PIPELINE",
+    "type": "TASK",
+    "title": "RAG Decomposition + Semantic-Index Pipeline (backend)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-rag-assets-unified-storage-and-assistant-flows",
+    "tags": [
+      "rag",
+      "decomposition",
+      "semantic-index",
+      "embeddings",
+      "hybrid-search"
+    ],
+    "source": ".plan/tickets/TASK-rag-decomposition-index-pipeline.md",
+    "status": "Not Started"
   },
   "TASK-RAG-DETECT-CLEANUP-ENHANCE-PIPELINE-OVER-INGESTED-CHUNKS": {
     "epic": "epic-rag-extract-link",
