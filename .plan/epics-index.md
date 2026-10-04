@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 316 epics
+**Total:** 317 epics
 
 ## Summary
 
@@ -216,6 +216,7 @@
 | Not Started | Integrations Core | Medium | Medium | 7 | [epic-integrations-core.md](/.plan/epics/epic-integrations-core.md) |
 | Not Started | Internationalization (i18n) | Medium | Medium | 0 | [epic-frontend-internationalization.md](/.plan/epics/epic-frontend-internationalization.md) |
 | Not Started | Inventory & Trading UI | P1 — High | Medium | 14 | [epic-inventory-ui.md](/.plan/epics/epic-inventory-ui.md) |
+| Not Started | Inventory System (Hub) | High | High | 5 | [epic-inventory-system.md](/.plan/epics/epic-inventory-system.md) |
 | Not Started | Item System Extensions | High | High | 0 | [epic-item-system-extensions.md](/.plan/epics/epic-item-system-extensions.md) |
 | In Progress | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
 | Not Started | Licensing | Low | Medium | 6 | [epic-licensing.md](/.plan/epics/epic-licensing.md) |
@@ -326,7 +327,7 @@
 | Not Started | World & Locations | Medium | Very High total (split across 4 sub-epics: travel-time High, npcs High, encounters High, diplomacy-karma High) | 0 | [epic-world-locations.md](/.plan/epics/epic-world-locations.md) |
 | Done | World Chat Channels & Invite-Driven Membership | Medium | Medium | 0 | [epic-world-chat-channels-invites.md](/.plan/epics/epic-world-chat-channels-invites.md) |
 | Not Started | World Shaping & Divine Intervention | Low | Medium | 0 | [epic-world-shaping-divine.md](/.plan/epics/epic-world-shaping-divine.md) |
-| Not Started | Worlds Extension (Shareability, Epochs, Maps, Mode Switches) | Medium | High | 8 | [epic-worlds-extension.md](/.plan/epics/epic-worlds-extension.md) |
+| Not Started | Worlds Extension (Shareability, Epochs, Maps, Mode Switches) | Medium | High | 13 | [epic-worlds-extension.md](/.plan/epics/epic-worlds-extension.md) |
 | Not Started | XMPP Integration | Medium | Medium | 11 | [epic-xmpp-integration.md](/.plan/epics/epic-xmpp-integration.md) |
 
 ---
@@ -492,7 +493,6 @@ OpenAPI specification, request validation, rate limiting, telemetry, and resourc
 - **Tags:** archival, soft-delete, retention, purge, data-lifecycle
 - **File:** `.plan/epics/epic-archival-workflow.md`
 
-
 ### Asset Consistency Generation — Reference-Conditioned Re-Generation and In-Chat Image Edit
 
 - **Status:** Not Started
@@ -649,8 +649,6 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Type:** Feature Epic
 - **Tags:** battle, items, social, npc, weather, resolution, integration
 - **File:** `.plan/epics/epic-battle-integration-gaps.md`
-
-### Current State Assessment
 
 ### Current State Assessment
 
@@ -2298,6 +2296,15 @@ Player housing and base building system — personal homes, guild halls, craftin
 - **Tags:** inventory, trading, items, ui, frontend
 - **File:** `.plan/epics/epic-inventory-ui.md`
 
+### Inventory System (Hub)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic (hub)
+- **Tags:** inventory, items, ownership, transfer, trading
+- **File:** `.plan/epics/epic-inventory-system.md`
+
 ### Item System Extensions
 
 - **Status:** Not Started
@@ -2578,7 +2585,6 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Tags:** npc, social, relationships, ui, frontend
 - **File:** `.plan/epics/epic-npc-management-ui.md`
 
-
 ### NPC BDI Autonomy — Character-Level Goal-Pursuit and Between-Session Continuity
 
 - **Status:** Not Started
@@ -2605,8 +2611,6 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Type:** Feature Epic
 - **Tags:** nsfw, integration, housing, weather, social, disease, cross-system
 - **File:** `.plan/epics/epic-nsfw-integration-gaps.md`
-
-### Current State Assessment
 
 ### Current State Assessment
 
@@ -3034,8 +3038,6 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
-### Current State Assessment
-
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3140,7 +3142,6 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Type:** Infrastructure Epic
 - **Tags:** testing, benchmarking, performance, load-testing, profiling
 - **File:** `.plan/epics/epic-testing-benchmarking.md`
-
 
 ### Tool Calling and MCP Integration — External Tool Calling Surface
 
@@ -3281,7 +3282,6 @@ Loop-lore has 281 epics and ~2100 tickets under `.plan/`. Each is hand-shaped pr
 
 Weather and environmental mechanics — dynamic weather systems, terrain effects, environmental hazards, climate zones, and gameplay impact. Integrates with world conditions and combat systems.
 
-
 ### Worktree Plan Tooling — Finalize, Validation, and Ticket Hygiene
 
 - **Status:** Not Started
@@ -3353,3 +3353,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+
