@@ -3,24 +3,24 @@
 
 // src/config/sections/docs.ts — Documentation config section
 
-import type { DocumentationConfig, } from "../schema";
-
 export const DOCS_DEFAULTS = {
   enabled: true,
-} satisfies DocumentationConfig;
+};
 
 /** */
-export class DocsSection implements DocumentationConfig {
+export class DocsSection {
   enabled = DOCS_DEFAULTS.enabled;
   public?: string[];
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<DocumentationConfig>,) {
+  constructor(overrides?: Partial<DocsSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type DocumentationConfig = DocsSection;
 
 export const docsMeta = {
   type: "object" as const,

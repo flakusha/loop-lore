@@ -4,13 +4,6 @@
 // src/config/schema/assistant.ts — Assistant config type
 
 /** */
-export interface AssistantConfig {
-  enabled: boolean;
-  /**
-   * Bound/linked travel mode: when on, the assistant prompt instructs the LLM
-   * it may narrate travel and suggest moving the chat to another location/chat
-   * when the narrative leaves the current one. Suggestions reference only
-   * known world locations. Default off.
-   */
-  travelPrompts: boolean;
-}
+import type { AssistantSection, } from "../sections/assistant";
+
+export type AssistantConfig = InstanceType<typeof AssistantSection>;

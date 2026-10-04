@@ -3,7 +3,7 @@
 
 // src/config/sections/encryption.ts — Encryption config section
 
-import type { EncryptionConfig, } from "../schema";
+import { EncryptionCompression, } from "../../db/enums";
 
 export const ENCRYPTION_DEFAULTS = {
   required: false,
@@ -11,24 +11,26 @@ export const ENCRYPTION_DEFAULTS = {
   compressAlgorithm: "gzip" as const,
   keyRotationDays: 90,
   anonymous: false,
-} satisfies EncryptionConfig;
+};
 
 /** */
-export class EncryptionSection implements EncryptionConfig {
+export class EncryptionSection {
   required = ENCRYPTION_DEFAULTS.required;
   compressThreshold = ENCRYPTION_DEFAULTS.compressThreshold;
-  compressAlgorithm = ENCRYPTION_DEFAULTS.compressAlgorithm;
-  keyRotationDays = ENCRYPTION_DEFAULTS.keyRotationDays;
-  anonymous = ENCRYPTION_DEFAULTS.anonymous;
+  compressAlgorithm: EncryptionCompression = ENCRYPTION_DEFAULTS.compressAlgorithm;
+  keyRotationDays? = ENCRYPTION_DEFAULTS.keyRotationDays;
+  anonymous? = ENCRYPTION_DEFAULTS.anonymous;
   serverEncryptionKey?: string;
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<EncryptionConfig>,) {
+  constructor(overrides?: Partial<EncryptionSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type EncryptionConfig = EncryptionSection;
 
 export const encryptionMeta = {
   type: "object" as const,

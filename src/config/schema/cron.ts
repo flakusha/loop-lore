@@ -3,6 +3,8 @@
 
 // src/config/schema/cron.ts — Cron scheduler config type
 
+import type { CronSection, } from "../sections/cron";
+
 /** Per-job override keyed by job name (e.g. "telemetry.retention"). */
 export interface CronJobOverride {
   enabled?: boolean;
@@ -10,9 +12,4 @@ export interface CronJobOverride {
   schedule?: string;
 }
 
-/** */
-export interface CronConfig {
-  /** Master switch — false leaves every job unregistered. */
-  enabled: boolean;
-  jobs: Record<string, CronJobOverride>;
-}
+export type CronConfig = InstanceType<typeof CronSection>;

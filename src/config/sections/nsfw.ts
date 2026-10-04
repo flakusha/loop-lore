@@ -3,8 +3,6 @@
 
 // src/config/sections/nsfw.ts — NSFW config section
 
-import type { NsfwConfig, } from "../schema";
-
 export const NSFW_DEFAULTS = {
   allowNsfw: true,
   nsfwMinAge: 18,
@@ -14,26 +12,28 @@ export const NSFW_DEFAULTS = {
   piiSecret: "",
   reporterHashSecret: "",
   useLlmClassifier: true,
-} satisfies NsfwConfig;
+};
 
 /** */
-export class NsfwSection implements NsfwConfig {
+export class NsfwSection {
   allowNsfw = NSFW_DEFAULTS.allowNsfw;
   nsfwMinAge = NSFW_DEFAULTS.nsfwMinAge;
   defaultNsfwScope = NSFW_DEFAULTS.defaultNsfwScope;
   consentRequired = NSFW_DEFAULTS.consentRequired;
   auditLogging = NSFW_DEFAULTS.auditLogging;
-  piiSecret = NSFW_DEFAULTS.piiSecret;
-  reporterHashSecret = NSFW_DEFAULTS.reporterHashSecret;
+  piiSecret? = NSFW_DEFAULTS.piiSecret;
+  reporterHashSecret? = NSFW_DEFAULTS.reporterHashSecret;
   useLlmClassifier = NSFW_DEFAULTS.useLlmClassifier;
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<NsfwConfig>,) {
+  constructor(overrides?: Partial<NsfwSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type NsfwConfig = NsfwSection;
 
 export const nsfwMeta = {
   type: "object" as const,
