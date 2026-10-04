@@ -33,11 +33,11 @@ Why this 404 is by design, not a product defect:
 - The canvas is chat-only: `src/views/chat.html:22` is the sole view that includes `{{> chat/game-canvas.html }}`, so only tests that reach `/views/chat` can produce this response.
 
 Why it is intermittent:
-The blanket assert runs in the `finally` immediately after `chat-header` attaches (`characters-flow.browser.ts:220-223`), but the 404 is recorded by the `page.on("response", ...)` handler (`htmx-alpine.ts:112-118`), which lands roughly 2500ms later. Measured by probe: `chat-header` attached at 696-788ms, 404 arrived at 821-952ms, 0 errors recorded at the assert point and 1 error present 2500ms later, 5/5 runs. Whether the response event lands before or after the assert is a scheduling race, which is why the failure is roughly 1-in-6 rather than deterministic.
+The blanket assert runs in the `finally` immediately after `chat-header` attaches (`characters-flow.browser.ts:220-223`), but the 404 is recorded by the `page.on("response", ...)` handler (`htmx-alpine.ts:119-125`), which lands roughly 2500ms later. Measured by probe: `chat-header` attached at 696-788ms, 404 arrived at 821-952ms, 0 errors recorded at the assert point and 1 error present 2500ms later, 5/5 runs. Whether the response event lands before or after the assert is a scheduling race, which is why the failure is roughly 1-in-6 rather than deterministic.
 
 Why the fix is the existing precedent, not a new mechanism:
-- The harness already exports `EXPECTED_404_NOISE_ALLOWLIST` at `tests/e2e/helpers/htmx-alpine.ts:40-42`.
-- Its docstring (`htmx-alpine.ts:29-39`) names this exact endpoint and this exact failure class.
+- The harness already exports `EXPECTED_404_NOISE_ALLOWLIST` at `tests/e2e/helpers/htmx-alpine.ts:47-49`.
+- Its docstring (`htmx-alpine.ts:29-46`) names this exact endpoint and this exact failure class.
 - The identical sibling flow already opts in: `tests/e2e/flows/browser/navigation.browser.ts:182-184` passes `trackPageErrors(page, { allowlist: EXPECTED_404_NOISE_ALLOWLIST, },)`.
 
 Rejected alternatives:
@@ -58,7 +58,7 @@ The 15 runs and the 9-case harness were executed against the narrower single-sit
 
 ## Scope caveat for future fixers
 
-`12403fdc3`'s file-scope comment concedes the limitation of the current approach: `EXPECTED_404_NOISE_ALLOWLIST` matches on response STATUS, not URL. A 404 from ANY endpoint reached in that flow is therefore excused, not only `/api/v1/chats/:id/game-state`. An unexpected 404 introduced by a future endpoint would be silently tolerated. Non-404 responses, network failures and JS page errors are unaffected and still fail. The obvious narrowing is to match the URL path as well as the status in `record()` (`htmx-alpine.ts:91-97`), but that is NOT implemented — noted here for whoever picks it up.
+`12403fdc3`'s file-scope comment concedes the limitation of the current approach: `EXPECTED_404_NOISE_ALLOWLIST` matches on response STATUS, not URL. A 404 from ANY endpoint reached in that flow is therefore excused, not only `/api/v1/chats/:id/game-state`. An unexpected 404 introduced by a future endpoint would be silently tolerated. Non-404 responses, network failures and JS page errors are unaffected and still fail. The obvious narrowing — matching the URL path as well as the status in `record()` (`htmx-alpine.ts:98-104`) — IS implemented on dev (`htmx-alpine.ts:47-49`), so this caveat is moot for the dev tree.
 
 Acceptance criteria:
 1. The file's blanket assert no longer fails on the by-design game-state 404.
