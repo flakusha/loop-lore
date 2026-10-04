@@ -131,6 +131,7 @@ export async function runNonStreaming({
         actorId: input.actorId,
         chatId: input.chatId,
       },);
+
       currentMessages = [...currentMessages, ...toolResults,];
       allToolResults.push(...toolResults,);
     }
@@ -151,6 +152,7 @@ export async function runNonStreaming({
         attemptId,
         finishReason: finalResponse.finishReason,
       },);
+
       throw new Error(`LLM returned empty content (finishReason=${finalResponse.finishReason})`,);
     }
 
@@ -200,6 +202,7 @@ export async function runNonStreaming({
         log.error("Telemetry record failed", error instanceof Error ? error : undefined,);
       },);
     }
+
     // BUG-generation-error-handling-gaps: explicit .catch on memory void.
     void extractAndStoreMemories(database, {
       actorId: input.actorId,
@@ -236,6 +239,7 @@ export async function runNonStreaming({
     } catch {
       // failGeneration already logs errors
     }
+
     return jsonError({ message: `Generation failed: ${errMsg}`, status: 500, },);
   }
 }

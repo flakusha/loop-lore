@@ -35,6 +35,7 @@ const SCHEDULER_CANCEL_PREFIX = "schedule cancelled: ";
 export function isSchedulerCancel(err: unknown,): boolean {
   return err instanceof Error && err.message.startsWith(SCHEDULER_CANCEL_PREFIX,);
 }
+
 /**
  * @param {ScheduledRequest<T>} req
  * @returns {InternalHandle<T>}
@@ -127,5 +128,6 @@ export function createInternalHandle<T,>(req: ScheduledRequest<T>,): InternalHan
     },
     notifySettled,
   };
+
   return handle;
 }
