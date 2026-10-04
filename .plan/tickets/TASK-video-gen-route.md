@@ -41,7 +41,7 @@ path; and output is `assetType: "video"` (MIME already in
   the image-route auth contract: 401 without user, `checkChatAccess` 403 on
   foreign `chatId`, 400 on missing prompt, 501 when no video provider is
   configured
-- [ ] Async job shape: submit \u2192 poll with `generationTimeout` deadline \u2192 504
+- [ ] Async job shape: submit → poll with `generationTimeout` deadline → 504
   on timeout, mirroring `generateSDCPP` (`image-engine/sdcpp.ts:79-127`);
   no request holds an HTTP connection through a multi-minute render
 - [ ] Output persists via `createAsset` (`assetType: "video"`) + `linkAsset`
@@ -50,4 +50,4 @@ path; and output is `assetType: "video"` (MIME already in
   `TASK-video-template-schema.md`; non-video modality rejected 400 (image
   route precedent `:88-93`)
 - [ ] Unit tests: auth matrix (401/403/400/501), timeout path, asset-link
-  assertions \u2014 mirroring `image-gen-route.test.ts`
+  assertions — mirroring `image-gen-route.test.ts`
