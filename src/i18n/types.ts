@@ -14,9 +14,7 @@ export type Locale = "en" | "es" | "fr" | "de" | "ja" | "ko" | "zh" | "pt" | "ru
 export type PluralCategory = Intl.LDMLPluralRule;
 
 /**
- * Per-key plural variants. `other` is the CLDR catch-all and is therefore
- * required; the rest are locale-dependent (`en` uses `one`/`other`; `ru` and
- * `pl` add `few`/`many`; `ar` adds `zero`/`two`).
+ * Per-key plural variants. `other` is required; the rest are locale-dependent.
  */
 export interface PluralTranslation {
   zero?: string;
@@ -40,10 +38,7 @@ export type FlatTranslationMap = Map<string, TranslationNode>;
 
 /**
  * Translator function signature.
- *
- * `params.count` (a number) drives plural selection: when a numeric `count` and
- * a plural-variant entry for the key are both present, `count` picks the CLDR
- * category. String-only keys are unaffected.
+ * A numeric `params.count` drives plural selection for plural-variant entries.
  */
 export type TranslatorFn = (key: string, params?: Record<string, string | number>,) => string;
 

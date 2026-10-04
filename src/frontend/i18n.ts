@@ -228,13 +228,10 @@ const PLURAL_CATEGORIES: Record<string, true> = {
 
 /**
  * A node is plural-variant data when every one of its keys is a CLDR category.
- * Requiring ALL keys to be categories keeps a plain enumeration that merely
- * CONTAINS `other` (e.g. `chats.flagReason`) a normal subtree.
- * @param node - candidate translation node
- * @returns true when the node is a plural-variant object.
+ * Requiring ALL keys keeps a plain enumeration containing `other` a normal subtree.
  */
 function isPluralNode(node: TranslationNode | TranslationMap,): node is PluralTranslation {
   if (typeof node !== "object" || node === null) { return false; }
   const keys = Object.keys(node,);
-  return keys.length > 0 && keys.every((key,) => PLURAL_CATEGORIES[key] === true,);
+  return keys.length > 0 && keys.every((key,) => PLURAL_CATEGORIES[key] === true);
 }
