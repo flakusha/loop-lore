@@ -330,7 +330,7 @@
     "epic": "epic-asset-platform-capabilities",
     "tags": [],
     "source": ".plan/tickets/BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ASSET-DEDUP-IGNORES-REQUESTED-ENCRYPTION-TIER-AND-KEY-RETURN": {
     "hash": "708fba5",
@@ -343,7 +343,7 @@
     "epic": "epic-asset-platform-capabilities",
     "tags": [],
     "source": ".plan/tickets/BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA": {
     "epic": "",
@@ -2109,7 +2109,7 @@
     "epic": "epic-asset-platform-capabilities",
     "tags": [],
     "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-COMMAND-DISPATCH-ASYNC-HANDLER-UNCAUGHT": {
     "epic": "epic-chat-lifecycle-moderation",
@@ -2291,7 +2291,7 @@
     "epic": "epic-asset-platform-capabilities",
     "tags": [],
     "source": ".plan/tickets/BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-CRITICAL-HIT-ROLLS-IGNORE-ADVANTAGE": {
     "epic": "",
@@ -2592,7 +2592,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-docs-site-build-emits-dangling-vp-icons-css-link-failing-eve.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "Docs build dies mid-render on case-colliding plan pages, leaving every page 404ing on vp-icons.css",
     "type": "BUG"
@@ -3227,7 +3227,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-frontend-ok-toast-branches-unreachable-fefetch-throws-on-non.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-FRONTEND-REGENERATEVARIANT-DOES-NOT-PASS-STYLE-TO-API": {
     "epic": "",
@@ -3943,7 +3943,7 @@
     "epic": "epic-asset-platform-capabilities",
     "tags": [],
     "source": ".plan/tickets/BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-IMAGE-EDIT-SUITE-RELEASES-ITS-DEAD-PORT-BEFORE-PROBING-IT-TO": {
     "hash": "11b117b",
@@ -4481,7 +4481,7 @@
       "embeddings"
     ],
     "source": ".plan/tickets/BUG-memory-embeddings-orphaned-on-actor-delete.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-MEMORY-INJECTION-REASON-NOT-DISPLAYED-IN-UI": {
     "epic": "",
@@ -5433,7 +5433,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-plan-backlog-sync-invokes-removed-giwt-subcommand-failing-bu.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-PLAN-SYNC-FIX-MASS-CREATES-ORPHAN-GIT-ISSUES-FOR-PLACEHOLDER": {
     "epic": "",
@@ -5906,7 +5906,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-routes-character-avatars-subdir-is-shadowed-by-flat-file-cru.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ROUTES-COMMANDS-INDEX-TS-19-HAS-UNUSED-IMPORT-T": {
     "epic": "",
