@@ -374,6 +374,31 @@ describe("GossipService — spki pin gate", () => {
     expect(pinCalls,).toBe(0,);
   });
 
+  test("non-canonical config origins still reach the pin gate", async () => {
+    const c = clock();
+    let pinCalls = 0;
+    const pinVerify: PeerPinVerifier = async () => {
+      pinCalls += 1;
+      return false;
+    };
+
+    // Raw config key (upper-case host, explicit default port) must map onto
+    // the canonical table origin, or the gate would silently pass.
+    const svc = new GossipService({
+      seeds: ["https://pinned.example.com",],
+      trusted: [],
+      trustByOrigin: { "https://PINNED.example.com:443": { spkiPins: ["sha256:QUJD",], }, },
+      selfOrigin: "http://localhost:3000",
+      now: c.now,
+      fetchImpl: async () => ({ ok: true, status: 200, body: {}, }),
+      pinVerify,
+    },);
+
+    const summary = await svc.pollOnce();
+    expect(pinCalls,).toBe(1,);
+    expect(summary.alive,).toBe(0,);
+  });
+
   test("default verifier fails closed against an unreachable pinned peer", async () => {
     const c = clock();
     const origin = "https://127.0.0.1:1";
