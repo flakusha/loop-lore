@@ -103,6 +103,17 @@ describe("config-menu routes", () => {
     expect(res.status,).toBe(400,);
   });
 
+  test("PATCH /api/config-menu rejects non-editable admin field", async () => {
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/config-menu", { method: "PATCH", headers: { "Content-Type": "application/json", }, body: JSON.stringify({ key: "server.port", value: "9999", },), },),
+    );
+
+    expect(res.status,).toBe(400,);
+    const rows = await db.selectFrom("system_config",).select("key",).where("key", "=", "server.port",).execute();
+    expect(rows.length,).toBe(0,);
+  });
+
   test("PATCH /api/config-menu admin writes system_config", async () => {
     const app = makeApp(db, "admin",);
     const res = await app.handle(
