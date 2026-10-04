@@ -17,6 +17,7 @@ export class GenerationSection implements GenerationConfig {
   defaultProvider = GENERATION_DEFAULTS.defaultProvider;
   defaultModels: Record<string, string> = {};
   modelRoles: Record<string, ModelRoleAssignment> = {};
+  routing = GENERATION_DEFAULTS.routing;
   autoStart: GenerationConfig["autoStart"];
   localModels: GenerationConfig["localModels"];
   matting: MattingConfig | undefined;

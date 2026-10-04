@@ -14,6 +14,7 @@ import { loadConfig, } from "../config/load";
 import { createLogger, getLogger, } from "../logger";
 import { AssetView, } from "./asset-view";
 import { API_BASE, ChatWidget, } from "./chat";
+import { createHarnessView, type HarnessView, } from "./harness";
 
 /** */
 export class TUIApp {
@@ -21,6 +22,7 @@ export class TUIApp {
   screen: blessed.Widgets.Screen;
   chat: ChatWidget;
   assets: AssetView;
+  harness: HarnessView;
 
   /** */
   constructor() {
@@ -52,7 +54,6 @@ export class TUIApp {
       tags: true,
       style: { bg: "blue", fg: "white", },
     },);
-
     this.updateStatus("initializing...",);
     this.chat = new ChatWidget(this.screen, {
       sessionToken,
@@ -65,6 +66,9 @@ export class TUIApp {
 
     // ── Asset view (right sidebar, toggleable) ─────────────
     this.assets = new AssetView(this.screen,);
+
+    // ── Harness view (full-screen overlay, toggleable) ──────
+    this.harness = createHarnessView(this.screen, sessionToken,);
 
     // ── Resize handler ─────────────────────────────────────
     this.screen.on("resize", () => {
@@ -82,6 +86,12 @@ export class TUIApp {
       this.updateStatus(this.assets.isVisible() ? "Assets: visible" : "Assets: hidden",);
     },);
 
+    // F3 — toggle harness view
+    this.screen.key(["f3",], () => {
+      this.harness.toggle();
+      this.updateStatus(this.harness.isVisible() ? "Harness: visible" : "Harness: hidden",);
+    },);
+
     // F5 — refresh current chat messages
     this.screen.key(["f5",], () => {
       void (async () => {
@@ -95,7 +105,6 @@ export class TUIApp {
             getLogger()
               .child({ module: "tui", },)
               .error("loadMessages failed", error instanceof Error ? error : new Error(String(error,),),);
-
             this.updateStatus("load failed",);
           }
         } else {
@@ -110,7 +119,7 @@ export class TUIApp {
       this.updateStatus("display cleared",);
     },);
 
-    this.updateStatus("ready — Tab: focus | F2: assets | F5: refresh | Esc/q: quit",);
+    this.updateStatus("ready — Tab: focus | F2: assets | F3: harness | F5: refresh | Esc/q: quit",);
 
     this.screen.render();
   }

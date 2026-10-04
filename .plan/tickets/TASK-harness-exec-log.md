@@ -24,3 +24,6 @@
 - `epic-recursive-self-improvement.md` (consumer)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+
+git issue: 4879281
