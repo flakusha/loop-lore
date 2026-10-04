@@ -7,6 +7,7 @@ describe("logger full", () => {
     const l = new LoggerImpl({ level: "info", },);
     expect(l,).toBeDefined();
   });
+
   it("child log", () => {
     const log = createLogger();
     const child = log.child({ requestId: "r1", },);

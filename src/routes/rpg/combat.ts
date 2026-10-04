@@ -51,6 +51,7 @@ export function combatRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
             ...c,
             initiative: rollInitiative(c,).total,
           }),);
+
           const sorted = sortByInitiative(withInitiative,);
           return jsonResponse({ combatants: sorted, },);
         } catch (error) {
@@ -82,6 +83,7 @@ export function combatRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
             resistances?: { type: string; modifier: string }[];
             advantage?: AdvantageMode;
           };
+
           const result = makeAttackRoll(
             body.attacker,
             body.target,
@@ -93,6 +95,7 @@ export function combatRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
             (body.resistances ?? []) as any,
             body.advantage ?? "normal",
           );
+
           return jsonResponse(result,);
         } catch (error) {
           log().error("Failed to resolve attack", error instanceof Error ? error : undefined,);
@@ -118,6 +121,7 @@ export function combatRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
             dc: number;
             advantage?: AdvantageMode;
           };
+
           const result = makeSavingThrow(body.combatant, body.ability, body.dc, body.advantage ?? "normal",);
           return jsonResponse(result,);
         } catch (error) {

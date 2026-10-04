@@ -32,6 +32,7 @@ if (ISOLATED) {
     const linkAssetMock = async (opts: LinkAssetCall,) => {
       linkAssetCalls.push(opts,);
     };
+
     return {
       ...realLinks,
       linkAsset: linkAssetMock,
@@ -81,6 +82,7 @@ describeOrSkip("createRoutes avatar asset linking", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     expect(linkAssetCalls,).toHaveLength(1,);
     expect(linkAssetCalls[0]?.assetId,).toBe(ASSET,);
@@ -97,6 +99,7 @@ describeOrSkip("createRoutes avatar asset linking", () => {
         body: JSON.stringify({ displayName: "NoAvatar", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     expect(linkAssetCalls,).toHaveLength(0,);
   });
@@ -119,6 +122,7 @@ describeOrSkip("createRoutes avatar asset linking", () => {
         },),
       },),
     );
+
     const { id, } = (await res.json()) as { id: string };
 
     const row = await testEnv.db
@@ -135,12 +139,14 @@ describeOrSkip("createRoutes avatar asset linking", () => {
       ],)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     expect(row?.personality,).toBe("witty, loyal",);
     expect(row?.appearance,).toBe("Tall figure with a scarred cheek",);
     expect(row?.default_outfit,).toBe("travel-gear",);
     expect(row?.outfits,).toBe(
       JSON.stringify([{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],),
     );
+
     expect(row?.scenario,).toBe("in a tavern",);
     expect(row?.welcome_message,).toBe("Hello traveller!",);
     expect(row?.agent_role,).toBe("guide",);

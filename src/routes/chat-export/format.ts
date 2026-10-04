@@ -45,6 +45,7 @@ export function formatMarkdown(chat: { name: string; type: string; mode: string 
     if (roleLabel !== lastAuthor) {
       lines.push(`### ${roleLabel}`, "",);
     }
+
     lines.push(msg.content, "",);
     lastAuthor = roleLabel;
   }
@@ -88,6 +89,7 @@ export function formatJson(
     },
     2,
   );
+
   return sr.ok ? sr.value : "{}";
 }
 

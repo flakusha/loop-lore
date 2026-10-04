@@ -91,18 +91,21 @@ describe("adminTemplateRoutes coverage", () => {
     const res = await admin.handle(
       new Request("http://localhost/api/admin/templates/registry",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       profiles: Record<string, FullProfile>;
       defaultProfileId: string;
       modelMatching: unknown;
     };
+
     expect(body.defaultProfileId,).toBe("sdxl",);
     expect(body.profiles["sdxl"]?.id,).toBe("sdxl",);
     expect(body.modelMatching,).toBeDefined();
     const denied = await user.handle(
       new Request("http://localhost/api/admin/templates/registry",),
     );
+
     expect(denied.status,).toBe(403,);
   });
 
@@ -110,16 +113,19 @@ describe("adminTemplateRoutes coverage", () => {
     const res = await admin.handle(
       new Request("http://localhost/api/admin/templates/sdxl",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as FullProfile;
     expect(body.isBuiltin,).toBe(true,);
     const missing = await admin.handle(
       new Request("http://localhost/api/admin/templates/no-such-profile",),
     );
+
     expect(missing.status,).toBe(404,);
     const denied = await user.handle(
       new Request("http://localhost/api/admin/templates/sdxl",),
     );
+
     expect(denied.status,).toBe(403,);
   });
 
@@ -131,6 +137,7 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ id: "cov-a", name: "A", families: ["sdxl",], },),
       },),
     );
+
     expect(anonRes.status,).toBe(401,);
     const userRes = await user.handle(
       new Request("http://localhost/api/admin/templates", {
@@ -139,6 +146,7 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ id: "cov-a", name: "A", families: ["sdxl",], },),
       },),
     );
+
     expect(userRes.status,).toBe(403,);
     const missing = await admin.handle(
       new Request("http://localhost/api/admin/templates", {
@@ -147,6 +155,7 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ id: "cov-a", },),
       },),
     );
+
     expect(missing.status,).toBe(400,);
     const badId = await admin.handle(
       new Request("http://localhost/api/admin/templates", {
@@ -155,6 +164,7 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ id: "BAD ID!", name: "A", families: ["sdxl",], },),
       },),
     );
+
     expect(badId.status,).toBe(400,);
   });
 
@@ -166,10 +176,12 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ id: "cov-custom", name: "Custom", families: ["sdxl",], },),
       },),
     );
+
     expect(created.status,).toBe(200,);
     const list = (await (await admin.handle(
       new Request("http://localhost/api/admin/templates",),
     )).json()) as ListBody;
+
     expect(list.customCount,).toBe(1,);
     expect(list.profiles.some((p,) => p.id === "cov-custom" && !p.isBuiltin),).toBe(true,);
     const dup = await admin.handle(
@@ -179,6 +191,7 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ id: "cov-custom", name: "Custom", families: ["sdxl",], },),
       },),
     );
+
     expect(dup.status,).toBe(422,);
     const builtinDup = await admin.handle(
       new Request("http://localhost/api/admin/templates", {
@@ -187,6 +200,7 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ id: "sdxl", name: "Custom", families: ["sdxl",], },),
       },),
     );
+
     expect(builtinDup.status,).toBe(422,);
   });
 
@@ -198,10 +212,12 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ detail: "balanced", mode: "yourself", template: "cover me {prompt}", },),
       },),
     );
+
     expect(put.status,).toBe(200,);
     const fetched = (await (await admin.handle(
       new Request("http://localhost/api/admin/templates/cov-custom",),
     )).json()) as FullProfile;
+
     expect(fetched.isBuiltin,).toBe(false,);
     expect(fetched.templates.balanced.yourself,).toBe("cover me {prompt}",);
     const defaults = await admin.handle(
@@ -211,10 +227,12 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ cfgScale: 9, },),
       },),
     );
+
     expect(defaults.status,).toBe(200,);
     const refetched = (await (await admin.handle(
       new Request("http://localhost/api/admin/templates/cov-custom",),
     )).json()) as FullProfile;
+
     expect(refetched.defaults.cfgScale,).toBe(9,);
   });
 
@@ -226,6 +244,7 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ detail: "balanced", mode: "yourself", template: "x", },),
       },),
     );
+
     expect(anonRes.status,).toBe(401,);
     const missing = await admin.handle(
       new Request("http://localhost/api/admin/templates/sdxl", {
@@ -234,6 +253,7 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ detail: "balanced", },),
       },),
     );
+
     expect(missing.status,).toBe(400,);
     const unknown = await admin.handle(
       new Request("http://localhost/api/admin/templates/nope", {
@@ -242,6 +262,7 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ detail: "balanced", mode: "yourself", template: "x", },),
       },),
     );
+
     expect(unknown.status,).toBe(404,);
     const unknownDefaults = await admin.handle(
       new Request("http://localhost/api/admin/templates/nope/defaults", {
@@ -250,6 +271,7 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ cfgScale: 9, },),
       },),
     );
+
     expect(unknownDefaults.status,).toBe(404,);
   });
 
@@ -263,10 +285,12 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ detail: "balanced", mode: "last", template: "cov-user-write", },),
       },),
     );
+
     expect(put.status,).toBe(403,);
     const del = await user.handle(
       new Request("http://localhost/api/admin/templates/cov-custom", { method: "DELETE", },),
     );
+
     expect(del.status,).toBe(403,);
   });
 
@@ -274,22 +298,27 @@ describe("adminTemplateRoutes coverage", () => {
     const anonRes = await anon.handle(
       new Request("http://localhost/api/admin/templates/cov-custom", { method: "DELETE", },),
     );
+
     expect(anonRes.status,).toBe(401,);
     const builtin = await admin.handle(
       new Request("http://localhost/api/admin/templates/sdxl", { method: "DELETE", },),
     );
+
     expect(builtin.status,).toBe(400,);
     const unknown = await admin.handle(
       new Request("http://localhost/api/admin/templates/nope", { method: "DELETE", },),
     );
+
     expect(unknown.status,).toBe(404,);
     const removed = await admin.handle(
       new Request("http://localhost/api/admin/templates/cov-custom", { method: "DELETE", },),
     );
+
     expect(removed.status,).toBe(200,);
     const gone = await admin.handle(
       new Request("http://localhost/api/admin/templates/cov-custom",),
     );
+
     expect(gone.status,).toBe(404,);
   });
 
@@ -298,6 +327,7 @@ describe("adminTemplateRoutes coverage", () => {
       .set({ value: "corrupt{{{", },)
       .where("key", "=", "prompt_templates",)
       .execute();
+
     const res = await admin.handle(new Request("http://localhost/api/admin/templates",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as ListBody;
@@ -311,11 +341,13 @@ describe("adminTemplateRoutes coverage", () => {
     const brokenApp = new Elysia({ name: "test-admin-templates-broken", },)
       .derive({ as: "scoped", }, () => ({ userId: "admin-cov", userRole: "admin", }),)
       .use(adminTemplateRoutes({ database: broken, },),) as unknown as Elysia;
+
     const list = await brokenApp.handle(new Request("http://localhost/api/admin/templates",),);
     expect(list.status,).toBe(500,);
     const registry = await brokenApp.handle(
       new Request("http://localhost/api/admin/templates/registry",),
     );
+
     expect(registry.status,).toBe(500,);
   });
 });

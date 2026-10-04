@@ -112,6 +112,7 @@ export function createComfyMattingProvider(opts: ComfyMattingProviderOpts,): Mat
         buffer,
         `matting-${Date.now()}.png`,
       );
+
       const outputs = await client.runWorkflow(
         buildMattingWorkflow(uploadName, model,),
       );
@@ -120,11 +121,13 @@ export function createComfyMattingProvider(opts: ComfyMattingProviderOpts,): Mat
       if (!png) {
         throw new Error("ComfyUI matting workflow produced no image",);
       }
+
       const sized = safeFromUint8Array(new Uint8Array(png,),);
       if (!sized.ok) { throw sized.error; }
       if (!looksLikePng(sized.buffer,)) {
         throw new Error("ComfyUI matting returned a non-PNG payload",);
       }
+
       return sized.buffer;
     },
   };

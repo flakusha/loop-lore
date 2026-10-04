@@ -32,6 +32,7 @@ if (ISOLATED) {
       },
     };
   },);
+
   mock.module("../nsfw-user-flag", () => {
     return {
       flagNsfwUserMessage: async (_database: unknown, userId: string, chatId: string, content: string,) => {
@@ -52,6 +53,7 @@ if (ISOLATED) {
 const createModule: unknown = await import("../create").catch(() => null);
 const createPristine = !!createModule &&
   typeof (createModule as Record<string, unknown>).createRoutes === "function";
+
 const { createRoutes, } = (createPristine ? createModule : {}) as typeof import("../create");
 // Both guards are required: `createPristine` for the pristine-module probe,
 // `ISOLATED` because the flagNsfwUserMessage mock above only registers there —
@@ -132,6 +134,7 @@ describeReal("nsfw flag ordering vs chat access (BUG-nsfw-flag-side-effect)", ()
         body: JSON.stringify({ content: "explicit graphic content", },),
       },),
     );
+
     // checkChatAccess hides non-member chats as 404.
     expect(res.status,).toBe(404,);
     expect(flagCalls,).toHaveLength(0,);
@@ -146,6 +149,7 @@ describeReal("nsfw flag ordering vs chat access (BUG-nsfw-flag-side-effect)", ()
         body: JSON.stringify({ content: "explicit content", },),
       },),
     );
+
     // Access passes → flag runs first → mock throws the sentinel → 500.
     expect(res.status,).toBe(500,);
     expect(flagCalls,).toHaveLength(1,);

@@ -35,6 +35,7 @@ describe("DBTransport", () => {
       message: "test entry",
       module: "test",
     };
+
     await transport.write(entry,);
 
     const rows = await db.selectFrom("log_entries",).selectAll().execute();
@@ -55,6 +56,7 @@ describe("DBTransport", () => {
       userId: "user-abc",
       meta: { event_type: "user", entity_type: "user", entity_id: "user-abc", action: "created", },
     };
+
     await transport.write(entry,);
 
     const rows = await db.selectFrom("log_entries",).selectAll().where("event_type", "=", "user",).execute();
@@ -74,6 +76,7 @@ describe("DBTransport", () => {
       time: "20260704T143002.123+02:00",
       message: "test action",
     };
+
     await transport.write(entry,);
 
     const rows = await db.selectFrom("log_entries",).selectAll().where("action", "=", "test action",).execute();
@@ -88,6 +91,7 @@ describe("DBTransport", () => {
       time: "x",
       message: "should not throw",
     };
+
     await expect(badTransport.write(entry,),).resolves.toBeUndefined();
   });
 

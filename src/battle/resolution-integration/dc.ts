@@ -23,6 +23,7 @@ export function getCombatDC(
         description: "DC to disarm opponent",
       };
     }
+
     case "shove": {
       return {
         name: "Shove",
@@ -30,6 +31,7 @@ export function getCombatDC(
         description: "DC to shove opponent",
       };
     }
+
     case "grapple": {
       return {
         name: "Grapple",
@@ -37,6 +39,7 @@ export function getCombatDC(
         description: "DC to grapple opponent",
       };
     }
+
     case "escape_grapple": {
       return {
         name: "Escape Grapple",
@@ -44,6 +47,7 @@ export function getCombatDC(
         description: "DC to escape grapple",
       };
     }
+
     case "aim": {
       return {
         name: "Aim",

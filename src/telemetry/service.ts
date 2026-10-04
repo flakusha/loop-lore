@@ -81,6 +81,7 @@ export async function record(
         bytes: payload.length,
         cap: TELEMETRY_EVENT_DATA_MAX_BYTES,
       },);
+
     return;
   }
 

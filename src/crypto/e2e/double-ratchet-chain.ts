@@ -25,6 +25,7 @@ export async function deriveChainKey(
     false,
     ["deriveBits",],
   );
+
   const salt = new Uint8Array(8,);
   new DataView(salt.buffer,).setBigUint64(0, BigInt(chainIndex,),);
   const bits = await crypto.subtle.deriveBits(
@@ -37,5 +38,6 @@ export async function deriveChainKey(
     base,
     KEY_LENGTH * 8,
   );
+
   return new Uint8Array(bits,);
 }

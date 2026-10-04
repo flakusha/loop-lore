@@ -74,6 +74,7 @@ describe("seedConfiguredUsers", () => {
       .select(["id", "username", "role", "password_hash",],)
       .where("username", "=", "moderator1",)
       .executeTakeFirst();
+
     expect(mod?.role,).toBe("moderator",);
     expect(mod?.password_hash,).toBeDefined();
     expect(mod?.password_hash,).not.toBe("mod-pw",);
@@ -83,6 +84,7 @@ describe("seedConfiguredUsers", () => {
       .select("display_name",)
       .where("display_name", "=", "moderator1",)
       .executeTakeFirst();
+
     expect(modActor,).toBeDefined();
 
     const audit = await db
@@ -90,6 +92,7 @@ describe("seedConfiguredUsers", () => {
       .selectAll()
       .where("seed_type", "=", "user",)
       .execute();
+
     expect(audit.length,).toBe(2,);
     expect(audit.some((a,) => a.seed_id === mod?.id || a.metadata?.includes("moderator1",)),).toBe(true,);
   });
@@ -102,6 +105,7 @@ describe("seedConfiguredUsers", () => {
       },
       auth: auth(true,),
     },);
+
     expect(created,).toBe(0,);
 
     const count = await db
@@ -109,6 +113,7 @@ describe("seedConfiguredUsers", () => {
       .select(db.fn.countAll<number>().as("n",),)
       .where("username", "=", "moderator1",)
       .executeTakeFirst();
+
     expect(count?.n,).toBe(1,);
   });
 
@@ -120,6 +125,7 @@ describe("seedConfiguredUsers", () => {
       },
       auth: auth(true,),
     },);
+
     expect(created,).toBe(0,);
   });
 
@@ -131,6 +137,7 @@ describe("seedConfiguredUsers", () => {
       },
       auth: auth(false,),
     },);
+
     expect(created,).toBe(0,);
 
     const exists = await db
@@ -138,6 +145,7 @@ describe("seedConfiguredUsers", () => {
       .select("id",)
       .where("username", "=", "solo-extra",)
       .executeTakeFirst();
+
     expect(exists,).toBeUndefined();
   });
 
@@ -149,6 +157,7 @@ describe("seedConfiguredUsers", () => {
       },
       auth: auth(true,),
     },);
+
     expect(created,).toBe(0,);
 
     const exists = await db
@@ -156,6 +165,7 @@ describe("seedConfiguredUsers", () => {
       .select("id",)
       .where("username", "=", "badrole",)
       .executeTakeFirst();
+
     expect(exists,).toBeUndefined();
   });
 
@@ -168,6 +178,7 @@ describe("seedConfiguredUsers", () => {
       },
       auth: auth(true,),
     },);
+
     expect(created,).toBe(0,);
 
     const exists = await db
@@ -175,6 +186,7 @@ describe("seedConfiguredUsers", () => {
       .select("id",)
       .where("username", "=", "noenv",)
       .executeTakeFirst();
+
     expect(exists,).toBeUndefined();
   });
 });

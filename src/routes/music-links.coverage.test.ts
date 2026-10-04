@@ -58,6 +58,7 @@ describe("musicLinksRoutes coverage", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await db.insertInto("users",).values({
       id: stranger,
       username: `ml-stranger-${stamp}`,
@@ -67,6 +68,7 @@ describe("musicLinksRoutes coverage", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await db.insertInto("chats",).values({ id: chatId, name: "ML Chat", created_by: owner, },).execute();
   },);
 
@@ -83,14 +85,17 @@ describe("musicLinksRoutes coverage", () => {
         body: JSON.stringify({ url: "https://open.spotify.com/track/abc", },),
       },),
     );
+
     expect(share.status,).toBe(401,);
     const list = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/music-links`,),
     );
+
     expect(list.status,).toBe(401,);
     const del = await app.handle(
       new Request(`http://localhost/api/music-links/${uid()}`, { method: "DELETE", },),
     );
+
     expect(del.status,).toBe(401,);
   });
 
@@ -103,6 +108,7 @@ describe("musicLinksRoutes coverage", () => {
         body: JSON.stringify({ url: "https://music.youtube.com/watch?v=abc123", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as MusicLinkBody;
     expect(body.chatId,).toBe(chatId,);
@@ -127,6 +133,7 @@ describe("musicLinksRoutes coverage", () => {
         body: JSON.stringify({ url: "https://open.spotify.com/track/abc123", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as MusicLinkBody;
     expect(body.service,).toBe("spotify",);
@@ -143,6 +150,7 @@ describe("musicLinksRoutes coverage", () => {
         body: JSON.stringify({ url: "https://myband.bandcamp.com/track/song", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as MusicLinkBody;
     expect(body.service,).toBe("bandcamp",);
@@ -159,6 +167,7 @@ describe("musicLinksRoutes coverage", () => {
         body: JSON.stringify({ url: "https://example.com/song", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -171,6 +180,7 @@ describe("musicLinksRoutes coverage", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(missing.status,).toBe(422,);
     const malformed = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/music-links`, {
@@ -179,6 +189,7 @@ describe("musicLinksRoutes coverage", () => {
         body: "not-json{{{",
       },),
     );
+
     expect(malformed.status,).toBe(400,);
     const textBody = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/music-links`, {
@@ -187,6 +198,7 @@ describe("musicLinksRoutes coverage", () => {
         body: "x=1",
       },),
     );
+
     expect(textBody.status,).toBe(422,);
   });
 
@@ -199,10 +211,12 @@ describe("musicLinksRoutes coverage", () => {
         body: JSON.stringify({ url: "https://open.spotify.com/track/abc123", },),
       },),
     );
+
     expect(missing.status,).toBe(404,);
     const missingList = await app.handle(
       new Request(`http://localhost/api/chats/${uid()}/music-links`,),
     );
+
     expect(missingList.status,).toBe(404,);
     const outsider = makeApp(stranger, "user",);
     const denied = await outsider.handle(
@@ -212,6 +226,7 @@ describe("musicLinksRoutes coverage", () => {
         body: JSON.stringify({ url: "https://open.spotify.com/track/abc123", },),
       },),
     );
+
     expect(denied.status,).toBe(404,);
   });
 
@@ -224,6 +239,7 @@ describe("musicLinksRoutes coverage", () => {
         body: JSON.stringify({ url: "https://myband.bandcamp.com/track/fk", sectionId: uid(), },),
       },),
     );
+
     expect(res.status,).toBe(500,);
   });
 
@@ -232,6 +248,7 @@ describe("musicLinksRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/music-links`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { data: MusicLinkBody[] };
     expect(body.data.length,).toBeGreaterThanOrEqual(2,);
@@ -247,15 +264,18 @@ describe("musicLinksRoutes coverage", () => {
         body: JSON.stringify({ url: "https://music.youtube.com/watch?v=xyz", },),
       },),
     );
+
     expect(created.status,).toBe(201,);
     const row = (await created.json()) as MusicLinkBody;
     const del = await app.handle(
       new Request(`http://localhost/api/music-links/${row.id}`, { method: "DELETE", },),
     );
+
     expect(del.status,).toBe(204,);
     const again = await app.handle(
       new Request(`http://localhost/api/music-links/${row.id}`, { method: "DELETE", },),
     );
+
     expect(again.status,).toBe(404,);
   });
 
@@ -264,6 +284,7 @@ describe("musicLinksRoutes coverage", () => {
     const unknown = await app.handle(
       new Request(`http://localhost/api/music-links/${uid()}`, { method: "DELETE", },),
     );
+
     expect(unknown.status,).toBe(404,);
     const created = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/music-links`, {
@@ -272,16 +293,19 @@ describe("musicLinksRoutes coverage", () => {
         body: JSON.stringify({ url: "https://music.apple.com/us/song/xyz", },),
       },),
     );
+
     const row = (await created.json()) as MusicLinkBody;
     const outsider = makeApp(stranger, "user",);
     const denied = await outsider.handle(
       new Request(`http://localhost/api/music-links/${row.id}`, { method: "DELETE", },),
     );
+
     expect(denied.status,).toBe(404,);
     const admin = makeApp(stranger, "admin",);
     const byAdmin = await admin.handle(
       new Request(`http://localhost/api/music-links/${row.id}`, { method: "DELETE", },),
     );
+
     expect(byAdmin.status,).toBe(204,);
   });
 });

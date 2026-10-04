@@ -43,11 +43,13 @@ export function validateRawLoreEntries(raw: unknown[],): string[] {
       errors.push(`lore[${i}] is not a valid object`,);
       continue;
     }
+
     const e = entry as Record<string, unknown>;
 
     if (typeof e.name !== "string" || e.name.trim() === "") {
       errors.push(`lore[${i}].name is required`,);
     }
+
     if (typeof e.content !== "string" || e.content.trim() === "") {
       errors.push(`lore[${i}].content is required`,);
     }
@@ -59,6 +61,7 @@ export function validateRawLoreEntries(raw: unknown[],): string[] {
         if (e.keys.length > MAX_KEYS) {
           errors.push(`lore[${i}].keys exceeds ${MAX_KEYS} entries`,);
         }
+
         for (let j = 0; j < e.keys.length; j++) {
           if (typeof e.keys![j] !== "string" || e.keys![j]!.trim().length > MAX_KEY_LENGTH) {
             errors.push(`lore[${i}].keys[${j}] must be a string of at most ${MAX_KEY_LENGTH} characters`,);
@@ -77,10 +80,12 @@ export function validateRawLoreEntries(raw: unknown[],): string[] {
     if (e.position !== undefined && typeof e.position !== "string") {
       errors.push(`lore[${i}].position must be a string`,);
     }
+
     if (typeof e.position === "string" && !isValidLorePosition(e.position,)) {
       errors.push(`lore[${i}].position is not a valid LorePosition`,);
     }
   }
+
   return errors;
 }
 
@@ -115,6 +120,7 @@ export function normalizeLoreEntries(raw: unknown[],): GeneratedEntityLoreEntry[
         .slice(0, MAX_KEYS,)
         .map((k,) => k.trim().slice(0, MAX_KEY_LENGTH,))
         .filter((k,) => k.length > 0);
+
       if (keys.length === 0) { keys = undefined; }
     }
 
@@ -149,6 +155,7 @@ export function normalizeLoreEntries(raw: unknown[],): GeneratedEntityLoreEntry[
       cooldown_seconds,
     },);
   }
+
   return result;
 }
 
@@ -170,12 +177,15 @@ export function validateLoreEntries(lore: GeneratedEntityLoreEntry[],): string[]
     if (!entry.name || entry.name.length === 0) {
       errors.push(`lore[${i}].name is required`,);
     }
+
     if (!entry.content || entry.content.length === 0) {
       errors.push(`lore[${i}].content is required`,);
     }
+
     if (entry.keys && entry.keys.length > MAX_KEYS) {
       errors.push(`lore[${i}].keys exceeds ${MAX_KEYS} entries`,);
     }
+
     if (entry.keys) {
       for (let j = 0; j < entry.keys.length; j++) {
         if (entry.keys![j]!.length > MAX_KEY_LENGTH) {
@@ -183,12 +193,15 @@ export function validateLoreEntries(lore: GeneratedEntityLoreEntry[],): string[]
         }
       }
     }
+
     if (entry.subject && entry.subject.kind !== undefined && !(entry.subject.kind in KNOWN_SUBJECT_KINDS)) {
       errors.push(`lore[${i}].subject.kind is not a known subject kind`,);
     }
+
     if (entry.position !== undefined && !isValidLorePosition(entry.position,)) {
       errors.push(`lore[${i}].position is not a valid LorePosition`,);
     }
   }
+
   return errors;
 }

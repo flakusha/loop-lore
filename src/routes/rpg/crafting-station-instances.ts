@@ -27,6 +27,7 @@ const CreateStationInstanceBody = t.Object({
   locationId: OptionalNullableId,
   ownerActorId: OptionalNullableId,
 },);
+
 const UpdateStationInstanceBody = t.Object({
   locationId: OptionalNullableId,
   ownerActorId: OptionalNullableId,
@@ -48,6 +49,7 @@ export async function assertWorldOwner(
 ): Promise<Response | null> {
   const world = await db.selectFrom("worlds",)
     .select("owner_id",).where("id", "=", worldId,).executeTakeFirst();
+
   if (!world) { return jsonError("World not found", HttpStatus.NotFound,); }
   if (world.owner_id !== userId) { return jsonError("Forbidden", HttpStatus.Forbidden,); }
   return null;
@@ -85,6 +87,7 @@ export function stationInstanceRoutes(opts: HandlerOpts, svc: StationsService, R
           locationId?: string | null;
           ownerActorId?: string | null;
         };
+
         const deny = await assertWorldOwner(opts.database, userId, body.worldId,);
         if (deny) { return deny; }
         // Verify station def exists
@@ -98,6 +101,7 @@ export function stationInstanceRoutes(opts: HandlerOpts, svc: StationsService, R
             ownerActorId: body.ownerActorId,
             currentDurability: def.maxDurability,
           },);
+
           return jsonResponse({ id, }, HttpStatus.Created,);
         } catch (error) {
           log().error("Failed to create station instance", error instanceof Error ? error : undefined,);

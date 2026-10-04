@@ -43,6 +43,7 @@ async function allSeededRowsOwnedBy(expected: string,): Promise<boolean> {
     .select("owner_id",)
     .where("modality", "=", "workflow",)
     .execute();
+
   return rows.length > 0 && rows.every((r,) => r.owner_id === expected);
 }
 
@@ -71,6 +72,7 @@ describe("workflow seed owner resolution", () => {
       role: "admin",
       created_at: "2026-01-01 00:00:00",
     },);
+
     await insertUsers(db, "demo", "Demo", {
       id: "solo-1",
       role: "solo",

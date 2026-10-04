@@ -53,6 +53,7 @@ if (typeof document !== "undefined" && typeof window !== "undefined") {
         <button id="btn1">First</button>
         <button id="btn2">Second</button>
       `;
+
       document.body.append(container,);
 
       const result = getFirstFocusable(container,);
@@ -69,6 +70,7 @@ if (typeof document !== "undefined" && typeof window !== "undefined") {
         <button id="btn1">First</button>
         <button id="btn2">Last</button>
       `;
+
       document.body.append(container,);
 
       const result = getLastFocusable(container,);
@@ -127,6 +129,7 @@ class FakeElement {
       set = new Set();
       this.listeners.set(type, set,);
     }
+
     set.add(fn,);
   }
   removeEventListener(type: string, fn: (e: unknown,) => void,): void {
@@ -190,6 +193,7 @@ function containerWith(elements: FakeElement[],): FakeElement & Element {
   for (const el of elements) {
     container.children.push(el,);
   }
+
   return container as FakeElement & Element;
 }
 
@@ -205,6 +209,7 @@ function keydown(container: FakeElement, target: FakeElement, shiftKey: boolean,
       prevented = true;
     },
   },);
+
   return { prevented, };
 }
 
@@ -322,6 +327,7 @@ describe("focus.ts logic (fake DOM)", () => {
           prevented = true;
         },
       },);
+
       expect(first.focused,).toBe(false,);
       expect(prevented,).toBe(false,);
     });
@@ -538,6 +544,7 @@ describe("focus.ts logic (fake DOM)", () => {
       escapeUnregister = onEscapeKey(() => {
         handlerCalls += 1;
       },);
+
       handleEscapeKey();
       expect(closeSidebarCalls,).toBe(1,);
       expect(handlerCalls,).toBe(0,);
@@ -550,6 +557,7 @@ describe("focus.ts logic (fake DOM)", () => {
       escapeUnregister = onEscapeKey(() => {
         handlerCalls += 1;
       },);
+
       handleEscapeKey();
       expect(closeSidebarCalls,).toBe(0,);
       expect(handlerCalls,).toBe(1,);
@@ -566,6 +574,7 @@ describe("focus.ts logic (fake DOM)", () => {
       escapeUnregister = onEscapeKey(() => {
         handlerCalls += 1;
       },);
+
       escapeUnregister();
       escapeUnregister = null;
       handleEscapeKey();
@@ -580,9 +589,11 @@ describe("focus.ts logic (fake DOM)", () => {
       onEscapeKey(() => {
         first += 1;
       },);
+
       escapeUnregister = onEscapeKey(() => {
         second += 1;
       },);
+
       handleEscapeKey();
       expect(first,).toBe(0,);
       expect(second,).toBe(1,);

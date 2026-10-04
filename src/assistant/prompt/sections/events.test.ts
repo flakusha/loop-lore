@@ -159,6 +159,7 @@ describe("eventSection — persisted random-event injection", () => {
         .select(["id",],)
         .where("username", "=", "other",)
         .executeTakeFirstOrThrow();
+
       await insertChats(db, "Other Chat", otherUser.id, { id: "chat-other" as never, world_id: worldId, },);
 
       // Same event content, but bound to a different chat.

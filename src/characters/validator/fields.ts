@@ -103,8 +103,10 @@ export function validateArrayConstraints(
         message: `Each item in ${field} must be a string`,
         value: item,
       },);
+
       continue;
     }
+
     if (maxItemLen !== undefined && item.length > maxItemLen) {
       if (mode === "strict") {
         errors.push({

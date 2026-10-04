@@ -65,6 +65,7 @@ async function insertQuest(
       narrative_hooks: "[]",
     },)
     .execute();
+
   return id;
 }
 
@@ -110,6 +111,7 @@ describe("quest memory events (notes-shadow-carriage AC5)", () => {
       config: COLLECTION_CONFIG,
       target: 5,
     },);
+
     await settle();
 
     const rows = await fetchEvents("memory.quest.opened", questId,);

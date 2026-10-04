@@ -109,6 +109,7 @@ describe("runTranslate — remaining parse branches", () => {
     const result = await runTranslate(["hello", "to", "fr",], ctx(), {
       complete: async () => ({ content: "   ", }),
     },);
+
     expect(result.handled,).toBe(true,);
     const payload = result.actionPayload as { fallback: boolean; translated: string };
     expect(payload.fallback,).toBe(true,);

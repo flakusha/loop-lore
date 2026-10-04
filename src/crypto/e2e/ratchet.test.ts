@@ -18,6 +18,7 @@ function seedKey(seed: number,): Uint8Array {
   for (let i = 0; i < out.byteLength; i++) {
     out[i] = (seed * 31 + i * 7 + 13) & 0xff;
   }
+
   return out;
 }
 
@@ -37,6 +38,7 @@ describe("nextRatchetStep — shape", () => {
     await expect(nextRatchetStep(new Uint8Array(31,),).then(() => undefined),).rejects.toThrow(
       /32 bytes/,
     );
+
     await expect(nextRatchetStep(new Uint8Array(33,),).then(() => undefined),).rejects.toThrow(
       /32 bytes/,
     );
@@ -89,6 +91,7 @@ describe("nextRatchetStep — determinism", () => {
       seen.add(tag,);
       ck = step.chainKey;
     }
+
     expect(seen.size,).toBe(100,);
   });
 });

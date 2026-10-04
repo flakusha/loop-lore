@@ -20,6 +20,7 @@ describe("updateChat gmConfig GM execution fields", () => {
       "GM Creator",
       { id: "user-gm", user_id: "user-gm", owner_id: "user-gm", } as never,
     );
+
     chatId = await createChat(db, {
       name: "GM Story",
       type: "group",
@@ -40,6 +41,7 @@ describe("updateChat gmConfig GM execution fields", () => {
       .select("gm_config",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     return row?.gm_config ? JSON.parse(row.gm_config,) : null;
   }
 
@@ -51,6 +53,7 @@ describe("updateChat gmConfig GM execution fields", () => {
         escalationThreshold: 0.5,
       },
     },);
+
     expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.type,).toBe("hybrid",);
@@ -62,6 +65,7 @@ describe("updateChat gmConfig GM execution fields", () => {
     const res = await updateChat(db, chatId, {
       gmConfig: { type: "human", humanGM: { actorId: "user-gm", notifications: true, }, },
     },);
+
     expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.type,).toBe("human",);
@@ -79,6 +83,7 @@ describe("updateChat gmConfig GM execution fields", () => {
         humanGM: { actorId: "user-gm", notifications: true, },
       },
     },);
+
     expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.assistantRole,).toBe("gm",);
@@ -100,6 +105,7 @@ describe("updateChat gmConfig GM execution fields", () => {
         },
       },
     },);
+
     expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.type,).toBe("llm",);
@@ -110,6 +116,7 @@ describe("updateChat gmConfig GM execution fields", () => {
       temperature: number;
       maxTokens: number;
     };
+
     expect(llm.model,).toBe("claude-3.5-sonnet",);
     expect(llm.provider,).toBe("anthropic",);
     expect(llm.temperature,).toBeCloseTo(0.8,);
@@ -126,6 +133,7 @@ describe("updateChat gmConfig GM execution fields", () => {
         },
       },
     },);
+
     expect(res,).toEqual({ ok: true, },);
     const parsed = await gmConfigOf();
     expect(parsed?.type,).toBe("llm",);
@@ -148,6 +156,7 @@ describe("updateChat online key-mechanic guard (presentation vs GM-execution)", 
       "Online Creator",
       { id: "user-on", user_id: "user-on", owner_id: "user-on", } as never,
     );
+
     chatId = await createChat(db, {
       name: "Online Story",
       type: "group",
@@ -155,6 +164,7 @@ describe("updateChat online key-mechanic guard (presentation vs GM-execution)", 
       createdBy: "user-on",
       participantIds: ["user-on",],
     },);
+
     // Put the chat online with a confirmed message.
     await insertMessages(db, chatId, "user-on", "user", "hello", {
       status: MessageStatus.Confirmed,
@@ -169,6 +179,7 @@ describe("updateChat online key-mechanic guard (presentation vs GM-execution)", 
     const res = await updateChat(db, chatId, {
       gmConfig: { type: "hybrid", assistantRole: "gm", },
     },);
+
     expect(res,).toMatchObject({ code: "key_mechanic_conflict", },);
     const details = (res as { details?: { fields: string[] } }).details;
     expect(details?.fields,).toContain("gmConfig.type",);
@@ -179,6 +190,7 @@ describe("updateChat online key-mechanic guard (presentation vs GM-execution)", 
     const res = await updateChat(db, chatId, {
       gmConfig: { vnLayout: "below", vnSplitRatio: 55, vnImageScaling: "cover", },
     },);
+
     expect(res,).toEqual({ ok: true, },);
   });
 
@@ -186,9 +198,11 @@ describe("updateChat online key-mechanic guard (presentation vs GM-execution)", 
     const res = await updateChat(db, chatId, {
       gmConfig: { visualNovel: true, vnLayout: "split", vnImageScaling: "contain", },
     },);
+
     expect(res,).toEqual({ ok: true, },);
     const row = await db.selectFrom("chats",).select("gm_config",).where("id", "=", chatId,)
       .executeTakeFirst();
+
     const parsed = row?.gm_config ? JSON.parse(row.gm_config,) : null;
     expect(parsed?.visualNovel,).toBe(true,);
     expect(parsed?.vnLayout,).toBe("split",);
@@ -207,6 +221,7 @@ describe("updateChat online key-mechanic guard (presentation vs GM-execution)", 
         },
       },
     },);
+
     expect(res,).toMatchObject({ code: "key_mechanic_conflict", },);
     const details = (res as { details?: { fields: string[]; migrateEndpoint: string } }).details;
     expect(details?.fields,).toContain("gmConfig.llmConfig",);
@@ -222,6 +237,7 @@ describe("updateChat online key-mechanic guard (presentation vs GM-execution)", 
     const res = await updateChat(db, chatId, {
       gmConfig: { vnLayout: "below", type: "llm", },
     },);
+
     expect(res,).toMatchObject({ code: "key_mechanic_conflict", },);
   });
 });
@@ -239,6 +255,7 @@ describe("updateChat renderingOverride merge (gm_config string-spread regression
       "RO Creator",
       { id: "user-ro", user_id: "user-ro", owner_id: "user-ro", } as never,
     );
+
     chatId = await createChat(db, {
       name: "RO Chat",
       type: "direct",
@@ -259,6 +276,7 @@ describe("updateChat renderingOverride merge (gm_config string-spread regression
       .select("gm_config",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     return row?.gm_config ? JSON.parse(row.gm_config,) : null;
   }
 
@@ -308,6 +326,7 @@ describe("updateChat promptOverride (per-chat prompt override)", () => {
       "Override Creator",
       { id: "user-ovr", user_id: "user-ovr", owner_id: "user-ovr", } as never,
     );
+
     chatId = await createChat(db, {
       name: "Override Chat",
       type: "direct",
@@ -328,6 +347,7 @@ describe("updateChat promptOverride (per-chat prompt override)", () => {
       .select("prompt_override",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     return row?.prompt_override ?? null;
   }
 
@@ -335,6 +355,7 @@ describe("updateChat promptOverride (per-chat prompt override)", () => {
     const res = await updateChat(db, chatId, {
       promptOverride: "You are the keeper of the Crimson Gate.",
     },);
+
     expect(res,).toEqual({ ok: true, },);
     expect(await promptOverrideOf(),).toBe("You are the keeper of the Crimson Gate.",);
   });
@@ -366,6 +387,7 @@ describe("updateChat quickReplies (quick-reply button sets)", () => {
       "QR Creator",
       { id: "user-qr", user_id: "user-qr", owner_id: "user-qr", } as never,
     );
+
     chatId = await createChat(db, {
       name: "QR Chat",
       type: "direct",
@@ -386,6 +408,7 @@ describe("updateChat quickReplies (quick-reply button sets)", () => {
       .select("quick_replies",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     return row?.quick_replies ? JSON.parse(row.quick_replies,) : null;
   }
 
@@ -396,6 +419,7 @@ describe("updateChat quickReplies (quick-reply button sets)", () => {
         { label: "Morning", command: "/time morning", trigger: "startup", },
       ],
     },);
+
     expect(res,).toEqual({ ok: true, },);
     expect(await quickRepliesOf(),).toEqual([
       { label: "Roll", command: "/roll 1d20", },
@@ -430,6 +454,7 @@ describe("updateChat customInstructions (two-tier steering, story tier)", () => 
       "CI Creator",
       { id: "user-ci", user_id: "user-ci", owner_id: "user-ci", } as never,
     );
+
     chatId = await createChat(db, {
       name: "CI Chat",
       type: "direct",
@@ -450,6 +475,7 @@ describe("updateChat customInstructions (two-tier steering, story tier)", () => 
       .select("custom_instructions",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     return row?.custom_instructions ?? null;
   }
 
@@ -488,6 +514,7 @@ describe("updateChat autonomyConfig (chat-level pacing override)", () => {
       "Auto Creator",
       { id: "user-auto", user_id: "user-auto", owner_id: "user-auto", } as never,
     );
+
     chatId = await createChat(db, {
       name: "Autonomy Chat",
       type: "direct",
@@ -510,6 +537,7 @@ describe("updateChat autonomyConfig (chat-level pacing override)", () => {
       .select("autonomy_config",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     return row?.autonomy_config ?? null;
   }
 

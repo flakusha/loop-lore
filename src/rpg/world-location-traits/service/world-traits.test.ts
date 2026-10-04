@@ -30,6 +30,7 @@ describe("createWorldTrait", () => {
       trait_name: "humid",
       trait_value: "high",
     },);
+
     expect(trait.id,).toBeTruthy();
     expect(trait.actor_id,).toBe(actorId,);
     expect(trait.world_id,).toBe(worldId,);
@@ -57,6 +58,7 @@ describe("getWorldTraits", () => {
       trait_name: "a",
       trait_value: "1",
     },);
+
     await createWorldTrait(db, {
       actor_id: actorId,
       world_id: worldId,
@@ -64,6 +66,7 @@ describe("getWorldTraits", () => {
       trait_name: "b",
       trait_value: "2",
     },);
+
     const otherWorld = await insertWorlds(db, "owner-1", "Other",);
     await createWorldTrait(db, {
       actor_id: actorId,
@@ -72,6 +75,7 @@ describe("getWorldTraits", () => {
       trait_name: "c",
       trait_value: "3",
     },);
+
     const rows = await getWorldTraits(db, actorId, worldId,);
     expect(rows.map((row,) => row.trait_category),).toEqual(["cultural", "environmental",],);
   });
@@ -87,6 +91,7 @@ describe("updateWorldTrait", () => {
       trait_name: "a",
       trait_value: "1",
     },);
+
     const updated = await updateWorldTrait(db, trait.id, { trait_value: "9", },);
     expect(updated?.trait_value,).toBe("9",);
     expect(updated?.trait_name,).toBe("a",);
@@ -103,11 +108,13 @@ describe("updateWorldTrait", () => {
       trait_name: "a",
       trait_value: "1",
     },);
+
     const updated = await updateWorldTrait(db, trait.id, {
       trait_category: "magical",
       trait_name: "b",
       trait_value: "2",
     },);
+
     expect(updated,).toMatchObject({ trait_category: "magical", trait_name: "b", trait_value: "2", },);
   });
 
@@ -127,6 +134,7 @@ describe("deleteWorldTrait", () => {
       trait_name: "a",
       trait_value: "1",
     },);
+
     expect(await deleteWorldTrait(db, trait.id,),).toBe(true,);
     expect(await getWorldTraits(db, actorId, worldId,),).toEqual([],);
   });

@@ -68,10 +68,12 @@ export class NotificationsManager {
       document.removeEventListener("htmx:afterSwap", this.syncHandler,);
       this.syncHandler = null;
     }
+
     if (this.beforeUnloadHandler) {
       window.removeEventListener("beforeunload", this.beforeUnloadHandler,);
       this.beforeUnloadHandler = null;
     }
+
     this.started = false;
   }
 
@@ -85,6 +87,7 @@ export class NotificationsManager {
     } catch {
       // network error — local state still updated below
     }
+
     this.state.unseen[chatId] = 0;
     this.renderBadge(chatId,);
   }
@@ -133,6 +136,7 @@ export class NotificationsManager {
         const data = parseOr(ActivitySnapshot, jsonParseOr(ev.data, null,), { chats: {}, },);
         this.applySnapshot(data.chats,);
       },);
+
       this.es.addEventListener("error", () => {
         // Browser auto-reconnects; polling covers the gap.
       },);

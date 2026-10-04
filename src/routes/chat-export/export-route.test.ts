@@ -45,18 +45,22 @@ async function seedChatWithMessage(content: string,): Promise<string> {
     user_id: "u-owner",
     owner_id: "u-owner",
   } as never,);
+
   await insertChats(database, "Test Chat", "u-owner", {
     id: "chat-1",
     type: "group",
     mode: "group",
   } as never,);
+
   await insertChatParticipants(database, "chat-1", "u-owner", {
     role_in_chat: "owner",
   } as never,);
+
   await insertMessages(database, "chat-1", "u-owner", MessageRole.User, content, {
     status: MessageStatus.Confirmed,
     visibility: MessageVisibility.Visible,
   } as never,);
+
   return "chat-1";
 }
 
@@ -76,6 +80,7 @@ describe("exportChatRoute - regex transforms at render time", () => {
     const app = makeApp({
       generation: { regexTransforms: [{ name: "t1", pattern: "SECRET", replacement: "PUBLIC", enabled: true, },], },
     },);
+
     const res = await app.handle(new Request("http://localhost/api/chats/chat-1/export?format=markdown",),);
     expect(res.status,).toBe(200,);
     const body = await res.text();
@@ -96,6 +101,7 @@ describe("exportChatRoute - regex transforms at render time", () => {
     const app = new Elysia({ name: "test-export-auth", },).use(
       exportChatRoute({ database, config: {} as never, }, "/api",),
     );
+
     const res = await app.handle(new Request("http://localhost/api/chats/chat-1/export",),);
     expect(res.status,).toBe(401,);
   });

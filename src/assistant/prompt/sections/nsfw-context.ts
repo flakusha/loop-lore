@@ -77,6 +77,7 @@ export const nsfwContextSection: SectionBuilder = {
       if (turnOns.length > 0) {
         sections.push(`Turn-ons: ${turnOns.join(", ",)}`,);
       }
+
       if (hardLimits.length > 0) {
         sections.push(`Hard limits: ${hardLimits.join(", ",)}`,);
       }

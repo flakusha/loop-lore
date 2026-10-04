@@ -42,6 +42,7 @@ export async function resolveLocationTemplate(
   const templateId = typeof body.templateId === "string" && body.templateId
     ? body.templateId
     : "template-world";
+
   return getChatSetupTemplate(database, templateId,);
 }
 
@@ -79,6 +80,7 @@ export async function createLocationChat(
     .where("current_location_id", "=", locationId,)
     .where("visibility", "=", "public",)
     .executeTakeFirst();
+
   if (existingChat) { return; }
 
   const world = await tx
@@ -86,6 +88,7 @@ export async function createLocationChat(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   const ownerId = world?.owner_id ?? fallbackUserId;
 
   const hasExplicit = (key: string,) => key in body;

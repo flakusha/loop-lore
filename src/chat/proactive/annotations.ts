@@ -59,6 +59,7 @@ export function listMemoryAnnotations(chatId: string,): Annotation[] {
   for (const a of memoryStore.values()) {
     if (a.chatId === chatId) { out.push(a,); }
   }
+
   return out;
 }
 
@@ -100,6 +101,7 @@ export async function createAnnotation(
   if (!VALID_KINDS.includes(input.kind,)) {
     throw new Error(`Invalid annotation kind: ${input.kind}`,);
   }
+
   const createdAt = new Date().toISOString();
   const ttlUntil = typeof input.ttlMs === "number" && input.ttlMs > 0
     ? new Date((parseExpiryMs(createdAt,) ?? 0) + input.ttlMs,).toISOString()
@@ -132,6 +134,7 @@ export async function createAnnotation(
         expires_at: annotation.ttlUntil,
       },)
       .execute();
+
     return annotation;
   }
 

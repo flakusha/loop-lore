@@ -67,6 +67,7 @@ export function validateCharacter(
     warnings,
     mode,
   );
+
   validateStringLength(character, "creator", errors, warnings, mode,);
   validateStringLength(character, "creator_notes", errors, warnings, mode,);
   validateStringLength(
@@ -76,6 +77,7 @@ export function validateCharacter(
     warnings,
     mode,
   );
+
   validateStringLength(character, "nickname", errors, warnings, mode,);
   // ── Identity fields (FEAT-character-spec-inclusion-race-origin-culture) ──
   validateStringLength(character, "species", errors, warnings, mode,);
@@ -100,6 +102,7 @@ export function validateCharacter(
   } else {
     validateOutfitFields(character, errors, warnings, "relaxed",);
   }
+
   // ── Extensions validation ───────────────────
   validateExtensions(character, errors, warnings, mode,);
   // ── Growth fields (`.plan/epics/epic-character-growth.md`) ──

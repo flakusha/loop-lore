@@ -105,6 +105,7 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
             status: HttpStatus.NotFound,
           },);
         }
+
         return jsonResponse(emotion,);
       }, {
         params: ActorEmotionParams,
@@ -154,6 +155,7 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
             },)
             .where("id", "=", existing.id,)
             .execute();
+
           return jsonResponse({ id: existing.id, updated: true, },);
         }
 

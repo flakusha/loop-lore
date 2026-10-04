@@ -60,6 +60,7 @@ export async function getWasmModule(): Promise<WasmNativeModule | null> {
       cachedModule = null;
       return null;
     }
+
     const bytes = await response.arrayBuffer();
     const mod = new WebAssembly.Module(bytes,);
     const instance = new WebAssembly.Instance(mod, {},);
@@ -109,6 +110,7 @@ function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory
         const dataLen = data.length;
         if (dataLen > SCRATCH_SIZE - 32) { return null; // too large
          }
+
         const view = new Uint8Array(memory.buffer,);
         view.set(data, 0,);
         const status = ll_blake3(0, dataLen, SCRATCH_SIZE - 32, 32,);

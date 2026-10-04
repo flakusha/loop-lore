@@ -136,6 +136,7 @@ describe("detectModerationWithLlm", () => {
     const aux = makeAux(async () => {
       throw new Error("boom",);
     },);
+
     const verdict = await detectModerationWithLlm("x", makeCtx(), aux,);
     expect(verdict,).toBeNull();
   });
@@ -148,6 +149,7 @@ describe("detectModerationWithLlm", () => {
         templates: { llm: { systemPrompts: { moderation: "CUSTOM", }, }, },
       } as unknown as Config,
     },);
+
     await detectModerationWithLlm("x", ctx, aux,);
     expect(aux.mock.calls[0]![3]![0]!.content,).toBe("CUSTOM",);
   });
@@ -185,6 +187,7 @@ describe("ModerationHook LLM escalation", () => {
     const aux = makeAux(async () => {
       throw new Error("boom",);
     },);
+
     const result = await makeHook(aux,).execute("That was a rude and offensive insult.", makeCtx(),);
     expect(result.handled,).toBe(true,);
     expect(result.suppressContent,).toBeFalsy();
@@ -200,6 +203,7 @@ describe("ModerationHook LLM escalation", () => {
         templates: { llm: { systemPrompts: {}, }, },
       } as unknown as Config,
     },);
+
     const clean = await makeHook(aux,).execute("Have a wonderful day full of kindness!", ctx,);
     expect(clean.handled,).toBe(false,);
     const flagged = await makeHook(aux,).execute("That was a rude and offensive insult.", ctx,);

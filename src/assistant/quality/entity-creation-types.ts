@@ -68,10 +68,12 @@ export function clampNonNegativeInt(value: unknown,): number | undefined {
   if (typeof value === "number" && Number.isFinite(value,)) {
     return Math.max(0, Math.floor(value,),);
   }
+
   if (typeof value === "string") {
     const n = Number(value,);
     if (Number.isFinite(n,)) { return Math.max(0, Math.floor(n,),); }
   }
+
   return undefined;
 }
 
@@ -86,10 +88,12 @@ export function clampInt(value: unknown, min: number, max: number,): number | un
   if (typeof value === "number" && Number.isFinite(value,)) {
     return Math.max(min, Math.min(max, Math.floor(value,),),);
   }
+
   if (typeof value === "string") {
     const n = Number(value,);
     if (Number.isFinite(n,)) { return Math.max(min, Math.min(max, Math.floor(n,),),); }
   }
+
   return undefined;
 }
 

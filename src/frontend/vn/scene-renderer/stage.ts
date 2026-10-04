@@ -44,5 +44,6 @@ export function createStage(
   for (const sprite of staged) {
     stage.append(buildStageElement(sprite, scene.emotion,),);
   }
+
   return stage;
 }

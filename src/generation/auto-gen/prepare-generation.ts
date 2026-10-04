@@ -72,6 +72,7 @@ export async function prepareGeneration(opts: PrepareGenerationOpts,): Promise<P
     isGroupChat,
     systemPromptOverride,
   } = opts;
+
   const log = getLogger().child({ module: "auto-gen", },);
 
   const resolved = await d.resolveProvider({ userId, config, db: database, },);
@@ -85,6 +86,7 @@ export async function prepareGeneration(opts: PrepareGenerationOpts,): Promise<P
       .select(["actor_id",],)
       .where("chat_id", "=", chatId,)
       .execute();
+
     const participantIds: string[] = [];
     for (const p of participants) { if (p.actor_id !== actorId) { participantIds.push(p.actor_id,); } }
     groupParticipantIds = participantIds;

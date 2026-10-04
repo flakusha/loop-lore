@@ -147,6 +147,7 @@ describe("toEquipmentItem", () => {
       ...baseSource,
       properties: { damage: 8, },
     },);
+
     expect(item.modifiers,).toContainEqual({ stat: "attack", value: 8, },);
   });
 
@@ -155,6 +156,7 @@ describe("toEquipmentItem", () => {
       ...baseSource,
       properties: { ac: 5, },
     },);
+
     expect(item.modifiers,).toContainEqual({ stat: "defense", value: 5, },);
   });
 
@@ -163,6 +165,7 @@ describe("toEquipmentItem", () => {
       ...baseSource,
       properties: { bonus: 3, },
     },);
+
     expect(item.modifiers,).toContainEqual({ stat: "attack", value: 3, },);
   });
 
@@ -171,6 +174,7 @@ describe("toEquipmentItem", () => {
       ...baseSource,
       properties: { damage: 4, ac: 2, },
     },);
+
     expect(item.modifiers,).toContainEqual({ stat: "attack", value: 4, },);
     expect(item.modifiers,).toContainEqual({ stat: "defense", value: 2, },);
   });
@@ -180,6 +184,7 @@ describe("toEquipmentItem", () => {
       ...baseSource,
       properties: { requiredLevel: 10, },
     },);
+
     expect(item.requiredLevel,).toBe(10,);
   });
 
@@ -188,6 +193,7 @@ describe("toEquipmentItem", () => {
       ...baseSource,
       properties: { requiredStats: { attack: 10, }, },
     },);
+
     expect(item.requiredStats,).toEqual({ attack: 10, },);
   });
 

@@ -54,6 +54,7 @@ beforeAll(async () => {
     compressThreshold: 128,
     compressAlgorithm: "gzip",
   },);
+
   uploadDir = mkdtempSync(join(tmpdir(), "ll-rotation-proof-",),);
   process.env["UPLOAD_DIR"] = uploadDir;
 },);
@@ -127,6 +128,7 @@ async function encryptMessage(
     status: "confirmed",
     visibility,
   },).execute();
+
   return id;
 }
 
@@ -176,6 +178,7 @@ describe("rotation acceptance proofs", () => {
     expect((await getChatKey(db, CHAT,)).keyId,).toBe(keyIdBefore,);
     const msgs = await db.selectFrom("messages",).select(["content", "key_id",],).where("chat_id", "=", CHAT,)
       .execute();
+
     expect(msgs.length,).toBe(2,);
     for (const msg of msgs) {
       expect(msg.key_id,).toBe(keyIdBefore,);
@@ -195,6 +198,7 @@ describe("rotation acceptance proofs", () => {
     expect(row.id,).toBe(oldKeyId,);
     const survivors = await db.selectFrom("messages",).select(["content", "key_id",],)
       .where("chat_id", "=", CHAT,).where("id", "!=", corruptId,).execute();
+
     for (const msg of survivors) {
       expect(msg.key_id,).toBe(oldKeyId,);
       await expect(decryptByKeyId(msg.content, msg.key_id ?? "",),).resolves.toMatch(/hello/,);
@@ -209,6 +213,7 @@ describe("rotation acceptance proofs", () => {
       algorithm: "zstd",
       threshold: 1024,
     }, "at-rest",);
+
     expect(sealed.encrypted,).toBe(true,);
     mkdirSync(join(uploadDir, "raw", ASSET_ID.slice(0, 2,), ASSET_ID.slice(2, 4,),), { recursive: true, },);
     writeFileSync(join(uploadDir, ASSET_PATH,), sealed.data,);
@@ -217,6 +222,7 @@ describe("rotation acceptance proofs", () => {
       encryption_tier: "at-rest",
       encrypted_key_id: oldKey.keyId,
     },);
+
     await db.insertInto("asset_links",).values({ asset_id: ASSET_ID, entity_type: "chat", entity_id: CHAT, },)
       .execute();
 

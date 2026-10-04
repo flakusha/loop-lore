@@ -50,6 +50,7 @@ describe("AsyncStore", () => {
       headers: { "Content-Type": "application/json", },
       body: JSON.stringify({ id: "msg-99", },),
     },);
+
     await store.flush();
     const row = await store.read("req-3",);
     expect(row?.status,).toBe("complete",);
@@ -78,6 +79,7 @@ describe("AsyncStore", () => {
       headers: {},
       body: "bob-forbidden",
     },);
+
     await store.flush();
     const row = await store.read("req-5",);
     expect(row?.status,).toBe("pending",);

@@ -43,6 +43,7 @@ describe("makeNPCDecision — branch coverage", () => {
       1,
       [],
     );
+
     expect(d.type,).toBe("negotiate",);
     expect(d.reasoning,).toBe("Values relationships over violence",);
   });
@@ -56,6 +57,7 @@ describe("makeNPCDecision — branch coverage", () => {
       1,
       [],
     );
+
     expect(d.type,).toBe("negotiate",);
     expect(d.reasoning,).toBe("Intelligent approach to avoid conflict",);
   });
@@ -69,6 +71,7 @@ describe("makeNPCDecision — branch coverage", () => {
       1,
       [],
     );
+
     expect(d.type,).toBe("negotiate",);
     expect(d.reasoning,).toBe("Seeks diplomatic solution",);
   });
@@ -82,6 +85,7 @@ describe("makeNPCDecision — branch coverage", () => {
       1,
       [],
     );
+
     expect(d.type,).toBe("defend",);
     expect(d.reasoning,).toBe("Cautious nature favors defense",);
   });
@@ -95,6 +99,7 @@ describe("makeNPCDecision — branch coverage", () => {
       1,
       [],
     );
+
     expect(d.type,).toBe("defend",);
     expect(d.reasoning,).toBe("Wounded, needs to protect self",);
   });
@@ -108,6 +113,7 @@ describe("makeNPCDecision — branch coverage", () => {
       1,
       [],
     );
+
     expect(d.type,).toBe("defend",);
     expect(d.reasoning,).toBe("Defensive posture chosen",);
   });
@@ -139,6 +145,7 @@ describe("makeNPCDecision — branch coverage", () => {
       1,
       [],
     );
+
     expect(d.type,).toBe("attack",);
     expect(d.reasoning,).toBe("Aggressive personality drives attack",);
   });
@@ -152,6 +159,7 @@ describe("makeNPCDecision — branch coverage", () => {
       1,
       [],
     );
+
     expect(d.type,).toBe("attack",);
     expect(d.reasoning,).toBe("High courage emboldens attack",);
   });
@@ -165,6 +173,7 @@ describe("makeNPCDecision — branch coverage", () => {
       1,
       [],
     );
+
     expect(d.type,).toBe("attack",);
     expect(d.reasoning,).toBe("Sees opportunity to strike",);
   });
@@ -185,6 +194,7 @@ describe("makeNPCDecision — branch coverage", () => {
       intelligence: 10,
       courage: 50,
     };
+
     const healthy = makeNPCDecision(fighter, 100, 100, 1, 1, [],);
     expect(healthy.type,).toBe("attack",);
     const dying = makeNPCDecision(fighter, 10, 100, 1, 1, [],);
@@ -197,6 +207,7 @@ describe("makeNPCDecision — branch coverage", () => {
       [{ ...ZERO, caution: 100, }, 1, 5, 5, [defeat(-100,),],],
       [{ ...ZERO, intelligence: 100, loyalty: 100, courage: 100, }, 75, 2, 2, [],],
     ];
+
     for (const [p, hp, enemies, allies, mems,] of cases) {
       const d = makeNPCDecision(p, hp, 100, enemies, allies, mems,);
       expect(d.confidence,).toBeGreaterThanOrEqual(0,);

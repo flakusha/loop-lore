@@ -39,6 +39,7 @@ export async function encryptStoredContent({
   if (!isEncryptionEnabled()) {
     return { storedContent: plaintext, storedKeyId: null, };
   }
+
   const smk = getSmk()!;
   const enc = await encryptMessageContent({
     database,
@@ -47,5 +48,6 @@ export async function encryptStoredContent({
     plaintext,
     smk,
   },);
+
   return { storedContent: enc.storedContent, storedKeyId: enc.keyId, };
 }

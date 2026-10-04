@@ -69,6 +69,7 @@ describe("autoTranslateRoutes", () => {
         body: JSON.stringify({ targetLang: "es", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const json = await res.json() as { data: { targetLang: string | null } };
     expect(json.data.targetLang,).toBe("es",);
@@ -87,6 +88,7 @@ describe("autoTranslateRoutes", () => {
         body: JSON.stringify({ targetLang: "klingon", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -101,9 +103,11 @@ describe("autoTranslateRoutes", () => {
         body: JSON.stringify({ targetLang: "ja", },),
       },),
     );
+
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/auto-translate`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
     const json = await res.json() as { data: { targetLang: string | null } };
     expect(json.data.targetLang,).toBeNull();
@@ -120,6 +124,7 @@ describe("autoTranslateRoutes", () => {
         body: JSON.stringify({ targetLang: "es", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -134,6 +139,7 @@ describe("autoTranslateRoutes", () => {
         body: JSON.stringify({ targetLang: "es", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 

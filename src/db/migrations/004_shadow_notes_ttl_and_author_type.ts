@@ -28,6 +28,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("shadow_notes",)
     .addColumn("expires_at", "text", (col,) => col,)
     .execute();
+
   await database.schema
     .alterTable("shadow_notes",)
     .addColumn(
@@ -55,13 +56,16 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await sql`DROP INDEX IF EXISTS idx_shadow_notes_chat_author_type`.execute(
     database,
   );
+
   await sql`DROP INDEX IF EXISTS idx_shadow_notes_expires_at`.execute(
     database,
   );
+
   await database.schema
     .alterTable("shadow_notes",)
     .dropColumn("author_type",)
     .execute();
+
   await database.schema
     .alterTable("shadow_notes",)
     .dropColumn("expires_at",)

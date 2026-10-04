@@ -41,6 +41,7 @@ export function characterWorldSetupRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
             return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
           }
+
           const setup = await service.getWorldSetup(actorId, worldId,);
           if (!setup) { return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },); }
           return jsonResponse(setup,);
@@ -69,6 +70,7 @@ export function characterWorldSetupRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
             return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
           }
+
           const resolved = await service.resolveCharacterWorldSetup(actorId, worldId,);
           if (!resolved) { return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },); }
           return jsonResponse(resolved,);
@@ -98,6 +100,7 @@ export function characterWorldSetupRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
             return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
           }
+
           const setup = await service.upsertWorldSetup({
             actorId,
             worldId,
@@ -108,6 +111,7 @@ export function characterWorldSetupRoutes(opts: HandlerOpts, prefix = "/api",) {
             systemPromptOverride: body.systemPromptOverride,
             initialState: body.initialState,
           },);
+
           return jsonCreated(setup,);
         },
         {
@@ -135,6 +139,7 @@ export function characterWorldSetupRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
             return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
           }
+
           const deleted = await service.deleteWorldSetup(actorId, worldId,);
           if (!deleted) { return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },); }
           return jsonNoContent();

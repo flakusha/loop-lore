@@ -57,6 +57,7 @@ function makeFakeLogger(): FakeLogger {
     },
     flush: async () => {},
   };
+
   return fake;
 }
 
@@ -74,6 +75,7 @@ const globalObj = globalThis as unknown as {
   __SESSION_ID?: string;
   location?: { pathname: string; search: string };
 };
+
 const docObj = globalThis.document as unknown as {
   addEventListener: (type: string, fn: Listener,) => void;
 };
@@ -100,9 +102,11 @@ beforeEach(() => {
   globalObj.addEventListener = (type: string, fn: Listener,) => {
     harness.globalListeners.set(type, fn,);
   };
+
   docObj.addEventListener = (type: string, fn: Listener,) => {
     harness.docListeners.set(type, fn,);
   };
+
   globalObj.location = harness.location;
 },);
 
@@ -123,6 +127,7 @@ function lastMeta(message: string,): Record<string, unknown> | undefined {
     const entry = fake.entries[i];
     if (entry?.message === message && entry.meta) { return entry.meta; }
   }
+
   return undefined;
 }
 

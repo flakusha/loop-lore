@@ -87,6 +87,7 @@ describe("MessageListResponse schema", () => {
     data: data as MessageListResponse["data"],
     pagination: { total: 1, page: 1, pageSize: 50, totalPages: 1, },
   });
+
   const base = { id: "m1", role: "user", content: "hi", created_at: "2024-01-01", };
   const EMPTY: MessageListResponse = {
     data: [],
@@ -117,6 +118,7 @@ describe("MessageListResponse schema", () => {
       token_count_total: null,
       emotion: null,
     },],);
+
     expect(parseOr(MessageListResponse, value, EMPTY,),).toEqual(value,);
   });
 });

@@ -69,6 +69,7 @@ describe("applyPostStoreEffects — happy path", () => {
       display_name: "Test Actor",
       agent_type: "assistant",
     } as never,);
+
     await insertChats(db, "Test Chat", userId, { id: chatId, visibility: "private", },);
     await insertChats(db, "Test Group Chat", userId, {
       id: groupChatId,
@@ -76,6 +77,7 @@ describe("applyPostStoreEffects — happy path", () => {
       type: "group",
       mode: "direct",
     },);
+
     // Seed the character row that MoodService updates.
     await db.insertInto("actors",).values({
       id: characterId,
@@ -121,6 +123,7 @@ describe("applyPostStoreEffects — happy path", () => {
       isGroupChat: false,
       cascadeDepth: 0,
     },);
+
     expect(true,).toBe(true,);
   });
 
@@ -148,6 +151,7 @@ describe("applyPostStoreEffects — happy path", () => {
       isGroupChat: false,
       cascadeDepth: 0,
     },);
+
     expect(true,).toBe(true,);
   });
 
@@ -178,6 +182,7 @@ describe("applyPostStoreEffects — happy path", () => {
       isGroupChat: false,
       cascadeDepth: 0,
     },);
+
     expect(true,).toBe(true,);
   });
 
@@ -208,6 +213,7 @@ describe("applyPostStoreEffects — happy path", () => {
       isGroupChat: false,
       cascadeDepth: 0,
     },);
+
     expect(true,).toBe(true,);
   });
 
@@ -238,6 +244,7 @@ describe("applyPostStoreEffects — happy path", () => {
       isGroupChat: true,
       cascadeDepth: 0,
     },);
+
     await drainMicrotasks();
     expect(true,).toBe(true,);
   });

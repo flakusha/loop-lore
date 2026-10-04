@@ -43,6 +43,7 @@ export function categoriseError(error: string,): ErrorCategory {
   for (const [pattern, category,] of ERROR_PATTERNS) {
     if (pattern.test(error,)) { return category; }
   }
+
   return "other";
 }
 
@@ -70,11 +71,13 @@ export async function hmacHex(value: string, secret: string, byteCount = 8,): Pr
     false,
     ["sign",],
   );
+
   const sig = await crypto.subtle.sign(
     "HMAC",
     key,
     encoder.encode(value,) as BufferSource,
   );
+
   return Array.from(new Uint8Array(sig, 0, byteCount,),)
     .map((b,) => b.toString(16,).padStart(2, "0",))
     .join("",);
@@ -146,6 +149,7 @@ export function redactError(
   for (const [pattern, replacement,] of SENSITIVE_PATTERNS) {
     text = text.replace(pattern, replacement,);
   }
+
   return {
     category: categoriseError(text,),
     text: text.length > MAX_ERROR_LEN ? text.slice(0, MAX_ERROR_LEN,) : text,

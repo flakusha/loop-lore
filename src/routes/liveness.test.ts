@@ -39,6 +39,7 @@ function configWith(health: HealthOverrides = {},): Config {
     metrics: { enabled: false, },
     telemetry: { piiSecret: "", },
   };
+
   return { observability, } as Config;
 }
 
@@ -73,6 +74,7 @@ describe("livenessRoutes", () => {
       database: {} as never,
       config: configWith({ liveness: true, },),
     },);
+
     const res = await app.handle(new Request("http://localhost/health/live",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as Record<string, unknown>;
@@ -87,6 +89,7 @@ describe("livenessRoutes", () => {
       database: {} as never,
       config: configWith({ liveness: true, },),
     },);
+
     const res = await app.handle(new Request("http://localhost/health/ready",),);
     expect(res.status,).toBe(404,);
   });
@@ -98,6 +101,7 @@ describe("livenessRoutes", () => {
         database: db,
         config: configWith({ readiness: true, },),
       },);
+
       const res = await app.handle(new Request("http://localhost/health/ready",),);
       expect(res.status,).toBe(200,);
       const body = (await res.json()) as { status: string; checks: { database: string } };
@@ -114,6 +118,7 @@ describe("livenessRoutes", () => {
       database: db,
       config: configWith({ readiness: true, },),
     },);
+
     const res = await app.handle(new Request("http://localhost/health/ready",),);
     expect(res.status,).toBe(503,);
   });
@@ -127,6 +132,7 @@ describe("livenessRoutes", () => {
           config: configWith({ liveness: true, readiness: true, },),
         },),
       );
+
       const live = await app.handle(new Request("http://localhost/health/live",),);
       expect(live.status,).toBe(200,);
       const ready = await app.handle(new Request("http://localhost/health/ready",),);
@@ -143,6 +149,7 @@ describe("livenessRoutes", () => {
       database: db,
       config: configWith({ readiness: true, },),
     },);
+
     const res = await app.handle(new Request("http://localhost/health/ready",),);
     expect([200, 503,],).toContain(res.status,);
   });
@@ -152,6 +159,7 @@ describe("livenessRoutes", () => {
       database: {} as never,
       config: configWith({ liveness: true, },),
     },);
+
     const res = await app.handle(new Request("http://localhost/health/unknown",),);
     expect(res.status,).toBe(404,);
   });

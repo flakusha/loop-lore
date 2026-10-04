@@ -42,6 +42,7 @@ function findCaretToken(text: string,): RegExpExecArray | null {
   for (let m = anchored.exec(text,); m; m = anchored.exec(text,)) {
     if (m.index + m[0].length === text.length) { return m; }
   }
+
   return null;
 }
 
@@ -80,6 +81,7 @@ export function filterSlashCandidates(
   for (const name of names) {
     if (name.toLowerCase().includes(needle,)) { out.push(name,); }
   }
+
   return out;
 }
 
@@ -103,6 +105,7 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
       this.hideSlashPopover();
       return;
     }
+
     const list = this._commandList ?? [];
     const names = list.map((entry,) => entry.name);
     const matched = filterSlashCandidates(names, query,);
@@ -112,6 +115,7 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
     this._slashCandidates = matched.map((name,) =>
       lookup[name] ?? { name, description: "", descriptionKey: `commands.${name}`, }
     );
+
     this._showSlashPopover = true;
     this._slashActiveIndex = 0;
   },
@@ -192,6 +196,7 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
       if (event.key === "Escape") { this.hideSlashPopover(); }
       return;
     }
+
     if (event.key === "Tab") {
       event.preventDefault();
       this.acceptSlashAtIndex(this._slashActiveIndex,);

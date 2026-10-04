@@ -49,6 +49,7 @@ function testFiles(dir: string, acc: string[] = [],): string[] {
       acc.push(full,);
     }
   }
+
   return acc;
 }
 
@@ -64,6 +65,7 @@ test("a test that deletes an app-installed global must also restore it", () => {
       const re = new RegExp(
         `delete\\s*\\(?\\s*\\(?globalThis(?:\\s+as\\s+[^)]*)?\\)?\\s*(?:\\.${global}|\\["${global}"\\])`,
       );
+
       if (!re.test(src,)) { continue; }
       // Deleting is only safe when the same file puts the value back. A delete
       // used purely as a test precondition is fine if the file snapshots the
@@ -72,10 +74,12 @@ test("a test that deletes an app-installed global must also restore it", () => {
       const restores = new RegExp(
         `(?:\\.${global}|\\["${global}"\\])\\s*=\\s*(?!undefined|real|original)`,
       );
+
       if (!restores.test(src,)) {
         offenders.push(`${rel} deletes ${global} and never restores it`,);
       }
     }
   }
+
   expect(offenders,).toEqual([],);
 });

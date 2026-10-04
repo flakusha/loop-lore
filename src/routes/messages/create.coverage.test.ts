@@ -121,6 +121,7 @@ describe("createRoutes coverage", () => {
       .select(["content_plaintext", "chat_id",],)
       .where("id", "=", created.id,)
       .executeTakeFirst();
+
     expect(row?.chat_id,).toBe(chatA,);
   });
 
@@ -252,6 +253,7 @@ describe("createRoutes coverage", () => {
       .select("content_plaintext",)
       .where("id", "=", body.id,)
       .executeTakeFirst();
+
     expect(row?.content_plaintext?.length,).toBe(1_000_000,);
   });
 
@@ -266,6 +268,7 @@ describe("createRoutes coverage", () => {
       .select("content_plaintext",)
       .where("id", "=", body.id,)
       .executeTakeFirst();
+
     expect(row?.content_plaintext,).toBe(text,);
   });
 
@@ -277,6 +280,7 @@ describe("createRoutes coverage", () => {
       content: "no attachments",
       attachments: [],
     },);
+
     expect(res.status,).toBe(201,);
   });
 
@@ -304,6 +308,7 @@ describe("createRoutes coverage", () => {
       .select(["content_plaintext", "attachments",],)
       .where("id", "=", body.id,)
       .executeTakeFirst();
+
     expect(row?.content_plaintext,).toBe("look please",);
     const attachments = JSON.parse(row?.attachments ?? "[]",) as { assetId: string }[];
     expect(attachments.map((a,) => a.assetId),).toEqual([assetId,],);
@@ -312,6 +317,7 @@ describe("createRoutes coverage", () => {
       .select("asset_id",)
       .where("asset_id", "=", assetId,)
       .execute();
+
     expect(links.length,).toBe(1,);
   });
 
@@ -323,6 +329,7 @@ describe("createRoutes coverage", () => {
       content: `both ways @asset:${assetId}`,
       attachments: [{ assetId, },],
     },);
+
     expect(res.status,).toBe(201,);
     const body: { id: string } = await res.json();
     const row = await db
@@ -330,6 +337,7 @@ describe("createRoutes coverage", () => {
       .select("attachments",)
       .where("id", "=", body.id,)
       .executeTakeFirst();
+
     const attachments = JSON.parse(row?.attachments ?? "[]",) as { assetId: string }[];
     expect(attachments,).toHaveLength(1,);
     expect(attachments[0]?.assetId,).toBe(assetId,);

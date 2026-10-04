@@ -54,6 +54,7 @@ describe("updateWithVersionCheck", () => {
       "=",
       "a1",
     ).executeTakeFirst();
+
     expect(row?.display_name,).toBe("Updated",);
     expect(row?.format_version,).toBe(1,);
     expect(row?.updated_at,).not.toBe(OLD_TIMESTAMP,);
@@ -67,8 +68,10 @@ describe("updateWithVersionCheck", () => {
       rowsAffected: 0,
       error: "Version conflict: record was modified by another process",
     },);
+
     const row = await db.selectFrom("actors",).select(["display_name", "format_version",],).where("id", "=", "a1",)
       .executeTakeFirst();
+
     expect(row?.display_name,).toBe("Original",);
     expect(row?.format_version,).toBe(0,);
   });
@@ -86,6 +89,7 @@ describe("updateWithVersionCheck", () => {
     expect((await updateWithVersionCheck(db, "actors", "a1", 1, { display_name: "v2", },)).ok,).toBe(true,);
     const row = await db.selectFrom("actors",).select(["display_name", "format_version",],).where("id", "=", "a1",)
       .executeTakeFirst();
+
     expect(row?.display_name,).toBe("v2",);
     expect(row?.format_version,).toBe(2,);
   });
@@ -97,9 +101,11 @@ describe("updateWithVersionCheck", () => {
       format_version: 99,
       updated_at: "1999-01-01T00:00:00.000Z",
     },);
+
     expect(result.ok,).toBe(true,);
     const row = await db.selectFrom("actors",).select(["format_version", "updated_at",],).where("id", "=", "a1",)
       .executeTakeFirst();
+
     expect(row?.format_version,).toBe(1,); // caller's 99 is ignored
     expect(row?.updated_at,).not.toBe("1999-01-01T00:00:00.000Z",); // bumped to now
   });
@@ -112,6 +118,7 @@ describe("updateWithVersionCheck", () => {
       avatar_focus_x: 2.5,
       display_name: "ünïcødé-✓",
     },);
+
     expect(result.ok,).toBe(true,);
     const row = await db.selectFrom("actors",).select([
       "description",
@@ -119,6 +126,7 @@ describe("updateWithVersionCheck", () => {
       "avatar_focus_x",
       "display_name",
     ],).where("id", "=", "a1",).executeTakeFirst();
+
     expect(row,).toMatchObject({
       description: null,
       llm_assist_enabled: 1,
@@ -166,6 +174,7 @@ describe("updateWithVersionCheckRaw", () => {
       "=",
       "a1",
     ).executeTakeFirst();
+
     expect(row?.display_name,).toBe("Raw",);
     expect(row?.format_version,).toBe(1,);
     expect(row?.updated_at,).toBe(OLD_TIMESTAMP,);
@@ -177,6 +186,7 @@ describe("updateWithVersionCheckRaw", () => {
       display_name: "Raw",
       updated_at: "2021-06-01T00:00:00.000Z",
     },);
+
     expect(result.ok,).toBe(true,);
     const row = await db.selectFrom("actors",).select(["updated_at",],).where("id", "=", "a1",).executeTakeFirst();
     expect(row?.updated_at,).toBe("2021-06-01T00:00:00.000Z",);
@@ -190,8 +200,10 @@ describe("updateWithVersionCheckRaw", () => {
       rowsAffected: 0,
       error: "Version conflict: record was modified by another process",
     },);
+
     const row = await db.selectFrom("actors",).select(["display_name", "format_version",],).where("id", "=", "a1",)
       .executeTakeFirst();
+
     expect(row?.display_name,).toBe("Original",);
     expect(row?.format_version,).toBe(0,);
   });

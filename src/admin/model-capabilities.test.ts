@@ -120,6 +120,7 @@ describe("model-capabilities", () => {
         contextWindow: 999_999,
         notes: "Custom override",
       },);
+
       expect(ok,).toBe(true,);
 
       const caps = await resolveModelCapabilities(db, "openai", "gpt-4o",);

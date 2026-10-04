@@ -59,6 +59,7 @@ export const blogStore: BlogState = {
     if (this._blogPosts.length === 0) {
       await this.loadPosts();
     }
+
     this.$dispatch("blog-posts-loaded", { posts: this.visiblePosts(), },);
   },
 
@@ -108,11 +109,13 @@ export const blogStore: BlogState = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody(input,),
       },);
+
       if (!res.ok) { throw new Error(t("errors.createFailed",),); }
       const data: unknown = await res.json();
       const post = data === null || data === undefined
         ? null
         : ((data as { post?: BlogPost }).post ?? (data as BlogPost));
+
       if (post) { this._blogPosts.unshift(post,); }
       this.$dispatch("blog-post-created", { post, },);
     } catch (e) {
@@ -137,6 +140,7 @@ export const blogStore: BlogState = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ body, parent_comment_id, },),
       },);
+
       if (!res.ok) { throw new Error(t("errors.createFailed",),); }
       const comment = await res.json();
       await this.listComments(postId,);

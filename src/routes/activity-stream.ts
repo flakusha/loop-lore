@@ -37,6 +37,7 @@ function snapshotOf(map: Record<string, ActivityEntry>,): string {
   const result = safeJsonStringify(
     Array.from(Object.entries(map,), ([id, e,],) => [id, e.unseenCount, e.lastMessageCreatedAt,],),
   );
+
   return result.ok ? result.value : "[]";
 }
 
@@ -103,6 +104,7 @@ export class ActivityStreamer {
             error instanceof Error ? error : new Error(String(error,),),
             { correlationId, },
           );
+
           send(controller, "stream-error", { message: "stream error, retry", correlationId, },);
         }
 

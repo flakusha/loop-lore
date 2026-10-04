@@ -53,6 +53,7 @@ function webp(chunks: { tag: string; payload: number[] }[],): Uint8Array {
     0x42,
     0x50,
   ];
+
   for (const { tag, payload, } of chunks) {
     out.push(...Array.from(tag, (c,) => c.charCodeAt(0,),),);
     const size = payload.length;
@@ -60,6 +61,7 @@ function webp(chunks: { tag: string; payload: number[] }[],): Uint8Array {
     out.push(...payload,);
     if (size % 2 !== 0) { out.push(0,); }
   }
+
   return new Uint8Array(out,);
 }
 
@@ -115,6 +117,7 @@ describe("detectWebpAlpha", () => {
     expect(detectWebpAlpha(webp([{ tag: "VP8X", payload: [0x10, 0, 0, 0, 0, 0, 0, 0, 0, 0,], },],),),).toBe(
       true,
     );
+
     expect(detectWebpAlpha(webp([{ tag: "VP8X", payload: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,], },],),),).toBe(
       false,
     );
@@ -130,6 +133,7 @@ describe("detectWebpAlpha", () => {
       { tag: "ICCP", payload: [9, 9, 9, 9,], },
       { tag: "VP8L", payload: [1,], },
     ],);
+
     expect(detectWebpAlpha(buf,),).toBe(true,);
   });
 

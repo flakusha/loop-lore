@@ -170,6 +170,7 @@ export class BodySystemService {
       effects
         .filter((e,) => e.effectId === id)
         .reduce((total, e,) => total + e.magnitude, 0,);
+
     const arousal = sum("arousal",);
     const exhaustion = sum("exhaustion",);
     const aphrodisiac = sum("aphrodisiac",);
@@ -179,13 +180,16 @@ export class BodySystemService {
       .select(["str", "dex", "con", "int", "wis", "cha",],)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     const block: StatBlock = stats
       ? { str: stats.str, dex: stats.dex, con: stats.con, int: stats.int, wis: stats.wis, cha: stats.cha, }
       : { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, };
+
     const effectiveDuration = calculateEncounterDurationDispatch(
       { ...profile, stamina: effectiveStamina, },
       getModifier(block, "con",),
     );
+
     return { profile, arousal, exhaustion, aphrodisiac, effectiveStamina, effectiveDuration, };
   }
 

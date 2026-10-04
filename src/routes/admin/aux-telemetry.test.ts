@@ -57,6 +57,7 @@ async function seedAuxCall(input: {
     completionTokens: 30,
     error: input.error ?? null,
   };
+
   await db.db
     .insertInto("telemetry_events",)
     .values({
@@ -78,6 +79,7 @@ describe("aux telemetry route", () => {
     const res = await app.handle(
       new Request("http://localhost/admin/telemetry/aux",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json();
     expect(body.events.length,).toBeGreaterThan(0,);
@@ -95,6 +97,7 @@ describe("aux telemetry route", () => {
     const res = await app.handle(
       new Request("http://localhost/admin/telemetry/aux",),
     );
+
     const body = await res.json();
     expect(body.events[0].error,).toBeUndefined();
     expect(body.events[0].errorCategory,).toBe("timeout",);
@@ -105,6 +108,7 @@ describe("aux telemetry route", () => {
     const res = await app.handle(
       new Request("http://localhost/admin/telemetry/aux?aggregate_only=true",),
     );
+
     const body = await res.json();
     expect(body.events,).toEqual([],);
     expect(body.aggregates.length,).toBeGreaterThan(0,);

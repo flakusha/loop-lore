@@ -68,9 +68,11 @@ export function severityFromOutcome(
       severity = 0;
       break;
   }
+
   if (nonConsensual && severity < 4) {
     severity = (severity + 1) as TraumaSeverity;
   }
+
   return severity;
 }
 
@@ -113,8 +115,10 @@ export class TraumaService {
         meta: null,
       },)
       .execute();
+
     getLogger().child({ module: "trauma", },)
       .info(`Trauma applied: sev${severity} → ${actorId}`,);
+
     return id;
   }
 
@@ -165,6 +169,7 @@ export class TraumaService {
       .where("expires_at", "is not", null,)
       .where("expires_at", "<=", now,)
       .executeTakeFirst();
+
     return Number(result.numDeletedRows ?? 0n,);
   }
 

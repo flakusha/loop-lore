@@ -83,6 +83,7 @@ export function destroyBattlePanel(): void {
   if (container && keyHandler) {
     container.removeEventListener("keydown", keyHandler,);
   }
+
   container = null;
   ctx = null;
   battle = null;
@@ -104,6 +105,7 @@ export function renderBattle(view: BattleView,): void {
   } else {
     focusTargets = [];
   }
+
   render();
 }
 
@@ -147,6 +149,7 @@ function render(): void {
       void executeAction(kind,);
     },
   };
+
   overlay.append(
     renderHeader(battle,),
     renderRoster(battle, selectedTargetId, callbacks,),
@@ -159,6 +162,7 @@ function render(): void {
     const selector = active.type === "combatant"
       ? `[data-battle-id="${CSS.escape(active.id,)}"]`
       : `[data-battle-action="${active.kind}"]`;
+
     overlay.querySelector<HTMLElement>(selector,)?.focus();
   }
 
@@ -219,6 +223,7 @@ function buildFocusTargets(): void {
   for (const c of battle.combatants) {
     if (c.hp > 0) { focusTargets.push({ type: "combatant", id: c.id, },); }
   }
+
   for (const a of ACTIONS) { focusTargets.push({ type: "action", kind: a.kind, },); }
   focusedIndex = Math.min(focusedIndex, Math.max(0, focusTargets.length - 1,),);
 }
@@ -233,9 +238,11 @@ function sameTarget(a: BattleFocusTarget, b: BattleFocusTarget,): boolean {
   if (a.type === "combatant" && b.type === "combatant") {
     return a.id === b.id;
   }
+
   if (a.type === "action" && b.type === "action") {
     return a.kind === b.kind;
   }
+
   return false;
 }
 

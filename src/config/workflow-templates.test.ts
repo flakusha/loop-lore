@@ -48,6 +48,7 @@ describe("mergeWorkflowConfig", () => {
       { workflows: { "image-flux": BASE.workflows["video-minimax-h3"]!, }, },
       "extend",
     );
+
     expect(Object.keys(merged.workflows,).sort(),).toEqual(
       ["image-flux", "video-minimax-h3",],
     );
@@ -58,11 +59,13 @@ describe("mergeWorkflowConfig", () => {
       ...BASE.workflows["video-minimax-h3"]!,
       name: "Minimax H3 v2",
     };
+
     const merged = mergeWorkflowConfig(
       BASE,
       { workflows: { "video-minimax-h3": replacement, }, },
       "override",
     );
+
     expect(merged.workflows["video-minimax-h3"]?.name,).toBe("Minimax H3 v2",);
   });
 
@@ -88,6 +91,7 @@ describe("validateWorkflowConfig", () => {
         },
       },)
     ).toThrow("options must be an array",);
+
     expect(() =>
       validateWorkflowConfig({
         workflows: {
@@ -123,6 +127,7 @@ describe("validateWorkflowConfig", () => {
     expect(() => validateWorkflowConfig({ workflows: { w: { steps: "x", }, }, },)).toThrow(
       "workflows.w.steps must be an array",
     );
+
     expect(() => validateWorkflowConfig({ workflows: { w: { steps: ["flat",], }, }, },)).toThrow(
       "workflows.w.steps[0] must be an object",
     );
@@ -134,6 +139,7 @@ describe("validateWorkflowConfig", () => {
         workflows: { w: { steps: [{ id: "", name: "S", type: "text", formatTemplate: "x", },], }, },
       },)
     ).toThrow("steps[0].id must be a non-empty string",);
+
     expect(() =>
       validateWorkflowConfig({
         workflows: {
@@ -141,6 +147,7 @@ describe("validateWorkflowConfig", () => {
         },
       },)
     ).toThrow("steps[0].name must be a non-empty string",);
+
     expect(() =>
       validateWorkflowConfig({
         workflows: { w: { steps: [{ id: "s", name: "S", type: "text", formatTemplate: "", },], }, },
@@ -158,6 +165,7 @@ describe("validateWorkflowConfig", () => {
         },
       },)
     ).toThrow("steps[0].recommendations must be an array",);
+
     expect(() =>
       validateWorkflowConfig({
         workflows: {
@@ -171,6 +179,7 @@ describe("validateWorkflowConfig", () => {
     expect(() => validateWorkflowConfig({ workflows: { w: { dispatch: "x", }, }, },)).toThrow(
       "workflows.w.dispatch must be an object",
     );
+
     expect(() => validateWorkflowConfig({ workflows: { w: { triggers: "x", }, }, },)).toThrow(
       "workflows.w.triggers must be an array",
     );
@@ -180,9 +189,11 @@ describe("validateWorkflowConfig", () => {
     expect(() => validateWorkflowConfig({ workflows: { w: { intent: [], }, }, },)).toThrow(
       "workflows.w.intent must be an object",
     );
+
     expect(() => validateWorkflowConfig({ workflows: { w: { intent: { target: "npc", }, }, }, },)).toThrow(
       "intent.type must be a non-empty string",
     );
+
     expect(() => validateWorkflowConfig({ workflows: { w: { intent: { type: "generate", target: "", }, }, }, },))
       .toThrow("intent.target must be a non-empty string",);
   });
@@ -197,6 +208,7 @@ describe("findWorkflowFiles + loadTemplateConfig", () => {
       ".tmp",
       `test-workflows-${crypto.randomUUID().slice(0, 8,)}-${Date.now()}`,
     );
+
     const dir = scratchRoot;
     const workflowsDir = path.join(dir, "configs", "templates", "workflows",);
     mkdirSync(workflowsDir, { recursive: true, },);
@@ -220,6 +232,7 @@ describe("findWorkflowFiles + loadTemplateConfig", () => {
         "",
       ].join("\n",),
     );
+
     try {
       const found = findWorkflowFiles(dir,);
       expect(found.length,).toBe(1,);
@@ -332,6 +345,7 @@ describe("loadTemplateConfig routes entityTypes out of the workflow domain", () 
         "",
       ].join("\n",),
     );
+
     try {
       const config = loadTemplateConfig(scratchRoot,);
       // entityTypes must not leak into the workflow table as a workflow id.
@@ -355,6 +369,7 @@ describe("loadTemplateConfig routes entityTypes out of the workflow domain", () 
       path.join(workflowsDir, "broken.yaml",),
       ["workflows:", "  bad:", "    steps: not-an-array", "",].join("\n",),
     );
+
     try {
       expect(() => loadTemplateConfig(scratchRoot,)).toThrow(
         "Failed to load workflow template",

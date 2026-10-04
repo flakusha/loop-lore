@@ -56,13 +56,16 @@ export function buildCanonicalFields(
   // Wardrobe — canonical names; legacy aliases (`outfit` singular, `wardrobe`) fill in when missing.
   const outfitsRaw = (raw.outfits as CanonicalCharacter["outfits"] | undefined) ??
     (raw.wardrobe as CanonicalCharacter["outfits"] | undefined);
+
   const outfits = Array.isArray(outfitsRaw,)
     ? outfitsRaw.filter((o,): o is CharacterOutfit => !!o && typeof o === "object")
     : [];
+
   const defaultOutfit = (raw.default_outfit as string | undefined) ??
     (raw.outfit as string | undefined) ??
     outfits[0]?.id ??
     "";
+
   return {
     name: (raw.name as string) ?? "",
     description: (raw.description as string) ?? "",

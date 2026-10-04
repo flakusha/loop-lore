@@ -47,6 +47,7 @@ export function detectPngAlpha(buf: Uint8Array,): boolean {
     if (chunkType === TRNSSIG) { return true; }
     offset += 12 + chunkLen;
   }
+
   return false;
 }
 
@@ -65,12 +66,14 @@ export function detectWebpAlpha(buf: Uint8Array,): boolean {
       const flags = buf[offset + 8]!;
       return (flags & 0x10) !== 0;
     }
+
     if (chunkTag === "VP8L") { return true; }
     if (chunkTag === "VP8 ") { return false; }
     if (chunkSize === 0) { break; }
     const chunkEnd = offset + 8 + chunkSize;
     offset = chunkEnd % 2 !== 0 ? chunkEnd + 1 : chunkEnd;
   }
+
   return false;
 }
 
@@ -91,6 +94,7 @@ export function detectGifAlpha(buf: Uint8Array,): boolean {
     if (intro === 0x21 && buf[offset + 1] === 0xF9) {
       return (buf[offset + 3]! & 0x01) !== 0;
     }
+
     if (intro === 0x21) {
       // Extension: label byte(s) done, now walk length-prefixed sub-blocks
       // through the 0x00 terminator.
@@ -100,8 +104,10 @@ export function detectGifAlpha(buf: Uint8Array,): boolean {
         offset += 1 + size;
         if (size === 0) { break; }
       }
+
       continue;
     }
+
     if (intro === 0x2C) {
       // Image descriptor: 9 fixed bytes + optional local color table,
       // then LZW minimum code byte + sub-blocks.
@@ -114,9 +120,12 @@ export function detectGifAlpha(buf: Uint8Array,): boolean {
         offset += 1 + size;
         if (size === 0) { break; }
       }
+
       continue;
     }
+
     offset += 1; // unknown byte: step forward instead of guessing a size
   }
+
   return false;
 }

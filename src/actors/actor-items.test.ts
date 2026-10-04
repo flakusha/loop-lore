@@ -36,6 +36,7 @@ describe("actor items service", () => {
       tags: ["iron", "starter",],
       metadata: { damage: "1d6", },
     },);
+
     expect(created.ok,).toBe(true,);
     if (!created.ok) { return; }
     expect(created.entity.quantity,).toBe(1,);
@@ -56,6 +57,7 @@ describe("actor items service", () => {
     const res = await createActorItem(db, actorId, "user-owner", "user", {
       name: "",
     },);
+
     expect(res,).toEqual({ ok: false, code: "bad_request", message: "name is required", },);
   });
 
@@ -65,6 +67,7 @@ describe("actor items service", () => {
       itemType: "tool",
       sortOrder: 1,
     },);
+
     await createActorItem(db, actorId, "user-owner", "user", {
       name: "Health Potion",
       itemType: "consumable",
@@ -73,6 +76,7 @@ describe("actor items service", () => {
     const consumables = await listActorItems(db, actorId, "user-owner", "user", {
       itemType: "consumable",
     },);
+
     expect(consumables.ok,).toBe(true,);
     if (consumables.ok) {
       expect(consumables.total,).toBe(1,);
@@ -91,6 +95,7 @@ describe("actor items service", () => {
       name: "Leather Armor",
       itemType: "armor",
     },);
+
     if (!created.ok) { throw new Error("seed failed",); }
 
     const equipped = await updateActorItem(
@@ -101,6 +106,7 @@ describe("actor items service", () => {
       "user",
       { equipped: true, quantity: 2, },
     );
+
     expect(equipped.ok,).toBe(true,);
     if (!equipped.ok) { return; }
     expect(equipped.entity.equipped,).toBe("equipped",);
@@ -115,6 +121,7 @@ describe("actor items service", () => {
       "user",
       { equipped: false, },
     );
+
     expect(unequipped.ok,).toBe(true,);
     if (unequipped.ok) { expect(unequipped.entity.equipped,).toBe("unequipped",); }
   });
@@ -124,12 +131,14 @@ describe("actor items service", () => {
       name: "Quest Rune",
       itemType: "key_item",
     },);
+
     if (!created.ok) { throw new Error("seed failed",); }
 
     const foreignActor = await insertActors(db, "Other", {
       id: "actor-other",
       owner_id: "user-owner",
     } as never,);
+
     const hijack = await updateActorItem(
       db,
       foreignActor,
@@ -138,6 +147,7 @@ describe("actor items service", () => {
       "user",
       { name: "Stolen", },
     );
+
     expect(hijack,).toEqual({ ok: false, code: "not_found", message: "Item not found", },);
 
     const wrongOwner = await updateActorItem(
@@ -148,6 +158,7 @@ describe("actor items service", () => {
       "user",
       { name: "Nope", },
     );
+
     expect(wrongOwner,).toEqual({ ok: false, code: "forbidden", message: "Not allowed", },);
 
     const deleted = await deleteActorItem(
@@ -157,6 +168,7 @@ describe("actor items service", () => {
       "user-owner",
       "user",
     );
+
     expect(deleted,).toEqual({ ok: true, id: created.entity.id, },);
 
     const gone = await deleteActorItem(db, actorId, "no-item", "user-owner", "user",);
@@ -170,6 +182,7 @@ describe("actor items service", () => {
     const created = await createActorItem(db, actorId, "user-other", "user", {
       name: "x",
     },);
+
     expect(created,).toEqual({ ok: false, code: "forbidden", message: "Not allowed", },);
 
     const admin = await listActorItems(db, actorId, "user-other", "admin",);

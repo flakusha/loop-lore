@@ -46,11 +46,13 @@ beforeAll(async () => {
     id: plainId,
     content_plaintext: "tavern song about dragons",
   },);
+
   await insertMessages(db, chatId, actorId, MessageRole.User, "ciphertext-blob", {
     ...BASE_OPTS,
     id: encryptedId,
     content_plaintext: null,
   },);
+
   await reindexMessageTokens(db, encryptedId, "secret tavern meeting", USER_KEY, ownerId,);
 },);
 
@@ -69,6 +71,7 @@ describe("search/providers/messages (exact)", () => {
     expect(hits[0]?.source,).toBe("db",);
     expect(exact({ q: uid(), mode: "exact", }, scope,),).resolves.toEqual([],);
   });
+
   test("outsiders cannot resolve ids in chats they cannot see", () => {
     const { exact, } = createMessageProviders(db,);
     const scope = { kind: "messages" as const, userId: outsiderId, };
@@ -87,12 +90,14 @@ describe("search/providers/messages (keyword)", () => {
     expect(hit!.score,).toBeGreaterThan(0,);
     expect(hit!.score,).toBeLessThanOrEqual(1,);
   });
+
   test("chat scope pins results and outsiders see nothing", async () => {
     const { keyword, } = createMessageProviders(db,);
     const scoped = await keyword(
       { q: "tavern", mode: "keyword", },
       { kind: "messages" as const, userId: ownerId, chatId, },
     );
+
     expect(scoped.length,).toBeGreaterThan(0,);
     expect(scoped.every((h,) => h.payload.chatId === chatId),).toBe(true,);
     expect(
@@ -106,13 +111,16 @@ describe("search/providers/messages (token)", () => {
     const { token, } = createMessageProviders(db, {
       resolveKey: async (userId,) => (userId === ownerId ? USER_KEY : null),
     },);
+
     const hits = await token(
       { q: "secret meeting", mode: "hybrid", includeEncrypted: true, },
       { kind: "messages" as const, userId: ownerId, },
     );
+
     expect(hits.map((h,) => h.id),).toContain(encryptedId,);
     expect(hits.find((h,) => h.id === encryptedId)?.encryptedMatch,).toBe(true,);
   });
+
   test("missing resolver or key yields no hits", () => {
     const scope = { kind: "messages" as const, userId: ownerId, };
     const query = { q: "secret", mode: "hybrid", includeEncrypted: true, } as const;

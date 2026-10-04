@@ -37,6 +37,7 @@ export async function revokeInviteRow(
       .select(["id", "chat_id", "status",],)
       .where("id", "=", inviteId,)
       .executeTakeFirst();
+
     if (row && row.chat_id === scopeId) {
       scopeMatched = true;
       status = row.status;
@@ -47,6 +48,7 @@ export async function revokeInviteRow(
       .select(["id", "world_id", "status",],)
       .where("id", "=", inviteId,)
       .executeTakeFirst();
+
     if (row && row.world_id === scopeId) {
       scopeMatched = true;
       status = row.status;
@@ -61,6 +63,7 @@ export async function revokeInviteRow(
     if (status === InviteStatus.Revoked) {
       return { ok: true, value: { id: inviteId, status: InviteStatus.Revoked, }, };
     }
+
     return { ok: false, error: { code: "revoked", message: "Invite has been revoked", }, };
   }
 

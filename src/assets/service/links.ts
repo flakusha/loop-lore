@@ -87,6 +87,7 @@ export async function deleteAssetLink({
     .where("asset_id", "=", assetId,)
     .where("entity_id", "=", linkId,)
     .execute();
+
   if (matches.length === 0) { return false; }
   if (matches.length > 1) {
     throw new Error(
@@ -96,16 +97,19 @@ export async function deleteAssetLink({
       { cause: { matches, }, },
     );
   }
+
   const only = matches[0];
   if (!only) {
     return false;
   }
+
   const result = await database
     .deleteFrom("asset_links",)
     .where("asset_id", "=", assetId,)
     .where("entity_type", "=", only.entity_type,)
     .where("entity_id", "=", linkId,)
     .executeTakeFirst();
+
   return Number(result.numDeletedRows,) === 1;
 }
 

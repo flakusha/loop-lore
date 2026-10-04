@@ -52,6 +52,7 @@ describe("actorMemoriesRoutes — carry endpoints", () => {
         settings: "{}",
       },)
       .execute();
+
     actorId = uid();
     await db
       .insertInto("actors",)
@@ -66,6 +67,7 @@ describe("actorMemoriesRoutes — carry endpoints", () => {
         import_spec: "{}",
       },)
       .execute();
+
     await insertChats(db, "Carry Chat", userId, { id: chatId, } as never,);
     for (const [id, content,] of [["mem-a", "alpha",], ["mem-b", "beta",], ["mem-c", "gamma",],] as const) {
       await db
@@ -101,12 +103,14 @@ describe("actorMemoriesRoutes — carry endpoints", () => {
         body: JSON.stringify({ chatId, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const copies = await db
       .selectFrom("actor_memories",)
       .selectAll()
       .where("source_chat_id", "=", chatId,)
       .execute();
+
     expect(copies,).toHaveLength(1,);
     expect(copies[0]?.content,).toBe("alpha",);
     expect(copies[0]?.actor_id,).toBe(actorId,);
@@ -121,6 +125,7 @@ describe("actorMemoriesRoutes — carry endpoints", () => {
         body: JSON.stringify({ chatId, excludeId: "mem-b", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { carried: number };
     // mem-a already carried for this chat; mem-b excluded → only mem-c copies.
@@ -130,6 +135,7 @@ describe("actorMemoriesRoutes — carry endpoints", () => {
       .select(["content", "source_chat_id",],)
       .where("source_chat_id", "=", chatId,)
       .execute();
+
     expect(copies.map((c,) => c.content).sort((a, b,) => a.localeCompare(b,)),).toEqual(["alpha", "gamma",],);
   });
 
@@ -141,6 +147,7 @@ describe("actorMemoriesRoutes — carry endpoints", () => {
         body: JSON.stringify({ chatId, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });

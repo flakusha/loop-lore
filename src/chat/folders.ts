@@ -63,23 +63,27 @@ export function createFolder(
   if (!normalized) {
     throw new Error("Folder name cannot be empty",);
   }
+
   const byName = normalized.toLowerCase();
   let userFolders = folderStore.get(userId,);
   if (!userFolders) {
     userFolders = new Map();
     folderStore.set(userId, userFolders,);
   }
+
   for (const folder of userFolders.values()) {
     if (folder.name.toLowerCase() === byName) {
       return folder;
     }
   }
+
   const folder: Folder = {
     id: uid(),
     userId,
     name: normalized,
     createdAt: new Date().toISOString(),
   };
+
   userFolders.set(folder.id, folder,);
   return folder;
 }
@@ -112,6 +116,7 @@ export function tagChat(chatId: string, tag: string,): void {
     tags = new Set();
     tagStore.set(chatId, tags,);
   }
+
   tags.add(normalized,);
 }
 

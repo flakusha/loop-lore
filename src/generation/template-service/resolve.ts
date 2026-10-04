@@ -47,10 +47,12 @@ export async function resolveLlmTemplateOverrideId(
 ): Promise<string | null> {
   const chat = await db.selectFrom("chats",).select("prompt_template_id",)
     .where("id", "=", chatId,).executeTakeFirst();
+
   if (chat?.prompt_template_id) { return chat.prompt_template_id; }
 
   const actor = await db.selectFrom("actors",).select("settings",)
     .where("id", "=", actorId,).executeTakeFirst();
+
   if (!actor?.settings) { return null; }
   const parsed = safeJsonParse<unknown>(actor.settings,);
   if (!parsed.ok || parsed.value === null || typeof parsed.value !== "object") { return null; }

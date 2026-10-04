@@ -104,6 +104,7 @@ export function can(
     if (p.endsWith(".*",)) {
       return permission.startsWith(p.slice(0, -1,),);
     }
+
     return false;
   },);
 }

@@ -104,15 +104,19 @@ export async function updateGenerationJobRecord(
     status: patch.status,
     updated_at: new Date().toISOString(),
   };
+
   if (patch.results !== undefined) {
     values.results = jsonStringifyOr(patch.results,);
   }
+
   if (patch.errorMessage !== undefined) {
     values.error_message = patch.errorMessage;
   }
+
   if (patch.completedAt !== undefined) {
     values.completed_at = patch.completedAt;
   }
+
   await database
     .updateTable("generation_jobs",)
     .set(values,)
@@ -135,6 +139,7 @@ export async function getGenerationJobRecord(
     .selectAll()
     .where("id", "=", id,)
     .executeTakeFirst();
+
   return row ? toRecord(row,) : undefined;
 }
 
@@ -155,6 +160,7 @@ export async function listGenerationJobRecords(
     .orderBy("created_at", "desc",)
     .orderBy(sql`rowid desc`,)
     .execute();
+
   return rows.map((row,) => toRecord(row,));
 }
 
@@ -175,6 +181,7 @@ function toRecord(row: GenerationJobRow,): GenerationJobRecord {
     completedAt: row.completed_at,
   };
 }
+
 /**
  * Record batch start: mirrors the in-memory job as a running row so the
  * gallery sees in-flight work.

@@ -69,6 +69,7 @@ export async function getWorkflowRow(
 ): Promise<WorkflowDbRow | null> {
   const row = await database.selectFrom("prompt_templates",).selectAll()
     .where("id", "=", id,).where("modality", "=", "workflow",).executeTakeFirst();
+
   return row ?? null;
 }
 

@@ -31,6 +31,7 @@ export function serviceErrorToResponse(error: ServiceError,): Response {
         code: ErrorCode.Forbidden,
       },);
     }
+
     case "bad_request": {
       return jsonError({
         message: error.message,
@@ -38,6 +39,7 @@ export function serviceErrorToResponse(error: ServiceError,): Response {
         code: ErrorCode.ValidationError,
       },);
     }
+
     case "not_found":
     default: {
       return jsonError({
@@ -147,6 +149,7 @@ export function parseToolResultMeta(metadataJson: string | null | undefined,): T
   if (!parsed.ok || typeof parsed.value !== "object" || parsed.value === null) {
     return { toolName: null, toolError: false, };
   }
+
   const name = parsed.value.tool_name;
   return {
     toolName: typeof name === "string" && name.length > 0 ? name : null,

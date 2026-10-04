@@ -37,6 +37,7 @@ async function createActor(app: Elysia, name: string,): Promise<string> {
       body: JSON.stringify({ displayName: name, },),
     },),
   );
+
   expect(res.status,).toBe(201,);
   const { id, } = (await res.json()) as { id: string };
   return id;
@@ -88,6 +89,7 @@ describe("actor avatar focus round-trip", () => {
         settings: "{}",
       },)
       .execute();
+
     app = createApp(db, userId,);
   },);
 

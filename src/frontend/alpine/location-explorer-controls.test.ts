@@ -88,6 +88,7 @@ describe("locationExplorerControls._refreshOptionLists", () => {
         makeStateRow("l4", "", "", "",),
       ],
     },);
+
     locationExplorerControls._refreshOptionLists.call(ctx,);
     expect(ctx.atmosphereOptions,).toEqual(["tense",],);
     expect(ctx.weatherOptions,).toEqual(["fog", "rain",],);
@@ -113,6 +114,7 @@ describe("locationExplorerControls.statusOptions", () => {
         makeLoc("l4", "",),
       ],
     },);
+
     expect(locationExplorerControls.statusOptions.call(ctx,),).toEqual(["draft", "published",],);
   });
 
@@ -165,6 +167,7 @@ describe("locationExplorerControls.clearFilters", () => {
       filterTimeOfDay: "night",
       filterTopLevelOnly: true,
     },);
+
     locationExplorerControls.clearFilters.call(ctx,);
     expect(ctx.search,).toBe("",);
     expect(ctx.filterStatus,).toBe("",);
@@ -203,6 +206,7 @@ describe("locationExplorerControls hover/navigate with window", () => {
     while (selectLoc.mock.calls.length === 0 && Date.now() < deadline) {
       await new Promise<void>((resolve,) => setTimeout(resolve, 25,));
     }
+
     expect(selectLoc,).toHaveBeenCalledTimes(1,);
     expect(selectLoc.mock.calls[0]?.[0],).toBe("loc-1",);
   });
@@ -216,6 +220,7 @@ describe("locationExplorerControls hover/navigate with window", () => {
     while (selectLoc.mock.calls.length === 0 && Date.now() < deadline) {
       await new Promise<void>((resolve,) => setTimeout(resolve, 25,));
     }
+
     expect(selectLoc.mock.calls,).toEqual([["loc-2",],],);
     // Fixed wait past the 350ms throttle: proves the superseded timer never
     // fires. Deterministic time control is unavailable in this bun version

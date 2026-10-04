@@ -60,6 +60,7 @@ const managerModule: unknown = await import("../../cancellation-manager").catch(
 const managerPristine = !!managerModule &&
   typeof (managerModule as Record<string, unknown>).cancelGenerationByChat === "function" &&
   typeof (managerModule as Record<string, unknown>).startGenerationTracking === "function";
+
 const {
   activeGenerations,
   cancelGenerationByChat,
@@ -67,6 +68,7 @@ const {
   registerSideEffectJob,
   startGenerationTracking,
 } = (managerPristine ? managerModule : {}) as typeof import("../../cancellation-manager");
+
 const describeReal = managerPristine ? describeOrSkipStrict : describe.skip;
 
 // The stop-and-respond tests assert on telemetry captured via this file's
@@ -85,6 +87,7 @@ async function isTelemetryCaptureOurs(): Promise<boolean> {
       undefined,
       { eventType: "__abort_selfcheck__", data: {}, },
     );
+
     return recordedEvents.some((e,) => e.eventType === "__abort_selfcheck__");
   } catch {
     return false;
@@ -104,6 +107,7 @@ if (STRICTLY_ISOLATED) {
     },
     isTelemetryEnabled: () => true,
   }),);
+
   mock.module("../persist", () => ({
     buildGenerationResult: (response: GenerateResponse, cancelled: boolean,) => ({
       content: response.content,
@@ -114,10 +118,12 @@ if (STRICTLY_ISOLATED) {
     }),
     storeGenerationResult: async () => "msg-test",
   }),);
+
   mock.module("../tool-execution", () => ({
     executeToolCalls: async () => [],
     MAX_TOOL_ROUNDS: 1,
   }),);
+
   mock.module("../../../memory", () => ({
     extractAndStoreMemories: async () => {/* noop */},
   }),);
@@ -149,6 +155,7 @@ async function collectEvents(response: Response,): Promise<Event[]> {
       if (line) { events.push(JSON.parse(line.slice(6,),) as Event,); }
     }
   }
+
   return events;
 }
 
@@ -179,6 +186,7 @@ function makeChunkyProvider(state: ProviderState,): LLMProvider {
         handler({ type: "content", content: c, },);
         state.chunksDelivered += 1;
       }
+
       state.firstChunkResolve();
       const aborted = req.signal
         ? await new Promise<boolean>((resolve,) => {
@@ -186,10 +194,12 @@ function makeChunkyProvider(state: ProviderState,): LLMProvider {
             resolve(true,);
             return;
           }
+
           req.signal!.addEventListener("abort", () => resolve(true,), { once: true, },);
           setTimeout(() => resolve(false,), 1500,);
         },)
         : false;
+
       state.sawAbort = aborted;
       return {
         content: chunks.join("",),
@@ -242,6 +252,7 @@ async function startStream(chatId: string,): Promise<{
     firstChunkPromise: undefined as unknown as Promise<void>,
     firstChunkResolve: undefined as unknown as () => void,
   };
+
   const provider = makeChunkyProvider(state,);
 
   const response = streamToClient({
@@ -290,6 +301,7 @@ describeFullyOurs("streamToClient — stop-and-respond interrupt", () => {
           ttsCancelled = true;
         },
       },);
+
       registerSideEffectJob(attemptId, {
         id: "img-1",
         kind: "image-queue",
@@ -303,6 +315,7 @@ describeFullyOurs("streamToClient — stop-and-respond interrupt", () => {
       const noopDb = {
         updateTable: () => ({ set: () => ({ where: () => ({ execute: async () => 0, }), }), }),
       } as unknown as Kysely<DB>;
+
       const cancelled = cancelGenerationByChat({
         db: noopDb,
         chatId,
@@ -337,6 +350,7 @@ describeFullyOurs("streamToClient — stop-and-respond interrupt", () => {
 
       const noAbortedActive = activeGenerations.size === 0 ||
         Array.from(activeGenerations.values(),).every((a,) => !a.abortController.signal.aborted);
+
       expect(noAbortedActive,).toBe(true,);
       void abortController;
     },

@@ -59,6 +59,7 @@ export async function flagContent({ thisL, params, }: FlagContentArgs,): Promise
   checkDescriptionLength(params.description,);
   const dismissedCount = await thisL.db.selectFrom("content_flags",).where("reporter_id", "=", params.reporterId,)
     .where("status", "=", "dismissed",).select(({ fn, },) => fn.count<number>("id",).as("count",)).executeTakeFirst();
+
   if (dismissedCount && dismissedCount.count >= 3) {
     thisL.log.warn("Reporter has 3+ dismissed flags", { reporterId: params.reporterId, },);
   }
@@ -82,6 +83,7 @@ export async function flagContent({ thisL, params, }: FlagContentArgs,): Promise
     if (isUniqueViolation(err,)) {
       throw new Error("Content already flagged for review.",);
     }
+
     throw err;
   }
 
@@ -138,6 +140,7 @@ export async function getFlagQueue(
       fn.count<number>("id",).as("count",)
     ).executeTakeFirst(),
   ],);
+
   const flagRows = rowsResult.status === "fulfilled" ? rowsResult.value : [];
   const countVal = countResult.status === "fulfilled" ? countResult.value : null;
   const flags = Array.from(flagRows, (r,) => mapFlag(r,),);
@@ -170,6 +173,7 @@ export async function resolveFlag(
   const now = new Date().toISOString();
   await thisL.db.updateTable("content_flags",).set({ status, resolution, resolved_by: resolvedBy, resolved_at: now, },)
     .where("id", "=", flagId,).execute();
+
   thisL.log.info("Content flag resolved", { flagId, resolvedBy, status, },);
   const row = await thisL.db.selectFrom("content_flags",).where("id", "=", flagId,).selectAll().executeTakeFirst();
   if (!row) { throw new Error(`Flag ${flagId} not found after resolution.`,); }

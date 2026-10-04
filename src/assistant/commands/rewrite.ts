@@ -34,6 +34,7 @@ function parseStyle(args: string[],): { style: string; rest: string[] } {
   if (idx !== -1 && idx + 1 < args.length) {
     return { style: args[idx + 1] ?? "clear", rest: args.filter((_, i,) => i !== idx && i !== idx + 1), };
   }
+
   return { style: "clear", rest: args, };
 }
 
@@ -91,6 +92,7 @@ export async function runRewrite(
         ],
         params: { maxTokens: 512, temperature: 0.7, },
       },);
+
       const content = result.content.trim();
       if (content) {
         rewritten = content;
@@ -110,9 +112,11 @@ export async function runRewrite(
         handled: true,
       };
     }
+
     if (!deps.apply) {
       return { systemMessage: "**Cannot apply.** Write-back needs a backend context.", handled: true, };
     }
+
     const applied = await deps.apply(targetId, final,);
     if (applied.ok) {
       return {
@@ -128,13 +132,16 @@ export async function runRewrite(
         handled: true,
       };
     }
+
     const reason = applied.error === "not_found"
       ? "The target message no longer exists."
       : applied.error === "cross_chat"
       ? "The target message belongs to another chat."
       : "You are not the author of the target message.";
+
     return { systemMessage: `**Cannot apply.** ${reason}`, handled: true, };
   }
+
   return {
     systemMessage: `**Rewritten (${style}):**\n\n${final}` +
       (fallback ? "\n\n[LLM unavailable — applied local heuristics only]" : ""),
@@ -179,6 +186,7 @@ registerCommand("rewrite", async (args, ctx,): Promise<CommandResult> => {
   if (!db || !config) {
     return runRewrite(args, ctx, { complete: async () => ({ content: "", }), },);
   }
+
   try {
     const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
     return runRewrite(args, ctx, {
@@ -211,6 +219,7 @@ function rewriteText(text: string, style: string,): string {
       result = result.replaceAll(/\s{2,}/g, " ",);
       break;
     }
+
     case "dramatic": {
       // Emphasize with stronger punctuation
       result = result.replaceAll(/\.{2,}/g, "...",);
@@ -218,6 +227,7 @@ function rewriteText(text: string, style: string,): string {
       result = result.replaceAll(/\b(suddenly|never|always|forever|absolute)\b/gi, (w,) => w.toUpperCase(),);
       break;
     }
+
     case "formal": {
       // Expand contractions
       result = result
@@ -228,8 +238,10 @@ function rewriteText(text: string, style: string,): string {
         .replaceAll(/\bi'm\b/gi, "I am",)
         .replaceAll(/\byou're\b/gi, "you are",)
         .replaceAll(/\bthey're\b/gi, "they are",);
+
       break;
     }
+
     default: {
       // "clear" — minimal changes, just cleanup
       break;

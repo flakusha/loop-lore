@@ -65,6 +65,7 @@ export async function upsertPeer(
     capabilities: encoded.value,
     capacity_bytes: peer.capacityBytes ?? null,
   };
+
   await database
     .insertInto("mesh_peers",)
     .values(row,)
@@ -76,6 +77,7 @@ export async function upsertPeer(
       },)
     )
     .execute();
+
   return origin;
 }
 
@@ -97,6 +99,7 @@ export async function setPeerState(
     .set({ state, },)
     .where("origin", "=", origin,)
     .executeTakeFirst();
+
   // Custom sqlite dialect reports numUpdatedRows (not kysely's
   // numUpdatedOrDeletedRows) — see profile.ts / orders.ts precedent.
   if (Number(result?.numUpdatedRows ?? 0,) === 0) {
@@ -135,12 +138,14 @@ export async function touchPeer(
   const peers = Array.isArray(advertisement.peers,)
     ? advertisement.peers.filter((p,): p is string => typeof p === "string").slice(0, 128,)
     : [];
+
   const encoded = safeJsonStringify(peers,);
   if (!encoded.ok) { throw new Error("peer capabilities not serializable",); }
   const reported = advertisement.capacityBytes;
   const capacity = typeof reported === "number" && Number.isFinite(reported,) && reported >= 0
     ? reported
     : undefined;
+
   await database
     .updateTable("mesh_peers",)
     .set({
@@ -181,6 +186,7 @@ export async function runResyncPass(
     } catch {
       return;
     }
+
     if (!res.ok) { return; }
     alive += 1;
     await touchPeer(
@@ -189,5 +195,6 @@ export async function runResyncPass(
       (res.body ?? {}) as InstanceAdvertisement,
     );
   },),);
+
   return { checked: trusted.length, alive, };
 }

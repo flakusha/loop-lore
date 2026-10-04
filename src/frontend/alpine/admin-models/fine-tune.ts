@@ -40,6 +40,7 @@ export const fineTuneState: Partial<ModelsState> & ThisType<ModelsState> = {
         };
       }
     >();
+
     const providers = this.providers ?? [];
     for (const p of providers) {
       const models = this.providerModels[p.name] ?? [];
@@ -47,6 +48,7 @@ export const fineTuneState: Partial<ModelsState> & ThisType<ModelsState> = {
         seen.set(`${p.name}/${m.id}`, { provider: p.name, model: m, },);
       }
     }
+
     const capabilities = this.modelCapabilities ?? [];
     for (const cap of capabilities) {
       if (!seen.has(`${cap.providerId}/${cap.modelId}`,)) {
@@ -65,6 +67,7 @@ export const fineTuneState: Partial<ModelsState> & ThisType<ModelsState> = {
         },);
       }
     }
+
     const out: FineTuneCandidate[] = [];
     for (const { provider, model, } of seen.values()) {
       out.push({
@@ -79,6 +82,7 @@ export const fineTuneState: Partial<ModelsState> & ThisType<ModelsState> = {
         ownedBy: model.ownedBy ?? null,
       },);
     }
+
     return out.sort((a, b,) => `${a.provider}/${a.model}`.localeCompare(`${b.provider}/${b.model}`,));
   },
 
@@ -92,12 +96,15 @@ export const fineTuneState: Partial<ModelsState> & ThisType<ModelsState> = {
     if (!Number.isNaN(size,) && size >= 8) {
       return "Suitable base — large param count";
     }
+
     if (ctx >= 32_000) {
       return "Suitable base — large context";
     }
+
     if (!Number.isNaN(size,) && size >= 3) {
       return "Usable base — mid-size";
     }
+
     return "Limited base — prefer a larger model";
   },
 };

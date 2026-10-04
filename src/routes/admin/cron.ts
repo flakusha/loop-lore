@@ -22,6 +22,7 @@ export function cronRoutes(_opts: AdminRouteOpts, prefix = "/api",) {
         code: ErrorCode.Forbidden,
       },);
     }
+
     const scheduler = getScheduler();
     if (!scheduler) {
       return jsonError({
@@ -30,6 +31,7 @@ export function cronRoutes(_opts: AdminRouteOpts, prefix = "/api",) {
         code: ErrorCode.ServiceUnavailable,
       },);
     }
+
     return scheduler;
   };
 

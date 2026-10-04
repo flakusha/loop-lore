@@ -122,6 +122,7 @@ async function runScenario(
     stdout: "pipe",
     stderr: "pipe",
   },);
+
   try {
     const text = await new Response(proc.stdout,).text();
     await proc.exited;
@@ -142,6 +143,7 @@ function makeStubDir(names: string[],): { dir: string; cleanup: () => void } {
     writeFileSync(stubPath, `#!/bin/sh\necho "$@" > "${join(dir, `${name}.args`,)}"\nexec sleep 30\n`,);
     chmodSync(stubPath, 0o755,);
   }
+
   return {
     dir,
     cleanup: () => {
@@ -244,6 +246,7 @@ describe("ServerExternalManager stop delegation", () => {
       pid: 9201,
       startedAt: Date.now(),
     };
+
     mgr.instances.push(instance,);
     await mgr.stop(instance,);
     expect(mgr.active,).toHaveLength(0,);
@@ -260,6 +263,7 @@ describe("ServerExternalManager stop delegation", () => {
         startedAt: Date.now(),
       },);
     }
+
     await mgr.stopAll();
     expect(mgr.active,).toHaveLength(0,);
   });
@@ -275,6 +279,7 @@ describe("ServerExternalManager stop delegation", () => {
         startedAt: Date.now(),
       },);
     }
+
     mgr.killAllSync();
     expect(mgr.active,).toHaveLength(0,);
   });
@@ -291,6 +296,7 @@ describe("ServerExternalManager probe delegation", () => {
     } finally {
       mgr.stopLivenessProbes();
     }
+
     expect(mgr.probeTimer,).toBeNull();
   });
 });

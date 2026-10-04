@@ -78,6 +78,7 @@ async function seed(): Promise<Fixture> {
     },
     uploadDir,
   },);
+
   return {
     db,
     uploadDir,
@@ -104,6 +105,7 @@ async function addAsset(fx: Fixture, filename: string,): Promise<string> {
     },
     uploadDir: fx.uploadDir,
   },);
+
   return asset.id;
 }
 
@@ -165,6 +167,7 @@ describe("signedUrlAuth", () => {
       "thumb",
       config,
     );
+
     expect(opts.signedUrlToken,).toBe("token-value",);
     expect(opts.signedUrlExpires,).toBe(1_700_000_000_000,);
     expect(opts.signedUrlAction,).toBe("thumb",);
@@ -181,6 +184,7 @@ describe("handleServeRaw", () => {
         .set({ visibility: AssetVisibility.Public, },)
         .where("id", "=", fx.assetId,)
         .execute();
+
       const res = await handleServeRaw({
         database: fx.db,
         assetId: fx.assetId,
@@ -188,6 +192,7 @@ describe("handleServeRaw", () => {
         actorId: fx.outsiderId,
         actorRole: "user",
       },);
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("content-type",),).toBe("image/png",);
       expect(Buffer.compare(Buffer.from(await res.arrayBuffer(),), fx.bytes,),).toBe(0,);
@@ -204,6 +209,7 @@ describe("handleServeRaw", () => {
         .set({ encryption_tier: "chat", encrypted_key_id: "test-chat-key", },)
         .where("id", "=", fx.assetId,)
         .execute();
+
       const res = await handleServeRaw({
         database: fx.db,
         assetId: fx.assetId,
@@ -211,6 +217,7 @@ describe("handleServeRaw", () => {
         actorId: fx.ownerId,
         actorRole: "user",
       },);
+
       expect(res.status,).toBe(400,);
       expect(await res.text(),).toBe("Encrypted asset requires chat context",);
     } finally {
@@ -233,6 +240,7 @@ describe("handleServeRaw", () => {
         signedUrlExpires: expiresAt,
         signedUrlAction: "raw",
       },);
+
       expect(res.status,).toBe(200,);
       expect(Buffer.compare(Buffer.from(await res.arrayBuffer(),), fx.bytes,),).toBe(0,);
     } finally {
@@ -251,6 +259,7 @@ describe("handleServeRaw", () => {
         actorRole: null,
         signedUrlToken: "orphan-token",
       },);
+
       expect(res.status,).toBe(403,);
       const body = (await res.json()) as { error: string; code: string };
       expect(body.error,).toBe("Invalid signed URL",);
@@ -273,6 +282,7 @@ describe("handleServeRaw", () => {
         signedUrlToken: "token-without-expiry",
         signedUrlAction: "raw",
       },);
+
       expect(res.status,).toBe(403,);
       const body = (await res.json()) as { error: string };
       expect(body.error,).toBe("Invalid signed URL",);
@@ -295,6 +305,7 @@ describe("handleServeRaw", () => {
         signedUrlExpires: Date.now() + 60_000,
         signedUrlAction: "raw",
       },);
+
       expect(res.status,).toBe(403,);
       const body = (await res.json()) as { error: string };
       expect(body.error,).toBe("Invalid or expired signed URL",);
@@ -312,6 +323,7 @@ describe("handleServeRaw", () => {
         action: "raw",
         expiresInSeconds: -60,
       },);
+
       const res = await handleServeRaw({
         database: fx.db,
         assetId: fx.assetId,
@@ -323,6 +335,7 @@ describe("handleServeRaw", () => {
         signedUrlExpires: expiresAt,
         signedUrlAction: "raw",
       },);
+
       expect(res.status,).toBe(403,);
       const body = (await res.json()) as { error: string };
       expect(body.error,).toBe("Invalid or expired signed URL",);
@@ -347,6 +360,7 @@ describe("handleServeRaw", () => {
         signedUrlExpires: expiresAt,
         signedUrlAction: "raw",
       },);
+
       expect(res.status,).toBe(404,);
       const body = (await res.json()) as { error: string };
       expect(body.error,).toBe("Asset not found",);
@@ -368,6 +382,7 @@ describe("handleServeCompressed", () => {
         actorId: fx.ownerId,
         actorRole: "user",
       },);
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("content-type",),).toBe("image/png",);
       expect(Buffer.compare(Buffer.from(await res.arrayBuffer(),), fx.bytes,),).toBe(0,);
@@ -392,6 +407,7 @@ describe("handleServeCompressed", () => {
         actorId: fx.ownerId,
         actorRole: "user",
       },);
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("content-type",),).toBe("image/webp",);
       expect(Buffer.compare(Buffer.from(await res.arrayBuffer(),), webp,),).toBe(0,);
@@ -411,6 +427,7 @@ describe("handleServeCompressed", () => {
         actorId: fx.outsiderId,
         actorRole: "user",
       },);
+
       expect(res.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -429,6 +446,7 @@ describe("handleDownload", () => {
         actorId: fx.ownerId,
         actorRole: "user",
       },);
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("content-disposition",),).toBe(`attachment; filename="${fx.filename}"`,);
       expect(Buffer.compare(Buffer.from(await res.arrayBuffer(),), fx.bytes,),).toBe(0,);
@@ -449,6 +467,7 @@ describe("handleDownload", () => {
         actorId: fx.ownerId,
         actorRole: "user",
       },);
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("content-disposition",),).toBe(
         `attachment; filename="my_photo_1_.png"`,
@@ -466,6 +485,7 @@ describe("handleDownload", () => {
         .set({ encryption_tier: "chat", encrypted_key_id: "test-chat-key", },)
         .where("id", "=", fx.assetId,)
         .execute();
+
       const res = await handleDownload({
         database: fx.db,
         assetId: fx.assetId,
@@ -473,6 +493,7 @@ describe("handleDownload", () => {
         actorId: fx.ownerId,
         actorRole: "user",
       },);
+
       expect(res.status,).toBe(400,);
       expect(await res.text(),).toBe("Encrypted asset requires chat context",);
     } finally {

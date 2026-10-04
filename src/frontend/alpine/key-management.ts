@@ -55,6 +55,7 @@ export interface ActorKeyMeta {
         if (!res.ok) {
           throw new Error(t("crypto.keyLoadFailed",),);
         }
+
         const data = await res.json();
         this.keys = data.keys ?? [];
       } catch (error) {
@@ -79,10 +80,12 @@ export interface ActorKeyMeta {
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ name: this.newKeyName.trim(), },),
         },);
+
         if (!res.ok) {
           const data = await res.json();
           throw new Error(data.message ?? t("crypto.keyGenerateFailed",),);
         }
+
         this.showGenerateModal = false;
         this.newKeyName = "";
         await this.loadKeys();
@@ -105,10 +108,12 @@ export interface ActorKeyMeta {
           method: "POST",
           headers: { "Content-Type": "application/json", },
         },);
+
         if (!res.ok) {
           const data = await res.json();
           throw new Error(data.message ?? t("crypto.keyRotateFailed",),);
         }
+
         await this.loadKeys();
       } catch (error) {
         this.error = error instanceof Error ? error.message : t("crypto.keyRotateFailed",);
@@ -140,10 +145,12 @@ export interface ActorKeyMeta {
         const res = await apiFetch(`/api/v1/keys/${this.revokeKeyId}`, {
           method: "DELETE",
         },);
+
         if (!res.ok) {
           const data = await res.json();
           throw new Error(data.message ?? t("crypto.keyRevokeFailed",),);
         }
+
         this.showRevokeModal = false;
         this.revokeKeyId = null;
         this.revokeKeyName = "";
@@ -173,12 +180,15 @@ export interface ActorKeyMeta {
         case "active": {
           return "text-green-600 dark:text-green-400";
         }
+
         case "expired": {
           return "text-yellow-600 dark:text-yellow-400";
         }
+
         case "revoked": {
           return "text-red-600 dark:text-red-400";
         }
+
         default: {
           return "text-gray-600 dark:text-gray-400";
         }

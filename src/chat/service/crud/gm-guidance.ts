@@ -46,6 +46,7 @@ export async function updateGmGuidance(
   const parsed = chat.gm_config
     ? safeJsonParse<GmConfig>(chat.gm_config,)
     : null;
+
   const current: GmConfig = parsed?.ok ? parsed.value : {};
 
   const next: GmConfig = {

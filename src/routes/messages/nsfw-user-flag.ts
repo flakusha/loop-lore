@@ -36,6 +36,7 @@ export async function flagNsfwUserMessage(
       .select(["max_rating",],)
       .where("user_id", "=", userId,)
       .executeTakeFirst();
+
     const maxRating = userPrefs?.max_rating ?? "sfw";
     const lower = content.toLowerCase();
     let detectedNsfw = false;
@@ -45,6 +46,7 @@ export async function flagNsfwUserMessage(
         break;
       }
     }
+
     if (!detectedNsfw) { return; }
     const maxIndex = RATING_ORDER.indexOf(maxRating,);
     if (maxIndex === -1 || maxIndex >= RATING_ORDER.indexOf("nsfw_intense",)) { return; }
@@ -53,6 +55,7 @@ export async function flagNsfwUserMessage(
       maxRating,
       chatId,
     },);
+
     const modService = new NsfwModerationService(database,);
     try {
       await modService.recordAction({

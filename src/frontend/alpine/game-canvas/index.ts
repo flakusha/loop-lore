@@ -62,12 +62,14 @@ export interface GameCanvasComponent {
           void component.refresh();
         }
       };
+
       document.addEventListener("visibilitychange", onVisibility,);
       pollTimer = globalThis.setInterval(() => {
         if (document.visibilityState === "visible") {
           void component.refresh();
         }
       }, POLL_INTERVAL_MS,);
+
       return component.refresh();
     },
 
@@ -79,6 +81,7 @@ export interface GameCanvasComponent {
         globalThis.clearInterval(pollTimer,);
         pollTimer = null;
       }
+
       if (onVisibility) {
         document.removeEventListener("visibilitychange", onVisibility,);
         onVisibility = null;
@@ -98,6 +101,7 @@ export interface GameCanvasComponent {
         const res = await apiFetch(`/api/v1/chats/${chatId}/game-state`, {
           headers: { Accept: "application/json", },
         },);
+
         if (res.status === 404) {
           // No state yet for this chat — placeholder, not an error banner.
           component.gameState = null;
@@ -150,6 +154,7 @@ export interface GameCanvasComponent {
           best = e;
         }
       }
+
       component.selected = best;
       component._draw();
     },
@@ -187,6 +192,7 @@ export interface GameCanvasComponent {
         drawPlaceholder(canvas, ctx,);
         return;
       }
+
       const cols = Math.min(payload.state.grid.width, MAX_RENDER_CELLS,);
       const rows = Math.min(payload.state.grid.height, MAX_RENDER_CELLS,);
       drawScene(ctx, payload.state, cols, rows, component._cellSize(canvas,), component.selected?.id ?? null,);

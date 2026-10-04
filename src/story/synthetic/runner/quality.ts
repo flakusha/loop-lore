@@ -39,6 +39,7 @@ export function runQuality(
       (i,) => state.evaluator.evaluate({ response: `${response} ${i}`, prompt: "", actorName, },).scores.overall,
       variations,
     );
+
     const passed = variance <= tolerance;
     return varianceResult(
       scores,
@@ -55,6 +56,7 @@ export function runQuality(
       () => state.evaluator.evaluate({ response, prompt: "", actorName, },).scores.overall,
       iterations,
     );
+
     const passed = variance === 0;
     return varianceResult(
       scores,

@@ -50,6 +50,7 @@ describe("Chat Invite & Join E2E", () => {
         settings: "{}",
       },)
       .execute();
+
     await server.db
       .insertInto("actors",)
       .values({
@@ -66,6 +67,7 @@ describe("Chat Invite & Join E2E", () => {
         format_version: 0,
       },)
       .execute();
+
     await joiner.loginAs("e2ejoiner", "password",);
 
     // A third user who is not invited and should not be able to join.
@@ -81,6 +83,7 @@ describe("Chat Invite & Join E2E", () => {
         settings: "{}",
       },)
       .execute();
+
     await server.db
       .insertInto("actors",)
       .values({
@@ -97,6 +100,7 @@ describe("Chat Invite & Join E2E", () => {
         format_version: 0,
       },)
       .execute();
+
     await outsider.loginAs("e2eoutsider", "password",);
 
     // A fourth user who is not a member — used to test capacity exhaustion.
@@ -112,6 +116,7 @@ describe("Chat Invite & Join E2E", () => {
         settings: "{}",
       },)
       .execute();
+
     await server.db
       .insertInto("actors",)
       .values({
@@ -128,6 +133,7 @@ describe("Chat Invite & Join E2E", () => {
         format_version: 0,
       },)
       .execute();
+
     joiner2 = createClient(server.url,);
     await joiner2.loginAs("e2ejoiner2", "password",);
   },);
@@ -141,6 +147,7 @@ describe("Chat Invite & Join E2E", () => {
       `/api/v1/chats/${SEED.chat.id}/invites`,
       {},
     );
+
     expect(res.ok,).toBe(true,);
     expect(res.status,).toBe(201,);
     expect(res.data!.code,).toHaveLength(8,);
@@ -176,6 +183,7 @@ describe("Chat Invite & Join E2E", () => {
       `/api/v1/invites/${code}/join`,
       {},
     );
+
     expect(joinRes.ok,).toBe(true,);
     expect(joinRes.data!.chatId,).toBe(SEED.chat.id,);
 
@@ -190,6 +198,7 @@ describe("Chat Invite & Join E2E", () => {
       `/api/v1/invites/${code}/join`,
       {},
     );
+
     expect(joinRes.ok,).toBe(true,);
     expect(joinRes.data!.alreadyMember,).toBe(true,);
   });
@@ -220,6 +229,7 @@ describe("Chat Invite & Join E2E", () => {
       `/api/v1/chats/${SEED.chat.id}/invites`,
       { maxUses: 1, },
     );
+
     expect(created.ok,).toBe(true,);
     const code = created.data!.code;
 
@@ -239,6 +249,7 @@ describe("Chat Invite & Join E2E", () => {
       `/api/v1/chats/${SEED.chat.id}/invites`,
       { expiresAt: past, },
     );
+
     expect(created.ok,).toBe(true,);
     const code = created.data!.code;
 

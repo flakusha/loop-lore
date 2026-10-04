@@ -58,6 +58,7 @@ export const chatSideChannels: Partial<ChatSideChannelsState> & ThisType<ChatSta
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ name: name.trim(), },),
       },);
+
       if (res.ok) {
         const created = (await res.json()) as { id: string };
         if (typeof Alpine !== "undefined") {
@@ -67,6 +68,7 @@ export const chatSideChannels: Partial<ChatSideChannelsState> & ThisType<ChatSta
             /* store not ready */
           }
         }
+
         await this.loadSideChannels();
         await this.switchSideChannel(created.id,);
         this.$dispatch?.("show-toast", { type: "success", message: t("sideChannels.created",), },);
@@ -90,6 +92,7 @@ export const chatSideChannels: Partial<ChatSideChannelsState> & ThisType<ChatSta
         /* store not ready */
       }
     }
+
     // selectChat lives on the shared chat state (chatWorld) and loads the
     // full chat (messages, sections, mood, participants, turn order).
     // .call(this) preserves the Alpine instance as `this` — a bare fn() call
@@ -97,6 +100,7 @@ export const chatSideChannels: Partial<ChatSideChannelsState> & ThisType<ChatSta
     const fn = (this as unknown as Record<string, unknown>).selectChat as
       | ((chatId: string,) => Promise<void>)
       | undefined;
+
     if (typeof fn === "function") { await fn.call(this, chatId,); }
   },
 
@@ -114,6 +118,7 @@ export const chatSideChannels: Partial<ChatSideChannelsState> & ThisType<ChatSta
       /* store not ready */
       return;
     }
+
     if (Alpine.store("ui",).showSideChannels) { this.loadSideChannels(); }
   },
 };
@@ -124,9 +129,11 @@ const g = globalThis as Record<string, unknown>;
 g.toggleSideChannels = function() {
   callChatStateAction("toggleSideChannels",);
 };
+
 g.switchSideChannel = async function(chatId: string,) {
   await awaitChatStateAction("switchSideChannel", chatId,);
 };
+
 g.createSideChannel = async function() {
   // Reading $store.ui requires a booted Alpine; the original inline version
   // only reached this read inside the scope guard, so keep it guarded.

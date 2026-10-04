@@ -86,6 +86,7 @@ export async function upsertByUnique<
       .values(values,)
       .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doNothing())
       .execute();
+
     return;
   }
 
@@ -139,6 +140,7 @@ export async function upsertByUniqueWith<
     .values(values,)
     .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doUpdateSet(updateSet as never,))
     .execute();
+
   // Disambiguate insert vs update via a guarded SELECT on the PK. The
   // ON CONFLICT DO UPDATE preserves the existing row's identity
   // (the conflicting row is updated in place, NOT replaced), so after
@@ -150,9 +152,11 @@ export async function upsertByUniqueWith<
     // No PK to probe — caller must inspect the row themselves.
     return "updated";
   }
+
   const exists = await sql<{ found: number }>`select 1 as found from ${sql.table(table,)} where ${
     sql.ref("id",)
   } = ${probeId}`.execute(db,);
+
   return exists.rows.length > 0 ? "inserted" : "updated";
 }
 
@@ -203,6 +207,7 @@ export async function insertUnique<
     .values(values,)
     .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doNothing())
     .execute();
+
   const first = result[0];
   const inserted = first !== undefined && Number(first.numInsertedOrUpdatedRows,) > 0;
   if (inserted) { return "inserted"; }
@@ -222,6 +227,7 @@ export async function insertUnique<
   const conflictPairs: ReadonlyArray<readonly [string, unknown,]> = conflictColumns
     .map((col,) => [String(col,), (values as Record<string, unknown>)[String(col,)] as unknown,] as const)
     .filter(([, v,],) => v !== undefined);
+
   // Nothing to probe against — every conflict column had an undefined
   // value, which means we can't disambiguate insert-vs-skip from the
   // row's identity. Fall back to the adapter's signal: it reported 0,
@@ -233,6 +239,7 @@ export async function insertUnique<
   for (const [col, val,] of conflictPairs) {
     probeQuery = probeQuery.where(col as never, "=", val as never,) as typeof probeQuery;
   }
+
   const probeRow = await probeQuery.executeTakeFirst() as { id: unknown } | undefined;
   if (probeRow === undefined || probeRow === null) {
     // No row at the conflict columns either — INSERT neither inserted
@@ -240,5 +247,6 @@ export async function insertUnique<
     // takes the retry path; the probe will re-validate on next call.
     return "skipped";
   }
+
   return probeRow.id === insertedId ? "inserted" : "skipped";
 }

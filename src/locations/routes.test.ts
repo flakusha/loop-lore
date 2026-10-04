@@ -29,6 +29,7 @@ async function makeTransportKindLocation(
      VALUES (?, ?, 'sea-port', '', '[]', 'draft', ?, 'transport', ?)`,
     [id, worldId, parentId, mobilityMode,],
   );
+
   return id;
 }
 
@@ -72,8 +73,10 @@ describe("TravelRouteService", () => {
          VALUES (?, ?, 'port-a', '', '[]', 'draft', NULL, 'transit', 'static')`,
         [id, worldId,],
       );
+
       return id;
     })();
+
     const stopB = await (async () => {
       const id = randomUUID();
       testDb.sqlite.run(
@@ -81,8 +84,10 @@ describe("TravelRouteService", () => {
          VALUES (?, ?, 'port-b', '', '[]', 'draft', NULL, 'transit', 'static')`,
         [id, worldId,],
       );
+
       return id;
     })();
+
     await svc.addStop({ routeId, locationId: stopA, stopOrder: 0, },);
     await svc.addStop({ routeId, locationId: stopB, stopOrder: 1, },);
     const stops = await svc.getStops(routeId,);
@@ -104,8 +109,10 @@ describe("TravelRouteService", () => {
          VALUES (?, ?, 'x', '', '[]', 'draft', NULL, 'transit', 'static')`,
         [id, w2,],
       );
+
       return id;
     })();
+
     await expect(svc.addStop({ routeId, locationId: stopX, stopOrder: 0, },),).rejects.toThrow(/cross-world/,);
   });
 
@@ -118,6 +125,7 @@ describe("TravelRouteService", () => {
     const row = testDb.sqlite.query(`SELECT current_route_id, travel_progress FROM locations WHERE id = ?`,).get(
       ship,
     ) as any;
+
     expect(row.current_route_id,).toBe(routeId,);
     expect(row.travel_progress,).toBe(0,);
     // Static transport cannot be attached.
@@ -131,8 +139,10 @@ describe("TravelRouteService", () => {
          VALUES (?, ?, 'town', '', '[]', 'draft', NULL, 'settlement', 'static')`,
         [id, worldId,],
       );
+
       return id;
     })();
+
     await expect(svc.attachTransport(town, routeId,),).rejects.toThrow(/location kind must be 'transport'/,);
   });
 
@@ -148,6 +158,7 @@ describe("TravelRouteService", () => {
     const row = testDb.sqlite.query(`SELECT current_route_id, travel_progress FROM locations WHERE id = ?`,).get(
       ship,
     ) as any;
+
     expect(row.current_route_id,).toBeNull();
     expect(row.travel_progress,).toBe(0,);
   });
@@ -164,8 +175,10 @@ describe("TravelRouteService", () => {
          VALUES (?, ?, 'shared-port', '', '[]', 'draft', NULL, 'transit', 'static')`,
         [id, worldId,],
       );
+
       return id;
     })();
+
     await svc.addStop({ routeId: r1, locationId: shared, stopOrder: 0, },);
     await svc.addStop({ routeId: r2, locationId: shared, stopOrder: 0, },);
     const found = await svc.getRoutesThroughLocation(shared,);
@@ -183,8 +196,10 @@ describe("TravelRouteService", () => {
          VALUES (?, ?, 'sp-A', '', '[]', 'draft', NULL, 'transit', 'static')`,
         [id, worldId,],
       );
+
       return id;
     })();
+
     const stopB = await (async () => {
       const id = randomUUID();
       testDb.sqlite.run(
@@ -192,8 +207,10 @@ describe("TravelRouteService", () => {
          VALUES (?, ?, 'sp-B', '', '[]', 'draft', NULL, 'transit', 'static')`,
         [id, worldId,],
       );
+
       return id;
     })();
+
     const stopC = await (async () => {
       const id = randomUUID();
       testDb.sqlite.run(
@@ -201,8 +218,10 @@ describe("TravelRouteService", () => {
          VALUES (?, ?, 'sp-C', '', '[]', 'draft', NULL, 'transit', 'static')`,
         [id, worldId,],
       );
+
       return id;
     })();
+
     await svc.addStop({ routeId, locationId: stopA, stopOrder: 0, },);
     await svc.addStop({ routeId, locationId: stopB, stopOrder: 1, },);
     await svc.addStop({ routeId, locationId: stopC, stopOrder: 2, },);
@@ -220,6 +239,7 @@ describe("TravelRouteService", () => {
     const row = testDb.sqlite.query(`SELECT loop, seconds_per_unit, waypoints FROM travel_routes WHERE id = ?`,).get(
       routeId,
     ) as any;
+
     expect(row.loop,).toBe(0,);
     expect(row.seconds_per_unit,).toBe(60,);
     expect(JSON.parse(row.waypoints as string,),).toEqual([],);
@@ -232,6 +252,7 @@ describe("TravelRouteService", () => {
     const routeId = await svc.createRoute(
       { worldId, name: "bad-serialization", kind: "road", waypoints: [{ x: BigInt(1,), y: 0, },] as never, },
     );
+
     const row = testDb.sqlite.query(`SELECT waypoints FROM travel_routes WHERE id = ?`,).get(routeId,) as any;
     expect(row.waypoints,).toBe("[]",);
   });
@@ -245,9 +266,11 @@ describe("TravelRouteService", () => {
        VALUES (?, ?, 'orphan', '', '[]', 'draft', NULL, 'transit', 'static')`,
       [orphan, worldId,],
     );
+
     await expect(svc.addStop({ routeId: randomUUID(), locationId: orphan, stopOrder: 0, },),).rejects.toThrow(
       /travel route not found/,
     );
+
     const routeId = await svc.createRoute({ worldId, name: "R6", kind: "road", },);
     await expect(svc.addStop({ routeId, locationId: randomUUID(), stopOrder: 0, },),).rejects.toThrow(
       /location not found/,
@@ -273,8 +296,10 @@ describe("TravelRouteService", () => {
          VALUES (?, ?, 'c1', '', '[]', 'draft', NULL, 'transit', 'static')`,
         [sid, worldId,],
       );
+
       return sid;
     })();
+
     const c2 = await (async () => {
       const sid = randomUUID();
       testDb.sqlite.run(
@@ -282,8 +307,10 @@ describe("TravelRouteService", () => {
          VALUES (?, ?, 'c2', '', '[]', 'draft', NULL, 'transit', 'static')`,
         [sid, worldId,],
       );
+
       return sid;
     })();
+
     await svc.addStop({ routeId, locationId: c1, stopOrder: 0, },);
     await svc.addStop({ routeId, locationId: c2, stopOrder: 1, },);
     // Overshoot the segment range; must clamp to the LAST stop.
@@ -320,8 +347,10 @@ describe("TravelRouteService", () => {
         "INSERT INTO locations (id, world_id, name, description, connections, publication_status, parent_location_id, kind, mobility_mode) VALUES (?, ?, 'sA', '', '[]', 'draft', NULL, 'transit', 'static')",
         [id, worldId,],
       );
+
       return id;
     })();
+
     const stopId = await svc.addStop({ routeId, locationId: a, stopOrder: 0, },);
     expect((await svc.listStops(routeId,)).length,).toBe(1,);
     await svc.removeStop(routeId, stopId,);

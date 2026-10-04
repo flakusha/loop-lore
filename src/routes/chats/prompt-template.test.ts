@@ -52,6 +52,7 @@ async function seedUserWithActor(
     owner_id: userId,
     actor_type: "user",
   } as never,);
+
   return userId;
 }
 
@@ -66,6 +67,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
     );
+
     expect(res.status,).toBe(401,);
 
     await db.destroy();
@@ -78,6 +80,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${uid()}/prompt-template`,),
     );
+
     expect(res.status,).toBe(404,);
 
     await db.destroy();
@@ -95,6 +98,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
     );
+
     expect(res.status,).toBe(404,);
 
     await db.destroy();
@@ -109,6 +113,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
       id: chatId,
       mode: "story",
     } as never,);
+
     await insertChatParticipants(db, chatId, userId, {
       role_in_chat: "owner" as never,
     },);
@@ -117,6 +122,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as PromptBody;
     expect(body.source,).toBe("registry",);
@@ -139,6 +145,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
       mode: "story",
       gm_config: JSON.stringify({ assistantRole: "gm", },),
     } as never,);
+
     await insertChatParticipants(db, chatId, userId, {
       role_in_chat: "owner" as never,
     },);
@@ -147,6 +154,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as PromptBody;
     expect(body.purpose,).toBe("gm",);
@@ -164,6 +172,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
       mode: "group",
       gm_config: JSON.stringify({ assistantRole: "gm", },),
     } as never,);
+
     await insertChatParticipants(db, chatId, userId, {
       role_in_chat: "owner" as never,
     },);
@@ -172,6 +181,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as PromptBody;
     expect(body.purpose,).toBe("chat",);
@@ -193,6 +203,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as PromptBody;
     // mode defaults to "story"; no assistantRole → purpose=chat
@@ -211,6 +222,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
       mode: "story",
       gm_config: "{not valid json",
     } as never,);
+
     await insertChatParticipants(db, chatId, userId, {
       role_in_chat: "owner" as never,
     },);
@@ -219,6 +231,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as PromptBody;
     expect(body.purpose,).toBe("chat",);
@@ -235,6 +248,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
       id: chatId,
       mode: "story",
     } as never,);
+
     await insertChatParticipants(db, chatId, userId, {
       role_in_chat: "owner" as never,
     },);
@@ -242,6 +256,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const configWithOverride = {
       templates: { llm: { systemPrompts: { chat: "CUSTOM_OVERRIDE", gm: "CUSTOM_GM", }, }, },
     };
+
     const app = new Elysia()
       .derive(() => ({ userId, userRole: "user", }))
       .use(promptTemplateRoutes({ database: db, config: configWithOverride as unknown as Config, },),);
@@ -249,6 +264,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as PromptBody;
     expect(body.prompt,).toBe("CUSTOM_OVERRIDE",);
@@ -268,13 +284,16 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
       system_prompt: "USER_ACTOR_PROMPT",
       actor_type: "user",
     } as never,);
+
     await insertChats(db, "Chat", userId, {
       id: chatId,
       mode: "story",
     } as never,);
+
     await insertChatParticipants(db, chatId, userId, {
       role_in_chat: "owner" as never,
     },);
+
     await insertChatParticipants(db, chatId, userActorId, {
       role_in_chat: "member" as never,
     },);
@@ -283,6 +302,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as PromptBody;
     expect(body.source,).toBe("registry",);
@@ -300,6 +320,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
       mode: "story",
       prompt_override: "OVERRIDE_TEXT",
     } as never,);
+
     await insertChatParticipants(db, chatId, userId, {
       role_in_chat: "owner" as never,
     },);
@@ -308,6 +329,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as PromptBody;
     // Handler exposes override and usingOverride but doesn't substitute it into prompt
@@ -328,6 +350,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
       mode: "story",
       gm_config: JSON.stringify({ assistantRole: "gm", },),
     } as never,);
+
     await insertChatParticipants(db, chatId, userId, {
       role_in_chat: "owner" as never,
     },);
@@ -336,6 +359,7 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as PromptBody;
     expect(body.purpose,).toBe("gm",);

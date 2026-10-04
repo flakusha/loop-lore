@@ -67,10 +67,12 @@ export function appealsRoutes(opts: HandlerOpts, prefix = "/api",) {
               .where("id", "=", actionId,)
               .where("deleted_at", "is", null,)
               .executeTakeFirst();
+
             if (!action || action.target_user_id !== userId) {
               return jsonError("Cannot appeal an action that does not target the caller", 403,);
             }
           }
+
           const result = await svc.submitAppeal(userId, actionId, reason,);
           return jsonResponse({ ...SuccessResponse, data: result, },);
         } catch (error: unknown) {

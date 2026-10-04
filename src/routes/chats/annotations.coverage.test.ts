@@ -71,11 +71,13 @@ async function seed(db: Kysely<DB>,): Promise<void> {
     "Participant",
     { id: PARTICIPANT_ID, } as never,
   );
+
   await insertActors(
     db,
     "Participant",
     { id: PARTICIPANT_ID, user_id: PARTICIPANT_ID, owner_id: PARTICIPANT_ID, } as never,
   );
+
   await insertUsers(db, `outsider-${OUTSIDER_ID}`, "Outsider", { id: OUTSIDER_ID, } as never,);
   await insertActors(
     db,
@@ -211,6 +213,7 @@ describe("chats/annotations - POST", () => {
       kind: "note",
       body: "Remember the tavern keeper",
     },);
+
     const body = await res.json() as CreateBody;
 
     expect(res.status,).toBe(201,);
@@ -232,6 +235,7 @@ describe("chats/annotations - POST", () => {
       body: "Recover the amulet",
       ttlMs: 60_000,
     },);
+
     const body = await res.json() as CreateBody;
 
     expect(res.status,).toBe(201,);
@@ -249,6 +253,7 @@ describe("chats/annotations - POST", () => {
       kind: "shadow",
       body: "The duke is a doppelganger",
     },);
+
     const body = await res.json() as CreateBody;
 
     expect(res.status,).toBe(201,);
@@ -257,6 +262,7 @@ describe("chats/annotations - POST", () => {
       .selectFrom("shadow_notes",)
       .select(["id", "chat_id", "content",],)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]!.id,).toBe(body.data.id,);
     expect(rows[0]!.chat_id,).toBe(CHAT_ID,);
@@ -273,6 +279,7 @@ describe("chats/annotations - POST", () => {
       body: "Lives forever",
       ttlMs: 0,
     },);
+
     const body = await res.json() as CreateBody;
 
     expect(res.status,).toBe(201,);
@@ -321,6 +328,7 @@ describe("chats/annotations - GET", () => {
       kind: "shadow",
       body: "Hidden fact",
     },);
+
     const shadowId = ((await shadowRes.json()) as CreateBody).data.id;
     await postAnnotation(app, CHAT_ID, { kind: "note", body: "Player note", },);
     await postAnnotation(app, CHAT_ID, { kind: "quest", body: "Find the well", },);
@@ -356,6 +364,7 @@ describe("chats/annotations - GET", () => {
     expect(
       memberBody.data.some((a,) => a.kind === "shadow"),
     ).toBe(false,);
+
     expect(
       memberBody.data.some((a,) => a.kind === "note"),
     ).toBe(true,);
@@ -366,6 +375,7 @@ describe("chats/annotations - GET", () => {
     expect(
       gmBody.data.some((a,) => a.kind === "shadow"),
     ).toBe(true,);
+
     await db.destroy();
   });
 

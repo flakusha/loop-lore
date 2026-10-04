@@ -68,6 +68,7 @@ describe("autoRenameChat", () => {
       mode: "direct",
       current_location_id: "loc-tavern",
     } as never,);
+
     await insertChatParticipants(db, "chat-fresh", "actor-mira", {} as never,);
     const record: ChatRecord = {
       name: "New Chat",
@@ -75,6 +76,7 @@ describe("autoRenameChat", () => {
       current_location_id: "loc-tavern",
       world_id: "world-1",
     };
+
     await autoRenameChat(db, "chat-fresh", "hello there", record,);
     const name = await chatName("chat-fresh",);
     expect(name,).not.toBe("New Chat",);
@@ -97,6 +99,7 @@ describe("autoRenameChat", () => {
       id: "chat-noloc",
       mode: "direct",
     } as never,);
+
     await insertChatParticipants(db, "chat-noloc", "actor-narr", {} as never,);
     const record: ChatRecord = {
       name: "New Chat",
@@ -104,6 +107,7 @@ describe("autoRenameChat", () => {
       current_location_id: "loc-missing",
       world_id: "world-1",
     };
+
     await autoRenameChat(db, "chat-noloc", "the road ahead is dark", record,);
     const name = await chatName("chat-noloc",);
     expect(name,).not.toBe("New Chat",);
@@ -122,6 +126,7 @@ describe("autoRenameChat", () => {
       .set({ settings: JSON.stringify({ auto_rename_enabled: false, },), },)
       .where("id", "=", "user-renamer",)
       .execute();
+
     await insertActors(db, "Mira", { id: "actor-mira-off", agent_type: "ai", } as never,);
     await insertChats(db, "New Chat", "user-renamer", { id: "chat-toggle", mode: "direct", } as never,);
     await insertChatParticipants(db, "chat-toggle", "actor-mira-off", {} as never,);
@@ -132,6 +137,7 @@ describe("autoRenameChat", () => {
       world_id: null,
       created_by: "user-renamer",
     };
+
     await autoRenameChat(db, "chat-toggle", "hello there", record,);
     expect(await chatName("chat-toggle",),).toBe("New Chat",);
   });
@@ -147,12 +153,14 @@ describe("autoRenameChat", () => {
       world_id: null,
       created_by: "user-renamer",
     };
+
     await autoRenameChat(db, "chat-src", "hello there", record,);
     const row = await db
       .selectFrom("chats",)
       .select(["name", "name_source",],)
       .where("id", "=", "chat-src",)
       .executeTakeFirst();
+
     expect(row?.name_source,).toBe("auto",);
     expect(row?.name,).not.toBe("New Chat",);
   });
@@ -171,6 +179,7 @@ describe("autoRenameChat — input edge cases", () => {
       id: "chat-empty-content",
       mode: "direct",
     } as never,);
+
     await insertChatParticipants(db, "chat-empty-content", "actor-empty", {} as never,);
     const record: ChatRecord = {
       name: "New Chat",
@@ -178,6 +187,7 @@ describe("autoRenameChat — input edge cases", () => {
       current_location_id: null,
       world_id: null,
     };
+
     await autoRenameChat(db, "chat-empty-content", "", record,);
     const name = await chatName("chat-empty-content",);
     expect(name,).toBe("Echo",);
@@ -190,6 +200,7 @@ describe("autoRenameChat — input edge cases", () => {
       id: "chat-whitespace",
       mode: "direct",
     } as never,);
+
     await insertChatParticipants(db, "chat-whitespace", "actor-ws", {} as never,);
     const record: ChatRecord = {
       name: "New Chat",
@@ -197,6 +208,7 @@ describe("autoRenameChat — input edge cases", () => {
       current_location_id: null,
       world_id: null,
     };
+
     await autoRenameChat(db, "chat-whitespace", "   	\n  ", record,);
     const name = await chatName("chat-whitespace",);
     expect(name,).toBe("Whisper",);
@@ -212,6 +224,7 @@ describe("autoRenameChat — input edge cases", () => {
       id: "chat-huge",
       mode: "direct",
     } as never,);
+
     await insertChatParticipants(db, "chat-huge", "actor-huge", {} as never,);
     const record: ChatRecord = {
       name: "New Chat",
@@ -219,6 +232,7 @@ describe("autoRenameChat — input edge cases", () => {
       current_location_id: null,
       world_id: null,
     };
+
     const big = "word ".repeat(200_000,); // 1 MB-ish
     await autoRenameChat(db, "chat-huge", big, record,);
     const name = await chatName("chat-huge",);
@@ -239,6 +253,7 @@ describe("autoRenameChat — input edge cases", () => {
       id: "chat-multi",
       mode: "direct",
     } as never,);
+
     await insertChatParticipants(db, "chat-multi", "actor-multi-1", {} as never,);
     await insertChatParticipants(db, "chat-multi", "actor-multi-2", {} as never,);
     const record: ChatRecord = {
@@ -247,6 +262,7 @@ describe("autoRenameChat — input edge cases", () => {
       current_location_id: null,
       world_id: null,
     };
+
     await autoRenameChat(db, "chat-multi", "explore the ruins", record,);
     const name = await chatName("chat-multi",);
     // One of the two must appear — exactly which is an implementation
@@ -274,10 +290,12 @@ describe("autoRenameChat — input edge cases", () => {
         visibility: "private",
       },)
       .execute();
+
     await insertChats(db, "New Chat", "user-renamer", {
       id: "chat-empty-name",
       mode: "direct",
     } as never,);
+
     await insertChatParticipants(db, "chat-empty-name", "actor-empty-name", {} as never,);
     const record: ChatRecord = {
       name: "New Chat",
@@ -285,6 +303,7 @@ describe("autoRenameChat — input edge cases", () => {
       current_location_id: null,
       world_id: null,
     };
+
     await autoRenameChat(db, "chat-empty-name", "the lost kingdom awaits", record,);
     const name = await chatName("chat-empty-name",);
     expect(name,).not.toBe("New Chat",);
@@ -300,6 +319,7 @@ describe("autoRenameChat — input edge cases", () => {
       id: "chat-filler",
       mode: "direct",
     } as never,);
+
     await insertChatParticipants(db, "chat-filler", "actor-sage", {} as never,);
     const record: ChatRecord = {
       name: "New Chat",
@@ -307,6 +327,7 @@ describe("autoRenameChat — input edge cases", () => {
       current_location_id: null,
       world_id: null,
     };
+
     await autoRenameChat(db, "chat-filler", "hey so um let's find the artifact", record,);
     const name = await chatName("chat-filler",);
     // After stripping "hey", "so", "um" → first 5 words = "let's find the artifact"

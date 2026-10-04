@@ -58,6 +58,7 @@ function chatIsVisualNovel(chat: { gm_config: string | null; mode: string },): b
   const override: ChatRenderingOverride | null = parsed.ok
     ? (parsed.value.renderingOverride ?? null)
     : null;
+
   return resolveRendering(chat.mode as never, override,) === "visual_novel";
 }
 

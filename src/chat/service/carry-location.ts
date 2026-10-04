@@ -51,6 +51,7 @@ export async function carryLocation(
         updated_at: section.updated_at,
       },)
       .execute();
+
     sectionIdRemap.set(section.id, newId,);
   }
 

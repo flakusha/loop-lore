@@ -44,9 +44,11 @@ async function seedPost(visibility: BlogPostVisibility, status: BlogPostStatus,)
     body: "Route seed body",
     visibility,
   },);
+
   if (status !== "draft") {
     await svc.updatePost(post.id, { status, }, AUTHOR, false,);
   }
+
   return post.id;
 }
 
@@ -129,6 +131,7 @@ describe("POST /api/blog/posts", () => {
         body: JSON.stringify({ title: "T", body: "B", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -140,10 +143,12 @@ describe("POST /api/blog/posts", () => {
         body: JSON.stringify({ title: "Created", body: "Created body", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       post?: { id: string; title: string; author_id: string; visibility: string; status: string };
     };
+
     expect(body.post?.title,).toBe("Created",);
     expect(body.post?.author_id,).toBe(AUTHOR,);
     expect(body.post?.visibility,).toBe("public",);
@@ -158,6 +163,7 @@ describe("POST /api/blog/posts", () => {
         body: JSON.stringify({ title: "", body: "B", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 });
@@ -191,6 +197,7 @@ describe("PATCH /api/blog/posts/:id", () => {
         body: JSON.stringify({ title: "New", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -203,6 +210,7 @@ describe("PATCH /api/blog/posts/:id", () => {
         body: JSON.stringify({ title: "Renamed", status: "published", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { post?: { title: string; status: string; published_at: string | null } };
     expect(body.post?.title,).toBe("Renamed",);
@@ -219,6 +227,7 @@ describe("PATCH /api/blog/posts/:id", () => {
         body: JSON.stringify({ title: "Hax", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -231,6 +240,7 @@ describe("PATCH /api/blog/posts/:id", () => {
         body: JSON.stringify({ title: "Admined", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { post?: { title: string } };
     expect(body.post?.title,).toBe("Admined",);
@@ -244,6 +254,7 @@ describe("PATCH /api/blog/posts/:id", () => {
         body: JSON.stringify({ title: "New", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });
@@ -254,6 +265,7 @@ describe("DELETE /api/blog/posts/:id", () => {
     const res = await makeApp(null, null,).handle(
       new Request(`http://localhost/api/blog/posts/${id}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -262,6 +274,7 @@ describe("DELETE /api/blog/posts/:id", () => {
     const res = await makeApp(AUTHOR, "user",).handle(
       new Request(`http://localhost/api/blog/posts/${id}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
     const svc = new BlogService(db,);
     expect(await svc.getPost(id,),).toBeUndefined();
@@ -272,6 +285,7 @@ describe("DELETE /api/blog/posts/:id", () => {
     const res = await makeApp(READER, "user",).handle(
       new Request(`http://localhost/api/blog/posts/${id}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
     const svc = new BlogService(db,);
     expect((await svc.getPost(id,))?.id,).toBe(id,);
@@ -281,6 +295,7 @@ describe("DELETE /api/blog/posts/:id", () => {
     const res = await makeApp(AUTHOR, "user",).handle(
       new Request("http://localhost/api/blog/posts/11111111-1111-4111-8111-111111111111", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });
@@ -295,6 +310,7 @@ describe("GET /api/blog/posts list gating (BUG-blog-comments-post-accepts-non-pu
     const byVisibility = await makeApp(READER, "user",).handle(
       new Request(`http://localhost/api/blog/posts?author_id=${AUTHOR}&visibility=private`,),
     );
+
     expect(byVisibility.status,).toBe(200,);
     const visBody = await byVisibility.json() as { posts?: { id: string }[] };
     const visIds = Array.from(visBody.posts ?? [], (p,) => p.id,);
@@ -305,6 +321,7 @@ describe("GET /api/blog/posts list gating (BUG-blog-comments-post-accepts-non-pu
     const byStatus = await makeApp(READER, "user",).handle(
       new Request(`http://localhost/api/blog/posts?author_id=${AUTHOR}&status=draft`,),
     );
+
     const statusBody = await byStatus.json() as { posts?: { id: string }[] };
     const statusIds = Array.from(statusBody.posts ?? [], (p,) => p.id,);
     expect(statusIds,).toContain(pub,);
@@ -317,6 +334,7 @@ describe("GET /api/blog/posts list gating (BUG-blog-comments-post-accepts-non-pu
     const res = await makeApp(AUTHOR, "user",).handle(
       new Request(`http://localhost/api/blog/posts?author_id=${AUTHOR}&visibility=private`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { posts?: { id: string }[] };
     expect(Array.from(body.posts ?? [], (p,) => p.id,),).toEqual([priv,],);
@@ -327,6 +345,7 @@ describe("GET /api/blog/posts list gating (BUG-blog-comments-post-accepts-non-pu
     const res = await makeApp(READER, "admin",).handle(
       new Request("http://localhost/api/blog/posts?visibility=private",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { posts?: { id: string }[] };
     expect(Array.from(body.posts ?? [], (p,) => p.id,),).toEqual([priv,],);
@@ -340,6 +359,7 @@ describe("GET /api/blog/posts list gating (BUG-blog-comments-post-accepts-non-pu
     const feed = await makeApp(READER, "user",).handle(
       new Request("http://localhost/api/blog/posts?visibility=followers",),
     );
+
     expect(feed.status,).toBe(200,);
     const feedBody = await feed.json() as { posts?: { id: string }[] };
     expect(Array.from(feedBody.posts ?? [], (p,) => p.id,),).toContain(feedPost,);
@@ -347,6 +367,7 @@ describe("GET /api/blog/posts list gating (BUG-blog-comments-post-accepts-non-pu
     const stranger = await makeApp(AUTHOR, "user",).handle(
       new Request("http://localhost/api/blog/posts?visibility=followers",),
     );
+
     const strangerBody = await stranger.json() as { posts?: { id: string }[] };
     expect(Array.from(strangerBody.posts ?? [], (p,) => p.id,),).not.toContain(feedPost,);
   });

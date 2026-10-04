@@ -43,6 +43,7 @@ describe("audit — recordAction", () => {
         scopeId: "chat-1",
       },
     },);
+
     expect(action.actionType,).toBe("block",);
     expect(action.targetUserId,).toBe("audit-target-1",);
     expect(action.performedBy,).toBe("mod-1",);
@@ -69,6 +70,7 @@ describe("audit — recordAction", () => {
         scopeId: "world-1",
       },
     },);
+
     expect(action.performedBy,).toBe("system",);
     // No notification row should exist for system actions.
     const notif = await db
@@ -76,6 +78,7 @@ describe("audit — recordAction", () => {
       .select("id",)
       .where("user_id", "=", "audit-target-2",)
       .executeTakeFirst();
+
     expect(notif,).toBeUndefined();
   });
 
@@ -85,6 +88,7 @@ describe("audit — recordAction", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     await recordAction({
       thisL: { db, log: svc["log"], } as any,
       params: {
@@ -96,11 +100,13 @@ describe("audit — recordAction", () => {
         scopeId: "chat-2",
       },
     },);
+
     const notif = await db
       .selectFrom("notifications",)
       .select(["title", "body", "type",],)
       .where("user_id", "=", "audit-target-3",)
       .executeTakeFirst();
+
     expect(notif?.type,).toBe("moderation",);
     expect(notif?.title,).toBe("You have been blocked from NSFW content",);
     expect(notif?.body,).toBe("You can no longer interact with NSFW content.",);
@@ -126,10 +132,12 @@ describe("audit — getAuditLog", () => {
         created_at: `2026-01-01T00:00:0${i + 1}Z`,
       } as never,).execute();
     }
+
     const log = await getAuditLog({
       thisL: { db, log: svc["log"], } as any,
       targetUserId: targetId,
     },);
+
     expect(log,).toHaveLength(3,);
     // Newest first: ban, unblock, block.
     expect(log[0]!.actionType,).toBe("ban",);
@@ -150,16 +158,19 @@ describe("audit — getAuditLog", () => {
         scopeId: "chat-y",
       },
     },);
+
     // Soft-delete the row.
     await db
       .updateTable("moderation_actions",)
       .set({ deleted_at: new Date().toISOString(), deleted_by: "mod-1", },)
       .where("id", "=", action.id,)
       .execute();
+
     const log = await getAuditLog({
       thisL: { db, log: svc["log"], } as any,
       targetUserId: targetId,
     },);
+
     expect(log,).toHaveLength(0,);
   });
 
@@ -178,11 +189,13 @@ describe("audit — getAuditLog", () => {
         },
       },);
     }
+
     const log = await getAuditLog({
       thisL: { db, log: svc["log"], } as any,
       targetUserId: targetId,
       options: { limit: 2, },
     },);
+
     expect(log,).toHaveLength(2,);
   });
 
@@ -202,6 +215,7 @@ describe("audit — getAuditLog", () => {
         },
       },);
     }
+
     // recordAction stamps created_at with millisecond precision, so three
     // back-to-back inserts can share a timestamp and `orderBy created_at desc`
     // leaves their relative order to the storage engine. Pin distinct stamps so
@@ -213,11 +227,13 @@ describe("audit — getAuditLog", () => {
         .where("action_type", "=", type,)
         .execute();
     }
+
     const log = await getAuditLog({
       thisL: { db, log: svc["log"], } as any,
       targetUserId: targetId,
       options: { limit: 1, offset: 1, },
     },);
+
     expect(log,).toHaveLength(1,);
     expect(log[0]!.actionType,).toBe("unblock",);
   });
@@ -227,6 +243,7 @@ describe("audit — getAuditLog", () => {
       thisL: { db, log: svc["log"], } as any,
       targetUserId: "no-such-user",
     },);
+
     expect(log,).toEqual([],);
   });
 });
@@ -238,16 +255,19 @@ describe("audit — notifyUser", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     await notifyUser(
       { db, log: svc["log"], } as any,
       "notify-target-1",
       "shadow",
     );
+
     const notif = await db
       .selectFrom("notifications",)
       .select(["title", "body",],)
       .where("user_id", "=", "notify-target-1",)
       .executeTakeFirst();
+
     expect(notif?.title,).toBe("Your NSFW access has been restricted",);
     expect(notif?.body,).toBe("Some of your NSFW interactions have been limited.",);
   });
@@ -258,16 +278,19 @@ describe("audit — notifyUser", () => {
       birth_date: "1990-01-01",
       age_gate_accepted_at: "2026-01-01T00:00:00Z",
     },);
+
     await notifyUser(
       { db, log: svc["log"], } as any,
       "notify-target-2",
       "custom_action",
     );
+
     const notif = await db
       .selectFrom("notifications",)
       .select(["title", "body",],)
       .where("user_id", "=", "notify-target-2",)
       .executeTakeFirst();
+
     expect(notif?.title,).toBe("Moderation action: custom_action",);
     expect(notif?.body,).toBe("A moderation action was applied to your account: custom_action.",);
   });
@@ -289,6 +312,7 @@ describe("audit — mapAction", () => {
       deleted_at: null,
       deleted_by: null,
     };
+
     const action = mapAction(row,);
     expect(action.id,).toBe("row-1",);
     expect(action.actionType,).toBe("block",);
@@ -317,6 +341,7 @@ describe("audit — mapAction", () => {
       expires_at: "2027-01-01T00:00:00Z",
       created_at: "2026-01-01T00:00:00Z",
     };
+
     const action = mapAction(row,);
     expect(action.deletedAt,).toBeNull();
     expect(action.deletedBy,).toBeNull();
@@ -337,6 +362,7 @@ describe("audit — mapAction", () => {
       expires_at: null,
       created_at: "2026-01-01T00:00:00Z",
     };
+
     const action = mapAction(row,);
     expect(action.metadata,).toEqual({},);
   });

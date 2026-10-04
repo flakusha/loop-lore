@@ -36,6 +36,7 @@ function makeCapturingProvider(): LLMProvider {
     finishReason: "stop",
     usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30, },
   });
+
   return {
     capabilities: {
       type: "openai-compatible",
@@ -106,6 +107,7 @@ describe("improvePrompt level threading", () => {
       config: makeConfig(),
       db,
     },);
+
     expect(lastReq?.messages?.[0]?.content,).toContain("STYLE REFERENCE",);
     expect(lastReq?.messages?.[0]?.content,).toContain("assistant: Hello there",);
   });
@@ -135,6 +137,7 @@ describe("improveOrPolish fallback", () => {
       config: makeConfig(),
       db: freshDb.db,
     },);
+
     expect(result.model,).toBe("local-heuristics",);
     expect(result.content,).toBe("Hello world.",);
   });
@@ -146,6 +149,7 @@ describe("improveOrPolish fallback", () => {
       config: makeConfig(),
       db,
     },);
+
     expect(result.model,).toBe("local-heuristics",);
     expect(result.content,).toBe("",);
   });
@@ -163,6 +167,7 @@ describe("parseAnalysis hardening", () => {
     const parsed = parseAnalysis(
       '{"intent":"action","clarity":0.8,"issues":[],"suggestions":["add detail"],"confidence":0.9}',
     );
+
     expect(parsed,).toEqual({
       intent: "action",
       clarity: 0.8,
@@ -176,6 +181,7 @@ describe("parseAnalysis hardening", () => {
     const parsed = parseAnalysis(
       '{"intent":"ooc","clarity":5,"issues":[],"suggestions":[],"confidence":-2}',
     );
+
     expect(parsed?.clarity,).toBe(1,);
     expect(parsed?.confidence,).toBe(0,);
   });
@@ -191,6 +197,7 @@ describe("parseAnalysis hardening", () => {
     const parsed = parseAnalysis(
       'Here you go: {"intent":"question","clarity":0.5,"issues":["vague"],"suggestions":[],"confidence":0.4} hope this helps',
     );
+
     expect(parsed?.intent,).toBe("question",);
   });
 });

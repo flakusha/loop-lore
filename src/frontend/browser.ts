@@ -108,6 +108,7 @@ export async function browserCompressThenEncrypt(
       let result: Uint8Array | null = null;
       if (algo === "gzip") { result = await tryGzipCompress(uint8,); }
       else if (algo === "brotli") { result = await tryBrotliCompress(uint8,); }
+
       if (result && result.length < uint8.length) {
         compressed = uint8ArrayToBase64(result,);
         compAlgo = algo;
@@ -148,6 +149,7 @@ export async function browserDecryptThenDecompress(stored: string, key: CryptoKe
   if (!payload.enc || !payload.nonce || !payload.algo) {
     throw new Error("Malformed encrypted payload",);
   }
+
   const plaintext = await browserDecryptContent(payload.enc, payload.nonce, key,);
   if (!payload.comp) { return plaintext; }
   return browserDecodeContent(plaintext, (payload.compAlgo ?? "gzip") as BrowserContentEncoding,);

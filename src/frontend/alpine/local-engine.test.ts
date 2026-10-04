@@ -44,6 +44,7 @@ function createFake(): FakeWorker {
       fake.onmessage?.({ data: response, },);
     },
   };
+
   return fake;
 }
 
@@ -69,6 +70,7 @@ describe("createLocalEngine lifecycle", () => {
         return createFake() as unknown as Worker;
       },
     },);
+
     await expect(engine.loadModel("nope",),).rejects.toBeInstanceOf(LocalInferenceUnavailable,);
     expect(spawned,).toBe(0,);
     expect(engine.loadedModel(),).toBeNull();
@@ -86,6 +88,7 @@ describe("createLocalEngine lifecycle", () => {
     await expect(engine.loadModel("SmolLM2-360M-Instruct",),).resolves.toBe("transformers-webgpu",);
     expect(fake.posted.length,).toBe(1,);
   });
+
   test("successful load marks the model ready", async () => {
     const store = new Map<string, string>();
     const globals = globalThis as unknown as { localStorage?: Storage };
@@ -102,6 +105,7 @@ describe("createLocalEngine lifecycle", () => {
       key: () => null,
       length: 0,
     } as Storage;
+
     try {
       const fake = createFake();
       const engine = createLocalEngine({ workerFactory: () => fake as unknown as Worker, },);
@@ -122,6 +126,7 @@ describe("createLocalEngine lifecycle", () => {
     const pending = engine.loadModel("SmolLM2-360M-Instruct", (loaded, total,) => {
       seen.push([loaded, total,],);
     },);
+
     fake.respond({ kind: "progress", loaded: 10, total: 100, },);
     const first = fake.posted[0] as Posted;
     fake.respond({ kind: "ready", id: first.id, engine: "transformers-wasm", },);
@@ -174,9 +179,11 @@ describe("createLocalEngine lifecycle", () => {
       workerFactory: () => fake as unknown as Worker,
       loadTimeoutMs: 5,
     },);
+
     await expect(engine.loadModel("SmolLM2-360M-Instruct",),).rejects.toBeInstanceOf(
       LocalInferenceUnavailable,
     );
+
     expect(engine.loadedModel(),).toBeNull();
   });
 
@@ -194,10 +201,12 @@ describe("createLocalEngine lifecycle", () => {
     fake.postMessage = () => {
       throw new DOMException("not cloneable", "DataCloneError",);
     };
+
     const engine = createLocalEngine({ workerFactory: () => fake as unknown as Worker, },);
     await expect(engine.loadModel("SmolLM2-360M-Instruct",),).rejects.toBeInstanceOf(
       LocalInferenceUnavailable,
     );
+
     expect(engine.loadedModel(),).toBeNull();
   });
 });
@@ -212,6 +221,7 @@ describe("createLocalEngine wllama routing", () => {
         return fake as unknown as Worker;
       },
     },);
+
     const pending = engine.loadModel("stories260K-GGUF",);
     expect(urls,).toEqual([WLLAMA_ENGINE_WORKER_URL,],);
     const first = fake.posted[0] as Record<string, unknown>;
@@ -233,6 +243,7 @@ describe("createLocalEngine wllama routing", () => {
         return fake as unknown as Worker;
       },
     },);
+
     const pending = engine.loadModel("SmolLM2-360M-Instruct",);
     expect(urls,).toEqual([ENGINE_WORKER_URL,],);
     const first = fake.posted[0] as Record<string, unknown>;
@@ -253,6 +264,7 @@ describe("createLocalEngine wllama routing", () => {
         return fakes[urls.length - 1] as unknown as Worker;
       },
     },);
+
     const loading = engine.loadModel("SmolLM2-360M-Instruct",);
     first.respond({ kind: "ready", id: (first.posted[0] as Posted).id, engine: "transformers-webgpu", },);
     await loading;
@@ -279,6 +291,7 @@ describe("wllama CDN layout contract", () => {
   test("ESM entry uses the versioned esm path (the +esm alias 404s)", () => {
     expect(WLLAMA_CDN.endsWith("/esm/index.js",),).toBe(true,);
   });
+
   test("WASM runtime ships next to the ESM entry at the pinned version", () => {
     const cdn = new URL(WLLAMA_CDN,);
     const wasm = new URL(WLLAMA_WASM_URL,);

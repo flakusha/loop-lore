@@ -93,6 +93,7 @@ beforeEach(() => {
     querySelector: (sel: string,) => (sel.startsWith("#",) ? els.get(sel.slice(1,),) ?? null : null),
     createElement: () => makeEl(),
   } as unknown as Document;
+
   host.location = {
     assign: (url: string,) => {
       assignedUrls.push(url,);
@@ -109,6 +110,7 @@ function seedForm(values: Record<string, string>,): void {
   for (const [id, value,] of Object.entries(values,)) {
     els.set(id, makeEl(value,),);
   }
+
   els.set("avatar-preview", makeEl(),);
 }
 
@@ -132,6 +134,7 @@ describeOrSkip("saveCharacterEdit", () => {
       "edit-avatar-focus-y": "80",
       "edit-content-rating": "nsfw_moderate",
     },);
+
     feHandler = () => new Response("{}", { status: 200, },);
 
     await page.saveCharacterEdit("actor-aria",);
@@ -194,6 +197,7 @@ describeOrSkip("uploadAvatar / clearAvatar", () => {
       expect(url,).toBe("/api/v1/assets",);
       return new Response(JSON.stringify({ id: "av2<script>", },), { status: 200, },);
     };
+
     const file = new File(["x",], "avatar.png", { type: "image/png", },);
     const input = { files: [file,], } as unknown as HTMLInputElement;
 

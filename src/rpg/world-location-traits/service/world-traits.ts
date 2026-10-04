@@ -80,6 +80,7 @@ export async function updateWorldTrait(
   if (input.trait_category !== undefined) {
     updates.trait_category = input.trait_category;
   }
+
   if (input.trait_name !== undefined) { updates.trait_name = input.trait_name; }
   if (input.trait_value !== undefined) { updates.trait_value = input.trait_value; }
 
@@ -109,5 +110,6 @@ export async function deleteWorldTrait(db: Kysely<any>, id: string,): Promise<bo
     .deleteFrom("character_world_traits",)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   return Number(result?.numDeletedRows ?? 0,) > 0;
 }

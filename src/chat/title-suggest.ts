@@ -51,12 +51,14 @@ export async function suggestChatTitle(args: {
       { role: "system", content: "Generate a short chat title (<=40 chars).", },
       { role: "user", content: args.firstMessage, },
     ];
+
     const result = await callAux("chat-title", args.config, args.db, messages, {
       maxTokens: 20,
       timeoutMs: 2000,
       userId: args.userId,
       chatId: args.chatId,
     },);
+
     const title = result?.content.trim();
     if (!title) { return fallback; }
     return title.length <= AUX_MAX ? title : `${title.slice(0, AUX_MAX,)}…`;
@@ -66,6 +68,7 @@ export async function suggestChatTitle(args: {
       .debug("chat title suggestion failed, using fallback", {
         error: (error as Error).message,
       },);
+
     return fallback;
   }
 }
@@ -106,6 +109,7 @@ export async function titleUntitledChatFromFirstMessage(args: {
       chatId: args.chatId,
       firstMessage: args.firstMessage,
     },);
+
     await args.db
       .updateTable("chats",)
       .set({ name: title, updated_at: new Date().toISOString(), },)

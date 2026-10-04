@@ -37,6 +37,7 @@ export function reorderRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("id",)
             .where("chat_id", "=", chatId,)
             .execute();
+
           const existingIds = new Set(Array.from(existing, (s,) => s.id,),);
           if (sectionIds.some((id,) => !existingIds.has(id,))) {
             return jsonResponse({ error: "sectionIds contains an unknown section", }, 400,);

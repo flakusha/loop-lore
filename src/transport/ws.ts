@@ -69,6 +69,7 @@ export class WsHandler extends TransportBase<WsOptions> {
         (this.ws as any)?.ping?.();
       }, this.options.pingInterval ?? 30_000,);
     }
+
     return conn;
   }
 
@@ -125,6 +126,7 @@ export class WsHandler extends TransportBase<WsOptions> {
     if (this.pendingMessages.length >= MAX_PENDING) {
       this.pendingMessages.shift();
     }
+
     this.pendingMessages.push(data,);
     return Promise.resolve();
   }
@@ -137,9 +139,11 @@ export class WsHandler extends TransportBase<WsOptions> {
     if (this.pingInterval) {
       clearInterval(this.pingInterval,);
     }
+
     if (this.ws) {
       this.ws.close(1000, "client close",);
     }
+
     return super.close();
   }
 }

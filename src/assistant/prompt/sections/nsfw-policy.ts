@@ -22,10 +22,12 @@ export const nsfwPolicySection: SectionBuilder = {
   build: (ctx,) => {
     const nsfwAllowed = (ctx.config?.nsfw.allowNsfw ?? true) &&
       getRuntimeNsfwConfig().allowNsfw;
+
     const policy = resolveSystemPrompt(
       ctx.config?.templates.llm,
       nsfwAllowed ? "nsfwPolicy" : "nsfwPolicySfw",
     );
+
     if (!policy) { return []; }
     return [{ role: "system", content: wrapSection("nsfw_policy", policy,), },];
   },

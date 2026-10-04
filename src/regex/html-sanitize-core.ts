@@ -48,6 +48,7 @@ export function stripScriptTags(html: string,): string {
       parts.push(html.slice(i,),);
       break;
     }
+
     const afterOpen = start + SCRIPT_OPEN.length;
     const nextChar = html[afterOpen];
     if (nextChar !== undefined && WORD_CHAR.test(nextChar,)) {
@@ -56,6 +57,7 @@ export function stripScriptTags(html: string,): string {
       i = afterOpen;
       continue;
     }
+
     const gt = html.indexOf(">", afterOpen,);
     if (gt === -1) {
       // Incomplete start tag (`<script` with no `>`): discarded by the
@@ -63,6 +65,7 @@ export function stripScriptTags(html: string,): string {
       parts.push(html.slice(i,),);
       break;
     }
+
     const closeEnd = findScriptCloseEnd(lower, gt + 1,);
     parts.push(html.slice(i, start,),);
     if (closeEnd === -1) {
@@ -70,6 +73,7 @@ export function stripScriptTags(html: string,): string {
       // end-of-input and executes, so drop the remainder.
       break;
     }
+
     i = closeEnd;
   }
 
@@ -91,6 +95,7 @@ function findScriptCloseEnd(lower: string, from: number,): number {
     if (lower.charAt(k,) === ">") { return k + 1; }
     close = lower.indexOf(SCRIPT_CLOSE_OPEN, close + SCRIPT_CLOSE_OPEN.length,);
   }
+
   return -1;
 }
 
@@ -128,12 +133,14 @@ const NAMED_REF = /&(colon|tab|newline);/gi;
 function normalizeUrlValue(raw: string,): string {
   const quoted = raw.length >= 2 &&
     ((raw.startsWith('"',) && raw.endsWith('"',)) || (raw.startsWith("'",) && raw.endsWith("'",)));
+
   const value = (quoted ? raw.slice(1, -1,) : raw)
     .replace(NUMERIC_REF, (_match, hex?: string, dec?: string,) => {
       const code = Number.parseInt(hex ?? dec ?? "", hex === undefined ? 10 : 16,);
       return Number.isFinite(code,) && code > 0 && code <= 0x10ffff ? String.fromCodePoint(code,) : "";
     },)
     .replace(NAMED_REF, (_match, name: string,) => (name.toLowerCase() === "colon" ? ":" : ""),);
+
   return value.replace(/[\t\n\r\f ]/g, "",).toLowerCase();
 }
 

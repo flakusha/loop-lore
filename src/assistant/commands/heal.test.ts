@@ -42,6 +42,7 @@ function makeCombatant(id: string, name: string, hp: number, maxHp: number,): Co
     12,
     false,
   );
+
   combatant.hp = hp;
   return combatant;
 }
@@ -60,6 +61,7 @@ async function seedBattle(
     combatants: rawCombatants ?? JSON.stringify(combatants,),
     log: "[]",
   } as never,);
+
   return { chatId, battleId, };
 }
 
@@ -98,6 +100,7 @@ describe("/heal", () => {
     const { chatId, } = await seedBattle(
       [makeCombatant("e1", "Goblin", 5, 10,), makeCombatant("e2", "Orc", 8, 20,),],
     );
+
     const result = await healHandler()(["troll",], ctxFor(chatId,),);
     expect(result.systemMessage,).toContain('target "troll" not found',);
     expect(result.systemMessage,).toContain("Goblin, Orc",);

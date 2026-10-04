@@ -114,21 +114,25 @@ describe("deleteUserData (BUG-nsfw-moderation-delete-destroys-audit-log)", () =>
       .select("id",)
       .where("target_user_id", "in", [TARGET, "other-user",],)
       .execute();
+
     expect(remaining.length,).toBe(4,);
 
     const deleted = await db.selectFrom("moderation_actions",)
       .select(["target_user_id", "deleted_at", "deleted_by",],)
       .where("target_user_id", "=", TARGET,)
       .execute();
+
     expect(deleted.length,).toBe(3,);
     for (const row of deleted) {
       expect(row.deleted_at,).not.toBeNull();
       expect(row.deleted_by,).toBe(ADMIN,);
     }
+
     const other = await db.selectFrom("moderation_actions",)
       .select("deleted_at",)
       .where("target_user_id", "=", "other-user",)
       .executeTakeFirst();
+
     expect(other?.deleted_at,).toBeNull();
   });
 
@@ -142,6 +146,7 @@ describe("deleteUserData (BUG-nsfw-moderation-delete-destroys-audit-log)", () =>
       .select("user_id",)
       .where("user_id", "=", TARGET,)
       .execute();
+
     expect(prefs.length,).toBe(0,);
   });
 
@@ -157,6 +162,7 @@ describe("deleteUserData (BUG-nsfw-moderation-delete-destroys-audit-log)", () =>
       .select("reporter_id",)
       .where("reporter_id", "in", [REPORTER, "other-reporter",],)
       .execute();
+
     expect(remaining.length,).toBe(1,);
     expect(remaining[0]?.reporter_id,).toBe("other-reporter",);
   });
@@ -172,6 +178,7 @@ describe("deleteUserData (BUG-nsfw-moderation-delete-destroys-audit-log)", () =>
       .where("module", "=", "nsfw-moderation",)
       .where("action", "=", "delete-user-data",)
       .execute();
+
     expect(audit.length,).toBe(1,);
     expect(audit[0]?.user_id,).toBe(ADMIN,);
     expect(audit[0]?.entity_id,).toBe(TARGET,);
@@ -186,6 +193,7 @@ describe("deleteUserData (BUG-nsfw-moderation-delete-destroys-audit-log)", () =>
       .select("deleted_at",)
       .where("target_user_id", "=", TARGET,)
       .executeTakeFirst();
+
     const firstAt = first?.deleted_at;
     expect(firstAt,).not.toBeNull();
 
@@ -195,6 +203,7 @@ describe("deleteUserData (BUG-nsfw-moderation-delete-destroys-audit-log)", () =>
       .select("deleted_at",)
       .where("target_user_id", "=", TARGET,)
       .executeTakeFirst();
+
     expect(second?.deleted_at,).toBe(firstAt,);
   });
 });
@@ -219,9 +228,11 @@ describe("exportUserData", () => {
           .selectAll()
           .where("user_id", "=", uid,)
           .executeTakeFirst();
+
         return row ? ({ ...row, } as never) : null;
       },
     };
+
     const exported = await exportUserData({ thisL: realCtx, userId: TARGET, exportedBy: ADMIN, },);
 
     // Soft-deleted audit row excluded from the export bundle.
@@ -238,12 +249,14 @@ describe("exportUserData", () => {
       .where("action", "=", "export-user-data",)
       .execute()
       .then((rows,) => rows.length);
+
     await exportUserData({ thisL: ctx, userId: TARGET, exportedBy: ADMIN, clientIp: "10.0.0.1", },);
     const logCountAfter = await db.selectFrom("log_entries",).selectAll()
       .where("entity_id", "=", TARGET,)
       .where("action", "=", "export-user-data",)
       .execute()
       .then((rows,) => rows.length);
+
     expect(logCountAfter,).toBe(logCountBefore + 1,);
     const row = await db.selectFrom("log_entries",).selectAll()
       .where("entity_id", "=", TARGET,)
@@ -251,6 +264,7 @@ describe("exportUserData", () => {
       .orderBy("created_at", "desc",)
       .limit(1,)
       .executeTakeFirst();
+
     expect(row?.user_id,).toBe(ADMIN,);
     expect(row?.module,).toBe("nsfw-moderation",);
     expect(row?.meta,).toContain("10.0.0.1",);
@@ -278,11 +292,13 @@ describe("exportUserData", () => {
       resolved_at: null,
       created_at: new Date().toISOString(),
     },).execute();
+
     const realCtx: NsfwModerationServiceContext = {
       ...ctx,
       getPreferences: async (uid: string,) => {
         const row = await db.selectFrom("nsfw_user_preferences",).selectAll()
           .where("user_id", "=", uid,).executeTakeFirst();
+
         return row ? ({ ...row, } as never) : null;
       },
       getAuditLog: async (uid: string,) => {
@@ -290,15 +306,18 @@ describe("exportUserData", () => {
           .where("target_user_id", "=", uid,)
           .where("deleted_at", "is", null,)
           .execute();
+
         return rows as never;
       },
     };
+
     const exported = await exportUserData({ thisL: realCtx, userId: TARGET, exportedBy: ADMIN, },);
     expect(exported.actions.length,).toBeGreaterThan(0,);
     for (const action of exported.actions) {
       expect(action.reason.length,).toBeLessThanOrEqual(201,);
       expect(action.reason.endsWith("…",),).toBe(true,);
     }
+
     expect(exported.flags.length,).toBeGreaterThan(0,);
     for (const flag of exported.flags) {
       const desc = (flag as { description?: string }).description ?? "";

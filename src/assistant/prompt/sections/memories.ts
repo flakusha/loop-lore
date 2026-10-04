@@ -40,6 +40,7 @@ export const memorySection: SectionBuilder = {
       ctx.chat.id,
       ctx.chat.world_id,
     );
+
     const participantIds = baseCtx.participantIds;
 
     const OTHER_MEMORY_CAP = 5;
@@ -59,6 +60,7 @@ export const memorySection: SectionBuilder = {
         isSpeaker ? 50 : OTHER_MEMORY_CAP,
         hasCopies ? ctx.chat.id : undefined,
       );
+
       if (rows.length === 0) { return []; }
       const provisionCtx = await buildProvisionContext(
         ctx.db,
@@ -67,6 +69,7 @@ export const memorySection: SectionBuilder = {
         ctx.chat.world_id,
         ownerId,
       );
+
       const result = provisionMemories(rows, provisionCtx, Number.MAX_SAFE_INTEGER,);
       return result.accepted;
     },);
@@ -77,6 +80,7 @@ export const memorySection: SectionBuilder = {
       if (r.status === "rejected") { throw r.reason; }
       provisioned.push(r.value,);
     }
+
     const allAccepted: MemoryEntry[] = [];
     for (const list of provisioned) { for (const m of list) { allAccepted.push(m,); } }
     if (allAccepted.length === 0) { return []; }
@@ -103,6 +107,7 @@ export const memorySection: SectionBuilder = {
           .orderBy("created_at", "desc",)
           .limit(5,)
           .execute();
+
         if (recent.length > 0) {
           const queryText = recent.map((r,) => r.content ?? "").join(" ",);
           const matched = await semanticRecall(
@@ -112,6 +117,7 @@ export const memorySection: SectionBuilder = {
             mutable.length,
             0.3,
           );
+
           if (matched.length > 0) {
             for (const m of matched) { scoreMap.set(m.memoryId, m.score,); }
             mutable.sort((a, b,) => {
@@ -135,6 +141,7 @@ export const memorySection: SectionBuilder = {
         );
       }
     }
+
     const ranked = [...pinned, ...mutable,];
 
     // ── Phase 2: Token budget ──────────────────────────────────────────────
@@ -152,6 +159,7 @@ export const memorySection: SectionBuilder = {
         .orderBy("created_at", "desc",)
         .limit(1,)
         .executeTakeFirst();
+
       if (latestUserMessage) {
         currentKeywords = extractMessageKeywords(latestUserMessage.content,);
       }
@@ -220,9 +228,11 @@ export const memorySection: SectionBuilder = {
       list.push(mem.id,);
       auditByActor.set(mem.actorId as string, list,);
     }
+
     const auditEntries: Array<
       { memoryId: string; actorId: string; userId: string | null; action: "inject"; details: Record<string, unknown> }
     > = [];
+
     for (const [actorId, memoryIds,] of auditByActor.entries()) {
       auditEntries.push({
         memoryId: memoryIds[0] ?? actorId,
@@ -236,6 +246,7 @@ export const memorySection: SectionBuilder = {
         },
       },);
     }
+
     if (auditEntries.length > 0) {
       await recordAuditLog(ctx.db, auditEntries,);
     }

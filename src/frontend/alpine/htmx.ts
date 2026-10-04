@@ -72,7 +72,23 @@ function triggerPageLoaders(): void {
   }
 }
 document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>,) => {
-document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>,) => {
+  const elt = e.detail.elt;
+  apiLog.debug("htmx:load", { tag: elt?.tagName, id: (elt as any)?.id, },);
+  if (elt && (globalThis as any).htmx && globalThis.Alpine) {
+    htmx.process(elt as HTMLElement,);
+    try {
+      Alpine.initTree(elt as HTMLElement,);
+    } catch {
+      /* Alpine may fail on partial swaps */
+    }
+  }
+
+  triggerPageLoaders();
+  normalizeHeaderSlot();
+},);
+
+// Update document title from header title after navigation
+document.addEventListener("htmx:afterSwap", (e: Event,) => {
   const target = (e as CustomEvent<{ target: Element }>)?.detail?.target;
   if (target) {
     const header = document.querySelector<HTMLElement>("#header-slot .title",);

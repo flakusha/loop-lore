@@ -41,11 +41,13 @@ export async function walkMessagePath(
       .select(["id", "parent_id", "chat_id",],)
       .where("id", "=", current,)
       .executeTakeFirst();
+
     if (!row || row.chat_id !== chatId) { break; }
     path.push(row.id,);
     current = row.parent_id;
     depth += 1;
   }
+
   return path.reverse();
 }
 
@@ -72,6 +74,7 @@ export async function nextAutoName(
     .select((eb,) => eb.fn.count<number>("id",).as("n",))
     .where("chat_id", "=", chatId,)
     .executeTakeFirst();
+
   return `Branch ${Number(row?.n ?? 0,) + 1 + attempt}`;
 }
 
@@ -104,6 +107,7 @@ export async function loadBranch(
     .selectAll()
     .where("id", "=", branchId,)
     .executeTakeFirst();
+
   return row && row.chat_id === chatId ? row : null;
 }
 
@@ -144,6 +148,7 @@ export async function activeBranchId(db: Kysely<DB>, chatId: string,): Promise<s
     .select(["active_branch_id",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   return chat?.active_branch_id ?? null;
 }
 
@@ -164,6 +169,7 @@ export async function withMeta(
     .select(["created_at",],)
     .where("id", "=", row.parent_message_id,)
     .executeTakeFirst();
+
   const path = await walkMessagePath(db, chatId, row.parent_message_id,);
   return {
     id: row.id,

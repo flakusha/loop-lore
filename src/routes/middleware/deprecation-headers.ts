@@ -66,6 +66,7 @@ export function withDeprecationHeaders(
     "Link",
     `</api/v${options.successorVersion}>; rel="successor-version"`,
   );
+
   headers.set("X-API-Deprecated-Version", options.deprecatedVersion,);
   return new Response(response.body, {
     status: response.status,
@@ -95,6 +96,7 @@ export function applyDeprecationHeaders(
   if (!isEnabled(config.enabled,)) {
     return response;
   }
+
   return withDeprecationHeaders(response, {
     deprecatedVersion: config.deprecatedVersion,
     successorVersion: config.successorVersion,
@@ -125,6 +127,7 @@ export function deprecationAfterHandle(
     if (!isEnabled(config.enabled,)) {
       return;
     }
+
     const headers = ctx.set.headers;
     headers["Sunset"] = config.sunset;
     headers["Deprecation"] = "true";

@@ -40,9 +40,11 @@ beforeEach(() => {
     if (!fetchHandler) { return new Response("{}", { status: 500, },); }
     return fetchHandler(String(url,), opts ?? {},);
   };
+
   (globalThis as Record<string, unknown>).showToast = () => {
     /* noop — toast assertions not needed for these paths */
   };
+
   globalThis.confirm = () => true;
 },);
 
@@ -84,6 +86,7 @@ describe("worldItems.loadItems", () => {
       value: 120,
       weight: 3,
     },);
+
     expect(c.itemsLoaded,).toBe(true,);
     expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/items",);
   });
@@ -109,6 +112,7 @@ describe("worldItems.addItem", () => {
       category: "consumable",
       rarity: "common",
     },);
+
     expect(c.newItemName,).toBe("",);
     expect(JSON.stringify(fetchCalls.map((f,) => f.url),),).toContain("/api/v1/worlds/w1/items",);
   });
@@ -132,6 +136,7 @@ describe("worldItems.saveItem", () => {
       editItemValue: "150",
       editItemWeight: "2",
     },);
+
     await c.saveItem("item-1",);
     expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/items/item-1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("PUT",);
@@ -178,6 +183,7 @@ describe("worldItems.loadInstances", () => {
       { id: "inst-1", item_id: "item-1", location_id: "loc-1", quantity: 3, visibility: "visible", created_at: "t", },
       { id: "inst-2", item_id: "item-1", location_id: null, quantity: 1, visibility: "visible", created_at: "t", },
     ],);
+
     const c = ctx();
     await c.loadInstances("item-1",);
     expect(c.instances,).toHaveLength(2,);
@@ -204,6 +210,7 @@ describe("worldItems.placeInstance", () => {
       placeQuantity: "5",
       locations: [{ id: "loc-1", name: "Darkwood", description: null, parent_location_id: null, },],
     },);
+
     await c.placeInstance("item-1",);
     expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/item-instances",);
     expect(fetchCalls[0]!.opts?.method,).toBe("POST",);
@@ -212,6 +219,7 @@ describe("worldItems.placeInstance", () => {
       locationId: "loc-1",
       quantity: 5,
     },);
+
     expect(c.placeQuantity,).toBe("1",);
   });
 });

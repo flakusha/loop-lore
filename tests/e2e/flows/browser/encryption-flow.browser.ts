@@ -41,6 +41,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
         serverEncryptionKey: VALID_HEX_KEY,
       },
     },);
+
     await seedAll(ctx.db,);
 
     // Encryption requires (1) a standard-tier chat and (2) an actor key for
@@ -71,6 +72,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
           new MouseEvent("click", { bubbles: true, },),
         );
       },);
+
       // Wait for the chat-list-panel to actually become visible (CSS toggle
       // sets display:flex via Alpine :style). 'attached' would resolve even
       // while the panel is display:none, hiding all nav-item children.
@@ -78,9 +80,11 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
         state: "visible",
         timeout: 15_000,
       },);
+
       const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).filter({
         hasText: SEED.soloChat.name,
       },).first();
+
       await chatItem.waitFor({ state: "visible", timeout: 15_000, },);
       await chatItem.click();
 
@@ -91,6 +95,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
         (state,) => state.activeChat === SEED.soloChat.id && state._encryptionEnabled === true && !!state._chatKey,
         10_000,
       );
+
       const keyPresent = await page.evaluate(() => globalThis.__chatKey instanceof CryptoKey);
       expect(keyPresent,).toBe(true,);
     } finally {
@@ -111,6 +116,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
           new MouseEvent("click", { bubbles: true, },),
         );
       },);
+
       // Wait for the chat-list-panel to actually become visible (CSS toggle
       // sets display:flex via Alpine :style). 'attached' would resolve even
       // while the panel is display:none, hiding all nav-item children.
@@ -118,9 +124,11 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
         state: "visible",
         timeout: 15_000,
       },);
+
       const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).filter({
         hasText: SEED.soloChat.name,
       },).first();
+
       await chatItem.waitFor({ state: "visible", timeout: 15_000, },);
       await chatItem.click();
       await waitForAlpineState(
@@ -142,6 +150,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
         .where("chat_id", "=", SEED.soloChat.id,)
         .orderBy("created_at", "desc",)
         .executeTakeFirst();
+
       const beforeId = before?.id ?? null;
       await page.fill("[data-testid='message-input']", secret,);
       await page.click("[data-testid='send-button']",);
@@ -157,6 +166,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
         .getByText(secret,)
         .locator("xpath=ancestor::div[contains(@class,'bubble')][1]",)
         .textContent();
+
       expect(bubbleText ?? "",).not.toContain("[Encrypted \u2014 unable to decrypt]",);
 
       // The row write races the assertions: the htmx swap resolves when the
@@ -173,14 +183,17 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
           .where("chat_id", "=", SEED.soloChat.id,)
           .orderBy("created_at", "desc",)
           .executeTakeFirst();
+
         if (candidate && candidate.id !== beforeId) {
           row = candidate;
           break;
         }
+
         const { promise, resolve, } = Promise.withResolvers<void>();
         setTimeout(resolve, 250,);
         await promise;
       }
+
       expect(row, "no new message row appeared after send",).toBeDefined();
       expect(row!.content,).not.toContain(secret,);
       expect(row!.key_id,).not.toBeNull();
@@ -196,6 +209,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
         comp?: unknown;
         key_id?: unknown;
       };
+
       expect(typeof envelope.enc, "enc must be base64 ciphertext",).toBe("string",);
       expect((envelope.enc as string).length,).toBeGreaterThan(0,);
       expect(typeof envelope.nonce, "nonce must be a 12-byte base64 string",).toBe("string",);
@@ -226,6 +240,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
               `/api/v1/chats/${args.chatId}/messages?page=1&pageSize=${args.pageSize}`,
               { credentials: "include", },
             );
+
             const firstBody = await first.text();
             let lastBody = firstBody;
             try {
@@ -234,22 +249,27 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
                   typeof parsed.pagination === "object" && parsed.pagination !== null
                 ? parsed.pagination
                 : {};
+
               const total = "total" in pagination && typeof pagination.total === "number"
                 ? pagination.total
                 : 0;
+
               const lastPage = Math.max(1, Math.ceil(total / args.pageSize,),);
               if (total > 0 && lastPage > 1) {
                 const last = await fetch(
                   `/api/v1/chats/${args.chatId}/messages?page=${lastPage}&pageSize=${args.pageSize}`,
                   { credentials: "include", },
                 );
+
                 lastBody = `${firstBody}\n${await last.text()}`;
               }
             } catch { /* non-JSON body: page 1 alone */ }
+
             return { status: first.status, body: lastBody, };
           },
           { chatId: SEED.soloChat.id, pageSize: PAGE_SIZE, },
         );
+
       // Poll until a deadline rather than a fixed attempt count. The previous
       // 20 x 250ms loop capped the wait at 5s, which the INSERT outran whenever
       // the suite ran under gate load - the send request the test has not yet
@@ -264,6 +284,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
         setTimeout(resolve, 250,);
         await promise;
       } while (Date.now() < commitDeadline);
+
       expect(list!.status,).toBe(200,);
       expect(list!.body,).toContain(secret,);
       expect(list!.body,).not.toContain("[Encrypted \u2014 unable to decrypt]",);
@@ -291,6 +312,7 @@ describe("Encrypted message — wrong-key fallback (API)", () => {
         serverEncryptionKey: VALID_HEX_KEY,
       },
     },);
+
     await seedAll(ctx.db,);
   }, 90_000,);
 
@@ -323,6 +345,7 @@ describe("Encrypted message — wrong-key fallback (API)", () => {
         comp: "none",
         key_id: bogusKeyId,
       },);
+
       const msgId = "b9999999-0000-4000-a000-000000000000";
       await ctx.db
         .insertInto("messages",)
@@ -345,6 +368,7 @@ describe("Encrypted message — wrong-key fallback (API)", () => {
       const single = await fetch(`${ctx.url}/api/v1/messages/${msgId}`, {
         credentials: "include",
       },);
+
       expect(single.status,).toBe(200,);
       const singleBody = await single.text();
       expect(singleBody,).toContain("[Encrypted \u2014 unable to decrypt]",);
@@ -357,6 +381,7 @@ describe("Encrypted message — wrong-key fallback (API)", () => {
       const list = await fetch(`${ctx.url}/api/v1/chats/${SEED.soloChat.id}/messages`, {
         credentials: "include",
       },);
+
       expect(list.status,).toBe(200,);
       const listBody = await list.text();
       expect(listBody,).toContain("[Encrypted \u2014 unable to decrypt]",);

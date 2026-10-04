@@ -74,6 +74,7 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -87,6 +88,7 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -95,6 +97,7 @@ describe("chatBranchRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/branches`, { method: "GET", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -108,6 +111,7 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, name: "Custom", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json() as { data: { branch: { name: string }; messagePath: string[] } };
     expect(body.data.branch.name,).toBe("Custom",);
@@ -125,6 +129,7 @@ describe("chatBranchRoutes", () => {
           body: JSON.stringify({ messageId: rootId, },),
         },),
       );
+
       expect(res.status,).toBe(201,);
       const body = await res.json() as { data: { branch: { name: string } } };
       expect(body.data.branch.name,).toBe(`Branch ${i}`,);
@@ -141,6 +146,7 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: otherMsgId, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -154,6 +160,7 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, },),
       },),
     );
+
     expect(createRes.status,).toBe(201,);
     const createBody = await createRes.json() as { data: { branch: { id: string } } };
     const branchId = createBody.data.branch.id;
@@ -165,6 +172,7 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ branchId, },),
       },),
     );
+
     expect(switchRes.status,).toBe(200,);
     const switchBody = await switchRes.json() as { data: { activeBranchId: string } };
     expect(switchBody.data.activeBranchId,).toBe(branchId,);
@@ -180,6 +188,7 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, },),
       },),
     );
+
     const createBody = await createRes.json() as { data: { branch: { id: string } } };
     const branchId = createBody.data.branch.id;
 
@@ -190,6 +199,7 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ branchId, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -203,9 +213,11 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, },),
       },),
     );
+
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/branches`, { method: "GET", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { branches: { messageCount: number }[] } };
     expect(body.data.branches.length,).toBeGreaterThan(0,);
@@ -222,6 +234,7 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 });

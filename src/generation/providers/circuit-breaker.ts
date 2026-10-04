@@ -84,6 +84,7 @@ export class CircuitBreaker {
         circuit.state = "half-open";
         return true;
       }
+
       return false;
     }
 

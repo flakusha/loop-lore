@@ -38,6 +38,7 @@ export function loadDomainConfigs(directory: string, baseConfig: Config,): Confi
             cause: error,
           },);
         }
+
         break; // First found wins per domain
       }
     }
@@ -75,6 +76,7 @@ function validateDatabaseDomain(parsed: Record<string, unknown>, filePath: strin
       `Invalid db.type in ${filePath}: "${db.type as unknown as string}". Must be "sqlite" or "postgres"`,
     );
   }
+
   if (db.type === "postgres" && !db.url) {
     throw new Error(`db.url is required when db.type is 'postgres' in ${filePath}`,);
   }
@@ -113,14 +115,17 @@ export function validateDomainConfig(domain: string, parsed: Record<string, unkn
       validateServerDomain(parsed, filePath,);
       break;
     }
+
     case "database": {
       validateDatabaseDomain(parsed, filePath,);
       break;
     }
+
     case "logging": {
       validateLoggingDomain(parsed, filePath,);
       break;
     }
+
     case "headers": {
       const headers = parsed.headers as Record<string, unknown> | undefined;
       if (
@@ -132,6 +137,7 @@ export function validateDomainConfig(domain: string, parsed: Record<string, unkn
             .xFrameOptions as unknown as string}". Must be DENY or SAMEORIGIN`,
         );
       }
+
       break;
     }
       // Other domains have no specific validation constraints

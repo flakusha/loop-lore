@@ -28,6 +28,7 @@ export async function findEncounterLocation(
     .where("effect_id", "=", "encounter_venue",)
     .select("meta",)
     .executeTakeFirst();
+
   if (!row?.meta) { return null; }
   const parsed = jsonParseOr<{ location_id?: unknown }>(row.meta, {},);
   return typeof parsed.location_id === "string" ? parsed.location_id : null;
@@ -61,6 +62,7 @@ export async function resolveAtmosphereBonus(
     log.warn(`Atmosphere consult skipped for ${encounterId}:`, {
       error: cause instanceof Error ? cause.message : String(cause,),
     },);
+
     return 0;
   }
 }

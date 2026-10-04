@@ -172,6 +172,7 @@ private enabledDefinitions<T>(definitions: Map<string, T[]>): T[] {
       if (!this.isEnabled(name)) continue;
       out.push(...defs);
     }
+
     return out;
   }
 }

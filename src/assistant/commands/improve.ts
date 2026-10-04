@@ -36,8 +36,10 @@ export async function runImprove(args: string[], ctx: CommandContext,): Promise<
       i++;
       continue;
     }
+
     textParts.push(args[i] as string,);
   }
+
   const text = textParts.join(" ",).trim();
 
   if (!text) {
@@ -63,6 +65,7 @@ export async function runImprove(args: string[], ctx: CommandContext,): Promise<
     userId: ctx.userId,
     chatId: ctx.chatId,
   },);
+
   const fallback = result.model === "local-heuristics";
   return {
     systemMessage: `**Improved:**\n\n${result.content}` +

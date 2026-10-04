@@ -52,6 +52,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${uid()}/join`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(401,);
     await db.destroy();
   });
@@ -67,6 +68,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
     const res = await app.handle(
       new Request("http://localhost/api/chats/not-a-uuid/join", { method: "POST", },),
     );
+
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     await db.destroy();
   });
@@ -82,6 +84,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${uid()}/join`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(400,);
     const body = (await res.json()) as JoinErrorBody;
     expect(body.error,).toMatch(/not joinable/i,);
@@ -102,6 +105,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/join`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(400,);
     const body = (await res.json()) as JoinErrorBody;
     expect(body.error,).toMatch(/not joinable/i,);
@@ -124,6 +128,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
       id: worldId,
       visibility: WorldVisibility.Private,
     } as never,);
+
     await insertChats(db, "Secret", ownerId, {
       id: chatId,
       type: "group",
@@ -135,6 +140,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/join`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(403,);
     const body = (await res.json()) as JoinErrorBody;
     expect(body.error,).toMatch(/not a member/i,);
@@ -157,6 +163,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
       id: worldId,
       visibility: WorldVisibility.Public,
     } as never,);
+
     await insertChats(db, "Open Chat", ownerId, {
       id: chatId,
       type: "group",
@@ -168,6 +175,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/join`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as JoinSuccessBody;
     expect(body.chatId,).toBe(chatId,);
@@ -179,6 +187,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
       .select(["chat_id", "actor_id", "role_in_chat",],)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(participants,).toHaveLength(1,);
     expect(participants[0]!.actor_id,).toBe(userId,);
     expect(participants[0]!.role_in_chat,).toBe(ChatParticipantRole.Member,);
@@ -198,6 +207,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
       id: worldId,
       visibility: WorldVisibility.Private,
     } as never,);
+
     await insertChats(db, "Mine", userId, {
       id: chatId,
       type: "group",
@@ -209,6 +219,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/join`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(201,);
     await db.destroy();
   });
@@ -228,6 +239,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
       id: worldId,
       visibility: WorldVisibility.Private,
     } as never,);
+
     await insertChats(db, "Owned", worldOwnerId, {
       id: chatId,
       type: "group",
@@ -240,6 +252,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/join`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(201,);
     await db.destroy();
   });
@@ -259,6 +272,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
       id: worldId,
       visibility: WorldVisibility.Private,
     } as never,);
+
     await insertWorldMembers(db, worldId, memberId,);
     await insertChats(db, "Member Chat", worldOwnerId, {
       id: chatId,
@@ -271,6 +285,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/join`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(201,);
     await db.destroy();
   });
@@ -287,12 +302,14 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
       id: worldId,
       visibility: WorldVisibility.Public,
     } as never,);
+
     await insertChats(db, "Already In", userId, {
       id: chatId,
       type: "group",
       mode: "story",
       world_id: worldId,
     } as never,);
+
     await insertChatParticipants(db, chatId, userId, {
       role_in_chat: ChatParticipantRole.Owner,
     },);
@@ -301,6 +318,7 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/join`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(400,);
     const body = (await res.json()) as JoinErrorBody;
     expect(body.error,).toMatch(/already a participant/i,);

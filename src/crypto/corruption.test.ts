@@ -30,15 +30,18 @@ function buildMigrationProvider(): {
       const files = readdirSync(dir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const f of files) {
         const mod = (await import(path.join(dir, f,))) as
           | { default?: Migration }
           | Migration;
+
         const candidate = "default" in mod && mod.default ? mod.default : (mod as Migration);
         const key = f.endsWith(".ts",) ? f.slice(0, -3,) : f;
         migrations[key] = candidate;
       }
+
       return migrations;
     },
   };
@@ -51,6 +54,7 @@ beforeAll(async () => {
     compressThreshold: 1024,
     compressAlgorithm: "gzip",
   },);
+
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = OFF",);
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
@@ -94,6 +98,7 @@ describe("Crypto Corruption Resistance", () => {
         storedContent: "{ invalid json",
         encryptionLevel: "at-rest",
       },);
+
       expect(result,).toBe("{ invalid json",);
     });
 
@@ -105,6 +110,7 @@ describe("Crypto Corruption Resistance", () => {
         plaintext: "test content",
         encryptionLevel: "standard",
       },);
+
       expect(isEncryptedPayload(valid.storedContent,),).toBeTrue();
 
       const corrupted = valid.storedContent.slice(0, valid.storedContent.length - 10,);
@@ -115,6 +121,7 @@ describe("Crypto Corruption Resistance", () => {
         storedContent: corrupted,
         encryptionLevel: "standard",
       },);
+
       expect(result,).toBe(corrupted,);
     });
 
@@ -126,6 +133,7 @@ describe("Crypto Corruption Resistance", () => {
         plaintext: "test content",
         encryptionLevel: "standard",
       },);
+
       const corrupted = valid.storedContent.slice(0, valid.storedContent.length - 10,);
       const result = await decryptAtRest({
         database: db,
@@ -133,6 +141,7 @@ describe("Crypto Corruption Resistance", () => {
         storedContent: corrupted,
         encryptionLevel: "at-rest",
       },);
+
       expect(result,).toBe(corrupted,);
     });
   });
@@ -146,6 +155,7 @@ describe("Crypto Corruption Resistance", () => {
         plaintext: "",
         encryptionLevel: "standard",
       },);
+
       expect(result.wasEncrypted,).toBeTrue();
       expect(isEncryptedPayload(result.storedContent,),).toBeTrue();
 
@@ -155,6 +165,7 @@ describe("Crypto Corruption Resistance", () => {
         storedContent: result.storedContent,
         encryptionLevel: "standard",
       },);
+
       expect(roundTrip,).toBe("",);
     });
 
@@ -167,6 +178,7 @@ describe("Crypto Corruption Resistance", () => {
         plaintext: longString,
         encryptionLevel: "standard",
       },);
+
       expect(result.wasEncrypted,).toBeTrue();
 
       const roundTrip = await decryptAtRest({
@@ -175,6 +187,7 @@ describe("Crypto Corruption Resistance", () => {
         storedContent: result.storedContent,
         encryptionLevel: "standard",
       },);
+
       expect(roundTrip,).toBe(longString,);
     });
   });

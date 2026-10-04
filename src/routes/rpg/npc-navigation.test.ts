@@ -51,6 +51,7 @@ describe("npc navigation (auth-gated)", () => {
       "Navigator",
       { id: userId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     worldId = uid();
     await insertWorlds(db, userId, "Nav World", { id: worldId, } as never,);
     actorId = uid();
@@ -85,6 +86,7 @@ describe("npc navigation (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/npc-navigation/actors/${actorId}/state?worldId=${worldId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { actorId?: string };
     expect(body.actorId,).toBe(actorId,);
@@ -99,6 +101,7 @@ describe("npc navigation (auth-gated)", () => {
         body: JSON.stringify({ worldId, updates: { speed: 3, }, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -111,6 +114,7 @@ describe("npc navigation (auth-gated)", () => {
         body: JSON.stringify({ worldId, pattern: "patrol", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -123,6 +127,7 @@ describe("npc navigation (auth-gated)", () => {
         body: JSON.stringify({ worldId, targetLocationId: locationId, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { success?: boolean };
     expect(body.success,).toBe(true,);
@@ -137,6 +142,7 @@ describe("npc navigation (auth-gated)", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { results?: unknown[] };
     expect(Array.isArray(body.results,),).toBe(true,);
@@ -148,6 +154,7 @@ describe("npc navigation (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/npc-navigation/actors/${actorId}/state?worldId=${worldId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

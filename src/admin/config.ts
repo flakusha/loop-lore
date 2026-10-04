@@ -210,21 +210,25 @@ export async function importConfigFromText(
   if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed,)) {
     throw new Error(`Import payload must be a mapping, got ${typeof parsed}`,);
   }
+
   const root = parsed as { system_config?: unknown };
   const entries = root.system_config;
   if (typeof entries !== "object" || entries === null || Array.isArray(entries,)) {
     throw new Error("Import payload must contain a `system_config` mapping",);
   }
+
   const results: ImportEntryResult[] = [];
   for (const [key, raw,] of Object.entries(entries as Record<string, unknown>,)) {
     if (typeof raw !== "string") {
       results.push({ key, action: "skipped", error: `value is ${typeof raw}, expected string`, },);
       continue;
     }
+
     if (SECRET_KEY_PATTERN.test(key,)) {
       results.push({ key, action: "skipped", },);
       continue;
     }
+
     const existing = await getConfig(db, key,);
     try {
       await setConfig(db, key, raw, existing?.description ?? undefined,);
@@ -233,5 +237,6 @@ export async function importConfigFromText(
       results.push({ key, action: "conflict", error: (error as Error).message, },);
     }
   }
+
   return results;
 }

@@ -85,11 +85,13 @@ describe("gifSearchRoutes — GET /api/gifs/search", () => {
         return Response.json(tenorBody(),);
       },
     },);
+
     const res = await app.handle(new Request("http://localhost/api/gifs/search?q=cats&limit=5",),);
     expect(res.status,).toBe(200,);
     const body = await res.json() as {
       data: { id: string; title: string; url: string; previewUrl: string; width: number; height: number }[];
     };
+
     expect(body.data,).toHaveLength(1,);
     expect(body.data[0],).toEqual({
       id: "123",
@@ -99,6 +101,7 @@ describe("gifSearchRoutes — GET /api/gifs/search", () => {
       width: 200,
       height: 150,
     },);
+
     expect(seenUrl,).toContain("q=cats",);
     expect(seenUrl,).toContain("key=secret-key",);
     expect(seenUrl,).toContain("limit=5",);
@@ -110,6 +113,7 @@ describe("gifSearchRoutes — GET /api/gifs/search", () => {
       tenorApiKey: "k",
       fetchImpl: async () => new Response("", { status: 429, },),
     },);
+
     const res = await app.handle(new Request("http://localhost/api/gifs/search?q=cats",),);
     expect(res.status,).toBe(429,);
   });
@@ -120,6 +124,7 @@ describe("gifSearchRoutes — GET /api/gifs/search", () => {
       tenorApiKey: "k",
       fetchImpl: async () => new Response("", { status: 500, },),
     },);
+
     const res = await app.handle(new Request("http://localhost/api/gifs/search?q=cats",),);
     expect(res.status,).toBe(502,);
   });
@@ -132,6 +137,7 @@ describe("gifSearchRoutes — GET /api/gifs/search", () => {
         throw new Error("offline",);
       },
     },);
+
     const res = await app.handle(new Request("http://localhost/api/gifs/search?q=cats",),);
     expect(res.status,).toBe(502,);
   });
@@ -163,6 +169,7 @@ describe("normalizeGifResults", () => {
         { id: "c", media_formats: { gif: { url: "https://x/c.gif", }, }, },
       ],
     };
+
     const out = normalizeGifResults(body, 2,);
     expect(out.map((r,) => r.id),).toEqual(["a", "c",],);
     expect(out[0]!.previewUrl,).toBe("https://x/a.gif",);

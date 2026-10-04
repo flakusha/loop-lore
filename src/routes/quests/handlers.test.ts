@@ -60,11 +60,13 @@ describe("quest handlers", () => {
     ) {
       await insertActors(db, name, { id: id as never, actor_type: "user" as never, },);
     }
+
     await insertWorlds(db, "owner", "Quest World", { id: "world-1" as never, },);
     await insertChats(db, "Quest Chat", "owner", {
       id: "chat-q" as never,
       world_id: "world-1",
     },);
+
     await insertChatParticipants(db, "chat-q", "owner",);
   },);
 
@@ -102,6 +104,7 @@ describe("quest handlers", () => {
         id: "quest-1" as never,
         status: "completed" as never,
       },);
+
       const owner = await checkQuestAccess(db, "quest-1", "owner", "user",);
       expect(owner!.world_id,).toBe("world-1",);
       expect(await checkQuestAccess(db, "quest-1", "admin", "admin",),).not.toBeNull();
@@ -124,15 +127,18 @@ describe("quest handlers", () => {
         status: "active" as never,
         priority: 5 as never,
       },);
+
       await insertQuests(db, "world-1", "owner", "Quest B", "collection", 3, {
         id: "quest-3" as never,
         status: "active" as never,
         priority: 1 as never,
       },);
+
       await insertQuests(db, "world-1", "owner", "Quest C", "collection", 3, {
         id: "quest-4" as never,
         status: "completed" as never,
       },);
+
       const res = await handleListQuests(db, "world-1", 1, 10, "owner", "user",);
       const body = await jsonOf(res,);
       expect(body.pagination!.total,).toBe(2,);
@@ -162,6 +168,7 @@ describe("quest handlers", () => {
         type: "collection",
         target: 7,
       },);
+
       const body = await jsonOf(res,);
       expect(body.id,).toBeDefined();
       const row = await db.selectFrom("quests",).selectAll().where("id", "=", body.id as string,).executeTakeFirst();
@@ -188,6 +195,7 @@ describe("quest handlers", () => {
         priority: 9,
         rewards: { xp: 100, },
       },);
+
       const body = await jsonOf(res,);
       expect(body.name,).toBe("Renamed",);
       const row = await db.selectFrom("quests",).selectAll().where("id", "=", "quest-2",).executeTakeFirst();
@@ -240,6 +248,7 @@ describe("quest handlers", () => {
         id: "quest-5" as never,
         status: "active" as never,
       },);
+
       const res = await handleProgress(db, "quest-5", undefined, "owner", "user", { delta: 3, chatId: "chat-q", },);
       const body = await jsonOf(res,);
       expect(body.newProgress,).toBeGreaterThanOrEqual(3,);

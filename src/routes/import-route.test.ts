@@ -27,6 +27,7 @@ function createApp(db: Kysely<DB>,): Elysia {
     demoAutoSetup: false,
     jwtSecret: "test-secret",
   };
+
   return new Elysia({ name: "test-import-route", },)
     .use(importRoutes({ database: db, config: { auth, }, },),);
 }
@@ -65,6 +66,7 @@ function multipartRequest(file?: File,): Request {
     // Still multipart, but no "file" field.
     form.append("note", "no file here",);
   }
+
   return new Request("http://localhost/api/actors/import", {
     method: "POST",
     body: form,
@@ -101,6 +103,7 @@ describe("importRoutes — POST /api/actors/import", () => {
       .selectAll()
       .where("display_name", "=", "Import Test Char",)
       .executeTakeFirst();
+
     expect(actor,).toBeDefined();
     expect(actor?.description,).toBe("A character imported via multipart",);
     expect(actor?.personality,).toBe("brave",);
@@ -124,6 +127,7 @@ describe("importRoutes — POST /api/actors/import", () => {
       lore_entries_imported: number;
       warnings: string[];
     };
+
     expect(body.assets_imported,).toBe(0,);
     expect(body.lore_entries_imported,).toBe(0,);
     expect(Array.isArray(body.warnings,),).toBe(true,);
@@ -133,6 +137,7 @@ describe("importRoutes — POST /api/actors/import", () => {
       .select(["alternate_greetings", "appearance", "default_outfit", "outfits",],)
       .where("display_name", "=", "Import Test Char",)
       .executeTakeFirst();
+
     expect(actor?.appearance,).toBe("Tall ranger with weathered leathers",);
     expect(actor?.default_outfit,).toBe("ranger-gear",);
     expect(actor?.outfits,).toContain("ranger-gear",);
@@ -150,6 +155,7 @@ describe("importRoutes — POST /api/actors/import", () => {
     const res = await app.handle(
       multipartRequest(new File(["this is not a character card",], "bad.json", { type: "application/json", },),),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -162,6 +168,7 @@ describe("importRoutes — POST /api/actors/import", () => {
         body: JSON.stringify({ purpose: "no file", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 });

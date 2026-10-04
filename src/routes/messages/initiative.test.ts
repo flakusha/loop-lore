@@ -42,6 +42,7 @@ describe("persistInitiative", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await db.insertInto("actors",).values({
       id: actorId,
       actor_type: "user",
@@ -55,6 +56,7 @@ describe("persistInitiative", () => {
       growth_mode: "dynamic",
       llm_assist_enabled: 0,
     },).execute();
+
     for (const name of Object.values(labels,)) {
       await db.insertInto("chats",).values({
         id: `chat-${name}`,
@@ -62,16 +64,19 @@ describe("persistInitiative", () => {
         created_by: userId,
       },).execute();
     }
+
     await db.updateTable("chats",).set({ story_state: "", },).where("id", "=", `chat-${labels.emptyState}`,).execute();
     await db.updateTable("chats",)
       .set({ story_state: JSON.stringify({ currentSceneId: "tavern-brawl", },), },)
       .where("id", "=", `chat-${labels.validState}`,)
       .execute();
+
     await db.updateTable("chats",).set({ story_state: "{this is not json", },).where(
       "id",
       "=",
       `chat-${labels.brokenState}`,
     ).execute();
+
     await db.updateTable("chats",)
       .set({ story_state: JSON.stringify({ currentSceneId: "scene-A", },), },)
       .where("id", "=", `chat-${labels.multiScene}`,)
@@ -92,6 +97,7 @@ describe("persistInitiative", () => {
       .where("scene_id", "=", "main",)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row?.score,).toBe(1,);
   });
 
@@ -107,6 +113,7 @@ describe("persistInitiative", () => {
       .where("scene_id", "=", "main",)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row?.score,).toBe(3,);
   });
 
@@ -118,6 +125,7 @@ describe("persistInitiative", () => {
       .selectAll()
       .where("chat_id", "=", chat,)
       .executeTakeFirst();
+
     expect(row?.scene_id,).toBe("main",);
     expect(row?.score,).toBe(1,);
   });
@@ -130,6 +138,7 @@ describe("persistInitiative", () => {
       .selectAll()
       .where("chat_id", "=", chat,)
       .executeTakeFirst();
+
     expect(row?.scene_id,).toBe("tavern-brawl",);
     expect(row?.score,).toBe(1,);
   });
@@ -142,6 +151,7 @@ describe("persistInitiative", () => {
       .selectAll()
       .where("chat_id", "=", chat,)
       .executeTakeFirst();
+
     expect(row?.scene_id,).toBe("main",);
     expect(row?.score,).toBe(1,);
   });
@@ -153,6 +163,7 @@ describe("persistInitiative", () => {
       .set({ story_state: JSON.stringify({ currentSceneId: "scene-B", },), },)
       .where("id", "=", chat,)
       .execute();
+
     await persistInitiative(db, chat, actorId,);
     const rows = await db
       .selectFrom("group_initiatives",)
@@ -161,6 +172,7 @@ describe("persistInitiative", () => {
       .where("actor_id", "=", actorId,)
       .orderBy("scene_id",)
       .execute();
+
     expect(rows.length,).toBe(2,);
     expect(rows.map((r,) => r.scene_id).sort(),).toEqual(["scene-A", "scene-B",],);
     expect(rows.every((r,) => r.score === 1),).toBe(true,);

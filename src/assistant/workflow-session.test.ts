@@ -68,6 +68,7 @@ describe("workflow sessions", () => {
       formatTemplate: "Style: {value}",
       required: false,
     },);
+
     const session = startSession("chat-1", workflow,);
     expect(nextStepId(session,),).toBe("a",);
     session.run.values.a = "filled";

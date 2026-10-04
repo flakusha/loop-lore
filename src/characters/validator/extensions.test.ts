@@ -79,6 +79,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(warnings.some((w,) => w.code === "UNKNOWN_FLAG"),).toBe(true,);
     expect(errors,).toHaveLength(0,);
   });
@@ -91,6 +92,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(0,);
     expect(warnings,).toHaveLength(0,);
   });
@@ -103,6 +105,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(0,);
     expect(warnings,).toHaveLength(0,);
   });
@@ -115,6 +118,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(0,);
     expect(warnings,).toHaveLength(0,);
   });
@@ -127,6 +131,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.inventory[0]",);
     expect(errors[0]?.code,).toBe("INVALID_TYPE",);
@@ -142,6 +147,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.inventory[0]",);
     expect(errors[0]?.code,).toBe("INVALID_TYPE",);
@@ -157,6 +163,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.inventory[0].name",);
     expect(errors[0]?.code,).toBe("REQUIRED",);
@@ -171,6 +178,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.inventory[0].name",);
     expect(errors[0]?.code,).toBe("REQUIRED",);
@@ -186,6 +194,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.inventory[0].quantity",);
     expect(errors[0]?.code,).toBe("INVALID_VALUE",);
@@ -202,6 +211,7 @@ describe("validateExtensions", () => {
       warnings,
       "relaxed",
     );
+
     expect(errors,).toHaveLength(0,);
     expect(warnings,).toHaveLength(1,);
     expect(warnings[0]?.field,).toBe("extensions.inventory[0].quantity",);
@@ -218,6 +228,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.inventory[0].quantity",);
   });
@@ -231,6 +242,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(0,);
     expect(warnings,).toHaveLength(0,);
   });
@@ -244,6 +256,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.inventory[0].rarity",);
     expect(errors[0]?.code,).toBe("INVALID_VALUE",);
@@ -259,6 +272,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.inventory[0].rarity",);
   });
@@ -273,6 +287,7 @@ describe("validateExtensions", () => {
         warnings,
         "strict",
       );
+
       expect(errors,).toHaveLength(0,);
       expect(warnings,).toHaveLength(0,);
     }
@@ -287,6 +302,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(0,);
   });
 
@@ -299,6 +315,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.inventory[0].weight",);
     expect(errors[0]?.message,).toContain("must",);
@@ -313,6 +330,7 @@ describe("validateExtensions", () => {
       warnings,
       "relaxed",
     );
+
     expect(errors,).toHaveLength(0,);
     expect(warnings,).toHaveLength(1,);
     expect(warnings[0]?.field,).toBe("extensions.inventory[0].weight",);
@@ -328,6 +346,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(0,);
     expect(warnings,).toHaveLength(0,);
   });
@@ -340,6 +359,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.relationships[0]",);
     expect(errors[0]?.code,).toBe("INVALID_TYPE",);
@@ -353,6 +373,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.relationships[0]",);
   });
@@ -366,6 +387,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.relationships[0].type",);
     expect(errors[0]?.code,).toBe("INVALID_VALUE",);
@@ -396,6 +418,7 @@ describe("validateExtensions", () => {
         warnings,
         "strict",
       );
+
       expect(errors,).toHaveLength(0,);
       expect(warnings,).toHaveLength(0,);
     }
@@ -410,6 +433,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.relationships[0].strength",);
     expect(errors[0]?.message,).toContain("must",);
@@ -424,6 +448,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.relationships[0].strength",);
   });
@@ -437,6 +462,7 @@ describe("validateExtensions", () => {
       warnings,
       "relaxed",
     );
+
     expect(errors,).toHaveLength(0,);
     expect(warnings,).toHaveLength(1,);
     expect(warnings[0]?.field,).toBe("extensions.relationships[0].strength",);
@@ -452,6 +478,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.relationships[0].strength",);
   });
@@ -466,6 +493,7 @@ describe("validateExtensions", () => {
         warnings,
         "strict",
       );
+
       expect(errors,).toHaveLength(0,);
       expect(warnings,).toHaveLength(0,);
     }
@@ -480,6 +508,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(1,);
     expect(errors[0]?.field,).toBe("extensions.relationships[0].target_type",);
     expect(errors[0]?.code,).toBe("INVALID_VALUE",);
@@ -495,6 +524,7 @@ describe("validateExtensions", () => {
         warnings,
         "strict",
       );
+
       expect(errors,).toHaveLength(0,);
       expect(warnings,).toHaveLength(0,);
     }
@@ -509,6 +539,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors,).toHaveLength(0,);
   });
 
@@ -524,6 +555,7 @@ describe("validateExtensions", () => {
       warnings,
       "strict",
     );
+
     expect(errors.some((e,) => e.field === "extensions.inventory[0]"),).toBe(true,);
     expect(errors.some((e,) => e.field === "extensions.inventory[2].quantity"),).toBe(true,);
     expect(errors.some((e,) => e.field === "extensions.inventory[1]"),).toBe(false,);
@@ -550,6 +582,7 @@ describe("validateFeatureFlags", () => {
       assets: true,
       nsfw: false,
     };
+
     validateFeatureFlags(flags, errors, warnings, "strict",);
     expect(errors,).toHaveLength(0,);
     expect(warnings,).toHaveLength(0,);

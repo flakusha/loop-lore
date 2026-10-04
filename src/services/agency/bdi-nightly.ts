@@ -27,6 +27,7 @@ try {
 } catch {
   createLogger({ level: "error", },);
 }
+
 const log = getLogger().child({ module: "agency/bdi-nightly", },);
 
 /** Cost-aware plan generator. Caller injects (default: deterministic stub). */
@@ -100,6 +101,7 @@ export async function runNightlyReflectionCycle(
         after: next.priority,
         reason: "nightly reflection",
       },);
+
       summary.revisionsEmitted += 1;
     }
 
@@ -130,6 +132,7 @@ async function insertPlan(
       created_at: sql`datetime('now')`,
     },)
     .execute();
+
   for (const a of next.activities) {
     await db
       .insertInto("actor_planned_activities",)
@@ -165,6 +168,7 @@ async function actorWorldId(db: Kysely<DB>, actorId: string,): Promise<string | 
     .where("actor_id", "=", actorId,)
     .orderBy("world_id", "asc",)
     .executeTakeFirst();
+
   return row?.world_id ?? null;
 }
 
@@ -200,6 +204,7 @@ export async function recordChatTurn(
     .where("actor_id", "=", actorId,)
     .where("partner_actor_id", "=", partnerActorId,)
     .executeTakeFirst();
+
   if (!existing) {
     const id = await newId(db,);
     await db
@@ -214,6 +219,7 @@ export async function recordChatTurn(
         max_consecutive_chats: 3,
       },)
       .execute();
+
     return { allowed: true, };
   }
 
@@ -226,14 +232,17 @@ export async function recordChatTurn(
       cooldownRemainingMs: (existing.cooldown_minutes - elapsedMin) * 60_000,
     };
   }
+
   if (existing.consecutive_count >= existing.max_consecutive_chats && elapsedMin < existing.cooldown_minutes * 2) {
     return { allowed: false, reason: "consecutive_cap", };
   }
+
   const nextCount = elapsedMin >= existing.cooldown_minutes * 2 ? 1 : existing.consecutive_count + 1;
   await db
     .updateTable("actor_chat_buffers",)
     .set({ last_chat_at: now.toISOString(), consecutive_count: nextCount, },)
     .where("id", "=", existing.id,)
     .execute();
+
   return { allowed: true, };
 }

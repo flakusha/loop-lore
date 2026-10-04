@@ -58,6 +58,7 @@ describe("createRequestHandler policy wiring", () => {
     const res = await handler(
       new Request("http://localhost/api/v1/chats", { headers: { "accept-encoding": "br", }, },),
     );
+
     expect(res.headers.get("content-encoding",),).toBe("br",);
     expect(res.headers.get("vary",),).toContain("Accept-Encoding",);
   });
@@ -67,6 +68,7 @@ describe("createRequestHandler policy wiring", () => {
       "content-type": "application/json",
       "cache-control": "no-store",
     },);
+
     const handler = createRequestHandler(app, config, logger,);
 
     const res = await handler(new Request("http://localhost/api/auth/me",),);

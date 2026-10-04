@@ -30,6 +30,7 @@ function makeContext(agentRole: string | null,): AssembleContext {
 afterAll(() => {
   registry.unregisterAll();
 },);
+
 describe("pluginAgentRoleSection", () => {
   beforeEach(() => {
     registry.unregisterAll();
@@ -51,6 +52,7 @@ describe("pluginAgentRoleSection", () => {
       origin: "core",
       directory: "/tmp/card-battle",
     },);
+
     registry.addAgentRoles("card-battle", [
       {
         id: "card-battler",
@@ -79,6 +81,7 @@ describe("pluginAgentRoleSection", () => {
       origin: "community",
       directory: "/tmp/p",
     },);
+
     registry.addAgentRoles("p", [
       { id: "empty", name: "Empty", description: "", systemPrompt: "", tools: [], },
     ],);

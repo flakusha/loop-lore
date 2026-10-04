@@ -15,6 +15,7 @@ describe("Domain Config Loading", () => {
     // --isolate processes skip that, so init here explicitly.
     createLogger({ level: "error", },);
   },);
+
   test("loads domain-specific config files from configs/", () => {
     // Create test configs directory
     mkdirSync(path.join(TEST_DIR, "configs",), { recursive: true, },);
@@ -24,6 +25,7 @@ describe("Domain Config Loading", () => {
       path.join(TEST_DIR, "configs", "config.server.toml",),
       '[server]\nport = 8080\nhost = "0.0.0.0"\n',
     );
+
     writeFileSync(
       path.join(TEST_DIR, "configs", "config.database.toml",),
       '[db]\ntype = "sqlite"\nsqliteFilename = "./test.db"\n',
@@ -91,6 +93,7 @@ describe("Domain Config Loading", () => {
       path.join(TEST_DIR, "configs", "config.server.yaml",),
       "server:\n  port: 8080\n",
     );
+
     writeFileSync(
       path.join(TEST_DIR, "configs", "config.server.toml",),
       "[server]\nport = 9090\n",

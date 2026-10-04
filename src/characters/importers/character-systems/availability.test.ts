@@ -45,15 +45,18 @@ describe("importAvailability", () => {
       id: crypto.randomUUID(),
       display_name: "Test-Avail-1",
     },).executeTakeFirstOrThrow();
+
     void a1;
     const a2 = await db.insertInto("actors",).values({
       id: crypto.randomUUID(),
       display_name: "Test-Avail-2",
     },).executeTakeFirstOrThrow();
+
     void a2;
     const rows = await db.selectFrom("actors",).select(["id",],)
       .where("display_name", "in", ["Test-Avail-1", "Test-Avail-2",],)
       .orderBy("display_name",).execute();
+
     actorId = rows[0]!.id;
     otherActorId = rows[1]!.id;
   },);
@@ -69,6 +72,7 @@ describe("importAvailability", () => {
     expect(result.errors,).toEqual([],);
     const row = await db.selectFrom("character_availability",).selectAll()
       .where("actor_id", "=", actorId,).executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 
@@ -86,6 +90,7 @@ describe("importAvailability", () => {
     expect(result.errors,).toEqual([],);
     const row = await db.selectFrom("character_availability",).selectAll()
       .where("actor_id", "=", actorId,).executeTakeFirstOrThrow();
+
     expect(row.status,).toBe("available",);
     expect(row.usage_policy,).toBe('{"allowCopy":true}',);
     expect(row.activity_restrictions,).toBe('{"sfw":true}',);
@@ -102,6 +107,7 @@ describe("importAvailability", () => {
       contentPolicy: {},
       nsfwPolicy: {},
     }, result,);
+
     expect(result.availabilityImported,).toBe(true,);
 
     // Second call should hit the update branch.
@@ -113,10 +119,12 @@ describe("importAvailability", () => {
       contentPolicy: {},
       nsfwPolicy: {},
     }, updateResult,);
+
     expect(updateResult.availabilityImported,).toBe(true,);
 
     const rows = await db.selectFrom("character_availability",).selectAll()
       .where("actor_id", "=", otherActorId,).execute();
+
     // Still a single row, status has been overwritten.
     expect(rows.length,).toBe(1,);
     expect(rows[0]!.status,).toBe("offline",);

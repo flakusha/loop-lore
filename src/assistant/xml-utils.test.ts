@@ -165,10 +165,12 @@ describe("format — injection resistance", () => {
           expect(closeCount,).toBe(1,);
           break;
         }
+
         case "fence": {
           expect(wrapped.endsWith("```",),).toBe(true,);
           break;
         }
+
         case "sentinel": {
           const closeCount = wrapped.split("<</lore>>",).length - 1;
           expect(closeCount,).toBe(1,);

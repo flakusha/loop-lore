@@ -48,6 +48,7 @@ export function compareMigrationNames(a: string, b: string,): number {
     if (an !== bn) { return an - bn; }
   } else if (!Number.isNaN(an,)) { return -1; }
   else if (!Number.isNaN(bn,)) { return 1; }
+
   return a < b ? -1 : a > b ? 1 : 0;
 }
 
@@ -69,6 +70,7 @@ export async function getMigrationFiles(): Promise<Record<string, Migration>> {
     if (!MIGRATION_FILENAME.test(f,)) { continue; }
     matched.push(f,);
   }
+
   const files = matched.toSorted(compareMigrationNames,);
   const migrations: Record<string, Migration> = {};
   for (const file of files) {
@@ -77,6 +79,7 @@ export async function getMigrationFiles(): Promise<Record<string, Migration>> {
 
     migrations[name] = module.default ?? module;
   }
+
   return migrations;
 }
 
@@ -110,6 +113,7 @@ export async function assertMigrationsNotStale<DB,>(
     if (!(error instanceof Error) || !error.message.includes("no such table",)) {
       throw error;
     }
+
     applied = [];
   }
 
@@ -117,6 +121,7 @@ export async function assertMigrationsNotStale<DB,>(
   for (const name of applied) {
     if (!(name in migrations)) { missing.push(name,); }
   }
+
   missing.sort((a, b,) => a.localeCompare(b,));
   if (missing.length === 0) { return; }
 
@@ -126,6 +131,7 @@ export async function assertMigrationsNotStale<DB,>(
     undefined,
     { missing, },
   );
+
   throw new Error(
     `Database has ${missing.length} applied migration(s) missing from src/db/migrations/:\n${
       Array.from(missing, (name,) => `  - ${name}`,).join("\n",)
@@ -162,6 +168,7 @@ export async function runMigrations(database: ReturnType<typeof getDatabase>,): 
       log.info(`Migration ${result.migrationName}: ${result.status}`,);
     }
   }
+
   if (error) {
     log.error("Migration failed", error instanceof Error ? error : undefined,);
     throw new Error("Migration failed — see above", { cause: error, },);

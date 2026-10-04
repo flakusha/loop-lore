@@ -25,9 +25,11 @@ beforeAll(async () => {
   await insertActorMemories(db, actorId, "the dragon hoard lies under the mountain", {
     id: dragonId,
   } as never,);
+
   await insertActorMemories(db, actorId, "tavern ledger shows unpaid tabs", {
     id: ledgerId,
   } as never,);
+
   await storeEmbedding(db, dragonId, new Float32Array([1, 0, 0,],),);
   await storeEmbedding(db, ledgerId, new Float32Array([0, 1, 0,],),);
 },);
@@ -46,6 +48,7 @@ describe("search/providers/memories (keyword)", () => {
     expect(hits.map((h,) => h.id),).toContain(dragonId,);
     expect(hits.map((h,) => h.id),).not.toContain(ledgerId,);
   });
+
   test("other actors see nothing", () => {
     const { keyword, } = createMemoryProviders(db,);
     expect(
@@ -59,6 +62,7 @@ describe("search/providers/memories (vector)", () => {
     const { vector, } = createMemoryProviders(db, {
       embedQuery: async () => new Float32Array([1, 0, 0,],),
     },);
+
     const hits = await vector({ q: "anything", mode: "vector", minScore: 0, }, { ...scope, actorId, },);
     expect(hits[0]?.id,).toBe(dragonId,);
     expect(hits[0]?.score,).toBeCloseTo(1,);

@@ -97,6 +97,7 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
     enabled: config.enabled ?? true,
     bypassHeader: config.bypassHeader ?? true,
   };
+
   const backend: IdempotencyBackendApi = cfg.backend === "table"
     ? createTableBackend(cfg.ttlMs, requireAsyncStore(config, "table",),)
     : createMemoryBackend(cfg.ttlMs,);
@@ -113,11 +114,13 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
       if (cfg.bypassHeader && ctx.request.headers.get(IDEMPOTENCY_BYPASS_HEADER,) === "1") {
         return undefined; // client asked to bypass the cache
       }
+
       // Only mutating methods are idempotent. GET/HEAD/OPTIONS always run.
       const method = ctx.request.method.toUpperCase();
       if (method === "GET" || method === "HEAD" || method === "OPTIONS") {
         return undefined;
       }
+
       const requestId = ctx.requestId ?? ctx.request.headers.get("x-request-id",);
       if (!requestId) { return undefined; } // no id ⇒ not idempotent
       if (!isValidRequestId(requestId,)) { return undefined; }
@@ -134,6 +137,7 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
           code: ErrorCode.Conflict,
         },);
       }
+
       if (existing && existing.completedAt !== null) {
         // Replay verbatim: status + headers + body. Whitelist the headers we
         // copy (skip Set-Cookie — a replay must NOT mint a new session).
@@ -143,6 +147,7 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
           headers: replayHeaders,
         },);
       }
+
       // First time on this key — reserve the slot. The handler will call
       // `recordResponse` (or the Elysia afterHandle hook) to capture the
       // actual response.
@@ -175,6 +180,7 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
         backend.release(key, meta,);
         return;
       }
+
       // Clone before reading the body so the original response (sent to the
       // client) is not consumed. `.text()` locks the stream.
       //
@@ -191,6 +197,7 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
         snapshot.headers.forEach((value, name,) => {
           headers[name] = value;
         },);
+
         backend.recordResponse(key, meta, {
           status: snapshot.status,
           headers,
@@ -248,6 +255,7 @@ function requireAsyncStore(config: IdempotencyConfig, backend: "table",): AsyncS
         `pass \`createAsyncStore(database)\` from src/async/.`,
     );
   }
+
   return config.asyncStore;
 }
 

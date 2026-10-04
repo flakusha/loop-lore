@@ -44,6 +44,7 @@ beforeEach(() => {
       return cookie;
     },
   } as unknown as Document;
+
   (globalThis as { location: unknown }).location = {
     get pathname() {
       return locPathname;
@@ -55,6 +56,7 @@ beforeEach(() => {
       locAssigns.push(url,);
     },
   };
+
   (globalThis as { fetch: unknown }).fetch = (url: string, opts?: FetchOpts,) => {
     calls.push({ url, opts: opts as FetchOpts, },);
     return fetchImpl(url, opts,);
@@ -248,6 +250,7 @@ describe("error paths", () => {
       e.name = "AbortError";
       throw e;
     };
+
     const { feFetch, } = await importFeFetch();
     const err = await feFetch("/x",).catch((e,) => e);
     expect(err,).toBeInstanceOf(Error,);
@@ -279,6 +282,7 @@ describe("option passthrough", () => {
       keepalive: true,
       headers: { "X-Custom": "1", },
     },);
+
     expect(calls[0]!.url,).toBe("/x",);
     const opts = calls[0]!.opts;
     expect(opts.method,).toBe("POST",);

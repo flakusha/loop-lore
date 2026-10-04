@@ -56,6 +56,7 @@ describe("decide gaps — privacy gate", () => {
       DEFAULT_INJECTION_CONFIG,
       makeCtx({ randomFn: () => 0, },),
     );
+
     expect(d.inject,).toBe(false,);
     expect(d.probability,).toBe(0,);
     expect(d.reason,).toBe("privacy:absolute_never_shared",);
@@ -67,6 +68,7 @@ describe("decide gaps — privacy gate", () => {
       DEFAULT_INJECTION_CONFIG,
       makeCtx({ randomFn: () => 0, },),
     );
+
     expect(d.inject,).toBe(false,);
     expect(d.reason,).toBe("privacy:absolute_never_shared",);
   });
@@ -81,6 +83,7 @@ describe("decide gaps — cooldown", () => {
       DEFAULT_COMFORT,
       9,
     );
+
     expect(d.inject,).toBe(false,);
     expect(d.probability,).toBe(0,);
     expect(d.reason,).toBe("cooldown: 2 turns remaining",);
@@ -94,6 +97,7 @@ describe("decide gaps — cooldown", () => {
       DEFAULT_COMFORT,
       7,
     );
+
     expect(d.inject,).toBe(true,);
     expect(d.probability,).toBeCloseTo(0.35, 10,);
   });
@@ -126,6 +130,7 @@ describe("decide gaps — secret intimacy gate", () => {
       DEFAULT_INJECTION_CONFIG,
       makeCtx({ averageIntimacy: 10, randomFn: () => 0, },),
     );
+
     expect(d.inject,).toBe(false,);
     expect(d.probability,).toBe(0,);
     expect(d.reason,).toBe("intimacy:10 < threshold:50",);
@@ -137,6 +142,7 @@ describe("decide gaps — secret intimacy gate", () => {
       DEFAULT_INJECTION_CONFIG,
       makeCtx({ averageIntimacy: 80, randomFn: () => 0.5, },),
     );
+
     expect(d.probability,).toBeCloseTo(0.126, 10,);
     expect(d.inject,).toBe(false,);
   });
@@ -147,6 +153,7 @@ describe("decide gaps — secret intimacy gate", () => {
       DEFAULT_INJECTION_CONFIG,
       makeCtx({ averageIntimacy: 80, randomFn: () => 0, },),
     );
+
     expect(d.probability,).toBeCloseTo(0.105, 10,);
     expect(d.inject,).toBe(true,);
   });
@@ -161,6 +168,7 @@ describe("decide gaps — trauma resistance", () => {
       DEFAULT_INJECTION_CONFIG,
       ctx,
     );
+
     expect(calm.probability,).toBeCloseTo(0.42, 10,);
     expect(heavy.probability,).toBeCloseTo(0.315, 10,);
   });

@@ -67,6 +67,7 @@ describe("Search & filtering E2E", () => {
           /Failed to load resource.*403/,
         ],
       },);
+
       try {
         await gotoGallery(page,);
 
@@ -105,6 +106,7 @@ describe("Search & filtering E2E", () => {
       const errors = trackPageErrors(page, {
         allowlist: [/Failed to load resource.*403/, /Failed to load resource.*404/,],
       },);
+
       try {
         // Wait for chatState.init() → loadChats() to populate the seeded solo chat.
         await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
@@ -125,6 +127,7 @@ describe("Search & filtering E2E", () => {
             new MouseEvent("click", { bubbles: true, },),
           );
         },);
+
         await page.locator(".chat-list-search",).waitFor({ state: "attached", timeout: 10_000, },);
 
         // Filter on a query that DOES NOT match — filteredChats should be empty.
@@ -206,12 +209,14 @@ describe("Search & filtering E2E", () => {
       const errors = trackPageErrors(page, {
         allowlist: [/Failed to load resource.*403/, /Failed to load resource.*404/,],
       },);
+
       try {
         // Open the seeded chat via the URL parameter so activeChat is set.
         await page.goto(`${ctx.url}/views/chat?chatid=${SEED.soloChat.id}`, {
           waitUntil: "domcontentloaded",
           timeout: 30_000,
         },);
+
         await waitForAlpineState(
           page,
           "[x-data='chatState()']",
@@ -223,6 +228,7 @@ describe("Search & filtering E2E", () => {
         await page.evaluate(
           () => (globalThis as { toggleMessageSearch?: () => void }).toggleMessageSearch?.(),
         );
+
         const searchInput = page.locator("[data-testid='message-search-input']",);
         await searchInput.waitFor({ state: "attached", timeout: 5_000, },);
         await searchInput.fill(needle,);

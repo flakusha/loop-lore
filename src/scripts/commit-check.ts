@@ -145,6 +145,7 @@ function getCommitsSinceLastTag(): string[] {
     const tag = execSync("git describe --tags --abbrev=0 2>/dev/null || echo ''", {
       encoding: "utf-8",
     },).trim();
+
     const range = tag ? `${tag}..HEAD` : "";
     const result = execSync(`git log --pretty=format:%s --no-merges ${range}`, { encoding: "utf-8", },);
     return result.split("\n",).filter(Boolean,);
@@ -161,11 +162,13 @@ async function main(): Promise<void> {
   const parser = object({
     all: withDefault(flag("--all", "--staged",), false,),
   },);
+
   const args = runScript(parser, {
     programName: "commit-check",
     brief: "Validate commits against conventional-commit rules (used as githook).",
     help: "option",
   },);
+
   const hookMode = !args.all && !process.stdin.isTTY;
 
   // Hook mode: read single commit from stdin
@@ -175,10 +178,12 @@ async function main(): Promise<void> {
     if (commitInfo.valid) {
       process.exit(0,);
     }
+
     console.log("Invalid commit message:",);
     for (const warn of commitInfo.warnings) {
       console.log(`  ${warn}`,);
     }
+
     process.exit(1,);
   }
 

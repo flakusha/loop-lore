@@ -89,6 +89,7 @@ export function safeJsonStringify(
         // value is not a valid JSON string — stringify as-is
       }
     }
+
     return { ok: true, value: JSON.stringify(toStringify, null, space,), };
   } catch (error) {
     return { ok: false, error: asError(error,), };

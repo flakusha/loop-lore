@@ -80,6 +80,7 @@ describe("chats turn-skip-routes", () => {
         body: JSON.stringify({ mode: "hold", reason: "thinking", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { ok: boolean; mode: string; deduped: boolean };
     expect(body.ok,).toBe(true,);
@@ -96,6 +97,7 @@ describe("chats turn-skip-routes", () => {
         body: JSON.stringify({ mode: "hold", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -108,6 +110,7 @@ describe("chats turn-skip-routes", () => {
         body: JSON.stringify({ mode: "hold", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -123,8 +126,10 @@ describe("chats turn-skip-routes", () => {
           body: JSON.stringify({ mode: "hold", },),
         },),
       );
+
       last = res.status;
     }
+
     expect(last,).toBe(429,);
   });
 

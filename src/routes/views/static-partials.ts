@@ -18,6 +18,7 @@ function serveStaticPartial(name: string, searchParams?: URLSearchParams,): stri
     if (searchParams?.has("worldId",)) {
       content = content.replace("{{worldId}}", () => searchParams.get("worldId",)!,);
     }
+
     return content;
   }
 

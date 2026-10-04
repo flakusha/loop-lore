@@ -29,14 +29,17 @@ const server = Bun.serve({
     if (new URL(req.url,).pathname !== "/rerank") {
       return new Response("not found", { status: 404, },);
     }
+
     lastBody = await req.json() as typeof lastBody;
     if (rawBody !== undefined) { return Response.json(rawBody,); }
     if (nextRerank === null) {
       return Response.json({ error: "reranker not loaded", }, { status: 500, },);
     }
+
     if ("error" in nextRerank) {
       return Response.json(nextRerank, { status: 500, },);
     }
+
     return Response.json(nextRerank,);
   },
 },);
@@ -64,6 +67,7 @@ afterAll(() => {
     if (value === undefined) { delete process.env[key]; }
     else { process.env[key] = value; }
   }
+
   void server.stop(true,);
 },);
 

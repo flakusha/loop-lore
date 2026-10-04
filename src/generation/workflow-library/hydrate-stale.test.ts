@@ -87,6 +87,7 @@ describe("hydrateWorkflowRegistry is authoritative", () => {
       .set({ enabled: "disabled", },)
       .where("id", "=", "w-disable",)
       .execute();
+
     await hydrateWorkflowRegistry(db, registry,);
 
     expect(registry.listAll().map((t,) => t.id),).not.toContain("w-disable",);

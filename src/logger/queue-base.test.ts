@@ -27,6 +27,7 @@ class TestQueue extends AsyncLogQueueBase {
     } finally {
       this.flushing = false;
     }
+
     this.flushedEntries.push(...this.buffer.splice(0, this.buffer.length,),);
   }
 
@@ -74,6 +75,7 @@ describe("AsyncLogQueueBase", () => {
       batchSize: 10,
       queueMaxSize: 500,
     },);
+
     expect(queue["flushInterval"],).toBe(200,);
     expect(queue["batchSize"],).toBe(10,);
     expect(queue["queueMaxSize"],).toBe(500,);
@@ -227,6 +229,7 @@ describe("AsyncLogQueueBase", () => {
         time: "20260704T143000.123+02:00",
         message: `msg ${i}`,
       };
+
       queue.enqueue(entry,);
       entries.push(entry,);
     }

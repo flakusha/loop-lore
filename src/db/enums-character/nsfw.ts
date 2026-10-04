@@ -75,6 +75,7 @@ const nsfwEncounterStatusDef: StateDef<NsfwEncounterStatus> = {
   },
   terminal: ["completed",],
 };
+
 export const nsfwEncounterStatusMachine = createMachine(nsfwEncounterStatusDef,);
 
 // ── NSFW Content Intensity ───────────────────────────────

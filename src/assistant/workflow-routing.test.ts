@@ -52,6 +52,7 @@ describe("matchWorkflowIntent", () => {
       dispatch: { backend: "assistant-create", target: `/create ${target}`, payloadTemplate: {}, },
     };
   }
+
   const NPC = makeEntityWorkflow("entity-npc", "npc", "npc",);
   const ITEM = makeEntityWorkflow("entity-item", "item", "item",);
 
@@ -91,6 +92,7 @@ describe("matchWorkflowIntent", () => {
       ...ITEM,
       intent: { type: "tool_exec", target: "summarize", },
     };
+
     expect(matchWorkflowIntent("summarize this please", [TOOL,],),).toBeUndefined();
   });
 });
@@ -102,6 +104,7 @@ describe("routeAssistantMessage", () => {
       workflows: [VIDEO,],
       isStoryMode: true,
     },);
+
     expect(target,).toEqual({ kind: "command", name: "create", },);
   });
 
@@ -111,6 +114,7 @@ describe("routeAssistantMessage", () => {
       workflows: [VIDEO,],
       isStoryMode: true,
     },);
+
     expect(target.kind,).toBe("workflow",);
     if (target.kind === "workflow") {
       expect(target.workflow.id,).toBe("video-minimax-h3",);
@@ -121,6 +125,7 @@ describe("routeAssistantMessage", () => {
     expect(routeAssistantMessage({ message: "hello all", workflows: [], isStoryMode: true, },),).toEqual({
       kind: "gm",
     },);
+
     expect(routeAssistantMessage({ message: "hello all", workflows: [], isStoryMode: false, },),).toEqual({
       kind: "chat",
     },);
@@ -140,6 +145,7 @@ describe("withShadowSteering", () => {
     expect(withShadowSteering("prompt", "<shadow_notes>x</shadow_notes>",),).toBe(
       "prompt\n\n<shadow_notes>x</shadow_notes>",
     );
+
     expect(withShadowSteering("prompt", "   ",),).toBe("prompt",);
   });
 });

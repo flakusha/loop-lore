@@ -38,6 +38,7 @@ describe("resolveMattingProvider", () => {
     const provider = resolveMattingProvider(
       makeConfig({ backend: "rembg", endpoint: "http://127.0.0.1:7000", model: "isnet", },),
     );
+
     expect(provider?.name,).toBe("rembg:isnet",);
   });
 
@@ -45,6 +46,7 @@ describe("resolveMattingProvider", () => {
     const provider = resolveMattingProvider(
       makeConfig({ backend: "http", endpoint: "http://127.0.0.1:9000/mat", },),
     );
+
     expect(provider?.name,).toBe("http",);
   });
 
@@ -55,6 +57,7 @@ describe("resolveMattingProvider", () => {
         [comfyProvider, { name: "llama", apiFamily: "sdcpp", endpoint: "http://x", },],
       ),
     );
+
     expect(provider?.name,).toBe("comfy:birefnet.safetensors",);
   });
 
@@ -62,11 +65,13 @@ describe("resolveMattingProvider", () => {
     const rembg = resolveMattingProvider(
       makeConfig({ backend: "auto", endpoint: "http://r", model: "isnet", },),
     );
+
     expect(rembg?.name,).toBe("rembg:isnet",);
 
     const http = resolveMattingProvider(
       makeConfig({ backend: "auto", endpoint: "http://e", },),
     );
+
     expect(http?.name,).toBe("http",);
 
     expect(resolveMattingProvider(makeConfig({ backend: "auto", },),),).toBeNull();

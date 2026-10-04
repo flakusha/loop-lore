@@ -29,5 +29,6 @@ export function decodeTextChunk(
   const value = chunkType === ZTXTSIG && buf[valStart] === 0
     ? new TextDecoder().decode(buf.slice(valStart + 1, dataEnd,),)
     : new TextDecoder().decode(buf.slice(valStart, dataEnd,),);
+
   return { key, value, };
 }

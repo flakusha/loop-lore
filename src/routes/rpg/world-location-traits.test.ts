@@ -45,6 +45,7 @@ describe("world & location traits (auth-gated)", () => {
       "Traitsmith",
       { id: userId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     worldId = uid();
     await insertWorlds(db, userId, "Trait World", { id: worldId, } as never,);
     actorId = uid();
@@ -80,6 +81,7 @@ describe("world & location traits (auth-gated)", () => {
     if (typeof body === "object" && body !== null && "id" in body && typeof body.id === "string") {
       return body.id;
     }
+
     throw new Error("response missing string id",);
   }
 
@@ -98,6 +100,7 @@ describe("world & location traits (auth-gated)", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     expect(readId(await json(res,),),).toBeString();
   });
@@ -107,6 +110,7 @@ describe("world & location traits (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/world-location-traits/worlds/${worldId}?actorId=${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { traits?: unknown[] };
     expect(Array.isArray(body.traits,),).toBe(true,);
@@ -127,6 +131,7 @@ describe("world & location traits (auth-gated)", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const id = readId(await json(res,),);
 
@@ -137,6 +142,7 @@ describe("world & location traits (auth-gated)", () => {
         body: JSON.stringify({ bonus: 5, },),
       },),
     );
+
     expect(upRes.status,).toBe(200,);
   });
 
@@ -145,6 +151,7 @@ describe("world & location traits (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/world-location-traits/locations/${locationId}?actorId=${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { traits?: unknown[] };
     expect(Array.isArray(body.traits,),).toBe(true,);
@@ -156,6 +163,7 @@ describe("world & location traits (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/world-location-traits/actors/${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { worldTraits?: unknown[]; locationTraits?: unknown[] };
     expect(Array.isArray(body.worldTraits,),).toBe(true,);
@@ -168,6 +176,7 @@ describe("world & location traits (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/world-location-traits/worlds/${worldId}?actorId=${actorId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

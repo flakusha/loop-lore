@@ -106,6 +106,7 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
       aiParticipants.push(p,);
     }
   }
+
   if (aiParticipants.length === 0) { return null; }
 
   // @mention override: if user mentioned someone, they get priority
@@ -143,6 +144,7 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
   const strategyConsultsClassifier = strategy === undefined ||
     strategy === TurnStrategy.QuestDriven ||
     strategy === TurnStrategy.Hybrid;
+
   let classifierPick: TurnClassifierPick | null = null;
   if (config && strategyConsultsClassifier) {
     classifierPick = await resolveTurnClassifierPick({

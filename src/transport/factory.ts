@@ -69,6 +69,7 @@ export function createProtocol(config: TransportConfig,): ProtocolHandler {
         host: config.host,
         tls: config.tls,
       },);
+
       break;
     }
 
@@ -78,6 +79,7 @@ export function createProtocol(config: TransportConfig,): ProtocolHandler {
         host: config.host,
         tls: config.tls,
       },);
+
       break;
     }
 
@@ -86,6 +88,7 @@ export function createProtocol(config: TransportConfig,): ProtocolHandler {
         port: config.port,
         host: config.host,
       },);
+
       break;
     }
 

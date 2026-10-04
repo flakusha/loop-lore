@@ -44,6 +44,7 @@ describe("Import E2E", () => {
       },
       "imported.json",
     );
+
     const form = new FormData();
     form.append("file", file,);
 
@@ -69,6 +70,7 @@ describe("Import E2E", () => {
       },
       "imported.yaml",
     );
+
     const form = new FormData();
     form.append("file", file,);
 
@@ -92,6 +94,7 @@ describe("Import E2E", () => {
       },
       "imported.yml",
     );
+
     const form = new FormData();
     form.append("file", file,);
 
@@ -107,6 +110,7 @@ describe("Import E2E", () => {
       '[character]\nname = "Imported TOML"\ndescription = "via multipart"\npersonality = "Bold and curious"\n' +
       'appearance = "Tall figure with sharp features"\ndefault_outfit = "travel-gear"\n' +
       '[[character.outfits]]\nid = "travel-gear"\nname = "Travel Gear"\ndescriptor = "Sturdy clothes"\n';
+
     const file = new File([toml,], "test.toml", { type: "application/toml", },);
     const form = new FormData();
     form.append("file", file,);
@@ -159,6 +163,7 @@ describe("Import E2E", () => {
       },
       "noname.json",
     );
+
     const form = new FormData();
     form.append("file", file,);
 

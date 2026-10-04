@@ -44,6 +44,7 @@ describe("createBattleTerrain", () => {
       avoidable: true,
       avoidanceDC: 0,
     },);
+
     expect(b.hazards,).toEqual([],);
   });
 });

@@ -58,15 +58,18 @@ describeOrSkip("per-sender inbound keys", () => {
       content: plaintext,
       cipher: pskCipher(first,),
     },);
+
     expect(new TextDecoder().decode(await openEnvelope(sealedOld, ciphers[1]!,),),).toBe(
       plaintext,
     );
+
     const sealedNew = await sealContent({
       id: "g2",
       origin: "https://a.example",
       content: plaintext,
       cipher: pskCipher(rotated,),
     },);
+
     expect(new TextDecoder().decode(await openEnvelope(sealedNew, ciphers[0]!,),),).toBe(
       plaintext,
     );
@@ -102,12 +105,15 @@ describeOrSkip("per-sender inbound keys", () => {
     await expect(getOrCreateInboundKey(db, key, "not a url",),).rejects.toThrow(
       "invalid sender origin",
     );
+
     await expect(rotateInboundKey(db, key, "not a url",),).rejects.toThrow(
       "invalid sender origin",
     );
+
     await expect(revokeInboundKey(db, "not a url",),).rejects.toThrow(
       "invalid sender origin",
     );
+
     expect(generateInboundKey(),).toHaveLength(44,);
   });
 },);

@@ -35,6 +35,7 @@ describe("dropOverBudgetSections", () => {
       section("postHistory", 80,),
       section("examples", 200,),
     ];
+
     // Total 530, budget 300: drop examples (330 still over) then postHistory.
     const remaining = dropOverBudgetSections(sections, 300, 530,);
     expect(remaining,).toBe(250,);

@@ -39,6 +39,7 @@ async function insertQuest(initialStatus: QuestStatus = QuestStatus.Active,): Pr
       narrative_hooks: "[]",
     },)
     .execute();
+
   return id;
 }
 

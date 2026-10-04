@@ -88,6 +88,7 @@ describe("chunk-boundary XSS attacks", () => {
       expect(e,).not.toContain("alert(1)",);
       expect(e,).not.toContain("<script",);
     }
+
     expect(e4,).toContain("done",);
     expect(e4,).toContain("<p>safe</p>",);
   });
@@ -196,6 +197,7 @@ describe("chunk-boundary XSS attacks", () => {
     expect(
       sanitize("<p>x</p><script>alert(1)</iframe>",),
     ).toBe("<p>x</p>",);
+
     // The matching `</script>` does — sanitizer sees the closed pair,
     // sanitizeHtml strips it, streaming emits just the safe trailing text.
     expect(
@@ -384,6 +386,7 @@ describe("performance and overflow", () => {
       acc += c;
       sanitize(acc,);
     }
+
     const finalByChar = sanitize(acc,);
     const sanitizeOnce = createStreamingSanitizer();
     const finalOneShot = sanitizeOnce(html,);

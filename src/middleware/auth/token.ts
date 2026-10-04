@@ -82,12 +82,14 @@ export async function resolveUserIdFromRequest(
   const candidateUserId = token
     ? await resolveUserIdFromSession(database, config, token, nowMs,)
     : null;
+
   if (candidateUserId !== null) {
     const user = await database
       .selectFrom("users",)
       .select(["status",],)
       .where("id", "=", candidateUserId,)
       .executeTakeFirst();
+
     if (
       user &&
       user.status !== UserStatus.Disabled &&
@@ -128,6 +130,7 @@ async function resolveUserIdFromSession(
           .select(["user_id", "expires_at",],)
           .where("id", "=", sid,)
           .executeTakeFirst();
+
         if (
           session &&
           (session.expires_at === null || (parseExpiryMs(session.expires_at,) ?? -Infinity) > nowMs)
@@ -145,6 +148,7 @@ async function resolveUserIdFromSession(
       .select(["user_id", "expires_at",],)
       .where("token_hash", "=", tokenHash,)
       .executeTakeFirst();
+
     if (session && (session.expires_at === null || (parseExpiryMs(session.expires_at,) ?? -Infinity) > nowMs)) {
       return session.user_id;
     }

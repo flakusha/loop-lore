@@ -98,6 +98,7 @@ function mockFetch(handler: (url: string,) => Response | Promise<Response>,): vo
     const urlStr = typeof url === "string" ? url : (url instanceof URL ? url.href : url.url);
     return handler(urlStr,);
   },);
+
   Object.defineProperty(globalThis, "fetch", { value: mocked, writable: true, configurable: true, },);
 }
 
@@ -132,6 +133,7 @@ describe("characterIoRoutes", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/actors/${actorId}/systems/export`,),
       );
+
       expect(res.status,).toBe(401,);
     });
 
@@ -142,6 +144,7 @@ describe("characterIoRoutes", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/actors/${actorId}/systems/export`,),
       );
+
       expect(res.status,).toBe(403,);
     });
 
@@ -150,6 +153,7 @@ describe("characterIoRoutes", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/actors/${actorId}/systems/export`,),
       );
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("Content-Type",),).toContain("application/json",);
 
@@ -164,6 +168,7 @@ describe("characterIoRoutes", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/actors/${actorId}/systems/export?format=yaml`,),
       );
+
       expect(res.status,).toBe(400,);
     });
   });
@@ -179,6 +184,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({ includeTraits: false, },),
         },),
       );
+
       expect(res.status,).toBe(200,);
       const body = (await res.json()) as CharacterSystemsExport;
       expect(body.traits,).toBeUndefined();
@@ -193,6 +199,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({},),
         },),
       );
+
       expect(res.status,).toBe(200,);
       const body = (await res.json()) as CharacterSystemsExport;
       expect(body.traits,).toBeDefined();
@@ -208,6 +215,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({},),
         },),
       );
+
       expect(res.status,).toBe(401,);
     });
 
@@ -229,6 +237,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({ worldId, },),
         },),
       );
+
       expect(res.status,).toBe(200,);
       const body = (await res.json()) as CharacterSystemsExport;
       expect(body.worldSetup,).toBeDefined();
@@ -253,6 +262,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({ worldId, includeWorldSetup: false, },),
         },),
       );
+
       expect(res.status,).toBe(200,);
       const body = (await res.json()) as CharacterSystemsExport;
       expect(body.worldSetup,).toBeUndefined();
@@ -269,6 +279,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({ characterId: actorId, },),
         },),
       );
+
       expect(res.status,).toBe(400,);
     });
 
@@ -281,6 +292,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({ version: "1.0", },),
         },),
       );
+
       expect(res.status,).toBe(401,);
     });
 
@@ -324,12 +336,14 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify(payload,),
         },),
       );
+
       expect(res.status,).toBe(201,);
       const body = (await res.json()) as {
         success: boolean;
         imported: Record<string, number | boolean>;
         errors: string[];
       };
+
       expect(body.success,).toBe(true,);
       expect(body.imported.traits,).toBe(1,);
       expect(body.imported.mood,).toBe(true,);
@@ -368,6 +382,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify(payload,),
         },),
       );
+
       expect(noWorld.status,).toBe(201,);
       const noWorldBody = (await noWorld.json()) as { imported: Record<string, number | boolean> };
       expect(noWorldBody.imported.worldSetup,).toBe(false,);
@@ -380,6 +395,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({ ...payload, worldId, },),
         },),
       );
+
       expect(withWorld.status,).toBe(201,);
       const withWorldBody = (await withWorld.json()) as { imported: Record<string, number | boolean> };
       expect(withWorldBody.imported.worldSetup,).toBe(true,);
@@ -390,6 +406,7 @@ describe("characterIoRoutes", () => {
         .where("world_id", "=", worldId,)
         .selectAll()
         .executeTakeFirst();
+
       expect(row?.scenario_override,).toBe("Ashen wastes",);
       expect(row?.system_prompt_override,).toBeNull();
       expect(row?.backstory,).toBe("Wasteland wanderer",);
@@ -422,6 +439,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify(payload,),
         },),
       );
+
       expect(noWorld.status,).toBe(201,);
       const noWorldBody = (await noWorld.json()) as { imported: Record<string, number | boolean> };
       expect(noWorldBody.imported.traits,).toBe(0,);
@@ -434,6 +452,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({ ...payload, worldId, },),
         },),
       );
+
       expect(withWorld.status,).toBe(201,);
       const withWorldBody = (await withWorld.json()) as { imported: Record<string, number | boolean> };
       expect(withWorldBody.imported.traits,).toBe(1,);
@@ -444,6 +463,7 @@ describe("characterIoRoutes", () => {
         .where("world_id", "=", worldId,)
         .selectAll()
         .executeTakeFirst();
+
       expect(worldTrait?.trait_name,).toBe("realm",);
     });
   });
@@ -458,6 +478,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({ url: "ftp://example.com/data.json", },),
         },),
       );
+
       expect(res.status,).toBe(400,);
     });
 
@@ -470,6 +491,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({ url: "http://169.254.169.254/meta", },),
         },),
       );
+
       expect(res.status,).toBe(400,);
     });
 
@@ -482,6 +504,7 @@ describe("characterIoRoutes", () => {
           body: JSON.stringify({ url: "https://example.com/data.json", },),
         },),
       );
+
       expect(res.status,).toBe(401,);
     });
 
@@ -491,6 +514,7 @@ describe("characterIoRoutes", () => {
         exportedAt: new Date().toISOString(),
         characterId: actorId,
       };
+
       mockFetch((url,) => {
         expect(url,).toContain("data.example.com",);
         return Response.json(payload, { status: 200, },);
@@ -505,6 +529,7 @@ describe("characterIoRoutes", () => {
             body: JSON.stringify({ url: "https://data.example.com/char.json", },),
           },),
         );
+
         expect(res.status,).toBe(201,);
         const body = (await res.json()) as { success: boolean; errors: string[] };
         expect(body.success,).toBe(true,);
@@ -525,6 +550,7 @@ describe("characterIoRoutes", () => {
             body: JSON.stringify({ url: "https://data.example.com/missing.json", },),
           },),
         );
+
         expect(res.status,).toBe(400,);
       } finally {
         restoreFetch();

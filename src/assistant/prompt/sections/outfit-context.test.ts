@@ -33,6 +33,7 @@ describe("outfitContextSection", () => {
     const out = await outfitContextSection.build(
       ctx({ outfit: "Court Dress", outfitSource: "chat_override", },),
     );
+
     const content = (out[0]?.content ?? "") as string;
     expect(content,).toContain("scene override",);
   });
@@ -41,6 +42,7 @@ describe("outfitContextSection", () => {
     const out = await outfitContextSection.build(
       ctx({ outfit: "Rags", outfitSource: "custom_source", },),
     );
+
     const content = (out[0]?.content ?? "") as string;
     expect(content,).toContain("custom_source",);
   });

@@ -9,6 +9,7 @@ describe("rpg/dice/notation (0% -> real logic)", () => {
     expect(p!.sides,).toBe(6,);
     expect(p!.modifier,).toBe(3,);
   });
+
   it('parses "d20 adv" correctly', () => {
     const p = parseDiceNotation("d20 adv",);
     expect(p,).not.toBeNull();
@@ -17,6 +18,7 @@ describe("rpg/dice/notation (0% -> real logic)", () => {
     // source maps 'adv' to full string 'advantage'
     expect(p!.advantage,).toBe("advantage",);
   });
+
   it("rejects invalid notation", () => {
     expect(parseDiceNotation("bad",),).toBeNull();
     expect(parseDiceNotation("3d99",),).toBeNull();

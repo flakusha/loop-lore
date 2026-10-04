@@ -32,6 +32,7 @@ export async function canAccessNsfw(
   if (!userId) {
     return { allowed: false, reason: "auth_required", };
   }
+
   const inputs = await loadGateInputs(database, [userId,],);
   return evaluateNsfwBase(config.nsfw, inputs.get(userId,),);
 }
@@ -105,10 +106,12 @@ export async function getChatParticipantUserIds(
     .select("actors.user_id",)
     .where("chat_participants.chat_id", "=", chatId,)
     .execute();
+
   const seen = new Set<string>();
   for (const r of rows) {
     if (r.user_id !== null) { seen.add(r.user_id,); }
   }
+
   return [...seen,];
 }
 

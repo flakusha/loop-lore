@@ -71,10 +71,12 @@ export async function trySpendForReroll(
   if (!actorCtx || !actorCtx.actorId) {
     return { ok: true, charged: false, cost: 0, reason: "no-actor", };
   }
+
   const cost = opts.cost ?? 1;
   if (!Number.isInteger(cost,) || cost <= 0) {
     return { ok: false, charged: false, cost: 0, reason: "error", message: `invalid cost: ${cost}`, };
   }
+
   try {
     await spendStoryPoints(db, {
       actorId: actorCtx.actorId,
@@ -82,6 +84,7 @@ export async function trySpendForReroll(
       amount: cost,
       reason: opts.reason ?? "reroll",
     },);
+
     return { ok: true, charged: true, cost, reason: "ok", };
   } catch (err) {
     if (err instanceof InsufficientStoryPointsError) {
@@ -93,6 +96,7 @@ export async function trySpendForReroll(
         message: `Not enough story points (have ${err.available}, need ${cost}).`,
       };
     }
+
     const msg = err instanceof Error ? err.message : String(err,);
     return { ok: false, charged: false, cost, reason: "error", message: msg, };
   }
@@ -129,14 +133,17 @@ export async function chargeStoryPointsForChat(
     .select("world_id",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   const worldId = chatRow?.world_id ?? null;
   const spend = await trySpendForReroll(
     db,
     { actorId, worldId, },
     { spendStoryPoints: true, cost: 1, reason, },
   );
+
   if (!spend.ok) {
     return badRequestResponse(spend.message ?? "Story-point spend failed.",);
   }
+
   return null;
 }

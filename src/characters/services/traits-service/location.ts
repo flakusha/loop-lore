@@ -92,6 +92,7 @@ export async function createLocationTrait(
     locationId: opts.locationId,
     name: opts.name,
   },);
+
   guardNotExists(existing, "Location trait", `${opts.actorId}:${opts.locationId}:${opts.name}`,);
 
   const id = randomUUID();

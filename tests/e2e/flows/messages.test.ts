@@ -29,6 +29,7 @@ describe("Messages E2E", () => {
         settings: "{}",
       },)
       .execute();
+
     api = createClient(server.url,);
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);
@@ -36,10 +37,12 @@ describe("Messages E2E", () => {
   afterAll(async () => {
     await server.close();
   },);
+
   test("GET /api/v1/chats/:id/messages returns messages", async () => {
     const res = await api.get<{ data: Array<{ id: string; content: string }> }>(
       `/api/v1/chats/${SEED.chat.id}/messages`,
     );
+
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data!.data,),).toBe(true,);
     expect(res.data!.data.length,).toBeGreaterThanOrEqual(1,);
@@ -50,6 +53,7 @@ describe("Messages E2E", () => {
       content: "New E2E message",
       role: "user",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
   });
@@ -72,6 +76,7 @@ describe("Messages E2E", () => {
       content: "Message to delete",
       role: "user",
     },);
+
     const msgId = createRes.data!.id;
 
     const deleteRes = await api.del(`/api/v1/messages/${msgId}`,);

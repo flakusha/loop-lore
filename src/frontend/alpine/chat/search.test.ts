@@ -78,6 +78,7 @@ describeOrSkip("chatSearch.searchChats", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const ctx = searchCtx();
     await chatSearch.searchChats!.call(ctx, "x",);
     expect(ctx._searchResults,).toEqual([],);
@@ -112,6 +113,7 @@ describeOrSkip("chatSearch.loadJoinableChats", () => {
     mockFetch(200, {
       data: [{ chatId: "c9", chatName: "Hall", participantCount: 4, lastActiveAt: "t", },],
     },);
+
     const ctx = searchCtx();
     await chatSearch.loadJoinableChats!.call(ctx,);
     expect(ctx._joinableChats,).toEqual([
@@ -123,6 +125,7 @@ describeOrSkip("chatSearch.loadJoinableChats", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const ctx = searchCtx({ _joinableChats: [{ chatId: "stale", },], },);
     await chatSearch.loadJoinableChats!.call(ctx,);
     expect(ctx._joinableChats,).toEqual([],);
@@ -138,6 +141,7 @@ describeOrSkip("chatSearch.joinChat", () => {
         if (e === "show-toast") { toasts.push(d,); }
       },
     },);
+
     await chatSearch.joinChat!.call(ctx, "c1",);
     expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/c1/join",);
     expect(toasts[0]?.type,).toBe("error",);
@@ -156,6 +160,7 @@ describeOrSkip("chatSearch.joinChat", () => {
         if (e === "show-toast") { toasts.push(d,); }
       },
     },);
+
     await chatSearch.joinChat!.call(ctx, "c2",);
     expect(joinableReloads,).toBe(1,);
     expect(ctx.loadChats as ReturnType<typeof mock>,).toHaveBeenCalledTimes(1,);
@@ -179,6 +184,7 @@ describeOrSkip("chatSearch.joinChat", () => {
         if (e === "show-toast") { toasts.push(d,); }
       },
     },);
+
     await chatSearch.joinChat!.call(ctx, "c4",);
     expect(toasts[toasts.length - 1]?.type,).toBe("error",);
   });

@@ -50,7 +50,10 @@ const SIZE_ALLOW_RE = /^\/\/\s*size-allow:\s*(\d+)\s*$/m;
 const HEADER_BYTES = 512;
 
 /**
- * Count real content lines.
+ * Count non-blank content lines.
+ *
+ * Blank lines (empty or whitespace-only) are separators, not content, so the
+ * padding-line rule's paragraph breaks never push a file over budget.
  *
  * A trailing newline TERMINATES the last line; it does not begin a new one.
  * `split("\n").length` counts that empty tail as a line, so every
@@ -63,11 +66,12 @@ const HEADER_BYTES = 512;
  * would only trade this bug for its mirror image.
  *
  * @param text - full file contents
- * @returns number of lines of content
+ * @returns number of non-blank lines of content
  */
 export function countContentLines(text: string,): number {
   if (text === "") { return 0; }
-  return text.split("\n",).length - (text.endsWith("\n",) ? 1 : 0);
+  const body = text.endsWith("\n",) ? text.slice(0, -1,) : text;
+  return body.split("\n",).filter((line,) => line.trim() !== "").length;
 }
 
 /**

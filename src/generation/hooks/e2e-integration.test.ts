@@ -128,6 +128,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       baseMood: "happy",
       moodStability: 0.4,
     },);
+
     expect(moodId,).toBeTruthy();
 
     const mood = await moodService.getMood(actorId, worldId,);
@@ -232,6 +233,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       ...moderateCtx,
       content: "The explicit and graphic scene was brutal and violent.",
     };
+
     const result2 = await hook.execute(intenseCtx.content, intenseCtx,);
     expect(result2.handled,).toBe(true,);
     expect(result2.suppressContent,).toBe(true,);
@@ -340,6 +342,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       source: "quest",
       sourceId: "quest-123",
     },);
+
     expect(eventId,).toBeTruthy();
 
     const events = await moodService.getEvents(actorId, worldId,);

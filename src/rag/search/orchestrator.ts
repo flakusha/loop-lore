@@ -56,6 +56,7 @@ export async function searchWithFallback(
       failures.push(`${provider.name}: quarantined (${Math.ceil((state?.cooldownRemainingMs ?? 0) / 1000,)}s left)`,);
       continue;
     }
+
     try {
       const results = await provider.search(query, maxResults,);
       searchBreaker.onSuccess(provider.name,);
@@ -70,6 +71,7 @@ export async function searchWithFallback(
       } else {
         searchBreaker.onFailure(provider.name,);
       }
+
       failures.push(`${provider.name}: ${(error as Error).message}`,);
     }
   }

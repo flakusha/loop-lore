@@ -39,19 +39,24 @@ export function categoryToType(category: ItemCategory,): ItemType {
     case "weapon": {
       return "weapon";
     }
+
     case "armor": {
       return "armor";
     }
+
     case "consumable": {
       return "consumable";
     }
+
     case "material": {
       return "material";
     }
+
     case "key_item":
     case "quest_item": {
       return "quest";
     }
+
     case "tool":
     case "container":
     case "treasure":
@@ -74,9 +79,11 @@ export function categoryToSlot(category: ItemCategory,): EquipmentSlot | undefin
     case "weapon": {
       return "weapon";
     }
+
     case "armor": {
       return "armor";
     }
+
     case "consumable":
     case "material":
     case "key_item":
@@ -154,9 +161,11 @@ export function toEquipmentItem(def: EquipmentSource,): EquipmentItem {
   if (typeof damage === "number" && damage !== 0) {
     modifiers.push({ stat: "attack", value: damage, },);
   }
+
   if (typeof bonus === "number" && bonus !== 0) {
     modifiers.push({ stat: "attack", value: bonus, },);
   }
+
   if (typeof ac === "number" && ac !== 0) {
     modifiers.push({ stat: "defense", value: ac, },);
   }

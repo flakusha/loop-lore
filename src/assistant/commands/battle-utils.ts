@@ -101,6 +101,7 @@ export function findCombatant(
       return c;
     }
   }
+
   return null;
 }
 

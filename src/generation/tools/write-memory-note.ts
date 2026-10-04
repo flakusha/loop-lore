@@ -68,9 +68,11 @@ export const writeMemoryNoteTool: ToolDefinition = {
     if (!content) {
       return { content: '{"error":"content is required and must be non-empty"}', isError: true, };
     }
+
     if (content.length > MEMORY_NOTE_MAX_CHARS) {
       return { content: `{"error":"content exceeds ${MEMORY_NOTE_MAX_CHARS} chars"}`, isError: true, };
     }
+
     if (!ctx) {
       return { content: '{"error":"memory tool requires generation context"}', isError: true, };
     }
@@ -80,10 +82,12 @@ export const writeMemoryNoteTool: ToolDefinition = {
         [MemoryType.Episodic, MemoryType.Semantic, MemoryType.Procedural,].includes(rawType as MemoryType,)
       ? (rawType as MemoryType)
       : MemoryType.Episodic;
+
     const rawImportance = params.importance;
     const importance = typeof rawImportance === "number" && rawImportance >= 0 && rawImportance <= 1
       ? rawImportance
       : 0.5;
+
     const rawKeywords = params.keywords;
     const keywords: string[] = [];
     if (Array.isArray(rawKeywords,)) {

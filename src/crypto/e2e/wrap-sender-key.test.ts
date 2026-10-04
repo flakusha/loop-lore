@@ -27,6 +27,7 @@ beforeEach(async () => {
     const kp = await generateKeyPair({ extractable: true, },);
     return { id, kp, pubJwk: await exportPublicJwk(kp.publicKey,), };
   };
+
   bob = await mk("bob",);
   carol = await mk("carol",);
 },);
@@ -55,6 +56,7 @@ describe("wrapSenderKey input validation", () => {
       chainKey: crypto.getRandomValues(new Uint8Array(32,),),
       recipients: [],
     },);
+
     expect(wraps,).toEqual([],);
   });
 });
@@ -66,6 +68,7 @@ describe("wrap wire format", () => {
       chainKey,
       recipients: [{ actorId: bob.id, staticPubJwk: bob.pubJwk, },],
     },);
+
     const parts = wraps[0]!.wrappedKey.split(".",);
     expect(parts,).toHaveLength(2,);
     const nonce = Uint8Array.fromBase64(parts[0]!,);
@@ -81,12 +84,14 @@ describe("wrap wire format", () => {
       chainKey: zeroKey,
       recipients: [{ actorId: bob.id, staticPubJwk: bob.pubJwk, },],
     },);
+
     const recovered = await unwrapSenderKey({
       wrappedKey: wraps[0]!.wrappedKey,
       senderEphPubJwk: wraps[0]!.senderEphPubJwk,
       recipientStaticPriv: bob.kp.privateKey,
       recipientActorId: bob.id,
     },);
+
     expect(recovered,).toEqual(zeroKey,);
   });
 
@@ -99,6 +104,7 @@ describe("wrap wire format", () => {
         { actorId: bob.id, staticPubJwk: carol.pubJwk, },
       ],
     },);
+
     expect(wraps,).toHaveLength(2,);
     expect(wraps[0]!.wrappedKey,).not.toBe(wraps[1]!.wrappedKey,);
     const recBob = await unwrapSenderKey({
@@ -107,12 +113,14 @@ describe("wrap wire format", () => {
       recipientStaticPriv: bob.kp.privateKey,
       recipientActorId: bob.id,
     },);
+
     const recCarol = await unwrapSenderKey({
       wrappedKey: wraps[1]!.wrappedKey,
       senderEphPubJwk: wraps[1]!.senderEphPubJwk,
       recipientStaticPriv: carol.kp.privateKey,
       recipientActorId: bob.id,
     },);
+
     expect(recBob,).toEqual(chainKey,);
     expect(recCarol,).toEqual(chainKey,);
   });
@@ -126,12 +134,14 @@ describe("unicode actor ids", () => {
       chainKey,
       recipients: [{ actorId: unicodeId, staticPubJwk: bob.pubJwk, },],
     },);
+
     const recovered = await unwrapSenderKey({
       wrappedKey: wraps[0]!.wrappedKey,
       senderEphPubJwk: wraps[0]!.senderEphPubJwk,
       recipientStaticPriv: bob.kp.privateKey,
       recipientActorId: unicodeId,
     },);
+
     expect(recovered,).toEqual(chainKey,);
   });
 
@@ -141,6 +151,7 @@ describe("unicode actor ids", () => {
       chainKey,
       recipients: [{ actorId: "actrü-🙂", staticPubJwk: bob.pubJwk, },],
     },);
+
     await expect(unwrapSenderKey({
       wrappedKey: wraps[0]!.wrappedKey,
       senderEphPubJwk: wraps[0]!.senderEphPubJwk,
@@ -157,6 +168,7 @@ describe("unwrapSenderKey malformed wire format", () => {
       chainKey,
       recipients: [{ actorId: bob.id, staticPubJwk: bob.pubJwk, },],
     },);
+
     return {
       wrappedKey: wraps[0]!.wrappedKey,
       senderEphPubJwk: wraps[0]!.senderEphPubJwk,
@@ -245,6 +257,7 @@ describe("unwrapSenderKey tampering + wrong-key authentication", () => {
       chainKey,
       recipients: [{ actorId: bob.id, staticPubJwk: bob.pubJwk, },],
     },);
+
     return {
       wrappedKey: wraps[0]!.wrappedKey,
       senderEphPubJwk: wraps[0]!.senderEphPubJwk,

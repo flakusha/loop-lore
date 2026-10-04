@@ -41,6 +41,7 @@ describe("pagesRoutes /views/nsfw-moderation authz", () => {
         headers: { "x-user-role": "user", "x-user-id": "u1", },
       },),
     );
+
     expect([302, 403,],).toContain(res.status,);
   });
 
@@ -50,6 +51,7 @@ describe("pagesRoutes /views/nsfw-moderation authz", () => {
         headers: { "x-user-id": "u1", },
       },),
     );
+
     expect([302, 403,],).toContain(res.status,);
   });
 
@@ -57,6 +59,7 @@ describe("pagesRoutes /views/nsfw-moderation authz", () => {
     const res = await app.handle(
       new Request("http://test/views/nsfw-moderation",),
     );
+
     // requirePermission("admin.system") short-circuits before any DB access
     // when no admin role is present; adminViewGuard falls back to 302.
     // Either is acceptable as long as the handler is never reached.

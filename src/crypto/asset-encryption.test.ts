@@ -31,6 +31,7 @@ beforeAll(async () => {
     true,
     ["encrypt", "decrypt",],
   );
+
   rawKey = new Uint8Array(await crypto.subtle.exportKey("raw", cryptoKey,),);
   chatKey = { key: cryptoKey, keyId: KEY_ID, rawKey, };
 },);
@@ -48,6 +49,7 @@ describe("isEncryptedAsset", () => {
       key_id: KEY_ID,
       a_id: ASSET_ID_A,
     },);
+
     expect(isEncryptedAsset(Buffer.from(v2Payload,),),).toBe(true,);
   });
 
@@ -183,6 +185,7 @@ describe("deriveAssetSubkey — isolation guarantees", () => {
 
     expect(raw1,).toEqual(raw2,);
   });
+
   test("asset encrypted with asset A's subkey cannot be decrypted with asset B's key", async () => {
     const plaintext = Buffer.from("confidential image",);
     const encrypted = await encryptAssetBlob(plaintext, chatKey, KEY_ID, ASSET_ID_A, PIPELINE_CONFIG, "standard",);

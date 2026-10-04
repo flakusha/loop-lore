@@ -25,6 +25,7 @@ describe("Profanity Filter E2E", () => {
   afterAll(async () => {
     await server.close();
   },);
+
   test("filters profanity from user messages", async () => {
     // Send a message with profanity
     const msgRes = await api.post<{ id: string }>(
@@ -34,6 +35,7 @@ describe("Profanity Filter E2E", () => {
         role: "user",
       },
     );
+
     expect(msgRes.ok,).toBe(true,);
     expect(msgRes.data!.id,).toBeTruthy();
 
@@ -41,6 +43,7 @@ describe("Profanity Filter E2E", () => {
     const getRes = await api.get<{ content: string }>(
       `/api/v1/messages/${msgRes.data!.id}`,
     );
+
     expect(getRes.ok,).toBe(true,);
     expect(getRes.data!.content,).not.toContain("fucking",);
     expect(getRes.data!.content,).not.toContain("bullshit",);
@@ -56,11 +59,13 @@ describe("Profanity Filter E2E", () => {
         role: "user",
       },
     );
+
     expect(msgRes.ok,).toBe(true,);
 
     const getRes = await api.get<{ content: string }>(
       `/api/v1/messages/${msgRes.data!.id}`,
     );
+
     expect(getRes.data!.content,).toBe("hello, how are you today?",);
   });
 });

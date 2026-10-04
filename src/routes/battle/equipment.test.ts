@@ -52,12 +52,14 @@ describe("battle equipmentRoutes /loot auth", () => {
       "Looter",
       { id: userId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     await insertUsers(
       db,
       `user-${otherUserId}`,
       "Intruder",
       { id: otherUserId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     worldId = uid();
     otherWorldId = uid();
     await insertWorlds(db, userId, "Owner World", { id: worldId, } as never,);
@@ -93,6 +95,7 @@ describe("battle equipmentRoutes /loot auth", () => {
         userRole: "user",
       }),);
     }
+
     return base.use(equipmentRoutes({ database: db, config: {} as never, },),) as any;
   }
 
@@ -131,12 +134,14 @@ describe("battle equipmentRoutes /loot auth", () => {
         body: bodyFor({ actorId, },),
       },),
     );
+
     expect(res.status,).toBe(401,);
     // No `world_items` row should have been minted.
     const minted = await db.selectFrom("world_items",)
       .select("id",)
       .where("owner_actor_id", "=", actorId,)
       .execute();
+
     expect(minted,).toHaveLength(0,);
   });
 
@@ -160,11 +165,13 @@ describe("battle equipmentRoutes /loot auth", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(403,);
     const minted = await db.selectFrom("world_items",)
       .select("id",)
       .where("owner_actor_id", "=", otherActorId,)
       .execute();
+
     expect(minted,).toHaveLength(0,);
   });
 
@@ -188,11 +195,13 @@ describe("battle equipmentRoutes /loot auth", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(403,);
     const minted = await db.selectFrom("world_items",)
       .select("id",)
       .where("owner_actor_id", "=", otherActorId,)
       .execute();
+
     expect(minted,).toHaveLength(0,);
   });
 
@@ -216,11 +225,13 @@ describe("battle equipmentRoutes /loot auth", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     const minted = await db.selectFrom("world_items",)
       .select("id",)
       .where("location_id", "=", crossWorldLocationId,)
       .execute();
+
     expect(minted,).toHaveLength(0,);
   });
 
@@ -244,6 +255,7 @@ describe("battle equipmentRoutes /loot auth", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -256,6 +268,7 @@ describe("battle equipmentRoutes /loot auth", () => {
         body: bodyFor({ actorId, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const data = (await json(res,)) as { loot: unknown[]; worldItemIds: string[] };
     expect(data.worldItemIds.length,).toBeGreaterThanOrEqual(1,);
@@ -263,6 +276,7 @@ describe("battle equipmentRoutes /loot auth", () => {
       .select("id",)
       .where("id", "in", data.worldItemIds,)
       .execute();
+
     expect(minted,).toHaveLength(data.worldItemIds.length,);
   });
 
@@ -275,6 +289,7 @@ describe("battle equipmentRoutes /loot auth", () => {
         body: bodyFor({ locationId, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const data = (await json(res,)) as { loot: unknown[]; worldItemIds: string[] };
     expect(data.worldItemIds.length,).toBeGreaterThanOrEqual(1,);
@@ -282,6 +297,7 @@ describe("battle equipmentRoutes /loot auth", () => {
       .select(["id", "location_id", "world_id",],)
       .where("id", "in", data.worldItemIds,)
       .execute();
+
     expect(minted,).toHaveLength(data.worldItemIds.length,);
     for (const row of minted) {
       expect(row.location_id,).toBe(locationId,);
@@ -307,6 +323,7 @@ describe("battle equipmentRoutes /loot auth", () => {
         },),
       },),
     );
+
     const data = (await json(res,)) as unknown[];
     expect(Array.isArray(data,),).toBe(true,);
   });

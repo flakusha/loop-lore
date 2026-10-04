@@ -44,6 +44,7 @@ describe("translate command", () => {
     expect(captured?.messages[0]?.content,).toBe(
       "Translate the following text into Spanish. Output ONLY the translated text.",
     );
+
     expect(captured?.messages[1]?.content,).toBe("Hello world",);
     expect(result.systemMessage,).toContain("Hola mundo",);
     expect(result.systemMessage,).not.toContain("[Translation to",);
@@ -66,6 +67,7 @@ describe("translate command", () => {
     expect(captured?.messages[0]?.content,).toBe(
       "Translate the following text into English. Output ONLY the translated text.",
     );
+
     expect(captured?.messages[1]?.content,).toBe("Hola mundo",);
     expect(result.systemMessage,).toContain("Hello world",);
   });
@@ -88,11 +90,13 @@ describe("translate command", () => {
     const complete = async (): Promise<{ content: string }> => {
       throw new Error("rate limit",);
     };
+
     const result = await runTranslate(
       ["Hello", "to", "fr",],
       { chatId: "c1", },
       { complete, },
     );
+
     expect(result.systemMessage,).toContain("LLM unavailable — applied local heuristics only",);
   });
 

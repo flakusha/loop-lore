@@ -76,6 +76,7 @@ describe("getPartialContent — DB fallback", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await testDb.insertInto("chats",).values({
       id: "chat-1",
       name: "Test Chat",
@@ -83,6 +84,7 @@ describe("getPartialContent — DB fallback", () => {
       mode: "direct",
       created_by: "user-1",
     },).execute();
+
     await testDb.insertInto("actors",).values({
       id: "actor-1",
       actor_type: "character",
@@ -92,6 +94,7 @@ describe("getPartialContent — DB fallback", () => {
       format_version: 0,
       import_spec: "{}",
     },).execute();
+
     await testDb.insertInto("messages",).values({
       id: "msg-1",
       chat_id: "chat-1",
@@ -151,6 +154,7 @@ describe("getPartialContent — DB fallback", () => {
         total_steps: 1,
       },)
       .execute();
+
     const result = await getPartialContent("db-attempt-2", testDb,);
     expect(result.content,).toBeNull();
   });
@@ -504,6 +508,7 @@ describe("cancelGeneration captures partial content", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await testDb.insertInto("chats",).values({
       id: "chat-cancel-test",
       name: "Cancel Test",
@@ -511,6 +516,7 @@ describe("cancelGeneration captures partial content", () => {
       mode: "direct",
       created_by: "user-1",
     },).execute();
+
     await testDb.insertInto("actors",).values({
       id: "actor-1",
       actor_type: "character",
@@ -520,6 +526,7 @@ describe("cancelGeneration captures partial content", () => {
       format_version: 0,
       import_spec: "{}",
     },).execute();
+
     await testDb.insertInto("messages",).values({
       id: "msg-cancel-test",
       chat_id: "chat-cancel-test",

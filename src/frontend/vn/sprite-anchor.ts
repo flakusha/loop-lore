@@ -90,6 +90,7 @@ export function createAnchorLoader(fetchRow: FetchTransform = fetchTransformRow,
       pending = fetchRow(assetId,).then(anchorFromTransform,).catch(() => null);
       cache.set(assetId, pending,);
     }
+
     return pending;
   };
 }

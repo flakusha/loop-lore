@@ -14,6 +14,7 @@ describe("mergeCharacterTemplates", () => {
     const defaults: CharactersConfig["templates"] = [
       { name: "Default 1", description: "Default character", },
     ];
+
     const userTemplates: CharactersConfig["templates"] = [
       { name: "User 1", description: "User character", },
     ];
@@ -29,6 +30,7 @@ describe("mergeCharacterTemplates", () => {
     const defaults: CharactersConfig["templates"] = [
       { name: "Shared Character", description: "Default version", },
     ];
+
     const userTemplates: CharactersConfig["templates"] = [
       { name: "shared character", description: "User version", },
     ];
@@ -83,6 +85,7 @@ describe("seedCharacterTemplates", () => {
         { name: "Wardrobe Fallback", description: "Seeded without outfits", appearance: "Tall figure", },
       ],
     };
+
     const result = await seedCharacterTemplates(db, config,);
     expect(result.created,).toBe(1,);
     const actor = await db
@@ -90,6 +93,7 @@ describe("seedCharacterTemplates", () => {
       .select(["default_outfit", "outfits",],)
       .where("display_name", "=", "Wardrobe Fallback",)
       .executeTakeFirstOrThrow();
+
     expect(actor.outfits,).toContain("Tall figure",);
   });
 
@@ -201,6 +205,7 @@ describe("seedCharacterTemplates", () => {
       .select("id",)
       .where("display_name", "=", "Identity Character",)
       .executeTakeFirst();
+
     expect(actor,).toBeDefined();
 
     const traits = await db
@@ -232,6 +237,7 @@ describe("seedCharacterTemplates", () => {
       .select("id",)
       .where("display_name", "=", "No Identity",)
       .executeTakeFirst();
+
     expect(actor,).toBeDefined();
 
     const traits = await db
@@ -239,6 +245,7 @@ describe("seedCharacterTemplates", () => {
       .selectAll()
       .where("actor_id", "=", actor!.id,)
       .execute();
+
     expect(traits.length,).toBe(0,);
   });
 
@@ -247,6 +254,7 @@ describe("seedCharacterTemplates", () => {
       enabled: true,
       templates: [{ name: "Avatar Character", description: "Has avatar", avatar: { type: "default", }, },],
     };
+
     const uploadDir = `${tmpdir()}/loop-lore-seed-avatar-${Date.now()}`;
 
     const result = await seedCharacterTemplates(db, config, null, uploadDir,);
@@ -258,6 +266,7 @@ describe("seedCharacterTemplates", () => {
       .select("id",)
       .where("display_name", "=", "Avatar Character",)
       .executeTakeFirst();
+
     expect(actor,).toBeDefined();
 
     const avatar = await db
@@ -265,6 +274,7 @@ describe("seedCharacterTemplates", () => {
       .selectAll()
       .where("actor_id", "=", actor!.id,)
       .executeTakeFirst();
+
     expect(avatar,).toBeDefined();
     expect(avatar?.is_primary,).toBe(1,);
 
@@ -273,6 +283,7 @@ describe("seedCharacterTemplates", () => {
       .selectAll()
       .where("entity_id", "=", actor!.id,)
       .executeTakeFirst();
+
     expect(link,).toBeDefined();
     expect(link?.entity_type,).toBe("actor",);
   });
@@ -291,6 +302,7 @@ describe("seedCharacterTemplates", () => {
       .select("id",)
       .where("display_name", "=", "No Avatar Dir",)
       .executeTakeFirst();
+
     expect(actor,).toBeDefined();
 
     const avatar = await db
@@ -298,6 +310,7 @@ describe("seedCharacterTemplates", () => {
       .selectAll()
       .where("actor_id", "=", actor!.id,)
       .executeTakeFirst();
+
     expect(avatar,).toBeUndefined();
   });
 });

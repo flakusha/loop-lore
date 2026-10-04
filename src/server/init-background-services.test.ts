@@ -33,6 +33,7 @@ function makeLogger(): { logger: Logger; calls: LogCall[] } {
   const rec = (level: string,) => (message: unknown,): void => {
     calls.push({ level, message, },);
   };
+
   const logger = {
     trace: rec("trace",),
     debug: rec("debug",),
@@ -45,6 +46,7 @@ function makeLogger(): { logger: Logger; calls: LogCall[] } {
     setBindings: () => {},
     flush: async () => {},
   };
+
   return { logger: logger as unknown as Logger, calls, };
 }
 
@@ -74,6 +76,7 @@ function makeManager(behavior: {
       return behavior.sdCpp ?? null;
     },
   };
+
   return { manager: manager as unknown as ServerExternalManager, calls, };
 }
 
@@ -93,10 +96,12 @@ function makeConfig(overrides: {
   if (overrides.charactersEnabled !== undefined) {
     config.characters.enabled = overrides.charactersEnabled;
   }
+
   config.generation.autoStart = overrides.autoStart;
   if (overrides.defaultProvider !== undefined) {
     config.generation.defaultProvider = overrides.defaultProvider;
   }
+
   return config;
 }
 
@@ -106,6 +111,7 @@ async function countTemplateActors(): Promise<number> {
     .select((eb,) => eb.fn.countAll().as("n",))
     .where("import_spec", "=", "template",)
     .executeTakeFirst();
+
   return Number(row?.n ?? 0,);
 }
 
@@ -132,6 +138,7 @@ describe("initBackgroundServices", () => {
       logger,
       manager,
     );
+
     expect(managerCalls.llamaCpp,).toHaveLength(0,);
     expect(managerCalls.llamaSwap,).toHaveLength(0,);
     expect(managerCalls.sdCpp,).toHaveLength(0,);
@@ -175,6 +182,7 @@ describe("initBackgroundServices", () => {
       charactersEnabled: false,
       autoStart: { llamaCpp: { enabled: true, modelPath: "/models/m.gguf", port: 9011, alias: "mymodel", }, },
     },);
+
     await initBackgroundServices(db, config, logger, manager,);
 
     expect(managerCalls.llamaCpp,).toHaveLength(1,);
@@ -193,6 +201,7 @@ describe("initBackgroundServices", () => {
       charactersEnabled: false,
       autoStart: { llamaCpp: { enabled: true, modelPath: "/models/m.gguf", port: 9011, }, },
     },);
+
     await initBackgroundServices(db, config, logger, manager,);
     registeredProviders.push("llama",);
     expect(getProvider("llama",),).toBeDefined();
@@ -207,6 +216,7 @@ describe("initBackgroundServices", () => {
       defaultProvider: "existing",
       autoStart: { llamaCpp: { enabled: true, modelPath: "/models/m.gguf", port: 9011, alias: "mymodel", }, },
     },);
+
     await initBackgroundServices(db, config, logger, manager,);
     registeredProviders.push("mymodel",);
     expect(getProvider("mymodel",),).toBeDefined();
@@ -220,6 +230,7 @@ describe("initBackgroundServices", () => {
       charactersEnabled: false,
       autoStart: { llamaCpp: { enabled: true, modelPath: "/models/m.gguf", port: 9011, alias: "broken", }, },
     },);
+
     await initBackgroundServices(db, config, logger, manager,);
     expect(getProvider("broken",),).toBeUndefined();
     expect(config.generation.defaultProvider,).toBe("",);
@@ -232,6 +243,7 @@ describe("initBackgroundServices", () => {
       charactersEnabled: false,
       autoStart: { llamaCpp: { enabled: true, modelPath: "/models/m.gguf", port: 9011, alias: "mymodel", }, },
     },);
+
     config.generation.defaultModels["mymodel"] = "preexisting";
     await initBackgroundServices(db, config, logger, manager,);
     registeredProviders.push("mymodel",);
@@ -252,6 +264,7 @@ describe("initBackgroundServices", () => {
       ok.logger,
       okManager.manager,
     );
+
     expect(ok.calls.some((c,) => c.level === "info" && String(c.message,).includes("llama-swap ready",)),).toBe(true,);
 
     const bad = makeLogger();
@@ -265,6 +278,7 @@ describe("initBackgroundServices", () => {
       bad.logger,
       badManager.manager,
     );
+
     expect(
       bad.calls.some((c,) =>
         c.level === "warn" && String(c.message,).includes("llama-swap auto-start failed or skipped",)
@@ -286,6 +300,7 @@ describe("initBackgroundServices", () => {
       bad.logger,
       badManager.manager,
     );
+
     expect(
       bad.calls.some((c,) => c.level === "warn" && String(c.message,).includes("sd-cpp auto-start failed or skipped",)),
     ).toBe(true,);
@@ -303,6 +318,7 @@ describe("initBackgroundServices", () => {
       good.logger,
       goodManager.manager,
     );
+
     expect(good.calls.some((c,) => c.level === "warn"),).toBe(false,);
   });
 
@@ -313,6 +329,7 @@ describe("initBackgroundServices", () => {
       llamaSwap: { port: 9012, pid: 2, },
       sdCpp: { port: 9010, pid: 3, },
     },);
+
     await initBackgroundServices(
       db,
       makeConfig({
@@ -326,6 +343,7 @@ describe("initBackgroundServices", () => {
       logger,
       manager,
     );
+
     expect(await countTemplateActors(),).toBeGreaterThan(0,);
     expect(managerCalls.llamaCpp,).toHaveLength(1,);
     expect(managerCalls.llamaSwap,).toHaveLength(1,);
@@ -355,6 +373,7 @@ describe("initBackgroundServices", () => {
       logger,
       manager,
     );
+
     // Seeding is independent of the server start — Promise.allSettled lets both settle.
     expect(await countTemplateActors(),).toBeGreaterThan(0,);
     // The failed server did not register a provider.
@@ -374,6 +393,7 @@ describe("initBackgroundServices", () => {
       logger,
       manager,
     );
+
     expect(managerCalls.llamaCpp,).toHaveLength(1,);
     expect(managerCalls.llamaCpp[0],).toEqual(cfg,);
   });
@@ -385,6 +405,7 @@ describe("initBackgroundServices", () => {
       llamaSwap: { port: 9012, pid: 7, },
       sdCpp: { port: 9010, pid: 9, },
     },);
+
     await initBackgroundServices(
       db,
       makeConfig({
@@ -398,6 +419,7 @@ describe("initBackgroundServices", () => {
       logger,
       manager,
     );
+
     // Promise.allSettled: one failure does not prevent the others from starting.
     expect(managerCalls.llamaCpp,).toHaveLength(1,);
     expect(managerCalls.llamaSwap,).toHaveLength(1,);

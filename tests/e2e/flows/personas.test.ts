@@ -32,6 +32,7 @@ describe("Personas E2E", () => {
     server = await createTestServer({
       auth: { required: true, },
     },);
+
     await seedUsers(server.db,);
     userApi = createClient(server.url,);
     adminApi = createClient(server.url,);
@@ -56,6 +57,7 @@ describe("Personas E2E", () => {
       name,
       description: "e2e-spec persona",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data,).toBeTruthy();
   });
@@ -65,6 +67,7 @@ describe("Personas E2E", () => {
     const created = await userApi.post("/api/v1/personas", {
       name: `p-list-${stamp}`,
     },);
+
     expect(created.ok,).toBe(true,);
     const personaId = (created.data as { id: string } | null | undefined)?.id;
     expect(typeof personaId,).toBe("string",);
@@ -76,6 +79,7 @@ describe("Personas E2E", () => {
     if (typeof personaId !== "string" || personaId.length === 0) {
       throw new Error("create did not return an id",);
     }
+
     expect(items.map((p,) => p.id),).toContain(personaId,);
   });
 
@@ -84,6 +88,7 @@ describe("Personas E2E", () => {
     const created = await userApi.post("/api/v1/personas", {
       name: `p-patch-${stamp}`,
     },);
+
     expect(created.ok,).toBe(true,);
     const personaId = (created.data as { id: string } | null | undefined)?.id;
     if (typeof personaId !== "string" || personaId.length === 0) {
@@ -93,6 +98,7 @@ describe("Personas E2E", () => {
     const updated = await userApi.patch(`/api/v1/personas/${personaId}`, {
       description: "updated by e2e",
     },);
+
     expect(updated.ok,).toBe(true,);
   });
 
@@ -101,6 +107,7 @@ describe("Personas E2E", () => {
     const created = await userApi.post("/api/v1/personas", {
       name: `p-del-${stamp}`,
     },);
+
     expect(created.ok,).toBe(true,);
     const personaId = (created.data as { id: string } | null | undefined)?.id;
     if (typeof personaId !== "string" || personaId.length === 0) {
@@ -122,6 +129,7 @@ describe("Personas E2E", () => {
     const created = await adminApi.post("/api/v1/personas", {
       name: `p-conv-${stamp}`,
     },);
+
     expect(created.ok,).toBe(true,);
     const personaId = (created.data as { id: string } | null | undefined)?.id;
     if (typeof personaId !== "string" || personaId.length === 0) {
@@ -132,6 +140,7 @@ describe("Personas E2E", () => {
       `/api/v1/personas/${personaId}/convert-to-character`,
       {},
     );
+
     expect(conv.status,).toBe(201,);
     const actorId = (conv.data as { actorId?: string } | null | undefined)?.actorId;
     expect(typeof actorId,).toBe("string",);
@@ -143,6 +152,7 @@ describe("Personas E2E", () => {
       .select(["id", "actor_type",],)
       .where("id", "=", actorId ?? "",)
       .executeTakeFirst();
+
     expect(actorRow?.actor_type,).toBe("character",);
   });
 });

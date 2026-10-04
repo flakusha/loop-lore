@@ -35,6 +35,7 @@ describe("appendAspirations", () => {
       [{ id: "a1", goal: "secret", priority: "low", visibility: "hidden", progress: 0, plans: [], },],
       () => false,
     );
+
     expect(lines,).toEqual([],);
   });
 
@@ -47,6 +48,7 @@ describe("appendAspirations", () => {
       ],
       () => true,
     );
+
     expect(lines,).toContain("### Goals & Aspirations",);
     expect(lines,).toContain("- [high] Find the lost sword",);
     expect(lines.find((l,) => l.includes("Find the lost sword",)),).not.toContain("progress",);
@@ -61,6 +63,7 @@ describe("appendAspirations", () => {
       ],
       () => true,
     );
+
     expect(lines.some((l,) => l.includes("(42% progress)",)),).toBe(true,);
   });
 
@@ -80,6 +83,7 @@ describe("appendAspirations", () => {
       ],
       () => true,
     );
+
     const planLine = lines.find((l,) => l.startsWith("  Plans:",));
     expect(planLine,).toBeDefined();
     expect(planLine,).toBe("  Plans: apprentice; buy forge; study",);
@@ -92,6 +96,7 @@ describe("appendAspirations", () => {
       [{ id: "a1", goal: "private ambition", priority: "low", visibility: "hidden", progress: 0, plans: [], },],
       () => true,
     );
+
     expect(lines,).toContain("- [low] private ambition",);
   });
 
@@ -105,6 +110,7 @@ describe("appendAspirations", () => {
       ],
       () => true,
     );
+
     expect(lines.at(-1,),).toBe("",);
     expect(lines.findIndex((l,) => l.includes("- [high] first",)),).toBeLessThan(
       lines.findIndex((l,) => l.includes("- [low] second",)),
@@ -171,6 +177,7 @@ describe("appendApproachTendencies", () => {
       { decision_style: "deliberate", risk_tolerance: 50, initiative_level: 50, },
       () => false,
     );
+
     expect(lines,).toEqual([],);
   });
 
@@ -181,9 +188,11 @@ describe("appendApproachTendencies", () => {
       { decision_style: "intuitive", risk_tolerance: 75, initiative_level: 30, },
       () => true,
     );
+
     expect(lines,).toContain(
       "### Approach: intuitive decision-maker, risk tolerance 75/100, initiative 30/100",
     );
+
     expect(lines.at(-1,),).toBe("",);
   });
 });
@@ -202,6 +211,7 @@ describe("appendVoicePatterns", () => {
       },
       () => false,
     );
+
     expect(lines,).toEqual([],);
   });
 
@@ -218,6 +228,7 @@ describe("appendVoicePatterns", () => {
       },
       () => true,
     );
+
     expect(lines,).toContain("- Vocabulary: archaic",);
     expect(lines,).toContain("- Sentences: flowing",);
   });
@@ -235,6 +246,7 @@ describe("appendVoicePatterns", () => {
       },
       () => true,
     );
+
     expect(lines.some((l,) => l.startsWith("- Humor:",)),).toBe(false,);
   });
 
@@ -251,6 +263,7 @@ describe("appendVoicePatterns", () => {
       },
       () => true,
     );
+
     expect(lines,).toContain("- Humor: dry",);
   });
 
@@ -267,6 +280,7 @@ describe("appendVoicePatterns", () => {
       },
       () => true,
     );
+
     expect(lines.some((l,) => l.startsWith("- Tics:",)),).toBe(false,);
   });
 
@@ -283,6 +297,7 @@ describe("appendVoicePatterns", () => {
       },
       () => true,
     );
+
     expect(lines,).toContain("- Tics: uh, kinda, you know",);
   });
 
@@ -299,6 +314,7 @@ describe("appendVoicePatterns", () => {
       },
       () => true,
     );
+
     expect(lines,).toContain("- Emotional range: 88/100",);
     expect(lines.at(-1,),).toBe("",);
   });

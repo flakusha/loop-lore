@@ -35,6 +35,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     if (this._generationEventSource) {
       this._generationEventSource.close();
     }
+
     this.isGenerating = true;
     const url = `/api/v1/generation/stream/${chatId}`;
     const es = new EventSource(url,);
@@ -60,6 +61,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       if (!isStale()) {
         trackTelemetry("generation.completed", { chatId, },);
       }
+
       this.isGenerating = false;
       this.activeAttemptId = null;
       this.generationDetail = null;
@@ -125,6 +127,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
             charsReceived: data.generation.charsReceived,
           }
           : null;
+
         const detail = this.generationDetail;
         if (detail) {
           const elapsed = detail.elapsedMs ? ` (${Math.round(Number(detail.elapsedMs,) / 1000,)}s)` : "";
@@ -157,6 +160,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.connectGenerationSSE(chatId,);
       return;
     }
+
     const end = Date.now() + 30_000;
     do {
       await this.checkGenerationStatus(chatId,);
@@ -165,6 +169,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
         setTimeout(resolve, 1000,);
       },);
     } while (Date.now() < end);
+
     await this.loadMessages();
     onDone?.();
   },
@@ -178,6 +183,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChatToCancel",), },);
       return;
     }
+
     try {
       const response = await apiFetch("/api/v1/generation/cancel", {
         method: "POST",
@@ -189,6 +195,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
           detail: "User cancelled generation",
         },),
       },);
+
       const data = await response.json();
       if (response.ok && data.ok) {
         this.isGenerating = false;
@@ -217,6 +224,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       container.innerHTML = DOMPurify.sanitize(html,);
       return;
     }
+
     // Fail-safe: sanitizer unavailable — render as text, never raw HTML.
     const pre = document.createElement("pre",);
     pre.textContent = html;
@@ -231,6 +239,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this._generationEventSource.close();
       this._generationEventSource = null;
     }
+
     this._streamToolCalls = [];
     this._streamContent = "";
     const container = document.querySelector("#stream-container",);

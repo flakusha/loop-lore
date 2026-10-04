@@ -42,6 +42,7 @@ function buildCtx(overrides?: Partial<MediaCtx>,): MediaCtx {
     },
     ...overrides,
   };
+
   return ctx;
 }
 
@@ -105,6 +106,7 @@ describeOrSkip("media.generateImageFromMessage", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await media.generateImageFromMessage!.call(ctx as never, "m1",);
     expect(ctx.toasts[0]!.type,).toBe("error",);
   });
@@ -136,6 +138,7 @@ describeOrSkip("media.captionMessage", () => {
         ],
       },],
     },);
+
     handler = async () => Response.json({ ok: true, },);
     await media.captionMessage!.call(ctx as never, "m1",);
     expect(calls[0]!.url,).toBe("/api/v1/generation/caption",);
@@ -161,6 +164,7 @@ describeOrSkip("media.captionMessage", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await media.captionMessage!.call(ctx as never, "m1",);
     expect(ctx.toasts,).toHaveLength(2,);
     expect(ctx.toasts[1]!.type,).toBe("error",);

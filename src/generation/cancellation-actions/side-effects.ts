@@ -36,6 +36,7 @@ export function registerSideEffectJob(attemptId: string, job: SideEffectJob,): b
     getLogger()
       .child({ module: "generation", },)
       .warn("registerSideEffectJob: attempt not active", { attemptId, jobId: job.id, kind: job.kind, },);
+
     return false;
   }
 

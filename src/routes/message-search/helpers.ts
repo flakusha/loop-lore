@@ -58,6 +58,7 @@ export function buildFtsQuery(raw: string,): string {
       tokens.push(`"${t.replaceAll('"', '""',)}"`,);
     }
   }
+
   return tokens.join(" ",);
 }
 
@@ -110,11 +111,13 @@ export function extraWhere(
           )
     `,);
   }
+
   if (query.chatId) { clauses.push(sql`m.chat_id = ${query.chatId}`,); }
   if (query.role) { clauses.push(sql`m.role = ${query.role}`,); }
   if (query.hasAttachment === "true") {
     clauses.push(sql`m.attachments IS NOT NULL AND m.attachments != '[]'`,);
   }
+
   if (query.attachmentType) {
     // The stored attachments JSON carries only {assetId,order,caption,label};
     // asset *type* lives on the linked asset row.
@@ -125,12 +128,14 @@ export function extraWhere(
           AND a.asset_type = ${query.attachmentType}
       )`,);
   }
+
   if (query.linkPattern) {
     // Plaintext mirror first: ciphertext rows have no meaningful content match
     // (same visibility rule as the FTS index itself).
     const pattern = `%${escapeLike(query.linkPattern,)}%`;
     clauses.push(sql`COALESCE(m.content_plaintext, m.content) LIKE ${pattern} ESCAPE '\\'`,);
   }
+
   if (query.dateFrom) { clauses.push(sql`m.created_at >= ${query.dateFrom}`,); }
   if (query.dateTo) { clauses.push(sql`m.created_at <= ${query.dateTo}`,); }
 

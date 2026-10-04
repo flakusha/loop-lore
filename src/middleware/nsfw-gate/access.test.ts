@@ -74,6 +74,7 @@ describe("canAccessNsfw moderation state", () => {
     expect(result,).toEqual({ allowed: true, },);
     const row = await db.selectFrom("nsfw_user_preferences",).select("id",).where("user_id", "=", "u-norow",)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 

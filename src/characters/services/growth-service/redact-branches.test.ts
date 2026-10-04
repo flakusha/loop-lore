@@ -56,6 +56,7 @@ describe("redactArcForPlayerCard", () => {
       stageDescription: "The turning point",
       updatedAt: "2026-01-01T00:00:00.000Z",
     };
+
     expect(redactArcForPlayerCard(arc,),).toEqual({
       actorId: "actor-1",
       currentStage: ArcStage.Crisis,
@@ -70,6 +71,7 @@ describe("redactArcForPlayerCard", () => {
       stageDescription: null,
       updatedAt: "2026-01-01T00:00:00.000Z",
     };
+
     const redacted = redactArcForPlayerCard(arc,);
     expect(redacted?.stageDescription,).toBeNull();
   });
@@ -96,6 +98,7 @@ describe("redactGrowthLogForPlayerCard", () => {
       makeEntry({ id: "pending-1", status: GrowthEntryStatus.Pending, },),
       makeEntry({ id: "rejected-1", status: GrowthEntryStatus.Rejected, },),
     ];
+
     const redacted = redactGrowthLogForPlayerCard(entries,);
     expect(redacted.map((e,) => e.id),).toEqual(["applied-1",],);
   });

@@ -75,6 +75,7 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ label: this._newSectionLabel.trim(), description: this._newSectionDesc || null, },),
       },);
+
       if (res.ok) {
         this._newSectionLabel = "";
         this._newSectionDesc = "";
@@ -122,6 +123,7 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ sectionIds: Array.from(reordered, (s,) => s.id,), },),
       },);
+
       if (res.ok) { await this.loadSections(); }
     } catch (error) {
       log.warn("moveSection failed", { error: String(error,), },);
@@ -182,6 +184,7 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
       count += 1;
       if (startTime === null) { startTime = msg.created_at ?? null; }
     }
+
     return { count, startTime, };
   },
 

@@ -46,16 +46,20 @@ function stubFetch(
     if (!handler || handler.fail) {
       throw new Error(`unreachable: ${origin}`,);
     }
+
     if (handler.deferred) {
       await new Promise<void>((resolve,) => {
         gates.set(url, resolve,);
       },);
     }
+
     if (handler.status !== undefined && handler.status !== 200) {
       return { ok: false, status: handler.status, body: null, };
     }
+
     return { ok: true, status: 200, body: handler.body ?? {}, };
   };
+
   return {
     fetchImpl,
     release: (url: string,) => gates.get(url,)?.(),
@@ -89,6 +93,7 @@ describe("GossipService — verdict policy", () => {
       selfOrigin: "http://localhost:3000",
       now: c.now,
     },);
+
     expect(svc.getPeer("https://seed.example.com",)?.state,).toBe("pending",);
     expect(svc.getPeer("https://peer.example.com",)?.state,).toBe("trusted",);
     expect(svc.origins(),).toHaveLength(2,);
@@ -105,6 +110,7 @@ describe("GossipService — pollOnce", () => {
       "https://alive.example.com": { body: { peers: [], }, },
       "https://dead.example.com": { fail: true, },
     },);
+
     const svc = new GossipService({
       seeds: ["https://alive.example.com", "https://dead.example.com",],
       trusted: [],
@@ -114,6 +120,7 @@ describe("GossipService — pollOnce", () => {
       now: c.now,
       fetchImpl,
     },);
+
     const first = await svc.pollOnce();
     expect(first,).toEqual({ tick: 1, polled: 2, alive: 1, discovered: 0, },);
     expect(svc.getPeer("https://alive.example.com",)?.lastSeq,).toBe(1,);
@@ -131,6 +138,7 @@ describe("GossipService — pollOnce", () => {
     const { fetchImpl, } = stubFetch({
       "https://flaky.example.com": { status: 503, },
     },);
+
     const svc = new GossipService({
       seeds: ["https://flaky.example.com",],
       trusted: [],
@@ -139,6 +147,7 @@ describe("GossipService — pollOnce", () => {
       now: c.now,
       fetchImpl,
     },);
+
     const summary = await svc.pollOnce();
     expect(summary,).toEqual({ tick: 1, polled: 1, alive: 0, discovered: 0, },);
     expect(svc.getPeer("https://flaky.example.com",)?.lastSeq,).toBe(-1,);
@@ -150,6 +159,7 @@ describe("GossipService — pollOnce", () => {
     const handlers: Record<string, StubHandler> = {
       "https://slow.example.com": { body: { peers: [], }, deferred: true, },
     };
+
     const { fetchImpl, release, } = stubFetch(handlers,);
     const svc = new GossipService({
       seeds: ["https://slow.example.com",],
@@ -159,6 +169,7 @@ describe("GossipService — pollOnce", () => {
       now: c.now,
       fetchImpl,
     },);
+
     const slowUrl = "https://slow.example.com/api/instance-state";
     const poll1 = svc.pollOnce();
     // Let poll 1 issue its request, then run a full fast poll 2 first.
@@ -192,6 +203,7 @@ describe("GossipService — pollOnce", () => {
         },
       },
     },);
+
     const svc = new GossipService({
       seeds: ["https://seed.example.com",],
       trusted: [],
@@ -201,6 +213,7 @@ describe("GossipService — pollOnce", () => {
       now: c.now,
       fetchImpl,
     },);
+
     const summary = await svc.pollOnce();
     expect(summary.discovered,).toBeGreaterThan(0,);
     expect(summary.discovered,).toBeLessThanOrEqual(8,);
@@ -216,6 +229,7 @@ describe("GossipService — pollOnce", () => {
     const { fetchImpl, } = stubFetch({
       "https://seed.example.com": { body: { peers: many, }, },
     },);
+
     const svc = new GossipService({
       seeds: ["https://seed.example.com",],
       trusted: [],
@@ -225,6 +239,7 @@ describe("GossipService — pollOnce", () => {
       now: c.now,
       fetchImpl,
     },);
+
     const summary = await svc.pollOnce();
     expect(summary.discovered,).toBe(2,);
     expect(svc.origins(),).toHaveLength(3,);
@@ -244,6 +259,7 @@ describe("GossipService — pollOnce", () => {
       now: c.now,
       fetchImpl,
     },);
+
     await svc.pollOnce();
     expect(calls[0]?.trust,).toBe(trust,);
     svc.stop();
@@ -260,12 +276,14 @@ describe("gossip singleton", () => {
       trustByOrigin: {},
       selfOrigin: "http://localhost:3000",
     },);
+
     const b = getGossipService({
       seeds: ["https://b.example.com",],
       trusted: [],
       trustByOrigin: {},
       selfOrigin: "http://localhost:3000",
     },);
+
     expect(a,).toBe(b,);
     expect(getGossipOrigins(),).toEqual(["https://a.example.com",],);
     resetGossipService();

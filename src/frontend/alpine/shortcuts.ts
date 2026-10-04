@@ -92,6 +92,7 @@ export function registerKeynavHandler(action: string, handler: () => void,): () 
     set = new Set();
     keynavHandlers.set(action, set,);
   }
+
   set.add(handler,);
   return () => {
     set?.delete(handler,);
@@ -167,6 +168,7 @@ if (typeof document.addEventListener === "function") {
       } else {
         location.assign("/views/new-chat",);
       }
+
       return;
     }
 
@@ -206,6 +208,7 @@ if (typeof document.addEventListener === "function") {
         dispatchKeynavActionToHandlers(entry.action,);
         dispatchKeynavAction(entry.action,);
       }
+
       return;
     }
 

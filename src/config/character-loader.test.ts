@@ -14,6 +14,7 @@ function setupTestDir(): void {
   if (existsSync(TEST_DIR,)) {
     rmSync(TEST_DIR, { recursive: true, },);
   }
+
   mkdirSync(TEST_DIR, { recursive: true, },);
   mkdirSync(path.join(TEST_DIR, "configs", "characters",), { recursive: true, },);
 }

@@ -54,6 +54,7 @@ export async function initDhRatchet(opts: InitDhRatchetOpts,): Promise<InitDhRat
   if (opts.rootKey.byteLength !== KEY_BYTES) {
     throw new Error(`rootKey must be ${KEY_BYTES} bytes (got ${opts.rootKey.byteLength})`,);
   }
+
   const chainKeyBits = await deriveChainKeyFromRoot(opts.rootKey,);
   const initialChainKey = new Uint8Array(chainKeyBits,) as Uint8Array<ArrayBuffer>;
   const myEphemeral = await crypto.subtle.generateKey(
@@ -61,6 +62,7 @@ export async function initDhRatchet(opts: InitDhRatchetOpts,): Promise<InitDhRat
     true,
     ["deriveBits",],
   );
+
   const myInitialPubJwk = await crypto.subtle.exportKey("jwk", myEphemeral.publicKey,);
   return {
     state: {
@@ -95,12 +97,14 @@ export async function dhRatchetEncrypt(opts: DhRatchetEncryptOpts,): Promise<DhR
     sendingChainKey: step.nextChainKey,
     sendCount: opts.state.sendCount + 1,
   };
+
   const nonce = crypto.getRandomValues(new Uint8Array(12,),);
   const ciphertext = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv: nonce, },
     step.messageKey,
     new TextEncoder().encode(opts.plaintext,) as Uint8Array<ArrayBuffer>,
   );
+
   return {
     state: newState,
     payload: {
@@ -138,6 +142,7 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
   const matchingSkip = opts.skippedKeys.find((sk,) =>
     sk.counter === payload.counter && canonicalJwk(sk.ephemeralPublicJwk,) === ephemeralKey
   );
+
   if (matchingSkip) {
     return {
       plaintext: await decryptWithMessageKey(matchingSkip.messageKeyBytes, payload,),
@@ -154,6 +159,7 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
     myEphemeralPubJwk: { ...state.myEphemeralPubJwk, },
     theirCurrentPubJwk: state.theirCurrentPubJwk === null ? null : { ...state.theirCurrentPubJwk, },
   };
+
   let newSkippedKeys: SkippedKey[] = [];
   let recvCountAdvance = 0;
   let chainKey: Uint8Array = new Uint8Array(workingState.receivingChainKey,);
@@ -164,6 +170,7 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
         `dhRatchetDecrypt: payload is ${payload.counter} messages ahead, exceeds maxSkip=${opts.maxSkip}`,
       );
     }
+
     newSkippedKeys = [...await skipOldChain(state, payload.counter,),];
     const theirNewPub = await crypto.subtle.importKey(
       "jwk",
@@ -172,6 +179,7 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
       false,
       [],
     );
+
     const dh = await dhStep(state.rootKey, state.myEphemeralPriv, theirNewPub,);
     workingState = {
       ...state,
@@ -180,6 +188,7 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
       theirCurrentPubJwk: payload.ephemeralPublicJwk,
       recvCount: 0,
     };
+
     // Re-seed chainKey from the NEW epoch's chain (dh.sendingChainKey), not
     // the previous epoch's receivingChainKey captured before the DH step.
     // Without this re-seed the chain-advance loop derives the message key
@@ -196,6 +205,7 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
         `dhRatchetDecrypt: payload counter ${payload.counter} is behind current recvCount ${state.recvCount}`,
       );
     }
+
     if (recvCountAdvance > opts.maxSkip) {
       throw new Error(
         `dhRatchetDecrypt: payload is ${recvCountAdvance} messages ahead, exceeds maxSkip=${opts.maxSkip}`,
@@ -222,6 +232,7 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
       },);
     }
   }
+
   if (!messageKey || !messageKeyBytes) {
     throw new Error("dhRatchetDecrypt: failed to derive message key (unreachable)",);
   }

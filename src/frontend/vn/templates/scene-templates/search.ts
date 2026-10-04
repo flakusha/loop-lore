@@ -20,6 +20,7 @@ export function searchTemplates(query: string,): VnTemplate[] {
       results.push(t,);
     }
   }
+
   for (const t of DIALOGUE_TEMPLATES) {
     if (
       t.name.toLowerCase().includes(lower,) || t.description.toLowerCase().includes(lower,) ||
@@ -28,5 +29,6 @@ export function searchTemplates(query: string,): VnTemplate[] {
       results.push(t,);
     }
   }
+
   return results;
 }

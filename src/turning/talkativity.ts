@@ -52,8 +52,10 @@ export function effectiveTalkativity(
   if (typeof opts.override === "number") {
     return clampWindow(opts.override,);
   }
+
   if (typeof chat.talkativity === "number") {
     return clampWindow(chat.talkativity,);
   }
+
   return clampWindow(actor.talkativity ?? DEFAULT_TALKATIVITY,);
 }

@@ -19,14 +19,17 @@ export function toBasePrivacy(level: InjectionPrivacyLevel,): MemoryPrivacy {
     case "private": {
       return "private";
     }
+
     case "localized":
     case "contextual":
     case "shared": {
       return "shared";
     }
+
     case "public": {
       return "public";
     }
+
     case "secret": {
       return "secret";
     }
@@ -48,14 +51,17 @@ export function checkInjectionPrivacy(
     case "absolute": {
       return "privacy:absolute_never_shared";
     }
+
     case "isolated": {
       if (!ctx.isPrivateChat) { return "privacy:isolated_requires_private_chat"; }
       return null;
     }
+
     case "localized": {
       if (!ctx.worldId) { return "privacy:localized_requires_world"; }
       return null;
     }
+
     case "contextual":
     case "shared":
     case "public":

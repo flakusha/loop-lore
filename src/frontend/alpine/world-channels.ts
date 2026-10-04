@@ -28,8 +28,10 @@ export const worldChannels: Partial<ChatState> & ThisType<ChatState> = {
         group = { locationId: key, locationName: chat.location_name || t("toasts.noChannel",), chats: [], };
         groups.set(key, group,);
       }
+
       group.chats.push(chat,);
     }
+
     return Array.from(groups.values(),);
   },
 
@@ -43,21 +45,25 @@ export const worldChannels: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch("show-toast", { type: "warning", message: t("toasts.enterWorldInviteCode",), },);
       return;
     }
+
     try {
       const res = await apiFetch(`/api/v1/world-invites/${encodeURIComponent(code,)}/join`, {
         method: "POST",
       },);
+
       if (!res.ok) {
         const body = await res.json();
         this.$dispatch("show-toast", { type: "error", message: body.error || t("toasts.couldNotJoinWorld",), },);
         return;
       }
+
       const outcome = await res.json();
       this.worldJoinCode = "";
       this.$dispatch("show-toast", {
         type: "success",
         message: t(outcome.alreadyMember ? "toasts.alreadyMember" : "toasts.joinedWorld",),
       },);
+
       await this.loadWorldChannels();
     } catch {
       this.$dispatch("show-toast", { type: "error", message: t("toasts.networkError",), },);

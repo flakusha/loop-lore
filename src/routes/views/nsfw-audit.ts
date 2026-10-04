@@ -32,6 +32,7 @@ function renderNsfwConsent(prefs: NsfwUserPrefs,): string {
     consentRow("Access status", prefs.accessStatus,),
     consentRow("Shadow NSFW", prefs.shadowNsfw ? "Yes" : "No",),
   ];
+
   if (prefs.blockReason) { rows.push(consentRow("Block reason", prefs.blockReason,),); }
   if (prefs.bannedBy) { rows.push(consentRow("Banned by", prefs.bannedBy,),); }
   if (prefs.bannedAt) { rows.push(consentRow("Banned at", prefs.bannedAt,),); }
@@ -49,6 +50,7 @@ function renderNsfwAuditRows(actions: ModAction[],): string {
         <td colspan="4" class="empty-state" style="padding: var(--space-8)">No moderation actions recorded</td>
       </tr>`;
   }
+
   return Array.from(actions, (a,) =>
     `<tr>
       <td style="font-size: 12px; white-space: nowrap">${escapeHtml(a.createdAt,)}</td>
@@ -96,6 +98,7 @@ async function serveNsfwModerationAudit(
     svc.getPreferences(targetUserId,),
     svc.getAuditLog(targetUserId, { limit: 200, },),
   ],);
+
   // The audit view needs both; preserve all-or-nothing behavior.
   if (prefsResult.status === "rejected") { throw prefsResult.reason; }
   if (actionsResult.status === "rejected") { throw actionsResult.reason; }

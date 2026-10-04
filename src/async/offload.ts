@@ -91,6 +91,7 @@ export class OffloadDaemon {
         this.log.error("offload daemon tick failed", undefined, { error: String(error,), },);
       },);
     }, this.intervalMs,);
+
     this.log.info("offload daemon started", {
       intervalMs: this.intervalMs,
       ttlMs: this.ttlMs,
@@ -105,6 +106,7 @@ export class OffloadDaemon {
       clearInterval(this.timer,);
       this.timer = null;
     }
+
     this.log.info("offload daemon stopped",);
   }
 

@@ -71,10 +71,12 @@ export async function listActorItems(
     .selectFrom("actor_items",)
     .select(database.fn.countAll().as("total",),)
     .where("actor_id", "=", actorId,);
+
   let listQuery = database
     .selectFrom("actor_items",)
     .selectAll()
     .where("actor_id", "=", actorId,);
+
   if (opts.itemType) {
     countQuery = countQuery.where("item_type", "=", opts.itemType,);
     listQuery = listQuery.where("item_type", "=", opts.itemType,);
@@ -141,6 +143,7 @@ export async function createActorItem(
     .selectAll()
     .where("id", "=", id,)
     .executeTakeFirstOrThrow();
+
   return { ok: true, entity, };
 }
 
@@ -171,6 +174,7 @@ export async function updateActorItem(
     .where("id", "=", itemId,)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!existing) {
     return { ok: false, code: "not_found", message: "Item not found", };
   }
@@ -178,6 +182,7 @@ export async function updateActorItem(
   const updates: Updateable<DB["actor_items"]> = {
     updated_at: new Date().toISOString(),
   };
+
   if (patch.name != null) { updates.name = patch.name; }
   if (patch.description !== undefined) { updates.description = patch.description; }
   if (patch.itemType != null) { updates.item_type = patch.itemType; }
@@ -188,11 +193,13 @@ export async function updateActorItem(
   if (patch.metadata != null) {
     updates.metadata = jsonStringifyOr(patch.metadata,);
   }
+
   if (patch.equipped != null) {
     updates.equipped = patch.equipped
       ? EquipState.Equipped
       : EquipState.Unequipped;
   }
+
   if (patch.sortOrder != null) { updates.sort_order = patch.sortOrder; }
 
   if (Object.keys(updates,).length === 1) { return { ok: true, entity: existing, }; }
@@ -208,6 +215,7 @@ export async function updateActorItem(
     .selectAll()
     .where("id", "=", itemId,)
     .executeTakeFirstOrThrow();
+
   return { ok: true, entity, };
 }
 
@@ -235,8 +243,10 @@ export async function deleteActorItem(
     .where("id", "=", itemId,)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!result || Number(result.numDeletedRows ?? 0,) === 0) {
     return { ok: false, code: "not_found", message: "Item not found", };
   }
+
   return { ok: true, id: itemId, };
 }

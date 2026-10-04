@@ -156,6 +156,7 @@ describe("streamDispatch", () => {
     const handler: StreamHandler = (chunk,) => {
       events.push(`${chunk.type}:${chunk.content ?? chunk.finishReason ?? ""}`,);
     };
+
     const chunks = [
       { model: "llama3.2", message: { role: "assistant", content: "Hel", }, done: false, },
       { model: "llama3.2", message: { role: "assistant", content: "lo", }, done: false, },
@@ -182,6 +183,7 @@ describe("streamDispatch", () => {
         toolCalls.push(`${chunk.toolCall.function.name}:${chunk.toolCall.function.arguments}`,);
       }
     };
+
     const chunks = [
       {
         model: "llama3.2",
@@ -200,6 +202,7 @@ describe("streamDispatch", () => {
         ],);
       },
     );
+
     expect(toolCalls,).toEqual(['get_weather:{"city":"x"}',],);
   });
 

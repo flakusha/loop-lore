@@ -122,6 +122,7 @@ describe("recordLifecycle (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(res.status,).toBe(500,);
 
     await store.flush();
@@ -163,6 +164,7 @@ describe("recordLifecycle (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     await store.flush();
 
     row = await store.read("pipe-1",);
@@ -184,6 +186,7 @@ describe("recordLifecycle (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(res.status,).toBe(400,);
 
     await store.flush();

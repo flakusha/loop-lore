@@ -38,6 +38,7 @@ export async function submitAppeal(
     status: "pending",
     created_at: now,
   },).execute();
+
   thisL.log.info("Appeal submitted", { userId, actionId, },);
   return { id, status: "pending", };
 }
@@ -85,6 +86,7 @@ export async function getUserAppeals(
         created_at: string;
       }
     >;
+
   return Array.from(rows, (r,) => ({
     id: r.id,
     actionId: r.action_id,
@@ -117,6 +119,7 @@ export async function getPendingAppeals(
     .orderBy("created_at", "asc",)
     .limit(limit,)
     .execute() as Array<{ id: string; user_id: string; action_id: string; reason: string; created_at: string }>;
+
   return Array.from(rows, (r,) => ({
     id: r.id,
     userId: r.user_id,
@@ -175,6 +178,7 @@ export async function reviewAppeal(
       .select("action_id",)
       .where("id", "=", appealId,)
       .executeTakeFirst() as unknown as { action_id: string } | undefined;
+
     if (appealRow) {
       await thisL.db.updateTable("moderation_actions",)
         .set({ superseded_by: appealId, },)
@@ -182,6 +186,7 @@ export async function reviewAppeal(
         .where("deleted_at", "is", null,)
         .execute();
     }
+
     // Record the pending_reversal audit row. NO direct state change.
     await thisL.recordAction({
       actionType: "pending_reversal",
@@ -191,6 +196,7 @@ export async function reviewAppeal(
       scope: "appeal",
       scopeId: appealId,
     },);
+
     thisL.log.info("Appeal approved; pending_reversal recorded", {
       appealId,
       reviewedBy,

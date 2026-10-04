@@ -98,6 +98,7 @@ async function storeGeneratedMessage({
       },)
       .where("id", "=", targetMessageId,)
       .execute();
+
     return targetMessageId;
   }
 

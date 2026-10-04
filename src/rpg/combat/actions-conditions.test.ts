@@ -44,6 +44,7 @@ describe("canTakeAction", () => {
     expect(canTakeAction(makeCombatant({ conditions: ["stunned",], },), ActionType.Attack,),).toBe(false,);
     expect(canTakeAction(makeCombatant({ conditions: ["paralyzed",], },), ActionType.FreeAction,),).toBe(false,);
   });
+
   it("spends from the matching pool", () => {
     const c = makeCombatant();
     expect(canTakeAction(c, ActionType.Attack,),).toBe(true,);
@@ -60,6 +61,7 @@ describe("consumeAction", () => {
     const twice = consumeAction(after, ActionType.Attack,);
     expect(twice.actions,).toBe(0,);
   });
+
   it("leaves other pools untouched", () => {
     const after = consumeAction(makeCombatant(), ActionType.BonusAction,);
     expect(after.bonusActions,).toBe(0,);
@@ -98,6 +100,7 @@ describe("isCombatOver", () => {
     const deadFoe = makeCombatant({ id: "e1", isNpc: true, hp: 0, },);
     expect(isCombatOver([hero, deadFoe,],),).toEqual({ over: true, winner: "player", },);
   });
+
   it("stays live while both sides stand", () => {
     const hero = makeCombatant();
     const foe = makeCombatant({ id: "e1", isNpc: true, },);
@@ -112,6 +115,7 @@ describe("applyDamage", () => {
     expect(overkill,).toBe(6,);
     expect(defeated,).toBe(true,);
   });
+
   it("leaves survivors standing", () => {
     const { updated, defeated, } = applyDamage(makeCombatant(), 5,);
     expect(updated.hp,).toBe(19,);

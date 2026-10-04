@@ -181,6 +181,7 @@ describe("EnvironmentalModifier interface", () => {
       duration: 3,
       description: "Test modifier",
     };
+
     expect(modifier.id,).toBe("test",);
     expect(modifier.source,).toBe("weather",);
     expect(modifier.affectedStat,).toBe("attack",);
@@ -203,6 +204,7 @@ describe("CombatWeather", () => {
       "heatwave",
       "cold_snap",
     ];
+
     for (const condition of conditions) {
       expect(typeof condition,).toBe("string",);
     }

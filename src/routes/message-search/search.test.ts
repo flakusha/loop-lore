@@ -50,6 +50,7 @@ async function seedUser(db: Kysely<DB>,): Promise<string> {
     user_id: userId,
     owner_id: userId,
   } as never,);
+
   return userId;
 }
 
@@ -73,6 +74,7 @@ async function seedMessage(
     content_plaintext: content,
     ...opts,
   },);
+
   return id;
 }
 
@@ -114,6 +116,7 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
       id: asCharacter,
       content_plaintext: "shared words",
     },);
+
     await seedMessage(db, chatId, userId, "shared words",);
 
     const app = makeApp(db, userId,);
@@ -134,6 +137,7 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
     const withAttachment = await seedMessage(db, chatId, userId, "look at this", {
       attachments: JSON.stringify([{ assetId, order: 0, caption: "", label: "message-attachment", },],),
     },);
+
     await seedMessage(db, chatId, userId, "just text",);
     await insertAssetLinks(db, assetId, "message", withAttachment,);
 
@@ -157,9 +161,11 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
     const imageMsg = await seedMessage(db, chatId, userId, "an image", {
       attachments: JSON.stringify([{ assetId: imageAsset, order: 0, caption: "", label: "message-attachment", },],),
     },);
+
     const audioMsg = await seedMessage(db, chatId, userId, "a song", {
       attachments: JSON.stringify([{ assetId: audioAsset, order: 0, caption: "", label: "message-attachment", },],),
     },);
+
     await insertAssetLinks(db, imageAsset, "message", imageMsg,);
     await insertAssetLinks(db, audioAsset, "message", audioMsg,);
 
@@ -220,6 +226,7 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/messages/search?chatId=${foreignChat}`,),
     );
+
     expect(res.status,).toBe(404,);
     await db.destroy();
   });
@@ -239,14 +246,17 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/messages/search?q=${encodeURIComponent(q,)}`,),
       );
+
       expect(res.status,).toBe(200,);
       const body = (await res.json()) as SearchBody;
       expect(body.results.map((r,) => r.content),).not.toContain("harmless message text",);
     }
+
     // LIKE metacharacters in linkPattern must stay literal.
     const likeRes = await app.handle(
       new Request("http://localhost/api/messages/search?linkPattern=%25%25%27%3B%20DROP%20TABLE%20messages%3B--",),
     );
+
     expect(likeRes.status,).toBe(200,);
     expect(((await likeRes.json()) as SearchBody).results,).toEqual([],);
     // Table still intact after the hostile requests.

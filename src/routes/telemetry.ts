@@ -57,6 +57,7 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
       if (!isFrontendTelemetryEnabled()) {
         return jsonResponse({ ok: true, dropped: "frontend telemetry disabled", },);
       }
+
       await record(database, {
         eventType: ctx.body.type,
         sessionId: ctx.sessionId ?? null,
@@ -65,6 +66,7 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
         data: ctx.body.data ?? {},
         source: "frontend",
       },);
+
       return jsonResponse({ ok: true, },);
     }, {
       body: TelemetryEventBody,
@@ -83,17 +85,20 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
           code: ErrorCode.Forbidden,
         },);
       }
+
       if (!isTelemetryEnabled()) {
         return jsonError({
           message: ctx.t?.("telemetry.telemetryDisabled",) ?? "Telemetry is disabled",
           status: HttpStatus.NotFound,
         },);
       }
+
       const row = await database
         .selectFrom("telemetry_events",)
         .select((eb,) => eb.fn.count<number>("id",).as("total",))
         .where("source", "=", "server",)
         .executeTakeFirst();
+
       return jsonResponse({ total: row?.total ?? 0, },);
     }, {
       response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
@@ -111,12 +116,14 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
           code: ErrorCode.Forbidden,
         },);
       }
+
       if (!isTelemetryEnabled()) {
         return jsonError({
           message: ctx.t?.("telemetry.telemetryDisabled",) ?? "Telemetry is disabled",
           status: HttpStatus.NotFound,
         },);
       }
+
       const rows = await database
         .selectFrom("telemetry_events",)
         .select(["event_type",],)
@@ -125,6 +132,7 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
         .where("source", "=", "server",)
         .groupBy("event_type",)
         .execute();
+
       return jsonResponse(rows,);
     }, {
       response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
@@ -142,12 +150,14 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
           code: ErrorCode.Forbidden,
         },);
       }
+
       if (!isTelemetryEnabled()) {
         return jsonError({
           message: ctx.t?.("telemetry.telemetryDisabled",) ?? "Telemetry is disabled",
           status: HttpStatus.NotFound,
         },);
       }
+
       const rows = await database
         .selectFrom("telemetry_events",)
         .select(["event_type", "source", "created_at",],)
@@ -160,6 +170,7 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
         .orderBy("created_at", "desc",)
         .limit(50,)
         .execute();
+
       return jsonResponse(rows,);
     }, {
       response: { 200: t.Array(TelemetryAnalyticsErrorsRow,), 401: ErrorResponse, 404: ErrorResponse, },
@@ -177,12 +188,14 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
           code: ErrorCode.Forbidden,
         },);
       }
+
       if (!isTelemetryEnabled()) {
         return jsonError({
           message: ctx.t?.("telemetry.telemetryDisabled",) ?? "Telemetry is disabled",
           status: HttpStatus.NotFound,
         },);
       }
+
       const limit = Number(ctx.query.limit ?? 7,);
       const rows = await database
         .selectFrom("telemetry_events",)
@@ -195,6 +208,7 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
         .orderBy("date", "desc",)
         .limit(limit,)
         .execute();
+
       return jsonResponse(rows,);
     }, {
       response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },

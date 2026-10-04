@@ -133,6 +133,7 @@ describe("POST /chats/:id/branches (fork alias)", () => {
       json("POST", { messageId: rootId, name: "Hax", },),
       STRANGER_ID,
     );
+
     expect(res.status,).toBe(404,);
     expect(await branchCount(), "a refused create writes no branch row",).toBe(0,);
   });

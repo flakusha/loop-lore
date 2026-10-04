@@ -53,6 +53,7 @@ const emptySections = (): ExportSections => ({
   availability: true,
   worldSetup: true,
 });
+
 const capitalize = (s: string,): string => s.charAt(0,).toUpperCase() + s.slice(1,);
 
 /** State plugin for the systems export/import panel, bound to one actor. */
@@ -112,6 +113,7 @@ export const actorSystems: ActorSystemsState = {
     for (const key of EXPORT_SECTIONS) {
       body[`include${capitalize(key,)}`] = this.sections[key];
     }
+
     if (this.worldId) { body.worldId = this.worldId; }
     return body;
   },
@@ -125,6 +127,7 @@ export const actorSystems: ActorSystemsState = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody(this.buildExportBody(),),
       },);
+
       if (!res.ok) { return null; }
       return await res.blob();
     } catch (error) {
@@ -144,6 +147,7 @@ export const actorSystems: ActorSystemsState = {
         this.error = t("status.systemsExportFailed",);
         return;
       }
+
       const url = URL.createObjectURL(blob,);
       const a = document.createElement("a",);
       a.href = url;
@@ -170,11 +174,13 @@ export const actorSystems: ActorSystemsState = {
       this.error = t("status.systemsImportNoPayload",);
       return;
     }
+
     const result = safeJsonParse<unknown>(raw,);
     if (!result.ok) {
       this.error = t("status.systemsImportInvalidJson",);
       return;
     }
+
     const payload = result.value;
     this.busy = true;
     this.error = "";
@@ -185,13 +191,16 @@ export const actorSystems: ActorSystemsState = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody(payload as Record<string, unknown>,),
       },);
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({} as Record<string, unknown>)) as {
           message?: string;
         };
+
         this.error = body.message ?? t("status.systemsImportFailed",);
         return;
       }
+
       this.importResult = (await res.json()) as ImportResult;
       this.message = t("status.systemsImportComplete",);
     } catch (error) {
@@ -210,6 +219,7 @@ export const actorSystems: ActorSystemsState = {
       this.error = t("status.systemsImportNoUrl",);
       return;
     }
+
     this.busy = true;
     this.error = "";
     this.message = "";
@@ -219,13 +229,16 @@ export const actorSystems: ActorSystemsState = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ url, worldId: this.worldId || null, },),
       },);
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({} as Record<string, unknown>)) as {
           message?: string;
         };
+
         this.error = body.message ?? t("status.systemsImportFailed",);
         return;
       }
+
       this.importResult = (await res.json()) as ImportResult;
       this.message = t("status.systemsImportComplete",);
     } catch (error) {

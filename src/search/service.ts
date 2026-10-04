@@ -97,6 +97,7 @@ export function createUnifiedSearchService(opts: ServiceOptions,): UnifiedSearch
       const timeout = new Promise<never>((_, reject,) => {
         timer = setTimeout(() => reject(new SearchTimeoutError(timeoutMs, [...partial,],),), timeoutMs,);
       },);
+
       const hits = await Promise.race([run(), timeout,],);
       return applyFloor(hits, query.minScore, topK,);
     } finally {
@@ -125,17 +126,20 @@ function tiersFor(
       const tier = providers.exact ?? providers.keyword;
       return tier === undefined ? [] : [tier,];
     }
+
     case "keyword":
     case "fuzzy":
     case "vector": {
       const tier = providers[mode] ?? providers.keyword;
       return tier === undefined ? [] : [tier,];
     }
+
     case "hybrid": {
       const tiers = [providers.keyword, providers.vector,].filter((t,) => t !== undefined);
       if (includeEncrypted && providers.token !== undefined) { tiers.push(providers.token,); }
       return tiers;
     }
+
     default: {
       const exhaustive: never = mode;
       throw new Error(`unhandled search mode: ${String(exhaustive,)}`,);
@@ -155,11 +159,13 @@ async function runTierLists(
       return hits;
     },)
   );
+
   const settled = await Promise.allSettled(wrapped,);
   const lists: SearchHit[][] = [];
   for (const s of settled) {
     if (s.status === "fulfilled") { lists.push(s.value,); }
   }
+
   return lists;
 }
 

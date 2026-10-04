@@ -67,6 +67,7 @@ export function listJobs(actorId: string,): BatchGenerationJob[] {
       jobs.push(job,);
     }
   }
+
   return jobs.sort((a, b,) => b.startedAt.localeCompare(a.startedAt,));
 }
 

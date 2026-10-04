@@ -102,6 +102,7 @@ describe("MessageCreateBody — additional field edge cases", () => {
       caption: `cap ${i}`,
       label: `lbl ${i}`,
     }),);
+
     expect(
       Value.Check(MessageCreateBody, body({ content: "hi", attachments: items, },),),
     ).toBe(true,);
@@ -129,9 +130,11 @@ describe("MessageCreateBody — additional field edge cases", () => {
     expect(
       Value.Check(MessageCreateBody, body({ content: "hi", role: "User", },),),
     ).toBe(false,);
+
     expect(
       Value.Check(MessageCreateBody, body({ content: "hi", role: "tool", },),),
     ).toBe(false,);
+
     expect(
       Value.Check(MessageCreateBody, body({ content: "hi", role: "narrator", },),),
     ).toBe(false,);
@@ -293,9 +296,11 @@ describe("MessageSearchQuery — search boundaries", () => {
     expect(
       Value.Check(MessageSearchQuery, body({ hasAttachment: "true", },),),
     ).toBe(true,);
+
     expect(
       Value.Check(MessageSearchQuery, body({ hasAttachment: "false", },),),
     ).toBe(true,);
+
     // Booleans rejected — must be the strings.
     expect(
       Value.Check(MessageSearchQuery, body({ hasAttachment: true as unknown as string, },),),

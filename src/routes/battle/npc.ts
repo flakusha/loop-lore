@@ -33,6 +33,7 @@ export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
             allyCount: number;
             battleMemories: NPCBattleMemory[];
           };
+
           const decision = makeNPCDecision(
             body.personality,
             body.currentHealth,
@@ -41,6 +42,7 @@ export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
             body.allyCount,
             body.battleMemories,
           );
+
           return jsonResponse(decision,);
         } catch (error) {
           log().error("Failed to make NPC decision", error instanceof Error ? error : undefined,);
@@ -67,6 +69,7 @@ export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
             opponentLevel: number;
             npcLevel: number;
           };
+
           const memory = createBattleMemory(
             body.battleId,
             body.outcome,
@@ -74,6 +77,7 @@ export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
             body.opponentLevel,
             body.npcLevel,
           );
+
           return jsonResponse(memory,);
         } catch (error) {
           log().error("Failed to create battle memory", error instanceof Error ? error : undefined,);
@@ -99,12 +103,14 @@ export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
             maxHealth: number;
             battleMemories: NPCBattleMemory[];
           };
+
           const result = wouldNPCSurrender(
             body.personality,
             body.currentHealth,
             body.maxHealth,
             body.battleMemories,
           );
+
           return jsonResponse(result,);
         } catch (error) {
           log().error("Failed to check NPC surrender", error instanceof Error ? error : undefined,);

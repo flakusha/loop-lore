@@ -103,6 +103,7 @@ function decodeTextChunk(buffer: Buffer, start: number, length: number, type: st
       return null;
     }
   }
+
   return buffer.toString("latin1", textStart, end,);
 }
 
@@ -132,6 +133,7 @@ function tryParseCharacter(text: string | null,): ExtractedCharacter | null {
       return { data, spec, };
     }
   }
+
   return null;
 }
 
@@ -174,6 +176,7 @@ function crc32(buf: Buffer,): number {
       crc = (crc >>> 1) ^ (crc & 1 ? 0xED_B8_83_20 : 0);
     }
   }
+
   return (crc ^ 0xFF_FF_FF_FF) >>> 0;
 }
 
@@ -240,9 +243,11 @@ function findIendOffset(buffer: Buffer,): number {
     if (type === "IEND") {
       return offset; // offset points to IEND's length field — insert before it
     }
+
     const length = buffer.readUInt32BE(offset,);
     offset += 12 + length; // 4 (length) + 4 (type) + length + 4 (crc)
   }
+
   return -1;
 }
 

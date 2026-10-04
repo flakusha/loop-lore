@@ -46,6 +46,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           status: HttpStatus.NotFound,
         },);
       }
+
       const jobs = emotionAvatarService.listJobs(actorId,);
       return jsonResponse(jobs,);
     },)
@@ -60,6 +61,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           status: HttpStatus.NotFound,
         },);
       }
+
       const { jobId, } = ctx.params as { jobId: string };
       const job = emotionAvatarService.getJobStatus(jobId as any,);
       if (!job) { return jsonError({ message: "Job not found", status: HttpStatus.NotFound, },); }
@@ -76,11 +78,13 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           status: HttpStatus.NotFound,
         },);
       }
+
       const { jobId, } = ctx.params as { jobId: string };
       const cancelled = emotionAvatarService.cancelJob(jobId as any,);
       if (!cancelled) {
         return jsonError({ message: "Job not found or already completed", status: HttpStatus.NotFound, },);
       }
+
       return jsonResponse({ ok: true, cancelled: true, },);
     },)
     // ── Start batch generation ───────────────────────────────────
@@ -94,6 +98,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           status: HttpStatus.NotFound,
         },);
       }
+
       const body = ctx.body as Record<string, unknown>;
 
       const baseAvatarId = body.baseAvatarId as string | undefined;
@@ -125,6 +130,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           promptPrefix,
           negativePrompt,
         },);
+
         return jsonCreated({ jobId, },);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Failed to start generation";
@@ -141,6 +147,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       if (!validEmotions.includes(emotion,)) {
         return jsonError({ message: `Invalid emotion: ${emotion}`, status: HttpStatus.BadRequest, },);
       }
+
       const modifier = emotionAvatarService.getEmotionPromptModifier(emotion as EmotionType,);
       return jsonResponse({ emotion, modifier, },);
     },)
@@ -153,6 +160,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
         value: emotion,
         displayName: emotion.charAt(0,).toUpperCase() + emotion.slice(1,),
       }),);
+
       return jsonResponse(emotions,);
     },);
 }

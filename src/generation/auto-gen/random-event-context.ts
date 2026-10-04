@@ -51,6 +51,7 @@ export async function loadChatLocation(
     .select(["id", "name", "description",],)
     .where("id", "=", locationId,)
     .executeTakeFirst();
+
   if (!row) { return null; }
   return {
     description: row.description ?? undefined,

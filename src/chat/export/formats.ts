@@ -72,15 +72,18 @@ function renderMarkdown(payload: ExportPayload,): string {
     "---",
     "",
   ];
+
   let lastAuthor = "";
   for (const msg of messages) {
     const author = authorLabel(msg,);
     if (author !== lastAuthor) {
       lines.push(`### ${author}`, "",);
     }
+
     lines.push(msg.content, "",);
     lastAuthor = author;
   }
+
   return lines.join("\n",);
 }
 
@@ -115,6 +118,7 @@ function renderToml(payload: ExportPayload,): string {
     `createdAt = "${tomlEscape(chat.createdAt,)}"`,
     "",
   ];
+
   for (const [i, msg,] of messages.entries()) {
     lines.push(`[[message]]`,);
     lines.push(`index = ${i}`,);
@@ -126,6 +130,7 @@ function renderToml(payload: ExportPayload,): string {
     if (msg.model_id !== null) { lines.push(`model = "${tomlEscape(msg.model_id,)}"`,); }
     lines.push("",);
   }
+
   return lines.join("\n",);
 }
 
@@ -154,6 +159,7 @@ function renderYaml(payload: ExportPayload,): string {
     }),),
     exportedAt: new Date().toISOString(),
   };
+
   return yamlDump(shaped, { lineWidth: 120, noRefs: true, },);
 }
 
@@ -177,6 +183,7 @@ function renderJson(payload: ExportPayload,): string {
     },
     2,
   );
+
   return sr.ok ? sr.value : "{}";
 }
 
@@ -201,5 +208,6 @@ export function exportChat(
   if (!VALID_FORMATS.includes(format,)) {
     throw new Error(`Unsupported export format: ${format}`,);
   }
+
   return FORMATTERS[format](payload,);
 }

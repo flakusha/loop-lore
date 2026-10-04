@@ -28,6 +28,7 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
           worlds.push({ id: w.id, name: w.name, },);
         }
       }
+
       this._worlds = worlds;
       for (const w of this._worlds) {
         await this.loadWorldChats(w.id,);
@@ -78,8 +79,10 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
         type: "warning",
         message: t("toasts.completeGenerationFirst",),
       },);
+
       return;
     }
+
     // Snapshot the outgoing composer's text before the swap so each chat
     // keeps its own draft.
     this.flushComposerDraft();
@@ -132,11 +135,13 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
         /* store not ready */
       }
     }
+
     // Guard against SSR/Node test environments where `document` may lack querySelector.
     if (typeof document?.querySelector === "function") {
       const titleEl = document.querySelector<HTMLElement>("#page-title",);
       if (titleEl) { titleEl.textContent = this.activeChatName; }
     }
+
     history.replaceState(null, "", `/views/chat?chatid=${chatId}`,);
     this.currentPage = 1;
     this.hasMoreMessages = true;
@@ -160,6 +165,7 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
       this.loadCharacterInfo(),
       this.loadMood(),
     ],);
+
     if (selectReload.some((r,) => r.status === "rejected")) { throw new Error("select chat reload failed",); }
     // Independent post-load fetches — run concurrently (allSettled preserves
     // the throw-on-rejection contract of the sequential version).
@@ -168,6 +174,7 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
       this.loadChatKey(chatId, this._activeChatEncryptionLevel,),
       this.loadImpersonationState(),
     ],);
+
     if (postLoad.some((r,) => r.status === "rejected")) { throw new Error("select chat post-load failed",); }
     // Quick-reply buttons + startup-triggered automation for this chat.
     this.loadQuickReplies();
@@ -181,6 +188,7 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
         this.loadTurnOrder(),
         this.loadAvailableActors(),
       ],);
+
       if (groupLoad.some((r,) => r.status === "rejected")) { throw new Error("group chat load failed",); }
     }
   },

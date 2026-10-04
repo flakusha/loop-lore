@@ -45,8 +45,10 @@ export async function generateEmotionAvatar(
       .select(["descriptor",],)
       .where("id", "=", opts.outfitId,)
       .executeTakeFirst();
+
     outfitDescriptor = item?.descriptor ?? "";
   }
+
   const outfitSlot = outfitDescriptor ? `${outfitDescriptor}, ` : "";
 
   // Build prompt: use explicit prefix if provided, otherwise use metadata fallback
@@ -62,6 +64,7 @@ export async function generateEmotionAvatar(
     const metadata = await extractAvatarMetadata(svc.db, opts.baseAvatarId, {
       actorId: opts.actorId,
     },);
+
     // Identity anchor first, then the outfit descriptor slot, then the
     // emotion descriptor (buildEmotionPrompt appends emotion + quality).
     const anchor = metadata.caption ?? metadata.altText ?? "character portrait";
@@ -121,6 +124,7 @@ export async function generateEmotionAvatar(
       sortOrder: EMOTION_ORDINAL[opts.emotion],
       outfitId: opts.outfitId,
     },);
+
     // Auto-enqueue matting for generated sprites. Providers typically emit
     // RGBA PNGs with fully opaque pixels, so header-level detection marks the
     // asset `native` and would skip matting — force the raw path here.

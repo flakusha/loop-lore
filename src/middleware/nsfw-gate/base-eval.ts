@@ -49,26 +49,32 @@ export function evaluateNsfwBase(
   if (!gateConfig.allowNsfw) {
     return { allowed: false, reason: "nsfw_disabled", };
   }
+
   if (!inputs) {
     return { allowed: false, reason: "user_not_found", };
   }
+
   if (!opts?.ignoreModeration) {
     if (inputs.accessStatus === "banned") {
       return { allowed: false, reason: "banned", };
     }
+
     if (inputs.accessStatus === "blocked") {
       return { allowed: false, reason: "blocked", };
     }
   }
+
   if (!inputs.ageGateAcceptedAt) {
     return { allowed: false, reason: "age_gate_not_accepted", };
   }
+
   if (inputs.birthDate) {
     const age = calculateAge(inputs.birthDate,);
     if (age === null || age < gateConfig.nsfwMinAge) {
       return { allowed: false, reason: age === null ? "invalid_birth_date" : `underage:${age}`, };
     }
   }
+
   return { allowed: true, };
 }
 
@@ -89,6 +95,7 @@ export async function loadGateInputs(
   if (unique.length === 0) {
     return result;
   }
+
   // Sequential awaits: two dependent-shaped reads on one connection; the
   // Promise.all form trips the no-unhandled-rejection lint.
   const users = await database
@@ -96,11 +103,13 @@ export async function loadGateInputs(
     .select(["id", "birth_date", "age_gate_accepted_at",],)
     .where("id", "in", unique,)
     .execute();
+
   const prefs = await database
     .selectFrom("nsfw_user_preferences",)
     .select(["user_id", "access_status",],)
     .where("user_id", "in", unique,)
     .execute();
+
   const statusByUser = new Map(prefs.map((p,) => [p.user_id, p.access_status,]),);
   for (const user of users) {
     result.set(user.id, {
@@ -109,6 +118,7 @@ export async function loadGateInputs(
       accessStatus: statusByUser.get(user.id,) ?? null,
     },);
   }
+
   return result;
 }
 
@@ -135,6 +145,7 @@ export async function findBlockedParticipant(
   if (others.length === 0) {
     return null;
   }
+
   const inputs = await loadGateInputs(database, others,);
   for (const id of others) {
     const decision = evaluateNsfwBase(gateConfig, inputs.get(id,),);
@@ -142,5 +153,6 @@ export async function findBlockedParticipant(
       return { userId: id, reason: decision.reason ?? "unknown", };
     }
   }
+
   return null;
 }

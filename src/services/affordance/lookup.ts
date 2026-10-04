@@ -141,6 +141,7 @@ export function evaluate(
     // Verb not in the cell matrix → conservative deny
     return deny(`verb '${verb}' not afforded for category '${item.category}'`, "verb_not_afforded",);
   }
+
   return guard(caps, item, ctx,);
 }
 

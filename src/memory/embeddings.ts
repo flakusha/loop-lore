@@ -146,6 +146,7 @@ export async function getStoredVectors(
     .select(["memory_id", "vector_blob",],)
     .where("memory_id", "in", memoryIds,)
     .execute();
+
   const map = new Map<string, Float32Array>();
   for (const row of rows) {
     const sized = safeFromUint8Array(new Uint8Array(row.vector_blob,),);
@@ -155,6 +156,7 @@ export async function getStoredVectors(
     const dims = Math.floor(buf.byteLength / 4,);
     map.set(row.memory_id, new Float32Array(buf.buffer, buf.byteOffset, dims,),);
   }
+
   return map;
 }
 
@@ -213,6 +215,7 @@ export async function semanticRecall(
       if (!match) { throw new Error(`Rerank index ${index} outside the shortlist.`,); }
       reordered.push({ memoryId: match.memoryId, score, },);
     }
+
     return reordered.slice(0, topK,);
   } catch (error) {
     getLogger()
@@ -220,6 +223,7 @@ export async function semanticRecall(
       .debug("Rerank failed; keeping cosine order", {
         error: error instanceof Error ? error.message : String(error,),
       },);
+
     return ranked;
   }
 }

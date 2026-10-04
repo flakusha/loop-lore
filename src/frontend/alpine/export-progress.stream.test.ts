@@ -58,6 +58,7 @@ function openSse(frames: string[],): { response: Response; closed: boolean } {
       state.closed = true;
     },
   },);
+
   return {
     response: new Response(stream, { status: 200, headers: { "Content-Type": "text/event-stream", }, },),
     get closed() {
@@ -72,6 +73,7 @@ test.skipIf(!ISOLATED,)("startExport streams the SSE body and disarms the fetch 
     `data: {"type":"job_created","jobId":"j1","status":"queued"}\n\n`,
     `data: {"type":"completed","jobId":"j1","downloadUrl":"/api/v1/export/download/j1"}\n\n`,
   ],);
+
   handler = async (_url: string, init?: RequestInit,) => {
     captured = init;
     return stream.response;

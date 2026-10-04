@@ -62,6 +62,7 @@ function buildCtx(
       }
     },
   };
+
   // Preserve getters (isGroupChat, filteredAvailableActors) like the real
   // mergeReactiveSource — a plain spread would freeze them.
   for (const name of Object.getOwnPropertyNames(chatParticipants,)) {
@@ -70,6 +71,7 @@ function buildCtx(
     if ("value" in desc) { base[name] = desc.value; }
     else { Object.defineProperty(base, name, desc,); }
   }
+
   return base as unknown as ChatState;
 }
 
@@ -109,6 +111,7 @@ describeOrSkip("chatParticipants", () => {
           actor_type: "character",
         },
       ],);
+
       const state = buildCtx();
       await chatParticipants.loadParticipants!.call(state,);
       expect(state._participants.length,).toBe(2,);
@@ -138,6 +141,7 @@ describeOrSkip("chatParticipants", () => {
           { id: "a3", display_name: "Carol", actor_type: "character", },
         ],
       },);
+
       const state = buildCtx();
       await chatParticipants.loadAvailableActors!.call(state,);
       expect(fetchCalls[0]?.url,).toBe("/api/v1/actors",);
@@ -172,6 +176,7 @@ describeOrSkip("chatParticipants", () => {
           ],
         },
       },);
+
       const state = buildCtx();
       await chatParticipants.loadTurnOrder!.call(state,);
       expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/turn-order",);
@@ -229,6 +234,7 @@ describeOrSkip("chatParticipants", () => {
           actor_type: "character",
         },
       ] as unknown as ChatState["_participants"];
+
       await chatParticipants.removeParticipant!.call(state, "a1",);
       expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/participants/a1",);
       expect(fetchCalls[0]?.opts.method,).toBe("DELETE",);
@@ -254,6 +260,7 @@ describeOrSkip("chatParticipants", () => {
           actor_type: "character",
         },
       ] as unknown as ChatState["_participants"];
+
       await chatParticipants.updateParticipantTalkativity!.call(state, "a1", 99,);
       expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ talkativity: 10, },);
       expect(state._participants[0]?.talkativity,).toBe(10,);
@@ -279,6 +286,7 @@ describeOrSkip("chatParticipants", () => {
           actor_type: "character",
         },
       ] as unknown as ChatState["_participants"];
+
       await chatParticipants.updateParticipantInitiative!.call(state, "a1", 7,);
       expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ initiative: 7, },);
       expect(state._participants[0]?.initiative,).toBe(7,);
@@ -303,11 +311,13 @@ describeOrSkip("chatParticipants", () => {
           actor_type: "character",
         },
       ] as unknown as ChatState["_participants"];
+
       state._availableActors = [
         { id: "a1", display_name: "Alice", actor_type: "character", },
         { id: "a2", display_name: "Bob", actor_type: "character", },
         { id: "a3", display_name: "Carol", actor_type: "character", },
       ];
+
       state._participantQuery = "car";
       const result = state.filteredAvailableActors;
       expect(result.map((a,) => a.id),).toEqual(["a3",],);

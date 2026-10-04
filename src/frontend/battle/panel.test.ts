@@ -102,6 +102,7 @@ describe("mountBattlePanel", () => {
       "battle-roster",
       "battle-actions",
     ],);
+
     expect(overlay.children[0]!.innerHTML,).toContain("Round 2",);
   });
 
@@ -110,6 +111,7 @@ describe("mountBattlePanel", () => {
       turnIndex: 1,
       combatants: [...roster, deadCombatant(),],
     },),);
+
     expect(tile(container, "alice",).classList.contains("is-acting",),).toBe(false,);
     const orc = tile(container, "orc",);
     expect(orc.classList.contains("is-acting",),).toBe(true,);
@@ -160,6 +162,7 @@ describe("target selection", () => {
     const { container, } = mountBattle(
       view({ combatants: [...roster, deadCombatant(),], },),
     );
+
     tile(container, "ghost",).click();
     expect(tile(container, "ghost",).classList.contains("is-selected",),).toBe(false,);
     expect(actionButton(container, "attack",).disabled,).toBe(true,);

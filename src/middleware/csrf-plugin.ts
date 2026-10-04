@@ -36,6 +36,7 @@ export function csrfForbiddenResponse(): Response {
     error: "csrf_verification_failed",
     message: "CSRF token missing or invalid.",
   },);
+
   return new Response(body, {
     status: 403,
     headers: { "content-type": "application/json", },
@@ -76,6 +77,7 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
         userId?: string | null;
         set: { status?: number };
       };
+
       const decision = decideCsrf(opts, {
         method: c.request.method,
         routePattern: c.route ?? null,
@@ -84,10 +86,12 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
         requestId: c.requestId ?? "anon",
         userId: c.userId ?? null,
       },);
+
       if (!decision.ok) {
         c.set.status = 403;
         return csrfForbiddenResponse();
       }
+
       return undefined;
     },
     /**
@@ -103,6 +107,7 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
         userId?: string | null;
         set: { headers: Record<string, string | string[] | undefined> };
       };
+
       const decision = decideCsrf(opts, {
         method: c.request.method,
         routePattern: c.route ?? null,
@@ -111,6 +116,7 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
         requestId: c.requestId ?? "anon",
         userId: c.userId ?? null,
       },);
+
       const cookieHeader = cookieForDecision(decision, opts,);
       if (cookieHeader === null) { return; }
       // Elysia mutation point — `ctx.set.headers` is a plain object (not a

@@ -83,6 +83,7 @@ export function createRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                 detail_level: "balanced",
                 payload: validated.payload,
               },);
+
               if (!serialized.ok) { return workflowInvalid([serialized.error,],); }
 
               const id = uid();

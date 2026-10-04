@@ -58,6 +58,7 @@ class HandleCache {
       const firstKey = this.cache.keys().next().value;
       if (firstKey !== undefined) { this.cache.delete(firstKey,); }
     }
+
     this.cache.set(userId, handle,);
     return handle;
   }
@@ -106,6 +107,7 @@ export function requirePermission(
       path: url.pathname,
       requestId,
     };
+
     try {
       (log ?? getLogger()).warn("Permission denied", auditEntry,);
     } catch {

@@ -69,8 +69,10 @@ function setup(opts: SetupOpts, asyncStore: AsyncStore,) {
           requestId,
           userId: ctx.userId ?? null,
         },);
+
         return;
       }
+
       idem.recordResponse({
         method: ctx.request.method,
         route: ctx.route ?? "?",
@@ -113,6 +115,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         body: "{}",
       },),
     );
+
     expect(res.status,).toBe(201,);
     expect(await res.text(),).toBe("ok-first",);
     expect(runs,).toBe(1,);
@@ -133,6 +136,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         return new Response("persisted-body", { status: 201, headers: { "x-trace": "p1", }, },);
       },
     }, asyncStore,);
+
     await app1.handle(
       new Request("http://localhost/api/x", {
         method: "POST",
@@ -140,6 +144,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         body: "{}",
       },),
     );
+
     expect(runs,).toBe(1,);
     await asyncStore.flush();
 
@@ -153,6 +158,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         return new Response("should-not-run", { status: 201, },);
       },
     }, asyncStore,);
+
     // Yield so the background hydrate (which kicks off on first lookup)
     // settles before the first handle() call. But handle() itself
     // triggers the lookup, so we cannot prime without an extra
@@ -182,6 +188,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         body: "{}",
       },),
     );
+
     expect(await first.text(),).toBe("should-not-run",);
     expect(runs,).toBe(2,);
     // Yield so any in-flight hydrate resolves.
@@ -196,10 +203,12 @@ describe("idempotent (Elysia integration, table backend)", () => {
         body: "{}",
       },),
     );
+
     expect(replay.status,).toBe(201,);
     expect(await replay.text(),).toBe("should-not-run",);
     expect(runs,).toBe(2,);
   });
+
   test("X-Idempotency-Bypass: 1 runs the handler instead of replaying", async () => {
     let runs = 0;
     const app = setup({
@@ -208,6 +217,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         return new Response(`run-${runs}`, { status: 201, },);
       },
     }, asyncStore,);
+
     await app.handle(
       new Request("http://localhost/api/x", {
         method: "POST",
@@ -215,6 +225,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         body: "{}",
       },),
     );
+
     await asyncStore.flush();
 
     const res = await app.handle(
@@ -228,6 +239,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         body: "{}",
       },),
     );
+
     expect(await res.text(),).toBe("run-2",);
     expect(runs,).toBe(2,);
   });
@@ -251,6 +263,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         body: "{}",
       },),
     );
+
     expect(a1.status,).toBe(201,);
     expect(await a1.json(),).toEqual({ n: 1, },);
     await asyncStore.flush();
@@ -262,6 +275,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         body: "{}",
       },),
     );
+
     expect(b1.status,).toBe(201,);
     expect(await b1.json(),).toEqual({ n: 2, },); // user-B's userId scopes the key
     expect(runs,).toBe(2,);
@@ -275,6 +289,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         return new Response("bad", { status: 400, },);
       },
     }, asyncStore,);
+
     const first = await app.handle(
       new Request("http://localhost/api/x", {
         method: "POST",
@@ -282,6 +297,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         body: "{}",
       },),
     );
+
     expect(first.status,).toBe(400,);
     await asyncStore.flush();
 
@@ -292,6 +308,7 @@ describe("idempotent (Elysia integration, table backend)", () => {
         body: "{}",
       },),
     );
+
     expect(second.status,).toBe(400,);
     expect(runs,).toBe(2,);
   });

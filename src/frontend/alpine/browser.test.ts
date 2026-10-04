@@ -130,6 +130,7 @@ describe("browserEncryptContent / browserDecryptContent", () => {
       "encrypt",
       "decrypt",
     ],);
+
     const encrypted = await browserEncryptContent(SHORT_TEXT, cryptoKey,);
     await expect(browserDecryptContent(encrypted.ciphertext, encrypted.nonce, wrongKey,),).rejects.toThrow();
   });
@@ -209,6 +210,7 @@ describe("browserCompressThenEncrypt / browserDecryptThenDecompress", () => {
       "encrypt",
       "decrypt",
     ],);
+
     const payload = await browserCompressThenEncrypt(SHORT_TEXT, cryptoKey, "key-1",);
     await expect(browserDecryptThenDecompress(payload, wrongKey,),).rejects.toThrow();
   });

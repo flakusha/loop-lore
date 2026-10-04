@@ -46,6 +46,7 @@ export async function convertPersonaToCharacter(
       getLogger()
         .child({ module: "personas", },)
         .warn("Persona not found for conversion", { personaId: id, userId, },);
+
       throw new Error("Persona not found",);
     }
 

@@ -40,6 +40,7 @@ export function listJobs(ownerId: string,): MattingJob[] {
       jobs.push(job,);
     }
   }
+
   return jobs.sort((a, b,) => b.startedAt.localeCompare(a.startedAt,));
 }
 

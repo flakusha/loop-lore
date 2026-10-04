@@ -26,11 +26,13 @@ export const scoreNarrativeQuality: Scorer = ({ response, },) => {
     "warm",
     "dark",
   ];
+
   const lowerResponse = response.toLowerCase();
   let sensoryCount = 0;
   for (const s of sensory) {
     if (lowerResponse.includes(s,)) { sensoryCount++; }
   }
+
   score += sensoryCount * 3;
 
   const dialogueCount = (response.match(/["\u{201C}\u{201D}]/gu,) ?? []).length;
@@ -38,6 +40,7 @@ export const scoreNarrativeQuality: Scorer = ({ response, },) => {
 
   const pastVerbs = (response.match(/\b(was|were|had|did|went|said|walked|looked|turned|spoke)\b/gi,) ?? [])
     .length;
+
   const presentVerbs = (response.match(/\b(is|are|has|do|go|say|walk|look|turn|speak)\b/gi,) ?? []).length;
   if (pastVerbs > 0 && presentVerbs > 0) {
     const ratio = pastVerbs / (pastVerbs + presentVerbs);

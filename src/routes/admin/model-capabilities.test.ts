@@ -26,6 +26,7 @@ function makeApp(db: Kysely<DB>, userRole: string,): Elysia {
     userId: `test-user-${userRole}`,
     userRole,
   }));
+
   return app.use(modelCapabilitiesRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
@@ -133,6 +134,7 @@ describe("admin model-capabilities — list", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/model-capabilities?provider=openai",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { capabilities: Array<{ providerId: string }> };
     expect(body.capabilities.length,).toBe(1,);
@@ -147,6 +149,7 @@ describe("admin model-capabilities — resolve one model", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/model-capabilities/openai/gpt-4o",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { capabilities: { providerId: string; modelId: string; contextWindow: number } };
     expect(body.capabilities.providerId,).toBe("openai",);
@@ -159,6 +162,7 @@ describe("admin model-capabilities — resolve one model", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/model-capabilities/openai/does-not-exist",),
     );
+
     expect([200, 404,],).toContain(res.status,);
   });
 
@@ -168,6 +172,7 @@ describe("admin model-capabilities — resolve one model", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/model-capabilities/openai/gpt-4o",),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -183,10 +188,12 @@ describe("admin model-capabilities — patch override", () => {
         body: JSON.stringify({ contextWindow: 16384, supportsTools: true, notes: "manual override", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as {
       capabilities: { contextWindow: number; supportsTools: boolean; userOverride: boolean; notes: string | null };
     };
+
     expect(body.capabilities.contextWindow,).toBe(16384,);
     expect(body.capabilities.supportsTools,).toBe(true,);
     expect(body.capabilities.userOverride,).toBe(true,);
@@ -204,6 +211,7 @@ describe("admin model-capabilities — patch override", () => {
         body: JSON.stringify({ contextWindow: "not-a-number", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -216,6 +224,7 @@ describe("admin model-capabilities — patch override", () => {
         body: JSON.stringify({ contextWindow: 1024, },),
       },),
     );
+
     expect([200, 404,],).toContain(res.status,);
   });
 });
@@ -232,12 +241,14 @@ describe("admin model-capabilities — delete override", () => {
         body: JSON.stringify({ contextWindow: 16384, },),
       },),
     );
+
     // Clear the override.
     const res = await app.handle(
       new Request("http://localhost/api/admin/model-capabilities/openai/gpt-4o", {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { success: boolean };
     expect(body.success,).toBe(true,);
@@ -250,6 +261,7 @@ describe("admin model-capabilities — delete override", () => {
         method: "DELETE",
       },),
     );
+
     expect([200, 404,],).toContain(res.status,);
   });
 
@@ -261,6 +273,7 @@ describe("admin model-capabilities — delete override", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

@@ -119,6 +119,7 @@ describeOrSkipStrict("provider-health (isolated)", () => {
       models: [{ id: "m1", },],
       lastChecked: "t",
     } as never,);
+
     expect(summary,).toMatchObject({ name: "h", status: "healthy", modelCount: 1, },);
   });
 
@@ -162,10 +163,12 @@ describeOrSkipStrict("provider-health (isolated)", () => {
         expect(results.find((r,) => r.name === "healthy-prov")?.status,).toBe("healthy",);
         const rows = await db.selectFrom("model_capabilities",).where("provider_id", "=", "healthy-prov",).selectAll()
           .execute();
+
         expect(rows.map((r,) => r.model_id),).toEqual(["m1",],);
         // Unhealthy/error providers must not populate the registry.
         const sickRows = await db.selectFrom("model_capabilities",).where("provider_id", "=", "sick-prov",).selectAll()
           .execute();
+
         expect(sickRows,).toHaveLength(0,);
       } finally {
         await db.destroy();
@@ -178,6 +181,7 @@ describeOrSkipStrict("provider-health (isolated)", () => {
           throw new Error("capabilities unavailable",);
         },
       } as unknown as Kysely<DB>;
+
       const results = await scanAllProviders(brokenDb,);
       expect(results.find((r,) => r.name === "healthy-prov")?.status,).toBe("healthy",);
       expect(getHealthCache().find((r,) => r.name === "healthy-prov")?.status,).toBe("healthy",);
@@ -204,6 +208,7 @@ describeOrSkipStrict("provider-health (isolated)", () => {
         lastChecked: "t",
         error: "boom",
       } as never,);
+
       expect(summary,).toEqual({
         name: "sick-prov",
         label: "Sick",

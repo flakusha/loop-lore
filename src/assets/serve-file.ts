@@ -25,6 +25,7 @@ export function serveFile(
   if (!existsSync(filePath,)) {
     return notFoundResponse("File not found on disk",);
   }
+
   const data = readFileSync(filePath,);
   return new Response(data, {
     headers: {

@@ -28,6 +28,7 @@ export function assertPluginCanRegister(
   if (!plugin && pluginName !== "core") {
     throw new Error(`Cannot register ${capability} for unregistered plugin "${pluginName}"`);
   }
+
   const origin = plugin?.origin ?? "core";
   if (!PLUGIN_ORIGIN_CAPABILITIES[origin].some((allowed) => allowed === capability)) {
     throw new Error(`Plugin "${pluginName}" (${origin}) cannot register ${capability}`);

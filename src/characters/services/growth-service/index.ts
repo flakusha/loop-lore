@@ -132,6 +132,7 @@ export class CharacterGrowthService {
 export function characterGrowthService(db: Kysely<DB>,): CharacterGrowthService {
   return new CharacterGrowthService(db,);
 }
+
 export { runLlmAssist, } from "./llm-assist";
 export type { RunLlmAssistOpts, } from "./llm-assist";
 export {

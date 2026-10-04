@@ -53,6 +53,7 @@ describe("generateResponse", () => {
       chatMode: "story",
       context: { actorCount: 3, },
     },);
+
     expect(response?.content,).toContain("How can I help",);
   });
 });

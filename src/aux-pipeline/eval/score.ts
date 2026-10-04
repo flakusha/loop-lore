@@ -103,6 +103,7 @@ export function diffBaseline(
         current: current.accuracy,
       },);
     }
+
     if (current.parseNullRate > stored.parseNullRate) {
       regressions.push({
         task: report.task,
@@ -112,5 +113,6 @@ export function diffBaseline(
       },);
     }
   }
+
   return regressions;
 }

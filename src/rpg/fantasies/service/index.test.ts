@@ -37,6 +37,7 @@ describe("FantasyService", () => {
       name: "Moonlit Vow",
       category: "roleplay",
     },);
+
     expect(fantasy.actorId,).toBe("actor-hero",);
     expect(fantasy.name,).toBe("Moonlit Vow",);
     expect(fantasy.category,).toBe("roleplay",);
@@ -48,6 +49,7 @@ describe("FantasyService", () => {
       minIntimacy: 0,
       minArousal: 0,
     },);
+
     expect(fantasy.fulfillmentEffects,).toEqual({
       satisfactionBonus: 10,
       intimacyBonus: 3,
@@ -55,12 +57,14 @@ describe("FantasyService", () => {
       memoryStrength: 50,
       repeatDesire: 50,
     },);
+
     expect(fantasy.risks,).toEqual({
       reputationRisk: 0,
       emotionalRisk: 0,
       physicalRisk: 0,
       discoveryRisk: 0,
     },);
+
     expect(fantasy.discoveredThrough,).toBeNull();
     expect(fantasy.initialReaction,).toBe("neutral",);
     expect(fantasy.currentFeeling,).toBe("neutral",);
@@ -84,6 +88,7 @@ describe("FantasyService", () => {
       discoveredThrough: "a daring scene",
       initialReaction: "like",
     },);
+
     expect(fantasy.intensity,).toBe("intense",);
     expect(fantasy.requirements.minIntimacy,).toBe(40,);
     expect(fantasy.requirements.equipment,).toEqual(["rope",],);
@@ -112,12 +117,14 @@ describe("FantasyService", () => {
         category: "roleplay",
       },);
     }
+
     await service.createFantasy({
       database: db,
       actorId: "actor-hero",
       name: "Mango",
       category: "bondage",
     },);
+
     const names = (await service.getActorFantasies("actor-hero",)).map((f,) => f.name);
     expect(names,).toEqual(["Mango", "Apple", "Zebra",],);
   });
@@ -130,12 +137,14 @@ describe("FantasyService", () => {
       name: "Silk Bonds",
       category: "bondage",
     },);
+
     await service.createFantasy({
       database: db,
       actorId: "actor-hero",
       name: "Moonlit Vow",
       category: "roleplay",
     },);
+
     const bondage = await service.getByCategory("actor-hero", "bondage",);
     expect(bondage.map((f,) => f.name),).toEqual(["Silk Bonds",],);
     expect(await service.getByCategory("actor-hero", "praise",),).toEqual([],);
@@ -149,6 +158,7 @@ describe("FantasyService", () => {
       name: "Moonlit Vow",
       category: "roleplay",
     },);
+
     expect(await service.recordExploration(fantasy.id,),).toBeTrue();
     expect(await service.recordExploration(fantasy.id, "love",),).toBeTrue();
     const [stored,] = await service.getActorFantasies("actor-hero",);
@@ -164,6 +174,7 @@ describe("FantasyService", () => {
       name: "Moonlit Vow",
       category: "roleplay",
     },);
+
     expect(await service.recordExploration(fantasy.id,),).toBeTrue();
     const [stored,] = await service.getActorFantasies("actor-hero",);
     expect(stored?.timesExplored,).toBe(1,);
@@ -183,6 +194,7 @@ describe("FantasyService", () => {
       name: "Moonlit Vow",
       category: "roleplay",
     },);
+
     expect(await service.deleteFantasy(fantasy.id,),).toBeTrue();
     expect(await service.getActorFantasies("actor-hero",),).toEqual([],);
     expect(await service.deleteFantasy(fantasy.id,),).toBeFalse();
@@ -196,6 +208,7 @@ describe("FantasyService", () => {
       "mystical moonlit bondage ritual tonight",
       1,
     );
+
     expect(result.discovered,).toBeTrue();
     expect(result.fantasy?.name,).toBe("Mystical moonlit bondage",);
     expect(result.fantasy?.category,).toBe("bondage",);
@@ -211,6 +224,7 @@ describe("FantasyService", () => {
       "secret praise ceremony at dawn",
       1,
     );
+
     expect(repeat,).toEqual({ discovered: false, reason: "Already known", },);
   });
 });
@@ -227,6 +241,7 @@ describe("fulfill (TASK-037)", () => {
       name: "Moonlit Vow",
       category: "roleplay",
     },);
+
     // Default effects: intimacyBonus 3, moodBonus 5.
     const effects = await service.fulfill(fantasy.id,);
     expect(effects?.intimacyBonus,).toBe(3,);
@@ -239,6 +254,7 @@ describe("fulfill (TASK-037)", () => {
       .where("actor_id", "=", "actor-hero",)
       .selectAll()
       .execute();
+
     expect(events.length,).toBe(1,);
     expect(events[0]!.event_type,).toBe("fantasy.fulfilled",);
     expect(events[0]!.source,).toBe("fantasy",);
@@ -254,6 +270,7 @@ describe("fulfill (TASK-037)", () => {
       category: "bondage",
       fulfillmentEffects: { intimacyBonus: 8, moodBonus: 4, },
     },);
+
     const effects = await service.fulfill(fantasy.id, { actorId: "actor-rival", },);
     expect(effects?.intimacyBonus,).toBe(8,);
     // Pair leg: rival → hero pair exists with the +8 delta.
@@ -267,12 +284,14 @@ describe("fulfill (TASK-037)", () => {
         .where("target_actor_id", "=", "actor-rival",)
         .selectAll()
         .executeTakeFirst();
+
     expect(pair?.score,).toBe(8,);
     // Mood leg lands on the target, not the owner.
     const events = await db.selectFrom("mood_events",)
       .where("actor_id", "=", "actor-rival",)
       .selectAll()
       .execute();
+
     expect(events.length,).toBe(1,);
     expect(events[0]!.event_type,).toBe("fantasy.fulfilled",);
   });
@@ -291,10 +310,12 @@ describe("fulfill (TASK-037)", () => {
       category: "service",
       fulfillmentEffects: { intimacyBonus: 0, moodBonus: 0, },
     },);
+
     expect(await service.fulfill(fantasy.id,),).not.toBeNull();
     expect(
       await db.selectFrom("mood_events",).selectAll().execute(),
     ).toEqual([],);
+
     const [stored,] = await service.getActorFantasies("actor-hero",);
     expect(stored?.timesExplored,).toBe(1,);
   });
@@ -325,6 +346,7 @@ describe("mood wrapper (TASK-041)", () => {
       .where("actor_id", "=", "actor-hero",)
       .selectAll()
       .execute();
+
     expect(events.length,).toBe(1,);
     expect(events[0]!.event_type,).toBe("encounter.completed",);
     expect(events[0]!.source,).toBe("nsfw",);

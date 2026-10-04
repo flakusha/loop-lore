@@ -34,9 +34,11 @@ async function setupAliceBob(): Promise<{
   const aliceInit = await initDhRatchet({
     rootKey,
   },);
+
   const bobInit = await initDhRatchet({
     rootKey,
   },);
+
   return {
     aliceState: aliceInit.state,
     aliceInitialPubJwk: aliceInit.myInitialPubJwk,
@@ -71,6 +73,7 @@ async function aliceSendsN(
     aState = r.state;
     payloads.push(r.payload,);
   }
+
   return { state: aState, payloads, };
 }
 
@@ -103,10 +106,12 @@ describe("dh-ratchet: symmetric chain ratchet (Phase B)", () => {
         skippedKeys: [],
         maxSkip: 10,
       },);
+
       expect(dec.plaintext,).toBe(`msg-${i}`,);
       expect(payloads[i]!.counter,).toBe(i,);
       bState = dec.state;
     }
+
     expect(bState.recvCount,).toBe(5,);
   });
 
@@ -122,6 +127,7 @@ describe("dh-ratchet: symmetric chain ratchet (Phase B)", () => {
       skippedKeys: [],
       maxSkip: 10,
     },);
+
     bState = dec0.state;
 
     // Receive payload[2] — should trigger skipped-key retention for payload[1]
@@ -131,6 +137,7 @@ describe("dh-ratchet: symmetric chain ratchet (Phase B)", () => {
       skippedKeys: [],
       maxSkip: 10,
     },);
+
     expect(dec2.plaintext,).toBe("msg-2",);
     expect(dec2.newSkippedKeys.length,).toBe(1,);
 
@@ -140,6 +147,7 @@ describe("dh-ratchet: symmetric chain ratchet (Phase B)", () => {
       skippedKeys: [],
       maxSkip: 10,
     },);
+
     expect(dec3.plaintext,).toBe("msg-3",);
 
     // Now receive the late payload[1] using the stored skipped key
@@ -149,6 +157,7 @@ describe("dh-ratchet: symmetric chain ratchet (Phase B)", () => {
       skippedKeys: dec2.newSkippedKeys,
       maxSkip: 10,
     },);
+
     expect(dec1.plaintext,).toBe("msg-1",);
     expect(dec1.consumedSkippedKeyIds.length,).toBe(1,);
   });
@@ -177,6 +186,7 @@ describe("dh-ratchet: symmetric chain ratchet (Phase B)", () => {
       skippedKeys: [],
       maxSkip: 10,
     },);
+
     bState = dec.state;
 
     // Now replay payload[0] — counter behind current recvCount, no skipped
@@ -198,6 +208,7 @@ describe("dh-ratchet: symmetric chain ratchet (Phase B)", () => {
       atob(enc.payload.ciphertext,),
       (c,) => c.charCodeAt(0,),
     );
+
     ctBytes[0]! ^= 0x01;
     const tampered: DhMessagePayload = {
       ...enc.payload,
@@ -220,6 +231,7 @@ describe("dh-ratchet: symmetric chain ratchet (Phase B)", () => {
 
     expect(Buffer.from(a.state.sendingChainKey,).toString("hex",),)
       .toBe(Buffer.from(b.state.receivingChainKey,).toString("hex",),);
+
     expect(Buffer.from(a.state.sendingChainKey,).toString("hex",),)
       .toBe(Buffer.from(b.state.sendingChainKey,).toString("hex",),);
   });

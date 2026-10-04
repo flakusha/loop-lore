@@ -99,6 +99,7 @@ describe("storeMessage", () => {
       .selectAll()
       .where("id", "=", result.messageId,)
       .executeTakeFirstOrThrow();
+
     expect(row.content,).toBe("plain content",);
     expect(row.role,).toBe(MessageRole.Assistant,);
     expect(row.parent_id,).toBeNull();
@@ -130,6 +131,7 @@ describe("storeMessage", () => {
       .selectAll()
       .where("id", "=", result.messageId,)
       .executeTakeFirstOrThrow();
+
     expect(row.parent_id,).toBe(parentId,);
     expect(row.swipe_index,).toBe(1,);
   });
@@ -170,6 +172,7 @@ describe("storeMessage", () => {
         .selectAll()
         .where("id", "=", result.messageId,)
         .executeTakeFirstOrThrow();
+
       // Both attempts used candidate max+1 = 1 (the aborted insert never
       // committed), so the successful row lands on swipe_index 1.
       expect(row.parent_id,).toBe(parentId,);
@@ -195,12 +198,14 @@ describe("storeMessage", () => {
         },),
       ),
     ).rejects.toThrow();
+
     const rows = await db
       .selectFrom("messages",)
       .selectAll()
       .where("chat_id", "=", "chat-4",)
       .where("content", "=", "orphan reply",)
       .execute();
+
     expect(rows.length,).toBe(0,);
   });
 });

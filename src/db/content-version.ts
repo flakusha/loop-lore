@@ -55,9 +55,11 @@ export function registerContentVersion(
   if (!Number.isInteger(dataVersion,) || dataVersion < 0) {
     throw new Error(`content-version: invalid data_version ${dataVersion}`,);
   }
+
   if (columns.length === 0) {
     throw new Error(`content-version: empty column projection for ${table}@v${dataVersion}`,);
   }
+
   const normalized = [...columns,].map((c,) => c.toLowerCase()).sort();
   const existing = REGISTRY.get(table,);
   const current = existing?.get(dataVersion,);
@@ -68,13 +70,16 @@ export function registerContentVersion(
     ) {
       return; // idempotent re-registration
     }
+
     throw new Error(
       `content-version: ${table}@v${dataVersion} already registered with different columns`,
     );
   }
+
   if (!existing) {
     REGISTRY.set(table, new Map(),);
   }
+
   REGISTRY.get(table,)!.set(dataVersion, { columns: normalized, },);
 }
 
@@ -105,6 +110,7 @@ export function getContentEnvelope(
     const value = (row as Record<string, unknown>)[col];
     if (value !== undefined) { envelope[col] = value; }
   }
+
   return envelope;
 }
 
@@ -182,6 +188,7 @@ export async function runBatchRefresh(
         & { id: string; data_version: number; record_hash?: string }
         & Record<string, unknown>
       >;
+
     if (rows.length === 0) { break; }
     scanned += rows.length;
     for (const row of rows) {
@@ -190,14 +197,17 @@ export async function runBatchRefresh(
         skipped++;
         continue;
       }
+
       if (row.record_hash === hash) { continue; }
       await database
         .updateTable(tableName,)
         .set({ record_hash: hash, },)
         .where("id", "=", row.id,)
         .execute();
+
       updated++;
     }
+
     if (rows.length < batchSize) { break; }
     offset += batchSize;
   }
@@ -218,6 +228,7 @@ function projectionColumns(projection: Map<number, ContentVersion>,): string[] {
   for (const cv of projection.values()) {
     for (const col of cv.columns) { seen.add(col,); }
   }
+
   if (!seen.has("id",)) { seen.add("id",); }
   if (!seen.has("data_version",)) { seen.add("data_version",); }
   return [...seen,];
@@ -240,5 +251,6 @@ export function __peekContentVersionRegistry(): ReadonlyMap<string, ReadonlyMap<
   for (const [table, versions,] of REGISTRY) {
     out.set(table, new Map([...versions,].map(([v, cv,],) => [v, cv.columns,] as const),),);
   }
+
   return out;
 }

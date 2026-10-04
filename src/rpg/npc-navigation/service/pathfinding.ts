@@ -34,5 +34,6 @@ export async function getLocationConnections(db: Kysely<DB>, locationId: string,
   for (const l of nearbyLocations) {
     if (l.location_id) { connections.push(l.location_id,); }
   }
+
   return connections;
 }

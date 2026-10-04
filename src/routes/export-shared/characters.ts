@@ -50,6 +50,7 @@ export async function exportCharactersToZip(ctx: ExportContext,): Promise<void> 
     .selectAll()
     .where("actor_id", "in", characters.map((c,) => c.id),)
     .execute();
+
   const licensingByActor = new Map(licensingRows.map((r,) => [r.actor_id, r,]),);
 
   for (const char of characters) {
@@ -103,5 +104,6 @@ export async function exportCharactersToZip(ctx: ExportContext,): Promise<void> 
       size,
     },);
   }
+
   ctx.counts.characters = characters.length;
 }

@@ -39,8 +39,10 @@ Alpine.magic("t", (el: HTMLElement,) => {
       for (const k of keys) {
         value = value?.[k];
       }
+
       if (typeof value === "string") { return value; }
     }
+
     // Fallback to global locale strings
     const globalStrings = (globalThis as any).__localeStrings;
     if (globalStrings) {
@@ -49,10 +51,13 @@ Alpine.magic("t", (el: HTMLElement,) => {
       for (const k of keys) {
         value = value?.[k];
       }
+
       if (typeof value === "string") { return value; }
     }
+
     return key; // Return key as fallback
   };
+
   return resolve;
 },);
 

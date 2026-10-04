@@ -27,6 +27,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectAll()
           .where("id", "=", ctx.params.actorId,)
           .executeTakeFirst();
+
         if (!actor) {
           return jsonError({
             message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
@@ -42,6 +43,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
             status: HttpStatus.NotFound,
           },);
         }
+
         return jsonResponse(actor,);
       },
       {

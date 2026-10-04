@@ -42,5 +42,6 @@ export async function runPostInsertChatEffects(
       : undefined,
     firstMessage: effectiveContent,
   },);
+
   await handleSceneTransitions(database, config, chatId, actorId, effectiveContent, chatRecord, messageId,);
 }

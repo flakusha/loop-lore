@@ -79,10 +79,12 @@ export function makeAttackRoll(
           finalDamage = Math.floor(finalDamage / 2,);
           break;
         }
+
         case DamageModifier.Vulnerable: {
           finalDamage *= 2;
           break;
         }
+
         case DamageModifier.Immune: {
           finalDamage = 0;
           break;

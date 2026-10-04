@@ -40,6 +40,7 @@ async function dispatch(db: Kysely<DB>, chatId: string, content: string,): Promi
   if (!result.handled) {
     throw new Error(`Expected command to be handled: ${content}`,);
   }
+
   return result.response;
 }
 
@@ -59,6 +60,7 @@ describe("battle commands via slash dispatch", () => {
       "Battle Caller",
       { id: CALLER_ACTOR_ID, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     await insertChats(db, "Battle Chat", CALLER_ACTOR_ID, { id: chatId, } as never,);
     // The caller user needs a matching actor row (user-actor equivalence) for
     // the chat_participants.actor_id FK.
@@ -69,6 +71,7 @@ describe("battle commands via slash dispatch", () => {
       user_id: CALLER_ACTOR_ID,
       owner_id: CALLER_ACTOR_ID,
     } as never,);
+
     await insertChatParticipants(db, chatId, CALLER_ACTOR_ID, { role_in_chat: "owner", } as never,);
 
     // Two combatant characters with stats + participants.
@@ -85,6 +88,7 @@ describe("battle commands via slash dispatch", () => {
         user_id: null,
         owner_id: null,
       } as never,);
+
       await insertCharacterStats(db, actorId, hp, hp, 16, {
         str: 16,
         dex: 14,
@@ -94,6 +98,7 @@ describe("battle commands via slash dispatch", () => {
         cha: 6,
         level: 5,
       } as never,);
+
       await insertChatParticipants(db, chatId, actorId, { role_in_chat: "member", } as never,);
     }
   },);

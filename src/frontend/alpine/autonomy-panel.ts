@@ -29,6 +29,7 @@ function sameFields(stored: AutonomyOverride, draft: AutonomyOverride,): boolean
     const field = k as keyof AutonomyOverride;
     if (stored[field] !== draft[field]) { return true; }
   }
+
   return false;
 }
 
@@ -41,6 +42,7 @@ function readUrl(worldId: string, chatId: string, actorId: string, scopeId: stri
     qs.set("scopeKind", "user",);
     qs.set("scopeId", scopeId,);
   }
+
   const suffix = qs.toString();
   return `/api/worlds/${worldId}/autonomy${suffix ? `?${suffix}` : ""}`;
 }
@@ -72,6 +74,7 @@ const panelState: AutonomyPanelState = {
       const res = await apiFetch(
         readUrl(this._autoWorldId, this._autoChatId, this._autoActorId, this._autoScopeId,),
       );
+
       const data = (await res.json()) as AutonomyPayload;
       this.autoData = data;
       // Editing starts from this layer's own values, not the merged ones:
@@ -100,6 +103,7 @@ const panelState: AutonomyPanelState = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ autonomyConfig: this.autoDraft, },),
       },);
+
       await this.load();
     } catch (error) {
       log.warn("Failed to save autonomy config", { error: String(error,), },);
@@ -122,6 +126,7 @@ const panelState: AutonomyPanelState = {
           body: jsonBody({ autonomy: this.autoActorDraft, },),
         },
       );
+
       await this.load();
     } catch (error) {
       log.warn("Failed to save actor autonomy", { error: String(error,), },);
@@ -140,6 +145,7 @@ const panelState: AutonomyPanelState = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ action, },),
       },);
+
       await this.load();
     } catch (error) {
       log.warn("Autonomy control failed", { error: String(error,), action, },);

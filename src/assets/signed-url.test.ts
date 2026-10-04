@@ -35,6 +35,7 @@ describe("signed asset URLs", () => {
       expiresAt: signed.expiresAt,
       now: NOW + 1000,
     },);
+
     expect(result,).toEqual({ valid: true, },);
   });
 
@@ -46,6 +47,7 @@ describe("signed asset URLs", () => {
       expiresInSeconds: 60,
       now: NOW,
     },);
+
     expect(signed.expiresAt,).toBe(NOW + 60_000,);
   });
 
@@ -60,6 +62,7 @@ describe("signed asset URLs", () => {
       expiresAt: signed.expiresAt,
       now: signed.expiresAt + 1,
     },);
+
     expect(result,).toEqual({ valid: false, reason: "expired", },);
   });
 
@@ -74,6 +77,7 @@ describe("signed asset URLs", () => {
       expiresAt: signed.expiresAt,
       now: NOW,
     },);
+
     expect(result,).toEqual({ valid: false, reason: "bad_signature", },);
   });
 
@@ -88,6 +92,7 @@ describe("signed asset URLs", () => {
       expiresAt: signed.expiresAt,
       now: NOW,
     },);
+
     expect(result,).toEqual({ valid: false, reason: "bad_signature", },);
   });
 
@@ -103,6 +108,7 @@ describe("signed asset URLs", () => {
       expiresAt: signed.expiresAt,
       now: NOW,
     },);
+
     expect(result,).toEqual({ valid: false, reason: "bad_signature", },);
   });
 
@@ -122,6 +128,7 @@ describe("signed asset URLs", () => {
       expiresAt: signed.expiresAt,
       now: NOW,
     },);
+
     expect(result,).toEqual({ valid: false, reason: "bad_signature", },);
   });
 
@@ -136,6 +143,7 @@ describe("signed asset URLs", () => {
       expiresAt: signed.expiresAt,
       now: NOW,
     },);
+
     expect(result,).toEqual({ valid: false, reason: "bad_signature", },);
   });
 
@@ -148,6 +156,7 @@ describe("signed asset URLs", () => {
       expiresAt: NaN,
       now: NOW,
     },);
+
     expect(result,).toEqual({ valid: false, reason: "malformed", },);
   });
 
@@ -160,6 +169,7 @@ describe("signed asset URLs", () => {
       expiresAt: NOW + 1000,
       now: NOW,
     },);
+
     expect(result,).toEqual({ valid: false, reason: "malformed", },);
   });
 });

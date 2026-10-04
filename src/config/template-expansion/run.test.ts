@@ -84,6 +84,7 @@ describe("runTemplateExpansion", () => {
         "",
       ].join("\n",),
     );
+
     const result = runTemplateExpansion(cwd, BASE_CONFIG,);
     expect(result.config.emotions.sad,).toEqual({ asset: "sad.png", intent: "sad", },);
     expect(result.config.emotions.happy,).toEqual({ asset: "happy.png", intent: "happy", },);
@@ -106,6 +107,7 @@ describe("runTemplateExpansion", () => {
         "",
       ].join("\n",),
     );
+
     const result = runTemplateExpansion(cwd, BASE_CONFIG,);
     expect(result.config.emotions.angry,).toBeDefined();
     expect(result.result.emotionsAdded,).toEqual(["angry",],);
@@ -125,6 +127,7 @@ describe("runTemplateExpansion", () => {
         "",
       ].join("\n",),
     );
+
     writeExpansion(
       cwd,
       "templates",
@@ -137,6 +140,7 @@ describe("runTemplateExpansion", () => {
         "",
       ].join("\n",),
     );
+
     const result = runTemplateExpansion(cwd, BASE_CONFIG,);
     expect(result.config.emotions.from_primary,).toBeDefined();
     expect(result.config.emotions.from_secondary,).toBeUndefined();
@@ -164,6 +168,7 @@ describe("runTemplateExpansion", () => {
         "",
       ].join("\n",),
     );
+
     const result = runTemplateExpansion(cwd, BASE_CONFIG,);
     expect(result.result.keywordsAdded,).toEqual(["k1", "k2",],);
     expect(result.result.actionsAdded,).toEqual(["a1",],);
@@ -186,6 +191,7 @@ describe("runTemplateExpansion", () => {
         "",
       ].join("\n",),
     );
+
     const result = runTemplateExpansion(cwd, BASE_CONFIG,);
     expect(result.config.emotions.excited,).toEqual({ asset: "excited.png", intent: "excited", },);
     expect(result.result.emotionsAdded,).toEqual(["excited",],);
@@ -206,6 +212,7 @@ describe("runTemplateExpansion", () => {
         "",
       ].join("\n",),
     );
+
     const result = runTemplateExpansion(cwd, BASE_CONFIG,);
     expect(result.config.emotions,).toEqual({ only: { asset: "only.png", intent: "only", }, },);
   });
@@ -225,6 +232,7 @@ describe("runTemplateExpansion", () => {
         "",
       ].join("\n",),
     );
+
     const result = runTemplateExpansion(cwd, BASE_CONFIG,);
     expect(result.config.emotions.happy,).toEqual({ asset: "overridden.png", intent: "overridden", },);
   });
@@ -245,6 +253,7 @@ describe("runTemplateExpansion", () => {
         "",
       ].join("\n",),
     );
+
     const result = runTemplateExpansion(cwd, BASE_CONFIG,);
     expect(result.result.avatarsGenerated,).toBe(0,);
     expect(result.result.errors,).toEqual([],);
@@ -266,6 +275,7 @@ describe("runTemplateExpansion", () => {
         "",
       ].join("\n",),
     );
+
     const result = runTemplateExpansion(cwd, BASE_CONFIG,);
     expect(result.result.avatarsGenerated,).toBe(0,);
     expect(result.result.errors,).toEqual([],);
@@ -304,6 +314,7 @@ describe("runTemplateExpansion", () => {
         "",
       ].join("\n",),
     );
+
     const result = runTemplateExpansion(cwd, BASE_CONFIG,);
     expect(result.config.intentPatterns.length,).toBe(2,);
     expect(result.result.patternsAdded,).toBe(2,);

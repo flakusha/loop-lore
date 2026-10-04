@@ -25,6 +25,7 @@ describe("Worlds E2E", () => {
         settings: "{}",
       },)
       .execute();
+
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);
 
@@ -43,6 +44,7 @@ describe("Worlds E2E", () => {
       name: "Test World",
       description: "A world for E2E testing",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
     createdWorldId = res.data!.id;
@@ -74,6 +76,7 @@ describe("Worlds E2E", () => {
       name: "Test Location",
       description: "A test location",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
     createdLocationId = res.data!.id;
@@ -83,6 +86,7 @@ describe("Worlds E2E", () => {
     const res = await api.get<{ data: Array<{ id: string; name: string }> }>(
       `/api/v1/worlds/${createdWorldId}/locations`,
     );
+
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data!.data,),).toBe(true,);
     expect(res.data!.data.some((l,) => l.name === "Test Location"),).toBe(true,);
@@ -92,6 +96,7 @@ describe("Worlds E2E", () => {
     const res = await api.get<{ name: string }>(
       `/api/v1/worlds/${createdWorldId}/locations/${createdLocationId}`,
     );
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.name,).toBe("Test Location",);
   });
@@ -100,11 +105,13 @@ describe("Worlds E2E", () => {
     const res = await api.put(`/api/v1/worlds/${createdWorldId}/locations/${createdLocationId}`, {
       name: "Updated Location",
     },);
+
     expect(res.ok,).toBe(true,);
 
     const getRes = await api.get<{ name: string }>(
       `/api/v1/worlds/${createdWorldId}/locations/${createdLocationId}`,
     );
+
     expect(getRes.data!.name,).toBe("Updated Location",);
   });
 

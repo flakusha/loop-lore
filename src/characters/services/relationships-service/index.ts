@@ -52,5 +52,6 @@ export function RelationshipsService(db: Kysely<DB>,): RelationshipsService {
       deleteRelationship({ thisL: self, actorId, targetActorId, worldId, },),
     logEvent: (opts,) => logEvent({ thisL: self, opts, },),
   };
+
   return self;
 }

@@ -13,6 +13,7 @@ export function rowsOf(value: unknown,): Row[] {
   for (const v of value) {
     if (v && typeof v === "object") { rows.push(v as Row,); }
   }
+
   return rows;
 }
 

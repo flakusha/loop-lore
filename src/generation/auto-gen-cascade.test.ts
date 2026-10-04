@@ -36,6 +36,7 @@ function createMockDeps(): Partial<GenDeps> {
     signalDone: mock(() => {/* noop */},),
     signalError: mock(() => {/* noop */},),
   };
+
   return {
     cancelGenerationByChat: mockCancelGenerationByChat,
     startGenerationTracking: mockStartGenerationTracking,
@@ -137,6 +138,7 @@ async function seedUser(db: Kysely<DB>,) {
       settings: "{}",
     },)
     .execute();
+
   await db
     .insertInto("actors",)
     .values({
@@ -152,6 +154,7 @@ async function seedUser(db: Kysely<DB>,) {
       import_spec: "{}",
     },)
     .execute();
+
   return userId;
 }
 
@@ -179,6 +182,7 @@ async function createAiActor(
       import_spec: "{}",
     },)
     .execute();
+
   return id;
 }
 
@@ -213,6 +217,7 @@ async function createGroupChat(
       story_state: opts.storyState ?? null,
     },)
     .execute();
+
   // Add the user as a participant
   await db
     .insertInto("chat_participants",)
@@ -222,6 +227,7 @@ async function createGroupChat(
       role_in_chat: "owner",
     },)
     .execute();
+
   return chatId;
 }
 
@@ -274,6 +280,7 @@ async function insertMessage(
       visibility: "visible",
     },)
     .execute();
+
   return msgId;
 }
 

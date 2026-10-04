@@ -35,6 +35,7 @@ describe("Actor Subresources E2E", () => {
       content: "Test memory content",
       type: "fact",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
   });
@@ -44,6 +45,7 @@ describe("Actor Subresources E2E", () => {
       content: "Specific memory",
       type: "fact",
     },);
+
     const memoryId = createRes.data!.id;
 
     const res = await api.get<{ content: string }>(`/api/v1/actors/${ACTOR_ID}/memories/${memoryId}`,);
@@ -56,6 +58,7 @@ describe("Actor Subresources E2E", () => {
       content: "Old memory",
       type: "fact",
     },);
+
     const memoryId = createRes.data!.id;
 
     await api.put(`/api/v1/actors/${ACTOR_ID}/memories/${memoryId}`, { content: "Updated memory", },);
@@ -69,6 +72,7 @@ describe("Actor Subresources E2E", () => {
       content: "To delete",
       type: "fact",
     },);
+
     const memoryId = createRes.data!.id;
 
     const delRes = await api.del(`/api/v1/actors/${ACTOR_ID}/memories/${memoryId}`,);
@@ -86,6 +90,7 @@ describe("Actor Subresources E2E", () => {
       description: "An item",
       quantity: 1,
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
   });
@@ -102,6 +107,7 @@ describe("Actor Subresources E2E", () => {
       name: "Old Name",
       quantity: 1,
     },);
+
     const itemId = createRes.data!.id;
 
     const res = await api.put(`/api/v1/actors/${ACTOR_ID}/items/${itemId}`, { name: "Updated Name", },);
@@ -113,6 +119,7 @@ describe("Actor Subresources E2E", () => {
       name: "Delete Me",
       quantity: 1,
     },);
+
     const itemId = createRes.data!.id;
 
     const delRes = await api.del(`/api/v1/actors/${ACTOR_ID}/items/${itemId}`,);
@@ -129,6 +136,7 @@ describe("Actor Subresources E2E", () => {
       title: "Test Note",
       content: "Note content",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
   });
@@ -145,6 +153,7 @@ describe("Actor Subresources E2E", () => {
       title: "Original",
       content: "Original content",
     },);
+
     const noteId = createRes.data!.id;
 
     await api.put(`/api/v1/actors/${ACTOR_ID}/notes/${noteId}`, { content: "Updated content", },);
@@ -158,6 +167,7 @@ describe("Actor Subresources E2E", () => {
       title: "Delete Note",
       content: "Bye",
     },);
+
     const noteId = createRes.data!.id;
 
     const delRes = await api.del(`/api/v1/actors/${ACTOR_ID}/notes/${noteId}`,);
@@ -174,6 +184,7 @@ describe("Actor Subresources E2E", () => {
       key: "test_lore",
       content: "Test lore content",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
   });
@@ -190,6 +201,7 @@ describe("Actor Subresources E2E", () => {
       key: "update_test",
       content: "Old content",
     },);
+
     const entryId = createRes.data!.id;
 
     await api.put(`/api/v1/actors/${ACTOR_ID}/lore-entries/${entryId}`, { content: "New content", },);
@@ -203,6 +215,7 @@ describe("Actor Subresources E2E", () => {
       key: "delete_test",
       content: "Bye lore",
     },);
+
     const entryId = createRes.data!.id;
 
     const delRes = await api.del(`/api/v1/actors/${ACTOR_ID}/lore-entries/${entryId}`,);

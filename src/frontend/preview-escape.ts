@@ -17,6 +17,7 @@ export function previewEscapeState() {
     removeEventListener(t: string, fn: (e: { key: string },) => void,): void;
     querySelector(sel: string,): { classList: { remove(n: string,): void } } | null;
   } | null = null;
+
   let handler: ((e: { key: string },) => void) | null = null;
   let trigger: { focus(): void } | null = null;
   const detach = (): void => {
@@ -25,6 +26,7 @@ export function previewEscapeState() {
       handler = null;
     }
   };
+
   return {
     /** Attach the Escape listener, remembering the opening trigger. */
     /**
@@ -54,6 +56,7 @@ export function previewEscapeState() {
         trigger?.focus();
         trigger = null;
       };
+
       doc.addEventListener("keydown", handler,);
     },
   };

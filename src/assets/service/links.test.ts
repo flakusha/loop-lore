@@ -47,6 +47,7 @@ describeReal("linkAsset", () => {
         assetId: ASSET_ID,
         link: { entityType: AssetLinkEntity.Character, entityId: "char-1", label: "hero portrait", },
       },);
+
       const links = await getAssetLinks(db, ASSET_ID,);
       expect(links,).toHaveLength(1,);
       expect(links[0]!.entity_type,).toBe("character",);
@@ -66,6 +67,7 @@ describeReal("linkAsset", () => {
         assetId: ASSET_ID,
         link: { entityType: AssetLinkEntity.World, entityId: "world-9", },
       },);
+
       const links = await getAssetLinks(db, ASSET_ID,);
       expect(links[0]!.label,).toBeNull();
     } finally {
@@ -85,6 +87,7 @@ describeReal("linkAsset", () => {
         assetId: ASSET_ID,
         link: { ...link, label: "changed", },
       },);
+
       const links = await getAssetLinks(db, ASSET_ID,);
       expect(links,).toHaveLength(1,);
       expect(links[0]!.label,).toBeNull();
@@ -186,6 +189,7 @@ describe("deleteAssetLink", () => {
       await seedAsset(db,);
       const owner = await db.selectFrom("users",).select("id",).where("username", "=", OWNER,)
         .executeTakeFirstOrThrow();
+
       await insertAssets(
         db,
         owner.id,
@@ -196,6 +200,7 @@ describe("deleteAssetLink", () => {
         "raw/aa/bb/other.png",
         { id: "other-asset" as never, },
       );
+
       await insertAssetLinks(db, ASSET_ID, AssetLinkEntity.Character, "char-1",);
       await insertAssetLinks(db, "other-asset", AssetLinkEntity.Character, "char-1",);
 
@@ -249,6 +254,7 @@ describe("getAssetLinks", () => {
       await seedAsset(db,);
       const owner = await db.selectFrom("users",).select("id",).where("username", "=", OWNER,)
         .executeTakeFirstOrThrow();
+
       await insertAssets(
         db,
         owner.id,
@@ -259,6 +265,7 @@ describe("getAssetLinks", () => {
         "raw/aa/bb/other.png",
         { id: "other-asset" as never, },
       );
+
       await insertAssetLinks(db, ASSET_ID, AssetLinkEntity.Memory, "mem-1", { label: "flashback", },);
       await insertAssetLinks(db, "other-asset", AssetLinkEntity.Memory, "mem-2",);
 

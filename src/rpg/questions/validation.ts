@@ -50,6 +50,7 @@ export function resolveAnswer(
     if (!answer.optionId) {
       throw new QuestionError("optionId is required for choice questions", "invalid_input",);
     }
+
     const option = options.find((o,) => o.id === answer.optionId);
     if (!option) {
       throw new QuestionError(
@@ -57,6 +58,7 @@ export function resolveAnswer(
         "invalid_option",
       );
     }
+
     return { selectedOptionId: option.id, answerValue: null, display: option.text, };
   }
 
@@ -79,16 +81,19 @@ function resolveFreeText(value: string | number,): Pick<ResolvedAnswer, "answerV
   if (typeof value !== "string") {
     throw new QuestionError("value must be a string for free_text questions", "invalid_input",);
   }
+
   const trimmed = value.trim();
   if (!trimmed) {
     throw new QuestionError("value must not be empty", "invalid_input",);
   }
+
   if (trimmed.length > FREE_TEXT_MAX_LENGTH) {
     throw new QuestionError(
       `value must be at most ${FREE_TEXT_MAX_LENGTH} characters`,
       "invalid_input",
     );
   }
+
   return { answerValue: trimmed, display: trimmed, };
 }
 
@@ -107,12 +112,15 @@ function resolveNumeric(
   if (!Number.isFinite(parsed,)) {
     throw new QuestionError(`value must be a finite number: ${String(value,)}`, "invalid_value",);
   }
+
   if (row.min_value !== null && parsed < row.min_value) {
     throw new QuestionError(`value must be at least ${row.min_value}`, "invalid_value",);
   }
+
   if (row.max_value !== null && parsed > row.max_value) {
     throw new QuestionError(`value must be at most ${row.max_value}`, "invalid_value",);
   }
+
   return { answerValue: String(parsed,), display: String(parsed,), };
 }
 
@@ -129,16 +137,19 @@ export function assertValidEffect(effect: QuestionEffect,): void {
     if (typeof quest.questId !== "string" || !quest.questId.trim()) {
       throw new QuestionError("Effect quest id must not be empty", "invalid_input",);
     }
+
     if (quest.progressDelta !== undefined && !Number.isFinite(quest.progressDelta,)) {
       throw new QuestionError(
         "Effect quest progressDelta must be a finite number",
         "invalid_input",
       );
     }
+
     if (quest.complete !== undefined && typeof quest.complete !== "boolean") {
       throw new QuestionError("Effect quest complete must be a boolean", "invalid_input",);
     }
   }
+
   if (
     effect.grantItemId !== undefined &&
     (typeof effect.grantItemId !== "string" || !effect.grantItemId.trim())

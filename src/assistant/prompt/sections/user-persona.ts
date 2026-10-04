@@ -30,6 +30,7 @@ export const userPersonaSection: SectionBuilder = {
     if (participant.persona_id) {
       return buildPersonaSection(ctx, participant.persona_id,);
     }
+
     return [];
   },
 };
@@ -83,6 +84,7 @@ async function buildImpersonationSection(
   if (impersonatedActor.description) {
     personaParts.push(`\nDescription: ${impersonatedActor.description}`,);
   }
+
   if (impersonatedActor.personality) {
     personaParts.push(`\nPersonality: ${impersonatedActor.personality}`,);
   }

@@ -78,6 +78,7 @@ async function makePatrolWorld(name: string,) {
       patrolIndex: 0,
     },),
   },);
+
   return { worldId, chatId, actorId, locA, locB, };
 }
 
@@ -87,6 +88,7 @@ async function setDue(worldId: string, nextTickAtMs: number, paused = 0,): Promi
     next_tick_at: toDate(nextTickAtMs,).toISOString(),
     paused,
   };
+
   await db
     .insertInto("world_simulation_state",)
     .values({ world_id: worldId, ...row, last_run_at: null, last_error: null, tick_count: 0, },)
@@ -167,6 +169,7 @@ describe("AutonomyScheduler — due ordering determinism", () => {
       await setDue(tieA.worldId, dueAt,);
       await setDue(tieB.worldId, dueAt,);
     };
+
     const expected = [earliest.worldId, ...[tieA.worldId, tieB.worldId,].sort(),];
 
     await seed();
@@ -196,6 +199,7 @@ describe("AutonomyScheduler — dispatch integration", () => {
       .select(["location_id", "schedule",],)
       .where("actor_id", "=", world.actorId,)
       .executeTakeFirst();
+
     expect(npc?.location_id,).toBe(world.locB,);
     expect(JSON.parse(npc?.schedule ?? "{}",).patrolIndex,).toBe(1,);
 
@@ -215,6 +219,7 @@ describe("AutonomyScheduler — dispatch integration", () => {
       .set({ autonomy_config: JSON.stringify({ perAgentCap: 0, perUserCap: 0, enabled: true, },), },)
       .where("id", "=", world.worldId,)
       .execute();
+
     const sched = new AutonomyScheduler(db, { rng: RNG_FIRES, },);
     await setDue(world.worldId, T0 - 1_000,);
 
@@ -233,6 +238,7 @@ describe("AutonomyScheduler — dispatch integration", () => {
       .set({ autonomy_config: JSON.stringify({ enabled: false, },), },)
       .where("id", "=", world.worldId,)
       .execute();
+
     const sched = new AutonomyScheduler(db, { rng: RNG_FIRES, },);
     await setDue(world.worldId, T0 - 1_000,);
 
@@ -316,6 +322,7 @@ describe("AutonomyScheduler — telemetry", () => {
       .selectAll()
       .where("event_type", "in", ["scheduler.world_tick.started", "scheduler.world_tick.completed",],)
       .execute();
+
     expect(rows.length,).toBeGreaterThanOrEqual(2,);
 
     const started = rows.find((r,) => r.event_type === "scheduler.world_tick.started")!;
@@ -350,6 +357,7 @@ describe("AutonomyScheduler — error isolation", () => {
       },)
       .where("actor_id", "=", broken.actorId,)
       .execute();
+
     await setDue(broken.worldId, T0 - 2_000,);
     await setDue(healthy.worldId, T0 - 1_000,);
 

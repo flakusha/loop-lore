@@ -24,6 +24,7 @@ const StationType = t.UnionEnum([
   "kitchen",
   "enchanting_table",
 ],);
+
 const CreateStationDefBody = t.Object({
   name: t.String({ minLength: 1, },),
   worldId: Id,
@@ -36,6 +37,7 @@ const CreateStationDefBody = t.Object({
   materialSavingChance: t.Optional(t.Number(),),
   maxDurability: t.Optional(t.Number({ minimum: 1, },),),
 },);
+
 const NullableString = t.Union([t.String(), t.Null(),],);
 
 const UpdateStationDefBody = t.Object({
@@ -90,6 +92,7 @@ export function craftingStationRoutes(opts: HandlerOpts, prefix = "/api",): Elys
           materialSavingChance?: number;
           maxDurability?: number;
         };
+
         const deny = await assertWorldOwner(opts.database, userId, body.worldId,);
         if (deny) { return deny; }
         try {
@@ -105,6 +108,7 @@ export function craftingStationRoutes(opts: HandlerOpts, prefix = "/api",): Elys
             materialSavingChance: body.materialSavingChance,
             maxDurability: body.maxDurability,
           },);
+
           return jsonResponse({ id, }, HttpStatus.Created,);
         } catch (error) {
           log().error("Failed to create station def", error instanceof Error ? error : undefined,);

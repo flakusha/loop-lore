@@ -34,12 +34,14 @@ function seedArchives(dir: string, n: number, ageDays = 0,): string[] {
   for (let i = 0; i < n; i++) {
     const stamp = new Date(Date.now() - ageDays * 86_400_000 + i * 1000,)
       .toISOString().replace(/[:.]/g, "-",);
+
     const name = `${stamp}-${MOCK_FILE}`;
     const filePath = path.join(dir, name,);
     writeFileSync(filePath, "",);
     utimesSync(filePath, Date.now() / 1000, Date.now() / 1000,);
     names.push(name,);
   }
+
   return names;
 }
 

@@ -52,12 +52,14 @@ async function populateModal(modal: HTMLElement, char: Record<string, unknown>, 
   modal.querySelector("[data-field='description']",)!.textContent = (char.description || "No description") as string;
   modal.querySelector("[data-field='system-prompt']",)!.textContent =
     (char.system_prompt || "No system prompt") as string;
+
   const avatarId = char.avatar_asset_id as string | undefined;
   modal.querySelector("[data-field='avatar']",)!.innerHTML = avatarId
     ? `<img src="/api/v1/assets/${
       escapeHtml(avatarId,)
     }/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
     : "<span>👤</span>";
+
   modal.querySelector("[data-action='start-chat']",)?.setAttribute("data-id", id,);
   modal.querySelector("[data-action='edit-char']",)?.setAttribute("data-id", id,);
   modal.querySelector("[data-action='delete-char']",)?.setAttribute("data-id", id,);
@@ -79,6 +81,7 @@ async function populateModal(modal: HTMLElement, char: Record<string, unknown>, 
     barEl.style.width = `${mood.happiness}%`;
     barEl.style.backgroundColor = happinessColor(mood.happiness,);
   }
+
   if (happinessEl) { happinessEl.textContent = `${mood.happiness}%`; }
 }
 
@@ -93,6 +96,7 @@ async function loadCharacterGallery(modal: HTMLElement, id: string,): Promise<vo
       container.innerHTML = "<div data-field='gallery-empty'>No linked assets.</div>";
       return;
     }
+
     container.innerHTML = Array.from(
       avatars,
       (av,) =>
@@ -126,6 +130,7 @@ export async function unlinkCharacterAsset(btn: HTMLElement,) {
     const res = await feFetch(`/api/v1/actors/${actorId}/assets/${assetId}`, {
       method: "DELETE",
     },);
+
     if (res.ok) {
       showToast("success", "Asset unlinked",);
       await loadCharacterGallery(modal, actorId,);
@@ -155,6 +160,7 @@ export async function selectCharacterCard(id: string,) {
       status: error instanceof Error && "status" in error ? error.status : undefined,
       id,
     },);
+
     showToast("error", "Failed to load character",);
     return;
   }
@@ -172,12 +178,14 @@ export async function startChatFromChar(btn: HTMLElement,) {
     showToast("error", "Character not loaded yet",);
     return;
   }
+
   try {
     const res = await feFetch("/api/v1/chats", {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ name: "Chat", type: "direct", mode: "direct", participantIds: [id,], },),
     },);
+
     if (res.ok) {
       const data = await res.json();
       location.assign(`/views/chat?chatid=${encodeURIComponent(data.id,)}`,);
@@ -201,6 +209,7 @@ export async function deleteCharacter(btn: HTMLElement,) {
     const res = await feFetch(`/api/v1/actors/${id}`, {
       method: "DELETE",
     },);
+
     if (res.ok) {
       document.querySelector("#character-detail-modal",)?.classList.remove("open",);
       showToast("success", "Character deleted",);
@@ -226,6 +235,7 @@ export function exportCharacter(btn: HTMLElement,) {
   const format = (
     modal.querySelector('input[name="export-format"]:checked',) as HTMLInputElement | null
   )?.value;
+
   const characterId = btn.closest("[data-character-id]",)?.getAttribute("data-character-id",) ??
     (modal as HTMLElement).dataset.characterId;
 

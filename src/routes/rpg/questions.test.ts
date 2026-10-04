@@ -99,11 +99,13 @@ describe("questions create/list/answer (auth-gated)", () => {
         body: JSON.stringify({ type: "dialogue", prompt: "Hi", options, actorId: emitterActorId, },),
       },),
     );
+
     expect(createRes.status,).toBe(401,);
 
     const listRes = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/questions`,),
     );
+
     expect(listRes.status,).toBe(401,);
   });
 
@@ -112,6 +114,7 @@ describe("questions create/list/answer (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/questions`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -124,6 +127,7 @@ describe("questions create/list/answer (auth-gated)", () => {
         body: JSON.stringify({ type: "nonsense", prompt: "Hi", options: [], actorId: emitterActorId, },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -138,6 +142,7 @@ describe("questions create/list/answer (auth-gated)", () => {
         body: JSON.stringify({ type: "combat", prompt: "Roll initiative", options, actorId: strangerActorId, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -150,6 +155,7 @@ describe("questions create/list/answer (auth-gated)", () => {
         body: JSON.stringify({ type: "combat", prompt: "Roll initiative", options, actorId: emitterActorId, },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as { id: string; status: string; options: unknown; prompt: string };
     expect(body.id,).toBeString();
@@ -164,6 +170,7 @@ describe("questions create/list/answer (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/questions`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { questions: { id: string }[] };
     expect(Array.isArray(body.questions,),).toBe(true,);
@@ -179,6 +186,7 @@ describe("questions create/list/answer (auth-gated)", () => {
         body: JSON.stringify({ optionId: "a", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -191,6 +199,7 @@ describe("questions create/list/answer (auth-gated)", () => {
         body: JSON.stringify({ optionId: "b", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { status: string; selectedOptionId: string };
     expect(body.status,).toBe("answered",);
@@ -201,6 +210,7 @@ describe("questions create/list/answer (auth-gated)", () => {
       .where("chat_id", "=", chatId,)
       .where("role", "=", "system",)
       .executeTakeFirst();
+
     expect(message,).toBeDefined();
     expect(message!.content,).toBe("Answer recorded: Retreat",);
 
@@ -208,6 +218,7 @@ describe("questions create/list/answer (auth-gated)", () => {
     const listRes = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/questions`,),
     );
+
     const listBody = (await listRes.json()) as { questions: { id: string }[] };
     expect(listBody.questions.some((q,) => q.id === questionId),).toBe(false,);
   });
@@ -221,6 +232,7 @@ describe("questions create/list/answer (auth-gated)", () => {
         body: JSON.stringify({ optionId: "a", },),
       },),
     );
+
     expect(res.status,).toBe(409,);
   });
 
@@ -238,6 +250,7 @@ describe("questions create/list/answer (auth-gated)", () => {
         },),
       },),
     );
+
     const created = (await createRes.json()) as { id: string };
 
     const res = await app.handle(
@@ -247,6 +260,7 @@ describe("questions create/list/answer (auth-gated)", () => {
         body: JSON.stringify({ optionId: "does-not-exist", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 });

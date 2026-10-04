@@ -40,6 +40,7 @@ describe("nowAndId", () => {
     expect(id,).toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
     );
+
     expect(Number.isNaN(Date.parse(now,),),).toBe(false,);
     expect(new Date(now,).toISOString(),).toBe(now,);
   });
@@ -105,6 +106,7 @@ describe("getOrCreateRow", () => {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },);
+
     expect(result.id,).toBe(id,);
     expect(result.name,).toBe("Fresh Table",);
 
@@ -112,6 +114,7 @@ describe("getOrCreateRow", () => {
       .where("id", "=", id,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(persisted.name,).toBe("Fresh Table",);
   });
 
@@ -120,6 +123,7 @@ describe("getOrCreateRow", () => {
     await db.insertInto("loot_tables",)
       .values({ id, name: "Original", source_type: "test", },)
       .execute();
+
     const result = await getOrCreateRow(db, "loot_tables", () =>
       db.selectFrom("loot_tables",)
         .where("id", "=", id,)
@@ -134,12 +138,14 @@ describe("getOrCreateRow", () => {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },);
+
     expect(result.name,).toBe("Original",);
 
     const persisted = await db.selectFrom("loot_tables",)
       .where("id", "=", id,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(persisted.name,).toBe("Original",);
   });
 });
@@ -161,6 +167,7 @@ describe("getRpgLog", () => {
       setBindings: () => {},
       flush: () => Promise.resolve(),
     };
+
     const stub: Logger = {
       trace: () => {},
       debug: () => {},
@@ -176,6 +183,7 @@ describe("getRpgLog", () => {
       setBindings: () => {},
       flush: () => Promise.resolve(),
     };
+
     setGlobalLogger(stub,);
     try {
       const log = getRpgLog("seduction",);

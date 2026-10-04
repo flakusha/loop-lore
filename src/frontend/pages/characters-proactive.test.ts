@@ -60,11 +60,13 @@ beforeEach(async () => {
   (globalThis as { document: unknown }).document = {
     querySelector: (sel: string,) => selectors.get(sel,) ?? null,
   };
+
   (globalThis as { location: unknown }).location = {
     get search() {
       return locSearch;
     },
   };
+
   const { initProactive, } = await import("./characters-proactive");
   initProactive(async (url: string, opts?: RequestInit,) => {
     fetchCalls.push({ url, opts, },);
@@ -86,6 +88,7 @@ describe("loadProactiveConfig", () => {
     await (globalThis as unknown as { loadProactiveConfig: (id: string,) => Promise<void> }).loadProactiveConfig(
       "actor1",
     );
+
     expect(status.textContent,).toBe("Configure from a chat session to set proactive messaging.",);
     expect(fetchCalls,).toEqual([],);
   });
@@ -94,10 +97,12 @@ describe("loadProactiveConfig", () => {
     locSearch = "?chatid=abc";
     fetchHandler = async () =>
       jsonResponse({ frequency: "rarely", enabled: true, quietHoursStart: "22:00", quietHoursEnd: "07:00", },);
+
     const { freq, enabled, qs, qe, } = registerFields();
     await (globalThis as unknown as { loadProactiveConfig: (id: string,) => Promise<void> }).loadProactiveConfig(
       "actor1",
     );
+
     expect(fetchCalls[0]?.url,).toBe("/api/v1/proactive-messaging/config?chatId=abc&actorId=actor1",);
     expect(freq.value,).toBe("rarely",);
     expect(enabled.checked,).toBe(true,);
@@ -111,6 +116,7 @@ describe("loadProactiveConfig", () => {
     await (globalThis as unknown as { loadProactiveConfig: (id: string,) => Promise<void> }).loadProactiveConfig(
       "actor1",
     );
+
     expect(fetchCalls[0]?.url,).toContain("chatId=xyz",);
   });
 
@@ -123,6 +129,7 @@ describe("loadProactiveConfig", () => {
     await (globalThis as unknown as { loadProactiveConfig: (id: string,) => Promise<void> }).loadProactiveConfig(
       "actor1",
     );
+
     expect(freq.value,).toBe("normal",);
     expect(enabled.checked,).toBe(false,);
     expect(qs.value,).toBe("23:00",);
@@ -137,6 +144,7 @@ describe("loadProactiveConfig", () => {
     await (globalThis as unknown as { loadProactiveConfig: (id: string,) => Promise<void> }).loadProactiveConfig(
       "actor1",
     );
+
     expect(freq.value,).toBe("normal",);
   });
 
@@ -145,6 +153,7 @@ describe("loadProactiveConfig", () => {
     fetchHandler = async () => {
       throw new Error("net",);
     };
+
     registerFields();
     await expect(
       (globalThis as unknown as { loadProactiveConfig: (id: string,) => Promise<void> }).loadProactiveConfig("actor1",),
@@ -167,6 +176,7 @@ describe("saveProactiveConfig", () => {
     registerFields();
     const result = await (globalThis as unknown as { saveProactiveConfig: (id: string,) => Promise<boolean> })
       .saveProactiveConfig("actor1",);
+
     expect(result,).toBe(false,);
     expect(fetchCalls,).toEqual([],);
   });
@@ -180,6 +190,7 @@ describe("saveProactiveConfig", () => {
     qe.value = "";
     const result = await (globalThis as unknown as { saveProactiveConfig: (id: string,) => Promise<boolean> })
       .saveProactiveConfig("actor1",);
+
     expect(result,).toBe(true,);
     expect(status.textContent,).toBe("Proactive messaging updated.",);
     expect(fetchCalls[0]?.url,).toBe("/api/v1/proactive-messaging/config?chatId=abc&actorId=actor1",);
@@ -195,6 +206,7 @@ describe("saveProactiveConfig", () => {
     await (globalThis as unknown as { saveProactiveConfig: (id: string,) => Promise<boolean> }).saveProactiveConfig(
       "actor1",
     );
+
     const body = JSON.parse(String(fetchCalls[0]?.opts?.body,),) as Record<string, unknown>;
     expect(body.enabled,).toBe(false,);
   });
@@ -205,6 +217,7 @@ describe("saveProactiveConfig", () => {
     const { status, } = registerFields();
     const result = await (globalThis as unknown as { saveProactiveConfig: (id: string,) => Promise<boolean> })
       .saveProactiveConfig("actor1",);
+
     expect(result,).toBe(false,);
     expect(status.textContent,).toBe("Failed to save proactive messaging.",);
   });
@@ -214,9 +227,11 @@ describe("saveProactiveConfig", () => {
     fetchHandler = async () => {
       throw new Error("net",);
     };
+
     const { status, } = registerFields();
     const result = await (globalThis as unknown as { saveProactiveConfig: (id: string,) => Promise<boolean> })
       .saveProactiveConfig("actor1",);
+
     expect(result,).toBe(false,);
     expect(status.textContent,).toBe("Failed to save proactive messaging.",);
   });

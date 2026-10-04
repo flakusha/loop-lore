@@ -35,6 +35,7 @@ function buildMigrationProvider(): { getMigrations: () => Promise<Record<string,
       const files = readdirSync(dir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const f of files) {
         // The migration specifier IS genuinely runtime-selected (readdirSync
@@ -44,10 +45,12 @@ function buildMigrationProvider(): { getMigrations: () => Promise<Record<string,
         const mod = (await import(path.join(dir, f,))) as
           | { default?: Migration }
           | Migration;
+
         const candidate = "default" in mod && mod.default ? mod.default : (mod as Migration);
         const key = f.endsWith(".ts",) ? f.slice(0, -3,) : f;
         migrations[key] = candidate;
       }
+
       return migrations;
     },
   };
@@ -61,6 +64,7 @@ beforeAll(async () => {
     compressThreshold: 128,
     compressAlgorithm: "gzip",
   },);
+
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = OFF",);
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
@@ -73,6 +77,7 @@ beforeAll(async () => {
     display_name: USER_ID,
     password_hash: "dummy",
   },).execute();
+
   app = new Elysia({ name: "test-msg-encryption", },)
     .derive(() => ({ userId: USER_ID, userRole: "solo", }))
     .use(
@@ -136,6 +141,7 @@ describe("GET /api/chats/:id/encryption-key — tier gate", () => {
       .selectAll()
       .where("chat_id", "=", "chat-at-rest-001",)
       .executeTakeFirst();
+
     expect(keyRow,).toBeUndefined();
   });
 
@@ -174,9 +180,11 @@ describe("GET /api/chats/:id/encryption-key — tier gate", () => {
           config: {} as Parameters<typeof messageEncryptionRoutes>[0]["config"],
         },),
       ) as unknown as Elysia;
+
     const res = await noAuthApp.handle(
       new Request("http://localhost/api/chats/chat-standard-001/encryption-key", { method: "GET", },),
     );
+
     expect([401, 404,],).toContain(res.status,);
   });
 });

@@ -31,6 +31,7 @@ export async function ensureTradeSentinel(
     .select("id",)
     .where("id", "=", TRADE_RECIPE_SENTINEL,)
     .executeTakeFirst();
+
   if (existing) { return; }
 
   const now = new Date().toISOString();
@@ -113,6 +114,7 @@ export async function createOffer(
     created_at: now,
     updated_at: now,
   },).execute();
+
   return id;
 }
 
@@ -157,9 +159,11 @@ export async function loadOfferForAccept(
   } else {
     return { success: false, reason: `offer is ${offer.status}`, };
   }
+
   if (offer.status === "pending" && offer.crafter_actor_id !== acceptorActorId) {
     return { success: false, reason: "only the seller can accept", };
   }
+
   if (offer.status === "countered" && offer.requester_actor_id !== acceptorActorId) {
     return { success: false, reason: "only the buyer can accept a countered offer", };
   }
@@ -208,6 +212,7 @@ export async function cancelOffer(
   if (offer.status !== "pending" && offer.status !== "countered") {
     return { success: false, reason: `offer is ${offer.status}`, };
   }
+
   if (offer.requester_actor_id !== cancellerActorId) {
     return { success: false, reason: "only the offer creator can cancel", };
   }

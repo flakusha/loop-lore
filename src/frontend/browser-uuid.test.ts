@@ -60,6 +60,7 @@ describe("browserRandomUUIDv7", () => {
       expect(seen.has(id,),).toBe(false,);
       seen.add(id,);
     }
+
     expect(seen.size,).toBe(100,);
   });
 
@@ -68,6 +69,7 @@ describe("browserRandomUUIDv7", () => {
     for (let i = 0; i < 5; i++) {
       ids.push(browserRandomUUIDv7({ timestampMs: 1_700_000_000_000 + i, },),);
     }
+
     for (let i = 1; i < ids.length; i++) {
       expect(ids[i - 1]! < ids[i]!,).toBe(true,);
     }
@@ -80,6 +82,7 @@ describe("browserRandomUUIDv7", () => {
       expect(seen.has(id,),).toBe(false,);
       seen.add(id,);
     }
+
     expect(seen.size,).toBe(10_000,);
   });
 
@@ -95,6 +98,7 @@ describe("browserRandomUUIDv7", () => {
       for (let i = 0; i < view.length; i++) { view[i] = 0; }
       return buf;
     };
+
     const id = browserRandomUUIDv7({ timestampMs: 0, random: allZeros, },);
     // With ts=0 + zero bytes + version/variant overrides:
     //   bytes 0..5 = 00       → "000000000000"

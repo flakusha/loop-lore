@@ -20,6 +20,7 @@ describe("applyChatFormat", () => {
       { role: "user", content: "hello", },
       { role: "assistant", content: "hi there", },
     ];
+
     const out = applyChatFormat(msgs, empty,);
     expect(out[0]!.content,).toBe("act as helpful",);
     expect(out[1]!.content,).toBe("hello",);
@@ -34,6 +35,7 @@ describe("applyChatFormat", () => {
       { role: "character", content: "i am roleplaying", },
       { role: "tool", content: '{"result": 42}', tool_call_id: "call_1", },
     ];
+
     const out = applyChatFormat(msgs, CHATML,);
     expect(out[0]!.content,).toBe("<|im_start|>system\nact as helpful<|im_end|>",);
     expect(out[1]!.content,).toBe("<|im_start|>user\nhello<|im_end|>",);
@@ -47,6 +49,7 @@ describe("applyChatFormat", () => {
     const msgs: GenerationMessage[] = [
       { role: "user", content: "echo $$ and $& and $` and $' done", },
     ];
+
     const out = applyChatFormat(msgs, CHATML,);
     expect(out[0]!.content,).toBe(
       "<|im_start|>user\necho $$ and $& and $` and $' done<|im_end|>",

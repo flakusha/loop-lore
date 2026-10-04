@@ -43,6 +43,7 @@ describe("dice", () => {
         { source: "a", value: 0, type: "advantage", },
         { source: "b", value: 5, type: "bonus", },
       ],);
+
       // Kept die is 20 (raw 20 > raw 2); bonus applies once to the kept total.
       expect(r.total,).toBe(25,);
       // Critical reflects the KEPT die (20), not the discarded results[0] (2).
@@ -86,6 +87,7 @@ describe("dice", () => {
       const r = rollDice("d20", 1,);
       results.push(r,);
     }
+
     // All results should be 1-20
     for (const r of results) {
       for (const roll of r.results) {

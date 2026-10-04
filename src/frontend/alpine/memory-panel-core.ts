@@ -23,6 +23,7 @@ export const memoryPanelCore: Partial<ChatState> & ThisType<ChatState> = {
     const charParticipant = participants.find(
       (p,) => p.actor_id !== this.userRole && p.display_name !== this.userDisplayName,
     );
+
     return charParticipant?.actor_id ?? null;
   },
 
@@ -82,6 +83,7 @@ export const memoryPanelCore: Partial<ChatState> & ThisType<ChatState> = {
         filtered.push(m,);
       }
     }
+
     return filtered;
   },
 
@@ -113,6 +115,7 @@ export const memoryPanelCore: Partial<ChatState> & ThisType<ChatState> = {
           scope: this.memoryPanel.activeTab,
         },),
       },);
+
       if (!res.ok) { return; }
       const created = await res.json() as MemoryApiRow;
 
@@ -191,6 +194,7 @@ export const memoryPanelCore: Partial<ChatState> & ThisType<ChatState> = {
       ...this.memoryPanel.assistantMemories,
       ...this.memoryPanel.worldMemories,
     ];
+
     let total = 0;
     for (const m of allMemories) { total += m.tokenCount || 0; }
     this.memoryPanel.tokensUsed = total;

@@ -60,6 +60,7 @@ describe("rewrite command", () => {
       expect(captured?.messages[0]?.content,).toBe(
         "Rewrite the following text in clear style. Preserve meaning.",
       );
+
       expect(captured?.messages[1]?.content,).toBe("some rough text",);
       expect(result.systemMessage,).toContain("A polished version.",);
       expect(result.systemMessage,).not.toContain("LLM unavailable",);
@@ -94,6 +95,7 @@ describe("rewrite command", () => {
         { chatId: "c1", },
         {},
       );
+
       expect(result.systemMessage,).toContain("LLM unavailable — applied local heuristics only",);
       expect(result.systemMessage,).toContain("I want",);
       expect(result.actionPayload,).toEqual(
@@ -105,11 +107,13 @@ describe("rewrite command", () => {
       const complete = async (): Promise<{ content: string }> => {
         throw new Error("provider down",);
       };
+
       const result = await runRewrite(
         ["text",],
         { chatId: "c1", },
         { complete, },
       );
+
       expect(result.systemMessage,).toContain("LLM unavailable — applied local heuristics only",);
     });
 
@@ -118,6 +122,7 @@ describe("rewrite command", () => {
         expect(req.messages[1]?.content,).toBe("previous reply",);
         return { content: "rewritten reply", };
       };
+
       const result = await runRewrite(
         [],
         {
@@ -129,6 +134,7 @@ describe("rewrite command", () => {
         },
         { complete, },
       );
+
       expect(result.systemMessage,).toContain("rewritten reply",);
     });
 
@@ -146,6 +152,7 @@ describe("rewrite command", () => {
         { id: "2", role: "assistant", content: "previous reply", created_at: "t", },
       ],
     };
+
     const complete = async (): Promise<{ content: string }> => ({ content: "rewritten reply", });
 
     it("writes back through the apply dep", async () => {
@@ -157,6 +164,7 @@ describe("rewrite command", () => {
           return { ok: true, };
         },
       },);
+
       expect(applied,).toEqual({ messageId: "2", content: "rewritten reply", },);
       expect(result.systemMessage,).toContain("and applied",);
       expect(result.actionPayload,).toEqual(
@@ -174,6 +182,7 @@ describe("rewrite command", () => {
         complete,
         apply: async () => ({ ok: false, error: "forbidden", }),
       },);
+
       expect(result.systemMessage,).toContain("not the author",);
     });
 
@@ -182,6 +191,7 @@ describe("rewrite command", () => {
         complete,
         apply: async () => ({ ok: false, error: "cross_chat", }),
       },);
+
       expect(result.systemMessage,).toContain("another chat",);
     });
 
@@ -190,6 +200,7 @@ describe("rewrite command", () => {
         complete,
         apply: async () => ({ ok: false, error: "not_found", }),
       },);
+
       expect(result.systemMessage,).toContain("no longer exists",);
     });
 

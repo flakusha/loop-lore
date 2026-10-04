@@ -135,6 +135,7 @@ describe("Auth registration interaction (success)", () => {
         .select(["username",],)
         .where("username", "=", username,)
         .executeTakeFirst();
+
       expect(row, "registered username must persist",).not.toBeNull();
       expect(row!.username,).toBe(username,);
     } finally {
@@ -190,6 +191,7 @@ describe("Auth registration interaction (validation error)", () => {
         .select(["username",],)
         .where("username", "=", username,)
         .executeTakeFirst();
+
       expect(row, "failed validation must not persist user row",).toBeUndefined();
     } finally {
       errors.assert();

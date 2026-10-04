@@ -37,6 +37,7 @@ describe("NSFW E2E", () => {
     server = await createTestServer({
       auth: { required: true, },
     },);
+
     await seedUsers(server.db,);
     userApi = createClient(server.url,);
     adminApi = createClient(server.url,);
@@ -65,11 +66,13 @@ describe("NSFW E2E", () => {
     expect(res.status,).toBe(403,);
     expect(res.error ?? "",).toContain("csrf",);
   });
+
   test("POST /api/v1/nsfw/moderation/block returns 403 for regular user", async () => {
     const res = await userApi.post(
       "/api/v1/nsfw/moderation/block",
       blockBody(SEED.admin.id,),
     );
+
     expect(res.status,).toBe(403,);
     expect(res.code,).toBeTruthy();
   });
@@ -79,6 +82,7 @@ describe("NSFW E2E", () => {
       "/api/v1/nsfw/moderation/ban",
       blockBody(SEED.admin.id,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -90,6 +94,7 @@ describe("NSFW E2E", () => {
       "/api/v1/nsfw/moderation/block",
       blockBody(targetId,),
     );
+
     expect(block.ok,).toBe(true,);
     expect(block.data,).toBeTruthy();
 
@@ -98,6 +103,7 @@ describe("NSFW E2E", () => {
       "/api/v1/nsfw/moderation/unblock",
       { targetUserId: targetId, },
     );
+
     expect(unblock.ok,).toBe(true,);
   });
 
@@ -109,6 +115,7 @@ describe("NSFW E2E", () => {
       "/api/v1/nsfw/moderation/shadow",
       blockBody(targetId,),
     );
+
     expect(shadow.ok,).toBe(true,);
 
     // unshadow route also uses modBody — requires reason
@@ -116,6 +123,7 @@ describe("NSFW E2E", () => {
       "/api/v1/nsfw/moderation/unshadow",
       blockBody(targetId,),
     );
+
     expect(unshadow.ok,).toBe(true,);
   });
 
@@ -131,6 +139,7 @@ describe("NSFW E2E", () => {
       "/api/v1/nsfw/moderation/block",
       { reason: "no target", },
     );
+
     expect(res.status,).toBe(422,);
     expect(res.code,).toBeTruthy();
   });
@@ -140,6 +149,7 @@ describe("NSFW E2E", () => {
       "/api/v1/nsfw/moderation/block",
       { targetUserId: SEED.user.id, },
     );
+
     expect(res.status,).toBe(422,);
   });
 });

@@ -42,6 +42,7 @@ async function postRegister(
     headers: { "Content-Type": "application/x-www-form-urlencoded", },
     body: body.toString(),
   },);
+
   const config = (server as unknown as { config: Config }).config;
   const res = await handleRegister(req, database, config, undefined, ip, limiter,);
   return res;
@@ -75,6 +76,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -87,6 +89,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -100,6 +103,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -111,6 +115,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBeLessThan(500,);
     expect(res.status,).toBeGreaterThanOrEqual(200,);
     const user = await server.db
@@ -118,6 +123,7 @@ describe("Registration edge-cases E2E", () => {
       .select("id",)
       .where("username", "=", "a".repeat(33,),)
       .executeTakeFirst();
+
     expect(user,).toBeUndefined();
   });
 
@@ -129,6 +135,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -141,6 +148,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -155,6 +163,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBeLessThan(500,);
     expect(res.status,).toBeGreaterThanOrEqual(200,);
   });
@@ -168,6 +177,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -181,6 +191,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -193,6 +204,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -209,6 +221,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       ip,
     );
+
     expect(a.status,).toBe(200,);
 
     const b = await postRegister(
@@ -218,6 +231,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       ip, // same IP within this test → 2nd request still has quota
     );
+
     expect(b.status,).toBeLessThan(500,);
     expect(b.status,).toBeGreaterThanOrEqual(200,);
 
@@ -226,6 +240,7 @@ describe("Registration edge-cases E2E", () => {
       .select("id",)
       .where("username", "=", username,)
       .execute();
+
     expect(rows.length,).toBe(1,);
   });
 
@@ -239,6 +254,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -250,6 +266,7 @@ describe("Registration edge-cases E2E", () => {
       limiter,
       uniqueIp(),
     );
+
     expect(res.status,).toBeLessThan(500,);
   });
 

@@ -12,5 +12,6 @@ export const calculateSocialProgress: ProgressCalculator = (_ctx, config, event,
   if (npcId === cfg.targetActorId) {
     return Math.round(100 / cfg.requiredInteractions,);
   }
+
   return 0;
 };

@@ -93,5 +93,6 @@ export async function streamCancelCleanup(deps: {
       sseData({ type: "done", attemptId, cancelled: true, finishReason: "cancelled", content: accumulatedContent, },),
     ),
   );
+
   controller.close();
 }

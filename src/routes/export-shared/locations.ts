@@ -39,5 +39,6 @@ export async function exportLocationsToZip(ctx: ExportContext,): Promise<void> {
       metadata: { world_id: location.world_id, },
     },);
   }
+
   ctx.counts.locations = locations.length;
 }

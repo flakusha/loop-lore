@@ -392,6 +392,7 @@ describe("format detection", () => {
       ...testCharacter,
       assets: [{ type: "avatar", name: "avatar.png", uri: "data:image/png;base64,...", ext: "png", },],
     };
+
     const pngBuffer = exportToPng(character,);
     const result: ParseResult = await parseCharacterCard(pngBuffer,);
 

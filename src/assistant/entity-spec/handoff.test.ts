@@ -46,6 +46,7 @@ describe("handoffToEntityCreationChat", () => {
       name: "Source story chat",
       createdBy: "user-create",
     },);
+
     return {
       kind: "character",
       seed: "Aldric\nA hooded stranger seen at the tavern.",
@@ -71,6 +72,7 @@ describe("handoffToEntityCreationChat", () => {
       .where("id", "=", chatId,)
       .select(["name", "visibility", "parent_chat_id", "created_by",],)
       .executeTakeFirst();
+
     expect(chat,).toBeDefined();
     expect(chat!.name,).toBe("Character creation: Aldric",);
     expect(chat!.visibility,).toBe("private",);
@@ -83,6 +85,7 @@ describe("handoffToEntityCreationChat", () => {
       .where("chat_id", "=", chatId,)
       .selectAll()
       .executeTakeFirst();
+
     expect(seed,).toBeDefined();
     expect(seed!.role,).toBe("system",);
     expect(seed!.content,).toContain("Aldric",);
@@ -93,6 +96,7 @@ describe("handoffToEntityCreationChat", () => {
       .where("chat_id", "=", chatId,)
       .selectAll()
       .executeTakeFirst();
+
     expect(session,).toBeDefined();
     expect(session!.workflow_id,).toBe("entity-character",);
   });

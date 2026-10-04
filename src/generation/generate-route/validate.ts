@@ -47,12 +47,15 @@ export async function validateGenerateRequest({
   if (!input.chatId || typeof input.chatId !== "string") {
     return jsonError({ message: "chatId is required", status: 400, },);
   }
+
   if (!input.parentMessageId || typeof input.parentMessageId !== "string") {
     return jsonError({ message: "parentMessageId is required", status: 400, },);
   }
+
   if (!input.actorId || typeof input.actorId !== "string") {
     return jsonError({ message: "actorId is required", status: 400, },);
   }
+
   if (!input.idempotencyKey || typeof input.idempotencyKey !== "string") {
     return jsonError({ message: "idempotencyKey is required", status: 400, },);
   }
@@ -67,14 +70,18 @@ export async function validateGenerateRequest({
   if (input.prompt !== undefined && !Array.isArray(input.prompt,)) {
     return jsonError({ message: "prompt must be an array", status: 400, },);
   }
+
   if (input.provider !== undefined && typeof input.provider !== "string") {
     return jsonError({ message: "provider must be a string", status: 400, },);
   }
+
   if (input.modelId !== undefined && typeof input.modelId !== "string") {
     return jsonError({ message: "modelId must be a string", status: 400, },);
   }
+
   if (input.format !== undefined && typeof input.format !== "string") {
     return jsonError({ message: "format must be a string", status: 400, },);
   }
+
   return null;
 }

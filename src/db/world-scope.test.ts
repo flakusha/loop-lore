@@ -120,6 +120,7 @@ describe("worldScoped", () => {
     const rowsA = await worldScoped(db, "crafting_station_instances", worldA,)
       .selectAll()
       .execute();
+
     expect(rowsA.length,).toBe(1,);
     expect(rowsA[0]?.id,).toBe(idA,);
     expect(rowsA[0]?.world_id,).toBe(worldA,);
@@ -127,6 +128,7 @@ describe("worldScoped", () => {
     const rowsB = await worldScoped(db, "crafting_station_instances", worldB,)
       .selectAll()
       .execute();
+
     expect(rowsB.length,).toBe(1,);
     expect(rowsB[0]?.id,).toBe(idB,);
     expect(rowsB[0]?.world_id,).toBe(worldB,);
@@ -140,6 +142,7 @@ describe("worldScoped", () => {
     )
       .selectAll()
       .execute();
+
     expect(rows,).toEqual([],);
   });
 });
@@ -203,6 +206,7 @@ describe("validateWorldAccess", () => {
       "actor-doesnt-matter",
       "world-does-not-exist",
     );
+
     expect(ok,).toBe(false,);
   });
 });

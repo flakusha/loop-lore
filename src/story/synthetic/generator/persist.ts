@@ -47,6 +47,7 @@ export async function persist(
     getLogger()
       .child({ module: "synthetic-generator", },)
       .error("serialization failed", undefined, { failures, },);
+
     throw new Error("Failed to serialize synthetic data",);
   }
 

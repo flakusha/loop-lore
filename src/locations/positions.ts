@@ -50,11 +50,13 @@ export class ActorPositionService {
     const ids = physicalLocationId === spatialLocationId
       ? [physicalLocationId,]
       : [physicalLocationId, spatialLocationId,];
+
     const rows = await this.db
       .selectFrom("locations",)
       .where("id", "in", ids,)
       .select(["id", "world_id",],)
       .execute();
+
     if (rows.length !== ids.length) { throw new Error("location(s) not found",); }
     const worlds = new Set(rows.map((r,) => r.world_id),);
     if (worlds.size > 1) {
@@ -98,6 +100,7 @@ export class ActorPositionService {
         "locations.world_id",
       ],)
       .executeTakeFirst();
+
     if (!row) { return null; }
     return {
       actorId: row.actor_id,
@@ -132,10 +135,12 @@ export class ActorPositionService {
       .where("id", "=", transportLocationId,)
       .select(["kind", "mobility_mode", "travel_progress", "current_route_id",],)
       .executeTakeFirst();
+
     if (!transport) { throw new Error("transport not found",); }
     if (transport.kind !== "transport" || transport.mobility_mode === "static") {
       throw new Error("location is not a moving transport",);
     }
+
     const effectiveRouteId = routeId ?? transport.current_route_id;
     if (!effectiveRouteId) { throw new Error("transport has no current route",); }
     const stops = await this.db
@@ -144,6 +149,7 @@ export class ActorPositionService {
       .select(["stop_order", "location_id",],)
       .orderBy("stop_order",)
       .execute();
+
     if (stops.length === 0) { throw new Error("route has no stops",); }
     const idx = Math.min(Math.floor(transport.travel_progress ?? 0,), stops.length - 1,);
     await this.setPosition(actorId, transportLocationId, stops[idx]!.location_id,);

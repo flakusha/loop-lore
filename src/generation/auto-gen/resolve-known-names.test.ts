@@ -38,6 +38,7 @@ describe("resolveChatKnownEntityNames", () => {
     await db.insertInto("users",)
       .values({ id: userId, username: "rkn-user", display_name: "RKN User", role: "user", status: "active", },)
       .execute();
+
     await db.insertInto("chats",)
       .values({ id: chatId, name: "RKN Chat", created_by: userId, },)
       .execute();
@@ -54,12 +55,15 @@ describe("resolveChatKnownEntityNames", () => {
     await db.insertInto("actors",)
       .values({ id: aliceId, display_name: "Alice", },)
       .execute();
+
     await db.insertInto("actors",)
       .values({ id: bobId, display_name: "Bob", },)
       .execute();
+
     await db.insertInto("chat_participants",)
       .values({ chat_id: chatId, actor_id: aliceId, },)
       .execute();
+
     await db.insertInto("chat_participants",)
       .values({ chat_id: chatId, actor_id: bobId, },)
       .execute();
@@ -74,9 +78,11 @@ describe("resolveChatKnownEntityNames", () => {
     await db.insertInto("worlds",)
       .values({ id: worldId, name: "RKN World", owner_id: userId, },)
       .execute();
+
     await db.insertInto("locations",)
       .values({ id: locationId, world_id: worldId, name: "Riverwood", },)
       .execute();
+
     await db.updateTable("chats",)
       .set({ current_location_id: locationId, },)
       .where("id", "=", chatId,)
@@ -93,9 +99,11 @@ describe("resolveChatKnownEntityNames", () => {
     await db.insertInto("worlds",)
       .values({ id: dupWorldId, name: "RKN World 2", owner_id: userId, },)
       .execute();
+
     await db.insertInto("locations",)
       .values({ id: dupLocationId, world_id: dupWorldId, name: "Alice", },)
       .execute();
+
     await db.updateTable("chats",)
       .set({ current_location_id: dupLocationId, },)
       .where("id", "=", chatId,)

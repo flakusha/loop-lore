@@ -95,6 +95,7 @@ describe("PUT /api/admin/nsfw", () => {
         body: JSON.stringify({ allowNsfw: false, },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -107,6 +108,7 @@ describe("PUT /api/admin/nsfw", () => {
         body: JSON.stringify({ allowNsfw: false, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -119,6 +121,7 @@ describe("PUT /api/admin/nsfw", () => {
         body: JSON.stringify({ allowNsfw: false, nsfwMinAge: 21, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { ok: boolean };
     expect(body.ok,).toBe(true,);
@@ -139,6 +142,7 @@ describe("PUT /api/admin/nsfw", () => {
         body: JSON.stringify({ nsfwMinAge: 5, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const verifyRes = await app.handle(new Request("http://localhost/api/admin/nsfw",),);

@@ -95,6 +95,7 @@ export function setChatTargetLang(
   } else {
     delete next[STORY_STATE_KEY];
   }
+
   const serialized = safeJsonStringify(next,);
   return serialized.ok ? serialized.value : (storyState ?? null);
 }

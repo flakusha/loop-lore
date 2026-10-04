@@ -49,6 +49,7 @@ describe("toVnMessage", () => {
       thinking: "hmm",
       attachments: [vnAttachment,],
     },),);
+
     expect(out.name,).toBe("Aria",);
     expect(out.thinking,).toBe("hmm",);
     expect(out.attachments,).toEqual([vnAttachment,],);

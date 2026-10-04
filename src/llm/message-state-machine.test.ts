@@ -41,6 +41,7 @@ describe("llmRequestStateMachine", () => {
     const nonTerminal = llmRequestStateMachine.def.values.filter((v,) =>
       !(llmRequestStateMachine.def.terminal as readonly string[]).includes(v,)
     );
+
     for (const s of nonTerminal) {
       expect(llmRequestStateMachine.canTransition(s as LlmRequestState, LlmRequestState.Cancelled,),)
         .toBe(true,);
@@ -58,6 +59,7 @@ describe("llmRequestStateMachine", () => {
     for (const state of llmRequestStateMachine.def.values) {
       for (const target of llmRequestStateMachine.def.transitions[state]) { all.add(target,); }
     }
+
     // The initial state is reachable trivially.
     all.add(llmRequestStateMachine.def.initial,);
     expect(all,).toEqual(new Set(llmRequestStateMachine.def.values,),);

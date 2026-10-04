@@ -87,17 +87,21 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
               method: "point_buy" | "4d6_drop_lowest" | "standard_array";
               allocation?: Record<AbilityName, number>;
             };
+
             switch (body.method) {
               case "point_buy": {
                 if (!body.allocation) {
                   return jsonError("Point-buy requires allocation", 400,);
                 }
+
                 const stats = pointBuy(body.allocation,);
                 if (!stats) {
                   return jsonError("Invalid point-buy allocation (must total 27 points)", 400,);
                 }
+
                 return jsonResponse({ method: "point_buy", stats, },);
               }
+
               case "4d6_drop_lowest": {
                 const rolls = rollStats4d6();
                 const stats = defaultStatBlock();
@@ -105,11 +109,14 @@ export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
                 for (let i = 0; i < 6; i++) {
                   stats[abilities[i]!] = rolls[i]!;
                 }
+
                 return jsonResponse({ method: "4d6_drop_lowest", stats, rolls, },);
               }
+
               case "standard_array": {
                 return jsonResponse({ method: "standard_array", array: standardArray(), },);
               }
+
               default: {
                 return jsonError("Unknown generation method", 400,);
               }

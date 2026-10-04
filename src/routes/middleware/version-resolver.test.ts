@@ -49,6 +49,7 @@ describe("resolveVersion (helper)", () => {
     const req = new Request("http://localhost/api/chats", {
       headers: { Accept: "application/vnd.loop-lore.v1+json", },
     },);
+
     expect(resolveVersion(req,),).toBe("1",);
   });
 
@@ -56,6 +57,7 @@ describe("resolveVersion (helper)", () => {
     const req = new Request("http://localhost/api/v1/chats", {
       headers: { Accept: "application/json", },
     },);
+
     expect(resolveVersion(req,),).toBe("1",);
   });
 });
@@ -85,6 +87,7 @@ describe("versionResolver (Elysia plugin)", () => {
         if ("apiVersion" in ctx) {
           capturedVersion = ctx.apiVersion as unknown;
         }
+
         return new Response("ok",);
       },);
   },);
@@ -126,6 +129,7 @@ describe("versionResolver (Elysia plugin)", () => {
         headers: { Accept: "application/vnd.loop-lore.v1+json", },
       },),
     );
+
     expect(res.status,).toBe(200,);
     expect(capturedVersion,).toBe("1",);
   });
@@ -144,6 +148,7 @@ describe("createApp wires versionResolver (regression)", () => {
     expect(source,).toContain(
       'import { versionResolver, } from "./routes/middleware/version-resolver";',
     );
+
     const useIdx = source.indexOf("app.use(versionResolver(),);",);
     const regIdx = source.indexOf("registerPlugins(",);
     expect(useIdx,).toBeGreaterThan(-1,);

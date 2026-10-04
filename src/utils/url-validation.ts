@@ -79,6 +79,7 @@ export function validateProviderUrl(
     if (hostname === allowed) {
       return { ok: true, url: urlString, local: false, };
     }
+
     if (allowed.startsWith("*.",) && hostname.endsWith(allowed.slice(1,),)) {
       return { ok: true, url: urlString, local: false, };
     }
@@ -98,6 +99,7 @@ export function validateProviderUrl(
           local: true,
         };
       }
+
       return { ok: true, url: urlString, local: true, };
     }
 
@@ -120,6 +122,7 @@ export function validateProviderUrl(
         local: true,
       };
     }
+
     return { ok: true, url: urlString, local: true, };
   }
 
@@ -146,6 +149,7 @@ export function validateProviderUrls(
   for (const { name, url, } of entries) {
     results[name] = validateProviderUrl(url, options,);
   }
+
   return results;
 }
 
@@ -169,6 +173,7 @@ function isLocalIPv4(ip: string,): boolean {
   for (const range of LOCAL_IPV4_RANGES) {
     if (((addr & range.mask) >>> 0) === range.network) { return true; }
   }
+
   return false;
 }
 

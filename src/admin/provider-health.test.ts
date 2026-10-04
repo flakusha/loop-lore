@@ -125,6 +125,7 @@ describeOrSkipStrict("provider-health", () => {
         latencyMs: 5,
         lastChecked: "t",
       },);
+
       expect(summary,).toEqual({
         name: "healthy-prov",
         label: "Healthy",

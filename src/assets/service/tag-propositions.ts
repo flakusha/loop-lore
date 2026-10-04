@@ -84,6 +84,7 @@ export async function proposeTags(
     .select(["filename", "alt_text",],)
     .where("id", "=", assetId,)
     .executeTakeFirst();
+
   if (!asset) { return []; }
 
   const candidates = source.propose(asset,);
@@ -93,6 +94,7 @@ export async function proposeTags(
     .select("tag",)
     .where("asset_id", "=", assetId,)
     .execute();
+
   const appliedSet = new Set(applied.map((row,) => row.tag),);
 
   const dismissed = await database
@@ -101,6 +103,7 @@ export async function proposeTags(
     .where("asset_id", "=", assetId,)
     .where("user_id", "=", userId,)
     .execute();
+
   const dismissedSet = new Set(dismissed.map((row,) => row.tag),);
 
   const altTokens = new Set(asset.alt_text ? tokenize(asset.alt_text,) : [],);
@@ -112,6 +115,7 @@ export async function proposeTags(
     if (appliedSet.has(tag,) || dismissedSet.has(tag,)) { continue; }
     proposals.push({ tag, provenance: altTokens.has(tag,) ? "alt_text" : "filename", },);
   }
+
   return proposals;
 }
 

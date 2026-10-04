@@ -115,10 +115,12 @@ export function storyOrchestrationRoutes(
         if (body.qualityThresholds) {
           merged.qualityThresholds = { ...merged.qualityThresholds, ...body.qualityThresholds, };
         }
+
         const serialized = safeJsonStringify(merged,);
         if (!serialized.ok) {
           return jsonError({ message: "gm_config serialization failed", status: HttpStatus.InternalServerError, },);
         }
+
         await db
           .updateTable("chats",)
           .set({
@@ -129,6 +131,7 @@ export function storyOrchestrationRoutes(
           },)
           .where("id", "=", params.id,)
           .execute();
+
         return jsonResponse({ ok: true, },);
       },
       { body: ConfigureBody, },
@@ -144,6 +147,7 @@ export function storyOrchestrationRoutes(
             status: HttpStatus.BadRequest,
           },);
         }
+
         const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
         await gm.initialize();
         await gm.injectNarration(chat.world_id, body.text,);
@@ -160,11 +164,13 @@ export function storyOrchestrationRoutes(
         if (!turn) {
           return jsonError({ message: "No open story turn to escalate", status: HttpStatus.NotFound, },);
         }
+
         await db
           .updateTable("story_turns",)
           .set({ status: TurnStatus.Escalated, updated_at: new Date().toISOString(), },)
           .where("id", "=", turn.id,)
           .execute();
+
         return jsonResponse({ ok: true, turnId: turn.id, status: TurnStatus.Escalated, },);
       },
     );

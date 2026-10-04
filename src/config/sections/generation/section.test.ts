@@ -17,6 +17,7 @@ describe("GenerationSection", () => {
       matting: { backend: "auto", endpoint: "http://127.0.0.1:7000", },
       providers: { openaiCompatible: [{ name: "x", baseUrl: "http://x", },], } as never,
     },);
+
     expect(section.matting?.backend,).toBe("auto",);
     expect(section.providers.openaiCompatible,).toHaveLength(1,);
   });

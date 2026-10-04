@@ -44,12 +44,15 @@ export async function logEvent(
   if (opts.standingDelta !== undefined) {
     updateOpts.standing = relationship.standing + opts.standingDelta;
   }
+
   if (opts.trustDelta !== undefined) {
     updateOpts.trust = relationship.trust + opts.trustDelta;
   }
+
   if (opts.familiarityDelta !== undefined) {
     updateOpts.familiarity = relationship.familiarity + opts.familiarityDelta;
   }
+
   if (opts.metadata !== undefined) {
     updateOpts.metadata = {
       ...relationship.metadata,

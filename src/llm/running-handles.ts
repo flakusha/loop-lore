@@ -22,6 +22,7 @@ export class RunningHandles {
       set = new Set<InternalHandle<unknown>>();
       this.#byProvider.set(provider, set,);
     }
+
     set.add(handle,);
   }
 
@@ -62,6 +63,7 @@ export class RunningHandles {
         }
       }
     }
+
     return false;
   }
 

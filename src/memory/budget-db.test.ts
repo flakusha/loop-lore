@@ -73,6 +73,7 @@ describe("getMemoriesWithinBudget", () => {
       confidence: 0.1,
       importance: 10,
     },);
+
     await seedMemory(db, {
       id: "m-hi",
       actorId: "actor-bud",
@@ -94,6 +95,7 @@ describe("getMemoriesWithinBudget", () => {
       confidence: 0.9,
       importance: 9,
     },);
+
     await seedMemory(db, {
       id: "m-2",
       actorId: "actor-bud",
@@ -101,6 +103,7 @@ describe("getMemoriesWithinBudget", () => {
       confidence: 0.9,
       importance: 7,
     },);
+
     await seedMemory(db, {
       id: "m-3",
       actorId: "actor-bud",
@@ -135,6 +138,7 @@ describe("getMemoriesWithinBudget", () => {
       confidence: 0.9,
       importance: 5,
     },);
+
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 0, },);
     expect(result,).toEqual([],);
   });
@@ -148,6 +152,7 @@ describe("getMemoriesWithinBudget", () => {
       importance: 5,
       pinned: "pinned",
     },);
+
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, respectPins: false, },);
     expect(result,).toHaveLength(1,);
     expect(result[0]?.content,).toBe("pinned row in db",);
@@ -162,6 +167,7 @@ describe("getMemoriesWithinBudget", () => {
       importance: 1,
       pinned: "pinned",
     },);
+
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, },);
     expect(result.map((m,) => m.content),).toEqual(["pinned but low confidence",],);
     expect(result[0]?.pinned,).toBe(true,);
@@ -178,6 +184,7 @@ describe("getMemoriesWithinBudget", () => {
       importance: 1,
       pinned: "pinned",
     },);
+
     await seedMemory(db, {
       id: "m-unpinned-tight",
       actorId: "actor-bud",
@@ -185,6 +192,7 @@ describe("getMemoriesWithinBudget", () => {
       confidence: 0.9,
       importance: 9,
     },);
+
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 10, },);
     expect(result.map((m,) => m.content),).toEqual(["pinned row kept regardless of budget",],);
     expect(result[0]?.pinned,).toBe(true,);
@@ -199,6 +207,7 @@ describe("getMemoriesWithinBudget", () => {
       importance: 1,
       pinned: "pinned",
     },);
+
     await seedMemory(db, {
       id: "m-unpinned-fit",
       actorId: "actor-bud",
@@ -206,6 +215,7 @@ describe("getMemoriesWithinBudget", () => {
       confidence: 0.9,
       importance: 9,
     },);
+
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, },);
     expect(result.map((m,) => m.content).sort((a, b,) => a.localeCompare(b,)),).toEqual(
       ["pinned row with room to spare", "unpinned row also fits",],
@@ -220,6 +230,7 @@ describe("getMemoriesWithinBudget", () => {
       confidence: 0.1,
       importance: 9,
     },);
+
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, },);
     expect(result,).toEqual([],);
   });
@@ -235,6 +246,7 @@ describe("getMemoriesWithinBudget", () => {
       confidence: -5,
       importance: 9,
     },);
+
     await seedMemory(db, {
       id: "m-big",
       actorId: "actor-bud",
@@ -257,6 +269,7 @@ describe("getMemoriesWithinBudget", () => {
       confidence: 0.9,
       importance: -3,
     },);
+
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, },);
     expect(result,).toHaveLength(1,);
   });

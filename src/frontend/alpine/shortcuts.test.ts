@@ -120,6 +120,7 @@ describe("shortcuts.ts", () => {
         const listener = (e: Event,) => {
           received.detail = (e as CustomEvent).detail;
         };
+
         window.addEventListener("keynav:action", listener,);
         dispatchKeynavAction("goto-chatlist",);
         expect(received.detail,).toEqual({ action: "goto-chatlist", },);
@@ -131,6 +132,7 @@ describe("shortcuts.ts", () => {
         const listener = (e: Event,) => {
           received.bubbles = (e as CustomEvent).bubbles;
         };
+
         window.addEventListener("keynav:action", listener,);
         dispatchKeynavAction("toggle-help",);
         expect(received.bubbles,).toBe(true,);
@@ -149,6 +151,7 @@ describe("shortcuts.ts", () => {
       registerKeynavHandler("goto-chatlist", () => {
         calls += 1;
       },);
+
       dispatchKeynavActionToHandlers("goto-chatlist",);
       expect(calls,).toBe(1,);
     });
@@ -158,6 +161,7 @@ describe("shortcuts.ts", () => {
       const handler = () => {
         calls += 1;
       };
+
       const unsub = registerKeynavHandler("goto-chatlist", handler,);
       dispatchKeynavActionToHandlers("goto-chatlist",);
       unsub();
@@ -178,10 +182,12 @@ describe("shortcuts.ts", () => {
       const staleUnsub = registerKeynavHandler("goto-chatlist", () => {
         calls += 1;
       },);
+
       staleUnsub();
       const liveUnsub = registerKeynavHandler("goto-chatlist", () => {
         calls += 1;
       },);
+
       // The stale unsubscribe must not remove the replacement registration.
       staleUnsub();
       dispatchKeynavActionToHandlers("goto-chatlist",);
@@ -199,9 +205,11 @@ describe("shortcuts.ts", () => {
       registerKeynavHandler("goto-chatlist", () => {
         chatlistCalls += 1;
       },);
+
       registerKeynavHandler("goto-home", () => {
         homeCalls += 1;
       },);
+
       dispatchKeynavActionToHandlers("goto-chatlist",);
       expect(chatlistCalls,).toBe(1,);
       expect(homeCalls,).toBe(0,);
@@ -213,9 +221,11 @@ describe("shortcuts.ts", () => {
       const unsubA = registerKeynavHandler("goto-chatlist", () => {
         a += 1;
       },);
+
       registerKeynavHandler("goto-chatlist", () => {
         b += 1;
       },);
+
       unsubA();
       dispatchKeynavActionToHandlers("goto-chatlist",);
       expect(a,).toBe(0,);
@@ -228,6 +238,7 @@ describe("shortcuts.ts", () => {
       registerKeynavHandler("goto-chatlist", () => {
         throw new Error("boom",);
       },);
+
       registerKeynavHandler("goto-chatlist", () => order.push("c",),);
       // Should not throw out of dispatch.
       expect(() => dispatchKeynavActionToHandlers("goto-chatlist",)).not.toThrow();
@@ -240,6 +251,7 @@ describe("shortcuts.ts", () => {
         registerKeynavHandler("goto-chatlist", () => {
           throw new Error("kaboom",);
         },);
+
         dispatchKeynavActionToHandlers("goto-chatlist",);
       },);
 
@@ -264,6 +276,7 @@ describe("shortcuts.ts", () => {
         registerKeynavHandler("goto-home", () => {
           throw "bare-string";
         },);
+
         dispatchKeynavActionToHandlers("goto-home",);
       },);
 
@@ -283,6 +296,7 @@ describe("shortcuts.ts", () => {
           },);
         }
       },);
+
       dispatchKeynavActionToHandlers("goto-chatlist",);
       expect(spawned,).toBe(11,);
     });

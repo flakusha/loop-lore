@@ -41,6 +41,7 @@ async function upsertActorItem(
     .select(["id", "quantity",],)
     .where("actor_id", "=", actorId,).where("name", "=", item.name,)
     .executeTakeFirst();
+
   if (ex) {
     await trx.updateTable("actor_items",)
       .set({ quantity: ex.quantity + qty, },).where("id", "=", ex.id,).execute();
@@ -110,6 +111,7 @@ function toCraftAttempt(r: {
     createdAt: r.created_at,
   };
 }
+
 /** Crafting process — attempt, consume materials, roll, produce output. */
 export class CraftingProcessService {
   private readonly db: Kysely<DB>;
@@ -125,17 +127,21 @@ export class CraftingProcessService {
   async attemptCraft(opts: CraftAttemptOpts,): Promise<CraftResult> {
     const recipe = await this.db.selectFrom("crafting_recipes",).selectAll()
       .where("id", "=", opts.recipeId,).executeTakeFirst();
+
     if (!recipe) { throw new Error(`Recipe not found: ${opts.recipeId}`,); }
     const matRows = await this.db.selectFrom("crafting_recipe_materials",)
       .selectAll().where("recipe_id", "=", opts.recipeId,).execute();
+
     const itemIds: string[] = Array.from(matRows, m => m.item_id,);
     const defs = itemIds.length > 0
       ? await this.db.selectFrom("items",).selectAll().where("id", "in", itemIds,).execute()
       : [];
+
     const defMap = new Map<
       string,
       { name: string; description: string | null; category: ItemCategory; value: number; weight: number }
     >();
+
     for (const d of defs) {
       defMap.set(d.id, {
         name: d.name,
@@ -145,12 +151,14 @@ export class CraftingProcessService {
         weight: d.weight,
       },);
     }
+
     // Validate station if required
     let station: StationBonuses | null = null;
     if (recipe.station_type_required) {
       if (!opts.stationInstanceId) {
         throw new Error("Station required but none provided",);
       }
+
       const si = await this.db.selectFrom("crafting_station_instances",)
         .innerJoin("crafting_station_defs", "crafting_station_defs.id", "crafting_station_instances.station_def_id",)
         .select([
@@ -161,17 +169,20 @@ export class CraftingProcessService {
           "crafting_station_instances.is_active",
         ],).where("crafting_station_instances.id", "=", opts.stationInstanceId,)
         .executeTakeFirst();
+
       if (!si) { throw new Error(`Station not found: ${opts.stationInstanceId}`,); }
       if (si.is_active !== 1) { throw new Error("Station is not active",); }
       if (si.station_type !== recipe.station_type_required) {
         throw new Error(`Station type mismatch: need ${recipe.station_type_required}`,);
       }
+
       station = {
         successBonus: si.success_bonus,
         qualityBonus: si.quality_bonus,
         materialSavingChance: si.material_saving_chance,
       };
     }
+
     // Transactional: validate → consume → roll → produce → record
     return this.db.transaction().execute(async (trx,) => {
       const consumed: MaterialRecord[] = [];
@@ -182,9 +193,11 @@ export class CraftingProcessService {
           .select(["id", "quantity",],)
           .where("actor_id", "=", opts.actorId,).where("name", "=", def.name,)
           .executeTakeFirst();
+
         if (!ai || ai.quantity < mat.quantity) {
           throw new Error(`Insufficient ${def.name}: need ${mat.quantity}`,);
         }
+
         const rem = ai.quantity - mat.quantity;
         if (rem === 0) {
           await trx.deleteFrom("actor_items",).where("id", "=", ai.id,).execute();
@@ -192,8 +205,10 @@ export class CraftingProcessService {
           await trx.updateTable("actor_items",).set({ quantity: rem, },)
             .where("id", "=", ai.id,).execute();
         }
+
         consumed.push({ itemId: mat.item_id, quantity: mat.quantity, },);
       }
+
       // Roll success
       const chance = Math.min(1, recipe.base_success_chance + (station?.successBonus ?? 0),);
       const success = Math.random() < chance;
@@ -206,11 +221,14 @@ export class CraftingProcessService {
         const maxQ = recipe.base_quality_max + (station?.qualityBonus ?? 0);
         quality = Math.floor(Math.random() * (maxQ - recipe.base_quality_min + 1),) +
           recipe.base_quality_min;
+
         status = quality >= recipe.perfect_threshold
           ? CraftingAttemptStatus.CriticalSuccess
           : CraftingAttemptStatus.Success;
+
         const outDef = await trx.selectFrom("items",).selectAll()
           .where("id", "=", recipe.output_item_id,).executeTakeFirst();
+
         if (outDef) {
           outputItemId = outDef.id;
           outputQuantity = recipe.output_quantity;
@@ -236,6 +254,7 @@ export class CraftingProcessService {
           }
         }
       }
+
       const attemptId = uid();
       await trx.insertInto("crafting_attempts",).values({
         id: attemptId,
@@ -254,6 +273,7 @@ export class CraftingProcessService {
         duration_ms: 0,
         created_at: new Date().toISOString(),
       },).execute();
+
       return {
         attemptId,
         status,
@@ -272,6 +292,7 @@ export class CraftingProcessService {
   async getAttempt(id: string,): Promise<CraftAttempt | null> {
     const r = await this.db.selectFrom("crafting_attempts",).selectAll()
       .where("id", "=", id,).executeTakeFirst();
+
     return r ? toCraftAttempt(r,) : null;
   }
   /**
@@ -282,6 +303,7 @@ export class CraftingProcessService {
     const rows = await this.db.selectFrom("crafting_attempts",).selectAll()
       .where("actor_id", "=", actorId,).where("world_id", "=", worldId,)
       .orderBy("created_at", "desc",).execute();
+
     return Array.from(rows, r => toCraftAttempt(r,),);
   }
 }

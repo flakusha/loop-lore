@@ -43,5 +43,6 @@ export async function emitPluginEvent(
       opts?.onError?.(error, handler);
     }
   }
+
   return invoked;
 }

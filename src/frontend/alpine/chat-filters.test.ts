@@ -11,6 +11,7 @@ function withFakeStorage(run: (store: Storage,) => void,): void {
     setItem: (k: string, v: string,) => void backing.set(k, v,),
     removeItem: (k: string,) => void backing.delete(k,),
   } as Storage;
+
   g.localStorage = fake;
   try {
     run(fake,);
@@ -70,6 +71,7 @@ describe("chatFilters", () => {
           reloaded++;
         },),
       };
+
       await chatFilters.applyChatFilters!.call(ctx,);
       expect(ctx._searchResults,).toEqual([],);
       expect(reloaded,).toBe(1,);
@@ -90,6 +92,7 @@ describe("chatFilters", () => {
           _chatMaxMessages: "",
           _chatUpdatedSince: "",
         };
+
         chatFilters.persistChatFilters!.call(ctx,);
         const raw = store.getItem(KEY,);
         expect(raw,).not.toBeNull();
@@ -110,6 +113,7 @@ describe("chatFilters", () => {
             updatedSince: "2026-08-01",
           },),
         );
+
         const ctx = {
           _chatType: "all",
           _chatStatus: "all",
@@ -119,6 +123,7 @@ describe("chatFilters", () => {
           _chatMaxMessages: "",
           _chatUpdatedSince: "",
         };
+
         chatFilters.restoreChatFilters!.call(ctx,);
         expect(ctx._chatType,).toBe("direct",);
         expect(ctx._chatStatus,).toBe("archived",);
@@ -141,6 +146,7 @@ describe("chatFilters", () => {
           _chatMaxMessages: "",
           _chatUpdatedSince: "",
         };
+
         expect(() => chatFilters.restoreChatFilters!.call(ctx,)).not.toThrow();
         expect(ctx._chatType,).toBe("all",);
       },);
@@ -159,6 +165,7 @@ describe("chatFilters", () => {
         _chatUpdatedSince: "",
         _worlds: [{ id: "w1", name: "Everhollow", },],
       };
+
       const chips = chatFilters.activeChatFilterChips!.call(ctx,);
       expect(chips,).toEqual([
         { key: "type", label: "group", },
@@ -181,6 +188,7 @@ describe("chatFilters", () => {
           applyChatFilters: chatFilters.applyChatFilters,
           loadChats: mock(async () => {},),
         };
+
         void chatFilters.clearChatFilter!.call(ctx, "type",);
         expect(ctx._chatType,).toBe("all",);
         expect(ctx.loadChats,).toHaveBeenCalledTimes(1,);
@@ -202,6 +210,7 @@ describe("chatFilters", () => {
           applyChatFilters: chatFilters.applyChatFilters,
           loadChats: mock(async () => {},),
         };
+
         void chatFilters.clearAllChatFilters!.call(ctx,);
         expect(ctx._chatType,).toBe("all",);
         expect(ctx._chatStatus,).toBe("all",);
@@ -254,6 +263,7 @@ describe("chatFilters — edge cases", () => {
       _chatMaxMessages: "9",
       _chatUpdatedSince: "2026-08-01",
     },);
+
     expect(params,).toContain("world=w1",);
     expect(params,).toContain("minMessages=2",);
     expect(params,).toContain("maxMessages=9",);
@@ -272,6 +282,7 @@ describe("chatFilters — edge cases", () => {
         _chatMaxMessages: "9",
         _chatUpdatedSince: "2026-08-01",
       },);
+
       expect(JSON.parse(store.getItem(KEY,) as string,),).toEqual({
         type: "direct",
         status: "archived",
@@ -337,6 +348,7 @@ describe("chatFilters — edge cases", () => {
           throw new Error("denied",);
         },
       },);
+
       const ctx = { ...defaults, };
       expect(() => chatFilters.restoreChatFilters!.call(ctx,)).not.toThrow();
       expect(ctx,).toEqual(defaults,);
@@ -354,6 +366,7 @@ describe("chatFilters — edge cases", () => {
           maxMessages: "9",
         },),
       );
+
       const ctx = { ...defaults, };
       chatFilters.restoreChatFilters!.call(ctx,);
       expect(ctx._chatType,).toBe("group",);
@@ -370,6 +383,7 @@ describe("chatFilters — edge cases", () => {
       _chatMaxMessages: "10",
       _chatUpdatedSince: "2026-08-01",
     },);
+
     expect(chips,).toEqual([
       { key: "minMessages", label: "≥ 5 msgs", },
       { key: "maxMessages", label: "≤ 10 msgs", },
@@ -383,6 +397,7 @@ describe("chatFilters — edge cases", () => {
       _chatWorld: "missing",
       _worlds: [{ id: "w1", name: "Everhollow", },],
     },);
+
     expect(chips,).toEqual([{ key: "world", label: "missing", },],);
   });
 
@@ -400,6 +415,7 @@ describe("chatFilters — edge cases", () => {
       applyChatFilters: chatFilters.applyChatFilters,
       loadChats: mock(async () => {},),
     };
+
     const pending: Promise<void>[] = [];
     withFakeStorage(() => {
       // The switch resets each field synchronously; only the reload is async.
@@ -407,6 +423,7 @@ describe("chatFilters — edge cases", () => {
         pending.push(chatFilters.clearChatFilter!.call(ctx, key,),);
       }
     },);
+
     await Promise.all(pending,);
     expect(ctx._chatStatus,).toBe("all",);
     expect(ctx._chatSort,).toBe("recent",);

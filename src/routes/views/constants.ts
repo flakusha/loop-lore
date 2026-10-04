@@ -25,6 +25,7 @@ function discoverViews(dir: string,): Set<string> {
       views.add(entry.name.replace(/\.html$/, "",),);
     }
   }
+
   // Alias: "assets" serves the "gallery" view
   views.add("assets",);
   return views;
@@ -52,6 +53,7 @@ function discoverPartials(dir: string,): Set<string> {
       }
     }
   }
+
   walk(dir, "",);
   return partials;
 }

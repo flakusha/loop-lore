@@ -51,6 +51,7 @@ export const rpgQuestions: Partial<ChatState> & ThisType<ChatState> = {
         this.rpgQuestions = [];
         return;
       }
+
       const data = await res.json();
       this.rpgQuestions = (data.questions ?? []).map((q: Record<string, unknown>,) => ({
         id: String(q.id ?? "",),
@@ -125,10 +126,12 @@ export const rpgQuestions: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
       },);
+
       if (!res.ok) {
         this.rpgQuestionsError = "Failed to record answer";
         return;
       }
+
       this._pendingAnswer = null;
       await this.loadOpenQuestions();
     } catch {

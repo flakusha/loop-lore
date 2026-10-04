@@ -40,6 +40,7 @@ export async function checkForcedSkipAuthority(
     input.userId,
     input.userRole,
   );
+
   if (authority.ok) { return null; }
   return {
     ok: false,

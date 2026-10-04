@@ -80,6 +80,7 @@ export function buildLoadRequest(
     if (!descriptor.gguf) {
       throw new LocalInferenceUnavailable(`wllama model "${modelId}" has no GGUF source`,);
     }
+
     return {
       kind: "load",
       id,
@@ -91,10 +92,12 @@ export function buildLoadRequest(
       wasmUrl: endpoints.wllamaWasmUrl,
     };
   }
+
   const pipelineId = PIPELINE_MODEL_IDS[modelId];
   if (!pipelineId) {
     throw new LocalInferenceUnavailable(`unknown browser model "${modelId}"`,);
   }
+
   return {
     kind: "load",
     id,

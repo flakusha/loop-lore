@@ -46,6 +46,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (trimmedContent.length === 0) {
           return badRequestResponse("Message content cannot be empty or whitespace-only.",);
         }
+
         const effectiveBody = { ...body, content: trimmedContent, };
         void body;
 
@@ -86,6 +87,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           actorId,
           chatId,
         );
+
         if (injectionRejection) { return injectionRejection; }
 
         const { isInitiative, cleanMessage, } = parseInitiativeFlag(filteredContent,);
@@ -112,6 +114,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           chatId,
           content: effectiveContent,
         },);
+
         if (gmOutcome.handled) { return gmOutcome.response; }
 
         // Per-chat auto-translation (inbound) — opt-in; degrades to original.
@@ -134,9 +137,11 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         const existingId = idempotencyKey
           ? await findByIdempotencyKey(database, chatId, idempotencyKey,)
           : null;
+
         if (existingId) {
           return jsonCreated({ id: existingId, context: {}, },);
         }
+
         // ── Transactional insert + cross-chat parentId IDOR guard ──
         // The guard runs INSIDE the INSERT transaction, and insert failures
         // are mapped to their HTTP status inside the helper
@@ -156,11 +161,13 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             ctx.set.status = status;
           },
         },);
+
         if (!inserted.ok) { return inserted.response; }
         const explicitAttachments = body.attachments ?? [];
         const mentionedAttachments = assetMentionIds
           .filter((assetId,) => !explicitAttachments.some((a,) => a.assetId === assetId))
           .map((assetId,) => ({ assetId, }));
+
         const attachments = [...explicitAttachments, ...mentionedAttachments,];
 
         // ── Profanity moderation gate ─────────────────────────
@@ -170,6 +177,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             await updateMessageVisibility(database, id, "hidden_by_moderator", "profanity",);
           }
         }
+
         if (attachments && attachments.length > 0) {
           const attachmentRejection = await attachAttachmentsOrForbidden(database, id, attachments, actorId,);
           if (attachmentRejection) { return attachmentRejection; }
@@ -189,6 +197,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           .select(["name", "mode", "current_location_id", "world_id", "created_by",],)
           .where("id", "=", chatId,)
           .executeTakeFirst();
+
         await runPostInsertChatEffects(database, config, chatId, actorId, id, effectiveContent, chatRecord,);
 
         // ── Context window stats ─────────────────────────────────────
@@ -197,6 +206,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           .select(database.fn.sum("token_count_total",).as("total_tokens",),)
           .where("chat_id", "=", chatId,)
           .executeTakeFirst();
+
         const usedTokens = Number(tokenRow?.total_tokens ?? 0,);
         const context = computeContextStats(
           [{ content: "", tokenCount: usedTokens, },],
@@ -213,6 +223,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           ctx.request as Request,
           opts.asyncStore,
         );
+
         if (reply.replied) {
           return jsonCreated({ ...(await reply.response?.json?.()), context, },);
         }

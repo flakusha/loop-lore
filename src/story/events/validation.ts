@@ -50,8 +50,10 @@ function validateSingleEvent(
         event.locationId = locationNames.get(targetName,);
         return { valid: true, };
       }
+
       return { valid: false, reason: `Unknown location: ${targetName}`, };
     }
+
     case WorldEventType.CombatEvent:
     case WorldEventType.NpcStateChange:
     case WorldEventType.TimeAdvancement:
@@ -60,13 +62,16 @@ function validateSingleEvent(
     case WorldEventType.QuestProgress: {
       return { valid: true, };
     }
+
     case WorldEventType.LocationModification: {
       const locId = event.data.locationId as string;
       if (locId && locationIds.has(locId,)) {
         return { valid: true, };
       }
+
       return { valid: false, reason: `Invalid location modification target: ${locId}`, };
     }
+
     default: {
       return assertNever(event.type,);
     }

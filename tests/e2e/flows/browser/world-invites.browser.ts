@@ -55,6 +55,7 @@ describe("World invites E2E", () => {
       const el = document.querySelector("[data-testid='create-world']",);
       if (el instanceof HTMLElement) { el.click(); }
     },);
+
     await page.locator("[data-testid='create-world-modal']",).waitFor({ state: "attached", timeout: 15_000, },);
 
     // Form fields and submit use the same evaluate-click workaround.
@@ -62,6 +63,7 @@ describe("World invites E2E", () => {
       state: "attached",
       timeout: 15_000,
     },);
+
     await page.fill("[data-testid='create-world-form'] #world-name", `world-${Date.now()}`,);
     // Call the page-side createWorld() handler directly; this is the same
     // function the form's x-on:submit binding fires, just bypasses the
@@ -88,6 +90,7 @@ describe("World invites E2E", () => {
       state: "attached",
       timeout: 30_000,
     },);
+
     return match[1]!;
   }
 
@@ -99,6 +102,7 @@ describe("World invites E2E", () => {
       const invites = tabs.find((el,) => el.textContent?.trim() === "Invites");
       if (invites instanceof HTMLElement) { invites.click(); }
     },);
+
     await page.locator("[data-testid='show-create-invite-btn']",).waitFor({
       state: "attached",
       timeout: 15_000,
@@ -109,6 +113,7 @@ describe("World invites E2E", () => {
       const el = document.querySelector("[data-testid='show-create-invite-btn']",);
       if (el instanceof HTMLElement) { el.click(); }
     },);
+
     await page.locator("#invite-max-uses",).waitFor({ state: "attached", timeout: 15_000, },);
     await page.fill("#invite-max-uses", maxUses,);
 
@@ -117,6 +122,7 @@ describe("World invites E2E", () => {
       const el = document.querySelector("[data-testid='submit-create-invite']",);
       if (el instanceof HTMLElement) { el.click(); }
     },);
+
     await page.locator("[data-testid='copy-invite-code']",).waitFor({ state: "attached", timeout: 15_000, },);
   }
 
@@ -133,6 +139,7 @@ describe("World invites E2E", () => {
           .select(["id", "owner_id",],)
           .where("id", "=", worldId,)
           .executeTakeFirst();
+
         expect(row,).not.toBeNull();
         expect(row!.id,).toBe(worldId,);
 
@@ -160,6 +167,7 @@ describe("World invites E2E", () => {
           .select(["id", "world_id", "code", "max_uses", "status", "uses",],)
           .where("world_id", "=", worldId,)
           .executeTakeFirst();
+
         expect(row,).not.toBeNull();
         expect(row!.world_id,).toBe(worldId,);
         expect(row!.max_uses,).toBe(5,);
@@ -191,6 +199,7 @@ describe("World invites E2E", () => {
           .select(["id", "status",],)
           .where("world_id", "=", worldId,)
           .executeTakeFirst();
+
         const inviteId = row!.id;
 
         // revokeInvite() gates on window.confirm() — accept the dialog.
@@ -211,6 +220,7 @@ describe("World invites E2E", () => {
           .select(["id", "status",],)
           .where("id", "=", inviteId,)
           .executeTakeFirst();
+
         expect(revoked,).not.toBeNull();
         expect(revoked!.id,).toBe(inviteId,);
         expect(revoked!.status,).toBe("revoked",);

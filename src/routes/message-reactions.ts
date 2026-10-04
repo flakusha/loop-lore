@@ -60,6 +60,7 @@ async function resolveMessageAccess(
     .select(["chat_id",],)
     .where("id", "=", messageId,)
     .executeTakeFirst();
+
   if (!msg) { return notFound("Message not found",); }
 
   const access = await checkChatAccess(database, msg.chat_id, userId, userRole,);
@@ -178,6 +179,7 @@ export function messageReactionsRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("message_id", "=", messageId,)
             .groupBy("emoji",)
             .execute();
+
           if (uniqueCount.length >= MAX_REACTIONS_PER_MESSAGE) {
             return Response.json(
               { error: `Max ${MAX_REACTIONS_PER_MESSAGE} unique reactions per message`, },
@@ -190,6 +192,7 @@ export function messageReactionsRoutes(opts: HandlerOpts, prefix = "/api",) {
             .insertInto("message_reactions",)
             .values({ id: uid(), message_id: messageId, user_id: userId, emoji, },)
             .execute();
+
           return jsonResponse({ toggled: true, emoji, },);
         },
         {

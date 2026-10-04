@@ -107,6 +107,7 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts, prefix = "/api"
         { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
         opts.database,
       );
+
       if (userId instanceof Response) { return userId; }
       try {
         const traits = await svc().get(actorId,);
@@ -134,6 +135,7 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts, prefix = "/api"
         { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
         opts.database,
       );
+
       if (userId instanceof Response) { return userId; }
       const body = ctx.body as Record<string, unknown>;
       try {
@@ -161,6 +163,7 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts, prefix = "/api"
         { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
         opts.database,
       );
+
       if (userId instanceof Response) { return userId; }
       try {
         const deleted = await svc().delete(actorId,);
@@ -186,6 +189,7 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts, prefix = "/api"
         { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
         opts.database,
       );
+
       if (userId instanceof Response) { return userId; }
       const includeHidden = (ctx.query as Record<string, string>).includeHidden === "true";
       try {

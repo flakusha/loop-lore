@@ -94,6 +94,7 @@ function timingSafeEqualBytes(a: Uint8Array, b: Uint8Array,): boolean {
   for (const [i, byte,] of a.entries()) {
     diff |= byte ^ b[i]!;
   }
+
   return diff === 0;
 }
 
@@ -179,6 +180,7 @@ export async function verifyAssetUrl(opts: VerifyAssetUrlOpts,): Promise<SignedU
       key,
       toBufferSource(encoder.encode(payload,),),
     );
+
     const expected = base64urlEncode(new Uint8Array(signature,),);
 
     if (!timingSafeEqualBytes(base64urlDecode(opts.token,), base64urlDecode(expected,),)) {
@@ -228,8 +230,10 @@ export function resolveSignedUrlSecret(
         { domains: ["jwt-sign", "assets-signed-url", "nsfw-pii", "telemetry-pii",], },
       );
     }
+
     return jwtSecret!;
   }
+
   return null;
 }
 

@@ -100,12 +100,14 @@ export function trackPageErrors(
       if (seenUrls.has(url,)) { return; }
       seenUrls.add(url,);
     }
+
     if (allowlist.every((re,) => !re.test(msg,))) { errors.push(msg,); }
   };
 
   const onPageError = (error: Error,) => {
     record(`pageerror: ${error.message}`,);
   };
+
   const onConsole = (message: ConsoleMessage,) => {
     if (message.type() !== "error") { return; }
     // location().url is the failing resource for "Failed to load resource"
@@ -113,6 +115,7 @@ export function trackPageErrors(
     const url = message.location().url || undefined;
     record(`console.error: ${message.text()}${url === undefined ? "" : ` [${url}]`}`, url,);
   };
+
   // fetch()/XHR failures never reach the console, so the response event is the
   // only place their resource gets named. 4xx/5xx only: 3xx is routine here
   // (login POSTs, htmx swaps and chat creation all redirect).
@@ -123,6 +126,7 @@ export function trackPageErrors(
     const reason = response.statusText() || HTTP_REASON_PHRASES[status] || `status ${status}`;
     record(failedResourceMessage(status, reason, url,), url,);
   };
+
   // Network-level failures (connection reset, empty response) produce no
   // response at all. ERR_ABORTED is skipped: a test that closes the page or
   // navigates mid-flight aborts its own requests — harness behaviour, not a
@@ -189,6 +193,7 @@ export function waitForAlpineReady(page: Page, timeoutMs = 5000,): Promise<void>
             setTimeout(check, 50,);
           }
         };
+
         check();
       },),
     timeoutMs,
@@ -216,6 +221,7 @@ export async function navigateViaHtmx(
     const el = document.querySelector(sel,);
     if (el instanceof HTMLElement) { el.click(); }
   }, `[data-testid='${testid}']`,);
+
   // Wait for the target element (or app-root) to confirm swap completed
   const target = targetTestid ? `[data-testid='${targetTestid}']` : "[data-testid='app-root']";
   await page.locator(target,).waitFor({ state: "attached", timeout: timeoutMs, },);
@@ -298,18 +304,22 @@ export async function getAlpineData<T = Record<string, unknown>,>(
     if (!el) {
       throw new Error(`Element not found for Alpine state: ${sel}`,);
     }
+
     const alpineEl = el as unknown as { __x?: { getUnobservedData?: () => unknown } };
     const x = alpineEl.__x;
     // Alpine's runtime global exposes $data(el) but ships no ambient type in this scope.
     const alpineGlobal = (globalThis as Record<string, unknown>).Alpine as
       | { $data?: (el: Element,) => unknown }
       | undefined;
+
     const raw = x?.getUnobservedData
       ? x.getUnobservedData()
       : alpineGlobal?.$data?.(el,);
+
     if (raw === undefined || raw === null) {
       throw new Error(`Alpine state not available on ${sel} (element not initialized)`,);
     }
+
     return JSON.parse(JSON.stringify(raw,),);
   }, selector,) as Promise<T>;
 }
@@ -334,6 +344,7 @@ export async function waitForAlpineState<T = Record<string, unknown>,>(
     } catch (error) {
       lastError = error;
     }
+
     if (Date.now() - start > timeoutMs) {
       const errorSuffix = lastError ? ` Last error: ${String(lastError,)}` : "";
       throw new Error(
@@ -341,6 +352,7 @@ export async function waitForAlpineState<T = Record<string, unknown>,>(
           `Last state: ${JSON.stringify(lastState,)}${errorSuffix}`,
       );
     }
+
     await page.waitForTimeout(100,);
   }
 }

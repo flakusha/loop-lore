@@ -54,6 +54,7 @@ export async function resolveMode(opts: ResolveModeOpts,): Promise<ResolveModeRe
       worldId: chat?.world_id ?? null,
       deps: d,
     },);
+
     return { handled: true, };
   }
 
@@ -67,6 +68,7 @@ export async function resolveMode(opts: ResolveModeOpts,): Promise<ResolveModeRe
   const assistantRole = chat?.gm_config
     ? jsonParseOr<{ assistantRole?: "off" | "helper" | "gm" | "moderator" }>(chat.gm_config, {},).assistantRole
     : undefined;
+
   const systemPromptOverride = assistantRole === "gm"
     ? resolveSystemPrompt(config.templates.llm, "gm",)
     : undefined;

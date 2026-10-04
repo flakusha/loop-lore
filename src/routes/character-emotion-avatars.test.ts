@@ -74,6 +74,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(characterEmotionAvatarsRoutes({ database: db, },),) as unknown as Elysia;
 }
 
@@ -107,6 +108,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -114,6 +116,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db, "other", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -121,6 +124,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as JobBody[];
     expect(Array.isArray(body,),).toBe(true,);
@@ -130,6 +134,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/unknown-job`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -141,6 +146,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
         body: JSON.stringify({ emotions: ["happy",], },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -152,6 +158,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
         body: JSON.stringify({ baseAvatarId: "av-1", emotions: ["not_a_real_emotion",], },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -163,6 +170,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
         body: JSON.stringify({ baseAvatarId: "av-1", emotions: ["happy", "sad",], },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json() as JobBody;
     expect(body.jobId,).toBeDefined();
@@ -170,6 +178,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const statusRes = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/${body.jobId}`,),
     );
+
     expect(statusRes.status,).toBe(200,);
     expect((await statusRes.json() as JobBody).status,).toBe("running",);
   });
@@ -182,6 +191,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
         body: JSON.stringify({ baseAvatarId: "av-1", emotions: ["happy",], },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -191,6 +201,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
         method: "POST",
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -202,6 +213,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
         body: JSON.stringify({ baseAvatarId: "av-1", emotions: ["happy",], },),
       },),
     );
+
     const { jobId, } = await createRes.json() as JobBody;
 
     const cancelRes = await makeApp(db, "owner", "user",).handle(
@@ -209,6 +221,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
         method: "POST",
       },),
     );
+
     expect(cancelRes.status,).toBe(200,);
     const cancelBody = await cancelRes.json() as JobBody;
     expect(cancelBody.cancelled,).toBe(true,);
@@ -218,6 +231,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/api/emotions/prompt-modifier/happy",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as JobBody;
     expect(body.modifier,).toBe("[happy mood]",);
@@ -227,6 +241,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/api/emotions/prompt-modifier/notreal",),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -234,6 +249,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db,).handle(
       new Request("http://localhost/api/emotions/prompt-modifier/happy",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -241,6 +257,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/api/emotions/types",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as JobBody[];
     expect(body.length,).toBeGreaterThanOrEqual(10,);
@@ -266,6 +283,7 @@ describeOrSkip("Emotion avatars — admin/solo bypass", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs`,),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -274,6 +292,7 @@ describeOrSkip("Emotion avatars — admin/solo bypass", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs`,),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -286,6 +305,7 @@ describeOrSkip("Emotion avatars — admin/solo bypass", () => {
         body: JSON.stringify({ baseAvatarId: "av-1", emotions: ["happy",], },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 },);

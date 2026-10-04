@@ -73,6 +73,7 @@ export function parseLoreScope(json: string | null | undefined,): LoreScope | nu
   if (!value || typeof value !== "object" || !("subject" in value)) {
     return null;
   }
+
   return value;
 }
 
@@ -97,16 +98,19 @@ export function isLoreVisibleTo(
     case "world": {
       return true;
     }
+
     case "race": {
       return subject.race
         ? identity.race.toLowerCase() === subject.race.toLowerCase()
         : false;
     }
+
     case "profession": {
       if (!subject.profession) { return false; }
       const target = subject.profession.toLowerCase();
       return identity.professions.some((p,) => p.toLowerCase() === target);
     }
+
     case "location": {
       const scopeLoc = subject.locationId;
       if (!scopeLoc) { return false; }
@@ -119,6 +123,7 @@ export function isLoreVisibleTo(
         ? locationInScope(identity.locationId, scopeLoc,)
         : identity.locationId === scopeLoc;
     }
+
     default: {
       // Unknown / not-yet-defined subject — close by default.
       return false;

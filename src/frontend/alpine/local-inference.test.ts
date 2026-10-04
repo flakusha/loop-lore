@@ -40,6 +40,7 @@ function installMemoryStorage(): MemoryStorage {
       return store.size;
     },
   } as Storage;
+
   return {
     store,
     restore: () => {
@@ -53,6 +54,7 @@ let storage: MemoryStorage;
 beforeEach(() => {
   storage = installMemoryStorage();
 },);
+
 afterAll(() => {
   storage.restore();
 },);
@@ -102,6 +104,7 @@ describe("runLocalPromptImprove", () => {
   test("model-backed levels signal fallback instead of failing", () => {
     expect(() => runLocalPromptImprove({ text: "hi", level: "creative", },))
       .toThrow(LocalInferenceUnavailable,);
+
     expect(() => runLocalPromptImprove({ text: "hi", level: "style-chat", },))
       .toThrow(LocalInferenceUnavailable,);
   });

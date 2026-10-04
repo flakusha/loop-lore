@@ -36,6 +36,7 @@ function renderBattleFromPayload(
       initiative: c.initiative,
     },);
   }
+
   const view: BattleView = {
     id: raw.id,
     status: raw.status,
@@ -43,6 +44,7 @@ function renderBattleFromPayload(
     turnIndex: raw.turnIndex,
     combatants,
   };
+
   const panel = ctx as { renderBattlePanel(view: BattleView,): void } | null;
   panel?.renderBattlePanel(view,);
 }

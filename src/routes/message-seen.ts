@@ -129,6 +129,7 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
               .where("message_id", "=", messageId,)
               .where("actor_id", "=", actorId,)
               .execute();
+
             return jsonResponse({ ok: true, reset: true, },);
           }
 

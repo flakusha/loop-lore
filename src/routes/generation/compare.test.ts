@@ -68,6 +68,7 @@ describe("generationCompareRoutes", () => {
         body: JSON.stringify({ prompt: "hi", models: [{ provider: "p1", model: "m1", },], },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -80,6 +81,7 @@ describe("generationCompareRoutes", () => {
         body: JSON.stringify({ prompt: "hi", models: [], },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -92,6 +94,7 @@ describe("generationCompareRoutes", () => {
         body: JSON.stringify({ models: [{ provider: "p1", model: "m1", },], },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -107,6 +110,7 @@ describe("generationCompareRoutes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       id: string;
@@ -121,6 +125,7 @@ describe("generationCompareRoutes", () => {
         }
       >;
     };
+
     expect(typeof body.id,).toBe("string",);
     expect(body.results.length,).toBe(2,);
     expect(body.results[0]!.model.provider,).toBe("p1",);
@@ -143,10 +148,12 @@ describe("generationCompareRoutes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       results: Array<{ latencyMs: number; tokenCount: number; cost: number }>;
     };
+
     expect(body.results[0]!.latencyMs,).toBeGreaterThanOrEqual(0,);
     expect(body.results[0]!.tokenCount,).toBe(30,);
     // cost = 30 / 1000 * 0.002 rounded to cents = 0.00
@@ -169,10 +176,12 @@ describe("generationCompareRoutes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       results: Array<{ status: string; error?: string }>;
     };
+
     expect(body.results.length,).toBe(3,);
     expect(body.results[0]!.status,).toBe("success",);
     expect(body.results[1]!.status,).toBe("error",);
@@ -195,11 +204,13 @@ describe("generationCompareRoutes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       sweep: boolean;
       results: Array<{ metadata: { kind: string } }>;
     };
+
     expect(body.sweep,).toBe(true,);
     expect(body.results[0]!.metadata.kind,).toBe("sweep",);
     expect(body.results[1]!.metadata.kind,).toBe("sweep",);
@@ -218,6 +229,7 @@ describe("generationCompareRoutes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { id: string; createdAt: string };
     const row = await db
@@ -225,6 +237,7 @@ describe("generationCompareRoutes", () => {
       .selectAll()
       .where("id", "=", body.id,)
       .executeTakeFirst();
+
     expect(row,).toBeDefined();
     expect(row!.user_id,).toBe(userId,);
     expect(row!.prompt,).toBe("persist me",);

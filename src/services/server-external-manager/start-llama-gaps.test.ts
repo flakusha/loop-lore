@@ -189,6 +189,7 @@ async function runScenario(
     stdout: "pipe",
     stderr: "pipe",
   },);
+
   try {
     const text = await new Response(proc.stdout,).text();
     await proc.exited;
@@ -209,6 +210,7 @@ function makeStubDir(names: string[],): { dir: string; cleanup: () => void } {
     writeFileSync(stubPath, `#!/bin/sh\necho "$@" > "${join(dir, `${name}.args`,)}"\nexec sleep 30\n`,);
     chmodSync(stubPath, 0o755,);
   }
+
   return {
     dir,
     cleanup: () => {
@@ -260,6 +262,7 @@ describe("start-llama child harness", () => {
         path: `${stub.dir}:/usr/bin:/bin`,
         stub: stub.dir,
       },);
+
       expect(result.null,).toBe(true,);
       expect(result.count,).toBe(0,);
       expect((result.warns as string[]).some((m,) => m.includes("Port in use",)),).toBe(true,);
@@ -275,6 +278,7 @@ describe("start-llama child harness", () => {
         path: `${stub.dir}:/usr/bin:/bin`,
         stub: stub.dir,
       },);
+
       expect(result.null,).toBe(false,);
       expect(result.type,).toBe("llama-cpp",);
       expect(result.count,).toBe(1,);
@@ -333,6 +337,7 @@ describe("start-llama child harness", () => {
         path: `${stub.dir}:/usr/bin:/bin`,
         stub: stub.dir,
       },);
+
       expect(result.null,).toBe(false,);
       expect(result.type,).toBe("llama-cpp",);
       const argv = result.argv as string;
@@ -355,6 +360,7 @@ describe("start-llama child harness", () => {
         path: `${stub.dir}:/usr/bin:/bin`,
         stub: stub.dir,
       },);
+
       expect(result.null,).toBe(false,);
       expect(result.type,).toBe("llama-swap",);
       expect(result.count,).toBe(1,);

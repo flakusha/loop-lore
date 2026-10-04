@@ -71,6 +71,7 @@ async function rankWithCustomEmbed(
     memoryId,
     vector,
   }));
+
   const matches = rankBySimilarity(candidates, queryVec, topK, minScore,);
   if (matches.length === 0) { return []; }
   const rows = await db
@@ -82,12 +83,14 @@ async function rankWithCustomEmbed(
       matches.map((match,) => match.memoryId),
     )
     .execute();
+
   const byId = new Map(rows.map((row,) => [row.id, row,]),);
   const hits: SearchHit<MemoryHit>[] = [];
   for (const match of matches) {
     const row = byId.get(match.memoryId,);
     if (row !== undefined) { hits.push(toHit(row, match.score, "vector",),); }
   }
+
   return hits;
 }
 
@@ -114,6 +117,7 @@ export function createMemoryProviders(
       WHERE memories_fts MATCH ${ftsQuery} AND m.actor_id = ${scope.actorId}
       ORDER BY rank ASC LIMIT ${topK}
     `.execute(db,);
+
     return rows.rows.map((row,) => toHit(row, bm25ToScore(-row.rank,), "fts",));
   };
 
@@ -126,11 +130,13 @@ export function createMemoryProviders(
       .select("id",)
       .where("actor_id", "=", scope.actorId,)
       .execute();
+
     const candidateIds = candidates.map((c,) => c.id);
     if (candidateIds.length === 0) { return []; }
     if (opts?.embedQuery !== undefined) {
       return rankWithCustomEmbed(db, candidateIds, query.q, opts.embedQuery, topK, minScore,);
     }
+
     const matches = await semanticRecall(db, candidateIds, query.q, topK, minScore,);
     if (matches.length === 0) { return []; }
     const rows = await db
@@ -142,12 +148,14 @@ export function createMemoryProviders(
         matches.map((match,) => match.memoryId),
       )
       .execute();
+
     const byId = new Map(rows.map((row,) => [row.id, row,]),);
     const hits: SearchHit<MemoryHit>[] = [];
     for (const match of matches) {
       const row = byId.get(match.memoryId,);
       if (row !== undefined) { hits.push(toHit(row, match.score, "vector",),); }
     }
+
     return hits;
   };
 

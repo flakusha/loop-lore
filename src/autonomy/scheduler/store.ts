@@ -49,6 +49,7 @@ export class SimulationStore {
       .selectAll()
       .where("world_id", "=", worldId,)
       .executeTakeFirst();
+
     if (row) { return row; }
     const epoch = toDate(0,).toISOString();
     return {
@@ -145,6 +146,7 @@ export class SimulationStore {
       last_error: state.last_error,
       tick_count: state.tick_count,
     },);
+
     return this.load(worldId,);
   }
 
@@ -163,6 +165,7 @@ export class SimulationStore {
       .orderBy("id", "asc",)
       .limit(1,)
       .executeTakeFirst();
+
     return row?.id ?? NO_CHAT;
   }
 }

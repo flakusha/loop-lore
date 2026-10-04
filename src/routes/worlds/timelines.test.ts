@@ -102,6 +102,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       .select("id",)
       .where("owner_id", "=", ownerId,)
       .executeTakeFirst();
+
     if (!w) { throw new Error("seed: world not inserted",); }
     worldId = w.id;
 
@@ -112,6 +113,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       .where("world_id", "=", worldId,)
       .where("name", "=", "Prime",)
       .executeTakeFirst();
+
     if (!tl) { throw new Error("seed: timeline not inserted",); }
     primeTimelineId = tl.id;
   },);
@@ -132,6 +134,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       app,
       await postJson(`/api/worlds/${worldId}/timelines`, { name: "alt-branch", },),
     );
+
     expect(res.status,).toBe(401,);
     // Confirm no row was inserted.
     const row = await db
@@ -139,6 +142,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       .select("id",)
       .where("name", "=", "alt-branch",)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 
@@ -148,6 +152,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       app,
       get(`/api/worlds/${worldId}/timelines/${primeTimelineId}`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -172,6 +177,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       app,
       await postJson(`/api/worlds/${worldId}/timelines`, { name: "stranger-branch", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -181,6 +187,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       app,
       await postJson(`/api/worlds/${worldId}/timelines`, { name: "owner-branch", },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as { data: { id: string; name: string; is_prime: number } };
     expect(body.data.name,).toBe("owner-branch",);
@@ -195,6 +202,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       .select("id",)
       .where("name", "=", "scratch-branch",)
       .executeTakeFirst();
+
     expect(branch,).toBeTruthy();
 
     // Non-owner: 403.
@@ -203,6 +211,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       outsiderApp,
       new Request(`${BASE}/api/worlds/${worldId}/timelines/${branch!.id}`, { method: "DELETE", },),
     );
+
     expect(forbidden.status,).toBe(403,);
 
     // Unauthenticated: 401.
@@ -211,6 +220,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       anonApp,
       new Request(`${BASE}/api/worlds/${worldId}/timelines/${branch!.id}`, { method: "DELETE", },),
     );
+
     expect(unauth.status,).toBe(401,);
 
     // Owner: 204 + row gone.
@@ -219,6 +229,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       ownerApp,
       new Request(`${BASE}/api/worlds/${worldId}/timelines/${branch!.id}`, { method: "DELETE", },),
     );
+
     expect(deleted.status,).toBe(204,);
 
     const after = await db
@@ -226,6 +237,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
       .select("id",)
       .where("id", "=", branch!.id,)
       .executeTakeFirst();
+
     expect(after,).toBeUndefined();
   });
 });

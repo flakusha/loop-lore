@@ -88,6 +88,7 @@ export function getReputationTier(value: number): ReputationTier {
       return tier;
     }
   }
+
   return "neutral"; // fallback (should never reach here)
 }
 

@@ -24,6 +24,7 @@ if (ISOLATED) {
       const cleanup = () => {
         trapCleanups.push(cleanup,);
       };
+
       return cleanup;
     },
   }),);
@@ -154,6 +155,7 @@ function makeEl(
         if (i >= 0) {
           node.parentNode.children.splice(i, 1,);
         }
+
         node.parentNode = null;
       }
     },
@@ -174,6 +176,7 @@ function makeEl(
     _closest: closest,
     _listeners: new Map(),
   };
+
   return node;
 }
 
@@ -237,6 +240,7 @@ beforeEach(async () => {
     addEventListener() {},
     removeEventListener() {},
   };
+
   (globalThis as { document: unknown }).document = doc;
   (globalThis as { CSS: unknown }).CSS = { escape: (s: string,) => s, };
   sidebarStore = { open: false, };
@@ -244,10 +248,12 @@ beforeEach(async () => {
     store: (name: string,) => (name === "sidebar" ? sidebarStore : {}),
     initTree: () => {},
   };
+
   (globalThis as { fetch: unknown }).fetch = (url: string, opts?: FetchOpts,) => {
     fetchCalls.push({ url, opts, },);
     return fetchHandler(url, opts,);
   };
+
   delete (globalThis as { __localeStrings?: unknown }).__localeStrings;
   delete (globalThis as { __THEMES?: unknown }).__THEMES;
   ui = await import("./ui");
@@ -506,6 +512,7 @@ describeOrSkip("applyTheme", () => {
       { id: "default", file: "a.css", },
       { id: "no-icons", file: "b.css", },
     ];
+
     ui.applyTheme("no-icons",);
     expect(def.disabled,).toBe(true,);
     expect(noIcons.disabled,).toBe(false,);

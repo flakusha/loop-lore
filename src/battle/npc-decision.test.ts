@@ -17,10 +17,12 @@ describe("makeNPCDecision", () => {
     expect(d.confidence,).toBeGreaterThanOrEqual(0,);
     expect(d.confidence,).toBeLessThanOrEqual(100,);
   });
+
   it("picks flee for a wounded outnumbered coward", () => {
     const d = makeNPCDecision(COWARD, 10, 100, 3, 1, [],);
     expect(d.type,).toBe("flee",);
   });
+
   it("always returns a reasoned decision", () => {
     const d = makeNPCDecision(BRUTE, 40, 100, 2, 2, [],);
     expect(d.reasoning.length,).toBeGreaterThan(0,);
@@ -100,6 +102,7 @@ describe("makeNPCDecision", () => {
         emotionalImpact: -90,
       },
     ];
+
     const d = makeNPCDecision(BRUTE, 80, 100, 1, 1, recentDefeats,);
     // emotionalImpact/-10 = -27 → memoryModifier = -27, so attack loses weight.
     expect(d.type,).toBeOneOf(["attack", "defend", "flee", "negotiate",],);

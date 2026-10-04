@@ -62,10 +62,12 @@ describe("safeUrl", () => {
     expect(safeUrl("http://music.example.com/track/1",),).toBe(
       "http://music.example.com/track/1",
     );
+
     expect(safeUrl("https://cdn.example.com/a.jpg",),).toBe(
       "https://cdn.example.com/a.jpg",
     );
   });
+
   test("accepts mailto: scheme", () => {
     expect(safeUrl("mailto:[email protected]",),).toBe(
       "mailto:[email protected]",
@@ -109,6 +111,7 @@ describe("safeUrl", () => {
     expect(safeUrl("HTTPS://cdn.example.com",),).toBe(
       `HTTPS://cdn.example.com`,
     );
+
     expect(safeUrl("MAILTO:[email protected]",),).toBe(
       `MAILTO:[email protected]`,
     );
@@ -167,6 +170,7 @@ function installDomPurify(result = "<iframe></iframe>",): { calls: SanitizeCall[
       return result;
     },
   };
+
   return { calls, };
 }
 
@@ -179,6 +183,7 @@ describe("chatMusicEmbed.renderMusicEmbed", () => {
     const html = chatMusicEmbed.renderMusicEmbed(
       musicMsg({ nsfwHidden: true, embedHtml: "<iframe src=https://e.com></iframe>", },),
     );
+
     expect(html,).toBe('<span class="music-embed-nsfw">🔒 Explicit content hidden</span>',);
     expect(html,).not.toContain("iframe src",);
   });
@@ -189,6 +194,7 @@ describe("chatMusicEmbed.renderMusicEmbed", () => {
     expect(html,).toContain(
       `href="https://open.spotify.com/track/1" target="_blank" rel="noopener" class="music-embed-link"`,
     );
+
     expect(html,).toContain("Song — Artist",);
     expect(html,).not.toContain("<img",);
   });
@@ -197,6 +203,7 @@ describe("chatMusicEmbed.renderMusicEmbed", () => {
     const html = chatMusicEmbed.renderMusicEmbed(
       musicMsg({ thumbnailUrl: "https://cdn.example.com/a.jpg", title: `A"B&C`, },),
     );
+
     expect(html,).toContain(
       `<img src="https://cdn.example.com/a.jpg" alt="A&quot;B&amp;C" class="music-embed-thumb" />`,
     );
@@ -206,6 +213,7 @@ describe("chatMusicEmbed.renderMusicEmbed", () => {
     const html = chatMusicEmbed.renderMusicEmbed(
       musicMsg({ title: `"><script>alert(1)</script>`, artist: "<b>x</b>", },),
     );
+
     // Link text: escText neutralizes tags (& < >); a bare " is inert as text.
     expect(html,).toContain(`"&gt;&lt;script&gt;alert(1)&lt;/script&gt;`,);
     expect(html,).not.toContain("<script>",);
@@ -216,6 +224,7 @@ describe("chatMusicEmbed.renderMusicEmbed", () => {
     const html = chatMusicEmbed.renderMusicEmbed(
       musicMsg({ title: `x" onerror="alert(1)`, thumbnailUrl: "https://cdn.example.com/a.jpg", },),
     );
+
     expect(html,).toContain(`alt="x&quot; onerror=&quot;alert(1)"`,);
     expect(html,).not.toContain(`alt="x" onerror="alert(1)"`,);
   });
@@ -224,6 +233,7 @@ describe("chatMusicEmbed.renderMusicEmbed", () => {
     const html = chatMusicEmbed.renderMusicEmbed(
       musicMsg({ serviceUrl: "javascript:alert(1)", thumbnailUrl: "data:text/html,x", },),
     );
+
     expect(html,).toContain('href="#blocked"',);
     expect(html,).toContain('src="#blocked"',);
     expect(html,).not.toContain("javascript:",);
@@ -234,9 +244,11 @@ describe("chatMusicEmbed.renderMusicEmbed", () => {
     const html = chatMusicEmbed.renderMusicEmbed(
       musicMsg({ embedHtml: `<img src=x onerror="alert(1)">`, },),
     );
+
     expect(html,).toBe(
       '<span class="music-embed-error">Embed unavailable (sanitizer missing)</span>',
     );
+
     expect(html,).not.toContain("onerror",);
   });
 
@@ -245,6 +257,7 @@ describe("chatMusicEmbed.renderMusicEmbed", () => {
     const html = chatMusicEmbed.renderMusicEmbed(
       musicMsg({ embedHtml: `<iframe src="https://e.com"></iframe>`, },),
     );
+
     expect(html,).toBe("<iframe sanitized></iframe>",);
     expect(calls.length,).toBe(1,);
     expect(calls[0]!.html,).toBe(`<iframe src="https://e.com"></iframe>`,);

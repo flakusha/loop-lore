@@ -45,6 +45,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           const url = new URL(ctx.request.url,);
           const { page, pageSize, } = parsePagination(url.searchParams,);
           const offset = (page - 1) * pageSize;
@@ -54,6 +55,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           let countQuery = opts.database
             .selectFrom("chats",)
             .select(opts.database.fn.countAll<number>().as("total",),);
+
           let listQuery = opts.database
             .selectFrom("chats",)
             .select(["id", "name", "type", "created_by", "world_id", "is_pinned", "created_at", "updated_at",],)
@@ -66,6 +68,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             countQuery = countQuery.where("name", "like", like,);
             listQuery = listQuery.where("name", "like", like,);
           }
+
           if (typeFilter) {
             countQuery = countQuery.where("type", "=", typeFilter as any,);
             listQuery = listQuery.where("type", "=", typeFilter as any,);
@@ -98,12 +101,14 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           const { id, } = ctx.params as { id: string };
           const chat = await opts.database
             .selectFrom("chats",)
             .selectAll()
             .where("id", "=", id,)
             .executeTakeFirst();
+
           if (!chat) {
             return jsonError({
               message: ctx.t?.("admin.chatNotFound",) ?? "Chat not found",
@@ -145,6 +150,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           const { id, } = ctx.params as { id: string };
           const { is_pinned, world_id, } = ctx.body as { is_pinned?: string; world_id?: string | null };
           const updates: Record<string, unknown> = {};
@@ -156,11 +162,13 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               status: HttpStatus.BadRequest,
             },);
           }
+
           await opts.database
             .updateTable("chats",)
             .set(updates as any,)
             .where("id", "=", id,)
             .execute();
+
           return jsonResponse({ ok: true, },);
         },
         {
@@ -182,6 +190,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           const { id, } = ctx.params as { id: string };
           await opts.database.deleteFrom("chats",).where("id", "=", id,).execute();
           return jsonNoContent();

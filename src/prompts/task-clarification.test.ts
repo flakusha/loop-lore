@@ -11,6 +11,7 @@ describe("buildTaskClarification", () => {
       chatMode: "story",
       characterName: "Bob",
     },);
+
     expect(s,).toContain("game-master decision",);
     expect(s,).toContain("mode=story",);
     expect(s,).toContain("Bob",);
@@ -32,6 +33,7 @@ describe("buildTaskClarification", () => {
       gmName: "Worldweaver",
       assistantName: "Helper",
     },);
+
     expect(s,).toContain("Assistant persona: Helper",);
     expect(s,).toContain("Game master: Worldweaver",);
   });

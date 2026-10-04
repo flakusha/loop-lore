@@ -114,6 +114,7 @@ function runTypewriter(el: HTMLElement, opts: FxOptions,): () => void {
       activeRuns--;
       return;
     }
+
     index++;
     // Write the prefix in one assignment: `textContent +=` reads the
     // DOM string back on every character (O(n²) over a full reveal).
@@ -132,14 +133,17 @@ function runTypewriter(el: HTMLElement, opts: FxOptions,): () => void {
       cancelAnimationFrame(raf,);
       raf = null;
     }
+
     if (timer !== null) {
       clearTimeout(timer,);
       timer = null;
     }
+
     if (!ended) {
       ended = true;
       activeRuns--;
     }
+
     el.classList.remove(FX_CLASSES.typewriter,);
     // Stopping reveals the full text — the skip-to-end contract.
     el.textContent = text;

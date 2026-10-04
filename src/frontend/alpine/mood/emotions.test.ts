@@ -57,6 +57,7 @@ describeOrSkip("moodStateEmotions.loadEmotions", () => {
           { id: "joy", display_name: "Joy", icon: "😊", },
           { id: "calm", display_name: "Calm", },
         ],);
+
     await moodStateEmotions.loadEmotions!.call(ctx as never,);
     expect(calls,).toEqual(["/api/v1/actors/actor-1/emotions", "/api/v1/emotions",],);
     expect(ctx._activeEmotions,).toEqual([
@@ -64,6 +65,7 @@ describeOrSkip("moodStateEmotions.loadEmotions", () => {
       // Missing icon falls back to null.
       { def: { id: "calm", icon: null, display_name: "Calm", }, intensity: 0.1, },
     ],);
+
     expect(ctx._activeEmotionsLoading,).toBe(false,);
   });
 
@@ -73,6 +75,7 @@ describeOrSkip("moodStateEmotions.loadEmotions", () => {
       url === "/api/v1/actors/actor-1/emotions"
         ? Response.json({ data: [{ emotion_id: "joy", },], },)
         : Response.json({ data: [{ id: "joy", display_name: "Joy", icon: null, },], },);
+
     await moodStateEmotions.loadEmotions!.call(ctx as never,);
     expect(ctx._activeEmotions,).toEqual([
       { def: { id: "joy", icon: null, display_name: "Joy", }, intensity: 0.5, },
@@ -86,6 +89,7 @@ describeOrSkip("moodStateEmotions.loadEmotions", () => {
       url === "/api/v1/actors/actor-1/emotions"
         ? new Response("", { status: 500, },)
         : Response.json([],);
+
     await moodStateEmotions.loadEmotions!.call(ctx as never,);
     expect(ctx._activeEmotions,).toHaveLength(1,);
     expect(ctx._activeEmotions[0]!.def.id,).toBe("old",);
@@ -96,6 +100,7 @@ describeOrSkip("moodStateEmotions.loadEmotions", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await moodStateEmotions.loadEmotions!.call(ctx as never,);
     expect(ctx._activeEmotions,).toEqual([],);
     expect(ctx._activeEmotionsLoading,).toBe(false,);

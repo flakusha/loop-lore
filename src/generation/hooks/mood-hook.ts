@@ -58,6 +58,7 @@ export class MoodHook implements HookHandler {
     // amplify the mood delta. Non-NSFW (SFW) actors use the base delta.
     const isNsfwActor = context.actorContentRating !== undefined &&
       isNsfwRating(context.actorContentRating as ContentRating,);
+
     const delta = isNsfwActor ? Math.round(baseDelta * 1.5,) : baseDelta;
 
     log.info("mood-hook: detected mood shift", {
@@ -100,6 +101,7 @@ export class MoodHook implements HookHandler {
       "cheerful",
       "glad",
     ];
+
     const negativeWords = [
       "sad",
       "angry",
@@ -112,14 +114,17 @@ export class MoodHook implements HookHandler {
       "worried",
       "fearful",
     ];
+
     const neutralWords = ["calm", "neutral", "indifferent", "bored", "tired", "exhausted", "relaxed", "peaceful",];
 
     for (const word of positiveWords) {
       if (lower.includes(word,)) { indicators.push(`positive:${word}`,); }
     }
+
     for (const word of negativeWords) {
       if (lower.includes(word,)) { indicators.push(`negative:${word}`,); }
     }
+
     for (const word of neutralWords) {
       if (lower.includes(word,)) { indicators.push(`neutral:${word}`,); }
     }
@@ -151,9 +156,11 @@ export class MoodHook implements HookHandler {
       case "positive": {
         return 5;
       }
+
       case "negative": {
         return -5;
       }
+
       default: {
         return 0;
       }

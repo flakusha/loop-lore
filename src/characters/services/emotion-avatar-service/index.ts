@@ -114,6 +114,7 @@ export class EmotionAvatarService {
         const mattingProvider = opts.mattingProvider ??
           (mattingEnabled ? resolveMattingProvider(loadConfig(),) : null) ??
           undefined;
+
         await runBatchGeneration(
           {
             db: this.db,
@@ -131,6 +132,7 @@ export class EmotionAvatarService {
           error instanceof Error ? error : new Error(String(error,),),
           { jobId: job.id, },
         );
+
         job.status = "failed";
         job.error = String(error,);
         job.completedAt = new Date().toISOString();

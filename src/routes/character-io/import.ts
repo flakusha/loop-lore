@@ -131,6 +131,7 @@ export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
             timeout: 5_000,
             handle401: false,
           },);
+
           if (!fetched.ok) {
             return jsonError({
               message: `Failed to fetch URL: ${fetched.error.message}`,

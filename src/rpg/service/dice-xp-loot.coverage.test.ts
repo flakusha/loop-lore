@@ -48,6 +48,7 @@ describe("dice-roll service", () => {
       total: 24,
       purpose: "attack roll",
     },);
+
     expect(typeof id,).toBe("string",);
     expect(id.length,).toBeGreaterThan(0,);
 
@@ -55,6 +56,7 @@ describe("dice-roll service", () => {
       .where("id", "=", id,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(row.user_id,).toBe(userId,);
     expect(row.chat_id,).toBe("chat-dice-1",);
     expect(row.actor_id,).toBe(actorId,);
@@ -82,10 +84,12 @@ describe("dice-roll service", () => {
       rawTotal: 4,
       total: 4,
     },);
+
     const row = await db.selectFrom("dice_roll_history",)
       .where("id", "=", id,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(row.chat_id,).toBeNull();
     expect(row.actor_id,).toBeNull();
     expect(row.exploding,).toBe(0,);
@@ -106,6 +110,7 @@ describe("dice-roll service", () => {
       total: 12,
       purpose: "first",
     },);
+
     const second = await logDiceRoll({ database: db, }, {
       userId,
       sides: 20,
@@ -118,11 +123,13 @@ describe("dice-roll service", () => {
       total: 10,
       purpose: "second",
     },);
+
     // Force a deterministic created_at order (same-second inserts tie).
     await db.updateTable("dice_roll_history",)
       .set({ created_at: "2026-01-01T00:00:00.000Z", },)
       .where("id", "=", first,)
       .execute();
+
     await db.updateTable("dice_roll_history",)
       .set({ created_at: "2026-01-02T00:00:00.000Z", },)
       .where("id", "=", second,)
@@ -158,6 +165,7 @@ describe("dice-roll service", () => {
       rawTotal: 3,
       total: 3,
     },);
+
     await logDiceRoll({ database: db, }, {
       userId,
       chatId: "chat-b",
@@ -192,12 +200,14 @@ describe("xp service", () => {
       referenceId: "battle-1",
       chatId: "chat-xp-1",
     },);
+
     expect(id.length,).toBeGreaterThan(0,);
 
     const row = await db.selectFrom("xp_ledger",)
       .where("id", "=", id,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(row.actor_id,).toBe(actorId,);
     expect(row.amount,).toBe(150,);
     expect(row.source,).toBe("combat",);
@@ -214,6 +224,7 @@ describe("xp service", () => {
       .where("id", "=", id,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(row.description,).toBeNull();
     expect(row.reference_id,).toBeNull();
     expect(row.chat_id,).toBeNull();
@@ -228,16 +239,19 @@ describe("xp service", () => {
       source: "quest",
       description: "first",
     },);
+
     const second = await logXp({ database: db, }, {
       actorId,
       amount: 75,
       source: "combat",
       description: "second",
     },);
+
     await db.updateTable("xp_ledger",)
       .set({ created_at: "2026-01-01T00:00:00.000Z", },)
       .where("id", "=", first,)
       .execute();
+
     await db.updateTable("xp_ledger",)
       .set({ created_at: "2026-01-02T00:00:00.000Z", },)
       .where("id", "=", second,)
@@ -262,10 +276,12 @@ describe("loot-tables service", () => {
       sourceType: "monster",
       sourceId: "goblin-1",
     },);
+
     const row = await db.selectFrom("loot_tables",)
       .where("id", "=", id,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(row.name,).toBe("Goblin Hoard",);
     expect(row.source_type,).toBe("monster",);
     expect(row.source_id,).toBe("goblin-1",);
@@ -279,6 +295,7 @@ describe("loot-tables service", () => {
       .where("id", "=", id,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(row.source_id,).toBeNull();
   });
 
@@ -291,10 +308,12 @@ describe("loot-tables service", () => {
       rarity: "common",
       weight: 10,
     },);
+
     const entry = await db.selectFrom("loot_entries",)
       .where("id", "=", entryId,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(entry.loot_table_id,).toBe(tableId,);
     expect(entry.item_name,).toBe("Rusty Dagger",);
     expect(entry.description,).toBeNull();
@@ -315,10 +334,12 @@ describe("loot-tables service", () => {
       minLevel: 2,
       metadata: { effect: "heal", },
     },);
+
     const table = await db.selectFrom("loot_tables",)
       .where("id", "=", tableId,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(table.total_weight,).toBe(15,);
   });
 
@@ -340,6 +361,7 @@ describe("loot-tables service", () => {
       minQuantity: 2,
       maxQuantity: 2,
     },);
+
     const result = await rollLootTable({ database: db, }, tableId,);
     expect(result,).toEqual({
       itemName: "Amulet of Dawn",
@@ -348,10 +370,12 @@ describe("loot-tables service", () => {
       rarity: "rare",
       quantity: 2,
     },);
+
     const table = await db.selectFrom("loot_tables",)
       .where("id", "=", tableId,)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(table.used,).toBe(1,);
   });
 
@@ -366,6 +390,7 @@ describe("loot-tables service", () => {
       minQuantity: 1,
       maxQuantity: 1,
     },);
+
     await addLootEntry({ database: db, }, {
       lootTableId: tableId,
       itemName: "Dragon Egg",
@@ -402,6 +427,7 @@ describe("loot-tables service", () => {
       minQuantity: 5,
       maxQuantity: 10,
     },);
+
     const original = Math.random;
     try {
       Math.random = () => 0.5;

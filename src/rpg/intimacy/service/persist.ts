@@ -28,6 +28,7 @@ export async function getActorStatBlock(db: Kysely<DB>, actorId: string,): Promi
     .select(["str", "dex", "con", "int", "wis", "cha",],)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!row) { return { ...DEFAULT_STATS, }; }
   return {
     str: row.str,

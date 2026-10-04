@@ -74,6 +74,7 @@ describe("memorySection — per-viewer cross-actor isolation", () => {
         scope: characterScope,
         privacy: privatePrivacy,
       },);
+
       await insertActorMemories(db, elfId, elfSecretBlocked, {
         scope: characterScope,
         privacy: secretPrivacy,
@@ -130,6 +131,7 @@ describe("memorySection helpers — carry scoping", () => {
     } catch {
       // Already initialized — ignore.
     }
+
     const { db, sqlite, } = await createTestDb();
     try {
       await insertUsers(db, "human", "Human",);
@@ -144,6 +146,7 @@ describe("memorySection helpers — carry scoping", () => {
       await insertActorMemories(db, actorId, "cross-chat original", {
         source_chat_id: null,
       },);
+
       await insertActorMemories(db, actorId, "carried copy", {
         source_chat_id: chat.id,
       },);
@@ -243,6 +246,7 @@ describeOrSkip("memorySection — semantic recall outage degrades gracefully", (
     }
   });
 },);
+
 describe("memorySection helpers — extraction review gating", () => {
   test("fetchActorMemories excludes pending rows until committed", async () => {
     try {
@@ -250,6 +254,7 @@ describe("memorySection helpers — extraction review gating", () => {
     } catch {
       // already initialized
     }
+
     const { db, sqlite, } = await createTestDb();
     try {
       await insertUsers(db, "human", "Human",);
@@ -265,9 +270,11 @@ describe("memorySection helpers — extraction review gating", () => {
       await insertActorMemories(db, actorId, "committed fact", {
         review_status: "committed",
       },);
+
       await insertActorMemories(db, actorId, "pending fact", {
         review_status: "pending",
       },);
+
       await insertActorMemories(db, actorId, "rejected fact", {
         review_status: "rejected",
       },);

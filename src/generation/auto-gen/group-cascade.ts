@@ -74,11 +74,13 @@ async function resolveNextCascadeActor(
     depth,
     log,
   } = opts;
+
   // Check for @mentions in the AI response (excluding the actor who just spoke)
   const mentionedIds = extractMentionedActorIds(
     aiContent,
     Array.from(aiParticipants, (p,) => ({ actorId: p.actor_id, displayName: p.display_name, }),),
   );
+
   const validMentions: string[] = [];
   for (const id of mentionedIds) { if (id !== previousActorId) { validMentions.push(id,); } }
   if (validMentions.length > 0) {
@@ -94,18 +96,23 @@ async function resolveNextCascadeActor(
       config: opts.config,
       userId: opts.userId,
     },);
+
     if (next === previousActorId) {
       const others: (typeof aiParticipants)[number][] = [];
       for (const p of aiParticipants) { if (p.actor_id !== previousActorId) { others.push(p,); } }
       next = others.length > 0 ? others[0]!.actor_id : null;
     }
+
     if (next) {
       log.info("Cascade: auto-advance selected next actor", { nextActorId: next, depth, },);
     }
+
     return next;
   }
+
   return null;
 }
+
 /**
  * Run one group-chat cascade step.
  * @param opts Group cascade options.
@@ -167,6 +174,7 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
     deps: d,
     log,
   },);
+
   if (aiParticipants.length === 0) {
     log.info("Cascade: all AI participants opted out via [PASS]; stopping", { chatId, },);
     // Slot release telemetry (TASK-turn-skip-cascade): the cascade cannot
@@ -182,6 +190,7 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
         data: { source: "all_passed", depth, },
       },);
     }
+
     return;
   }
 
@@ -197,6 +206,7 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
     config,
     userId,
   },);
+
   if (!nextActorId) { return; }
 
   // Find the last message ID to use as parent for the next generation
@@ -259,6 +269,7 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
     .select("story_state",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   if (storyStateIsPaused(postChat?.story_state,)) {
     log.info("Cascade: pause toggled mid-flight; next depth skipped", { chatId, depth: depth + 1, },);
     return;

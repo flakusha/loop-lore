@@ -135,6 +135,7 @@ describe("customInstructionsSection", () => {
       { name: "lore", chars: 8000, tokens: 2000, dropped: false, },
       { name: "examples", chars: 8000, tokens: 2000, dropped: false, },
     ];
+
     dropOverBudgetSections(sections, 2500, 6000,);
     expect(sections[0]!.dropped,).toBe(false,); // PRIORITY 0 → kept
     expect(sections[1]!.dropped,).toBe(true,);

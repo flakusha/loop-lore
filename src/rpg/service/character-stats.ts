@@ -237,5 +237,6 @@ export async function updateCharacterStats(
   if (updated) {
     log().debug("Updated character stats", { statsId, },);
   }
+
   return updated;
 }

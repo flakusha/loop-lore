@@ -79,6 +79,7 @@ describe("statsLine", () => {
       token_count_total: 300,
       tokens_per_second: 100,
     },);
+
     expect(line,).toContain("gpt-4",);
     expect(line,).toContain("openai",);
     expect(line,).toContain("3.0s",);

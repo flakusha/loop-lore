@@ -98,6 +98,7 @@ if (STRICTLY_ISOLATED) {
     storeGenerationResult: async () => "msg-id-1",
   }),);
 }
+
 // Stub tool-execution — not exercised in the no-tool-call path.
 if (STRICTLY_ISOLATED) {
   mock.module("./tool-execution", () => ({
@@ -122,6 +123,7 @@ if (STRICTLY_ISOLATED) {
       if (callDelayMs > 0) {
         await new Promise<void>(r => setTimeout(r, callDelayMs,));
       }
+
       if (failoverThrows) { throw new Error("provider exploded",); }
       if (responseQueue.length > 0) { return responseQueue.shift(); }
       return fakeResponse;
@@ -149,11 +151,13 @@ const failoverSelfCheck = await (async () => {
     return false;
   }
 })();
+
 const persistSelfCheck = (buildResultFn({
   content: "__nonstream_selfcheck__",
   finishReason: "stop",
   usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
 } as never, false,) as { content?: string }).content === "__nonstream_selfcheck__";
+
 const nonStreamSelfOk = failoverSelfCheck && persistSelfCheck;
 const describeSelf = nonStreamSelfOk ? describeOrSkipStrict : describe.skip;
 
@@ -177,6 +181,7 @@ describeSelf("runNonStreaming — generation.completed latencyMs", () => {
     fakeResponse.toolCalls = [
       { id: "tc-1", function: { name: "noop", arguments: "{}", }, },
     ];
+
     const { createTestDb, } = await import("../../test-utils/create-test-db");
     const { db, sqlite, } = await createTestDb();
     // runNonStreaming converts internal errors to a 500 Response (never
@@ -193,12 +198,14 @@ describeSelf("runNonStreaming — generation.completed latencyMs", () => {
       providerReq: { model: "test-model", messages: [], params: {}, },
       failoverList: [{ name: "test-provider", provider: {} as never, },],
     },);
+
     fakeResponse.toolCalls = originalCalls;
     sqlite.close();
     expect(res.status,).toBe(500,);
     const body = await res.json() as { error: string };
     expect(body.error,).toContain("Tool call loop exceeded max rounds",);
   });
+
   it("records a non-zero latencyMs in the telemetry event", async () => {
     recordedEvents.length = 0;
     callDelayMs = 5; // 5ms simulated provider delay
@@ -358,6 +365,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
       },
       { content: "final answer", finishReason: "stop", usage: USAGE, toolCalls: null, },
     );
+
     toolResults = [{ role: "tool", content: "tool-out", tool_call_id: "tc-1", },];
     const res = await runDefault("attempt-tools",);
     expect(res.status,).toBe(200,);
@@ -369,6 +377,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
       content: "",
       tool_calls: [{ id: "tc-1", type: "function", function: { name: "lookup", arguments: "{}", }, },],
     },);
+
     expect(second[2],).toEqual({ role: "tool", content: "tool-out", tool_call_id: "tc-1", },);
     const body = await res.json() as { content: string };
     expect(body.content,).toBe("final answer",);
@@ -387,6 +396,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
       finishReason: string;
       meta: { api_version: string };
     };
+
     expect(body,).toEqual({
       ok: true,
       attemptId: "attempt-shape",

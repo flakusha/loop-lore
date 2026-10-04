@@ -33,6 +33,7 @@ export async function bindWardrobeItemInstance(
     .where("id", "=", itemInstanceId,)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!instance) { throw new Error("Item instance not found in actor inventory",); }
 
   const existing = await db
@@ -42,6 +43,7 @@ export async function bindWardrobeItemInstance(
     .where("wardrobe_item_id", "=", wardrobeItemId,)
     .where("item_instance_id", "=", itemInstanceId,)
     .executeTakeFirst();
+
   if (existing) { return existing.id; }
 
   const id = randomUUID();
@@ -55,6 +57,7 @@ export async function bindWardrobeItemInstance(
       created_at: new Date().toISOString(),
     },)
     .execute();
+
   return id;
 }
 
@@ -75,6 +78,7 @@ export async function unbindWardrobeItemInstance(
     .where("id", "=", bindingId,)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   return Number(result.numDeletedRows ?? 0,) > 0;
 }
 

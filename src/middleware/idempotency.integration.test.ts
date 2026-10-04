@@ -84,8 +84,10 @@ function setup(opts: SetupOpts,) {
           requestId,
           userId: ctx.userId ?? null,
         },);
+
         return;
       }
+
       idem.recordResponse({
         method: ctx.request.method,
         route: ctx.route ?? "?",
@@ -115,6 +117,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(res.status,).toBe(201,);
     expect(await res.text(),).toBe("ok-first",);
     expect(runs,).toBe(1,);
@@ -137,6 +140,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     const second = await app.handle(
       new Request("http://localhost/api/x", {
         method: "POST",
@@ -144,6 +148,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(second.status,).toBe(409,);
     expect(await second.json(),).toMatchObject({ code: "CONFLICT", },);
     await first;
@@ -169,6 +174,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(first.status,).toBe(201,);
     expect(await first.json(),).toEqual({ n: 1, },);
 
@@ -181,6 +187,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(second.status,).toBe(201,);
     expect(await second.json(),).toEqual({ n: 1, },);
     expect(second.headers.get("x-trace",),).toBe("abc",);
@@ -203,6 +210,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(await first.text(),).toBe("run-1",);
     await flushMicrotasks();
 
@@ -213,6 +221,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(second.status,).toBe(201,);
     expect(await second.text(),).toBe("run-2",);
     expect(runs,).toBe(2,);
@@ -248,6 +257,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     await app.handle(
       new Request("http://localhost/api/x", {
         method: "POST",
@@ -276,6 +286,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(a1.status,).toBe(201,);
     expect(await a1.json(),).toEqual({ who: "user-A", n: 1, },);
     await flushMicrotasks();
@@ -288,6 +299,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(b1.status,).toBe(201,);
     // The body must belong to user-B's handler run, not the replay of user-A.
     expect(await b1.json(),).toEqual({ who: "user-A", n: 2, },);
@@ -314,6 +326,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(a1.status,).toBe(201,);
     expect(await a1.json(),).toEqual({ who: "user-A", n: 1, },);
     await flushMicrotasks();
@@ -326,6 +339,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(a2.status,).toBe(201,);
     expect(await a2.json(),).toEqual({ who: "user-A", n: 1, },);
     expect(runs,).toBe(1,);
@@ -348,6 +362,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(runs,).toBe(1,);
     await flushMicrotasks();
 
@@ -360,6 +375,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(runs,).toBe(2,);
   });
 
@@ -379,6 +395,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(first.status,).toBe(400,);
     await flushMicrotasks();
 
@@ -389,6 +406,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(second.status,).toBe(400,);
     expect(runs,).toBe(2,);
   });
@@ -405,6 +423,7 @@ describe("idempotent (Elysia integration)", () => {
           requestId: (ctx as unknown as { requestId?: string }).requestId,
         },)
       );
+
     app.get("/api/g", () => {
       runs++;
       return new Response("g", { status: 200, },);
@@ -414,6 +433,7 @@ describe("idempotent (Elysia integration)", () => {
     await app.handle(new Request("http://localhost/api/g", { headers: { "x-request-id": "g-1", }, },),);
     expect(runs,).toBe(2,);
   });
+
   test("handler throw releases the in-flight slot so a retry is not stuck at 409 (BUG-orphaned-slot)", async () => {
     let runs = 0;
     const idem = idempotent({ backend: "memory", },);
@@ -423,8 +443,10 @@ describe("idempotent (Elysia integration)", () => {
         const id = ctx.requestId;
         return typeof id === "string" ? id : undefined;
       }
+
       return undefined;
     };
+
     const app = new Elysia()
       .derive(requestIdMiddleware(),)
       .onBeforeHandle((ctx,) =>
@@ -442,6 +464,7 @@ describe("idempotent (Elysia integration)", () => {
           idem.release({ method: ctx.request.method, route: ctx.route, requestId, },);
           return;
         }
+
         idem.recordResponse({ method: ctx.request.method, route: ctx.route, requestId, response, },);
       },)
       // Mirror elysia-app.ts: the error boundary releases the idempotency slot
@@ -455,8 +478,10 @@ describe("idempotent (Elysia integration)", () => {
             requestId,
           },);
         }
+
         return new Response("error", { status: 500, },);
       },);
+
     app.post("/api/x", () => {
       runs++;
       throw new Error("boom",);
@@ -469,6 +494,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     expect(first.status,).toBe(500,);
     await flushMicrotasks();
 
@@ -479,6 +505,7 @@ describe("idempotent (Elysia integration)", () => {
         body: "{}",
       },),
     );
+
     // Slot released on error → not 409; handler runs again (no permanent 409).
     expect(second.status,).not.toBe(409,);
     expect(runs,).toBe(2,);

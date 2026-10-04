@@ -32,6 +32,7 @@ import { createTestActors, } from "./test-helpers";
 const proto = EmotionAvatarService.prototype as unknown as Record<string, unknown>;
 const emotionServicePristine = typeof proto.generateEmotionAvatar === "function" &&
   typeof proto.resolveEmotionPromptModifier === "function";
+
 const describeReal = emotionServicePristine ? describe : describe.skip;
 
 // ── Mocks ──────────────────────────────────────────────────────
@@ -47,6 +48,7 @@ function mockFetch(handler: (url: string, init?: RequestInit,) => Response | Pro
     const urlStr = typeof url === "string" ? url : (url instanceof URL ? url.href : url.url);
     return handler(urlStr, _init,);
   },);
+
   Object.defineProperty(globalThis, "fetch", { value: mocked, writable: true, configurable: true, },);
 }
 
@@ -148,6 +150,7 @@ describeReal("EmotionAvatarService", () => {
       AvatarService.prototype.createAvatar = mock(async () => randomUUID());
       sqlite.run("PRAGMA foreign_keys = OFF",);
     }
+
     /** */
     function restoreDbWrites() {
       AvatarService.prototype.createAvatar = origCreateAvatar;
@@ -218,6 +221,7 @@ describeReal("EmotionAvatarService", () => {
         if (capturedUrls.length <= 1) {
           return Response.json({ id: "job-123", },);
         }
+
         return Response.json({
           status: "done",
           images: [pngBuf.toString("base64",),],
@@ -272,6 +276,7 @@ describeReal("EmotionAvatarService", () => {
         happy: { asset: "happy.png", intent: "radiant warm smile", },
         sad: { asset: "sad.png", intent: "gentle sad expression", },
       };
+
       const result = emotionService.resolveEmotionPromptModifier(EmotionType.Happy, configEmotions,);
       expect(result,).toBe("radiant warm smile",);
     });

@@ -58,12 +58,14 @@ export function buildMessages(
         tool_use_id: msg.tool_call_id ?? "",
         content: msg.content ?? "",
       };
+
       const last = out[out.length - 1];
       if (last?.role === "user" && Array.isArray(last.content,)) {
         last.content = [...(last.content as unknown[]), block,];
       } else {
         out.push({ role: "user", content: [block,], },);
       }
+
       continue;
     }
 

@@ -19,6 +19,7 @@ const globals = globalThis as unknown as {
   apiFetch?: ApiFetchMock;
   localStorage?: Storage;
 };
+
 const originalFetch = globals.apiFetch;
 const originalStorage = globals.localStorage;
 
@@ -51,6 +52,7 @@ function buildCtx(text: string,): ImproveCtx {
       ctx.dispatched.push({ event, detail, },);
     },
   };
+
   return ctx;
 }
 
@@ -82,6 +84,7 @@ beforeEach(() => {
     fetchCalls.push(url,);
     return Promise.resolve(Response.json({ data: { content: "server-polished", }, },),);
   };
+
   globals.localStorage = {
     getItem: (k,) => store.get(k,) ?? null,
     setItem: (k, v,) => {
@@ -94,6 +97,7 @@ beforeEach(() => {
     key: () => null,
     length: 0,
   } as Storage;
+
   const twin: FakeWorker = {
     onmessage: null,
     posted: [],
@@ -107,6 +111,7 @@ beforeEach(() => {
       twin.onmessage?.({ data: response, },);
     },
   };
+
   fake = twin;
   resetLocalEngine();
   getLocalEngine({ workerFactory: () => twin as unknown as Worker, },);
@@ -129,6 +134,7 @@ async function drive(action: Promise<void>, ctx: ImproveCtx, original: string,):
       settled = true;
     },
   );
+
   let answered = 0;
   // Pure microtask flushing: every engine continuation is promise-driven,
   // so each round answers new posts and yields — no wall-clock waits.
@@ -142,12 +148,15 @@ async function drive(action: Promise<void>, ctx: ImproveCtx, original: string,):
         fake.respond({ kind: "generated", id: message.id, text: generatedText, },);
       }
     }
+
     if (ctx.$refs.messageInput.value !== original || fetchCalls.length > 0) {
       await tracked;
       return;
     }
+
     await Promise.resolve();
   }
+
   await tracked;
 }
 

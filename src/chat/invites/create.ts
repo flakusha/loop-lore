@@ -23,8 +23,10 @@ export async function createInvite(
     input,
     resolveScope: (i,) => i.chatId,
   },);
+
   if (!result.ok) {
     return result;
   }
+
   return { ok: true, value: toRow(result.value as never,), };
 }

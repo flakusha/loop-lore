@@ -31,6 +31,7 @@ const assetFallbackPristine = await (async () => {
       .set({ description: "Probe description caption", },)
       .where("id", "=", actorId,)
       .execute();
+
     const buffer = makeMinimalPng(16, 16,);
     const { asset, } = await createAsset({
       database: probe.db,
@@ -44,6 +45,7 @@ const assetFallbackPristine = await (async () => {
       },
       uploadDir: "/tmp/test-uploads",
     },);
+
     const result = await extractAvatarMetadata(probe.db, asset.id, { actorId, },);
     return result.caption === "Probe description caption";
   } catch {
@@ -52,6 +54,7 @@ const assetFallbackPristine = await (async () => {
     probe.sqlite.close();
   }
 })();
+
 const itReal = assetFallbackPristine ? it : it.skip;
 const describeReal = assetFallbackPristine ? describe : describe.skip;
 
@@ -60,11 +63,13 @@ describe("buildEmotionPrompt", () => {
     const metadata: AvatarMetadata = {
       caption: "portrait of a young woman with red hair",
     };
+
     const result = buildEmotionPrompt(
       metadata,
       EmotionType.Happy,
       "happy expression, smiling, bright eyes, cheerful",
     );
+
     expect(result,).toBe(
       "portrait of a young woman with red hair, happy expression, smiling, bright eyes, cheerful, high quality, detailed, sharp focus, professional",
     );
@@ -74,11 +79,13 @@ describe("buildEmotionPrompt", () => {
     const metadata: AvatarMetadata = {
       altText: "Aria, the elven mage",
     };
+
     const result = buildEmotionPrompt(
       metadata,
       EmotionType.Sad,
       "sad expression, downcast eyes, melancholy, sorrowful",
     );
+
     expect(result,).toBe(
       "Aria, the elven mage, sad expression, downcast eyes, melancholy, sorrowful, high quality, detailed, sharp focus, professional",
     );
@@ -91,6 +98,7 @@ describe("buildEmotionPrompt", () => {
       EmotionType.Angry,
       "angry expression, furrowed brow, intense gaze, furious",
     );
+
     expect(result,).toBe(
       "character portrait, angry expression, furrowed brow, intense gaze, furious, high quality, detailed, sharp focus, professional",
     );
@@ -100,12 +108,14 @@ describe("buildEmotionPrompt", () => {
     const metadata: AvatarMetadata = {
       caption: "anime girl with blue eyes",
     };
+
     const result = buildEmotionPrompt(
       metadata,
       EmotionType.Excited,
       "excited expression, enthusiastic, eager, thrilled",
       "masterpiece, best quality, 4k",
     );
+
     expect(result,).toBe(
       "anime girl with blue eyes, excited expression, enthusiastic, eager, thrilled, masterpiece, best quality, 4k",
     );
@@ -116,11 +126,13 @@ describe("buildEmotionPrompt", () => {
       caption: "from caption",
       altText: "from alt text",
     };
+
     const result = buildEmotionPrompt(
       metadata,
       EmotionType.Neutral,
       "neutral expression, calm face, natural look",
     );
+
     expect(result,).toContain("from caption",);
     expect(result,).not.toContain("from alt text",);
   });

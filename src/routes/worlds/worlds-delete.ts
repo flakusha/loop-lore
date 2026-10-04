@@ -27,6 +27,7 @@ export async function handleDeleteWorld(
     .select("id",)
     .where("world_id", "=", worldId,)
     .execute();
+
   const locIds = Array.from(locationIds, (l,) => l.id,);
   if (locIds.length > 0) {
     await database.deleteFrom("location_states",).where("location_id", "in", locIds,).execute();
@@ -41,6 +42,7 @@ export async function handleDeleteWorld(
       .where("current_location_id", "in", locIds,)
       .execute();
   }
+
   await database
     .updateTable("chats",)
     .set({ world_id: null, },)
@@ -63,6 +65,7 @@ export async function handleDeleteWorld(
     .where("entity_type", "=", "world",)
     .where("entity_id", "=", worldId,)
     .execute();
+
   await database.deleteFrom("locations",).where("world_id", "=", worldId,).execute();
   await database.deleteFrom("worlds",).where("id", "=", worldId,).execute();
   return jsonNoContent();

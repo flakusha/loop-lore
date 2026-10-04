@@ -37,15 +37,19 @@ export async function generateImages(
     case "openai": {
       return generateOpenAI(sdConfig, opts,);
     }
+
     case "sdapi": {
       return generateSDAPI(sdConfig, opts,);
     }
+
     case "sdcpp": {
       return generateSDCPP(sdConfig, opts,);
     }
+
     case "comfyui": {
       return generateComfyUI(sdConfig, opts,);
     }
+
     default: {
       return failure(
         `Image gen API family "${

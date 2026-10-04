@@ -48,6 +48,7 @@ describe("create_location tool", () => {
       { name: "The Gilded Tavern", description: "A cozy inn.", worldId: "world-a", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).not.toBe(true,);
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, worldId: "world-a", },);
 
@@ -56,6 +57,7 @@ describe("create_location tool", () => {
       .selectAll()
       .where("name", "=", "The Gilded Tavern",)
       .executeTakeFirstOrThrow();
+
     expect(row.world_id,).toBe("world-a",);
     expect(row.description,).toBe("A cozy inn.",);
   });
@@ -66,6 +68,7 @@ describe("create_location tool", () => {
       { name: "Harbor", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, worldId: "chat-world", },);
   });
 
@@ -74,6 +77,7 @@ describe("create_location tool", () => {
       { name: "Harbor", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, worldId: "default", },);
   });
 
@@ -82,6 +86,7 @@ describe("create_location tool", () => {
       { description: "no name", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).toBe(true,);
     expect(await db.selectFrom("locations",).select("id",).execute(),).toHaveLength(0,);
   });
@@ -98,10 +103,12 @@ describe("create_location tool", () => {
       turn_strategy: "round_robin",
       visibility: "private",
     },);
+
     const result = await locationCreationTool.handler(
       { name: "The Gilded Tavern", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).not.toBe(true,);
     const parsed = JSON.parse(result.content,);
 
@@ -110,6 +117,7 @@ describe("create_location tool", () => {
       .selectAll()
       .where("current_location_id", "=", parsed.id,)
       .executeTakeFirstOrThrow();
+
     expect(chat.created_by,).toBe(userId,);
     expect(chat.world_id,).toBe("default",);
     expect(chat.type,).toBe("group",);
@@ -124,6 +132,7 @@ describe("create_location tool", () => {
       .selectAll()
       .where("id", "=", parsed.id,)
       .executeTakeFirstOrThrow();
+
     expect(row.description,).toBeNull();
   }, 10000,);
 
@@ -132,16 +141,19 @@ describe("create_location tool", () => {
       id: "template-world",
       gm_config: JSON.stringify({ renderingOverride: "visual_novel", },),
     },);
+
     const result = await locationCreationTool.handler(
       { name: "VN Room", },
       { db, actorId, chatId: "chat-1", },
     );
+
     const parsed = JSON.parse(result.content,);
     const chat = await db
       .selectFrom("chats",)
       .selectAll()
       .where("current_location_id", "=", parsed.id,)
       .executeTakeFirstOrThrow();
+
     expect(chat.gm_config,).toContain("visual_novel",);
   }, 10000,);
 
@@ -150,16 +162,19 @@ describe("create_location tool", () => {
       id: "template-world",
       gm_config: "{{{not-json",
     },);
+
     const result = await locationCreationTool.handler(
       { name: "Broken", },
       { db, actorId, chatId: "chat-1", },
     );
+
     const parsed = JSON.parse(result.content,);
     const chat = await db
       .selectFrom("chats",)
       .selectAll()
       .where("current_location_id", "=", parsed.id,)
       .executeTakeFirstOrThrow();
+
     // Invalid template gm_config never leaks into the chat row; createChat
     // normalizes to valid JSON with a null renderingOverride.
     expect(chat.gm_config,).not.toContain("{{{not-json",);
@@ -171,12 +186,14 @@ describe("create_location tool", () => {
       { name: "Nowhere", },
       { db, actorId, chatId: "chat-1", },
     );
+
     const parsed = JSON.parse(result.content,);
     const chats = await db
       .selectFrom("chats",)
       .select("id",)
       .where("current_location_id", "=", parsed.id,)
       .execute();
+
     expect(chats,).toHaveLength(0,);
   }, 10000,);
 
@@ -188,12 +205,14 @@ describe("create_location tool", () => {
       { name: "Orphan's Loc", },
       { db, actorId: orphanId, chatId: "chat-1", },
     );
+
     const parsed = JSON.parse(result.content,);
     const chats = await db
       .selectFrom("chats",)
       .select("id",)
       .where("current_location_id", "=", parsed.id,)
       .execute();
+
     expect(chats,).toHaveLength(0,);
     // The location itself is still created.
     const row = await db
@@ -201,6 +220,7 @@ describe("create_location tool", () => {
       .select("id",)
       .where("id", "=", parsed.id,)
       .executeTakeFirstOrThrow();
+
     expect(row.id,).toBe(parsed.id,);
   }, 10000,);
 
@@ -209,6 +229,7 @@ describe("create_location tool", () => {
       { name: "   ", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).toBe(true,);
   });
 
@@ -217,6 +238,7 @@ describe("create_location tool", () => {
       { name: 42, },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).toBe(true,);
   });
 
@@ -225,6 +247,7 @@ describe("create_location tool", () => {
       { name: "Trimmed", worldId: "  world-a  ", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, worldId: "world-a", },);
   });
 });

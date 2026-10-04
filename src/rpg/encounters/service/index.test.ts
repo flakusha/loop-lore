@@ -44,6 +44,7 @@ describe("EncounterService", () => {
       encounterType: "romantic",
       participants: ["actor-1", "actor-2",],
     },);
+
     expect(encounter.encounterType,).toBe("romantic",);
     expect(encounter.intensity,).toBe("vanilla",);
     expect(encounter.narrativeStyle,).toBe("fade_to_black",);
@@ -53,6 +54,7 @@ describe("EncounterService", () => {
       "Main",
       "Aftercare",
     ],);
+
     expect(encounter.currentPhase,).toBe(0,);
     expect(encounter.outcomes.length,).toBe(3,);
     expect(encounter.contentTags,).toEqual([],);
@@ -90,6 +92,7 @@ describe("EncounterService", () => {
       },],
       contentTags: ["tender",],
     },);
+
     expect(encounter.worldId,).toBe("world-1",);
     expect(encounter.intensity,).toBe("moderate",);
     expect(encounter.narrativeStyle,).toBe("explicit",);
@@ -119,17 +122,20 @@ describe("EncounterService", () => {
       encounterType: "romantic",
       participants: ["actor-1",],
     },);
+
     await service.createEncounter({
       database: db,
       worldId: "world-1",
       encounterType: "group",
       participants: ["actor-1",],
     },);
+
     await service.createEncounter({
       database: db,
       encounterType: "romantic",
       participants: ["actor-1",],
     },);
+
     expect((await service.listEncounters("world-1",)).length,).toBe(2,);
     const romantic = await service.listEncounters("world-1", { type: "romantic", },);
     expect(romantic.length,).toBe(1,);
@@ -152,16 +158,19 @@ describe("EncounterService", () => {
       },],
       outcomes: [],
     },);
+
     await service.createEncounter({
       database: db,
       worldId: "world-1",
       encounterType: "tender",
       participants: ["actor-1",],
     },);
+
     await service.advancePhase(finishing.id,);
     expect(
       (await service.listEncounters("world-1", { completed: true, },)).map((e,) => e.id),
     ).toEqual([finishing.id,],);
+
     expect((await service.listEncounters("world-1", { completed: false, },)).length,).toBe(1,);
   });
 
@@ -172,6 +181,7 @@ describe("EncounterService", () => {
       encounterType: "romantic",
       participants: ["actor-1",],
     },);
+
     const first = await service.advancePhase(encounter.id,);
     expect(first.complete,).toBeFalse();
     expect(first.phaseIndex,).toBe(1,);
@@ -221,6 +231,7 @@ describe("EncounterService", () => {
         },
       ],
     },);
+
     const result = await service.advancePhase(encounter.id,);
     expect(result.complete,).toBeTrue();
     expect(result.phaseIndex,).toBe(1,);
@@ -256,6 +267,7 @@ describe("EncounterService", () => {
         },
       },],
     },);
+
     const result = await service.advancePhase(encounter.id,);
     expect(result.complete,).toBeTrue();
     expect(result.triggeredOutcomes,).toEqual([],);
@@ -278,6 +290,7 @@ describe("EncounterService", () => {
       encounterType: "romantic",
       participants: ["actor-1",],
     },);
+
     expect(await service.deleteEncounter(encounter.id,),).toBeTrue();
     expect(await service.getEncounter(encounter.id,),).toBeNull();
     expect(await service.deleteEncounter(encounter.id,),).toBeFalse();
@@ -326,6 +339,7 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
         },
       },],
     },);
+
     const result = await service.advancePhase(encounter.id,);
     expect(result.complete,).toBeTrue();
 
@@ -335,6 +349,7 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
         .where("actor_id", "=", actor,)
         .selectAll()
         .execute();
+
       expect(events.some((row,) => row.event_type === "encounter.completed" && row.source === "encounter"),).toBeTrue();
     }
 
@@ -345,6 +360,7 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
         .where("source", "=", "nsfw_encounter",)
         .selectAll()
         .execute();
+
       expect(rows.length,).toBe(1,);
       expect(rows[0]!.amount,).toBe(15,);
     }
@@ -356,6 +372,7 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
         .where("category", "=", "reputation",)
         .selectAll()
         .execute();
+
       expect(rows.length,).toBe(1,);
       expect(rows[0]!.source,).toBe("nsfw",);
     }
@@ -366,6 +383,7 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
         .where("actor_id", "=", actor,)
         .selectAll()
         .execute();
+
       expect(rows.length,).toBe(1,);
     }
 
@@ -380,6 +398,7 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
         .where("target_actor_id", "=", a,)
         .selectAll()
         .executeTakeFirst();
+
     expect(pair?.score,).toBe(5,);
   });
 
@@ -415,6 +434,7 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
         },
       },],
     },);
+
     await service.advancePhase(encounter.id,);
     const pair = await db.selectFrom("character_intimacy",)
       .where("actor_id", "=", a,)
@@ -426,6 +446,7 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
         .where("target_actor_id", "=", a,)
         .selectAll()
         .executeTakeFirst();
+
     // 5 + 2 romantic bonus = 7.
     expect(pair?.score,).toBe(7,);
   });
@@ -445,6 +466,7 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
       },],
       outcomes: [],
     },);
+
     const result = await service.advancePhase(encounter.id,);
     expect(result.complete,).toBeTrue();
     expect(
@@ -485,19 +507,23 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
           },
         },],
       },);
+
       await service.advancePhase(enc.id,);
       const rows = await db.selectFrom("status_effect",)
         .where("effect_id", "=", "pregnancy",)
         .where("category", "=", "pregnancy",)
         .selectAll()
         .execute();
+
       conceived = rows.length > 0;
     }
+
     expect(conceived,).toBeTrue();
     const rows = await db.selectFrom("status_effect",)
       .where("effect_id", "=", "pregnancy",)
       .selectAll()
       .executeTakeFirstOrThrow();
+
     expect(rows.source,).toBe("reproduction",);
     expect(rows.expires_at,).not.toBeNull();
   });

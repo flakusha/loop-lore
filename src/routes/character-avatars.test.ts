@@ -72,11 +72,13 @@ describe("Avatar CRUD — owner", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     await insertActors(db, "Other Actor", {
       id: OTHER as never,
       owner_id: OTHER_USER,
       user_id: OTHER_USER,
     },);
+
     await insertAssets(db, OWNER_USER, "avatar.png", "image/png", "image", 1024, "/assets/avatar.png", {
       id: ASSET as never,
     },);
@@ -115,6 +117,7 @@ describe("Avatar CRUD — owner", () => {
         body: JSON.stringify({ image_url: ASSET, mood: "happy", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = await res.json() as { id: string };
     expect(id,).toBeDefined();
@@ -129,6 +132,7 @@ describe("Avatar CRUD — owner", () => {
         body: JSON.stringify({ mood: "happy", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -141,6 +145,7 @@ describe("Avatar CRUD — owner", () => {
         body: JSON.stringify({ image_url: ASSET, mood: "sad", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -151,6 +156,7 @@ describe("Avatar CRUD — owner", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });
@@ -168,6 +174,7 @@ describe("Avatar CRUD — admin/solo bypass", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     await insertAssets(db, OWNER_USER, "avatar.png", "image/png", "image", 1024, "/assets/avatar.png", {
       id: ASSET as never,
     },);
@@ -199,6 +206,7 @@ describe("Avatar CRUD — admin/solo bypass", () => {
         body: JSON.stringify({ image_url: ASSET, mood: "neutral", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 });
@@ -228,6 +236,7 @@ describe("Avatar config", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/avatars/config`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -240,6 +249,7 @@ describe("Avatar config", () => {
         body: JSON.stringify({ selection_rule_override: "mood_first", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 
@@ -252,6 +262,7 @@ describe("Avatar config", () => {
         body: JSON.stringify({ selection_rule_override: "random", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });
@@ -270,12 +281,15 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     await insertAssets(db, OWNER_USER, "a.png", "image/png", "image", 1024, "/a.png", {
       id: ASSET as never,
     },);
+
     await insertAssets(db, OWNER_USER, "b.png", "image/png", "image", 1024, "/b.png", {
       id: ASSET2 as never,
     },);
+
     await insertWorlds(db, OWNER_USER, "Test World", { id: WORLD as never, },);
   },);
 
@@ -290,6 +304,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/assets/${ASSET}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
 
     // The link row is gone, but the asset itself is preserved.
@@ -299,6 +314,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
       .where("asset_id", "=", ASSET,)
       .where("entity_id", "=", OWNER,)
       .execute();
+
     expect(links.length,).toBe(0,);
     const asset = await db.selectFrom("assets",).selectAll().where("id", "=", ASSET,).executeTakeFirst();
     expect(asset,).toBeDefined();
@@ -311,6 +327,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/assets/${ASSET2}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
 
     const remaining = await db
@@ -318,6 +335,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
       .select("entity_type",)
       .where("asset_id", "=", ASSET2,)
       .execute();
+
     expect(remaining.map((r,) => r.entity_type),).toEqual([AssetLinkEntity.World,],);
   });
 
@@ -326,6 +344,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/assets/${ASSET}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -334,6 +353,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/assets/${ASSET}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -346,6 +366,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
         body: JSON.stringify({ image_url: ASSET, mood: "calm", },),
       },),
     );
+
     const { id, } = await created.json() as { id: string };
 
     const res = await app.handle(new Request(`http://localhost/api/actors/${OWNER}/avatars/${id}`,),);
@@ -357,6 +378,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/avatars/00000000-0000-4000-8000-000000000999`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -369,6 +391,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
         body: JSON.stringify({ selection_rule_override: "mood_first", },),
       },),
     );
+
     expect(put.status,).toBe(200,);
 
     const get = await app.handle(new Request(`http://localhost/api/worlds/${WORLD}/avatars/config/${OWNER}`,),);
@@ -386,6 +409,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
         body: JSON.stringify({ selection_rule_override: "TOTALLY_BOGUS_RULE", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
 
     const stored = await db
@@ -393,6 +417,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
       .selectAll()
       .where("actor_id", "=", OWNER,)
       .execute();
+
     expect(stored.map((row,) => String(row.selection_rule_override ?? "",)),).not.toContain("TOTALLY_BOGUS_RULE",);
   });
 
@@ -405,6 +430,7 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -434,6 +460,7 @@ describe("Prefix parameterisation", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     await insertAssets(db, OWNER_USER, "a.png", "image/png", "image", 1024, "/a.png", {
       id: ASSET as never,
     },);
@@ -450,6 +477,7 @@ describe("Prefix parameterisation", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/v1/actors/${OWNER}/assets/${ASSET}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
   });
 
@@ -490,18 +518,22 @@ describe("Authorization — resource-level (IDOR)", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     // Actor owned by OTHER_USER, carrying a private avatar.
     await insertActors(db, "Other Actor", {
       id: OTHER as never,
       owner_id: OTHER_USER,
       user_id: OTHER_USER,
     },);
+
     await insertAssets(db, OTHER_USER, "v.png", "image/png", "image", 1024, "/v.png", {
       id: ASSET as never,
     },);
+
     await insertAssets(db, OWNER_USER, "m.png", "image/png", "image", 1024, "/m.png", {
       id: ASSET2 as never,
     },);
+
     await insertWorlds(db, OWNER_USER, "Owner World", { id: WORLD as never, },);
     await insertWorlds(db, OTHER_USER, "Other World", { id: WORLD2 as never, },);
 
@@ -525,6 +557,7 @@ describe("Authorization — resource-level (IDOR)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/avatars/${victimAvatarId}`,),
     );
+
     expect(res.status,).toBe(404,);
     expect(await res.text(),).not.toContain("secret-emotion",);
   });
@@ -537,10 +570,12 @@ describe("Authorization — resource-level (IDOR)", () => {
       tags: { emotion: "happy", },
       isPrimary: false,
     },);
+
     const app = makeApp(db, OWNER_USER, "user",);
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/avatars/${own}`,),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -553,6 +588,7 @@ describe("Authorization — resource-level (IDOR)", () => {
         body: JSON.stringify({ selection_rule_override: "mood_first", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
 
     const rows = await db
@@ -560,6 +596,7 @@ describe("Authorization — resource-level (IDOR)", () => {
       .selectAll()
       .where("world_id", "=", WORLD2,)
       .execute();
+
     expect(rows.length,).toBe(0,);
   });
 
@@ -568,6 +605,7 @@ describe("Authorization — resource-level (IDOR)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${WORLD2}/avatars/config/${OWNER}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -580,10 +618,12 @@ describe("Authorization — resource-level (IDOR)", () => {
         body: JSON.stringify({ selection_rule_override: "action_first", },),
       },),
     );
+
     expect(put.status,).toBe(200,);
     const get = await app.handle(
       new Request(`http://localhost/api/worlds/${WORLD}/avatars/config/${OWNER}`,),
     );
+
     expect(get.status,).toBe(200,);
   });
 
@@ -592,6 +632,7 @@ describe("Authorization — resource-level (IDOR)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/worlds/${WORLD2}/avatars/config/${OTHER}`,),
     );
+
     expect(res.status,).not.toBe(403,);
   });
 });
@@ -614,14 +655,17 @@ describe("Avatar select, update, delete", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     await insertActors(db, "Other Actor", {
       id: OTHER as never,
       owner_id: OTHER_USER,
       user_id: OTHER_USER,
     },);
+
     await insertAssets(db, OWNER_USER, "own.png", "image/png", "image", 1024, "/own.png", {
       id: ASSET as never,
     },);
+
     await insertAssets(db, OWNER_USER, "other.png", "image/png", "image", 1024, "/other.png", {
       id: ASSET2 as never,
     },);
@@ -633,6 +677,7 @@ describe("Avatar select, update, delete", () => {
       tags: { emotion: "happy", },
       isPrimary: false,
     },);
+
     // Belongs to OTHER — selecting it through OWNER must be refused.
     foreignAvatarId = await avatarService.createAvatar({
       actorId: OTHER,
@@ -695,6 +740,7 @@ describe("Avatar select, update, delete", () => {
         body: JSON.stringify({ emotion: "calm", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const updated = await avatarService.getAvatar(ownAvatarId,);
     expect(updated?.label,).toBe("calm",);
@@ -710,6 +756,7 @@ describe("Avatar select, update, delete", () => {
         body: JSON.stringify({ mood: "stoic", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const updated = await avatarService.getAvatar(ownAvatarId,);
     expect(updated?.label,).toBe("stoic",);
@@ -724,10 +771,12 @@ describe("Avatar select, update, delete", () => {
       tags: { emotion: "meh", },
       isPrimary: false,
     },);
+
     const app = makeApp(db, OWNER_USER, "user",);
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/avatars/${doomed}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
     expect(await avatarService.getAvatar(doomed,),).toBeUndefined();
   });

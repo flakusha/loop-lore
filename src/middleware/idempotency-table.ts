@@ -68,6 +68,7 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
       cache.delete(key,);
       return null;
     }
+
     return entry;
   };
 
@@ -88,6 +89,7 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
         // a fresh read.
         pending.finally(() => inflightHydrates.delete(key,));
       }
+
       return null;
     },
     markInFlight(key, meta,) {
@@ -101,6 +103,7 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
         startedAt: Date.now(),
         completedAt: null,
       };
+
       cache.set(key, entry,);
       // Persist asynchronously so cross-instance re-fires observe the
       // in-flight state on the **next** arrival (after the queue flush).
@@ -110,6 +113,7 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
         routePattern: meta.route,
         userId: meta.userId,
       },);
+
       return entry;
     },
     recordResponse(key, meta, args,) {
@@ -123,6 +127,7 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
         startedAt: args.startedAt,
         completedAt: Date.now(),
       },);
+
       // Persist asynchronously. `asyncStore.complete()` writes the response
       // body + status + headers into `request_results` so future processes
       // (or sibling instances) can replay it.
@@ -177,6 +182,7 @@ async function hydrateFromTable(
         existing && existing.completedAt !== null && entry.completedAt !== null &&
         existing.completedAt >= entry.completedAt
       ) { return; }
+
       cache.set(key, entry,);
     }
   } catch (error) {

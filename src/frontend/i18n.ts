@@ -56,10 +56,12 @@ export function resolveKey(
     if (typeof current !== "object" || current === null) {
       return undefined;
     }
+
     const next: string | TranslationMap = current[part] as string | TranslationMap;
     if (next === undefined) {
       return undefined;
     }
+
     current = next;
   }
 
@@ -128,6 +130,7 @@ export async function loadTranslations(locale: string,): Promise<TranslationMap 
   } catch {
     // network error or invalid JSON
   }
+
   return null;
 }
 
@@ -141,6 +144,7 @@ export function getSavedLocale(): Locale {
   if (saved && (SUPPORTED_LOCALES as string[]).includes(saved,)) {
     return saved as Locale;
   }
+
   return DEFAULT_LOCALE;
 }
 
@@ -193,12 +197,15 @@ export function createFrontendTranslator(
     if (value === undefined && fallbackLocale) {
       value = resolveKey(fallbackLocale, key,);
     }
+
     if (value === undefined) {
       return key;
     }
+
     if (params) {
       return interpolate(value, params,);
     }
+
     return value;
   };
 }

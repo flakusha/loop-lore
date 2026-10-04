@@ -36,6 +36,7 @@ export function applyChatFormat(
     user: template.user,
     assistant: template.assistant,
   };
+
   return messages.map((msg,) => {
     if (msg.role === "tool") { return msg; }
     const key = msg.role === "character" ? "assistant" : msg.role;
@@ -46,6 +47,7 @@ export function applyChatFormat(
       // String.replace replacement pattern ($&, $`, $', $$).
       ? wrapper.replace("${content}", () => msg.content,)
       : `${wrapper}${msg.content}`;
+
     return { ...msg, content: wrapped, };
   },);
 }

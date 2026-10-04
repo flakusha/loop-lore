@@ -50,6 +50,7 @@ async function createSessionAndCookie(
     .select(database.fn.countAll().as("cnt",),)
     .where("user_id", "=", userId,)
     .executeTakeFirst();
+
   const cnt = Number(existingCount?.cnt ?? 0,);
   if (cnt >= maxSessions) {
     // Evict the oldest session by id (lowest id = oldest auto-increment)

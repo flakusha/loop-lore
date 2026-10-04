@@ -42,8 +42,10 @@ export function isCombatOver(combatants: Combatant[],): {
   if (players.length === 0) {
     return { over: true, winner: "enemy", };
   }
+
   if (enemies.length === 0) {
     return { over: true, winner: "player", };
   }
+
   return { over: false, winner: null, };
 }

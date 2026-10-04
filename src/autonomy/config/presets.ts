@@ -64,6 +64,7 @@ export class UnboundedStressGatedError extends Error {
     super(
       "Preset 'unlimited-stress' is dev-only; reject in NODE_ENV=production.",
     );
+
     this.name = "UnboundedStressGatedError";
   }
 }
@@ -80,5 +81,6 @@ export function getPreset(name: PacingPresetName,): PresetDefinition {
   if (name === "unlimited-stress" && process.env.NODE_ENV === "production") {
     throw new UnboundedStressGatedError();
   }
+
   return PRESETS[name];
 }

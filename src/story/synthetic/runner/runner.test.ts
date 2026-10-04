@@ -18,6 +18,7 @@ import type { RunnerState, } from "./types";
 const alwaysPassEvaluator = new QualityEvaluator({
   thresholds: { accept: 0, regenerate: 0, escalate: 0, maxRegenerations: 3, },
 },);
+
 const alwaysFailEvaluator = new QualityEvaluator({
   thresholds: { accept: 101, regenerate: 0, escalate: 0, maxRegenerations: 3, },
 },);
@@ -96,6 +97,7 @@ describe("Synthetic Test Runner", () => {
         makeCase({ expected: { passed: true, }, },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("passed",);
       expect(r.actual,).toMatchObject({ passed: true, },);
       expect(r.mode,).toBe(SyntheticTestMode.Replay,);
@@ -114,6 +116,7 @@ describe("Synthetic Test Runner", () => {
         makeCase({ expected: { passed: true, }, },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("failed",);
     });
 
@@ -129,6 +132,7 @@ describe("Synthetic Test Runner", () => {
         makeCase({ expected: { passed: true, minScore: 200, }, },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("failed",);
       expect(r.reason,).toContain("min=200",);
     });
@@ -149,6 +153,7 @@ describe("Synthetic Test Runner", () => {
           promptVariations: 4,
         },
       );
+
       expect(r.status,).toBe("passed",);
       expect((r.actual as { scores: number[] }).scores,).toHaveLength(4,);
     });
@@ -165,6 +170,7 @@ describe("Synthetic Test Runner", () => {
         makeCase({ expected: { passed: true, }, },),
         SyntheticTestMode.Stress,
       );
+
       expect(r.status,).toBe("passed",);
       expect((r.actual as { scores: number[] }).scores,).toHaveLength(5,);
       expect((r.actual as { variance: number }).variance,).toBe(0,);
@@ -198,6 +204,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("passed",);
       expect(r.actual,).toMatchObject({ warranted: true, },);
     });
@@ -217,6 +224,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("passed",);
       expect(r.actual,).toMatchObject({ warranted: false, },);
     });
@@ -237,6 +245,7 @@ describe("Synthetic Test Runner", () => {
         makeCase({ expected: { nextActorId: "actor-1", }, },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("skipped",);
       expect(r.reason,).toContain("turnManagerFactory",);
     });
@@ -255,6 +264,7 @@ describe("Synthetic Test Runner", () => {
         makeCase({ expected: { nextActorId: "actor-1", }, },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("passed",);
       expect(r.actual,).toEqual({ nextActorId: "actor-1", structural: true, },);
     });
@@ -273,6 +283,7 @@ describe("Synthetic Test Runner", () => {
         makeCase({ expected: { nextActorId: 42, }, },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("failed",);
     });
   });
@@ -295,6 +306,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("passed",);
       expect(r.actual,).toMatchObject({ consistent: true, changedKeys: ["gold",], },);
     });
@@ -314,6 +326,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("failed",);
     });
 
@@ -332,6 +345,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("passed",);
     });
   });
@@ -354,6 +368,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("passed",);
       expect(r.actual,).toMatchObject({ questStatus: "active", escalated: true, },);
     });
@@ -374,6 +389,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("passed",);
     });
 
@@ -392,6 +408,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("skipped",);
       expect(r.reason,).toContain("not found",);
     });
@@ -410,6 +427,7 @@ describe("Synthetic Test Runner", () => {
         makeCase({ expected: {}, },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("skipped",);
       expect(r.reason,).toContain("deferred",);
     });
@@ -433,6 +451,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("passed",);
       expect(r.actual,).toMatchObject({ target: 100, nextProgress: 100, newStatus: "completed", advanced: true, },);
     });
@@ -452,6 +471,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("passed",);
       expect(r.actual,).toMatchObject({ advanced: false, newStatus: "completed", },);
     });
@@ -471,6 +491,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("failed",);
     });
 
@@ -489,6 +510,7 @@ describe("Synthetic Test Runner", () => {
         },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("skipped",);
     });
   });
@@ -508,6 +530,7 @@ describe("Synthetic Test Runner", () => {
         makeCase({ expected: {}, },),
         SyntheticTestMode.Replay,
       );
+
       expect(r.status,).toBe("skipped",);
       expect(r.reason,).toContain("unsupported scenario type",);
     });
@@ -530,6 +553,7 @@ describe("Synthetic Test Runner", () => {
         generated_cases: caseJson,
         status: SyntheticDataStatus.Generated,
       },).execute();
+
       await db.insertInto("synthetic_data",).values({
         id: regressionRowId,
         chat_id: null,
@@ -547,6 +571,7 @@ describe("Synthetic Test Runner", () => {
         qualityEvaluator: alwaysPassEvaluator,
         idGenerator: () => "fixed-run-id",
       },);
+
       const result = await runner.run([qualityRowId,], SyntheticTestMode.Replay,);
       expect(result.runId,).toBe("fixed-run-id",);
       expect(result.total,).toBe(1,);
@@ -562,12 +587,14 @@ describe("Synthetic Test Runner", () => {
         qualityEvaluator: alwaysPassEvaluator,
         autoValidate: true,
       },);
+
       await runner.run([regressionRowId,], SyntheticTestMode.Replay,);
       const row = await db
         .selectFrom("synthetic_data",)
         .select("status",)
         .where("id", "=", regressionRowId,)
         .executeTakeFirst();
+
       expect(row?.status,).toBe(SyntheticDataStatus.Validated,);
     });
 

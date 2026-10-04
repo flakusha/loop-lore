@@ -100,6 +100,7 @@ function setTokenCookie(token: string, maxAgeSecs: number,): string {
     "HttpOnly",
     "SameSite=Lax",
   ];
+
   if (secure) { parts.push("Secure",); }
   return parts.join("; ",);
 }

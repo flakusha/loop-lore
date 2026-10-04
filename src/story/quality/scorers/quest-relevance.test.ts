@@ -7,6 +7,7 @@ describe("quality/scorers/quest-relevance (real logic)", () => {
       scoreQuestRelevance({ response: "hello", prompt: "", actorName: "", lore: null, quests: [], recentTurns: [], },),
     ).toBe(60,);
   });
+
   it("returns 60 when quests undefined", () => {
     expect(
       scoreQuestRelevance({
@@ -19,6 +20,7 @@ describe("quality/scorers/quest-relevance (real logic)", () => {
       },),
     ).toBe(60,);
   });
+
   it("adds score for matching quest name words", () => {
     const r = scoreQuestRelevance({
       response: "dragon treasure",
@@ -28,8 +30,10 @@ describe("quality/scorers/quest-relevance (real logic)", () => {
       quests: [{ name: "Kill Dragon", progress: 0, target: 0, },],
       recentTurns: [],
     },);
+
     expect(r,).toBeGreaterThan(50,);
   });
+
   it("adds +10 for progress words", () => {
     const base = scoreQuestRelevance({
       response: "nothing",
@@ -39,6 +43,7 @@ describe("quality/scorers/quest-relevance (real logic)", () => {
       quests: [{ name: "X", progress: 0, target: 0, },],
       recentTurns: [],
     },);
+
     const withProgress = scoreQuestRelevance({
       response: "found the item",
       prompt: "",
@@ -47,8 +52,10 @@ describe("quality/scorers/quest-relevance (real logic)", () => {
       quests: [{ name: "X", progress: 0, target: 0, },],
       recentTurns: [],
     },);
+
     expect(withProgress,).toBeGreaterThan(base,);
   });
+
   it("ignores words <= 3 chars", () => {
     const r = scoreQuestRelevance({
       response: "a big dragon",
@@ -58,6 +65,7 @@ describe("quality/scorers/quest-relevance (real logic)", () => {
       quests: [{ name: "Kill Dragon", progress: 0, target: 0, },],
       recentTurns: [],
     },);
+
     expect(r,).toBeGreaterThan(50,);
   });
 });

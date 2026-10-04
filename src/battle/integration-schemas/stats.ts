@@ -74,6 +74,7 @@ export function calculateEffectiveStats(
   for (const mod of modifiers) {
     if (mod.stat === "characterId") { continue; // Skip non-numeric fields
      }
+
     const currentValue = effective[mod.stat];
     if (typeof currentValue === "number") {
       (effective as Record<string, unknown>)[mod.stat] = currentValue + mod.value;

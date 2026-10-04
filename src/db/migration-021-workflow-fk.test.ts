@@ -31,11 +31,13 @@ function buildMigrationProvider() {
       const files = readdirSync(dir,)
         .filter((f,) => typeof f === "string" && f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const file of files) {
         const mod = await import(path.join(dir, file,));
         migrations[file.replace(/\.ts$/, "",)] = mod.default ?? mod;
       }
+
       return migrations;
     },
   };
@@ -55,15 +57,18 @@ function seedBoundChat(sqlite: Database,): void {
     `INSERT INTO prompt_templates (id, owner_id, modality, name)
      VALUES ('t-bound', 'u1', 'llm', 'Bound')`,
   );
+
   sqlite.run(
     `INSERT INTO prompt_templates (id, owner_id, modality, name)
      VALUES ('t-free', 'u1', 'image', 'Free')`,
   );
+
   // Raw SQL: insertChats() has no prompt_template_id option.
   sqlite.run(
     `INSERT INTO chats (id, name, created_by, prompt_template_id)
      VALUES ('c-bound', 'Bound chat', 'u1', 't-bound')`,
   );
+
   sqlite.run(
     `INSERT INTO chats (id, name, created_by, prompt_template_id)
      VALUES ('c-free', 'Free chat', 'u1', NULL)`,
@@ -76,6 +81,7 @@ function readChatTemplateId(sqlite: Database, id: string,): string | null {
       SELECT prompt_template_id FROM chats WHERE id = ?
     `,)
     .get(id,);
+
   return row?.prompt_template_id ?? null;
 }
 
@@ -114,6 +120,7 @@ describe("migration 021/022 prompt_templates rebuild", () => {
     const count = sqlite
       .query<{ n: number }, []>("SELECT COUNT(*) AS n FROM prompt_templates",)
       .get();
+
     expect(count?.n,).toBe(2,);
     expect(foreignKeyViolations(sqlite,),).toEqual([],);
 
@@ -132,9 +139,11 @@ describe("migration 021/022 prompt_templates rebuild", () => {
       `INSERT INTO prompt_templates (id, owner_id, modality, name)
        VALUES ('t-wf', 'u1', 'workflow', 'Anima')`,
     );
+
     const modality = sqlite
       .query<{ modality: string }, []>("SELECT modality FROM prompt_templates WHERE id = 't-wf'",)
       .get();
+
     expect(modality?.modality,).toBe("workflow",);
 
     // The CHECK is still enforced — this is not a free-for-all text column.
@@ -162,6 +171,7 @@ describe("migration 021/022 prompt_templates rebuild", () => {
         "SELECT is_default, enabled FROM prompt_templates WHERE id = 't-bound'",
       )
       .get("t-bound",);
+
     expect(row?.is_default,).toBe("not_default",);
     expect(row?.enabled,).toBe("enabled",);
 
@@ -181,6 +191,7 @@ describe("migration 021/022 prompt_templates rebuild", () => {
          (id, owner_id, modality, name, model_family, is_default)
        VALUES ('d1', 'u1', 'workflow', 'A', 'sdxl', 'default')`,
     );
+
     // Second default for the same family — rejected.
     expect(() => {
       sqlite.run(
@@ -189,18 +200,21 @@ describe("migration 021/022 prompt_templates rebuild", () => {
          VALUES ('d2', 'u1', 'workflow', 'B', 'sdxl', 'default')`,
       );
     },).toThrow();
+
     // A different family is fine.
     sqlite.run(
       `INSERT INTO prompt_templates
          (id, owner_id, modality, name, model_family, is_default)
        VALUES ('d3', 'u1', 'workflow', 'C', 'anima', 'default')`,
     );
+
     // NULL family gets its own single-default budget.
     sqlite.run(
       `INSERT INTO prompt_templates
          (id, owner_id, modality, name, is_default)
        VALUES ('d4', 'u1', 'workflow', 'D', 'default')`,
     );
+
     expect(() => {
       sqlite.run(
         `INSERT INTO prompt_templates
@@ -234,6 +248,7 @@ describe("migration 021/022 prompt_templates rebuild", () => {
       .query<{ name: string }, []>('PRAGMA table_info("prompt_templates")',)
       .all()
       .map((r,) => r.name);
+
     expect(cols,).not.toContain("is_default",);
 
     await db.destroy();
