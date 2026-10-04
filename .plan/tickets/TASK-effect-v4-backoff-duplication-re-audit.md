@@ -3,7 +3,7 @@
 
 # TASK: Effect v4 backoff duplication re-audit
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-effect-v4-adoption-evaluation
