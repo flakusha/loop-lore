@@ -53,8 +53,11 @@ export async function processMovementTick(
     .select(["actor_id", "location_id", "schedule",],)
     // Total order: every wander/flee NPC draws from the one shared
     // `ctx.rng` stream in iteration order, so an unordered read makes a
-    // seeded tick assign draws to different NPCs run to run.
+    // seeded tick assign draws to different NPCs run to run. The `id`
+    // tie-break makes the order total even if (actor_id, world_id)
+    // duplicates slip in via an unguarded carry (see scheduler/store.ts).
     .orderBy("actor_id",)
+    .orderBy("id",)
     .execute();
 
   for (const npc of npcs) {

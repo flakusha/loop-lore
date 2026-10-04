@@ -31,8 +31,10 @@ export async function getLocationConnections(db: Kysely<DB>, locationId: string,
     // with the seeded tick rng, so an unordered read makes a seeded tick
     // replay differently depending on which index SQLite picks
     // (idx_location_states_world can be scanned instead of the table).
-    // It also pins the limit(5) window to the 5 lowest ids.
+    // It also pins the limit(5) window to the 5 lowest ids. The `id`
+    // tie-break keeps the order total if location_id repeats.
     .orderBy("location_id",)
+    .orderBy("id",)
     .limit(5,) // Limit to nearby locations
     .execute();
 
