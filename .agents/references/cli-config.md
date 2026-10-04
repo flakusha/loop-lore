@@ -76,15 +76,15 @@ Runs on commit: format → check → unit tests → e2e (with safeguards).
 
 ## Native Issue Tracking
 
-All commands run via `bun run scripts/worktree/ <command>`. Valid ticket types:
+All commands run via `giwt` (full command map: `.agents/skills/giwt-usage/SKILL.md`). Valid ticket types:
 `BUG-`, `FEAT-`, `FIX-`, `IDEA-`, `TASK-`, `SOL-`, `INFRA-` (there is no `FEA-`
 type and epics are not tickets — they live in `.plan/epics/`).
 
-| Command                                           | Description                                                       |
-| ------------------------------------------------- | ----------------------------------------------------------------- |
-| `bun run scripts/worktree/ ticket BUG ID "Title"` | Create ticket file + git issue (BUG/FEAT/FIX/IDEA/TASK/SOL/INFRA) |
-| `bun run scripts/worktree/ issues`                | List open issues with branch mapping                              |
-| `bun run scripts/worktree/ state ID closed`       | Transition issue status (`open` \| `closed`)                      |
-| `bun run plan:sync`                               | Dry-run ticket-index ↔ git issue sync                             |
-| `bun run plan:sync:fix`                           | Apply sync fixes (non-interactive)                                |
-| `bun run scripts/worktree/ gi <args>`             | Run git-issue command directly                                    |
+| Command                                                     | Description                                                       |
+| ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| `giwt ticket BUG "Title" [body] --label <X> --priority <X>` | Create ticket file + git issue (BUG/FEAT/FIX/IDEA/TASK/SOL/INFRA) |
+| `giwt issues`                                               | List open issues with branch mapping                              |
+| `giwt state ID closed`                                      | Transition issue status (`open` \| `closed`)                      |
+| `bun run plan:sync`                                         | Dry-run ticket-index ↔ git issue sync                             |
+| `bun run plan:sync:fix`                                     | Apply sync fixes (non-interactive)                                |
+| `giwt gi <args>`                                            | Run git-issue command directly                                    |

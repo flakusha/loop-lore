@@ -61,7 +61,7 @@ The gate is a no-op unless `WEAVE_BASE` is set, so normal runs are unaffected.
 ## Source of Truth (Precedence Order)
 
 1. **`AGENTS.md`** — project conventions (this file)
-2. **`.agents/references/banned-patterns.md`** + **`recommendations.md`** — review rules
+2. **`.agents/references/banned-patterns.md`** + **`recommendations.md`** — review rules; **`.agents/skills/giwt-usage/SKILL.md`** — giwt command reference
 3. **`src/`** — runnable truth, verify with `bun run check`
 4. **`docs/spec/*`** — design specs (aspirational, may be stale)
 5. **`docs/meta/code-practices-improvements/*`** — research only
@@ -340,11 +340,17 @@ on the dev checkout.
 > `node_modules/.bin` ahead of `~/.local/bin`, so the `plan:*` scripts already
 > resolve the pin), or `bun node_modules/giwt/src/cli.ts <args>`. Repo code
 > that shells out to giwt MUST spawn the pinned path, not the bare name — see
-> `giwtArgv` in `scripts/worktree/commands/sync.ts`.
+> `giwtArgv` in `scripts/worktree/commands/sync.ts`. The dependency itself is
+> pinned by `bun.lock` (`github:flakusha/giwt`).
+>
+> Raw `git` invocations in bash may be rerouted by the harness to `giwt git` —
+> a safety-gated passthrough that refuses destructive shapes, GPG bypass, and
+> config writes (config: `git` section of `giwt.toml`). Full command map and
+> lifecycle reference: `.agents/skills/giwt-usage/SKILL.md`.
 
 ```bash
 # Create worktree (branch defaults to dev base)
-giwt new feature-name
+giwt new feature-name [--scope <text>] [--tickets <csv>]
 
 # Work in worktree
 cd tree/feature-name
@@ -364,6 +370,21 @@ giwt finalize plan-branch --merge-strategy squash
 # Manual recovery if finalize left dev in a bad state
 giwt abort              # recover (idempotent)
 giwt abort --dry-run   # preview what would happen
+
+# Other frequently used commands (full map: .agents/skills/giwt-usage/SKILL.md)
+giwt finalize feature-name --plan-gates <csv> --jobs <n>  # gate tuning
+giwt remove feature-name [--branch-only]  # drop worktree/branch
+giwt cleanup                              # prune worktrees of deleted branches
+giwt create feature-name                  # worktree for existing branch
+giwt prs                                  # worktrees for open PRs
+giwt report        # aggregate check reports (same as bun run check:report-ls)
+giwt runs [triage <run> | diff <a> <b>]   # run records + failure triage
+giwt ledger [--last N] [--json]           # shared agent ledger
+giwt gripe --at <branch> <message>        # flag a failure at another branch
+giwt doctor [check | scratchpad]          # repo health / scratchpad bloat
+giwt clean ; giwt tmp                     # .tmp / machine-temp pruning (dry-run default)
+giwt docs list|show|search|dump           # markdown doc corpus
+giwt task "<directive>" -w                # render an agent task prompt
 ```
 
 > **Note**: `giwt` is the canonical CLI — all worktree work goes through it.

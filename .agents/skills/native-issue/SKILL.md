@@ -33,66 +33,66 @@ is regenerated with `bun run plan:docs`.
 
 ## Commands
 
-All commands run via `bun run scripts/worktree/ <command>` (from any checkout;
+All commands run via `giwt <command>` (from any checkout;
 the CLI resolves the main repo root itself).
 
 ### Create Ticket
 
 ```bash
-bun run scripts/worktree/ ticket BUG "Fix login crash" -l bug -p high
+giwt ticket BUG "Fix login crash" --label bug --priority high
 # Creates .plan/tickets/BUG-fix-login-crash.md + git issue BUG-FIX-LOGIN-CRASH
-# Multiple labels: repeat -l or pass comma-separated: -l bug,auth
+# Multiple labels: repeat --label or pass comma-separated: --label bug,auth
 ```
 
 ### List Issues
 
 ```bash
-bun run scripts/worktree/ issues
+giwt issues
 ```
 
 ### Show / Inspect an Issue
 
 ```bash
-bun run scripts/worktree/ show TASK-001
+giwt show TASK-001
 # Full issue detail (metadata, body, trailers)
 ```
 
 ### Search Issues
 
 ```bash
-bun run scripts/worktree/ search "combat"
+giwt search "combat"
 ```
 
 ### Comment on an Issue
 
 ```bash
-bun run scripts/worktree/ comment TASK-001 -m "blocked on schema"
+giwt comment TASK-001 -m "blocked on schema"
 ```
 
 ### Edit an Issue
 
 ```bash
-bun run scripts/worktree/ edit TASK-001 --title "New title" --body "New body"
+giwt edit TASK-001 --title "New title" --body "New body"
 ```
 
 ### Change Issue State
 
 ```bash
-bun run scripts/worktree/ state TASK-001 closed
+giwt state TASK-001 closed
 # Valid states: open | closed
 ```
 
 ### Attach Files
 
 ```bash
-bun run scripts/worktree/ attach TASK-001 ./spec.md
-bun run scripts/worktree/ attach-dir TASK-001 ./design-notes/
+giwt attach TASK-001 ./spec.md
+giwt attach-dir TASK-001 ./design-notes/
 ```
 
 ### Run git-issue Directly
 
 ```bash
-bun run scripts/worktree/ gi <args>
+giwt gi <args>
 # Passes through to the git-issue CLI
 ```
 
