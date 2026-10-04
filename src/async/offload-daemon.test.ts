@@ -732,6 +732,7 @@ describe("pruneOrphanSpills — retention cap for unreferenced spill files", () 
         ttlMs: TTL_MS,
         dir: path.join(sweepDir, "missing",),
       },);
+
       expect(pruned,).toBe(0,);
     } finally {
       await ctx.db.destroy();
@@ -808,6 +809,7 @@ describe("pruneOrphanSpills — retention cap for unreferenced spill files", () 
       writeFileSync(p, "x",);
       utimesSync(p, oldTs, oldTs,);
     }
+
     const ctx = await createTestDb();
     try {
       await seedRequest(ctx.db, {
