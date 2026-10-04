@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 315 epics
+**Total:** 316 epics
 
 ## Summary
 
@@ -202,6 +202,7 @@
 | Not Started | Fuzzing Infrastructure | Medium | Medium | 9 | [epic-fuzzing-infrastructure.md](/.plan/epics/epic-fuzzing-infrastructure.md) |
 | In Progress | GM/Assistant Story Whitenotes & Shadow Notes | High | Medium | 1 | [epic-gm-shadow-notes.md](/.plan/epics/epic-gm-shadow-notes.md) |
 | In Progress | Group Chat | High | Medium | 0 | [epic-group-chat.md](/.plan/epics/epic-group-chat.md) |
+| Not Started | Guest Access — Unauthenticated Public Browsing (draft for new worktree) | High — public reach / demo-ability gap | Large | 7 | [epic-guest-access.md](/.plan/epics/epic-guest-access.md) |
 | Not Started | Headers & Navigation Management | Medium | Medium | 0 | [epic-frontend-headers-management.md](/.plan/epics/epic-frontend-headers-management.md) |
 | Not Started | Headless Mode & Alternative Frontends | Medium | High (split into 5 sub-epics) | 0 | [epic-headless-alternative-frontends.md](/.plan/epics/epic-headless-alternative-frontends.md) |
 | Not Started | Hidden Carriage — Chat-Includeable Structured Memory Context | medium | Medium | 0 | [epic-hidden-carriage-context.md](/.plan/epics/epic-hidden-carriage-context.md) |
@@ -2165,6 +2166,15 @@ Systematic approach to generating diverse, malicious, and edge-case inputs for f
 - **File:** `.plan/epics/epic-group-chat.md`
 
 Group chat lets multiple characters participate in one conversation. The runtime
+
+### Guest Access — Unauthenticated Public Browsing (draft for new worktree)
+
+- **Status:** Not Started
+- **Priority:** High — public reach / demo-ability gap
+- **Effort:** Large
+- **Type:** epic
+- **Tags:** auth, access, guest, public, visibility, read-only
+- **File:** `.plan/epics/epic-guest-access.md`
 
 ### Headers & Navigation Management
 
