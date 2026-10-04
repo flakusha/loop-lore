@@ -148,8 +148,16 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
 
       // The server decrypts on read, so the rendered bubble contains plaintext.
       await page.locator("#message-list",).getByText(secret,).waitFor({ timeout: 30_000, },);
-      const bodyText = await page.evaluate(() => document.body.textContent || "");
-      expect(bodyText,).not.toContain("[Encrypted \u2014 unable to decrypt]",);
+      // Scope the decrypt-failure check to THIS message's own bubble. The
+      // previous assertion read the whole document body, so a decrypt failure
+      // in any other bubble anywhere on the page tripped it for a reason
+      // unrelated to the secret under test (see BUG-browser-e2e-asserts-absence).
+      const bubbleText = await page
+        .locator("#message-list",)
+        .getByText(secret,)
+        .locator("xpath=ancestor::div[contains(@class,'bubble')][1]",)
+        .textContent();
+      expect(bubbleText ?? "",).not.toContain("[Encrypted \u2014 unable to decrypt]",);
 
       // The row write races the assertions: the htmx swap resolves when the
       // bubble renders, which is not a barrier for the INSERT. Reading the
