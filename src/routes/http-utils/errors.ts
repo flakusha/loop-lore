@@ -52,6 +52,21 @@ export function notFoundResponse(message?: string, t?: TranslatorFn,): Response 
   return jsonError({ message: msg, status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
 }
 
+/**
+ * 404 for an emotion-avatar job the caller may not see.
+ *
+ * Shared so the "unknown job" and "job owned by someone else" replies are
+ * byte-identical across surfaces — a differing body would let a caller probe
+ * for job existence. Only the response shape is shared: each call site keeps
+ * its own ownership decision (see `job.userId` vs `job.actorId`).
+ */
+export function emotionJobNotFoundResponse(t?: TranslatorFn,): Response {
+  return jsonError({
+    message: t?.("characters.emotionJobNotFound",) ?? "Job not found",
+    status: HttpStatus.NotFound,
+  },);
+}
+
 /** 404 "Not found or not owner" — ownership check failure. */
 export function notOwnerResponse(entity = "Resource", t?: TranslatorFn,): Response {
   return notFoundResponse(`${entity} ${t?.("errors.notFound",) ?? "not found or not owner"}`, t,);
