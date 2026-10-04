@@ -28,6 +28,7 @@ async function loadUserInfo(): Promise<void> {
       username?: string;
       role?: string;
     };
+
     if (nameEl) { nameEl.textContent = user.display_name || user.username || t("common.user",); }
     if (roleEl) { roleEl.textContent = user.role || "solo"; }
   } catch {

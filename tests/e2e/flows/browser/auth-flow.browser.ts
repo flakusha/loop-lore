@@ -89,6 +89,7 @@ describe("Auth browser E2E", () => {
           (res,) => res.url().includes("/api/v1/auth/login",) && res.request().method() === "POST",
           { timeout: 30_000, },
         );
+
         await page.click("[data-testid='login-submit']",);
         await response;
         // The error element should have received a swap (innerHTML changed).

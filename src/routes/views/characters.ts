@@ -34,6 +34,7 @@ async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
     const avatar = c.avatar_asset_id
       ? `<img src="/api/v1/assets/${c.avatar_asset_id}/thumb" alt="Avatar" />`
       : "<span>👤</span>";
+
     const name = escapeHtml(c.display_name,);
     const desc = escapeHtml(c.description || "",);
     return `<div class="character-card" x-on:click="window.selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
@@ -71,6 +72,7 @@ async function serveCharacterEditForm(
       <div class="title">Character not found</div>
     </div>`,);
   }
+
   // buildEditFormHtml applies escapeHtml/escapeAttr internally to all
   // user-controlled fields, so pass the raw DB values (not pre-escaped).
   const name = actor.display_name ?? "";
@@ -86,10 +88,12 @@ async function serveCharacterEditForm(
   const avatarHtml = actor.avatar_asset_id
     ? `<img src="/api/v1/assets/${actor.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
     : "<span>👤</span>";
+
   const avatarId = actor.avatar_asset_id || "";
   const avatarRemoveBtn = actor.avatar_asset_id
     ? '<button type="button" class="btn btn-danger" x-on:click="window.clearAvatar()">Remove</button>'
     : "";
+
   const contentRating = (actor.content_rating as string | null) ?? "sfw";
   const avatarFocusX = actor.avatar_focus_x ?? 50;
   const avatarFocusY = actor.avatar_focus_y ?? 50;

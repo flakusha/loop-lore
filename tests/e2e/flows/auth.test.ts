@@ -23,6 +23,7 @@ describe("Auth E2E", () => {
   afterAll(async () => {
     await server.close();
   },);
+
   test("GET /api/v1/auth/me returns 401 when not authenticated", async () => {
     const res = await api.get("/api/v1/auth/me",);
     expect(res.status,).toBe(401,);
@@ -45,6 +46,7 @@ describe("Auth E2E", () => {
       display_name: string;
       role: string;
     }>("/api/v1/auth/me",);
+
     expect(res.ok,).toBe(true,);
     expect(res.data,).toBeTruthy();
     expect(res.data!.role,).toBe("solo",);
@@ -66,6 +68,7 @@ describe("Auth E2E", () => {
     expect(meRes.status,).toBe(401,);
     expect(meRes.code,).toBeTruthy(); // TEST.2 error envelope
   });
+
   describe("Auth E2E — seeded user login", () => {
     test("POST /api/v1/auth/login with valid credentials", async () => {
       // Seed users before test
@@ -111,6 +114,7 @@ describe("Auth E2E", () => {
           password: "wrong-password",
         },).toString(),
       },);
+
       expect(r.status,).toBeGreaterThanOrEqual(400,);
       expect(r.status,).toBeLessThan(500,);
     });
@@ -120,6 +124,7 @@ describe("Auth E2E", () => {
         SEED.user.username,
         SEED.user.password,
       );
+
       expect(ok,).toBe(true,);
 
       const first = await scopedApi.post("/api/v1/auth/logout",);

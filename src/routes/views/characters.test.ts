@@ -40,6 +40,7 @@ describe("views/characters", () => {
         actor_type: "character" as never,
         description: "A desc",
       },);
+
       await insertActors(db, "Hidden", { id: "actor-hidden" as never, actor_type: "user" as never, },);
 
       const res = await serveCharactersGrid(db,);
@@ -54,11 +55,13 @@ describe("views/characters", () => {
       await insertAssets(db, "u-owner", "a.png", "image/png", "image", 10, "p", {
         id: "asset-1" as never,
       },);
+
       await insertActors(db, "Ava", {
         id: "actor-ava" as never,
         actor_type: "character" as never,
         avatar_asset_id: "asset-1",
       },);
+
       await insertActors(db, "Plain", { id: "actor-plain" as never, actor_type: "character" as never, },);
 
       const html = await (await serveCharactersGrid(db,)).text();
@@ -71,6 +74,7 @@ describe("views/characters", () => {
         actor_type: "character" as never,
         description: "<script>x</script>",
       },);
+
       const html = await (await serveCharactersGrid(db,)).text();
       expect(html,).not.toContain("<b>Evil</b>",);
       expect(html,).toContain("&lt;b&gt;Evil&lt;/b&gt;",);
@@ -97,6 +101,7 @@ describe("views/characters", () => {
         mes_example: "m",
         post_history_instructions: "p",
       },);
+
       const html = await (await serveCharacterEditForm(id, db,)).text();
       expect(html,).toContain("Hero",);
       expect(html,).toContain("desc &lt;&amp;&gt;",);
@@ -109,11 +114,13 @@ describe("views/characters", () => {
       await insertAssets(db, "u-owner", "pic.png", "image/png", "image", 100, "path", {
         id: "asset-9" as never,
       },);
+
       await insertActors(db, "Pict", {
         id: id as never,
         actor_type: "character" as never,
         avatar_asset_id: "asset-9",
       },);
+
       const html = await (await serveCharacterEditForm(id, db,)).text();
       expect(html,).toContain("/api/v1/assets/asset-9/thumb",);
       expect(html,).toContain("Remove",);

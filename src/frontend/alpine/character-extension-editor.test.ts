@@ -145,6 +145,7 @@ describe("characterExtensionEditorFactory", () => {
       abilities: { strength: 12, },
       inventory: [{ id: "x", name: "x", type: "weapon", description: "y", quantity: 1, equipped: false, },],
     };
+
     setResponder(() => settingsResponse(seed,));
 
     const state = characterExtensionEditorFactory("actor-aria", FANTASY_RPG_REQUIREMENTS, fetcher,);
@@ -171,6 +172,7 @@ describe("characterExtensionEditorFactory", () => {
       abilities: { strength: 14, },
       inventory: [{ id: "x", name: "x", type: "weapon", description: "y", quantity: 1, equipped: false, },],
     };
+
     state.bundleId = "fantasy-rpg";
     await state.save();
 
@@ -205,6 +207,7 @@ describe("characterExtensionEditorFactory", () => {
       abilities: { strength: 9, },
       inventory: [{ id: "x", name: "x", type: "weapon", description: "y", quantity: 1, equipped: false, },],
     };
+
     setResponder(() => settingsResponse(seed,));
 
     const state = characterExtensionEditorFactory("actor-aria", undefined, fetcher,);

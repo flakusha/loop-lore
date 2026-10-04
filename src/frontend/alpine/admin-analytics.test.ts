@@ -56,12 +56,14 @@ function routeResponses(): void {
     if (url.startsWith("/api/v1/telemetry/analytics/summary",)) {
       return Response.json({ total: 5, distinct_sessions: 2, distinct_users: 1, },);
     }
+
     if (url.startsWith("/api/v1/telemetry/analytics/daily",)) {
       return Response.json([
         { date: "2026-10-01", count: 3, active_users: 1, },
         { date: "2026-10-02", count: 6, active_users: 2, },
       ],);
     }
+
     if (url.startsWith("/api/v1/telemetry/analytics/errors",)) { return Response.json([],); }
     if (url.startsWith("/api/v1/telemetry/analytics/purge",)) { return Response.json({ ok: true, },); }
     if (url === "/api/v1/analytics/overview") {
@@ -77,6 +79,7 @@ function routeResponses(): void {
         topChats: [],
       },);
     }
+
     if (url === "/api/v1/analytics/characters") {
       return Response.json({
         characters: [{
@@ -89,6 +92,7 @@ function routeResponses(): void {
         },],
       },);
     }
+
     return new Response("", { status: 404, },);
   };
 }
