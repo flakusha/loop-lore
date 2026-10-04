@@ -33,5 +33,6 @@ export async function flushRegexTelemetry(db: Kysely<DB>,): Promise<void> {
       source: "server",
     },);
   }
+
   resetRegexTelemetry();
 }

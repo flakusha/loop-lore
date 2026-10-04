@@ -64,6 +64,7 @@ describeOrSkip("flushRegexTelemetry", () => {
         source: "server",
       },
     ],);
+
     expect(getRegexTelemetrySnapshot(),).toEqual([],);
   });
 
