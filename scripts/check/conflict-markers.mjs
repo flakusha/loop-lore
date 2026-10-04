@@ -17,7 +17,8 @@
  * Usage: bun run scripts/check/conflict-markers.mjs
  *
  * Exit codes: 0 clean, 1 markers found, 2 git failure. `git grep` uses
- * exit 1 for "no matches", so a tooling failure must never read as clean.
+ * exit 1 for "no matches", so a tooling failure — or a contradictory
+ * exit-0-with-no-output state — must never read as clean.
  *
  * Scans tracked working-tree files only (git grep default): untracked dirt
  * is refused earlier by the finalize clean-state check, and merges commit
@@ -51,9 +52,14 @@ function main() {
     );
   }
   const out = new TextDecoder().decode(proc.stdout,).trim();
-  if (proc.exitCode === 1 || out === "") {
+  if (proc.exitCode === 1) {
     console.log("conflict - markers: clean (no merge/rebase markers in tracked files)",);
     return;
+  }
+  // Exit 0 with empty output is contradictory (exit 0 means matches) — fail
+  // closed rather than reading a broken git state as clean.
+  if (out === "") {
+    throw new Error("git grep exited 0 with no output — contradictory state",);
   }
 
   const findings = out.split("\n",);
