@@ -164,11 +164,11 @@ export function createEmailAdapter(options: EmailAdapterOptions = {},): EmailAda
         : {};
 
       const smtpUser = typeof record.smtpUser === "string" && record.smtpUser.trim() !== ""
-        ? record.smtpUser.trim()
+        ? record.smtpUser.trim().toLowerCase()
         : undefined;
 
       const mailbox = typeof record.mailboxAddress === "string" && record.mailboxAddress.trim() !== ""
-        ? record.mailboxAddress.trim()
+        ? record.mailboxAddress.trim().toLowerCase()
         : undefined;
 
       if (smtpUser === undefined && mailbox === undefined) {

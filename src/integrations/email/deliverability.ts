@@ -91,7 +91,9 @@ export function relaxBody(body: string,): string {
 
 /**
  * Sign an outbound message with DKIM (RFC 6376, relaxed/relaxed rsa-sha256).
- * The returned header must be PREPENDED to the message headers exactly as-is.
+ * The returned header must be PREPENDED to the message headers exactly as-is;
+ * it is emitted UNFOLDED — fold before transmit at tag boundaries (CRLF +
+ * WSP only; relaxed canonicalization ignores folding, so verifiers re-unfold).
  * @throws never — key failures return a typed {@link DkimSignError}.
  * @param request Message pieces + signing identity + private key.
  * @returns The DKIM-Signature header, or a typed failure.
@@ -100,8 +102,10 @@ export function signDkim(request: DkimSignRequest,): DkimSignResult {
   const timestamp = request.timestamp ?? Math.floor(Date.now() / 1000,);
   const bodyHash = createHash("sha256",).update(relaxBody(request.body,),).digest("base64",);
 
-  // Signed headers are taken last-occurrence-first (RFC 6376 §5.4.2);
-  // a listed header absent from the message signs as empty (`name:`).
+  // Signed headers are taken last-occurrence-first (RFC 6376 §5.4.2): when
+  // the same name is listed twice in h=, the first entry signs the LAST
+  // instance and the next entry walks back one instance (back-to-front);
+  // a listed header with no remaining instance signs as empty (`name:`).
   // h= names are matched and emitted lowercased so title-case callers
   // ("From") resolve against the lowercased header index.
   const signHeaders = request.signHeaders.map((name,) => name.toLowerCase());
@@ -110,8 +114,12 @@ export function signDkim(request: DkimSignRequest,): DkimSignResult {
     return { name: canonical.slice(0, canonical.indexOf(":",),), canonical, };
   },);
 
+  const usedInstances = new Map<string, number>();
   const signedLines = signHeaders.map((name,) => {
-    const match = byName.findLast((part,) => part.name === name);
+    const occurrences = byName.filter((part,) => part.name === name);
+    const used = usedInstances.get(name,) ?? 0;
+    usedInstances.set(name, used + 1,);
+    const match = occurrences[occurrences.length - 1 - used];
     return match === undefined ? `${name}:` : match.canonical;
   },);
 
