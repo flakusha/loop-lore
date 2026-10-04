@@ -49,12 +49,12 @@ Absent prerequisites (each verified by search, not assumption):
 
 - No Fedify or equivalent AP library in `package.json`.
 - No HTTP-signature verification module; the sole mention of HTTP Signatures in `src/` is
-  a comment at `src/crypto/activitypub-keys.ts:13`.
+  a comment at `src/crypto/activitypub-keys.ts:12`.
 - No WebFinger or actor-document resolution, and no `federated_identities` / `ap_id` /
   `actor_uri` mapping table. `BUG-federation-identity-mapping-to-local-users-undefined`
   tracks this and states it blocks all federation.
 - The only AP-named schema is `activitypub_actor_keys`
-  (`src/db/schema-manifest.ts:968`, `src/db/migrations/001_init.ts:793`) — key storage
+  (`src/db/schema-manifest.ts:987`, `src/db/migrations/001_init.ts:793`) — key storage
   with no reader in any live code path, not the protocol.
 
 Why no test was written: the security-relevant case this ticket implies — a remote actor

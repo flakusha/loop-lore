@@ -55,14 +55,14 @@ What is genuinely absent (each is a prerequisite for this ticket, not a detail):
 - **No AP library.** No Fedify (or equivalent) in `package.json`.
 - **No HTTP-signature verification module.** `src/crypto/` has no signature/HTTP
   signing file; the only mention of HTTP Signatures in `src/` is a comment at
-  `src/crypto/activitypub-keys.ts:13`. This ticket's AC requires it on every inbox POST.
+  `src/crypto/activitypub-keys.ts:12`. This ticket's AC requires it on every inbox POST.
 - **No inbox/outbox.** No route, no `OrderedCollection` document, no pagination.
 - **No WebFinger or actor-document resolution** for local or remote actors.
 - **No remote-identity mapping.** No `federated_identities`, `ap_id`, or `actor_uri`
   table. `BUG-federation-identity-mapping-to-local-users-undefined` records this gap and
   states it blocks all federation.
 - **No object persistence with ownership metadata.** The only AP-named artifact is key
-  storage: `activitypub_actor_keys` (`src/db/schema-manifest.ts:968`, created at
+  storage: `activitypub_actor_keys` (`src/db/schema-manifest.ts:987`, created at
   `src/db/migrations/001_init.ts:793`). That is a keypair table with no reader in any live
   code path — it is not the protocol.
 
