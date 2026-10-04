@@ -4833,3 +4833,25 @@ export async function insertChatWardrobeOverrides(
   } as any,).execute();
   return id;
 }
+
+/** Insert a mesh_dek_exports row. */
+export async function insertMeshDekExports(
+  db: Db,
+  chat_id: string,
+  key_id: string,
+  peer_origin: string,
+  sender_origin: string,
+  opts?: { id?: string; created_at?: string; revoked_at?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("mesh_dek_exports",).values({
+    id,
+    chat_id,
+    key_id,
+    peer_origin,
+    sender_origin,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}

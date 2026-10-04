@@ -591,6 +591,15 @@ export const SCHEMA = new SchemaManifest()
     vector_blob: col("blob", { notNull: true, },),
     created_at: col("integer", { notNull: true, },),
   },)
+  .table("mesh_dek_exports", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    chat_id: col("text", { notNull: true, },),
+    key_id: col("text", { notNull: true, },),
+    peer_origin: col("text", { notNull: true, },),
+    sender_origin: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    revoked_at: col("text",),
+  },)
   .table("mesh_deliveries", {
     content_id: col("text", { primaryKey: true, },),
     origin: col("text", { notNull: true, },),
