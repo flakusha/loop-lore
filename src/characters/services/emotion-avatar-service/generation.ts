@@ -14,22 +14,9 @@ import type { MattingProvider, } from "../../../generation/matting/types";
 import { getLogger, } from "../../../logger";
 import { validateProviderUrl, } from "../../../utils/url-validation";
 import type { AvatarService, } from "../avatar-service";
+import { emitJobProgress, jobProgress, } from "./job-events";
 import { recordBatchFinish, recordBatchStart, } from "./job-records";
 import type { BatchGenerationJob, GenerateEmotionAvatarsOpts, } from "./types";
-
-import { randomUUID, } from "node:crypto";
-import { persistGeneratedImages, } from "../../../assets/service";
-import { generateImages, } from "../../../generation/image-engine";
-import { enqueueAutoMatting, } from "../../../generation/matting/auto-matte";
-import {
-  buildEmotionPrompt,
-  extractAvatarMetadata,
-} from "../emotion-avatar-fallback";
-import { emitJobProgress, jobProgress, } from "./job-events";
-
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// src/characters/services/emotion-avatar-service/generation.ts — Batch generation logic
 
 /**
  * Minimal structural handle onto the owning service, threading the state the
