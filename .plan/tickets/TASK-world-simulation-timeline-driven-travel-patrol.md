@@ -21,5 +21,4 @@ Existing world-tick scheduler covers actor autonomy; this ticket extends it to d
 - Cost accounting: each action costs 0.05 budget unit; budget enforcement layered atop `epic-generation-flow-control`.
 - Tests: 100-tick simulation deterministic given seed; budget exhausted -> no actions.
 
-// hint: Structural and logic conflict. Both design and behavior differ.
 **Resolved:** 2026-10-02 registry-driven close: git issue fbf4f84 (registry tip: 9e694754e Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WORLD-SIMULATION-TIMELINE-D)
