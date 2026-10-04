@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 // size-allow: 280
 
-import type { CharactersConfig, } from "../../schema";
+import type { CharacterTemplate, } from "./types.js";
 
-export const CHARACTERS_DEFAULTS = {
+export const CHARACTERS_DEFAULTS: { enabled: boolean; templates: CharacterTemplate[]; } = {
   enabled: true,
   templates: [
     // ── Starter Trio ────────────────────────────────────────
@@ -262,4 +262,4 @@ export const CHARACTERS_DEFAULTS = {
       is_default: true,
     },
   ],
-} satisfies CharactersConfig;
+} satisfies { enabled: boolean; templates: CharacterTemplate[]; };
