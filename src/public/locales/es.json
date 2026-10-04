@@ -1411,8 +1411,6 @@
   },
 
   "branches": {
-<<<<<<< ours — object `branches` (S+F, confidence: low)
-// hint: Structural and logic conflict. Both design and behavior differ.
     "title": "Ramas",
     "none": "Aún no hay ramas",
     "manage": "Gestionar ramas",
@@ -1439,18 +1437,6 @@
     "failedSwitch": "No se pudo cambiar de rama",
     "failedDelete": "No se pudo eliminar la rama",
     "failedMerge": "No se pudo fusionar la rama"
-=======
-    "title": "Branches",
-    "none": "No branches yet",
-    "fromHere": "Branch from here",
-    "forkPrompt": "Branch name (leave empty for auto-name)",
-    "forked": "Branched from message",
-    "failedFork": "Failed to create branch",
-    "switched": "Switched branch",
-    "failedSwitch": "Failed to switch branch",
-    "failedLoad": "Failed to load branches",
-    "forkPoint": "Branch point"
->>>>>>> theirs — object `branches` (S+F, confidence: low)
   },
   "wardrobe": {
     "baseOutfit": "Base outfit",
