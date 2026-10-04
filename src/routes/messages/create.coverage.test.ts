@@ -4,12 +4,14 @@
 /**
  * Coverage tests for message creation (validation, guards, idempotency).
  */
+import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { getProvider, registerProvider, unregisterProvider, } from "../../generation/providers/registry";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssets, insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
@@ -22,15 +24,43 @@ const testConfig = {
   generation: { providers: { openaiCompatible: [], }, defaultProvider: null, },
 } as unknown as Config;
 
+// Bun's mock.module is process-global and cannot be unmocked: under a full
+// `bun test src/` run an earlier file (e.g.
+// admin/provider-health-isolated.test.ts) may have replaced the provider
+// registry with fakes, flipping isLlmGenerationConfigured() on and diverting
+// the assistant path below onto the LLM path. A sentinel roundtrip detects
+// ANY registry stub; skip the generation-dependent test when stubbed (see
+// generation/providers/registry.test.ts and reply.test.ts).
+const REGISTRY_PROBE_PROVIDER = "__create_coverage_pristine_probe__";
+const registryPristine = (() => {
+  try {
+    // Registry stubs export only listProviders/getProvider — a missing
+    // register/unregister means stubbed.
+    if (typeof registerProvider !== "function" || typeof unregisterProvider !== "function") { return false; }
+    registerProvider(REGISTRY_PROBE_PROVIDER, { label: "probe", } as never,);
+    const hit = getProvider(REGISTRY_PROBE_PROVIDER,) !== undefined;
+    unregisterProvider(REGISTRY_PROBE_PROVIDER,);
+    return hit;
+  } catch {
+    return false;
+  }
+})();
+
 /**
  * @param db
  * @param userId
  * @param userRole
+ * @param config
  */
-function makeApp(db: Kysely<DB>, userId: string | null, userRole: string | null,): Elysia {
+function makeApp(
+  db: Kysely<DB>,
+  userId: string | null,
+  userRole: string | null,
+  config: Config = testConfig,
+): Elysia {
   return new Elysia({ name: "test-create-coverage", },)
     .derive({ as: "scoped", }, () => ({ userId, userRole, }),)
-    .use(createRoutes({ database: db, config: testConfig, },),) as unknown as Elysia;
+    .use(createRoutes({ database: db, config, },),) as unknown as Elysia;
 }
 
 /**
@@ -78,6 +108,7 @@ async function postMessage(
 
 describe("createRoutes coverage", () => {
   let db: Kysely<DB>;
+  let sqlite: Database;
   const owner = uid();
   const stranger = uid();
   let chatA: string;
@@ -86,7 +117,7 @@ describe("createRoutes coverage", () => {
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
-    ({ db, } = await createTestDb());
+    ({ db, sqlite, } = await createTestDb());
     await seedUser(db, owner, "Owner",);
     await seedUser(db, stranger, "Stranger",);
     chatA = uid();
@@ -342,4 +373,40 @@ describe("createRoutes coverage", () => {
     expect(attachments,).toHaveLength(1,);
     expect(attachments[0]?.assetId,).toBe(assetId,);
   });
+
+  test.skipIf(!registryPristine,)(
+    "failed generation propagates its 503 instead of a re-wrapped 201",
+    async () => {
+      // Force every assistant-reply INSERT to collide: the trigger raises
+      // the exact unique-violation text the swipe-retry classifier treats
+      // as retryable, so maybeAutoReply burns all 8 bounded attempts and
+      // surfaces its 503 jsonError Response to the route
+      // (BUG-message-create-re-wraps-a-503-reply-into-201-jsoncreated).
+      sqlite.run(`
+        CREATE TRIGGER force_swipe_collision
+        BEFORE INSERT ON messages
+        WHEN NEW.role = 'assistant'
+        BEGIN
+          SELECT RAISE(ABORT, 'UNIQUE constraint failed: messages.swipe_index');
+        END;
+      `,);
+
+      try {
+        const assistantConfig = {
+          assistant: { enabled: true, },
+          encryption: { compressThreshold: 1024, compressAlgorithm: "gzip", },
+          generation: { providers: { openaiCompatible: [], }, defaultProvider: null, },
+        } as unknown as Config;
+
+        const app = makeApp(db, owner, "user", assistantConfig,);
+        const res = await postMessage(app, chatA, { content: "hello", },);
+
+        expect(res.status,).toBe(503,);
+        const body = (await res.json()) as { code: string };
+        expect(body.code,).toBe("SERVICE_UNAVAILABLE",);
+      } finally {
+        sqlite.run("DROP TRIGGER force_swipe_collision",);
+      }
+    },
+  );
 });

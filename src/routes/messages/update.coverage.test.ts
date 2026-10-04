@@ -165,6 +165,49 @@ describe("updateRoutes coverage", () => {
     expect(wiped.status,).toBe(204,);
   });
 
+  test("soft delete guards authorship but allows chat admins", async () => {
+    const id = await seedMessage("hide not yours",);
+    // Participant without authorship and without admin rights → 403 and the
+    // row stays untouched
+    // (BUG-message-soft-delete-lets-any-chat-member-hide-any-member-s).
+    await db
+      .insertInto("chat_participants",)
+      .values({ chat_id: chatId, actor_id: stranger, role_in_chat: "member", },)
+      .onConflict((oc,) => oc.columns(["chat_id", "actor_id",],).doUpdateSet({ role_in_chat: "member", },))
+      .execute();
+
+    const app = makeApp(db, stranger, "user",);
+    const denied = await app.handle(
+      new Request(`http://localhost/api/messages/${id}`, { method: "DELETE", },),
+    );
+
+    expect(denied.status,).toBe(403,);
+    const untouched = await db
+      .selectFrom("messages",)
+      .select(["visibility", "hidden_by",],)
+      .where("id", "=", id,)
+      .executeTakeFirst();
+
+    expect(untouched?.visibility,).toBe("visible",);
+    expect(untouched?.hidden_by,).toBeNull();
+
+    // Chat admin may soft-hide a foreign message → 204.
+    const adminApp = makeApp(db, stranger, "admin",);
+    const hidden = await adminApp.handle(
+      new Request(`http://localhost/api/messages/${id}`, { method: "DELETE", },),
+    );
+
+    expect(hidden.status,).toBe(204,);
+    const hiddenRow = await db
+      .selectFrom("messages",)
+      .select(["visibility", "hidden_by",],)
+      .where("id", "=", id,)
+      .executeTakeFirst();
+
+    expect(hiddenRow?.visibility,).toBe("hidden_by_user",);
+    expect(hiddenRow?.hidden_by,).toBe(stranger,);
+  });
+
   test("delete 404 for missing message", async () => {
     const app = makeApp(db, owner, "user",);
     const res = await app.handle(
