@@ -82,7 +82,7 @@ export function reportResults(results,) {
         head = outputLines.slice(0, 5,),
         tail = outputLines.slice(-20,);
       console.log(
-        `  Output: ${[...new Set([...head, ...(outputLines.length > 25 ? ["...",] : []), ...tail,],)].join("\n  ",)}`,
+        `  Output: ${[...new Set([...head, ...(outputLines.length > 25 ? ["...",] : []), ...tail,],),].join("\n  ",)}`,
       );
       const slug = result.name.replace(/[^a-z0-9]+/gi, "-",).replace(/^-|-$/g, "",).toLowerCase();
       const logPath = path.join(RUN_TMP_DIR, `check-fail-${slug}.log`,);
