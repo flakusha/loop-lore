@@ -12,6 +12,10 @@ import { optionsObjectParamsRule, } from "./options-object-params.mjs";
 const linter = new Linter();
 
 const config: Linter.Config = {
+  // Required: `verify` only applies file-matching when a filename is given,
+  // and a config with no `files` then matches nothing. Without this, every
+  // case below silently returned zero messages.
+  files: ["**/*.ts",],
   languageOptions: {
     parser: tseslint.parser,
     ecmaVersion: 2022,
@@ -23,13 +27,15 @@ const config: Linter.Config = {
   rules: { "local/options-object-params": "warn", },
 };
 
-// Count only this rule's reports. `verify` also returns parse errors, which
-// would otherwise satisfy a `toBe(1)` assertion on a snippet the parser
-// rejected -- i.e. a test that passes without the logic ever running.
+// Count only this rule's reports. `verify` also returns parse errors and
+// config-level fatals, which would otherwise satisfy a `toBe(1)` assertion on a
+// snippet the parser rejected -- i.e. a test that passes without the logic ever
+// running. A null ruleId is exactly that case, so fail loudly instead.
 function violations(code: string,): number {
-  return linter.verify(code, config,)
-    .filter((message,) => message.ruleId === "local/options-object-params")
-    .length;
+  const messages = linter.verify(code, config, "case.ts",);
+  const fatal = messages.find((message,) => message.ruleId == null);
+  if (fatal) { throw new Error(`linter did not run: ${fatal.message}`,); }
+  return messages.filter((message,) => message.ruleId === "local/options-object-params").length;
 }
 
 describe("options-object-params rule", () => {
@@ -260,5 +266,113 @@ describe("options-object-params rule", () => {
 
   test("reports nested functions separately", () => {
     expect(violations("function outer(a, b, c) { function inner(x, y, z) {} }",),).toBe(2,);
+  });
+
+  // --- Typed-slot exemption: a type annotation already pins the arity, so an
+  // options-object rewrite would break assignability. Each case below pins a
+  // BOUNDARY, not just that the exemption fires. ---
+
+  // Proof the harness is live: this snippet has nothing to do with any
+  // exemption and must still be reported. If `violations` ever silently stops
+  // invoking the rule, every `toBe(0)` below becomes a false pass.
+  test("SANITY: the rule still reports an unannotated 3-param function", () => {
+    expect(violations("function plain(a: number, b: number, c: number) { return a + b + c; }",),).toBe(1,);
+  });
+
+  // Exempt shape A: the annotation is on the declarator itself. Block body.
+  test("allows a block-bodied function assigned to a function-typed const", () => {
+    const code =
+      "type Fn = (a: number, b: number, c: number) => number;\nconst f: Fn = (a, b, c) => { return a + b + c; };";
+    expect(violations(code,),).toBe(0,);
+  });
+
+  // Same shape with an expression body -- a different AST shape for the
+  // function node, so the exemption must not depend on a block.
+  test("allows an expression-bodied function assigned to a function-typed const", () => {
+    const code = "type Fn = (a: number, b: number, c: number) => number;\nconst f: Fn = (a, b, c) => a + b + c;";
+    expect(violations(code,),).toBe(0,);
+  });
+
+  // Exempt shape B: a method of the object literal that IS the direct
+  // `return { ... }` of a function carrying a return-type annotation.
+  test("allows methods of an object literal returned from a typed function", () => {
+    const code = [
+      "interface Api { m(a: number, b: number, c: number): number; }",
+      "function make(): Api {",
+      "  return { m(a, b, c) { return a + b + c; } };",
+      "}",
+    ].join("\n",);
+    expect(violations(code,),).toBe(0,);
+  });
+
+  // Shape B via an annotated const literal -- the factory-service pattern.
+  test("allows methods of an object literal bound to an annotated const", () => {
+    const code = [
+      "interface Api { m(a: number, b: number, c: number): number; }",
+      "function make(): Api {",
+      "  const self: Api = { m(a, b, c) { return a + b + c; } };",
+      "  return self;",
+      "}",
+    ].join("\n",);
+    expect(violations(code,),).toBe(0,);
+  });
+
+  // NEAR MISS 1: no annotation at all, so the rewrite is available.
+  test("NEAR MISS: still flags an untyped const with 3 params", () => {
+    expect(violations("const f = (a: number, b: number, c: number) => a + b + c;",),).toBe(1,);
+  });
+
+  // NEAR MISS 2: the class is exported through an annotated symbol, but no
+  // interface dictates the method arity, so it is still refactorable. This is
+  // the case an "is some ancestor typed" predicate would wrongly swallow.
+  test("NEAR MISS: still flags a class method whose class is merely exported", () => {
+    const code = [
+      "export class Service {",
+      "  run(a: number, b: number, c: number): number { return a + b + c; }",
+      "}",
+    ].join("\n",);
+    expect(violations(code,),).toBe(1,);
+  });
+
+  // NEAR MISS 3: the enclosing function is annotated, but the object literal
+  // is a local returned later -- nothing pins its members.
+  test("NEAR MISS: still flags a method of an unannotated local literal", () => {
+    const code = [
+      "function make(): number {",
+      "  const o = { m(a: number, b: number, c: number) { return a + b + c; } };",
+      "  return o.m(1, 2, 3);",
+      "}",
+    ].join("\n",);
+    expect(violations(code,),).toBe(1,);
+  });
+
+  // NEAR MISS 3b: the literal IS the direct return value, but the enclosing
+  // function has no return-type annotation, so nothing dictates the arity.
+  test("NEAR MISS: still flags a directly returned literal from an unannotated function", () => {
+    const code = [
+      "function make() {",
+      "  return { m(a: number, b: number, c: number) { return a + b + c; } };",
+      "}",
+    ].join("\n",);
+    expect(violations(code,),).toBe(1,);
+  });
+
+  // NEAR MISS 4: a class method stays flagged even when the class member is
+  // itself annotated -- `MethodDefinition` is never an exempting parent.
+  test("NEAR MISS: still flags a class property with 3 annotated params", () => {
+    expect(violations("class A { f = (a: number, b: number, c: number) => a + b + c; }",),).toBe(1,);
+  });
+
+  // The exemption is scoped to the annotated slot only: a sibling function in
+  // the same annotated block is still judged on its own.
+  test("NEAR MISS: a sibling of an exempted slot is still flagged", () => {
+    const code = [
+      "interface Api { m(a: number, b: number, c: number): number; }",
+      "function make(): Api {",
+      "  return { m(a, b, c) { return a + b + c; } };",
+      "}",
+      "function free(a: number, b: number, c: number) { return a + b + c; }",
+    ].join("\n",);
+    expect(violations(code,),).toBe(1,);
   });
 });

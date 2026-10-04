@@ -316,6 +316,10 @@ export default [
       "jsdoc/require-param": "off",
       "jsdoc/require-returns": "off",
       "jsdoc/require-throws": "off",
+      // insert-helpers.ts is 169 of the rule's 1247 findings (13.6%) and is
+      // emitted verbatim by `bun run db:sync-types`; rewriting its signatures
+      // would be undone by the next generator run.
+      "local/options-object-params": "off",
     },
   },
   // Util implementations: base64 wraps btoa/atob; safe-fetch wraps bare fetch;
