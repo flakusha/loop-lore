@@ -71,6 +71,7 @@ describeOrSkip("storyState", () => {
           { progress: "6", narrative: "bad", },
         ],),
       } as never;
+
       expect(s.questMilestones(quest,),).toEqual([{ progress: 5, narrative: "Halfway there", },],);
       expect(s.questMilestones({ progress: 0, } as never,),).toEqual([],);
     });
@@ -81,6 +82,7 @@ describeOrSkip("storyState", () => {
         progress: 0,
         rewards: JSON.stringify({ xp: 100, items: [{ itemId: "gem", quantity: 2, },], },),
       } as never;
+
       expect(s.questRewardChips(quest,),).toEqual(["+100 XP", "gem ×2",],);
       expect(s.questRewardChips({ progress: 0, } as never,),).toEqual([],);
     });
@@ -97,6 +99,7 @@ describeOrSkip("storyState", () => {
         expect(s.questRewardChips({ progress: 0, rewards: raw, } as never,),).toEqual([],);
         expect(s._parseQuestBanners(raw,),).toEqual([],);
       }
+
       const badItems = '{"items":{}}';
       expect(s.questRewardChips({ progress: 0, rewards: badItems, } as never,),).toEqual([],);
       const partialItem = '{"items":[{"itemId":1}]}';
@@ -108,8 +111,10 @@ describeOrSkip("storyState", () => {
         expect(s.questMilestones({ progress: 0, narrative_hooks: raw, } as never,),).toEqual([],);
         expect(s._parseQuestBanners(raw,),).toEqual([],);
       }
+
       expect(s.questRewardChips({ progress: 0, rewards: '{"items":[null]}', } as never,),).toEqual([],);
     });
+
     test("turnForMessage looks up by parent message id, null when absent", () => {
       const s = makeState();
       s.turnMeta["msg-1"] = { turnNumber: 3, qualityScore: 88, promptSent: "go", status: "completed", };
@@ -142,6 +147,11 @@ describeOrSkip("storyState", () => {
       const s = makeState();
       expect(s._parseQuestBanners(JSON.stringify([{ quest_name: "x", },],),),).toEqual([],);
       expect(s._parseQuestBanners("not json",),).toEqual([],);
+      // Type-mismatch: quest_name present but not a string must fall back
+      // to "Quest" rather than passing the wrong type through.
+      expect(s._parseQuestBanners(JSON.stringify([{ quest_name: 42, progress: 5, },],),),).toEqual([
+        { questName: "Quest", progress: 5, },
+      ],);
     });
   },);
 
@@ -262,6 +272,7 @@ describeOrSkip("storyState", () => {
           status: "active",
           progress: 0,
         }),);
+
       // Page 1 comes back exactly full, so a single ?pageSize=100 request
       // looked like the whole log. The server reports 101 rows and page 2
       // holds the rest, including active quest `q-final` that a capped
@@ -271,6 +282,7 @@ describeOrSkip("storyState", () => {
         const data = n === 1 ? rows(1, 100,) : [{ ...rows(2, 1,)[0], id: "q-final", name: "Final boss", },];
         return Response.json({ data, pagination: { total: 101, page: n, pageSize: 100, }, },);
       };
+
       await s._loadQuests();
       expect(fetchCalls.length,).toBe(2,);
       expect(fetchCalls[0]?.url,).toBe("/api/v1/worlds/world-1/quests?pageSize=100&page=1",);
@@ -278,6 +290,7 @@ describeOrSkip("storyState", () => {
       expect(s.quests.length,).toBe(101,);
       expect(s.quests.some((q,) => q.id === "q-final"),).toBe(true,);
     });
+
     test("no-ops without a world id", async () => {
       const s = makeState();
       s.chatId = "chat-1";
