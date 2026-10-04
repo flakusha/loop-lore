@@ -87,11 +87,12 @@ per-chunk, and probe clean:
 
 ## Scheduler config (llama-swap path)
 
-When running against `llama-swap`, generation requests are routed through a
-scheduler that enforces per-provider rate limits, priority classes, and token
-budgets. One `ResourceManager` instance is shared at the `callWithFailover`
-sites; requests enter through a priority class (defaulting to Normal) and
-are admitted based on budget and capacity. Field names are normative in
+When running against `llama-swap`, generation requests are planned to be
+routed through a scheduler that enforces per-provider rate limits, priority
+classes, and token budgets. One `ResourceManager` instance will be shared at
+the `callWithFailover` sites; requests enter through a priority class
+(defaulting to Normal) and are admitted based on budget and capacity. Field
+names are normative in
 [`docs/spec/generation-scheduler.md`](../spec/generation-scheduler.md).
 
 For the full scheduling model, see [`docs/spec/generation-scheduler.md`](../spec/generation-scheduler.md).
