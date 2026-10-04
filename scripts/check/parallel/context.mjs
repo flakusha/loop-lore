@@ -37,9 +37,11 @@ export const DIFF_BASE = parseDiffBase();
 // `--skip-gates=<csv>` runs every check EXCEPT the named ones (inverse).
 // Both flags take a comma-separated list of gate names — exactly the keys
 // of the `checks` dictionary below. Both the space form (`--gates a,b`) and
-// the equals form (`--gates=a,b`) are accepted: the equals form is the one
-// every other flag in this runner and its docs already use, and reading only
-// the space form made `--gates=bogus` a silent no-op that ran the WHOLE suite.
+// the equals form (`--gates=a,b`) are accepted; reading only the space form
+// made `--gates=bogus` a silent no-op that ran the WHOLE suite. Note the
+// asymmetry with `--diff-base` above, which is still space-form only: nobody
+// in this repo passes `--diff-base=<ref>` (it would silently disable scoping
+// and run everything), so it is left alone rather than grown on speculation.
 // Names match verbatim after trimming whitespace; unknown names exit
 // non-zero with a hint listing available names. The flag is the source of
 // truth (trust semantics): no implicit inclusion of diff-scoped gates.
