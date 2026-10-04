@@ -13,6 +13,7 @@
 import type { Kysely, } from "kysely";
 import type { DuplicationPolicy, } from "../config/schema";
 import type { DB, } from "../db/schema";
+import { authorizeChatExport, ChatClearanceError, } from "./clearance";
 import { pushEnvelope, } from "./delivery";
 import {
   type FanOutSkip,
@@ -38,6 +39,13 @@ export interface FanOutContent {
   worldId?: string;
   /** Sender wall-clock ms (defaults to now). */
   clock?: number;
+  /**
+   * Chat the content belongs to. When set, EVERY target must pass the
+   * per-chat content-clearance gate (./clearance) before its reservation —
+   * a denial lands the target in `failed` with the denial reason and no
+   * network attempt. Chat content must always set this.
+   */
+  chatId?: string;
 }
 
 /** One target that did not receive the content. */
@@ -154,6 +162,17 @@ export async function fanOutContent(
   const candidates = await selectDuplicationTargets(database, policy, senderOrigin, content.worldId,);
   const fit = await selectTargetsWithCapacity(database, candidates, probe.size,);
   const settled = await Promise.allSettled(fit.targets.map(async (target,) => {
+    // Content-clearance gate: per-chat consent is checked per target BEFORE
+    // any reservation or push (default-deny; issue 41f4f83).
+    if (content.chatId !== undefined) {
+      try {
+        await authorizeChatExport(database, { chatId: content.chatId, peerOrigin: target, },);
+      } catch (error) {
+        const reason = error instanceof ChatClearanceError ? error.reason : "gate-error";
+        throw new Error(`content clearance denied: ${reason}`,);
+      }
+    }
+
     const granted = await requestReservation(post, target, {
       senderOrigin,
       contentHash: probe.hash,
