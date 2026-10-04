@@ -19,9 +19,14 @@ import type { Config, } from "../config/schema";
 import { ModelRole, } from "../db/enums-core";
 import type { DB, } from "../db/schema";
 import type { GenerationMessage, } from "../generation/gen-types-options";
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 import { buildFailoverList, resolveProvider, } from "../generation/providers/registry";
 import { toHarnessTaskType, toTaskSignal, } from "../generation/routing/task-signal";
 import { recordExecRun, } from "../harness/exec-recorder";
+import { callWithFailover, } from "../generation/providers/call-with-failover";
+import { getProvider, resolveProvider, } from "../generation/providers/registry";
+import { getSchedulerManager, } from "../generation/scheduler";
+import { PriorityLevel, } from "../llm";
 import { getLogger, } from "../logger";
 import { isTelemetryEnabled, record, } from "../telemetry/service";
 import type { AuxCallOptions, AuxCallResult, AuxTaskName, } from "./types";
@@ -112,7 +117,6 @@ export async function callAux(
     userId,
     chatId,
   } = opts;
-
   // Resolve the model role → provider/model; graceful failure => null (BUG-1 fix)
   let auxRole: ResolvedModelRole | null;
   try {
@@ -120,11 +124,9 @@ export async function callAux(
   } catch {
     return null;
   }
-
   if (!auxRole || !auxRole.provider || !auxRole.model) {
     return null;
   }
-
   // BYO apiKey parity: user key → chat/actor override → server default
   let apiKey: string | undefined;
   try {
@@ -135,18 +137,12 @@ export async function callAux(
       config,
       db,
     },);
-
     apiKey = resolved.resolvedApiKey;
   } catch {
     // Non-fatal — fall back to the provider instance's configured key
   }
 
-  // Task-signal routing: the resolved Auxiliary provider stays primary, and the
-  // router orders the remaining configured providers for this specific job
-  // (a cheap classifier wants the cheapest/fastest capable candidate).
-  const signal = toTaskSignal(task,);
-  const auxCandidates = buildFailoverList(auxRole.provider, config, signal,);
-  const provider = auxCandidates[0]?.provider;
+  const provider = getProvider(auxRole.provider,);
   if (!provider) {
     return null;
   }
@@ -170,39 +166,36 @@ export async function callAux(
     },);
   };
 
-  // The AUX runner calls the provider directly (it has a hard per-task timeout
-  // and no failover loop), so it records its own exec-log lines here rather
-  // than through callWithFailover.
-  const recordExec = (
-    result: "ok" | "error" | "timeout",
-    error: string | null,
-    usage?: { promptTokens: number; completionTokens: number },
-  ): void => {
-    recordExecRun({
-      taskType: toHarnessTaskType(signal.taskType,),
-      model: auxRole.model,
-      runMs: Date.now() - startedAt,
-      result,
-      error,
-      usage,
-      task: `aux:${task}`,
-      costPer1kTokens: provider.capabilities.costPer1kTokens,
-    },);
-  };
-
   try {
-    const response = await withTimeout(
-      provider.complete({
-        model: auxRole.model,
-        messages,
-        apiKey,
-        params: { temperature, maxTokens, },
-      },),
-      timeoutMs,
-    );
-
+    // Aux bypass routed through failover + scheduler: the aux provider
+    // joins one ordered list (primary first, same as interactive turns)
+    // and dispatch holds a Low slot keyed by the aux provider name.
+    // Null on timeout/cancel like before (graceful degradation); a timeout
+    // cancels the slot while still queued — a running provider holds its
+    // slot until it returns (no abort is forwarded into the aux call).
+    const failover = [{ name: auxRole.provider, provider, },];
+    const mgr = getSchedulerManager();
+    const auxId = `${task}:${Date.now()}:${Math.random().toString(36,).slice(2,)}`;
+    const handle = mgr.submit({
+      id: auxId,
+      provider: auxRole.provider,
+      priority: PriorityLevel.Low,
+      run: () =>
+        callWithFailover(failover, {
+          model: auxRole.model,
+          messages,
+          apiKey,
+          params: { temperature, maxTokens, },
+        },),
+    },);
+    const response = await withTimeout(handle.result, timeoutMs,);
     if (!response) {
-      recordExec("timeout", `AUX ${task} timed out after ${timeoutMs}ms`,);
+      mgr.cancel(auxId, "aux timeout",);
+      // Suppress the handle rejection after cancel — it rejects with the
+      // scheduler cancellation error, which is expected here.  The old code
+      // threw GenerationCancelledError (caught by this catch) but the aux
+      // path gracefully returned null; preserve that contract.
+      void handle.result.catch(() => {/* timed out, ignore */},);
       recordCall(false, { error: "timeout", },);
       return null;
     }
@@ -216,19 +209,12 @@ export async function callAux(
       completionTokens: response.usage.completionTokens,
     };
 
-    recordExec("ok", null, {
-      promptTokens: response.usage.promptTokens,
-      completionTokens: response.usage.completionTokens,
-    },);
-
     recordCall(true, {
       promptTokens: result.promptTokens,
       completionTokens: result.completionTokens,
     },);
-
     return result;
   } catch (error) {
-    recordExec("error", (error as Error).message,);
     recordCall(false, { error: (error as Error).message, },);
     getLog().debug("AUX call failed", { task, error: (error as Error).message, },);
     return null;

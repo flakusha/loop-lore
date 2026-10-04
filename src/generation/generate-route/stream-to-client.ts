@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 380
+// size-allow: 390
 
 /**
  * StreamToClient — streaming (SSE) generation path for
@@ -20,6 +20,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import type { ResourceManager, } from "../../llm";
 import { getLogger, } from "../../logger";
 import { extractAndStoreMemories, } from "../../memory";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
@@ -30,8 +31,13 @@ import {
   failGeneration,
   processStreamingChunk,
 } from "../cancellation-manager";
-import { callWithFailover, } from "../providers/call-with-failover";
-import type { ChunkEvent, GenerateRequest as ProviderRequest, LLMProvider, } from "../providers/types";
+import type {
+  ChunkEvent,
+  GenerateRequest as ProviderRequest,
+  GenerateResponse,
+  LLMProvider,
+} from "../providers/types";
+import { scheduledCallWithFailover, } from "../scheduler";
 import { getOrCreateBuffer, scheduleBufferCleanup, } from "../stream-buffer";
 import type { GenerationMessage, } from "../types";
 import { streamCancelCleanup, } from "./cancel-stream";
@@ -54,6 +60,8 @@ export interface StreamToClientOpts {
   providerName: string;
   providerReq: ProviderRequest;
   failoverList: { name: string; provider: LLMProvider }[];
+  /** Scheduler override (tests); production uses the process-wide manager. */
+  scheduler?: ResourceManager;
 }
 
 /**
@@ -68,6 +76,7 @@ export interface StreamToClientOpts {
  * @param root0.providerName
  * @param root0.providerReq
  * @param root0.failoverList
+ * @param root0.scheduler
  * @throws {Error}
  * @throws {Error}
  * @returns {Response}
@@ -83,6 +92,7 @@ export function streamToClient({
   providerName,
   providerReq,
   failoverList,
+  scheduler,
 }: StreamToClientOpts,): Response {
   let streamError: string | undefined;
   let accumulatedContent = "";
@@ -113,18 +123,18 @@ export function streamToClient({
             }, { once: true, },);
           }
         }
-
         let currentMessages = messages;
-        let finalResponse: Awaited<ReturnType<typeof callWithFailover>> | null = null;
+        let finalResponse: GenerateResponse | null = null;
         const allToolResults: GenerationMessage[] = [];
         for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
           let roundContent = "";
           let _roundThinking = "";
 
-          const response = await callWithFailover(
+          const response = await scheduledCallWithFailover({
+            id: `${attemptId}:round-${round}`,
             failoverList,
-            { ...providerReq, messages: currentMessages, signal: abortController.signal, },
-            (chunk: ChunkEvent,) => {
+            req: { ...providerReq, messages: currentMessages, signal: abortController.signal, },
+            handler: (chunk: ChunkEvent,) => {
               if (abortController?.signal.aborted) { return; }
               if (chunk.type === "content" && chunk.content) {
                 accumulatedContent += chunk.content;
@@ -133,7 +143,6 @@ export function streamToClient({
                   .catch((error: unknown,) => {
                     log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
                   },);
-
                 const seq = flushChunk(controller, buffer, sseData({ type: "content", content: chunk.content, },),);
                 recordLastRendered(attemptId, seq,);
               } else if (chunk.type === "thinking" && chunk.content) {
@@ -142,13 +151,13 @@ export function streamToClient({
                 const seq = flushChunk(controller, buffer, sseData({ type: "thinking", content: chunk.content, },),);
                 recordLastRendered(attemptId, seq,);
               }
-
               // BUG-generation-error-handling-gaps: throwIfAborted AFTER
               // processing each chunk so cancellation terminates accumulation
               // promptly (not only at start).
               abortController?.signal.throwIfAborted();
             },
-          );
+            scheduler,
+          },);
 
           if (!response.toolCalls || response.toolCalls.length === 0) {
             finalResponse = response;
@@ -176,7 +185,6 @@ export function streamToClient({
             actorId: input.actorId,
             chatId: input.chatId,
           },);
-
           currentMessages = [...currentMessages, ...toolResults,];
           allToolResults.push(...toolResults,);
         }
@@ -231,7 +239,6 @@ export function streamToClient({
           cancelled: isCancelled,
           lastRenderedChunkIndex: activeForDone?.lastRenderedChunkIndex ?? -1,
         },);
-
         const doneSeq = flushChunk(controller, buffer, doneFrame,);
         if (activeForDone) {
           activeForDone.lastRenderedChunkIndex = doneSeq;
@@ -283,7 +290,6 @@ export function streamToClient({
             log.error("Telemetry truncation record failed", error instanceof Error ? error : undefined,);
           },);
         }
-
         // BUG-generation-error-handling-gaps: explicit .catch on memory.
         // Memory extraction runs only when the full response was delivered —
         // we don't want to memorize partial output the user never saw.
@@ -315,7 +321,6 @@ export function streamToClient({
         const isCancel = err instanceof GenerationCancelledError ||
           err.name === "AbortError" ||
           (err.cause instanceof GenerationCancelledError);
-
         if (isCancel) {
           await streamCancelCleanup({
             db: database,
@@ -327,7 +332,6 @@ export function streamToClient({
             buffer,
             controller,
           },);
-
           return;
         }
 
