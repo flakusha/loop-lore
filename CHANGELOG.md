@@ -26,11 +26,11 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 - **DB v0 collapse** — replaced 23 forward migrations + 20 `parts/` sub-modules with a single atomic `001_init.ts` (~4 600 lines, all 154 tables + indexes + triggers). Dropped `parts/` orchestration, the `parts/`-vs-append strategy policy, the `schema_version` ledger, and the boot-time `schema-backfill` step. Regenerated `schema.ts`, `schema-*.ts`, `schema-manifest.ts`, `insert-helpers.ts`, `db-schemas.ts`. AGENTS.md updated: append-only policy retained, but with only two valid paths (new top-level `NNN_*.ts` or extend current HEAD if not yet shipped).
 
 - **Repo orchestration synced to the pinned `giwt`** — `scripts/worktree/commands/sync.ts` spawned a bare `giwt` off PATH, which resolves through `~/.local/bin/giwt` to a _mutable local checkout_ rather than the `bun.lock` pin; it now resolves the pinned `node_modules/giwt/src/cli.ts` (`giwtArgv`, with tests). `plan:backlog:sync{,fix}` call the dedicated `giwt backlog sync` instead of routing through `giwt plan validate --gates backlog`; new `plan:matrix{,check}` scripts and a `plan - matrix` freshness gate cover the generated `.plan/feature-matrix.md`. AGENTS.md documents the pin rule, the `status-vocab` gate's canonical `**Status:**` values, and the `matrix`/`status-vocab` gates.
+
 ### Fixed
 
 - **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
 - **Non-retryable provider errors keep their identity when the request is cancelled** — `withProviderRetry` classified an aborted signal before checking whether the failure was already a non-retryable `ProviderError`, so a 401 raised in the same tick as a user cancel surfaced as `Request cancelled` (no status) instead of the auth error. `callWithFailover` maps the two down different paths, which would have swallowed auth failures. Precedence now matches the hand-rolled loops these call sites replaced, and `retry.test.ts` pins it.
-
 
 ## [0.1.0] - 2026-08-15
 
@@ -48,7 +48,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Regex extraction pipeline** — image edits, intents, memory, transitions, and other extraction passes.
 - **Auth & safety** — authentication + sessions, NSFW gate + moderation, profanity filter, age gate, rate limiting, solo-user mode.
 - **Plumbing** — Kysely + `bun:sqlite` (PG dialect-swappable), encrypted DB backup/recovery, plugin system, structured logging, telemetry, auxiliary LLM pipeline, wiring gate (`scripts/check-wiring.ts`), e2e browser suite (19 flows).
-
 
 ### Changed
 
