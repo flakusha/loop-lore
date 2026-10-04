@@ -82,9 +82,11 @@ export class ModelRouter {
       for (const capability of signal.requiresCapabilities ?? []) {
         if (c.capabilities[capability] === false) { return false; }
       }
+
       return signal.estimatedTokens === undefined || c.contextWindow === undefined ||
         signal.estimatedTokens <= c.contextWindow;
     },);
+
     if (eligible.length === 0) { return { primary: null, fallbacks: [], }; }
 
     const rule = this.config?.rules?.find((r,) => r.taskType === signal.taskType);
@@ -142,5 +144,6 @@ export function sharedRouter(routing?: GenerationRoutingConfig,): ModelRouter {
   if (shared === undefined || shared.routing !== routing) {
     shared = { routing, router: new ModelRouter(routing,), };
   }
+
   return shared.router;
 }

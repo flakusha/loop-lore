@@ -64,6 +64,7 @@ function indexWorkflows(ctx: CommandContext,): Record<string, AssistantWorkflowC
     index[workflow.id.toLowerCase()] = workflow;
     index[workflow.name.toLowerCase()] = workflow;
   }
+
   return index;
 }
 
@@ -81,9 +82,11 @@ function formatWorkflowList(index: Record<string, AssistantWorkflowConfig>,): st
     const desc = workflow.description ? ` - ${workflow.description}` : "";
     lines.push(`- \`${workflow.id}\`${desc}`,);
   }
+
   if (lines.length === 0) {
     return "No harness workflows are configured for this server.";
   }
+
   return `**Available workflows:**\n${lines.join("\n",)}`;
 }
 
@@ -111,9 +114,11 @@ async function startHarnessVerb(
       handled: true,
     };
   }
+
   if ((args[0] ?? "").toLowerCase() === "list") {
     return { systemMessage: formatWorkflowList(index,), handled: true, };
   }
+
   const named = args[0];
   const workflow = named ? index[named.toLowerCase()] : index[DEFAULT_WORKFLOW_BY_VERB[verb.name] ?? ""];
   if (!workflow) {
@@ -122,6 +127,7 @@ async function startHarnessVerb(
       handled: true,
     };
   }
+
   // Only one live run per chat: a new verb must not silently clobber another.
   const existing = getSession(ctx.chatId,);
   if (existing) {
@@ -131,6 +137,7 @@ async function startHarnessVerb(
       handled: true,
     };
   }
+
   const session = startSession(ctx.chatId, workflow,);
   if (ctx.db) { await saveSession(ctx.db, ctx.chatId, session,); }
   return {

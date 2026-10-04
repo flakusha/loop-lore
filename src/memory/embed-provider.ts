@@ -134,6 +134,7 @@ export async function embedText(text: string,): Promise<Float32Array> {
     } else {
       emb = (await embedDispatch(buildOllamaState(), text, model,))[0];
     }
+
     if (!emb) { throw new Error("Embedding provider returned no embeddings.",); }
     recordExecRun({
       taskType: toHarnessTaskType(BACKGROUND.taskType,),
@@ -142,6 +143,7 @@ export async function embedText(text: string,): Promise<Float32Array> {
       result: "ok",
       task: "memory:embeddings",
     },);
+
     // Normalise to unit length so cosine similarity = dot product.
     return normalise(new Float32Array(emb,),);
   } catch (error) {
@@ -153,6 +155,7 @@ export async function embedText(text: string,): Promise<Float32Array> {
       error: (error as Error).message,
       task: "memory:embeddings",
     },);
+
     throw error;
   }
 }

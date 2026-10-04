@@ -43,6 +43,7 @@ export function getExecLogPath(): string | null {
   } catch {
     logPath = "";
   }
+
   return logPath === "" ? null : logPath;
 }
 

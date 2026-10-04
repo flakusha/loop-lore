@@ -98,6 +98,7 @@ function routingConfig(
     allowUserApiKey: false,
     models: {},
   }));
+
   return config;
 }
 
@@ -141,6 +142,7 @@ afterAll(() => {
       "sm-cov-noop-b",
     ]
   ) { unregisterProvider(name,); }
+
   testSqlite.close();
 },);
 
@@ -226,6 +228,7 @@ describe("buildFailoverList", () => {
         models: {},
       },
     ];
+
     const list = buildFailoverList("sm-cov-fail-b", config,);
     expect(list.map((e,) => e.name),).toEqual(["sm-cov-fail-b", "sm-cov-fail-c",],);
   });
@@ -278,6 +281,7 @@ describe("buildFailoverList", () => {
       ...TURN,
       requiresCapabilities: ["tools",],
     },).map((e,) => e.name);
+
     expect(names,).toEqual(["sm-cov-noop-a", "sm-cov-noop-b",],);
   });
 });

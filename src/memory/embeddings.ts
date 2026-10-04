@@ -216,12 +216,14 @@ export async function semanticRecall(
       topN: topK,
       routing: loadConfig().generation.routing,
     },);
+
     const reordered: SemanticMatch[] = [];
     for (const { index, score, } of hits) {
       const match = shortlist[index];
       if (!match) { throw new Error(`Rerank index ${index} outside the shortlist.`,); }
       reordered.push({ memoryId: match.memoryId, score, },);
     }
+
     return reordered.slice(0, topK,);
   } catch (error) {
     getLogger()
@@ -229,6 +231,7 @@ export async function semanticRecall(
       .debug("Rerank failed; keeping cosine order", {
         error: error instanceof Error ? error.message : String(error,),
       },);
+
     return ranked;
   }
 }

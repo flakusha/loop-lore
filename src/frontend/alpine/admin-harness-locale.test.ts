@@ -54,6 +54,7 @@ describe("harness locale parity", () => {
       const extra = leafKeys(data, "",).filter(
         (key,) => key.startsWith("harness.",) && !enKeys.has(key,),
       );
+
       expect(extra,).toEqual([],);
     });
 
@@ -67,8 +68,10 @@ describe("harness locale parity", () => {
               : undefined,
           data,
         );
+
         return typeof node !== "string" || node.trim() === "";
       },);
+
       expect(empty,).toEqual([],);
     });
   }

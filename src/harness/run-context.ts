@@ -53,14 +53,17 @@ function readGitContext(): { branch: string | null; gitSha: string | null } {
   } catch {
     branch = null;
   }
+
   let gitSha: string | null = null;
   try {
     gitSha = runGit(["rev-parse", "--short", "HEAD",],) || null;
   } catch {
     gitSha = null;
   }
+
   return { branch, gitSha, };
 }
+
 /**
  * Current branch and commit for the exec log. Memoized per process.
  * @returns Branch + short sha; nulls when git is unavailable.
