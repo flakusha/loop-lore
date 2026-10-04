@@ -30,8 +30,7 @@ import { LogLevelNumeric, } from "./types";
 export class LoggerImpl implements Logger {
   private transports: Transport[];
   private readonly queue: AsyncLogQueue;
-  private threshold: number;
-  private levelString: LogLevel;
+  private levelBox: { name: LogLevel; threshold: number };
   private bindings: LoggerBindings;
   private readonly censorEnabled: boolean;
   private readonly censorFields: string[];
@@ -43,8 +42,7 @@ export class LoggerImpl implements Logger {
    */
   constructor(config?: Partial<LoggerConfig>, bindings?: LoggerBindings,) {
     this.bindings = bindings ?? {};
-    this.levelString = config?.level ?? "debug";
-    this.threshold = levelFromConfig(this.levelString,);
+    this.levelBox = { name: config?.level ?? "debug", threshold: levelFromConfig(config?.level ?? "debug"), };
     this.censorEnabled = config?.censorEnabled ?? true;
     this.censorFields = config?.censorFields ?? [];
 
@@ -102,7 +100,7 @@ export class LoggerImpl implements Logger {
     options?: LogOptions,
   ): void {
     const numericLevel = LogLevelNumeric[level];
-    if (!shouldEmit(numericLevel, this.threshold,)) { return; }
+    if (!shouldEmit(numericLevel, this.levelBox.threshold,)) { return; }
 
     // Censor structured messages: object messages carry key-value PII/secrets
     // (logger.info({ password })) and previously bypassed censoring entirely.
@@ -196,15 +194,17 @@ export class LoggerImpl implements Logger {
    * @param bindings
    */
   child(bindings: LoggerBindings,): Logger {
-    return new LoggerImpl(
+    const child = new LoggerImpl(
       {
-        level: this.levelString,
+        level: this.levelBox.name,
         censorEnabled: this.censorEnabled,
         censorFields: this.censorFields,
         limits: this.limits,
       },
       { ...this.bindings, ...bindings, },
     );
+    child.levelBox = this.levelBox;
+    return child;
   }
 
   /**
@@ -225,8 +225,8 @@ export class LoggerImpl implements Logger {
    * @param level
    */
   setLevel(level: LogLevel,): void {
-    this.levelString = level;
-    this.threshold = levelFromConfig(level,);
+    this.levelBox.name = level;
+    this.levelBox.threshold = levelFromConfig(level,);
   }
 
   /** */
