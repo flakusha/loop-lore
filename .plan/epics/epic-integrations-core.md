@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** core seams + config + secrets + health/rate-limit + webhook ingestion landed (5 tickets Done); remaining: config UI skeleton, status dashboard UI, integration logging, docs/security/integrations.md
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic

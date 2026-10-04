@@ -19,6 +19,11 @@ export { DYNAMIC_RESPONSE_DEFAULTS, dynamicResponseMeta, DynamicResponseSection,
 export { ENCRYPTION_DEFAULTS, encryptionMeta, EncryptionSection, } from "./encryption";
 export { GENERATION_DEFAULTS, generationMeta, GenerationSection, } from "./generation";
 export { CSP_DEFAULTS, HEADERS_DEFAULTS, headersMeta, HeadersSection, } from "./headers";
+export {
+  INTEGRATIONS_DEFAULTS,
+  integrationsMeta,
+  type IntegrationsSection,
+} from "./integrations";
 export { LOGGING_DEFAULTS, loggingMeta, LoggingSection, } from "./logging";
 export { MESSAGES_DEFAULTS, messagesMeta, MessagesSection, } from "./messages";
 export { NSFW_DEFAULTS, nsfwMeta, NsfwSection, } from "./nsfw";

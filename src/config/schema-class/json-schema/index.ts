@@ -20,6 +20,7 @@ import { generation, } from "./generation";
 import { headers, } from "./headers";
 import { hooks, } from "./hooks";
 import { idempotency, } from "./idempotency";
+import { integrations, } from "./integrations";
 import { logging, } from "./logging";
 import { messages, } from "./messages";
 import { nsfw, } from "./nsfw";
@@ -86,6 +87,7 @@ export const jsonSchema = (): JSONSchema => {
       templates,
       characters,
       cron,
+      integrations,
     },
     required: [
       "server",

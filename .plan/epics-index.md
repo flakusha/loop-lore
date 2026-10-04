@@ -212,7 +212,7 @@
 | In Progress | Impersonation System | Medium | Med | 5 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
 | Not Started | Implementation Guide | Medium | Medium | 0 | [epic-implementation.md](/.plan/epics/epic-implementation.md) |
 | Not Started | Instant Messaging Integrations | Medium | Medium | 9 | [epic-im-integrations.md](/.plan/epics/epic-im-integrations.md) |
-| Not Started | Integrations Core | Medium | Medium | 7 | [epic-integrations-core.md](/.plan/epics/epic-integrations-core.md) |
+| In Progress | Integrations Core | Medium | Medium | 7 | [epic-integrations-core.md](/.plan/epics/epic-integrations-core.md) |
 | Not Started | Internationalization (i18n) | Medium | Medium | 0 | [epic-frontend-internationalization.md](/.plan/epics/epic-frontend-internationalization.md) |
 | Not Started | Inventory & Trading UI | P1 — High | Medium | 14 | [epic-inventory-ui.md](/.plan/epics/epic-inventory-ui.md) |
 | Not Started | Inventory System (Hub) | High | High | 5 | [epic-inventory-system.md](/.plan/epics/epic-inventory-system.md) |
@@ -2259,7 +2259,7 @@ Player housing and base building system — personal homes, guild halls, craftin
 
 ### Integrations Core
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -3323,4 +3323,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

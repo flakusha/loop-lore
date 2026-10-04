@@ -25,6 +25,7 @@ import type { GenerationConfig, } from "./generation";
 import type { HeadersConfig, } from "./headers";
 import type { HooksConfig, } from "./hooks";
 import type { IdempotencyConfig, } from "./idempotency";
+import type { IntegrationsConfig, } from "./integrations";
 import type { LoggingConfig, } from "./logging";
 import type { MessagesConfig, } from "./messages";
 import type { NsfwConfig, } from "./nsfw";
@@ -64,4 +65,5 @@ export interface Config {
   frontend: FrontendConfig;
   cron: CronConfig;
   federation: FederationConfig;
+  integrations: IntegrationsConfig;
 }
