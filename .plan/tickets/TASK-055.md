@@ -3,14 +3,14 @@
 
 # TASK-055: Duplicate Item Protection
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Dedupe ItemDefinition templates by (worldId, name, category).
 **Context:** Distinct from TASK-054 (instance uniqueness vs template uniqueness).
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**: items, rpg, duplicate, protection
 **Epic**: epic-items
@@ -48,3 +48,5 @@ Prevents the same `ItemDefinition` (template) from being silently duplicated whe
 - Speculative migration is marked; verify column names with current `src/db/schema.ts`.
 - "Re-roll" semantics: when the assistant wants to overwrite an existing definition, expose an explicit `forceReplace: true` flag rather than a silent upsert.
 - Conflict resolution when one user submits an LLM item that another user already created: default to "first wins"; revisit if UX demands merge.
+
+**Resolved:** 2026-10-04 registry-driven close: git issue c598f22 (registry tip: 1258a3a0b Konstantin Fedotov Auto-closed: appended .md marker marks TASK-055 done)

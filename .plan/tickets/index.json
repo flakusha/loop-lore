@@ -17390,7 +17390,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-055.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# TASK-055: Duplicate Item Protection",
     "type": "TASK"
@@ -17403,7 +17403,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-056.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# TASK-056: Overpowered Item Management",
     "type": "TASK"
