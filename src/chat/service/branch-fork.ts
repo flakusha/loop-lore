@@ -113,7 +113,6 @@ export async function insertForkRow(
           .where("chat_id", "=", chatId,)
           .where("is_active", "=", 1,)
           .execute();
-
         await tx
           .insertInto("chat_branches",)
           .values({
@@ -124,8 +123,14 @@ export async function insertForkRow(
             is_active: 1,
           },)
           .execute();
+        // Keep chats.active_branch_id in lockstep with the new active row so
+        // the display invariant holds for a forking caller too.
+        await tx
+          .updateTable("chats",)
+          .set({ active_branch_id: branchId, },)
+          .where("id", "=", chatId,)
+          .execute();
       },);
-
       return { name, };
     } catch (error) {
       // Only a name conflict is retryable; any other driver error is real.
@@ -136,6 +141,5 @@ export async function insertForkRow(
       }
     }
   }
-
   return { code: "bad_request", message: "Could not allocate a unique branch name; retry", };
 }

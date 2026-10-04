@@ -12,7 +12,7 @@ import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { checkChatAccess, } from "./access";
 import { insertForkRow, } from "./branch-fork";
-import { setActiveBranchId, walkMessagePath, } from "./branch-helpers";
+import { getMessagesForBranch, listBranches, setActiveBranchId, walkMessagePath, } from "./branch-helpers";
 import type { ServiceError, } from "./types";
 
 /** One branch as returned to the caller. */
@@ -92,13 +92,13 @@ export async function forkBranch(
   }
 
   const branchId = crypto.randomUUID();
+  // insertForkRow demotes the previously active row, inserts the new one as
+  // active, and syncs chats.active_branch_id atomically. It also resolves
+  // name collisions: a taken user-supplied name is refused, and an auto-name
+  // retries past labels occupied by a concurrent fork or a deleted-branch gap.
   const inserted = await insertForkRow(db, { chatId, branchId, parentMessageId: messageId, name: params.name, },);
   if ("code" in inserted) { return inserted; }
   const name = inserted.name;
-  // Sync chats.active_branch_id so the display invariant holds: both
-  // representations of "displayed branch" stay consistent (same lockstep
-  // that switchActiveBranch keeps).
-  await setActiveBranchId(db, chatId, branchId,);
 
   const path = await walkMessagePath(db, chatId, messageId,);
   return {
