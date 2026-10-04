@@ -4,9 +4,10 @@
 // src/federation/peer-fetch.ts — Peer advertisement fetch seam.
 //
 // Default implementation fetches over safeFetch with per-peer TLS trust
-// (custom CA bundles) and a bounded timeout. SPKI pins / mTLS are NOT
-// enforced — runtimes expose no peer-certificate handle for pin comparison;
-// custom-CA trust is the enforceable subset today. Injectable for tests.
+// (custom CA bundles) and a bounded timeout. SPKI pins are enforced as a
+// node:tls pre-flight (src/federation/spki-pin.ts) which gossip consults
+// before fetching a peer that configures spkiPins; mTLS is NOT enforced —
+// runtimes expose no client-certificate handle on fetch. Injectable for tests.
 
 import type { FederationPeerTrustConfig, } from "../config/schema";
 import { safeFetch, } from "../utils/safe-fetch";

@@ -6,8 +6,9 @@
  *
  * Clock and fetch are injected — no real timers, no network.
  */
-import { describe, expect, test, } from "bun:test";
+import { beforeAll, describe, expect, test, } from "bun:test";
 import type { FederationPeerTrustConfig, } from "../config/schema";
+import { createLogger, } from "../logger";
 import {
   getGossipOrigins,
   getGossipService,
@@ -16,6 +17,7 @@ import {
   resetGossipService,
 } from "./gossip";
 import type { PeerFetch, } from "./peer-fetch";
+import type { PeerPinVerifier, } from "./spki-pin";
 
 function clock(startMs = 1_000_000,): { now: () => number; advance: (ms: number,) => void } {
   let t = startMs;
@@ -288,5 +290,104 @@ describe("gossip singleton", () => {
     expect(getGossipOrigins(),).toEqual(["https://a.example.com",],);
     resetGossipService();
     expect(getGossipOrigins(),).toEqual([],);
+  });
+});
+
+describe("GossipService — spki pin gate", () => {
+  beforeAll(() => {
+    // The mismatch path emits a structured log (peer.tls.failure).
+    createLogger({ level: "error", },);
+  },);
+
+  const PINNED = "https://pinned.example.com";
+  const TRUST: FederationPeerTrustConfig = { spkiPins: ["sha256:QUJD",], };
+
+  function pinnedService(opts: {
+    now: () => number;
+    pinVerify: PeerPinVerifier;
+    calls: { url: string; trust: FederationPeerTrustConfig | undefined }[];
+  },): GossipService {
+    const fetchImpl: PeerFetch = async (url, trust,) => {
+      opts.calls.push({ url, trust, },);
+      return { ok: true, status: 200, body: {}, };
+    };
+
+    return new GossipService({
+      seeds: [PINNED,],
+      trusted: [],
+      trustByOrigin: { [PINNED]: TRUST, },
+      selfOrigin: "http://localhost:3000",
+      ttl: 1_000,
+      now: opts.now,
+      fetchImpl,
+      pinVerify: opts.pinVerify,
+    },);
+  }
+
+  test("pin mismatch skips the fetch; the peer goes stale and is swept", async () => {
+    const c = clock();
+    const calls: { url: string; trust: FederationPeerTrustConfig | undefined }[] = [];
+    const svc = pinnedService({ now: c.now, pinVerify: async () => false, calls, },);
+
+    const first = await svc.pollOnce();
+    expect(first,).toEqual({ tick: 1, polled: 1, alive: 0, discovered: 0, },);
+    expect(calls,).toHaveLength(0,);
+    expect(svc.getPeer(PINNED,)?.lastSeq,).toBe(-1,);
+
+    c.advance(2_000,);
+    const second = await svc.pollOnce();
+    expect(second.alive,).toBe(0,);
+    expect(svc.origins(),).toEqual([],);
+  });
+
+  test("pin match proceeds to fetch and heartbeats", async () => {
+    const c = clock();
+    const calls: { url: string; trust: FederationPeerTrustConfig | undefined }[] = [];
+    const svc = pinnedService({ now: c.now, pinVerify: async () => true, calls, },);
+
+    const summary = await svc.pollOnce();
+    expect(summary,).toEqual({ tick: 1, polled: 1, alive: 1, discovered: 0, },);
+    expect(calls,).toEqual([{ url: `${PINNED}/api/instance-state`, trust: TRUST, },],);
+    expect(svc.getPeer(PINNED,)?.lastSeq,).toBe(1,);
+  });
+
+  test("peers without pins bypass the pin gate entirely", async () => {
+    const c = clock();
+    let pinCalls = 0;
+    const pinVerify: PeerPinVerifier = async () => {
+      pinCalls += 1;
+      return true;
+    };
+
+    const svc = new GossipService({
+      seeds: ["https://plain.example.com",],
+      trusted: [],
+      trustByOrigin: {},
+      selfOrigin: "http://localhost:3000",
+      now: c.now,
+      fetchImpl: async () => ({ ok: true, status: 200, body: {}, }),
+      pinVerify,
+    },);
+
+    const summary = await svc.pollOnce();
+    expect(summary.alive,).toBe(1,);
+    expect(pinCalls,).toBe(0,);
+  });
+
+  test("default verifier fails closed against an unreachable pinned peer", async () => {
+    const c = clock();
+    const origin = "https://127.0.0.1:1";
+    const svc = new GossipService({
+      seeds: [origin,],
+      trusted: [],
+      trustByOrigin: { [origin]: { spkiPins: ["sha256:QUJD",], }, },
+      selfOrigin: "http://localhost:3000",
+      ttl: 1_000,
+      now: c.now,
+      fetchImpl: async () => ({ ok: true, status: 200, body: {}, }),
+    },);
+
+    const summary = await svc.pollOnce();
+    expect(summary,).toEqual({ tick: 1, polled: 1, alive: 0, discovered: 0, },);
   });
 });
