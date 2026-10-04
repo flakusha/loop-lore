@@ -20,3 +20,7 @@ DELETE /api/messages/:id soft path (src/routes/messages/update.ts:77-83) runs af
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - the author-or-admin guard exists only in the hardDelete branch (src/routes/messages/update.ts:56-75); the soft branch (update.ts:77-81) sets visibility="hidden_by_user" after just checkChatAccess (:53) with no actor scoping. No worktree touches update.ts.

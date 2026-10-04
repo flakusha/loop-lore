@@ -20,3 +20,7 @@ CRITICAL. PUT /worlds/:worldId/locations/:locId reparent (src/routes/worlds/loca
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev (CRITICAL) - parent_location_id is set from the body via a raw UPDATE with only .where("id") + .where("world_id") (src/routes/worlds/locations.ts:211, 232-237); no self/cycle/existence checks. Same in fix-open-bug-tickets (:118, :211); moveSubtree has zero route callers on dev and in npc-navigation-rescue / feat-actor-autonomy-dispatch.

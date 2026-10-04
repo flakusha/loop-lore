@@ -20,3 +20,7 @@ Handler destructures { emotionId, intensity, ... } from the body (src/routes/cha
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - the handler destructures emotionId from the body (src/routes/character-emotions/actor.ts:137, insert :166-169) while the mounted schema declares only emotion_name + intensity 0-100 vs the 0-1 column scale (src/validation/schemas/character-systems.ts:203-206), so emotionId is always undefined -> NOT NULL FK violation -> 500, unchanged. No branch or worktree touches this file or the schema with a fix (pickaxe: refactors/lint only).

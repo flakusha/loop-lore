@@ -20,3 +20,7 @@ src/generation/caption-route.ts:129 builds the captioning request WITHOUT the im
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - src/generation/caption-route.ts:126-142 builds genReq with only text messages (system + user prompt naming the filename); asset bytes/base64 are never read or attached. All checked worktrees carry the identical text-only code at :127/:130.

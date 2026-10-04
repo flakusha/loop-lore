@@ -20,3 +20,7 @@ src/routes/messages/create.ts:227-229 spreads reply.response?.json() into jsonCr
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - src/routes/messages/create.ts:227-228 still does return jsonCreated({ ...(await reply.response?.json?.()), context }) whenever reply.replied; reply.ts returns a 503 jsonError on swipe-insert exhaustion (src/routes/messages/reply.ts:200, insert-message.ts:121-122), so the client still gets 201 with an error body. No worktree modifies create.ts.

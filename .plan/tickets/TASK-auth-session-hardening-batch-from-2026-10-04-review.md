@@ -20,3 +20,7 @@ Six MINOR verified gaps, one batch: (1) username enumeration - unknown user -> i
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - all six sub-gaps present at dev HEAD: (1) username enumeration: src/routes/auth/login.ts:76-84 unknown user -> instant 401 (no hash), :86-88 disabled -> 403 before Bun.password.verify (:100); (2) session-cap eviction: src/routes/auth/session.ts:55-62 evicts orderBy("id","asc") limit 1 but sessions.id is a random v4 UUID (src/utils.ts:40); (3) expiry-shape mismatch: src/middleware/auth/authenticate.ts:87-96 treats null/unparseable expires_at as NOT expired while src/routes/sessions-switch.ts:48-52 deletes the same shape as expired; (4) session list swallows failures: src/routes/sessions.ts:100-112 Promise.allSettled renders failed queries as rows=[]/total=0 with HTTP 200; (5) logout cookie: src/routes/auth/session.ts:125-130 hand-builds Set-Cookie without Secure while setTokenCookie applies Secure in production (src/routes/auth/shared.ts:80-106, Secure pushed at :104, production default :94); (6) password max length: src/routes/auth/register.ts:116-125 enforces only min 6, Bun.password.hash at :140 with no cap. No worktree addresses any item.
