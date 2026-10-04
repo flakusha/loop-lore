@@ -28,6 +28,8 @@ import type { ServiceError, } from "./types";
  * @param messageId
  * @param visibility
  * @param reason
+ * @throws {Error} when the persisted status x visibility pair is not a legal
+ *   state pair (see `assertValidWrite`).
  * @returns void
  */
 export async function updateMessageVisibility(

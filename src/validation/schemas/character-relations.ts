@@ -99,7 +99,9 @@ const LICENSING_SCALARS = {
  * only formed after `composeLicenseRow` merges the persisted `allow_derivatives`.
  * That write still reaches `assertValidWrite` and throws, i.e. it surfaces as a
  * 500. Closing that needs the check to move after the compose and return a 4xx,
- * which changes the endpoint's error contract — see the branch concern file.
+ * which changes the endpoint's error contract — see
+ * `.plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md`
+ * defect (a).
  */
 export const LicensingBody = t.Union([
   // derivatives forbidden -> share_alike must not be yes
