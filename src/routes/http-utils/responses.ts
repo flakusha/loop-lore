@@ -12,6 +12,7 @@ export {
   API_VERSION,
   badRequestResponse,
   conflictResponse,
+  emotionJobNotFoundResponse,
   forbiddenResponse,
   jsonError,
   notFoundResponse,

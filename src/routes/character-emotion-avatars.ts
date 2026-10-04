@@ -14,6 +14,7 @@ import { EmotionType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { checkActorOwnership, } from "./actor-auth";
 import {
+  emotionJobNotFoundResponse,
   HttpStatus,
   jsonCreated,
   jsonError,
@@ -68,10 +69,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       // The job carries its own actor, so owning any single actor would let a
       // caller read another tenant's job (IDOR).
       if (!job || job.actorId !== actorId) {
-        return jsonError({
-          message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
-          status: HttpStatus.NotFound,
-        },);
+        return emotionJobNotFoundResponse(ctx.t,);
       }
 
       return jsonResponse(job,);
@@ -94,10 +92,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       // before it is invoked.
       const job = emotionAvatarService.getJobStatus(jobId as any,);
       if (!job || job.actorId !== actorId) {
-        return jsonError({
-          message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
-          status: HttpStatus.NotFound,
-        },);
+        return emotionJobNotFoundResponse(ctx.t,);
       }
 
       const cancelled = emotionAvatarService.cancelJob(jobId as any,);

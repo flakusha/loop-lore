@@ -72,7 +72,7 @@ const OTHER = "00000000-0000-4000-8000-000000000002";
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-emotion-avatars", },);
   if (userId) {
-    app.derive(() => ({ userId, userRole, t: (key: string) => `t:${key}`, }));
+    app.derive(() => ({ userId, userRole, t: (key: string,) => `t:${key}`, }));
   }
 
   return app.use(characterEmotionAvatarsRoutes({ database: db, },),) as unknown as Elysia;
