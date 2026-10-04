@@ -7,7 +7,7 @@
 
 
 **Status:** Done
-**Status Note:** Routes wired under `/api/rpg/achievements` (`achievementsRoutes` + `achievementsPlayerRoutes` via `rpgRoutes` in `src/app/register-plugins.ts`); epic metadata reconciled 2026-10-02
+**Status Note:** Routes wired under `/api/v1/rpg/achievements` (`achievementsRoutes` + `achievementsPlayerRoutes` via `rpgRoutes` in `src/routes/rpg/index.ts`, mounted from `src/routes/v1/actors-surface.ts`); epic metadata reconciled 2026-10-02
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic

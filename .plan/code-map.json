@@ -876,10 +876,6 @@
   "src/app/register-plugins.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-achievements.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
     },
     {
@@ -929,10 +925,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-docs-spec-analytics-observability.md"
     },
     {
       "kind": "ticket",
@@ -29753,6 +29745,10 @@
   ],
   "src/routes/rpg/index.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-achievements.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-professions-service-routes.md"
     },
@@ -30241,6 +30237,12 @@
       "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
     }
   ],
+  "src/routes/v1/actors-surface.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-achievements.md"
+    }
+  ],
   "src/routes/v1/base-surface.ts": [
     {
       "kind": "ticket",
@@ -30263,6 +30265,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-docs-spec-analytics-observability.md"
     }
   ],
   "src/routes/v1/governance.test.ts": [
