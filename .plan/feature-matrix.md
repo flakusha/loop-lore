@@ -1128,7 +1128,7 @@ Total tickets: **3216** — untagged: **2702** — unbound to epic: **1623**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2702 | 1099 | 59 | 1234 | 36 | 0 | 274 |
+| (untagged) | 2702 | 1103 | 59 | 1230 | 36 | 0 | 274 |
 
 ## By epic × status
 
@@ -1251,7 +1251,7 @@ Total tickets: **3216** — untagged: **2702** — unbound to epic: **1623**
 | epic-blog-system | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
 | epic-byok-api-keys | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-byok-local-models.md (admin model surface extension) + epic-assistant-gm-flows.md (tooling) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-certificate-and-tls-management.md | 9 | 0 | 0 | 9 | 0 | 0 | 0 |
+| epic-certificate-and-tls-management.md | 9 | 1 | 0 | 8 | 0 | 0 | 0 |
 | epic-character-core-system | 31 | 9 | 0 | 16 | 0 | 0 | 6 |
 | epic-character-core-system (config-templates sub-area) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-character-core-system (research sub-area) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1422,7 +1422,7 @@ Total tickets: **3216** — untagged: **2702** — unbound to epic: **1623**
 | epic-memory-knowledge-systems.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-memory-systems | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-memory-systems-three-tier | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-mesh-federation-content-sharing | 5 | 0 | 2 | 3 | 0 | 0 | 0 |
+| epic-mesh-federation-content-sharing | 5 | 2 | 2 | 1 | 0 | 0 | 0 |
 | epic-mesh-federation-content-sharing.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-message-seen-state | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-messages | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1597,7 +1597,7 @@ Total tickets: **3216** — untagged: **2702** — unbound to epic: **1623**
 | Visual Novel Mode; Immersion & Presentation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Wardrobe / Loadout Avatar Variants | 8 | 4 | 0 | 4 | 0 | 0 | 0 |
 | World & Locations | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| (unbound) | 1623 | 658 | 57 | 530 | 50 | 0 | 328 |
+| (unbound) | 1623 | 659 | 57 | 529 | 50 | 0 | 328 |
 
 ## Ticket detail
 
