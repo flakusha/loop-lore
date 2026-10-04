@@ -74,7 +74,7 @@ Key decisions:
 
 ## Work Items
 
-- [ ] **Story auto-drive scheduler** — world-tick loop, due-actor selection, action dispatch through existing generation pipeline (navigation ticks, BDI decisions, GM beats), pause/resume/step, persistence of simulation state across restarts. → TASK-story-auto-drive-scheduler
+- [x] **Story auto-drive scheduler** — world-tick loop, due-actor selection, action dispatch through existing generation pipeline (navigation ticks, BDI decisions, GM beats), pause/resume/step, persistence of simulation state across restarts. → TASK-story-auto-drive-scheduler
 - [x] **NPC navigation tick driver** — autonomous caller for `NpcNavigationService` ticks via the scheduler, with jitter and governor budget gate. → `TASK-world-simulation-npc-navigation-tick-driver.md`
 - [x] **Autonomy config surface** — layering: world default → chat override → per-actor override; pacing presets (serene / organic / brisk); unlimited stress preset gated to dev builds; UI affordances in chat + world settings. → TASK-autonomy-config-surface
 
@@ -111,7 +111,7 @@ The `autonomy_preferences` data schema (AutonomyProfile, D9) is owned by
 
 | Work Item | Ticket | On-disk | Status |
 | --------- | ------ | ------- | ------ |
-| Story auto-drive scheduler | `TASK-story-auto-drive-scheduler.md` | yes | In Progress — loop, selection, dispatch via `runNpcMovementTick`, controls, persistence, telemetry all ship. BDI + GM dispatch split out: `TASK-bdi-plan-recompute-implementation`, `TASK-gm-beat-scheduling` |
+| Story auto-drive scheduler | `TASK-story-auto-drive-scheduler.md` | yes | Done — loop, selection, dispatch via `runNpcMovementTick`, controls, persistence, telemetry all ship. BDI + GM dispatch split out: `TASK-bdi-plan-recompute-implementation`, `TASK-gm-beat-scheduling` |
 | BDI plan recompute implementation | `TASK-bdi-plan-recompute-implementation.md` | yes | open — `planRecompute` has no production impl; blocks BDI dispatch |
 | GM beat scheduling | `TASK-gm-beat-scheduling.md` | yes | open — GM is turn-driven only; double-movement + chat-vs-world blockers |
 | NPC navigation tick driver | `TASK-world-simulation-npc-navigation-tick-driver.md` | yes | Done — `src/rpg/npc-navigation/tick-driver.ts` (`runNpcMovementTick`) is the scheduler's caller; jitter + `perUserCap` governor gate |
