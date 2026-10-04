@@ -3,9 +3,17 @@
 
 import type { Kysely, } from "kysely";
 import { registerContentVersion, } from "../../../db/content-version";
+import type { CraftingDiscipline, } from "../../../db/enums";
+import type { DB, } from "../../../db/schema";
+import { jsonStringifyOr, uid, } from "../../../utils";
+import { recipeMaterialInsertRows, rowToRecipeWithMaterials, } from "./helpers";
+import type {
+  CreateRecipeOpts,
+  RecipeWithMaterials,
+} from "./types";
 
 // Base `data_version` 0 projection for `crafting_recipes` (columns added by
-// migration 031). Declared beside the module that creates recipes.
+// migration 034). Declared beside the module that creates recipes.
 registerContentVersion("crafting_recipes", 0, [
   "world_id",
   "name",
@@ -22,14 +30,6 @@ registerContentVersion("crafting_recipes", 0, [
   "station_type_required",
   "tags",
 ],);
-import type { CraftingDiscipline, } from "../../../db/enums";
-import type { DB, } from "../../../db/schema";
-import { jsonStringifyOr, uid, } from "../../../utils";
-import { recipeMaterialInsertRows, rowToRecipeWithMaterials, } from "./helpers";
-import type {
-  CreateRecipeOpts,
-  RecipeWithMaterials,
-} from "./types";
 
 /**
  * Create a recipe with materials in a single transaction.

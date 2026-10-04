@@ -7,19 +7,8 @@
 import { Elysia, } from "elysia";
 import { randomUUID, } from "node:crypto";
 import { checkChatSettingsAccess, } from "../../chat/service";
-import { registerContentVersion, } from "../../db/content-version";
-
-// Base `data_version` 0 projection for `shadow_notes` (columns added by
-// migration 031). GM-authored content, so integrity tracking matters.
-registerContentVersion("shadow_notes", 0, [
-  "chat_id",
-  "type",
-  "content",
-  "status",
-  "visibility",
-  "author_type",
-],);
 import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../../crypto";
+import { registerContentVersion, } from "../../db/content-version";
 import {
   ContentEncoding,
   MessageContentFormat,
@@ -43,6 +32,17 @@ import {
 } from "../http-utils";
 import { NoteIdParams, ShadowNoteBody, } from "./schemas";
 import type { HandlerOpts, } from "./types";
+
+// Base `data_version` 0 projection for `shadow_notes` (columns added by
+// migration 034). GM-authored content, so integrity tracking matters.
+registerContentVersion("shadow_notes", 0, [
+  "chat_id",
+  "type",
+  "content",
+  "status",
+  "visibility",
+  "author_type",
+],);
 
 /**
  * Inject a narrator system message into the chat when a shadow note is revealed.

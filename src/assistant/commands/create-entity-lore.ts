@@ -22,9 +22,8 @@ import type { LoreScope, } from "../lore/audience";
 import type { EntityKind, } from "../prompt/templates/entity-generation";
 import type { GeneratedEntityLoreEntry, } from "../quality/entity-creation";
 
-
 // Base `data_version` 0 projections for both lore tables (columns added by
-// migration 031). Declared beside the writer so `computeRowHash` /
+// migration 034). Declared beside the writer so `computeRowHash` /
 // `runBatchRefresh` can hash generated lore rows. Projection is the
 // content-defining set this module actually populates — not every column.
 registerContentVersion("world_lore_entries", 0, [
