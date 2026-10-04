@@ -77,6 +77,22 @@
     "source": ".plan/tickets/BUG-achievement-claimrewards-double-credit-race-and-lost-reward-.md",
     "status": "Done"
   },
+  "BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS": {
+    "hash": "707ea1a",
+    "git_issue": "707ea1a",
+    "extid": "BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS",
+    "type": "BUG",
+    "title": "activitypub_actor_keys table and src/crypto/activitypub-keys.ts have no production reader",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "federation",
+      "dead-code"
+    ],
+    "source": ".plan/tickets/BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys.md",
+    "status": "Not Started"
+  },
   "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY": {
     "epic": "",
     "extid": "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY",
@@ -1040,6 +1056,19 @@
     "title": "BUG: CSRF verification accepts cookie-only token, defeating double-submit",
     "type": "BUG"
   },
+  "BUG-BUG-EMOTION-AVATAR-JOB-ROUTES-AUTHORIZE-ONLY-THE-PATH-ACTOR-": {
+    "hash": "4e483df",
+    "git_issue": "4e483df",
+    "extid": "BUG-BUG-EMOTION-AVATAR-JOB-ROUTES-AUTHORIZE-ONLY-THE-PATH-ACTOR-",
+    "type": "BUG",
+    "title": "emotion-avatar job routes authorize only the path actor, so any owner can read and cancel another user's job",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-.md",
+    "status": "Not Started"
+  },
   "BUG-BUG-HALLUCINATION-GUARD-RUNS-OUTSIDE-TRY-CATCH-AFTER-MESSAGE": {
     "epic": "",
     "extid": "BUG-BUG-HALLUCINATION-GUARD-RUNS-OUTSIDE-TRY-CATCH-AFTER-MESSAGE",
@@ -1144,6 +1173,19 @@
     "tags": [],
     "title": "BUG: message-seen re-mark clobbers first-seen timestamp",
     "type": "BUG"
+  },
+  "BUG-BUG-ORPHANED-REMNANTS-OF-THE-REMOVED-GATE-IN-THE-CHECK-RUNNE": {
+    "hash": "f6705a5",
+    "git_issue": "f6705a5",
+    "extid": "BUG-BUG-ORPHANED-REMNANTS-OF-THE-REMOVED-GATE-IN-THE-CHECK-RUNNE",
+    "type": "BUG",
+    "title": "orphaned remnants of the removed `test - unit` gate in the check runner (dead SCOPED_TESTS, stale HEAVY_NAMES entry, stale comment)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-bug-orphaned-remnants-of-the-removed-gate-in-the-check-runne.md",
+    "status": "Not Started"
   },
   "BUG-BUG-RANDOM-EVENTS-GENERATOR-IS-DEAD-INCOMPLETE-PHANTOM-PARAM": {
     "epic": "",
@@ -3240,6 +3282,19 @@
     "title": "getClientIp is untestable without a live Bun server — IP source not injectable",
     "type": "BUG"
   },
+  "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURCING": {
+    "hash": "29eca13",
+    "extid": "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURCING",
+    "type": "BUG",
+    "title": "getClientIp is untestable without a live Bun server — IP sourcing has no unit-level seam",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-api-rate-limiting",
+    "tags": [],
+    "source": ".plan/tickets/BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing.md",
+    "status": "Not Started",
+    "git_issue": "29eca13"
+  },
   "BUG-GETCLIENTIP-TRUSTS-SPOOFABLE-PROXY-HEADERS-UNCONDITIONALLY": {
     "epic": "",
     "extid": "BUG-GETCLIENTIP-TRUSTS-SPOOFABLE-PROXY-HEADERS-UNCONDITIONALLY",
@@ -4350,6 +4405,22 @@
     "title": "mention-parser regex fails on multi-word names",
     "type": "BUG"
   },
+  "BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI": {
+    "hash": "4b503b5",
+    "git_issue": "4b503b5",
+    "extid": "BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI",
+    "type": "BUG",
+    "title": "mesh-deliver accepts envelopes from untrusted or unknown origins without a peer-trust check",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "security",
+      "federation"
+    ],
+    "source": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md",
+    "status": "Not Started"
+  },
   "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH": {
     "epic": "",
     "extid": "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH",
@@ -5395,6 +5466,19 @@
     "title": "Rate-limiter module singletons shared across test files cause cross-file flakiness",
     "type": "BUG"
   },
+  "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER": {
+    "hash": "e09e0f9",
+    "extid": "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER",
+    "type": "BUG",
+    "title": "Raw Buffer.allocUnsafe/alloc exists in src/ alongside SafeBuffer guards — inconsistency at 0 sites",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-api-validation-guardrails",
+    "tags": [],
+    "source": ".plan/tickets/BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer.md",
+    "status": "Not Started",
+    "git_issue": "e09e0f9"
+  },
   "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER-65-SITES": {
     "epic": "epic-code-quality",
     "extid": "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER-65-SITES",
@@ -5407,6 +5491,19 @@
     "tags": [],
     "title": "raw Buffer.from/alloc inconsistent with safe-buffer — 65 sites",
     "type": "BUG"
+  },
+  "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON": {
+    "hash": "e7be482",
+    "extid": "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON",
+    "type": "BUG",
+    "title": "Raw JSON.parse used outside safeJson — 3 sites need audit for untrusted input handling",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-api-validation-guardrails",
+    "tags": [],
+    "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json.md",
+    "status": "Not Started",
+    "git_issue": "e7be482"
   },
   "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON-3-SITES": {
     "epic": "epic-code-quality",
@@ -6074,7 +6171,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md",
-    "status": "Wontfix",
+    "status": "done",
     "tags": [],
     "title": "SSE streams leak String(error) internals to clients",
     "type": "BUG"
@@ -27475,6 +27572,32 @@
     "title": "docs remove deleted scenario catalog tooling references",
     "type": "TASK"
   },
+  "TASK-DOCS-SPEC-ANALYTICS-OBSERVABILITY": {
+    "hash": "b75700b",
+    "git_issue": "b75700b",
+    "extid": "TASK-DOCS-SPEC-ANALYTICS-OBSERVABILITY",
+    "type": "TASK",
+    "title": "Docs spec — analytics & observability",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-docs-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-spec-analytics-observability.md",
+    "status": "Not Started"
+  },
+  "TASK-DOCS-SPEC-GROUP-CHAT": {
+    "hash": "05b8b7b",
+    "git_issue": "05b8b7b",
+    "extid": "TASK-DOCS-SPEC-GROUP-CHAT",
+    "type": "TASK",
+    "title": "Docs spec — group-chat",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-docs-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-spec-group-chat.md",
+    "status": "Not Started"
+  },
   "TASK-DOCS-UI-ENDPOINT-LINKAGE": {
     "epic": "epic-docs-reconciliation.md",
     "extid": "TASK-DOCS-UI-ENDPOINT-LINKAGE",
@@ -43408,7 +43531,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-workflow-dag-engine-task-dependencies.md",
-    "status": "Wontfix",
+    "status": "done",
     "tags": [],
     "title": "Workflow DAG engine — task dependencies",
     "type": "TASK"
@@ -44153,128 +44276,5 @@
     "tags": [],
     "title": "nsfw-audit view route has no inline authz guard",
     "type": "WIRE"
-  },
-  "BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS": {
-    "hash": "707ea1a",
-    "git_issue": "707ea1a",
-    "extid": "BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS",
-    "type": "BUG",
-    "title": "activitypub_actor_keys table and src/crypto/activitypub-keys.ts have no production reader",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [
-      "federation",
-      "dead-code"
-    ],
-    "source": ".plan/tickets/BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys.md",
-    "status": "Not Started"
-  },
-  "BUG-BUG-EMOTION-AVATAR-JOB-ROUTES-AUTHORIZE-ONLY-THE-PATH-ACTOR-": {
-    "hash": "4e483df",
-    "git_issue": "4e483df",
-    "extid": "BUG-BUG-EMOTION-AVATAR-JOB-ROUTES-AUTHORIZE-ONLY-THE-PATH-ACTOR-",
-    "type": "BUG",
-    "title": "emotion-avatar job routes authorize only the path actor, so any owner can read and cancel another user's job",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-.md",
-    "status": "Not Started"
-  },
-  "BUG-BUG-ORPHANED-REMNANTS-OF-THE-REMOVED-GATE-IN-THE-CHECK-RUNNE": {
-    "hash": "f6705a5",
-    "git_issue": "f6705a5",
-    "extid": "BUG-BUG-ORPHANED-REMNANTS-OF-THE-REMOVED-GATE-IN-THE-CHECK-RUNNE",
-    "type": "BUG",
-    "title": "orphaned remnants of the removed `test - unit` gate in the check runner (dead SCOPED_TESTS, stale HEAVY_NAMES entry, stale comment)",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-bug-orphaned-remnants-of-the-removed-gate-in-the-check-runne.md",
-    "status": "Not Started"
-  },
-  "BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI": {
-    "hash": "4b503b5",
-    "git_issue": "4b503b5",
-    "extid": "BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI",
-    "type": "BUG",
-    "title": "mesh-deliver accepts envelopes from untrusted or unknown origins without a peer-trust check",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [
-      "security",
-      "federation"
-    ],
-    "source": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md",
-    "status": "Not Started"
-  },
-  "TASK-DOCS-SPEC-ANALYTICS-OBSERVABILITY": {
-    "hash": "b75700b",
-    "git_issue": "b75700b",
-    "extid": "TASK-DOCS-SPEC-ANALYTICS-OBSERVABILITY",
-    "type": "TASK",
-    "title": "Docs spec — analytics & observability",
-    "label": "task",
-    "priority": "Medium",
-    "epic": "epic-docs-reconciliation",
-    "tags": [],
-    "source": ".plan/tickets/TASK-docs-spec-analytics-observability.md",
-    "status": "Not Started"
-  },
-  "TASK-DOCS-SPEC-GROUP-CHAT": {
-    "hash": "05b8b7b",
-    "git_issue": "05b8b7b",
-    "extid": "TASK-DOCS-SPEC-GROUP-CHAT",
-    "type": "TASK",
-    "title": "Docs spec — group-chat",
-    "label": "task",
-    "priority": "High",
-    "epic": "epic-docs-reconciliation",
-    "tags": [],
-    "source": ".plan/tickets/TASK-docs-spec-group-chat.md",
-    "status": "Not Started"
-  },
-  "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURCING": {
-    "hash": "29eca13",
-    "extid": "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURCING",
-    "type": "BUG",
-    "title": "getClientIp is untestable without a live Bun server — IP sourcing has no unit-level seam",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "epic-api-rate-limiting",
-    "tags": [],
-    "source": ".plan/tickets/BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing.md",
-    "status": "Not Started",
-    "git_issue": "29eca13"
-  },
-  "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER": {
-    "hash": "e09e0f9",
-    "extid": "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER",
-    "type": "BUG",
-    "title": "Raw Buffer.allocUnsafe/alloc exists in src/ alongside SafeBuffer guards — inconsistency at 0 sites",
-    "label": "bug",
-    "priority": "high",
-    "epic": "epic-api-validation-guardrails",
-    "tags": [],
-    "source": ".plan/tickets/BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer.md",
-    "status": "Not Started",
-    "git_issue": "e09e0f9"
-  },
-  "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON": {
-    "hash": "e7be482",
-    "extid": "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON",
-    "type": "BUG",
-    "title": "Raw JSON.parse used outside safeJson — 3 sites need audit for untrusted input handling",
-    "label": "bug",
-    "priority": "high",
-    "epic": "epic-api-validation-guardrails",
-    "tags": [],
-    "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json.md",
-    "status": "Not Started",
-    "git_issue": "e7be482"
   }
 }
