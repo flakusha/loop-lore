@@ -12,6 +12,7 @@ const globalState = globalThis as unknown as {
   apiFetch?: ApiFetchMock;
   showToast?: (type: string, message: string,) => void;
 };
+
 const originalFetch = globalState.apiFetch;
 const originalToast = globalState.showToast;
 let calls: { url: string; opts: RequestInit }[] = [];
@@ -26,6 +27,7 @@ beforeEach(() => {
     calls.push({ url, opts: opts ?? {}, },);
     return handler(url, opts,);
   };
+
   globalState.showToast = (type, message,) => {
     toasts.push({ type, message, },);
   };
@@ -49,6 +51,7 @@ afterEach(() => {
     completedSteps: 0,
     totalSteps: 0,
   };
+
   comfyuiBuilderState.palette = {};
   comfyuiBuilderState.loadingPalette = false;
   comfyuiBuilderState.paletteError = "";
@@ -84,6 +87,7 @@ describe("comfyuiBuilderState.loadChains / loadTemplates", () => {
       if (url.includes("/chains",)) { return Response.json({ chains: [chainRow,], },); }
       return Response.json({ data: [template,], },);
     };
+
     await comfyuiBuilderState.init();
     expect(comfyuiBuilderState.chains,).toHaveLength(1,);
     expect(comfyuiBuilderState.chains[0]!.name,).toBe("Portrait chain",);
@@ -167,6 +171,7 @@ describe("saveChain", () => {
       if (opts?.method === "POST") { return Response.json({ chain: chainRow, }, { status: 201, },); }
       return Response.json({ chains: [chainRow,], },);
     };
+
     await comfyuiBuilderState.saveChain();
 
     expect(calls[0]!.url,).toBe("/api/v1/comfyui-builder/chains",);
@@ -175,6 +180,7 @@ describe("saveChain", () => {
       description: string | null;
       steps: unknown[];
     };
+
     expect(body.name,).toBe("My chain",);
     expect(body.description,).toBe("desc",);
     expect(body.steps,).toHaveLength(1,);
@@ -190,6 +196,7 @@ describe("saveChain", () => {
       if (opts?.method === "PATCH") { return Response.json({ chain: chainRow, },); }
       return Response.json({ chains: [], },);
     };
+
     await comfyuiBuilderState.saveChain();
     expect(calls[0]!.url,).toBe("/api/v1/comfyui-builder/chains/chain-1",);
     expect(calls[0]!.opts.method,).toBe("PATCH",);
@@ -209,6 +216,7 @@ describe("saveChain", () => {
         { error: "steps[0]: duplicate step id s1", },
         { status: 400, },
       );
+
     await comfyuiBuilderState.saveChain();
     expect(comfyuiBuilderState.saveError,).toContain("duplicate step id s1",);
     expect(comfyuiBuilderState.savingChain,).toBe(false,);
@@ -221,6 +229,7 @@ describe("startRun / pollRun", () => {
       if (url.endsWith("/runs",) && opts?.method === "POST") {
         return Response.json({ jobId: "job-1", }, { status: 201, },);
       }
+
       return Response.json({
         job: {
           status: "completed",
@@ -230,6 +239,7 @@ describe("startRun / pollRun", () => {
         },
       },);
     };
+
     await comfyuiBuilderState.startRun("chain-1",);
     expect(comfyuiBuilderState.runState.jobId,).toBe("job-1",);
     expect(comfyuiBuilderState.runState.status,).toBe("completed",);
@@ -253,10 +263,12 @@ describe("startRun / pollRun", () => {
       if (url.endsWith("/runs",) && opts?.method === "POST") {
         return Response.json({ jobId: "job-2", }, { status: 201, },);
       }
+
       return Response.json({
         job: { status: "failed", error: "Unknown template: nope", completedSteps: 0, totalSteps: 2, },
       },);
     };
+
     await comfyuiBuilderState.startRun("chain-1",);
     expect(comfyuiBuilderState.runState.status,).toBe("failed",);
     expect(comfyuiBuilderState.runState.error,).toContain("Unknown template",);
@@ -268,6 +280,7 @@ describe("list actions", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await comfyuiBuilderState.loadChains();
     expect(comfyuiBuilderState.chainsError,).toBe("Network error loading chains",);
     expect(comfyuiBuilderState.loadingChains,).toBe(false,);
@@ -277,6 +290,7 @@ describe("list actions", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await expect(comfyuiBuilderState.loadTemplates(),).resolves.toBeUndefined();
     expect(comfyuiBuilderState.templates,).toEqual([],);
   });
@@ -289,8 +303,10 @@ describe("list actions", () => {
         deleted.push(url,);
         return Response.json({ ok: true, },);
       }
+
       return Response.json({ chains: [chainRow,], },);
     };
+
     await comfyuiBuilderState.deleteChain("chain-1",);
     expect(deleted,).toEqual(["/api/v1/comfyui-builder/chains/chain-1",],);
     expect(comfyuiBuilderState.confirmDeleteChain,).toBe("",);
@@ -308,6 +324,7 @@ describe("list actions", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await comfyuiBuilderState.deleteChain("chain-1",);
     expect(toasts.at(-1,)?.message,).toContain("Network error",);
   });
@@ -319,6 +336,7 @@ describe("loadPalette", () => {
       Response.json(
         { data: { KSampler: { display_name: "KSampler", category: "sampling", }, }, },
       );
+
     await comfyuiBuilderState.loadPalette();
     expect(comfyuiBuilderState.palette["KSampler"]?.display_name,).toBe("KSampler",);
     expect(comfyuiBuilderState.paletteError,).toBe("",);
@@ -333,6 +351,7 @@ describe("loadPalette", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await comfyuiBuilderState.loadPalette();
     expect(comfyuiBuilderState.paletteError,).toBe("Network error loading palette",);
     expect(comfyuiBuilderState.loadingPalette,).toBe(false,);
@@ -367,6 +386,7 @@ describe("pollRun failure branches", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await comfyuiBuilderState.pollRun();
     expect(comfyuiBuilderState.runState.status,).toBe("failed",);
     expect(comfyuiBuilderState.runState.error,).toBe("Network error polling run",);
@@ -376,6 +396,7 @@ describe("pollRun failure branches", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await comfyuiBuilderState.startRun("chain-1",);
     expect(comfyuiBuilderState.runState.status,).toBe("failed",);
     expect(comfyuiBuilderState.runState.error,).toBe("Network error starting run",);
@@ -388,8 +409,10 @@ describe("pollRun failure branches", () => {
       const job = polls === 1
         ? { status: "running", completedSteps: 1, totalSteps: 2, }
         : { status: "completed", completedSteps: 2, totalSteps: 2, };
+
       return Response.json({ job, },);
     };
+
     await comfyuiBuilderState.pollRun();
     expect(polls,).toBe(2,);
     expect(comfyuiBuilderState.runState.status,).toBe("completed",);
@@ -404,6 +427,7 @@ describe("pollRun failure branches", () => {
       completedSteps: 0,
       totalSteps: 2,
     };
+
     let polls = 0;
     handler = async () => {
       polls += 1;
@@ -416,6 +440,7 @@ describe("pollRun failure branches", () => {
         completedSteps: 0,
         totalSteps: 5,
       };
+
       return Response.json({ job: { status: "completed", completedSteps: 2, totalSteps: 2, }, },);
     };
 
@@ -474,6 +499,7 @@ describe("editor open/close and step fallbacks", () => {
         { name: "weird", type: "string", label: "Weird", default: { nested: 1, }, },
       ],
     },];
+
     comfyuiBuilderState.pickedTemplateId = "tpl-x";
     comfyuiBuilderState.addStep();
     expect(comfyuiBuilderState.steps,).toHaveLength(1,);
@@ -499,6 +525,7 @@ describe("editor open/close and step fallbacks", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await comfyuiBuilderState.saveChain();
     expect(comfyuiBuilderState.saveError,).toBe("Network error saving chain",);
     expect(comfyuiBuilderState.savingChain,).toBe(false,);

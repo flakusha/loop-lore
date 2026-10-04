@@ -64,6 +64,7 @@ export function builderChainRoutes(
           description: body.description,
           steps: body.steps,
         },);
+
         return jsonCreated({ chain, },);
       } catch (error) {
         return jsonError({

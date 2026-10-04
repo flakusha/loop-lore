@@ -52,6 +52,7 @@ export function createRunJob(input: CreateRunJobInput,): ChainRunJob {
     startedAt: new Date().toISOString(),
     completedAt: null,
   };
+
   activeJobs.set(job.id, job,);
   return job;
 }
@@ -75,6 +76,7 @@ export function listRunJobs(ownerId: string,): ChainRunJob[] {
   for (const job of activeJobs.values()) {
     if (job.ownerId === ownerId) { jobs.push(job,); }
   }
+
   return jobs.sort((a, b,) => b.startedAt.localeCompare(a.startedAt,));
 }
 
