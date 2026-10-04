@@ -25,8 +25,8 @@ Build the video prompt-template schema the FEAT-065 scaffold specifies
 ## Context
 
 The image template library is the pattern: `ImageTemplatePayload`
-(`template-types.ts:37-43`) + `applyImageTemplate` (`template-service/apply.ts:20-31`)
-+ CRUD in `template-service/crud.ts` + `TemplateModality.Video` already in the
+(`template-types.ts:37-43`) - `applyImageTemplate` (`template-service/apply.ts:20-31`)
+- CRUD in `template-service/crud.ts` - `TemplateModality.Video` already in the
 enum (`src/db/enums-generation.ts:78-87`). Video payloads today fall through to
 the freeform `SimpleTemplatePayload` (`template-types.ts:44-48`) with no
 temporal structure. FEAT-065-sub-video defines the target: model families
@@ -34,21 +34,21 @@ temporal structure. FEAT-065-sub-video defines the target: model families
 keyframe-tags / json), variables (`subject motion style duration aspectRatio
 cameraMovement negativePrompt`), detail levels (instant/balanced/detailed),
 gen modes (`text2video image2video scene last`). The video route
-(`TASK-video-gen-route.md`) consumes this: `templateId` + `context` render
+(`TASK-video-gen-route.md`) consumes this: `templateId` - `context` render
 through it, non-video modality rejected 400.
 
 ## Acceptance Criteria
 
-+ [ ] `VideoPromptTemplatePayload` type with family, format, mode, detail,
+- [ ] `VideoPromptTemplatePayload` type with family, format, mode, detail,
   and the seven temporal variables; `parseTemplatePayload` handles `video`
   modality (today it falls to `SimpleTemplatePayload` at `template-types.ts:146-147`)
-+ [ ] `src/generation/video-prompt-templates.ts` exports `resolveTemplate()`,
+- [ ] `src/generation/video-prompt-templates.ts` exports `resolveTemplate()`,
   `resolveProfile()`, `buildVideoPromptMessages()` mirroring the
   `prompt-templates/` structure (config/index/messages/profiles/resolution/templates/types)
-+ [ ] Migration adds `video_prompt_templates` table (forward-only new file;
+- [ ] Migration adds `video_prompt_templates` table (forward-only new file;
   never edit `001_init`)
-+ [ ] CRUD API: create/list return 200; apply renders `{{variables}}`
+- [ ] CRUD API: create/list return 200; apply renders `{{variables}}`
   (unknown vars render empty, image precedent `apply.ts:29`); 501 on apply
   until a video provider lands
-+ [ ] Unit tests: template resolution, variable substitution, detail-level
+- [ ] Unit tests: template resolution, variable substitution, detail-level
   token budgets — mirroring `prompt-templates.test.ts`
