@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** 2026-10-04 audit — 13 of 21 catalogued subsystems verified wired (Discovery table + Audit section updated); epic reopened — 7 subsystems still lack a frontend consumer, 2 partially wired.
 **Priority:** High
 **Effort:** High
