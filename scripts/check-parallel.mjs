@@ -53,6 +53,7 @@
 // is load-bearing: module init of config → context/gates/filter → runner
 // performs the flag parsing, gate-table build, filter application, and
 // concurrency-cap resolution exactly where the monolith did — before main().
+import { execFileSync, } from "node:child_process";
 import { IS_REPORT_LS, } from "./check/parallel/config.mjs";
 import { ensureGpgWarm, gpgPrecheck, } from "./check/parallel/gpg.mjs";
 import { runNonBlockingChecks, } from "./check/parallel/nonblocking.mjs";
