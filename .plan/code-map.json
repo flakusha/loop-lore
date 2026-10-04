@@ -3147,12 +3147,6 @@
       "source": "docs/spec/lore.md"
     }
   ],
-  "src/assistant/prompt/sections/memories-helpers.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-memory-provision-context.md"
-    }
-  ],
   "src/assistant/prompt/sections/memories.test.ts": [
     {
       "kind": "ticket",
@@ -3199,10 +3193,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-timeline-memory-injection.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-memory-provision-context.md"
     }
   ],
   "src/assistant/prompt/sections/nsfw-policy.test.ts": [
@@ -3223,12 +3213,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
-    }
-  ],
-  "src/assistant/prompt/sections/plugin-agent-role.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-tool-calling-mcp.md"
     }
   ],
   "src/assistant/prompt/sections/post-history.ts": [
@@ -6431,12 +6415,6 @@
       "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md"
     }
   ],
-  "src/chat/index.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-memory-promotion-pipeline.md"
-    }
-  ],
   "src/chat/join-flow.ts": [
     {
       "kind": "ticket",
@@ -6598,27 +6576,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-quiet-hours-boundary.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
-    }
-  ],
-  "src/chat/proactive/index.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-quiet-hours-boundary.md"
-    }
-  ],
-  "src/chat/proactive/timing.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-quiet-hours-boundary.md"
     }
   ],
   "src/chat/proactive/timing.ts": [
@@ -6651,10 +6613,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-quiet-hours-boundary.md"
     },
     {
       "kind": "ticket",
@@ -7835,10 +7793,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-memory-promotion-pipeline.md"
     }
   ],
   "src/chat/transitions.ts": [
@@ -7896,10 +7850,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-memory-promotion-pipeline.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-transitions.md"
     }
   ],
@@ -7953,10 +7903,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-worlds-extension.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-memory-promotion-pipeline.md"
     }
   ],
   "src/chat/types/index.ts": [
@@ -16383,12 +16329,6 @@
       "source": ".plan/epics/epic-npc-management-ui.md"
     }
   ],
-  "src/frontend/alpine/chat-types/participants-state.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md"
-    }
-  ],
   "src/frontend/alpine/chat-types/tool-call-render.ts": [
     {
       "kind": "ticket",
@@ -16667,12 +16607,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
-    }
-  ],
-  "src/frontend/alpine/composer-pre-send/send-gate.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md"
     }
   ],
   "src/frontend/alpine/context-window.ts": [
@@ -20933,10 +20867,6 @@
   ],
   "src/generation/generate-route/tool-execution.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-tool-calling-mcp.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md"
     },
@@ -24081,10 +24011,6 @@
       "source": ".plan/tickets/TASK-memory-promotion-pipeline.md"
     },
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-memory-promotion-pipeline.md"
-    },
-    {
       "kind": "frontend",
       "source": "docs/frontend/chat/memories.md"
     }
@@ -24161,10 +24087,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-trust-modifier-wiring.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-memory-provision-context.md"
     }
   ],
   "src/memory/provision.ts": [
@@ -24203,10 +24125,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-trust-modifier-wiring.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-memory-provision-context.md"
     }
   ],
   "src/memory/purge.test.ts": [
@@ -25152,10 +25070,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-refactor-extract-scopebyuserid-middleware.md"
     }
   ],
@@ -26049,10 +25963,6 @@
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-tool-calling-mcp.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-plugin-tool-gating-empty-role-bypass.md"
     },
@@ -26117,10 +26027,6 @@
   ],
   "src/plugins/tool-executor.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-tool-calling-mcp.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-047.md"
     },
@@ -26151,10 +26057,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-plugin-extension-points.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-tool-calling-mcp.md"
     },
     {
       "kind": "ticket",
@@ -30717,12 +30619,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
-    }
-  ],
-  "src/routes/messages/scene-transition-context-cut.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-wire-memory-promotion-pipeline.md"
     }
   ],
   "src/routes/messages/swipe-race-insert.test.ts": [
@@ -36951,10 +36847,6 @@
   ],
   "src/story/game-master/execute.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-tool-calling-mcp.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-story-mode-prompt-stored-as-content.md"
     },
@@ -37697,10 +37589,6 @@
   ],
   "src/tools/registry.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-tool-calling-mcp.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/IDEA-epic-tool-calling-mcp-2026-09-26.md"
     }
@@ -38366,10 +38254,6 @@
     }
   ],
   "src/users/permissions.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-tool-calling-mcp.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-032.md"

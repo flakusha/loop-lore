@@ -12969,20 +12969,6 @@
     "title": "Timeline System",
     "type": "EPIC"
   },
-  "EPIC-TOOL-CALLING-MCP": {
-    "hash": "pending",
-    "extid": "EPIC-TOOL-CALLING-MCP",
-    "type": "EPIC",
-    "title": "Agent Tool-Calling & MCP Connector Surface",
-    "label": "epic",
-    "priority": "Medium (matrix High future severity, but P6+ deferred under 0.1.0 alignment)",
-    "epic": "",
-    "tags": [
-      "(none)"
-    ],
-    "source": ".plan/tickets/epic-tool-calling-mcp.md",
-    "status": "Not Started"
-  },
   "EPIC-TOOLING-IMPROVEMENT": {
     "epic": "",
     "extid": "EPIC-TOOLING-IMPROVEMENT",

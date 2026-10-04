@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 314 epics
+**Total:** 313 epics
 
 ## Summary
 
@@ -112,7 +112,6 @@
 | Not Started | EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections | medium | Large (event table + projection rebuild + tests) | 0 | [epic-math-ledger.md](/.plan/epics/epic-math-ledger.md) |
 | Not Started | EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution | medium | Large (multiple sub-tickets, see Sub-systems) | 0 | [epic-math-resolution.md](/.plan/epics/epic-math-resolution.md) |
 | Done | Epic: Achievements | Medium | Medium | 13 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
-| Not Started | Epic: Agent Tool-Calling & MCP Connector Surface | Medium (matrix High future severity, but P6+ deferred under 0.1.0 alignment) | Large | 6 | [epic-tool-calling-mcp.md](/.plan/epics/epic-tool-calling-mcp.md) |
 | Not Started | Epic: Ambient, Music & Sound Effects | Medium | High | 14 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
 | Not Started | Epic: Analytics & Observability | High | Medium | 5 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | Not Started | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
@@ -1270,15 +1269,6 @@ Multi-system epic combining:
 - **Type:** Feature Epic
 - **Tags:** achievements, trophies, badges, milestones, rewards
 - **File:** `.plan/epics/epic-achievements.md`
-
-### Epic: Agent Tool-Calling & MCP Connector Surface
-
-- **Status:** Not Started
-- **Priority:** Medium (matrix High future severity, but P6+ deferred under 0.1.0 alignment)
-- **Effort:** Large
-- **Type:** Feature Epic
-- **Tags:** (none)
-- **File:** `.plan/epics/epic-tool-calling-mcp.md`
 
 ### Epic: Ambient, Music & Sound Effects
 
