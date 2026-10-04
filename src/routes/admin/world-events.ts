@@ -67,6 +67,7 @@ export function worldEventsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             page,
             pageSize,
           },);
+
           return jsonResponse(result,);
         },
         {

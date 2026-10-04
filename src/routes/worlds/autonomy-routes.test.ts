@@ -279,6 +279,7 @@ function putActorRawSeed(actorId: string, rawSeed: string,): Promise<Response> {
     },),
   );
 }
+
 /**
  * @param name the character's display name
  * @param ownerId the user who owns the character row
@@ -422,6 +423,7 @@ describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId — seed validation",
       .select("autonomy_preferences",)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   },);
 
@@ -448,6 +450,7 @@ describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId — seed validation",
       .select("autonomy_preferences",)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 });

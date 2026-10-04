@@ -46,6 +46,7 @@ const autonomyQuery = t.Object({
   scopeKind: t.Optional(t.Union([t.Literal("actor",), t.Literal("user",),],),),
   scopeId: t.Optional(t.String(),),
 },);
+
 /**
  * The characters bound to a world, for the per-actor override picker.
  *
@@ -94,6 +95,7 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
           scopeKind?: AutonomyScopeKind;
           scopeId?: string;
         };
+
         const chatId = q.chatId || NO_CHAT;
         try {
           const { layers, resolved, } = await resolveAutonomyLayers(database, {
@@ -101,6 +103,7 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
             chatId,
             actorId: q.actorId || undefined,
           },);
+
           return jsonResponse({
             layers,
             resolved,

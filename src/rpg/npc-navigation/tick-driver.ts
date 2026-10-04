@@ -147,6 +147,7 @@ export async function runNpcMovementTick(
       nowMs,
     },
   );
+
   if (!gate.ok) {
     return { skipped: "budget", reason: gate, };
   }

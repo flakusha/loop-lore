@@ -44,9 +44,11 @@ export function hashSeed(...parts: Array<string | number>): number {
     for (let i = 0; i < text.length; i++) {
       hash = Math.imul(hash ^ text.charCodeAt(i,), 0x01000193,) >>> 0;
     }
+
     // Separator so ("ab","c") and ("a","bc") don't collide.
     hash = Math.imul(hash ^ 0x2f, 0x01000193,) >>> 0;
   }
+
   return hash >>> 0;
 }
 

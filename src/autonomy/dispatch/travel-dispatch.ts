@@ -65,6 +65,7 @@ export function createTravelDispatch(opts: TravelDispatchOptions = {},): Autonom
         ceiling,
         claims: new Set<string>(),
       };
+
       const travel = await advancePartyTravel(ctx.db, ctx.worldId, tick, travelCtx,);
       const migration = await migrateNpc(ctx.db, ctx.worldId, tick, travelCtx,);
       const dispatched = travel.actions.length + migration.actions.length;
@@ -86,5 +87,6 @@ async function currentTickIndex(ctx: AutonomyDispatchContext,): Promise<number> 
     .select("tick_count",)
     .where("world_id", "=", ctx.worldId,)
     .executeTakeFirst();
+
   return state?.tick_count ?? 0;
 }

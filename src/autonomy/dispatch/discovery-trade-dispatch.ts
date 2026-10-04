@@ -95,5 +95,6 @@ async function currentTickIndex(ctx: AutonomyDispatchContext,): Promise<number |
     .select("tick_count",)
     .where("world_id", "=", ctx.worldId,)
     .executeTakeFirst();
+
   return state?.tick_count ?? null;
 }
