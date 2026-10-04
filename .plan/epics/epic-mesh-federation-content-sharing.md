@@ -5,19 +5,16 @@
 
 **Status:** Done
 **Priority:** medium
-**Effort:** Medium
-**Type:** epic
-**Tags:** (none)
+**Effort:** Very High
+**Type:** Architecture / Feature Epic
+**Tags:** mesh, federation, encrypted-sharing, quota, coordinator-server
 **Overview:** (see sections below)
-
 
 **Status:** Done
 **Priority**: medium
 **Effort**: Very High
 **Type**: Architecture / Feature Epic
 **Tags**: mesh, federation, encrypted-sharing, quota, coordinator-server
-**Assignee**:
-
 ## Summary
 
 Server-to-server mesh federation for loop-lore instances: encrypted content
