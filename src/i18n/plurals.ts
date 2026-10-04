@@ -19,13 +19,7 @@ const ruleCache = new Map<Locale, Intl.PluralRules>();
 
 /**
  * Build the plural-category selector for a locale.
- *
- * An unusable tag degrades to the runtime default locale's rules (English-style
- * `one`/`other`) rather than throwing at request time.
- * @param locale - locale whose CLDR plural rules apply
- * @returns a function mapping a count to its plural category.
- * @example
- * pluralRuleFor("ru")(2) // => "few"
+ * An unusable tag degrades to the runtime default locale's rules.
  */
 export function pluralRuleFor(locale: Locale,): PluralRuleFn {
   const cached = ruleCache.get(locale,);
