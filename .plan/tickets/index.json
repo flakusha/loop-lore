@@ -77,6 +77,22 @@
     "source": ".plan/tickets/BUG-achievement-claimrewards-double-credit-race-and-lost-reward-.md",
     "status": "Done"
   },
+  "BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS": {
+    "hash": "707ea1a",
+    "git_issue": "707ea1a",
+    "extid": "BUG-ACTIVITYPUB-ACTOR-KEYS-TABLE-AND-SRC-CRYPTO-ACTIVITYPUB-KEYS",
+    "type": "BUG",
+    "title": "activitypub_actor_keys table and src/crypto/activitypub-keys.ts have no production reader",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "federation",
+      "dead-code"
+    ],
+    "source": ".plan/tickets/BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys.md",
+    "status": "Not Started"
+  },
   "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY": {
     "epic": "",
     "extid": "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY",
@@ -4375,6 +4391,22 @@
     "tags": [],
     "title": "mention-parser regex fails on multi-word names",
     "type": "BUG"
+  },
+  "BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI": {
+    "hash": "4b503b5",
+    "git_issue": "4b503b5",
+    "extid": "BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI",
+    "type": "BUG",
+    "title": "mesh-deliver accepts envelopes from untrusted or unknown origins without a peer-trust check",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "security",
+      "federation"
+    ],
+    "source": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md",
+    "status": "Not Started"
   },
   "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH": {
     "epic": "",
