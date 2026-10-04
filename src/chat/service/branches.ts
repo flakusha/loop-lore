@@ -12,7 +12,7 @@ import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { checkChatAccess, } from "./access";
 import { insertForkRow, } from "./branch-fork";
-import { walkMessagePath, } from "./branch-helpers";
+import { setActiveBranchId, walkMessagePath, } from "./branch-helpers";
 import type { ServiceError, } from "./types";
 
 /** One branch as returned to the caller. */
@@ -93,14 +93,10 @@ export async function forkBranch(
   const inserted = await insertForkRow(db, { chatId, branchId, parentMessageId: messageId, name: params.name, },);
   if ("code" in inserted) { return inserted; }
   const name = inserted.name;
-  // Sync chats.active_branch_id so the display invariant holds:
-  // both representations of "displayed branch" stay consistent (same lockstep
+  // Sync chats.active_branch_id so the display invariant holds: both
+  // representations of "displayed branch" stay consistent (same lockstep
   // that switchActiveBranch keeps).
-  await db
-    .updateTable("chats",)
-    .set({ active_branch_id: branchId, },)
-    .where("id", "=", chatId,)
-    .execute();
+  await setActiveBranchId(db, chatId, branchId,);
 
   const path = await walkMessagePath(db, chatId, messageId,);
   return {
@@ -146,11 +142,7 @@ export async function switchActiveBranch(
   // Keep per-row flags in lockstep with chats.active_branch_id so the
   // display invariant (exactly one active branch row per chat) holds.
   await db.transaction().execute(async (tx,) => {
-    await tx
-      .updateTable("chats",)
-      .set({ active_branch_id: branchId, },)
-      .where("id", "=", chatId,)
-      .execute();
+    await setActiveBranchId(tx, chatId, branchId,);
 
     await tx
       .updateTable("chat_branches",)

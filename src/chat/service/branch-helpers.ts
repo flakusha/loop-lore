@@ -153,6 +153,27 @@ export async function activeBranchId(db: Kysely<DB>, chatId: string,): Promise<s
 }
 
 /**
+ * Point the chat's displayed branch at `branchId`. Runs through the caller's
+ * executor so it can join an existing transaction; fork and switch both keep
+ * `chats.active_branch_id` in lockstep with the per-row `is_active` flags.
+ * @param db
+ * @param chatId
+ * @param branchId
+ * @returns {Promise<void>}
+ */
+export async function setActiveBranchId(
+  db: Kysely<DB>,
+  chatId: string,
+  branchId: string,
+): Promise<void> {
+  await db
+    .updateTable("chats",)
+    .set({ active_branch_id: branchId, },)
+    .where("id", "=", chatId,)
+    .execute();
+}
+
+/**
  * Decorate a row with walk-derived metadata (message count + last activity).
  * @param db
  * @param chatId
