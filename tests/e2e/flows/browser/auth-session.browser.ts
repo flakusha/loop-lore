@@ -49,6 +49,32 @@ describe("Auth session E2E", () => {
     await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 30_000, },);
   }
 
+  /**
+   * Wait for a URL predicate, retrying when the in-flight navigation aborts
+   * the frame (`net::ERR_ABORTED` / "frame was detached"). A bare waitForURL
+   * races a navigation that is already in flight and fails ~1-in-6 runs even
+   * though the navigation succeeds; only that transient abort shape is
+   * retried, so a genuine timeout still surfaces.
+   */
+  async function waitForUrlWithRetry(
+    page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,
+    predicate: (url: URL,) => boolean,
+    timeout = 30_000,
+  ) {
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      try {
+        await page.waitForURL(predicate, { timeout, },);
+        return;
+      } catch (error) {
+        lastError = error;
+        const message = error instanceof Error ? error.message : String(error,);
+        if (!/ERR_ABORTED|frame was detached|navigating/i.test(message,)) { throw error; }
+      }
+    }
+    throw lastError;
+  }
+
   describe("Login", () => {
     test("successful login redirects to chat", async () => {
       const page = await ctx.openPage();
@@ -78,7 +104,7 @@ describe("Auth session E2E", () => {
           const btn = document.querySelector("button[data-testid='nav-logout']",);
           (btn as HTMLElement | undefined)?.click();
         },);
-        await page.waitForURL((url,) => url.pathname === "/views/login", { timeout: 30_000, },);
+        await waitForUrlWithRetry(page, (url,) => url.pathname === "/views/login",);
       } finally {
         errors.assert();
         errors.detach();
