@@ -205,6 +205,7 @@ const nullLogger: Logger = {
   child: () => nullLogger,
   addTransport: () => {},
   setBindings: () => {},
+  setLevel: () => {},
   flush: () => Promise.resolve(),
 };
 

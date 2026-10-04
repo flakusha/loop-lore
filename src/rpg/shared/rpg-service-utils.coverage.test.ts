@@ -165,6 +165,7 @@ describe("getRpgLog", () => {
       child: () => child,
       addTransport: () => {},
       setBindings: () => {},
+      setLevel: () => {},
       flush: () => Promise.resolve(),
     };
 
@@ -181,6 +182,7 @@ describe("getRpgLog", () => {
       },
       addTransport: () => {},
       setBindings: () => {},
+      setLevel: () => {},
       flush: () => Promise.resolve(),
     };
 

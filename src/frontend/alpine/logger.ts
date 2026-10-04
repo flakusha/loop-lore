@@ -26,8 +26,8 @@ class LightLogger implements Logger {
   private bindings: LoggerBindings;
   private readonly transports: Transport[];
   private readonly queue: AsyncLogQueue | null;
-  private readonly threshold: number;
-  private readonly levelString: LogLevel;
+  private threshold: number;
+  private levelString: LogLevel;
 
   /**
    * @param config
@@ -179,6 +179,14 @@ class LightLogger implements Logger {
    */
   setBindings(partial: LoggerBindings,): void {
     Object.assign(this.bindings, partial,);
+  }
+
+  /**
+   * @param level
+   */
+  setLevel(level: LogLevel,): void {
+    this.levelString = level;
+    this.threshold = levelFromConfig(level,);
   }
 }
 

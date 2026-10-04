@@ -62,6 +62,9 @@ export interface Logger {
   /** Merge bindings at runtime (e.g. userId/sessionId for telemetry) */
   setBindings(partial: LoggerBindings,): void;
 
+  /** Update the runtime level threshold for this logger and its children. */
+  setLevel(level: LogLevel,): void;
+
   /** Flush pending entries (await before shutdown) */
   flush(): Promise<void>;
 }
