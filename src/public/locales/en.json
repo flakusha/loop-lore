@@ -644,6 +644,7 @@
     "gallery": "Gallery",
     "admin": "Admin",
     "settings": "Settings",
+    "config": "Config",
     "logout": "Log Out",
     "closeSidebar": "Close sidebar",
     "notifications": "Notifications",
