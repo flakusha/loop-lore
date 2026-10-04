@@ -29,6 +29,7 @@ export const builderListState: Partial<ComfyuiBuilder> & ThisType<ComfyuiBuilder
       const res = await apiFetch(`${BUILDER_PATH}/chains`, {
         headers: { Accept: "application/json", },
       },);
+
       if (res.ok) {
         const data = await res.json() as { chains?: BuilderChain[] };
         this.chains = Array.isArray(data.chains,) ? data.chains : [];
@@ -50,6 +51,7 @@ export const builderListState: Partial<ComfyuiBuilder> & ThisType<ComfyuiBuilder
       const res = await apiFetch(TEMPLATES_PATH, {
         headers: { Accept: "application/json", },
       },);
+
       if (res.ok) {
         const data = await res.json() as { data?: BuilderTemplate[] };
         this.templates = Array.isArray(data.data,) ? data.data : [];

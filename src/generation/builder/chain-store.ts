@@ -76,11 +76,13 @@ export async function listChains(
     .where("modality", "=", "workflow",)
     .orderBy("updated_at", "desc",)
     .execute();
+
   const chains: BuilderChain[] = [];
   for (const row of rows) {
     const chain = toChain(row,);
     if (chain) { chains.push(chain,); }
   }
+
   return chains;
 }
 
@@ -120,6 +122,7 @@ export async function createChain(
     description: input.description,
     payload: { kind: "chain", steps: input.steps, },
   },);
+
   const chain = toChain(row,);
   if (!chain) { throw new Error("chain failed to round-trip after create",); }
   return chain;
@@ -150,6 +153,7 @@ export async function updateChain(
       ? { kind: "chain", steps: patch.steps, }
       : undefined,
   },);
+
   if (!updated) { return null; }
   const chain = toChain(updated,);
   if (!chain) { throw new Error("chain failed to round-trip after update",); }

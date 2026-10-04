@@ -54,6 +54,7 @@ export function validateChainPayload(value: unknown,): ChainValidation {
   if (typeof value !== "object" || value === null || Array.isArray(value,)) {
     return { ok: false, errors: ["chain payload must be an object",], };
   }
+
   const record = value as Record<string, unknown>;
   if (!isChainPayloadShape(record,)) {
     return { ok: false, errors: ['chain payload requires kind: "chain" and a steps array',], };
@@ -68,25 +69,30 @@ export function validateChainPayload(value: unknown,): ChainValidation {
       errors.push(`steps[${index}] must be an object`,);
       continue;
     }
+
     const step = entry as Record<string, unknown>;
     if (typeof step.id !== "string" || step.id.length === 0) {
       errors.push(`steps[${index}] requires a non-empty id`,);
       continue;
     }
+
     if (seenIds.has(step.id,)) {
       errors.push(`steps[${index}]: duplicate step id ${step.id}`,);
       continue;
     }
+
     seenIds.add(step.id,);
     if (typeof step.templateId !== "string" || step.templateId.length === 0) {
       errors.push(`steps[${index}] requires a non-empty templateId`,);
       continue;
     }
+
     const params = step.params;
     if (typeof params !== "object" || params === null || Array.isArray(params,)) {
       errors.push(`steps[${index}]: params must be an object`,);
       continue;
     }
+
     const cleanParams: ChainStep["params"] = {};
     let paramsOk = true;
     for (const [name, raw,] of Object.entries(params as Record<string, unknown>,)) {
@@ -95,8 +101,10 @@ export function validateChainPayload(value: unknown,): ChainValidation {
         paramsOk = false;
         continue;
       }
+
       cleanParams[name] = raw;
     }
+
     if (!paramsOk) { continue; }
     steps.push({ id: step.id, templateId: step.templateId, params: cleanParams, },);
   }

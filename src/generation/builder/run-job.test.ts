@@ -21,6 +21,7 @@ async function until(check: () => boolean, timeoutMs = 2_000,): Promise<boolean>
     if (check()) { return true; }
     await new Promise((resolve,) => setTimeout(resolve, 5,));
   }
+
   return check();
 }
 
@@ -41,6 +42,7 @@ describe("startChainRun", () => {
         return Response.json({ data: [{ filename: `${body.template_id}.png`, },], },);
       },
     },);
+
     expect(["pending", "running",],).toContain(job.status,);
 
     const done = await until(() => job.status === "completed");
@@ -68,6 +70,7 @@ describe("startChainRun", () => {
         return Response.json({ data: [], },);
       },
     },);
+
     await until(() => job.status === "completed");
     expect(seen!.chatId,).toBe("chat-9",);
     expect(seen!.messageId,).toBe("msg-3",);
@@ -85,6 +88,7 @@ describe("startChainRun", () => {
         return Response.json({ error: "Unknown template: nope", }, { status: 404, },);
       },
     },);
+
     const done = await until(() => job.status === "failed");
     expect(done,).toBe(true,);
     expect(calls,).toBe(1,);
@@ -101,6 +105,7 @@ describe("startChainRun", () => {
       auth: AUTH,
       executeStep: async () => new Response("not json", { status: 502, },),
     },);
+
     const done = await until(() => job.status === "failed");
     expect(done,).toBe(true,);
     expect(job.error,).toContain("502",);
@@ -116,6 +121,7 @@ describe("startChainRun", () => {
         throw new Error("provider exploded",);
       },
     },);
+
     const done = await until(() => job.status === "failed");
     expect(done,).toBe(true,);
     expect(job.error,).toContain("provider exploded",);
@@ -130,6 +136,7 @@ describe("startChainRun", () => {
       auth: AUTH,
       executeStep: async () => Response.json({ data: [], },),
     },);
+
     await until(() => first.status === "completed");
 
     expect(listRunJobs("user-1",).some((job,) => job.id === first.id),).toBe(true,);

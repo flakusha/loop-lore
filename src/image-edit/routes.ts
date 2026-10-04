@@ -216,6 +216,7 @@ export async function handleHealth(): Promise<Response> {
  * exposes the unified ComfyUI / sd-server image-edit endpoints.
  * @param opts
  * @param opts.database
+ * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { "image-edit": { templates: { ...; }; }; }; } & { ...; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function imageEditRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {

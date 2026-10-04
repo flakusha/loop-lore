@@ -30,6 +30,7 @@ describe("validateGraph", () => {
       a: { class_type: "KSampler", inputs: { model: ["b", 0,], }, },
       b: { class_type: "KSampler", inputs: { model: ["a", 0,], }, },
     },);
+
     expect(result.ok,).toBe(false,);
     expect(kinds(result,),).toContain("cycle",);
     expect(result.issues.find((issue,) => issue.kind === "cycle")?.message,).toContain("a, b",);
@@ -40,6 +41,7 @@ describe("validateGraph", () => {
       "2": { class_type: "KSampler", inputs: { model: ["99", 0,], }, },
       "3": { class_type: "SaveImage", inputs: { images: ["2", 0,], }, },
     },);
+
     expect(result.ok,).toBe(false,);
     expect(kinds(result,),).toContain("missing_input",);
     expect(result.issues.some((issue,) => issue.message.includes("unknown node 99",)),).toBe(true,);
@@ -50,6 +52,7 @@ describe("validateGraph", () => {
       { id: "1", class_type: "CheckpointLoaderSimple", inputs: {}, },
       { id: "1", class_type: "KSampler", inputs: {}, },
     ],);
+
     expect(result.ok,).toBe(false,);
     expect(kinds(result,),).toContain("duplicate_id",);
   });
@@ -59,6 +62,7 @@ describe("validateGraph", () => {
       "1": { class_type: "KSampler", },
       "3": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
     },);
+
     expect(result.ok,).toBe(false,);
     expect(result.issues.some((issue,) => issue.message.includes("missing inputs",)),).toBe(true,);
   });
@@ -73,6 +77,7 @@ describe("validateGraph", () => {
       // Nothing links FROM the rogue node and it is not a sink — dead.
       "5": { class_type: "KSampler", inputs: {}, },
     },);
+
     expect(result.ok,).toBe(false,);
     expect(kinds(result,),).toContain("dead_node",);
     const deadMessages = result.issues.filter((issue,) => issue.kind === "dead_node");
@@ -85,6 +90,7 @@ describe("validateGraph", () => {
       "1": { inputs: {}, },
       "3": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
     },);
+
     expect(result.ok,).toBe(false,);
     expect(kinds(result,),).toContain("invalid_shape",);
   });
@@ -116,6 +122,7 @@ describe("validateGraph", () => {
       b: { class_type: "B", inputs: { x: ["c", 0,], }, },
       c: { class_type: "C", inputs: { x: ["a", 0,], }, },
     },);
+
     expect(kinds(result,),).toContain("cycle",);
     const message = result.issues.find((issue,) => issue.kind === "cycle")?.message ?? "";
     expect(message,).toContain("a",);
@@ -136,6 +143,7 @@ describe("validateGraph", () => {
       bad: { class_type: "KSampler", inputs: { model: ["ghost", 0,], }, },
       noClass: { inputs: {}, },
     },);
+
     const found = kinds(result,);
     expect(found,).toContain("cycle",);
     expect(found,).toContain("missing_input",);
@@ -149,6 +157,7 @@ describe("validateGraph", () => {
       c: { class_type: "SaveImage", inputs: { images: ["b", 0,], }, },
       d: { class_type: "SaveImage", inputs: {}, },
     },);
+
     expect(result.ok,).toBe(true,);
     expect(result.issues,).toEqual([],);
   });

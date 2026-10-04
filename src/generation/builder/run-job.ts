@@ -71,6 +71,7 @@ async function stepErrorMessage(response: Response,): Promise<string> {
   } catch {
     // Non-JSON error body — the status line is the best signal we have.
   }
+
   return fallback;
 }
 
@@ -95,6 +96,7 @@ async function runSteps(
       chatId: opts.linkage?.chatId,
       messageId: opts.linkage?.messageId,
     };
+
     const response = await executeStep(body, opts.auth,);
     if (!response.ok) {
       job.status = "failed";
@@ -102,9 +104,11 @@ async function runSteps(
       job.completedAt = new Date().toISOString();
       return;
     }
+
     job.results.push(await response.json(),);
     job.completedSteps += 1;
   }
+
   job.status = "completed";
   job.completedAt = new Date().toISOString();
 }
@@ -124,11 +128,13 @@ export function startChainRun(opts: StartChainRunOpts,): ChainRunJob {
     chainId: opts.chainId,
     totalSteps: opts.steps.length,
   },);
+
   const executeStep = opts.executeStep ?? executeViaHandleRun;
   runSteps(job, opts, executeStep,).catch((error,) => {
     job.status = "failed";
     job.error = error instanceof Error ? error.message : String(error,);
     job.completedAt = new Date().toISOString();
   },);
+
   return job;
 }

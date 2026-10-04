@@ -60,6 +60,7 @@ export function builderRunRoutes(
       if (chain.steps.length === 0) {
         return jsonError({ message: "Chain has no steps", status: HttpStatus.BadRequest, },);
       }
+
       const auth = ctx as unknown as { userRole?: string | null };
       const job = startChainRun({
         ownerId: userId,
@@ -69,6 +70,7 @@ export function builderRunRoutes(
         linkage: { chatId: body.chatId, messageId: body.messageId, },
         executeStep,
       },);
+
       return jsonCreated({ jobId: job.id, },);
     }, {
       body: ChainRunBody,

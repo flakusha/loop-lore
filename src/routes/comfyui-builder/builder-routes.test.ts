@@ -61,6 +61,7 @@ async function pollUntilDone(
     if (status === "completed" || status === "failed") { break; }
     await new Promise((resolve,) => setTimeout(resolve, 5,));
   }
+
   return body.job ?? {};
 }
 
