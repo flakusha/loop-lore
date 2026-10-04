@@ -357,6 +357,9 @@ giwt rebase feature-name
 
 # Finalize (checks + signed merge + cleanup; --force skips gates)
 giwt finalize feature-name [--gates <csv>] [--skip-gates <csv>]
+# Plan-only branches (tickets/epics/backlog/index + generated matrix/code-map):
+# prefer squash — one merge instead of a per-commit rebase replay:
+giwt finalize plan-branch --merge-strategy squash
 
 # Manual recovery if finalize left dev in a bad state
 giwt abort              # recover (idempotent)

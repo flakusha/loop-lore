@@ -3,7 +3,8 @@
 
 # TASK: squash default for plan-only finalizes and ticket-scope orchestration
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** squash default for plan-only finalizes
 **Priority:** medium
 **Effort:** Small
 **Tags:** finalize, orchestration
@@ -18,6 +19,8 @@ Plan-only branches (tickets/epics/backlog/index + generated matrix/code-map) rep
 
 **Acceptance Criteria:**
 
-- [ ] Ticket-scope finalizes default to --merge-strategy squash; documented where agents find it
-- [ ] Cross-refs to the six giwt tickets resolve after their finalize
-- [ ] Plan-only finalize stops hitting per-commit replay conflicts
+- [x] Ticket-scope finalizes default to --merge-strategy squash; documented where agents find it
+- [x] Cross-refs to the six giwt tickets resolve after their finalize
+- [x] Plan-only finalize stops hitting per-commit replay conflicts
+
+**Resolved:** squash guidance added to AGENTS.md worktree block (squash-default-orchestration branch). Cross-refs: giwt-side improvement batch all Not Started 2026-10-03 - lock-narrow, universal post-merge reconciliation, ticket-header resolver, staging-worktree merge, stash-dance deletion, index sharding (filed, pending implementation).
