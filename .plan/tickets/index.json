@@ -34026,6 +34026,23 @@
     "title": "Wire `requestIdMiddleware` into Elysia `.derive()` chain",
     "type": "TASK"
   },
+  "TASK-MIGRATE-SAFE-FETCH-RETRY-LOOP-TO-EFFECT-SCHEDULE": {
+    "hash": "pending",
+    "extid": "TASK-MIGRATE-SAFE-FETCH-RETRY-LOOP-TO-EFFECT-SCHEDULE",
+    "type": "TASK",
+    "title": "Migrate safe-fetch retry loop to Effect Schedule",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-effect-v4-adoption-evaluation",
+    "tags": [
+      "effect",
+      "retry",
+      "refactor",
+      "evaluation"
+    ],
+    "source": ".plan/tickets/TASK-migrate-safe-fetch-retry-loop-to-effect-schedule.md",
+    "status": "in_progress"
+  },
   "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR": {
     "epic": "",
     "extid": "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR",
