@@ -3,7 +3,7 @@
 
 # BUG: frontend !ok toast branches unreachable (feFetch throws on non-2xx)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 
@@ -20,3 +20,11 @@ feFetch/safeFetch (src/frontend/fe-fetch.ts) throws on non-2xx, so `if (!resp.ok
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Verified fixed by code reading and focused tests against dev:
+
+- `feFetch` rejects every non-2xx response by throwing, so the dead `!resp.ok` branches in `src/frontend/pages/characters.ts` and `src/frontend/alpine/chat-editing.ts` were removed.
+- The error-handling paths in those callers now branch on `error.status` from the thrown error, which is the only reachable code path.
+- Pinned by `src/frontend/alpine/chat-editing.test.ts`, which exercises the affected handlers and asserts the correct error branch is taken for non-2xx responses.
