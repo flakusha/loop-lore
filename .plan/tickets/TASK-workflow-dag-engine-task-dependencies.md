@@ -3,7 +3,7 @@
 
 # TASK: Workflow DAG engine — task dependencies
 
-**Status:** Wontfix
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Task-dependency DAG execution engine for multi-step agentic workflows
