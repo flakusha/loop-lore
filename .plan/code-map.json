@@ -34090,10 +34090,6 @@
   "src/search/types.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-search-rag-coverage-bridge.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
     }
   ],
