@@ -20,3 +20,7 @@ src/generation/providers/openai-compatible/http.ts:151: after response headers, 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - src/generation/providers/openai-compatible/http.ts:151-171 has a single setTimeout(state.timeout) around fetch(), cleared in finally immediately after headers, with no coverage of the body read; src/generation/providers/openai-compatible/core.ts:71 response.body?.getReader() loop has no per-chunk timer/deadline. Worktree scan across all 38 trees: zero idle/per-chunk/deadline timers in that file.

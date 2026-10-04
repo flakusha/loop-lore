@@ -20,3 +20,7 @@ src/routes/world-import/bundle.ts:157 does not remap quest time_location_id thro
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - src/routes/world-import/bundle.ts:157 copies time_location_id raw (strOrNull(row, "time_location_id")) with no locationIdMap remap (cf. location_states remap :185-187); bundle.ts:85 copies connections verbatim (str(row, "connections") ?? "[]"). Identical in fix-open-bug-tickets / npc-navigation-rescue; repo-wide sweep for remap patterns: none.
