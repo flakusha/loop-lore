@@ -313,7 +313,7 @@ describe("migration consistency flags", () => {
     // Baseline is every migration before the hot-path sweep. Pairs that
     // already existed — including partial unique indexes the column list
     // cannot distinguish — are pre-existing debt, not this sweep's doing.
-    const sweepStart = MIGRATION_NAMES.indexOf("032_hot_path_indexes",);
+    const sweepStart = MIGRATION_NAMES.indexOf("035_hot_path_indexes",);
     const before = await redundant(MIGRATION_NAMES.slice(0, sweepStart,),);
     const after = await redundant(MIGRATION_NAMES,);
 

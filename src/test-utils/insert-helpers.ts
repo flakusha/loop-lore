@@ -1270,7 +1270,7 @@ export async function insertGrowthLog(
     source_event_id?: string | null;
     confirmed_at?: string | null;
     confirmed_by?: string | null;
-    created_at?: string;
+    created_at?: string | null;
     updated_at?: string | null;
   },
 ): Promise<string> {
@@ -2152,7 +2152,7 @@ export async function insertChatPins(
   chat_id: string,
   message_id: string,
   pinned_by: string,
-  opts?: { id?: string; pinned_at?: string; created_at?: string; updated_at?: string | null },
+  opts?: { id?: string; pinned_at?: string; created_at?: string | null; updated_at?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -2283,7 +2283,7 @@ export async function insertChatRandomEvents(
   token_count: number,
   fired_at: number,
   expires_at: number,
-  opts?: { id?: string; fired_count?: number; created_at?: string; updated_at?: string | null },
+  opts?: { id?: string; fired_count?: number; created_at?: string | null; updated_at?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -3142,7 +3142,7 @@ export async function insertRecipeDiscoveries(
   recipe_id: string,
   discovery_method: DiscoveryMethod,
   discovered_at: string,
-  opts?: { id?: string; mastery_level?: number; created_at?: string; updated_at?: string | null },
+  opts?: { id?: string; mastery_level?: number; created_at?: string | null; updated_at?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -3527,7 +3527,7 @@ export async function insertBlogTags(
   db: Db,
   post_id: string,
   tag: string,
-  opts?: { id?: string; created_at?: string; updated_at?: string | null },
+  opts?: { id?: string; created_at?: string | null; updated_at?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -4320,7 +4320,7 @@ export async function insertTravelRouteStops(
     coord_x?: number | null;
     coord_y?: number | null;
     coord_z?: number | null;
-    created_at?: string;
+    created_at?: string | null;
     updated_at?: string | null;
   },
 ): Promise<string> {
@@ -4425,7 +4425,7 @@ export async function insertStatusEffect(
     source_id?: string | null;
     expires_at?: string | null;
     meta?: string | null;
-    created_at?: string;
+    created_at?: string | null;
     updated_at?: string | null;
   },
 ): Promise<string> {
