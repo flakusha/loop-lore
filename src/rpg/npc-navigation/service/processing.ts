@@ -140,24 +140,21 @@ export async function processPatrolMovement(
     errors: [],
   };
 }
-
-/** Process wander movement — random movement within radius. */
-export async function processWanderMovement(
+/** Shared random-movement logic for wander and flee patterns. */
+async function processRandomMovement(
   db: Kysely<DB>,
   actorId: string,
   worldId: string,
   currentLocationId: string | null,
-  _schedule: Record<string, unknown>,
   opts: Required<MovementTickOptions>,
+  pattern: MovementPattern,
 ): Promise<MovementResult | null> {
   if (!currentLocationId) { return null; }
 
-  // Get connected locations
   const connections = await getLocationConnections(db, currentLocationId,);
 
   if (connections.length === 0) { return null; }
 
-  // Pick random connected location
   const randomIndex = Math.floor(opts.rng() * connections.length,);
   const nextLocationId = connections[randomIndex];
 
@@ -172,9 +169,21 @@ export async function processWanderMovement(
     success: true,
     fromLocationId: currentLocationId,
     toLocationId: nextLocationId,
-    pattern: MovementPattern.Wander,
+    pattern,
     errors: [],
   };
+}
+
+/** Process wander movement — random movement within radius. */
+export async function processWanderMovement(
+  db: Kysely<DB>,
+  actorId: string,
+  worldId: string,
+  currentLocationId: string | null,
+  _schedule: Record<string, unknown>,
+  opts: Required<MovementTickOptions>,
+): Promise<MovementResult | null> {
+  return processRandomMovement(db, actorId, worldId, currentLocationId, opts, MovementPattern.Wander,);
 }
 
 /** Process follow movement — follow target NPC/player. */
@@ -224,29 +233,5 @@ export async function processFleeMovement(
   _schedule: Record<string, unknown>,
   opts: Required<MovementTickOptions>,
 ): Promise<MovementResult | null> {
-  if (!currentLocationId) { return null; }
-
-  // Get connected locations
-  const connections = await getLocationConnections(db, currentLocationId,);
-
-  if (connections.length === 0) { return null; }
-
-  // Pick random connected location (flee to any direction)
-  const randomIndex = Math.floor(opts.rng() * connections.length,);
-  const nextLocationId = connections[randomIndex];
-
-  if (!nextLocationId || nextLocationId === currentLocationId) { return null; }
-
-  await updateMovementState(db, actorId, worldId, {
-    currentLocationId: nextLocationId,
-    lastMovedAt: toDate(opts.nowMs,).toISOString(),
-  },);
-
-  return {
-    success: true,
-    fromLocationId: currentLocationId,
-    toLocationId: nextLocationId,
-    pattern: MovementPattern.Flee,
-    errors: [],
-  };
+  return processRandomMovement(db, actorId, worldId, currentLocationId, opts, MovementPattern.Flee,);
 }
