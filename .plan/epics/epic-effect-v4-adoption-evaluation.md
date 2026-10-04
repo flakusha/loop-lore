@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** S1 PASS (compatibility) and S2 PASS (retry parity, adopted); S3 REJECT — v4 ships no semaphore operator
 **Priority:** Medium
 **Effort:** Medium
@@ -291,3 +291,5 @@ classification moved in with them.
 
 
 git issue: 5bb3855
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 5bb3855 (registry tip: d451200bd Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-EFFECT-V4-ADOPTION-EVALUATI)
