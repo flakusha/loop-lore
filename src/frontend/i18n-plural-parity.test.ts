@@ -17,6 +17,14 @@
  * Both sides now share `isPluralNode` / `selectVariant` / `pluralRuleFor` from
  * `src/i18n/plurals.ts`, so a failure here means someone reintroduced a private
  * copy or a frontend-local plural rule.
+ *
+ * Resource contract (parallel-safe): owns NO db, NO file, NO port. Its one
+ * process-global is the pair `globalThis.currentLocale` / `__localeStrings`,
+ * which `withLocale` borrows: saved on first entry, restored in a `finally` on
+ * every exit, and restored AGAIN by an `afterEach` that no-ops when nothing is
+ * borrowed — so a failing assertion cannot leak the FIXTURE catalog into a
+ * sibling file sharing the process. `hasSaved` is the borrow flag and is the
+ * only state carried between tests; no ordering dependence.
  */
 
 import { afterEach, describe, expect, it, } from "bun:test";
