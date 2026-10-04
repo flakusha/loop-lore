@@ -13,9 +13,19 @@
  * Every assertion here goes through the REAL barrel, so deleting that `.use()`
  * line fails this file.
  *
- * Resource contract (parallel-safe): own in-memory SQLite via createTestDb, no
- * shared paths/ports/tmp dirs, the barrel is driven via app.handle() (never
- * Bun.serve), no cron, no ordering dependence.
+ * Resource contract (parallel-safe):
+ *  - DB: its OWN `:memory:` SQLite from createTestDb, released by an afterAll
+ *    that is guarded against a failed beforeAll (no fixed path, no port).
+ *  - env: OWNS NOTHING in `process.env`. The guard's enable predicate is
+ *    INJECTED (`governanceEnabled`), so this file cannot enable or disable
+ *    governance for a sibling file sharing the process.
+ *  - process-global singletons: `metrics` and `governanceRateLimiter` are
+ *    SHARED MODULE STATE, not owned. They are reset in beforeEach/afterEach
+ *    around every test so no counter or rate-limit window survives into the
+ *    next file; under `--parallel` each file additionally has its own module
+ *    registry. They cannot be un-shared, so this file must not be run in a
+ *    runner that interleaves two files' TESTS within one module registry.
+ *  - driven via app.handle() (never Bun.serve), no cron, no ordering dependence.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
@@ -56,24 +66,19 @@ function createV1App(db: Kysely<DB>, userId: string | null,): Elysia {
   const t = (k: string,) => k;
   return new Elysia({ name: "test-v1-governance", },)
     .derive(() => ({ userId, userRole: userId ? "admin" : null, sessionId: null, locale: "en", t, }))
-    .use(v1Routes({ database: db, config: {} as never, asyncStore: stubAsyncStore(), },),) as unknown as Elysia;
+    // Injected predicate, NOT a process.env mutation: the guard must be live for
+    // this file without E2E_SAFEGUARD being cleared process-wide.
+    .use(v1Routes({ database: db, config: {} as never, asyncStore: stubAsyncStore(), governanceEnabled: () => true, },),) as unknown as Elysia;
 }
 
 describe("v1 governance guard is mounted by the real route tree", () => {
   let db: Kysely<DB>;
   const userId = uid();
-  /** E2E_SAFEGUARD as it was before this file touched it (see beforeAll). */
-  let priorSafeguard: string | undefined;
-
+  // No process.env mutation: the guard's enable predicate is INJECTED via
+  // `governanceEnabled` (see createV1App), so this file never reads or writes
+  // E2E_SAFEGUARD and cannot change governance behaviour for a sibling file
+  // sharing the process.
   beforeAll(async () => {
-    // `v1Routes` passes `enabled: () => process.env.E2E_SAFEGUARD !== "1"` to
-    // the guard. Exercising the mount is pointless with the guard disabled, so
-    // the flag is cleared for this file. `bun test` runs every file in ONE
-    // process, hence the capture/restore: a leaked mutation would silently
-    // disable (or enable) governance in whichever file runs after this one.
-    priorSafeguard = process.env.E2E_SAFEGUARD;
-    delete process.env.E2E_SAFEGUARD;
-
     createLogger({ level: "error", },);
     ({ db, } = await createTestDb());
     await db.insertInto("users",).values({
@@ -87,9 +92,9 @@ describe("v1 governance guard is mounted by the real route tree", () => {
   },);
 
   afterAll(async () => {
-    if (priorSafeguard === undefined) { delete process.env.E2E_SAFEGUARD; }
-    else { process.env.E2E_SAFEGUARD = priorSafeguard; }
-
+    // Guarded: a failed beforeAll leaves `db` undefined, and an unguarded
+    // destroy() throws a TypeError here that MASKS the real setup error.
+    if (!db) { return; }
     await db.destroy();
   },);
 

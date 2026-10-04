@@ -28,6 +28,11 @@ export interface RegisterPluginsOpts {
   config: Config;
   /** Async request-result store (request_results table writer). */
   asyncStore: import("../async/store").AsyncStore;
+  /**
+   * v1 governance-guard enable predicate. Defaults to the E2E_SAFEGUARD env
+   * read; injected by tests so they need not mutate `process.env` process-wide.
+   */
+  governanceEnabled?: () => boolean;
 }
 
 /**
