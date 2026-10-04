@@ -48,7 +48,6 @@ export class ConcurrencyLimiter {
     if (!Number.isInteger(opts.max,) || opts.max < 1) {
       throw new RangeError(`ConcurrencyLimiter: max must be a positive integer, got ${opts.max}`,);
     }
-
     this.max = opts.max;
     this.semaphore = Semaphore.makeUnsafe(opts.max,) as SemaphoreIntrospection;
   }
@@ -66,6 +65,22 @@ export class ConcurrencyLimiter {
   /** Number of waiters queued. */
   get pending(): number {
     return this.semaphore.waiters.size;
+  }
+
+  /**
+   * Update the slot cap; wakes parked waiters when raised (hot-reload).
+   * @throws {RangeError} when max is not a positive integer.
+   */
+  resize(max: number,): void {
+    if (!Number.isInteger(max,) || max < 1) {
+      throw new RangeError(`ConcurrencyLimiter: max must be a positive integer, got ${max}`,);
+    }
+    this.max = max;
+    while (this.held < this.max) {
+      const next = this.waiters.shift();
+      if (!next) { return; }
+      next();
+    }
   }
 
   /**
@@ -127,13 +142,11 @@ export function createLimiterRegistry(): LimiterRegistry {
     get(key: string, max: number,) {
       const existing = map.get(key,);
       if (existing) {
-        if (existing.capacity !== max) {
-          throw new Error(`ConcurrencyLimiter: capacity mismatch for ${key} (have ${existing.capacity}, want ${max})`,);
-        }
-
+        // Hot-reload: caps are config-derived and may change between loads,
+        // so adopt the latest cap instead of pinning the first one seen.
+        existing.resize(max,);
         return existing;
       }
-
       const created = new ConcurrencyLimiter({ max, },);
       map.set(key, created,);
       return created;

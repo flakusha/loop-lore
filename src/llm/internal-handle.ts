@@ -18,8 +18,23 @@ export interface InternalHandle<T,> extends ScheduleHandle<T> {
   isCancelled(): boolean;
   /** Invoked once when the request settles (success / fail / cancel). */
   onSettled?: () => void;
+  /** Fire onSettled at most once (settle path + manager drain both nudge). */
+  notifySettled(): void;
 }
 
+/** Prefix for scheduler cancellation errors (see cancel() below). */
+const SCHEDULER_CANCEL_PREFIX = "schedule cancelled: ";
+
+/**
+ * Whether `err` is a scheduler cancellation (queued slot cancelled before
+ * run) as opposed to a provider failure. Lets dispatch seams tell the two
+ * apart without coupling to the message text.
+ * @param err
+ * @returns true for scheduler cancellations
+ */
+export function isSchedulerCancel(err: unknown,): boolean {
+  return err instanceof Error && err.message.startsWith(SCHEDULER_CANCEL_PREFIX,);
+}
 /**
  * @param {ScheduledRequest<T>} req
  * @returns {InternalHandle<T>}
@@ -33,6 +48,17 @@ export function createInternalHandle<T,>(req: ScheduledRequest<T>,): InternalHan
     rejectFn = rej;
   },);
 
+  // onSettled fires exactly once: cancel() settles via settle() while the
+  // manager's runOne() also nudges it in `finally` — without this guard the
+  // live-id set drops the same request twice.
+  let userOnSettled: (() => void) | undefined;
+  let settledFired = false;
+  const notifySettled = (): void => {
+    if (settledFired) { return; }
+    settledFired = true;
+    userOnSettled?.();
+  };
+
   const settle = (
     next: ScheduleState,
     fn: ((v: unknown,) => void) | ((v: T,) => void) | null,
@@ -45,7 +71,7 @@ export function createInternalHandle<T,>(req: ScheduledRequest<T>,): InternalHan
     rejectFn = null;
     state = next;
     r(value,);
-    handle.onSettled?.();
+    notifySettled();
   };
 
   const handle: InternalHandle<T> = {
@@ -63,7 +89,7 @@ export function createInternalHandle<T,>(req: ScheduledRequest<T>,): InternalHan
      */
     cancel(reason?: string,) {
       if (state === "complete" || state === "cancelled") { return; }
-      settle("cancelled", rejectFn, new Error(`schedule cancelled: ${reason ?? "cancelled"}`,),);
+      settle("cancelled", rejectFn, new Error(`${SCHEDULER_CANCEL_PREFIX}${reason ?? "cancelled"}`,),);
     },
     /**
      * @param {T} value
@@ -93,7 +119,13 @@ export function createInternalHandle<T,>(req: ScheduledRequest<T>,): InternalHan
     isCancelled() {
       return state === "cancelled";
     },
+    get onSettled(): (() => void) | undefined {
+      return userOnSettled;
+    },
+    set onSettled(fn: (() => void) | undefined,) {
+      userOnSettled = fn;
+    },
+    notifySettled,
   };
-
   return handle;
 }

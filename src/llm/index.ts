@@ -20,6 +20,8 @@ export {
   llmRequestStateMachine,
 } from "./message-state-machine";
 
+export { isSchedulerCancel, } from "./internal-handle";
+
 export {
   type Priority,
   PriorityLevel,
