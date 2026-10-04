@@ -11,6 +11,7 @@
 **Summary:** Bench the wired `ResourceManager` under synthetic queued load: N concurrent requests × M priorities, measuring queue-wait p50/p95, denial rate, and low-priority starvation (max wait). Mock variant first (deterministic, CI-safe via `MockLLMProvider`); llama-swap variant after the LLM bench ticket lands. Catches scheduler regressions `FEAT-e2e-performance-benchmarks` cannot (it measures unqueued paths). Depends on the wire ticket.
 
 **Context:** The wire ticket lands behavior-preserving (no request ever waits). Without a soak bench, a later policy ticket could silently reintroduce head-blocking or starvation and no existing test would catch it — unit tests cover the queue in isolation, not dispatch under load.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Acceptance Criteria
 
