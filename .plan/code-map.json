@@ -3999,13 +3999,6 @@
       "source": ".plan/tickets/TASK-autonomy-deterministic-turns.md"
     }
   ],
-
-  "src/autonomy/scheduler/telemetry.ts": [
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
-    }
-  ],
   "src/aux-pipeline": [
     {
       "kind": "epic",
@@ -4160,10 +4153,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/aux-pipeline/tasks/emotion-avatar.ts": [
@@ -7484,10 +7473,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recon-test-coverage.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/chat/transition-classifier.test.ts": [
@@ -9256,10 +9241,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-llama-swap-native-support-cpu-resident-classifier-model-reci.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/config/schema/characters.ts": [
@@ -9304,10 +9285,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-rate-limiting-and-concurrency-limits.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/config/schema/headers.ts": [
@@ -18960,10 +18937,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/generation/auto-gen/classify-intent.test.ts": [
@@ -19638,10 +19611,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-maxtokens-and-prompt-array-unvalidated-cost-dos.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/generation/generate-route/non-stream.test.ts": [
@@ -20610,10 +20579,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/generation/providers/circuit-breaker.ts": [
@@ -20648,10 +20613,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-sidecar-python-provider-for-custo.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/generation/providers/comfyui-upload.ts": [
@@ -20898,10 +20859,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/generation/providers/retry.test.ts": [
@@ -20926,10 +20883,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/generation/providers/stream-buffer.ts": [
@@ -22308,10 +22261,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-llm-scheduler-observability.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/llm/queue.ts": [
@@ -22334,10 +22283,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/llm/resource-manager.test.ts": [
@@ -22366,10 +22311,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/llm/scheduler.ts": [
@@ -34862,10 +34803,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/services/server-external-manager/start-sd.ts": [
@@ -35624,10 +35561,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-admin-analytics-latency-p50-p95-p99-trends-sse-live-push-cha.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/generation-scheduler.md"
     }
   ],
   "src/telemetry/telemetry.test.ts": [
