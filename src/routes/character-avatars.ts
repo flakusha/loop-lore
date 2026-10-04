@@ -7,6 +7,7 @@
  * API endpoints for managing character avatars (CRUD, selection, config).
  */
 import { Elysia, t, } from "elysia";
+import { requireAssetOwner, } from "../assets/controller";
 import { AvatarService, } from "../characters/services/avatar-service";
 import {
   ActorIdAvatarIdParams,
@@ -73,6 +74,16 @@ export function characterAvatarsRoutes(opts: HandlerOpts, prefix = "/api",) {
           status: HttpStatus.BadRequest,
         },);
       }
+
+      // requireActorAccess only proves the caller owns the ACTOR. image_url is
+      // caller-supplied and createAvatar links it onto the actor without ever
+      // consulting the asset row, so owning an actor must not grant the right to
+      // link somebody else's asset. Gate the asset at the same layer as the
+      // unlink route in character-avatars-extra. requireAssetOwner answers
+      // "missing" and "not yours" with the same 404, so this leaks no existence
+      // oracle, and it keeps the raw SQLite FK error off the wire for unknown ids.
+      const ownedAsset = await requireAssetOwner(database, image_url as string, userId,);
+      if (ownedAsset instanceof Response) { return ownedAsset; }
 
       const avatarId = await avatarService.createAvatar({
         actorId,

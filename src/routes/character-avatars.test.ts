@@ -37,6 +37,7 @@ const OTHER = "00000000-0000-4000-8000-000000000002";
 const OTHER_USER = "00000000-0000-4000-8000-000000000012";
 const ASSET = "00000000-0000-4000-8000-000000000101";
 const ASSET2 = "00000000-0000-4000-8000-000000000102";
+const ADMIN_ASSET = "00000000-0000-4000-8000-000000000103";
 const WORLD = "00000000-0000-4000-8000-000000000201";
 const WORLD2 = "00000000-0000-4000-8000-000000000202";
 
@@ -178,6 +179,12 @@ describe("Avatar CRUD — admin/solo bypass", () => {
     await insertAssets(db, OWNER_USER, "avatar.png", "image/png", "image", 1024, "/assets/avatar.png", {
       id: ASSET as never,
     },);
+    // The admin below acts as userId "admin"; it needs its OWN asset, since
+    // the create route now gates the asset with the strict owner-only guard.
+    await insertUsers(db, "admin-user", "Admin", { id: "admin" as never, },);
+    await insertAssets(db, "admin", "admin.png", "image/png", "image", 1024, "/assets/admin.png", {
+      id: ADMIN_ASSET as never,
+    },);
   },);
 
   afterAll(async () => {
@@ -197,7 +204,28 @@ describe("Avatar CRUD — admin/solo bypass", () => {
     expect(res.status,).toBe(200,);
   });
 
+  // The ACTOR bypass is unchanged and still exercised here: admin posts to
+  // another user's actor. What changed is the ASSET - the create route now
+  // runs requireAssetOwner, so admin uses an asset it actually owns. The
+  // cross-user-asset refusal is pinned by the next test.
   test("admin can POST avatar on another user's actor", async () => {
+    const app = makeApp(db, "admin", "admin",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/avatars`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ image_url: ADMIN_ASSET, mood: "neutral", },),
+      },),
+    );
+
+    expect(res.status,).toBe(201,);
+  });
+
+  // requireActorAccess grants admin/solo a bypass via can(role, "admin.character"),
+  // but requireAssetOwner is strict owner-only - matching the unlink route and
+  // DELETE /assets/:id/links/:linkId. An admin can no longer attach another
+  // user's asset. Pinned here so it is explicit, not a silent side effect.
+  test("admin is refused when the asset belongs to another user", async () => {
     const app = makeApp(db, "admin", "admin",);
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${OWNER}/avatars`, {
@@ -207,7 +235,14 @@ describe("Avatar CRUD — admin/solo bypass", () => {
       },),
     );
 
-    expect(res.status,).toBe(201,);
+    expect(res.status,).toBe(404,);
+    const links = await db
+      .selectFrom("asset_links",)
+      .select(["entity_id",],)
+      .where("asset_id", "=", ASSET,)
+      .where("entity_id", "=", OWNER,)
+      .execute();
+    expect(links,).toHaveLength(0,);
   });
 });
 
