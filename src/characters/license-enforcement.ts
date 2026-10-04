@@ -107,6 +107,7 @@ export function licenseRightsValid(licensing: LicenseRightsRow,): boolean {
   const derivatives = licensing.allow_derivatives === 1
     ? DerivativesState.Allowed
     : DerivativesState.Forbidden;
+
   const shareAlike = licensing.share_alike === 1 ? ShareAlikeState.Yes : ShareAlikeState.No;
   if (!shareAlikeDerivatives.isValid(derivatives, shareAlike,)) { return false; }
   return licensing.allow_derivatives === canonical.derivatives &&
@@ -158,6 +159,7 @@ export function licenseWarnings(licensing: LicenseInfo,): string[] {
       `License ${licensing.license_type} requires attribution on reuse, but no attribution is set on this character`,
     );
   }
+
   return warnings;
 }
 
@@ -172,10 +174,12 @@ export function licenseHeaders(licensing: LicenseInfo | null,): Record<string, s
   const headers: Record<string, string> = {
     "X-License-Type": licensing.license_type,
   };
+
   const warnings = licenseWarnings(licensing,);
   if (warnings.length > 0) {
     headers["X-License-Warning"] = warnings.join("; ",);
   }
+
   return headers;
 }
 
@@ -208,6 +212,7 @@ export function withLicenseExtension(json: string, licensing: LicenseInfo | null
   if (!parsed.ok || typeof parsed.value !== "object" || parsed.value === null) {
     return json;
   }
+
   const card = parsed.value;
   const data = card["data"];
   if (typeof data !== "object" || data === null) { return json; }
@@ -215,6 +220,7 @@ export function withLicenseExtension(json: string, licensing: LicenseInfo | null
   const extensions = typeof dataRecord["extensions"] === "object" && dataRecord["extensions"] !== null
     ? dataRecord["extensions"] as Record<string, unknown>
     : {};
+
   extensions["license"] = licenseExtension(licensing,);
   dataRecord["extensions"] = extensions;
   const serialized = safeJsonStringify(card, 2,);

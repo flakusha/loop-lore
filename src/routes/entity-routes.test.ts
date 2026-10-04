@@ -104,6 +104,7 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ title: "My Note", content: "Body text", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as { title: string; content: string; actor_id: string; id: string };
     expect(body.title,).toBe("My Note",);
@@ -121,6 +122,7 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ content: "No title", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -133,6 +135,7 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ title: "X", content: "Y", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -145,6 +148,7 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ title: "X", content: "Y", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -179,6 +183,7 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ title: "Find Me", content: "Here", },),
       },),
     );
+
     const created = (await noteCreate.json()) as { id: string };
 
     const res = await app.handle(new Request(`http://localhost/api/actors/${actorId}/notes/${created.id}`,),);
@@ -204,6 +209,7 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ title: "Before", content: "Original", },),
       },),
     );
+
     const created = (await noteCreate.json()) as { id: string };
 
     // Use "content" field — EntityUpdateBody schema only allows name/content/type/data
@@ -214,6 +220,7 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ content: "Updated content", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { content: string; title: string };
     expect(body.content,).toBe("Updated content",);
@@ -234,6 +241,7 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ title: "Silent", content: "BEFORE", },),
       },),
     );
+
     expect(noteCreate.status,).toBe(201,);
     const { id, } = (await noteCreate.json()) as { id: string };
 
@@ -244,10 +252,12 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ content: "AFTER", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const row = await db.selectFrom("actor_notes",).select("content",).where("id", "=", id,)
       .executeTakeFirstOrThrow();
+
     expect(row.content,).toBe("AFTER",);
   });
 
@@ -260,6 +270,7 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ content: "X", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -274,6 +285,7 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ title: "Delete Me", content: "Gone", },),
       },),
     );
+
     const created = (await noteCreate.json()) as { id: string };
 
     const res = await app.handle(
@@ -281,12 +293,14 @@ describe("createEntityRoutes", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(204,);
 
     // Verify gone
     const noteGet = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/notes/${created.id}`,),
     );
+
     expect(noteGet.status,).toBe(404,);
   });
 
@@ -300,6 +314,7 @@ describe("createEntityRoutes", () => {
         method: "DELETE",
       },),
     );
+
     expect(res.status,).toBe(204,);
   });
 
@@ -318,6 +333,7 @@ describe("createEntityRoutes", () => {
         body: JSON.stringify({ title: "X", content: "Y", },),
       },),
     );
+
     expect(create.status,).toBe(404,);
   });
 
@@ -401,6 +417,7 @@ describe("checkOwnership", () => {
       userId: string | null;
       userRole: string | null;
     }[] = [];
+
     const config: EntityConfig = {
       ...NOTES_CONFIG,
       checkOwnership: async (opts,) => {
@@ -410,6 +427,7 @@ describe("checkOwnership", () => {
           userId: opts.userId,
           userRole: opts.userRole,
         },);
+
         return true;
       },
     };
@@ -429,6 +447,7 @@ describe("checkOwnership", () => {
       ...NOTES_CONFIG,
       checkOwnership: async () => false,
     };
+
     expect(await checkOwnership(db, config, "parent-1", "user-1", "user",),).toBe(false,);
   });
 

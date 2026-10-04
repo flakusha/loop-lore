@@ -108,6 +108,7 @@ registerCommand("caption", async (args, ctx,): Promise<CommandResult> => {
     for (const c of captions) {
       if (c.caption) { captionLines.push(`**${c.assetId.slice(0, 8,)}:** ${c.caption}`,); }
     }
+
     const captionList = captionLines.join("\n\n",);
 
     return {

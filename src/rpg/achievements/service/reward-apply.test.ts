@@ -111,6 +111,7 @@ describeOrSkip("applySingleAchievementReward — story_points branch", () => {
       { type: "story_points", value: 7, description: "+7 SP", },
       { db, playerId: "p1", achievementId: "ach-1", },
     );
+
     expect(result,).toBe(true,);
     expect(earnMock,).toHaveBeenCalledTimes(1,);
     expect(earnMock.mock.calls[0]?.[0],).toBe(db,);
@@ -128,6 +129,7 @@ describeOrSkip("applySingleAchievementReward — story_points branch", () => {
       { type: "story_points", value: 3.9, description: "+3 SP", },
       { db, playerId: "p1", achievementId: "ach-1", },
     );
+
     expect(result,).toBe(true,);
     expect(earnMock.mock.calls[0]?.[1],).toMatchObject({ amount: 3, },);
   });
@@ -140,18 +142,21 @@ describeOrSkip("applySingleAchievementReward — story_points branch", () => {
         { db, playerId: "p1", achievementId: "ach-1", },
       ),
     ).toBe(false,);
+
     expect(
       await applySingleAchievementReward(
         { type: "story_points", value: -5, description: "x", },
         { db, playerId: "p1", achievementId: "ach-1", },
       ),
     ).toBe(false,);
+
     expect(
       await applySingleAchievementReward(
         { type: "story_points", value: Number.NaN, description: "x", },
         { db, playerId: "p1", achievementId: "ach-1", },
       ),
     ).toBe(false,);
+
     expect(earnMock,).not.toHaveBeenCalled();
   });
 
@@ -162,6 +167,7 @@ describeOrSkip("applySingleAchievementReward — story_points branch", () => {
       { type: "story_points", value: 5, description: "+5 SP", },
       { db, playerId: "p1", achievementId: "ach-1", },
     );
+
     expect(result,).toBe(false,);
     expect(earnMock,).toHaveBeenCalledTimes(1,);
   });
@@ -176,6 +182,7 @@ describeOrSkip("applySingleAchievementReward — unsupported reward types", () =
         { type, value: 1, description: "noop", },
         { db, playerId: "p1", achievementId: "ach-1", },
       );
+
       expect(result,).toBe(false,);
       expect(earnMock,).not.toHaveBeenCalled();
     },
@@ -189,6 +196,7 @@ describeOrSkip("claimRewards — story_points reward dispatch", () => {
     const achievementId = await makeAchievement(
       [{ type: "story_points", value: 10, description: "+10 SP", },],
     );
+
     await makeUnlocked(achievementId, "player-1",);
 
     const rewards = await claimRewards(db, "player-1", achievementId,);
@@ -205,6 +213,7 @@ describeOrSkip("claimRewards — story_points reward dispatch", () => {
     const row = raw
       .query("SELECT status, claimed_at FROM player_achievements WHERE player_id = ? AND achievement_id = ?",)
       .get("player-1", achievementId,) as { status: string; claimed_at: string | null };
+
     expect(row.status,).toBe("claimed",);
     expect(row.claimed_at,).not.toBeNull();
   });
@@ -219,6 +228,7 @@ describeOrSkip("claimRewards — story_points reward dispatch", () => {
         { type: "title", value: "hero", description: "Title: Hero", },
       ],
     );
+
     await makeUnlocked(achievementId, "player-1",);
 
     const rewards = await claimRewards(db, "player-1", achievementId,);
@@ -244,6 +254,7 @@ describeOrSkip("claimRewards — story_points reward dispatch", () => {
     await expect(claimRewards(db, "ghost-player", achievementId,),).rejects.toThrow(
       "Player achievement not found",
     );
+
     expect(earnMock,).not.toHaveBeenCalled();
 
     // Locked row → "Achievement not unlocked".
@@ -253,9 +264,11 @@ describeOrSkip("claimRewards — story_points reward dispatch", () => {
       max_progress: 1,
       status: "locked",
     },);
+
     await expect(claimRewards(db, "locked-player", achievementId,),).rejects.toThrow(
       "Achievement not unlocked",
     );
+
     expect(earnMock,).not.toHaveBeenCalled();
 
     // Already-claimed row → "Rewards already claimed".
@@ -270,6 +283,7 @@ describeOrSkip("claimRewards — story_points reward dispatch", () => {
     await expect(claimRewards(db, "claimed-player", achievementId,),).rejects.toThrow(
       "Rewards already claimed",
     );
+
     expect(earnMock,).not.toHaveBeenCalled();
   });
 
@@ -320,10 +334,12 @@ describeOrSkip("claimRewards — story_points reward dispatch", () => {
       [{ type: "story_points", value: 1, description: "+1 SP", },],
       { maxProgress: 1, },
     );
+
     const combat = await insertAchievements(db, "Combat Win", "x", "combat", "silver", {
       unlock_condition: JSON.stringify({ type: "simple", },),
       rewards: JSON.stringify([{ type: "experience", value: 10, description: "+10 XP", },],),
     },);
+
     const craft = await insertAchievements(db, "Craft Master", "x", "crafting", "gold", {
       unlock_condition: JSON.stringify({ type: "simple", },),
       rewards: JSON.stringify([],),
@@ -336,6 +352,7 @@ describeOrSkip("claimRewards — story_points reward dispatch", () => {
       status: "unlocked",
       unlocked_at: new Date().toISOString(),
     },);
+
     await insertPlayerAchievements(db, "stats-1", combat, {
       progress: 1,
       max_progress: 1,
@@ -343,6 +360,7 @@ describeOrSkip("claimRewards — story_points reward dispatch", () => {
       unlocked_at: new Date().toISOString(),
       claimed_at: new Date().toISOString(),
     },);
+
     await insertPlayerAchievements(db, "stats-1", craft, {
       progress: 0,
       max_progress: 1,

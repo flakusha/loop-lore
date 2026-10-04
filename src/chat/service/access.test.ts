@@ -58,6 +58,7 @@ async function seedChatWithParticipants(opts: {
     user_id: opts.creatorId,
     owner_id: opts.creatorId,
   } as never,);
+
   if (opts.participants) {
     for (const p of opts.participants) {
       await insertUsers(database, `u-${p.userId}`, "User", { id: p.userId, } as never,);
@@ -68,14 +69,17 @@ async function seedChatWithParticipants(opts: {
       } as never,);
     }
   }
+
   await insertChats(database, "Test Chat", opts.creatorId, {
     id: `chat-${opts.creatorId}`,
     type: "group",
     mode: "group",
   } as never,);
+
   await insertChatParticipants(database, `chat-${opts.creatorId}`, opts.creatorId, {
     role_in_chat: "owner",
   } as never,);
+
   if (opts.participants) {
     for (const p of opts.participants) {
       await insertChatParticipants(database, `chat-${opts.creatorId}`, p.userId, {
@@ -83,6 +87,7 @@ async function seedChatWithParticipants(opts: {
       } as never,);
     }
   }
+
   return `chat-${opts.creatorId}`;
 }
 
@@ -104,6 +109,7 @@ describe("checkChatAccess (broad read/join)", () => {
       creatorId: "u-owner",
       participants: [{ userId: "u-member", role: "member", },],
     },);
+
     const result = await checkChatAccess(database, chatId, "u-member", null,);
     expect(result.ok,).toBe(true,);
   });
@@ -133,6 +139,7 @@ describe("checkChatSettingsAccess (strict settings-mutation)", () => {
       creatorId: "u-owner",
       participants: [{ userId: "u-coowner", role: "owner", },],
     },);
+
     const result = await checkChatSettingsAccess(database, chatId, "u-coowner", null,);
     expect(result.ok,).toBe(true,);
   });
@@ -142,6 +149,7 @@ describe("checkChatSettingsAccess (strict settings-mutation)", () => {
       creatorId: "u-owner",
       participants: [{ userId: "u-member", role: "member", },],
     },);
+
     const result = await checkChatSettingsAccess(database, chatId, "u-member", null,);
     expect(result.ok,).toBe(false,);
     if (!result.ok) { expect(result.error.code,).toBe("forbidden",); }
@@ -152,6 +160,7 @@ describe("checkChatSettingsAccess (strict settings-mutation)", () => {
       creatorId: "u-owner",
       participants: [{ userId: "u-observer", role: "observer", },],
     },);
+
     const result = await checkChatSettingsAccess(database, chatId, "u-observer", null,);
     expect(result.ok,).toBe(false,);
   });
@@ -161,6 +170,7 @@ describe("checkChatSettingsAccess (strict settings-mutation)", () => {
       creatorId: "u-owner",
       participants: [{ userId: "u-guest", role: "guest", },],
     },);
+
     const result = await checkChatSettingsAccess(database, chatId, "u-guest", null,);
     expect(result.ok,).toBe(false,);
   });
@@ -178,6 +188,7 @@ describe("checkChatAccess moderation enforcement (chat/moderation.ts wiring)", (
       creatorId: "u-owner",
       participants: [{ userId: "u-member", role: "member", },],
     },);
+
     await insertModerationActions(database, "ban", "u-member", "u-owner", "spam", "global",);
     const result = await checkChatAccess(database, chatId, "u-member", null,);
     expect(result,).toEqual({ ok: false, error: { code: "forbidden", message: "User is banned", }, },);
@@ -188,6 +199,7 @@ describe("checkChatAccess moderation enforcement (chat/moderation.ts wiring)", (
       creatorId: "u-owner",
       participants: [{ userId: "u-member", role: "member", },],
     },);
+
     await insertModerationActions(database, "block", "u-member", "u-owner", "spam", "chat", { scope_id: chatId, },);
     const result = await checkChatAccess(database, chatId, "u-member", null,);
     expect(result,).toEqual({ ok: false, error: { code: "forbidden", message: "User is blocked", }, },);
@@ -198,9 +210,11 @@ describe("checkChatAccess moderation enforcement (chat/moderation.ts wiring)", (
       creatorId: "u-owner",
       participants: [{ userId: "u-member", role: "member", },],
     },);
+
     await insertModerationActions(database, "block", "u-member", "u-owner", "spam", "chat", {
       scope_id: "other-chat",
     },);
+
     const result = await checkChatAccess(database, chatId, "u-member", null,);
     expect(result,).toEqual({ ok: true, },);
   });
@@ -210,12 +224,15 @@ describe("checkChatAccess moderation enforcement (chat/moderation.ts wiring)", (
       creatorId: "u-owner",
       participants: [{ userId: "u-member", role: "member", },],
     },);
+
     await insertModerationActions(database, "ban", "u-member", "u-owner", "old", "global", {
       expires_at: "2000-01-01T00:00:00Z",
     },);
+
     await insertModerationActions(database, "ban", "u-member", "u-owner", "lifted", "global", {
       deleted_at: "2026-01-01T00:00:00Z",
     },);
+
     const result = await checkChatAccess(database, chatId, "u-member", null,);
     expect(result,).toEqual({ ok: true, },);
     expect(await getModerationBlock(database, chatId, "u-member",),).toBeNull();
@@ -226,6 +243,7 @@ describe("checkChatAccess moderation enforcement (chat/moderation.ts wiring)", (
       creatorId: "u-owner",
       participants: [{ userId: "u-member", role: "member", },],
     },);
+
     await insertModerationActions(database, "ban", "u-member", "admin", "nsfw", "nsfw",);
     const result = await checkChatAccess(database, chatId, "u-member", null,);
     expect(result,).toEqual({ ok: true, },);
@@ -247,12 +265,14 @@ describe("checkChatAccess moderation enforcement (chat/moderation.ts wiring)", (
     expect(result.ok,).toBe(true,);
   });
 });
+
 describe("checkChatSettingsAccess GM role (migration 007)", () => {
   it("grants participant with role_in_chat=gm", async () => {
     const chatId = await seedChatWithParticipants({
       creatorId: "u-owner",
       participants: [{ userId: "u-gm", role: "gm", },],
     },);
+
     const result = await checkChatSettingsAccess(database, chatId, "u-gm", null,);
     expect(result.ok,).toBe(true,);
   });
@@ -273,6 +293,7 @@ describe("reconcileModeratorGrants", () => {
       user_id: "u-new-owner",
       owner_id: "u-new-owner",
     } as never,);
+
     await insertChatParticipants(database, chatId, "u-new-owner", { role_in_chat: "owner", } as never,);
 
     await reconcileModeratorGrants(database, chatId, "u-owner", "u-new-owner",);
@@ -283,6 +304,7 @@ describe("reconcileModeratorGrants", () => {
       .where("chat_id", "=", chatId,)
       .where("actor_id", "in", ["u-gm-a", "u-gm-b",],)
       .execute();
+
     const byActor = Object.fromEntries(roles.map((r,) => [r.actor_id, r.role_in_chat,]),);
     expect(byActor["u-gm-a"],).toBe("member",);
     expect(byActor["u-gm-b"],).toBe("member",);
@@ -302,6 +324,7 @@ describe("reconcileModeratorGrants", () => {
       .where("chat_id", "=", chatId,)
       .where("actor_id", "=", "u-new-owner",)
       .executeTakeFirstOrThrow();
+
     expect(row.role_in_chat,).toBe("gm",);
   });
 });

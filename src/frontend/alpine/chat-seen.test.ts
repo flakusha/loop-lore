@@ -63,6 +63,7 @@ function buildCtx(overrides?: Partial<SeenCtx>,): SeenCtx {
     loadMessageSeen: (msgId,) => chatSeenMethods.loadMessageSeen!.call(ctx, msgId,),
     ...overrides,
   };
+
   return ctx;
 }
 
@@ -76,6 +77,7 @@ describe("chatSeenMethods.loadMessageSeen", () => {
     const ctx = buildCtx({
       messages: [{ id: "m1", role: "user", content: "hi", created_at: "2026-01-01T00:00:00.000Z", },],
     },);
+
     handler = async () => Response.json(viewers,);
     await chatSeenMethods.loadMessageSeen!.call(ctx, "m1",);
     expect(calls[0]!.url,).toBe("/api/v1/messages/m1/seen",);
@@ -86,12 +88,14 @@ describe("chatSeenMethods.loadMessageSeen", () => {
     const ctx = buildCtx({
       messages: [{ id: "m1", role: "user", content: "hi", created_at: "2026-01-01T00:00:00.000Z", },],
     },);
+
     handler = async () => new Response("", { status: 500, },);
     await chatSeenMethods.loadMessageSeen!.call(ctx, "m1",);
     expect(ctx.messages[0]!.seenState,).toBeUndefined();
     handler = async () => {
       throw new Error("offline",);
     };
+
     await chatSeenMethods.loadMessageSeen!.call(ctx, "m1",);
   });
 
@@ -110,6 +114,7 @@ describe("chatSeenMethods.loadAllSeen", () => {
         { id: "m2", role: "assistant", content: "", created_at: "2026-01-01T00:00:00.000Z", },
       ],
     },);
+
     await chatSeenMethods.loadAllSeen!.call(ctx,);
     expect(calls.map((c,) => c.url).sort(),).toEqual(["/api/v1/messages/m1/seen", "/api/v1/messages/m2/seen",],);
   });
@@ -130,6 +135,7 @@ describe("chatSeenMethods.markSeen", () => {
     const ctx = buildCtx({
       messages: [{ id: "m1", role: "user", content: "", created_at: "2026-01-01T00:00:00.000Z", },],
     },);
+
     handler = async (_url, opts,) => opts?.method === "POST" ? Response.json({},) : Response.json(viewers,);
     await chatSeenMethods.markSeen!.call(ctx, "m1", "seen",);
     const post = calls.find((c,) => c.opts.method === "POST")!;
@@ -154,6 +160,7 @@ describe("chatSeenMethods.markSeen", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await chatSeenMethods.markSeen!.call(buildCtx(), "m1", "seen",);
   });
 });
@@ -169,6 +176,7 @@ describe("chatSeenMethods popover + summary", () => {
         seenState: [{ actorId: "a", state: "seen", seenAt: null, },],
       },],
     },);
+
     chatSeenMethods.openSeenPopover!.call(ctx, "m1", fakeEvent,);
     expect(ctx.dispatched,).toHaveLength(1,);
     expect(ctx.dispatched[0]!.event,).toBe("show-seen-popover",);
@@ -181,6 +189,7 @@ describe("chatSeenMethods popover + summary", () => {
     const ctx = buildCtx({
       messages: [{ id: "m1", role: "assistant", content: "", created_at: "2026-01-01T00:00:00.000Z", },],
     },);
+
     chatSeenMethods.openSeenPopover!.call(ctx, "ghost", fakeEvent,);
     chatSeenMethods.openSeenPopover!.call(ctx, "m1", fakeEvent,);
     expect(ctx.dispatched,).toEqual([],);
@@ -192,9 +201,11 @@ describe("chatSeenMethods popover + summary", () => {
       { actorId: "b", state: "seen", seenAt: null, },
       { actorId: "c", state: "processing", seenAt: null, },
     ],),).toBe("2 seen, 1 processing",);
+
     expect(chatSeenMethods.seenTitle!.call({} as never, [
       { actorId: "c", state: "processing", seenAt: null, },
     ],),).toBe("1 processing",);
+
     expect(chatSeenMethods.seenTitle!.call({} as never, [],),).toBe("No viewers",);
   });
 
@@ -203,6 +214,7 @@ describe("chatSeenMethods popover + summary", () => {
       { actorId: "a", state: "seen", seenAt: null, },
       { actorId: "b", state: "processing", seenAt: null, },
     ],),).toBe(2,);
+
     expect(chatSeenMethods.seenCount!.call({} as never, [],),).toBe(0,);
   });
 });
@@ -227,11 +239,13 @@ describe("chatSeenMethods.initSeenPopover", () => {
     const doc = globalThis as unknown as {
       document: { addEventListener: (t: string, cb: (e: unknown,) => void,) => void };
     };
+
     const original = doc.document.addEventListener;
     let captured: ((e: unknown,) => void) | null = null;
     doc.document.addEventListener = (_type, cb,) => {
       captured = cb;
     };
+
     try {
       const ctx = buildCtx();
       chatSeenMethods.initSeenPopover!.call(ctx,);
@@ -243,6 +257,7 @@ describe("chatSeenMethods.initSeenPopover", () => {
           target: { getBoundingClientRect: () => ({ left: 12, bottom: 34, }), },
         },
       },);
+
       expect(ctx._seenPopoverOpen,).toBe(true,);
       expect(ctx._seenPopoverX,).toBe(12,);
       expect(ctx._seenPopoverY,).toBe(42,);

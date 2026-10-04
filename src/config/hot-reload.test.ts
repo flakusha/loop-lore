@@ -38,6 +38,7 @@ const stubWatch: WatchFn = ((_dir: string, _opts: unknown, listener: unknown,) =
     stubState.failWith = null;
     throw err;
   }
+
   const watcher: StubWatcher = {
     listeners: [listener as Listener,],
     closed: false,
@@ -45,6 +46,7 @@ const stubWatch: WatchFn = ((_dir: string, _opts: unknown, listener: unknown,) =
       this.closed = true;
     },
   };
+
   stubState.watchers.push(watcher,);
   return watcher as unknown as FSWatcher;
 }) as WatchFn;
@@ -123,6 +125,7 @@ describeOrSkip("Domain Config Hot-Reload", () => {
     watchDomainConfigs(TEST_DIR, (domain,) => {
       domains.push(domain,);
     },);
+
     const stub = stubState.watchers[0]!;
 
     stub.listeners.forEach((l,) => l("change", "README.md",));

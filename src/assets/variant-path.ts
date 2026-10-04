@@ -37,10 +37,12 @@ export function resolveCompressedVariantPath({
   if (variant === "thumb" && thumbnailPath) {
     candidates.push(thumbnailPath,);
   }
+
   candidates.push(`compressed/${subDir}/${assetId}_${variant}.webp`,);
   for (const relative of candidates) {
     const absolute = getAssetFilePath(uploadDir, relative,);
     if (existsSync(absolute,)) { return absolute; }
   }
+
   return null;
 }

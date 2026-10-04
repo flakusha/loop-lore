@@ -55,6 +55,7 @@ function buildCtx(overrides?: Partial<MoodLoadingCtx>,): MoodLoadingCtx {
     _happinessToMood: (happiness,) => moodStateLoading._happinessToMood!.call(ctx, happiness,),
     ...overrides,
   };
+
   return ctx;
 }
 
@@ -76,17 +77,20 @@ function routeResponses(opts?: {
         ? new Response("", { status: opts.participantsStatus, },)
         : Response.json(opts?.participants ?? npcParticipants,);
     }
+
     if (url === "/api/v1/chats/chat-1") {
       if (opts?.rejectChat) { throw new Error("offline",); }
       return opts?.chatStatus
         ? new Response("", { status: opts.chatStatus, },)
         : Response.json(opts?.chat ?? { world_id: "w1", },);
     }
+
     if (url.startsWith("/api/v1/actors/actor-9/mood",)) {
       return opts?.moodStatus
         ? new Response("", { status: opts.moodStatus, },)
         : Response.json(opts?.mood ?? { happiness: 72, },);
     }
+
     return new Response("", { status: 404, },);
   };
 }
@@ -138,6 +142,7 @@ describeOrSkip("moodStateLoading.loadMood", () => {
         emotionsLoaded += 1;
       },
     },);
+
     routeResponses({ mood: { happiness: 72, }, },);
     await moodStateLoading.loadMood!.call(ctx,);
     expect(calls.some((c,) => c.url === "/api/v1/actors/actor-9/mood?worldId=w1"),).toBe(true,);
@@ -150,6 +155,7 @@ describeOrSkip("moodStateLoading.loadMood", () => {
       lastMoodChange: "",
       expressionModifiers: {},
     },);
+
     expect(ctx._moodSliderValue,).toBe(72,);
     expect(ctx._moodCanEdit,).toBe(false,);
     expect(avatarsLoaded,).toBe(1,);

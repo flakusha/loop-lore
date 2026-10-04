@@ -23,6 +23,7 @@ import { escapeHtml, } from "./layout";
 function escapeAttr(str: string,): string {
   return escapeHtml(str,).replaceAll("'", "&#39;",);
 }
+
 const CHARACTER_COMPONENTS_DIR = join(import.meta.dir, "..", "..", "components", "character",);
 const panelBodyCache = new Map<string, string>();
 
@@ -43,6 +44,7 @@ function loadPanelBody(file: string,): string {
     .replace(/^[\s\S]*?<(?:section|div)[^>]*>/, "",)
     .replace(/<\/(?:section|div)>\s*$/, "",)
     .trim();
+
   panelBodyCache.set(file, body,);
   return body;
 }
@@ -74,6 +76,7 @@ export function extensionEditorSection(
           </div>
         </details>`;
 }
+
 /** Input values for the edit form */
 export interface EditFormValues {
   name: string;

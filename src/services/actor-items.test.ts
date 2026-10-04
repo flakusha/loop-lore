@@ -28,6 +28,7 @@ beforeAll(async () => {
     "Test User",
     { id: userId, role: "solo", status: "active", settings: "{}", } as never,
   );
+
   actorId = uid();
   await insertActors(
     db,
@@ -72,6 +73,7 @@ describe("ActorItemsService", () => {
       .select("equipped",)
       .where("id", "=", item.id,)
       .executeTakeFirst();
+
     expect(updated?.equipped,).toBe(EquipState.Equipped,);
   });
 
@@ -106,6 +108,7 @@ describe("ActorItemsService", () => {
       .select("equipped",)
       .where("id", "=", item.id,)
       .executeTakeFirst();
+
     expect(updated?.equipped,).toBe(EquipState.Unequipped,);
   });
 
@@ -138,6 +141,7 @@ describe("ActorItemsService", () => {
       "Str",
       { id: strongUser, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     await insertActors(
       db,
       "Strong",
@@ -150,6 +154,7 @@ describe("ActorItemsService", () => {
         settings: '{"strength":20}',
       } as never,
     );
+
     const status = await svc().getCarryStatus(strong,);
     expect(status.capacity,).toBe(250,);
   });
@@ -163,6 +168,7 @@ describe("ActorItemsService", () => {
       "T",
       { id: targetUser, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     await insertActors(
       db,
       "Target",
@@ -186,6 +192,7 @@ describe("ActorItemsService", () => {
 
     const srcAfter = await db.selectFrom("actor_items",).where("id", "=", source.id,).select("quantity",)
       .executeTakeFirst();
+
     expect(srcAfter?.quantity,).toBe(3,);
 
     const tgtAfter = await db
@@ -194,6 +201,7 @@ describe("ActorItemsService", () => {
       .where("name", "=", "Rations",)
       .select("quantity",)
       .executeTakeFirst();
+
     expect(tgtAfter?.quantity,).toBe(2,);
   });
 
@@ -206,6 +214,7 @@ describe("ActorItemsService", () => {
       "T2",
       { id: targetUser, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     await insertActors(
       db,
       "T2",

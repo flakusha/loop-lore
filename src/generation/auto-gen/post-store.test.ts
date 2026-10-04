@@ -50,6 +50,7 @@ if (STRICTLY_ISOLATED) {
       generateRandomEvent: realChat.generateRandomEvent ?? (() => null),
     };
   },);
+
   // Keep telemetry quiet in tests.
   mock.module("../../telemetry/service", () => ({
     record: async () => {/* noop */},

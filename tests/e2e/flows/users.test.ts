@@ -36,6 +36,7 @@ describe("Users E2E", () => {
     const res = await api.put<Record<string, unknown>>(`/api/v1/users/${SEED.user.id}/settings`, {
       theme: "dark",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.theme,).toBe("dark",);
   });

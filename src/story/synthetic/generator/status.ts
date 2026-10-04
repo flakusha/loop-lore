@@ -28,6 +28,7 @@ export async function transitionStatus(
     .select(["status",],)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   if (!row) { return false; }
   if (!syntheticDataStatusMachine.canTransition(row.status, to,)) { return false; }
 
@@ -36,6 +37,7 @@ export async function transitionStatus(
     patch.validated_at = new Date().toISOString();
     if (validatedBy) { patch.validated_by = validatedBy; }
   }
+
   await state.db.updateTable("synthetic_data",).set(patch,).where("id", "=", id,).execute();
   return true;
 }

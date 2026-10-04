@@ -47,6 +47,7 @@ export function rollMultiple(count: number, sides: DiceSides,): number[] {
   for (let i = 0; i < count; i++) {
     results.push(rollDie(sides,),);
   }
+
   return results;
 }
 
@@ -149,6 +150,7 @@ export function rollDice(
   for (const d of dice) {
     rawTotal += d.value;
   }
+
   const total = Math.max(1, rawTotal + modifier,);
 
   let hasNat20 = false;

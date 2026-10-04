@@ -43,6 +43,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
               chatId,
               actorId,
             },);
+
             if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
 
             // N3: location must be suitable for NSFW encounters (privacy).
@@ -63,6 +64,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
               participants: body.participants as string[],
               contentTags: body.contentTags as string[] | undefined,
             },);
+
             return jsonResponse(encounter,);
           } catch (error) {
             log().error("Failed to create encounter", error instanceof Error ? error : undefined,);
@@ -82,6 +84,7 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
             if (!encounter) {
               return jsonError("Encounter not found", 404,);
             }
+
             return jsonResponse(encounter,);
           } catch (error) {
             log().error("Failed to get encounter", error instanceof Error ? error : undefined,);

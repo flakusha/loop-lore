@@ -59,14 +59,17 @@ function stubJobServer(handlers: {
     if (handlers.failAll) {
       throw new Error("ECONNREFUSED",);
     }
+
     const method = (init?.method ?? "GET").toUpperCase();
     const target = String(url,);
     if (method === "POST" && target === SUBMIT_URL) {
       return new Response(JSON.stringify(handlers.onSubmit?.() ?? {},), { status: 200, },);
     }
+
     if (method === "GET" && target.includes("/sdcpp/v1/jobs/",)) {
       return new Response(JSON.stringify(handlers.onPoll?.() ?? {},), { status: 200, },);
     }
+
     throw new Error(`unexpected stub call: ${method} ${target}`,);
   }) as typeof fetch;
 }
@@ -96,6 +99,7 @@ describe("generateSDCPP", () => {
       onSubmit: () => ({ id: "job-1", }),
       onPoll: () => ({ status: "done", images: [B64,], }),
     },);
+
     const outcome = await generateSDCPP(CONFIG, OPTS,);
     expect(outcome.ok,).toBe(true,);
     if (outcome.ok) {
@@ -109,6 +113,7 @@ describe("generateSDCPP", () => {
       onSubmit: () => ({ id: "job-2", }),
       onPoll: () => ({ status: "done", }),
     },);
+
     const outcome = await generateSDCPP(CONFIG, OPTS,);
     expect(outcome.ok,).toBe(false,);
     if (!outcome.ok) {
@@ -121,6 +126,7 @@ describe("generateSDCPP", () => {
       onSubmit: () => ({ id: "job-3", }),
       onPoll: () => ({ status: "failed", error: "OutOfMemory", }),
     },);
+
     const outcome = await generateSDCPP(CONFIG, OPTS,);
     expect(outcome.ok,).toBe(false,);
     if (!outcome.ok) {
@@ -136,10 +142,12 @@ describe("generateSDCPP", () => {
       if (method === "POST" && target === SUBMIT_URL) {
         return new Response(JSON.stringify({ id: "job-4", },), { status: 200, },);
       }
+
       if (method === "GET") {
         polls++;
         throw new Error("polling socket closed",);
       }
+
       throw new Error(`unexpected stub call: ${method} ${target}`,);
     }) as typeof fetch;
 
@@ -156,6 +164,7 @@ describe("generateSDCPP", () => {
       onSubmit: () => ({ id: "job-5", }),
       onPoll: () => ({ status: "running", progress: 0.5, }),
     },);
+
     const outcome = await generateSDCPP(CONFIG, OPTS,);
     expect(outcome.ok,).toBe(false,);
     if (!outcome.ok) {
@@ -172,6 +181,7 @@ describe("generateSDCPP", () => {
         body = typeof init?.body === "string" ? init.body : "";
         return new Response(JSON.stringify({ id: "job-6", },), { status: 200, },);
       }
+
       return new Response(JSON.stringify({ status: "done", images: [B64,], },), { status: 200, },);
     }) as typeof fetch;
 
@@ -210,10 +220,12 @@ describe("generateSDCPP", () => {
           { status: 200, },
         );
       }
+
       if (method === "POST") {
         body = typeof init?.body === "string" ? init.body : "";
         return new Response(JSON.stringify({ id: "job-lora", },), { status: 200, },);
       }
+
       return new Response(JSON.stringify({ status: "done", images: [B64,], },), { status: 200, },);
     }) as typeof fetch;
 
@@ -239,10 +251,12 @@ describe("generateSDCPP", () => {
           { status: 200, },
         );
       }
+
       if (method === "POST") {
         body = typeof init?.body === "string" ? init.body : "";
         return new Response(JSON.stringify({ id: "job-lora2", },), { status: 200, },);
       }
+
       return new Response(JSON.stringify({ status: "done", images: [B64,], },), { status: 200, },);
     }) as typeof fetch;
 

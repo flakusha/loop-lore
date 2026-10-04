@@ -39,10 +39,12 @@ describe("frontendLogsRoutes coverage", () => {
       meta: { k: 1, },
       timestamp: new Date().toISOString(),
     }));
+
     const { body, headers, } = batchBody(entries,);
     const res = await app.handle(
       new Request("http://localhost/api/frontend/logs", { method: "POST", headers, body, },),
     );
+
     expect(res.status,).toBe(200,);
     const parsed = (await res.json()) as { ok: boolean; ingested: number };
     expect(parsed.ok,).toBe(true,);
@@ -54,9 +56,11 @@ describe("frontendLogsRoutes coverage", () => {
     const { body, headers, } = batchBody([
       { level: "verbose", module: "m", message: "hi", timestamp: new Date().toISOString(), },
     ],);
+
     const res = await app.handle(
       new Request("http://localhost/api/frontend/logs", { method: "POST", headers, body, },),
     );
+
     expect(res.status,).toBe(200,);
     const parsed = (await res.json()) as { ingested: number };
     expect(parsed.ingested,).toBe(1,);
@@ -67,9 +71,11 @@ describe("frontendLogsRoutes coverage", () => {
     const { body, headers, } = batchBody([
       { level: "info", module: "m", message: "no-meta", timestamp: new Date().toISOString(), },
     ],);
+
     const res = await app.handle(
       new Request("http://localhost/api/frontend/logs", { method: "POST", headers, body, },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -82,6 +88,7 @@ describe("frontendLogsRoutes coverage", () => {
         body: "{not-json",
       },),
     );
+
     expect(res.status,).toBe(400,);
     const parsed = (await res.json()) as { error: string };
     expect(typeof parsed.error,).toBe("string",);
@@ -93,6 +100,7 @@ describe("frontendLogsRoutes coverage", () => {
     const res = await app.handle(
       new Request("http://localhost/api/frontend/logs", { method: "POST", headers, body, },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -106,6 +114,7 @@ describe("frontendLogsRoutes coverage", () => {
           body: JSON.stringify(payload,),
         },),
       );
+
       expect(res.status,).toBe(400,);
     }
   });

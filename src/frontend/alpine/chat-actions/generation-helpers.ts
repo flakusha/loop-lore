@@ -41,14 +41,17 @@ export async function dispatchGenerationAction(
       type: "warning",
       message: t("toasts.actionNoInput", { action: label.toLowerCase(), },),
     },);
+
     return;
   }
+
   try {
     const res = await apiFetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody(body,),
     },);
+
     if (res.ok) {
       ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.actionStarted", { action: label, },), },);
       ctx.connectGenerationSSE(chatId,);
@@ -84,6 +87,7 @@ export async function dispatchQuestAction(ctx: DispatchCtx, description: string,
     ctx.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noQuestDescription",), },);
     return;
   }
+
   try {
     // Fetch chat to get world_id (backend requires /api/v1/worlds/:worldId/quests)
     const chatRes = await apiFetch(`/api/v1/chats/${chatId}`,);
@@ -91,6 +95,7 @@ export async function dispatchQuestAction(ctx: DispatchCtx, description: string,
       ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedLoadChatForQuest",), },);
       return;
     }
+
     const chat = await chatRes.json();
     const worldId = chat.world_id;
     if (!worldId) {
@@ -98,13 +103,16 @@ export async function dispatchQuestAction(ctx: DispatchCtx, description: string,
         type: "warning",
         message: t("toasts.questsRequireWorld",),
       },);
+
       return;
     }
+
     const res = await apiFetch(`/api/v1/worlds/${worldId}/quests`, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ chatId, description, },),
     },);
+
     if (res.ok) {
       ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.questCreated",), },);
     } else {

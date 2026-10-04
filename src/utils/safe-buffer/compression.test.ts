@@ -19,6 +19,7 @@ function buildDensePayload(decompressedBytes: number,): Buffer {
   for (let i = 0; i < raw.length; i += 4096) {
     crypto.getRandomValues(raw.subarray(i, Math.min(i + 4096, raw.length,),),);
   }
+
   return gzipSync(raw,);
 }
 

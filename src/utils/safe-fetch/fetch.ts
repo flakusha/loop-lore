@@ -34,8 +34,10 @@ function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortS
   const combined = new AbortController();
   if (external.aborted) { combined.abort(); }
   else { external.addEventListener("abort", () => combined.abort(), { once: true, },); }
+
   if (timeoutSignal.aborted) { combined.abort(); }
   else { timeoutSignal.addEventListener("abort", () => combined.abort(), { once: true, },); }
+
   return combined.signal;
 }
 
@@ -58,6 +60,7 @@ function serializeBody(body: unknown,): BodyInit | undefined {
     // DOM BodyInit union does not accept; the value is a valid body at runtime.
     return body as unknown as BodyInit;
   }
+
   const jsonResult = safeJsonStringify(body,);
   return jsonResult.ok ? jsonResult.value : undefined;
 }
@@ -79,12 +82,14 @@ function buildRequestHeaders(
   for (const [key, value,] of Object.entries(authHeaders,)) {
     headers.set(key, value,);
   }
+
   // Only a JSON-stringified body should carry the JSON content-type. Native
   // bodies (FormData/Blob) already set their own multipart/content-type and
   // must not be overridden.
   if (typeof serializedBody === "string" && !headers.has("Content-Type",)) {
     headers.set("Content-Type", "application/json",);
   }
+
   return headers;
 }
 
@@ -187,6 +192,7 @@ export async function safeFetch<T = unknown,>(
           headers: response.headers,
         };
       }
+
       const jsonResult: JsonResult<T> = safeJsonParse<T>(text,);
       if (!jsonResult.ok) {
         return {
@@ -196,6 +202,7 @@ export async function safeFetch<T = unknown,>(
           headers: response.headers,
         };
       }
+
       return { ok: true, data: jsonResult.value, status: response.status, headers: response.headers, };
     }
 
@@ -207,6 +214,7 @@ export async function safeFetch<T = unknown,>(
     if (err.name === "AbortError") {
       return { ok: false, error: new Error(`Request timed out after ${timeout}ms`,), };
     }
+
     return { ok: false, error: err, };
   } finally {
     clearTimeout(timeoutId,);

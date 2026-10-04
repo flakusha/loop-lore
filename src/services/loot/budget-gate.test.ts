@@ -42,6 +42,7 @@ const COMMON_SWORD: LootRow = {
   isEquippable: true,
   isConsumable: false,
 };
+
 const LEGENDARY: LootRow = {
   name: "holy avenger",
   rarity: "legendary",
@@ -51,6 +52,7 @@ const LEGENDARY: LootRow = {
   isEquippable: true,
   isConsumable: false,
 };
+
 const POTION: LootRow = {
   name: "healing potion",
   rarity: "common",
@@ -60,6 +62,7 @@ const POTION: LootRow = {
   isEquippable: false,
   isConsumable: true,
 };
+
 const KEY: LootRow = {
   name: "rusty key",
   rarity: "common",

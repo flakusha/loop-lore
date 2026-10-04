@@ -77,6 +77,7 @@ async function recentMessageText(ctx: KeyphraseRecallCtx,): Promise<string> {
     .orderBy("created_at", "desc",)
     .limit(RECENT_MESSAGE_WINDOW,)
     .execute();
+
   const parts: string[] = [];
   for (const row of rows) {
     try {
@@ -88,6 +89,7 @@ async function recentMessageText(ctx: KeyphraseRecallCtx,): Promise<string> {
       );
     }
   }
+
   return parts.join("\n",);
 }
 
@@ -115,6 +117,7 @@ export async function collectKeyphraseHits(
       entry.keywords.length > 0 &&
       keyphraseRecallAllowed({ chatId: ctx.chat.id, memoryId: entry.id, now, },),
   );
+
   if (candidates.length === 0) { return []; }
   const matched = findKeyphraseMatches({ text, entries: candidates, maxMatches: limit, },);
   const matchedIds = new Set(matched.map((entry,) => entry.id),);
@@ -144,6 +147,7 @@ export async function applyKeyphraseRecalls(
   for (const entry of forced) {
     recordKeyphraseRecall({ chatId: ctx.chat.id, memoryId: entry.id, now, },);
   }
+
   // One audit row per ACTOR, matching `memories.ts`: a single row stamped with
   // the first entry's actorId would misattribute every other forced entry's
   // memory to that actor in the audit trail.
@@ -154,6 +158,7 @@ export async function applyKeyphraseRecalls(
     if (group) { group.push(entry,); }
     else { byActor.set(actorId, [entry,],); }
   }
+
   await recordAuditLog(
     ctx.db,
     [...byActor,].map(([actorId, group,],): AuditLogEntry => ({
@@ -168,5 +173,6 @@ export async function applyKeyphraseRecalls(
       },
     })),
   );
+
   return [...selected, ...forced,];
 }

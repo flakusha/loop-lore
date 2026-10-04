@@ -25,6 +25,7 @@ import {
 function bobKnowsAlice(s: DhRatchetState, alicePub: JsonWebKey,): DhRatchetState {
   return { ...s, theirCurrentPubJwk: alicePub, };
 }
+
 describe("BUG-dhratchetdecrypt-dh-step-branch-derives-message-key-from-stale-chain", () => {
   test("decrypt succeeds when sender rotates ephemeral (DH-step branch)", async () => {
     const rootKey = crypto.getRandomValues(new Uint8Array(32,),);
@@ -42,6 +43,7 @@ describe("BUG-dhratchetdecrypt-dh-step-branch-derives-message-key-from-stale-cha
       skippedKeys: [],
       maxSkip: 10,
     },);
+
     bob = dec1.state;
     expect(dec1.plaintext,).toBe("first",);
     expect(bob.theirCurrentPubJwk,).not.toBeNull();
@@ -53,6 +55,7 @@ describe("BUG-dhratchetdecrypt-dh-step-branch-derives-message-key-from-stale-cha
       true,
       ["deriveBits",],
     );
+
     const aliceNewPubJwk = await crypto.subtle.exportKey("jwk", aliceNewEphemeral.publicKey,);
     const bobCurrentPub = await crypto.subtle.importKey(
       "jwk",
@@ -61,6 +64,7 @@ describe("BUG-dhratchetdecrypt-dh-step-branch-derives-message-key-from-stale-cha
       false,
       [],
     );
+
     const dh = await dhStep(alice.rootKey, aliceNewEphemeral.privateKey, bobCurrentPub,);
     alice = {
       ...alice,
@@ -92,6 +96,7 @@ describe("BUG-dhratchetdecrypt-dh-step-branch-derives-message-key-from-stale-cha
       skippedKeys: [],
       maxSkip: 10,
     },);
+
     expect(dec2.plaintext,).toBe("after-rotate",);
 
     // Returned state must reflect the new epoch:
@@ -106,8 +111,10 @@ describe("BUG-dhratchetdecrypt-dh-step-branch-derives-message-key-from-stale-cha
     // Caller's bob state must be byte-identical to the snapshot.
     expect(Buffer.from(bob.rootKey,).toString("hex",),)
       .toBe(Buffer.from(snapshotRootKey,).toString("hex",),);
+
     expect(Buffer.from(bob.receivingChainKey,).toString("hex",),)
       .toBe(Buffer.from(snapshotRecvChain,).toString("hex",),);
+
     expect(bob.theirCurrentPubJwk,).toBe(snapshotTheirPub,);
     expect(bob.recvCount,).toBe(snapshotRecvCount,);
   });
@@ -128,6 +135,7 @@ describe("BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard", () => {
       skippedKeys: [],
       maxSkip: 10,
     },);
+
     bob = dec1.state;
     expect(dec1.plaintext,).toBe("first",);
 
@@ -148,6 +156,7 @@ describe("BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard", () => {
     // Caller's `bob` must NOT have been mutated.
     expect(Buffer.from(bob.receivingChainKey,).toString("hex",),)
       .toBe(Buffer.from(snapshotChainKey,).toString("hex",),);
+
     expect(bob.recvCount,).toBe(snapshotRecvCount,);
     expect(bob.theirCurrentPubJwk,).toBe(snapshotTheirPub,);
   });
@@ -160,6 +169,7 @@ describe("BUG-initdhratchetopts-theirinitialpub-declared-but-never-read", () => 
     const b = await initDhRatchet({ rootKey, },);
     expect(Buffer.from(a.state.sendingChainKey,).toString("hex",),)
       .toBe(Buffer.from(b.state.sendingChainKey,).toString("hex",),);
+
     expect(a.myInitialPubJwk,).toBeDefined();
   });
 });
@@ -183,6 +193,7 @@ describe("BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-across-ratc
       skippedKeys: [],
       maxSkip: 10,
     },);
+
     expect(d2.plaintext,).toBe("m2",);
     expect(d2.newSkippedKeys.map((k,) => k.counter).sort((a, b,) => a - b),).toEqual([0, 1,],);
     let pool = [...d2.newSkippedKeys,];
@@ -194,6 +205,7 @@ describe("BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-across-ratc
       skippedKeys: pool,
       maxSkip: 10,
     },);
+
     expect(d0.plaintext,).toBe("m0",);
     expect(d0.consumedSkippedKeyIds.length,).toBe(1,);
     pool = pool.filter((k,) => !d0.consumedSkippedKeyIds.includes(k.id,));
@@ -205,6 +217,7 @@ describe("BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-across-ratc
       skippedKeys: pool,
       maxSkip: 10,
     },);
+
     expect(d1.plaintext,).toBe("m1",);
     pool = pool.filter((k,) => !d1.consumedSkippedKeyIds.includes(k.id,));
     expect(pool.length,).toBe(0,);
@@ -219,6 +232,7 @@ describe("BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-across-ratc
       true,
       ["deriveBits",],
     );
+
     const newPubJwk = await crypto.subtle.exportKey("jwk", newEphemeral.publicKey,);
     const bobPub = await crypto.subtle.importKey(
       "jwk",
@@ -227,6 +241,7 @@ describe("BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-across-ratc
       false,
       [],
     );
+
     const dh = await dhStep(e2.state.rootKey, newEphemeral.privateKey, bobPub,);
     const aliceRotated = {
       ...e2.state,
@@ -236,6 +251,7 @@ describe("BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-across-ratc
       myEphemeralPubJwk: newPubJwk,
       sendCount: 0,
     };
+
     const e3 = await dhRatchetEncrypt({ state: aliceRotated, plaintext: "m3", },);
 
     const d3 = await dhRatchetDecrypt({
@@ -244,6 +260,7 @@ describe("BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-across-ratc
       skippedKeys: [],
       maxSkip: 10,
     },);
+
     expect(d3.plaintext,).toBe("m3",);
     // The new epoch consumed nothing from the drained store, and Bob's
     // receiving key now tracks the fresh epoch chain.

@@ -69,6 +69,7 @@ export class InMemoryRateLimitStore implements RateLimitStore {
       this.windows.delete(key,);
       return [];
     }
+
     entry.timestamps = fresh;
     return fresh;
   }
@@ -87,6 +88,7 @@ export class InMemoryRateLimitStore implements RateLimitStore {
     } else {
       this.windows.set(key, { timestamps, windowMs, lastSaveMs: nowMs, },);
     }
+
     this.maybeSweep(nowMs,);
   }
 
@@ -133,6 +135,7 @@ export class InMemoryRateLimitStore implements RateLimitStore {
     for (const [key, entry,] of this.windows) {
       if (nowMs - entry.lastSaveMs > entry.windowMs) { this.windows.delete(key,); }
     }
+
     for (const [key, entry,] of this.buckets) {
       if (nowMs - entry.lastSaveMs > entry.windowMs) { this.buckets.delete(key,); }
     }

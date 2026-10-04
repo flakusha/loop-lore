@@ -115,12 +115,14 @@ export async function encodeEphemeralPayload(
     false,
     [],
   );
+
   // 1. Fresh ephemeral key pair; the private half lives only inside this call.
   const eph = await crypto.subtle.generateKey(
     { name: "ECDH", namedCurve: "P-256", },
     true,
     ["deriveBits",],
   );
+
   try {
     // 2. ECDH(eph.priv, receiver.static.pub) → 32 bytes
     const sharedBits = await crypto.subtle.deriveBits(
@@ -128,6 +130,7 @@ export async function encodeEphemeralPayload(
       eph.privateKey,
       KEY_LENGTH * 8,
     );
+
     const shared = new Uint8Array(sharedBits,);
     // 3-4. chainKey → messageKey via the existing ratchet primitive.
     const chainKey = await deriveChainKey(shared, opts.chainIndex,);
@@ -141,11 +144,13 @@ export async function encodeEphemeralPayload(
       false,
       ["encrypt",],
     );
+
     const ct = await crypto.subtle.encrypt(
       { name: "AES-GCM", iv: new Uint8Array(nonce,).buffer as ArrayBuffer, },
       aes,
       new TextEncoder().encode(opts.plaintext,).buffer as ArrayBuffer,
     );
+
     // 6. Wire payload — public-side only.
     return {
       ciphertext: new Uint8Array(ct,).toBase64(),
@@ -177,12 +182,14 @@ export async function decodeEphemeralPayload(
     false,
     [],
   );
+
   // 2. ECDH(myStatic.priv, sender.eph.pub) → 32 bytes
   const sharedBits = await crypto.subtle.deriveBits(
     { name: "ECDH", public: senderEphPub, },
     opts.receiverStaticPriv,
     KEY_LENGTH * 8,
   );
+
   const shared = new Uint8Array(sharedBits,);
   // 3-4. Same derive → messageKey.
   const chainKey = await deriveChainKey(shared, payload.chainIndex,);
@@ -195,16 +202,19 @@ export async function decodeEphemeralPayload(
     false,
     ["decrypt",],
   );
+
   const ct = Uint8Array.fromBase64(payload.ciphertext,);
   const nonce = Uint8Array.fromBase64(payload.nonce,);
   if (nonce.byteLength !== NONCE_LENGTH) {
     throw new Error(`nonce must be ${NONCE_LENGTH} bytes (got ${nonce.byteLength})`,);
   }
+
   const pt = await crypto.subtle.decrypt(
     { name: "AES-GCM", iv: new Uint8Array(nonce,).buffer as ArrayBuffer, },
     aes,
     new Uint8Array(ct,).buffer as ArrayBuffer,
   );
+
   return new TextDecoder().decode(pt,);
 }
 

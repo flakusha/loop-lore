@@ -89,5 +89,6 @@ export async function validateWorldAccess(
     .where("world_id", "=", worldId,)
     .where("actor_id", "=", userId,)
     .executeTakeFirst();
+
   return row !== undefined;
 }

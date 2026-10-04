@@ -103,6 +103,7 @@ export async function downloadModel(opts: DownloadOpts,): Promise<Uint8Array> {
     fetchImpl = fetch,
     subtle,
   } = opts;
+
   const prefixLength = resumeFrom?.length ?? 0;
   const headers: Record<string, string> = {};
   if (prefixLength > 0) { headers.Range = `bytes=${prefixLength}-`; }
@@ -128,15 +129,18 @@ export async function downloadModel(opts: DownloadOpts,): Promise<Uint8Array> {
   if (prefix.length > maxBytes) {
     throw new DownloadIntegrityError(`size ${prefix.length} exceeds cap ${maxBytes}`,);
   }
+
   if (sizeBytes !== undefined && prefix.length !== sizeBytes) {
     throw new DownloadIntegrityError(`size ${prefix.length} !== expected ${sizeBytes}`,);
   }
+
   if (expectedSha256 !== undefined) {
     const actual = await sha256Hex(prefix, subtle,);
     if (actual !== expectedSha256.toLowerCase()) {
       throw new DownloadIntegrityError("SHA-256 mismatch",);
     }
   }
+
   return prefix;
 }
 
@@ -172,9 +176,11 @@ async function readBody(
     if (offset + whole.length > maxBytes) {
       throw new DownloadIntegrityError(`size exceeds cap ${maxBytes}`,);
     }
+
     onProgress?.({ loadedBytes: offset + whole.length, totalBytes: total, },);
     return whole;
   }
+
   for (;;) {
     const { done, value, } = await reader.read();
     if (done) { break; }
@@ -184,9 +190,11 @@ async function readBody(
       if (loaded > maxBytes) {
         throw new DownloadIntegrityError(`size exceeds cap ${maxBytes}`,);
       }
+
       onProgress?.({ loadedBytes: loaded, totalBytes: total, },);
     }
   }
+
   return concat(new Uint8Array(0,), ...chunks,);
 }
 
@@ -201,5 +209,6 @@ function concat(...parts: Uint8Array[]): Uint8Array {
     out.set(part, at,);
     at += part.length;
   }
+
   return out;
 }

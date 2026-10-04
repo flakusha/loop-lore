@@ -52,6 +52,7 @@ export function getDependencies({ thisL, systemId, }: GetDependenciesArgs,): Int
       out.push(e,);
     }
   }
+
   return out;
 }
 
@@ -71,6 +72,7 @@ export function getDependents({ thisL, systemId, }: GetDependentsArgs,): Integra
       out.push(e,);
     }
   }
+
   return out;
 }
 
@@ -112,6 +114,7 @@ export function getUnresolvedGaps({ thisL, }: GetUnresolvedGapsArgs,): Integrati
   for (const e of thisL.edges.values()) {
     if (e.gap && !e.gap.resolved) { out.push(e,); }
   }
+
   return out.sort((a, b,) => {
     const order = { high: 0, medium: 1, low: 2, };
     return (order[a.gap!.severity] ?? 3) - (order[b.gap!.severity] ?? 3);
@@ -140,6 +143,7 @@ export function getEvents(
       }
     }
   }
+
   return out;
 }
 
@@ -155,6 +159,7 @@ export function getSharedTypes({ thisL, systemId, }: GetSharedTypesArgs,): Inter
   for (const c of thisL.contracts.values()) {
     if (c.sharedBy.includes(systemId,)) { out.push(c,); }
   }
+
   return out;
 }
 
@@ -171,6 +176,7 @@ export function resolveEdgeInterfaces({ thisL, edge, }: ResolveEdgeInterfacesArg
     const c = thisL.contracts.get(id,);
     if (c !== undefined) { out.push(c,); }
   }
+
   return out;
 }
 
@@ -186,6 +192,7 @@ export function getStateLayers({ thisL, systemId, }: GetStateLayersArgs,): Playe
   for (const l of thisL.stateLayers) {
     if (l.owner === systemId) { out.push(l,); }
   }
+
   return out;
 }
 
@@ -205,5 +212,6 @@ export function getGraph({ thisL, }: GetGraphArgs,): Map<SystemId, SystemId[]> {
       adj.get(edge.target,)!.push(edge.source,);
     }
   }
+
   return adj;
 }

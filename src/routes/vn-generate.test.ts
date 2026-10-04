@@ -39,6 +39,7 @@ describe("vnGenerateRoutes", () => {
         body: JSON.stringify({ sceneIndex: 0, },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -50,6 +51,7 @@ describe("vnGenerateRoutes", () => {
         body: JSON.stringify({ sceneIndex: 0, count: 3, },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 });

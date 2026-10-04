@@ -140,6 +140,7 @@ export async function listEncounters(
   if (opts?.completed !== undefined) {
     query = query.where("status", "=", opts.completed ? "completed" : "active",);
   }
+
   if (opts?.type) {
     query = query.where("encounter_type", "=", opts.type,);
   }

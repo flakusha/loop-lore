@@ -96,6 +96,7 @@ async function seedTemplate(
         ? { tags, is_template: template.is_template, is_default: template.is_default, }
         : { is_template: template.is_template, is_default: template.is_default, },
     );
+
     const settings = settingsResult.ok ? settingsResult.value : "{}";
     // Spec mandatory set: seed rows must carry a wardrobe catalog + matching
     // default. Templates without one inherit a single outfit seeded from the
@@ -105,6 +106,7 @@ async function seedTemplate(
       : template.appearance
       ? [{ id: "default", name: "Default", descriptor: template.appearance, },]
       : [];
+
     const templateDefault = template.default_outfit ?? templateOutfits[0]?.id ?? null;
     const outfitsResult = templateOutfits.length > 0 ? safeJsonStringify(templateOutfits,) : null;
     const outfits = outfitsResult ? (outfitsResult.ok ? outfitsResult.value : null) : null;
@@ -167,6 +169,7 @@ async function persistIdentityTraits(
       category: TraitCategory.Identity,
     },);
   }
+
   if (template.subrace) {
     identityTraits.push({
       name: "subrace",
@@ -174,12 +177,15 @@ async function persistIdentityTraits(
       category: TraitCategory.Identity,
     },);
   }
+
   if (template.gender) {
     identityTraits.push({ name: "gender", value: template.gender, category: TraitCategory.Identity, },);
   }
+
   if (template.age !== undefined && template.age !== null) {
     identityTraits.push({ name: "age", value: String(template.age,), category: TraitCategory.Identity, },);
   }
+
   if (template.homeland) {
     identityTraits.push({
       name: "homeland",
@@ -187,6 +193,7 @@ async function persistIdentityTraits(
       category: TraitCategory.Background,
     },);
   }
+
   if (template.culture) {
     identityTraits.push({
       name: "culture",
@@ -194,6 +201,7 @@ async function persistIdentityTraits(
       category: TraitCategory.Background,
     },);
   }
+
   for (const t of identityTraits) {
     await traits.createPermanentTrait({ actorId: id, category: t.category, name: t.name, value: t.value, },);
   }
@@ -235,5 +243,6 @@ async function linkTemplateAvatar(
       buffer: resolved.buffer,
     },
   },);
+
   await avatars.createAvatar({ actorId: id, assetId: asset.id, label: "default", isPrimary: true, },);
 }

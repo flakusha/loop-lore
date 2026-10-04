@@ -37,6 +37,7 @@ describe("game-state service", () => {
     actorId = await insertActors(database, "Game State Narrator", {
       id: crypto.randomUUID(),
     },);
+
     messageId = await insertMessages(
       database,
       chatId,
@@ -61,6 +62,7 @@ describe("game-state service", () => {
         .select(["chat_id", "message_id", "state",],)
         .where("id", "=", id as string,)
         .executeTakeFirstOrThrow();
+
       expect(row.chat_id,).toBe(chatId,);
       expect(row.message_id,).toBe(messageId,);
       expect(JSON.parse(row.state,),).toEqual(snapshot([entity("hero", 1, 2,),],),);
@@ -82,6 +84,7 @@ describe("game-state service", () => {
         messageId,
         content: "plain narration with no block",
       },);
+
       expect(id,).toBeNull();
     });
 
@@ -139,6 +142,7 @@ describe("game-state service", () => {
         messageId: null,
         content: block(snapshot([entity("hero", 1, 1,), entity("orc", 5, 5,),],),),
       },);
+
       await extractAndStore({
         database,
         chatId: diffChatId,
@@ -166,18 +170,21 @@ describe("game-state service", () => {
         messageId: null,
         content: block(snapshot([entity("hero", 0, 0,),],),),
       },);
+
       const middle = await extractAndStore({
         database,
         chatId: histChatId,
         messageId: null,
         content: block(snapshot([entity("hero", 1, 0,),],),),
       },);
+
       const newest = await extractAndStore({
         database,
         chatId: histChatId,
         messageId: null,
         content: block(snapshot([entity("hero", 2, 0,),],),),
       },);
+
       if (!oldest || !middle || !newest) { throw new Error("insert failed",); }
 
       const all = await getGameStateHistory({ database, chatId: histChatId, },);

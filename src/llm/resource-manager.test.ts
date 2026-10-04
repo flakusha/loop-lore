@@ -19,6 +19,7 @@ describe("ResourceManager", () => {
       priority: PriorityLevel.Normal,
       run: makeExec("ok",),
     },);
+
     expect(await handle.result,).toBe("ok",);
     expect(handle.state,).toBe("complete",);
   });
@@ -39,6 +40,7 @@ describe("ResourceManager", () => {
         return `v${i}`;
       },
     }),);
+
     const handles = reqs.map((r,) => mgr.submit(r,));
     await Promise.all(handles.map((h,) => h.result),);
     expect(peak,).toBeLessThanOrEqual(2,);
@@ -64,6 +66,7 @@ describe("ResourceManager", () => {
         },
       },),);
     }
+
     await Promise.all(handles.map((h,) => h.result),);
     expect(peakOai,).toBe(1,);
   });
@@ -78,6 +81,7 @@ describe("ResourceManager", () => {
       await sleep(15,);
       return provider;
     };
+
     void liveA;
     void liveB;
     // Use distinct trackers via closures.
@@ -90,6 +94,7 @@ describe("ResourceManager", () => {
       liveCombined--;
       return provider;
     };
+
     void liveA;
     void liveB;
     void make;
@@ -100,12 +105,14 @@ describe("ResourceManager", () => {
       priority: PriorityLevel.Normal,
       run: run("openai",),
     },);
+
     const b = mgr.submit({
       id: "b",
       provider: "anthropic",
       priority: PriorityLevel.Normal,
       run: run("anthropic",),
     },);
+
     await Promise.all([a.result, b.result,],);
     // peak should be 2 if both ran truly in parallel (different providers).
     expect(peak,).toBe(2,);
@@ -152,12 +159,14 @@ describe("ResourceManager", () => {
       priority: PriorityLevel.Normal,
       run: makeExec("blocker", 30,),
     },);
+
     const queued = mgr.submit({
       id: "queued",
       provider: "p",
       priority: PriorityLevel.Normal,
       run: makeExec("queued", 5,),
     },);
+
     expect(queued.state,).toBe("queued",);
     expect(mgr.cancel("queued", "user-stopped",),).toBe(true,);
     await expect(queued.result,).rejects.toThrow(/user-stopped/,);
@@ -174,6 +183,7 @@ describe("ResourceManager", () => {
       priority: PriorityLevel.Normal,
       run: makeExec("x",),
     },);
+
     expect(() =>
       mgr.submit({
         id: "dupe",
@@ -192,12 +202,14 @@ describe("ResourceManager", () => {
       priority: PriorityLevel.Normal,
       run: makeExec("q", 30,),
     },);
+
     const queued2 = mgr.submit({
       id: "queued2",
       provider: "p",
       priority: PriorityLevel.Normal,
       run: makeExec("q2", 30,),
     },);
+
     mgr.forgetProvider("p",);
     expect(mgr.inFlight,).toBe(0,);
     // Queued awaiters must reject — they cannot leak.
@@ -210,6 +222,7 @@ describe("ResourceManager", () => {
       priority: PriorityLevel.Normal,
       run: makeExec("after",),
     },);
+
     expect(await handle.result,).toBe("after",);
   });
 
@@ -221,6 +234,7 @@ describe("ResourceManager", () => {
       priority: PriorityLevel.Normal,
       run: () => sleep(50,).then(() => "done"),
     },);
+
     // Wait for the limiter to dispatch.
     await sleep(5,);
     expect(handle.state,).toBe("running",);
@@ -236,6 +250,7 @@ describe("ResourceManager", () => {
       priority: PriorityLevel.Normal,
       run: () => sleep(50,).then(() => "done"),
     },);
+
     // Wait for dispatch.
     await sleep(5,);
     expect(handle.state,).toBe("running",);

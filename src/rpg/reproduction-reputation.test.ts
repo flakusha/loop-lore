@@ -44,6 +44,7 @@ describe("reproduction service (TASK-038)", () => {
         "golem",
       ),
     ).toBeNull();
+
     expect((await repro.getPregnancy("carrier-golem",)).pregnant,).toBeFalse();
   });
 
@@ -80,6 +81,7 @@ describe("reproduction service (TASK-038)", () => {
         "human",
       ),
     ).toBeNull();
+
     expect((await repro.getPregnancy("carrier-safe",)).pregnant,).toBeFalse();
   });
 
@@ -99,6 +101,7 @@ describe("reproduction service (TASK-038)", () => {
         "human",
       );
     }
+
     expect(conceived,).not.toBeNull();
     const status = await repro.getPregnancy("carrier-mom",);
     expect(status.pregnant,).toBeTrue();
@@ -120,6 +123,7 @@ describe("reproduction service (TASK-038)", () => {
       )
       .selectAll()
       .execute();
+
     expect(rels.length,).toBe(3,);
     expect(new Set(rels.map((r,) => r.relationship_type),),).toEqual(new Set(["family",],),);
   });
@@ -154,6 +158,7 @@ describe("reputation service (TASK-042)", () => {
       .where("category", "=", "reputation",)
       .selectAll()
       .execute();
+
     expect(rows.length,).toBe(1,);
     expect(rows[0]!.source,).toBe("nsfw",);
     const meta = JSON.parse(rows[0]!.meta!,) as { event: string; actor: string; axis: string; delta: number };

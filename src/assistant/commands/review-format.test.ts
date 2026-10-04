@@ -18,6 +18,7 @@ describe("formatReviewReport", () => {
       { field: "avatar", issue: "blurry", severity: "warning", },
       { field: "lore", issue: "could expand", severity: "info", },
     ];
+
     const out = formatReviewReport("World", "Aether", issues,);
     expect(out,).toContain("**Errors (1):**",);
     expect(out,).toContain("- ❌ name: missing",);
@@ -32,6 +33,7 @@ describe("formatReviewReport", () => {
     const out = formatReviewReport("Location", "Tavern", [
       { field: "name", issue: "missing", severity: "error", },
     ],);
+
     expect(out,).toContain("**Errors (1):**",);
     expect(out,).not.toContain("Warnings",);
     expect(out,).not.toContain("Suggestions",);

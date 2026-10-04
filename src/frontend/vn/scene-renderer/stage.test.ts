@@ -78,6 +78,7 @@ function allByClass(root: FakeEl, cls: string,): FakeEl[] {
       walk(child,);
     }
   };
+
   walk(root,);
   return out;
 }
@@ -100,6 +101,7 @@ describe("group scene staging", () => {
     for (const portrait of portraits) {
       expect(portrait.className,).toContain("vn-stage-sprite",);
     }
+
     const stage = sceneEl.querySelector(".vn-stage",)!;
     expect(stage,).not.toBeNull();
     expect(spritesOf(sceneEl,),).toHaveLength(2,);
@@ -138,6 +140,7 @@ describe("group scene staging", () => {
       castMember("rin", "Rin",),
       { ...castMember("kai", "Kai",), visible: false, },
     ];
+
     const container = install([scene,], 0,);
 
     await renderCurrentScene(false, NAV,);

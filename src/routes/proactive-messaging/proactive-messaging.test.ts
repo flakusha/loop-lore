@@ -143,6 +143,7 @@ describe("proactiveMessagingRoutes — trigger contract", () => {
         method: "POST",
       },),
     );
+
     expect(res.status,).toBe(409,);
   });
 
@@ -159,6 +160,7 @@ describe("proactiveMessagingRoutes — trigger contract", () => {
         method: "POST",
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const row = await db
@@ -167,6 +169,7 @@ describe("proactiveMessagingRoutes — trigger contract", () => {
       .where("chat_id", "=", chatId,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
+
     expect(row.backoff_count,).toBe(3,);
   });
 
@@ -194,6 +197,7 @@ describe("proactiveMessagingRoutes — trigger contract", () => {
         method: "POST",
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const body = (await res.json()) as { triggered: boolean };
@@ -206,6 +210,7 @@ describe("proactiveMessagingRoutes — trigger contract", () => {
       .where("chat_id", "=", targetChat,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
+
     expect(row.last_proactive_at,).not.toBeNull();
 
     // A system notification for the user was created.
@@ -215,6 +220,7 @@ describe("proactiveMessagingRoutes — trigger contract", () => {
       .where("user_id", "=", userId,)
       .where("type", "=", "system",)
       .executeTakeFirst();
+
     expect(notif,).toBeDefined();
   });
 
@@ -242,6 +248,7 @@ describe("proactiveMessagingRoutes — trigger contract", () => {
         method: "POST",
       },),
     );
+
     expect(res.status,).toBe(409,);
   });
 });
@@ -303,6 +310,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
       mode: "direct",
       created_by: userId,
     },).execute();
+
     return id;
   }
 
@@ -314,6 +322,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
     const res = await app.handle(
       new Request(`http://localhost${R}/config?chatId=${chat}&actorId=${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       chatId: string;
@@ -321,6 +330,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
       frequency: string;
       enabled: boolean;
     };
+
     expect(body.chatId,).toBe(chat,);
     expect(body.actorId,).toBe(actorId,);
     expect(body.frequency,).toBe("frequent",);
@@ -334,6 +344,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
     const res = await app.handle(
       new Request(`http://localhost${R}/config?chatId=${chat}&actorId=${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.json(),).toBeNull();
   });
@@ -346,6 +357,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
     const res = await app.handle(
       new Request(`http://localhost${R}/configs?chatId=${chat}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as Array<{ chatId: string; frequency: string }>;
     expect(body.length,).toBe(1,);
@@ -361,6 +373,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
     const res = await app.handle(
       new Request(`http://localhost${R}/configs?chatId=${chat}`,),
     );
+
     expect(res.status,).toBe(404,);
     const body = (await res.json()) as { error: string };
     expect(body.error,).toBe("Chat not found",);
@@ -377,12 +390,14 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
         body: JSON.stringify({ frequency: "frequent", enabled: false, configJson: { dailyLimit: 2, }, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       frequency: string;
       enabled: boolean;
       configJson: Record<string, unknown>;
     };
+
     expect(body.frequency,).toBe("frequent",);
     expect(body.enabled,).toBe(false,);
     expect(body.configJson,).toEqual({ dailyLimit: 2, },);
@@ -393,6 +408,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
       .where("chat_id", "=", chat,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
+
     expect(row.frequency,).toBe("frequent",);
     expect(row.enabled,).toBe(0,);
   });
@@ -409,6 +425,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
         body: JSON.stringify({ frequency: "infrequent", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const row = await db
@@ -417,6 +434,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
       .where("chat_id", "=", chat,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
+
     expect(row.frequency,).toBe("infrequent",);
     expect(row.enabled,).toBe(1,);
   });
@@ -432,6 +450,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
         body: JSON.stringify({ frequency: "every_second", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -443,12 +462,14 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
     const res = await app.handle(
       new Request(`http://localhost${R}/check?chatId=${chat}&actorId=${actorId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       shouldMessage: boolean;
       reason: string;
       config: { chatId: string } | null;
     };
+
     expect(body.shouldMessage,).toBe(true,);
     expect(body.reason,).toBe("Ready to send proactive message",);
     expect(body.config?.chatId,).toBe(chat,);
@@ -469,6 +490,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
         method: "POST",
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { ok: boolean };
     expect(body.ok,).toBe(true,);
@@ -479,6 +501,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
       .where("chat_id", "=", chat,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
+
     expect(row.last_proactive_at,).not.toBeNull();
     expect(row.backoff_count,).toBe(0,);
   });
@@ -493,6 +516,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
         method: "POST",
       },),
     );
+
     expect(res.status,).toBe(200,);
     expect(((await res.json()) as { ok: boolean }).ok,).toBe(true,);
 
@@ -502,6 +526,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
       .where("chat_id", "=", chat,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
+
     expect(row.backoff_count,).toBe(0,);
   });
 
@@ -515,6 +540,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
         method: "DELETE",
       },),
     );
+
     expect(first.status,).toBe(200,);
     expect(((await first.json()) as { deleted: boolean }).deleted,).toBe(true,);
 
@@ -524,6 +550,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
       .where("chat_id", "=", chat,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
 
     const second = await app.handle(
@@ -531,6 +558,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
         method: "DELETE",
       },),
     );
+
     expect(second.status,).toBe(200,);
     expect(((await second.json()) as { deleted: boolean }).deleted,).toBe(false,);
   });
@@ -557,6 +585,7 @@ describe("proactive messaging — CRUD/check/record endpoints", () => {
           body: c.body,
         },),
       );
+
       expect(res.status,).toBe(404,);
       const body = (await res.json()) as { error: string };
       expect(body.error,).toBe("Actor not found",);

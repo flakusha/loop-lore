@@ -57,6 +57,7 @@ describe("createTableBackend", () => {
       body: JSON.stringify({ ok: true, },),
       startedAt: Date.now(),
     },);
+
     await asyncStore.flush();
 
     // Verify the row landed in the table.
@@ -77,6 +78,7 @@ describe("createTableBackend", () => {
       body: "ok",
       startedAt: Date.now(),
     },);
+
     await asyncStore.flush();
 
     // Process 2: fresh backend, same DB. get() must hydrate from the table
@@ -113,6 +115,7 @@ describe("createTableBackend", () => {
       body: "ok",
       startedAt: Date.now(),
     },);
+
     backend.clear();
     expect(backend.get("a",),).toBeNull();
     expect(backend.get("b",),).toBeNull();
@@ -126,6 +129,7 @@ describe("createTableBackend", () => {
       routePattern: "/api/x",
       userId: "user-1",
     },);
+
     asyncStore.fail("failed-key", { userId: "user-1", }, "boom",);
     await asyncStore.flush();
 
@@ -148,6 +152,7 @@ describe("createTableBackend", () => {
         body: "ok",
         startedAt: Date.now(),
       },);
+
       expect(backend.get("k",)?.body,).toBe("ok",);
       // Advance past the 1s TTL. completedAt was captured at recordResponse
       // time, so advancing the clock by 2s guarantees the entry is stale.
@@ -169,11 +174,13 @@ describe("createTableBackend", () => {
       routePattern: "/api/x",
       userId: "user-1",
     },);
+
     asyncStore.complete(
       "stale-key",
       { userId: "user-1", },
       { status: 200, headers: {}, body: "old", },
     );
+
     await asyncStore.flush();
     // Backdate completed_at to 2h ago so the row is past any reasonable TTL.
     await testDb.db
@@ -233,11 +240,13 @@ describe("createTableBackend", () => {
       routePattern: "/api/x",
       userId: "user-1",
     },);
+
     asyncStore.complete(key, { userId: "user-1", }, {
       status: 200,
       headers: {},
       body: "stale-db",
     },);
+
     await asyncStore.flush();
     await testDb.db
       .updateTable("request_results",)
@@ -250,6 +259,7 @@ describe("createTableBackend", () => {
       },)
       .where("id", "=", key,)
       .execute();
+
     const backend = createTableBackend(60_000, asyncStore,);
     backend.markInFlight(key, META,);
     backend.recordResponse(key, META, {
@@ -258,6 +268,7 @@ describe("createTableBackend", () => {
       body: "fresh-local",
       startedAt: Date.now() - 50,
     },);
+
     backend.clear();
     // get() fires hydrate.
     expect(backend.get(key,),).toBeNull();
@@ -268,6 +279,7 @@ describe("createTableBackend", () => {
       body: "fresh-local",
       startedAt: Date.now(),
     },);
+
     await new Promise((resolve,) => setTimeout(resolve, 50,));
     const after = backend.get(key,);
     expect(after?.body,).toBe("fresh-local",);
@@ -288,11 +300,13 @@ describe("createTableBackend", () => {
       routePattern: "/api/x",
       userId: "user-1",
     },);
+
     asyncStore.complete(key, { userId: "user-1", }, {
       status: 200,
       headers: {},
       body: "sibling-persisted",
     },);
+
     await asyncStore.flush();
     const backend = createTableBackend(60_000, asyncStore,);
     // Cache miss → fires hydrate.
@@ -316,6 +330,7 @@ describe("createTableBackend", () => {
     const results = await Promise.all(
       Array.from({ length: 50, }, () => backend.get(key,),),
     );
+
     expect(results,).toEqual(Array(50,).fill(null,),);
   });
 
@@ -334,6 +349,7 @@ describe("createTableBackend", () => {
       },
       async flush(): Promise<void> {},
     };
+
     const log = createLogger({ level: "warn", },);
     log.addTransport(transport,);
     // Capture the prior global logger so the test can restore it on
@@ -346,6 +362,7 @@ describe("createTableBackend", () => {
     } catch {
       // No global logger yet — fine.
     }
+
     setGlobalLogger(log,);
     try {
       // Destroy the DB so asyncStore.read() throws. The hydrate path

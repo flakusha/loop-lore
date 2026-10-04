@@ -48,6 +48,7 @@ describe("flushActiveStore", () => {
     const row = sqlite
       .query("SELECT id, status FROM request_results WHERE id = ?",)
       .get("req-teardown",) as { id: string; status: string } | null;
+
     expect(row?.id,).toBe("req-teardown",);
     expect(row?.status,).toBe("pending",);
 
@@ -69,6 +70,7 @@ describe("flushActiveStore", () => {
     const persisted = sqlite
       .query("SELECT COUNT(*) AS n FROM request_results WHERE id LIKE 'req-%'",)
       .get() as { n: number };
+
     expect(persisted.n,).toBe(ids.length,);
 
     await db.destroy();
@@ -88,6 +90,7 @@ describe("flushActiveStore", () => {
     const persisted = sqlite
       .query("SELECT COUNT(*) AS n FROM request_results WHERE id LIKE 'req-c%'",)
       .get() as { n: number };
+
     expect(persisted.n,).toBe(25,);
 
     await db.destroy();

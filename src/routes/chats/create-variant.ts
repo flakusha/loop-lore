@@ -39,6 +39,7 @@ export function resolveVariantOverrides(
   if (!(CHAT_VARIANTS as readonly string[]).includes(rawVariant,)) {
     return { error: `Unknown chat variant: ${rawVariant}`, };
   }
+
   const variant = rawVariant as ChatVariant;
   const def = VARIANT_DEFAULTS[variant];
   // If the caller also supplies any of type/mode/purpose, they must match the
@@ -53,8 +54,10 @@ export function resolveVariantOverrides(
       suppliedMode ?? def.chat_mode,
       suppliedPurpose ?? def.chat_purpose,
     );
+
     if (err) { return { error: err, }; }
   }
+
   return {
     resolvedType: suppliedType ?? def.chat_type,
     resolvedMode: suppliedMode ?? def.chat_mode,

@@ -67,6 +67,7 @@ Alpine.magic("t", (el: HTMLElement,) => {
       for (const k of keys) { value = (value as Record<string, unknown>)?.[k]; }
       if (typeof value === "string") { return value; }
     }
+
     const globalStrings = g.__localeStrings as Record<string, unknown> | undefined;
     if (globalStrings) {
       const keys = key.split(".",);
@@ -74,8 +75,10 @@ Alpine.magic("t", (el: HTMLElement,) => {
       for (const k of keys) { value = (value as Record<string, unknown>)?.[k]; }
       if (typeof value === "string") { return value; }
     }
+
     return key;
   };
+
   return resolve;
 },);
 

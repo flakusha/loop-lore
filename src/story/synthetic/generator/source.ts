@@ -25,6 +25,7 @@ export async function fetchSource(state: GeneratorState, chatId: string,): Promi
     .select(["world_id",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   if (!chat) { return null; }
 
   const [messagesResult, questsResult, questProgressResult, worldStatesResult,] = await Promise.allSettled([
@@ -53,22 +54,26 @@ export async function fetchSource(state: GeneratorState, chatId: string,): Promi
       .limit(20,)
       .execute(),
   ],);
+
   // Preserve Promise.all abort semantics: rethrow on any rejected query.
   const messages = messagesResult.status === "fulfilled"
     ? messagesResult.value
     : (() => {
       throw messagesResult.reason;
     })();
+
   const quests = questsResult.status === "fulfilled"
     ? questsResult.value
     : (() => {
       throw questsResult.reason;
     })();
+
   const questProgress = questProgressResult.status === "fulfilled"
     ? questProgressResult.value
     : (() => {
       throw questProgressResult.reason;
     })();
+
   const worldStates = worldStatesResult.status === "fulfilled"
     ? worldStatesResult.value
     : (() => {

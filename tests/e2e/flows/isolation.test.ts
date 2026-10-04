@@ -56,6 +56,7 @@ describe("Cross-Tenant Isolation E2E", () => {
       type: "direct",
       mode: "direct",
     },);
+
     expect(createRes.ok,).toBe(true,);
     expect(createRes.data?.id,).toBeTruthy();
 
@@ -70,6 +71,7 @@ describe("Cross-Tenant Isolation E2E", () => {
       type: "direct",
       mode: "direct",
     },);
+
     expect(createRes.ok,).toBe(true,);
 
     const getRes = await userA.get(`/api/v1/chats/${createRes.data!.id}`,);
@@ -88,6 +90,7 @@ describe("Cross-Tenant Isolation E2E", () => {
       type: "direct",
       mode: "direct",
     },);
+
     expect(createRes.ok,).toBe(true,);
     const chatId = createRes.data!.id;
 
@@ -105,6 +108,7 @@ describe("Cross-Tenant Isolation E2E", () => {
       type: "direct",
       mode: "direct",
     },);
+
     expect(createRes.ok,).toBe(true,);
 
     const listRes = await userB.get<{ data: Array<{ id: string }> }>("/api/v1/chats",);

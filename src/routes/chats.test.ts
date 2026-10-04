@@ -99,6 +99,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Test", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -124,6 +125,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "My Chat", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as { id: string };
     expect(body.id,).toBeDefined();
@@ -144,6 +146,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Group Chat", type: "group", mode: "group", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as { id: string };
     const chat = await db.selectFrom("chats",).selectAll().where("id", "=", body.id,).executeTakeFirst();
@@ -187,6 +190,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Filter Archive Me", },),
       },),
     );
+
     const { id, } = (await create.json()) as { id: string };
     await db.updateTable("chats",).set({ is_pinned: "archived", },).where("id", "=", id,).execute();
 
@@ -232,6 +236,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Unread Target", },),
       },),
     )).json()) as { id: string };
+
     const c2 = (await (await app.handle(
       new Request("http://localhost/api/chats", {
         method: "POST",
@@ -264,6 +269,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Find Me", },),
       },),
     );
+
     const { id, } = (await chatCreate.json()) as { id: string };
 
     const res = await app.handle(new Request(`http://localhost/api/chats/${id}`,),);
@@ -289,6 +295,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Old Name", },),
       },),
     );
+
     const { id, } = (await chatCreate.json()) as { id: string };
 
     const res = await app.handle(
@@ -298,6 +305,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "New Name", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { ok: boolean };
     expect(body.ok,).toBe(true,);
@@ -318,6 +326,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Original Name", },),
       },),
     );
+
     const { id, } = (await chatCreate.json()) as { id: string };
 
     const res = await app.handle(
@@ -327,6 +336,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Renamed Chat", name_source: "manual", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { ok: boolean };
     expect(body.ok,).toBe(true,);
@@ -346,6 +356,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Test", },),
       },),
     );
+
     const { id, } = (await chatCreate.json()) as { id: string };
     const longName = "A".repeat(61,);
     const renameBody = JSON.stringify({ name: longName, name_source: "manual", },);
@@ -356,6 +367,7 @@ describe("chatsRoutes", () => {
         body: renameBody,
       },),
     );
+
     expect(res.status,).toBe(400,);
     const body = (await res.json()) as { error: string; code: string };
     expect(body.error,).toContain("1-60 characters",);
@@ -372,6 +384,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Chat One", },),
       },),
     );
+
     const { id: id1, } = (await chat1Create.json()) as { id: string };
 
     // Create second chat
@@ -382,6 +395,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Chat Two", },),
       },),
     );
+
     const { id: id2, } = (await chat2Create.json()) as { id: string };
 
     // Rename first chat to "Chat One"
@@ -401,6 +415,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Chat One", name_source: "manual", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     const body = (await res.json()) as { error: string; code: string };
     expect(body.error,).toContain("already in use",);
@@ -417,6 +432,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Delete Me", },),
       },),
     );
+
     const { id, } = (await chatCreate.json()) as { id: string };
 
     const res = await app.handle(new Request(`http://localhost/api/chats/${id}`, { method: "DELETE", },),);
@@ -437,6 +453,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Owner Chat", },),
       },),
     );
+
     const { id, } = (await chatCreate.json()) as { id: string };
 
     const otherApp = createApp(db, "other-user-id",);
@@ -474,6 +491,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Template Chat", templateId: "vn-story", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = (await res.json()) as { id: string };
     const chat = await db.selectFrom("chats",).selectAll().where("id", "=", id,).executeTakeFirst();
@@ -482,6 +500,7 @@ describe("chatsRoutes", () => {
     expect(gmConfigVisualNovel(chat?.gm_config ?? "",),).toBe("visual_novel",);
     const tmpl = await db.selectFrom("chat_setup_templates",).select("id",).where("slug", "=", "vn-story",)
       .executeTakeFirst();
+
     expect(chat?.template_id,).toBe(tmpl?.id,);
   });
 
@@ -499,6 +518,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Override Chat", templateId: "tmpl-override", mode: "direct", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = (await res.json()) as { id: string };
     const chat = await db.selectFrom("chats",).selectAll().where("id", "=", id,).executeTakeFirst();
@@ -515,6 +535,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Bad Template", templateId: "does-not-exist", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -529,6 +550,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Draft", mode: "direct", },),
       },),
     );
+
     const { id, } = (await chatCreate.json()) as { id: string };
 
     const res = await app.handle(
@@ -538,6 +560,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ mode: "story", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const chat = await db.selectFrom("chats",).selectAll().where("id", "=", id,).executeTakeFirst();
     expect(chat?.mode,).toBe("story",);
@@ -552,6 +575,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Online", mode: "direct", },),
       },),
     );
+
     const { id, } = (await chatCreate.json()) as { id: string };
 
     // Make it online with a confirmed message
@@ -564,6 +588,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ mode: "story", },),
       },),
     );
+
     expect(res.status,).toBe(409,);
     const body = (await res.json()) as { code: string };
     expect(body.code,).toBe("key_mechanic_conflict",);
@@ -578,6 +603,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Online State", mode: "direct", },),
       },),
     );
+
     const { id, } = (await chatCreate.json()) as { id: string };
     await insertMessages(db, id, userId, "user", "hello", { status: MessageStatus.Confirmed, } as any,);
 
@@ -588,6 +614,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Renamed Online", isPinned: true, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const chat = await db.selectFrom("chats",).selectAll().where("id", "=", id,).executeTakeFirst();
     expect(chat?.name,).toBe("Renamed Online",);
@@ -601,6 +628,7 @@ describe("chatsRoutes", () => {
       turn_strategy: "scene_based",
       gm_config: JSON.stringify({ renderingOverride: "visual_novel", },),
     },);
+
     const app = createApp(db, userId,);
     const chatCreate = await app.handle(
       new Request("http://localhost/api/chats", {
@@ -609,6 +637,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Source Chat", mode: "direct", },),
       },),
     );
+
     const { id: sourceId, } = (await chatCreate.json()) as { id: string };
 
     const res = await app.handle(
@@ -622,6 +651,7 @@ describe("chatsRoutes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as { newChatId: string; sourceChatId: string };
     expect(body.sourceChatId,).toBe(sourceId,);
@@ -631,6 +661,7 @@ describe("chatsRoutes", () => {
     expect(newChat?.mode,).toBe("story",);
     const tmpl = await db.selectFrom("chat_setup_templates",).select("id",).where("slug", "=", "migrate-target",)
       .executeTakeFirst();
+
     expect(newChat?.template_id,).toBe(tmpl?.id,);
   });
 
@@ -643,6 +674,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Source Again", },),
       },),
     );
+
     const { id: sourceId, } = (await chatCreate.json()) as { id: string };
 
     await app.handle(
@@ -660,6 +692,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ templateId: "migrate-target", },),
       },),
     );
+
     expect(second.status,).toBe(400,);
   });
 
@@ -672,6 +705,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "Source Three", },),
       },),
     );
+
     const { id: sourceId, } = (await chatCreate.json()) as { id: string };
 
     const res = await app.handle(
@@ -681,6 +715,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ templateId: "nope", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -689,6 +724,7 @@ describe("chatsRoutes", () => {
       mode: "story",
       turn_strategy: "scene_based",
     },);
+
     const app = createApp(db, userId,);
     const chatCreate = await app.handle(
       new Request("http://localhost/api/chats", {
@@ -697,6 +733,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "State Source", mode: "story", },),
       },),
     );
+
     const { id: sourceId, } = (await chatCreate.json()) as { id: string };
 
     // Seed chat-bound party state
@@ -710,6 +747,7 @@ describe("chatsRoutes", () => {
       "hello",
       { id: msgId, status: MessageStatus.Confirmed, } as any,
     );
+
     const worldId = uid();
     await insertWorlds(db, userId, "Quest World", { id: worldId, } as any,);
     const questId = uid();
@@ -729,6 +767,7 @@ describe("chatsRoutes", () => {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },).execute();
+
     await db.insertInto("chat_pins",).values({
       id: uid(),
       chat_id: sourceId,
@@ -736,6 +775,7 @@ describe("chatsRoutes", () => {
       pinned_by: userId,
       pinned_at: new Date().toISOString(),
     },).execute();
+
     await db.insertInto("vn_choices",).values({
       id: uid(),
       chat_id: sourceId,
@@ -759,6 +799,7 @@ describe("chatsRoutes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { newChatId, } = (await res.json()) as { newChatId: string };
 
@@ -767,30 +808,35 @@ describe("chatsRoutes", () => {
       "=",
       newChatId,
     ).executeTakeFirst();
+
     expect(turnCount?.n,).toBe(1,);
     const questCount = await db.selectFrom("quest_progress",).select(db.fn.countAll<number>().as("n",),).where(
       "chat_id",
       "=",
       newChatId,
     ).executeTakeFirst();
+
     expect(questCount?.n,).toBe(1,);
     const initCount = await db.selectFrom("group_initiatives",).select(db.fn.countAll<number>().as("n",),).where(
       "chat_id",
       "=",
       newChatId,
     ).executeTakeFirst();
+
     expect(initCount?.n,).toBe(1,);
     const pinCount = await db.selectFrom("chat_pins",).select(db.fn.countAll<number>().as("n",),).where(
       "chat_id",
       "=",
       newChatId,
     ).executeTakeFirst();
+
     expect(pinCount?.n,).toBe(1,);
     const choiceCount = await db.selectFrom("vn_choices",).select(db.fn.countAll<number>().as("n",),).where(
       "chat_id",
       "=",
       newChatId,
     ).executeTakeFirst();
+
     expect(choiceCount?.n,).toBe(1,);
   });
 
@@ -798,6 +844,7 @@ describe("chatsRoutes", () => {
     await insertChatSetupTemplates(db, "nostate-target", "NoState Target", {
       mode: "story",
     },);
+
     const app = createApp(db, userId,);
     const chatCreate = await app.handle(
       new Request("http://localhost/api/chats", {
@@ -806,6 +853,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ name: "NoState Source", mode: "story", },),
       },),
     );
+
     const { id: sourceId, } = (await chatCreate.json()) as { id: string };
     await db.insertInto("story_turns",).values({
       id: uid(),
@@ -829,6 +877,7 @@ describe("chatsRoutes", () => {
         body: JSON.stringify({ templateId: "nostate-target", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { newChatId, } = (await res.json()) as { newChatId: string };
     const turnCount = await db.selectFrom("story_turns",).select(db.fn.countAll<number>().as("n",),).where(
@@ -836,6 +885,7 @@ describe("chatsRoutes", () => {
       "=",
       newChatId,
     ).executeTakeFirst();
+
     expect(turnCount?.n,).toBe(0,);
   });
 });
@@ -918,6 +968,7 @@ describe("chatsRoutes — side-channels + turn-order (C1)", () => {
         body: JSON.stringify({ name: "C1 Group", type: "group", mode: "group", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = (await res.json()) as { id: string };
     // Add an AI companion so the group has a turn-order candidate.
@@ -928,6 +979,7 @@ describe("chatsRoutes — side-channels + turn-order (C1)", () => {
         body: JSON.stringify({ actorId: aiActorId, },),
       },),
     );
+
     return id;
   }
 
@@ -942,6 +994,7 @@ describe("chatsRoutes — side-channels + turn-order (C1)", () => {
         body: JSON.stringify({ name: "OOC Chat", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id: sideId, } = (await res.json()) as { id: string };
 
@@ -954,6 +1007,7 @@ describe("chatsRoutes — side-channels + turn-order (C1)", () => {
     // Inherited participants: owner (user) + companion.
     const participants = await db.selectFrom("chat_participants",).select("actor_id",).where("chat_id", "=", sideId,)
       .execute();
+
     const ids = Array.from(participants, (p,) => p.actor_id,);
     expect(ids,).toContain(userId,);
     expect(ids,).toContain(aiActorId,);
@@ -970,6 +1024,7 @@ describe("chatsRoutes — side-channels + turn-order (C1)", () => {
         body: JSON.stringify({ name: "Side A", },),
       },),
     );
+
     await app.handle(
       new Request(`http://localhost/api/chats/${groupId}/side`, {
         method: "POST",
@@ -1007,6 +1062,7 @@ describe("chatsRoutes — side-channels + turn-order (C1)", () => {
         body: JSON.stringify({ templateId: "c1-migrate-target", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
 
     // A second migrate on the same source is still rejected (idempotency).
@@ -1017,6 +1073,7 @@ describe("chatsRoutes — side-channels + turn-order (C1)", () => {
         body: JSON.stringify({ templateId: "c1-migrate-target", },),
       },),
     );
+
     expect(res2.status,).toBe(400,);
   });
 
@@ -1035,6 +1092,7 @@ describe("chatsRoutes — side-channels + turn-order (C1)", () => {
         order: { actor_id: string; display_name: string; isCurrent: boolean; isNext: boolean }[];
       };
     };
+
     expect(turnOrder.strategy,).toBe("round_robin",);
     expect(turnOrder.order.length,).toBeGreaterThan(0,);
     // AI companion is in the order (non-user agent).
@@ -1053,6 +1111,7 @@ describe("chatsRoutes — side-channels + turn-order (C1)", () => {
         body: JSON.stringify({ name: "Direct", type: "direct", mode: "direct", },),
       },),
     );
+
     const { id, } = (await res.json()) as { id: string };
 
     const to = await app.handle(new Request(`http://localhost/api/chats/${id}/turn-order`,),);

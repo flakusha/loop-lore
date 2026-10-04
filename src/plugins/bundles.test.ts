@@ -71,16 +71,19 @@ describe("validateCharacterForBundle", () => {
       required: ["motivations", "equipment",],
       minLength: { motivations: 1, },
     };
+
     const ok = validateCharacterForBundle(
       { motivations: [{ summary: "guard the keep", }], equipment: { main_hand: "longsword", }, },
       reqs,
     );
+
     expect(ok.valid).toBe(true);
 
     const missingEq = validateCharacterForBundle(
       { motivations: [{ summary: "guard the keep", }], },
       reqs,
     );
+
     expect(missingEq.valid).toBe(false);
     expect(missingEq.missing).toContain("required: equipment");
   },);
@@ -112,6 +115,7 @@ describe("PluginManifest.characterRequirements", () => {
         "fantasy-rpg": FANTASY_RPG_REQUIREMENTS,
       },
     };
+
     expect(manifest.characterRequirements?.["fantasy-rpg"]).toBe(FANTASY_RPG_REQUIREMENTS,);
   },);
 });

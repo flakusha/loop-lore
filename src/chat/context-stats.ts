@@ -88,6 +88,7 @@ export function computeSections(
       pct: maxTokens > 0 ? Math.round((s.tokens / maxTokens) * 100,) : 0,
     },);
   }
+
   return out;
 }
 

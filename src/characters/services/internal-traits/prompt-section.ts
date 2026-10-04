@@ -24,6 +24,7 @@ function appendAspirations(lines: string[], aspirations: Aspiration[], isVisible
   for (const a of aspirations) {
     if (isVisible("aspirations",) || a.visibility === "open") { visible.push(a,); }
   }
+
   if (visible.length === 0) { return; }
   lines.push("### Goals & Aspirations",);
   for (const a of visible) {
@@ -31,6 +32,7 @@ function appendAspirations(lines: string[], aspirations: Aspiration[], isVisible
     lines.push(`- [${a.priority}] ${a.goal}${progress}`,);
     if (a.plans.length > 0) { lines.push(`  Plans: ${a.plans.join("; ",)}`,); }
   }
+
   lines.push("",);
 }
 

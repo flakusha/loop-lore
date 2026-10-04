@@ -67,6 +67,7 @@ describe("appendTimelineEvents", () => {
         makeEvent({ description: "Event A", timestamp: "2020-01-01T00:00:00Z", },),
         makeEvent({ description: "Event B", timestamp: "2020-06-15T12:00:00Z", },),
       ];
+
       await appendTimelineEvents({ db, worldId, storyId: null, events, },);
 
       const rows = await db.selectFrom("world_timeline_events",).selectAll().execute();
@@ -135,6 +136,7 @@ describe("seedBackstory", () => {
         .selectAll()
         .where("id", "=", id,)
         .executeTakeFirstOrThrow();
+
       expect(row.description,).toBe("The ancient war ended 200 years ago.",);
       expect(row.occurred_at,).toBe("1800-01-01T00:00:00Z",);
       expect(row.event_type,).toBe("world_lore_update",);
@@ -167,6 +169,7 @@ describe("seedBackstory", () => {
         .selectFrom("world_lore_entries",)
         .select(["content", "audience_scope",],)
         .execute();
+
       expect(lore,).toHaveLength(1,);
       expect(lore[0]!.content,).toBe("Elves founded the Silver Spire.",);
       expect(lore[0]!.audience_scope,).not.toBeNull();
@@ -175,6 +178,7 @@ describe("seedBackstory", () => {
       const scope = parseLoreScope(lore[0]!.audience_scope,);
       expect(isLoreVisibleTo({ audienceScope: scope, }, { race: "elf", professions: [], locationId: null, },),)
         .toBeTrue();
+
       expect(isLoreVisibleTo({ audienceScope: scope, }, { race: "human", professions: [], locationId: null, },),)
         .toBeFalse();
     } finally {
@@ -244,6 +248,7 @@ describe("listTimelineEntries", () => {
         worldId,
         occurredAfter: "2015-01-01T00:00:00Z",
       },);
+
       expect(afterOnly,).toHaveLength(2,);
       expect(afterOnly.map((r,) => r.description),).toEqual(["Mid", "New",],);
 
@@ -252,6 +257,7 @@ describe("listTimelineEntries", () => {
         worldId,
         occurredBefore: "2025-01-01T00:00:00Z",
       },);
+
       expect(beforeOnly,).toHaveLength(2,);
       expect(beforeOnly.map((r,) => r.description),).toEqual(["Old", "Mid",],);
     } finally {
@@ -292,6 +298,7 @@ describe("getEstablishedHistory", () => {
         description: "Ancient event",
         occurredAt: "1800-01-01T00:00:00Z",
       },);
+
       await seedBackstory({
         db,
         worldId,
@@ -304,6 +311,7 @@ describe("getEstablishedHistory", () => {
         worldId,
         since: "2020-01-01T00:00:00Z",
       },);
+
       expect(history,).toHaveLength(1,);
       expect(history[0]!.description,).toBe("Ancient event",);
     } finally {

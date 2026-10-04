@@ -42,12 +42,14 @@ const uiStore: AlpineStore = {
   showGallery: false,
   showCharacterInfo: false,
 };
+
 const chatStore: AlpineStore = { currentChat: null, };
 const stores: Record<string, AlpineStore> = { ui: uiStore, chat: chatStore, };
 const alpineMock = {
   store: (name: string,) => stores[name] ?? {},
   initTree: () => {},
 };
+
 const originalAlpine = (globalThis as Record<string, unknown>).Alpine;
 beforeEach(() => {
   uiStore.hasActiveChat = false;
@@ -57,6 +59,7 @@ beforeEach(() => {
   chatStore.currentChat = null;
   (globalThis as Record<string, unknown>).Alpine = alpineMock;
 },);
+
 afterEach(() => {
   (globalThis as Record<string, unknown>).Alpine = originalAlpine;
 },);
@@ -74,6 +77,7 @@ beforeEach(() => {
     },
   };
 },);
+
 afterEach(() => {
   if (originalReplace) {
     historyGlobal.history = { replaceState: originalReplace, };
@@ -154,9 +158,11 @@ describeOrSkip("chatWorld.loadWorldChannels", () => {
           ],
         },);
       }
+
       loaded.push(url,);
       return Response.json({ data: [], },);
     };
+
     const ctx = worldCtx();
     await chatWorld.loadWorldChannels!.call(ctx,);
     expect(ctx._worlds,).toEqual([{ id: "w1", name: "Chat World", },],);
@@ -176,6 +182,7 @@ describeOrSkip("chatWorld.loadWorldChannels", () => {
     handler = () => {
       throw new Error("offline",);
     };
+
     const ctx = worldCtx();
     await expect(chatWorld.loadWorldChannels!.call(ctx,),).resolves.toBeUndefined();
     expect(ctx._worldsLoading,).toBe(false,);
@@ -209,6 +216,7 @@ describeOrSkip("chatWorld.loadWorldChats", () => {
     handler = () => {
       throw new Error("offline",);
     };
+
     const ctx = worldCtx();
     await chatWorld.loadWorldChats!.call(ctx, "w1",);
     expect((ctx._worldChats as Record<string, unknown[]>)["w1"],).toEqual([],);
@@ -225,6 +233,7 @@ describeOrSkip("chatWorld.toggleWorld", () => {
         loaded.push(id,);
       },
     },);
+
     chatWorld.toggleWorld!.call(ctx, "w1",);
     expect((ctx._worldExpanded as Record<string, boolean>)["w1"],).toBe(true,);
     expect(loaded,).toEqual(["w1",],);
@@ -239,6 +248,7 @@ describeOrSkip("chatWorld.toggleWorld", () => {
         loads++;
       },
     },);
+
     chatWorld.toggleWorld!.call(ctx, "w1",);
     expect((ctx._worldExpanded as Record<string, boolean>)["w1"],).toBe(false,);
     expect(loads,).toBe(0,);
@@ -253,6 +263,7 @@ describeOrSkip("chatWorld.toggleWorld", () => {
         loads++;
       },
     },);
+
     chatWorld.toggleWorld!.call(ctx, "w1",);
     expect(loads,).toBe(0,);
   });
@@ -274,6 +285,7 @@ describeOrSkip("chatWorld.selectChat guards", () => {
         inner++;
       },
     },);
+
     await chatWorld.selectChat!.call(ctx, "c1",);
     expect(inner,).toBe(0,);
     expect(fetchCalls,).toHaveLength(0,);
@@ -291,6 +303,7 @@ describeOrSkip("chatWorld.selectChat guards", () => {
         if (e === "show-toast") { toasts.push(d,); }
       },
     },);
+
     await chatWorld.selectChat!.call(ctx, "c1",);
     expect(inner,).toBe(0,);
     expect(toasts[0]?.type,).toBe("warning",);
@@ -314,6 +327,7 @@ describeOrSkip("chatWorld.selectChat guards", () => {
         events.push("flush",);
       },
     },);
+
     await chatWorld.selectChat!.call(ctx, "c1",);
     expect(events,).toEqual(["flush", "inner",],);
   });
@@ -418,6 +432,7 @@ describeOrSkip("chatWorld._selectChatInner happy path", () => {
       },
       initTree: () => {},
     };
+
     const original = (globalThis as Record<string, unknown>).Alpine;
     (globalThis as Record<string, unknown>).Alpine = failingAlpine;
     try {
@@ -445,6 +460,7 @@ describeOrSkip("chatWorld._selectChatInner happy path", () => {
     const ctx = makeSelectCtx({
       loadSections: () => Promise.reject(new Error("sections down",),),
     },);
+
     await expect(chatWorld._selectChatInner!.call(ctx, "c1",),).rejects.toThrow("select chat reload failed",);
   });
 
@@ -452,6 +468,7 @@ describeOrSkip("chatWorld._selectChatInner happy path", () => {
     const ctx = makeSelectCtx({
       markChatAsRead: () => Promise.reject(new Error("mark read failed",),),
     },);
+
     await expect(chatWorld._selectChatInner!.call(ctx, "c1",),).rejects.toThrow("select chat post-load failed",);
   });
 
@@ -472,6 +489,7 @@ describeOrSkip("chatWorld._selectChatInner happy path", () => {
         return Promise.resolve();
       },
     },);
+
     await chatWorld._selectChatInner!.call(ctx, "c1",);
     expect(calls,).toContain("participants",);
     expect(calls,).toContain("turnOrder",);
@@ -483,6 +501,7 @@ describeOrSkip("chatWorld._selectChatInner happy path", () => {
       isGroupChat: true,
       loadTurnOrder: () => Promise.reject(new Error("turn order broken",),),
     },);
+
     await expect(chatWorld._selectChatInner!.call(ctx, "c1",),).rejects.toThrow("group chat load failed",);
   });
 
@@ -503,6 +522,7 @@ describeOrSkip("chatWorld._selectChatInner happy path", () => {
         return Promise.resolve();
       },
     },);
+
     await chatWorld._selectChatInner!.call(ctx, "c1",);
     expect(groupCalls,).toBe(0,);
   });
@@ -518,6 +538,7 @@ describeOrSkip("chatWorld.selectChat successful flow", () => {
         throw new Error("inner boom",);
       },
     },);
+
     await expect(chatWorld.selectChat!.call(ctx, "c1",),).rejects.toThrow("inner boom",);
     expect(inner,).toBe(1,);
     expect(ctx._selectingChat,).toBe(false,);

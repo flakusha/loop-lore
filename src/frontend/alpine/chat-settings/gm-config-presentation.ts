@@ -39,5 +39,6 @@ export function presentationGmConfig(
   for (const key of GM_CONFIG_PRESENTATION_KEYS) {
     if (gmConfig[key] !== undefined) { out[key] = gmConfig[key]; }
   }
+
   return out;
 }

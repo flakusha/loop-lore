@@ -16,6 +16,7 @@ describe("escapeHtml", () => {
   it("escapes all five special characters", () => {
     expect(escapeHtml(`<a href="x">&'`,),).toBe("&lt;a href=&quot;x&quot;&gt;&amp;&#39;",);
   });
+
   it("leaves plain text untouched", () => {
     expect(escapeHtml("plain",),).toBe("plain",);
   });

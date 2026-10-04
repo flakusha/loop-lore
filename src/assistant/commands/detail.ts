@@ -16,6 +16,7 @@ registerCommand("detail", (args,): CommandResult => {
       handled: true,
     };
   }
+
   return {
     action: "set-detail-level",
     actionPayload: { level, },

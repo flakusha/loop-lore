@@ -46,6 +46,7 @@ function dbStub(takes: unknown[], runs: Array<() => Promise<unknown>>,): Kysely<
     executeTakeFirst: () => takeQueue.shift(),
     execute: () => runQueue.shift()?.(),
   };
+
   return {
     selectFrom: () => chain,
     insertInto: () => chain,
@@ -57,11 +58,13 @@ describe("ensureActiveSession", () => {
     const database = dbStub([PAIR_ROW,], [() => {
       throw new Error("must not insert",);
     },],);
+
     const session = await ensureActiveSession({
       database,
       senderActorId: "a",
       recipientActorId: "b",
     },);
+
     expect(session?.id,).toBe("sess-pair",);
   });
 
@@ -74,6 +77,7 @@ describe("ensureActiveSession", () => {
       chatId: "c1",
       kind: "group",
     },);
+
     expect(session?.id,).toBe("sess-group",);
   });
 
@@ -86,6 +90,7 @@ describe("ensureActiveSession", () => {
       chatId: "c1",
       kind: "group",
     },);
+
     expect(session?.id,).toBe("sess-group",);
   });
 
@@ -93,11 +98,13 @@ describe("ensureActiveSession", () => {
     const database = dbStub([undefined, PAIR_ROW,], [async () => {
       throw new Error("UNIQUE constraint failed",);
     },],);
+
     const session = await ensureActiveSession({
       database,
       senderActorId: "a",
       recipientActorId: "b",
     },);
+
     expect(session?.id,).toBe("sess-pair",);
   });
 
@@ -105,6 +112,7 @@ describe("ensureActiveSession", () => {
     const database = dbStub([undefined, undefined,], [async () => {
       throw new Error("UNIQUE constraint failed",);
     },],);
+
     await expect(ensureActiveSession({
       database,
       senderActorId: "a",

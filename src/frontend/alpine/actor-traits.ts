@@ -81,6 +81,7 @@ export const actorTraits: ActorTraitsState = {
         this.traitsError = t("status.traitsLoadFailed",);
         return;
       }
+
       const body = (await res.json()) as PermanentTrait[];
       this.traits = Array.isArray(body,) ? body : [];
     } catch (error) {
@@ -130,6 +131,7 @@ export const actorTraits: ActorTraitsState = {
       this.error = t("status.traitsNameRequired",);
       return;
     }
+
     this.busy = true;
     this.error = "";
     this.message = "";
@@ -138,19 +140,23 @@ export const actorTraits: ActorTraitsState = {
       const url = isEdit
         ? `/api/v1/actors/${actorId}/traits/${encodeURIComponent(this.draft.editingName!,)}`
         : `/api/v1/actors/${actorId}/traits`;
+
       const method = isEdit ? "PUT" : "POST";
       const res = await apiFetch(url, {
         method,
         headers: { "Content-Type": "application/json", },
         body: jsonBody(this.buildPayload(),),
       },);
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({} as Record<string, unknown>)) as {
           message?: string;
         };
+
         this.error = body.message ?? t("status.traitsSaveFailed",);
         return;
       }
+
       this.message = t(isEdit ? "status.traitsUpdated" : "status.traitsCreated",);
       this.cancelEdit();
       await this.loadTraits();
@@ -172,10 +178,12 @@ export const actorTraits: ActorTraitsState = {
         `/api/v1/actors/${actorId}/traits/${encodeURIComponent(traitName,)}`,
         { method: "DELETE", },
       );
+
       if (!res.ok && res.status !== 404) {
         this.error = t("status.traitsDeleteFailed",);
         return;
       }
+
       this.message = t("status.traitsDeleted",);
       if (this.draft.editingName === traitName) { this.cancelEdit(); }
       await this.loadTraits();

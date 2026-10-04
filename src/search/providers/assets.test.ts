@@ -28,11 +28,13 @@ beforeAll(async () => {
     visibility: AssetVisibility.Public,
     alt_text: "cozy tavern hall",
   },);
+
   await insertAssets(db, ownerId, "Old tavern cellar.png", "image/png", AssetType.Image, 2048, "/cellar.png", {
     id: privateId,
     visibility: AssetVisibility.Private,
     alt_text: "dark cellar",
   },);
+
   await insertAssets(db, strangerId, "Dragon portrait.png", "image/png", AssetType.Image, 512, "/dragon.png", {
     visibility: AssetVisibility.Public,
     alt_text: "red dragon",
@@ -51,17 +53,21 @@ describe("search/providers/assets (fuzzy)", () => {
       { q: "tavern", mode: "fuzzy", },
       { kind: "assets", userId: ownerId, },
     );
+
     expect(hits.map((h,) => h.id),).toEqual([publicId, privateId,],);
     expect(hits[0]?.source,).toBe("fuzzy",);
   });
+
   test("strangers see only public assets", async () => {
     const { fuzzy, } = createAssetProviders(db,);
     const hits = await fuzzy(
       { q: "tavern", mode: "fuzzy", },
       { kind: "assets", userId: strangerId, },
     );
+
     expect(hits.map((h,) => h.id),).toEqual([publicId,],);
   });
+
   test("type filter narrows and unknown types are ignored", async () => {
     const { fuzzy, } = createAssetProviders(db,);
     const scope = { kind: "assets", userId: ownerId, } as const;
@@ -69,11 +75,13 @@ describe("search/providers/assets (fuzzy)", () => {
       { q: "tavern", mode: "fuzzy", filters: { assetType: "audio", }, },
       { ...scope, },
     );
+
     expect(audio,).toEqual([],);
     const bogus = await fuzzy(
       { q: "tavern", mode: "fuzzy", filters: { assetType: "bogus", }, },
       { ...scope, },
     );
+
     expect(bogus.map((h,) => h.id),).toEqual([publicId, privateId,],);
   });
 });
@@ -88,6 +96,7 @@ describe("search/providers/assets (exact)", () => {
       { q: privateId, mode: "exact", },
       { kind: "assets", userId: strangerId, },
     );
+
     expect(denied,).toEqual([],);
   });
 });

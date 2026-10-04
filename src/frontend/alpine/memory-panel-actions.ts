@@ -44,6 +44,7 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ reviewStatus: status, },),
       },);
+
       await this.loadMemories();
     } catch (error) {
       this.memoryPanel.error = error instanceof Error ? error.message : String(error,);
@@ -115,6 +116,7 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
     } catch {
       this.$dispatch?.("show-toast", { type: "error", message: t("chats.inThisChatError",), },);
     }
+
     await this.loadMemories();
   },
 
@@ -143,12 +145,14 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ content, },),
       },);
+
       if (!res.ok) { return; }
       const mem = this.getCurrentMemoryList().find((m,) => m.id === memoryId);
       if (mem) {
         mem.content = content;
         mem.tokenCount = estimateTokens(content,);
       }
+
       this.cancelEditMemory();
       this._updateTokenCount();
     } catch {
@@ -184,10 +188,12 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
           scope: "character",
         },),
       },);
+
       if (!res.ok) {
         this.$dispatch?.("show-toast", { type: "error", message: `Remember failed (${res.status})`, },);
         return;
       }
+
       this.$dispatch?.("show-toast", { type: "info", message: t("chats.remembered",), },);
       await this.loadMemories();
     } catch {

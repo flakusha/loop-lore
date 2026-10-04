@@ -61,6 +61,7 @@ export async function importWorldBundle(
       difficulty_state: (world?.difficulty_state as DifficultyState) ?? DifficultyState.Normal,
       nsfw_override: strOrNull(world ?? {}, "nsfw_override",),
     };
+
     await trx.insertInto("worlds",).values(worldValues,).execute();
 
     // ── locations ───────────────────────────────────────────────
@@ -84,9 +85,11 @@ export async function importWorldBundle(
         connections: str(row, "connections",) ?? "[]",
       },);
     }
+
     if (locationValues.length > 0) {
       await trx.insertInto("locations",).values(locationValues,).execute();
     }
+
     counts.locations = locationValues.length;
 
     for (const row of locationRows) {
@@ -128,6 +131,7 @@ export async function importWorldBundle(
           audience_scope: strOrNull(row, "audience_scope",),
         } satisfies Insertable<WorldLoreEntries>,
       ).execute();
+
       counts.world_lore_entries++;
     }
 
@@ -156,6 +160,7 @@ export async function importWorldBundle(
           completed_at: strOrNull(row, "completed_at",),
         } satisfies Insertable<Quests>,
       ).execute();
+
       counts.quests++;
     }
 
@@ -171,6 +176,7 @@ export async function importWorldBundle(
           description: strOrNull(row, "description",),
         } satisfies Insertable<WorldStates>,
       ).execute();
+
       counts.world_states++;
     }
 
@@ -193,6 +199,7 @@ export async function importWorldBundle(
           hazards: str(row, "hazards",) ?? "[]",
         } satisfies Insertable<LocationStates>,
       ).execute();
+
       counts.location_states++;
     }
 

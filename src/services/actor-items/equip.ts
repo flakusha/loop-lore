@@ -24,9 +24,11 @@ export function slotForCategory(category: ItemCategory,): EquipSlot | null {
     case "weapon": {
       return "weapon";
     }
+
     case "armor": {
       return "armor";
     }
+
     case "consumable":
     case "key_item":
     case "quest_item":

@@ -26,8 +26,10 @@ export function parseKeywords(raw: unknown,): string[] {
       const trimmed = s.trim();
       if (trimmed) { out.push(trimmed,); }
     }
+
     return out;
   }
+
   return [];
 }
 
@@ -52,8 +54,10 @@ export function parseKeyGroups(raw: unknown,): string[][] | null {
       const trimmed = String(key,).trim();
       if (trimmed) { keys.push(trimmed,); }
     }
+
     if (keys.length > 0) { groups.push(keys,); }
   }
+
   return groups.length > 0 ? groups : null;
 }
 
@@ -70,6 +74,7 @@ function wordsFromText(text: string,): Set<string> {
   for (const w of text.toLowerCase().split(/[^a-z0-9]+/i,)) {
     if (w) { words.push(w,); }
   }
+
   return new Set(words,);
 }
 
@@ -95,10 +100,12 @@ async function recentUserMessages(
     .orderBy("created_at", "desc",)
     .limit(limit,)
     .execute();
+
   const contents: string[] = [];
   for (const row of rows) {
     if (row.content) { contents.push(row.content,); }
   }
+
   return contents;
 }
 
@@ -126,6 +133,7 @@ export async function recentConversation(
     for (const w of wordsFromText(content,)) { words.add(w,); }
     textParts.push(content,);
   }
+
   return { words, text: textParts.join("\n",), };
 }
 

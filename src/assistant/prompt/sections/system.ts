@@ -47,6 +47,7 @@ export function wrapUntrusted(source: string, content: string,): string {
     UNTRUSTED_CLOSE,
   ].join(String.fromCharCode(10,),);
 }
+
 /**
  * Wrap user-authored STEERING text (custom instructions) in the same sandbox
  * marker, but with advisory rather than data-only semantics.
@@ -102,11 +103,13 @@ export const systemSection: SectionBuilder = {
     } else {
       content = ctx.actor.system_prompt ?? "";
     }
+
     if (!content) { return []; }
     const wrapped = trusted ? content : wrapUntrusted(
       ctx.chat.prompt_override ? "chat.prompt_override" : "world.system_prompt_override",
       content,
     );
+
     return [{ role: "system", content: wrapped, },];
   },
 };

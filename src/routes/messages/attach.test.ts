@@ -68,6 +68,7 @@ async function readAttachments(
     .select("attachments",)
     .where("id", "=", messageId,)
     .executeTakeFirst();
+
   if (!row?.attachments) { return []; }
   return JSON.parse(row.attachments,) as { assetId?: string; order?: number; label?: string }[];
 }
@@ -84,6 +85,7 @@ async function countLinks(db: Kysely<DB>, assetId: string,): Promise<number> {
     .select("asset_id",)
     .where("asset_id", "=", assetId,)
     .execute();
+
   return rows.length;
 }
 

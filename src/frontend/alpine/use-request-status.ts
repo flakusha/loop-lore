@@ -90,20 +90,24 @@ export function useRequestStatus(opts: UseRequestStatusOptions = {},): {
           status: "failed",
           error: `Status endpoint returned ${res.status.toString()}`,
         };
+
         opts.onUpdate?.(payload,);
         opts.onTerminal?.(payload,);
         return;
       }
+
       const payload = (await res.json()) as RequestStatusPayload;
       opts.onUpdate?.(payload,);
       if (TERMINAL.has(payload.status,)) {
         opts.onTerminal?.(payload,);
         return;
       }
+
       if (Date.now() - startedAt >= maxDurationMs) {
         opts.onTerminal?.(payload,);
         return;
       }
+
       timer = setTimeout(() => {
         void poll(requestId, startedAt,);
       }, intervalMs,);
@@ -113,6 +117,7 @@ export function useRequestStatus(opts: UseRequestStatusOptions = {},): {
         status: "failed",
         error: err instanceof Error ? err.message : String(err,),
       };
+
       opts.onUpdate?.(payload,);
       opts.onTerminal?.(payload,);
     }

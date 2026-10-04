@@ -75,6 +75,7 @@ export async function recordRelationshipShift(
       "not_found",
     );
   }
+
   if (!relRow.evolution_tracked) {
     // D9: Opted out — silently no-op rather than error. The relationship
     // Write already happened; we just don't audit it as growth.

@@ -44,10 +44,12 @@ beforeAll(async () => {
     visibility: AssetVisibility.Public,
     alt_text: "cozy tavern hall",
   },);
+
   await insertAssets(db, ownerId, "Old tavern cellar.png", "image/png", AssetType.Image, 2048, "/c.png", {
     visibility: AssetVisibility.Private,
     alt_text: "dark cellar",
   },);
+
   await insertAssets(db, ownerId, "Tavern brawl.png", "image/png", AssetType.Image, 512, "/b.png", {
     visibility: AssetVisibility.Public,
     alt_text: "bar fight",
@@ -72,25 +74,31 @@ describe("assetSearchRoutes", () => {
       "Tavern brawl.png",
       "Tavern interior.png",
     ],);
+
     expect(body.hasMore,).toBe(false,);
   });
+
   test("strangers see only public assets", async () => {
     const res = await get(searchApp(strangerId, "user",), "/api/assets/search?q=tavern",);
     const body = (await res.json()) as SearchBody;
     expect(body.total,).toBe(2,);
   });
+
   test("limit/offset paginate with honest hasMore", async () => {
     const first = (await (
       await get(searchApp(ownerId, "user",), "/api/assets/search?q=tavern&limit=2&offset=0",)
     ).json()) as SearchBody;
+
     expect(first.results,).toHaveLength(2,);
     expect(first.hasMore,).toBe(true,);
     const second = (await (
       await get(searchApp(ownerId, "user",), "/api/assets/search?q=tavern&limit=2&offset=2",)
     ).json()) as SearchBody;
+
     expect(second.results,).toHaveLength(1,);
     expect(second.hasMore,).toBe(false,);
   });
+
   test("unauthenticated callers get 401", async () => {
     const res = await get(searchApp(null, null,), "/api/assets/search?q=tavern",);
     expect(res.status,).toBe(401,);

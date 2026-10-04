@@ -48,6 +48,7 @@ describe("validateWorkflowPayload", () => {
         "9": { class_type: "CLIPLoader", inputs: { clip_name: "x", }, },
       },
     },);
+
     expect(result.ok,).toBe(false,);
     if (!result.ok) {
       expect(result.errors.join(" ",),).toContain("9",);
@@ -65,6 +66,7 @@ describe("validateWorkflowPayload", () => {
       ...BASE,
       parameters: [{ name: "cfg_scale", type: "number", label: "CFG", default: 7, },],
     },);
+
     expect(result.ok,).toBe(false,);
     if (!result.ok) {
       expect(result.errors.join(" ",),).toContain("cfg_scale",);
@@ -76,6 +78,7 @@ describe("validateWorkflowPayload", () => {
       ...BASE,
       parameters: [{ name: "width", type: "number", label: "Width", default: 768, },],
     },);
+
     expect(result.ok,).toBe(true,);
   });
 
@@ -87,6 +90,7 @@ describe("validateWorkflowPayload", () => {
         { name: "width", type: "number", label: "W2", default: 2, },
       ],
     },);
+
     expect(result.ok,).toBe(false,);
   });
 
@@ -95,6 +99,7 @@ describe("validateWorkflowPayload", () => {
       ...BASE,
       loraSlots: [{ nodeId: "404", classType: "LoraLoader", label: "Style", },],
     },);
+
     expect(result.ok,).toBe(false,);
     if (!result.ok) {
       expect(result.errors.join(" ",),).toContain("404",);
@@ -106,6 +111,7 @@ describe("validateWorkflowPayload", () => {
       ...BASE,
       loraSlots: [{ nodeId: "2", classType: "LoraLoader", label: "Style", },],
     },);
+
     expect(result.ok,).toBe(false,);
   });
 
@@ -114,6 +120,7 @@ describe("validateWorkflowPayload", () => {
       ...BASE,
       loraSlots: [{ nodeId: "2", classType: "KSampler", label: "Sampler", },],
     },);
+
     expect(result.ok,).toBe(true,);
   });
 

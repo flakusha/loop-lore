@@ -39,12 +39,14 @@ export async function fulfillFantasy(
     .where("id", "=", fantasyId,)
     .selectAll()
     .executeTakeFirst();
+
   if (!row) { return null; }
   const log = getLogger().child({ module: "fantasies", },);
   const fantasy = getRow(row as any,);
   if (fantasy.intensity === "intense" || fantasy.intensity === "extreme") {
     log.warn(`nsfw.content_warning: fulfilling ${fantasy.intensity} fantasy "${fantasy.name}" (${fantasy.category})`,);
   }
+
   const target = forTarget?.actorId ?? fantasy.actorId;
   const effects = fantasy.fulfillmentEffects;
   await applyFulfillIntimacy(db, log, fantasy, forTarget, effects,);

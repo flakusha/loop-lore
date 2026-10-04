@@ -168,6 +168,7 @@ function resolveTemplate(template: string, opts: ResolveOpts = {},): string {
       if (worldTime) {
         return PERIOD_WEATHER[worldTime.period] ?? pickRandom(WEATHER_OPTIONS,);
       }
+
       return pickRandom(WEATHER_OPTIONS,);
     },)
     .replace("{sound}", () => pickRandom(SOUND_OPTIONS,),)

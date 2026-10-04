@@ -25,6 +25,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(characterWorldSetupRoutes({ database: db, },),);
 }
 
@@ -58,6 +59,7 @@ describe("character-world-setup routes", () => {
       scenario: "base scenario",
       system_prompt: "base prompt",
     },);
+
     await insertActors(db, "Other Actor", { id: OTHER as never, owner_id: "other", },);
   },);
 
@@ -67,6 +69,7 @@ describe("character-world-setup routes", () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -74,6 +77,7 @@ describe("character-world-setup routes", () => {
     const res = await makeApp(db, "other", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -81,6 +85,7 @@ describe("character-world-setup routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -92,6 +97,7 @@ describe("character-world-setup routes", () => {
         body: JSON.stringify({ backstory: "orphan from the north", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json() as SetupBody;
     expect(body.actor_id,).toBe(ACTOR,);
@@ -105,6 +111,7 @@ describe("character-world-setup routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as SetupBody;
     expect(body.backstory,).toBe("orphan from the north",);
@@ -121,6 +128,7 @@ describe("character-world-setup routes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json() as SetupBody;
     expect(body.starting_inventory,).toContain("sword",);
@@ -131,6 +139,7 @@ describe("character-world-setup routes", () => {
       .select(["scenario_override", "backstory",],)
       .where("actor_id", "=", ACTOR,)
       .executeTakeFirst();
+
     expect(row?.scenario_override,).toBe("overridden scenario",);
     expect(row?.backstory,).toBe("orphan from the north",); // preserved on merge
   });
@@ -139,6 +148,7 @@ describe("character-world-setup routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}/resolve`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as SetupBody;
     expect(body.actorId,).toBe(ACTOR,);
@@ -151,6 +161,7 @@ describe("character-world-setup routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD2}/resolve`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as SetupBody;
     expect(body.scenario,).toBe("base scenario",);
@@ -166,6 +177,7 @@ describe("character-world-setup routes", () => {
         body: JSON.stringify({ backstory: "x", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -173,6 +185,7 @@ describe("character-world-setup routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
 
     const row = await db
@@ -180,6 +193,7 @@ describe("character-world-setup routes", () => {
       .select("id",)
       .where("actor_id", "=", ACTOR,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 
@@ -187,6 +201,7 @@ describe("character-world-setup routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -194,6 +209,7 @@ describe("character-world-setup routes", () => {
     const res = await makeApp(db, "other", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -224,6 +240,7 @@ describe("character-world-setup routes", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`,),
       );
+
       expect(res.status,).toBe(200,);
     });
 
@@ -232,6 +249,7 @@ describe("character-world-setup routes", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/actors/${ACTOR}/world-setup/${WORLD}`,),
       );
+
       expect(res.status,).toBe(200,);
     });
 
@@ -244,6 +262,7 @@ describe("character-world-setup routes", () => {
           body: JSON.stringify({ scenario: "admin override", },),
         },),
       );
+
       expect(res.status,).toBe(201,);
     });
   });

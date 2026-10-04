@@ -36,6 +36,7 @@ describe("insertGeneratedEntity", () => {
         settings: "{}",
       },)
       .execute();
+
     await db
       .insertInto("actors",)
       .values({
@@ -51,6 +52,7 @@ describe("insertGeneratedEntity", () => {
         import_spec: "{}",
       },)
       .execute();
+
     worldId = "world-npc-fixture";
     await db
       .insertInto("worlds",)
@@ -86,6 +88,7 @@ describe("insertGeneratedEntity", () => {
       .select(["agent_type", "actor_type", "default_outfit", "outfits",],)
       .where("id", "=", inserted.id,)
       .executeTakeFirst();
+
     expect(actor?.agent_type,).toBe("npc",);
     expect(actor?.actor_type,).toBe("character",);
     // appearance doubles as the default outfit when none is supplied
@@ -111,6 +114,7 @@ describe("insertGeneratedEntity", () => {
       .select("name",)
       .where("actor_id", "=", inserted.id,)
       .execute();
+
     expect(lore.map((l,) => l.name),).toEqual(["Archive Key",],);
   });
 
@@ -135,6 +139,7 @@ describe("insertGeneratedEntity", () => {
       .select(["id", "visibility", "template_id", "world_id", "current_location_id", "turn_strategy",],)
       .where("id", "=", inserted.linkedChatId!,)
       .executeTakeFirst();
+
     expect(chat?.current_location_id,).toBe(inserted.id,);
     expect(chat?.world_id,).toBe(worldId,);
     expect(chat?.template_id,).toBe("template-world",);

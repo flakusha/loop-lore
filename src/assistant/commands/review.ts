@@ -37,13 +37,16 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
     case "char": {
       return reviewCharacter(db, ctx.userId ?? "",);
     }
+
     case "world": {
       return reviewWorld(db, worldId,);
     }
+
     case "location":
     case "loc": {
       return reviewLocation(db, worldId,);
     }
+
     default: {
       return {
         systemMessage: "Usage: /review <character|world|location>",
@@ -88,24 +91,31 @@ async function reviewCharacter(db: Kysely<DB>, userId: string,): Promise<Command
   if (!character.description) {
     issues.push({ field: "description", issue: "Missing description", severity: "error", },);
   }
+
   if (!character.personality) {
     issues.push({ field: "personality", issue: "Missing personality traits", severity: "warning", },);
   }
+
   if (!character.scenario) {
     issues.push({ field: "scenario", issue: "Missing scenario context", severity: "warning", },);
   }
+
   if (!character.system_prompt) {
     issues.push({ field: "system_prompt", issue: "No custom system prompt", severity: "info", },);
   }
+
   if (!character.mes_example) {
     issues.push({ field: "mes_example", issue: "No example messages", severity: "info", },);
   }
+
   if (!character.welcome_message) {
     issues.push({ field: "welcome_message", issue: "No welcome message", severity: "info", },);
   }
+
   if (character.display_name.length < 2) {
     issues.push({ field: "display_name", issue: "Name too short", severity: "warning", },);
   }
+
   if (character.description && character.description.length < 50) {
     issues.push({ field: "description", issue: "Description is very brief (under 50 chars)", severity: "info", },);
   }
@@ -139,9 +149,11 @@ async function reviewWorld(db: Kysely<DB>, worldId: string,): Promise<CommandRes
   if (!world.description) {
     issues.push({ field: "description", issue: "Missing world description", severity: "error", },);
   }
+
   if (!world.lore) {
     issues.push({ field: "lore", issue: "Missing lore/backstory", severity: "warning", },);
   }
+
   if (world.description && world.description.length < 100) {
     issues.push({ field: "description", issue: "Description is brief (under 100 chars)", severity: "info", },);
   }
@@ -151,6 +163,7 @@ async function reviewWorld(db: Kysely<DB>, worldId: string,): Promise<CommandRes
     .where("world_id", "=", worldId,)
     .select((eb,) => eb.fn.count("id",).as("count",))
     .executeTakeFirst();
+
   const count = Number(locationCount?.count ?? 0,);
   if (count === 0) {
     issues.push({ field: "locations", issue: "No locations defined", severity: "warning", },);
@@ -188,6 +201,7 @@ async function reviewLocation(db: Kysely<DB>, worldId: string,): Promise<Command
   if (!location.description) {
     issues.push({ field: "description", issue: "Missing location description", severity: "error", },);
   }
+
   if (location.description && location.description.length < 50) {
     issues.push({ field: "description", issue: "Description is brief (under 50 chars)", severity: "info", },);
   }

@@ -166,6 +166,7 @@ async function runScenario(
     stdout: "pipe",
     stderr: "pipe",
   },);
+
   try {
     const text = await new Response(proc.stdout,).text();
     await proc.exited;
@@ -267,6 +268,7 @@ describe("start-sd child harness", () => {
         `${stub.dir}:/usr/bin:/bin`,
         stub.dir,
       );
+
       expect(result.null,).toBe(false,);
       expect((result.warns as string[]).some((m,) => m.includes("missing llmPath",)),).toBe(false,);
       const argv = result.argv as string;
@@ -307,6 +309,7 @@ describe("start-sd child harness", () => {
       ) {
         expect(argv.includes(flag,),).toBe(true,);
       }
+
       expect(argv.includes("/models/diffusion",),).toBe(true,);
       expect(argv.includes("~",),).toBe(false,);
     } finally {
@@ -324,6 +327,7 @@ describe("start-sd child harness", () => {
         `${stub.dir}:/usr/bin:/bin`,
         stub.dir,
       );
+
       expect(result.null,).toBe(false,);
       expect((result.warns as string[]).some((m,) => m.includes("missing llmPath",)),).toBe(true,);
       const argv = result.argv as string;

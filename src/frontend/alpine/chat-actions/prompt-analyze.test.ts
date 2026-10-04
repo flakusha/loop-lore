@@ -17,6 +17,7 @@ const globals = globalThis as unknown as {
   apiFetch?: ApiFetchMock;
   localStorage?: Storage;
 };
+
 const originalFetch = globals.apiFetch;
 const originalStorage = globals.localStorage;
 
@@ -41,6 +42,7 @@ function buildCtx(text: string,): AnalyzeCtx {
       ctx.dispatched.push({ event, detail, },);
     },
   };
+
   return ctx;
 }
 
@@ -89,10 +91,12 @@ beforeEach(() => {
     },
   } as Storage;
 },);
+
 afterEach(() => {
   globals.apiFetch = originalFetch;
   globals.localStorage = originalStorage;
 },);
+
 afterAll(() => {
   globals.apiFetch = originalFetch;
   globals.localStorage = originalStorage;
@@ -113,6 +117,7 @@ describe("analyzePrompt server path", () => {
       text: "where to?",
       chatId: "chat-1",
     },);
+
     expect(ctx.$refs.messageInput.value,).toBe("  where to?  ",);
     expect(ctx._promptAnalysis,).toEqual(PROFILE,);
     expect(ctx._analyzing,).toBe(false,);
@@ -132,6 +137,7 @@ describe("analyzePrompt server path", () => {
     expect(ctx.$refs.messageInput.value,).toBe("hello world",);
   });
 });
+
 describe("analyzePrompt guards", () => {
   test("empty draft returns without a call", async () => {
     const ctx = buildCtx("   ",);
@@ -139,6 +145,7 @@ describe("analyzePrompt guards", () => {
     expect(calls,).toEqual([],);
     expect(ctx.dispatched,).toEqual([],);
   });
+
   test("missing chat warns without a call", async () => {
     const ctx = buildCtx("hello",);
     ctx.activeChat = null;
@@ -148,6 +155,7 @@ describe("analyzePrompt guards", () => {
     expect(toastOf(ctx,).type,).toBe("warning",);
     expect(ctx._analyzing,).toBe(false,);
   });
+
   test("in-flight analyze is not re-entered", async () => {
     const ctx = buildCtx("hello",);
     ctx._analyzing = true;
@@ -155,6 +163,7 @@ describe("analyzePrompt guards", () => {
     expect(calls,).toEqual([],);
   });
 });
+
 describe("analyzePrompt failures", () => {
   test("server error surfaces failure toast + resets flag", async () => {
     stubFetch(() => Promise.resolve(new Response(JSON.stringify({ message: "bad", },), { status: 500, },),));
@@ -165,6 +174,7 @@ describe("analyzePrompt failures", () => {
     expect(ctx.$refs.messageInput.value,).toBe("hello",);
     expect(ctx._analyzing,).toBe(false,);
   });
+
   test("injection block surfaces blocked message", async () => {
     stubFetch(() =>
       Promise.resolve(Response.json(
@@ -172,12 +182,14 @@ describe("analyzePrompt failures", () => {
         { status: 403, },
       ),)
     );
+
     const ctx = buildCtx("hello",);
     await analyze(ctx,);
     expect(toastOf(ctx,).type,).toBe("error",);
     expect(ctx._promptAnalysis,).toBeUndefined();
     expect(ctx._analyzing,).toBe(false,);
   });
+
   test("missing analysis payload surfaces failure", async () => {
     stubFetch(() => Promise.resolve(Response.json({ data: {}, },),));
     const ctx = buildCtx("hello",);
@@ -185,6 +197,7 @@ describe("analyzePrompt failures", () => {
     expect(toastOf(ctx,).type,).toBe("error",);
     expect(ctx._promptAnalysis,).toBeUndefined();
   });
+
   test("network throw surfaces failure + resets flag", async () => {
     stubFetch(() => Promise.reject(new Error("down",),));
     const ctx = buildCtx("hello",);
@@ -193,6 +206,7 @@ describe("analyzePrompt failures", () => {
     expect(ctx._analyzing,).toBe(false,);
   });
 });
+
 describe("clearPromptAnalysis", () => {
   test("clears displayed profile, draft untouched", async () => {
     const ctx = buildCtx("hello",);

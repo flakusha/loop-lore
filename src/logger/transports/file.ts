@@ -61,6 +61,7 @@ export class FileTransport implements Transport {
     this.writeChain = next.catch(() => {
       // already swallowed by writeLocked
     },);
+
     return next;
   }
 
@@ -100,9 +101,11 @@ export class FileTransport implements Transport {
     if (this.maxFiles > 0) {
       await rm(`${this.activePath}.${this.maxFiles}`, { force: true, },);
     }
+
     for (let i = this.maxFiles - 1; i >= 1; i--) {
       await rename(`${this.activePath}.${i}`, `${this.activePath}.${i + 1}`,);
     }
+
     // Default maxFiles=5 → keep path.1..path.5, then rotate current → path.1.
     if (this.maxFiles >= 1) {
       await rename(this.activePath, `${this.activePath}.1`,);

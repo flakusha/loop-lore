@@ -14,6 +14,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("metadata", "text", (col,) => col.notNull().defaultTo("{}",),)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .execute();
+
   await database.schema
     .createIndex("model_comparison_runs_user_created",)
     .on("model_comparison_runs",)

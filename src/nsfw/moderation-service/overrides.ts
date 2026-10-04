@@ -39,6 +39,7 @@ export async function getEffectiveNsfw(
     .select(["nsfw_override", "world_id", "type",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   if (chat?.nsfw_override === "enabled") { return { enabled: true, source: "chat_override", }; }
   if (chat?.nsfw_override === "disabled") { return { enabled: false, source: "chat_override", }; }
 
@@ -48,6 +49,7 @@ export async function getEffectiveNsfw(
       .select("nsfw_override",)
       .where("id", "=", chat.world_id,)
       .executeTakeFirst();
+
     if (world?.nsfw_override === "enabled") { return { enabled: true, source: "world_override", }; }
     if (world?.nsfw_override === "disabled") { return { enabled: false, source: "world_override", }; }
   }
@@ -87,13 +89,16 @@ export async function setChatNsfwOverride(
     .select("id",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   if (!chat) {
     throw new Error(`chat_not_found:${chatId}`,);
   }
+
   await thisL.db.updateTable("chats",)
     .set({ nsfw_override: override, },)
     .where("id", "=", chatId,)
     .execute();
+
   thisL.log.info("Chat NSFW override updated", { chatId, override, performedBy, },);
   await thisL.recordAction({
     actionType: "nsfw_override_set",
@@ -131,13 +136,16 @@ export async function setWorldNsfwOverride(
     .select("id",)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   if (!world) {
     throw new Error(`world_not_found:${worldId}`,);
   }
+
   await thisL.db.updateTable("worlds",)
     .set({ nsfw_override: override, },)
     .where("id", "=", worldId,)
     .execute();
+
   thisL.log.info("World NSFW override updated", { worldId, override, performedBy, },);
   await thisL.recordAction({
     actionType: "nsfw_override_set",

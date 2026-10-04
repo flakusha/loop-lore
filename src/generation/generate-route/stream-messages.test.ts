@@ -38,6 +38,7 @@ describe("toGenerationToolCalls", () => {
     const [only,] = toGenerationToolCalls([
       { id: "x", function: { name: "n", arguments: raw, }, },
     ],);
+
     expect(only?.function.arguments,).toBe(raw,);
   });
 });
@@ -47,6 +48,7 @@ describe("buildToolCallAssistantMessage", () => {
     const message = buildToolCallAssistantMessage("", [
       { id: "call-1", function: { name: "f", arguments: "{}", }, },
     ],);
+
     expect(message,).toEqual({
       role: "assistant",
       content: "",
@@ -60,6 +62,7 @@ describe("buildToolCallAssistantMessage", () => {
     const message = buildToolCallAssistantMessage("Let me check that.", [
       { id: "call-9", function: { name: "inspect", arguments: "[1]", }, },
     ],);
+
     expect(message.role,).toBe("assistant",);
     expect(message.content,).toBe("Let me check that.",);
     expect(message.tool_calls,).toHaveLength(1,);

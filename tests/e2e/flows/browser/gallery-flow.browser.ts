@@ -45,17 +45,20 @@ describe("Gallery flow E2E", () => {
       const url = new URL(res.url(),);
       return res.request().method() === "POST" && url.pathname === "/api/v1/assets";
     }, { timeout: 15_000, },);
+
     await page.click("[data-testid='upload-button']",);
     await page.locator("[data-testid='upload-form']",).waitFor({ state: "visible", timeout: 15_000, },);
     const png = Buffer.from(
       "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
       "base64",
     );
+
     await page.setInputFiles("#upload-file-input", {
       name: filename,
       mimeType: "image/png",
       buffer: png,
     },);
+
     await page.fill("#asset-label", "browser-upload",);
     await page.click("[data-testid='upload-form'] button[type='submit']",);
 
@@ -76,12 +79,15 @@ describe("Gallery flow E2E", () => {
         .select("id",)
         .where("id", "=", created.id,)
         .executeTakeFirst();
+
       if (row) {
         durable = true;
         break;
       }
+
       await new Promise((resolve,) => setTimeout(resolve, 250,));
     }
+
     expect(durable, "uploaded asset row should be durable",).toBe(true,);
     return created.id;
   }
@@ -114,6 +120,7 @@ describe("Gallery flow E2E", () => {
       page.on("request", (req,) => {
         requests.push(req.url(),);
       },);
+
       try {
         await gotoGallery(page,);
         await page.locator("[data-testid='upload-button']",).waitFor({ state: "visible", timeout: 15_000, },);
@@ -149,6 +156,7 @@ describe("Gallery flow E2E", () => {
           expect(dlUrl.pathname, "download should target the download endpoint",).toBe(
             `/api/v1/assets/${id}/download`,
           );
+
           expect(dlUrl.searchParams.has("sig",), "download should carry sig",).toBe(true,);
           expect(dlUrl.searchParams.has("expires",), "download should carry expires",).toBe(true,);
         }
@@ -158,6 +166,7 @@ describe("Gallery flow E2E", () => {
           const url = new URL(u,);
           return url.pathname === `/api/v1/assets/${id}/download` && !url.searchParams.has("sig",);
         },);
+
         expect(bareGet, "download should never hit the bare authenticated endpoint",).toBe(false,);
       } finally {
         errors.assert();

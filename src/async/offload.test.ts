@@ -36,6 +36,7 @@ describe("offload helpers", () => {
     dir = mkdtempSync(path.join(tmpdir(), "loop-lore-offload-",),);
     setOffloadDir(dir,);
   },);
+
   afterEach(() => {
     resetOffloadDir();
     rmSync(dir, { recursive: true, force: true, },);

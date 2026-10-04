@@ -45,6 +45,7 @@ export function collectScoresAndVariance(
   for (let i = 0; i < iterations; i++) {
     scores.push(evaluate(i,),);
   }
+
   const variance = Math.max(...scores,) - Math.min(...scores,);
   return { scores, variance, };
 }
@@ -92,16 +93,19 @@ export function countByStatus(results: { status: string }[],): {
         passed++;
         break;
       }
+
       case "failed": {
         failed++;
         break;
       }
+
       case "skipped": {
         skipped++;
         break;
       }
     }
   }
+
   return { passed, failed, skipped, };
 }
 

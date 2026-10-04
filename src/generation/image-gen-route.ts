@@ -84,6 +84,7 @@ export async function handleImageGeneration(
     if (!row) {
       return Response.json({ error: "Template not found", status: 404, }, { status: 404, },);
     }
+
     const payload = parseTemplatePayload(row.payload, row.modality,);
     if (row.modality !== "image" || !payload) {
       return Response.json(
@@ -91,6 +92,7 @@ export async function handleImageGeneration(
         { status: 400, },
       );
     }
+
     const rendered = applyImageTemplate(payload as ImageTemplatePayload, req.context ?? {},);
     prompt = rendered.prompt;
     negativePrompt = negativePrompt ?? rendered.negativePrompt;
@@ -111,6 +113,7 @@ export async function handleImageGeneration(
       { status: 501, },
     );
   }
+
   // LoRA opt-in: only comfyui + sd-server/sdcpp support it. Reject mismatched backends early.
   if (req.lora) {
     const supported = sdConfig.apiFamily === "comfyui" || sdConfig.apiFamily === "sdcpp";
@@ -184,6 +187,7 @@ export async function handleImageGeneration(
         link: { entityType: "message", entityId: req.messageId, label: "generated", },
       },);
     }
+
     if (req.chatId) {
       await linkAsset({
         database: db,

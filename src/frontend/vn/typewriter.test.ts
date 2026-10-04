@@ -36,6 +36,7 @@ beforeEach(() => {
   (globalThis as Globals).matchMedia = (query: string,): { matches: boolean } => ({
     matches: reducedMotion && query.includes("reduce",),
   });
+
   (globalThis as Globals).requestAnimationFrame = (cb: () => void,): number => {
     const id = ++nextFrameId;
     pendingFrames.set(id, cb,);
@@ -44,8 +45,10 @@ beforeEach(() => {
       pendingFrames.delete(id,);
       frame?.();
     }, 0,);
+
     return id;
   };
+
   (globalThis as Globals).cancelAnimationFrame = (handle: number,): void => {
     pendingFrames.delete(handle,);
   };

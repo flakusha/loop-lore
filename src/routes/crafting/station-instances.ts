@@ -70,6 +70,7 @@ export function craftingStationInstancesRoutes({ database, }: { database: Db }, 
       if (!Number.isFinite(durability,) || durability < 0) {
         return badRequestResponse("currentDurability must be a non-negative number",);
       }
+
       const id = await svc().createInstance({
         stationDefId: ctx.params.stationDefId,
         worldId: ctx.params.worldId,
@@ -78,6 +79,7 @@ export function craftingStationInstancesRoutes({ database, }: { database: Db }, 
         currentDurability: durability,
         isActive: body.isActive as boolean | undefined,
       },);
+
       return jsonResponse({ id, }, 201,);
     }, {
       params: t.Object({ worldId: Id, stationDefId: Id, },),
@@ -140,6 +142,7 @@ export function craftingStationInstancesRoutes({ database, }: { database: Db }, 
         currentDurability: body.currentDurability as number | undefined,
         isActive: body.isActive as boolean | undefined,
       },);
+
       if (!ok) { return notFoundResponse("Station instance",); }
       return jsonResponse({ ok: true, },);
     }, {

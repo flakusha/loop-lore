@@ -44,6 +44,7 @@ describe("stats", () => {
       { stat: "attack", value: 5, },
       { stat: "defense", value: 3, },
     ];
+
     const result = calculateEffectiveStats(baseStats, modifiers,);
     expect(result.attack,).toBe(15,);
     expect(result.defense,).toBe(8,);

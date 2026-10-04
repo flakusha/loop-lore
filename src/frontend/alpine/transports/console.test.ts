@@ -23,6 +23,7 @@ function captureConsole(): {
     warn: [],
     error: [],
   };
+
   const originals: Record<string, (...args: unknown[]) => void> = {};
   for (const name of ["debug", "info", "warn", "error",] as const) {
     originals[name] = console[name];
@@ -30,6 +31,7 @@ function captureConsole(): {
       calls[name]!.push(args,);
     };
   }
+
   return {
     calls,
     restore: () => {
@@ -106,6 +108,7 @@ describe("BrowserConsoleTransport", () => {
           throw new Error("getter bomb",);
         },
       },);
+
       await expect(transport.write(hostile,),).resolves.toBeUndefined();
       expect(sink.calls.error,).toHaveLength(0,);
     } finally {

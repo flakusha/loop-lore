@@ -52,6 +52,7 @@ function withWatcherDom(run: (env: Env,) => void,): void {
     MutationObserver?: unknown;
     document: { querySelector: unknown };
   };
+
   const prevQuery = g.document.querySelector;
   const prevObserver = g.MutationObserver;
   const container = new FakeSceneContainer();

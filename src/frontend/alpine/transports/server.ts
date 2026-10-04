@@ -37,6 +37,7 @@ export class ServerTransport implements Transport {
       clearTimeout(this.timer,);
       this.timer = null;
     }
+
     if (this.buffer.length === 0) { return; }
 
     const batch = this.buffer.slice();

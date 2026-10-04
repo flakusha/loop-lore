@@ -90,6 +90,7 @@ export class AutonomyScheduler {
     for (const entry of due) {
       worlds.push(await this.#tickWorld(entry, nowMs,),);
     }
+
     return {
       nowMs,
       dueWorldIds: due.map((e,) => e.worldId),
@@ -160,6 +161,7 @@ export class AutonomyScheduler {
         next_tick_at: nextTickAt,
         tick_count: state.tick_count + 1,
       },);
+
       return { worldId, nextTickAt, outcome, };
     } catch (err) {
       return await this.#onWorldError(worldId, state, err, nowMs,);
@@ -181,6 +183,7 @@ export class AutonomyScheduler {
       governor: this.#governor,
       paused: false,
     },);
+
     if ("skipped" in out) { return { skipped: out.skipped, }; }
     return { dispatched: out.results.length, };
   }
@@ -208,6 +211,7 @@ export class AutonomyScheduler {
       last_error: null,
       tick_count: state.tick_count + 1,
     },);
+
     return nextTickAt;
   }
 
@@ -239,6 +243,7 @@ export class AutonomyScheduler {
         .child({ module: "autonomy.scheduler", },)
         .warn("Failed to persist scheduler error state", { worldId, error: String(writeErr,), },);
     }
+
     emitSchedulerEvent(this.#db, EV_ERROR, { world_id: worldId, error: message, next_tick_at: nextTickAt, },);
     return { worldId, nextTickAt, outcome: { skipped: "error", }, error: message, };
   }

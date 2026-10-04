@@ -11,6 +11,7 @@ const globalState = globalThis as unknown as {
   apiFetch?: ApiFetchMock;
   showToast?: (type: string, message: string,) => void;
 };
+
 const originalFetch = globalState.apiFetch;
 const originalToast = globalState.showToast;
 let calls: { url: string; opts: RequestInit }[] = [];
@@ -25,6 +26,7 @@ beforeEach(() => {
     calls.push({ url, opts: opts ?? {}, },);
     return handler(url, opts,);
   };
+
   globalState.showToast = (type, message,) => {
     toasts.push({ type, message, },);
   };
@@ -137,6 +139,7 @@ describe("adminWorkflows.saveWorkflow", () => {
       requiredNodes: "KSampler, SaveImage",
       graph,
     };
+
     await adminWorkflows.saveWorkflow();
     const sent = JSON.parse(String(calls[0]!.opts.body,),) as Record<string, unknown>;
     expect(calls[0]!.url,).toBe("/api/v1/admin/comfyui-workflows",);
@@ -161,6 +164,7 @@ describe("adminWorkflows.saveWorkflow", () => {
       name: "Renamed",
       graph,
     };
+
     await adminWorkflows.saveWorkflow();
     expect(calls[0]!.url,).toBe("/api/v1/admin/comfyui-workflows/wf1",);
     expect(calls[0]!.opts.method,).toBe("PUT",);
@@ -172,6 +176,7 @@ describe("adminWorkflows.saveWorkflow", () => {
         { error: "node 4: dead node; parameters[0].name: no {{steps}} placeholder", code: "BAD_REQUEST", meta: {}, },
         { status: 400, },
       );
+
     adminWorkflows.showWorkflowForm = true;
     adminWorkflows.workflowForm = { ...emptyWorkflowForm(), name: "Broken", graph, };
     await adminWorkflows.saveWorkflow();
@@ -180,6 +185,7 @@ describe("adminWorkflows.saveWorkflow", () => {
       "node 4: dead node",
       "parameters[0].name: no {{steps}} placeholder",
     ],);
+
     expect(calls.length,).toBe(1,);
   });
 
@@ -190,6 +196,7 @@ describe("adminWorkflows.saveWorkflow", () => {
       graph,
       parametersJson: '{"name":"steps"}',
     };
+
     await adminWorkflows.saveWorkflow();
     expect(calls.length,).toBe(0,);
     expect(adminWorkflows.workflowFormErrors,).toEqual(["Parameters must be a JSON array",],);
@@ -202,6 +209,7 @@ describe("adminWorkflows.saveWorkflow", () => {
       graph,
       loraSlotsJson: '{"nodeId":"10"}',
     };
+
     await adminWorkflows.saveWorkflow();
     expect(calls.length,).toBe(0,);
     expect(adminWorkflows.workflowFormErrors,).toEqual(["LoRA slots must be a JSON array",],);
@@ -234,6 +242,7 @@ describe("adminWorkflows.openWorkflowEdit", () => {
           requiredNodes: ["KSampler", "SaveImage",],
         },
       },);
+
     await adminWorkflows.openWorkflowEdit("wf1",);
     expect(calls[0]!.url,).toBe("/api/v1/admin/comfyui-workflows/wf1",);
     expect(adminWorkflows.showWorkflowForm,).toBe(true,);
@@ -247,6 +256,7 @@ describe("adminWorkflows.openWorkflowEdit", () => {
   test("keeps the form open and shows the error when the row is gone", async () => {
     handler = async () =>
       Response.json({ error: "Workflow wf1 not found", code: "NOT_FOUND", meta: {}, }, { status: 404, },);
+
     await adminWorkflows.openWorkflowEdit("wf1",);
     expect(adminWorkflows.showWorkflowForm,).toBe(true,);
     expect(adminWorkflows.workflowFormErrors,).toEqual(["Workflow wf1 not found",],);

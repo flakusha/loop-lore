@@ -49,6 +49,7 @@ export function asTableName(value: string,): TableName {
   if (value !== value.toLowerCase()) {
     throw new Error(`record-hash: table name must be lowercase: ${value}`,);
   }
+
   return value as TableName;
 }
 
@@ -93,27 +94,32 @@ function canonicalize(value: unknown, seen: Set<object>,): string {
     if (!Number.isFinite(value as number,)) { return "null"; }
     return JSON.stringify(value,);
   }
+
   if (t === "string") { return JSON.stringify(value,); }
   if (t === "bigint") {
     // JSON.stringify throws on BigInt; coerce deterministically.
     return JSON.stringify(value.toString(),);
   }
+
   if (value instanceof Date) { return JSON.stringify(value.toISOString(),); }
   if (Array.isArray(value,)) {
     if (seen.has(value,)) {
       throw new Error("record-hash: cyclic array reference",);
     }
+
     seen.add(value,);
     const parts: string[] = [];
     for (const item of value) { parts.push(canonicalize(item, seen,),); }
     seen.delete(value,);
     return "[" + parts.join(",",) + "]";
   }
+
   if (t === "object") {
     const obj = value as Record<string, unknown>;
     if (seen.has(obj,)) {
       throw new Error("record-hash: cyclic object reference",);
     }
+
     seen.add(obj,);
     const keys = Object.keys(obj,).sort();
     const parts: string[] = [];
@@ -123,9 +129,11 @@ function canonicalize(value: unknown, seen: Set<object>,): string {
       if (v === undefined) { continue; }
       parts.push(JSON.stringify(key,) + ":" + canonicalize(v, seen,),);
     }
+
     seen.delete(obj,);
     return "{" + parts.join(",",) + "}";
   }
+
   // Functions, symbols, etc. — coerce to null to keep the envelope unambiguous.
   return "null";
 }

@@ -24,6 +24,7 @@ export async function batchArchiveChats(
     .where("created_by", "=", userId,)
     .orderBy(sql`rowid`,)
     .execute();
+
   const ownedIds = Array.from(owned, (c,) => c.id,);
   if (ownedIds.length === 0) { return []; }
 
@@ -54,6 +55,7 @@ export async function batchDeleteChats(
     .where("id", "in", chatIds,)
     .where("created_by", "=", userId,)
     .execute();
+
   const ownedIds = Array.from(owned, (c,) => c.id,);
   if (ownedIds.length === 0) { return 0; }
 
@@ -73,6 +75,7 @@ export async function batchDeleteChats(
       await trx.deleteFrom("synthetic_data",).where("chat_id", "=", chatId,).execute();
       await trx.deleteFrom("actor_memories",).where("source_chat_id", "=", chatId,).execute();
     }
+
     await trx.deleteFrom("chats",).where("id", "in", ownedIds,).execute();
   },);
 
@@ -114,6 +117,7 @@ export async function batchExportChats(
     .orderBy("chat_id",)
     .orderBy("created_at", "asc",)
     .execute();
+
   const allParticipants = await database
     .selectFrom("chat_participants",)
     .selectAll()
@@ -131,6 +135,7 @@ export async function batchExportChats(
       messagesByChat.set(m.chat_id, [m,],);
     }
   }
+
   const participantsByChat = new Map<string, unknown[]>();
   for (const p of allParticipants as { chat_id: string }[]) {
     const list = participantsByChat.get(p.chat_id,);
@@ -149,5 +154,6 @@ export async function batchExportChats(
       participants: participantsByChat.get(chat.id,) ?? [],
     },);
   }
+
   return exports;
 }

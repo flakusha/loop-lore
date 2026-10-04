@@ -35,6 +35,7 @@ function makeApp(
     userId,
     userRole,
   }));
+
   return app.use(sdStatusRoutes({ database: db, config, }, "/api",),);
 }
 
@@ -69,6 +70,7 @@ describe("admin sd-status routes", () => {
     const config = {
       generation: { autoStart: { sdCpp: { port: 7777, }, }, },
     } as unknown as Config;
+
     const app = makeApp(db, "admin", config,);
     const res = await app.handle(new Request("http://localhost/api/admin/sd-status",),);
     expect(res.status,).toBe(200,);

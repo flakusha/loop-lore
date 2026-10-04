@@ -9,6 +9,7 @@ describe("rpg/loot/generation (real logic)", () => {
     expect(result.totalGoldValue,).toBe(0,);
     expect(result.hasRareDrop,).toBe(false,);
   });
+
   it("entry below minLevel is excluded", () => {
     const entry: LootEntry = {
       itemId: "e1",
@@ -23,9 +24,11 @@ describe("rpg/loot/generation (real logic)", () => {
       maxQuantity: 1,
       metadata: {},
     };
+
     const result = generateLoot([entry,], 5, 1, 0,);
     expect(result.drops,).toHaveLength(0,);
   });
+
   it("eligible entry is included in drops", () => {
     const entry: LootEntry = {
       itemId: "e1",
@@ -40,6 +43,7 @@ describe("rpg/loot/generation (real logic)", () => {
       maxQuantity: 1,
       metadata: {},
     };
+
     const result = generateLoot([entry,], 5, 1, 0,);
     expect(result.drops.length,).toBeGreaterThanOrEqual(1,);
   });
@@ -58,6 +62,7 @@ describe("rpg/loot/generation (real logic)", () => {
       maxQuantity: 1,
       metadata: {},
     };
+
     const rare: LootEntry = {
       itemId: "r1",
       name: "Gem",
@@ -71,6 +76,7 @@ describe("rpg/loot/generation (real logic)", () => {
       maxQuantity: 1,
       metadata: {},
     };
+
     // luckModifier=99 forces adjustedRoll=100 -> threshold=totalWeight -> only
     // the rare (last-cumulative) entry can cross it, deterministically.
     const lucky = generateLoot([common, rare,], 1, 1, 99,);

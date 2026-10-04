@@ -136,6 +136,7 @@ export async function resolveTurnClassifierPick(
     const labels = opts.participants
       .map((c,) => `- ${c.actorId}: ${c.displayName}`)
       .join("\n",);
+
     const transcript = opts.userMessage?.slice(0, 500,) ?? "";
     const result = await callAux("intent", opts.config, opts.db, [
       { role: "system" as const, content: TURN_SELECTION_PROMPT, },
@@ -146,11 +147,13 @@ export async function resolveTurnClassifierPick(
       temperature: 0,
       maxTokens: 100,
     },);
+
     if (!result) { return null; }
     const pick = parseTurnSelection(result.content, opts.participants,);
     if (!pick) {
       log().debug("Classifier verdict discarded (unknown label)", { chatId: opts.chatId, },);
     }
+
     return pick;
   } catch (error) {
     log().warn("Classifier turn selection failed; using deterministic path", { error: String(error,), },);

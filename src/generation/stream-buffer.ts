@@ -87,6 +87,7 @@ export class StreamBuffer {
     for (const e of this.events) {
       if (e.sequence >= fromSequence) { out.push(e,); }
     }
+
     return out;
   }
 
@@ -163,6 +164,7 @@ export function getOrCreateBuffer(chatId: string,): StreamBuffer {
     buf = new StreamBuffer();
     chatBuffers.set(chatId, buf,);
   }
+
   touchBuffer(chatId,);
   return buf;
 }

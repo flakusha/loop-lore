@@ -84,6 +84,7 @@ export async function forkBranch(
     .select(["id", "chat_id",],)
     .where("id", "=", messageId,)
     .executeTakeFirst();
+
   if (!message || message.chat_id !== chatId) {
     return { code: "not_found", message: "Fork point message not found in chat", };
   }
@@ -129,6 +130,7 @@ export async function switchActiveBranch(
     .select(["id", "chat_id",],)
     .where("id", "=", branchId,)
     .executeTakeFirst();
+
   if (!branch || branch.chat_id !== chatId) {
     return { code: "not_found", message: "Branch not found in chat", };
   }
@@ -141,12 +143,14 @@ export async function switchActiveBranch(
       .set({ active_branch_id: branchId, },)
       .where("id", "=", chatId,)
       .execute();
+
     await tx
       .updateTable("chat_branches",)
       .set({ is_active: 0, },)
       .where("chat_id", "=", chatId,)
       .where("is_active", "=", 1,)
       .execute();
+
     await tx
       .updateTable("chat_branches",)
       .set({ is_active: 1, },)
@@ -179,6 +183,7 @@ export async function getMessagesForBranch(
     .select(["chat_id", "parent_message_id",],)
     .where("id", "=", branchId,)
     .executeTakeFirst();
+
   if (!branch || branch.chat_id !== chatId) { return []; }
   return walkMessagePath(db, chatId, branch.parent_message_id,);
 }
@@ -215,6 +220,7 @@ export async function listBranches(
       .select(["created_at",],)
       .where("id", "=", tip,)
       .executeTakeFirst();
+
     const path = await walkMessagePath(db, chatId, tip,);
     out.push({
       id: row.id,
@@ -227,5 +233,6 @@ export async function listBranches(
       lastActivity: tipRow?.created_at ?? null,
     },);
   }
+
   return { ok: true, branches: out, };
 }

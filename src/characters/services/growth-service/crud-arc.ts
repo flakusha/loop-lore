@@ -47,6 +47,7 @@ export async function getArc(db: Kysely<DB>, actorId: string,): Promise<Characte
     .where("actor_id", "=", actorId,)
     .selectAll()
     .executeTakeFirst();
+
   return row ? rowToArc(row as CharacterArcRow,) : null;
 }
 

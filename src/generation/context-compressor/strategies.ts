@@ -40,11 +40,13 @@ export function applyStrategy(
     case "truncate": {
       return truncateStrategy(system, conversation, remainingBudget, config, tokenCountFn,);
     }
+
     case "sliding":
     case "summarize": {
       // Without actual summarizeFn, sliding is the deterministic fallback
       return slidingStrategy(system, conversation, remainingBudget, config, tokenCountFn, summarizeFn,);
     }
+
     default: {
       return { compressedSystem: system, compressedConversation: conversation, };
     }
@@ -151,6 +153,7 @@ function selectMessagesByBudget(
       if (currentTokens + msgTokens <= budget) {
         acc.unshift(msg,);
       }
+
       return acc;
     }, recentMessages,);
   }

@@ -33,6 +33,7 @@ function rejectBodyImpersonation(ctx: any,): Response | undefined {
   if (Object.prototype.hasOwnProperty.call(body, "performedBy",)) {
     return jsonError(PERFORMED_BY_REJECT, 400,);
   }
+
   return;
 }
 

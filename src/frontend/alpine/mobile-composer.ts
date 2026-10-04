@@ -64,14 +64,17 @@ export function mobileComposer() {
       const el = (this as unknown as { $el: Element }).$el;
       const parent = (globalThis as unknown as { Alpine?: { $data?: (el: Element,) => Record<string, unknown> } })
         .Alpine?.$data?.(el,);
+
       if (parent && typeof parent.sendMessage === "function") {
         // Forward the text into the parent's messageInput ref
         const parentInput = (parent as Record<string, unknown>).$refs as Record<string, unknown> | undefined;
         if (parentInput?.messageInput) {
           (parentInput.messageInput as HTMLInputElement).value = text;
         }
+
         await (parent.sendMessage as () => Promise<void>).call(parent,);
       }
+
       input.value = "";
     },
   };

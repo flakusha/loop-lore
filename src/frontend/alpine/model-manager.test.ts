@@ -54,6 +54,7 @@ describe("model-manager", () => {
       },
       store: createMemoryStore(),
     },);
+
     await manager.init();
     expect(manager.catalog,).toEqual([],);
     expect(manager.catalogError,).not.toBeNull();
@@ -67,6 +68,7 @@ describe("model-manager", () => {
       download: cannedDownload(seen, "abc",),
       digest: async () => "computed-sha",
     },);
+
     manager.downloadUrl = "https://cdn.example.com/tiny.gguf";
     manager.downloadSha = "";
     await manager.downloadFromUrl();
@@ -87,6 +89,7 @@ describe("model-manager", () => {
         throw new Error("must not run",);
       },
     },);
+
     manager.downloadUrl = "https://cdn.example.com/tiny.gguf?dl=1";
     manager.downloadSha = "ABCDEF";
     manager.downloadId = "custom-id";
@@ -109,6 +112,7 @@ describe("model-manager", () => {
         throw new Error("boom (500)",);
       }) as typeof downloadModel,
     },);
+
     manager.downloadUrl = "https://cdn.example.com/tiny.gguf";
     await manager.downloadFromUrl();
     expect(manager.error,).toBe("boom (500)",);
@@ -125,6 +129,7 @@ describe("model-manager", () => {
       download: cannedDownload(seen, "abc",),
       digest: async () => "computed-sha",
     },);
+
     await manager.init();
     await manager.downloadCatalogEntry("m1",);
     expect(seen.map((call,) => call.url),).toEqual(["https://cdn.example.com/m1/a.onnx",],);
@@ -140,6 +145,7 @@ describe("model-manager", () => {
       store: createMemoryStore(),
       loadCatalog: async () => CATALOG,
     },);
+
     await manager.init();
     await manager.downloadCatalogEntry("ghost",);
     expect(manager.error,).not.toBeNull();
@@ -151,6 +157,7 @@ describe("model-manager", () => {
         throw new Error("boom (500)",);
       }) as typeof downloadModel,
     },);
+
     await failing.init();
     await failing.downloadCatalogEntry("m1",);
     expect(failing.error,).toBe("boom (500)",);
@@ -194,6 +201,7 @@ describe("model-manager download policy", () => {
       store: createMemoryStore(),
       loadCapability: async () => ({ downloadsAllowed: false, }),
     },);
+
     expect(manager.downloadsAllowed,).toBe(true,);
     await manager.init();
     expect(manager.downloadsAllowed,).toBe(false,);
@@ -210,6 +218,7 @@ describe("model-manager download policy", () => {
         return encode("x",);
       }) as typeof downloadModel,
     },);
+
     await manager.init();
     manager.downloadUrl = "https://cdn.example.com/m.bin";
     await manager.downloadFromUrl();

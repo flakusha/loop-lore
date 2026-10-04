@@ -118,6 +118,7 @@ describe("initVnRenderer", () => {
       [],
       GM_CONFIG,
     );
+
     await tick();
 
     expect(getSceneCount(),).toBe(0,);
@@ -184,6 +185,7 @@ describe("navigation", () => {
       [{ id: "m1", role: "assistant", content: "Rin here.", name: "Rin", },],
       GM_CONFIG,
     );
+
     expect(state.roster?.entries.map((e,) => [e.characterId, e.visible,]),).toEqual([["rin", true,],],);
 
     addScene({ id: "m2", role: "assistant", content: "Kai here.", name: "Kai", },);
@@ -197,6 +199,7 @@ describe("navigation", () => {
       ["rin", true,],
       ["kai", false,],
     ],);
+
     expect(state.scenes[2]?.emotion,).toBe("happy",);
   });
 });

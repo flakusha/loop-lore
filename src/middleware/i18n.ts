@@ -36,6 +36,7 @@ export function parseAcceptLanguage(header: string,): string[] {
     if (q <= 0) { continue; }
     parsed.push({ lang, q, },);
   }
+
   // Highest preference first, honoring client-declared q-values.
   return Array.from(parsed.toSorted((a, b,) => b.q - a.q), (e,) => e.lang,);
 }

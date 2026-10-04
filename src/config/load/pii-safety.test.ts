@@ -34,6 +34,7 @@ function withEnv(vars: Record<string, string | undefined>,): () => void {
     if (value === undefined) { delete process.env[key]; }
     else { process.env[key] = value; }
   }
+
   return () => {
     for (const [key, value,] of saved) {
       if (value === undefined) { delete process.env[key]; }
@@ -215,6 +216,7 @@ describe("resolveReporterHashSecret", () => {
       NSFW_MODERATION_HMAC_SECRET: "hmac-env",
       NSFW_PII_SECRET: "pii-env",
     },);
+
     try {
       expect(resolveReporterHashSecret({ reporterHashSecret: "explicit", },),).toBe("explicit",);
     } finally {
@@ -254,6 +256,7 @@ describe("resolveReporterHashSecret", () => {
       NSFW_FLAG_REPORTER_HASH_SECRET: "flag-env",
       NSFW_MODERATION_HMAC_SECRET: "hmac-env",
     },);
+
     try {
       expect(resolveReporterHashSecret({},),).toBe("flag-env",);
     } finally {
@@ -355,6 +358,7 @@ describe("validatePiiSafety", () => {
       NSFW_FLAG_REPORTER_HASH_SECRET: LONG,
       TELEMETRY_PII_SECRET: LONG,
     },);
+
     try {
       const config = freshConfig();
       delete config.nsfw.piiSecret;

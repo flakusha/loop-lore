@@ -14,6 +14,7 @@ registerCommand("ooc", (args,): CommandResult => {
       handled: true,
     };
   }
+
   return {
     systemMessage: `**(OOC)** ${args.join(" ",)}`,
     action: "inject-ooc",

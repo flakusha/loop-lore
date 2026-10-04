@@ -27,6 +27,7 @@ export async function requestRegeneration(
   await persistState(host, (state,) => {
     state.pendingRegeneration = { turnId, attempt: nextAttempt, reason, };
   },);
+
   return true;
 }
 

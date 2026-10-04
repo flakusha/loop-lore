@@ -60,5 +60,6 @@ export function rollFromNotation(notation: string,): DiceRollResult | null {
   if (!parsed) {
     return null;
   }
+
   return rollDice(parsed.sides, parsed.count, parsed.modifier, parsed.advantage,);
 }

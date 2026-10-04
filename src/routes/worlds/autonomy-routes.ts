@@ -62,6 +62,7 @@ async function listWorldActors(database: Kysely<DB>, worldId: string,): Promise<
     .where("world_members.world_id", "=", worldId,)
     .orderBy("actors.display_name",)
     .execute();
+
   return rows;
 }
 
@@ -92,6 +93,7 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
           scopeKind?: AutonomyScopeKind;
           scopeId?: string;
         };
+
         const chatId = q.chatId || NO_CHAT;
         try {
           const { layers, resolved, } = await resolveAutonomyLayers(database, {
@@ -99,6 +101,7 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
             chatId,
             actorId: q.actorId || undefined,
           },);
+
           return jsonResponse({
             layers,
             resolved,
@@ -189,6 +192,7 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
           { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
           database,
         );
+
         if (access instanceof Response) { return access; }
 
         // `{}` is how the per-actor layer says "no override of my own" —
@@ -243,5 +247,6 @@ async function peekBudget(
     cap,
     chatId,
   },);
+
   return { scopeKind: kind, scopeId, ...win, };
 }

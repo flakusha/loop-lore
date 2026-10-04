@@ -101,6 +101,7 @@ describe("safeFetchWithRetry — non-retryable failures", () => {
         },);
       },)
     );
+
     await withMockFetch(abortOnSignal as unknown as typeof fetch, async () => {
       const result = await safeFetchWithRetry("https://example.com/slow", { timeout: 20, }, 3, 1,);
       expect(result.ok,).toBe(false,);
@@ -128,6 +129,7 @@ describe("safeFetchWithRetry — exhaustion", () => {
       if (i < 3) { return Promise.reject(new Error("ECONNRESET",),); }
       return Promise.resolve(new Response("{}", { status: 200, },),);
     },);
+
     await withMockFetch(fetchMock, async () => {
       const result = await safeFetchWithRetry("https://example.com/api", {}, 3, 1,);
       expect(result.ok,).toBe(true,);

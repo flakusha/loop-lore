@@ -66,6 +66,7 @@ describe("getContentEnvelope", () => {
       body: "hi",
       metadata: "extra", // ignored (not in projection)
     },);
+
     expect(env,).toEqual({ chat_id: "c1", body: "hi", },);
   });
 
@@ -87,6 +88,7 @@ describe("getContentEnvelope", () => {
       // body is undefined
       body: undefined,
     },);
+
     expect(env,).toEqual({ chat_id: "c", },);
   });
 });
@@ -144,6 +146,7 @@ describe("runBatchRefresh", () => {
     __resetContentVersionRegistry();
     sqlite.run(`DELETE FROM ${TABLE}`,);
   },);
+
   function insertRow(id: string, dataVersion: number, body: string, recordHash: string,): void {
     sqlite.run(
       `INSERT INTO ${TABLE} (id, data_version, body, record_hash) VALUES (?, ?, ?, ?)`,

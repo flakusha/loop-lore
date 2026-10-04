@@ -105,6 +105,7 @@ async function detectShortReply(opts: {
     confidence: intent.confidence,
     maxTokens: AUTO_GEN_SHORT_REPLY_MAX_TOKENS,
   },);
+
   return true;
 }
 
@@ -130,6 +131,7 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
     chatStreaming,
     requestId,
   } = opts;
+
   const log = getLogger().child({ module: "auto-gen", },);
 
   const shortReply = await detectShortReply({ assistantTuning, userMessage, config, database, log, },);
@@ -144,6 +146,7 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
   const canStream = chatStreaming === 1 ||
     (chatStreaming == null && configDefault === true) ||
     (chatStreaming == null && configDefault == null && providerCapable);
+
   const buffer = parentMessageId ? d.getOrCreateBuffer(chatId,) : undefined;
 
   const failoverList = d.buildFailoverList(resolved.resolvedProviderName, config,);
@@ -164,6 +167,7 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
         requestId,
       },);
     }
+
     const finalResponse = await d.callWithFailover(
       failoverList,
       genReq,
@@ -177,6 +181,7 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
                 log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
               },);
           }
+
           if (buffer && streamSanitizer) {
             const seq = buffer.append(
               "stream-update",
@@ -191,21 +196,25 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
                 },
               ),
             );
+
             bumpLastRendered(tracking?.attemptId, seq,);
           }
         } else if (chunk.type === "thinking" && chunk.content) {
           accumulatedThinking = (accumulatedThinking ?? "") + chunk.content;
         }
+
         // BUG-generation-error-handling-gaps: throwIfAborted AFTER processing
         // each chunk so cancellation terminates accumulation promptly.
         tracking?.abortSignal.throwIfAborted();
       },
     );
+
     tokenUsage = {
       promptTokens: finalResponse.usage.promptTokens,
       completionTokens: finalResponse.usage.completionTokens,
       totalTokens: finalResponse.usage.totalTokens,
     };
+
     finishReason = finalResponse.finishReason;
   } else {
     const response = await d.callWithFailover(failoverList, genReq,);
@@ -216,6 +225,7 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
           log.error("Non-stream response detection failed", error instanceof Error ? error : undefined,);
         },);
     }
+
     accumulatedContent = response.content;
     accumulatedThinking = response.thinking;
     tokenUsage = {
@@ -223,6 +233,7 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
       completionTokens: response.usage.completionTokens,
       totalTokens: response.usage.totalTokens,
     };
+
     finishReason = response.finishReason;
     if (buffer) {
       const seq = buffer.append(
@@ -231,6 +242,7 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
           thinking: accumulatedThinking,
         },),
       );
+
       bumpLastRendered(tracking?.attemptId, seq,);
     }
   }

@@ -84,6 +84,7 @@ describe("resolveTurnClassifierPick", () => {
       chatId: "chat-x",
       participants: [],
     },);
+
     expect(pick,).toBeNull();
     await db.destroy();
   });
@@ -104,6 +105,7 @@ describe("resolveTurnClassifierPick", () => {
         userMessage: "Hello there",
         participants: CANDIDATES,
       },);
+
       expect(pick,).toEqual({ actorId: "a2", beatType: "narration", },);
     } finally {
       unregisterProvider(PROVIDER,);
@@ -127,6 +129,7 @@ describe("resolveTurnClassifierPick", () => {
         userMessage: "Hello there",
         participants: CANDIDATES,
       },);
+
       expect(pick,).toBeNull();
     } finally {
       unregisterProvider(PROVIDER,);

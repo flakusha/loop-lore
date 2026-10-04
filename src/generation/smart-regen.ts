@@ -71,15 +71,18 @@ export function appendStylePrompt<T extends StylePromptTarget,>(
       break;
     }
   }
+
   if (firstSystemIndex === -1) {
     return [{ role: "system", content: stylePrompt, } as T, ...messages,];
   }
+
   const updated = [...messages,];
   const target = updated[firstSystemIndex] as StylePromptTarget;
   updated[firstSystemIndex] = {
     ...target,
     content: `${target.content}\n\n${stylePrompt}`,
   } as T;
+
   return updated;
 }
 

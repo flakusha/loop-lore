@@ -60,6 +60,7 @@ describe("crafting order lifecycle", () => {
       "Order Owner",
       { id: userId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     worldId = uid();
     await insertWorlds(db, userId, "Order World", { id: worldId, } as never,);
     requester = uid();
@@ -146,6 +147,7 @@ describe("crafting order lifecycle", () => {
         body: JSON.stringify({ requesterActorId: requester, recipeId, offeredPayment, },),
       },),
     );
+
     expect(placeRes.status,).toBe(201,);
     const orderId = ((await json(placeRes,)) as { id: string }).id;
     expect(orderId,).toBeString();
@@ -154,6 +156,7 @@ describe("crafting order lifecycle", () => {
     const listRes = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/crafting-orders`,),
     );
+
     expect(listRes.status,).toBe(200,);
     const listBody = (await json(listRes,)) as { orders: { id: string; status: string }[] };
     expect(listBody.orders.find((o,) => o.id === orderId)?.status,).toBe("open",);
@@ -166,6 +169,7 @@ describe("crafting order lifecycle", () => {
         body: JSON.stringify({ crafterActorId: crafter, },),
       },),
     );
+
     expect(acceptRes.status,).toBe(200,);
 
     // fulfil
@@ -174,6 +178,7 @@ describe("crafting order lifecycle", () => {
         method: "POST",
       },),
     );
+
     expect(fulfillRes.status,).toBe(200,);
     const fulfillBody = (await json(fulfillRes,)) as { ok: boolean; attemptId?: string };
     expect(fulfillBody.ok,).toBe(true,);
@@ -183,6 +188,7 @@ describe("crafting order lifecycle", () => {
     const finalList = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/crafting-orders`,),
     );
+
     const finalBody = (await json(finalList,)) as { orders: { id: string; status: string }[] };
     expect(finalBody.orders.find((o,) => o.id === orderId)?.status,).toBe("fulfilled",);
 
@@ -195,6 +201,7 @@ describe("crafting order lifecycle", () => {
       .where("actor_id", "=", requester,)
       .where("name", "=", "Steel",)
       .executeTakeFirst();
+
     expect(steel?.quantity,).toBe(8,);
   });
 
@@ -207,6 +214,7 @@ describe("crafting order lifecycle", () => {
         body: JSON.stringify({ requesterActorId: requester, recipeId, },),
       },),
     );
+
     const orderId = ((await json(placeRes,)) as { id: string }).id;
 
     const cancelRes = await app.handle(
@@ -216,11 +224,13 @@ describe("crafting order lifecycle", () => {
         body: JSON.stringify({ actorId: requester, },),
       },),
     );
+
     expect(cancelRes.status,).toBe(200,);
 
     const listRes = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/crafting-orders`,),
     );
+
     const listBody = (await json(listRes,)) as { orders: { id: string; status: string }[] };
     expect(listBody.orders.find((o,) => o.id === orderId)?.status,).toBe("cancelled",);
   });
@@ -233,6 +243,7 @@ describe("crafting order lifecycle", () => {
       "Stranger",
       { id: strangerUser, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     const stranger = uid();
     await db.insertInto("actors",).values({
       id: stranger,
@@ -248,6 +259,7 @@ describe("crafting order lifecycle", () => {
         body: JSON.stringify({ requesterActorId: requester, recipeId, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

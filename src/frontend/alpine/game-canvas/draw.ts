@@ -103,10 +103,12 @@ export function drawScene(
     ctx.moveTo(i * cell + 0.5, 0,);
     ctx.lineTo(i * cell + 0.5, canvas.height,);
   }
+
   for (let j = 0; j <= rows; j++) {
     ctx.moveTo(0, j * cell + 0.5,);
     ctx.lineTo(canvas.width, j * cell + 0.5,);
   }
+
   ctx.stroke();
 
   // Items: small diamond markers.
@@ -144,6 +146,7 @@ export function drawScene(
       ctx.lineWidth = 2;
       ctx.stroke();
     }
+
     ctx.fillStyle = "#111827";
     ctx.fillText((e.name || e.label || e.id).slice(0, 12,), px, py + r + 11,);
   }

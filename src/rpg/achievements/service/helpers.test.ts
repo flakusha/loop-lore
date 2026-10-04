@@ -31,6 +31,7 @@ describe("rowToAchievement", () => {
       created_at: "2026-01-01",
       updated_at: "2026-01-02",
     },);
+
     expect(out.id,).toBe("a1",);
     expect(out.isSecret,).toBe(false,);
     expect(out.isHidden,).toBe(true,);
@@ -47,6 +48,7 @@ describe("rowToAchievement", () => {
       rewards: null,
       metadata: undefined,
     },);
+
     expect(out.unlockCondition,).toEqual({ type: "simple", },);
     expect(out.rewards,).toEqual([],);
     expect(out.metadata,).toEqual({},);
@@ -67,6 +69,7 @@ describe("rowToPlayerAchievement", () => {
       created_at: "2026-01-01",
       updated_at: "2026-01-01",
     };
+
     expect(rowToPlayerAchievement({ ...base, status: "unlocked", },).isUnlocked,).toBe(true,);
     expect(rowToPlayerAchievement({ ...base, status: "claimed", },).isUnlocked,).toBe(true,);
     expect(rowToPlayerAchievement({ ...base, status: "locked", },).isUnlocked,).toBe(false,);

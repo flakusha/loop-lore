@@ -90,6 +90,7 @@ describe("worlds creation publication_status (commit gating)", () => {
         body: JSON.stringify({ name: "Draft World", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = (await res.json()) as { id: string };
 
@@ -98,6 +99,7 @@ describe("worlds creation publication_status (commit gating)", () => {
       .select("publication_status",)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     expect(row?.publication_status,).toBe(PublicationStatus.Draft,);
   });
 
@@ -111,6 +113,7 @@ describe("worlds creation publication_status (commit gating)", () => {
         body: JSON.stringify({ name: "World for Loc", },),
       },),
     );
+
     const { id: worldId, } = (await worldRes.json()) as { id: string };
 
     const locRes = await app.handle(
@@ -120,6 +123,7 @@ describe("worlds creation publication_status (commit gating)", () => {
         body: JSON.stringify({ name: "Draft Location", },),
       },),
     );
+
     expect(locRes.status,).toBe(201,);
     const { id: locId, } = (await locRes.json()) as { id: string };
 
@@ -128,6 +132,7 @@ describe("worlds creation publication_status (commit gating)", () => {
       .select("publication_status",)
       .where("id", "=", locId,)
       .executeTakeFirst();
+
     expect(row?.publication_status,).toBe(PublicationStatus.Draft,);
   });
 
@@ -141,6 +146,7 @@ describe("worlds creation publication_status (commit gating)", () => {
         body: JSON.stringify({ name: "World for AutoChat", },),
       },),
     );
+
     const { id: worldId, } = (await worldRes.json()) as { id: string };
 
     const locRes = await app.handle(
@@ -150,6 +156,7 @@ describe("worlds creation publication_status (commit gating)", () => {
         body: JSON.stringify({ name: "Auto Chat Location", },),
       },),
     );
+
     expect(locRes.status,).toBe(201,);
     const { id: locId, } = (await locRes.json()) as { id: string };
 
@@ -158,6 +165,7 @@ describe("worlds creation publication_status (commit gating)", () => {
       .selectAll()
       .where("current_location_id", "=", locId,)
       .executeTakeFirst();
+
     expect(chat,).toBeDefined();
     expect(chat?.visibility,).toBe("public",);
     expect(chat?.template_id,).toBe("template-world",);
@@ -175,6 +183,7 @@ describe("worlds creation publication_status (commit gating)", () => {
         body: JSON.stringify({ name: "World for Custom Template", },),
       },),
     );
+
     const { id: worldId, } = (await worldRes.json()) as { id: string };
 
     const locRes = await app.handle(
@@ -188,6 +197,7 @@ describe("worlds creation publication_status (commit gating)", () => {
         },),
       },),
     );
+
     expect(locRes.status,).toBe(201,);
     const { id: locId, } = (await locRes.json()) as { id: string };
 
@@ -196,14 +206,17 @@ describe("worlds creation publication_status (commit gating)", () => {
       .selectAll()
       .where("current_location_id", "=", locId,)
       .executeTakeFirst();
+
     expect(chat,).toBeDefined();
     expect(chat?.template_id,).toBe("template-visual-novel",);
     const worldGmConfig = chat?.gm_config ?? "";
     const worldGmParsed = safeJsonParse<{ renderingOverride?: "text" | "visual_novel" | null }>(
       worldGmConfig,
     );
+
     expect(worldGmParsed.ok ? worldGmParsed.value.renderingOverride ?? null : null,)
       .toBe("visual_novel",);
+
     // Explicit fine-tune override wins over the template default.
     expect(chat?.visibility,).toBe("private",);
   });
@@ -218,6 +231,7 @@ describe("worlds creation publication_status (commit gating)", () => {
         body: JSON.stringify({ name: "World for Bad Template", },),
       },),
     );
+
     const { id: worldId, } = (await worldRes.json()) as { id: string };
 
     const locRes = await app.handle(
@@ -227,6 +241,7 @@ describe("worlds creation publication_status (commit gating)", () => {
         body: JSON.stringify({ name: "Bad Template Location", templateId: "template-nope", },),
       },),
     );
+
     expect(locRes.status,).toBe(400,);
   });
 
@@ -241,6 +256,7 @@ describe("worlds creation publication_status (commit gating)", () => {
           body: JSON.stringify({ name: "Export Realm", description: "A realm to export", },),
         },),
       );
+
       const { id: worldId, } = (await worldRes.json()) as { id: string };
       expect(worldId,).toBeDefined();
 
@@ -255,6 +271,7 @@ describe("worlds creation publication_status (commit gating)", () => {
       const exportRes = await app.handle(
         new Request(`http://localhost/api/worlds/${worldId}/export`,),
       );
+
       expect(exportRes.status,).toBe(200,);
       expect(exportRes.headers.get("Content-Disposition",),).toContain("attachment",);
       expect(exportRes.headers.get("Content-Type",),).toContain("application/json",);
@@ -264,6 +281,7 @@ describe("worlds creation publication_status (commit gating)", () => {
         world: { id: string; name: string; description: string | null };
         locations: { id: string; name: string }[];
       };
+
       expect(bundle.schema_version,).toBe("1.0",);
       expect(bundle.world.id,).toBe(worldId,);
       expect(bundle.world.name,).toBe("Export Realm",);
@@ -282,6 +300,7 @@ describe("worlds creation publication_status (commit gating)", () => {
           body: JSON.stringify({ name: "Source World", },),
         },),
       );
+
       const { id: sourceId, } = (await seedRes.json()) as { id: string };
       await app.handle(
         new Request(`http://localhost/api/worlds/${sourceId}/locations`, {
@@ -294,6 +313,7 @@ describe("worlds creation publication_status (commit gating)", () => {
       const exportRes = await app.handle(
         new Request(`http://localhost/api/worlds/${sourceId}/export`,),
       );
+
       expect(exportRes.status,).toBe(200,);
       const bundle = (await exportRes.json()) as WorldBundle;
 
@@ -308,6 +328,7 @@ describe("worlds creation publication_status (commit gating)", () => {
         .selectAll()
         .where("world_id", "=", importedId,)
         .execute();
+
       expect(importedLocs,).toHaveLength(1,);
       expect(importedLocs[0]?.name,).toBe("Source Village",);
     });
@@ -322,6 +343,7 @@ describe("worlds creation publication_status (commit gating)", () => {
           body: JSON.stringify({ name: "Private Realm", },),
         },),
       );
+
       const { id: worldId, } = (await worldRes.json()) as { id: string };
 
       // Simulate a different user hitting the export endpoint.
@@ -332,6 +354,7 @@ describe("worlds creation publication_status (commit gating)", () => {
       const res = await otherApp.handle(
         new Request(`http://localhost/api/worlds/${worldId}/export`,),
       );
+
       expect(res.status,).toBe(403,);
     });
   });

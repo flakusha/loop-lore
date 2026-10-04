@@ -51,11 +51,13 @@ export async function enforceInjectionGate(
     userId,
     chatId,
   },);
+
   if (injection.verdict !== "blocked") { return null; }
   getLogger().child({ module: "messages/create", },).warn(
     "Message blocked by injection validation",
     { chatId, signals: injection.signals, },
   );
+
   return jsonResponse(
     { error: "injection_detected", message: "Message rejected: prompt injection detected.", },
     403 as HttpStatusCode,
@@ -90,6 +92,7 @@ export async function attachAttachmentsOrForbidden(
         headers: { "Content-Type": "application/json", },
       },);
     }
+
     throw err;
   }
 }
@@ -115,11 +118,13 @@ export async function enforceMuteGate(
     .where("actor_id", "=", actorId,)
     .limit(1,)
     .execute();
+
   if (!isMuted(mutedRows[0] ?? null, Date.now(),)) { return null; }
   getLogger().child({ module: "messages/create", },).info(
     "Message rejected: sender is muted",
     { chatId, actorId, },
   );
+
   return jsonResponse(
     { error: "forbidden", message: "You are muted in this chat", },
     403 as HttpStatusCode,

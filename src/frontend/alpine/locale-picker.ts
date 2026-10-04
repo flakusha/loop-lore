@@ -54,6 +54,7 @@ export function localePicker() {
       if (typeof globalThis.setLocale === "function") {
         globalThis.setLocale(localeId,);
       }
+
       // Also trigger Alpine reactivity if available
       if (globalThis.Alpine) {
         const appData = Alpine.$data(document.querySelector("[x-data]",) as HTMLElement,);

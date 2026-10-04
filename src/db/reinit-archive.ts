@@ -43,6 +43,7 @@ export function archiveFile(p: string, log: Logger,): void {
     log.warn(`Could not archive ${p} (${String(err,)}); removing instead`,);
     unlinkSync(p,);
   }
+
   pruneArchives(dir, log,);
 }
 
@@ -88,6 +89,7 @@ export function pruneArchives(dir: string, log: Logger,): void {
     log.warn(`Could not read backup dir ${dir} for pruning (${String(err,)}); skipping`,);
     return;
   }
+
   const cutoff = Date.now() - MAX_AGE_DAYS * MS_PER_DAY;
   // Oldest first — drop oldest beyond MAX_ARCHIVES, plus anything past cutoff.
   entries.sort((a, b,) => a.stamp.getTime() - b.stamp.getTime());
@@ -96,6 +98,7 @@ export function pruneArchives(dir: string, log: Logger,): void {
   for (const e of entries) {
     if (e.stamp.getTime() < cutoff) { toDrop.add(e.path,); }
   }
+
   for (const target of toDrop) {
     try {
       const ageDays = (Date.now() - statSync(target,).mtimeMs) / MS_PER_DAY;

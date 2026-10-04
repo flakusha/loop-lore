@@ -32,6 +32,7 @@ beforeAll(async () => {
     status: "active" as never,
     settings: "{}" as never,
   },);
+
   worldId = uid();
   await insertWorlds(db, userId, "Balance Test World", { id: worldId as never, },);
   actorA = uid();
@@ -44,6 +45,7 @@ beforeAll(async () => {
     agent_type: "ai" as never,
     settings: "{}" as never,
   },);
+
   await insertActors(db, "Bob", {
     id: actorB as never,
     actor_type: "character" as never,
@@ -89,6 +91,7 @@ describe("transferCurrency — amount<=0 guard", () => {
       status: "active" as never,
       settings: "{}" as never,
     },);
+
     await insertActors(db, "Fresh", {
       id: freshActor as never,
       actor_type: "character" as never,
@@ -107,6 +110,7 @@ describe("transferCurrency — amount<=0 guard", () => {
       .select("id",)
       .where("actor_id", "=", freshActor,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 

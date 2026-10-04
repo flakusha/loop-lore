@@ -51,6 +51,7 @@ describe("Admin guard E2E", () => {
         waitUntil: "domcontentloaded",
         timeout: 30_000,
       },);
+
       await page
         .locator("[data-testid='nsfw-moderation-header']",)
         .waitFor({ state: "visible", timeout: 30_000, },);

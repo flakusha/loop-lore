@@ -73,12 +73,14 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (post === undefined) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
+
       // Row-level read policy (BUG-blog-post-get-bypasses-visibility-policy):
       // see isReadablePost — denied rows answer 404 (not 403) so post
       // existence is not leaked.
       if (!isReadablePost(post, userId, can(userRole, "admin.settings",),)) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
+
       await svc.incrementViewCount(post.id,);
       return jsonResponse({ success: true, post, },);
     }, {
@@ -151,6 +153,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
           offset,
         };
       }
+
       const posts = await svc.listPosts(filters,);
       return jsonResponse({ success: true, posts, count: posts.length, },);
     }, {
@@ -216,6 +219,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (!ok) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
+
       return jsonResponse({ success: true, },);
     }, {
       response: {

@@ -64,6 +64,7 @@ export async function streamDispatch(
     inputTokens: 0,
     outputTokens: 0,
   };
+
   const pending: PendingEvent = { name: "", };
 
   try {
@@ -78,6 +79,7 @@ export async function streamDispatch(
       for (const line of lines) {
         if (applyStreamLine(line, signal, handler, acc, pending,)) { break; }
       }
+
       if (signal?.aborted) {
         acc.finishReason = "cancelled";
         break;
@@ -158,6 +160,7 @@ function applyStreamLine(
     pending.name = trimmed.slice("event:".length,).trim();
     return false;
   }
+
   if (!trimmed.startsWith("data:",)) { return false; }
 
   const frame = parseAnthropicEvent(`event: ${pending.name}`, line,);
@@ -178,6 +181,7 @@ function applyEvent(event: AnthropicStreamEvent, handler: StreamHandler, acc: St
       if (event.message?.usage?.input_tokens !== undefined) {
         acc.inputTokens += event.message.usage.input_tokens;
       }
+
       break;
     }
 
@@ -189,6 +193,7 @@ function applyEvent(event: AnthropicStreamEvent, handler: StreamHandler, acc: St
           args: "",
         },);
       }
+
       break;
     }
 
@@ -197,14 +202,17 @@ function applyEvent(event: AnthropicStreamEvent, handler: StreamHandler, acc: St
         acc.fullContent += event.delta.text;
         handler({ type: "content", content: event.delta.text, },);
       }
+
       if (event.delta?.type === "thinking_delta" && event.delta.thinking) {
         acc.fullThinking += event.delta.thinking;
         handler({ type: "thinking", content: event.delta.thinking, },);
       }
+
       if (event.delta?.type === "input_json_delta" && event.delta.partial_json) {
         const entry = acc.toolArgsAccum.get(event.index,);
         if (entry) { entry.args += event.delta.partial_json; }
       }
+
       break;
     }
 
@@ -213,9 +221,11 @@ function applyEvent(event: AnthropicStreamEvent, handler: StreamHandler, acc: St
         acc.finishReason = mapFinishReason(event.delta.stop_reason,);
         handler({ type: "done", finishReason: acc.finishReason, },);
       }
+
       if (event.usage?.output_tokens !== undefined) {
         acc.outputTokens = event.usage.output_tokens;
       }
+
       break;
     }
 

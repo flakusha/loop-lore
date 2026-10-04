@@ -41,6 +41,7 @@ function listAllFiles(root: string,): string[] {
       else { out.push(full.slice(root.length + 1,),); }
     }
   };
+
   walk(root,);
   return out.sort();
 }
@@ -163,6 +164,7 @@ describe("createAsset concurrent dedup", () => {
         input: { ...base, encryptionTier: "public", },
         uploadDir,
       },);
+
       const chatAsset = await createAsset({
         database: db,
         input: { ...base, encryptionTier: "chat", },
@@ -178,6 +180,7 @@ describe("createAsset concurrent dedup", () => {
         .select(["encryption_tier", "encrypted_key_id",],)
         .orderBy("encryption_tier",)
         .execute();
+
       expect(rows.length,).toBe(2,);
     } finally {
       sqlite.close();
@@ -209,6 +212,7 @@ describe("createAsset concurrent dedup", () => {
         input: { ...base, ownerId, encryptionTier: "chat", },
         uploadDir,
       },);
+
       const publicRow = await createAsset({
         database: db,
         input: { ...base, ownerId, encryptionTier: "public", },
@@ -232,6 +236,7 @@ describe("createAsset concurrent dedup", () => {
           publicRow.asset.id,
         );
       }
+
       expect(raced.some((r,) => r.duplicate), "the race must actually produce a loser",).toBe(true,);
 
       // The chat row is untouched by the public-tier race.
@@ -240,6 +245,7 @@ describe("createAsset concurrent dedup", () => {
         .select("id",)
         .where("id", "=", chatRow.asset.id,)
         .executeTakeFirst();
+
       expect(chatAfter?.id,).toBe(chatRow.asset.id,);
 
       const rows = await db.selectFrom("assets",).select("encryption_tier",).execute();
@@ -274,6 +280,7 @@ describe("createAsset concurrent dedup", () => {
         input: { ...base, dedupe: false, },
         uploadDir,
       },);
+
       const second = await createAsset({
         database: db,
         input: { ...base, dedupe: false, },

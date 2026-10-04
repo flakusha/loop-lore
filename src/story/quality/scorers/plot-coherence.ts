@@ -13,6 +13,7 @@ export const scorePlotCoherence: Scorer = ({ response, prompt, },) => {
   for (const w of lowerPrompt.split(/\s+/,)) {
     if (w.length > 3) { promptWords.add(w,); }
   }
+
   const responseWords = lowerResponse.split(/\s+/,);
   let matchedWordCount = 0;
   for (const w of responseWords) {
@@ -30,6 +31,7 @@ export const scorePlotCoherence: Scorer = ({ response, prompt, },) => {
     "contrary to",
     "despite this",
   ];
+
   for (const phrase of contradictionPhrases) {
     if (lowerResponse.includes(phrase,)) { score -= 2; }
   }
@@ -43,6 +45,7 @@ export const scorePlotCoherence: Scorer = ({ response, prompt, },) => {
     "leading to",
     "in response",
   ];
+
   let hasFlow = false;
   for (const m of flowMarkers) {
     if (lowerResponse.includes(m,)) {
@@ -50,6 +53,7 @@ export const scorePlotCoherence: Scorer = ({ response, prompt, },) => {
       break;
     }
   }
+
   if (hasFlow) { score += 10; }
 
   return Math.max(10, Math.min(100, score,),);

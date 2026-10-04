@@ -46,6 +46,7 @@ describe("aux-pipeline prompts", () => {
     for (const v of vals) {
       if (!seen.includes(v,)) { seen.push(v,); }
     }
+
     expect(seen.length,).toBe(vals.length,);
   });
 });
@@ -74,6 +75,7 @@ describe("aux-pipeline types", () => {
       promptTokens: 0,
       completionTokens: 0,
     };
+
     expect(r.content,).toBe("x",);
     expect(r.latencyMs,).toBeGreaterThanOrEqual(0,);
   });
@@ -105,6 +107,7 @@ function makeCapturingProvider(requested: string[],): LLMProvider {
       usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2, },
     };
   };
+
   return {
     capabilities: {
       type: "openai-compatible",
@@ -140,6 +143,7 @@ describe("callAux classifier-role routing", () => {
       testDb.db,
       [{ role: "user", content: "ping", },],
     );
+
     expect(result,).not.toBeNull();
     expect(result?.model,).toBe("mock-classifier-model",);
     expect(requested,).toEqual(["mock-classifier-model",],);
@@ -158,6 +162,7 @@ describe("callAux classifier-role routing", () => {
       testDb.db,
       [{ role: "user", content: "ping", },],
     );
+
     expect(result,).not.toBeNull();
     expect(result?.model,).toBe("mock-aux-model",);
     expect(requested,).toEqual(["mock-aux-model",],);
@@ -178,6 +183,7 @@ describe("callAux classifier-role routing", () => {
       [{ role: "user", content: "ping", },],
       { role: ModelRole.Captioning, },
     );
+
     expect(result,).not.toBeNull();
     expect(result?.model,).toBe("mock-caption-model",);
     expect(requested,).toEqual(["mock-caption-model",],);
@@ -196,6 +202,7 @@ describe("callAux classifier-role routing", () => {
       configuredDb.db,
       [{ role: "user", content: "ping", },],
     );
+
     expect(configured?.model,).toBe("mock-classifier-model",);
     expect(requestedConfigured,).toEqual(["mock-classifier-model",],);
     await configuredDb.db.destroy();
@@ -211,6 +218,7 @@ describe("callAux classifier-role routing", () => {
       unconfiguredDb.db,
       [{ role: "user", content: "ping", },],
     );
+
     expect(unconfigured?.model,).toBe("mock-aux-model",);
     expect(requestedUnconfigured,).toEqual(["mock-aux-model",],);
     await unconfiguredDb.db.destroy();
@@ -232,6 +240,7 @@ describe("callAux graceful failure", () => {
       db,
       [{ role: "user", content: "ping", },],
     );
+
     expect(result,).toBeNull();
     await db.destroy();
   });

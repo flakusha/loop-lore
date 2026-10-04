@@ -94,6 +94,7 @@ export async function upsertModelCapabilities(
         .execute();
     }
   }
+
   getLogger().child({ module: "model-capabilities", },).info("Upserted model capabilities", {
     providerId,
     count: models.length,
@@ -156,6 +157,7 @@ export async function listModelCapabilities(
   if (providerId) {
     query = query.where("provider_id", "=", providerId,);
   }
+
   const rows = await query.orderBy("provider_id",).orderBy("model_id",).execute();
 
   return Array.from(rows, (row,): ResolvedModelCapabilities => ({

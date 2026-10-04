@@ -54,6 +54,7 @@ export function validateCharacterForBundle(
       missing.push(`minLength: ${key} (not an array)`);
       continue;
     }
+
     if (v.length < min) {
       missing.push(`minLength: ${key} < ${min}`);
     }

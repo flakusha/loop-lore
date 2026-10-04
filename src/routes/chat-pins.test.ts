@@ -28,6 +28,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(chatPinRoutes({ database: db, },),);
 }
 
@@ -113,6 +114,7 @@ describe("chat-pins routes", () => {
           body: JSON.stringify({ messageId: "msg-2", },),
         },),
       );
+
       const body = await res.json() as PinResponse;
       expect(body.ok,).toBe(true,);
       expect(body.id,).toBeDefined();
@@ -128,6 +130,7 @@ describe("chat-pins routes", () => {
           body: JSON.stringify({ messageId: "msg-1", },),
         },),
       );
+
       const body = await res.json() as PinResponse;
       expect(body.ok,).toBe(true,);
       expect(body.already,).toBe(true,);
@@ -142,6 +145,7 @@ describe("chat-pins routes", () => {
           body: JSON.stringify({ messageId: "msg-1", },),
         },),
       );
+
       expect(res.status,).toBe(401,);
     });
 
@@ -154,6 +158,7 @@ describe("chat-pins routes", () => {
           body: JSON.stringify({ messageId: "msg-1", },),
         },),
       );
+
       expect(res.status,).toBe(404,);
     });
   });
@@ -164,6 +169,7 @@ describe("chat-pins routes", () => {
       const res = await app.handle(
         new Request("http://localhost/api/chats/chat-1/pins/pin-1", { method: "DELETE", },),
       );
+
       const body = await res.json() as PinResponse;
       expect(body.ok,).toBe(true,);
     });
@@ -174,6 +180,7 @@ describe("chat-pins routes", () => {
       const res = await app.handle(
         new Request("http://localhost/api/chats/chat-1/pins/pin-2", { method: "DELETE", },),
       );
+
       expect(res.status,).toBe(403,);
     });
 
@@ -182,6 +189,7 @@ describe("chat-pins routes", () => {
       const res = await app.handle(
         new Request("http://localhost/api/chats/chat-1/pins/pin-nope", { method: "DELETE", },),
       );
+
       expect(res.status,).toBe(404,);
     });
   });

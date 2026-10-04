@@ -26,6 +26,7 @@ const BASE = "http://localhost";
 const testConfig = {
   encryption: { compressThreshold: 1024, compressAlgorithm: "gzip", },
 } as unknown as Config;
+
 /**
  * Auth-context app via derive, mirroring message-search helpers.
  * @param db
@@ -37,6 +38,7 @@ function forwardApp(db: Kysely<DB>, userId: string | null, userRole: string | nu
     .derive(() => ({ userId, userRole, }))
     .use(forwardRoutes({ database: db, config: testConfig, },),) as unknown as Elysia;
 }
+
 /**
  * @param app
  * @param req
@@ -44,6 +46,7 @@ function forwardApp(db: Kysely<DB>, userId: string | null, userRole: string | nu
 async function appHandle(app: Elysia, req: Request,): Promise<Response> {
   return (app as unknown as { handle: (r: Request,) => Promise<Response> }).handle(req,);
 }
+
 /**
  * @param path
  * @param body
@@ -55,6 +58,7 @@ function post(path: string, body: unknown,): Request {
     body: JSON.stringify(body,),
   },);
 }
+
 interface ForwardBody {
   id: string;
   droppedAttachments: number;
@@ -87,6 +91,7 @@ describe("forwardRoutes", () => {
       settings: "{}",
       format_version: 0,
     } as never);
+
     await insertActors(db, "Owner", actorOpts(ownerId,),);
     await insertActors(db, "Participant", actorOpts(participantId,),);
     await insertActors(db, "Outsider", actorOpts(outsiderId,),);
@@ -97,56 +102,69 @@ describe("forwardRoutes", () => {
     await insertChats(db, "Outsider Chat", outsiderId, {},);
     outsiderChat =
       (await db.selectFrom("chats",).select("id",).where("name", "=", "Outsider Chat",).executeTakeFirst())!.id;
+
     await insertChatParticipants(db, chatA, participantId, {},);
     sourceMsg = uid();
     await insertMessages(db, chatA, ownerId, MessageRole.User, "the dragon hoard glitters", { id: sourceMsg, },);
   },);
+
   afterAll(async () => {
     await sqlite.close();
   },);
+
   test("returns 401 without userId", async () => {
     const app = forwardApp(db, null, null,);
     const res = await appHandle(
       app,
       post(`/api/chats/${chatA}/messages/${sourceMsg}/forward`, { targetChatId: chatB, },),
     );
+
     expect(res.status,).toBe(401,);
   });
+
   test("returns 404 for an unknown message", async () => {
     const app = forwardApp(db, ownerId, "user",);
     const res = await appHandle(app, post(`/api/chats/${chatA}/messages/${uid()}/forward`, { targetChatId: chatB, },),);
     expect(res.status,).toBe(404,);
   });
+
   test("returns 404 when the message belongs to another chat", async () => {
     const app = forwardApp(db, participantId, "user",);
     const res = await appHandle(
       app,
       post(`/api/chats/${chatB}/messages/${sourceMsg}/forward`, { targetChatId: chatB, },),
     );
+
     expect(res.status,).toBe(404,);
   });
+
   test("denies a caller with no source access", async () => {
     const app = forwardApp(db, outsiderId, "user",);
     const res = await appHandle(
       app,
       post(`/api/chats/${chatA}/messages/${sourceMsg}/forward`, { targetChatId: outsiderChat, },),
     );
+
     expect([403, 404,],).toContain(res.status,);
   });
+
   test("hides an inaccessible target chat", async () => {
     const app = forwardApp(db, participantId, "user",);
     const res = await appHandle(
       app,
       post(`/api/chats/${chatA}/messages/${sourceMsg}/forward`, { targetChatId: outsiderChat, },),
     );
+
     expect(res.status,).toBe(404,);
   });
+
   test("copies content with attribution into the target chat", async () => {
     const app = forwardApp(db, participantId, "user",);
     const res = await appHandle(
       app,
       post(`/api/chats/${chatA}/messages/${sourceMsg}/forward`, { targetChatId: chatB, },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as ForwardBody;
     expect(body.droppedAttachments,).toBe(0,);
@@ -156,12 +174,14 @@ describe("forwardRoutes", () => {
         "=",
         body.id,
       ).executeTakeFirst())!;
+
     expect(row.chat_id,).toBe(chatB,);
     expect(row.actor_id,).toBe(participantId,);
     const text = row.content_plaintext ?? row.content;
     expect(text,).toContain("the dragon hoard glitters",);
     expect(text,).toContain("> Forwarded from Owner",);
   });
+
   test("replays the same id on idempotency-key retry", async () => {
     const app = forwardApp(db, participantId, "user",);
     const payload = { targetChatId: chatB, idempotencyKey: `fwd-${uid()}`, };
@@ -177,8 +197,10 @@ describe("forwardRoutes", () => {
       "=",
       payload.idempotencyKey,
     ).executeTakeFirst();
+
     expect(Number(count?.n ?? 0,),).toBe(1,);
   });
+
   test("forwards only caller-owned attachments and counts drops", async () => {
     const ownedAsset = uid();
     const foreignAsset = uid();
@@ -187,9 +209,11 @@ describe("forwardRoutes", () => {
     await insertAssets(db, participantId, "map.png", "image/png", AssetType.Image, 10, "/tmp/map.png", {
       id: ownedAsset,
     },);
+
     await insertAssets(db, outsiderId, "secret.png", "image/png", AssetType.Image, 10, "/tmp/secret.png", {
       id: foreignAsset,
     },);
+
     await insertAssetLinks(db, ownedAsset, AssetLinkEntity.Message, msgWithFiles, { label: "message-attachment", },);
     await insertAssetLinks(db, foreignAsset, AssetLinkEntity.Message, msgWithFiles, { label: "message-attachment", },);
     const app = forwardApp(db, participantId, "user",);
@@ -197,6 +221,7 @@ describe("forwardRoutes", () => {
       app,
       post(`/api/chats/${chatA}/messages/${msgWithFiles}/forward`, { targetChatId: chatB, },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as ForwardBody;
     expect(body.droppedAttachments,).toBe(1,);
@@ -205,6 +230,7 @@ describe("forwardRoutes", () => {
       "=",
       body.id,
     ).execute();
+
     expect(links.map((l,) => l.asset_id),).toEqual([ownedAsset,],);
   });
 });

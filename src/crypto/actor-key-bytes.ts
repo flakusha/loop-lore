@@ -42,6 +42,7 @@ export async function decryptBytes(key: CryptoKey, encrypted: string,): Promise<
   const plaintext = await crypto.subtle.decrypt({ name: "AES-GCM", iv, }, key, data,);
   return new Uint8Array(plaintext,);
 }
+
 /**
  * Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource.
  * @param arr - typed array view of a key/IV

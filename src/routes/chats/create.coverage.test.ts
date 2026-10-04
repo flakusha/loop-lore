@@ -141,6 +141,7 @@ describe("chats/create — variant taxonomy wiring", () => {
       variant: "rpg",
       mode: "direct",
     },);
+
     const body = await res.json() as { error?: string };
 
     expect(res.status,).toBe(400,);
@@ -180,6 +181,7 @@ describe("chats/create — variant taxonomy wiring", () => {
       name: "Welcomed",
       participantIds: ["greeter-actor",],
     },);
+
     const created = await res.json() as { id?: string };
     const messages = await db
       .selectFrom("messages",)

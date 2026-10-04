@@ -28,6 +28,7 @@ export function tradeHistoryRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
           const denied = await resolveActorAccess(opts.database, actorId, userId,);
           if (denied) { return denied; }
         }
+
         const history = await opts.svc().getTradeHistory(ctx.params.worldId, actorId, limit,);
         return jsonResponse({ history, },);
       }, {

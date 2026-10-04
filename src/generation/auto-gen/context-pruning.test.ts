@@ -63,6 +63,7 @@ describe("checkAndPruneContext — persists pruning decisions", () => {
         .where("visibility", "=", "auto_hidden",)
         .orderBy("id", "asc",)
         .execute();
+
       expect(autoHidden.length,).toBeGreaterThan(0,);
       // And they must be the lowest-scored (oldest first) messages.
       expect(autoHidden[0]?.id,).toBe("msg-prune-0",);

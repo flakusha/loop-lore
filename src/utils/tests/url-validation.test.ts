@@ -49,6 +49,7 @@ describe("validateProviderUrl", () => {
       const result = validateProviderUrl("https://api.openai.com/v1", {
         allowlist: ["api.openai.com",],
       },);
+
       expect(result.ok,).toBe(true,);
       expect(result.local,).toBe(false,);
     });
@@ -57,6 +58,7 @@ describe("validateProviderUrl", () => {
       const result = validateProviderUrl("https://sub.example.com/api", {
         allowlist: ["*.example.com",],
       },);
+
       expect(result.ok,).toBe(true,);
       expect(result.local,).toBe(false,);
     });
@@ -65,6 +67,7 @@ describe("validateProviderUrl", () => {
       const result = validateProviderUrl("https://evil.com/steal", {
         allowlist: ["api.openai.com",],
       },);
+
       expect(result.ok,).toBe(false,);
       expect(result.error,).toContain("not in allowlist",);
     });
@@ -75,6 +78,7 @@ describe("validateProviderUrl", () => {
       const result = validateProviderUrl("http://localhost:8080", {
         blockLocalAddrs: true,
       },);
+
       expect(result.ok,).toBe(false,);
       expect(result.local,).toBe(true,);
       expect(result.error,).toContain("blocked",);
@@ -84,6 +88,7 @@ describe("validateProviderUrl", () => {
       const result = validateProviderUrl("http://127.0.0.1:8080", {
         blockLocalAddrs: true,
       },);
+
       expect(result.ok,).toBe(false,);
       expect(result.local,).toBe(true,);
     });
@@ -92,6 +97,7 @@ describe("validateProviderUrl", () => {
       const result = validateProviderUrl("http://10.0.0.1:8080", {
         blockLocalAddrs: true,
       },);
+
       expect(result.ok,).toBe(false,);
       expect(result.local,).toBe(true,);
     });
@@ -101,6 +107,7 @@ describe("validateProviderUrl", () => {
         blockLocalAddrs: true,
         allowlist: ["api.openai.com",],
       },);
+
       expect(result.ok,).toBe(true,);
     });
   });
@@ -121,6 +128,7 @@ describe("validateProviderUrl", () => {
       const result = validateProviderUrl("ws://localhost:8080", {
         allowedSchemes: ["ws", "wss",],
       },);
+
       expect(result.ok,).toBe(true,);
     });
   });
@@ -150,6 +158,7 @@ describe("validateProviderUrl", () => {
       const result = validateProviderUrl("http://8.8.8.8:53", {
         allowlist: ["8.8.8.8",],
       },);
+
       expect(result.ok,).toBe(true,);
     });
   });

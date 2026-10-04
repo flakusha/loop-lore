@@ -33,6 +33,7 @@ export function removeRoutes(config: EntityConfig, opts: { database: Db; config:
       if (!ownershipOk) {
         return notFound(`${config.entityName} not found`,);
       }
+
       if (config.writeGuard) {
         const row = (await db
           .selectFrom(config.tableName,)
@@ -40,6 +41,7 @@ export function removeRoutes(config: EntityConfig, opts: { database: Db; config:
           .where("id", "=", entityId,)
           .where(config.parentFk, "=", parentId,)
           .executeTakeFirst()) ?? null;
+
         const guard = await config.writeGuard({ body: {}, existing: row, userId, userRole, },);
         if (!guard.ok) {
           return jsonError({ message: guard.message, status: guard.status, },);
@@ -55,6 +57,7 @@ export function removeRoutes(config: EntityConfig, opts: { database: Db; config:
       if ((result as any[]).length === 0) {
         return notFound(`${config.entityName} not found`,);
       }
+
       return jsonNoContent();
     }, {
       response: {

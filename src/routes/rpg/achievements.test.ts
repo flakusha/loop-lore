@@ -74,6 +74,7 @@ describe("achievements CRUD + progress (auth-gated)", () => {
     if (typeof body === "object" && body !== null && "id" in body && typeof body.id === "string") {
       return body.id;
     }
+
     throw new Error("response missing string id",);
   }
 
@@ -94,6 +95,7 @@ describe("achievements CRUD + progress (auth-gated)", () => {
         body: JSON.stringify(body,),
       },),
     );
+
     expect(res.status,).toBe(201,);
     achievementId = readId(await json(res,),);
     expect(achievementId,).toBeString();
@@ -104,6 +106,7 @@ describe("achievements CRUD + progress (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/achievements/${achievementId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { name?: string };
     expect(body.name,).toBe("First Blood",);
@@ -114,6 +117,7 @@ describe("achievements CRUD + progress (auth-gated)", () => {
     const res = await app.handle(
       new Request("http://localhost/api/rpg/achievements?category=combat",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { achievements?: unknown[] };
     expect(Array.isArray(body.achievements,),).toBe(true,);
@@ -128,6 +132,7 @@ describe("achievements CRUD + progress (auth-gated)", () => {
       headers: { "Content-Type": "application/json", },
       body: JSON.stringify({ tier: "silver", },),
     },);
+
     const res = await app.handle(req,);
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { tier?: string };
@@ -142,6 +147,7 @@ describe("achievements CRUD + progress (auth-gated)", () => {
       headers: { "Content-Type": "application/json", },
       body: JSON.stringify({ progressIncrement: 1, },),
     },);
+
     const res = await app.handle(req,);
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { newProgress?: number; unlocked?: boolean };
@@ -153,6 +159,7 @@ describe("achievements CRUD + progress (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/achievements/player/${userId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { progress?: unknown[] };
     expect(Array.isArray(body.progress,),).toBe(true,);
@@ -165,6 +172,7 @@ describe("achievements CRUD + progress (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/achievements/player/${userId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -173,11 +181,13 @@ describe("achievements CRUD + progress (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/achievements/${achievementId}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
 
     const afterRes = await app.handle(
       new Request(`http://localhost/api/rpg/achievements/${achievementId}`,),
     );
+
     expect(afterRes.status,).toBe(404,);
   });
 });

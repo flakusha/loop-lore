@@ -125,6 +125,7 @@ describe("moraleRoutes", () => {
       state: MORALE_STATE,
       modifier: { reason: "rallied", value: 10, duration: 3, appliedAt: new Date().toISOString(), },
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<MoraleBody>(res,);
     expect(body.value,).toBe(60,);
@@ -136,6 +137,7 @@ describe("moraleRoutes", () => {
     const res = await post(app, "http://localhost/api/battle/morale/break", {
       state: { ...MORALE_STATE, value: 5, level: "broken", },
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<MoraleBody>(res,);
     expect(body.broke,).toBeTrue();
@@ -146,6 +148,7 @@ describe("moraleRoutes", () => {
     const res = await post(app, "http://localhost/api/battle/morale/break", {
       state: MORALE_STATE,
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<MoraleBody>(res,);
     expect(body.broke,).toBeFalse();
@@ -170,6 +173,7 @@ describe("npcRoutes", () => {
       allyCount: 2,
       battleMemories: [],
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<NpcDecisionBody>(res,);
     expect(["attack", "defend", "flee", "negotiate", "use_item", "special",],).toContain(body.type,);
@@ -185,6 +189,7 @@ describe("npcRoutes", () => {
       opponentLevel: 3,
       npcLevel: 5,
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<NpcMemoryBody>(res,);
     expect(body.battleId,).toBe("b1",);
@@ -199,6 +204,7 @@ describe("npcRoutes", () => {
       maxHealth: 100,
       battleMemories: [],
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<NpcSurrenderBody>(res,);
     expect(body.surrender,).toBeFalse();
@@ -221,6 +227,7 @@ describe("resolutionRoutes", () => {
       isCritical: false,
       damageType: "physical",
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<DamageBody>(res,);
     expect(body.totalDamage >= 1,).toBeTrue();
@@ -233,6 +240,7 @@ describe("resolutionRoutes", () => {
       baseDamage: "zzz",
       modifiers: [],
     },);
+
     expect(res.status,).toBe(200,);
     expect((await json<DamageBody>(res,)).totalDamage,).toBe(0,);
   });
@@ -242,6 +250,7 @@ describe("resolutionRoutes", () => {
       attackBonus: 5,
       targetAC: 10,
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<AttackBody>(res,);
     expect(typeof body.hit,).toBe("boolean",);
@@ -253,6 +262,7 @@ describe("resolutionRoutes", () => {
       defenseBonus: 4,
       incomingAttack: 12,
     },);
+
     expect(res.status,).toBe(200,);
     expect(typeof (await json<DefenseBody>(res,)).success,).toBe("boolean",);
   });
@@ -265,6 +275,7 @@ describe("resolutionRoutes", () => {
       ],
       currentHP: { a: 30, b: 30, },
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<RoundBody>(res,);
     expect(body.actions.length,).toBe(2,);
@@ -287,6 +298,7 @@ describe("socialRoutes", () => {
       targetLevel: 1,
       targetMorale: MORALE_STATE,
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<SocialBody>(res,);
     expect(body.action,).toBe("intimidate",);
@@ -300,6 +312,7 @@ describe("socialRoutes", () => {
       targetMorale: MORALE_STATE,
       targetPersonality: "aggressive",
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<SocialBody>(res,);
     expect(body.action,).toBe("taunt",);
@@ -312,6 +325,7 @@ describe("socialRoutes", () => {
       attackerReputation: 50,
       targetHealthPercent: 25,
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<SocialBody>(res,);
     expect(body.canSurrender,).toBeTrue();
@@ -324,6 +338,7 @@ describe("socialRoutes", () => {
       attackerReputation: 50,
       targetHealthPercent: 100,
     },);
+
     expect(res.status,).toBe(200,);
     expect((await json<SocialBody>(res,)).canSurrender,).toBeFalse();
   });
@@ -334,6 +349,7 @@ describe("socialRoutes", () => {
       leaderLevel: 5,
       allyMorale: MORALE_STATE,
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<SocialBody>(res,);
     expect(body.action,).toBe("rally",);
@@ -346,6 +362,7 @@ describe("socialRoutes", () => {
       leaderInspiration: 10,
       allyMorale: MORALE_STATE,
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<SocialBody>(res,);
     expect(body.action,).toBe("inspire",);
@@ -358,6 +375,7 @@ describe("socialRoutes", () => {
       attackerLevel: 20,
       targetMorale: MORALE_STATE,
     },);
+
     expect(res.status,).toBe(200,);
     const body = await json<SocialBody>(res,);
     expect(body.action,).toBe("demoralize",);
@@ -378,6 +396,7 @@ describe("weatherRoutes", () => {
       weather: "clear",
       terrain: "open",
     },);
+
     expect(res.status,).toBe(200,);
   });
 
@@ -386,6 +405,7 @@ describe("weatherRoutes", () => {
       weather: "fog",
       timeOfDay: 12,
     },);
+
     expect(res.status,).toBe(200,);
     expect((await json<VisibilityBody>(res,)).visibility,).toBe(30,);
   });
@@ -395,6 +415,7 @@ describe("weatherRoutes", () => {
       weather: "clear",
       timeOfDay: 22,
     },);
+
     expect(res.status,).toBe(200,);
     expect((await json<VisibilityBody>(res,)).visibility,).toBe(50,);
   });
@@ -404,6 +425,7 @@ describe("weatherRoutes", () => {
       terrain: "open",
       weather: "clear",
     },);
+
     expect(res.status,).toBe(200,);
   });
 
@@ -430,6 +452,7 @@ describe("battleRoutes barrel", () => {
       opponentLevel: 1,
       npcLevel: 1,
     },);
+
     expect(res.status,).toBe(200,);
     expect((await json<NpcMemoryBody>(res,)).battleId,).toBe("bb",);
   });
@@ -439,6 +462,7 @@ describe("battleRoutes barrel", () => {
       baseDamage: "1d4",
       modifiers: [],
     },);
+
     expect(res.status,).toBe(200,);
   });
 
@@ -449,6 +473,7 @@ describe("battleRoutes barrel", () => {
       targetLevel: 10,
       targetMorale: MORALE_STATE,
     },);
+
     expect(res.status,).toBe(200,);
     expect((await json<SocialBody>(res,)).success,).toBeFalse();
   });
@@ -458,6 +483,7 @@ describe("battleRoutes barrel", () => {
       weather: "rain",
       timeOfDay: 12,
     },);
+
     expect(res.status,).toBe(200,);
     expect((await json<VisibilityBody>(res,)).visibility,).toBe(70,);
   });

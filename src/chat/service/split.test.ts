@@ -67,12 +67,15 @@ describe("party split / reunion (C7 Phase 3)", () => {
     await insertChatParticipants(db, srcChatId, ownerId, {
       role_in_chat: ChatParticipantRole.Owner,
     } as never,);
+
     await insertChatParticipants(db, srcChatId, heroId, {
       role_in_chat: ChatParticipantRole.Member,
     } as never,);
+
     await insertChatParticipants(db, srcChatId, rogueId, {
       role_in_chat: ChatParticipantRole.Member,
     } as never,);
+
     await insertChatParticipants(db, srcChatId, mageId, {
       role_in_chat: ChatParticipantRole.Member,
     } as never,);
@@ -115,6 +118,7 @@ describe("party split / reunion (C7 Phase 3)", () => {
         .select(["id", "current_location_id",],)
         .where("id", "=", result.branches[0]!.chatId,)
         .executeTakeFirst();
+
       expect(forestChat?.current_location_id,).toBe("forest",);
       expect(result.branches[0]!.participantCount,).toBe(1,);
 
@@ -123,6 +127,7 @@ describe("party split / reunion (C7 Phase 3)", () => {
         .select(["id", "current_location_id",],)
         .where("id", "=", result.branches[1]!.chatId,)
         .executeTakeFirst();
+
       expect(caveChat?.current_location_id,).toBe("cave",);
       expect(result.branches[1]!.participantCount,).toBe(2,);
     });
@@ -261,6 +266,7 @@ describe("party split / reunion (C7 Phase 3)", () => {
         "Other Owner",
         { id: otherOwnerId, user_id: otherOwnerId, owner_id: otherOwnerId, } as never,
       );
+
       const otherChatId = crypto.randomUUID();
       await insertChats(db, "Other Chat", otherOwnerId, { id: otherChatId, type: "group", mode: "group", } as never,);
 

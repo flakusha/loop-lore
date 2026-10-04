@@ -53,16 +53,20 @@ export function collectPlaceholders(obj: unknown,): Set<string> {
       for (const match of value.matchAll(PLACEHOLDER_RE,)) {
         found.add(match[1]!.trim(),);
       }
+
       return;
     }
+
     if (Array.isArray(value,)) {
       for (const item of value) { walk(item,); }
       return;
     }
+
     if (typeof value === "object" && value !== null) {
       for (const nested of Object.values(value,)) { walk(nested,); }
     }
   };
+
   walk(obj,);
   return found;
 }
@@ -98,6 +102,7 @@ export function substituteWorkflow<T,>(
     for (const [key, value,] of Object.entries(obj as Record<string, unknown>,)) {
       result[key] = substituteWorkflow(value, vars, _nodeOverrides,);
     }
+
     return result as Substituted<T>;
   }
 

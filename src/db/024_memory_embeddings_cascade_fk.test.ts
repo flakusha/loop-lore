@@ -32,11 +32,14 @@ async function seed(db: Kysely<DB>,): Promise<{ kept: string; chatId: string }> 
     id: `mem-${crypto.randomUUID()}`,
     source_chat_id: chatId,
   },);
+
   const kept = await insertActorMemories(db, actorB, "two", { id: `mem-${crypto.randomUUID()}`, },);
   await db.insertInto("memory_embeddings",).values({ memory_id: memA, vector_blob: vec, created_at: Date.now(), },)
     .execute();
+
   await db.insertInto("memory_embeddings",).values({ memory_id: kept, vector_blob: vec, created_at: Date.now(), },)
     .execute();
+
   return { kept, chatId, };
 }
 
@@ -112,10 +115,12 @@ describe("024_memory_embeddings_cascade_fk", () => {
            created_at INTEGER NOT NULL
          )`,
       );
+
       sqlite.run(
         "INSERT INTO memory_embeddings (memory_id, vector_blob, created_at) VALUES (?, ?, ?)",
         ["orphan-mem", vec, Date.now(),],
       );
+
       expect(await embeddingIds(db,),).toEqual(["orphan-mem",],);
 
       await up(db as unknown as Kysely<unknown>,);

@@ -40,6 +40,7 @@ export function parseAssistantTuning(gmConfigJson: string | null | undefined,): 
   if (!parsed.ok || typeof parsed.value !== "object" || parsed.value === null) {
     return { temperature: null, maxTokens: null, };
   }
+
   const raw = parsed.value.assistantTuning;
   if (raw == null || typeof raw !== "object") { return { temperature: null, maxTokens: null, }; }
   const rec = raw as Record<string, unknown>;

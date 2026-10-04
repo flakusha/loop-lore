@@ -53,6 +53,7 @@ async function enrichChats(
       .limit(chatIds.length * 2,)
       .execute(),
   ],);
+
   // Enrichment queries are best-effort: a failed one yields empty maps.
   const counts = countsResult.status === "fulfilled" ? countsResult.value : [];
   const lastMsgs = lastMsgsResult.status === "fulfilled" ? lastMsgsResult.value : [];
@@ -61,6 +62,7 @@ async function enrichChats(
   for (const m of lastMsgs) {
     if (!msgMap.has(m.chat_id,)) { msgMap.set(m.chat_id, m.content,); }
   }
+
   return Array.from(chats, (c,) => ({
     ...c,
     participant_count: countMap.get(c.id,) ?? 0,
@@ -94,16 +96,19 @@ function renderChatListItems(rows: {
         escapeHtml(r.encryption_level,)
       })" style="font-size:11px;color:var(--accent-cyan)">🔒</span>`
       : "";
+
     const worldTag = r.world_name
       ? `<span class="tag" style="background:var(--bg-tertiary);padding:1px 6px;border-radius:var(--radius-sm);font-size:11px">🌍 ${
         escapeHtml(r.world_name,)
       }</span>`
       : "";
+
     const locationTag = r.location_name
       ? `<span class="tag" style="background:var(--bg-tertiary);padding:1px 6px;border-radius:var(--radius-sm);font-size:11px">📍 ${
         escapeHtml(r.location_name,)
       }</span>`
       : "";
+
     const ts = toDate(r.updated_at,).getTime();
     const age = now - ts;
     let ageStr: string;

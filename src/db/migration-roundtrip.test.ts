@@ -82,12 +82,14 @@ function buildMigrationProvider() {
       const files = readdirSync(dir,)
         .filter((f,) => typeof f === "string" && f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const file of files) {
         const mod = await import(path.join(dir, file,));
         const name = file.replace(/\.ts$/, "",);
         migrations[name] = mod.default ?? mod;
       }
+
       return migrations;
     },
   };
@@ -158,6 +160,7 @@ describe("migration roundtrip", () => {
       for (const r of downResult.results) {
         expect(r.status, `rollback ${r.migrationName} should succeed`,).toBe("Success",);
       }
+
       rolledBack++;
     }
 
@@ -184,6 +187,7 @@ describe("migration roundtrip", () => {
       const down = await migrator.migrateDown();
       if (!down.results || down.results.length === 0) { break; }
     }
+
     expect(getTableNames(sqlite,),).toHaveLength(0,);
 
     // Second pass: up all again
@@ -211,6 +215,7 @@ describe("migration roundtrip", () => {
         result.error,
         `up step ${i} (${name}) should not error`,
       ).toBeUndefined();
+
       expect(result.results!.length,).toBe(1,);
       expect(result.results![0]!.status,).toBe("Success",);
 
@@ -227,6 +232,7 @@ describe("migration roundtrip", () => {
         result.error,
         `down step ${i} should not error`,
       ).toBeUndefined();
+
       expect(result.results!.length,).toBe(1,);
       expect(result.results![0]!.status,).toBe("Success",);
     }

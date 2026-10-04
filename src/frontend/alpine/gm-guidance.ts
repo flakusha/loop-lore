@@ -109,6 +109,7 @@ interface GmGuidanceComponent {
           constraints: [...this._gmGuidance.constraints, c,],
         };
       }
+
       this._gmNewConstraint = "";
     },
 
@@ -121,6 +122,7 @@ interface GmGuidanceComponent {
       for (const c of this._gmGuidance.constraints) {
         if (c !== constraint) { kept.push(c,); }
       }
+
       this._gmGuidance = { ...this._gmGuidance, constraints: kept, };
     },
 
@@ -149,6 +151,7 @@ interface GmGuidanceComponent {
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ storyMode: this._storyMode, gmGuidance: this._gmGuidance, },),
         },);
+
         if (res.ok) {
           this.$dispatch?.("show-toast", { type: "success", message: t("toasts.gmGuidanceApplied",), },);
         } else {
@@ -171,5 +174,6 @@ interface GmGuidanceComponent {
       await this.applyGmGuidance();
     },
   };
+
   return component;
 };

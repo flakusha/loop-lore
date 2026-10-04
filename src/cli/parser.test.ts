@@ -28,9 +28,11 @@ describe("runScript wrapper", () => {
       count: withDefault(option("-c", "--count", integer({ min: 1, },),), 1,),
       verbose: withDefault(flag("-v", "--verbose",), false,),
     },);
+
     const args = runScript(parser, {
       args: ["--name", "loop-lore", "--count", "5", "--verbose",],
     },);
+
     expect(args.name,).toBe("loop-lore",);
     expect(args.count,).toBe(5,);
     expect(args.verbose,).toBe(true,);
@@ -41,6 +43,7 @@ describe("runScript wrapper", () => {
       count: withDefault(option("-c", "--count", integer({ min: 0, },),), 1,),
       verbose: withDefault(flag("-v", "--verbose",), false,),
     },);
+
     const args = runScript(parser, { args: [], },);
     expect(args.count,).toBe(1,);
     expect(args.verbose,).toBe(false,);
@@ -50,6 +53,7 @@ describe("runScript wrapper", () => {
     const parser = object({
       input: option("--input", string(),),
     },);
+
     // Confirm that supplying brief/description/examples alongside a valid
     // parser pipeline does not break parsing. Optique renders them only
     // when --help is invoked (which exits via onExit).
@@ -67,6 +71,7 @@ describe("runScript wrapper", () => {
     const parser = object({
       port: option("--port", integer({ min: 1, max: 65535, },),),
     },);
+
     const args = runScript(parser, { args: ["--port", "8080",], },);
     expect(args.port,).toBe(8080,);
   });

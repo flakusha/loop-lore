@@ -80,6 +80,7 @@ function handleSplit(database: Kysely<DB>,) {
         : (result.code === "forbidden"
           ? HttpStatus.Forbidden
           : HttpStatus.BadRequest);
+
       return jsonError(result.message, status, result.code as never,);
     }
 
@@ -113,6 +114,7 @@ function handleReunite(database: Kysely<DB>,) {
         : (result.code === "forbidden"
           ? HttpStatus.Forbidden
           : HttpStatus.BadRequest);
+
       return jsonError(result.message, status, result.code as never,);
     }
 

@@ -24,6 +24,7 @@ export async function generateOpenAI(
     "Content-Type": "application/json",
     ...(sdConfig.apiKey && { Authorization: `Bearer ${sdConfig.apiKey}`, }),
   };
+
   const payload = safeJsonStringify({
     prompt: opts.prompt,
     n,
@@ -31,6 +32,7 @@ export async function generateOpenAI(
     output_format: outputFormat,
     ...(opts.negativePrompt && { negative_prompt: opts.negativePrompt, }),
   },);
+
   // Base64 image payloads can exceed safeFetch's default size cap.
   const result = await safeFetch<{ data: { b64_json: string }[] }>(url, {
     method: "POST",

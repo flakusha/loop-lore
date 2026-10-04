@@ -45,6 +45,7 @@ function buildCtx(overrides?: Partial<ImpersonationCtx>,): ImpersonationCtx {
     },
     ...overrides,
   };
+
   return ctx;
 }
 
@@ -116,6 +117,7 @@ describeOrSkip("impersonation.toggleImpersonate", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await impersonation.toggleImpersonate!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(false,);
     expect(ctx.toasts[0]!.type,).toBe("error",);
@@ -129,6 +131,7 @@ describeOrSkip("impersonation.impersonate", () => {
     ctx.toggleImpersonate = async () => {
       toggles += 1;
     };
+
     await impersonation.impersonate!.call(ctx as never, "char",);
     await impersonation.impersonate!.call(ctx as never, "impersonate",);
     expect(toggles,).toBe(2,);
@@ -155,6 +158,7 @@ describeOrSkip("impersonation.loadImpersonationState", () => {
       Response.json({
         data: [{ actor_id: "gm", impersonate_actor_id: "actor-3", },],
       },);
+
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(true,);
     expect(ctx.impersonatingActorId,).toBe("actor-3",);
@@ -166,6 +170,7 @@ describeOrSkip("impersonation.loadImpersonationState", () => {
       Response.json({
         data: [{ actor_id: "gm", impersonate_actor_id: null, },],
       },);
+
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(false,);
     expect(ctx.impersonatingActorId,).toBeNull();
@@ -177,6 +182,7 @@ describeOrSkip("impersonation.loadImpersonationState", () => {
       Response.json({
         data: [{ actor_id: "other", display_name: "mee", impersonate_actor_id: "actor-5", },],
       },);
+
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(true,);
     expect(ctx.impersonatingActorId,).toBe("actor-5",);
@@ -188,6 +194,7 @@ describeOrSkip("impersonation.loadImpersonationState", () => {
       Response.json({
         data: [{ actor_id: "other", impersonate_actor_id: "actor-7", },],
       },);
+
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(true,);
     expect(ctx.impersonatingActorId,).toBe("actor-7",);
@@ -199,6 +206,7 @@ describeOrSkip("impersonation.loadImpersonationState", () => {
       Response.json({
         data: [{ actor_id: "other", impersonate_actor_id: null, },],
       },);
+
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(false,);
     expect(ctx.impersonatingActorId,).toBeNull();
@@ -212,6 +220,7 @@ describeOrSkip("impersonation.loadImpersonationState", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(false,);
   });

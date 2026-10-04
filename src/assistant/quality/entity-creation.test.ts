@@ -77,6 +77,7 @@ describe("checkDuplicate (DB-backed)", () => {
         format_version: 1,
       },)
       .execute();
+
     await db.insertInto("actors",)
       .values({
         id: "a1",
@@ -112,6 +113,7 @@ describe("checkDuplicate (DB-backed)", () => {
         format_version: 1,
       },)
       .execute();
+
     await db.insertInto("actors",)
       .values({
         id: "npc-1",
@@ -149,6 +151,7 @@ describe("checkDuplicate (DB-backed)", () => {
         format_version: 1,
       },)
       .execute();
+
     await db.insertInto("worlds",)
       .values({
         id: "w1",
@@ -161,6 +164,7 @@ describe("checkDuplicate (DB-backed)", () => {
         difficulty_modifier: 0,
       },)
       .execute();
+
     await db.insertInto("worlds",)
       .values({
         id: "w2",
@@ -173,6 +177,7 @@ describe("checkDuplicate (DB-backed)", () => {
         difficulty_modifier: 0,
       },)
       .execute();
+
     await db.insertInto("items",)
       .values({
         id: "i1",
@@ -202,6 +207,7 @@ describe("runQualityGates", () => {
       { name: "", description: "", },
       { ownerId: "u1", },
     );
+
     expect(report.schema.ok,).toBe(false,);
     expect(report.duplicate.found,).toBe(false,);
   });
@@ -214,6 +220,7 @@ describe("runQualityGates", () => {
       { name: "Valinor", description: "blessed land", },
       { ownerId: "u1", },
     );
+
     expect(report.schema.ok,).toBe(true,);
     expect(report.duplicate.found,).toBe(false,);
     expect(report.consistency.warnings,).toHaveLength(0,);
@@ -235,6 +242,7 @@ describe("normalizeLoreEntries", () => {
         priority: 5,
       },
     ];
+
     const entries = normalizeLoreEntries(raw,);
     expect(entries,).toHaveLength(1,);
     expect(entries[0]!.name,).toBe("The Betrayer",);
@@ -259,6 +267,7 @@ describe("normalizeLoreEntries", () => {
       null,
       "not an object",
     ];
+
     const entries = normalizeLoreEntries(raw,);
     expect(entries,).toHaveLength(1,);
     expect(entries[0]!.name,).toBe("Valid",);
@@ -273,6 +282,7 @@ describe("normalizeLoreEntries", () => {
         keys: [longKey, "b", "c", "d", "e", "f", "g", "h",],
       },
     ];
+
     const entries = normalizeLoreEntries(raw,);
     expect(entries[0]!.keys,).toHaveLength(5,);
     expect(entries[0]!.keys![0]!.length,).toBe(100,);
@@ -290,6 +300,7 @@ describe("normalizeLoreEntries", () => {
         cooldown_seconds: -10,
       },
     ];
+
     const entries = normalizeLoreEntries(raw,);
     expect(entries[0]!.insertion_order,).toBe(0,);
     expect(entries[0]!.priority,).toBe(999,);
@@ -306,6 +317,7 @@ describe("validateRawLoreEntries", () => {
       subject: { kind: "world", },
       position: "before_char",
     },];
+
     expect(validateRawLoreEntries(raw,),).toHaveLength(0,);
   });
 
@@ -322,6 +334,7 @@ describe("validateRawLoreEntries", () => {
       content: "c",
       keys: Array(6,).fill("x",),
     },];
+
     const errors = validateRawLoreEntries(raw,);
     expect(errors,).toContain("lore[0].keys exceeds 5 entries",);
   });
@@ -332,6 +345,7 @@ describe("validateRawLoreEntries", () => {
       content: "c",
       keys: ["a".repeat(200,),],
     },];
+
     const errors = validateRawLoreEntries(raw,);
     expect(errors,).toContain("lore[0].keys[0] must be a string of at most 100 characters",);
   });
@@ -342,6 +356,7 @@ describe("validateRawLoreEntries", () => {
       content: "c",
       subject: { kind: "bogus", },
     },];
+
     const errors = validateRawLoreEntries(raw,);
     expect(errors,).toContain("lore[0].subject is invalid or has incomplete selectors",);
   });
@@ -352,6 +367,7 @@ describe("validateRawLoreEntries", () => {
       { name: "T", content: "c", subject: { kind: "race", }, },
       { name: "T", content: "c", subject: { kind: "location", locationId: "not-a-uuid", }, },
     ];
+
     const errors = validateRawLoreEntries(raw,);
     expect(errors.some(e => e.includes("lore[0].subject",)),).toBe(true,);
     expect(errors.some(e => e.includes("lore[1].subject",)),).toBe(true,);
@@ -364,6 +380,7 @@ describe("validateRawLoreEntries", () => {
       content: "c",
       position: "bad",
     },];
+
     const errors = validateRawLoreEntries(raw,);
     expect(errors,).toContain("lore[0].position is not a valid LorePosition",);
   });
@@ -386,6 +403,7 @@ describe("validateLoreEntries", () => {
       subject: { kind: "world", } as const,
       position: "before_char",
     },];
+
     const errors = validateLoreEntries(entries,);
     expect(errors,).toHaveLength(0,);
   });
@@ -395,6 +413,7 @@ describe("validateLoreEntries", () => {
       name: "",
       content: "",
     },];
+
     const errors = validateLoreEntries(entries,);
     expect(errors,).toContain("lore[0].name is required",);
     expect(errors,).toContain("lore[0].content is required",);
@@ -406,6 +425,7 @@ describe("validateLoreEntries", () => {
       content: "c",
       keys: Array(6,).fill("x",),
     },];
+
     const errors = validateLoreEntries(entries,);
     expect(errors,).toContain("lore[0].keys exceeds 5 entries",);
   });
@@ -417,6 +437,7 @@ describe("validateLoreEntries", () => {
       subject: { kind: "bogus", } as never,
       position: "before_char" as const,
     },];
+
     const errors = validateLoreEntries(entries,);
     expect(errors,).toContain("lore[0].subject.kind is not a known subject kind",);
   });
@@ -427,6 +448,7 @@ describe("validateLoreEntries", () => {
       content: "c",
       position: "bad" as never,
     },];
+
     const errors = validateLoreEntries(entries,);
     expect(errors,).toContain("lore[0].position is not a valid LorePosition",);
   });
@@ -439,6 +461,7 @@ describe("normalizeEntity (structured lore)", () => {
       description: "desc",
       lore: [{ name: "L", content: "C", },],
     };
+
     const entity = normalizeEntity(raw,);
     expect(Array.isArray(entity.lore,),).toBe(true,);
     const loreArr = entity.lore as GeneratedEntityLoreEntry[];
@@ -451,6 +474,7 @@ describe("normalizeEntity (structured lore)", () => {
       description: "d",
       lore: "A long time ago...",
     },);
+
     expect(entity.lore,).toBe("A long time ago...",);
   });
 
@@ -460,6 +484,7 @@ describe("normalizeEntity (structured lore)", () => {
       description: "d",
       lore: 42,
     },);
+
     expect(entity.lore,).toBeUndefined();
   });
 });
@@ -483,6 +508,7 @@ describe("resolveEntityGenerationPrompt", () => {
     const config = {
       templates: { llm: { entityGeneration: { character: "MAKE {description} NOW", }, }, },
     } as never;
+
     const p = resolveEntityGenerationPrompt(config, "character", "a rogue",);
     expect(p,).toBe("MAKE a rogue NOW",);
   });
@@ -491,6 +517,7 @@ describe("resolveEntityGenerationPrompt", () => {
     const config = {
       templates: { llm: { entityGeneration: { item: "Invent something", }, }, },
     } as never;
+
     const p = resolveEntityGenerationPrompt(config, "item", "a sword",);
     expect(p,).toContain("Invent something",);
     expect(p,).toContain("a sword",);
@@ -500,6 +527,7 @@ describe("resolveEntityGenerationPrompt", () => {
     const config = {
       templates: { llm: { entityGeneration: {}, }, },
     } as never;
+
     const p = resolveEntityGenerationPrompt(config, "character", "a mage",);
     const blockIdx = p.indexOf("Follow this schema",);
     const templateIdx = p.indexOf("Generate a character profile",);
@@ -512,6 +540,7 @@ describe("resolveEntityGenerationPrompt", () => {
     const config = {
       templates: { llm: { entityGeneration: {}, entityTemplatePosition: "before", }, },
     } as never;
+
     const p = resolveEntityGenerationPrompt(config, "location", "a tavern",);
     const blockIdx = p.indexOf("Follow this schema",);
     const templateIdx = p.indexOf("Generate a location",);
@@ -524,6 +553,7 @@ describe("resolveEntityGenerationPrompt", () => {
     const config = {
       templates: { llm: { entityGeneration: {}, entityTemplatePosition: "after", }, },
     } as never;
+
     const p = resolveEntityGenerationPrompt(config, "world", "a continent",);
     const blockIdx = p.indexOf("Follow this schema",);
     const templateIdx = p.indexOf("Generate a world setting",);
@@ -536,6 +566,7 @@ describe("resolveEntityGenerationPrompt", () => {
     const config = {
       templates: { llm: { entityGeneration: {}, entityTemplatePosition: "off", }, },
     } as never;
+
     for (const kind of ["character", "location", "world", "item",] as const) {
       const p = resolveEntityGenerationPrompt(config, kind, "test",);
       expect(p,).not.toContain("Follow this schema",);
@@ -552,6 +583,7 @@ describe("resolveEntityGenerationPrompt", () => {
         },
       },
     } as never;
+
     const p = resolveEntityGenerationPrompt(config, "character", "a knight",);
     expect(p,).toBe("CUSTOM a knight",);
   });

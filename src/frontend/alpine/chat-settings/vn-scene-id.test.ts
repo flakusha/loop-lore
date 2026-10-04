@@ -96,6 +96,7 @@ function withContainer(run: (container: FakeContainer,) => void,): void {
   const g = globalThis as Omit<typeof globalThis, "document"> & {
     document: { querySelector: unknown };
   };
+
   const prev = g.document.querySelector;
   const container = new FakeContainer();
   g.document.querySelector = () => container as unknown as HTMLElement;

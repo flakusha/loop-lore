@@ -86,6 +86,7 @@ export const locationCreationTool: ToolDefinition = {
       const gmParsed = template.gm_config
         ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
         : null;
+
       await createChat(ctx.db, {
         name,
         type: "group",

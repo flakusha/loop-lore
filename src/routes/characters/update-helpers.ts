@@ -39,32 +39,40 @@ export function rejectClearedCharacterFields(
   const defValue = hasDefault && typeof body.defaultOutfit === "string"
     ? body.defaultOutfit
     : actor.default_outfit ?? null;
+
   if (typeof outfitsValue !== "string" || outfitsValue.trim() === "") {
     return "At least one outfit is required";
   }
+
   if (typeof defValue !== "string" || defValue.trim() === "") {
     return "default_outfit is required";
   }
+
   const parsedResult = safeJsonParse<unknown>(outfitsValue,);
   if (!parsedResult.ok) { return "outfits must be valid JSON"; }
   const parsed = parsedResult.value;
   if (!Array.isArray(parsed,) || parsed.length === 0) {
     return "At least one outfit is required";
   }
+
   const ids = new Set<string>();
   for (const o of parsed) {
     const idValue = (o as { id?: unknown } | null)?.id;
     if (typeof idValue !== "string" || idValue === "") {
       return "Each outfit must have a non-empty id";
     }
+
     if (ids.has(idValue,)) {
       return `Duplicate outfit id "${idValue}"`;
     }
+
     ids.add(idValue,);
   }
+
   const defId = defValue as string;
   if (!ids.has(defId,)) {
     return `default_outfit "${defId}" must match an outfits[].id`;
   }
+
   return null;
 }

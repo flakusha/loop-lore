@@ -26,6 +26,7 @@ function stubUpload(response: () => Response,): { captured: Captured; restore: (
     captured.form = (init?.body as FormData) ?? null;
     return response();
   }) as unknown as typeof fetch;
+
   return {
     captured,
     restore: () => {
@@ -48,6 +49,7 @@ describe("ComfyUIClient.uploadImage", () => {
     const { captured, restore, } = stubUpload(
       () => new Response(JSON.stringify({ name: "matting-1.png", subfolder: "", type: "input", },),),
     );
+
     cleanup.push(restore,);
 
     const name = await client().uploadImage(Buffer.from(PNG,), "matting-1.png",);

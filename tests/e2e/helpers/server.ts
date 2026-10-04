@@ -94,6 +94,7 @@ export async function _handleImportRequest(request: Request, database: Kysely<DB
       settings: "{}",
     },)
     .execute();
+
   return jsonCreated({ id, },);
 }
 
@@ -113,6 +114,7 @@ async function resolveImportUserId(
       .select(["user_id",],)
       .where("token_hash", "=", tokenHash,)
       .executeTakeFirst();
+
     if (session) { return session.user_id; }
   }
 
@@ -121,6 +123,7 @@ async function resolveImportUserId(
     const solo = await getOrCreateSoloUserForAuth(database, config.auth.demoUsername ?? "solo",);
     if (solo) { return solo.id; }
   }
+
   return null;
 }
 
@@ -147,21 +150,25 @@ async function parseImportFile(
       spec: parsed.spec === "chara_card_v2" ? "chara_card_v2" : undefined,
     };
   }
+
   if (filename.endsWith(".png",)) {
     const extracted = extractCharacterDataFromPng(fileBytes,);
     if (!extracted) { return null; }
     return { data: extracted.data, spec: extracted.spec, };
   }
+
   if (filename.endsWith(".yaml",) || filename.endsWith(".yml",)) {
     const parsed = yamlLoad(await file.text(),);
     if (!parsed || typeof parsed !== "object") { return null; }
     return { data: parsed as Record<string, unknown>, spec: undefined, };
   }
+
   if (filename.endsWith(".toml",)) {
     const parsed = parseToml(await file.text(),);
     if (!parsed || typeof parsed !== "object") { return null; }
     return { data: parsed as Record<string, unknown>, spec: undefined, };
   }
+
   return null;
 }
 
@@ -241,6 +248,7 @@ function enforceE2eSafeguard(config: Config,): void {
       ...issues.map((i,) => `  - ${i}`),
       "Set E2E_SAFEGUARD=0 to bypass (or use the in-memory test config from createTestServer).",
     ].join("\n",);
+
     throw new Error(msg,);
   }
 
@@ -321,6 +329,7 @@ function mergeGeneration(base: Config["generation"], overrides: Partial<Config["
       }
     }
   }
+
   if (overrides.defaultProvider != null) { result.defaultProvider = overrides.defaultProvider; }
   if (overrides.defaultModels) { result.defaultModels = { ...base.defaultModels, ...overrides.defaultModels, }; }
   return result;
@@ -387,6 +396,7 @@ export async function createTestServer(
       // Clear real providers from config so initializeProviders only registers the mock
       config.generation.providers.openaiCompatible = [];
     }
+
     initializeProviders(config,);
 
     const app = createApp({
@@ -407,6 +417,7 @@ export async function createTestServer(
     process.env.NO_PROXY = process.env.NO_PROXY
       ? `${process.env.NO_PROXY},127.0.0.1,localhost`
       : "127.0.0.1,localhost";
+
     const SEED_DEFAULT_CHAT_ID = "a0000004-0000-4000-a000-000000000000";
 
     return {

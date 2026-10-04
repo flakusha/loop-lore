@@ -30,6 +30,7 @@ function configWith(federation: Partial<FederationConfig>,): Config {
     meshPsk: federation.meshPsk ?? "",
     duplication: federation.duplication ?? { mode: "trusted", peers: [], },
   };
+
   return {
     server: { host: "localhost", port: 3000, tls: undefined, },
     auth: { registrationOpen: false, },
@@ -45,10 +46,12 @@ async function dbFor(): Promise<Db> {
   sharedDb ??= (await createTestDb()).db;
   return sharedDb;
 }
+
 /** @param config */
 async function appFor(config: Config,) {
   return federationRoutes({ config, database: await dbFor(), },);
 }
+
 const FED_DISABLED = configWith({ enabled: false, },);
 
 describe("federationRoutes — gating", () => {
@@ -89,6 +92,7 @@ describe("federationRoutes — NodeInfo 2.1", () => {
       ...base,
       server: { ...base.server, publicOrigin: "https://lore.example.com", },
     } as unknown as Config;
+
     const app = await appFor(config,);
     const res = await app.handle(new Request("http://localhost/.well-known/nodeinfo",),);
     expect(res.status,).toBe(200,);
@@ -166,6 +170,7 @@ describe("federationRoutes — edge cases", () => {
         headers: { accept: "text/plain", },
       },),
     );
+
     expect([200, 406,],).toContain(res.status,);
   });
 
@@ -175,6 +180,7 @@ describe("federationRoutes — edge cases", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/instance-state?garbage=${huge}`,),
     );
+
     expect([200, 414,],).toContain(res.status,);
   });
 
@@ -183,6 +189,7 @@ describe("federationRoutes — edge cases", () => {
     const res = await app.handle(
       new Request("http://localhost/.well-known/nodeinfo?foo=bar&baz=qux",),
     );
+
     expect(res.status,).toBe(200,);
   });
 });
@@ -242,6 +249,7 @@ describe("federationRoutes — mesh-deliver", () => {
       content: "cross-server payload",
       cipher: routeCipher,
     },);
+
     const res = await postDeliver(PSK_CONFIG, { envelope, },);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { verdict: string };
@@ -258,6 +266,7 @@ describe("federationRoutes — mesh-deliver", () => {
       content: "tampered payload",
       cipher: pskCipher("other-psk",),
     },);
+
     const res = await postDeliver(PSK_CONFIG, { envelope, },);
     expect(res.status,).toBe(400,);
   });
@@ -270,6 +279,7 @@ describe("federationRoutes — mesh-deliver", () => {
       contentHash: "route-hash-1",
       sizeBytes: 18,
     },);
+
     expect(reserve.status,).toBe(200,);
     const { reservationId, } = (await reserve.json()) as { reservationId: string };
     expect(typeof reservationId,).toBe("string",);
@@ -279,6 +289,7 @@ describe("federationRoutes — mesh-deliver", () => {
       content: "reserved payload!!",
       cipher: routeCipher,
     },);
+
     const deliver = await postDeliver(PSK_CONFIG, { envelope, reservationId, },);
     expect(deliver.status,).toBe(200,);
     expect(((await deliver.json()) as { verdict: string }).verdict,).toBe("stored",);
@@ -287,6 +298,7 @@ describe("federationRoutes — mesh-deliver", () => {
       .select(["state",],)
       .where("id", "=", reservationId,)
       .executeTakeFirstOrThrow();
+
     expect(row.state,).toBe("confirmed",);
   });
 
@@ -297,27 +309,32 @@ describe("federationRoutes — mesh-deliver", () => {
       state: "trusted",
       capacityBytes: 5,
     },);
+
     const stranger = await postReserve(PSK_CONFIG, {
       senderOrigin: "https://stranger.example",
       contentHash: "x",
       sizeBytes: 1,
     },);
+
     expect(stranger.status,).toBe(403,);
     const first = await postReserve(PSK_CONFIG, {
       senderOrigin: "https://small-peer.example",
       contentHash: "y",
       sizeBytes: 3,
     },);
+
     expect(first.status,).toBe(200,);
     const second = await postReserve(PSK_CONFIG, {
       senderOrigin: "https://small-peer.example",
       contentHash: "z",
       sizeBytes: 3,
     },);
+
     expect(second.status,).toBe(409,);
     const malformed = await postReserve(PSK_CONFIG, { senderOrigin: "x", },);
     expect(malformed.status,).toBe(400,);
   });
+
   test("reserve omits contentKey on a plaintext wire even with an SMK", async () => {
     await initSmk({
       serverEncryptionKey: "d".repeat(64,),
@@ -325,6 +342,7 @@ describe("federationRoutes — mesh-deliver", () => {
       compressThreshold: 128,
       compressAlgorithm: "gzip",
     },);
+
     const db = await dbFor();
     await upsertPeer(db, { origin: "https://plain-peer.example", state: "trusted", },);
     const res = await postReserve(PSK_CONFIG, {
@@ -332,6 +350,7 @@ describe("federationRoutes — mesh-deliver", () => {
       contentHash: "plain-hash",
       sizeBytes: 4,
     },);
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { reservationId: string; contentKey?: unknown };
     expect(typeof body.reservationId,).toBe("string",);
@@ -345,17 +364,20 @@ describe("federationRoutes — mesh-deliver", () => {
       compressThreshold: 128,
       compressAlgorithm: "gzip",
     },);
+
     const db = await dbFor();
     await upsertPeer(db, { origin: "https://proxy-peer.example", state: "trusted", },);
     const proxied: Config = {
       ...PSK_CONFIG,
       server: { ...PSK_CONFIG.server, trustProxy: true, },
     };
+
     const res = await postReserve(proxied, {
       senderOrigin: "https://proxy-peer.example",
       contentHash: "proxy-hash",
       sizeBytes: 4,
     },);
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { reservationId: string; contentKey?: unknown };
     expect(typeof body.reservationId,).toBe("string",);

@@ -29,6 +29,7 @@ export function parseDbTimestamp(value: string,): number {
     const parsed = parseExpiryMs(value,);
     return parsed ?? 0;
   }
+
   const parsed = parseExpiryMs(`${value.replace(" ", "T",)}Z`,);
   return parsed ?? 0;
 }
@@ -52,6 +53,7 @@ export async function saveSession(
     confirmed: session.run.confirmed ? 1 : 0,
     updated_at: new Date().toISOString(),
   };
+
   await db
     .insertInto("workflow_sessions",)
     .values(values,)
@@ -77,14 +79,17 @@ export async function loadPersistedSession(
     .selectAll()
     .where("chat_id", "=", chatId,)
     .executeTakeFirst();
+
   if (!row) { return undefined; }
   const drop = async (): Promise<undefined> => {
     await deletePersistedSession(db, chatId,);
     return undefined;
   };
+
   if (Date.now() - parseDbTimestamp(row.updated_at,) > WORKFLOW_SESSION_TTL_MS) {
     return drop();
   }
+
   const workflow = workflows.find((candidate,) => candidate.id === row.workflow_id);
   if (!workflow) { return drop(); }
   const session: WorkflowSession = {
@@ -95,6 +100,7 @@ export async function loadPersistedSession(
       confirmed: row.confirmed === 1,
     },
   };
+
   restoreSession(chatId, session,);
   return session;
 }

@@ -129,6 +129,7 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
           .where("parent_id", "=", parentMessageId,)
           .executeTakeFirst()
         : undefined;
+
       const candidate = parentMessageId ? (maxSwipe?.max_idx ?? 0) + 1 : null;
       try {
         await trx
@@ -156,6 +157,7 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
             thinking: thinking ?? null,
           },)
           .execute();
+
         resolvedSwipeIndex = candidate;
         lastError = undefined;
         break;
@@ -170,14 +172,17 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
         ) {
           throw err;
         }
+
         lastError = err;
         // bump candidate for the next attempt
         if (candidate !== null) { resolvedSwipeIndex = candidate + 1; }
       }
     }
+
     if (lastError !== undefined) {
       throw lastError;
     }
+
     return { swipeIndex: resolvedSwipeIndex, };
   },);
 

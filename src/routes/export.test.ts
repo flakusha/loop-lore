@@ -51,6 +51,7 @@ async function parseZip(res: Response,): Promise<Record<string, string>> {
       }
     },),
   );
+
   return files;
 }
 
@@ -295,6 +296,7 @@ describe("exportRoutes", () => {
         difficulty_state: "normal",
       },)
       .execute();
+
     const locId = uid();
     await db
       .insertInto("locations",)

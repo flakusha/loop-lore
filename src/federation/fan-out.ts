@@ -106,11 +106,13 @@ export async function requestReservation(
     contentType: request.contentType ?? "blob",
     ttlMs: request.ttlMs ?? DEFAULT_RESERVATION_TTL_MS,
   },);
+
   const body = (response.body ?? null) as { reservationId?: unknown; contentKey?: unknown } | null;
   const reservationId = body?.reservationId;
   if (!response.ok || typeof reservationId !== "string") {
     throw new Error(`reservation refused by ${origin} (status ${response.status})`,);
   }
+
   const contentKey = body?.contentKey;
   return {
     reservationId,
@@ -148,6 +150,7 @@ export async function fanOutContent(
     content: content.content,
     cipher: encryption.psk,
   },);
+
   const candidates = await selectDuplicationTargets(database, policy, senderOrigin, content.worldId,);
   const fit = await selectTargetsWithCapacity(database, candidates, probe.size,);
   const settled = await Promise.allSettled(fit.targets.map(async (target,) => {
@@ -157,6 +160,7 @@ export async function fanOutContent(
       sizeBytes: probe.size,
       contentType: type,
     },);
+
     const cipher = encryption.contentCipher(granted.contentKey,);
     const envelope = await sealContent({
       id: content.id,
@@ -166,9 +170,11 @@ export async function fanOutContent(
       content: content.content,
       cipher,
     },);
+
     const verdict = await pushEnvelope(post, target, envelope, granted.reservationId,);
     return { target, verdict, };
   },),);
+
   const result: FanOutResult = { targets: fit.targets, stored: [], stale: [], failed: [], skipped: fit.skipped, };
   for (const [index, outcome,] of settled.entries()) {
     const target = fit.targets[index]!;
@@ -179,5 +185,6 @@ export async function fanOutContent(
       result.failed.push({ origin: target, error, },);
     }
   }
+
   return result;
 }

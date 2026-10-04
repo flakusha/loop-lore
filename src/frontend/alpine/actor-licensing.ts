@@ -132,10 +132,12 @@ export const actorLicensing: ActorLicensingState = {
         this.license = null;
         return;
       }
+
       if (!res.ok) {
         this.licenseError = t("status.licensingLoadFailed",);
         return;
       }
+
       const row = (await res.json()) as CharacterLicensing;
       this.license = row;
       this.licenseForm = {
@@ -146,6 +148,7 @@ export const actorLicensing: ActorLicensingState = {
         allow_commercial: row.allow_commercial === 1,
         share_alike: row.share_alike === 1,
       };
+
       this.licenseDirty = false;
     } catch (error) {
       // feFetch throws for non-2xx; a 404 is the documented "no license yet" empty state.
@@ -153,6 +156,7 @@ export const actorLicensing: ActorLicensingState = {
         this.license = null;
         return;
       }
+
       log.error("Failed to load licensing", error instanceof Error ? error : undefined, {},);
       this.licenseError = t("status.licensingLoadFailed",);
     } finally {
@@ -169,6 +173,7 @@ export const actorLicensing: ActorLicensingState = {
         this.licenseHistory = [];
         return;
       }
+
       this.licenseHistory = (await res.json()) as LicenseHistoryEntry[];
     } catch (error) {
       log.error("Failed to load license history", error instanceof Error ? error : undefined, {},);
@@ -194,18 +199,22 @@ export const actorLicensing: ActorLicensingState = {
         allow_commercial: this.licenseForm.allow_commercial,
         share_alike: this.licenseForm.share_alike,
       };
+
       const res = await apiFetch(`/api/v1/actors/${actorId}/licensing`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
       },);
+
       if (!res.ok) {
         const errBody = await res.json().catch(() => ({} as Record<string, unknown>)) as {
           message?: string;
         };
+
         this.licenseError = errBody.message ?? t("status.licensingSaveFailed",);
         return;
       }
+
       this.licenseDirty = false;
       await this.loadLicensing();
       await this.loadLicenseHistory();
@@ -227,6 +236,7 @@ export const actorLicensing: ActorLicensingState = {
         this.licenseError = t("status.licensingDeleteFailed",);
         return;
       }
+
       this.license = null;
       this.licenseForm = { ...EMPTY_FORM, };
       this.licenseDirty = false;

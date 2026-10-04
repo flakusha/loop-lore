@@ -114,6 +114,7 @@ export class AutonomyGovernor {
     if (cap === null) {
       return { remaining: null, resetAt: nowMs + limit.windowMs, cap: null, count: 0, };
     }
+
     const row = await this.#cache.load(db, { scope, limitName, nowMs, },);
     const win = effectiveWindow(row, limit, nowMs,);
     return {
@@ -185,6 +186,7 @@ export class AutonomyGovernor {
         window_count: 0,
         updated_at: nowIso,
       };
+
       this.#cache.write(scope, limitName, unchangedRow, nowMs,);
 
       record(db, {

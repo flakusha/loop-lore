@@ -92,6 +92,7 @@ export async function getModerationBlock(
     .where("target_user_id", "=", userId,)
     .where("deleted_at", "is", null,)
     .execute();
+
   let blocked = false;
   for (const row of rows) {
     if (row.action_type !== "ban" && row.action_type !== "block") { continue; }
@@ -100,6 +101,7 @@ export async function getModerationBlock(
     if (row.action_type === "ban") { return "ban"; }
     blocked = true;
   }
+
   return blocked ? "block" : null;
 }
 
@@ -149,6 +151,7 @@ export async function checkChatAccess(
   if (block === "ban") {
     return { ok: false, error: { code: "forbidden", message: "User is banned", }, };
   }
+
   if (block === "block") {
     return { ok: false, error: { code: "forbidden", message: "User is blocked", }, };
   }
@@ -204,6 +207,7 @@ export async function checkChatSettingsAccess(
   if (ownerParticipant) {
     return { ok: true, };
   }
+
   const gmParticipant = await database
     .selectFrom("chat_participants",)
     .select("actor_id",)
@@ -240,8 +244,10 @@ export async function isChatOnline(
     .where("status", "=", "confirmed",)
     .limit(1,)
     .executeTakeFirst();
+
   return row !== undefined;
 }
+
 // `reconcileModeratorGrants` (post-transfer moderator-grant reconciliation)
 // now lives in `./access-moderation.ts` to keep this file under the 250L
 // cap. Re-exported here for back-compat with consumers that still import

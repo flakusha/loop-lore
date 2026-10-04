@@ -27,6 +27,7 @@ export function jsonResponse(data: unknown, status: HttpStatusCode = HttpStatus.
   const body = (data !== null && typeof data === "object" && !Array.isArray(data,))
     ? { ...(data as Record<string, unknown>), meta: API_META, }
     : data;
+
   return Response.json(body, { status, },);
 }
 
@@ -67,6 +68,7 @@ export function jsonPaginated(
         totalPages: pageSize && pageSize > 0 ? Math.ceil((total ?? 0) / pageSize,) : 0,
       },
     };
+
   return Response.json({ data, pagination, meta: API_META, }, { status: HttpStatus.OK, },);
 }
 
@@ -76,10 +78,12 @@ export function jsonCreated(data?: unknown,): Response {
   const envelope = (data !== null && typeof data === "object" && !Array.isArray(data,))
     ? { ...(data as Record<string, unknown>), meta: API_META, }
     : { data, meta: API_META, };
+
   const result = safeJsonStringify(envelope,);
   if (!result.ok) {
     return jsonError({ message: "Failed to serialize response", status: HttpStatus.InternalServerError, },);
   }
+
   return new Response(result.value, {
     status: HttpStatus.Created,
     headers: { "Content-Type": "application/json", },

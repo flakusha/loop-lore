@@ -187,6 +187,7 @@ describe("startAutoRotationTimer", () => {
       .select(["status", "expires_at",],)
       .where("id", "=", agedKeyId,)
       .executeTakeFirst();
+
     expect(keyRow?.status,).toBe("expired",);
     expect(keyRow?.expires_at,).not.toBeNull();
   });

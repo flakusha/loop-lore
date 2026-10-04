@@ -30,6 +30,7 @@ function makeApp(userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(exportSseRoutes({ database: db, },),);
 }
 
@@ -49,6 +50,7 @@ describe("exportSseRoutes barrel", () => {
     const res = await makeApp("u1",).handle(
       new Request("http://localhost/api/export/status/job-missing",),
     );
+
     expect(res.status,).toBe(404,);
   });
 });

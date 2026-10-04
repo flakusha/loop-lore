@@ -19,6 +19,7 @@ describe("store-schema — chat-view defaults + shape assertions", () => {
         children: [{ id: "x", },],
         visibility: "hidden",
       };
+
       applyChatViewDefaults(store,);
       expect(store.children,).toEqual([{ id: "x", },],);
       expect(store.visibility,).toBe("hidden",);

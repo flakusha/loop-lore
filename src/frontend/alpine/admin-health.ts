@@ -75,6 +75,7 @@ export function healthPanelMethods() {
               const modelsRes = await apiFetch(`/api/v1/admin/providers/${p.name}/models`, {
                 headers: { Accept: "application/json", },
               },);
+
               if (modelsRes.ok) {
                 const modelsData = await modelsRes.json();
                 p.models = modelsData.models || [];
@@ -83,6 +84,7 @@ export function healthPanelMethods() {
               /* keep summary only */
             }
           }
+
           this.healthProviders = providers;
         }
       } catch {
@@ -118,6 +120,7 @@ export function healthPanelMethods() {
         const res = await apiFetch("/api/v1/admin/telemetry/aux?limit=50", {
           headers: { Accept: "application/json", },
         },);
+
         if (res.ok) {
           const data = await res.json();
           this.auxAggregates = data.aggregates || [];
@@ -173,6 +176,7 @@ export function healthPanelMethods() {
           headers: { "Content-Type": "application/json", },
           body: jsonBody(this.nsfwConfig,),
         },);
+
         if (res.ok) {
           showToast("success", t("toasts.nsfwPolicySaved",),);
         } else {

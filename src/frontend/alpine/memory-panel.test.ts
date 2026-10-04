@@ -130,6 +130,7 @@ describe("memoryPanel.createMemory", () => {
       scope: "assistant",
       created_at: "t",
     },);
+
     const c = ctx({
       memoryPanel: {
         ...(memoryPanel.memoryPanel as object),
@@ -138,12 +139,14 @@ describe("memoryPanel.createMemory", () => {
         showCreateForm: true,
       },
     },);
+
     await c.createMemory!();
     expect(fetchCalls[0]!.opts?.method,).toBe("POST",);
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toMatchObject({
       content: "new memory",
       scope: "assistant",
     },);
+
     expect(c.memoryPanel!.assistantMemories[0]!.id,).toBe("m5",);
     expect(c.memoryPanel!.newMemoryContent,).toBe("",);
   });
@@ -172,6 +175,7 @@ describe("memoryPanel.saveEditMemory", () => {
         editMemoryContent: "  updated content  ",
       },
     },);
+
     await c.saveEditMemory!();
     expect(fetchCalls[0]!.url,).toBe("/api/v1/actors/char-1/memories/m1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("PUT",);
@@ -199,6 +203,7 @@ describe("memoryPanel world-tab write guard", () => {
         ],
       },
     },);
+
     c.startEditMemory!(c.memoryPanel!.worldMemories[0]!,);
     expect(c.memoryPanel!.editingMemoryId,).toBeNull();
     expect(c._canWriteActiveTab!(),).toBe(false,);
@@ -212,6 +217,7 @@ describe("memoryPanel world-tab write guard", () => {
         activeTab: "world",
       },
     },);
+
     expect(c._canWriteActiveTab!(),).toBe(true,);
   });
 });
@@ -260,6 +266,7 @@ describe("memoryPanel.toggleMemoryInChat", () => {
         ],
       },
     },);
+
     await c.toggleMemoryInChat!(c.memoryPanel!.characterMemories[1]!,);
     const carry = fetchCalls.find((f,) => f.url.endsWith("/carry",));
     expect(carry,).toBeDefined();
@@ -278,6 +285,7 @@ describe("memoryPanel.toggleMemoryInChat", () => {
         ],
       },
     },);
+
     await c.toggleMemoryInChat!(c.memoryPanel!.characterMemories[0]!,);
     const except = fetchCalls.find((f,) => f.url.endsWith("/carry-except",));
     expect(except,).toBeDefined();
@@ -305,6 +313,7 @@ describe("memoryPanel.toggleMemoryInChat", () => {
         ],
       },
     },);
+
     await c.toggleMemoryInChat!(c.memoryPanel!.characterMemories[0]!,);
     const del = fetchCalls.find((f,) => f.opts?.method === "DELETE");
     expect(del?.url,).toBe("/api/v1/actors/char-1/memories/copy-1",);
@@ -320,6 +329,7 @@ describe("memoryPanel review actions", () => {
         activeTab: "character",
       },
     },);
+
     await c.approveMemory!("m1",);
     expect(fetchCalls[0]!.url,).toBe("/api/v1/actors/char-1/memories/m1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("PUT",);
@@ -341,6 +351,7 @@ describe("memoryPanel review actions", () => {
         busy: true,
       },
     },);
+
     await c.rejectMemory!("m1",);
     expect(fetchCalls,).toEqual([],);
   });
@@ -437,6 +448,7 @@ describe("memoryPanel.deleteMemory", () => {
     fetchHandler = () => {
       throw new Error("network down",);
     };
+
     const c = deleteCtx();
     await c.deleteMemory!("m1",);
     expect(c.memoryPanel!.characterMemories,).toEqual([],);
@@ -495,6 +507,7 @@ describe("memoryPanel.toggleMemoryPin", () => {
     fetchHandler = () => {
       throw new Error("network down",);
     };
+
     const c = pinCtx();
     await c.toggleMemoryPin!("m1",);
     expect(c.memoryPanel!.characterMemories[0]!.pinned,).toBe(false,);
@@ -526,6 +539,7 @@ describe("memoryPanel.startEditMemory allowed path", () => {
         ],
       },
     },);
+
     c.startEditMemory!(c.memoryPanel!.worldMemories[0]!,);
     expect(c.memoryPanel!.editingMemoryId,).toBe("w1",);
     expect(c.memoryPanel!.editMemoryContent,).toBe("lore",);
@@ -558,6 +572,7 @@ describe("memoryPanel.createMemory failure paths", () => {
     fetchHandler = () => {
       throw new Error("network down",);
     };
+
     const c = draftCtx();
     await c.createMemory!();
     expect(c.memoryPanel!.newMemoryContent,).toBe("keep me",);

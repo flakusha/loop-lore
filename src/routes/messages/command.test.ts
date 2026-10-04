@@ -43,6 +43,7 @@ async function setup(): Promise<Setup> {
     user_id: userId,
     owner_id: userId,
   },);
+
   await insertChats(db, "Cmd Chat", userId, { id: chatId, },);
   return { db, chatId, userId, };
 }
@@ -73,6 +74,7 @@ describe("commandActiveChat", () => {
       gm_config: null,
       world_id: null,
     },);
+
     expect(active,).toEqual({ id: "c1", mode: undefined, type: undefined, worldId: undefined, },);
   });
 
@@ -93,6 +95,7 @@ describe("dispatchCommand", () => {
       .where("role", "=", MessageRole.System as never,)
       .orderBy("created_at", "desc",)
       .executeTakeFirst();
+
     expect(row?.content,).toContain("The sky darkens.",);
   });
 

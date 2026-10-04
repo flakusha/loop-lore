@@ -41,15 +41,18 @@ function buildMigrationProvider() {
       const migrationFiles = readdirSync(migrationDir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const f of migrationFiles) {
         const mod = (await import(path.join(migrationDir, f,))) as
           | { default?: Migration }
           | Migration;
+
         const candidate = "default" in mod && mod.default ? mod.default : (mod as Migration);
         const key = f.endsWith(".ts",) ? f.slice(0, -3,) : f;
         migrations[key] = candidate;
       }
+
       return migrations;
     },
   };
@@ -105,6 +108,7 @@ beforeAll(async () => {
   for (const actor of [ALICE, CAROL, DAVE, EVE, FRANK, GRACE, HEIDI,]) {
     await seedActor(db, actor,);
   }
+
   for (const chatId of [GROUP_CHAT, GROUP_CHAT_2,]) {
     await db.insertInto("chats",).values({
       id: chatId,
@@ -140,6 +144,7 @@ function raceDb(plant: () => Promise<void>,): Kysely<DB> {
           }),
         });
       }
+
       const value = Reflect.get(target, prop, receiver,);
       return typeof value === "function" ? value.bind(target,) : value;
     },
@@ -155,6 +160,7 @@ describe("e2e-session group branches", () => {
       chatId: GROUP_CHAT,
       kind: "group",
     },);
+
     expect(a.kind,).toBe("group",);
     expect(a.chatId,).toBe(GROUP_CHAT,);
     expect(a.recipientActorId,).toBeNull();
@@ -167,6 +173,7 @@ describe("e2e-session group branches", () => {
       chatId: GROUP_CHAT,
       kind: "group",
     },);
+
     expect(b.id,).toBe(a.id,);
 
     const reread = await findSession({ database: db, sessionId: a.id, },);
@@ -182,6 +189,7 @@ describe("e2e-session group branches", () => {
       chatId: GROUP_CHAT_2,
       kind: "group",
     },);
+
     expect(await revokeSession({ database: db, sessionId: first.id, },),).toBe(true,);
     const second = await ensureActiveSession({
       database: db,
@@ -190,6 +198,7 @@ describe("e2e-session group branches", () => {
       chatId: GROUP_CHAT_2,
       kind: "group",
     },);
+
     expect(second.id,).not.toBe(first.id,);
     expect(second.revokedAt,).toBeNull();
   });
@@ -201,6 +210,7 @@ describe("e2e-session group branches", () => {
       recipientActorId: FRANK,
       kind: "group",
     },);
+
     expect(row.kind,).toBe("group",);
     expect(row.chatId,).toBeNull();
   });
@@ -220,6 +230,7 @@ describe("e2e-session insert-race recovery", () => {
       senderActorId: CAROL,
       recipientActorId: DAVE,
     },);
+
     expect(raced.id,).toBe("cov-race-pair-rival",);
     expect(raced.senderActorId,).toBe(CAROL,);
   });
@@ -239,6 +250,7 @@ describe("e2e-session insert-race recovery", () => {
       chatId: GROUP_CHAT,
       kind: "group",
     },);
+
     expect(raced.id,).toBe("cov-race-group-rival",);
     expect(raced.chatId,).toBe(GROUP_CHAT,);
   });

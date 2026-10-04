@@ -57,6 +57,7 @@ export async function carryHistory(
       idRemap.set(m.id, parentId,);
       continue;
     }
+
     await database
       .insertInto("messages",)
       .values({
@@ -86,6 +87,7 @@ export async function carryHistory(
         section_id: m.section_id,
       },)
       .execute();
+
     idRemap.set(m.id, newId,);
   }
 }

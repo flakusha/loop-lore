@@ -54,5 +54,6 @@ export function CharacterWorldSetupService(db: Kysely<DB>,): CharacterWorldSetup
     deleteWorldSetup: (actorId, worldId,) => deleteWorldSetup({ thisL: self, actorId, worldId, },),
     resolveCharacterWorldSetup: (actorId, worldId,) => resolveCharacterWorldSetup({ thisL: self, actorId, worldId, },),
   };
+
   return self;
 }

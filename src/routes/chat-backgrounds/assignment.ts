@@ -31,6 +31,7 @@ export function assignmentRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!(await chatAccess(database, chatId, userId, ctx.userRole as string | null,))) {
             return notFound("Chat not found",);
           }
+
           const background = await getChatBackground(database, chatId,);
           return jsonResponse({ data: background, },);
         },
@@ -64,6 +65,7 @@ export function assignmentRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("id",)
             .where("id", "=", backgroundId,)
             .executeTakeFirst();
+
           if (!background) { return notFound("Background not found",); }
 
           await setChatBackground(database, chatId, backgroundId,);
@@ -94,6 +96,7 @@ export function assignmentRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!(await chatAccess(database, chatId, userId, ctx.userRole as string | null,))) {
             return notFound("Chat not found",);
           }
+
           await database.deleteFrom("chat_background_assignments",).where("chat_id", "=", chatId,).execute();
           return jsonResponse({ ok: true, },);
         },

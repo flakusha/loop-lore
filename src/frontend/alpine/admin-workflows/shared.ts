@@ -36,6 +36,7 @@ export async function workflowErrors(res: Response, fallback: string,): Promise<
     const parts = body.error.split("; ",).map((part,) => part.trim()).filter((part,) => part.length > 0);
     if (parts.length > 0) { return parts; }
   }
+
   return [fallback,];
 }
 
@@ -57,5 +58,6 @@ export function readJsonField(text: string, label: string, errors: string[],): u
     errors.push(`${label}: not valid JSON — ${parsed.error.message}`,);
     return undefined;
   }
+
   return parsed.value;
 }

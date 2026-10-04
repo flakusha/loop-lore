@@ -33,6 +33,7 @@ describe("selectWithinBudget", () => {
       mem("b".repeat(400,), 1, 0.5,),
       mem("c".repeat(400,), 5, 0.7,),
     ];
+
     const result = selectWithinBudget(items, { maxTokens: 150, },);
     expect(result.some((m,) => m.content.startsWith("a",)),).toBe(true,);
     expect(result.some((m,) => m.content.startsWith("b",)),).toBe(false,);
@@ -43,6 +44,7 @@ describe("selectWithinBudget", () => {
       mem("pinned memory", 1, 0.3, true,),
       mem("unpinned important", 10, 0.95,),
     ];
+
     const result = selectWithinBudget(items, { maxTokens: 50, respectPins: true, },);
     expect(result.some((m,) => m.pinned),).toBe(true,);
   });

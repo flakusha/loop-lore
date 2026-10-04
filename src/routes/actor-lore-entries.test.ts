@@ -19,6 +19,7 @@ function makeApp(db: Kysely<DB>, userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, }));
   }
+
   return app.use(actorLoreEntriesRoutes({ database: db, config: {} as never, },),);
 }
 
@@ -51,6 +52,7 @@ describe("actorLoreEntriesRoutes", () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/nonexistent/lore-entries",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -62,6 +64,7 @@ describe("actorLoreEntriesRoutes", () => {
         body: JSON.stringify({ content: "Some lore content", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 
@@ -73,6 +76,7 @@ describe("actorLoreEntriesRoutes", () => {
         body: JSON.stringify({ content: "", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 });

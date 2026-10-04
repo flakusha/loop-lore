@@ -92,26 +92,33 @@ const server = Bun.serve({
       if (nextEmbeddings === null) {
         return Response.json({ error: "embedding model not loaded", }, { status: 500, },);
       }
+
       if ("error" in nextEmbeddings) {
         return Response.json(nextEmbeddings, { status: 500, },);
       }
+
       return Response.json({ embeddings: nextEmbeddings, },);
     }
+
     if (pathname === "/v1/embeddings") {
       lastOpenAIBody = await req.json() as { model?: string; input?: string };
       if (nextOpenAIEmbedding === null) {
         return Response.json({ error: "no model loaded", }, { status: 500, },);
       }
+
       return Response.json({ data: [{ embedding: nextOpenAIEmbedding, },], },);
     }
+
     if (pathname === "/rerank") {
       rerankHits += 1;
       lastRerankBody = await req.json() as typeof lastRerankBody;
       if (nextRerank === null) {
         return Response.json({ error: "reranker not loaded", }, { status: 500, },);
       }
+
       return Response.json(nextRerank,);
     }
+
     return new Response("not found", { status: 404, },);
   },
 },);
@@ -138,6 +145,7 @@ afterAll(() => {
   } else {
     process.env.OLLAMA_BASE_URL = ORIGINAL_BASE_URL;
   }
+
   void server.stop(true,);
 },);
 
@@ -237,6 +245,7 @@ describe("rankBySimilarity", () => {
       10,
       0,
     );
+
     expect(matches.map((m: SemanticMatch,) => m.memoryId),).toEqual(["a", "c", "b",],);
     expect(matches[0]?.score,).toBeCloseTo(1, 5,);
     expect(matches[1]?.score,).toBeCloseTo(0.6, 5,);
@@ -253,6 +262,7 @@ describe("rankBySimilarity", () => {
       10,
       0.5,
     );
+
     expect(matches.map((m,) => m.memoryId),).toEqual(["a",],);
   });
 
@@ -277,6 +287,7 @@ describe("rankBySimilarity", () => {
       10,
       0,
     );
+
     expect(matches,).toHaveLength(2,);
     expect(matches[0]?.memoryId,).toBe("full",);
   });
@@ -333,6 +344,7 @@ describe("embedding storage", () => {
       .select(["model", "dimensions",],)
       .where("memory_id", "=", "mem-emb-2",)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.model,).toBe("model-b",);
     expect(rows[0]?.dimensions,).toBe(2,);
@@ -349,6 +361,7 @@ describe("embedding storage", () => {
       .select("model",)
       .where("memory_id", "=", "mem-emb-3",)
       .executeTakeFirst();
+
     expect(row?.model,).toBe("nomic-embed-text",);
   });
 
@@ -453,9 +466,11 @@ describe("semanticRecall", () => {
       ["rerank-2", "red text",],
       ["rerank-3", "green text",],
     ];
+
     for (const [id, content,] of texts) {
       await db.updateTable("actor_memories",).set({ content, },).where("id", "=", id,).execute();
     }
+
     await storeEmbedding(db, "rerank-1", new Float32Array([0.6, 0.8,],), "m",);
     await storeEmbedding(db, "rerank-2", new Float32Array([1, 0,],), "m",);
     await storeEmbedding(db, "rerank-3", new Float32Array([0.8, -0.6,],), "m",);

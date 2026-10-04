@@ -528,6 +528,7 @@ templates:
       "character.yaml",
       "merge: extend\ntemplates:\n  - name: X\n    description: 42\n",
     );
+
     expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(
       /templates\[0\]\.description must be a string/,
     );
@@ -538,6 +539,7 @@ templates:
       "character.yaml",
       "merge: extend\ntemplates:\n  - name: ''\n    description: d\n",
     );
+
     expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(
       /templates\[0\]\.name must be a non-empty string/,
     );
@@ -591,6 +593,7 @@ describe("canonical merge semantics", () => {
       systemPrompts: { chat: "base", gm: "base-gm", },
       chatFormats: {},
     };
+
     const override: Partial<LlmTemplateConfig> = {
       systemPrompts: { chat: "override", custom: "new", },
     };
@@ -608,6 +611,7 @@ describe("canonical merge semantics", () => {
       systemPrompts: { chat: "base", gm: "base-gm", },
       chatFormats: {},
     };
+
     const override: Partial<LlmTemplateConfig> = {
       systemPrompts: { chat: "only", },
     };
@@ -632,6 +636,7 @@ describe("canonical merge semantics", () => {
       },
       modelMatching: [],
     };
+
     const override: Partial<SdTemplateConfig> = {
       profiles: {
         shared: {
@@ -654,6 +659,7 @@ describe("canonical merge semantics", () => {
       merge: "extend",
       workflows: { w: { id: "w", name: "base", category: "cat", backend: "comfy", description: "d", }, },
     };
+
     const override: Partial<ImageEditTemplateConfig> = {
       workflows: { w: { id: "w", name: "override", category: "cat", backend: "comfy", description: "d", }, },
     };
@@ -667,6 +673,7 @@ describe("canonical merge semantics", () => {
       merge: "extend",
       templates: [{ name: "Shared", description: "d", system_prompt: "base", },],
     };
+
     const override: Partial<CharacterTemplateConfig> = {
       templates: [
         { name: "Shared", description: "d", system_prompt: "override", },
@@ -685,6 +692,7 @@ describe("canonical merge semantics", () => {
       merge: "extend",
       workflows: { w: { id: "w", name: "base", category: "cat", backend: "comfy", description: "d", }, },
     };
+
     const override: Partial<ImageEditTemplateConfig> = {
       workflows: {
         w: { id: "w", name: "override", category: "cat", backend: "comfy", description: "d", },
@@ -711,6 +719,7 @@ describe("canonical merge semantics", () => {
       merge: "extend",
       templates: [{ name: "Shared", description: "d", system_prompt: "base", },],
     };
+
     const override: Partial<CharacterTemplateConfig> = {
       templates: [{ name: "Shared", description: "d", system_prompt: "override", },],
     };

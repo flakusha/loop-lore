@@ -182,6 +182,7 @@ export async function spendStoryPoints(
         .where("actor_id", "=", params.actorId,)
         .where("world_id", "is", worldKey,)
         .executeTakeFirst();
+
       // Throwing rolls the transaction back, so the seeded zero row is
       // undone along with the failed debit.
       throw new InsufficientStoryPointsError(
@@ -236,6 +237,7 @@ export async function setStoryPointCap(
         lower(hex(randomblob(16))), ${actorId}, ${worldKey}, 0, 0, 0, ${cap}, datetime('now'), datetime('now')
       )
     `.execute(db,);
+
     return;
   }
 

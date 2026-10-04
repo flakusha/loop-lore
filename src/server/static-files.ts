@@ -21,6 +21,7 @@ function walkDirectorySync(dir: string,): string[] {
       files.push(entry.name,);
     }
   }
+
   return files;
 }
 
@@ -111,6 +112,7 @@ function respondWithFile(
   if (variant) {
     headers["Content-Encoding"] = variant.encoding;
   }
+
   return new Response(content, { headers, },);
 }
 
@@ -154,6 +156,7 @@ export function handleDocsRequest(
   if (fullPath !== DOCS_PATH && !fullPath.startsWith(docsPathWithSlash,)) {
     return new Response("Documentation not found", { status: 404, },);
   }
+
   if (existsSync(fullPath,)) {
     const acceptEncoding = request.headers.get("accept-encoding",) ?? "";
     const ifNoneMatch = request.headers.get("if-none-match",);
@@ -192,6 +195,7 @@ export function createNonApiHandler(
       if (url.pathname.startsWith("/views/",)) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       if (!isValidHtml(fullPath,)) { return new Response("Not found", { status: 404, },); }
     }
 

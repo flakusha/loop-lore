@@ -57,6 +57,7 @@ export async function chatDetailHandler(db: Kysely<DB>, ctx: AnalyticsCtx,): Pro
     .where("chat_id", "=", telemetryChatId,)
     .where("user_id", "=", telemetryUserId,)
     .where("event_type", "=", "generation.completed",);
+
   if (fromIso !== null) { generations = generations.where("created_at", ">=", fromIso,); }
   if (toIso !== null) { generations = generations.where("created_at", "<", toIso,); }
   const generationStats = await generations.select([
@@ -66,6 +67,7 @@ export async function chatDetailHandler(db: Kysely<DB>, ctx: AnalyticsCtx,): Pro
     ),
     sql<number>`coalesce(avg(CAST(json_extract(event_data, '$.latencyMs') AS INTEGER)), 0)`.as("avgLatencyMs",),
   ],).executeTakeFirst();
+
   const totalTokens = generationStats?.generationTokens ?? messageStats?.totalTokens ?? 0;
 
   return jsonResponse({

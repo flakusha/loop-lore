@@ -31,12 +31,14 @@ export async function loadUserPromptPreferences(
     responseLengthPreset: null,
     customInstructions: null,
   };
+
   if (!userId) { return empty; }
   const userRow = await db
     .selectFrom("users",)
     .select("settings",)
     .where("id", "=", userId,)
     .executeTakeFirst();
+
   const userSettings = parseJsonOr<
     {
       outputStyle?: { preset?: OutputStylePreset };
@@ -44,6 +46,7 @@ export async function loadUserPromptPreferences(
       customInstructions?: string | null;
     } | null
   >(userRow?.settings ?? null, null,);
+
   const preset = userSettings?.responseLength?.preset;
   return {
     outputStylePreset: userSettings?.outputStyle?.preset ?? null,

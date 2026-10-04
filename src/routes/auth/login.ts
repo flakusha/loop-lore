@@ -82,9 +82,11 @@ async function handleLogin(
       "Invalid username or password.",
     );
   }
+
   if (user.status === UserStatus.Disabled || user.status === UserStatus.Deactivated) {
     return errorResponse(request, HttpStatus.Forbidden, "auth.accountLocked", t, "Account is disabled.",);
   }
+
   if (!user.password_hash) {
     return errorResponse(
       request,

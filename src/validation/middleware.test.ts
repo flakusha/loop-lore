@@ -293,6 +293,7 @@ describe("onValidationError", () => {
         body: JSON.stringify({ name: "Alice", age: 25, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { name: string; age: number };
     expect(body.name,).toBe("Alice",);
@@ -308,6 +309,7 @@ describe("onValidationError", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(422,);
     const body = (await res.json()) as { error: string; code: string; details: { field: string }[] };
     expect(body.error,).toBe("Validation failed",);
@@ -326,6 +328,7 @@ describe("onValidationError", () => {
         body: JSON.stringify({ name: "", age: -5, },),
       },),
     );
+
     expect(res.status,).toBe(422,);
     const body = (await res.json()) as { details: { field: string }[] };
     expect(body.details.length,).toBeGreaterThanOrEqual(2,);
@@ -349,6 +352,7 @@ describe("onValidationError", () => {
       .get("/boom", () => {
         throw new Error(`SQLITE_CANTOPEN: unable to open ${SECRET_PATH}`,);
       },);
+
     const res = await app.handle(new Request("http://localhost/boom",),);
     expect(res.status,).toBe(500,);
     const body = (await res.json()) as { error: string; code: string };

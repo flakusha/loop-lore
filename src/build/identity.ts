@@ -99,6 +99,7 @@ function readGitHead(projectRoot: string,): string {
       encoding: "utf8",
       timeout: 5_000,
     },);
+
     if (res.status !== 0) { return ""; }
     const head = (res.stdout ?? "").trim();
     return /^[0-9a-f]{4,}$/i.test(head,) ? head : "";
@@ -135,12 +136,15 @@ function stableJson(value: unknown,): string {
     for (const k of Object.keys(node as object,).sort()) {
       out[k] = walk((node as Record<string, unknown>)[k],);
     }
+
     return out;
   };
+
   const result = safeJsonStringify(walk(value,),);
   if (!result.ok) {
     throw new Error(`stableJson failed: ${result.error.message}`,);
   }
+
   return result.value;
 }
 
@@ -163,6 +167,7 @@ async function walkFiles(
   } catch {
     return out;
   }
+
   for (const entry of entries) {
     const full = path.join(root, entry.name,);
     if (entry.isDirectory()) {
@@ -172,6 +177,7 @@ async function walkFiles(
       out.push(full,);
     }
   }
+
   out.sort();
   return out;
 }
@@ -197,9 +203,11 @@ async function hashSourceTree(projectRoot: string,): Promise<string> {
     } catch {
       continue;
     }
+
     const inner = sha256Hex(bytes,);
     hasher.update(`${rel}\0${inner}\0`,);
   }
+
   return hasher.digest("hex",);
 }
 
@@ -220,6 +228,7 @@ function hashLockfiles(projectRoot: string,): string {
       // skip unreadable file
     }
   }
+
   if (parts.length === 0) { return ""; }
   return sha256Hex(parts.join("\n",),);
 }
@@ -236,6 +245,7 @@ function buildManifest(projectRoot: string,): BuildManifest {
   const profile: BuildManifest["buildProfile"] = process.env.NODE_ENV === "production"
     ? "production"
     : "development";
+
   const bunVersion = (globalThis as { Bun?: { version?: string } }).Bun?.version ?? "";
   return {
     bunVersion,
@@ -267,6 +277,7 @@ export async function computeBuildIdentity(
   const projectRoot = path.resolve(
     options.projectRoot ?? PROJECT_ROOT_FROM_META ?? process.cwd(),
   );
+
   const cached = memo.get(projectRoot,);
   if (cached && !options.force) { return cached; }
 

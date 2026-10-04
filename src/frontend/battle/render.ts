@@ -35,6 +35,7 @@ export function renderHeader(battle: BattleView,): HTMLElement {
   h.innerHTML = `<strong>Round ${battle.round}</strong> <span class="battle-panel-status">${
     escapeHtml(battle.status,)
   }</span>`;
+
   return h;
 }
 
@@ -65,6 +66,7 @@ export function renderRoster(
     for (const cls of classes) {
       if (cls) { classNameParts.push(cls,); }
     }
+
     tile.className = classNameParts.join(" ",);
     tile.dataset.battleId = c.id;
     tile.setAttribute("role", "listitem",);
@@ -86,6 +88,7 @@ export function renderRoster(
     list.append(tile,);
     i++;
   }
+
   return list;
 }
 
@@ -117,5 +120,6 @@ export function renderActions(
 
     bar.append(btn,);
   }
+
   return bar;
 }

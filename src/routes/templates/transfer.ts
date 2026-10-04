@@ -56,6 +56,7 @@ export function templateTransferRoutes(
         .where("owner_id", "=", userId,)
         .orderBy("name", "asc",)
         .execute();
+
       const templates = rows
         .filter((row,) => !modality || row.modality === modality)
         .map((row,) => ({
@@ -66,6 +67,7 @@ export function templateTransferRoutes(
           detail_level: row.detail_level,
           payload: jsonParseOr<unknown>(row.payload, {},),
         }));
+
       const pack: TemplatePack = { version: 1, exportedBy: userId, templates, };
       return jsonResponse(pack,);
     }, {
@@ -88,6 +90,7 @@ export function templateTransferRoutes(
           skipped += 1;
         }
       }
+
       return jsonResponse({ imported, skipped, },);
     }, {
       body: TemplateImportBody,

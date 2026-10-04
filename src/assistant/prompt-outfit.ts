@@ -28,12 +28,14 @@ async function resolveCurrentOutfit(
       worldId: chat.world_id ?? undefined,
       locationId: chat.current_location_id ?? undefined,
     },);
+
     if (!resolved.outfitId) { return undefined; }
     const item = await db
       .selectFrom("wardrobe_items",)
       .select(["name",],)
       .where("id", "=", resolved.outfitId,)
       .executeTakeFirst();
+
     if (!item) { return undefined; }
     return { name: item.name, source: resolved.source, };
   } catch (error) {

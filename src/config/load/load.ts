@@ -97,6 +97,7 @@ export function loadConfig(cwd?: string,): Config {
     path.join(directory, "env.toml",),
     path.join(directory, "configs", "env.toml",),
   ];
+
   if (mainRoot && mainRoot !== directory) {
     envConfigCandidates.push(
       path.join(mainRoot, "env.yaml",),
@@ -105,6 +106,7 @@ export function loadConfig(cwd?: string,): Config {
       path.join(mainRoot, "configs", "env.toml",),
     );
   }
+
   const envConfigPath = firstExisting(envConfigCandidates,);
   if (envConfigPath) {
     const ext = envConfigPath.split(".",).pop() as string;

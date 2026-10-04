@@ -54,6 +54,7 @@ export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: Ou
         .where("chat_id", "=", chatId,)
         .where("actor_id", "=", actorId,)
         .executeTakeFirst();
+
       return jsonResponse({ outfit_id: row?.outfit_id ?? null, updated_at: row?.updated_at ?? null, },);
     }, {
       params: t.Object({ id: t.String(), actorId: t.String(), },),
@@ -84,15 +85,18 @@ export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: Ou
         .select(["actor_type",],)
         .where("id", "=", actorId,)
         .executeTakeFirst();
+
       const initiator = targetActor?.actor_type === "user"
         ? OutfitChangeInitiator.Player
         : OutfitChangeInitiator.Npc;
+
       const currentOverride = await database
         .selectFrom("chat_wardrobe_overrides",)
         .select(["outfit_id",],)
         .where("chat_id", "=", chatId,)
         .where("actor_id", "=", actorId,)
         .executeTakeFirst();
+
       const verdict = await requestOutfitChange({
         actorId,
         chatId,
@@ -100,6 +104,7 @@ export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: Ou
         toOutfitId: outfitId,
         initiator,
       }, outfitChangeGate,);
+
       if (!verdict.allowed) {
         return jsonError({
           message: verdict.reason ?? "Outfit change refused",
@@ -176,9 +181,11 @@ async function requireChatActorAccess(
   if (!access.ok) {
     return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, },);
   }
+
   if (!(actorId && await checkActorOwnership(opts.database, actorId, userId, ctx.userRole ?? null,))) {
     return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
   }
+
   return { chatId, actorId, userId, };
 }
 
@@ -201,6 +208,7 @@ async function requireWorldActorAccess(
   if (!(await checkActorOwnership(opts.database, actorId, userId, ctx.userRole ?? null,))) {
     return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
   }
+
   return { worldId, actorId, };
 }
 

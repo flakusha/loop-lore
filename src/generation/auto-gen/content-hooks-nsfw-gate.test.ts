@@ -73,6 +73,7 @@ async function seedUser(
       age_gate_accepted_at: opts.ageGateAcceptedAt ?? null,
     },)
     .execute();
+
   return userId;
 }
 
@@ -101,6 +102,7 @@ async function createAiActor(
       content_rating,
     },)
     .execute();
+
   return actorId;
 }
 
@@ -118,6 +120,7 @@ async function createChat(db: Kysely<DB>, ownerId: string,): Promise<string> {
       created_by: ownerId,
     },)
     .execute();
+
   return chatId;
 }
 
@@ -153,6 +156,7 @@ describe("runContentHooks NSFW age-gate precheck", () => {
       birthDate: null,
       ageGateAcceptedAt: null,
     },);
+
     const actorId = await createAiActor(db, ContentRating.Sfw,);
     const chatId = await createChat(db, noGateUserId,);
 
@@ -287,6 +291,7 @@ describe("runContentHooks NSFW age-gate precheck", () => {
         userId,
         content: "x",
       },);
+
       // Adult + age-gated user → all NSFW tiers pass through.
       expect(result.allowed,).toBe(true,);
     }
@@ -306,6 +311,7 @@ describe("runContentHooks NSFW age-gate precheck", () => {
       userId,
       content: "NSFW content",
     },);
+
     expect(result.allowed,).toBe(false,);
     expect(result.dominantEmotion,).toBeUndefined();
     expect(result.moodShiftDelta,).toBeUndefined();
@@ -316,6 +322,7 @@ describe("runContentHooks NSFW age-gate precheck", () => {
       birthDate: "2015-01-01",
       ageGateAcceptedAt: "2025-01-01T00:00:00Z",
     },);
+
     const minorActorId = uid();
     await db
       .insertInto("actors",)
@@ -333,12 +340,14 @@ describe("runContentHooks NSFW age-gate precheck", () => {
         content_rating: ContentRating.Sfw,
       },)
       .execute();
+
     const actorId = await createAiActor(db, ContentRating.NsfwMild,);
     const chatId = await createChat(db, userId,);
     await db
       .insertInto("chat_participants",)
       .values({ chat_id: chatId, actor_id: minorActorId, },)
       .execute();
+
     await recordNsfwConsent({ database: db, chatId, userId, action: "given", },);
     const result = await runContentHooks({
       database: db,
@@ -348,6 +357,7 @@ describe("runContentHooks NSFW age-gate precheck", () => {
       userId,
       content: "NSFW content",
     },);
+
     // Requester clears every check (adult, gated, consent given) — the
     // underage co-participant alone must block generation.
     expect(result.allowed,).toBe(false,);

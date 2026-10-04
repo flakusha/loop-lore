@@ -80,6 +80,7 @@ export function adminImportWizard(this: ImportWizardHost,) {
         this.importWizard.error = "File exceeds 1MB limit";
         return;
       }
+
       this.importWizard.fileName = file.name;
       const lower = file.name.toLowerCase();
       if (lower.endsWith(".toml",)) { this.importWizard.format = "toml"; }
@@ -88,6 +89,7 @@ export function adminImportWizard(this: ImportWizardHost,) {
         this.importWizard.error = "Unknown format — use .yaml, .yml, or .toml";
         return;
       }
+
       try {
         const content = await file.text();
         const preview = this.buildImportPreview(content,);
@@ -112,16 +114,19 @@ export function adminImportWizard(this: ImportWizardHost,) {
         const attempt = jsonParseOr<unknown>(content, undefined,);
         parsed = attempt === undefined ? this.parseSimpleToml(content,) : attempt;
       }
+
       const root = (parsed as { system_config?: Record<string, unknown> } | null)?.system_config;
       if (typeof root !== "object" || root === null) { return []; }
       const existing = new Set(this.systemConfig.map((c,) => c.key),);
       const secretRe =
         /secret|password|token|api.?key|private.?key|mesh.?psk|encryption.?key|signed.?url|db\.url|database.?url/iu;
+
       const entries: ImportPreviewRow[] = [];
       for (const [k, v,] of Object.entries(root,)) {
         if (typeof v !== "string") { continue; }
         entries.push({ key: k, value: v, isSecret: secretRe.test(k,), willOverwrite: existing.has(k,), },);
       }
+
       return entries;
     },
     /**
@@ -140,6 +145,7 @@ export function adminImportWizard(this: ImportWizardHost,) {
           inBlock = true;
           continue;
         }
+
         if (inBlock && /^\S/.test(line,)) { break; }
         const m = /^  ([A-Za-z0-9._-]+):\s*(.*)$/.exec(line,);
         if (m) {
@@ -147,9 +153,11 @@ export function adminImportWizard(this: ImportWizardHost,) {
           if ((v.startsWith('"',) && v.endsWith('"',)) || (v.startsWith("'",) && v.endsWith("'",))) {
             v = v.slice(1, -1,);
           }
+
           out[m[1]!] = v;
         }
       }
+
       return { system_config: out, };
     },
     /**
@@ -168,11 +176,14 @@ export function adminImportWizard(this: ImportWizardHost,) {
           inBlock = true;
           continue;
         }
+
         if (inBlock && line.startsWith("[",)) { break; }
         const m = /^"([^"]+)"\s*=\s*"((?:[^"\\]|\\.)*)"\s*$/.exec(line,) ??
           /^([A-Za-z0-9._-]+)\s*=\s*"((?:[^"\\]|\\.)*)"\s*$/.exec(line,);
+
         if (m) { out[m[1]!] = m[2]!.replace(/\\"/g, '"',); }
       }
+
       return { system_config: out, };
     },
     /**
@@ -192,17 +203,20 @@ export function adminImportWizard(this: ImportWizardHost,) {
         const content = this.importWizard.format === "yaml"
           ? this.stringifySimpleYaml(this.importWizard.preview,)
           : this.stringifySimpleToml(this.importWizard.preview,);
+
         const res = await apiFetch("/api/v1/admin/system-config/import", {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ format: this.importWizard.format, content, },),
         },);
+
         if (res.ok) {
           const body = await res.json() as { imported: number; changed: number; skipped: number; conflicts: number };
           showToast(
             "success",
             `Imported ${body.imported}, changed ${body.changed}, skipped ${body.skipped}, conflicts ${body.conflicts}`,
           );
+
           this.importWizard.open = false;
           await this.loadSystemConfig();
         } else {
@@ -224,6 +238,7 @@ export function adminImportWizard(this: ImportWizardHost,) {
         const v = safeJsonStringify(value,);
         lines.push(`  ${key}: ${v.ok ? v.value : '""'}`,);
       }
+
       return lines.join("\n",) + "\n";
     },
     /**
@@ -238,6 +253,7 @@ export function adminImportWizard(this: ImportWizardHost,) {
         const v = safeJsonStringify(value,);
         lines.push(`${k.ok ? k.value : '""'} = ${v.ok ? v.value : '""'}`,);
       }
+
       return lines.join("\n",) + "\n";
     },
   };

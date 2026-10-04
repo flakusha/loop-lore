@@ -23,6 +23,7 @@ describe("body-systems/heat/rowToHeatCycle (real logic)", () => {
       created_at: "2026-01-01",
       updated_at: "2026-01-02",
     };
+
     const state = rowToHeatCycle(mockRow,);
     expect(state.id,).toBe("h1",);
     expect(state.actorId,).toBe("a1",);
@@ -32,6 +33,7 @@ describe("body-systems/heat/rowToHeatCycle (real logic)", () => {
     expect(state.daysUntilNextHeat,).toBe(14,);
     expect(state.createdAt,).toBe("2026-01-01",);
   });
+
   it("falls back to empty effects when effects is empty string", () => {
     const row = {
       id: "h2",
@@ -44,6 +46,7 @@ describe("body-systems/heat/rowToHeatCycle (real logic)", () => {
       created_at: "2026-01-01",
       updated_at: "2026-01-02",
     };
+
     const s = rowToHeatCycle(row,);
     expect(s.id,).toBe("h2",);
   });
@@ -177,6 +180,7 @@ describe("body-systems/heat/getHeatEffects", () => {
       },)
       .where("actor_id", "=", "actor-1",)
       .execute();
+
     const effects = await getHeatEffects(db, "actor-1",);
     expect(effects.arousalMultiplier,).toBe(3,);
     expect(effects.fertilityBoost,).toBe(2,);
@@ -197,6 +201,7 @@ describe("body-systems/heat/rowToHeatCycle — corrupt JSON", () => {
       created_at: "2026-01-01",
       updated_at: "2026-01-02",
     },);
+
     expect(state.effects as unknown as Record<string, unknown>,).toEqual({},);
   });
 });

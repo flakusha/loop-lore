@@ -29,6 +29,7 @@ export async function importAvailability(
   try {
     const existing = await db.selectFrom("character_availability",).where("actor_id", "=", actorId,).select("id",)
       .executeTakeFirst();
+
     const now = new Date().toISOString();
     if (existing) {
       await db.updateTable("character_availability",).set({
@@ -52,6 +53,7 @@ export async function importAvailability(
         updated_at: now,
       },).execute();
     }
+
     result.availabilityImported = true;
   } catch (error: unknown) {
     result.errors.push(`Failed to import availability: ${errMsg(error,)}`,);

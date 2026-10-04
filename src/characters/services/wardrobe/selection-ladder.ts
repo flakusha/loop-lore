@@ -87,6 +87,7 @@ export function runOutfitLadder(
     const hit = emotion
       ? pickOne(byEmotion(defaultPool, emotion,),) ?? pickOne(byNeutral(defaultPool,),)
       : pickOne(byNeutral(defaultPool,),) ?? pickOne(defaultPool,);
+
     if (hit) { return hit; }
   }
 
@@ -95,6 +96,7 @@ export function runOutfitLadder(
   const baseHit = emotion
     ? pickOne(byEmotion(basePool, emotion,),) ?? pickOne(byNeutral(basePool,),)
     : pickOne(byNeutral(basePool,),);
+
   if (baseHit) { return baseHit; }
 
   return null;

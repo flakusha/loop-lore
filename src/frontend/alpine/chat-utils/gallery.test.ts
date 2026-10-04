@@ -20,6 +20,7 @@ describe("getMediaStyle", () => {
       { type: "image", width: 1600, height: 400, },
       1,
     );
+
     expect(style.width,).toBe("100%",);
     expect(style.maxHeight,).toBe("400px",);
   });
@@ -29,6 +30,7 @@ describe("getMediaStyle", () => {
       { type: "image", width: 200, height: 800, },
       1,
     );
+
     expect(style.width,).toBe("40%",);
     expect(style.float,).toBe("right",);
   });
@@ -38,6 +40,7 @@ describe("getMediaStyle", () => {
       { type: "image", width: 800, height: 600, },
       1,
     );
+
     expect(style.width,).toBe("50%",);
     expect(style.float,).toBe("left",);
   });
@@ -47,6 +50,7 @@ describe("getMediaStyle", () => {
       { type: "image", width: 800, height: 600, },
       2,
     );
+
     expect(style.width,).toBe("calc(50% - 6px)",);
     expect(style.aspectRatio,).toBe("1",);
   });
@@ -56,6 +60,7 @@ describe("getMediaStyle", () => {
       { type: "image", width: 800, height: 600, },
       5,
     );
+
     expect(style.width,).toBe("calc(33.33% - 8px)",);
   });
 
@@ -78,6 +83,7 @@ describe("openAssetPreview", () => {
       filename: "hero.png",
       mime_type: "image/png",
     },);
+
     expect(c.previewMediaAsset,).not.toBeNull();
     expect(c.previewMediaAsset.id,).toBe("asset-1",);
     expect(c.previewMediaAsset.url,).toBe("/api/v1/assets/asset-1/raw",);
@@ -90,6 +96,7 @@ describe("openAssetPreview", () => {
       id: "asset-2",
       alt_text: "A scenic view",
     },);
+
     expect(c.previewMediaAsset.caption,).toBe("A scenic view",);
   });
 
@@ -139,6 +146,7 @@ describe("uploadChatAssets", () => {
         this.galleryAssets = [{ id: "fresh", },];
       },
     };
+
     return { ctx, toasts, };
   }
 
@@ -148,6 +156,7 @@ describe("uploadChatAssets", () => {
       files: names.map((n,) => new File(["data",], n, { type: "image/png", },)),
       value: "dirty",
     };
+
     return { event: { target: input, } as unknown as Event, input, };
   }
 
@@ -167,14 +176,17 @@ describe("uploadChatAssets", () => {
       return handler(url, init,);
     };
   }
+
   afterEach(() => {
     (globalThis as any).apiFetch = realApiFetch;
     calls = [];
   },);
+
   /** */
   function uploadCalls() {
     return calls.filter((c,) => c.url === "/api/v1/assets" && (c.opts as { method?: string }).method === "POST");
   }
+
   /** */
   function linkCalls() {
     return calls.filter((c,) => c.url.endsWith("/links",));
@@ -188,8 +200,10 @@ describe("uploadChatAssets", () => {
         n += 1;
         return Response.json({ id: `asset-${n}`, }, { status: 200, },);
       }
+
       return Response.json({ ok: true, }, { status: 200, },);
     },);
+
     const { event, input, } = makeFileEvent(["a.png", "b.png", "c.png",],);
     await (chatUtilsGallery as any).uploadChatAssets.call(ctx, event,);
     expect(uploadCalls().length,).toBe(3,);
@@ -197,6 +211,7 @@ describe("uploadChatAssets", () => {
     for (const c of uploadCalls()) {
       expect(c.opts.body instanceof FormData,).toBe(true,);
     }
+
     expect(uploadCalls().map((c,) => fileNameOf(c.opts,)).sort(),).toEqual(["a.png", "b.png", "c.png",],);
     expect(toasts.filter((t,) => t.type === "success").length,).toBe(3,);
     expect(input.value,).toBe("",);
@@ -211,11 +226,14 @@ describe("uploadChatAssets", () => {
         if (fileNameOf(opts,) === "b.png") {
           return Response.json({ error: "boom", }, { status: 500, },);
         }
+
         n += 1;
         return Response.json({ id: `asset-${n}`, }, { status: 200, },);
       }
+
       return Response.json({ ok: true, }, { status: 200, },);
     },);
+
     const { event, } = makeFileEvent(["a.png", "b.png", "c.png",],);
     await (chatUtilsGallery as any).uploadChatAssets.call(ctx, event,);
     // All three attempts still fire; only the two successes link.
@@ -238,8 +256,10 @@ describe("uploadChatAssets", () => {
           resolvers.push(() => resolve(Response.json({ id, }, { status: 200, },),));
         },);
       }
+
       return Response.json({ ok: true, }, { status: 200, },);
     },);
+
     const { event, } = makeFileEvent(["a.png", "b.png", "c.png",],);
     const pending = (chatUtilsGallery as any).uploadChatAssets.call(ctx, event,);
     // The map callbacks run synchronously to their first await, so every
@@ -263,6 +283,7 @@ describe("loadGalleryAssets / loadMoreGalleryAssets / deletePreviewAsset", () =>
       galleryTotal: 0,
       previewMediaAsset: null as any,
     };
+
     ctx.loadGalleryAssets = (chatUtilsGallery as any).loadGalleryAssets.bind(ctx,);
     return ctx;
   }
@@ -298,6 +319,7 @@ describe("loadGalleryAssets / loadMoreGalleryAssets / deletePreviewAsset", () =>
       called = true;
       return Response.json({},);
     };
+
     await (chatUtilsGallery as any).loadGalleryAssets.call(ctx,);
     await (chatUtilsGallery as any).loadMoreGalleryAssets.call(ctx,);
     expect(called,).toBe(false,);
@@ -307,6 +329,7 @@ describe("loadGalleryAssets / loadMoreGalleryAssets / deletePreviewAsset", () =>
     const ctx: any = { ...makeGalleryCtx(), galleryAssets: [{ id: "a", },], galleryTotal: 3, };
     (globalThis as any).apiFetch = async () =>
       Response.json({ data: [{ id: "a", }, { id: "b", },], pagination: { total: 3, }, },);
+
     await (chatUtilsGallery as any).loadMoreGalleryAssets.call(ctx,);
     expect(ctx.galleryAssets,).toEqual([{ id: "a", }, { id: "b", },],);
     expect(ctx.galleryPage,).toBe(2,);
@@ -319,6 +342,7 @@ describe("loadGalleryAssets / loadMoreGalleryAssets / deletePreviewAsset", () =>
       called = true;
       return Response.json({},);
     };
+
     await (chatUtilsGallery as any).loadMoreGalleryAssets.call(ctx,);
     expect(called,).toBe(false,);
     expect(ctx.galleryPage,).toBe(1,);
@@ -356,6 +380,7 @@ describe("openMediaPreview", () => {
         opened.push(args,);
       },
     };
+
     (chatUtilsGallery as any).openMediaPreview({ type: "image", url: "https://x/y.png", },);
     expect(opened,).toEqual([["https://x/y.png", "_blank", "noopener,noreferrer",],],);
   });
@@ -367,6 +392,7 @@ describe("openMediaPreview", () => {
         opened.push(args,);
       },
     };
+
     (chatUtilsGallery as any).openMediaPreview({ type: "video", url: "https://x/v.mp4", },);
     expect(opened,).toEqual([],);
   });
@@ -415,6 +441,7 @@ describe("openAssetPreview — fallbacks", () => {
       width: 5,
       height: 5,
     },);
+
     const mirror = (globalThis as any).__previewAsset;
     expect(mirror,).not.toBeNull();
     expect(mirror.id,).toBe("a4",);
@@ -477,6 +504,7 @@ describe("gallery network edges", () => {
     (globalThis as any).apiFetch = async () => {
       throw new Error("network down",);
     };
+
     await (chatUtilsGallery as any).loadGalleryAssets.call(c,);
     expect(c.galleryAssets,).toEqual([],);
     expect(c.galleryTotal,).toBe(0,);
@@ -503,6 +531,7 @@ describe("gallery network edges", () => {
     (globalThis as any).apiFetch = async () => {
       throw new Error("network down",);
     };
+
     await (chatUtilsGallery as any).loadMoreGalleryAssets.call(c,);
     expect(c.galleryAssets,).toEqual([{ id: "a", },],);
     expect(c.galleryPage,).toBe(1,);
@@ -533,6 +562,7 @@ describe("uploadChatAssets — edges", () => {
         this.galleryReloads += 1;
       },
     };
+
     return { ctx, toasts, };
   }
 
@@ -542,6 +572,7 @@ describe("uploadChatAssets — edges", () => {
       files: names.map((n,) => new File(["data",], n, { type: "image/png", },)),
       value: "dirty",
     };
+
     return { event: { target: input, } as unknown as Event, input, };
   }
 
@@ -580,6 +611,7 @@ describe("uploadChatAssets — edges", () => {
       if (url === "/api/v1/assets") { return Response.json({ id: "a1", }, { status: 200, },); }
       return Response.json({ error: "link down", }, { status: 500, },);
     },);
+
     const { event, } = makeFileEvent(["a.png",],);
     await (chatUtilsGallery as any).uploadChatAssets.call(ctx, event,);
     expect(calls.filter((c,) => c.url === "/api/v1/assets").length,).toBe(1,);
@@ -593,6 +625,7 @@ describe("uploadChatAssets — edges", () => {
     installApiFetch(() => {
       throw new Error("network down",);
     },);
+
     const { event, } = makeFileEvent(["a.png",],);
     await (chatUtilsGallery as any).uploadChatAssets.call(ctx, event,);
     expect(toasts.length,).toBe(1,);
@@ -616,6 +649,7 @@ describe("loadCharacterInfo", () => {
       called = true;
       return Response.json({},);
     };
+
     await (chatUtilsGallery as any).loadCharacterInfo.call(ctx,);
     expect(called,).toBe(false,);
   });
@@ -626,6 +660,7 @@ describe("loadCharacterInfo", () => {
       if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "char-9", },); }
       return Response.json({ id: "char-9", name: "Aria", },);
     };
+
     await (chatUtilsGallery as any).loadCharacterInfo.call(ctx,);
     expect(ctx.currentCharacter,).toEqual({ id: "char-9", name: "Aria", },);
   });
@@ -637,6 +672,7 @@ describe("loadCharacterInfo", () => {
       urls.push(url,);
       return Response.json({ id: "chat-1", },);
     };
+
     await (chatUtilsGallery as any).loadCharacterInfo.call(ctx,);
     expect(urls,).toEqual(["/api/v1/chats/chat-1",],);
     expect(ctx.currentCharacter,).toBeNull();
@@ -655,6 +691,7 @@ describe("loadCharacterInfo", () => {
       if (url === "/api/v1/chats/chat-1") { return Response.json({ character_id: "c9", },); }
       return Response.json({ error: "x", }, { status: 500, },);
     };
+
     await (chatUtilsGallery as any).loadCharacterInfo.call(ctx,);
     expect(ctx.currentCharacter,).toBeNull();
   });
@@ -664,6 +701,7 @@ describe("loadCharacterInfo", () => {
     (globalThis as any).apiFetch = async () => {
       throw new Error("down",);
     };
+
     await (chatUtilsGallery as any).loadCharacterInfo.call(ctx,);
     expect(ctx.currentCharacter,).toBeNull();
   });

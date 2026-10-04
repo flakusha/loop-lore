@@ -27,6 +27,7 @@ function getManager(): ActivityManager | undefined {
       return mgr as ActivityManager;
     }
   }
+
   return undefined;
 }
 

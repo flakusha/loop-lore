@@ -38,6 +38,7 @@ describe("GET /api/plugins", () => {
       origin: "core",
       directory: "/tmp",
     },);
+
     registry.setEnabled("test-plugin", true,);
   },);
 
@@ -74,6 +75,7 @@ describe("POST /api/plugins/:name/enable", () => {
       origin: "core",
       directory: "/tmp",
     },);
+
     registry.setEnabled("disable-me", false,);
   },);
 
@@ -87,6 +89,7 @@ describe("POST /api/plugins/:name/enable", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/disable-me/enable", { method: "POST", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -95,6 +98,7 @@ describe("POST /api/plugins/:name/enable", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/disable-me/enable", { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
     expect(registry.isEnabled("disable-me",),).toBe(true,);
   });
@@ -104,6 +108,7 @@ describe("POST /api/plugins/:name/enable", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/disable-me/enable", { method: "POST", },),
     );
+
     expect(res.status,).toBe(400,);
   });
 });
@@ -118,6 +123,7 @@ describe("POST /api/plugins/:name/disable", () => {
       origin: "core",
       directory: "/tmp",
     },);
+
     registry.setEnabled("enable-me", true,);
   },);
 
@@ -131,6 +137,7 @@ describe("POST /api/plugins/:name/disable", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/enable-me/disable", { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
     expect(registry.isEnabled("enable-me",),).toBe(false,);
   });
@@ -140,6 +147,7 @@ describe("POST /api/plugins/:name/disable", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/enable-me/disable", { method: "POST", },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -148,6 +156,7 @@ describe("POST /api/plugins/:name/disable", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/unknown/disable", { method: "POST", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });
@@ -162,6 +171,7 @@ describe("plugin routes — edge cases", () => {
       origin: "core",
       directory: "/tmp",
     },);
+
     registry.setEnabled("edge-test", false,);
   },);
 
@@ -175,6 +185,7 @@ describe("plugin routes — edge cases", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/does-not-exist/enable", { method: "POST", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -184,6 +195,7 @@ describe("plugin routes — edge cases", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/edge-test/enable", { method: "POST", },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -193,6 +205,7 @@ describe("plugin routes — edge cases", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/plugins/${huge}/enable`, { method: "POST", },),
     );
+
     expect([400, 404,],).toContain(res.status,);
   });
 
@@ -204,6 +217,7 @@ describe("plugin routes — edge cases", () => {
         directory: "/tmp",
       },);
     }
+
     const app = createPluginApp(db, "admin",);
     const res = await app.handle(new Request("http://localhost/api/plugins",),);
     expect(res.status,).toBe(200,);
@@ -229,6 +243,7 @@ describe("plugin config routes (FEAT-051)", () => {
       origin: "core",
       directory: "/tmp",
     },);
+
     registry.setEnabled("cfg-plugin", true,);
   },);
 
@@ -242,6 +257,7 @@ describe("plugin config routes (FEAT-051)", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/cfg-plugin/config",),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -250,6 +266,7 @@ describe("plugin config routes (FEAT-051)", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/no-such-plugin/config",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -262,6 +279,7 @@ describe("plugin config routes (FEAT-051)", () => {
         body: jsonStringifyOr({ token: "x", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -274,6 +292,7 @@ describe("plugin config routes (FEAT-051)", () => {
         body: jsonStringifyOr({ token: "x", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -286,6 +305,7 @@ describe("plugin config routes (FEAT-051)", () => {
         body: jsonStringifyOr({},),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -298,11 +318,13 @@ describe("plugin config routes (FEAT-051)", () => {
         body: jsonStringifyOr({ token: "s3cret", },),
       },),
     );
+
     expect(put.status,).toBe(200,);
 
     const get = await app.handle(
       new Request("http://localhost/api/plugins/cfg-plugin/config",),
     );
+
     expect(get.status,).toBe(200,);
     const body = (await get.json()) as { config: Record<string, unknown> };
     expect(body.config,).toEqual({ token: "s3cret", },);
@@ -319,6 +341,7 @@ describe("GET /api/plugins/ui-components", () => {
       origin: "core",
       directory: "/tmp",
     },);
+
     registry.addUIComponents("ui-plugin", [
       { type: "web", name: "sidebar-widget", location: "chat.sidebar", props: { label: "Hi", }, },
       { type: "both", name: "composer-widget", location: "chat.composer", },
@@ -347,6 +370,7 @@ describe("GET /api/plugins/ui-components", () => {
       type: string;
       props: Record<string, unknown>;
     }[];
+
     const names = body.map((c,) => c.name);
     expect(names,).toContain("sidebar-widget",);
     expect(names,).toContain("composer-widget",);
@@ -362,6 +386,7 @@ describe("GET /api/plugins/ui-components", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/ui-components?location=chat.composer",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { name: string }[];
     expect(body.map((c,) => c.name),).toEqual(["composer-widget",],);
@@ -372,6 +397,7 @@ describe("GET /api/plugins/ui-components", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/ui-components?location=nope.here",),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.json(),).toEqual([],);
   });
@@ -381,6 +407,7 @@ describe("GET /api/plugins/ui-components", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/ui-components?location=",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { name: string }[];
     expect(body.map((c,) => c.name),).toContain("sidebar-widget",);

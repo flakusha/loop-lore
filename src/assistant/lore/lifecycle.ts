@@ -96,6 +96,7 @@ export function effectiveConfidence(
     : Number.isFinite(worldDaysSince,) && worldDaysSince > 0
     ? worldDaysSince
     : 0;
+
   const decayed = base - elapsed * cfg.decay_per_day;
   const adjusted = decayed - distortion;
   return clamp(adjusted, 0, 100,);
@@ -157,6 +158,7 @@ const disputedStateDef: StateDef<DisputedState> = {
   },
   terminal: ["disputed",],
 };
+
 export const disputedStateMachine = createMachine(disputedStateDef,);
 
 /** Distortion axis: has `distortion_level` crossed the configured cap? */
@@ -176,6 +178,7 @@ const distortionBucketDef: StateDef<DistortionBucket> = {
   },
   terminal: ["at_cap",],
 };
+
 export const distortionBucketMachine = createMachine(distortionBucketDef,);
 
 /** Manual-flag axis (`world_lore_entries.disputed`). */
@@ -195,6 +198,7 @@ const disputedFlagDef: StateDef<DisputedFlag> = {
   },
   terminal: [],
 };
+
 export const disputedFlagMachine = createMachine(disputedFlagDef,);
 
 /**
@@ -224,6 +228,7 @@ export function resolveDisputedState(row: DisputedRow, cfg: LifecycleConfig,): D
   const bucket = clamp(row.distortion_level, 0, 100,) >= cfg.distortion_cap
     ? DistortionBucket.AtCap
     : DistortionBucket.BelowCap;
+
   const flag = row.disputed === 1 ? DisputedFlag.Flagged : DisputedFlag.Clear;
   if (!loreDisputedInvariant.isValid(bucket, flag,)) { return DisputedState.Disputed; }
   return bucket === DistortionBucket.AtCap || flag === DisputedFlag.Flagged

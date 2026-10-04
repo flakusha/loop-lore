@@ -19,11 +19,13 @@ beforeEach(() => {
     return handler(url, opts,);
   };
 },);
+
 afterEach(() => {
   calls = [];
   handler = async () => Response.json({},);
   globalState.apiFetch = originalFetch;
 },);
+
 afterAll(() => {
   globalState.apiFetch = originalFetch;
 },);
@@ -97,6 +99,7 @@ function buildCtx(overrides?: Partial<SendCtx>,): SendCtx {
     $nextTick: (fn,) => fn(),
     ...overrides,
   };
+
   return ctx;
 }
 
@@ -154,11 +157,13 @@ describe("chatSendMethods.sendMessage — success paths", () => {
         routed.push(chatId,);
       },
     },);
+
     ctx.$refs.messageInput.value = "hello";
     handler = async () => Response.json({ id: "m1", },);
     await chatSendMethods.sendMessage!.call(ctx as never,);
     expect(routed,).toEqual(["chat-1",],);
   });
+
   test("keeps the optimistic message labelled for media-only sends", async () => {
     const ctx = buildCtx({ pendingAssets: [{ assetId: "a1", filename: "pic.png", },], },);
     handler = async () => Response.json({ id: "m1", },);
@@ -180,6 +185,7 @@ describe("chatSendMethods.sendMessage — success paths", () => {
         { assetId: "a", filename: "a.png", },
       ],
     },);
+
     ctx.$refs.messageInput.value = "reply";
     handler = async () => Response.json({ id: "m2", },);
     await chatSendMethods.sendMessage!.call(ctx as never,);
@@ -204,6 +210,7 @@ describe("chatSendMethods.sendMessage — success paths", () => {
       enc: string;
       nonce: string;
     };
+
     expect(payload.algo,).toBe("aes-256-gcm",);
     expect(payload.key_id,).toBe("key-9",);
     expect(payload.comp,).toBe(false,);
@@ -222,6 +229,7 @@ describe("chatSendMethods.sendMessage — success paths", () => {
         sse.push(chatId,);
       },
     },);
+
     ctx.$refs.messageInput.value = "/roll";
     handler = async () => Response.json({ action: "wizard-preview", actionPayload: { wizardId: "w1", }, },);
     await chatSendMethods.sendMessage!.call(ctx as never,);
@@ -238,6 +246,7 @@ describe("chatSendMethods.sendMessage — success paths", () => {
       },
       _consecutiveAutoFires: 4,
     },);
+
     ctx.$refs.messageInput.value = "hello";
     handler = async () => Response.json({ id: "m1", },);
     await chatSendMethods.sendMessage!.call(ctx as never,);
@@ -254,6 +263,7 @@ describe("chatSendMethods.sendMessage — success paths", () => {
         triggers.push(trigger,);
       },
     },);
+
     ctx.$refs.messageInput.value = "auto";
     handler = async () => Response.json({ id: "m1", },);
     await chatSendMethods.sendMessage!.call(ctx as never,);
@@ -290,6 +300,7 @@ describe("chatSendMethods.sendMessage — failure paths", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     await chatSendMethods.sendMessage!.call(ctx as never,);
     expect(ctx.messages,).toEqual([],);
     expect(ctx.isGenerating,).toBe(false,);

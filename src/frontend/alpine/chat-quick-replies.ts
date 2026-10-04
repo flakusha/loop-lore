@@ -43,6 +43,7 @@ export const chatQuickReplies: Partial<ChatState> & ThisType<ChatState> = {
     if (input) {
       input.value = command;
     }
+
     // Mark this send as automated so the `user` event trigger does not
     // re-fire on the message this command produces.
     this._autoFired = true;
@@ -103,17 +104,20 @@ export const chatQuickReplies: Partial<ChatState> & ThisType<ChatState> = {
     const body: Record<string, unknown> = {
       quickReplies: this._quickReplies.length > 0 ? this._quickReplies : null,
     };
+
     const res = await apiFetch(`/api/v1/chats/${this.activeChat}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", },
       body: jsonBody(body,),
     },);
+
     if (res.ok) {
       this._quickRepliesDirty = false;
       const chat = this.chats.find((c,) => c.id === this.activeChat);
       if (chat) {
         chat.quick_replies = body.quickReplies ? jsonBody(body.quickReplies,) : null;
       }
+
       this.$dispatch?.("show-toast", {
         type: "success",
         message: t("toasts.quickRepliesSaved",),

@@ -76,5 +76,6 @@ export function refreshHtmx(selector: string | null | undefined,): boolean {
     target: selector,
     swap: el.getAttribute("hx-swap",) ?? "innerHTML",
   },);
+
   return true;
 }

@@ -85,6 +85,7 @@ function makeWidget(): WidgetStub {
     state,
   };
 }
+
 const blessedStub = {
   screen: () => ({ ...makeWidget(), append: () => {}, focused: null, }),
   box: () => makeWidget(),
@@ -115,6 +116,7 @@ const blessedDefaultExport: Record<string, unknown> = {
   default: blessedStub,
   ...blessedStub,
 };
+
 // ── API dispatcher mock ────────────────────────────────────────
 // ChatWidget.handleSend/loadMessages delegate to ./api; stub the module so
 // delegation is observable without network access.
@@ -127,9 +129,11 @@ if (ISOLATED) {
     loadMessages: loadMessagesMock,
   }),);
 }
+
 if (ISOLATED) {
   mock.module("blessed", () => blessedDefaultExport,);
 }
+
 beforeAll(async () => {
   // Dynamic import required: bun's mock.module replaces the resolution table
   // only for modules imported after the stub registers; the static type-only
@@ -161,6 +165,7 @@ function captureFactory<T extends (...args: unknown[]) => unknown,>(
     calls.push(args,);
     return fn(...args,);
   }) as T;
+
   return { wrapped, calls, };
 }
 
@@ -286,6 +291,7 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
         seen.push(id,);
       },
     },);
+
     chat.cursor = "cursor-abc";
     chat.setChatId("chat-1",);
     expect(chat.getChatId(),).toBe("chat-1",);

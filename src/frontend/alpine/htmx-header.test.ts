@@ -19,18 +19,22 @@ function mockDoc(overrides?: Record<string, any>,) {
         return this === child || this.children.some((c: any,) => c === child || c.contains(child,));
       },
     };
+
     if (attrs) { Object.assign(el, attrs,); }
     items.push(el,);
     return el;
   };
+
   const querySelectorAll = (sel: string,) => {
     if (sel === "#header-slot") { return items.filter((i: any,) => i._id === "header-slot"); }
     return [];
   };
+
   const querySelector = (sel: string,) => {
     if (sel === "#app-root") { return items.find((i: any,) => i._id === "app-root") || null; }
     return null;
   };
+
   return { createElement, querySelectorAll, querySelector, ...overrides, };
 }
 
@@ -48,11 +52,13 @@ describe("normalizeHeaderSlot", () => {
       contains: () => true,
       parentElement: { insertBefore: () => {}, },
     } as any;
+
     const header = { _id: "header-slot", children: [{},], } as any;
     const doc = mockDoc({
       querySelectorAll: (sel: string,) => (sel === "#header-slot" ? [header,] : []),
       querySelector: (sel: string,) => (sel === "#app-root" ? appRoot : null),
     },);
+
     globalThis.document = doc as any;
     expect(() => normalizeHeaderSlot()).not.toThrow();
   });
@@ -66,11 +72,13 @@ describe("normalizeHeaderSlot", () => {
         removed++;
       },
     } as any;
+
     const appRoot = { _id: "app-root", children: [], contains: () => false, parentElement: null, } as any;
     const doc = mockDoc({
       querySelectorAll: (sel: string,) => (sel === "#header-slot" ? [empty, empty,] : []),
       querySelector: (sel: string,) => (sel === "#app-root" ? appRoot : null),
     },);
+
     globalThis.document = doc as any;
     normalizeHeaderSlot();
     expect(removed,).toBe(2,);
@@ -82,6 +90,7 @@ describe("normalizeHeaderSlot", () => {
       querySelectorAll: () => [],
       querySelector: (sel: string,) => (sel === "#app-root" ? appRoot : null),
     },);
+
     globalThis.document = doc as any;
     expect(() => normalizeHeaderSlot()).not.toThrow();
   });
@@ -131,6 +140,7 @@ describe("normalizeHeaderSlot — multi-slot resolution", () => {
       querySelectorAll: liveSlots(live,),
       querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
     },);
+
     globalThis.document = doc as any;
     normalizeHeaderSlot();
     expect(removed,).toEqual([empty,],);
@@ -148,6 +158,7 @@ describe("normalizeHeaderSlot — multi-slot resolution", () => {
       querySelectorAll: liveSlots(live,),
       querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
     },);
+
     globalThis.document = doc as any;
     normalizeHeaderSlot();
     expect(removed,).toEqual([a, b,],);
@@ -165,6 +176,7 @@ describe("normalizeHeaderSlot — multi-slot resolution", () => {
       querySelectorAll: liveSlots(live,),
       querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
     },);
+
     globalThis.document = doc as any;
     normalizeHeaderSlot();
     expect(removed,).toEqual([small,],);
@@ -182,6 +194,7 @@ describe("normalizeHeaderSlot — multi-slot resolution", () => {
       querySelectorAll: liveSlots(live,),
       querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
     },);
+
     globalThis.document = doc as any;
     normalizeHeaderSlot();
     expect(removed,).toEqual([second,],);
@@ -199,6 +212,7 @@ describe("normalizeHeaderSlot — multi-slot resolution", () => {
       querySelectorAll: liveSlots(live,),
       querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
     },);
+
     globalThis.document = doc as any;
     normalizeHeaderSlot();
     expect(removed,).toEqual([outApp,],);
@@ -216,6 +230,7 @@ describe("normalizeHeaderSlot — multi-slot resolution", () => {
       querySelectorAll: liveSlots(live,),
       querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
     },);
+
     globalThis.document = doc as any;
     normalizeHeaderSlot();
     expect(removed,).toEqual([small,],);

@@ -40,6 +40,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
           return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
         }
+
         const worldId = ctx.query.worldId as string | undefined;
         const format = ctx.query.format as string | undefined;
 
@@ -77,6 +78,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
           return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
         }
+
         const {
           worldId,
           includeTraits = true,

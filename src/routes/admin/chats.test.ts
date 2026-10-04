@@ -24,6 +24,7 @@ function makeApp(db: Kysely<DB>, userRole: string | null,) {
     userId: userRole ? `test-user-${userRole}` : null,
     userRole,
   }));
+
   return app.use(chatsRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
@@ -40,6 +41,7 @@ beforeAll(async () => {
   await insertUsers(db, "alice", "Alice", { id: TEST_USER, },);
   await insertChats(db, "Test Chat", TEST_USER, { id: TEST_CHAT, type: ChatType.Direct, },);
 },);
+
 afterAll(() => {
   sqlite.close();
 },);
@@ -85,6 +87,7 @@ describe("admin chats routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/admin/chats/${TEST_CHAT}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { id: string; messageCount: number; participants: unknown[] };
     expect(body.id,).toBe(TEST_CHAT,);
@@ -96,6 +99,7 @@ describe("admin chats routes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/chats/00000000-0000-0000-0000-000000000999",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -104,6 +108,7 @@ describe("admin chats routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/admin/chats/${TEST_CHAT}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -116,6 +121,7 @@ describe("admin chats routes", () => {
         body: JSON.stringify({ is_pinned: "true", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -128,6 +134,7 @@ describe("admin chats routes", () => {
         body: JSON.stringify({ not_a_field: "ignored", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -136,6 +143,7 @@ describe("admin chats routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/admin/chats/${TEST_CHAT}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
   });
 
@@ -144,6 +152,7 @@ describe("admin chats routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/admin/chats/${TEST_CHAT}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

@@ -61,13 +61,16 @@ export class TelemetryTransport implements Transport {
     if (entry.level < MIN_TELEMETRY_LEVEL && !CURATED_EVENTS.has(eventType,)) {
       return Promise.resolve();
     }
+
     if (this.sent >= MAX_EVENTS_PER_SESSION) {
       if (!this.capWarned) {
         this.capWarned = true;
         console.warn("[telemetry] session event cap reached — dropping further events",);
       }
+
       return Promise.resolve();
     }
+
     this.sent += 1;
 
     // The ingest route (TelemetryEventBody) accepts ONLY a closed union of
@@ -128,5 +131,6 @@ function digest(value: string,): string {
     hash ^= value.charCodeAt(i,);
     hash = Math.imul(hash, 0x01000193,);
   }
+
   return (hash >>> 0).toString(16,).padStart(8, "0",).repeat(2,);
 }

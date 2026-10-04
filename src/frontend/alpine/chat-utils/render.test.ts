@@ -33,6 +33,7 @@ type FakeDiv = { textContent: string; getHTML: () => string };
 const doc = globalThis.document as unknown as {
   createElement: (tag: string,) => FakeDiv;
 };
+
 const originalCreateElement = doc.createElement;
 
 /** Record of marked.parse / DOMPurify.sanitize calls for the happy path. */
@@ -48,6 +49,7 @@ function installMarkdownLibs(): void {
       return `<p>${content}</p>`;
     },
   };
+
   (globalThis as unknown as { __DOMPurify?: unknown }).__DOMPurify = {
     sanitize: (html: string, config: { ALLOWED_TAGS: string[]; ALLOWED_ATTR: string[] },) => {
       sanitizeInputs.push({ html, config, },);
@@ -69,6 +71,7 @@ beforeEach(() => {
         return browserEscape(this.textContent,);
       },
     };
+
     return div;
   };
 },);
@@ -102,6 +105,7 @@ describe("chatUtilsRender.renderMarkdown", () => {
     (globalThis as unknown as { __DOMPurify?: unknown }).__DOMPurify = {
       sanitize: () => "should not be called",
     };
+
     const html = chatUtilsRender.renderMarkdown!("<b>bold</b>",);
     expect(html,).toBe("&lt;b&gt;bold&lt;/b&gt;",);
   });
@@ -111,6 +115,7 @@ describe("chatUtilsRender.renderMarkdown", () => {
     (globalThis as unknown as { __marked?: unknown }).__marked = {
       parse: () => "<b>bold</b>",
     };
+
     const html = chatUtilsRender.renderMarkdown!("<b>bold</b>",);
     expect(html,).toBe("&lt;b&gt;bold&lt;/b&gt;",);
   });
@@ -165,6 +170,7 @@ describe("chatUtilsRender.renderMarkdown", () => {
     ) {
       expect(config?.ALLOWED_TAGS.includes(tag,),).toBe(true,);
     }
+
     for (const attr of ["href", "src", "alt", "title", "class", "target", "rel",]) {
       expect(config?.ALLOWED_ATTR.includes(attr,),).toBe(true,);
     }

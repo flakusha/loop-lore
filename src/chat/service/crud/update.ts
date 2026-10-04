@@ -77,10 +77,13 @@ async function checkChatUpdateLock(
           }
         }
       }
+
       continue;
     }
+
     if (params[field] !== undefined) { attemptedMechanics.push(field,); }
   }
+
   if (attemptedMechanics.length > 0 && (await isChatOnline(database, chatId,))) {
     return {
       code: "key_mechanic_conflict",
@@ -92,6 +95,7 @@ async function checkChatUpdateLock(
       },
     };
   }
+
   return null;
 }
 
@@ -111,6 +115,7 @@ function patchStoryState(
     const serialized = safeJsonStringify(patch,);
     return serialized.ok ? serialized.value : null;
   }
+
   const current = safeJsonParse<Record<string, unknown>>(fullChat.story_state,);
   const state = { ...(current.ok && current.value), ...patch, };
   const serialized = safeJsonStringify(state,);
@@ -137,50 +142,63 @@ function buildChatUpdates(
   if (typeof params.isPinned === "boolean") {
     updates.is_pinned = params.isPinned ? PinnedState.Pinned : PinnedState.Unpinned;
   }
+
   if (typeof params.isPaused === "boolean") {
     updates.story_state = patchStoryState(fullChat, { isPaused: params.isPaused, },);
   }
+
   if (typeof params.freezePanel === "boolean" && can(params.userRole, "admin.chat",)) {
     updates.story_state = patchStoryState(fullChat, { isPanelFrozen: params.freezePanel, },);
   }
+
   // `fullChat.gm_config` is a JSON string (or null), not a record. Parse it
   // before spreading — spreading a string produces numeric-index garbage keys.
   const parsedGmConfig = fullChat.gm_config
     ? safeJsonParse<Record<string, unknown>>(fullChat.gm_config,)
     : null;
+
   const baseGmConfig = parsedGmConfig?.ok ? parsedGmConfig.value : {};
   let nextGmConfig: Record<string, unknown> | null | undefined;
   if (params.renderingOverride !== undefined) {
     nextGmConfig = { ...baseGmConfig, renderingOverride: params.renderingOverride, };
   }
+
   if (params.gmConfig !== undefined) {
     nextGmConfig = {
       ...(nextGmConfig ?? baseGmConfig),
       ...params.gmConfig,
     };
   }
+
   if (nextGmConfig !== undefined) {
     updates.gm_config = jsonStringifyOr(nextGmConfig,);
   }
+
   if (params.thinkingVisibility) {
     updates.thinking_visibility = params.thinkingVisibility;
   }
+
   if (params.promptOverride !== undefined) {
     updates.prompt_override = params.promptOverride;
   }
+
   if (params.quickReplies !== undefined) {
     updates.quick_replies = params.quickReplies ? jsonStringifyOr(params.quickReplies,) : null;
   }
+
   if (params.outputStylePreset !== undefined) {
     updates.output_style_preset = params.outputStylePreset || null;
   }
+
   if (params.customInstructions !== undefined) {
     updates.custom_instructions = params.customInstructions || null;
   }
+
   // Autonomy pacing override (TASK-autonomy-config-surface). An empty object
   // clears the chat layer, matching the world layer's "cleared" encoding.
   if (params.autonomyConfig !== undefined) {
     updates.autonomy_config = jsonStringifyOr(params.autonomyConfig,);
   }
+
   return updates;
 }

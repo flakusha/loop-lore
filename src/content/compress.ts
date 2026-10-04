@@ -85,13 +85,16 @@ async function _getMinimizedContent(content: string, extension: string,): Promis
     case ".css": {
       return minifyCSS(content,);
     }
+
     case ".js": {
       return minifyJS(content,);
     }
+
     case ".html":
     case ".htm": {
       return minifyHTMLContent(content,);
     }
+
     default: {
       return minifyText(content,);
     }
@@ -162,6 +165,7 @@ export async function compressAssets(
     if (zstdFn) {
       compressedBytes.zst += readFileSync(`${file}.zst`, { encoding: null, },).length;
     }
+
     compressedBytes.br += readFileSync(`${file}.br`, { encoding: null, },).length;
   }
 

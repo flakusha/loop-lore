@@ -26,6 +26,7 @@ try {
 } catch (error) {
   modulePristine = error instanceof Error && error.message.startsWith("All providers failed",);
 }
+
 const describeReal: (name: string, fn: () => void,) => void = modulePristine
   ? describe
   : (name, fn,) => describe.skip(name, fn,);
@@ -71,6 +72,7 @@ describeReal("callWithFailover — cancellation vs provider failure", () => {
       CancelSource.AutoRepetition,
       "test detector",
     );
+
     const controller = new AbortController();
     controller.abort(cancelled,);
 
@@ -140,6 +142,7 @@ describeReal("callWithFailover — cancellation vs provider failure", () => {
       makeReq(new AbortController().signal,),
       () => {/* noop */},
     );
+
     expect(response.content,).toBe("fallback won",);
   });
 },);

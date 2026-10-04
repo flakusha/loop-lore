@@ -13,6 +13,7 @@ let dom: FakeDom;
 beforeEach(() => {
   dom = installVnFakeDom();
 },);
+
 afterEach(() => {
   dom.restore();
 },);
@@ -21,9 +22,11 @@ describe("normalizePoint", () => {
   test("maps offsets to 0..1", () => {
     expect(normalizePoint(200, 100, 80, 30,),).toEqual({ x: 0.4, y: 0.3, },);
   });
+
   test("clamps out-of-range offsets", () => {
     expect(normalizePoint(200, 100, 400, -10,),).toEqual({ x: 1, y: 0, },);
   });
+
   test("zero size falls back to center", () => {
     expect(normalizePoint(0, 0, 5, 5,),).toEqual({ x: 0.5, y: 0.5, },);
   });
@@ -39,12 +42,14 @@ describe("mountAnchorEditor", () => {
       save: async () => true,
       notify: () => {},
     },);
+
     await Promise.resolve();
     await Promise.resolve();
     const marker = container.querySelector(".asset-anchor-marker",);
     expect(marker?.style["left"],).toBe("40%",);
     expect(marker?.style["top"],).toBe("30%",);
   });
+
   test("click saves the normalized point", async () => {
     const container = makeEl("div",);
     const img = makeEl("img",);
@@ -52,6 +57,7 @@ describe("mountAnchorEditor", () => {
     img.getBoundingClientRect = () => {
       return { left: 10, top: 20, width: 200, height: 100, };
     };
+
     const notes: string[] = [];
     container.append(img,);
     mountAnchorEditor(img as unknown as HTMLImageElement, "a1", {
@@ -64,12 +70,14 @@ describe("mountAnchorEditor", () => {
         notes.push(message,);
       },
     },);
+
     img.dispatch("click", { clientX: 110, clientY: 70, },);
     await Promise.resolve();
     await Promise.resolve();
     expect(saved,).toEqual([{ x: 0.5, y: 0.5, },],);
     expect(notes,).toEqual(["Anchor saved",],);
   });
+
   test("failed save notifies an error", async () => {
     const notes: string[] = [];
     const container = makeEl("div",);
@@ -77,6 +85,7 @@ describe("mountAnchorEditor", () => {
     img.getBoundingClientRect = () => {
       return { left: 10, top: 20, width: 200, height: 100, };
     };
+
     container.append(img,);
     mountAnchorEditor(img as unknown as HTMLImageElement, "a1", {
       load: async () => null,
@@ -85,11 +94,13 @@ describe("mountAnchorEditor", () => {
         notes.push(message,);
       },
     },);
+
     img.dispatch("click", { clientX: 110, clientY: 70, },);
     await Promise.resolve();
     await Promise.resolve();
     expect(notes,).toEqual(["Failed to save anchor",],);
   });
+
   test("destroy removes the marker and detaches clicks", async () => {
     const saved: Array<{ x: number; y: number }> = [];
     const container = makeEl("div",);
@@ -103,6 +114,7 @@ describe("mountAnchorEditor", () => {
       },
       notify: () => {},
     },);
+
     expect(container.querySelectorAll(".asset-anchor-marker",).length,).toBe(1,);
     destroy();
     expect(container.querySelectorAll(".asset-anchor-marker",).length,).toBe(0,);

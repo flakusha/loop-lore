@@ -51,5 +51,6 @@ export function parseExpansionFile(filePath: string,): ExpansionConfig {
   if (ext === "toml") {
     return Bun.TOML.parse(content,) as unknown as ExpansionConfig;
   }
+
   return Bun.YAML.parse(content,) as ExpansionConfig;
 }

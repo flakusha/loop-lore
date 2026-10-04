@@ -61,6 +61,7 @@ export function composeLicenseRow(
       share_alike: booleanToInt(body.share_alike, existing.share_alike,),
     };
   }
+
   return {
     license_type: body.license_type ?? "proprietary",
     custom_license_text: body.custom_license_text ?? null,

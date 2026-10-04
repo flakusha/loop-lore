@@ -84,6 +84,7 @@ describe("minifyHTMLContent", () => {
   <p>Hello World</p>
 </body>
 </html>`;
+
     const result = await minifyHTMLContent(input,);
     expect(result,).toContain("<!doctype html>",);
     expect(result,).toContain("<title>Test</title>",);
@@ -141,6 +142,7 @@ describe("minifyCSS", () => {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }`;
+
     const result = minifyCSS(input,);
     expect(result,).toContain("@keyframes spin",);
     expect(result,).toContain("from",);

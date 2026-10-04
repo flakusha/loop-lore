@@ -46,6 +46,7 @@ describe("applyDataMigration", () => {
       .where("table_name", "=", "actors",)
       .where("to_version", "=", 100,)
       .executeTakeFirst();
+
     expect(row,).toBeDefined();
     expect(row?.from_version,).toBe(99,);
   });
@@ -88,6 +89,7 @@ describe("applyDataMigration", () => {
       .where("table_name", "=", "actors",)
       .where("to_version", "=", 200,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 
@@ -121,6 +123,7 @@ describe("runDataMigrations", () => {
       .selectAll()
       .where("table_name", "=", "actors",)
       .execute();
+
     // One row per (table, to_version) — no duplicates across double runs.
     const versions = new Set(actorsRows.map((r,) => r.to_version),);
     expect(versions.size,).toBe(actorsRows.length,);
@@ -141,6 +144,7 @@ describe("discoverMigrations", () => {
         `export const migration = { table: "actors", fromVersion: ${
           to - 1
         }, toVersion: ${to}, description: "d${to}", up: async () => {} };`;
+
       // Deliberately written in the order localeCompare would mis-sort.
       writeFileSync(join(tableDir, "v10_second.ts",), body(10,),);
       writeFileSync(join(tableDir, "v2_first.ts",), body(2,),);

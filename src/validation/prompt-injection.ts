@@ -130,10 +130,12 @@ export function detectInjectionSignals(text: string,): { score: number; signals:
       if (!signals.includes(signal.id,)) { signals.push(signal.id,); }
     }
   }
+
   if (OBFUSCATION_PATTERN.test(text,)) {
     score += 1;
     if (!signals.includes("obfuscation",)) { signals.push("obfuscation",); }
   }
+
   return { score, signals, };
 }
 
@@ -161,6 +163,7 @@ export async function confirmInjectionWithLlm(
     userId: options.userId,
     chatId: options.chatId,
   },);
+
   if (!result) { return null; }
   return parseInjectionVerdict(result.content,);
 }
@@ -186,11 +189,13 @@ export async function checkPromptInjection(
   if (score < SUSPECT_THRESHOLD) {
     return { verdict: "clean", score, signals, };
   }
+
   const llm = await confirmInjectionWithLlm(text, options,);
   if (!llm) {
     getLog().debug("Injection LLM confirm unavailable — scan verdict stands", { score, signals, },);
     return { verdict: "suspicious", score, signals, };
   }
+
   const blocked = score >= BLOCK_SCORE_THRESHOLD && llm.injected && llm.confidence >= BLOCK_LLM_CONFIDENCE;
   return {
     verdict: blocked ? "blocked" : "suspicious",
@@ -229,6 +234,7 @@ export function parseInjectionVerdict(
   ) {
     return null;
   }
+
   return { injected, category, confidence: clamp01(obj.confidence,), };
 }
 

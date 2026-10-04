@@ -54,6 +54,7 @@ describe("combat-use durability degradation", () => {
       "Gear Owner",
       { id: userId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     worldId = uid();
     await insertWorlds(db, userId, "Gear World", { id: worldId, } as never,);
     actorId = uid();
@@ -96,10 +97,12 @@ describe("combat-use durability degradation", () => {
         body: JSON.stringify({ actorId, damage: 25, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as {
       items: { id: string; durability: number; maxDurability: number; broken: boolean }[];
     };
+
     expect(body.items,).toHaveLength(1,);
     expect(body.items[0]!.id,).toBe(itemId,);
     expect(body.items[0]!.durability,).toBe(75,);
@@ -111,6 +114,7 @@ describe("combat-use durability degradation", () => {
       .select("durability",)
       .where("id", "=", itemId,)
       .executeTakeFirst();
+
     expect(persisted?.durability,).toBe(75,);
   });
 
@@ -123,10 +127,12 @@ describe("combat-use durability degradation", () => {
         body: JSON.stringify({ actorId, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as {
       items: { durability: number; maxDurability: number }[];
     };
+
     expect(body.items[0]!.durability,).toBe(65,); // 75 - 10
     expect(body.items[0]!.maxDurability,).toBe(100,);
   });
@@ -139,6 +145,7 @@ describe("combat-use durability degradation", () => {
       "Stranger",
       { id: strangerUser, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     const app = authedApp(strangerUser,);
     const res = await app.handle(
       new Request("http://localhost/api/battle/equipment/combat-use", {
@@ -147,6 +154,7 @@ describe("combat-use durability degradation", () => {
         body: JSON.stringify({ actorId, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -160,6 +168,7 @@ describe("combat-use durability degradation", () => {
         body: JSON.stringify({ actorId: unknownActorId, },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });

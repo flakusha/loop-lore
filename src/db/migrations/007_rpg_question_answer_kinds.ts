@@ -18,18 +18,22 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("rpg_questions",)
     .addColumn("input_kind", "text", (col,) => col.notNull().defaultTo("choice",),)
     .execute();
+
   await database.schema
     .alterTable("rpg_questions",)
     .addColumn("answer_value", "text",)
     .execute();
+
   await database.schema
     .alterTable("rpg_questions",)
     .addColumn("min_value", "integer",)
     .execute();
+
   await database.schema
     .alterTable("rpg_questions",)
     .addColumn("max_value", "integer",)
     .execute();
+
   await database.schema
     .alterTable("rpg_questions",)
     .addColumn("effect", "text", (col,) => col.notNull().defaultTo("{}",),)

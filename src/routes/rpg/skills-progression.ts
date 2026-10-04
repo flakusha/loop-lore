@@ -66,6 +66,7 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
           ctx.params.category as SkillCategory,
           worldId,
         );
+
         return jsonResponse({ skills, },);
       } catch (error) {
         log().error("Failed to get skills by category", error instanceof Error ? error : undefined,);

@@ -25,10 +25,12 @@ function include(s: string,) {
   INCLUDE_DIRECTIVE_FRESH.lastIndex = 0;
   return INCLUDE_DIRECTIVE_FRESH.exec(s,);
 }
+
 function i18n(s: string,) {
   I18N_DIRECTIVE_FRESH.lastIndex = 0;
   return I18N_DIRECTIVE_FRESH.exec(s,);
 }
+
 function icon(s: string,) {
   ICON_DIRECTIVE_FRESH.lastIndex = 0;
   return ICON_DIRECTIVE_FRESH.exec(s,);

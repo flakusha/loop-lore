@@ -54,13 +54,16 @@ export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) =
       : []),
     `Keep response 50-300 words, in-character, use *action descriptions*.`,
   ];
+
   const guidance = deps.gmGuidance;
   if (guidance?.constraints?.length) {
     instructions.push(`GM guidance — narrative constraints:\n- ${guidance.constraints.join("\n- ",)}`,);
   }
+
   if (guidance?.sceneDescription) {
     instructions.push(`GM scene direction: ${guidance.sceneDescription}`,);
   }
+
   assembled.messages.push({ role: "user", content: instructions.join("\n",), },);
 
   let responseText: string;
@@ -82,6 +85,7 @@ export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) =
       resolvedProvider,
       error: error instanceof Error ? error.message : String(error,),
     },);
+
     const fallback = await hardcodedDecision(deps, context, actorId,);
     return { ...fallback, fallback: true, };
   }
@@ -94,6 +98,7 @@ export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) =
       resolvedModel,
       resolvedProvider,
     },);
+
     const fallback = await hardcodedDecision(deps, context, actorId,);
     return { ...fallback, fallback: true, };
   }

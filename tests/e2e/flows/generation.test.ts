@@ -89,6 +89,7 @@ describe("Generation E2E", () => {
     const getRes = await api.get<{ content: string; role: string; provider: string }>(
       `/api/v1/messages/${msgId}`,
     );
+
     expect(getRes.ok,).toBe(true,);
     expect(getRes.data!.role,).toBe("assistant",);
     expect(getRes.data!.content,).toBe("Mock response content",);
@@ -100,6 +101,7 @@ describe("Generation E2E", () => {
       chatId: SEED.chat.id,
       // Missing parentMessageId, actorId, idempotencyKey
     },);
+
     expect(res.status,).toBe(400,);
     expect(res.error,).toContain("parentMessageId",);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
@@ -113,6 +115,7 @@ describe("Generation E2E", () => {
       idempotencyKey: "e2e-idemp-3",
       provider: "nonexistent-provider",
     },);
+
     expect(res.status,).toBe(422,);
     expect(res.error,).toContain("Provider resolution failed",);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
@@ -234,6 +237,7 @@ describe("Generation E2E", () => {
     const res = await api.post("/api/v1/generation/cancel", {
       chatId: SEED.chat.id,
     },);
+
     expect(res.status,).toBe(404,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
@@ -242,6 +246,7 @@ describe("Generation E2E", () => {
     const res = await api.post("/api/v1/generation/cancel", {
       chatId: "00000000-0000-4000-a000-000000000099",
     },);
+
     expect(res.status,).toBe(403,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
@@ -259,6 +264,7 @@ describe("Generation E2E", () => {
     const res = await api.get<{ isActive: boolean; attemptId: string | null }>(
       `/api/v1/generation/status/${SEED.chat.id}`,
     );
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.isActive,).toBe(false,);
     expect(res.data!.attemptId,).toBeNull();

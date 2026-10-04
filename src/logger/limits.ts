@@ -41,6 +41,7 @@ function truncateString(s: string, maxBytes: number, label = "chars",): string {
     if (bytes(s.slice(0, mid,),) <= maxBytes) { lo = mid; }
     else { hi = mid - 1; }
   }
+
   const suffix = `...[truncated ${s.length - lo} ${label}]`;
   return s.slice(0, lo,) + suffix;
 }
@@ -113,6 +114,7 @@ export function applyLimits(entry: LogEntry, overrides?: Partial<SizeLimits>,): 
       for (const k of keys.slice(0, limits.maxMessageKeys,)) {
         truncated[k] = result.message[k];
       }
+
       truncated["[truncated]"] = `${keys.length - limits.maxMessageKeys} excess keys`;
       result.message = truncated;
     }

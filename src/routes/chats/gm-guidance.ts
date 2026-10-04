@@ -42,9 +42,11 @@ export function gmGuidanceRoutes(opts: HandlerOpts, prefix = "/api",) {
           storyMode: body.storyMode,
           gmGuidance: body.gmGuidance,
         },);
+
         if ("code" in result) {
           return notFound(result.message,);
         }
+
         return jsonResponse({ ok: true, },);
       },
       { body: GmGuidanceUpdateBody, params: ChatIdParams, },

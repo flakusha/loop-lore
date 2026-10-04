@@ -86,6 +86,7 @@ export async function fetchSkipCooldowns(
       .orderBy(sql`rowid`, "desc",)
       .limit(1,)
       .executeTakeFirst();
+
     // `>=` errs toward eligibility on same-millisecond ties so a chat can
     // never stall on a mis-ordered timestamp.
     if (activity && parseCreatedAt(activity.created_at,) >= skippedAt) {

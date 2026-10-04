@@ -74,6 +74,7 @@ describe("attack command preconditions", () => {
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("no active battle",);
   });
+
   /** Build a combatant serialized the way startBattle persists it. */
   function makeCombatant(id: string, name: string, hp: number, isNpc: boolean,): Combatant {
     const combatant = buildCombatant(
@@ -85,6 +86,7 @@ describe("attack command preconditions", () => {
       12,
       isNpc,
     );
+
     combatant.hp = hp;
     return combatant;
   }

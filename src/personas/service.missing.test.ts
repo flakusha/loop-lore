@@ -101,6 +101,7 @@ describe("PersonasService — convertToCharacter()", () => {
         model?: string | null;
       };
     };
+
     expect(settings.persona?.title,).toBe("Knight Champion",);
     expect(settings.persona?.temperature,).toBeNull();
     expect(settings.persona?.max_tokens,).toBeNull();
@@ -211,6 +212,7 @@ test("update() with isDefault=true on a missing id throws and leaves other perso
     .where("user_id", "=", userId,)
     .where("title", "=", "X",)
     .executeTakeFirst();
+
   expect(leakedTitle,).toBeUndefined();
 });
 
@@ -239,6 +241,7 @@ describe("PersonasService — delete() cascade", () => {
         data_raw: null,
       },)
       .execute();
+
     await db
       .insertInto("chats",)
       .values({
@@ -267,6 +270,7 @@ describe("PersonasService — delete() cascade", () => {
       .where("chat_id", "=", chatId,)
       .where("actor_id", "=", participantActorId,)
       .executeTakeFirst();
+
     expect(before!.persona_id,).toBe(personaId,);
 
     // Delete the persona
@@ -279,6 +283,7 @@ describe("PersonasService — delete() cascade", () => {
       .where("chat_id", "=", chatId,)
       .where("actor_id", "=", participantActorId,)
       .executeTakeFirst();
+
     expect(after!.persona_id,).toBeNull();
   });
 });
@@ -290,6 +295,7 @@ describe("PersonasService — create() with avatarAssetId", () => {
       name: "Avatar Creator",
       avatarAssetId: "test-asset-1",
     },);
+
     const persona = await service.getById(id, userId,);
     expect(persona,).toBeTruthy();
     expect(persona!.avatar_asset_id,).toBe("test-asset-1",);
@@ -301,6 +307,7 @@ describe("PersonasService — create() with avatarAssetId", () => {
       name: "Null Avatar",
       avatarAssetId: null,
     },);
+
     const persona = await service.getById(id, userId,);
     expect(persona!.avatar_asset_id,).toBeNull();
   });

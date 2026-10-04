@@ -42,6 +42,7 @@ export const profiles = {
       const res = await apiFetch("/api/v1/admin/templates", {
         headers: { Accept: "application/json", },
       },);
+
       if (res.ok) {
         const data = parseOr(AdminTemplateListResponse, await res.json(), {
           profiles: [],
@@ -49,6 +50,7 @@ export const profiles = {
           builtinCount: 0,
           customCount: 0,
         },);
+
         this.templateProfiles = data.profiles;
         this.defaultProfileId = data.defaultProfileId || "sdxl";
         this.builtinCount = data.builtinCount;
@@ -72,6 +74,7 @@ export const profiles = {
       const res = await apiFetch(`/api/v1/admin/templates/${id}`, {
         headers: { Accept: "application/json", },
       },);
+
       if (res.ok) {
         this.selectedProfile = await res.json();
       }
@@ -100,6 +103,7 @@ export const profiles = {
       const res = await (globalThis as any).apiFetch(`/api/v1/admin/templates/${id}`, {
         method: "DELETE",
       },);
+
       if (res.ok) {
         (globalThis as any).showToast("success", t("toasts.profileDeleted",),);
         await this.loadTemplates();
@@ -126,6 +130,7 @@ export const profiles = {
         const trimmed = s.trim();
         if (trimmed) { families.push(trimmed,); }
       }
+
       const res = await (globalThis as any).apiFetch("/api/v1/admin/templates", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
@@ -137,6 +142,7 @@ export const profiles = {
           maxTokenHint: np.maxTokenHint,
         },),
       },);
+
       if (res.ok) {
         (globalThis as any).showToast("success", t("toasts.profileCreated",),);
         this.showCreateModal = false;
@@ -147,6 +153,7 @@ export const profiles = {
           promptFormat: "tags",
           maxTokenHint: 150,
         };
+
         await this.loadTemplates();
       } else {
         const err = await res.json();

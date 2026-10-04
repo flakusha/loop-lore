@@ -105,6 +105,7 @@ describe("processEvent", () => {
       delta: 50,
       completed: false,
     },);
+
     expect(entries[0]?.milestoneHit,).toBeNull();
   });
 
@@ -132,6 +133,7 @@ describe("processEvent", () => {
     await insertQuests(db, worldId, creatorId, "Broken", QuestType.Collection, 100, {
       config: "{not-json",
     } as never,);
+
     expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],),).toEqual([],);
   });
 
@@ -139,6 +141,7 @@ describe("processEvent", () => {
     await insertQuests(db, worldId, creatorId, "Weird", "bogus" as never, 100, {
       config: JSON.stringify({ type: "bogus", },),
     } as never,);
+
     expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],),).toEqual([],);
   });
 
@@ -146,6 +149,7 @@ describe("processEvent", () => {
     await insertQuests(db, worldId, creatorId, "Typeless", QuestType.Collection, 100, {
       config: JSON.stringify({ items: [], },),
     } as never,);
+
     expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],),).toEqual([],);
   });
 });
@@ -171,6 +175,7 @@ describe("advanceProgress", () => {
       .where("quest_id", "=", id,)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.progress,).toBe(20,);
     expect(rows[0]?.status,).toBe("active",);
@@ -185,6 +190,7 @@ describe("advanceProgress", () => {
         return "snap-1";
       },
     } as unknown as WorldStateService;
+
     const hooked = new QuestEngine(db, worldState,);
     const id = await hooked.createQuest({
       worldId,
@@ -196,6 +202,7 @@ describe("advanceProgress", () => {
       target: 100,
       narrativeHooks: [{ progress: 50, narrative: "Halfway there!", },],
     },);
+
     const entry = await hooked.advanceProgress(id, chatId, 50,);
     expect(entry.milestoneHit,).toBe("Halfway there!",);
     expect(snapshots,).toHaveLength(1,);
@@ -219,6 +226,7 @@ describe("advanceProgress", () => {
       config: COLLECTION,
       target: 10,
     },);
+
     await engine.abandon(locked,);
     expect(await questStatus(locked,),).toBe(QuestStatus.Abandoned,);
 
@@ -232,6 +240,7 @@ describe("advanceProgress", () => {
       target: 10,
       rewards: { unlockQuests: [locked,], },
     },);
+
     await engine.advanceProgress(main, chatId, 10,);
     expect(await questStatus(locked,),).toBe(QuestStatus.Active,);
   });
@@ -248,6 +257,7 @@ describe("advanceProgress", () => {
       target: 10,
       rewards: { items: [{ itemId: "reward-blade", quantity: 2, },], },
     },);
+
     await withItems.advanceProgress(id, chatId, 10,);
     const rows = await db.selectFrom("items",).select("name",).where("world_id", "=", worldId,).execute();
     expect(rows.filter((r,) => r.name === "reward-blade"),).toHaveLength(2,);
@@ -264,6 +274,7 @@ describe("advanceProgress", () => {
       target: 5,
       rewards: {},
     },);
+
     const entry = await engine.advanceProgress(id, chatId, 5,);
     expect(entry.completed,).toBe(true,);
   });
@@ -296,6 +307,7 @@ describe("getCompletion", () => {
       config: COLLECTION,
       target: 0,
     },);
+
     expect(await engine.getCompletion(id,),).toEqual({ progress: 0, target: 0, percentage: 0, },);
   });
 
@@ -326,6 +338,7 @@ describe("lifecycle via engine", () => {
       target: 1,
       deadline: new Date(Date.now() - 60_000,).toISOString(),
     },);
+
     const future = await engine.createQuest({
       worldId,
       creatorId,
@@ -336,6 +349,7 @@ describe("lifecycle via engine", () => {
       target: 1,
       deadline: new Date(Date.now() + 3_600_000,).toISOString(),
     },);
+
     const expired = await engine.checkTimeQuests(worldId,);
     expect(expired,).toEqual([past,],);
     expect(await questStatus(past,),).toBe(QuestStatus.Failed,);

@@ -70,6 +70,7 @@ async function seed(): Promise<Fixture> {
     },
     uploadDir,
   },);
+
   return { db, uploadDir, ownerId, outsiderId, rawId: asset.id, };
 }
 
@@ -93,16 +94,19 @@ async function seedMatted(fx: Fixture,): Promise<string> {
     },
     uploadDir: fx.uploadDir,
   },);
+
   await linkAsset({
     database: fx.db,
     assetId: matted.id,
     link: { entityType: AssetLinkEntity.Asset, entityId: fx.rawId, label: MATTING_SOURCE_LABEL, },
   },);
+
   await fx.db
     .updateTable("assets",)
     .set({ alpha_status: AssetAlphaStatus.Matted, },)
     .where("id", "=", fx.rawId,)
     .execute();
+
   return matted.id;
 }
 
@@ -132,6 +136,7 @@ describe("GET /api/assets/:id/matted", () => {
       const res = await makeApp(fx, fx.ownerId,).handle(
         new Request(`http://localhost/api/assets/${fx.rawId}/matted`,),
       );
+
       expect(res.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -145,6 +150,7 @@ describe("GET /api/assets/:id/matted", () => {
       const res = await makeApp(fx, fx.ownerId,).handle(
         new Request(`http://localhost/api/assets/${fx.rawId}/matted`,),
       );
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("Content-Type",),).toBe("image/png",);
       expect(res.headers.get("X-Content-Type-Options",),).toBe("nosniff",);
@@ -160,6 +166,7 @@ describe("GET /api/assets/:id/matted", () => {
       const res = await makeApp(fx, fx.outsiderId,).handle(
         new Request(`http://localhost/api/assets/${fx.rawId}/matted`,),
       );
+
       expect(res.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -175,11 +182,13 @@ describe("GET /api/assets/:id/matted", () => {
       },).handle(
         new Request(`http://localhost/api/assets/${fx.rawId}/signed-url/matted`, { method: "POST", },),
       );
+
       expect(mint.status,).toBe(200,);
       const { url, } = (await mint.json()) as { url: string };
       const res = await makeApp(fx, null, (c,) => {
         c.assets.signedUrlSecret = "test-hmac-secret-0123456789";
       },).handle(new Request(`http://localhost${url}`,),);
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("Content-Type",),).toBe("image/png",);
     } finally {
@@ -195,6 +204,7 @@ describe("POST /api/assets/:id/matte", () => {
       const res = await makeApp(fx, fx.ownerId,).handle(
         new Request(`http://localhost/api/assets/${fx.rawId}/matte`, { method: "POST", },),
       );
+
       expect(res.status,).toBe(400,);
     } finally {
       await cleanup(fx,);
@@ -208,6 +218,7 @@ describe("POST /api/assets/:id/matte", () => {
       const res = await makeApp(fx, fx.ownerId, mattingConfig,).handle(
         new Request(`http://localhost/api/assets/${fx.rawId}/matte`, { method: "POST", },),
       );
+
       expect(res.status,).toBe(201,);
       const { jobId, } = (await res.json()) as { jobId: string };
       expect(jobId.length,).toBeGreaterThan(0,);
@@ -219,15 +230,18 @@ describe("POST /api/assets/:id/matte", () => {
         const s = await makeApp(fx, fx.ownerId, mattingConfig,).handle(
           new Request(`http://localhost/api/assets/${fx.rawId}/matte`,),
         );
+
         if (s.status === 200) {
           status = ((await s.json()) as { status: string }).status;
         }
       }
+
       expect(status,).toBe("completed",);
 
       const detail = await makeApp(fx, fx.ownerId,).handle(
         new Request(`http://localhost/api/assets/${fx.rawId}`,),
       );
+
       const json = (await detail.json()) as { alpha_status: string; matted_asset_id: string | null };
       expect(json.alpha_status,).toBe("matted",);
       expect(json.matted_asset_id,).not.toBeNull();
@@ -243,11 +257,13 @@ describe("POST /api/assets/:id/matte", () => {
       const missing = await makeApp(fx, fx.ownerId, mattingConfig,).handle(
         new Request(`http://localhost/api/assets/${randomUUID()}/matte`, { method: "POST", },),
       );
+
       expect(missing.status,).toBe(404,);
 
       const forbidden = await makeApp(fx, fx.outsiderId, mattingConfig,).handle(
         new Request(`http://localhost/api/assets/${fx.rawId}/matte`, { method: "POST", },),
       );
+
       expect(forbidden.status,).toBe(403,);
     } finally {
       await cleanup(fx,);
@@ -269,6 +285,7 @@ describe("POST /api/assets/:id/matte", () => {
       const res = await makeApp(fx, fx.ownerId, mattingConfig,).handle(
         new Request(`http://localhost/api/assets/${fx.rawId}/matte`, { method: "POST", },),
       );
+
       expect(res.status,).toBe(201,);
     } finally {
       restore();
@@ -284,12 +301,14 @@ describe("GET /api/assets/:id matted_asset_id projection", () => {
       const before = await makeApp(fx, fx.ownerId,).handle(
         new Request(`http://localhost/api/assets/${fx.rawId}`,),
       );
+
       expect(((await before.json()) as { matted_asset_id: string | null }).matted_asset_id,).toBeNull();
 
       const mattedId = await seedMatted(fx,);
       const after = await makeApp(fx, fx.ownerId,).handle(
         new Request(`http://localhost/api/assets/${fx.rawId}`,),
       );
+
       expect(((await after.json()) as { matted_asset_id: string | null }).matted_asset_id,).toBe(mattedId,);
     } finally {
       await cleanup(fx,);

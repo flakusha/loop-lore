@@ -56,6 +56,7 @@ describe("getConfig", () => {
       exotic: 0,
       seedy: 0,
     },);
+
     expect(config.equipment,).toEqual([],);
     expect(config.risks,).toEqual({ discovery: 10, injury: 0, arrest: 0, reputation: 5, },);
     expect(typeof config.id,).toBe("string",);
@@ -81,6 +82,7 @@ describe("updateConfig", () => {
         equipment: ["bed", "candles",],
       },),
     ).toBeTrue();
+
     const config = await svc.getConfig(locationId,);
     expect(config.locationType,).toBe("tavern",);
     expect(config.privacyLevel,).toBe("semi_private",);
@@ -94,6 +96,7 @@ describe("updateConfig", () => {
       atmosphere: { romantic: 90, },
       risks: { arrest: 25, },
     },);
+
     const config = await svc.getConfig(locationId,);
     expect(config.atmosphere.romantic,).toBe(90,);
     expect(config.atmosphere.comfortable,).toBe(50,);

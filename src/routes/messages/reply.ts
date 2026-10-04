@@ -79,6 +79,7 @@ export async function maybeAutoReply(
     .select("story_state",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   if (checkPaused(pausedRow?.story_state ?? null,)) {
     log().debug("Chat paused, auto-reply skipped", { chatId, },);
     return { replied: false, };
@@ -112,6 +113,7 @@ export async function maybeAutoReply(
       // of emitting an unhandled-rejection warning at runtime.
       log().error(`triggerAutoGeneration failed: ${String(error,)}`, undefined, { chatId, },);
     },);
+
     return { replied: false, };
   }
 
@@ -127,6 +129,7 @@ export async function maybeAutoReply(
         chatId,
         deps: await buildTranslateDeps(database, config, actorId,),
       },);
+
       assistantContent = outbound.text;
 
       let replyStoredContent = assistantContent;
@@ -146,9 +149,11 @@ export async function maybeAutoReply(
             algorithm: config.encryption.compressAlgorithm,
           },
         },);
+
         replyStoredContent = enc.storedContent;
         replyKeyId = enc.keyId;
       }
+
       // Concurrent assistant replies used to read MAX(swipe_index) and race
       // on INSERT. The unique index `idx_messages_swipe_unique` on
       // (chat_id, parent_id, swipe_index) makes that race detectable. We
@@ -190,6 +195,7 @@ export async function maybeAutoReply(
               swipe_index: candidate,
             },)
             .execute();
+
           inserted = true;
           assistantId = attemptId;
           lastError = undefined;
@@ -204,10 +210,12 @@ export async function maybeAutoReply(
           if (!isSwipeIndexUniqueViolation(err,)) {
             throw err;
           }
+
           lastError = err;
           candidate++;
         }
       }
+
       if (!inserted) {
         log().warn("Assistant reply swipe retry exhausted", { chatId, parentMessageId, err: lastError, },);
         return {
@@ -229,6 +237,7 @@ export async function maybeAutoReply(
       };
     }
   }
+
   // Neither LLM auto-generation nor a rule-based assistant response was
   // produced — report honestly that no reply was attempted (the previous
   // implicit `undefined` broke the declared Promise shape; TS2366).

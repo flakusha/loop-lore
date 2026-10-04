@@ -209,6 +209,7 @@ describe("moderation override routes — moderator gating", () => {
     const res = await app.handle(
       new Request("http://localhost/api/nsfw/moderation/effective/c-1",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -217,6 +218,7 @@ describe("moderation override routes — moderator gating", () => {
     const res = await app.handle(
       new Request("http://localhost/api/nsfw/moderation/effective/c-1",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -232,6 +234,7 @@ describe("moderation override routes — moderator gating", () => {
     const res = await app.handle(
       new Request("http://localhost/api/nsfw/moderation/effective/c-1",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { enabled: boolean; source: string } };
     expect(body.data.source,).toBe("user_preference",);
@@ -250,6 +253,7 @@ describe("moderation override routes — moderator gating", () => {
     const res = await app.handle(
       new Request("http://localhost/api/nsfw/moderation/effective/c-1",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { enabled: boolean; source: string } };
     expect(body.data.source,).toBe("chat_override",);
@@ -267,6 +271,7 @@ describe("moderation override routes — moderator gating", () => {
     const res = await app.handle(
       new Request("http://localhost/api/nsfw/moderation/effective/c-1",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { enabled: boolean; source: string } };
     expect(body.data.source,).toBe("chat_override",);

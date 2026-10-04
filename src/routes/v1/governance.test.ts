@@ -32,6 +32,7 @@ describe("governanceGuard rate limiting", () => {
       const res = await app.handle(new Request("http://localhost/api/v1/auth/ping",),);
       last = res.status;
     }
+
     expect(last,).toBe(429,);
   });
 
@@ -40,6 +41,7 @@ describe("governanceGuard rate limiting", () => {
     for (let i = 0; i < 10; i++) {
       await app.handle(new Request("http://localhost/api/v1/auth/ping",),);
     }
+
     const res = await app.handle(new Request("http://localhost/api/v1/anything",),);
     expect(res.status,).toBe(200,);
   });
@@ -58,6 +60,7 @@ describe("governanceGuard rate limiting", () => {
     for (let i = 0; i < 11; i++) {
       throttled = await app.handle(new Request("http://localhost/api/v1/auth/ping",),);
     }
+
     expect(throttled?.status,).toBe(429,);
     const limit = throttled?.headers.get("ratelimit-limit",);
     const remaining = throttled?.headers.get("ratelimit-remaining",);
@@ -80,6 +83,7 @@ describe("governanceGuard rate limiting", () => {
       if (res.status === 429) { throttled += 1; }
       else { ok += 1; }
     }
+
     expect(throttled,).toBeGreaterThan(0,);
     const snapshot = metrics.snapshot();
     // Each 429 recorded exactly once — not twice (before + after handle).
@@ -96,6 +100,7 @@ describe("governanceEndpoints", () => {
     const res = await app.handle(
       new Request("http://localhost/api/v1/rate-limit/status?path=/api/v1/auth/login",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { policy: string; limit: number; remaining: number };
     expect(body.policy,).toBe("auth",);
@@ -108,6 +113,7 @@ describe("governanceEndpoints", () => {
     const res = await app.handle(
       new Request("http://localhost/api/v1/rate-limit/status?path=://",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { policy: string };
     // Falls back to /api/v1/rate-limit/status → default policy.

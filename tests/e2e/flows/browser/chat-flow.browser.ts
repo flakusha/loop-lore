@@ -242,9 +242,11 @@ describe("Chat gallery upload linkage", () => {
           new MouseEvent("click", { bubbles: true, },),
         );
       },);
+
       const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item",).filter({
         hasText: SEED.soloChat.name,
       },).first();
+
       await chatItem.waitFor({ state: "attached", timeout: 15_000, },);
       await chatItem.click();
       await waitForAlpineState(
@@ -268,6 +270,7 @@ describe("Chat gallery upload linkage", () => {
         },
         { timeout: 15_000, },
       );
+
       const linkRes = page.waitForResponse(
         (res,) => {
           const url = new URL(res.url(),);
@@ -280,6 +283,7 @@ describe("Chat gallery upload linkage", () => {
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
         "base64",
       );
+
       await input.setInputFiles({ name: "chat-upload.png", mimeType: "image/png", buffer: png, },);
 
       const res = await uploadRes;

@@ -81,6 +81,7 @@ describe("rollDice", () => {
         expect(r,).toBeGreaterThanOrEqual(1,);
         expect(r,).toBeLessThanOrEqual(sides,);
       }
+
       expect(roll.total,).toBeGreaterThanOrEqual(0,);
       expect(roll.type,).toBe(type,);
       expect(roll.count,).toBe(3,);
@@ -98,6 +99,7 @@ describe("rollDice", () => {
       { source: "bless", value: 1000, type: "bonus", },
       { source: "curse", value: -100, type: "penalty", },
     ];
+
     const roll = rollDice("d6", 1, mods,);
     const base = roll.results.reduce((a, b,) => a + b, 0,);
     expect(roll.total,).toBe(base + 900,);
@@ -135,6 +137,7 @@ describe("rollDice", () => {
       { source: "a", value: 0, type: "advantage", },
       { source: "d", value: 0, type: "disadvantage", },
     ],);
+
     expect(both.results,).toHaveLength(1,);
   });
 });
@@ -148,6 +151,7 @@ describe("makeSkillCheck", () => {
       expect(check.success,).toBe(
         check.criticalSuccess || (!check.criticalFailure && check.margin >= 0),
       );
+
       expect(check.criticalSuccess,).toBe(check.roll.criticalSuccess,);
       expect(check.criticalFailure,).toBe(check.roll.criticalFailure,);
     }
@@ -162,6 +166,7 @@ describe("makeSkillCheck", () => {
         expect(check.success,).toBe(true,);
       }
     }
+
     expect(sawNonFumble,).toBe(true,);
   });
 

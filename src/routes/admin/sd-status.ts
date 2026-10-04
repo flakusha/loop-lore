@@ -39,9 +39,11 @@ export function sdStatusRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           timeout: 5_000,
           parseJson: false,
         },);
+
         if (result.ok || result.status !== undefined) {
           latencyMs = Date.now() - start;
         }
+
         status = result.ok ? "running" : "stopped";
 
         return jsonResponse({

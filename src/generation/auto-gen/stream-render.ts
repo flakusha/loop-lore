@@ -66,6 +66,7 @@ export function renderStreamMessageWithSanitizer(
 
   return `<div class="message assistant" data-message-id="${msgId}"${streamingAttr}><div class="bubble"><div class="meta"><span class="name">${safeName}</span><span class="time">just now</span></div>${thinkingBlock}<div class="content">${safeIncrement}</div></div></div>`;
 }
+
 /**
  * Render the final streaming bubble after the response is complete.
  *

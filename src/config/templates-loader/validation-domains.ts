@@ -19,13 +19,16 @@ function validateCharacterTemplateEntry(entry: unknown, index: number,): void {
   if (typeof entry !== "object" || entry === null) {
     throw new Error(`templates[${index}] must be an object`,);
   }
+
   const t = entry as Partial<{ name: unknown; description: unknown; content_rating: unknown }>;
   if (typeof t.name !== "string" || t.name === "") {
     throw new TypeError(`templates[${index}].name must be a non-empty string`,);
   }
+
   if (t.description !== undefined && typeof t.description !== "string") {
     throw new TypeError(`templates[${index}].description must be a string`,);
   }
+
   const rating = typeof t.content_rating === "string" ? t.content_rating : "";
   if (t.content_rating !== undefined && !(LEGAL_CONTENT_RATINGS as readonly string[]).includes(rating,)) {
     throw new TypeError(
@@ -47,6 +50,7 @@ export function validateCharacterConfig(raw: Record<string, unknown>,): void {
     if (!Array.isArray(raw.templates,)) {
       throw new Error("templates must be an array of character template objects",);
     }
+
     raw.templates.forEach((entry, i,) => {
       validateCharacterTemplateEntry(entry, i,);
     },);
@@ -66,6 +70,7 @@ function validateWorkflowStepEntry(entry: unknown, workflowId: string, index: nu
   if (typeof entry !== "object" || entry === null) {
     throw new Error(`workflows.${workflowId}.steps[${index}] must be an object`,);
   }
+
   const s = entry as Partial<{
     id: unknown;
     name: unknown;
@@ -75,26 +80,33 @@ function validateWorkflowStepEntry(entry: unknown, workflowId: string, index: nu
     recommendations: unknown;
     required: unknown;
   }>;
+
   if (typeof s.id !== "string" || s.id === "") {
     throw new TypeError(`workflows.${workflowId}.steps[${index}].id must be a non-empty string`,);
   }
+
   if (typeof s.name !== "string" || s.name === "") {
     throw new TypeError(`workflows.${workflowId}.steps[${index}].name must be a non-empty string`,);
   }
+
   if (typeof s.type !== "string" || !(LEGAL_WORKFLOW_STEP_TYPES as readonly string[]).includes(s.type,)) {
     throw new TypeError(
       `workflows.${workflowId}.steps[${index}].type must be one of ${LEGAL_WORKFLOW_STEP_TYPES.join("|",)}`,
     );
   }
+
   if (typeof s.formatTemplate !== "string" || s.formatTemplate === "") {
     throw new TypeError(`workflows.${workflowId}.steps[${index}].formatTemplate must be a non-empty string`,);
   }
+
   if ((s.type === "choice" || s.type === "multi") && !Array.isArray(s.options,)) {
     throw new TypeError(`workflows.${workflowId}.steps[${index}].options must be an array for choice/multi steps`,);
   }
+
   if (s.recommendations !== undefined && !Array.isArray(s.recommendations,)) {
     throw new TypeError(`workflows.${workflowId}.steps[${index}].recommendations must be an array`,);
   }
+
   if (s.required !== undefined && typeof s.required !== "boolean") {
     throw new TypeError(`workflows.${workflowId}.steps[${index}].required must be a boolean`,);
   }
@@ -112,9 +124,11 @@ export function validateWorkflowConfig(raw: Record<string, unknown>,): void {
   const table = (
     raw.workflows !== undefined ? raw.workflows : raw
   ) as Record<string, unknown>;
+
   if (typeof table !== "object" || table === null || Array.isArray(table,)) {
     throw new Error("workflows must be an object mapping id -> workflow",);
   }
+
   for (const [id, value,] of Object.entries(table,)) {
     if (id === "merge") { continue; }
     validateWorkflowEntry(id, value,);
@@ -126,10 +140,12 @@ function validateWorkflowIntentEntry(intent: unknown, workflowId: string,): void
   if (typeof intent !== "object" || intent === null || Array.isArray(intent,)) {
     throw new TypeError(`workflows.${workflowId}.intent must be an object`,);
   }
+
   const i = intent as { type?: unknown; target?: unknown };
   if (typeof i.type !== "string" || i.type === "") {
     throw new TypeError(`workflows.${workflowId}.intent.type must be a non-empty string`,);
   }
+
   if (typeof i.target !== "string" || i.target === "") {
     throw new TypeError(`workflows.${workflowId}.intent.target must be a non-empty string`,);
   }
@@ -140,6 +156,7 @@ function validateWorkflowEntry(id: string, value: unknown,): void {
   if (typeof value !== "object" || value === null) {
     throw new Error(`workflows.${id} must be an object`,);
   }
+
   const w = value as Partial<{
     id: unknown;
     name: unknown;
@@ -150,25 +167,31 @@ function validateWorkflowEntry(id: string, value: unknown,): void {
     intent: unknown;
     entityType: unknown;
   }>;
+
   for (const field of ["id", "name", "modelFamily", "entityType",] as const) {
     if (w[field] !== undefined && typeof w[field] !== "string") {
       throw new TypeError(`workflows.${id}.${field} must be a string`,);
     }
   }
+
   if (w.steps !== undefined) {
     if (!Array.isArray(w.steps,)) {
       throw new Error(`workflows.${id}.steps must be an array`,);
     }
+
     w.steps.forEach((entry, i,) => {
       validateWorkflowStepEntry(entry, id, i,);
     },);
   }
+
   if (w.dispatch !== undefined && (typeof w.dispatch !== "object" || w.dispatch === null)) {
     throw new TypeError(`workflows.${id}.dispatch must be an object`,);
   }
+
   if (w.triggers !== undefined && !Array.isArray(w.triggers,)) {
     throw new TypeError(`workflows.${id}.triggers must be an array`,);
   }
+
   if (w.intent !== undefined) {
     validateWorkflowIntentEntry(w.intent, id,);
   }

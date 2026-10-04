@@ -44,6 +44,7 @@ describe("actorMemoriesRoutes — scope persistence", () => {
         settings: "{}",
       },)
       .execute();
+
     actorId = uid();
     await db
       .insertInto("actors",)
@@ -73,6 +74,7 @@ describe("actorMemoriesRoutes — scope persistence", () => {
         body: JSON.stringify({ content: "assistant mem", memoryType: "episodic", scope: "assistant", },),
       },),
     );
+
     expect(memCreateRes.status,).toBe(201,);
     const created = (await memCreateRes.json()) as { id: string; scope: string };
     expect(created.scope,).toBe("assistant",);
@@ -82,11 +84,13 @@ describe("actorMemoriesRoutes — scope persistence", () => {
       .select("scope",)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
+
     expect(dbRow.scope,).toBe("assistant",);
 
     const memGetRes = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/memories/${created.id}`,),
     );
+
     const memGet = (await memGetRes.json()) as { scope: string };
     expect(memGet.scope,).toBe("assistant",);
   });
@@ -100,12 +104,14 @@ describe("actorMemoriesRoutes — scope persistence", () => {
         body: JSON.stringify({ content: "char mem", memoryType: "episodic", },),
       },),
     );
+
     const created = (await memCreateRes.json()) as { id: string };
     const dbRow = await db
       .selectFrom("actor_memories",)
       .select("scope",)
       .where("id", "=", created.id,)
       .executeTakeFirstOrThrow();
+
     expect(dbRow.scope,).toBe("character",);
   });
 });

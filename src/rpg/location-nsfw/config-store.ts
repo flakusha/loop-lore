@@ -155,6 +155,7 @@ export class LocationNsfwConfigStore {
     if (updates.atmosphere !== undefined) {
       fields.atmosphere = jsonStringifyOr({ ...current.atmosphere, ...updates.atmosphere, },);
     }
+
     if (updates.equipment !== undefined) { fields.equipment = jsonStringifyOr(updates.equipment,); }
     if (updates.risks !== undefined) {
       fields.risks = jsonStringifyOr({ ...current.risks, ...updates.risks, },);

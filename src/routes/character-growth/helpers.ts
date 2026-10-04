@@ -61,6 +61,7 @@ export function errResponse(err: unknown,): Response {
     if (err.code === "already_resolved") { return jsonError(err.message, 409,); }
     if (err.code === "invalid_input") { return jsonError(err.message, 400,); }
   }
+
   return jsonError("Internal server error", 500,);
 }
 

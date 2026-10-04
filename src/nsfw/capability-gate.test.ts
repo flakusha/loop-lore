@@ -71,16 +71,19 @@ async function seedGatePair(
     birth_date: "1990-01-01",
     age_gate_accepted_at: "2026-01-01T00:00:00Z",
   },);
+
   await insertChats(db, "gate", ids.user, { id: ids.chat as never, },);
   await insertActors(db, ids.actor, {
     id: ids.actor as never,
     user_id: ids.user,
     content_rating: (opts.actorRating ?? "sfw") as never,
   },);
+
   await insertActors(db, ids.target, {
     id: ids.target as never,
     user_id: ids.user,
   },);
+
   await insertChatParticipants(db, ids.chat, ids.actor,);
   await insertChatParticipants(db, ids.chat, ids.target,);
   if (opts.userMaxRating !== undefined) {
@@ -88,6 +91,7 @@ async function seedGatePair(
       max_rating: opts.userMaxRating as never,
     },);
   }
+
   if (opts.consent === "given" || opts.consent === "revoked") {
     await recordNsfwConsent({
       database: db,
@@ -96,6 +100,7 @@ async function seedGatePair(
       action: "given",
     },);
   }
+
   if (opts.consent === "revoked") {
     await recordNsfwConsent({
       database: db,
@@ -104,6 +109,7 @@ async function seedGatePair(
       action: "revoked",
     },);
   }
+
   return makeConfig({ consentRequired: opts.consentRequired ?? true, },);
 }
 
@@ -144,6 +150,7 @@ describe("assertNsfwCapability", () => {
     await expect(gate(db, disabled, ids,),).rejects.toMatchObject({
       reason: "access_denied",
     },);
+
     expect(config,).toBeDefined();
   });
 
@@ -154,6 +161,7 @@ describe("assertNsfwCapability", () => {
       actor: "a-gate-revoked",
       target: "t-gate-revoked",
     };
+
     const config = await seedGatePair(db, ids, { consent: "revoked", },);
     await expect(gate(db, config, ids,),).rejects.toThrow(CapabilityBlockedError,);
     await expect(gate(db, config, ids,),).rejects.toMatchObject({
@@ -168,6 +176,7 @@ describe("assertNsfwCapability", () => {
       actor: "a-gate-scope",
       target: "t-gate-scope",
     };
+
     const config = await seedGatePair(db, ids, { consent: "given", },);
     await expect(gate(db, config, ids, { consentAction: "custom_ritual", },),)
       .rejects.toMatchObject({ reason: "action_not_consented", },);
@@ -180,11 +189,13 @@ describe("assertNsfwCapability", () => {
       actor: "a-gate-rating",
       target: "t-gate-rating",
     };
+
     // Actor MODERATE vs user default preference MILD → effective limit MILD.
     const config = await seedGatePair(db, ids, {
       actorRating: "nsfw_moderate",
       consent: "given",
     },);
+
     await expect(gate(db, config, ids,),).rejects.toThrow(CapabilityBlockedError,);
     await expect(gate(db, config, ids,),).rejects.toMatchObject({
       reason: "rating_blocked",
@@ -198,6 +209,7 @@ describe("assertNsfwCapability", () => {
       actor: "a-gate-intimacy",
       target: "t-gate-intimacy",
     };
+
     const config = await seedGatePair(db, ids, { consentRequired: false, },);
     await expect(gate(db, config, ids,),).rejects.toThrow(CapabilityBlockedError,);
     await expect(gate(db, config, ids,),).rejects.toMatchObject({
@@ -212,6 +224,7 @@ describe("assertNsfwCapability", () => {
       actor: "a-gate-ok",
       target: "t-gate-ok",
     };
+
     const config = await seedGatePair(db, ids, { consentRequired: false, },);
     await insertCharacterIntimacy(
       db,
@@ -221,6 +234,7 @@ describe("assertNsfwCapability", () => {
       "2026-01-01T00:00:00Z",
       { score: 45, },
     );
+
     const grant = await gate(db, config, ids,);
     expect(grant.intimacy,).toEqual({ sufficient: true, score: 45, threshold: 40, },);
     expect(grant.enforcement.character_rating,).toBe(NSFWContentRating.SFW,);
@@ -237,12 +251,14 @@ describe("assertNsfwCapability", () => {
       actor: "a-gate-tighten",
       target: "t-gate-tighten",
     };
+
     // INTENSE actor + EXTREME user preference clears the default gate…
     const config = await seedGatePair(db, ids, {
       actorRating: "nsfw_intense",
       userMaxRating: "nsfw_extreme",
       consentRequired: false,
     },);
+
     await insertCharacterIntimacy(
       db,
       ids.actor,
@@ -251,6 +267,7 @@ describe("assertNsfwCapability", () => {
       "2026-01-01T00:00:00Z",
       { score: 60, },
     );
+
     await expect(gate(db, config, ids,),).resolves.toBeDefined();
     // …but an explicit MILD ceiling blocks it.
     await expect(gate(db, config, ids, {
@@ -265,6 +282,7 @@ describe("assertNsfwCapability", () => {
       actor: "a-gate-content",
       target: "t-gate-content",
     };
+
     const config = await seedGatePair(db, ids, { consentRequired: false, },);
     await insertCharacterIntimacy(
       db,
@@ -274,6 +292,7 @@ describe("assertNsfwCapability", () => {
       "2026-01-01T00:00:00Z",
       { score: 50, },
     );
+
     // SFW actor passes by default, but the content about to be produced is EXTREME.
     await expect(gate(db, config, ids,),).resolves.toBeDefined();
     await expect(gate(db, config, ids, {

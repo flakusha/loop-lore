@@ -49,6 +49,7 @@ export function achievementsRoutes({ database, }: HandlerOpts, prefix = "/api",)
           category?: AchievementCategory;
           includeSecret?: boolean;
         };
+
         const achievements = await svc().listAchievements(category, includeSecret ?? false,);
         return jsonResponse({ achievements, },);
       } catch (error) {

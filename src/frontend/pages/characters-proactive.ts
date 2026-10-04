@@ -31,6 +31,7 @@ export function initProactive(fetchFn: typeof feFetch,) {
     if (status) { status.textContent = "Configure from a chat session to set proactive messaging."; }
     return;
   }
+
   try {
     const res = await _feFetch(`/api/v1/proactive-messaging/config?chatId=${chatId}&actorId=${actorId}`,);
     if (res.ok) {
@@ -71,10 +72,12 @@ export function initProactive(fetchFn: typeof feFetch,) {
         quietHoursEnd: qe || null,
       },),
     },);
+
     if (res.ok) {
       if (status) { status.textContent = "Proactive messaging updated."; }
       return true;
     }
+
     if (status) { status.textContent = "Failed to save proactive messaging."; }
     return false;
   } catch {

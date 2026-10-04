@@ -60,6 +60,7 @@ describe("autonomy config API → resolver seam", () => {
         body: JSON.stringify({ name: "Seam World", },),
       },),
     );
+
     expect(created.status,).toBe(201,);
     worldId = ((await created.json()) as { id: string }).id;
 

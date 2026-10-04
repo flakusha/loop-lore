@@ -28,4 +28,5 @@ const characterStateDef: StateDef<CharacterState> = {
   },
   terminal: ["dead",],
 };
+
 export const characterStateMachine = createMachine(characterStateDef,);

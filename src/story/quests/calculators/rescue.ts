@@ -11,5 +11,6 @@ export const calculateRescueProgress: ProgressCalculator = (ctx, config, event,)
   if (event.actorId === cfg.targetActorId && event.locationId === cfg.safeLocationId) {
     return 100 - ctx.progress;
   }
+
   return 0;
 };

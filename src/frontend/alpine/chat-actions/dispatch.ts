@@ -38,6 +38,7 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
         type: "info",
         message: t("toasts.actionNotImplemented", { label, },),
       },);
+
       log.info("Unimplemented generation action", { action, },);
       return;
     }
@@ -78,6 +79,7 @@ const actionHandlers: Record<string, ActionHandler> = {
       ctx.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noAssetsToCaption",), },);
       return;
     }
+
     await dispatchGenerationAction(
       ctx,
       "/api/v1/generation/caption",
@@ -96,6 +98,7 @@ const actionHandlers: Record<string, ActionHandler> = {
       log.warn("link-asset: missing required payload fields", { payload, },);
       return;
     }
+
     const target = entityType === "message" ? `message ${entityId}` : "this chat";
     if (!confirm(`Attach "${filename}" to ${target}?`,)) { return; }
     try {
@@ -104,6 +107,7 @@ const actionHandlers: Record<string, ActionHandler> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ entityType, entityId, },),
       },);
+
       ctx.$dispatch?.("show-toast", {
         type: res.ok ? "success" : "error",
         message: res.ok
@@ -123,6 +127,7 @@ const actionHandlers: Record<string, ActionHandler> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ impersonateActorId: null, },),
       },);
+
       ctx.impersonationActive = false;
       ctx.impersonatingActorId = null;
       ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.impersonationEnded",), },);
@@ -138,6 +143,7 @@ const actionHandlers: Record<string, ActionHandler> = {
       const res = await apiFetch(`/api/v1/chats/${chatId}/participants`, {
         headers: { Accept: "application/json", },
       },);
+
       if (!res.ok) { return; }
       const participants = await res.json();
       const target = participants.find(
@@ -145,18 +151,22 @@ const actionHandlers: Record<string, ActionHandler> = {
           p.actor_type === "character" &&
           p.display_name?.toLowerCase() === characterName.toLowerCase(),
       );
+
       if (!target) {
         ctx.$dispatch?.("show-toast", {
           type: "warning",
           message: t("toasts.characterNotFound", { name: characterName, },),
         },);
+
         return;
       }
+
       const putRes = await apiFetch(`/api/v1/chats/${chatId}/impersonate`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ impersonateActorId: target.actor_id, },),
       },);
+
       if (putRes.ok) {
         ctx.impersonationActive = true;
         ctx.impersonatingActorId = target.actor_id;

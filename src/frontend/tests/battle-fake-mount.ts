@@ -55,6 +55,7 @@ export function mountBattle(active: BattleView | null,): Mounted {
       return Promise.resolve();
     },
   },);
+
   if (active) { renderBattle(active,); }
   return { container, sent, };
 }

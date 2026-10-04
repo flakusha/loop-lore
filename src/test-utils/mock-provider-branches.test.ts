@@ -45,6 +45,7 @@ describe("MockLLMProvider — happy path", () => {
       if (event.type === "content") { seen.push(event.content!,); }
       if (event.type === "done") { done = true; }
     };
+
     const res = await provider.stream(makeReq(), handler,);
     expect(seen.join("",),).toBe("Mock streamed response",);
     expect(done,).toBe(true,);
@@ -86,6 +87,7 @@ describe("MockLLMProvider — failure flags", () => {
       "Mock stream failure",
     );
   });
+
   test("flags are independent per instance", async () => {
     const failing = new MockLLMProvider();
     failing.failOnCall = true;

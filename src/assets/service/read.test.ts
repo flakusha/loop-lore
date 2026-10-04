@@ -37,10 +37,12 @@ async function seedOwner(
   await insertAssets(db, ownerId, "readme.png", "image/png", "image" as never, 8, ASSET_PATH, {
     id: ASSET_ID as never,
   },);
+
   if (writeFile) {
     mkdirSync(join(uploadDir, "raw", ASSET_ID.slice(0, 2,), ASSET_ID.slice(2, 4,),), { recursive: true, },);
     writeFileSync(join(uploadDir, ASSET_PATH,), "PNGCONTENT",);
   }
+
   return ownerId;
 }
 
@@ -121,6 +123,7 @@ describe("getAssetData", () => {
         encryption_tier: "standard" as never,
         encrypted_key_id: "key-1" as never,
       },);
+
       await expect(getAssetData(db, "encrypted-asset", uploadDir,),).rejects.toThrow(
         "Chat key required to decrypt encrypted asset",
       );
@@ -163,6 +166,7 @@ describe("isAssetEncrypted", () => {
         encryption_tier: "standard" as never,
         encrypted_key_id: "key-x" as never,
       },);
+
       expect(await isAssetEncrypted(db, "enc-asset",),).toBe(true,);
     } finally {
       sqlite.close();
@@ -228,6 +232,7 @@ describe("canAccessAsset", () => {
         id: "public-asset" as never,
         visibility: "public" as never,
       },);
+
       // Public + non-null actor (stranger, not owner) → can access
       expect(await canAccessAsset(db, "public-asset", strangerId, null,),).toBe(true,);
     } finally {
@@ -262,12 +267,14 @@ describe("canAccessAsset", () => {
         id: "shared-asset" as never,
         visibility: "shared" as never,
       },);
+
       await db.insertInto("asset_shares",).values({
         id: "share-row-1",
         asset_id: "shared-asset",
         shared_with_id: otherId,
         shared_by_id: ownerId,
       },).execute();
+
       expect(await canAccessAsset(db, "shared-asset", otherId, null,),).toBe(true,);
     } finally {
       sqlite.close();
@@ -285,6 +292,7 @@ describe("canAccessAsset", () => {
         id: "shared2-asset" as never,
         visibility: "shared" as never,
       },);
+
       expect(await canAccessAsset(db, "shared2-asset", strangerId, null,),).toBe(false,);
     } finally {
       sqlite.close();
@@ -310,6 +318,7 @@ describe("listAssets", () => {
         "raw/op/ther/other-private.png",
         { id: "other-private-asset" as never, visibility: "private" as never, },
       );
+
       const result = await listAssets(db, { actorRole: "admin", },);
       expect(result.data.length,).toBeGreaterThanOrEqual(2,);
     } finally {
@@ -334,6 +343,7 @@ describe("listAssets", () => {
         "raw/op/ublic/other-public.png",
         { id: "other-public-asset" as never, visibility: "public" as never, },
       );
+
       const result = await listAssets(db, { actorId: ownerId, },);
       expect(result.data.some((a,) => a.id === ASSET_ID),).toBe(true,);
       expect(result.data.some((a,) => a.id === "other-public-asset"),).toBe(true,);
@@ -354,6 +364,7 @@ describe("listAssets", () => {
         entity_type: "character",
         entity_id: "char-linked",
       },).execute();
+
       const result = await listAssets(db, { entityType: "character", actorId: ownerId, },);
       expect(result.data.some((a,) => a.id === ASSET_ID),).toBe(true,);
     } finally {
@@ -372,6 +383,7 @@ describe("listAssets", () => {
         entity_type: "world",
         entity_id: "world-linked",
       },).execute();
+
       const result = await listAssets(db, { entityType: "world", entityId: "world-linked", actorId: ownerId, },);
       expect(result.data.some((a,) => a.id === ASSET_ID),).toBe(true,);
     } finally {
@@ -391,12 +403,14 @@ describe("listAssets", () => {
         entity_id: "char-1",
         label: "hero-portrait",
       },).execute();
+
       const result = await listAssets(db, {
         entityType: "character",
         entityId: "char-1",
         label: "hero-portrait",
         actorId: ownerId,
       },);
+
       expect(result.data.some((a,) => a.id === ASSET_ID),).toBe(true,);
     } finally {
       sqlite.close();
@@ -414,6 +428,7 @@ describe("listAssets", () => {
           id: `page-asset-${i}` as never,
         },);
       }
+
       const page1 = await listAssets(db, { page: 1, pageSize: 2, actorId: ownerId, },);
       expect(page1.data.length,).toBeLessThanOrEqual(2,);
       expect(page1.total,).toBeGreaterThan(0,);

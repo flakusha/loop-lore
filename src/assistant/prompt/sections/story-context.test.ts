@@ -40,6 +40,7 @@ beforeEach(async () => {
     id: "loc-1",
     description: "A rowdy dockside tavern.",
   },);
+
   await insertLocationStates(db, "loc-1", "world-1", {
     time_of_day: "evening",
     weather: "rain",
@@ -80,6 +81,7 @@ describe("storyContextSection", () => {
     const noLocation = ctx({
       chat: { id: "chat-1", world_id: "world-1", current_location_id: null, },
     },);
+
     expect(await storyContextSection.build(noLocation,),).toEqual([],);
   });
 });

@@ -42,6 +42,7 @@ async function makeDb(): Promise<{ db: Db; sqlite: Database }> {
       settings text not null
     )`,
   );
+
   sqlite.run(
     `CREATE TABLE worlds (
       id text primary key,
@@ -63,6 +64,7 @@ async function makeDb(): Promise<{ db: Db; sqlite: Database }> {
       rpg_enabled integer not null default 0
     )`,
   );
+
   sqlite.run(
     `CREATE TABLE crafting_station_defs (
       id text primary key,
@@ -80,6 +82,7 @@ async function makeDb(): Promise<{ db: Db; sqlite: Database }> {
       updated_at text not null
     )`,
   );
+
   sqlite.run(
     `CREATE TABLE crafting_station_instances (
       id text primary key,
@@ -93,6 +96,7 @@ async function makeDb(): Promise<{ db: Db; sqlite: Database }> {
       updated_at text not null
     )`,
   );
+
   const db = new Kysely<import("../../db/schema").DB>({ dialect: createSqliteDialect(sqlite,), },);
   return { db, sqlite, };
 }
@@ -124,6 +128,7 @@ describe("craftingStationRoutes", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await db.insertInto("worlds",).values({
       id: WORLD_ID,
       owner_id: TEST_USER,
@@ -151,6 +156,7 @@ describe("craftingStationRoutes", () => {
         },),
       },),
     );
+
     expect(createRes.status,).toBe(201,);
     const created = await createRes.json() as { id: string };
     expect(created.id,).toBeTruthy();
@@ -175,6 +181,7 @@ describe("craftingStationRoutes", () => {
         body: JSON.stringify({ name: "Renamed Anvil", tier: 3, },),
       },),
     );
+
     expect(updRes.status,).toBe(200,);
     expect((await updRes.json() as { ok: boolean }).ok,).toBe(true,);
 
@@ -191,6 +198,7 @@ describe("craftingStationRoutes", () => {
         body: JSON.stringify({ currentDurability: 100, isActive: true, },),
       },),
     );
+
     expect(instRes.status,).toBe(201,);
     const instCreated = await instRes.json() as { id: string };
     expect(instCreated.id,).toBeTruthy();
@@ -214,6 +222,7 @@ describe("craftingStationRoutes", () => {
         body: JSON.stringify({ currentDurability: 50, isActive: false, },),
       },),
     );
+
     expect(updInst.status,).toBe(200,);
 
     const getInst2 = await app.handle(new Request(`${BASE}/${defId}/instances/${instId}`,),);
@@ -226,6 +235,7 @@ describe("craftingStationRoutes", () => {
         method: "DELETE",
       },),
     );
+
     expect(delInst.status,).toBe(200,);
 
     const getInst3 = await app.handle(new Request(`${BASE}/${defId}/instances/${instId}`,),);
@@ -237,6 +247,7 @@ describe("craftingStationRoutes", () => {
         method: "DELETE",
       },),
     );
+
     expect(delDef.status,).toBe(200,);
 
     const getDef3 = await app.handle(new Request(`${BASE}/${defId}`,),);
@@ -256,6 +267,7 @@ describe("craftingStationRoutes", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     // World owned by a *different* user.
     await db.insertInto("worlds",).values({
       id: WORLD_ID,
@@ -272,6 +284,7 @@ describe("craftingStationRoutes", () => {
         body: JSON.stringify({ name: "x", stationType: "forge", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
 
     await db.destroy();
@@ -293,12 +306,14 @@ describe("craftingStationRoutes", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await db.insertInto("worlds",).values({
       id: WORLD_ID,
       owner_id: TEST_USER,
       name: "World A",
       description: null,
     },).execute();
+
     await db.insertInto("worlds",).values({
       id: otherWorldId,
       owner_id: TEST_USER,
@@ -322,6 +337,7 @@ describe("craftingStationRoutes", () => {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },).execute();
+
     await db.insertInto("crafting_station_instances",).values({
       id: instId,
       station_def_id: defId,
@@ -349,6 +365,7 @@ describe("craftingStationRoutes", () => {
         body: JSON.stringify({ currentDurability: 1, },),
       },),
     );
+
     expect(putRes.status,).toBe(404,);
 
     // DELETE must 404 (no row deleted).
@@ -357,6 +374,7 @@ describe("craftingStationRoutes", () => {
         method: "DELETE",
       },),
     );
+
     expect(delRes.status,).toBe(404,);
 
     // Original instance must still exist in world A.
@@ -364,6 +382,7 @@ describe("craftingStationRoutes", () => {
       .where("id", "=", instId,)
       .selectAll()
       .executeTakeFirst();
+
     expect(stillThere?.current_durability,).toBe(100,);
 
     await db.destroy();

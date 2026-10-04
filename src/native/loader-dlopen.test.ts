@@ -34,6 +34,7 @@ if (ISOLATED_RUN) {
     },
     FFIType: { i32: 0, ptr: 1, u64: 2, i64: 3, },
   }),);
+
   mock.module("node:fs", () => ({
     existsSync: (_path: string,) => true,
   }),);

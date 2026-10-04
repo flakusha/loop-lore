@@ -84,15 +84,18 @@ function buildMigrationProvider() {
       const migrationFiles = readdirSync(migrationDir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));
+
       const migrations: Record<string, Migration> = {};
       for (const f of migrationFiles) {
         const mod = (await import(path.join(migrationDir, f,))) as
           | { default?: Migration }
           | Migration;
+
         const candidate = "default" in mod && mod.default ? mod.default : (mod as Migration);
         const key = f.endsWith(".ts",) ? f.slice(0, -3,) : f;
         migrations[key] = candidate;
       }
+
       return migrations;
     },
   };
@@ -191,6 +194,7 @@ async function persistKeyPair(actorId: string,): Promise<JsonWebKey> {
       createdAt: new Date().toISOString(),
     },),
   );
+
   return publicJwk;
 }
 
@@ -204,6 +208,7 @@ function buildPubKeyRegistry(): Record<string, JsonWebKey> {
     const jwk = parsed.keyPairJwk?.publicKey;
     if (jwk) { reg[actorId] = jwk; }
   }
+
   return reg;
 }
 
@@ -222,11 +227,13 @@ function bindStubFetch(): void {
         headers: { "content-type": "application/json", },
       },);
     }
+
     return new Response(JSON.stringify({ publicKeyJwk: jwk, algorithm: "ECDH-P256", },), {
       status: 200,
       headers: { "content-type": "application/json", },
     },);
   },);
+
   globalThis.fetch = stub as unknown as typeof fetch;
 }
 
@@ -237,6 +244,7 @@ const realFetch = globalThis.fetch;
 beforeEach(() => {
   bindStubFetch();
 },);
+
 afterEach(() => {
   globalThis.fetch = realFetch;
 },);
@@ -250,6 +258,7 @@ describe("e2e-session lookup helpers", () => {
       senderActorId: ALICE_ID,
       recipientActorId: BOB_ID,
     },);
+
     expect(a.senderActorId,).toBe(ALICE_ID,);
     expect(a.recipientActorId,).toBe(BOB_ID,);
     expect(a.revokedAt,).toBeNull();
@@ -259,6 +268,7 @@ describe("e2e-session lookup helpers", () => {
       senderActorId: ALICE_ID,
       recipientActorId: BOB_ID,
     },);
+
     expect(b.id,).toBe(a.id,);
   });
 
@@ -268,6 +278,7 @@ describe("e2e-session lookup helpers", () => {
       senderActorId: BOB_ID,
       recipientActorId: ALICE_ID,
     },);
+
     expect(r,).toBeNull();
   });
 
@@ -282,6 +293,7 @@ describe("e2e-session lookup helpers", () => {
       senderActorId: ALICE_ID,
       recipientActorId: BOB_ID,
     },);
+
     expect(session.lastMessageAt,).toBeNull();
     await recordMessageSent({ database: db, sessionId: session.id, },);
     const reread = await findSession({ database: db, sessionId: session.id, },);
@@ -294,6 +306,7 @@ describe("e2e-session lookup helpers", () => {
       senderActorId: BOB_ID,
       recipientActorId: ALICE_ID,
     },);
+
     expect(await revokeSession({ database: db, sessionId: session.id, },),).toBe(true,);
     expect(await revokeSession({ database: db, sessionId: session.id, },),).toBe(false,);
     const active = await findActiveSession({
@@ -301,6 +314,7 @@ describe("e2e-session lookup helpers", () => {
       senderActorId: BOB_ID,
       recipientActorId: ALICE_ID,
     },);
+
     expect(active,).toBeNull();
   });
 });
@@ -330,6 +344,7 @@ describe("Alice→DB→Bob E2E roundtrip (Phase A acceptance criterion)", () => 
       plaintext,
       chainKey,
     },);
+
     expect(payload.ciphertext,).toBeTruthy();
     expect(payload.nonce,).toBeTruthy();
     expect(payload.senderEphPub,).toBeTruthy();
@@ -348,11 +363,13 @@ describe("Alice→DB→Bob E2E roundtrip (Phase A acceptance criterion)", () => 
       model_id: null,
       provider: null,
     },).execute();
+
     await sql`UPDATE messages SET e2e_payload = ${
       JSON.stringify(payload,)
     }, e2e_session_id = ${session.id} WHERE id = ${messageId}`.execute(
       db,
     );
+
     await recordMessageSent({ database: db, sessionId: session.id, },);
 
     const stored = await sql<{
@@ -362,6 +379,7 @@ describe("Alice→DB→Bob E2E roundtrip (Phase A acceptance criterion)", () => 
     }>`SELECT e2e_payload, e2e_session_id, content FROM messages WHERE id = ${messageId}`.execute(
       db,
     );
+
     const row = stored.rows[0];
     expect(row,).toBeDefined();
     expect(row?.e2e_session_id,).toBe(session.id,);
@@ -373,6 +391,7 @@ describe("Alice→DB→Bob E2E roundtrip (Phase A acceptance criterion)", () => 
       chainKey,
       payload: storedPayload,
     },);
+
     expect(decrypt.plaintext,).toBe(plaintext,);
     expect(decrypt.nextChainKey.byteLength,).toBe(32,);
   });
@@ -409,6 +428,7 @@ describe("Alice→DB→Bob E2E roundtrip (Phase A acceptance criterion)", () => 
       model_id: null,
       provider: null,
     },).execute();
+
     await sql`UPDATE messages SET e2e_payload = ${
       JSON.stringify(payload,)
     }, e2e_session_id = ${session.id} WHERE id = ${messageId}`.execute(

@@ -56,9 +56,11 @@ export function findCompressedVariant(
   if (encodings.has("br",) && existsSync(`${filePath}.br`,)) {
     return { path: `${filePath}.br`, encoding: "br", };
   }
+
   if (encodings.has("zstd",) && existsSync(`${filePath}.zst`,)) {
     return { path: `${filePath}.zst`, encoding: "zstd", };
   }
+
   if (encodings.has("gzip",) && existsSync(`${filePath}.gz`,)) {
     return { path: `${filePath}.gz`, encoding: "gzip", };
   }

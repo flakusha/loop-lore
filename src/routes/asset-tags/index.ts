@@ -117,6 +117,7 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
           scope: body.scope,
           ownerId,
         },);
+
         if (!tag) { return badRequestResponse("tag must not be empty",); }
         return jsonResponse({ tag, },);
       },
@@ -202,6 +203,7 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
           scope: body.scope,
           ownerId,
         },);
+
         if (!tag) { return badRequestResponse("oldTag and newTag must differ and must not be empty",); }
         return jsonResponse({ tag, },);
       },

@@ -49,6 +49,7 @@ export async function resolveLinkPreview(
     .select(["id", "filename", "owner_id",],)
     .where("id", "=", assetId,)
     .executeTakeFirst();
+
   if (!asset) { return { ok: false, error: `**Link:** asset "${assetId}" not found.`, }; }
   if (asset.owner_id !== userId) { return { ok: false, error: "**Link:** you don't own that asset.", }; }
   if (messageId !== undefined) {
@@ -57,15 +58,18 @@ export async function resolveLinkPreview(
       .select(["id", "chat_id",],)
       .where("id", "=", messageId,)
       .executeTakeFirst();
+
     if (!message) { return { ok: false, error: `**Link:** message "${messageId}" not found.`, }; }
     if (message.chat_id !== chatId) {
       return { ok: false, error: "**Link:** that message is in a different chat.", };
     }
+
     return {
       ok: true,
       preview: { assetId, filename: asset.filename, entityType: AssetLinkEntity.Message, entityId: messageId, },
     };
   }
+
   return {
     ok: true,
     preview: { assetId, filename: asset.filename, entityType: AssetLinkEntity.Chat, entityId: chatId, },
@@ -77,10 +81,12 @@ registerCommand("link", async (args, ctx,): Promise<CommandResult> => {
   if (!db) {
     return { systemMessage: "**Link unavailable:** command context missing database.", handled: true, };
   }
+
   const userId = ctx.userId;
   if (!userId) {
     return { systemMessage: "**Link unavailable:** missing user context.", handled: true, };
   }
+
   const assetId = (args[0] ?? "").trim();
   if (!assetId) {
     return {
@@ -88,12 +94,14 @@ registerCommand("link", async (args, ctx,): Promise<CommandResult> => {
       handled: true,
     };
   }
+
   const messageId = (args[1] ?? "").trim() || undefined;
   const resolved = await resolveLinkPreview(db, userId, ctx.chatId, assetId, messageId,);
   if (!resolved.ok) { return { systemMessage: resolved.error, handled: true, }; }
   const target = resolved.preview.entityType === AssetLinkEntity.Message
     ? `message \`${resolved.preview.entityId}\``
     : "this chat";
+
   return {
     systemMessage:
       `**Link preview** — attach **${resolved.preview.filename}** to ${target}? Confirm in the dialog to attach (no re-upload).`,

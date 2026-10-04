@@ -39,6 +39,7 @@ describe("recordTurnSkip", () => {
       await insertUsers(db, name, name, { id, } as never,);
       await insertActors(db, name, { id, user_id: id, owner_id: id, } as never,);
     }
+
     await insertChats(db, "Skip Chat", OWNER_ID, { id: CHAT_ID, } as never,);
     await insertChatParticipants(db, CHAT_ID, OWNER_ID, { role_in_chat: "owner", },);
     await insertChatParticipants(db, CHAT_ID, MEMBER_ID, { role_in_chat: "member", },);
@@ -57,6 +58,7 @@ describe("recordTurnSkip", () => {
       userId: MEMBER_ID,
       userRole: null,
     },);
+
     expect(res.ok,).toBe(true,);
     if (!res.ok) { return; }
     expect(res.deduped,).toBe(false,);
@@ -77,6 +79,7 @@ describe("recordTurnSkip", () => {
       userId: MEMBER_ID,
       userRole: null,
     },);
+
     const second = await recordTurnSkip(db, {
       chatId: CHAT_ID,
       actorId: MEMBER_ID,
@@ -84,12 +87,14 @@ describe("recordTurnSkip", () => {
       userId: MEMBER_ID,
       userRole: null,
     },);
+
     expect(first.ok && second.ok,).toBe(true,);
     if (!first.ok || !second.ok) { return; }
     expect(second.deduped,).toBe(true,);
     expect(second.messageId,).toBe(first.messageId,);
     const rows = await db.selectFrom("messages",).select("id",)
       .where("chat_id", "=", CHAT_ID,).where("content_type", "=", MessageContentType.TurnSkip,).execute();
+
     expect(rows,).toHaveLength(1,);
   });
 
@@ -113,6 +118,7 @@ describe("recordTurnSkip", () => {
         userRole: null,
       },),
     ],);
+
     expect(a.ok && b.ok,).toBe(true,);
     if (!a.ok || !b.ok) { return; }
     // Exactly one winner; the loser replays the winner's row.
@@ -122,6 +128,7 @@ describe("recordTurnSkip", () => {
     expect(loser.messageId,).toBe(winner.messageId,);
     const rows = await db.selectFrom("messages",).select("id",)
       .where("chat_id", "=", CHAT_ID,).where("content_type", "=", MessageContentType.TurnSkip,).execute();
+
     expect(rows,).toHaveLength(1,);
   });
 
@@ -142,6 +149,7 @@ describe("recordTurnSkip", () => {
         userRole: null,
       },),
     ],);
+
     // Distinct chain keys: neither actor dedups against the other.
     //
     // Assert `ok` on its own BEFORE touching `deduped`. The short-circuit shape
@@ -167,6 +175,7 @@ describe("recordTurnSkip", () => {
       userId: MEMBER_ID,
       userRole: null,
     },);
+
     expect(res,).toEqual({ ok: false, code: "not_found", message: "Chat not found", },);
   });
 
@@ -178,6 +187,7 @@ describe("recordTurnSkip", () => {
       userId: OWNER_ID,
       userRole: null,
     },);
+
     expect(res.ok,).toBe(false,);
     if (res.ok) { return; }
     expect(res.code,).toBe("not_found",);
@@ -187,6 +197,7 @@ describe("recordTurnSkip", () => {
     await insertMessages(db, CHAT_ID, MEMBER_ID, MessageRole.User, "attempted beat", {
       status: MessageStatus.Rejected,
     },);
+
     const res = await recordTurnSkip(db, {
       chatId: CHAT_ID,
       actorId: MEMBER_ID,
@@ -194,6 +205,7 @@ describe("recordTurnSkip", () => {
       userId: MEMBER_ID,
       userRole: null,
     },);
+
     expect(res.ok,).toBe(false,);
     if (res.ok) { return; }
     expect(res.code,).toBe("refused_beat",);
@@ -213,6 +225,7 @@ describe("cascade telemetry (TASK-turn-skip-cascade)", () => {
       await insertUsers(db, name, name, { id, } as never,);
       await insertActors(db, name, { id, user_id: id, owner_id: id, } as never,);
     }
+
     await insertChats(db, "Cascade Chat", OWNER_ID, { id: CHAT_ID, } as never,);
     await insertChatParticipants(db, CHAT_ID, OWNER_ID, { role_in_chat: "owner", },);
     await insertChatParticipants(db, CHAT_ID, MEMBER_ID, { role_in_chat: "member", },);
@@ -235,6 +248,7 @@ describe("cascade telemetry (TASK-turn-skip-cascade)", () => {
       userId: MEMBER_ID,
       userRole: null,
     },);
+
     expect(res.ok,).toBe(true,);
     const events = await telemetryEvents("cascade.beat.consumed",);
     expect(events.length,).toBeGreaterThanOrEqual(1,);
@@ -248,6 +262,7 @@ describe("cascade telemetry (TASK-turn-skip-cascade)", () => {
       userId: MEMBER_ID,
       userRole: null,
     },);
+
     expect(first.ok,).toBe(true,);
     const second = await recordTurnSkip(db, {
       chatId: CHAT_ID,
@@ -256,6 +271,7 @@ describe("cascade telemetry (TASK-turn-skip-cascade)", () => {
       userId: MEMBER_ID,
       userRole: null,
     },);
+
     expect(second.ok,).toBe(true,);
     if (!second.ok) { return; }
     expect(second.deduped,).toBe(true,);
@@ -267,6 +283,7 @@ describe("cascade telemetry (TASK-turn-skip-cascade)", () => {
     await insertMessages(db, CHAT_ID, MEMBER_ID, MessageRole.User, "attempted beat", {
       status: MessageStatus.Rejected,
     },);
+
     const res = await recordTurnSkip(db, {
       chatId: CHAT_ID,
       actorId: MEMBER_ID,
@@ -274,6 +291,7 @@ describe("cascade telemetry (TASK-turn-skip-cascade)", () => {
       userId: MEMBER_ID,
       userRole: null,
     },);
+
     expect(res.ok,).toBe(false,);
     const consumed = await telemetryEvents("cascade.beat.consumed",);
     const dedup = await telemetryEvents("cascade.dedup.skip",);
@@ -295,6 +313,7 @@ describe("countTurnSkipsForActor (TASK-turn-skip-cascade)", () => {
       await insertUsers(db, name, name, { id, } as never,);
       await insertActors(db, name, { id, user_id: id, owner_id: id, } as never,);
     }
+
     await insertChats(db, "Count Chat", OWNER_ID, { id: CHAT_ID, } as never,);
     await insertChatParticipants(db, CHAT_ID, OWNER_ID, { role_in_chat: "owner", },);
     await insertChatParticipants(db, CHAT_ID, MEMBER_ID, { role_in_chat: "member", },);
@@ -321,6 +340,7 @@ describe("countTurnSkipsForActor (TASK-turn-skip-cascade)", () => {
       userId: MEMBER_ID,
       userRole: null,
     },);
+
     await recordTurnSkip(db, {
       chatId: CHAT_ID,
       actorId: OWNER_ID,
@@ -328,6 +348,7 @@ describe("countTurnSkipsForActor (TASK-turn-skip-cascade)", () => {
       userId: OWNER_ID,
       userRole: null,
     },);
+
     // Owner emits a non-skip message (e.g. a confirmed beat) → next owner
     // skip is no longer deduped against the prior skip row.
     await insertMessages(db, CHAT_ID, OWNER_ID, MessageRole.Character, "Meanwhile, the captain stood watch.",);
@@ -338,6 +359,7 @@ describe("countTurnSkipsForActor (TASK-turn-skip-cascade)", () => {
       userId: OWNER_ID,
       userRole: null,
     },);
+
     const memberCount = await countTurnSkipsForActor(db, CHAT_ID, MEMBER_ID,);
     const ownerCount = await countTurnSkipsForActor(db, CHAT_ID, OWNER_ID,);
     expect(memberCount,).toBe(1,);
@@ -358,6 +380,7 @@ describe("GM-forced skip overrides (TASK-chat-feature-turn-talkativity-skip AC5)
       await insertUsers(db, name, name, { id, } as never,);
       await insertActors(db, name, { id, user_id: id, owner_id: id, } as never,);
     }
+
     await insertChats(db, "Forced Skip Chat", OWNER_ID, { id: CHAT_ID, } as never,);
     await insertChatParticipants(db, CHAT_ID, OWNER_ID, { role_in_chat: "owner", },);
     await insertChatParticipants(db, CHAT_ID, MEMBER_ID, { role_in_chat: "member", },);
@@ -373,6 +396,7 @@ describe("GM-forced skip overrides (TASK-chat-feature-turn-talkativity-skip AC5)
       .select("story_state",)
       .where("id", "=", CHAT_ID,)
       .executeTakeFirstOrThrow();
+
     return JSON.parse(row.story_state ?? "{}",) as Record<string, unknown>;
   }
 
@@ -384,10 +408,12 @@ describe("GM-forced skip overrides (TASK-chat-feature-turn-talkativity-skip AC5)
       userId: MEMBER_ID,
       userRole: null,
     },);
+
     expect(res.ok,).toBe(false,);
     if (res.ok) {
       return;
     }
+
     expect(res.code,).toBe("forbidden",);
     const skips = await countTurnSkipsForActor(db, CHAT_ID, OWNER_ID,);
     expect(skips,).toBe(0,);
@@ -401,6 +427,7 @@ describe("GM-forced skip overrides (TASK-chat-feature-turn-talkativity-skip AC5)
       userId: OWNER_ID,
       userRole: null,
     },);
+
     expect(res.ok,).toBe(true,);
     const state = await readStoryState();
     const forced = state.forcedSkips as Array<Record<string, unknown>> | undefined;
@@ -417,6 +444,7 @@ describe("GM-forced skip overrides (TASK-chat-feature-turn-talkativity-skip AC5)
       userId: OWNER_ID,
       userRole: null,
     },);
+
     expect(res.ok,).toBe(true,);
     const state = await readStoryState();
     const forced = state.forcedSkips as Array<unknown> | undefined;

@@ -60,6 +60,7 @@ export async function searchMessages(
     providers: { exact: providers.exact, keyword: providers.keyword, token: providers.token, },
     timeCaps: opts.timeCaps ?? DEFAULT_SEARCH_CAPS,
   },);
+
   return service.search(
     {
       q,
@@ -93,6 +94,7 @@ export async function searchMemories(
     providers: { keyword: providers.keyword, vector: providers.vector, },
     timeCaps: opts.timeCaps ?? DEFAULT_SEARCH_CAPS,
   },);
+
   return service.search(
     { q, mode: opts.mode ?? "hybrid", topK: opts.topK, minScore: opts.minScore, },
     { kind: "memories", actorId: opts.actorId, },
@@ -123,6 +125,7 @@ export async function searchAssets(
     providers: { exact: providers.exact, fuzzy: providers.fuzzy, keyword: providers.fuzzy, },
     timeCaps: opts.timeCaps ?? DEFAULT_SEARCH_CAPS,
   },);
+
   return service.search(
     {
       q,

@@ -68,6 +68,7 @@ describe("persistLoot", () => {
         .select(["id", "location_id",],)
         .where("id", "=", wId,)
         .executeTakeFirst();
+
       expect(row,).toBeDefined();
       expect(row?.location_id,).toBe(locationId,);
     }
@@ -84,6 +85,7 @@ describe("persistLoot", () => {
         .select("owner_actor_id",)
         .where("id", "=", wId,)
         .executeTakeFirst();
+
       expect(row?.owner_actor_id,).toBe(actorId,);
     }
   });
@@ -98,6 +100,7 @@ describe("persistLoot", () => {
       .where("world_items.id", "in", result.worldItemIds,)
       .select(["items.name", "items.category", "items.rarity",],)
       .execute();
+
     expect(rows.length,).toBe(result.worldItemIds.length,);
     for (const r of rows) {
       expect(r.name,).toBe("Health Potion",);
@@ -153,6 +156,7 @@ describe("persistLoot", () => {
       value: 1,
       weight: 1,
     },);
+
     const persisted = await persistLoot(db, {
       drops: [{
         name: "Arrow",
@@ -169,6 +173,7 @@ describe("persistLoot", () => {
       hasRareDrop: false,
       worldItemIds: [],
     }, { worldId, locationId, },);
+
     expect(persisted.worldItemIds,).toHaveLength(3,);
 
     const rows = await db
@@ -176,6 +181,7 @@ describe("persistLoot", () => {
       .select("quantity",)
       .where("id", "in", persisted.worldItemIds,)
       .execute();
+
     expect(rows.map((r,) => r.quantity).sort((a, b,) => b - a),).toEqual([2, 2, 1,],);
   });
 
@@ -193,6 +199,7 @@ describe("persistLoot", () => {
       value: 10,
       weight: 1,
     },);
+
     const persisted = await persistLoot(db, {
       drops: [{
         name: "Blade of Secrets",
@@ -209,6 +216,7 @@ describe("persistLoot", () => {
       hasRareDrop: true,
       worldItemIds: [],
     }, { worldId, locationId, },);
+
     expect(persisted.worldItemIds,).toHaveLength(3,);
 
     const rows = await db
@@ -216,6 +224,7 @@ describe("persistLoot", () => {
       .select("quantity",)
       .where("id", "in", persisted.worldItemIds,)
       .execute();
+
     for (const r of rows) {
       expect(r.quantity,).toBe(1,);
     }
@@ -230,6 +239,7 @@ describe("toCategory", () => {
     expect(toCategory("quest_item", "other",),).toBe(ItemCategory.QuestItem,);
     expect(toCategory("artifact", "other",),).toBe(ItemCategory.Artifact,);
   });
+
   test("falls back to provided default for unknown types", () => {
     expect(toCategory("gizmo", "misc",),).toBe(ItemCategory.Misc,);
   });

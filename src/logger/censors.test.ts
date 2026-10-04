@@ -33,6 +33,7 @@ describe("censorMeta", () => {
         nested: { deep: { secret: "x", }, },
       },
     },);
+
     expect((result!.user as Record<string, unknown>).email,).toBe("[REDACTED]",);
     expect((result!.user as Record<string, unknown>).name,).toBe("Bob",);
     expect(((result!.nested as Record<string, unknown>).deep as Record<string, unknown>).secret,).toBe(
@@ -57,6 +58,7 @@ describe("censorMeta", () => {
         items: [{ email: "a@b.com", }, { name: "ok", },],
       },
     },);
+
     const items = result!.items as Record<string, unknown>[];
     expect(items[0]!.email,).toBe("[REDACTED]",);
     expect(items[1]!.name,).toBe("ok",);
@@ -125,6 +127,7 @@ describe("censorMeta", () => {
         auth_header: "Bearer xxx",
       },
     },);
+
     expect(result!["set-cookie"],).toBe("[REDACTED]",);
     expect(result!.session_id,).toBe("[REDACTED]",);
     expect(result!.bearer_token,).toBe("[REDACTED]",);
@@ -142,6 +145,7 @@ describe("censorMeta", () => {
         },
       },
     };
+
     const result = censorMeta({ meta: deep, maxDepth: 2, },);
     const l1 = result!.level1 as Record<string, unknown>;
     const l2 = l1.level2 as Record<string, unknown>;

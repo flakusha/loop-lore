@@ -23,6 +23,7 @@ function installStorage(): void {
       if (setItemThrows) {
         throw new Error("quota",);
       }
+
       store.set(k, v,);
     },
     removeItem: (k: string,) => {

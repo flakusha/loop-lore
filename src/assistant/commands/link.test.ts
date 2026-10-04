@@ -63,6 +63,7 @@ describe("resolveLinkPreview", () => {
       id: messageId,
       swipe_index: 0,
     } as never,);
+
     foreignMessageId = uid();
     await insertMessages(db, otherChatId, ownerId, MessageRole.User, "hello", {
       id: foreignMessageId,

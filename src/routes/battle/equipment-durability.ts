@@ -51,6 +51,7 @@ async function degradeActorEquipment(
       rarity: "common",
       properties: jsonParseOr<Record<string, unknown>>(row.metadata ?? "{}", {},),
     },);
+
     item.durability = row.durability ?? 100;
     item.maxDurability = row.max_durability ?? 100;
     item.equipped = true;
@@ -69,6 +70,7 @@ async function degradeActorEquipment(
       broken: degraded.durability <= 0,
     },);
   }
+
   return updated;
 }
 

@@ -62,6 +62,7 @@ async function field(
     .select(column,)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   return row ? (row[column] as number) : null;
 }
 
@@ -177,6 +178,7 @@ describe("purgeStaleMemories — hard delete", () => {
       minConfidence: 0.5,
       minStrength: 0.1,
     },);
+
     expect(result.deleted,).toBe(1,);
   });
 

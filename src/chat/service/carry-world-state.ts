@@ -34,6 +34,7 @@ export async function carryWorldState(
     .selectAll()
     .where("world_id", "=", sourceWorldId,)
     .execute();
+
   for (const s of states) {
     await database
       .insertInto("world_states",)
@@ -54,6 +55,7 @@ export async function carryWorldState(
     .selectAll()
     .where("world_id", "=", sourceWorldId,)
     .execute();
+
   for (const n of npcStates) {
     await database
       .insertInto("npc_states",)
@@ -79,6 +81,7 @@ export async function carryWorldState(
     .selectAll()
     .where("world_id", "=", sourceWorldId,)
     .execute();
+
   for (const l of locationStates) {
     await database
       .insertInto("location_states",)

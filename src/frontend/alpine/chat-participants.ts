@@ -38,6 +38,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
       if (q && !(a.display_name || "").toLowerCase().includes(q,)) { continue; }
       out.push(a,);
     }
+
     return out;
   },
 
@@ -110,6 +111,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ actorId, role, },),
       },);
+
       if (res.ok) {
         this._selectedAddActorId = null;
         this._participantQuery = "";
@@ -121,6 +123,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
           const body = (await res.json()) as { error?: string };
           errorMessage = body.error;
         } catch { /* non-JSON error body */ }
+
         this.$dispatch?.("show-toast", {
           type: "error",
           message: errorMessage || t("participants.failedAdd",),
@@ -144,6 +147,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants/${actorId}`, {
         method: "DELETE",
       },);
+
       if (res.ok || res.status === 204) {
         await this.loadParticipants();
         this.$dispatch?.("show-toast", { type: "success", message: t("participants.removed",), },);
@@ -170,6 +174,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ talkativity: clamped, },),
     },);
+
     if (res.ok) {
       const p = this._participants.find((x,) => x.actor_id === actorId);
       if (p) { p.talkativity = clamped; }
@@ -190,6 +195,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ initiative: value, },),
     },);
+
     if (res.ok) {
       const p = this._participants.find((x,) => x.actor_id === actorId);
       if (p) { p.initiative = value; }

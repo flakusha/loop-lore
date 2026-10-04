@@ -55,11 +55,13 @@ function buildMigrationProvider() {
       const fileNames = readdirSync(dir,)
         .filter((f,) => f?.endsWith(".ts",) ?? false)
         .sort((a, b,) => (a ?? "") < (b ?? "") ? -1 : ((a ?? "") > (b ?? "") ? 1 : 0));
+
       const migrations: Record<string, Migration> = {};
       for (const fileName of fileNames) {
         const mod = await import(path.join(dir, fileName,));
         migrations[fileName.replace(/\.ts$/, "",)] = mod.default ?? mod;
       }
+
       return migrations;
     },
   };
@@ -149,6 +151,7 @@ describe("AC5: concurrent join+leave collapses to a single rotation", () => {
       chatKey: initialKey.key,
       keyId: initialKey.keyId,
     },);
+
     await db.insertInto("messages",).values({
       id: crypto.randomUUID(),
       chat_id: CHAT_ID,
@@ -182,10 +185,12 @@ describe("AC5: concurrent join+leave collapses to a single rotation", () => {
 
     const row = await db.selectFrom("chat_keys",).select("id",)
       .where("chat_id", "=", CHAT_ID,).executeTakeFirstOrThrow();
+
     expect(row.id,).toBe(resultA.keyId,);
 
     const msgs = await db.selectFrom("messages",).select(["content", "key_id",],)
       .where("chat_id", "=", CHAT_ID,).execute();
+
     expect(msgs.length,).toBe(1,);
     expect(msgs[0]!.key_id,).toBe(resultA.keyId,);
     const postKey = await getChatKeyById(db, resultA.keyId, smk,);

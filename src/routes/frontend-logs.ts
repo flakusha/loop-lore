@@ -68,26 +68,32 @@ export function frontendLogsRoutes(prefix = "/api",) {
           log.trace(msg, meta,);
           break;
         }
+
         case "debug": {
           log.debug(msg, meta,);
           break;
         }
+
         case "info": {
           log.info(msg, meta,);
           break;
         }
+
         case "warn": {
           log.warn(msg, meta,);
           break;
         }
+
         case "error": {
           log.error(msg, undefined, meta,);
           break;
         }
+
         case "fatal": {
           log.fatal(msg, undefined, meta,);
           break;
         }
+
         default: {
           log.info(msg, meta,);
         }

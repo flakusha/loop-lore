@@ -69,6 +69,7 @@ export async function wrapSenderKey(
   if (opts.chainKey.byteLength !== KEY_LENGTH) {
     throw new Error(`chainKey must be ${KEY_LENGTH} bytes (got ${opts.chainKey.byteLength})`,);
   }
+
   const wraps: RecipientWrap[] = [];
   for (const recipient of opts.recipients) {
     const eph = await crypto.subtle.generateKey(
@@ -76,6 +77,7 @@ export async function wrapSenderKey(
       true,
       ["deriveBits",],
     );
+
     const theirPub = await crypto.subtle.importKey(
       "jwk",
       recipient.staticPubJwk,
@@ -83,11 +85,13 @@ export async function wrapSenderKey(
       false,
       [],
     );
+
     const sharedBits = await crypto.subtle.deriveBits(
       { name: "ECDH", public: theirPub, },
       eph.privateKey,
       KEY_LENGTH * 8,
     );
+
     const shared = new Uint8Array(sharedBits,);
     const keystream = await hkdfExpandToBytes(shared, WRAP_INFO, KEY_LENGTH,);
     const wrapKey = await crypto.subtle.importKey(
@@ -97,9 +101,11 @@ export async function wrapSenderKey(
       false,
       ["encrypt",],
     );
+
     const wrapNonce = crypto.getRandomValues(
       new Uint8Array(WRAP_NONCE_LENGTH,),
     );
+
     const aad = wrapAad(recipient.actorId,);
     const ct = new Uint8Array(
       await crypto.subtle.encrypt(
@@ -112,17 +118,20 @@ export async function wrapSenderKey(
         new Uint8Array(opts.chainKey,).buffer as ArrayBuffer,
       ),
     );
+
     const packed = `${wrapNonce.toBase64()}.${ct.toBase64()}`;
     const senderEphPubJwk = await crypto.subtle.exportKey(
       "jwk",
       eph.publicKey,
     );
+
     wraps.push({
       recipientActorId: recipient.actorId,
       wrappedKey: packed,
       senderEphPubJwk,
     },);
   }
+
   return wraps;
 }
 
@@ -143,23 +152,27 @@ export async function unwrapSenderKey(
     false,
     [],
   );
+
   const sharedBits = await crypto.subtle.deriveBits(
     { name: "ECDH", public: senderEphPub, },
     opts.recipientStaticPriv,
     KEY_LENGTH * 8,
   );
+
   const shared = new Uint8Array(sharedBits,);
   const keystream = await hkdfExpandToBytes(shared, WRAP_INFO, KEY_LENGTH,);
   const parts = opts.wrappedKey.split(".",);
   if (parts.length !== 2) {
     throw new Error("wrap wire format invalid: expected `<nonce_b64>.<ct_b64>`",);
   }
+
   const [nonceB64, ctB64,] = parts as [string, string,];
   const wrapNonce = Uint8Array.fromBase64(nonceB64,);
   const ct = Uint8Array.fromBase64(ctB64,);
   if (wrapNonce.byteLength !== WRAP_NONCE_LENGTH) {
     throw new Error(`wrap nonce must be ${WRAP_NONCE_LENGTH} bytes`,);
   }
+
   const wrapKey = await crypto.subtle.importKey(
     "raw",
     new Uint8Array(keystream,).buffer as ArrayBuffer,
@@ -167,6 +180,7 @@ export async function unwrapSenderKey(
     false,
     ["decrypt",],
   );
+
   const aad = wrapAad(opts.recipientActorId,);
   // Throws OperationError on auth-tag mismatch (wrong key OR wrong actor id).
   const pt = new Uint8Array(
@@ -180,9 +194,11 @@ export async function unwrapSenderKey(
       new Uint8Array(ct,).buffer as ArrayBuffer,
     ),
   );
+
   if (pt.byteLength !== KEY_LENGTH) {
     throw new Error(`unwrapped chain key must be ${KEY_LENGTH} bytes`,);
   }
+
   return pt;
 }
 
@@ -229,6 +245,7 @@ export async function recordGroupWrap(
       chain_index: opts.chainIndex,
     },)
     .execute();
+
   return {
     id,
     groupSessionId: opts.groupSessionId,

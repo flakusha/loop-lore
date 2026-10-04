@@ -65,6 +65,7 @@ function makeCtx(overrides?: {
       deleted_at: null,
       deleted_by: null,
     },).execute();
+
     return {
       id,
       actionType: params.actionType,
@@ -78,6 +79,7 @@ function makeCtx(overrides?: {
       createdAt: now,
     } as ModAction;
   },);
+
   return {
     db,
     log: makeLog(),
@@ -138,11 +140,13 @@ describe("submitAppeal", () => {
       actionId: "action-1",
       reason: "I did not break the rules",
     },);
+
     expect(result.status,).toBe("pending",);
     expect(result.id,).toBeTruthy();
 
     const row = await db.selectFrom("moderation_appeals",).selectAll()
       .where("id", "=", result.id,).executeTakeFirst();
+
     expect(row?.status,).toBe("pending",);
     expect(row?.user_id,).toBe(USER,);
     expect(row?.action_id,).toBe("action-1",);
@@ -268,6 +272,7 @@ describe("reviewAppeal", () => {
     expect(unblock,).not.toHaveBeenCalled();
     const row = await db.selectFrom("moderation_appeals",).selectAll()
       .where("id", "=", appeal.id,).executeTakeFirst();
+
     expect(row?.status,).toBe("denied",);
     expect(row?.reviewed_by,).toBe("admin-2",);
     expect(row?.review_note,).toBe("evidence confirms violation",);
@@ -291,11 +296,13 @@ describe("reviewAppeal", () => {
     expect(unblock,).not.toHaveBeenCalled();
     const appealRow = await db.selectFrom("moderation_appeals",).selectAll()
       .where("id", "=", appeal.id,).executeTakeFirst();
+
     expect(appealRow?.status,).toBe("pending_reversal",);
     const actionRow = await db.selectFrom("moderation_actions",)
       .select(["id", "superseded_by",],)
       .where("id", "=", "action-d2",)
       .executeTakeFirst() as unknown as { superseded_by: string | null } | undefined;
+
     expect(actionRow?.superseded_by,).toBe(appeal.id,);
   });
 
@@ -315,11 +322,13 @@ describe("reviewAppeal", () => {
     expect(unban,).not.toHaveBeenCalled();
     const appealRow = await db.selectFrom("moderation_appeals",).selectAll()
       .where("id", "=", appeal.id,).executeTakeFirst();
+
     expect(appealRow?.status,).toBe("pending_reversal",);
     const actionRow = await db.selectFrom("moderation_actions",)
       .select(["id", "superseded_by",],)
       .where("id", "=", "action-d3",)
       .executeTakeFirst() as unknown as { superseded_by: string | null } | undefined;
+
     expect(actionRow?.superseded_by,).toBe(appeal.id,);
   });
 
@@ -339,6 +348,7 @@ describe("reviewAppeal", () => {
     const actionRow = await db.selectFrom("moderation_actions",)
       .select(["id", "superseded_by",],)
       .executeTakeFirst() as unknown as { superseded_by: string | null } | undefined;
+
     expect(actionRow?.superseded_by,).toBe(appeal.id,);
   });
 
@@ -353,8 +363,10 @@ describe("reviewAppeal", () => {
       status: "approved",
       reviewNote: "ok",
     },),).resolves.toBeUndefined();
+
     const row = await db.selectFrom("moderation_appeals",).selectAll()
       .where("id", "=", appeal.id,).executeTakeFirst();
+
     expect(row?.status,).toBe("pending_reversal",);
   });
 
@@ -395,11 +407,13 @@ describe("reviewAppeal", () => {
       .select(["id", "superseded_by", "deleted_at",],)
       .where("id", "=", "action-sd1",)
       .executeTakeFirst() as unknown as { superseded_by: string | null; deleted_at: string | null } | undefined;
+
     expect(actionRow?.superseded_by,).toBeNull();
     expect(actionRow?.deleted_at,).not.toBeNull();
     // Appeal still progresses to pending_reversal (audit trail is preserved).
     const appealRow = await db.selectFrom("moderation_appeals",).selectAll()
       .where("id", "=", appeal.id,).executeTakeFirst();
+
     expect(appealRow?.status,).toBe("pending_reversal",);
   });
 
@@ -440,6 +454,7 @@ describe("executeReversal", () => {
       status: "approved",
       reviewNote: "ok",
     },);
+
     await expect(executeReversal({
       thisL: makeCtx(),
       appealId: appeal.id,
@@ -458,6 +473,7 @@ describe("executeReversal", () => {
       status: "denied",
       reviewNote: "no",
     },);
+
     await expect(executeReversal({
       thisL: makeCtx(),
       appealId: appeal.id,
@@ -481,6 +497,7 @@ describe("executeReversal", () => {
         metadata: "{}",
       } as unknown as ModAction,)
     );
+
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r3", reason: "x", },);
     await reviewAppeal({
       thisL: makeCtx(),
@@ -489,6 +506,7 @@ describe("executeReversal", () => {
       status: "approved",
       reviewNote: "ok",
     },);
+
     await executeReversal({
       thisL: makeCtx({ unblockUser: unblock, },),
       appealId: appeal.id,
@@ -499,6 +517,7 @@ describe("executeReversal", () => {
     expect(unblock,).toHaveBeenCalledTimes(1,);
     const row = await db.selectFrom("moderation_appeals",).selectAll()
       .where("id", "=", appeal.id,).executeTakeFirst();
+
     expect(row?.status,).toBe("reversed",);
   });
 
@@ -515,6 +534,7 @@ describe("executeReversal", () => {
       format_version: 0,
       created_at: "2026-01-01T00:00:00.000Z",
     },).execute();
+
     await db.insertInto("moderation_actions",).values({
       id: "action-r4",
       action_type: "block",
@@ -529,6 +549,7 @@ describe("executeReversal", () => {
       deleted_by: null,
       superseded_by: null,
     },).execute();
+
     const unblock = mock(() =>
       Promise.resolve({
         id: "rev-r4",
@@ -542,6 +563,7 @@ describe("executeReversal", () => {
         metadata: "{}",
       } as unknown as ModAction,)
     );
+
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r4", reason: "x", },);
     await reviewAppeal({
       thisL: makeCtx(),
@@ -550,16 +572,20 @@ describe("executeReversal", () => {
       status: "approved",
       reviewNote: "ok",
     },);
+
     await executeReversal({
       thisL: makeCtx({ unblockUser: unblock, },),
       appealId: appeal.id,
       executedBy: "admin-2",
       approvedBy: "admin-1",
     },);
+
     const note = await db.selectFrom("notifications",).selectAll()
       .where("user_id", "=", "moderator-A",).executeTakeFirst();
+
     expect(note?.type,).toBe("appeal.reversed",);
   });
+
   test("throws when the underlying action is soft-deleted (deleted_at IS NOT NULL)", async () => {
     await insertActionRow({ id: "action-r5", actionType: "block", targetUserId: USER, },);
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r5", reason: "x", },);
@@ -570,12 +596,14 @@ describe("executeReversal", () => {
       status: "approved",
       reviewNote: "ok",
     },);
+
     // Now tombstone the action between approval and execution — mirrors
     // deleteUserData.ts running concurrently with the approval flow.
     await db.updateTable("moderation_actions",)
       .set({ deleted_at: "2026-01-15T00:00:00.000Z", deleted_by: "admin-3", },)
       .where("id", "=", "action-r5",)
       .execute();
+
     const unblock = mock(() => Promise.resolve({} as ModAction,));
     await expect(executeReversal({
       thisL: makeCtx({ unblockUser: unblock, },),
@@ -583,10 +611,12 @@ describe("executeReversal", () => {
       executedBy: "admin-2",
       approvedBy: "admin-1",
     },),).rejects.toThrow(/not found/,);
+
     // The reversal side effects MUST NOT fire when the action is tombstoned.
     expect(unblock,).not.toHaveBeenCalled();
     const appealRow = await db.selectFrom("moderation_appeals",).selectAll()
       .where("id", "=", appeal.id,).executeTakeFirst();
+
     expect(appealRow?.status,).toBe("pending_reversal",);
   });
 });

@@ -5,6 +5,7 @@ const globalState = globalThis as unknown as {
   apiFetch?: (url: string, opts?: RequestInit,) => Promise<Response>;
   showToast?: (type: string, message: string,) => void;
 };
+
 const originalFetch = globalState.apiFetch;
 const originalToast = globalState.showToast;
 let handler: (url: string,) => Promise<Response> = async () => Response.json({},);
@@ -55,12 +56,14 @@ function routeResponses(): void {
     if (url.startsWith("/api/v1/telemetry/analytics/summary",)) {
       return Response.json({ total: 5, distinct_sessions: 2, distinct_users: 1, },);
     }
+
     if (url.startsWith("/api/v1/telemetry/analytics/daily",)) {
       return Response.json([
         { date: "2026-10-01", count: 3, active_users: 1, },
         { date: "2026-10-02", count: 6, active_users: 2, },
       ],);
     }
+
     if (url.startsWith("/api/v1/telemetry/analytics/errors",)) { return Response.json([],); }
     if (url.startsWith("/api/v1/telemetry/analytics/purge",)) { return Response.json({ ok: true, },); }
     if (url === "/api/analytics/overview") {
@@ -76,6 +79,7 @@ function routeResponses(): void {
         topChats: [],
       },);
     }
+
     if (url === "/api/analytics/characters") {
       return Response.json({
         characters: [{
@@ -88,6 +92,7 @@ function routeResponses(): void {
         },],
       },);
     }
+
     return new Response("", { status: 404, },);
   };
 }
@@ -141,6 +146,7 @@ describe("adminAnalytics.purgeAnalytics", () => {
       url.startsWith("/api/v1/telemetry/analytics/purge",)
         ? Response.json({ message: "nope", }, { status: 500, },)
         : await base(url,);
+
     await state.purgeAnalytics();
     expect(toasts,).toEqual([{ type: "error", message: "nope", },],);
     expect(state.purgingAnalytics,).toBe(false,);

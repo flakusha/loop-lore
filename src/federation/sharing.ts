@@ -54,6 +54,7 @@ export async function outstandingBytes(
     .where("peer_origin", "=", peerOrigin,)
     .where("state", "in", [...OPEN_RESERVATION_STATES,],)
     .executeTakeFirst();
+
   return row?.held ?? 0;
 }
 
@@ -89,16 +90,19 @@ export async function createInboundReservation(
     .select(["origin", "state", "capacity_bytes",],)
     .where("origin", "=", origin,)
     .executeTakeFirst();
+
   if (!peer || peer.state !== "trusted") { throw new Error(`untrusted peer: ${origin}`,); }
   if (!Number.isFinite(input.sizeBytes,) || input.sizeBytes <= 0) {
     throw new Error(`invalid size: ${input.sizeBytes}`,);
   }
+
   if (peer.capacity_bytes !== null) {
     const held = await outstandingBytes(database, origin,);
     if (held + input.sizeBytes > peer.capacity_bytes) {
       throw new Error(`peer capacity exhausted: ${origin}`,);
     }
   }
+
   const now = input.now ?? Date.now();
   const id = crypto.randomUUID();
   await database
@@ -113,6 +117,7 @@ export async function createInboundReservation(
       expires_at: new Date(now + (input.ttlMs ?? DEFAULT_RESERVATION_TTL_MS),).toISOString(),
     },)
     .execute();
+
   return id;
 }
 
@@ -135,13 +140,16 @@ export async function advanceReservation(
     .select(["state",],)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   if (!row) { throw new Error(`unknown reservation: ${id}`,); }
   const current = row.state as ReservationState;
   const legal = (current === "reserved" || current === "pushed") &&
     NEXT_RESERVATION[current] === next;
+
   if (!legal) {
     throw new Error(`illegal reservation transition: ${current} -> ${next}`,);
   }
+
   await database
     .updateTable("mesh_reservations",)
     .set({ state: next, },)
@@ -166,11 +174,13 @@ export async function releaseReservation(
     .select(["state",],)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   if (!row) { throw new Error(`unknown reservation: ${id}`,); }
   const current = row.state as ReservationState;
   if (current === "confirmed" || current === "released" || current === "expired") {
     throw new Error(`reservation already terminal: ${current}`,);
   }
+
   await database
     .updateTable("mesh_reservations",)
     .set({ state: "released", },)
@@ -195,6 +205,7 @@ export async function sweepExpiredReservations(
     .where("expires_at", "<", cutoff,)
     .where("state", "in", [...OPEN_RESERVATION_STATES,],)
     .execute();
+
   for (const row of stale) {
     await database
       .updateTable("mesh_reservations",)
@@ -202,5 +213,6 @@ export async function sweepExpiredReservations(
       .where("id", "=", row.id,)
       .execute();
   }
+
   return stale.length;
 }

@@ -49,6 +49,7 @@ function buildCtx(overrides?: Partial<AvatarCtx>,): AvatarCtx {
     _emotionGenJobId: null,
     ...overrides,
   };
+
   return ctx as unknown as AvatarCtx;
 }
 
@@ -75,14 +76,17 @@ function routeResponses(opts?: {
         ? new Response("", { status: opts.participantsStatus, },)
         : Response.json(opts?.participants ?? npcParticipants,);
     }
+
     if (url === "/api/v1/actors/actor-9/avatars") {
       return opts?.avatarsStatus
         ? new Response("", { status: opts.avatarsStatus, },)
         : Response.json(opts?.avatars ?? avatarRows,);
     }
+
     if (url === "/api/v1/actors/actor-9/emotion-avatars") {
       return opts?.generation ?? Response.json({ jobId: null, },);
     }
+
     return new Response("", { status: 404, },);
   };
 }
@@ -119,6 +123,7 @@ describeOrSkip("moodStateAvatars.loadEmotionAvatars", () => {
       { emotion: "happy", avatarId: "av-happy", assetId: "as-happy", },
       { emotion: "neutral", avatarId: "av-neutral", assetId: "as-neutral", },
     ],);
+
     expect(ctx._currentEmotionAvatar,).toBe("as-neutral",);
     expect(ctx._emotionAvatarsLoading,).toBe(false,);
   });
@@ -216,6 +221,7 @@ describeOrSkip("moodStateAvatars.avatarForMessage", () => {
       currentCharacter: { id: "c1", avatar_asset_id: "base-1", },
       _emotionAvatars: [{ emotion: "happy", avatarId: "a", assetId: "as-happy", },],
     },);
+
     expect(moodStateAvatars.avatarForMessage!.call(ctx as never, { role: "user", emotion: "happy", },),).toBeNull();
   });
 
@@ -226,6 +232,7 @@ describeOrSkip("moodStateAvatars.avatarForMessage", () => {
         { emotion: "neutral", avatarId: "b", assetId: "as-neutral", },
       ],
     },);
+
     expect(moodStateAvatars.avatarForMessage!.call(ctx as never, { role: "assistant", emotion: "happy", },),).toBe(
       "as-happy",
     );
@@ -235,12 +242,15 @@ describeOrSkip("moodStateAvatars.avatarForMessage", () => {
     const ctx = buildCtx({
       _emotionAvatars: [{ emotion: "neutral", avatarId: "b", assetId: "as-neutral", },],
     },);
+
     expect(moodStateAvatars.avatarForMessage!.call(ctx as never, { role: "assistant", emotion: "angry", },),).toBe(
       "as-neutral",
     );
+
     const firstOnly = buildCtx({
       _emotionAvatars: [{ emotion: "happy", avatarId: "a", assetId: "as-first", },],
     },);
+
     expect(moodStateAvatars.avatarForMessage!.call(firstOnly as never, { role: "assistant", emotion: "angry", },),)
       .toBe("as-first",);
   });
@@ -266,6 +276,7 @@ describeOrSkip("moodStateAvatars.selectEmotionAvatar", () => {
         { emotion: "neutral", avatarId: "b", assetId: "as-neutral", },
       ],
     },);
+
     expect(moodStateAvatars.selectEmotionAvatar!.call(ctx as never, "happy",),).toBe("as-happy",);
     expect(ctx._currentEmotionAvatar,).toBe("as-happy",);
   });
@@ -274,11 +285,13 @@ describeOrSkip("moodStateAvatars.selectEmotionAvatar", () => {
     const neutral = buildCtx({
       _emotionAvatars: [{ emotion: "neutral", avatarId: "b", assetId: "as-neutral", },],
     },);
+
     expect(moodStateAvatars.selectEmotionAvatar!.call(neutral as never, "sad",),).toBe("as-neutral",);
     expect(neutral._currentEmotionAvatar,).toBe("as-neutral",);
     const first = buildCtx({
       _emotionAvatars: [{ emotion: "happy", avatarId: "a", assetId: "as-first", },],
     },);
+
     expect(moodStateAvatars.selectEmotionAvatar!.call(first as never, "sad",),).toBe("as-first",);
   });
 },);

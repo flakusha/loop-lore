@@ -36,6 +36,7 @@ describe("FEAT-character-spec-inclusion — identity fields", () => {
       gender: "female",
       age: "300",
     };
+
     expect(char.species,).toBe("high elf",);
     expect(char.homeland,).toBe("Whispering Library",);
     expect(char.culture,).toBe("Scholar of the old tongue",);
@@ -48,6 +49,7 @@ describe("FEAT-character-spec-inclusion — identity fields", () => {
       ...baseCharacter,
       growth_mode: undefined as never, // type-only reference to existing flag
     };
+
     // Identity flag is on CharacterFeatureFlags; verify behavior by passing in extensions.
     // (No runtime check for the interface field itself; this test guards against regressions.)
     expect(char.extensions,).toBeUndefined();
@@ -68,6 +70,7 @@ describe("FEAT-character-spec-inclusion — validator length caps", () => {
       ...baseCharacter,
       species: "x".repeat(65,),
     };
+
     const result = validateCharacter(char, "strict",);
     const speciesErr = result.errors.find((e,) => e.field === "species");
     expect(speciesErr,).toBeDefined();
@@ -79,6 +82,7 @@ describe("FEAT-character-spec-inclusion — validator length caps", () => {
       ...baseCharacter,
       species: "x".repeat(65,),
     };
+
     const result = validateCharacter(char, "relaxed",);
     const speciesErr = result.errors.find((e,) => e.field === "species");
     expect(speciesErr,).toBeUndefined();
@@ -91,6 +95,7 @@ describe("FEAT-character-spec-inclusion — validator length caps", () => {
       ...baseCharacter,
       species: "x".repeat(64,), // exactly at cap
     };
+
     const result = validateCharacter(char, "strict",);
     expect(result.errors.find((e,) => e.field === "species"),).toBeUndefined();
   });
@@ -120,6 +125,7 @@ describe("FEAT-character-spec-inclusion — importer legacy aliasing", () => {
       species: "high elf",
       race: "dwarf",
     },);
+
     expect(result.species,).toBe("high elf",);
   });
 
@@ -152,6 +158,7 @@ describe("FEAT-character-spec-inclusion — exporter round-trip", () => {
       gender: "n/a",
       age: 7,
     };
+
     const exported = exportBaseFields(char,);
     expect(exported.species,).toBe("synthetic",);
     expect(exported.homeland,).toBe("starship Horizon",);
@@ -169,6 +176,7 @@ describe("FEAT-character-spec-inclusion — exporter round-trip", () => {
     expect("age" in exported,).toBe(false,);
   });
 });
+
 describe("character appearance + outfits — required fields", () => {
   it("strict mode: missing appearance → REQUIRED error", () => {
     const char: CanonicalCharacter = { ...baseCharacter, appearance: "", };
@@ -197,6 +205,7 @@ describe("character appearance + outfits — required fields", () => {
       ],
       default_outfit: "gear",
     };
+
     const result = validateCharacter(char, "strict",);
     expect(result.errors.find((e,) => e.field === "outfits" && e.code === "DUPLICATE_ID"),).toBeDefined();
   });
@@ -216,6 +225,7 @@ describe("character appearance + outfits — required fields", () => {
       appearance: "Tall figure",
       outfits: [{ id: "gear", name: "Gear", descriptor: "Sturdy clothes", },],
     },);
+
     expect(result.appearance,).toBe("Tall figure",);
     expect(result.outfits,).toHaveLength(1,);
     expect(result.default_outfit,).toBe("gear",);
@@ -227,12 +237,14 @@ describe("character appearance + outfits — required fields", () => {
     expect(exported.default_outfit,).toBe("travel-gear",);
     expect(exported.outfits,).toEqual(baseCharacter.outfits,);
   });
+
   it("strict mode: oversized catalog + invalid fields → MAX_ITEMS + INVALID_VALUE", () => {
     const outfits = Array.from({ length: 21, }, (_, i,) => ({
       id: i === 0 ? "" : `gear-${i}`,
       name: i === 1 ? "" : `Gear ${i}`,
       descriptor: i === 2 ? "" : "Sturdy clothes",
     }),);
+
     const char: CanonicalCharacter = { ...baseCharacter, outfits, default_outfit: "gear-3", };
     const result = validateCharacter(char, "strict",);
     expect(result.errors.find((e,) => e.field === "outfits" && e.code === "MAX_ITEMS_EXCEEDED"),).toBeDefined();
@@ -248,6 +260,7 @@ describe("character appearance + outfits — required fields", () => {
       outfits: [null as unknown as { id: string; name: string; descriptor: string },],
       default_outfit: "",
     };
+
     const result = validateCharacter(char, "strict",);
     expect(result.errors.find((e,) => e.field === "outfits[0]" && e.code === "INVALID_TYPE"),).toBeDefined();
     expect(result.errors.find((e,) => e.field === "default_outfit" && e.code === "REQUIRED"),).toBeDefined();

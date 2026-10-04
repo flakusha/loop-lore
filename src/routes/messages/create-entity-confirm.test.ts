@@ -49,6 +49,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         settings: "{}",
       },)
       .execute();
+
     await db
       .insertInto("actors",)
       .values({
@@ -77,6 +78,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         settings: "{}",
       },)
       .execute();
+
     await db
       .insertInto("actors",)
       .values({
@@ -134,6 +136,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     // Elysia body validation may fire before handler, producing 422
     expect(res.ok,).toBe(false,);
   });
@@ -153,6 +156,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     const body = await res.json();
     expect(body.error,).toContain("kind",);
@@ -171,6 +175,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     // Elysia body schema requires name: t.String(), rejects at validation
     expect(res.ok,).toBe(false,);
   });
@@ -188,6 +193,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(422,);
     const body = await res.json();
     expect(body.error,).toContain("Invalid entity",);
@@ -215,6 +221,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json();
     expect(body.kind,).toBe("character",);
@@ -228,6 +235,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .where("id", "=", body.id,)
       .selectAll()
       .executeTakeFirst();
+
     expect(actor,).toBeDefined();
     expect(actor!.display_name,).toBe("Aragorn",);
     expect(actor!.personality,).toBe("Noble and steadfast",);
@@ -252,6 +260,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json();
     expect(body.kind,).toBe("world",);
@@ -263,6 +272,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .where("id", "=", body.id,)
       .selectAll()
       .executeTakeFirst();
+
     expect(world,).toBeDefined();
     expect(world!.name,).toBe("Middle-earth",);
     expect(world!.lore,).toBe("Created by Ilúvatar",);
@@ -287,6 +297,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json();
     expect(body.kind,).toBe("item",);
@@ -298,6 +309,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .where("id", "=", body.id,)
       .selectAll()
       .executeTakeFirst();
+
     expect(item,).toBeDefined();
     expect(item!.name,).toBe("Sting",);
   });
@@ -321,6 +333,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json();
     expect(body.kind,).toBe("location",);
@@ -332,6 +345,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .where("id", "=", body.id,)
       .selectAll()
       .executeTakeFirst();
+
     expect(location,).toBeDefined();
     expect(location!.name,).toBe("Rivendell",);
   });
@@ -355,6 +369,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.ok,).toBe(false,);
   });
 
@@ -381,6 +396,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -426,6 +442,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json();
     expect(body.kind,).toBe("character",);
@@ -436,6 +453,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .selectAll()
       .where("actor_id", "=", body.id,)
       .execute();
+
     expect(loreEntries,).toHaveLength(2,);
     expect(loreEntries[0]!.name,).toBe("Ancient Secret",);
     expect(loreEntries[0]!.content,).toBe("The keeper knows the location of the lost city.",);
@@ -489,6 +507,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json();
 
@@ -498,6 +517,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .selectAll()
       .where("world_id", "=", body.id,)
       .execute();
+
     expect(loreEntries,).toHaveLength(1,);
     expect(loreEntries[0]!.name,).toBe("The Starfall",);
     expect(loreEntries[0]!.content,).toBe("A meteor crashed here centuries ago.",);
@@ -532,6 +552,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
 
     // Verify lore persisted in world_lore_entries with world_id = worldId
@@ -540,6 +561,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .selectAll()
       .where("world_id", "=", worldId,)
       .execute();
+
     expect(loreEntries,).toHaveLength(1,);
     expect(loreEntries[0]!.name,).toBe("Bridge Legend",);
     // Location lore gets requires_presence = true by default
@@ -573,6 +595,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
 
     const loreEntries = await db
@@ -580,6 +603,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .selectAll()
       .where("name", "=", "The Bard's Tale",)
       .execute();
+
     expect(loreEntries,).toHaveLength(1,);
     expect(loreEntries[0]!.name,).toBe("The Bard's Tale",);
   });
@@ -603,6 +627,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json();
 
@@ -611,6 +636,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .select("id",)
       .where("actor_id", "=", body.id,)
       .execute();
+
     expect(loreEntries,).toHaveLength(0,);
   });
 
@@ -636,6 +662,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .select("id",)
       .where("name", "=", "Phantom Bridge",)
       .execute();
+
     expect(locations,).toHaveLength(0,);
   });
 
@@ -667,6 +694,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
 
     const loreEntries = await db
@@ -674,6 +702,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .selectAll()
       .where("name", "=", "No Trigger",)
       .execute();
+
     expect(loreEntries,).toHaveLength(1,);
     // N6: selective=true with empty keys → stored as 0
     expect(loreEntries[0]!.selective,).toBe(0,);
@@ -705,6 +734,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
 
     const loreEntries = await db
@@ -712,6 +742,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .selectAll()
       .where("name", "=", "Whisper Warning",)
       .execute();
+
     expect(loreEntries,).toHaveLength(1,);
     // selective=true with non-empty keys → stored as 1
     expect(loreEntries[0]!.selective,).toBe(1,);
@@ -744,6 +775,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = await res.json();
 
@@ -753,6 +785,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .where("world_id", "=", worldId,)
       .where("name", "=", "Shrine History",)
       .execute();
+
     expect(loreEntries,).toHaveLength(1,);
     expect(loreEntries[0]!.audience_scope,).not.toBeNull();
     const scope = JSON.parse(loreEntries[0]!.audience_scope!,);
@@ -790,6 +823,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
 
     const loreEntries = await db
@@ -797,6 +831,7 @@ describe("POST /api/chats/:id/create-entity", () => {
       .selectAll()
       .where("name", "=", "Hunting Ground",)
       .execute();
+
     expect(loreEntries,).toHaveLength(1,);
     // Character scope without subject → no audience_scope
     expect(loreEntries[0]!.audience_scope,).toBeNull();

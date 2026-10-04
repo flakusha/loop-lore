@@ -49,6 +49,7 @@ function extractToken(request: Request,): string | null {
     const match = LL_TOKEN.exec(cookieHeader,);
     if (match) { return match[1]!; }
   }
+
   return null;
 }
 
@@ -78,9 +79,11 @@ async function verifyTokenContext(
     .select(["id", "expires_at",],)
     .where("id", "=", payload.sid,)
     .executeTakeFirst();
+
   if (session === undefined) {
     return null;
   }
+
   const nowMs = Date.now();
   // parseExpiryMs returns null for null / empty / unparseable; treat both
   // null and corrupt as "not expired" (matches the original `Date.parse()`/NaN
@@ -98,6 +101,7 @@ async function verifyTokenContext(
     .select(["role", "status",],)
     .where("id", "=", payload.sub,)
     .executeTakeFirst();
+
   if (!user || user.status === UserStatus.Disabled || user.status === UserStatus.Deactivated) {
     getLog()?.debug("JWT user not found or deactivated", { sub: payload.sub, },);
     return null;
@@ -122,6 +126,7 @@ async function verifyTokenContext(
     sessionId: payload.sid,
   },);
 }
+
 /**
  * Attempt to authenticate the request.
  *
@@ -161,6 +166,7 @@ export async function authenticate({
         status: HttpStatus.InternalServerError,
       },);
     }
+
     return {
       context: createRequestContext({
         userId: soloUser.id,

@@ -61,6 +61,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         const enrichResults = await Promise.allSettled(
           messages.map((m,) => enrichMessageForList(database, m as never, regexTransforms,)),
         );
+
         const enriched: Record<string, unknown>[] = [];
         for (const r of enrichResults) {
           if (r.status === "fulfilled") { enriched.push(r.value,); }
@@ -95,6 +96,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           userId,
           ctx.userRole as string | null,
         );
+
         if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
         const message = msgResult;
 
@@ -104,6 +106,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         const toolMeta = singleRow.content_type === "tool_result"
           ? parseToolResultMeta(singleRow.metadata ?? null,)
           : null;
+
         let content: string;
         try {
           // BUG-regex-transform-runs-at-store-time-not-render-time: render-time transforms.
@@ -111,6 +114,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         } catch {
           content = "[Encrypted — unable to decrypt]";
         }
+
         return jsonResponse({
           ...message,
           content,
@@ -135,6 +139,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           userId,
           ctx.userRole as string | null,
         );
+
         if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
         const message = msgResult;
         const parentId = message.parent_id as string | null;
@@ -150,6 +155,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
             userId,
             ctx.userRole as string | null,
           );
+
           if (isServiceError(recheck,)) {
             return serviceErrorToResponse(recheck,);
           }
@@ -182,6 +188,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
             })(),
           );
         }
+
         const variantResults = await Promise.allSettled(variantPromises,);
         const enriched: Record<string, unknown>[] = [];
         for (const r of variantResults) {
@@ -206,6 +213,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           userId,
           ctx.userRole as string | null,
         );
+
         if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
         const message = msgResult;
 
@@ -217,6 +225,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           .orderBy("swipe_index", "asc",)
           .orderBy("created_at", "asc",)
           .execute();
+
         const selected = variants[body.variantIndex];
         if (!selected) {
           return jsonError({

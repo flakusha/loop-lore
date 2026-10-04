@@ -46,6 +46,7 @@ const registryPristine = (() => {
     return false;
   }
 })();
+
 const describeReal = registryPristine ? describe : describe.skip;
 
 /**
@@ -140,6 +141,7 @@ describeReal("maybeAutoReply — swipe_index race", () => {
       const indexes = swipes
         .map((r,) => r.swipe_index)
         .filter((n,): n is number => n !== null);
+
       expect(indexes,).toHaveLength(fanout,);
       expect(new Set(indexes,).size,).toBe(fanout,); // all distinct
       // Each call's swipe_index is unique; under heavy contention the
@@ -188,6 +190,7 @@ describeReal("maybeAutoReply — swipe_index race", () => {
       ...testConfig,
       assistant: { enabled: false, },
     } as unknown as Config;
+
     const result = await maybeAutoReply(
       db,
       offConfig,
@@ -197,6 +200,7 @@ describeReal("maybeAutoReply — swipe_index race", () => {
       "hello",
       new Request("http://localhost/",),
     );
+
     expect(result,).toBeDefined();
     expect(result.replied,).toBe(false,);
     expect(result.response,).toBeUndefined();
@@ -316,6 +320,7 @@ describeReal("maybeAutoReply — asyncStore forwarding (BUG-register-plugins-dis
       request,
       // asyncStore intentionally omitted
     );
+
     // Synchronous rule-based assistant path; must reply successfully.
     expect(result.replied,).toBe(true,);
   });
@@ -347,6 +352,7 @@ describeReal("maybeAutoReply — isSwipeIndexUniqueViolation (BUG-rule-based-rep
     const err = new Error(
       "SQLITE_CONSTRAINT_UNIQUE: UNIQUE constraint failed: 'idx_messages_swipe_unique'",
     );
+
     expect(isSwipeIndexUniqueViolation(err,),).toBe(true,);
   });
 
@@ -571,6 +577,7 @@ describeReal("maybeAutoReply — userMessage edge cases", () => {
       "",
       new Request("http://localhost/",),
     );
+
     expect(result,).toBeDefined();
     // Either rule matched (replied:true with a 201) or it didn't
     // (replied:false). Both are valid; what is NOT valid is undefined.
@@ -591,6 +598,7 @@ describeReal("maybeAutoReply — userMessage edge cases", () => {
       big,
       new Request("http://localhost/",),
     );
+
     // If the rule matched (replied:true with a 201), verify the persisted
     // content length. If the rule did not match, the body is undefined —
     // also fine; the contract is "no crash, well-defined return shape".
@@ -598,6 +606,7 @@ describeReal("maybeAutoReply — userMessage edge cases", () => {
       const body = (await result.response.clone().json()) as {
         assistantMessage?: { id?: string; content?: string };
       };
+
       expect(body.assistantMessage?.content?.length,).toBe(1_000_000,);
     } else {
       expect(result.replied,).toBe(false,);
@@ -643,6 +652,7 @@ describeReal("maybeAutoReply — story pause gate", () => {
       .set({ story_state: JSON.stringify({ isPaused: true, },), },)
       .where("id", "=", pausedChatId,)
       .execute();
+
     pausedParentId = uid();
     await insertMessages(db, pausedChatId, actorId, MessageRole.User, "hello world", {
       id: pausedParentId,
@@ -672,6 +682,7 @@ describeReal("maybeAutoReply — story pause gate", () => {
       "hello",
       new Request("http://localhost/",),
     );
+
     expect(result.replied,).toBe(false,);
     const rows = await db
       .selectFrom("messages",)
@@ -679,6 +690,7 @@ describeReal("maybeAutoReply — story pause gate", () => {
       .where("chat_id", "=", pausedChatId,)
       .where("role", "=", MessageRole.Assistant,)
       .execute();
+
     expect(rows,).toHaveLength(0,);
   });
 
@@ -692,6 +704,7 @@ describeReal("maybeAutoReply — story pause gate", () => {
       "hello",
       new Request("http://localhost/",),
     );
+
     expect(result.replied,).toBe(true,);
   });
 },);

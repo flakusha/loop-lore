@@ -80,6 +80,7 @@ beforeAll(async () => {
       },)
       .execute();
   }
+
   service = new PersonasService(db,);
 },);
 
@@ -138,6 +139,7 @@ describe("handleCreatePersona", () => {
       body: { name: "", },
       context: ctxFor(OWNER_ID,),
     },);
+
     expect(res.status,).toBe(400,);
   });
 
@@ -147,6 +149,7 @@ describe("handleCreatePersona", () => {
       body: { name: 42, },
       context: ctxFor(OWNER_ID,),
     },);
+
     expect(res.status,).toBe(400,);
   });
 
@@ -156,6 +159,7 @@ describe("handleCreatePersona", () => {
       body: { name: "Minimal", },
       context: ctxFor(OWNER_ID,),
     },);
+
     expect(res.status,).toBe(201,);
     const body: IdBody = await res.json();
     expect(typeof body.id,).toBe("string",);
@@ -177,6 +181,7 @@ describe("handleCreatePersona", () => {
       },
       context: ctxFor(OWNER_ID,),
     },);
+
     expect(res.status,).toBe(201,);
     const body: IdBody = await res.json();
     const stored: StoredPersona | undefined = await service.getById(body.id, OWNER_ID,);
@@ -193,6 +198,7 @@ describe("handleCreatePersona", () => {
       body: { name: "Loose Types", temperature: "hot", maxTokens: "many", model: 7, },
       context: ctxFor(OWNER_ID,),
     },);
+
     expect(res.status,).toBe(201,);
     const body: IdBody = await res.json();
     const stored: StoredPersona | undefined = await service.getById(body.id, OWNER_ID,);
@@ -238,6 +244,7 @@ describe("handleUpdatePersona", () => {
       body: { name: "Nope", },
       context: ctxFor(null,),
     },);
+
     expect(res.status,).toBe(401,);
   });
 
@@ -249,6 +256,7 @@ describe("handleUpdatePersona", () => {
       body: { name: "After", description: "new desc", title: "new title", },
       context: ctxFor(OWNER_ID,),
     },);
+
     expect(res.status,).toBe(200,);
     const body: OkBody = await res.json();
     expect(body.ok,).toBe(true,);
@@ -266,6 +274,7 @@ describe("handleUpdatePersona", () => {
       body: { temperature: 0.3, maxTokens: 500, model: "tuned-model", },
       context: ctxFor(OWNER_ID,),
     },);
+
     expect(res.status,).toBe(200,);
     const stored: StoredPersona | undefined = await service.getById(id, OWNER_ID,);
     expect(stored?.temperature ?? 0,).toBeCloseTo(0.3,);
@@ -286,12 +295,14 @@ describe("handleUpdatePersona", () => {
         throw new Error("boom",);
       },
     } as unknown as Kysely<DB>;
+
     const res = await handleUpdatePersona({
       database: failingDb,
       personaId: "any-id",
       body: { name: "x", },
       context: ctxFor(OWNER_ID,),
     },);
+
     expect(res.status,).toBe(500,);
     const body: ErrorBody = await res.json();
     expect(body.error,).toBe("Failed to update persona",);
@@ -312,6 +323,7 @@ describe("handleUpdatePersona", () => {
       body: { name: "Hijacked", },
       context: ctxFor(PEER_ID,),
     },);
+
     expect(res.status,).toBe(404,);
 
     // Peer must not have mutated the persona.
@@ -326,6 +338,7 @@ describe("handleUpdatePersona", () => {
       body: { name: "anything", },
       context: ctxFor(OWNER_ID,),
     },);
+
     expect(res.status,).toBe(404,);
   });
 });
@@ -386,6 +399,7 @@ describe("handleConvertToCharacter", () => {
       .select(["id", "display_name", "owner_id", "description",],)
       .where("id", "=", body.actorId,)
       .executeTakeFirst();
+
     expect(actor?.display_name,).toBe("Convert Me",);
     expect(actor?.owner_id,).toBe(OWNER_ID,);
     expect(actor?.description,).toBe("to actor",);
@@ -397,11 +411,13 @@ describe("handleConvertToCharacter", () => {
         throw "boom-string";
       },
     } as unknown as Kysely<DB>;
+
     const res = await handleConvertToCharacter({
       database: failingDb,
       personaId: "any-id",
       context: ctxFor(OWNER_ID,),
     },);
+
     expect(res.status,).toBe(500,);
     const body: ErrorBody = await res.json();
     expect(body.error,).toBe("Conversion failed",);
@@ -413,11 +429,13 @@ describe("handleConvertToCharacter", () => {
         throw new Error("secret internal detail",);
       },
     } as unknown as Kysely<DB>;
+
     const res = await handleConvertToCharacter({
       database: failingDb,
       personaId: "any-id",
       context: ctxFor(OWNER_ID,),
     },);
+
     expect(res.status,).toBe(500,);
     const body: ErrorBody = await res.json();
     expect(body.error,).toBe("Conversion failed",);
@@ -436,6 +454,7 @@ describe("handleConvertToCharacter", () => {
       maxTokens: 2000,
       model: "custom-model",
     },);
+
     const res = await handleConvertToCharacter({ database: db, personaId: id, context: ctxFor(OWNER_ID,), },);
     expect(res.status,).toBe(201,);
     const body: ActorBody = await res.json();
@@ -444,6 +463,7 @@ describe("handleConvertToCharacter", () => {
       .select("settings",)
       .where("id", "=", body.actorId,)
       .executeTakeFirst();
+
     const settings = JSON.parse(actor!.settings,) as {
       persona?: {
         title: string | null;
@@ -452,6 +472,7 @@ describe("handleConvertToCharacter", () => {
         model: string | null;
       };
     };
+
     expect(settings.persona?.title,).toBe("Dr.",);
     expect(settings.persona?.temperature ?? 0,).toBeCloseTo(0.7,);
     expect(settings.persona?.max_tokens,).toBe(2000,);

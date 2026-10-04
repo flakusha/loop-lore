@@ -81,6 +81,7 @@ export async function applyEdit(
         config.assets.uploadDir,
         sourceAsset.storage_path,
       );
+
       const imageBuffer = await fs.readFile(filePath,);
       const base64Image = imageBuffer.toString("base64",);
 
@@ -118,10 +119,13 @@ export async function applyEdit(
           // user a broken asset with no error anywhere.
           throw new Error(`img2img provider returned undecodable image data: ${r.error.message}`,);
         }
+
         return r.buffer;
       },);
+
       break;
     }
+
     case "openai": {
       // OpenAI doesn't support img2img directly, use DALL-E for editing
       const url = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/v1/images/edits`;
@@ -140,6 +144,7 @@ export async function applyEdit(
         config.assets.uploadDir,
         sourceAsset.storage_path,
       );
+
       const imageBlob = new Blob([await fs.readFile(filePath,),],);
 
       formData.append("image", imageBlob, "source.png",);
@@ -170,10 +175,13 @@ export async function applyEdit(
         if (!r.ok) {
           throw new Error(`Image edit provider returned undecodable image data: ${r.error.message}`,);
         }
+
         return r.buffer;
       },);
+
       break;
     }
+
     case "sdcpp":
     case "comfyui": {
       throw new Error(

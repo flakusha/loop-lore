@@ -64,10 +64,12 @@ async function setupChat(gm: boolean,): Promise<SetupResult> {
     user_id: userId,
     owner_id: userId,
   },);
+
   await insertChats(db, "GM Exec Chat", userId, {
     id: chatId,
     gm_config: gm ? JSON.stringify({ assistantRole: "gm", },) : null,
   },);
+
   return { db, chatId, userId, };
 }
 
@@ -79,6 +81,7 @@ async function systemMessageCount(db: Kysely<DB>, chatId: string,): Promise<numb
     .where("chat_id", "=", chatId,)
     .where("role", "=", MessageRole.System as never,)
     .executeTakeFirstOrThrow();
+
   return Number(row.count,);
 }
 
@@ -113,6 +116,7 @@ describe("executeGmToolRequest", () => {
         return detection("roll_dice", 0.9,);
       },
     },);
+
     expect(outcome.handled,).toBe(false,);
     expect(detectCalls,).toBe(0,);
     expect(await systemMessageCount(db, chatId,),).toBe(0,);
@@ -128,6 +132,7 @@ describe("executeGmToolRequest", () => {
       content: "roll a d20",
       detect: async () => detection("roll_dice", 0.9, { dice: "d20", },),
     },);
+
     expect(outcome.handled,).toBe(true,);
     if (!outcome.handled) { return; }
     const body = await outcome.response.json() as { command?: string; systemMessage?: string };
@@ -146,6 +151,7 @@ describe("executeGmToolRequest", () => {
       content: "maybe roll something",
       detect: async () => detection("roll_dice", 0.5,),
     },);
+
     expect(outcome.handled,).toBe(false,);
     expect(await systemMessageCount(db, chatId,),).toBe(0,);
   });
@@ -161,8 +167,10 @@ describe("executeGmToolRequest", () => {
         content: "hello there",
         detect: async () => result,
       },);
+
       expect(outcome.handled,).toBe(false,);
     }
+
     expect(await systemMessageCount(db, chatId,),).toBe(0,);
   });
 
@@ -178,6 +186,7 @@ describe("executeGmToolRequest", () => {
         throw new Error("aux unavailable",);
       },
     },);
+
     expect(outcome.handled,).toBe(false,);
     expect(await systemMessageCount(db, chatId,),).toBe(0,);
   });
@@ -192,6 +201,7 @@ describe("executeGmToolRequest", () => {
       content: "modify the world",
       detect: async () => detection("modify_world", 0.95,),
     },);
+
     expect(outcome.handled,).toBe(false,);
     expect(await systemMessageCount(db, chatId,),).toBe(0,);
   });
@@ -208,6 +218,7 @@ describe("executeGmToolRequest", () => {
       new URL("../routes/messages/create.ts", import.meta.url,),
       "utf8",
     );
+
     const slashIdx = routeSource.indexOf("dispatchCommand(database",);
     const gmIdx = routeSource.indexOf("executeGmToolRequest({",);
     expect(slashIdx,).toBeGreaterThan(-1,);

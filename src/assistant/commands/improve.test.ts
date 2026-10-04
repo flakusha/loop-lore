@@ -35,6 +35,7 @@ function makeStubProvider(content: string,): LLMProvider {
     finishReason: "stop",
     usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30, },
   });
+
   return {
     capabilities: {
       type: "openai-compatible",
@@ -134,6 +135,7 @@ describe("improve command", () => {
         ["hello world", "--level", "nonsense",],
         { chatId: "c1", },
       );
+
       expect(result.actionPayload,).toEqual(
         expect.objectContaining({ level: "wording", },),
       );

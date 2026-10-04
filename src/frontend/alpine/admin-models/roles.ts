@@ -30,6 +30,7 @@ export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
           const found = (data.roles || []).find((r,) => r.role === role);
           return { role, provider: found?.provider ?? "", model: found?.model ?? "", };
         },);
+
         this.roleTuning = {};
         // Every role row rendered from modelRoleList gets a tuning entry
         // (empty string = inherit) so each x-model binds a valid assignment
@@ -74,6 +75,7 @@ export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
       },);
+
       if (res.ok) {
         showToast("success", t("toasts.roleUpdatedFor", { role, },),);
         await this.loadModelRoles();

@@ -7,6 +7,7 @@ describe("safe-buffer/string (real logic)", () => {
     expect(r.ok,).toBe(true,);
     if (r.ok) { expect(r.buffer.toString(),).toBe("hello",); }
   });
+
   it("returns error when string exceeds size", () => {
     const r = safeFromString("x".repeat(100,), "utf8", 10,);
     expect(r.ok,).toBe(false,);

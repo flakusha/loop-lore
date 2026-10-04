@@ -23,6 +23,7 @@ function makePlugin(name: string, origin: "core" | "community" | "local" = "comm
 afterAll(() => {
   registry.unregisterAll();
 },);
+
 describe("Plugin Registry", () => {
   beforeEach(() => {
     registry.unregisterAll();
@@ -83,6 +84,7 @@ describe("Plugin Registry", () => {
         path: "/api/test",
         handler: async () => new Response("ok"),
       };
+
       registry.register(makePlugin("p1"));
       registry.addRoutes("p1", [route]);
 
@@ -111,6 +113,7 @@ describe("Plugin Registry", () => {
         parameters: {},
         handler: async () => ({ content: "result" }),
       };
+
       registry.register(makePlugin("p1"));
       registry.addTools("p1", [tool]);
 
@@ -127,6 +130,7 @@ describe("Plugin Registry", () => {
         systemPrompt: "You are a card battler.",
         tools: ["play_card_battle"],
       };
+
       registry.register(makePlugin("p1"));
       registry.addAgentRoles("p1", [role]);
 
@@ -199,6 +203,7 @@ describe("Plugin Registry", () => {
       registry.addTools("p1", [
         { name: "tool", description: "", parameters: {}, handler: async () => ({ content: "ok" }) },
       ]);
+
       registry.addEventHandlers("p1", [{ event: "test", handler: async () => {} }]);
 
       registry.setEnabled("p1", false);

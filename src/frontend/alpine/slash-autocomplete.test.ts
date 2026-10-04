@@ -81,6 +81,7 @@ function keyEvent(
       stopped = true;
     },
   } as unknown as KeyboardEvent;
+
   return { event, prevented: () => stopped, };
 }
 
@@ -197,6 +198,7 @@ describe("slashAutocomplete.handleSlashInput", () => {
       ctx as never,
       { name: "help", description: "d", descriptionKey: "commands.help", },
     );
+
     expect(ta.value,).toBe("say /help  to me",);
     expect(ta.selectionStart,).toBe("say /help ".length,);
     expect(ctx._showSlashPopover,).toBe(false,);
@@ -212,6 +214,7 @@ describe("slashAutocomplete.handleSlashInput", () => {
       ctx as never,
       { name: "new", description: "d", descriptionKey: "commands.new", },
     );
+
     expect(ta.value,).toBe("/old /new ",);
     expect(ta.selectionStart,).toBe("/old /new ".length,);
   });
@@ -302,6 +305,7 @@ describe("slashAutocomplete.handleSlashInput", () => {
       selectionEnd: 0,
       focus() {},
     },);
+
     slashAutocomplete.handleSlashKeydown!.call(ctx as never, event,);
     expect(prevented(),).toBe(false,);
     expect(ctx._showSlashPopover,).toBe(true,);
@@ -324,6 +328,7 @@ describe("slashAutocomplete.handleSlashInput", () => {
         stopped = true;
       },
     } as unknown as KeyboardEvent;
+
     slashAutocomplete.handleSlashKeydown!.call(ctx as never, event,);
     expect(stopped,).toBe(false,);
     expect(ta.value,).toBe("/im",);
@@ -362,6 +367,7 @@ describe("slashAutocomplete.handleSlashInput", () => {
       ctx as never,
       { name: "improve", description: "", descriptionKey: "commands.improve", },
     );
+
     expect(ctx._showSlashPopover,).toBe(true,);
     expect(ctx._slashCandidates,).toEqual([],);
   });

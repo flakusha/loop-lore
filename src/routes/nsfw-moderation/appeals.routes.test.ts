@@ -94,6 +94,7 @@ describe("nsfw moderation appeal routes", () => {
     const res = await app.handle(
       submitRequest({ actionId: "a-1", reason: "r", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -105,6 +106,7 @@ describe("nsfw moderation appeal routes", () => {
     const res = await app.handle(
       submitRequest({ actionId, reason: "mistake", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json();
     expect(body.data.id,).toBeString();
@@ -120,6 +122,7 @@ describe("nsfw moderation appeal routes", () => {
     const res = await app.handle(
       submitRequest({ actionId, reason: "x", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -131,6 +134,7 @@ describe("nsfw moderation appeal routes", () => {
     const res = await app.handle(
       submitRequest({ actionId, reason: "y", },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -143,6 +147,7 @@ describe("nsfw moderation appeal routes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/nsfw/moderation/appeals/me",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json();
     expect(Array.isArray(body.data,),).toBe(true,);
@@ -154,6 +159,7 @@ describe("nsfw moderation appeal routes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/nsfw/moderation/appeals/pending",),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -162,6 +168,7 @@ describe("nsfw moderation appeal routes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/nsfw/moderation/appeals/pending",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json();
     expect(Array.isArray(body.data,),).toBe(true,);
@@ -176,6 +183,7 @@ describe("nsfw moderation appeal routes", () => {
         body: JSON.stringify({ status: "denied", reviewNote: "no", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -188,6 +196,7 @@ describe("nsfw moderation appeal routes", () => {
     const submit = await ownerApp.handle(
       submitRequest({ actionId, reason: "x", },),
     );
+
     const { data: appeal, } = await submit.json() as { data: { id: string } };
 
     const adminApp = createApp(db, sessionUser, "admin",);
@@ -201,11 +210,13 @@ describe("nsfw moderation appeal routes", () => {
         },
       ),
     );
+
     expect(res.status,).toBe(200,);
 
     // Verify session user is the reviewer in the DB row.
     const row = await db.selectFrom("moderation_appeals",).selectAll()
       .where("id", "=", appeal.id,).executeTakeFirst();
+
     expect(row?.reviewed_by,).toBe(sessionUser,);
   });
 
@@ -219,6 +230,7 @@ describe("nsfw moderation appeal routes", () => {
         body: JSON.stringify({ approvedBy: "some-admin", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -232,6 +244,7 @@ describe("nsfw moderation appeal routes", () => {
     const submit = await ownerApp.handle(
       submitRequest({ actionId, reason: "x", },),
     );
+
     const { data: appeal, } = await submit.json() as { data: { id: string } };
     // 2) Same admin reviews AND tries to execute (should be blocked).
     const adminApp = createApp(db, adminId, "admin",);
@@ -245,6 +258,7 @@ describe("nsfw moderation appeal routes", () => {
         },
       ),
     );
+
     const exec = await adminApp.handle(
       new Request(
         `http://localhost/api/nsfw/moderation/appeals/${appeal.id}/execute`,
@@ -255,6 +269,7 @@ describe("nsfw moderation appeal routes", () => {
         },
       ),
     );
+
     expect(exec.status,).toBe(400,);
   });
 });

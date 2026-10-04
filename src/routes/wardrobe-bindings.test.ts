@@ -86,11 +86,13 @@ describe("Wardrobe binding routes", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     await insertActors(db, "Unrelated Actor", {
       id: OTHER_ACTOR as never,
       owner_id: OTHER_USER,
       user_id: OTHER_USER,
     },);
+
     await insertWardrobeItems(db, "Route Outfit", { id: OUTFIT, actor_id: OWNER, },);
     instanceId = await insertActorItems(db, OWNER, "Route Sword", ItemCategory.Weapon,);
   },);
@@ -104,6 +106,7 @@ describe("Wardrobe binding routes", () => {
     const res = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "GET",),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.json(),).toEqual([],);
   });
@@ -112,6 +115,7 @@ describe("Wardrobe binding routes", () => {
     const res = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "POST", { item_instance_id: instanceId, },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = await res.json() as { id: string };
     expect(typeof id,).toBe("string",);
@@ -119,6 +123,7 @@ describe("Wardrobe binding routes", () => {
     const listRes = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "GET",),
     );
+
     const bindings = await listRes.json() as Array<Record<string, unknown>>;
     expect(bindings,).toHaveLength(1,);
     expect(bindings[0],).toEqual({
@@ -134,9 +139,11 @@ describe("Wardrobe binding routes", () => {
     const first = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "POST", { item_instance_id: instanceId, },),
     );
+
     const second = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "POST", { item_instance_id: instanceId, },),
     );
+
     expect(second.status,).toBe(201,);
     const a = await first.json() as { id: string };
     const b = await second.json() as { id: string };
@@ -147,6 +154,7 @@ describe("Wardrobe binding routes", () => {
       .selectAll()
       .where("wardrobe_item_id", "=", OUTFIT,)
       .execute();
+
     expect(rows,).toHaveLength(1,);
   });
 
@@ -155,6 +163,7 @@ describe("Wardrobe binding routes", () => {
     const res = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "POST", { item_instance_id: foreign, },),
     );
+
     expect(res.status,).toBe(404,);
     expect(await messageOf(res,),).toContain(MSG_INSTANCE_MISSING,);
   });
@@ -163,11 +172,13 @@ describe("Wardrobe binding routes", () => {
     const bindRes = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "POST", { item_instance_id: instanceId, },),
     );
+
     const { id, } = await bindRes.json() as { id: string };
 
     const delRes = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings/${id}`, "DELETE",),
     );
+
     expect(delRes.status,).toBe(200,);
     const body = await delRes.json() as { ok: boolean };
     expect(body.ok,).toBe(true,);
@@ -180,13 +191,16 @@ describe("Wardrobe binding routes", () => {
     const bindRes = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "POST", { item_instance_id: instanceId, },),
     );
+
     const { id, } = await bindRes.json() as { id: string };
     await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings/${id}`, "DELETE",),
     );
+
     const again = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings/${id}`, "DELETE",),
     );
+
     expect(again.status,).toBe(404,);
     expect(await messageOf(again,),).toBe(MSG_BINDING_MISSING,);
   });
@@ -195,11 +209,13 @@ describe("Wardrobe binding routes", () => {
     const bindRes = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "POST", { item_instance_id: instanceId, },),
     );
+
     const { id, } = await bindRes.json() as { id: string };
 
     const res = await makeApp(db, OTHER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings/${id}`, "DELETE",),
     );
+
     expect(res.status,).toBe(404,);
 
     const rows = await db.selectFrom("actor_wardrobe",).selectAll().where("id", "=", id,).execute();
@@ -212,6 +228,7 @@ describe("Wardrobe binding routes", () => {
       [`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "POST",],
       [`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings/some-id`, "DELETE",],
     ];
+
     for (const [path, method,] of paths) {
       const res = await makeApp(db,).handle(req(path, method, { item_instance_id: instanceId, },),);
       expect(res.status,).toBe(401,);
@@ -222,11 +239,13 @@ describe("Wardrobe binding routes", () => {
     const list = await makeApp(db, OTHER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "GET",),
     );
+
     expect(list.status,).toBe(404,);
 
     const post = await makeApp(db, OTHER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "POST", { item_instance_id: instanceId, },),
     );
+
     expect(post.status,).toBe(404,);
   });
 
@@ -234,6 +253,7 @@ describe("Wardrobe binding routes", () => {
     const res = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/no-such-outfit/bindings`, "GET",),
     );
+
     expect(res.status,).toBe(404,);
     expect(await messageOf(res,),).toBe(MSG_OUTFIT_MISSING,);
   });
@@ -242,6 +262,7 @@ describe("Wardrobe binding routes", () => {
     const res = await makeApp(db, OWNER_USER,).handle(
       req(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/bindings`, "POST", {},),
     );
+
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     expect(res.status,).toBeLessThan(500,);
   });

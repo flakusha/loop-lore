@@ -7,6 +7,7 @@ describe("applyRegexTransforms", () => {
     const transforms: RegexTransform[] = [
       { name: "fix spaces", pattern: "\\s+", replacement: " ", enabled: true, },
     ];
+
     const result = applyRegexTransforms("hello   world", transforms,);
     expect(result.text,).toBe("hello world",);
     expect(result.applied,).toHaveLength(1,);
@@ -17,6 +18,7 @@ describe("applyRegexTransforms", () => {
     const transforms: RegexTransform[] = [
       { name: "disabled", pattern: "a", replacement: "b", enabled: false, },
     ];
+
     const result = applyRegexTransforms("aaa", transforms,);
     expect(result.text,).toBe("aaa",);
     expect(result.applied,).toHaveLength(0,);
@@ -26,6 +28,7 @@ describe("applyRegexTransforms", () => {
     const transforms: RegexTransform[] = [
       { name: "bad regex", pattern: "[invalid", replacement: "x", enabled: true, },
     ];
+
     const result = applyRegexTransforms("hello", transforms,);
     expect(result.text,).toBe("hello",);
     expect(result.applied,).toHaveLength(0,);
@@ -36,6 +39,7 @@ describe("applyRegexTransforms", () => {
       { name: "step1", pattern: "foo", replacement: "bar", enabled: true, },
       { name: "step2", pattern: "bar", replacement: "baz", enabled: true, },
     ];
+
     const result = applyRegexTransforms("foo foo", transforms,);
     expect(result.text,).toBe("baz baz",);
     expect(result.applied,).toHaveLength(2,);
@@ -47,6 +51,7 @@ describe("applyRegexTransforms", () => {
     const transforms: RegexTransform[] = [
       { name: "count", pattern: "\\d+", replacement: "NUM", enabled: true, },
     ];
+
     const result = applyRegexTransforms("123 abc 456 def 789", transforms,);
     expect(result.text,).toBe("NUM abc NUM def NUM",);
     expect(result.applied[0]!.matches,).toBe(3,);
@@ -56,6 +61,7 @@ describe("applyRegexTransforms", () => {
     const transforms: RegexTransform[] = [
       { name: "no match", pattern: "xyz", replacement: "abc", enabled: true, },
     ];
+
     const result = applyRegexTransforms("hello world", transforms,);
     expect(result.text,).toBe("hello world",);
     expect(result.applied,).toHaveLength(0,);
@@ -65,6 +71,7 @@ describe("applyRegexTransforms", () => {
     const transforms: RegexTransform[] = [
       { name: "case insensitive", pattern: "hello", replacement: "HI", flags: "gi", enabled: true, },
     ];
+
     const result = applyRegexTransforms("Hello HELLO hello", transforms,);
     expect(result.text,).toBe("HI HI HI",);
     expect(result.applied[0]!.matches,).toBe(3,);
@@ -74,6 +81,7 @@ describe("applyRegexTransforms", () => {
     const transforms: RegexTransform[] = [
       { name: "swap", pattern: "(\\w+) (\\w+)", replacement: "$2 $1", enabled: true, },
     ];
+
     const result = applyRegexTransforms("hello world", transforms,);
     expect(result.text,).toBe("world hello",);
   });
@@ -84,6 +92,7 @@ describe("applyRegexTransforms", () => {
       { name: "off", pattern: "b", replacement: "c", enabled: false, },
       { name: "on2", pattern: "d", replacement: "e", enabled: true, },
     ];
+
     const result = applyRegexTransforms("a d", transforms,);
     expect(result.text,).toBe("b e",);
     expect(result.applied,).toHaveLength(2,);
@@ -95,6 +104,7 @@ describe("applyRegexTransforms", () => {
     const transforms: RegexTransform[] = [
       { name: "anything", pattern: ".", replacement: "x", enabled: true, },
     ];
+
     const result = applyRegexTransforms("", transforms,);
     expect(result.text,).toBe("",);
     expect(result.applied,).toHaveLength(0,);
@@ -112,6 +122,7 @@ describe("applyRegexTransforms", () => {
       { name: "late-output", pattern: "b", replacement: "C", enabled: true, phase: "output", },
       { name: "first-edit-input", pattern: "a", replacement: "b", enabled: true, phase: "edit-input", },
     ];
+
     // Canonical order edit-input → output → display ⇒ a→b (edit-input), b→C (output), C→D (display)
     const result = applyRegexTransforms("a", transforms,);
     expect(result.text,).toBe("D",);
@@ -127,6 +138,7 @@ describe("applyRegexTransforms", () => {
       { name: "step1", pattern: "foo", replacement: "bar", enabled: true, phase: "output", },
       { name: "step2", pattern: "bar", replacement: "baz", enabled: true, phase: "output", },
     ];
+
     const result = applyRegexTransforms("foo foo", transforms,);
     expect(result.text,).toBe("baz baz",);
     expect(result.applied.map((a,) => a.name),).toEqual(["step1", "step2",],);
@@ -138,6 +150,7 @@ describe("applyRegexTransforms", () => {
       { name: "edit-phase", pattern: "a", replacement: "b", enabled: true, phase: "edit-input", },
       { name: "display-phase", pattern: "c", replacement: "D", enabled: true, phase: "display", },
     ];
+
     // edit-input a→b, then default-output (output slot) b→c, then display c→D
     const result = applyRegexTransforms("a", transforms,);
     expect(result.text,).toBe("D",);

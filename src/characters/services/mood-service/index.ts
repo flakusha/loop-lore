@@ -67,5 +67,6 @@ export function MoodService(db: Kysely<DB>,): MoodService {
     logEvent: (opts,) => logEvent({ thisL: self, opts, },),
     getEvents: (actorId, worldId, limit,) => getEvents({ thisL: self, actorId, worldId, limit, },),
   };
+
   return self;
 }

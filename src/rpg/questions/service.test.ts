@@ -126,6 +126,7 @@ describe("RpgQuestionsService", () => {
         timeLimit: 30,
         requiredChoice: 0,
       },);
+
       expect(question.timeLimit,).toBe(30,);
       expect(question.requiredChoice,).toBe(0,);
     });
@@ -136,9 +137,11 @@ describe("RpgQuestionsService", () => {
       expect(
         createQuestion(db, { ...base, prompt: "   ", options, },),
       ).rejects.toThrow(QuestionError,);
+
       expect(
         createQuestion(db, { ...base, prompt: "Pick", options: [], },),
       ).rejects.toThrow("at least one option",);
+
       expect(
         createQuestion(db, {
           ...base,
@@ -158,6 +161,7 @@ describe("RpgQuestionsService", () => {
         prompt: "Search the room?",
         options,
       },);
+
       const answered = await createQuestion(db, {
         chatId,
         actorId: emitterActorId,
@@ -165,6 +169,7 @@ describe("RpgQuestionsService", () => {
         prompt: "Answer me",
         options,
       },);
+
       await createQuestion(db, {
         chatId: otherChatId,
         actorId: emitterActorId,
@@ -172,6 +177,7 @@ describe("RpgQuestionsService", () => {
         prompt: "Other chat question",
         options,
       },);
+
       await answerQuestion(db, answered.id, { optionId: "opt-1", }, playerActorId,);
 
       const open = await getOpenQuestions(db, chatId,);
@@ -198,6 +204,7 @@ describe("RpgQuestionsService", () => {
 
       const row = await db.selectFrom("rpg_questions",).selectAll()
         .where("id", "=", question.id,).executeTakeFirst();
+
       expect(row!.status,).toBe("answered",);
       expect(row!.selected_option_id,).toBe("opt-2",);
       expect(row!.answered_at,).not.toBeNull();
@@ -206,6 +213,7 @@ describe("RpgQuestionsService", () => {
         .where("chat_id", "=", chatId,)
         .where("content", "=", "Answer recorded: Walk away",)
         .executeTakeFirst();
+
       expect(message,).toBeDefined();
       expect(message!.role,).toBe("system",);
       expect(message!.actor_id,).toBe(playerActorId,);
@@ -215,6 +223,7 @@ describe("RpgQuestionsService", () => {
       expect(answerQuestion(db, "missing-question", { optionId: "opt-1", }, playerActorId,),).rejects.toThrow(
         QuestionError,
       );
+
       expect(answerQuestion(db, "missing-question", { optionId: "opt-1", }, playerActorId,),).rejects.toThrow(
         "not found",
       );
@@ -228,6 +237,7 @@ describe("RpgQuestionsService", () => {
         prompt: "One choice only",
         options,
       },);
+
       await answerQuestion(db, question.id, { optionId: "opt-1", }, playerActorId,);
 
       expect(
@@ -237,6 +247,7 @@ describe("RpgQuestionsService", () => {
       // Re-answer must not create a second choice record or message.
       const row = await db.selectFrom("rpg_questions",).selectAll()
         .where("id", "=", question.id,).executeTakeFirst();
+
       expect(row!.selected_option_id,).toBe("opt-1",);
     });
 
@@ -281,6 +292,7 @@ describe("RpgQuestionsService", () => {
         ...base(),
         prompt: "Default kind",
       },);
+
       expect(question.inputKind,).toBe("choice",);
       expect(question.answerValue,).toBeNull();
       expect(question.effect,).toEqual({},);
@@ -296,6 +308,7 @@ describe("RpgQuestionsService", () => {
         maxValue: 10,
         effect,
       },);
+
       expect(numeric.inputKind,).toBe("numeric",);
       expect(numeric.minValue,).toBe(1,);
       expect(numeric.maxValue,).toBe(10,);
@@ -306,11 +319,13 @@ describe("RpgQuestionsService", () => {
         prompt: "Describe what you do",
         inputKind: RpgQuestionInputKind.FreeText,
       },);
+
       expect(freeText.inputKind,).toBe("free_text",);
       expect(freeText.minValue,).toBeNull();
 
       const row = await db.selectFrom("rpg_questions",).selectAll()
         .where("id", "=", numeric.id,).executeTakeFirst();
+
       expect(row!.input_kind,).toBe("numeric",);
       expect(row!.min_value,).toBe(1,);
       expect(row!.effect,).toBe(JSON.stringify(effect,),);
@@ -326,9 +341,11 @@ describe("RpgQuestionsService", () => {
           maxValue: 1,
         },),
       ).rejects.toThrow("minValue must not exceed",);
+
       expect(
         createQuestion(db, { ...base(), prompt: "Bad quest", effect: { quest: { questId: "  ", }, }, },),
       ).rejects.toThrow("quest id",);
+
       expect(
         createQuestion(db, { ...base(), prompt: "Bad item", effect: { grantItemId: "", }, },),
       ).rejects.toThrow("grantItemId",);
@@ -347,6 +364,7 @@ describe("RpgQuestionsService", () => {
         { value: "I sneak past the guard", },
         playerActorId,
       );
+
       expect(answered.status,).toBe(RpgQuestionStatus.Answered,);
       expect(answered.answerValue,).toBe("I sneak past the guard",);
       expect(answered.selectedOptionId,).toBeNull();
@@ -354,6 +372,7 @@ describe("RpgQuestionsService", () => {
 
       const row = await db.selectFrom("rpg_questions",).selectAll()
         .where("id", "=", question.id,).executeTakeFirst();
+
       expect(row!.answer_value,).toBe("I sneak past the guard",);
       expect(row!.selected_option_id,).toBeNull();
 
@@ -361,6 +380,7 @@ describe("RpgQuestionsService", () => {
         .where("chat_id", "=", chatId,)
         .where("content", "=", "Answer recorded: I sneak past the guard",)
         .executeTakeFirst();
+
       expect(message,).toBeDefined();
 
       // Double answer still rejected for value questions too.
@@ -379,18 +399,22 @@ describe("RpgQuestionsService", () => {
       expect(answerQuestion(db, question.id, {}, playerActorId,),).rejects.toThrow(
         "value is required",
       );
+
       expect(answerQuestion(db, question.id, { value: 42, }, playerActorId,),).rejects.toThrow(
         "must be a string",
       );
+
       expect(answerQuestion(db, question.id, { value: "   ", }, playerActorId,),).rejects.toThrow(
         "must not be empty",
       );
+
       expect(
         answerQuestion(db, question.id, { value: "x".repeat(2001,), }, playerActorId,),
       ).rejects.toThrow("at most 2000",);
 
       const row = await db.selectFrom("rpg_questions",).selectAll()
         .where("id", "=", question.id,).executeTakeFirst();
+
       expect(row!.status,).toBe("open",);
     });
 
@@ -402,6 +426,7 @@ describe("RpgQuestionsService", () => {
         minValue: 1,
         maxValue: 10,
       },);
+
       const answered = await answerQuestion(db, question.id, { value: "7", }, playerActorId,);
       expect(answered.answerValue,).toBe("7",);
       expect(answered.answeredAt,).not.toBeNull();
@@ -411,6 +436,7 @@ describe("RpgQuestionsService", () => {
         prompt: "How many apples?",
         inputKind: RpgQuestionInputKind.Numeric,
       },);
+
       const answered2 = await answerQuestion(db, second.id, { value: 5, }, playerActorId,);
       expect(answered2.answerValue,).toBe("5",);
 
@@ -418,6 +444,7 @@ describe("RpgQuestionsService", () => {
         .where("chat_id", "=", chatId,)
         .where("content", "=", "Answer recorded: 7",)
         .executeTakeFirst();
+
       expect(message,).toBeDefined();
     });
 
@@ -433,18 +460,22 @@ describe("RpgQuestionsService", () => {
       expect(answerQuestion(db, question.id, { value: 11, }, playerActorId,),).rejects.toThrow(
         "at most 10",
       );
+
       expect(answerQuestion(db, question.id, { value: 0, }, playerActorId,),).rejects.toThrow(
         "at least 1",
       );
+
       expect(answerQuestion(db, question.id, { value: "abc", }, playerActorId,),).rejects.toThrow(
         "finite number",
       );
+
       expect(answerQuestion(db, question.id, { value: "", }, playerActorId,),).rejects.toThrow(
         "finite number",
       );
 
       const row = await db.selectFrom("rpg_questions",).selectAll()
         .where("id", "=", question.id,).executeTakeFirst();
+
       expect(row!.status,).toBe("open",);
     });
 
@@ -454,6 +485,7 @@ describe("RpgQuestionsService", () => {
         prompt: "Numeric only",
         inputKind: RpgQuestionInputKind.Numeric,
       },);
+
       expect(
         answerQuestion(db, numericQ.id, { optionId: "opt-1", }, playerActorId,),
       ).rejects.toThrow("value is required for numeric",);
@@ -480,6 +512,7 @@ describe("RpgQuestionsService", () => {
         id: questId,
         progress: 2,
       } as never,);
+
       const question = await createQuestion(db, {
         ...base(),
         prompt: "Press the attack?",
@@ -491,6 +524,7 @@ describe("RpgQuestionsService", () => {
 
       const quest = await db.selectFrom("quests",).selectAll()
         .where("id", "=", questId,).executeTakeFirst();
+
       expect(quest!.progress,).toBe(4,);
       expect(quest!.status,).toBe("active",);
 
@@ -498,12 +532,14 @@ describe("RpgQuestionsService", () => {
         .where("quest_id", "=", questId,)
         .where("chat_id", "=", effectChatId,)
         .executeTakeFirst();
+
       expect(progress,).toBeDefined();
       expect(progress!.progress,).toBe(4,);
       expect(progress!.status,).toBe("active",);
 
       const messages = await db.selectFrom("messages",).selectAll()
         .where("chat_id", "=", effectChatId,).execute();
+
       expect(
         messages.some((m,) => m.content.includes(`Quest "Dragon Hunt" progress 4/5`,)),
       ).toBe(true,);
@@ -515,6 +551,7 @@ describe("RpgQuestionsService", () => {
         id: questId,
         progress: 4,
       } as never,);
+
       const question = await createQuestion(db, {
         ...base(),
         prompt: "Finish them?",
@@ -528,12 +565,14 @@ describe("RpgQuestionsService", () => {
 
       const quest = await db.selectFrom("quests",).selectAll()
         .where("id", "=", questId,).executeTakeFirst();
+
       expect(quest!.progress,).toBe(5,);
       expect(quest!.status,).toBe("completed",);
       expect(quest!.completed_at,).not.toBeNull();
 
       const progress = await db.selectFrom("quest_progress",).selectAll()
         .where("quest_id", "=", questId,).executeTakeFirst();
+
       expect(progress!.status,).toBe("completed",);
     });
 
@@ -543,6 +582,7 @@ describe("RpgQuestionsService", () => {
         id: questId,
         progress: 1,
       } as never,);
+
       const question = await createQuestion(db, {
         ...base(),
         prompt: "Complete the rite?",
@@ -553,9 +593,11 @@ describe("RpgQuestionsService", () => {
       expect(answered.effectsApplied,).toEqual([`quest:${questId}:complete`,],);
       const quest = await db.selectFrom("quests",).selectAll()
         .where("id", "=", questId,).executeTakeFirst();
+
       expect(quest!.status,).toBe("completed",);
       const progress = await db.selectFrom("quest_progress",).selectAll()
         .where("quest_id", "=", questId,).executeTakeFirst();
+
       expect(progress!.status,).toBe("completed",);
 
       // An already-terminal quest skips the effect best-effort.
@@ -564,6 +606,7 @@ describe("RpgQuestionsService", () => {
         prompt: "Complete it again?",
         effect: { quest: { questId, complete: true, }, },
       },);
+
       const answered2 = await answerQuestion(db, second.id, { optionId: "opt-1", }, playerActorId,);
       expect(answered2.effectsApplied,).toEqual([],);
     });
@@ -582,6 +625,7 @@ describe("RpgQuestionsService", () => {
 
       const instance = await db.selectFrom("world_items",).selectAll()
         .where("item_id", "=", itemId,).executeTakeFirst();
+
       expect(instance,).toBeDefined();
       expect(instance!.owner_actor_id,).toBe(playerActorId,);
       expect(instance!.world_id,).toBe(worldId,);
@@ -589,6 +633,7 @@ describe("RpgQuestionsService", () => {
 
       const messages = await db.selectFrom("messages",).selectAll()
         .where("chat_id", "=", effectChatId,).execute();
+
       expect(messages.some((m,) => m.content.includes("Received: Iron Sword",)),).toBe(true,);
     });
 

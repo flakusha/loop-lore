@@ -71,12 +71,14 @@ function buildCtx(
       }
     },
   };
+
   for (const name of Object.getOwnPropertyNames(chatSideChannels,)) {
     const desc = Object.getOwnPropertyDescriptor(chatSideChannels, name,);
     if (!desc) { continue; }
     if ("value" in desc) { base[name] = desc.value; }
     else { Object.defineProperty(base, name, desc,); }
   }
+
   return base as unknown as ChatState;
 }
 
@@ -102,6 +104,7 @@ describeOrSkip("chatSideChannels", () => {
           },
         ],
       },);
+
       const state = buildCtx();
       await chatSideChannels.loadSideChannels!.call(state,);
       expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/side",);
@@ -182,6 +185,7 @@ describeOrSkip("chatSideChannels — loadSideChannels boundaries", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const state = buildCtx();
     await chatSideChannels.loadSideChannels!.call(state,);
     expect(uiStore.sideChannels,).toBeUndefined();
@@ -213,6 +217,7 @@ describeOrSkip("chatSideChannels — createSideChannel boundaries", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const toasts: Toast[] = [];
     const state = buildCtx({ toasts, },);
     await chatSideChannels.createSideChannel!.call(state, "Notes",);
@@ -281,6 +286,7 @@ describeOrSkip("side-channel header globals — absent-Alpine no-op", () => {
     } else {
       g.Alpine = realAlpine;
     }
+
     g.document = realDocument;
   },);
 
@@ -310,6 +316,7 @@ describeOrSkip("side-channel header globals — absent-Alpine no-op", () => {
       store: () => ({ newSideChannelName: "Notes", }),
       $data: (e: unknown,) => (e === el ? { createSideChannel, } : {}),
     };
+
     await (g.createSideChannel as () => Promise<void>)();
     expect(createSideChannel,).toHaveBeenCalledTimes(1,);
     expect(createSideChannel,).toHaveBeenCalledWith("Notes",);

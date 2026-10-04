@@ -30,6 +30,7 @@ export async function requireWorldAccess(
     .select(["owner_id", "visibility",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   if (!world) { return notFound("World not found",); }
   if (can(userRole, "admin.world",) || world.owner_id === userId) { return null; }
   if (!userId) { return notFound("World not found",); }
@@ -42,6 +43,7 @@ export async function requireWorldAccess(
     .where("world_id", "=", worldId,)
     .where("actor_id", "=", userId,)
     .executeTakeFirst();
+
   if (member) { return null; }
   return notFound("World not found",);
 }
@@ -66,6 +68,7 @@ export async function requireWorldOwner(
     .select(["owner_id",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   if (!world) { return notFound("World not found",); }
   if (can(userRole, "admin.world",) || world.owner_id === userId) { return null; }
   return forbidden("Forbidden",);

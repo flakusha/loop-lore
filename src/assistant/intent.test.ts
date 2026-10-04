@@ -42,6 +42,7 @@ describe("detectAvatarChangeIntent", () => {
         { pattern: "smile bright", emotion: "joyful", },
       ],
     };
+
     expect(detectAvatarChangeIntent("a bright smile", ordered,),).toBe("happy",);
   });
 });

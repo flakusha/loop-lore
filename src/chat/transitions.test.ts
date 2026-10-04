@@ -87,6 +87,7 @@ describe("selectMessagesForPromotion", () => {
       { messageId: "2", role: "user", content: "y".repeat(1000,), tokenCount: 300, createdAt: "", score: 0.8, },
       { messageId: "3", role: "user", content: "z".repeat(1000,), tokenCount: 300, createdAt: "", score: 0.1, },
     ];
+
     const result = selectMessagesForPromotion(msgs, 100, 0.6,);
     expect(result,).toContain("2",);
     expect(result,).not.toContain("1",);
@@ -98,6 +99,7 @@ describe("selectMessagesForPromotion", () => {
       makeMsg("1", "x".repeat(300,),),
       makeMsg("2", "short",),
     ];
+
     const result = selectMessagesForPromotion(msgs, 10, 0.6,);
     expect(result.length,).toBeGreaterThan(0,);
   });
@@ -124,6 +126,7 @@ beforeEach(async () => {
         settings: "{}",
       },)
       .execute();
+
     await db
       .insertInto("actors",)
       .values({
@@ -140,6 +143,7 @@ beforeEach(async () => {
       },)
       .execute();
   }
+
   for (const chatId of [CHAT_OWNED_BY_VICTIM, CHAT_VICTIM_JOINS, CHAT_ATTACKER_JOINS,]) {
     await db
       .insertInto("chats",)
@@ -151,6 +155,7 @@ beforeEach(async () => {
 afterEach(() => {
   resetTestDb(sqlite,);
 },);
+
 // Module-scope constants so all ownership-guard describe blocks can share
 // the same fixture ids (the test bodies reference these from sibling blocks).
 const VICTIM_ID = "victim-1";
@@ -169,6 +174,7 @@ describe("promoteMessagesToMemories — ownership guard", () => {
       .insertInto("chat_participants",)
       .values({ chat_id: CHAT_OWNED_BY_VICTIM, actor_id: VICTIM_ID, role_in_chat: "owner", },)
       .execute();
+
     const msgs: MessageRef[] = [{
       messageId: "m1",
       role: "user",
@@ -198,6 +204,7 @@ describe("promoteMessagesToMemories — ownership guard", () => {
       .selectAll()
       .where("actor_id", "=", VICTIM_ID,)
       .execute();
+
     expect(rows,).toEqual([],);
   });
 
@@ -277,6 +284,7 @@ describe("promoteMessagesToMemories — ownership guard", () => {
       .selectAll()
       .where("actor_id", "=", VICTIM_ID,)
       .execute();
+
     expect(stored.length,).toBe(1,);
     expect(stored[0]?.source_chat_id,).toBe(CHAT_OWNED_BY_VICTIM,);
   });
@@ -295,6 +303,7 @@ describe("classifyTransitionMessage ownership guard", () => {
       ),
     ).rejects.toBeInstanceOf(OwnershipError,);
   });
+
   it("allows when ownership context is provided and actor is a participant", async () => {
     await db
       .insertInto("chat_participants",)
@@ -358,6 +367,7 @@ describe("ownership audit (exported-function coverage)", () => {
         `(?:export\\s+(?:async\\s+)?function\\s+${fn}\\s*\\([^)]*\\)\\s*[^{]*\\{)([\\s\\S]*?)\\n\\}`,
         "m",
       );
+
       const m = fnBlockRe.exec(src,);
       expect(m,).not.toBeNull();
       const body = m?.[1] ?? "";
@@ -369,6 +379,7 @@ describe("ownership audit (exported-function coverage)", () => {
           `expected ${fn} to call an ownership guard`,
         ).toBe(true,);
       }
+
       if (pure[fn]) {
         const hasGuard = /requireChatParticipant|requireActorExists/.test(body,);
         expect(

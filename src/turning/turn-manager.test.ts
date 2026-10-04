@@ -225,10 +225,12 @@ describe("TurnManager", () => {
           created_by: userId,
         } as never,)
         .execute();
+
       await db
         .insertInto("chat_participants",)
         .values({ chat_id: chatId, actor_id: "actor-ai-1", role_in_chat: "member", talkativity: 5, } as never,)
         .execute();
+
       await db
         .insertInto("group_initiatives",)
         .values(
@@ -250,6 +252,7 @@ describe("TurnManager", () => {
         .where("scene_id", "=", "main",)
         .where("actor_id", "=", "actor-ai-1",)
         .executeTakeFirst();
+
       expect(row?.score,).toBe(2,);
     });
 
@@ -266,10 +269,12 @@ describe("TurnManager", () => {
           created_by: userId,
         } as never,)
         .execute();
+
       await db
         .insertInto("chat_participants",)
         .values({ chat_id: chatId, actor_id: "actor-ai-1", role_in_chat: "member", talkativity: 5, } as never,)
         .execute();
+
       await db
         .insertInto("group_initiatives",)
         .values(
@@ -289,6 +294,7 @@ describe("TurnManager", () => {
         .where("scene_id", "=", "main",)
         .where("actor_id", "=", "actor-ai-1",)
         .executeTakeFirst();
+
       expect(row?.score,).toBe(0,);
     });
   });
@@ -405,6 +411,7 @@ describe("skip cooldown (TASK-chat-feature-turn-talkativity-skip AC4)", () => {
     for (const actorId of ["actor-ai-1", "actor-ai-2", "actor-narrator",]) {
       await recordSkip(chatId, actorId,);
     }
+
     await tm.initialize();
 
     const picked = await tm.selectNextActor();

@@ -73,6 +73,7 @@ export function watchChatPause({ database, chatId, pollMs, }: WatchChatPauseOpts
         // Transient DB errors must not crash the cascade; the next tick retries.
       },);
   }, pollMs,);
+
   return {
     controller,
     stop: () => {

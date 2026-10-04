@@ -57,6 +57,7 @@ describe("Chat settings access guard (PUT /api/v1/chats/:id)", () => {
         settings: "{}",
       },)
       .execute();
+
     await server.db
       .insertInto("actors",)
       .values({
@@ -70,6 +71,7 @@ describe("Chat settings access guard (PUT /api/v1/chats/:id)", () => {
         import_spec: "raw",
       },)
       .execute();
+
     await server.db
       .insertInto("chat_participants",)
       .values({
@@ -90,6 +92,7 @@ describe("Chat settings access guard (PUT /api/v1/chats/:id)", () => {
     const res = await api.put(`/api/v1/chats/${server.context.chatId}`, {
       name: "Admin Overrode",
     },);
+
     expect(res.ok,).toBe(true,);
   });
 
@@ -115,6 +118,7 @@ describe("Chat settings access guard (PUT /api/v1/chats/:id)", () => {
     const res = await api.put(`/api/v1/chats/${server.context.chatId}`, {
       gmConfig: { visualNovel: true, vnLayout: "split", },
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.status,).toBe(200,);
   });
@@ -124,6 +128,7 @@ describe("Chat settings access guard (PUT /api/v1/chats/:id)", () => {
     const res = await api.put(`/api/v1/chats/${server.context.chatId}`, {
       gmConfig: { type: "llm", },
     },);
+
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(409,);
     expect(res.code,).toBe("key_mechanic_conflict",);

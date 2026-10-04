@@ -25,6 +25,7 @@ describe("countMessageTokens", () => {
       msg("Hello world",), // 11 chars → 3 tokens
       msg("This is a test",), // 14 chars → 4 tokens
     ];
+
     const result = countMessageTokens(messages,);
     expect(result,).toBe(7,); // 3 + 4
   });

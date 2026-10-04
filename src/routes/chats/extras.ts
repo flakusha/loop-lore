@@ -47,6 +47,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
+
           if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
@@ -56,6 +57,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .selectAll()
             .where("id", "=", id,)
             .executeTakeFirst();
+
           if (!fullChat) { return notFound("Chat not found",); }
 
           if (!fullChat.world_id) {
@@ -78,6 +80,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
                 source: "manual",
               },);
             },);
+
             return jsonResponse({ ok: true, current_location_id: null, },);
           }
 
@@ -87,6 +90,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", locationId,)
             .where("world_id", "=", fullChat.world_id,)
             .executeTakeFirst();
+
           if (!location) { return notFound("Location not found in this world",); }
 
           await database.transaction().execute(async (tx,) => {
@@ -107,6 +111,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             // single current_location_id link or any 401-guard logic).
             await autoSyncChatBackground(tx, id, locationId,);
           },);
+
           return jsonResponse({ ok: true, current_location_id: locationId, location_name: location.name, },);
         },
         { body: ChatLocationUpdateBody, params: ChatIdParams, },
@@ -125,6 +130,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
+
           if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
@@ -135,6 +141,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("chat_id", "=", id,)
             .where("actor_id", "=", userId,)
             .execute();
+
           return jsonResponse({ ok: true, },);
         },
         { body: ChatPersonaUpdateBody, params: ChatIdParams, },
@@ -153,6 +160,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("created_by",)
             .where("id", "=", id,)
             .executeTakeFirst();
+
           if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
             return notFound("Chat not found",);
           }
@@ -162,8 +170,10 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             const status = result.code === "not_found"
               ? HttpStatus.NotFound
               : (result.code === "forbidden" ? HttpStatus.Forbidden : HttpStatus.BadRequest);
+
             return jsonError(result.message, status, result.code as never,);
           }
+
           return jsonResponse({ ok: true, },);
         },
         { body: ChatImpersonateBody, params: ChatIdParams, },
@@ -182,6 +192,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("chat_id", "=", id,)
             .where("actor_id", "=", userId,)
             .executeTakeFirst();
+
           if (!participant) { return forbidden("Not a participant of this chat",); }
 
           const message = await database
@@ -190,6 +201,7 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", body.messageId,)
             .where("chat_id", "=", id,)
             .executeTakeFirst();
+
           if (!message) { return notFound("Message not found in this chat",); }
 
           await database

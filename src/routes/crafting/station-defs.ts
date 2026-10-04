@@ -76,6 +76,7 @@ export async function resolveWorldOwner(
     .select("owner_id",)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   if (!world) { return notFoundResponse("World",); }
   if (world.owner_id !== userId) { return jsonError("Not allowed", 403,); }
   return null;
@@ -110,9 +111,11 @@ export function craftingStationDefsRoutes({ database, }: { database: Db }, prefi
         if (typeof body.name !== "string" || body.name.length === 0) {
           return badRequestResponse("name is required",);
         }
+
         if (typeof body.stationType !== "string" || body.stationType.length === 0) {
           return badRequestResponse("stationType is required",);
         }
+
         const id = await svc().createStationDef({
           worldId: ctx.params.worldId,
           name: body.name,
@@ -125,6 +128,7 @@ export function craftingStationDefsRoutes({ database, }: { database: Db }, prefi
           materialSavingChance: body.materialSavingChance as number | undefined,
           maxDurability: body.maxDurability as number | undefined,
         },);
+
         return jsonResponse({ id, }, 201,);
       },);
     }, {
@@ -149,6 +153,7 @@ export function craftingStationDefsRoutes({ database, }: { database: Db }, prefi
           ctx.params.worldId,
           ctx.query.type as CraftingStationType | undefined,
         );
+
         return jsonResponse({ stationDefs: defs, },);
       },);
     }, {
@@ -190,6 +195,7 @@ export function craftingStationDefsRoutes({ database, }: { database: Db }, prefi
           materialSavingChance: body.materialSavingChance as number | undefined,
           maxDurability: body.maxDurability as number | undefined,
         },);
+
         if (!ok) { return notFoundResponse("Station definition",); }
         return jsonResponse({ ok: true, },);
       },);

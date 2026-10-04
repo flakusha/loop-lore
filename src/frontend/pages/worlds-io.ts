@@ -17,22 +17,26 @@ globalThis.importWorld = async function(event: Event,) {
     showToast("error", "Select a .world.json file to import",);
     return;
   }
+
   const parsed = safeJsonParse(await file.text(),);
   if (!parsed.ok) {
     showToast("error", "Invalid JSON: not a valid world bundle",);
     return;
   }
+
   const bundle = parsed.value;
   if (typeof bundle !== "object" || bundle === null || !("world" in (bundle as Record<string, unknown>))) {
     showToast("error", "Invalid world bundle: missing `world` object",);
     return;
   }
+
   try {
     const res = await feFetch("/api/v1/import/world", {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody(bundle as Record<string, unknown>,),
     },);
+
     // feFetch THROWS on any non-2xx (it never hands back the Response), so
     // the API's own error message is unreachable here — surface the thrown
     // error instead of a blanket "Network error".
@@ -43,6 +47,7 @@ globalThis.importWorld = async function(event: Event,) {
     for (const key of Object.keys(counts,)) {
       totalImported += typeof counts[key] === "number" ? counts[key] : 0;
     }
+
     showToast("success", `Imported world (${totalImported} records)`,);
     refreshHtmx("#world-list",);
   } catch (error) {

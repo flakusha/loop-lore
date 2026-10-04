@@ -76,6 +76,7 @@ export function eventsRoutes(opts: HandlerOpts, prefix = "/api",) {
           source,
           sourceId,
         },);
+
         return jsonCreated({ id: eventId, },);
       }, {
         params: ActorIdParams,

@@ -112,14 +112,17 @@ export function recordConsentAction(
       state.consent_aware = true;
       break;
     }
+
     case "revoked": {
       state.consent_given = false;
       break;
     }
+
     case "modified": {
       if (params.scope) { state.consent_scope = params.scope; }
       break;
     }
+
     case "overridden": {
       state.consent_given = true;
       break;

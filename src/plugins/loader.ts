@@ -94,6 +94,7 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
     for (const e of entries) {
       if (e.isDirectory()) { pluginDirs.push(e.name); }
     }
+
     pluginDirs.sort((a, b) => a.localeCompare(b));
 
     for (const pluginName of pluginDirs) {
@@ -211,6 +212,7 @@ export async function dispatchPluginRoute(request: Request): Promise<Response | 
       if (result) return result;
     }
   }
+
   return null;
 }
 
@@ -229,6 +231,7 @@ export async function unloadAllPlugins(): Promise<void> {
       }
     }
   }
+
   registry.unregisterAll();
   loadOrder.length = 0;
 }

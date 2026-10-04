@@ -47,12 +47,15 @@ export async function domainKey(
   if (!secret) {
     throw new Error("domainKey: secret must be non-empty",);
   }
+
   if (!info) {
     throw new Error("domainKey: info must be non-empty (use a domain-scoped id)",);
   }
+
   if (length <= 0 || length > 255 * 32) {
     throw new Error(`domainKey: length out of range (got ${length})`,);
   }
+
   const ikm = await crypto.subtle.importKey(
     "raw",
     new TextEncoder().encode(secret,),
@@ -60,6 +63,7 @@ export async function domainKey(
     false,
     ["deriveBits",],
   );
+
   const bits = await crypto.subtle.deriveBits(
     {
       name: "HKDF",
@@ -70,6 +74,7 @@ export async function domainKey(
     ikm,
     length * 8,
   );
+
   return new Uint8Array(bits,);
 }
 
@@ -121,6 +126,7 @@ export async function hashWithDomain(
     false,
     ["deriveBits",],
   );
+
   const bits = await crypto.subtle.deriveBits(
     {
       name: "HKDF",
@@ -131,6 +137,7 @@ export async function hashWithDomain(
     ikm,
     8 * 8,
   );
+
   const hmacKey = await crypto.subtle.importKey(
     "raw",
     bits,
@@ -138,11 +145,13 @@ export async function hashWithDomain(
     false,
     ["sign",],
   );
+
   const sig = await crypto.subtle.sign(
     "HMAC",
     hmacKey,
     new TextEncoder().encode(value,),
   );
+
   return [...new Uint8Array(sig,),]
     .slice(0, 8,)
     .map((b,) => b.toString(16,).padStart(2, "0",))

@@ -13,12 +13,15 @@ export function calculateCoverBonus(cover: CoverType,): number {
     case "none": {
       return 0;
     }
+
     case "half": {
       return 2;
     }
+
     case "three_quarters": {
       return 5;
     }
+
     case "full": {
       return 10;
     }
@@ -48,6 +51,7 @@ export function calculateElevationBonus(
       damageBonus: difference * 1,
     };
   }
+
   if (difference < 0) {
     // Attacker has elevation disadvantage
     return {

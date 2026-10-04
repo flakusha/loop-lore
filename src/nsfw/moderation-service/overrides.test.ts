@@ -46,6 +46,7 @@ describe("NSFW override service-level guard", () => {
       .select("nsfw_override",)
       .where("id", "=", "chat-override",)
       .executeTakeFirst();
+
     expect(chat?.nsfw_override,).toBe("disabled",);
 
     const audit = await db
@@ -53,6 +54,7 @@ describe("NSFW override service-level guard", () => {
       .selectAll()
       .where("scope_id", "=", "chat-override",)
       .execute();
+
     expect(audit,).toHaveLength(1,);
     expect(audit[0]!.action_type,).toBe("nsfw_override_set",);
     expect(audit[0]!.performed_by,).toBe("mod-1",);
@@ -77,6 +79,7 @@ describe("NSFW override service-level guard", () => {
       .select("nsfw_override",)
       .where("id", "=", "world-override",)
       .executeTakeFirst();
+
     expect(world?.nsfw_override,).toBe("enabled",);
 
     const audit = await db
@@ -84,6 +87,7 @@ describe("NSFW override service-level guard", () => {
       .selectAll()
       .where("scope_id", "=", "world-override",)
       .execute();
+
     expect(audit,).toHaveLength(1,);
     expect(audit[0]!.action_type,).toBe("nsfw_override_set",);
     expect(audit[0]!.performed_by,).toBe("mod-1",);

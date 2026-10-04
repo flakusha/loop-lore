@@ -88,6 +88,7 @@ describe("options-object-params rule", () => {
   test("ignores overload signatures, flagging only the implementation", () => {
     const code =
       "function f(a: number, b: number, c: number): void;\nfunction f(a: number, b: number, c: number): void {}";
+
     expect(violations(code,),).toBe(1,);
   });
 
@@ -161,6 +162,7 @@ describe("options-object-params rule", () => {
   test("flags 3 params with very long type annotations", () => {
     const code =
       "function f(a: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, b: BBBBBBBBBBBBBBBBBBBBBBBBBBBBB, c: CCCCCCCCCCCCCCCCCCCCC) {}";
+
     expect(violations(code,),).toBe(1,);
   });
 
@@ -239,6 +241,7 @@ describe("options-object-params rule", () => {
   test("ignores 4 constructor parameter properties", () => {
     const code =
       "class A { constructor(private a: number, private b: number, private c: number, private d: number) {} }";
+
     expect(violations(code,),).toBe(0,);
   });
 
@@ -283,6 +286,7 @@ describe("options-object-params rule", () => {
   test("allows a block-bodied function assigned to a function-typed const", () => {
     const code =
       "type Fn = (a: number, b: number, c: number) => number;\nconst f: Fn = (a, b, c) => { return a + b + c; };";
+
     expect(violations(code,),).toBe(0,);
   });
 
@@ -302,6 +306,7 @@ describe("options-object-params rule", () => {
       "  return { m(a, b, c) { return a + b + c; } };",
       "}",
     ].join("\n",);
+
     expect(violations(code,),).toBe(0,);
   });
 
@@ -314,6 +319,7 @@ describe("options-object-params rule", () => {
       "  return self;",
       "}",
     ].join("\n",);
+
     expect(violations(code,),).toBe(0,);
   });
 
@@ -331,6 +337,7 @@ describe("options-object-params rule", () => {
       "  run(a: number, b: number, c: number): number { return a + b + c; }",
       "}",
     ].join("\n",);
+
     expect(violations(code,),).toBe(1,);
   });
 
@@ -343,6 +350,7 @@ describe("options-object-params rule", () => {
       "  return o.m(1, 2, 3);",
       "}",
     ].join("\n",);
+
     expect(violations(code,),).toBe(1,);
   });
 
@@ -354,6 +362,7 @@ describe("options-object-params rule", () => {
       "  return { m(a: number, b: number, c: number) { return a + b + c; } };",
       "}",
     ].join("\n",);
+
     expect(violations(code,),).toBe(1,);
   });
 
@@ -373,6 +382,7 @@ describe("options-object-params rule", () => {
       "}",
       "function free(a: number, b: number, c: number) { return a + b + c; }",
     ].join("\n",);
+
     expect(violations(code,),).toBe(1,);
   });
 });

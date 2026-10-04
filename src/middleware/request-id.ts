@@ -88,9 +88,11 @@ export function applyRequestId(headers: Headers, id: string,): Headers {
     headers.set(REQUEST_ID_HEADER, crypto.randomUUID(),);
     return headers;
   }
+
   headers.set(REQUEST_ID_HEADER, id,);
   return headers;
 }
+
 /**
  * Elysia `.derive()` middleware — resolves, validates, and applies the
  * request id for every request.

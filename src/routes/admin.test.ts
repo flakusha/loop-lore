@@ -86,6 +86,7 @@ describe("Admin system-config", () => {
         body: JSON.stringify({ key: "x", value: "y", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -98,6 +99,7 @@ describe("Admin system-config", () => {
         body: JSON.stringify({ key: "x", value: "y", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -134,6 +136,7 @@ describe("Admin worlds", () => {
         settings: "{}",
       },)
       .execute();
+
     await db
       .insertInto("worlds",)
       .values({
@@ -179,6 +182,7 @@ describe("Admin chats", () => {
         settings: "{}",
       },)
       .execute();
+
     await db
       .insertInto("chats",)
       .values({ id: "c1", name: "Test Chat", type: "direct", mode: "direct", created_by: userId, },)
@@ -288,6 +292,7 @@ describe("Admin danger zone", () => {
         module: "auth",
       },)
       .execute();
+
     await db
       .insertInto("system_config",)
       .values({ key: "dz_key", value: "dz_val", description: null, },)
@@ -308,6 +313,7 @@ describe("Admin danger zone", () => {
         body: JSON.stringify({ confirmation: "NOPE", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -320,6 +326,7 @@ describe("Admin danger zone", () => {
         body: JSON.stringify({ confirmation: "PURGE", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const left = await db.selectFrom("log_entries",).select(db.fn.countAll<number>().as("n",),).executeTakeFirst();
     expect(left?.n ?? 0,).toBe(0,);
@@ -334,6 +341,7 @@ describe("Admin danger zone", () => {
         body: JSON.stringify({ confirmation: "RESET", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const rows = await db.selectFrom("system_config",).select("key",).execute();
     expect(rows.some((r,) => r.key === "dz_key"),).toBe(false,);
@@ -349,6 +357,7 @@ describe("Admin danger zone", () => {
         body: JSON.stringify({ confirmation: "MAYBE", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -361,6 +370,7 @@ describe("Admin danger zone", () => {
         body: JSON.stringify({ confirmation: "PURGE", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });
@@ -383,6 +393,7 @@ describe("Admin review stats", () => {
         status: "pending",
       },)
       .execute();
+
     await db
       .insertInto("content_flags",)
       .values({

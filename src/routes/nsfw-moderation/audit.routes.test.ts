@@ -127,6 +127,7 @@ describe("moderation audit routes — moderator gating", () => {
     const res = await app.handle(
       new Request("http://localhost/api/nsfw/moderation/export/u-1", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -135,6 +136,7 @@ describe("moderation audit routes — moderator gating", () => {
     const res = await app.handle(
       new Request("http://localhost/api/nsfw/moderation/export/u-1", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
   });
 });

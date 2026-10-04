@@ -54,6 +54,7 @@ export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ state, },),
       },);
+
       if (res.ok) {
         await this.loadMessageSeen(msgId,);
       }
@@ -72,6 +73,7 @@ export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
     if (!msg) { return; }
     const seenState =
       (msg as Message & { seenState?: Array<{ actorId: string; state: string; seenAt: string | null }> }).seenState;
+
     if (!seenState || seenState.length === 0) { return; }
     const target = event.currentTarget as HTMLElement;
     this.$dispatch?.("show-seen-popover", {

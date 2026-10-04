@@ -49,11 +49,13 @@ export const adminReview = {
         },),
         apiFetch("/api/v1/admin/review/stats", { headers: { Accept: "application/json", }, },),
       ],);
+
       if (queueRes.status === "fulfilled" && queueRes.value.ok) {
         const d = await queueRes.value.json();
         this.reviewFlags = d.data?.flags || [];
         this.reviewTotal = d.data?.total || 0;
       }
+
       if (statsRes.status === "fulfilled" && statsRes.value.ok) {
         this.reviewStats = await statsRes.value.json();
       }
@@ -79,6 +81,7 @@ export const adminReview = {
           status,
         },),
       },);
+
       if (res.ok) {
         showToast("success", "Flag resolved",);
         this.reviewResolution[flagId] = "";

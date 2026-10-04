@@ -43,12 +43,14 @@ export async function loadSourcePlaintext(
     .select(["id", "chat_id", "actor_id", "content", "content_encoding", "key_id",],)
     .where("id", "=", opts.messageId,)
     .executeTakeFirst();
+
   if (!source || source.chat_id !== opts.chatId) {
     return {
       ok: false,
       response: jsonResponse({ error: "not_found", message: "Message not found.", }, 404 as HttpStatusCode,),
     };
   }
+
   let plaintext: string;
   try {
     plaintext = await decryptMessageContent(database, {
@@ -66,10 +68,12 @@ export async function loadSourcePlaintext(
       ),
     };
   }
+
   const sender = await database
     .selectFrom("actors",)
     .select("display_name",)
     .where("id", "=", source.actor_id,)
     .executeTakeFirst();
+
   return { ok: true, plaintext, senderName: sender?.display_name ?? "another chat", };
 }

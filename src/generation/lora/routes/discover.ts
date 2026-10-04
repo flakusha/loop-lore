@@ -67,6 +67,7 @@ export function discoverRoutes(config: Config, prefix = "/api",) {
         for (const m of r.models) {
           allModels.push(m,);
         }
+
         if (r.error) {
           errors.push(r.error,);
         }

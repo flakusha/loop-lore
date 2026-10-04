@@ -75,6 +75,7 @@ describe("applyEnvironmentOverrides", () => {
       },
       "staging",
     );
+
     expect(overridden.users.map((u,) => u.username),).toEqual(["staging_admin",],);
     expect(overridden.seedData?.chats,).toHaveLength(1,);
     expect(overridden.seedData?.characters,).toBeUndefined();
@@ -91,6 +92,7 @@ describe("applyEnvironmentOverrides", () => {
       },
       "development",
     );
+
     expect(overridden.users.map((u,) => u.username),).toEqual(["dev_admin",],);
     expect(overridden.seedData,).toEqual(base.seedData,);
   });
@@ -122,6 +124,7 @@ describe("seedConfiguredContent", () => {
       .where("actor_type", "=", "character",)
       .where("display_name", "in", ["Orin", "Mira",],)
       .execute();
+
     expect(chars,).toHaveLength(2,);
     const orin = chars.find((c,) => c.display_name === "Orin");
     expect(orin?.personality,).toBe(JSON.stringify(["stoic", "wary",],),);
@@ -133,6 +136,7 @@ describe("seedConfiguredContent", () => {
       .select(["name", "publication_status",],)
       .where("name", "=", "Verdant Vale",)
       .executeTakeFirst();
+
     expect(world?.publication_status,).toBe("draft",);
 
     const locations = await db
@@ -140,6 +144,7 @@ describe("seedConfiguredContent", () => {
       .select("name",)
       .where("name", "in", ["River Bend", "Old Keep",],)
       .execute();
+
     expect(locations,).toHaveLength(2,);
 
     const groupChat = await db
@@ -147,6 +152,7 @@ describe("seedConfiguredContent", () => {
       .select(["name", "type", "mode",],)
       .where("name", "in", ["player1, player2", "Party",],)
       .execute();
+
     expect(groupChat.map((c,) => c.name).sort(),).toEqual(["Party", "player1, player2",],);
     const party = groupChat.find((c,) => c.name === "Party");
     expect(party?.type,).toBe("group",);
@@ -156,6 +162,7 @@ describe("seedConfiguredContent", () => {
       .selectFrom("chat_participants",)
       .select(db.fn.countAll<number>().as("n",),)
       .executeTakeFirst();
+
     expect(participantCount?.n,).toBe(4,);
 
     const audit = await db
@@ -163,6 +170,7 @@ describe("seedConfiguredContent", () => {
       .select("seed_type",)
       .where("seed_type", "in", ["character", "world", "chat",],)
       .execute();
+
     expect(audit,).toHaveLength(5,);
   });
 
@@ -175,6 +183,7 @@ describe("seedConfiguredContent", () => {
       .select(db.fn.countAll<number>().as("n",),)
       .where("actor_type", "=", "character",)
       .executeTakeFirst();
+
     expect(charCount?.n,).toBe(2,);
   });
 
@@ -210,6 +219,7 @@ describe("seedConfiguredContent", () => {
         },],
       },
     };
+
     await seedConfiguredUsers(db, { seeding: { ...seeding, users, }, auth: auth(true,), },);
     const created = await seedConfiguredContent(db, seeding, true,);
     expect(created,).toBe(2,);
@@ -219,6 +229,7 @@ describe("seedConfiguredContent", () => {
       .select("id",)
       .where("name", "=", "Item Quest World",)
       .executeTakeFirst();
+
     expect(world,).toBeDefined();
 
     const items = await db
@@ -226,6 +237,7 @@ describe("seedConfiguredContent", () => {
       .select(["name", "category", "rarity", "stackable", "max_stack", "value",],)
       .where("world_id", "=", world!.id,)
       .execute();
+
     expect(items,).toHaveLength(2,);
     const sword = items.find((i,) => i.name === "Iron Sword");
     expect(sword?.category,).toBe("weapon",);
@@ -240,6 +252,7 @@ describe("seedConfiguredContent", () => {
       .select(["name", "type", "category", "status", "target",],)
       .where("world_id", "=", world!.id,)
       .execute();
+
     expect(quests,).toHaveLength(1,);
     expect(quests[0]?.name,).toBe("Find the Relic",);
     expect(quests[0]?.type,).toBe("discovery",);
@@ -251,6 +264,7 @@ describe("seedConfiguredContent", () => {
       .select("id",)
       .where("name", "=", "NarratedRoute",)
       .executeTakeFirst();
+
     expect(chat,).toBeDefined();
     const messages = await db
       .selectFrom("messages",)
@@ -258,10 +272,12 @@ describe("seedConfiguredContent", () => {
       .where("chat_id", "=", chat!.id,)
       .orderBy("created_at", "asc",)
       .execute();
+
     expect([...messages.map((m,) => m.content).sort(),],).toEqual([
       "A crow circles overhead.",
       "The road opens before you.",
     ],);
+
     expect(messages.every((m,) => m.role === "system"),).toBe(true,);
   });
 
@@ -274,6 +290,7 @@ describe("seedConfiguredContent", () => {
         worlds: [{ name: "Lost Realm", creator: "nobody", },],
       },
     };
+
     // 0 resolvable — owners don't exist
     const created = await seedConfiguredContent(db, seeding, true,);
     expect(created,).toBe(0,);

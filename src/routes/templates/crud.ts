@@ -73,6 +73,7 @@ export function templateCrudRoutes(
       if (!serialized.ok) {
         return jsonError({ message: serialized.error, status: HttpStatus.BadRequest, },);
       }
+
       const row = await createTemplate(database, userId, input,);
       return jsonResponse({ template: row, },);
     }, {
@@ -97,6 +98,7 @@ export function templateCrudRoutes(
           },
         },);
       }
+
       if (def?.row) {
         return jsonResponse({
           template: {
@@ -106,6 +108,7 @@ export function templateCrudRoutes(
           },
         },);
       }
+
       return notFound("Template not found",);
     }, {
       params: IdParams,

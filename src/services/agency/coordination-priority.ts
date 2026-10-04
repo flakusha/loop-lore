@@ -46,6 +46,7 @@ export function markPlayerIntentPending(sceneId: string, actorId: string,): void
     bucket = new Map();
     sceneIntents.set(sceneId, bucket,);
   }
+
   if (!bucket.has(actorId,)) { bucket.set(actorId, { actorId, inFlight: true, },); }
 }
 
@@ -90,6 +91,7 @@ export function enqueueIfNoPlayerIntent(
     queuedActions.push({ sceneId, action, enqueuedAt: Date.now(), },);
     return { status: "queued", reason: "player_intent_in_flight", };
   }
+
   return { status: "dispatched", };
 }
 
@@ -108,6 +110,7 @@ export function drainQueuedActions(sceneId: string,): Array<{ actorId: string; p
       i--;
     }
   }
+
   return out;
 }
 

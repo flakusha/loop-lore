@@ -88,6 +88,7 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
             code: ErrorCode.Forbidden,
           },);
         }
+
         const providerName = ctx.params.name as string;
 
         const health = getProviderHealth(providerName,);
@@ -98,6 +99,7 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
             code: ErrorCode.NotFound,
           },);
         }
+
         return jsonResponse({
           name: health.name,
           label: health.label,

@@ -36,6 +36,7 @@ describe("promoteEventToLore — event → world lore", () => {
     } catch {
       // Already initialized.
     }
+
     const { db, sqlite, worldId, } = await setupWorld();
     try {
       const id = await promoteEventToLore(db, worldId, {
@@ -83,6 +84,7 @@ describe("promoteEventToLore — event → world lore", () => {
         professions: [],
         locationId: null,
       },);
+
       const visibleToHuman = isLoreVisibleTo({ audienceScope: scope, }, {
         race: "human",
         professions: [],
@@ -149,6 +151,7 @@ describe("applyEvents — WorldLoreUpdate promotes to structured lore", () => {
           data: { newLoreEntry: "The old king died and his heir was crowned.", },
         },],
       },);
+
       expect(await countRows(),).toHaveLength(1,);
 
       // Opt-out: data.promoteToLore === false suppresses promotion.
@@ -162,6 +165,7 @@ describe("applyEvents — WorldLoreUpdate promotes to structured lore", () => {
           data: { newLoreEntry: "A private court secret.", promoteToLore: false, },
         },],
       },);
+
       expect(await countRows(),).toHaveLength(1,);
     } finally {
       sqlite.close();

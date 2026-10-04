@@ -161,6 +161,7 @@ export async function seedBackstory(
       data: { ...data, audienceScope, },
       ...(actorId && { actorId, }),
     };
+
     await promoteEventToLore(db, worldId, syntheticEvent,);
   }
 
@@ -191,6 +192,7 @@ export async function listTimelineEntries(
   if (occurredBefore !== undefined) {
     query = query.where("occurred_at", "<", occurredBefore,);
   }
+
   if (occurredAfter !== undefined) {
     query = query.where("occurred_at", ">", occurredAfter,);
   }

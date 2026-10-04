@@ -54,6 +54,7 @@ if (ISOLATED) {
       },
     }),
   }),);
+
   ({ runBatchGeneration, } = await import("./generation"));
 }
 
@@ -98,6 +99,7 @@ describeOrSkip("runBatchGeneration", () => {
       baseAvatarId: "avatar-base",
       emotions: [EmotionType.Happy, EmotionType.Sad,],
     },);
+
     await runBatchGeneration(svc, job, makeOpts(),);
     expect(job.status,).toBe("completed",);
     const record = await getGenerationJobRecord(db, job.id,);
@@ -115,15 +117,18 @@ describeOrSkip("runBatchGeneration", () => {
         if (calls === 2) {
           throw new Error("boom",);
         }
+
         return { avatarId: "av-1", assetId: "as-1", };
       },),
     );
+
     const job = createJob({
       id: "job-batch-partial" as BatchJobId,
       actorId,
       baseAvatarId: "avatar-base",
       emotions: [EmotionType.Happy, EmotionType.Sad,],
     },);
+
     await runBatchGeneration(svc, job, makeOpts(),);
     expect(job.status,).toBe("failed",);
     expect(job.results.map((result,) => result.status),).toEqual(["completed", "failed",],);
@@ -143,12 +148,14 @@ describeOrSkip("runBatchGeneration", () => {
         return { avatarId: "av-1", assetId: "as-1", };
       },),
     );
+
     const job = createJob({
       id: "job-batch-cancel" as BatchJobId,
       actorId,
       baseAvatarId: "avatar-base",
       emotions: [EmotionType.Happy, EmotionType.Sad,],
     },);
+
     jobRef = job;
     await runBatchGeneration(svc, job, makeOpts(),);
     expect(calls,).toBe(1,);
@@ -171,6 +178,7 @@ describeOrSkip("runBatchGeneration", () => {
         },
       }),
     }),);
+
     const svc = makeSvc(db, mock(async () => ({ avatarId: "av-1", assetId: "as-1", })),);
     const job = createJob({
       id: "job-batch-noprov" as BatchJobId,
@@ -178,9 +186,11 @@ describeOrSkip("runBatchGeneration", () => {
       baseAvatarId: "avatar-base",
       emotions: [EmotionType.Happy,],
     },);
+
     await expect(runBatchGeneration(svc, job, makeOpts(),),).rejects.toThrow(
       "No image generation provider",
     );
+
     // Validation runs before the start is recorded: no row exists to strand.
     expect(job.status,).toBe("pending",);
     const record = await getGenerationJobRecord(db, job.id,);
@@ -200,6 +210,7 @@ describeOrSkip("runBatchGeneration", () => {
         },
       }),
     }),);
+
     const svc = makeSvc(db, mock(async () => ({ avatarId: "av-1", assetId: "as-1", })),);
     const job = createJob({
       id: "job-batch-badurl" as BatchJobId,
@@ -207,9 +218,11 @@ describeOrSkip("runBatchGeneration", () => {
       baseAvatarId: "avatar-base",
       emotions: [EmotionType.Happy,],
     },);
+
     await expect(runBatchGeneration(svc, job, makeOpts(),),).rejects.toThrow(
       "Invalid image provider URL",
     );
+
     // Stillborn batch: rejected before any row was recorded.
     const record = await getGenerationJobRecord(db, job.id,);
     expect(record,).toBeUndefined();

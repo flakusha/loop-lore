@@ -62,10 +62,12 @@ const COMMAND_BUTTONS: CommandButton[] = [
         const role = alpine?.store("ui",)?.userRole as string | undefined;
         if (role === "owner") { return this.buttons; }
       } catch { /* fall through */ }
+
       const visible: CommandButton[] = [];
       for (const b of this.buttons) {
         if (b.role !== "gm") { visible.push(b,); }
       }
+
       return visible;
     },
 
@@ -84,18 +86,23 @@ const COMMAND_BUTTONS: CommandButton[] = [
           ui.showGmGuidance = true;
           ui.showChatSettings = true;
         }
+
         return;
       }
+
       if (cmd === "impersonate" || cmd === "char") {
         const chat = (globalThis as { Alpine?: { store: (n: string,) => Record<string, unknown> } })
           .Alpine
           ?.store("chat",);
+
         const impersonate = chat && typeof chat.impersonate === "function"
           ? (chat.impersonate as (cmd: string,) => void)
           : null;
+
         if (impersonate) { impersonate(cmd,); }
         return;
       }
+
       const input = document.querySelector("#message-input",) as HTMLTextAreaElement | null;
       if (input) {
         input.value = `/${cmd} `;

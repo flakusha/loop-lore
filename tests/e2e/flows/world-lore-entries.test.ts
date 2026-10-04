@@ -17,6 +17,7 @@ describe("World Lore Entries E2E", () => {
     const worldRes = await api.post<{ id: string }>("/api/v1/worlds", {
       name: "Lore Test World",
     },);
+
     worldId = worldRes.data!.id;
   },);
 
@@ -36,6 +37,7 @@ describe("World Lore Entries E2E", () => {
       key: "world_history",
       content: "The world was created in ancient times.",
     },);
+
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
   });
@@ -52,11 +54,13 @@ describe("World Lore Entries E2E", () => {
       key: "specific_lore",
       content: "Specific content",
     },);
+
     const entryId = createRes.data!.id as string;
 
     const res = await api.get<{ keys: string; content: string }>(
       `/api/v1/worlds/${worldId}/lore-entries/${entryId}`,
     );
+
     expect(res.ok,).toBe(true,);
     // The response may use `keys` array instead of single `key` field
     expect(res.data!.content,).toBe("Specific content",);
@@ -67,6 +71,7 @@ describe("World Lore Entries E2E", () => {
       key: "update_lore",
       content: "Old content",
     },);
+
     const entryId = createRes.data!.id as string;
 
     await api.put(`/api/v1/worlds/${worldId}/lore-entries/${entryId}`, { content: "New content", },);
@@ -74,6 +79,7 @@ describe("World Lore Entries E2E", () => {
     const getRes = await api.get<{ content: string }>(
       `/api/v1/worlds/${worldId}/lore-entries/${entryId}`,
     );
+
     expect(getRes.data!.content,).toBe("New content",);
   });
 
@@ -82,6 +88,7 @@ describe("World Lore Entries E2E", () => {
       key: "delete_lore",
       content: "To delete",
     },);
+
     const entryId = createRes.data!.id as string;
 
     const delRes = await api.del(`/api/v1/worlds/${worldId}/lore-entries/${entryId}`,);

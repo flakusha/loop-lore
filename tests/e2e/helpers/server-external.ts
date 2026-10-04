@@ -63,12 +63,15 @@ export class ServerExternalManager {
         const res = await fetch(`http://127.0.0.1:${instance.port}/health`, {
           signal: AbortSignal.timeout(5000,),
         },);
+
         return res.ok;
       }
+
       // sd-cpp: any TCP response = alive
       await fetch(`http://127.0.0.1:${instance.port}/`, {
         signal: AbortSignal.timeout(5000,),
       },);
+
       return true;
     } catch {
       return false;
@@ -105,6 +108,7 @@ export class ServerExternalManager {
       this.log.warn("llama-server not found in PATH — skipping",);
       return null;
     }
+
     if (!(await isPortFree(opts.port,))) {
       this.log.warn(`port ${opts.port} in use — skipping llama-cpp`,);
       return null;
@@ -135,6 +139,7 @@ export class ServerExternalManager {
       `http://127.0.0.1:${opts.port}/health`,
       { timeoutMs: 15_000, },
     );
+
     if (!ready) {
       proc.kill();
       this.log.warn(`llama-cpp on ${opts.port} did not become ready`,);
@@ -148,6 +153,7 @@ export class ServerExternalManager {
       pid: proc.pid,
       startedAt: Date.now(),
     };
+
     this.instances.push(instance,);
     return instance;
   }
@@ -165,6 +171,7 @@ export class ServerExternalManager {
     const expandedPath = opts.configPath.startsWith("~",)
       ? join(homedir(), opts.configPath.slice(1,),)
       : opts.configPath;
+
     const resolvedConfig = resolve(expandedPath,);
     const proc = spawn({
       cmd: [binary, "--config", resolvedConfig, "--host", "127.0.0.1",],
@@ -187,6 +194,7 @@ export class ServerExternalManager {
       pid: proc.pid,
       startedAt: Date.now(),
     };
+
     this.instances.push(instance,);
     return instance;
   }
@@ -200,6 +208,7 @@ export class ServerExternalManager {
       this.log.warn("sd-server not found in PATH — skipping",);
       return null;
     }
+
     if (!(await isPortFree(opts.port,))) {
       this.log.warn(`port ${opts.port} in use — skipping sd-cpp`,);
       return null;
@@ -214,6 +223,7 @@ export class ServerExternalManager {
       "-m",
       resolve(opts.modelPath,),
     ];
+
     if (opts.llmPath) { args.push("--llm", resolve(opts.llmPath,),); }
     if (opts.vaePath) { args.push("--vae", resolve(opts.vaePath,),); }
     if (opts.loraDir) { args.push("--lora-model-dir", resolve(opts.loraDir,),); }
@@ -240,6 +250,7 @@ export class ServerExternalManager {
       pid: proc.pid,
       startedAt: Date.now(),
     };
+
     this.instances.push(instance,);
     return instance;
   }
@@ -252,6 +263,7 @@ export class ServerExternalManager {
     if (!instance.process.killed) {
       instance.process.kill("SIGKILL",);
     }
+
     this.instances = this.instances.filter((i,) => i !== instance);
   }
 

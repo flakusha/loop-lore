@@ -86,6 +86,7 @@ class TestProvider extends BaseProvider<TestState> {
         return fn(state, ...args,);
       };
     };
+
     super(config, {
       capabilities: CAPABILITIES,
       defaultBaseUrl: options?.defaultBaseUrl,
@@ -100,6 +101,7 @@ class TestProvider extends BaseProvider<TestState> {
         ...dispatchers,
       },
     },);
+
     this.seen = seen;
   }
 }
@@ -115,6 +117,7 @@ describe("BaseProvider construction", () => {
     const provider = new TestProvider(makeInstance({ baseUrl: "", },), undefined, {
       defaultBaseUrl: "http://localhost:9999/v1",
     },);
+
     await provider.complete(makeReq(),);
     expect(provider.seen[0]?.state.baseUrl,).toBe("http://localhost:9999/v1",);
   });
@@ -158,6 +161,7 @@ describe("BaseProvider delegation", () => {
     } catch (error) {
       thrown = error;
     }
+
     expect(thrown,).toBeInstanceOf(ProviderError,);
     expect((thrown as ProviderError).statusCode,).toBe(501,);
   });
@@ -170,6 +174,7 @@ describe("BaseProvider delegation", () => {
         return [[0.1, 0.2,],];
       },
     },);
+
     await expect(provider.embed(["a", "b",],),).resolves.toEqual([[0.1, 0.2,],],);
     expect(calls,).toEqual([{ input: ["a", "b",], model: "test-model", },],);
   });

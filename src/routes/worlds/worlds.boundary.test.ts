@@ -61,6 +61,7 @@ describe("PUT /api/worlds/:worldId — character/world boundary", () => {
         body: JSON.stringify({ personality: "brooding", displayName: "New Name", lore: "kept", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
     const body = await res.json() as { error: string };
     expect(body.error,).toContain('"personality"',);
@@ -73,6 +74,7 @@ describe("PUT /api/worlds/:worldId — character/world boundary", () => {
       .select(["name", "lore",],)
       .where("id", "=", worldId,)
       .executeTakeFirst();
+
     expect(row?.name,).toBe("Boundary Realm",);
     expect(row?.lore,).toBeNull();
   });
@@ -85,12 +87,14 @@ describe("PUT /api/worlds/:worldId — character/world boundary", () => {
         body: JSON.stringify({ name: "Renamed Realm", lore: "Ancient lore.", rpgDice: true, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const row = await db
       .selectFrom("worlds",)
       .select(["name", "lore", "rpg_dice",],)
       .where("id", "=", worldId,)
       .executeTakeFirst();
+
     expect(row?.name,).toBe("Renamed Realm",);
     expect(row?.lore,).toBe("Ancient lore.",);
     expect(row?.rpg_dice,).toBe(1,);
@@ -104,12 +108,14 @@ describe("PUT /api/worlds/:worldId — character/world boundary", () => {
         body: JSON.stringify({ description: "world blurb", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const row = await db
       .selectFrom("worlds",)
       .select("description",)
       .where("id", "=", worldId,)
       .executeTakeFirst();
+
     expect(row?.description,).toBe("world blurb",);
   });
 
@@ -123,6 +129,7 @@ describe("PUT /api/worlds/:worldId — character/world boundary", () => {
         body: JSON.stringify({ personality: "brooding", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

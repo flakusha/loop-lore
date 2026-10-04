@@ -48,6 +48,7 @@ export function characterGrowthRoutes(opts: HandlerOpts, prefix = "/api",) {
         { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
         opts.database,
       );
+
       if (access instanceof Response) { return access; }
       try {
         // Sequential awaits: eslint bans Promise.all (unhandled-rejection risk).
@@ -77,6 +78,7 @@ export function characterGrowthRoutes(opts: HandlerOpts, prefix = "/api",) {
         { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
         opts.database,
       );
+
       if (access instanceof Response) { return access; }
       try {
         const body = ctx.body as { currentStage: ArcStageT; stageDescription?: string };
@@ -88,6 +90,7 @@ export function characterGrowthRoutes(opts: HandlerOpts, prefix = "/api",) {
           },
           access,
         );
+
         return jsonResponse(arc,);
       } catch (error) {
         return errResponse(error,);
@@ -110,6 +113,7 @@ export function characterGrowthRoutes(opts: HandlerOpts, prefix = "/api",) {
         { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
         opts.database,
       );
+
       if (access instanceof Response) { return access; }
       try {
         // Default: applied entries only. Author/GM/owner may opt in
@@ -124,6 +128,7 @@ export function characterGrowthRoutes(opts: HandlerOpts, prefix = "/api",) {
           ...(limit !== undefined ? { limit, } : {}),
           includePending,
         },);
+
         return jsonResponse({ entries, },);
       } catch (error) {
         return errResponse(error,);
@@ -146,6 +151,7 @@ export function characterGrowthRoutes(opts: HandlerOpts, prefix = "/api",) {
         { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
         opts.database,
       );
+
       if (access instanceof Response) { return access; }
       try {
         const entry = await svc().confirmGrowthEntry({
@@ -153,6 +159,7 @@ export function characterGrowthRoutes(opts: HandlerOpts, prefix = "/api",) {
           entryId,
           confirmedBy: access,
         },);
+
         return jsonResponse(entry,);
       } catch (error) {
         return errResponse(error,);
@@ -175,6 +182,7 @@ export function characterGrowthRoutes(opts: HandlerOpts, prefix = "/api",) {
         { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
         opts.database,
       );
+
       if (access instanceof Response) { return access; }
       try {
         const entry = await svc().rejectGrowthEntry({
@@ -182,6 +190,7 @@ export function characterGrowthRoutes(opts: HandlerOpts, prefix = "/api",) {
           entryId,
           rejectedBy: access,
         },);
+
         return jsonResponse(entry,);
       } catch (error) {
         return errResponse(error,);

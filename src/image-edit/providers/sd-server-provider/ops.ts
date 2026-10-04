@@ -37,6 +37,7 @@ function getEmotionModifier(emotion: string,): string {
     bored: "bored expression, disinterested, vacant stare, apathetic",
     contemptuous: "contemptuous expression, sneering, disdainful look",
   };
+
   return modifiers[emotion] ?? "";
 }
 

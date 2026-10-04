@@ -132,6 +132,7 @@ export class MockLLMProvider implements LLMProvider {
     if (this._streamError) {
       throw new Error("Mock stream failure",);
     }
+
     const scripted = this.resolveScriptedContent(req,);
     const full = scripted ?? "Mock streamed response";
     const words = full.split(" ",);
@@ -141,11 +142,13 @@ export class MockLLMProvider implements LLMProvider {
       const chunk = i < words.length - 1 ? `${words[i]} ` : words[i];
       handler({ type: "content", content: chunk, },);
     }
+
     handler({
       type: "done",
       finishReason: "stop",
       usage: MOCK_USAGE,
     },);
+
     return Promise.resolve({
       content: full,
       thinking: undefined,

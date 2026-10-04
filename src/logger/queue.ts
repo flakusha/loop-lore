@@ -52,6 +52,7 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
         error: String(result.reason,),
         module: "logger",
       };
+
       try {
         process.stderr.write(formatJSONL(fallback,),);
       } catch {

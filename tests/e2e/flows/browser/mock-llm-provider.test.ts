@@ -80,6 +80,7 @@ describe("MockLLMProvider helper — basic shape", () => {
     await mock.stream({ model: "mock-model", messages: [], params: {}, }, (chunk,) => {
       if (chunk.type === "content" && chunk.content) { chunks.push(chunk.content,); }
     },);
+
     expect(chunks.join("",),).toContain("Mock",);
     expect(chunks.join("",),).toContain("streamed",);
   });

@@ -144,6 +144,7 @@ describe("extractCharacterDataFromPng", () => {
       pngChunk("IDAT", Buffer.alloc(4,),),
       pngChunk("PLTE", Buffer.alloc(3,),),
     ],);
+
     expect(extractCharacterDataFromPng(png,),).toBeNull();
   });
 
@@ -153,6 +154,7 @@ describe("extractCharacterDataFromPng", () => {
       pngChunk("tEXt", Buffer.from("chara\u{0}partial", "latin1",),),
       Buffer.from([0, 0, 0, 3, 0x74, 0x45,],), // truncated next chunk
     ],);
+
     const result = extractCharacterDataFromPng(png,);
     expect(result,).toBeNull();
   });

@@ -35,6 +35,7 @@ async function seed(): Promise<Seed> {
     status: "active",
     settings: "{}",
   } as never,);
+
   const worldId = uid();
   const otherWorldId = uid();
   await insertWorlds(db, userId, "Forge World", { id: worldId, } as never,);
@@ -52,6 +53,7 @@ describe("station defs", () => {
         name: "Anvil",
         stationType: CraftingStationType.Anvil,
       },);
+
       const def = await svc.getStationDef(id,);
       expect(def,).toMatchObject({
         id,
@@ -66,6 +68,7 @@ describe("station defs", () => {
         materialSavingChance: 0,
         maxDurability: 100,
       },);
+
       expect(typeof def?.createdAt,).toBe("string",);
     } finally {
       await s.db.destroy();
@@ -91,17 +94,20 @@ describe("station defs", () => {
         stationType: CraftingStationType.Anvil,
         tier: 2,
       },);
+
       await svc.createStationDef({
         worldId: s.worldId,
         name: "A Forge",
         stationType: CraftingStationType.Forge,
         tier: 1,
       },);
+
       await svc.createStationDef({
         worldId: s.otherWorldId,
         name: "Far Anvil",
         stationType: CraftingStationType.Anvil,
       },);
+
       const all = await svc.listStationDefs(s.worldId,);
       expect(all.map((d,) => d.name),).toEqual(["A Forge", "B Anvil",],);
       const anvils = await svc.listStationDefs(s.worldId, CraftingStationType.Anvil,);
@@ -120,6 +126,7 @@ describe("station defs", () => {
         name: "Old",
         stationType: CraftingStationType.Anvil,
       },);
+
       expect(await svc.updateStationDef(id, { name: "New", tier: 3, },),).toBe(true,);
       const def = await svc.getStationDef(id,);
       expect(def?.name,).toBe("New",);
@@ -138,6 +145,7 @@ describe("station defs", () => {
         name: "Anvil",
         stationType: CraftingStationType.Anvil,
       },);
+
       expect(await svc.updateStationDef(id, {},),).toBe(true,);
       // No-op means the row is untouched.
       expect((await svc.getStationDef(id,))?.name,).toBe("Anvil",);
@@ -156,6 +164,7 @@ describe("station defs", () => {
         name: "Anvil",
         stationType: CraftingStationType.Anvil,
       },);
+
       expect(await svc.deleteStationDef(id,),).toBe(true,);
       expect(await svc.getStationDef(id,),).toBeNull();
       expect(await svc.deleteStationDef(id,),).toBe(false,);
@@ -185,6 +194,7 @@ describe("station instances", () => {
         worldId: s.worldId,
         currentDurability: 80,
       },);
+
       const inst = await svc.getInstance(s.worldId, id,);
       expect(inst,).toMatchObject({
         id,
@@ -211,6 +221,7 @@ describe("station instances", () => {
         currentDurability: 10,
         isActive: false,
       },);
+
       expect((await svc.getInstance(s.worldId, id,))?.isActive,).toBe(false,);
     } finally {
       await s.db.destroy();
@@ -227,6 +238,7 @@ describe("station instances", () => {
         worldId: s.worldId,
         currentDurability: 50,
       },);
+
       expect(await svc.getInstance(s.otherWorldId, id,),).toBeNull();
       expect((await svc.getInstanceById(id,))?.id,).toBe(id,);
       expect(await svc.getInstanceById(uid(),),).toBeNull();
@@ -251,20 +263,24 @@ describe("station instances", () => {
         locationId: locA,
         currentDurability: 50,
       },);
+
       await svc.createInstance({
         stationDefId: def,
         worldId: s.worldId,
         locationId: locB,
         currentDurability: 50,
       },);
+
       await svc.createInstance({
         stationDefId: otherDef,
         worldId: s.otherWorldId,
         currentDurability: 50,
       },);
+
       expect((await svc.listInstances(s.worldId,)).map((i,) => i.id),).toEqual(
         expect.arrayContaining([first,],),
       );
+
       expect((await svc.listInstances(s.worldId,)).length,).toBe(2,);
       expect((await svc.listInstances(s.worldId, locA,)).map((i,) => i.id),).toEqual([first,],);
     } finally {
@@ -282,6 +298,7 @@ describe("station instances", () => {
         worldId: s.worldId,
         currentDurability: 50,
       },);
+
       expect(await svc.updateInstance(s.otherWorldId, id, { currentDurability: 1, },),).toBe(false,);
       expect(
         await svc.updateInstance(s.worldId, id, {
@@ -289,6 +306,7 @@ describe("station instances", () => {
           isActive: false,
         },),
       ).toBe(true,);
+
       const inst = await svc.getInstance(s.worldId, id,);
       expect(inst?.currentDurability,).toBe(25,);
       expect(inst?.isActive,).toBe(false,);
@@ -309,6 +327,7 @@ describe("station instances", () => {
         worldId: s.worldId,
         currentDurability: 50,
       },);
+
       expect(await svc.updateInstance(s.worldId, id, {},),).toBe(true,);
       // No-op means the row is untouched.
       expect((await svc.getInstance(s.worldId, id,))?.currentDurability,).toBe(50,);
@@ -328,6 +347,7 @@ describe("station instances", () => {
         worldId: s.worldId,
         currentDurability: 50,
       },);
+
       expect(await svc.deleteInstance(s.otherWorldId, id,),).toBe(false,);
       expect(await svc.deleteInstance(s.worldId, id,),).toBe(true,);
       expect(await svc.getInstance(s.worldId, id,),).toBeNull();

@@ -64,6 +64,7 @@ export async function applyHappinessDelta(
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ delta, worldId, },),
     },);
+
     if (res.ok) { return await res.json(); }
     return null;
   } catch {

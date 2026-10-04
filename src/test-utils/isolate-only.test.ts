@@ -6,6 +6,7 @@ describe("test-utils isolate-only", () => {
   test("ISOLATED is a boolean", () => {
     expect(typeof ISOLATED,).toBe("boolean",);
   });
+
   test("describeOrSkip is a function", () => {
     expect(typeof describeOrSkip,).toBe("function",);
   });

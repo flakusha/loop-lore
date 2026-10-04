@@ -89,6 +89,7 @@ describe("Wardrobe selection v2", () => {
         updated_at: now,
       },
     ],).execute();
+
     armorId = "armor-001";
     courtId = "court-001";
     robesId = "robes-001";
@@ -120,6 +121,7 @@ describe("Wardrobe selection v2", () => {
       { outfitId: robesId, emotion: "joy", asset: "robes-joy", },
       { outfitId: null, emotion: "joy", asset: "base-joy", },
     ];
+
     for (const [i, v,] of variants.entries()) {
       await avatarService.createAvatar({
         actorId,
@@ -167,6 +169,7 @@ describe("Wardrobe selection v2", () => {
       worldId,
       locationId: locationB,
     },);
+
     expect(resolved.outfitId,).toBe(armorId,);
     expect(resolved.source,).toBe("chat_override",);
   });
@@ -178,6 +181,7 @@ describe("Wardrobe selection v2", () => {
       worldId,
       locationId: locationB,
     },);
+
     expect(resolved.outfitId,).toBe(courtId,);
     expect(resolved.source,).toBe("location_rule",);
   });
@@ -188,6 +192,7 @@ describe("Wardrobe selection v2", () => {
       worldId,
       locationId: locationA,
     },);
+
     expect(resolved.outfitId,).toBe(robesId,);
     expect(resolved.source,).toBe("default",);
   });
@@ -199,6 +204,7 @@ describe("Wardrobe selection v2", () => {
       chatId: chatA,
       locationId: locationA,
     }, worldId,);
+
     expect(pickA?.outfitId,).toBe(armorId,);
     expect(pickA?.tags.emotion,).toBe("joy",);
 
@@ -208,6 +214,7 @@ describe("Wardrobe selection v2", () => {
       chatId: chatB,
       locationId: locationB,
     }, worldId,);
+
     expect(pickB?.outfitId,).toBe(courtId,);
     expect(pickB?.tags.emotion,).toBe("joy",);
   });
@@ -218,6 +225,7 @@ describe("Wardrobe selection v2", () => {
       emotion: "sad",
       outfitId: armorId,
     },);
+
     expect(pick?.outfitId,).toBe(armorId,);
     expect(pick?.tags.emotion,).toBe("neutral",);
   });
@@ -230,6 +238,7 @@ describe("Wardrobe selection v2", () => {
       emotion: "grief",
       outfitId: armorId,
     },);
+
     // Never an outfit other than the resolved one.
     expect(pick?.outfitId ?? null,).not.toBe(courtId,);
   });
@@ -280,6 +289,7 @@ describe("Outfit-scoped regen isolation", () => {
         updated_at: now,
       },
     ],).execute();
+
     armorId = "regen-armor";
     courtId = "regen-court";
 
@@ -354,6 +364,7 @@ describe("Outfit-scoped regen isolation", () => {
       label: "base joy old",
       tags: { emotion: "joy", },
     },);
+
     const armorJoy = await avatarService.createAvatar({
       actorId,
       assetId: "asset-old-armor-joy",

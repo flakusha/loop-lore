@@ -46,13 +46,16 @@ describe("importLicensing", () => {
       id: crypto.randomUUID(),
       display_name: "Test-Lic-1",
     },).execute();
+
     await db.insertInto("actors",).values({
       id: crypto.randomUUID(),
       display_name: "Test-Lic-2",
     },).execute();
+
     const rows = await db.selectFrom("actors",).select(["id",],)
       .where("display_name", "in", ["Test-Lic-1", "Test-Lic-2",],)
       .orderBy("display_name",).execute();
+
     actorId = rows[0]!.id;
     otherActorId = rows[1]!.id;
   },);
@@ -77,6 +80,7 @@ describe("importLicensing", () => {
     expect(result.licensingImported,).toBe(true,);
     const row = await db.selectFrom("character_licensing",).selectAll()
       .where("actor_id", "=", actorId,).executeTakeFirstOrThrow();
+
     expect(row.license_type,).toBe(LicenseType.CcByNcSa,);
     expect(row.custom_license_text,).toBeNull();
     expect(row.attribution,).toBeNull();
@@ -96,6 +100,7 @@ describe("importLicensing", () => {
       allowCommercial: 0,
       shareAlike: 0,
     }, first,);
+
     expect(first.licensingImported,).toBe(true,);
 
     // Second call must hit the update branch.
@@ -106,10 +111,12 @@ describe("importLicensing", () => {
       allowCommercial: 1,
       shareAlike: 1,
     }, second,);
+
     expect(second.licensingImported,).toBe(true,);
 
     const rows = await db.selectFrom("character_licensing",).selectAll()
       .where("actor_id", "=", otherActorId,).execute();
+
     expect(rows.length,).toBe(1,);
     expect(rows[0]!.license_type,).toBe(LicenseType.CcBy,);
     expect(rows[0]!.custom_license_text,).toBeNull();

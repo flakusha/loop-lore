@@ -68,9 +68,11 @@ export async function requireActiveBattle(
   if (!battle) {
     throw new Error(`Battle ${battleId} not found.`,);
   }
+
   if (battle.status !== BattleStatus.Active) {
     throw new Error(`Battle ${battleId} is ${battle.status}, not active.`,);
   }
+
   return battle;
 }
 
@@ -99,10 +101,12 @@ export async function persistBattle(
   if (!serializedRoster.ok) {
     throw new Error(`Failed to serialize roster: ${serializedRoster.error.message}`,);
   }
+
   const serializedLog = safeJsonStringify(logEntries,);
   if (!serializedLog.ok) {
     throw new Error(`Failed to serialize log: ${serializedLog.error.message}`,);
   }
+
   const endedAt = status === BattleStatus.Active ? null : new Date().toISOString();
 
   await deps.database
@@ -129,6 +133,7 @@ function materialize(row: BattleRow,): BattleWithRoster {
   if (!Array.isArray(parsedRoster,)) {
     log().warn("Battle roster is not an array; defaulting to empty", { battleId: row.id, },);
   }
+
   const parsedLog = jsonParseOr<CombatAction[]>(row.log, [],);
   if (!Array.isArray(parsedLog,)) {
     log().warn("Battle log is not an array; defaulting to empty", { battleId: row.id, },);

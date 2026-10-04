@@ -76,6 +76,7 @@ export function craftingOrderRoutes({ database, }: { database: Db }, prefix = "/
         deadline: body.deadline as string | null | undefined,
         tradeType: body.tradeType as string | undefined,
       },);
+
       return jsonResponse({ id, }, 201,);
     }, {
       params: t.Object({ worldId: Id, },),
@@ -109,6 +110,7 @@ export function craftingOrderRoutes({ database, }: { database: Db }, prefix = "/
         const denied = await resolveActorAccess(database, actorId, userId,);
         if (denied) { return denied; }
       }
+
       const orders = await svc().listOrders(ctx.params.worldId, actorId,);
       return jsonResponse({ orders, },);
     }, {

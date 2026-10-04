@@ -46,6 +46,7 @@ async function ensureCatalogOutfit(
     .select(["id",],)
     .where("id", "=", materializedId,)
     .executeTakeFirst();
+
   if (existing) { return existing.id; }
 
   const actor = await db
@@ -53,6 +54,7 @@ async function ensureCatalogOutfit(
     .select(["outfits",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   if (!actor?.outfits) { return null; }
 
   const catalog = jsonParseOr<CatalogOutfit[]>(actor.outfits, [],);
@@ -74,6 +76,7 @@ async function ensureCatalogOutfit(
       updated_at: now,
     },)
     .execute();
+
   return materializedId;
 }
 
@@ -93,6 +96,7 @@ export async function resolveDefaultOutfit(
     .select(["default_outfit",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   const ref = actor?.default_outfit;
   if (!ref) { return null; }
 
@@ -102,6 +106,7 @@ export async function resolveDefaultOutfit(
     .where("id", "=", ref,)
     .where((eb,) => eb.or([eb("actor_id", "=", actorId,), eb("actor_id", "is", null,),],))
     .executeTakeFirst();
+
   if (direct) { return direct.id; }
 
   return ensureCatalogOutfit(db, actorId, ref,);
@@ -125,6 +130,7 @@ export async function resolveOutfit(
       .where("chat_id", "=", ctx.chatId,)
       .where("actor_id", "=", ctx.actorId,)
       .executeTakeFirst();
+
     if (override) { return { outfitId: override.outfit_id, source: "chat_override", }; }
   }
 
@@ -135,9 +141,11 @@ export async function resolveOutfit(
       .where("world_id", "=", ctx.worldId,)
       .where("actor_id", "=", ctx.actorId,)
       .executeTakeFirst();
+
     const bindings = config?.outfit_bindings
       ? jsonParseOr<Record<string, string>>(config.outfit_bindings, {},)
       : {};
+
     const mapped = bindings[ctx.locationId];
     if (mapped) { return { outfitId: mapped, source: "location_rule", }; }
   }

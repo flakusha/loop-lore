@@ -79,11 +79,13 @@ describe("Wardrobe avatar routes — generation", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     await insertWardrobeItems(db, "Av Outfit", {
       id: OUTFIT,
       actor_id: OWNER,
       descriptor: "plate armor",
     },);
+
     await db.insertInto("chats",).values({ id: CHAT, name: "Av Chat", created_by: OWNER_USER, },).execute();
   },);
 
@@ -99,6 +101,7 @@ describe("Wardrobe avatar routes — generation", () => {
         emotions: ["happy", "not-a-real-emotion",],
       },),
     );
+
     expect(res.status,).toBe(400,);
     expect(await messageOf(res,),).toBe("Invalid emotion: not-a-real-emotion",);
   });
@@ -111,6 +114,7 @@ describe("Wardrobe avatar routes — generation", () => {
         emotions: ["happy",],
       },),
     );
+
     expect(res.status,).toBe(400,);
     const message = await messageOf(res,);
     expect(message.length,).toBeGreaterThan(0,);
@@ -123,6 +127,7 @@ describe("Wardrobe avatar routes — generation", () => {
         emotion: "nonsense",
       },),
     );
+
     expect(res.status,).toBe(400,);
     expect(await messageOf(res,),).toBe("Invalid emotion: nonsense",);
   });
@@ -134,6 +139,7 @@ describe("Wardrobe avatar routes — generation", () => {
         emotion: "happy",
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -141,6 +147,7 @@ describe("Wardrobe avatar routes — generation", () => {
     const batch = await makeApp(db,).handle(
       post(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/emotion-avatars`, { base_avatar_id: "a", },),
     );
+
     expect(batch.status,).toBe(401,);
 
     const single = await makeApp(db,).handle(
@@ -149,6 +156,7 @@ describe("Wardrobe avatar routes — generation", () => {
         emotion: "happy",
       },),
     );
+
     expect(single.status,).toBe(401,);
   });
 });
@@ -168,6 +176,7 @@ describe("Wardrobe avatar routes — outfit resolution", () => {
       owner_id: OWNER_USER,
       user_id: OWNER_USER,
     },);
+
     await insertWardrobeItems(db, "Override outfit", { id: OUTFIT, actor_id: OWNER, },);
     await insertWardrobeItems(db, "Body outfit", { id: OTHER_OUTFIT, actor_id: OWNER, },);
     await db.insertInto("chats",).values({ id: CHAT, name: "Res Chat", created_by: OWNER_USER, },).execute();
@@ -195,6 +204,7 @@ describe("Wardrobe avatar routes — outfit resolution", () => {
       tags: { emotion: "joy", },
       outfitId: OUTFIT,
     },);
+
     await avatars.createAvatar({
       actorId: OWNER,
       assetId: "av-res-2",
@@ -214,6 +224,7 @@ describe("Wardrobe avatar routes — outfit resolution", () => {
     const res = await makeApp(db, OWNER_USER,).handle(
       post(`/api/actors/${OWNER}/outfit-resolve`, { chatId: CHAT, emotion: "joy", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { outfit_id: string; source: string; avatar: unknown };
     expect(body.outfit_id,).toBe(OUTFIT,);
@@ -229,6 +240,7 @@ describe("Wardrobe avatar routes — outfit resolution", () => {
         outfitId: OTHER_OUTFIT,
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { outfit_id: string; source: string };
     // The caller named the outfit; resolution did not choose it.
@@ -240,6 +252,7 @@ describe("Wardrobe avatar routes — outfit resolution", () => {
     const res = await makeApp(db, OWNER_USER,).handle(
       post(`/api/actors/${OWNER}/outfit-resolve`, { emotion: "joy", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { outfit_id: string; source: string };
     expect(body.outfit_id,).toBe(OTHER_OUTFIT,);
@@ -250,6 +263,7 @@ describe("Wardrobe avatar routes — outfit resolution", () => {
     const res = await makeApp(db, OWNER_USER,).handle(
       post(`/api/actors/${OWNER}/outfit-resolve`, { emotion: "rage", },),
     );
+
     expect(res.status,).toBe(404,);
     expect(await messageOf(res,),).toBe("No avatar found",);
   });
@@ -258,11 +272,13 @@ describe("Wardrobe avatar routes — outfit resolution", () => {
     const anon = await makeApp(db,).handle(
       post(`/api/actors/${OWNER}/outfit-resolve`, { emotion: "joy", },),
     );
+
     expect(anon.status,).toBe(401,);
 
     const other = await makeApp(db, OTHER_USER,).handle(
       post(`/api/actors/${OWNER}/outfit-resolve`, { emotion: "joy", },),
     );
+
     expect(other.status,).toBe(404,);
   });
 });

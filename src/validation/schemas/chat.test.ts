@@ -143,6 +143,7 @@ describe("ChatUpdateBody — additional field edge cases", () => {
       label: `q${i}`,
       command: `cmd${i}`,
     }),);
+
     expect(Value.Check(ChatUpdateBody, body({ quickReplies: many, },),),).toBe(true,);
   });
 
@@ -176,6 +177,7 @@ describe("ChatUpdateBody — additional field edge cases", () => {
     expect(
       Value.Check(ChatRenameBody, body({ name: "New Name", name_source: "user.manual", },),),
     ).toBe(true,);
+
     expect(
       Value.Check(ChatRenameBody, body({ name: "New Name", name_source: "x".repeat(10_000,), },),),
     ).toBe(true,);

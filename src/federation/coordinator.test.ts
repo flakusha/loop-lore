@@ -33,6 +33,7 @@ describe("coordinator registry", () => {
     const { db, } = await createTestDb();
     await expect(setPeerState(db, "https://ghost.example", "trusted",),).rejects.toThrow("unknown peer",);
   });
+
   test("touchPeer stores valid advertised capacity", async () => {
     const { db, } = await createTestDb();
     await upsertPeer(db, { origin: "https://cap.example", state: "trusted", },);
@@ -61,11 +62,13 @@ describe("negotiation state machine", () => {
     for (const next of ["handshake", "capability-exchange", "quota-agreement", "established",] as const) {
       await advanceNegotiation(db, id, next,);
     }
+
     const row = await db
       .selectFrom("mesh_negotiations",)
       .select(["state",],)
       .where("id", "=", id,)
       .executeTakeFirstOrThrow();
+
     expect(row.state,).toBe("established",);
   });
 
@@ -79,6 +82,7 @@ describe("negotiation state machine", () => {
       .select(["state",],)
       .where("id", "=", id,)
       .executeTakeFirstOrThrow();
+
     expect(row.state,).toBe("idle",);
   });
 
@@ -109,12 +113,14 @@ describe("resync pass", () => {
           ? { ok: true, status: 200, body: { peers: ["https://friend.example",], }, }
           : { ok: false, status: 0, body: null, },
     },);
+
     expect(summary,).toEqual({ checked: 2, alive: 1, },);
     const alive = await db
       .selectFrom("mesh_peers",)
       .select(["capabilities", "last_seen",],)
       .where("origin", "=", "https://alive.example",)
       .executeTakeFirstOrThrow();
+
     expect(alive.capabilities,).toBe('["https://friend.example"]',);
     expect(alive.last_seen,).not.toBeNull();
   });

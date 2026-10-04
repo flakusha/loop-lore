@@ -37,6 +37,7 @@ export async function performAttack(
   if (!attacker) {
     throw new Error(`Attacker ${params.attackerId} is not in this battle.`,);
   }
+
   if (!target) {
     throw new Error(`Target ${params.targetId} is not in this battle.`,);
   }
@@ -55,6 +56,7 @@ export async function performAttack(
     const damaged = c.id === params.targetId && attack.hit && attack.damage
       ? applyDamage(c, attack.damage.finalDamage,).updated
       : c;
+
     return c.id === params.attackerId ? consumeAction(damaged, "attack",) : damaged;
   },);
 
@@ -64,6 +66,7 @@ export async function performAttack(
     targetId: params.targetId,
     description: attack.narration,
   };
+
   if (attack.hit && attack.damage) {
     action.damage = attack.damage.finalDamage;
     action.attack = attack;
@@ -166,6 +169,7 @@ export async function advanceTurn(
   const withTurnReset = acting
     ? Array.from(battle.combatants, (c,) => (c.id === acting.id ? resetTurnActions(c,) : c),)
     : battle.combatants;
+
   const updated = nextRound === battle.round ? withTurnReset : resetRoundReactions(withTurnReset,);
 
   await persistBattle(deps, battle.id, nextRound, nextTurn, updated, battle.log, BattleStatus.Active,);

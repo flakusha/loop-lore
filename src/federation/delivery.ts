@@ -43,6 +43,7 @@ export async function receiveDelivery(
     .select(["clock", "content_hash",],)
     .where("content_id", "=", envelope.id,)
     .executeTakeFirst();
+
   if (
     existing &&
     (existing.clock > envelope.clock ||
@@ -50,6 +51,7 @@ export async function receiveDelivery(
   ) {
     return "stale";
   }
+
   await database
     .insertInto("mesh_deliveries",)
     .values({
@@ -67,10 +69,12 @@ export async function receiveDelivery(
       },)
     )
     .execute();
+
   if (opts.reservationId !== undefined) {
     await advanceReservation(database, opts.reservationId, "pushed",);
     await advanceReservation(database, opts.reservationId, "confirmed",);
   }
+
   return "stored";
 }
 
@@ -94,5 +98,6 @@ export async function pushEnvelope(
   if (!response.ok || (verdict !== "stored" && verdict !== "stale")) {
     throw new Error(`delivery refused by ${origin} (status ${response.status})`,);
   }
+
   return verdict;
 }

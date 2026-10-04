@@ -43,6 +43,7 @@ function cannedDownload(seen: SeenCall[], bodies: Record<string, string>,): type
       sizeBytes: opts.sizeBytes,
       resumeLength: opts.resumeFrom?.length ?? 0,
     },);
+
     const body = bodies[opts.url] ?? "";
     opts.onProgress?.({ loadedBytes: body.length, totalBytes: body.length, },);
     return encode(body,);
@@ -68,11 +69,13 @@ describe("catalog-download", () => {
       digest: async () => "computed",
       onProgress: (snapshot,) => progress.push(snapshot,),
     },);
+
     expect(result,).toEqual({ modelId: "m1", files: ["m1/a.onnx", "m1/tok.json",], totalBytes: 5, },);
     expect(seen,).toEqual([
       { url: "https://cdn.example.com/m1/a.onnx", expectedSha256: "aa", sizeBytes: 3, resumeLength: 0, },
       { url: "https://cdn.example.com/m1/tok.json", expectedSha256: undefined, sizeBytes: undefined, resumeLength: 0, },
     ],);
+
     expect((await store.load("m1/a.onnx",))?.sha256,).toBe("aa",);
     expect((await store.load("m1/tok.json",))?.sha256,).toBe("computed",);
     expect(progress.length,).toBeGreaterThan(0,);
@@ -90,6 +93,7 @@ describe("catalog-download", () => {
         "https://cdn.example.com/m1/tok.json": "BB",
       },),
     },);
+
     expect(seen.map((call,) => call.resumeLength),).toEqual([1, 0,],);
   });
 
@@ -103,6 +107,7 @@ describe("catalog-download", () => {
         { name: "b", url: "https://x/b", sizeBytes: 20, },
       ],
     };
+
     await downloadCatalogEntry({
       entry: sized,
       store,
@@ -112,6 +117,7 @@ describe("catalog-download", () => {
       }) as typeof downloadModel,
       onProgress: (snapshot,) => progress.push(snapshot,),
     },);
+
     expect(progress[0],).toEqual({ loadedBytes: 5, totalBytes: 30, },);
     expect(progress[1],).toEqual({ loadedBytes: 10, totalBytes: 30, },);
   });
@@ -123,6 +129,7 @@ describe("catalog-download", () => {
       ...ENTRY,
       files: [{ name: "a", url: "ftp://cdn.example.com/a", },],
     };
+
     await expect(
       downloadCatalogEntry({
         entry,
@@ -133,6 +140,7 @@ describe("catalog-download", () => {
         }) as typeof downloadModel,
       },),
     ).rejects.toThrow("not http(s)",);
+
     expect(calls,).toBe(0,);
   });
 
@@ -148,6 +156,7 @@ describe("catalog-download", () => {
         }) as typeof downloadModel,
       },),
     ).rejects.toThrow("boom (500)",);
+
     expect((await store.load("m1/a.onnx",))?.bytes.length,).toBe(3,);
     expect(await store.load("m1/tok.json",),).toBeNull();
   });
@@ -182,6 +191,7 @@ describe("gguf split entries", () => {
       "https://cdn.example.com/g1/g-00001-of-00002.gguf": "GGUF01",
       "https://cdn.example.com/g1/g-00002-of-00002.gguf": "0202",
     };
+
     const result = await downloadCatalogEntry({
       entry: { ...SPLIT, files: [...SPLIT.files,].reverse(), },
       store,
@@ -194,15 +204,18 @@ describe("gguf split entries", () => {
       digest: async () => "computed",
       onProgress: (snapshot,) => progress.push(snapshot,),
     },);
+
     expect(result,).toEqual({
       modelId: "g1",
       files: ["g1/g-00001-of-00002.gguf", "g1/g-00002-of-00002.gguf",],
       totalBytes: 10,
     },);
+
     expect(seen,).toEqual([
       "https://cdn.example.com/g1/g-00001-of-00002.gguf",
       "https://cdn.example.com/g1/g-00002-of-00002.gguf",
     ],);
+
     expect(progress.at(-1,),).toEqual({ loadedBytes: 10, totalBytes: 10, },);
   });
 
@@ -219,6 +232,7 @@ describe("gguf split entries", () => {
         }) as typeof downloadModel,
       },),
     ).rejects.toThrow("incomplete GGUF split set",);
+
     expect(called,).toBe(0,);
   });
 

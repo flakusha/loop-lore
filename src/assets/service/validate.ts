@@ -9,6 +9,7 @@ export function validateFileSize(sizeBytes: number, maxSize: number,): string | 
     const maxMb = (maxSize / 1_048_576).toFixed(0,);
     return `File too large. Maximum size is ${maxMb} MB.`;
   }
+
   return null;
 }
 
@@ -34,6 +35,7 @@ export function validateMimeType(mime: string,): string | null {
   if (BLOCKED_MIME_TYPES.includes(lowered,)) {
     return `Unsupported file type: ${mime}`;
   }
+
   const allowed = ALLOWED_MIME_PREFIXES.some((prefix,) => lowered.startsWith(prefix,));
   if (!allowed) { return `Unsupported file type: ${mime}`; }
   return null;

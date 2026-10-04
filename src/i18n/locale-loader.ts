@@ -66,6 +66,7 @@ export function getRawTranslations(locale: Locale,): TranslationMap | undefined 
   if (!rawCache.has(locale,)) {
     loadLocale(locale,);
   }
+
   return rawCache.get(locale,);
 }
 

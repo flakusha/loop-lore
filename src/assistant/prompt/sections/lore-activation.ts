@@ -80,6 +80,7 @@ export function matchesSelectiveKeys(
       const re = compileKeyRegex(key,);
       if (re?.test(text,)) { return true; }
     }
+
     return false;
   }
 
@@ -88,6 +89,7 @@ export function matchesSelectiveKeys(
     for (const group of groups) {
       if (group.every((k,) => words.has(k.toLowerCase(),))) { return true; }
     }
+
     return false;
   }
 

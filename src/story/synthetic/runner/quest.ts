@@ -28,6 +28,7 @@ export async function runQuestProgression(state: RunnerState, c: SyntheticCase,)
     .select(["target", "status",],)
     .where("id", "=", questId,)
     .executeTakeFirst();
+
   if (!quest) {
     return skippedResult(c.expected, `quest ${questId} not found`, { found: false, },);
   }

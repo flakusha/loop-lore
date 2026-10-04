@@ -6,6 +6,7 @@ describe("theme registry", () => {
   test("exposes the theme list on globalThis for the bundler", () => {
     const themes = (globalThis as unknown as { __THEMES?: { id: string; name: string; file: string }[] })
       .__THEMES;
+
     expect(Array.isArray(themes,),).toBe(true,);
     expect(themes,).toHaveLength(10,);
     const ids = themes!.map((t,) => t.id);

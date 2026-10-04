@@ -113,6 +113,7 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
           },)
           .where("id", "=", existing.id,)
           .execute();
+
         return jsonResponse({ ok: true, provider: providerName, },);
       }
 

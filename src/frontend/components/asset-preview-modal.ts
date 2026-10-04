@@ -70,6 +70,7 @@ function openImpl(state: AssetPreviewModalState, asset: PreviewAssetLike, trigge
   if (savedOverflow === null) {
     savedOverflow = document.body.style.overflow;
   }
+
   document.body.style.overflow = "hidden";
   // Move focus into the modal on next paint.
   requestAnimationFrame(() => {
@@ -77,6 +78,7 @@ function openImpl(state: AssetPreviewModalState, asset: PreviewAssetLike, trigge
     const first = modal?.querySelector<HTMLElement>(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
+
     first?.focus();
   },);
 }
@@ -91,9 +93,11 @@ function closeImpl(state: AssetPreviewModalState,): void {
     document.body.style.overflow = savedOverflow;
     savedOverflow = null;
   }
+
   if (restoreFocus && document.contains(restoreFocus,)) {
     restoreFocus.focus();
   }
+
   restoreFocus = null;
 }
 
@@ -121,6 +125,7 @@ export function assetPreviewModal(): AssetPreviewModalState {
       closeImpl(this,);
     },
   };
+
   return state;
 }
 
@@ -149,6 +154,7 @@ export async function openAssetPreviewById(id: string,): Promise<void> {
     showToast("error", t("gallery.previewFailed",),);
     return;
   }
+
   asset.url = `/api/v1/assets/${id}/raw`;
   const modal = document.querySelector<HTMLElement>("#asset-preview-modal",);
   if (modal && typeof Alpine !== "undefined") {

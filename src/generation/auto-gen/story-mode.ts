@@ -47,6 +47,7 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
     // see the missing-config signal via the warn below.
     log.warn("Story mode chat has no valid GM config — synthesizing default LLM config", { chatId, },);
   }
+
   const gmGuidance = gmConfigRaw?.gmGuidance as GmGuidance | undefined;
   const gameMasterConfig: GameMasterConfig = {
     type: (gmConfigRaw?.type as GameMasterType | undefined) ?? GameMasterType.Llm,
@@ -81,6 +82,7 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
       provider: params.provider || undefined,
       model: params.model || undefined,
     },);
+
     usedProviderName = callResolved.resolvedProviderName;
     usedModel = callResolved.resolvedModel;
 
@@ -93,6 +95,7 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
         maxTokens: params.maxTokens ?? 2048,
       },
     },);
+
     return response.content;
   };
 
@@ -123,6 +126,7 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
       "story-mode: Human GM turn produced no response — skipping auto-store",
       { chatId, turnId: turnResult.turnId, actorId: turnResult.actorId, },
     );
+
     return;
   }
 
@@ -169,6 +173,7 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
     deps,
     log,
   },);
+
   if (!stored) { return; }
   const messageId = stored.messageId;
 

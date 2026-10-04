@@ -37,6 +37,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", sectionId,)
             .where("chat_id", "=", chatId,)
             .executeTakeFirst();
+
           if (!section) { return notFound("Section not found",); }
 
           const updates: Record<string, unknown> = { updated_at: new Date().toISOString(), };

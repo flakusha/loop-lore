@@ -158,9 +158,11 @@ describe("safeFetch — timeout and abort", () => {
         timeout: 5000,
         signal: controller.signal,
       },);
+
       expect(result.ok,).toBe(false,);
       if (!result.ok) { expect(result.error.message,).toBe("Request timed out after 5000ms",); }
     },);
+
     setTimeout(() => controller.abort(), 10,);
     await promise;
   });
@@ -187,6 +189,7 @@ describe("safeFetch — streaming", () => {
         }
       },
     },);
+
     await withMockFetch(
       mock(() => new Response(stream, { status: 200, headers: { "Content-Type": "text/event-stream", }, },)),
       async () => {
@@ -212,6 +215,7 @@ describe("safeFetch — streaming", () => {
           stream: true,
           timeout: 1,
         },);
+
         // If a timeout were armed, safeFetch would never resolve against a body
         // that stays open. It returns the unread Response immediately.
         expect(result.ok,).toBe(true,);
@@ -235,6 +239,7 @@ describe("safeFetch — streaming", () => {
           stream: true,
           maxSize: 1024,
         },);
+
         expect(result.ok,).toBe(true,);
         if (result.ok) {
           expect((result.data as Response).body,).not.toBeNull();
@@ -286,6 +291,7 @@ describe("safeFetch — request body serialization", () => {
           body: { a: 1, },
           headers: { "Content-Type": "application/x-ndjson", },
         },);
+
         expect(new Headers(captured?.headers,).get("Content-Type",),).toBe("application/x-ndjson",);
       },
     );
@@ -342,6 +348,7 @@ describe("safeFetch — auth header injection", () => {
         await safeFetch("https://example.com/api", {
           auth: { csrfToken: "csrf-123", sessionToken: "sess-456", },
         },);
+
         const headers = new Headers(captured?.headers,);
         expect(headers.get("X-CSRF-Token",),).toBe("csrf-123",);
         expect(headers.get("Authorization",),).toBe("Bearer sess-456",);
@@ -360,6 +367,7 @@ describe("safeFetch — auth header injection", () => {
         await safeFetch("https://example.com/api", {
           auth: { sessionToken: "sess-456", authorization: "Bearer custom", },
         },);
+
         expect(new Headers(captured?.headers,).get("Authorization",),).toBe("Bearer custom",);
       },
     );
@@ -377,6 +385,7 @@ describe("safeFetch — auth header injection", () => {
           auth: { csrfToken: "csrf-123", extraHeaders: { "X-Custom": "yes", }, },
           headers: { "X-Other": "no", },
         },);
+
         const headers = new Headers(captured?.headers,);
         expect(headers.get("X-CSRF-Token",),).toBe("csrf-123",);
         expect(headers.get("X-Custom",),).toBe("yes",);

@@ -71,6 +71,7 @@ export function livenessRoutes(opts: LivenessOpts,): Elysia {
           status: HttpStatus.ServiceUnavailable,
         },);
       }
+
       return jsonResponse({
         status: "ok",
         checks: { database: "ok", },

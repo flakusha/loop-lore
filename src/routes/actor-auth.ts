@@ -47,6 +47,7 @@ export async function requireActorAccess(
       status: HttpStatus.NotFound,
     },);
   }
+
   return userId;
 }
 
@@ -91,6 +92,7 @@ export async function checkActorOwnership(
     .select("owner_id",)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   if (!actor) { return false; }
   return actor.owner_id === userId || can(userRole, "admin.character",);
 }

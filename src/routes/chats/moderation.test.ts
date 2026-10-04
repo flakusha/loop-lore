@@ -43,11 +43,13 @@ async function seed(db: Kysely<DB>,): Promise<void> {
     await insertUsers(db, `name-${id}`, id, { id, } as never,);
     await insertActors(db, id, { id, user_id: id, owner_id: id, } as never,);
   }
+
   await insertChats(db, "Moderated", OWNER_ID, {
     id: CHAT_ID,
     type: "group",
     mode: "group",
   } as never,);
+
   await insertChatParticipants(db, CHAT_ID, OWNER_ID, { role_in_chat: "owner", } as never,);
   await insertChatParticipants(db, CHAT_ID, TARGET_ID, { role_in_chat: "member", } as never,);
 }
@@ -69,6 +71,7 @@ async function auditCount(db: Kysely<DB>, kind?: string,) {
     .selectFrom("log_entries",)
     .select("id",)
     .where("entity_id", "=", TARGET_ID,);
+
   if (kind) { q = q.where("action", "=", kind as never,); }
   return (await q.execute()).length;
 }
@@ -126,6 +129,7 @@ describe("moderationRoutes — identity, authority, dispatch", () => {
       reason: "spam",
       durationMs: 60_000,
     },);
+
     const body = await res.json() as { ok: boolean; auditEntryId?: string };
 
     expect(res.status,).toBe(200,);
@@ -138,6 +142,7 @@ describe("moderationRoutes — identity, authority, dispatch", () => {
       .where("chat_id", "=", CHAT_ID,)
       .where("actor_id", "=", TARGET_ID,)
       .executeTakeFirst();
+
     expect(participant?.banned_until,).not.toBeNull();
     expect(await auditCount(db, "ban",),).toBe(1,);
     await db.destroy();
@@ -173,6 +178,7 @@ describe("moderationRoutes — identity, authority, dispatch", () => {
       .where("chat_id", "=", CHAT_ID,)
       .where("actor_id", "=", TARGET_ID,)
       .execute();
+
     expect(rows,).toHaveLength(0,);
     expect(await auditCount(db, "kick",),).toBe(1,);
     await db.destroy();
@@ -195,6 +201,7 @@ describe("moderationRoutes — identity, authority, dispatch", () => {
       .where("chat_id", "=", CHAT_ID,)
       .where("actor_id", "=", TARGET_ID,)
       .executeTakeFirst();
+
     const remaining = Date.parse(participant!.muted_until!,) - Date.now();
     expect(remaining,).toBeGreaterThan(60_000,);
     expect(remaining,).toBeLessThanOrEqual(120_000,);
@@ -217,6 +224,7 @@ describe("moderationRoutes — identity, authority, dispatch", () => {
       .where("chat_id", "=", CHAT_ID,)
       .where("actor_id", "=", TARGET_ID,)
       .executeTakeFirst();
+
     const remaining = Date.parse(participant!.muted_until!,) - Date.now();
     expect(remaining,).toBeGreaterThan(50 * 60_000,);
     await db.destroy();
@@ -232,6 +240,7 @@ describe("moderationRoutes — identity, authority, dispatch", () => {
       targetActorId: TARGET_ID,
       content: "explicit content sample",
     },);
+
     const tox = await post(app, { action: "flag-tox", targetActorId: TARGET_ID, },);
 
     expect(nsfw.status,).toBe(200,);

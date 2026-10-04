@@ -51,6 +51,7 @@ function makeEl(tag: string,): FakeEl {
       el.attrs[name] = value;
     },
   };
+
   return el;
 }
 
@@ -97,6 +98,7 @@ describe("renderChoiceCards", () => {
       choice({ id: "av", text: "Go left", },),
       choice({ id: "lb", label: "Custom label", text: "raw text", },),
     ] as never;
+
     renderChoiceCards(container as unknown as HTMLElement, choices, () => {},);
     const cards = container.children[0]!.children;
     expect(cardLabels(cards,),).toEqual(["Go left", "Custom label", "Stay put",],);
@@ -111,6 +113,7 @@ describe("renderChoiceCards", () => {
       choice({ id: "sel", text: "Stay put", selected: true, },),
       choice({ id: "av", text: "Go left", },),
     ] as never;
+
     renderChoiceCards(container as unknown as HTMLElement, choices, (id,) => calls.push(id,),);
     const [available, selected,] = container.children[0]!.children;
     expect(available!.type,).toBe("button",);
@@ -129,6 +132,7 @@ describe("renderChoiceCards", () => {
       choice({ id: "a", text: "A", description: "A narrow path", },),
       choice({ id: "b", text: "B", description: null, },),
     ] as never;
+
     renderChoiceCards(container as unknown as HTMLElement, choices, () => {},);
     const [withDesc, withoutDesc,] = container.children[0]!.children;
     expect(withDesc!.children.length,).toBe(2,);

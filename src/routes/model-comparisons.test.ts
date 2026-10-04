@@ -66,6 +66,7 @@ describe("POST /api/analytics/comparisons", () => {
       settings: "{}",
       format_version: 0,
     } as never,);
+
     await insertChats(db, "Analytics Owner Chat", ownerId, {},);
     const chatRow = await db.selectFrom("chats",).select("id",).where("created_by", "=", ownerId,).executeTakeFirst();
     const chatId = chatRow!.id;
@@ -94,6 +95,7 @@ describe("POST /api/analytics/comparisons", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -111,6 +113,7 @@ describe("POST /api/analytics/comparisons", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as Record<string, unknown>;
     expect(typeof body.id,).toBe("string",);
@@ -135,6 +138,7 @@ describe("POST /api/analytics/comparisons", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -152,6 +156,7 @@ describe("POST /api/analytics/comparisons", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -164,6 +169,7 @@ describe("POST /api/analytics/comparisons", () => {
         body: JSON.stringify({ messageId: "msg-4", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -181,6 +187,7 @@ describe("POST /api/analytics/comparisons", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 });
@@ -219,6 +226,7 @@ describe("GET /api/analytics/comparisons", () => {
     const res = await app.handle(
       new Request("http://localhost/api/analytics/comparisons",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -227,6 +235,7 @@ describe("GET /api/analytics/comparisons", () => {
     const res = await app.handle(
       new Request("http://localhost/api/analytics/comparisons",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { comparisons: Array<{ user_id: string }> };
     expect(body.comparisons.length,).toBeGreaterThanOrEqual(3,);
@@ -240,6 +249,7 @@ describe("GET /api/analytics/comparisons", () => {
     const res = await app.handle(
       new Request("http://localhost/api/analytics/comparisons",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { comparisons: unknown[] };
     expect(body.comparisons.length,).toBe(0,);
@@ -265,6 +275,7 @@ describe("GET /api/analytics/comparisons/leaderboard", () => {
       confidence: 0.9,
       created_at: new Date().toISOString(),
     },).execute();
+
     await db.insertInto("model_comparisons",).values({
       id: uid(),
       message_id: "msg-lb-2",
@@ -274,6 +285,7 @@ describe("GET /api/analytics/comparisons/leaderboard", () => {
       confidence: 0.7,
       created_at: new Date().toISOString(),
     },).execute();
+
     await db.insertInto("model_comparisons",).values({
       id: uid(),
       message_id: "msg-lb-3",
@@ -283,6 +295,7 @@ describe("GET /api/analytics/comparisons/leaderboard", () => {
       confidence: 0.6,
       created_at: new Date().toISOString(),
     },).execute();
+
     // Foreign user's row — must NOT appear in this user's leaderboard.
     await db.insertInto("model_comparisons",).values({
       id: uid(),
@@ -305,6 +318,7 @@ describe("GET /api/analytics/comparisons/leaderboard", () => {
     const res = await app.handle(
       new Request("http://localhost/api/analytics/comparisons/leaderboard",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -313,6 +327,7 @@ describe("GET /api/analytics/comparisons/leaderboard", () => {
     const res = await app.handle(
       new Request("http://localhost/api/analytics/comparisons/leaderboard",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       leaderboard: {
@@ -324,6 +339,7 @@ describe("GET /api/analytics/comparisons/leaderboard", () => {
         avgConfidence: number;
       }[];
     };
+
     expect(Array.isArray(body.leaderboard,),).toBe(true,);
     expect(body.leaderboard.length,).toBeGreaterThanOrEqual(2,);
 

@@ -53,6 +53,7 @@ async function makeNpc(
     id: actorId,
     actor_type: "character",
   },);
+
   const schedule: Record<string, unknown> = {};
   if (opts?.movementPattern) { schedule.movementPattern = opts.movementPattern; }
   if (opts?.patrolRoute) { schedule.patrolRoute = opts.patrolRoute; }
@@ -62,6 +63,7 @@ async function makeNpc(
     location_id: locationId,
     schedule: JSON.stringify(schedule,),
   },);
+
   return actorId;
 }
 
@@ -96,10 +98,12 @@ describe("processMovementTick", () => {
       id: actorId,
       actor_type: "character",
     },);
+
     await insertNpcStates(db, actorId, worldId, {
       location_id: loc,
       schedule: "not valid json {{{",
     },);
+
     const results = await processMovementTick(db, worldId,);
     expect(results,).toEqual([],);
   });
@@ -113,6 +117,7 @@ describe("processMovementTick", () => {
       patrolRoute: [locA, locB,],
       patrolIndex: 0,
     },);
+
     const results = await processMovementTick(db, worldId,);
     expect(results,).toHaveLength(1,);
     expect(results[0]!.actorId,).toBe(actorId,);
@@ -151,6 +156,7 @@ describe("processMovementTick", () => {
     const actorId = await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Wander,
     },);
+
     const results = await processMovementTick(db, worldId,);
     expect(results,).toHaveLength(1,);
     expect(results[0]!.actorId,).toBe(actorId,);
@@ -167,10 +173,12 @@ describe("processMovementTick", () => {
     const targetId = await makeNpc(worldId, locB, {
       movementPattern: MovementPattern.Stationary,
     },);
+
     const followerId = await makeNpc(worldId, locA, {
       movementPattern: MovementPattern.Follow,
       followTargetId: targetId,
     },);
+
     const results = await processMovementTick(db, worldId,);
     expect(results,).toHaveLength(1,);
     expect(results[0]!.actorId,).toBe(followerId,);
@@ -186,6 +194,7 @@ describe("processMovementTick", () => {
     await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Follow,
     },);
+
     const results = await processMovementTick(db, worldId,);
     expect(results,).toEqual([],);
   });
@@ -196,10 +205,12 @@ describe("processMovementTick", () => {
     const targetId = await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Stationary,
     },);
+
     await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Follow,
       followTargetId: targetId,
     },);
+
     const results = await processMovementTick(db, worldId,);
     expect(results,).toEqual([],);
   });
@@ -212,6 +223,7 @@ describe("processMovementTick", () => {
     const actorId = await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Flee,
     },);
+
     const results = await processMovementTick(db, worldId,);
     expect(results,).toHaveLength(1,);
     expect(results[0]!.actorId,).toBe(actorId,);

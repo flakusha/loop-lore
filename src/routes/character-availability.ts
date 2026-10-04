@@ -48,6 +48,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
           status: HttpStatus.NotFound,
         },);
       }
+
       return jsonResponse(availability,);
     }, {
       params: ActorIdParams,
@@ -100,6 +101,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
           },)
           .where("id", "=", existing.id,)
           .execute();
+
         return jsonResponse({ id: existing.id, updated: true, },);
       }
 

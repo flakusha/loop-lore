@@ -51,9 +51,11 @@ export async function initializeNpcStates(state: WorldState, worldId: string,): 
           schedule: "{}",
         },)
         .execute();
+
       count++;
     }
   }
+
   return count;
 }
 
@@ -97,9 +99,11 @@ export async function initializeCharacterWorldSetup(state: WorldState, worldId: 
           initial_state: "{}",
         },)
         .execute();
+
       count++;
     }
   }
+
   return count;
 }
 
@@ -126,6 +130,7 @@ export async function seedStartingInventory(state: WorldState, worldId: string,)
     .select("id",)
     .where("world_id", "=", worldId,)
     .execute();
+
   const known = new Set<string>();
   for (const item of itemDefs) { known.add(item.id,); }
 
@@ -140,6 +145,7 @@ export async function seedStartingInventory(state: WorldState, worldId: string,)
       .where("owner_actor_id", "=", setup.actor_id,)
       .where("world_id", "=", worldId,)
       .executeTakeFirst();
+
     if (existing) { continue; }
 
     for (const item of starting) {
@@ -158,9 +164,11 @@ export async function seedStartingInventory(state: WorldState, worldId: string,)
           spawn_condition: null,
         },)
         .execute();
+
       granted++;
     }
   }
+
   return granted;
 }
 
@@ -200,8 +208,10 @@ export async function seedStartingInventory(state: WorldState, worldId: string,)
           hazards: "[]",
         },)
         .execute();
+
       count++;
     }
   }
+
   return count;
 }

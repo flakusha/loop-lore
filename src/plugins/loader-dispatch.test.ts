@@ -25,6 +25,7 @@ describe("dispatchPluginRoute", () => {
         handler: async () => new Response("hello",),
       },
     ],);
+
     const res = await dispatchPluginRoute(new Request("http://localhost/plugin/demo",));
     expect(res?.status,).toBe(200,);
     expect(await res?.text(),).toBe("hello",);
@@ -38,9 +39,11 @@ describe("dispatchPluginRoute", () => {
         handler: async () => new Response("hello",),
       },
     ],);
+
     expect(
       await dispatchPluginRoute(new Request("http://localhost/plugin/demo",)),
     ).toBeNull();
+
     expect(
       await dispatchPluginRoute(new Request("http://localhost/other", { method: "POST", },)),
     ).toBeNull();
@@ -51,6 +54,7 @@ describe("dispatchPluginRoute", () => {
       { method: "GET", path: "/x", handler: async () => null, },
       { method: "GET", path: "/x", handler: async () => new Response("second",), },
     ],);
+
     const res = await dispatchPluginRoute(new Request("http://localhost/x",));
     expect(await res?.text(),).toBe("second",);
   });
@@ -61,10 +65,12 @@ describe("dispatch respects enabled state", () => {
     registry.addRoutes("demo", [
       { method: "GET", path: "/x", handler: async () => new Response("x",), },
     ],);
+
     registry.setEnabled("demo", false,);
     expect(
       await dispatchPluginRoute(new Request("http://localhost/x",)),
     ).toBeNull();
+
     expect(registry.getAllRoutes(),).toHaveLength(0,);
     expect(registry.getEnabledRoutes(),).toEqual([],);
   });
@@ -73,6 +79,7 @@ describe("dispatch respects enabled state", () => {
     expect(() => registry.addRoutes("ghost", [
       { method: "GET", path: "/g", handler: async () => new Response("g",), },
     ],)).toThrow("unregistered plugin");
+
     expect(
       await dispatchPluginRoute(new Request("http://localhost/g",)),
     ).toBeNull();
@@ -84,6 +91,7 @@ describe("unloadAllPlugins", () => {
     registry.addRoutes("demo", [
       { method: "GET", path: "/x", handler: async () => new Response("x",), },
     ],);
+
     await unloadAllPlugins();
     expect(registry.getAllRoutes(),).toEqual([],);
     expect(

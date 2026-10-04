@@ -44,6 +44,7 @@ export function assertInputSize(input: string, limit: number = MAX_INPUT_CHARS,)
   if (typeof input !== "string") {
     throw new TypeError("Regex pipeline input must be a string",);
   }
+
   if (input.length > limit) {
     throw new RegexInputTooLargeError(input.length, limit,);
   }

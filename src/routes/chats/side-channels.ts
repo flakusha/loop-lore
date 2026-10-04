@@ -88,6 +88,7 @@ export function sideChannelRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select(["id", "name", "type", "mode", "created_by", "world_id", "current_location_id",],)
             .where("id", "=", id,)
             .executeTakeFirst();
+
           if (!parent) { return notFound("Chat not found",); }
           if (parent.created_by !== userId) { return notFound("Chat not found",); }
 
@@ -109,6 +110,7 @@ export function sideChannelRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("chat_id", "=", id,)
             .where("role_in_chat", "!=", "owner",)
             .execute();
+
           for (const m of members) {
             try {
               await database

@@ -38,6 +38,7 @@ describe("resubmitMessage", () => {
       chatId: "chat-resubmit",
       messageId: "msg-1",
     },);
+
     expect(result.ok,).toBe(true,);
     if (!result.ok) { return; }
     expect(result.parentMessageId,).toBe("msg-1",);
@@ -46,6 +47,7 @@ describe("resubmitMessage", () => {
       .select(["id", "chat_id", "parent_id", "actor_id", "status", "content",],)
       .where("id", "=", result.newMessageId,)
       .executeTakeFirst();
+
     expect(row,).not.toBeNull();
     expect(row?.chat_id,).toBe("chat-resubmit",);
     expect(row?.parent_id,).toBe("msg-1",);
@@ -60,6 +62,7 @@ describe("resubmitMessage", () => {
       messageId: "msg-2",
       branchFromId: "msg-1",
     },);
+
     expect(result.ok,).toBe(true,);
     if (!result.ok) { return; }
     expect(result.parentMessageId,).toBe("msg-1",);
@@ -68,6 +71,7 @@ describe("resubmitMessage", () => {
       .select(["parent_id",],)
       .where("id", "=", result.newMessageId,)
       .executeTakeFirst();
+
     expect(row?.parent_id,).toBe("msg-1",);
   });
 
@@ -76,6 +80,7 @@ describe("resubmitMessage", () => {
       chatId: "chat-resubmit",
       messageId: "msg-does-not-exist",
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.code,).toBe("not_found",);
@@ -86,6 +91,7 @@ describe("resubmitMessage", () => {
       chatId: "chat-resubmit",
       messageId: "msg-foreign",
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.code,).toBe("cross_chat",);
@@ -97,6 +103,7 @@ describe("resubmitMessage", () => {
       messageId: "msg-1",
       branchFromId: "msg-foreign",
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.code,).toBe("cross_chat",);

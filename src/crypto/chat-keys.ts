@@ -42,6 +42,7 @@ export async function getChatParticipantActorIds(database: Kysely<DB>, chatId: s
     .where("chat_id", "=", chatId,)
     .orderBy("actor_id", "asc",)
     .execute();
+
   return Array.from(rows, (r,) => r.actor_id,);
 }
 
@@ -55,12 +56,14 @@ export async function deriveChatKey(participantKeys: ActorKeyData[], chatId: str
   if (participantKeys.length === 0) {
     throw new Error("Cannot derive chat key: no participant keys",);
   }
+
   const ikmLength = participantKeys.length * 32;
   const ikm = new Uint8Array(ikmLength,);
   for (let i = 0; i < participantKeys.length; i++) {
     const participantKey = participantKeys[i]!;
     ikm.set(participantKey.rawKey, i * 32,);
   }
+
   const keyMaterial = await crypto.subtle.importKey("raw", ikm, "HKDF", false, ["deriveKey",],);
   const salt = new TextEncoder().encode(chatId,);
   const info = new TextEncoder().encode(HKDF_INFO,);
@@ -71,6 +74,7 @@ export async function deriveChatKey(participantKeys: ActorKeyData[], chatId: str
     true,
     ["encrypt", "decrypt",],
   );
+
   const rawKey = new Uint8Array(await crypto.subtle.exportKey("raw", derived,),);
   return { key: derived, keyId: participantKeys[0]!.keyId, rawKey, };
 }
@@ -91,6 +95,7 @@ export async function getChatKeyById(
     .selectAll()
     .where("id", "=", keyId,)
     .executeTakeFirst();
+
   if (!row?.encrypted_chat_key) { return null; }
   const rawKey = await decryptBytes(smk, row.encrypted_chat_key,);
   const key = await crypto.subtle.importKey(
@@ -100,6 +105,7 @@ export async function getChatKeyById(
     true,
     ["encrypt", "decrypt",],
   );
+
   return { key, keyId: row.id, rawKey, };
 }
 
@@ -120,6 +126,7 @@ export async function deriveChatKeyForChat(
     .selectAll()
     .where("chat_id", "=", chatId,)
     .executeTakeFirst();
+
   if (existing?.encrypted_chat_key) {
     const rawKey = await decryptBytes(smk, existing.encrypted_chat_key,);
     const key = await crypto.subtle.importKey(
@@ -129,8 +136,10 @@ export async function deriveChatKeyForChat(
       true,
       ["encrypt", "decrypt",],
     );
+
     return { key, keyId: existing.id, rawKey, };
   }
+
   const id = crypto.randomUUID();
   const rawKey = crypto.getRandomValues(new Uint8Array(32,),);
   const encryptedChatKey = await encryptBytes(smk, rawKey,);
@@ -146,6 +155,7 @@ export async function deriveChatKeyForChat(
         created_at: new Date().toISOString(),
         expires_at: null,
       },).execute();
+
       break;
     } catch (error) {
       if (attempt === 1) { throw error; }
@@ -154,6 +164,7 @@ export async function deriveChatKeyForChat(
         .selectAll()
         .where("chat_id", "=", chatId,)
         .executeTakeFirst();
+
       if (winner?.encrypted_chat_key) {
         const rawKey2 = await decryptBytes(smk, winner.encrypted_chat_key,);
         const key2 = await crypto.subtle.importKey(
@@ -163,11 +174,13 @@ export async function deriveChatKeyForChat(
           true,
           ["encrypt", "decrypt",],
         );
+
         return { key: key2, keyId: winner.id, rawKey: rawKey2, };
       }
       // No winner yet — the other insert also raced; retry the INSERT.
     }
   }
+
   const key = await crypto.subtle.importKey(
     "raw",
     rawKey as unknown as Parameters<typeof crypto.subtle.importKey>[1],
@@ -175,5 +188,6 @@ export async function deriveChatKeyForChat(
     true,
     ["encrypt", "decrypt",],
   );
+
   return { key, keyId: id, rawKey, };
 }

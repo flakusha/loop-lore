@@ -41,6 +41,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectAll()
           .where("id", "=", ctx.params.actorId,)
           .executeTakeFirst();
+
         if (!actor) {
           return jsonError({
             message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
@@ -77,6 +78,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           "character",
           Object.keys(ctx.body as Record<string, unknown>,),
         );
+
         if (!boundary.ok) {
           return jsonError({ message: boundary.error.message, status: HttpStatus.UnprocessableEntity, },);
         }
@@ -95,6 +97,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (cleared) {
           return jsonError({ message: cleared, status: HttpStatus.BadRequest, },);
         }
+
         if (settings !== undefined) {
           const settingsResult = safeJsonStringify(settings,);
           if (!settingsResult.ok) {
@@ -103,6 +106,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
               status: HttpStatus.BadRequest,
             },);
           }
+
           updates.settings = settingsResult.value;
         }
 
@@ -173,6 +177,7 @@ function buildActorUpdates(
     avatarFocusX,
     avatarFocusY,
   } = body;
+
   if (displayName) { updates.display_name = displayName; }
   if (description) { updates.description = description; }
   if (systemPrompt) { updates.system_prompt = systemPrompt; }

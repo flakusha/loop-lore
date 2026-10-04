@@ -54,6 +54,7 @@ describeOrSkip("chatActions utility functions", () => {
         generation_time_ms: 1000,
         token_count_total: 100,
       },);
+
       expect(result,).toBe("100.0 t/s",);
     });
 
@@ -104,6 +105,7 @@ describeOrSkip("chatActions utility functions", () => {
         token_count_total: 150,
         tokens_per_second: 30,
       },);
+
       expect(result,).toBe("gpt-4 · openai · 5.0s · 150t · 30.0 t/s",);
     });
 
@@ -112,6 +114,7 @@ describeOrSkip("chatActions utility functions", () => {
         model_id: "gpt-4",
         token_count_total: 150,
       },);
+
       expect(result,).toBe("gpt-4 · 150t",);
     });
   },);
@@ -145,12 +148,14 @@ describeOrSkip("sendWithPreferredMode", () => {
     await chatGenerations.sendWithPreferredMode!.call(host as unknown as ChatState, "chat-1",);
     expect(host.calls,).toEqual(["sse:chat-1",],);
   });
+
   test("streaming off polls status then reloads without EventSource", async () => {
     const host = buildPreferredModeHost(false,);
     let done = false;
     await chatGenerations.sendWithPreferredMode!.call(host as unknown as ChatState, "chat-1", () => {
       done = true;
     },);
+
     expect(host.calls[0],).toBe("status",);
     expect(host.calls,).toContain("messages",);
     expect(host.calls.join(" ",),).not.toContain("sse:",);
@@ -241,6 +246,7 @@ function genHost(): GenHost {
     renderStreamContainer: chatGenerations.renderStreamContainer!,
     _cleanupSSE: chatGenerations._cleanupSSE!,
   };
+
   return host;
 }
 
@@ -264,10 +270,12 @@ function stubGlobals(container: { innerHTML: string } | null, sanitize?: (html: 
   if (container && !(container as { replaceChildren?: unknown }).replaceChildren) {
     (container as { replaceChildren?: () => void }).replaceChildren = () => {};
   }
+
   (globalThis as Record<string, unknown>)["document"] = {
     querySelector: () => container,
     createElement: () => ({ textContent: "", }),
   };
+
   if (sanitize) {
     (globalThis as Record<string, unknown>)["__DOMPurify"] = { sanitize, };
   } else {
@@ -287,6 +295,7 @@ afterAll(() => {
   } else {
     (globalThis as Record<string, unknown>)["__DOMPurify"] = realPurify;
   }
+
   genHandler = null;
 },);
 
@@ -298,6 +307,7 @@ describeOrSkip("connectGenerationSSE", () => {
       seen.push(html,);
       return "clean:" + html;
     },);
+
     const host = genHost();
     chatGenerations.connectGenerationSSE!.call(asState(host,), "chat-1",);
     expect(host.isGenerating,).toBe(true,);
@@ -311,6 +321,7 @@ describeOrSkip("connectGenerationSSE", () => {
     expect(container.innerHTML,).toBe("clean:tc-1hello",);
     expect(seen.length,).toBeGreaterThan(0,);
   });
+
   test("done reloads on the current chat", async () => {
     stubGlobals({ innerHTML: "", }, (html,) => html,);
     const host = genHost();
@@ -320,6 +331,7 @@ describeOrSkip("connectGenerationSSE", () => {
     expect(host.isGenerating,).toBe(false,);
     expect(host.loads,).toEqual(["messages", "auto:ai",],);
   });
+
   test("done skips reload after a chat switch (stale guard)", async () => {
     stubGlobals({ innerHTML: "", }, (html,) => html,);
     const host = genHost();
@@ -332,6 +344,7 @@ describeOrSkip("connectGenerationSSE", () => {
     expect(host.loads,).toEqual([],);
     expect(host._generationEventSource,).toBeNull();
   });
+
   test("stream-error toasts and resets", () => {
     stubGlobals({ innerHTML: "", }, (html,) => html,);
     const host = genHost();
@@ -341,6 +354,7 @@ describeOrSkip("connectGenerationSSE", () => {
     expect(host.isGenerating,).toBe(false,);
     expect(host.toasts.length,).toBe(1,);
   });
+
   test("hard close resets; non-terminal readyState is ignored", () => {
     stubGlobals({ innerHTML: "", }, (html,) => html,);
     const host = genHost();
@@ -364,12 +378,14 @@ describeOrSkip("checkGenerationStatus", () => {
         attemptId: "a1",
         generation: { attemptId: "a1", status: "running", elapsedMs: 2000, chunksReceived: 2, charsReceived: 50, },
       },);
+
     const host = genHost();
     await chatGenerations.checkGenerationStatus!.call(asState(host,), "chat-1",);
     expect(host.isGenerating,).toBe(true,);
     expect(host.activeAttemptId,).toBe("a1",);
     expect(host.generationLabel,).toContain("Generating",);
   });
+
   test("active without detail clears the label state", async () => {
     stubGlobals(null,);
     genHandler = () => jsonRes({ isActive: true, attemptId: "a2", },);
@@ -378,6 +394,7 @@ describeOrSkip("checkGenerationStatus", () => {
     expect(host.isGenerating,).toBe(true,);
     expect(host.generationDetail,).toBeNull();
   });
+
   test("a finished attempt reloads once", async () => {
     stubGlobals(null,);
     genHandler = () => jsonRes({ isActive: false, },);
@@ -387,6 +404,7 @@ describeOrSkip("checkGenerationStatus", () => {
     expect(host.isGenerating,).toBe(false,);
     expect(host.loads,).toEqual(["messages",],);
   });
+
   test("idle without an attempt stays idle", async () => {
     stubGlobals(null,);
     genHandler = () => jsonRes({ isActive: false, },);
@@ -395,11 +413,13 @@ describeOrSkip("checkGenerationStatus", () => {
     expect(host.activeAttemptId,).toBeNull();
     expect(host.loads,).toEqual([],);
   });
+
   test("a failed poll never rejects", async () => {
     stubGlobals(null,);
     genHandler = () => {
       throw new Error("down",);
     };
+
     const host = genHost();
     await chatGenerations.checkGenerationStatus!.call(asState(host,), "chat-1",);
     expect(host.isGenerating,).toBe(false,);
@@ -414,6 +434,7 @@ describeOrSkip("cancelGeneration", () => {
     await chatGenerations.cancelGeneration!.call(asState(host,),);
     expect(host.toasts.length,).toBe(1,);
   });
+
   test("clears flags on acknowledgement", async () => {
     stubGlobals(null,);
     genHandler = () => jsonRes({ ok: true, },);
@@ -425,6 +446,7 @@ describeOrSkip("cancelGeneration", () => {
     expect(host.activeAttemptId,).toBeNull();
     expect(host.toasts.length,).toBe(1,);
   });
+
   test("error toast on rejection", async () => {
     stubGlobals(null,);
     genHandler = () => jsonRes({ ok: false, error: "nope", },);
@@ -433,11 +455,13 @@ describeOrSkip("cancelGeneration", () => {
     expect(host.isGenerating,).toBe(false,);
     expect(host.toasts.length,).toBe(1,);
   });
+
   test("network toast on throw", async () => {
     stubGlobals(null,);
     genHandler = () => {
       throw new Error("down",);
     };
+
     const host = genHost();
     await chatGenerations.cancelGeneration!.call(asState(host,),);
     expect(host.toasts.length,).toBe(1,);
@@ -451,6 +475,7 @@ describeOrSkip("renderStreamContainer", () => {
     host._streamContent = "hi";
     chatGenerations.renderStreamContainer!.call(asState(host,),);
   });
+
   test("falls back to text when the sanitizer is missing", () => {
     const added: unknown[] = [];
     const container = {
@@ -459,6 +484,7 @@ describeOrSkip("renderStreamContainer", () => {
         added.push(...kids,);
       },
     };
+
     stubGlobals(container,);
     const host = genHost();
     host._streamContent = "<b>hi</b>";

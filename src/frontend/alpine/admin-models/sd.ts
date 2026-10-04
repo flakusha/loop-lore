@@ -92,6 +92,7 @@ export const sdState: Partial<ModelsState> & ThisType<ModelsState> = {
         { key: "comfyui_enabled", value: String(this.comfyuiConfig.enabled,), },
         { key: "comfyui_url", value: this.comfyuiConfig.url, },
       ];
+
       for (const entry of entries) {
         await apiFetch("/api/v1/admin/system-config", {
           method: "PATCH",
@@ -99,6 +100,7 @@ export const sdState: Partial<ModelsState> & ThisType<ModelsState> = {
           body: jsonBody(entry,),
         },);
       }
+
       showToast("success", t("toasts.sdConfigSaved",),);
     } catch {
       showToast("error", t("toasts.failedSaveSdConfig",),);

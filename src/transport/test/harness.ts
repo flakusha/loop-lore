@@ -133,6 +133,7 @@ export function buildDefaultTests(): TransportTestSuite {
           throw new TypeError(`expected string payload, got ${typeof payload}`,);
         }
       }
+
       return Promise.resolve();
     },
 
@@ -146,6 +147,7 @@ export function buildDefaultTests(): TransportTestSuite {
       if (size <= 0) {
         throw new TypeError("backpressure size must be > 0",);
       }
+
       return Promise.resolve();
     },
 

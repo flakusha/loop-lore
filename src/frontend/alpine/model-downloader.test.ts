@@ -42,6 +42,7 @@ function cannedFetch(
         controller.close();
       },
     },);
+
     return new Response(stream, { status, headers, },);
   }) as typeof fetch;
 }
@@ -74,6 +75,7 @@ describe("downloadModel", () => {
       fetchImpl: cannedFetch(seen, 200, "abc", { "Content-Length": "3", },),
       onProgress: (snapshot,) => progress.push(snapshot.loadedBytes,),
     },);
+
     expect(new TextDecoder().decode(bytes,),).toBe("abc",);
     expect(seen[0]?.headers,).toEqual({},);
     expect(progress.at(-1,),).toBe(3,);
@@ -86,6 +88,7 @@ describe("downloadModel", () => {
       expectedSha256: ABC_SHA256,
       fetchImpl: cannedFetch(seen, 200, "xyz",),
     },);
+
     await expect(promise,).rejects.toBeInstanceOf(DownloadIntegrityError,);
   });
 
@@ -96,6 +99,7 @@ describe("downloadModel", () => {
       sizeBytes: 99,
       fetchImpl: cannedFetch(seen, 200, "abc",),
     },);
+
     await expect(promise,).rejects.toBeInstanceOf(DownloadIntegrityError,);
   });
 
@@ -105,6 +109,7 @@ describe("downloadModel", () => {
       url: "https://cdn.example.com/missing.gguf",
       fetchImpl: cannedFetch(seen, 404, "nope",),
     },);
+
     const error = await promise.catch((cause,) => cause);
     expect(error,).toBeInstanceOf(DownloadFailedError,);
     expect((error as DownloadFailedError).status,).toBe(404,);
@@ -121,6 +126,7 @@ describe("downloadModel", () => {
       fetchImpl: cannedFetch(seen, 206, "world", { "Content-Range": "bytes 6-10/11", },),
       onProgress: (snapshot,) => totals.push(snapshot.totalBytes,),
     },);
+
     expect(seen[0]?.headers.Range,).toBe("bytes=6-",);
     expect(new TextDecoder().decode(bytes,),).toBe("Hello world",);
     expect(totals.at(-1,),).toBe(11,);
@@ -133,6 +139,7 @@ describe("downloadModel", () => {
       resumeFrom: encode("stale-prefix",),
       fetchImpl: cannedFetch(seen, 200, "abc",),
     },);
+
     expect(new TextDecoder().decode(bytes,),).toBe("abc",);
   });
 
@@ -144,6 +151,7 @@ describe("downloadModel", () => {
       resumeFrom: encode("abc",),
       fetchImpl: cannedFetch(seen, 416, "",),
     },);
+
     expect(new TextDecoder().decode(bytes,),).toBe("abc",);
   });
 
@@ -154,6 +162,7 @@ describe("downloadModel", () => {
       maxBytes: 2,
       fetchImpl: cannedFetch(seen, 200, "abc",),
     },);
+
     await expect(promise,).rejects.toBeInstanceOf(DownloadIntegrityError,);
   });
 
@@ -168,6 +177,7 @@ describe("downloadModel", () => {
         arrayBuffer: async () => encode("abc",).buffer as ArrayBuffer,
       })) as unknown as typeof fetch,
     },);
+
     expect(new TextDecoder().decode(bytes,),).toBe("abc",);
   });
 });

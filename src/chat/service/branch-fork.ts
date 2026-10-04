@@ -40,12 +40,14 @@ export async function isActiveBranch(
     .select(["active_branch_id",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
+
   if (activeId?.active_branch_id === branchId) { return true; }
   const row = await db
     .selectFrom("chat_branches",)
     .select(["is_active",],)
     .where("id", "=", branchId,)
     .executeTakeFirst();
+
   return Number(row?.is_active ?? 0,) === 1;
 }
 
@@ -75,6 +77,7 @@ async function nextFreeAutoName(db: Kysely<DB>, chatId: string,): Promise<string
     .select(["name",],)
     .where("chat_id", "=", chatId,)
     .execute();
+
   const used = new Set(rows.map((row,) => row.name),);
   let n = rows.length + 1;
   while (used.has(`Branch ${n}`,)) { n += 1; }
@@ -110,6 +113,7 @@ export async function insertForkRow(
           .where("chat_id", "=", chatId,)
           .where("is_active", "=", 1,)
           .execute();
+
         await tx
           .insertInto("chat_branches",)
           .values({
@@ -121,6 +125,7 @@ export async function insertForkRow(
           },)
           .execute();
       },);
+
       return { name, };
     } catch (error) {
       // Only a name conflict is retryable; any other driver error is real.
@@ -131,5 +136,6 @@ export async function insertForkRow(
       }
     }
   }
+
   return { code: "bad_request", message: "Could not allocate a unique branch name; retry", };
 }

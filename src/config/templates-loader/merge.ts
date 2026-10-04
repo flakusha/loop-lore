@@ -135,6 +135,7 @@ export function mergeAvatarConfig(
       }
     }
   }
+
   const mergedPatterns = [...base.intentPatterns,];
   if (override.intentPatterns) {
     for (const pattern of override.intentPatterns) {
@@ -143,6 +144,7 @@ export function mergeAvatarConfig(
       }
     }
   }
+
   return {
     merge: base.merge,
     emotions: mergedEmotions,

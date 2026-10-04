@@ -26,6 +26,7 @@ export class ConcurrencyLimiter {
     if (!Number.isInteger(opts.max,) || opts.max < 1) {
       throw new RangeError(`ConcurrencyLimiter: max must be a positive integer, got ${opts.max}`,);
     }
+
     this.max = opts.max;
   }
 
@@ -53,6 +54,7 @@ export class ConcurrencyLimiter {
       this.held++;
       return this.makeReleaser();
     }
+
     return new Promise<() => void>((resolve,) => {
       this.waiters.push(() => {
         this.held++;
@@ -120,8 +122,10 @@ export function createLimiterRegistry(): LimiterRegistry {
         if (existing.capacity !== max) {
           throw new Error(`ConcurrencyLimiter: capacity mismatch for ${key} (have ${existing.capacity}, want ${max})`,);
         }
+
         return existing;
       }
+
       const created = new ConcurrencyLimiter({ max, },);
       map.set(key, created,);
       return created;

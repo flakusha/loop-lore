@@ -23,6 +23,7 @@ const nsfwAccessStatusDef: StateDef<NsfwAccessStatus> = {
   },
   terminal: [],
 };
+
 export const nsfwAccessStatusMachine = createMachine(nsfwAccessStatusDef,);
 
 // ── Moderation ──────────────────────────────────────────────

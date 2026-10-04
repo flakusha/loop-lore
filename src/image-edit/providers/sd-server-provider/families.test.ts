@@ -38,11 +38,13 @@ async function withMockFetch(
     calls.push({ url, init, },);
     return handler(url, init,);
   },) as unknown as typeof fetch;
+
   try {
     await fn();
   } finally {
     (globalThis as Record<string, unknown>).fetch = originalFetch;
   }
+
   return calls;
 }
 
@@ -70,6 +72,7 @@ describe("sdcppGenerate", () => {
         const results = await sdcppGenerate(makeHost(), "txt2img", { prompt: "a cat", }, (p,) => {
           progress.push(p,);
         },);
+
         expect(results,).toHaveLength(2,);
         for (const [i, result,] of results.entries()) {
           expect(result.filename,).toMatch(new RegExp(`^sdserver-[0-9a-f]{8}-${i}\\.png$`,),);
@@ -78,6 +81,7 @@ describe("sdcppGenerate", () => {
         }
       },
     );
+
     expect(calls,).toHaveLength(2,);
     expect(calls[0]!.url,).toBe("http://sdserver.test/sdcpp/v1/txt2img",);
     expect(calls[1]!.url,).toBe("http://sdserver.test/sdcpp/v1/jobs/job-42",);
@@ -189,9 +193,11 @@ describe("sdcppGenerate", () => {
         const results = await sdcppGenerate(makeHost(), "txt2img", {}, (p,) => {
           progress.push(p,);
         },);
+
         expect(results,).toHaveLength(1,);
       },
     );
+
     expect(progress,).toEqual([
       { status: "running", progress: 0.1, message: "Processing...", },
       { status: "running", progress: 0.42, },
@@ -235,6 +241,7 @@ describe("sdapiGenerate", () => {
         }
       },
     );
+
     expect(calls,).toHaveLength(1,);
     expect(calls[0]!.url,).toBe("http://sdserver.test/sdapi/v1/txt2img",);
     expect(bodyOf(calls[0]!,).prompt,).toBe("x",);
@@ -261,12 +268,14 @@ describe("openaiGenerate", () => {
           makeHost(ImageApiFamily.Openai, { apiKey: "sk-test-123", } as ImageProviderConfig,),
           { prompt: "a dog", },
         );
+
         expect(results,).toHaveLength(1,);
         expect(results[0]!.filename,).toMatch(/^openai-[0-9a-f]{8}-0\.png$/,);
         expect(results[0]!.url,).toBe(`/api/assets/${results[0]!.id}/raw`,);
         expect(results[0]!.mimeType,).toBe("image/png",);
       },
     );
+
     expect(calls,).toHaveLength(1,);
     expect(calls[0]!.url,).toBe("http://sdserver.test/v1/images/generations",);
     const headers = calls[0]!.init?.headers as Headers;
@@ -280,6 +289,7 @@ describe("openaiGenerate", () => {
         await openaiGenerate(makeHost(ImageApiFamily.Openai,), { prompt: "a dog", },);
       },
     );
+
     const headers = calls[0]!.init?.headers as Headers;
     expect(headers.get("Authorization",),).toBeNull();
   });

@@ -49,6 +49,7 @@ export function stateRoutes(opts: HandlerOpts, prefix = "/api",) {
             status: HttpStatus.NotFound,
           },);
         }
+
         return jsonResponse(mood,);
       }, {
         params: ActorIdParams,
@@ -84,6 +85,7 @@ export function stateRoutes(opts: HandlerOpts, prefix = "/api",) {
           baseMood,
           moodStability,
         },);
+
         return jsonCreated({ id: moodId, },);
       }, {
         params: ActorIdParams,
@@ -125,6 +127,7 @@ export function stateRoutes(opts: HandlerOpts, prefix = "/api",) {
           moodStability,
           expressionModifiers,
         },);
+
         return jsonResponse({ ok: true, },);
       }, {
         params: ActorIdParams,

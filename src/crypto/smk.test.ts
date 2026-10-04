@@ -41,6 +41,7 @@ describe("initSmk — valid key", () => {
       required: false,
       ...BASE_ENCRYPTION_CONFIG,
     },);
+
     expect(getSmk(),).not.toBeNull();
   });
 });

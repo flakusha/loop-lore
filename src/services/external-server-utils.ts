@@ -28,6 +28,7 @@ function getBinaryNameWithSuffix(name: string,): string[] {
   if (platform === "win32") {
     names.push(`${name}${WINDOWS_EXE_SUFFIX}`,);
   }
+
   return names;
 }
 
@@ -43,6 +44,7 @@ export function findBinary(type: keyof typeof BINARY_CANDIDATES,): string | null
       if (result) { return result; }
     }
   }
+
   return null;
 }
 
@@ -62,6 +64,7 @@ export function isPortFree(port: number,): boolean {
         /* probe port check — ignore */
       }
     })();
+
     return true;
   } catch {
     return false;
@@ -97,6 +100,7 @@ export async function waitForHealth(url: string, opts: WaitForHealthOptions,): P
     if (result.ok) { return true; }
     await new Promise((r,) => setTimeout(r, intervalMs,));
   }
+
   return false;
 }
 
@@ -113,6 +117,7 @@ export async function waitForPort(port: number, opts: WaitForPortOptions,): Prom
     if (result.ok || result.status !== undefined) { return true; }
     await new Promise((r,) => setTimeout(r, 500,));
   }
+
   return false;
 }
 

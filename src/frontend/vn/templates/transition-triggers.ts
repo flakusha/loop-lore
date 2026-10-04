@@ -102,6 +102,7 @@ export function evaluateTriggers(
   for (const trigger of TRANSITION_TRIGGERS) {
     if (trigger.condition(context,)) { matchingTriggers.push(trigger,); }
   }
+
   matchingTriggers.sort((a, b,) => b.priority - a.priority);
 
   if (matchingTriggers.length === 0) { return null; }

@@ -24,6 +24,7 @@ if (ISOLATED) {
       return apiHandler(url, opts ?? {},);
     },
   }),);
+
   // choice-cards.ts imports feFetch directly (split/reunite); mock the seam so
   // the real fe-fetch → utils barrel never loads in this suite.
   mock.module("../fe-fetch", () => ({
@@ -74,6 +75,7 @@ function makeEl(): FakeEl {
       el.attrs[name] = value;
     },
   };
+
   return el;
 }
 
@@ -163,6 +165,7 @@ describeOrSkip("loadChoices", () => {
           rawChoice({ id: "anon", text: undefined, },),
         ],
       },);
+
     await loadChoices();
     expect(apiCalls.length,).toBe(1,);
     expect(apiCalls[0]!.url,).toBe("/api/v1/chats/chat-1/vn-choices?sceneIndex=2",);
@@ -177,6 +180,7 @@ describeOrSkip("loadChoices", () => {
     const cards = container.children[0]!.children;
     expect(cards.map((c,) => c.children[0]?.textContent ?? ""),)
       .toEqual(["Custom label", "Untitled choice", "Open the door",],);
+
     expect(cards[0]!.children[1]?.textContent,).toBe("A narrow path",);
     const selectedCard = cards[2]!;
     expect(selectedCard.className,).toBe("vn-choice-card vn-choice-card--selected",);
@@ -188,6 +192,7 @@ describeOrSkip("loadChoices", () => {
     boot();
     apiHandler = () =>
       jsonRes({ data: [rawChoice({ id: "d1", is_active: 1, relationship_impact: { kim: 1, }, },),], },);
+
     await loadChoices();
     expect(getAccumulatedImpacts(),).toEqual({ relationships: { kim: 1, }, moods: {}, },);
   });
@@ -217,6 +222,7 @@ describeOrSkip("loadChoices", () => {
     apiHandler = () => {
       throw new Error("network",);
     };
+
     await loadChoices();
     expect(getAccumulatedImpacts(),).toEqual({ relationships: {}, moods: {}, },);
   });

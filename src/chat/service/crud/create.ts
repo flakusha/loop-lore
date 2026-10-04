@@ -71,6 +71,7 @@ export async function createChat(
     const selectiveIds = params.memoryCarry === "selective" && params.memoryCarryIds?.length
       ? params.memoryCarryIds
       : undefined;
+
     const selections = await database
       .selectFrom("actor_memories",)
       .select([
@@ -90,6 +91,7 @@ export async function createChat(
       .where("actor_id", "=", sourceActorId,)
       .$if(!!selectiveIds?.length, (qb,) => qb.where("id", "in", selectiveIds as string[],),)
       .execute();
+
     for (const m of selections) {
       await database
         .insertInto("actor_memories",)

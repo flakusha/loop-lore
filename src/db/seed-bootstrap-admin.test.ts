@@ -66,6 +66,7 @@ describe("seedBootstrapAdmin (multi-user mode)", () => {
       .select((eb,) => eb.fn.countAll<number>().as("n",))
       .where("role", "=", "admin",)
       .executeTakeFirst();
+
     expect(admins?.n,).toBe(1,);
   });
 

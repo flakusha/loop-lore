@@ -38,6 +38,7 @@ export function jsonError(
   const opts = typeof messageOrOptions === "string"
     ? { message: messageOrOptions, status, code, }
     : messageOrOptions;
+
   const message = opts.t ? opts.t(opts.message,) : opts.message;
   const resolvedStatus = opts.status ?? (typeof messageOrOptions === "string" ? status : HttpStatus.BadRequest);
   const resolvedCode = opts.code ?? STATUS_TO_CODE[resolvedStatus];
@@ -87,5 +88,6 @@ export function requireUserId(ctx: unknown,): string | Response {
   if (!userId) {
     return unauthorizedResponse((ctx as any).t?.("errors.unauthorized",) ?? "Unauthorized",);
   }
+
   return userId;
 }

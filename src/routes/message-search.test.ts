@@ -108,12 +108,15 @@ describe("messageSearchRoutes", () => {
     await insertMessages(db, chatId, ownerId, MessageRole.User, "The dragon guards the golden lair", {
       content_plaintext: "The dragon guards the golden lair",
     },);
+
     await insertMessages(db, chatId, participantId, MessageRole.Character, "I bring news of the dragon's lair", {
       content_plaintext: "I bring news of the dragon's lair",
     },);
+
     await insertMessages(db, chatId, ownerId, MessageRole.Assistant, "A sack of coins spills onto the floor", {
       content_plaintext: "A sack of coins spills onto the floor",
     },);
+
     await insertMessages(db, otherChatId, outsiderId, MessageRole.User, "secret dragon treasure elsewhere", {
       content_plaintext: "secret dragon treasure elsewhere",
     },);
@@ -171,11 +174,13 @@ describe("messageSearchRoutes", () => {
       content_plaintext: "look at this image",
       attachments: JSON.stringify([{ assetId: "asset_1", order: 0, caption: "pic", label: "", },],),
     },);
+
     const app = searchApp(db, ownerId, "user",);
     const res = await appHandle(
       app,
       get(`/api/messages/search?chatId=${chatId}&q=image&hasAttachment=true`,),
     );
+
     const body = (await res.json()) as SearchBody;
     expect(body.results,).toHaveLength(1,);
     expect(body.results[0]?.attachments,).toHaveLength(1,);
@@ -189,6 +194,7 @@ describe("messageSearchRoutes", () => {
       app,
       get(`/api/messages/search?chatId=${chatId}&q=dragon&dateFrom=2099-01-01T00:00:00Z`,),
     );
+
     expect(((await none.json()) as SearchBody).total,).toBe(0,);
   });
 
@@ -200,6 +206,7 @@ describe("messageSearchRoutes", () => {
     for (const r of body.results) {
       expect(r.chatId,).toBe(chatId,);
     }
+
     expect(body.results.some((r,) => r.content.includes("secret",)),).toBe(false,);
   });
 
@@ -222,26 +229,31 @@ describe("messageSearchRoutes", () => {
     expect(body.hasMore,).toBe(true,);
     expect(body.total,).toBe(2,);
   });
+
   test("deleted message no longer appears after search", async () => {
     const app = searchApp(db, ownerId, "user",);
     await insertMessages(db, chatId, ownerId, MessageRole.User, "temporary-mint snowflake", {
       content_plaintext: "temporary-mint snowflake",
     },);
+
     const row = await db.selectFrom("messages",).select("id",).where(
       "content_plaintext",
       "=",
       "temporary-mint snowflake",
     ).executeTakeFirst();
+
     expect(row,).toBeTruthy();
 
     const before =
       (await (await appHandle(app, get(`/api/messages/search?chatId=${chatId}&q=snowflake`,),)).json()) as SearchBody;
+
     expect(before.results.some((r,) => r.content.includes("mint",)),).toBe(true,);
 
     await db.deleteFrom("messages",).where("id", "=", row!.id,).execute();
 
     const after =
       (await (await appHandle(app, get(`/api/messages/search?chatId=${chatId}&q=snowflake`,),)).json()) as SearchBody;
+
     expect(after.results.some((r,) => r.content.includes("mint",)),).toBe(false,);
   });
 
@@ -256,11 +268,13 @@ describe("messageSearchRoutes", () => {
     await insertMessages(db, chatId, ownerId, MessageRole.User, "plain-anchor-mint identity-marker", {
       content_plaintext: "plain-anchor-mint identity-marker",
     },);
+
     const app = searchApp(db, ownerId, "user",);
     const res = await appHandle(
       app,
       get(`/api/messages/search?chatId=${chatId}&q=identity-marker`,),
     );
+
     const json = (await res.json()) as SearchBody;
     const hit = json.results.find((r,) => r.content.startsWith("plain-anchor",));
     expect(hit,).toBeTruthy();
@@ -279,6 +293,7 @@ describe("messageSearchRoutes", () => {
       content: encoded.encoded,
       content_encoding: encoded.encoding,
     } as never,);
+
     const app = searchApp(db, ownerId, "user",);
     // Search for the plaintext token. FTS indexes the base64 bytes, so this
     // query MUST NOT return the gzip row (the row is functionally invisible
@@ -287,6 +302,7 @@ describe("messageSearchRoutes", () => {
       app,
       get(`/api/messages/search?chatId=${chatId}&q=gzip-probe-marker`,),
     );
+
     const json = (await res.json()) as SearchBody;
     const leaked = json.results.find((r,) => r.content.includes("Z",));
     expect(leaked,).toBeUndefined();
@@ -311,6 +327,7 @@ describe("messageSearchRoutes", () => {
       app,
       get(`/api/messages/search?chatId=${chatId}&q=deadbeefunique`,),
     );
+
     const json = (await res.json()) as SearchBody;
     for (const r of json.results) {
       expect(r.content,).not.toContain('"enc":',);

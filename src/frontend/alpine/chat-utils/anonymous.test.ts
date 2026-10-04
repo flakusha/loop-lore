@@ -12,6 +12,7 @@ const dispatchFetch: ApiFetchMock = (url, opts,) => fetchMock(url, opts,);
 beforeEach(() => {
   globalState.apiFetch = dispatchFetch;
 },);
+
 afterEach(() => {
   globalState.apiFetch = originalFetch;
 },);
@@ -46,6 +47,7 @@ describe("anonymous mode flag", () => {
     fetchMock = async () => {
       throw new Error("offline",);
     };
+
     await expect(initAnonymousModeCheck(),).resolves.toBeUndefined();
     expect(isAnonymousMode(),).toBe(false,);
   });
@@ -58,6 +60,7 @@ describe("anonymous mode flag", () => {
       seenAccept = new Headers(opts?.headers,).get("accept",) ?? undefined;
       return Response.json({ anonymousMode: false, },);
     };
+
     await initAnonymousModeCheck();
     expect(seenUrl,).toBe("/api/v1/encryption/status",);
     expect(seenAccept,).toBe("application/json",);

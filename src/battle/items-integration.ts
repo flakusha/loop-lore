@@ -167,6 +167,7 @@ export function generateLoot(
       const quantity = Math.floor(
         Math.random() * (entry.maxQuantity - entry.minQuantity + 1) + entry.minQuantity,
       );
+
       drops.push({
         itemId: entry.itemId,
         quantity,
@@ -242,5 +243,6 @@ export function calculateTotalWeight(
     const weight = weightMap.get(item.id,) ?? 0;
     totalWeight += weight;
   }
+
   return totalWeight;
 }

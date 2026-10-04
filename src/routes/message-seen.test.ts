@@ -181,6 +181,7 @@ describe("messageSeenRoutes", () => {
     // Elysia emits 422 for body schema-validation failures (TypeBox union mismatch).
     expect(res.status,).toBe(422,);
   });
+
   test("POST re-mark preserves original seen_at (first-seen semantics)", async () => {
     const app = seenApp(db, userId, null,);
 
@@ -208,6 +209,7 @@ describe("messageSeenRoutes", () => {
       app.handle(postSeen(`/api/messages/${messageId}/seen`, { actorId, state: "seen", },),),
       app.handle(postSeen(`/api/messages/${messageId}/seen`, { actorId, state: "seen", },),),
     ],);
+
     expect(a.status,).toBe(200,);
     expect(b.status,).toBe(200,);
 
@@ -239,6 +241,7 @@ describe("messageSeenRoutes", () => {
       .select("id",)
       .where("id", "=", `ms-${messageId}-${otherActorId}`,)
       .executeTakeFirst();
+
     expect(row,).toBeDefined();
   });
 
@@ -254,12 +257,14 @@ describe("messageSeenRoutes", () => {
     await db.deleteFrom("message_seen",)
       .where("message_id", "=", messageId,)
       .execute();
+
     const app = seenApp(db, userId, null,);
     // Send otherActorId in body; session is userId. Server must use
     // userId's primary actor (actorId), not otherActorId.
     const res = await app.handle(
       postSeen(`/api/messages/${messageId}/seen`, { actorId: otherActorId, state: "seen", },),
     );
+
     expect(res.status,).toBe(200,);
     // GET should show actorId (not otherActorId) as the viewer.
     const listRes = await app.handle(get(`/api/messages/${messageId}/seen`,),);
@@ -274,10 +279,12 @@ describe("messageSeenRoutes", () => {
     await db.deleteFrom("message_seen",)
       .where("message_id", "=", messageId,)
       .execute();
+
     const app = seenApp(db, userId, null,);
     const res = await app.handle(
       postSeen(`/api/messages/${messageId}/seen`, { state: "seen", },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -289,6 +296,7 @@ describe("messageSeenRoutes", () => {
     const res = await app.handle(
       postSeen(`/api/messages/${messageId}/seen`, { state: "seen", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 });

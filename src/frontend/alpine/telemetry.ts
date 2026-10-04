@@ -122,6 +122,7 @@ function trackPageView(): void {
     clearTimeout(pageViewTimer,);
     pageViewTimer = null;
   }
+
   pageViewTimer = setTimeout(() => {
     lastPagePath = path;
     try {

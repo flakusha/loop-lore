@@ -36,6 +36,7 @@ async function seedActor(db: Kysely<DB>, actorId: string,): Promise<void> {
     display_name: userId,
     password_hash: "dummy",
   },).execute();
+
   await db.insertInto("actors",).values({
     id: actorId,
     actor_type: "user",
@@ -174,6 +175,7 @@ describe("recordGroupWrap → latestGroupWrapForRecipient round-trip", () => {
       senderEphPubJwk: pubJwk,
       chainIndex: 11,
     },);
+
     expect(recorded.chainIndex,).toBe(11,);
     expect(recorded.wrappedKey,).toBe("nonce-b64.ct-b64",);
 
@@ -198,6 +200,7 @@ describe("recordGroupWrap → latestGroupWrapForRecipient round-trip", () => {
       senderEphPubJwk: circular as unknown as JsonWebKey,
       chainIndex: 0,
     },);
+
     expect(recorded.senderEphPubJwk,).toBe("",);
     const fetched = await latestGroupWrapForRecipient(db, SESSION_A, BOB,);
     expect(fetched,).not.toBeNull();

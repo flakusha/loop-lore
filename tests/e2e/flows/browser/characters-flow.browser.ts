@@ -28,6 +28,7 @@ describe("Characters flow E2E", () => {
       },)
       .onConflict((oc,) => oc.column("id",).doNothing())
       .execute();
+
     // The character edit view's licensing panel fetches
     // /api/v1/actors/:id/licensing, whose designed 404 ("no license yet") still
     // logs a browser console resource error. Characters configured for
@@ -56,6 +57,7 @@ describe("Characters flow E2E", () => {
     try {
       await page.goto(`${ctx.url}/views/characters`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     } catch {}
+
     await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 15_000, },);
   }
 
@@ -100,9 +102,11 @@ describe("Characters flow E2E", () => {
           state: "detached",
           timeout: 15_000,
         },);
+
         const resolved = await page
           .locator("[data-testid='character-grid'], [data-testid='characters-empty']",)
           .count();
+
         expect(resolved,).toBeGreaterThan(0,);
       } finally {
         errors.assert();
@@ -242,6 +246,7 @@ describe("Characters flow E2E", () => {
         await page.evaluate(() => {
           (document.querySelector("[data-testid='nav-gallery']",) as HTMLElement)?.click();
         },);
+
         await page.locator("[data-testid='gallery-header']",).waitFor({ state: "attached", timeout: 15_000, },);
         expect(page.url(),).toContain("/views/gallery",);
       } finally {
@@ -270,9 +275,11 @@ describe("Characters flow E2E", () => {
           waitUntil: "domcontentloaded",
           timeout: 30_000,
         },);
+
         await page
           .locator("[data-testid='character-edit-header']",)
           .waitFor({ state: "attached", timeout: 30_000, },);
+
         await page.locator("#character-edit-form",).waitFor({ state: "attached", timeout: 30_000, },);
         // Web-first: wait for the htmx-loaded form's last section to mount
         // instead of a fixed sleep.

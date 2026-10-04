@@ -63,6 +63,7 @@ describe("MessageSeenState", () => {
         all.add(target,);
       }
     }
+
     // Every state reachable from some state
     expect(all,).toEqual(new Set(Object.values(MessageSeenState,),),);
   });

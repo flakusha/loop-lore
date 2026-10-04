@@ -124,6 +124,7 @@ export async function getActivePublicKey(opts: GetActivePublicKeyOpts,): Promise
     .where("actor_id", "=", opts.actorId,)
     .where("revoked_at", "is", null,)
     .executeTakeFirst();
+
   if (!row) { return null; }
   return rowToPublicKey(row,);
 }
@@ -144,6 +145,7 @@ export async function listActivePublicKeys(opts: ListActivePublicKeysOpts,): Pro
     .where("revoked_at", "is", null,)
     .orderBy("created_at", "asc",)
     .execute();
+
   return rows.map(rowToPublicKey,);
 }
 
@@ -160,6 +162,7 @@ export async function revokePublicKey(opts: RevokePublicKeyOpts,): Promise<boole
     .where("actor_id", "=", opts.actorId,)
     .where("revoked_at", "is", null,)
     .execute();
+
   return result.length > 0 && result[0]!.numUpdatedRows > 0n;
 }
 

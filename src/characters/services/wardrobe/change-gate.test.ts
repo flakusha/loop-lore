@@ -32,6 +32,7 @@ describe("requestOutfitChange routing", () => {
         return { allowed: false, reason: "wardrobe breaks the scene", };
       },
     };
+
     const verdict = await requestOutfitChange(BASE, refusing,);
     expect(seen.current?.actorId,).toBe("actor-1",);
     expect(seen.current?.toOutfitId,).toBe("outfit-1",);
@@ -45,6 +46,7 @@ describe("requestOutfitChange routing", () => {
       { ...BASE, initiator: OutfitChangeInitiator.Gm, },
       allowAllOutfitChangeGate,
     );
+
     expect(verdict.allowed,).toBe(true,);
     expect(verdict.bypassed,).toBeFalsy();
   });
@@ -55,6 +57,7 @@ describe("requestOutfitChange routing", () => {
       { ...BASE, initiator: OutfitChangeInitiator.Npc, },
       refusing,
     );
+
     expect(verdict.allowed,).toBe(true,);
     expect(verdict.bypassed,).toBe(true,);
   });
@@ -65,6 +68,7 @@ describe("requestOutfitChange routing", () => {
       { ...BASE, initiator: OutfitChangeInitiator.WorldRule, },
       refusing,
     );
+
     expect(verdict.allowed,).toBe(true,);
     expect(verdict.bypassed,).toBe(true,);
   });

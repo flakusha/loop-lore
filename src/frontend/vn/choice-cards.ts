@@ -86,6 +86,7 @@ export async function loadChoices(): Promise<void> {
         label: c.label ?? c.text ?? "Untitled choice",
       },);
     }
+
     renderChoices();
   } catch {
     choices = [];
@@ -113,9 +114,11 @@ function extractSplitBranches(
     for (const id of actorIds) {
       if (typeof id === "string") { ids.push(id,); }
     }
+
     if (ids.length === 0) { continue; }
     out.push({ locationId, actorIds: ids, },);
   }
+
   return out.length >= 2 ? out : null;
 }
 
@@ -146,6 +149,7 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ choiceId, },),
     },);
+
     if (!res.ok) { return null; }
     const data = await res.json();
     const { choice: returned, locationId, } = (data.choice ?? data.data) as { choice: VnChoice; locationId?: string };
@@ -165,12 +169,14 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ locationId, },),
         },);
+
         if (locRes.ok) {
           globalThis.dispatchEvent(
             new CustomEvent(LOCATION_CHANGED_EVENT, {
               detail: { chatId, locationId, locationName: null, },
             },),
           );
+
           locationChanged = true;
         }
       } catch {
@@ -187,6 +193,7 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ branches: splitBranches, },),
         },);
+
         splitTriggered = splitRes.ok;
       } catch {
         splitTriggered = false;
@@ -201,6 +208,7 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ secondaryChatId: reunionSource, },),
         },);
+
         reunionTriggered = reuniteRes.ok;
       } catch {
         reunionTriggered = false;

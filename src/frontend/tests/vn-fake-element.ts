@@ -52,23 +52,28 @@ export function makeEl(tag = "div",): FakeEl {
       style[name] = value;
     },
   };
+
   const matchesSel = (el: FakeEl, sel: string,): boolean => {
     return el.className.split(" ",).includes(sel,) || el.tagName === sel.toUpperCase();
   };
+
   const find = (el: FakeEl, cls: string,): FakeEl | null => {
     for (const child of el.children) {
       if (matchesSel(child, cls,)) { return child; }
       const hit = find(child, cls,);
       if (hit) { return hit; }
     }
+
     return null;
   };
+
   const findAll = (el: FakeEl, cls: string, out: FakeEl[],): void => {
     for (const child of el.children) {
       if (matchesSel(child, cls,)) { out.push(child,); }
       findAll(child, cls, out,);
     }
   };
+
   return {
     tagName: tag.toUpperCase(),
     className: "",
@@ -95,15 +100,18 @@ export function makeEl(tag = "div",): FakeEl {
         const i = p.children.indexOf(this,);
         if (i >= 0) { p.children.splice(i, 1,); }
       }
+
       this.parent = null;
     },
     get classList() {
       const tokens = (): string[] => {
         return this.className.split(" ",).filter(Boolean,);
       };
+
       const write = (list: string[],): void => {
         this.className = list.join(" ",);
       };
+
       return {
         contains: (cls: string,) => {
           return tokens().includes(cls,);
@@ -113,6 +121,7 @@ export function makeEl(tag = "div",): FakeEl {
           for (const name of names) {
             if (!list.includes(name,)) { list.push(name,); }
           }
+
           write(list,);
         },
         remove: (...names: string[]) => {

@@ -241,6 +241,7 @@ describe("locationExplorerState", () => {
           parent: null,
         },
       },);
+
       await state.selectLoc("loc-1",);
       const callsAfterFirst = fetchCalls.length;
       await state.selectLoc("loc-1",);

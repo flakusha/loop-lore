@@ -56,6 +56,7 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (invalid) {
         return jsonError({ message: `Invalid emotion: ${invalid}`, status: HttpStatus.BadRequest, },);
       }
+
       return startGenerationJob(emotionAvatars, owned, {
         baseAvatarId: base_avatar_id,
         emotions: emotions as EmotionType[] | undefined,
@@ -83,6 +84,7 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (!isEmotion(emotion,)) {
         return jsonError({ message: `Invalid emotion: ${emotion}`, status: HttpStatus.BadRequest, },);
       }
+
       // A single-slot call is a re-roll by default: it replaces only THIS
       // (emotion, outfit) slot — sibling slots/outfits are untouched.
       return startGenerationJob(emotionAvatars, owned, {
@@ -115,6 +117,7 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
         worldId: body.worldId,
         locationId: body.locationId,
       },);
+
       const outfitId = body.outfitId !== undefined ? body.outfitId : outfit.outfitId;
 
       const avatar = await avatars.selectAvatar(actorId, {
@@ -128,9 +131,11 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
         chatId: body.chatId,
         locationId: body.locationId,
       }, body.worldId,);
+
       if (!avatar) {
         return jsonError({ message: "No avatar found", status: HttpStatus.NotFound, },);
       }
+
       return jsonResponse({
         outfit_id: outfitId,
         source: outfit.source,
@@ -193,6 +198,7 @@ async function startGenerationJob(
       outfitId: owned.itemId,
       replace: req.replace ?? undefined,
     },);
+
     return jsonCreated({ jobId, },);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to start generation";

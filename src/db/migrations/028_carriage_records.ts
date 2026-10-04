@@ -42,5 +42,6 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await sql`DROP INDEX IF EXISTS idx_carriage_records_chat_created`.execute(
     database,
   );
+
   await database.schema.dropTable("carriage_records",).execute();
 }

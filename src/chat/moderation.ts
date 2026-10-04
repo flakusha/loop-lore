@@ -95,6 +95,7 @@ export function checkModerationPermission(
       if (!can(callerRole, "admin.chat",) && callerRole !== "owner") {
         return { allowed: false, reason: "Only admins can ban users", };
       }
+
       break;
     }
 
@@ -103,6 +104,7 @@ export function checkModerationPermission(
       if (callerRole !== "owner" && !can(callerRole, "admin.chat",) && action.scope === "chat") {
         return { allowed: false, reason: "Only chat owners can shadow/collapse messages", };
       }
+
       break;
     }
 
@@ -134,6 +136,7 @@ export function isBlocked(
       (b.scope === scope || b.scope === "global")
     ) { return true; }
   }
+
   return false;
 }
 
@@ -147,6 +150,7 @@ export function isBanned(bans: ModerationAction[], targetActorId: string,): bool
   for (const b of bans) {
     if (b.type === "ban" && b.targetActorId === targetActorId) { return true; }
   }
+
   return false;
 }
 
@@ -164,6 +168,7 @@ export function getShadowState(
     if (a.type === "shadow" && a.targetActorId === viewerId) { return "shadow"; }
     if (a.type === "collapse" && a.targetActorId === viewerId) { return "collapse"; }
   }
+
   return null;
 }
 
@@ -235,6 +240,7 @@ async function writeAuditPair(
   const expiresAt = args.durationMs
     ? new Date(now + args.durationMs,).toISOString()
     : null;
+
   const reason = args.reason ?? DEFAULT_REASON;
 
   const meta: Record<string, unknown> = {
@@ -304,6 +310,7 @@ export async function applyBan(db: Kysely<DB>, opts: ApplyOptions,): Promise<App
   if (opts.targetActorId === opts.byActorId) {
     return { ok: false, reason: "Cannot ban yourself", };
   }
+
   if (!opts.chatId) {
     return { ok: false, reason: "chatId is required", };
   }
@@ -381,6 +388,7 @@ export async function applyKick(db: Kysely<DB>, opts: ApplyOptions,): Promise<Ap
   if (opts.targetActorId === opts.byActorId) {
     return { ok: false, reason: "Cannot kick yourself", };
   }
+
   if (!opts.chatId) {
     return { ok: false, reason: "chatId is required", };
   }
@@ -433,6 +441,7 @@ export async function applyMute(db: Kysely<DB>, opts: ApplyOptions,): Promise<Ap
   if (opts.targetActorId === opts.byActorId) {
     return { ok: false, reason: "Cannot mute yourself", };
   }
+
   if (!opts.chatId) {
     return { ok: false, reason: "chatId is required", };
   }
@@ -523,6 +532,7 @@ export async function applyFlag(
       nsfwConfig: {} as never,
       db,
     },);
+
     const data = (hookResult.data ?? {}) as { severity?: string };
     if (data.severity === "severe") { severity = "severe"; }
   }

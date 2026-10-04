@@ -85,6 +85,7 @@ async function exclusiveSubtree(
       .where("parent_id", "in", frontier,)
       .orderBy("id",)
       .execute();
+
     frontier = [];
     for (const row of rows) {
       if (seen.has(row.id,)) { continue; }
@@ -93,6 +94,7 @@ async function exclusiveSubtree(
       frontier.push(row.id,);
     }
   }
+
   return { ids: out, exhausted: false, };
 }
 
@@ -119,6 +121,7 @@ async function resolveTarget(
     .where("chat_id", "=", chatId,)
     .where("is_active", "=", 1,)
     .executeTakeFirst();
+
   return active?.id ?? null;
 }
 
@@ -152,6 +155,7 @@ export async function mergeBranch(
     if (targetId === branchId) {
       return { code: "bad_request", message: "Cannot merge a branch into itself", };
     }
+
     const target = await loadBranch(db, chatId, targetId,);
     if (!target) { return { code: "not_found", message: "Target branch not found in chat", }; }
     // The source row is deleted below; consuming the displayed branch would
@@ -176,6 +180,7 @@ export async function mergeBranch(
         message: `Subtree exceeds merge ceiling of ${MAX_MERGE_NODES} nodes`,
       };
     }
+
     const moved = subtree.ids;
     // An empty subtree means the source forked off a node the target already
     // contains: there is nothing to move, so consuming the row would delete a
@@ -195,6 +200,7 @@ export async function mergeBranch(
             message: "Cannot merge the active branch; switch to another branch first",
           },);
         }
+
         // ONLY the subtree root moves. `exclusiveSubtree` discovered every
         // other node FROM the parent it still has, so their `parent_id` is
         // already correct — rewriting them would chain the BFS walk order
@@ -204,6 +210,7 @@ export async function mergeBranch(
           .set({ parent_id: target.parent_message_id, },)
           .where("id", "=", moved[0]!,)
           .execute();
+
         // `exclusiveSubtree` is a BFS, so `moved` is non-decreasing in depth
         // and its last id is a deepest leaf of the moved subtree — the new tip
         // of the target's line. Non-empty by the guard above, so it exists.
@@ -213,6 +220,7 @@ export async function mergeBranch(
           .set({ parent_message_id: tip, },)
           .where("id", "=", targetId,)
           .execute();
+
         // Consume the source: the re-parenting above is permanent, so a
         // surviving row would resolve to the target's line, not its own. Zero
         // rows means a concurrent client consumed it first; aborting rolls the
@@ -221,6 +229,7 @@ export async function mergeBranch(
           .deleteFrom("chat_branches",)
           .where("id", "=", branchId,)
           .executeTakeFirst();
+
         if (Number(deleted?.numDeletedRows ?? 0,) === 0) {
           throw new BranchTxAbort(BRANCH_NOT_FOUND,);
         }

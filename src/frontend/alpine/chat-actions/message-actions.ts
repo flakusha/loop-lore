@@ -87,6 +87,7 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.messageImproveFailed",), },);
       return;
     }
+
     if (this._improvingMessageId === messageId) { return; }
     this._improvingMessageId = messageId;
     try {
@@ -95,10 +96,12 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
         level: this.isGroupChat ? "style-group" : "style-chat",
         text: msg.content,
       },);
+
       if (!improved) {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.messageImproveFailed",), },);
         return;
       }
+
       const patch = await apiFetch(
         `/api/v1/messages/${messageId}`,
         {
@@ -107,10 +110,12 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
           body: jsonBody({ content: improved, },),
         } as Parameters<typeof apiFetch>[1],
       );
+
       if (!patch.ok) {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.messageImproveFailed",), },);
         return;
       }
+
       // In-place splice: the same message object is mutated, so Alpine's
       // keyed list keeps DOM/scroll position untouched.
       msg.content = improved;
@@ -138,6 +143,7 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
       const res = await apiFetch(
         `/api/v1/assets?entity_type=chat&entity_id=${this.activeChat}&pageSize=200`,
       );
+
       if (!res.ok) { throw new Error(`gallery fetch ${String(res.status,)}`,); }
       const data = await res.json();
       const rows: GalleryAsset[] = Array.isArray(data?.data,) ? data.data : [];
@@ -175,14 +181,17 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
           body: jsonBody({ assetId, },),
         } as Parameters<typeof apiFetch>[1],
       );
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({ message: undefined, }));
         this.$dispatch?.("show-toast", {
           type: "error",
           message: err?.message ?? t("toasts.assetAttachFailed",),
         },);
+
         return;
       }
+
       const refreshed = await apiFetch(`/api/v1/messages/${messageId}`,);
       if (refreshed.ok) {
         const body = await refreshed.json();
@@ -191,6 +200,7 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
           target.attachments = body.attachments as Message["attachments"];
         }
       }
+
       this.closeAssetPicker();
       this.$dispatch?.("show-toast", { type: "success", message: t("toasts.assetAttached",), },);
     } catch (err) {

@@ -87,6 +87,7 @@ describe("rollD20WithAdvantage", () => {
         break;
       }
     }
+
     expect(foundNat20,).toBe(true,);
   });
 
@@ -99,6 +100,7 @@ describe("rollD20WithAdvantage", () => {
         break;
       }
     }
+
     expect(foundNat1,).toBe(true,);
   });
 });
@@ -133,6 +135,7 @@ describe("rollDice", () => {
         break;
       }
     }
+
     expect(foundExploded,).toBe(true,);
   });
 
@@ -148,6 +151,7 @@ describe("rollDice", () => {
       const result = rollDice(20, 1, 0,);
       totals.push(result.rawTotal,);
     }
+
     const avg = totals.reduce((a, b,) => a + b, 0,) / totals.length;
     expect(avg,).toBeGreaterThan(9.5,);
     expect(avg,).toBeLessThan(11.5,);

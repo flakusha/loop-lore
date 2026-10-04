@@ -48,6 +48,7 @@ export async function seedCharacters(
       .where("actor_type", "=", ActorType.Character,)
       .where("display_name", "=", character.name,)
       .executeTakeFirst();
+
     if (existing) {
       log.debug(`Character "${character.name}" already exists — skipping`,);
       continue;
@@ -75,12 +76,15 @@ export async function seedCharacters(
         format_version: 0,
       },)
       .execute();
+
     await recordSeedAudit(database, "character", characterId, {
       name: character.name,
       owner: character.owner,
     },);
+
     created += 1;
     log.info(`Seeded character "${character.name}" (owner ${character.owner})`,);
   }
+
   return created;
 }

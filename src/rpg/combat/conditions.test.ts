@@ -28,24 +28,29 @@ describe("rpg/combat/conditions (real logic)", () => {
     expect(isIncapacitated(makeCombatant({ conditions: ["stunned",], hp: 10, isNpc: false, },),),).toBe(true,);
     expect(isIncapacitated(makeCombatant({ conditions: [], hp: 10, isNpc: false, },),),).toBe(false,);
   });
+
   it("isDead detects 0 or negative HP", () => {
     expect(isDead(makeCombatant({ conditions: [], hp: 0, isNpc: true, },),),).toBe(true,);
     expect(isDead(makeCombatant({ conditions: [], hp: -5, isNpc: false, },),),).toBe(true,);
     expect(isDead(makeCombatant({ conditions: [], hp: 10, isNpc: true, },),),).toBe(false,);
   });
+
   it("isCombatOver detects defeat", () => {
     const result = isCombatOver([
       makeCombatant({ conditions: [], hp: 0, isNpc: false, },),
       makeCombatant({ conditions: [], hp: 10, isNpc: true, },),
     ],);
+
     expect(result.over,).toBe(true,);
     expect(result.winner,).toBe("enemy",);
   });
+
   it("isCombatOver not over when both sides alive", () => {
     const result = isCombatOver([
       makeCombatant({ conditions: [], hp: 10, isNpc: false, },),
       makeCombatant({ conditions: [], hp: 10, isNpc: true, },),
     ],);
+
     expect(result.over,).toBe(false,);
   });
 });

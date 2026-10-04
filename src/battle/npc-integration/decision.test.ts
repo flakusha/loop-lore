@@ -37,6 +37,7 @@ describe("makeNPCDecision", () => {
       5,
       [],
     );
+
     expect(decision.type,).toBe("attack",);
     expect(decision.reasoning,).toBe("Aggressive personality drives attack",);
     expect(decision.confidence,).toBe(100,);
@@ -51,6 +52,7 @@ describe("makeNPCDecision", () => {
       1,
       [],
     );
+
     expect(decision.type,).toBe("flee",);
     expect(decision.reasoning,).toBe("Low courage prompts retreat",);
   });
@@ -64,6 +66,7 @@ describe("makeNPCDecision", () => {
       1,
       [],
     );
+
     expect(decision.type,).toBe("defend",);
     expect(decision.reasoning,).toBe("Cautious nature favors defense",);
   });
@@ -77,6 +80,7 @@ describe("makeNPCDecision", () => {
       1,
       [],
     );
+
     expect(decision.type,).toBe("negotiate",);
     expect(decision.reasoning,).toBe("Intelligent approach to avoid conflict",);
   });
@@ -93,6 +97,7 @@ describe("makeNPCDecision", () => {
       1,
       [defeat("b1", 100,), defeat("b2", 100,), defeat("b3", 100,),],
     );
+
     expect(scarred.type,).toBe("attack",);
   });
 
@@ -106,6 +111,7 @@ describe("makeNPCDecision", () => {
       1,
       [defeat("b0", 1000,), defeat("b1", 0,), defeat("b2", 0,), defeat("b3", 0,),],
     );
+
     // Oldest 1000-impact defeat falls outside the last-3 window, so defend still wins
     expect(withOld.type,).toBe("defend",);
   });
@@ -127,6 +133,7 @@ describe("makeNPCDecision", () => {
       5,
       [],
     );
+
     expect(decision.type,).toBe("defend",);
     expect(decision.reasoning,).toBe("Wounded, needs to protect self",);
   });
@@ -140,6 +147,7 @@ describe("makeNPCDecision", () => {
       1,
       [],
     );
+
     expect(decision.type,).toBe("flee",);
     expect(decision.reasoning,).toBe("Outnumbered, tactical retreat",);
   });
@@ -153,6 +161,7 @@ describe("makeNPCDecision", () => {
       1,
       [],
     );
+
     expect(decision.type,).toBe("attack",);
     expect(decision.reasoning,).toBe("High courage emboldens attack",);
   });
@@ -166,6 +175,7 @@ describe("makeNPCDecision", () => {
       1,
       [],
     );
+
     expect(decision.confidence,).toBeGreaterThanOrEqual(0,);
     expect(decision.confidence,).toBeLessThanOrEqual(100,);
     expect(Number.isInteger(decision.confidence,),).toBe(true,);

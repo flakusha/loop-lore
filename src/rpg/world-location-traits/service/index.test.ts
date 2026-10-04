@@ -27,6 +27,7 @@ describe("WorldLocationTraitsService — world traits", () => {
       trait_name: "festive",
       trait_value: "high",
     },);
+
     expect(trait.id,).toBeTruthy();
     const rows = await service.getWorldTraits(actorId, worldId,);
     expect(rows,).toHaveLength(1,);
@@ -49,6 +50,7 @@ describe("WorldLocationTraitsService — world traits", () => {
       trait_name: "a",
       trait_value: "1",
     },);
+
     const updated = await service.updateWorldTrait(trait.id, { trait_value: "2", },);
     expect(updated?.trait_value,).toBe("2",);
     expect(updated?.trait_name,).toBe("a",);
@@ -65,6 +67,7 @@ describe("WorldLocationTraitsService — world traits", () => {
       trait_name: "a",
       trait_value: "1",
     },);
+
     expect(await service.deleteWorldTrait(trait.id,),).toBe(true,);
     expect(await service.getWorldTraits(actorId, worldId,),).toEqual([],);
     expect(await service.deleteWorldTrait("nope",),).toBe(false,);
@@ -81,6 +84,7 @@ describe("WorldLocationTraitsService — location traits", () => {
       trait_name: "drafty",
       trait_value: "cold",
     },);
+
     expect(trait.bonus,).toBe(0,);
     expect(trait.penalty,).toBe(0,);
     expect(trait.effects,).toBe("{}",);
@@ -100,6 +104,7 @@ describe("WorldLocationTraitsService — location traits", () => {
       effects: { cold_resist: 2, },
       equipment_override: { cloak: "warm", },
     },);
+
     expect(trait.bonus,).toBe(2,);
     expect(trait.penalty,).toBe(3,);
     expect(trait.effects,).toBe(JSON.stringify({ cold_resist: 2, },),);
@@ -122,6 +127,7 @@ describe("WorldLocationTraitsService — location traits", () => {
       trait_value: "1",
       bonus: 1,
     },);
+
     const updated = await service.updateLocationTrait(trait.id, { bonus: 5, },);
     expect(updated?.bonus,).toBe(5,);
     expect(updated?.trait_name,).toBe("a",);
@@ -137,6 +143,7 @@ describe("WorldLocationTraitsService — location traits", () => {
       trait_name: "a",
       trait_value: "1",
     },);
+
     expect(await service.deleteLocationTrait(trait.id,),).toBe(true,);
     expect(await service.getLocationTraits(actorId, locationId,),).toEqual([],);
     expect(await service.deleteLocationTrait("nope",),).toBe(false,);
@@ -160,12 +167,14 @@ describe("WorldLocationTraitsService — aggregate", () => {
       trait_name: "w",
       trait_value: "1",
     },);
+
     await service.createLocationTrait({
       actor_id: actorId,
       location_id: locationId,
       trait_name: "l",
       trait_value: "2",
     },);
+
     const all = await service.getAllTraitsForActor(actorId,);
     expect(all.worldTraits,).toHaveLength(1,);
     expect(all.locationTraits,).toHaveLength(1,);
@@ -184,6 +193,7 @@ describe("WorldLocationTraitsService — aggregate", () => {
       trait_name: "mine",
       trait_value: "1",
     },);
+
     await service.createWorldTrait({
       actor_id: otherActor,
       world_id: worldId,
@@ -191,6 +201,7 @@ describe("WorldLocationTraitsService — aggregate", () => {
       trait_name: "theirs",
       trait_value: "2",
     },);
+
     const all = await service.getAllTraitsForActor(actorId,);
     expect(all.worldTraits,).toHaveLength(1,);
     expect(all.worldTraits[0]!.trait_name,).toBe("mine",);

@@ -304,6 +304,7 @@ describe("SeductionService", () => {
       const success = await service.updateDesireProfile("actor-late", {
         fetishes: ["silk",],
       },);
+
       expect(success,).toBe(true,);
       const profile = await service.getDesireProfile("actor-late",);
       expect(profile.fetishes,).toEqual(["silk",],);

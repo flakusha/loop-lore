@@ -17,6 +17,7 @@ function chunkBytes(parts: (string | number)[],): Uint8Array {
     if (typeof p === "string") { out.push(...Array.from(p, (c,) => c.charCodeAt(0,),),); }
     else { out.push(p,); }
   }
+
   return new Uint8Array(out,);
 }
 

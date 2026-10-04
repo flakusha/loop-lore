@@ -103,6 +103,7 @@ export async function assertNsfwCapability(
     chatId: args.chatId,
     actorId: args.actorId,
   },);
+
   if (!gate.allowed) {
     throw new CapabilityBlockedError(
       "access_denied",
@@ -121,6 +122,7 @@ export async function assertNsfwCapability(
         "NSFW capability blocked: consent has not been given",
       );
     }
+
     const action = args.consentAction ?? DEFAULT_CONSENT_ACTION;
     if (!isActionConsented(gate.consent, action,)) {
       throw new CapabilityBlockedError(
@@ -134,6 +136,7 @@ export async function assertNsfwCapability(
     gate.enforcement.effective_limit,
     ...(args.ratingLimits ?? []),
   );
+
   const contentRating = args.contentRating ?? gate.enforcement.character_rating;
   if (!isRatingAllowed(contentRating, effectiveLimit,)) {
     throw new CapabilityBlockedError(
@@ -148,6 +151,7 @@ export async function assertNsfwCapability(
     args.targetActorId,
     args.worldId ?? null,
   );
+
   if (!intimacy.sufficient) {
     throw new CapabilityBlockedError(
       "intimacy_insufficient",

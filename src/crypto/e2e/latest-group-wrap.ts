@@ -26,6 +26,7 @@ export async function latestGroupWrapForRecipient(
     .orderBy("chain_index", "desc",)
     .limit(1,)
     .executeTakeFirst();
+
   return row
     ? {
       id: row.id,

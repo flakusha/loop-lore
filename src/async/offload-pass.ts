@@ -45,6 +45,7 @@ export async function runOffloadPass(
     .where("completed_at", "<=", minAgeCutoff,)
     .where("offloaded_at", "is", null,)
     .execute();
+
   for (const row of ripe) {
     if (row.response_body === null) { continue; }
     if (row.response_body.length <= maxInlineBytes) { continue; }
@@ -69,9 +70,11 @@ export async function runOffloadPass(
           try {
             unlinkSync(spillPath,);
           } catch { /* already gone */ }
+
           throw error;
         }
       },);
+
       offloaded++;
     } catch (error) {
       log.error("offload spill failed", undefined, { id: row.id, error: String(error,), },);
@@ -85,6 +88,7 @@ export async function runOffloadPass(
     .where("status", "in", ["complete", "failed",],)
     .where("completed_at", "<=", ttlCutoff,)
     .execute();
+
   expired = Number(expiredResult[0]?.numUpdatedRows ?? 0,);
 
   // Best-effort cleanup of spill files for rows that have been expired
@@ -98,6 +102,7 @@ export async function runOffloadPass(
     .where("completed_at", "<=", oldCutoff,)
     .where("offload_path", "is not", null,)
     .execute();
+
   for (const row of expiredOld) {
     if (row.offload_path === null) { continue; }
     const filePath = row.offload_path;
@@ -115,10 +120,12 @@ export async function runOffloadPass(
         .where("id", "=", row.id,)
         .execute();
     },);
+
     try {
       unlinkSync(filePath,);
     } catch { /* already gone */ }
   }
+
   const pruned = await pruneOrphanSpills(database, { ttlMs, now, },);
   return { offloaded, expired, pruned, };
 }

@@ -50,6 +50,7 @@ export function timelinesRoutes(opts: HandleOpts, prefix = "/api",) {
             .where("world_id", "=", worldId,)
             .orderBy("is_prime", "desc",)
             .execute();
+
           return jsonCreated({ data: timelines, },);
         },
         { params: t.Object({ worldId: t.String(), },), },
@@ -83,6 +84,7 @@ export function timelinesRoutes(opts: HandleOpts, prefix = "/api",) {
             .select(["id", "world_id", "name", "description", "is_prime", "created_at",],)
             .where("id", "=", id,)
             .executeTakeFirst();
+
           return jsonCreated({ data: row, },);
         },
         {
@@ -109,6 +111,7 @@ export function timelinesRoutes(opts: HandleOpts, prefix = "/api",) {
             .where("id", "=", timelineId,)
             .where("world_id", "=", worldId,)
             .executeTakeFirst();
+
           if (!row) { return notFound("Timeline not found",); }
           return jsonCreated({ data: row, },);
         },
@@ -132,6 +135,7 @@ export function timelinesRoutes(opts: HandleOpts, prefix = "/api",) {
             .where("id", "=", timelineId,)
             .where("world_id", "=", worldId,)
             .executeTakeFirst();
+
           if (!row) { return notFound("Timeline not found",); }
           if (row.is_prime) {
             return badRequestResponse("Cannot delete the prime timeline",);
@@ -141,6 +145,7 @@ export function timelinesRoutes(opts: HandleOpts, prefix = "/api",) {
             .deleteFrom("world_timelines",)
             .where("id", "=", timelineId,)
             .execute();
+
           return new Response(null, { status: 204, },);
         },
         {

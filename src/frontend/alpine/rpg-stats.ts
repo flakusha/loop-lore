@@ -34,6 +34,7 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
         this.rpgStats = null;
         return;
       }
+
       const chat = await chatRes.json();
       const actorId = chat.character_id;
       if (!actorId) {
@@ -99,6 +100,7 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
         total += mod;
       }
     }
+
     return total;
   },
 };
@@ -171,5 +173,6 @@ function parseEquipmentSlots(raw: string,): EquipmentSlot[] {
       // This is a placeholder for future equipment integration
     }
   }
+
   return slots;
 }

@@ -48,17 +48,20 @@ describe("travelSection", () => {
     await insertWorlds(db, userId, "Test World",);
     const worlds = await db.selectFrom("worlds",).select(["id",],)
       .where("name", "=", "Test World",).executeTakeFirstOrThrow();
+
     worldId = worlds.id;
 
     const starting = await insertLocations(db, worldId, "Starting Hub",);
     const startingRow = await db.selectFrom("locations",).select(["id",],)
       .where("name", "=", "Starting Hub",).executeTakeFirstOrThrow();
+
     currentLocationId = startingRow.id;
     void starting; // silence unused
 
     for (let i = 1; i <= 11; i++) {
       await insertLocations(db, worldId, `Other Place ${i}`,);
     }
+
     await insertLocations(db, worldId, "Extra A",);
     await insertLocations(db, worldId, "Extra B",);
 
@@ -66,6 +69,7 @@ describe("travelSection", () => {
     await insertWorlds(db, userId, "Empty World",);
     const emptyWorldRow = await db.selectFrom("worlds",).select(["id",],)
       .where("name", "=", "Empty World",).executeTakeFirstOrThrow();
+
     emptyWorldId = emptyWorldRow.id;
 
     chatWithWorldId = "chat-travel-with-world";
@@ -74,12 +78,14 @@ describe("travelSection", () => {
       world_id: worldId,
       current_location_id: currentLocationId,
     },);
+
     chatWithoutWorldId = "chat-travel-no-world";
     await insertChats(db, "NoWorld Chat", userId, {
       id: chatWithoutWorldId as never,
       world_id: null,
       current_location_id: null,
     },);
+
     emptyChatId = "chat-travel-empty-world";
     await insertChats(db, "Empty World Chat", userId, {
       id: emptyChatId as never,
@@ -101,6 +107,7 @@ describe("travelSection", () => {
     const baseConfig = {
       assistant: { travelPrompts, },
     } as unknown as AssembleContext["config"];
+
     return {
       db,
       actor: {

@@ -30,6 +30,7 @@ export function removeRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectAll()
           .where("id", "=", ctx.params.actorId,)
           .executeTakeFirst();
+
         if (!actor) {
           return jsonError({
             message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",

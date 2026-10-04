@@ -89,10 +89,12 @@ async function loadPipeline(request: LoadRequest,): Promise<string> {
       scope.postMessage({ kind: "progress", loaded: record.loaded, total: record.total, },);
     }
   };
+
   const baseOpts = {
     dtype: request.dtype,
     progress_callback: progressCallback,
   };
+
   const devices = request.device === "webgpu" ? ["webgpu", "wasm",] : ["wasm",];
   let lastError: unknown = null;
   for (const device of devices) {
@@ -105,6 +107,7 @@ async function loadPipeline(request: LoadRequest,): Promise<string> {
       generator = null;
     }
   }
+
   throw lastError ?? new Error("pipeline load failed",);
 }
 
@@ -118,11 +121,13 @@ scope.onmessage = (event: { data: unknown },): void => {
     scope.postMessage({ kind: "unloaded", id, },);
     return;
   }
+
   if (message.kind === "load") {
     if (loadedModel === message.model && generator) {
       scope.postMessage({ kind: "ready", id, engine: "transformers-cached", },);
       return;
     }
+
     loadPipeline(message,).then(
       (engine,) => {
         scope.postMessage({ kind: "ready", id, engine: `transformers-${engine}`, },);
@@ -132,12 +137,15 @@ scope.onmessage = (event: { data: unknown },): void => {
         scope.postMessage({ kind: "error", id, message: `model load failed: ${detail}`, },);
       },
     );
+
     return;
   }
+
   if (!generator) {
     scope.postMessage({ kind: "error", id, message: "no browser model loaded", },);
     return;
   }
+
   const active = generator;
   const input = message.input;
   const maxTokens = message.maxTokens;
@@ -153,5 +161,6 @@ scope.onmessage = (event: { data: unknown },): void => {
       },
     );
 };
+
 /** Module marker: keeps this worker's globals out of the shared global scope (sibling workers declare the same names). */
 export {};

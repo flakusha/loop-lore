@@ -16,6 +16,7 @@ export function staticRoutes() {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
+
       const name = `${ctx.params.page}/${ctx.params.section}`;
       const url = new URL(ctx.request.url,);
       const content = serveStaticPartial(name, url.searchParams,);

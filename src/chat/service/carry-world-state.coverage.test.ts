@@ -46,6 +46,7 @@ describe("carryWorldState", () => {
       id: "ws-src-1",
       description: "storm state",
     } as never,);
+
     await insertLocations(db, sourceWorldId, "Tavern", { id: locationId, } as never,);
     await insertNpcStates(db, npcActorId, sourceWorldId, {
       id: "npc-src-1",
@@ -53,6 +54,7 @@ describe("carryWorldState", () => {
       mental_state: "calm",
       location_id: locationId,
     } as never,);
+
     await insertLocationStates(db, locationId, sourceWorldId, {
       id: "loc-src-1",
       atmosphere: "tense",
@@ -69,6 +71,7 @@ describe("carryWorldState", () => {
     const worldStates = await db
       .selectFrom("world_states",).selectAll()
       .where("world_id", "=", targetWorldId,).execute();
+
     expect(worldStates,).toHaveLength(1,);
     expect(worldStates[0]?.snapshot,).toBe('{"weather":"rain"}',);
     expect(worldStates[0]?.description,).toBe("storm state",);
@@ -77,6 +80,7 @@ describe("carryWorldState", () => {
     const npcStates = await db
       .selectFrom("npc_states",).selectAll()
       .where("world_id", "=", targetWorldId,).execute();
+
     expect(npcStates,).toHaveLength(1,);
     expect(npcStates[0]?.actor_id,).toBe(npcActorId,);
     expect(npcStates[0]?.health,).toBe(7,);
@@ -85,6 +89,7 @@ describe("carryWorldState", () => {
     const locationStates = await db
       .selectFrom("location_states",).selectAll()
       .where("world_id", "=", targetWorldId,).execute();
+
     expect(locationStates,).toHaveLength(1,);
     expect(locationStates[0]?.location_id,).toBe(locationId,);
     expect(locationStates[0]?.atmosphere,).toBe("tense",);
@@ -94,9 +99,11 @@ describe("carryWorldState", () => {
     expect(
       await db.selectFrom("world_states",).selectAll().where("world_id", "=", sourceWorldId,).execute(),
     ).toHaveLength(1,);
+
     expect(
       await db.selectFrom("npc_states",).selectAll().where("world_id", "=", sourceWorldId,).execute(),
     ).toHaveLength(1,);
+
     expect(
       await db.selectFrom("location_states",).selectAll().where("world_id", "=", sourceWorldId,).execute(),
     ).toHaveLength(1,);

@@ -35,12 +35,14 @@ export const workflowListState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
       const res = await apiFetch(`${WORKFLOWS_PATH}${filter}`, {
         headers: { Accept: "application/json", },
       },);
+
       if (res.ok) {
         // A schema mismatch falls back to the empty list, which would read as
         // "the library is empty" rather than "the contract moved". Say so.
         const data = parseOr(WorkflowListResponseSchema, await res.json(), EMPTY_LIST, () => {
           showToast("error", "Unexpected workflow list shape — see the console for the mismatch",);
         },);
+
         this.workflows = data.workflows;
         this.workflowTotal = data.total;
         this.comfyuiReachable = data.comfyui_reachable;

@@ -235,11 +235,14 @@ export function validateVariantTriple(
   if (def.chat_type !== type) {
     return `Variant "${variant}" expects chat_type="${def.chat_type}", got "${type}"`;
   }
+
   if (def.chat_mode !== mode) {
     return `Variant "${variant}" expects chat_mode="${def.chat_mode}", got "${mode}"`;
   }
+
   if (def.chat_purpose !== purpose) {
     return `Variant "${variant}" expects chat_purpose="${def.chat_purpose}", got "${purpose}"`;
   }
+
   return null;
 }

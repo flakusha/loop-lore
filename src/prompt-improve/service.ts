@@ -91,6 +91,7 @@ export async function improvePrompt(options: PromptImproveOptions,): Promise<Pro
     userId,
     chatId,
   },);
+
   if (!result) { return null; }
   const content = stripWrappers(result.content,);
   if (!content) { return null; }
@@ -133,6 +134,7 @@ export async function analyzePrompt(
     { role: "system", content: PROMPT_ANALYSIS_PROMPT, },
     { role: "user", content: trimmed.slice(0, MAX_IMPROVE_INPUT_CHARS,), },
   ], { timeoutMs: AUX_TIMEOUT_MS, userId, chatId, },);
+
   if (!result) { return null; }
   return parseAnalysis(result.content,);
 }
@@ -159,6 +161,7 @@ export function parseAnalysis(raw: string,): PromptAnalysis | null {
   ) {
     return null;
   }
+
   const issues = toStringArray(obj.issues,);
   const suggestions = toStringArray(obj.suggestions,);
   if (!issues || !suggestions) { return null; }
@@ -231,5 +234,6 @@ function toStringArray(value: unknown,): string[] | null {
     if (typeof item !== "string") { return null; }
     out.push(item,);
   }
+
   return out;
 }

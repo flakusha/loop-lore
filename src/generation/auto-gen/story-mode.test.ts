@@ -73,9 +73,11 @@ if (STRICTLY_ISOLATED) {
             temperature: 0.5,
             maxTokens: 100,
           };
+
           generateTextCalls.push(params,);
           await capturedGenerateText(params,);
         }
+
         return {
           prompt: mockTurnPrompt,
           response: mockTurnResponse,
@@ -232,6 +234,7 @@ describeReal("triggerStoryModeGeneration — gm_config NULL must not skip genera
       .select("id",)
       .where("chat_id", "=", "chat-1",)
       .execute();
+
     expect(messages,).toHaveLength(0,);
     expect(capturedEncryptPlaintext,).toBeNull();
     expect(capturedAcceptResponse,).toBeNull();
@@ -258,6 +261,7 @@ describeReal("triggerStoryModeGeneration — gm_config NULL must not skip genera
       .select("id",)
       .where("chat_id", "=", "chat-1",)
       .execute();
+
     expect(messages,).toHaveLength(0,);
   }, 10000,);
 
@@ -288,6 +292,7 @@ describeReal("triggerStoryModeGeneration — gm_config NULL must not skip genera
       .select(["id", "content", "actor_id",],)
       .where("chat_id", "=", "chat-1",)
       .execute();
+
     expect(messages,).toHaveLength(1,);
     expect(messages[0]!.content,).toBe("cipher",);
     expect(messages[0]!.actor_id,).toBe("actor-gm",);
@@ -361,11 +366,13 @@ describeReal("triggerStoryModeGeneration — gm_config NULL must not skip genera
       temperature: 0.5,
       maxTokens: 100,
     },);
+
     const messages = await db
       .selectFrom("messages",)
       .select(["model_id", "provider",],)
       .where("chat_id", "=", "chat-1",)
       .execute();
+
     expect(messages,).toHaveLength(1,);
     expect(messages[0]!.model_id,).toBe("actor-model",);
     expect(messages[0]!.provider,).toBe("actor-provider",);
@@ -392,6 +399,7 @@ describeReal("triggerStoryModeGeneration — gm_config NULL must not skip genera
       .select("id",)
       .where("chat_id", "=", "chat-1",)
       .execute();
+
     expect(messages,).toHaveLength(0,);
     expect(capturedAcceptResponse,).toBeNull();
   }, 10000,);
@@ -417,6 +425,7 @@ describeReal("triggerStoryModeGeneration — gm_config NULL must not skip genera
       .select("id",)
       .where("chat_id", "=", "chat-1",)
       .execute();
+
     expect(messages,).toHaveLength(1,);
     expect(capturedAcceptResponse,).toBe(mockTurnResponse,);
   }, 10000,);

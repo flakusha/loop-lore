@@ -39,11 +39,13 @@ async function withMockFetch(
     calls.push({ url, init, },);
     return handler(url, init,);
   },) as unknown as typeof fetch;
+
   try {
     await fn();
   } finally {
     (globalThis as Record<string, unknown>).fetch = originalFetch;
   }
+
   return calls;
 }
 
@@ -85,12 +87,14 @@ describe("executeTxt2Img", () => {
         const results = await executeTxt2Img(makeHost(ImageApiFamily.Sdcpp,), {}, makeCfg(), (p,) => {
           progress.push(p,);
         },);
+
         expect(results,).toHaveLength(1,);
         expect(results[0]!.filename,).toMatch(/^sdserver-[0-9a-f]{8}-0\.png$/,);
         expect(results[0]!.url,).toBe(`/api/assets/${results[0]!.id}/raw`,);
         expect(results[0]!.mimeType,).toBe("image/png",);
       },
     );
+
     expect(calls[0]!.url,).toBe("http://sdserver.test/sdcpp/v1/txt2img",);
     const body = bodyOf(calls[0]!,);
     expect(body.prompt,).toBe("",);
@@ -122,6 +126,7 @@ describe("executeTxt2Img", () => {
         }, makeCfg(),);
       },
     );
+
     const body = bodyOf(calls[0]!,);
     expect(body.prompt,).toBe("a cat",);
     expect(body.negative_prompt,).toBe("blurry",);
@@ -143,6 +148,7 @@ describe("executeTxt2Img", () => {
         }, makeCfg(),);
       },
     );
+
     expect(bodyOf(calls[0]!,).prompt,).toBe("a cat, happy expression, smiling, bright eyes, cheerful",);
   });
 
@@ -156,6 +162,7 @@ describe("executeTxt2Img", () => {
         }, makeCfg(),);
       },
     );
+
     expect(bodyOf(calls[0]!,).prompt,).toBe("a cat",);
   });
 
@@ -166,6 +173,7 @@ describe("executeTxt2Img", () => {
         await executeTxt2Img(makeHost(ImageApiFamily.Sdcpp,), { prompt: "a cat", }, makeCfg(),);
       },
     );
+
     expect(bodyOf(calls[0]!,).prompt,).toBe("a cat",);
   });
 
@@ -178,6 +186,7 @@ describe("executeTxt2Img", () => {
         expect(results[0]!.filename,).toMatch(/^sdapi-[0-9a-f]{8}-0\.png$/,);
       },
     );
+
     expect(calls[0]!.url,).toBe("http://sdserver.test/sdapi/v1/txt2img",);
     const body = bodyOf(calls[0]!,);
     expect(body.sampler_name,).toBe("euler",);
@@ -194,11 +203,13 @@ describe("executeTxt2Img", () => {
           width: 1024,
           height: 768,
         }, makeCfg(),);
+
         expect(results,).toHaveLength(2,);
         expect(results[0]!.filename,).toMatch(/^openai-[0-9a-f]{8}-0\.png$/,);
         expect(results[0]!.url,).toBe(`/api/assets/${results[0]!.id}/raw`,);
       },
     );
+
     expect(calls[0]!.url,).toBe("http://sdserver.test/v1/images/generations",);
     const body = bodyOf(calls[0]!,);
     expect(body.prompt,).toBe("a dog",);
@@ -219,6 +230,7 @@ describe("executeImg2Img", () => {
         },);
       },
     );
+
     expect(calls[0]!.url,).toBe("http://sdserver.test/sdcpp/v1/img2img",);
     const body = bodyOf(calls[0]!,);
     expect(body.init_image,).toBe("b64src",);
@@ -238,6 +250,7 @@ describe("executeImg2Img", () => {
         }, makeCfg(),);
       },
     );
+
     expect(bodyOf(calls[0]!,).denoising_strength,).toBe(0.5,);
   });
 
@@ -248,6 +261,7 @@ describe("executeImg2Img", () => {
         await executeImg2Img(makeHost(ImageApiFamily.Sdapi,), { input_image: "b64src", }, makeCfg(),);
       },
     );
+
     expect(calls[0]!.url,).toBe("http://sdserver.test/sdapi/v1/img2img",);
     const body = bodyOf(calls[0]!,);
     expect(body.init_images,).toEqual(["b64src",],);
@@ -264,6 +278,7 @@ describe("executeImg2Img", () => {
           );
       },
     );
+
     expect(calls,).toHaveLength(0,);
   });
 });
@@ -277,12 +292,14 @@ describe("executeUpscale", () => {
         const results = await executeUpscale(makeHost(ImageApiFamily.Sdapi,), { input_image: "b64src", }, (p,) => {
           progress.push(p,);
         },);
+
         expect(results,).toHaveLength(1,);
         expect(results[0]!.filename,).toMatch(/^upscaled-[0-9a-f]{8}\.png$/,);
         expect(results[0]!.url,).toBe(`/api/assets/${results[0]!.id}/raw`,);
         expect(results[0]!.mimeType,).toBe("image/png",);
       },
     );
+
     expect(calls[0]!.url,).toBe("http://sdserver.test/sdapi/v1/extra-single-image",);
     const body = bodyOf(calls[0]!,);
     expect(body.image,).toBe("b64src",);
@@ -300,6 +317,7 @@ describe("executeUpscale", () => {
         },);
       },
     );
+
     expect(bodyOf(calls[0]!,).upscale_model,).toBe("ESRGAN",);
   });
 
@@ -323,6 +341,7 @@ describe("executeUpscale", () => {
         );
       },
     );
+
     expect(calls,).toHaveLength(0,);
   });
 });

@@ -74,6 +74,7 @@ export async function insertCommandSystemMessage(
         algorithm: config.encryption.compressAlgorithm,
       },
     },);
+
     sysStoredContent = enc.storedContent;
     sysKeyId = enc.keyId;
   }
@@ -150,6 +151,7 @@ export async function fetchChatAndRole(
       .where("id", "=", chatId,)
       .executeTakeFirst(),
   ],);
+
   const participant = settled[0]?.status === "fulfilled" ? settled[0].value : undefined;
   const chat = settled[1]?.status === "fulfilled" ? settled[1].value : undefined;
   return { chat, role: participant?.role_in_chat ?? ChatParticipantRole.Member, };
@@ -192,10 +194,12 @@ export async function dispatchCommand(
       ? undefined
       : matchWorkflowTrigger(effectiveContent, loadedWorkflows,) ??
         matchWorkflowIntent(effectiveContent, loadedWorkflows,);
+
     if (!session && workflowMatch === undefined) {
       return { handled: false, };
     }
   }
+
   // Issue chat context (chat row + caller role via the shared helper) and
   // recent-message history concurrently — independent reads, used downstream
   // only after this point. `Promise.allSettled` is the project-mandated shape
@@ -210,14 +214,17 @@ export async function dispatchCommand(
       .limit(50,)
       .execute(),
   ],);
+
   // The chat-context helper never rejects (internal allSettled); a messages
   // rejection throws so behavior matches sequential await.
   if (settled.some((r,) => r.status === "rejected")) {
     throw new Error("dispatchCommand: chat context lookup failed",);
   }
+
   const context = settled[0]?.status === "fulfilled"
     ? settled[0].value
     : { chat: undefined, role: ChatParticipantRole.Member, };
+
   const chatRecord = context.chat;
   const recentMessages = settled[1]?.status === "fulfilled" ? settled[1].value : [];
   const roleInChat = context.role;
@@ -271,13 +278,16 @@ export async function dispatchCommand(
         action: "workflow-progress",
         actionPayload: { workflowId: session.workflow.id, },
       };
+
       await saveSession(database, chatId, session,);
     } else {
       const match = matchWorkflowTrigger(effectiveContent, loadedWorkflows,) ??
         matchWorkflowIntent(effectiveContent, loadedWorkflows,);
+
       if (match === undefined) {
         return { handled: false, };
       }
+
       const started = startSession(chatId, match,);
       await saveSession(database, chatId, started,);
       result = {

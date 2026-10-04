@@ -37,6 +37,7 @@ function makeApp(db: Kysely<DB>, userId: string | undefined,) {
   const templates = config.templates as unknown as {
     workflows?: { workflows?: Record<string, unknown> };
   };
+
   templates.workflows ??= { workflows: {}, };
   templates.workflows.workflows ??= {};
   templates.workflows.workflows["entity-character"] = { id: "entity-character", steps: [], };
@@ -59,6 +60,7 @@ async function seed(db: Kysely<DB>,): Promise<void> {
     "Participant",
     { id: PARTICIPANT_ID, user_id: PARTICIPANT_ID, owner_id: PARTICIPANT_ID, } as never,
   );
+
   await insertUsers(db, `outsider-${OUTSIDER_ID}`, "Outsider", { id: OUTSIDER_ID, } as never,);
   await insertActors(db, "Outsider", { id: OUTSIDER_ID, user_id: OUTSIDER_ID, owner_id: OUTSIDER_ID, } as never,);
 
@@ -67,6 +69,7 @@ async function seed(db: Kysely<DB>,): Promise<void> {
     type: "group",
     mode: "story",
   } as never,);
+
   await insertChatParticipants(db, CHAT_ID, PARTICIPANT_ID, {} as never,);
 
   await insertMessages(

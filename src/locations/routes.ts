@@ -58,6 +58,7 @@ export class TravelRouteService {
         seconds_per_unit: input.secondsPerUnit ?? 60,
       } as never,)
       .execute();
+
     return id;
   }
 
@@ -68,12 +69,14 @@ export class TravelRouteService {
       .where("id", "=", input.routeId,)
       .select("world_id",)
       .executeTakeFirst();
+
     if (!route) { throw new Error("travel route not found",); }
     const loc = await this.db
       .selectFrom("locations",)
       .where("id", "=", input.locationId,)
       .select("world_id",)
       .executeTakeFirst();
+
     if (!loc) { throw new Error("location not found",); }
     if (loc.world_id !== route.world_id) {
       throw new Error("cross-world stop rejected",);
@@ -93,6 +96,7 @@ export class TravelRouteService {
         coord_z: input.coordZ ?? null,
       } as never,)
       .execute();
+
     return id;
   }
 
@@ -121,12 +125,14 @@ export class TravelRouteService {
       .where("id", "=", routeId,)
       .select("world_id",)
       .executeTakeFirst();
+
     if (!route) { throw new Error("travel route not found",); }
     const loc = await this.db
       .selectFrom("locations",)
       .where("id", "=", locationId,)
       .select(["world_id", "kind", "mobility_mode",],)
       .executeTakeFirst();
+
     if (!loc) { throw new Error("location not found",); }
     if (loc.world_id !== route.world_id) { throw new Error("cross-world attach rejected",); }
     if (loc.kind !== "transport") { throw new Error("location kind must be 'transport' to attach",); }
@@ -153,6 +159,7 @@ export class TravelRouteService {
       .where("travel_route_stops.location_id", "=", locationId,)
       .select(["travel_routes.id", "travel_routes.name", "travel_routes.kind",],)
       .execute();
+
     return rows.map((r,) => ({ id: r.id, name: r.name, kind: r.kind, }));
   }
 
@@ -162,6 +169,7 @@ export class TravelRouteService {
       .where("id", "=", locationId,)
       .select(["current_route_id", "travel_progress",],)
       .executeTakeFirst();
+
     if (!loc?.current_route_id) { return null; }
     const stops = await this.getStops(loc.current_route_id,);
     if (stops.length === 0) { return null; }
@@ -178,6 +186,7 @@ export class TravelRouteService {
       .select(["id", "name", "kind", "loop", "seconds_per_unit",],)
       .orderBy("name", "asc",)
       .execute();
+
     return rows as Array<{ id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number }>;
   }
 
@@ -194,6 +203,7 @@ export class TravelRouteService {
       .where("world_id", "=", worldId,)
       .select(["id", "name", "kind", "loop", "seconds_per_unit", "world_id",],)
       .executeTakeFirst();
+
     return row as {
       id: string;
       name: string;

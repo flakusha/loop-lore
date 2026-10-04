@@ -46,6 +46,7 @@ export function isInQuietHours(start: string | null, end: string | null, now: Da
   if (startMinutes > endMinutes) {
     return currentMinutes >= startMinutes || currentMinutes < endMinutes;
   }
+
   return currentMinutes >= startMinutes && currentMinutes < endMinutes;
 }
 

@@ -18,15 +18,18 @@ function mergePrefs(stored?: Partial<NotificationPreferences>,): NotificationPre
     enabled: { ...DEFAULT_PREFS.enabled, },
     mutedWorlds: [...DEFAULT_PREFS.mutedWorlds,],
   };
+
   if (stored?.enabled) {
     for (const key of Object.keys(prefs.enabled,) as NotificationType[]) {
       const value = stored.enabled[key];
       if (typeof value === "boolean") { prefs.enabled[key] = value; }
     }
   }
+
   if (Array.isArray(stored?.mutedWorlds,)) {
     prefs.mutedWorlds = [...stored.mutedWorlds,];
   }
+
   return prefs;
 }
 
@@ -45,6 +48,7 @@ export async function getPrefs(
     .select("settings",)
     .where("id", "=", userId,)
     .executeTakeFirst();
+
   const settings = jsonParseOr(user?.settings ?? "{}", {},) as Record<string, unknown>;
   const stored = settings.notifications as Partial<NotificationPreferences> | undefined;
   return mergePrefs(stored,);
@@ -76,6 +80,7 @@ export async function setPrefs(
     .select("settings",)
     .where("id", "=", userId,)
     .executeTakeFirst();
+
   const settings = jsonParseOr(user?.settings ?? "{}", {},) as Record<string, unknown>;
   settings.notifications = merged;
 
@@ -84,10 +89,12 @@ export async function setPrefs(
     // Don't report success for a preference we failed to persist.
     throw new Error("Failed to serialize notification preferences",);
   }
+
   await db
     .updateTable("users",)
     .set({ settings: serialized.value, },)
     .where("id", "=", userId,)
     .execute();
+
   return merged;
 }

@@ -24,9 +24,11 @@ describe("017 guard-trigger UPDATE twins", () => {
       await expect(
         db.updateTable("world_lore_entries",).set({ confidence: 999, },).where("id", "=", loreId,).execute(),
       ).rejects.toThrow(/confidence must be 0\.\.100/,);
+
       await expect(
         db.updateTable("world_lore_entries",).set({ confidence: -1, },).where("id", "=", loreId,).execute(),
       ).rejects.toThrow(/confidence must be 0\.\.100/,);
+
       // In-range UPDATE still passes.
       await db.updateTable("world_lore_entries",).set({ confidence: 50, },).where("id", "=", loreId,).execute();
     } finally {
@@ -44,6 +46,7 @@ describe("017 guard-trigger UPDATE twins", () => {
       await expect(
         db.updateTable("world_lore_entries",).set({ distortion_level: 101, },).where("id", "=", loreId,).execute(),
       ).rejects.toThrow(/distortion_level must be 0\.\.100/,);
+
       await db.updateTable("world_lore_entries",).set({ distortion_level: 10, },).where("id", "=", loreId,).execute();
     } finally {
       await db.destroy();
@@ -62,9 +65,11 @@ describe("017 guard-trigger UPDATE twins", () => {
         "create",
         { user_id: userId, },
       );
+
       await expect(
         db.updateTable("memory_audit_log",).set({ action: "bogus", },).where("id", "=", auditId,).execute(),
       ).rejects.toThrow(/not in allowed enum/,);
+
       // Enum UPDATE still passes.
       await db.updateTable("memory_audit_log",).set({ action: "pin", },).where("id", "=", auditId,).execute();
     } finally {

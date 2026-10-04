@@ -28,6 +28,7 @@ export async function generateSDAPI(
     sampler_name: opts.samplerName ?? sdConfig.defaults.sampler,
     batch_size: n,
   },);
+
   // Base64 image payloads can exceed safeFetch's default size cap.
   const result = await safeFetch<{ images: string[] }>(url, {
     method: "POST",

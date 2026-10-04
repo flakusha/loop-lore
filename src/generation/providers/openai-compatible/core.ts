@@ -95,6 +95,7 @@ export async function streamDispatch(
       for (const line of lines) {
         if (applyStreamLine(line, signal, handler, acc,)) { break; }
       }
+
       if (signal?.aborted) { break; }
     }
   } catch (error) {
@@ -200,10 +201,12 @@ function applyStreamLine(
     acc.fullContent += delta.content;
     handler({ type: "content", content: delta.content, },);
   }
+
   if (delta.reasoning_content) {
     acc.fullThinking += delta.reasoning_content;
     handler({ type: "thinking", content: delta.reasoning_content, },);
   }
+
   if (delta.tool_calls) {
     for (const tc of delta.tool_calls) {
       accumulateToolCall(acc, tc,);
@@ -220,7 +223,9 @@ function applyStreamLine(
         totalTokens: data.usage.total_tokens ?? 0,
       };
     }
+
     handler({ type: "done", finishReason: acc.finishReason, },);
   }
+
   return false;
 }

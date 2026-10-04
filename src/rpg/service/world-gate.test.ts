@@ -39,6 +39,7 @@ describe("world-gate mechanics config", () => {
       rpg_loot: 1,
       rpg_quests: 1,
     },).execute();
+
     const config = await getMechanicsConfig(db, worldId,);
     expect(config,).toEqual({ dice: true, checks: true, combat: true, xp: true, loot: true, quests: true, },);
   });
@@ -64,6 +65,7 @@ describe("world-gate mechanics config", () => {
       rpg_loot: 1,
       rpg_quests: 1,
     },).execute();
+
     await db.updateTable("worlds",).set({ rpg_dice: 0, },).where("id", "=", worldId,).execute();
     const config = await getMechanicsConfig(db, worldId,);
     expect(config?.dice,).toBe(false,);
@@ -81,6 +83,7 @@ describe("world-gate mechanics config", () => {
     const worldId = crypto.randomUUID();
     await db.insertInto("worlds",).values({ id: worldId, name: "NoCombat", owner_id: userId, rpg_enabled: 0, },)
       .execute();
+
     const gate = await checkMechanicEnabled(db, worldId, RpgMechanic.Combat,);
     expect(gate.allowed,).toBe(false,);
     expect(gate.reason,).toContain("combat",);
@@ -105,6 +108,7 @@ describe("world-gate mechanics config", () => {
       rpg_loot: 1,
       rpg_quests: 1,
     },).execute();
+
     expect(await checkCommandMechanic(db, worldId, RpgMechanic.Dice,),).toBeNull();
     await db.updateTable("worlds",).set({ rpg_dice: 0, },).where("id", "=", worldId,).execute();
     const denial = await checkCommandMechanic(db, worldId, RpgMechanic.Dice,);
@@ -120,6 +124,7 @@ describe("world-gate mechanics config", () => {
       rpg_enabled: 0,
       rpg_dice: 1,
     },).execute();
+
     await expect(getMechanicsConfig(db, worldId,),).rejects.toThrow("Invalid composite state: off:on",);
   });
 });

@@ -57,9 +57,11 @@ export function battleCommandFor(
     case "attack": {
       return target ? `/attack ${quote(target.name,)}` : null;
     }
+
     case "heal": {
       return target ? `/heal ${quote(target.name,)}` : null;
     }
+
     case "end": {
       return "/battle end";
     }

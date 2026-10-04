@@ -83,6 +83,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
             if (!settingsResult.ok) {
               return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest, },);
             }
+
             updates.settings = settingsResult.value;
           }
 
@@ -92,6 +93,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
             .select("id",)
             .where("id", "=", targetId,)
             .executeTakeFirst();
+
           if (!targetUser) { return notFound("User not found",); }
 
           await opts.database.updateTable("users",).set(updates,).where("id", "=", targetId,).execute();

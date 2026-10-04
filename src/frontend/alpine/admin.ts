@@ -98,22 +98,27 @@ import { apiFetch, } from "./htmx";
           this.loadOverview();
           break;
         }
+
         case "users": {
           this.loadUsers();
           break;
         }
+
         case "worlds": {
           this.loadWorlds();
           break;
         }
+
         case "chats": {
           this.loadChats();
           break;
         }
+
         case "audit": {
           this.loadAudit();
           break;
         }
+
         case "models": {
           this.loadModels();
           this.loadModelRoles();
@@ -123,31 +128,38 @@ import { apiFetch, } from "./htmx";
           this.loadComparisonHistory();
           break;
         }
+
         case "review": {
           this.loadReview();
           break;
         }
+
         case "templates": {
           this.loadTemplates();
           break;
         }
+
         case "workflows": {
           this.loadWorkflows();
           break;
         }
+
         case "plugins": {
           this.loadPlugins();
           break;
         }
+
         case "system": {
           this.loadSystemConfig();
           this.loadNsfwConfig();
           break;
         }
+
         case "analytics": {
           this.loadAnalytics();
           break;
         }
+
         case "health": {
           this.loadHealth();
           break;
@@ -186,9 +198,11 @@ import { apiFetch, } from "./htmx";
           apiFetch("/api/v1/admin/stats", { headers: { Accept: "application/json", }, },),
           apiFetch(`/api/v1/admin/audit?${params.toString()}`, { headers: { Accept: "application/json", }, },),
         ],);
+
         if (statsRes.status !== "fulfilled" || auditRes.status !== "fulfilled") {
           throw new Error("admin overview load failed",);
         }
+
         if (statsRes.value.ok) { this.stats = await statsRes.value.json(); }
         if (auditRes.value.ok) {
           const d = await auditRes.value.json();

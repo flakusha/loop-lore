@@ -21,6 +21,7 @@ let dom: FakeDom;
 beforeEach(() => {
   dom = installVnFakeDom();
 },);
+
 afterEach(() => {
   dom.restore();
 },);
@@ -33,12 +34,14 @@ describe("anchorFromTransform", () => {
   test("extracts focal point from a resolved row", () => {
     expect(anchorFromTransform({ focal_point_x: 0.4, focal_point_y: 0.3, },),).toEqual({ x: 0.4, y: 0.3, },);
   });
+
   test("null for missing rows and incomplete focal data", () => {
     expect(anchorFromTransform(null,),).toBeNull();
     expect(anchorFromTransform(undefined,),).toBeNull();
     expect(anchorFromTransform({},),).toBeNull();
     expect(anchorFromTransform({ focal_point_x: 0.4, focal_point_y: null, },),).toBeNull();
   });
+
   test("null for non-finite focal values", () => {
     expect(anchorFromTransform({ focal_point_x: NaN, focal_point_y: 0.3, },),).toBeNull();
     expect(anchorFromTransform({ focal_point_x: 0.4, focal_point_y: Infinity, },),).toBeNull();
@@ -50,6 +53,7 @@ describe("anchorToObjectPosition", () => {
     expect(anchorToObjectPosition({ x: 0.4, y: 0.3, },),).toBe("40% 30%",);
     expect(anchorToObjectPosition({ x: 0.5, y: 0.35, },),).toBe("50% 35%",);
   });
+
   test("clamps out-of-range anchors to valid CSS", () => {
     expect(anchorToObjectPosition({ x: 2, y: -0.5, },),).toBe("100% 0%",);
   });
@@ -82,15 +86,18 @@ describe("createAnchorLoader", () => {
       calls += 1;
       return id === "a1" ? { focal_point_x: 0.4, focal_point_y: 0.3, } : null;
     },);
+
     await expect(load("a1",),).resolves.toEqual({ x: 0.4, y: 0.3, },);
     await expect(load("a1",),).resolves.toEqual({ x: 0.4, y: 0.3, },);
     await expect(load("missing",),).resolves.toBeNull();
     expect(calls,).toBe(2,);
   });
+
   test("fetch rejection resolves to null", async () => {
     const load = createAnchorLoader(async () => {
       throw new Error("offline",);
     },);
+
     await expect(load("a1",),).resolves.toBeNull();
   });
 });
@@ -105,8 +112,10 @@ describe("decorateStageAnchors", () => {
       sprite.append(makeEl("img",),);
       stage.append(sprite,);
     }
+
     return stage as unknown;
   }
+
   test("applies fetched anchors, skips unstamped sprites", async () => {
     const stage = stageWith(["a1", null,],) as unknown as ParentNode;
     let fetched: string[] = [];
@@ -114,12 +123,15 @@ describe("decorateStageAnchors", () => {
       fetched.push(id,);
       return { x: 0.4, y: 0.3, };
     },);
+
     expect(fetched,).toEqual(["a1",],);
     const imgs = (stage as unknown as { querySelectorAll(sel: string,): Array<{ style: Record<string, string> }> })
       .querySelectorAll("img",);
+
     expect(imgs[0]?.style["objectPosition"],).toBe("40% 30%",);
     expect(imgs[1]?.style["objectPosition"],).toBeUndefined();
   });
+
   test("null anchor clears, loader failure never rejects", async () => {
     const stage = stageWith(["a1", "a2",],) as unknown as ParentNode;
     await expect(decorateStageAnchors(stage, async (id,): Promise<SpriteAnchor | null> => {
@@ -127,6 +139,7 @@ describe("decorateStageAnchors", () => {
       return null;
     },),).resolves.toBeUndefined();
   });
+
   test("sprite without an image is skipped", async () => {
     const stage = makeEl("div",);
     const sprite = makeEl("div",);
@@ -138,6 +151,7 @@ describe("decorateStageAnchors", () => {
       fetched += 1;
       return { x: 0.4, y: 0.3, };
     },);
+
     expect(fetched,).toBe(0,);
   });
 });

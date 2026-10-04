@@ -66,6 +66,7 @@ export async function recordCarriage(
   if (!isCarriageScope(input.scope,)) {
     throw new Error(`Invalid carriage scope: ${String(input.scope,)}`,);
   }
+
   const payload = (() => {
     const r = safeJsonStringify(input.payload,);
     return r.ok ? r.value : "{}";

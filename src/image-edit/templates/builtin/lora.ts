@@ -28,6 +28,7 @@ export function parseLoraString(loraStr: string,): LoraEntry[] {
       entries.push({ path: trimmed, strength: 1, },);
     }
   }
+
   return entries;
 }
 
@@ -70,6 +71,7 @@ export function buildLoraNodes(
       class_type: "LoraLoader",
       _meta: { title: `LoRA: ${lora.path}`, },
     };
+
     currentModel = [id, 0,];
     currentClip = [id, 1,];
   }

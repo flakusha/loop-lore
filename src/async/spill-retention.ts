@@ -23,6 +23,7 @@ function collectSpillFiles(dir: string,): string[] {
   } catch {
     return []; // no spill dir yet — nothing to sweep
   }
+
   const found: string[] = [];
   for (const name of names) {
     const entry = path.join(dir, name,);
@@ -30,6 +31,7 @@ function collectSpillFiles(dir: string,): string[] {
       found.push(entry,);
       continue;
     }
+
     let inner: string[];
     try {
       if (!statSync(entry,).isDirectory()) { continue; }
@@ -37,10 +39,12 @@ function collectSpillFiles(dir: string,): string[] {
     } catch {
       continue;
     }
+
     for (const leaf of inner) {
       if (leaf.endsWith(".json.gz",)) { found.push(path.join(entry, leaf,),); }
     }
   }
+
   return found;
 }
 
@@ -62,6 +66,7 @@ function removeEmptyNamespaces(dir: string,): void {
   } catch {
     return;
   }
+
   for (const name of names) {
     const child = path.join(dir, name,);
     try {
@@ -107,14 +112,17 @@ export async function pruneOrphanSpills(
     } catch {
       /* raced with another writer/sweeper */ continue;
     }
+
     if (mtimeMs <= cutoffMs) { candidates.push(filePath,); }
   }
+
   // Clean namespaces on BOTH exit paths: a dead process's namespace can be empty
   // (or emptied by an earlier sweep) while still leaving its directory behind.
   if (candidates.length === 0) {
     removeEmptyNamespaces(dir,);
     return 0;
   }
+
   // Chunked IN query (SQLite host-parameter limit) — anything referenced by
   // any row survives, so a chunking race can only over-retain, never delete.
   const referenced = new Set<string>();
@@ -125,10 +133,12 @@ export async function pruneOrphanSpills(
       .select("offload_path",)
       .where("offload_path", "in", candidates.slice(i, i + CHUNK,),)
       .execute();
+
     for (const row of rows) {
       if (row.offload_path !== null) { referenced.add(row.offload_path,); }
     }
   }
+
   let pruned = 0;
   for (const filePath of candidates) {
     if (referenced.has(filePath,)) { continue; }
@@ -137,9 +147,11 @@ export async function pruneOrphanSpills(
       pruned++;
     } catch { /* raced with another writer — keep going */ }
   }
+
   if (pruned > 0) {
     log.info("pruned orphaned spill files", { pruned, scanned: candidates.length, },);
   }
+
   removeEmptyNamespaces(dir,);
   return pruned;
 }

@@ -75,6 +75,7 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config }, pref
       if ((bodyScope === "world" || rowScope === "world") && !can(userRole, "admin.world",)) {
         return { ok: false as const, status: 403, message: "World memories are admin-managed", };
       }
+
       return { ok: true as const, };
     },
     valueTransforms: {
@@ -84,6 +85,7 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config }, pref
       pinned: (value: unknown,) => value === "pinned",
     },
   } as const;
+
   const { withIdPath, basePath, parentParam, } = entityPaths(entityConfig as never, prefix,);
 
   const expandRoute = new Elysia({ name: "memories-expand", },)
@@ -102,6 +104,7 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config }, pref
         .where("id", "=", entityId,)
         .where("actor_id", "=", parentId,)
         .executeTakeFirst();
+
       if (!row) { return notFound("Memory not found",); }
 
       const searchParams = new URL((ctx as any).request.url,).searchParams;
@@ -153,6 +156,7 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config }, pref
         else if (body.pinned === false || body.pinned === "unpinned") { action = "unpin"; }
         else { action = "modify"; }
       }
+
       if (!action) { return; }
 
       await recordAuditLog(opts.database, [{

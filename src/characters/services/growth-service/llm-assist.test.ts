@@ -51,6 +51,7 @@ describe("runLlmAssist", () => {
       llm_assist_enabled: 1,
       growth_mode: "dynamic",
     },);
+
     await insertActors(db, "Disabled Actor", {
       id: disabledActor,
       user_id: ownerUserId,
@@ -59,6 +60,7 @@ describe("runLlmAssist", () => {
       llm_assist_enabled: 0,
       growth_mode: "dynamic",
     },);
+
     await insertActors(db, "Static Actor", {
       id: staticActor,
       user_id: ownerUserId,
@@ -78,6 +80,7 @@ describe("runLlmAssist", () => {
       actorId: "ghost-actor",
       chatContext: "anything",
     },);
+
     expect(result,).toEqual({ entryId: null, },);
   });
 
@@ -86,6 +89,7 @@ describe("runLlmAssist", () => {
       actorId: disabledActor,
       chatContext: "anything",
     },);
+
     expect(result,).toEqual({ entryId: null, },);
   });
 
@@ -94,6 +98,7 @@ describe("runLlmAssist", () => {
       actorId: staticActor,
       chatContext: "anything",
     },);
+
     expect(result,).toEqual({ entryId: null, },);
   });
 
@@ -102,6 +107,7 @@ describe("runLlmAssist", () => {
       actorId: enabledActor,
       chatContext: "user talked about apples",
     },);
+
     expect(result.entryId,).not.toBeNull();
     expect(typeof result.entryId,).toBe("string",);
 
@@ -110,6 +116,7 @@ describe("runLlmAssist", () => {
       .where("id", "=", result.entryId!,)
       .selectAll()
       .executeTakeFirst();
+
     expect(row,).toBeDefined();
     expect(row?.actor_id,).toBe(enabledActor,);
     expect(row?.axis,).toBe("arc",);
@@ -130,6 +137,7 @@ describe("runLlmAssist", () => {
       .where("id", "=", result.entryId!,)
       .selectAll()
       .executeTakeFirst();
+
     expect(row?.axis,).toBe("trait",);
     expect(row?.event_type,).toBe(GrowthEventType.TraitDrifted,);
   });

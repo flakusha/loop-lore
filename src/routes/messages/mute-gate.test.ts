@@ -31,6 +31,7 @@ const BASE = "http://localhost";
 const createModule: unknown = await import("./create").catch(() => null);
 const createPristine = !!createModule &&
   typeof (createModule as Record<string, unknown>).createRoutes === "function";
+
 const { createRoutes, } = (createPristine ? createModule : {}) as typeof import("./create");
 const describeRoute = createPristine ? describe : describe.skip;
 
@@ -83,6 +84,7 @@ describe("enforceMuteGate", () => {
         import_spec: "{}",
       },)
       .execute();
+
     chatId = uid();
     await insertChats(db, "Mute Gate Chat", ownerId, { id: chatId, } as never,);
     await db
@@ -137,12 +139,14 @@ describeRoute("POST /messages mute wiring", () => {
         body: JSON.stringify({ content: "hello there", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
     const rows = await db
       .selectFrom("messages",)
       .select("id",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(rows,).toHaveLength(0,);
   });
 
@@ -156,6 +160,7 @@ describeRoute("POST /messages mute wiring", () => {
         body: JSON.stringify({ content: "hello there", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     // Only the sender's row is asserted — auto-reply's assistant row is
     // incidental pipeline behavior under default config.
@@ -165,6 +170,7 @@ describeRoute("POST /messages mute wiring", () => {
       .where("chat_id", "=", chatId,)
       .where("role", "=", "user",)
       .execute();
+
     expect(userRows,).toHaveLength(1,);
   });
 },);

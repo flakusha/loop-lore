@@ -98,6 +98,7 @@ export abstract class BaseProvider<S extends BaseProviderState = BaseProviderSta
     const rawBase = options.defaultBaseUrl && !config.baseUrl
       ? options.defaultBaseUrl
       : config.baseUrl;
+
     const baseUrl = rawBase.replace(/\/+$/, "",);
     const validated = validateProviderUrl(baseUrl,);
     if (!validated.ok) {
@@ -108,6 +109,7 @@ export abstract class BaseProvider<S extends BaseProviderState = BaseProviderSta
         false,
       );
     }
+
     const base: BaseProviderState = {
       baseUrl,
       apiKey: config.apiKey,
@@ -116,6 +118,7 @@ export abstract class BaseProvider<S extends BaseProviderState = BaseProviderSta
       retries: config.retries,
       headers: config.headers ?? {},
     };
+
     this.state = options.buildState ? options.buildState(base,) : (base as S);
     this.capabilities = options.capabilities;
     this.dispatchers = options.dispatchers;
@@ -171,6 +174,7 @@ export abstract class BaseProvider<S extends BaseProviderState = BaseProviderSta
         false,
       );
     }
+
     return this.dispatchers.embed(this.state, input, this.state.defaultModel,);
   }
 }

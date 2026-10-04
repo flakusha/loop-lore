@@ -62,14 +62,17 @@ export const loreSection: SectionBuilder = {
     const needsScan = allEntries.some(
       (e,) => !params.selectiveKeys && e.selective && !e.constant,
     );
+
     let maxDepth = 1;
     if (needsScan) {
       let deepest = 1;
       for (const entry of allEntries) {
         deepest = Math.max(deepest, clampScanDepth(entry.scan_depth,),);
       }
+
       maxDepth = Math.min(deepest, MAX_SCAN_DEPTH,);
     }
+
     // Conversation scan window, most recent first. When selective keys are given
     // explicitly (UI override) they stand in for the conversation.
     const scanned = params.selectiveKeys ? null : await recentConversation(ctx.db, params.chatId, maxDepth,);
@@ -82,12 +85,14 @@ export const loreSection: SectionBuilder = {
       if (!isLoreVisibleTo({ audienceScope: parseLoreScope(entry.audience_scope,), }, identityWithLocation,)) {
         return false;
       }
+
       // Lifecycle confidence floor (TASK-world-lore-lifecycle-confidence-decay-distortion).
       if (!passesConfidenceFloor(entry, loaded.lifecycleConfig,)) { return false; }
       // Check cooldown second
       if (!isCooldownExpired(entry.last_activated, entry.cooldown_seconds,)) {
         return false;
       }
+
       if (entry.constant) { return passesActivationChance(entry.activation_chance,); }
       if (!entry.selective) { return passesActivationChance(entry.activation_chance,); }
 
@@ -98,6 +103,7 @@ export const loreSection: SectionBuilder = {
       for (const w of window.toLowerCase().split(/[^a-z0-9]+/i,)) {
         if (w) { words.add(w,); }
       }
+
       if (!matchesSelectiveKeys(entry, words, window,)) { return false; }
       return passesActivationChance(entry.activation_chance,);
     };
@@ -157,6 +163,7 @@ export const loreSection: SectionBuilder = {
       if (isLoreDisputed(entry, loaded.lifecycleConfig,)) { disputedList.push(entry.content,); }
       else { undisputedList.push(entry.content,); }
     }
+
     if (undisputedList.length > 0) { parts.push(undisputedList.join("\n\n",),); }
     if (disputedList.length > 0) {
       // Disputed entries are tagged with a bracket sentinel that survives
@@ -165,6 +172,7 @@ export const loreSection: SectionBuilder = {
       const lines = disputedList.flatMap((c,) => [`[disputed] ${c}`,]);
       parts.push(lines.join("\n\n",),);
     }
+
     const loreText = parts.join("\n\n",);
     return loreText ? [{ role: "system", content: wrapSection("lore", loreText,), },] : [];
   },

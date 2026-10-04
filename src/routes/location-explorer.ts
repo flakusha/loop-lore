@@ -39,6 +39,7 @@ async function requireWorldAccess(
     .select(["owner_id", "visibility",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
+
   if (!world) { return notFound("World not found",); }
   if (can(userRole, "admin.world",) || world.owner_id === userId) { return null; }
   if (world.visibility === WorldVisibility.Public) { return null; }
@@ -48,6 +49,7 @@ async function requireWorldAccess(
     .where("world_id", "=", worldId,)
     .where("actor_id", "=", userId,)
     .executeTakeFirst();
+
   if (member) { return null; }
   return notFound("World not found",);
 }
@@ -118,6 +120,7 @@ export function locationExplorerRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", locId,)
             .where("world_id", "=", worldId,)
             .executeTakeFirst();
+
           if (!location) { return notFound("Location not found",); }
 
           const state = await database

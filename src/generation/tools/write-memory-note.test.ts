@@ -51,6 +51,7 @@ describe("write_memory_note tool", () => {
       { content: "The keeper drinks only black coffee.", },
       { db, actorId, chatId, },
     );
+
     expect(result.isError,).not.toBe(true,);
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, stored: 1, },);
 
@@ -74,6 +75,7 @@ describe("write_memory_note tool", () => {
       importance: 0.9,
       keywords: ["mirror", "rule",],
     }, { db, actorId, chatId, },);
+
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, stored: 1, memoryType: "semantic", },);
     expect(result.metadata,).toMatchObject({ stored: 1, memoryType: "semantic", },);
 
@@ -82,6 +84,7 @@ describe("write_memory_note tool", () => {
       .select(["memory_type", "importance", "keywords",],)
       .where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
+
     expect(row.memory_type,).toBe(MemoryType.Semantic,);
     expect(row.importance,).toBeCloseTo(0.9, 10,);
     expect(JSON.parse(row.keywords as string,),).toEqual(["mirror", "rule",],);
@@ -98,6 +101,7 @@ describe("write_memory_note tool", () => {
       { content: "x".repeat(MEMORY_NOTE_MAX_CHARS + 1,), },
       { db, actorId, chatId, },
     );
+
     expect(result.isError,).toBe(true,);
   });
 

@@ -115,9 +115,11 @@ export function buildStyleDirective(cfg: OutputStyleConfig,): string {
     : cfg.intensity <= 0.25
     ? "Subtly"
     : "Moderately";
+
   const intro = `Adopt the following writing style. ${intensityLabel} favor it in every reply:`;
   const custom = cfg.customInstruction
     ? `\n\nAdditional voice guidance: ${cfg.customInstruction}`
     : "";
+
   return `${intro}\n${base}${custom}`;
 }

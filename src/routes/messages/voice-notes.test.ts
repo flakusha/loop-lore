@@ -37,14 +37,17 @@ describe("enrichAttachments voice notes", () => {
       duration_secs: 42.5,
     },);
   },);
+
   afterAll(async () => {
     await sqlite.close();
   },);
+
   test("exposes duration and voice-note label for audio", async () => {
     const enriched = (await enrichAttachments(
       db,
       JSON.stringify([{ assetId: voiceAsset, order: 0, caption: "", label: "voice-note", },],),
     )) as unknown as EnrichedAttachment[];
+
     expect(enriched,).toHaveLength(1,);
     const first = enriched[0]!;
     expect(first.label,).toBe("voice-note",);
@@ -53,15 +56,18 @@ describe("enrichAttachments voice notes", () => {
     expect(first.type,).toBe("audio",);
     expect(first.url,).toBe(`/api/assets/${voiceAsset}/raw`,);
   });
+
   test("returns null for empty payloads", async () => {
     expect(await enrichAttachments(db, null,),).toBeNull();
     expect(await enrichAttachments(db, "[]",),).toBeNull();
   });
+
   test("degrades gracefully for unknown assets", async () => {
     const enriched = (await enrichAttachments(
       db,
       JSON.stringify([{ assetId: uid(), order: 0, caption: "", label: "voice-note", },],),
     )) as unknown as EnrichedAttachment[];
+
     expect(enriched,).toHaveLength(1,);
     const first = enriched[0]!;
     expect(first.durationSecs,).toBe(0,);

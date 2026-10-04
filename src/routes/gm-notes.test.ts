@@ -27,6 +27,7 @@ async function setup(): Promise<Kysely<DB>> {
     "owner-1",
     { id: "11111111-1111-4111-8111-111111111111", world_id: "world-1", } as any,
   );
+
   return db;
 }
 
@@ -41,6 +42,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(gmNotesRoutes({ database: db, config: {} as any, },),);
 }
 
@@ -84,6 +86,7 @@ describe("gmNotesRoutes", () => {
           body: body ? JSON.stringify(body,) : undefined,
         },),
       );
+
       expect(res.status, `expected 401 for ${method} ${path}`,).toBe(401,);
     }
   });
@@ -95,6 +98,7 @@ describe("gmNotesRoutes", () => {
     const res = await app.handle(
       new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -110,6 +114,7 @@ describe("gmNotesRoutes", () => {
         body: JSON.stringify({ type: "world_secret", content: "The king is a lich.", },),
       },),
     );
+
     expect(created.status,).toBe(201,);
     const { id, } = await getJson<{ id: string }>(created,);
     expect(id,).toBeTruthy();
@@ -118,6 +123,7 @@ describe("gmNotesRoutes", () => {
     const listed = await app.handle(
       new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`,),
     );
+
     expect(listed.status,).toBe(200,);
     const list = await getJson<{ items: { id: string; status: string; content: string }[]; total: number }>(listed,);
     expect(list.total,).toBe(1,);
@@ -130,6 +136,7 @@ describe("gmNotesRoutes", () => {
         method: "POST",
       },),
     );
+
     expect(revealed.status,).toBe(204,);
 
     const after = await getJson<{ items: { status: string }[] }>(
@@ -137,18 +144,21 @@ describe("gmNotesRoutes", () => {
         new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`,),
       ),
     );
+
     expect(after.items[0]!.status,).toBe("revealed",);
 
     // Delete
     const del = await app.handle(
       new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes/${id}`, { method: "DELETE", },),
     );
+
     expect(del.status,).toBe(204,);
 
     // Delete again → 404
     const delAgain = await app.handle(
       new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes/${id}`, { method: "DELETE", },),
     );
+
     expect(delAgain.status,).toBe(404,);
   });
 
@@ -169,12 +179,14 @@ describe("gmNotesRoutes", () => {
           body: JSON.stringify({ type: "tone", content, priority, scope: "scene", },),
         },),
       );
+
       expect(res.status,).toBe(201,);
     }
 
     const listed = await app.handle(
       new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes`,),
     );
+
     const list = await getJson<{ items: { priority: number; content: string }[] }>(listed,);
     expect(list.items[0]!.content,).toBe("High priority.",);
     expect(list.items[1]!.content,).toBe("Low priority.",);
@@ -191,6 +203,7 @@ describe("gmNotesRoutes", () => {
         body: JSON.stringify({ type: "tone", content: "", },),
       },),
     );
+
     expect(empty.status,).toBe(422,);
 
     const badType = await app.handle(
@@ -200,6 +213,7 @@ describe("gmNotesRoutes", () => {
         body: JSON.stringify({ type: "not-a-type", content: "x", },),
       },),
     );
+
     expect(badType.status,).toBe(422,);
   });
 
@@ -210,6 +224,7 @@ describe("gmNotesRoutes", () => {
     const unknownChat = await app.handle(
       new Request(`${BASE}/api/chats/00000000-0000-4000-8000-000000000000/whitenotes`,),
     );
+
     expect(unknownChat.status,).toBe(403,); // checkChatAccess maps missing chat → forbidden
 
     const missing = await app.handle(
@@ -218,6 +233,7 @@ describe("gmNotesRoutes", () => {
         { method: "DELETE", },
       ),
     );
+
     expect(missing.status,).toBe(404,);
   });
 
@@ -233,8 +249,10 @@ describe("gmNotesRoutes", () => {
           body: JSON.stringify({ type, content: `note ${type}`, },),
         },),
       );
+
       expect(res.status,).toBe(201,);
     }
+
     for (const type of Object.values(WhiteneoteType,)) {
       const res = await app.handle(
         new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes`, {
@@ -243,6 +261,7 @@ describe("gmNotesRoutes", () => {
           body: JSON.stringify({ type, content: `note ${type}`, },),
         },),
       );
+
       expect(res.status,).toBe(201,);
     }
   });

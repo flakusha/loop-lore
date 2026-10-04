@@ -61,6 +61,7 @@ describe("views/character-edit-form", () => {
       desc: "<b>bold</b>",
       characterId: "evil'); alert(1); ('",
     };
+
     const html = buildEditFormHtml(raw,);
     // Raw script tag must NOT appear verbatim.
     expect(html,).not.toContain("<script>alert(1)</script>",);
@@ -91,6 +92,7 @@ describe("views/character-edit-form", () => {
       avatarId: "",
       avatarRemoveBtn: "",
     };
+
     const html = buildEditFormHtml(noAvatar,);
     expect(html,).toContain("👤",);
     expect(html,).not.toContain("remove-avatar",);

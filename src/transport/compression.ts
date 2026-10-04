@@ -51,6 +51,7 @@ function compress(
   if (!bufferResult.ok) {
     throw bufferResult.error;
   }
+
   const buffer = bufferResult.buffer;
   const strictIn = strictUint8(buffer,);
 
@@ -96,6 +97,7 @@ function decompress(data: Uint8Array, algorithm: CompressionAlgorithm,): Uint8Ar
   if (!bufferResult.ok) {
     throw bufferResult.error;
   }
+
   const buffer = bufferResult.buffer;
   const strictIn = strictUint8(buffer,);
 

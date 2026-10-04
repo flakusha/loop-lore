@@ -227,6 +227,7 @@ describe("cancellation fan-out over registered side-effect jobs", () => {
         throw new Error("job exploded",);
       },
     },);
+
     registerSideEffectJob("att-1", trackingJob("job-after", "image-queue", calls,),);
 
     const result = cancelGeneration({

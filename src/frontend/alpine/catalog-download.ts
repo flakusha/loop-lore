@@ -66,6 +66,7 @@ export async function downloadCatalogEntry(deps: CatalogDownloadDeps,): Promise<
   if (split && !ordered) {
     throw new Error(`Catalog entry "${deps.entry.id}" has an incomplete GGUF split set`,);
   }
+
   const files = ordered ?? deps.entry.files;
   const knownTotal = catalogTotalBytes(deps.entry,);
   const stored: string[] = [];
@@ -75,6 +76,7 @@ export async function downloadCatalogEntry(deps: CatalogDownloadDeps,): Promise<
     if (!/^https?:\/\//.test(file.url,)) {
       throw new Error(`Catalog file URL is not http(s): ${file.name}`,);
     }
+
     const key = catalogStoreKey(deps.entry.id, file.name,);
     const prefix = (await deps.store.load(key,))?.bytes;
     const bytes = await download({
@@ -92,18 +94,22 @@ export async function downloadCatalogEntry(deps: CatalogDownloadDeps,): Promise<
         }
         : undefined,
     },);
+
     await deps.store.save(key, {
       bytes,
       sha256: file.sha256 ?? await digest(bytes,),
       updatedAt: Date.now(),
     },);
+
     if (split && stored.length === 0) { firstBytes = bytes; }
     stored.push(key,);
     doneBytes += bytes.length;
   }
+
   if (split && !isGgufMagic(firstBytes?.subarray(0, 4,) ?? new Uint8Array(0,),)) {
     throw new Error(`Catalog entry "${deps.entry.id}" failed the GGUF header probe`,);
   }
+
   return { modelId: deps.entry.id, files: stored, totalBytes: doneBytes, };
 }
 

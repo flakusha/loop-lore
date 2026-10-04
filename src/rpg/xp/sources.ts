@@ -66,6 +66,7 @@ export function xpForQuest(
     hard: 1.5,
     deadly: 2,
   };
+
   const baseXp = xpForLevel(questLevel + 1,) - xpForLevel(questLevel,);
   return Math.floor(baseXp * (multipliers[difficulty] ?? 1),);
 }
@@ -85,6 +86,7 @@ export function xpForSkillChallenge(
     medium: 0.5,
     hard: 1,
   };
+
   const baseXp = 100 * characterLevel;
   return Math.floor(baseXp * (multipliers[difficulty] ?? 0.5),);
 }

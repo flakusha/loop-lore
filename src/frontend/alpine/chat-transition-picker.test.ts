@@ -63,16 +63,20 @@ function buildCtx(overrides?: Partial<PickerCtx>,): PickerCtx {
     },
     ...overrides,
   };
+
   const wired = ctx as PickerCtx & Record<string, unknown>;
   wired.loadLocations = async () => {
     ctx.loadCalls++;
   };
+
   wired.changeChatLocation = async () => {
     ctx.changeCalls++;
   };
+
   wired.selectChat = async (id: string,) => {
     ctx.selected.push(id,);
   };
+
   return ctx;
 }
 
@@ -85,6 +89,7 @@ beforeEach(() => {
     transitionLocations: [],
     transitionBusy: false,
   };
+
   (globalThis as Record<string, unknown>).Alpine = {
     store: () => ui,
     $data: () => ({}),
@@ -108,6 +113,7 @@ describeOrSkip("transitionPicker.toggleTransitionPicker", () => {
       { id: "loc1", name: "Town", },
       { id: "loc2", name: "Forest", },
     ],);
+
     expect(ui.transitionDestinationId,).toBe("loc1",);
   });
 
@@ -159,12 +165,15 @@ describeOrSkip("transitionPicker.runLocationTransition", () => {
       if (url === "/api/v1/chats/c1" && !opts?.method) {
         return Response.json({ template_id: "tmpl-1", },);
       }
+
       if (url === "/api/v1/chats/c1/migrate") {
         return Response.json({ newChatId: "c2", sourceChatId: "c1", }, { status: 201, },);
       }
+
       if (url === "/api/v1/chats/c2/location") {
         return Response.json({ ok: true, },);
       }
+
       return Response.json({}, { status: 404, },);
     };
 
@@ -176,6 +185,7 @@ describeOrSkip("transitionPicker.runLocationTransition", () => {
       templateId: "tmpl-1",
       carry: { participants: true, memory: true, worldState: true, state: true, },
     },);
+
     expect(calls[2]?.url,).toBe("/api/v1/chats/c2/location",);
     expect(JSON.parse(calls[2]?.opts.body as string,),).toEqual({ locationId: "loc2", },);
     expect(ctx.selected,).toEqual(["c2",],);
@@ -191,9 +201,11 @@ describeOrSkip("transitionPicker.runLocationTransition", () => {
       if (url === "/api/v1/chats/c1" && !opts?.method) {
         return Response.json({ template_id: "tmpl-1", },);
       }
+
       if (url === "/api/v1/chats/c1/migrate") {
         return Response.json({ newChatId: "c3", }, { status: 201, },);
       }
+
       return Response.json({ ok: true, },);
     };
 
@@ -203,6 +215,7 @@ describeOrSkip("transitionPicker.runLocationTransition", () => {
       templateId: "tmpl-1",
       carry: { history: "full", location: true, state: true, pins: true, memory: true, },
     },);
+
     expect(ctx.selected,).toEqual(["c3",],);
     expect(ctx.toasts.at(-1,),).toMatchObject({
       type: "success",
@@ -222,6 +235,7 @@ describeOrSkip("transitionPicker.runLocationTransition", () => {
       type: "error",
       message: "This chat has no setup template — only an in-place move is possible.",
     },);
+
     expect(ui.transitionBusy,).toBe(false,);
   });
 

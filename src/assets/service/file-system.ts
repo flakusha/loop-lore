@@ -33,6 +33,7 @@ export function resolveUploadDir(uploadDir: string,): string {
         const afterHome = normalized.slice(forbidden.length + 1,);
         if (afterHome.includes("/",)) { continue; }
       }
+
       throw new Error(`Upload directory "${resolved}" resolves to forbidden system path "${normalized}"`,);
     }
   }
@@ -70,6 +71,7 @@ export function storeFile(uploadDir: string, assetId: string, filename: string, 
   if (!target.startsWith(`${root}/`,)) {
     throw new Error(`Refusing to write outside upload dir: ${target}`,);
   }
+
   writeFileSync(target, buffer,);
   return storagePath;
 }

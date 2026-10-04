@@ -63,6 +63,7 @@ const shadowNoteStatusDef: StateDef<ShadowNoteStatus> = {
   },
   terminal: ["revealed",],
 };
+
 export const shadowNoteStatusMachine = createMachine(shadowNoteStatusDef,);
 
 // ── Shadow Note Visibility ────────────────────────────────
@@ -87,6 +88,7 @@ const shadowNoteVisibilityDef: StateDef<ShadowNoteVisibility> = {
   },
   terminal: [],
 };
+
 export const shadowNoteVisibilityMachine = createMachine(shadowNoteVisibilityDef,);
 
 /**

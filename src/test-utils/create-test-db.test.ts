@@ -6,6 +6,7 @@ describe("test-utils create-test-db", () => {
   test("createTestDb is defined and callable", () => {
     expect(typeof createTestDb,).toBe("function",);
   });
+
   test("createTestDb returns a Promise", async () => {
     const result = createTestDb();
     expect(result,).toBeInstanceOf(Promise,);

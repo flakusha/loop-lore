@@ -22,5 +22,6 @@ export async function listWorldInvites(
     .where("world_id", "=", worldId,)
     .orderBy("created_at", "desc",)
     .execute();
+
   return Array.from(rows, (row,) => toRow(row,),);
 }

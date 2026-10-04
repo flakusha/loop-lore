@@ -98,6 +98,7 @@ export async function persistLoot(
       .where("world_id", "=", dest.worldId,)
       .where("ledger_key", "=", dest.ledgerKey,)
       .executeTakeFirst();
+
     if (existing) {
       const parsed = safeJsonParse<string[]>(existing.world_item_ids,);
       return { ...result, worldItemIds: parsed.ok ? parsed.value : [], };
@@ -110,6 +111,7 @@ export async function persistLoot(
     for (const drop of result.drops) {
       ids.push(...(await persistDrop(items, drop, dest, category,)),);
     }
+
     if (dest.ledgerKey) {
       const serialized = safeJsonStringify(ids,);
       await trx
@@ -122,6 +124,7 @@ export async function persistLoot(
         },)
         .execute();
     }
+
     return ids;
   },);
 
@@ -144,6 +147,7 @@ function chunkQuantity(quantity: number, maxStack: number,): number[] {
     chunks.push(take,);
     remaining -= take;
   }
+
   return chunks;
 }
 
@@ -186,9 +190,11 @@ async function persistDrop(
       `persistLoot: item definition ${definitionId} not found in world ${dest.worldId}`,
     );
   }
+
   const maxStack = definition.stackable === StackableState.Stackable
     ? (definition.max_stack ?? 1)
     : 1;
+
   if (
     definition.stackable === StackableState.Unique &&
     (definition.rarity === ItemRarity.Unique || definition.rarity === ItemRarity.Artifact)
@@ -196,6 +202,7 @@ async function persistDrop(
     const existing = await items.getUniqueItem(definitionId, dest.worldId,);
     if (existing) { return [existing.id,]; }
   }
+
   const chunks = chunkQuantity(drop.quantity, maxStack,);
 
   // Grant to an NPC or place at a location — a destination is required so
@@ -210,6 +217,7 @@ async function persistDrop(
       throw new Error("persistLoot requires actorId or locationId",);
     }
   }
+
   return ids;
 }
 

@@ -67,6 +67,7 @@ describe("taskClarificationSection", () => {
     const msgs = await taskClarificationSection.build(
       fakeCtx({ actor: baseActor({ type: "narrator", display_name: "Narrator", },), },),
     );
+
     expect(msgs[0]!.content,).toContain("Assistant persona: Narrator",);
     expect(msgs[0]!.content,).not.toContain("Character in role",);
   });
@@ -75,6 +76,7 @@ describe("taskClarificationSection", () => {
     const msgs = await taskClarificationSection.build(
       fakeCtx({ task: "gm-decision", actor: baseActor({ display_name: "Worldweaver", },), },),
     );
+
     expect(msgs[0]!.content,).toContain("Game master: Worldweaver",);
     expect(msgs[0]!.content,).not.toContain("Character in role",);
   });
@@ -83,6 +85,7 @@ describe("taskClarificationSection", () => {
     const msgs = await taskClarificationSection.build(
       fakeCtx({ task: "vn-choice", action: "pick-3", },),
     );
+
     expect(msgs[0]!.content,).toContain("generate choice cards for a visual-novel scene",);
     expect(msgs[0]!.content,).toContain("pick-3",);
   });

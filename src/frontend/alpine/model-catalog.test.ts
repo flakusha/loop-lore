@@ -41,6 +41,7 @@ describe("model-catalog", () => {
       seen.push(url,);
       return jsonResponse({ models: [ENTRY,], },);
     },);
+
     expect(seen,).toEqual(["/api/v1/local-inference/manifest",],);
     expect(models,).toEqual([ENTRY,],);
   });
@@ -70,14 +71,17 @@ describe("model-catalog", () => {
         cdn: "https://cdn.example.com/m1",
       },),
     ).toBe(false,);
+
     expect(isCatalogModel(null,),).toBe(false,);
     expect(isCatalogModel({ ...ENTRY, files: [{ name: "x", url: 7, },], },),).toBe(false,);
     expect(
       isCatalogModel({ ...ENTRY, files: [{ name: "x", url: "https://x", sizeBytes: "big", },], },),
     ).toBe(false,);
+
     expect(
       isCatalogModel({ ...ENTRY, files: [{ name: "x", url: "https://x", sha256: 42, },], },),
     ).toBe(false,);
+
     expect(isCatalogModel(ENTRY,),).toBe(true,);
   });
 
@@ -91,6 +95,7 @@ describe("model-catalog", () => {
         ],
       },),
     ).toBe(30,);
+
     expect(catalogTotalBytes(ENTRY,),).toBeUndefined();
     expect(catalogTotalBytes({ ...ENTRY, files: [], },),).toBe(0,);
   });
@@ -101,6 +106,7 @@ describe("fetchCapability", () => {
     expect(await fetchCapability(async () => jsonResponse({ downloadsAllowed: false, },)),).toEqual({
       downloadsAllowed: false,
     },);
+
     expect(await fetchCapability(async () => jsonResponse({ downloadsAllowed: true, },)),).toEqual({
       downloadsAllowed: true,
     },);
@@ -111,6 +117,7 @@ describe("fetchCapability", () => {
     expect(await fetchCapability(async () => jsonResponse({ downloadsAllowed: false, }, 500,)),).toEqual({
       downloadsAllowed: true,
     },);
+
     expect(
       await fetchCapability(async () => {
         throw new Error("offline",);
@@ -156,6 +163,7 @@ describe("gguf split-chunk contract", () => {
       "m-00001-of-00002.gguf",
       "m-00002-of-00002.gguf",
     ],);
+
     expect(orderSplitFiles(split(["m-00001-of-00003.gguf", "m-00003-of-00003.gguf",],),),).toBeNull();
     expect(orderSplitFiles(split(["m-00001-of-00002.gguf", "m-00001-of-00002.gguf",],),),).toBeNull();
     expect(orderSplitFiles(ENTRY,),).toBeNull();

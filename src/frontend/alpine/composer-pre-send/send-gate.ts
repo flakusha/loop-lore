@@ -103,12 +103,15 @@ export function sendBlockedReasonText(reason: SendBlockedReason,): string {
     case "no_active_chat": {
       return "Open a chat before sending.";
     }
+
     case "chat_paused": {
       return "Chat is paused.";
     }
+
     case "no_actor_selected": {
       return "Pick a character to send as.";
     }
+
     case "not_your_turn": {
       return "It's not your turn — wait for the current speaker.";
     }

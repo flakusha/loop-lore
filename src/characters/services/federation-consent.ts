@@ -29,6 +29,7 @@ export class FederationConsentError extends Error {
       message ??
         `Character ${actorId} has not opted in to federation (federation_consent=${consent ? 1 : 0})`,
     );
+
     this.name = "FederationConsentError";
   }
 }
@@ -48,6 +49,7 @@ export async function getFederationConsent(
     .select("federation_consent",)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   return row ? row.federation_consent === 1 : false;
 }
 

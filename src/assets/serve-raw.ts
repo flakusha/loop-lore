@@ -54,6 +54,7 @@ export async function handleServeRaw({
     signedUrlExpires,
     signedUrlAction,
   },);
+
   if (resolved instanceof Response) { return resolved; }
 
   const { asset, } = resolved;
@@ -124,6 +125,7 @@ export async function handleDownload({
     signedUrlExpires,
     signedUrlAction,
   },);
+
   if (resolved instanceof Response) { return resolved; }
   const { asset, } = resolved;
   const safeName = asset.filename.replaceAll(/[^\w.-]+/g, "_",);

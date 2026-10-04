@@ -28,6 +28,7 @@ export const pluginAgentRoleSection: SectionBuilder = {
       // Role id assigned but no matching plugin role registered — no-op.
       return [];
     }
+
     if (!role.systemPrompt) { return []; }
 
     return [{ role: "system", content: wrapSection("plugin_agent_role", role.systemPrompt,), },];

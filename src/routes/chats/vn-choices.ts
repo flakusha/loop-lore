@@ -57,6 +57,7 @@ function handleListVnChoices(database: Kysely<DB>,) {
     if (!access.ok) {
       return serviceErrorToResponse(access.error,);
     }
+
     const sceneIndex = Number(ctx.query.sceneIndex,);
 
     if (!Number.isInteger(sceneIndex,) || sceneIndex < 0) {
@@ -71,6 +72,7 @@ function handleListVnChoices(database: Kysely<DB>,) {
         : (result.code === "forbidden"
           ? HttpStatus.Forbidden
           : HttpStatus.BadRequest);
+
       return jsonError(result.message, status, result.code as never,);
     }
 
@@ -93,6 +95,7 @@ function handleSelectVnChoice(database: Kysely<DB>,) {
     if (!access.ok) {
       return serviceErrorToResponse(access.error,);
     }
+
     const choiceId = ctx.params.choiceId;
 
     if (!choiceId) {
@@ -107,6 +110,7 @@ function handleSelectVnChoice(database: Kysely<DB>,) {
         : (result.code === "forbidden"
           ? HttpStatus.Forbidden
           : HttpStatus.BadRequest);
+
       return jsonError(result.message, status, result.code as never,);
     }
 

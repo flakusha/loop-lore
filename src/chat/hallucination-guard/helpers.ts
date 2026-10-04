@@ -16,6 +16,7 @@ export function extractContext(text: string, entityName: string,): string {
       return sentence.slice(0, 200,);
     }
   }
+
   return text.slice(0, 200,);
 }
 
@@ -40,18 +41,21 @@ export function computeHallucinationConfidence(
 
       break;
     }
+
     case "location": {
       // Locations are somewhat less likely
       confidence = 0.6;
 
       break;
     }
+
     case "item": {
       // Items are less likely to be hallucinated
       confidence = 0.5;
 
       break;
     }
+
     case "world": {
       // Shared world facts — lower hallucination likelihood than characters.
       confidence = 0.6;

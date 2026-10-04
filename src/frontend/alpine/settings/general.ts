@@ -84,9 +84,11 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
             "maxTokens",
             "detailLevel",
           ] as const;
+
           for (const key of fields) {
             if (settings[key]) { (this as unknown as Record<string, unknown>)[key] = settings[key]; }
           }
+
           if (typeof settings.temperature === "number") { this.temperature = settings.temperature; }
           // Boolean chat flags: only trust real booleans so a missing key
           // keeps the localStorage/default value.
@@ -97,6 +99,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       } catch (error) {
         log.warn("loadSettings failed", { error: String(error,), },);
       }
+
       this.loaded = true;
     },
 
@@ -111,6 +114,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
         const res = await apiFetch(`/api/v1/nsfw/moderation/preferences/${encodeURIComponent(userId,)}`, {
           headers: { Accept: "application/json", },
         },);
+
         if (res.ok) {
           const body = await res.json() as { data?: Record<string, unknown> };
           const d = body.data;
@@ -145,6 +149,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
         const appended = this.nsfwConsent.blockReason ? ` — ${this.nsfwConsent.blockReason}` : "";
         return parts.join(", ",) + appended;
       }
+
       return t("settings.nsfwNone",);
     },
 
@@ -161,6 +166,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
           for (const p of providers) {
             if (p.status === "healthy") { healthy.push(p,); }
           }
+
           this.providerList = healthy;
         }
       } catch (error) {
@@ -203,6 +209,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
           showToast("error", t("toasts.exportFailed",),);
           return;
         }
+
         const blob = await res.blob();
         const url = URL.createObjectURL(blob,);
         const a = document.createElement("a",);

@@ -39,6 +39,7 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
       const res = await apiFetch(`/api/v1/admin/providers/${name}/models`, {
         headers: { Accept: "application/json", },
       },);
+
       if (res.ok) {
         const data = await res.json();
         this.providerModels[name] = data.models || [];
@@ -99,10 +100,12 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
     if (lightweight) {
       return "Lightweight — better for captioning, moderation, monitoring, censoring than roleplay";
     }
+
     const capable = ctx >= 32_000 || (!Number.isNaN(size,) && size >= 8);
     if (capable) {
       return "Capable — suited to long-form roleplay and storytelling";
     }
+
     return "";
   },
   /**
@@ -134,8 +137,10 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
               error: p.error,
             };
           }
+
           await this.loadProviderModels(p.name,);
         }
+
         this.providers = merged;
         showToast("success", t("toasts.providersRescanned",),);
       } else { showToast("error", t("toasts.failedRescanProviders",),); }

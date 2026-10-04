@@ -74,6 +74,7 @@ function findCharacterFiles(cwd: string,): string[] {
     path.join(cwd, "configs", "characters",),
     path.join(cwd, "characters",),
   ];
+
   if (mainRoot && mainRoot !== cwd) {
     searchDirs.push(
       path.join(mainRoot, "configs", "characters",),
@@ -117,6 +118,7 @@ function parseCharacterFile(filePath: string,): CharacterFileData {
   if (ext === "toml") {
     return Bun.TOML.parse(content,);
   }
+
   return Bun.YAML.parse(content,) as CharacterFileData;
 }
 

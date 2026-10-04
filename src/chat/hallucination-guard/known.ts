@@ -26,6 +26,7 @@ export async function loadKnownEntities(
     .select("display_name",)
     .limit(500,)
     .execute();
+
   for (const row of actorRows) {
     actors.add(row.display_name.toLowerCase(),);
 
@@ -39,6 +40,7 @@ export async function loadKnownEntities(
   if (worldId) {
     locQuery = locQuery.where("world_id", "=", worldId,);
   }
+
   const locRows = await locQuery.limit(500,).execute();
   for (const row of locRows) {
     locations.add(row.name.toLowerCase(),);
@@ -49,6 +51,7 @@ export async function loadKnownEntities(
   if (worldId) {
     itemQuery = itemQuery.where("world_id", "=", worldId,);
   }
+
   const itemRows = await itemQuery.limit(500,).execute();
   for (const row of itemRows) {
     items.add(row.name.toLowerCase(),);
@@ -60,6 +63,7 @@ export async function loadKnownEntities(
     .select("name",)
     .limit(100,)
     .execute();
+
   for (const row of worldRows) {
     worlds.add(row.name.toLowerCase(),);
   }

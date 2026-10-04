@@ -83,6 +83,7 @@ export class MattingService {
       previousStatus: asset.alpha_status,
       startedAt: new Date().toISOString(),
     };
+
     storeJob(job,);
     await this.#setAlphaStatus(assetId, AssetAlphaStatus.MattingPending,);
 
@@ -133,6 +134,7 @@ export class MattingService {
       const fallback = job.previousStatus === AssetAlphaStatus.Matted
         ? AssetAlphaStatus.Raw
         : AssetAlphaStatus.MattingFailed;
+
       await this.#setAlphaStatus(job.assetId, fallback,).catch(() => undefined);
       getLogger().warn({ event: "matting.job_failed", jobId: job.id, error: job.error, },);
     } finally {
@@ -150,6 +152,7 @@ export class MattingService {
       .selectAll()
       .where("id", "=", assetId,)
       .executeTakeFirst();
+
     return row ?? null;
   }
 
@@ -163,6 +166,7 @@ export class MattingService {
     if (asset.encryption_tier !== "public") {
       throw new Error("Matting of encrypted assets is not supported",);
     }
+
     const path = getAssetFilePath(this.#uploadDir, asset.storage_path,);
     const raw = new Uint8Array(await Bun.file(path,).arrayBuffer(),);
     const sized = safeFromUint8Array(raw,);
@@ -205,6 +209,7 @@ export class MattingService {
         label: MATTING_SOURCE_LABEL,
       },
     },);
+
     return asset;
   }
 

@@ -55,6 +55,7 @@ describe("GET /api/blog/authors/:authorId/followers (BUG-blog-followers-list-no-
     const res = await makeApp(null, null,).handle(
       new Request(`http://localhost/api/blog/authors/${AUTHOR}/followers`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -62,6 +63,7 @@ describe("GET /api/blog/authors/:authorId/followers (BUG-blog-followers-list-no-
     const res = await makeApp(AUTHOR, "user",).handle(
       new Request(`http://localhost/api/blog/authors/${AUTHOR}/followers`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { followers?: string[]; count?: number };
     expect(body.followers,).toEqual([FOLLOWER,],);
@@ -72,6 +74,7 @@ describe("GET /api/blog/authors/:authorId/followers (BUG-blog-followers-list-no-
     const res = await makeApp(OTHER, "user",).handle(
       new Request(`http://localhost/api/blog/authors/${AUTHOR}/followers`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -79,6 +82,7 @@ describe("GET /api/blog/authors/:authorId/followers (BUG-blog-followers-list-no-
     const res = await makeApp(OTHER, "admin",).handle(
       new Request(`http://localhost/api/blog/authors/${AUTHOR}/followers`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { followers?: string[] };
     expect(body.followers,).toEqual([FOLLOWER,],);
@@ -90,6 +94,7 @@ describe("POST /api/blog/follow/:authorId", () => {
     const res = await makeApp(null, null,).handle(
       new Request(`http://localhost/api/blog/follow/${AUTHOR}`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -97,10 +102,12 @@ describe("POST /api/blog/follow/:authorId", () => {
     const res = await makeApp(OTHER, "user",).handle(
       new Request(`http://localhost/api/blog/follow/${AUTHOR}`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
     const status = await makeApp(OTHER, "user",).handle(
       new Request(`http://localhost/api/blog/follow/${AUTHOR}/status`,),
     );
+
     expect(status.status,).toBe(200,);
     const body = (await status.json()) as { following?: boolean };
     expect(body.following,).toBe(true,);
@@ -112,6 +119,7 @@ describe("GET /api/blog/follow/:authorId/status", () => {
     const res = await makeApp(null, null,).handle(
       new Request(`http://localhost/api/blog/follow/${AUTHOR}/status`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -119,6 +127,7 @@ describe("GET /api/blog/follow/:authorId/status", () => {
     const res = await makeApp(OTHER, "user",).handle(
       new Request(`http://localhost/api/blog/follow/${AUTHOR}/status`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { following?: boolean };
     expect(body.following,).toBe(false,);
@@ -130,6 +139,7 @@ describe("DELETE /api/blog/follow/:authorId", () => {
     const res = await makeApp(null, null,).handle(
       new Request(`http://localhost/api/blog/follow/${AUTHOR}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -137,6 +147,7 @@ describe("DELETE /api/blog/follow/:authorId", () => {
     const res = await makeApp(FOLLOWER, "user",).handle(
       new Request(`http://localhost/api/blog/follow/${AUTHOR}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
     const svc = new BlogService(db,);
     expect(await svc.isFollowing(FOLLOWER, AUTHOR,),).toBeFalse();

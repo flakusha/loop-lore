@@ -30,12 +30,14 @@ const toolExecPristine = await (async () => {
     const probe = await executeToolCalls([
       { id: "probe", function: { name: "__pristine_probe__", arguments: "{}", }, },
     ],);
+
     const content = probe[0]?.content;
     return typeof content === "string" && content.includes("Tool not found",);
   } catch {
     return false;
   }
 })();
+
 const describeReal = toolExecPristine ? describe : describe.skip;
 
 beforeEach(() => {
@@ -118,6 +120,7 @@ describeReal("executeToolCalls context forwarding", () => {
     expect(parsed.error,).toContain("tool arguments must be a JSON object",);
     expect(parsed.received,).toBe('{"name": "foo",}',);
   });
+
   test("non-object JSON (array) emits explicit error without invoking handler", async () => {
     let invoked = false;
     registry.addTools("test-plugin", [
@@ -240,6 +243,7 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       status: "active",
       settings: "{}",
     },).execute();
+
     await insertActors(db, "Alice", {
       id: actorId,
       actor_type: "character",
@@ -250,6 +254,7 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       data_source_format: "json",
       data_raw: null,
     } as never,);
+
     await db.insertInto("chats",).values({
       id: chatId,
       name: "Tool Exec Persist",
@@ -258,12 +263,14 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       created_by: userId,
       max_turns: null,
     } as never,).execute();
+
     await db.insertInto("chat_participants",).values({
       chat_id: chatId,
       actor_id: actorId,
       role_in_chat: "member",
       talkativity: 5,
     } as never,).execute();
+
     // The assistant message is inserted so any future FK on
     // `messages.tool_call_id` (none today) would still be satisfiable. The
     // inline persist path writes rows with `parent_id = null` and traces the
@@ -311,6 +318,7 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       .where("chat_id", "=", chatId,)
       .where("content_type", "=", "tool_result",)
       .execute();
+
     expect(rows.length,).toBe(1,);
     expect(rows[0]!.parent_id,).toBeNull();
     expect(rows[0]!.chat_id,).toBe(chatId,);
@@ -348,12 +356,14 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       .where("content_type", "=", "tool_result",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(rows.length,).toBe(1,);
     expect(JSON.parse(rows[0]!.metadata ?? "{}",),).toEqual({
       tool_call_id: "tc-2",
       tool_name: "explode_tool",
       tool_error: true,
     },);
+
     const parsed = JSON.parse(rows[0]!.content,);
     expect(parsed.error,).toBe("boom",);
 
@@ -374,6 +384,7 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       .where("content_type", "=", "tool_result",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(rows.length,).toBe(1,);
     expect(JSON.parse(rows[0]!.metadata ?? "{}",),).toEqual({
       tool_call_id: "tc-3",
@@ -433,8 +444,10 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
             },
           }),
         };
+
         return chain as unknown as ReturnType<Kysely<DB>["insertInto"]>;
       }
+
       return realInsertInto(table,);
     }) as Kysely<DB>["insertInto"];
 
@@ -508,9 +521,11 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       .where("content_type", "=", "tool_result",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     const rejected = rows.find((r,) =>
       jsonParseOr<Record<string, unknown>>(r.metadata ?? "{}", {},).tool_call_id === "tc-reject"
     );
+
     expect(jsonParseOr<Record<string, unknown>>(rejected!.metadata ?? "{}", {},).tool_error,).toBe(true,);
     expect(jsonParseOr<Record<string, unknown>>(rejected!.content, {},).error,).toBe("kaboom",);
   });
@@ -549,9 +564,11 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       .where("content_type", "=", "tool_result",)
       .where("chat_id", "=", chatId,)
       .execute();
+
     const slow = rows.find((r,) =>
       jsonParseOr<Record<string, unknown>>(r.metadata ?? "{}", {},).tool_call_id === "tc-slow"
     );
+
     expect(jsonParseOr<Record<string, unknown>>(slow!.metadata ?? "{}", {},).tool_error,).toBe(true,);
     expect(jsonParseOr<Record<string, unknown>>(slow!.content, {},).error,).toContain("timed out",);
   });

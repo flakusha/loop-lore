@@ -70,10 +70,12 @@ function makeDb(
       if (table === "actors" && failActorInsert) {
         throw new Error("simulated actor insert failure",);
       }
+
       const skipped = table === "users" && !!vals.username && seenUsernames.has(vals.username,);
       if (table === "users" && vals.username && !skipped) {
         seenUsernames.add(vals.username,);
       }
+
       return {
         onConflict: (cb: (oc: any,) => any,) =>
           cb({
@@ -93,6 +95,7 @@ function makeDb(
       };
     },
   });
+
   return {
     fn: {
       countAll: () => ({ as: (_alias: string,) => "count_all_marker", }),
@@ -138,6 +141,7 @@ function makeDb(
             }),
           }),
         };
+
         try {
           return await cb(trx,);
         } catch (err) {
@@ -146,6 +150,7 @@ function makeDb(
             if (last === undefined) { break; }
             seenUsernames.delete(last,);
           }
+
           throw err;
         }
       },
@@ -172,6 +177,7 @@ describe("POST /api/auth/register", () => {
   beforeEach(() => {
     registerLimiter = createRegisterLimiter();
   },);
+
   afterEach(() => {
     registerLimiter.destroy();
   },);

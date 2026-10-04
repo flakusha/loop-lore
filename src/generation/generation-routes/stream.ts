@@ -82,6 +82,7 @@ export async function handleGenerationStream(
               event.html.split("\n",),
               (l,) => `data: ${l}`,
             ).join("\n",);
+
             controller.enqueue(new TextEncoder().encode(`event: ${event.type}\n${dataBlock}\n\n`,),);
           } catch {
             // Controller might be closed — ignore
@@ -101,6 +102,7 @@ export async function handleGenerationStream(
             controller.enqueue(
               new TextEncoder().encode(`event: stream-error\ndata: ${payload.ok ? payload.value : "{}"}\n\n`,),
             );
+
             controller.close();
           } catch {
             // Ignore
@@ -160,13 +162,16 @@ async function waitForBuffer(chatId: string, timeoutMs: number,): Promise<Return
         resolve(undefined,);
         return;
       }
+
       const buf = getBuffer(chatId,);
       if (buf) {
         resolve(buf,);
         return;
       }
+
       setTimeout(check, 200,);
     };
+
     check();
   },);
 }

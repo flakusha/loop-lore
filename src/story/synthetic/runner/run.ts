@@ -50,6 +50,7 @@ async function executeRowCases(
       qualityScores.push(r.actual.score,);
     }
   }
+
   return rowResults;
 }
 
@@ -91,6 +92,7 @@ export async function run(
         break;
       }
     }
+
     if (
       allPassed &&
       state.autoValidate &&
@@ -107,6 +109,7 @@ export async function run(
   const summary: SyntheticTestRunSummary = {
     passRate: executed > 0 ? passed / executed : 0,
   };
+
   if (mode === SyntheticTestMode.Calibration && qualityScores.length > 0) {
     summary.suggestedThresholds = suggestThresholds(qualityScores,);
   }

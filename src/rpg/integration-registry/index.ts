@@ -82,6 +82,7 @@ export function IntegrationRegistry(): IntegrationRegistry {
     contracts: new Map(),
     stateLayers: [],
   };
+
   const self: IntegrationRegistryContext = {
     ...state,
     addEdge: (edge,) => addEdge({ thisL: self, edge, },),
@@ -99,6 +100,7 @@ export function IntegrationRegistry(): IntegrationRegistry {
     getStateLayers: (systemId,) => getStateLayers({ thisL: self, systemId, },),
     getGraph: () => getGraph({ thisL: self, },),
   };
+
   return self;
 }
 

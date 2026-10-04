@@ -35,6 +35,7 @@ describe("local inference manifest", () => {
       if (!isWllamaEngine(model.engine,)) {
         expect(model.files.length,).toBeGreaterThan(0,);
       }
+
       for (const file of model.files) {
         expect(file.name.length,).toBeGreaterThan(0,);
         expect(file.url.startsWith("https://",),).toBe(true,);
@@ -42,16 +43,19 @@ describe("local inference manifest", () => {
           expect(Number.isSafeInteger(file.sizeBytes,),).toBe(true,);
           expect(file.sizeBytes,).toBeGreaterThan(0,);
         }
+
         if (file.sha256 !== undefined) {
           expect(/^[0-9a-f]{64}$/.test(file.sha256,),).toBe(true,);
         }
       }
     }
   });
+
   test("absent policy allows every catalog model", () => {
     for (const model of BROWSER_MODEL_CATALOG) {
       expect(isModelDownloadable(model.id,),).toBe(true,);
     }
+
     expect(buildLocalInferenceManifest().models.length,).toBe(BROWSER_MODEL_CATALOG.length,);
   });
 
@@ -60,8 +64,10 @@ describe("local inference manifest", () => {
     for (const model of BROWSER_MODEL_CATALOG) {
       expect(isModelDownloadable(model.id, policy,),).toBe(false,);
     }
+
     expect(buildLocalInferenceManifest(policy,).models,).toEqual([],);
   });
+
   test("per-model config wins over the admin default either way", () => {
     const first = BROWSER_MODEL_CATALOG[0];
     const second = BROWSER_MODEL_CATALOG[1];
@@ -101,6 +107,7 @@ describe("local inference manifest", () => {
         expect(model.gguf,).toBeUndefined();
       }
     }
+
     expect(BROWSER_MODEL_CATALOG.some((model,) => isWllamaEngine(model.engine,)),).toBe(true,);
   });
 });

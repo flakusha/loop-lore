@@ -35,6 +35,7 @@ describe("actor notes service", () => {
       title: "Rumors",
       content: "Knows about the smuggler cove",
     },);
+
     expect(created.ok,).toBe(true,);
     if (!created.ok) { return; }
     expect(created.entity.category,).toBe("general",);
@@ -43,6 +44,7 @@ describe("actor notes service", () => {
     await insertActorNotes(db, actorId, "Pinned", "pinned body", {
       pinned: "pinned",
     },);
+
     const listed = await listActorNotes(db, actorId, "user-owner", "user",);
     expect(listed.ok,).toBe(true,);
     if (listed.ok) {
@@ -55,9 +57,11 @@ describe("actor notes service", () => {
       content: "body",
       category: "story",
     },);
+
     const stories = await listActorNotes(db, actorId, "user-owner", "user", {
       category: "story",
     },);
+
     expect(stories.ok,).toBe(true,);
     if (stories.ok) {
       expect(stories.total,).toBe(1,);
@@ -69,12 +73,14 @@ describe("actor notes service", () => {
     const noTitle = await createActorNote(db, actorId, "user-owner", "user", {
       content: "body",
     } as CreateNoteInput,);
+
     expect(noTitle,).toEqual({ ok: false, code: "bad_request", message: "title is required", },);
 
     const noContent = await createActorNote(db, actorId, "user-owner", "user", {
       title: "t",
       content: "",
     },);
+
     expect(noContent,).toEqual({ ok: false, code: "bad_request", message: "content is required", },);
   });
 
@@ -83,6 +89,7 @@ describe("actor notes service", () => {
       title: "before",
       content: "body",
     },);
+
     if (!created.ok) { throw new Error("seed failed",); }
 
     const updated = await updateActorNote(
@@ -93,6 +100,7 @@ describe("actor notes service", () => {
       "user",
       { title: "after", pinned: true, },
     );
+
     expect(updated.ok,).toBe(true,);
     if (!updated.ok) { return; }
     expect(updated.entity.title,).toBe("after",);
@@ -105,6 +113,7 @@ describe("actor notes service", () => {
       id: "actor-stranger",
       owner_id: "user-owner",
     } as never,);
+
     const noteId = await insertActorNotes(db, foreign, "Foreign", "body",);
 
     const res = await updateActorNote(
@@ -115,6 +124,7 @@ describe("actor notes service", () => {
       "user",
       { title: "hijack", },
     );
+
     expect(res,).toEqual({ ok: false, code: "not_found", message: "Note not found", },);
   });
 
@@ -123,6 +133,7 @@ describe("actor notes service", () => {
       title: "scrap",
       content: "body",
     },);
+
     if (!created.ok) { throw new Error("seed failed",); }
 
     const deleted = await deleteActorNote(
@@ -132,6 +143,7 @@ describe("actor notes service", () => {
       "user-owner",
       "user",
     );
+
     expect(deleted,).toEqual({ ok: true, id: created.entity.id, },);
 
     const missing = await deleteActorNote(db, actorId, "no-note", "user-owner", "user",);
@@ -146,6 +158,7 @@ describe("actor notes service", () => {
       title: "t",
       content: "c",
     },);
+
     expect(created,).toEqual({ ok: false, code: "forbidden", message: "Not allowed", },);
 
     const admin = await listActorNotes(db, actorId, "user-other", "admin",);

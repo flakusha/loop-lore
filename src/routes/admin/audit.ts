@@ -38,6 +38,7 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           const url = new URL(ctx.request.url,);
           const { page, pageSize, } = parsePagination(url.searchParams,);
           const offset = (page - 1) * pageSize;
@@ -60,6 +61,7 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           let query = opts.database
             .selectFrom("log_entries",)
             .select([
@@ -86,12 +88,15 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           if (eventType) {
             query = query.where("event_type", "=", eventType,);
           }
+
           if (userIdFilter) {
             query = query.where("user_id", "=", userIdFilter,);
           }
+
           if (entityType) {
             query = query.where("entity_type", "=", entityType,);
           }
+
           if (q) {
             const like = `%${q}%`;
             query = query.where("message", "like", like,);
@@ -102,19 +107,24 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           let countQuery = opts.database
             .selectFrom("log_entries",)
             .select(opts.database.fn.countAll<number>().as("total",),);
+
           if (eventType) {
             countQuery = countQuery.where("event_type", "=", eventType,);
           }
+
           if (userIdFilter) {
             countQuery = countQuery.where("user_id", "=", userIdFilter,);
           }
+
           if (entityType) {
             countQuery = countQuery.where("entity_type", "=", entityType,);
           }
+
           if (q) {
             const like = `%${q}%`;
             countQuery = countQuery.where("message", "like", like,);
           }
+
           const countResult = await countQuery.executeTakeFirst();
           const total = countResult?.total ?? 0;
 
@@ -139,6 +149,7 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             code: ErrorCode.Forbidden,
           },);
         }
+
         const { id, } = ctx.params as { id: string };
         const entry = await opts.database
           .selectFrom("log_entries",)
@@ -161,6 +172,7 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           ],)
           .where("id", "=", id,)
           .executeTakeFirst();
+
         if (!entry) {
           return jsonError({
             message: ctx.t?.("admin.logEntryNotFound",) ?? "Log entry not found",
@@ -168,6 +180,7 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             code: ErrorCode.NotFound,
           },);
         }
+
         return jsonResponse(entry,);
       }, {
         response: {

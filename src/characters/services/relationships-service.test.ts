@@ -38,6 +38,7 @@ describe("RelationshipsService", () => {
         trust: 70,
         familiarity: 60,
       },);
+
       expect(relationshipId,).toBeDefined();
     });
 
@@ -48,6 +49,7 @@ describe("RelationshipsService", () => {
           targetActorId: testActorId2,
           relationshipType: "friend",
         },);
+
         expect(true,).toBe(false,);
       } catch (error: any) {
         expect(error.message,).toContain("already exists",);
@@ -61,6 +63,7 @@ describe("RelationshipsService", () => {
         testActorId1,
         testActorId2,
       );
+
       expect(relationship,).toBeDefined();
       expect(relationship?.actorId,).toBe(testActorId1,);
       expect(relationship?.relationshipType,).toBe("friend",);
@@ -86,6 +89,7 @@ describe("RelationshipsService", () => {
         standing: 75,
         trust: 85,
       },);
+
       const relationship = await relationshipsService.getRelationship(testActorId1, testActorId2,);
       expect(relationship?.standing,).toBe(75,);
       expect(relationship?.trust,).toBe(85,);
@@ -97,6 +101,7 @@ describe("RelationshipsService", () => {
         trust: -150,
         familiarity: 150,
       },);
+
       const relationship = await relationshipsService.getRelationship(testActorId1, testActorId2,);
       expect(relationship?.standing,).toBe(100,);
       expect(relationship?.trust,).toBe(-100,);
@@ -112,6 +117,7 @@ describe("RelationshipsService", () => {
         targetActorId: "test-actor-rel-delete",
         relationshipType: "rival",
       },);
+
       await relationshipsService.deleteRelationship(testActorId1, "test-actor-rel-delete",);
       const relationship = await relationshipsService.getRelationship(testActorId1, "test-actor-rel-delete",);
       expect(relationship,).toBeUndefined();
@@ -125,6 +131,7 @@ describe("RelationshipsService", () => {
         trust: 50,
         familiarity: 50,
       },);
+
       await relationshipsService.logEvent({
         actorId: testActorId1,
         targetActorId: testActorId2,
@@ -133,6 +140,7 @@ describe("RelationshipsService", () => {
         trustDelta: 5,
         familiarityDelta: 10,
       },);
+
       const relationship = await relationshipsService.getRelationship(testActorId1, testActorId2,);
       expect(relationship?.standing,).toBe(60,);
       expect(relationship?.trust,).toBe(55,);

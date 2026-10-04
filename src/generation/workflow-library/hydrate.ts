@@ -71,9 +71,11 @@ export async function hydrateWorkflowRegistry(
       log.warn("skipping unusable workflow row", { id: row.id, enabled: row.enabled, },);
       continue;
     }
+
     templates.push(template,);
     registered += 1;
   }
+
   // replaceManaged, not register: a row the operator deleted or disabled has to
   // disappear from the list, and a plain re-register would leave the previous
   // pass's copy in the registry until the process restarted.
@@ -105,6 +107,7 @@ export function ensureWorkflowRegistry(
     hydrated = null;
     throw error;
   },);
+
   return hydrated;
 }
 

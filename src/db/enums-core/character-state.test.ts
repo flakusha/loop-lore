@@ -70,6 +70,7 @@ describe("CharacterState", () => {
         reachable.add(target,);
       }
     }
+
     expect(reachable,).toEqual(new Set(Object.values(CharacterState,) as CState[],),);
   });
 });

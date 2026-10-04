@@ -20,21 +20,27 @@ export function levelFromConfig(level: LogLevelT,): number {
     case "trace": {
       return 5;
     }
+
     case "debug": {
       return 10;
     }
+
     case "info": {
       return 20;
     }
+
     case "warn": {
       return 30;
     }
+
     case "error": {
       return 40;
     }
+
     case "fatal": {
       return 50;
     }
+
     default: {
       return 20; // safe default
     }
@@ -51,21 +57,27 @@ export function numericToLabel(numeric: number,): string {
     case 5: {
       return "TRACE";
     }
+
     case 10: {
       return "DEBUG";
     }
+
     case 20: {
       return "INFO";
     }
+
     case 30: {
       return "WARN";
     }
+
     case 40: {
       return "ERROR";
     }
+
     case 50: {
       return "FATAL";
     }
+
     default: {
       return String(numeric,);
     }

@@ -56,6 +56,7 @@ describe("filterPassedActors turn_skip promotion", () => {
     await insertMessages(db, CHAT_ID, AI_A, MessageRole.Character, "I have nothing to add [PASS]", {
       content_plaintext: "I have nothing to add [PASS]",
     },);
+
     await insertMessages(db, CHAT_ID, AI_B, MessageRole.Character, "I am here!",);
     const res = await filterPassedActors({
       database: db,
@@ -64,6 +65,7 @@ describe("filterPassedActors turn_skip promotion", () => {
       deps: makeDeps(),
       log: createLogger({ level: "error", },).child({ module: "pass-filter-test", },),
     },);
+
     expect(res.filtered,).toBe(1,);
     expect(res.eligible.map((p,) => p.actor_id),).toEqual([AI_B,],);
   });
@@ -73,6 +75,7 @@ describe("filterPassedActors turn_skip promotion", () => {
       content_type: MessageContentType.TurnSkip,
       content_plaintext: "skips this beat (hold)",
     },);
+
     await insertMessages(db, CHAT_ID, AI_B, MessageRole.Character, "I am here!",);
     const res = await filterPassedActors({
       database: db,
@@ -81,6 +84,7 @@ describe("filterPassedActors turn_skip promotion", () => {
       deps: makeDeps(),
       log: createLogger({ level: "error", },).child({ module: "pass-filter-test", },),
     },);
+
     expect(res.filtered,).toBe(1,);
     expect(res.eligible.map((p,) => p.actor_id),).toEqual([AI_B,],);
   });
@@ -90,6 +94,7 @@ describe("filterPassedActors turn_skip promotion", () => {
       content_type: MessageContentType.TurnSkip,
       content_plaintext: "skips this beat (hold)",
     },);
+
     await insertMessages(db, CHAT_ID, AI_A, MessageRole.Character, "Actually, I am back.",);
     const res = await filterPassedActors({
       database: db,
@@ -98,6 +103,7 @@ describe("filterPassedActors turn_skip promotion", () => {
       deps: makeDeps(),
       log: createLogger({ level: "error", },).child({ module: "pass-filter-test", },),
     },);
+
     expect(res.filtered,).toBe(0,);
     expect(res.eligible,).toHaveLength(2,);
   });

@@ -47,6 +47,7 @@ export function createClient(baseUrl: string,) {
     const raws: string[] = typeof res.headers.getSetCookie === "function"
       ? res.headers.getSetCookie()
       : [res.headers.get("Set-Cookie",) ?? "",];
+
     for (const raw of raws) {
       const lm = /(?:^|,\s*)ll_token=([^;]+)/.exec(raw,);
       if (lm) { token = lm[1] ?? null; }
@@ -91,6 +92,7 @@ export function createClient(baseUrl: string,) {
     if (cookies.length > 0) {
       headers["Cookie"] = cookies.join("; ",);
     }
+
     if (isUnsafe && csrfToken) {
       headers["X-CSRF-Token"] = csrfToken;
     }
@@ -194,6 +196,7 @@ export function createClient(baseUrl: string,) {
       if (res.ok) {
         await bootstrapCsrf();
       }
+
       return res.ok;
     },
 
@@ -216,10 +219,12 @@ export function createClient(baseUrl: string,) {
         body: formBody,
         redirect: "manual",
       },);
+
       absorbCookies(res,);
       if (res.ok) {
         await bootstrapCsrf();
       }
+
       return res.ok;
     },
 

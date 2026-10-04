@@ -58,6 +58,7 @@ beforeEach(async () => {
     status: "active",
     settings: "{}",
   },).execute();
+
   await insertActors(db, "Alice", {
     id: "actor-ai-1",
     actor_type: "character",
@@ -85,12 +86,14 @@ async function startAttempt(chatId: string,): Promise<{ attemptId: string; abort
     created_by: userId,
     max_turns: null,
   } as never,).execute();
+
   await db.insertInto("chat_participants",).values({
     chat_id: chatId,
     actor_id: "actor-ai-1",
     role_in_chat: "member",
     talkativity: 5,
   } as never,).execute();
+
   const parentMessageId = `msg-${chatId}`;
   await insertMessages(db, chatId, "actor-ai-1", "user", "hi", { id: parentMessageId, } as never,);
 
@@ -126,6 +129,7 @@ function captureController(): { controller: ReadableStreamDefaultController; fra
       controller = c;
     },
   },);
+
   const reader = stream.getReader();
   void (async () => {
     for (;;) {
@@ -134,6 +138,7 @@ function captureController(): { controller: ReadableStreamDefaultController; fra
       frames.push(new TextDecoder().decode(value,),);
     }
   })();
+
   return { controller: controller!, frames, };
 }
 
@@ -163,6 +168,7 @@ test("streamCancelCleanup persists Cancelled, releases tracking, signals done", 
     .select(["status", "cancel_reason", "cancel_source", "cancel_reason_detail", "delivery_confirmed_at",],)
     .where("id", "=", attemptId,)
     .executeTakeFirstOrThrow();
+
   expect(row.status,).toBe(GenerationStatus.Cancelled,);
   expect(row.cancel_reason,).toBe(CancelReason.UserCancel,);
   expect(row.cancel_source,).toBe(CancelSource.User,);
@@ -206,6 +212,7 @@ test("streamCancelCleanup treats AbortError as generic user cancel", async () =>
     .select(["status", "cancel_reason", "cancel_source",],)
     .where("id", "=", attemptId,)
     .executeTakeFirstOrThrow();
+
   expect(row.status,).toBe(GenerationStatus.Cancelled,);
   expect(row.cancel_reason,).toBe(CancelReason.UserCancel,);
   expect(row.cancel_source,).toBe(CancelSource.User,);
@@ -268,8 +275,10 @@ test("streamToClient cancel path persists real cancel detail to the attempt reco
           resolve();
           return;
         }
+
         tracker.signal.addEventListener("abort", () => resolve(), { once: true, },);
       },);
+
       sawAbort = true;
       // Surface the cancel as the typed error (registry wraps aborts this way).
       throw new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, "user stop",);
@@ -302,6 +311,7 @@ test("streamToClient cancel path persists real cancel detail to the attempt reco
   setTimeout(() => {
     tracker.abort(new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, "user stop",),);
   }, 10,);
+
   await new Promise<void>((resolve, reject,) => {
     void (async () => {
       try {
@@ -309,6 +319,7 @@ test("streamToClient cancel path persists real cancel detail to the attempt reco
           const { done, } = await reader.read();
           if (done) { break; }
         }
+
         resolve();
       } catch (e) {
         reject(e,);
@@ -323,6 +334,7 @@ test("streamToClient cancel path persists real cancel detail to the attempt reco
     .select(["status", "cancel_reason", "cancel_source", "cancel_reason_detail",],)
     .where("id", "=", attemptId,)
     .executeTakeFirstOrThrow();
+
   expect(row.status,).toBe(GenerationStatus.Cancelled,);
   expect(row.cancel_reason,).toBe(CancelReason.UserCancel,);
   expect(row.cancel_source,).toBe(CancelSource.User,);
@@ -352,18 +364,22 @@ test("client disconnect persists Cancelled with the AbortError detail", async ()
         firstChunk = true;
         handler({ type: "content", content: "partial ", },);
       }
+
       const sig = req.signal;
       await new Promise<void>((resolve,) => {
         if (!sig) {
           resolve();
           return;
         }
+
         if (sig.aborted) {
           resolve();
           return;
         }
+
         sig.addEventListener("abort", () => resolve(), { once: true, },);
       },);
+
       sawAbort = true;
       // The stream's own controller aborted with no reason → providers
       // typically throw AbortError; the catch classifies it as cancel.
@@ -404,6 +420,7 @@ test("client disconnect persists Cancelled with the AbortError detail", async ()
       }
     }
   })();
+
   await firstChunkSeen;
   await reader.cancel().catch(() => {},);
   // The provider throws post-abort; the catch runs streamCancelCleanup which
@@ -415,16 +432,19 @@ test("client disconnect persists Cancelled with the AbortError detail", async ()
     cancel_source: CancelSource | null;
     cancel_reason_detail: string | null;
   } | undefined;
+
   for (let i = 0; i < 100; i++) {
     const candidate = await db
       .selectFrom("generation_attempts",)
       .select(["status", "cancel_reason", "cancel_source", "cancel_reason_detail",],)
       .where("id", "=", attemptId,)
       .executeTakeFirst();
+
     if (candidate?.status === GenerationStatus.Cancelled) {
       row = candidate;
       break;
     }
+
     await Promise.resolve(); // yield to the event loop; no wall-clock timer
   }
 

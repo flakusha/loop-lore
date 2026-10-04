@@ -37,6 +37,7 @@ function buildHashLookup(dir: string,): Map<string, string> {
       map.set(logical, entry.name,);
     }
   }
+
   return map;
 }
 
@@ -72,6 +73,7 @@ export function injectContentHashes(directory: string,): { replaced: number; ski
           totalReplaced++;
           return `${prefix}${hashed}${suffix}`;
         }
+
         totalSkipped++;
         return _match;
       },
@@ -85,6 +87,7 @@ export function injectContentHashes(directory: string,): { replaced: number; ski
           totalReplaced++;
           return `${prefix}${hashed}${suffix}`;
         }
+
         totalSkipped++;
         return _match;
       },

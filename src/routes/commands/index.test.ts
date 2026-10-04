@@ -27,6 +27,7 @@ describe("GET /api/commands", () => {
     if (!listCommands().includes(TEST_COMMAND,)) {
       registerCommand(TEST_COMMAND, () => ({ handled: true, }),);
     }
+
     if (!listCommands().includes(OTHER_TEST_COMMAND,)) {
       registerCommand(OTHER_TEST_COMMAND, () => ({ handled: true, }),);
     }

@@ -58,6 +58,7 @@ async function setupScope(
     `autonomy-u-${crypto.randomUUID()}`,
     "Autonomy Owner",
   );
+
   const worldId = await insertWorlds(testDb.db, userId, "Autonomy World",);
   const chatId = await insertChats(
     testDb.db,
@@ -65,10 +66,12 @@ async function setupScope(
     userId,
     { world_id: worldId, },
   );
+
   const actorId = await insertActors(testDb.db, "Autonomy Actor",);
   await insertCharacterInternalTraits(testDb.db, actorId, {
     autonomy_preferences: actorAutonomy,
   },);
+
   return { worldId, chatId, actorId, };
 }
 
@@ -110,6 +113,7 @@ describe("resolveAutonomyConfig — layering precedence", () => {
         autonomy: { preset: "organic", tickIntervalMs: 12_345, },
       },),
     );
+
     await setColumn("worlds", worldId, JSON.stringify({ preset: "brisk", },),);
     await setColumn("chats", chatId, JSON.stringify({ preset: "serene", perUserCap: 999, },),);
     const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, actorId, },);
@@ -126,6 +130,7 @@ describe("resolveAutonomyConfig — layering precedence", () => {
         solo_comfort: 20,
       },),
     );
+
     const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, actorId, },);
     expect(cfg.preset,).toBe("organic",);
     expect(cfg.tickIntervalMs,).toBe(PRESETS.organic.tickIntervalMs,);
@@ -181,6 +186,7 @@ describe("dev-only gating", () => {
         worldId,
         JSON.stringify({ preset: "unlimited-stress", },),
       );
+
       const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, },);
       expect(cfg.preset,).toBe("unlimited-stress",);
       expect(cfg.perAgentCap,).toBeNull();
@@ -199,6 +205,7 @@ describe("dev-only gating", () => {
         worldId,
         JSON.stringify({ preset: "unlimited-stress", },),
       );
+
       await expect(
         resolveAutonomyConfig(testDb.db, { worldId, chatId, },),
       ).rejects.toBeInstanceOf(UnboundedStressGatedError,);

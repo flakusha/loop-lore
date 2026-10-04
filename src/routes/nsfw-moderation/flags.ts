@@ -45,6 +45,7 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
             flagReason,
             description,
           },);
+
           // Return a redacted view (reporter hash, no chatId/worldId/contentId/description).
           const view = toQueueView(flag, configured,);
           return jsonResponse({

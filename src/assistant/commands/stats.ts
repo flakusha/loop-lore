@@ -82,6 +82,7 @@ async function resolveStatCharacter(
       .select(["display_name",],)
       .where("id", "=", participant.impersonate_actor_id,)
       .executeTakeFirst();
+
     return {
       characterId: participant.impersonate_actor_id,
       characterName: actor?.display_name ?? "this character",

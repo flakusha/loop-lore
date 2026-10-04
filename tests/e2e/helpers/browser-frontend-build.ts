@@ -43,6 +43,7 @@ function hashFrontendSources(root: string,): string {
       hash.update(String(stat.lastModified,),);
     }
   }
+
   return hash.digest("hex",);
 }
 
@@ -74,8 +75,10 @@ function acquireBuildLock(lockPath: string, isReady: () => boolean,): number | n
         if ((error as NodeJS.ErrnoException).code !== "ENOENT") { throw error; }
       }
     }
+
     Bun.sleepSync(25,);
   }
+
   return null;
 }
 
@@ -145,6 +148,7 @@ export function ensureFrontendBuild(): string {
       stdio: ["ignore", "pipe", "pipe",],
       cwd: root,
     },);
+
     if (result.exitCode !== 0) {
       throw new Error(`Frontend build failed: ${result.stderr.toString()}`,);
     }

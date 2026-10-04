@@ -81,6 +81,7 @@ function keyEvent(
       stopped = true;
     },
   } as unknown as KeyboardEvent;
+
   return { event, prevented: () => stopped, };
 }
 
@@ -248,6 +249,7 @@ describeOrSkip("isChatPaused", () => {
     expect(chatGroup.isChatPaused!.call(ctx as never, null,),).toBe(false,);
     expect(chatGroup.isChatPaused!.call(ctx as never, { story_state: "{}", },),).toBe(false,);
   });
+
   test("true only when isPaused is exactly true", () => {
     const ctx = pauseCtx(null,);
     expect(chatGroup.isChatPaused!.call(ctx as never, { story_state: '{"isPaused":true}', },),).toBe(true,);
@@ -266,6 +268,7 @@ describeOrSkip("toggleGroupPause", () => {
     await chatGroup.toggleGroupPause!.call(missing as never,);
     expect(missing.toasts,).toEqual([],);
   });
+
   test("pauses and resumes, persisting isPaused into story_state", async () => {
     pauseHandler = () => new Response("{}", { status: 200, },);
     const chat = { type: "group", story_state: "{}", };
@@ -278,6 +281,7 @@ describeOrSkip("toggleGroupPause", () => {
     expect(ctx._groupPaused,).toBe(false,);
     expect(JSON.parse(chat.story_state,).isPaused,).toBe(false,);
   });
+
   test("surfaces server and network failures as error toasts", async () => {
     pauseHandler = () => new Response(JSON.stringify({ error: "denied", },), { status: 403, },);
     const denied = pauseCtx({ type: "group", story_state: "{}", },);
@@ -287,6 +291,7 @@ describeOrSkip("toggleGroupPause", () => {
     pauseHandler = () => {
       throw new Error("down",);
     };
+
     const offline = pauseCtx({ type: "group", story_state: "{}", },);
     await chatGroup.toggleGroupPause!.call(offline as never,);
     expect(offline.toasts.length,).toBe(1,);
@@ -305,6 +310,7 @@ describeOrSkip("chatGroup.handleComposerEnter", () => {
         sent += 1;
       },
     },);
+
     chatGroup.handleMentionInput!.call(ctx as never, { target: ta, } as unknown as Event,);
     expect(ctx._showMentionAutocomplete,).toBe(true,);
     chatGroup.handleComposerEnter!.call(ctx as never,);
@@ -323,6 +329,7 @@ describeOrSkip("chatGroup.handleComposerEnter", () => {
         sent += 1;
       },
     },);
+
     ctx._showCommandPalette = true;
     ctx._filteredCommands = [{ name: "roll", descriptionKey: "k1", description: "d1", },];
     chatGroup.handleComposerEnter!.call(ctx as never,);
@@ -341,6 +348,7 @@ describeOrSkip("chatGroup.handleComposerEnter", () => {
         sent += 1;
       },
     },);
+
     chatGroup.handleComposerEnter!.call(ctx as never,);
     expect(sent,).toBe(1,);
   });
@@ -369,6 +377,7 @@ describeOrSkip("chatGroup.handleComposerEnter", () => {
         toasts.push(detail,);
       },
     },);
+
     chatGroup.handleComposerEnter!.call(ctx as never,);
     await new Promise((resolve,) => setTimeout(resolve, 0,));
     // i18n.test-helper loads the real en.json catalog; t("toasts.failedSend") resolves to "Failed to send".

@@ -79,6 +79,7 @@ describe("csrfPlugin.beforeHandle", () => {
       headers: { "X-CSRF-Token": "aaa", Cookie: "csrf_token=bbb", },
       sessionId: "sess-1",
     },);
+
     expect(plugin.beforeHandle(ctx,)?.status,).toBe(403,);
   });
 
@@ -91,6 +92,7 @@ describe("csrfPlugin.beforeHandle", () => {
       headers: { "X-CSRF-Token": token, Cookie: `csrf_token=${token}`, },
       sessionId: "sess-9",
     },);
+
     expect(plugin.beforeHandle(ctx,),).toBeUndefined();
   });
 
@@ -110,6 +112,7 @@ describe("csrfPlugin.beforeHandle", () => {
       headers: { "X-CSRF-Token": token, Cookie: `csrf_token=${token}`, },
       requestId: "req-7",
     },);
+
     expect(plugin.beforeHandle(ctx,),).toBeUndefined();
   });
 
@@ -145,6 +148,7 @@ describe("csrfPlugin.afterHandle", () => {
       headers: { Cookie: `csrf_token=${token}`, },
       sessionId: "sess-3",
     },);
+
     plugin.afterHandle(ctx,);
     expect(ctx.set.headers["set-cookie"],).toBeUndefined();
   });
@@ -158,6 +162,7 @@ describe("csrfPlugin.afterHandle", () => {
       headers: { "X-CSRF-Token": token, Cookie: `csrf_token=${token}`, },
       sessionId: "sess-4",
     },);
+
     plugin.afterHandle(ctx,);
     expect(ctx.set.headers["set-cookie"],).toBeUndefined();
   });
@@ -176,6 +181,7 @@ describe("applyCsrfPlugin", () => {
         expect(typeof cb,).toBe("function",);
       },
     };
+
     applyCsrfPlugin(app, OPTS,);
     expect(seen,).toEqual(["before", "after",],);
   });
@@ -191,6 +197,7 @@ describe("applyCsrfPlugin", () => {
         after = cb;
       },
     };
+
     applyCsrfPlugin(app, OPTS,);
 
     const blocked = fakeCtx({ method: "POST", route: "/api/chat", },);

@@ -76,6 +76,7 @@ export function buildWorkflowGraph(
       vars[key] = value;
     }
   }
+
   // Resolve the needed set from the *body*, before substitution: the
   // substitutor replaces an unknown placeholder with "", so scanning the output
   // would always come back clean.
@@ -96,6 +97,7 @@ export function buildWorkflowGraph(
         `Declare them as parameters before running this workflow.`,
     );
   }
+
   return substituteWorkflow(payload.body, vars,) as ComfyUIWorkflow;
 }
 
@@ -143,5 +145,6 @@ export function missingRequiredNodes(
     names.add(node.name,);
     names.add(node.name.toUpperCase(),);
   }
+
   return payload.requiredNodes.filter((required,) => !names.has(required,));
 }

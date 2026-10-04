@@ -34,6 +34,7 @@ export function normalizeEntity(
     const trimmed = v.trim();
     return trimmed.length > 0 ? trimmed : undefined;
   };
+
   return {
     name: str(raw.name,) ?? "",
     description: str(raw.description,),
@@ -62,9 +63,11 @@ export function validateEntitySchema(
   for (const f of required) {
     if (!entity[f as keyof GeneratedEntity]) { missing.push(f,); }
   }
+
   if (missing.length > 0) {
     return { ok: false, message: `Missing required field(s): ${missing.join(", ",)}`, };
   }
+
   // Validate structured lore entries when present
   if (Array.isArray(entity.lore,)) {
     const errors = validateLoreEntries(entity.lore,);
@@ -72,6 +75,7 @@ export function validateEntitySchema(
       return { ok: false, message: `Invalid lore entries: ${errors.join("; ",)}`, };
     }
   }
+
   return { ok: true, };
 }
 
@@ -113,8 +117,10 @@ export async function checkDuplicate(
         .where("owner_id", "=", scope.ownerId,)
         .where(sql<string>`lower(display_name)`, "=", needle,)
         .executeTakeFirst();
+
       break;
     }
+
     case "world": {
       row = await db
         .selectFrom("worlds",)
@@ -122,8 +128,10 @@ export async function checkDuplicate(
         .where("owner_id", "=", scope.ownerId,)
         .where(lowered, "=", needle,)
         .executeTakeFirst();
+
       break;
     }
+
     case "location": {
       row = await db
         .selectFrom("locations",)
@@ -131,8 +139,10 @@ export async function checkDuplicate(
         .where("world_id", "=", scope.worldId ?? "default",)
         .where(lowered, "=", needle,)
         .executeTakeFirst();
+
       break;
     }
+
     case "item": {
       row = await db
         .selectFrom("items",)
@@ -140,6 +150,7 @@ export async function checkDuplicate(
         .where("world_id", "=", scope.worldId ?? "default",)
         .where(lowered, "=", needle,)
         .executeTakeFirst();
+
       break;
     }
   }
@@ -151,6 +162,7 @@ export async function checkDuplicate(
       message: `A ${kind} named "${entity.name}" already exists in this scope.`,
     };
   }
+
   return { found: false, };
 }
 
@@ -175,6 +187,7 @@ export function checkConsistency(
   if ((kind === "location" || kind === "item") && worldContext && !entity.description) {
     warnings.push(`No description provided while world "${worldContext.name}" context is available.`,);
   }
+
   return { warnings, };
 }
 
@@ -206,5 +219,6 @@ export async function runQualityGates(
     duplicate = await checkDuplicate(db, kind, entity, scope,);
     consistency = checkConsistency(kind, entity, worldContext,);
   }
+
   return { schema, duplicate, consistency, };
 }

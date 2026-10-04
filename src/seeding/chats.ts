@@ -45,6 +45,7 @@ export async function seedChats(
         log.warn(`Chat participant "${username}" not found — omitting`,);
       }
     }
+
     if (participantIds.length === 0) {
       log.warn(`Skipping chat with no resolvable participants`,);
       continue;
@@ -59,6 +60,7 @@ export async function seedChats(
       .where("created_by", "=", createdBy,)
       .where("name", "=", name,)
       .executeTakeFirst();
+
     if (existing) {
       log.debug(`Chat "${name}" already exists — skipping`,);
       continue;
@@ -124,5 +126,6 @@ export async function seedChats(
     created += 1;
     log.info(`Seeded chat "${name}" (${participantIds.length} participants)`,);
   }
+
   return created;
 }

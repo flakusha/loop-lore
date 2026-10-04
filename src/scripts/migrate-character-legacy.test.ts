@@ -82,6 +82,7 @@ describe("migrateCanonicalExtensions (pure)", () => {
         ],
       },
     },);
+
     expect(result.changed,).toBe(true,);
     expect(result.fieldsAdded,).toEqual(["relationships[].target_type",],);
     const rels = (result.next!.extensions as Record<string, unknown>).relationships as Record<string, unknown>[];
@@ -96,6 +97,7 @@ describe("migrateCanonicalExtensions (pure)", () => {
         ],
       },
     },);
+
     expect(result.changed,).toBe(false,);
     expect(result.fieldsAdded,).toHaveLength(0,);
   });
@@ -114,6 +116,7 @@ describe("migrateCanonicalExtensions (pure)", () => {
         ],
       },
     },);
+
     expect(result.changed,).toBe(false,);
     const inv = (result.next!.extensions as Record<string, unknown>).inventory as Record<string, unknown>[];
     expect(inv[0],).not.toHaveProperty("rarity",);
@@ -136,6 +139,7 @@ describe("runMigration (DB)", () => {
         ],
       },
     },);
+
     await seedActor("actor-mig-1", "u-mig-1", legacyRaws,);
 
     const firstRun = await runMigration(db,);
@@ -187,6 +191,7 @@ describe("runMigration (DB)", () => {
         custom_plugin_field: { plugin: "fantasy-rpg", },
       },
     };
+
     await seedActor("actor-mig-4", "u-mig-4", JSON.stringify(payload,),);
 
     const result = await runMigration(db,);
@@ -230,6 +235,7 @@ describeIsolated("main() CLI entry", () => {
         ...realConfigLoad,
         loadConfig: () => ({ db: { type: "sqlite", sqliteFilename: ":memory:", }, }),
       }),);
+
       const code = await main();
       expect(code,).toBe(1,);
     } finally {
@@ -255,6 +261,7 @@ describeIsolated("main() CLI entry", () => {
         settings: "{}",
       },)
       .execute();
+
     await seedDb
       .insertInto("actors",)
       .values({
@@ -270,6 +277,7 @@ describeIsolated("main() CLI entry", () => {
         },),
       },)
       .execute();
+
     await seedDb.destroy();
     seedSqlite.close();
 
@@ -278,6 +286,7 @@ describeIsolated("main() CLI entry", () => {
         ...realConfigLoad,
         loadConfig: () => ({ db: { type: "sqlite", sqliteFilename: dbPath, }, }),
       }),);
+
       const origLog = console.log;
       const origErr = console.error;
       console.log = () => {};
@@ -289,6 +298,7 @@ describeIsolated("main() CLI entry", () => {
         console.log = origLog;
         console.error = origErr;
       }
+
       expect(code,).toBe(0,);
     } finally {
       rmSync(tmpDir, { recursive: true, force: true, },);
@@ -318,6 +328,7 @@ describeIsolated("main() CLI entry", () => {
         stdout: "pipe",
         stderr: "pipe",
       },);
+
       const exitCode = await proc.exited;
       const stderr = await new Response(proc.stderr,).text();
       const stdout = await new Response(proc.stdout,).text();
@@ -326,6 +337,7 @@ describeIsolated("main() CLI entry", () => {
         console.error("stdout:", stdout,);
         console.error("stderr:", stderr,);
       }
+
       expect(exitCode,).toBe(0,);
       expect(stdout,).toContain("migrate:character:legacy summary",);
     } finally {

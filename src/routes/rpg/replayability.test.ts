@@ -45,6 +45,7 @@ describe("replayability (auth-gated)", () => {
       "Replayer",
       { id: userId, role: "solo", status: "active", settings: "{}", } as never,
     );
+
     worldId = uid();
     await insertWorlds(db, userId, "Replay World", { id: worldId, } as never,);
   },);
@@ -76,6 +77,7 @@ describe("replayability (auth-gated)", () => {
     if (typeof body === "object" && body !== null && "id" in body && typeof body.id === "string") {
       return body.id;
     }
+
     throw new Error("response missing string id",);
   }
 
@@ -88,6 +90,7 @@ describe("replayability (auth-gated)", () => {
         body: JSON.stringify({ playerId: userId, worldId, },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     playthroughId = readId(await json(res,),);
     expect(playthroughId,).toBeString();
@@ -98,6 +101,7 @@ describe("replayability (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/replayability/playthroughs/${playthroughId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { playerId?: string };
     expect(body.playerId,).toBe(userId,);
@@ -108,6 +112,7 @@ describe("replayability (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/replayability/players/${userId}/playthroughs?worldId=${worldId}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await json(res,)) as { playthroughs?: unknown[] };
     expect(Array.isArray(body.playthroughs,),).toBe(true,);
@@ -124,6 +129,7 @@ describe("replayability (auth-gated)", () => {
         body: JSON.stringify({ secretId: uid(), },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -137,6 +143,7 @@ describe("replayability (auth-gated)", () => {
         body: JSON.stringify({ endingId: uid(), endingType: "good", completionTime: 3600, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -149,6 +156,7 @@ describe("replayability (auth-gated)", () => {
         body: JSON.stringify({ playerId: userId, worldId, previousPlaythroughId: playthroughId, },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
 
@@ -157,6 +165,7 @@ describe("replayability (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/replayability/players/${userId}/meta`,),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -166,6 +175,7 @@ describe("replayability (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/replayability/playthroughs/${playthroughId}`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -175,6 +185,7 @@ describe("replayability (auth-gated)", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/rpg/replayability/players/${userId}/meta`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

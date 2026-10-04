@@ -100,6 +100,7 @@ describeOrSkip("actorTraits.loadTraits", () => {
     handler = async () => {
       throw new Error("net",);
     };
+
     const ctx = baseCtx();
     ctx._trActorId = "actor-1";
     await ctx.loadTraits();
@@ -178,8 +179,10 @@ describeOrSkip("actorTraits.save (create)", () => {
       if (callIdx === 1 && url.endsWith("/traits",)) {
         return Response.json({ ok: true, }, { status: 201, },);
       }
+
       return Response.json([],);
     };
+
     const ctx = baseCtx();
     ctx._trActorId = "actor-1";
     ctx.draft.name = "loyal";
@@ -192,6 +195,7 @@ describeOrSkip("actorTraits.save (create)", () => {
       trait_name: "loyal",
       value: "true",
     },);
+
     expect(ctx.message,).toBeTruthy();
     expect(ctx.draft.editingName,).toBeNull();
   });
@@ -214,8 +218,10 @@ describeOrSkip("actorTraits.save (update)", () => {
       if (callIdx === 1 && url.includes("/traits/brave",)) {
         return Response.json({ ok: true, },);
       }
+
       return Response.json([],);
     };
+
     const ctx = baseCtx();
     ctx._trActorId = "actor-1";
     ctx.startEdit(sampleTrait(),);
@@ -247,8 +253,10 @@ describeOrSkip("actorTraits.remove", () => {
       if (url.includes("/traits/brave",) && calls[callIdx - 1]?.opts.method === "DELETE") {
         return Response.json({ ok: true, },);
       }
+
       return Response.json([],);
     };
+
     const ctx = baseCtx();
     ctx._trActorId = "actor-1";
     ctx.startEdit(sampleTrait(),);
@@ -256,6 +264,7 @@ describeOrSkip("actorTraits.remove", () => {
     expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/v1/actors/actor-1/traits/brave"),).toBe(
       true,
     );
+
     expect(ctx.draft.editingName,).toBeNull();
   });
 

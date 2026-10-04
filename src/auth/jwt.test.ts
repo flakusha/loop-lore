@@ -46,12 +46,14 @@ async function signRaw(headerB64: string, payloadB64: string, secret: string,): 
     false,
     ["sign",],
   );
+
   const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(`${headerB64}.${payloadB64}`,),);
   const sigBytes = new Uint8Array(sig,);
   const sigB64 = btoa(String.fromCharCode(...sigBytes,),).replaceAll("+", "-",).replaceAll("/", "_",).replace(
     /=+$/,
     "",
   );
+
   return `${headerB64}.${payloadB64}.${sigB64}`;
 }
 
@@ -73,6 +75,7 @@ describe("verifyJwt — signature gate", () => {
       sessionId: SID,
       expiresInSeconds: 3600,
     },);
+
     const result = await verifyJwt({ secret: SECRET, token, },);
     expect(result.valid,).toBe(true,);
   });
@@ -85,10 +88,12 @@ describe("verifyJwt — signature gate", () => {
       sessionId: SID,
       expiresInSeconds: 3600,
     },);
+
     const result = await verifyJwt({
       secret: "wrong-secret-must-be-at-least-32-chars-bbbb",
       token,
     },);
+
     expect(result.valid,).toBe(false,);
   });
 
@@ -105,6 +110,7 @@ describe("verifyJwt — signature gate", () => {
       sessionId: SID,
       expiresInSeconds: 3600,
     },);
+
     // Flip a byte in the middle of the signature.
     const sigStart = token.lastIndexOf(".",) + 1;
     const mid = sigStart + Math.floor((token.length - sigStart) / 2,);
@@ -143,6 +149,7 @@ describe("verifyJwt — payload hardening (regression)", () => {
       iat: 0,
       exp: future,
     },),);
+
     const result = await verifyJwt({ secret: SECRET, token, },);
     expect(result.valid,).toBe(false,);
     if (!result.valid) {
@@ -158,6 +165,7 @@ describe("verifyJwt — payload hardening (regression)", () => {
       iat: 0,
       exp: future,
     },),);
+
     const result = await verifyJwt({ secret: SECRET, token, },);
     expect(result.valid,).toBe(false,);
     if (!result.valid) {
@@ -172,6 +180,7 @@ describe("verifyJwt — payload hardening (regression)", () => {
       sid: SID,
       iat: 0,
     },),);
+
     const result = await verifyJwt({ secret: SECRET, token, },);
     expect(result.valid,).toBe(false,);
     if (!result.valid) {
@@ -187,6 +196,7 @@ describe("verifyJwt — payload hardening (regression)", () => {
       iat: 0,
       exp: "9999999999",
     },),);
+
     const result = await verifyJwt({ secret: SECRET, token, },);
     expect(result.valid,).toBe(false,);
     if (!result.valid) {
@@ -202,6 +212,7 @@ describe("verifyJwt — payload hardening (regression)", () => {
       sessionId: SID,
       expiresInSeconds: -10,
     },);
+
     const result = await verifyJwt({ secret: SECRET, token, },);
     expect(result.valid,).toBe(false,);
     if (!result.valid) {

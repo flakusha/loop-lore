@@ -83,10 +83,12 @@ export class GossipService {
       ttl: opts.ttl,
       now: opts.now,
     },);
+
     for (const origin of opts.trusted) {
       const canonical = canonicalOrigin(origin,);
       if (canonical !== null) { this.table.trustPeer(canonical,); }
     }
+
     this.trustByOrigin = opts.trustByOrigin ?? {};
     this.selfOrigin = opts.selfOrigin;
     this.maxPayloadPeers = opts.maxPayloadPeers ?? MAX_PAYLOAD_PEERS;
@@ -153,11 +155,13 @@ export class GossipService {
           `${peer.origin}/api/instance-state`,
           this.trustByOrigin[peer.origin],
         );
+
         body = res.body;
         ok = res.ok;
       } catch {
         return;
       }
+
       if (!ok) { return; }
       if (!this.table.recordHeartbeat(peer.origin, tick,)) { return; }
       alive += 1;
@@ -172,6 +176,7 @@ export class GossipService {
         discovered += 1;
       }
     },),);
+
     this.table.sweep();
     return { tick, polled: known.length, alive, discovered, };
   }

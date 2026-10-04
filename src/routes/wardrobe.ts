@@ -54,6 +54,7 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
         const worldErr = await requireWorldOwner(database, worldId, userId, ctx.userRole as string | null,);
         if (worldErr) { return worldErr; }
       }
+
       const items = await listWardrobeItems(database, actorId, { worldId, },);
       return jsonResponse(items,);
     }, {
@@ -82,6 +83,7 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
         const worldErr = await requireWorldOwner(database, world_id, userId, ctx.userRole as string | null,);
         if (worldErr) { return worldErr; }
       }
+
       const id = await createWardrobeItem(database, {
         actorId: world_id ? undefined : actorId,
         worldId: world_id,
@@ -90,6 +92,7 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
         tags,
         sortOrder: sort_order,
       },);
+
       return jsonCreated({ id, },);
     }, {
       params: WardrobeActorParams,

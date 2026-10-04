@@ -105,6 +105,7 @@ export function sessionsRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
             .execute(),
           countQuery.executeTakeFirst(),
         ],);
+
         const rows = rowsRes.status === "fulfilled" ? rowsRes.value : [];
         const countResult = countRes.status === "fulfilled" ? countRes.value : undefined;
 

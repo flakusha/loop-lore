@@ -45,6 +45,7 @@ describe("exportChat — json", () => {
       messages: MessageData[];
       exported_at: string;
     };
+
     expect(parsed.chat,).toEqual(payloadFixture.chat,);
     expect(parsed.messages,).toEqual(payloadFixture.messages,);
     expect(parsed.exported_at,).toMatch(/^\d{4}-\d{2}-\d{2}T/,);
@@ -105,6 +106,7 @@ describe("exportChat — md", () => {
       },
       "md",
     );
+
     expect(out,).toContain("### You",);
     expect(out,).toContain("anon hi",);
   });

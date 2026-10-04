@@ -40,6 +40,7 @@ export class MetricsCollector {
     } else if (status === 429) {
       this.increment("rate_limited_total",);
     }
+
     stats.latencies.push(latencyMs,);
     if (stats.latencies.length > LATENCY_CAP) { stats.latencies.shift(); }
     this.routes.set(route, stats,);
@@ -68,6 +69,7 @@ export class MetricsCollector {
       const sorted = [...s.latencies,].sort((a, b,) => a - b);
       const pick = (q: number,) =>
         sorted.length === 0 ? 0 : sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length,),)]!;
+
       return {
         route,
         requests: s.requests,
@@ -76,6 +78,7 @@ export class MetricsCollector {
         p95: pick(0.95,),
       };
     },);
+
     const counters: Record<string, number> = {};
     for (const [k, v,] of this.counters) { counters[k] = v; }
     return { uptimeSec: Math.floor((Date.now() - this.startedAtMs) / 1000,), routes, counters, };

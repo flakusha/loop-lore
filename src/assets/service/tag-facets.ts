@@ -40,10 +40,12 @@ export async function visibleTagNames(
     )
     .orderBy("tag", "asc",)
     .execute();
+
   for (const row of rows) {
     const tags = map.get(row.asset_id,) ?? [];
     tags.push(row.tag,);
     map.set(row.asset_id, tags,);
   }
+
   return map;
 }

@@ -40,6 +40,7 @@ export function sdTemplatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               .select("value",)
               .where("key", "=", "sd.templates",)
               .executeTakeFirst();
+
             const profiles = row ? jsonParseOr(row.value, {},) : {};
             return jsonResponse(profiles,);
           }, {
@@ -61,6 +62,7 @@ export function sdTemplatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
                 .select("value",)
                 .where("key", "=", "sd.templates",)
                 .executeTakeFirst();
+
               const profiles: Record<string, unknown> = row ? jsonParseOr(row.value, {},) : {};
               if (!profiles[id]) {
                 return jsonError({
@@ -69,6 +71,7 @@ export function sdTemplatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
                   code: ErrorCode.NotFound,
                 },);
               }
+
               profiles[id] = { ...profiles[id], ...update, id, };
               await opts.database
                 .insertInto("system_config",)
@@ -84,6 +87,7 @@ export function sdTemplatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
                   },)
                 )
                 .execute();
+
               return jsonResponse(profiles[id],);
             },
             { body: AdminTemplateUpdateBody, response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, }, },
@@ -101,6 +105,7 @@ export function sdTemplatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
                 .select("value",)
                 .where("key", "=", "sd.templates",)
                 .executeTakeFirst();
+
               const profiles: Record<string, unknown> = row ? jsonParseOr(row.value, {},) : {};
               if (profiles[id]) {
                 return jsonError({
@@ -109,6 +114,7 @@ export function sdTemplatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
                   code: ErrorCode.BadRequest,
                 },);
               }
+
               profiles[id] = profile;
               await opts.database
                 .insertInto("system_config",)
@@ -124,6 +130,7 @@ export function sdTemplatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
                   },)
                 )
                 .execute();
+
               return jsonResponse(profile,);
             },
             { body: AdminTemplateCreateBody, response: { 200: t.Any(), 400: ErrorResponse, 403: ErrorResponse, }, },
@@ -138,6 +145,7 @@ export function sdTemplatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               .select("value",)
               .where("key", "=", "sd.templates",)
               .executeTakeFirst();
+
             const profiles: Record<string, unknown> = row ? jsonParseOr(row.value, {},) : {};
             if (!profiles[id]) {
               return jsonError({
@@ -162,6 +170,7 @@ export function sdTemplatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
                 },)
               )
               .execute();
+
             return jsonNoContent();
           }, {
             response: {

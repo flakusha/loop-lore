@@ -63,6 +63,7 @@ describe("gmNotesSection", () => {
       world_id: "world-1",
       gm_config: JSON.stringify({ assistantRole: "gm", },),
     } as any,);
+
     await insertWhitenotes(
       db,
       "chat-1",
@@ -71,6 +72,7 @@ describe("gmNotesSection", () => {
       "2026-08-01T00:00:00Z",
       { priority: 8, scope: "scene", } as any,
     );
+
     await insertShadowNotes(db, "chat-1", ShadowNoteType.WorldSecret, "The king is a lich.", "2026-08-01T00:00:00Z",);
 
     const messages = await gmNotesSection.build(makeCtx(db, "chat-1",),);
@@ -97,6 +99,7 @@ describe("gmNotesSection", () => {
       "2026-07-01T00:00:00Z",
       { expires_at: "2026-07-02T00:00:00Z", },
     );
+
     await insertWhitenotes(
       db,
       "chat-1",
@@ -121,6 +124,7 @@ describe("gmNotesSection", () => {
       world_id: "world-1",
       gm_config: JSON.stringify({ assistantRole: "gm", },),
     } as any,);
+
     await insertShadowNotes(
       db,
       "chat-1",
@@ -129,6 +133,7 @@ describe("gmNotesSection", () => {
       "2026-08-01T00:00:00Z",
       { status: ShadowNoteStatus.Revealed, } as any,
     );
+
     await insertShadowNotes(
       db,
       "chat-1",
@@ -180,6 +185,7 @@ describe("gmNotesSection", () => {
         { priority: i, } as any,
       );
     }
+
     const messages = await gmNotesSection.build(makeCtx(db, "chat-1",),);
     const content = messages[0]!.content;
     expect(content.match(/Whitenote \d+/g,),).toHaveLength(10,);
@@ -225,6 +231,7 @@ describe("fetchUnrevealedShadowNotes + formatShadowSteering", () => {
       "2026-08-01T00:00:00Z",
       { expires_at: "2099-01-01T00:00:00Z", } as any,
     );
+
     await insertShadowNotes(
       db,
       "chat-1",
@@ -233,6 +240,7 @@ describe("fetchUnrevealedShadowNotes + formatShadowSteering", () => {
       "2026-08-01T00:00:00Z",
       { expires_at: "2020-01-01T00:00:00Z", } as any,
     );
+
     await insertShadowNotes(
       db,
       "chat-1",

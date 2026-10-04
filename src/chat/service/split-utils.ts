@@ -117,6 +117,7 @@ export async function mergeParticipantsIntoPrimary(
         impersonate_actor_id: p.impersonate_actor_id,
       },)
       .execute();
+
     added++;
   }
 

@@ -125,6 +125,7 @@ function scoreOne(kind: ReactionKind, w: TraitWeights, ctx: ReactionContext,): n
       score += w.solitary * 0.5 - w.social * 0.4;
       break;
   }
+
   score += contextBoost(kind, ctx,);
   return score;
 }
@@ -151,6 +152,7 @@ export function scoreReaction(
       best = { kind, score, reason: rationaleFor(kind, weights, ctx,), };
     }
   }
+
   return best;
 }
 
@@ -161,13 +163,16 @@ function rationaleFor(kind: ReactionKind, w: TraitWeights, ctx: ReactionContext,
       "bold personality",
     );
   }
+
   if (w.cautious > 0 && (kind === REACTION_KIND.Wait || kind === REACTION_KIND.Flee)) {
     bits.push("cautious personality",);
   }
+
   if (w.social > 0 && kind === REACTION_KIND.Chat) { bits.push("social disposition",); }
   if (w.solitary > 0 && (kind === REACTION_KIND.DoOther || kind === REACTION_KIND.Ignore)) {
     bits.push("solitary disposition",);
   }
+
   if (ctx.inDanger) { bits.push("in danger",); }
   if (ctx.isHostile) { bits.push("hostile context",); }
   if (bits.length === 0) { bits.push("baseline preference",); }

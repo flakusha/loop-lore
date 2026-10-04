@@ -80,6 +80,7 @@ const registryPristine = (() => {
     return false;
   }
 })();
+
 const describeReal = registryPristine ? describe : describe.skip;
 
 describeReal("admin model-roles routes", () => {
@@ -94,6 +95,7 @@ describeReal("admin model-roles routes", () => {
     if (!getProvider("default-prov",)) {
       registerProvider("default-prov", fakeProvider(),);
     }
+
     await insertModelRoleOverrides(db, "fake-provider", "m-main", { role: "main" as never, },);
   },);
 
@@ -124,6 +126,7 @@ describeReal("admin model-roles routes", () => {
       expect(body.overrides,).toEqual({
         main: { provider: "fake-provider", model: "m-main", temperature: null, maxTokens: null, },
       },);
+
       expect(body.validRoles,).toContain("main",);
     });
 
@@ -135,6 +138,7 @@ describeReal("admin model-roles routes", () => {
           modelRoles: { captioning: { provider: "default-prov", model: "cm", }, },
         },
       } as unknown as Config,);
+
       const res = await app.handle(new Request("http://localhost/api/admin/model-roles",),);
       const body = await res.json() as OverrideBody;
       const caption = body.roles!.find(r => r.role === "captioning");
@@ -175,6 +179,7 @@ describeReal("admin model-roles routes", () => {
           body: JSON.stringify({ provider: "fake-provider", model: "updated-model", },),
         },),
       );
+
       const body = await res.json() as OverrideBody;
       expect(body.ok,).toBe(true,);
 
@@ -197,6 +202,7 @@ describeReal("admin model-roles routes", () => {
           body: JSON.stringify({ provider: "ghost-provider", model: "x", },),
         },),
       );
+
       expect(res.status,).toBe(400,);
     });
 
@@ -209,6 +215,7 @@ describeReal("admin model-roles routes", () => {
           body: JSON.stringify({ provider: "fake-provider", model: "x", },),
         },),
       );
+
       expect(res.status,).toBe(400,);
     });
 
@@ -221,6 +228,7 @@ describeReal("admin model-roles routes", () => {
           body: JSON.stringify({ provider: "fake-provider", model: "x", },),
         },),
       );
+
       expect(res.status,).toBe(403,);
     });
   });
@@ -231,6 +239,7 @@ describeReal("admin model-roles routes", () => {
       const res = await app.handle(
         new Request("http://localhost/api/admin/model-roles/main", { method: "DELETE", },),
       );
+
       expect(res.status,).toBe(204,);
 
       const check = await app.handle(new Request("http://localhost/api/admin/model-roles",),);
@@ -243,6 +252,7 @@ describeReal("admin model-roles routes", () => {
       const res = await app.handle(
         new Request("http://localhost/api/admin/model-roles/bogus", { method: "DELETE", },),
       );
+
       expect(res.status,).toBe(400,);
     });
 
@@ -251,6 +261,7 @@ describeReal("admin model-roles routes", () => {
       const res = await app.handle(
         new Request("http://localhost/api/admin/model-roles/main", { method: "DELETE", },),
       );
+
       expect(res.status,).toBe(403,);
     });
   });

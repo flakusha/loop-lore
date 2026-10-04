@@ -62,5 +62,6 @@ export function resolveTimeCap(config: SearchTimeCapConfig,): ResolvedTimeCap {
       config.admin?.[field] ??
       config.global[field] ??
       DEFAULT_GLOBAL_CAP[field];
+
   return { defaultMs: pick("defaultMs",), maxMs: pick("maxMs",), };
 }

@@ -50,13 +50,16 @@ export async function updateMood(
     updateData.happiness = Math.max(0, Math.min(100, opts.happiness,),);
     updateData.last_mood_change = now;
   }
+
   if (opts.currentMood !== undefined) {
     updateData.current_mood = opts.currentMood;
     updateData.last_mood_change = now;
   }
+
   if (opts.moodStability !== undefined) {
     updateData.mood_stability = opts.moodStability;
   }
+
   if (opts.expressionModifiers !== undefined) {
     updateData.expression_modifiers = jsonStringifyOr(opts.expressionModifiers,);
   }

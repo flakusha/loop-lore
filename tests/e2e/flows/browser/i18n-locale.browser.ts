@@ -57,6 +57,7 @@ async function switchLocale(page: Page, locale: string,): Promise<void> {
   await page.evaluate((stamp: string,) => {
     Reflect.set(globalThis, stamp, true,);
   }, PRE_RELOAD_STAMP,);
+
   await page.selectOption(LOCALE_SELECT, locale,);
   await page.waitForFunction(
     (stamp: string,) => Reflect.get(globalThis, stamp,) !== true,
@@ -87,6 +88,7 @@ describe("i18n E2E", () => {
       const initialLang = await page.evaluate(
         () => (document.documentElement.lang || ""),
       );
+
       expect(initialLang.startsWith("en",),).toBe(true,);
 
       // The shipped translator resolves the known key to its English string
@@ -95,6 +97,7 @@ describe("i18n E2E", () => {
         const g = globalThis as unknown as { t?: (key: string,) => string };
         return g.t?.("common.edit",) ?? null;
       },);
+
       expect(initialEditLabel,).toBe(ENGLISH_EDIT_LABEL,);
 
       // Switch to Spanish; the helper waits for the reload onLocaleChange()
@@ -107,6 +110,7 @@ describe("i18n E2E", () => {
       const reloadedLang = await page.evaluate(
         () => (document.documentElement.lang || ""),
       );
+
       expect(reloadedLang.startsWith("es",),).toBe(true,);
 
       // English strings are pre-injected at layout render time
@@ -117,6 +121,7 @@ describe("i18n E2E", () => {
         const g = globalThis as unknown as { t?: (key: string,) => string };
         return g.t?.("common.edit",) ?? null;
       },);
+
       expect(editLabel,).toBe(SPANISH_EDIT_LABEL,);
     } finally {
       errors.assert();
@@ -143,6 +148,7 @@ describe("i18n E2E", () => {
         const g = globalThis as unknown as { t?: (key: string,) => string };
         return g.t?.("common.edit",) ?? null;
       },);
+
       expect(reloadedEditLabel,).toBe(SPANISH_EDIT_LABEL,);
 
       // Drive the REAL entry point — the ui.ts `t` the page's inline handlers

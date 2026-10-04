@@ -91,6 +91,7 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix 
           if (body.allowNsfw !== undefined) {
             await setConfig(database, NSFW_ALLOW_KEY, String(body.allowNsfw,), "Allow NSFW content in chats",);
           }
+
           if (body.nsfwMinAge !== undefined) {
             const age = Math.max(13, Math.min(25, body.nsfwMinAge,),);
             await setConfig(database, NSFW_MIN_AGE_KEY, String(age,), "Minimum age for NSFW content",);
@@ -102,6 +103,7 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix 
           if (body.nsfwMinAge !== undefined) {
             patch.nsfwMinAge = Math.max(13, Math.min(25, body.nsfwMinAge,),);
           }
+
           updateRuntimeNsfwConfig(patch,);
 
           log().info(`NSFW config updated by ${userId}`,);

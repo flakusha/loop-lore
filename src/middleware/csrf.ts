@@ -118,6 +118,7 @@ export function buildCsrfCookie(
     `Max-Age=${opts.maxAgeSecs}`,
     "SameSite=Lax",
   ];
+
   if (opts.secure) { parts.push("Secure",); }
   return parts.join("; ",);
 }
@@ -226,6 +227,7 @@ export function decideCsrf(
   if (!opts.enabled) {
     return { ok: true, cookieToIssue: null, };
   }
+
   const method = args.method.toUpperCase();
   const routeKey = `${method} ${args.routePattern ?? "?"}`;
   const isUnsafe = UNSAFE_METHODS.has(method,);
@@ -251,12 +253,15 @@ export function decideCsrf(
         hasHeader: headerToken !== null,
         hasCookie: cookieToken !== null,
       },);
+
       return { ok: false, cookieToIssue: null, };
     }
+
     if (headerToken !== cookieToken) {
       opts.logger?.warn("csrf.header_cookie_mismatch", { method, route: routeKey, },);
       return { ok: false, cookieToIssue: null, };
     }
+
     // Bind to the authenticated session when present. Solo mode has no
     // session row (authenticate.ts sets sessionId=null) but DOES resolve a
     // stable acting userId — bind to that, because a per-request
@@ -271,6 +276,7 @@ export function decideCsrf(
       opts.logger?.warn("csrf.verify_failed", { method, route: routeKey, sessionId: args.sessionId, },);
       return { ok: false, cookieToIssue: null, };
     }
+
     return { ok: true, cookieToIssue: null, };
   }
 
@@ -286,6 +292,7 @@ export function decideCsrf(
   if (existingCookie !== null && verifyCsrfToken(opts.secret, existingCookie, issueBinding,)) {
     return { ok: true, cookieToIssue: null, };
   }
+
   const token = mintCsrfToken(opts.secret, issueBinding, {},);
   return { ok: true, cookieToIssue: token, };
 }
@@ -312,6 +319,7 @@ export function cookieForDecision(
     // BUG-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.
     opts.cookieSecureInProd ?? process.env["NODE_ENV"] === "production",
   );
+
   return buildCsrfCookie(decision.cookieToIssue, {
     secure,
     maxAgeSecs: CSRF_COOKIE_MAX_AGE_SECS,

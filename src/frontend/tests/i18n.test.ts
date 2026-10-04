@@ -33,6 +33,7 @@ const mockLocalStorage = {
   },
   key: (index: number,) => [...storage.keys(),][index] ?? null,
 };
+
 Object.defineProperty(globalThis, "localStorage", { value: mockLocalStorage, writable: true, },);
 
 // Mock document for cookie and DOM operations
@@ -44,6 +45,7 @@ const mockDocument = {
   },
   addEventListener: () => {},
 };
+
 Object.defineProperty(globalThis, "document", { value: mockDocument, writable: true, },);
 
 // Dynamic import for ui.ts to avoid module-level side effects
@@ -59,6 +61,7 @@ beforeEach(async () => {
   const ui = await import("../ui");
   t = ui.t;
 },);
+
 // The `globalThis.t (from ui.ts)` describe block below overwrites `__localeStrings`
 // with a stub map in its nested `beforeEach`. Save the pre-test value before each
 // overwrite and restore it afterward so downstream tests in the same bun:test process

@@ -64,6 +64,7 @@ async function seed(db: Kysely<DB>,): Promise<void> {
     "Participant",
     { id: PARTICIPANT_ID, user_id: PARTICIPANT_ID, owner_id: PARTICIPANT_ID, } as never,
   );
+
   await insertUsers(db, `out-${OUTSIDER_ID}`, "Outsider", { id: OUTSIDER_ID, } as never,);
   await insertActors(db, "Outsider", { id: OUTSIDER_ID, user_id: OUTSIDER_ID, owner_id: OUTSIDER_ID, } as never,);
   await insertUsers(db, `adm-${ADMIN_ID}`, "Admin", { id: ADMIN_ID, role: "admin", } as never,);
@@ -95,6 +96,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       previousOwnerId: string;
       autoInvited: boolean;
     };
+
     expect(json.ok,).toBe(true,);
     expect(json.previousOwnerId,).toBe(OWNER_ID,);
     expect(json.newOwnerId,).toBe(PARTICIPANT_ID,);
@@ -108,6 +110,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       .select(["actor_id", "role_in_chat",],)
       .where("chat_id", "=", CHAT_ID,)
       .execute();
+
     const roleById = Object.fromEntries(rows.map((r,) => [r.actor_id, r.role_in_chat,]),);
     expect(roleById[PARTICIPANT_ID],).toBe(ChatParticipantRole.Owner,);
     expect(roleById[OWNER_ID],).toBe(ChatParticipantRole.Member,);
@@ -139,6 +142,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       .where("chat_id", "=", CHAT_ID,)
       .where("actor_id", "=", OUTSIDER_ID,)
       .executeTakeFirst();
+
     expect(row?.role_in_chat,).toBe(ChatParticipantRole.Owner,);
 
     await db.destroy();
@@ -186,6 +190,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       newOwnerId: string;
       autoInvited: boolean;
     };
+
     expect(json.ok,).toBe(true,);
     expect(json.previousOwnerId,).toBe(OWNER_ID,);
     expect(json.newOwnerId,).toBe(PARTICIPANT_ID,);

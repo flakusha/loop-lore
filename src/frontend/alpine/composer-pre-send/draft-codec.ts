@@ -34,6 +34,7 @@ export function decodeStoredDraft(
       typeof parsed.text !== "string" ||
       typeof parsed.savedAt !== "number"
     ) { return null; }
+
     if (now() - parsed.savedAt > DRAFT_TTL_MS) { return null; }
     return { chatId: parsed.chatId, text: parsed.text, savedAt: parsed.savedAt, };
   } catch {

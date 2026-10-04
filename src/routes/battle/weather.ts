@@ -30,6 +30,7 @@ export function weatherRoutes(_opts: HandlerOpts, prefix = "/api",) {
             weather: CombatWeather;
             terrain: TerrainType;
           };
+
           const terrainState = createBattleTerrain(body.terrain, body.weather,);
           const modifiers = getEnvironmentalModifiers(terrainState,);
           return jsonResponse(modifiers,);
@@ -55,6 +56,7 @@ export function weatherRoutes(_opts: HandlerOpts, prefix = "/api",) {
             weather: CombatWeather;
             timeOfDay: number;
           };
+
           const visibility = calculateVisibility(body.weather, body.timeOfDay,);
           return jsonResponse({ visibility, },);
         } catch (error) {
@@ -79,6 +81,7 @@ export function weatherRoutes(_opts: HandlerOpts, prefix = "/api",) {
             terrain: TerrainType;
             weather: CombatWeather;
           };
+
           const hazard = generateEnvironmentalHazard(body.terrain, body.weather,);
           return jsonResponse(hazard,);
         } catch (error) {

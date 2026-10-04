@@ -79,6 +79,7 @@ describe("wardrobe instance bindings", () => {
     await expect(
       bindWardrobeItemInstance(db, actorA, outfitId, foreignInstance,),
     ).rejects.toThrow("Item instance not found in actor inventory",);
+
     // The rejected bind must not have written a row.
     expect(await bindingRows(),).toHaveLength(1,);
   });

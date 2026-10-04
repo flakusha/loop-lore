@@ -58,6 +58,7 @@ export async function loadNotificationSnapshot(
     service.getUnreadCount(userId,),
     service.list(userId, false,),
   ],);
+
   return {
     count: countRes.status === "fulfilled" ? countRes.value : 0,
     recent: recentRes.status === "fulfilled" ? recentRes.value : [],
@@ -85,6 +86,7 @@ export async function loadNotificationSnapshotStrict(
     service.getUnreadCount(userId,),
     service.list(userId, false,),
   ],);
+
   if (countRes.status === "rejected") { throw countRes.reason; }
   if (recentRes.status === "rejected") { throw recentRes.reason; }
   return { count: countRes.value, recent: recentRes.value, };
@@ -156,6 +158,7 @@ export class NotificationStreamer {
             error instanceof Error ? error : new Error(String(error,),),
             { correlationId, },
           );
+
           send(controller, "stream-error", { message: "stream error, retry", correlationId, },);
         }
 

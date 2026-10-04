@@ -74,6 +74,7 @@ export class QualityEvaluator {
     for (const dim of DIMENSIONS) {
       scores[dim] = this.scorers[dim](ctx,);
     }
+
     let sum = 0;
     for (const dim of DIMENSIONS) { sum += scores[dim] * this.config.weights[dim]; }
     const overall = Math.round(sum,);
@@ -88,6 +89,7 @@ export class QualityEvaluator {
     for (const dim of DIMENSIONS) {
       details[dim] = { score: scores[dim], reasoning: getReasoning(dim, scores[dim],), };
     }
+
     return details;
   }
 
@@ -115,6 +117,7 @@ export class QualityEvaluator {
     for (const d of Object.values(details,)) {
       if (d.score < lowest) { lowest = d.score; }
     }
+
     if (!escalationReason && lowest < thresholds.escalate) {
       escalationReason = `Dimension score ${lowest} below escalation threshold`;
     }

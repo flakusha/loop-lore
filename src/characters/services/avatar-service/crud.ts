@@ -157,9 +157,11 @@ export async function updateAvatar(
   if (opts.label !== undefined) {
     updateData.label = opts.label;
   }
+
   if (opts.tags !== undefined) {
     updateData.tags = jsonStringifyOr(opts.tags,);
   }
+
   if (opts.isPrimary !== undefined) {
     if (opts.isPrimary) {
       // Unset other primaries
@@ -169,11 +171,14 @@ export async function updateAvatar(
         .where("actor_id", "=", existing.actorId,)
         .execute();
     }
+
     updateData.is_primary = opts.isPrimary ? 1 : 0;
   }
+
   if (opts.sortOrder !== undefined) {
     updateData.sort_order = opts.sortOrder;
   }
+
   if (opts.outfitId !== undefined) {
     updateData.outfit_id = opts.outfitId;
   }

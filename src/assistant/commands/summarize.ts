@@ -75,6 +75,7 @@ function parseFormat(args: string[],): { format: SummarizeFormat; rest: string[]
   if (requested === "tldr" || requested === "bullets" || requested === "detailed") {
     return { format: requested, rest, };
   }
+
   return { format: "concise", rest, };
 }
 
@@ -94,6 +95,7 @@ export async function runSummarize(
   if (!ctx.messages || ctx.messages.length === 0) {
     return { systemMessage: "No messages to summarize.", handled: true, };
   }
+
   const { format, rest, } = parseFormat(args,);
   const count = Math.max(1, Math.min(parseIntOr(rest[0] ?? "10", 10,), ctx.messages.length,),);
   const recent = ctx.messages.slice(-count,);
@@ -101,6 +103,7 @@ export async function runSummarize(
     const transcript = recent
       .map((m,) => `${m.role}: ${m.content.slice(0, 500,)}`)
       .join("\n",);
+
     try {
       const result = await deps.complete({
         model: deps.model ?? "",
@@ -113,6 +116,7 @@ export async function runSummarize(
         ],
         params: { maxTokens: 512, temperature: 0.3, },
       },);
+
       const content = result.content.trim();
       if (content) {
         return {
@@ -125,6 +129,7 @@ export async function runSummarize(
       // Fall through to extractive fallback
     }
   }
+
   return buildSummary(rest, ctx,);
 }
 
@@ -134,6 +139,7 @@ function resolveAndSummarize(args: string[], ctx: CommandContext,): CommandResul
   if (!db || !config) {
     return buildSummary(rest, ctx,);
   }
+
   return (async (): Promise<CommandResult> => {
     try {
       const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);

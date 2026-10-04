@@ -113,6 +113,7 @@ describe("query and event helpers", () => {
       querySelector: () => makeEl({},),
       querySelectorAll: (selector: string,) => (selector === ".all" ? list : none),
     };
+
     expect($("#any", root as unknown as ParentNode,),).not.toBe(null,);
     expect($all(".all", root as unknown as ParentNode,),).toBe(list,);
     expect($all(".none", root as unknown as ParentNode,),).toBe(none,);

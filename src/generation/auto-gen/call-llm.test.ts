@@ -47,6 +47,7 @@ function contentChunk(chunks: string[],): (providers: unknown, req: unknown, han
       acc += c;
       handler({ type: "content", content: c, } as ChunkEvent,);
     }
+
     return { content: acc, thinking: undefined, finishReason: "stop" as const, usage, };
   };
 }
@@ -103,12 +104,14 @@ describeOrSkip("callLlm — generation-error-handling gaps", () => {
       handler?.({ type: "content", content: "LEAK", } as ChunkEvent,);
       return { content: "", thinking: undefined, finishReason: "cancelled", usage, } as never;
     };
+
     const result = await callLlm(
       makeOpts({
         driver: driver as never,
         tracking: { attemptId: "att-1", abortSignal: controller.signal, },
       },),
     );
+
     expect(result.content,).toBe("ok",);
     expect(result.content,).not.toContain("LEAK",);
   });
@@ -151,10 +154,12 @@ describeOrSkip("callLlm — generation-error-handling gaps", () => {
       seen.push(req as { params?: { temperature: number; maxTokens: number } },);
       return { content: "ok", thinking: undefined, finishReason: "stop", usage, } as never;
     };
+
     const opts = {
       ...makeOpts({ driver: driver as never, chatStreaming: 0, },),
       assistantTuning: { temperature: 0.2, maxTokens: 64, },
     } as Parameters<typeof callLlm>[0];
+
     const result = await callLlm(opts,);
     expect(result.content,).toBe("ok",);
     expect(seen[0]?.params,).toEqual({ temperature: 0.2, maxTokens: 64, },);
@@ -166,6 +171,7 @@ describeOrSkip("callLlm — generation-error-handling gaps", () => {
       seen.push(req as { params?: { temperature: number; maxTokens: number } },);
       return { content: "ok", thinking: undefined, finishReason: "stop", usage, } as never;
     };
+
     const opts = { ...makeOpts({ driver: driver as never, chatStreaming: 0, },), } as Parameters<typeof callLlm>[0];
     const result = await callLlm(opts,);
     expect(result.content,).toBe("ok",);

@@ -91,6 +91,7 @@ describe("CharacterWorldSetupService", () => {
       const row = await service.updateWorldSetup(actorId, worldId, {
         systemPromptOverride: "world prompt",
       },);
+
       expect(row?.system_prompt_override,).toBe("world prompt",);
       expect(row?.scenario_override,).toBe("world scenario",);
     });
@@ -170,6 +171,7 @@ describe("CharacterWorldSetupService", () => {
         .select("actor_id",)
         .where("world_id", "=", worldId,)
         .execute();
+
       const actorIds = rows.map((r,) => r.actor_id);
       expect(new Set(actorIds,).size,).toBe(actorIds.length,);
     });
@@ -205,6 +207,7 @@ describe("CharacterWorldSetupService", () => {
         .where("owner_actor_id", "=", seeded,)
         .where("world_id", "=", worldId,)
         .execute();
+
       expect(inventory.length,).toBe(1,);
       expect(inventory[0]?.quantity,).toBe(2,);
 
@@ -229,6 +232,7 @@ describe("CharacterWorldSetupService", () => {
         .where("owner_actor_id", "=", ghost,)
         .where("world_id", "=", worldId,)
         .execute();
+
       expect(inventory.length,).toBe(0,);
     });
   });

@@ -34,6 +34,7 @@ function systemPromptForFamily(
         `Use booru-style tags: 1girl, black hair, blue eyes, smile, etc.`,
       ].join(" ",);
     }
+
     case "natural": {
       return [
         `You are an image prompt writer. Output ONLY a ${verbosity} natural language description.`,
@@ -42,6 +43,7 @@ function systemPromptForFamily(
         `Keep under ${maxTokenHint} tokens.`,
       ].join(" ",);
     }
+
     case "tags-and-natural": {
       return [
         `You are an image prompt writer. Output a ${verbosity} mix of lowercase keywords and natural language.`,
@@ -50,6 +52,7 @@ function systemPromptForFamily(
         `Keep under ${maxTokenHint} tokens.`,
       ].join(" ",);
     }
+
     case "json": {
       return [
         `You are an image prompt writer. Output ONLY a JSON object with high_level_description, style_description, and compositional_deconstruction fields.`,
@@ -57,6 +60,7 @@ function systemPromptForFamily(
         `Keep under ${maxTokenHint} tokens.`,
       ].join(" ",);
     }
+
     default: {
       return `You are an image prompt writer. Output a ${verbosity} description of the scene. Keep under ${maxTokenHint} tokens.`;
     }

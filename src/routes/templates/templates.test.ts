@@ -91,6 +91,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify(IMAGE_BODY,),
       },),
     );
+
     expect(create.status,).toBe(401,);
   });
 
@@ -103,6 +104,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify(IMAGE_BODY,),
       },),
     );
+
     expect(created.status,).toBe(200,);
     const row = ((await created.json()) as { template: { id: string } }).template;
     expect(row.id.length,).toBeGreaterThan(0,);
@@ -124,12 +126,14 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify({ name: "Renamed", },),
       },),
     );
+
     expect(patched.status,).toBe(200,);
     expect(((await patched.json()) as { template: { name: string } }).template.name,).toBe("Renamed",);
 
     const deleted = await app.handle(
       new Request(`http://localhost/api/templates/${row.id}`, { method: "DELETE", },),
     );
+
     expect(deleted.status,).toBe(204,);
     const gone = await app.handle(new Request(`http://localhost/api/templates/${row.id}`,),);
     expect(gone.status,).toBe(404,);
@@ -144,6 +148,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify({ name: "Bad", modality: "smell", payload: {}, },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -161,6 +166,7 @@ describe("promptTemplateRoutes", () => {
     const got = await app.handle(
       new Request("http://localhost/api/templates/preset-roleplay",),
     );
+
     expect(got.status,).toBe(200,);
     const body = (await got.json()) as { template: { isPreset: boolean; modality: string } };
     expect(body.template.isPreset,).toBe(true,);
@@ -173,6 +179,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify({ name: "Hijacked", },),
       },),
     );
+
     expect(patch.status,).toBe(404,);
   });
 
@@ -185,6 +192,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify(IMAGE_BODY,),
       },),
     );
+
     const { id, } = ((await created.json()) as { template: { id: string } }).template;
     const applied = await app.handle(
       new Request(`http://localhost/api/templates/${id}/apply`, {
@@ -193,6 +201,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify({ context: { subject: "a lone lighthouse", }, },),
       },),
     );
+
     expect(applied.status,).toBe(200,);
     const body = (await applied.json()) as { prompt: string; negativePrompt: string };
     expect(body.prompt,).toBe("a lone lighthouse, cinematic lighting, 85mm",);
@@ -208,6 +217,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -228,6 +238,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify(template,),
       },),
     );
+
     expect(created.status,).toBe(200,);
     const { id, } = ((await created.json()) as { template: { id: string } }).template;
     return await app.handle(
@@ -252,6 +263,7 @@ describe("promptTemplateRoutes", () => {
       template: LLM_BODY,
       apply: { actorId, chatId, },
     },);
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       messages: { role: string; content: string }[];
@@ -259,6 +271,7 @@ describe("promptTemplateRoutes", () => {
       tokenCount: number;
       tokenBudget: number;
     };
+
     // The override template supplies an empty system section, so the actor's
     // own system prompt is what must survive into the assembled messages.
     const rendered = body.messages.map((m,) => m.content).join("\n",);
@@ -282,6 +295,7 @@ describe("promptTemplateRoutes", () => {
       modality: "video",
       payload: JSON.stringify({ body: 42, },),
     },);
+
     const res = await makeApp(db, userId,).handle(
       new Request(`http://localhost/api/templates/${id}/apply`, {
         method: "POST",
@@ -289,6 +303,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify({},),
       },),
     );
+
     expect(res.status,).toBe(400,);
     expect(((await res.json()) as { error: string }).error,).toContain("malformed",);
   });
@@ -302,6 +317,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify(IMAGE_BODY,),
       },),
     );
+
     const { id, } = ((await created.json()) as { template: { id: string } }).template;
 
     const appB = makeApp(db, otherId,);
@@ -314,10 +330,12 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify({ name: "Stolen", },),
       },),
     );
+
     expect(patched.status,).toBe(404,);
     const deleted = await appB.handle(
       new Request(`http://localhost/api/templates/${id}`, { method: "DELETE", },),
     );
+
     expect(deleted.status,).toBe(404,);
   });
 
@@ -331,6 +349,7 @@ describe("promptTemplateRoutes", () => {
         { name: "Bad", modality: "image", payload: {}, },
       ],
     };
+
     const imp = await appA.handle(
       new Request("http://localhost/api/templates/import", {
         method: "POST",
@@ -338,6 +357,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify(pack,),
       },),
     );
+
     expect(imp.status,).toBe(200,);
     const impBody = (await imp.json()) as { imported: number; skipped: number };
     expect(impBody.imported,).toBe(1,);
@@ -350,6 +370,7 @@ describe("promptTemplateRoutes", () => {
       exportedBy: string;
       templates: { name: string; payload: { templateBody: string } }[];
     };
+
     expect(exported.version,).toBe(1,);
     expect(exported.exportedBy,).toBe(userId,);
     const packed = exported.templates.find((t,) => t.name === "Pack A");

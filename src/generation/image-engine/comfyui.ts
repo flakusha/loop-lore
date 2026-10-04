@@ -27,6 +27,7 @@ export async function generateComfyUI(
   if (!validatedComfy.ok) {
     return failure(`Invalid ComfyUI URL: ${validatedComfy.error}`, 400,);
   }
+
   let workflow = await loadComfyUIWorkflow(workflowName, {
     prompt: opts.prompt,
     negativePrompt: opts.negativePrompt,
@@ -45,6 +46,7 @@ export async function generateComfyUI(
     const found = discovered.models.some(
       (m: LoRAModel,) => m.name === opts.lora!.name,
     );
+
     if (found) {
       // Cast: injectComfyUILora returns Record<string,unknown> which satisfies ComfyUIWorkflow
       workflow = injectComfyUILora(

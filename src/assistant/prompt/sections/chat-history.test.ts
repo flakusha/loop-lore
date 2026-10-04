@@ -89,6 +89,7 @@ describe("chatHistorySection — content_encoding pass-through vs gzip decode", 
     } catch {
       // Already initialized — ignore.
     }
+
     const { db, sqlite, } = await createTestDb();
     try {
       const ctx = await setupContext(db,);
@@ -112,6 +113,7 @@ describe("chatHistorySection — content_encoding pass-through vs gzip decode", 
         visibility: visible,
         created_at: "2025-01-01T00:00:00.000Z",
       },);
+
       await insertMessages(db, chat.id, actor.id, MessageRole.Assistant, encoded.encoded, {
         content_encoding: gzipEnc,
         status: confirmed,
@@ -144,6 +146,7 @@ describe("chatHistorySection — content_encoding pass-through vs gzip decode", 
     } catch {
       // Already initialized.
     }
+
     const { db, sqlite, } = await createTestDb();
     try {
       const ctx = await setupContext(db,);

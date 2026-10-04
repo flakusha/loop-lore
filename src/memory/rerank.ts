@@ -49,6 +49,7 @@ export async function rerankViaLlamaCpp(
   const baseUrl = opts.baseUrl ?? process.env.RERANK_BASE_URL ??
     process.env.EMBEDDINGS_BASE_URL ?? process.env.OLLAMA_BASE_URL ??
     "http://localhost:11434";
+
   const result = await safeFetch<{ results?: { index?: unknown; relevance_score?: unknown }[] }>(
     `${baseUrl}/rerank`,
     {
@@ -57,21 +58,26 @@ export async function rerankViaLlamaCpp(
       timeout: opts.timeoutMs ?? 2000,
     },
   );
+
   if (!result.ok) {
     throw new Error(`Rerank endpoint request failed: ${result.error.message}`,);
   }
+
   const payload = result.data;
   if (!Array.isArray(payload.results,)) {
     throw new Error("Rerank response is missing a results array.",);
   }
+
   return payload.results.map((entry,) => {
     const { index, relevance_score: score, } = entry;
     if (typeof index !== "number" || index < 0 || index >= docs.length) {
       throw new Error(`Rerank result index ${String(index,)} is out of range.`,);
     }
+
     if (typeof score !== "number") {
       throw new Error("Rerank result entry is missing relevance_score.",);
     }
+
     return { index, score, };
   },);
 }
@@ -89,6 +95,7 @@ export async function fetchMemoryTexts(db: Kysely<DB>, ids: string[],): Promise<
     .select(["id", "content",],)
     .where("id", "in", ids,)
     .execute();
+
   const byId = new Map<string, string>();
   for (const row of rows) { byId.set(row.id, row.content,); }
   return ids.map((id,) => {

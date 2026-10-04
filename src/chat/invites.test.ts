@@ -36,6 +36,7 @@ describe("chat invites service", () => {
         mode: "group",
       },)
       .execute();
+
     chatId = "chat-invite-1";
   },);
 
@@ -77,6 +78,7 @@ describe("chat invites service", () => {
         expiresAt: future,
         maxUses: 5,
       },);
+
       expect(res.ok,).toBe(true,);
       if (!res.ok) { return; }
       expect(res.value.expiresAt,).toBe(future,);
@@ -144,6 +146,7 @@ describe("chat invites service", () => {
         .where("chat_id", "=", chatId,)
         .where("actor_id", "=", "user-joiner",)
         .executeTakeFirst();
+
       expect(participant,).toBeTruthy();
       expect(participant!.role_in_chat,).toBe("member",);
     });
@@ -190,6 +193,7 @@ describe("chat invites service", () => {
         createdBy: "user-owner",
         expiresAt: new Date(Date.now() - 1000,).toISOString(),
       },);
+
       if (!created.ok) { return; }
       const outcome = await redeemInvite(db, { code: created.value.code, actorId: "user-joiner", },);
       expect(outcome.ok,).toBe(false,);
@@ -207,6 +211,7 @@ describe("chat invites service", () => {
         "Joiner2",
         { id: "user-joiner2", user_id: "user-joiner2", owner_id: "user-joiner2", } as never,
       );
+
       const outcome = await redeemInvite(db, { code: created.value.code, actorId: "user-joiner2", },);
       expect(outcome.ok,).toBe(false,);
       if (!outcome.ok) { expect(outcome.error.code,).toBe("used_up",); }

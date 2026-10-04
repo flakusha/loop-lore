@@ -23,6 +23,7 @@ function makeApp(db: Kysely<DB>, userRole: string | null,) {
     userId: userRole ? `test-user-${userRole}` : null,
     userRole,
   }));
+
   return app.use(worldsRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
@@ -89,6 +90,7 @@ describe("admin worlds routes", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/worlds/00000000-0000-0000-0000-000000000999",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -103,6 +105,7 @@ describe("admin worlds routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/admin/worlds/${OTHER_WORLD}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
   });
 
@@ -111,6 +114,7 @@ describe("admin worlds routes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/admin/worlds/${TEST_WORLD}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 });

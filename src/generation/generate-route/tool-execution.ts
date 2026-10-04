@@ -115,11 +115,13 @@ async function persistToolResults(
       actorId: ctx.actorId,
       plaintext: result.content,
     },);
+
     const metadata = safeJsonStringify({
       tool_call_id: result.tool_call_id ?? null,
       tool_name: result.toolName ?? null,
       tool_error: result.toolError ?? false,
     },);
+
     await ctx.db
       .insertInto("messages",)
       .values({
@@ -165,17 +167,21 @@ export async function executeToolCalls(
         toolName: tc.function.name,
         toolError: true,
       },);
+
       continue;
     }
+
     const parsed = safeJsonParse<Record<string, unknown>>(tc.function.arguments,);
     const valueIsObject = parsed.ok &&
       parsed.value !== null &&
       typeof parsed.value === "object" &&
       !Array.isArray(parsed.value,);
+
     if (!valueIsObject) {
       const detail = parsed.ok
         ? `got ${parsed.value === null ? "null" : Array.isArray(parsed.value,) ? "array" : typeof parsed.value}`
         : parsed.error.message;
+
       results.push({
         role: "tool",
         content: sanitizeToolOutput(jsonStringifyOr({
@@ -186,8 +192,10 @@ export async function executeToolCalls(
         toolName: tc.function.name,
         toolError: true,
       },);
+
       continue;
     }
+
     const params = parsed.value;
     // FEAT-049: route every tool (plugin and builtin) through the ToolExecutor
     // so the timeout + single failure contract is uniform. `executePluginTool`
@@ -201,6 +209,7 @@ export async function executeToolCalls(
       toolError: toolResult.isError === true,
     },);
   }
+
   // BUG-tool-call-result-no-frontend-rendering: persist each tool result as a
   // chat-visible `messages` row so tool calls leave a record even when the
   // upstream LLM errored, the tool threw, or the registry missed the tool.

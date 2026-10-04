@@ -82,12 +82,14 @@ function wrapWithLayout(
       const jsonData = jsonStringifyOr(rawTranslations, "{}",);
       const injectScript =
         `<script type="application/json" id="locale-data"${nonceAttr}>${jsonData}</script><script${nonceAttr}>try{globalThis.__localeStrings = JSON.parse(document.getElementById("locale-data").textContent);}catch{}</script>`;
+
       layout = layout.replace(
         "<!-- Initialize locale from cookie/localStorage before page renders -->",
         () => `${injectScript}\n    <!-- Initialize locale from cookie/localStorage before page renders -->`,
       );
     }
   }
+
   return layout;
 }
 
@@ -101,9 +103,11 @@ function resolveIncludes(content: string, chain = new Set<string>(),): string {
     if (chain.has(resolved,)) {
       throw new Error(`Circular include detected: ${includePath} (resolved to ${resolved})`,);
     }
+
     if (!existsSync(resolved,)) {
       throw new Error(`Include not found: ${includePath} (resolved to ${resolved})`,);
     }
+
     const included = readFileSync(resolved, "utf8",);
     chain.add(resolved,);
     try {
@@ -129,6 +133,7 @@ function resolveIcons(content: string,): string {
     if (!existsSync(iconPath,)) {
       return `<!-- icon not found: ${name} -->`;
     }
+
     return readFileSync(iconPath, "utf8",);
   },);
 }
@@ -182,6 +187,7 @@ function respond(
   const body = isHtmx
     ? applyI18n(contentWithMounts, t,)
     : wrapWithLayout(contentWithMounts, title, userId, sessionId, nonce, t, locale,);
+
   return new Response(body, {
     headers: { "Content-Type": "text/html; charset=utf-8", },
   },);
@@ -210,6 +216,7 @@ function notFoundView(
       <div class="icon">⚠️</div>
       <div class="title">${escapeHtml(message,)}</div>
     </div>`;
+
   return respond(content, isHtmx, translatedTitle, userId, sessionId, request, t,);
 }
 

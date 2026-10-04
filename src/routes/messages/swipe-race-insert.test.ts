@@ -135,6 +135,7 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
       chatId: newChatId,
       parentId: null,
     },);
+
     expect(result.swipeIndex,).toBeNull();
   });
 
@@ -149,6 +150,7 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
       id: forcedParent,
       swipe_index: 0,
     } as never,);
+
     // Pre-fill swipe_indexes 1..MAX to collide every retry attempt.
     for (let i = 1; i <= 8; i++) {
       await db
@@ -169,6 +171,7 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
         },)
         .execute();
     }
+
     // Now attempt an insert at swipe_index 9 — should also collide
     // because the helper computes MAX then +1, then retries incrementing
     // attempt counter only via the catch; since the underlying unique
@@ -194,6 +197,7 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
         },)
         .execute();
     }
+
     // Now MAX = 16, attempt 0 → swipe_index 17 → success.
     // To force exhaustion we need to inject a unique-index violation
     // independent of the swipe_index arithmetic. Use an explicit
@@ -217,6 +221,7 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
         swipe_index: null,
       },)
       .execute();
+
     // Now insert with the same id (collides on primary key, retries
     // also collide because the helper re-uses the same id on every attempt).
     await expect(
@@ -285,6 +290,7 @@ describe("swipe-race-insert — idempotency", () => {
       contentEncoding: "utf8" as ContentEncoding,
       idempotencyKey: idemKey,
     },);
+
     const result = await findByIdempotencyKey(db, chatId, idemKey,);
     expect(result,).toBe(rowId,);
   });
@@ -310,6 +316,7 @@ describe("swipe-race-insert — idempotency", () => {
       contentEncoding: "utf8" as ContentEncoding,
       idempotencyKey: null,
     },);
+
     const b = await insertUserMessageWithRetry(db, {
       id: uid(),
       chatId,
@@ -320,6 +327,7 @@ describe("swipe-race-insert — idempotency", () => {
       contentEncoding: "utf8" as ContentEncoding,
       idempotencyKey: null,
     },);
+
     expect(a.id,).not.toBe(b.id,);
   });
 });

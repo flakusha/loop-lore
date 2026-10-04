@@ -132,6 +132,7 @@ export const exportProgress: ExportProgressState = {
     } else if (event.status) {
       this.status = event.status;
     }
+
     if (event.error) { this.error = event.error; }
     if (event.message) { this.message = event.message; }
     if (event.completedAt) { this.completedAt = event.completedAt; }
@@ -139,6 +140,7 @@ export const exportProgress: ExportProgressState = {
       this.downloadUrl = `/api/v1/export/download/${this.jobId}`;
       if (!this.completedAt) { this.completedAt = new Date().toISOString(); }
     }
+
     if (this.isTerminal()) { this.stopTracking(); }
   },
 
@@ -153,9 +155,11 @@ export const exportProgress: ExportProgressState = {
     if (snapshot.status === "completed") {
       this.downloadUrl = `/api/v1/export/download/${snapshot.id}`;
     }
+
     if (snapshot.status === "failed" && snapshot.error) {
       this.error = snapshot.error;
     }
+
     return this.isTerminal();
   },
 
@@ -171,6 +175,7 @@ export const exportProgress: ExportProgressState = {
         this.error = t("status.exportStartFailed",);
         return;
       }
+
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
@@ -194,18 +199,22 @@ export const exportProgress: ExportProgressState = {
               log.error("Failed to parse SSE event", result.error, {},);
               continue;
             }
+
             const event = result.value;
             this.applyEvent(event,);
             if (this.isTerminal()) {
               try {
                 await reader.cancel();
               } catch { /* ignore */ }
+
               break;
             }
           }
         }
+
         if (this.isTerminal()) { break; }
       }
+
       // If the stream ends without a terminal event, fall back to polling.
       if (!this.isTerminal() && this.jobId) {
         this.startPolling();
@@ -226,6 +235,7 @@ export const exportProgress: ExportProgressState = {
         this.stopTracking();
         return;
       }
+
       try {
         const res = await apiFetch(`/api/v1/export/status/${this.jobId}`, {},);
         if (!res.ok) { return; }
@@ -236,6 +246,7 @@ export const exportProgress: ExportProgressState = {
         log.error("Failed to poll export status", error instanceof Error ? error : undefined, {},);
       }
     };
+
     void tick();
     this._pollTimer = setInterval(() => {
       void tick();
@@ -247,6 +258,7 @@ export const exportProgress: ExportProgressState = {
       this._sse.close();
       this._sse = null;
     }
+
     if (this._pollTimer) {
       clearInterval(this._pollTimer,);
       this._pollTimer = null;

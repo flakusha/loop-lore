@@ -63,6 +63,7 @@ export const chatUtilsInteraction: ChatUtilsInteraction = {
       showToast("error", t("chats.flagReasonRequired",),);
       return;
     }
+
     this._flagBusy = true;
     try {
       const res = await apiFetch("/api/v1/nsfw/moderation/flags", {
@@ -75,6 +76,7 @@ export const chatUtilsInteraction: ChatUtilsInteraction = {
           flagReason,
         },),
       },);
+
       if (res.ok) {
         showToast("success", t("chats.flagSubmitted",),);
         this.closeFlagDialog();
@@ -84,6 +86,7 @@ export const chatUtilsInteraction: ChatUtilsInteraction = {
           const err = await res.json();
           errMsg = err?.message;
         } catch { /* non-JSON error body */ }
+
         showToast("error", errMsg || t("chats.flagFailed",),);
       }
     } catch {

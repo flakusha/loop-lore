@@ -22,6 +22,7 @@ describe("renderIntegrationMermaid", () => {
         if (producer === layer.owner) {
           continue;
         }
+
         expect(out,).toContain(`'${producer}' -.->|'produces ${layer.id}'`,);
       }
     }

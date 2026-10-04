@@ -16,6 +16,7 @@ const withForcedDie = async (value: number, run: () => Promise<void>,): Promise<
       return array;
     },
   },);
+
   try {
     await run();
   } finally {
@@ -57,6 +58,7 @@ describe("interaction service", () => {
       ],)
       .where("chat_id", "=", "chat-1",)
       .executeTakeFirstOrThrow();
+
     expect(row.roll_raw_total,).toBe(20,);
     expect(row.roll_total,).toBe(26,);
     expect(row.roll_margin,).toBe(16,);
@@ -70,6 +72,7 @@ describe("interaction service", () => {
       { source: "ability.int", value: 4, },
       { source: "equipment", value: 2, },
     ],);
+
     expect(recent[0]?.stateChanges,).toEqual({ insight: 1, },);
   });
 
@@ -87,6 +90,7 @@ describe("interaction service", () => {
       difficulty: 10,
       requirements: [{ itemName: "rope", quantity: 1, },],
     },);
+
     expect(resolution.outcome,).toBe(InteractionOutcome.Blocked,);
     expect(resolution.id,).not.toBeNull();
     const row = await db
@@ -94,6 +98,7 @@ describe("interaction service", () => {
       .select(["outcome", "roll_total", "result",],)
       .where("chat_id", "=", "chat-1",)
       .executeTakeFirstOrThrow();
+
     expect(row.outcome,).toBe(InteractionOutcome.Blocked,);
     expect(row.roll_total,).toBeNull();
     expect(row.result,).toContain("rope x1",);
@@ -115,6 +120,7 @@ describe("interaction service", () => {
         difficulty: 10,
       },);
     },);
+
     expect(resolution?.outcome,).toBe(InteractionOutcome.CriticalFailure,);
     expect(resolution?.margin,).toBe(-9,);
   });

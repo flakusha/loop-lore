@@ -35,6 +35,7 @@ function ascending32(): Uint8Array<ArrayBuffer> {
   for (let i = 0; i < 32; i++) {
     out[i] = i;
   }
+
   return out;
 }
 
@@ -56,6 +57,7 @@ describe("dh-ratchet KDF known-answer vectors (independent derivation)", () => {
     expect(hex(step.nextChainKey,),).toBe(
       "11461194053d3a1f2beb45433accba753c45a41e0651b56ac17405c3921a57a4",
     );
+
     expect(hex(step.messageKeyBytes,),).toBe(
       "77c7e994260febed7d04bc84c7a258a570643b35d5b74b3d34967b59d1f0eac8",
     );
@@ -76,6 +78,7 @@ describe("dh-ratchet KDF known-answer vectors (independent derivation)", () => {
         "61be2c7c31eabd03294c5e8548e1a9ce6dd9bd7138bae3660d61de718fff446f",
       ],
     ];
+
     let chainKey: Uint8Array = fill32(0x01,);
     for (const [wantNext, wantMsg,] of expected) {
       const step = await chainStep(chainKey as Uint8Array<ArrayBuffer>,);

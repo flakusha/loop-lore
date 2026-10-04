@@ -79,6 +79,7 @@ export async function upsertWorldSetup(
       created_at: now,
       updated_at: now,
     };
+
     await thisL.db.insertInto("character_world_setup",).values(row,).execute();
     return row;
   }
@@ -89,6 +90,7 @@ export async function upsertWorldSetup(
     worldId: input.worldId,
     input,
   },);
+
   // updateWorldSetup returns undefined only if the row vanished concurrently;
   // fall back to re-reading so callers always get a row.
   return merged ?? getWorldSetup({
@@ -124,12 +126,15 @@ export async function updateWorldSetup(
   const updates: Record<string, unknown> = {
     updated_at: new Date().toISOString(),
   };
+
   if (input.startingInventory !== undefined) {
     updates.starting_inventory = jsonStringifyOr(input.startingInventory, "[]",);
   }
+
   if (input.loreEntries !== undefined) {
     updates.lore_entries = jsonStringifyOr(input.loreEntries, "[]",);
   }
+
   if (input.backstory !== undefined) { updates.backstory = input.backstory; }
   if (input.scenarioOverride !== undefined) { updates.scenario_override = input.scenarioOverride; }
   if (input.systemPromptOverride !== undefined) { updates.system_prompt_override = input.systemPromptOverride; }
@@ -168,5 +173,6 @@ export async function deleteWorldSetup(
     .where("actor_id", "=", actorId,)
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
+
   return Number(result?.numDeletedRows ?? 0,) > 0;
 }

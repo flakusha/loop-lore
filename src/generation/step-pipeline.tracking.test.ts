@@ -34,6 +34,7 @@ beforeAll(async () => {
     status: "active",
     settings: "{}",
   },).execute();
+
   await db.insertInto("chats",).values({
     id: "chat-1",
     name: "Test Chat",
@@ -41,6 +42,7 @@ beforeAll(async () => {
     mode: "direct",
     created_by: "user-1",
   },).execute();
+
   await db.insertInto("actors",).values({
     id: "actor-1",
     actor_type: "character",
@@ -50,6 +52,7 @@ beforeAll(async () => {
     format_version: 0,
     import_spec: "{}",
   },).execute();
+
   await db.insertInto("messages",).values({
     id: "msg-1",
     chat_id: "chat-1",
@@ -75,6 +78,7 @@ beforeAll(async () => {
     step_index: 0,
     total_steps: 3,
   },).execute();
+
   await db.insertInto("generation_attempts",).values({
     id: "attempt-db",
     chat_id: "chat-1",
@@ -87,6 +91,7 @@ beforeAll(async () => {
     step_index: 2,
     total_steps: 5,
   },).execute();
+
   // Damaged/legacy row: NULL step_index and total_steps.
   await db.insertInto("generation_attempts",).values({
     id: "attempt-nulls",
@@ -180,6 +185,7 @@ describe("completeStep", () => {
 
     await expect(completeStep({ attemptId: "att-cs-err", stepIndex: 2, db: brokenDb, },),)
       .resolves.toBeUndefined();
+
     expect(activeGenerations.get("att-cs-err",)?.stepIndex,).toBe(3,);
   });
 });

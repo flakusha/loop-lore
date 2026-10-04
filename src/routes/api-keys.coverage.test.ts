@@ -62,10 +62,12 @@ describe("apiKeysRoutes coverage", () => {
         body: JSON.stringify({ name: "test-prov", provider: "test-prov", api_key: "sk-x", },),
       },),
     );
+
     expect(store.status,).toBe(401,);
     const del = await app.handle(
       new Request("http://localhost/api/user-api-keys/test-prov", { method: "DELETE", },),
     );
+
     expect(del.status,).toBe(401,);
   });
 
@@ -80,6 +82,7 @@ describe("apiKeysRoutes coverage", () => {
         body: JSON.stringify({ name: "test-prov", provider: "test-prov", api_key: "sk-x", },),
       },),
     );
+
     expect(store.status,).toBe(403,);
   });
 
@@ -93,6 +96,7 @@ describe("apiKeysRoutes coverage", () => {
         body: JSON.stringify({ name: "test-prov", provider: "test-prov", api_key: "sk-x", },),
       },),
     );
+
     expect(res.status,).toBe(500,);
   });
 
@@ -105,6 +109,7 @@ describe("apiKeysRoutes coverage", () => {
         body: JSON.stringify({ name: "ghost-prov", provider: "ghost-prov", api_key: "sk-x", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -118,6 +123,7 @@ describe("apiKeysRoutes coverage", () => {
         body: JSON.stringify(payload,),
       },),
     );
+
     expect(store.status,).toBe(200,);
     const stored: { ok: boolean; provider: string } = await store.json();
     expect(stored.ok,).toBe(true,);
@@ -135,6 +141,7 @@ describe("apiKeysRoutes coverage", () => {
         body: JSON.stringify({ ...payload, api_key: "sk-second", },),
       },),
     );
+
     expect(upsert.status,).toBe(200,);
     const rows = await db
       .selectFrom("user_api_keys",)
@@ -142,15 +149,18 @@ describe("apiKeysRoutes coverage", () => {
       .where("user_id", "=", userId,)
       .where("provider_name", "=", "test-prov",)
       .execute();
+
     expect(rows,).toHaveLength(1,);
 
     const del = await app.handle(
       new Request("http://localhost/api/user-api-keys/test-prov", { method: "DELETE", },),
     );
+
     expect(del.status,).toBe(204,);
     const gone = await app.handle(
       new Request("http://localhost/api/user-api-keys/test-prov", { method: "DELETE", },),
     );
+
     expect(gone.status,).toBe(404,);
   });
 
@@ -165,6 +175,7 @@ describe("apiKeysRoutes coverage", () => {
         body: JSON.stringify({ name: "test-prov", provider: "test-prov", api_key: "sk-mine", },),
       },),
     );
+
     const theirs = makeApp(db, otherId, testConfig(),);
     const list = await theirs.handle(new Request("http://localhost/api/user-api-keys",),);
     expect(list.status,).toBe(200,);
@@ -173,6 +184,7 @@ describe("apiKeysRoutes coverage", () => {
     const del = await theirs.handle(
       new Request("http://localhost/api/user-api-keys/test-prov", { method: "DELETE", },),
     );
+
     expect(del.status,).toBe(404,);
   });
 });

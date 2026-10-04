@@ -55,6 +55,7 @@ export const chatPromptTemplate: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ promptOverride: next || null, },),
       },);
+
       if (res.ok) {
         await this.loadPromptTemplate();
         this.$dispatch?.("show-toast", {

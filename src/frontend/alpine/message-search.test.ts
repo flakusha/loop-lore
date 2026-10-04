@@ -103,6 +103,7 @@ describeOrSkip("messageSearch.runMessageSearch", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const ctx = searchCtx({ _msgSearchQuery: "x", },);
     await messageSearch.runMessageSearch!.call(ctx,);
     expect(ctx._msgSearchMatches,).toEqual([],);
@@ -160,6 +161,7 @@ describeOrSkip("messageSearch open/close", () => {
       _msgSearchTotal: 3,
       _msgSearchIndex: 2,
     },);
+
     messageSearch.closeMessageSearch!.call(ctx,);
     expect(ctx._msgSearchOpen,).toBe(false,);
     expect(ctx._msgSearchQuery,).toBe("",);
@@ -184,6 +186,7 @@ describeOrSkip("messageSearch open/close", () => {
         },
       },
     },);
+
     messageSearch.toggleMessageSearch!.call(ctx,);
     expect(ctx._msgSearchOpen,).toBe(true,);
     expect(focused,).toBe(1,);
@@ -202,6 +205,7 @@ describeOrSkip("messageSearch open/close", () => {
     (ctx as Record<string, unknown>).runMessageSearch = () => {
       runs++;
     };
+
     messageSearch.onMessageSearchInput!.call(ctx,);
     expect(ctx._msgSearchDebounce,).not.toBeNull();
     // Poll for the debounced run instead of a fixed sleep: under full-suite
@@ -210,6 +214,7 @@ describeOrSkip("messageSearch open/close", () => {
     while (runs === 0 && Date.now() < deadline) {
       await new Promise<void>((resolve,) => setTimeout(resolve, 25,));
     }
+
     expect(runs,).toBe(1,);
     messageSearch.closeMessageSearch!.call(ctx,);
     expect(ctx._msgSearchDebounce,).toBeNull();
@@ -221,6 +226,7 @@ describeOrSkip("messageSearch open/close", () => {
     (ctx as Record<string, unknown>).runMessageSearch = () => {
       runs++;
     };
+
     messageSearch.onMessageSearchInput!.call(ctx,);
     messageSearch.onMessageSearchInput!.call(ctx,);
     messageSearch.onMessageSearchInput!.call(ctx,);
@@ -228,6 +234,7 @@ describeOrSkip("messageSearch open/close", () => {
     while (runs === 0 && Date.now() < deadline) {
       await new Promise<void>((resolve,) => setTimeout(resolve, 25,));
     }
+
     expect(runs,).toBe(1,);
     messageSearch.closeMessageSearch!.call(ctx,);
   });
@@ -243,6 +250,7 @@ const domHost = globalThis as unknown as {
     querySelector: (selector: string,) => unknown;
   };
 };
+
 const realCss = domHost.CSS;
 const realDocument = domHost.document;
 
@@ -312,12 +320,14 @@ describeOrSkip("messageSearch highlight helpers (real implementations)", () => {
       ".search-match-active": [active,],
       '[data-message-id="m1"]': [match,],
     },);
+
     const applyActive = mock(() => {},);
     const ctx = rawCtx({
       _msgSearchMatches: ["m1",],
       $refs: { messageList: scope, },
       applySearchMatchActive: applyActive,
     },);
+
     messageSearch.applyMessageSearchHighlights!.call(ctx,);
     expect(active.classes.has("search-match-active",),).toBe(false,);
     expect(match.classes.has("search-match",),).toBe(true,);
@@ -338,6 +348,7 @@ describeOrSkip("messageSearch highlight helpers (real implementations)", () => {
       querySelectorAll: (sel: string,) => (sel === '[data-message-id="m1"]' ? [match,] : []),
       querySelector: () => null,
     };
+
     const ctx = rawCtx({ _msgSearchMatches: ["m1",], $refs: {}, },);
     messageSearch.applyMessageSearchHighlights!.call(ctx,);
     expect(match.classes.has("search-match",),).toBe(true,);
@@ -391,6 +402,7 @@ describeOrSkip("messageSearch toggle optional chains", () => {
         fn();
       },
     },);
+
     messageSearch.toggleMessageSearch!.call(ctx,);
     expect(ctx._msgSearchOpen,).toBe(true,);
     expect(ticked,).toBe(1,);

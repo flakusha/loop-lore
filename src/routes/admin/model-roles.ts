@@ -124,6 +124,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               temperature,
               maxTokens,
             },);
+
             return jsonResponse({ ok: true, },);
           } catch (error) {
             return jsonError({

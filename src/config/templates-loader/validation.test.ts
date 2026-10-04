@@ -23,11 +23,13 @@ function captureWarnings(fn: () => void,): (string | Error)[][] {
   process.emitWarning = ((warning: string | Error,) => {
     calls.push([warning,],);
   }) as typeof process.emitWarning;
+
   try {
     fn();
   } finally {
     process.emitWarning = orig;
   }
+
   return calls;
 }
 
@@ -42,6 +44,7 @@ describe("validateLlmConfig", () => {
       systemPrompts: { chat: "Be helpful.", },
       chatFormats: { default: { system: "s", user: "u", assistant: "a", }, },
     };
+
     expect(validateLlmConfig(raw,),).toBe(raw,);
   });
 
@@ -132,13 +135,16 @@ describe("validateSdConfig", () => {
     expect(() => validateSdConfig({ profiles: { p: "flat", }, },)).toThrow(
       /profiles\.p must be an object/,
     );
+
     expect(() => validateSdConfig({ profiles: { p: { name: 1, }, }, },)).toThrow(TypeError,);
     expect(() => validateSdConfig({ profiles: { p: { maxTokenHint: "lots", }, }, },)).toThrow(
       /maxTokenHint must be a number/,
     );
+
     expect(() => validateSdConfig({ profiles: { p: { promptFormat: 7, }, }, },)).toThrow(
       /promptFormat must be a string/,
     );
+
     expect(() => validateSdConfig({ profiles: { p: { defaults: "flat", }, }, },)).toThrow(
       /defaults must be an object/,
     );
@@ -171,9 +177,11 @@ describe("validateAvatarConfig", () => {
     expect(() => validateAvatarConfig({ emotions: { happy: "flat", }, },)).toThrow(
       /emotions\.happy must be an object/,
     );
+
     expect(() => validateAvatarConfig({ emotions: { happy: {}, }, },)).toThrow(
       /emotions\.happy\.asset must be a string/,
     );
+
     expect(() => validateAvatarConfig({ emotions: { happy: { asset: "h.png", intent: 3, }, }, },)).toThrow(
       /emotions\.happy\.intent must be a string/,
     );
@@ -204,6 +212,7 @@ describe("validateImageEditConfig", () => {
     expect(() => validateImageEditConfig({ workflows: { w: "flat", }, },)).toThrow(
       /workflows\.w must be an object/,
     );
+
     expect(() => validateImageEditConfig({ workflows: { w: { name: 1, }, }, },)).toThrow(
       /workflows\.w\.name must be a string/,
     );

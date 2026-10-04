@@ -90,20 +90,25 @@ export async function redeemInviteCode<Invite extends RedeemableInvite,>(
   if (!invite) {
     return { ok: false, error: notFoundError(), };
   }
+
   if (invite.status === InviteStatus.Revoked) {
     return { ok: false, error: revokedError(), };
   }
+
   if (invite.status === InviteStatus.Expired) {
     return { ok: false, error: expiredError(), };
   }
+
   if (invite.status === InviteStatus.Exhausted) {
     return { ok: false, error: usedUpError(), };
   }
+
   const expiresMs = parseExpiryMs(invite.expires_at,);
   if (expiresMs !== null && expiresMs < Date.now()) {
     if (!inviteStatusMachine.canTransition(invite.status, InviteStatus.Expired,)) {
       return { ok: false, error: expiredError(), };
     }
+
     await portals.setStatus(invite.id, InviteStatus.Expired,);
     return { ok: false, error: expiredError(), };
   }
@@ -118,6 +123,7 @@ export async function redeemInviteCode<Invite extends RedeemableInvite,>(
     if (!inviteStatusMachine.canTransition(invite.status, InviteStatus.Exhausted,)) {
       return { ok: false, error: usedUpError(), };
     }
+
     await portals.setStatus(invite.id, InviteStatus.Exhausted,);
     return { ok: false, error: usedUpError(), };
   }

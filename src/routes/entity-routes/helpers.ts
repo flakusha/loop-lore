@@ -24,12 +24,14 @@ export function buildCreateValues({
     id: uid(),
     [config.parentFk]: parentId,
   };
+
   for (const [camel, col,] of Object.entries(config.fieldMappings,)) {
     const raw = body[camel] == null ? config.defaults[camel] : body[camel];
     if (raw == null) { continue; }
     const val = config.valueTransforms?.[camel] ? config.valueTransforms[camel](raw,) : raw;
     values[col] = config.jsonFields.includes(camel,) ? jsonStringifyOr(val,) : val;
   }
+
   return values;
 }
 
@@ -55,6 +57,7 @@ export function buildUpdateValues({
     const val = config.valueTransforms?.[camel] ? config.valueTransforms[camel](body[camel],) : body[camel];
     updates[col] = config.jsonFields.includes(camel,) ? jsonStringifyOr(val,) : val;
   }
+
   updates.updated_at = new Date().toISOString();
   return updates;
 }
@@ -78,10 +81,12 @@ export function applyResponseTransforms(
     const val = config.responseTransforms?.[camel] ? config.responseTransforms[camel](row[col],) : row[col];
     out[camel] = config.jsonFields.includes(camel,) ? row[col] : val;
   }
+
   for (const [key, val,] of Object.entries(row,)) {
     if (!(key in config.fieldMappings)) {
       out[key] = val;
     }
   }
+
   return out;
 }

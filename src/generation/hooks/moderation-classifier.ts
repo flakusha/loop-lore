@@ -84,12 +84,14 @@ export async function detectModerationWithLlm(
       },
       { role: "user" as const, content: content.slice(0, 500,), },
     ];
+
     const response = await callAuxFn("moderation", context.config, context.db, messages, {
       userId: context.userId,
       chatId: context.chatId,
       temperature: 0,
       maxTokens: 50,
     },);
+
     if (!response) { return null; }
 
     const parsed = jsonParseOr<{ severity?: string }>(response.content, {},);
@@ -97,9 +99,11 @@ export async function detectModerationWithLlm(
       case "severe": {
         return "severe";
       }
+
       case "moderate": {
         return "moderate";
       }
+
       default: {
         return null; // clean, missing, or unknown severity
       }
@@ -108,6 +112,7 @@ export async function detectModerationWithLlm(
     getLogger()
       .child({ module: "moderation-hook", },)
       .debug("moderation-hook: LLM classifier failed, keeping keyword verdict",);
+
     return null;
   }
 }

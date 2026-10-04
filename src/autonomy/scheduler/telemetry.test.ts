@@ -39,6 +39,7 @@ let testDb: TestDb;
 beforeAll(async () => {
   testDb = await createTestDb();
 },);
+
 afterAll(async () => {
   await testDb.db.destroy();
 },);
@@ -55,6 +56,7 @@ describeOrSkip("emitSchedulerEvent — rejecting telemetry store", () => {
       expect(() => {
         emitSchedulerEvent(testDb.db, EV_STARTED, { world_id: "w-broken", },);
       },).not.toThrow();
+
       // The rejection settles on the microtask queue; an unhandled
       // rejection here is the regression this test exists to catch.
       await settle();
@@ -71,6 +73,7 @@ describeOrSkip("emitSchedulerEvent — rejecting telemetry store", () => {
           emitSchedulerEvent(testDb.db, eventType, { world_id: "w-broken", },);
         },).not.toThrow();
       }
+
       await settle();
     } finally {
       recordRejects = false;

@@ -43,6 +43,7 @@ export async function verifyAttachmentsOwned(
     .select(["id", "owner_id",],)
     .where("id", "in", ids,)
     .execute();
+
   const ownerById = new Map(rows.map((r,) => [r.id, r.owner_id,] as const),);
 
   for (const a of attachments) {

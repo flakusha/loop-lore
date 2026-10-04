@@ -58,6 +58,7 @@ export abstract class AsyncLogQueueBase {
         }
       })();
     }, this.flushInterval,);
+
     // Subclass may override: timer.unref() for Node
     this.setupTimerUnref();
   }
@@ -90,6 +91,7 @@ export abstract class AsyncLogQueueBase {
         message: `log queue full — dropped ${this.droppedCount} entries`,
         module: "logger",
       };
+
       this.buffer.push(warning,);
       this.droppedCount = 0;
     }
@@ -132,6 +134,7 @@ export abstract class AsyncLogQueueBase {
         for (const s of settled) {
           if (s.status === "rejected") { throw s.reason; }
         }
+
         // Return shape matches PromiseSettledResult<Awaited<void>[]>; values are unused.
         return Array.from(batch, () => void 0,);
       },),

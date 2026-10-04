@@ -31,6 +31,7 @@ async function handleGetSettings(database: Kysely<DB>, userId: string,): Promise
     .select("settings",)
     .where("id", "=", userId,)
     .executeTakeFirst();
+
   const settings = user?.settings ? jsonParseOr(user.settings, {},) : {};
   return jsonResponse(settings,);
 }
@@ -55,6 +56,7 @@ async function handleUpdateSettings(
   const rejectedKeys = Object.keys(body,).filter(
     (key,) => !(SettingsUpdateAllowedKeys as readonly string[]).includes(key,),
   );
+
   if (rejectedKeys.length > 0) {
     return Response.json(
       {
@@ -81,6 +83,7 @@ async function handleUpdateSettings(
       );
     }
   }
+
   const current = await database
     .selectFrom("users",)
     .select("settings",)
@@ -100,6 +103,7 @@ async function handleUpdateSettings(
     .set({ settings: mergedResult.value, },)
     .where("id", "=", userId,)
     .execute();
+
   return jsonResponse(merged,);
 }
 
@@ -113,6 +117,7 @@ async function handleExportAll(database: Kysely<DB>, userId: string,): Promise<R
     .select("settings",)
     .where("id", "=", userId,)
     .executeTakeFirst();
+
   const settings = user?.settings ? jsonParseOr(user.settings, {},) : {};
 
   const characters = await database

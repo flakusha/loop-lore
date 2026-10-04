@@ -49,6 +49,7 @@ describe("evaluateTriggers", () => {
       currentLocationId: "tavern",
       previousLocationId: "forest",
     },),);
+
     expect(template?.id,).toBe("introduction",);
   });
 
@@ -57,6 +58,7 @@ describe("evaluateTriggers", () => {
       currentLocationId: "tavern",
       previousLocationId: "tavern",
     },),);
+
     expect(template,).toBeNull();
   });
 
@@ -74,6 +76,7 @@ describe("evaluateTriggers", () => {
       charactersInScene: ["aria",],
       previousCharacters: ["bob",],
     },),);
+
     expect(template?.id,).toBe("introduction",);
   });
 
@@ -82,6 +85,7 @@ describe("evaluateTriggers", () => {
       charactersInScene: ["aria",],
       previousCharacters: ["aria",],
     },),);
+
     expect(template,).toBeNull();
   });
 
@@ -114,6 +118,7 @@ describe("evaluateTriggers", () => {
       choiceSelected: true,
       combatActive: true,
     },),);
+
     expect(template?.id,).toBe("farewell",);
   });
 
@@ -123,6 +128,7 @@ describe("evaluateTriggers", () => {
       charactersInScene: ["new",],
       previousCharacters: [],
     },),);
+
     expect(template?.id,).toBe("combat_start",);
   });
 });
@@ -151,6 +157,7 @@ describe("trigger history", () => {
     for (let i = 0; i < 55; i++) {
       recordTrigger(`t${i}`, "farewell",);
     }
+
     const history = getTriggerHistory();
     expect(history.length,).toBe(50,);
     expect(history[0]?.triggerId,).toBe("t5",);

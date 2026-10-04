@@ -57,6 +57,7 @@ function createPortrait(
     sizePercent: settings.portraitSize,
   },);
 }
+
 /**
  * @param scene
  * @param scene.role
@@ -162,8 +163,10 @@ function createAttachments(
       cap.textContent = label;
       item.append(cap,);
     }
+
     grid.append(item,);
   }
+
   el.append(grid,);
   return el;
 }
@@ -217,6 +220,7 @@ export async function renderCurrentScene(
     choicesEl.className = "vn-choices-container";
     sceneEl.append(choicesEl,);
   }
+
   const attachmentsEl = createAttachments(scene,);
   if (attachmentsEl) { sceneEl.append(attachmentsEl,); }
 

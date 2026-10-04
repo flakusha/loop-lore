@@ -43,6 +43,7 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
         log.warn("command list fetch failed", { status: res.status, },);
         return;
       }
+
       const body = await res.json() as { data?: { name: string; descriptionKey: string }[] };
       const entries = Array.isArray(body.data,) ? body.data : [];
       this._commandList = entries.map((entry,) => ({
@@ -50,6 +51,7 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
         descriptionKey: entry.descriptionKey,
         description: t(entry.descriptionKey,),
       }));
+
       if (this._showCommandPalette) { this._filteredCommands = this._commandList; }
     } catch (err) {
       log.warn("command list fetch threw", { err, },);
@@ -89,6 +91,7 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
       input.value = `/${name} `;
       input.focus();
     }
+
     this._showCommandPalette = false;
   },
 

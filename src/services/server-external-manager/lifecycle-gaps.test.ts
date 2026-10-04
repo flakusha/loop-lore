@@ -37,6 +37,7 @@ function makeHost(): ServerExternalHost & { logCalls: CapturedLog[] } {
       logCalls.push({ level: "error", msg, meta, },);
     },
   };
+
   return {
     log: log as unknown as ServerExternalHost["log"],
     instances: [],
@@ -150,6 +151,7 @@ describe("lifecycle killAllSync dispatch", () => {
       makeInstance(9131, makeGracefulProc(9131, [],),),
       makeInstance(9132, makeGracefulProc(9132, [],), "sd-cpp",),
     );
+
     for (const instance of host.instances) {
       instance.pid = 2_100_000_000 + instance.port;
     }

@@ -46,6 +46,7 @@ export async function redeemInvite(
         .where("chat_id", "=", invite.chat_id,)
         .where("actor_id", "=", actorId,)
         .executeTakeFirst();
+
       return existing !== undefined;
     },
     insertMemberAndConsumeUse: (invite, actorId,) =>
@@ -60,6 +61,7 @@ export async function redeemInvite(
               role_in_chat: "member" as never,
             },)
             .execute();
+
           await trx
             .updateTable("chat_invites",)
             .set({ uses: invite.uses + 1, },)
@@ -72,5 +74,6 @@ export async function redeemInvite(
   if (!result.ok) {
     return result;
   }
+
   return { ok: true, chatId: result.invite.chat_id, alreadyMember: result.alreadyMember, };
 }

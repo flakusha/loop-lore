@@ -42,6 +42,7 @@ export function selectMemoriesForInjection(
         reason: `max_per_message:${config.maxPerMessage}`,
         probability: 0,
       },);
+
       continue;
     }
 

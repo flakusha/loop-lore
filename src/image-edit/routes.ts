@@ -44,9 +44,11 @@ function getProvider(backend: ImageEditBackend,): ImageEditProvider {
     case "comfyui": {
       return comfyuiProvider;
     }
+
     case "sd-server": {
       return sdServerProvider;
     }
+
     default: {
       throw new Error(`Unknown backend: ${backend as string}`,);
     }
@@ -76,6 +78,7 @@ export async function handleRun(request: Request, opts?: HandleRunAuth,): Promis
   if (!body.template_id) {
     return jsonError({ message: "Missing required field: template_id", status: HttpStatus.BadRequest, },);
   }
+
   if (!body.backend) {
     return jsonError({ message: "Missing required field: backend", status: HttpStatus.BadRequest, },);
   }
@@ -99,6 +102,7 @@ export async function handleRun(request: Request, opts?: HandleRunAuth,): Promis
   for (const p of template.parameters) {
     if (p.required && !body.params[p.name]) { missing.push(p.name,); }
   }
+
   if (missing.length > 0) {
     return jsonError({
       message: `Missing required parameters: ${missing.join(", ",)}`,

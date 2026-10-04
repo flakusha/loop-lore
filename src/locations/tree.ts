@@ -78,6 +78,7 @@ export class LocationTreeService {
         .where("id", "=", input.parentLocationId,)
         .select(["id", "world_id", "path",],)
         .executeTakeFirst();
+
       if (!parent) { throw new Error("parent location not found",); }
       if (parent.world_id !== input.worldId) { throw new Error("cross-world parent rejected",); }
       const prospectiveDepth = LocationTreeService.depth(parent.path,) + 1;
@@ -85,6 +86,7 @@ export class LocationTreeService {
         throw new Error(`location depth exceeds limit (${LOCATION_DEPTH_LIMIT})`,);
       }
     }
+
     const newId = randomUUID();
     await this.db
       .insertInto("locations",)
@@ -100,6 +102,7 @@ export class LocationTreeService {
         parent_location_id: input.parentLocationId,
       } as never,)
       .execute();
+
     return newId;
   }
 
@@ -115,6 +118,7 @@ export class LocationTreeService {
         .where("id", "=", locationId,)
         .select(["id", "parent_location_id",],)
         .executeTakeFirst();
+
       if (!row) { return ""; }
       let parentPath: string | null = null;
       if (row.parent_location_id) {
@@ -123,8 +127,10 @@ export class LocationTreeService {
           .where("id", "=", row.parent_location_id,)
           .select("path",)
           .executeTakeFirst();
+
         parentPath = parent?.path ?? null;
       }
+
       const newPath = LocationTreeService.computeChildPath(parentPath, row.id,);
       await trx.updateTable("locations",).where("id", "=", row.id,).set({ path: newPath, },).execute();
       return newPath;
@@ -149,6 +155,7 @@ export class LocationTreeService {
       SELECT id, parent_location_id, path, depth FROM chain
        WHERE depth > 0 ORDER BY depth DESC
     `.execute(this.db,);
+
     return result.rows as LocationTreeNode[];
   }
 
@@ -166,6 +173,7 @@ export class LocationTreeService {
       SELECT id, parent_location_id, path, depth FROM tree
        WHERE depth > 0 ORDER BY depth, path
     `.execute(this.db,);
+
     return result.rows as LocationTreeNode[];
   }
 
@@ -184,6 +192,7 @@ export class LocationTreeService {
       .select(["id", "name", "parent_location_id",],)
       .orderBy("name", "asc",)
       .execute();
+
     type Flat = { id: string; name: string; parent_location_id: string | null };
     const byParent = new Map<string | null, Flat[]>();
     for (const row of all as Flat[]) {
@@ -192,6 +201,7 @@ export class LocationTreeService {
       if (bucket) { bucket.push(row,); }
       else { byParent.set(key, [row,],); }
     }
+
     const build = (parentId: string | null,): LocationTreeBranch[] => {
       const kids = byParent.get(parentId,) ?? [];
       return kids.map((k,) => ({
@@ -203,6 +213,7 @@ export class LocationTreeService {
         children: build(k.id,),
       }));
     };
+
     return build(null,);
   }
 
@@ -211,6 +222,7 @@ export class LocationTreeService {
     if (newParentId === locationId) {
       throw new Error("location cannot be its own parent",);
     }
+
     if (newParentId !== null) {
       // App-layer cross-world check (trigger enforces too; this catches pre-trigger validation paths).
       const rows = await this.db
@@ -218,12 +230,14 @@ export class LocationTreeService {
         .where("id", "in", [locationId, newParentId,],)
         .select(["id", "world_id",],)
         .execute();
+
       const self = rows.find((r,) => r.id === locationId);
       const parent = rows.find((r,) => r.id === newParentId);
       if (!self || !parent) { throw new Error("location or parent not found",); }
       if (self.world_id !== parent.world_id) {
         throw new Error("cross-world move rejected",);
       }
+
       if (newParentId !== null) {
         const ancestors = await this.getAncestors(newParentId,);
         if (ancestors.some((a,) => a.id === locationId)) {
@@ -231,6 +245,7 @@ export class LocationTreeService {
         }
       }
     }
+
     await this.db.updateTable("locations",).where("id", "=", locationId,).set({
       parent_location_id: newParentId,
     },).execute();

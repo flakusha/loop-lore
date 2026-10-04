@@ -78,6 +78,7 @@ export const adminSystem = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ key, value, },),
       },);
+
       if (res.ok) {
         showToast("success", t("toasts.configSaved",),);
         delete this.sysConfigDirty[key];
@@ -111,11 +112,13 @@ export const adminSystem = {
       const res = await apiFetch(`/api/v1/admin/system-config/export?format=${format}`, {
         headers: { Accept: format === "toml" ? "application/toml" : "application/yaml", },
       },);
+
       if (!res.ok) {
         const err = await res.json();
         showToast("error", err.message || t("toasts.failed",),);
         return;
       }
+
       const blob = await res.blob();
       const url = URL.createObjectURL(blob,);
       const a = document.createElement("a",);
@@ -141,6 +144,7 @@ export const adminSystem = {
       reset: { string: "RESET", url: "/api/v1/admin/settings/reset", },
       factory: { string: "DELETE ALL", url: "/api/v1/admin/factory-reset", },
     } as const;
+
     const cfg = confirmMap[action];
     if (this.dangerConfirm[action] !== cfg.string) { return; }
     this.dangerBusy[action] = true;
@@ -150,6 +154,7 @@ export const adminSystem = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ confirmation: cfg.string, },),
       },);
+
       if (res.ok) {
         showToast("success", t("toasts.dangerActionDone",),);
         this.dangerConfirm[action] = "";

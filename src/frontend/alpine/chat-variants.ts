@@ -70,10 +70,12 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ variantIndex: index, },),
       },);
+
       if (!res.ok) {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSwitchVariant",), },);
         return;
       }
+
       const selected = await res.json() as { id?: string; content?: string };
       const msg = this.messages.find((m,) => m.id === messageId);
       if (msg && typeof selected.content === "string") {
@@ -82,6 +84,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       } else {
         await this.loadMessages();
       }
+
       this.closeVariants();
     } catch {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSwitchVariant",), },);
@@ -97,12 +100,14 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
       return;
     }
+
     try {
       const response = await apiFetch("/api/v1/generation/regenerate", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ chatId: this.activeChat, },),
       },);
+
       const data = await response.json();
       if (response.ok && data.ready) {
         this.$dispatch?.("show-toast", { type: "info", message: t("status.regeneratingResponse",), },);
@@ -131,6 +136,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
       },);
+
       if (res.ok) {
         await this.loadMessages();
         this.$dispatch?.("show-toast", { type: "info", message: t("toasts.newVariantGenerated",), },);
@@ -165,6 +171,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
       return;
     }
+
     const msgEl = document.querySelector<HTMLElement>(`[data-message-id="${CSS.escape(messageId,)}"]`,);
     const actorId = msgEl?.dataset.actorId ?? "unknown";
     try {
@@ -173,14 +180,17 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ messageId, chatId: this.activeChat, actorId, },),
       },);
+
       const data = await response.json();
       if (!response.ok || !data.ok) {
         this.$dispatch?.("show-toast", {
           type: "error",
           message: data.error ?? t("toasts.failedContinueMessage",),
         },);
+
         return;
       }
+
       this.continuingMessageId = messageId;
       this.isContinuing = true;
       this.isGenerating = true;
@@ -202,17 +212,20 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
       return;
     }
+
     try {
       const response = await apiFetch("/api/v1/generation/retry", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ chatId: this.activeChat, attemptId, step, },),
       },);
+
       const data = await response.json();
       if (!response.ok || !data.ok) {
         this.$dispatch?.("show-toast", { type: "error", message: data.error ?? t("toasts.failedRetry",), },);
         return;
       }
+
       this.$dispatch?.("show-toast", {
         type: "info",
         message: data.resumeFromStep > 0
@@ -222,6 +235,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
           },)
           : t("status.regeneratingResponse",),
       },);
+
       this.isGenerating = true;
     } catch {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorDuringRetry",), },);

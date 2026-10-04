@@ -83,6 +83,7 @@ export async function exportCharacterSystems(
   const worldTraits = worldId
     ? await traitsService.getWorldTraits(actorId, worldId,)
     : [];
+
   const locationTraits: Record<string, unknown>[] = []; // Location traits need locationId
 
   if (permanentTraits.length > 0 || worldTraits.length > 0) {

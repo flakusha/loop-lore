@@ -23,6 +23,7 @@ describe("searchWithFallback", () => {
       calls++;
       throw new CaptchaBlockedError("ddg-cap", 900_000,);
     },);
+
     const brave = provider("brave-ok", () => hit("brave-ok",),);
     const results = await searchWithFallback([ddg, brave,], "ai agents",);
     expect(results[0]?.provider,).toBe("brave-ok",);
@@ -34,6 +35,7 @@ describe("searchWithFallback", () => {
     const limited = provider("rate-p", () => {
       throw new ProviderRateLimitedError("rate-p", 5_000,);
     },);
+
     const ok = provider("ok-p", () => hit("ok-p",),);
     const results = await searchWithFallback([limited, ok,], "q",);
     expect(results[0]?.provider,).toBe("ok-p",);
@@ -44,21 +46,26 @@ describe("searchWithFallback", () => {
     const a = provider("dead-a", () => {
       throw new CaptchaBlockedError("dead-a", 900_000,);
     },);
+
     const b = provider("dead-b", () => {
       throw new Error("boom",);
     },);
+
     const first = await searchWithFallback([a, b,], "q",).then(
       () => null,
       (error: Error,) => error,
     );
+
     expect(first?.message,).toContain("All search providers failed",);
     // Second run reports quarantine skips, not fresh calls.
     const second = await searchWithFallback([a, b,], "q",).then(
       () => null,
       (error: Error,) => error,
     );
+
     expect(second?.message,).toContain("quarantined",);
   });
+
   test("trackSearchError quarantines then rethrows", () => {
     expect(() => trackSearchError(new CaptchaBlockedError("trk-cap", 60_000,),)).toThrow("quarantined",);
     expect(searchBreaker.allowRequest("trk-cap",),).toBe(false,);

@@ -25,6 +25,7 @@ registerCommand("heal", async (args, ctx,): Promise<CommandResult> => {
   if (!db) {
     return { systemMessage: "**Heal unavailable:** command context missing database.", handled: true, };
   }
+
   const userId = ctx.userId;
   if (!userId) {
     return { systemMessage: "**Heal unavailable:** missing user context.", handled: true, };
@@ -51,6 +52,7 @@ registerCommand("heal", async (args, ctx,): Promise<CommandResult> => {
       handled: true,
     };
   }
+
   if (target.hp >= target.maxHp) {
     return { systemMessage: `**Heal:** ${target.name} is already at full HP.`, handled: true, };
   }

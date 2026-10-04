@@ -185,6 +185,7 @@ describe("handleRetryGeneration", () => {
       resumeFromStep: number;
       totalSteps: number;
     };
+
     expect(data.ok,).toBe(true,);
     expect(data.chatId,).toBe(chatId,);
     expect(data.resumeFromStep,).toBe(0,);
@@ -216,6 +217,7 @@ describe("handleRetryGeneration", () => {
       testDb!,
       member,
     );
+
     expect(res.status,).toBe(200,);
     const bal = await getStoryPointBalance(testDb!, member, null,);
     expect(bal.balance,).toBe(2,);
@@ -230,6 +232,7 @@ describe("handleRetryGeneration", () => {
       testDb!,
       member,
     );
+
     expect(res.status,).toBe(400,);
   });
 

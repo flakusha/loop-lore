@@ -64,6 +64,7 @@ export async function createEvalEnv(mode: EvalMode, corpus: readonly EvalFixture
     for (const fixture of corpus) {
       mock.setInputReply(fixture.task, fixture.input, fixture.reply,);
     }
+
     registerProvider(EVAL_PROVIDER_NAME, mock,);
   } else {
     const instance: ProviderInstanceConfig = {
@@ -77,8 +78,10 @@ export async function createEvalEnv(mode: EvalMode, corpus: readonly EvalFixture
       allowUserApiKey: false,
       models: {},
     };
+
     registerProvider(EVAL_PROVIDER_NAME, new OpenAiCompatibleProvider(instance,),);
   }
+
   await insertModelRoleOverrides(db, EVAL_PROVIDER_NAME, EVAL_MODEL_ID, { role: ModelRole.Auxiliary, } as never,);
   await insertModelRoleOverrides(db, EVAL_PROVIDER_NAME, EVAL_MODEL_ID, { role: ModelRole.Classifier, } as never,);
   return {

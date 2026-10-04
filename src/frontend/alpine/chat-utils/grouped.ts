@@ -35,8 +35,10 @@ export function computeGroupedMessages(this: ChatState,): GroupedMessage[] {
         if (last) { last.groupCount = ((last.groupCount as number) ?? 1) + 1; }
       }
     }
+
     groups.push(msg,);
   }
+
   this._groupedKey = key;
   this._groupedCache = groups;
   return groups;

@@ -249,6 +249,7 @@ describe("triggerAutoGeneration — catch-path contract", () => {
     } catch {
       didThrow = true;
     }
+
     expect(didThrow,).toBe(false,);
   });
 

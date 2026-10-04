@@ -81,6 +81,7 @@ export async function upsertAssetTransform(
     focal_point_y: values.focalPointY ?? null,
     updated_at: new Date().toISOString(),
   }, ["asset_id", "context",],);
+
   const row = await getAssetTransform(db, assetId, context,);
   if (!row) { throw new Error("Transform upsert did not persist",); }
   return row;
@@ -101,6 +102,7 @@ export async function getAssetTransform(
   const row = await db.selectFrom("asset_transforms",).selectAll()
     .where("asset_id", "=", assetId,).where("context", "=", context,)
     .executeTakeFirst();
+
   return row as AssetTransforms | undefined;
 }
 

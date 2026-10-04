@@ -54,6 +54,7 @@ describe("Registration flow E2E", () => {
         // real assertion is the user row + redirect below.
         allowlist: [/status of 401 \(Unauthorized\)/,],
       },);
+
       try {
         await gotoRegister(page,);
         const username = `browser_${Date.now()}`;
@@ -70,6 +71,7 @@ describe("Registration flow E2E", () => {
           .select(["username",],)
           .where("username", "=", username,)
           .executeTakeFirst();
+
         expect(row,).not.toBeNull();
         expect(row!.username,).toBe(username,);
       } finally {
@@ -112,6 +114,7 @@ describe("Registration flow E2E", () => {
           state: "visible",
           timeout: 10_000,
         },);
+
         const errHtml = await page2.locator("[data-testid='register-error']",).innerHTML();
         expect(errHtml.length, "duplicate registration must surface an error message",).toBeGreaterThan(0,);
         expect(new URL(page2.url(),).pathname, "duplicate registration must not redirect",).toBe("/views/register",);
@@ -122,6 +125,7 @@ describe("Registration flow E2E", () => {
           .select(["username",],)
           .where("username", "=", username,)
           .execute();
+
         expect(rows.length,).toBe(1,);
       } finally {
         errors2.assert();
@@ -159,6 +163,7 @@ describe("Registration closed E2E", () => {
         state: "visible",
         timeout: 10_000,
       },);
+
       const errHtml = await page.locator("[data-testid='register-error']",).innerHTML();
       expect(errHtml.length, "closed registration must surface an error message",).toBeGreaterThan(0,);
       expect(new URL(page.url(),).pathname,).toBe("/views/register",);
@@ -168,6 +173,7 @@ describe("Registration closed E2E", () => {
         .select(["username",],)
         .where("username", "=", username,)
         .executeTakeFirst();
+
       expect(row, "closed registration must not persist a user",).toBeUndefined();
     } finally {
       errors.assert();

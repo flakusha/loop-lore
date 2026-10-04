@@ -66,9 +66,11 @@ export async function handlePromptImprove(
   if (!userId) {
     return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
   }
+
   if (!req || typeof req.text !== "string" || req.text.trim().length === 0) {
     return Response.json({ error: "Missing required field: text", status: 400, }, { status: 400, },);
   }
+
   const mode = req.mode ?? "improve";
   if (mode !== "improve" && mode !== "analyze") {
     return Response.json({ error: "Invalid mode; expected improve or analyze", status: 400, }, { status: 400, },);
@@ -77,6 +79,7 @@ export async function handlePromptImprove(
   const level: PromptImproveLevel | null = mode === "improve"
     ? (req.level as PromptImproveLevel | undefined) ?? "wording"
     : null;
+
   if (level && !IMPROVE_LEVELS.includes(level,)) {
     return Response.json({
       error: `Invalid level; expected one of: ${IMPROVE_LEVELS.join(", ",)}`,
@@ -100,6 +103,7 @@ export async function handlePromptImprove(
       chatId: req.chatId,
       signals: injection.signals,
     },);
+
     return Response.json({
       error: "injection_detected",
       message: "Text rejected: prompt injection detected.",
@@ -119,6 +123,7 @@ export async function handlePromptImprove(
     if (!analysis) {
       return Response.json({ error: "No auxiliary model configured", status: 503, }, { status: 503, },);
     }
+
     return Response.json({ data: { mode, analysis, }, },);
   }
 
@@ -131,6 +136,7 @@ export async function handlePromptImprove(
     userId,
     chatId: req.chatId,
   },);
+
   return Response.json({
     data: {
       mode,
@@ -159,6 +165,7 @@ async function buildStyleContext(db: Kysely<DB>, chatId: string,): Promise<strin
     .orderBy("created_at", "desc",)
     .limit(STYLE_CONTEXT_MESSAGES,)
     .execute();
+
   const samples = rows.reverse().map((r,) => `${r.role}: ${r.content}`);
   const styleContext = samples.join("\n---\n",).slice(0, STYLE_CONTEXT_MAX_CHARS,);
   return styleContext.length > 0 ? styleContext : undefined;

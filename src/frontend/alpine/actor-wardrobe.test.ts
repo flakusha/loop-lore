@@ -83,6 +83,7 @@ describeOrSkip("actorWardrobe.load", () => {
       url.endsWith("/avatars",)
         ? Response.json([variant("v1", "o1", "happy",),],)
         : Response.json([outfit("o1", "Court Dress",),],);
+
     await s.load();
     expect(s.outfits,).toHaveLength(1,);
     expect(s.variants,).toHaveLength(1,);
@@ -100,6 +101,7 @@ describeOrSkip("actorWardrobe.load", () => {
       url.endsWith("/avatars",)
         ? Response.json({}, { status: 500, },)
         : Response.json({}, { status: 500, },);
+
     await s.load();
     expect(s.loadError,).not.toBe("",);
     expect(s.variants,).toEqual([],);
@@ -135,6 +137,7 @@ describeOrSkip("actorWardrobe.save", () => {
       descriptor: "",
       tags: ["formal",],
     },);
+
     expect(s.message,).toBe("status.wardrobeCreated",);
     expect(s.draft.name,).toBe("",);
   });
@@ -159,6 +162,7 @@ describeOrSkip("actorWardrobe.remove", () => {
       opts.method === "DELETE"
         ? Response.json({}, { status: 404, },)
         : Response.json([],);
+
     await s.remove("o1",);
     expect(fetchCalls[0]!.opts.method,).toBe("DELETE",);
     expect(s.error,).toBe("",);
@@ -183,6 +187,7 @@ describeOrSkip("actorWardrobe.variantGrid", () => {
       variant("v3", "o1", "angry",),
       variant("v4", "missing-outfit", "sad",),
     ];
+
     const grid = s.variantGrid();
     expect(grid,).toHaveLength(3,);
     const names = grid.map((g,) => g.outfitName);

@@ -83,6 +83,7 @@ export function branchRoute<P extends { id: string } = { id: string }, R extends
       const error = result as unknown as ServiceError;
       return jsonError(error.message, statusFor(error.code,), error.code as never,);
     }
+
     return envelope(result,);
   };
 }

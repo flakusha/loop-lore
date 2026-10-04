@@ -96,6 +96,7 @@ function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; ca
 
     if (chunkType === 0x49_45_4E_44) { break; // IEND
      }
+
     if (chunkType === TEXTSIG || chunkType === ZTXTSIG) {
       const dataStart = offset + 8;
       const dataEnd = dataStart + chunkLen;
@@ -137,6 +138,7 @@ function parseJpegMetadata(buf: Uint8Array,): { width: number; height: number; c
       if (segLen >= 3) {
         caption = new TextDecoder().decode(buf.slice(offset + 4, offset + 2 + segLen,),);
       }
+
       offset += 2 + segLen;
       continue;
     }

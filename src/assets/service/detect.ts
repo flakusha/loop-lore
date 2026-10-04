@@ -46,5 +46,6 @@ export function mimeFromExtension(filename: string,): string {
     json: "application/json",
     txt: "text/plain",
   };
+
   return MIME_MAP[ext] ?? "application/octet-stream";
 }

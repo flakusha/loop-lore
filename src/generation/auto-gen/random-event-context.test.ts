@@ -32,17 +32,20 @@ async function seedWorldAndChat(): Promise<void> {
     status: "active",
     settings: "{}",
   },).execute();
+
   await db.insertInto("worlds",).values({
     id: "world-1",
     owner_id: "user-1",
     name: "Test World",
   },).execute();
+
   await db.insertInto("locations",).values({
     id: "loc-1",
     world_id: "world-1",
     name: "Tavern",
     description: "A smoky tavern.",
   },).execute();
+
   await db.insertInto("chats",).values({
     id: "chat-1",
     name: "Chat",
@@ -51,6 +54,7 @@ async function seedWorldAndChat(): Promise<void> {
     created_by: "user-1",
     current_location_id: "loc-1",
   },).execute();
+
   await db.insertInto("chats",).values({
     id: "chat-no-loc",
     name: "No Location Chat",
@@ -76,6 +80,7 @@ async function seedParticipant(
     format_version: 0,
     import_spec: "{}",
   },).execute();
+
   await db.insertInto("chat_participants",).values({
     chat_id: chatId,
     actor_id: actorId,

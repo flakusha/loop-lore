@@ -75,6 +75,7 @@ export class PersonasService {
         model: params.model ?? null,
       },)
       .execute();
+
     return id;
   }
 
@@ -95,6 +96,7 @@ export class PersonasService {
         if (Number(res?.numUpdatedRows ?? 0,) === 0) {
           throw new Error("Persona not found",);
         }
+
         updateVerifiedRow = true;
       }
 
@@ -115,6 +117,7 @@ export class PersonasService {
       .where("id", "=", id,)
       .where("user_id", "=", userId,)
       .executeTakeFirst();
+
     if (!owned) { return; }
 
     // Clear chat_participants.persona_id BEFORE deleting the persona — the
@@ -174,6 +177,7 @@ async function applyDefault(
       .where("id", "=", id,)
       .where("user_id", "=", userId,)
       .executeTakeFirst();
+
     if (!owned) {
       throw new Error("Persona not found",);
     }
@@ -215,11 +219,13 @@ function buildPersonaUpdate(params: UpdatePersonaParams,): {
     updates.is_default = DefaultState.NotDefault;
     updates.updated_at = new Date().toISOString();
   }
+
   if (params.temperature !== undefined) { updates.temperature = params.temperature; }
   if (params.maxTokens !== undefined) { updates.max_tokens = params.maxTokens; }
   if (params.model !== undefined) { updates.model = params.model; }
   if (!defaultFlip && updates.updated_at === undefined && Object.keys(updates,).length > 0) {
     updates.updated_at = new Date().toISOString();
   }
+
   return { updates, defaultFlip, };
 }

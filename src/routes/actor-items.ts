@@ -61,5 +61,6 @@ export function actorItemsRoutes(opts: { database: Db; config: Config }, prefix 
     opts,
     prefix,
   );
+
   return crud.use(actorItemsGameplayRoutes(opts, prefix,),);
 }

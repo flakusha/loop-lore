@@ -103,6 +103,7 @@ export function createApp(deps: AppDeps,): Elysia {
         request.headers.delete("x-user-id",);
         return { userId: null, userRole: null, sessionId: null, ...i18n, };
       }
+
       // Detect locale and create translator
       const locale = detectLocale(request,);
       const i18n = createI18nContext(locale,);
@@ -115,6 +116,7 @@ export function createApp(deps: AppDeps,): Elysia {
       if (authResult.context.userId !== null) {
         request.headers.set("x-user-id", authResult.context.userId,);
       }
+
       return {
         userId: authResult.context.userId,
         userRole: authResult.context.userRole,
@@ -140,11 +142,13 @@ export function createApp(deps: AppDeps,): Elysia {
   const cookieSecureOverride = readCookieSecureOverrideFromEnv(
     process.env["LL_COOKIE_SECURE"],
   );
+
   const csrfOpts: CsrfMiddlewareOptions = {
     secret: effectiveCsrfSecret,
     enabled: csrfEnabled,
     cookieSecureOverride,
   };
+
   // The CSRF wiring (onBeforeHandle + onAfterHandle) lives in
   // `src/middleware/csrf-plugin.ts::csrfPlugin`. Production and the
   // integration test apply the same factory — there is no second copy
@@ -180,6 +184,7 @@ export function createApp(deps: AppDeps,): Elysia {
       idem.release({ method: ctx.request.method, route: ctx.route ?? "?", requestId, userId: ctx.userId ?? null, },);
       return;
     }
+
     idem.recordResponse({
       method: ctx.request.method,
       route: ctx.route ?? "?",
@@ -200,6 +205,7 @@ export function createApp(deps: AppDeps,): Elysia {
     void asyncStore.flush();
     scheduler.stop();
   },);
+
   // ── API version resolver ───────────────────────────────────
   // Populates ctx.apiVersion for every request via global derive().
   // Mounted before plugins so they can read apiVersion from context.
@@ -225,10 +231,12 @@ export function createApp(deps: AppDeps,): Elysia {
       const { unauthorizedResponse, } = await import("./routes/http-utils");
       return unauthorizedResponse();
     }
+
     if (!config.assets.enabled) {
       const { notFoundResponse, } = await import("./routes/http-utils");
       return notFoundResponse("Asset system is disabled",);
     }
+
     const { handleUpload, } = await import("./assets/controller");
     return handleUpload({
       request: ctx.request,
@@ -238,6 +246,7 @@ export function createApp(deps: AppDeps,): Elysia {
       maxFileSize: config.assets.maxFileSize,
     },);
   };
+
   app.post("/api/v1/assets", uploadAsset, { parse: "none", },);
 
   // ── Convenience redirects ─────────────────────────────────────
@@ -258,6 +267,7 @@ export function createApp(deps: AppDeps,): Elysia {
       if (!url.pathname.startsWith("/api/v1/",) && !url.pathname.startsWith("/api/views/",)) {
         return versionRedirect("v1",)({ request, },);
       }
+
       return handleApiRequest({ request, database, config, },);
     }
 

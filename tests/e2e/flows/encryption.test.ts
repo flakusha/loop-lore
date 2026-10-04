@@ -32,6 +32,7 @@ describe("Encryption Workflow", () => {
         compressAlgorithm: "gzip",
       },
     },);
+
     await seedAll(server.db,);
     api = createClient(server.url,);
     await api.loginAs(SEED.user.username, SEED.user.password,);
@@ -50,9 +51,11 @@ describe("Encryption Workflow", () => {
         console.log("Skipping: encryption not enabled",);
         return;
       }
+
       const res = await api.get<{ keys: Array<{ id: string; name: string; status: string }> }>(
         "/api/v1/keys",
       );
+
       expect(res.ok,).toBe(true,);
       expect(Array.isArray(res.data!.keys,),).toBe(true,);
     });
@@ -62,10 +65,12 @@ describe("Encryption Workflow", () => {
         console.log("Skipping: encryption not enabled",);
         return;
       }
+
       const res = await api.post<{ id: string; name: string; status: string }>(
         "/api/v1/keys",
         { name: "test-key-e2e", },
       );
+
       expect(res.ok,).toBe(true,);
       expect(res.data!.id,).toBeTruthy();
       expect(res.data!.name,).toBe("test-key-e2e",);
@@ -77,6 +82,7 @@ describe("Encryption Workflow", () => {
         console.log("Skipping: encryption not enabled",);
         return;
       }
+
       const res = await api.post("/api/v1/keys", { name: "", },);
       expect(res.ok,).toBe(false,);
     });
@@ -96,6 +102,7 @@ describe("Encryption Workflow", () => {
           encryption_level: "standard",
         },
       );
+
       expect(chatRes.ok,).toBe(true,);
       const chatId = chatRes.data!.id;
 
@@ -105,12 +112,14 @@ describe("Encryption Workflow", () => {
         `/api/v1/chats/${chatId}/messages`,
         { content: msgContent, role: "user", },
       );
+
       expect(sendRes.ok,).toBe(true,);
 
       // Retrieve messages
       const listRes = await api.get<{ data: Array<{ id: string; content: string }> }>(
         `/api/v1/chats/${chatId}/messages`,
       );
+
       expect(listRes.ok,).toBe(true,);
       expect(listRes.data!.data.length,).toBeGreaterThanOrEqual(1,);
 
@@ -131,6 +140,7 @@ describe("Encryption Workflow", () => {
           encryption_level: "none",
         },
       );
+
       expect(chatRes.ok,).toBe(true,);
       const chatId = chatRes.data!.id;
 
@@ -140,12 +150,14 @@ describe("Encryption Workflow", () => {
         `/api/v1/chats/${chatId}/messages`,
         { content: msgContent, role: "user", },
       );
+
       expect(sendRes.ok,).toBe(true,);
 
       // Retrieve and verify plaintext
       const listRes = await api.get<{ data: Array<{ content: string }> }>(
         `/api/v1/chats/${chatId}/messages`,
       );
+
       expect(listRes.ok,).toBe(true,);
       expect(listRes.data!.data[0]!.content,).toBe(msgContent,);
     });
@@ -159,6 +171,7 @@ describe("Encryption Workflow", () => {
         console.log("Skipping: encryption not enabled",);
         return;
       }
+
       // Use the chat we created earlier
       const chatRes = await api.post<{ id: string }>(
         "/api/v1/chats",
@@ -169,6 +182,7 @@ describe("Encryption Workflow", () => {
           encryptionLevel: "standard",
         },
       );
+
       expect(chatRes.ok,).toBe(true,);
       const chatId = chatRes.data!.id;
 
@@ -176,6 +190,7 @@ describe("Encryption Workflow", () => {
       const keyRes = await api.get<{ keyId: string; rawKey: string }>(
         `/api/v1/chats/${chatId}/encryption-key`,
       );
+
       expect(keyRes.ok,).toBe(true,);
       expect(keyRes.data!.keyId,).toBeTruthy();
       expect(keyRes.data!.rawKey,).toBeTruthy();
@@ -195,6 +210,7 @@ describe("Encryption Workflow", () => {
           encryption_level: "standard",
         },
       );
+
       expect(chatRes.ok,).toBe(true,);
       const chatId = chatRes.data!.id;
 
@@ -203,11 +219,13 @@ describe("Encryption Workflow", () => {
         `/api/v1/chats/${chatId}/messages`,
         { content: unicodeContent, role: "user", },
       );
+
       expect(sendRes.ok,).toBe(true,);
 
       const listRes = await api.get<{ data: Array<{ content: string }> }>(
         `/api/v1/chats/${chatId}/messages`,
       );
+
       expect(listRes.ok,).toBe(true,);
       expect(listRes.data!.data[0]!.content,).toBe(unicodeContent,);
     });
@@ -222,6 +240,7 @@ describe("Encryption Workflow", () => {
           encryption_level: "standard",
         },
       );
+
       expect(chatRes.ok,).toBe(true,);
       const chatId = chatRes.data!.id;
 
@@ -231,15 +250,18 @@ describe("Encryption Workflow", () => {
       // roundtrips cleanly through trim (no trailing whitespace).
       const longContent = "The quick brown fox jumps over the lazy dog. ".repeat(99,) +
         "The quick brown fox jumps over the lazy dog.";
+
       const sendRes = await api.post<{ id: string }>(
         `/api/v1/chats/${chatId}/messages`,
         { content: longContent, role: "user", },
       );
+
       expect(sendRes.ok,).toBe(true,);
 
       const listRes = await api.get<{ data: Array<{ content: string }> }>(
         `/api/v1/chats/${chatId}/messages`,
       );
+
       expect(listRes.ok,).toBe(true,);
       expect(listRes.data!.data[0]!.content,).toBe(longContent,);
     });

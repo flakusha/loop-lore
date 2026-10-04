@@ -24,6 +24,7 @@ describe("InMemoryRateLimitStore eviction", () => {
     for (let i = 0; i < 2_500; i++) {
       store.saveWindow(`key-${i}`, [10,], 1_000, 100,);
     }
+
     // Still mid-epoch-1 in wall time: nothing evictable yet, keys present.
     expect(store.loadWindow("key-0", 100,),).toEqual([10,],);
     // Time passes far beyond every window, then one more save triggers the sweep.
@@ -31,6 +32,7 @@ describe("InMemoryRateLimitStore eviction", () => {
     for (let i = 0; i < 1_024; i++) {
       store.saveWindow(`fresh-${i}`, [5_000_000,], 1_000, 5_000_000,);
     }
+
     // All stale idle keys are gone.
     expect(store.loadWindow("key-0", 5_000_000,),).toEqual([],);
     expect(store.loadWindow("key-2499", 5_000_000,),).toEqual([],);
@@ -44,6 +46,7 @@ describe("InMemoryRateLimitStore eviction", () => {
     for (let i = 0; i < 1_024; i++) {
       store.saveWindow(`w-${i}`, [5_000_000,], 1_000, 5_000_000,);
     }
+
     expect(store.loadBucket("b",),).toBeUndefined();
     store.destroy();
   });

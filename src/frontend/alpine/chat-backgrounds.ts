@@ -70,10 +70,12 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
         const body = await res.json();
         this._backgrounds = (body.data as ChatBackgroundRow[]) || [];
       }
+
       await this.loadBackground();
     } catch (error) {
       log.warn("loadBackgrounds failed", { error: String(error,), },);
     }
+
     this._backgroundsLoading = false;
   },
 
@@ -89,6 +91,7 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ backgroundId, },),
       },);
+
       if (res.ok) {
         const body = await res.json();
         this._background = (body.data as ChatBackgroundRow | null) ?? null;

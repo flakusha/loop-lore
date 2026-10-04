@@ -47,6 +47,7 @@ describe("updateMessageVisibility", () => {
       .select(["visibility", "hidden_reason",],)
       .where("id", "=", messageId,)
       .executeTakeFirst();
+
     expect(row?.visibility,).toBe("hidden_by_user",);
     expect(row?.hidden_reason,).toBe("user hid it",);
   });
@@ -60,6 +61,7 @@ describe("updateMessageVisibility", () => {
       .select(["visibility", "hidden_reason",],)
       .where("id", "=", messageId,)
       .executeTakeFirst();
+
     expect(row?.visibility,).toBe("hidden_by_moderator",);
     expect(row?.hidden_reason,).toBeNull();
   });
@@ -73,6 +75,7 @@ describe("updateMessageVisibility", () => {
       .select("hidden_reason",)
       .where("id", "=", messageId,)
       .executeTakeFirst();
+
     expect(row?.hidden_reason,).toBe("updated reason",);
   });
 
@@ -122,12 +125,14 @@ describe("hardDeleteChat", () => {
       .select("id",)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     expect(chat,).toBeUndefined();
     const msg = await db
       .selectFrom("messages",)
       .select("id",)
       .where("id", "=", messageId,)
       .executeTakeFirst();
+
     expect(msg,).toBeUndefined();
   });
 
@@ -150,12 +155,14 @@ describe("hardDeleteChat", () => {
       code: "forbidden",
       message: "Only the chat creator, an Owner, or a GM can change settings",
     },);
+
     // Chat row still present — the guard short-circuited before the cascade.
     const stillThere = await localDb
       .selectFrom("chats",)
       .select("id",)
       .where("id", "=", otherChat,)
       .executeTakeFirst();
+
     expect(stillThere?.id,).toBe(otherChat,);
     await isolated.db.destroy();
   });

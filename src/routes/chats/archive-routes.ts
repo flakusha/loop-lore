@@ -41,8 +41,10 @@ export function archiveRoutes(opts: HandlerOpts, prefix = "/api",) {
             const status = result.code === "not_found"
               ? HttpStatus.NotFound
               : HttpStatus.Forbidden;
+
             return jsonError(result.message, status, result.code as never,);
           }
+
           return jsonResponse({ ok: true, chatId: result.chatId, },);
         },
         { params: ChatIdParams, },
@@ -60,8 +62,10 @@ export function archiveRoutes(opts: HandlerOpts, prefix = "/api",) {
             const status = result.code === "not_found"
               ? HttpStatus.NotFound
               : HttpStatus.Forbidden;
+
             return jsonError(result.message, status, result.code as never,);
           }
+
           return jsonResponse({ ok: true, chatId: result.chatId, },);
         },
         { params: ChatIdParams, },
@@ -79,8 +83,10 @@ export function archiveRoutes(opts: HandlerOpts, prefix = "/api",) {
             const status = result.code === "not_found"
               ? HttpStatus.NotFound
               : HttpStatus.Forbidden;
+
             return jsonError(result.message, status, result.code as never,);
           }
+
           return jsonNoContent();
         },
         { params: ChatIdParams, },

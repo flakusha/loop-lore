@@ -52,6 +52,7 @@ export const capabilitiesState: Partial<ModelsState> & ThisType<ModelsState> = {
           body: jsonStringifyOr(fields, "{}",),
         },
       );
+
       if (res.ok) {
         await this.loadModelCapabilities();
         showToast("success", "Override saved",);
@@ -74,6 +75,7 @@ export const capabilitiesState: Partial<ModelsState> & ThisType<ModelsState> = {
         `/api/v1/admin/model-capabilities/${encodeURIComponent(providerId,)}/${encodeURIComponent(modelId,)}`,
         { method: "DELETE", headers: { Accept: "application/json", }, },
       );
+
       if (res.ok) {
         await this.loadModelCapabilities();
         showToast("success", "Override cleared",);

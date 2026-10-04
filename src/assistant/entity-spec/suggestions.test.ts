@@ -10,6 +10,7 @@ describe("collectEntitySuggestions", () => {
       { role: "user", content: "A stranger named Aldric appears.", },
       { role: "character", content: "They discover a settlement called Ravenhollow.", },
     ],);
+
     expect(items.map((s,) => s.name),).toEqual(["Ravenhollow",],);
   });
 
@@ -18,6 +19,7 @@ describe("collectEntitySuggestions", () => {
       { role: "character", content: "A stranger named Aldric appears.", },
       { role: "assistant", content: "Later, a stranger named Aldric returns.", },
     ],);
+
     expect(items,).toHaveLength(1,);
   });
 
@@ -26,6 +28,7 @@ describe("collectEntitySuggestions", () => {
       role: "character",
       content: `A stranger named Person${i} appears.`,
     }),);
+
     expect(collectEntitySuggestions(messages,).length,).toBe(ENTITY_SUGGESTION_LIMIT,);
   });
 
@@ -34,6 +37,7 @@ describe("collectEntitySuggestions", () => {
       { role: "character", content: "An amulet called Veyra surfaces.", },
       { role: "character", content: "A stranger named Aldric appears.", },
     ],);
+
     expect(items[0]!.name,).toBe("Veyra",);
   });
 });

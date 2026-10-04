@@ -41,6 +41,7 @@ const OK_POST: PeerPost = (async (url: string,) => {
   if (url.endsWith("/api/mesh-reserve",)) {
     return { ok: true, status: 200, body: { reservationId: "r-1", }, };
   }
+
   return { ok: true, status: 200, body: { verdict: "stored", }, };
 }) as PeerPost;
 
@@ -53,6 +54,7 @@ describe("inbound reservation", () => {
       contentHash: "abc",
       sizeBytes: 12,
     },);
+
     expect(typeof id,).toBe("string",);
     await expect(createInboundReservation(db, {
       senderOrigin: "https://stranger.example",
@@ -69,6 +71,7 @@ describe("inbound reservation", () => {
       contentHash: "abc",
       sizeBytes: 1,
     },),).rejects.toThrow("untrusted peer",);
+
     await expect(createInboundReservation(db, {
       senderOrigin: "not a url",
       contentHash: "abc",
@@ -83,17 +86,20 @@ describe("inbound reservation", () => {
       state: "trusted",
       capacityBytes: 100,
     },);
+
     const id = await createInboundReservation(db, {
       senderOrigin: "https://b.example",
       contentHash: "a",
       sizeBytes: 60,
     },);
+
     expect(await outstandingBytes(db, "https://b.example",),).toBe(60,);
     await expect(createInboundReservation(db, {
       senderOrigin: "https://b.example",
       contentHash: "b",
       sizeBytes: 50,
     },),).rejects.toThrow("capacity exhausted",);
+
     await releaseReservation(db, id,);
     expect(await outstandingBytes(db, "https://b.example",),).toBe(0,);
     const retry = await createInboundReservation(db, {
@@ -101,6 +107,7 @@ describe("inbound reservation", () => {
       contentHash: "b",
       sizeBytes: 50,
     },);
+
     expect(typeof retry,).toBe("string",);
   });
 
@@ -112,6 +119,7 @@ describe("inbound reservation", () => {
       contentHash: "a",
       sizeBytes: 10 ** 9,
     },);
+
     expect(typeof id,).toBe("string",);
   });
 
@@ -139,6 +147,7 @@ describe("reservation lifecycle", () => {
       contentHash: "abc",
       sizeBytes: 12,
     },);
+
     await advanceReservation(db, id, "pushed",);
     await advanceReservation(db, id, "confirmed",);
     const row = await db
@@ -146,6 +155,7 @@ describe("reservation lifecycle", () => {
       .select(["state",],)
       .where("id", "=", id,)
       .executeTakeFirstOrThrow();
+
     expect(row.state,).toBe("confirmed",);
   });
 
@@ -157,6 +167,7 @@ describe("reservation lifecycle", () => {
       contentHash: "abc",
       sizeBytes: 1,
     },);
+
     await expect(advanceReservation(db, id, "confirmed",),).rejects.toThrow(
       "illegal reservation transition",
     );
@@ -171,6 +182,7 @@ describe("reservation lifecycle", () => {
       sizeBytes: 1,
       ttlMs: 1,
     },);
+
     await releaseReservation(db, id,);
     await expect(releaseReservation(db, id,),).rejects.toThrow("already terminal",);
     const stale = await createInboundReservation(db, {
@@ -179,12 +191,14 @@ describe("reservation lifecycle", () => {
       sizeBytes: 1,
       ttlMs: 1,
     },);
+
     expect(await sweepExpiredReservations(db, Date.now() + 60_000,),).toBe(1,);
     const row = await db
       .selectFrom("mesh_reservations",)
       .select(["state",],)
       .where("id", "=", stale,)
       .executeTakeFirstOrThrow();
+
     expect(row.state,).toBe("expired",);
   });
 });
@@ -199,14 +213,17 @@ describe("delivery", () => {
       contentHash: envelope.hash,
       sizeBytes: envelope.size,
     },);
+
     expect(
       await receiveDelivery(db, envelope, cipher, { reservationId, },),
     ).toBe("stored",);
+
     const row = await db
       .selectFrom("mesh_reservations",)
       .select(["state",],)
       .where("id", "=", reservationId,)
       .executeTakeFirstOrThrow();
+
     expect(row.state,).toBe("confirmed",);
   });
 
@@ -228,6 +245,7 @@ describe("sender transport", () => {
       status: 200,
       body: { reservationId: "r-1", contentKey: "a2V5", },
     })) as unknown as PeerPost;
+
     expect(
       await requestReservation(keyed, "https://b.example", {
         senderOrigin: "https://a.example",
@@ -235,6 +253,7 @@ describe("sender transport", () => {
         sizeBytes: 3,
       },),
     ).toEqual({ reservationId: "r-1", contentKey: "a2V5", },);
+
     expect(
       await requestReservation(OK_POST, "https://b.example", {
         senderOrigin: "https://a.example",
@@ -242,6 +261,7 @@ describe("sender transport", () => {
         sizeBytes: 3,
       },),
     ).toEqual({ reservationId: "r-1", },);
+
     const refuse: PeerPost = (async () => ({ ok: false, status: 409, body: null, })) as PeerPost;
     await expect(
       requestReservation(refuse, "https://b.example", {
@@ -256,6 +276,7 @@ describe("sender transport", () => {
     expect(await pushEnvelope(OK_POST, "https://b.example", await sealed(), "r-1",),).toBe(
       "stored",
     );
+
     const refuse: PeerPost = (async () => ({ ok: false, status: 400, body: null, })) as PeerPost;
     await expect(
       pushEnvelope(refuse, "https://b.example", await sealed(),),
@@ -272,12 +293,14 @@ describe("duplication targets", () => {
     expect(
       await selectDuplicationTargets(db, { mode: "trusted", peers: [], }, "https://b.example",),
     ).toEqual(["https://c.example",],);
+
     expect(
       await selectDuplicationTargets(
         db,
         { mode: "listed", peers: ["https://c.example", "https://pending.example",], },
       ),
     ).toEqual(["https://c.example",],);
+
     expect(await selectDuplicationTargets(db, { mode: "none", peers: [], },),).toEqual([],);
   });
 
@@ -293,22 +316,27 @@ describe("duplication targets", () => {
         "world-2": { mode: "none", peers: [], },
       },
     };
+
     expect(await selectDuplicationTargets(db, policy, undefined, "world-1",),).toEqual([
       "https://c.example",
     ],);
+
     expect(await selectDuplicationTargets(db, policy, undefined, "world-2",),).toEqual([],);
     expect(await selectDuplicationTargets(db, policy, undefined, "unknown",),).toEqual([
       "https://b.example",
       "https://c.example",
     ],);
+
     expect(await selectDuplicationTargets(db, policy,),).toEqual([
       "https://b.example",
       "https://c.example",
     ],);
+
     expect(resolveDuplicationPolicy(policy, "world-1",),).toEqual({
       mode: "listed",
       peers: ["https://c.example",],
     },);
+
     expect(resolveDuplicationPolicy(policy, "unknown",),).toBe(policy,);
   });
 });
@@ -332,6 +360,7 @@ describe("sender fan-out", () => {
     if (typeof body !== "object" || body === null || !("envelope" in body)) {
       throw new Error("expected deliver body with envelope",);
     }
+
     // Guarded above: fakes only ever send ContentEnvelope payloads.
     return body.envelope as ContentEnvelope;
   }
@@ -344,14 +373,17 @@ describe("sender fan-out", () => {
       if (url.endsWith("/api/mesh-reserve",)) {
         return { ok: true, status: 200, body: { reservationId: "r-fan", contentKey: KEY, }, };
       }
+
       delivered.push(pushEnvelopeOf(body,),);
       return { ok: true, status: 200, body: { verdict: "stored", }, };
     }) as PeerPost;
+
     const result = await fanOutContent(db, post, "https://a.example", POLICY, encryption, {
       id: "fan-1",
       content: "fan payload",
       clock: 7,
     },);
+
     expect(result.targets,).toEqual(["https://b.example", "https://c.example",],);
     expect(result.stored,).toEqual(["https://b.example", "https://c.example",],);
     expect(result.failed,).toEqual([],);
@@ -371,14 +403,17 @@ describe("sender fan-out", () => {
       if (url.endsWith("/api/mesh-reserve",)) {
         return { ok: true, status: 200, body: { reservationId: "r-fan", }, };
       }
+
       delivered.push(pushEnvelopeOf(body,),);
       return { ok: true, status: 200, body: { verdict: "stale", }, };
     }) as PeerPost;
+
     const result = await fanOutContent(db, post, "https://a.example", POLICY, encryption, {
       id: "fan-2",
       content: "fallback payload",
       clock: 8,
     },);
+
     expect(result.stored,).toEqual([],);
     expect(result.stale,).toEqual(["https://b.example", "https://c.example",],);
     for (const envelope of delivered) {
@@ -395,15 +430,19 @@ describe("sender fan-out", () => {
         if (url.startsWith("https://c.example",)) {
           return { ok: false, status: 409, body: null, };
         }
+
         return { ok: true, status: 200, body: { reservationId: "r-fan", }, };
       }
+
       return { ok: true, status: 200, body: { verdict: "stored", }, };
     }) as PeerPost;
+
     const result = await fanOutContent(db, post, "https://a.example", POLICY, encryption, {
       id: "fan-3",
       content: "partial payload",
       clock: 9,
     },);
+
     expect(result.stored,).toEqual(["https://b.example",],);
     expect(result.failed,).toHaveLength(1,);
     expect(result.failed[0]?.origin,).toBe("https://c.example",);
@@ -418,6 +457,7 @@ describe("sender fan-out", () => {
       calls += 1;
       return { ok: true, status: 200, body: {}, };
     }) as PeerPost;
+
     const result = await fanOutContent(
       db,
       post,
@@ -426,6 +466,7 @@ describe("sender fan-out", () => {
       encryption,
       { id: "fan-4", content: "nowhere", clock: 10, },
     );
+
     expect(result,).toEqual({ targets: [], stored: [], stale: [], failed: [], skipped: [], },);
     expect(calls,).toBe(0,);
   });
@@ -440,8 +481,10 @@ describe("sender fan-out", () => {
       if (url.endsWith("/api/mesh-reserve",)) {
         return { ok: true, status: 200, body: { reservationId: "r-cap", }, };
       }
+
       return { ok: true, status: 200, body: { verdict: "stored", }, };
     }) as PeerPost;
+
     const result = await fanOutContent(
       db,
       post,
@@ -450,6 +493,7 @@ describe("sender fan-out", () => {
       encryption,
       { id: "fan-5", content: "eleven bytes!", clock: 11, },
     );
+
     expect(result.skipped,).toHaveLength(1,);
     expect(result.skipped[0]?.origin,).toBe("https://b.example",);
     expect(result.skipped[0]?.reason,).toMatch(/capacity/,);

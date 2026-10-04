@@ -94,6 +94,7 @@ export interface GmPanel {
             content: this.newShadowContent.trim(),
           },),
         },);
+
         if (res.ok) {
           this.newShadowContent = "";
           await this.loadShadowNotes(chatId,);
@@ -119,6 +120,7 @@ export interface GmPanel {
             scope: "scene",
           },),
         },);
+
         if (res.ok) {
           this.newWhiteneoteContent = "";
           await this.loadWhitenotes(chatId,);
@@ -136,6 +138,7 @@ export interface GmPanel {
         const res = await apiFetch(`/api/v1/chats/${chatId}/shadow-notes/${noteId}/reveal`, {
           method: "POST",
         },);
+
         if (res.ok) {
           await this.loadShadowNotes(chatId,);
         }
@@ -152,6 +155,7 @@ export interface GmPanel {
         const res = await apiFetch(`/api/v1/chats/${chatId}/shadow-notes/${noteId}`, {
           method: "DELETE",
         },);
+
         if (res.ok) {
           await this.loadShadowNotes(chatId,);
         }
@@ -168,6 +172,7 @@ export interface GmPanel {
         const res = await apiFetch(`/api/v1/chats/${chatId}/whitenotes/${noteId}`, {
           method: "DELETE",
         },);
+
         if (res.ok) {
           await this.loadWhitenotes(chatId,);
         }

@@ -69,12 +69,14 @@ describe("worldRoutes — lore persistence (BUG-world-lore-silently-stripped)", 
         body: JSON.stringify({ name: "Lore Realm", lore: "Ancient lore text.", },),
       },),
     );
+
     expect(createRes.status,).toBe(201,);
     const { id, } = await createRes.json() as { id: string };
 
     const got = await app.handle(
       new Request(`${BASE}/api/worlds/${id}`,),
     );
+
     expect(got.status,).toBe(200,);
     const world = (await got.json()) as { lore: string | null };
     expect(world.lore,).toBe("Ancient lore text.",);
@@ -87,11 +89,13 @@ describe("worldRoutes — lore persistence (BUG-world-lore-silently-stripped)", 
         body: JSON.stringify({ lore: "Updated lore.", },),
       },),
     );
+
     expect(updRes.status,).toBe(200,);
 
     const gotAfter = await app.handle(
       new Request(`${BASE}/api/worlds/${id}`,),
     );
+
     const worldAfter = (await gotAfter.json()) as { lore: string | null };
     expect(worldAfter.lore,).toBe("Updated lore.",);
   });
@@ -106,12 +110,14 @@ describe("worldRoutes — lore persistence (BUG-world-lore-silently-stripped)", 
         body: JSON.stringify({ name: "NoLoreWorld", },),
       },),
     );
+
     expect(createRes.status,).toBe(201,);
     const { id, } = await createRes.json() as { id: string };
 
     const got = await app.handle(
       new Request(`${BASE}/api/worlds/${id}`,),
     );
+
     const world = (await got.json()) as { lore: string | null };
     expect(world.lore,).toBeNull();
   });
@@ -171,6 +177,7 @@ describe("worldRoutes — RPG opt-in flags", () => {
         body: JSON.stringify({ name: "Plain World", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = (await res.json()) as { id: string };
     expect(await readFlags(app, id,),).toEqual({
@@ -193,6 +200,7 @@ describe("worldRoutes — RPG opt-in flags", () => {
         body: JSON.stringify({ name: "Rpg World", rpgEnabled: true, },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = (await res.json()) as { id: string };
     expect(await readFlags(app, id,),).toEqual({
@@ -215,6 +223,7 @@ describe("worldRoutes — RPG opt-in flags", () => {
         body: JSON.stringify({ name: "Mixed World", },),
       },),
     );
+
     const { id, } = (await res.json()) as { id: string };
     const upd = await app.handle(
       new Request(`${BASE}/api/worlds/${id}`, {
@@ -223,6 +232,7 @@ describe("worldRoutes — RPG opt-in flags", () => {
         body: JSON.stringify({ rpgEnabled: 1, rpgCombat: false, },),
       },),
     );
+
     expect(upd.status,).toBe(200,);
     expect(await readFlags(app, id,),).toEqual({
       rpg_enabled: 1,
@@ -244,6 +254,7 @@ describe("worldRoutes — RPG opt-in flags", () => {
         body: JSON.stringify({ name: "Off World", rpgEnabled: true, },),
       },),
     );
+
     const { id, } = (await res.json()) as { id: string };
     const upd = await app.handle(
       new Request(`${BASE}/api/worlds/${id}`, {
@@ -252,11 +263,13 @@ describe("worldRoutes — RPG opt-in flags", () => {
         body: JSON.stringify({ rpgEnabled: false, },),
       },),
     );
+
     expect(upd.status,).toBe(200,);
     const flags = await readFlags(app, id,);
     expect(Object.values(flags,).every((v,) => v === 0),).toBe(true,);
   });
 });
+
 describe("worldRoutes — list visibility + delete", () => {
   let db: Kysely<DB>;
   let sqlite: TestDb["sqlite"];
@@ -293,6 +306,7 @@ describe("worldRoutes — list visibility + delete", () => {
         body: JSON.stringify(body,),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = (await res.json()) as { id: string };
     return id;
@@ -359,6 +373,7 @@ describe("worldRoutes — list q filter", () => {
           body: JSON.stringify({ name, },),
         },),
       );
+
       expect(res.status,).toBe(201,);
     }
   },);

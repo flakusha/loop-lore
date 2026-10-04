@@ -55,6 +55,7 @@ export async function handleImageCaption(
   if (!userId) {
     return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
   }
+
   if (!req.assetIds || req.assetIds.length === 0) {
     return Response.json({ error: "Missing required field: assetIds", status: 400, }, { status: 400, },);
   }
@@ -81,6 +82,7 @@ export async function handleImageCaption(
       role = main;
     }
   }
+
   if (!role.provider || !role.model) {
     return Response.json({ error: "No captioning model configured", status: 503, }, { status: 503, },);
   }
@@ -95,6 +97,7 @@ export async function handleImageCaption(
       config,
       db,
     },);
+
     apiKey = resolved.resolvedApiKey;
   } catch (error) {
     log.debug("BYO key resolution failed; falling back to provider key", { error, },);
@@ -113,6 +116,7 @@ export async function handleImageCaption(
       captions.push({ assetId, caption: "", },);
       continue;
     }
+
     // Foreign assets are treated as not found — never read or overwrite them.
     if (asset.owner_id !== userId) {
       captions.push({ assetId, caption: "", },);
@@ -121,6 +125,7 @@ export async function handleImageCaption(
 
     const systemPrompt =
       "Generate a concise one-sentence description of this image. Focus on the main subject and visual elements.";
+
     const userPrompt =
       `Describe this image briefly for accessibility purposes. The image filename is "${asset.filename}".`;
 

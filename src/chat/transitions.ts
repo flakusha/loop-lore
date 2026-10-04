@@ -58,6 +58,7 @@ export async function classifyTransitionMessage(
     // to prevent a forged id from reaching BYO apiKey resolution.
     await requireActorExists(db, userId,);
   }
+
   return classifyTransition(content, recentMessages, config, db, userId,);
 }
 
@@ -123,10 +124,12 @@ export function selectMessagesForPromotion(
     const effectiveScore = msg.score ?? (msg.content.length > 50
       ? Math.min(1, msg.content.length / 200,)
       : 0);
+
     if (effectiveScore >= promotionThreshold) {
       promoted.push(msg.messageId,);
     }
   }
+
   return promoted;
 }
 

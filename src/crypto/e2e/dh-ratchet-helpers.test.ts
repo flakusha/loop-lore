@@ -31,6 +31,7 @@ describe("skipOldChain", () => {
       recvCount: 42,
       theirCurrentPubJwk: { kty: "EC", x: "x", y: "y", } as JsonWebKey,
     };
+
     const skipped = await skipOldChain(state, 0,);
     expect(skipped,).toEqual([],);
   });
@@ -41,6 +42,7 @@ describe("skipOldChain", () => {
       recvCount: 7,
       theirCurrentPubJwk: { kty: "EC", x: "x", y: "y", } as JsonWebKey,
     };
+
     const skipped = await skipOldChain(state, 1,);
 
     expect(skipped.length,).toBe(1,);
@@ -60,6 +62,7 @@ describe("skipOldChain", () => {
       recvCount: 100,
       theirCurrentPubJwk: null,
     };
+
     const skipped = await skipOldChain(state, 3,);
 
     expect(skipped.length,).toBe(3,);
@@ -81,6 +84,7 @@ describe("skipOldChain", () => {
       recvCount: 0,
       theirCurrentPubJwk: null,
     };
+
     const first = await skipOldChain(base, 2,);
     expect(first.map((s,) => s.counter),).toEqual([0, 1,],);
 
@@ -90,6 +94,7 @@ describe("skipOldChain", () => {
       { ...base, receivingChainKey: key(0x88,), },
       1,
     );
+
     expect(next.map((s,) => s.counter),).toEqual([0,],);
   });
 });

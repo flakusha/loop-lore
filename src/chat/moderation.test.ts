@@ -146,6 +146,7 @@ describe("checkModerationPermission", () => {
       scope: "chat",
       actorId: "admin-1",
     },);
+
     const result = checkModerationPermission(adminShadow, "admin", false,);
     expect(result.allowed,).toBe(true,);
   });
@@ -283,6 +284,7 @@ async function seedChat(opts: {
     type: "group",
     mode: "group",
   } as never,);
+
   await insertChatParticipants(database, chatId, opts.creatorId, {
     role_in_chat: "owner",
   } as never,);
@@ -292,6 +294,7 @@ async function seedChat(opts: {
       role_in_chat: p.role,
     } as never,);
   }
+
   return chatId;
 }
 
@@ -320,6 +323,7 @@ describe("applyBan — ban removes participant + prevents rejoin", () => {
       .where("chat_id", "=", chatId,)
       .where("actor_id", "=", "u-target",)
       .executeTakeFirst();
+
     expect(participant?.banned_until,).not.toBeNull();
 
     const audit = await database
@@ -327,6 +331,7 @@ describe("applyBan — ban removes participant + prevents rejoin", () => {
       .selectAll()
       .where("id", "=", result.auditEntryId!,)
       .executeTakeFirst();
+
     expect(audit?.action,).toBe("ban",);
     expect(audit?.event_type,).toBe("moderation.chat.ban",);
 
@@ -337,6 +342,7 @@ describe("applyBan — ban removes participant + prevents rejoin", () => {
       { banned_until: participant?.banned_until ?? null, },
       Date.now() + (365 * 24 * 60 * 60 * 1000),
     );
+
     expect(expired,).toBe(false,);
   });
 
@@ -347,6 +353,7 @@ describe("applyBan — ban removes participant + prevents rejoin", () => {
       byActorId: "u-self",
       scope: "chat",
     },);
+
     expect(result.ok,).toBe(false,);
     expect(result.reason,).toContain("yourself",);
   });
@@ -375,6 +382,7 @@ describe("applyKick — removes actor immediately, leaves history intact", () =>
       .where("chat_id", "=", chatId,)
       .where("actor_id", "=", "u-target",)
       .executeTakeFirst();
+
     expect(participant,).toBeUndefined();
 
     const audit = await database
@@ -382,6 +390,7 @@ describe("applyKick — removes actor immediately, leaves history intact", () =>
       .selectAll()
       .where("id", "=", result.auditEntryId!,)
       .executeTakeFirst();
+
     expect(audit?.action,).toBe("kick",);
     expect(audit?.event_type,).toBe("moderation.chat.kick",);
   });
@@ -427,6 +436,7 @@ describe("applyMute / isMuted — mute predicate unit", () => {
       .where("chat_id", "=", chatId,)
       .where("actor_id", "=", "u-target",)
       .executeTakeFirst();
+
     expect(isMuted(participant, Date.now(),),).toBe(true,);
 
     const audit = await database
@@ -434,6 +444,7 @@ describe("applyMute / isMuted — mute predicate unit", () => {
       .selectAll()
       .where("id", "=", result.auditEntryId!,)
       .executeTakeFirst();
+
     expect(audit?.action,).toBe("mute",);
     expect(audit?.event_type,).toBe("moderation.chat.mute",);
   });
@@ -463,6 +474,7 @@ describe("applyFlag — writes audit row + invokes moderation hook", () => {
       .selectAll()
       .where("id", "=", result.auditEntryId!,)
       .executeTakeFirst();
+
     expect(audit?.action,).toBe("flag-nsfw",);
     expect(audit?.event_type,).toBe("moderation.chat.flag.nsfw",);
   });
@@ -488,6 +500,7 @@ describe("applyFlag — writes audit row + invokes moderation hook", () => {
       .selectAll()
       .where("id", "=", result.auditEntryId!,)
       .executeTakeFirst();
+
     expect(audit?.event_type,).toBe("moderation.chat.flag.tox",);
   });
 });

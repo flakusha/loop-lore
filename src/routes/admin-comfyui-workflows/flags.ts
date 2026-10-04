@@ -51,11 +51,13 @@ export function flagRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                   .where("modality", "=", "workflow",)
                   .where("is_default", "=", DefaultState.Default,)
                   .where("id", "!=", id,);
+
                 if (row.model_family === null) {
                   await demote.where("model_family", "is", null,).execute();
                 } else {
                   await demote.where("model_family", "=", row.model_family,).execute();
                 }
+
                 await trx.updateTable("prompt_templates",)
                   .set({ is_default: DefaultState.Default, updated_at: now, },)
                   .where("id", "=", id,)

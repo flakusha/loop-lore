@@ -80,10 +80,12 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
       ) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
       }
+
       const comments = await svc.listCommentsThreaded(ctx.params.id, {
         limit: ctx.query.limit ? Number(ctx.query.limit,) : undefined,
         offset: ctx.query.offset ? Number(ctx.query.offset,) : undefined,
       },);
+
       return jsonResponse({ success: true, comments, count: comments.length, },);
     }, {
       response: {
@@ -109,10 +111,12 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
       ) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
       }
+
       const comment = await svc.getComment(ctx.params.commentId,);
       if (!comment) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
       }
+
       return jsonResponse({ success: true, comment, },);
     }, {
       response: {

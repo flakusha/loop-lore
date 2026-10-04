@@ -126,6 +126,7 @@ describe("provisionMemories — privacy filtering", () => {
       actorId: "char-1",
       shareability: JSON.stringify({ shareProbability: 0, trustedActorIds: [], blockedActorIds: [], },),
     },);
+
     const result = provisionMemories([mem,], makeCtx({ viewerId: "char-2", randomFn: () => 0.5, },),);
     expect(result.accepted,).toHaveLength(0,);
   });
@@ -137,6 +138,7 @@ describe("provisionMemories — privacy filtering", () => {
       actorId: "char-1",
       shareability: JSON.stringify({ shareProbability: 0, trustedActorIds: ["char-2",], blockedActorIds: [], },),
     },);
+
     const result = provisionMemories([mem,], makeCtx({ viewerId: "char-2", },),);
     expect(result.accepted,).toHaveLength(1,);
   });
@@ -178,6 +180,7 @@ describe("provisionMemories — mixed scenarios", () => {
       },),
       makeMemory({ id: "m4", scope: "character", actorId: "char-2", },), // wrong owner
     ];
+
     const result = provisionMemories(memories, makeCtx({ viewerId: "char-1", randomFn: () => 0.5, },),);
     // m1: public ✓, m2: private+owner ✓, m3: secret+owner ✓, m4: wrong owner ✗
     expect(result.accepted,).toHaveLength(3,);
@@ -189,6 +192,7 @@ describe("provisionMemories — mixed scenarios", () => {
       makeMemory({ id: "m1", scope: "character", actorId: "char-1", },),
       makeMemory({ id: "m2", scope: "world", worldId: "world-1", },),
     ];
+
     const result = provisionMemories(memories, makeCtx({ viewerId: "char-1", worldId: "world-1", },),);
     expect(result.accepted,).toHaveLength(2,);
   });

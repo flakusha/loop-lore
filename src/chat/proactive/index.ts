@@ -114,6 +114,7 @@ export class ProactiveMessagingService {
     // Frequency + backoff check
     const baseMs = (PROACTIVE_FREQUENCY_MS as Record<string, number>)[config.frequency] ??
       PROACTIVE_FREQUENCY_MS.normal;
+
     const requiredMs = backoffMs(baseMs, config.backoffCount,);
 
     if (config.lastProactiveAt) {

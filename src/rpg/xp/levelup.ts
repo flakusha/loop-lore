@@ -20,6 +20,7 @@ export function hpOnLevelUp(
   if (isFirstLevel) {
     return hitDie + conModifier;
   }
+
   const avg = AVG_HP_BY_DIE[hitDie] ?? Math.ceil(hitDie / 2,);
   return Math.max(1, avg + conModifier,);
 }

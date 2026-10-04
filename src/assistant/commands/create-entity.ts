@@ -105,6 +105,7 @@ export async function insertGeneratedEntity(
             import_spec: "llm-generated",
           },)
           .execute();
+
         await insertEntityLore(trx, kind, id, worldId, data.lore,);
         return { id, kind, name, };
       }
@@ -131,6 +132,7 @@ export async function insertGeneratedEntity(
             import_spec: "llm-generated",
           },)
           .execute();
+
         await insertEntityLore(trx, kind, id, worldId, data.lore,);
         return { id, kind, name, };
       }
@@ -156,6 +158,7 @@ export async function insertGeneratedEntity(
           const gmParsed = template.gm_config
             ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
             : null;
+
           const chat = await createChat(trx, {
             name,
             type: "group",
@@ -172,8 +175,10 @@ export async function insertGeneratedEntity(
             visibility: template.visibility ?? "private",
             templateId: template.id,
           },);
+
           linkedChatId = chat;
         }
+
         await insertEntityLore(trx, kind, id, resolvedWorld, data.lore,);
         return { id, kind, name, linkedChatId, };
       }
@@ -192,6 +197,7 @@ export async function insertGeneratedEntity(
             difficulty_state: DifficultyState.Normal,
           },)
           .execute();
+
         await insertEntityLore(trx, kind, id, id, data.lore,);
         return { id, kind, name, };
       }
@@ -214,6 +220,7 @@ export async function insertGeneratedEntity(
             weight: 1,
           },)
           .execute();
+
         await insertEntityLore(trx, kind, id, resolvedWorld, data.lore,);
         return { id, kind, name, };
       }

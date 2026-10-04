@@ -36,6 +36,7 @@ export function isEncryptedPayload(storedContent: string,): boolean {
     p.algo !== "aes-256-gcm" ||
     typeof p.key_id !== "string"
   ) { return false; }
+
   // Validate nonce: AES-GCM requires exactly 12 bytes. Forged payloads
   // (e.g. `{ "nonce":"y" }`) must NOT pass.
   let nonceBytes: Uint8Array;
@@ -44,6 +45,7 @@ export function isEncryptedPayload(storedContent: string,): boolean {
   } catch {
     return false;
   }
+
   if (nonceBytes.length !== IV_LENGTH) { return false; }
   // Ciphertext must also be base64-decodable (it can be any non-empty
   // length; we only require the encoding is valid). Forged placeholders
@@ -54,6 +56,7 @@ export function isEncryptedPayload(storedContent: string,): boolean {
   } catch {
     return false;
   }
+
   return true;
 }
 
@@ -134,6 +137,7 @@ export async function compressThenEncrypt({
     key_id: keyId,
     ...(aId !== undefined && { a_id: aId, }),
   };
+
   const r = safeJsonStringify(payload,);
   if (!r.ok) { throw new Error("Failed to serialize encrypted payload",); }
   return r.value;
@@ -200,6 +204,7 @@ export async function decryptThenDecompress(storedContent: string, chatKey: Cryp
   if (!payload.compAlgo) {
     throw new Error("Malformed encrypted payload: comp=true but compAlgo is missing",);
   }
+
   return decodeContent(decryptedText, payload.compAlgo as ContentEncoding,);
 }
 

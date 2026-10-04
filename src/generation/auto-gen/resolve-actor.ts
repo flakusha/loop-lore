@@ -60,6 +60,7 @@ export async function resolveActor(
         .where("chat_id", "=", chatId,)
         .where("actor_id", "=", cascadeActorId,)
         .executeTakeFirst();
+
       if (!membership) { return null; }
       // Outbound mute enforcement (TASK-chat-feature-moderation AC3): a
       // muted actor must not generate even when pre-selected by a cascade.
@@ -67,10 +68,12 @@ export async function resolveActor(
         logMuteSuppress(chatId, cascadeActorId,);
         return null;
       }
+
       // Participant row survived but its actor row did not — still generate.
       const cascadeName = await actorName(database, cascadeActorId,);
       return { characterId: cascadeActorId, characterName: cascadeName ?? "Unknown", };
     }
+
     const selectedId = await selectNextGroupActor({
       db: database,
       chatId,
@@ -78,6 +81,7 @@ export async function resolveActor(
       config: opts.config,
       userId: opts.userId,
     },);
+
     if (!selectedId) { return null; }
     const selectedName = await actorName(database, selectedId,);
     if (!selectedName) { return null; }
@@ -91,6 +95,7 @@ export async function resolveActor(
     .where("chat_participants.actor_id", "!=", userId,)
     .select(["actors.id", "actors.display_name", "chat_participants.muted_until",],)
     .executeTakeFirst();
+
   if (!character) { return null; }
   // Outbound mute enforcement (TASK-chat-feature-moderation AC3): a muted
   // chat partner must not generate until muted_until elapses.
@@ -98,6 +103,7 @@ export async function resolveActor(
     logMuteSuppress(chatId, character.id,);
     return null;
   }
+
   return { characterId: character.id, characterName: character.display_name, };
 }
 
@@ -126,5 +132,6 @@ async function actorName(database: Kysely<DB>, actorId: string,): Promise<string
     .select("display_name",)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   return row?.display_name ?? null;
 }

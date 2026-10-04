@@ -55,6 +55,7 @@ export function ImageEditService(opts: ImageEditServiceOpts = {},): ImageEditSer
   if (!opts.database) {
     throw new Error("ImageEditService requires a database instance",);
   }
+
   const config = loadConfig();
   const db = opts.database;
   const uploadDir = opts.uploadDir ?? config.assets.uploadDir;
@@ -68,5 +69,6 @@ export function ImageEditService(opts: ImageEditServiceOpts = {},): ImageEditSer
     getEditHistory: (assetId,) => getEditHistoryDispatch({ thisL: self, assetId, },),
     clearEditHistory: (assetId,) => clearEditHistoryDispatch({ thisL: self, assetId, },),
   };
+
   return self;
 }

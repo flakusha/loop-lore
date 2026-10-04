@@ -60,15 +60,18 @@ export async function tradeCore(
         .where("id", "=", line.worldItemId,)
         .where("world_id", "=", worldId,)
         .executeTakeFirst();
+
       if (!row) { return `item ${line.worldItemId} not found`; }
       if (row.owner_actor_id !== actorId) { return `item ${line.worldItemId} not owned by intended party`; }
       if (row.quantity < line.quantity) { return `insufficient quantity for ${line.worldItemId}`; }
     }
+
     return null;
   };
 
   const preErr = (await validateLines(db, buyerActorId, buyerItems,)) ??
     (await validateLines(db, sellerActorId, sellerItems,));
+
   if (preErr) { return { success: false, reason: preErr, }; }
 
   let success = false;
@@ -77,6 +80,7 @@ export async function tradeCore(
     itemsOffered: [],
     itemsRequested: [],
   };
+
   let reason: string | undefined;
 
   await db.transaction().execute(async (trx,) => {
@@ -85,6 +89,7 @@ export async function tradeCore(
       reason = "buyer has insufficient currency";
       return;
     }
+
     await credit(trx, sellerActorId, worldId, price, DEFAULT_CURRENCY, trx,);
     moved.pricePaid = price;
 
@@ -94,16 +99,20 @@ export async function tradeCore(
         reason = "buyer item transfer failed";
         return;
       }
+
       moved.itemsOffered.push(line.worldItemId,);
     }
+
     for (const line of sellerItems) {
       const res = await items.transfer(line.worldItemId, worldId, line.quantity, undefined, buyerActorId, trx,);
       if (!res.success) {
         reason = "seller item transfer failed";
         return;
       }
+
       moved.itemsRequested.push(line.worldItemId,);
     }
+
     success = true;
 
     if (success) {

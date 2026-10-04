@@ -47,6 +47,7 @@ describe("FEAT-048: chat lifecycle plugin events", () => {
       event: "chat.archived",
       handler: async () => { throw new Error("plugin boom",); },
     },);
+
     liveHandlers.push({
       event: "chat.archived",
       handler: async () => { okSeen.push("reached",); },
@@ -70,6 +71,7 @@ describe("FEAT-048: chat lifecycle plugin events", () => {
       event: "other.event",
       handler: async () => {},
     },);
+
     expect(await emitPluginEvent(liveHandlers, "chat.created", { chatId: "x", },),).toBe(0,);
   },);
 });

@@ -15,6 +15,7 @@ export const scoreQuestRelevance: Scorer = ({ response, quests, },) => {
     for (const w of questWords) {
       if (w.length > 3 && responseLower.includes(w,)) { matchedCount++; }
     }
+
     if (matchedCount > 0) {
       score += 10 + (matchedCount / questWords.length) * 10;
     }
@@ -35,6 +36,7 @@ export const scoreQuestRelevance: Scorer = ({ response, quests, },) => {
     "goal",
     "mission",
   ];
+
   const hasProgress = progressWords.some((w,) => responseLower.includes(w,));
   if (hasProgress) { score += 10; }
 

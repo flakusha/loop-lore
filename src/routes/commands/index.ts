@@ -43,6 +43,7 @@ export function commandsRoutes(opts: { prefix?: string },) {
           name,
           descriptionKey: `commands.${name}`,
         }));
+
         return Response.json({ data, },);
       },
       {

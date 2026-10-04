@@ -27,6 +27,7 @@ beforeEach(async () => {
   await insertAssets(db, "user-owner", "a.png", "image/png", "image", 10, "/a.png", {
     id: "asset-owned",
   },);
+
   await insertAssets(db, "user-other", "b.png", "image/png", "image", 10, "/b.png", {
     id: "asset-other",
   },);
@@ -49,6 +50,7 @@ describe("verifyAttachmentsOwned", () => {
       [{ assetId: "asset-other", },],
       "user-owner",
     ).catch((e: unknown,) => e);
+
     expect(error,).toBeInstanceOf(AttachmentOwnershipError,);
     expect((error as AttachmentOwnershipError).name,).toBe("AttachmentOwnershipError",);
     expect((error as Error).message,).toContain("asset-other",);
@@ -66,6 +68,7 @@ describe("verifyAttachmentsOwned", () => {
       [{ assetId: "asset-owned", }, { assetId: "asset-other", },],
       "user-owner",
     ).catch((e: unknown,) => e);
+
     expect(error,).toBeInstanceOf(AttachmentOwnershipError,);
     expect((error as Error).message,).toContain("asset-other",);
   });

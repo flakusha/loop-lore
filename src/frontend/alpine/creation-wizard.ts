@@ -80,6 +80,7 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
       log.warn("confirmWizard: draft mismatch", { wizardId, },);
       return;
     }
+
     const draft = this.wizardDraft;
     const chatId = this.activeChat;
     if (!chatId) { return; }
@@ -105,6 +106,7 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
           type: "success",
           message: t("toasts.entityCreated", { name: draft.fields.name ?? "Entity", },),
         },);
+
         await this.loadMessages();
         log.info("wizard confirmed", { wizardId, entityType: draft.entityType, },);
       } else {
@@ -115,6 +117,7 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
         } catch {
           // Use default error message
         }
+
         this.$dispatch?.("show-toast", {
           type: "error",
           message: errorMsg,

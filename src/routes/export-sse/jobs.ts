@@ -71,6 +71,7 @@ async function processExport(
         .where("actor_type", "=", "character",)
         .where("user_id", "=", userId,)
         .executeTakeFirst();
+
       totalItems += charCount?.count ?? 0;
     }
 
@@ -80,6 +81,7 @@ async function processExport(
         .select(({ fn, },) => [fn.count<number>("id",).as("count",),])
         .where("created_by", "=", userId,)
         .executeTakeFirst();
+
       totalItems += chatCount?.count ?? 0;
     }
 
@@ -89,6 +91,7 @@ async function processExport(
         .select(({ fn, },) => [fn.count<number>("id",).as("count",),])
         .where("owner_id", "=", userId,)
         .executeTakeFirst();
+
       totalItems += worldCount?.count ?? 0;
     }
 
@@ -98,6 +101,7 @@ async function processExport(
         .select(({ fn, },) => [fn.count<number>("id",).as("count",),])
         .where("owner_id", "=", userId,)
         .executeTakeFirst();
+
       totalItems += assetCount?.count ?? 0;
     }
 
@@ -108,6 +112,7 @@ async function processExport(
         .select(({ fn, },) => [fn.count<number>("locations.id",).as("count",),])
         .where("worlds.owner_id", "=", userId,)
         .executeTakeFirst();
+
       totalItems += locCount?.count ?? 0;
     }
 
@@ -117,6 +122,7 @@ async function processExport(
         .select(({ fn, },) => [fn.count<number>("id",).as("count",),])
         .where("owner_id", "=", userId,)
         .executeTakeFirst();
+
       totalItems += worldCount?.count ?? 0;
     }
 
@@ -131,6 +137,7 @@ async function processExport(
       processedItems++;
       job.progress = processedItems;
     };
+
     const exportCtx = {
       database,
       userId,
@@ -175,6 +182,7 @@ async function processExport(
       job.currentStep = "Exporting story state...";
       await exportStoryToZip(exportCtx,);
     }
+
     // Export assets
     if (include.includes("assets",)) {
       job.currentStep = "Exporting assets...";

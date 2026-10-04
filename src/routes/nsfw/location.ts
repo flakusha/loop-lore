@@ -51,6 +51,7 @@ export function locationRoutes(opts: HandlerOpts, prefix = "/api",) {
               ctx.params.locationId,
               body,
             );
+
             return jsonResponse({ success, },);
           } catch (error) {
             log().error("Failed to update location config", error instanceof Error ? error : undefined,);

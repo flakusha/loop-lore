@@ -65,6 +65,7 @@ export function permanentTraitRoutes(opts: HandlerOpts, prefix = "/api",) {
         name: trait_name as string,
         value: (value as string) ?? "",
       },);
+
       return jsonCreated({ id, },);
     }, {
       params: ActorIdParams,

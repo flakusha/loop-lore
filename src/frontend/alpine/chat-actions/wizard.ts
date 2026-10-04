@@ -30,6 +30,7 @@ export const wizardActionHandlers: Record<string, ActionHandler> = {
       log.warn("wizard-preview: missing required payload fields", { payload, },);
       return;
     }
+
     // Store wizard draft in Alpine state for the preview panel
     ctx.wizardDraft = { wizardId, entityType, label, fields, };
     ctx.wizardPreviewOpen = true;
@@ -64,12 +65,14 @@ export const wizardActionHandlers: Record<string, ActionHandler> = {
       userId?: string | null;
       warnings?: string[];
     };
+
     const kind = draft.kind ?? "entity";
     const data = draft.data ?? {};
     const fields: Record<string, string | undefined> = {};
     for (const [k, v,] of Object.entries(data,)) {
       if (typeof v === "string") { fields[k] = v; }
     }
+
     // UUIDv7 gives chronological ordering; the wizard id is opaque to the server.
     ctx.wizardDraft = {
       wizardId: `preview_${kind}_${browserRandomUUIDv7()}`,
@@ -81,6 +84,7 @@ export const wizardActionHandlers: Record<string, ActionHandler> = {
       description: draft.description,
       warnings: draft.warnings,
     };
+
     ctx.wizardPreviewOpen = true;
     log.info("create-entity-preview: draft ready", { kind, },);
   },

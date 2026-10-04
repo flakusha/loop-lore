@@ -84,6 +84,7 @@ export async function persistState(
       getLogger()
         .child({ module: "turn-manager", },)
         .error("persistState: chat not found", undefined, { chatId: host.chatId, },);
+
       return;
     }
 
@@ -98,9 +99,11 @@ export async function persistState(
       strategy: host.state.strategy,
       maxTurns: host.state.maxTurns,
     };
+
     if (host.state.turnOrder.length === 0) {
       await refreshTurnOrder(host,);
     }
+
     await mutate(host.state,);
 
     // 3. Serialize and CAS-write.
@@ -109,6 +112,7 @@ export async function persistState(
       getLogger()
         .child({ module: "turn-manager", },)
         .error("persistState serialization failed", undefined, { error: serialized.error, },);
+
       return;
     }
 
@@ -201,6 +205,7 @@ export async function recordForcedSkip(
       const prior = state.forcedSkips ?? [];
       state.forcedSkips = [...prior, entry,].slice(-FORCED_SKIP_HISTORY_LIMIT,);
     },);
+
     log.info("GM-forced turn-skip override recorded", {
       chatId,
       actorId: entry.actorId,

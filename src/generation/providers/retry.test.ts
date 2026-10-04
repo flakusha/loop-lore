@@ -14,6 +14,7 @@ describe("withProviderRetry", () => {
       calls++;
       return Promise.resolve("ok",);
     }, 3,);
+
     expect(result,).toBe("ok",);
     expect(calls,).toBe(1,);
   });
@@ -26,6 +27,7 @@ describe("withProviderRetry", () => {
         ? Promise.reject(new ProviderError("upstream 500", undefined, 500, true,),)
         : Promise.resolve("recovered",);
     }, 2,);
+
     expect(result,).toBe("recovered",);
     expect(calls,).toBe(2,);
   });
@@ -42,6 +44,7 @@ describe("withProviderRetry", () => {
         expect((error as ProviderError).statusCode,).toBe(400,);
       },
     );
+
     expect(calls,).toBe(1,);
   });
 
@@ -56,6 +59,7 @@ describe("withProviderRetry", () => {
         expect((error as Error).message,).toBe("attempt 1",);
       },
     );
+
     expect(calls,).toBe(1,);
   });
 
@@ -65,6 +69,7 @@ describe("withProviderRetry", () => {
       calls++;
       return calls === 1 ? Promise.reject(new TypeError("network down",),) : Promise.resolve(7,);
     }, 1,);
+
     expect(result,).toBe(7,);
     expect(calls,).toBe(2,);
   });
@@ -88,6 +93,7 @@ describe("withProviderRetry", () => {
         expect((error as ProviderError).retryable,).toBe(false,);
       },
     );
+
     expect(calls,).toBe(1,);
   });
 
@@ -113,6 +119,7 @@ describe("withProviderRetry", () => {
         expect((error as ProviderError).statusCode,).toBe(401,);
       },
     );
+
     expect(calls,).toBe(1,);
   });
 
@@ -130,6 +137,7 @@ describe("withProviderRetry", () => {
         expect((error as Error).message,).toBe("attempt 3",);
       },
     );
+
     expect(stamps.length,).toBe(3,);
     expect(at(1,) - at(0,),).toBeGreaterThan(900,);
     expect(at(1,) - at(0,),).toBeLessThan(1_400,);

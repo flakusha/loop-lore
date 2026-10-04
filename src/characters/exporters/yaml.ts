@@ -47,6 +47,7 @@ export function exportToYaml(character: CanonicalCharacter,): string {
   if (character.alternate_greetings?.length) {
     yamlData.alternate_greetings = character.alternate_greetings;
   }
+
   if (character.tags?.length) {
     yamlData.tags = character.tags;
   }

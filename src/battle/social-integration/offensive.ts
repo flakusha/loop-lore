@@ -74,11 +74,13 @@ export function calculateTauntEffect(
       targetResistance -= 10;
       break;
     }
+
     case "cautious": {
       bonus -= 10; // Harder to taunt cautious targets
       targetResistance += 10;
       break;
     }
+
     case "neutral": {
       // Balanced disposition — baseline resistance.
       break;

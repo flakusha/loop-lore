@@ -32,6 +32,7 @@ async function getActorStatBlock(db: Kysely<DB>, actorId: string,): Promise<Stat
     .select(["str", "dex", "con", "int", "wis", "cha",],)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!row) { return { ...DEFAULT_STATS, }; }
   return {
     str: row.str,
@@ -92,6 +93,7 @@ export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpt
         skillLevels[missingSkill]
       })`,
     );
+
     return {
       success: false,
       roll: 0,
@@ -141,6 +143,7 @@ export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpt
   const matchingFantasy = approachCategory
     ? await fantasies.getByCategory(targetId, approachCategory,)
     : [];
+
   const turnOnMatch = matchingFantasy.length > 0;
   if (turnOnMatch) { dc -= 15; }
 
@@ -148,6 +151,7 @@ export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpt
   const turnOffMatch = targetDesire.turnOffs.some(
     (off,) => approachLower.includes(off.toLowerCase(),),
   );
+
   if (turnOffMatch) { dc += 15; }
 
   dc = Math.max(10, Math.min(90, dc,),);

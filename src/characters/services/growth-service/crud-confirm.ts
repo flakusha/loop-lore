@@ -63,12 +63,14 @@ export async function confirmGrowthEntry(
     .where("actor_id", "=", opts.actorId,)
     .selectAll()
     .executeTakeFirst();
+
   if (!row) {
     throw new GrowthServiceError(
       `Growth log entry '${opts.entryId}' not found for actor '${opts.actorId}'`,
       "not_found",
     );
   }
+
   if ((row as GrowthLogRow).status !== "pending") {
     throw new GrowthServiceError(
       `Growth log entry '${opts.entryId}' is already ${(row as GrowthLogRow).status}`,
@@ -98,6 +100,7 @@ export async function confirmGrowthEntry(
     .where("id", "=", opts.entryId,)
     .selectAll()
     .executeTakeFirstOrThrow();
+
   return rowToGrowthEntry(updated as GrowthLogRow,);
 }
 
@@ -120,12 +123,14 @@ export async function rejectGrowthEntry(
     .where("actor_id", "=", opts.actorId,)
     .selectAll()
     .executeTakeFirst();
+
   if (!row) {
     throw new GrowthServiceError(
       `Growth log entry '${opts.entryId}' not found for actor '${opts.actorId}'`,
       "not_found",
     );
   }
+
   if ((row as GrowthLogRow).status !== "pending") {
     throw new GrowthServiceError(
       `Growth log entry '${opts.entryId}' is already ${(row as GrowthLogRow).status}`,
@@ -154,5 +159,6 @@ export async function rejectGrowthEntry(
     .where("id", "=", opts.entryId,)
     .selectAll()
     .executeTakeFirstOrThrow();
+
   return rowToGrowthEntry(updated as GrowthLogRow,);
 }

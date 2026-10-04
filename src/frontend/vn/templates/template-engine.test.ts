@@ -122,12 +122,14 @@ describe("resolveTemplate", () => {
       },
       variables: [makeVariable({ name: "shared", default: "parent-default", },),],
     },);
+
     const child = makeTemplate({
       id: "child",
       parentTemplateId: "parent",
       body: { layout: "overlay", transition: "cut", portrait: { position: "right", }, },
       variables: [makeVariable({ name: "shared", default: "child-default", },),],
     },);
+
     const resolved = resolveTemplate(child, new Map([["parent", parent,],],),);
     expect(resolved.name,).toBe("Template One",);
     expect(resolved.body.layout,).toBe("overlay",);
@@ -144,11 +146,13 @@ describe("resolveTemplate", () => {
         makeVariable({ name: "only-parent", default: "p", },),
       ],
     },);
+
     const child = makeTemplate({
       id: "child",
       parentTemplateId: "parent",
       variables: [makeVariable({ name: "shared", default: "child", },),],
     },);
+
     const resolved = resolveTemplate(child, new Map([["parent", parent,],],),);
     expect(resolved.variables.map((v,) => v.name),).toEqual(["only-parent", "shared",],);
     expect(resolved.variables.find((v,) => v.name === "shared")?.default,).toBe("child",);
@@ -160,16 +164,19 @@ describe("resolveTemplate", () => {
       body: { layout: "below", transition: "dissolve", portrait: { position: "left", }, },
       variables: [makeVariable({ name: "g", default: "g", },),],
     },);
+
     const parent = makeTemplate({
       id: "p",
       parentTemplateId: "gp",
       body: { layout: "below", transition: "cut", },
     },);
+
     const child = makeTemplate({
       id: "c",
       parentTemplateId: "p",
       body: { layout: "overlay", transition: "cut", },
     },);
+
     const resolved = resolveTemplate(child, new Map([["gp", grandparent,], ["p", parent,],],),);
     expect(resolved.body.layout,).toBe("overlay",);
     expect(resolved.body.transition,).toBe("cut",);

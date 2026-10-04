@@ -32,6 +32,7 @@ describe("cancelGeneration", () => {
       source: CancelSource.User,
       detail: "test",
     },);
+
     expect(result,).toBe(false,);
   });
 
@@ -45,6 +46,7 @@ describe("cancelGeneration", () => {
       abortController: controller,
       repetitionDetector: { getBufferText: () => "", },
     } as unknown as ActiveGeneration,);
+
     chatToAttempt.set("chat-1", "attempt-1",);
 
     const result = cancelGeneration({
@@ -53,6 +55,7 @@ describe("cancelGeneration", () => {
       source: CancelSource.User,
       detail: "test cancel",
     },);
+
     expect(result,).toBe(true,);
     expect(controller.signal.aborted,).toBe(true,);
     expect(activeGenerations.has("attempt-1",),).toBe(false,);
@@ -69,6 +72,7 @@ describe("cancelGeneration", () => {
       abortController: controller,
       repetitionDetector: { getBufferText: () => "", },
     } as unknown as ActiveGeneration;
+
     activeGenerations.set("attempt-2", active,);
 
     cancelGeneration({
@@ -77,6 +81,7 @@ describe("cancelGeneration", () => {
       source: CancelSource.User,
       detail: "test",
     },);
+
     expect(active.status,).toBe(GenerationStatus.Cancelled,);
   });
 });
@@ -90,6 +95,7 @@ describe("cancelGenerationByChat", () => {
       db: mockDb,
       chatId: "chat-1",
     },);
+
     expect(result,).toBe(false,);
   });
 
@@ -103,6 +109,7 @@ describe("cancelGenerationByChat", () => {
       abortController: controller,
       repetitionDetector: { getBufferText: () => "", },
     } as unknown as ActiveGeneration,);
+
     chatToAttempt.set("chat-1", "attempt-1",);
 
     const mockDb = {
@@ -114,10 +121,12 @@ describe("cancelGenerationByChat", () => {
         }),
       }),
     } as any;
+
     const result = cancelGenerationByChat({
       db: mockDb,
       chatId: "chat-1",
     },);
+
     expect(result,).toBe(true,);
     expect(controller.signal.aborted,).toBe(true,);
     expect(activeGenerations.has("attempt-1",),).toBe(false,);
@@ -137,6 +146,7 @@ describe("getAbortSignal", () => {
       attemptId: "attempt-1",
       abortController: controller,
     } as ActiveGeneration,);
+
     const signal = getAbortSignal("attempt-1",);
     expect(signal,).toBe(controller.signal,);
   });
@@ -149,6 +159,7 @@ describe("GenerationCancelledError", () => {
       CancelSource.User,
       "test detail",
     );
+
     expect(err,).toBeInstanceOf(Error,);
     expect(err.name,).toBe("GenerationCancelledError",);
     expect(err.reason,).toBe(CancelReason.UserCancel,);

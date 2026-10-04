@@ -63,9 +63,11 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
           if (!updated.templates) {
             updated.templates = {} as Record<DetailLevel, any>;
           }
+
           if (!updated.templates[body.detail]) {
             (updated.templates as any)[body.detail] = {};
           }
+
           (updated.templates as any)[body.detail][body.mode] = body.template;
 
           // Store as custom (even for builtin overrides)

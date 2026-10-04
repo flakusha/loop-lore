@@ -28,6 +28,7 @@ const telemetryPristine = await (async () => {
     probe.sqlite.close();
   }
 })();
+
 const describeReal = telemetryPristine ? describe : describe.skip;
 
 describeReal("Telemetry Service", () => {
@@ -40,6 +41,7 @@ describeReal("Telemetry Service", () => {
       chatId: "3",
       data: { test: true, },
     },);
+
     const result = await db.selectFrom("telemetry_events",).selectAll().limit(1,).execute();
     expect(result.length,).toBe(1,);
     expect(result[0]?.event_type,).toBe("test",);

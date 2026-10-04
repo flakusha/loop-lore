@@ -79,11 +79,13 @@ export async function encryptGroupMessage(
   if (opts.recipients.length === 0) {
     throw new Error("encryptGroupMessage requires at least one recipient",);
   }
+
   const chainKey = crypto.getRandomValues(new Uint8Array(32,),);
   const wraps = await wrapSenderKey({
     chainKey,
     recipients: opts.recipients,
   },);
+
   const step = await nextRatchetStep(chainKey,);
   const nonce = crypto.getRandomValues(new Uint8Array(NONCE_LENGTH,),);
   const aes = await crypto.subtle.importKey(
@@ -93,11 +95,13 @@ export async function encryptGroupMessage(
     false,
     ["encrypt",],
   );
+
   const ct = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv: new Uint8Array(nonce,).buffer as ArrayBuffer, },
     aes,
     new TextEncoder().encode(opts.plaintext,).buffer as ArrayBuffer,
   );
+
   step.messageKey.fill(0,);
   const perRecipient: GroupEncryptedPayload["per_recipient"] = {};
   for (const wrap of wraps) {
@@ -106,6 +110,7 @@ export async function encryptGroupMessage(
       senderEphPubJwk: wrap.senderEphPubJwk,
     };
   }
+
   return {
     ciphertext: new Uint8Array(ct,).toBase64(),
     nonce: nonce.toBase64(),
@@ -129,12 +134,14 @@ export async function decryptGroupMessage(
       `decryptGroupMessage: no wrap found for ${opts.recipientActorId}`,
     );
   }
+
   const chainKey = await unwrapSenderKey({
     wrappedKey: wrap.wrappedKey,
     senderEphPubJwk: wrap.senderEphPubJwk,
     recipientStaticPriv: opts.recipientStaticPriv,
     recipientActorId: opts.recipientActorId,
   },);
+
   const step = await nextRatchetStep(chainKey,);
   const aes = await crypto.subtle.importKey(
     "raw",
@@ -143,16 +150,19 @@ export async function decryptGroupMessage(
     false,
     ["decrypt",],
   );
+
   const ct = Uint8Array.fromBase64(opts.payload.ciphertext,);
   const nonce = Uint8Array.fromBase64(opts.payload.nonce,);
   if (nonce.byteLength !== NONCE_LENGTH) {
     throw new Error(`nonce must be ${NONCE_LENGTH} bytes (got ${nonce.byteLength})`,);
   }
+
   const pt = await crypto.subtle.decrypt(
     { name: "AES-GCM", iv: new Uint8Array(nonce,).buffer as ArrayBuffer, },
     aes,
     new Uint8Array(ct,).buffer as ArrayBuffer,
   );
+
   step.messageKey.fill(0,);
   return new TextDecoder().decode(pt,);
 }

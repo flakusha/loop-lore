@@ -80,6 +80,7 @@ async function ensurePreviewModal(): Promise<HTMLElement | null> {
   if (globalThis.Alpine) {
     (globalThis.Alpine as { initTree(el: HTMLElement,): void }).initTree(container as HTMLElement,);
   }
+
   return document.querySelector<HTMLElement>("#preview-modal",);
 }
 
@@ -119,21 +120,27 @@ async function renderPreviewBody(
       body.innerHTML = `<img src="${escapeHtml(mediaSrc,)}" alt="${
         escapeHtml(a.filename ?? "",)
       }" style="width:100%;display:block" />`;
+
       mountPreviewAnchorEditor(body, a.id,);
       break;
     }
+
     case "audio": {
       body.innerHTML = `<audio controls style="width:100%;padding:var(--space-6)"><source src="${
         escapeHtml(mediaSrc,)
       }" /></audio>`;
+
       break;
     }
+
     case "video": {
       body.innerHTML = `<video controls style="width:100%;display:block"><source src="${
         escapeHtml(mediaSrc,)
       }" /></video>`;
+
       break;
     }
+
     default: {
       body.innerHTML =
         `<div style="padding:var(--space-6);text-align:center"><div class="file-icon" style="font-size:48px">📄</div></div>`;
@@ -225,11 +232,13 @@ export async function deleteAssetPreview(): Promise<boolean> {
       if (grid) {
         (globalThis.htmx as { trigger(el: HTMLElement, evt: string,): void }).trigger(grid as HTMLElement, "load",);
       }
+
       return true;
     }
   } catch {
     showToast("error", "Failed to delete",);
   }
+
   return false;
 }
 

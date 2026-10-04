@@ -57,6 +57,7 @@ function makeEl(tag: string, id = "",): FakeEl {
     files: undefined,
     textContent: "",
   };
+
   return el;
 }
 
@@ -170,6 +171,7 @@ describe("initDropZone", () => {
       preventDefault: () => {},
       dataTransfer: { files: [file,], },
     },);
+
     expect(textEl?.textContent,).toBe("test.png",);
   });
 
@@ -180,6 +182,7 @@ describe("initDropZone", () => {
       preventDefault: () => {},
       dataTransfer: { files: [], },
     },);
+
     expect(textEl?.textContent,).toBe("Drag & drop files here",);
   });
 

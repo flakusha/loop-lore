@@ -11,12 +11,14 @@ beforeEach(() => {
     prevRoot = undefined;
   }
 },);
+
 afterEach(() => {
   if (prevRoot) {
     setGlobalLogger(prevRoot,);
   } else {
     createLogger({ level: "error", },);
   }
+
   prevRoot = undefined;
 },);
 

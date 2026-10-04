@@ -44,6 +44,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           welcomeMessage,
           systemPrompt,
         } = ctx.body;
+
         const assetId = (ctx.body as { assetId?: string | null }).assetId ?? null;
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -60,6 +61,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             if (trimmed) { parsedTags.push(trimmed,); }
           }
         }
+
         const settings = parsedTags.length > 0 ? jsonStringifyOr({ tags: parsedTags, },) : "{}";
         const id = uid();
         await database
@@ -88,6 +90,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             format_version: 0,
           },)
           .execute();
+
         if (assetId) {
           await writeLink({
             database,

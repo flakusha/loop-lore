@@ -185,6 +185,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
           link: { entityType: "chat", entityId: request.chatId, label: template.name, },
         },);
       }
+
       if (request.messageId) {
         await linkAsset({
           database,
@@ -238,6 +239,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
       bored: "bored expression, disinterested, vacant stare, apathetic",
       contemptuous: "contemptuous expression, sneering, disdainful look",
     };
+
     return modifiers[emotion] ?? "";
   }
 }

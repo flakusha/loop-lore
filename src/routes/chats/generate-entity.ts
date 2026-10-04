@@ -49,6 +49,7 @@ export function generateEntityRoutes(opts: HandlerOpts, prefix = "/api",) {
           400,
         );
       }
+
       const seed = typeof body.seed === "string" ? body.seed.trim() : "";
       if (seed === "") {
         return jsonResponse({ error: "Seed text is required.", }, 400,);
@@ -62,6 +63,7 @@ export function generateEntityRoutes(opts: HandlerOpts, prefix = "/api",) {
         userId,
         workflows,
       },);
+
       if (!result.ok) {
         return jsonResponse({ error: result.message, }, result.code === "chat_create_failed" ? 500 : 400,);
       }

@@ -55,5 +55,6 @@ export async function applyReflectionCheckpoint(
       created_at: sql`datetime('now')`,
     },)
     .execute();
+
   return { emitted: true, revisionId: id, };
 }

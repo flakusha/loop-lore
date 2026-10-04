@@ -51,6 +51,7 @@ async function readJsonColumn(
     WHERE id = ${id}
     LIMIT 1
   `.execute(db,);
+
   const raw = result.rows[0]?.value;
   return jsonParseOr<AutonomyConfigOverride>(raw ?? "{}", {},);
 }
@@ -71,11 +72,13 @@ async function readActorOverride(db: Db, actorId: string,): Promise<AutonomyConf
     WHERE actor_id = ${actorId}
     LIMIT 1
   `.execute(db,);
+
   const raw = result.rows[0]?.value;
   const parsed = jsonParseOr<{ autonomy?: AutonomyConfigOverride }>(
     raw ?? "{}",
     {},
   );
+
   return parsed.autonomy ?? {};
 }
 
@@ -140,6 +143,7 @@ function mergeLayers(
     perAgentCap: preset.perAgentCap,
     perUserCap: preset.perUserCap,
   };
+
   applyLayer(out, world,);
   applyLayer(out, chat,);
   applyLayer(out, actor,);

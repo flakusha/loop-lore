@@ -28,6 +28,7 @@ describe("requireUserId", () => {
       userId: null,
       t: (key: string,) => (key === "errors.unauthorized" ? "Not signed in" : undefined),
     },) as Response;
+
     const body = (await res.json()) as { error: string };
     expect(body.error,).toBe("Not signed in",);
   });

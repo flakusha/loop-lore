@@ -22,6 +22,7 @@ const DEFAULTS_STATE = {
   loadingIndicator: null as unknown,
   locationChangeHandler: null as unknown,
 };
+
 const originalImage = (globalThis as Record<string, unknown>).Image;
 beforeEach(() => {
   Object.assign(state, DEFAULTS_STATE,);
@@ -61,6 +62,7 @@ function tracker(): Tracker {
     hide: () => void t.hidden++,
     updateProgress: (loaded: number, total: number,) => void t.calls.push([loaded, total,],),
   };
+
   return t;
 }
 
@@ -184,6 +186,7 @@ describe("preloadCurrentAndUpcoming", () => {
     expect(FakeImage.created.map((img,) => img.src).sort(),).toEqual(
       ["/api/v1/assets/av0/thumb", "bg0.png", "bg1.png", "bg2.png",].sort(),
     );
+
     expect(t.shown,).toBe(1,);
     expect(t.calls,).toEqual([[4, 4,],],);
     await until(() => t.hidden > 0);
@@ -211,6 +214,7 @@ describe("preloadCurrentAndUpcoming", () => {
         emotionVariants: { happy: "happy-9", },
       },],
     };
+
     try {
       armPreload(t, [scene({
         characterAvatar: "base-1",
@@ -234,6 +238,7 @@ describe("handleLocationChanged", () => {
     state.container = {
       querySelector: (sel: string,): HTMLElement | null => sel === ".vn-scene" ? sceneEl : null,
     } as unknown as HTMLElement;
+
     state.settings = { layout: "split", } as unknown as typeof state.settings;
     return { sceneEl, };
   }

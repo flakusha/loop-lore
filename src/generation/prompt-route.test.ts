@@ -56,6 +56,7 @@ function makeStubProvider(content: string,): LLMProvider {
     finishReason: "stop",
     usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30, },
   });
+
   return {
     capabilities: {
       type: "openai-compatible",
@@ -85,6 +86,7 @@ describeOrSkip("prompt route", () => {
     model: string,
     overrides: Record<string, unknown>,
   ) => Promise<unknown>;
+
   let ModelRole: Record<string, string>;
 
   beforeAll(async () => {
@@ -99,6 +101,7 @@ describeOrSkip("prompt route", () => {
         import("../test-utils/insert-helpers"),
         import("../db/enums"),
       ],);
+
     const testDb = await createTestDb();
     db = testDb.db;
     setTestDatabase = setDb as typeof setTestDatabase;
@@ -137,6 +140,7 @@ describeOrSkip("prompt route", () => {
       "u1",
       "solo",
     );
+
     expect(badLevel.status,).toBe(400,);
   });
 
@@ -151,6 +155,7 @@ describeOrSkip("prompt route", () => {
       "u1",
       "solo",
     );
+
     expect(res.status,).toBe(403,);
     const body = await res.json();
     expect(body.error,).toBe("injection_detected",);
@@ -167,6 +172,7 @@ describeOrSkip("prompt route", () => {
       "u1",
       "solo",
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json();
     expect(body.data.content,).toBe("A clearer sentence.",);
@@ -189,6 +195,7 @@ describeOrSkip("prompt route", () => {
       "mock",
       makeStubProvider('{"intent":"action","clarity":0.7,"issues":[],"suggestions":[],"confidence":0.8}',),
     );
+
     const res = await handlePromptImprove({ mode: "analyze", text: "I open the door", }, db, "u1", "solo",);
     expect(res.status,).toBe(200,);
     const body = await res.json();
@@ -203,6 +210,7 @@ describeOrSkip("prompt route", () => {
       "u1",
       "member",
     );
+
     expect(res.status,).toBe(403,);
   });
 },);

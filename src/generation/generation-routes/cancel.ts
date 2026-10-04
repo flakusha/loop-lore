@@ -78,6 +78,7 @@ export async function handleCancelGeneration(
       for (const gen of listActiveGenerations()) {
         if (gen.attemptId === attemptId) { return gen.chatId; }
       }
+
       return null;
     })();
 

@@ -50,6 +50,7 @@ describe("body physical status (TASK-035)", () => {
       magnitude: 20,
       source: "encounter",
     },);
+
     const status = await bodies.getPhysicalStatus("actor-tired",);
     expect(status.arousal,).toBe(3,);
     expect(status.exhaustion,).toBe(20,);
@@ -69,6 +70,7 @@ describe("body physical status (TASK-035)", () => {
       source: "test",
       durationSeconds: -1,
     },);
+
     const status = await bodies.getPhysicalStatus("actor-fresh",);
     expect(status.exhaustion,).toBe(0,);
     expect(status.effectiveStamina,).toBe(50,);
@@ -96,6 +98,7 @@ describe("chemistry service (TASK-039)", () => {
       .where("actor_id", "=", "actor-chem",)
       .selectAll()
       .execute();
+
     expect(rows.length,).toBe(1,);
     expect(rows[0]!.effect_id,).toBe("pheromone_allure",);
     expect(rows[0]!.category,).toBe("physical",);
@@ -130,10 +133,12 @@ describe("trauma service (TASK-044)", () => {
     type: "satisfaction" as const,
     effects: { intimacyChange: 5, moodChange: 5, satisfactionBonus: 5, memoryCreated: false, reputationChange: 0, },
   };
+
   const dissatisfaction = {
     type: "dissatisfaction" as const,
     effects: { intimacyChange: -2, moodChange: -3, satisfactionBonus: 0, memoryCreated: false, reputationChange: 0, },
   };
+
   const injury = {
     type: "injury" as const,
     effects: { intimacyChange: -5, moodChange: -10, satisfactionBonus: 0, memoryCreated: false, reputationChange: 0, },
@@ -144,6 +149,7 @@ describe("trauma service (TASK-044)", () => {
     expect(severityFromOutcome(dissatisfaction,),).toBe(1,);
     expect(severityFromOutcome({ ...dissatisfaction, effects: { ...dissatisfaction.effects, moodChange: -8, }, },),)
       .toBe(2,);
+
     expect(severityFromOutcome(injury,),).toBe(3,);
     expect(severityFromOutcome(injury, true,),).toBe(4,);
     expect(severityFromOutcome(satisfaction, true,),).toBe(1,);

@@ -100,11 +100,13 @@ export async function walkMessageChain(
       .where("chat_id", "=", chatId,)
       .where("id", "=", cursor,)
       .executeTakeFirst();
+
     if (!row) { break; }
     const content = readableContent(row,);
     if (content !== null) {
       out.push({ id: row.id, chatId: row.chat_id, role: row.role, content, createdAt: row.created_at, },);
     }
+
     if (direction === "up") {
       cursor = row.parent_id;
     } else {
@@ -119,9 +121,11 @@ export async function walkMessageChain(
         .orderBy(sql`swipe_index IS NULL`, "desc",)
         .orderBy("swipe_index", "asc",)
         .executeTakeFirst();
+
       cursor = child?.id ?? null;
     }
   }
+
   return direction === "up" ? out.reverse() : out;
 }
 
@@ -143,10 +147,12 @@ export async function reconstructMessageChain(
     .select(["source_message_ids", "source_message_id", "source_chat_ids", "source_chat_id",],)
     .where("id", "=", memoryId,)
     .executeTakeFirst();
+
   if (!memory) {
     getLog().debug("Memory not found for reconstruction", { memoryId, },);
     return [];
   }
+
   let ids = jsonParseOr<string[]>(memory.source_message_ids ?? "", [],);
   if (ids.length === 0 && memory.source_message_id) { ids = [memory.source_message_id,]; }
   if (ids.length === 0) { return []; }
@@ -165,6 +171,7 @@ export async function reconstructMessageChain(
     if (content === null) { continue; }
     out.push({ id: row.id, chatId: row.chat_id, role: row.role, content, createdAt: row.created_at, },);
   }
+
   return out;
 }
 
@@ -188,6 +195,7 @@ export async function expandMemoryContext(
     .select(["content", "source_message_ids", "source_message_id",],)
     .where("id", "=", memoryId,)
     .executeTakeFirst();
+
   if (!memory) { return null; }
 
   const chain = await reconstructMessageChain(db, memoryId,);
@@ -200,9 +208,11 @@ export async function expandMemoryContext(
       truncated = true;
       break;
     }
+
     messages.push(msg,);
     used += cost;
   }
+
   return { summary: memory.content, messages, truncated, };
 }
 
@@ -244,6 +254,7 @@ export async function selectMemoriesWithExpansion(
     const expanded = await expandMemoryContext(db, memory.id, { maxTokens: opts.expandMaxTokens, },);
     if (expanded && expanded.messages.length > 0) { expansions.set(memory.id, expanded,); }
   }
+
   const { selected, rejected, } = selectMemoriesForInjection(memories, config, ctx,);
   return { selected, rejected, expansions, };
 }

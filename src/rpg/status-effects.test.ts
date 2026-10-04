@@ -23,6 +23,7 @@ describe("shared status-effect store", () => {
       durationSeconds: 3600,
       meta: { dose: "standard", },
     },);
+
     expect(typeof id,).toBe("string",);
     const active = await getActiveEffects(db, "actor-hero",);
     expect(active.length,).toBe(1,);
@@ -40,6 +41,7 @@ describe("shared status-effect store", () => {
       source: "test",
       durationSeconds: -1,
     },);
+
     expect(await getActiveEffects(db, "actor-hero",),).toEqual([],);
     expect(await sweepExpiredEffects(db,),).toBe(1,);
     expect(await sweepExpiredEffects(db,),).toBe(0,);
@@ -54,12 +56,14 @@ describe("shared status-effect store", () => {
       category: "trauma",
       source: "test",
     },);
+
     await applyStatusEffect(db, {
       actorId: "actor-hero",
       effectId: "exhaustion",
       category: "physical",
       source: "test",
     },);
+
     expect((await getActiveEffects(db, "actor-hero", { category: "trauma", },)).length,).toBe(1,);
     expect((await getActiveEffects(db, "actor-hero", { effectId: "exhaustion", },)).length,).toBe(1,);
     expect(await getActiveEffects(db, "actor-hero", { category: "missing", },),).toEqual([],);
@@ -74,6 +78,7 @@ describe("shared status-effect store", () => {
       category: "reputation",
       source: "test",
     },);
+
     expect(await sweepExpiredEffects(db,),).toBe(0,);
     expect((await getActiveEffects(db, "actor-hero",)).length,).toBe(1,);
   });

@@ -48,12 +48,14 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.maxUsesPositiveInteger",), },);
       return;
     }
+
     try {
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}/invites`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ maxUses, },),
       },);
+
       if (res.ok) {
         const invite = (await res.json()) as ChatInviteRow;
         this._chatInvites = [invite, ...this._chatInvites,];
@@ -97,6 +99,7 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}/invites/${inviteId}`, {
         method: "DELETE",
       },);
+
       if (res.ok || res.status === 204) {
         this._chatInvites = this._chatInvites.filter((row,) => row.id !== inviteId);
         this.$dispatch?.("show-toast", { type: "success", message: t("toasts.inviteRevoked",), },);
@@ -118,24 +121,29 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.enterChatInviteCode",), },);
       return;
     }
+
     try {
       const res = await apiFetch(`/api/v1/invites/${encodeURIComponent(code,)}/join`, {
         method: "POST",
       },);
+
       if (!res.ok) {
         const body = await res.json() as { message?: string; error?: string };
         this.$dispatch?.("show-toast", {
           type: "error",
           message: body.message ?? body.error ?? t("toasts.couldNotJoinChat",),
         },);
+
         return;
       }
+
       const outcome = await res.json() as { chatId?: string; alreadyMember?: boolean };
       this._chatJoinCode = "";
       this.$dispatch?.("show-toast", {
         type: "success",
         message: t(outcome.alreadyMember ? "toasts.alreadyChatMember" : "toasts.joinedChat",),
       },);
+
       await this.loadChats?.();
       if (typeof outcome.chatId === "string" && outcome.chatId) {
         await this.selectChat?.(outcome.chatId,);

@@ -54,6 +54,7 @@ export async function extractMemories(
       chatId,
       maxTokens: 200,
     },);
+
     if (!response) {
       getLog().debug("Extraction AUX call failed",);
       return [];
@@ -69,6 +70,7 @@ export async function extractMemories(
     for (const m of parsed) {
       if (m.confidence >= 0.5 && m.content.length > 10) { result.push(m,); }
     }
+
     return result;
   } catch (error) {
     getLog().warn("Extraction failed", { error: (error as Error).message, actorId, chatId, },);

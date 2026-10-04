@@ -51,6 +51,7 @@ function inputOf(workflow: unknown, nodeId: string,): Record<string, unknown> {
   if (!node || typeof node !== "object" || !("inputs" in node)) {
     throw new Error(`node ${nodeId} has no inputs`,);
   }
+
   const inputs: unknown = node.inputs;
   if (!inputs || typeof inputs !== "object") { throw new Error("inputs not an object",); }
   return inputs as Record<string, unknown>;
@@ -66,12 +67,14 @@ describe("getWorkflowLoader", () => {
     const loaded = await loader.loadWorkflow({ name: "txt2img", vars: { prompt: "cat", }, },);
     expect(inputOf(loaded, "5",).text,).toBe("cat",);
   });
+
   it("refuses to load a workflow with a dead node", async () => {
     await fixtures();
     const loader = getWorkflowLoader(DIR,);
     expect(await loader.listWorkflows(),).not.toContain("deadnode",);
     await expect(loader.loadWorkflow({ name: "deadnode", },),).rejects.toThrowError("not found",);
   });
+
   it("applies node overrides and returns raw workflows", async () => {
     await fixtures();
     const loader = getWorkflowLoader(DIR,);
@@ -79,9 +82,11 @@ describe("getWorkflowLoader", () => {
       name: "txt2img",
       nodeOverrides: new Map([["5", { cfg: 9, },],],),
     },);
+
     expect(inputOf(loaded, "5",).cfg,).toBe(9,);
     expect(await loader.getRawWorkflow("missing",),).toBeNull();
   });
+
   it("throws for unknown workflows", async () => {
     await fixtures();
     const loader = getWorkflowLoader(DIR,);

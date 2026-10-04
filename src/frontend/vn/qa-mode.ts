@@ -106,6 +106,7 @@ export function runQaCheck(
           severity: "warning",
           message: `${consecutiveNarration} consecutive narration scenes — consider adding dialogue`,
         },);
+
         consecutiveNarration = 0;
       }
     } else {

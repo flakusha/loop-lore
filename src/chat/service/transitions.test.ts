@@ -33,6 +33,7 @@ describe("injectNarration — real narrator actor, no FK drop", () => {
         user_id: userId,
         owner_id: userId,
       },);
+
       const narrator = await db
         .selectFrom("actors",)
         .select("id",)
@@ -49,6 +50,7 @@ describe("injectNarration — real narrator actor, no FK drop", () => {
         .select(["id", "actor_id", "content_type",],)
         .where("chat_id", "=", chat.id,)
         .executeTakeFirst();
+
       expect(row,).toBeDefined();
       expect(row?.actor_id,).toBe(narrator.id,);
       expect(row?.content_type,).toBe("narration",);
@@ -77,6 +79,7 @@ describe("injectNarration — real narrator actor, no FK drop", () => {
         .select(db.fn.countAll<number>().as("total",),)
         .where("chat_id", "=", chat2.id,)
         .executeTakeFirst();
+
       expect(count?.total,).toBe(0,);
     } finally {
       sqlite.close();

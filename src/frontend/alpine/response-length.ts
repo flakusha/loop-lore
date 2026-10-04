@@ -32,6 +32,7 @@ const LENGTH_PRESETS = [
       if (this.preset === "custom") {
         return Math.max(1, this.customMax,);
       }
+
       const preset = LENGTH_PRESETS.find((p,) => p.value === this.preset);
       return preset ? preset.maxTokens : 400;
     },

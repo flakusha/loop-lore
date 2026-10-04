@@ -18,18 +18,21 @@ export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
       this._searchResults = [];
       return;
     }
+
     try {
       const res = await apiFetch(`/api/v1/chats/search?q=${encodeURIComponent(query,)}`,);
       if (!res.ok) {
         this._searchResults = [];
         return;
       }
+
       const body = await res.json();
       const data = Array.isArray(body,)
         ? body
         : (body as {
           data?: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];
         }).data ?? [];
+
       this._searchResults = Array.from(data, (r,) => ({
         chatId: r.chatId as string,
         chatName: r.chatName as string,
@@ -55,6 +58,7 @@ export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
         : (body as {
           data?: { chatId: string; chatName: string; participantCount: number; lastActiveAt: string | null }[];
         }).data ?? [];
+
       this._joinableChats = Array.from(data, (r,) => ({
         chatId: r.chatId as string,
         chatName: r.chatName as string,
@@ -67,11 +71,13 @@ export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
         this._joinableChats = [];
         return;
       }
+
       getLogger().error(
         "Failed to load joinable chats",
         error instanceof Error ? error : new Error(String(error,),),
         {},
       );
+
       this._joinableChats = [];
     }
   },
@@ -88,6 +94,7 @@ export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.couldNotJoinChat",), },);
         return;
       }
+
       // Refresh the joinable list + local chat list after joining.
       const joinReload = await Promise.allSettled([this.loadJoinableChats(), this.loadChats?.(),],);
       if (joinReload.some((r,) => r.status === "rejected")) { throw new Error("join reload failed",); }

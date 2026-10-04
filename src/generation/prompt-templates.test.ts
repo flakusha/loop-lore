@@ -66,6 +66,7 @@ describe("resolveTemplate", () => {
       ...ctx,
       extra: { spell: "fireball", },
     },);
+
     expect(result,).toBe("Alice uses fireball",);
   });
 
@@ -91,6 +92,7 @@ describe("resolveProfile", () => {
     const { resolvedProfileId, } = resolveProfile("yourself", "balanced", {
       modelName: "flux1-dev",
     },);
+
     expect(resolvedProfileId,).toBe("flux",);
   });
 
@@ -98,6 +100,7 @@ describe("resolveProfile", () => {
     const { resolvedProfileId, } = resolveProfile("yourself", "balanced", {
       modelName: "ponyDiffusionV6",
     },);
+
     expect(resolvedProfileId,).toBe("pony",);
   });
 
@@ -105,6 +108,7 @@ describe("resolveProfile", () => {
     const { resolvedProfileId, } = resolveProfile("yourself", "balanced", {
       modelName: "illustriousXLV10",
     },);
+
     expect(resolvedProfileId,).toBe("illustrious",);
   });
 
@@ -112,6 +116,7 @@ describe("resolveProfile", () => {
     const { resolvedProfileId, } = resolveProfile("yourself", "balanced", {
       modelName: "krea-2-turbo",
     },);
+
     expect(resolvedProfileId,).toBe("krea2",);
   });
 
@@ -119,6 +124,7 @@ describe("resolveProfile", () => {
     const { resolvedProfileId, } = resolveProfile("yourself", "balanced", {
       modelName: "anima-aesthetic-v1.1",
     },);
+
     expect(resolvedProfileId,).toBe("anima",);
   });
 
@@ -126,6 +132,7 @@ describe("resolveProfile", () => {
     const { resolvedProfileId, } = resolveProfile("yourself", "balanced", {
       modelName: "some-unknown-model-v3",
     },);
+
     expect(resolvedProfileId,).toBe("sdxl",);
   });
 
@@ -133,6 +140,7 @@ describe("resolveProfile", () => {
     const { resolvedProfileId, } = resolveProfile("yourself", "balanced", {
       profileId: "nonexistent",
     },);
+
     expect(resolvedProfileId,).toBe("sdxl",);
   });
 

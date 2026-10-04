@@ -28,6 +28,7 @@ export function resolveDuplicationPolicy(
     const override = policy.worlds?.[worldId];
     if (override !== undefined) { return override; }
   }
+
   return policy;
 }
 
@@ -56,10 +57,12 @@ export async function selectDuplicationTargets(
     .where("state", "=", "trusted",)
     .orderBy("origin",)
     .execute();
+
   const trusted = new Set(rows.map((row,) => row.origin),);
   const candidates = effective.mode === "listed"
     ? effective.peers.map((raw,) => canonicalOrigin(raw,))
     : [...trusted,];
+
   return candidates.filter((origin,): origin is string => origin !== null && origin !== except && trusted.has(origin,));
 }
 
@@ -92,6 +95,7 @@ export async function selectTargetsWithCapacity(
     .select(["origin", "capacity_bytes",],)
     .where("origin", "in", candidates,)
     .execute();
+
   // Dynamic per-call snapshot keyed by arbitrary origins — Map, not Record.
   const capacity = new Map(rows.map((row,) => [row.origin, row.capacity_bytes,] as const),);
   const targets: string[] = [];
@@ -104,5 +108,6 @@ export async function selectTargetsWithCapacity(
       targets.push(candidate,);
     }
   }
+
   return { targets, skipped, };
 }

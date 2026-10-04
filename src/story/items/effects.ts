@@ -33,12 +33,15 @@ function parseEffect(value: unknown,): ItemEffect | null {
   ) {
     return { kind: value.kind, stat: value.stat, amount: value.amount, };
   }
+
   if (value.kind === "on_use" && isNonEmptyString(value.action,) && "payload" in value) {
     return { kind: value.kind, action: value.action, payload: value.payload, };
   }
+
   if (value.kind === "passive" && isNonEmptyString(value.condition,) && "payload" in value) {
     return { kind: value.kind, condition: value.condition, payload: value.payload, };
   }
+
   return null;
 }
 

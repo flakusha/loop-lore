@@ -50,14 +50,17 @@ describe("updateImpersonation", () => {
       id: chatWorld,
       world_id: worldId,
     } as never,);
+
     await insertChats(db, "Chat W1b", userA, {
       id: chatWorld2,
       world_id: worldId,
     } as never,);
+
     await insertChats(db, "Chat W2", userB, {
       id: chatOtherWorld,
       world_id: otherWorldId,
     } as never,);
+
     await insertChats(db, "Chat No World", userA, { id: chatNoWorld, } as never,);
 
     await insertChatParticipants(db, chatWorld, userA, {},);
@@ -86,6 +89,7 @@ describe("updateImpersonation", () => {
       .where("chat_id", "=", chatNoWorld,)
       .where("actor_id", "=", userA,)
       .executeTakeFirst();
+
     expect(row?.impersonate_actor_id,).toBe(heroActorId,);
   });
 
@@ -99,6 +103,7 @@ describe("updateImpersonation", () => {
       .where("chat_id", "=", chatWorld,)
       .where("actor_id", "=", userA,)
       .executeTakeFirst();
+
     expect(row?.impersonate_actor_id,).toBe(heroActorId,);
   });
 
@@ -120,6 +125,7 @@ describe("updateImpersonation", () => {
       .where("chat_id", "=", chatWorld,)
       .where("actor_id", "=", userA,)
       .executeTakeFirst();
+
     expect(row?.impersonate_actor_id,).toBeNull();
   });
 
@@ -139,6 +145,7 @@ describe("updateImpersonation", () => {
       .where("chat_id", "=", chatWorld2,)
       .where("actor_id", "=", userA,)
       .executeTakeFirst();
+
     expect(row?.impersonate_actor_id,).toBe(heroActorId,);
   });
 

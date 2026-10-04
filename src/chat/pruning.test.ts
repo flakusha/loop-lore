@@ -72,6 +72,7 @@ describe("scoreMessage", () => {
       hasMemoryLink: true,
       hasAttachment: true,
     },);
+
     expect(scoreMessage(msg,).shouldPromote,).toBe(true,);
   });
 
@@ -94,10 +95,12 @@ describe("pruneMessages", () => {
       makeMsg("1", "Short", 0, 1,),
       makeMsg("2", "Message", 1, 2,),
     ];
+
     const result = pruneMessages(msgs, {
       ...DEFAULT_PRUNING_CONFIG,
       targetTokens: 100_000,
     },);
+
     expect(result.kept.length,).toBe(2,);
     expect(result.pruned.length,).toBe(0,);
   });
@@ -110,10 +113,12 @@ describe("pruneMessages", () => {
       makeMsg("4", "w".repeat(5000,), 3, 5,),
       makeMsg("5", "v".repeat(5000,), 4, 5,), // recent
     ];
+
     const result = pruneMessages(msgs, {
       ...DEFAULT_PRUNING_CONFIG,
       targetTokens: 500, // very small target
     },);
+
     expect(result.pruned.length,).toBeGreaterThan(0,);
     expect(result.tokensSaved,).toBeGreaterThan(0,);
   });
@@ -123,10 +128,12 @@ describe("pruneMessages", () => {
       { length: 20, },
       (_, i,) => makeMsg(String(i,), `Message ${i} with some content `.repeat(10,), i, 20,),
     );
+
     const result = pruneMessages(msgs, {
       ...DEFAULT_PRUNING_CONFIG,
       targetTokens: 100,
     },);
+
     if (result.pruned.length > 0) {
       expect(result.summary,).toBeDefined();
       expect(result.summary,).toContain("Pruned",);
@@ -140,11 +147,13 @@ describe("pruneMessages", () => {
       strategy: "aggressive",
       targetTokens: 50,
     },);
+
     const conservative = pruneMessages(msgs, {
       ...DEFAULT_PRUNING_CONFIG,
       strategy: "conservative",
       targetTokens: 50,
     },);
+
     // Aggressive should prune more
     expect(aggressive.pruned.length,).toBeGreaterThanOrEqual(conservative.pruned.length,);
   });

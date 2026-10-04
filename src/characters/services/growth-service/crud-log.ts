@@ -69,6 +69,7 @@ export async function getGrowthMode(
     .where("id", "=", actorId,)
     .select(["growth_mode", "llm_assist_enabled",],)
     .executeTakeFirst();
+
   return {
     growthMode: (row?.growth_mode ?? "dynamic") as GrowthModeSnapshot["growthMode"],
     llmAssistEnabled: Boolean(row?.llm_assist_enabled ?? 0,),

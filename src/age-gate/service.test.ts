@@ -54,6 +54,7 @@ describe("getStatus", () => {
       birth_date: "2000-01-01",
       age_gate_accepted_at: "2024-06-01T12:00:00.000Z",
     },);
+
     expect(status,).toEqual({ isEnabled: true, hasPassed: true, minimumAge: 18, mode: "self-declaration", },);
   });
 
@@ -87,6 +88,7 @@ describe("validateAge", () => {
     expect(() => {
       validateAge("2015-06-15", 18,);
     },).toThrow(UnderageError,);
+
     expect(() => {
       validateAge("2015-06-15", 18,);
     },).toThrow(/at least 18/,);
@@ -105,6 +107,7 @@ describe("validateAge", () => {
     expect(() => {
       validateAge("not-a-date", 18,);
     },).toThrow(AgeGateError,);
+
     expect(() => {
       validateAge("not-a-date", 18,);
     },).toThrow(/Invalid birth date/,);
@@ -120,6 +123,7 @@ describe("validateAge", () => {
     expect(() => {
       validateAge("2005-01-01", 13,);
     },).not.toThrow();
+
     expect(() => {
       validateAge("2015-01-01", 13,);
     },).toThrow(UnderageError,);
@@ -195,6 +199,7 @@ describe("acceptAgeGate", () => {
       acceptAgeGate({ database, config, userId: "test-user-1", input: { birthDate: "2020-01-01", }, },),
     ).resolves.toBeUndefined();
   });
+
   test("created_at default matches production migration format (SQLite datetime('now'))", async () => {
     const database = await createTestDatabase();
     // created_at is set by the DEFAULT (datetime('now')) — not by the service.
@@ -239,6 +244,7 @@ async function createTestDatabase(): Promise<Kysely<import("../db/schema").DB>> 
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
   `,);
+
   sqlite.exec(`
     INSERT INTO users (id, username, display_name, role, status, settings)
     VALUES ('test-user-1', 'tester', 'Tester', 'user', 'active', '{}')
@@ -254,11 +260,13 @@ describe("getStatus boundary", () => {
     const s = getStatus(gateConfig(), { birth_date: "", age_gate_accepted_at: null, },);
     expect(s.hasPassed,).toBe(false,);
   });
+
   test("undefined user fields => hasPassed false", () => {
     const s = getStatus(gateConfig(), {
       birth_date: undefined as unknown as null,
       age_gate_accepted_at: undefined as unknown as null,
     },);
+
     expect(s.hasPassed,).toBe(false,);
   });
 });
@@ -267,6 +275,7 @@ describe("validateAge boundary", () => {
   test("minimum 0 => still throws AgeGateError (birth in future)", () => {
     expect(() => validateAge("2030-01-01", 0,)).toThrow(AgeGateError,);
   });
+
   test("very old date passes any reasonable minimum", () => {
     expect(() => validateAge("1900-01-01", 18,)).not.toThrow();
   });

@@ -12,6 +12,7 @@ describe("findDeadNodes", () => {
       "2": { class_type: "KSampler", inputs: { model: ["1", 0,], }, },
       "3": { class_type: "SaveImage", inputs: { images: ["2", 0,], }, },
     };
+
     expect(findDeadNodes(wf,),).toEqual([],);
   });
 
@@ -22,6 +23,7 @@ describe("findDeadNodes", () => {
       "5": { class_type: "CLIPTextEncode", inputs: { text: "cat", }, },
       "46": { class_type: "SaveImage", inputs: { images: ["5", 0,], }, },
     };
+
     expect(findDeadNodes(wf,),).toEqual([],);
   });
 
@@ -33,6 +35,7 @@ describe("findDeadNodes", () => {
       "60:61": { class_type: "CLIPLoaderGGUF", inputs: { clip_name: "new.gguf", }, },
       "46": { class_type: "SaveImage", inputs: { clip: ["60:61", 0,], }, },
     };
+
     expect(findDeadNodes(wf,),).toEqual(["60:45",],);
   });
 
@@ -44,6 +47,7 @@ describe("findDeadNodes", () => {
       "4": { class_type: "LoraLoader", inputs: { model: ["1", 0,], }, },
       "5": { class_type: "SaveImage", inputs: { images: ["2", 0,], }, },
     };
+
     // 3 and 4 are consumed by nobody and are not sinks.
     expect(findDeadNodes(wf,),).toEqual(["3", "4",],);
   });
@@ -61,6 +65,7 @@ describe("findDeadNodes", () => {
       "2": { class_type: "KSampler", inputs: { model: ["1", 0,], latent: ["1", 2,], }, },
       "3": { class_type: "SaveImage", inputs: { images: ["2", 0,], }, },
     };
+
     expect(findDeadNodes(wf,),).toEqual([],);
   });
 
@@ -72,6 +77,7 @@ describe("findDeadNodes", () => {
     const wf: ComfyUIWorkflow = {
       "1": { class_type: "KSampler", inputs: { batch_size: 1, sampler: "euler", steps: [1, 2,], }, },
     };
+
     expect(findDeadNodes(wf,),).toEqual(["1",],);
   });
 

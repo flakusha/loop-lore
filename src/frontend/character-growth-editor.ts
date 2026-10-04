@@ -86,6 +86,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
             llmAssistEnabled: this.llmAssistEnabled,
           },),
         },);
+
         this.message = "Saved.";
       } catch (err) {
         this.message = "Failed to save growth mode.";
@@ -110,6 +111,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
             },),
           },
         );
+
         if (!res.ok) { throw new Error(`HTTP ${res.status}`,); }
         this.message = "Arc saved.";
       } catch (err) {
@@ -130,6 +132,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
           }`,
           { method: "POST", },
         );
+
         this._updateEntryStatus(entryId, "applied",);
         this.message = "Entry confirmed.";
       } catch (err) {
@@ -150,6 +153,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
           }`,
           { method: "POST", },
         );
+
         this._updateEntryStatus(entryId, "rejected",);
         this.message = "Entry rejected.";
       } catch (err) {

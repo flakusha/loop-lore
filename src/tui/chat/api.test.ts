@@ -83,6 +83,7 @@ function makeHost(overrides: Partial<ChatHost> = {},): ChatHost & HostExtras {
     addedMessages,
     ...overrides,
   };
+
   return host;
 }
 
@@ -97,13 +98,16 @@ function headersToRecord(init: HeadersInit | undefined,): Record<string, string>
     init.forEach((value, key,) => {
       out[key] = value;
     },);
+
     return out;
   }
+
   if (Array.isArray(init,)) {
     const out: Record<string, string> = {};
     for (const [key, value,] of init) { out[key] = value; }
     return out;
   }
+
   return { ...init, };
 }
 
@@ -115,6 +119,7 @@ function stubFetchJson(status: number, payload: unknown,): void {
       headers: headersToRecord(init?.headers,),
       body: typeof init?.body === "string" ? init?.body : "",
     };
+
     (globalThis as CaptureGlobal)[CAPTURE_KEY] = captured;
     return new Response(JSON.stringify(payload,), {
       status,
@@ -169,6 +174,7 @@ describe("handleSend", () => {
       { id: "msg-1", role: "user", content: "hello world", },
       { id: "msg-2", role: "assistant", content: "hi back", },
     ],);
+
     expect(host.isSending,).toBe(false,);
   });
 
@@ -202,6 +208,7 @@ describe("handleSend", () => {
     setFetch(async () => {
       throw new Error("ECONNREFUSED",);
     },);
+
     const host = makeHost({ sessionToken: "tok", },);
     await handleSend(host, "hi",);
     expect(host.showErrorMessages,).toEqual(["ECONNREFUSED",],);
@@ -222,6 +229,7 @@ describe("loadMessages", () => {
       data: [{ id: "m1", role: "user", content: "hi", }, { id: "m2", role: "assistant", content: "yo", },],
       cursor: null,
     },);
+
     await loadMessages(makeHost({ sessionToken: "tok", },),);
     const captured = getCaptured();
     expect(captured.url,).toBe("http://localhost:3000/api/chats/chat-1/messages?pageSize=200",);
@@ -270,6 +278,7 @@ describe("loadMessages", () => {
     setFetch(async () => {
       throw new Error("netfail",);
     },);
+
     const host = makeHost();
     await loadMessages(host,);
     expect(host.showErrorMessages,).toEqual(["Network error loading messages: netfail",],);

@@ -138,6 +138,7 @@ describeOrSkip("contextWindow.load", () => {
       sections: [{ name: "system", tokens: 100, pct: 20, },],
       suggestions: [{ section: "history", tokens: 50, message: "prune", },],
     },);
+
     const s = fresh();
     await s.load("chat-1",);
     expect(s.chatId,).toBe("chat-1",);
@@ -169,6 +170,7 @@ describeOrSkip("contextWindow.load", () => {
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     const s = fresh();
     s.currentTokens = 42;
     await s.load("c1",);
@@ -297,9 +299,11 @@ describeOrSkip("contextWindow.init/destroy", () => {
       removeEventListener: () => {},
       querySelector: () => el,
     };
+
     (globalThis as Record<string, unknown>).Alpine = {
       $data: () => ({ activeChat: "c5", }),
     };
+
     mockFetch(200, { currentTokens: 3, },);
     const s = fresh();
     s.init();
@@ -321,6 +325,7 @@ describeOrSkip("contextWindow.init/destroy", () => {
       removeEventListener: () => {},
       querySelector: () => el,
     };
+
     delete (globalThis as Record<string, unknown>).Alpine;
     const s = fresh();
     s.init();
@@ -334,9 +339,11 @@ describeOrSkip("contextWindow.init/destroy", () => {
       removeEventListener: () => {},
       querySelector: () => el,
     };
+
     (globalThis as Record<string, unknown>).Alpine = {
       $data: () => ({ activeChat: null, }),
     };
+
     const s = fresh();
     s.init();
     await new Promise<void>((resolve,) => setTimeout(resolve, 10,));

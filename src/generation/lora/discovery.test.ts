@@ -54,6 +54,7 @@ describe("discoverSdCppLoras", () => {
         if (url.includes("/sd-api/v1/models",)) {
           return Response.json({ data: mockModels, },);
         }
+
         return new Response("Not Found", { status: 404, },);
       },
       async () => {
@@ -141,6 +142,7 @@ describe("discoverComfyUILoras", () => {
             },
           },);
         }
+
         return new Response("Not Found", { status: 404, },);
       },
       async () => {
@@ -162,6 +164,7 @@ describe("discoverComfyUILoras", () => {
         if (url.includes("/object_info",)) {
           return Response.json({},);
         }
+
         return new Response("Not Found", { status: 404, },);
       },
       async () => {
@@ -265,6 +268,7 @@ describe("discoverLoras", () => {
             },
           },);
         }
+
         return new Response("Not Found", { status: 404, },);
       },
       async () => {
@@ -301,6 +305,7 @@ describe("discoverLoras", () => {
             },
           },);
         }
+
         return new Response("Not Found", { status: 404, },);
       },
       async () => {

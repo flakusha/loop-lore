@@ -65,6 +65,7 @@ describe("combat resolution (auth-gated)", () => {
     reactions: 1,
     conditions: [],
   };
+
   const target = {
     id: "g1",
     name: "Goblin",
@@ -92,6 +93,7 @@ describe("combat resolution (auth-gated)", () => {
         body: JSON.stringify({ combatants: [attacker, target,], },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json<{ combatants: { initiative: number }[] }>(res,);
     expect(body.combatants,).toHaveLength(2,);
@@ -114,6 +116,7 @@ describe("combat resolution (auth-gated)", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json<{ hit: boolean }>(res,);
     expect(typeof body.hit,).toBe("boolean",);
@@ -128,6 +131,7 @@ describe("combat resolution (auth-gated)", () => {
         body: JSON.stringify({ combatant: attacker, ability: "con", dc: 12, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json<{ success: boolean }>(res,);
     expect(typeof body.success,).toBe("boolean",);
@@ -142,6 +146,7 @@ describe("combat resolution (auth-gated)", () => {
         body: JSON.stringify({ combatant: target, amount: 7, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json<{ updated: { hp: number }; defeated: boolean }>(res,);
     expect(body.updated.hp,).toBe(0,);
@@ -157,6 +162,7 @@ describe("combat resolution (auth-gated)", () => {
         body: JSON.stringify({ combatant: { ...target, hp: 3, }, amount: 10, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json<{ updated: { hp: number } }>(res,);
     expect(body.updated.hp,).toBe(target.maxHp,);
@@ -171,6 +177,7 @@ describe("combat resolution (auth-gated)", () => {
         body: JSON.stringify({ combatants: [{ ...target, hp: 0, }, attacker,], },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await json<{ combatOver: { over: boolean; winner: string | null } }>(res,);
     expect(body.combatOver.over,).toBe(true,);
@@ -181,6 +188,7 @@ describe("combat resolution (auth-gated)", () => {
     const app = new Elysia()
       .derive({ as: "scoped", }, () => ({ userId: null, userRole: null, }),)
       .use(combatRoutes({ database: mockDb, } as any,),) as any;
+
     const res = await app.handle(
       new Request("http://localhost/api/rpg/combat/initiative", {
         method: "POST",
@@ -188,6 +196,7 @@ describe("combat resolution (auth-gated)", () => {
         body: JSON.stringify({ combatants: [attacker,], },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 });

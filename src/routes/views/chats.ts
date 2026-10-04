@@ -42,6 +42,7 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
       .select((eb: any,) => eb.fn.countAll().as("total",))
       .executeTakeFirst(),
   ],);
+
   // List + count are best-effort: a failed query yields an empty list / 0 total.
   const chats = chatsResult.status === "fulfilled" ? chatsResult.value : [];
   const countRow = countRowResult.status === "fulfilled" ? countRowResult.value : undefined;
@@ -65,6 +66,7 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
           hx-trigger="click" style="width:100%">Load more (${total - offset - pageSize} remaining)</button>
       </div>`
     : "";
+
   return htmlResponse(`<div data-page="${page}">${items}</div>${loadMore}`,);
 }
 
@@ -101,9 +103,11 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
   if (query) {
     qb = qb.where("chats.name", "like", `%${query}%`,);
   }
+
   if (worldId) {
     qb = qb.where("chats.world_id", "=", worldId,);
   }
+
   if (chatType) {
     qb = qb.where("chats.type", "=", chatType as any,);
   }
@@ -116,6 +120,7 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
     qb.limit(pageSize,).offset(offset,).execute(),
     qb.clearOrderBy().select((eb: any,) => eb.fn.countAll().as("total" as any,)).executeTakeFirst(),
   ],);
+
   const chats = chatsResult.status === "fulfilled" ? chatsResult.value : [];
   const countRow = countRowResult.status === "fulfilled" ? countRowResult.value : undefined;
 
@@ -140,6 +145,7 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
           hx-trigger="click" style="width:100%">Load more (${total - offset - pageSize} remaining)</button>
       </div>`
     : "";
+
   return htmlResponse(`<div data-page="${page}">${items}</div>${loadMore}`,);
 }
 

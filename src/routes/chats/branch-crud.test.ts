@@ -102,6 +102,7 @@ describe("branch detail", () => {
     const parsed = await res.json() as {
       data: { branch: { id: string; messageCount: number }; messagePath: string[] };
     };
+
     expect(parsed.data.branch.id,).toBe(branchId,);
     expect(parsed.data.messagePath,).toEqual([rootId, midId,],);
     expect(parsed.data.branch.messageCount,).toBe(2,);
@@ -180,6 +181,7 @@ describe("branch merge", () => {
         deletedSourceBranchId: string;
       };
     };
+
     expect(parsed.data.sourceBranchId,).toBe(sourceId,);
     expect(parsed.data.targetBranchId,).toBe(targetId,);
     // The shared fork point is already on the target path: only the alt leaf moves.
@@ -211,6 +213,7 @@ describe("branch list pagination", () => {
     const first = await firstRes.json() as {
       data: { branches: { id: string; messageCount: number }[]; nextCursor: string | null };
     };
+
     expect(first.data.branches.length,).toBe(2,);
     expect(first.data.branches[0]!.messageCount,).toBeGreaterThan(0,);
     expect(first.data.nextCursor,).toBeTruthy();

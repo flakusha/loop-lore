@@ -55,6 +55,7 @@ describe("consecutive-turn guard (BUG-group-cascade-consecutive-turn-guard)", ()
       ...baseParticipants,
       { actorId: "n", type: "character", agentType: "narrator", talkativity: 1, },
     ];
+
     // currentTurn=3 → would normally pick narrator, but narrator == lastActorId.
     const picked = sceneBasedSelect(withNarrator, null, 3, ["a", "b", "c",], undefined, "n",);
     expect(picked,).not.toBe("n",);
@@ -82,6 +83,7 @@ describe("consecutive-turn guard (BUG-group-cascade-consecutive-turn-guard)", ()
       { chatMode: "group", mentionedActorId: "c", },
       "a",
     );
+
     expect(picked,).toBe("c",);
   });
 
@@ -96,6 +98,7 @@ describe("consecutive-turn guard (BUG-group-cascade-consecutive-turn-guard)", ()
         { chatMode: "group", mentionedActorId: "a", },
         "a",
       );
+
       expect(picked,).toBe("b",);
     }
   });

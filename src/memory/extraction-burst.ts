@@ -44,6 +44,7 @@ export async function extractFromBurst(
     const label = row.role === "assistant" ? "Assistant" : "User";
     lines.push(`${label}: ${row.content_plaintext ?? row.content}`,);
   }
+
   if (lines.length === 0) { return 0; }
 
   const memories = await extractMemories(db, {
@@ -52,6 +53,7 @@ export async function extractFromBurst(
     aiContent: lines.join("\n",),
     userContent: undefined,
   },);
+
   if (memories.length === 0) { return 0; }
   return storeMemories(db, opts.actorId, opts.chatId, memories, {
     sourceMessageIds: Array.from(rows, (row,) => row.id,),

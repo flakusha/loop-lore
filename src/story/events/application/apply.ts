@@ -45,6 +45,7 @@ export async function applyEvents({ db, worldId, events, trx, storyId, }: ApplyE
   for (const r of results) {
     if (r.applied) { successfulEvents.push(r.event,); }
   }
+
   if (successfulEvents.length > 0) {
     await appendTimelineEvents({
       db: database,

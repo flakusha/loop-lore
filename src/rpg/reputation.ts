@@ -69,6 +69,7 @@ export class ReputationService {
       axis,
       source,
     },);
+
     await this.db
       .insertInto("status_effect",)
       .values({
@@ -93,8 +94,10 @@ export class ReputationService {
         ),
       },)
       .execute();
+
     getLogger().child({ module: "reputation", },)
       .info(`Reputation delta: ${actorId} ${delta > 0 ? "+" : ""}${delta} (${axis})`,);
+
     return next;
   }
 
@@ -119,6 +122,7 @@ export class ReputationService {
       const meta = row.meta ? jsonParseOr(row.meta, {} as { axis?: unknown },) : {};
       if (meta.axis === undefined || meta.axis === axis) { axisRows.push(row,); }
     }
+
     axisRows.sort((a, b,) => a.startedAt.localeCompare(b.startedAt,));
     for (const row of axisRows) {
       score = applyCanonicalChange(score, row.magnitude, row.sourceId ?? row.source, {
@@ -127,6 +131,7 @@ export class ReputationService {
         effect_id: row.id,
       },);
     }
+
     return { ...score, tier: getReputationTier(score.value,), };
   }
 
@@ -151,6 +156,7 @@ export class ReputationService {
         rumors.push(`They speak ${tone} of ${actorId} (${axis}, ${reason})`,);
       }
     }
+
     return rumors;
   }
 
@@ -179,6 +185,7 @@ export class ReputationService {
       socialContext,
       intimacyLevel,
     );
+
     return this.applyDelta(actorId, `${encounterId}:${change.reason}`, change.reputationChange, socialContext,);
   }
 }

@@ -25,6 +25,7 @@ describe("seedDefaultActors", () => {
       .selectAll()
       .where("id", "=", "assistant-default",)
       .executeTakeFirst();
+
     expect(actor,).toBeDefined();
     expect(actor?.display_name,).toBe("Assistant",);
 
@@ -40,12 +41,14 @@ describe("seedDefaultActors", () => {
       .selectFrom("actors",)
       .select(db.fn.countAll<number>().as("n",),)
       .executeTakeFirst();
+
     expect(actorCount?.n,).toBe(1,);
 
     const userCount = await db
       .selectFrom("users",)
       .select(db.fn.countAll<number>().as("n",),)
       .executeTakeFirst();
+
     expect(userCount?.n,).toBe(1,);
   });
 });

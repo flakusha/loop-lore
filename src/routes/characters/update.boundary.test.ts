@@ -42,6 +42,7 @@ async function currentVersion(db: Kysely<DB>, id: string,): Promise<number> {
     .select("format_version",)
     .where("id", "=", id,)
     .executeTakeFirst();
+
   if (!row) { throw new Error(`actor ${id} missing`,); }
   return row.format_version;
 }
@@ -84,6 +85,7 @@ describe("PUT /api/actors/:actorId — character/world boundary", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(422,);
     const body = await res.json() as { error: string };
     expect(body.error,).toContain('"lore"',);
@@ -95,6 +97,7 @@ describe("PUT /api/actors/:actorId — character/world boundary", () => {
       .select("display_name",)
       .where("id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row?.display_name,).toBe("Boundary Char",);
   });
 
@@ -110,12 +113,14 @@ describe("PUT /api/actors/:actorId — character/world boundary", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const row = await db
       .selectFrom("actors",)
       .select(["display_name", "personality",],)
       .where("id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row?.display_name,).toBe("Renamed",);
     expect(row?.personality,).toBe("witty",);
   });
@@ -128,12 +133,14 @@ describe("PUT /api/actors/:actorId — character/world boundary", () => {
         body: JSON.stringify({ description: "card text", dataVersion: await currentVersion(db, actorId,), },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const row = await db
       .selectFrom("actors",)
       .select("description",)
       .where("id", "=", actorId,)
       .executeTakeFirst();
+
     expect(row?.description,).toBe("card text",);
   });
 
@@ -145,6 +152,7 @@ describe("PUT /api/actors/:actorId — character/world boundary", () => {
         body: JSON.stringify({ lore: "world lore", dataVersion: 0, },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 });

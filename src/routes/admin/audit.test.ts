@@ -23,6 +23,7 @@ function makeApp(db: Kysely<DB>, userRole: string | null,): Elysia {
     userId: userRole ? `test-user-${userRole}` : null,
     userRole,
   }));
+
   return app.use(auditRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
@@ -56,6 +57,7 @@ async function insertLogRow(
       event_type: eventType,
     },)
     .execute();
+
   return id;
 }
 
@@ -162,6 +164,7 @@ describe("admin audit — general filtering + single entry", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/admin/audit?q=${longQ}`,),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -169,10 +172,12 @@ describe("admin audit — general filtering + single entry", () => {
     for (let i = 0; i < 12; i++) {
       await insertLogRow(db, `u${String(i,)}`, `r${String(i,)}`,);
     }
+
     const app = makeApp(db, "admin",);
     const res = await app.handle(
       new Request("http://localhost/api/admin/audit?page=2&pageSize=5",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: unknown[]; page: number; pageSize: number };
     expect(body.page,).toBe(2,);
@@ -193,6 +198,7 @@ describe("admin audit — general filtering + single entry", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/audit/00000000-0000-0000-0000-000000000000",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -208,6 +214,7 @@ describe("admin audit — general filtering + single entry", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/audit/00000000-0000-0000-0000-000000000000",),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -217,6 +224,7 @@ describe("admin audit — general filtering + single entry", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/audit?event_type=admin.settings.update",),
     );
+
     // Moderator lacks admin.system → 403 even with non-NSFW event_type
     expect(res.status,).toBe(403,);
   });

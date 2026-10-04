@@ -37,6 +37,7 @@ export const examplesSection: SectionBuilder = {
         : (label === "user" || label === "{{user}}"
           ? "user"
           : "user");
+
       examples.push({ role, content, },);
     }
 

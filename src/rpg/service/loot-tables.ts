@@ -146,6 +146,7 @@ export async function rollLootTable(
       const quantity = entry.min_quantity + Math.floor(
         Math.random() * (entry.max_quantity - entry.min_quantity + 1),
       );
+
       return {
         itemName: entry.item_name,
         description: entry.description,

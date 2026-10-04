@@ -43,6 +43,7 @@ let compactResult: {
   compacted: true,
   droppedTokens: 100,
 };
+
 let compactThrows = false;
 
 if (STRICTLY_ISOLATED) {
@@ -99,18 +100,22 @@ const probe = async (check: () => Promise<boolean> | boolean,): Promise<boolean>
     return false;
   }
 };
+
 const promptsSelfOk = await probe(
   () => resolveFn(undefined, "assistant",) === "fallback:assistant",
 );
+
 const assemblerSelfOk = await probe(async () => {
   const inst = new AssemblerFn({} as Kysely<DB>,);
   return (await inst.assemble({ actorId: "actor-1", chatId: "chat-1", modelId: "model-x", },)) ===
     assembleResult;
 },);
+
 const compactorSelfOk = await probe(async () => {
   const inst = new CompactorFn({},);
   return (await inst.compact([], 1,)) === compactResult;
 },);
+
 const buildPromptSelfOk = promptsSelfOk && assemblerSelfOk && compactorSelfOk;
 const describeSelf = buildPromptSelfOk ? describeOrSkipStrict : describe.skip;
 
@@ -157,6 +162,7 @@ describeSelf("buildPrompt — explicit prompt passthrough", () => {
       { role: "user", content: "héllo 🌍", },
       { role: "assistant", content: "réponse", },
     ];
+
     const { messages, systemPrompt, } = await run({ prompt, systemPrompt: "custom sys", },);
     expect(messages,).toBe(prompt,);
     expect(systemPrompt,).toBe("custom sys",);

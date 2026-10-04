@@ -70,6 +70,7 @@ function decodeBranchCursor(raw: string | undefined,): BranchCursor | null {
   const decoded = safeJsonParse<{ createdAt?: unknown; id?: unknown }>(
     bytes.buffer.toString("utf8",),
   );
+
   if (!decoded.ok) { return null; }
   const { createdAt, id, } = decoded.value;
   if (typeof createdAt !== "string" || typeof id !== "string") { return null; }
@@ -115,6 +116,7 @@ export async function listBranchesPage(
       ],)
     );
   }
+
   // One extra row tells us whether another page exists, without a COUNT.
   const rows = await query
     .orderBy("created_at", "asc",)

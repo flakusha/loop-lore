@@ -70,6 +70,7 @@ export function parseGmToolDetection(content: string,): GmToolDetection | null {
     content,
     {},
   );
+
   const toolCall = parsed.toolCall;
   if (!toolCall || typeof toolCall !== "object") { return null; }
 
@@ -79,6 +80,7 @@ export function parseGmToolDetection(content: string,): GmToolDetection | null {
   const params = toolCall.params && typeof toolCall.params === "object" && !Array.isArray(toolCall.params,)
     ? (toolCall.params as Record<string, unknown>)
     : {};
+
   // Confidence is contractually `[0, 1]`; clamp out-of-range values and fall
   // back to 0.5 for non-finite input so downstream heuristics that branch on
   // confidence thresholds cannot be tricked by prompt-injected tool-result JSON.
@@ -121,6 +123,7 @@ export async function detectGmTool(
     temperature: 0,
     maxTokens: 100,
   },);
+
   if (!response) { return null; }
 
   const detection = parseGmToolDetection(response.content,);
@@ -128,6 +131,7 @@ export async function detectGmTool(
     getLogger()
       .child({ module: "gm-tool-detection", },)
       .debug("AUX LLM returned an unparseable GM tool detection, treating as none",);
+
     return null;
   }
 

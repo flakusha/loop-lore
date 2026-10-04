@@ -28,6 +28,7 @@ export function cardRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectAll()
           .where("id", "=", ctx.params.actorId,)
           .executeTakeFirst();
+
         if (!actor) {
           return jsonError({
             message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
@@ -69,6 +70,7 @@ export function cardRoutes(opts: HandlerOpts, prefix = "/api",) {
             extensions: {},
           },
         };
+
         return jsonResponse(card,);
       },
       {

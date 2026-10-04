@@ -45,6 +45,7 @@ beforeAll(async () => {
     status: "active" as never,
     settings: "{}" as never,
   },);
+
   worldId = uid();
   await insertWorlds(db, userId, "Core Test World", { id: worldId as never, },);
   buyer = uid();
@@ -57,6 +58,7 @@ beforeAll(async () => {
     agent_type: "ai" as never,
     settings: "{}" as never,
   },);
+
   await insertActors(db, "Seller", {
     id: seller as never,
     actor_type: "character" as never,
@@ -65,6 +67,7 @@ beforeAll(async () => {
     agent_type: "ai" as never,
     settings: "{}" as never,
   },);
+
   defA = uid();
   defB = uid();
   await insertItems(db, worldId, "Potion", "consumable", { id: defA as never, },);
@@ -76,6 +79,7 @@ beforeAll(async () => {
     owner_actor_id: buyer,
     quantity: 5 as never,
   },);
+
   await insertWorldItems(db, worldId, defB, {
     id: sellerItem as never,
     owner_actor_id: seller,
@@ -97,6 +101,7 @@ describe("tradeCore — self-trade guard", () => {
       sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 0,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toBe("cannot trade with yourself",);
   });
@@ -112,6 +117,7 @@ describe("tradeCore — self-trade guard", () => {
       sellerItems: [],
       price: 0,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toBe("cannot trade with yourself",);
   });
@@ -127,6 +133,7 @@ describe("tradeCore — validateLines rejection paths", () => {
       sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 0,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toMatch(/not found/,);
   });
@@ -141,6 +148,7 @@ describe("tradeCore — validateLines rejection paths", () => {
       sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 0,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toMatch(/not owned/,);
   });
@@ -155,6 +163,7 @@ describe("tradeCore — validateLines rejection paths", () => {
       sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 0,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toMatch(/insufficient quantity/,);
   });
@@ -168,6 +177,7 @@ describe("tradeCore — validateLines rejection paths", () => {
       sellerItems: [{ worldItemId: "no-such-id", quantity: 1, },],
       price: 0,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toMatch(/not found/,);
   });
@@ -182,6 +192,7 @@ describe("tradeCore — validateLines rejection paths", () => {
       sellerItems: [{ worldItemId: sellerItem, quantity: 10, },],
       price: 0,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toMatch(/insufficient quantity/,);
   });
@@ -196,6 +207,7 @@ describe("buyFromNpc / sellToNpc — self-trade guard", () => {
       sellerItems: [{ worldItemId: buyerItem, quantity: 1, },],
       price: 0,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toBe("cannot trade with yourself",);
   });
@@ -208,6 +220,7 @@ describe("buyFromNpc / sellToNpc — self-trade guard", () => {
       buyerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 0,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toBe("cannot trade with yourself",);
   });
@@ -226,6 +239,7 @@ describe("tradeCore — mid-transaction transfer failure", () => {
       owner_actor_id: buyer,
       quantity: 5 as never,
     },);
+
     const result = await tradeCore(db, {
       worldId,
       buyerActorId: buyer,
@@ -237,6 +251,7 @@ describe("tradeCore — mid-transaction transfer failure", () => {
       sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 0,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toBe("buyer item transfer failed",);
   });
@@ -255,11 +270,13 @@ describe("tradeCore — mid-transaction transfer failure", () => {
       owner_actor_id: buyer,
       quantity: 1 as never,
     },);
+
     await insertWorldItems(db, worldId, sellerDef, {
       id: sellerStock as never,
       owner_actor_id: seller,
       quantity: 3 as never,
     },);
+
     const result = await tradeCore(db, {
       worldId,
       buyerActorId: buyer,
@@ -271,6 +288,7 @@ describe("tradeCore — mid-transaction transfer failure", () => {
       ],
       price: 0,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toBe("seller item transfer failed",);
   });
@@ -286,11 +304,13 @@ describe("counterOffer — expiry", () => {
       price: 10,
       deadline: new Date(Date.now() - 1_000,).toISOString(),
     },);
+
     const result = await counterOffer(db, {
       offerId,
       counterActorId: buyer,
       price: 20,
     },);
+
     expect(result.success,).toBe(false,);
     expect(result.reason,).toBe("offer expired",);
     const row = await db
@@ -298,6 +318,7 @@ describe("counterOffer — expiry", () => {
       .select("status",)
       .where("id", "=", offerId,)
       .executeTakeFirst();
+
     expect(row?.status,).toBe("expired",);
   });
 });

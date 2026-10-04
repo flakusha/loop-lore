@@ -47,6 +47,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectAll()
           .where("id", "=", id,)
           .executeTakeFirst();
+
         if (!message) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
 
         const access = await checkChatAccess(database, message.chat_id, actorId, ctx.userRole as string | null,);
@@ -63,6 +64,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           // GDPR / right-to-be-forgotten path: real DELETE wipes the row
           // (ciphertext + plaintext shadow); the migration-068
           // `messages_fts_ad` trigger removes the FTS row, and FK rows in
@@ -77,6 +79,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           .set({ visibility: "hidden_by_user", hidden_by: actorId, },)
           .where("id", "=", id,)
           .execute();
+
         return jsonNoContent();
       },
       { params: MessageIdParams, response: { 204: t.Void(), 401: ErrorResponse, 404: ErrorResponse, }, },
@@ -151,6 +154,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
               algorithm: config.encryption.compressAlgorithm,
             },
           },);
+
           storedContent = enc.storedContent;
           storedKeyId = enc.keyId;
         }
@@ -201,6 +205,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           },)
           .where("id", "=", id,)
           .execute();
+
         return jsonResponse({ ok: true, },);
       },
       {

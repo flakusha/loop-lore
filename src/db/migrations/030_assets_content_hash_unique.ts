@@ -67,6 +67,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     process.emitWarning(
       `[030_assets_content_hash_unique] owner ${dupe.owner_id} has ${dupe.n} rows with identical content at tier ${dupe.encryption_tier}; collapsing to the oldest.`,
     );
+
     // Keep the oldest row: it owns the storage_path and asset_links that any
     // surviving reference already points at. Newer duplicates are orphans.
     await sql`

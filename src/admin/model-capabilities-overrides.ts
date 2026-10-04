@@ -107,5 +107,6 @@ export async function getContextWindowForModel(
     .where("model_id", "=", modelId,)
     .select("context_window",)
     .executeTakeFirst();
+
   return row?.context_window ?? null;
 }

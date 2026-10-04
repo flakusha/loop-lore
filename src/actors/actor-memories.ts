@@ -67,10 +67,12 @@ export async function listActorMemories(
     .selectFrom("actor_memories",)
     .select(database.fn.countAll().as("total",),)
     .where("actor_id", "=", actorId,);
+
   let listQuery = database
     .selectFrom("actor_memories",)
     .selectAll()
     .where("actor_id", "=", actorId,);
+
   if (opts.memoryType) {
     countQuery = countQuery.where("memory_type", "=", opts.memoryType,);
     listQuery = listQuery.where("memory_type", "=", opts.memoryType,);
@@ -100,6 +102,7 @@ export async function createActorMemory(
   if (input.content == null || input.content === "") {
     return { ok: false, code: "bad_request", message: "content is required", };
   }
+
   if (input.scope === "world" && !can(userRole, "admin.world",)) {
     return { ok: false, code: "forbidden", message: "World memories are admin-managed", };
   }
@@ -132,6 +135,7 @@ export async function createActorMemory(
     .selectAll()
     .where("id", "=", id,)
     .executeTakeFirstOrThrow();
+
   return { ok: true, entity, };
 }
 
@@ -153,9 +157,11 @@ export async function updateActorMemory(
     .where("id", "=", memoryId,)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!existing) {
     return { ok: false, code: "not_found", message: "Memory not found", };
   }
+
   if ((patch.scope === "world" || existing.scope === "world") && !can(userRole, "admin.world",)) {
     return { ok: false, code: "forbidden", message: "World memories are admin-managed", };
   }
@@ -163,6 +169,7 @@ export async function updateActorMemory(
   const updates: Updateable<DB["actor_memories"]> = {
     updated_at: new Date().toISOString(),
   };
+
   if (patch.content != null) { updates.content = patch.content; }
   if (patch.memoryType != null) { updates.memory_type = patch.memoryType; }
   if (patch.confidence != null) { updates.confidence = patch.confidence; }
@@ -173,6 +180,7 @@ export async function updateActorMemory(
   if (patch.pinned != null) {
     updates.pinned = patch.pinned ? PinnedState.Pinned : PinnedState.Unpinned;
   }
+
   if (patch.sourceChatId !== undefined) { updates.source_chat_id = patch.sourceChatId; }
   if (patch.reviewStatus != null) { updates.review_status = patch.reviewStatus; }
   if (patch.scope != null) { updates.scope = patch.scope; }
@@ -191,6 +199,7 @@ export async function updateActorMemory(
     .selectAll()
     .where("id", "=", memoryId,)
     .executeTakeFirstOrThrow();
+
   return { ok: true, entity, };
 }
 
@@ -213,9 +222,11 @@ export async function deleteActorMemory(
     .where("id", "=", memoryId,)
     .where("actor_id", "=", actorId,)
     .executeTakeFirst();
+
   if (!existing) {
     return { ok: false, code: "not_found", message: "Memory not found", };
   }
+
   if (existing.scope === "world" && !can(userRole, "admin.world",)) {
     return { ok: false, code: "forbidden", message: "World memories are admin-managed", };
   }
@@ -225,5 +236,6 @@ export async function deleteActorMemory(
     .where("id", "=", memoryId,)
     .where("actor_id", "=", actorId,)
     .execute();
+
   return { ok: true, id: memoryId, };
 }

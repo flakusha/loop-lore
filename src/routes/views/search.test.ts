@@ -29,9 +29,11 @@ describe("views/search — gallery", () => {
     await insertAssets(db, "owner", "theme.mp3", "audio/mpeg", "audio", 3_000_000, "path/b", {
       id: "asset-2" as never,
     },);
+
     await insertAssets(db, "owner", "intro.mp4", "video/mp4", "video", 10_000_000, "path/c", {
       id: "asset-3" as never,
     },);
+
     await insertAssetTags(db, "asset-1", "cozy", { scope: "global", },);
   },);
 
@@ -107,6 +109,7 @@ describe("views/search — gallery", () => {
         created_at: new Date().toISOString(),
       },)
       .execute();
+
     const res = await serveGallerySearch(db, new URLSearchParams({ q: "script", },),);
     const html = await res.text();
     expect(html,).not.toContain("<script>alert(1)</script>",);
@@ -127,11 +130,13 @@ describe("views/search — characters", () => {
       actor_type: "character" as never,
       description: "grumpy",
     },);
+
     await insertActors(db, "Aria", {
       id: "actor-aria" as never,
       owner_id: "owner",
       actor_type: "character" as never,
     },);
+
     await insertActors(db, "User One", {
       id: "owner" as never,
       owner_id: "owner",
@@ -183,6 +188,7 @@ describe("views/search — characters", () => {
         updated_at: new Date().toISOString(),
       },)
       .execute();
+
     const res = await serveCharactersSearch(db, new URLSearchParams({ q: "X", },),);
     const html = await res.text();
     expect(html,).not.toContain("<b>X</b>",);
@@ -245,6 +251,7 @@ describe("views/search — worlds", () => {
         updated_at: new Date().toISOString(),
       },)
       .execute();
+
     const res = await serveWorldsSearch(db, new URLSearchParams({ q: "script", },), "alice", "user",);
     const html = await res.text();
     expect(html,).not.toContain("<script>w</script>",);

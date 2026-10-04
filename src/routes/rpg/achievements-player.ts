@@ -110,6 +110,7 @@ export function achievementsPlayerRoutes({ database, }: HandlerOpts, prefix = "/
           ctx.params.achievementId,
           body.progressIncrement ?? 1,
         );
+
         return jsonResponse(result,);
       } catch (error) {
         log().error("Failed to update achievement progress", error instanceof Error ? error : undefined,);

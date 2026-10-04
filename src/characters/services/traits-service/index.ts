@@ -85,5 +85,6 @@ export function TraitsService(db: Kysely<DB>,): TraitsService {
 
     getAllTraits: (actorId, worldId, locationId,) => getAllTraits({ thisL: self, actorId, worldId, locationId, },),
   };
+
   return self;
 }

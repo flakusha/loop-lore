@@ -28,6 +28,7 @@ describe("rpg/dice/roll (real logic - 3 assertions)", () => {
     for (let i = 0; i < 200; i++) {
       seen.add(rollDie(2 as unknown as 4,),);
     }
+
     expect(seen.has(1,),).toBe(true,);
     expect(seen.has(2,),).toBe(true,);
   });

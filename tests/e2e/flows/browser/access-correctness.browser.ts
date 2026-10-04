@@ -55,6 +55,7 @@ describe("Access control E2E", () => {
       (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
       { timeout: 30_000, },
     );
+
     await page.click("[data-testid='login-submit']",);
     await loginRes;
     // The login POST returning is not the same as the login navigation
@@ -81,6 +82,7 @@ describe("Access control E2E", () => {
       },)
       .onConflict((oc,) => oc.column("id",).doNothing())
       .execute();
+
     await ctx.db
       .insertInto("actors",)
       .values({
@@ -123,6 +125,7 @@ describe("Access control E2E", () => {
       },)
       .onConflict((oc,) => oc.column("id",).doNothing())
       .execute();
+
     await ctx.db
       .insertInto("chat_participants",)
       .values({
@@ -132,6 +135,7 @@ describe("Access control E2E", () => {
       },)
       .onConflict((oc,) => oc.columns(["chat_id", "actor_id",],).doNothing())
       .execute();
+
     await ctx.db
       .insertInto("messages",)
       .values({
@@ -171,6 +175,7 @@ describe("Access control E2E", () => {
           /newDesc is not defined/,
         ],
       },);
+
       try {
         // The world-edit shell renders, then the Alpine component fetches
         // /api/v1/worlds/:id, which is access-gated (requireWorldAccess).
@@ -178,6 +183,7 @@ describe("Access control E2E", () => {
           (res,) => res.url().includes(`/api/v1/worlds/${WORLD_ID}`,) && res.request().method() === "GET",
           { timeout: 30_000, },
         );
+
         await page.goto(`${ctx.url}/worlds/${WORLD_ID}/edit`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
         const res = await worldApi;
         // requireWorldAccess: not owner, not admin (outsider is "user"), not public,
@@ -197,6 +203,7 @@ describe("Access control E2E", () => {
           null,
           { timeout: 15_000, },
         );
+
         expect(await page.locator(".world-edit-tabs",).count(),).toBe(0,);
       } finally {
         errors.assert();
@@ -218,6 +225,7 @@ describe("Access control E2E", () => {
           /newDesc is not defined/,
         ],
       },);
+
       try {
         await page.goto(`${ctx.url}/worlds/${WORLD_ID}`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
         // The #world-detail container htmx-loads /dynamic/worlds/:id/detail on page load.
@@ -229,6 +237,7 @@ describe("Access control E2E", () => {
           null,
           { timeout: 15_000, },
         );
+
         const bodyText = await page.evaluate(() => document.body.textContent || "");
         // serveWorldDetailContent allows owner/admin only; outsider (non-admin) denied → no name leak.
         expect(bodyText,).not.toContain(WORLD_NAME,);
@@ -255,11 +264,13 @@ describe("Access control E2E", () => {
           /newDesc is not defined/,
         ],
       },);
+
       try {
         await page.goto(`${ctx.url}/views/chat?chatid=${CHAT_ID}`, {
           waitUntil: "domcontentloaded",
           timeout: 30_000,
         },);
+
         // The chat app only keeps chats the user created; a foreign chatid is
         // dropped (redirect to /views/chat) before any message fetch.
         await page.locator("#message-list",).waitFor({ state: "attached", timeout: 30_000, },);

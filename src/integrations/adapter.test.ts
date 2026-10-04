@@ -72,11 +72,13 @@ describe("ProtocolAdapter seam", () => {
     adapter.onMessage((message,) => {
       seen.push(message,);
     },);
+
     const id = await adapter.sendMessage("general", {
       author: "tester",
       body: "hello",
       timestamp: Date.now(),
     },);
+
     expect(id,).toBe("echo-1",);
     expect(seen,).toHaveLength(1,);
     await adapter.disconnect();

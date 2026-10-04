@@ -9,6 +9,7 @@ const g = globalThis as unknown as {
   apiFetch?: ApiFetchMock;
   personasPage?: () => Record<string, unknown>;
 };
+
 const originalFetch = g.apiFetch;
 
 interface PersonaItem {
@@ -51,6 +52,7 @@ beforeEach(() => {
     calls.push({ url, opts: opts ?? {}, },);
     return handler(url, opts,);
   };
+
   for (const k of Object.keys(uiStore,)) { delete uiStore[k]; }
   gAlpine.Alpine = {
     store: (name: string,) => {
@@ -135,6 +137,7 @@ describe("personasPage.loadPersonas", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     const s = fresh();
     s.personas = [persona(),];
     await s.loadPersonas();
@@ -154,11 +157,14 @@ describe("personasPage.loadPersonaModels", () => {
           ],
         },);
       }
+
       if (url === "/api/v1/admin/providers/good/models") {
         return Response.json({ models: [{ id: "m1", }, { id: "m2", },], },);
       }
+
       return Response.json({ models: [{ id: "should-not-appear", },], },);
     };
+
     const s = fresh();
     await s.loadPersonaModels();
     expect(s.personaAvailableModels,).toEqual(["m1", "m2",],);
@@ -170,8 +176,10 @@ describe("personasPage.loadPersonaModels", () => {
       if (url === "/api/v1/providers") {
         return Response.json({ providers: [{ name: "a", status: "healthy", }, { name: "b", status: "healthy", },], },);
       }
+
       return Response.json({ models: [{ id: "same", },], },);
     };
+
     const s = fresh();
     await s.loadPersonaModels();
     expect(s.personaAvailableModels,).toEqual(["same",],);
@@ -189,8 +197,10 @@ describe("personasPage.loadPersonaModels", () => {
       if (url === "/api/v1/providers") {
         return Response.json({ providers: [{ name: "flaky", status: "healthy", },], },);
       }
+
       throw new Error("offline",);
     };
+
     const s = fresh();
     await s.loadPersonaModels();
     expect(s.personaAvailableModels,).toEqual([],);
@@ -205,9 +215,11 @@ describe("personasPage.init", () => {
     s.loadPersonas = async () => {
       personas++;
     };
+
     s.loadPersonaModels = async () => {
       models++;
     };
+
     await (s as unknown as { init(): Promise<void> }).init();
     expect(personas,).toBe(1,);
     expect(models,).toBe(1,);
@@ -226,6 +238,7 @@ describe("personasPage.editPersona", () => {
       formMaxTokens: unknown;
       formTemperature: unknown;
     };
+
     s.editPersona(
       persona({
         name: "Aria",
@@ -237,6 +250,7 @@ describe("personasPage.editPersona", () => {
         temperature: 0.5,
       },),
     );
+
     expect(s.formName,).toBe("Aria",);
     expect(s.formTitle,).toBe("Guide",);
     expect(s.formDescription,).toBe("helps",);
@@ -253,6 +267,7 @@ describe("personasPage.editPersona", () => {
       formIsDefault: boolean;
       formModel: string;
     };
+
     s.editPersona(persona(),);
     expect(s.formTitle,).toBe("",);
     expect(s.formIsDefault,).toBe(false,);
@@ -280,6 +295,7 @@ describe("personasPage.savePersona", () => {
       formTemperature: string;
       loadPersonas(): Promise<void>;
     };
+
     s.formName = "  New  ";
     s.formTitle = "T";
     s.formDescription = "D";
@@ -290,6 +306,7 @@ describe("personasPage.savePersona", () => {
     s.loadPersonas = async () => {
       reloaded++;
     };
+
     await s.savePersona();
     expect(calls[0]!.url,).toBe("/api/v1/personas",);
     expect(calls[0]!.opts.method,).toBe("POST",);
@@ -312,6 +329,7 @@ describe("personasPage.savePersona", () => {
         formIsDefault: boolean;
         loadPersonas(): Promise<void>;
       };
+
       s.formName = "Renamed";
       s.formIsDefault = true;
       s.loadPersonas = async () => {};
@@ -329,12 +347,14 @@ describe("personasPage.savePersona", () => {
     handler = async () => {
       throw new Error("offline",);
     };
+
     const s = fresh() as unknown as Record<string, unknown> & {
       savePersona(): Promise<void>;
       formName: string;
       saving: boolean;
       loadPersonas(): Promise<void>;
     };
+
     s.formName = "Keep";
     s.loadPersonas = async () => {};
     await s.savePersona();

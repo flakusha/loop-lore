@@ -111,6 +111,7 @@ describe("encryptValue / decryptValue", () => {
       false,
       ["deriveBits",],
     );
+
     const bits = await crypto.subtle.deriveBits(
       {
         name: "HKDF",
@@ -121,6 +122,7 @@ describe("encryptValue / decryptValue", () => {
       ikm,
       256,
     );
+
     const keyBytes = new Uint8Array(bits.byteLength,);
     keyBytes.set(new Uint8Array(bits,),);
     const legacyKey = await crypto.subtle.importKey(
@@ -130,6 +132,7 @@ describe("encryptValue / decryptValue", () => {
       false,
       ["encrypt", "decrypt",],
     );
+
     const iv = crypto.getRandomValues(new Uint8Array(12,),);
     const plaintext = "legacy-row-api-key";
     const ct = await crypto.subtle.encrypt(
@@ -137,6 +140,7 @@ describe("encryptValue / decryptValue", () => {
       legacyKey,
       new TextEncoder().encode(plaintext,),
     );
+
     const legacyCiphertext = `${iv.toBase64()}:${new Uint8Array(ct,).toBase64()}`;
     const decrypted = await decryptValue(legacyCiphertext, SECRET,);
     expect(decrypted,).toBe(plaintext,);

@@ -73,14 +73,17 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             countQuery = countQuery.where((eb,) =>
               eb.or([eb("username", "like", like,), eb("display_name", "like", like,),],)
             );
+
             listQuery = listQuery.where((eb,) =>
               eb.or([eb("username", "like", like,), eb("display_name", "like", like,),],)
             );
           }
+
           if (roleFilter) {
             countQuery = countQuery.where("role", "=", roleFilter as any,);
             listQuery = listQuery.where("role", "=", roleFilter as any,);
           }
+
           if (statusFilter) {
             countQuery = countQuery.where("status", "=", statusFilter as any,);
             listQuery = listQuery.where("status", "=", statusFilter as any,);
@@ -143,6 +146,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.NotFound,
             },);
           }
+
           return jsonResponse(user,);
         },
         {

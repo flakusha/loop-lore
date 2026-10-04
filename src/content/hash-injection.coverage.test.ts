@@ -71,6 +71,7 @@ describe("injectContentHashes", () => {
     // missing.js counted skipped across the whole run; other.js replaced.
     expect(result.skipped,).toBeGreaterThanOrEqual(1,);
   });
+
   test("wrong-length suffix does not count as a hashed variant", () => {
     const sub = mkdtempSync(join(tmpdir(), "loop-lore-hash-inject-bad-",),);
     try {

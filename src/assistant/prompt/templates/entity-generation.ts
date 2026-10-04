@@ -68,6 +68,7 @@ function buildEntityTemplateBlock(kind: EntityKind,): string {
   const example = exampleResult.ok ? exampleResult.value : "{}";
   return `Follow this schema and use the example as a model:\nSchema: ${entityTemplate.schema}\nExample: ${example}`;
 }
+
 /**
  * Resolve the prompt template for an entity kind.
  *
@@ -98,12 +99,15 @@ export function resolveEntityGenerationPrompt(
       ? override.replace("{description}", description,)
       : `${override} Description: ${description}`;
   }
+
   const template = DEFAULT_PROMPTS[kind](description,);
   const position: EntityTemplatePosition = config?.templates?.llm?.entityTemplatePosition ??
     DEFAULT_ENTITY_TEMPLATE_POSITION;
+
   if (position === "off") {
     return template;
   }
+
   const block = buildEntityTemplateBlock(kind,);
   return position === "before" ? `${block}\n\n${template}` : `${template}\n\n${block}`;
 }

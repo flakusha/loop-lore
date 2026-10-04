@@ -83,14 +83,17 @@ describe("archivingRoutes coverage", () => {
     const archive = await app.handle(
       new Request(`http://localhost/api/messages/${messageId}/archive`, { method: "POST", },),
     );
+
     expect(archive.status,).toBe(401,);
     const restore = await app.handle(
       new Request(`http://localhost/api/messages/${messageId}/restore`, { method: "POST", },),
     );
+
     expect(restore.status,).toBe(401,);
     const purge = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/messages/purge`, { method: "POST", },),
     );
+
     expect(purge.status,).toBe(401,);
   });
 
@@ -99,12 +102,14 @@ describe("archivingRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/messages/${messageId}/archive`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
     const row = await db
       .selectFrom("messages",)
       .select(["archived_at", "visibility",],)
       .where("id", "=", messageId,)
       .executeTakeFirst();
+
     expect(row?.archived_at,).not.toBeNull();
     expect(row?.visibility,).toBe("auto_hidden",);
   });
@@ -114,6 +119,7 @@ describe("archivingRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/messages/${uid()}/archive`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -122,6 +128,7 @@ describe("archivingRoutes coverage", () => {
     const res = await app.handle(
       new Request("http://localhost/api/messages/not-a-uuid/archive", { method: "POST", },),
     );
+
     expect([400, 404, 422,],).toContain(res.status,);
   });
 
@@ -130,6 +137,7 @@ describe("archivingRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/messages/${messageId}/archive`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -138,6 +146,7 @@ describe("archivingRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/messages/${messageId}/archive`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -147,12 +156,14 @@ describe("archivingRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/messages/${messageId}/restore`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
     const row = await db
       .selectFrom("messages",)
       .select(["archived_at", "visibility",],)
       .where("id", "=", messageId,)
       .executeTakeFirst();
+
     expect(row?.archived_at,).toBeNull();
     expect(row?.visibility,).toBe("visible",);
   });
@@ -162,11 +173,13 @@ describe("archivingRoutes coverage", () => {
     const missing = await app.handle(
       new Request(`http://localhost/api/messages/${uid()}/restore`, { method: "POST", },),
     );
+
     expect(missing.status,).toBe(404,);
     const other = makeApp(db, stranger, "user",);
     const denied = await other.handle(
       new Request(`http://localhost/api/messages/${messageId}/restore`, { method: "POST", },),
     );
+
     expect(denied.status,).toBe(404,);
   });
 
@@ -184,11 +197,13 @@ describe("archivingRoutes coverage", () => {
       .set({ archived_at: new Date(Date.now() - 91 * day,).toISOString(), },)
       .where("id", "=", expiredId,)
       .execute();
+
     await db
       .updateTable("messages",)
       .set({ archived_at: new Date(Date.now() - 31 * day,).toISOString(), },)
       .where("id", "=", midId,)
       .execute();
+
     await db
       .updateTable("messages",)
       .set({ archived_at: new Date().toISOString(), },)
@@ -198,6 +213,7 @@ describe("archivingRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/messages/purge`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
     const parsed = (await res.json()) as { ok: boolean; purged: number };
     expect(parsed.ok,).toBe(true,);
@@ -227,6 +243,7 @@ describe("archivingRoutes coverage", () => {
         .set({ archived_at: new Date(Date.now() - 8 * day,).toISOString(), },)
         .where("id", "=", expiredId,)
         .execute();
+
       await db
         .updateTable("messages",)
         .set({ archived_at: new Date(Date.now() - 3 * day,).toISOString(), },)
@@ -236,6 +253,7 @@ describe("archivingRoutes coverage", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/chats/${chatId}/messages/purge`, { method: "POST", },),
       );
+
       expect(res.status,).toBe(200,);
       const gone = await db.selectFrom("messages",).select("id",).where("id", "=", expiredId,).executeTakeFirst();
       expect(gone,).toBeUndefined();
@@ -255,6 +273,7 @@ describe("archivingRoutes coverage", () => {
       .set({ archived_at: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000,).toISOString(), },)
       .where("id", "=", midId,)
       .execute();
+
     try {
       // Zero/negative or non-numeric values must not widen the window.
       for (const invalid of ["0", "garbage",]) {
@@ -262,6 +281,7 @@ describe("archivingRoutes coverage", () => {
         const res = await app.handle(
           new Request(`http://localhost/api/chats/${chatId}/messages/purge`, { method: "POST", },),
         );
+
         expect(res.status,).toBe(200,);
         const kept = await db.selectFrom("messages",).select("id",).where("id", "=", midId,).executeTakeFirst();
         expect(kept?.id,).toBe(midId,);
@@ -276,6 +296,7 @@ describe("archivingRoutes coverage", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/messages/purge`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
     const parsed = (await res.json()) as { purged: number };
     expect(parsed.purged,).toBe(0,);
@@ -286,11 +307,13 @@ describe("archivingRoutes coverage", () => {
     const missing = await app.handle(
       new Request(`http://localhost/api/chats/${uid()}/messages/purge`, { method: "POST", },),
     );
+
     expect(missing.status,).toBe(404,);
     const other = makeApp(db, stranger, "user",);
     const denied = await other.handle(
       new Request(`http://localhost/api/chats/${chatId}/messages/purge`, { method: "POST", },),
     );
+
     expect(denied.status,).toBe(404,);
   });
 });

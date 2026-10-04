@@ -49,6 +49,7 @@ describe("resolveActor cascade participant check", () => {
         import_spec: "{}",
       },)
       .execute();
+
     await db
       .insertInto("users",)
       .values({
@@ -60,6 +61,7 @@ describe("resolveActor cascade participant check", () => {
         settings: "{}",
       },)
       .execute();
+
     await db
       .insertInto("chats",)
       .values({
@@ -70,16 +72,19 @@ describe("resolveActor cascade participant check", () => {
         created_by: "user-1",
       },)
       .execute();
+
     await db
       .insertInto("chat_participants",)
       .values({ chat_id: chatId, actor_id: actorId, role_in_chat: "member", },)
       .execute();
+
     const resolved = await resolveActor(db, {
       type: "group",
       cascadeActorId: actorId,
       chatId,
       userId: "user-1",
     },);
+
     expect(resolved,).toEqual({ characterId: actorId, characterName: "Alice", },);
   });
 
@@ -101,6 +106,7 @@ describe("resolveActor cascade participant check", () => {
         import_spec: "{}",
       },)
       .execute();
+
     // No chat_participants row — actor exists but is not in this chat.
     const resolved = await resolveActor(db, {
       type: "group",
@@ -108,6 +114,7 @@ describe("resolveActor cascade participant check", () => {
       chatId,
       userId: "user-1",
     },);
+
     expect(resolved,).toBeNull();
   });
 
@@ -118,6 +125,7 @@ describe("resolveActor cascade participant check", () => {
       chatId: uid(),
       userId: "user-1",
     },);
+
     expect(resolved,).toBeNull();
   });
 });
@@ -150,6 +158,7 @@ async function seedChatWithActor(
       import_spec: "{}",
     },)
     .execute();
+
   await db
     .insertInto("users",)
     .values({
@@ -161,6 +170,7 @@ async function seedChatWithActor(
       settings: "{}",
     },)
     .execute();
+
   await db
     .insertInto("chats",)
     .values({
@@ -171,12 +181,14 @@ async function seedChatWithActor(
       created_by: "user-1",
     },)
     .execute();
+
   if (opts.withParticipant !== false) {
     await db
       .insertInto("chat_participants",)
       .values({ chat_id: chatId, actor_id: actorId, role_in_chat: "member", },)
       .execute();
   }
+
   return { chatId, actorId, };
 }
 
@@ -212,6 +224,7 @@ describe("resolveActor turn selection and single-chat", () => {
       userId: "user-1",
       userMessage: "hey @Alice go",
     },);
+
     expect(resolved,).toEqual({ characterId: actorId, characterName: "Alice", },);
   });
 
@@ -253,6 +266,7 @@ describe("resolveActor outbound mute enforcement (moderation AC3)", () => {
       chatId,
       userId: "user-1",
     },);
+
     expect(resolved,).toBeNull();
   });
 

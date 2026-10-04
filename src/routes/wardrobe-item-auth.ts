@@ -47,5 +47,6 @@ export async function requireOwnedWardrobeItem(
   if (!item) {
     return jsonError({ message: "Wardrobe item not found", status: HttpStatus.NotFound, },);
   }
+
   return { userId, actorId, itemId, item, };
 }

@@ -86,6 +86,7 @@ export function mountAnchorEditor(img: HTMLImageElement, assetId: string, deps: 
       deps.notify("error", "Failed to save anchor",);
     },);
   };
+
   img.addEventListener("click", onClick,);
   return () => {
     img.removeEventListener("click", onClick,);

@@ -44,6 +44,7 @@ function walk(dir: string,): string[] {
   } catch {
     return out;
   }
+
   for (const name of entries) {
     const p = path.join(dir, name,);
     const s = statSync(p,);
@@ -53,6 +54,7 @@ function walk(dir: string,): string[] {
       out.push(p,);
     }
   }
+
   return out;
 }
 
@@ -86,6 +88,7 @@ describe("CSP — no inline event handlers in shipped view HTML", () => {
       const msg = offenders.map((o,) => `  ${o.file}:${o.line}  ${o.snippet}`).join("\n",);
       throw new Error(`Found inline event handlers that CSP will block:\n${msg}`,);
     }
+
     expect(offenders.length,).toBe(0,);
   });
 });
@@ -123,6 +126,7 @@ describe("CSP — no inline event handlers in frontend pages innerHTML sinks", (
         line: lineNo,
         snippet: lines[lineNo - 1]?.trim().slice(0, 120,) ?? "(see file)",
       },);
+
       // Same file:line may match multiple innerHTML lines if the template
       // literal is reachable from several RHSs; report each line once.
       break;
@@ -134,6 +138,7 @@ describe("CSP — no inline event handlers in frontend pages innerHTML sinks", (
       const msg = offenders.map((o,) => `  ${o.file}:${o.line}  ${o.snippet}`).join("\n",);
       throw new Error(`Found innerHTML + inline event handler combination that CSP will block:\n${msg}`,);
     }
+
     expect(offenders.length,).toBe(0,);
   });
 });

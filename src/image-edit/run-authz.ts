@@ -30,20 +30,24 @@ export async function authorizeRunLinkage(
   if (!userId) {
     return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
   }
+
   const db = database ?? getDatabase();
   if (body.chatId) {
     const access = await checkChatAccess(db, body.chatId, userId, userRole,);
     if (!access.ok) { return forbiddenResponse(); }
   }
+
   if (body.messageId) {
     const message = await db
       .selectFrom("messages",)
       .select("chat_id",)
       .where("id", "=", body.messageId,)
       .executeTakeFirst();
+
     if (!message) { return forbiddenResponse(); }
     const access = await checkChatAccess(db, message.chat_id, userId, userRole,);
     if (!access.ok) { return forbiddenResponse(); }
   }
+
   return null;
 }

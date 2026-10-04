@@ -128,6 +128,7 @@ export async function regenerateMessageVariant(
       .where("chat_id", "=", chatId,)
       .where("parent_id", "=", parentId,)
       .executeTakeFirst();
+
     swipeIndex = (maxRow?.max_idx ?? -1) + 1;
   }
 
@@ -152,6 +153,7 @@ export async function regenerateMessageVariant(
       idempotency_key: regenKey,
     },)
     .execute();
+
   // FEAT-048: notify plugin event handlers that a sibling variant was created.
   await emitPluginEvent(
     registry.getAllEventHandlers(),

@@ -18,6 +18,7 @@ export async function parseBody<T = Record<string, unknown>,>(request: Request,)
     if (ct.includes("application/json",)) {
       return (await request.json()) as T;
     }
+
     // form-encoded (htmx default)
     const text = await request.text();
     const params = new URLSearchParams(text,);

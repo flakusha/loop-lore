@@ -118,6 +118,7 @@ export function buildGmConfig(
     vnSplitRatio: fields.splitRatio,
     type: fields.gmType,
   };
+
   if (fields.gmModel.trim()) {
     gmConfig.llmConfig = {
       model: fields.gmModel.trim(),
@@ -129,28 +130,33 @@ export function buildGmConfig(
   } else {
     delete gmConfig.llmConfig;
   }
+
   const filteredActorModels = buildActorModels(actorModels,);
   if (Object.keys(filteredActorModels,).length > 0) {
     gmConfig.actorModels = filteredActorModels;
   } else {
     delete gmConfig.actorModels;
   }
+
   if (fields.gmType === "human" || fields.gmType === "hybrid") {
     gmConfig.humanGM = { actorId: fields.gmHumanActorId, notifications: true, };
   } else {
     delete gmConfig.humanGM;
   }
+
   if (fields.gmType === "hybrid") {
     gmConfig.escalationThreshold = fields.gmEscalationThreshold;
   } else {
     delete gmConfig.escalationThreshold;
   }
+
   gmConfig.responseLengthPreset = fields.responseLengthPreset;
   if (fields.responseLengthPreset === "custom") {
     gmConfig.responseLengthCustom = fields.responseLengthCustom;
   } else {
     delete gmConfig.responseLengthCustom;
   }
+
   if (fields.outputStylePreset) {
     gmConfig.outputStyle = {
       preset: fields.outputStylePreset,
@@ -159,6 +165,7 @@ export function buildGmConfig(
   } else {
     delete gmConfig.outputStyle;
   }
+
   // Per-chat assistant tuning persists through the existing gm_config JSON
   // column (no migration). Validated at this boundary: out-of-range values
   // degrade to null and a fully-null override prunes the key entirely.
@@ -172,6 +179,7 @@ export function buildGmConfig(
   } else {
     delete gmConfig.assistantTuning;
   }
+
   return gmConfig;
 }
 
@@ -189,6 +197,7 @@ export function buildActorModels(
       result[actorId] = { model: m.model.trim(), provider: m.provider?.trim() ?? "", };
     }
   }
+
   return result;
 }
 

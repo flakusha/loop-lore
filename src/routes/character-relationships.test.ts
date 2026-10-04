@@ -31,6 +31,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(characterRelationshipsRoutes({ database: db, },),);
 }
 
@@ -76,6 +77,7 @@ describe("character-relationships routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${A}/relationships`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -83,6 +85,7 @@ describe("character-relationships routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${A}/relationships`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.json(),).toEqual([],);
   });
@@ -95,6 +98,7 @@ describe("character-relationships routes", () => {
         body: JSON.stringify({ target_actor_id: C, relationship_type: "friend", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = await res.json() as { id: string };
     expect(id,).toBeDefined();
@@ -104,6 +108,7 @@ describe("character-relationships routes", () => {
       .selectAll()
       .where("id", "=", id,)
       .executeTakeFirst();
+
     expect(rel,).toBeDefined();
     expect(rel?.actor_id,).toBe(B,);
     expect(rel?.target_actor_id,).toBe(C,);
@@ -125,6 +130,7 @@ describe("character-relationships routes", () => {
         body: JSON.stringify({ target_actor_id: C, relationship_type: "", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     const body = await res.json() as { error: string };
     expect(body.error,).toContain("required",);
@@ -147,6 +153,7 @@ describe("character-relationships routes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
 
     const rel = await db
@@ -155,6 +162,7 @@ describe("character-relationships routes", () => {
       .where("actor_id", "=", B,)
       .where("target_actor_id", "=", D,)
       .executeTakeFirst();
+
     expect(rel?.standing,).toBe(25,);
     expect(rel?.trust,).toBe(10,);
     expect(rel?.familiarity,).toBe(70,);
@@ -169,6 +177,7 @@ describe("character-relationships routes", () => {
       .where("actor_id", "=", D,)
       .where("target_actor_id", "=", B,)
       .executeTakeFirst();
+
     expect(reverse,).toBeDefined();
   });
 
@@ -180,6 +189,7 @@ describe("character-relationships routes", () => {
         body: JSON.stringify({ relationship_type: "friend", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -192,6 +202,7 @@ describe("character-relationships routes", () => {
         body: JSON.stringify({ target_actor_id: E, relationship_type: "friend", strength: 8, },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const { id, } = await res.json() as { id: string };
     const rel = await db
@@ -199,6 +210,7 @@ describe("character-relationships routes", () => {
       .select("id",)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     expect(rel,).toBeDefined();
   });
 
@@ -210,6 +222,7 @@ describe("character-relationships routes", () => {
         body: JSON.stringify({ target_actor_id: C, relationship_type: "friend", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -221,6 +234,7 @@ describe("character-relationships routes", () => {
         body: JSON.stringify({ target_actor_id: C, relationship_type: "friend", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -228,6 +242,7 @@ describe("character-relationships routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${B}/relationships`,),
     );
+
     expect(res.status,).toBe(200,);
     const rows = await res.json() as Relationship[];
     // Unfiltered GET returns global (world-less) relationships only.
@@ -244,6 +259,7 @@ describe("character-relationships routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${B}/relationships?worldId=${WORLD}`,),
     );
+
     expect(res.status,).toBe(200,);
     const rows = await res.json() as Relationship[];
     expect(rows,).toHaveLength(1,);
@@ -254,6 +270,7 @@ describe("character-relationships routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${B}/relationships/${C}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Relationship;
     expect(body.actorId,).toBe(B,);
@@ -266,6 +283,7 @@ describe("character-relationships routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${B}/relationships/${D}?worldId=${WORLD}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as Relationship;
     expect(body.targetActorId,).toBe(D,);
@@ -278,6 +296,7 @@ describe("character-relationships routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${B}/relationships/${A}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -285,6 +304,7 @@ describe("character-relationships routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${B}/relationships/${D}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -301,6 +321,7 @@ describe("character-relationships routes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     expect((await res.json() as { ok: boolean }).ok,).toBe(true,);
 
@@ -310,6 +331,7 @@ describe("character-relationships routes", () => {
       .where("actor_id", "=", B,)
       .where("target_actor_id", "=", D,)
       .executeTakeFirst();
+
     expect(rel?.relationship_type,).toBe("rival",);
     expect(rel?.standing,).toBe(-40,);
     expect(rel?.trust,).toBe(10,);
@@ -324,6 +346,7 @@ describe("character-relationships routes", () => {
         body: JSON.stringify({ relationship_type: "enemy", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -331,6 +354,7 @@ describe("character-relationships routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${B}/relationships/${C}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(204,);
 
     const row = await db
@@ -339,6 +363,7 @@ describe("character-relationships routes", () => {
       .where("actor_id", "=", B,)
       .where("target_actor_id", "=", C,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 
@@ -346,6 +371,7 @@ describe("character-relationships routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${B}/relationships/${D}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -365,6 +391,7 @@ describe("character-relationships routes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     expect((await res.json() as { ok: boolean }).ok,).toBe(true,);
 
@@ -374,6 +401,7 @@ describe("character-relationships routes", () => {
       .where("actor_id", "=", B,)
       .where("target_actor_id", "=", D,)
       .executeTakeFirst();
+
     expect(rel?.standing,).toBe(-35,);
     expect(rel?.trust,).toBe(13,);
     expect(rel?.familiarity,).toBe(22,);
@@ -390,6 +418,7 @@ describe("character-relationships routes", () => {
         body: JSON.stringify({ event_type: "helped", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -401,6 +430,7 @@ describe("character-relationships routes", () => {
         body: JSON.stringify({ target_actor_id: D, event_type: "helped", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -424,6 +454,7 @@ describe("character-relationships routes", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/actors/${A}/relationships`,),
       );
+
       expect(res.status,).toBe(200,);
     });
 
@@ -432,6 +463,7 @@ describe("character-relationships routes", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/actors/${A}/relationships`,),
       );
+
       expect(res.status,).toBe(200,);
     });
 
@@ -444,6 +476,7 @@ describe("character-relationships routes", () => {
           body: JSON.stringify({ target_actor_id: B, relationship_type: "friend", },),
         },),
       );
+
       expect(res.status,).toBe(201,);
     });
   });

@@ -33,11 +33,13 @@ export async function loadStoredTemplates(db: Kysely<DB>,): Promise<StoredTempla
   if (!raw) {
     return { profiles: {}, defaultProfileId: "sdxl", };
   }
+
   const result = safeJsonParse<StoredTemplates>(raw.value,);
   if (!result.ok) {
     log().warn("Failed to parse stored templates, resetting",);
     return { profiles: {}, defaultProfileId: "sdxl", };
   }
+
   return result.value;
 }
 
@@ -75,5 +77,6 @@ export function countTemplates(templates: ImageModelProfile["templates"],): numb
       if (t.length > 0) { count += 1; }
     }
   }
+
   return count;
 }

@@ -51,6 +51,7 @@ function makeEl(): FakeEl {
       style[name] = value;
     },
   };
+
   const listeners = new Map<string, Array<(e: unknown,) => void>>();
   return {
     tagName: "DIV",
@@ -80,6 +81,7 @@ function completeOnTransitionEnd(outgoing: FakeEl | null, incoming: FakeEl, type
     type,
     duration: 20,
   },);
+
   incoming.dispatch("transitionend",);
   return pending;
 }

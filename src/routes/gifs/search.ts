@@ -65,6 +65,7 @@ export function resolveTenorKey(opts: GifSearchOpts,): string | null {
   if (explicit) {
     return explicit;
   }
+
   const envKey = process.env.TENOR_API_KEY?.trim();
   return envKey ? envKey : null;
 }
@@ -82,10 +83,12 @@ export function normalizeGifResults(body: TenorSearchBody, limit: number,): GifS
     if (out.length >= limit) {
       break;
     }
+
     const full = item.media_formats?.gif;
     if (!full?.url) {
       continue;
     }
+
     const tiny = item.media_formats?.tinygif;
     const dims = Array.isArray(full.dims,) ? full.dims : [];
     out.push({
@@ -97,6 +100,7 @@ export function normalizeGifResults(body: TenorSearchBody, limit: number,): GifS
       height: dims[1] ?? 0,
     },);
   }
+
   return out;
 }
 
@@ -114,6 +118,7 @@ export function gifSearchRoutes(opts: GifSearchOpts, prefix = "/api",) {
         if (typeof userId !== "string") {
           return userId;
         }
+
         const key = resolveTenorKey(opts,);
         if (!key) {
           return jsonError({
@@ -121,11 +126,13 @@ export function gifSearchRoutes(opts: GifSearchOpts, prefix = "/api",) {
             status: 501,
           },);
         }
+
         const query = (ctx as { query: { q: string; limit?: number } }).query;
         const q = query.q.trim();
         if (!q) {
           return jsonError({ message: "Missing required query param: q", status: 400, },);
         }
+
         const limit = query.limit ?? 12;
         const upstream = new URL("https://tenor.googleapis.com/v2/search",);
         upstream.searchParams.set("q", q,);
@@ -138,15 +145,18 @@ export function gifSearchRoutes(opts: GifSearchOpts, prefix = "/api",) {
         } catch {
           return jsonError({ message: "GIF provider unreachable", status: 502, },);
         }
+
         if (res.status === 429) {
           return jsonError({
             message: "GIF provider rate limit exceeded, try again shortly",
             status: 429,
           },);
         }
+
         if (!res.ok) {
           return jsonError({ message: "GIF search failed", status: 502, },);
         }
+
         const body = await res.json() as TenorSearchBody;
         return jsonResponse({ data: normalizeGifResults(body, limit,), },);
       },

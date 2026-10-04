@@ -36,6 +36,7 @@ export async function importRelationships(
         rel.targetActorId as string,
         worldId,
       );
+
       if (existing) {
         await relationshipsService.updateRelationship(actorId, rel.targetActorId as string, worldId, {
           relationshipType: rel.relationshipType as any,
@@ -57,6 +58,7 @@ export async function importRelationships(
           metadata: rel.metadata as Record<string, unknown>,
         },);
       }
+
       result.relationshipsImported++;
     } catch (error: unknown) {
       result.errors.push(`Failed to import relationship with "${String(rel.targetActorId,)}": ${errMsg(error,)}`,);

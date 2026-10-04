@@ -36,6 +36,7 @@ export async function isLoadoutBridgeEnabled(db: Kysely<DB>,): Promise<boolean> 
     .select(["value",],)
     .where("key", "=", LOADOUT_BRIDGE_FLAG,)
     .executeTakeFirst();
+
   return row?.value === "true";
 }
 
@@ -65,5 +66,6 @@ export async function resolveEquippedOutfit(
     .orderBy("actor_wardrobe.id", "desc",)
     .limit(1,)
     .execute();
+
   return rows[0]?.wardrobe_item_id ?? null;
 }

@@ -43,6 +43,7 @@ export function isValidWorkflow(obj: unknown,): obj is ComfyUIWorkflow {
       return true;
     }
   }
+
   return false;
 }
 
@@ -72,5 +73,6 @@ export function findDeadNodes(workflow: ComfyUIWorkflow,): string[] {
     if (TERMINAL_SINK_CLASSES.has(node.class_type,)) { continue; }
     dead.push(id,);
   }
+
   return dead;
 }

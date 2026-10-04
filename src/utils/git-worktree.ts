@@ -49,5 +49,6 @@ export function findMainRepoRoot(cwd: string,): string | null {
       // fall through
     }
   }
+
   return null;
 }

@@ -33,6 +33,7 @@ if (ISOLATED) {
     "toasts.keyphrasesSaved": "Keyphrases saved ({count})",
     "toasts.keyphrasesSaveFailed": "Keyphrases: {failed} failed, {saved} saved",
   };
+
   mock.module("../ui", () => ({
     showToast: (type: string, message: string,) => {
       toastCalls.push({ type, message, },);
@@ -109,6 +110,7 @@ describeOrSkip("characters-journal-keyphrases", () => {
         },),
         { status: 200, },
       );
+
     // Dynamic import: the mocked module seams must be registered first.
     await import("./characters-journal-keyphrases");
     await page.initJournalKeyphrases("actor-9",);
@@ -142,6 +144,7 @@ describeOrSkip("characters-journal-keyphrases", () => {
     expect(first.keywords,).toEqual(
       ["moonstone", "lantern", "a", "b", "c", "d", "e", "f",],
     );
+
     const second = JSON.parse(fetchCalls[1]!.opts!.body as string,) as { keywords: string[] };
     expect(second.keywords,).toEqual([],);
     expect(toastCalls,).toEqual([{ type: "success", message: "Keyphrases saved (2)", },],);
@@ -153,6 +156,7 @@ describeOrSkip("characters-journal-keyphrases", () => {
       putCount++;
       return new Response("{}", { status: putCount === 1 ? 500 : 200, },);
     };
+
     // Dynamic import: the mocked module seams must be registered first.
     await import("./characters-journal-keyphrases");
     rows = [

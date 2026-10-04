@@ -80,18 +80,22 @@ export const characterCreationTool: ToolDefinition = {
     if (!description) {
       return { content: '{"error":"description is required and must be non-empty"}', isError: true, };
     }
+
     const personality = stringParam(params, "personality",);
     if (!personality) {
       return { content: '{"error":"personality is required and must be non-empty"}', isError: true, };
     }
+
     const appearance = stringParam(params, "appearance",);
     if (!appearance) {
       return { content: '{"error":"appearance is required and must be non-empty"}', isError: true, };
     }
+
     const defaultOutfit = stringParam(params, "defaultOutfit",);
     if (!defaultOutfit) {
       return { content: '{"error":"defaultOutfit is required and must be non-empty"}', isError: true, };
     }
+
     const scenario = stringParam(params, "scenario",);
     const systemPrompt = stringParam(params, "systemPrompt",);
 

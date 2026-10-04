@@ -74,6 +74,7 @@ describe("ItemsService.transfer", () => {
       .where("item_id", "=", item,)
       .where("location_id", "=", destLoc,)
       .executeTakeFirst();
+
     expect(dest?.quantity,).toBe(5,);
   });
 
@@ -100,6 +101,7 @@ describe("ItemsService.transfer", () => {
       .where("item_id", "=", item,)
       .where("location_id", "=", destLoc,)
       .executeTakeFirst();
+
     expect(dest?.quantity,).toBe(2,);
   });
 
@@ -231,6 +233,7 @@ describe("ItemsService.getAtLocation", () => {
       quantity: 2,
       visibility: ItemVisibility.Visible,
     } as never,);
+
     await insertWorldItems(db, worldId, hiddenItem, {
       id: uid(),
       location_id: testLoc,
@@ -277,10 +280,12 @@ describe("ItemsService world state and item evolution", () => {
       value: 0,
       weight: 1,
     },);
+
     const worldItemId = await svc.placeInLocation(defId, locationA, worldId, 1, false, false, undefined, {
       current: 3,
       max: 3,
     },);
+
     const result = await svc.decrementDurability(worldItemId, worldId, 3,);
     expect(result,).toEqual({ remaining: 0, broken: true, },);
     const row = await db.selectFrom("world_items",).select(["current_durability", "is_active",],).where(
@@ -288,6 +293,7 @@ describe("ItemsService world state and item evolution", () => {
       "=",
       worldItemId,
     ).executeTakeFirst();
+
     expect(row?.current_durability,).toBe(0,);
     expect(row?.is_active,).toBe(0,);
   });
@@ -322,6 +328,7 @@ describe("ItemsService world state and item evolution", () => {
       value: 0,
       weight: 1,
     },);
+
     const worldItemId = await svc.placeInLocation(defId, locationA, worldId,);
     await svc.applyDrift(worldItemId, worldId, { stat: "damage", amount: 0.04, },);
     const drift = await svc.applyDrift(worldItemId, worldId, { stat: "damage", amount: 0.04, },);
@@ -332,6 +339,7 @@ describe("ItemsService world state and item evolution", () => {
       "=",
       locationB,
     ).where("item_id", "=", defId,).executeTakeFirst();
+
     expect(moved?.properties,).toContain('"damage":0.05',);
   });
 
@@ -349,6 +357,7 @@ describe("ItemsService world state and item evolution", () => {
       value: 0,
       weight: 1,
     },);
+
     await svc.placeInLocation(defId, locationA, worldId,);
     await expect(svc.placeInLocation(defId, locationB, worldId,),).rejects.toThrow();
     expect((await svc.getUniqueItem(defId, worldId,))?.item_id,).toBe(defId,);
@@ -397,6 +406,7 @@ describe("016 instance-state invariant", () => {
       current: 0,
       max: 5,
     },);
+
     const row = await db.selectFrom("world_items",).selectAll().where("id", "=", id,).executeTakeFirst();
     expect(row?.current_durability,).toBe(0,);
     expect(row?.max_durability,).toBe(5,);

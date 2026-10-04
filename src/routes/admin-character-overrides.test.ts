@@ -23,6 +23,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(adminCharacterOverridesRoutes({ database: db, },),);
 }
 
@@ -58,6 +59,7 @@ describe("admin-character-overrides routes", () => {
     const res = await makeApp(db, "user", "user",).handle(
       new Request("http://localhost/api/admin/character-overrides",),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -80,6 +82,7 @@ describe("admin-character-overrides routes", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/admin/character-overrides",),
     );
+
     expect(res.status,).toBe(200,);
     const rows = await res.json() as OverrideBody[];
     expect(rows.length,).toBeGreaterThanOrEqual(1,);
@@ -90,6 +93,7 @@ describe("admin-character-overrides routes", () => {
     const res = await makeApp(db, "user", "user",).handle(
       new Request(`http://localhost/api/admin/actors/${ACTOR}/overrides`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -97,6 +101,7 @@ describe("admin-character-overrides routes", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request(`http://localhost/api/admin/actors/${ACTOR}/overrides`,),
     );
+
     expect(res.status,).toBe(200,);
     const rows = await res.json() as OverrideBody[];
     expect(rows,).toHaveLength(1,);
@@ -111,6 +116,7 @@ describe("admin-character-overrides routes", () => {
         body: JSON.stringify({ action: "ban", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -128,6 +134,7 @@ describe("admin-character-overrides routes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     expect((await res.json() as OverrideBody).id,).toBeDefined();
 
@@ -136,6 +143,7 @@ describe("admin-character-overrides routes", () => {
       .select(["actor_id", "admin_id", "action", "reason", "visibility_override", "license_override", "expires_at",],)
       .where("actor_id", "=", ACTOR2,)
       .executeTakeFirst();
+
     expect(row?.admin_id,).toBe("admin",);
     expect(row?.action,).toBe("approve",);
     expect(row?.reason,).toBe("looks good",);
@@ -152,6 +160,7 @@ describe("admin-character-overrides routes", () => {
         body: JSON.stringify({ actor_id: ACTOR2, action: "ban", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
 
     const row = await db
@@ -159,6 +168,7 @@ describe("admin-character-overrides routes", () => {
       .select(["actor_id", "action",],)
       .where("action", "=", "ban",)
       .executeTakeFirst();
+
     // actor_id comes from the URL param, not the (stripped) body field.
     expect(row?.actor_id,).toBe(ACTOR,);
   });
@@ -171,6 +181,7 @@ describe("admin-character-overrides routes", () => {
         body: JSON.stringify({ action: "ban", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -178,6 +189,7 @@ describe("admin-character-overrides routes", () => {
     const res = await makeApp(db, "user", "user",).handle(
       new Request("http://localhost/api/admin/character-overrides/ov-1", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -185,6 +197,7 @@ describe("admin-character-overrides routes", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/admin/character-overrides/ov-1", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
     expect((await res.json() as OverrideBody).ok,).toBe(true,);
 
@@ -193,6 +206,7 @@ describe("admin-character-overrides routes", () => {
       .select("id",)
       .where("id", "=", "ov-1",)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 
@@ -200,6 +214,7 @@ describe("admin-character-overrides routes", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/admin/character-overrides/does-not-exist", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
   });
 });

@@ -112,6 +112,7 @@ export async function resolveAllModelRoles(config: Config, db: Kysely<DB>,): Pro
   for (const r of results) {
     if (r.status === "fulfilled") { roles.push(r.value,); }
   }
+
   return roles;
 }
 
@@ -196,6 +197,7 @@ export async function getModelRoleOverrides(
     string,
     { provider: string; model: string; temperature: number | null; maxTokens: number | null }
   > = {};
+
   for (const row of rows) {
     overrides[row.role] = {
       provider: row.provider,
@@ -204,5 +206,6 @@ export async function getModelRoleOverrides(
       maxTokens: row.max_tokens,
     };
   }
+
   return overrides;
 }

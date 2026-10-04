@@ -104,6 +104,7 @@ export const transitionPicker: Partial<TransitionPickerState> & ThisType<Transit
       store.showTransitionPicker = false;
       return;
     }
+
     await this.loadLocations();
     setUi({
       transitionLocations: this._locations.map((l,) => ({ id: l.id, name: l.name, })),
@@ -121,6 +122,7 @@ export const transitionPicker: Partial<TransitionPickerState> & ThisType<Transit
       this.$dispatch?.("show-toast", { type: "info", message: t("toasts.transitionNoDestination",), },);
       return;
     }
+
     if (uiField<boolean>("transitionBusy", false,)) { return; }
     setUi({ transitionBusy: true, },);
 
@@ -150,10 +152,12 @@ export const transitionPicker: Partial<TransitionPickerState> & ThisType<Transit
           body: jsonBody({ templateId, carry: MIGRATE_CARRY[mode], },),
         },
       );
+
       if (!migrateRes.ok) {
         failTransition(this,);
         return;
       }
+
       const created = await migrateRes.json() as { newChatId?: string };
       const newChatId = created.newChatId ?? "";
       if (!newChatId) {
@@ -169,6 +173,7 @@ export const transitionPicker: Partial<TransitionPickerState> & ThisType<Transit
           body: jsonBody({ locationId: destinationId, },),
         },
       );
+
       if (!locRes.ok) {
         // The migration itself succeeded — still switch, but be honest.
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.transitionLocationFailed",), },);
@@ -177,11 +182,13 @@ export const transitionPicker: Partial<TransitionPickerState> & ThisType<Transit
       const selectChat = (this as unknown as Record<string, unknown>).selectChat as
         | ((chatId: string,) => Promise<void>)
         | undefined;
+
       if (typeof selectChat === "function") { await selectChat.call(this, newChatId,); }
       this.$dispatch?.("show-toast", {
         type: "success",
         message: t(mode === "new-chat" ? "toasts.transitionNewChatDone" : "toasts.transitionIsolateDone",),
       },);
+
       setUi({ showTransitionPicker: false, },);
     } catch (error) {
       log.warn("location transition failed", { mode, error: String(error,), },);
@@ -198,6 +205,7 @@ const g = globalThis as Record<string, unknown>;
 g.toggleTransitionPicker = function() {
   void callChatStateAction("toggleTransitionPicker",);
 };
+
 g.runLocationTransition = async function(mode: TransitionMode,) {
   await awaitChatStateAction("runLocationTransition", mode,);
 };

@@ -45,6 +45,7 @@ describe("listModelsDispatch", () => {
         expect(models,).toEqual([
           { id: "llama3.2", paramSize: "3.2B", raw: expect.anything(), },
         ],);
+
         expect(models[0]?.raw,).toBeTruthy();
       },
     );
@@ -67,6 +68,7 @@ describe("healthCheckDispatch", () => {
         if (url.endsWith("/api/version",)) {
           return Response.json({ version: "0.3.4", },);
         }
+
         return Response.json({ models: [{ name: "llama3.2", },], },);
       },
       async () => {

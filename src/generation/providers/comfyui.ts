@@ -98,6 +98,7 @@ export class ComfyUIClient {
       } catch {
         // Error body read failed — keep "unknown" fallback
       }
+
       throw new Error(`ComfyUI prompt submission failed [${resp.status}]: ${body}`,);
     }
 
@@ -142,6 +143,7 @@ export class ComfyUIClient {
           }
         }
       }
+
       return { done: true, images, };
     }
 
@@ -168,6 +170,7 @@ export class ComfyUIClient {
         if (result.error) {
           throw new Error(`ComfyUI execution failed: ${result.error}`,);
         }
+
         return Array.from(result.images ?? [], (img,) => img.filename,);
       }
 
@@ -248,6 +251,7 @@ export class ComfyUIClient {
     for (const filename of filenames) {
       buffers.push(await this.downloadImage(filename,),);
     }
+
     return buffers;
   }
 

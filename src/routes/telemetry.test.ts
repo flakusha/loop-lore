@@ -40,6 +40,7 @@ const telemetryPristine = await (async () => {
     probe.sqlite.close();
   }
 })();
+
 const describeReal = telemetryPristine ? describe : describe.skip;
 
 /**
@@ -52,6 +53,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, sessionId: `sess-${userId}`, }));
   }
+
   return app.use(telemetryRoutes({ database: db, },),);
 }
 
@@ -87,6 +89,7 @@ describeReal("telemetry routes — enabled", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as EventBody;
     expect(body.ok,).toBe(true,);
@@ -97,6 +100,7 @@ describeReal("telemetry routes — enabled", () => {
       .select(["event_type", "session_id", "user_id", "chat_id", "source", "event_data",],)
       .where("event_type", "=", "frontend.page_view",)
       .execute();
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.session_id,).toBe(hashId("sess-user1",),);
     expect(rows[0]?.user_id,).toBe(hashId("user1",),);
@@ -116,6 +120,7 @@ describeReal("telemetry routes — enabled", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
 
     const row = await db
@@ -123,6 +128,7 @@ describeReal("telemetry routes — enabled", () => {
       .select(["event_data", "user_id",],)
       .where("event_type", "=", "generation.started",)
       .executeTakeFirst();
+
     expect(row?.user_id,).toBe(hashId("user2",),);
     expect(JSON.parse(row?.event_data ?? "{}",),).toEqual({ provider: "openai", model: "gpt-4o", },);
   });
@@ -145,6 +151,7 @@ describeReal("telemetry routes — enabled", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const row = await db
       .selectFrom("telemetry_events",)
@@ -153,6 +160,7 @@ describeReal("telemetry routes — enabled", () => {
       .orderBy("created_at", "desc",)
       .limit(1,)
       .executeTakeFirst();
+
     expect(row?.session_id,).toBe(hashId("sess-user1",),);
     expect(row?.user_id,).toBe(hashId("user1",),);
   });
@@ -165,6 +173,7 @@ describeReal("telemetry routes — enabled", () => {
         body: JSON.stringify({ data: { path: "/x", }, },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -176,6 +185,7 @@ describeReal("telemetry routes — enabled", () => {
         body: JSON.stringify({ type: "totally.unknown.type", data: {}, },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -226,6 +236,7 @@ describeReal("telemetry routes — enabled", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/summary",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as EventBody;
     expect(body.total,).toBeGreaterThanOrEqual(3,);
@@ -235,6 +246,7 @@ describeReal("telemetry routes — enabled", () => {
     const res = await makeApp(db, "user1", "user",).handle(
       new Request("http://localhost/api/telemetry/analytics/models",),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -281,6 +293,7 @@ describeReal("telemetry routes — enabled", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/models",),
     );
+
     expect(res.status,).toBe(200,);
     const rows = await res.json() as { event_type: string; count: number }[];
     const started = rows.find((r,) => r.event_type === "generation.started");
@@ -309,6 +322,7 @@ describeReal("telemetry routes — enabled", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/errors",),
     );
+
     expect(res.status,).toBe(200,);
     const rows = await res.json() as Array<Record<string, unknown>>;
     expect(rows.length,).toBeGreaterThanOrEqual(1,);
@@ -320,6 +334,7 @@ describeReal("telemetry routes — enabled", () => {
       expect(row["source"],).toBe("server",);
       expect(String(row["event_type"] ?? "",),).toContain("failed",);
     }
+
     const bodyText = JSON.stringify(rows,);
     expect(bodyText.includes("leak-test-secret",),).toBe(false,);
     expect(bodyText.includes("user-victim",),).toBe(false,);
@@ -335,9 +350,11 @@ describeReal("telemetry routes — enabled", () => {
       event_data: "{}",
       created_at: new Date().toISOString(),
     },).execute();
+
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/daily?limit=2",),
     );
+
     expect(res.status,).toBe(200,);
     const rows = await res.json() as { date: string; count: number }[];
     expect(rows.length,).toBeLessThanOrEqual(2,);
@@ -349,6 +366,7 @@ describeReal("telemetry routes — enabled", () => {
     const res = await makeApp(db, "user1", "user",).handle(
       new Request("http://localhost/api/telemetry/analytics/daily",),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -356,6 +374,7 @@ describeReal("telemetry routes — enabled", () => {
     const res = await makeApp(db, "user1", "user",).handle(
       new Request("http://localhost/api/telemetry/analytics/purge", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -388,6 +407,7 @@ describeReal("telemetry routes — enabled", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/purge?days=30&confirm=PURGE", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as EventBody & { count?: number };
     expect(body.purged,).toBe(true,);
@@ -398,6 +418,7 @@ describeReal("telemetry routes — enabled", () => {
       .select("id",)
       .where("id", "=", "old-1",)
       .executeTakeFirst();
+
     expect(oldRow,).toBeUndefined();
 
     const freshRow = await db
@@ -405,6 +426,7 @@ describeReal("telemetry routes — enabled", () => {
       .select("id",)
       .where("id", "=", "fresh-1",)
       .executeTakeFirst();
+
     expect(freshRow,).toBeDefined();
   });
 
@@ -412,6 +434,7 @@ describeReal("telemetry routes — enabled", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/purge?days=0&confirm=PURGE", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -419,6 +442,7 @@ describeReal("telemetry routes — enabled", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/purge?days=400&confirm=PURGE", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -426,6 +450,7 @@ describeReal("telemetry routes — enabled", () => {
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/purge?days=30", { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -438,6 +463,7 @@ describeReal("telemetry routes — enabled", () => {
         body: JSON.stringify({ type: "frontend.page_view", data: hugeData, },),
       },),
     );
+
     expect([200, 400, 413, 422,],).toContain(res.status,);
   });
 
@@ -449,6 +475,7 @@ describeReal("telemetry routes — enabled", () => {
         body: "{this is not valid JSON",
       },),
     );
+
     expect([400, 422,],).toContain(res.status,);
   });
 
@@ -460,6 +487,7 @@ describeReal("telemetry routes — enabled", () => {
         body: JSON.stringify({ type: "frontend.page_view", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 },);

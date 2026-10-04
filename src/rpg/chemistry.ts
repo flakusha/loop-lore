@@ -75,6 +75,7 @@ export class ChemistryService {
     if (!KNOWN_IDS.has(effectId,)) {
       throw new Error(`Unknown chemistry effect: ${effectId}`,);
     }
+
     const known = CHEMISTRY_EFFECTS[effectId as ChemistryEffectId];
     const now = new Date();
     const id = uid();
@@ -97,8 +98,10 @@ export class ChemistryService {
         meta: jsonStringifyOr({ family: "chemistry", },),
       },)
       .execute();
+
     getLogger().child({ module: "chemistry", },)
       .info(`Chemistry effect applied: ${effectId} → ${targetActorId}`,);
+
     return id;
   }
 

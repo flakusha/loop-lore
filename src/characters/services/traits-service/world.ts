@@ -91,6 +91,7 @@ export async function createWorldTrait(
     worldId: opts.worldId,
     name: opts.name,
   },);
+
   guardNotExists(existing, "World trait", `${opts.actorId}:${opts.worldId}:${opts.name}`,);
 
   const id = randomUUID();

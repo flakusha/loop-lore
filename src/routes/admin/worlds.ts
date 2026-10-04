@@ -39,6 +39,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           const url = new URL(ctx.request.url,);
           const { page, pageSize, } = parsePagination(url.searchParams,);
           const offset = (page - 1) * pageSize;
@@ -47,6 +48,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           let countQuery = opts.database
             .selectFrom("worlds",)
             .select(opts.database.fn.countAll<number>().as("total",),);
+
           let listQuery = opts.database
             .selectFrom("worlds",)
             .select(["id", "name", "description", "owner_id", "created_at", "updated_at",],)
@@ -87,12 +89,14 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           const { id, } = ctx.params as { id: string };
           const world = await opts.database
             .selectFrom("worlds",)
             .selectAll()
             .where("id", "=", id,)
             .executeTakeFirst();
+
           if (!world) {
             return jsonError({
               message: ctx.t?.("admin.worldNotFound",) ?? "World not found",
@@ -127,6 +131,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
+
           const { id, } = ctx.params as { id: string };
           await opts.database.deleteFrom("worlds",).where("id", "=", id,).execute();
           return jsonNoContent();

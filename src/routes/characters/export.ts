@@ -42,6 +42,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
         .selectAll()
         .where("id", "=", ctx.params.actorId,)
         .executeTakeFirst();
+
       if (!actor) {
         return jsonError({
           message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
@@ -117,6 +118,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             },
           },);
         }
+
         case "toml": {
           return new Response(exportToToml(canonical,), {
             headers: {
@@ -126,6 +128,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             },
           },);
         }
+
         case "png": {
           const dataObj: Record<string, unknown> = {
             name: canonical.name,
@@ -146,6 +149,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             tags: canonical.tags,
             ...licenseData,
           };
+
           const pngBuf = insertCharacterDataIntoPng(getMinimalPng(), dataObj,);
           return new Response(new Uint8Array(pngBuf,), {
             headers: {
@@ -155,6 +159,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             },
           },);
         }
+
         case "charx": {
           const v3Data: Record<string, unknown> = {
             spec: "chara_card_v3",
@@ -178,6 +183,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
               ...licenseData,
             },
           };
+
           // Fetch linked assets for the character
           const assetRows = await database
             .selectFrom("asset_links",)
@@ -186,6 +192,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("asset_links.entity_type", "=", "actor",)
             .where("asset_links.entity_id", "=", ctx.params.actorId,)
             .execute();
+
           const assets: { path: string; data: Buffer }[] = [];
           for (const a of assetRows) {
             const data = readFileSync(a.storage_path,);
@@ -193,6 +200,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
               assets.push({ path: a.filename, data, },);
             }
           }
+
           const charxBuf = await createCharx(v3Data, assets,);
           return new Response(new Uint8Array(charxBuf,), {
             headers: {
@@ -202,6 +210,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             },
           },);
         }
+
         case "ccv2": {
           return new Response(withLicenseExtension(exportToCcV2Json(canonical,), licensing,), {
             headers: {
@@ -211,6 +220,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             },
           },);
         }
+
         case "ccv3":
         case "json":
         default: {

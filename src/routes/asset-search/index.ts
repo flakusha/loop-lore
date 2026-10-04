@@ -72,6 +72,7 @@ export function assetSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
             visibility: string;
             matchScore: number;
           }> = [];
+
           for (const hit of page) {
             results.push({
               assetId: hit.payload.assetId,

@@ -72,6 +72,7 @@ describe("buildBody", () => {
       },),
       false,
     );
+
     expect(body.temperature,).toBeCloseTo(0.7, 5,);
     expect(body.max_tokens,).toBe(100,);
     expect(body.top_p,).toBeCloseTo(0.9, 5,);
@@ -100,6 +101,7 @@ describe("buildBody", () => {
       },),
       false,
     );
+
     expect(body.min_p,).toBeCloseTo(0.05, 5,);
     expect(body.top_k,).toBe(40,);
     expect(body.typical_p,).toBeCloseTo(0.9, 5,);
@@ -117,6 +119,7 @@ describe("buildBody", () => {
     const tools: ToolDef[] = [
       { type: "function", function: { name: "f", description: "d", parameters: {}, }, },
     ];
+
     const body = buildBody(state, baseReq({ tools, },), false,);
     expect(body.tools,).toEqual(tools,);
   });
@@ -133,6 +136,7 @@ describe("buildBody", () => {
       },),
       false,
     );
+
     expect(body.vendor_flag,).toBe("x",);
     expect(body.model,).toBe("m1",);
     expect(body.temperature,).toBe(1,);
@@ -144,6 +148,7 @@ describe("buildBody", () => {
       baseReq({ params: { minP: undefined, vendor_flag: undefined, }, },),
       false,
     );
+
     expect("minP" in body,).toBe(false,);
     expect("vendor_flag" in body,).toBe(false,);
     expect("min_p" in body,).toBe(false,);
@@ -195,6 +200,7 @@ describe("handleErrorResponse", () => {
       status: 401,
       headers: { "Content-Type": "application/json", },
     },);
+
     try {
       await handleErrorResponse(resp,);
       expect.unreachable();
@@ -209,6 +215,7 @@ describe("handleErrorResponse", () => {
       status: 429,
       headers: { "retry-after": "7", },
     },);
+
     try {
       await handleErrorResponse(resp,);
       expect.unreachable();
@@ -338,6 +345,7 @@ describe("fetchRaw", () => {
         await fetchRaw(state, "https://provider.example/x", { a: 1, }, undefined, "byo-key",);
       },
     );
+
     expect(capturedHeaders?.Authorization,).toBe("Bearer byo-key",);
   });
 
@@ -353,6 +361,7 @@ describe("fetchRaw", () => {
         await fetchRaw(noKeyState, "https://provider.example/x", { a: 1, }, undefined,);
       },
     );
+
     expect(capturedHeaders?.Authorization,).toBeUndefined();
   });
 
@@ -367,6 +376,7 @@ describe("fetchRaw", () => {
         await fetchRaw(state, "https://provider.example/x", undefined, undefined,);
       },
     );
+
     expect(capturedMethod,).toBe("GET",);
   });
 
@@ -467,6 +477,7 @@ describe("fetchWithRetry", () => {
             reject(new DOMException("Aborted", "AbortError",),);
             return;
           }
+
           init.signal?.addEventListener("abort", () => {
             reject(new DOMException("Aborted", "AbortError",),);
           }, { once: true, },);

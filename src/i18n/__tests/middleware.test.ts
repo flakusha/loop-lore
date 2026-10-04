@@ -38,6 +38,7 @@ describe("detectLocale", () => {
     const request = new Request("http://localhost", {
       headers: { "Cookie": "ll_locale=ja; other=value", },
     },);
+
     expect(detectLocale(request,),).toBe("ja",);
   });
 
@@ -45,6 +46,7 @@ describe("detectLocale", () => {
     const request = new Request("http://localhost", {
       headers: { "Accept-Language": "ja,en-US;q=0.9", },
     },);
+
     expect(detectLocale(request,),).toBe("ja",);
   });
 
@@ -52,6 +54,7 @@ describe("detectLocale", () => {
     const request = new Request("http://localhost", {
       headers: { "Accept-Language": "xx", },
     },);
+
     expect(detectLocale(request,),).toBe("en",);
   });
 
@@ -62,6 +65,7 @@ describe("detectLocale", () => {
         "Accept-Language": "ja",
       },
     },);
+
     expect(detectLocale(request,),).toBe("de",);
   });
 
@@ -75,6 +79,7 @@ describe("detectLocale", () => {
       ...DEFAULT_I18N_CONFIG,
       defaultLocale: "ja" as const,
     };
+
     const request = new Request("http://localhost",);
     expect(detectLocale(request, config,),).toBe("ja",);
   });

@@ -47,6 +47,7 @@ function buildTurns(count: number, userLen = 200, assistantLen = 500,): ContextM
       assistantMsg(`Assistant response ${i} `.repeat(assistantLen / 18,),),
     );
   }
+
   return turns;
 }
 
@@ -78,6 +79,7 @@ describe("compressMessages — no-op path", () => {
       messages: msgs,
       config: { ...DEFAULT_CONTEXT_WINDOW, maxContextTokens: 100_000, },
     },);
+
     expect(result.compressed,).toEqual(msgs,);
     expect(result.metadata.budgetExceeded,).toBe(false,);
   });
@@ -93,6 +95,7 @@ describe("compressMessages — no-op path", () => {
       systemMsg("A".repeat(48,),), // ~12 tokens (48/4)
       userMsg("B".repeat(48,),), // ~12 tokens
     ];
+
     // Total ~24 tokens, budget = 32000 * 0.75 = 24000 → fits
     const result = compressMessages({ messages: msgs, },);
     expect(result.compressed,).toEqual(msgs,);
@@ -222,6 +225,7 @@ describe("compressMessages — edge cases", () => {
       assistantMsg("Hello",),
       systemMsg("Post-history instruction.",), // Non-leading system message
     ];
+
     const config = { ...DEFAULT_CONTEXT_WINDOW, maxContextTokens: 20, strategy: "truncate" as const, };
     const result = compressMessages({ messages: msgs, config, tokenCountFn: wordTokenCount, },);
     // splitSystemMessages only collects leading system messages

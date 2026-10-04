@@ -73,6 +73,7 @@ function requestBody(
     requiredNodes: form.requiredNodes.split(",",).map((node,) => node.trim()).filter((node,) => node.length > 0),
     body: parsed.graph,
   };
+
   const minVram = Number(form.min_vram.trim(),);
   if (form.min_vram.trim() !== "" && Number.isFinite(minVram,)) { body.min_vram = minVram; }
   if (parsed.parameters !== undefined) { body.parameters = parsed.parameters; }
@@ -91,6 +92,7 @@ function parseGraphField(text: string, errors: string[],): object | null {
     errors.push("Graph is required",);
     return null;
   }
+
   const reported = errors.length;
   const value = readJsonField(text, "Graph", errors,);
   if (errors.length > reported) { return null; }
@@ -98,6 +100,7 @@ function parseGraphField(text: string, errors: string[],): object | null {
     errors.push("Graph must be a JSON object of node id to node",);
     return null;
   }
+
   return value;
 }
 
@@ -119,6 +122,7 @@ function readJsonArrayField(text: string, label: string, errors: string[],): unk
     errors.push(`${label} must be a JSON array`,);
     return undefined;
   }
+
   return value;
 }
 
@@ -149,10 +153,12 @@ export const workflowFormState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
       const res = await apiFetch(`${WORKFLOWS_PATH}/${id}`, {
         headers: { Accept: "application/json", },
       },);
+
       if (!res.ok) {
         this.workflowFormErrors = await workflowErrors(res, `Workflow ${id} not found`,);
         return;
       }
+
       const row = parseOr(WorkflowDetailResponseSchema, await res.json(), null,);
       this.workflowForm = row ? formFromRow(row,) : emptyWorkflowForm();
       if (!row) { this.workflowFormErrors = ["Unreadable workflow response",]; }
@@ -193,10 +199,12 @@ export const workflowFormState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
         headers: { "Content-Type": "application/json", },
         body: jsonBody(requestBody(form, { graph, parameters, loraSlots, },),),
       },);
+
       if (!res.ok) {
         this.workflowFormErrors = await workflowErrors(res, "Workflow rejected",);
         return;
       }
+
       this.closeWorkflowForm();
       showToast("success", editing ? "Workflow updated" : "Workflow created",);
       await this.loadWorkflows();

@@ -67,9 +67,11 @@ export async function upsertAvatarConfig(
       existingRow.weights ?? "{}",
       {} as Record<AvatarTagType, number>,
     );
+
     const mergedWeights = config.weights
       ? { ...existingWeights, ...config.weights, }
       : existingWeights;
+
     const fallbackChain = config.fallbackChain
       ? jsonStringifyOr(config.fallbackChain,)
       : existingRow.fallback_chain;

@@ -21,6 +21,7 @@ describe("flushChunk", () => {
         chunks.push(c,);
       },
     } as unknown as ReadableStreamDefaultController;
+
     const seq = flushChunk(controller, buffer, "hello",);
     expect(seq,).toBe(0,);
     expect(new TextDecoder().decode(chunks[0],),).toBe("hello",);
@@ -33,6 +34,7 @@ describe("recordLastRendered", () => {
     activeGenerations.set("attempt-1", {
       lastRenderedChunkIndex: -1,
     } as unknown as ActiveGeneration,);
+
     recordLastRendered("attempt-1", 7,);
     expect(activeGenerations.get("attempt-1",)?.lastRenderedChunkIndex,).toBe(7,);
   });

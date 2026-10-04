@@ -77,6 +77,7 @@ export async function getXpHistory(
     .orderBy("created_at", "desc",)
     .limit(limit,)
     .execute();
+
   return Array.from(rows, (r,) => ({
     id: r.id,
     amount: r.amount,

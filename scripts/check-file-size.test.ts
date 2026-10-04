@@ -48,6 +48,10 @@ describe("countContentLines", () => {
     expect(fileOf(300,).split("\n",).length,).toBe(301,);
     expect(countContentLines(fileOf(300,),),).toBe(300,);
   });
+  test("blank lines are separators, not content — padding paragraphs never tip the budget", () => {
+    expect(countContentLines("a\n\nb\n   \nc\n",),).toBe(3,);
+    expect(exceedsSizeAllow("a\n\nb\n", 2,),).toBe(false,);
+  });
 });
 
 describe("exceedsSizeAllow", () => {

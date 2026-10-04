@@ -40,6 +40,7 @@ describe("isChatGenerating", () => {
       chatId: "chat-1",
       status: GenerationStatus.Streaming,
     } as ActiveGeneration,);
+
     chatToAttempt.set("chat-1", attemptId,);
     expect(isChatGenerating("chat-1",),).toBe(true,);
   });
@@ -52,6 +53,7 @@ describe("isChatGenerating", () => {
       chatId: "chat-1",
       status: GenerationStatus.Completed,
     } as ActiveGeneration,);
+
     chatToAttempt.set("chat-1", attemptId,);
     expect(isChatGenerating("chat-1",),).toBe(false,);
   });
@@ -87,6 +89,7 @@ describe("listActiveGenerations", () => {
       charsReceived: 100,
       startedAt: Date.now() - 1000,
     } as ActiveGeneration,);
+
     const list = listActiveGenerations();
     expect(list.length,).toBe(1,);
     expect(list[0]!.attemptId,).toBe("attempt-1",);
@@ -100,6 +103,7 @@ describe("safeTransition", () => {
       attemptId: "attempt-1",
       status: GenerationStatus.Pending,
     } as ActiveGeneration;
+
     safeTransition({ active, to: GenerationStatus.Processing, log, },);
     expect(active.status,).toBe(GenerationStatus.Processing,);
   });
@@ -110,6 +114,7 @@ describe("safeTransition", () => {
       attemptId: "attempt-1",
       status: GenerationStatus.Completed,
     } as ActiveGeneration;
+
     // Invalid: Completed → Streaming
     safeTransition({ active, to: GenerationStatus.Streaming, log, },);
     expect(active.status,).toBe(GenerationStatus.Streaming,);
@@ -125,6 +130,7 @@ describe("startGenerationTracking idempotency", () => {
       values: () => chain,
       where: () => chain,
     };
+
     return {
       insertInto: () => chain,
       updateTable: () => chain,
@@ -146,6 +152,7 @@ describe("startGenerationTracking idempotency", () => {
     await expect(
       startGenerationTracking({ options: baseOptions, db, },),
     ).rejects.toThrow(IdempotencyKeyConflictError,);
+
     // First generation stays intact and in-flight.
     expect(isChatGenerating("chat-1",),).toBe(true,);
     expect(getActiveAttemptId("chat-1",),).toBe(first.attemptId,);
@@ -159,6 +166,7 @@ describe("startGenerationTracking idempotency", () => {
       options: { ...baseOptions, idempotencyKey: "key-2", },
       db,
     },);
+
     expect(first.abortSignal.aborted,).toBe(true,);
     expect(second.attemptId,).not.toBe(first.attemptId,);
     expect(getActiveAttemptId("chat-1",),).toBe(second.attemptId,);

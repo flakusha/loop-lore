@@ -23,5 +23,6 @@ export function allocateNodeId(reserved: Iterable<string>,): string {
     const leading = Number.parseInt(key, 10,);
     if (Number.isFinite(leading,) && leading > max) { max = leading; }
   }
+
   return String(max + 1,);
 }

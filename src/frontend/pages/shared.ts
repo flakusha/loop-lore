@@ -20,6 +20,7 @@ export async function fetchPartial(path: string,): Promise<string | null> {
     log.error(`Failed to load partial ${path}`, undefined, { status: resp.status, },);
     return null;
   }
+
   return resp.text();
 }
 
@@ -75,9 +76,11 @@ export function filterCards(opts: FilterCardsOptions,): void {
     const desc = (card.querySelector(opts.descSelector,)?.textContent ?? "").toLowerCase();
     const match = (!query || name.includes(query,) || desc.includes(query,)) &&
       (opts.matchExtra ? opts.matchExtra(card,) : true);
+
     (card as HTMLElement).style.display = match ? "" : "none";
     if (match) { visible++; }
   }
+
   if (visible === 0 && cards.length > 0) {
     const container = document.querySelector(opts.containerId,);
     if (container && !container.querySelector(".empty-state",)) {
@@ -85,9 +88,11 @@ export function filterCards(opts: FilterCardsOptions,): void {
       empty.className = "empty-state";
       if (opts.emptyStyle) { empty.style.cssText = opts.emptyStyle; }
       else { empty.style.padding = "var(--space-12)"; }
+
       empty.innerHTML = `<div class="icon">${escapeHtml(opts.emptyIcon,)}</div><div class="title">${
         escapeHtml(opts.emptyTitle,)
       }</div>`;
+
       container.append(empty,);
     }
   }
@@ -113,6 +118,7 @@ export function filterActors(actors: any[], q: string, limit = 20,): any[] {
       if (out.length >= limit) { break; }
     }
   }
+
   return out;
 }
 

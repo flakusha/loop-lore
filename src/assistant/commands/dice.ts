@@ -140,6 +140,7 @@ export function formatDiceResult(result: DiceResult,): string {
     : (result.modifier < 0
       ? ` - ${Math.abs(result.modifier,)}`
       : "");
+
   const diceDesc = `${result.count}d${result.sides}${modifierStr}`;
 
   return `🎲 ${diceDesc}: [${rollValues}]${modifierStr} = **${result.total}**`;

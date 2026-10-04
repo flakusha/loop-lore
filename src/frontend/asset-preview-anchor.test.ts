@@ -30,6 +30,7 @@ beforeEach(() => {
   calls = [];
   feHandler = null;
 },);
+
 afterEach(() => {
   dom.restore();
 },);
@@ -40,6 +41,7 @@ function mountedBody(): { body: FakeEl; img: FakeEl } {
   img.getBoundingClientRect = () => {
     return { left: 10, top: 20, width: 200, height: 100, };
   };
+
   body.append(img,);
   return { body, img, };
 }
@@ -61,6 +63,7 @@ describeOrSkip("mountPreviewAnchorEditor", () => {
       expect(url,).toContain("/transform?context=sprite",);
       return new Response(JSON.stringify({ focal_point_x: 0.4, focal_point_y: 0.3, },), { status: 200, },);
     };
+
     const { body, } = mountedBody();
     mountPreviewAnchorEditor(body as unknown as HTMLElement, "a1",);
     await flush();
@@ -82,6 +85,7 @@ describeOrSkip("mountPreviewAnchorEditor", () => {
     feHandler = () => {
       throw new Error("offline",);
     };
+
     const { body, } = mountedBody();
     mountPreviewAnchorEditor(body as unknown as HTMLElement, "a1",);
     await flush();
@@ -95,6 +99,7 @@ describeOrSkip("mountPreviewAnchorEditor", () => {
       if (opts.method === "PUT") { return new Response("{}", { status: 200, },); }
       return new Response("{}", { status: 404, },);
     };
+
     const { body, img, } = mountedBody();
     mountPreviewAnchorEditor(body as unknown as HTMLElement, "a7",);
     await flush();
@@ -122,6 +127,7 @@ describeOrSkip("mountPreviewAnchorEditor", () => {
       if (n > 1) { throw new Error("offline",); }
       return new Response("{}", { status: 404, },);
     };
+
     const { body, img, } = mountedBody();
     mountPreviewAnchorEditor(body as unknown as HTMLElement, "a9",);
     await flush();

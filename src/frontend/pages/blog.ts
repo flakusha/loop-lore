@@ -106,6 +106,7 @@ globalThis.blogPage = function(): BlogPageState {
       const authorId = post !== null && post.id === id
         ? post.author_id
         : this.store._blogPosts.find((p,) => p.id === id)?.author_id;
+
       await this.store.listComments(id,);
       await this.store.loadSources(id,);
       this.following = authorId === undefined ? false : await this.store.getFollowStatus(authorId,);
@@ -154,6 +155,7 @@ globalThis.blogPage = function(): BlogPageState {
           if (c.children !== undefined && c.children.length > 0) { walk(c.children, depth + 1,); }
         }
       };
+
       walk(this.store._blogComments, 0,);
       return out;
     },
@@ -194,6 +196,7 @@ globalThis.blogPage = function(): BlogPageState {
       } else {
         await this.store.followAuthor(post.author_id,);
       }
+
       this.following = await this.store.getFollowStatus(post.author_id,);
     },
 
@@ -214,6 +217,7 @@ globalThis.blogPage = function(): BlogPageState {
         this.formError = "create";
         return;
       }
+
       const tags = this.formTags.split(",",).map((s,) => s.trim()).filter((s,) => s !== "");
       await this.store.createPost({
         title: this.formTitle.trim(),
@@ -223,6 +227,7 @@ globalThis.blogPage = function(): BlogPageState {
         character_id: this.formCharacterId.trim() === "" ? undefined : this.formCharacterId.trim(),
         tags,
       },);
+
       if (this.store._blogError !== "" && this.store._blogError !== null) { return; }
       this.formTitle = "";
       this.formBody = "";

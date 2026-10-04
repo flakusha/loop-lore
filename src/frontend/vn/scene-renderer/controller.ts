@@ -34,9 +34,11 @@ function syncRosterFromScenes(): void {
     for (const member of scene.cast ?? []) {
       addToRoster(roster, member,);
     }
+
     applyStageDirectives(roster, deriveStageDirectives(prev, scene,),);
     prev = scene;
   }
+
   state.roster = roster;
 }
 
@@ -68,6 +70,7 @@ export function initVnRenderer(
   if (state.locationChangeHandler) {
     globalThis.removeEventListener("chat:location-changed", state.locationChangeHandler,);
   }
+
   state.locationChangeHandler = handleLocationChanged;
   globalThis.addEventListener("chat:location-changed", state.locationChangeHandler,);
 
@@ -86,12 +89,14 @@ export function destroyVnRenderer(): void {
     globalThis.removeEventListener("chat:location-changed", state.locationChangeHandler,);
     state.locationChangeHandler = null;
   }
+
   destroyChoiceCards();
   state.loadingIndicator = null;
   if (state.container) {
     state.container.replaceChildren();
     state.container = null;
   }
+
   state.scenes = [];
   state.currentIndex = 0;
   state.settings = null;
@@ -171,6 +176,7 @@ export function addScene(message: VnMessage,): void {
   for (const member of scene.cast ?? []) {
     addToRoster(state.roster, member,);
   }
+
   applyStageDirectives(state.roster, deriveStageDirectives(prev, scene,),);
   state.currentIndex = state.scenes.length - 1;
   void preloadCurrentAndUpcoming();

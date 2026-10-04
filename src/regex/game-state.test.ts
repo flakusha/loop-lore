@@ -34,6 +34,7 @@ describe("extractGameStateBlock", () => {
       '```game-state\n{"first":true}\n```',
       '```game-state\n{"second":true}\n```',
     ].join("\n",);
+
     expect(extractGameStateBlock(content,),).toBe('{"first":true}',);
   });
 
@@ -55,6 +56,7 @@ describe("extractGameStateBlocks", () => {
       "text",
       '```game-state\n{"n":2}\n```',
     ].join("\n",);
+
     expect(extractGameStateBlocks(content,),).toEqual([
       '{"n":1}',
       '{"n":2}',

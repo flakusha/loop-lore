@@ -52,6 +52,7 @@ let foreignTicks = 0;
 const foreignTimer: ReturnType<typeof setInterval> = setInterval(() => {
   process.emitWarning(`[foreign-emitter] background tick ${foreignTicks++}`,);
 }, 1,);
+
 // Unref'd so an unpaired run (030 alone) cannot hang on this timer.
 foreignTimer.unref?.();
 // Published as a disposer, not the handle: the peer file gets a callable with
@@ -76,6 +77,7 @@ describe(MIGRATION, () => {
     } catch {
       // Logger already initialized — ignore.
     }
+
     const fresh = makeInMemoryDb();
     db = fresh.kysely;
     raw = fresh.raw;
@@ -86,6 +88,7 @@ describe(MIGRATION, () => {
       if (name === MIGRATION) { continue; }
       await migrations[name]!.up(db,);
     }
+
     await sql`INSERT INTO users (id, username, display_name, created_at)
       VALUES ('owner-1', 'owner-1', 'Owner One', datetime('now'))`.execute(db,);
   },);
@@ -124,6 +127,7 @@ describe(MIGRATION, () => {
     const rows = await sql<{ id: string }>`SELECT id FROM assets
       WHERE content_hash IS ${contentHash} AND encrypted_key_id IS ${encryptedKeyId}
       ORDER BY id`.execute(db,);
+
     return rows.rows.map((r,) => r.id);
   }
 
@@ -160,6 +164,7 @@ describe(MIGRATION, () => {
     const survivor = await sql<{ storage_path: string }>`SELECT storage_path FROM assets WHERE id = 'a-oldest'`.execute(
       db,
     );
+
     expect(survivor.rows[0]?.storage_path,).toBe("/storage/a-oldest",);
     // Rows outside a duplicate group are untouched by the collapse.
     expect(await idsFor("hash-public", "key-9",),).toEqual(["f-other-tier",],);
@@ -180,9 +185,11 @@ describe(MIGRATION, () => {
     await expect(
       insertAsset("i-dup-public", "2026-01-04 00:00:00", "hash-public", null,),
     ).rejects.toThrow(/UNIQUE/i,);
+
     await expect(
       insertAsset("j-dup-keyed", "2026-01-04 00:00:00", "hash-keyed", "key-7",),
     ).rejects.toThrow(/UNIQUE/i,);
+
     // The `dedupe: false` opt-out still works with the indexes in place.
     await insertAsset("k-nohash-after", "2026-01-05 00:00:00", null, null,);
     expect(await idsFor(null, null,),).toContain("k-nohash-after",);

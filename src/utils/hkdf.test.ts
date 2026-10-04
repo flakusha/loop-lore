@@ -8,10 +8,12 @@ describe("hkdf", () => {
     expect(typeof key,).toBe("object",);
     expect(key.length,).toBeGreaterThan(0,);
   });
+
   test("hashWithDomain hashes with domain info", async () => {
     const hash = await hashWithDomain("secret", "test-info", "test",);
     expect(typeof hash,).toBe("string",);
   });
+
   test("DOMAIN_INFO is defined", () => {
     expect(DOMAIN_INFO,).toBeDefined();
   });

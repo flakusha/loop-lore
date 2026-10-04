@@ -58,11 +58,13 @@ export async function storyControl(
       headers: { "Content-Type": "application/json", },
       body: body === undefined ? undefined : jsonBody(body,),
     },);
+
     if (res.ok) { return { ok: true, }; }
     let data: { message?: string } | null = null;
     try {
       data = (await res.json()) as { message?: string };
     } catch { /* non-JSON error body */ }
+
     return { ok: false, message: data?.message ?? `story control "${action}" failed (${res.status})`, };
   } catch (error) {
     log.warn("Story control request failed", { action, error, },);

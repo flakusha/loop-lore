@@ -23,6 +23,7 @@ describe("Chat Participants E2E", () => {
     const res = await api.get<Array<{ actor_id: string; role_in_chat: string }>>(
       `/api/v1/chats/${SEED.chat.id}/participants`,
     );
+
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data,),).toBe(true,);
     expect(res.data!.some((p,) => p.actor_id === SEED.user.id),).toBe(true,);
@@ -33,17 +34,20 @@ describe("Chat Participants E2E", () => {
       displayName: "Participant Actor",
       actorType: "character",
     },);
+
     participantActorId = actorRes.data!.id;
 
     const res = await api.post(`/api/v1/chats/${SEED.chat.id}/participants`, {
       actorId: participantActorId,
       roleInChat: "member",
     },);
+
     expect(res.ok,).toBe(true,);
 
     const listRes = await api.get<Array<{ actor_id: string }>>(
       `/api/v1/chats/${SEED.chat.id}/participants`,
     );
+
     expect(listRes.data!.some((p,) => p.actor_id === participantActorId),).toBe(true,);
   });
 
@@ -51,6 +55,7 @@ describe("Chat Participants E2E", () => {
     const res = await api.post(`/api/v1/chats/${SEED.chat.id}/participants`, {
       roleInChat: "member",
     },);
+
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(422,);
   });
@@ -62,6 +67,7 @@ describe("Chat Participants E2E", () => {
     const listRes = await api.get<Array<{ actor_id: string }>>(
       `/api/v1/chats/${SEED.chat.id}/participants`,
     );
+
     expect(listRes.data!.some((p,) => p.actor_id === participantActorId),).toBe(false,);
   });
 
@@ -69,6 +75,7 @@ describe("Chat Participants E2E", () => {
     const createRes = await api.post<{ id: string }>(`/api/v1/chats/${SEED.chat.id}/side`, {
       name: "OOC Channel",
     },);
+
     expect(createRes.ok,).toBe(true,);
     const sideId = createRes.data!.id;
 
@@ -76,6 +83,7 @@ describe("Chat Participants E2E", () => {
     const listRes = await api.get<{ sideChannels: Array<{ id: string; name: string }> }>(
       `/api/v1/chats/${SEED.chat.id}/side`,
     );
+
     expect(listRes.ok,).toBe(true,);
     expect(listRes.data!.sideChannels.some((s,) => s.id === sideId),).toBe(true,);
     expect(listRes.data!.sideChannels.some((s,) => s.name === "OOC Channel"),).toBe(true,);
@@ -84,6 +92,7 @@ describe("Chat Participants E2E", () => {
     const chatRes = await api.get<{ parent_chat_id: string | null; name: string }>(
       `/api/v1/chats/${sideId}`,
     );
+
     expect(chatRes.ok,).toBe(true,);
     expect(chatRes.data!.parent_chat_id,).toBe(SEED.chat.id,);
   });
@@ -105,6 +114,7 @@ describe("Chat Participants E2E", () => {
       type: "group",
       mode: "group",
     },);
+
     const groupId = group.data!.id;
     await api.post(`/api/v1/chats/${groupId}/participants`, {
       actorId: SEED.character.id,
@@ -119,6 +129,7 @@ describe("Chat Participants E2E", () => {
         order: Array<{ actor_id: string; display_name: string }>;
       } | null;
     }>(`/api/v1/chats/${groupId}/turn-order`,);
+
     expect(res.ok,).toBe(true,);
     // The group has an AI participant → a turn order is computed.
     expect(res.data!.turnOrder,).not.toBeNull();

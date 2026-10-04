@@ -84,6 +84,7 @@ describe("detectLocale", () => {
       defaultLocale: "en",
       supportedLocales: ["en", "ja",],
     };
+
     // "pt" is a real locale but not in this config's supported list.
     expect(detectLocale(req({ "Accept-Language": "pt", },), config,),).toBe("en",);
     expect(detectLocale(req({ "Accept-Language": "ja", },), config,),).toBe("ja",);

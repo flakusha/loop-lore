@@ -84,6 +84,7 @@ describeOrSkip("exportProgress.applyEvent", () => {
         closed = true;
       },
     } as unknown as EventSource;
+
     ctx.applyEvent({ type: "job_created", jobId: "j1", status: "queued", },);
     ctx.applyEvent({
       type: "completed",
@@ -92,6 +93,7 @@ describeOrSkip("exportProgress.applyEvent", () => {
       totalItems: 10,
       completedAt: "2026-01-01T00:01:00Z",
     },);
+
     expect(ctx.status,).toBe("completed",);
     expect(ctx.downloadUrl,).toBe("/api/v1/export/download/j1",);
     expect(ctx.completedAt,).toBe("2026-01-01T00:01:00Z",);
@@ -127,6 +129,7 @@ describeOrSkip("exportProgress.applySnapshot", () => {
       currentStep: "chats",
       createdAt: "2026-01-01T00:00:00Z",
     },);
+
     expect(terminal,).toBe(false,);
     expect(ctx.currentStep,).toBe("chats",);
   });
@@ -143,6 +146,7 @@ describeOrSkip("exportProgress.applySnapshot", () => {
       createdAt: "2026-01-01T00:00:00Z",
       completedAt: "2026-01-01T00:01:00Z",
     },);
+
     expect(terminal,).toBe(true,);
     expect(ctx.downloadUrl,).toBe("/api/v1/export/download/j1",);
   });
@@ -159,6 +163,7 @@ describeOrSkip("exportProgress.applySnapshot", () => {
       createdAt: "2026-01-01T00:00:00Z",
       error: "boom",
     },);
+
     expect(ctx.error,).toBe("boom",);
   });
 },);
@@ -238,6 +243,7 @@ const sseBody = (blocks: string[],) =>
         for (const block of blocks) {
           controller.enqueue(new TextEncoder().encode(block,),);
         }
+
         controller.close();
       },
     },),
@@ -252,6 +258,7 @@ describeOrSkip("exportProgress.startExport (SSE stream)", () => {
         `data: {"type":"progress","jobId":"j1","progress":5,"total":10,"percentage":50}\n\n`,
         `data: {"type":"completed","jobId":"j1","downloadUrl":"/api/v1/export/download/j1","totalItems":10}\n\n`,
       ],);
+
     const ctx = baseCtx();
     await ctx.startExport();
     expect(ctx.jobId,).toBe("j1",);
@@ -264,6 +271,7 @@ describeOrSkip("exportProgress.startExport (SSE stream)", () => {
       sseBody([
         `data: {"type":"progress","jobId":"j2","progress":1}\n\n`,
       ],);
+
     const ctx = baseCtx();
     await ctx.startExport();
     expect(ctx.isTerminal(),).toBe(false,);
@@ -284,6 +292,7 @@ describeOrSkip("exportProgress.startPolling tick", () => {
         currentStep: "chats",
         createdAt: "2026-01-01T00:00:00Z",
       },);
+
     const ctx = baseCtx();
     ctx.jobId = "j1";
     ctx.startPolling();
@@ -302,6 +311,7 @@ describeOrSkip("exportProgress._sse teardown", () => {
         closed = true;
       },
     } as unknown as EventSource;
+
     ctx.applyEvent({ type: "job_created", jobId: "j1", status: "queued", },);
     ctx.applyEvent({ type: "completed", jobId: "j1", },);
     expect(closed,).toBe(true,);

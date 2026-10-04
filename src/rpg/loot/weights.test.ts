@@ -6,6 +6,7 @@ describe("rpg/loot/weights (real logic)", () => {
     expect(RARITY_WEIGHTS.common,).toBeGreaterThan(RARITY_WEIGHTS.rare,);
     expect(RARITY_WEIGHTS.artifact,).toBeLessThan(RARITY_WEIGHTS.common,);
   });
+
   it("all rarities defined", () => {
     const keys = ["common", "uncommon", "rare", "epic", "legendary", "unique", "artifact",] as const;
     for (const k of keys) {

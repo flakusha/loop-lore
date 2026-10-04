@@ -90,6 +90,7 @@ describe("calculateEquipmentModifiers", () => {
         modifiers: [{ stat: "defense", value: 4, },],
       },),
     ],);
+
     expect(mods,).toHaveLength(2,);
   });
 });
@@ -156,6 +157,7 @@ describe("generateLoot", () => {
       maxQuantity: 5,
       requiredLevel: 5,
     },];
+
     expect(generateLoot(table, 1,),).toEqual([],);
   });
 
@@ -167,6 +169,7 @@ describe("generateLoot", () => {
       maxQuantity: 1,
       requiredLevel: 1,
     },];
+
     expect(generateLoot(table, 10,),).toEqual([],);
   });
 
@@ -178,6 +181,7 @@ describe("generateLoot", () => {
       maxQuantity: 3,
       requiredLevel: 1,
     },];
+
     expect(generateLoot(table, 10,),).toEqual([{ itemId: "gem", quantity: 3, },],);
   });
 
@@ -189,6 +193,7 @@ describe("generateLoot", () => {
       maxQuantity: 6,
       requiredLevel: 1,
     },];
+
     for (let i = 0; i < 20; i++) {
       const [drop,] = generateLoot(table, 10,);
       expect(drop?.quantity,).toBeGreaterThanOrEqual(1,);
@@ -204,6 +209,7 @@ describe("generateLoot", () => {
       maxQuantity: 1,
       requiredLevel: 5,
     },];
+
     expect(generateLoot(table, 5,),).toHaveLength(1,);
   });
 });

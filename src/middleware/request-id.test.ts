@@ -62,6 +62,7 @@ describe("resolveRequestId", () => {
       [REQUEST_ID_HEADER]: "primary",
       [IDEMPOTENCY_KEY_HEADER]: "fallback",
     },);
+
     expect(resolveRequestId(headers,),).toBe("primary",);
   });
 

@@ -48,6 +48,7 @@ export function toast(message: string, type = "info",): void {
   try {
     const alpine =
       (globalThis as { Alpine?: { store: (name: string,) => { toast: (t: string, m: string,) => void } } }).Alpine;
+
     alpine?.store("app",)?.toast(type, message,);
   } catch {
     /* toast is best-effort */
@@ -69,6 +70,7 @@ export function parseQuestBanners(raw: string,): QuestBanner[] {
       progress: Math.round(entry.progress,),
     },);
   }
+
   return banners;
 }
 
@@ -118,11 +120,14 @@ export function summarizeTurns(turns: StoryTurnRow[],): TurnSummary {
         status: turn.status,
       };
     }
+
     if (!latest || turn.turn_number > latest.turn_number) { latest = turn; }
   }
+
   if (!latest) {
     return { turnMeta, turnNumber: null, promptSent: null, running: false, banners: [], };
   }
+
   return {
     turnMeta,
     turnNumber: latest.turn_number,
@@ -148,5 +153,6 @@ export function mapParticipants(
     isActive: index === 0,
     order: index,
   }),);
+
   return { actors, nextActorName: actors[0]?.name ?? null, };
 }

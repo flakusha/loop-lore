@@ -51,6 +51,7 @@ describe("findKeyphraseMatches", () => {
       { id: "c", keywords: ["tok",], },
       { id: "d", keywords: ["tok",], },
     ];
+
     const hits = findKeyphraseMatches({ text: "tok tok tok tok", entries: wide, },);
     expect(hits,).toHaveLength(DEFAULT_MAX_KEYPHRASE_RECALLS,);
     expect(hits.map((h,) => h.id),).toEqual(["a", "b", "c",],);

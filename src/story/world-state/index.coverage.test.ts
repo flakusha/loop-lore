@@ -99,6 +99,7 @@ describe("WorldStateService.buildContext", () => {
       },),
       turn_strategy: "hybrid",
     },);
+
     const actorId = await seedMember("Hero", "npc",);
     await insertChatParticipants(db, chatId, actorId,);
     await insertNpcStates(db, actorId, worldId, {
@@ -107,11 +108,13 @@ describe("WorldStateService.buildContext", () => {
       mental_state: "calm",
       schedule: JSON.stringify({ movementPattern: "patrol", targetLocationId: locId, },),
     },);
+
     await insertQuests(db, worldId, actorId, "Find the Key", "collection", 1, {
       status: "active",
       priority: 5,
       config: JSON.stringify({ type: "collection", },),
     },);
+
     await insertStoryTurns(db, chatId, 1, actorId, "character_action", "What do you do?", {
       status: "accepted",
       response_received: "I search.",
@@ -148,6 +151,7 @@ describe("WorldStateService.buildContext", () => {
       story_state: "{{{not json",
       turn_strategy: "round_robin",
     },);
+
     const ctx = await new WorldStateService(db,).buildContext(chatId,);
     expect(ctx,).not.toBeNull();
     expect(ctx!.turnManagerState.currentTurn,).toBe(0,);
@@ -187,6 +191,7 @@ describe("WorldStateService.buildContext", () => {
       items_available: "]]]",
       hazards: "not json",
     },);
+
     const chatId = await insertChats(db, "Chat", userId, { world_id: worldId, current_location_id: locId, },);
     const ctx = await new WorldStateService(db,).buildContext(chatId,);
     expect(ctx,).not.toBeNull();
@@ -200,6 +205,7 @@ describe("WorldStateService.buildContext", () => {
       status: "active",
       config: "{{{",
     },);
+
     const chatId = await insertChats(db, "Chat", userId, { world_id: worldId, },);
     const ctx = await new WorldStateService(db,).buildContext(chatId,);
     expect(ctx,).not.toBeNull();
@@ -221,6 +227,7 @@ describe("WorldStateService.buildContext", () => {
     for (let i = 1; i <= 15; i++) {
       await insertStoryTurns(db, chatId, i, actorId, "character_action", `prompt ${i}`, { status: "accepted", },);
     }
+
     const ctx = await new WorldStateService(db,).buildContext(chatId, 5,);
     expect(ctx!.recentTurns,).toHaveLength(5,);
     expect(ctx!.recentTurns.map((t,) => t.turnNumber),).toEqual([11, 12, 13, 14, 15,],);
@@ -262,6 +269,7 @@ describe("WorldStateService.buildContext", () => {
       knowledge: "]]]",
       relationships: "not json",
     },);
+
     const ctx = await new WorldStateService(db,).buildContext(chatId,);
     const npc = ctx!.actors[0]!.npcState!;
     expect(npc.movementPattern,).toBe("stationary",);

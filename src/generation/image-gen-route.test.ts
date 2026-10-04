@@ -155,6 +155,7 @@ if (ISOLATED) {
     ...realAssetCreate,
     createAsset: mockCreateAsset,
   }),);
+
   mock.module("../assets/service/links", () => ({
     ...realAssetLinks,
     linkAsset: mockLinkAsset,
@@ -203,6 +204,7 @@ async function seedTemplate(
     status: "active",
     settings: "{}",
   },).execute();
+
   await db.insertInto("prompt_templates",).values({
     id,
     owner_id: "test-user",
@@ -250,6 +252,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
       prompt: "lora prompt",
       lora: LORA_CONFIG,
     },);
+
     await handleImageGeneration(body, undefined, "test-user",);
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
@@ -300,6 +303,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
       prompt: "comfyui lora prompt",
       lora: COMFYUI_CONFIG,
     },);
+
     await handleComfyUI(body, undefined, "test-user",);
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
@@ -384,6 +388,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
       prompt: "lora with openai",
       lora: LORA_CONFIG,
     },);
+
     const res = await handleOpenAI(body, undefined, "test-user",);
 
     expect(res.status,).toBe(400,);
@@ -516,6 +521,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
         "Image template",
         JSON.stringify({ templateBody: "a {{mood}} portrait", negativePrompt: "blurry", },),
       );
+
       const res = await handleImageGeneration(
         makeBody({ templateId: "tpl-image", context: { mood: "dark", }, },),
         db,
@@ -559,6 +565,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
         status: "active",
         settings: "{}",
       },).execute();
+
       await insertChats(db, "Linked chat", "test-user", { id: "chat-1", } as never,);
       const res = await handleImageGeneration(
         makeBody({ prompt: "linked", messageId: "msg-1", chatId: "chat-1", },),

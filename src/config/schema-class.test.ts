@@ -106,6 +106,7 @@ describe("ConfigSchema", () => {
     expect(() => {
       validate(cfg,);
     },).toThrow("port",);
+
     cfg.server.port = 100_000;
     expect(() => {
       validate(cfg,);
@@ -150,6 +151,7 @@ describe("ConfigSchema", () => {
         models: {},
       },
     ];
+
     expect(() => {
       validate(cfg,);
     },).toThrow("baseUrl",);
@@ -169,6 +171,7 @@ describe("ConfigSchema", () => {
         models: {},
       },
     ];
+
     expect(() => {
       validate(cfg,);
     },).toThrow("model",);
@@ -186,6 +189,7 @@ describe("ConfigSchema", () => {
       allowUserApiKey: false,
       models: { claude: { contextLimit: 200_000, maxOutput: 4000, }, },
     };
+
     expect(() => {
       validate(cfg,);
     },).toThrow("apiKey",);
@@ -203,6 +207,7 @@ describe("ConfigSchema", () => {
       allowUserApiKey: false,
       models: {},
     };
+
     expect(() => {
       validate(cfg,);
     },).toThrow("baseUrl",);
@@ -220,6 +225,7 @@ describe("ConfigSchema", () => {
       allowUserApiKey: false,
       models: { "llama3.2": { contextLimit: 128_000, maxOutput: 4096, }, },
     };
+
     expect(() => {
       validate(cfg,);
     },).not.toThrow();
@@ -292,13 +298,16 @@ describe("ConfigSchema", () => {
 
           break;
         }
+
         current = (current as Record<string, unknown>)[part];
       }
+
       // Optional fields (testing.*, db.url, optional logging) may be undefined — expected
       if (pathExists && current !== undefined) {
         expect(current,).toBeDefined();
       }
     }
+
     // At least some paths must resolve
     const resolved = Object.values(map,).filter((dotPath,) => {
       const parts = dotPath.split(".",);
@@ -307,8 +316,10 @@ describe("ConfigSchema", () => {
         if (current === undefined || current === null || typeof current !== "object") { return false; }
         current = (current as Record<string, unknown>)[part];
       }
+
       return current != null;
     },);
+
     expect(resolved.length,).toBeGreaterThan(50,); // Most paths should resolve
   });
 });

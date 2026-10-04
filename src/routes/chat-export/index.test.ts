@@ -30,6 +30,7 @@ function makeApp(userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole: "user", }));
   }
+
   return app.use(chatExportRoutes({ database: db, },),);
 }
 
@@ -47,6 +48,7 @@ describe("chatExportRoutes barrel", () => {
     const res = await makeApp().handle(
       new Request("http://localhost/api/chats/chat-1/export?format=json",),
     );
+
     expect(res.status,).toBe(401,);
   });
 });

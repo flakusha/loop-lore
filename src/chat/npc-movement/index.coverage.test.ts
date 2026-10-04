@@ -50,6 +50,7 @@ describe("NpcMovementIndicatorService", () => {
       id: msgA,
       created_at: "2026-01-01T10:00:00Z",
     } as never,);
+
     await insertMessages(db, chatId, actorB, "assistant", "scene two", {
       id: msgB,
       created_at: "2026-01-02T10:00:00Z",
@@ -81,9 +82,11 @@ describe("NpcMovementIndicatorService", () => {
     const row = await db
       .selectFrom("messages",).select("metadata",)
       .where("id", "=", msgA,).executeTakeFirstOrThrow();
+
     const parsed = JSON.parse(row.metadata as string,) as {
       movement: Array<{ actorId: string; pattern: string }>;
     };
+
     expect(parsed.movement,).toHaveLength(1,);
     expect(parsed.movement[0]?.actorId,).toBe(actorA,);
 
@@ -95,12 +98,15 @@ describe("NpcMovementIndicatorService", () => {
       pattern: "flee",
       timestamp: "2026-01-01T10:05:00Z",
     },],);
+
     const again = await db
       .selectFrom("messages",).select("metadata",)
       .where("id", "=", msgA,).executeTakeFirstOrThrow();
+
     const parsedAgain = JSON.parse(again.metadata as string,) as {
       movement: Array<{ pattern: string }>;
     };
+
     expect(parsedAgain.movement.map((m,) => m.pattern),).toEqual(["wander", "flee",],);
   });
 

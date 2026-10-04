@@ -36,6 +36,7 @@ describe("create_world tool", () => {
       { name: "Aetheria", description: "A floating continent.", lore: "Lost sky islands.", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).not.toBe(true,);
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, name: "Aetheria", },);
 
@@ -44,6 +45,7 @@ describe("create_world tool", () => {
       .selectAll()
       .where("name", "=", "Aetheria",)
       .executeTakeFirstOrThrow();
+
     expect(row.owner_id,).toBe(userId,);
     expect(row.description,).toBe("A floating continent.",);
     expect(row.lore,).toBe("Lost sky islands.",);
@@ -55,6 +57,7 @@ describe("create_world tool", () => {
       { description: "no name", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).toBe(true,);
     expect(await db.selectFrom("worlds",).select("id",).execute(),).toHaveLength(0,);
   });
@@ -64,6 +67,7 @@ describe("create_world tool", () => {
       { name: "\t ", },
       { db, actorId, chatId: "chat-1", },
     );
+
     expect(result.isError,).toBe(true,);
   });
 

@@ -19,6 +19,7 @@ function makeApp(db: Kysely<DB>, userId?: string,) {
   if (userId) {
     app.derive(() => ({ userId, }));
   }
+
   return app.use(actorNotesRoutes({ database: db, config: {} as never, },),);
 }
 
@@ -51,8 +52,10 @@ describe("actorNotesRoutes", () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/nonexistent/notes",),
     );
+
     expect(res.status,).toBe(404,);
   });
+
   test("create succeeds with title+content", async () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/user1/notes", {
@@ -61,8 +64,10 @@ describe("actorNotesRoutes", () => {
         body: JSON.stringify({ title: "Note A", content: "Some note", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
   });
+
   test("create rejects empty title with 400", async () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/user1/notes", {
@@ -71,6 +76,7 @@ describe("actorNotesRoutes", () => {
         body: JSON.stringify({ title: "", content: "x", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -78,6 +84,7 @@ describe("actorNotesRoutes", () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/user1/notes",),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: unknown[] };
     expect(Array.isArray(body.data,),).toBe(true,);

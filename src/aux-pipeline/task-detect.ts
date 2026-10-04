@@ -37,5 +37,6 @@ export function detectAuxTask(
   for (const [task, marker,] of TASK_MARKERS) {
     if (system.includes(marker,)) { return task; }
   }
+
   return null;
 }

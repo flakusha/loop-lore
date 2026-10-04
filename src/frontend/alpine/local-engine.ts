@@ -68,6 +68,7 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
       clearTimeout(entry.timer,);
       entry.reject(error,);
     }
+
     pending.clear();
     progressHandler = null;
     try {
@@ -75,6 +76,7 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
     } catch {
       /* already gone */
     }
+
     worker = null;
     loaded = null;
     loadedUrl = null;
@@ -91,10 +93,12 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
       } catch {
         /* already gone */
       }
+
       worker = null;
       loaded = null;
       engineName = "";
     }
+
     try {
       const created = opts.workerFactory ? opts.workerFactory(url,) : new Worker(url,);
       created.onmessage = (event: MessageEvent,) => {
@@ -104,6 +108,7 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
           progressHandler?.(data.loaded, data.total,);
           return;
         }
+
         const entry = data.id === undefined ? undefined : pending.get(data.id,);
         if (!entry) { return; }
         pending.delete(data.id as number,);
@@ -111,9 +116,11 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
         if (data.kind === "error") { entry.reject(new LocalInferenceUnavailable(data.message,),); }
         else { entry.resolve(data,); }
       };
+
       created.onerror = () => {
         dropWorker("inference worker errored",);
       };
+
       worker = created;
       loadedUrl = url;
       return created;
@@ -134,6 +141,7 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
       pending.delete(message.id,);
       reject(dropWorker(timeoutReason,),);
     }, timeoutMs,);
+
     pending.set(message.id, { resolve, reject, timer, },);
     try {
       live.postMessage(message,);
@@ -142,6 +150,7 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
       clearTimeout(timer,);
       throw dropWorker("inference worker rejected the request",);
     }
+
     return promise;
   }
 
@@ -158,6 +167,7 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
       if (!descriptor) {
         throw new LocalInferenceUnavailable(`unknown browser model "${modelId}"`,);
       }
+
       const plan = resolveEnginePlan(descriptor,);
       if (loaded === modelId && worker && loadedUrl === plan.workerUrl) { return engineName; }
       progressHandler = onProgress ?? null;
@@ -168,9 +178,11 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
           `model "${modelId}" load timed out`,
           plan.workerUrl,
         );
+
         if (response.kind !== "ready") {
           throw new LocalInferenceUnavailable(`unexpected load response "${response.kind}"`,);
         }
+
         loaded = modelId;
         engineName = response.engine;
         markModelReady(modelId,);
@@ -191,15 +203,18 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
       if (!worker || !loaded || !loadedUrl) {
         throw new LocalInferenceUnavailable("no browser model loaded",);
       }
+
       const response = await request(
         { kind: "generate", id: nextId++, input, maxTokens, },
         generateTimeoutMs,
         "model generation timed out",
         loadedUrl,
       );
+
       if (response.kind !== "generated") {
         throw new LocalInferenceUnavailable(`unexpected generate response "${response.kind}"`,);
       }
+
       return response.text;
     },
 
@@ -229,6 +244,7 @@ export function getLocalEngine(opts?: LocalEngineOptions,): LocalEngine {
     singleton?.terminate();
     singleton = null;
   }
+
   if (!singleton) { singleton = createLocalEngine(opts ?? {},); }
   return singleton;
 }
@@ -242,5 +258,6 @@ export function resetLocalEngine(): void {
   } catch {
     /* already gone */
   }
+
   singleton = null;
 }

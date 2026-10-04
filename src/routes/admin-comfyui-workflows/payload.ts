@@ -47,11 +47,13 @@ export function uploadedGraph(body: unknown,): ComfyUIWorkflow | null {
     const wrapped = body[key];
     if (isValidWorkflow(wrapped,)) { return wrapped; }
   }
+
   const bare = Object.fromEntries(
     Object.entries(body,).filter(([, value,],) =>
       typeof value === "object" && value !== null && !Array.isArray(value,)
     ),
   );
+
   return isValidWorkflow(bare,) ? bare : null;
 }
 
@@ -90,6 +92,7 @@ export function buildWorkflowPayload(
     parameters: Array.isArray(meta.parameters,) ? meta.parameters : [],
     requiredNodes: Array.isArray(meta.requiredNodes,) ? meta.requiredNodes : [],
   };
+
   if (Array.isArray(meta.loraSlots,)) { payload.loraSlots = meta.loraSlots; }
   return payload;
 }

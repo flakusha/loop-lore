@@ -70,6 +70,7 @@ describe("memory audit — recordAuditLog", () => {
     const rows = await runRaw<{ action: string; memory_id: string }>(
       "SELECT action, memory_id FROM memory_audit_log ORDER BY created_at ASC",
     );
+
     expect(rows,).toHaveLength(2,);
     expect(rows[0],).toEqual({ action: "pin", memory_id: "mem-a", },);
     expect(rows[1],).toEqual({ action: "unpin", memory_id: "mem-b", },);
@@ -88,6 +89,7 @@ describe("memory audit — recordAuditLog", () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       action: "create" as any,
     };
+
     // Force a violation of NOT NULL on actor_id by passing null through a
     // cast. If the service throws, this test fails — by design, it must NOT.
     await expect(
@@ -132,6 +134,7 @@ describe("memory audit — listAuditLog", () => {
       since: before,
       until: new Date(Date.now() + 1000,).toISOString(),
     },);
+
     expect(result.entries.length,).toBeGreaterThanOrEqual(1,);
 
     const futureResult = await listAuditLog(db, actorId, { since: new Date(Date.now() + 60_000,).toISOString(), },);
@@ -172,6 +175,7 @@ describe("memory audit — listAuditLog", () => {
       action: "modify" as const,
       details: { i, },
     }),);
+
     await recordAuditLog(db, entries,);
 
     const page1 = await listAuditLog(db, actorId, { limit: 3, },);
@@ -200,6 +204,7 @@ describe("memory audit — listAuditLog", () => {
       action: "modify" as const,
       details: { i, },
     }),);
+
     await recordAuditLog(db, entries,);
 
     // Walk every page and collect ids. A cursor that silently degrades to
@@ -214,6 +219,7 @@ describe("memory audit — listAuditLog", () => {
         expect(seen.has(row.id,),).toBe(false,);
         seen.add(row.id,);
       }
+
       if (page.nextCursor === undefined) { break; }
       expect(page.nextCursor,).not.toBe("",);
       cursor = page.nextCursor;
@@ -262,6 +268,7 @@ describe("memory audit — listAuditLog", () => {
     const inner = Buffer.from(
       JSON.stringify({ c: "2026-01-01T00:00:00.000Z", i: "m1", },),
     ).toString("base64url",);
+
     const tampered = `!!!!${inner}`;
     expect(Buffer.from(tampered, "base64url",).toString("utf8",),).not.toBe("",);
 
@@ -351,6 +358,7 @@ describe("memory audit — extraction hook (create)", () => {
     const rows = await runRaw<{ action: string; details: string }>(
       "SELECT action, details FROM memory_audit_log ORDER BY created_at ASC",
     );
+
     expect(rows.length,).toBeGreaterThanOrEqual(2,);
     for (const row of rows) {
       expect(row.action,).toBe("create",);
@@ -389,6 +397,7 @@ describe("memory audit — purge hook (decay + purge)", () => {
     const rows = await runRaw<{ action: string; details: string }>(
       "SELECT action, details FROM memory_audit_log",
     );
+
     expect(rows.length,).toBeGreaterThanOrEqual(1,);
     expect(rows[0]?.action,).toBe("decay",);
   });
@@ -416,11 +425,13 @@ describe("memory audit — purge hook (decay + purge)", () => {
       minConfidence: 0.2,
       minStrength: 0.1,
     },);
+
     expect(result.deleted,).toBeGreaterThanOrEqual(1,);
 
     const rows = await runRaw<{ action: string }>(
       "SELECT action FROM memory_audit_log",
     );
+
     expect(rows.some((r,) => r.action === "purge"),).toBe(true,);
   });
 
@@ -447,11 +458,13 @@ describe("memory audit — purge hook (decay + purge)", () => {
       minConfidence: 0.2,
       minStrength: 0.1,
     },);
+
     expect(result.stale,).toBeGreaterThanOrEqual(1,);
 
     const rows = await runRaw<{ action: string }>(
       "SELECT action FROM memory_audit_log",
     );
+
     expect(rows.some((r,) => r.action === "decay"),).toBe(true,);
   });
 });
@@ -476,6 +489,7 @@ describe("memory audit — delete and inject actions (FEAT-075 coverage)", () =>
     const rows = await runRaw<{ action: string; memory_id: string }>(
       "SELECT action, memory_id FROM memory_audit_log WHERE memory_id = 'mem-del'",
     );
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.action,).toBe("delete",);
   });
@@ -507,11 +521,13 @@ describe("memory audit — delete and inject actions (FEAT-075 coverage)", () =>
     const rows = await runRaw<{ action: string; details: string }>(
       "SELECT action, details FROM memory_audit_log WHERE action = 'inject'",
     );
+
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.action,).toBe("inject",);
     const details = JSON.parse(rows[0]?.details ?? "{}",) as {
       memoryIds: string[];
     };
+
     expect(details.memoryIds,).toEqual(["mem-inj-1", "mem-inj-2",],);
   });
 });

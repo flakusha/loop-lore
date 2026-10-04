@@ -23,6 +23,7 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   if (userId) {
     app.derive(() => ({ userId, userRole, }));
   }
+
   return app.use(characterLicensingRoutes({ database: db, },),);
 }
 
@@ -51,6 +52,7 @@ describe("character-licensing routes", () => {
       owner_id: "owner",
       actor_type: "character" as never,
     },);
+
     await insertActors(db, "Member Actor", {
       id: MEMBER_ACTOR as never,
       owner_id: "member",
@@ -64,6 +66,7 @@ describe("character-licensing routes", () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/licensing`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -71,6 +74,7 @@ describe("character-licensing routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/api/actors/99999999-9999-4999-8999-999999999999/licensing",),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -78,6 +82,7 @@ describe("character-licensing routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/licensing`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -85,6 +90,7 @@ describe("character-licensing routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/licensing`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -108,6 +114,7 @@ describe("character-licensing routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/licensing`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as LicensingBody;
     expect(body.license_type,).toBe("cc0",);
@@ -123,6 +130,7 @@ describe("character-licensing routes", () => {
         body: JSON.stringify({ license_type: "cc0", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -134,6 +142,7 @@ describe("character-licensing routes", () => {
         body: JSON.stringify({ license_type: "cc0", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -152,6 +161,7 @@ describe("character-licensing routes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(201,);
 
     const row = await db
@@ -167,6 +177,7 @@ describe("character-licensing routes", () => {
       ],)
       .where("actor_id", "=", MEMBER_ACTOR,)
       .executeTakeFirst();
+
     expect(row?.actor_id,).toBe(MEMBER_ACTOR,);
     expect(row?.license_type,).toBe("custom",);
     expect(row?.custom_license_text,).toBe("Free for any use",);
@@ -184,6 +195,7 @@ describe("character-licensing routes", () => {
         body: JSON.stringify({ license_type: "proprietary", },),
       },),
     );
+
     expect(res.status,).toBe(200,); // upsert: row already existed (lic-1)
     const body = await res.json() as LicensingBody;
     expect(body.updated,).toBe(true,);
@@ -193,6 +205,7 @@ describe("character-licensing routes", () => {
       .select(["license_type", "allow_derivatives", "allow_commercial", "share_alike",],)
       .where("actor_id", "=", OWNER_ACTOR,)
       .executeTakeFirst();
+
     expect(row?.license_type,).toBe("proprietary",);
     expect(row?.allow_derivatives,).toBe(1,);
     expect(row?.allow_commercial,).toBe(1,); // preserved from seeded row
@@ -207,6 +220,7 @@ describe("character-licensing routes", () => {
         body: JSON.stringify({ license_type: "proprietary", allow_commercial: true, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as LicensingBody;
     expect(body.updated,).toBe(true,);
@@ -217,6 +231,7 @@ describe("character-licensing routes", () => {
       .select(["license_type", "allow_commercial", "custom_license_text",],)
       .where("actor_id", "=", MEMBER_ACTOR,)
       .executeTakeFirst();
+
     expect(row?.license_type,).toBe("proprietary",);
     expect(row?.allow_commercial,).toBe(1,);
     expect(row?.custom_license_text,).toBe("Free for any use",); // preserved
@@ -226,6 +241,7 @@ describe("character-licensing routes", () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/licensing`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -233,6 +249,7 @@ describe("character-licensing routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/licensing`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -240,6 +257,7 @@ describe("character-licensing routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/licensing`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(200,);
     expect((await res.json() as LicensingBody).ok,).toBe(true,);
 
@@ -248,6 +266,7 @@ describe("character-licensing routes", () => {
       .select("id",)
       .where("actor_id", "=", MEMBER_ACTOR,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 
@@ -255,11 +274,13 @@ describe("character-licensing routes", () => {
     const anon = await makeApp(db,).handle(
       new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/licensing/history`,),
     );
+
     expect(anon.status,).toBe(401,);
 
     const other = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${OWNER_ACTOR}/licensing/history`,),
     );
+
     expect(other.status,).toBe(404,);
   });
 
@@ -268,6 +289,7 @@ describe("character-licensing routes", () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/licensing/history`,),
     );
+
     expect(res.status,).toBe(200,);
     const history = await res.json() as Array<{ license_type: string; changed_by: string }>;
     expect(history.length,).toBeGreaterThanOrEqual(3,);
@@ -289,6 +311,7 @@ describe("character-licensing routes", () => {
         body: JSON.stringify({ license_type: "cc0", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     const body = await res.json() as LicensingBody;
     expect(body.error ?? "",).toContain("character",);
@@ -299,6 +322,7 @@ describe("character-licensing routes", () => {
       .select("id",)
       .where("actor_id", "=", userActorId,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 });

@@ -20,6 +20,7 @@ export function withWorldId<T,>(qb: T, worldId: string | undefined, worldCol = "
     !!worldId,
     (q: any,) => q.where(worldCol, "=", worldId!,),
   );
+
   return chain.$if(
     !worldId,
     (q: any,) => q.where(worldCol, "is", null,),

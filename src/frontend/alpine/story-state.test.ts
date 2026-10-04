@@ -65,6 +65,7 @@ describeOrSkip("storyState", () => {
         promptSent: "go",
         status: "completed",
       },);
+
       expect(s.turnForMessage("nope",),).toBeNull();
     });
   },);
@@ -76,6 +77,7 @@ describeOrSkip("storyState", () => {
         { quest_name: "Slay the dragon", progress: 50, },
         { questName: "Find the relic", progress: 100, },
       ],),);
+
       expect(banners,).toEqual([
         { questName: "Slay the dragon", progress: 50, },
         { questName: "Find the relic", progress: 100, },
@@ -153,6 +155,7 @@ describeOrSkip("storyState", () => {
           },
         ],
       },);
+
       await s._loadTurns();
       expect(s.turnMeta["msg-1"],).toEqual({
         turnNumber: 1,
@@ -160,6 +163,7 @@ describeOrSkip("storyState", () => {
         promptSent: "GM: enter the cave",
         status: "completed",
       },);
+
       expect(s.turnNumber,).toBe(2,);
       expect(s.running,).toBe(true,);
       expect(s.promptSent,).toBe("",);
@@ -186,6 +190,7 @@ describeOrSkip("storyState", () => {
       mockFetch(200, {
         data: [{ id: "q1", name: "Slay the dragon", type: "composite", status: "active", progress: 50, },],
       },);
+
       await s._loadQuests();
       expect(s.quests.length,).toBe(1,);
       expect(s.quests[0]?.name,).toBe("Slay the dragon",);
@@ -208,11 +213,13 @@ describeOrSkip("storyState", () => {
         { actor_id: "gm-1", name: "GM", display_name: "Narrator", actor_type: "assistant", },
         { actor_id: "p-1", name: "Hero", display_name: null, actor_type: "character", },
       ],);
+
       await s._loadParticipants();
       expect(s.actors,).toEqual([
         { id: "gm-1", name: "Narrator", type: "assistant", role: "gm", isActive: true, order: 0, },
         { id: "p-1", name: "Hero", type: "character", role: "player", isActive: false, order: 1, },
       ],);
+
       expect(s.nextActorName,).toBe("Narrator",);
     });
   },);
@@ -237,8 +244,10 @@ describeOrSkip("storyState", () => {
             },
           }, { status: 200, },);
         }
+
         return Response.json([{ actorId: "a1", displayName: "Goblin", },], { status: 200, },);
       };
+
       await s._loadWorldState();
       expect(s.worldState.timeOfDay,).toBe("night",);
       expect(s.worldState.weather,).toBe("rain",);
@@ -277,6 +286,7 @@ describeOrSkip("storyState", () => {
       s.notify = (message: string,) => {
         toasts.push(message,);
       };
+
       mockFetch(404, { message: "wiring pending", },);
       await s.togglePause();
       expect(s.running,).toBe(true,);
@@ -295,6 +305,7 @@ describeOrSkip("storyState", () => {
           data: [{ id: "q-new", name: "Side quest", type: "composite", status: "active", progress: 0, },],
         }, { status: 200, },);
       };
+
       await s.createQuest("Side quest",);
       expect(fetchCalls[0]?.url,).toBe("/api/v1/worlds/world-1/quests",);
       expect(fetchCalls[0]?.opts.method,).toBe("POST",);
@@ -342,8 +353,10 @@ describeOrSkip("storyState", () => {
             status: 200,
           },);
         }
+
         return Response.json({ name: "World", }, { status: 200, },);
       };
+
       await s.refresh();
       expect(s.isStoryMode,).toBe(false,);
       expect(call,).toBe(1,);
@@ -362,23 +375,29 @@ describeOrSkip("storyState", () => {
               { status: 200, },
             );
           }
+
           case 2: {
             return Response.json({ name: "Eldoria", }, { status: 200, },);
           }
+
           case 3: {
             return Response.json({ data: [], }, { status: 200, },);
           }
+
           case 4: {
             return Response.json({ data: [], }, { status: 200, },);
           }
+
           case 5: {
             return Response.json({ id: "loc-1", state: { time_of_day: null, }, }, { status: 200, },);
           }
+
           default: {
             return Response.json([], { status: 200, },);
           }
         }
       };
+
       await s.refresh();
       expect(s.isStoryMode,).toBe(true,);
       expect(s.worldName,).toBe("Eldoria",);
@@ -395,6 +414,7 @@ describeOrSkip("storyState.init", () => {
     s.refresh = mock(async () => {
       calls++;
     },) as unknown as StoryStateComponent["refresh"];
+
     await s.init();
     expect(calls,).toBe(1,);
   });
@@ -407,6 +427,7 @@ describeOrSkip("storyState.refresh error path", () => {
     s._loadChat = mock(async () => {
       throw new Error("boom",);
     },) as unknown as StoryStateComponent["_loadChat"];
+
     await s.refresh();
     expect(s.error,).toBe("boom",);
     expect(s.loading,).toBe(false,);
@@ -430,6 +451,7 @@ describeOrSkip("storyState controls (step/escalate/narration)", () => {
     s.notify = (message: string,) => {
       toasts.push(message,);
     };
+
     mockFetch(404, { message: "step unavailable", },);
     await s.stepTurn();
     expect(toasts[0],).toBe("step unavailable",);
@@ -457,6 +479,7 @@ describeOrSkip("storyState controls (step/escalate/narration)", () => {
     s.notify = (message: string,) => {
       toasts.push(message,);
     };
+
     mockFetch(500, {},);
     await s.escalateToMe();
     expect(toasts[0],).toContain("escalate",);
@@ -484,6 +507,7 @@ describeOrSkip("storyState controls (step/escalate/narration)", () => {
     s.notify = (message: string,) => {
       toasts.push(message,);
     };
+
     mockFetch(500, {},);
     await s.injectNarration();
     expect(toasts[0],).toContain("narration",);
@@ -513,6 +537,7 @@ describeOrSkip("storyState quest error paths", () => {
     s.notify = (message: string,) => {
       toasts.push(message,);
     };
+
     mockFetch(422, {},);
     await s.createQuest("Side quest",);
     expect(toasts[0],).toBe("Quest creation failed",);
@@ -527,9 +552,11 @@ describeOrSkip("storyState quest error paths", () => {
     s.notify = (message: string,) => {
       toasts.push(message,);
     };
+
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     await s.createQuest("Side quest",);
     expect(toasts[0],).toBe("Quest creation failed",);
   });
@@ -542,6 +569,7 @@ describeOrSkip("storyState quest error paths", () => {
     s.notify = (message: string,) => {
       toasts.push(message,);
     };
+
     mockFetch(404, {},);
     await s.deleteQuest("q1",);
     expect(toasts[0],).toBe("Quest deletion failed",);
@@ -556,9 +584,11 @@ describeOrSkip("storyState quest error paths", () => {
     s.notify = (message: string,) => {
       toasts.push(message,);
     };
+
     fetchHandler = () => {
       throw new Error("offline",);
     };
+
     await s.deleteQuest("q1",);
     expect(toasts[0],).toBe("Quest deletion failed",);
     expect(s.quests,).toHaveLength(1,);

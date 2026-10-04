@@ -44,6 +44,7 @@ export async function getNpcInventory(state: ItemState, actorId: string, worldId
     .where("world_items.world_id", "=", worldId,)
     .where("items.world_id", "=", worldId,)
     .execute();
+
   return Array.from(rows, (row,) => ({
     worldItemId: row.world_item_id,
     itemId: row.item_id,
@@ -79,6 +80,7 @@ export async function getNpcInventoryBatch(
   if (actorIds.length === 0) {
     return new Map();
   }
+
   const rows = await state.db
     .selectFrom("world_items",)
     .innerJoin("items", "items.id", "world_items.item_id",)
@@ -105,6 +107,7 @@ export async function getNpcInventoryBatch(
     .where("world_items.world_id", "=", worldId,)
     .where("items.world_id", "=", worldId,)
     .execute();
+
   const byActor = new Map<string, ItemInstance[]>();
   for (const row of rows) {
     const ownerId = row.owner_actor_id;
@@ -112,6 +115,7 @@ export async function getNpcInventoryBatch(
       // Unowned row cannot be attributed to any requested actor.
       continue;
     }
+
     const instance: ItemInstance = {
       worldItemId: row.world_item_id,
       itemId: row.item_id,
@@ -129,6 +133,7 @@ export async function getNpcInventoryBatch(
       weight: row.weight,
       visibility: row.visibility,
     };
+
     const list = byActor.get(ownerId,);
     if (list) {
       list.push(instance,);
@@ -136,5 +141,6 @@ export async function getNpcInventoryBatch(
       byActor.set(ownerId, [instance,],);
     }
   }
+
   return byActor;
 }

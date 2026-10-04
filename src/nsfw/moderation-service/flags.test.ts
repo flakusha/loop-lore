@@ -110,6 +110,7 @@ describe("flagContent", () => {
         description: "threatening",
       },
     },);
+
     expect(flag.id,).toBeTruthy();
     expect(flag.status,).toBe("pending",);
     expect(flag.reporterId,).toBe(REPORTER,);
@@ -123,6 +124,7 @@ describe("flagContent", () => {
 
     const row = await db.selectFrom("content_flags",).selectAll()
       .where("id", "=", flag.id,).executeTakeFirst();
+
     expect(row?.status,).toBe("pending",);
   });
 
@@ -132,6 +134,7 @@ describe("flagContent", () => {
       thisL: ctx,
       params: { reporterId: REPORTER, contentType: "message", contentId: "dup-1", flagReason: "a", },
     },);
+
     await expect(flagContent({
       thisL: ctx,
       params: { reporterId: OTHER_REPORTER, contentType: "message", contentId: "dup-1", flagReason: "b", },
@@ -144,6 +147,7 @@ describe("flagContent", () => {
       thisL: ctx,
       params: { reporterId: REPORTER, contentType: "message", contentId: "ref-1", flagReason: "a", },
     },);
+
     await resolveFlag({
       thisL: ctx,
       flagId: first.id,
@@ -156,6 +160,7 @@ describe("flagContent", () => {
       thisL: ctx,
       params: { reporterId: REPORTER, contentType: "message", contentId: "ref-1", flagReason: "b", },
     },);
+
     expect(second.id,).not.toBe(first.id,);
     expect(second.status,).toBe("pending",);
   });
@@ -170,6 +175,7 @@ describe("flagContent", () => {
         thisL: ctx,
         params: { reporterId: REPORTER, contentType: "message", contentId: `warn-${i}`, flagReason: "a", },
       },);
+
       await resolveFlag({
         thisL: ctx,
         flagId: flag.id,
@@ -184,6 +190,7 @@ describe("flagContent", () => {
       thisL: ctx,
       params: { reporterId: REPORTER, contentType: "message", contentId: "warn-4", flagReason: "a", },
     },);
+
     expect(warn,).toHaveBeenCalledTimes(1,);
   });
 
@@ -218,12 +225,14 @@ describe("getFlagQueue", () => {
       status: "pending",
       createdAt: "2026-01-03T00:00:00.000Z",
     },);
+
     await insertFlagRow({
       id: "q-pending-2",
       reporterId: REPORTER,
       status: "pending",
       createdAt: "2026-01-04T00:00:00.000Z",
     },);
+
     await insertFlagRow({
       id: "q-resolved-1",
       reporterId: REPORTER,
@@ -245,6 +254,7 @@ describe("getFlagQueue", () => {
         createdAt: `2026-02-0${i + 1}T00:00:00.000Z`,
       },);
     }
+
     const page1 = await getFlagQueue({ thisL: makeCtx(), params: { status: "under_review", limit: 2, offset: 0, }, },);
     expect(page1.flags.map((f,) => f.id),).toEqual(["q-page-4", "q-page-3",],);
 
@@ -257,6 +267,7 @@ describe("getFlagQueue", () => {
       thisL: makeCtx(),
       params: { reporterId: REPORTER, contentType: "message", contentId: "def-pending", flagReason: "a", },
     },);
+
     const { total, } = await getFlagQueue({ thisL: makeCtx(), },);
     expect(total,).toBe(1,);
   });
@@ -269,6 +280,7 @@ describe("resolveFlag", () => {
       thisL: ctx,
       params: { reporterId: REPORTER, contentType: "message", contentId: "res-1", flagReason: "spam", },
     },);
+
     const resolved = await resolveFlag({
       thisL: ctx,
       flagId: flag.id,
@@ -276,6 +288,7 @@ describe("resolveFlag", () => {
       resolution: "confirmed violation",
       status: "confirmed",
     },);
+
     expect(resolved.status,).toBe("confirmed",);
     expect(resolved.resolution,).toBe("confirmed violation",);
     expect(resolved.resolvedBy,).toBe("admin-1",);
@@ -292,6 +305,7 @@ describe("resolveFlag", () => {
     },),).rejects.toThrow("not found after resolution",);
   });
 });
+
 describe("getFlagQueue status filter (all variants)", () => {
   test("returns only pending flags when status='pending'", async () => {
     await insertFlagRow({
@@ -300,12 +314,14 @@ describe("getFlagQueue status filter (all variants)", () => {
       status: "pending",
       createdAt: "2026-03-01T00:00:00.000Z",
     },);
+
     await insertFlagRow({
       id: "sr-1",
       reporterId: REPORTER,
       status: "resolved",
       createdAt: "2026-03-02T00:00:00.000Z",
     },);
+
     await insertFlagRow({
       id: "sd-1",
       reporterId: REPORTER,
@@ -327,12 +343,14 @@ describe("getFlagQueue status filter (all variants)", () => {
       status: "pending",
       createdAt: "2026-04-01T00:00:00.000Z",
     },);
+
     await insertFlagRow({
       id: "sd-2",
       reporterId: REPORTER,
       status: "dismissed",
       createdAt: "2026-04-02T00:00:00.000Z",
     },);
+
     await insertFlagRow({
       id: "sd-3",
       reporterId: REPORTER,
@@ -353,12 +371,14 @@ describe("getFlagQueue status filter (all variants)", () => {
       status: "pending",
       createdAt: "2026-05-01T00:00:00.000Z",
     },);
+
     await insertFlagRow({
       id: "sr-2",
       reporterId: REPORTER,
       status: "resolved",
       createdAt: "2026-05-02T00:00:00.000Z",
     },);
+
     await insertFlagRow({
       id: "sr-3",
       reporterId: REPORTER,
@@ -381,6 +401,7 @@ describe("getFlagQueue status filter (all variants)", () => {
       { id: "m-5", status: "resolved", createdAt: "2026-06-05T00:00:00.000Z", },
       { id: "m-6", status: "resolved", createdAt: "2026-06-06T00:00:00.000Z", },
     ];
+
     for (const r of rows) {
       await insertFlagRow({
         id: r.id,
@@ -426,11 +447,13 @@ describe("resolveReporterHashSecret (production gate)", () => {
     } else {
       process.env["NODE_ENV"] = SAVED_NODE_ENV;
     }
+
     if (SAVED_PRIMARY === undefined) {
       delete process.env["NSFW_FLAG_REPORTER_HASH_SECRET"];
     } else {
       process.env["NSFW_FLAG_REPORTER_HASH_SECRET"] = SAVED_PRIMARY;
     }
+
     if (SAVED_FALLBACK === undefined) {
       delete process.env["NSFW_MODERATION_HMAC_SECRET"];
     } else {
@@ -456,11 +479,13 @@ describe("resolveReporterHashSecret (production gate)", () => {
     process.env["NSFW_MODERATION_HMAC_SECRET"] = "fallback-secret-bbbbbbbbbbbbbb";
     expect(resolveReporterHashSecret(),).toBe("fallback-secret-bbbbbbbbbbbbbb",);
   });
+
   test("falls back to dev secret only in test/dev NODE_ENV (matches pii-redaction pattern)", () => {
     process.env["NODE_ENV"] = "test";
     expect(resolveReporterHashSecret(),).toBe(
       "loop-lore-nsfw-default-do-not-use-in-prod",
     );
+
     process.env["NODE_ENV"] = "development";
     expect(resolveReporterHashSecret(),).toBe(
       "loop-lore-nsfw-default-do-not-use-in-prod",

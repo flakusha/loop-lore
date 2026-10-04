@@ -29,6 +29,7 @@ export async function carryPins(
     .selectAll()
     .where("chat_id", "=", sourceChatId,)
     .execute();
+
   for (const p of pins) {
     await database
       .insertInto("chat_pins",)
@@ -47,6 +48,7 @@ export async function carryPins(
     .selectAll()
     .where("chat_id", "=", sourceChatId,)
     .execute();
+
   for (const c of choices) {
     await database
       .insertInto("vn_choices",)

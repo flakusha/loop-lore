@@ -94,5 +94,6 @@ export function createInternalHandle<T,>(req: ScheduledRequest<T>,): InternalHan
       return state === "cancelled";
     },
   };
+
   return handle;
 }

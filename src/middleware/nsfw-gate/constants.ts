@@ -41,6 +41,7 @@ export function calculateAge(birthDate: string,): number | null {
   if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
     age--;
   }
+
   return age;
 }
 

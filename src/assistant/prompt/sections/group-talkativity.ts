@@ -33,12 +33,14 @@ export const groupTalkativitySection: SectionBuilder = {
       // Index/rowid order and the prompt jitters between identical calls.
       .orderBy("actors.display_name",)
       .execute();
+
     if (rows.length === 0) { return []; }
     const lines = rows.map((r,) => {
       const name = r.display_name ?? r.id;
       const score = r.talkativity ?? 5;
       return `- ${name}: ${score}/10`;
     },);
+
     return [{
       role: "system",
       content: "[Group Talkativity]\n" +

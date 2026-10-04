@@ -25,6 +25,7 @@ describe("Database schema", () => {
     const tables = sqlite
       .query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'kysely_%' ORDER BY name",)
       .all() as Row[];
+
     const names = tables.map((t,) => t.name as string);
     expect(names,).toContain("users",);
     expect(names,).toContain("sessions",);
@@ -150,6 +151,7 @@ describe("Database schema", () => {
       const actors = sqlite
         .query("SELECT actor_type, COUNT(*) as cnt FROM actors GROUP BY actor_type ORDER BY actor_type",)
         .all() as Row[];
+
       expect(actors.map((r,) => ({ type: r.actor_type, count: r.cnt, })),).toEqual([
         { type: "character", count: 1, },
         { type: "narrator", count: 1, },
@@ -250,6 +252,7 @@ describe("Database schema", () => {
       const states = sqlite
         .query("SELECT id, visibility FROM messages WHERE chat_id = ? ORDER BY rowid",)
         .all("chat-vis",) as Row[];
+
       expect(states,).toEqual([
         { id: "msg-vis", visibility: "visible", },
         { id: "msg-hidden-user", visibility: "hidden_by_user", },
@@ -257,13 +260,16 @@ describe("Database schema", () => {
         { id: "msg-auto", visibility: "auto_hidden", },
       ],);
     });
+
     test("only visible messages appear in default query", () => {
       const visible = sqlite
         .query("SELECT COUNT(*) as cnt FROM messages WHERE visibility = 'visible'",)
         .get() as Row;
+
       const hidden = sqlite
         .query("SELECT COUNT(*) as cnt FROM messages WHERE visibility != 'visible'",)
         .get() as Row;
+
       expect(visible.cnt,).toBe(1,);
       expect(hidden.cnt,).toBe(3,);
     });
@@ -292,11 +298,13 @@ describe("Database schema", () => {
           "SELECT a.display_name, cp.role_in_chat FROM chat_participants cp JOIN actors a ON a.id = cp.actor_id WHERE cp.chat_id = ? ORDER BY cp.rowid",
         )
         .all(chatId,) as Row[];
+
       expect(participants,).toHaveLength(2,);
       expect(participants[0]!.display_name,).toBe("Alice",);
       expect(participants[0]!.role_in_chat,).toBe("owner",);
       expect(participants[1]!.display_name,).toBe("Bob",);
     });
+
     test("chat fields are persisted correctly", async () => {
       // Verify chats inserted as FK targets have correct field values
       const chat = sqlite.query("SELECT name, type, mode, created_by FROM chats WHERE id = ?",).get("chat-cp",) as Row;
@@ -366,9 +374,11 @@ describe("Database schema", () => {
       const aiChars = sqlite
         .query("SELECT COUNT(*) as cnt FROM characters WHERE agent_type = 'ai'",)
         .get() as Row;
+
       const humanChars = sqlite
         .query("SELECT COUNT(*) as cnt FROM characters WHERE agent_type = 'none'",)
         .get() as Row;
+
       expect(aiChars.cnt,).toBe(1,);
       expect(humanChars.cnt,).toBe(1,);
     });
@@ -430,6 +440,7 @@ describe("Database schema", () => {
          ORDER BY m.created_at`,
         )
         .all(chatId,) as Row[];
+
       expect(msgs,).toHaveLength(2,);
       expect(msgs[0]!.content,).toBe("Hi Bob!",);
       expect(msgs[0]!.display_name,).toBe("Alice",);

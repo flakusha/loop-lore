@@ -34,10 +34,12 @@ function resolvePlugin(ctx: any,): { plugin: LoadedPlugin } | { error: Response 
   if (!can(ctx.userRole, "admin.system",)) {
     return { error: forbidden("Admin access required",), };
   }
+
   const plugin = registry.getPlugin(ctx.params.name as string,);
   if (!plugin) {
     return { error: jsonError({ message: "Plugin not found", status: HttpStatus.NotFound, },), };
   }
+
   return { plugin, };
 }
 
@@ -82,6 +84,7 @@ export function pluginConfigRoutes({ database, }: { database: Kysely<DB> }, pref
         if (body === null || typeof body !== "object" || Array.isArray(body,)) {
           return jsonError({ message: "Plugin config must be a JSON object", status: HttpStatus.BadRequest, },);
         }
+
         const stored = body as Record<string, unknown>;
 
         try {
@@ -99,6 +102,7 @@ export function pluginConfigRoutes({ database, }: { database: Kysely<DB> }, pref
             plugin: name,
             error: String(error,),
           },);
+
           return jsonError({ message: "Failed to persist plugin config", status: HttpStatus.InternalServerError, },);
         }
 

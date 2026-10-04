@@ -81,11 +81,13 @@ globalThis.notificationsBell = function(): NotificationBellState {
           unreadCount: 0,
           items: [],
         },);
+
         if (data.items.length === 0 && !data.unreadCount) { return; }
         const known = new Set(Array.from(this.items, (i,) => i.id,),);
         for (const n of data.items) {
           if (!known.has(n.id,)) { globalThis.showToast("info", n.title,); }
         }
+
         this.items = data.items;
         if (data.unreadCount == null) {
           let unread = 0;
@@ -123,6 +125,7 @@ globalThis.notificationsBell = function(): NotificationBellState {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ read: true, },),
       },);
+
       this.items = Array.from(this.items, (i,) => (i.id === id ? { ...i, read: 1, } : i),);
       let unread = 0;
       for (const i of this.items) { if (!i.read) { unread += 1; } }
@@ -189,6 +192,7 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
           enabled: Record<string, boolean>;
           mutedWorlds: string[];
         };
+
         this.enabled = data.enabled ?? {};
         this.mutedWorlds = data.mutedWorlds ?? [];
         this.loaded = true;
@@ -219,6 +223,7 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
       } else {
         this.mutedWorlds = [...this.mutedWorlds, worldId,];
       }
+
       await this.save();
     },
 

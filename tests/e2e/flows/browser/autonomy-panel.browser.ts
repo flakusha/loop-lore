@@ -49,10 +49,12 @@ describe("World autonomy panel E2E", () => {
       const el = document.querySelector("[data-testid='create-world']",);
       if (el instanceof HTMLElement) { el.click(); }
     },);
+
     await page.locator("[data-testid='create-world-form'] #world-name",).waitFor({
       state: "attached",
       timeout: 15_000,
     },);
+
     await page.fill("[data-testid='create-world-form'] #world-name", `autonomy-${Date.now()}`,);
     await page.evaluate(() => {
       const fn = (globalThis as { createWorld?: (event: Event,) => Promise<void> }).createWorld;
@@ -64,6 +66,7 @@ describe("World autonomy panel E2E", () => {
         void fn(event,);
       }
     },);
+
     await page.waitForURL((url,) => /\/worlds\/[a-f0-9-]+\/edit$/.test(url.pathname,), { timeout: 30_000, },);
     const match = page.url().match(/\/worlds\/([a-f0-9-]+)\/edit/,);
     if (!match) { throw new Error(`Could not parse world id from URL: ${page.url()}`,); }
@@ -85,6 +88,7 @@ describe("World autonomy panel E2E", () => {
       .insertInto("actors",)
       .values({ id: actorId, actor_type: "character", agent_type: "npc", display_name: displayName, },)
       .execute();
+
     await ctx.db.insertInto("world_members",).values({ world_id: worldId, actor_id: actorId, },).execute();
     return actorId;
   }
@@ -101,6 +105,7 @@ describe("World autonomy panel E2E", () => {
       const el = document.querySelector("[data-testid='tab-autonomy']",);
       if (el instanceof HTMLElement) { el.click(); }
     },);
+
     await page.locator("[data-testid='autonomy-panel']",).waitFor({ state: "visible", timeout: 30_000, },);
     // The panel GETs on init; the body renders once that data lands.
     await page.locator("[data-testid='autonomy-body']",).waitFor({ state: "visible", timeout: 30_000, },);
@@ -125,6 +130,7 @@ describe("World autonomy panel E2E", () => {
           "[data-testid='autonomy-actor-picker'] option",
           (els,) => els.map((el,) => (el as HTMLOptionElement).textContent?.trim()),
         );
+
         expect(options,).toContain("Zara",);
       } finally {
         errors.assert();
@@ -158,6 +164,7 @@ describe("World autonomy panel E2E", () => {
             select.dispatchEvent(new Event("change", { bubbles: true, },),);
           }
         },);
+
         await page.locator("[data-testid='autonomy-actor-save']",).click();
 
         // Written by the panel's PUT, not by the page reload above.
@@ -169,9 +176,11 @@ describe("World autonomy panel E2E", () => {
             .select("autonomy_preferences",)
             .where("actor_id", "=", actorId,)
             .executeTakeFirst();
+
           const prefs = row?.autonomy_preferences;
           if (typeof prefs === "string" && prefs.includes("serene",)) { stored = prefs; }
         }
+
         expect(stored,).toContain("serene",);
         expect(errors.errors,).toEqual([],);
       } finally {
@@ -205,6 +214,7 @@ describe("World autonomy panel E2E", () => {
           (state,) => !!(state as Record<string, unknown>).activeChat,
           20_000,
         );
+
         await page.click("[data-testid='toggle-chat-settings']",);
 
         const section = page.locator("[data-testid='chat-autonomy-section']",);
@@ -234,6 +244,7 @@ describe("World autonomy panel E2E", () => {
             select.dispatchEvent(new Event("change", { bubbles: true, },),);
           }
         },);
+
         const save = page.locator("[data-testid='autonomy-save']",);
         await save.waitFor({ state: "visible", timeout: 15_000, },);
         await save.click();
@@ -246,9 +257,11 @@ describe("World autonomy panel E2E", () => {
             .select("autonomy_config",)
             .where("id", "=", SEED.soloChat.id,)
             .executeTakeFirst();
+
           const cfg = row?.autonomy_config;
           if (typeof cfg === "string" && cfg.includes("brisk",)) { stored = cfg; }
         }
+
         expect(stored,).toContain("brisk",);
         expect(errors.errors,).toEqual([],);
       } finally {
@@ -278,6 +291,7 @@ describe("World autonomy panel E2E", () => {
           (state,) => !!(state as Record<string, unknown>).activeChat,
           20_000,
         );
+
         await page.click("[data-testid='toggle-chat-settings']",);
         await page.locator("[data-testid='chat-settings-modal']",).waitFor({
           state: "visible",

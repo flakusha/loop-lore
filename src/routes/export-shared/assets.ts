@@ -41,5 +41,6 @@ export async function exportAssetsToZip(ctx: ExportContext,): Promise<void> {
       },
     },);
   }
+
   ctx.counts.assets = assets.length;
 }

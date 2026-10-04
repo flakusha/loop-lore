@@ -68,6 +68,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Test Character", },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     const body = (await res.json()) as { id: string };
     expect(body.id,).toBeDefined();
@@ -87,6 +88,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Rated", contentRating: "nsfw_intense", },),
       },),
     );
+
     expect(rated.status,).toBe(201,);
     const { id, } = (await rated.json()) as { id: string };
     const stored = await db
@@ -94,6 +96,7 @@ describe("charactersRoutes", () => {
       .select("content_rating",)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     expect(stored?.content_rating,).toBe("nsfw_intense",);
 
     const unrated = await app.handle(
@@ -103,12 +106,14 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Unrated", },),
       },),
     );
+
     const { id: id2, } = (await unrated.json()) as { id: string };
     const stored2 = await db
       .selectFrom("actors",)
       .select("content_rating",)
       .where("id", "=", id2,)
       .executeTakeFirst();
+
     expect(stored2?.content_rating,).toBe("sfw",);
   });
 
@@ -121,6 +126,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Bad Rating", contentRating: "extreme", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -128,6 +134,7 @@ describe("charactersRoutes", () => {
     const app = new Elysia({ name: "test-noauth", },)
       .derive(() => ({ userId: null, userRole: null, }))
       .use(charactersRoutes({ database: db, },),) as unknown as Elysia;
+
     const res = await app.handle(
       new Request("http://localhost/api/actors", {
         method: "POST",
@@ -135,6 +142,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "No Auth", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -147,6 +155,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ description: "No name", },),
       },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -172,6 +181,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Find Me", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
 
     const res = await app.handle(new Request(`http://localhost/api/actors/${id}`,),);
@@ -197,6 +207,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Card Actor", description: "A character", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
 
     const res = await app.handle(new Request(`http://localhost/api/actors/${id}/card`,),);
@@ -218,6 +229,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Old Name", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
     const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
 
@@ -228,6 +240,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "New Name", dataVersion: created?.format_version, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { ok: boolean };
     expect(body.ok,).toBe(true,);
@@ -235,6 +248,7 @@ describe("charactersRoutes", () => {
     const actor = await db.selectFrom("actors",).selectAll().where("id", "=", id,).executeTakeFirst();
     expect(actor?.display_name,).toBe("New Name",);
   });
+
   test("PUT /api/actors/:id accepts a consistent wardrobe pair", async () => {
     const app = createApp(db, userId,);
     const actorCreate = await app.handle(
@@ -244,6 +258,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Wardrobe Actor", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
     const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
     const outfits = JSON.stringify([{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],);
@@ -254,9 +269,11 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ outfits, defaultOutfit: "travel-gear", dataVersion: created?.format_version, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const stored = await db.selectFrom("actors",).select(["outfits", "default_outfit",],).where("id", "=", id,)
       .executeTakeFirst();
+
     expect(stored?.default_outfit,).toBe("travel-gear",);
     expect(stored?.outfits,).toBe(outfits,);
   });
@@ -267,6 +284,7 @@ describe("charactersRoutes", () => {
       { id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },
       { id: "court-robes", name: "Court Robes", descriptor: "Formal robes", },
     ],);
+
     const actorCreate = await app.handle(
       new Request("http://localhost/api/actors", {
         method: "POST",
@@ -274,6 +292,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Half Pair Actor", outfits, defaultOutfit: "travel-gear", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
     const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
     const res = await app.handle(
@@ -283,9 +302,11 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ defaultOutfit: "court-robes", dataVersion: created?.format_version, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const stored = await db.selectFrom("actors",).select(["outfits", "default_outfit",],).where("id", "=", id,)
       .executeTakeFirst();
+
     expect(stored?.default_outfit,).toBe("court-robes",);
     expect(stored?.outfits,).toBe(outfits,);
   });
@@ -300,6 +321,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Half Dangling Actor", outfits, defaultOutfit: "travel-gear", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
     const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
     const res = await app.handle(
@@ -309,6 +331,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ defaultOutfit: "nope", dataVersion: created?.format_version, },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -321,6 +344,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Dangling Actor", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
     const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
     const res = await app.handle(
@@ -334,6 +358,7 @@ describe("charactersRoutes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -346,6 +371,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Broken JSON Actor", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
     const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
     const res = await app.handle(
@@ -359,6 +385,7 @@ describe("charactersRoutes", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -371,12 +398,14 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Duplicate Actor", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
     const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
     const outfits = JSON.stringify([
       { id: "gear", name: "Gear", descriptor: "Sturdy clothes", },
       { id: "gear", name: "Gear 2", descriptor: "Other clothes", },
     ],);
+
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
@@ -384,6 +413,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ outfits, defaultOutfit: "gear", dataVersion: created?.format_version, },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -396,6 +426,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Rate Me", contentRating: "nsfw_mild", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
     const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
 
@@ -406,12 +437,14 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ contentRating: "nsfw_extreme", dataVersion: created?.format_version, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const stored = await db
       .selectFrom("actors",)
       .select("content_rating",)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     expect(stored?.content_rating,).toBe("nsfw_extreme",);
   });
 
@@ -424,6 +457,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Nope", },),
       },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -438,6 +472,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Versioned Actor", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
 
     const res = await app.handle(
@@ -447,6 +482,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "No Version Sent", },),
       },),
     );
+
     expect(res.status,).toBe(400,);
   });
 
@@ -459,6 +495,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Concurrent Target", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
 
     // Send a deliberately-stale dataVersion (one less than current).
@@ -467,6 +504,7 @@ describe("charactersRoutes", () => {
       .select("format_version",)
       .where("id", "=", id,)
       .executeTakeFirst();
+
     // Send a deliberately-stale dataVersion that is still >= 0 so it passes
     // schema validation (Elysia rejects negative integers with 422).
     const staleVersion = (current?.format_version ?? 0) + 1;
@@ -478,6 +516,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Concurrent Edit", dataVersion: staleVersion, },),
       },),
     );
+
     expect(res.status,).toBe(409,);
     // Genuine optimistic-lock conflict, not a schema/middleware 400 or 422.
     const body = (await res.json()) as { error?: string };
@@ -495,6 +534,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Delete Me", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
 
     const res = await app.handle(new Request(`http://localhost/api/actors/${id}`, { method: "DELETE", },),);
@@ -515,6 +555,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Owner Actor", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
 
     // A regular "user"-role caller (no admin.character permission) is denied.
@@ -526,6 +567,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Stolen", },),
       },),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -538,6 +580,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Owner Actor 2", },),
       },),
     );
+
     const { id, } = (await actorCreate.json()) as { id: string };
     const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
 
@@ -550,6 +593,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({ displayName: "Solo Edit", dataVersion: created?.format_version, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
   });
 });

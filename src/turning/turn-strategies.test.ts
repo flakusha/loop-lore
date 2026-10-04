@@ -150,6 +150,7 @@ describe("deterministic replay + talkativity weighting (turn-talkativity-skip AC
     const reweighted = participants.map((p,) => {
       return { ...p, talkativity: 0, };
     },);
+
     expect(roundRobinSelect(reweighted, "a1", 1, turnOrder,),).toBe(first,);
   });
 
@@ -172,6 +173,7 @@ describe("deterministic replay + talkativity weighting (turn-talkativity-skip AC
         loudCount++;
       }
     }
+
     // 100:1 weight → expected loud picks ≈ 49.5/50; the assertion floor
     // (40) still fails with overwhelming probability if weights are ignored
     // (fair coin → P(≥40 of 50) ≈ 2.6e-10).

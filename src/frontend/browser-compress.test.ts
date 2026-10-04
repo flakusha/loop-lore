@@ -128,6 +128,7 @@ describe("browserDecodeContent non-zstd paths", () => {
       // documented fallback, not a decode failure.
       return;
     }
+
     expect(encoded.encoding,).toBe("gzip",);
     expect(await browserDecodeContent(encoded.encoded, "gzip",),).toBe(plaintext,);
   });

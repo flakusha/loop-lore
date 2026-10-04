@@ -51,6 +51,7 @@ describe("branch navigation (FEAT-046)", () => {
       ownerId,
       { role_in_chat: ChatParticipantRole.Owner, } as never,
     );
+
     return chatId;
   }
 
@@ -119,12 +120,14 @@ describe("branch navigation (FEAT-046)", () => {
     const renamed = ok(
       await renameBranch(tdb.db, { chatId, branchId, actorId: ownerId, name: "  Say no  ", },),
     );
+
     expect(renamed.branch.name,).toBe("Say no",);
     const row = await tdb.db
       .selectFrom("chat_branches",)
       .select(["name",],)
       .where("id", "=", branchId,)
       .executeTakeFirst();
+
     expect(row?.name,).toBe("Say no",);
   });
 
@@ -136,11 +139,13 @@ describe("branch navigation (FEAT-046)", () => {
       await renameBranch(tdb.db, { chatId, branchId, actorId: ownerId, name: "   ", },),
       "bad_request",
     );
+
     const row = await tdb.db
       .selectFrom("chat_branches",)
       .select(["name",],)
       .where("id", "=", branchId,)
       .executeTakeFirst();
+
     expect(row?.name,).toBe("Branch 1",);
   });
 
@@ -155,11 +160,13 @@ describe("branch navigation (FEAT-046)", () => {
       await renameBranch(tdb.db, { chatId, branchId: second, actorId: ownerId, name: "Alt", },),
       "bad_request",
     );
+
     const row = await tdb.db
       .selectFrom("chat_branches",)
       .select(["name",],)
       .where("id", "=", second,)
       .executeTakeFirst();
+
     expect(row?.name,).toBe("Branch 2",);
   });
 
@@ -172,6 +179,7 @@ describe("branch navigation (FEAT-046)", () => {
     const result = ok(
       await renameBranch(tdb.db, { chatId, branchId: first, actorId: ownerId, name: "Chosen", activate: true, },),
     );
+
     expect(result.branch.name,).toBe("Chosen",);
     expect(result.branch.isActive,).toBe(true,);
 
@@ -180,12 +188,14 @@ describe("branch navigation (FEAT-046)", () => {
       .select(["active_branch_id",],)
       .where("id", "=", chatId,)
       .executeTakeFirst();
+
     expect(chat?.active_branch_id,).toBe(first,);
     const demoted = await tdb.db
       .selectFrom("chat_branches",)
       .select(["is_active",],)
       .where("id", "=", second,)
       .executeTakeFirst();
+
     expect(demoted?.is_active,).toBe(0,);
   });
 
@@ -202,6 +212,7 @@ describe("branch navigation (FEAT-046)", () => {
       .select(["id",],)
       .where("id", "=", stale,)
       .executeTakeFirst();
+
     expect(row,).toBeUndefined();
   });
 
@@ -217,6 +228,7 @@ describe("branch navigation (FEAT-046)", () => {
       .select(["id",],)
       .where("id", "=", displayed,)
       .executeTakeFirst();
+
     expect(kept,).toBeDefined();
 
     // The chat must point elsewhere, not merely flip the row flag.
@@ -243,6 +255,7 @@ describe("branch navigation (FEAT-046)", () => {
     const result = ok(
       await mergeBranch(tdb.db, { chatId, branchId: source, actorId: ownerId, intoBranchId: target, },),
     );
+
     expect(result.movedMessageIds,).toEqual([aId, a1Id, a2Id,],);
     expect(result.sourceBranchId,).toBe(source,);
     expect(result.targetBranchId,).toBe(target,);
@@ -253,6 +266,7 @@ describe("branch navigation (FEAT-046)", () => {
       .select(["id", "parent_message_id",],)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(rows.map((r,) => r.id),).toEqual([target,],);
     expect(rows[0]?.parent_message_id,).toBe(a2Id,);
     expect(await walkMessagePath(tdb.db, chatId, a2Id,),).toEqual([
@@ -295,6 +309,7 @@ describe("branch navigation (FEAT-046)", () => {
       .select(["id", "parent_id",],)
       .where("chat_id", "=", chatId,)
       .execute();
+
     expect(new Map(parents.map((r,) => [r.id, r.parent_id,]),),).toEqual(
       new Map([
         [pId, q1Id,],
@@ -319,6 +334,7 @@ describe("branch navigation (FEAT-046)", () => {
       xId,
       x1Id,
     ],);
+
     expect(await walkMessagePath(tdb.db, chatId, y1Id,),).toEqual([
       rootId,
       qId,
@@ -354,17 +370,20 @@ describe("branch navigation (FEAT-046)", () => {
       await mergeBranch(tdb.db, { chatId, branchId: source, actorId: ownerId, intoBranchId: target, },),
       "bad_request",
     );
+
     const kept = await tdb.db
       .selectFrom("chat_branches",)
       .select(["id",],)
       .where("id", "=", source,)
       .executeTakeFirst();
+
     expect(kept,).toBeDefined();
 
     ok(await switchActiveBranch(tdb.db, { chatId, branchId: target, actorId: ownerId, },),);
     const merged = ok(
       await mergeBranch(tdb.db, { chatId, branchId: source, actorId: ownerId, intoBranchId: target, },),
     );
+
     expect(merged.movedMessageIds,).toEqual([aId, a1Id,],);
   });
 
@@ -399,12 +418,14 @@ describe("branch navigation (FEAT-046)", () => {
       await mergeBranch(tdb.db, { chatId, branchId: source, actorId: ownerId, intoBranchId: target, },),
       "bad_request",
     );
+
     // The user-visible branch survives a refused no-op merge.
     const kept = await tdb.db
       .selectFrom("chat_branches",)
       .select(["id",],)
       .where("id", "=", source,)
       .executeTakeFirst();
+
     expect(kept,).toBeDefined();
   });
 
@@ -430,9 +451,11 @@ describe("branch navigation (FEAT-046)", () => {
           role: MessageRole.User,
           content: `d${batch + i}`,
         };
+
         parent = id;
         return row;
       },);
+
       await tdb.db.insertInto("messages",).values(rows,).execute();
     }
 
@@ -444,12 +467,14 @@ describe("branch navigation (FEAT-046)", () => {
       await mergeBranch(tdb.db, { chatId, branchId: source, actorId: ownerId, intoBranchId: target, },),
       "bad_request",
     );
+
     // Rejected BEFORE any write: `a` still points at root, not at the target.
     const untouched = await tdb.db
       .selectFrom("messages",)
       .select(["parent_id",],)
       .where("id", "=", aId,)
       .executeTakeFirst();
+
     expect(untouched?.parent_id,).toBe(rootId,);
   });
 
@@ -461,6 +486,7 @@ describe("branch navigation (FEAT-046)", () => {
       prev = await msg(chatId, `m${i}`, prev,);
       tips.push(prev,);
     }
+
     for (const tip of tips) { await fork(chatId, tip,); }
 
     const seen: string[] = [];
@@ -473,6 +499,7 @@ describe("branch navigation (FEAT-046)", () => {
       if (!page.nextCursor) { break; }
       cursor = page.nextCursor;
     }
+
     expect(pages,).toBe(3,);
     expect(seen.length,).toBe(5,);
     expect(new Set(seen,).size,).toBe(5,);
@@ -494,6 +521,7 @@ describe("branch navigation (FEAT-046)", () => {
     const corrupt = ok(
       await listBranchesPage(tdb.db, { chatId, actorId: ownerId, cursor: "!!!!not-a-cursor", },),
     );
+
     expect(corrupt.branches.map((b,) => b.id),).toEqual(first.branches.map((b,) => b.id),);
     expect(corrupt.nextCursor,).toBe(first.nextCursor,);
   });
@@ -505,6 +533,7 @@ describe("branch navigation (FEAT-046)", () => {
       prev = await msg(chatId, `m${i}`, prev,);
       await fork(chatId, prev,);
     }
+
     const firstPage = ok(await listBranchesPage(tdb.db, { chatId, actorId: ownerId, limit: 2, },),);
     expect(firstPage.nextCursor,).toBeTruthy();
 
@@ -515,6 +544,7 @@ describe("branch navigation (FEAT-046)", () => {
       const page = ok(
         await listBranchesPage(tdb.db, { chatId, actorId: ownerId, limit: 2, cursor: tampered, },),
       );
+
       expect(page.branches.map((b,) => b.id),).toEqual(firstPage.branches.map((b,) => b.id),);
     }
 
@@ -522,6 +552,7 @@ describe("branch navigation (FEAT-046)", () => {
     const roundTrip = ok(
       await listBranchesPage(tdb.db, { chatId, actorId: ownerId, limit: 2, cursor: firstPage.nextCursor!, },),
     );
+
     expect(roundTrip.branches.length,).toBe(2,);
     expect(roundTrip.branches.map((b,) => b.id),).not.toEqual(firstPage.branches.map((b,) => b.id),);
   });
@@ -551,6 +582,7 @@ describe("branch navigation (FEAT-046)", () => {
     const rest = ok(
       await listBranchesPage(tdb.db, { chatId, actorId: ownerId, limit: 5000, cursor: page.nextCursor!, },),
     );
+
     expect(rest.branches.length,).toBe(1,);
     expect(rest.nextCursor,).toBeNull();
   });
@@ -566,6 +598,7 @@ describe("branch navigation (FEAT-046)", () => {
     const page = ok(
       await listBranchesPage(tdb.db, { chatId, actorId: ownerId, cursor: badJson, },),
     );
+
     expect(page.branches.map((b,) => b.id),).toEqual(first.branches.map((b,) => b.id),);
     expect(page.nextCursor,).toBe(first.nextCursor,);
   });
@@ -581,6 +614,7 @@ describe("branch navigation (FEAT-046)", () => {
     const page = ok(
       await listBranchesPage(tdb.db, { chatId, actorId: ownerId, cursor: missing, },),
     );
+
     expect(page.branches.map((b,) => b.id),).toEqual(first.branches.map((b,) => b.id),);
     expect(page.nextCursor,).toBe(first.nextCursor,);
   });
@@ -613,6 +647,7 @@ describe("branch navigation (FEAT-046)", () => {
       .select(["id",],)
       .where("id", "=", branchId,)
       .executeTakeFirst();
+
     expect(kept,).toBeDefined();
   });
 
@@ -656,6 +691,7 @@ describe("branch navigation (FEAT-046)", () => {
           fired = true;
           sideEffect();
         }
+
         return Promise.resolve(args.result,);
       },
     };
@@ -688,6 +724,7 @@ describe("branch navigation (FEAT-046)", () => {
       .where("chat_id", "=", chatId,)
       .orderBy("created_at", "asc",)
       .execute();
+
     return rows.map((row,) => row.name);
   }
 
@@ -711,6 +748,7 @@ describe("branch navigation (FEAT-046)", () => {
     } catch (error) {
       rejected = error instanceof Error && error.message.includes("UNIQUE constraint failed",);
     }
+
     expect(rejected,).toBe(true,);
   });
 
@@ -734,6 +772,7 @@ describe("branch navigation (FEAT-046)", () => {
       await forkBranch(tdb.db, { chatId, messageId: rootId, actorId: ownerId, name: "  Alt  ", },),
       "bad_request",
     );
+
     // Neither a silent overwrite nor a silent "Alt (2)".
     expect(await branchNames(chatId,),).toEqual(["Alt",],);
   });
@@ -797,11 +836,13 @@ describe("branch navigation (FEAT-046)", () => {
       await mergeBranch(raced, { chatId, branchId: source, actorId: ownerId, intoBranchId: target, },),
       "bad_request",
     );
+
     const kept = await tdb.db
       .selectFrom("chat_branches",)
       .select(["id",],)
       .where("id", "=", source,)
       .executeTakeFirst();
+
     expect(kept,).toBeDefined();
     // Nothing was re-parented: the merge never partially happened.
     const targetRow = await tdb.db
@@ -809,12 +850,14 @@ describe("branch navigation (FEAT-046)", () => {
       .select(["parent_message_id",],)
       .where("id", "=", target,)
       .executeTakeFirst();
+
     expect(targetRow?.parent_message_id,).toBe(b1Id,);
     const a1Row = await tdb.db
       .selectFrom("messages",)
       .select(["parent_id",],)
       .where("id", "=", a1Id,)
       .executeTakeFirst();
+
     expect(a1Row?.parent_id,).toBe(aId,);
   });
 
@@ -837,6 +880,7 @@ describe("branch navigation (FEAT-046)", () => {
       .select(["id",],)
       .where("id", "=", stale,)
       .executeTakeFirst();
+
     expect(kept,).toBeDefined();
   });
 
@@ -879,12 +923,14 @@ describe("branch navigation (FEAT-046)", () => {
       await mergeBranch(raced, { chatId, branchId: source, actorId: ownerId, intoBranchId: target, },),
       "not_found",
     );
+
     // The re-parenting rolled back with the abort: `a` still hangs off `root`.
     const aRow = await tdb.db
       .selectFrom("messages",)
       .select(["parent_id",],)
       .where("id", "=", aId,)
       .executeTakeFirst();
+
     expect(aRow?.parent_id,).toBe(rootId,);
   });
 });

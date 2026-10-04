@@ -55,6 +55,7 @@ beforeAll(async () => {
     { id: OUTSIDER_ID, name: "Outsider", },
     { id: STRANGER_ID, name: "Stranger", },
   ];
+
   for (const { id, name, } of userFixtures) {
     await insertUsers(db, `${name.toLowerCase()}-${id}`, name, { id, } as never,);
     await insertActors(db, name, { id, user_id: id, owner_id: id, } as never,);
@@ -85,23 +86,27 @@ async function resetChat(): Promise<void> {
     .set({ created_by: OWNER_ID, },)
     .where("id", "=", CHAT_ID,)
     .execute();
+
   await db
     .updateTable("chat_participants",)
     .set({ role_in_chat: ChatParticipantRole.Owner, },)
     .where("chat_id", "=", CHAT_ID,)
     .where("actor_id", "=", OWNER_ID,)
     .execute();
+
   await db
     .updateTable("chat_participants",)
     .set({ role_in_chat: ChatParticipantRole.Member, },)
     .where("chat_id", "=", CHAT_ID,)
     .where("actor_id", "=", PARTICIPANT_ID,)
     .execute();
+
   await db
     .deleteFrom("chat_participants",)
     .where("chat_id", "=", CHAT_ID,)
     .where("actor_id", "not in", [OWNER_ID, PARTICIPANT_ID,],)
     .execute();
+
   await db.deleteFrom("log_entries",).where("entity_id", "=", CHAT_ID,).execute();
 }
 
@@ -111,6 +116,7 @@ describe("transferOwnership", () => {
   test("transfers ownership to existing participant; flips created_by and demotes previous owner", async () => {
     const beforeChat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,)
       .executeTakeFirstOrThrow();
+
     expect(beforeChat.created_by,).toBe(OWNER_ID,);
 
     const result = await transferOwnership(db, {
@@ -120,6 +126,7 @@ describe("transferOwnership", () => {
       newOwnerId: PARTICIPANT_ID,
       reason: "stepping down",
     },);
+
     expect(result.ok,).toBe(true,);
     if (!result.ok) { return; }
     expect(result.result.previousOwnerId,).toBe(OWNER_ID,);
@@ -128,6 +135,7 @@ describe("transferOwnership", () => {
 
     const afterChat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,)
       .executeTakeFirstOrThrow();
+
     expect(afterChat.created_by,).toBe(PARTICIPANT_ID,);
 
     const roles = await db
@@ -135,6 +143,7 @@ describe("transferOwnership", () => {
       .select(["actor_id", "role_in_chat",],)
       .where("chat_id", "=", CHAT_ID,)
       .execute();
+
     const roleById = Object.fromEntries(roles.map((r,) => [r.actor_id, r.role_in_chat,]),);
     expect(roleById[PARTICIPANT_ID],).toBe(ChatParticipantRole.Owner,);
     expect(roleById[OWNER_ID],).toBe(ChatParticipantRole.Member,);
@@ -151,6 +160,7 @@ describe("transferOwnership", () => {
       newOwnerId: PARTICIPANT_ID,
       reason: "audit-test fixture",
     },);
+
     expect(result.ok,).toBe(true,);
 
     const logs = await db
@@ -177,6 +187,7 @@ describe("transferOwnership", () => {
       .where("chat_id", "=", CHAT_ID,)
       .where("actor_id", "=", OUTSIDER_ID,)
       .executeTakeFirst();
+
     expect(before,).toBeUndefined();
 
     const result = await transferOwnership(db, {
@@ -185,6 +196,7 @@ describe("transferOwnership", () => {
       requesterRole: "user",
       newOwnerId: OUTSIDER_ID,
     },);
+
     expect(result.ok,).toBe(true,);
     if (!result.ok) { return; }
     expect(result.result.autoInvited,).toBe(true,);
@@ -195,6 +207,7 @@ describe("transferOwnership", () => {
       .where("chat_id", "=", CHAT_ID,)
       .where("actor_id", "=", OUTSIDER_ID,)
       .executeTakeFirstOrThrow();
+
     expect(row.role_in_chat,).toBe(ChatParticipantRole.Owner,);
     // State cleanup is handled by `beforeEach(resetChat)` — no in-test rollback needed.
   });
@@ -206,6 +219,7 @@ describe("transferOwnership", () => {
       requesterRole: "user",
       newOwnerId: PARTICIPANT_ID,
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.error.code,).toBe("forbidden",);
@@ -218,6 +232,7 @@ describe("transferOwnership", () => {
       requesterRole: "user",
       newOwnerId: OWNER_ID,
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.error.code,).toBe("bad_request",);
@@ -233,6 +248,7 @@ describe("transferOwnership", () => {
       requesterRole: "admin", // bypasses checkChatSettingsAccess
       newOwnerId: OWNER_ID, // → previousOwnerId === newOwnerId
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.error.code,).toBe("bad_request",);
@@ -247,6 +263,7 @@ describe("transferOwnership", () => {
       newOwnerId: PARTICIPANT_ID,
       reason: "compliance audit",
     },);
+
     expect(result.ok,).toBe(true,);
     if (!result.ok) { return; }
     expect(result.result.previousOwnerId,).toBe(OWNER_ID,);
@@ -255,6 +272,7 @@ describe("transferOwnership", () => {
 
     const afterChat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,)
       .executeTakeFirstOrThrow();
+
     expect(afterChat.created_by,).toBe(PARTICIPANT_ID,);
   });
 
@@ -265,6 +283,7 @@ describe("transferOwnership", () => {
       requesterRole: "user",
       newOwnerId: PARTICIPANT_ID,
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.error.code,).toBe("not_found",);
@@ -279,6 +298,7 @@ describe("transferOwnership", () => {
       requesterRole: "user",
       newOwnerId: randomUUID(),
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.error.code,).toBe("not_found",);
@@ -305,6 +325,7 @@ describe("transferOwnership", () => {
         newOwnerId: OUTSIDER_ID,
       },),
     ],);
+
     const winners = [toParticipant, toOutsider,].filter((o,) => o.ok);
     expect(winners.length,).toBe(1,);
     const winner = winners[0]!;
@@ -312,6 +333,7 @@ describe("transferOwnership", () => {
 
     const afterChat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,)
       .executeTakeFirstOrThrow();
+
     expect(afterChat.created_by,).toBe(winner.result.newOwnerId,);
 
     const roles = await db
@@ -319,6 +341,7 @@ describe("transferOwnership", () => {
       .select(["actor_id", "role_in_chat",],)
       .where("chat_id", "=", CHAT_ID,)
       .execute();
+
     const roleById = Object.fromEntries(roles.map((r,) => [r.actor_id, r.role_in_chat,]),);
     expect(roleById[winner.result.newOwnerId],).toBe(ChatParticipantRole.Owner,);
 
@@ -329,6 +352,7 @@ describe("transferOwnership", () => {
       .where("entity_id", "=", CHAT_ID,)
       .where("event_type", "=", "chat_ownership_transferred",)
       .execute();
+
     expect(auditRows.length,).toBe(1,);
   });
 
@@ -345,6 +369,7 @@ describe("transferOwnership", () => {
         return Promise.resolve();
       },
     }),);
+
     const ownership = await import("./ownership?spy=" + Date.now());
     try {
       const result = await ownership.transferOwnership(db, {
@@ -353,6 +378,7 @@ describe("transferOwnership", () => {
         requesterRole: "user",
         newOwnerId: PARTICIPANT_ID,
       },);
+
       expect(result.ok,).toBe(true,);
       expect(calls.length,).toBe(1,);
       expect(calls[0]?.[1],).toBe(CHAT_ID,);
@@ -380,6 +406,7 @@ describe("transferOwnership", () => {
       requesterRole: "user",
       newOwnerId: PARTICIPANT_ID,
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.error.code,).toBe("bad_request",);
@@ -396,6 +423,7 @@ describe("transferOwnership", () => {
         return Promise.reject(new Error("synthetic reconcile failure",),);
       },
     }),);
+
     const ownership = await import("./ownership?thrown=" + Date.now());
     try {
       const result = await ownership.transferOwnership(db, {
@@ -404,6 +432,7 @@ describe("transferOwnership", () => {
         requesterRole: "user",
         newOwnerId: PARTICIPANT_ID,
       },);
+
       expect(result.ok,).toBe(true,);
       expect(callCount,).toBe(1,);
       // Ownership flip must survive the reconcile failure.
@@ -412,6 +441,7 @@ describe("transferOwnership", () => {
         .select("created_by",)
         .where("id", "=", CHAT_ID,)
         .executeTakeFirstOrThrow();
+
       expect(after.created_by,).toBe(PARTICIPANT_ID,);
     } finally {
       mock.module("./access", () => realAccess,);
@@ -427,6 +457,7 @@ describe("transferOwnership", () => {
       .where("chat_id", "=", CHAT_ID,)
       .where("actor_id", "=", OUTSIDER_ID,)
       .executeTakeFirst();
+
     expect(before,).toBeUndefined();
 
     const result = await transferOwnership(db, {
@@ -435,6 +466,7 @@ describe("transferOwnership", () => {
       requesterRole: "user",
       newOwnerId: OUTSIDER_ID,
     },);
+
     expect(result.ok,).toBe(true,);
     if (!result.ok) { return; }
     expect(result.result.autoInvited,).toBe(true,);
@@ -445,6 +477,7 @@ describe("transferOwnership", () => {
       .where("chat_id", "=", CHAT_ID,)
       .where("actor_id", "=", OUTSIDER_ID,)
       .executeTakeFirstOrThrow();
+
     expect(row.role_in_chat,).toBe(ChatParticipantRole.Owner,);
   });
 
@@ -457,6 +490,7 @@ describe("transferOwnership", () => {
       requesterRole: "user",
       newOwnerId: UNKNOWN_ID,
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.error.code,).toBe("not_found",);
@@ -473,6 +507,7 @@ describe("transferOwnership", () => {
       requesterRole: "admin",
       newOwnerId: OWNER_ID,
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.error.code,).toBe("bad_request",);
@@ -488,6 +523,7 @@ describe("transferOwnership", () => {
       newOwnerId: PARTICIPANT_ID,
       reason,
     },);
+
     expect(result.ok,).toBe(true,);
 
     const logs = await db
@@ -498,6 +534,7 @@ describe("transferOwnership", () => {
       .orderBy("timestamp", "desc",)
       .limit(1,)
       .execute();
+
     const meta = JSON.parse(logs[0]!.meta ?? "{}",) as Record<string, unknown>;
     expect(meta.reason,).toBe("r".repeat(500,),);
   });
@@ -516,11 +553,13 @@ describe("transferOwnership — tx error mapping (stubbed db)", () => {
         executeTakeFirst: async () => row,
         execute: async () => ({ numUpdatedRows: 1, }),
       };
+
       c.select = () => c;
       c.where = () => c;
       c.set = () => c;
       return c;
     };
+
     return {
       selectFrom: (table: string,) =>
         chain(
@@ -543,6 +582,7 @@ describe("transferOwnership — tx error mapping (stubbed db)", () => {
       requesterRole: "admin",
       newOwnerId: PARTICIPANT_ID,
     },);
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.error.code,).toBe("bad_request",);
@@ -559,6 +599,7 @@ describe("transferOwnership — tx error mapping (stubbed db)", () => {
         newOwnerId: PARTICIPANT_ID,
       },
     );
+
     expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
     expect(result.error.code,).toBe("bad_request",);

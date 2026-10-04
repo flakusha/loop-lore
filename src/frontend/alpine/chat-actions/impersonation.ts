@@ -23,6 +23,7 @@ export const impersonation: Partial<ChatState> & ThisType<ChatState> = {
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ impersonateActorId: null, },),
         },);
+
         if (res.ok) {
           this.impersonationActive = false;
           this.impersonatingActorId = null;
@@ -40,6 +41,7 @@ export const impersonation: Partial<ChatState> & ThisType<ChatState> = {
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ impersonateActorId: this.currentCharacter.id, },),
         },);
+
         if (res.ok) {
           this.impersonationActive = true;
           this.impersonatingActorId = this.currentCharacter.id;
@@ -87,16 +89,20 @@ export const impersonation: Partial<ChatState> & ThisType<ChatState> = {
         (p: { actor_id: string; display_name?: string },) =>
           p.actor_id === this.userRole || p.display_name === this.userDisplayName,
       );
+
       if (!me) {
         const selfParticipant = participants.find(
           (p: { impersonate_actor_id?: string | null },) => !!p.impersonate_actor_id,
         );
+
         if (selfParticipant) {
           this.impersonationActive = true;
           this.impersonatingActorId = selfParticipant.impersonate_actor_id!;
         }
+
         return;
       }
+
       if (me.impersonate_actor_id) {
         this.impersonationActive = true;
         this.impersonatingActorId = me.impersonate_actor_id as string;

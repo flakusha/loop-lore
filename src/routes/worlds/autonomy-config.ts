@@ -36,8 +36,10 @@ export function autonomyUpdate(raw: unknown,): AutonomyUpdateResult {
         },),
       };
     }
+
     return { ok: true, value: raw, };
   }
+
   if (typeof raw === "object") { return { ok: true, value: jsonStringifyOr(raw,), }; }
   return {
     ok: false,

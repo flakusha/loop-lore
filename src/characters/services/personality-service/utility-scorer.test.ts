@@ -16,6 +16,7 @@ const BOLD: ResolvedPersonality = { resolved: { D8_approach: "1", personality_tr
 const CAUTIOUS: ResolvedPersonality = {
   resolved: { D8_approach: "-1", D7_coping: "0.5", personality_traits: "paranoid, careful", },
 };
+
 const NEUTRAL: ResolvedPersonality = { resolved: {}, };
 
 const CTX: ReactionContext = { isHostile: false, inDanger: false, hasLineOfEffect: true, relationToActor: "neutral", };
@@ -62,6 +63,7 @@ describe("scoreOne — context boost", () => {
     expect(scoreOne(REACTION_KIND.Flee, wCautious, DANGER_CTX,),).toBeGreaterThan(
       scoreOne(REACTION_KIND.Wait, wCautious, DANGER_CTX,),
     );
+
     expect(flee,).toBeGreaterThanOrEqual(wait,);
   });
 

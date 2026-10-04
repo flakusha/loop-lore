@@ -41,6 +41,7 @@ export function reciprocalRankFusion<T,>(
       acc.set(hit.id, { hit, fused, },);
     },);
   }
+
   const denom = lists.length > 0 ? lists.length / (k + 1) : 1;
   return Array.from(acc.values(),)
     .map(({ hit, fused, },) => ({

@@ -14,6 +14,7 @@ registerCommand("narrate", (args,): CommandResult => {
       handled: true,
     };
   }
+
   return {
     systemMessage: args.join(" ",),
     action: "inject-narration",

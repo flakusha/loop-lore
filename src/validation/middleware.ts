@@ -113,6 +113,7 @@ export function onValidationError(
     // Logger not initialized — silently swallow; never let logging break
     // the error response.
   }
+
   set.status = 500;
   return { error: "Internal server error", code: "SERVER_ERROR", };
 }

@@ -63,9 +63,11 @@ describe("deleteChat cascade", () => {
         snapshot: "{}",
       } as never,)
       .execute();
+
     await insertAssets(db, ownerId, "stub.png", "image/png", "image", 1, "stub.png", {
       id: "asset-1",
     },);
+
     await insertAssetLinks(db, "asset-1", "chat", chatId,);
     assetLinkRowCount = await db
       .selectFrom("asset_links",)
@@ -74,6 +76,7 @@ describe("deleteChat cascade", () => {
       .where("entity_id", "=", chatId,)
       .execute()
       .then((rows,) => rows.length);
+
     await insertMessages(db, chatId, ownerId, "user", "hi2",);
   },);
 
@@ -86,9 +89,11 @@ describe("deleteChat cascade", () => {
     expect(
       await db.selectFrom("messages",).select("id",).where("chat_id", "=", chatId,).executeTakeFirst(),
     ).not.toBeUndefined();
+
     expect(
       await db.selectFrom("story_turns",).select("id",).where("chat_id", "=", chatId,).executeTakeFirst(),
     ).not.toBeUndefined();
+
     expect(assetLinkRowCount,).toBeGreaterThan(0,);
 
     await deleteChat(db, chatId,);
@@ -97,15 +102,19 @@ describe("deleteChat cascade", () => {
     expect(
       await db.selectFrom("chats",).select("id",).where("id", "=", chatId,).executeTakeFirst(),
     ).toBeUndefined();
+
     expect(
       await db.selectFrom("chat_participants",).select("actor_id",).where("chat_id", "=", chatId,).executeTakeFirst(),
     ).toBeUndefined();
+
     expect(
       await db.selectFrom("messages",).select("id",).where("chat_id", "=", chatId,).executeTakeFirst(),
     ).toBeUndefined();
+
     expect(
       await db.selectFrom("story_turns",).select("id",).where("chat_id", "=", chatId,).executeTakeFirst(),
     ).toBeUndefined();
+
     expect(
       await db
         .selectFrom("asset_links",)
@@ -114,6 +123,7 @@ describe("deleteChat cascade", () => {
         .where("entity_id", "=", chatId,)
         .execute(),
     ).toHaveLength(0,);
+
     expect(
       await db.selectFrom("world_states",).select("id",).where("id", "=", worldStateId,).executeTakeFirst(),
     ).toBeUndefined();
@@ -127,6 +137,7 @@ describe("deleteChat cascade", () => {
       .select(["id", "name",],)
       .where("id", "=", otherChatId,)
       .executeTakeFirst();
+
     expect(other?.id,).toBe(otherChatId,);
     // Other chat's participants and messages untouched.
     expect(
@@ -176,15 +187,19 @@ describe("deleteChat cascade", () => {
                         throw new Error("injected mid-cascade failure",);
                       },
                     };
+
                     return out as unknown as typeof ret;
                   }
+
                   return ret;
                 }) as typeof inner.where,
               };
+
               return wrapped;
             }) as typeof db.deleteFrom,
             selectFrom: ((table: never,) => db.selectFrom(table,)) as unknown as typeof db.selectFrom,
           };
+
           return await fn(trx as unknown as typeof db,);
         },
       }),
@@ -196,6 +211,7 @@ describe("deleteChat cascade", () => {
     } catch (e) {
       thrown = e;
     }
+
     expect((thrown as Error | null)?.message,).toBe("injected mid-cascade failure",);
 
     // Atomicity: the prior deletes rolled back. The chat row, the participant
@@ -204,9 +220,11 @@ describe("deleteChat cascade", () => {
     expect(
       await db.selectFrom("chats",).select("id",).where("id", "=", txChatId,).executeTakeFirst(),
     ).not.toBeUndefined();
+
     expect(
       await db.selectFrom("chat_participants",).select("actor_id",).where("chat_id", "=", txChatId,).execute(),
     ).toHaveLength(1,);
+
     expect(
       await db
         .selectFrom("messages",)

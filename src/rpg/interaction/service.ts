@@ -46,6 +46,7 @@ export async function resolveInteraction(
     advantage,
     modifiers,
   };
+
   const id = randomUUID();
   const missing = await findMissingMaterials(database, params.actorId, params.requirements ?? [],);
 
@@ -78,6 +79,7 @@ export async function resolveInteraction(
         state_changes: jsonStringifyOr({},),
       },)
       .execute();
+
     return {
       id,
       context,
@@ -99,6 +101,7 @@ export async function resolveInteraction(
     : margin >= 0
     ? InteractionOutcome.Success
     : InteractionOutcome.Failure;
+
   const draft: ResolvedInteraction = { context, roll, outcome, margin, };
   const stateChanges = params.stateChange ? await params.stateChange(draft,) : {};
   const result = {

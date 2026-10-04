@@ -32,6 +32,7 @@ function stubFetch(response: Response | Promise<Response>,): { calls: CapturedCa
     calls.push({ url: String(input,), init: init ?? {}, },);
     return await response;
   }) as typeof fetch;
+
   return {
     calls,
     restore: () => {
@@ -65,6 +66,7 @@ describe("createRembgMattingProvider", () => {
       baseUrl: "http://127.0.0.1:7000",
       decontaminate: false,
     },);
+
     await provider.removeBackground(Buffer.from([1,],),);
 
     const form = calls[0]?.init.body as FormData;
@@ -78,6 +80,7 @@ describe("createRembgMattingProvider", () => {
     const provider = createRembgMattingProvider({
       baseUrl: "http://127.0.0.1:7000",
     },);
+
     await expect(provider.removeBackground(Buffer.from([1,],),),).rejects.toThrow(
       "non-PNG",
     );
@@ -88,6 +91,7 @@ describe("createRembgMattingProvider", () => {
     const provider = createRembgMattingProvider({
       baseUrl: "http://127.0.0.1:7000",
     },);
+
     await expect(provider.removeBackground(Buffer.from([1,],),),).rejects.toThrow(
       "HTTP 500",
     );

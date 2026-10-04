@@ -76,6 +76,7 @@ interface TemplateDetail extends TemplateSummary {
           this.error = "Failed to load template";
           return;
         }
+
         const body = await res.json();
         const t = body.template as TemplateDetail;
         this.editingId = t.isPreset ? "" : t.id;
@@ -115,6 +116,7 @@ interface TemplateDetail extends TemplateSummary {
           this.error = "Payload is not valid JSON";
           return;
         }
+
         const payload = payloadResult.value;
         const input = {
           name: this.draft.name,
@@ -122,6 +124,7 @@ interface TemplateDetail extends TemplateSummary {
           description: this.draft.description || undefined,
           payload,
         };
+
         const res = this.editingId
           ? await apiFetch(`/api/v1/templates/${encodeURIComponent(this.editingId,)}`, {
             method: "PATCH",
@@ -133,11 +136,13 @@ interface TemplateDetail extends TemplateSummary {
             headers: { "Content-Type": "application/json", },
             body: jsonBody(input,),
           },);
+
         if (!res.ok) {
           const body = (await res.json().catch(() => ({}))) as { message?: unknown };
           this.error = typeof body.message === "string" ? body.message : "Save failed";
           return;
         }
+
         this.draft = null;
         this.editingId = "";
         await this.load();
@@ -170,11 +175,13 @@ interface TemplateDetail extends TemplateSummary {
           this.error = "Export failed";
           return;
         }
+
         const packResult = safeJsonStringify(await res.json(), 2,);
         if (!packResult.ok) {
           this.error = "Export failed";
           return;
         }
+
         const blob = new Blob([packResult.value,], { type: "application/json", },);
         const url = URL.createObjectURL(blob,);
         const a = document.createElement("a",);
@@ -199,16 +206,19 @@ interface TemplateDetail extends TemplateSummary {
           this.error = "Import failed";
           return;
         }
+
         const pack = packResult.value;
         const res = await apiFetch("/api/v1/templates/import", {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody(pack,),
         },);
+
         if (!res.ok) {
           this.error = "Import failed";
           return;
         }
+
         await this.load();
       } catch {
         this.error = "Import failed";

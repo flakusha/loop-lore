@@ -63,6 +63,7 @@ describe("chat setup templates", () => {
       features: ["rpg mode", "no quests",],
       visibility: "unlisted",
     },);
+
     expect(created.ok,).toBe(true,);
     if (!created.ok) { return; }
     expect(created.template.features,).toEqual(["rpg mode", "no quests",],);
@@ -72,6 +73,7 @@ describe("chat setup templates", () => {
       features: ["vn mode",],
       visibility: "public",
     },);
+
     expect(updated.ok,).toBe(true,);
     if (!updated.ok) { return; }
     expect(updated.template.features,).toEqual(["vn mode",],);
@@ -104,6 +106,7 @@ describe("chat setup templates", () => {
       turnStrategy: "scene_based",
       renderingOverride: null,
     },);
+
     expect(r1.ok,).toBe(true,);
     if (!r1.ok) { return; }
     expect(r1.template.mode,).toBe("story",);
@@ -112,6 +115,7 @@ describe("chat setup templates", () => {
       slug: "custom-roleplay",
       name: "Duplicate",
     },);
+
     expect(dup.ok,).toBe(false,);
     if (dup.ok) { return; }
     expect(dup.code,).toBe("conflict",);
@@ -124,10 +128,12 @@ describe("chat setup templates", () => {
       mode: "direct",
       renderingOverride: null,
     },);
+
     const r = await updateChatSetupTemplate(db, "template-editable", {
       name: "After",
       renderingOverride: "visual_novel",
     },);
+
     expect(r.ok,).toBe(true,);
     if (!r.ok) { return; }
     expect(r.template.name,).toBe("After",);
@@ -157,6 +163,7 @@ describe("chat setup templates", () => {
       turnStrategy: "round_robin",
       renderingOverride: null,
     },);
+
     const ownerId = crypto.randomUUID();
     await insertUsers(db, "snap-user", "Snap User", { id: ownerId, },);
     const chatId = crypto.randomUUID();
@@ -167,9 +174,11 @@ describe("chat setup templates", () => {
       turn_strategy: "round_robin" as never,
       gm_config: JSON.stringify({ renderingOverride: null, },),
     },);
+
     // Bind the chat to the template via the FK lineage pointer.
     const tpl = await db.selectFrom("chat_setup_templates",).select("id",).where("slug", "=", "snap",)
       .executeTakeFirst();
+
     expect(tpl,).not.toBeUndefined();
     await db.updateTable("chats",).set({ template_id: tpl!.id, },).where("id", "=", chatId,).execute();
 
@@ -181,6 +190,7 @@ describe("chat setup templates", () => {
       mode: "story",
       turnStrategy: "scene_based",
     },);
+
     expect(upd.ok,).toBe(true,);
 
     const after = await db.selectFrom("chats",).selectAll().where("id", "=", chatId,).executeTakeFirst();

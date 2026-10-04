@@ -72,6 +72,7 @@ describe("gameStateSection", () => {
       state: JSON.stringify({ grid: { w: 5, h: 5, }, entities: [], },),
       created_at: "2026-01-01T00:00:00Z",
     },);
+
     await insertGameStates(db, "chat-1", {
       id: "gs-new",
       state: STATE,

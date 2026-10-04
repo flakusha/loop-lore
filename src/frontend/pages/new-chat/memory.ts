@@ -25,6 +25,7 @@ export async function loadMemoriesForActor(ctx: NewChatCtx, actorId: string,): P
         pinned?: boolean;
       }>;
     };
+
     ctx.characterMemories = Array.from(data.items ?? [], (m,) => ({
       id: m.id,
       content: m.content,
@@ -33,6 +34,7 @@ export async function loadMemoriesForActor(ctx: NewChatCtx, actorId: string,): P
       pinned: !!m.pinned,
       tokens: estimateTokens(m.content,),
     }),);
+
     ctx.selectedMemoryIds = new Set(Array.from(ctx.characterMemories, (m,) => m.id,),);
     renderMemoryList(ctx,);
   } catch {
@@ -62,6 +64,7 @@ export function renderMemoryList(ctx: NewChatCtx,): void {
   const sorted = [...ctx.characterMemories,].sort(
     (a, b,) => a.type.localeCompare(b.type,) || a.content.localeCompare(b.content,),
   );
+
   let lastType = "";
   for (const m of sorted) {
     if (m.type !== lastType) {
@@ -69,12 +72,15 @@ export function renderMemoryList(ctx: NewChatCtx,): void {
       const heading = document.createElement("div",);
       heading.style.cssText =
         "font-size: 10px; font-weight: 600; color: var(--text-secondary); margin: var(--space-2) 0 var(--space-1)";
+
       heading.textContent = m.type;
       ctx.memoryCheckboxList.appendChild(heading,);
     }
+
     const label = document.createElement("label",);
     label.style.cssText =
       "display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-1) 0; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--border-default, #f0f0f0)";
+
     const cb = document.createElement("input",);
     cb.type = "checkbox";
     cb.value = m.id;
@@ -84,6 +90,7 @@ export function renderMemoryList(ctx: NewChatCtx,): void {
       const fn = (globalThis as Record<string, unknown>)["_toggleMemorySelect"];
       if (typeof fn === "function") { (fn as (id: string, checked: boolean,) => void)(m.id, cb.checked,); }
     },);
+
     const wrap = document.createElement("div",);
     const preview = document.createElement("div",);
     preview.style.color = "var(--text-primary)";
@@ -108,6 +115,7 @@ export function bindMemoryHandlers(ctx: NewChatCtx,): void {
     } else {
       ctx.selectedMemoryIds.delete(id,);
     }
+
     renderMemoryList(ctx,);
   };
 
@@ -133,6 +141,7 @@ export function bindMemoryHandlers(ctx: NewChatCtx,): void {
         ctx.selectedMemoryIds = new Set(Array.from(ctx.characterMemories, (m,) => m.id,),);
         ctx.memorySelectAllBtn!.textContent = "Deselect All";
       }
+
       renderMemoryList(ctx,);
     },);
   }
@@ -149,6 +158,7 @@ export function bindMemoryHandlers(ctx: NewChatCtx,): void {
         method: "POST",
         body: jsonBody({ content, memoryType: "episodic", confidence: 1, importance: 5, keywords: [], },),
       },);
+
       if (!res.ok) { return; }
       addInput.value = "";
       await loadMemoriesForActor(ctx, actorId,);

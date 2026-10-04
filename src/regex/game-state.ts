@@ -40,5 +40,6 @@ export function extractGameStateBlocks(content: string,): string[] {
   for (const match of content.matchAll(GAME_STATE_BLOCK_ALL,)) {
     payloads.push((match[1] ?? "").trim(),);
   }
+
   return payloads;
 }

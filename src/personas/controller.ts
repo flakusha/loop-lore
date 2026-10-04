@@ -33,6 +33,7 @@ export function personaRoutes({ database, }: { database: Kysely<DB> }, prefix = 
         userRole: (ctx as any).userRole as string | null,
         sessionId: (ctx as any).sessionId as string | null,
       },);
+
       return handleListPersonas({ database, context, },);
     },)
     .post(`${prefix}/personas`, async (ctx,) => {
@@ -41,6 +42,7 @@ export function personaRoutes({ database, }: { database: Kysely<DB> }, prefix = 
         userRole: (ctx as any).userRole as string | null,
         sessionId: (ctx as any).sessionId as string | null,
       },);
+
       const body = ctx.body as Record<string, unknown>;
       return handleCreatePersona({ database, body, context, },);
     },)
@@ -50,6 +52,7 @@ export function personaRoutes({ database, }: { database: Kysely<DB> }, prefix = 
         userRole: (ctx as any).userRole as string | null,
         sessionId: (ctx as any).sessionId as string | null,
       },);
+
       return handleGetPersona({ database, personaId: ctx.params.id, context, },);
     },)
     .patch(`${prefix}/personas/:id`, async (ctx,) => {
@@ -58,6 +61,7 @@ export function personaRoutes({ database, }: { database: Kysely<DB> }, prefix = 
         userRole: (ctx as any).userRole as string | null,
         sessionId: (ctx as any).sessionId as string | null,
       },);
+
       const body = ctx.body as Record<string, unknown>;
       return handleUpdatePersona({ database, personaId: ctx.params.id, body, context, },);
     },)
@@ -67,6 +71,7 @@ export function personaRoutes({ database, }: { database: Kysely<DB> }, prefix = 
         userRole: (ctx as any).userRole as string | null,
         sessionId: (ctx as any).sessionId as string | null,
       },);
+
       return handleDeletePersona({ database, personaId: ctx.params.id, context, },);
     },)
     .post(`${prefix}/personas/:id/convert-to-character`, async (ctx,) => {
@@ -75,6 +80,7 @@ export function personaRoutes({ database, }: { database: Kysely<DB> }, prefix = 
         userRole: (ctx as any).userRole as string | null,
         sessionId: (ctx as any).sessionId as string | null,
       },);
+
       return handleConvertToCharacter({ database, personaId: ctx.params.id, context, },);
     },);
 }

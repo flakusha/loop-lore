@@ -82,6 +82,7 @@ async function seed(): Promise<Fixture> {
     },
     uploadDir,
   },);
+
   return { db, uploadDir, ownerId, outsiderId, assetId: asset.id, };
 }
 
@@ -97,6 +98,7 @@ describe("GET /api/assets", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir,).handle(
         new Request("http://localhost/api/assets?page=1&pageSize=10",),
       );
+
       expect(res.status,).toBe(200,);
       const json = (await res.json()) as { data: { id: string }[]; pagination: { total: number } };
       expect(json.pagination.total,).toBe(1,);
@@ -112,6 +114,7 @@ describe("GET /api/assets", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir, (c,) => {
         c.assets.enabled = false;
       },).handle(new Request("http://localhost/api/assets",),);
+
       expect(res.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -126,6 +129,7 @@ describe("GET /api/assets/:id", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}`,),
       );
+
       expect(res.status,).toBe(200,);
       const json = (await res.json()) as { id: string };
       expect(json.id,).toBe(fx.assetId,);
@@ -140,6 +144,7 @@ describe("GET /api/assets/:id", () => {
       const res = await makeApp(fx.db, fx.outsiderId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}`,),
       );
+
       expect(res.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -154,6 +159,7 @@ describe("PATCH /api/assets/:id", () => {
       const res = await makeApp(fx.db, null, fx.uploadDir,).handle(
         jsonRequest(`http://localhost/api/assets/${fx.assetId}`, "PATCH", { visibility: "shared", },),
       );
+
       expect(res.status,).toBe(401,);
     } finally {
       await cleanup(fx,);
@@ -166,6 +172,7 @@ describe("PATCH /api/assets/:id", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir,).handle(
         jsonRequest(`http://localhost/api/assets/${fx.assetId}`, "PATCH", { visibility: "bogus", },),
       );
+
       expect(res.status,).toBe(400,);
     } finally {
       await cleanup(fx,);
@@ -178,6 +185,7 @@ describe("PATCH /api/assets/:id", () => {
       const res = await makeApp(fx.db, fx.outsiderId, fx.uploadDir,).handle(
         jsonRequest(`http://localhost/api/assets/${fx.assetId}`, "PATCH", { visibility: "shared", },),
       );
+
       expect(res.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -190,6 +198,7 @@ describe("PATCH /api/assets/:id", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir,).handle(
         jsonRequest(`http://localhost/api/assets/${fx.assetId}`, "PATCH", { visibility: "shared", },),
       );
+
       expect(res.status,).toBe(200,);
       const json = (await res.json()) as { id: string; visibility: string };
       expect(json.id,).toBe(fx.assetId,);
@@ -207,6 +216,7 @@ describe("DELETE /api/assets/:id", () => {
       const res = await makeApp(fx.db, null, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}`, { method: "DELETE", },),
       );
+
       expect(res.status,).toBe(401,);
     } finally {
       await cleanup(fx,);
@@ -222,6 +232,7 @@ describe("DELETE /api/assets/:id", () => {
       const second = await app.handle(
         new Request(`http://localhost/api/assets/${fx.assetId}`, { method: "DELETE", },),
       );
+
       expect(second.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -236,6 +247,7 @@ describe("serve routes", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/raw`,),
       );
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("Content-Type",),).toBe("image/png",);
       expect((await res.arrayBuffer()).byteLength,).toBeGreaterThan(0,);
@@ -250,6 +262,7 @@ describe("serve routes", () => {
       const res = await makeApp(fx.db, fx.outsiderId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/raw`,),
       );
+
       expect(res.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -262,6 +275,7 @@ describe("serve routes", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/download`,),
       );
+
       expect(res.status,).toBe(200,);
       expect(res.headers.get("Content-Disposition",),).toMatch(/attachment/,);
     } finally {
@@ -275,6 +289,7 @@ describe("serve routes", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/thumb`,),
       );
+
       expect(res.status,).toBe(200,);
       expect((await res.arrayBuffer()).byteLength,).toBeGreaterThan(0,);
     } finally {
@@ -288,6 +303,7 @@ describe("serve routes", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/compressed`,),
       );
+
       expect(res.status,).toBe(200,);
       expect((await res.arrayBuffer()).byteLength,).toBeGreaterThan(0,);
     } finally {
@@ -303,6 +319,7 @@ describe("POST /api/assets/:id/signed-url/:action", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/signed-url/bogus`, { method: "POST", },),
       );
+
       expect(res.status,).toBe(400,);
     } finally {
       await cleanup(fx,);
@@ -315,6 +332,7 @@ describe("POST /api/assets/:id/signed-url/:action", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/signed-url/raw`, { method: "POST", },),
       );
+
       expect(res.status,).toBe(403,);
     } finally {
       await cleanup(fx,);
@@ -329,6 +347,7 @@ describe("POST /api/assets/:id/signed-url/:action", () => {
       },).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/signed-url/raw`, { method: "POST", },),
       );
+
       expect(res.status,).toBe(200,);
       const json = (await res.json()) as { url: string; token: string; action: string };
       expect(json.action,).toBe("raw",);
@@ -347,6 +366,7 @@ describe("asset links", () => {
       const res = await makeApp(fx.db, null, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/links`,),
       );
+
       expect(res.status,).toBe(401,);
     } finally {
       await cleanup(fx,);
@@ -364,6 +384,7 @@ describe("asset links", () => {
           label: "avatar",
         },),
       );
+
       expect(linked.status,).toBe(201,);
       const listed = await app.handle(new Request(`http://localhost/api/assets/${fx.assetId}/links`,),);
       expect(listed.status,).toBe(200,);
@@ -372,6 +393,7 @@ describe("asset links", () => {
       const unlinked = await app.handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/links/char-1`, { method: "DELETE", },),
       );
+
       expect(unlinked.status,).toBe(204,);
       const relisted = await app.handle(new Request(`http://localhost/api/assets/${fx.assetId}/links`,),);
       expect(((await relisted.json()) as unknown[]).length,).toBe(0,);
@@ -391,12 +413,14 @@ describe("asset links", () => {
             entityId,
           },),
         );
+
         expect(linked.status,).toBe(201,);
       }
 
       const deleted = await app.handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/links/char-1`, { method: "DELETE", },),
       );
+
       expect(deleted.status,).toBe(204,);
 
       const listed = await app.handle(new Request(`http://localhost/api/assets/${fx.assetId}/links`,),);
@@ -407,6 +431,7 @@ describe("asset links", () => {
       const repeat = await app.handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/links/char-1`, { method: "DELETE", },),
       );
+
       expect(repeat.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -420,6 +445,7 @@ describe("asset links", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/links/ghost`, { method: "DELETE", },),
       );
+
       expect(res.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -440,6 +466,7 @@ describe("asset links", () => {
       const res = await makeApp(fx.db, fx.outsiderId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/links/char-1`, { method: "DELETE", },),
       );
+
       expect(res.status,).toBe(404,);
 
       // Ownership is enforced server-side: the link survives the rejected call.
@@ -465,11 +492,14 @@ describe("asset links", () => {
             entityId: "shared-id",
           },),
         );
+
         expect(linkRes.status,).toBe(201,);
       }
+
       const delRes = await app.handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/links/shared-id`, { method: "DELETE", },),
       );
+
       expect(delRes.status,).toBe(409,);
       const body = await delRes.json() as { code?: string; error?: string };
       expect(body.code,).toBe("CONFLICT",);
@@ -479,6 +509,7 @@ describe("asset links", () => {
       const listRes = await app.handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/links`,),
       );
+
       expect(((await listRes.json()) as unknown[]).length,).toBe(2,);
     } finally {
       await cleanup(fx,);
@@ -494,6 +525,7 @@ describe("asset links", () => {
           entityId: "char-1",
         },),
       );
+
       expect(res.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -509,10 +541,12 @@ describe("asset shares", () => {
       const shareRes = await app.handle(
         jsonRequest(`http://localhost/api/assets/${fx.assetId}/share`, "POST", {},),
       );
+
       expect(shareRes.status,).toBe(400,);
       const unshareRes = await app.handle(
         jsonRequest(`http://localhost/api/assets/${fx.assetId}/share`, "DELETE", {},),
       );
+
       expect(unshareRes.status,).toBe(400,);
     } finally {
       await cleanup(fx,);
@@ -525,6 +559,7 @@ describe("asset shares", () => {
       const res = await makeApp(fx.db, fx.outsiderId, fx.uploadDir,).handle(
         jsonRequest(`http://localhost/api/assets/${fx.assetId}/share`, "POST", { actor_id: fx.ownerId, },),
       );
+
       expect(res.status,).toBe(404,);
     } finally {
       await cleanup(fx,);
@@ -538,6 +573,7 @@ describe("asset shares", () => {
       const shared = await app.handle(
         jsonRequest(`http://localhost/api/assets/${fx.assetId}/share`, "POST", { actor_id: fx.outsiderId, },),
       );
+
       expect(shared.status,).toBe(201,);
       const listed = await app.handle(new Request(`http://localhost/api/assets/${fx.assetId}/shares`,),);
       expect(listed.status,).toBe(200,);
@@ -546,6 +582,7 @@ describe("asset shares", () => {
       const unshared = await app.handle(
         jsonRequest(`http://localhost/api/assets/${fx.assetId}/share`, "DELETE", { actor_id: fx.outsiderId, },),
       );
+
       expect(unshared.status,).toBe(204,);
       const relisted = await app.handle(new Request(`http://localhost/api/assets/${fx.assetId}/shares`,),);
       expect(((await relisted.json()) as unknown[]).length,).toBe(0,);
@@ -571,6 +608,7 @@ describe("handleUpload", () => {
         uploadDir: fx.uploadDir,
         maxFileSize: config.assets.maxFileSize,
       },);
+
       expect(res.status,).toBe(400,);
     } finally {
       await cleanup(fx,);
@@ -588,6 +626,7 @@ describe("handleUpload", () => {
         uploadDir: fx.uploadDir,
         maxFileSize: config.assets.maxFileSize,
       },);
+
       expect(res.status,).toBe(400,);
     } finally {
       await cleanup(fx,);
@@ -606,6 +645,7 @@ describe("handleUpload", () => {
         uploadDir: fx.uploadDir,
         maxFileSize: 1,
       },);
+
       expect(res.status,).toBe(400,);
     } finally {
       await cleanup(fx,);
@@ -625,6 +665,7 @@ describe("handleUpload", () => {
         uploadDir: fx.uploadDir,
         maxFileSize: config.assets.maxFileSize,
       },);
+
       expect(res.status,).toBe(400,);
     } finally {
       await cleanup(fx,);
@@ -645,6 +686,7 @@ describe("handleUpload", () => {
         uploadDir: fx.uploadDir,
         maxFileSize: config.assets.maxFileSize,
       },);
+
       expect(first.status,).toBe(201,);
       const firstJson = (await first.json()) as { id: string };
       expect(firstJson.id,).toBeTruthy();
@@ -657,6 +699,7 @@ describe("handleUpload", () => {
         uploadDir: fx.uploadDir,
         maxFileSize: config.assets.maxFileSize,
       },);
+
       expect(second.status,).toBe(200,);
       const secondJson = (await second.json()) as { id: string; duplicate: boolean };
       expect(secondJson.duplicate,).toBe(true,);
@@ -674,6 +717,7 @@ describe("PUT /api/assets/:id/transform (owner gate)", () => {
       const res = await makeApp(fx.db, fx.ownerId, fx.uploadDir,).handle(
         jsonRequest(`http://localhost/api/assets/${randomUUID()}/transform`, "PUT", { focalPointX: 0.4, },),
       );
+
       expect(res.status,).toBe(404,);
     } finally {
       await cleanup(fx,);

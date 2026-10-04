@@ -144,6 +144,7 @@ export function getProviderHealth(name: string,): ProviderHealthStatus | undefin
   for (const p of state.cache) {
     if (p.name === name) { return p; }
   }
+
   return undefined;
 }
 
@@ -155,6 +156,7 @@ export function hasUnhealthyProviders(): boolean {
   for (const p of state.cache) {
     if (p.status !== "healthy") { return true; }
   }
+
   return false;
 }
 
@@ -167,6 +169,7 @@ export function getUnhealthyProviders(): string[] {
   for (const p of state.cache) {
     if (p.status !== "healthy") { result.push(p.name,); }
   }
+
   return result;
 }
 

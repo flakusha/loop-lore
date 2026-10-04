@@ -72,6 +72,7 @@ describe("GET /api/settings", () => {
     const app = new Elysia({ name: "test-settings-noauth", },)
       .derive(() => ({ userId: null, }))
       .use(settingsRoutes({ database: db, },),);
+
     const res = await app.handle(new Request("http://localhost/api/settings",),);
     expect(res.status,).toBe(401,);
   });
@@ -89,6 +90,7 @@ describe("GET /api/settings", () => {
         status: "active",
       },)
       .execute();
+
     const app = createSettingsApp(db, emptyUserId,);
     const res = await app.handle(new Request("http://localhost/api/settings",),);
     expect(res.status,).toBe(200,);
@@ -136,6 +138,7 @@ describe("PATCH /api/settings", () => {
         body: JSON.stringify({ theme: "light", fontSize: 14, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.theme,).toBe("light",);
@@ -151,6 +154,7 @@ describe("PATCH /api/settings", () => {
         body: JSON.stringify({ locale: "fr", },),
       },),
     );
+
     const res = await app.handle(new Request("http://localhost/api/settings",),);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.theme,).toBe("light",);
@@ -167,6 +171,7 @@ describe("PATCH /api/settings", () => {
         body: JSON.stringify({ customInstructions: "always stay in character", },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.customInstructions,).toBe("always stay in character",);
@@ -181,6 +186,7 @@ describe("PATCH /api/settings", () => {
         body: JSON.stringify({ customInstructions: "x".repeat(5001,), },),
       },),
     );
+
     // Handler-level enforcement of the customInstructions cap → 400.
     expect(res.status,).toBe(400,);
   });
@@ -194,6 +200,7 @@ describe("PATCH /api/settings", () => {
         body: JSON.stringify({ customInstructions: { nested: true, }, },),
       },),
     );
+
     // Handler-level enforcement of the customInstructions type → 400.
     expect(res.status,).toBe(400,);
   });
@@ -207,6 +214,7 @@ describe("PATCH /api/settings", () => {
         body: JSON.stringify({ customInstructions: null, },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.customInstructions,).toBeNull();
@@ -217,6 +225,7 @@ describe("PATCH /api/settings", () => {
     const app = new Elysia({ name: "test-settings-noauth", },)
       .derive(() => ({ userId: null, }))
       .use(settingsRoutes({ database: db, },),);
+
     const res = await app.handle(
       new Request("http://localhost/api/settings", {
         method: "PATCH",
@@ -224,6 +233,7 @@ describe("PATCH /api/settings", () => {
         body: JSON.stringify({ theme: "dark", },),
       },),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -240,12 +250,14 @@ describe("PATCH /api/settings", () => {
         body: JSON.stringify({ theme: "dark", isAdmin: true, isModerator: 1, },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     const body = (await res.json()) as {
       error?: string;
       code?: string;
       details?: { rejectedKeys?: string[]; allowedKeys?: string[] };
     };
+
     expect(body.error,).toBeTruthy();
     expect(body.code,).toBe("BAD_REQUEST",);
     expect(body.details?.rejectedKeys?.sort(),).toEqual(["isAdmin", "isModerator",],);
@@ -261,6 +273,7 @@ describe("PATCH /api/settings", () => {
         body: JSON.stringify({ isAdmin: true, },),
       },),
     );
+
     expect(res.status,).toBe(400,);
     // The persisted blob must NOT contain the rejected key — verify by
     // re-reading settings through GET.
@@ -289,6 +302,7 @@ describe("PATCH /api/settings", () => {
         },),
       },),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.theme,).toBe("light",);
@@ -334,6 +348,7 @@ describe("GET /api/settings/export", () => {
     const app = new Elysia({ name: "test-settings-noauth", },)
       .derive(() => ({ userId: null, }))
       .use(settingsRoutes({ database: db, },),);
+
     const res = await app.handle(new Request("http://localhost/api/settings/export",),);
     expect(res.status,).toBe(401,);
   });

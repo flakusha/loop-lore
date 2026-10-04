@@ -51,6 +51,7 @@ export async function hkdfExpandToBytes(
     false,
     ["deriveBits",],
   );
+
   const bits = await crypto.subtle.deriveBits(
     {
       name: "HKDF",
@@ -61,6 +62,7 @@ export async function hkdfExpandToBytes(
     base,
     outLen * 8,
   );
+
   return new Uint8Array(bits,);
 }
 

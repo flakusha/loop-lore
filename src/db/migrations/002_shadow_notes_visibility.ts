@@ -41,6 +41,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await sql`DROP INDEX IF EXISTS idx_shadow_notes_chat_visibility`.execute(
     database,
   );
+
   await database.schema
     .alterTable("shadow_notes",)
     .dropColumn("visibility",)

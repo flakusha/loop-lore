@@ -54,6 +54,7 @@ describe("parseShareability", () => {
       trustedActorIds: ["a", "b",],
       blockedActorIds: ["c",],
     },);
+
     const config = parseShareability(json,);
     expect(config.shareProbability,).toBeCloseTo(0.8,);
     expect(config.trustedActorIds,).toEqual(["a", "b",],);
@@ -91,6 +92,7 @@ describe("evaluateShareability", () => {
       viewerId: "blocked-1",
       shareability: baseConfig,
     },);
+
     expect(result,).toBe("withhold",);
   });
 
@@ -101,6 +103,7 @@ describe("evaluateShareability", () => {
       viewerId: "trusted-1",
       shareability: baseConfig,
     },);
+
     expect(result,).toBe("share",);
   });
 
@@ -111,6 +114,7 @@ describe("evaluateShareability", () => {
       viewerId: "stranger",
       shareability: baseConfig,
     },);
+
     expect(result,).toBe("withhold",);
   });
 
@@ -121,6 +125,7 @@ describe("evaluateShareability", () => {
       viewerId: "owner-1",
       shareability: baseConfig,
     },);
+
     expect(result,).toBe("share",);
   });
 
@@ -133,6 +138,7 @@ describe("evaluateShareability", () => {
       shareability: { ...baseConfig, shareProbability: 0.5, },
       randomFn: () => 0.3,
     },);
+
     expect(share,).toBe("share",);
 
     // roll = 0.7, threshold = 0.5 → withhold
@@ -143,6 +149,7 @@ describe("evaluateShareability", () => {
       shareability: { ...baseConfig, shareProbability: 0.5, },
       randomFn: () => 0.7,
     },);
+
     expect(withhold,).toBe("withhold",);
   });
 
@@ -156,6 +163,7 @@ describe("evaluateShareability", () => {
       trustModifier: 0.4,
       randomFn: () => 0.5,
     },);
+
     expect(result,).toBe("share",);
 
     // base 0.3 + modifier -0.4 = -0.1 → clamped to 0 → always withhold
@@ -167,6 +175,7 @@ describe("evaluateShareability", () => {
       trustModifier: -0.4,
       randomFn: () => 0.01,
     },);
+
     expect(result2,).toBe("withhold",);
   });
 
@@ -177,6 +186,7 @@ describe("evaluateShareability", () => {
       viewerId: "trusted-1",
       shareability: { ...baseConfig, shareProbability: 0, },
     },);
+
     expect(result,).toBe("share",);
   });
 });

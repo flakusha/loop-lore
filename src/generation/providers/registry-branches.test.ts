@@ -66,6 +66,7 @@ beforeAll(async () => {
   } catch {
     // Logger already initialized by another test file — reuse it.
   }
+
   const env = await createTestDb();
   testDb = env.db;
   testSqlite = env.sqlite;
@@ -86,6 +87,7 @@ afterAll(() => {
       "sm-cov-init-a",
     ]
   ) { unregisterProvider(name,); }
+
   testSqlite.close();
 },);
 
@@ -146,6 +148,7 @@ describe("buildFailoverList", () => {
         models: {},
       },
     ];
+
     const list = buildFailoverList("sm-cov-fail-b", config,);
     expect(list.map((e,) => e.name),).toEqual(["sm-cov-fail-b", "sm-cov-fail-c",],);
   });
@@ -159,6 +162,7 @@ describe("resolveProvider", () => {
       model: "model-1",
       config: emptyConfig(),
     },);
+
     expect(resolved.resolvedProviderName,).toBe("sm-cov-res-a",);
     expect(resolved.resolvedModel,).toBe("model-1",);
     expect(resolved.resolvedApiKey,).toBeUndefined();
@@ -181,6 +185,7 @@ describe("resolveProvider", () => {
         models: {},
       },
     ];
+
     config.generation.defaultModels = { "sm-cov-res-fb": "fb-model", };
     const resolved = await resolveProvider({ config, },);
     expect(resolved.resolvedProviderName,).toBe("sm-cov-res-fb",);
@@ -206,11 +211,13 @@ describe("resolveProvider", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await testDb.insertInto("user_api_keys",).values({
       user_id: "byo-user",
       provider_name: "sm-cov-byo-a",
       api_key_encrypted: await encryptValue("sk-byo-secret", secret,),
     },).execute();
+
     const config = emptyConfig();
     config.byoKey = { enabled: true, encryptionKey: secret, } as Config["byoKey"];
     const resolved = await resolveProvider({
@@ -220,6 +227,7 @@ describe("resolveProvider", () => {
       config,
       db: testDb,
     },);
+
     expect(resolved.resolvedApiKey,).toBe("sk-byo-secret",);
   });
 
@@ -234,11 +242,13 @@ describe("resolveProvider", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
     await testDb.insertInto("user_api_keys",).values({
       user_id: "byo-user-broken",
       provider_name: "sm-cov-byo-b",
       api_key_encrypted: "not-valid-ciphertext",
     },).execute();
+
     const config = emptyConfig();
     config.byoKey = { enabled: true, encryptionKey: secret, } as Config["byoKey"];
     const resolved = await resolveProvider({
@@ -248,6 +258,7 @@ describe("resolveProvider", () => {
       config,
       db: testDb,
     },);
+
     expect(resolved.resolvedProviderName,).toBe("sm-cov-byo-b",);
     expect(resolved.resolvedApiKey,).toBeUndefined();
   });
@@ -268,6 +279,7 @@ describe("initializeProviders", () => {
         models: {},
       },
     ];
+
     expect(getProvider("sm-cov-init-a",),).toBeUndefined();
     initializeProviders(config,);
     expect(getProvider("sm-cov-init-a",),).toBeDefined();

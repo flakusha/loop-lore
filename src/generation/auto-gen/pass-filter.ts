@@ -77,6 +77,7 @@ export async function filterPassedActors(opts: PassFilterOpts,): Promise<PassFil
       )
     )
     .execute();
+
   const passedActorIds = new Set<string>();
   for (const row of recentPassRows) {
     // First-class turn_skip events opt out without decrypting — the event
@@ -85,6 +86,7 @@ export async function filterPassedActors(opts: PassFilterOpts,): Promise<PassFil
       passedActorIds.add(row.actor_id,);
       continue;
     }
+
     const plaintext = row.content_plaintext ?? await decryptCascadeRow(row,);
     if (detectPassToken(plaintext,)) { passedActorIds.add(row.actor_id,); }
   }
@@ -108,6 +110,7 @@ export async function filterPassedActors(opts: PassFilterOpts,): Promise<PassFil
       return "";
     }
   }
+
   const eligible: PassFilterParticipant[] = [];
   let filtered = 0;
   for (const p of aiParticipantsRaw) {
@@ -116,6 +119,7 @@ export async function filterPassedActors(opts: PassFilterOpts,): Promise<PassFil
       log.debug("Cascade: actor opted out via [PASS]", { actorId: p.actor_id, chatId, },);
     } else { eligible.push(p,); }
   }
+
   if (filtered > 0) {
     log.info("Cascade: filtered opted-out actors", {
       chatId,
@@ -123,5 +127,6 @@ export async function filterPassedActors(opts: PassFilterOpts,): Promise<PassFil
       remaining: eligible.length,
     },);
   }
+
   return { eligible, filtered, };
 }
