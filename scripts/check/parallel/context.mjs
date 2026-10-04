@@ -57,27 +57,49 @@ if (GATES_FILTER && SKIP_GATES_FILTER) {
 }
 
 /**
- * Files changed on this branch vs `base`, plus uncommitted working-tree
- * changes. Empty when `base` is null.
+ * Files `git diff --name-only base HEAD` reports, plus uncommitted
+ * working-tree changes. Empty when `base` is null.
+ *
+ * Two-dot (`base`..`HEAD`), not merge-base. The question this answers is
+ * "which files will this branch change when it lands on `base`", and only a
+ * tree-vs-tree diff answers that. A merge-base diff answers a different
+ * question — "which files did EITHER side touch since the fork" — so on a
+ * branch that forked a while back it also returns every file `base` moved
+ * independently. The coverage gate then floored whole files at the floor for
+ * churn this branch never authored, blocking it on debt it did not create.
+ *
+ * `git diff A B` needs no common ancestor, so dropping the merge-base lookup
+ * also removes a crash: `git merge-base` exits non-zero on unrelated
+ * histories, which took the whole runner down.
+ *
+ * Two limits worth knowing before reading scope off this list. It is a
+ * SUPERSET of what the merge actually changes, never a subset — a file the two
+ * tips hold identically is excluded, but one only `base` moved is still listed
+ * (over-scopes, which costs a false red, never a false green). And it only sees
+ * TRACKED working-tree changes: `git diff HEAD` omits untracked files, so a new
+ * source file that was never `git add`ed is not gated.
+ *
  * @param base - Git ref to diff against, or null.
+ * @param cwd - Repo root to diff in; defaults to this repo. Exists so tests
+ *   can point the diff at a fixture repo.
  * @returns Sorted list of changed paths (repo-relative).
+ * @throws {Error} when `base` does not resolve to a commit. This runs at module
+ *   init, before `main()`, so the throw is NOT caught by the runner's error
+ *   handler and no check report is written. `resolveDiffBase` in
+ *   `scripts/worktree/commands/finalize.ts` validates the ref first so the
+ *   finalize path fails with a message instead.
  */
-function changedFiles(base,) {
+export function changedFiles(base, cwd = DIFF_ROOT,) {
   if (!base) { return []; }
-  const mergeBase = execFileSync(
-    "git",
-    ["merge-base", base, "HEAD",],
-    { cwd: DIFF_ROOT, encoding: "utf8", },
-  ).trim();
   const committed = execFileSync(
     "git",
-    ["diff", "--name-only", mergeBase,],
-    { cwd: DIFF_ROOT, encoding: "utf8", },
+    ["diff", "--name-only", base, "HEAD",],
+    { cwd, encoding: "utf8", },
   );
   const dirty = execFileSync(
     "git",
     ["diff", "--name-only", "HEAD",],
-    { cwd: DIFF_ROOT, encoding: "utf8", },
+    { cwd, encoding: "utf8", },
   );
   return [...new Set(`${committed}\n${dirty}`.split("\n",).map((f,) => f.trim()).filter(Boolean,),),].sort();
 }
