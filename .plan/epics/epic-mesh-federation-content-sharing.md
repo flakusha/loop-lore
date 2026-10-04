@@ -3,7 +3,7 @@
 
 # EPIC: Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Very High
 **Type:** Architecture / Feature Epic
@@ -272,3 +272,5 @@ Out of scope (owned by other epics):
 - `epic-communications-integrations.md` — `ProtocolAdapter` / `EncryptionProvider` seams
 - `FEAT-swarm-mode-reconciliation.md` — CRDT state sync, HLC/vector clocks
 - `TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl` — per-peer TLS trust
+
+**Resolved:** 2026-10-04 registry-driven close: git issue d0e739b (registry tip: abb346065 Konstantin Fedotov Auto-closed: ticket EPIC-MESH-FEDERATION-CONTENT-SHARING marked done in)
