@@ -145,6 +145,7 @@ describe("two independent stores on one database do not share a spill path", () 
       const file = await m.spill(process.argv[2], "payload-for-pid-" + process.pid);
       console.log(JSON.stringify({ root: m.SPILL_ROOT, dir, file, pid: process.pid }));
     `;
+
     const proc = Bun.spawnSync({
       cmd: [process.execPath, "-e", script, path.join(import.meta.dir, "spill.ts",), id, cwd, mode,],
       // The child's cwd decides where `SPILL_ROOT` (a CWD-relative
@@ -154,9 +155,11 @@ describe("two independent stores on one database do not share a spill path", () 
       cwd,
       timeout: 10_000,
     },);
+
     if (proc.exitCode !== 0) {
       throw new Error(`child spill process failed: ${proc.stderr.toString()}`,);
     }
+
     return JSON.parse(proc.stdout.toString().trim(),) as { root: string; dir: string; file: string; pid: number };
   }
 
