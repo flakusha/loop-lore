@@ -39210,7 +39210,7 @@
     "epic": "epic-effect-v4-adoption-evaluation",
     "tags": [],
     "source": ".plan/tickets/TASK-replace-concurrency-limiter-core-with-effect-semaphore.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-REPLACE-KNIP-GLOBAL-TYPES-EXCLUSION-WITH-PER-SYMBOL-KNIPIGNO": {
     "epic": "",
