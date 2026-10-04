@@ -904,6 +904,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
     },
     {
@@ -2675,6 +2679,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-context-inclusion-budget-policy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
     }
   ],
   "src/assistant/prompt/assembly.ts": [
@@ -3309,6 +3317,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-char-growth-prompt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
     },
     {
       "kind": "ticket",
@@ -6258,6 +6270,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-local-random-event-generator.md"
     },
     {
@@ -6599,6 +6615,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-context-pruning.md"
+    }
+  ],
+  "src/chat/pruning/prune.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
     }
   ],
   "src/chat/random-events.test.ts": [
@@ -7522,6 +7544,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-test-chat-module.md"
     }
   ],
@@ -7891,6 +7917,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-location-transition-transfer.md"
+    }
+  ],
+  "src/chat/types/variants.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md"
+    }
+  ],
+  "src/chat/variants.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md"
     }
   ],
   "src/chat/world-invites.ts": [
@@ -14772,10 +14810,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-.md"
     },
     {
@@ -15483,6 +15517,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-bestiary-ui-compendium-and-per-location-population.md"
+    }
+  ],
+  "src/frontend/alpine/admin-analytics.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
     }
   ],
   "src/frontend/alpine/admin-audit.ts": [
@@ -20039,6 +20079,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
     }
   ],
   "src/generation/auto-gen/deps.ts": [
@@ -20089,6 +20133,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-single-chat-pause-not-gating-autoreply.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md"
     }
   ],
   "src/generation/auto-gen/handle-generation-error.ts": [
@@ -20567,6 +20615,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-tool-valves-panel.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
     },
     {
       "kind": "spec",
@@ -23944,6 +23996,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-matrix-story-coherence-perspective-aware-draft-set-perspecti.md"
     },
     {
@@ -25489,18 +25545,30 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-persona-lifecycle-contract.md"
     }
   ],
   "src/personas/convert.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-personas-converttocharacter-drops-title-temperature-max-toke.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-persona-lifecycle-contract.md"
     }
   ],
   "src/personas/handlers.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-personas-converttocharacter-drops-title-temperature-max-toke.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-persona-lifecycle-contract.md"
     }
   ],
   "src/personas/handlers.ts": [
@@ -25519,6 +25587,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-personas-setdefault-silently-succeeds-for-invalid-personaid-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-persona-lifecycle-contract.md"
     }
   ],
   "src/personas/service.missing.test.ts": [
@@ -25528,6 +25600,10 @@
     }
   ],
   "src/personas/service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-persona-lifecycle-contract.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-e2e-users-personas-routes-missing.md"
@@ -25557,6 +25633,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-format-version-migration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-persona-lifecycle-contract.md"
     },
     {
       "kind": "ticket",
@@ -27606,10 +27686,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/FEAT-user-engagement-leaderboards.md"
     },
     {
@@ -28601,6 +28677,12 @@
       "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
     }
   ],
+  "src/routes/chats/create-variant.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md"
+    }
+  ],
   "src/routes/chats/create.ts": [
     {
       "kind": "ticket",
@@ -28617,6 +28699,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-024.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md"
     },
     {
       "kind": "ticket",
@@ -29633,12 +29719,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations-architecture.md"
-    }
-  ],
-  "src/routes/memory/knowledge-graph.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
     }
   ],
   "src/routes/message-archiving.test.ts": [
@@ -31585,6 +31665,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
     },
     {
       "kind": "ticket",
@@ -37817,6 +37901,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md"
     }
   ],
   "src/turning/turn-manager/turn-strategies.ts": [
@@ -38635,6 +38723,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
     },
     {
       "kind": "ticket",
