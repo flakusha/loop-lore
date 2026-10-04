@@ -7,16 +7,6 @@
 import { Elysia, } from "elysia";
 import { checkChatSettingsAccess, } from "../../chat/service";
 import { registerContentVersion, } from "../../db/content-version";
-
-// Base `data_version` 0 projection for `whitenotes` (columns added by
-// migration 031). GM-authored content, so integrity tracking matters.
-registerContentVersion("whitenotes", 0, [
-  "chat_id",
-  "type",
-  "content",
-  "priority",
-  "scope",
-],);
 import { uid, } from "../../utils";
 import {
   ChatIdParams,
@@ -32,6 +22,16 @@ import {
 } from "../http-utils";
 import { NoteIdParams, WhiteneoteBody, } from "./schemas";
 import type { HandlerOpts, } from "./types";
+
+// Base `data_version` 0 projection for `whitenotes` (columns added by
+// migration 034). GM-authored content, so integrity tracking matters.
+registerContentVersion("whitenotes", 0, [
+  "chat_id",
+  "type",
+  "content",
+  "priority",
+  "scope",
+],);
 
 /**
  * @param opts
