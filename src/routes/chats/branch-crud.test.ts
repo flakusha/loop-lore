@@ -37,6 +37,7 @@ function makeApp(db: TestDb["db"], userId: string | null,) {
     .derive(() => ({ userId, }))
     .use(chatBranchRoutes({ database: db, config, },),);
 }
+
 /** Issue a request as `userId` (null = no session) and return the response. */
 function call(path: string, init?: RequestInit, userId: string | null = OWNER_ID,): Promise<Response> {
   return makeApp(tdb.db, userId,).handle(new Request(`http://localhost${path}`, init,),);
@@ -184,6 +185,7 @@ describe("branch merge", () => {
         deletedSourceBranchId: string;
       };
     };
+
     expect(parsed.data.sourceBranchId,).toBe(sourceId,);
     expect(parsed.data.targetBranchId,).toBe(targetId,);
     // The shared fork point is already on the target path: only the alt leaf moves.
@@ -214,12 +216,14 @@ describe("branch merge consumes the source", () => {
     const altLeafId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "alt leaf", {
       parent_id: rootId,
     },);
+
     await activate(targetId,);
 
     // What B saw before the merge — the branch must never report this after.
     const beforeRes = await makeApp(tdb.db, OWNER_ID,).handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/branches/${sourceId}`, { method: "GET", },),
     );
+
     const before = await beforeRes.json() as { data: { messagePath: string[] } };
     expect(before.data.messagePath,).toEqual([rootId,],);
 
@@ -229,6 +233,7 @@ describe("branch merge consumes the source", () => {
         json("POST", { intoBranchId: targetId, },),
       ),
     );
+
     expect(merge.status,).toBe(200,);
 
     // Consumed: the detail route no longer resolves the source at all, so it
@@ -236,6 +241,7 @@ describe("branch merge consumes the source", () => {
     const after = await makeApp(tdb.db, OWNER_ID,).handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/branches/${sourceId}`, { method: "GET", },),
     );
+
     expect(after.status,).toBe(404,);
     const reMerge = await makeApp(tdb.db, OWNER_ID,).handle(
       new Request(
@@ -243,17 +249,20 @@ describe("branch merge consumes the source", () => {
         json("POST", { intoBranchId: targetId, },),
       ),
     );
+
     expect(reMerge.status,).toBe(404,);
     const rows = await tdb.db
       .selectFrom("chat_branches",)
       .select(["id",],)
       .where("chat_id", "=", CHAT_ID,)
       .execute();
+
     expect(rows.map((r,) => r.id).sort(),).toEqual([targetId,],);
     // The folded messages now live on the target.
     const targetRes = await makeApp(tdb.db, OWNER_ID,).handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/branches/${targetId}`, { method: "GET", },),
     );
+
     const targetBody = await targetRes.json() as { data: { messagePath: string[] } };
     expect(targetBody.data.messagePath,).toEqual([rootId, altLeafId,],);
   });
@@ -265,12 +274,14 @@ describe("branch merge consumes the source", () => {
     await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "alt leaf", {
       parent_id: rootId,
     },);
+
     // `sourceId` is the newest fork and therefore the displayed branch.
     const chatBefore = await tdb.db
       .selectFrom("chats",)
       .select(["active_branch_id",],)
       .where("id", "=", CHAT_ID,)
       .executeTakeFirst();
+
     expect(chatBefore?.active_branch_id,).toBe(sourceId,);
 
     const res = await makeApp(tdb.db, OWNER_ID,).handle(
@@ -279,6 +290,7 @@ describe("branch merge consumes the source", () => {
         json("POST", { intoBranchId: targetId, },),
       ),
     );
+
     expect(res.status,).toBe(400,);
     const parsed = await res.json() as { error: string };
     expect(parsed.error,).toContain("active branch",);
@@ -288,12 +300,14 @@ describe("branch merge consumes the source", () => {
       .select(["active_branch_id",],)
       .where("id", "=", CHAT_ID,)
       .executeTakeFirst();
+
     expect(chatAfter?.active_branch_id,).toBe(sourceId,);
     const sourceRow = await tdb.db
       .selectFrom("chat_branches",)
       .select(["id",],)
       .where("id", "=", sourceId,)
       .executeTakeFirst();
+
     expect(sourceRow?.id,).toBe(sourceId,);
   });
 
@@ -308,6 +322,7 @@ describe("branch merge consumes the source", () => {
       .set({ is_active: 1, },)
       .where("id", "=", sourceId,)
       .execute();
+
     await tdb.db
       .updateTable("chats",)
       .set({ active_branch_id: targetId, },)
@@ -320,12 +335,14 @@ describe("branch merge consumes the source", () => {
         json("POST", { intoBranchId: targetId, },),
       ),
     );
+
     expect(res.status,).toBe(400,);
     const row = await tdb.db
       .selectFrom("chat_branches",)
       .select(["id",],)
       .where("id", "=", sourceId,)
       .executeTakeFirst();
+
     expect(row?.id,).toBe(sourceId,);
   });
 
@@ -345,6 +362,7 @@ describe("branch merge consumes the source", () => {
       content: `bulk ${i}`,
       parent_id: i === 0 ? rootId : ids[i - 1]!,
     }));
+
     for (let i = 0; i < rows.length; i += 200) {
       await tdb.db.insertInto("messages",).values(rows.slice(i, i + 200,) as never,).execute();
     }
@@ -355,6 +373,7 @@ describe("branch merge consumes the source", () => {
         json("POST", { intoBranchId: targetId, },),
       ),
     );
+
     expect(res.status,).toBe(400,);
     const parsed = await res.json() as { code: string; error: string };
     expect(parsed.code,).toBe("bad_request",);
@@ -366,27 +385,32 @@ describe("branch merge consumes the source", () => {
       .select(["parent_id",],)
       .where("id", "=", ids[0]!,)
       .executeTakeFirst();
+
     expect(first?.parent_id,).toBe(rootId,);
     const last = await tdb.db
       .selectFrom("messages",)
       .select(["parent_id",],)
       .where("id", "=", ids[ids.length - 1]!,)
       .executeTakeFirst();
+
     expect(last?.parent_id,).toBe(ids[ids.length - 2]!,);
     const targetRow = await tdb.db
       .selectFrom("chat_branches",)
       .select(["parent_message_id",],)
       .where("id", "=", targetId,)
       .executeTakeFirst();
+
     expect(targetRow?.parent_message_id,).toBe(rootId,);
     const sourceRow = await tdb.db
       .selectFrom("chat_branches",)
       .select(["id",],)
       .where("id", "=", sourceId,)
       .executeTakeFirst();
+
     expect(sourceRow?.id,).toBe(sourceId,);
   });
 });
+
 describe("branch merge default target", () => {
   test("a bodyless merge lands on the chat's active branch", async () => {
     const rootId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "root",);
@@ -395,6 +419,7 @@ describe("branch merge default target", () => {
     const altLeafId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "alt leaf", {
       parent_id: rootId,
     },);
+
     // `targetId` is now the active branch (the newest fork demoted it, so
     // point the display back at it to exercise the default resolution).
     await activate(targetId,);
@@ -403,6 +428,7 @@ describe("branch merge default target", () => {
     const res = await makeApp(tdb.db, OWNER_ID,).handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/branches/${sourceId}/merge`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(200,);
     const parsed = await res.json() as { data: { targetBranchId: string; movedMessageIds: string[] } };
     expect(parsed.data.targetBranchId,).toBe(targetId,);
@@ -412,6 +438,7 @@ describe("branch merge default target", () => {
       .select(["parent_id",],)
       .where("id", "=", altLeafId,)
       .executeTakeFirst();
+
     expect(moved?.parent_id,).toBe(rootId,);
   });
 
@@ -421,6 +448,7 @@ describe("branch merge default target", () => {
     const res = await makeApp(tdb.db, OWNER_ID,).handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/branches/${only}/merge`, { method: "POST", },),
     );
+
     expect(res.status,).toBe(400,);
   });
 });
@@ -443,6 +471,7 @@ describe("branch route error paths", () => {
       const parsed = await res.json() as { code: string };
       expect(parsed.code,).toBe("not_found",);
     }
+
     const merge = await app.handle(new Request(`${base}/merge`, { method: "POST", },),);
     expect(merge.status,).toBe(404,);
     // None of the 404s may have mutated the chat's branch set.
@@ -451,6 +480,7 @@ describe("branch route error paths", () => {
       .select(["id",],)
       .where("chat_id", "=", CHAT_ID,)
       .executeTakeFirst();
+
     expect(only?.id,).toBe(survivor,);
   });
 });
@@ -464,6 +494,7 @@ describe("branch list limit parsing", () => {
       const res = await app.handle(
         new Request(`http://localhost/api/chats/${CHAT_ID}/branches?${query}`, { method: "GET", },),
       );
+
       expect(res.status, `${query} must be rejected`,).toBe(400,);
     }
   });
@@ -474,6 +505,7 @@ describe("branch list limit parsing", () => {
     const res = await makeApp(tdb.db, OWNER_ID,).handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/branches`, { method: "GET", },),
     );
+
     expect(res.status,).toBe(200,);
     const parsed = await res.json() as { data: { branches: unknown[] } };
     expect(parsed.data.branches.length,).toBe(20,);
@@ -487,6 +519,7 @@ describe("branch list limit parsing", () => {
     const res = await makeApp(tdb.db, OWNER_ID,).handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/branches?limit=9999`, { method: "GET", },),
     );
+
     expect(res.status,).toBe(200,);
     const parsed = await res.json() as { data: { branches: unknown[]; nextCursor: string | null } };
     expect(parsed.data.branches.length,).toBe(100,);
@@ -494,6 +527,7 @@ describe("branch list limit parsing", () => {
     expect(parsed.data.nextCursor,).toBeTruthy();
   });
 });
+
 describe("branch list pagination", () => {
   test("the last page reports no cursor", async () => {
     const rootId = await msg(MessageRole.User, "root",);
@@ -503,6 +537,7 @@ describe("branch list pagination", () => {
     const first = await firstRes.json() as {
       data: { branches: { id: string; messageCount: number }[]; nextCursor: string | null };
     };
+
     expect(first.data.branches.length,).toBe(2,);
     expect(first.data.branches[0]!.messageCount,).toBeGreaterThan(0,);
     expect(first.data.nextCursor,).toBeTruthy();
@@ -534,6 +569,7 @@ describe("branch name validation", () => {
         json("POST", { messageId: rootId, name: tooLong, },),
       ),
     );
+
     expect(createRes.status,).toBe(422,);
     const renameRes = await makeApp(tdb.db, OWNER_ID,).handle(
       new Request(
@@ -541,12 +577,14 @@ describe("branch name validation", () => {
         json("PATCH", { name: tooLong, },),
       ),
     );
+
     expect(renameRes.status,).toBe(422,);
     const row = await tdb.db
       .selectFrom("chat_branches",)
       .select(["name",],)
       .where("id", "=", branchId,)
       .executeTakeFirst();
+
     expect(row?.name,).toBe("Short",);
   });
 
@@ -559,15 +597,18 @@ describe("branch name validation", () => {
         json("PATCH", { name: "bad\u0000name", },),
       ),
     );
+
     expect(res.status,).toBe(422,);
     const row = await tdb.db
       .selectFrom("chat_branches",)
       .select(["name",],)
       .where("id", "=", branchId,)
       .executeTakeFirst();
+
     expect(row?.name,).toBe("Keep Me",);
   });
 });
+
 describe("branch route trust boundary", () => {
   test("a non-participant is refused on every CRUD endpoint and mutates nothing", async () => {
     const branchId = await fork(await msg(MessageRole.User, "root",), "Owned",);
