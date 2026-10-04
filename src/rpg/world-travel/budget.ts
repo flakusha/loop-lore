@@ -38,7 +38,7 @@ export const ACTION_COST = 0.05;
 /** Ticks a budget window spans before the accumulator rolls over. */
 export const BUDGET_WINDOW_TICKS = 10;
 
-/** Default ceiling in budget units — 20 actions per window. */
+/** Default ceiling in budget units — 1 unit = 20 actions at ACTION_COST = 0.05. */
 export const DEFAULT_CEILING = 1;
 
 /** Money never becomes a float: 0.05 units is exactly 50_000 micro-units, so
@@ -147,6 +147,7 @@ export async function chargeBudget(
         updated_at: toSqlDate(nowMs,),
       },)
       .execute();
+
     return true;
   }
 
@@ -174,6 +175,7 @@ export async function chargeBudget(
     .where("window_start_tick", "=", row.window_start_tick,)
     .where("spent", "=", row.spent,)
     .executeTakeFirst();
+
   return Number(applied?.numUpdatedRows ?? 0,) > 0;
 }
 
