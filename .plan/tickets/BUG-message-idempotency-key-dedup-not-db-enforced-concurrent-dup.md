@@ -20,3 +20,7 @@ idx_messages_idempotency is NON-unique (src/db/migrations/001_init.ts:2151-2154)
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - src/db/migrations/001_init.ts:2151-2154 idx_messages_idempotency is still a plain (non-unique) index and no later migration adds a UNIQUE partial index; src/routes/messages/create.ts:136-143 still check-then-insert via findByIdempotencyKey. No worktree migrations relevant.

@@ -20,3 +20,7 @@ src/routes/character-emotions/actor.ts:96-109 (GET one) and :206-211 (DELETE): t
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - src/routes/character-emotions/actor.ts GET one (:98-100) and DELETE (:206-208) query character_emotions by id alone with no .where("actor_id", "=", actorId); DELETE always returns {ok:true} (:211). Pickaxe git log --all -S 'where("actor_id", "=", actorId' on actor.ts: only refactors - no branch or worktree adds the scoping.

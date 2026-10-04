@@ -20,3 +20,7 @@ The config schema documents multi-provider text2img fallback (src/config/schema/
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - src/config/schema/sd-provider.ts:19-35 pickSdProvider returns a single provider ("fallback" here is selection fallback, not generation failover); src/generation/image-gen-route.ts:106, src/generation/image-edit-service/apply.ts:49 and src/generation/matting/factory.ts:30 all call pickSdProvider once with no ordered-candidate failover in the SD path; src/generation/providers/call-with-failover.ts implements failover for LLM providers only, never used for SD text2img. No worktree contains pickSdProviders/sdProviderCandidates/sdFallback or any SD-path failover.

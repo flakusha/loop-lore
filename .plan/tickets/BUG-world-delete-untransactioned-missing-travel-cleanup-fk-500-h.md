@@ -20,3 +20,7 @@ DELETE world (src/routes/worlds/worlds-delete.ts:25-71) never deletes travel_rou
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - src/routes/worlds/worlds-delete.ts:25-71 has no travel_route_stops/travel_routes/actor_locations deletes and no transaction (plain awaits throughout); grep for travel_route|actor_locations|transaction in worktree copies: no matches.

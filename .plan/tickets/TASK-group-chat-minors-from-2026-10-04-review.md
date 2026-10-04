@@ -20,3 +20,7 @@ Three MINOR verified gaps, one batch: (1) muted actor burns a mention slot - cas
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Review 2026-10-04
+
+OPEN on dev - all three items present: (1) muted actor burns a mention slot, no muted_until filter before slot selection (src/generation/auto-gen/group-cascade.ts:84-89); (2) ASCII-only mention regex /@([A-Za-z0-9_-]+)/g unchanged, no unicode class or lookbehind (src/group-chat/mention-parser.ts:56); (3) placeholder coverage test still asserts typeof "group-chat" === "string" (src/group-chat/group-chat-coverage.test.ts:1-6). No worktree touches group-chat or auto-gen cascade/mention code.
