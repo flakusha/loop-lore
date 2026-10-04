@@ -88,7 +88,7 @@ const localPlugin = {
 // Shared plugins
 const tsPlugins = {
   "@typescript-eslint": tseslint.plugin,
-  unicorn: unicorn.configs["flat/recommended"].plugins.unicorn,
+  unicorn: unicorn.configs.recommended.plugins.unicorn,
   sonarjs: sonarjs.configs.recommended.plugins.sonarjs,
   import: importPlugin,
   // Local (inline) plugin -- no new dependency; defined above.
