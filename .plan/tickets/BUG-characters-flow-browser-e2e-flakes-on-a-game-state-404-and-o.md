@@ -68,7 +68,7 @@ if (res.status === 404) {
 
 5. The fetch fires on **every** chat page load, so "the request fired too early" cannot be the mechanism. `src/components/chat/game-canvas.html:10-14` mounts `x-data="gameCanvas()"`; Alpine calls `init()`; `init()` ends in `return component.refresh()` (`src/frontend/alpine/game-canvas/index.ts:71`); `refresh()` resolves the id via `activeChatId()` (`src/frontend/alpine/story-state/derived.ts:28-38`), which falls back to the `?chatid=` query param.
 
-6. The test harness **already exports an allowlist naming this exact endpoint** — `tests/e2e/helpers/htmx-alpine.ts:40-42`, whose docstring at lines 29-39 cites `GET /api/v1/chats/:id/game-state` and this very failure class. The sibling test for the identical flow already opts in, `tests/e2e/flows/browser/navigation.browser.ts:182-184`:
+6. The test harness **already exports an allowlist naming this exact endpoint** — `tests/e2e/helpers/htmx-alpine.ts:47-49`, whose docstring at lines 29-46 cites `GET /api/v1/chats/:id/game-state` and this very failure class. The sibling test for the identical flow already opts in, `tests/e2e/flows/browser/navigation.browser.ts:182-184`:
 
 ```ts
 // The game canvas fetches /api/v1/chats/:id/game-state, which 404s by
@@ -78,7 +78,7 @@ const errors = trackPageErrors(page, { allowlist: EXPECTED_404_NOISE_ALLOWLIST, 
 
 7. `tests/e2e/flows/browser/characters-flow.browser.ts:212` calls `trackPageErrors(page)` with **no allowlist**, and line 223 asserts the resulting blanket list. That single omission is the bug.
 
-**Why it is intermittent (~1-in-6).** Not request ordering — a harness timing race. `errors.assert()` runs in the `finally` immediately after `chat-header` attaches (`characters-flow.browser.ts:220-223`), while the game-state 404 is recorded by the `page.on("response", ...)` handler (`htmx-alpine.ts:112-118`). Whether that response event lands before the assert is a coin flip on a ~150ms gap. Measured with a throwaway probe over 5 isolated runs: `chat-header` attached at 696-788ms and the game-state 404 arrived at 821-952ms — 0 errors recorded at the assert point, 1 error present 2500ms later, in 5/5 runs.
+**Why it is intermittent (~1-in-6).** Not request ordering — a harness timing race. `errors.assert()` runs in the `finally` immediately after `chat-header` attaches (`characters-flow.browser.ts:220-223`), while the game-state 404 is recorded by the `page.on("response", ...)` handler (`htmx-alpine.ts:119-125`). Whether that response event lands before the assert is a coin flip on a ~150ms gap. Measured with a throwaway probe over 5 isolated runs: `chat-header` attached at 696-788ms and the game-state 404 arrived at 821-952ms — 0 errors recorded at the assert point, 1 error present 2500ms later, in 5/5 runs.
 
 **Reproduction attempt (honest).** 10 isolated runs of the single file with the exact env `scripts/run-browser-tests.ts:29-30` sets (`E2E_SAFEGUARD=1 HTTP_PROXY= NO_PROXY=*`): **NOT REPRODUCED — 11 pass / 0 fail on all 10 runs.** The probe is the substitute evidence and is stronger than a red run: it observes the 404 on 5/5 runs and captures the response body.
 
