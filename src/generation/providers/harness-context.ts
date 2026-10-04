@@ -37,16 +37,34 @@ export interface HarnessCallContext {
   pattern?: string;
   /** Free-form pattern detail. */
   patternDetail?: string;
+  /**
+   * Correlation id of the user turn this call belongs to. Every tool round of
+   * one turn carries the same value, so the several exec-log lines one turn
+   * wrote are one node. Omitted when the dispatch site has no turn in scope.
+   */
+  turnId?: string;
+}
+
+/** What {@link harnessContext} accepts — an options object, so adding a field
+ * is additive rather than another positional argument every call site must
+ * learn. */
+export interface HarnessContextOptions {
+  /** Routing class of the call. */
+  taskType: TaskType;
+  /** Human label for the call site (e.g. "generate-route"). */
+  task: string;
+  /** Turn correlation id; omitted when the path has no turn in scope. */
+  turnId?: string;
 }
 
 /**
  * Build the exec-log context for a dispatch site. A helper rather than an
  * inline literal so every call site names its task the same way and the
  * signal type is threaded from one import.
- * @param taskType - the routing class of the call
- * @param task - human label for the call site (e.g. "generate-route")
+ * @param opts - the routing class, the human label, and the turn correlation
+ *   id when the call site has one in scope
  * @returns a context object ready to spread onto the request.
  */
-export function harnessContext(taskType: TaskType, task: string,): HarnessCallContext {
-  return { taskType, task, };
+export function harnessContext(opts: HarnessContextOptions,): HarnessCallContext {
+  return { taskType: opts.taskType, task: opts.task, turnId: opts.turnId, };
 }

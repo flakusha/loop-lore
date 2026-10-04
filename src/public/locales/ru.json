@@ -1468,6 +1468,7 @@
       "pid": "PID",
       "pattern": "Шаблон",
       "patternDetail": "Детали шаблона",
+      "turnId": "ID хода",
       "toolingGap": "Пробел в инструментах",
       "tools": "Инструменты",
       "message": "Сообщение"

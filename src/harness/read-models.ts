@@ -31,6 +31,12 @@ export interface HarnessRunSummary {
   branch: string | null;
   gitSha: string | null;
   pid: number | null;
+  /**
+   * Correlation id of the user turn that produced this run, shared by every
+   * tool round of that turn. Null when the turn is unknown — including on any
+   * line written before turn correlation existed.
+   */
+  turnId: string | null;
 }
 
 /**
@@ -58,6 +64,8 @@ export interface HarnessRunFilter {
   result?: HarnessResult;
   task?: string;
   model?: string;
+  /** Exact turn id: returns every run one user turn wrote, all tool rounds. */
+  turnId?: string;
 }
 
 /** Totals row of `GET /api/v1/harness/stats`. */

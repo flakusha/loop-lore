@@ -23,8 +23,8 @@ without introducing a second scheduler?
 `HarnessRunRecord` (one line of `.harness/executions.jsonl`) already carries
 everything needed to measure per-call consumption: `runMs`, `tokensIn`,
 `tokensOut`, `costUsd`, `result` (`ok|error|timeout|cancelled`), `tools`,
-`toolCount`, `task`, `taskType`, `model`, `branch`, `gitSha`, `pid`
-(`src/harness/types.ts:37-63`). The wire shape is stable snake_case
+`toolCount`, `task`, `taskType`, `model`, `branch`, `gitSha`, `pid`,
+`turnId` (`src/harness/types.ts:37-63`). The wire shape is stable snake_case
 (`src/harness/types.ts:80-101`, `:108-131`), so a `jq` rollup over a child's
 records already yields "tokens spent / wall time / tools used" for one task.
 

@@ -155,6 +155,7 @@ function makeSummary(overrides: Partial<HarnessRunSummary> = {},): HarnessRunSum
     branch: "main",
     gitSha: "abc1234",
     pid: 1,
+    turnId: "turn-1",
     ...overrides,
   };
 }
