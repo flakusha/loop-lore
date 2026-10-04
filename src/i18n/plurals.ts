@@ -9,10 +9,61 @@
  * which one a count falls into.
  */
 
-import type { Locale, PluralCategory, } from "./types";
+import type {
+  Locale,
+  PluralCategory,
+  PluralTranslation,
+  TranslationMap,
+  TranslationNode,
+} from "./types";
 
 /** Selects the CLDR plural category for a count in a fixed locale. */
 export type PluralRuleFn = (count: number,) => PluralCategory;
+
+/**
+ * Every CLDR plural category a plural-variant node may be keyed by.
+ *
+ * SHARED by the server and the browser. This pair of primitives used to be
+ * copy-pasted into BOTH `src/i18n/translator.ts` and `src/frontend/i18n.ts`, and
+ * the copies silently drifted: the browser kept the constant but stopped
+ * selecting variants, so a plural key rendered as its raw key in the browser
+ * while the server rendered "1 item" (BUG-ispluralnode-duplicated). This module
+ * is a dependency-free leaf, so both tsconfig programs import it directly —
+ * keep the discriminator here and there is only one copy to change.
+ */
+const PLURAL_CATEGORIES: Record<string, true> = {
+  zero: true,
+  one: true,
+  two: true,
+  few: true,
+  many: true,
+  other: true,
+};
+
+/**
+ * A node is plural-variant data when every one of its keys is a CLDR category.
+ * Requiring ALL keys keeps a plain enumeration containing `other` a normal subtree.
+ */
+export function isPluralNode(
+  node: TranslationNode | TranslationMap,
+): node is PluralTranslation {
+  if (typeof node !== "object" || node === null) { return false; }
+  const keys = Object.keys(node,);
+  return keys.length > 0 && keys.every((key,) => PLURAL_CATEGORIES[key] === true);
+}
+
+/**
+ * Pick the variant for `category` from a plural node.
+ * Falls back to `other` when the selected category is absent from the catalog.
+ */
+export function selectVariant(
+  variants: PluralTranslation,
+  category: string,
+): string {
+  const selected = variants[category as keyof typeof variants];
+  if (typeof selected === "string") { return selected; }
+  return variants.other;
+}
 
 /** Per-locale rule cache — constructing `Intl.PluralRules` is the expensive half. */
 const ruleCache = new Map<Locale, Intl.PluralRules>();
