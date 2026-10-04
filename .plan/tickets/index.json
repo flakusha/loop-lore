@@ -21587,7 +21587,7 @@
     "label": "task",
     "priority": "critical",
     "source": ".plan/tickets/TASK-auth-me-trusts-unverified-jwt-allowing-user-impersonation.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Auth /me trusts unverified JWT allowing user impersonation",
     "type": "TASK"
@@ -29265,7 +29265,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-federation-content-clearance-gate-per-chat-consent-before-me.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Federation content clearance gate: per-chat consent before mesh push",
     "type": "TASK"
@@ -29295,7 +29295,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-federation-dek-re-wrap-protocol-server-to-server-key-export.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Federation DEK re-wrap protocol: server-to-server key export",
     "type": "TASK"
@@ -41116,7 +41116,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-spki-pin-verification-for-federation-peers.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "SPKI pin verification for federation peers",
     "type": "TASK"
