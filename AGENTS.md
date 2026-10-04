@@ -262,7 +262,7 @@ See `.agents/references/recommendations.md` — use these:
 ## Verification Gates (Required Before "Done")
 
 ```bash
-bun run check        # parallel gate runner (check-parallel.mjs): typecheck ×4, lint (ts/css/html/html-scripts/chaining), dprint, md lint, db schema gate, size, context-weight, jscpd ratchet, unit + e2e tests
+bun run check        # parallel gate runner (check-parallel.mjs): typecheck ×4, lint (ts/css/html/html-scripts/chaining), dprint, md lint, db schema gate, conflict markers, size, context-weight, jscpd ratchet, unit + e2e tests
 #                     # the `jscpd ratchet` gate is BLOCKING: growing the clone count past
 #                     # scripts/check/jscpd-baseline.json fails the run; lower the baseline
 #                     # only intentionally via `bun run jscpd:ratchet --report <report> --update`
