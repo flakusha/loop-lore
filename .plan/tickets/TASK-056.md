@@ -89,3 +89,5 @@ and TASK-053 (drift), which were left untouched.
 ticket's Notes anticipate; they need tuning during the epic balance pass.
 Per-rarity budget *overrides* (letting a unique item exceed the normal ceiling)
 are not implemented — the category budget is the single ceiling for now.
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 78fd61b (registry tip: 782336168 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-056 done)
