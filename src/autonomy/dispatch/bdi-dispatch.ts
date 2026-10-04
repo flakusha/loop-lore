@@ -107,6 +107,7 @@ async function runBdiDispatch(
     worldId,
     nowMs,
   },);
+
   if (!gate.ok) { return { skipped: BDI_SKIP.Budget, }; }
 
   const result = await runNightlyReflectionCycle(db, actors, {
@@ -119,6 +120,7 @@ async function runBdiDispatch(
         worldId,
         nowMs,
       },);
+
       // null = an unbounded cap, so there is nothing left to exhaust.
       return peeked.remaining === null || peeked.remaining > 0;
     },
@@ -126,6 +128,7 @@ async function runBdiDispatch(
     maxActors: limit,
     today: planDate,
   },);
+
   return { dispatched: result.processed, };
 }
 
@@ -142,6 +145,7 @@ async function dueActors(
     .select("actor_id",)
     .where("plan_date", "=", planDate,)
     .execute();
+
   const plannedIds = new Set(planned.map((p,) => p.actor_id),);
   const members = await db
     .selectFrom("world_members",)
@@ -149,6 +153,7 @@ async function dueActors(
     .where("world_id", "=", worldId,)
     .orderBy("actor_id", "asc",)
     .execute();
+
   return members.map((m,) => m.actor_id).filter((id,) => !plannedIds.has(id,)).slice(0, limit,);
 }
 
@@ -160,6 +165,7 @@ async function hasMembers(db: Kysely<DB>, worldId: string,): Promise<boolean> {
     .where("world_id", "=", worldId,)
     .limit(1,)
     .executeTakeFirst();
+
   return row !== undefined;
 }
 

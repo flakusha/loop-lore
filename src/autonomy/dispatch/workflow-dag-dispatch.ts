@@ -106,6 +106,7 @@ export function createWorkflowDagDispatch(
           "workflow_dag engine not created yet — pass `engine` to read status before the first tick",
         );
       }
+
       return engine;
     },
   };

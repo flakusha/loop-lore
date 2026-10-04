@@ -37,6 +37,7 @@ try {
 } catch {
   createLogger({ level: "error", },);
 }
+
 const log = getLogger().child({ module: "agency/bdi-plan-recompute", },);
 
 /** Chat id handed to `callLlm`. Nothing in the cycle is chat-scoped — no
@@ -83,8 +84,10 @@ export function createPlanRecompute(opts: PlanRecomputeOptions,): PlanRecomputeF
           planDate: today,
           contentLength: raw.length,
         },);
+
         return fallbackPlan(facts,);
       }
+
       return parsed;
     } catch (error) {
       log.error(
@@ -92,6 +95,7 @@ export function createPlanRecompute(opts: PlanRecomputeOptions,): PlanRecomputeF
         error instanceof Error ? error : undefined,
         { actorId, planDate: today, },
       );
+
       return fallbackPlan(facts,);
     }
   };
@@ -115,6 +119,7 @@ function callLlmGenerator(args: { db: Kysely<DB>; config?: Config },): PlanTextG
       // call is what the production caller actually wants.
       chatStreaming: 0,
     },);
+
     return llm.content;
   };
 }
@@ -129,9 +134,11 @@ async function loadFacts(
     .select("display_name",)
     .where("id", "=", actorId,)
     .executeTakeFirst();
+
   const world = worldId === undefined
     ? undefined
     : await db.selectFrom("worlds",).select("name",).where("id", "=", worldId,).executeTakeFirst();
+
   const npc = await db
     .selectFrom("npc_states",)
     .leftJoin("locations", "locations.id", "npc_states.location_id",)
@@ -145,12 +152,14 @@ async function loadFacts(
     .where("npc_states.actor_id", "=", actorId,)
     .where("npc_states.world_id", "=", worldId ?? "",)
     .executeTakeFirst();
+
   const prev = await db
     .selectFrom("actor_daily_plans",)
     .select(["summary", "priority",],)
     .where("actor_id", "=", actorId,)
     .orderBy("plan_date", "desc",)
     .executeTakeFirst();
+
   const schedule = jsonParseOr<Record<string, unknown>>(npc?.schedule ?? "{}", {},);
   return {
     actorName: actor?.display_name ?? actorId,

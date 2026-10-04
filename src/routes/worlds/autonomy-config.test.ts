@@ -60,6 +60,7 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
       settings: "{}",
       format_version: 0,
     } as never,);
+
     app = appWithAuth(db, ownerId, "user",);
   },);
 
@@ -79,6 +80,7 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
         body: JSON.stringify({ name, },),
       },),
     );
+
     expect(res.status,).toBe(201,);
     return ((await res.json()) as { id: string }).id;
   }
@@ -108,6 +110,7 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
       .select("autonomy_config",)
       .where("id", "=", worldId,)
       .executeTakeFirst();
+
     return row?.autonomy_config ?? null;
   }
 
@@ -222,6 +225,7 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
         body: JSON.stringify({ autonomyConfig: { preset: "brisk", }, },),
       },),
     );
+
     expect(res.status,).toBe(403,);
     // Untouched default: no override was written by the rejected call.
     expect(await readColumn(worldId,),).toBe("{}",);
@@ -295,6 +299,7 @@ describe("autonomyUpdate — direct normaliser contract", () => {
       { seed: 1.5, },
       { seed: JSON.parse("1e999",) as unknown, },
     ];
+
     for (const cfg of raws) {
       const r = autonomyUpdate(cfg,);
       expect(await statusOf(r,),).toBe(400,);

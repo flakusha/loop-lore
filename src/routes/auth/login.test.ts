@@ -371,6 +371,7 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
+
     const cookie = res.headers.get("Set-Cookie",) ?? "";
     expect(cookie,).not.toContain("Secure",);
     expect(cookie,).toContain("HttpOnly",);
@@ -388,6 +389,7 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
+
     expect(res.headers.get("Set-Cookie",),).toContain("Secure",);
   });
 
@@ -402,6 +404,7 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
+
     expect(res.headers.get("Set-Cookie",),).toContain("Secure",);
   });
 
@@ -416,6 +419,7 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
+
     expect(res.headers.get("Set-Cookie",),).not.toContain("Secure",);
   });
 });

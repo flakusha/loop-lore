@@ -113,6 +113,7 @@ async function readLedger(): Promise<{ spent: number; window_start_tick: number 
     .select(["spent", "window_start_tick",],)
     .where("world_id", "=", WORLD_ID,)
     .executeTakeFirst();
+
   return row ?? null;
 }
 
@@ -138,12 +139,14 @@ async function runTicks(ticks: number, ceiling: number,): Promise<SimRun> {
       frozen.push({ tick, positions: await readPositions(), },);
     }
   }
+
   const final = await travelDb(db,)
     .selectFrom("travel_parties",)
     .select(["id", "route_index", "current_location_id",],)
     .where("world_id", "=", WORLD_ID,)
     .orderBy("id", "asc",)
     .execute();
+
   return { actions, exhausted, final, frozen, };
 }
 
@@ -154,6 +157,7 @@ async function readPositions(): Promise<Record<string, string | null>> {
     .select(["id", "current_location_id",],)
     .where("world_id", "=", WORLD_ID,)
     .execute();
+
   return Object.fromEntries(rows.map((row,) => [row.id, row.current_location_id,]),);
 }
 

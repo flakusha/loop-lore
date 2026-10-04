@@ -153,6 +153,7 @@ function mergeLayers(
     perUserCap: preset.perUserCap,
     seed: preset.seed,
   };
+
   applyLayer(out, world,);
   applyLayer(out, chat,);
   applyLayer(out, actor,);
