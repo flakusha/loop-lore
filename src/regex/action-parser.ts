@@ -154,6 +154,7 @@ function extractTarget(input: string, verbMatchIndex: number,): TargetRef | unde
     tail,
     "action-parser:target",
   );
+
   if (!m) { return undefined; }
   const displayName = (m[1] ?? "").trim();
   if (!displayName || displayName.length < 2) { return undefined; }

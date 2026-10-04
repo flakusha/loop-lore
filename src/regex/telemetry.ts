@@ -49,6 +49,7 @@ export function recordRegexCall(patternName: string, matched: boolean,): void {
     counter = { calls: 0, matches: 0, };
     counters.set(patternName, counter,);
   }
+
   counter.calls += 1;
   if (matched) { counter.matches += 1; }
 }
