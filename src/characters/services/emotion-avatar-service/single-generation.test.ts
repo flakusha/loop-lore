@@ -63,10 +63,13 @@ if (ISOLATED) {
 }
 
 const SD_CONFIG = { name: "test-sd", label: "Test", baseUrl: "http://127.0.0.1:7860", } as never;
+/** Actor id deliberately also present in `users` (id-collision case). */
+const COLLIDING_ACTOR_ID = "actor-id-collision";
 
 describeOrSkip("generateEmotionAvatar", () => {
   let db: Kysely<DB>;
   const actorId = "actor-single-gen";
+  const ownerUserId = "user-single-gen";
   const outfitId = "outfit-single-gen";
   const createdAvatars: Array<{ label: string; tags: unknown; outfitId?: string; assetId: string }> = [];
 
@@ -98,10 +101,10 @@ describeOrSkip("generateEmotionAvatar", () => {
   beforeAll(async () => {
     const created = await createTestDb();
     db = created.db;
-    // persistGeneratedImages writes assets.owner_id = opts.actorId, and
-    // assets.owner_id references users.id — so the actor needs a user twin.
-    await insertUsers(db, "single-gen", "Single Gen", { id: actorId as never, },);
-    await insertActors(db, "Single Gen Actor", { id: actorId, },);
+    // assets.owner_id references users.id and is derived from the actor row,
+    // so the actor gets a real owning user whose id is NOT the actor id.
+    await insertUsers(db, "single-gen", "Single Gen", { id: ownerUserId as never, },);
+    await insertActors(db, "Single Gen Actor", { id: actorId, owner_id: ownerUserId, },);
     await insertWardrobeItems(db, "Descriptor Outfit", {
       id: outfitId,
       actor_id: actorId,
@@ -209,4 +212,60 @@ describeOrSkip("generateEmotionAvatar", () => {
     expect(createdAvatars[0]?.label,).toContain(EmotionType.Happy,);
     expect(createdAvatars[0]?.assetId,).toBe(result.assetId,);
   });
+
+  it("owns the generated asset with the actor's user id, not the actor id", async () => {
+    const result = await generateEmotionAvatar(makeSvc(), {
+      actorId,
+      emotion: EmotionType.Happy,
+      sdConfig: SD_CONFIG,
+      uploadDir: "/tmp",
+      promptPrefix: "an anchor",
+      outfitId,
+    },);
+
+    const asset = await db.selectFrom("assets",).selectAll().where("id", "=", result.assetId,).executeTakeFirst();
+    expect(asset?.owner_id,).toBe(ownerUserId,);
+    expect(asset?.owner_id,).not.toBe(actorId,);
+
+    // The link stays keyed on the actor, so owner_id and link.entity_id stay
+    // one principal (the gallery joins asset_links -> actors.owner_id).
+    const link = await db.selectFrom("asset_links",).selectAll().where("asset_id", "=", result.assetId,).executeTakeFirst();
+    expect(link?.entity_type,).toBe("actor",);
+    expect(link?.entity_id,).toBe(actorId,);
+  },);
+
+  it("never hands the asset to an unrelated user whose id collides with the actor id", async () => {
+    // A user holding the actor id satisfies the FK, so this is the silent
+    // mis-attribution case: the asset would land on the wrong principal.
+    await insertUsers(db, "id-collision", "Id Collision", { id: COLLIDING_ACTOR_ID as never, },);
+    const collidingActor = await insertActors(db, "Colliding Actor", {
+      id: COLLIDING_ACTOR_ID,
+      owner_id: ownerUserId,
+    },);
+
+    const result = await generateEmotionAvatar(makeSvc(), {
+      actorId: collidingActor,
+      emotion: EmotionType.Happy,
+      sdConfig: SD_CONFIG,
+      uploadDir: "/tmp",
+      promptPrefix: "an anchor",
+    },);
+
+    const asset = await db.selectFrom("assets",).selectAll().where("id", "=", result.assetId,).executeTakeFirst();
+    expect(asset?.owner_id,).toBe(ownerUserId,);
+  },);
+
+  it("refuses to generate for an actor with no owning user", async () => {
+    const orphanActor = await insertActors(db, "Orphan Actor", { id: "actor-no-owning-user", },);
+
+    await expect(
+      generateEmotionAvatar(makeSvc(), {
+        actorId: orphanActor,
+        emotion: EmotionType.Happy,
+        sdConfig: SD_CONFIG,
+        uploadDir: "/tmp",
+        promptPrefix: "an anchor",
+      },),
+    ).rejects.toThrow("no owning user",);
+  },);
 },);
