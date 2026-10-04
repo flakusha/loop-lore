@@ -3,25 +3,27 @@
 
 // src/config/sections/cron.ts — Cron scheduler config section
 
-import type { CronConfig, CronJobOverride, } from "../schema";
+import type { CronJobOverride, } from "../schema";
 
 export const CRON_DEFAULTS = {
   enabled: true,
   jobs: {},
-} satisfies CronConfig;
+};
 
 /** */
-export class CronSection implements CronConfig {
+export class CronSection {
   enabled = CRON_DEFAULTS.enabled;
   jobs: Record<string, CronJobOverride> = CRON_DEFAULTS.jobs;
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<CronConfig>,) {
+  constructor(overrides?: Partial<CronSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type CronConfig = CronSection;
 
 export const cronMeta = {
   type: "object" as const,

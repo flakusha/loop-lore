@@ -3,7 +3,8 @@
 
 // src/config/sections/transport.ts — Transport config section
 
-import type { TransportCompressionConfig, TransportConfig, TransportLimitsConfig, } from "../schema";
+import { TransportProtocol, } from "../../db/enums";
+import type { TransportCompressionConfig, TransportLimitsConfig, } from "../schema";
 
 export const TRANSPORT_COMPRESSION_DEFAULTS = {
   enabled: false,
@@ -25,11 +26,11 @@ export const TRANSPORT_DEFAULTS = {
   enableH3: false,
   compression: TRANSPORT_COMPRESSION_DEFAULTS,
   limits: TRANSPORT_LIMITS_DEFAULTS,
-} satisfies TransportConfig;
+};
 
 /** */
-export class TransportSection implements TransportConfig {
-  defaultProtocol = TRANSPORT_DEFAULTS.defaultProtocol;
+export class TransportSection {
+  defaultProtocol: TransportProtocol = TRANSPORT_DEFAULTS.defaultProtocol;
   enableWebSocket = TRANSPORT_DEFAULTS.enableWebSocket;
   enableWebTransport = TRANSPORT_DEFAULTS.enableWebTransport;
   enableH2 = TRANSPORT_DEFAULTS.enableH2;
@@ -40,7 +41,7 @@ export class TransportSection implements TransportConfig {
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<TransportConfig>,) {
+  constructor(overrides?: Partial<TransportSection>,) {
     if (!overrides) { return; }
 
     const { compression, limits, ...rest } = overrides;
@@ -48,13 +49,12 @@ export class TransportSection implements TransportConfig {
     if (compression) {
       this.compression = { ...this.compression, ...compression, };
     }
-
     if (limits) {
       this.limits = { ...this.limits, ...limits, };
     }
   }
 }
-
+export type TransportConfig = TransportSection;
 export const transportMeta = {
   type: "object" as const,
   description: "Transport configuration",

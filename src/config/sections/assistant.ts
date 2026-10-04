@@ -3,25 +3,25 @@
 
 // src/config/sections/assistant.ts — Assistant config section
 
-import type { AssistantConfig, } from "../schema";
-
 export const ASSISTANT_DEFAULTS = {
   enabled: true,
   travelPrompts: false,
-} satisfies AssistantConfig;
+};
 
 /** */
-export class AssistantSection implements AssistantConfig {
+export class AssistantSection {
   enabled = ASSISTANT_DEFAULTS.enabled;
   travelPrompts = ASSISTANT_DEFAULTS.travelPrompts;
 
   /**
    * @param overrides
    */
-  constructor(overrides?: Partial<AssistantConfig>,) {
+  constructor(overrides?: Partial<AssistantSection>,) {
     Object.assign(this, overrides,);
   }
 }
+
+export type AssistantConfig = AssistantSection;
 
 export const assistantMeta = {
   type: "object" as const,
