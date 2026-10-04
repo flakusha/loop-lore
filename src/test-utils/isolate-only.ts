@@ -44,6 +44,7 @@ try {
  * suite skips and says so out loud instead of vanishing from the summary.
  */
 export const ISOLATED = process.env.BUN_TEST_WORKER_ID !== undefined || requestsPerFileIsolation(runnerCmdline,);
+  const globals = globalThis as Record<string, unknown>;
 
 /**
  * True only under `bun run test:unit` (package.json: `bun test --parallel=4
