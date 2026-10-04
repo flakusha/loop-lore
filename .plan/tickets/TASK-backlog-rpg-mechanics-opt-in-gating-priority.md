@@ -4,6 +4,7 @@
 # TASK: backlog — schedule RPG Mechanics Opt-in Gating (safety-first before new mechanics)
 
 **Status:** Not Started
+**Status Note:** (2026-10-02 re-verify: batch still 2 Done / 9 open. Spot-checked 3 open tickets vs HEAD — unify-roll-RNG (src/assistant/commands/dice.ts:86 Math.random still present; /roll handler never calls logDiceRoll from src/rpg/service/dice-roll.ts), /check breakdown (no registerCommand("check") anywhere in src), timed conditions (no addCondition/statDeltas in src; src/rpg/combat/conditions.ts exports only isIncapacitated/isDead/isCombatOver). All 3 claims still accurate; no member statuses flipped.)
 **Priority:** high
 **Effort:** Small
 **Type:** Task
