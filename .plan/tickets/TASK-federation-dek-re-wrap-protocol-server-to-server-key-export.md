@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-mesh-federation-content-sharing
@@ -22,3 +22,5 @@ Define the server-to-server DEK export protocol for mesh content sharing (epic-m
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 035958e (registry tip: 9c6d39672 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-FEDERATION-DEK-RE-WRAP-PROT)

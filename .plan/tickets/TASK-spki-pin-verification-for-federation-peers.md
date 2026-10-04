@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-certificate-and-tls-management.md
@@ -40,3 +40,5 @@ feasibility is proven: on Bun v1.4.2, `node:tls` `tls.connect` +
 - [ ] Cached verdict reused within TTL; expired verdict re-verified.
 - [ ] Tests against a real loopback TLS server (self-signed fixture cert).
 - [ ] `bun run check` green.
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 271e08d (registry tip: 04a5d0c26 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-SPKI-PIN-VERIFICATION-FOR-F)
