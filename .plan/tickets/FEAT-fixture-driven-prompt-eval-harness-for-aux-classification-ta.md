@@ -3,7 +3,7 @@
 
 # FEAT: Fixture-driven prompt-eval harness for AUX classification tasks
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ No eval harness exists for the 10 AUX classification prompts; unit tests assert 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-04 registry-driven close: git issue 5fe4c12 (registry tip: 12ab43ce0 Konstantin Fedotov Close issue)
