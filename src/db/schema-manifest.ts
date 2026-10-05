@@ -1609,6 +1609,7 @@ export const SCHEMA = new SchemaManifest()
     llm_assist_enabled: col("integer", { notNull: true, hasDefault: true, },),
     avatar_focus_x: col("real", { notNull: true, hasDefault: true, },),
     avatar_focus_y: col("real", { notNull: true, hasDefault: true, },),
+    review_state: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("characters", {
     id: col("text", { primaryKey: true, },),
@@ -1925,6 +1926,7 @@ export const SCHEMA = new SchemaManifest()
     active_branch_id: col("text",),
     autonomy_config: col("text", { notNull: true, hasDefault: true, },),
     federation_consented_at: col("text",),
+    purpose: col("text",),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
