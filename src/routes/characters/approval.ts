@@ -12,16 +12,12 @@ import type { Kysely, } from "kysely";
 import { approve, getPendingReviews, reject, submitForReview, } from "../../characters/service/approval";
 import type { DB, } from "../../db";
 import { can, } from "../../users/permissions";
-import { Id, } from "../../validation/schemas";
+import { Id, ReviewDecisionBody, } from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
 }
-
-const ReviewDecisionBody = t.Object({
-  reason: t.Optional(t.String({ maxLength: 2000, },),),
-},);
 
 /**
  * @param {HandlerOpts} opts
