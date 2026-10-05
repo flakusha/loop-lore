@@ -23,5 +23,8 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  // Drop the index first: SQLite refuses ALTER TABLE ... DROP COLUMN while an
+  // index still references the column ("error in index ... no such column").
+  await database.schema.dropIndex("idx_actors_review_state",).execute();
   await database.schema.alterTable("actors",).dropColumn("review_state",).execute();
 }

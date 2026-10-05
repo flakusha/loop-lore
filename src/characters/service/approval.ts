@@ -8,6 +8,7 @@
  * All functions return a Result type for explicit error handling.
  */
 import type { Kysely, } from "kysely";
+import { ActorType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { ReviewState, } from "../spec/enums";
 
@@ -43,12 +44,19 @@ export async function submitForReview(opts: {
 
   const actor = await database
     .selectFrom("actors",)
-    .select(["id", "owner_id", "review_state",],)
+    .select(["id", "actor_type", "owner_id", "review_state",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
 
   if (!actor) { return { ok: false, error: "Character not found", }; }
+  if (actor.actor_type !== ActorType.Character) {
+    return { ok: false, error: "Only characters are subject to review", };
+  }
+
   if (actor.owner_id !== userId) { return { ok: false, error: "Only the owner can submit for review", }; }
+  // New characters default to `pending_review` (migration 038), so an
+  // already-queued character is a successful no-op rather than an error.
+  if (actor.review_state === ReviewState.PendingReview) { return { ok: true, value: undefined, }; }
   if (actor.review_state !== ReviewState.Draft && actor.review_state !== ReviewState.Rejected) {
     return { ok: false, error: `Cannot submit from state: ${actor.review_state}`, };
   }
@@ -81,11 +89,15 @@ export async function approve(opts: {
 
   const actor = await database
     .selectFrom("actors",)
-    .select(["id", "review_state",],)
+    .select(["id", "actor_type", "review_state",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
 
   if (!actor) { return { ok: false, error: "Character not found", }; }
+  if (actor.actor_type !== ActorType.Character) {
+    return { ok: false, error: "Only characters are subject to review", };
+  }
+
   if (actor.review_state !== ReviewState.PendingReview) {
     return { ok: false, error: `Cannot approve from state: ${actor.review_state}`, };
   }
@@ -118,11 +130,15 @@ export async function reject(opts: {
 
   const actor = await database
     .selectFrom("actors",)
-    .select(["id", "review_state",],)
+    .select(["id", "actor_type", "review_state",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
 
   if (!actor) { return { ok: false, error: "Character not found", }; }
+  if (actor.actor_type !== ActorType.Character) {
+    return { ok: false, error: "Only characters are subject to review", };
+  }
+
   if (actor.review_state !== ReviewState.PendingReview) {
     return { ok: false, error: `Cannot reject from state: ${actor.review_state}`, };
   }
@@ -155,6 +171,9 @@ export async function getPendingReviews(opts: {
     .selectFrom("actors",)
     .select(["id", "display_name", "owner_id", "review_state", "created_at",],)
     .where("review_state", "=", ReviewState.PendingReview,)
+    // The queue is the *character* approval queue: exclude user/narrator/
+    // system actors, which share the actors table but are never reviewed.
+    .where("actor_type", "=", ActorType.Character,)
     .orderBy("created_at", "asc",)
     .limit(limit,)
     .offset(offset,)

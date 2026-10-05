@@ -1191,6 +1191,7 @@ export const ActorsSchema = t.Object({
   llm_assist_enabled: t.Optional(t.Number(),),
   avatar_focus_x: t.Optional(t.Number(),),
   avatar_focus_y: t.Optional(t.Number(),),
+  review_state: t.Optional(t.String(),),
 },);
 
 // ── admin_character_overrides ────────────────────────────────────────────
@@ -1697,40 +1698,9 @@ export const ChatSetupTemplatesSchema = t.Object({
 
 // ── chats ────────────────────────────────────────────
 export const ChatsSchema = t.Object({
-  name: t.String(),
   created_by: t.String(),
-  type: t.Optional(ChatTypeSchema,),
-  mode: t.Optional(ChatModeSchema,),
-  world_id: t.Optional(t.String(),),
-  current_location_id: t.Optional(t.String(),),
-  story_state: t.Optional(t.String(),),
-  gm_config: t.Optional(t.String(),),
-  turn_strategy: t.Optional(TurnStrategySchema,),
-  max_turns: t.Optional(t.Number(),),
-  auto_advance: t.Optional(t.Number(),),
-  parent_chat_id: t.Optional(t.String(),),
-  is_pinned: t.Optional(t.String(),),
-  encryption_level: t.Optional(t.String(),),
-  response_length_preset: t.Optional(t.String(),),
-  response_length_custom: t.Optional(t.Number(),),
-  context_max_tokens: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-  streaming: t.Optional(t.Number(),),
-  nsfw_override: t.Optional(t.String(),),
-  name_source: t.Optional(t.String(),),
-  template_id: t.Optional(t.String(),),
-  visibility: t.Optional(t.String(),),
-  thinking_visibility: t.Optional(t.String(),),
-  quick_replies: t.Optional(t.String(),),
-  prompt_override: t.Optional(t.String(),),
-  output_style_preset: t.Optional(t.String(),),
-  data_version: t.Optional(t.Number(),),
-  record_hash: t.Optional(t.String(),),
-  custom_instructions: t.Optional(t.String(),),
-  prompt_template_id: t.Optional(t.String(),),
-  active_branch_id: t.Optional(t.String(),),
   autonomy_config: t.Optional(t.String(),),
+  purpose: t.Optional(t.String(),),
 },);
 
 // ── chat_random_events ────────────────────────────────────────────
