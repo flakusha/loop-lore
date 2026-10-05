@@ -11,38 +11,11 @@
  * forbidden, and the orchestrator regenerates them after
  * `037_world_discovery_trade_events` lands.
  */
-import type { Generated, Kysely, } from "kysely";
+import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import type { LocationDiscovery, WorldEventLog, } from "../../db/schema-core";
 
-/** `world_event_log` — append-only, world-scoped simulation events. */
-export interface WorldEventLog {
-  id: Generated<string>;
-  world_id: string;
-  event_type: string;
-  /** Location id for `location:discovered`, party id for `trade:route`. */
-  subject_id: string | null;
-  /** The actor that caused it, when there is one. */
-  actor_id: string | null;
-  payload: Generated<string>;
-  tick_index: number;
-  /** UNIQUE — the idempotency key that makes a replayed tick a no-op. */
-  dedupe_key: string;
-  created_at: Generated<string>;
-}
-
-/** `location_discovery` — one actor's exploration progress at one location. */
-export interface LocationDiscovery {
-  world_id: string;
-  location_id: string;
-  actor_id: string;
-  progress: Generated<number>;
-  /** The decay clock AND the replay latch — see migration 031. */
-  last_explored_tick: Generated<number>;
-  discovered: Generated<number>;
-  discovered_tick: number | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
+export type { LocationDiscovery, WorldEventLog, };
 
 /** The tables this module adds on top of the generated `DB`.
  *
