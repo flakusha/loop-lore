@@ -1540,6 +1540,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-listassets-treats-shared-visibility-as-world-readable.md"
     },
     {
@@ -5989,6 +5993,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-federation-lacks-owner-consent-or-nsfw-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
     },
     {
       "kind": "ticket",
@@ -10900,6 +10908,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-scheduler-implementation-internal-cron-jobs.md"
     },
     {
@@ -10981,6 +10993,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-crypto-activitypub-key-rotation-is-non-atomic-insert-failure.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
     },
     {
       "kind": "ticket",
@@ -13086,6 +13102,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md"
     },
     {
@@ -13545,6 +13565,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    }
+  ],
+  "src/db/migrations/038_mesh_outbox.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
     }
   ],
   "src/db/migrations/039_chat_public_flag.ts": [
@@ -14286,6 +14312,10 @@
   "src/db/schema-blog.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-activitypub-federation.md"
     },
     {
@@ -14816,6 +14846,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-identity-mapping-to-local-users-undefined.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-shadow-notes-missing-visibility-for-llm-injection-control.md"
     },
     {
@@ -15213,6 +15247,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-worlds-extension.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-identity-mapping-to-local-users-undefined.md"
     },
     {
       "kind": "ticket",
@@ -15863,6 +15901,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
     }
   ],
   "src/federation/gossip.test.ts": [
@@ -15911,6 +15953,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-instance-switching-backend-instances-handles-actor-map.md"
+    }
+  ],
+  "src/federation/outbox.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
     }
   ],
   "src/federation/peer-fetch.ts": [
@@ -27245,12 +27293,6 @@
       "source": ".plan/tickets/TASK-046.md"
     }
   ],
-  "src/plugins/plugin-dynamic.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
-    }
-  ],
   "src/plugins/registry.ts": [
     {
       "kind": "epic",
@@ -28559,6 +28601,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
     },
     {
       "kind": "ticket",
@@ -31153,6 +31199,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
     }
   ],
   "src/routes/http-utils/index.ts": [
@@ -33711,6 +33761,12 @@
       "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
     }
   ],
+  "src/routes/views/plugin-dynamic.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
+    }
+  ],
   "src/routes/views/plugin-dynamic.ts": [
     {
       "kind": "ticket",
@@ -33725,6 +33781,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
+    }
+  ],
+  "src/routes/views/search.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
     }
   ],
   "src/routes/views/search.ts": [
@@ -39150,6 +39212,10 @@
   "src/test-utils/create-test-db.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-test-failures.md"
     }
   ],
@@ -40015,6 +40081,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-guest-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
     },
     {
       "kind": "ticket",
@@ -41341,12 +41411,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-auth-access.md"
-    }
-  ],
-  "src/views/search.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
     }
   ],
   "src/views/settings.html": [

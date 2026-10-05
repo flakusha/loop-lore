@@ -3,7 +3,7 @@
 
 # BUG: diff-scoped gates diff against a stale merge-base so scope explodes to the whole repo
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -12,7 +12,7 @@
 
 `giwt finalize` DOES pass `--diff-base` (`node_modules/giwt/src/commands/finalize/gates.ts:36-37` resolves it, `checks.ts:39-43` appends it to the check command; opt-out `[commands] diff_base = false` is not set in `giwt.toml`). The coverage gate is NOT repo-wide. The `"mode":"diff-files"` key is real — emitted by `scripts/check/coverage.mjs:380-387`, the `--files=` path.
 
-The real defect is in `scripts/check-parallel.mjs:141-158` (`changedFiles()`): it computes `git merge-base <base> HEAD` and diffs against it. When the worktree branch has not been rebased onto `dev`, that merge-base is arbitrarily old, so the "branch diff" degenerates to most of the repository.
+The real defect WAS in `changedFiles()` — originally `scripts/check-parallel.mjs:141-158`, now `scripts/check/parallel/context.mjs:92-105` after the module split. It computed `git merge-base <base> HEAD` and diffed against that. When the worktree branch had not been rebased onto `dev`, that merge-base was arbitrarily old, so the "branch diff" degenerated to most of the repository. **Both halves are now fixed — see Verification 2026-10-05 below.** The measured numbers that follow are the original 2026-10-02 report against `feat-actor-autonomy-dispatch`, retained as the record of the bug; they are not re-measured.
 
 Measured on `feat-actor-autonomy-dispatch` (2026-10-02):
 
@@ -60,7 +60,141 @@ Fix directions (pick one):
 
 **Acceptance Criteria:**
 
-- [ ] Scoped coverage `total` on `feat-actor-autonomy-dispatch` drops from 1295 to 109 once the branch is rebased onto dev, or the gate refuses to run and names the stale diff-base
-- [ ] Failing set reduced to the 2 real branch files (`world-events.ts`, `world-travel/budget.ts`) or waived with a reason
-- [ ] Regression test asserting scope size for a deliberately stale merge-base
-- [ ] Documentation updated
+- [x] Scoped coverage `total` on `feat-actor-autonomy-dispatch` drops from 1295 to 109 once the branch is rebased onto dev, or the gate refuses to run and names the stale diff-base
+- [ ] Failing set reduced to the 2 real branch files (`world-events.ts`, `world-travel/budget.ts`) or waived with a reason — NOT VERIFIED: no re-measurement of the coverage gate was run against `feat-actor-autonomy-dispatch`; the defect that inflated the set is fixed, but the residual 2-file branch debt was not re-counted.
+- [x] Regression test asserting scope size for a deliberately stale merge-base
+- [x] Documentation updated
+
+
+## Verification 2026-10-05
+
+Two halves had to change together; both did.
+
+**1. The runner no longer computes a merge-base.** `changedFiles()` at
+`scripts/check/parallel/context.mjs:92-105`:
+
+```js
+export function changedFiles(base, cwd = DIFF_ROOT,) {
+  if (!base) { return []; }
+  const committed = execFileSync(
+    "git",
+    ["diff", "--name-only", base, "HEAD",],
+    { cwd, encoding: "utf8", },
+  );
+  const dirty = execFileSync(
+    "git",
+    ["diff", "--name-only", "HEAD",],
+    { cwd, encoding: "utf8", },
+  );
+  return [...new Set(`${committed}\n${dirty}`.split("\n",).map((f,) => f.trim()).filter(Boolean,),),].sort();
+}
+```
+
+That is a two-dot tree-vs-tree `git diff <base> HEAD`, not a three-dot
+`git diff A...B` and not a diff against `merge-base(A, HEAD)`. A grep for
+`merge-base` across `scripts/check/` and `scripts/check-parallel.mjs` now
+returns comment lines only (`context.mjs:63,65,71,72,75`) — no executable
+call remains **in the runner**. A repo-wide grep of `scripts/` confirms no
+`git merge-base` invocation anywhere in the check path at all.
+
+One other `changedFiles` exists at `scripts/check/weave-damage.mjs:60-63`
+(`git diff --name-only --diff-filter=d <base>`, base from `WEAVE_BASE` or
+argv). It is NOT merge-base-scoped and does not need to be: it is a
+pre-rebase damage scan, opt-in via `WEAVE_BASE` (`gates.mjs:259-261`,
+`NOOP_OK` otherwise), and the operator passes the pre-rebase ref
+deliberately — measuring damage introduced BY a rebase is exactly a
+merge-base question. It is outside the reported failure mode (it has no
+coverage `total`/`fail` line) and is left as-is.
+
+**2. `resolveDiffBase` returns the target, not the merge-base.**
+`scripts/worktree/commands/finalize.ts:630-642` validates the ref with
+`git rev-parse --verify <target>^{commit}` and then `return target;` (line
+641). The previous merge-base lookup is gone. Change commit `f09d4dd2b`
+(2026-10-04, `git merge-base --is-ancestor f09d4dd2b HEAD` exits 0).
+
+**Tests — behavioural, not wiring.**
+`scripts/check-parallel.diff-base.test.mjs` builds a real temp git history
+where the branch and the base each edit the same file and the base then
+reproduces the branch's edit byte-for-byte. It first pins the pre-fix
+over-report as a control (`mergeBaseSet()` equals both files, line 165), then
+asserts `changedFiles("main", workDir)` returns exactly the one genuinely
+divergent file (line 179) and excludes the converged one (line 171). That
+is the scope-vs-real-divergence boundary, not a wiring assertion. It also
+pins that a base with no common ancestor no longer throws (lines 267-283),
+which is the crash the merge-base lookup used to cause.
+`scripts/worktree/resolve-diff-base.test.ts:70-74` asserts
+`resolveDiffBase` returns the target branch after it has moved past the fork.
+
+`bun test scripts/check-parallel.diff-base.test.mjs scripts/worktree/resolve-diff-base.test.ts`
+→ 16 pass, 0 fail.
+
+
+**Fixture isolation — both files are per-test and order-independent, with
+one caveat worth recording.** Each test owns its own `mkdtemp` repo under a
+distinct prefix (`loop-lore-diff-base-`, `loop-lore-resolve-diff-base-`) and
+removes it in `afterEach`, so neither writes a fixed path and both are safe to
+run concurrently. Verified rather than assumed:
+
+- 6 files together: 64 pass, 0 fail. Same 6 in reversed order: 64 pass.
+- Each file alone: 12 pass / 4 pass / 21 pass.
+- `bun test --parallel=4` on both git-fixture files: 16 pass.
+- Same file run twice back to back: 16 pass both times (no cross-run leak).
+
+Caveat: the two files are NOT equally hardened against host git config.
+`check-parallel.diff-base.test.mjs` pins `GIT_CONFIG_GLOBAL`/`GIT_CONFIG_SYSTEM`
+to `/dev/null`, strips the `GIT_*` redirect vars, and carries identity via env.
+`scripts/worktree/resolve-diff-base.test.ts:38-45,47-63` spawns git with NO env
+(`Bun.spawnSync(cmd, { cwd, ... })` inherits the whole environment) and sets
+identity with a repo-local `git config` write, so whatever the host demands
+rides straight in. Reproduced the resulting failure with no persistent config
+change anywhere — identity and signing supplied as one-shot `git -c`
+overrides, host config nulled by the `GIT_CONFIG_GLOBAL` env var only:
+
+```
+identity via -c, gpgsign=false  → status=0
+identity via -c, gpgsign=true   → status=128  fatal: failed to write commit object
+```
+
+So on a host that demands signatures (this repo's own local config has
+`commit.gpgsign=true`), that fixture's commits die unless the suite nulls the
+host config or passes `-c commit.gpgsign=false`.
+
+This does NOT weaken the fix verdict: it is a property of the TEST FIXTURE's
+environment hygiene, not of `changedFiles` or `resolveDiffBase`, and the fix is
+independently reproducible without either suite (see below).
+
+Fix direction — both sanctioned, no persistent config write involved. Either
+copy the `GIT_ENV` block from `check-parallel.diff-base.test.mjs:53-75`, or
+reuse the existing `isolatedGitEnv()` helper in
+`scripts/check/weave-damage.test.mjs:58-68`; or make the suite's `run()` append
+`-c user.name=... -c user.email=... -c commit.gpgsign=false` to each git argv,
+which is a one-shot override rather than a persisted setting. The third is the
+smaller diff. Note the fixture should NOT set repo-local identity via
+`git config` at all — that is a persistent write, and the reason it leaks host
+settings in the first place is that it is the one call in the fixture with no
+per-invocation override beside it.
+
+Left alone here — out of this ticket's scope, and touching test files is
+outside the change this ticket records.
+
+**Is the reported failure mode still reachable? No.** The scope is now the
+set of files whose content differs between the target tip and HEAD, so a
+stale merge-base cannot widen it — the fork point is no longer an input to
+the computation. Two documented supersets remain by design (rename/mode/
+whitespace-only diffs are still listed, and only tracked working-tree
+changes are seen): both over-scope, which costs a false red, never a false
+green. Neither reintroduces the reported explosion.
+
+
+**Independent of the suites.** Built the same fork/advance/reproduce history
+in a throwaway repo with no test harness and compared both diff forms directly:
+
+```
+merge-base(main,HEAD) = 2c840f8ec8f04decd9108edb107605c33aa7caf1
+git diff main HEAD   (two-dot, current impl) = ["src/a.ts"]
+git diff <merge-base> (pre-fix impl)       = ["src/a.ts","src/converged.ts"]
+scope shrank from 2 to 1
+```
+
+The stale-merge-base over-report and its removal are therefore properties of
+the git semantics, observable without running either test file.
