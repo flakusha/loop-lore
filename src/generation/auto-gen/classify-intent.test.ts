@@ -77,7 +77,7 @@ describe("parseIntentClassification", () => {
 describe("detectShortReply", () => {
   it("returns false when assistantTuning has maxTokens", async () => {
     const result = await detectShortReply({
-      assistantTuning: { maxTokens: 50, },
+      assistantTuning: { maxTokens: 50, temperature: null, },
       userMessage: "hi",
       config: {} as never,
       database: {} as never,
