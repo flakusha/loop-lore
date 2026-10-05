@@ -3,7 +3,7 @@
 
 # BUG: CI workflows invoke three package.json scripts that no longer exist
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -59,10 +59,10 @@ Two files still document the removed scripts as part of the check chain and will
 
 ## Acceptance Criteria
 
-- [ ] Every `run:` step in `.github/workflows/*.yml` names a `package.json` script that exists (add a CI lint or test that validates workflow `run: bun run X` invocations against the `scripts` block)
-- [ ] `lint:css` and `lint:html` resolved to a chosen linter, with the choice recorded in the ticket resolution
-- [ ] `dev-release.yml:58` and `release.yml:58` invoke an existing script
-- [ ] The two stale docs no longer reference the removed script names
+- [x] Every `run:` step in `.github/workflows/*.yml` names a `package.json` script that exists (add a CI lint or test that validates workflow `run: bun run X` invocations against the `scripts` block)
+- [x] `lint:css` and `lint:html` resolved to a chosen linter, with the choice recorded in the ticket resolution
+- [x] `dev-release.yml:58` and `release.yml:58` invoke an existing script
+- [x] The two stale docs no longer reference the removed script names
 
 **Context:** resolution
 
@@ -83,6 +83,30 @@ The two stale docs now describe the scripts as CI/hook invocations, not
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Verification 2026-10-05
+
+Enumerated every `bun|npm|yarn|pnpm run <script>` token in `.github/workflows/*.yml`
+(scratch script over `readdirSync` + per-line regex; 29 invocations across
+`ci.yml`, `deploy.yml`, `dev-release.yml`, `pr-checks.yml`, `release.yml`)
+and checked each name against `package.json` `scripts`.
+**0 missing.** The three names are now:
+
+- `lint:css` — `package.json:43`, `stylelint "src/public/**/*.css"`
+- `lint:html` — `package.json:44`, `markuplint --allow-warnings "src/views/**/*.html" "src/components/**/*.html"`
+- `test:unit:parallel` — gone; `dev-release.yml:58` and `release.yml:58`
+  both invoke `bun run test:unit` (`package.json:70`, already `--parallel`)
+
+Pinning test: `src/utils/ci-workflow-scripts.test.ts` reads the real workflow
+directory and `package.json`, and asserts every matched name exists in
+`scripts`. It is not wiring-only: it parses the actual files on disk and
+carries an anti-vacuity guard (`expect(invocations).toBeGreaterThan(10)`,
+line 40) so a broken selector cannot pass by matching nothing.
+`bun test src/utils/ci-workflow-scripts.test.ts` → 1 pass, 0 fail.
+
+Fix commit `9c3b45888` (2026-10-05, `git merge-base --is-ancestor 9c3b45888 HEAD`
+exits 0), touching `package.json`, both release workflows, the new test, and
+the two stale docs.

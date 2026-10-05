@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-federation-swarm-sync
@@ -36,3 +36,31 @@ and the NSFW/moderation gate. Runtime scope remains
 `FEAT-federate-blog-system-via-activitypub-lemmy-mastodon-reddit` (blocked on G15/G16);
 this ticket's acceptance was definitional, so no shipped code was demanded here.
 
+## Closure (2026-10-05, federation resolution review)
+
+RESOLUTION TYPE: **decision-only — documentation, no implementation.**
+
+Decision is recorded in `FEAT-activitypub-federation.md` → "Blog Publisher Threading":
+"blog_post create/update publishes a `Page`/`Note` activity from the owning world's
+actor; threaded `blog_comment` (`parent_comment_id`) publishes a `Note` reply with
+`inReplyTo`", signed with `getActiveActivityPubKey`
+(`src/crypto/activitypub-keys.ts` over `activitypub_actor_keys`), fanned out through the
+same outbox/inbox routes as world events, gated on `config.federation.enabled` and the
+NSFW/moderation gate; `blog_follows` maps to ActivityPub `Follow`/`Accept`.
+
+What exists today in the repo: the blog subsystem is real and unimplemented for
+federation — `src/routes/blog/{posts,comments,follows,moderation}.ts` and
+`src/rpg/blog/service/{posts,comments,follows}.ts` (29 files), with `blog_posts`,
+`blog_comments` (`parent_comment_id` at `src/db/schema-blog.ts:18`), `blog_follows`,
+`blog_tags`, `blog_rag_sources` in `src/db/schema-blog.ts`. No ActivityPub publishing
+code exists in `src/`: grep for `federated_identities|actor_uri|mapping_mode` returns no
+matches, and the only `activitypub` hits are the signing-keypair table
+(`src/db/migrations/001_init.ts:797`), the key service, the consent gate, and a
+`protocols: ["activitypub"]` string in the NodeInfo route. The unchecked AC boxes above
+are therefore expected: they are runtime criteria carried by the follow-on FEAT, not
+satisfied by this definitional ticket.
+
+Follow-on FEAT carrying the implementation:
+`FEAT-federate-blog-system-via-activitypub-lemmy-mastodon-reddit` (Not Started, marked
+BLOCKED on G15/G17 per `epic-federation-swarm-sync.md`). This ticket is closed as the
+decision being written down; the code work is not done and is tracked there.
