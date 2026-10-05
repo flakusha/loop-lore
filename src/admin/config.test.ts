@@ -3,12 +3,12 @@
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { initConfigHotApply, resetConfigHotApply, } from "../config/hot-apply";
 import type { Config, } from "../config/schema";
+import { createConfigSchema, } from "../config/schema-class";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { initConfigHotApply, resetConfigHotApply, } from "../config/hot-apply";
-import { createConfigSchema, } from "../config/schema-class";
 import { deleteConfig, getAllConfig, getConfig, seedDefaults, setConfig, } from "./config";
 
 describe("getAllConfig", () => {
