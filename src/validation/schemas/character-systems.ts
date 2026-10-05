@@ -211,9 +211,12 @@ export const EmotionDefinitionCreateBody = t.Object({
   base_expression: t.Optional(t.String(),),
 },);
 
+// Route paths name the segment `:emotionId` and the handlers read
+// `ctx.params.emotionId`; declaring `emotionName` here left that param
+// unvalidated-and-undefined, so every emotion GET/DELETE 422'd.
 export const ActorEmotionParams = t.Object({
   actorId: t.String({ format: "uuid", },),
-  emotionName: t.String(),
+  emotionId: t.String({ format: "uuid", },),
 },);
 
 export const CharacterSystemsExportBody = t.Object({

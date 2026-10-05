@@ -27,3 +27,12 @@
 - [ ] Outbound + inbound content routes through existing NSFW/moderation gate (`src/routes/blog/moderation.ts`, `src/crypto/activitypub-keys.ts` consent gate)
 - [ ] Scope into `FEAT-activitypub-federation` (`epic-federation-swarm-sync.md`) or new FEAT; blocked on G15 threading + G16 adapter per epic plan
 
+## Definition (2026-10-04, p3-bugfix-2026-10-04)
+
+Publisher threading defined in `FEAT-activitypub-federation.md` → "Blog Publisher
+Threading": blog post/comment create/update publish signed `Page`/`Note` activities via
+`src/crypto/activitypub-keys.ts` + outbox fan-out, behind `config.federation.enabled`
+and the NSFW/moderation gate. Runtime scope remains
+`FEAT-federate-blog-system-via-activitypub-lemmy-mastodon-reddit` (blocked on G15/G16);
+this ticket's acceptance was definitional, so no shipped code was demanded here.
+

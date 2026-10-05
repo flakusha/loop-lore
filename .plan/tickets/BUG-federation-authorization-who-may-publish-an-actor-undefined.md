@@ -21,3 +21,11 @@ FEAT-activitypub-federation does not state who may publish a World or Channel as
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Definition (2026-10-04, p3-bugfix-2026-10-04)
+
+The AC now exists in `FEAT-activitypub-federation.md` → Acceptance Criteria: publish
+authorization = the actor's owner or an instance admin, with a world-visibility
+precondition (private worlds not publishable). The authorization check itself is runtime
+code that lands with that FEAT; this ticket recorded the missing definition and it is
+now written down there.

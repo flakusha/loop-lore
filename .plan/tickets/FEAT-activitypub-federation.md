@@ -90,6 +90,7 @@ implementation, so items 3 and 4 have no host code to extend.
 ## Acceptance Criteria
 
 - A World or Channel can be published as a fediverse `Group` actor with a resolvable WebFinger (`@world@host`).
+- An actor may be published only by its owner or an instance admin, and only when the world's visibility permits public exposure; private worlds are not publishable (BUG-federation-authorization-who-may-publish-an-actor-undefined).
 - Inbound `Follow`/`Accept` and `Create`/`Announce` (`Note`/`Article`) are handled and verified via HTTP signatures + authorized fetch.
 - Outbound world events/messages are delivered to followers as signed activities.
 - New followers receive paginated outbox backfill (Mastodon/Lemmy-style `OrderedCollection` pages, newest-first) covering a recent history window, capped by count and age (decision C9).
@@ -97,6 +98,52 @@ implementation, so items 3 and 4 have no host code to extend.
 - Federated objects are persisted in the existing Kysely store with ownership/signature metadata.
 - All outbound federation routes through the existing NSFW + moderation gate; inbound supports blocklists/defederation.
 - Actor-model mapping (World/Channel/Character → actor type) is documented.
+- Remote actors resolve to local users via `federated_identities`; foreign auth is never trusted and a local session is issued only on verified ownership proof (see Federated Identity Mapping).
+
+## Federated Identity Mapping
+
+Closes `BUG-federation-identity-mapping-to-local-users-undefined`. The AC above requires
+mapping fediverse/IM actors into the local auth model without trusting foreign auth; this
+is the mechanism.
+
+Table `federated_identities` (new, in the existing Kysely store; the inbox handlers'
+resolution service looks up/inserts by `actor_uri` before any remote activity is attached
+to a local identity):
+
+- `actor_uri` — TEXT PRIMARY KEY, the remote actor's id URI.
+- `local_user_id` — FK to `users`.
+- `mapping_mode` — `link` (remote actor attached to an existing local user after
+  ownership proof) or `shadow` (auto-provisioned local account with no credentials).
+- `created_at` — timestamp.
+
+Trust boundary: remote assertions (display names, self-declared identities, activity
+`actor` fields) never grant local authority. A `federated_identities` row is an
+addressing record only. A local session for a remote actor is issued solely on verified
+ownership proof — an HTTP-signed request from the key material advertised by that
+actor's resolved actor document/WebFinger — which upgrades `shadow` to `link`. Shadow
+accounts exist to persist remote-authored objects and cannot authenticate.
+
+Character publication consent is already covered by
+`src/characters/services/federation-consent.ts` (it gates key minting); this section
+does not redefine it.
+
+## Blog Publisher Threading
+
+Closes `BUG-activitypub-federation-does-not-leverage-the-blog-system-lem` as a
+definition; runtime delivery lands with
+`FEAT-federate-blog-system-via-activitypub-lemmy-mastodon-reddit` (blocked on G15
+threading + G16 adapter per `epic-federation-swarm-sync.md`).
+
+- `blog_post` create/update publishes a `Page`/`Note` activity from the owning world's
+  actor; threaded `blog_comment` (`parent_comment_id`) publishes a `Note` reply with
+  `inReplyTo`.
+- Every activity is signed with the actor key from `getActiveActivityPubKey`
+  (`src/crypto/activitypub-keys.ts` over `activitypub_actor_keys`) and fans out to
+  followers through the same outbox/inbox routes that deliver world events.
+- Publishing runs only when `config.federation.enabled` is true
+  (`FEDERATION_DEFAULTS.enabled` is `false` by default) and after the existing
+  NSFW/moderation gate.
+- `blog_follows` maps to ActivityPub `Follow`/`Accept`.
 
 ## Implementation Notes
 
