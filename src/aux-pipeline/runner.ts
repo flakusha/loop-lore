@@ -19,10 +19,6 @@ import type { Config, } from "../config/schema";
 import { ModelRole, } from "../db/enums-core";
 import type { DB, } from "../db/schema";
 import type { GenerationMessage, } from "../generation/gen-types-options";
-// hint: Logic changed on both sides. Requires understanding intent of each change.
-import { buildFailoverList, resolveProvider, } from "../generation/providers/registry";
-import { toHarnessTaskType, toTaskSignal, } from "../generation/routing/task-signal";
-import { recordExecRun, } from "../harness/exec-recorder";
 import { callWithFailover, } from "../generation/providers/call-with-failover";
 import { getProvider, resolveProvider, } from "../generation/providers/registry";
 import { getSchedulerManager, } from "../generation/scheduler";
