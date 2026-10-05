@@ -53,6 +53,7 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
+import { insertUserMessageRow, } from "./insert-message";
 import {
   findByIdempotencyKey,
   insertUserMessageWithRetry,
@@ -443,6 +444,45 @@ describe("swipe-race-insert — DB-enforced dedup (BUG-message-idempotency-key-d
       .execute();
 
     expect(rows,).toHaveLength(2,);
+  });
+
+  test("replayedId propagates through insertUserMessageRow (route contract)", async () => {
+    // Concurrency-free proof of the FULL propagation chain: a pre-existing
+    // row covering the key makes the loser's INSERT hit migration 040's
+    // unique index inside insertUserMessageRow; the violation must come
+    // back as ok:true + replayedId = the winner's id, not a 500.
+    const key = "propagation-key-1";
+    const winnerId = uid();
+    await insertWithKey(winnerId, key,);
+
+    const loserId = uid();
+    const outcome = await insertUserMessageRow({
+      database: db,
+      chatId,
+      actorId,
+      id: loserId,
+      parentId: null,
+      storedContent: "loser",
+      storedKeyId: null,
+      storedPlaintext: null,
+      contentEncoding: "utf8" as ContentEncoding,
+      idempotencyKey: key,
+      setStatus: () => {},
+    },);
+
+    expect(outcome.ok,).toBe(true,);
+    if (outcome.ok) {
+      expect(outcome.replayedId,).toBe(winnerId,);
+    }
+
+    // Still exactly one row for the key.
+    const rows = await db
+      .selectFrom("messages",)
+      .select(["id",],)
+      .where("idempotency_key", "=", key,)
+      .execute();
+
+    expect(rows,).toHaveLength(1,);
   });
 
   test("turn_skip keys are exempt from the unique index", async () => {
