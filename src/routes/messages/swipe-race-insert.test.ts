@@ -56,6 +56,7 @@ import { uid, } from "../../utils";
 import {
   findByIdempotencyKey,
   insertUserMessageWithRetry,
+  isIdempotencyUniqueViolation,
   SwipeInsertExhaustedError,
 } from "./swipe-race-insert";
 
@@ -329,5 +330,136 @@ describe("swipe-race-insert — idempotency", () => {
     },);
 
     expect(a.id,).not.toBe(b.id,);
+  });
+});
+
+describe("swipe-race-insert — DB-enforced dedup (BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup)", () => {
+  // The check-then-insert in the route has a TOCTOU window; migration 040
+  // closes it with `uq_messages_idempotency_enforced` on
+  // (chat_id, idempotency_key) WHERE key IS NOT NULL AND key NOT LIKE
+  // 'regen:variant:%' AND key NOT LIKE 'turn_skip:%'. These tests pin the
+  // schema-level behavior the route replay path depends on.
+  let db: Kysely<DB>;
+  let chatId: string;
+  let actorId: string;
+
+  beforeAll(async () => {
+    ({ db, } = await createTestDb());
+
+    const userId = uid();
+    await insertUsers(db, `enforced-user-${userId}`, "Enforced User", { id: userId, } as never,);
+    actorId = userId;
+    await db
+      .insertInto("actors",)
+      .values({
+        id: actorId,
+        actor_type: "user",
+        display_name: "Enforced Actor",
+        user_id: userId,
+        owner_id: userId,
+        agent_type: "none",
+        settings: "{}",
+        format_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+      },)
+      .execute();
+
+    chatId = uid();
+    await insertChats(db, "Enforced Chat", actorId, { id: chatId, } as never,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  const insertWithKey = (id: string, idempotencyKey: string | null,) =>
+    insertUserMessageWithRetry(db, {
+      id,
+      chatId,
+      actorId,
+      parentId: null,
+      storedContent: "x",
+      storedKeyId: null,
+      contentEncoding: "utf8" as ContentEncoding,
+      idempotencyKey,
+    },);
+
+  test("second insert with the same (chat, key) replays the winner's id", async () => {
+    const key = "dedup-enforced-key-1";
+    const first = await insertWithKey(uid(), key,);
+    const second = await insertWithKey(uid(), key,);
+
+    expect(first.replayedId,).toBeUndefined();
+    expect(second.replayedId,).toBe(first.id,);
+
+    // Exactly one row exists for the key: the unique index rejected the
+    // loser's INSERT and the helper mapped the violation to a replay.
+    const rows = await db
+      .selectFrom("messages",)
+      .select(["id",],)
+      .where("chat_id", "=", chatId,)
+      .where("idempotency_key", "=", key,)
+      .execute();
+
+    expect(rows,).toHaveLength(1,);
+    expect(rows[0]?.id,).toBe(first.id,);
+  });
+
+  test("isIdempotencyUniqueViolation matches both driver error forms", () => {
+    const text = new Error("UNIQUE constraint failed: messages.chat_id, messages.idempotency_key",);
+    const code = new Error("SQLITE_CONSTRAINT_UNIQUE: uq_messages_idempotency_enforced",);
+    expect(isIdempotencyUniqueViolation(text,),).toBe(true,);
+    expect(isIdempotencyUniqueViolation(code,),).toBe(true,);
+
+    // Unrelated unique violations must NOT be classified as idempotency
+    // conflicts (swipe retry and error mapping depend on this).
+    const swipe = new Error("UNIQUE constraint failed: messages.swipe_index",);
+    const pk = new Error("UNIQUE constraint failed: messages.id",);
+    const fk = new Error("FOREIGN KEY constraint failed",);
+    expect(isIdempotencyUniqueViolation(swipe,),).toBe(false,);
+    expect(isIdempotencyUniqueViolation(pk,),).toBe(false,);
+    expect(isIdempotencyUniqueViolation(fk,),).toBe(false,);
+    expect(isIdempotencyUniqueViolation("not an error",),).toBe(false,);
+    expect(isIdempotencyUniqueViolation(null,),).toBe(false,);
+  });
+
+  test("regen:variant keys are exempt from the unique index", async () => {
+    // chat/service/write.ts re-inserts the same regen:variant key after the
+    // pending variant was confirmed (filled in place, key kept for replay).
+    // The index's WHERE clause must keep excluding that family or real
+    // regenerations would 500.
+    const regenKey = `regen:variant:${uid()}:funnier`;
+    const a = await insertWithKey(uid(), regenKey,);
+    const b = await insertWithKey(uid(), regenKey,);
+
+    expect(a.replayedId,).toBeUndefined();
+    expect(b.replayedId,).toBeUndefined();
+    const rows = await db
+      .selectFrom("messages",)
+      .select(["id",],)
+      .where("chat_id", "=", chatId,)
+      .where("idempotency_key", "=", regenKey,)
+      .execute();
+
+    expect(rows,).toHaveLength(2,);
+  });
+
+  test("turn_skip keys are exempt from the unique index", async () => {
+    // chat/service/crud/turn-skip.ts minute-bucket keys collide across
+    // buckets by design; dedup there is the latest-message guard.
+    const skipKey = `turn_skip:${chatId}:${actorId}:advance:0`;
+    const a = await insertWithKey(uid(), skipKey,);
+    const b = await insertWithKey(uid(), skipKey,);
+
+    expect(b.replayedId,).toBeUndefined();
+    const rows = await db
+      .selectFrom("messages",)
+      .select(["id",],)
+      .where("chat_id", "=", chatId,)
+      .where("idempotency_key", "=", skipKey,)
+      .execute();
+
+    expect(rows,).toHaveLength(2,);
   });
 });
