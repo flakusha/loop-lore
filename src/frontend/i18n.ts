@@ -43,7 +43,7 @@ export const SUPPORTED_LOCALES = Object.keys(LOCALE_REGISTRY,) as Locale[];
  */
 function activeLocale(): Locale {
   const saved = globalThis.currentLocale;
-  return (SUPPORTED_LOCALES as string[]).includes(saved ?? "")
+  return (SUPPORTED_LOCALES as string[]).includes(saved ?? "",)
     ? saved as Locale
     : DEFAULT_LOCALE;
 }
@@ -93,7 +93,7 @@ export function resolveKey(
   if (typeof current === "string") { return current; }
   // A plural node is a leaf VALUE, not a missing key: returning `undefined`
   // here is what made the browser render the raw key instead of "1 item".
-  if (!isPluralNode(current)) { return undefined; }
+  if (!isPluralNode(current,)) { return undefined; }
   if (count === undefined) { return current.other; }
   return selectVariant(current, pluralRuleFor(activeLocale(),)(count,),);
 }
@@ -124,6 +124,7 @@ export function flattenTranslations(
         result.set(fullKey, value.other,);
         continue;
       }
+
       for (const [nestedKey, nestedValue,] of flattenTranslations(value, fullKey,)) {
         result.set(nestedKey, nestedValue,);
       }
@@ -250,4 +251,3 @@ export function createFrontendTranslator(
     return value;
   };
 }
-

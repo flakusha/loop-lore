@@ -28,10 +28,10 @@
  */
 
 import { afterEach, describe, expect, it, } from "bun:test";
-import { t as alpineT, } from "./alpine/i18n";
-import { resolveKey as frontendResolveKey, } from "./i18n";
 import { createTranslator, flattenTranslations as serverFlatten, } from "../i18n/translator";
 import type { Locale, TranslationMap, } from "../i18n/types";
+import { t as alpineT, } from "./alpine/i18n";
+import { resolveKey as frontendResolveKey, } from "./i18n";
 
 /**
  * The single fixture every assertion below is driven through. `inventory.item`
@@ -80,12 +80,13 @@ let hasSaved = false;
  * @param fn
  * @returns {T}
  */
-function withLocale<T>(locale: Locale, fn: () => T,): T {
+function withLocale<T,>(locale: Locale, fn: () => T,): T {
   if (!hasSaved) {
     savedLocaleStrings = localeStringsHost.__localeStrings;
     savedCurrentLocale = localeStringsHost.currentLocale;
     hasSaved = true;
   }
+
   localeStringsHost.currentLocale = locale;
   localeStringsHost.__localeStrings = FIXTURE;
   try {
@@ -102,7 +103,7 @@ afterEach(() => {
   localeStringsHost.currentLocale = savedCurrentLocale;
   localeStringsHost.__localeStrings = savedLocaleStrings;
   hasSaved = false;
-});
+},);
 
 describe("server/frontend plural parity", () => {
   for (const locale of ["en", "ru", "ar",] as const) {
@@ -115,7 +116,7 @@ describe("server/frontend plural parity", () => {
       for (const key of ["inventory.item", "shop.visitor",]) {
         for (const count of COUNTS) {
           const viaServer = serverT(key, { count, },);
-          const viaFrontend = withLocale(locale, () => alpineT(key, { count, },));
+          const viaFrontend = withLocale(locale, () => alpineT(key, { count, },),);
 
           expect(viaFrontend, `${locale} ${key} @ count=${count}`,).toBe(viaServer,);
         }
@@ -132,9 +133,9 @@ describe("server/frontend plural parity", () => {
     expect(Number(ARABIC_THREE,),).toBeNaN();
 
     const viaServer = serverT("inventory.item", { count: ARABIC_THREE, },);
-    const viaFrontend = withLocale("en", () => alpineT("inventory.item", { count: ARABIC_THREE, },));
+    const viaFrontend = withLocale("en", () => alpineT("inventory.item", { count: ARABIC_THREE, },),);
 
-    expect(viaServer,).toBe("٣ items");
+    expect(viaServer,).toBe("٣ items",);
     expect(viaFrontend,).toBe(viaServer,);
   });
 
@@ -142,7 +143,7 @@ describe("server/frontend plural parity", () => {
     const serverT = createTranslator({ primary: serverFlatten(FIXTURE,), locale: "ru", },);
 
     // ru classifies 1 as `one`, but with no count there is nothing to classify.
-    expect(serverT("inventory.item",),).toBe("{count} items");
+    expect(serverT("inventory.item",),).toBe("{count} items",);
     expect(withLocale("ru", () => alpineT("inventory.item",),),).toBe(serverT("inventory.item",),);
   });
 
@@ -151,12 +152,13 @@ describe("server/frontend plural parity", () => {
     const partial: TranslationMap = {
       inventory: { item: { one: "{count} item", other: "{count} items (fallback)", }, },
     };
+
     const serverT = createTranslator({ primary: serverFlatten(partial,), locale: "ru", },);
     const viaFrontend = withLocale("ru", () => frontendResolveKey(partial, "inventory.item", 2,),);
 
-    expect(serverT("inventory.item", { count: 2, },),).toBe("2 items (fallback)");
+    expect(serverT("inventory.item", { count: 2, },),).toBe("2 items (fallback)",);
     // `resolveKey` returns the un-interpolated template; `alpineT` interpolates.
-    expect(viaFrontend,).toBe("{count} items (fallback)");
+    expect(viaFrontend,).toBe("{count} items (fallback)",);
   });
 });
 
@@ -164,28 +166,29 @@ describe("browser regression: a plural key is not a missing key", () => {
   it("resolves the plural string instead of the raw key", () => {
     // Pre-fix every one of these returned `undefined`, and every caller turned
     // that into the raw key, so the browser showed the literal "inventory.item".
-    expect(frontendResolveKey(FIXTURE, "inventory.item",),).toBe("{count} items");
-    expect(frontendResolveKey(FIXTURE, "inventory.item", 1,),).toBe("{count} item");
-    expect(frontendResolveKey(FIXTURE, "inventory.item", 7,),).toBe("{count} items");
+    expect(frontendResolveKey(FIXTURE, "inventory.item",),).toBe("{count} items",);
+    expect(frontendResolveKey(FIXTURE, "inventory.item", 1,),).toBe("{count} item",);
+    expect(frontendResolveKey(FIXTURE, "inventory.item", 7,),).toBe("{count} items",);
   });
 
   it("renders the shipped Alpine translator output the server renders", () => {
     withLocale("en", () => {
-      expect(alpineT("inventory.item", { count: 1, },)).toBe("1 item");
-      expect(alpineT("inventory.item", { count: 0, },)).toBe("0 items");
-      expect(alpineT("inventory.item", { count: 2, },)).toBe("2 items");
-      expect(alpineT("inventory.item", { count: 7, },)).toBe("7 items");
+      expect(alpineT("inventory.item", { count: 1, },),).toBe("1 item",);
+      expect(alpineT("inventory.item", { count: 0, },),).toBe("0 items",);
+      expect(alpineT("inventory.item", { count: 2, },),).toBe("2 items",);
+      expect(alpineT("inventory.item", { count: 7, },),).toBe("7 items",);
     },);
+
     withLocale("ru", () => {
-      expect(alpineT("shop.visitor", { count: 1, },)).toBe("1 visitor");
-      expect(alpineT("shop.visitor", { count: 3, },)).toBe("3 visitors (few)");
-      expect(alpineT("shop.visitor", { count: 5, },)).toBe("5 visitors (many)");
+      expect(alpineT("shop.visitor", { count: 1, },),).toBe("1 visitor",);
+      expect(alpineT("shop.visitor", { count: 3, },),).toBe("3 visitors (few)",);
+      expect(alpineT("shop.visitor", { count: 5, },),).toBe("5 visitors (many)",);
     },);
   });
 
   it("still treats an enum containing `other` as a normal subtree", () => {
     // A node is plural-variant data only when EVERY key is a CLDR category.
-    expect(frontendResolveKey(FIXTURE, "chat.flagReason.other",)).toBe("Other");
-    expect(frontendResolveKey(FIXTURE, "chat.flagReason",)).toBeUndefined();
+    expect(frontendResolveKey(FIXTURE, "chat.flagReason.other",),).toBe("Other",);
+    expect(frontendResolveKey(FIXTURE, "chat.flagReason",),).toBeUndefined();
   });
 });
