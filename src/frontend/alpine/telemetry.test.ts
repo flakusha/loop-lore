@@ -52,6 +52,7 @@ function makeFakeLogger(): FakeLogger {
     fatal: () => {},
     child: () => fake,
     addTransport: () => {},
+    setLevel: () => {},
     setBindings: (partial: Record<string, unknown>,) => {
       Object.assign(bindings, partial,);
     },
