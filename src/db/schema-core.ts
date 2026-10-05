@@ -1085,6 +1085,7 @@ export interface Chats extends AuditColumns {
   prompt_template_id: string | null;
   active_branch_id: string | null;
   autonomy_config: Generated<string>;
+  purpose: string | null;
 }
 // ── actors ────────────────────────────────────────────
 export interface Actors {
@@ -1139,6 +1140,7 @@ export interface WorldInvites {
   llm_assist_enabled: Generated<number>;
   avatar_focus_x: Generated<number>;
   avatar_focus_y: Generated<number>;
+  review_state: Generated<string>;
 }
 
 

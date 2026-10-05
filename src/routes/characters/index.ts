@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
+import { approvalRoutes, } from "./approval";
 import { cardRoutes, } from "./card";
 import { createRoutes, } from "./create";
 import { exportRoutes, } from "./export";
@@ -27,5 +28,6 @@ export function charactersRoutes(opts: HandlerOpts, prefix = "/api",) {
     .use(cardRoutes(opts, prefix,),)
     .use(updateRoutes(opts, prefix,),)
     .use(removeRoutes(opts, prefix,),)
-    .use(exportRoutes(opts, prefix,),);
+    .use(exportRoutes(opts, prefix,),)
+    .use(approvalRoutes(opts, prefix,),);
 }
