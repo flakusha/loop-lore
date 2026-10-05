@@ -42,8 +42,8 @@ Character impersonation — 1 character can be impersonated once per world (exce
 
 | Gap                    | Severity | Description                                                                                                                                    |
 | ---------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Command dispatch       | High     | `/impersonate <name>` returns `impersonate-select` action but `dispatchCommandAction()` doesn't handle it — command is a no-op from chat input |
-| Name→Actor resolution  | High     | `impersonate-select` passes `{ characterName }` but no resolver maps name → actor ID                                                           |
+| Command dispatch       | ✅       | `impersonate-toggle` + `impersonate-select` handled in `dispatch.ts:122-187` |
+| Name→Actor resolution  | ✅       | `impersonate-select` resolves name via participants list (`dispatch.ts:149-153`) |
 | De-duplication         | Medium   | `routes/chats.ts` does inline DB update for impersonation instead of calling `chat/service.ts#updateImpersonation()`                           |
 | 1-per-world constraint | Medium   | Current: world-level check in `updateImpersonation()`. **Needs refinement:** character present in world at a location should only be impersonated by one user at that location; different timelines or isolated chats should allow same character impersonated by different users. Scope to `(world_id, location_id)` or `(world_id, timeline_id)`. Private/disconnected chats (no `world_id`) remain exempt. |
 | Memory isolation       | Low      | No special handling for impersonated character's memories                                                                                      |
@@ -60,8 +60,8 @@ Character impersonation — 1 character can be impersonated once per world (exce
 - [x] Frontend: `toggleImpersonate()` in chat-actions
 - [x] Frontend: Personas page CRUD
 - [x] Commands: `/impersonate` + `/char` register action types
-- [ ] **FIX**: Wire `impersonate-toggle` and `impersonate-select` actions in `dispatchCommandAction()`
-- [ ] **FIX**: Add name→actor ID resolution for `impersonate-select`
+- [x] **FIX**: Wire `impersonate-toggle` and `impersonate-select` actions in `dispatchCommandAction()`
+- [x] **FIX**: Add name→actor ID resolution for `impersonate-select`
 - [ ] **FIX**: Route should call `updateImpersonation()` instead of inline DB
 - [ ] **FIX**: Refine impersonation constraint from world-level to location/timeline scope
 - [ ] Docs: Expand `docs/spec/impersonation.md` from stub to full spec
