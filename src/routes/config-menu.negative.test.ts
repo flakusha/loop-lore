@@ -17,7 +17,8 @@ function makeApp(db: Kysely<DB>, userRole: string | null,) {
   app.derive((): { userId: string | null; userRole: string | null } => ({
     userId: userRole ? `test-user-${userRole}` : null,
     userRole,
-  },),);
+  }));
+
   return app.use(configMenuRoutes({ database: db, },),);
 }
 
@@ -44,20 +45,25 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
         body: JSON.stringify({ key: "theme", value: "dark", },),
       },),
     );
+
     console.log("3a. admin PATCH theme status:", res.status,);
-    const body = await res.json() as { ok?: boolean; key?: string; error?: string; };
+    const body = await res.json() as { ok?: boolean; key?: string; error?: string };
     console.log("3a. response body:", JSON.stringify(body,),);
 
     // Check if admin's settings were written
-    const adminUser = await db.selectFrom("users",).select("settings",).where("id", "=", "test-user-admin",).executeTakeFirst();
+    const adminUser = await db.selectFrom("users",).select("settings",).where("id", "=", "test-user-admin",)
+      .executeTakeFirst();
+
     console.log("3a. admin settings after PATCH:", adminUser?.settings,);
 
     // Check if system_config was written (should NOT be for user-scope key)
-    const sysConfig = await db.selectFrom("system_config",).select("value",).where("key", "=", "theme",).executeTakeFirst();
+    const sysConfig = await db.selectFrom("system_config",).select("value",).where("key", "=", "theme",)
+      .executeTakeFirst();
+
     console.log("3a. system_config theme:", sysConfig?.value,);
 
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("3b. user PATCHes key NOT in SettingsUpdateAllowedKeys → 400?", async () => {
     const app = makeApp(db, "user",);
@@ -68,11 +74,12 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
         body: JSON.stringify({ key: "isAdmin", value: "true", },),
       },),
     );
+
     console.log("3b. user PATCH isAdmin status:", res.status,);
-    const body = await res.json() as { ok?: boolean; error?: string; };
+    const body = await res.json() as { ok?: boolean; error?: string };
     console.log("3b. response body:", JSON.stringify(body,),);
     expect(res.status,).toBe(400,);
-  },);
+  });
 
   test("3c. coerceValue array/object — round-trip corruption?", async () => {
     // notifications is type "object" in USER_FIELD_TYPES
@@ -85,11 +92,14 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
         body: JSON.stringify({ key: "notifications", value: originalValue, },),
       },),
     );
+
     console.log("3c. user PATCH notifications (object) status:", res.status,);
-    const body = await res.json() as { ok?: boolean; };
+    const body = await res.json() as { ok?: boolean };
     console.log("3c. response body:", JSON.stringify(body,),);
 
-    const user = await db.selectFrom("users",).select("settings",).where("id", "=", "test-user-user",).executeTakeFirst();
+    const user = await db.selectFrom("users",).select("settings",).where("id", "=", "test-user-user",)
+      .executeTakeFirst();
+
     console.log("3c. stored settings:", user?.settings,);
 
     // Parse and check round-trip
@@ -101,7 +111,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
     }
 
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("3d. coerceValue number — NaN persisted?", async () => {
     const app = makeApp(db, "user",);
@@ -112,15 +122,18 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
         body: JSON.stringify({ key: "fontSize", value: "abc", },),
       },),
     );
+
     console.log("3d. user PATCH fontSize='abc' status:", res.status,);
-    const body = await res.json() as { ok?: boolean; };
+    const body = await res.json() as { ok?: boolean };
     console.log("3d. response body:", JSON.stringify(body,),);
 
-    const user = await db.selectFrom("users",).select("settings",).where("id", "=", "test-user-user",).executeTakeFirst();
+    const user = await db.selectFrom("users",).select("settings",).where("id", "=", "test-user-user",)
+      .executeTakeFirst();
+
     console.log("3d. stored settings:", user?.settings,);
 
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("3f. unauthenticated PATCH → 401?", async () => {
     const app = makeApp(db, null,);
@@ -131,16 +144,17 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
         body: JSON.stringify({ key: "theme", value: "dark", },),
       },),
     );
+
     console.log("3f. anon PATCH status:", res.status,);
     expect(res.status,).toBe(401,);
-  },);
+  });
 
   test("3f2. anonymous GET → 401?", async () => {
     const app = makeApp(db, null,);
     const res = await app.handle(new Request("http://localhost/api/config-menu",),);
     console.log("3f2. anon GET status:", res.status,);
     expect(res.status,).toBe(401,);
-  },);
+  });
 
   test("3g. prototype-pollution key '__proto__' via PATCH", async () => {
     const app = makeApp(db, "user",);
@@ -151,13 +165,14 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
         body: JSON.stringify({ key: "__proto__", value: "polluted", },),
       },),
     );
+
     console.log("3g. user PATCH __proto__ status:", res.status,);
-    const body = await res.json() as { ok?: boolean; error?: string; };
+    const body = await res.json() as { ok?: boolean; error?: string };
     console.log("3g. response body:", JSON.stringify(body,),);
 
     // Check if it was rejected
     expect(res.status,).toBe(400,);
-  },);
+  });
 
   test("3g2. prototype-pollution key 'constructor' via PATCH", async () => {
     const app = makeApp(db, "user",);
@@ -168,11 +183,12 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
         body: JSON.stringify({ key: "constructor", value: "polluted", },),
       },),
     );
+
     console.log("3g2. user PATCH constructor status:", res.status,);
-    const body = await res.json() as { ok?: boolean; error?: string; };
+    const body = await res.json() as { ok?: boolean; error?: string };
     console.log("3g2. response body:", JSON.stringify(body,),);
     expect(res.status,).toBe(400,);
-  },);
+  });
 
   test("3h. user PATCH merge — concurrent keys preserved?", async () => {
     // First, set up a user with existing settings
@@ -188,9 +204,12 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
         body: JSON.stringify({ key: "theme", value: "dark", },),
       },),
     );
+
     console.log("3h. user PATCH theme (merge test) status:", res.status,);
 
-    const user = await db.selectFrom("users",).select("settings",).where("id", "=", "test-user-user",).executeTakeFirst();
+    const user = await db.selectFrom("users",).select("settings",).where("id", "=", "test-user-user",)
+      .executeTakeFirst();
+
     console.log("3h. settings after merge:", user?.settings,);
 
     if (user?.settings) {
@@ -201,7 +220,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
     }
 
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("3i. admin PATCH user-scope key — does it check SettingsUpdateAllowedKeys?", async () => {
     // Admin patches "theme" — it's in user scope, so goes to user branch
@@ -214,16 +233,19 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
         body: JSON.stringify({ key: "theme", value: "dark", },),
       },),
     );
+
     console.log("3i. admin PATCH theme status:", res.status,);
-    const body = await res.json() as { ok?: boolean; key?: string; error?: string; };
+    const body = await res.json() as { ok?: boolean; key?: string; error?: string };
     console.log("3i. response body:", JSON.stringify(body,),);
 
     // Check admin's settings
-    const adminUser = await db.selectFrom("users",).select("settings",).where("id", "=", "test-user-admin",).executeTakeFirst();
+    const adminUser = await db.selectFrom("users",).select("settings",).where("id", "=", "test-user-admin",)
+      .executeTakeFirst();
+
     console.log("3i. admin settings:", adminUser?.settings,);
 
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("3j. user PATCH admin-scope key → 403?", async () => {
     const app = makeApp(db, "user",);
@@ -234,9 +256,10 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
         body: JSON.stringify({ key: "registration_open", value: "true", },),
       },),
     );
+
     console.log("3j. user PATCH registration_open status:", res.status,);
     expect(res.status,).toBe(403,);
-  },);
+  });
 
   test("3k. admin PATCH non-editable admin field → 400?", async () => {
     const app = makeApp(db, "admin",);
@@ -247,9 +270,10 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
         body: JSON.stringify({ key: "server.port", value: "9999", },),
       },),
     );
+
     console.log("3k. admin PATCH server.port status:", res.status,);
     expect(res.status,).toBe(400,);
-  },);
+  });
 
   test("3l. GET /api/config-menu — admin sees 26 sections, 139 fields?", async () => {
     const app = makeApp(db, "admin",);
@@ -257,9 +281,9 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
     const body = await res.json() as { role: string; sections: Array<{ key: string; fields: unknown[] }> };
     console.log("3l. admin role:", body.role,);
     console.log("3l. admin sections count:", body.sections.length,);
-    const totalFields = body.sections.reduce((sum, s) => sum + s.fields.length, 0);
+    const totalFields = body.sections.reduce((sum, s,) => sum + s.fields.length, 0,);
     console.log("3l. admin total fields:", totalFields,);
-  },);
+  });
 
   test("3m. GET /api/config-menu — user sees 1 section, 15 fields?", async () => {
     const app = makeApp(db, "user",);
@@ -267,7 +291,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
     const body = await res.json() as { role: string; sections: Array<{ key: string; fields: unknown[] }> };
     console.log("3m. user role:", body.role,);
     console.log("3m. user sections count:", body.sections.length,);
-    const totalFields = body.sections.reduce((sum, s) => sum + s.fields.length, 0);
+    const totalFields = body.sections.reduce((sum, s,) => sum + s.fields.length, 0,);
     console.log("3m. user total fields:", totalFields,);
-  },);
-},);
+  });
+});
