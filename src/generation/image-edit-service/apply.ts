@@ -4,7 +4,7 @@
 // ── Apply-edit dispatcher ────────────────────────────────
 
 import { randomUUID, } from "node:crypto";
-import { createAsset, getAsset, linkAsset, } from "../../assets/service";
+import { createAsset, getAsset, linkAsset, resolveAssetOwnerId, } from "../../assets/service";
 import { loadConfig, } from "../../config/load";
 import { pickSdProvider, } from "../../config/schema";
 import { AssetLinkEntity, } from "../../db/enums";
@@ -194,6 +194,11 @@ export async function applyEdit(
   const db = thisL.db;
   let resultAssetId = "";
 
+  // The asset is owned by the actor's user, not by the actor id; the link
+  // below stays keyed on the source asset. Resolved once — the owner is the
+  // same for every image in the batch.
+  const assetOwnerId = await resolveAssetOwnerId(db, opts.actorId,);
+
   for (const buffer of resultImages) {
     const id = randomUUID();
     const filename = `edit-${id.slice(0, 8,)}.png`;
@@ -201,7 +206,7 @@ export async function applyEdit(
     const { asset, } = await createAsset({
       database: db,
       input: {
-        ownerId: opts.actorId,
+        ownerId: assetOwnerId,
         filename,
         mimeType,
         assetType: "image",
