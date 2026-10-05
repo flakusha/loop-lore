@@ -40,6 +40,18 @@ describe("policyForRoute", () => {
     expect(policyForRoute("/api/v1/generation/images",),).toBe(generationPolicy,);
   });
 
+  test("emotion-avatar batch generation resolves the generation policy (BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy)", () => {
+    // POST /api/v1/actors/:actorId/emotion-avatars is nested under an id, so no
+    // prefix rule reaches it; the suffix rule moves its per-entry image-gen
+    // fan-out out of the shared 300/min default bucket.
+    expect(policyForRoute("/api/v1/actors/a1/emotion-avatars",),).toBe(generationPolicy,);
+    expect(policyForRoute("/api/v1/actors/a1/wardrobe/o1/emotion-avatars",),).toBe(generationPolicy,);
+    // Job list/status polling + cancel must NOT starve in the 20/min bucket.
+    expect(policyForRoute("/api/v1/actors/a1/emotion-avatars/jobs",),).toBe(defaultPolicy,);
+    expect(policyForRoute("/api/v1/actors/a1/emotion-avatars/jobs/j9",),).toBe(defaultPolicy,);
+    expect(policyForRoute("/api/v1/actors/a1/emotion-avatars/jobs/j9/cancel",),).toBe(defaultPolicy,);
+  });
+
   test("auth prefix resolves the auth policy", () => {
     expect(policyForRoute("/api/v1/auth/login",),).toBe(authPolicy,);
   });

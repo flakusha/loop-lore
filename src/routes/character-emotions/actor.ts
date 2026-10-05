@@ -97,6 +97,7 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectFrom("character_emotions",)
           .selectAll()
           .where("id", "=", emotionId,)
+          .where("actor_id", "=", actorId,)
           .executeTakeFirst();
 
         if (!emotion) {
@@ -203,9 +204,24 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
           },);
         }
 
+        const existing = await database
+          .selectFrom("character_emotions",)
+          .select("id",)
+          .where("id", "=", emotionId,)
+          .where("actor_id", "=", actorId,)
+          .executeTakeFirst();
+
+        if (!existing) {
+          return jsonError({
+            message: ctx.t?.("characters.emotionNotFound",) ?? "Emotion not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
+
         await database
           .deleteFrom("character_emotions",)
           .where("id", "=", emotionId,)
+          .where("actor_id", "=", actorId,)
           .execute();
 
         return jsonResponse({ ok: true, },);

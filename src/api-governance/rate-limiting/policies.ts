@@ -48,11 +48,16 @@ export function resolvePolicy(name: string | undefined,): RatePolicy {
   return defaultPolicy;
 }
 
+/** How a rule pattern is compared against the request pathname. */
+export type RouteMatch = "prefix" | "suffix";
+
 /**
- * Route-prefix → policy. First matching prefix wins; anything else gets
- * the default policy.
+ * Route-pattern → policy. First matching rule wins; anything else gets
+ * the default policy. `prefix` (default) matches `startsWith`; `suffix`
+ * matches `endsWith` — for generation routes nested under an id-bearing
+ * path no prefix rule can reach.
  */
-export const routePolicies: Array<[prefix: string, policy: RatePolicy,]> = [
+export const routePolicies: Array<[pattern: string, policy: RatePolicy, match?: RouteMatch,]> = [
   ["/api/v1/auth", authPolicy,],
   ["/api/v1/generation", generationPolicy,],
   ["/api/v1/chats", chatPolicy,],
@@ -62,6 +67,13 @@ export const routePolicies: Array<[prefix: string, policy: RatePolicy,]> = [
   // >=26-message chat sustained >300 req/min → 429 storm + starvation of
   // every other unmatched route.
   ["/api/v1/messages", chatPolicy,],
+  // BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy: batch
+  // avatar generation is POST /api/v1/actors/:actorId/emotion-avatars (and the
+  // wardrobe variant) — nested under an id, so no prefix rule ever reached it
+  // and each request fanned out image-gen jobs inside the shared 300/min
+  // default bucket. This suffix hits exactly the generation POSTs: the job
+  // list/status/cancel paths end with `/jobs…` and stay unmatched.
+  ["/emotion-avatars", generationPolicy, "suffix",],
 ];
 
 /**
@@ -70,8 +82,9 @@ export const routePolicies: Array<[prefix: string, policy: RatePolicy,]> = [
  * @returns {RatePolicy}
  */
 export function policyForRoute(pathname: string,): RatePolicy {
-  for (const [prefix, policy,] of routePolicies) {
-    if (pathname.startsWith(prefix,)) { return policy; }
+  for (const [pattern, policy, match = "prefix",] of routePolicies) {
+    const hit = match === "suffix" ? pathname.endsWith(pattern,) : pathname.startsWith(pattern,);
+    if (hit) { return policy; }
   }
 
   return defaultPolicy;

@@ -57,7 +57,10 @@ export const MessageStatusUpdateBody = t.Object({
   status: MessageStatusSchema,
 },);
 
-export const MessageVariantBody = t.Object({
+// BUG-chat-minors-variant-put-never-persists: variant selection is a
+// stateless read — no persisted "selected variant" column exists, so the
+// endpoint is a GET with the index as a query param, not a PUT body.
+export const MessageVariantQuery = t.Object({
   variantIndex: t.Numeric({ minimum: 0, },),
 },);
 

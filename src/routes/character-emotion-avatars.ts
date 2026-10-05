@@ -131,10 +131,26 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       // Validate emotions if provided
       if (emotionsParam && emotionsParam.length > 0) {
         const validEmotions = Object.values(EmotionType,) as string[];
+        // BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy:
+        // every entry fans out into its own image-gen job, so the array is
+        // capped at one entry per emotion and duplicates are rejected —
+        // uncapped, a single request could enqueue unbounded generation work.
+        if (emotionsParam.length > validEmotions.length) {
+          return jsonError({
+            message: `emotions accepts at most ${validEmotions.length} entries`,
+            status: HttpStatus.BadRequest,
+          },);
+        }
+
         for (const e of emotionsParam) {
           if (!validEmotions.includes(e,)) {
             return jsonError({ message: `Invalid emotion: ${e}`, status: HttpStatus.BadRequest, },);
           }
+        }
+
+        const seenEmotions = new Set(emotionsParam,);
+        if (seenEmotions.size !== emotionsParam.length) {
+          return jsonError({ message: "emotions must not contain duplicates", status: HttpStatus.BadRequest, },);
         }
       }
 
