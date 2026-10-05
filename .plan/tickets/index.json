@@ -10723,6 +10723,26 @@
     "title": "Group Chat",
     "type": "EPIC"
   },
+  "EPIC-GUEST-ACCESS": {
+    "hash": "37d7b06",
+    "git_issue": "37d7b06",
+    "extid": "EPIC-GUEST-ACCESS",
+    "type": "EPIC",
+    "title": "Guest Access — Unauthenticated Public Browsing (draft for new worktree)",
+    "label": "epic",
+    "priority": "High — public reach / demo-ability gap",
+    "epic": "",
+    "tags": [
+      "auth",
+      "access",
+      "guest",
+      "public",
+      "visibility",
+      "read-only"
+    ],
+    "source": ".plan/tickets/epic-guest-access.md",
+    "status": "Not Started"
+  },
   "EPIC-HARNESS-INTEGRATION": {
     "hash": "9085399",
     "extid": "EPIC-HARNESS-INTEGRATION",
@@ -31363,6 +31383,84 @@
     "tags": [],
     "title": "Guard sql.ref identifier construction in optimistic locking",
     "type": "TASK"
+  },
+  "TASK-GUEST-ASSET-PUBLIC-READS-OPEN-PUBLIC-ASSET-ACCESS": {
+    "hash": "7b2b199",
+    "git_issue": "7b2b199",
+    "extid": "TASK-GUEST-ASSET-PUBLIC-READS-OPEN-PUBLIC-ASSET-ACCESS",
+    "type": "TASK",
+    "title": "Guest asset public reads: open-public asset access",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-guest-access.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md",
+    "status": "Not Started"
+  },
+  "TASK-GUEST-CHAT-PUBLIC-READS-VISIBILITY-AWARE-CHAT-ACCESS": {
+    "hash": "747b486",
+    "git_issue": "747b486",
+    "extid": "TASK-GUEST-CHAT-PUBLIC-READS-VISIBILITY-AWARE-CHAT-ACCESS",
+    "type": "TASK",
+    "title": "Guest chat public reads: visibility-aware chat access",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-guest-access.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md",
+    "status": "Not Started"
+  },
+  "TASK-GUEST-CONTEXT-SYNTHETIC-DERIVE-BRANCH-AUTH-GUESTACCESS-FLAG": {
+    "hash": "f790146",
+    "git_issue": "f790146",
+    "extid": "TASK-GUEST-CONTEXT-SYNTHETIC-DERIVE-BRANCH-AUTH-GUESTACCESS-FLAG",
+    "type": "TASK",
+    "title": "Guest context: synthetic derive branch + auth.guestAccess flag",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-guest-access.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md",
+    "status": "Not Started"
+  },
+  "TASK-GUEST-PUBLIC-FUNCTIONALITY-SURFACE-FEED-TEMPLATES-DOCS": {
+    "hash": "c43700a",
+    "git_issue": "c43700a",
+    "extid": "TASK-GUEST-PUBLIC-FUNCTIONALITY-SURFACE-FEED-TEMPLATES-DOCS",
+    "type": "TASK",
+    "title": "Guest public functionality surface: feed, templates, docs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-guest-access.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-guest-public-functionality-surface-feed-templates-docs.md",
+    "status": "Not Started"
+  },
+  "TASK-GUEST-RATE-LIMITING-AUDIT-LOGGING-FOR-GUEST-READS": {
+    "hash": "1d01122",
+    "git_issue": "1d01122",
+    "extid": "TASK-GUEST-RATE-LIMITING-AUDIT-LOGGING-FOR-GUEST-READS",
+    "type": "TASK",
+    "title": "Guest rate limiting + audit logging for guest reads",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-guest-access.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-guest-rate-limiting-audit-logging-for-guest-reads.md",
+    "status": "Not Started"
+  },
+  "TASK-GUEST-WORLD-PUBLIC-BROWSE-READ-ONLY-PUBLIC-WORLDS": {
+    "hash": "495ce0f",
+    "git_issue": "495ce0f",
+    "extid": "TASK-GUEST-WORLD-PUBLIC-BROWSE-READ-ONLY-PUBLIC-WORLDS",
+    "type": "TASK",
+    "title": "Guest world public browse: read-only public worlds",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-guest-access.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md",
+    "status": "Not Started"
   },
   "TASK-GUIDED-REGEN-ACTION-MENU-ON-ASSISTANT-MESSAGES": {
     "epic": "epic-output-control-transforms",
