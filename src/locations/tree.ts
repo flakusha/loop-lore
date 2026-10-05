@@ -29,38 +29,39 @@ import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import { LOCATION_DEPTH_LIMIT, } from "../db/enums-story/world";
 
-import {
-  type InsertLocationInput,
-  LocationMoveError,
-  type LocationTreeBranch,
-  type LocationTreeNode,
-} from "./tree-types";
-export {
-  type InsertLocationInput,
-  LocationMoveError,
-  type LocationMoveReason,
-  type LocationTreeBranch,
-  type LocationTreeNode,
-} from "./tree-types";
+export interface LocationTreeNode {
+  id: string;
+  parent_location_id: string | null;
+  path: string;
+  depth: number;
+}
+
+/** A `LocationTreeNode` plus its immediate children, recursively. `tree()` also emits `name` for display. */
+export type LocationTreeBranch = LocationTreeNode & {
+  name: string;
+  children: LocationTreeBranch[];
+};
+
+export interface InsertLocationInput {
+  worldId: string;
+  name: string;
+  description?: string;
+  kind?: string;
+  mobilityMode?: string;
+  parentLocationId: string | null;
+}
 
 export class LocationTreeService {
   constructor(private readonly db: Kysely<DB>,) {}
 
-  /**
-   * Compute the canonical path for a location, given its parent's path.
-   * @param parentPath
-   * @param childId
-   */
+  /** Compute the canonical path for a location, given its parent's path. */
   static computeChildPath(parentPath: string | null, childId: string,): string {
     // Strip trailing '/' from parent, then format as '/parent/child/' (canonical: leading + trailing).
     const base = parentPath === null ? "" : parentPath.replace(/\/$/, "",);
     return `${base}/${childId}/`;
   }
 
-  /**
-   * Depth (separator count in path) of a given location.
-   * @param parentPath
-   */
+  /** Depth (separator count in path) of a given location. */
   static depth(parentPath: string | null,): number {
     if (parentPath === null || parentPath === "") { return 1; }
     return parentPath.split("/",).length - 2; // '/a/' → 1 separator
@@ -69,7 +70,6 @@ export class LocationTreeService {
   /**
    * Insert a Location with depth + cross-world checks at the application layer.
    * The trigger on `path` materializes the path automatically. Returns the new id.
-   * @param input
    */
   async insertLocation(input: InsertLocationInput,): Promise<string> {
     if (input.parentLocationId !== null) {
@@ -159,10 +159,7 @@ export class LocationTreeService {
     return result.rows as LocationTreeNode[];
   }
 
-  /**
-   * Walk down — direct children first.
-   * @param locationId
-   */
+  /** Walk down — direct children first. */
   async getDescendants(locationId: string,): Promise<LocationTreeNode[]> {
     const result = await sql<LocationTreeNode>`
       WITH RECURSIVE tree(id, parent_location_id, path, depth) AS (
@@ -184,7 +181,6 @@ export class LocationTreeService {
    * Return every location in a world as a flat parent → children tree.
    * Roots are locations with parent_location_id IS NULL.
    * Each node carries its immediate children.
-   * @param worldId
    */
   async tree(worldId: string,): Promise<LocationTreeBranch[]> {
     // Load all locations for the world once, then assemble the tree in memory.
@@ -221,15 +217,10 @@ export class LocationTreeService {
     return build(null,);
   }
 
-  /**
-   * Move a subtree under a new parent (cross-world and cycle rejected at the app layer).
-   * @param locationId
-   * @param newParentId
-   * @throws {LocationMoveError} self-parent, not-found, cross-world, or cycle rejection
-   */
+  /** Move a subtree under a new parent (cross-world and cycle rejected at the app layer). */
   async moveSubtree(locationId: string, newParentId: string | null,): Promise<void> {
     if (newParentId === locationId) {
-      throw new LocationMoveError("self-parent", "location cannot be its own parent",);
+      throw new Error("location cannot be its own parent",);
     }
 
     if (newParentId !== null) {
@@ -242,14 +233,16 @@ export class LocationTreeService {
 
       const self = rows.find((r,) => r.id === locationId);
       const parent = rows.find((r,) => r.id === newParentId);
-      if (!self || !parent) { throw new LocationMoveError("not-found", "location or parent not found",); }
+      if (!self || !parent) { throw new Error("location or parent not found",); }
       if (self.world_id !== parent.world_id) {
-        throw new LocationMoveError("cross-world", "cross-world move rejected",);
+        throw new Error("cross-world move rejected",);
       }
 
-      const ancestors = await this.getAncestors(newParentId,);
-      if (ancestors.some((a,) => a.id === locationId)) {
-        throw new LocationMoveError("cycle", "move would create a cycle",);
+      if (newParentId !== null) {
+        const ancestors = await this.getAncestors(newParentId,);
+        if (ancestors.some((a,) => a.id === locationId)) {
+          throw new Error("move would create a cycle",);
+        }
       }
     }
 
