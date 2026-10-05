@@ -3,20 +3,20 @@
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { ageGateConfig, } from "../age-gate/controller";
-import { createLogger, getLogger, setGlobalLogger, } from "../logger";
+import { createLogger, getLogger, type LogLevel, setGlobalLogger, } from "../logger";
 import { getRuntimeNsfwConfig, resetNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import {
   applyConfigChange,
   applyConfigWrite,
   classifyConfigPath,
+  type ConfigChange,
   initConfigHotApply,
   onConfigChange,
   resetConfigHotApply,
-  type ConfigChange,
 } from "./hot-apply";
 import { applyHotConfig, } from "./hot-apply-consumers";
-import type { Config, } from "./schema/config";
 import { createConfigSchema, } from "./schema-class";
+import type { Config, } from "./schema/config";
 
 function makeConfig(): Config {
   return structuredClone(createConfigSchema().defaults,) as Config;
@@ -41,28 +41,31 @@ describe("classifyConfigPath", () => {
     expect(classifyConfigPath("logging.level",),).toBe("hot",);
     expect(classifyConfigPath("nsfw.allowNsfw",),).toBe("hot",);
     expect(classifyConfigPath("ageGate.enabled",),).toBe("hot",);
-  },);
+  });
 
   test("restart-required bindings default to restart", () => {
     expect(classifyConfigPath("default_provider",),).toBe("restart",);
     expect(classifyConfigPath("default_model",),).toBe("restart",);
     expect(classifyConfigPath("registration_open",),).toBe("restart",);
-  },);
-},);
+  });
+});
 
 describe("applyConfigChange", () => {
   test("first call after init seeds the snapshot without emitting", () => {
     const changes: ConfigChange[] = [];
-    onConfigChange((change,) => { changes.push(change,); },);
+    onConfigChange((change,) => {
+      changes.push(change,);
+    },);
+
     const change = applyConfigChange("boot", makeConfig(),);
     expect(changes.length,).toBe(0,);
     expect(change.changedPaths,).toEqual([],);
     expect(change.requiresRestart,).toBe(false,);
-  },);
+  });
 
   test("diffs changed leaves and classifies them", () => {
     const config = makeConfig();
-    config.logging.level = "warn";
+    config.logging.level = "warn" as LogLevel;
     config.nsfw.allowNsfw = false;
     const change = applyConfigChange("logging", config,);
     expect(change.changedPaths,).toContain("logging.level",);
@@ -70,11 +73,14 @@ describe("applyConfigChange", () => {
     expect(change.hotPaths,).toContain("logging.level",);
     expect(change.hotPaths,).toContain("nsfw.allowNsfw",);
     expect(change.requiresRestart,).toBe(false,);
-  },);
+  });
 
   test("subscribers receive the change", () => {
     const seen: ConfigChange[] = [];
-    onConfigChange((change,) => { seen.push(change,); },);
+    onConfigChange((change,) => {
+      seen.push(change,);
+    },);
+
     const config = makeConfig();
     config.ageGate.enabled = true;
     applyConfigChange("age-gate", config,);
@@ -82,15 +88,17 @@ describe("applyConfigChange", () => {
     const first = seen[0];
     expect(first?.domain,).toBe("age-gate",);
     expect(first?.hotPaths,).toContain("ageGate.enabled",);
-  },);
-},);
+  });
+});
 
 describe("applyHotConfig", () => {
   test("applies logging.level live without a restart", async () => {
     const entries: number[] = [];
     getLogger().addTransport({
       name: "probe",
-      write: async (entry) => { entries.push(entry.level,); },
+      write: async (entry,) => {
+        entries.push(entry.level,);
+      },
       flush: async () => {},
     },);
 
@@ -104,7 +112,7 @@ describe("applyHotConfig", () => {
 
     expect(entries,).not.toContain(10,);
     expect(entries,).toContain(40,);
-  },);
+  });
 
   test("children created before setLevel see the new level", async () => {
     const entries: number[] = [];
@@ -112,7 +120,9 @@ describe("applyHotConfig", () => {
     const child = root.child({ module: "test", },);
     child.addTransport({
       name: "probe",
-      write: async (entry) => { entries.push(entry.level,); },
+      write: async (entry,) => {
+        entries.push(entry.level,);
+      },
       flush: async () => {},
     },);
 
@@ -124,7 +134,7 @@ describe("applyHotConfig", () => {
 
     expect(entries,).not.toContain(10,);
     expect(entries,).toContain(40,);
-  },);
+  });
 
   test("applies ageGate.enabled live", () => {
     const config = makeConfig();
@@ -133,14 +143,14 @@ describe("applyHotConfig", () => {
     applyConfigChange("age-gate", config,);
     expect(ageGateConfig.get().enabled,).toBe(true,);
     expect(ageGateConfig.get().minimumAge,).toBe(21,);
-  },);
+  });
 
   test("applies nsfw.allowNsfw live", () => {
     const config = makeConfig();
     config.nsfw.allowNsfw = false;
     applyConfigChange("nsfw", config,);
     expect(getRuntimeNsfwConfig().allowNsfw,).toBe(false,);
-  },);
+  });
 });
 
 describe("applyConfigWrite", () => {
@@ -158,7 +168,10 @@ describe("applyConfigWrite", () => {
 
   test("restart-required key returns false and does not emit", () => {
     const changes: ConfigChange[] = [];
-    const unsub = onConfigChange((c,) => { changes.push(c,); },);
+    const unsub = onConfigChange((c,) => {
+      changes.push(c,);
+    },);
+
     const applied = applyConfigWrite("server.port", "8080",);
     expect(applied,).toBe(false,);
     expect(changes.length,).toBe(0,);
