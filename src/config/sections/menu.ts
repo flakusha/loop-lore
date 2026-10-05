@@ -12,9 +12,18 @@
  * Pure module — no DB access, no I/O.
  */
 
-import { jsonSchema, } from "../schema-class";
-import { SECRET_KEY_PATTERN, REQUIRES_RESTART_KEYS, PER_CHAT_OVERRIDABLE_KEYS, } from "../../admin/config-keys";
+import { PER_CHAT_OVERRIDABLE_KEYS, REQUIRES_RESTART_KEYS, SECRET_KEY_PATTERN, } from "../../admin/config-keys";
 import { SettingsUpdateAllowedKeys, } from "../../validation/schemas";
+import { jsonSchema, } from "../schema-class";
+import {
+  EDITABLE_KEY_MAP,
+  enumOptions,
+  humanize,
+  SECTION_GROUPS,
+  STANDALONE_KEYS,
+  USER_FIELD_OPTIONS,
+  USER_FIELD_TYPES,
+} from "./menu-data";
 
 export type ConfigMenuScope = "admin" | "user";
 
@@ -45,107 +54,6 @@ export interface ConfigMenuSection {
   fields: ConfigMenuField[];
 }
 
-/** system_config keys that map to config section fields (camelCase → snake). */
-const EDITABLE_KEY_MAP: Record<string, Record<string, string>> = {
-  auth: {
-    registrationOpen: "registration_open",
-    sessionTimeoutHours: "session_timeout_hours",
-    maxSessionsPerUser: "max_sessions_per_user",
-  },
-  assets: {
-    maxFileSize: "max_upload_size_bytes",
-  },
-  generation: {
-    defaultProvider: "default_provider",
-    defaultModels: "default_model",
-  },
-};
-
-/** Standalone system_config keys not in any section meta. */
-const STANDALONE_KEYS: { key: string; label: string; type: ConfigMenuField["type"]; description: string; section: string }[] = [
-  { key: "log_retention_days", label: "Log Retention (days)", type: "number", description: "Audit log retention in days", section: "logging" },
-  { key: "archive_retention_days", label: "Archive Retention (days)", type: "number", description: "Chat archive purge retention in days", section: "messages" },
-  { key: "memory_keyphrase_recall", label: "Memory Keyphrase Recall", type: "boolean", description: "Inject journal memories on keyphrase match", section: "generation" },
-  { key: "memory_keyphrase_recall_limit", label: "Memory Recall Limit", type: "number", description: "Max keyphrase-triggered memory recalls per message", section: "generation" },
-  { key: "auto_moderation", label: "Auto-Moderation", type: "boolean", description: "Enable auto-moderation rules", section: "moderation" },
-  { key: "profanity_filter", label: "Profanity Filter", type: "boolean", description: "Enable profanity filter", section: "moderation" },
-  { key: "spam_detection", label: "Spam Detection", type: "boolean", description: "Enable spam detection", section: "moderation" },
-  { key: "max_flags_before_hide", label: "Max Flags Before Hide", type: "number", description: "Auto-hide content after N flags", section: "moderation" },
-  { key: "wardrobe_loadout_bridge", label: "Wardrobe Loadout Bridge", type: "boolean", description: "Auto-switch outfit from equipped items", section: "characters" },
-];
-
-/**
- * Domain grouping for the section navigator. Sections absent from the map land
- * in "Other" — the UI renders one nav group per bucket, one panel per section.
- */
-const SECTION_GROUPS: Record<string, string> = {
-  server: "Core",
-  db: "Core",
-  frontend: "Core",
-  transport: "Core",
-  observability: "Core",
-  auth: "Security & Access",
-  encryption: "Security & Access",
-  headers: "Security & Access",
-  ageGate: "Security & Access",
-  byoKey: "Security & Access",
-  generation: "Content & Generation",
-  assistant: "Content & Generation",
-  templates: "Content & Generation",
-  dynamicResponse: "Content & Generation",
-  messages: "Content & Generation",
-  characters: "Content & Generation",
-  nsfw: "Moderation",
-  assets: "Assets",
-  federation: "Platform",
-  hooks: "Platform",
-  idempotency: "Platform",
-  cron: "Platform",
-  seeding: "Platform",
-  docs: "Platform",
-  logging: "Platform",
-  tui: "Platform",
-};
-
-/** User settings field types. */
-const USER_FIELD_TYPES: Record<string, ConfigMenuField["type"]> = {
-  theme: "string",
-  fontSize: "number",
-  locale: "string",
-  provider: "string",
-  apiEndpoint: "string",
-  apiKey: "string",
-  model: "string",
-  temperature: "number",
-  maxTokens: "number",
-  detailLevel: "enum",
-  auto_rename_enabled: "boolean",
-  displayName: "string",
-  birthDate: "string",
-  customInstructions: "string",
-  notifications: "object",
-};
-
-function humanize(key: string,): string {
-  return key
-    .replace(/([A-Z])/g, " $1",)
-    .replace(/[_-]+/g, " ",)
-    .replace(/^\s*/, "",)
-    .replace(/\b\w/g, (c,) => c.toUpperCase(),)
-    .trim();
-}
-
-/** String-only enum options (the JSON schema may carry a null sentinel). */
-function enumOptions(values: unknown[] | undefined,): string[] | undefined {
-  if (!values || values.length === 0) { return undefined; }
-  return values.filter((v,): v is string => typeof v === "string",);
-}
-
-/** Allowed values for user-settings enums keyed by setting name. */
-const USER_FIELD_OPTIONS: Record<string, string[]> = {
-  detailLevel: ["Immersion", "Basic", "Detailed",],
-};
-
 function buildAdminSections(): ConfigMenuSection[] {
   const schema = jsonSchema();
   const props = (schema.properties ?? {}) as Record<
@@ -160,12 +68,12 @@ function buildAdminSections(): ConfigMenuSection[] {
   const sections: ConfigMenuSection[] = [];
   const consumedStandalone = new Set<string>();
 
-  for (const [sectionKey, sectionMeta] of Object.entries(props,)) {
+  for (const [sectionKey, sectionMeta,] of Object.entries(props,)) {
     if (sectionMeta.type !== "object" || !sectionMeta.properties) { continue; }
     const fields: ConfigMenuField[] = [];
     const editableMap = EDITABLE_KEY_MAP[sectionKey] ?? {};
 
-    for (const [fieldName, fieldMeta] of Object.entries(sectionMeta.properties,)) {
+    for (const [fieldName, fieldMeta,] of Object.entries(sectionMeta.properties,)) {
       const snakeKey = editableMap[fieldName];
       const editable = snakeKey !== undefined;
       const secret = SECRET_KEY_PATTERN.test(fieldName,) || SECRET_KEY_PATTERN.test(snakeKey ?? "",);
@@ -189,7 +97,7 @@ function buildAdminSections(): ConfigMenuSection[] {
       },);
     }
 
-    for (const sk of STANDALONE_KEYS.filter((s,) => s.section === sectionKey,)) {
+    for (const sk of STANDALONE_KEYS.filter((s,) => s.section === sectionKey)) {
       consumedStandalone.add(sk.key,);
       fields.push({
         key: sk.key,
@@ -221,7 +129,7 @@ function buildAdminSections(): ConfigMenuSection[] {
   // "moderation") would otherwise vanish from the catalog. Emit one synthetic
   // section per orphan bucket so every editable key stays reachable.
   for (const sk of STANDALONE_KEYS.filter((s,) => !consumedStandalone.has(s.key,))) {
-    const existing = sections.find((s,) => s.key === sk.section,);
+    const existing = sections.find((s,) => s.key === sk.section);
     const field: ConfigMenuField = {
       key: sk.key,
       label: sk.label,
@@ -263,7 +171,7 @@ function buildUserSections(): ConfigMenuSection[] {
     editable: true,
     scope: "user" as const,
     options: USER_FIELD_OPTIONS[key],
-  }),);
+  }));
 
   return [
     {
