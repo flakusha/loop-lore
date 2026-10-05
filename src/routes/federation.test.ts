@@ -242,7 +242,27 @@ describe("federationRoutes — mesh-deliver", () => {
     expect(res.status,).toBe(400,);
   });
 
+  /** Register a trusted peer and hold a reservation for `sizeBytes`. */
+  async function reserveFor(
+    origin: string,
+    sizeBytes: number,
+  ): Promise<string> {
+    const db = await dbFor();
+    await upsertPeer(db, { origin, state: "trusted", },);
+    const res = await postReserve(PSK_CONFIG, {
+      senderOrigin: origin,
+      contentHash: `hash-${origin}-${sizeBytes}`,
+      sizeBytes,
+    },);
+
+    expect(res.status,).toBe(200,);
+    return (await res.json() as { reservationId: string }).reservationId;
+  }
+
   test("valid envelope stores and verifies (A→B integrity)", async () => {
+    // Deliver is now gated on a trusted peer that holds a reservation
+    // (BUG-federation-authorization-who-may-publish-an-actor-undefined).
+    const reservationId = await reserveFor("https://a.example", 20,);
     const envelope = await sealContent({
       id: "route-content-1",
       origin: "https://a.example",
@@ -250,16 +270,50 @@ describe("federationRoutes — mesh-deliver", () => {
       cipher: routeCipher,
     },);
 
-    const res = await postDeliver(PSK_CONFIG, { envelope, },);
+    const res = await postDeliver(PSK_CONFIG, { envelope, reservationId, },);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { verdict: string };
     expect(body.verdict,).toBe("stored",);
-    const replay = await postDeliver(PSK_CONFIG, { envelope, },);
+    const replay = await postDeliver(PSK_CONFIG, { envelope, reservationId, },);
     const replayBody = (await replay.json()) as { verdict: string };
     expect(replayBody.verdict,).toBe("stale",);
   });
 
+  test("deliver without a reservation is rejected (400)", async () => {
+    const envelope = await sealContent({
+      id: "route-content-nores",
+      origin: "https://a.example",
+      content: "unreserved payload",
+      cipher: routeCipher,
+    },);
+
+    const res = await postDeliver(PSK_CONFIG, { envelope, },);
+    expect(res.status,).toBe(400,);
+  });
+
+  test("deliver from an untrusted origin is rejected (403)", async () => {
+    const reservationId = await reserveFor("https://stranger-deliver.example", 12,);
+    const envelope = await sealContent({
+      id: "route-content-untrusted",
+      origin: "https://evil.example",
+      content: "payload from nowhere",
+      cipher: routeCipher,
+    },);
+
+    const res = await postDeliver(PSK_CONFIG, { envelope, reservationId, },);
+    expect(res.status,).toBe(403,);
+    const db = await dbFor();
+    const row = await db
+      .selectFrom("mesh_deliveries",)
+      .select("content_id",)
+      .where("content_id", "=", "route-content-untrusted",)
+      .executeTakeFirst();
+
+    expect(row,).toBeUndefined();
+  });
+
   test("wrong-PSK envelope returns 400 and records nothing", async () => {
+    const reservationId = await reserveFor("https://a.example", 16,);
     const envelope = await sealContent({
       id: "route-content-2",
       origin: "https://a.example",
@@ -267,8 +321,16 @@ describe("federationRoutes — mesh-deliver", () => {
       cipher: pskCipher("other-psk",),
     },);
 
-    const res = await postDeliver(PSK_CONFIG, { envelope, },);
+    const res = await postDeliver(PSK_CONFIG, { envelope, reservationId, },);
     expect(res.status,).toBe(400,);
+    const db = await dbFor();
+    const row = await db
+      .selectFrom("mesh_deliveries",)
+      .select("content_id",)
+      .where("content_id", "=", "route-content-2",)
+      .executeTakeFirst();
+
+    expect(row,).toBeUndefined();
   });
 
   test("reserve → deliver confirms the reservation", async () => {

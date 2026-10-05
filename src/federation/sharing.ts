@@ -59,6 +59,26 @@ export async function outstandingBytes(
 }
 
 /**
+ * Look up a peer by canonical origin and verify it is trusted.
+ * @param database Receiver database handle.
+ * @param origin Canonical peer origin.
+ * @returns The peer row if trusted, null otherwise.
+ */
+export async function assertTrustedPeer(
+  database: Kysely<DB>,
+  origin: string,
+): Promise<{ origin: string; state: string; capacity_bytes: number | null } | null> {
+  const peer = await database
+    .selectFrom("mesh_peers",)
+    .select(["origin", "state", "capacity_bytes",],)
+    .where("origin", "=", origin,)
+    .executeTakeFirst();
+
+  if (!peer || peer.state !== "trusted") { return null; }
+  return peer;
+}
+
+/**
  * Create an inbound reservation (receiver side). The sender peer must be
  * trusted, and the push must fit its remaining capacity.
  * @param database Receiver database handle.
@@ -85,13 +105,9 @@ export async function createInboundReservation(
 ): Promise<string> {
   const origin = canonicalOrigin(input.senderOrigin,);
   if (origin === null) { throw new Error(`invalid sender origin: ${input.senderOrigin}`,); }
-  const peer = await database
-    .selectFrom("mesh_peers",)
-    .select(["origin", "state", "capacity_bytes",],)
-    .where("origin", "=", origin,)
-    .executeTakeFirst();
+  const peer = await assertTrustedPeer(database, origin,);
 
-  if (!peer || peer.state !== "trusted") { throw new Error(`untrusted peer: ${origin}`,); }
+  if (!peer) { throw new Error(`untrusted peer: ${origin}`,); }
   if (!Number.isFinite(input.sizeBytes,) || input.sizeBytes <= 0) {
     throw new Error(`invalid size: ${input.sizeBytes}`,);
   }

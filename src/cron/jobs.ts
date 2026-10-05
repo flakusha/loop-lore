@@ -135,6 +135,23 @@ export function defaultJobs(): CronJobDef[] {
       },
     },),
     defineJob({
+      name: "federation.outbox-drain",
+      schedule: "*/2 * * * *",
+      enabled: true,
+      run: async ({ config, database, logger, },) => {
+        if (!config.federation.enabled) { return { skipped: "federation.disabled", }; }
+        const { runMeshOutboxPass, } = await import("../federation/outbox");
+        const trustByOrigin: Record<string, import("../config/schema").FederationPeerTrustConfig | undefined> = {};
+        for (const peer of config.federation.peers) {
+          trustByOrigin[peer.origin] = peer.trust;
+        }
+
+        const summary = await runMeshOutboxPass(database, { trustByOrigin, },);
+        logger.info("federation outbox drain complete", { module: "cron", ...summary, },);
+        return summary;
+      },
+    },),
+    defineJob({
       name: "providers.health-rescan",
       schedule: "*/15 * * * *",
       enabled: true,

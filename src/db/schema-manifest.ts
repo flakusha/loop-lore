@@ -620,6 +620,16 @@ export const SCHEMA = new SchemaManifest()
     state: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("mesh_outbox", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    target_origin: col("text", { notNull: true, },),
+    content_id: col("text", { notNull: true, },),
+    envelope: col("text", { notNull: true, },),
+    attempts: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    next_attempt_at: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("mesh_peers", {
     origin: col("text", { primaryKey: true, },),
     state: col("text", { notNull: true, hasDefault: true, },),
