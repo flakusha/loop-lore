@@ -29,3 +29,12 @@ This ticket exists to make the zero-reader state explicit and reviewed, so it is
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Blocked-by (2026-10-04, p3-bugfix-2026-10-04)
+
+The missing production reader is `FEAT-activitypub-federation` itself — it owns actor
+keys, inbox/outbox, and signature verification, and is currently Not Started. Until it
+lands, `src/crypto/activitypub-keys.ts` (`getActiveActivityPubKey`) over the
+`activitypub_actor_keys` table is the ready substrate: finished, tested groundwork
+(consent-gated key minting), not dead weight. Resolve keep-and-wire vs drop when that
+FEAT ships; do not remove earlier.
