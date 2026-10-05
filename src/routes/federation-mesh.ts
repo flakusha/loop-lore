@@ -19,8 +19,10 @@ import {
 } from "../federation/delivery";
 import { createMeshEncryption, } from "../federation/encryption";
 import { type ContentEnvelope, } from "../federation/envelope";
+import { canonicalOrigin, } from "../federation/peer-fetch";
 import { getOrCreateInboundKey, } from "../federation/peer-keys";
 import {
+  assertTrustedPeer,
   createInboundReservation,
 } from "../federation/sharing";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
@@ -155,9 +157,33 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
         },);
       }
 
-      const reservationId = typeof request?.reservationId === "string"
-        ? request.reservationId
-        : undefined;
+      if (typeof request?.reservationId !== "string") {
+        return jsonError({
+          message: "reservationId is required",
+          status: HttpStatus.BadRequest,
+          code: ErrorCode.BadRequest,
+        },);
+      }
+
+      const reservationId = request.reservationId;
+
+      const senderOrigin = canonicalOrigin(envelope.origin,);
+      if (senderOrigin === null) {
+        return jsonError({
+          message: "invalid envelope origin",
+          status: HttpStatus.BadRequest,
+          code: ErrorCode.BadRequest,
+        },);
+      }
+
+      const trusted = await assertTrustedPeer(opts.database, senderOrigin,);
+      if (!trusted) {
+        return jsonError({
+          message: "untrusted peer",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
+      }
 
       const ciphers = await createMeshEncryption(secret,).receiverCiphers(
         opts.database,
@@ -172,7 +198,7 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
             opts.database,
             envelope as ContentEnvelope,
             cipher,
-            reservationId === undefined ? {} : { reservationId, },
+            { reservationId, },
           );
 
           break;
@@ -196,6 +222,91 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
       detail: {
         summary: "Receive mesh content delivery",
         description: "Decrypts, verifies, and stores a pushed content envelope (LWW). Federation opt-in.",
+        tags: ["Federation",],
+      },
+    },
+  );
+
+  app.post(
+    "/api/mesh-retract",
+    async ({ body, },) => {
+      const request = body as { contentId?: unknown; origin?: unknown } | null;
+      if (!request || typeof request.contentId !== "string" || typeof request.origin !== "string") {
+        return jsonError({
+          message: "contentId and origin are required",
+          status: HttpStatus.BadRequest,
+          code: ErrorCode.BadRequest,
+        },);
+      }
+
+      const canonical = canonicalOrigin(request.origin,);
+      if (canonical === null) {
+        return jsonError({
+          message: "invalid origin",
+          status: HttpStatus.BadRequest,
+          code: ErrorCode.BadRequest,
+        },);
+      }
+
+      const trusted = await assertTrustedPeer(opts.database, canonical,);
+      if (!trusted) {
+        return jsonError({
+          message: "untrusted peer",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
+      }
+
+      const delivery = await opts.database
+        .selectFrom("mesh_deliveries",)
+        .select(["origin",],)
+        .where("content_id", "=", request.contentId,)
+        .executeTakeFirst();
+
+      if (!delivery) {
+        return jsonError({
+          message: "content not found",
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        },);
+      }
+
+      const deliveryOrigin = canonicalOrigin(delivery.origin,);
+      if (deliveryOrigin !== canonical) {
+        return jsonError({
+          message: "origin mismatch",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
+      }
+
+      // Scope the DELETE to the origin that was just authorized. Filtering on
+      // the STORED `delivery.origin` (not the canonical form) is what makes the
+      // write provably hit only the authorized row: a concurrent
+      // `receiveDelivery` upsert that overwrites `origin` in the read-then-write
+      // window makes the predicate miss, and a miss is reported as 403 rather
+      // than a retraction that never happened (IDOR).
+      const deleted = await opts.database
+        .deleteFrom("mesh_deliveries",)
+        .where("content_id", "=", request.contentId,)
+        .where("origin", "=", delivery.origin,)
+        .executeTakeFirst();
+
+      if (Number(deleted?.numDeletedRows ?? 0n,) === 0) {
+        return jsonError({
+          message: "origin mismatch",
+          status: HttpStatus.Forbidden,
+          code: ErrorCode.Forbidden,
+        },);
+      }
+
+      return jsonResponse({ ok: true, },);
+    },
+    {
+      detail: {
+        summary: "Retract mesh content delivery",
+        description:
+          "Deletes a previously delivered content envelope by content id. Only the originating trusted peer may retract.",
         tags: ["Federation",],
       },
     },

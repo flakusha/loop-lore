@@ -1460,3 +1460,15 @@ export interface MeshDekExports {
   created_at: Generated<string>;
   revoked_at: string | null;
 }
+
+// ── mesh_outbox ────────────────────────────────────────────
+export interface MeshOutbox {
+  id: Generated<string>;
+  target_origin: string;
+  content_id: string;
+  envelope: string;
+  attempts: Generated<number>;
+  status: Generated<string>;
+  next_attempt_at: string;
+  created_at: Generated<string>;
+}
