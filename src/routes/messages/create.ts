@@ -133,7 +133,9 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         // ── Idempotency: short-circuit if a row already covers this key.
         // Closes the duplicate-insert hazard for retried POSTs. The key is
         // optional; the helper handles null by returning null.
-        const idempotencyKey = body.idempotencyKey ?? null;
+        // Empty string is "no key" (matches the schema-validation pin):
+        // storing "" would collide on the migration 040 unique index.
+        const idempotencyKey = body.idempotencyKey ? body.idempotencyKey : null;
         const existingId = idempotencyKey
           ? await findByIdempotencyKey(database, chatId, idempotencyKey,)
           : null;
