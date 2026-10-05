@@ -16,7 +16,7 @@
 
 ## Summary
 
-Impersonation system: `impersonate_actor_id` on `chat_participants`, 1-per-world constraint, name→actor resolution from `/impersonate` command.
+Impersonation system: `impersonate_actor_id` on `chat_participants`, 1-per-location/timeline constraint (refined from 1-per-world), name→actor resolution from `/impersonate` command.
 
 ## Done
 
