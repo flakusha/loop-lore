@@ -8,6 +8,9 @@
  * Barrel: re-exports the public API from domain modules (flat function bank).
  */
 export {
+  resolveAssetOwnerId,
+} from "./asset-owner";
+export {
   createAsset,
 } from "./create";
 export {

@@ -15,14 +15,21 @@
  *  - the persisted asset gets an avatar row tagged with the emotion and
  *    scoped to the outfit.
  *
+ * Resource contract (parallel-safe): owns ONE `:memory:` SQLite from
+ * createTestDb and ONE mkdtemp upload dir, both created in beforeAll and both
+ * released in afterAll by a teardown guarded against a failed beforeAll. The
+ * image engine module is `mock.module`-stubbed, which is why the suite is
  * ISOLATED-only: mock.module is process-global and leaks across files without
  * --isolate, so plain `bun test src/` skips this file.
  */
-import { beforeAll, expect, it, mock, } from "bun:test";
+import { afterAll, beforeAll, expect, it, mock, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
 import { EmotionType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
-import { createTestDb, } from "../../../test-utils/create-test-db";
+import { createTestDb, type TestDb, } from "../../../test-utils/create-test-db";
 import {
   insertActors,
   insertUsers,
@@ -68,6 +75,10 @@ const COLLIDING_ACTOR_ID = "actor-id-collision";
 
 describeOrSkip("generateEmotionAvatar", () => {
   let db: Kysely<DB>;
+  /** Owned handle pair — assigned only once createTestDb() has returned. */
+  let testDb: TestDb | undefined;
+  /** Own upload dir (mkdtemp), so no fixed /tmp path is shared. */
+  let uploadDir: string;
   const actorId = "actor-single-gen";
   const ownerUserId = "user-single-gen";
   const outfitId = "outfit-single-gen";
@@ -99,8 +110,9 @@ describeOrSkip("generateEmotionAvatar", () => {
   }
 
   beforeAll(async () => {
-    const created = await createTestDb();
-    db = created.db;
+    testDb = await createTestDb();
+    db = testDb.db;
+    uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-single-gen-",),);
     // assets.owner_id references users.id and is derived from the actor row,
     // so the actor gets a real owning user whose id is NOT the actor id.
     await insertUsers(db, "single-gen", "Single Gen", { id: ownerUserId as never, },);
@@ -112,13 +124,22 @@ describeOrSkip("generateEmotionAvatar", () => {
     },);
   },);
 
+  afterAll(async () => {
+    // Guarded: a failed beforeAll leaves `testDb` unset, and an unguarded
+    // destroy() throws a TypeError here that MASKS the real setup error.
+    if (!testDb) { return; }
+    await testDb.db.destroy();
+    testDb.sqlite.close();
+    rmSync(uploadDir, { recursive: true, force: true, },);
+  },);
+
   it("injects the outfit descriptor between the prompt prefix and the emotion modifier", async () => {
     calls.length = 0;
     await generateEmotionAvatar(makeSvc(), {
       actorId,
       emotion: EmotionType.Happy,
       sdConfig: SD_CONFIG,
-      uploadDir: "/tmp",
+      uploadDir,
       promptPrefix: "a lone traveler",
       outfitId,
     },);
@@ -136,7 +157,7 @@ describeOrSkip("generateEmotionAvatar", () => {
       actorId,
       emotion: EmotionType.Sad,
       sdConfig: SD_CONFIG,
-      uploadDir: "/tmp",
+      uploadDir,
       promptPrefix: "a lone traveler",
     },);
 
@@ -149,7 +170,7 @@ describeOrSkip("generateEmotionAvatar", () => {
       actorId,
       emotion: EmotionType.Angry,
       sdConfig: SD_CONFIG,
-      uploadDir: "/tmp",
+      uploadDir,
       outfitId,
     },);
 
@@ -164,7 +185,7 @@ describeOrSkip("generateEmotionAvatar", () => {
       actorId,
       emotion: EmotionType.Happy,
       sdConfig: SD_CONFIG,
-      uploadDir: "/tmp",
+      uploadDir,
       promptPrefix: "an anchor",
       outfitId: "outfit-that-was-deleted",
     },);
@@ -182,7 +203,7 @@ describeOrSkip("generateEmotionAvatar", () => {
           actorId,
           emotion: EmotionType.Happy,
           sdConfig: SD_CONFIG,
-          uploadDir: "/tmp",
+          uploadDir,
           promptPrefix: "an anchor",
         },),
       ).rejects.toThrow("provider exploded",);
@@ -199,7 +220,7 @@ describeOrSkip("generateEmotionAvatar", () => {
       actorId,
       emotion: EmotionType.Happy,
       sdConfig: SD_CONFIG,
-      uploadDir: "/tmp",
+      uploadDir,
       promptPrefix: "an anchor",
       outfitId,
     },);
@@ -218,7 +239,7 @@ describeOrSkip("generateEmotionAvatar", () => {
       actorId,
       emotion: EmotionType.Happy,
       sdConfig: SD_CONFIG,
-      uploadDir: "/tmp",
+      uploadDir,
       promptPrefix: "an anchor",
       outfitId,
     },);
@@ -229,10 +250,12 @@ describeOrSkip("generateEmotionAvatar", () => {
 
     // The link stays keyed on the actor, so owner_id and link.entity_id stay
     // one principal (the gallery joins asset_links -> actors.owner_id).
-    const link = await db.selectFrom("asset_links",).selectAll().where("asset_id", "=", result.assetId,).executeTakeFirst();
+    const link = await db.selectFrom("asset_links",).selectAll().where("asset_id", "=", result.assetId,)
+      .executeTakeFirst();
+
     expect(link?.entity_type,).toBe("actor",);
     expect(link?.entity_id,).toBe(actorId,);
-  },);
+  });
 
   it("never hands the asset to an unrelated user whose id collides with the actor id", async () => {
     // A user holding the actor id satisfies the FK, so this is the silent
@@ -247,13 +270,13 @@ describeOrSkip("generateEmotionAvatar", () => {
       actorId: collidingActor,
       emotion: EmotionType.Happy,
       sdConfig: SD_CONFIG,
-      uploadDir: "/tmp",
+      uploadDir,
       promptPrefix: "an anchor",
     },);
 
     const asset = await db.selectFrom("assets",).selectAll().where("id", "=", result.assetId,).executeTakeFirst();
     expect(asset?.owner_id,).toBe(ownerUserId,);
-  },);
+  });
 
   it("refuses to generate for an actor with no owning user", async () => {
     const orphanActor = await insertActors(db, "Orphan Actor", { id: "actor-no-owning-user", },);
@@ -263,9 +286,9 @@ describeOrSkip("generateEmotionAvatar", () => {
         actorId: orphanActor,
         emotion: EmotionType.Happy,
         sdConfig: SD_CONFIG,
-        uploadDir: "/tmp",
+        uploadDir,
         promptPrefix: "an anchor",
       },),
     ).rejects.toThrow("no owning user",);
-  },);
+  });
 },);
