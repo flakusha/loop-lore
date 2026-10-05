@@ -198,3 +198,5 @@ scope shrank from 2 to 1
 
 The stale-merge-base over-report and its removal are therefore properties of
 the git semantics, observable without running either test file.
+
+**Resolved:** 2026-10-05 registry-driven close: git issue 1ee04e5 (registry tip: 4d0b2d84a Konstantin Fedotov Close issue)
