@@ -23,4 +23,4 @@ removeStop ignores its routeId argument (named _routeId; src/routes/worlds/fract
 
 ## Review 2026-10-04
 
-OPEN on dev - removeStop(_routeId, stopId) ignores routeId and deletes by stop id only (src/locations/routes.ts:217-219); the route only checks requireWorldOwner(worldId) and _routeId is never validated (src/routes/worlds/fractal-travel-routes.ts:147-155). Identical in all checked worktrees (the where("route_id" hits at :90/:116/:141 are unrelated callsites).
+OPEN on dev - `removeStop(_routeId, stopId)` ignores routeId and deletes by stop id only (src/locations/routes.ts:217-219); the route only checks requireWorldOwner(worldId) and `_routeId` is never validated (src/routes/worlds/fractal-travel-routes.ts:147-155). Identical in all checked worktrees (the `where("route_id"` hits at :90/:116/:141 are unrelated callsites).
