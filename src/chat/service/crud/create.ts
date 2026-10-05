@@ -40,6 +40,7 @@ export async function createChat(
       parent_chat_id: params.parentChatId ?? null,
       visibility: params.visibility ?? "private",
       encryption_level: params.encryptionLevel ?? "none",
+      purpose: params.purpose ?? null,
     },)
     .execute();
 

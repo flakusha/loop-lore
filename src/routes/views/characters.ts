@@ -37,11 +37,20 @@ async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
 
     const name = escapeHtml(c.display_name,);
     const desc = escapeHtml(c.description || "",);
+    const reviewState = c.review_state || "pending_review";
+    const badgeClass = reviewState === "approved"
+      ? "badge-success"
+      : reviewState === "rejected"
+      ? "badge-danger"
+      : "badge-warning";
+
+    const badgeLabel = reviewState.replace(/_/g, " ",);
     return `<div class="character-card" x-on:click="window.selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
       <div class="card-img">${avatar}</div>
       <div class="card-body">
         <div class="name">${name}</div>
         <div class="description">${desc}</div>
+        <span class="review-badge ${badgeClass}" style="font-size: 11px; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px">${badgeLabel}</span>
       </div>
     </div>`;
   },).join("",);

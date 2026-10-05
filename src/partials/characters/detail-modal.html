@@ -70,6 +70,14 @@
       <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
         <button
           class="btn btn-secondary"
+          data-action="submit-for-review"
+          x-on:click="window.submitSelectedForReview($el)"
+          data-testid="submit-for-review-btn"
+        >
+          📤 Submit for Review
+        </button>
+        <button
+          class="btn btn-secondary"
           data-action="start-chat"
           x-on:click="window.startChatFromChar($el)"
           data-testid="start-chat-btn"

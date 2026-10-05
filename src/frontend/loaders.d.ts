@@ -66,6 +66,7 @@ declare global {
   var startChatFromChar: typeof import("./pages/characters").startChatFromChar;
   var editCharacter: typeof import("./pages/characters").editCharacter;
   var deleteCharacter: typeof import("./pages/characters").deleteCharacter;
+  var submitSelectedForReview: typeof import("./pages/characters").submitSelectedForReview;
   var exportCharacter: typeof import("./pages/characters").exportCharacter;
   var saveCharacterEdit: (characterId: string,) => Promise<void>;
   var initJournalKeyphrases: (characterId: string,) => Promise<void>;
