@@ -33,6 +33,23 @@ export function mapToolDef(tool: ToolDef,): Record<string, unknown> {
 }
 
 /**
+ * Anthropic vision contract: an image-bearing message becomes a content-block
+ * array (text + base64 image source). Text-only messages keep bare string
+ * content (payload byte-unchanged).
+ * @param msg
+ */
+function toAnthropicContent(msg: GenerationMessage,): unknown {
+  if (!msg.images || msg.images.length === 0) { return msg.content ?? ""; }
+
+  const imageBlocks = Array.from(msg.images, (img,) => ({
+    type: "image",
+    source: { type: "base64", media_type: img.mediaType, data: img.base64, },
+  }),);
+
+  return msg.content ? [{ type: "text", text: msg.content, }, ...imageBlocks,] : imageBlocks;
+}
+
+/**
  * Build the Anthropic request body, extracting system messages into the
  * top-level `system` field (Anthropic does not accept a `system` role in
  * the messages array).
@@ -70,7 +87,7 @@ export function buildMessages(
     }
 
     const role = mapRole(msg.role,);
-    out.push({ role, content: msg.content ?? "", },);
+    out.push({ role, content: toAnthropicContent(msg,), },);
   }
 
   return { system: systemParts.join("\n\n",), messages: out, };

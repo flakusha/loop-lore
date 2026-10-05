@@ -15,15 +15,21 @@
  * unknown asset ids yield empty captions instead of leaking or overwriting.
  */
 import type { Kysely, } from "kysely";
+import { resolveModelCapabilities, } from "../admin/model-capabilities";
 import { resolveModelRole, } from "../admin/model-roles";
-import { getAsset, } from "../assets/service";
+import { getAsset, getAssetData, } from "../assets/service";
+import type { AssetRecord, } from "../assets/service";
 import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
+import { deriveChatKeyForChat, getSmk, } from "../crypto";
+import type { ChatKey, } from "../crypto";
 import { ModelRole, } from "../db/enums-core";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger/index";
+import type { Logger, } from "../logger/index";
 import { forbiddenResponse, } from "../routes/http-utils";
+import type { GenerationMessage, } from "./gen-types-options";
 import { getProvider, resolveProvider, } from "./providers/registry";
 import type { GenerateRequest, } from "./providers/types";
 
@@ -108,6 +114,12 @@ export async function handleImageCaption(
     return Response.json({ error: "Captioning provider unavailable", status: 503, }, { status: 503, },);
   }
 
+  // Vision gate: skip the attachment only when the model is registered with vision
+  // explicitly disabled; unknown capabilities (never scanned) still get image bytes —
+  // the captioning role is meant for a multimodal model.
+  const caps = await resolveModelCapabilities(db, role.provider, role.model,);
+  const supportsVision = caps === null || caps.supportsVision;
+
   const captions: { assetId: string; caption: string }[] = [];
 
   for (const assetId of req.assetIds.slice(0, MAX_CAPTION_BATCH,)) {
@@ -123,6 +135,16 @@ export async function handleImageCaption(
       continue;
     }
 
+    const images = supportsVision
+      ? await readCaptionImages({
+        db,
+        asset,
+        uploadDir: config.assets.uploadDir,
+        chatId: req.chatId,
+        log,
+      },)
+      : undefined;
+
     const systemPrompt =
       "Generate a concise one-sentence description of this image. Focus on the main subject and visual elements.";
 
@@ -130,11 +152,14 @@ export async function handleImageCaption(
       `Describe this image briefly for accessibility purposes. The image filename is "${asset.filename}".`;
 
     try {
+      const userMessage: GenerationMessage = { role: "user", content: userPrompt, };
+      if (images) { userMessage.images = images; }
+
       const genReq: GenerateRequest = {
         model: role.model,
         messages: [
           { role: "system", content: systemPrompt, },
-          { role: "user", content: userPrompt, },
+          userMessage,
         ],
         params: { maxTokens: 128, temperature: 0.3, },
       };
@@ -155,4 +180,47 @@ export async function handleImageCaption(
   }
 
   return Response.json({ data: captions, },);
+}
+
+/**
+ * Read image bytes for a vision caption request via the asset reader (resolves
+ * the storage path + decrypts chat-encrypted assets), packaged as a message
+ * attachment. Returns undefined when the asset cannot be read or decrypted
+ * (e.g. encrypted asset without chat context) so captioning degrades to
+ * text-only instead of failing.
+ * @param opts
+ * @param opts.db
+ * @param opts.asset
+ * @param opts.uploadDir
+ * @param opts.chatId
+ * @param opts.log
+ */
+async function readCaptionImages({
+  db,
+  asset,
+  uploadDir,
+  chatId,
+  log,
+}: {
+  db: Kysely<DB>;
+  asset: AssetRecord;
+  uploadDir: string;
+  chatId?: string;
+  log: Logger;
+},): Promise<GenerationMessage["images"]> {
+  try {
+    let chatKey: ChatKey | undefined;
+    if (asset.encryption_tier !== "public" && asset.encrypted_key_id && chatId) {
+      const smk = getSmk();
+      if (smk) { chatKey = await deriveChatKeyForChat(db, chatId, smk,); }
+    }
+
+    const bytes = await getAssetData(db, asset.id, uploadDir, chatKey,);
+    if (!bytes) { return undefined; }
+
+    return [{ mediaType: asset.mime_type, base64: bytes.toString("base64",), },];
+  } catch (error) {
+    log.debug("caption image bytes unavailable; captioning text-only", { assetId: asset.id, error, },);
+    return undefined;
+  }
 }
