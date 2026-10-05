@@ -95,29 +95,28 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
   // default decide).
   if (templateId) { fineTunePayload.renderingOverride = visualNovel === true ? "visual_novel" : null; }
 
-  // Map variant to type/mode/purpose.
-  let chatType = ctx.chatType!.value;
-  let chatMode = gmGuided ? "story" : mode;
-  if (variant === "rpg") {
-    chatType = "direct";
-    chatMode = "story";
-  } else if (variant === "rpg_group") {
-    chatType = "group";
-    chatMode = "battle";
+  // For RPG variants, send `variant` and let the backend resolve the canonical
+  // triple (type/mode/purpose) and gm_config. For standard, fall back to
+  // the explicit type/mode from the form (gmGuided overrides mode to "story").
+  let fineTunePayloadWithVariant = { ...fineTunePayload, };
+  if (variant === "rpg" || variant === "rpg_group") {
+    fineTunePayloadWithVariant.variant = variant;
   }
 
   return {
     name,
-    type: chatType,
-    mode: chatMode,
+    type: variant !== "rpg" && variant !== "rpg_group" ? ctx.chatType!.value : undefined,
+    mode: variant !== "rpg" && variant !== "rpg_group"
+      ? (gmGuided ? "story" : mode)
+      : undefined,
     participantIds: Array.from(ctx.selected, (a: any,) => a.id,),
     personaId,
     impersonateActorId: impersonateId,
     memoryCarry: memoryCarryMode,
     memoryCarryIds,
     templateId,
-    ...fineTunePayload,
-    ...(gmGuided && { gmConfig: { assistantRole: "gm", storyMode: true, }, }),
+    ...fineTunePayloadWithVariant,
+    ...(gmGuided && variant === "standard" && { gmConfig: { assistantRole: "gm", storyMode: true, }, }),
   };
 }
 
