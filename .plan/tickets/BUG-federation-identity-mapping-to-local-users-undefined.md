@@ -21,3 +21,12 @@ FEAT-activitypub-federation AC says map fediverse or IM actors to loop-lore auth
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Definition (2026-10-04, p3-bugfix-2026-10-04)
+
+Mechanism now specified in `FEAT-activitypub-federation.md` → "Federated Identity
+Mapping": `federated_identities` (`actor_uri` PK, `local_user_id` FK → `users`,
+`mapping_mode` link|shadow, `created_at`), plus the trust boundary — remote assertions
+never grant local authority and a local session issues only on verified ownership proof.
+Character consent remains covered by `src/characters/services/federation-consent.ts`.
+The resolution service implementation lands with the FEAT.

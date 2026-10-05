@@ -49,16 +49,16 @@ describe("Message Variants, Visibility, Status E2E", () => {
     expect(res.data!.length,).toBe(2,);
   });
 
-  test("PUT /api/v1/messages/:id/variant selects variant by index", async () => {
-    const res = await api.put(`/api/v1/messages/${variantMsgId}/variant`, { variantIndex: 1, },);
+  test("GET /api/v1/messages/:id/variant returns the sibling at the index", async () => {
+    const res = await api.get(`/api/v1/messages/${variantMsgId}/variant?variantIndex=1`,);
     expect(res.ok,).toBe(true,);
     const selected = res.data as { content?: string } | null;
     expect(selected,).toBeTruthy();
     expect(selected!.content,).toBe("Variant B",);
   });
 
-  test("PUT /api/v1/messages/:id/variant rejects invalid index", async () => {
-    const res = await api.put(`/api/v1/messages/${variantMsgId}/variant`, { variantIndex: 99, },);
+  test("GET /api/v1/messages/:id/variant rejects invalid index", async () => {
+    const res = await api.get(`/api/v1/messages/${variantMsgId}/variant?variantIndex=99`,);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(400,);
   });
