@@ -27,6 +27,8 @@ import type { FetchAuth, FetchResult, SafeFetchOptions, } from "./types";
  * bearer token injection behavior, or omit for raw fetch with safety.
  * @param url - URL to fetch
  * @param options - Fetch options with safety extensions
+ * @param external
+ * @param timeoutSignal
  * @returns FetchResult with parsed data or error
  */
 function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortSignal,): AbortSignal {
@@ -45,6 +47,7 @@ function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortS
  * Serialize a request body: strings pass through (avoids double-serialization),
  * other values are JSON-stringified. Returns undefined for null bodies or
  * when stringification fails.
+ * @param body
  */
 function serializeBody(body: unknown,): BodyInit | undefined {
   if (body === undefined || body === null) { return undefined; }

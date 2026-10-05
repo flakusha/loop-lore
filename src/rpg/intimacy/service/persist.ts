@@ -50,6 +50,14 @@ type ModuleLog = ReturnType<typeof getLogger>;
  * `intimacy.level_changed` surfaced through Character Core (TASK-041).
  * Best-effort: a missing mood row must not fail the intimacy update.
  * @param args
+ * @param args.db
+ * @param args.log
+ * @param args.pairId
+ * @param args.actorId
+ * @param args.feltIds
+ * @param args.upward
+ * @param args.worldId
+ * @param args.thresholds
  * @returns {Promise<void>}
  */
 export async function logLevelChangeMood(args: {
@@ -88,6 +96,11 @@ export async function logLevelChangeMood(args: {
 /**
  * Persist the pair score, history, and unlocked thresholds.
  * @param args
+ * @param args.db
+ * @param args.pairId
+ * @param args.score
+ * @param args.history
+ * @param args.unlocked
  * @returns {Promise<void>}
  */
 export async function persistPairScore(args: {

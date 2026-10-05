@@ -46,7 +46,10 @@ export const BranchName = t.String({
   pattern: "^[^\\u0000-\\u001f\\u007f]*$",
 },);
 
-/** Map service errors to HTTP status. */
+/**
+ * Map service errors to HTTP status.
+ * @param code
+ */
 export function statusFor(
   code: string,
 ): (typeof HttpStatus)[keyof typeof HttpStatus] {

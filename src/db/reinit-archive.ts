@@ -30,6 +30,7 @@ export function archiveDir(): string {
 /** Move `p` into the timestamped backup dir; fall back to unlink on
  * cross-device rename. After the move, retention is enforced via
  * {@link pruneArchives}.  * @param {string} p
+ * @param p
  * @param {Logger} log
  * @returns {void}
  */
@@ -50,6 +51,7 @@ export function archiveFile(p: string, log: Logger,): void {
 /** Parse the moved-at timestamp from an archive filename. Returns null when
  * the name does not match the `<iso-stamp>-<original>` pattern produced by
  * {@link archiveFile}. Exported for tests.  * @param {string} name
+ * @param name
  * @returns {Date | null}
  */
 export function parseArchiveStamp(name: string,): Date | null {
@@ -73,6 +75,7 @@ interface ArchiveEntry {
 /** Enforce {@link MAX_ARCHIVES} + {@link MAX_AGE_DAYS} retention on `dir`.
  * Files without a parseable stamp prefix are left untouched so unrelated
  * files in the backup dir are not deleted.  * @param {string} dir
+ * @param dir
  * @param {Logger} log
  * @returns {void}
  */

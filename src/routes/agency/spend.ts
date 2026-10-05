@@ -23,6 +23,7 @@ import {
 
 /**
  * @param {{ database: import("kysely").Kysely<import("../../db/schema").DB> }} opts
+ * @param opts.database
  * @param {unknown} prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { agency: { spend: { post: { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */

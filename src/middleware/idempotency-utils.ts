@@ -10,6 +10,7 @@
  * factory surface compact for the size gate).
  *
  * Not exported from `idempotency.ts`; this is implementation detail.
+ * @param headers
  */
 export function filterReplayHeaders(headers: Record<string, string>,): Record<string, string> {
   const out: Record<string, string> = {};

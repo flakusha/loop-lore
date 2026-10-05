@@ -47,6 +47,8 @@ function buildCenterStyle(vw: number, vh: number,): string {
  * @param host - window-like object (defaults to globalThis) — passed
  *   through so tests can stub window dimensions without touching the
  *   real DOM.
+ * @param host.innerWidth
+ * @param host.innerHeight
  * @returns {AvatarCentererState}
  */
 export function avatarCenterer(host?: { innerWidth: number; innerHeight: number },): AvatarCentererState {
@@ -65,7 +67,7 @@ export function avatarCenterer(host?: { innerWidth: number; innerHeight: number 
 type AvatarCentererFactory = typeof avatarCenterer;
 declare global {
   // Ambient registration consumed by Alpine x-data="avatarCenterer()".
-  // eslint-disable-next-line no-var
+
   var avatarCenterer: AvatarCentererFactory;
 }
 

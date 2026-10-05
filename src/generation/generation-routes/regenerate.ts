@@ -75,6 +75,9 @@ function logDegradation(message: string,): void {
  * @param chatId
  * @param parentId
  * @param variant
+ * @param variant.variantMessageId
+ * @param variant.actorId
+ * @param variant.style
  * @param userId
  * @param userRole
  */

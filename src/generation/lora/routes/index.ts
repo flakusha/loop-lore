@@ -18,6 +18,7 @@ export { resolveBackendUrls, } from "./urls";
  * `register-plugins.ts` is unchanged.
  * @param root0
  * @param root0.config
+ * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { lora: { discover: { ...; }; }; }; } & { ...; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function loraRoutes({ config, }: { config: Config }, prefix = "/api",) {

@@ -86,6 +86,7 @@ export function migrateCanonicalExtensions(
  * normalize each, write back when changed. Returns a summary suitable for CLI output.
  * @param {Kysely<DB>} database
  * @param {{ verbose?: boolean }} _opts
+ * @param _opts.verbose
  * @returns {Promise<{ totalActors: number; candidates: number; changed: number; unchanged: number; skipped: number; fieldsAdded: Record<string, number>; perActor: { actorId: string; status: "skipped" | "changed" | "unchanged"; reason?: string | undefined; fieldsAdded?: string[] | undefined; }[]; }>}
  */
 export async function runMigration(

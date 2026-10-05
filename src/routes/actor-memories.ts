@@ -26,6 +26,7 @@ import { memoryAuditRoutes, } from "./memory-audit";
  * @param opts
  * @param opts.database
  * @param opts.config
+ * @param prefix
  * @returns Elysia plugin for the actor memories CRUD surface.
  */
 export function actorMemoriesRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {

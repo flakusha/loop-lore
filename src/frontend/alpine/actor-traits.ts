@@ -200,7 +200,10 @@ export const actorTraits: ActorTraitsState = {
   },
 };
 
-/** Build the Alpine scope for the permanent-traits panel. */
+/**
+ * Build the Alpine scope for the permanent-traits panel.
+ * @param actorId
+ */
 export function actorTraitsFactory(actorId: string,): ActorTraitsState {
   const state = Object.create(actorTraits,) as ActorTraitsState;
   state._trActorId = null;

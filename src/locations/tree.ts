@@ -54,14 +54,21 @@ export interface InsertLocationInput {
 export class LocationTreeService {
   constructor(private readonly db: Kysely<DB>,) {}
 
-  /** Compute the canonical path for a location, given its parent's path. */
+  /**
+   * Compute the canonical path for a location, given its parent's path.
+   * @param parentPath
+   * @param childId
+   */
   static computeChildPath(parentPath: string | null, childId: string,): string {
     // Strip trailing '/' from parent, then format as '/parent/child/' (canonical: leading + trailing).
     const base = parentPath === null ? "" : parentPath.replace(/\/$/, "",);
     return `${base}/${childId}/`;
   }
 
-  /** Depth (separator count in path) of a given location. */
+  /**
+   * Depth (separator count in path) of a given location.
+   * @param parentPath
+   */
   static depth(parentPath: string | null,): number {
     if (parentPath === null || parentPath === "") { return 1; }
     return parentPath.split("/",).length - 2; // '/a/' → 1 separator
@@ -70,6 +77,7 @@ export class LocationTreeService {
   /**
    * Insert a Location with depth + cross-world checks at the application layer.
    * The trigger on `path` materializes the path automatically. Returns the new id.
+   * @param input
    */
   async insertLocation(input: InsertLocationInput,): Promise<string> {
     if (input.parentLocationId !== null) {
@@ -159,7 +167,10 @@ export class LocationTreeService {
     return result.rows as LocationTreeNode[];
   }
 
-  /** Walk down — direct children first. */
+  /**
+   * Walk down — direct children first.
+   * @param locationId
+   */
   async getDescendants(locationId: string,): Promise<LocationTreeNode[]> {
     const result = await sql<LocationTreeNode>`
       WITH RECURSIVE tree(id, parent_location_id, path, depth) AS (
@@ -181,6 +192,7 @@ export class LocationTreeService {
    * Return every location in a world as a flat parent → children tree.
    * Roots are locations with parent_location_id IS NULL.
    * Each node carries its immediate children.
+   * @param worldId
    */
   async tree(worldId: string,): Promise<LocationTreeBranch[]> {
     // Load all locations for the world once, then assemble the tree in memory.
@@ -217,7 +229,11 @@ export class LocationTreeService {
     return build(null,);
   }
 
-  /** Move a subtree under a new parent (cross-world and cycle rejected at the app layer). */
+  /**
+   * Move a subtree under a new parent (cross-world and cycle rejected at the app layer).
+   * @param locationId
+   * @param newParentId
+   */
   async moveSubtree(locationId: string, newParentId: string | null,): Promise<void> {
     if (newParentId === locationId) {
       throw new Error("location cannot be its own parent",);

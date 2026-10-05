@@ -38,17 +38,28 @@ export {
 
 /** Default chat-archive purge retention in days (`archive_retention_days`). */
 export const ARCHIVE_RETENTION_DAYS_DEFAULT = 90;
-/** Return all system config entries ordered by key. */
+/**
+ * Return all system config entries ordered by key.
+ * @param db
+ */
 export async function getAllConfig(db: Kysely<DB>,): Promise<ConfigEntry[]> {
   return db.selectFrom("system_config",).selectAll().orderBy("key",).execute();
 }
 
-/** Return a single config entry by key, or undefined if missing. */
+/**
+ * Return a single config entry by key, or undefined if missing.
+ * @param db
+ * @param key
+ */
 export async function getConfig(db: Kysely<DB>, key: string,): Promise<ConfigEntry | undefined> {
   return db.selectFrom("system_config",).selectAll().where("key", "=", key,).executeTakeFirst();
 }
 
-/** Return the raw string value for a key, or undefined if missing. */
+/**
+ * Return the raw string value for a key, or undefined if missing.
+ * @param db
+ * @param key
+ */
 export async function getConfigValue(db: Kysely<DB>, key: string,): Promise<string | undefined> {
   const row = await db.selectFrom("system_config",).select("value",).where("key", "=", key,).executeTakeFirst();
   return row?.value;
@@ -57,6 +68,7 @@ export async function getConfigValue(db: Kysely<DB>, key: string,): Promise<stri
 /**
  * Insert or update a config entry.
  * Updates updated_at on conflict.
+// hint: Structural and logic conflict. Both design and behavior differ.
  * After persisting, hot-applies the write to live consumers when the key
  * is hot-applicable (no-op for restart-required keys).
  * @returns requires_restart — matches decorateConfigEntry. When the write was
@@ -82,7 +94,11 @@ export async function setConfig(
   return classifyConfigPath(key,) !== "none";
 }
 
-/** Delete a config entry by key. */
+/**
+ * Delete a config entry by key.
+ * @param db
+ * @param key
+ */
 export async function deleteConfig(db: Kysely<DB>, key: string,): Promise<void> {
   await db.deleteFrom("system_config",).where("key", "=", key,).execute();
 }
@@ -90,6 +106,8 @@ export async function deleteConfig(db: Kysely<DB>, key: string,): Promise<void> 
 /**
  * Seed default config values from the app config. Skips existing keys.
  * Missing config sections degrade gracefully: keys sourced from them are skipped.
+ * @param db
+ * @param config
  */
 export async function seedDefaults(db: Kysely<DB>, config: Config,): Promise<void> {
   const defaults: { key: string; value: string; description: string }[] = [];

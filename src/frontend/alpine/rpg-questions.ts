@@ -21,7 +21,10 @@ import type {
   RpgQuestionView,
 } from "./types.js";
 
-/** Coerces a backend input kind to the known union, defaulting to "choice". */
+/**
+ * Coerces a backend input kind to the known union, defaulting to "choice".
+ * @param raw
+ */
 function normalizeInputKind(raw: unknown,): RpgQuestionInputKind {
   return raw === "free_text" || raw === "numeric" ? raw : "choice";
 }

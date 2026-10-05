@@ -31,6 +31,12 @@ export function booleanToInt(value: boolean | undefined, fallback: number,): num
  * the existing values (or to the supplied defaults when no row exists).
  * @param existing
  * @param body
+ * @param body.license_type
+ * @param body.custom_license_text
+ * @param body.attribution
+ * @param body.allow_derivatives
+ * @param body.allow_commercial
+ * @param body.share_alike
  * @returns {LicenseHistoryRow & { license_type: LicenseType; }}
  */
 export function composeLicenseRow(

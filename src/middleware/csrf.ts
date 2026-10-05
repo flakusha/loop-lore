@@ -210,6 +210,7 @@ export interface CsrfDecision {
  * @param args.headers
  * @param args.sessionId
  * @param args.requestId
+ * @param args.userId
  * @returns {CsrfDecision}
  */
 export function decideCsrf(

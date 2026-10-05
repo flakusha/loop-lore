@@ -21,7 +21,11 @@ interface CacheEntry {
   expiresAtMs: number;
 }
 
-/** Compose the cache key. */
+/**
+ * Compose the cache key.
+ * @param scope
+ * @param limitName
+ */
 function cacheKey(scope: AutonomyScope, limitName: GovernorLimitName,): string {
   return `${scope.kind}|${scope.id}|${limitName}`;
 }

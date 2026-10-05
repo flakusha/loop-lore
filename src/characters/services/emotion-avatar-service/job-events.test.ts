@@ -23,6 +23,7 @@ describe("emotion-avatar job events", () => {
       baseAvatarId: "av-1",
       emotions: [EmotionType.Happy, EmotionType.Sad, EmotionType.Angry,],
     },);
+
     expect(jobProgress(job,),).toEqual(
       { jobId: "job-progress", done: 0, total: 3, status: "pending", },
     );
@@ -71,6 +72,7 @@ describe("emotion-avatar job events", () => {
     subscribeJob("job-4", () => {
       throw new Error("boom",);
     },);
+
     expect(() => emitJobProgress({ jobId: "job-4", done: 1, total: 1, status: "completed", },)).not.toThrow();
   });
 });

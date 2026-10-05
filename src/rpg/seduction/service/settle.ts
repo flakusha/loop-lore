@@ -18,6 +18,17 @@ import type { SeductionSkill, } from "./types";
  * Best-effort on the mood event — a missing mood row must not fail the
  * attempt outcome.
  * @param args
+ * @param args.db
+ * @param args.log
+ * @param args.actorId
+ * @param args.targetId
+ * @param args.skillCategory
+ * @param args.worldId
+ * @param args.relevantSkill
+ * @param args.success
+ * @param args.arousalDelta
+ * @param args.xpGained
+ * @param args.intensityTier
  * @returns {Promise<void>}
  */
 export async function settleAttempt(args: {

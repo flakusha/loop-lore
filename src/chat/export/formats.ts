@@ -50,6 +50,7 @@ const DEFAULT_AUTHOR_BY_ROLE: Record<string, string> = {
 /**
  * Author label for a message — display_name when present, otherwise
  * the role, with a User → "You" override (mirrors the markdown UX).
+ * @param msg
  */
 function authorLabel(msg: MessageData,): string {
   if (msg.display_name) { return msg.display_name; }
@@ -60,6 +61,7 @@ function authorLabel(msg: MessageData,): string {
  * Serialize the chat as Markdown. Consecutive same-author messages
  * collapse under a single heading (matches the existing markdown
  * exporter in `routes/chat-export/format.ts`).
+ * @param payload
  */
 function renderMarkdown(payload: ExportPayload,): string {
   const { chat, messages, } = payload;
@@ -90,6 +92,7 @@ function renderMarkdown(payload: ExportPayload,): string {
 /**
  * Quote-escape a TOML basic string. Newlines, tabs, backslashes, and
  * double quotes need escapes; everything else is literal.
+ * @param value
  */
 function tomlEscape(value: string,): string {
   return value
@@ -104,6 +107,7 @@ function tomlEscape(value: string,): string {
  * Render the export as TOML. Flattened shape: `[[message]]` array of
  * inline tables. The chat header lives in a `[chat]` table. Comments
  * keep the file human-readable.
+ * @param payload
  */
 function renderToml(payload: ExportPayload,): string {
   const { chat, messages, } = payload;
@@ -138,6 +142,7 @@ function renderToml(payload: ExportPayload,): string {
  * Render the export as YAML. `js-yaml`'s `dump` handles strings and
  * nested objects cleanly; we pre-shape the payload so the layout
  * matches the JSON exporter.
+ * @param payload
  */
 function renderYaml(payload: ExportPayload,): string {
   const shaped = {
@@ -165,6 +170,7 @@ function renderYaml(payload: ExportPayload,): string {
 
 /**
  * Render the export as pretty-printed JSON.
+ * @param payload
  */
 function renderJson(payload: ExportPayload,): string {
   const sr = safeJsonStringify(
