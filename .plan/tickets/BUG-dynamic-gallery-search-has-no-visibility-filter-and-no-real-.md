@@ -132,3 +132,5 @@ Fix commits, both confirmed ancestors of HEAD via
 `git merge-base --is-ancestor <sha> HEAD` (exit 0): `8b4eae500`
 `fix(auth): IDOR and visibility enforcement in routes and rate-limiting`
 (2026-10-05) and `a66da50ac`.
+
+**Resolved:** 2026-10-05 registry-driven close: git issue c064be9 (registry tip: 051187792 Konstantin Fedotov Close issue)

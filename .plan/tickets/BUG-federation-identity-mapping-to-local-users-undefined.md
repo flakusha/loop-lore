@@ -59,3 +59,5 @@ any of the 15 schema modules in that directory, nor the 195-line table union
 Carried by `FEAT-activitypub-federation` (Not Started), which owns the inbox resolution
 service that looks up/inserts by `actor_uri`. Closing here records the decision; the
 migration and resolution service have not landed.
+
+**Resolved:** 2026-10-05 registry-driven close: git issue d6f2a94 (registry tip: 306b98448 Konstantin Fedotov Close issue)
