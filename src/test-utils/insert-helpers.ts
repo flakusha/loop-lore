@@ -1192,6 +1192,7 @@ export async function insertActors(
     llm_assist_enabled?: number;
     avatar_focus_x?: number;
     avatar_focus_y?: number;
+    review_state?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -2261,6 +2262,7 @@ export async function insertChats(
     active_branch_id?: string | null;
     autonomy_config?: string;
     federation_consented_at?: string | null;
+    purpose?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
