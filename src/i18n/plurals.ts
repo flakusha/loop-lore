@@ -82,6 +82,7 @@ export function pluralRuleFor(locale: Locale,): PluralRuleFn {
   } catch {
     rules = new Intl.PluralRules(undefined,);
   }
+
   ruleCache.set(locale, rules,);
   return (count: number,) => rules.select(count,);
 }
