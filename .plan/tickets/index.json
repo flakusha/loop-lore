@@ -132,22 +132,6 @@
     "title": "actorType persona 422 on valid UI input",
     "type": "BUG"
   },
-  "BUG-ADAPTER-SECRETS-LOOKUP-USES-THE-UNTRUSTED-PATH-SEGMENT-AS-A-": {
-    "hash": "e640965",
-    "git_issue": "e640965",
-    "extid": "BUG-ADAPTER-SECRETS-LOOKUP-USES-THE-UNTRUSTED-PATH-SEGMENT-AS-A-",
-    "type": "BUG",
-    "title": "Adapter secrets lookup uses the untrusted path segment as a prototype-chain key",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [
-      "security",
-      "integrations"
-    ],
-    "source": ".plan/tickets/BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-.md",
-    "status": "Not Started"
-  },
   "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY": {
     "epic": "epic-frontend-admin",
     "extid": "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY",
@@ -2192,21 +2176,6 @@
     "title": "NSFW consent state is in-memory only, never persisted",
     "type": "BUG"
   },
-  "BUG-CONSENT-TOCTOU-REVOKING-A-CHAT-CONSENT-DURING-A-FAN-OUT-ROUN": {
-    "hash": "5bad50d",
-    "git_issue": "5bad50d",
-    "extid": "BUG-CONSENT-TOCTOU-REVOKING-A-CHAT-CONSENT-DURING-A-FAN-OUT-ROUN",
-    "type": "BUG",
-    "title": "Consent TOCTOU: revoking a chat consent during a fan-out round still exports once",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [
-      "federation"
-    ],
-    "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md",
-    "status": "Not Started"
-  },
   "BUG-CONTENT-HOOKS-TS-MISSING-IMPORTS-BREAKS-TYPECHECK": {
     "epic": "",
     "extid": "BUG-CONTENT-HOOKS-TS-MISSING-IMPORTS-BREAKS-TYPECHECK",
@@ -3013,22 +2982,6 @@
     "title": "Factory reset deletes tables without transaction, silent per-table catch",
     "type": "BUG"
   },
-  "BUG-FAN-OUT-CONTENT-CLEARANCE-GATE-IS-OPT-IN-ON-A-CALLER-SUPPLIE": {
-    "hash": "142027d",
-    "git_issue": "142027d",
-    "extid": "BUG-FAN-OUT-CONTENT-CLEARANCE-GATE-IS-OPT-IN-ON-A-CALLER-SUPPLIE",
-    "type": "BUG",
-    "title": "Fan-out content-clearance gate is opt-in on a caller-supplied chatId",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [
-      "security",
-      "federation"
-    ],
-    "source": ".plan/tickets/BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie.md",
-    "status": "Not Started"
-  },
   "BUG-FE-BE-CHARACTER-GROWTH-ARC-CONFIRM-REJECT-DECLARE-UNSATISFIA": {
     "epic": "",
     "extid": "BUG-FE-BE-CHARACTER-GROWTH-ARC-CONFIRM-REJECT-DECLARE-UNSATISFIA",
@@ -3510,21 +3463,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-giwt-auto-close-asserts-a-ticket-is-done-when-no-md-marker-e.md",
     "status": "Not Started"
-  },
-  "BUG-GIWT-NEW-SCOPE-WITHOUT-TICKETS-ATTEMPTS-AN-EMPTY-COMMIT-AND-": {
-    "hash": "d593eb8",
-    "git_issue": "d593eb8",
-    "extid": "BUG-GIWT-NEW-SCOPE-WITHOUT-TICKETS-ATTEMPTS-AN-EMPTY-COMMIT-AND-",
-    "type": "BUG",
-    "title": "giwt new --scope without --tickets attempts an empty commit and exits 1",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [
-      "infra"
-    ],
-    "source": ".plan/tickets/BUG-giwt-new-scope-without-tickets-attempts-an-empty-commit-and-.md",
-    "status": "done"
   },
   "BUG-GIWT-PLAN-GATES-REPORT-112-PHANTOM-ACTIONABLE-ISSUES-WHEN-TH": {
     "epic": "",
@@ -4046,21 +3984,6 @@
     "title": "impersonate command register callbacks are empty (no-op)",
     "type": "BUG"
   },
-  "BUG-IMPORTCHATDEK-THROWS-ON-CHAT-KEYS-PRIMARY-KEY-COLLISION-INST": {
-    "hash": "873fe9f",
-    "git_issue": "873fe9f",
-    "extid": "BUG-IMPORTCHATDEK-THROWS-ON-CHAT-KEYS-PRIMARY-KEY-COLLISION-INST",
-    "type": "BUG",
-    "title": "importChatDek throws on chat_keys primary-key collision instead of degrading",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [
-      "federation"
-    ],
-    "source": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md",
-    "status": "Not Started"
-  },
   "BUG-IN-MEMORY-LIMITER-NOT-SHARED-ACROSS-INSTANCES-NO-SHUTDOWN-CL": {
     "epic": "",
     "extid": "BUG-IN-MEMORY-LIMITER-NOT-SHARED-ACROSS-INSTANCES-NO-SHUTDOWN-CL",
@@ -4189,21 +4112,6 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin.md",
-    "status": "Not Started"
-  },
-  "BUG-JOURNAL-KEYPHRASE-PANEL-READS-ONLY-PAGE-1-OF-THE-PAGINATED-M": {
-    "hash": "59af687",
-    "git_issue": "59af687",
-    "extid": "BUG-JOURNAL-KEYPHRASE-PANEL-READS-ONLY-PAGE-1-OF-THE-PAGINATED-M",
-    "type": "BUG",
-    "title": "Journal keyphrase panel reads only page 1 of the paginated memories envelope",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [
-      "frontend"
-    ],
-    "source": ".plan/tickets/BUG-journal-keyphrase-panel-reads-only-page-1-of-the-paginated-m.md",
     "status": "Not Started"
   },
   "BUG-JSCPD-RATCHET-GATE-SILENTLY-REMOVED-WITHOUT-TICKET": {
@@ -4615,22 +4523,6 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md",
-    "status": "Not Started"
-  },
-  "BUG-MESH-RESERVE-ISSUES-INBOUND-CONTENT-KEYS-WITHOUT-AUTHENTICAT": {
-    "hash": "1138d0f",
-    "git_issue": "1138d0f",
-    "extid": "BUG-MESH-RESERVE-ISSUES-INBOUND-CONTENT-KEYS-WITHOUT-AUTHENTICAT",
-    "type": "BUG",
-    "title": "Mesh reserve issues inbound content keys without authenticating the requester",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [
-      "security",
-      "federation"
-    ],
-    "source": ".plan/tickets/BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat.md",
     "status": "Not Started"
   },
   "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH": {
@@ -5452,21 +5344,6 @@
     "title": "PATCH settings endpoint has no key allowlist - {...currentSettings, ...body} silently accepts arbitrary keys",
     "type": "BUG"
   },
-  "BUG-PER-SENDER-RATE-LIMITER-BUCKETS-ARE-NEVER-EVICTED-UNBOUNDED-": {
-    "hash": "30d4991",
-    "git_issue": "30d4991",
-    "extid": "BUG-PER-SENDER-RATE-LIMITER-BUCKETS-ARE-NEVER-EVICTED-UNBOUNDED-",
-    "type": "BUG",
-    "title": "Per-sender rate-limiter buckets are never evicted (unbounded memory keyed on forged senders)",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [
-      "integrations"
-    ],
-    "source": ".plan/tickets/BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-.md",
-    "status": "Not Started"
-  },
   "BUG-PERSONA-UPDATE-ON-CROSS-USER-ID-RETURNS-200-OK-INSTEAD-OF-40": {
     "epic": "",
     "extid": "BUG-PERSONA-UPDATE-ON-CROSS-USER-ID-RETURNS-200-OK-INSTEAD-OF-40",
@@ -5544,21 +5421,6 @@
     "tags": [],
     "title": "PII redaction hardcoded dev fallback secret, no prod guard",
     "type": "BUG"
-  },
-  "BUG-PIN-MISMATCH-AND-TRANSIENT-PROBE-FAILURE-BOTH-EVICT-A-PEER-F": {
-    "hash": "d033d31",
-    "git_issue": "d033d31",
-    "extid": "BUG-PIN-MISMATCH-AND-TRANSIENT-PROBE-FAILURE-BOTH-EVICT-A-PEER-F",
-    "type": "BUG",
-    "title": "Pin mismatch and transient probe failure both evict a peer from the mesh",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [
-      "federation"
-    ],
-    "source": ".plan/tickets/BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f.md",
-    "status": "Not Started"
   },
   "BUG-PLAN-BACKLOG-SYNC-INVOKES-REMOVED-GIWT-SUBCOMMAND-FAILING-BU": {
     "hash": "404adc9",
@@ -5837,22 +5699,6 @@
     "tags": [],
     "title": "raw JSON.parse outside safe-json — 3 sites",
     "type": "BUG"
-  },
-  "BUG-RE-WRAPPED-DEK-ARTIFACTS-LACK-CONTEXT-BINDING-NO-AAD-ENABLIN": {
-    "hash": "93dae7b",
-    "git_issue": "93dae7b",
-    "extid": "BUG-RE-WRAPPED-DEK-ARTIFACTS-LACK-CONTEXT-BINDING-NO-AAD-ENABLIN",
-    "type": "BUG",
-    "title": "Re-wrapped DEK artifacts lack context binding (no AAD), enabling cross-chat key confusion on import",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [
-      "security",
-      "federation"
-    ],
-    "source": ".plan/tickets/BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin.md",
-    "status": "Not Started"
   },
   "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san": {
     "extid": "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san",
@@ -6173,22 +6019,6 @@
     "title": "runOffloadPass phase 3 — unlinkSync races with phase 1 re-spill",
     "type": "BUG"
   },
-  "BUG-RUNRESYNCPASS-FETCHES-PEER-ADVERTISEMENTS-WITHOUT-THE-SPKI-P": {
-    "hash": "54b7962",
-    "git_issue": "54b7962",
-    "extid": "BUG-RUNRESYNCPASS-FETCHES-PEER-ADVERTISEMENTS-WITHOUT-THE-SPKI-P",
-    "type": "BUG",
-    "title": "runResyncPass fetches peer advertisements without the SPKI pin gate",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [
-      "security",
-      "federation"
-    ],
-    "source": ".plan/tickets/BUG-runresyncpass-fetches-peer-advertisements-without-the-spki-p.md",
-    "status": "Not Started"
-  },
   "BUG-SAFE-BUFFER-BASE64URL-GUARD-ACCEPTS-WHITESPACE-VARIANTS-AND-": {
     "hash": "2ef22a3",
     "git_issue": "2ef22a3",
@@ -6462,22 +6292,6 @@
     "tags": [],
     "title": "smart-regen validates style then drops it — the style parameter never reaches the LLM call",
     "type": "BUG"
-  },
-  "BUG-SPKI-PIN-GATE-IS-NOT-ENFORCED-ACROSS-HTTP-REDIRECTS": {
-    "hash": "bc4950c",
-    "git_issue": "bc4950c",
-    "extid": "BUG-SPKI-PIN-GATE-IS-NOT-ENFORCED-ACROSS-HTTP-REDIRECTS",
-    "type": "BUG",
-    "title": "SPKI pin gate is not enforced across HTTP redirects",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [
-      "security",
-      "federation"
-    ],
-    "source": ".plan/tickets/BUG-spki-pin-gate-is-not-enforced-across-http-redirects.md",
-    "status": "Not Started"
   },
   "BUG-SQLITE-FK-PRAGMA-NO-OP-IN-MIGRATION-047-REBUILD": {
     "epic": "",
@@ -7353,37 +7167,6 @@
     "tags": [],
     "title": "VN mode locked once chat has confirmed messages",
     "type": "BUG"
-  },
-  "BUG-WEBHOOK-DEDUP-IS-RECORDED-BEFORE-DISPATCH-SO-A-HANDLER-THROW": {
-    "hash": "ebafd77",
-    "git_issue": "ebafd77",
-    "extid": "BUG-WEBHOOK-DEDUP-IS-RECORDED-BEFORE-DISPATCH-SO-A-HANDLER-THROW",
-    "type": "BUG",
-    "title": "Webhook dedup is recorded before dispatch, so a handler throw makes provider retries silently swallowed",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [
-      "integrations"
-    ],
-    "source": ".plan/tickets/BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw.md",
-    "status": "Not Started"
-  },
-  "BUG-WEBHOOK-RATE-LIMIT-BUDGET-IS-CONSUMED-BEFORE-SIGNATURE-VERIF": {
-    "hash": "9d640f6",
-    "git_issue": "9d640f6",
-    "extid": "BUG-WEBHOOK-RATE-LIMIT-BUDGET-IS-CONSUMED-BEFORE-SIGNATURE-VERIF",
-    "type": "BUG",
-    "title": "Webhook rate-limit budget is consumed before signature verification",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [
-      "security",
-      "integrations"
-    ],
-    "source": ".plan/tickets/BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif.md",
-    "status": "Not Started"
   },
   "BUG-WHITENOTE-UI-TYPES-REJECTED-422": {
     "epic": "",
@@ -19223,21 +19006,6 @@
     "tags": [],
     "title": "Adaptive Audio",
     "type": "TASK"
-  },
-  "TASK-ADD-A-PRE-MERGE-CONFLICT-MARKER-SCAN-TO-THE-CHECK-OR-HOOK-PA": {
-    "hash": "18d8a03",
-    "git_issue": "18d8a03",
-    "extid": "TASK-ADD-A-PRE-MERGE-CONFLICT-MARKER-SCAN-TO-THE-CHECK-OR-HOOK-PA",
-    "type": "TASK",
-    "title": "Add a pre-merge conflict-marker scan to the check or hook path",
-    "label": "task",
-    "priority": "low",
-    "epic": "",
-    "tags": [
-      "infra"
-    ],
-    "source": ".plan/tickets/TASK-add-a-pre-merge-conflict-marker-scan-to-the-check-or-hook-pa.md",
-    "status": "Not Started"
   },
   "TASK-ADD-ACHIEVEMENTCATEGORY-AND-ACHIEVEMENTTIER-ENUMS-FOR-ACHIEV": {
     "epic": "epic-achievements",
@@ -45598,5 +45366,237 @@
     "tags": [],
     "title": "nsfw-audit view route has no inline authz guard",
     "type": "WIRE"
+  },
+  "BUG-ADAPTER-SECRETS-LOOKUP-USES-THE-UNTRUSTED-PATH-SEGMENT-AS-A-": {
+    "hash": "e640965",
+    "git_issue": "e640965",
+    "extid": "BUG-ADAPTER-SECRETS-LOOKUP-USES-THE-UNTRUSTED-PATH-SEGMENT-AS-A-",
+    "type": "BUG",
+    "title": "Adapter secrets lookup uses the untrusted path segment as a prototype-chain key",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "security",
+      "integrations"
+    ],
+    "source": ".plan/tickets/BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-.md",
+    "status": "Not Started"
+  },
+  "BUG-CONSENT-TOCTOU-REVOKING-A-CHAT-CONSENT-DURING-A-FAN-OUT-ROUN": {
+    "hash": "5bad50d",
+    "git_issue": "5bad50d",
+    "extid": "BUG-CONSENT-TOCTOU-REVOKING-A-CHAT-CONSENT-DURING-A-FAN-OUT-ROUN",
+    "type": "BUG",
+    "title": "Consent TOCTOU: revoking a chat consent during a fan-out round still exports once",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "federation"
+    ],
+    "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md",
+    "status": "Not Started"
+  },
+  "BUG-FAN-OUT-CONTENT-CLEARANCE-GATE-IS-OPT-IN-ON-A-CALLER-SUPPLIE": {
+    "hash": "142027d",
+    "git_issue": "142027d",
+    "extid": "BUG-FAN-OUT-CONTENT-CLEARANCE-GATE-IS-OPT-IN-ON-A-CALLER-SUPPLIE",
+    "type": "BUG",
+    "title": "Fan-out content-clearance gate is opt-in on a caller-supplied chatId",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "security",
+      "federation"
+    ],
+    "source": ".plan/tickets/BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie.md",
+    "status": "Not Started"
+  },
+  "BUG-GIWT-NEW-SCOPE-WITHOUT-TICKETS-ATTEMPTS-AN-EMPTY-COMMIT-AND-": {
+    "hash": "d593eb8",
+    "git_issue": "d593eb8",
+    "extid": "BUG-GIWT-NEW-SCOPE-WITHOUT-TICKETS-ATTEMPTS-AN-EMPTY-COMMIT-AND-",
+    "type": "BUG",
+    "title": "giwt new --scope without --tickets attempts an empty commit and exits 1",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "infra"
+    ],
+    "source": ".plan/tickets/BUG-giwt-new-scope-without-tickets-attempts-an-empty-commit-and-.md",
+    "status": "done"
+  },
+  "BUG-IMPORTCHATDEK-THROWS-ON-CHAT-KEYS-PRIMARY-KEY-COLLISION-INST": {
+    "hash": "873fe9f",
+    "git_issue": "873fe9f",
+    "extid": "BUG-IMPORTCHATDEK-THROWS-ON-CHAT-KEYS-PRIMARY-KEY-COLLISION-INST",
+    "type": "BUG",
+    "title": "importChatDek throws on chat_keys primary-key collision instead of degrading",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "federation"
+    ],
+    "source": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md",
+    "status": "Not Started"
+  },
+  "BUG-JOURNAL-KEYPHRASE-PANEL-READS-ONLY-PAGE-1-OF-THE-PAGINATED-M": {
+    "hash": "59af687",
+    "git_issue": "59af687",
+    "extid": "BUG-JOURNAL-KEYPHRASE-PANEL-READS-ONLY-PAGE-1-OF-THE-PAGINATED-M",
+    "type": "BUG",
+    "title": "Journal keyphrase panel reads only page 1 of the paginated memories envelope",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "frontend"
+    ],
+    "source": ".plan/tickets/BUG-journal-keyphrase-panel-reads-only-page-1-of-the-paginated-m.md",
+    "status": "Not Started"
+  },
+  "BUG-MESH-RESERVE-ISSUES-INBOUND-CONTENT-KEYS-WITHOUT-AUTHENTICAT": {
+    "hash": "1138d0f",
+    "git_issue": "1138d0f",
+    "extid": "BUG-MESH-RESERVE-ISSUES-INBOUND-CONTENT-KEYS-WITHOUT-AUTHENTICAT",
+    "type": "BUG",
+    "title": "Mesh reserve issues inbound content keys without authenticating the requester",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "security",
+      "federation"
+    ],
+    "source": ".plan/tickets/BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat.md",
+    "status": "Not Started"
+  },
+  "BUG-PER-SENDER-RATE-LIMITER-BUCKETS-ARE-NEVER-EVICTED-UNBOUNDED-": {
+    "hash": "30d4991",
+    "git_issue": "30d4991",
+    "extid": "BUG-PER-SENDER-RATE-LIMITER-BUCKETS-ARE-NEVER-EVICTED-UNBOUNDED-",
+    "type": "BUG",
+    "title": "Per-sender rate-limiter buckets are never evicted (unbounded memory keyed on forged senders)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "integrations"
+    ],
+    "source": ".plan/tickets/BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-.md",
+    "status": "Not Started"
+  },
+  "BUG-PIN-MISMATCH-AND-TRANSIENT-PROBE-FAILURE-BOTH-EVICT-A-PEER-F": {
+    "hash": "d033d31",
+    "git_issue": "d033d31",
+    "extid": "BUG-PIN-MISMATCH-AND-TRANSIENT-PROBE-FAILURE-BOTH-EVICT-A-PEER-F",
+    "type": "BUG",
+    "title": "Pin mismatch and transient probe failure both evict a peer from the mesh",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "federation"
+    ],
+    "source": ".plan/tickets/BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f.md",
+    "status": "Not Started"
+  },
+  "BUG-RE-WRAPPED-DEK-ARTIFACTS-LACK-CONTEXT-BINDING-NO-AAD-ENABLIN": {
+    "hash": "93dae7b",
+    "git_issue": "93dae7b",
+    "extid": "BUG-RE-WRAPPED-DEK-ARTIFACTS-LACK-CONTEXT-BINDING-NO-AAD-ENABLIN",
+    "type": "BUG",
+    "title": "Re-wrapped DEK artifacts lack context binding (no AAD), enabling cross-chat key confusion on import",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "security",
+      "federation"
+    ],
+    "source": ".plan/tickets/BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin.md",
+    "status": "Not Started"
+  },
+  "BUG-RUNRESYNCPASS-FETCHES-PEER-ADVERTISEMENTS-WITHOUT-THE-SPKI-P": {
+    "hash": "54b7962",
+    "git_issue": "54b7962",
+    "extid": "BUG-RUNRESYNCPASS-FETCHES-PEER-ADVERTISEMENTS-WITHOUT-THE-SPKI-P",
+    "type": "BUG",
+    "title": "runResyncPass fetches peer advertisements without the SPKI pin gate",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "security",
+      "federation"
+    ],
+    "source": ".plan/tickets/BUG-runresyncpass-fetches-peer-advertisements-without-the-spki-p.md",
+    "status": "Not Started"
+  },
+  "BUG-SPKI-PIN-GATE-IS-NOT-ENFORCED-ACROSS-HTTP-REDIRECTS": {
+    "hash": "bc4950c",
+    "git_issue": "bc4950c",
+    "extid": "BUG-SPKI-PIN-GATE-IS-NOT-ENFORCED-ACROSS-HTTP-REDIRECTS",
+    "type": "BUG",
+    "title": "SPKI pin gate is not enforced across HTTP redirects",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "security",
+      "federation"
+    ],
+    "source": ".plan/tickets/BUG-spki-pin-gate-is-not-enforced-across-http-redirects.md",
+    "status": "Not Started"
+  },
+  "BUG-WEBHOOK-DEDUP-IS-RECORDED-BEFORE-DISPATCH-SO-A-HANDLER-THROW": {
+    "hash": "ebafd77",
+    "git_issue": "ebafd77",
+    "extid": "BUG-WEBHOOK-DEDUP-IS-RECORDED-BEFORE-DISPATCH-SO-A-HANDLER-THROW",
+    "type": "BUG",
+    "title": "Webhook dedup is recorded before dispatch, so a handler throw makes provider retries silently swallowed",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "integrations"
+    ],
+    "source": ".plan/tickets/BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw.md",
+    "status": "Not Started"
+  },
+  "BUG-WEBHOOK-RATE-LIMIT-BUDGET-IS-CONSUMED-BEFORE-SIGNATURE-VERIF": {
+    "hash": "9d640f6",
+    "git_issue": "9d640f6",
+    "extid": "BUG-WEBHOOK-RATE-LIMIT-BUDGET-IS-CONSUMED-BEFORE-SIGNATURE-VERIF",
+    "type": "BUG",
+    "title": "Webhook rate-limit budget is consumed before signature verification",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "security",
+      "integrations"
+    ],
+    "source": ".plan/tickets/BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif.md",
+    "status": "Not Started"
+  },
+  "TASK-ADD-A-PRE-MERGE-CONFLICT-MARKER-SCAN-TO-THE-CHECK-OR-HOOK-PA": {
+    "hash": "18d8a03",
+    "git_issue": "18d8a03",
+    "extid": "TASK-ADD-A-PRE-MERGE-CONFLICT-MARKER-SCAN-TO-THE-CHECK-OR-HOOK-PA",
+    "type": "TASK",
+    "title": "Add a pre-merge conflict-marker scan to the check or hook path",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "infra"
+    ],
+    "source": ".plan/tickets/TASK-add-a-pre-merge-conflict-marker-scan-to-the-check-or-hook-pa.md",
+    "status": "Not Started"
   }
 }
