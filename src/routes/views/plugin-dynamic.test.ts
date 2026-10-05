@@ -118,11 +118,20 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
   });
 
   test("gallery search renders with HX-Request", async () => {
-    const res = await makeApp(db,).handle(
+    const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/gallery/search", { headers: { "HX-Request": "true", }, },),
     );
 
     expect(res.status,).toBe(200,);
+    expect(await res.text(),).toContain("asset-card-g1",);
+  });
+
+  test("gallery search requires auth", async () => {
+    const res = await makeApp(db,).handle(
+      new Request("http://localhost/dynamic/gallery/search", { headers: { "HX-Request": "true", }, },),
+    );
+
+    expect(res.status,).toBe(401,);
   });
 
   test("characters search renders with HX-Request", async () => {

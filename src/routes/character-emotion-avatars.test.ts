@@ -8,6 +8,7 @@ import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { EmotionType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertUsers, } from "../test-utils/insert-helpers";
@@ -160,6 +161,45 @@ describeOrSkip("character-emotion-avatars routes", () => {
     );
 
     expect(res.status,).toBe(400,);
+  });
+
+  test("POST start batch rejects emotions beyond one per emotion type", async () => {
+    const all = Object.values(EmotionType,);
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ baseAvatarId: "av-1", emotions: [...all, ...all,], },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    expect((await res.json() as { error?: string }).error,).toContain(String(all.length,),);
+  });
+
+  test("POST start batch rejects duplicate emotions", async () => {
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ baseAvatarId: "av-1", emotions: ["happy", "sad", "happy",], },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    expect((await res.json() as { error?: string }).error,).toContain("duplicate",);
+  });
+
+  test("POST start batch still accepts the full unique emotion set", async () => {
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ baseAvatarId: "av-1", emotions: Object.values(EmotionType,), },),
+      },),
+    );
+
+    expect(res.status,).toBe(201,);
   });
 
   test("POST start batch creates a job", async () => {

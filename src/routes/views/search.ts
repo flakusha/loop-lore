@@ -2,8 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { visibleAssetFilter, } from "../../assets/service/read";
 import { visibleTagNames, } from "../../assets/service/tag-facets";
-import { ActorType, AssetLinkEntity, AssetTagScope, AssetType, } from "../../db/enums";
+import { ActorType, ActorVisibility, AssetLinkEntity, AssetTagScope, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { formatSize, inheritedHiddenAssetIds, } from "./gallery";
@@ -27,10 +28,31 @@ async function serveGallerySearch(
   const entityType = params.get("entityType",) ?? null;
   const entityId = params.get("entityId",) ?? null;
   const tag = params.get("tag",) ?? null;
+  const isAdmin = can(actorRole ?? null, "admin.character",);
 
   let qb = database
     .selectFrom("assets",)
     .selectAll("assets",);
+
+  // Same visibility model as the authenticated gallery grid: public, owned by
+  // the viewer, or explicitly shared — plus assets linked to a PUBLIC
+  // character, whose avatars inherit the character's visibility (G6).
+  if (!isAdmin) {
+    qb = qb.where((eb,) =>
+      eb.or([
+        visibleAssetFilter(eb, actorId ?? "", "",),
+        eb.exists(
+          eb.selectFrom("asset_links as al",)
+            .innerJoin("actors as act", "act.id", "al.entity_id",)
+            .select("act.id",)
+            .whereRef("al.asset_id", "=", "assets.id",)
+            .where("al.entity_type", "=", AssetLinkEntity.Actor,)
+            .where("act.actor_type", "=", ActorType.Character,)
+            .where("act.visibility", "=", ActorVisibility.Public,),
+        ),
+      ],)
+    );
+  }
 
   // Filter by linked entity when entityType/entityId provided
   const entityTypeValid = entityType !== null &&

@@ -106,14 +106,14 @@ describeOrSkip("chatVariants.openVariants", () => {
 },);
 
 describeOrSkip("chatVariants.selectVariantByIndex", () => {
-  test("PUTs stateless select and swaps bubble content locally", async () => {
+  test("GETs stateless select and swaps bubble content locally", async () => {
     const ctx = buildCtx();
     Object.assign(ctx, chatVariants,);
     handler = async () => Response.json({ id: "v2", content: "B", },);
     await chatVariants.selectVariantByIndex!.call(ctx as never, "m1", 1,);
-    expect(calls[0]?.url,).toBe("/api/v1/messages/m1/variant",);
-    expect(calls[0]?.opts.method,).toBe("PUT",);
-    expect(JSON.parse(calls[0]?.opts.body as string,),).toEqual({ variantIndex: 1, },);
+    expect(calls[0]?.url,).toBe("/api/v1/messages/m1/variant?variantIndex=1",);
+    expect(calls[0]?.opts.method,).toBe("GET",);
+    expect(calls[0]?.opts.body,).toBeUndefined();
     expect(ctx.messages[0]?.content,).toBe("B",);
     expect(ctx.messages[0]?.variantIndex,).toBe(1,);
     expect(ctx._variantsOpen,).toBe(false,);
@@ -178,7 +178,7 @@ describeOrSkip("chatVariants.switchVariant", () => {
     Object.assign(ctx, chatVariants,);
     handler = async () => Response.json({ id: "v2", content: "B", },);
     await chatVariants.switchVariant!.call(ctx as never, "m1", 1,);
-    expect(JSON.parse(calls[0]?.opts.body as string,),).toEqual({ variantIndex: 1, },);
+    expect(calls[0]?.url,).toBe("/api/v1/messages/m1/variant?variantIndex=1",);
     expect(ctx.messages[0]?.content,).toBe("B",);
   });
 },);

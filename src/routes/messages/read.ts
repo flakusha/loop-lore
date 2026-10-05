@@ -9,7 +9,7 @@ import {
   ErrorResponse,
   MessageIdParams,
   MessagesQuery,
-  MessageVariantBody,
+  MessageVariantQuery,
 } from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonPaginated, jsonResponse, requireUserId, } from "../http-utils";
 import {
@@ -199,13 +199,17 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
       { params: MessageIdParams, response: { 200: t.Array(t.Any(),), 401: ErrorResponse, 404: ErrorResponse, }, },
     )
-    .put(
+    // BUG-chat-minors-variant-put-never-persists: the former PUT never
+    // wrote anything — it only SELECTed siblings and returned one. Demoted
+    // to a stateless GET (matches docs/reference/api.md); the client keeps
+    // the selection locally since no selected-variant column exists.
+    .get(
       `${prefix}/messages/:id/variant`,
       async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const id = (ctx.params as { id: string }).id;
-        const body = ctx.body as typeof MessageVariantBody.static;
+        const { variantIndex, } = ctx.query as typeof MessageVariantQuery.static;
 
         const msgResult = await getMessageWithAccess(
           database,
@@ -226,7 +230,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           .orderBy("created_at", "asc",)
           .execute();
 
-        const selected = variants[body.variantIndex];
+        const selected = variants[variantIndex];
         if (!selected) {
           return jsonError({
             message: ctx.t?.("messages.invalidVariantIndex",) ?? "Invalid variant index",
@@ -238,7 +242,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
       {
         params: MessageIdParams,
-        body: MessageVariantBody,
+        query: MessageVariantQuery,
         response: { 200: t.Any(), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
       },
     );
