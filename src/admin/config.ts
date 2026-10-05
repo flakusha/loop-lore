@@ -11,8 +11,8 @@
 
 import { load as yamlLoad, } from "js-yaml";
 import type { Kysely, } from "kysely";
-import type { Config, } from "../config/schema";
 import { applyConfigWrite, classifyConfigPath, } from "../config/hot-apply";
+import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { SECRET_KEY_PATTERN, } from "./config-keys";
@@ -89,6 +89,7 @@ export async function setConfig(
         .doUpdateSet({ value, description: description ?? null, updated_at: new Date().toISOString(), },)
     )
     .execute();
+
   const applied = applyConfigWrite(key, value,);
   if (applied) { return false; }
   return classifyConfigPath(key,) !== "none";
