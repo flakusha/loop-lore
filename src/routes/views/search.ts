@@ -2,12 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { visibleAssetFilter, } from "../../assets/service/read";
 import { visibleTagNames, } from "../../assets/service/tag-facets";
-import { ActorType, ActorVisibility, AssetLinkEntity, AssetTagScope, AssetType, } from "../../db/enums";
+import { ActorType, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
-import { formatSize, inheritedHiddenAssetIds, } from "./gallery";
+import { applyGalleryAssetFilters, formatSize, inheritedHiddenAssetIds, } from "./gallery";
 import { escapeHtml, htmlResponse, } from "./layout";
 
 /**
@@ -34,36 +33,9 @@ async function serveGallerySearch(
     .selectFrom("assets",)
     .selectAll("assets",);
 
-  // Same visibility model as the authenticated gallery grid: public, owned by
-  // the viewer, or explicitly shared — plus assets linked to a PUBLIC
-  // character, whose avatars inherit the character's visibility (G6).
-  if (!isAdmin) {
-    qb = qb.where((eb,) =>
-      eb.or([
-        visibleAssetFilter(eb, actorId ?? "", "",),
-        eb.exists(
-          eb.selectFrom("asset_links as al",)
-            .innerJoin("actors as act", "act.id", "al.entity_id",)
-            .select("act.id",)
-            .whereRef("al.asset_id", "=", "assets.id",)
-            .where("al.entity_type", "=", AssetLinkEntity.Actor,)
-            .where("act.actor_type", "=", ActorType.Character,)
-            .where("act.visibility", "=", ActorVisibility.Public,),
-        ),
-      ],)
-    );
-  }
-
-  // Filter by linked entity when entityType/entityId provided
-  const entityTypeValid = entityType !== null &&
-    Object.values(AssetLinkEntity,).includes(entityType as AssetLinkEntity,);
-
-  if (entityTypeValid && entityId) {
-    qb = qb
-      .innerJoin("asset_links", "asset_links.asset_id", "assets.id",)
-      .where("asset_links.entity_type", "=", entityType as AssetLinkEntity,)
-      .where("asset_links.entity_id", "=", entityId,);
-  }
+  // Same visibility + linked-entity + tag filters as the authenticated
+  // gallery grid, so the two views cannot drift apart.
+  qb = applyGalleryAssetFilters(qb, { actorId, isAdmin, entityType, entityId, tag, },);
 
   if (query) {
     qb = qb.where("filename", "like", `%${query}%`,);
@@ -71,25 +43,6 @@ async function serveGallerySearch(
 
   if (type !== "all" && Object.values(AssetType,).includes(type as AssetType,)) {
     qb = qb.where("asset_type", "=", type as AssetType,);
-  }
-
-  // Filter by visible tag name when `tag` provided: global tags plus the
-  // viewer's own user-scoped tags — other users' private tags never match.
-  if (tag !== null && tag !== "all") {
-    qb = qb.where((eb,) =>
-      eb.exists(
-        eb.selectFrom("asset_tags as ft",)
-          .select("ft.id",)
-          .whereRef("ft.asset_id", "=", "assets.id",)
-          .where("ft.tag", "=", tag,)
-          .where((eb2,) =>
-            eb2.or([
-              eb2("ft.scope", "=", AssetTagScope.Global,),
-              eb2("ft.owner_id", "=", actorId ?? "",),
-            ],)
-          ),
-      )
-    );
   }
 
   if (sort === "newest") { qb = qb.orderBy("created_at", "desc",); }

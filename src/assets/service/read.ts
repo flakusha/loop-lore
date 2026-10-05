@@ -8,8 +8,7 @@ import type { ExpressionBuilder, Kysely, } from "kysely";
 import { existsSync, readFileSync, } from "node:fs";
 import { decryptAssetBlob, } from "../../crypto/asset-encryption";
 import type { ChatKey, } from "../../crypto/chat-keys";
-import { AssetVisibility, } from "../../db/enums";
-import type { AssetLinkEntity, } from "../../db/enums";
+import { ActorType, ActorVisibility, AssetLinkEntity, AssetVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { getAssetFilePath, } from "./file-system";
@@ -106,6 +105,30 @@ export function visibleAssetFilter(
           .where("asset_shares.shared_with_id", "=", actorId,),
       ),
     ],),
+  ],);
+}
+
+/**
+ * Build the gallery-grid visibility filter: `visibleAssetFilter` OR the asset is
+ * linked to a PUBLIC character, whose avatars inherit the character's visibility
+ * (G6). Shared by the gallery grid and the gallery search so the two cannot
+ * drift apart.
+ * @param eb
+ * @param actorId
+ * @returns void
+ */
+export function visibleGalleryAssetFilter(eb: ExpressionBuilder<DB, "assets">, actorId: string,) {
+  return eb.or([
+    visibleAssetFilter(eb, actorId, "",),
+    eb.exists(
+      eb.selectFrom("asset_links as al",)
+        .innerJoin("actors as act", "act.id", "al.entity_id",)
+        .select("act.id",)
+        .whereRef("al.asset_id", "=", "assets.id",)
+        .where("al.entity_type", "=", AssetLinkEntity.Actor,)
+        .where("act.actor_type", "=", ActorType.Character,)
+        .where("act.visibility", "=", ActorVisibility.Public,),
+    ),
   ],);
 }
 
