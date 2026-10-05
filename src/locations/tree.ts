@@ -29,48 +29,19 @@ import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import { LOCATION_DEPTH_LIMIT, } from "../db/enums-story/world";
 
-export interface LocationTreeNode {
-  id: string;
-  parent_location_id: string | null;
-  path: string;
-  depth: number;
-}
-
-/** A `LocationTreeNode` plus its immediate children, recursively. `tree()` also emits `name` for display. */
-export type LocationTreeBranch = LocationTreeNode & {
-  name: string;
-  children: LocationTreeBranch[];
-};
-
-export interface InsertLocationInput {
-  worldId: string;
-  name: string;
-  description?: string;
-  kind?: string;
-  mobilityMode?: string;
-  parentLocationId: string | null;
-}
-
-/**
- * Why `moveSubtree` refused a move. `code` lets callers map to HTTP statuses
- * without string-matching messages.
- */
-export type LocationMoveReason = "self-parent" | "not-found" | "cross-world" | "cycle";
-
-/** Typed rejection from `LocationTreeService.moveSubtree`. */
-export class LocationMoveError extends Error {
-  /**
-   * @param code machine-readable rejection reason
-   * @param message human-readable detail
-   */
-  constructor(
-    readonly code: LocationMoveReason,
-    message: string,
-  ) {
-    super(message,);
-    this.name = "LocationMoveError";
-  }
-}
+import {
+  type InsertLocationInput,
+  LocationMoveError,
+  type LocationTreeBranch,
+  type LocationTreeNode,
+} from "./tree-types";
+export {
+  type InsertLocationInput,
+  LocationMoveError,
+  type LocationMoveReason,
+  type LocationTreeBranch,
+  type LocationTreeNode,
+} from "./tree-types";
 
 export class LocationTreeService {
   constructor(private readonly db: Kysely<DB>,) {}
