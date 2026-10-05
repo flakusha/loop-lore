@@ -56,6 +56,7 @@ World + location binding via `chats.world_id` / `chats.location_id`.
 - [ ] Invite event fires once per party member, producing N intro scenes that transition into the chat.
 - [ ] Turn arbitration uses battle-mode machinery (`epic-battle-action-systems`); per-round cap honored when set.
 - [ ] Group routing per `TASK-group-chat-mention-routing` overlays on top of turn arbitration.
+- [ ] Impersonation constraint: a character at a specific location can only be impersonated by one user at that location; different timelines or isolated chats allow the same character to be impersonated by different users (scope: `(world_id, location_id)` or `(world_id, timeline_id)`). See `TASK-impersonation-system.md`.
 - [ ] OOC questions route per `TASK-rpg-chat-questions`; per-world history commits per `TASK-rpg-history-committing-chats-per-world`.
 
 ## Related Epics / Tickets
