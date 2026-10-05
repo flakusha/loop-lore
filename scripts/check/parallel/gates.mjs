@@ -27,7 +27,7 @@ import {
   SCOPED_DIFF_SRC_FILES,
 } from "./context.mjs";
 import { applyGateFilter, } from "./filter.mjs";
-import { filterPaths, matchesSkip, SKIP_PATTERNS } from "./test-skip.mjs";
+import { filterPaths, matchesSkip, SKIP_PATTERNS, } from "./test-skip.mjs";
 
 // oxlint-disable-next-line sort-keys
 export const checks = {
@@ -149,7 +149,6 @@ export const ADVISORY_GATES = new Set([
   // merges add or remove clones concurrently.
   "jscpd ratchet",
 ],);
-
 
 /**
  * Build the coverage gate command. Lives here — after the multi-declarator
