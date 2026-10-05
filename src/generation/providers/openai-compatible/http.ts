@@ -6,9 +6,10 @@
 // Extracted from the `OpenAiCompatibleProvider` class body. Each dispatcher is
 // Threaded with an explicit `state` handle (the class's private fields).
 
-// size-allow: 264
+// size-allow: 288
 
 import { safeJsonStringify, } from "../../../utils";
+import type { GenerationMessage, } from "../../gen-types-options";
 import { withProviderRetry, } from "../retry";
 import type { GenerateRequest, } from "../types";
 import { ProviderAuthError, ProviderError, ProviderRateLimitError, } from "../types";
@@ -61,6 +62,28 @@ function applyLlamaParams(body: Record<string, unknown>, params: GenerateRequest
 }
 
 /**
+ * OpenAI vision contract: an image-bearing message serializes as content parts
+ * (text + `image_url` data URLs). The internal `images` field is stripped — it
+ * is not part of the wire format. Text-only messages pass through untouched.
+ * @param msg
+ */
+function toOpenAiMessage(msg: GenerationMessage,): GenerationMessage | Record<string, unknown> {
+  if (!msg.images || msg.images.length === 0) { return msg; }
+
+  const { images, ...rest } = msg;
+  return {
+    ...rest,
+    content: [
+      { type: "text", text: msg.content, },
+      ...Array.from(images, (img,) => ({
+        type: "image_url",
+        image_url: { url: `data:${img.mediaType};base64,${img.base64}`, },
+      }),),
+    ],
+  };
+}
+
+/**
  * @param state
  * @param req
  * @param stream
@@ -71,9 +94,11 @@ export function buildBody(
   req: GenerateRequest,
   stream: boolean,
 ): Record<string, unknown> {
+  const hasImages = req.messages.some((msg,) => msg.images && msg.images.length > 0);
+
   const body: Record<string, unknown> = {
     model: req.model || state.defaultModel,
-    messages: req.messages,
+    messages: hasImages ? Array.from(req.messages, toOpenAiMessage,) : req.messages,
     stream,
   };
 
