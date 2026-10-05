@@ -449,7 +449,7 @@ describe("swipe-race-insert — DB-enforced dedup (BUG-message-idempotency-key-d
     // chat/service/crud/turn-skip.ts minute-bucket keys collide across
     // buckets by design; dedup there is the latest-message guard.
     const skipKey = `turn_skip:${chatId}:${actorId}:advance:0`;
-    const a = await insertWithKey(uid(), skipKey,);
+    await insertWithKey(uid(), skipKey,);
     const b = await insertWithKey(uid(), skipKey,);
 
     expect(b.replayedId,).toBeUndefined();
