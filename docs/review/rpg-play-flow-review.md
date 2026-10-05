@@ -47,8 +47,7 @@
 | Service | ✅ `updateImpersonation()` with 1-per-world constraint | `src/chat/service/participants.ts:28-72` |
 | Prompt | ✅ `<user_persona>` section reads impersonated actor | `src/assistant/prompt/sections/user-persona.ts` |
 | Frontend | ✅ Toggle in chat settings + input area | `src/frontend/alpine/chat-settings.ts:186`, `src/components/chat/input-area.html:49-53` |
-| Commands | ⚠️ `/impersonate` registers action but dispatch incomplete | `src/assistant/commands/impersonate.ts` — `impersonate-select` not handled in `dispatchCommandAction()` |
-| Frontend | ⚠️ Name→actor resolution incomplete | `dispatchCommandAction("impersonate-select", { characterName })` — no resolver |
+| Commands | ✅ `/impersonate` + `/char` fully wired | `src/frontend/alpine/chat-actions/dispatch.ts:122-187` — `impersonate-toggle` + `impersonate-select` both handled; name→actor resolution via participants list |
 
 #### 3a. Impersonation Constraint — Current: 1-per-world
 
@@ -103,8 +102,6 @@ The variant system validates a `(type, mode, purpose)` triple but `createChat` o
 | 4 | Impersonated actor not excluded from AI turn generation | High | chat/generation |
 | 5 | Chat purpose not persisted | Medium | chat |
 | 6 | No variant picker in new-chat UI | Medium | frontend |
-| 7 | Command dispatch for `impersonate-select` incomplete | Medium | assistant |
-| 8 | Name→actor resolution for impersonation incomplete | Medium | assistant |
 
 ## Recommended Actions
 
