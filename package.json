@@ -40,6 +40,8 @@
     "lint:eslint": "bunx eslint --concurrency=8 .",
     "lint:biome": "biome lint docs/",
     "lint:biome:fix": "biome lint --write docs/",
+    "lint:css": "stylelint \"src/public/**/*.css\"",
+    "lint:html": "markuplint --allow-warnings \"src/views/**/*.html\" \"src/components/**/*.html\"",
     "format": "dprint check",
     "format:fix": "dprint fmt",
     "md:lint": "markdownlint-cli2 \"docs/**/*.md\" \".plan/**/*.md\"",

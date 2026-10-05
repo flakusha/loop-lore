@@ -341,7 +341,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Generate Emotion Avatar
 
-`POST /api/v1/actors/:actorId/emotion-avatars` — body: `{ emotion, provider }`
+`POST /api/v1/actors/:actorId/emotion-avatars` — batch generation; body: `{ baseAvatarId, emotions?, promptPrefix?, negativePrompt? }`. Each `emotions` entry (default set: 8 emotions) is one generated variant, so the array must be unique and no longer than the emotion catalogue (18) — otherwise 400. Governed by the `generation` rate policy (20/min, burst 5); job list/status/cancel paths are not.
 
 ### Emotion Prompt Modifier
 

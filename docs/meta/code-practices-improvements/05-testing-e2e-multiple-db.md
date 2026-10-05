@@ -16,8 +16,9 @@
 - **`loadTestConfig`** applies safe defaults (port 0, `:memory:`,
   `/tmp/...` uploads, auth off) _before_ the safeguard check.
 - **Multi-layer gates in `check`**: `typecheck` + `typecheck:frontend` +
-  `typecheck:coverage` (85%) + `lint` + `lint:css` + `lint:html` +
-  `format` + `md:lint`.
+  `typecheck:coverage` (85%) + `lint` + `format` + `md:lint`; the CI job
+  runs `lint:css` + `lint:html` as separate steps
+  (`.github/workflows/ci.yml`).
 - **`jscpd`** duplication check in scripts.
 - **Playwright browser e2e** (`tests/e2e/flows/browser/*.browser.ts`).
 

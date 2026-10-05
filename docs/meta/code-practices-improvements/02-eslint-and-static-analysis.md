@@ -16,8 +16,10 @@
   **e2e**, **tests**, **scripts**
 - `unicorn/filename-case: warn` (kebab + pascal + snake)
 
-`check` runs `eslint .` plus `lint:css` (stylelint) and `lint:html`
-(markuplint) — good multi-layer coverage. `jscpd` checks duplication.
+`lint` runs `eslint .`; the CI job adds `lint:css` (stylelint) and
+`lint:html` (markuplint) steps (`.github/workflows/ci.yml`), and the
+pre-commit hook lints staged CSS/HTML — good multi-layer coverage. `jscpd`
+checks duplication.
 
 ## Gaps
 

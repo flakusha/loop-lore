@@ -64,9 +64,22 @@ Two files still document the removed scripts as part of the check chain and will
 - [ ] `dev-release.yml:58` and `release.yml:58` invoke an existing script
 - [ ] The two stale docs no longer reference the removed script names
 
-**Context:**
+**Context / resolution:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Linter choice: `stylelint` for `lint:css` and `markuplint` for `lint:html` —
+both are installed devDependencies with committed configs (`.stylelintrc.json`,
+`.markuplintrc.json`) and already invoked this way by `.githooks/pre-commit`
+(`bunx stylelint`, `bunx markuplint --allow-warnings`). The scripts were
+restored with their pre-removal definitions
+(`stylelint "src/public/**/*.css"`,
+`markuplint --allow-warnings "src/views/**/*.html" "src/components/**/*.html"`),
+so `ci.yml:48/:51` now resolve. `test:unit:parallel` call sites in
+`dev-release.yml:58` / `release.yml:58` replaced by `bun run test:unit`
+(already carries `--parallel`). Pinning test:
+`src/utils/ci-workflow-scripts.test.ts` asserts every `bun run <script>`
+target in `.github/workflows/*.yml` exists in `package.json` `scripts`.
+The two stale docs now describe the scripts as CI/hook invocations, not
+`check` gates.
 
 **Acceptance Criteria:**
 
