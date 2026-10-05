@@ -163,6 +163,16 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         },);
 
         if (!inserted.ok) { return inserted.response; }
+
+        // ── Idempotency race replay (migration 040) ────────────────
+        // A concurrent POST with the same key committed first; the unique
+        // index rejected our insert and the helper replayed the winner.
+        // Respond with the winning row before ANY post-insert side effect
+        // (attachments, mentions, moderation, auto-reply) can double-fire.
+        if (inserted.replayedId) {
+          return jsonCreated({ id: inserted.replayedId, context: {}, },);
+        }
+
         const explicitAttachments = body.attachments ?? [];
         const mentionedAttachments = assetMentionIds
           .filter((assetId,) => !explicitAttachments.some((a,) => a.assetId === assetId))
