@@ -17,7 +17,7 @@ import {
   MessagesQuery,
   MessageSearchQuery,
   MessageStatusUpdateBody,
-  MessageVariantBody,
+  MessageVariantQuery,
   MessageVisibilityUpdateBody,
 } from "./messages";
 
@@ -172,17 +172,17 @@ describe("MessageAttachmentSchema — standalone", () => {
   });
 },);
 
-describe("MessageVariantBody", () => {
+describe("MessageVariantQuery", () => {
   test("accepts variantIndex 0 (lower bound)", () => {
-    expect(Value.Check(MessageVariantBody, body({ variantIndex: 0, },),),).toBe(true,);
+    expect(Value.Check(MessageVariantQuery, body({ variantIndex: 0, },),),).toBe(true,);
   });
 
   test("accepts variantIndex 1", () => {
-    expect(Value.Check(MessageVariantBody, body({ variantIndex: 1, },),),).toBe(true,);
+    expect(Value.Check(MessageVariantQuery, body({ variantIndex: 1, },),),).toBe(true,);
   });
 
   test("rejects variantIndex -1 (below minimum)", () => {
-    expect(Value.Check(MessageVariantBody, body({ variantIndex: -1, },),),).toBe(false,);
+    expect(Value.Check(MessageVariantQuery, body({ variantIndex: -1, },),),).toBe(false,);
   });
 
   test("rejects non-numeric string (TypeBox range quirk: bypass for strings)", () => {
@@ -190,7 +190,7 @@ describe("MessageVariantBody", () => {
     // enforces range on number values only, not on string-pass-through.
     // A client sending variantIndex: "100" passes validation.
     expect(
-      Value.Check(MessageVariantBody, body({ variantIndex: "100", },),),
+      Value.Check(MessageVariantQuery, body({ variantIndex: "100", },),),
     ).toBe(true,);
   });
 },);
