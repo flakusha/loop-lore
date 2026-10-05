@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -21,3 +21,5 @@ No federation ticket specifies Delete activity propagation or right-to-be-forgot
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-05 registry-driven close: git issue 32066c5 (registry tip: deadc8d8b Konstantin Fedotov Close issue)

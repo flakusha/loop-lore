@@ -3,7 +3,7 @@
 
 # BUG: characters-flow browser e2e trips on the by-design game-state 404
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -77,3 +77,5 @@ Superseded implementation note: an earlier narrower fix of this ticket — allow
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-05 registry-driven close: git issue 3a5a9ab (registry tip: 9efe7bfb2 Konstantin Fedotov Close issue)

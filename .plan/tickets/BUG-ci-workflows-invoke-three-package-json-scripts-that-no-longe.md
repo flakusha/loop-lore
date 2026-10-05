@@ -110,3 +110,5 @@ line 40) so a broken selector cannot pass by matching nothing.
 Fix commit `9c3b45888` (2026-10-05, `git merge-base --is-ancestor 9c3b45888 HEAD`
 exits 0), touching `package.json`, both release workflows, the new test, and
 the two stale docs.
+
+**Resolved:** 2026-10-05 registry-driven close: git issue 1e7dffe (registry tip: 2cad303d9 Konstantin Fedotov Close issue)

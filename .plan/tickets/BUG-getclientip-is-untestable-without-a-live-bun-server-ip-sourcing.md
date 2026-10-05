@@ -3,7 +3,7 @@
 
 # BUG: getClientIp is untestable without a live Bun server — IP sourcing has no unit-level seam
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-api-rate-limiting
@@ -38,3 +38,5 @@ IP-sourcing is the foundation of auth rate-limiting. Without a direct unit seam,
 
 
 git issue: 29eca13
+
+**Resolved:** 2026-10-05 registry-driven close: git issue 29eca13 (registry tip: c75cc1e9b Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: emotion-avatar job routes authorize only the path actor, so any owner can read and cancel another user's job
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -40,3 +40,5 @@ Both call `checkActorOwnership(database, actorId, ...)` on the path actor, then 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-05 registry-driven close: git issue 4e483df (registry tip: 047d02d90 Konstantin Fedotov Close issue)
