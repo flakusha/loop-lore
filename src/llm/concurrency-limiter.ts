@@ -77,7 +77,12 @@ export class ConcurrencyLimiter {
       throw new RangeError(`ConcurrencyLimiter: max must be a positive integer, got ${max}`,);
     }
 
+    const delta = max - this.max;
     this.max = max;
+    if (delta > 0) {
+      // Release additional permits so parked waiters wake up.
+      Effect.runSync(this.semaphore.release(delta,),);
+    }
   }
 
   /**
