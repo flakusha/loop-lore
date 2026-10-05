@@ -11016,7 +11016,7 @@
     "type": "EPIC"
   },
   "EPIC-INVENTORY-SYSTEM": {
-    "hash": "pending",
+    "hash": "cd5e2ea",
     "extid": "EPIC-INVENTORY-SYSTEM",
     "type": "EPIC",
     "title": "Inventory System (Hub)",
@@ -11031,7 +11031,8 @@
       "trading"
     ],
     "source": ".plan/epics/epic-inventory-system.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "cd5e2ea"
   },
   "EPIC-INVENTORY-UI": {
     "epic": "",
@@ -11165,7 +11166,7 @@
     "type": "EPIC"
   },
   "EPIC-LLAMA-SWAP": {
-    "hash": "pending",
+    "hash": "19d6f4e",
     "extid": "EPIC-LLAMA-SWAP",
     "type": "EPIC",
     "title": "llama-swap Hub (lifecycle, config, rotation/exclusion, bench)",
@@ -11181,7 +11182,8 @@
       "bench"
     ],
     "source": ".plan/epics/epic-llama-swap.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "19d6f4e"
   },
   "EPIC-LLM-QUEUE": {
     "epic": "",
@@ -18759,7 +18761,7 @@
     "type": "TASK"
   },
   "TASK-ACTOR-ITEMS-CRUD-OWNERSHIP": {
-    "hash": "pending",
+    "hash": "280cb5d",
     "extid": "TASK-ACTOR-ITEMS-CRUD-OWNERSHIP",
     "type": "TASK",
     "title": "actor_items CRUD + Ownership + Transfer",
@@ -18774,7 +18776,8 @@
       "crud"
     ],
     "source": ".plan/tickets/TASK-actor-items-crud-ownership.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "280cb5d"
   },
   "TASK-ACTOR-LICENSING-FRONTEND": {
     "epic": "epic-frontend-backend-integration",
@@ -20675,7 +20678,7 @@
     "type": "TASK"
   },
   "TASK-ASSET-B1-BLAKE3-CONTENT-STORE": {
-    "hash": "pending",
+    "hash": "9ed287e",
     "extid": "TASK-ASSET-B1-BLAKE3-CONTENT-STORE",
     "type": "TASK",
     "title": "Asset B1 — BLAKE3 content-addressed store (blob + refcount)",
@@ -20684,10 +20687,11 @@
     "epic": "`epic-asset-platform-capabilities` (Batch B1)",
     "tags": [],
     "source": ".plan/tickets/TASK-asset-b1-blake3-content-store.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "9ed287e"
   },
   "TASK-ASSET-B1-RENDITION-PIPELINE": {
-    "hash": "pending",
+    "hash": "d49f1dc",
     "extid": "TASK-ASSET-B1-RENDITION-PIPELINE",
     "type": "TASK",
     "title": "Asset B1 — rendition pipeline (`asset_renditions` + thumbs/LQIP)",
@@ -20696,7 +20700,8 @@
     "epic": "`epic-asset-platform-capabilities` (Batch B1)",
     "tags": [],
     "source": ".plan/tickets/TASK-asset-b1-rendition-pipeline.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "d49f1dc"
   },
   "TASK-ASSET-CONTEXT-INCLUSION-BUDGET-POLICY": {
     "epic": "",
@@ -21346,7 +21351,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-GM-HANDOFF": {
-    "hash": "pending",
+    "hash": "8a717b9",
     "extid": "TASK-ASSISTANT-GM-HANDOFF",
     "type": "TASK",
     "title": "Assistant-GM handoff",
@@ -21355,7 +21360,8 @@
     "epic": "epic-assistant-gm-flows",
     "tags": [],
     "source": ".plan/tickets/TASK-assistant-gm-handoff.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "8a717b9"
   },
   "TASK-ASSISTANT-LOREBOOK-TOOLS": {
     "epic": "",
@@ -22219,8 +22225,8 @@
   "TASK-BACKLOG-CHAT-PRODUCT-RPG-FEATURES": {
     "epic": "epic-chat-product-features",
     "extid": "TASK-BACKLOG-CHAT-PRODUCT-RPG-FEATURES",
-    "git_issue": "TBD",
-    "hash": "TBD",
+    "git_issue": "e92af1c",
+    "hash": "e92af1c",
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-backlog-chat-product-rpg-features.md",
@@ -22240,8 +22246,8 @@
   "TASK-BACKLOG-CHAT-VARIANTS-TAXONOMY": {
     "epic": "epic-group-chat",
     "extid": "TASK-BACKLOG-CHAT-VARIANTS-TAXONOMY",
-    "git_issue": "TBD",
-    "hash": "TBD",
+    "git_issue": "409f599",
+    "hash": "409f599",
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-backlog-chat-variants-taxonomy.md",
@@ -25091,7 +25097,7 @@
     "type": "TASK"
   },
   "TASK-CHAT-VARIANT-BEHAVIORAL-WIRING": {
-    "hash": "pending",
+    "hash": "d87cce3",
     "extid": "TASK-CHAT-VARIANT-BEHAVIORAL-WIRING",
     "type": "TASK",
     "title": "Chat variant behavioral wiring",
@@ -25106,7 +25112,8 @@
       "behavioral"
     ],
     "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "d87cce3"
   },
   "TASK-CHAT-VARIANT-CHARACTER": {
     "epic": "epic-chat-variants-taxonomy",
@@ -25857,7 +25864,7 @@
     "git_issue": "cefeb42"
   },
   "TASK-COMFYUI-WS-PROGRESS-STREAMING": {
-    "hash": "pending",
+    "hash": "3225d3f",
     "extid": "TASK-COMFYUI-WS-PROGRESS-STREAMING",
     "type": "TASK",
     "title": "ComfyUI /ws Progress Streaming to Frontend",
@@ -25872,7 +25879,8 @@
       "frontend"
     ],
     "source": ".plan/tickets/TASK-comfyui-ws-progress-streaming.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "3225d3f"
   },
   "TASK-COMPANION-BONDING-QUESTS": {
     "epic": "epic-companion-pet-mount",
@@ -26226,7 +26234,7 @@
     "type": "TASK"
   },
   "TASK-CONTEXT-LOSSLESS-LOSSY-TIERING": {
-    "hash": "pending",
+    "hash": "874ee3a",
     "extid": "TASK-CONTEXT-LOSSLESS-LOSSY-TIERING",
     "type": "TASK",
     "title": "Context lossless/lossy tiering contract",
@@ -26241,7 +26249,8 @@
       "prompt"
     ],
     "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "874ee3a"
   },
   "TASK-CONTEXT-WINDOW-MONITOR": {
     "epic": "Epic 36 (Chat Lifecycle)",
@@ -32197,7 +32206,7 @@
     "type": "TASK"
   },
   "TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED": {
-    "hash": "pending",
+    "hash": "439ff25",
     "extid": "TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED",
     "type": "TASK",
     "title": "Image-Edit Workflows as First-Class (builtin templates → edit provider → asset)",
@@ -32212,7 +32221,8 @@
       "assets"
     ],
     "source": ".plan/tickets/TASK-image-edit-workflows-dedicated.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "439ff25"
   },
   "TASK-IMMERSION-PRESENTATION": {
     "epic": "epic-immersion-presentation",
@@ -33421,7 +33431,7 @@
     "type": "TASK"
   },
   "TASK-LOCATION-CRUD-TREE-CONNECTIONS": {
-    "hash": "pending",
+    "hash": "571512d",
     "extid": "TASK-LOCATION-CRUD-TREE-CONNECTIONS",
     "type": "TASK",
     "title": "Location CRUD + tree service + connection validation hardening",
@@ -33430,7 +33440,8 @@
     "epic": "`epic-locations`",
     "tags": [],
     "source": ".plan/tickets/TASK-location-crud-tree-connections.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "571512d"
   },
   "TASK-LOCATION-DETAILS": {
     "epic": "epic-world-management-ui.md",
@@ -37089,7 +37100,7 @@
     "type": "TASK"
   },
   "TASK-PERSONA-LIFECYCLE-CONTRACT": {
-    "hash": "pending",
+    "hash": "4641869",
     "extid": "TASK-PERSONA-LIFECYCLE-CONTRACT",
     "type": "TASK",
     "title": "Persona lifecycle contract (setDefault + invalid-id + tuning fields)",
@@ -37103,7 +37114,8 @@
       "contract"
     ],
     "source": ".plan/tickets/TASK-persona-lifecycle-contract.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "4641869"
   },
   "TASK-PERSONA-SETDEFAULT-GETDEFAULT-UNWIRED-DELETE-OR-WIRE": {
     "epic": "",
@@ -38293,7 +38305,7 @@
     "type": "TASK"
   },
   "TASK-RAG-DECOMPOSITION-INDEX-PIPELINE": {
-    "hash": "pending",
+    "hash": "f885d5b",
     "extid": "TASK-RAG-DECOMPOSITION-INDEX-PIPELINE",
     "type": "TASK",
     "title": "RAG Decomposition + Semantic-Index Pipeline (backend)",
@@ -38308,7 +38320,8 @@
       "hybrid-search"
     ],
     "source": ".plan/tickets/TASK-rag-decomposition-index-pipeline.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "f885d5b"
   },
   "TASK-RAG-DETECT-CLEANUP-ENHANCE-PIPELINE-OVER-INGESTED-CHUNKS": {
     "epic": "epic-rag-extract-link",
@@ -41211,7 +41224,7 @@
     "type": "TASK"
   },
   "TASK-SD-CPP-PROVIDER": {
-    "hash": "pending",
+    "hash": "f1be651",
     "extid": "TASK-SD-CPP-PROVIDER",
     "type": "TASK",
     "title": "sd.cpp provider — secondary-backend adapter (Phase 1)",
@@ -41220,7 +41233,8 @@
     "epic": "`epic-assistant-generation-extensions` (Phase 1)",
     "tags": [],
     "source": ".plan/tickets/TASK-sd-cpp-provider.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "f1be651"
   },
   "TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE": {
     "epic": "epic-e2e-integration-testing.md (Pillar 3 — real-server tier)",
@@ -43705,7 +43719,7 @@
     "type": "TASK"
   },
   "TASK-VIDEO-GEN-ROUTE": {
-    "hash": "pending",
+    "hash": "960495a",
     "extid": "TASK-VIDEO-GEN-ROUTE",
     "type": "TASK",
     "title": "Video generation route (`POST /api/generation/video`)",
@@ -43714,10 +43728,11 @@
     "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
     "tags": [],
     "source": ".plan/tickets/TASK-video-gen-route.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "960495a"
   },
   "TASK-VIDEO-PROVIDER-MINIMAX-H3": {
-    "hash": "pending",
+    "hash": "519ca71",
     "extid": "TASK-VIDEO-PROVIDER-MINIMAX-H3",
     "type": "TASK",
     "title": "Video provider — MiniMax H3 dispatch",
@@ -43726,10 +43741,11 @@
     "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
     "tags": [],
     "source": ".plan/tickets/TASK-video-provider-minimax-h3.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "519ca71"
   },
   "TASK-VIDEO-TEMPLATE-SCHEMA": {
-    "hash": "pending",
+    "hash": "8857530",
     "extid": "TASK-VIDEO-TEMPLATE-SCHEMA",
     "type": "TASK",
     "title": "Video prompt template schema (FEAT-065 video slice)",
@@ -43738,7 +43754,8 @@
     "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
     "tags": [],
     "source": ".plan/tickets/TASK-video-template-schema.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "8857530"
   },
   "TASK-VISIBILITY-REPORT-FOR-CHAT-ADMINS": {
     "hash": "6b3558a",
