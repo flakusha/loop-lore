@@ -82,6 +82,7 @@ async function seed(): Promise<Fixture> {
     .insertInto("asset_links",)
     .values({ asset_id: asset.id, entity_type: "character", entity_id: "char-secret", label: "hero portrait", },)
     .execute();
+
   await db
     .insertInto("asset_shares",)
     .values({ asset_id: asset.id, shared_with_id: outsiderId, shared_by_id: ownerId, },)
@@ -152,6 +153,7 @@ describe("requireAssetOwner returns one indistinguishable 404 body", () => {
       const notOwned = await makeApp(fx.db, fx.outsiderId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${fx.assetId}/links`,),
       );
+
       // Well-formed UUID that does not exist.
       const missing = await makeApp(fx.db, fx.outsiderId, fx.uploadDir,).handle(
         new Request(`http://localhost/api/assets/${randomUUID()}/links`,),
