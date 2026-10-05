@@ -35,8 +35,15 @@ export interface InsertUserMessageParams {
   setStatus: (status: number,) => void;
 }
 
-/** `ok: false` carries the already-built HTTP response to return verbatim. */
-export type InsertUserMessageOutcome = { ok: true } | { ok: false; response: Response };
+/**
+ * `ok: false` carries the already-built HTTP response to return verbatim.
+ * `ok: true` with `replayedId` means a concurrent writer already committed a
+ * row covering the same (chatId, idempotencyKey): the caller must respond
+ * with `replayedId` instead of the pre-allocated id.
+ */
+export type InsertUserMessageOutcome =
+  | { ok: true; replayedId?: string }
+  | { ok: false; response: Response };
 
 /**
  * Insert the user message row, guarding `parentId` ownership inside the same
@@ -61,6 +68,8 @@ export async function insertUserMessageRow(
     setStatus,
   } = params;
 
+  let replayedId: string | undefined;
+
   try {
     await database.transaction().execute(async (trx,) => {
       if (parentId !== null) {
@@ -81,7 +90,7 @@ export async function insertUserMessageRow(
         }
       }
 
-      await insertUserMessageWithRetry(trx, {
+      const result = await insertUserMessageWithRetry(trx, {
         id,
         chatId,
         actorId,
@@ -92,6 +101,8 @@ export async function insertUserMessageRow(
         contentEncoding,
         idempotencyKey,
       },);
+
+      if (result.replayedId) { replayedId = result.replayedId; }
     },);
   } catch (err) {
     if (err instanceof ParentMessageNotFoundError) {
@@ -127,5 +138,5 @@ export async function insertUserMessageRow(
     throw err;
   }
 
-  return { ok: true, };
+  return { ok: true, replayedId, };
 }
