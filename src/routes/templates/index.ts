@@ -32,6 +32,7 @@ import { templateTransferRoutes, } from "./transfer";
 
 /**
  * @param opts - Handler options
+ * @param opts.database
  * @param prefix - Route prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { templates: { get: { ...; }; }; }; } & ... 6 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
  */

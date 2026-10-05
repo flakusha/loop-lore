@@ -86,14 +86,13 @@ describe("memory audit — recordAuditLog", () => {
     const bad = {
       memoryId: "mem-x",
       actorId: "actor-x",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       action: "create" as any,
     };
 
     // Force a violation of NOT NULL on actor_id by passing null through a
     // cast. If the service throws, this test fails — by design, it must NOT.
     await expect(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       recordAuditLog(db, [{ ...bad, actorId: null as any, },],),
     ).resolves.toBeUndefined();
   });

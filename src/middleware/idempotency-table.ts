@@ -35,7 +35,10 @@ function getLog() {
   }
 }
 
-/** Translate a `RequestResultRow` into the beforeHandle replay entry shape. */
+/**
+ * Translate a `RequestResultRow` into the beforeHandle replay entry shape.
+ * @param row
+ */
 function rowToEntry(row: RequestResultRow,): InMemoryEntry {
   const headers = row.responseHeaders ?? {};
   // The async store's `started_at` / `completed_at` are ISO strings; parse
@@ -54,7 +57,11 @@ function rowToEntry(row: RequestResultRow,): InMemoryEntry {
   };
 }
 
-/** Build a table backend. `asyncStore` must target the same `request_results` table. */
+/**
+ * Build a table backend. `asyncStore` must target the same `request_results` table.
+ * @param ttlMs
+ * @param asyncStore
+ */
 export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): IdempotencyBackendApi {
   // Process-local fast path. Hydrated lazily from the table on first miss.
   const cache = new Map<string, InMemoryEntry>();
@@ -62,7 +69,11 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
   // misses (e.g. a fanout retry) issues one DB read per key, not N.
   const inflightHydrates = new Map<string, Promise<void>>();
 
-  /** Drop completed entries past their TTL. */
+  /**
+   * Drop completed entries past their TTL.
+   * @param key
+   * @param entry
+   */
   const liveEntry = (key: string, entry: InMemoryEntry,): InMemoryEntry | null => {
     if (entry.completedAt !== null && Date.now() - entry.completedAt > ttlMs) {
       cache.delete(key,);
@@ -153,6 +164,10 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
 /**
  * Background hydrate for a single key. Failures are swallowed so a transient
  * DB blip cannot crash the beforeHandle hot path.
+ * @param key
+ * @param asyncStore
+ * @param cache
+ * @param ttlMs
  */
 async function hydrateFromTable(
   key: string,
@@ -200,6 +215,7 @@ async function hydrateFromTable(
 /**
  * PII-safe log identifier: the key embeds userId + requestId, so keep only the
  * `METHOD ROUTE` prefix — the access log's requestId carries the correlation.
+ * @param key
  */
 export function redactKeyForLog(key: string,): string {
   // Cache key format (fixed by `makeKey`):

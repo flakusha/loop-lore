@@ -33,6 +33,7 @@ export interface OwnedWardrobeItem {
  * visible to the actor (personal item or world template).
  * @param ctx - Elysia handler context carrying `params.actorId` + `params.itemId`
  * @param opts - database handle used for the ownership + item lookup
+ * @param opts.database
  * @returns the resolved ids and item, or a Response to short-circuit the handler
  */
 export async function requireOwnedWardrobeItem(

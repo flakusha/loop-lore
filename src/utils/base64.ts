@@ -10,6 +10,7 @@
  *
  * No URL-safe alphabet (we don't need it inside the app); no `Buffer`
  * dependency (so this works the same in browser + Node + Bun).
+ * @param bytes
  */
 export function toBase64(bytes: Uint8Array,): string {
   let binary = "";

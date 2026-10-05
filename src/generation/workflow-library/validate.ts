@@ -40,7 +40,10 @@ export type ValidationResult = { ok: true; payload: WorkflowPayload } | {
   errors: string[];
 };
 
-/** A node is well-formed when it has a class_type and an inputs object. */
+/**
+ * A node is well-formed when it has a class_type and an inputs object.
+ * @param graph
+ */
 function nodeShapeErrors(graph: ComfyUIWorkflow,): string[] {
   const errors: string[] = [];
   for (const [nodeId, node,] of Object.entries(graph,)) {
@@ -56,7 +59,11 @@ function nodeShapeErrors(graph: ComfyUIWorkflow,): string[] {
   return errors;
 }
 
-/** Every declared parameter name must actually appear as a {{placeholder}}. */
+/**
+ * Every declared parameter name must actually appear as a {{placeholder}}.
+ * @param parameters
+ * @param placeholders
+ */
 function parameterErrors(parameters: TemplateParameter[], placeholders: Set<string>,): string[] {
   const errors: string[] = [];
   const seen = new Set<string>();
@@ -79,7 +86,10 @@ function parameterErrors(parameters: TemplateParameter[], placeholders: Set<stri
   return errors;
 }
 
-/** Each declared LoRA slot must point at a node that exists and matches. */
+/**
+ * Each declared LoRA slot must point at a node that exists and matches.
+ * @param payload
+ */
 function loraSlotErrors(payload: WorkflowPayload,): string[] {
   const slots = payload.loraSlots;
   if (!slots) { return []; }
@@ -103,7 +113,10 @@ function loraSlotErrors(payload: WorkflowPayload,): string[] {
   return errors;
 }
 
-/** Structural probe for the metadata half of a payload. */
+/**
+ * Structural probe for the metadata half of a payload.
+ * @param value
+ */
 function payloadShapeErrors(value: unknown,): string[] | null {
   if (typeof value !== "object" || value === null || Array.isArray(value,)) {
     return ["payload must be an object",];

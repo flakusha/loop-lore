@@ -88,6 +88,9 @@ function removeEmptyNamespaces(dir: string,): void {
  * status — are always kept.
  * @param database - Kysely handle
  * @param opts - ttlMs sets the 2× age cutoff; `now`/`dir` are test seams.
+ * @param opts.ttlMs
+ * @param opts.now
+ * @param opts.dir
  * @returns number of orphaned spill files removed.
  */
 export async function pruneOrphanSpills(

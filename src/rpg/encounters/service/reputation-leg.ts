@@ -17,6 +17,14 @@ import type { EncounterOutcome, NsfwEncounter, } from "./types";
  * leg in try/catch so a missing auxiliary row never fails completion.
  * @param db
  * @param row
+ * @param row.id
+ * @param row.actorId
+ * @param row.effectId
+ * @param row.category
+ * @param row.magnitude
+ * @param row.source
+ * @param row.sourceId
+ * @param row.meta
  * @returns {Promise<void>}
  */
 export async function insertFanOutEffect(

@@ -49,7 +49,14 @@ export interface ListMemoriesOpts extends ActorListOpts {
   memoryType?: MemoryType;
 }
 
-/** List an actor's memories, most important first (matches the route order). */
+/**
+ * List an actor's memories, most important first (matches the route order).
+ * @param database
+ * @param actorId
+ * @param userId
+ * @param userRole
+ * @param opts
+ */
 export async function listActorMemories(
   database: Kysely<DB>,
   actorId: string,
@@ -89,7 +96,14 @@ export async function listActorMemories(
   return { ok: true, items, total: Number(countResult?.total ?? 0,), page, pageSize, };
 }
 
-/** Create a memory for an actor. `content` is required. */
+/**
+ * Create a memory for an actor. `content` is required.
+ * @param database
+ * @param actorId
+ * @param userId
+ * @param userRole
+ * @param input
+ */
 export async function createActorMemory(
   database: Kysely<DB>,
   actorId: string,
@@ -139,7 +153,15 @@ export async function createActorMemory(
   return { ok: true, entity, };
 }
 
-/** Update a memory in place; the memory must belong to the given actor. */
+/**
+ * Update a memory in place; the memory must belong to the given actor.
+ * @param database
+ * @param actorId
+ * @param memoryId
+ * @param userId
+ * @param userRole
+ * @param patch
+ */
 export async function updateActorMemory(
   database: Kysely<DB>,
   actorId: string,
@@ -203,7 +225,14 @@ export async function updateActorMemory(
   return { ok: true, entity, };
 }
 
-/** Delete a memory; the memory must belong to the given actor. */
+/**
+ * Delete a memory; the memory must belong to the given actor.
+ * @param database
+ * @param actorId
+ * @param memoryId
+ * @param userId
+ * @param userRole
+ */
 export async function deleteActorMemory(
   database: Kysely<DB>,
   actorId: string,

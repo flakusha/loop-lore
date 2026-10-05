@@ -19,6 +19,8 @@ import type { GenDeps, } from "./deps";
  * @param userId
  * @param attemptId
  * @param context - optional model/provider for failure attribution
+ * @param context.model
+ * @param context.provider
  * @returns {Promise<void>}
  */
 export async function handleGenerationError(

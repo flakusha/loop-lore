@@ -27,6 +27,8 @@ import type {
  * @param db
  * @param fantasyId
  * @param forTarget
+ * @param forTarget.actorId
+ * @param forTarget.worldId
  * @returns {Promise<FulfillmentEffects | null>}
  */
 export async function fulfillFantasy(

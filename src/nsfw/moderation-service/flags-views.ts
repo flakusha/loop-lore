@@ -99,6 +99,8 @@ const FLAG_DESCRIPTION_MAX = 1000;
  * Prefers an explicit per-call config (route `opts.config.nsfw`) so values
  * from `configs/env.yaml` are honored; falls back to env-only otherwise.
  * @param configured Value from the merged Config (`nsfw.piiSecret` / `nsfw.reporterHashSecret`).
+ * @param configured.piiSecret
+ * @param configured.reporterHashSecret
  * @returns {string}
  */
 export function resolveReporterHashSecret(configured?: { piiSecret?: string; reporterHashSecret?: string },): string {
@@ -106,7 +108,12 @@ export function resolveReporterHashSecret(configured?: { piiSecret?: string; rep
 }
 
 let cachedReporterSecret: string | null = null;
-/** Resolve (and memoize) the secret; test hook below busts the cache. */
+/**
+ * Resolve (and memoize) the secret; test hook below busts the cache.
+ * @param configured
+ * @param configured.piiSecret
+ * @param configured.reporterHashSecret
+ */
 function reporterSecret(configured?: { piiSecret?: string; reporterHashSecret?: string },): string {
   if (configured) { return resolveSharedReporterHashSecret(configured,); }
   cachedReporterSecret ??= resolveSharedReporterHashSecret();
@@ -129,6 +136,9 @@ export function resetReporterHashSecretCache(): void {
  * so a deployment without `NSFW_FLAG_REPORTER_HASH_SECRET` cannot boot in
  * production with a known default salt.
  * @param reporterId - Raw reporter id (UUID).
+ * @param configured
+ * @param configured.piiSecret
+ * @param configured.reporterHashSecret
  * @returns 32-char hex digest prefixed with "rh_".
  */
 export function hashReporterId(
@@ -143,6 +153,9 @@ export function hashReporterId(
 /**
  * Project a ContentFlag to the queue-view shape (no reporter PII).
  * @param row
+ * @param configured
+ * @param configured.piiSecret
+ * @param configured.reporterHashSecret
  * @returns {FlagQueueView}
  */
 export function toQueueView(

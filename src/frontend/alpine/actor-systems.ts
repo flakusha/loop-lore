@@ -258,7 +258,10 @@ export const actorSystems: ActorSystemsState = {
   },
 };
 
-/** Build the Alpine scope for the systems panel partial. */
+/**
+ * Build the Alpine scope for the systems panel partial.
+ * @param actorId
+ */
 export function actorSystemsFactory(actorId: string,): ActorSystemsState {
   const state = Object.create(actorSystems,) as ActorSystemsState;
   state._sysActorId = null;

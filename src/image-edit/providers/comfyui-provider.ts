@@ -52,6 +52,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
    * rebinds the export but cannot reach an already-built instance — and keying the
    * cache on baseUrl is no better, since it still serves a stale instance when the
    * config is unchanged but the client class is swapped.
+   * @param config
    */
   private getClient(config?: Config,): ComfyUIClient {
     const sdConfig = pickSdProvider((config ?? loadConfig()).generation.providers.sd, "edit",);

@@ -89,6 +89,8 @@ export async function startBattle(
  * Fetch an active battle for a chat.
  * @param deps - Service dependencies
  * @param chatId - Chat to look up
+ * @param battleId
+ * @param status
  * @returns The active battle roster, or null when none active
  */
 export async function endBattle(

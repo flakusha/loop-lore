@@ -116,6 +116,8 @@ export class FantasyService {
    * counts the exploration, returns the fulfillment effects.
    * @param fantasyId
    * @param forTarget
+   * @param forTarget.actorId
+   * @param forTarget.worldId
    */
   async fulfill(
     fantasyId: string,

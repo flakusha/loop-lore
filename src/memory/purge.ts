@@ -27,6 +27,9 @@ const DEFAULT_STALE_AFTER_CHATS = 10;
 /**
  * Apply decay to memory confidence.
  * Reduces confidence by decayRate for memories that were accessed.
+ * @param db
+ * @param opts
+ * @param opts.now
  */
 export async function applyDecay(
   db: Kysely<DB>,

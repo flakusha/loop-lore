@@ -109,7 +109,10 @@ export interface CommandChatRow {
   world_id: string | null;
 }
 
-/** Build the `activeChat` field of a {@link CommandContext} from a chat row. */
+/**
+ * Build the `activeChat` field of a {@link CommandContext} from a chat row.
+ * @param chatRecord
+ */
 export function commandActiveChat(
   chatRecord: CommandChatRow | undefined,
 ): CommandContext["activeChat"] {

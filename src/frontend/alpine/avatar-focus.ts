@@ -27,6 +27,8 @@ function clampPercent(value: number | null | undefined,): number {
  * Compute the `object-position` VALUE ("X% Y%") from an actor's avatar focus
  * percentages. Absent or invalid values yield exact centering (50/50).
  * @param focus - avatar_focus_x / avatar_focus_y percentages (0-100)
+ * @param focus.focusX
+ * @param focus.focusY
  * @returns {string}
  */
 export function avatarFocusPosition(
@@ -39,6 +41,8 @@ export function avatarFocusPosition(
  * Build a full CSS `object-position` declaration (for style attributes)
  * from an actor's avatar focus percentages.
  * @param focus - avatar_focus_x / avatar_focus_y percentages (0-100)
+ * @param focus.focusX
+ * @param focus.focusY
  * @returns {string}
  */
 export function avatarFocusStyle(

@@ -20,7 +20,12 @@ import {
   jsonResponse,
 } from "../http-utils";
 
-/** Validate a value against an enum's values. Returns the value if valid, fallback otherwise. */
+/**
+ * Validate a value against an enum's values. Returns the value if valid, fallback otherwise.
+ * @param value
+ * @param validValues
+ * @param fallback
+ */
 export function enumOr<T extends string,>(value: unknown, validValues: readonly T[], fallback: T,): T {
   return typeof value === "string" && (validValues as readonly string[]).includes(value,)
     ? (value as T)

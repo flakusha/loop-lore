@@ -12,6 +12,8 @@
  *   const ta = $<HTMLTextAreaElement>("#my-input");
  *   const form = $<HTMLFormElement>("#my-form", container);
  *   const items = $all<HTMLLIElement>(".list-item");
+ * @param selector
+ * @param root
  */
 export function $<T extends HTMLElement,>(
   selector: string,

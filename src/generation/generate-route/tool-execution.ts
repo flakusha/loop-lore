@@ -103,6 +103,8 @@ interface PersistedToolResult extends GenerationMessage {
  * linking the row back to its tool call via `metadata.tool_call_id`.
  * `parent_id` stays null because `executeToolCalls` does not have the
  * assistant message id; rows correlate through `metadata.tool_call_id`.
+ * @param ctx
+ * @param results
  */
 async function persistToolResults(
   ctx: ToolExecutionContext,

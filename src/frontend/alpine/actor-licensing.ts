@@ -254,7 +254,10 @@ export const actorLicensing: ActorLicensingState = {
   },
 };
 
-/** Build the Alpine scope for the licensing panel partial. */
+/**
+ * Build the Alpine scope for the licensing panel partial.
+ * @param actorId
+ */
 export function actorLicensingFactory(actorId: string,): ActorLicensingState {
   const state = Object.create(actorLicensing,) as ActorLicensingState;
   state._licActorId = null;

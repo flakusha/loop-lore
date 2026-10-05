@@ -84,6 +84,7 @@ function uiField<T,>(name: string, fallback: T,): T {
  * Toast the generic transition failure. Used by every failure branch of
  * `transitionPicker.runLocationTransition`.
  * @param ctx - The chatState action context carrying `$dispatch`.
+ * @param ctx.$dispatch
  */
 function failTransition(ctx: { $dispatch?: (event: string, detail: Record<string, unknown>,) => void },): void {
   ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.transitionFailed",), },);

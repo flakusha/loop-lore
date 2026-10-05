@@ -21,7 +21,11 @@ export {
   unauthorizedResponse,
 } from "./errors";
 
-/** JSON success response. */
+/**
+ * JSON success response.
+ * @param data
+ * @param status
+ */
 export function jsonResponse(data: unknown, status: HttpStatusCode = HttpStatus.OK,): Response {
   // Merge meta into object responses (backward-compatible for property access).
   // Arrays and primitives pass through unchanged to preserve existing contracts.
@@ -32,7 +36,11 @@ export function jsonResponse(data: unknown, status: HttpStatusCode = HttpStatus.
   return Response.json(body, { status, },);
 }
 
-/** JSON validation error (422) with field-level detail. */
+/**
+ * JSON validation error (422) with field-level detail.
+ * @param errors
+ * @param message
+ */
 export function jsonValidationError(errors: ValidationError[], message = "Validation failed",): Response {
   return Response.json(
     { error: message, code: "VALIDATION_ERROR", details: errors, meta: API_META, } satisfies ApiError & {
@@ -73,7 +81,10 @@ export function jsonPaginated(
   return Response.json({ data, pagination, meta: API_META, }, { status: HttpStatus.OK, },);
 }
 
-/** Created response (201). Empty body when no payload. */
+/**
+ * Created response (201). Empty body when no payload.
+ * @param data
+ */
 export function jsonCreated(data?: unknown,): Response {
   if (data === undefined) { return new Response(null, { status: HttpStatus.Created, },); }
   const envelope = (data !== null && typeof data === "object" && !Array.isArray(data,))

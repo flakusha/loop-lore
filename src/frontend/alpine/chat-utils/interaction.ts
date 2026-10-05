@@ -120,6 +120,9 @@ export const chatUtilsInteraction: ChatUtilsInteraction = {
 
   /**
    * @param {{ role: string; actor_name?: string; actor_id?: string }} msg
+   * @param msg.role
+   * @param msg.actor_name
+   * @param msg.actor_id
    * @returns {string}
    */
   displayName(msg: { role: string; actor_name?: string; actor_id?: string },): string {

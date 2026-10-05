@@ -72,14 +72,20 @@ export function branchCrudRoutes(opts: HandlerOpts, prefix = "/api",) {
     },);
 }
 
-/** GET /chats/:id/branches/:branchId */
+/**
+ * GET /chats/:id/branches/:branchId
+ * @param database
+ */
 function handleDetail(database: Kysely<DB>,) {
   return branchRoute<BranchRouteParams, GetBranchResult>(
     ({ id: chatId, branchId, }, actorId,) => getBranch(database, { chatId, branchId, actorId, },),
   );
 }
 
-/** PATCH /chats/:id/branches/:branchId */
+/**
+ * PATCH /chats/:id/branches/:branchId
+ * @param database
+ */
 function handleRename(database: Kysely<DB>,) {
   return branchRoute<BranchRouteParams, RenameBranchResult>(
     ({ id: chatId, branchId, }, actorId, ctx,) => {
@@ -95,14 +101,20 @@ function handleRename(database: Kysely<DB>,) {
   );
 }
 
-/** DELETE /chats/:id/branches/:branchId */
+/**
+ * DELETE /chats/:id/branches/:branchId
+ * @param database
+ */
 function handleDelete(database: Kysely<DB>,) {
   return branchRoute<BranchRouteParams, DeleteBranchResult>(
     ({ id: chatId, branchId, }, actorId,) => deleteBranch(database, { chatId, branchId, actorId, },),
   );
 }
 
-/** POST /chats/:id/branches/:branchId/merge */
+/**
+ * POST /chats/:id/branches/:branchId/merge
+ * @param database
+ */
 function handleMerge(database: Kysely<DB>,) {
   return branchRoute<BranchRouteParams, MergeBranchResult>(
     ({ id: chatId, branchId, }, actorId, ctx,) => {

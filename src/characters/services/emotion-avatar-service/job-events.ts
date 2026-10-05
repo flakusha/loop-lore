@@ -30,6 +30,7 @@ export function subscribeJob(jobId: string, listener: JobProgressListener,): () 
     set = new Set();
     listeners.set(jobId, set,);
   }
+
   set.add(listener,);
   return () => {
     set.delete(listener,);

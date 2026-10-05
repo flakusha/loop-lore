@@ -17,7 +17,10 @@ import type { AsyncStore, } from "./store";
 
 let activeStore: AsyncStore | null = null;
 
-/** Register the live store so `flushActiveStore()` can reach it. */
+/**
+ * Register the live store so `flushActiveStore()` can reach it.
+ * @param store
+ */
 export function setStore(store: AsyncStore | null,): void {
   activeStore = store;
 }

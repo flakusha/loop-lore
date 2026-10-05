@@ -36,6 +36,11 @@ export function deriveChatTitleFallback(text: string,): string {
  * content (capped at 60 chars) or the rule-based fallback on null/throw.
  * Advisory-only: never throws.
  * @param args - Config, db, optional user/chat ids, and the first message
+ * @param args.config
+ * @param args.db
+ * @param args.userId
+ * @param args.chatId
+ * @param args.firstMessage
  * @returns {Promise<string>}
  */
 export async function suggestChatTitle(args: {
@@ -88,6 +93,12 @@ export function isUntitledChatName(name: string | null,): boolean {
  * otherwise keep the placeholder forever. Never throws — skips titled or
  * direct chats, logs update failures.
  * @param args - Config, db, chat/user ids, the chat record, first message
+ * @param args.config
+ * @param args.db
+ * @param args.chatId
+ * @param args.userId
+ * @param args.chatRecord
+ * @param args.firstMessage
  * @returns {Promise<void>}
  */
 export async function titleUntitledChatFromFirstMessage(args: {

@@ -32,6 +32,7 @@ export interface NotificationSnapshot {
  * (routes/notifications/index.ts) maps the raw DB `read` string to 1/0;
  * the SSE frames MUST do the same or the client's strict parseOr drops
  * every notifications event (BUG-notifications-sse-frames-never-parse-).
+ * @param items
  */
 function toWireItems(items: readonly NotificationRecord[],) {
   return items.map((item,) => ({

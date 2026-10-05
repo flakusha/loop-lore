@@ -155,7 +155,12 @@ function extractTarget(input: string, verbMatchIndex: number,): TargetRef | unde
   return { kind: "item", displayName, };
 }
 
-/** Stage-1 verb match, falling back to the `stage2` LLM parser. */
+/**
+ * Stage-1 verb match, falling back to the `stage2` LLM parser.
+ * @param input
+ * @param stage2
+ * @param ctx
+ */
 export async function parseAction(
   input: string,
   stage2?: Stage2LLMFn,
@@ -178,7 +183,10 @@ export async function parseAction(
   return null;
 }
 
-/** Map a parsed {@link Action} onto the pre-verb-parser intent shape. */
+/**
+ * Map a parsed {@link Action} onto the pre-verb-parser intent shape.
+ * @param action
+ */
 export function actionToLegacyIntent(
   action: Action,
 ): { intent: AssistantIntent; target: string; confidence: number } {
@@ -214,7 +222,10 @@ export function actionToLegacyIntent(
   return { intent, target, confidence, };
 }
 
-/** Stage-1 only — no `stage2` fallback. */
+/**
+ * Stage-1 only — no `stage2` fallback.
+ * @param input
+ */
 export function parseActionStage1(input: string,): Action | null {
   const trimmed = input.trim();
   if (!trimmed) { return null; }

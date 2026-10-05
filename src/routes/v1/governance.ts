@@ -18,7 +18,10 @@ import { renderPrometheus, } from "../../api-governance/telemetry/prometheus";
 import { can, } from "../../users/permissions";
 import { ErrorCode, extractAuth, HttpStatus, jsonError, requireUserId, } from "../http-utils";
 
-/** Collapse id-like path segments so labels stay low-cardinality. */
+/**
+ * Collapse id-like path segments so labels stay low-cardinality.
+ * @param pathname
+ */
 function normalizeRoute(pathname: string,): string {
   return pathname
     .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, ":id",)
@@ -27,6 +30,7 @@ function normalizeRoute(pathname: string,): string {
 
 /**
  * @param {{ enabled?: () => boolean }} opts
+ * @param opts.enabled
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: { readonly __governanceStart: number; }; resolve: {}; schema: {}; standaloneSchema: {}; response: { ...; }; }, { ...; }>}
  */
 export function governanceGuard(opts: { enabled?: () => boolean } = {},) {

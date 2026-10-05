@@ -160,6 +160,8 @@ async function newId(db: Kysely<DB>,): Promise<string> {
  *
  *  This used to return `actorId` whenever the actor existed, which wrote
  *  the actor's own id into `actor_daily_plans.world_id`.
+ * @param db
+ * @param actorId
  */
 async function actorWorldId(db: Kysely<DB>, actorId: string,): Promise<string | null> {
   const row = await db

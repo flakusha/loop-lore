@@ -205,6 +205,7 @@ function renderErrorCard(message: string,): string {
 
 /**
  * @param assets
+ * @param tagMap
  */
 function renderCards(
   assets: readonly { id: string; filename: string; asset_type: AssetType; size_bytes: number }[],

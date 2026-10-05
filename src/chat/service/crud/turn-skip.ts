@@ -52,7 +52,11 @@ export type RecordTurnSkipResult =
 /** One-minute retry window: same actor + chat + mode replays the first row. */
 const DEDUP_BUCKET_MS = 60_000;
 
-/** */
+/**
+ * @param chatId
+ * @param actorId
+ * @param mode
+ */
 function dedupKey(chatId: string, actorId: string, mode: TurnSkipMode,): string {
   const bucket = Math.floor(Date.now() / DEDUP_BUCKET_MS,);
   return `turn_skip:${chatId}:${actorId}:${mode}:${bucket}`;

@@ -25,7 +25,11 @@ export function applyEnvironmentOverrides(config: Config, environmentMap: Record
   return result as unknown as Config;
 }
 
-/** True when `path` resolves to a defined value (e.g. an explicit nested key in the same file). */
+/**
+ * True when `path` resolves to a defined value (e.g. an explicit nested key in the same file).
+ * @param obj
+ * @param path
+ */
 function hasPath(obj: Record<string, unknown>, path: string,): boolean {
   let current: unknown = obj;
   for (const part of path.split(".",)) {

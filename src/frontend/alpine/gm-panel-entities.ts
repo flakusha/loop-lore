@@ -68,7 +68,12 @@ export const gmPanelEntities = {
     }
   },
 
-  /** Prefill the seed from a suggestion and start the handoff. */
+  /**
+   * Prefill the seed from a suggestion and start the handoff.
+   * @param suggestion
+   * @param suggestion.kind
+   * @param suggestion.seed
+   */
   async useSuggestion(suggestion: { kind: string; seed: string },) {
     this.entityKind = suggestion.kind as typeof this.entityKind;
     this.entitySeed = suggestion.seed;

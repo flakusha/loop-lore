@@ -58,7 +58,10 @@ export interface ModelManagerState {
   removeModel(modelId: string,): Promise<void>;
   formatSize(bytes: number,): string;
 }
-/** Alpine component state; `deps` are injectable seams for tests. */
+/**
+ * Alpine component state; `deps` are injectable seams for tests.
+ * @param deps
+ */
 export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerState {
   const loadCatalog = deps.loadCatalog ?? fetchCatalog;
   const loadCapability = deps.loadCapability ?? fetchCapability;

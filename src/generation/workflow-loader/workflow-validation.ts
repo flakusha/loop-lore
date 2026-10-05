@@ -47,7 +47,10 @@ export function isValidWorkflow(obj: unknown,): obj is ComfyUIWorkflow {
   return false;
 }
 
-/** A `[nodeId, slot]` link, the shape ComfyUI uses for cross-node inputs. */
+/**
+ * A `[nodeId, slot]` link, the shape ComfyUI uses for cross-node inputs.
+ * @param value
+ */
 function isLink(value: unknown,): value is [string, number,] {
   return Array.isArray(value,) && typeof value[0] === "string";
 }

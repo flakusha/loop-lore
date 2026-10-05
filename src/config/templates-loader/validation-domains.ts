@@ -135,7 +135,11 @@ export function validateWorkflowConfig(raw: Record<string, unknown>,): void {
   }
 }
 
-/** Validate the `intent: { type, target }` block on one workflow. */
+/**
+ * Validate the `intent: { type, target }` block on one workflow.
+ * @param intent
+ * @param workflowId
+ */
 function validateWorkflowIntentEntry(intent: unknown, workflowId: string,): void {
   if (typeof intent !== "object" || intent === null || Array.isArray(intent,)) {
     throw new TypeError(`workflows.${workflowId}.intent must be an object`,);
@@ -151,7 +155,11 @@ function validateWorkflowIntentEntry(intent: unknown, workflowId: string,): void
   }
 }
 
-/** Validate one workflow definition in the `workflows` domain. */
+/**
+ * Validate one workflow definition in the `workflows` domain.
+ * @param id
+ * @param value
+ */
 function validateWorkflowEntry(id: string, value: unknown,): void {
   if (typeof value !== "object" || value === null) {
     throw new Error(`workflows.${id} must be an object`,);

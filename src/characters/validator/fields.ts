@@ -190,6 +190,8 @@ const VALID_GROWTH_MODES: Readonly<Record<GrowthMode, true>> = {
  * Per `.plan/epics/epic-character-growth.md`: `growth_mode` must be one of
  * `'dynamic' | 'static'` and `llm_assist_enabled` a boolean, when provided.
  * Both are optional: relaxed mode accepts their absence.
+ * @param character
+ * @param errors
  */
 export function validateGrowthFields(
   character: CanonicalCharacter,

@@ -37,7 +37,10 @@ export interface UpdatePersonaParams {
 export class PersonasService {
   constructor(private readonly db: Kysely<DB>,) {}
 
-  /** All personas owned by `userId`, default-first then newest. */
+  /**
+   * All personas owned by `userId`, default-first then newest.
+   * @param userId
+   */
   async listByUser(userId: string,) {
     return this.db
       .selectFrom("personas",)
@@ -48,7 +51,11 @@ export class PersonasService {
       .execute();
   }
 
-  /** The persona row, or `undefined` if not found / not owned. */
+  /**
+   * The persona row, or `undefined` if not found / not owned.
+   * @param id
+   * @param userId
+   */
   async getById(id: string, userId: string,) {
     return this.db
       .selectFrom("personas",)
@@ -58,7 +65,10 @@ export class PersonasService {
       .executeTakeFirst();
   }
 
-  /** @returns the inserted persona's id. */
+  /**
+   * @param params
+   * @returns the inserted persona's id.
+   */
   async create(params: CreatePersonaParams,): Promise<string> {
     const id = uid();
     await this.db
@@ -79,7 +89,12 @@ export class PersonasService {
     return id;
   }
 
-  /** @throws {Error} `"Persona not found"` ⇒ 404 (matches getById/delete/convertToCharacter). */
+  /**
+   * @param id
+   * @param params
+   * @param userId
+   * @throws {Error} `"Persona not found"` ⇒ 404 (matches getById/delete/convertToCharacter).
+   */
   async update(id: string, params: UpdatePersonaParams, userId: string,): Promise<void> {
     const { updates, defaultFlip, } = buildPersonaUpdate(params,);
     await this.db.transaction().execute(async (trx,) => {
@@ -202,6 +217,7 @@ async function applyDefault(
 /**
  * Map an UpdatePersonaParams payload to the UPDATE column set; the
  * returned defaultFlip defers the default-state change to applyDefault.
+ * @param params
  */
 function buildPersonaUpdate(params: UpdatePersonaParams,): {
   updates: Record<string, unknown>;

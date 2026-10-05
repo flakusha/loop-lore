@@ -54,6 +54,7 @@ function formatSize(bytes: number,): string {
 /**
  * Open the asset preview modal with focus management.
  *
+ * @param state
  * @param asset - the asset payload to display (name/tags/source from existing API).
  * @param trigger - element to restore focus to on close (typically the tile that opened it).
  */
@@ -85,6 +86,7 @@ function openImpl(state: AssetPreviewModalState, asset: PreviewAssetLike, trigge
 
 /**
  * Close the modal: clear payload, release scroll lock, restore focus.
+ * @param state
  */
 function closeImpl(state: AssetPreviewModalState,): void {
   state.isOpen = false;
@@ -166,9 +168,8 @@ export async function openAssetPreviewById(id: string,): Promise<void> {
 type AssetPreviewModalFactory = typeof assetPreviewModal;
 type OpenAssetPreviewById = typeof openAssetPreviewById;
 declare global {
-  // eslint-disable-next-line no-var
   var assetPreviewModal: AssetPreviewModalFactory;
-  // eslint-disable-next-line no-var
+
   var openAssetPreviewById: OpenAssetPreviewById;
 }
 

@@ -28,7 +28,10 @@ async function readBaseline(): Promise<Baseline> {
   return await file.json() as Baseline;
 }
 
-/** Format the per-task report table. */
+/**
+ * Format the per-task report table.
+ * @param reports
+ */
 function formatReportLines(reports: readonly TaskReport[],): string[] {
   return reports.map((r,) => {
     const m = reportMetrics(r,);

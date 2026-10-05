@@ -49,6 +49,7 @@ export interface LogNsfwEventInput {
  * of free-form text — see BUG-nsfw-gate-log-plaintext-pii).
  * @param database
  * @param event
+ * @param configured
  * @throws {Error}
  * @returns {Promise<void>}
  */

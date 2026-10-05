@@ -27,7 +27,6 @@ function makeInMemoryDb(): {
   kysely: Kysely<DB>;
   raw: import("bun:sqlite").Database;
 } {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { Database, } = require("bun:sqlite",) as typeof import("bun:sqlite");
   const raw = new Database(":memory:",);
   const kysely = new Kysely<DB>({ dialect: createSqliteDialect(raw,), },);

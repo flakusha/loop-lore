@@ -56,6 +56,7 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Push the current draft onto the undo stack, dropping the oldest level
    * once the bounded depth is reached.
+   * @param draft
    */
   pushPromptImproveHistory(draft: string,) {
     this._promptImproveHistory = [...this._promptImproveHistory, draft,].slice(-MAX_IMPROVE_HISTORY,);

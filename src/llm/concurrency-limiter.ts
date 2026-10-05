@@ -103,6 +103,7 @@ export class ConcurrencyLimiter {
 
   /**
    * Run `fn` while holding a slot; releases on completion or throw.
+   * @param fn
    * @throws whatever `fn` throws.
    */
   async run<T,>(fn: () => Promise<T>,): Promise<T> {

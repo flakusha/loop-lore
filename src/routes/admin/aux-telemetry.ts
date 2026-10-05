@@ -73,7 +73,10 @@ function effectiveSecret(configured?: string,): string {
 }
 
 let cachedSecret: string | null = null;
-/** Resolve (and memoize) the secret; test hook below busts the cache. */
+/**
+ * Resolve (and memoize) the secret; test hook below busts the cache.
+ * @param configured
+ */
 function secret(configured?: string,): string {
   if (configured) { return effectiveSecret(configured,); }
   cachedSecret ??= effectiveSecret();
@@ -92,7 +95,9 @@ export function resetTelemetryPiiSecretCache(): void {
 
 let hmacKeyPromise: Promise<CryptoKey> | null = null;
 let keySecret: string | null = null;
-/** */
+/**
+ * @param configured
+ */
 async function getHmacKey(configured?: string,): Promise<CryptoKey> {
   const current = secret(configured,);
   if (!hmacKeyPromise || keySecret !== current) {
@@ -112,6 +117,7 @@ async function getHmacKey(configured?: string,): Promise<CryptoKey> {
 
 /**
  * @param value
+ * @param configured
  */
 async function hashId(value: string, configured?: string,): Promise<string> {
   const key = await getHmacKey(configured,);

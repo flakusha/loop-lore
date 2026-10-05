@@ -36,6 +36,9 @@ export function previewEscapeState() {
         removeEventListener(t: string, fn: (e: { key: string },) => void,): void;
         querySelector(sel: string,): { classList: { remove(n: string,): void } } | null;
       }} host
+ * @param host.addEventListener
+ * @param host.removeEventListener
+ * @param host.querySelector
  * @returns {void}
  */
     arm(

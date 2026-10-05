@@ -47,6 +47,7 @@ function parseCreatedAt(value: string,): number {
  * Actors whose latest `turn_skip` event is inside the cooldown window.
  * @param db
  * @param chatId
+ * @param opts
  * @param opts.now - Reference timestamp in ms (injectable for tests).
  * @param opts.cooldownMs - Cooldown window override (tests).
  * @returns {Promise<Set<string>>} Actor ids still cooling down.

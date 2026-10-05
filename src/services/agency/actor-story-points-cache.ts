@@ -61,7 +61,7 @@ export async function refreshActorStoryPointsCache(
     if (process.env.DEBUG_STORY_POINTS_CACHE) {
       // intentional side effect: surface the cached value in dev logs
       // when the operator opts in.
-      // eslint-disable-next-line no-console
+
       console.debug("story_points_cache.refresh", { actorId, balance: bal.balance, },);
     }
   } catch (error) {

@@ -49,7 +49,12 @@ let container: HTMLElement | null = null;
 let chatId: string | null = null;
 let sceneIndex = 0;
 
-/** Initialize the choice cards component. */
+/**
+ * Initialize the choice cards component.
+ * @param containerEl
+ * @param currentChatId
+ * @param currentSceneIndex
+ */
 export function initChoiceCards(
   containerEl: HTMLElement,
   currentChatId: string,
