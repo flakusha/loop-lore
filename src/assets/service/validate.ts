@@ -3,6 +3,8 @@
 
 /**
  * Asset Service — input validation
+ * @param sizeBytes
+ * @param maxSize
  */
 export function validateFileSize(sizeBytes: number, maxSize: number,): string | null {
   if (sizeBytes > maxSize) {

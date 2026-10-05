@@ -82,6 +82,8 @@ const DEFAULT_QUEUE_LIMIT = 10_000;
  * Build a store bound to the given Kysely instance. Every method is
  * **fire-and-forget**: errors are logged, never thrown on the hot path.
  * Drain `destroy()` at shutdown to flush the in-flight queue.
+ * @param database
+ * @param config
  */
 export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig = {},): AsyncStore {
   const cfg: Required<AsyncStoreConfig> = {
@@ -95,7 +97,10 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
   let draining = false;
   let destroyed = false;
 
-  /** Enqueue a write. Drops on overflow (logs at warn). */
+  /**
+   * Enqueue a write. Drops on overflow (logs at warn).
+   * @param write
+   */
   const enqueue = (write: Write,): void => {
     if (destroyed) { return; }
     if (queue.length >= cfg.queueLimit) {
@@ -141,6 +146,9 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
      * Push a progress update. The owner must match the `track()` caller —
      * a client guessing another user's requestId cannot push progress on
      * their row. BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+     * @param id
+     * @param owner
+     * @param update
      */
     progress(id: string, owner: OwnerRef, update: ProgressUpdate,) {
       enqueue({
@@ -155,6 +163,9 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
      * Mark a request complete. Scoped by `owner.userId` so a client guessing
      * another user's requestId cannot overwrite their cached response.
      * BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+     * @param id
+     * @param owner
+     * @param response
      */
     complete(id: string, owner: OwnerRef, response: CapturedResponse,) {
       enqueue({ kind: "complete", id, userId: owner.userId, response, },);
@@ -162,6 +173,9 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
     /**
      * Mark a request failed. Owner-scoped for the same reason as `complete()`.
      * BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+     * @param id
+     * @param owner
+     * @param error
      */
     fail(id: string, owner: OwnerRef, error: string,) {
       enqueue({ kind: "fail", id, userId: owner.userId, error, },);
@@ -210,7 +224,10 @@ export interface AsyncStore {
   destroy(): void;
 }
 
-/** Translate a raw snake_case DB row to camelCase `RequestResultRow`. */
+/**
+ * Translate a raw snake_case DB row to camelCase `RequestResultRow`.
+ * @param row
+ */
 function rowToResult(row: RequestResultsRow,): RequestResultRow {
   return {
     id: row.id,

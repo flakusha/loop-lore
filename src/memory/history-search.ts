@@ -55,7 +55,13 @@ function getLog() {
   return getLogger().child({ module: "memory-history-search", },);
 }
 
-/** Extract readable text — mirrors the read path (`content_plaintext ?? content`). */
+/**
+ * Extract readable text — mirrors the read path (`content_plaintext ?? content`).
+ * @param row
+ * @param row.content
+ * @param row.content_plaintext
+ * @param row.key_id
+ */
 function readableContent(
   row: { content: string; content_plaintext: string | null; key_id: string | null },
 ): string | null {

@@ -79,6 +79,11 @@ export async function applyQuestionEffects(
 /**
  * Advance or complete a quest, mirroring the quest engine's
  * progress-apply semantics (delta clamped at the quest target).
+ * @param db
+ * @param chatId
+ * @param questEffect
+ * @param effectsApplied
+ * @param messageParts
  * @returns The quest's world id when the effect applied, else `null`.
  */
 async function applyQuestEffect(
@@ -144,7 +149,13 @@ async function applyQuestEffect(
 /**
  * Grant an item definition to the answering actor's inventory as a
  * `world_items` instance (same pattern as loot `giveToNpc`).
+ * @param db
+ * @param chatId
+ * @param answeredBy
+ * @param grantItemId
  * @param chatWorldId - World id resolved for the quest effect, if any.
+ * @param effectsApplied
+ * @param messageParts
  */
 async function applyItemGrant(
   db: Kysely<DB>,

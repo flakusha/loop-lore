@@ -83,6 +83,15 @@ export interface ResolveSteeringOpts {
 
 /**
  * Create a GM steering teaser. Probability must be within 0–1.
+ * @param root0
+ * @param root0.db
+ * @param root0.worldId
+ * @param root0.description
+ * @param root0.manifestProbability
+ * @param root0.conditions
+ * @param root0.mayManifest
+ * @param root0.timelineId
+ * @param root0.audienceScope
  * @returns The new steering id.
  * @throws {RangeError} When the probability is outside 0–1.
  * @throws {Error} When the description is empty.

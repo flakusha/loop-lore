@@ -71,7 +71,10 @@ interface ReportingEndpointsValue {
   reportTo: string;
 }
 
-/** Normalize header key to canonical casing for case-insensitive comparison. */
+/**
+ * Normalize header key to canonical casing for case-insensitive comparison.
+ * @param key
+ */
 export function normalizeHeaderKey(key: string,): string {
   const lower = key.toLowerCase();
   return CANONICAL_HEADER_NAMES.get(lower,) ?? key;

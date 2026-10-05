@@ -82,7 +82,11 @@ export class ItemsService {
     return createDefinitionDispatch(this.state, def,);
   }
 
-  /** Get item definition by ID. Requires worldId to prevent cross-world IDOR. */
+  /**
+   * Get item definition by ID. Requires worldId to prevent cross-world IDOR.
+   * @param itemId
+   * @param worldId
+   */
   async getDefinition(itemId: string, worldId: string,) {
     return getDefinitionDispatch(this.state, itemId, worldId,);
   }
@@ -105,6 +109,7 @@ export class ItemsService {
    * @param hidden
    * @param respawnable
    * @param spawnCondition
+   * @param durability
    */
   async placeInLocation(
     itemId: string,
@@ -135,6 +140,7 @@ export class ItemsService {
    * @param actorId
    * @param worldId
    * @param quantity
+   * @param durability
    */
   async giveToNpc(
     itemId: string,
@@ -149,6 +155,7 @@ export class ItemsService {
   /**
    * Get items at a location
    * @param locationId
+   * @param worldId
    * @param includeHidden
    */
   async getAtLocation(locationId: string, worldId: string, includeHidden = false,) {
@@ -158,6 +165,7 @@ export class ItemsService {
   /**
    * Get items carried by an NPC
    * @param actorId
+   * @param worldId
    */
   async getNpcInventory(actorId: string, worldId: string,) {
     return getNpcInventoryDispatch(this.state, actorId, worldId,);
@@ -167,6 +175,7 @@ export class ItemsService {
    * Get items carried by multiple NPCs in one query (avoids N+1).
    * Returns actorId -> inventory. BUG-n-1-queries-in-story-world-state-context-per-participant.
    * @param actorIds
+   * @param worldId
    */
   async getNpcInventoryBatch(actorIds: string[], worldId: string,): Promise<Map<string, ItemInstance[]>> {
     return getNpcInventoryBatchDispatch(this.state, actorIds, worldId,);

@@ -47,6 +47,8 @@ const CompareBody = t.Object({
 
 /**
  * @param root0
+ * @param root0.config
+ * @param root0.database
  * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
@@ -146,7 +148,14 @@ interface RunOneResult {
  * latency, token count, and a blended cost estimate.
  *
  * @param config
+ * @param config.config
+ * @param config.database
  * @param m
+ * @param m.provider
+ * @param m.model
+ * @param m.temperature
+ * @param m.topP
+ * @param m.maxTokens
  * @param prompt
  * @param userId
  */

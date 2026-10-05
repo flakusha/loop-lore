@@ -6,6 +6,7 @@
  *
  * Utilities for keyboard navigation and focus management.
  * Provides WCAG 2.1 compliant focus handling for interactive elements.
+ * @param container
  */
 export function getFirstFocusable(container: Element,): HTMLElement | null {
   const focusables = container.querySelectorAll<HTMLElement>(

@@ -21,7 +21,10 @@ export function log(): Logger {
   return getLogger().child({ module: "messages", },);
 }
 
-/** Convert a ServiceError into an HTTP Response. */
+/**
+ * Convert a ServiceError into an HTTP Response.
+ * @param error
+ */
 export function serviceErrorToResponse(error: ServiceError,): Response {
   switch (error.code) {
     case "forbidden": {
@@ -51,7 +54,10 @@ export function serviceErrorToResponse(error: ServiceError,): Response {
   }
 }
 
-/** Type guard: check if a value is a ServiceError (not a message record). */
+/**
+ * Type guard: check if a value is a ServiceError (not a message record).
+ * @param value
+ */
 export function isServiceError(
   value: Record<string, unknown> | ServiceError,
 ): value is ServiceError {
@@ -163,6 +169,14 @@ export function parseToolResultMeta(metadataJson: string | null | undefined,): T
  * never throws per-row. Mirrors the inline enrichment in `read.ts`.
  * @param database
  * @param row
+ * @param row.content
+ * @param row.content_type
+ * @param row.metadata
+ * @param row.content_encoding
+ * @param row.key_id
+ * @param row.chat_id
+ * @param row.attachments
+ * @param row.tool_calls
  * @param transforms - regex output transforms applied after decryption.
  *   Defaults to [] so test stubs that lack a config stay trivial.
  *   Production callers pass `config.generation.regexTransforms` to keep

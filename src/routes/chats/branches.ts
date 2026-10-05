@@ -64,7 +64,10 @@ export function chatBranchRoutes(opts: HandlerOpts, prefix = "/api",) {
     .use(branchCrudRoutes(opts, prefix,),);
 }
 
-/** POST /chats/:id/fork and its `/chats/:id/branches` alias. */
+/**
+ * POST /chats/:id/fork and its `/chats/:id/branches` alias.
+ * @param database
+ */
 function handleFork(database: Kysely<DB>,) {
   return branchRoute(
     ({ id: chatId, }, actorId, ctx,) => {
@@ -80,7 +83,10 @@ function handleFork(database: Kysely<DB>,) {
   );
 }
 
-/** PATCH /chats/:id/active-branch */
+/**
+ * PATCH /chats/:id/active-branch
+ * @param database
+ */
 function handleSwitch(database: Kysely<DB>,) {
   return branchRoute(({ id: chatId, }, actorId, ctx,) => {
     const body = ctx.body as { branchId: string };
@@ -92,7 +98,10 @@ function handleSwitch(database: Kysely<DB>,) {
   },);
 }
 
-/** GET /chats/:id/branches — keyset-paginated, `?limit` + `?cursor`. */
+/**
+ * GET /chats/:id/branches — keyset-paginated, `?limit` + `?cursor`.
+ * @param database
+ */
 function handleList(database: Kysely<DB>,) {
   return branchRoute(async ({ id: chatId, }, actorId, ctx,) => {
     const query = (ctx.query ?? {}) as { limit?: string; cursor?: string };

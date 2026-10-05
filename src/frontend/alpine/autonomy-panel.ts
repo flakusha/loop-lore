@@ -22,6 +22,8 @@ const EMPTY_DRAFT: AutonomyOverride = {};
  * serialise-and-compare: a field the user cleared is `undefined` in the draft
  * and may be absent from the stored layer, and stringify compare would call
  * those different and arm Save on a form nobody touched.
+ * @param stored
+ * @param draft
  */
 function sameFields(stored: AutonomyOverride, draft: AutonomyOverride,): boolean {
   const keys = new Set([...Object.keys(stored,), ...Object.keys(draft,),],);
@@ -33,7 +35,13 @@ function sameFields(stored: AutonomyOverride, draft: AutonomyOverride,): boolean
   return false;
 }
 
-/** Autonomy read url for the panel's scope, with a query string when non-empty. */
+/**
+ * Autonomy read url for the panel's scope, with a query string when non-empty.
+ * @param worldId
+ * @param chatId
+ * @param actorId
+ * @param scopeId
+ */
 function readUrl(worldId: string, chatId: string, actorId: string, scopeId: string,): string {
   const qs = new URLSearchParams();
   if (chatId) { qs.set("chatId", chatId,); }
@@ -184,7 +192,15 @@ const panelState: AutonomyPanelState = {
   },
 };
 
-/** Fresh panel state bound to the given mount scope (world, chat, layer, budget, actor). */
+/**
+ * Fresh panel state bound to the given mount scope (world, chat, layer, budget, actor).
+ * @param opts
+ * @param opts.worldId
+ * @param opts.chatId
+ * @param opts.layer
+ * @param opts.scopeId
+ * @param opts.actorId
+ */
 export function autonomyPanelFactory(
   opts: { worldId: string; chatId?: string; layer?: AutonomyLayer; scopeId?: string; actorId?: string },
 ): AutonomyPanelState {

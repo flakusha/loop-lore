@@ -9,6 +9,7 @@
  * The chat-command gates in `src/rpg/service/world-gate.ts` enforce the
  * per-mechanic flags; these helpers keep the stored columns consistent with
  * what the API caller asked for.
+ * @param value
  */
 export function toRpgFlag(value: unknown,): 0 | 1 | null {
   if (value === true || value === 1) { return 1; }

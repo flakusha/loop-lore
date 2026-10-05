@@ -8,6 +8,9 @@
  * `clampUnit` constrains a finite number to `[0, 1]` (unit interval) and falls
  * back to `0.5` when the input is `NaN`/`±Infinity` — a safe default for
  * confidence scores that must always be present in downstream heuristics.
+ * @param value
+ * @param min
+ * @param max
  */
 export function clamp(value: number, min: number, max: number,): number {
   if (value < min) { return min; }

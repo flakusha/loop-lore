@@ -90,6 +90,8 @@ export const AUTO_GEN_SHORT_REPLY_MAX_TOKENS = 512;
  * short-reply heuristic (TASK P3 #13 / gm-config-tuning consumer).
  * @param opts - Validated per-chat override + whether the intent classifier
  *   predicted a short reply for this turn.
+ * @param opts.tuning
+ * @param opts.shortReply
  * @returns {{ temperature: number; maxTokens: number }}
  */
 export function resolveAutoGenSamplingParams(

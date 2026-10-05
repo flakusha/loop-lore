@@ -32,6 +32,14 @@ interface HandleOpts {
 
 /**
  * Safe session response — strips token_hash, shows current flag
+ * @param session
+ * @param session.id
+ * @param session.user_id
+ * @param session.ip
+ * @param session.user_agent
+ * @param session.created_at
+ * @param session.last_activity
+ * @param session.expires_at
  * @param currentSessionId
  */
 function sanitizeSession(

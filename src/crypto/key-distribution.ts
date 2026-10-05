@@ -50,7 +50,10 @@ export function resetRotationEventCount(): void {
   inflightRotations.clear();
 }
 
-/** @throws When the in-flight rotation rejects — callers must fail closed. */
+/**
+ * @param chatId
+ * @throws When the in-flight rotation rejects — callers must fail closed.
+ */
 export async function awaitChatKeyLock(chatId: string,): Promise<void> {
   const inflight = inflightRotations.get(chatId,);
   if (!inflight) { return; }
@@ -61,14 +64,23 @@ function log(): Logger {
   return getLogger().child({ module: "key-distribution", },);
 }
 
-/** @throws {Error} When encryption is not configured. */
+/**
+ * @param database
+ * @param chatId
+ * @throws {Error} When encryption is not configured.
+ */
 export async function getChatKey(database: Kysely<DB>, chatId: string,): Promise<ChatKey> {
   const smk = getSmk();
   if (!smk) { throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",); }
   return deriveChatKeyForChat(database, chatId, smk,);
 }
 
-/** @throws {Error} When encryption is not configured. */
+/**
+ * @param database
+ * @param chatId
+ * @param newParticipantId
+ * @throws {Error} When encryption is not configured.
+ */
 export async function distributeKeysOnJoin(
   database: Kysely<DB>,
   chatId: string,
@@ -87,7 +99,12 @@ export async function distributeKeysOnJoin(
   return chatKey;
 }
 
-/** @throws When no participants remain or any re-encrypt step fails. */
+/**
+ * @param database
+ * @param chatId
+ * @param departedParticipantId
+ * @throws When no participants remain or any re-encrypt step fails.
+ */
 export async function rotateKeyOnLeave(
   database: Kysely<DB>,
   chatId: string,
@@ -108,6 +125,9 @@ export async function rotateKeyOnLeave(
 }
 
 /**
+ * @param database
+ * @param chatId
+ * @param departedParticipantId
  * @throws When validation or any re-encrypt step fails; DB txn rolls back.
  */
 async function doRotate(

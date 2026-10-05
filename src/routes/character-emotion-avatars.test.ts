@@ -55,6 +55,7 @@ if (ISOLATED) {
           status: "running",
           results: (opts.emotions ?? []).map((emotion,) => ({ emotion, status: "pending", })),
         },);
+
         return jobId;
       }
       /**
@@ -431,6 +432,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
       if (done) { break; }
       out += decoder.decode(value, { stream: true, },);
     }
+
     out += decoder.decode();
     return out;
   }
@@ -448,6 +450,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
         body: JSON.stringify({ baseAvatarId: "av-1", emotions: ["happy", "sad",], },),
       },),
     );
+
     const body = await res.json() as JobBody;
     if (!body.jobId) { throw new Error("expected jobId",); }
     return body.jobId;
@@ -457,6 +460,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db,).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/job-1/stream`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -464,6 +468,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/unknown-job/stream`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -472,6 +477,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${SECOND}/emotion-avatars/jobs/${jobId}/stream`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -486,6 +492,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/${jobId}/stream`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await readAll(res,);
     expect(body,).toContain('"status":"cancelled"',);
@@ -498,6 +505,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/${jobId}/stream`,),
     );
+
     expect(res.status,).toBe(200,);
     expect(res.headers.get("Content-Type",),).toBe("text/event-stream",);
     expect(res.headers.get("Cache-Control",),).toBe("no-cache",);
@@ -513,6 +521,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
       if (chunk.done) { break; }
       body += decoder.decode(chunk.value, { stream: true, },);
     }
+
     expect(body,).toContain(`"jobId":"${jobId}"`,);
     expect(body,).toContain('"done":0',);
     expect(body,).toContain('"total":2',);
@@ -528,6 +537,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
       if (chunk.done) { break; }
       body += decoder.decode(chunk.value, { stream: true, },);
     }
+
     expect(body,).toContain('"done":2',);
     expect(body,).toContain("event: done",);
   }, 20_000,);

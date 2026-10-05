@@ -35,6 +35,8 @@ import {
  * clamp also left `earned_total` counting the refused amount, breaking
  * `balance = earned - spent`; refusing keeps the invariant.
  *
+ * @param db
+ * @param params
  * @throws CapExceededError when a cap is set and the earn would exceed it.
  * @throws InvalidAmountError when `amount` is not a positive integer.
  */
@@ -127,6 +129,8 @@ export async function earnStoryPoints(
  * the losers raised a raw `SQLITE_CONSTRAINT` instead of the intended
  * `InsufficientStoryPointsError`. A losing INSERT falls through to the
  * conditional UPDATE below, which reports the insufficiency properly.
+ * @param db
+ * @param params
  * @throws InsufficientStoryPointsError when the balance cannot cover the amount.
  * @throws InvalidAmountError when `amount` is not a positive integer.
  */

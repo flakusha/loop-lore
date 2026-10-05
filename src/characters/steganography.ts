@@ -142,6 +142,8 @@ function tryParseCharacter(text: string | null,): ExtractedCharacter | null {
 /**
  * Minimal 1×1 white pixel PNG (67 bytes).
  * Used as a base image when no avatar is available for export.
+ * @param keyword
+ * @param value
  */
 function buildTextChunk(keyword: string, value: string,): Buffer {
   const payload = Buffer.alloc(keyword.length + 1 + value.length,);

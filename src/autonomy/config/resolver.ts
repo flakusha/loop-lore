@@ -85,6 +85,8 @@ async function readActorOverride(db: Db, actorId: string,): Promise<AutonomyConf
 /**
  * Apply a single layer's overrides onto `out`. Only fields explicitly
  * set in the layer override the preset baseline.
+ * @param out
+ * @param layer
  */
 function applyLayer(out: AutonomyConfig, layer: AutonomyConfigOverride,): void {
   if (layer.preset !== undefined) { out.preset = layer.preset; }

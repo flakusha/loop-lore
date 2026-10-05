@@ -58,7 +58,11 @@ function encodeProperties(properties: Record<string, unknown>,): string {
  * and stay active; durable instances carry 0 ≤ current ≤ max with
  * `is_active` mirroring `current > 0`.
  * @param {{ category: ItemCategory; stackable: StackableState }} definition
+ * @param definition.category
+ * @param definition.stackable
  * @param {{ current: number | null; max: number | null }} durabilityState
+ * @param durabilityState.current
+ * @param durabilityState.max
  * @param {number} isActive
  * @returns {boolean}
  */
@@ -90,6 +94,7 @@ export function isItemInstanceStateConsistent(
  * @param hidden
  * @param respawnable
  * @param spawnCondition
+ * @param durability
  * @throws {Error}
  * @throws {Error}
  * @returns {Promise<string>}
@@ -211,6 +216,7 @@ export async function giveToNpc(
  * Get items at a location
  * @param state
  * @param locationId
+ * @param worldId
  * @param includeHidden
  * @returns {Promise<{ world_id: string; visibility: ItemVisibility; location_id: string | null; item_id: string; owner_actor_id: string | null; quantity: number; max_durability: number | null; ... 10 more ...; instance_properties: string; }[]>}
  */

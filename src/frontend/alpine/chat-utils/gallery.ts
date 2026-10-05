@@ -136,6 +136,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
    * Upload file(s) and link them to the active chat in parallel, then refresh
    * the in-chat gallery list. Errors on individual files are reported via
    * toast but do not cancel sibling uploads.
+   * @param event
    */
   async uploadChatAssets(event: Event,) {
     const activeChat = this.activeChat;

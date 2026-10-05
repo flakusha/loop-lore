@@ -91,6 +91,8 @@ function isRarityAllowed(rarity: ItemRarity, partyLevel: number,): boolean {
 /**
  * Walk `rarity` down toward `Common` until level-allowed.
  * Returns `null` if already at `common` but not allowed.
+ * @param rarity
+ * @param partyLevel
  */
 function rareDownshift(rarity: ItemRarity, partyLevel: number,): ItemRarity | null {
   let current = rarity;

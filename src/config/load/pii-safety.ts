@@ -21,7 +21,10 @@ export function isDevEnv(): boolean {
   return env === "test" || env === "development" || env === "dev";
 }
 
-/** First non-empty trimmed candidate, or undefined. */
+/**
+ * First non-empty trimmed candidate, or undefined.
+ * @param {...any} candidates
+ */
 function firstSet(...candidates: Array<string | undefined>): string | undefined {
   for (const c of candidates) {
     if (c !== undefined && c.trim() !== "") { return c; }
@@ -61,6 +64,7 @@ const GEN_HINT = "Generate with `openssl rand -base64 48`.";
 /**
  * Resolve the effective NSFW PII secret (gate audit hashing).
  * @param {{ piiSecret?: string }} config
+ * @param config.piiSecret
  * @returns {string}
  */
 export function resolveNsfwPiiSecret(config?: { piiSecret?: string },): string {
@@ -76,6 +80,8 @@ export function resolveNsfwPiiSecret(config?: { piiSecret?: string },): string {
  * Resolve the effective reporter-hash secret: explicit reporter secret wins,
  * then the legacy moderation HMAC env, then the NSFW PII secret.
  * @param {{ piiSecret?: string; reporterHashSecret?: string }} config
+ * @param config.piiSecret
+ * @param config.reporterHashSecret
  * @returns {string}
  */
 export function resolveReporterHashSecret(config?: { piiSecret?: string; reporterHashSecret?: string },): string {
@@ -94,6 +100,7 @@ export function resolveReporterHashSecret(config?: { piiSecret?: string; reporte
 /**
  * Resolve the effective admin-telemetry PII secret.
  * @param {{ piiSecret?: string }} config
+ * @param config.piiSecret
  * @returns {string}
  */
 export function resolveTelemetryPiiSecret(config?: { piiSecret?: string },): string {
@@ -105,7 +112,11 @@ export function resolveTelemetryPiiSecret(config?: { piiSecret?: string },): str
   );
 }
 
-/** Short-secret guard shared by all three PII secrets (prod only). */
+/**
+ * Short-secret guard shared by all three PII secrets (prod only).
+ * @param name
+ * @param secret
+ */
 function assertPiiLength(name: string, secret: string,): void {
   if (secret.length < MIN_PII_SECRET_LENGTH) {
     throw new Error(

@@ -60,6 +60,7 @@ const DEFAULT_PROMPTS: Record<EntityKind, EntityPrompt> = {
  * is the deterministic, schema-steered guidance appended/prepended to the
  * base instruction per the `epic-assistant-gm-flows.md` pre-compiled-templates
  * spec.
+ * @param kind
  * @returns The rendered block, or empty string if it cannot be assembled
  */
 function buildEntityTemplateBlock(kind: EntityKind,): string {
