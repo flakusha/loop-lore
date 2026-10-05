@@ -6,46 +6,13 @@
 // batch orchestrator and the one-avatar path can be read independently).
 
 import { randomUUID, } from "node:crypto";
-import type { Kysely, } from "kysely";
-import { persistGeneratedImages, } from "../../../assets/service";
+import { persistGeneratedImages, resolveAssetOwnerId, } from "../../../assets/service";
 import { AssetAlphaStatus, EMOTION_ORDINAL, } from "../../../db/enums";
-import type { DB, } from "../../../db/schema";
 import { generateImages, } from "../../../generation/image-engine";
 import { enqueueAutoMatting, } from "../../../generation/matting/auto-matte";
 import { getLogger, } from "../../../logger";
 import { buildEmotionPrompt, extractAvatarMetadata, } from "../emotion-avatar-fallback";
 import type { GenerateEmotionAvatarOpts, GenerationDispatchHandle, } from "./generation";
-
-/**
- * Resolve the user that must own an asset generated for an actor.
- *
- * `assets.owner_id` references `users.id`, so the actor id is never a valid
- * owner: it trips the FK when no user holds that id, and silently hands the
- * asset to an unrelated user when one does. The owner is the actor row's
- * `owner_id` (owned characters) or `user_id` (the requester's own persona) —
- * the same pair `resolveActorAccess` (src/routes/actor-access.ts) treats as
- * ownership — so the asset owner and the `link.entityId` actor stay one
- * principal.
- * @param db
- * @param actorId
- * @returns The owning user id
- * @throws {Error} When the actor row is missing or has no owning user
- */
-export async function resolveAssetOwnerId(db: Kysely<DB>, actorId: string): Promise<string> {
-  const actor = await db
-    .selectFrom("actors")
-    .select(["owner_id", "user_id"])
-    .where("id", "=", actorId)
-    .executeTakeFirst();
-
-  const userId = actor?.owner_id ?? actor?.user_id ?? null;
-
-  if (!userId) {
-    throw new Error(`Actor ${actorId} has no owning user to own generated assets`);
-  }
-
-  return userId;
-}
 
 /**
  * Generate a single emotion avatar variant.
@@ -126,7 +93,7 @@ export async function generateEmotionAvatar(
 
   // The asset is owned by the actor's user, not by the actor id; the link
   // below stays keyed on the actor.
-  const assetOwnerId = await resolveAssetOwnerId(svc.db, opts.actorId);
+  const assetOwnerId = await resolveAssetOwnerId(svc.db, opts.actorId,);
 
   // Persist generated buffers via the shared generation→asset contract, then
   // create avatars on top. Avatar rows + matting stay caller-owned follow-ups.
