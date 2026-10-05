@@ -31,6 +31,7 @@ export function resolveVariantOverrides(
 ): {
   resolvedType?: string;
   resolvedMode?: string;
+  resolvedPurpose?: string;
   resolvedGmConfig?: Record<string, unknown>;
   error?: string;
 } {
@@ -61,6 +62,7 @@ export function resolveVariantOverrides(
   return {
     resolvedType: suppliedType ?? def.chat_type,
     resolvedMode: suppliedMode ?? def.chat_mode,
+    resolvedPurpose: suppliedPurpose ?? def.chat_purpose,
     // Variant-derived gm_config seeds the row when the caller supplied none.
     resolvedGmConfig: !hasExplicit("gmConfig",) && def.gm_config !== null
       ? (def.gm_config as Record<string, unknown>)

@@ -579,6 +579,48 @@
         </div>
       </div>
 
+      <!-- Character Approvals -->
+      <div style="padding: var(--space-6); border-top: 1px solid var(--border-default, #e9ecef); margin-top: var(--space-4)">
+        <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; align-items: center">
+          <h3 style="font-size: 16px; font-weight: 600; margin-right: auto">Character Approvals</h3>
+          <button class="btn btn-primary btn-xs" @click="loadApprovals()" :disabled="loadingApprovals">Refresh</button>
+        </div>
+        <div x-show="loadingApprovals" class="empty-state" style="padding: var(--space-8)">
+          <div class="icon">⏳</div>
+          <div class="title">Loading pending reviews…</div>
+        </div>
+        <template x-if="!loadingApprovals">
+          <div>
+            <div
+              x-show="pendingReviews.length === 0"
+              style="font-size: 13px; color: var(--text-secondary, #6c757d); padding: var(--space-4)"
+            >
+              No characters pending review.
+            </div>
+            <template x-for="r in pendingReviews" :key="r.id">
+              <div style="padding: var(--space-3); border-bottom: 1px solid var(--border-default, #e9ecef); font-size: 13px">
+                <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap">
+                  <span style="font-weight: 500" x-text="r.display_name"></span>
+                  <span style="color: var(--text-secondary, #6c757d)" x-text="formatDate(r.created_at)"></span>
+                </div>
+                <div style="display: flex; gap: var(--space-2); align-items: center; margin-top: 6px">
+                  <input
+                    class="form-input"
+                    style="font-size: 12px; flex: 1; max-width: 280px"
+                    placeholder="Rejection reason…"
+                    x-model="rejectionReasons[r.id]"
+                  />
+                  <button class="btn btn-success btn-xs" @click="approveCharacter(r.id)">Approve</button>
+                  <button class="btn btn-danger btn-xs" @click="rejectCharacter(r.id, rejectionReasons[r.id] || '')">
+                    Reject
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+
       <div x-show="activeTab === 'audit'">
         <div style="padding: var(--space-6)">
           <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap">

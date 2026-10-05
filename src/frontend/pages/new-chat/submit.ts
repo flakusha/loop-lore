@@ -101,6 +101,7 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
   let fineTunePayloadWithVariant = { ...fineTunePayload, };
   if (variant === "rpg" || variant === "rpg_group") {
     fineTunePayloadWithVariant.variant = variant;
+    fineTunePayloadWithVariant.purpose = "rpg";
   }
 
   return {

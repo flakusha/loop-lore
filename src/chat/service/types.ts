@@ -58,6 +58,8 @@ export interface CreateChatParams {
   memoryCarry?: MemoryCarry;
   /** When memoryCarry is "selective", IDs of specific memories to carry forward. */
   memoryCarryIds?: string[];
+  /** Chat purpose (e.g. "rpg", "roleplay"). Null = no specific purpose. */
+  purpose?: string | null;
 }
 
 /** */
