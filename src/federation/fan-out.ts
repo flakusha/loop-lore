@@ -22,6 +22,7 @@ import {
 } from "./duplication";
 import { type MeshEncryptionProvider, } from "./encryption";
 import { sealContent, } from "./envelope";
+import { markOutboxDone, queueOutboxRetry, } from "./outbox";
 import { type PeerPost, } from "./peer-fetch";
 import { DEFAULT_RESERVATION_TTL_MS, } from "./sharing";
 
@@ -190,8 +191,19 @@ export async function fanOutContent(
       cipher,
     },);
 
-    const verdict = await pushEnvelope(post, target, envelope, granted.reservationId,);
-    return { target, verdict, };
+    try {
+      const verdict = await pushEnvelope(post, target, envelope, granted.reservationId,);
+      await markOutboxDone(database, target, content.id,);
+      return { target, verdict, };
+    } catch (error) {
+      try {
+        await queueOutboxRetry(database, { targetOrigin: target, contentId: content.id, envelope, },);
+      } catch {
+        // Outbox queueing failed — the push error is more important
+      }
+
+      throw error;
+    }
   },),);
 
   const result: FanOutResult = { targets: fit.targets, stored: [], stale: [], failed: [], skipped: fit.skipped, };

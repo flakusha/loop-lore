@@ -4856,3 +4856,25 @@ export async function insertMeshDekExports(
   } as any,).execute();
   return id;
 }
+
+/** Insert a mesh_outbox row. */
+export async function insertMeshOutbox(
+  db: Db,
+  target_origin: string,
+  content_id: string,
+  envelope: string,
+  next_attempt_at: string,
+  opts?: { id?: string; attempts?: number; status?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("mesh_outbox",).values({
+    id,
+    target_origin,
+    content_id,
+    envelope,
+    next_attempt_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}

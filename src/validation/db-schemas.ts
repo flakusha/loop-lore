@@ -3042,3 +3042,14 @@ export const MeshDekExportsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   revoked_at: t.Optional(t.String(),),
 },);
+
+// ── mesh_outbox ────────────────────────────────────────────
+export const MeshOutboxSchema = t.Object({
+  target_origin: t.String(),
+  content_id: t.String(),
+  envelope: t.String(),
+  next_attempt_at: t.String(),
+  attempts: t.Optional(t.Number(),),
+  status: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
