@@ -340,6 +340,15 @@ describe("swipe-race-insert — DB-enforced dedup (BUG-message-idempotency-key-d
   // (chat_id, idempotency_key) WHERE key IS NOT NULL AND key NOT LIKE
   // 'regen:variant:%' AND key NOT LIKE 'turn_skip:%'. These tests pin the
   // schema-level behavior the route replay path depends on.
+  //
+  // Resource contract (parallel-safe tests):
+  //   - this block owns a private in-memory DB (createTestDb in beforeAll,
+  //     destroyed in afterAll) — no shared files, ports, or env mutation;
+  //   - tests within the block share that DB, but each writes with a
+  //     UNIQUE idempotency key (fixed literal or uid()) and every row
+  //     count asserts against a key-scoped query, so cross-test row
+  //     accumulation cannot poison any assertion;
+  //   - no inter-test ordering dependence: each test passes alone.
   let db: Kysely<DB>;
   let chatId: string;
   let actorId: string;
