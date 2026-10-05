@@ -49,6 +49,12 @@ import type {
 /**
  * Create an in-memory moderation action record. Pure — does not persist.
  * @param params
+ * @param params.type
+ * @param params.targetActorId
+ * @param params.scope
+ * @param params.actorId
+ * @param params.reason
+ * @param params.internal
  */
 export function createModerationAction(params: {
   type: ModerationActionType;
@@ -216,6 +222,17 @@ const DEFAULT_REASON = "(no reason provided)";
  * `log_entries.action = "<kind>"` and `metadata.action_id`.
  *
  * Kept private — only the `apply*` primitives call it.
+ * @param trx
+ * @param args
+ * @param args.kind
+ * @param args.severity
+ * @param args.chatId
+ * @param args.targetActorId
+ * @param args.byActorId
+ * @param args.scope
+ * @param args.reason
+ * @param args.durationMs
+ * @param args.extraMeta
  */
 async function writeAuditPair(
   trx: Kysely<DB>,

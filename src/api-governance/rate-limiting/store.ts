@@ -127,6 +127,7 @@ export class InMemoryRateLimitStore implements RateLimitStore {
   /**
    * Drop entries whose window is fully expired (idled past windowMs since
    * the last activity). Runs at most once per SWEEP_INTERVAL saves.
+   * @param nowMs
    */
   private maybeSweep(nowMs: number,): void {
     this.savesSinceSweep += 1;

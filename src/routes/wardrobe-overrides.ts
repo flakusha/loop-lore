@@ -163,6 +163,12 @@ export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: Ou
 /**
  * Chat-access + actor-ownership guard for the chat outfit-override routes.
  * @param ctx
+ * @param ctx.params
+ * @param ctx.params.id
+ * @param ctx.params.actorId
+ * @param ctx.body
+ * @param ctx.body.actor_id
+ * @param ctx.userRole
  * @param opts
  * @param bodyActorId - actor id from the body when the path omits it
  * @returns the resolved ids, or a Response to short-circuit the handler
@@ -192,6 +198,10 @@ async function requireChatActorAccess(
 /**
  * World-write-access + actor-ownership guard for the location rule route.
  * @param ctx
+ * @param ctx.params
+ * @param ctx.params.worldId
+ * @param ctx.params.actorId
+ * @param ctx.userRole
  * @param opts
  * @returns the resolved ids, or a Response to short-circuit the handler
  */

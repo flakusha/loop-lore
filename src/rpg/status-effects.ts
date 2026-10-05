@@ -84,6 +84,8 @@ export interface ActiveStatusEffect {
  * @param db
  * @param actorId
  * @param filter
+ * @param filter.category
+ * @param filter.effectId
  * @returns {Promise<ActiveStatusEffect[]>}
  */
 export async function getActiveEffects(

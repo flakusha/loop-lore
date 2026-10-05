@@ -138,6 +138,10 @@ export class AutonomyGovernor {
    *   5. Else: UPSERT the row with window_start_at = the window's own
    *      start, count = nextCount. Update cache.
    *
+   * @param db
+   * @param scope
+   * @param limitName
+   * @param opts
    * @returns Decision + remaining + resetAt. Caller MUST check `ok`.
    */
   async tryConsume(

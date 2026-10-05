@@ -46,7 +46,10 @@ export const SCENE_ID_ATTR = "data-scene-id";
 const SCENE_CONTAINER_SELECTOR = "#vn-container";
 const MODE_ATTR = "data-mode";
 
-/** Mirror the active camera mode onto the scene container. */
+/**
+ * Mirror the active camera mode onto the scene container.
+ * @param mode
+ */
 function syncSceneContainer(mode: ViewMode,): void {
   document
     .querySelector<HTMLElement>(SCENE_CONTAINER_SELECTOR,)
@@ -112,6 +115,7 @@ function detachSceneWatcher(): void {
  * id) is skipped so a restored or deep-linked camera survives the
  * first scene render. Teardown (id → null) resets, since the old
  * scene's camera position no longer applies.
+ * @param state
  */
 function attachSceneWatcher(state: ViewModeState,): void {
   if (typeof MutationObserver === "undefined") { return; }
@@ -185,7 +189,6 @@ export function viewMode(): ViewModeState {
 
 type ViewModeFactory = typeof viewMode;
 declare global {
-  // eslint-disable-next-line no-var
   var viewMode: ViewModeFactory;
 }
 

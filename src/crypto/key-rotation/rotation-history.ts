@@ -26,6 +26,11 @@ import { log, } from "./log";
  *   transaction has already committed.
  * @param audit - Row payload. `actorId` is the participant who left
  *   (`null` for non-actor triggers).
+ * @param audit.chatId
+ * @param audit.actorId
+ * @param audit.oldKeyId
+ * @param audit.newKeyId
+ * @param audit.messagesReEncrypted
  * @returns {Promise<void>}
  */
 export async function recordRotationAuditLeave(

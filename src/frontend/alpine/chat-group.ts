@@ -113,6 +113,8 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
 
   /**
    * @param {{ actor_id: string; name: string }} participant
+   * @param participant.actor_id
+   * @param participant.name
    * @returns {void}
    */
   selectMention(participant: { actor_id: string; name: string },) {

@@ -81,6 +81,8 @@ export function hasPlayerIntent(sceneId: string,): boolean {
  *
  * @param sceneId
  * @param action
+ * @param action.actorId
+ * @param action.payload
  * @returns {QueueResult}
  */
 export function enqueueIfNoPlayerIntent(

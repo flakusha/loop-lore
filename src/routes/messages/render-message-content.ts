@@ -28,6 +28,10 @@ import { resolveMessageContent, } from "./helpers";
     key_id: string | null;
     chat_id: string;
   }} message
+ * @param message.chat_id
+ * @param message.key_id
+ * @param message.content_encoding
+ * @param message.content
  * @param {ReadonlyArray<RegexTransform>} transforms
  * @returns {Promise<string>}
 */

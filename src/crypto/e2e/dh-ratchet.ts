@@ -49,7 +49,10 @@ export interface InitDhRatchetResult {
   state: DhRatchetState;
   myInitialPubJwk: JsonWebKey;
 }
-/** @throws {Error} When `rootKey` is not exactly `KEY_BYTES` long. */
+/**
+ * @param opts
+ * @throws {Error} When `rootKey` is not exactly `KEY_BYTES` long.
+ */
 export async function initDhRatchet(opts: InitDhRatchetOpts,): Promise<InitDhRatchetResult> {
   if (opts.rootKey.byteLength !== KEY_BYTES) {
     throw new Error(`rootKey must be ${KEY_BYTES} bytes (got ${opts.rootKey.byteLength})`,);
@@ -131,6 +134,7 @@ export interface DhRatchetDecryptResult {
 }
 
 /**
+ * @param opts
  * @throws {Error} When the payload is undecryptable, the message counter is out of
  *   range, or more than `maxSkip` skipped keys would have to be retained.
  */

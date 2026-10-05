@@ -124,6 +124,9 @@ export class ActorPositionService {
    * Derive a position from context for actors on a moving transport.
    * physical = transport, spatial = current stop on transport's route.
    * Caller passes the routeId; if absent, falls back to locations.current_route_id.
+   * @param actorId
+   * @param transportLocationId
+   * @param routeId
    */
   async deriveForTransport(
     actorId: string,

@@ -72,7 +72,10 @@ function effectiveSecret(configured?: string,): string {
 }
 
 let cachedSecret: string | null = null;
-/** Resolve (and memoize) the secret; test hook below busts the cache. */
+/**
+ * Resolve (and memoize) the secret; test hook below busts the cache.
+ * @param configured
+ */
 function secret(configured?: string,): string {
   if (configured) { return effectiveSecret(configured,); }
   cachedSecret ??= effectiveSecret();
@@ -141,6 +144,7 @@ export const NSFW_METADATA_MAX_BYTES = 1024;
  * Async because WebCrypto's HMAC `sign` is async; the key is cached
  * after the first call.
  * @param value
+ * @param configured
  * @returns {Promise<string>}
  */
 export async function hashId(value: string, configured?: string,): Promise<string> {

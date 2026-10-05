@@ -15,6 +15,8 @@ type Base64Alphabet = "base64" | "base64url";
  * accepts it. `toString("base64url")` emits `-` and `_` in place of `+`
  * and `/`; valid padding is already accepted by `Uint8Array.fromBase64`,
  * so only the alphabet differs.
+ * @param encoded
+ * @param alphabet
  */
 function normalizeAlphabet(encoded: string, alphabet: Base64Alphabet,): string {
   return alphabet === "base64url" ? encoded.replaceAll("-", "+",).replaceAll("_", "/",) : encoded;
@@ -23,6 +25,11 @@ function normalizeAlphabet(encoded: string, alphabet: Base64Alphabet,): string {
 /**
  * The one base64 guard. Every decode variant and every throwing variant
  * routes through here, so the size and strictness rules cannot drift apart.
+ * @param encoded
+ * @param root0
+ * @param root0.alphabet
+ * @param root0.maxSize
+ * @param root0.operation
  */
 function guardDecode(
   encoded: string,
@@ -116,6 +123,8 @@ export function safeFromBase64Url(encoded: string, maxSize = DEFAULT_MAX_SIZE,):
 
 /**
  * Decode standard base64 or throw `SafeBufferError`.
+ * @param encoded
+ * @param maxSize
  * @throws {SafeBufferError} when the input is empty, oversized, or malformed
  */
 export function mustFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Buffer {
@@ -124,6 +133,8 @@ export function mustFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Bu
 
 /**
  * Decode base64url or throw `SafeBufferError`.
+ * @param encoded
+ * @param maxSize
  * @throws {SafeBufferError} when the input is empty, oversized, or malformed
  */
 export function mustFromBase64Url(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Buffer {

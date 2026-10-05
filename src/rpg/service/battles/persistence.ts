@@ -58,6 +58,7 @@ export async function getBattle(
  * automatically when one side is fully defeated.
  * @param deps - Service dependencies
  * @param params - Attack resolution parameters
+ * @param battleId
  * @returns The resolved attack + updated roster + end-of-battle state
  */
 export async function requireActiveBattle(

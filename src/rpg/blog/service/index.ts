@@ -185,6 +185,8 @@ export class BlogService extends BlogFollowsService {
    * @param id
    * @param status
    * @param caller
+   * @param caller.userId
+   * @param caller.role
    */
   async moderateComment(
     id: string,

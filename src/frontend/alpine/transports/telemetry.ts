@@ -124,7 +124,10 @@ function truncate(value: string, max: number,): string {
   return value.length <= max ? value : value.slice(0, max,);
 }
 
-/** FNV-1a hex digest, 16 chars — a stable, non-identifying fingerprint. */
+/**
+ * FNV-1a hex digest, 16 chars — a stable, non-identifying fingerprint.
+ * @param value
+ */
 function digest(value: string,): string {
   let hash = 0x811c9dc5;
   for (let i = 0; i < value.length; i++) {

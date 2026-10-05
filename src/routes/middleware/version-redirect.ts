@@ -6,6 +6,7 @@
  *
  * Redirects unversioned `/api/{resource}` requests to `/api/v1/{resource}`
  * for backward compatibility during the versioning migration.
+ * @param targetVersion
  * @see docs/spec/api-versioning.md
  */
 export function versionRedirect(targetVersion: string,) {

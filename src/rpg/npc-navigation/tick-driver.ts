@@ -46,6 +46,7 @@ const TICK_LIMIT: GovernorLimitName = "per_tick_action";
  *  user counters in `autonomy_budget`.
  *  ponytail: synthetic scope — a future per-world policy ticket can
  *  replace this with a real world scope if needed.
+ * @param worldId
  */
 function tickScope(worldId: string,): AutonomyScope {
   return { kind: "user", id: `world:${worldId}`, };

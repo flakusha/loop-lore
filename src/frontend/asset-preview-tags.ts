@@ -44,7 +44,10 @@ function escapeHtml(s: string,): string {
   },);
 }
 
-/** Render the tag chips, input, and proposition feed into the preview modal. */
+/**
+ * Render the tag chips, input, and proposition feed into the preview modal.
+ * @param assetId
+ */
 export async function renderTagsPanel(assetId: string,): Promise<void> {
   const panel = document.querySelector<HTMLElement>("[data-field='tags-panel']",);
   if (!panel) { return; }
@@ -139,6 +142,9 @@ export async function renderTagsPanel(assetId: string,): Promise<void> {
 /**
  * Swap the edit slot to an inline rename form for `oldTag`. Submitting posts
  * the rename and re-renders the panel (which resets the slot).
+ * @param assetId
+ * @param oldTag
+ * @param slot
  */
 function showRenameEditor(assetId: string, oldTag: string, slot: HTMLElement,): void {
   slot.style.display = "flex";
@@ -227,6 +233,9 @@ async function removeTag(assetId: string, tag: string, scope: "user" | "global",
 /**
  * Rename a user-scoped tag; the panel re-renders so chips, item detail, and
  * (on next gallery render) filter facets all reflect the new name.
+ * @param assetId
+ * @param oldTag
+ * @param newTag
  */
 async function renameTag(assetId: string, oldTag: string, newTag: string,): Promise<void> {
   const { showToast, } = await import("./ui");

@@ -89,7 +89,9 @@ export function watchChatPause({ database, chatId, pollMs, }: WatchChatPauseOpts
  * the tracking handle passes through unchanged. Ignored for initial
  * greetings, which have no generation tracking.
  * @param tracking - Tracking handle from prepareGeneration (undefined for greetings)
+ * @param tracking.tracking
  * @param abortSignal - Caller-supplied cascade abort signal (optional)
+ * @param tracking.abortSignal
  * @returns The tracking handle whose abortSignal covers both sources
  */
 export function combineTrackingAbortSignal({

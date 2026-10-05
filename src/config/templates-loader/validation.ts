@@ -20,6 +20,7 @@ const LEGAL_MERGE_STRATEGIES: readonly MergeStrategy[] = [
 /**
  * Runtime-validate a raw template config before merging — malformed files fail
  * fast instead of casting into a half-shaped config.
+ * @param raw
  * @throws When `merge` is illegal or `systemPrompts`/`chatFormats` are malformed
  */
 export function validateLlmConfig(
@@ -54,6 +55,7 @@ export function validateLlmConfig(
 
 /**
  * Validate the `systemPrompts` map (purpose -> string).
+ * @param systemPrompts
  * @throws {Error|TypeError} On a non-object map or a non-string value.
  */
 function validateSystemPrompts(systemPrompts: unknown,): void {
@@ -71,6 +73,7 @@ function validateSystemPrompts(systemPrompts: unknown,): void {
 
 /**
  * Validate the `chatFormats` map (name -> {system,user,assistant}).
+ * @param chatFormats
  * @throws {Error|TypeError} On a non-object map, entry, or role value.
  */
 function validateChatFormats(chatFormats: unknown,): void {
@@ -102,6 +105,7 @@ function validateChatFormats(chatFormats: unknown,): void {
 
 /**
  * Validate the `sd` domain raw config before merging.
+ * @param raw
  * @throws {Error|TypeError} On a malformed `profiles` or `modelMatching`.
  */
 export function validateSdConfig(raw: Record<string, unknown>,): void {
@@ -150,6 +154,7 @@ export function validateSdConfig(raw: Record<string, unknown>,): void {
 
 /**
  * Validate the `avatar` domain raw config before merging.
+ * @param raw
  * @throws {Error|TypeError} On a malformed `emotions` map or `intentPatterns`.
  */
 export function validateAvatarConfig(raw: Record<string, unknown>,): void {
@@ -181,6 +186,7 @@ export function validateAvatarConfig(raw: Record<string, unknown>,): void {
 
 /**
  * Validate the `imageEdit` domain raw config before merging.
+ * @param raw
  * @throws {Error|TypeError} On a malformed `workflows` map or field type.
  */
 export function validateImageEditConfig(raw: Record<string, unknown>,): void {
@@ -219,6 +225,7 @@ export {
  * Warn when a `systemPrompts` key is not a known purpose but is within edit
  * distance 2 of one — catches typos like `sumarize` that would otherwise be
  * silently treated as custom prompts. Keys beyond distance 2 stay silent.
+ * @param systemPrompts
  */
 export function warnUnknownPromptPurposes(systemPrompts: unknown,): void {
   if (typeof systemPrompts !== "object" || systemPrompts === null) { return; }
@@ -234,7 +241,11 @@ export function warnUnknownPromptPurposes(systemPrompts: unknown,): void {
   }
 }
 
-/** Small Levenshtein distance (iterative, single row). */
+/**
+ * Small Levenshtein distance (iterative, single row).
+ * @param a
+ * @param b
+ */
 function levenshtein(a: string, b: string,): number {
   let prev: number[] = Array.from({ length: b.length + 1, }, (_, i,) => i,);
   for (let i = 1; i <= a.length; i++) {

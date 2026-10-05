@@ -12,6 +12,9 @@
  *   const qb = db.selectFrom("table").where("actor_id", "=", actorId);
  *   const filtered = withWorldId(qb, worldId);
  *   const result = await filtered.selectAll().executeTakeFirst();
+ * @param qb
+ * @param worldId
+ * @param worldCol
  */
 export function withWorldId<T,>(qb: T, worldId: string | undefined, worldCol = "world_id",): T {
   // Kysely's $if is typed per-table; the generic cast is unavoidable here.

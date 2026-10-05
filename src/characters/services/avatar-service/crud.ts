@@ -19,6 +19,7 @@ import type { Avatar, CreateAvatarOpts, UpdateAvatarOpts, } from "./types";
  * @param row.tags
  * @param row.is_primary
  * @param row.sort_order
+ * @param row.outfit_id
  * @param row.created_at
  * @param row.updated_at
  * @returns void

@@ -17,7 +17,11 @@ import { buildBody, fetchRaw, fetchWithRetry, handleErrorResponse, mapFinishReas
 import { parseSSELine, } from "./sse";
 import type { OpenAiCompatibleState, OpenAIResponse, OpenAIStreamChunk, } from "./types";
 
-/** @throws {Error} When the provider rejects or returns a non-OK response. */
+/**
+ * @param state
+ * @param req
+ * @throws {Error} When the provider rejects or returns a non-OK response.
+ */
 export async function completeDispatch(
   state: OpenAiCompatibleState,
   req: GenerateRequest,
@@ -52,7 +56,12 @@ export async function completeDispatch(
   };
 }
 
-/** @throws {Error} When the provider rejects or returns a non-OK response. */
+/**
+ * @param state
+ * @param req
+ * @param handler
+ * @throws {Error} When the provider rejects or returns a non-OK response.
+ */
 export async function streamDispatch(
   state: OpenAiCompatibleState,
   req: GenerateRequest,
@@ -129,7 +138,10 @@ export async function streamDispatch(
   };
 }
 
-/** @returns Sorted tool calls, or `undefined` when none were accumulated. */
+/**
+ * @param accum
+ * @returns Sorted tool calls, or `undefined` when none were accumulated.
+ */
 function collectToolCalls(
   accum: Map<number, { id?: string; type?: "function"; function: { name?: string; arguments: string } }>,
 ): ToolCall[] | undefined {
@@ -144,7 +156,17 @@ function collectToolCalls(
   );
 }
 
-/** Merge a delta tool-call fragment from the current SSE chunk into the accumulator. */
+/**
+ * Merge a delta tool-call fragment from the current SSE chunk into the accumulator.
+ * @param acc
+ * @param tc
+ * @param tc.index
+ * @param tc.id
+ * @param tc.type
+ * @param tc.function
+ * @param tc.function.name
+ * @param tc.function.arguments
+ */
 function accumulateToolCall(
   acc: StreamAccum,
   tc: { index: number; id?: string; type?: "function"; function?: { name?: string; arguments?: string } },
@@ -173,6 +195,8 @@ interface StreamAccum {
  * Process a single SSE line from a streaming chat-completions response.
  * @param line - Raw SSE line (event name or data payload)
  * @param signal - Abort signal; when aborted the stream is marked cancelled
+ * @param handler
+ * @param acc
  * @returns `true` when the caller should stop reading further lines
  */
 function applyStreamLine(

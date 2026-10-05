@@ -134,6 +134,8 @@ export class ActorItemsService {
    * @param actorId
    * @param itemId
    * @param opts - Optional affordance context (TASK-affordance-lookup-table).
+   * @param opts.actorCaps
+   * @param opts.context
    */
   async equip(
     actorId: string,

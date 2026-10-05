@@ -49,6 +49,7 @@ export class TravelTickEngine {
   /**
    * Run one tick. Returns counts; never throws on individual transport
    * failures — the tick continues so other transports still advance.
+   * @param opts
    */
   async tick(opts: TickOptions = {},): Promise<TickSummary> {
     const elapsed = opts.elapsedSeconds ?? 60;

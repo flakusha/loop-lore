@@ -19,6 +19,8 @@ import type { AdminRouteOpts, } from "./types";
 /**
  * Admin-only carriage read path — the sole route that selects from
  * `carriage_records` (carriage AC3). Unknown chats 404.
+ * @param opts
+ * @param prefix
  */
 export function carriageRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const app = new Elysia({ name: "admin-carriage", },);

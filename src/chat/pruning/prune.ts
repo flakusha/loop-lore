@@ -15,6 +15,8 @@ import type { MessageScore, PruneResult, PruningConfig, ScorableMessage, } from 
  * 4. Promote high-importance messages to memory before removal
  * 5. Insert a system message noting what was pruned
  * @param messages - All messages in the chat
+ * @param scores
+ * @param sortedIndices
  * @param config - Pruning configuration
  * @returns Prune result with kept/promoted/pruned messages
  */

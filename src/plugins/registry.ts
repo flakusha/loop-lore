@@ -40,37 +40,61 @@ class PluginRegistry {
     assertPluginCanRegister(this.plugins, pluginName, capability);
   }
 
-  /** @throws When the plugin is unknown or cannot register routes. */
+  /**
+   * @param pluginName
+   * @param defs
+   * @throws When the plugin is unknown or cannot register routes.
+   */
   addRoutes(pluginName: string, defs: RouteDefinition[]): void {
     this.assertCanRegister(pluginName, "routes");
     this.store.setRoutes(pluginName, defs);
   }
 
-  /** @throws When the plugin is unknown or cannot register tools. */
+  /**
+   * @param pluginName
+   * @param defs
+   * @throws When the plugin is unknown or cannot register tools.
+   */
   addTools(pluginName: string, defs: ToolDefinition[]): void {
     this.assertCanRegister(pluginName, "tools");
     this.store.setTools(pluginName, defs);
   }
 
-  /** @throws When the plugin is unknown or cannot register agent roles. */
+  /**
+   * @param pluginName
+   * @param defs
+   * @throws When the plugin is unknown or cannot register agent roles.
+   */
   addAgentRoles(pluginName: string, defs: AgentRoleDefinition[]): void {
     this.assertCanRegister(pluginName, "agentRoles");
     this.store.setAgentRoles(pluginName, defs);
   }
 
-  /** @throws When the plugin is unknown or cannot register UI components. */
+  /**
+   * @param pluginName
+   * @param defs
+   * @throws When the plugin is unknown or cannot register UI components.
+   */
   addUIComponents(pluginName: string, defs: UIComponentDefinition[]): void {
     this.assertCanRegister(pluginName, "uiComponents");
     this.store.setUIComponents(pluginName, defs);
   }
 
-  /** @throws When the plugin is unknown or cannot register event handlers. */
+  /**
+   * @param pluginName
+   * @param defs
+   * @throws When the plugin is unknown or cannot register event handlers.
+   */
   addEventHandlers(pluginName: string, defs: EventHandlerDefinition[]): void {
     this.assertCanRegister(pluginName, "eventHandlers");
     this.store.setEventHandlers(pluginName, defs);
   }
 
-  /** @throws When the plugin is unknown or cannot register migrations. */
+  /**
+   * @param pluginName
+   * @param defs
+   * @throws When the plugin is unknown or cannot register migrations.
+   */
   addMigrations(pluginName: string, defs: MigrationDefinition[]): void {
     this.assertCanRegister(pluginName, "migrations");
     this.store.setMigrations(pluginName, defs);
@@ -78,7 +102,10 @@ class PluginRegistry {
 
   // ── Accessors ─────────────────────────────────────────────
 
-  /** The loaded plugin, if found. */
+  /**
+   * The loaded plugin, if found.
+   * @param name
+   */
   getPlugin(name: string): LoadedPlugin | undefined {
     return this.plugins.get(name);
   }
@@ -88,7 +115,10 @@ class PluginRegistry {
     return [...this.plugins.values()];
   }
 
-  /** Plugins matching the origin. */
+  /**
+   * Plugins matching the origin.
+   * @param origin
+   */
   getPluginsByOrigin(origin: PluginOrigin): LoadedPlugin[] {
     const out: LoadedPlugin[] = [];
     for (const plugin of this.plugins.values()) {
@@ -108,7 +138,10 @@ class PluginRegistry {
     return this.getAllRoutes();
   }
 
-  /** Raw routes for a plugin, including disabled registrations. */
+  /**
+   * Raw routes for a plugin, including disabled registrations.
+   * @param pluginName
+   */
   getPluginRoutes(pluginName: string): RouteDefinition[] {
     return this.store.getPluginRoutes(pluginName);
   }
@@ -123,7 +156,10 @@ class PluginRegistry {
     return this.store.getAllAgentRoles();
   }
 
-  /** Look up an enabled plugin agent role by id. */
+  /**
+   * Look up an enabled plugin agent role by id.
+   * @param id
+   */
   getAgentRole(id: string): AgentRoleDefinition | undefined {
     return this.getAllAgentRoles().find((role) => role.id === id);
   }
@@ -150,7 +186,10 @@ class PluginRegistry {
     this.store.clear();
   }
 
-  /** Whether the plugin is enabled. */
+  /**
+   * Whether the plugin is enabled.
+   * @param name
+   */
   isEnabled(name: string): boolean {
     return this.store.isEnabled(name);
   }

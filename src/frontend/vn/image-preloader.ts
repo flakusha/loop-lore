@@ -98,7 +98,12 @@ export interface SceneImages {
   spriteUrls?: string[];
 }
 
-/** Collect background + portrait + cast-sprite URLs from current and next N scenes. */
+/**
+ * Collect background + portrait + cast-sprite URLs from current and next N scenes.
+ * @param scenes
+ * @param currentIndex
+ * @param preloadCount
+ */
 function collectSceneUrls(scenes: SceneImages[], currentIndex: number, preloadCount: number,): string[] {
   const urls: string[] = [];
   const indices = [currentIndex,];

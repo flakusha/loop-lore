@@ -26,7 +26,12 @@ export class GovernanceRateLimiter {
   private store: RateLimitStore;
   private now: () => number;
 
-  /** Create a new rate limiter with optional store and clock. */
+  /**
+   * Create a new rate limiter with optional store and clock.
+   * @param opts
+   * @param opts.store
+   * @param opts.now
+   */
   constructor(opts: {
     store?: RateLimitStore;
     /** Injectable clock (ms epoch) — defaults to Date.now. */

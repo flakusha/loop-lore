@@ -30,7 +30,10 @@ export interface OutfitLadderInput {
   emotion?: string;
 }
 
-/** Primary-first, then input (sort_order asc) pick. */
+/**
+ * Primary-first, then input (sort_order asc) pick.
+ * @param pool
+ */
 function pickOne(pool: Avatar[],): Avatar | null {
   return pool.find((a,) => a.isPrimary) ?? pool[0] ?? null;
 }

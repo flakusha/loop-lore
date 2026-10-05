@@ -6,6 +6,7 @@
  *
  * Maps a happiness value (0-100) to a mood label. Exported for reuse by
  * dispatchers; a pure, stable domain mapping.
+ * @param happiness
  */
 export function happinessToMood(happiness: number,): string {
   if (happiness >= 80) { return "ecstatic"; }

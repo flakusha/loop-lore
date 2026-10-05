@@ -12,7 +12,12 @@ import type {
   ProgressUpdateResult,
 } from "./types";
 
-/** Get player achievement progress. */
+/**
+ * Get player achievement progress.
+ * @param db
+ * @param playerId
+ * @param achievementId
+ */
 export async function getPlayerAchievement(
   db: Kysely<DB>,
   playerId: string,
@@ -28,7 +33,11 @@ export async function getPlayerAchievement(
   return row ? rowToPlayerAchievement(row,) : null;
 }
 
-/** Get all achievements for a player. */
+/**
+ * Get all achievements for a player.
+ * @param db
+ * @param playerId
+ */
 export async function getPlayerAchievements(db: Kysely<DB>, playerId: string,): Promise<PlayerAchievement[]> {
   const rows = await (db as any)
     .selectFrom("player_achievements",)
@@ -42,6 +51,10 @@ export async function getPlayerAchievements(db: Kysely<DB>, playerId: string,): 
 
 /**
  * Update achievement progress for a player.
+ * @param db
+ * @param playerId
+ * @param achievementId
+ * @param progressIncrement
  * @throws {Error} When the achievement does not exist.
  */
 export async function updateProgress(
@@ -126,6 +139,9 @@ export async function updateProgress(
 /**
  * Claim achievement rewards. Claim + payout are one atomic unit, so a
  * concurrent second claim touches 0 rows and throws rather than double-credit.
+ * @param db
+ * @param playerId
+ * @param achievementId
  * @throws {Error} On missing/locked player achievement, prior claim, or missing achievement.
  */
 export async function claimRewards(
@@ -187,13 +203,22 @@ export async function claimRewards(
   return achievement.rewards;
 }
 
-/** Check if achievement is unlocked for player. */
+/**
+ * Check if achievement is unlocked for player.
+ * @param db
+ * @param playerId
+ * @param achievementId
+ */
 export async function isUnlocked(db: Kysely<DB>, playerId: string, achievementId: string,): Promise<boolean> {
   const playerAchievement = await getPlayerAchievement(db, playerId, achievementId,);
   return playerAchievement?.isUnlocked ?? false;
 }
 
-/** Get achievement statistics (unlock totals, per-category and per-tier) for a player. */
+/**
+ * Get achievement statistics (unlock totals, per-category and per-tier) for a player.
+ * @param db
+ * @param playerId
+ */
 export async function getPlayerStats(db: Kysely<DB>, playerId: string,): Promise<{
   totalUnlocked: number;
   totalAvailable: number;

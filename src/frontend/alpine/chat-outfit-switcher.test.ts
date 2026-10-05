@@ -172,12 +172,11 @@ describeOrSkip("outfitSwitcher.init/destroy", () => {
     const listeners: { type: string; handler: EventListener }[] = [];
     const originalAdd = document.addEventListener.bind(document,);
     const originalRemove = document.removeEventListener.bind(document,);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     (document as any).addEventListener = (type: string, handler: EventListener,) => {
       listeners.push({ type, handler, },);
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (document as any).removeEventListener = (type: string, handler: EventListener,) => {
       const idx = listeners.findIndex((l,) => l.type === type && l.handler === handler);
       if (idx >= 0) { listeners.splice(idx, 1,); }
@@ -200,9 +199,8 @@ describeOrSkip("outfitSwitcher.init/destroy", () => {
       s.destroy();
       expect(listeners,).toHaveLength(0,);
     } finally {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (document as any).addEventListener = originalAdd;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       (document as any).removeEventListener = originalRemove;
     }
   });

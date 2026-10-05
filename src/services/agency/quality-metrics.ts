@@ -62,6 +62,12 @@ export async function recordAgencyMode(
     hourBucket?: string;
     meaningful: boolean;
   }} params
+ * @param params.worldId
+ * @param params.chatId
+ * @param params.actorId
+ * @param params.dimension
+ * @param params.hourBucket
+ * @param params.meaningful
  * @returns {Promise<void>}
 */
 export async function incrementDimensionCounter(

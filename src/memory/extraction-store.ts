@@ -133,6 +133,8 @@ export async function storeMemories(
  * "Immersion" silently commits — docs/frontend/chat/memories.md).
  * @param db
  * @param opts
+ * @param opts.reviewMode
+ * @param opts.userId
  * @returns "pending" when the user must review, otherwise "committed"
  */
 export async function resolveReviewStatus(

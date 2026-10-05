@@ -35,7 +35,11 @@ export interface RateLimitResult {
   resetSec: number;
 }
 
-/** Build the headers for a 429 (or informational) response. */
+/**
+ * Build the headers for a 429 (or informational) response.
+ * @param result
+ * @param retryAfterSec
+ */
 export function rateLimitHeaders(
   result: RateLimitResult,
   retryAfterSec?: number,
@@ -70,6 +74,7 @@ export interface RateLimitConfig {
  * back the limiter with a shared store. The prune timer keeps running for
  * the process lifetime; call {@link destroy} on the returned instance to
  * stop it (tests, per-request instantiation, shutdown hooks).
+ * @param config
  */
 export function createRateLimiter(config: RateLimitConfig,) {
   // Per-key queue of timestamps (ms). The queue length is bounded by
@@ -99,6 +104,8 @@ export function createRateLimiter(config: RateLimitConfig,) {
    * both checks and records. For two-step flows (gate before an
    * expensive effect, refund-or-record after) use {@link peek},
    * {@link record}, and {@link refund} instead.
+   * @param key
+   * @param now
    */
   function consume(key: string, now = Date.now(),): RateLimitResult {
     const cutoff = now - config.windowMs;
@@ -147,6 +154,8 @@ export function createRateLimiter(config: RateLimitConfig,) {
    * Callers that reserve at the gate pair it with {@link record} on success
    * and {@link refund} on a post-gate skip. A peek-only caller records
    * nothing, so it must never refund — see {@link refund}.
+   * @param key
+   * @param now
    */
   function peek(key: string, now = Date.now(),): RateLimitResult {
     const cutoff = now - config.windowMs;
@@ -184,6 +193,8 @@ export function createRateLimiter(config: RateLimitConfig,) {
    * or {@link consume} will block correctly. Keeping the over-budget
    * push is the simplest invariant: every record() corresponds to one
    * real request that touched the effect.
+   * @param key
+   * @param now
    */
   function record(key: string, now = Date.now(),): void {
     const cutoff = now - config.windowMs;
@@ -209,6 +220,7 @@ export function createRateLimiter(config: RateLimitConfig,) {
    * budget (BUG-refund-contract-invites-over-admission-in-peek-record-flows-).
    * Pops the most recent in-window timestamp for the key. If the queue is
    * empty (race: window expired between record and refund) this is a no-op.
+   * @param key
    */
   function refund(key: string,): void {
     const queue = timestamps.get(key,);
@@ -221,12 +233,16 @@ export function createRateLimiter(config: RateLimitConfig,) {
    * Backward-compatible boolean check.
    * Records the request on success (same as consume().allowed === true).
    * Does NOT record on failure (caller is blocked).
+   * @param key
    */
   function check(key: string,): boolean {
     return consume(key,).allowed;
   }
 
-  /** Reset counter for a specific key. */
+  /**
+   * Reset counter for a specific key.
+   * @param key
+   */
   function reset(key: string,): void {
     timestamps.delete(key,);
   }

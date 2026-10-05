@@ -27,6 +27,10 @@ export interface ForcedSkipDenial {
  * Self-skips (`actorId === userId`) are always allowed.
  * @param database
  * @param input - Chat, acting user, and the beat's target actor.
+ * @param input.chatId
+ * @param input.userId
+ * @param input.userRole
+ * @param input.actorId
  * @returns A denial when the caller lacks authority; null to proceed.
  */
 export async function checkForcedSkipAuthority(
@@ -55,6 +59,10 @@ export async function checkForcedSkipAuthority(
  * Never throws — the skip event itself has already landed as a message.
  * @param database
  * @param input - Chat, forced target, forcing user, and skip mode.
+ * @param input.chatId
+ * @param input.actorId
+ * @param input.userId
+ * @param input.mode
  * @returns {Promise<void>}
  */
 export async function auditForcedSkip(

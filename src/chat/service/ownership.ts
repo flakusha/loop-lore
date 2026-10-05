@@ -24,7 +24,18 @@ export type { TransferOwnershipOptions, TransferOwnershipOutcome, TransferOwners
 const ownershipLogger = (): ReturnType<typeof getLogger> => getLogger().child({ module: "chat-ownership", },);
 const CONCURRENT_MODIFICATION = "chat-ownership-concurrent-modification";
 
-/** Transaction body. Throws CONCURRENT_MODIFICATION on a lost TOCTOU race. */
+/**
+ * Transaction body. Throws CONCURRENT_MODIFICATION on a lost TOCTOU race.
+ * @param trx
+ * @param params
+ * @param params.chatId
+ * @param params.previousOwnerId
+ * @param params.newOwnerId
+ * @param params.autoInvited
+ * @param params.now
+ * @param params.auditMeta
+ * @param params.requesterId
+ */
 async function executeTransferTx(
   trx: Kysely<DB>,
   params: {
@@ -98,7 +109,13 @@ async function executeTransferTx(
   return { newOwnerId, previousOwnerId, autoInvited, };
 }
 
-/** Notifications + moderator-grant reconciliation (best-effort). */
+/**
+ * Notifications + moderator-grant reconciliation (best-effort).
+ * @param db
+ * @param outcome
+ * @param reason
+ * @param chatId
+ */
 async function runPostTransferHooks(
   db: Kysely<DB>,
   outcome: TransferOwnershipResult,
@@ -124,7 +141,15 @@ async function runPostTransferHooks(
   }
 }
 
-/** Map a thrown tx error to a ServiceResult. */
+/**
+ * Map a thrown tx error to a ServiceResult.
+ * @param err
+ * @param ctx
+ * @param ctx.chatId
+ * @param ctx.requesterId
+ * @param ctx.newOwnerId
+ * @param ctx.previousOwnerId
+ */
 function interpretTransferError(
   err: unknown,
   ctx: { chatId: string; requesterId: string; newOwnerId: string; previousOwnerId: string | undefined },
