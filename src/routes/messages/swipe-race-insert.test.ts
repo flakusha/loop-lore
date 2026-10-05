@@ -446,6 +446,49 @@ describe("swipe-race-insert — DB-enforced dedup (BUG-message-idempotency-key-d
     expect(rows,).toHaveLength(2,);
   });
 
+  test("same key in a different chat inserts fresh (index is chat-scoped)", async () => {
+    // The unique index covers (chat_id, idempotency_key): a same-key insert
+    // into ANOTHER chat must succeed with replayedId undefined — not be
+    // caught by the index and not be misclassified as a replay.
+    const otherChat = uid();
+    await insertChats(db, "Cross-Chat Enforced", actorId, { id: otherChat, } as never,);
+
+    const key = "chat-scope-key-1";
+    const first = await insertUserMessageWithRetry(db, {
+      id: uid(),
+      chatId,
+      actorId,
+      parentId: null,
+      storedContent: "chat a",
+      storedKeyId: null,
+      contentEncoding: "utf8" as ContentEncoding,
+      idempotencyKey: key,
+    },);
+
+    const second = await insertUserMessageWithRetry(db, {
+      id: uid(),
+      chatId: otherChat,
+      actorId,
+      parentId: null,
+      storedContent: "chat b",
+      storedKeyId: null,
+      contentEncoding: "utf8" as ContentEncoding,
+      idempotencyKey: key,
+    },);
+
+    expect(first.replayedId,).toBeUndefined();
+    expect(second.replayedId,).toBeUndefined();
+
+    const rows = await db
+      .selectFrom("messages",)
+      .select(["id", "chat_id",],)
+      .where("idempotency_key", "=", key,)
+      .execute();
+
+    expect(rows,).toHaveLength(2,);
+    expect(new Set(rows.map((r,) => r.chat_id),).size,).toBe(2,);
+  });
+
   test("replayedId propagates through insertUserMessageRow (route contract)", async () => {
     // Concurrency-free proof of the FULL propagation chain: a pre-existing
     // row covering the key makes the loser's INSERT hit migration 040's
