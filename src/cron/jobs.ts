@@ -7,8 +7,24 @@
 // lifecycle belong to the registry. Bodies stay import-lazy (dynamic import)
 // so loading the catalog never pulls heavy service graphs eagerly.
 
+import type { Config, } from "../config/schema";
 import { defineJob, } from "./registry";
 import type { CronJobDef, } from "./types";
+
+/**
+ * Per-origin TLS trust overrides, shared by the gossip, resync, and outbox
+ * jobs — each hands the same map to its federation service entry point.
+ * @param config
+ * @returns Trust overrides keyed by peer origin.
+ */
+function trustByOriginOf(config: Config,): Record<string, Config["federation"]["peers"][number]["trust"]> {
+  const trustByOrigin: Record<string, Config["federation"]["peers"][number]["trust"]> = {};
+  for (const peer of config.federation.peers) {
+    trustByOrigin[peer.origin] = peer.trust;
+  }
+
+  return trustByOrigin;
+}
 
 /**
  * The default job set wired by `startScheduler` when no explicit list is
@@ -96,10 +112,7 @@ export function defaultJobs(): CronJobDef[] {
         if (!config.federation.enabled) { return { skipped: "federation.disabled", }; }
         const { getGossipService, publicOriginOf, } = await import("../federation/gossip");
         const trusted = config.federation.peers.map((peer,) => peer.origin);
-        const trustByOrigin: Record<string, import("../config/schema").FederationPeerTrustConfig | undefined> = {};
-        for (const peer of config.federation.peers) {
-          trustByOrigin[peer.origin] = peer.trust;
-        }
+        const trustByOrigin = trustByOriginOf(config,);
 
         const service = getGossipService({
           seeds: config.federation.seeds,
@@ -123,12 +136,8 @@ export function defaultJobs(): CronJobDef[] {
         if (!config.federation.enabled) { return { skipped: "federation.disabled", }; }
         const { runResyncPass, } = await import("../federation/coordinator");
         const { sweepExpiredReservations, } = await import("../federation/sharing");
-        const trustByOrigin: Record<string, import("../config/schema").FederationPeerTrustConfig | undefined> = {};
-        for (const peer of config.federation.peers) {
-          trustByOrigin[peer.origin] = peer.trust;
-        }
 
-        const summary = await runResyncPass(database, { trustByOrigin, },);
+        const summary = await runResyncPass(database, { trustByOrigin: trustByOriginOf(config,), },);
         const expired = await sweepExpiredReservations(database,);
         logger.info("federation resync pass complete", { module: "cron", ...summary, expired, },);
         return { ...summary, expired, };
@@ -141,12 +150,8 @@ export function defaultJobs(): CronJobDef[] {
       run: async ({ config, database, logger, },) => {
         if (!config.federation.enabled) { return { skipped: "federation.disabled", }; }
         const { runMeshOutboxPass, } = await import("../federation/outbox");
-        const trustByOrigin: Record<string, import("../config/schema").FederationPeerTrustConfig | undefined> = {};
-        for (const peer of config.federation.peers) {
-          trustByOrigin[peer.origin] = peer.trust;
-        }
 
-        const summary = await runMeshOutboxPass(database, { trustByOrigin, },);
+        const summary = await runMeshOutboxPass(database, { trustByOrigin: trustByOriginOf(config,), },);
         logger.info("federation outbox drain complete", { module: "cron", ...summary, },);
         return summary;
       },

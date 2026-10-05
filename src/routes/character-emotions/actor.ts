@@ -204,25 +204,20 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
           },);
         }
 
-        const existing = await database
-          .selectFrom("character_emotions",)
-          .select("id",)
+        // Scoped to this actor, so a foreign row is never touched; the
+        // affected-row count is the existence check (a 404, not a silent 200).
+        const deleted = await database
+          .deleteFrom("character_emotions",)
           .where("id", "=", emotionId,)
           .where("actor_id", "=", actorId,)
           .executeTakeFirst();
 
-        if (!existing) {
+        if (Number(deleted?.numDeletedRows ?? 0n,) === 0) {
           return jsonError({
             message: ctx.t?.("characters.emotionNotFound",) ?? "Emotion not found",
             status: HttpStatus.NotFound,
           },);
         }
-
-        await database
-          .deleteFrom("character_emotions",)
-          .where("id", "=", emotionId,)
-          .where("actor_id", "=", actorId,)
-          .execute();
 
         return jsonResponse({ ok: true, },);
       }, {

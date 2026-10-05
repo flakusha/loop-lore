@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { Kysely, } from "kysely";
-import { visibleAssetFilter, } from "../../assets/service/read";
+import type { Kysely, SelectQueryBuilder, } from "kysely";
+import { visibleGalleryAssetFilter, } from "../../assets/service/read";
 import { visibleTagNames, } from "../../assets/service/tag-facets";
 import { ActorType, ActorVisibility, AssetLinkEntity, AssetTagScope, } from "../../db/enums";
 import type { AssetType, } from "../../db/enums";
@@ -11,6 +11,71 @@ import { can, } from "../../users/permissions";
 import { escapeHtml, htmlResponse, } from "./layout";
 
 const GRID_PAGE_SIZE = 200;
+
+/** Filter inputs shared by the gallery grid and the gallery search. */
+export interface GalleryAssetFilters {
+  /** Viewer actor id (empty when anonymous). */
+  actorId: string | null | undefined;
+  /** True when the viewer holds `admin.character` (bypasses visibility). */
+  isAdmin: boolean;
+  /** `entityType` query param, or null. */
+  entityType: string | null;
+  /** `entityId` query param, or null. */
+  entityId: string | null;
+  /** `tag` query param, or null. */
+  tag: string | null;
+}
+
+/**
+ * Apply the gallery asset filters — visibility, linked-entity, and visible-tag —
+ * shared verbatim by the grid and the search so the two cannot drift apart.
+ * @param qb Asset query builder.
+ * @param filters
+ * @returns The narrowed query builder.
+ */
+export function applyGalleryAssetFilters<QB extends SelectQueryBuilder<DB, "assets", any>,>(
+  qb: QB,
+  filters: GalleryAssetFilters,
+): QB {
+  const { actorId, isAdmin, entityType, entityId, tag, } = filters;
+  let out = qb;
+
+  // Same visibility model as listAssets: public, owned by the viewer, or
+  // explicitly shared with the viewer — plus assets linked to a PUBLIC
+  // character, whose avatars inherit the character's visibility (G6).
+  if (!isAdmin) {
+    out = out.where((eb,) => visibleGalleryAssetFilter(eb, actorId ?? "",)) as QB;
+  }
+
+  // Filter by linked entity when entityType/entityId provided
+  if (entityType !== null && entityId && Object.values(AssetLinkEntity,).includes(entityType as AssetLinkEntity,)) {
+    out = out
+      .innerJoin("asset_links", "asset_links.asset_id", "assets.id",)
+      .where("asset_links.entity_type", "=", entityType as AssetLinkEntity,)
+      .where("asset_links.entity_id", "=", entityId,) as QB;
+  }
+
+  // Filter by visible tag name when `tag` provided: global tags plus the
+  // viewer's own user-scoped tags — other users' private tags never match.
+  if (tag !== null && tag !== "all") {
+    out = out.where((eb,) =>
+      eb.exists(
+        eb.selectFrom("asset_tags as ft",)
+          .select("ft.id",)
+          .whereRef("ft.asset_id", "=", "assets.id",)
+          .where("ft.tag", "=", tag,)
+          .where((eb2,) =>
+            eb2.or([
+              eb2("ft.scope", "=", AssetTagScope.Global,),
+              eb2("ft.owner_id", "=", actorId ?? "",),
+            ],)
+          ),
+      )
+    ) as QB;
+  }
+
+  return out;
+}
 
 /**
  * @param bytes
@@ -91,58 +156,20 @@ async function serveGalleryGrid(
     .limit(GRID_PAGE_SIZE,)
     .offset((page - 1) * GRID_PAGE_SIZE,);
 
-  // Same visibility model as listAssets: public, owned by the viewer, or
-  // explicitly shared with the viewer — plus assets linked to a PUBLIC
-  // character, whose avatars inherit the character's visibility (G6).
-  if (!isAdmin) {
-    qb = qb.where((eb,) =>
-      eb.or([
-        visibleAssetFilter(eb, actorId ?? "", "",),
-        eb.exists(
-          eb.selectFrom("asset_links as al",)
-            .innerJoin("actors as act", "act.id", "al.entity_id",)
-            .select("act.id",)
-            .whereRef("al.asset_id", "=", "assets.id",)
-            .where("al.entity_type", "=", AssetLinkEntity.Actor,)
-            .where("act.actor_type", "=", ActorType.Character,)
-            .where("act.visibility", "=", ActorVisibility.Public,),
-        ),
-      ],)
-    );
-  }
-
-  // Filter by linked entity when entityType/entityId provided
   const entityTypeValid = entityTypeParam !== null &&
     Object.values(AssetLinkEntity,).includes(entityTypeParam as AssetLinkEntity,);
 
-  if (entityTypeValid && entityId) {
-    qb = qb
-      .innerJoin("asset_links", "asset_links.asset_id", "assets.id",)
-      .where("asset_links.entity_type", "=", entityTypeParam as AssetLinkEntity,)
-      .where("asset_links.entity_id", "=", entityId,);
-  } else if (entityTypeParam !== null && !entityTypeValid) {
+  if (entityTypeParam !== null && !entityTypeValid) {
     return htmlResponse(renderErrorCard("Invalid entity type",),);
   }
 
-  // Filter by visible tag name when `tag` provided: global tags plus the
-  // viewer's own user-scoped tags — other users' private tags never match.
-  const tagParam = params?.get("tag",) ?? null;
-  if (tagParam !== null && tagParam !== "all") {
-    qb = qb.where((eb,) =>
-      eb.exists(
-        eb.selectFrom("asset_tags as ft",)
-          .select("ft.id",)
-          .whereRef("ft.asset_id", "=", "assets.id",)
-          .where("ft.tag", "=", tagParam,)
-          .where((eb2,) =>
-            eb2.or([
-              eb2("ft.scope", "=", AssetTagScope.Global,),
-              eb2("ft.owner_id", "=", actorId ?? "",),
-            ],)
-          ),
-      )
-    );
-  }
+  qb = applyGalleryAssetFilters(qb, {
+    actorId,
+    isAdmin,
+    entityType: entityTypeParam,
+    entityId,
+    tag: params?.get("tag",) ?? null,
+  },);
 
   const assets = await qb.execute();
 
