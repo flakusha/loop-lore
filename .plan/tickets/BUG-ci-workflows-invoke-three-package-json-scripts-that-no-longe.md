@@ -64,7 +64,7 @@ Two files still document the removed scripts as part of the check chain and will
 - [ ] `dev-release.yml:58` and `release.yml:58` invoke an existing script
 - [ ] The two stale docs no longer reference the removed script names
 
-**Context / resolution:**
+**Context:** resolution
 
 Linter choice: `stylelint` for `lint:css` and `markuplint` for `lint:html` —
 both are installed devDependencies with committed configs (`.stylelintrc.json`,
