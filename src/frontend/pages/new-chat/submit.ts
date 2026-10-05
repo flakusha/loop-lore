@@ -77,6 +77,7 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
   const templateId = $<HTMLSelectElement>("#chat-template",)?.value || undefined;
   const mode = $<HTMLSelectElement>("#chat-mode",)?.value ?? "direct";
   const gmGuided = $<HTMLInputElement>("#gm-guided-toggle",)?.checked ?? false;
+  const variant = $<HTMLSelectElement>("#chat-variant",)?.value ?? "standard";
 
   // Fine-tune overrides: only sent when the user picked a non-default value.
   const turnStrategy = $<HTMLSelectElement>("#chat-turn-strategy",)?.value || undefined;
@@ -94,10 +95,21 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
   // default decide).
   if (templateId) { fineTunePayload.renderingOverride = visualNovel === true ? "visual_novel" : null; }
 
+  // Map variant to type/mode/purpose.
+  let chatType = ctx.chatType!.value;
+  let chatMode = gmGuided ? "story" : mode;
+  if (variant === "rpg") {
+    chatType = "direct";
+    chatMode = "story";
+  } else if (variant === "rpg_group") {
+    chatType = "group";
+    chatMode = "battle";
+  }
+
   return {
     name,
-    type: ctx.chatType!.value,
-    mode: gmGuided ? "story" : mode,
+    type: chatType,
+    mode: chatMode,
     participantIds: Array.from(ctx.selected, (a: any,) => a.id,),
     personaId,
     impersonateActorId: impersonateId,

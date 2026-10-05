@@ -16,9 +16,11 @@ import type { ServiceError, } from "./types";
 /**
  * Update impersonation actor for a chat.
  *
- * Enforces 1-per-world constraint: when setting an impersonate_actor_id,
- * checks if that actor is already being impersonated by another user in
- * a chat belonging to the same world. Private/disconnected chats exempt.
+ * Enforces 1-per-(world+location) constraint: when setting an
+ * impersonate_actor_id, checks if that actor is already being impersonated
+ * by another user in a chat sharing the same world AND current_location_id.
+ * If the chat has no current_location_id (detached), falls back to the
+ * world-level check. Private/disconnected chats are exempt.
  * @param database
  * @param chatId
  * @param userId
@@ -35,25 +37,35 @@ export async function updateImpersonation(
     // Look up this chat's world_id
     const chat = await database
       .selectFrom("chats",)
-      .select(["world_id", "type",],)
+      .select(["world_id", "type", "current_location_id",],)
       .where("id", "=", chatId,)
       .executeTakeFirst();
 
     if (chat?.world_id) {
       // Check if another user already impersonates this actor in the same world
-      const conflict = await database
+      // AND current location (when the chat has one). If the chat is detached
+      // from a location, fall back to world-level scope.
+      let conflictQuery = database
         .selectFrom("chat_participants",)
         .innerJoin("chats", "chats.id", "chat_participants.chat_id",)
         .select(["chat_participants.actor_id", "chat_participants.chat_id",],)
         .where("chats.world_id", "=", chat.world_id,)
         .where("chat_participants.impersonate_actor_id", "=", impersonateActorId,)
-        .where("chat_participants.actor_id", "!=", userId,)
-        .executeTakeFirst();
+        .where("chat_participants.actor_id", "!=", userId,);
+
+      if (chat.current_location_id) {
+        conflictQuery = conflictQuery
+          .where("chats.current_location_id", "=", chat.current_location_id,);
+      }
+
+      const conflict = await conflictQuery.executeTakeFirst();
 
       if (conflict) {
         return {
           code: "bad_request",
-          message: "This character is already being impersonated by another user in this world",
+          message: chat.current_location_id
+            ? "This character is already being impersonated by another user at this location"
+            : "This character is already being impersonated by another user in this world",
         };
       } else {
         // no conflict — proceed to update impersonation for this user

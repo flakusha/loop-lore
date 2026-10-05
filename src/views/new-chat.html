@@ -114,6 +114,14 @@
               <option value="">{{{t("chats.useDefault")}}}</option>
             </select>
           </div>
+          <div class="form-group" id="variant-group">
+            <label class="form-label" for="chat-variant">{{{t("chats.chatVariant")}}}</label>
+            <select class="form-select" name="variant" id="chat-variant" data-testid="chat-variant">
+              <option value="standard">{{{t("chats.variantStandard")}}}</option>
+              <option value="rpg">{{{t("chats.variantRpg")}}}</option>
+              <option value="rpg_group">{{{t("chats.variantRpgGroup")}}}</option>
+            </select>
+          </div>
           <div class="form-group" id="participant-group">
             <label class="form-label" for="participant-search">{{{t("chats.characterParticipant")}}}</label>
             <div style="position: relative">

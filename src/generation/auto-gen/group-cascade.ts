@@ -161,8 +161,27 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
     .where("actors.agent_type", "!=", "none",)
     .execute();
 
+  // Collect actor IDs being impersonated in this chat so we exclude them
+  // from AI turn selection — a user who is impersonating a character should
+  // drive that character's turns, not the LLM.
+  const impersonatedRows = await database
+    .selectFrom("chat_participants",)
+    .select(["impersonate_actor_id",],)
+    .where("chat_id", "=", chatId,)
+    .where("impersonate_actor_id", "is not", null,)
+    .execute();
+
+  const impersonatedActorIds = new Set(
+    impersonatedRows.map((r,) => r.impersonate_actor_id),
+  );
+
   const aiParticipantsRaw: (typeof participants)[number][] = [];
-  for (const p of participants) { if (p.actor_type !== "user") { aiParticipantsRaw.push(p,); } }
+  for (const p of participants) {
+    if (p.actor_type !== "user" && !impersonatedActorIds.has(p.actor_id,)) {
+      aiParticipantsRaw.push(p,);
+    }
+  }
+
   if (aiParticipantsRaw.length === 0) { return; }
 
   // Filter out actors who opted out via a trailing `[PASS]` on their most
