@@ -112,11 +112,7 @@ describe("readRoutes coverage", () => {
 
     expect(variants.status,).toBe(401,);
     const select = await app.handle(
-      new Request(`http://localhost/api/messages/${swipeA}/variant`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ variantIndex: 0, },),
-      },),
+      new Request(`http://localhost/api/messages/${swipeA}/variant?variantIndex=0`,),
     );
 
     expect(select.status,).toBe(401,);
@@ -290,11 +286,7 @@ describe("readRoutes coverage", () => {
   test("select variant returns the indexed sibling", async () => {
     const app = makeApp(db, owner, "user",);
     const res = await app.handle(
-      new Request(`http://localhost/api/messages/${swipeA}/variant`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ variantIndex: 1, },),
-      },),
+      new Request(`http://localhost/api/messages/${swipeA}/variant?variantIndex=1`,),
     );
 
     expect(res.status,).toBe(200,);
@@ -305,11 +297,7 @@ describe("readRoutes coverage", () => {
   test("select variant 400 for out-of-range index", async () => {
     const app = makeApp(db, owner, "user",);
     const res = await app.handle(
-      new Request(`http://localhost/api/messages/${swipeA}/variant`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ variantIndex: 99, },),
-      },),
+      new Request(`http://localhost/api/messages/${swipeA}/variant?variantIndex=99`,),
     );
 
     expect(res.status,).toBe(400,);
@@ -318,11 +306,7 @@ describe("readRoutes coverage", () => {
   test("select variant 404 for missing id", async () => {
     const app = makeApp(db, owner, "user",);
     const res = await app.handle(
-      new Request(`http://localhost/api/messages/${uid()}/variant`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ variantIndex: 0, },),
-      },),
+      new Request(`http://localhost/api/messages/${uid()}/variant?variantIndex=0`,),
     );
 
     expect(res.status,).toBe(404,);

@@ -54,9 +54,9 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     this._variants = [];
   },
 
-  // BE PUT /messages/:id/variant is stateless (returns the sibling at
-  // index, persists nothing), so apply the selection locally as a preview
-  // swap on the originating bubble instead of reloading the list.
+  // BE GET /messages/:id/variant?variantIndex=N is stateless (returns the
+  // sibling at index, persists nothing), so apply the selection locally as a
+  // preview swap on the originating bubble instead of reloading the list.
   /**
    * @param {string} messageId
    * @param {number} index
@@ -65,10 +65,8 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
   async selectVariantByIndex(messageId: string, index: number,) {
     log.info("selectVariantByIndex", { messageId, index, },);
     try {
-      const res = await apiFetch(`/api/v1/messages/${messageId}/variant`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", },
-        body: jsonBody({ variantIndex: index, },),
+      const res = await apiFetch(`/api/v1/messages/${messageId}/variant?variantIndex=${index}`, {
+        method: "GET",
       },);
 
       if (!res.ok) {

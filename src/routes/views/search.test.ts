@@ -40,7 +40,7 @@ describe("views/search — gallery", () => {
   afterAll(() => sqlite.close());
 
   test("empty query returns all assets sorted by filename", async () => {
-    const res = await serveGallerySearch(db, new URLSearchParams(),);
+    const res = await serveGallerySearch(db, new URLSearchParams(), "owner", "user",);
     const html = await res.text();
     expect(html,).toContain('data-testid="asset-card-asset-1"',);
     expect(html,).toContain('data-testid="asset-card-asset-2"',);
@@ -48,21 +48,21 @@ describe("views/search — gallery", () => {
   });
 
   test("query filters by filename", async () => {
-    const res = await serveGallerySearch(db, new URLSearchParams({ q: "sword", },),);
+    const res = await serveGallerySearch(db, new URLSearchParams({ q: "sword", },), "owner", "user",);
     const html = await res.text();
     expect(html,).toContain("asset-card-asset-1",);
     expect(html,).not.toContain("asset-card-asset-2",);
   });
 
   test("type filter narrows asset type", async () => {
-    const res = await serveGallerySearch(db, new URLSearchParams({ type: "audio", },),);
+    const res = await serveGallerySearch(db, new URLSearchParams({ type: "audio", },), "owner", "user",);
     const html = await res.text();
     expect(html,).toContain("asset-card-asset-2",);
     expect(html,).not.toContain("asset-card-asset-1",);
   });
 
   test("tag param narrows to tagged assets", async () => {
-    const res = await serveGallerySearch(db, new URLSearchParams({ tag: "cozy", },),);
+    const res = await serveGallerySearch(db, new URLSearchParams({ tag: "cozy", },), "owner", "user",);
     const html = await res.text();
     expect(html,).toContain("asset-card-asset-1",);
     expect(html,).not.toContain("asset-card-asset-2",);
@@ -70,29 +70,49 @@ describe("views/search — gallery", () => {
   });
 
   test("tag param with no matches renders empty state", async () => {
-    const res = await serveGallerySearch(db, new URLSearchParams({ tag: "missing-tag", },),);
+    const res = await serveGallerySearch(db, new URLSearchParams({ tag: "missing-tag", },), "owner", "user",);
     const html = await res.text();
     expect(html,).toContain("gallery-empty",);
   });
 
   test("cards expose visible tags as data-tags", async () => {
-    const res = await serveGallerySearch(db, new URLSearchParams(),);
+    const res = await serveGallerySearch(db, new URLSearchParams(), "owner", "user",);
     const html = await res.text();
     expect(html,).toContain('data-tags="cozy"',);
   });
 
   test("no matches renders empty state", async () => {
-    const res = await serveGallerySearch(db, new URLSearchParams({ q: "zzz-nothing", },),);
+    const res = await serveGallerySearch(db, new URLSearchParams({ q: "zzz-nothing", },), "owner", "user",);
     const html = await res.text();
     expect(html,).toContain("gallery-empty",);
   });
 
   test("renders per-type thumbnails", async () => {
-    const res = await serveGallerySearch(db, new URLSearchParams(),);
+    const res = await serveGallerySearch(db, new URLSearchParams(), "owner", "user",);
     const html = await res.text();
     expect(html,).toContain("/api/v1/assets/asset-1/thumb",); // image
     expect(html,).toContain("🎵",); // audio
     expect(html,).toContain("🎬",); // video
+  });
+
+  test("anonymous search sees no private assets", async () => {
+    const res = await serveGallerySearch(db, new URLSearchParams(), null, null,);
+    const html = await res.text();
+    expect(html,).toContain("gallery-empty",);
+  });
+
+  test("cross-user private assets are excluded", async () => {
+    await insertUsers(db, "mallory", "Mallory", { id: "mallory" as never, },);
+    await insertAssets(db, "mallory", "secret2.png", "image/png", "image", 10, "p/s2", {
+      id: "b-secret" as never,
+      visibility: "private" as never,
+    },);
+
+    const asOwner = await serveGallerySearch(db, new URLSearchParams({ q: "secret2", },), "owner", "user",);
+    expect(await asOwner.text(),).not.toContain("asset-card-b-secret",);
+
+    const asMallory = await serveGallerySearch(db, new URLSearchParams({ q: "secret2", },), "mallory", "user",);
+    expect(await asMallory.text(),).toContain("asset-card-b-secret",);
   });
 
   test("escapes filenames", async () => {
@@ -110,7 +130,7 @@ describe("views/search — gallery", () => {
       },)
       .execute();
 
-    const res = await serveGallerySearch(db, new URLSearchParams({ q: "script", },),);
+    const res = await serveGallerySearch(db, new URLSearchParams({ q: "script", },), "owner", "user",);
     const html = await res.text();
     expect(html,).not.toContain("<script>alert(1)</script>",);
     expect(html,).toContain("&lt;script&gt;",);
