@@ -10,52 +10,11 @@
  * them by hand is forbidden, and the orchestrator regenerates them
  * after `036_world_travel_simulation` lands.
  */
-import type { Generated, Kysely, } from "kysely";
+import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import type { NpcMigrations, TravelParties, WorldTravelBudget, } from "../../db/schema-core";
 
-/** `travel_parties` — world-scoped party, its route, and its cursor. */
-export interface TravelParties {
-  id: Generated<string>;
-  world_id: string;
-  name: string;
-  kind: string;
-  cadence: string;
-  route: string;
-  route_index: number;
-  steps_per_tick: number;
-  travel_progress: number;
-  current_location_id: string | null;
-  current_tick: number;
-  status: string;
-  blocked_until_tick: number;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-/** `npc_migrations` — one NPC's relocation schedule. */
-export interface NpcMigrations {
-  id: Generated<string>;
-  world_id: string;
-  actor_id: string;
-  origin_location_id: string | null;
-  destination_location_id: string | null;
-  depart_tick: number;
-  arrive_tick: number;
-  cadence: string;
-  status: string;
-  last_depart_tick: number;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-/** `world_travel_budget` — fractional spend ledger, one row per world. */
-export interface WorldTravelBudget {
-  world_id: string;
-  spent: number;
-  ceiling: number;
-  window_start_tick: number;
-  updated_at: Generated<string>;
-}
+export type { NpcMigrations, TravelParties, WorldTravelBudget, };
 
 /** The tables this module adds on top of the generated `DB`.
  *
