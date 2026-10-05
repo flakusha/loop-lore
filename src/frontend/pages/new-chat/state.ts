@@ -48,6 +48,7 @@ export interface NewChatCtx {
   worldSelect: HTMLSelectElement | null;
   visibilitySelect: HTMLSelectElement | null;
   visualNovelCheckbox: HTMLInputElement | null;
+  variantSelect: HTMLSelectElement | null;
   searchInput: HTMLInputElement | null;
   resultsEl: HTMLElement | null;
   selectedEl: HTMLElement | null;
@@ -82,6 +83,7 @@ export function createCtx(): NewChatCtx {
     worldSelect: null,
     visibilitySelect: null,
     visualNovelCheckbox: null,
+    variantSelect: null,
     searchInput: null,
     resultsEl: null,
     selectedEl: null,

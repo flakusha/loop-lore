@@ -170,8 +170,19 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
     if (modeSelect && this.checked) { modeSelect.value = "story"; }
   },);
 
+  // When RPG variants are selected, world picker becomes required.
+  const syncWorldRequired = () => {
+    if (ctx.worldSelect && ctx.variantSelect) {
+      ctx.worldSelect.required = ctx.variantSelect.value !== "standard";
+    }
+  };
+
+  ctx.variantSelect?.addEventListener("change", syncWorldRequired,);
+  syncWorldRequired();
+
   ctx.impersonateGroup = $<HTMLElement>("#impersonate-group",);
   ctx.impersonateToggle = $<HTMLInputElement>("#impersonate-toggle",);
+  ctx.variantSelect = $<HTMLSelectElement>("#chat-variant",);
   ctx.memoryCarryGroup = $<HTMLElement>("#memory-carry-group",);
   ctx.memorySelectiveList = $<HTMLElement>("#memory-selective-list",);
   ctx.memoryCheckboxList = $<HTMLElement>("#memory-checkbox-list",);
