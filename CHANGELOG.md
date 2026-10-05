@@ -54,18 +54,15 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - Lint debt resolved across `src` (156 files), eslint config + example configs shipped.
 - In-range dependency bumps (kysely, smol-toml, js-yaml, alpine, eslint, unicorn, typescript-eslint, etc.).
 
-
 ### Fixed
 
 - `versionRedirect` double-prefix loop for `/api/v1/*` paths.
 - Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
 
-
 ### Fixed
 
 - `versionRedirect` double-prefix loop for `/api/v1/*` paths.
 - Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
-
 
 ### Removed
 
