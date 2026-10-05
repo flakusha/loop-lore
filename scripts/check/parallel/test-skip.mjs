@@ -37,9 +37,9 @@ export const SKIP_PATTERNS = (() => {
   const keep = process.env.CHECK_TEST_KEEP_REGEX;
   const base = DEFAULT_TEST_SKIP_PATTERNS;
   if (!keep) { return base; }
-  const re = new RegExp(keep);
-  return base.filter((p) => !re.test(p));
+  const re = new RegExp(keep,);
+  return base.filter((p,) => !re.test(p,));
 })();
 
-export const matchesSkip = (p) => SKIP_PATTERNS.some((pat) => p.includes(pat));
-export const filterPaths = (paths) => paths.filter((p) => !matchesSkip(p));
+export const matchesSkip = (p,) => SKIP_PATTERNS.some((pat,) => p.includes(pat,));
+export const filterPaths = (paths,) => paths.filter((p,) => !matchesSkip(p,));
