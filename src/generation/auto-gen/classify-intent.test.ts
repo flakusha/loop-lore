@@ -13,7 +13,7 @@
  */
 import { describe, expect, it, } from "bun:test";
 
-import { parseIntentClassification, } from "./classify-intent";
+import { detectShortReply, parseIntentClassification, } from "./classify-intent";
 
 describe("parseIntentClassification", () => {
   it("parses a valid response", () => {
@@ -71,5 +71,29 @@ describe("parseIntentClassification", () => {
 
   it("returns null on malformed JSON", () => {
     expect(parseIntentClassification("not json at all",),).toBeNull();
+  });
+});
+
+describe("detectShortReply", () => {
+  it("returns false when assistantTuning has maxTokens", async () => {
+    const result = await detectShortReply({
+      assistantTuning: { maxTokens: 50, },
+      userMessage: "hi",
+      config: {} as never,
+      database: {} as never,
+      log: { info: () => {}, } as never,
+    },);
+
+    expect(result,).toBe(false,);
+  });
+
+  it("returns false when no userMessage", async () => {
+    const result = await detectShortReply({
+      config: {} as never,
+      database: {} as never,
+      log: { info: () => {}, } as never,
+    },);
+
+    expect(result,).toBe(false,);
   });
 });
