@@ -4,7 +4,7 @@
 # BUG: Message idempotency-key dedup not DB-enforced - concurrent duplicate messages
 
 **Status:** In Progress
-**Implementation:** fix-message-idempotency-db-enforced (gates pending)
+**Implementation:** fix-message-idempotency-db-enforced (gates green; plan:sync/plan:validate advisory-only drift is pre-existing from concurrent sessions, identical findings on base)
 **Priority:** high
 **Effort:** Medium
 
