@@ -45,7 +45,7 @@ Character impersonation — 1 character can be impersonated once per world (exce
 | Command dispatch       | High     | `/impersonate <name>` returns `impersonate-select` action but `dispatchCommandAction()` doesn't handle it — command is a no-op from chat input |
 | Name→Actor resolution  | High     | `impersonate-select` passes `{ characterName }` but no resolver maps name → actor ID                                                           |
 | De-duplication         | Medium   | `routes/chats.ts` does inline DB update for impersonation instead of calling `chat/service.ts#updateImpersonation()`                           |
-| 1-per-world constraint | Medium   | Spec says 1 impersonated character per world/group, no validation exists                                                                       |
+| 1-per-world constraint | Medium   | Current: world-level check in `updateImpersonation()`. **Needs refinement:** character present in world at a location should only be impersonated by one user at that location; different timelines or isolated chats should allow same character impersonated by different users. Scope to `(world_id, location_id)` or `(world_id, timeline_id)`. Private/disconnected chats (no `world_id`) remain exempt. |
 | Memory isolation       | Low      | No special handling for impersonated character's memories                                                                                      |
 
 ## Refactored Task List
@@ -63,7 +63,7 @@ Character impersonation — 1 character can be impersonated once per world (exce
 - [ ] **FIX**: Wire `impersonate-toggle` and `impersonate-select` actions in `dispatchCommandAction()`
 - [ ] **FIX**: Add name→actor ID resolution for `impersonate-select`
 - [ ] **FIX**: Route should call `updateImpersonation()` instead of inline DB
-- [ ] **FIX**: Validate 1-per-world constraint for group/world chats
+- [ ] **FIX**: Refine impersonation constraint from world-level to location/timeline scope
 - [ ] Docs: Expand `docs/spec/impersonation.md` from stub to full spec
 
 ## Files
