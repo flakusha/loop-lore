@@ -8,7 +8,7 @@ import { CancelReason, CancelSource, } from "../db/enums";
 import { PriorityLevel, ResourceManager, } from "../llm";
 import { GenerationCancelledError, } from "./cancellation-actions/error";
 import type { GenerateResponse, } from "./providers/types";
-import { scheduledCallWithFailover, } from "./scheduler";
+import { dispatchThroughScheduler, scheduledCallWithFailover, } from "./scheduler";
 
 const usage = { promptTokens: 1, completionTokens: 1, totalTokens: 2, };
 
@@ -113,5 +113,24 @@ describe("scheduler seam", () => {
     controller.abort(new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, "stop",),);
     await expect(pending,).rejects.toBeInstanceOf(GenerationCancelledError,);
     await blocker.result;
+  });
+
+  test("dispatchThroughScheduler uses injected dispatch", async () => {
+    const dispatched: string[] = [];
+    const res = await dispatchThroughScheduler(
+      { callWithFailover: (async () => ok()) as never, },
+      {
+        id: "test-1",
+        failoverList: providerList(),
+        req: req(),
+        dispatch: (async (opts: { id: string },) => {
+          dispatched.push(opts.id,);
+          return ok("dispatched",);
+        }) as never,
+      },
+    );
+
+    expect(res.content,).toBe("dispatched",);
+    expect(dispatched,).toEqual(["test-1",],);
   });
 });
