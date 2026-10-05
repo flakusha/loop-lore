@@ -4,6 +4,7 @@
 // ── Admin Page component (admin.html) — orchestrator ──────────
 
 import { adminAnalytics, } from "./admin-analytics";
+import { adminApprovals, } from "./admin-approvals";
 import { adminAudit, } from "./admin-audit";
 import { adminChats, } from "./admin-chats";
 import { adminModels, } from "./admin-models";
@@ -62,6 +63,7 @@ import { apiFetch, } from "./htmx";
     ...adminWorldEvents,
     ...adminModels,
     ...adminReview,
+    ...adminApprovals,
     ...adminSystem,
     ...adminTemplates,
     ...adminWorkflows,
@@ -138,6 +140,7 @@ import { apiFetch, } from "./htmx";
 
         case "review": {
           this.loadReview();
+          this.loadApprovals();
           break;
         }
 

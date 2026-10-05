@@ -200,6 +200,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (variantOverride.error) { return badRequest(variantOverride.error,); }
           const resolvedType = variantOverride.resolvedType;
           const resolvedMode = variantOverride.resolvedMode;
+          const resolvedPurpose = variantOverride.resolvedPurpose;
           const resolvedGmConfig = variantOverride.resolvedGmConfig;
 
           const newChatId = await createChat(database, {
@@ -227,6 +228,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
               : (template?.visibility ?? undefined),
             encryptionLevel: body.encryptionLevel,
             templateId: template?.id,
+            purpose: resolvedPurpose ?? (hasExplicit("purpose",) ? body.purpose : undefined),
           },);
 
           await seedWelcomeMessages(database, newChatId, body, opts, userId,);

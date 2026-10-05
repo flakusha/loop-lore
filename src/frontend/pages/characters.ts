@@ -63,6 +63,7 @@ async function populateModal(modal: HTMLElement, char: Record<string, unknown>, 
   modal.querySelector("[data-action='start-chat']",)?.setAttribute("data-id", id,);
   modal.querySelector("[data-action='edit-char']",)?.setAttribute("data-id", id,);
   modal.querySelector("[data-action='delete-char']",)?.setAttribute("data-id", id,);
+  modal.querySelector("[data-action='submit-for-review']",)?.setAttribute("data-id", id,);
   modal.classList.add("open",);
   await loadCharacterGallery(modal, id,);
 
@@ -220,6 +221,26 @@ export async function deleteCharacter(btn: HTMLElement,) {
   }
 }
 
+export async function submitSelectedForReview(btn: HTMLElement,) {
+  const id = btn.dataset.id;
+  if (!id) { return; }
+  try {
+    const res = await feFetch(`/api/v1/characters/${id}/submit-for-review`, {
+      method: "POST",
+    },);
+
+    if (res.ok) {
+      showToast("success", "Character submitted for review",);
+      refreshHtmx("#character-grid",);
+    } else {
+      const err = await res.json().catch(() => ({}));
+      showToast("error", err.message || "Failed to submit for review",);
+    }
+  } catch {
+    showToast("error", "Network error",);
+  }
+}
+
 export function exportCharacter(btn: HTMLElement,) {
   // The export modal partial does not carry data-character-id itself, but it
   // is rendered inside a context that does (e.g. #character-chat-list,
@@ -257,6 +278,7 @@ Object.assign(globalThis, {
   startChatFromChar,
   editCharacter,
   deleteCharacter,
+  submitSelectedForReview,
   exportCharacter,
 },);
 
