@@ -11,7 +11,7 @@ export const LOGGING_DEFAULTS = {
 
 /** */
 export class LoggingSection {
-  level = LOGGING_DEFAULTS.level;
+  level: LogLevel = LOGGING_DEFAULTS.level;
   jsonlPath?: string;
   jsonlMaxBytes?: number;
   jsonlMaxFiles?: number;
