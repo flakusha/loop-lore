@@ -47,6 +47,8 @@ Reuse: `src/generation/template-service/{crud,apply,resolve,index}.ts`. Don't du
 
 ## Acceptance Criteria
 
+**Acceptance Criteria:**
+
 ### Already delivered by flat routes (`/api/v1/templates`)
 
 - [x] Routes mounted at `/api/v1/templates[/...]` via `content-surface.ts:64`
