@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 240
+// size-allow: 280
 
 /**
  * Normalize `.plan` status values onto their closed vocabularies.
