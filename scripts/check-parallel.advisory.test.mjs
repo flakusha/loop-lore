@@ -14,6 +14,7 @@
 import { describe, expect, test, } from "bun:test";
 import { ADVISORY_GATES, } from "./check/parallel/gates.mjs";
 import { buildReport, reportResults, } from "./check/parallel/report.mjs";
+import { runCheck, } from "./check/parallel/runner.mjs";
 
 // ── Helpers ──────────────────────────────────────────────────────
 
@@ -177,5 +178,56 @@ describe("advisory failures appear in the report", () => {
     expect(failed,).toBe(0,);
     expect(output,).toContain("SKIP:",);
     expect(output,).not.toContain("ADVISORY:",);
+  });
+});
+
+// ── runCheck wiring ──────────────────────────────────────────────
+//
+// The tests above all feed reportResults hand-built results that ALREADY carry
+// `advisory`, so they cannot catch the runner dropping the field. Every case
+// below drives the real runCheck with a trivial shell command and asserts on the
+// object it returns.
+describe("runCheck sets the advisory flag from the gate registry", () => {
+  test("a failing ADVISORY_GATES member comes back advisory", async () => {
+    const result = await runCheck("plan - validate", "exit 1",);
+    expect(result.passed,).toBe(false,);
+    expect(result.advisory,).toBe(true,);
+
+    // The consequence that matters: a failing advisory gate must not fail the
+    // run. This is the regression -- with `advisory` dropped, summary.advisory
+    // was 0, failed was 3, and `bun run check` exited 1 on nothing actionable.
+    const report = buildReport({ exitCode: 0, checks: [result,], nonBlocking: [], gpgPrecheck: null, },);
+    expect(report.summary.advisory,).toBe(1,);
+    expect(report.summary.failed,).toBe(0,);
+  });
+
+  test("a failing blocking gate comes back NOT advisory", async () => {
+    const result = await runCheck("lint - eslint", "exit 1",);
+    expect(result.passed,).toBe(false,);
+    expect(result.advisory,).toBe(false,);
+
+    const report = buildReport({ exitCode: 1, checks: [result,], nonBlocking: [], gpgPrecheck: null, },);
+    expect(report.summary.advisory,).toBe(0,);
+    expect(report.summary.failed,).toBe(1,);
+  });
+
+  test("every advisory member is advisory, every other gate is not", async () => {
+    for (const name of ADVISORY_GATES) {
+      const result = await runCheck(name, "exit 1",);
+      expect({ name, advisory: result.advisory, },).toEqual({ name, advisory: true, },);
+    }
+    const blocking = await runCheck("typecheck - backend", "exit 1",);
+    expect(blocking.advisory,).toBe(false,);
+  });
+
+  test("a passing advisory gate is neither failed nor advisory-counted", async () => {
+    const result = await runCheck("jscpd ratchet", "exit 0",);
+    expect(result.passed,).toBe(true,);
+    expect(result.advisory,).toBe(true,);
+
+    const report = buildReport({ exitCode: 0, checks: [result,], nonBlocking: [], gpgPrecheck: null, },);
+    expect(report.summary.advisory,).toBe(0,);
+    expect(report.summary.failed,).toBe(0,);
+    expect(report.summary.passed,).toBe(1,);
   });
 });
