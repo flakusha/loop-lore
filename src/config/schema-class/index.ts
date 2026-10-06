@@ -135,5 +135,6 @@ export type ConfigSchema = ReturnType<typeof createConfigSchema>;
 export const configSchema = createConfigSchema();
 
 export { envMap, } from "./env-map";
+export { envJsonSchema, } from "./env-schema";
 export { jsonSchema, } from "./json-schema";
 export { validate, } from "./validate";
