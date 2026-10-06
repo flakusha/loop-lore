@@ -67,4 +67,3 @@ Follow-on FEAT carrying the implementation:
 BLOCKED on G15/G17 per `epic-federation-swarm-sync.md`). This ticket is closed as the
 decision being written down; the code work is not done and is tracked there.
 
-**Resolved:** 2026-10-05 registry-driven close: git issue 81b59cf (registry tip: 79e9e69da Konstantin Fedotov Close issue)
