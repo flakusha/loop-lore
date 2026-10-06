@@ -8,8 +8,12 @@ import {
   BUILTIN_PROFILES,
   DEFAULT_PROFILE_REGISTRY,
 } from "../../generation/prompt-templates";
-import { can, } from "../../users/permissions";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  requirePermissionUserId,
+} from "../http-utils";
 import { countTemplates, loadStoredTemplates, log, mergeProfiles, } from "./shared";
 
 /**
@@ -25,16 +29,8 @@ export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
     new Elysia({ name: "admin-templates-list", },)
       // ── List all profiles (builtin + custom) ───────────────
       .get(`${prefix}/admin/templates`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.settings",);
         if (typeof userId !== "string") { return userId; }
-
-        if (!can(ctx.userRole as string | null, "admin.settings",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         try {
           const stored = await loadStoredTemplates(database,);
@@ -67,16 +63,8 @@ export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
       },)
       // ── Get full registry (all profiles with templates) ────
       .get(`${prefix}/admin/templates/registry`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.settings",);
         if (typeof userId !== "string") { return userId; }
-
-        if (!can(ctx.userRole as string | null, "admin.settings",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         try {
           const stored = await loadStoredTemplates(database,);
@@ -97,16 +85,8 @@ export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
       },)
       // ── Get one profile ───────────────────────────────────
       .get(`${prefix}/admin/templates/:id`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.settings",);
         if (typeof userId !== "string") { return userId; }
-
-        if (!can(ctx.userRole as string | null, "admin.settings",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const { id, } = ctx.params as { id: string };
         const stored = await loadStoredTemplates(database,);

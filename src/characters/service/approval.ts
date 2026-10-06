@@ -27,6 +27,68 @@ export interface GetPendingReviewsOpts {
   offset?: number;
 }
 
+/** Columns every review transition reads before it decides. */
+const REVIEW_COLUMNS = ["id", "actor_type", "review_state",] as const;
+
+/**
+ * Load a reviewable actor and apply the two checks every review transition
+ * shares. `submitForReview` additionally reads `owner_id`, which it passes
+ * in as `withOwner`; the extra column is then re-used for the ownership
+ * check instead of loading the actor a second time.
+ * @param database the scheduler's database handle
+ * @param actorId actor whose review state is being read
+ * @param withOwner also select `owner_id` (submitForReview needs it)
+ * @returns the actor row, or the refusal to return as-is
+ */
+async function loadReviewable(
+  database: Kysely<DB>,
+  actorId: string,
+  withOwner: boolean,
+): Promise<
+  | { loaded: true; actor: { id: string; actor_type: string; review_state: string; owner_id?: string | null } }
+  | { loaded: false; refusal: Result<void> }
+> {
+  const actor = await database
+    .selectFrom("actors",)
+    .select(withOwner ? [...REVIEW_COLUMNS, "owner_id",] : [...REVIEW_COLUMNS,],)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+
+  if (!actor) {
+    return { loaded: false, refusal: { ok: false, error: "Character not found", }, };
+  }
+
+  if (actor.actor_type !== ActorType.Character) {
+    return { loaded: false, refusal: { ok: false, error: "Only characters are subject to review", }, };
+  }
+
+  return {
+    loaded: true,
+    actor: actor as { id: string; actor_type: string; review_state: string; owner_id?: string | null },
+  };
+}
+
+/** Write one actor's `review_state`. Every transition in this module ends
+ * with exactly this write; only the target state differs.
+ * @param database the scheduler's database handle
+ * @param actorId actor to transition
+ * @param to the state to move the actor into
+ * @returns {Promise<Result<void>>} always ok — a missing row is a no-op here
+ */
+async function setReviewState(
+  database: Kysely<DB>,
+  actorId: string,
+  to: string,
+): Promise<Result<void>> {
+  await database
+    .updateTable("actors",)
+    .set({ review_state: to, },)
+    .where("id", "=", actorId,)
+    .execute();
+
+  return { ok: true, value: undefined, };
+}
+
 /**
  * Submit a character for review. Only the owner can submit.
  * @param {object} opts
@@ -42,16 +104,9 @@ export async function submitForReview(opts: {
 },): Promise<Result<void>> {
   const { database, actorId, userId, } = opts;
 
-  const actor = await database
-    .selectFrom("actors",)
-    .select(["id", "actor_type", "owner_id", "review_state",],)
-    .where("id", "=", actorId,)
-    .executeTakeFirst();
-
-  if (!actor) { return { ok: false, error: "Character not found", }; }
-  if (actor.actor_type !== ActorType.Character) {
-    return { ok: false, error: "Only characters are subject to review", };
-  }
+  const found = await loadReviewable(database, actorId, true,);
+  if (!found.loaded) { return found.refusal; }
+  const actor = found.actor;
 
   if (actor.owner_id !== userId) { return { ok: false, error: "Only the owner can submit for review", }; }
   // New characters default to `pending_review` (migration 042), so an
@@ -61,9 +116,39 @@ export async function submitForReview(opts: {
     return { ok: false, error: `Cannot submit from state: ${actor.review_state}`, };
   }
 
+  return await setReviewState(database, actorId, ReviewState.PendingReview,);
+}
+
+/**
+ * Shared body of {@link approve} / {@link reject}: both are the same
+ * guarded `pending_review → <decision>` transition, differing only in the
+ * target state and the verb used in the refusal message.
+ * @param {object} opts
+ * @param {Kysely<DB>} opts.database
+ * @param {string} opts.actorId
+ * @param {string} opts.to decision state to apply
+ * @param {string} opts.verb verb used in the state-refusal message
+ * @returns {Promise<Result<void>>}
+ */
+async function decide(opts: {
+  database: Kysely<DB>;
+  actorId: string;
+  to: string;
+  verb: string;
+},): Promise<Result<void>> {
+  const { database, actorId, to, verb, } = opts;
+
+  const found = await loadReviewable(database, actorId, false,);
+  if (!found.loaded) { return found.refusal; }
+  const actor = found.actor;
+
+  if (actor.review_state !== ReviewState.PendingReview) {
+    return { ok: false, error: `Cannot ${verb} from state: ${actor.review_state}`, };
+  }
+
   await database
     .updateTable("actors",)
-    .set({ review_state: ReviewState.PendingReview, },)
+    .set({ review_state: to, },)
     .where("id", "=", actorId,)
     .execute();
 
@@ -85,30 +170,12 @@ export async function approve(opts: {
   adminId: string;
   reason?: string;
 },): Promise<Result<void>> {
-  const { database, actorId, } = opts;
-
-  const actor = await database
-    .selectFrom("actors",)
-    .select(["id", "actor_type", "review_state",],)
-    .where("id", "=", actorId,)
-    .executeTakeFirst();
-
-  if (!actor) { return { ok: false, error: "Character not found", }; }
-  if (actor.actor_type !== ActorType.Character) {
-    return { ok: false, error: "Only characters are subject to review", };
-  }
-
-  if (actor.review_state !== ReviewState.PendingReview) {
-    return { ok: false, error: `Cannot approve from state: ${actor.review_state}`, };
-  }
-
-  await database
-    .updateTable("actors",)
-    .set({ review_state: ReviewState.Approved, },)
-    .where("id", "=", actorId,)
-    .execute();
-
-  return { ok: true, value: undefined, };
+  return await decide({
+    database: opts.database,
+    actorId: opts.actorId,
+    to: ReviewState.Approved,
+    verb: "approve",
+  },);
 }
 
 /**
@@ -126,30 +193,12 @@ export async function reject(opts: {
   adminId: string;
   reason?: string;
 },): Promise<Result<void>> {
-  const { database, actorId, } = opts;
-
-  const actor = await database
-    .selectFrom("actors",)
-    .select(["id", "actor_type", "review_state",],)
-    .where("id", "=", actorId,)
-    .executeTakeFirst();
-
-  if (!actor) { return { ok: false, error: "Character not found", }; }
-  if (actor.actor_type !== ActorType.Character) {
-    return { ok: false, error: "Only characters are subject to review", };
-  }
-
-  if (actor.review_state !== ReviewState.PendingReview) {
-    return { ok: false, error: `Cannot reject from state: ${actor.review_state}`, };
-  }
-
-  await database
-    .updateTable("actors",)
-    .set({ review_state: ReviewState.Rejected, },)
-    .where("id", "=", actorId,)
-    .execute();
-
-  return { ok: true, value: undefined, };
+  return await decide({
+    database: opts.database,
+    actorId: opts.actorId,
+    to: ReviewState.Rejected,
+    verb: "reject",
+  },);
 }
 
 /**

@@ -13,9 +13,11 @@
  */
 import type { TemplateDetailLevel, } from "../db/enums";
 import {
+  detailVerbosity,
   matchModalityProfile,
   type MatchProfileOptions,
   type ModalityProfileRegistry,
+  pickModalityTemplate,
   resolveModalityTemplate,
 } from "./modality-templates/shared";
 
@@ -113,9 +115,7 @@ export function resolveVideoProfile(
 ): ResolvedVideoProfile {
   const registry = opts.registry ?? DEFAULT_VIDEO_PROFILE_REGISTRY;
   const profile = matchModalityProfile(registry, opts,);
-  const modeTemplates = profile.templates[mode];
-  let template = modeTemplates[detail] ?? modeTemplates.balanced;
-  if (opts.templateOverride !== undefined) { template = opts.templateOverride; }
+  const template = pickModalityTemplate(profile.templates[mode], detail, opts.templateOverride,);
   return { profile, template, resolvedProfileId: profile.id, };
 }
 
@@ -129,7 +129,7 @@ export { resolveModalityTemplate as resolveTemplate, } from "./modality-template
  * @param detail
  */
 export function buildVideoSystemPrompt(profile: VideoModelProfile, detail: TemplateDetailLevel,): string {
-  const verbosity = detail === "instant" ? "short" : (detail === "balanced" ? "concise" : "detailed");
+  const verbosity = detailVerbosity(detail,);
   const formatInstruction = profile.promptFormat === "json"
     ? "Output ONLY a JSON object with subject, motion, camera, style, duration, aspect_ratio fields."
     : profile.promptFormat === "keyframe-tags"
