@@ -12,7 +12,7 @@
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-lora-discovery-application
-**Labels:** frontend, lora, admin
+**Tags:** frontend, lora, admin
 **Issue:** `7492d4b`
 **Related:** `epic-lora-discovery-application.md`, `src/generation/lora/*`
 

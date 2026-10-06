@@ -12,7 +12,7 @@
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-assistant-gm-flows
-**Labels:** assistant, lore, generation
+**Tags:** assistant, lore, generation
 **Issue:** `8e34ac4`
 **Related:** `docs/spec/lore.md`, `src/assistant/commands/create.ts`, `src/assistant/lore/audience.ts`, `src/assistant/prompt/sections/lore.ts`, `src/db/migrations/028_lore_audience_scope.ts`
 

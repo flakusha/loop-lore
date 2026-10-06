@@ -12,7 +12,7 @@
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-character-spec
-**Labels:** character, spec, identity, race, origin, culture, lore, compatibility, trait
+**Tags:** character, spec, identity, race, origin, culture, lore, compatibility, trait
 **Related:** `FEAT-race-origin-lore-identity-model.md`, `FEAT-race-origin-lore-identity-memory-config.md`, `FEAT-origin-capture-generation-seeding.md`, `docs/spec/character-spec.md`, `src/characters/spec.ts`, `src/characters/services/personality-service.ts`, `src/assistant/lore/audience.ts`, `TASK-character-spec-unified-api.md`
 
 ## Summary

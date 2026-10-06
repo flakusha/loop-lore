@@ -11,7 +11,7 @@
 
 **Status:** Done
 **Priority:** high
-**Labels:** routes, module-resolution, dead-code
+**Tags:** routes, module-resolution, dead-code
 
 ## Summary
 

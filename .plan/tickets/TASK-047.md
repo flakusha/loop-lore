@@ -12,8 +12,8 @@
 
 **Status**: Done
 **Priority**: medium
-**Labels**: plugins, rpg, api
-**Epic**: epic-plugin-extension-points
+**Tags**: plugins, rpg, api
+**Epic:**: epic-plugin-extension-points
 **Assignee**:
 
 ## Summary

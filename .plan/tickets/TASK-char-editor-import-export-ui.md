@@ -13,9 +13,9 @@
 
 **Status**: Not Started
 **Priority**: high
-**Labels**: frontend, character-editor, import-export, ux
+**Tags**: frontend, character-editor, import-export, ux
 **Assignee**:
-**Epic**: epic-character-core-system
+**Epic:**: epic-character-core-system
 **Related**: `docs/spec/character-spec.md` §4, `docs/spec/io-formats.md`, `src/partials/characters/import-modal.html`, `src/partials/characters/export-modal.html`
 
 ## Description

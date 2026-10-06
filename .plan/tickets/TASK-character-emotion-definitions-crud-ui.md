@@ -12,7 +12,7 @@
 **Status:** Not Started
 **Priority:** P3
 **Epic:** epic-character-core-system / epic-emotion-avatar-message-binding
-**Labels:** emotion, admin, crud, definitions
+**Tags:** emotion, admin, crud, definitions
 **Related:** TASK-emotion-intent-detection.md, src/routes/character-emotions/definitions.ts
 
 ## Summary

@@ -14,9 +14,9 @@
 **Status:** Done
 **Status Note:** shipped
 **Priority**: medium
-**Labels**: chat, templates, config, lifecycle, migration, architecture
+**Tags**: chat, templates, config, lifecycle, migration, architecture
 **Assignee**:
-**Epic**: epic-story-mode-ui
+**Epic:**: epic-story-mode-ui
 **Related**: IDEA-chat-setup-templates, .plan/epics/epic-config-templates.md,
 .plan/epics/epic-chat-lifecycle-moderation.md, BUG-chat-settings-modal-invalid-mode,
 FEAT-message-swipe-replay-branch, .plan/epics/epic-config-templates.md

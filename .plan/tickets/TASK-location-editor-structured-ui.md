@@ -13,9 +13,9 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: frontend, location-editor, ux, alpine, htmx
+**Tags**: frontend, location-editor, ux, alpine, htmx
 **Assignee**:
-**Epic**: epic-world-locations
+**Epic:**: epic-world-locations
 **Related**: `src/routes/worlds/locations.ts`, `src/routes/location-explorer.ts`, `docs/spec/locations.md`
 
 ## Description

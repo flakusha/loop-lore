@@ -13,7 +13,7 @@
 **Priority:** Low
 **Effort:** Large
 **Epic:** epic-memory-knowledge-systems
-**Labels:** memory, privacy, isolation, timeline
+**Tags:** memory, privacy, isolation, timeline
 **Related:** `FEAT-memory-systems-three-tier.md`, `docs/spec/memory-system.md`, `src/memory/`
 
 ## Summary

@@ -13,9 +13,9 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: chat, messages, swipe, regenerate, replay, branch, llm
+**Tags**: chat, messages, swipe, regenerate, replay, branch, llm
 **Assignee**:
-**Epic**: epic-messages
+**Epic:**: epic-messages
 **Related**: TASK-quick-regen-button, docs/spec/messages.md,
 docs/frontend/chat/message-actions.md, docs/frontend/chat/message-bubbles.md,
 .plan/epics/epic-config-templates.md, FEAT-chat-template-config-lifecycle

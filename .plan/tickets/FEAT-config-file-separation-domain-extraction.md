@@ -11,7 +11,7 @@
 
 **Status:** Not Started
 **Priority:** High
-**Labels:** config, modularization, domain-separation
+**Tags:** config, modularization, domain-separation
 **Assignee:**
 **Epic:** EPIC-2026-39 (Config File Separation)
 

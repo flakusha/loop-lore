@@ -13,7 +13,7 @@
 
 **Status**: Done
 **Priority**: high (release-blocking — last red gate)
-**Labels**: lint, quality, release-closeout
+**Tags**: lint, quality, release-closeout
 **Assignee**:
 **Epic**:
 **Related**: `TASK-fix-eslint-errors.md` (✅ 2026-08-07), `TASK-epic-36-lint-fix-array-method-warnings.md`

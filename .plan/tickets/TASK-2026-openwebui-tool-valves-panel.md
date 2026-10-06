@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Labels:** frontend, tools, controls
+**Tags:** frontend, tools, controls
 **Summary:** Add a Chat Controls collapsible Alpine section that lets users pick a tool and override its per-tool parameter fields (valves) declared by the tool's `valvesSpec`. Changes debounce-save to a new endpoint `PATCH /api/tools/:id/valves`. On generation, overrides are injected so tools receive user-customized values.
 
 **Context:** Tools in loop-lore already declare per-tool parameter schemas (`valvesSpec`) consumed at generation time. There is no UI for users to set them per-session. Open-webui ships exactly this in `open-webui/src/lib/components/chat/Controls/Valves.svelte:41–50` — a per-tool, per-user, debounced-save panel that overrides default values.

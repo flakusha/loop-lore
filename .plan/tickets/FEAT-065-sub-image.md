@@ -16,7 +16,7 @@
 **Status:** Done
 **Status Note:** implemented — see Resolution
 **Priority**: medium
-**Labels**: generation, image, prompts, templates
+**Tags**: generation, image, prompts, templates
 **Assignee**:
 **Epic**: EPIC-38 (Output Control & Transforms)
 **Parent**: FEAT-065 (Prompt Library)

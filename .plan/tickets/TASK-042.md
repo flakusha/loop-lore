@@ -13,8 +13,8 @@
 
 **Status**: Done
 **Priority**: medium
-**Labels**: nsfw, rpg, game-mechanics
-**Epic**: epic-nsfw-game-mechanics
+**Tags**: nsfw, rpg, game-mechanics
+**Epic:**: epic-nsfw-game-mechanics
 
 ## Summary
 

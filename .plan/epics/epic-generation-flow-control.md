@@ -13,7 +13,7 @@
 ## Status: Proposed
 
 **Priority:** High
-**Labels:** generation, pause, rate-limit, concurrency, admin
+**Tags:** generation, pause, rate-limit, concurrency, admin
 
 ## Summary
 

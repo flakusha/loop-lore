@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
-**Labels:** backend, assets, elysia, e2e
+**Tags:** backend, assets, elysia, e2e
 **Regression introduced by:** c78e5466 (`fix(auth): close remaining access-control gaps in admin, assets, chat, world routes`)
 
 ## Summary

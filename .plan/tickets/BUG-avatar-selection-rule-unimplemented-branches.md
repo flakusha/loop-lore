@@ -12,7 +12,7 @@
 **Status:** Done
 **Priority:** P3
 **Epic:** epic-character-core-system
-**Labels:** avatar, selection-rule, enum-hygiene
+**Tags:** avatar, selection-rule, enum-hygiene
 **Related:** TASK-character-multi-avatar.md, src/characters/services/avatar-service/selection.ts, src/db/enums-character/avatar.ts
 
 ## Summary

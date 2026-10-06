@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** Large
-**Labels:** turning, group-chat, seen
+**Tags:** turning, group-chat, seen
 **Epic:** epic-message-seen-state
 
 ## Summary

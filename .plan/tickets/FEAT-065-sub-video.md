@@ -13,7 +13,7 @@
 
 **Status**: Done
 **Priority**: low
-**Labels**: generation, video, prompts, templates
+**Tags**: generation, video, prompts, templates
 **Assignee**:
 **Epic**: EPIC-38 (Output Control & Transforms)
 **Parent**: FEAT-065 (Prompt Library)

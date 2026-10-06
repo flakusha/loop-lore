@@ -13,7 +13,7 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: feature, characters, relationships
+**Tags**: feature, characters, relationships
 **Assignee**:
 **Epic**: EPIC-059 (Creative Studio)
 
