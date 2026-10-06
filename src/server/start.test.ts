@@ -47,7 +47,15 @@ if (ISOLATED) {
   const fakeDb = {};
   const fakeApp = {};
   const fakeHandler = () => new Response("ok",);
-  mock.module("../age-gate/controller", () => ({ initAgeGate: () => {}, }),);
+  // `config/hot-apply-consumers` reaches this module too and calls
+  // `ageGateConfig.update()` when an `ageGate.*` hot path changes, so the
+  // stub has to expose the store as well as `initAgeGate` — a mock that only
+  // stubs `initAgeGate` breaks module linking for every importer.
+  mock.module("../age-gate/controller", () => ({
+    ageGateConfig: { update: () => {}, },
+    initAgeGate: () => {},
+  }),);
+
   mock.module("../config/cert", () => ({ ensureTlsCerts: () => null, }),);
   mock.module("../config/load", () => ({ loadConfig: () => currentConfig, }),);
   mock.module("../cron", () => ({ getScheduler: () => ({ stop: () => {}, }), }),);
@@ -67,6 +75,7 @@ if (ISOLATED) {
   mock.module("../nsfw/runtime-config", () => ({
     applyStoredNsfwConfig: async () => {},
     initNsfwRuntimeConfig: () => {},
+    updateRuntimeNsfwConfig: () => {},
   }),);
 
   mock.module("../plugins", () => ({ loadAllPlugins: async () => {}, unloadAllPlugins: async () => {}, }),);

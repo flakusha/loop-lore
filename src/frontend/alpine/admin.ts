@@ -7,6 +7,7 @@ import { adminAnalytics, } from "./admin-analytics";
 import { adminApprovals, } from "./admin-approvals";
 import { adminAudit, } from "./admin-audit";
 import { adminChats, } from "./admin-chats";
+import { adminHarness, } from "./admin-harness";
 import { adminModels, } from "./admin-models";
 import { adminReview, } from "./admin-review";
 import { adminSystem, } from "./admin-system";
@@ -60,6 +61,7 @@ import { apiFetch, } from "./htmx";
     ...adminWorlds,
     ...adminChats,
     ...adminAudit,
+    ...adminHarness,
     ...adminWorldEvents,
     ...adminModels,
     ...adminReview,
@@ -172,6 +174,11 @@ import { apiFetch, } from "./htmx";
 
         case "health": {
           this.loadHealth();
+          break;
+        }
+
+        case "harness": {
+          this.loadHarness();
           break;
         }
       }
