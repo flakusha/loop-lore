@@ -12,8 +12,8 @@
 
 **Status**: Done
 **Priority**: medium
-**Labels**: items, rpg, world, inventory
-**Epic**: epic-items
+**Tags**: items, rpg, world, inventory
+**Epic:**: epic-items
 **Assignee**:
 
 ## Summary

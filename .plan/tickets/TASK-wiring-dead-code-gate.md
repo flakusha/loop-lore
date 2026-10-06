@@ -13,9 +13,9 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: tooling, dead-code, gate
+**Tags**: tooling, dead-code, gate
 **Assignee**:
-**Epic**: epic-e2e-integration-testing
+**Epic:**: epic-e2e-integration-testing
 **Related**: TASK-wiring-dead-code-gate
 
 ## Summary

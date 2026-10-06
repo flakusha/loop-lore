@@ -14,7 +14,7 @@
 **Status:** Done
 **Status Note:** stale-resolved (verified 2026-09-18)
 **Priority**: medium
-**Labels**: e2e, characters, error
+**Tags**: e2e, characters, error
 **Assignee**:
 **Epic**: (if applicable)
 **Related**: characters-flow E2E test, server log output

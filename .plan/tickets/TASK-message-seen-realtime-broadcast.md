@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Labels:** realtime, transport, seen
+**Tags:** realtime, transport, seen
 **Epic:** epic-message-seen-state
 
 ## Summary

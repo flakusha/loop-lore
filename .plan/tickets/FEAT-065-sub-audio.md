@@ -13,7 +13,7 @@
 
 **Status**: Done
 **Priority**: low
-**Labels**: generation, audio, sound, prompts, templates
+**Tags**: generation, audio, sound, prompts, templates
 **Assignee**:
 **Epic**: EPIC-38 (Output Control & Transforms)
 **Parent**: FEAT-065 (Prompt Library)

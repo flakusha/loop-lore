@@ -11,7 +11,7 @@
 
 **Status:** Done
 **Priority:** medium
-**Labels:** battle, equipment, durability
+**Tags:** battle, equipment, durability
 **Assignee**:
 **Epic:** epic-battle-integration-gaps
 **Related:** TASK-PLAN-UNWIRED-CODEOUT.md

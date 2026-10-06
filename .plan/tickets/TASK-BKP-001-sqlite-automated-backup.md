@@ -13,8 +13,8 @@
 
 **Status**: Not Started
 **Priority**: high  
-**Labels**: backup, sqlite, automation, security, cron  
-**Epic**: epic-database-backup-recovery  
+**Tags**: backup, sqlite, automation, security, cron  
+**Epic:**: epic-database-backup-recovery  
 **Assignee**: Platform Team  
 
 ## Description

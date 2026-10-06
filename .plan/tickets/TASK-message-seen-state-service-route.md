@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Labels:** messages, api, seen
+**Tags:** messages, api, seen
 **Epic:** epic-message-seen-state
 
 ## Summary

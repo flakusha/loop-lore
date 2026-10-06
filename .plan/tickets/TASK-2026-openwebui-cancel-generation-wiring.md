@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
-**Labels:** frontend, streaming, generation
+**Tags:** frontend, streaming, generation
 **Summary:** Wire the existing `cancelGeneration()` stub in `src/frontend/alpine/chat-types/core.ts:261` to the already-implemented server endpoint `DELETE /api/generation/cancel/:chatId` at `src/generation/generation-routes/cancel.ts`, then close the SSE `EventSource` and reset `isGenerating`.
 
 **Context:** The stop button in the chat composer is already rendered in `src/views/chat.html:40–46` and its `x-on:click` handler resolves to `window.cancelGeneration()`. The server side is fully shipped — `src/generation/generation-routes/cancel.ts` accepts the chat ID, aborts the active generation, and the stream emits `stream-error` when the LLM task is terminated. The Alpine method, however, is currently a no-op stub at `src/frontend/alpine/chat-types/core.ts:261`.

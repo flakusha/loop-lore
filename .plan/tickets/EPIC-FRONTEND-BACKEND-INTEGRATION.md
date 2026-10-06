@@ -13,7 +13,7 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: epic
+**Tags**: epic
 **Epic**: (if applicable)
 **Related**: git issue bd5eaa3
 

@@ -11,7 +11,7 @@
 
 **Status:** Not Started
 **Priority:** medium
-**Labels:** rpg, trade, economy, routes
+**Tags:** rpg, trade, economy, routes
 **Assignee**:
 **Epic:** epic-rpg-wiring-phase3.md
 **Related:** TASK-implement-trade.md, TASK-npc-inventory-frontend.md

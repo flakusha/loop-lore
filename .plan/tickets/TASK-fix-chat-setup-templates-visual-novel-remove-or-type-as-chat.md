@@ -12,7 +12,7 @@
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-character-core-system
-**Labels:** state-machine, schema, cleanup
+**Tags:** state-machine, schema, cleanup
 
 ## Summary
 

@@ -13,7 +13,7 @@
 
 **Status**: Not Started
 **Priority**: high
-**Labels**: byok, api-keys, llm, providers, privacy
+**Tags**: byok, api-keys, llm, providers, privacy
 **Assignee**:
 **Epic**: EPIC-byok-api-keys
 **Related**: epic-assistant-generation-extensions.md, epic-llm-queue.md

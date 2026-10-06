@@ -13,7 +13,7 @@
 
 **Status:** In Progress
 **Priority**: high
-**Labels**: epic, observability, telemetry
+**Tags**: epic, observability, telemetry
 
 ## Description
 

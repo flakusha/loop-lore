@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Labels:** generation, image-engine, comfyui
+**Tags:** generation, image-engine, comfyui
 **Summary:** When the active image backend is ComfyUI, replace the blocking HTTP poll with a WebSocket subscription on `{baseUrl}/ws?clientId={clientId}` after `queue_prompt`, draining messages until the `{"type":"executing","data":{"node":null}}` sentinel signals completion. Final outputs are fetched via `GET {baseUrl}/history/{prompt_id}`. Progress messages emit as `image-progress` SSE events through the existing `StreamBuffer`. Falls back to the current blocking HTTP path if the WS handshake fails.
 
 **Context:** Loop-lore's `generateComfyUI` in `src/generation/image-engine/comfyui.ts` blocks on the synchronous `/prompt` endpoint and only surfaces outputs after ComfyUI finishes. That hides generation latency from the user and prevents progressive UI hints. Open-webui subscribes to the ComfyUI WS feed and pipes `executing`/`progress_value` events back to the chat as streamed updates; the same approach keeps the chat UX responsive during image generation.

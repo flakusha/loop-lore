@@ -14,9 +14,9 @@
 **Status**: Done
 **Priority**: medium
 **Effort**: Medium
-**Labels**: character, creator, licensing, legal
+**Tags**: character, creator, licensing, legal
 **Assignee**:
-**Epic**: epic-licensing
+**Epic:**: epic-licensing
 **Related**:
 
 ## Summary

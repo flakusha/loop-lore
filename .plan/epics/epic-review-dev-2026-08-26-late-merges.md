@@ -13,7 +13,7 @@
 ## Status: Proposed
 
 **Priority:** Medium
-**Labels:** review, nsfw, testing, tooling
+**Tags:** review, nsfw, testing, tooling
 
 ## Summary
 

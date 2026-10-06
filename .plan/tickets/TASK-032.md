@@ -15,9 +15,9 @@
 **Status Note:** seed + matrix + audit shipped 2026-09-22
 **Priority**: medium
 **Effort**: Medium
-**Labels**: user, seeding, roles, onboarding
+**Tags**: user, seeding, roles, onboarding
 **Assignee**:
-**Epic**: epic-auth-access
+**Epic:**: epic-auth-access
 **Related**:
 
 ## Summary

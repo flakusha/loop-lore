@@ -12,8 +12,8 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: items, rpg, stats
-**Epic**: epic-items
+**Tags**: items, rpg, stats
+**Epic:**: epic-items
 **Assignee**:
 
 ## Summary

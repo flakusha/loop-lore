@@ -13,9 +13,9 @@
 **Status**: Not Started
 **Priority**: medium
 **Effort**: Medium
-**Labels**: i18n, e2e, testing
+**Tags**: i18n, e2e, testing
 **Assignee**:
-**Epic**: epic-frontend-internationalization
+**Epic:**: epic-frontend-internationalization
 **Related**: TASK-010-plurals (decomposed — plural AC deferred; `src/i18n/translator.ts` lacks `Intl.PluralRules` infra)
 
 ## Summary

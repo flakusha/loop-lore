@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**: epic-database-backup-recovery
+**Epic:**: epic-database-backup-recovery
 **Related**:
 
 ## Summary

@@ -13,7 +13,7 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: feature, characters, config
+**Tags**: feature, characters, config
 **Assignee**:
 **Epic**: EPIC-059 (Creative Studio)
 **Related**: configs/characters/*.yaml, src/config/character-loader.ts

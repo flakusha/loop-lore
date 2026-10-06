@@ -12,8 +12,8 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: items, rpg, durability
-**Epic**: epic-items
+**Tags**: items, rpg, durability
+**Epic:**: epic-items
 **Assignee**:
 
 ## Summary

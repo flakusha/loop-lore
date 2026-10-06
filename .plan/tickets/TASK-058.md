@@ -13,9 +13,9 @@
 **Status**: Not Started
 **Priority**: medium
 **Effort**: Medium
-**Labels**: transport, config, observability, docs
+**Tags**: transport, config, observability, docs
 **Assignee**:
-**Epic**: epic-transport-expansion
+**Epic:**: epic-transport-expansion
 **Related**:
 
 ## Summary

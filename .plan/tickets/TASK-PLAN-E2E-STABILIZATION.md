@@ -13,7 +13,7 @@
 
 **Status**: Done
 **Priority**: medium
-**Labels**: e2e, test-infra, release-closeout
+**Tags**: e2e, test-infra, release-closeout
 **Assignee**:
 **Epic**:
 **Related**: `TASK-e2e-browser-reliability-hardening`, `BUG-e2e-test-infrastructure-fixes`

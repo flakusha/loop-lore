@@ -15,7 +15,7 @@
 **Status:** Wontfix
 **Status Note:** duplicate-of-epic-nsfw-game-mechanics
 **Priority**: medium
-**Labels**: epic
+**Tags**: epic
 **Epic**: (if applicable)
 **Related**: git issue 30a1b4b, .plan/epics/epic-nsfw-game-mechanics.md
 

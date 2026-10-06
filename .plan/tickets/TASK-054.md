@@ -12,8 +12,8 @@
 
 **Status**: Done
 **Priority**: medium
-**Labels**: items, rpg, unique
-**Epic**: epic-items
+**Tags**: items, rpg, unique
+**Epic:**: epic-items
 **Assignee**:
 
 ## Summary

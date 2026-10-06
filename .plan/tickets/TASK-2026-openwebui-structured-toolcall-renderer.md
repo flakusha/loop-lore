@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
-**Labels:** frontend, streaming, tools
+**Tags:** frontend, streaming, tools
 **Summary:** Render SSE `event: tool_call` payloads as a live, in-place interactive tool-call block in the chat UI (Alpine `x-data` updates the block as the tool runs) rather than the current generic `stream-update` HTML bubble. On `event: tool_result`, replace the block with the result.
 
 **Context:** Loop-lore already streams tool-call lifecycle on the SSE channel via the `_streamToolCalls` handler in `src/frontend/alpine/chat-types/core.ts:23` and the emitter in `src/generation/generate-route/stream-to-client.ts:146–154` (sends `tool_call` and `tool_result` events), but the frontend has no purpose-built renderer: the payload lands in the same flow as text tokens and surfaces through the generic stream swap. A dedicated, mutable block makes pending/running/done/error state observable to the user and matches open-webui's per-block reactive model.

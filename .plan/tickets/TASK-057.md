@@ -13,9 +13,9 @@
 **Status**: Not Started
 **Priority**: medium
 **Effort**: Medium
-**Labels**: transport, http2, docs
+**Tags**: transport, http2, docs
 **Assignee**:
-**Epic**: epic-transport-expansion
+**Epic:**: epic-transport-expansion
 **Related**:
 
 ## Summary

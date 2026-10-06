@@ -12,7 +12,7 @@
 **Status Note:** `gguf-downloader-policy`
 **Priority:** high
 **Effort:** Small
-**Labels:** byok, local-models, wasm, gguf, browser
+**Tags:** byok, local-models, wasm, gguf, browser
 **Epic:** epic-byok-local-models.md
 **Related:** FEAT-byok-local-models.md, TASK-wllama-gguf-inference-engine-browser.md
 

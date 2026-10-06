@@ -12,7 +12,7 @@
 **Status:** Not Started
 **Priority:** P3
 **Epic:** epic-docs-reconciliation
-**Labels:** docs, spec, reconciliation
+**Tags:** docs, spec, reconciliation
 **Related:** src/content/*, src/aux-pipeline/*, src/image-edit/*, src/group-chat/* (frontend doc exists)
 
 ## Summary

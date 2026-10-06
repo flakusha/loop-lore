@@ -12,9 +12,9 @@
 
 **Status:** Done
 **Priority**: high
-**Labels**: bug, gm-notes, sqlite, kysely
+**Tags**: bug, gm-notes, sqlite, kysely
 **Assignee**: (next session)
-**Epic**: epic-gm-shadow-notes
+**Epic:**: epic-gm-shadow-notes
 **Related**: TASK-gm-shadow-notes.md, TASK-gm-whitenotes.md
 
 ## Description

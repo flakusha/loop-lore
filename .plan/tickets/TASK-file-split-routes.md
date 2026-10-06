@@ -13,9 +13,9 @@
 
 **Status**: Not Started
 **Priority**: high
-**Labels**: refactor, file-split, routes, god-module
+**Tags**: refactor, file-split, routes, god-module
 **Assignee**:
-**Epic**: epic-file-splitting
+**Epic:**: epic-file-splitting
 **Related**: TASK-split-messages-route, TASK-split-generate-route, TASK-chat-route-extraction
 
 ## Description

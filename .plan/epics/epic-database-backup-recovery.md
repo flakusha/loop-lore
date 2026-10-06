@@ -15,7 +15,7 @@
 
 **Last Updated**: 2026-08-14
 **Priority**: High
-**Labels**: backup, sqlite, postgresql, infrastructure
+**Tags**: backup, sqlite, postgresql, infrastructure
 
 ## Overview
 

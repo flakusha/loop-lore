@@ -12,8 +12,8 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: items, rpg, quests, ledger
-**Epic**: epic-items
+**Tags**: items, rpg, quests, ledger
+**Epic:**: epic-items
 **Assignee**:
 
 ## Summary

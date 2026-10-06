@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Labels:** frontend, streaming
+**Tags:** frontend, streaming
 **Summary:** Persist the last SSE sequence number per chat in `sessionStorage` and on `EventSource` error/close reconnect with the `Last-Event-ID` header so the server replays buffered events via `StreamBuffer.replay(fromSeq)`. Reconcile `isGenerating` against the server's `/api/generation/status/:chatId` rather than a stale local flag.
 
 **Context:** The server already accepts `Last-Event-ID` and replays buffered events: `src/generation/generation-routes/stream.ts:47` parses the header into a `fromSeq` and the underlying `src/generation/stream-buffer.ts` provides the replay API. The frontend opens a vanilla `EventSource` via `connectGenerationSSE` in `src/frontend/alpine/chat-types/core.ts` without state continuity; a transient network blip drops buffered tokens and confuses the `isGenerating` toggle. Open-webui's resilient reconnect pattern is in `open-webui/src/lib/components/chat/Messages/structuredOutput.ts:515–553` (event accumulation with persisted cursors) and the Chat.svelte SSE reconnect path.

@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Labels:** byok, local-models, wasm, inference, llama, browser
+**Tags:** byok, local-models, wasm, inference, llama, browser
 **Epic:** epic-byok-local-models.md
 **Related:** FEAT-byok-local-models.md
 

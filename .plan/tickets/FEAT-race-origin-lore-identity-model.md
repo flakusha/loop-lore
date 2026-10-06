@@ -12,7 +12,7 @@
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-memory-knowledge-systems
-**Labels:** lore, identity, race, origin, culture, audience
+**Tags:** lore, identity, race, origin, culture, audience
 **Related:** `docs/spec/lore.md` §3, `src/assistant/lore/audience.ts`, `FEAT-race-origin-lore-identity-memory-config.md`, `FEAT-origin-capture-generation-seeding.md`, `FEAT-character-spec-inclusion-race-origin-culture.md`, `src/characters/services/personality-service.ts`
 
 ## Summary

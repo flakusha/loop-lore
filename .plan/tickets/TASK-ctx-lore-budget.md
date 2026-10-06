@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**: epic-chat-context-optimization
+**Epic:**: epic-chat-context-optimization
 **Related**:
 
 ## Summary
