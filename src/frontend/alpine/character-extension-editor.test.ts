@@ -1,5 +1,8 @@
 import { describe, expect, test, } from "bun:test";
-import type { BundleCharacterRequirements, } from "../../plugins";
+// Import the type from its leaf module, NOT the `../../plugins` barrel: the
+// barrel re-exports the plugin loader, and resolving it drags the entire
+// backend into the frontend tsc project (ES2026 target, `@/` paths absent).
+import type { BundleCharacterRequirements, } from "../../plugins/types";
 import {
   characterExtensionEditorFactory,
   type CharacterExtensionsPayload,

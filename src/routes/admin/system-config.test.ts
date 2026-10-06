@@ -17,9 +17,9 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { setConfig, } from "../../admin/config";
-import { initConfigHotApply, onConfigChange, resetConfigHotApply, type ConfigChange, } from "../../config/hot-apply";
-import { createConfigSchema, } from "../../config/schema-class";
+import { type ConfigChange, initConfigHotApply, onConfigChange, resetConfigHotApply, } from "../../config/hot-apply";
 import type { Config, } from "../../config/schema";
+import { createConfigSchema, } from "../../config/schema-class";
 import type { DB, } from "../../db/schema";
 import { createLogger, getLogger, setGlobalLogger, } from "../../logger";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
@@ -128,7 +128,9 @@ describe("admin system-config routes", () => {
     setGlobalLogger(createLogger({ level: "debug", },),);
     initConfigHotApply(structuredClone(createConfigSchema().defaults,),);
     const changes: ConfigChange[] = [];
-    const unsub = onConfigChange((c,) => { changes.push(c,); },);
+    const unsub = onConfigChange((c,) => {
+      changes.push(c,);
+    },);
 
     const app = makeApp(db, "admin",);
     const res = await app.handle(
@@ -154,7 +156,9 @@ describe("admin system-config routes", () => {
     setGlobalLogger(createLogger({ level: "debug", },),);
     initConfigHotApply(structuredClone(createConfigSchema().defaults,),);
     const changes: ConfigChange[] = [];
-    const unsub = onConfigChange((c,) => { changes.push(c,); },);
+    const unsub = onConfigChange((c,) => {
+      changes.push(c,);
+    },);
 
     const app = makeApp(db, "admin",);
     const res = await app.handle(

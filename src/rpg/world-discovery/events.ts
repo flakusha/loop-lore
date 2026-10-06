@@ -74,6 +74,8 @@ export async function emitWorldEvent(db: DiscoveryDb, event: WorldEventInput,): 
  * location is charted once for the life of the world, and two actors
  * crossing the threshold on the same tick must produce one event between
  * them.
+ * @param worldId
+ * @param locationId
  */
 export function discoveredKey(worldId: string, locationId: string,): string {
   return `discovered:${worldId}:${locationId}`;
@@ -83,6 +85,9 @@ export function discoveredKey(worldId: string, locationId: string,): string {
  * Dedupe key for a convoy. Scoped to the tick AND the party: a convoy is
  * legitimately in motion on many ticks, and each is its own event, but a
  * replay of the same tick is not.
+ * @param worldId
+ * @param tick
+ * @param partyId
  */
 export function tradeRouteKey(worldId: string, tick: number, partyId: string,): string {
   return `trade-route:${worldId}:${tick}:${partyId}`;
@@ -94,6 +99,8 @@ export function tradeRouteKey(worldId: string, tick: number, partyId: string,): 
  * Read-only: the admin panel is a viewer, and nothing in this file
  * mutates. `worldId` is required — the log is world-scoped and an
  * unfiltered read would scan every world in the database.
+ * @param db
+ * @param query
  */
 export async function listWorldEvents(db: DiscoveryDb, query: WorldEventListQuery,): Promise<WorldEventPage> {
   const pageSize = Math.min(Math.max(1, query.pageSize,), MAX_PAGE_SIZE,);

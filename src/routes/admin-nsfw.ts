@@ -17,7 +17,7 @@ import type { Kysely, } from "kysely";
 import { setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
-import { getRuntimeNsfwConfig, } from "../nsfw/runtime-config";
+import { getRuntimeNsfwConfig, type NsfwRuntimeConfig, updateRuntimeNsfwConfig, } from "../nsfw/runtime-config";
 import { can, } from "../users/permissions";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
@@ -90,7 +90,12 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix 
         try {
           let requiresRestart = false;
           if (body.allowNsfw !== undefined) {
-            requiresRestart = await setConfig(database, NSFW_ALLOW_KEY, String(body.allowNsfw,), "Allow NSFW content in chats",);
+            requiresRestart = await setConfig(
+              database,
+              NSFW_ALLOW_KEY,
+              String(body.allowNsfw,),
+              "Allow NSFW content in chats",
+            );
           }
 
           if (body.nsfwMinAge !== undefined) {
@@ -98,6 +103,17 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix 
             const rr = await setConfig(database, NSFW_MIN_AGE_KEY, String(age,), "Minimum age for NSFW content",);
             requiresRestart = requiresRestart || rr;
           }
+
+          // Persisting is not enough: enforcement (and the GET above) read the
+          // runtime store, which hot-apply only mutates when a config snapshot
+          // exists. Apply directly so the toggle is live either way.
+          const patch: Partial<NsfwRuntimeConfig> = {};
+          if (body.allowNsfw !== undefined) { patch.allowNsfw = body.allowNsfw; }
+          if (body.nsfwMinAge !== undefined) {
+            patch.nsfwMinAge = Math.max(13, Math.min(25, body.nsfwMinAge,),);
+          }
+
+          if (Object.keys(patch,).length > 0) { updateRuntimeNsfwConfig(patch,); }
 
           log().info(`NSFW config updated by ${userId}`,);
           return jsonResponse({ ok: true, requires_restart: requiresRestart, },);

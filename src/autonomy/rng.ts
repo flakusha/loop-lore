@@ -60,6 +60,7 @@ export function hashSeed(...parts: Array<string | number>): number {
  * jitter drop in tick 7 cannot shift tick 8's draws, so replaying a
  * single tick in isolation is exact.
  * @param root0 seed from `AutonomyConfig.seed`; null = unseeded
+ * @param root0.seed
  * @param root0.worldId world the tick belongs to
  * @param root0.tickIndex index of the tick within the world's run
  * @returns generator producing floats in [0, 1)

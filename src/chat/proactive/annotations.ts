@@ -102,6 +102,7 @@ export async function createAnnotation(
   if (!VALID_KINDS.includes(input.kind,)) {
     throw new Error(`Invalid annotation kind: ${input.kind}`,);
   }
+
   const createdAt = new Date().toISOString();
   const ttlUntil = typeof input.ttlMs === "number" && input.ttlMs > 0
     ? new Date((parseExpiryMs(createdAt,) ?? 0) + input.ttlMs,).toISOString()
@@ -132,6 +133,7 @@ export async function createAnnotation(
       author_type: "extracted" as never,
       expires_at: annotation.ttlUntil,
     };
+
     assertValidWrite("shadow_notes", noteRow,);
     await db.insertInto("shadow_notes",).values(noteRow,).execute();
     return annotation;

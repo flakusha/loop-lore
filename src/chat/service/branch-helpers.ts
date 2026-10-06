@@ -99,6 +99,7 @@ export async function getMessagesForBranch(
     .select(["chat_id", "parent_message_id",],)
     .where("id", "=", branchId,)
     .executeTakeFirst();
+
   if (!branch || branch.chat_id !== chatId) { return []; }
   return walkMessagePath(db, chatId, branch.parent_message_id,);
 }

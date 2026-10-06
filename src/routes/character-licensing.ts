@@ -53,6 +53,7 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
           status: HttpStatus.NotFound,
         },);
       }
+
       return jsonResponse(licensing,);
     }, {
       params: ActorIdParams,
@@ -126,6 +127,7 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
         .select("actor_type",)
         .where("id", "=", actorId,)
         .executeTakeFirst();
+
       if (!actorRow || actorRow.actor_type !== "character") {
         return jsonError({
           message: "Licenses are only issued to character actors",
@@ -160,6 +162,7 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
           },)
           .where("id", "=", existing.id,)
           .execute();
+
         await recordLicenseHistory(database, actorId, effective, userId,);
         return jsonResponse({ id: existing.id, updated: true, },);
       }

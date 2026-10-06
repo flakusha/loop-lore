@@ -25,6 +25,7 @@ const MAX_LIMIT = 200;
 /**
  * Parse `?limit=` into a clamped top-N. A non-numeric or non-positive value
  * falls back to the default rather than failing the request.
+ * @param raw
  */
 function parseLimit(raw: string | null,): number {
   if (raw === null) { return DEFAULT_LIMIT; }

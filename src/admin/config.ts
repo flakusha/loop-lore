@@ -68,9 +68,12 @@ export async function getConfigValue(db: Kysely<DB>, key: string,): Promise<stri
 /**
  * Insert or update a config entry.
  * Updates updated_at on conflict.
-// hint: Structural and logic conflict. Both design and behavior differ.
  * After persisting, hot-applies the write to live consumers when the key
  * is hot-applicable (no-op for restart-required keys).
+ * @param db
+ * @param key
+ * @param value
+ * @param description
  * @returns requires_restart — matches decorateConfigEntry. When the write was
  *   not applied (no snapshot), hot keys report true (not live).
  */

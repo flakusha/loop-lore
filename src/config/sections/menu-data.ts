@@ -157,7 +157,10 @@ export function humanize(key: string,): string {
     .trim();
 }
 
-/** String-only enum options (the JSON schema may carry a null sentinel). */
+/**
+ * String-only enum options (the JSON schema may carry a null sentinel).
+ * @param values
+ */
 export function enumOptions(values: unknown[] | undefined,): string[] | undefined {
   if (!values || values.length === 0) { return undefined; }
   return values.filter((v,): v is string => typeof v === "string");

@@ -33,7 +33,12 @@ interface TickCtx {
   nowMs: number;
 }
 
-/** Process NPC movement tick — advance NPCs based on their movement patterns. */
+/**
+ * Process NPC movement tick — advance NPCs based on their movement patterns.
+ * @param db
+ * @param worldId
+ * @param opts
+ */
 export async function processMovementTick(
   db: Kysely<DB>,
   worldId: string,
@@ -84,7 +89,15 @@ export async function processMovementTick(
   return results;
 }
 
-/** Process individual NPC movement based on pattern. */
+/**
+ * Process individual NPC movement based on pattern.
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param currentLocationId
+ * @param schedule
+ * @param ctx
+ */
 export async function processNpcMovement(
   db: Kysely<DB>,
   actorId: string,
@@ -118,7 +131,15 @@ export async function processNpcMovement(
   }
 }
 
-/** Process patrol movement — follow patrol route. */
+/**
+ * Process patrol movement — follow patrol route.
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param currentLocationId
+ * @param schedule
+ * @param ctx
+ */
 export async function processPatrolMovement(
   db: Kysely<DB>,
   actorId: string,
@@ -157,6 +178,12 @@ export async function processPatrolMovement(
  *
  * Draws the destination from `ctx.rng` so the choice is reproducible under
  * an injected seed, and stamps `lastMovedAt` from `ctx.nowMs`.
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param currentLocationId
+ * @param ctx
+ * @param pattern
  */
 async function moveToRandomNeighbor(
   db: Kysely<DB>,
@@ -193,7 +220,15 @@ async function moveToRandomNeighbor(
   };
 }
 
-/** Process follow movement — follow target NPC/player. */
+/**
+ * Process follow movement — follow target NPC/player.
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param currentLocationId
+ * @param schedule
+ * @param ctx
+ */
 export async function processFollowMovement(
   db: Kysely<DB>,
   actorId: string,

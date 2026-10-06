@@ -182,6 +182,7 @@ async function persistDrop(
       value: drop.goldValue,
       weight: 1,
     };
+
     try {
       definitionId = await items.createDefinition(definition,);
     } catch (error) {
@@ -198,9 +199,11 @@ async function persistDrop(
       `persistLoot: item definition ${definitionId} not found in world ${dest.worldId}`,
     );
   }
+
   const maxStack = definition.stackable === StackableState.Stackable
     ? (definition.max_stack ?? 1)
     : 1;
+
   if (
     definition.stackable === StackableState.Unique &&
     (definition.rarity === ItemRarity.Unique || definition.rarity === ItemRarity.Artifact)
@@ -208,6 +211,7 @@ async function persistDrop(
     const existing = await items.getUniqueItem(definitionId, dest.worldId,);
     if (existing) { return [existing.id,]; }
   }
+
   const chunks = chunkQuantity(drop.quantity, maxStack,);
 
   // Grant to an NPC or place at a location — a destination is required so
@@ -222,6 +226,7 @@ async function persistDrop(
       throw new Error("persistLoot requires actorId or locationId",);
     }
   }
+
   return ids;
 }
 

@@ -205,6 +205,7 @@ export class GossipService {
    * mismatching verdict skips the fetch — no heartbeat, so the peer goes
    * stale and the sweep evicts it after the TTL (never a plaintext
    * downgrade). Spec log event: `peer.tls.failure`.
+   * @param peer
    */
   private async pinOk(peer: PeerEntry,): Promise<boolean> {
     const trust = this.trustByOrigin[peer.origin];

@@ -57,6 +57,7 @@ const ModalityCreateBody = Type.Object({
   detail_level: Type.Optional(TemplateDetailLevelSchema,),
   payload: Type.Unknown(),
 },);
+
 const ModalityUpdateBody = Type.Partial(ModalityCreateBody,);
 const IdParams = Type.Object({ id: Type.String(), },);
 
@@ -79,7 +80,11 @@ export function modalityTemplateRoutes(
 ) {
   const base = `${prefix}/templates/${modality}`;
 
-  /** 404 unless the template exists, is owned, and matches the route modality. */
+  /**
+   * 404 unless the template exists, is owned, and matches the route modality.
+   * @param id
+   * @param userId
+   */
   const ownedMatchingRow = async (id: string, userId: string,) => {
     const row = await getOwnedTemplate(database, id, userId,);
     if (!row || row.modality !== modality) { return null; }
@@ -106,11 +111,13 @@ export function modalityTemplateRoutes(
           status: HttpStatus.BadRequest,
         },);
       }
+
       const input = { ...body, modality, } as CreateTemplateInput;
       const serialized = serializeTemplateInput(input,);
       if (!serialized.ok) {
         return jsonError({ message: serialized.error, status: HttpStatus.BadRequest, },);
       }
+
       const row = await createTemplate(database, userId, input,);
       return jsonResponse({ template: row, },);
     }, {
@@ -141,6 +148,7 @@ export function modalityTemplateRoutes(
           status: HttpStatus.BadRequest,
         },);
       }
+
       // Pre-check before any write: a wrong-modality (or foreign) id must
       // 404 without mutating the row.
       const existing = await ownedMatchingRow(ctx.params.id, userId,);
