@@ -5,16 +5,11 @@ import { Elysia, t, } from "elysia";
 import { ItemVisibility, } from "../../db/enums";
 import { rankItemPower, } from "../../story/items/balance";
 import type { ItemDefinition, ItemInstance, } from "../../story/items/types";
-import { can, } from "../../users/permissions";
 import { jsonParseOr, } from "../../utils";
 import { ErrorResponse, WorldIdParams, } from "../../validation/schemas";
 import {
-  ErrorCode,
-  extractAuth,
-  HttpStatus,
-  jsonError,
   jsonResponse,
-  requireUserId,
+  withPermissionAuth,
 } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
@@ -50,70 +45,65 @@ export function itemPowerRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .get(
         `${prefix}/admin/worlds/:id/items/power-audit`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const { userRole, } = extractAuth(ctx,);
-          if (!can(userRole, "admin.system",)) {
-            return jsonError({
-              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-              status: HttpStatus.Forbidden,
-              code: ErrorCode.Forbidden,
-            },);
-          }
+          return withPermissionAuth(ctx, "admin.system", async () => {
+            const { id: worldId, } = ctx.params as { id: string };
 
-          const { id: worldId, } = ctx.params as { id: string };
+            const url = new URL(ctx.request.url,);
+            const limit = parseLimit(url.searchParams.get("limit",),);
 
-          const url = new URL(ctx.request.url,);
-          const limit = parseLimit(url.searchParams.get("limit",),);
+            const rows = await opts.database
+              .selectFrom("world_items",)
+              .innerJoin("items", "items.id", "world_items.item_id",)
+              .select([
+                "world_items.id as worldItemId",
+                "world_items.item_id as itemId",
+                "world_items.properties as instanceProperties",
+                "world_items.max_durability as maxDurability",
+                "items.name",
+                "items.category",
+                "items.rarity",
+                "items.properties as definitionProperties",
+              ],)
+              .where("world_items.world_id", "=", worldId,)
+              .execute();
 
-          const rows = await opts.database
-            .selectFrom("world_items",)
-            .innerJoin("items", "items.id", "world_items.item_id",)
-            .select([
-              "world_items.id as worldItemId",
-              "world_items.item_id as itemId",
-              "world_items.properties as instanceProperties",
-              "world_items.max_durability as maxDurability",
-              "items.name",
-              "items.category",
-              "items.rarity",
-              "items.properties as definitionProperties",
-            ],)
-            .where("world_items.world_id", "=", worldId,)
-            .execute();
+            const definitionById = new Map<string, ItemDefinition>(rows.map((row,) => [
+              row.itemId,
+              {
+                worldId,
+                name: row.name,
+                description: "",
+                category: row.category,
+                rarity: row.rarity,
+                stackable: false,
+                maxStack: 1,
+                properties: jsonParseOr<Record<string, unknown>>(row.definitionProperties, {},),
+                value: 0,
+                weight: 0,
+              },
+            ]),);
 
-          const definitionById = new Map<string, ItemDefinition>(rows.map((row,) => [
-            row.itemId,
-            {
-              worldId,
+            const instances: ItemInstance[] = rows.map((row,) => ({
+              worldItemId: row.worldItemId,
+              itemId: row.itemId,
               name: row.name,
               description: "",
               category: row.category,
               rarity: row.rarity,
-              stackable: false,
-              maxStack: 1,
-              properties: jsonParseOr<Record<string, unknown>>(row.definitionProperties, {},),
+              visibility: ItemVisibility.Visible,
+              quantity: 1,
+              properties: jsonParseOr<Record<string, unknown>>(row.instanceProperties, {},),
               value: 0,
               weight: 0,
-            },
-          ]),);
+              maxDurability: row.maxDurability,
+            }));
 
-          const instances: ItemInstance[] = rows.map((row,) => ({
-            worldItemId: row.worldItemId,
-            itemId: row.itemId,
-            name: row.name,
-            description: "",
-            category: row.category,
-            rarity: row.rarity,
-            visibility: ItemVisibility.Visible,
-            quantity: 1,
-            properties: jsonParseOr<Record<string, unknown>>(row.instanceProperties, {},),
-            value: 0,
-            weight: 0,
-            maxDurability: row.maxDurability,
-          }));
-
-          return jsonResponse({ worldId, limit, items: rankItemPower(definitionById, instances,).slice(0, limit,), },);
+            return jsonResponse({
+              worldId,
+              limit,
+              items: rankItemPower(definitionById, instances,).slice(0, limit,),
+            },);
+          },);
         },
         { params: WorldIdParams, response: { 200: t.Any(), 403: ErrorResponse, }, },
       )

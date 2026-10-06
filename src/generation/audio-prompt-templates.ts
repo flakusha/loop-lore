@@ -13,9 +13,11 @@
  */
 import type { TemplateDetailLevel, } from "../db/enums";
 import {
+  detailVerbosity,
   matchModalityProfile,
   type MatchProfileOptions,
   type ModalityProfileRegistry,
+  pickModalityTemplate,
   resolveModalityTemplate,
 } from "./modality-templates/shared";
 
@@ -123,9 +125,7 @@ export function resolveAudioProfile(
     throw new Error(`Audio profile "${profile.id}" does not support the "${subtype}" subtype`,);
   }
 
-  const subtypeTemplates = profile.templates[subtype];
-  let template = subtypeTemplates[detail] ?? subtypeTemplates.balanced;
-  if (opts.templateOverride !== undefined) { template = opts.templateOverride; }
+  const template = pickModalityTemplate(profile.templates[subtype], detail, opts.templateOverride,);
   return { profile, template, resolvedProfileId: profile.id, };
 }
 
@@ -141,7 +141,7 @@ export function buildAudioSystemPrompt(
   subtype: AudioSubtype,
   detail: TemplateDetailLevel,
 ): string {
-  const verbosity = detail === "instant" ? "short" : (detail === "balanced" ? "concise" : "detailed");
+  const verbosity = detailVerbosity(detail,);
   const formatInstruction = profile.promptFormat === "json"
     ? "Output ONLY a JSON object describing the audio."
     : profile.promptFormat === "ssml"

@@ -8,7 +8,64 @@
 // denied check]` — into reusable wrappers. See `responses.ts` for the
 // underlying `requireUserId` primitive.
 
-import { requireUserId, } from "./responses";
+import { can, type Permission, } from "../../users/permissions";
+import { jsonError, requireUserId, } from "./responses";
+import { ErrorCode, extractAuth, HttpStatus, } from "./status";
+
+/** Minimal Elysia ctx shape {@link requirePermissionUserId} reads. */
+export interface PermissionGuardCtx {
+  userId?: string | null;
+  userRole?: string | null;
+  t?: (key: string,) => string;
+}
+
+/**
+ * Narrow `ctx` to an authenticated userId whose role holds `permission`.
+ *
+ * Folds the universal `requireUserId + typeof narrow + extractAuth + can +
+ * 403 jsonError` block that precedes every admin/permission route handler.
+ * Returns the userId when allowed, else the denial Response (401 before 403).
+ * @param ctx - Elysia request context
+ * @param permission - Permission string (see users/permissions.ts)
+ * @returns the requester id, or a 401/403 Response to return verbatim
+ */
+export function requirePermissionUserId(
+  ctx: PermissionGuardCtx,
+  permission: Permission,
+): string | Response {
+  const userId = requireUserId(ctx,);
+  if (typeof userId !== "string") { return userId; }
+  const { userRole, } = extractAuth(ctx,);
+  if (can(userRole, permission,)) { return userId; }
+  return jsonError({
+    message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
+    status: HttpStatus.Forbidden,
+    code: ErrorCode.Forbidden,
+  },);
+}
+
+/**
+ * Run `fn` with the authenticated userId, or short-circuit with the denial
+ * Response from {@link requirePermissionUserId}.
+ *
+ * Folds the `requirePermissionUserId + typeof narrow` pair that otherwise
+ * precedes every admin handler, so callers stop repeating it verbatim.
+ * @param ctx - Elysia request context
+ * @param permission - Permission string (see users/permissions.ts)
+ * @param fn - body invoked with the resolved userId
+ * @returns the fn's return value or the 401/403 Response to return verbatim
+ * @example
+ *   return withPermissionAuth(ctx, "admin.system", (userId) => svc.list(userId,));
+ */
+export function withPermissionAuth<T,>(
+  ctx: PermissionGuardCtx,
+  permission: Permission,
+  fn: (userId: string,) => T,
+): T | Response {
+  const userId = requirePermissionUserId(ctx, permission,);
+  if (typeof userId !== "string") { return userId; }
+  return fn(userId,);
+}
 
 /**
  * Run `fn` with the authenticated userId, or short-circuit with a 401 response.

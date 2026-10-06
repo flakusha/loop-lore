@@ -2,10 +2,12 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { can, } from "../../users/permissions";
 import { safeFetch, } from "../../utils";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  jsonResponse,
+  requirePermissionUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -18,16 +20,8 @@ export function sdStatusRoutes(opts: AdminRouteOpts, prefix = "/api",) {
     new Elysia({ name: "admin-sd-status", },)
       // ── SD.CPP status ──────────────────────────────────────
       .get(`${prefix}/admin/sd-status`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const config = opts.config;
         const sdPort: number = (config as any).generation?.autoStart?.sdCpp?.port ?? 9010;

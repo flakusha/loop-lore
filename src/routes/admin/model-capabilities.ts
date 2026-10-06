@@ -8,9 +8,14 @@ import {
   resolveModelCapabilities,
   setModelOverride,
 } from "../../admin/model-capabilities";
-import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  ErrorCode,
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  requirePermissionUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -29,16 +34,8 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
     new Elysia({ name: "admin-model-capabilities", },)
       // ── List all ───────────────────────────────────────────
       .get(`${prefix}/admin/model-capabilities`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const provider = ctx.query?.provider as string | undefined;
         const capabilities = await listModelCapabilities(opts.database, provider,);
@@ -52,16 +49,8 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
       },)
       // ── Resolve one model ──────────────────────────────────
       .get(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const caps = await resolveModelCapabilities(
           opts.database,
@@ -87,16 +76,8 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
       },)
       // ── Set user override ──────────────────────────────────
       .patch(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const ok = await setModelOverride(
           opts.database,
@@ -144,16 +125,8 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
       },)
       // ── Clear user override ────────────────────────────────
       .delete(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const ok = await clearModelOverride(
           opts.database,

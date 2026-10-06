@@ -22,12 +22,17 @@
  */
 import { Elysia, t, } from "elysia";
 import { resolveTelemetryPiiSecret as resolveSharedTelemetryPiiSecret, } from "../../config/load/pii-safety";
-import { can, } from "../../users/permissions";
 import { jsonParseOr, } from "../../utils";
 import { parseExpiryMs, } from "../../utils/date";
 import { DOMAIN_INFO, domainKey, } from "../../utils/hkdf";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  ErrorCode,
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  requirePermissionUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 interface AuxTelemetryRow {
@@ -144,16 +149,8 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
   return new Elysia({ name: "admin-aux-telemetry", },)
     .get(`${prefix}/admin/telemetry/aux`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
+      const userId = requirePermissionUserId(ctx, "admin.system",);
       if (typeof userId !== "string") { return userId; }
-      const { userRole, } = extractAuth(ctx,);
-      if (!can(userRole, "admin.system",)) {
-        return jsonError({
-          message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-          status: HttpStatus.Forbidden,
-          code: ErrorCode.Forbidden,
-        },);
-      }
 
       const aggregateOnly = ctx.query?.aggregate_only === true || ctx.query?.aggregate_only === "true";
       const limit = Math.min(
