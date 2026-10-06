@@ -11,7 +11,7 @@
 import { mkdirSync, writeFileSync, } from "node:fs";
 import { dirname, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
-import { envMap, jsonSchema, } from "../src/config/schema-class";
+import { envJsonSchema, envMap, jsonSchema, } from "../src/config/schema-class";
 import { safeJsonStringify, } from "../src/utils";
 
 const __dirname = dirname(fileURLToPath(import.meta.url,),);
@@ -32,3 +32,7 @@ console.log(`Wrote: ${jsonSchemaPath}`,);
 const envMapPath = resolve(schemasDir, "env-map.snapshot.json",);
 writeFileSync(envMapPath, toJson(envMap(),),);
 console.log(`Wrote: ${envMapPath}`,);
+
+const envSchemaPath = resolve(schemasDir, "env.schema.json",);
+writeFileSync(envSchemaPath, toJson(envJsonSchema(),),);
+console.log(`Wrote: ${envSchemaPath}`,);
