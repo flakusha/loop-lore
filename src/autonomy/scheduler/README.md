@@ -67,7 +67,6 @@ paused) — autonomy does not require an opt-in seed row per world.
 `stateFor` and `stepOnce` synthesize the same shape for it.
 
 That guarantee covers **which worlds are selected and in what order**
-// hint: Logic changed on both sides. Requires understanding intent of each change.
 only — not what a turn does. Every turn is split into a deterministic
 tier (scheduling, selection, ordering, budget accounting) and a
 nondeterministic tier (jitter drop, wander/flee target choice, LLM

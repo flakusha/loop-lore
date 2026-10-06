@@ -17,6 +17,7 @@
 
 import { REQUIRES_RESTART_KEYS, } from "../admin/config-keys";
 import { getLogger, } from "../logger";
+import { safeJsonStringify, } from "../utils/safe-json";
 import { coerceValue, getTypeOfPath, setByPath, } from "./load/parse";
 import type { Config, } from "./schema/config";
 
@@ -96,9 +97,17 @@ function collectChangedPaths(prev: unknown, next: unknown, prefix: string, out: 
     return;
   }
 
-  if (prev !== next && !(Array.isArray(prev,) && Array.isArray(next,) && JSON.stringify(prev,) === JSON.stringify(next,))) {
-    out.push(prefix,);
+  if (prev === next) { return; }
+
+  // Arrays compare structurally. A value that fails to stringify (cyclic) is a
+  // real difference, so only two successful, equal strings count as unchanged.
+  if (Array.isArray(prev,) && Array.isArray(next,)) {
+    const a = safeJsonStringify(prev,);
+    const b = safeJsonStringify(next,);
+    if (a.ok && b.ok && a.value === b.value) { return; }
   }
+
+  out.push(prefix,);
 }
 
 /**
@@ -156,11 +165,14 @@ export function applyConfigChange(domain: string, config: Config,): ConfigChange
 
   if (changedPaths.length > 0) {
     for (const handler of handlers) {
-      try { handler(change,); } catch (error) {
+      try {
+        handler(change,);
+      } catch (error) {
         getLogger().error("config change handler failed", error instanceof Error ? error : new Error(String(error,),),);
       }
     }
   }
+
   return change;
 }
 

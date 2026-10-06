@@ -36,6 +36,7 @@ and the NSFW/moderation gate. Runtime scope remains
 `FEAT-federate-blog-system-via-activitypub-lemmy-mastodon-reddit` (blocked on G15/G16);
 this ticket's acceptance was definitional, so no shipped code was demanded here.
 
+**Resolved:** 2026-10-06 registry-driven close: git issue 81b59cf (registry tip: 79e9e69da Konstantin Fedotov Close issue)
 ## Closure (2026-10-05, federation resolution review)
 
 RESOLUTION TYPE: **decision-only — documentation, no implementation.**

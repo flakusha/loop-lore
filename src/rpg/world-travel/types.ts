@@ -8,7 +8,7 @@
  * declared here rather than in `src/db/schema*.ts` because those files
  * are GENERATED from the migrations (`bun run db:sync-types`) — editing
  * them by hand is forbidden, and the orchestrator regenerates them
- * after `036_world_travel_simulation` lands.
+ * after `040_world_travel_simulation` lands.
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";

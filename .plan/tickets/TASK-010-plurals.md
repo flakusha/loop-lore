@@ -115,3 +115,5 @@ Contract note: only a NUMERIC `count` drives selection. The shipped
 `{count} chat(s)`-style strings are reached with `String(ids.length)`, so they
 keep rendering exactly as before — verified against the real `src/public/locales`
 catalogs, which are unchanged.
+
+**Resolved:** 2026-10-06 registry-driven close: git issue fc3b325 (registry tip: 2c9a5d1bc Konstantin Fedotov Auto-closed: appended .md marker marks TASK-010-PLURALS done)

@@ -30,6 +30,8 @@ import type { AdminRouteOpts, } from "./types";
  * The query is delegated whole to `listWorldEvents`, which owns the total
  * ORDER BY and the page-size ceiling. This file owns nothing but the auth
  * and the response envelope.
+ * @param opts
+ * @param prefix
  */
 export function worldEventsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const { database, } = opts;

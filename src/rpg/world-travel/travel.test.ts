@@ -903,7 +903,7 @@ describe("party travel and migration contend for one arrival per location", () =
 
 describe("replaying a tick must not apply a party's move twice", () => {
   /**
-   * `travel_parties.current_tick` is the replay latch migration 036 nominates
+   * `travel_parties.current_tick` is the replay latch migration 040 nominates
    * ("the same idea one column over" from discovery's `last_explored_tick`).
    * The write is guarded on `current_tick < tick`, so a tick the scheduler
    * replays after a crash matches no row.

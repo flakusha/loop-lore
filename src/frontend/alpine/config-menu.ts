@@ -9,10 +9,10 @@
  * renders and batches writes. Pure helpers are exported separately so the
  * coercion/validation/grouping rules are unit-testable without a DOM.
  */
+import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
-import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 
 const log = rootLog.child({ module: "config-menu", },);
 
@@ -62,7 +62,7 @@ export function groupSections(sections: ConfigMenuSection[],): ConfigMenuGroup[]
   const groups: ConfigMenuGroup[] = [];
   for (const section of sections) {
     const name = section.group ?? UNGROUPED;
-    const existing = groups.find((g,) => g.group === name,);
+    const existing = groups.find((g,) => g.group === name);
     if (existing) { existing.sections.push(section,); }
     else { groups.push({ group: name, sections: [section,], },); }
   }
@@ -172,7 +172,7 @@ export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
         }
 
         const hash = typeof location === "undefined" ? "" : location.hash.replace(/^#/, "",);
-        const wanted = this.sections.find((s,) => s.key === hash,);
+        const wanted = this.sections.find((s,) => s.key === hash);
         this.selectSection(wanted?.key ?? this.sections[0]?.key ?? "",);
       } catch (error) {
         log.warn("Failed to load config menu", { error: String(error,), },);
@@ -187,7 +187,7 @@ export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
     selectSection(key: string,) {
       if (!key) { return; }
       this.activeSection = key;
-      this.activeGroup = this.sections.find((s,) => s.key === key,)?.group ?? UNGROUPED;
+      this.activeGroup = this.sections.find((s,) => s.key === key)?.group ?? UNGROUPED;
       if (typeof location !== "undefined" && typeof history !== "undefined") {
         history.replaceState(null, "", `#${key}`,);
       }
@@ -195,11 +195,11 @@ export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
 
     /** Sections belonging to the currently selected group. */
     activeGroupSections(): ConfigMenuSection[] {
-      return this.groups.find((g,) => g.group === this.activeGroup,)?.sections ?? [];
+      return this.groups.find((g,) => g.group === this.activeGroup)?.sections ?? [];
     },
 
     currentSection(): ConfigMenuSection | undefined {
-      return this.sections.find((s,) => s.key === this.activeSection,);
+      return this.sections.find((s,) => s.key === this.activeSection);
     },
 
     /** Record a new value, tracking dirtiness and re-validating the field. */

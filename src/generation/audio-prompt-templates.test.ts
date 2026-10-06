@@ -33,6 +33,7 @@ describe("audio builtin profiles", () => {
     expect(Object.keys(BUILTIN_AUDIO_PROFILES,).sort(),).toEqual(
       ["bark", "elevenlabs", "musicgen", "openai-tts", "piper", "riffusion", "stable-audio",],
     );
+
     expect(BUILTIN_AUDIO_PROFILES.elevenlabs!.subtypes.sort(),).toEqual(["sfx", "tts", "voice-clone",],);
     expect(BUILTIN_AUDIO_PROFILES.piper!.promptFormat,).toBe("ssml",);
     expect(BUILTIN_AUDIO_PROFILES["stable-audio"]!.promptFormat,).toBe("json",);
@@ -64,6 +65,7 @@ describe("resolveAudioProfile", () => {
     expect(resolveAudioProfile("tts", "balanced", {},).resolvedProfileId,).toBe("elevenlabs",);
     expect(resolveAudioProfile("tts", "balanced", { modelName: "tts-1-hd", },).resolvedProfileId,)
       .toBe("openai-tts",);
+
     expect(resolveAudioProfile("music", "balanced", { modelName: "MusicGen-Large", },).resolvedProfileId,)
       .toBe("musicgen",);
   });
@@ -71,6 +73,7 @@ describe("resolveAudioProfile", () => {
   test("explicit profileId wins; unknown ids fall to default", () => {
     expect(resolveAudioProfile("sfx", "balanced", { profileId: "stable-audio", },).resolvedProfileId,)
       .toBe("stable-audio",);
+
     expect(resolveAudioProfile("tts", "balanced", { profileId: "ghost", },).resolvedProfileId,)
       .toBe("elevenlabs",);
   });
@@ -78,6 +81,7 @@ describe("resolveAudioProfile", () => {
   test("throws when the resolved profile does not support the subtype", () => {
     expect(() => resolveAudioProfile("music", "balanced", { profileId: "piper", },))
       .toThrow('Audio profile "piper" does not support the "music" subtype',);
+
     expect(() => resolveAudioProfile("voice-clone", "balanced", { profileId: "openai-tts", },))
       .toThrow("voice-clone",);
   });

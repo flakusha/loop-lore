@@ -6,16 +6,16 @@
  * Event-based progress calculation, milestone detection, reward
  * distribution, and the public processEvent / advanceProgress paths.
  */
-import type { ProgressQuestRow, QuestProgressEntry, QuestState, } from "./types";
-import type { QuestConfig, QuestReward, WorldEvent, } from "../types";
+import { QuestStatus, type QuestType, } from "../../db/enums";
+import { getLogger, } from "../../logger";
+import { emitMemoryEvent, MEMORY_EVENT_QUEST_COMPLETED, } from "../../memory/events";
+import { jsonParseOr, } from "../../utils";
+import { applyEvents, } from "../events";
 import { DuplicateItemDefinitionError, } from "../items";
 import { PROGRESS_CALCULATORS, } from "../quests/registry";
-import { QuestStatus, type QuestType, } from "../../db/enums";
-import { applyEvents, } from "../events";
-import { emitMemoryEvent, MEMORY_EVENT_QUEST_COMPLETED, } from "../../memory/events";
-import { getLogger, } from "../../logger";
-import { jsonParseOr, } from "../../utils";
 import { requireQuestTransition, selectActiveQuests, upsertQuestProgress, } from "../shared/story-utils";
+import type { QuestConfig, QuestReward, WorldEvent, } from "../types";
+import type { ProgressQuestRow, QuestProgressEntry, QuestState, } from "./types";
 
 /**
  * Get completion percentage for a quest
@@ -200,7 +200,13 @@ async function applyProgress(
   };
 }
 
-/** Apply a quest's reward payload: world changes, unlocked sub-quests, items. */
+/**
+ * Apply a quest's reward payload: world changes, unlocked sub-quests, items.
+ * @param state
+ * @param questId
+ * @param worldId
+ * @param rewardsJson
+ */
 async function distributeRewards(
   state: QuestState,
   questId: string,

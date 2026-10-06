@@ -34,7 +34,7 @@ class LightLogger implements Logger {
    */
   constructor(config?: LightLoggerConfig, bindings?: LoggerBindings,) {
     this.bindings = bindings ?? {};
-    this.levelBox = { name: config?.level ?? "debug", threshold: levelFromConfig(config?.level ?? "debug"), };
+    this.levelBox = { name: config?.level ?? "debug", threshold: levelFromConfig(config?.level ?? "debug",), };
     this.transports = config?.transports ?? [];
     if (this.transports.length > 0) {
       this.queue = new AsyncLogQueue(this.transports,);
@@ -156,6 +156,7 @@ class LightLogger implements Logger {
       { level: this.levelBox.name, transports: this.transports, },
       { ...this.bindings, ...bindings, },
     );
+
     child.levelBox = this.levelBox;
     return child;
   }

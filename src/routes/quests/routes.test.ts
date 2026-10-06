@@ -95,9 +95,11 @@ describe("quest routes", () => {
     await insertQuests(db, WORLD_ID, "owner", "Find sword", "collection", 10, {
       id: QUEST_ID as never,
     },);
+
     await insertQuests(db, WORLD_ID, "owner", "Doomed quest", "collection", 5, {
       id: DOOMED_ID as never,
     },);
+
     await insertQuestProgress(db, QUEST_ID, CHAT_ID, { progress: 4, },);
   },);
 
@@ -107,6 +109,7 @@ describe("quest routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/quests`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as QuestList;
     expect(body.pagination.total,).toBe(2,);
@@ -119,14 +122,17 @@ describe("quest routes", () => {
     const missing = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/worlds/${MISSING_ID}/quests`,),
     );
+
     expect(missing.status,).toBe(404,);
     const foreign = await makeApp(db, "stranger", "user",).handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/quests`,),
     );
+
     expect(foreign.status,).toBe(404,);
     const anon = await makeApp(db,).handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/quests`,),
     );
+
     expect(anon.status,).toBe(404,);
   });
 
@@ -139,6 +145,7 @@ describe("quest routes", () => {
         category: "side",
       },),
     );
+
     expect(created.status,).toBe(201,);
     const createdBody = await created.json() as { id: string };
     expect(typeof createdBody.id,).toBe("string",);
@@ -146,6 +153,7 @@ describe("quest routes", () => {
     const listed = await authed.handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/quests`,),
     );
+
     const listedBody = await listed.json() as QuestList;
     expect(listedBody.pagination.total,).toBe(3,);
     expect(listedBody.data.some((quest,) => quest.id === createdBody.id),).toBe(true,);
@@ -155,10 +163,12 @@ describe("quest routes", () => {
     const bad = await makeApp(db, "owner", "user",).handle(
       postJson(`http://localhost/api/worlds/${WORLD_ID}/quests`, {},),
     );
+
     expect(bad.status,).toBe(422,);
     const missing = await makeApp(db, "owner", "user",).handle(
       postJson(`http://localhost/api/worlds/${MISSING_ID}/quests`, { name: "Ghost", },),
     );
+
     expect(missing.status,).toBe(404,);
   });
 
@@ -166,6 +176,7 @@ describe("quest routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/quests/${QUEST_ID}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as QuestRow;
     expect(body.id,).toBe(QUEST_ID,);
@@ -177,14 +188,17 @@ describe("quest routes", () => {
     const missing = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/quests/${MISSING_ID}`,),
     );
+
     expect(missing.status,).toBe(404,);
     const foreign = await makeApp(db, "stranger", "user",).handle(
       new Request(`http://localhost/api/quests/${QUEST_ID}`,),
     );
+
     expect(foreign.status,).toBe(404,);
     const anon = await makeApp(db,).handle(
       new Request(`http://localhost/api/quests/${QUEST_ID}`,),
     );
+
     expect(anon.status,).toBe(404,);
   });
 
@@ -193,6 +207,7 @@ describe("quest routes", () => {
     const updated = await authed.handle(
       putJson(`http://localhost/api/quests/${QUEST_ID}`, { name: "Find the axe", },),
     );
+
     expect(updated.status,).toBe(200,);
     const updatedBody = await updated.json() as QuestRow;
     expect(updatedBody.name,).toBe("Find the axe",);
@@ -200,6 +215,7 @@ describe("quest routes", () => {
     const refetched = await authed.handle(
       new Request(`http://localhost/api/quests/${QUEST_ID}`,),
     );
+
     const refetchedBody = await refetched.json() as QuestRow;
     expect(refetchedBody.name,).toBe("Find the axe",);
   });
@@ -208,6 +224,7 @@ describe("quest routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       putJson(`http://localhost/api/quests/${MISSING_ID}`, { name: "Ghost", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -215,6 +232,7 @@ describe("quest routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/quests/${QUEST_ID}/progress/${CHAT_ID}`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { quest_id: string; chat_id: string; progress: number };
     expect(body.quest_id,).toBe(QUEST_ID,);
@@ -228,6 +246,7 @@ describe("quest routes", () => {
         `http://localhost/api/quests/${DOOMED_ID}/progress/${CHAT_ID}`,
       ),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { questId: string; chatId: string; progress: number };
     expect(body.questId,).toBe(DOOMED_ID,);
@@ -239,6 +258,7 @@ describe("quest routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       postJson(`http://localhost/api/quests/${QUEST_ID}/progress`, { delta: 0, },),
     );
+
     expect(res.status,).toBe(422,);
   });
 
@@ -246,6 +266,7 @@ describe("quest routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       postJson(`http://localhost/api/quests/${QUEST_ID}/progress`, {},),
     );
+
     expect(res.status,).toBe(200,);
   });
 
@@ -253,6 +274,7 @@ describe("quest routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/quests/${MISSING_ID}/progress/${CHAT_ID}`,),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -261,16 +283,19 @@ describe("quest routes", () => {
     const deleted = await authed.handle(
       new Request(`http://localhost/api/quests/${DOOMED_ID}`, { method: "DELETE", },),
     );
+
     expect(deleted.status,).toBe(204,);
     const refetched = await authed.handle(
       new Request(`http://localhost/api/quests/${DOOMED_ID}`,),
     );
+
     expect(refetched.status,).toBe(200,);
     const refetchedBody = await refetched.json() as QuestRow;
     expect(refetchedBody.status,).toBe("abandoned",);
     const listed = await authed.handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/quests`,),
     );
+
     const listedBody = await listed.json() as QuestList;
     expect(listedBody.pagination.total,).toBe(2,);
     expect(listedBody.data.some((quest,) => quest.id === DOOMED_ID),).toBe(false,);
@@ -280,6 +305,7 @@ describe("quest routes", () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/quests/${MISSING_ID}`, { method: "DELETE", },),
     );
+
     expect(res.status,).toBe(404,);
   });
 
@@ -289,6 +315,7 @@ describe("quest routes", () => {
       id: "77777777-7777-4777-8777-777777777777" as never,
       status: "completed" as never,
     },);
+
     await insertQuests(db, WORLD_ID, "owner", "Lost quest", "collection", 5, {
       id: "88888888-8888-4888-8888-888888888888" as never,
       status: "failed" as never,
@@ -302,6 +329,7 @@ describe("quest routes", () => {
     const failed = await authed.handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/quests?status=failed`,),
     );
+
     const failedBody = await failed.json() as QuestList;
     expect(failedBody.pagination.total,).toBe(1,);
     expect(failedBody.data.map((quest,) => quest.status),).toEqual(["failed",],);
@@ -309,6 +337,7 @@ describe("quest routes", () => {
     const bogus = await authed.handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/quests?status=bogus`,),
     );
+
     expect(bogus.status,).toBe(400,);
   });
 });

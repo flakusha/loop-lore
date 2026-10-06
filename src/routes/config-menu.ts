@@ -12,12 +12,12 @@
 
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
-import { buildConfigMenu, type ConfigMenuField, type ConfigMenuSection, } from "../config/sections/menu";
-import { can, } from "../users/permissions";
 import { setConfig, } from "../admin/config";
-import { SettingsUpdateAllowedKeys, } from "../validation/schemas";
+import { buildConfigMenu, type ConfigMenuField, type ConfigMenuSection, } from "../config/sections/menu";
+import type { DB, } from "../db/schema";
+import { can, } from "../users/permissions";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
+import { SettingsUpdateAllowedKeys, } from "../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 interface ConfigMenuOpts {
@@ -33,7 +33,7 @@ interface ConfigMenuCtx {
 
 function findField(sections: ConfigMenuSection[], key: string,): ConfigMenuField | undefined {
   for (const s of sections) {
-    const f = s.fields.find((fld,) => fld.key === key,);
+    const f = s.fields.find((fld,) => fld.key === key);
     if (f) { return f; }
   }
 
@@ -63,13 +63,13 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
     }, {
       response: {
         200: t.Object({
-          role: t.Union([t.Literal("admin"), t.Literal("user"),],),
+          role: t.Union([t.Literal("admin",), t.Literal("user",),],),
           sections: t.Array(t.Object({
             key: t.String(),
             title: t.String(),
             description: t.Optional(t.String(),),
             group: t.Optional(t.String(),),
-            scope: t.Union([t.Literal("admin"), t.Literal("user"),],),
+            scope: t.Union([t.Literal("admin",), t.Literal("user",),],),
             fields: t.Array(t.Object({
               key: t.String(),
               path: t.Optional(t.String(),),
@@ -95,7 +95,7 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const isAdmin = can(ctx.userRole, "admin.system",);
-        const body = ctx.body as { key?: unknown; value?: unknown; } | undefined;
+        const body = ctx.body as { key?: unknown; value?: unknown } | undefined;
         const key = typeof body?.key === "string" ? body.key : "";
         if (!key) { return jsonError("key is required", HttpStatus.BadRequest, ErrorCode.BadRequest,); }
 
@@ -121,7 +121,9 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
             return jsonError(`Unknown settings key: ${key}`, HttpStatus.BadRequest, ErrorCode.BadRequest,);
           }
 
-          const user = await database.selectFrom("users",).select("settings",).where("id", "=", userId,).executeTakeFirst();
+          const user = await database.selectFrom("users",).select("settings",).where("id", "=", userId,)
+            .executeTakeFirst();
+
           const current = user?.settings ? jsonParseOr(user.settings, {},) : {};
           const merged = { ...current, [key]: body?.value, };
           const result = safeJsonStringify(merged,);

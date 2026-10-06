@@ -33,6 +33,9 @@ import {
 import { NoteIdParams, ShadowNoteBody, } from "./schemas";
 import type { HandlerOpts, } from "./types";
 
+import { ShadowNoteStatus, ShadowNoteVisibility, } from "../../db/enums-gm";
+import { assertValidWrite, } from "../../db/validators/enforce";
+
 // Base `data_version` 0 projection for `shadow_notes` (columns added by
 // migration 034). GM-authored content, so integrity tracking matters.
 registerContentVersion("shadow_notes", 0, [
@@ -42,19 +45,6 @@ registerContentVersion("shadow_notes", 0, [
   "status",
   "visibility",
   "author_type",
-],);
-
-import { ShadowNoteStatus, ShadowNoteVisibility, } from "../../db/enums-gm";
-import { assertValidWrite, } from "../../db/validators/enforce";
-
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-/**
- * GM Notes — shadow notes CRUD.
- */
-// Base `data_version` 0 projection for `shadow_notes` (columns added by
-// migration 034). GM-authored content, so integrity tracking matters.
-registerContentVersion("shadow_notes", 0, [
 ],);
 
 /**
@@ -155,6 +145,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             .limit(pageSize,)
             .offset(offset,)
             .execute();
+
           const countResult = await database
             .selectFrom("shadow_notes",)
             .select(database.fn.countAll<number>().as("total",),)
@@ -195,6 +186,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             author_type: (body.authorType ?? "user") as never,
             expires_at: body.expiresAt ?? null,
           };
+
           assertValidWrite("shadow_notes", noteRow,);
           await database.insertInto("shadow_notes",).values(noteRow,).execute();
 
@@ -231,6 +223,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", noteId,)
             .where("chat_id", "=", id,)
             .executeTakeFirst();
+
           if (Number(result?.numUpdatedRows ?? 0,) === 0) {
             return notFound("Shadow note not found",);
           }

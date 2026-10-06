@@ -43,6 +43,7 @@ const PLURAL_CATEGORIES: Record<string, true> = {
 /**
  * A node is plural-variant data when every one of its keys is a CLDR category.
  * Requiring ALL keys keeps a plain enumeration containing `other` a normal subtree.
+ * @param node
  */
 export function isPluralNode(
   node: TranslationNode | TranslationMap,
@@ -55,6 +56,8 @@ export function isPluralNode(
 /**
  * Pick the variant for `category` from a plural node.
  * Falls back to `other` when the selected category is absent from the catalog.
+ * @param variants
+ * @param category
  */
 export function selectVariant(
   variants: PluralTranslation,
@@ -71,6 +74,7 @@ const ruleCache = new Map<Locale, Intl.PluralRules>();
 /**
  * Build the plural-category selector for a locale.
  * An unusable tag degrades to the runtime default locale's rules.
+ * @param locale
  */
 export function pluralRuleFor(locale: Locale,): PluralRuleFn {
   const cached = ruleCache.get(locale,);

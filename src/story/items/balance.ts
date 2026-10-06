@@ -65,7 +65,10 @@ export function driftCapFor(rarity: ItemRarity, category: ItemCategory,): number
   return Math.min(DRIFT_CAPS[rarity] ?? 0, powerBudgetFor(category,).maxDriftPct,);
 }
 
-/** Budget lookup that never returns undefined for an out-of-enum category. */
+/**
+ * Budget lookup that never returns undefined for an out-of-enum category.
+ * @param category
+ */
 export function powerBudgetFor(category: ItemCategory,): ItemPowerBudget {
   return ITEM_POWER_BUDGETS[category] ?? ITEM_POWER_BUDGETS[ItemCategory.Other];
 }
@@ -86,11 +89,15 @@ export class ItemPowerBudgetError extends Error {
   }
 }
 
-/** Parse a persisted `properties.drift` value into a well-formed drift record. */
+/**
+ * Parse a persisted `properties.drift` value into a well-formed drift record.
+ * @param value
+ */
 export function parseItemDrift(value: unknown,): ItemDrift {
   if (typeof value !== "object" || value === null || Array.isArray(value,)) {
     return { statMultipliers: {}, battleUses: 0, lastDriftAt: "", };
   }
+
   const raw = value as Record<string, unknown>;
   const statMultipliers: Record<string, number> = {};
   const rawMultipliers = raw.statMultipliers;
@@ -99,6 +106,7 @@ export function parseItemDrift(value: unknown,): ItemDrift {
       if (typeof amount === "number" && Number.isFinite(amount,)) { statMultipliers[stat] = amount; }
     }
   }
+
   return {
     statMultipliers,
     battleUses: typeof raw.battleUses === "number" ? raw.battleUses : 0,
@@ -106,16 +114,23 @@ export function parseItemDrift(value: unknown,): ItemDrift {
   };
 }
 
-/** Sum of `stat_delta` magnitudes across an item's effects. */
+/**
+ * Sum of `stat_delta` magnitudes across an item's effects.
+ * @param effects
+ */
 export function statDeltaTotal(effects: ItemEffect[],): number {
   let total = 0;
   for (const effect of effects) {
     if (effect.kind === "stat_delta") { total += Math.abs(effect.amount,); }
   }
+
   return total;
 }
 
-/** Sum of absolute drift multipliers carried by an instance. */
+/**
+ * Sum of absolute drift multipliers carried by an instance.
+ * @param drift
+ */
 export function driftTotal(drift: ItemDrift,): number {
   let total = 0;
   for (const amount of Object.values(drift.statMultipliers,)) { total += Math.abs(amount,); }
@@ -142,6 +157,7 @@ export function validateItemPower(
   if (statDelta > budget.maxStatDelta) {
     return { ok: false, field: "statDelta", reason: `statDelta ${statDelta} exceeds ${budget.maxStatDelta}`, };
   }
+
   if (effects.length > budget.maxEffectCount) {
     return {
       ok: false,
@@ -149,6 +165,7 @@ export function validateItemPower(
       reason: `effectCount ${effects.length} exceeds ${budget.maxEffectCount}`,
     };
   }
+
   if (!instance) { return { ok: true, }; }
   const maxDurability = instance.maxDurability ?? 0;
   if (maxDurability > budget.maxDurability) {
@@ -158,12 +175,14 @@ export function validateItemPower(
       reason: `maxDurability ${maxDurability} exceeds ${budget.maxDurability}`,
     };
   }
+
   const drift = parseItemDrift(instance.properties.drift,);
   for (const [stat, amount,] of Object.entries(drift.statMultipliers,)) {
     if (Math.abs(amount,) > budget.maxDriftPct) {
       return { ok: false, field: "drift", reason: `drift.${stat} ${amount} exceeds ${budget.maxDriftPct}`, };
     }
   }
+
   return { ok: true, };
 }
 
@@ -211,6 +230,7 @@ export function rankItemPower(
       score: maxStatDelta + drift + maxDurability,
     },);
   }
+
   scored.sort((a, b,) => (b.score - a.score) || a.worldItemId.localeCompare(b.worldItemId,));
   return scored;
 }

@@ -33,6 +33,7 @@ beforeAll(async () => {
   for (const [id, name,] of [[OWNER, "GM",], [HERO, "Aria",], [VILLAIN, "Drak",], [MEMBER, "Peon",],] as const) {
     await insertActors(db, name, { id: id as never, actor_type: "user" as never, },);
   }
+
   await insertChats(db, "Story Chat", OWNER, { id: CHAT_ID as never, mode: "story" as never, },);
   await insertChatParticipants(db, CHAT_ID, OWNER, { role_in_chat: "owner" as never, },);
   await insertChatParticipants(db, CHAT_ID, HERO, { role_in_chat: "member" as never, },);
@@ -63,6 +64,7 @@ async function guidance(): Promise<GmGuidance> {
     .select("gm_config",)
     .where("id", "=", CHAT_ID,)
     .executeTakeFirstOrThrow();
+
   const parsed = JSON.parse(row.gm_config ?? "{}",) as { gmGuidance?: GmGuidance };
   return parsed.gmGuidance ?? { constraints: [], turnPriority: {}, };
 }
@@ -131,6 +133,7 @@ describe("gm guidance commands", () => {
       .select(["actor_id", "content_type",],)
       .where("chat_id", "=", CHAT_ID,)
       .execute();
+
     const skip = rows.find((row,) => row.content_type === "turn_skip");
     expect(skip?.actor_id,).toBe(VILLAIN,);
     expect(skip?.content_type,).toBe("turn_skip",);
@@ -159,6 +162,7 @@ describe("gm guidance commands", () => {
       .select("gm_config",)
       .where("id", "=", directId,)
       .executeTakeFirstOrThrow();
+
     const parsed = JSON.parse(row.gm_config ?? "{}",) as { gmGuidance?: GmGuidance };
     expect(parsed.gmGuidance?.sceneDescription,).toBe("Tense silence",);
   });

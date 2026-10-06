@@ -17,7 +17,10 @@ import type {
   VideoPromptFormat,
 } from "./video-prompt-templates";
 
-/** Per-mode template bodies for one prompt format. */
+/**
+ * Per-mode template bodies for one prompt format.
+ * @param format
+ */
 function formatBodies(format: VideoPromptFormat,): Record<VideoGenMode, string> {
   if (format === "keyframe-tags") {
     return {
@@ -27,12 +30,15 @@ function formatBodies(format: VideoPromptFormat,): Record<VideoGenMode, string> 
       last: "[0s: {{lastMessage}}] [2s: {{motion}}]",
     };
   }
+
   if (format === "json") {
     const fields =
       '{"subject": "{{subject}}", "motion": "{{motion}}", "camera": "{{cameraMovement}}", "style": "{{style}}", "duration": "{{duration}}", "aspect_ratio": "{{aspectRatio}}"}';
+
     const body = `Output JSON: ${fields}`;
     return { text2video: body, image2video: body, scene: body, last: body, };
   }
+
   return {
     text2video: "Subject: {{subject}}. Motion: {{motion}}.",
     image2video: "Animate the source frame of {{subject}}. Motion: {{motion}}.",
@@ -41,7 +47,11 @@ function formatBodies(format: VideoPromptFormat,): Record<VideoGenMode, string> 
   };
 }
 
-/** Layer per-mode bodies + family style into the three detail levels. */
+/**
+ * Layer per-mode bodies + family style into the three detail levels.
+ * @param format
+ * @param style
+ */
 function videoTemplates(
   format: VideoPromptFormat,
   style: string,
@@ -55,12 +65,14 @@ function videoTemplates(
     const levels = { instant: bodies.text2video, balanced: bodies.text2video, detailed: bodies.text2video, };
     return { text2video: levels, image2video: levels, scene: levels, last: levels, };
   }
+
   const wrap = (body: string,) => ({
     instant: `${body} {{duration}} {{aspectRatio}}.`,
     balanced: `${body} Style: {{style}} (${style}). {{duration}}, {{aspectRatio}}.`,
     detailed: `${body} Style: {{style}} (${style}). Camera: {{cameraMovement}}.` +
       ` {{duration}}, {{aspectRatio}}. Avoid: {{negativePrompt}}.`,
   });
+
   return {
     text2video: wrap(bodies.text2video,),
     image2video: wrap(bodies.image2video,),

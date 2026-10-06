@@ -73,6 +73,7 @@ export async function applyDrift(
   if (typeof event.stat !== "string" || event.stat.trim().length === 0 || !Number.isFinite(event.amount,)) {
     return null;
   }
+
   const db = trx ?? state.db;
   const row = await db
     .selectFrom("world_items",)
@@ -81,6 +82,7 @@ export async function applyDrift(
     .where("world_items.id", "=", worldItemId,)
     .where("world_items.world_id", "=", worldId,)
     .executeTakeFirst();
+
   if (!row) { return null; }
   const properties = jsonParseOr<Record<string, unknown>>(row.properties, {},);
   const drift = parseItemDrift(properties.drift,);
@@ -97,6 +99,7 @@ export async function applyDrift(
     .where("id", "=", worldItemId,)
     .where("world_id", "=", worldId,)
     .execute();
+
   return drift;
 }
 

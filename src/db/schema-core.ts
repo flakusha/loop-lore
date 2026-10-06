@@ -414,6 +414,7 @@ export interface Actors {
   llm_assist_enabled: Generated<number>;
   avatar_focus_x: Generated<number>;
   avatar_focus_y: Generated<number>;
+  review_state: Generated<string>;
 }
 
 // ── character_arc ────────────────────────────────────────────
@@ -683,6 +684,7 @@ export interface Chats extends AuditColumns {
   active_branch_id: string | null;
   autonomy_config: Generated<string>;
   federation_consented_at: string | null;
+  purpose: string | null;
 }
 
 // ── chat_random_events ────────────────────────────────────────────
@@ -1450,7 +1452,6 @@ export interface ChatWardrobeOverrides {
   updated_at: Generated<string>;
 }
 
-<<<<<<< ours
 // ── mesh_dek_exports ────────────────────────────────────────────
 export interface MeshDekExports {
   id: Generated<string>;
@@ -1461,7 +1462,6 @@ export interface MeshDekExports {
   created_at: Generated<string>;
   revoked_at: string | null;
 }
-<<<<<<< ours
 
 // ── mesh_outbox ────────────────────────────────────────────
 export interface MeshOutbox {
@@ -1475,35 +1475,84 @@ export interface MeshOutbox {
   created_at: Generated<string>;
 }
 
-||||||| base
-// ── mesh_dek_exports ────────────────────────────────────────────
-export interface MeshDekExports {
-  id: Generated<string>;
-  chat_id: string;
-  key_id: string;
-  peer_origin: string;
-  sender_origin: string;
+// ── task_dependencies ────────────────────────────────────────────
+export interface TaskDependencies {
+  task_id: string;
+  depends_on_task_id: string;
+  on_failure: Generated<string>;
   created_at: Generated<string>;
-  revoked_at: string | null;
 }
 
-// ── scheduled_messages ────────────────────────────────────────────
-export interface ScheduledMessages {
+// ── travel_parties ────────────────────────────────────────────
+export interface TravelParties {
   id: Generated<string>;
-  chat_id: string;
-  author_id: string;
-  body: string;
-  send_at: string;
+  world_id: string;
+  name: string;
+  kind: Generated<string>;
+  cadence: Generated<string>;
+  route: Generated<string>;
+  route_index: Generated<number>;
+  steps_per_tick: Generated<number>;
+  travel_progress: Generated<number>;
+  current_location_id: string | null;
+  current_tick: Generated<number>;
   status: Generated<string>;
+  blocked_until_tick: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
 }
 
-// ── message_reminders ────────────────────────────────────────────
-export interface MessageReminders {
+// ── npc_migrations ────────────────────────────────────────────
+export interface NpcMigrations {
   id: Generated<string>;
-  message_id: string;
-  user_id: string;
-  remind_at: string;
+  world_id: string;
+  actor_id: string;
+  origin_location_id: string | null;
+  destination_location_id: string | null;
+  depart_tick: number;
+  arrive_tick: number;
+  cadence: Generated<string>;
+  status: Generated<string>;
+  last_depart_tick: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
 }
+
+// ── world_travel_budget ────────────────────────────────────────────
+export interface WorldTravelBudget {
+  world_id: Generated<string>;
+  spent: Generated<number>;
+  ceiling: Generated<number>;
+  window_start_tick: Generated<number>;
+  updated_at: Generated<string>;
+}
+
+// ── world_event_log ────────────────────────────────────────────
+export interface WorldEventLog {
+  id: Generated<string>;
+  world_id: string;
+  event_type: string;
+  subject_id: string | null;
+  actor_id: string | null;
+  payload: Generated<string>;
+  tick_index: number;
+  dedupe_key: string;
+  created_at: Generated<string>;
+}
+
+// ── location_discovery ────────────────────────────────────────────
+export interface LocationDiscovery {
+  world_id: string;
+  location_id: string;
+  actor_id: string;
+  progress: Generated<number>;
+  last_explored_tick: Generated<number>;
+  discovered: Generated<number>;
+  discovered_tick: number | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
 // ── scheduled_messages ────────────────────────────────────────────
 export interface ScheduledMessages {
   id: Generated<string>;

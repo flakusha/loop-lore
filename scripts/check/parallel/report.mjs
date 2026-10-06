@@ -66,14 +66,8 @@ export function reportResults(results,) {
   for (const result of results) {
     if (result.skipped) {
       console.log(`SKIP: ${result.name}`,);
-      // Two distinct causes reach this branch (see runCheck): the issue CLI
-      // being unreachable, and a NOOP_OK command. Printing the giwt marker for
-      // both would attribute a no-op gate to giwt, so they get separate lines.
-      // NOOP_OK is deliberately cause-agnostic - the weave gate emits it when
-      // WEAVE_BASE is unset, the coverage/e2e builders emit it when the diff
-      // scope matches nothing - so this line names the condition, not a cause
-      // it cannot actually see. A skip that misattributes itself is worse
-      // than one that stays general.
+      // A skip is either the issue CLI being unreachable or a NOOP_OK command;
+      // printing the giwt marker for both would misattribute a no-op gate.
       if (result.command === NOOP_OK) {
         console.log(
           `  no-op gate (${NOOP_OK}) - nothing to evaluate. ` +

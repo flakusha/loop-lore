@@ -27,6 +27,7 @@ function makeApp(db: Kysely<DB>, userRole: string | null,) {
     userId: userRole ? `test-user-${userRole}` : null,
     userRole,
   }));
+
   return app.use(itemPowerRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
@@ -47,11 +48,13 @@ beforeAll(async () => {
   const swordId = await insertItems(db, TEST_WORLD, "Sword", ItemCategory.Weapon, {
     properties: JSON.stringify({ effects: [{ kind: "stat_delta", stat: "damage", amount: 5, },], },),
   },);
+
   await insertWorldItems(db, TEST_WORLD, swordId, { max_durability: 50, },);
 
   const potionId = await insertItems(db, TEST_WORLD, "Potion", ItemCategory.Consumable, {
     properties: JSON.stringify({ effects: [{ kind: "stat_delta", stat: "heal", amount: 1, },], },),
   },);
+
   await insertWorldItems(db, TEST_WORLD, potionId, {
     max_durability: 2,
     properties: JSON.stringify({ drift: { statMultipliers: { damage: 0.3, }, }, },),
@@ -67,6 +70,7 @@ describe("admin item power-audit route", () => {
     const res = await makeApp(db, null,).handle(
       new Request(`http://localhost/api/admin/worlds/${TEST_WORLD}/items/power-audit`,),
     );
+
     expect(res.status,).toBe(401,);
   });
 
@@ -74,6 +78,7 @@ describe("admin item power-audit route", () => {
     const res = await makeApp(db, "user",).handle(
       new Request(`http://localhost/api/admin/worlds/${TEST_WORLD}/items/power-audit`,),
     );
+
     expect(res.status,).toBe(403,);
   });
 
@@ -81,12 +86,14 @@ describe("admin item power-audit route", () => {
     const res = await makeApp(db, "admin",).handle(
       new Request(`http://localhost/api/admin/worlds/${TEST_WORLD}/items/power-audit`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as {
       worldId: string;
       limit: number;
       items: { name: string; score: number; maxStatDelta: number; drift: number; maxDurability: number }[];
     };
+
     expect(body.worldId,).toBe(TEST_WORLD,);
     expect(body.limit,).toBe(20,);
     expect(body.items.map((i,) => i.name),).toEqual(["Sword", "Potion",],);
@@ -98,6 +105,7 @@ describe("admin item power-audit route", () => {
     const res = await makeApp(db, "admin",).handle(
       new Request(`http://localhost/api/admin/worlds/${EMPTY_WORLD}/items/power-audit`,),
     );
+
     expect(res.status,).toBe(200,);
     const body = await res.json() as { items: unknown[] };
     expect(body.items,).toEqual([],);
@@ -119,6 +127,7 @@ describe("admin item power-audit route", () => {
     const res = await makeApp(db, "admin",).handle(
       new Request("http://localhost/api/admin/worlds/not-a-uuid/items/power-audit",),
     );
+
     expect(res.status,).toBe(422,);
   });
 });

@@ -101,7 +101,12 @@ export function createPlanRecompute(opts: PlanRecomputeOptions,): PlanRecomputeF
   };
 }
 
-/** Default generator: resolve the provider, then the canonical LLM helper. */
+/**
+ * Default generator: resolve the provider, then the canonical LLM helper.
+ * @param args
+ * @param args.db
+ * @param args.config
+ */
 function callLlmGenerator(args: { db: Kysely<DB>; config?: Config },): PlanTextGenerator {
   return async (req,) => {
     const config = args.config ?? loadConfig();
