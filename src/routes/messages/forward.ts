@@ -119,7 +119,8 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
         );
 
         const id = uid();
-        const idempotencyKey = body.idempotencyKey ?? null;
+        // Empty string is "no key": storing "" would collide on the unique index.
+        const idempotencyKey = body.idempotencyKey ? body.idempotencyKey : null;
         const existingId = idempotencyKey
           ? await findByIdempotencyKey(database, targetChatId, idempotencyKey,)
           : null;
@@ -129,7 +130,7 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
 
         try {
-          await insertUserMessageWithRetry(database, {
+          const inserted = await insertUserMessageWithRetry(database, {
             id,
             chatId: targetChatId,
             actorId,
@@ -140,6 +141,13 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
             contentEncoding: contentEncoding as ContentEncoding,
             idempotencyKey,
           },);
+
+          // Idempotency race replay: a concurrent forward with the same key
+          // committed first. Respond with the winner before ANY post-insert
+          // side effect (moderation, attachments) can double-fire.
+          if (inserted.replayedId) {
+            return jsonCreated({ id: inserted.replayedId, droppedAttachments: 0, },);
+          }
         } catch (err) {
           if (err instanceof SwipeInsertExhaustedError) {
             return jsonResponse(
