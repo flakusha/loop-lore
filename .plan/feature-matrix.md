@@ -296,7 +296,7 @@ Total tickets: **3286** — untagged: **2755** — unbound to epic: **1664**
 | data-model | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | database | 13 | 3 | 0 | 0 | 2 | 0 | 8 |
 | day-night | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| db | 10 | 1 | 0 | 7 | 0 | 0 | 2 |
+| db | 10 | 2 | 0 | 6 | 0 | 0 | 2 |
 | db-types | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | dead-code | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
 | debt | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -863,7 +863,7 @@ Total tickets: **3286** — untagged: **2755** — unbound to epic: **1664**
 | rss | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | rules | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
 | ruleset | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| runtime | 3 | 0 | 1 | 1 | 0 | 0 | 1 |
+| runtime | 3 | 1 | 1 | 0 | 0 | 0 | 1 |
 | safety | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | sandbox | 5 | 0 | 0 | 0 | 1 | 0 | 4 |
 | sandboxing | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -955,7 +955,7 @@ Total tickets: **3286** — untagged: **2755** — unbound to epic: **1664**
 | standalone | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | standards | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | standing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| state-machine | 4 | 0 | 0 | 2 | 1 | 0 | 1 |
+| state-machine | 4 | 1 | 0 | 1 | 1 | 0 | 1 |
 | static | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | stats | 3 | 0 | 2 | 0 | 0 | 0 | 1 |
 | status-effects | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1078,7 +1078,7 @@ Total tickets: **3286** — untagged: **2755** — unbound to epic: **1664**
 | ux | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
 | validation | 7 | 1 | 2 | 0 | 0 | 0 | 4 |
 | validator | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
-| validators | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| validators | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | variant | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | variants | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | vector | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
@@ -1135,7 +1135,7 @@ Total tickets: **3286** — untagged: **2755** — unbound to epic: **1664**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2755 | 1124 | 59 | 1226 | 36 | 0 | 310 |
+| (untagged) | 2755 | 1129 | 59 | 1221 | 36 | 0 | 310 |
 
 ## By epic × status
 
@@ -1606,7 +1606,7 @@ Total tickets: **3286** — untagged: **2755** — unbound to epic: **1664**
 | Visual Novel Mode; Immersion & Presentation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Wardrobe / Loadout Avatar Variants | 8 | 4 | 0 | 4 | 0 | 0 | 0 |
 | World & Locations | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| (unbound) | 1664 | 675 | 57 | 525 | 51 | 0 | 356 |
+| (unbound) | 1664 | 681 | 57 | 519 | 51 | 0 | 356 |
 
 ## Ticket detail
 

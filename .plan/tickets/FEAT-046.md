@@ -1,6 +1,6 @@
 ---
 title: "FEAT-046: Branch navigation API"
-status: Not Started
+status: Done
 priority: medium
 labels: [feature, chat, api]
 epic: epic-conversation-branching
@@ -8,7 +8,7 @@ related: [FEAT-045, FEAT-047]
 ---
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -56,3 +56,5 @@ The data model (FEAT-045) provides storage. This ticket provides the API surface
 
 - Blocked by: FEAT-045 (branching data model)
 - Blocks: FEAT-047 (branch UI controls)
+
+**Resolved:** 2026-10-06 registry-driven close: git issue dc6e174 (registry tip: 8ae8f07d3 Konstantin Fedotov Auto-closed: appended .md marker marks FEAT-046 done)
