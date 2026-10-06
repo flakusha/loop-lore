@@ -3,7 +3,7 @@
 
 # BUG: giwt new --scope without --tickets attempts an empty commit and exits 1
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Tags:** infra
@@ -18,6 +18,7 @@ Observed 2026-10-04 running giwt new review-bugs-2026-10-04 --scope ...: branch,
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+**Resolved:** 2026-10-05T14:31:46.864Z Fixed in giwt 2f0e8c9: applyScopedTickets skips add/commit when zero tickets resolve; scope marker still written

@@ -505,7 +505,7 @@ Total tickets: **3286** — untagged: **2755** — unbound to epic: **1664**
 | incentives | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | index | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | inference | 3 | 1 | 0 | 0 | 1 | 0 | 1 |
-| infra | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| infra | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | infrastructure | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | ingestion | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | instance-switcher | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1606,7 +1606,7 @@ Total tickets: **3286** — untagged: **2755** — unbound to epic: **1664**
 | Visual Novel Mode; Immersion & Presentation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Wardrobe / Loadout Avatar Variants | 8 | 4 | 0 | 4 | 0 | 0 | 0 |
 | World & Locations | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| (unbound) | 1664 | 674 | 57 | 525 | 51 | 0 | 357 |
+| (unbound) | 1664 | 675 | 57 | 525 | 51 | 0 | 356 |
 
 ## Ticket detail
 

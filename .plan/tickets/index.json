@@ -3524,7 +3524,7 @@
       "infra"
     ],
     "source": ".plan/tickets/BUG-giwt-new-scope-without-tickets-attempts-an-empty-commit-and-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-GIWT-PLAN-GATES-REPORT-112-PHANTOM-ACTIONABLE-ISSUES-WHEN-TH": {
     "epic": "",
