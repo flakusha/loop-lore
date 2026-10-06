@@ -58,6 +58,48 @@ export interface TurnSelectorOptions {
 }
 
 /**
+ * Actor IDs currently impersonated in this chat's scope.
+ *
+ * Excluded from AI turn selection — a user impersonating a character drives
+ * that character's turns, not the LLM. Scope mirrors updateImpersonation()
+ * (chat/service/participants.ts): chats sharing the same world AND
+ * current_location_id; detached chats fall back to world level; world-less
+ * chats to the chat itself.
+ * @param db
+ * @param chatId
+ * @returns Impersonated actor IDs in scope.
+ */
+export async function fetchImpersonatedActorIds(db: Kysely<DB>, chatId: string,): Promise<Set<string>> {
+  const chat = await db
+    .selectFrom("chats",)
+    .select(["world_id", "current_location_id",],)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+
+  let impersonatedQuery = db
+    .selectFrom("chat_participants",)
+    .innerJoin("chats", "chats.id", "chat_participants.chat_id",)
+    .select("chat_participants.impersonate_actor_id",)
+    .where("chat_participants.impersonate_actor_id", "is not", null,);
+
+  if (chat?.world_id) {
+    impersonatedQuery = impersonatedQuery.where("chats.world_id", "=", chat.world_id,);
+    if (chat.current_location_id) {
+      impersonatedQuery = impersonatedQuery
+        .where("chats.current_location_id", "=", chat.current_location_id,);
+    }
+  } else {
+    impersonatedQuery = impersonatedQuery.where("chat_participants.chat_id", "=", chatId,);
+  }
+
+  const rows = await impersonatedQuery.execute();
+
+  return new Set(
+    rows.map((r,) => r.impersonate_actor_id).filter((id,): id is string => id !== null),
+  );
+}
+
+/**
  * Select the next actor to generate in a group chat.
  * @param options
  * @returns Actor ID to generate as, or null if no generation should occur
@@ -99,10 +141,16 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
 
   const aiParticipants: (typeof participants)[number][] = [];
   const now = Date.now();
+  // Impersonated actors never auto-generate — the impersonating user speaks
+  // for them, not the LLM (parity with group-cascade.ts).
+  const impersonatedActorIds = await fetchImpersonatedActorIds(db, chatId,);
   for (const p of participants) {
     // Outbound mute enforcement (TASK-chat-feature-moderation AC3): a
     // muted actor never generates, so they are not mention-eligible.
-    if (p.actor_type !== "user" && !isMuted({ muted_until: p.muted_until, }, now,)) {
+    if (
+      p.actor_type !== "user" && !isMuted({ muted_until: p.muted_until, }, now,) &&
+      !impersonatedActorIds.has(p.actor_id,)
+    ) {
       aiParticipants.push(p,);
     }
   }
