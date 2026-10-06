@@ -71,8 +71,6 @@ if (ISOLATED) {
 
 const ACTOR = "00000000-0000-4000-8000-000000000001";
 const OTHER = "00000000-0000-4000-8000-000000000002";
-// Third actor for the SSE job-ownership test: unrelated to ACTOR's jobs.
-const SECOND = "00000000-0000-4000-8000-000000000003";
 
 /**
  * @param db
@@ -554,7 +552,6 @@ describeOrSkip("emotion-avatar job SSE stream", () => {
     expect(body,).toContain('"done":2',);
     expect(body,).toContain("event: done",);
   }, 20_000,);
-
 },);
 
 describeOrSkip("Emotion avatars — admin/solo bypass", () => {
