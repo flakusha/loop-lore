@@ -108,6 +108,12 @@ if (typeof doc.addEventListener === "function" && !doc[LISTENER_KEY]) {
     (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
     (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
     (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
+    (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
+    (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
+    (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
+    (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
+    (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
+    (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
       showToast(e.detail.type || "info", e.detail.message,);
     },
   );

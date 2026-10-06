@@ -12,11 +12,8 @@ import type { Kysely, } from "kysely";
 import { approve, getPendingReviews, reject, submitForReview, } from "../../characters/service/approval";
 import type { DB, } from "../../db";
 import { can, } from "../../users/permissions";
-import { Id, } from "../../validation/schemas";
+import { Id, ReviewDecisionBody, } from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
-
-/** Approve/reject body: optional decision reason (matches the service's `reason?: string`). */
-const ReviewDecisionBody = t.Object({ reason: t.Optional(t.String(),), },);
 
 interface HandlerOpts {
   database: Kysely<DB>;
