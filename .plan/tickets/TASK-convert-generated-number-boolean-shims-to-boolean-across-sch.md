@@ -13,7 +13,7 @@
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-data-integrity-acid
-**Labels:** state-machine, schema, boolean
+**Tags:** state-machine, schema, boolean
 
 ## Summary
 

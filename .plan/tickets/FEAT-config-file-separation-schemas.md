@@ -11,7 +11,7 @@
 
 **Status:** Not Started
 **Priority:** High
-**Labels:** config, schemas, validation
+**Tags:** config, schemas, validation
 **Assignee:**
 **Epic:** EPIC-2026-39 (Config File Separation)
 

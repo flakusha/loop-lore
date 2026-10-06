@@ -12,7 +12,7 @@
 **Status Note:** closed 2026-09-15; all 19 errors resolved on dev
 **Priority:** high
 **Effort:** Medium
-**Labels:** bug, typescript7, migration, typecheck
+**Tags:** bug, typescript7, migration, typecheck
 
 ## Summary
 

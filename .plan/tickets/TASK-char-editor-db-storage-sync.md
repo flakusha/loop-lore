@@ -13,9 +13,9 @@
 
 **Status**: Not Started
 **Priority**: high
-**Labels**: backend, db, character-editor, schema, api
+**Tags**: backend, db, character-editor, schema, api
 **Assignee**:
-**Epic**: epic-character-core-system
+**Epic:**: epic-character-core-system
 **Related**: `src/db/schema-character.ts`, `src/routes/characters/`, `src/characters/spec/`
 
 ## Description

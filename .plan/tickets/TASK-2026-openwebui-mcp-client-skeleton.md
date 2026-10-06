@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Labels:** generation, tools, mcp
+**Tags:** generation, tools, mcp
 **Summary:** Add a new `src/plugins/mcp/client.ts` that wraps `@modelcontextprotocol/sdk`'s `streamablehttp_client` + `ClientSession` and exposes `listTools()`, `callTool(name, args)`, `disconnect()`. Lifecycle managed via `AsyncExitStack` (LIFO — required by the MCP SDK). OAuth token storage is mocked initially. Extend `src/plugins/registry.ts` with a `mcpServers: Map<string, MCPClient>` and route to MCP when a tool's `apiFamily === 'mcp'`.
 
 **Context:** Open-webui speaks the Model Context Protocol over Streamable HTTP for remote tool servers (`utils/mcp/client.py:59–87`). Loop-lore's plugin registry currently treats every tool as either local JS or a remote HTTP function. To stay compatible with the MCP ecosystem (and let users point loop-lore at any MCP-compliant server), we need a first-class client wrapper. This ticket lands the skeleton — concrete server registration UX is a follow-up.

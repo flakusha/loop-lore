@@ -12,7 +12,7 @@
 **Status:** Done
 **Status Note:** 2026-08-18
 **Priority:** high
-**Labels:** rpg, crafting, routes
+**Tags:** rpg, crafting, routes
 **Assignee**:
 **Epic:** epic-rpg-wiring-phase3.md
 **Related:** TASK-wire-crafting-routes.md, TASK-complete-crafting-system-services.md

@@ -15,7 +15,7 @@
 **Status:** Wontfix
 **Status Note:** duplicate-of-epic-economy-trading
 **Priority**: medium
-**Labels**: epic
+**Tags**: epic
 **Epic**: (if applicable)
 **Related**: git issue 772d0e5, .plan/epics/epic-economy-trading.md
 

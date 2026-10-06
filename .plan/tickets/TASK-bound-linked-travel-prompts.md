@@ -13,9 +13,9 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: chat, travel, locations, migration, llm, assistant
+**Tags**: chat, travel, locations, migration, llm, assistant
 **Assignee**:
-**Epic**: epic-chat-transfer-location
+**Epic:**: epic-chat-transfer-location
 **Related**: FEAT-world-template-chat-lifecycle, FEAT-chat-template-config-lifecycle,
 FEAT-chat-transfer-location-change, TASK-chat-transfer-location
 

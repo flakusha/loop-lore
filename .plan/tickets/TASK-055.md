@@ -12,8 +12,8 @@
 
 **Status**: Done
 **Priority**: medium
-**Labels**: items, rpg, duplicate, protection
-**Epic**: epic-items
+**Tags**: items, rpg, duplicate, protection
+**Epic:**: epic-items
 **Assignee**:
 
 ## Summary

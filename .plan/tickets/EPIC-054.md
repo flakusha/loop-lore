@@ -15,7 +15,7 @@
 **Status:** Wontfix
 **Status Note:** duplicate-of-epic-embeddable-engine-game-frontend
 **Priority**: medium
-**Labels**: epic
+**Tags**: epic
 **Epic**: (if applicable)
 **Related**: git issue 2bf50dd, .plan/epics/epic-embeddable-engine-game-frontend.md
 

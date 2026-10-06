@@ -13,7 +13,7 @@
 ## Status: Proposed
 
 **Priority:** High
-**Labels:** review, security, data-integrity, auth, nsfw
+**Tags:** review, security, data-integrity, auth, nsfw
 
 ## Summary
 

@@ -12,7 +12,7 @@
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-character-spec
-**Labels:** seeding, character, identity, race, origin, culture, lore, trait
+**Tags:** seeding, character, identity, race, origin, culture, lore, trait
 **Related:** `FEAT-character-spec-inclusion-race-origin-culture.md`, `FEAT-race-origin-lore-identity-model.md`, `FEAT-race-origin-lore-identity-memory-config.md`, `FEAT-origin-capture-generation-seeding.md`, `FEAT-seed-default-characters-avatar.md`, `src/characters/seed.ts`, `src/config/sections/characters.ts`, `src/characters/services/traits-service.ts`, `src/characters/services/personality-service.ts`, `src/assistant/lore/audience.ts`, `.plan/epics/epic-character-core-system.md`
 
 ## Summary

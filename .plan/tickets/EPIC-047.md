@@ -15,7 +15,7 @@
 **Status:** Wontfix
 **Status Note:** duplicate-of-epic-api-versioning
 **Priority**: medium
-**Labels**: epic
+**Tags**: epic
 **Epic**: (if applicable)
 **Related**: git issue 001b22d, .plan/epics/epic-api-versioning.md
 

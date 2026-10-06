@@ -12,7 +12,7 @@
 **Status:** In Progress
 **Priority:** P3
 **Epic:** epic-docs-reconciliation
-**Labels:** docs, spec, emotion-avatar
+**Tags:** docs, spec, emotion-avatar
 **Related:** src/characters/services/emotion-avatar-service/*, src/characters/services/emotion-avatar-fallback.ts, src/assistant/prompt/sections/emotion-avatar.ts, README.md (Emotion avatars row)
 
 ## Summary

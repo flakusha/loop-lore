@@ -15,9 +15,9 @@
 **Status:** Done
 **Status Note:** as-decomposed
 **Priority**: medium
-**Labels**: chat, templates, chat-setup, architecture
+**Tags**: chat, templates, chat-setup, architecture
 **Assignee**:
-**Epic**: epic-story-mode-ui
+**Epic:**: epic-story-mode-ui
 **Related**: BUG-chat-settings-modal-invalid-mode, .plan/epics/epic-chat-lifecycle-moderation.md,
 .plan/epics/epic-config-templates.md, FEAT-chat-template-config-lifecycle
 **Decomposed into** (verified 2026-09-23):

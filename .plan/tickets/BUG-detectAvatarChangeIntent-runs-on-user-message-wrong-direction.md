@@ -12,7 +12,7 @@
 **Status:** Done
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding
-**Labels:** emotion-avatar, intent-detection, prompt-injection, wrong-direction
+**Tags:** emotion-avatar, intent-detection, prompt-injection, wrong-direction
 **Related:** TASK-aux-emotion-avatar.md (line 152 says "dead code" — wrong; this ticket is the real defect), src/generation/auto-gen/prepare-generation.ts:84-92, src/assistant/intent.ts
 
 ## Summary

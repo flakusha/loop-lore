@@ -10,7 +10,7 @@
 **Context:** Ubuntu 22.04 LTS; on-prem single-server + multi-node deployment.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-deployment-infrastructure
-**Labels:** ops, deployment, infrastructure
+**Tags:** ops, deployment, infrastructure
 **Assignee:** Ops Team
 
 ## Summary

@@ -15,7 +15,7 @@
 **Status:** Wontfix
 **Status Note:** duplicate-of-epic-battle-action-systems
 **Priority**: medium
-**Labels**: epic
+**Tags**: epic
 **Epic**: (if applicable)
 **Related**: git issue baa672b, .plan/epics/epic-battle-action-systems.md
 

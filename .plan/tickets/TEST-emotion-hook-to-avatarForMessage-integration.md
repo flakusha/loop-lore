@@ -12,7 +12,7 @@
 **Status:** Not Started
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding
-**Labels:** test, integration, emotion-avatar, end-to-end
+**Tags:** test, integration, emotion-avatar, end-to-end
 **Related:** src/generation/hooks/emotion-hook.ts, src/generation/auto-gen/content-hooks.ts, src/generation/auto-gen/store-message.ts, src/frontend/alpine/mood/avatars.ts, src/frontend/alpine/mood.test.ts, src/generation/auto-gen-emotion-avatar.test.ts
 
 ## Summary

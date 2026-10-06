@@ -13,9 +13,9 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: prompt-assembly, character-traits, feature-flags, architecture
+**Tags**: prompt-assembly, character-traits, feature-flags, architecture
 **Assignee**:
-**Epic**: epic-character-core-system
+**Epic:**: epic-character-core-system
 **Related**: `docs/spec/character-spec.md` (CharacterFeatureFlags), `src/assistant/prompt/registry.ts`
 
 ## Description

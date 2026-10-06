@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**: epic-api-versioning.md
+**Epic:**: epic-api-versioning.md
 **Related**: FEAT-036, FEAT-037
 
 Git issue: `0fe7f31`

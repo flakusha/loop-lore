@@ -15,7 +15,7 @@
 **Status:** Wontfix
 **Status Note:** duplicate-of-epic-stealth-crime
 **Priority**: medium
-**Labels**: epic
+**Tags**: epic
 **Epic**: (if applicable)
 **Related**: git issue 2b7280b, .plan/epics/epic-stealth-crime.md
 

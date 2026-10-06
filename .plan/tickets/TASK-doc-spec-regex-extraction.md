@@ -12,7 +12,7 @@
 **Status:** In Progress
 **Priority:** P3
 **Epic:** epic-docs-reconciliation
-**Labels:** docs, spec, regex
+**Tags:** docs, spec, regex
 **Related:** src/regex/*, README.md (Regex extraction row)
 
 ## Summary

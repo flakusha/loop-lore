@@ -13,7 +13,7 @@
 
 **Status**: Not Started
 **Priority**: low
-**Labels**: feature, characters, licensing
+**Tags**: feature, characters, licensing
 **Assignee**:
 **Epic**: EPIC-059 (Creative Studio)
 
