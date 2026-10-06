@@ -13,7 +13,7 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: cleanup, investigation
+**Tags**: cleanup, investigation
 **Assignee**:
 **Related**: chore(db): add auto-generators for schema types, manifest, and test helpers
 

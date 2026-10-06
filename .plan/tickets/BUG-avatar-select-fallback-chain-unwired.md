@@ -12,7 +12,7 @@
 **Status:** Done
 **Priority:** P2
 **Epic:** epic-character-core-system
-**Labels:** avatar, selection, fallback, dead-code
+**Tags:** avatar, selection, fallback, dead-code
 **Related:** TASK-character-multi-avatar.md, src/characters/services/avatar-service/selection.ts, src/characters/services/avatar-service/config.ts
 
 ## Summary

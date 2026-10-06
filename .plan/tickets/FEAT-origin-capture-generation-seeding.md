@@ -12,7 +12,7 @@
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-assistant-gm-flows
-**Labels:** lore, origin, culture, generation, create, seeding, audience
+**Tags:** lore, origin, culture, generation, create, seeding, audience
 **Related:** `FEAT-lore-structured-generation-via-assistant.md`, `FEAT-race-origin-lore-identity-model.md`, `FEAT-race-origin-lore-identity-memory-config.md`, `FEAT-character-spec-inclusion-race-origin-culture.md`, `src/assistant/commands/create.ts`, `src/assistant/lore/audience.ts`, `src/story/events/promote-lore.ts`, `src/characters/services/personality-service.ts`
 
 ## Summary

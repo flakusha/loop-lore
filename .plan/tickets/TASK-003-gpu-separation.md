@@ -13,7 +13,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Epic:** epic-deployment-infrastructure
-**Labels:** infrastructure, gpu, deployment
+**Tags:** infrastructure, gpu, deployment
 **Assignee:** Platform Team
 
 ## Summary

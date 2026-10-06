@@ -13,7 +13,7 @@
 
 **Status**: Done
 **Priority**: high
-**Labels**: e2e-blocking, characters, ux
+**Tags**: e2e-blocking, characters, ux
 **Assignee**:
 **Epic**: (if applicable)
 **Related**: characters-flow E2E test "start chat button in detail modal redirects to chat"

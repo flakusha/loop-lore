@@ -12,7 +12,7 @@
 **Status:** Not Started
 **Priority:** P3
 **Epic:** epic-aux-enrichment-pipeline
-**Labels:** aux-llm, emotion-avatar, enrichment-task
+**Tags:** aux-llm, emotion-avatar, enrichment-task
 **Related:** epic-aux-enrichment-pipeline.md (lines 208-216, 262-279), TASK-aux-emotion-avatar.md, src/aux-pipeline/
 
 ## Summary

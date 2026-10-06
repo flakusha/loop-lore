@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Labels:** frontend, streaming, thinking
+**Tags:** frontend, streaming, thinking
 **Summary:** Render SSE `event: thinking` payloads as a `<details class="thinking-block">` prepended to the streaming message bubble. Collapse by default when the response finishes; honor the character-level `thinking_visibility` setting to decide whether the block is rendered at all.
 
 **Context:** Loop-lore already emits `event: thinking` on the SSE stream from `src/generation/generate-route/stream-to-client.ts:127–131` and the consumer registers a handler in `_streamContent` at `src/frontend/alpine/chat-types/core.ts:23`. The buffer (`src/generation/stream-buffer.ts`) carries the events for replay. The frontend currently renders thinking tokens into the same bubble as regular text — there is no separate collapsible region.

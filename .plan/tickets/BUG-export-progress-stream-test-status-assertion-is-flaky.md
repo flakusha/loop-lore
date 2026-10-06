@@ -7,7 +7,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Trivial
-**Labels:** bug, frontend, testing
+**Tags:** bug, frontend, testing
 **Epic:** (none)
 **Related**: git issue 2b8da26
 

@@ -13,9 +13,9 @@
 
 **Status**: Done
 **Priority**: medium
-**Labels**: schemas, validation
+**Tags**: schemas, validation
 **Assignee**:
-**Epic**: epic-shared-schemas
+**Epic:**: epic-shared-schemas
 **Related**: TASK-schema-migration
 
 ## Summary

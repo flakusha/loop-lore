@@ -12,7 +12,7 @@
 **Status Note:** `gguf-downloader-policy`
 **Priority:** high
 **Effort:** Small
-**Labels:** byok, local-models, policy, browser, security
+**Tags:** byok, local-models, policy, browser, security
 **Epic:** epic-byok-local-models.md
 **Related:** FEAT-byok-local-models.md
 

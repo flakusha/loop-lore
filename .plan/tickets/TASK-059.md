@@ -13,9 +13,9 @@
 **Status**: Not Started
 **Priority**: medium
 **Effort:** Medium
-**Labels**: transport, external-protocols, docs
+**Tags**: transport, external-protocols, docs
 **Assignee**:
-**Epic**: epic-transport-expansion
+**Epic:**: epic-transport-expansion
 **Related**:
 
 ## Summary

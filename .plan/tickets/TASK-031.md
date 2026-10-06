@@ -13,9 +13,9 @@
 **Status**: Not Started
 **Priority**: medium
 **Effort**: Medium
-**Labels**: character, world, data-model, architecture
+**Tags**: character, world, data-model, architecture
 **Assignee**:
-**Epic**: epic-character-world-setup
+**Epic:**: epic-character-world-setup
 **Related**:
 
 ## Summary

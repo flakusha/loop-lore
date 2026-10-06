@@ -13,8 +13,8 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: plugins, security, rpg, override
-**Epic**: epic-plugin-extension-points
+**Tags**: plugins, security, rpg, override
+**Epic:**: epic-plugin-extension-points
 **Assignee**:
 
 ## Summary

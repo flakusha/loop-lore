@@ -13,9 +13,9 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: testing, generation, fixtures
+**Tags**: testing, generation, fixtures
 **Assignee**:
-**Epic**: epic-e2e-integration-testing
+**Epic:**: epic-e2e-integration-testing
 **Related**: TASK-generation-mock-scenario-provider
 
 ## Summary

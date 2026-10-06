@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**: epic-api-versioning.md
+**Epic:**: epic-api-versioning.md
 **Related**: FEAT-035, FEAT-036
 
 Git issue: `f6f4511`

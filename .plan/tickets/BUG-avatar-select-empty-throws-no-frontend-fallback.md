@@ -12,7 +12,7 @@
 **Status:** Done
 **Priority:** P2
 **Epic:** epic-character-core-system
-**Labels:** avatar, fallback, error-handling
+**Tags:** avatar, fallback, error-handling
 **Related:** TASK-character-multi-avatar.md, src/characters/services/avatar-service/selection.ts, src/routes/character-avatars/select.ts
 
 ## Summary

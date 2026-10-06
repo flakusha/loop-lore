@@ -13,9 +13,9 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: refactor, factory, interface-merge, thisL
+**Tags**: refactor, factory, interface-merge, thisL
 **Assignee**:
-**Epic**: epic-file-splitting
+**Epic:**: epic-file-splitting
 **Related**: TASK-file-split-chat-service
 
 ## Description

@@ -7,7 +7,7 @@
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-nsfw-game-mechanics
-**Labels:** nsfw, rpg, game-mechanics, tech-debt
+**Tags:** nsfw, rpg, game-mechanics, tech-debt
 
 **Summary:**
 

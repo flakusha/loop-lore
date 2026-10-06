@@ -11,7 +11,7 @@
 
 **Status:** Postponed
 **Priority:** medium
-**Labels:** idea, tooling
+**Tags:** idea, tooling
 
 ## Summary
 

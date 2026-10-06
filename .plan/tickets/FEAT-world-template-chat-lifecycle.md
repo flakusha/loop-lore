@@ -13,7 +13,7 @@
 
 **Status**: Not Started
 **Priority**: high
-**Labels**: chat, templates, world, locations, rpg, frontend, config
+**Tags**: chat, templates, world, locations, rpg, frontend, config
 **Assignee**:
 **Epic**: epic-world-locations, epic-config-templates, epic-chat-transfer-location
 **Related**: FEAT-chat-template-config-lifecycle, IDEA-chat-setup-templates,

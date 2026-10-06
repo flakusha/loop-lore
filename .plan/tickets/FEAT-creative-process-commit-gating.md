@@ -12,7 +12,7 @@
 **Priority:** high
 **Effort:** High
 **Epic:** epic-assistant-gm-flows
-**Labels:** assistant, lore, generation, quality
+**Tags:** assistant, lore, generation, quality
 **Issue:** `720ed41`
 **Related:** `src/assistant/commands/create.ts`, `src/db/enums-story.ts` (`SyntheticDataStatus`), `src/assistant/prompt/sections/lore.ts`, `docs/spec/lore.md`, `FEAT-lore-structured-generation-via-assistant`
 

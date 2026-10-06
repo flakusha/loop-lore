@@ -13,7 +13,7 @@
 ## Status: Resolved (informational, no action required)
 
 **Priority:** Low
-**Labels:** review, tooling, performance, ram
+**Tags:** review, tooling, performance, ram
 
 ## Summary
 

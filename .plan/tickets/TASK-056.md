@@ -12,8 +12,8 @@
 
 **Status**: Done
 **Priority**: medium
-**Labels**: items, rpg, balance, security
-**Epic**: epic-items
+**Tags**: items, rpg, balance, security
+**Epic:**: epic-items
 **Assignee**:
 
 ## Summary

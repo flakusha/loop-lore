@@ -13,9 +13,9 @@
 **Status**: Done
 **Priority**: medium
 **Effort:** Medium
-**Labels**: 3d, view-mode, frontend, immersion
+**Tags**: 3d, view-mode, frontend, immersion
 **Assignee**:
-**Epic**: epic-3d-generation
+**Epic:**: epic-3d-generation
 **Related**:
 
 ## Summary

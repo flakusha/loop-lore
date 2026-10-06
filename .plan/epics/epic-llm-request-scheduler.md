@@ -3,7 +3,7 @@
 
 # EPIC: LLM Request Scheduler — Complexity, Resources, Model Rotation
 
-**Status:** Proposed
+**Status:** Not Started
 **Status Note:** Proposed 2026-09-28; supersedes the scheduling half of `epic-llm-queue.md` (see Reconciliation)
 **Priority:** high
 **Effort:** Large

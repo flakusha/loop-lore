@@ -10,7 +10,7 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Labels:** security
+**Tags:** security
 
 ## Summary
 

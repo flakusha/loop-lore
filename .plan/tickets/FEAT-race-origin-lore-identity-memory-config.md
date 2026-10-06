@@ -12,7 +12,7 @@
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-memory-knowledge-systems
-**Labels:** lore, memory, identity, race, origin, config, provisioning
+**Tags:** lore, memory, identity, race, origin, config, provisioning
 **Related:** `FEAT-race-origin-lore-identity-model.md`, `FEAT-character-spec-inclusion-race-origin-culture.md`, `docs/spec/lore.md`, `docs/spec/memory-system.md`, `src/memory/`, `src/assistant/prompt/sections/lore.ts`, `src/assistant/prompt/sections/memories.ts`
 
 ## Summary

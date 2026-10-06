@@ -13,7 +13,7 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: feature, frontend, creative
+**Tags**: feature, frontend, creative
 **Assignee**:
 **Epic:** epic-creative-studio
 **Related**: TASK-character-template-seeding.md

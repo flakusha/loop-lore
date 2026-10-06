@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**: epic-api-versioning.md
+**Epic:**: epic-api-versioning.md
 **Related**:
 
 Git issue: `e25c9ee`

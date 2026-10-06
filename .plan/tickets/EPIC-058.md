@@ -14,7 +14,7 @@
 **Status:** Wontfix
 **Status Note:** duplicate-of-epic-chat-lifecycle-moderation
 **Priority**: medium
-**Labels**: epic
+**Tags**: epic
 **Epic**: (if applicable)
 **Related**: git issue c1fd428, .plan/epics/epic-chat-lifecycle-moderation.md
 

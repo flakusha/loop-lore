@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
-**Labels:** generation, streaming, tools
+**Tags:** generation, streaming, tools
 **Summary:** When the generation loop encounters tool calls, each tool result must be enqueued into `StreamBuffer` as a `response.content_part.added` event immediately after the `response.function_call_arguments.done` event that triggered it. The ReadableStream controller drains the buffer with standard backpressure. Round counter increments per batch, not per call.
 
 **Context:** Loop-lore's tool loop buffers all tool results in the current round and resumes the stream only after every call has resolved. That hides latency when the slowest tool is the rate-limiter and breaks the UX of seeing tool output streamed as it arrives. Open-webui's `process_chat_response` writes each tool result to the event emitter as soon as the call completes (`middleware.py:5774–5783`), giving the UI real-time feedback.

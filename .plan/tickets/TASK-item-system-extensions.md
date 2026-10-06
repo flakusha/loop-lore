@@ -13,7 +13,7 @@
 
 **Status**: Not Started
 **Priority**: medium
-**Labels**: feature, items, rpg
+**Tags**: feature, items, rpg
 **Assignee**:
 **Epic**: EPIC-039 (Item System Extensions)
 

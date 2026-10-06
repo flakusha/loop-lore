@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Labels:** generation, streaming, types
+**Tags:** generation, streaming, types
 **Summary:** Replace the `string`-typed `type` field on `StreamBuffer.append()` and the SSE emitter with a typed `StreamEventType` const enum / literal union covering the full open-webui-style namespaced event vocabulary.
 
 **Context:** Loop-lore's generation stream uses untyped strings for SSE event names. Open-webui defines a precise, namespaced event vocabulary (`response.*`, `chat:message:*`) that the Python `ChatCompletionMiddleware` emits throughout `event_emitter` and `process_chat_response`. Adopting the same vocabulary gives the frontend a stable contract and reduces silent drift between backend and frontend parsers.

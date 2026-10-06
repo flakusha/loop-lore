@@ -14,9 +14,9 @@
 **Status**: Done
 **Priority**: medium
 **Effort**: Medium
-**Labels**: rpg, chat, gameplay, quests
+**Tags**: rpg, chat, gameplay, quests
 **Assignee**:
-**Epic**: epic-rpg-content-systems
+**Epic:**: epic-rpg-content-systems
 **Related**:
 
 ## Summary

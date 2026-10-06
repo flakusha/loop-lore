@@ -13,9 +13,9 @@
 
 **Status**: Not Started
 **Priority**: high
-**Labels**: templates, prompt-assembly, architecture, config
+**Tags**: templates, prompt-assembly, architecture, config
 **Assignee**:
-**Epic**: epic-config-templates
+**Epic:**: epic-config-templates
 **Related**: `docs/spec/template-system.md`, `src/prompts/registry.ts`, `src/generation/prompt-templates/templates.ts`
 
 ## Description

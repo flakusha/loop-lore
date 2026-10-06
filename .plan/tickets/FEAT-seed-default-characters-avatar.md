@@ -12,7 +12,7 @@
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-character-spec
-**Labels:** seeding, character, avatar, asset, gallery
+**Tags:** seeding, character, avatar, asset, gallery
 **Related:** `TASK-character-avatar-gallery-binding.md`, `FEAT-seed-default-characters-identity.md`, `src/characters/seed.ts`, `src/config/sections/characters.ts`, `src/characters/services/avatar-service.ts`, `src/assets/service.ts`, `.plan/epics/epic-character-core-system.md`
 
 ## Summary

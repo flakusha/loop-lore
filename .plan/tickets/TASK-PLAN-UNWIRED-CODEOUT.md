@@ -12,7 +12,7 @@
 **Status:** Done
 **Status Note:** 2026-08-18
 **Priority:** medium
-**Labels:** unwired, routes, lora, crafting, battle
+**Tags:** unwired, routes, lora, crafting, battle
 **Assignee**:
 **Epic**:
 **Related:** TASK-crafting-stations-execution.md, TASK-wire-crafting-routes.md, TASK-battle-equipment-integration.md, TASK-lora-discovery-application.md

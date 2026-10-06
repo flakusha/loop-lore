@@ -14,7 +14,7 @@
 
 **Status**: Done
 **Priority**: medium
-**Labels**: bug, bookkeeping
+**Tags**: bug, bookkeeping
 **Epic**: (none)
 **Closed at**: 2026-09-18
 **Related**: git issue 1e5d5dc

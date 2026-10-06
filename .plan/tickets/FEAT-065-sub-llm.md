@@ -16,7 +16,7 @@
 **Status:** Done
 **Status Note:** implemented — see Resolution
 **Priority**: high
-**Labels**: generation, llm, prompts, templates
+**Tags**: generation, llm, prompts, templates
 **Assignee**:
 **Epic**: EPIC-38 (Output Control & Transforms)
 **Parent**: FEAT-065 (Prompt Library)

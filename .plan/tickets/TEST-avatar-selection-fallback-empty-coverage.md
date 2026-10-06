@@ -12,7 +12,7 @@
 **Status:** Not Started
 **Priority:** P2
 **Epic:** epic-character-core-system
-**Labels:** test, avatar, selection, fallback, coverage
+**Tags:** test, avatar, selection, fallback, coverage
 **Related:** src/characters/services/avatar-service/selection.ts, src/characters/services/avatar-service.test.ts, BUG-avatar-select-fallback-chain-unwired.md, BUG-avatar-select-empty-throws-no-frontend-fallback.md
 
 ## Summary

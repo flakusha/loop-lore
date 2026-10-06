@@ -13,7 +13,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Epic:** epic-deployment-infrastructure
-**Labels:** infrastructure, cloud-hosting, cost-analysis
+**Tags:** infrastructure, cloud-hosting, cost-analysis
 **Assignee:** Platform Team
 
 ## Summary

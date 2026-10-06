@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Labels:** generation, tools, security, access-control
+**Tags:** generation, tools, security, access-control
 **Summary:** Extend `executeToolCalls()` to enforce per-tool `access_grants` (`resource_type='tool'`, `resource_id=toolName`, `permission='execute'`) before invoking any tool. Tools the actor lacks a grant for must return an error tool result — never throw and never silently skip.
 
 **Context:** Loop-lore's existing gating (`gatePluginToolsByRole`) only checks the agent role's tool allowlist. Open-webui adds a second layer: `AccessGrants.has_access(user, "tool", tool_name, "execute")` consulted inside `process_tool_result` / `execute_tool`. Without it, role-shared tools with sensitive actions leak to any agent that inherits the role. The `access_grants` table already exists for `character` / `knowledge`; adding a `tool` `resource_type` closes the gap.

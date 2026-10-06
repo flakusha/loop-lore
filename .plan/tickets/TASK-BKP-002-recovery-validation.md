@@ -13,8 +13,8 @@
 
 **Status**: Not Started
 **Priority**: high  
-**Labels**: backup, recovery, testing, validation, cron  
-**Epic**: epic-database-backup-recovery  
+**Tags**: backup, recovery, testing, validation, cron  
+**Epic:**: epic-database-backup-recovery  
 **Assignee**: Platform Team  
 
 ## Description

@@ -15,7 +15,7 @@
 **Status:** Wontfix
 **Status Note:** duplicate-of-epic-federation-swarm-sync
 **Priority**: medium
-**Labels**: epic, decentralization, federation
+**Tags**: epic, decentralization, federation
 **Assignee**:
 **Epic**:
 **Related**: epic-communications-integrations, epic-anonymity-decentralization, epic-multi-instance-reconciliation
