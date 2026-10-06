@@ -145,7 +145,7 @@
 | Not Started | Epic: Game Engine SDKs (Unity / Godot) | Low | High | 11 | [epic-game-engine-sdks.md](/.plan/epics/epic-game-engine-sdks.md) |
 | Not Started | Epic: Game Frontend Scenes (2D/3D) | Low | Medium | 3 | [epic-game-frontend-scenes.md](/.plan/epics/epic-game-frontend-scenes.md) |
 | Not Started | Epic: Generation Flow Control — Pause, Throttling & Concurrency | High | Medium | 0 | [epic-generation-flow-control.md](/.plan/epics/epic-generation-flow-control.md) |
-| Draft | Epic: Harness Integration (Agent Runtime Consolidation) | High | Very High (phased; each phase ships standalone value) | 23 | [epic-harness-integration.md](/.plan/epics/epic-harness-integration.md) |
+| Not Started | Epic: Harness Integration (Agent Runtime Consolidation) | High | Very High (phased; each phase ships standalone value) | 23 | [epic-harness-integration.md](/.plan/epics/epic-harness-integration.md) |
 | Not Started | Epic: HTTP/2 / HTTP/3 / Elysia Protocol & Feature Adoption | Medium | Medium | 6 | [epic-http-protocol-features.md](/.plan/epics/epic-http-protocol-features.md) |
 | Not Started | Epic: Instance Federation — Identity, Switching & Cross-Sync | Medium | High | 0 | [epic-instance-federation.md](/.plan/epics/epic-instance-federation.md) |
 | Done | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
@@ -222,7 +222,7 @@
 | In Progress | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
 | Not Started | Licensing | Low | Medium | 6 | [epic-licensing.md](/.plan/epics/epic-licensing.md) |
 | Not Started | llama-swap Hub (lifecycle, config, rotation/exclusion, bench) | medium | Large | 5 | [epic-llama-swap.md](/.plan/epics/epic-llama-swap.md) |
-| Proposed | LLM Request Scheduler — Complexity, Resources, Model Rotation | high | Large | 0 | [epic-llm-request-scheduler.md](/.plan/epics/epic-llm-request-scheduler.md) |
+| Not Started | LLM Request Scheduler — Complexity, Resources, Model Rotation | high | Large | 0 | [epic-llm-request-scheduler.md](/.plan/epics/epic-llm-request-scheduler.md) |
 | Not Started | LLM Request Throughput & Message Scheduling | Medium | Large | 13 | [epic-llm-queue.md](/.plan/epics/epic-llm-queue.md) |
 | Not Started | Local Process Swarm (Bun-Managed Multi-Process Decomposition) | Medium | Very High | 0 | [epic-local-process-swarm.md](/.plan/epics/epic-local-process-swarm.md) |
 | Not Started | Logging & Structured Logging | Medium | Medium | 5 | [epic-logging.md](/.plan/epics/epic-logging.md) |
@@ -1594,7 +1594,7 @@ Containerize the loop-lore application and establish deployment strategies for b
 
 ### Epic: Harness Integration (Agent Runtime Consolidation)
 
-- **Status:** Draft
+- **Status:** Not Started
 - **Priority:** High
 - **Effort:** Very High (phased; each phase ships standalone value)
 - **Type:** Feature Epic
@@ -2353,7 +2353,7 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 
 ### LLM Request Scheduler — Complexity, Resources, Model Rotation
 
-- **Status:** Proposed
+- **Status:** Not Started
 - **Priority:** high
 - **Effort:** Large
 - **Type:** Feature Epic
@@ -3343,4 +3343,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-
