@@ -44,8 +44,8 @@ Body: { "impersonateActorId": "actor-id" | null }
 
 - Sets `impersonate_actor_id` on the caller's `chat_participants` row.
 - Passing `null` or omitting stops impersonation.
-- **1-per-world constraint**: in world chats, an actor can only be impersonated by one user at a time.
-- Returns 400 if another user already impersonates that actor in the same world.
+- **1-per-(world, location) constraint**: in world chats, an actor can only be impersonated by one user at a time within the same world AND current location; chats with no current location fall back to the world-level check.
+- Returns 400 if another user already impersonates that actor in scope.
 
 ### Set persona
 
@@ -102,12 +102,12 @@ POST   /api/personas/:id/convert-to-character — creates an actor from persona 
 
 - Full CRUD for managing personas (create, edit, delete, set default).
 
-## 1-Per-World Constraint
+## 1-Per-(World, Location) Constraint
 
-**Rule**: In a world-linked chat, the same character (`impersonate_actor_id`) can only be impersonated by one user at a time.
+**Rule**: In a world-linked chat, the same character (`impersonate_actor_id`) can only be impersonated by one user at a time within the same world AND current location. A chat with no current location (detached) falls back to the world-level check.
 
 - Private/disconnected chats are exempt (no world_id).
-- Enforcement: `updateImpersonation()` in `chat/service.ts` queries `chat_participants JOIN chats` on `world_id` before setting.
+- Enforcement: `updateImpersonation()` in `chat/service/participants.ts` queries `chat_participants JOIN chats` on `world_id`, narrowed by `current_location_id` when the chat has one, before setting.
 - Conflict returns `ServiceError { code: "bad_request" }` → HTTP 400.
 - Clearing impersonation (null) always succeeds.
 

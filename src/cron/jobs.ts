@@ -179,9 +179,29 @@ export function defaultJobs(): CronJobDef[] {
       // the due-set selection.
       schedule: "* * * * *",
       enabled: true,
-      run: async ({ database, logger, },) => {
+      run: async ({ database, config, logger, },) => {
         const { AutonomyScheduler, } = await import("../autonomy/scheduler");
-        const result = await new AutonomyScheduler(database,).tickOnce();
+        const { createBdiDispatch, } = await import("../autonomy/dispatch/bdi-dispatch");
+        const { createTravelDispatch, } = await import("../autonomy/dispatch/travel-dispatch");
+        const { createDiscoveryTradeDispatch, } = await import("../autonomy/dispatch/discovery-trade-dispatch");
+        const { createWorkflowDagDispatch, } = await import("../autonomy/dispatch/workflow-dag-dispatch");
+        const { createGmBeatDispatch, } = await import("../autonomy/dispatch/gm-beat-dispatch");
+        const { createGm, } = await import("../routes/story-orchestration/helpers");
+        // Discovery reads travel_parties.status, so it runs AFTER travel —
+        // otherwise an arrival on this tick is reported one tick late.
+        const dag = createWorkflowDagDispatch();
+        const result = await new AutonomyScheduler(database, {
+          dispatch: [
+            createBdiDispatch({ db: database, },),
+            createTravelDispatch(),
+            createDiscoveryTradeDispatch(),
+            dag.dispatch,
+            createGmBeatDispatch({
+              createGm: (chat,) => createGm(database, config, chat.id, chat.gmConfig, chat.createdBy,),
+            },),
+          ],
+        },).tickOnce();
+
         if (result.dueWorldIds.length > 0) {
           logger.info("autonomy world tick complete", { module: "cron", ...result, },);
         }

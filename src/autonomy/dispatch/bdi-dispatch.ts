@@ -147,6 +147,7 @@ async function dueActors(
   const planned = await db
     .selectFrom("actor_daily_plans",)
     .select("actor_id",)
+    .where("world_id", "=", worldId,)
     .where("plan_date", "=", planDate,)
     .execute();
 
