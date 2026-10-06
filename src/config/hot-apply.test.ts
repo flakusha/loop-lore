@@ -3,8 +3,7 @@
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { ageGateConfig, } from "../age-gate/controller";
-import { LogLevel, } from "../db/enums";
-import { createLogger, getLogger, setGlobalLogger, } from "../logger";
+import { createLogger, getLogger, type LogLevel, setGlobalLogger, } from "../logger";
 import { getRuntimeNsfwConfig, resetNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import {
   applyConfigChange,
@@ -66,7 +65,7 @@ describe("applyConfigChange", () => {
 
   test("diffs changed leaves and classifies them", () => {
     const config = makeConfig();
-    config.logging.level = LogLevel.Warn;
+    config.logging.level = "warn" as LogLevel;
     config.nsfw.allowNsfw = false;
     const change = applyConfigChange("logging", config,);
     expect(change.changedPaths,).toContain("logging.level",);
@@ -104,7 +103,7 @@ describe("applyHotConfig", () => {
     },);
 
     const config = makeConfig();
-    config.logging.level = LogLevel.Error;
+    config.logging.level = "error";
     applyConfigChange("logging", config,);
 
     getLogger().debug("suppressed",);
