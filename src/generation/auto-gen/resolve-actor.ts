@@ -125,6 +125,11 @@ async function verifyCascadeActor(options: {
   }
 
   if ((await fetchImpersonatedActorIds(database, chatId,)).has(cascadeActorId,)) {
+    getLogger().child({ module: "auto-gen", },).info(
+      "impersonated actor — outbound generation suppressed",
+      { chatId, actorId: cascadeActorId, },
+    );
+
     return false;
   }
 
