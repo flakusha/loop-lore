@@ -13,7 +13,7 @@ import type { Kysely, } from "kysely";
 import { isMuted, } from "../../chat/moderation";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
-import { selectNextGroupActor, } from "../../group-chat/turn-selector";
+import { fetchImpersonatedActorIds, selectNextGroupActor, } from "../../group-chat/turn-selector";
 import { getLogger, } from "../../logger";
 
 /** */
@@ -51,24 +51,8 @@ export async function resolveActor(
 
   if (type === "group") {
     if (cascadeActorId) {
-      // Cascade mode: use the pre-selected actor, but verify it is still a
-      // participant — the id arrives from the prior cascade depth and may be
-      // stale (actor left) or forged (direct triggerAutoGeneration call).
-      const membership = await database
-        .selectFrom("chat_participants",)
-        .select(["actor_id", "muted_until",],)
-        .where("chat_id", "=", chatId,)
-        .where("actor_id", "=", cascadeActorId,)
-        .executeTakeFirst();
-
-      if (!membership) { return null; }
-      // Outbound mute enforcement (TASK-chat-feature-moderation AC3): a
-      // muted actor must not generate even when pre-selected by a cascade.
-      if (isMuted(membership, Date.now(),)) {
-        logMuteSuppress(chatId, cascadeActorId,);
-        return null;
-      }
-
+      const cascade = await verifyCascadeActor({ database, chatId, cascadeActorId, },);
+      if (!cascade) { return null; }
       // Participant row survived but its actor row did not — still generate.
       const cascadeName = await actorName(database, cascadeActorId,);
       return { characterId: cascadeActorId, characterName: cascadeName ?? "Unknown", };
@@ -105,6 +89,46 @@ export async function resolveActor(
   }
 
   return { characterId: character.id, characterName: character.display_name, };
+}
+
+/**
+ * Verify a pre-selected cascade actor is still eligible to generate.
+ *
+ * Cascade mode: the id arrives from the prior cascade depth and may be stale
+ * (actor left) or forged (direct triggerAutoGeneration call). Rejects muted
+ * actors (TASK-chat-feature-moderation AC3) and impersonated actors (the
+ * impersonating user speaks for them, not the LLM — parity with
+ * group-cascade.ts).
+ * @param options
+ * @param options.database
+ * @param options.chatId
+ * @param options.cascadeActorId
+ * @returns True when the actor may generate.
+ */
+async function verifyCascadeActor(options: {
+  database: Kysely<DB>;
+  chatId: string;
+  cascadeActorId: string;
+},): Promise<boolean> {
+  const { database, chatId, cascadeActorId, } = options;
+  const membership = await database
+    .selectFrom("chat_participants",)
+    .select(["actor_id", "muted_until",],)
+    .where("chat_id", "=", chatId,)
+    .where("actor_id", "=", cascadeActorId,)
+    .executeTakeFirst();
+
+  if (!membership) { return false; }
+  if (isMuted(membership, Date.now(),)) {
+    logMuteSuppress(chatId, cascadeActorId,);
+    return false;
+  }
+
+  if ((await fetchImpersonatedActorIds(database, chatId,)).has(cascadeActorId,)) {
+    return false;
+  }
+
+  return true;
 }
 
 /**
