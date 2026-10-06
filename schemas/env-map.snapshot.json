@@ -73,6 +73,7 @@
   "GENERATION_PROVIDERS_OPENAICOMPATIBLE": "generation.providers.openaiCompatible",
   "GENERATION_DEFAULTPROVIDER": "generation.defaultProvider",
   "GENERATION_CHATDEFAULTS_OUTPUTSTYLE": "generation.chatDefaults.outputStyle",
+  "GENERATION_ROUTING_STRATEGY": "generation.routing.strategy",
   "BYOKEY_ENABLED": "byoKey.enabled",
   "ENCRYPTION_REQUIRED": "encryption.required",
   "ENCRYPTION_COMPRESSTHRESHOLD": "encryption.compressThreshold",

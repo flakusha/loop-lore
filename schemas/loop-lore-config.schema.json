@@ -701,6 +701,24 @@
           "type": "object",
           "description": "Default model per provider"
         },
+        "routing": {
+          "type": "object",
+          "description": "Model routing policy applied to the provider failover order",
+          "properties": {
+            "strategy": {
+              "type": "string",
+              "description": "Ordering strategy: \"capability-match\" (default, no-op for unannotated models), \"cheapest\", \"fastest\", or \"round-robin\""
+            },
+            "fallbacks": {
+              "type": "number",
+              "description": "Hard cap on the fallback chain; entries past it are dropped"
+            },
+            "rules": {
+              "type": "array",
+              "description": "Per-task-type strategy overrides (taskType + strategy)"
+            }
+          }
+        },
         "autoStart": {
           "type": "object",
           "description": "Auto-spawn external AI servers at startup",
