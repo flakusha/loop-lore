@@ -7,11 +7,11 @@
 import { describe, expect, test, } from "bun:test";
 import {
   coerceFieldValue,
+  type ConfigMenuField,
+  type ConfigMenuSection,
   createConfigMenuState,
   groupSections,
   validateFieldValue,
-  type ConfigMenuField,
-  type ConfigMenuSection,
 } from "./config-menu";
 
 function field(overrides: Partial<ConfigMenuField> = {},): ConfigMenuField {
@@ -245,7 +245,9 @@ describe("createConfigMenuState", () => {
   test("role gating: non-admin cannot edit admin-scope fields", async () => {
     const sections = [
       section("server", "Core", [field({ key: "secret", type: "string", scope: "admin", editable: true, },),],),
-      section("preferences", "Preferences", [field({ key: "theme", type: "string", scope: "user", editable: true, },),],),
+      section("preferences", "Preferences", [
+        field({ key: "theme", type: "string", scope: "user", editable: true, },),
+      ],),
     ];
 
     const state = createConfigMenuState({ fetch: async () => jsonResponse({ role: "user", sections, },), },);
@@ -254,7 +256,7 @@ describe("createConfigMenuState", () => {
     state.setValue(sections[0]!.fields[0]!, "x",);
     state.setValue(sections[1]!.fields[0]!, "dark",);
 
-    const pending = state.pendingKeys().map((p,) => p.key,);
+    const pending = state.pendingKeys().map((p,) => p.key);
     expect(pending,).not.toContain("secret",);
     expect(pending,).toContain("theme",);
   });

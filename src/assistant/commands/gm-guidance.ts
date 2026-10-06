@@ -41,12 +41,18 @@ interface GmTarget {
   guidance: GmGuidance;
 }
 
-/** Every command returns the same handled system-message result shape. @param text */
+/**
+ * Every command returns the same handled system-message result shape. @param text
+ * @param text
+ */
 function message(text: string,): CommandResult {
   return { systemMessage: text, handled: true, };
 }
 
-/** @param values @param value */
+/**
+ * @param values @param value
+ * @param value
+ */
 function appendUnique(values: readonly string[], value: string,): string[] {
   return values.includes(value,) ? [...values,] : [...values, value,];
 }
@@ -81,6 +87,7 @@ async function loadGmTarget(ctx: CommandContext,): Promise<GmTarget | CommandRes
     .select("gm_config",)
     .where("id", "=", ctx.chatId,)
     .executeTakeFirst();
+
   const parsed = row?.gm_config ? safeJsonParse<GmConfig>(row.gm_config,) : null;
   const config = parsed?.ok ? parsed.value : null;
   // Story mode is signalled by `chats.mode = "story"` OR `gm_config.storyMode`
@@ -95,12 +102,18 @@ async function loadGmTarget(ctx: CommandContext,): Promise<GmTarget | CommandRes
     constraints: existing?.constraints ?? [],
     turnPriority: existing?.turnPriority ?? {},
   };
+
   if (existing?.targetCharacter !== undefined) { guidance.targetCharacter = existing.targetCharacter; }
   if (existing?.sceneDescription !== undefined) { guidance.sceneDescription = existing.sceneDescription; }
   return { db, chatId: ctx.chatId, userId, guidance, };
 }
 
-/** Persist a merged guidance patch and return the confirmation message. @param target @param patch @param ok */
+/**
+ * Persist a merged guidance patch and return the confirmation message. @param target @param patch @param ok
+ * @param target
+ * @param patch
+ * @param ok
+ */
 async function saveGuidance(
   target: GmTarget,
   patch: Partial<GmGuidance>,
@@ -129,10 +142,12 @@ async function resolveActorId(
     .select(["chat_participants.actor_id", "actors.display_name",],)
     .where("chat_participants.chat_id", "=", chatId,)
     .execute();
+
   const needle = nameOrId.toLowerCase();
   for (const p of participants) {
     if (p.actor_id === nameOrId || p.display_name.toLowerCase() === needle) { return p.actor_id; }
   }
+
   return null;
 }
 
@@ -142,6 +157,7 @@ function describeGuidance(guidance: GmGuidance,): string {
   const priorityText = priorities.length > 0
     ? priorities.map(([id, level,],) => `${id}=${level}`).join(", ",)
     : "\u2014";
+
   return [
     "**GM guidance**",
     `- Scene: ${guidance.sceneDescription ?? "\u2014"}`,
@@ -199,10 +215,12 @@ registerCommand("priority", async (args, ctx,): Promise<CommandResult> => {
   if (!character || !isTurnPriority(level,)) {
     return message("Usage: `/priority <character> <high|medium|low>`",);
   }
+
   const actorId = await resolveActorId(target.db, target.chatId, character,);
   if (!actorId) {
     return message(`**GM guidance:** character "${character}" is not a participant of this chat.`,);
   }
+
   return await saveGuidance(
     target,
     { turnPriority: { ...target.guidance.turnPriority, [actorId]: level, }, },
@@ -219,6 +237,7 @@ registerCommand("skip", async (args, ctx,): Promise<CommandResult> => {
   if (!actorId) {
     return message(`**Skip failed:** character "${character}" is not a participant of this chat.`,);
   }
+
   const result = await recordTurnSkip(target.db, {
     chatId: target.chatId,
     actorId,
@@ -226,6 +245,7 @@ registerCommand("skip", async (args, ctx,): Promise<CommandResult> => {
     userId: target.userId,
     userRole: null,
   },);
+
   if (!result.ok) { return message(`**Skip failed:** ${result.message}`,); }
   return message(
     `**GM guidance:** ${character} skips this beat${result.deduped ? " (already recorded)" : ""}.`,

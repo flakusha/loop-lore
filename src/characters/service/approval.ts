@@ -54,7 +54,7 @@ export async function submitForReview(opts: {
   }
 
   if (actor.owner_id !== userId) { return { ok: false, error: "Only the owner can submit for review", }; }
-  // New characters default to `pending_review` (migration 038), so an
+  // New characters default to `pending_review` (migration 042), so an
   // already-queued character is a successful no-op rather than an error.
   if (actor.review_state === ReviewState.PendingReview) { return { ok: true, value: undefined, }; }
   if (actor.review_state !== ReviewState.Draft && actor.review_state !== ReviewState.Rejected) {

@@ -60,6 +60,7 @@ const QUEST_STATUS_VALUES: readonly string[] = [
   QuestStatus.Failed,
   QuestStatus.Abandoned,
 ];
+
 export async function handleListQuests(
   database: Kysely<DB>,
   worldId: string,
@@ -72,6 +73,7 @@ export async function handleListQuests(
   if (!(await checkWorldAccess(database, worldId, userId, userRole,))) {
     return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
   }
+
   if (status !== undefined && !QUEST_STATUS_VALUES.includes(status,)) {
     return jsonError({ message: "Invalid quest status", status: HttpStatus.BadRequest, },);
   }
@@ -87,6 +89,7 @@ export async function handleListQuests(
     .$if(status !== undefined, (qb,) => qb.where("status", "=", status as QuestStatus,),)
     .$if(status === undefined, (qb,) => qb.where("status", "!=", QuestStatus.Abandoned,),)
     .executeTakeFirst();
+
   const total = countResult?.total ?? 0;
 
   const quests = await database

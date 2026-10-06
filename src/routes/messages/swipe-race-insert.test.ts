@@ -335,7 +335,7 @@ describe("swipe-race-insert — idempotency", () => {
 });
 
 describe("swipe-race-insert — DB-enforced dedup (BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup)", () => {
-  // The check-then-insert in the route has a TOCTOU window; migration 040
+  // The check-then-insert in the route has a TOCTOU window; migration 045
   // closes it with `uq_messages_idempotency_enforced` on
   // (chat_id, idempotency_key) WHERE key IS NOT NULL AND key NOT LIKE
   // 'regen:variant:%' AND key NOT LIKE 'turn_skip:%'. These tests pin the
@@ -500,7 +500,7 @@ describe("swipe-race-insert — DB-enforced dedup (BUG-message-idempotency-key-d
 
   test("replayedId propagates through insertUserMessageRow (route contract)", async () => {
     // Concurrency-free proof of the FULL propagation chain: a pre-existing
-    // row covering the key makes the loser's INSERT hit migration 040's
+    // row covering the key makes the loser's INSERT hit migration 045's
     // unique index inside insertUserMessageRow; the violation must come
     // back as ok:true + replayedId = the winner's id, not a 500.
     const key = "propagation-key-1";

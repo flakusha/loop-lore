@@ -4774,6 +4774,113 @@ export async function insertCarriageRecords(
   return id;
 }
 
+/** Insert a wardrobe_items row. */
+export async function insertWardrobeItems(
+  db: Db,
+  name: string,
+  opts?: {
+    id?: string;
+    actor_id?: string | null;
+    world_id?: string | null;
+    descriptor?: string;
+    tags?: string;
+    sort_order?: number;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("wardrobe_items",).values({
+    id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a actor_wardrobe row. */
+export async function insertActorWardrobe(
+  db: Db,
+  actor_id: string,
+  wardrobe_item_id: string,
+  opts?: { id?: string; item_instance_id?: string | null; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("actor_wardrobe",).values({
+    id,
+    actor_id,
+    wardrobe_item_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a chat_wardrobe_overrides row. */
+export async function insertChatWardrobeOverrides(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  outfit_id: string,
+  opts?: { id?: string; changed_by?: string | null; created_at?: string; updated_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("chat_wardrobe_overrides",).values({
+    id,
+    chat_id,
+    actor_id,
+    outfit_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a mesh_dek_exports row. */
+export async function insertMeshDekExports(
+  db: Db,
+  chat_id: string,
+  key_id: string,
+  peer_origin: string,
+  sender_origin: string,
+  opts?: { id?: string; created_at?: string; revoked_at?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("mesh_dek_exports",).values({
+    id,
+    chat_id,
+    key_id,
+    peer_origin,
+    sender_origin,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a mesh_outbox row. */
+export async function insertMeshOutbox(
+  db: Db,
+  target_origin: string,
+  content_id: string,
+  envelope: string,
+  next_attempt_at: string,
+  opts?: { id?: string; attempts?: number; status?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("mesh_outbox",).values({
+    id,
+    target_origin,
+    content_id,
+    envelope,
+    next_attempt_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
 /** Insert a task_dependencies row. */
 export async function insertTaskDependencies(
   db: Db,
@@ -4914,68 +5021,7 @@ export async function insertLocationDiscovery(
   } as any,).execute();
   return id;
 }
-/** Insert a wardrobe_items row. */
-export async function insertWardrobeItems(
-  db: Db,
-  name: string,
-  opts?: {
-    id?: string;
-    actor_id?: string | null;
-    world_id?: string | null;
-    descriptor?: string;
-    tags?: string;
-    sort_order?: number;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("wardrobe_items",).values({
-    id,
-    name,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
 
-/** Insert a actor_wardrobe row. */
-export async function insertActorWardrobe(
-  db: Db,
-  actor_id: string,
-  wardrobe_item_id: string,
-  opts?: { id?: string; item_instance_id?: string | null; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("actor_wardrobe",).values({
-    id,
-    actor_id,
-    wardrobe_item_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a chat_wardrobe_overrides row. */
-export async function insertChatWardrobeOverrides(
-  db: Db,
-  chat_id: string,
-  actor_id: string,
-  outfit_id: string,
-  opts?: { id?: string; changed_by?: string | null; created_at?: string; updated_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("chat_wardrobe_overrides",).values({
-    id,
-    chat_id,
-    actor_id,
-    outfit_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
 /** Insert a scheduled_messages row. */
 export async function insertScheduledMessages(
   db: Db,
@@ -5013,49 +5059,6 @@ export async function insertMessageReminders(
     message_id,
     user_id,
     remind_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-/** Insert a mesh_dek_exports row. */
-export async function insertMeshDekExports(
-  db: Db,
-  chat_id: string,
-  key_id: string,
-  peer_origin: string,
-  sender_origin: string,
-  opts?: { id?: string; created_at?: string; revoked_at?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("mesh_dek_exports",).values({
-    id,
-    chat_id,
-    key_id,
-    peer_origin,
-    sender_origin,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a mesh_outbox row. */
-export async function insertMeshOutbox(
-  db: Db,
-  target_origin: string,
-  content_id: string,
-  envelope: string,
-  next_attempt_at: string,
-  opts?: { id?: string; attempts?: number; status?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("mesh_outbox",).values({
-    id,
-    target_origin,
-    content_id,
-    envelope,
-    next_attempt_at,
     ...restOpts,
   } as any,).execute();
   return id;

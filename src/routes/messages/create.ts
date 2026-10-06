@@ -134,7 +134,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         // Closes the duplicate-insert hazard for retried POSTs. The key is
         // optional; the helper handles null by returning null.
         // Empty string is "no key" (matches the schema-validation pin):
-        // storing "" would collide on the migration 040 unique index.
+        // storing "" would collide on the migration 045 unique index.
         const idempotencyKey = body.idempotencyKey ? body.idempotencyKey : null;
         const existingId = idempotencyKey
           ? await findByIdempotencyKey(database, chatId, idempotencyKey,)
@@ -166,7 +166,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         if (!inserted.ok) { return inserted.response; }
 
-        // ── Idempotency race replay (migration 040) ────────────────
+        // ── Idempotency race replay (migration 045) ────────────────
         // A concurrent POST with the same key committed first; the unique
         // index rejected our insert and the helper replayed the winner.
         // Respond with the winning row before ANY post-insert side effect

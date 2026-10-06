@@ -31,9 +31,11 @@ export async function createDefinition(state: ItemState, def: ItemDefinition,): 
     .where("category", "=", def.category,)
     .orderBy("created_at", "asc",)
     .executeTakeFirst();
+
   if (existing) {
     throw new DuplicateItemDefinitionError(existing.id,);
   }
+
   const id = uid();
   await state.db
     .insertInto("items",)
@@ -54,6 +56,7 @@ export async function createDefinition(state: ItemState, def: ItemDefinition,): 
       weight: def.weight,
     },)
     .execute();
+
   return id;
 }
 

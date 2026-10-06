@@ -24,7 +24,7 @@
  *                                     (chatId, idempotencyKey) won the
  *                                     insert race; `replayedId` is the
  *                                     existing row's id (dedup is now
- *                                     DB-enforced, migration 040) and the
+ *                                     DB-enforced, migration 045) and the
  *                                     route must respond with it.
  *
  * Exported for unit testing (see swipe-race-insert.test.ts).
@@ -74,7 +74,7 @@ export interface SwipeInsertResult {
 
 /**
  * Detect whether an insert error is the idempotency dedup unique violation
- * (migration 040, `uq_messages_idempotency_enforced` on
+ * (migration 045, `uq_messages_idempotency_enforced` on
  * `(chat_id, idempotency_key) WHERE idempotency_key IS NOT NULL ...`). The
  * race loser must REPLAY the winner's row, never retry the same INSERT and
  * never bubble up as a 500.
@@ -198,7 +198,7 @@ export async function insertUserMessageWithRetry(
     return { id: input.id, swipeIndex: outcome.value ?? null, };
   } catch (err) {
     // A concurrent writer with the same (chatId, idempotencyKey) committed
-    // first (migration 040 unique index). Replay that row instead of
+    // first (migration 045 unique index). Replay that row instead of
     // surfacing a 500 to the client.
     if (isIdempotencyUniqueViolation(err,)) {
       const existingId = await findByIdempotencyKey(

@@ -102,6 +102,7 @@ async function handleRegister(
       "Username and password are required.",
     );
   }
+
   if (username.length < 3 || username.length > 32) {
     limiter.refund(ip,);
     return errorResponse(
@@ -112,6 +113,7 @@ async function handleRegister(
       "Username must be 3–32 characters.",
     );
   }
+
   if (password.length < 6) {
     limiter.refund(ip,);
     return errorResponse(
@@ -158,6 +160,7 @@ async function handleRegister(
         },
         ["username",] as const,
       );
+
       if (result === "skipped") { return "skipped" as const; }
 
       await trx
@@ -180,6 +183,7 @@ async function handleRegister(
       if (smk) {
         await ensureActorKey({ database: trx, actorId: userId, smk, },);
       }
+
       return "inserted" as const;
     },);
   } catch (error) {
@@ -192,6 +196,7 @@ async function handleRegister(
     limiter.refund(ip,);
     return errorResponse(request, HttpStatus.Conflict, "auth.usernameTaken", t, "Username already taken.",);
   }
+
   // Slot was reserved at the gate and the rows committed — keep it.
   return createSessionAndCookie(request, database, config, userId, UserRole.User, ip, t,);
 }

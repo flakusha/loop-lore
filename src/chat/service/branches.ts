@@ -12,7 +12,7 @@ import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { checkChatAccess, } from "./access";
 import { insertForkRow, } from "./branch-fork";
-import { getMessagesForBranch, listBranches, setActiveBranchId, walkMessagePath, } from "./branch-helpers";
+import { setActiveBranchId, walkMessagePath, } from "./branch-helpers";
 import type { ServiceError, } from "./types";
 
 /** One branch as returned to the caller. */
@@ -88,6 +88,7 @@ export async function forkBranch(
     .select(["id", "chat_id",],)
     .where("id", "=", messageId,)
     .executeTakeFirst();
+
   if (!message || message.chat_id !== chatId) {
     return { code: "not_found", message: "Fork point message not found in chat", };
   }
@@ -137,6 +138,7 @@ export async function switchActiveBranch(
     .select(["id", "chat_id",],)
     .where("id", "=", branchId,)
     .executeTakeFirst();
+
   if (!branch || branch.chat_id !== chatId) {
     return { code: "not_found", message: "Branch not found in chat", };
   }
@@ -151,6 +153,7 @@ export async function switchActiveBranch(
       .where("chat_id", "=", chatId,)
       .where("is_active", "=", 1,)
       .execute();
+
     await tx
       .updateTable("chat_branches",)
       .set({ is_active: 1, },)

@@ -42,7 +42,7 @@ export class LoggerImpl implements Logger {
    */
   constructor(config?: Partial<LoggerConfig>, bindings?: LoggerBindings,) {
     this.bindings = bindings ?? {};
-    this.levelBox = { name: config?.level ?? "debug", threshold: levelFromConfig(config?.level ?? "debug"), };
+    this.levelBox = { name: config?.level ?? "debug", threshold: levelFromConfig(config?.level ?? "debug",), };
     this.censorEnabled = config?.censorEnabled ?? true;
     this.censorFields = config?.censorFields ?? [];
 
@@ -203,6 +203,7 @@ export class LoggerImpl implements Logger {
       },
       { ...this.bindings, ...bindings, },
     );
+
     child.levelBox = this.levelBox;
     return child;
   }

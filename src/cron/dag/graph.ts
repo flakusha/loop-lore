@@ -96,13 +96,20 @@ export class DagGraph {
     this.#known.add(taskId,);
   }
 
-  /** Nodes `taskId` waits on. Empty for a root. */
+  /**
+   * Nodes `taskId` waits on. Empty for a root.
+   * @param taskId
+   */
   dependsOn(taskId: string,): string[] {
     const deps = this.#deps.get(taskId,) ?? new Set<string>();
     return [...deps,].toSorted((a, b,) => a.localeCompare(b,));
   }
 
-  /** Would `taskId` running on `dependsOnTaskId` close a cycle? */
+  /**
+   * Would `taskId` running on `dependsOnTaskId` close a cycle?
+   * @param taskId
+   * @param dependsOnTaskId
+   */
   wouldCycle(taskId: string, dependsOnTaskId: string,): boolean {
     return reaches(this.#deps, dependsOnTaskId, taskId,);
   }

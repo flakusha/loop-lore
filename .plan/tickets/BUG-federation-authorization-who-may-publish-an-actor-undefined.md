@@ -30,7 +30,7 @@ precondition (private worlds not publishable). The authorization check itself is
 code that lands with that FEAT; this ticket recorded the missing definition and it is
 now written down there.
 
-
+**Resolved:** 2026-10-06 registry-driven close: git issue d50cdb6 (registry tip: fb352c23d Konstantin Fedotov Close issue)
 ## Closure (2026-10-05, federation resolution review)
 
 RESOLUTION TYPE: **decision-only — documentation, no implementation.**

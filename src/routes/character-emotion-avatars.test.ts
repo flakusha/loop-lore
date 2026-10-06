@@ -4,18 +4,18 @@
  * The EmotionAvatarService is mocked (it drives real image generation in
  * production), so job state is scripted per scenario. Requires `--isolate`.
  */
-import type { DB, } from "../db/schema";
 import type { Database, } from "bun:sqlite";
-import type { Kysely, } from "kysely";
-import { Elysia, } from "elysia";
-import { EmotionType, } from "../db/enums";
 import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import { EmotionType, } from "../db/enums";
+import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import { insertActors, insertUsers, } from "../test-utils/insert-helpers";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 
-import { characterEmotionAvatarsRoutes, } from "./character-emotion-avatars";
 import { emitJobProgress, } from "../characters/services/emotion-avatar-service/job-events";
+import { characterEmotionAvatarsRoutes, } from "./character-emotion-avatars";
 
 if (ISOLATED) {
   mock.module("../characters/services/emotion-avatar-service", () => {
@@ -411,16 +411,26 @@ describeOrSkip("character-emotion-avatars routes", () => {
     expect(body[0]?.value,).toBeDefined();
     expect(body[0]?.displayName,).toBeDefined();
   });
+},);
+
+describeOrSkip("emotion-avatar job SSE stream", () => {
+  let sseDb: Kysely<DB>;
+  let sseSqlite: Database;
 
   beforeAll(async () => {
-    ({ db, sqlite, } = await createTestDb());
-    await insertUsers(db, "owner", "Owner", { id: "owner" as never, },);
-    await insertActors(db, "Hero", { id: ACTOR as never, owner_id: "owner", },);
-    await insertActors(db, "Second", { id: SECOND as never, owner_id: "owner", },);
+    ({ db: sseDb, sqlite: sseSqlite, } = await createTestDb());
+    await insertUsers(sseDb, "owner", "Owner", { id: "owner" as never, },);
+    await insertActors(sseDb, "Hero", { id: ACTOR as never, owner_id: "owner", },);
+    // Same owner as ACTOR so "owner" can address ACTOR's job via the OTHER path;
+    // the genuinely cross-tenant case is covered by the suite above.
+    await insertActors(sseDb, "Second", { id: OTHER as never, owner_id: "owner", },);
   },);
+
+  afterAll(() => sseSqlite.close());
 
   /**
    * @param response
+   * @returns {Promise<string>}
    */
   async function readAll(response: Response,): Promise<string> {
     const reader = response.body?.getReader();
@@ -436,6 +446,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
     out += decoder.decode();
     return out;
   }
+
   const sleep = (ms: number,) => new Promise((resolve,) => setTimeout(resolve, ms,));
 
   /**
@@ -443,7 +454,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
    * @returns {Promise<string>}
    */
   async function createJob(): Promise<string> {
-    const res = await makeApp(db, "owner", "user",).handle(
+    const res = await makeApp(sseDb, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars`, {
         method: "POST",
         headers: { "content-type": "application/json", },
@@ -457,7 +468,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
   }
 
   test("requires auth", async () => {
-    const res = await makeApp(db,).handle(
+    const res = await makeApp(sseDb,).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/job-1/stream`,),
     );
 
@@ -465,7 +476,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
   });
 
   test("returns 404 for an unknown job", async () => {
-    const res = await makeApp(db, "owner", "user",).handle(
+    const res = await makeApp(sseDb, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/unknown-job/stream`,),
     );
 
@@ -474,8 +485,8 @@ describeOrSkip("character-emotion-avatars routes", () => {
 
   test("returns 404 for a job owned by another actor", async () => {
     const jobId = await createJob();
-    const res = await makeApp(db, "owner", "user",).handle(
-      new Request(`http://localhost/api/actors/${SECOND}/emotion-avatars/jobs/${jobId}/stream`,),
+    const res = await makeApp(sseDb, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${OTHER}/emotion-avatars/jobs/${jobId}/stream`,),
     );
 
     expect(res.status,).toBe(404,);
@@ -483,13 +494,13 @@ describeOrSkip("character-emotion-avatars routes", () => {
 
   test("sends a terminal snapshot and done immediately for a finished job", async () => {
     const jobId = await createJob();
-    await makeApp(db, "owner", "user",).handle(
+    await makeApp(sseDb, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/${jobId}/cancel`, {
         method: "POST",
       },),
     );
 
-    const res = await makeApp(db, "owner", "user",).handle(
+    const res = await makeApp(sseDb, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/${jobId}/stream`,),
     );
 
@@ -502,7 +513,7 @@ describeOrSkip("character-emotion-avatars routes", () => {
   test("streams an initial snapshot, live events, and done on terminal", async () => {
     const jobId = await createJob();
 
-    const res = await makeApp(db, "owner", "user",).handle(
+    const res = await makeApp(sseDb, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/${jobId}/stream`,),
     );
 
@@ -541,7 +552,6 @@ describeOrSkip("character-emotion-avatars routes", () => {
     expect(body,).toContain('"done":2',);
     expect(body,).toContain("event: done",);
   }, 20_000,);
-  afterAll(() => sqlite.close());
 },);
 
 describeOrSkip("Emotion avatars — admin/solo bypass", () => {

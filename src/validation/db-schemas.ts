@@ -1191,6 +1191,7 @@ export const ActorsSchema = t.Object({
   llm_assist_enabled: t.Optional(t.Number(),),
   avatar_focus_x: t.Optional(t.Number(),),
   avatar_focus_y: t.Optional(t.Number(),),
+  review_state: t.Optional(t.String(),),
 },);
 
 // ── admin_character_overrides ────────────────────────────────────────────
@@ -1732,6 +1733,7 @@ export const ChatsSchema = t.Object({
   active_branch_id: t.Optional(t.String(),),
   autonomy_config: t.Optional(t.String(),),
   federation_consented_at: t.Optional(t.String(),),
+  purpose: t.Optional(t.String(),),
 },);
 
 // ── chat_random_events ────────────────────────────────────────────
@@ -3033,7 +3035,6 @@ export const ChatWardrobeOverridesSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
-<<<<<<< ours
 // ── mesh_dek_exports ────────────────────────────────────────────
 export const MeshDekExportsSchema = t.Object({
   chat_id: t.String(),
@@ -3043,7 +3044,6 @@ export const MeshDekExportsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   revoked_at: t.Optional(t.String(),),
 },);
-<<<<<<< ours
 
 // ── mesh_outbox ────────────────────────────────────────────
 export const MeshOutboxSchema = t.Object({
@@ -3056,41 +3056,79 @@ export const MeshOutboxSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
-||||||| base
-// ── mesh_dek_exports ────────────────────────────────────────────
-export const MeshDekExportsSchema = t.Object({
-  chat_id: t.String(),
-  key_id: t.String(),
-  peer_origin: t.String(),
-  sender_origin: t.String(),
+// ── task_dependencies ────────────────────────────────────────────
+export const TaskDependenciesSchema = t.Object({
+  task_id: t.String(),
+  depends_on_task_id: t.String(),
+  on_failure: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
-  revoked_at: t.Optional(t.String(),),
 },);
 
-// ── mesh_dek_exports ────────────────────────────────────────────
-export const MeshDekExportsSchema = t.Object({
-  chat_id: t.String(),
-  key_id: t.String(),
-  peer_origin: t.String(),
-  sender_origin: t.String(),
-  created_at: t.Optional(t.String(),),
-  revoked_at: t.Optional(t.String(),),
-},);
-
-// ── scheduled_messages ────────────────────────────────────────────
-export const ScheduledMessagesSchema = t.Object({
-  chat_id: t.String(),
-  author_id: t.String(),
-  body: t.String(),
-  send_at: t.String(),
+// ── travel_parties ────────────────────────────────────────────
+export const TravelPartiesSchema = t.Object({
+  world_id: t.String(),
+  name: t.String(),
+  kind: t.Optional(t.String(),),
+  cadence: t.Optional(t.String(),),
+  route: t.Optional(t.String(),),
+  route_index: t.Optional(t.Number(),),
+  steps_per_tick: t.Optional(t.Number(),),
+  travel_progress: t.Optional(t.Number(),),
+  current_location_id: t.Optional(t.String(),),
+  current_tick: t.Optional(t.Number(),),
   status: t.Optional(t.String(),),
+  blocked_until_tick: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
-// ── message_reminders ────────────────────────────────────────────
-export const MessageRemindersSchema = t.Object({
-  message_id: t.String(),
-  user_id: t.String(),
-  remind_at: t.String(),
+// ── npc_migrations ────────────────────────────────────────────
+export const NpcMigrationsSchema = t.Object({
+  world_id: t.String(),
+  actor_id: t.String(),
+  depart_tick: t.Number(),
+  arrive_tick: t.Number(),
+  origin_location_id: t.Optional(t.String(),),
+  destination_location_id: t.Optional(t.String(),),
+  cadence: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  last_depart_tick: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_travel_budget ────────────────────────────────────────────
+export const WorldTravelBudgetSchema = t.Object({
+  world_id: t.Optional(t.String(),),
+  spent: t.Optional(t.Number(),),
+  ceiling: t.Optional(t.Number(),),
+  window_start_tick: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_event_log ────────────────────────────────────────────
+export const WorldEventLogSchema = t.Object({
+  world_id: t.String(),
+  event_type: t.String(),
+  tick_index: t.Number(),
+  dedupe_key: t.String(),
+  subject_id: t.Optional(t.String(),),
+  actor_id: t.Optional(t.String(),),
+  payload: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── location_discovery ────────────────────────────────────────────
+export const LocationDiscoverySchema = t.Object({
+  world_id: t.String(),
+  location_id: t.String(),
+  actor_id: t.String(),
+  progress: t.Optional(t.Number(),),
+  last_explored_tick: t.Optional(t.Number(),),
+  discovered: t.Optional(t.Number(),),
+  discovered_tick: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── scheduled_messages ────────────────────────────────────────────

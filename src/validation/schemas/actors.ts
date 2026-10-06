@@ -72,6 +72,13 @@ export const ActorIdParams = t.Object({
   actorId: Id,
 },);
 
+/** Body for the admin approve/reject review decisions. `reason` is optional —
+ * neither decision requires one — but bounded when present so an admin cannot
+ * write an unbounded blob into the audit trail. */
+export const ReviewDecisionBody = t.Object({
+  reason: t.Optional(t.String({ maxLength: 1000, },),),
+},);
+
 export const ActorsQuery = t.Object({
   page: t.Optional(t.Numeric({ minimum: 1, default: 1, },),),
   pageSize: t.Optional(t.Numeric({ minimum: 1, maximum: 200, default: 20, },),),

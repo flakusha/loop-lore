@@ -245,6 +245,24 @@ describe("001_init — core tables", () => {
 
 // ── Flag inconsistencies ─────────────────────────────────────
 
+describe("migration numbering is sequential from 001", () => {
+  test("numeric prefixes are unique and gapless", () => {
+    const prefixes = MIGRATION_NAMES.map((name,) => Number(name.slice(0, 3,),));
+
+    // Two migrations sharing a prefix is not a load failure — getMigrationFiles()
+    // keys by full filename — but compareMigrationNames then falls back to the
+    // name, so the applied order silently diverges from the authored one. Pin
+    // it: a duplicate prefix means someone picked a number dev already shipped.
+    const dupes = prefixes.filter((n,) => prefixes.indexOf(n,) !== prefixes.lastIndexOf(n,));
+    expect(dupes, `duplicate migration prefix(es): ${dupes.join(", ",)}`,).toEqual([],);
+
+    expect(prefixes[0],).toBe(1,);
+    for (const [i, n,] of prefixes.entries()) {
+      expect(n, `${MIGRATION_NAMES[i]} must follow ${MIGRATION_NAMES[i - 1] ?? "(none)"}`,).toBe(i + 1,);
+    }
+  });
+});
+
 describe("migration consistency flags", () => {
   let migrations: Record<string, Migration>;
 

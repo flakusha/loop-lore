@@ -106,7 +106,11 @@ function applyLayer(out: AutonomyConfig, layer: AutonomyConfigOverride,): void {
   }
 }
 
-/** Read all three layers for a scope. Shared by resolveAutonomyLayers and resolveAutonomyConfig. */
+/**
+ * Read all three layers for a scope. Shared by resolveAutonomyLayers and resolveAutonomyConfig.
+ * @param db
+ * @param scope
+ */
 async function readLayers(
   db: Db,
   scope: ResolveAutonomyScope,

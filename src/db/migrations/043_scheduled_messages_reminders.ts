@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 038_scheduled_messages_reminders
+ * 043_scheduled_messages_reminders
  *
  * Messenger-parity composer cluster (TASK-scheduled-messages-reminders):
  *
@@ -52,6 +52,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
       CREATE UNIQUE INDEX IF NOT EXISTS idx_message_reminders_unique
       ON message_reminders (message_id, user_id)
     `.execute(database,);
+
   await sql`
       CREATE INDEX IF NOT EXISTS idx_message_reminders_due
       ON message_reminders (remind_at)

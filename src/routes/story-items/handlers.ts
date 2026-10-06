@@ -150,6 +150,7 @@ export async function handleDefinitions(
       worldId,
       category ? enumOr(category, Object.values(ItemCategory,), "other",) : undefined,
     );
+
     const total = allDefs.length;
     const paged = allDefs.slice((page - 1) * pageSize, page * pageSize,);
     return jsonPaginated({ data: paged, total, page, pageSize, },);
@@ -174,6 +175,7 @@ export async function handleDefinitions(
     if (!(error instanceof DuplicateItemDefinitionError)) { throw error; }
     return conflictResponse(`Item "${body.name as string}" already exists in this world`,);
   }
+
   return jsonCreated({ id, },);
 }
 

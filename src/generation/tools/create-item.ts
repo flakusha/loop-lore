@@ -141,6 +141,7 @@ export const itemCreationTool: ToolDefinition = {
           isError: true,
         };
       }
+
       throw error;
     }
 

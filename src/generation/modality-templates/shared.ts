@@ -48,9 +48,11 @@ export function matchModalityProfile<P,>(
       }
     }
   }
+
   if (!profileId || !registry.profiles[profileId]) {
     profileId = registry.defaultProfileId;
   }
+
   return registry.profiles[profileId]!;
 }
 
@@ -70,5 +72,6 @@ export function resolveModalityTemplate(
   for (const [key, value,] of Object.entries(vars,)) {
     result = result.replaceAll(`{{${key}}}`, () => value,);
   }
+
   return result;
 }

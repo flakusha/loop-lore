@@ -70,6 +70,7 @@ export class ConcurrencyLimiter {
 
   /**
    * Update the slot cap; wakes parked waiters when raised (hot-reload).
+   * @param max
    * @throws {RangeError} when max is not a positive integer.
    */
   resize(max: number,): void {

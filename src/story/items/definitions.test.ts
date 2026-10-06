@@ -128,6 +128,7 @@ describe("createDefinition dedupe", () => {
 
     const rows = await db.selectFrom("items",).select("id",).where("world_id", "=", worldA,).where("name", "=", name,)
       .execute();
+
     expect(rows,).toHaveLength(2,);
     expect(other,).toBeTruthy();
   });

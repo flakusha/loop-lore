@@ -44,6 +44,7 @@ describe("runBackfill", () => {
     expect(isUsableEncryptionSecret(await secretOf(emptySecretId,),),).toBe(true,);
     expect(await secretOf(keyedId,),).toBe(PRE_EXISTING,);
   });
+
   test("second run is a no-op — it must not rotate a live key", async () => {
     const afterFirst = await secretOf(nullSecretId,);
     const summary = await runBackfill(db, {},);
@@ -51,10 +52,12 @@ describe("runBackfill", () => {
     expect(summary.updated,).toBe(0,);
     expect(await secretOf(nullSecretId,),).toBe(afterFirst,);
   });
+
   test("backfilled users get distinct secrets from each other", async () => {
     const [a, b,] = [await secretOf(nullSecretId,), await secretOf(emptySecretId,),];
     expect(a,).not.toBe(b,);
   });
+
   test("dry-run reports the work without writing", async () => {
     const freshId = await insertUsers(db, "bf-dry", "Dry", { encryption_secret: null, },);
     const summary = await runBackfill(db, { dryRun: true, },);
