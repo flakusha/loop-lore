@@ -3,7 +3,7 @@
 
 # TASK: `users.encryption_secret` — per-user HMAC key for token-indexed search
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small (one migration + key generation in user-create flow)
 **Summary:** Add `users.encryption_secret TEXT` (32-byte hex) so the existing `deriveSearchTokens(plaintext, userKey)` primitive (HMAC-SHA256, 16-hex truncated) has a real per-user key. Currently the token-indexing column `message_search_tokens` exists but has no key source, so the feature is dead code. The column holds a per-user secret independent from `users.password_hash` and from chat keys.
@@ -33,3 +33,5 @@ For new users, generate `randomBytes(32).toString('hex')` during user-create (`s
 
 
 git issue: d14e674
+
+**Resolved:** 2026-10-06 registry-driven close: git issue d14e674 (registry tip: 3be617c0b Konstantin Fedotov Auto-closed: appended .md marker marks TASK-019-USERS-ENCRYPTION-SECRET)
