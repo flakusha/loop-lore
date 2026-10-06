@@ -73,6 +73,16 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
         const targetAccess = await checkChatAccess(database, targetChatId, actorId, ctx.userRole as string | null,);
         if (!targetAccess.ok) { return serviceErrorToResponse(targetAccess.error,); }
 
+        // Empty string is "no key": storing "" would collide on the unique index.
+        const idempotencyKey = body.idempotencyKey ? body.idempotencyKey : null;
+        const existingId = idempotencyKey
+          ? await findByIdempotencyKey(database, targetChatId, idempotencyKey,)
+          : null;
+
+        if (existingId) {
+          return jsonCreated({ id: existingId, droppedAttachments: 0, },);
+        }
+
         const filteredContent = filterProfanity(plaintext,);
         const hasProfanity = containsProfanity(plaintext,);
         await flagNsfwUserMessage(database, actorId, targetChatId, plaintext,);
@@ -119,16 +129,6 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
         );
 
         const id = uid();
-        // Empty string is "no key": storing "" would collide on the unique index.
-        const idempotencyKey = body.idempotencyKey ? body.idempotencyKey : null;
-        const existingId = idempotencyKey
-          ? await findByIdempotencyKey(database, targetChatId, idempotencyKey,)
-          : null;
-
-        if (existingId) {
-          return jsonCreated({ id: existingId, droppedAttachments: 0, },);
-        }
-
         try {
           const inserted = await insertUserMessageWithRetry(database, {
             id,
