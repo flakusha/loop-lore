@@ -190,14 +190,14 @@ export interface DB {
   wardrobe_items: import("./schema-core").WardrobeItems;
   actor_wardrobe: import("./schema-core").ActorWardrobe;
   chat_wardrobe_overrides: import("./schema-core").ChatWardrobeOverrides;
-  mesh_dek_exports: import("./schema-core").MeshDekExports;
-  mesh_outbox: import("./schema-core").MeshOutbox;
   task_dependencies: import("./schema-core").TaskDependencies;
+  mesh_dek_exports: import("./schema-core").MeshDekExports;
   travel_parties: import("./schema-core").TravelParties;
   npc_migrations: import("./schema-core").NpcMigrations;
   world_travel_budget: import("./schema-core").WorldTravelBudget;
   world_event_log: import("./schema-core").WorldEventLog;
   location_discovery: import("./schema-core").LocationDiscovery;
+  mesh_outbox: import("./schema-core").MeshOutbox;
   scheduled_messages: import("./schema-core").ScheduledMessages;
   message_reminders: import("./schema-core").MessageReminders;
 }
