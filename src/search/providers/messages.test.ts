@@ -112,13 +112,16 @@ describe("search/providers/messages (token)", () => {
     const { token, } = createMessageProviders(db, {
       resolveKey: async (userId,) => (userId === ownerId ? USER_KEY : null),
     },);
+
     const hits = await token(
       { q: "secret meeting", mode: "hybrid", includeEncrypted: true, },
       { kind: "messages" as const, userId: ownerId, },
     );
+
     expect(hits.map((h,) => h.id),).toContain(encryptedId,);
     expect(hits.find((h,) => h.id === encryptedId)?.encryptedMatch,).toBe(true,);
   });
+
   test("default resolver reads users.encryption_secret — no opts needed", async () => {
     // No resolveKey passed: the provider must reach the `users` row itself.
     const { token, } = createMessageProviders(db,);
@@ -126,8 +129,10 @@ describe("search/providers/messages (token)", () => {
       { q: "secret meeting", mode: "hybrid", includeEncrypted: true, },
       { kind: "messages" as const, userId: ownerId, },
     );
+
     expect(hits.map((h,) => h.id),).toContain(encryptedId,);
   });
+
   test("a user with no stored secret gets no hits, and never throws", async () => {
     const { token, } = createMessageProviders(db,);
     // outsiderId has encryption_secret NULL: deriveSearchTokens would throw on
@@ -136,8 +141,10 @@ describe("search/providers/messages (token)", () => {
       { q: "secret meeting", mode: "hybrid", includeEncrypted: true, },
       { kind: "messages" as const, userId: outsiderId, },
     );
+
     expect(hits,).toEqual([],);
   });
+
   test("another user's key cannot read these tokens (cross-user isolation)", async () => {
     const otherKey = "b".repeat(64,);
     const { token, } = createMessageProviders(db, { resolveKey: async () => otherKey, },);
@@ -145,8 +152,10 @@ describe("search/providers/messages (token)", () => {
       { q: "secret meeting", mode: "hybrid", includeEncrypted: true, },
       { kind: "messages" as const, userId: ownerId, },
     );
+
     expect(hits,).toEqual([],);
   });
+
   test("SQL metacharacters in query text cannot alter the query", async () => {
     // Query text reaches the DB only as HMAC output: tokenizeForSearch strips
     // to [a-z0-9], then deriveSearchTokens returns 16 hex chars per word, so
@@ -159,6 +168,7 @@ describe("search/providers/messages (token)", () => {
       "' UNION SELECT password_hash FROM users --",
       "admin'--",
     ];
+
     // One hit is the ceiling: the chat holds a single indexed message, so a
     // payload that widened the query (OR 1=1, UNION) would return more.
     const { token, } = createMessageProviders(db,);
@@ -167,26 +177,32 @@ describe("search/providers/messages (token)", () => {
         { q, mode: "hybrid", includeEncrypted: true, },
         { kind: "messages" as const, userId: ownerId, },
       );
+
       expect(hits.length,).toBeLessThanOrEqual(1,);
       for (const hit of hits) { expect(hit.source,).toBe("token",); }
     }
+
     const owner = await db
       .selectFrom("users",)
       .select("encryption_secret",)
       .where("id", "=", ownerId,)
       .executeTakeFirst();
+
     expect(owner?.encryption_secret,).toBe(USER_KEY,);
   });
+
   test("a malicious scope userId resolves to no key, not a SQL splice", async () => {
     const { token, } = createMessageProviders(db,);
     const hits = await token(
       { q: "secret meeting", mode: "hybrid", includeEncrypted: true, },
       { kind: "messages" as const, userId: "'; DROP TABLE users; --", },
     );
+
     expect(hits,).toEqual([],);
     const still = await db.selectFrom("users",).select("id",).where("id", "=", ownerId,).executeTakeFirst();
     expect(still?.id,).toBe(ownerId,);
   });
+
   test("explicit null resolver still yields no hits", () => {
     const scope = { kind: "messages" as const, userId: ownerId, };
     const query = { q: "secret", mode: "hybrid", includeEncrypted: true, } as const;

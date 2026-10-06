@@ -45,13 +45,17 @@ export function spkiPinFromDer(der: Buffer,): string {
 /**
  * Strip an optional `sha256:` prefix and surrounding whitespace. Shared by
  * pin derivation and pin-set parsing so both sides stay in lockstep.
+ * @param pin
  */
 function normalizePin(pin: string,): string {
   const trimmed = pin.trim();
   return trimmed.startsWith("sha256:",) ? trimmed.slice("sha256:".length,) : trimmed;
 }
 
-/** SNI must be a DNS name; IP literals are excluded (RFC 6066). */
+/**
+ * SNI must be a DNS name; IP literals are excluded (RFC 6066).
+ * @param host
+ */
 function sniName(host: string,): string | undefined {
   return /^\d{1,3}(\.\d{1,3}){3}$/.test(host,) || host.includes(":",) ? undefined : host;
 }
@@ -59,6 +63,8 @@ function sniName(host: string,): string | undefined {
 /**
  * Whether a derived pin is listed in a pin set. Prefix-tolerant: a bare
  * base64 pin matches its `sha256:`-prefixed form and vice versa.
+ * @param pin
+ * @param pins
  */
 export function pinsMatch(pin: string, pins: readonly string[],): boolean {
   const candidate = normalizePin(pin,);
@@ -78,6 +84,11 @@ export type SpkiProbe = (opts: {
  * Connect to a peer, capture the leaf certificate, derive its SPKI pin.
  * Chain validation is intentionally off (`rejectUnauthorized: false`) — the
  * pin comparison is the check performed here; fetch enforces chain trust.
+ * @param opts
+ * @param opts.host
+ * @param opts.port
+ * @param opts.servername
+ * @param opts.timeoutMs
  * @throws {Error} when the connection fails, times out, or no leaf
  *   certificate is presented.
  */
@@ -117,7 +128,11 @@ export function probeSpkiPin(opts: {
   },);
 }
 
-/** Parsed https origin plus its active (normalized) pins; null when unverifiable. */
+/**
+ * Parsed https origin plus its active (normalized) pins; null when unverifiable.
+ * @param origin
+ * @param pins
+ */
 function parsePinTarget(
   origin: string,
   pins: readonly string[],
@@ -182,6 +197,10 @@ export type PeerPinVerifier = (
  * and pin-set per TTL. Only positive verdicts are cached, so a mismatching
  * or unreachable peer is re-probed on the next poll and recovers within one
  * poll after a cert rotation instead of after a full TTL.
+ * @param opts
+ * @param opts.ttlMs
+ * @param opts.now
+ * @param opts.probe
  */
 export function createPeerPinVerifier(opts: {
   /** Verdict TTL in ms; defaults to `PIN_VERDICT_TTL_MS`. */

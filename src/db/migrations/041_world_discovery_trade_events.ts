@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 037_world_discovery_trade_events
+ * 041_world_discovery_trade_events
  *
  * World-scoped simulation log + exploration progress
  * (TASK-world-simulation-discovery-and-trade-events).

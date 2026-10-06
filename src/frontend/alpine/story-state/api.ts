@@ -79,6 +79,7 @@ export async function fetchQuests(worldId: string,): Promise<StoryQuest[]> {
     const res = await apiFetch(
       `/api/v1/worlds/${worldId}/quests?pageSize=${QUEST_PAGE_SIZE}&page=${page}`,
     );
+
     // A mid-walk failure keeps what was already collected rather than
     // throwing away a partial log; the next refresh retries from page 1.
     if (!res.ok) { return quests; }

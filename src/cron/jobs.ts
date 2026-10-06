@@ -211,8 +211,6 @@ export function defaultJobs(): CronJobDef[] {
         return dispatchDue(database, config, { logger, },);
       },
     },),
-      },
-    },),
     defineJob({
       name: "nsfw.status-sweep",
       schedule: "*/15 * * * *",

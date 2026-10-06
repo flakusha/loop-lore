@@ -35,6 +35,7 @@ describe("video builtin profiles", () => {
     expect(Object.keys(BUILTIN_VIDEO_PROFILES,).sort(),).toEqual(
       ["animatediff", "hunyuan", "ltx", "mochi", "svd", "wan",],
     );
+
     expect(BUILTIN_VIDEO_PROFILES.wan!.promptFormat,).toBe("natural",);
     expect(BUILTIN_VIDEO_PROFILES.animatediff!.promptFormat,).toBe("keyframe-tags",);
     expect(BUILTIN_VIDEO_PROFILES.hunyuan!.promptFormat,).toBe("json",);
@@ -82,6 +83,7 @@ describe("resolveVideoProfile", () => {
   test("model name pattern matches first-match-wins", () => {
     expect(resolveVideoProfile("text2video", "balanced", { modelName: "Wan2.2-T2V-A14B", },).resolvedProfileId,)
       .toBe("wan",);
+
     expect(resolveVideoProfile("text2video", "balanced", { modelName: "ltx-video-2", },).resolvedProfileId,)
       .toBe("ltx",);
   });
@@ -96,6 +98,7 @@ describe("resolveVideoProfile", () => {
     const { template, } = resolveVideoProfile("text2video", "balanced", {
       templateOverride: "custom {{subject}} body",
     },);
+
     expect(template,).toBe("custom {{subject}} body",);
   });
 
@@ -110,6 +113,7 @@ describe("resolveVideoProfile", () => {
       profiles: { mine: { ...BUILTIN_VIDEO_PROFILES.wan!, id: "mine", }, },
       defaultProfileId: "mine",
     };
+
     const { resolvedProfileId, } = resolveVideoProfile("text2video", "balanced", { registry: custom, },);
     expect(resolvedProfileId,).toBe("mine",);
   });

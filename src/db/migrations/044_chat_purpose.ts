@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 039_chat_purpose
+ * 044_chat_purpose
  *
  * Add purpose column to chats table. Nullable: null = no specific purpose.
  */

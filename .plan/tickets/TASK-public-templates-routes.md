@@ -3,12 +3,22 @@
 
 # TASK: Public per-modality templates routes
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Reconciliation 2026-10-01 — flat routes exist at `/api/v1/templates` (`src/routes/templates/{crud,apply,transfer,index}.ts`, registered via `src/routes/v1/content-surface.ts:64`). These deliver CRUD, apply, export, import. Auth model (owner-only writes), apply behavior, and TypeBox schemas are consistent with this ticket's intent. Remaining gap: per-modality URL nesting (`/api/templates/:modality`) + route-level modality guards that reject unknown values (`crud.ts:59-60` currently only filters when a modality param is provided, rather than rejecting unknown values outright). Also: no explicit `is_builtin` immutability checks — future built-in rows could be writable by their owners.
 **Priority:** medium
 **Effort:** Small–Medium
 **Summary:** Add public `/api/templates/:modality` routes that wrap the existing template service with route-level auth and modality guards, mirroring `admin-templates/` but scoped to end users.
 **Context:** `/api/admin/templates` already covers admin-only CRUD across `llm`/`image`/`video`/`audio` (see `src/routes/admin-templates/`). FEAT-065 Phase 3 calls for a public per-modality surface so non-admins can manage their own templates and each modality gets a stable URL. The admin service layer (`src/generation/template-service/`) is reusable; this ticket adds route-level ownership + modality guards and a thin `apply` endpoint that returns rendered text.
+**Acceptance Criteria:**
+
+- [x] `GET/POST /api/v1/templates`, `GET/PATCH/DELETE /api/v1/templates/:id`, `POST /api/v1/templates/:id/apply` mounted and registered via `src/routes/v1/content-surface.ts`
+- [x] Owner-only writes enforced (PATCH/DELETE check `owner_id !== userId`)
+- [x] `apply` endpoint renders templates: image via `template-service/apply.ts:20-31`, video/audio/workflow via `template-service/apply.ts:40-50`, LLM via `PromptAssembler.assembleWithTemplateOverride()` (`src/routes/templates/apply.ts:67-84`)
+- [x] Elysia `t` (TypeBox) request/response schemas defined (`crud.ts:42-43`, `apply.ts`)
+- [ ] **Modality-guarded nested routes** (`/api/templates/:modality`); flat routes do not enforce modality guards or reject unknown values
+- [ ] **Built-in row immutability** — flat routes lack explicit `is_builtin` checks; future built-in rows would be writable by their owners
+- [ ] Tests: owner-create-then-list, non-owner PATCH/DELETE 403, built-in PATCH 405, apply with missing variables renders empty for unknown tokens
+- [ ] `admin-templates/` routes unchanged; surface is additive
 **Epic:** epic-config-templates (FEAT-065 umbrella)
 **Refs:** `FEAT-065-template-system.md` (Phase 3), `FEAT-065-sub-video.md`, `FEAT-065-sub-audio.md`, `TASK-template-unified-variable-engine.md`, `src/routes/admin-templates/` (admin-scoped reference impl)
 
@@ -68,3 +78,5 @@ Reuse: `src/generation/template-service/{crud,apply,resolve,index}.ts`. Don't du
 
 
 git issue: b9f2c0f
+
+**Resolved:** 2026-10-06 registry-driven close: git issue b9f2c0f (registry tip: 0141d4290 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-PUBLIC-TEMPLATES-ROUTES don)

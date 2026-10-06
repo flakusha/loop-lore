@@ -49,7 +49,10 @@ export class ChatClearanceError extends Error {
   /** Denial reason — match on this, never on the message. */
   readonly reason: ClearanceDenial;
 
-  /** @param reason */
+  /**
+   * @param reason
+   * @param chatId
+   */
   constructor(reason: ClearanceDenial, chatId: string,) {
     super(`content clearance denied for ${chatId}: ${reason}`,);
     this.name = "ChatClearanceError";

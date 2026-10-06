@@ -34,7 +34,10 @@ export function getSchedulerManager(): ResourceManager {
   return manager;
 }
 
-/** Test seam: swap/reset the process-wide scheduler. */
+/**
+ * Test seam: swap/reset the process-wide scheduler.
+ * @param next
+ */
 export function resetSchedulerManager(next?: ResourceManager,): ResourceManager {
   manager = next ?? new ResourceManager({ defaultMax: SCHEDULER_DEFAULT_MAX, },);
   return manager;

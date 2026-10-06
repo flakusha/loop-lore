@@ -247,10 +247,12 @@ export function parseActionStage1(input: string,): Action | null {
         parser_stage: "stage1",
         raw: trimmed,
       };
+
       const target = extractTarget(trimmed, m.index + m[0].length - (m[1]?.length ?? 0) || m.index,);
       if (target) { action.target = target; }
       return action;
     }
   }
+
   return null;
 }

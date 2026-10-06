@@ -89,8 +89,8 @@ describe("nsfw runtime config store", () => {
       useLlmClassifier: false,
     },);
 
-    await insertConfig(db, "nsfw_allow", "false",);
-    await insertConfig(db, "nsfw_min_age", "21",);
+    await insertConfig(db, "nsfw.allowNsfw", "false",);
+    await insertConfig(db, "nsfw.nsfwMinAge", "21",);
 
     await applyStoredNsfwConfig(db,);
     const cfg = getRuntimeNsfwConfig();
@@ -109,8 +109,8 @@ describe("nsfw runtime config store", () => {
       useLlmClassifier: false,
     },);
 
-    await insertConfig(db, "nsfw_allow", "not-a-bool",);
-    await insertConfig(db, "nsfw_min_age", "99999",);
+    await insertConfig(db, "nsfw.allowNsfw", "not-a-bool",);
+    await insertConfig(db, "nsfw.nsfwMinAge", "99999",);
 
     await applyStoredNsfwConfig(db,);
     const cfg = getRuntimeNsfwConfig();

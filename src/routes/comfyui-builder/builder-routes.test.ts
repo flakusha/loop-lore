@@ -90,6 +90,7 @@ describe("comfyuiBuilderRoutes", () => {
       post("http://localhost/api/comfyui-builder/validate", { workflow: {}, },),
       new Request("http://localhost/api/comfyui-builder/palette",),
     ];
+
     for (const request of requests) {
       const res = await app.handle(request,);
       expect(res.status,).toBe(401,);
@@ -111,6 +112,7 @@ describe("comfyuiBuilderRoutes", () => {
     const got = await app.handle(
       new Request(`http://localhost/api/comfyui-builder/chains/${chain.id}`,),
     );
+
     expect(got.status,).toBe(200,);
 
     const patched = await app.handle(
@@ -123,16 +125,19 @@ describe("comfyuiBuilderRoutes", () => {
         },
       ),
     );
+
     expect(patched.status,).toBe(200,);
     expect(((await patched.json()) as { chain: { name: string } }).chain.name,).toBe("Renamed",);
 
     const deleted = await app.handle(
       new Request(`http://localhost/api/comfyui-builder/chains/${chain.id}`, { method: "DELETE", },),
     );
+
     expect(deleted.status,).toBe(204,);
     const gone = await app.handle(
       new Request(`http://localhost/api/comfyui-builder/chains/${chain.id}`,),
     );
+
     expect(gone.status,).toBe(404,);
   });
 
@@ -141,12 +146,14 @@ describe("comfyuiBuilderRoutes", () => {
     const created = await ownerApp.handle(
       post("http://localhost/api/comfyui-builder/chains", CHAIN_BODY,),
     );
+
     const chain = ((await created.json()) as { chain: { id: string } }).chain;
 
     const intruder = makeApp(db, otherId,);
     const got = await intruder.handle(
       new Request(`http://localhost/api/comfyui-builder/chains/${chain.id}`,),
     );
+
     expect(got.status,).toBe(404,);
     const patched = await intruder.handle(
       new Request(
@@ -158,16 +165,19 @@ describe("comfyuiBuilderRoutes", () => {
         },
       ),
     );
+
     expect(patched.status,).toBe(404,);
     const deleted = await intruder.handle(
       new Request(`http://localhost/api/comfyui-builder/chains/${chain.id}`, { method: "DELETE", },),
     );
+
     expect(deleted.status,).toBe(404,);
 
     // Owner's row is untouched.
     const stillThere = await ownerApp.handle(
       new Request(`http://localhost/api/comfyui-builder/chains/${chain.id}`,),
     );
+
     expect(stillThere.status,).toBe(200,);
     expect(
       ((await stillThere.json()) as { chain: { name: string } }).chain.name,
@@ -182,6 +192,7 @@ describe("comfyuiBuilderRoutes", () => {
       name: "Bad",
       steps: [{ id: "s1", templateId: "t", params: { deep: { nested: true, }, }, },],
     },),);
+
     expect(badParam.status,).toBe(422,);
   });
 
@@ -194,6 +205,7 @@ describe("comfyuiBuilderRoutes", () => {
         { id: "s1", templateId: "t", params: {}, },
       ],
     },),);
+
     expect(res.status,).toBe(400,);
     const body = (await res.json()) as { error?: string };
     expect(body.error,).toContain("duplicate step id s1",);
@@ -204,16 +216,19 @@ describe("comfyuiBuilderRoutes", () => {
     const unknown = await app.handle(post("http://localhost/api/comfyui-builder/runs", {
       chainId: "missing",
     },),);
+
     expect(unknown.status,).toBe(404,);
 
     const created = await app.handle(post("http://localhost/api/comfyui-builder/chains", {
       name: "Empty",
       steps: [],
     },),);
+
     const chain = ((await created.json()) as { chain: { id: string } }).chain;
     const empty = await app.handle(post("http://localhost/api/comfyui-builder/runs", {
       chainId: chain.id,
     },),);
+
     expect(empty.status,).toBe(400,);
   });
 
@@ -230,6 +245,7 @@ describe("comfyuiBuilderRoutes", () => {
     const started = await app.handle(post("http://localhost/api/comfyui-builder/runs", {
       chainId: chain.id,
     },),);
+
     expect(started.status,).toBe(201,);
     const { jobId, } = (await started.json()) as { jobId: string };
     expect(jobId.length,).toBeGreaterThan(0,);
@@ -243,6 +259,7 @@ describe("comfyuiBuilderRoutes", () => {
     const stolen = await intruder.handle(
       new Request(`http://localhost/api/comfyui-builder/runs/${jobId}`,),
     );
+
     expect(stolen.status,).toBe(404,);
   });
 
@@ -252,11 +269,13 @@ describe("comfyuiBuilderRoutes", () => {
         { error: "Unknown template: nope", },
         { status: 404, },
       ),);
+
     const created = await app.handle(post("http://localhost/api/comfyui-builder/chains", CHAIN_BODY,),);
     const chain = ((await created.json()) as { chain: { id: string } }).chain;
     const started = await app.handle(post("http://localhost/api/comfyui-builder/runs", {
       chainId: chain.id,
     },),);
+
     const { jobId, } = (await started.json()) as { jobId: string };
 
     const final = await pollUntilDone(app, jobId,);
@@ -272,6 +291,7 @@ describe("comfyuiBuilderRoutes", () => {
         b: { class_type: "KSampler", inputs: { model: ["a", 0,], }, },
       },
     },),);
+
     expect(cycle.status,).toBe(200,);
     const cycleBody = (await cycle.json()) as { ok: boolean; issues: { kind: string }[] };
     expect(cycleBody.ok,).toBe(false,);
@@ -284,6 +304,7 @@ describe("comfyuiBuilderRoutes", () => {
         "3": { class_type: "SaveImage", inputs: { images: ["2", 0,], }, },
       },
     },),);
+
     expect(valid.status,).toBe(200,);
     expect(((await valid.json()) as { ok: boolean }).ok,).toBe(true,);
   });
@@ -295,6 +316,7 @@ describe("comfyuiBuilderRoutes", () => {
       for (let i = 0; i < count; i++) {
         out["n" + i] = { class_type: classType, inputs: {}, };
       }
+
       return out;
     }
 
@@ -303,24 +325,28 @@ describe("comfyuiBuilderRoutes", () => {
     const tooManyNodes = await app.handle(
       post("http://localhost/api/comfyui-builder/validate", { workflow: nodes(101, "KSampler",), },),
     );
+
     expect(tooManyNodes.status,).toBe(422,);
 
     // The node-array form is bounded by the same ceiling.
     const shortArray = await app.handle(
       post("http://localhost/api/comfyui-builder/validate", { workflow: [1, 2, 3,], },),
     );
+
     expect(shortArray.status,).toBe(200,);
     const longArray = await app.handle(
       post("http://localhost/api/comfyui-builder/validate", {
         workflow: Array.from({ length: 101, }, (_, i,) => i,),
       },),
     );
+
     expect(longArray.status,).toBe(422,);
 
     // Exactly at the cap still validates - the bound does not clip real work.
     const atCap = await app.handle(
       post("http://localhost/api/comfyui-builder/validate", { workflow: nodes(100, "Note",), },),
     );
+
     expect(atCap.status,).toBe(200,);
   });
 
@@ -328,6 +354,7 @@ describe("comfyuiBuilderRoutes", () => {
     const ok = await handlePalette({
       getNodeInfo: async () => ({ KSampler: { display_name: "KSampler", }, } as never),
     },);
+
     expect(ok.status,).toBe(200,);
     expect(((await ok.json()) as { data: Record<string, unknown> }).data.KSampler,).toBeDefined();
 
@@ -336,6 +363,7 @@ describe("comfyuiBuilderRoutes", () => {
         throw new Error("ComfyUI object_info failed [500]",);
       },
     },);
+
     expect(failed.status,).toBe(502,);
 
     const timeout = await handlePalette({
@@ -345,6 +373,7 @@ describe("comfyuiBuilderRoutes", () => {
         throw error;
       },
     },);
+
     expect(timeout.status,).toBe(504,);
   });
 });

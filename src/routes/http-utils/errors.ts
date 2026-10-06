@@ -68,6 +68,7 @@ export function notFoundResponse(message?: string, t?: TranslatorFn,): Response 
  * byte-identical across surfaces — a differing body would let a caller probe
  * for job existence. Only the response shape is shared: each call site keeps
  * its own ownership decision (see `job.userId` vs `job.actorId`).
+ * @param t
  */
 export function emotionJobNotFoundResponse(t?: TranslatorFn,): Response {
   return jsonError({

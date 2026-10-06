@@ -46,7 +46,10 @@ export interface NodeRecord {
 export class NodeStates {
   readonly #nodes = new Map<string, NodeRecord>();
 
-  /** The raw record, or undefined if the node is unknown. */
+  /**
+   * The raw record, or undefined if the node is unknown.
+   * @param taskId
+   */
   get(taskId: string,): NodeRecord | undefined {
     return this.#nodes.get(taskId,);
   }
@@ -94,7 +97,10 @@ export class NodeStates {
     node.lastError = null;
   }
 
-  /** @param taskId @param message why it failed */
+  /**
+   * @param taskId @param message why it failed
+   * @param message
+   */
   fail(taskId: string, message: string,): void {
     const node = this.#nodes.get(taskId,);
     if (node === undefined) { return; }

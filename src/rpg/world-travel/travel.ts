@@ -75,7 +75,7 @@ async function parkParty(db: Kysely<DB>, partyId: string, currentTick: number, s
 /**
  * Persist one party's step, guarded by the replay latch.
  *
- * The write carries `WHERE current_tick < :tick` — the column migration 036
+ * The write carries `WHERE current_tick < :tick` — the column migration 040
  * nominates as the party's replay guard, the same idea one column over from
  * discovery's `last_explored_tick`. A tick the scheduler replays after a
  * crash matches no row, so a replayed party neither moves a second time nor

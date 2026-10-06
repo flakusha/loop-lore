@@ -133,6 +133,10 @@ async function runBdiDispatch(
 }
 
 /** World members with no plan row for `planDate`, id-ordered so the set
+ * @param db
+ * @param worldId
+ * @param planDate
+ * @param limit
  *  is identical across restarts. */
 async function dueActors(
   db: Kysely<DB>,
@@ -157,7 +161,11 @@ async function dueActors(
   return members.map((m,) => m.actor_id).filter((id,) => !plannedIds.has(id,)).slice(0, limit,);
 }
 
-/** Does this world have any members at all? */
+/**
+ * Does this world have any members at all?
+ * @param db
+ * @param worldId
+ */
 async function hasMembers(db: Kysely<DB>, worldId: string,): Promise<boolean> {
   const row = await db
     .selectFrom("world_members",)
@@ -170,6 +178,7 @@ async function hasMembers(db: Kysely<DB>, worldId: string,): Promise<boolean> {
 }
 
 /** The dispatch has no actor identity of its own, so the budget is
+ * @param worldId
  *  billed to a synthetic world scope — same shape as the tick-driver's. */
 function worldScope(worldId: string,): AutonomyScope {
   return { kind: "user", id: `world:${worldId}`, };

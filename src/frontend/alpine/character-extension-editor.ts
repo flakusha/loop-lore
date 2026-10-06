@@ -12,7 +12,10 @@
 //
 // Ponytail note: the editor holds the canonical draft and serializes to
 // the existing `PUT /api/actors/:actorId` `settings` payload. One round-trip.
-import type { BundleCharacterRequirements, } from "../../plugins";
+// From the leaf module, NOT the `../../plugins` barrel: the barrel re-exports
+// the plugin loader, and resolving it drags the whole backend into the frontend
+// tsc project (ES2026 target, no `@/` paths).
+import type { BundleCharacterRequirements, } from "../../plugins/types";
 import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";

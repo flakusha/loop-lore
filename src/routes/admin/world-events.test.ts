@@ -81,7 +81,7 @@ describe("admin world-events routes", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { event_type: string }[]; total: number };
     expect(body.total,).toBe(1,);
-    expect(body.data[0].event_type,).toBe("trade:route",);
+    expect(body.data.map((row,) => row.event_type),).toEqual(["trade:route",],);
   });
 
   test("GET /api/admin/world-events returns empty for unknown world", async () => {

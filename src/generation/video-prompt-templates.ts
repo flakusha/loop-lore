@@ -102,7 +102,9 @@ export interface VideoPromptMessage {
 
 /**
  * Resolve a video profile + template by profile id, model name, or default.
+ * @param mode
  * @param detail - Falls back to the `balanced` body, mirroring the image resolver.
+ * @param opts
  */
 export function resolveVideoProfile(
   mode: VideoGenMode,
@@ -123,6 +125,8 @@ export { resolveModalityTemplate as resolveTemplate, } from "./modality-template
 /**
  * Role-switch system message for video prompt writing in the profile's
  * format (same pattern as the image `buildImageSystemPrompt`).
+ * @param profile
+ * @param detail
  */
 export function buildVideoSystemPrompt(profile: VideoModelProfile, detail: TemplateDetailLevel,): string {
   const verbosity = detail === "instant" ? "short" : (detail === "balanced" ? "concise" : "detailed");
@@ -131,6 +135,7 @@ export function buildVideoSystemPrompt(profile: VideoModelProfile, detail: Templ
     : profile.promptFormat === "keyframe-tags"
     ? "Output ONLY timestamped markers like [0s: subject enters] [2s: camera pans]."
     : "Output ONLY a flowing description of subject, motion, and style.";
+
   return [
     `[New Task] Forget previous instructions. You are now a video prompt writer.`,
     `${formatInstruction} Be ${verbosity}. Keep under ${profile.maxTokenHint} tokens.`,
@@ -138,7 +143,13 @@ export function buildVideoSystemPrompt(profile: VideoModelProfile, detail: Templ
   ].join(" ",);
 }
 
-/** Build the [system, user] LLM message array for video prompt generation. */
+/**
+ * Build the [system, user] LLM message array for video prompt generation.
+ * @param mode
+ * @param detail
+ * @param ctx
+ * @param opts
+ */
 export function buildVideoPromptMessages(
   mode: VideoGenMode,
   detail: TemplateDetailLevel,

@@ -36,6 +36,7 @@ export interface BackfillSummary {
  *
  * @param db - typed Kysely instance
  * @param opts - `dryRun` reports counts without writing
+ * @param opts.dryRun
  * @returns counts of rows considered and written
  * @example
  * ```ts
@@ -59,6 +60,7 @@ export async function runBackfill(
     if (opts.dryRun !== true) {
       await db.updateTable("users",).set({ encryption_secret: secret, },).where("id", "=", row.id,).execute();
     }
+
     updated++;
   }
 
@@ -83,6 +85,7 @@ export async function main(): Promise<number> {
     console.error("backfill:users:encryption-secret requires a real on-disk DB; got:", sqliteFilename,);
     return 1;
   }
+
   const sqlite = new Database(sqliteFilename,);
   sqlite.run("PRAGMA foreign_keys = ON",);
   const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);

@@ -1024,6 +1024,78 @@ export interface ActorPlanRevisions {
   created_at: Generated<string>;
 }
 
+export interface TaskDependencies {
+  task_id: string;
+  depends_on_task_id: string;
+  on_failure: Generated<string>;
+  created_at: Generated<string>;
+}
+
+export interface TravelParties {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  kind: Generated<string>;
+  cadence: Generated<string>;
+  route: Generated<string>;
+  route_index: Generated<number>;
+  steps_per_tick: Generated<number>;
+  travel_progress: Generated<number>;
+  current_location_id: string | null;
+  current_tick: Generated<number>;
+  status: Generated<string>;
+  blocked_until_tick: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+export interface NpcMigrations {
+  id: Generated<string>;
+  world_id: string;
+  actor_id: string;
+  origin_location_id: string | null;
+  destination_location_id: string | null;
+  depart_tick: number;
+  arrive_tick: number;
+  cadence: Generated<string>;
+  status: Generated<string>;
+  last_depart_tick: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+export interface WorldTravelBudget {
+  world_id: Generated<string>;
+  spent: Generated<number>;
+  ceiling: Generated<number>;
+  window_start_tick: Generated<number>;
+  updated_at: Generated<string>;
+}
+
+export interface WorldEventLog {
+  id: Generated<string>;
+  world_id: string;
+  event_type: string;
+  subject_id: string | null;
+  actor_id: string | null;
+  payload: Generated<string>;
+  tick_index: number;
+  dedupe_key: string;
+  created_at: Generated<string>;
+}
+
+export interface LocationDiscovery {
+  world_id: string;
+  location_id: string;
+  actor_id: string;
+  progress: Generated<number>;
+  last_explored_tick: Generated<number>;
+  discovered: Generated<number>;
+  discovered_tick: number | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
 export interface ScheduledMessages {
   id: Generated<string>;
   chat_id: string;
@@ -1033,6 +1105,7 @@ export interface ScheduledMessages {
   status: Generated<string>;
 }
 
+// ── message_reminders ────────────────────────────────────────────
 export interface MessageReminders {
   id: Generated<string>;
   message_id: string;
@@ -1064,29 +1137,17 @@ export interface ChatParticipants {
 
 export interface Chats extends AuditColumns {
   id: Generated<string>;
-
   name: string;
-
   created_by: string;
-
   world_id: string | null;
-
   current_location_id: string | null;
-
   story_state: string | null;
-
   gm_config: string | null;
-
   turn_strategy: TurnStrategy | null;
-
   max_turns: number | null;
-
   auto_advance: number | null;
-
   response_length_preset: Generated<string>;
-
   response_length_custom: number | null;
-
   context_max_tokens: number | null;
   streaming: number | null;
   nsfw_override: string | null;
@@ -1106,28 +1167,51 @@ export interface Chats extends AuditColumns {
 // ── actors ────────────────────────────────────────────
 export interface Actors {
   id: Generated<string>;
+
   actor_type: Generated<ActorType>;
+
   display_name: string;
+
   user_id: string | null;
+
   owner_id: string | null;
+
   avatar_asset_id: string | null;
+
   description: string | null;
+
   system_prompt: string | null;
+
   agent_type: Generated<AgentType>;
+
   settings: Generated<string>;
+
   format_version: Generated<number>;
+
   visibility: Generated<string>;
+
   welcome_message: string | null;
+
   personality: string | null;
+
   appearance: string | null;
+
   default_outfit: string | null;
+
   outfits: string | null;
+
   scenario: string | null;
+
   mes_example: string | null;
+
   alternate_greetings: string | null;
+
   post_history_instructions: string | null;
+
   creator_notes: string | null;
+
   creator: string | null;
+
   character_version: string | null;
 
 // ── mesh_inbound_keys ────────────────────────────────────────────
@@ -1158,7 +1242,6 @@ export interface WorldInvites {
   avatar_focus_y: Generated<number>;
   review_state: Generated<string>;
 }
-
 
 export interface ChatSetupTemplates {
   id: Generated<string>;
@@ -1222,6 +1305,7 @@ export interface ActivitypubActorKeys {
   durability: Generated<number>;
   max_durability: Generated<number>;
 }
+
 // ── actor_currencies ────────────────────────────────────────────
 export interface ActorCurrencies {
   id: Generated<string>;
@@ -1232,6 +1316,7 @@ export interface ActorCurrencies {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
 // ── system_config ────────────────────────────────────────────
 export interface SystemConfig {
   key: Generated<string>;
@@ -1240,6 +1325,7 @@ export interface SystemConfig {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
 // ── log_entries ────────────────────────────────────────────
 export interface LogEntries {
   id: Generated<string>;
@@ -1326,6 +1412,7 @@ export interface Messages {
   data_version: Generated<number>;
   record_hash: Generated<string>;
 }
+
 // ── actor_keys ────────────────────────────────────────────
 export interface ActorKeys {
   id: Generated<string>;
@@ -1919,7 +2006,6 @@ export interface ChatKeys {
   expires_at: string | null;
 }
 
-
 export interface MusicLinks {
   id: Generated<string>;
   chat_id: string;
@@ -2253,6 +2339,7 @@ export interface CarriageRecords {
   payload: string;
   created_at: string;
 }
+
 // ── wardrobe_items ────────────────────────────────────────────
 export interface WardrobeItems {
   id: Generated<string>;
@@ -2362,4 +2449,7 @@ export interface LocationDiscovery {
   discovered_tick: number | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+}
+
+  review_state: Generated<string>;
 }

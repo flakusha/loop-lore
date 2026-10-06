@@ -72,6 +72,8 @@ const JSON_BODIES: Record<"sfx" | "music", Record<"instant" | "balanced" | "deta
  * Bodies for one format: natural table, SSML/JSON overrides, then blanks
  * for sub-types the profile does not support (the resolver guard throws
  * before they are ever read).
+ * @param format
+ * @param subtypes
  */
 function templatesFor(
   format: AudioPromptFormat,
@@ -83,15 +85,18 @@ function templatesFor(
     music: { ...NATURAL_BODIES.music, },
     "voice-clone": { ...NATURAL_BODIES["voice-clone"], },
   };
+
   if (format === "ssml") { templates.tts = { ...SSML_TTS_BODIES, }; }
   if (format === "json") {
     templates.sfx = { ...JSON_BODIES.sfx, };
     templates.music = { ...JSON_BODIES.music, };
   }
+
   const empty = { instant: "", balanced: "", detailed: "", };
   for (const subtype of ["tts", "sfx", "music", "voice-clone",] as const) {
     if (!subtypes.includes(subtype,)) { templates[subtype] = { ...empty, }; }
   }
+
   return templates;
 }
 

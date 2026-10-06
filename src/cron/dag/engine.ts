@@ -47,6 +47,7 @@ export class WorkflowDagEngine {
   /** Only `done` unblocks a dependent. A `failed` or `skipped`
    *  prerequisite does not, which is what keeps a `retry` dependent
    *  waiting for its prerequisite to actually succeed.
+   * @param taskId
    */
   readonly #isDone = (taskId: string,): boolean => this.#states.get(taskId,)?.state === "done";
 
@@ -89,7 +90,10 @@ export class WorkflowDagEngine {
     return hydrateEdges(this.#db, this.#graph, this.#states,);
   }
 
-  /** Prerequisite ids for a node — its slice of the graph. */
+  /**
+   * Prerequisite ids for a node — its slice of the graph.
+   * @param taskId
+   */
   dependsOn(taskId: string,): string[] {
     return this.#graph.dependsOn(taskId,);
   }

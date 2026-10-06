@@ -106,8 +106,6 @@ if (typeof doc.addEventListener === "function" && !doc[LISTENER_KEY]) {
   document.addEventListener(
     "show-toast",
     (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
-    (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
-    (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
       showToast(e.detail.type || "info", e.detail.message,);
     },
   );
@@ -199,7 +197,6 @@ export function getTheme(): string {
 
 /**
  * Resolve a translation key against the global locale strings; falls back to the key.
-// hint: Structural and logic conflict. Both design and behavior differ.
  * A numeric `params.count` drives plural-variant selection, matching the server.
  * @param key
  * @param params

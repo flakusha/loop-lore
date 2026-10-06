@@ -341,6 +341,7 @@ describe("GET /api/plugins/ui-components", () => {
       origin: "core",
       directory: "/tmp",
     },);
+
     registry.addUIComponents("ui-plugin", [
       { type: "web", name: "sidebar-widget", location: "chat.sidebar", props: { label: "Hi", }, },
       { type: "both", name: "composer-widget", location: "chat.composer", },
@@ -369,6 +370,7 @@ describe("GET /api/plugins/ui-components", () => {
       type: string;
       props: Record<string, unknown>;
     }[];
+
     const names = body.map((c,) => c.name);
     expect(names,).toContain("sidebar-widget",);
     expect(names,).toContain("composer-widget",);
@@ -384,6 +386,7 @@ describe("GET /api/plugins/ui-components", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/ui-components?location=chat.composer",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { name: string }[];
     expect(body.map((c,) => c.name),).toEqual(["composer-widget",],);
@@ -394,14 +397,17 @@ describe("GET /api/plugins/ui-components", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/ui-components?location=nope.here",),
     );
+
     expect(res.status,).toBe(200,);
     expect(await res.json(),).toEqual([],);
   });
+
   test("empty ?location= value is treated as no filter", async () => {
     const app = createPluginApp(db, "admin",);
     const res = await app.handle(
       new Request("http://localhost/api/plugins/ui-components?location=",),
     );
+
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { name: string }[];
     expect(body.map((c,) => c.name),).toContain("sidebar-widget",);

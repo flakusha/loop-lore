@@ -29,6 +29,7 @@ export async function importLicensing(
   try {
     const existing = await db.selectFrom("character_licensing",).where("actor_id", "=", actorId,).select("id",)
       .executeTakeFirst();
+
     const now = new Date().toISOString();
     if (existing) {
       const licensingRow = {
@@ -40,6 +41,7 @@ export async function importLicensing(
         share_alike: (data.shareAlike as number) ?? 0,
         updated_at: now,
       };
+
       assertValidWrite("character_licensing", licensingRow,);
       await db.updateTable("character_licensing",).set(licensingRow,).where("actor_id", "=", actorId,)
         .execute();
@@ -54,6 +56,7 @@ export async function importLicensing(
         created_at: now,
         updated_at: now,
       };
+
       assertValidWrite("character_licensing", licensingRow,);
       await db.insertInto("character_licensing",).values({
         id: crypto.randomUUID(),
@@ -61,6 +64,7 @@ export async function importLicensing(
         ...licensingRow,
       },).execute();
     }
+
     result.licensingImported = true;
   } catch (error: unknown) {
     result.errors.push(`Failed to import licensing: ${errMsg(error,)}`,);

@@ -101,8 +101,12 @@ export function resetNsfwRuntimeConfig(): void {
  * @returns {Promise<void>}
  */
 export async function applyStoredNsfwConfig(db: Kysely<DB>,): Promise<void> {
-  const allowRaw = await getConfigValue(db, "nsfw_allow",);
-  const minAgeRaw = await getConfigValue(db, "nsfw_min_age",);
+  // Dotted paths, matching HOT_APPLY_PATHS and the keys admin-nsfw.ts writes.
+  // The legacy `nsfw_allow` / `nsfw_min_age` rows are intentionally NOT read:
+  // nothing writes them any more, and reading them would silently shadow the
+  // live config with a value no admin surface can update.
+  const allowRaw = await getConfigValue(db, "nsfw.allowNsfw",);
+  const minAgeRaw = await getConfigValue(db, "nsfw.nsfwMinAge",);
 
   const patch: Partial<NsfwRuntimeConfig> = {};
 

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 038_actor_review_state
+ * 042_actor_review_state
  *
  * Add review_state column to actors table for character approval workflow.
  * Default is 'pending_review' so new characters enter the review queue.

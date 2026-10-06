@@ -58,9 +58,11 @@ async function loadEncryptionSecret(db: Kysely<DB>, userId: string,): Promise<st
     .select("encryption_secret",)
     .where("id", "=", userId,)
     .executeTakeFirst();
+
   const secret = row?.encryption_secret ?? null;
   return isUsableEncryptionSecret(secret,) ? secret : null;
 }
+
 interface MessageRow {
   id: string;
   chat_id: string;
@@ -125,6 +127,7 @@ export function createMessageProviders(
       SELECT m.id, m.chat_id, m.role, m.content_plaintext, m.created_at
       FROM messages m WHERE m.id = ${query.q} AND ${access} LIMIT 1
     `.execute(db,);
+
     const row = rows.rows[0];
     if (row === undefined) { return []; }
     return [{ ...toHit(row, 1,), source: "db", },];
@@ -145,6 +148,7 @@ export function createMessageProviders(
       WHERE messages_fts MATCH ${ftsQuery} AND ${access}
       ORDER BY rank ASC LIMIT ${topK}
     `.execute(db,);
+
     return rows.rows.map((row,) => toHit(row, bm25ToScore(-row.rank,), row.snippet,));
   };
 
@@ -164,6 +168,7 @@ export function createMessageProviders(
       SELECT m.id, m.chat_id, m.role, m.content_plaintext, m.created_at
       FROM messages m WHERE m.id IN (${idList}) AND ${access}
     `.execute(db,);
+
     const byId = new Map(rows.rows.map((row,) => [row.id, row,]),);
     const ceiling = matches[0]?.hits ?? 1;
     const hits: SearchHit<MessageHit>[] = [];
@@ -173,6 +178,7 @@ export function createMessageProviders(
         hits.push({ ...toHit(row, match.hits / ceiling,), source: "token", encryptedMatch: true, },);
       }
     }
+
     return hits;
   };
 

@@ -75,6 +75,9 @@ export interface Recomputed {
  * same (progress, lastTick, present, tick) always yields the same number, so
  * a replay writes the value it would have written anyway and the guard in
  * the UPDATE is what stops it writing twice.
+ * @param row
+ * @param present
+ * @param tick
  */
 export function recompute(row: ProgressRow, present: boolean, tick: number,): Recomputed {
   const elapsed = Math.max(1, tick - row.last_explored_tick,);
@@ -83,7 +86,10 @@ export function recompute(row: ProgressRow, present: boolean, tick: number,): Re
   return { progress, fresh: !row.discovered && progress >= DISCOVERY_THRESHOLD, };
 }
 
-/** SQLite has no date type; the rest of the schema stores `datetime('now')`. */
+/**
+ * SQLite has no date type; the rest of the schema stores `datetime('now')`.
+ * @param nowMs
+ */
 function stamp(nowMs: number,): string {
   return toDate(nowMs,).toISOString().replace("T", " ",).slice(0, 19,);
 }
@@ -97,6 +103,8 @@ function stamp(nowMs: number,): string {
  * happened to hand rows back: a restore that reorders the scan would move
  * progress between actors. `actor_id` is a unique column, so the order is
  * total and identical on every run.
+ * @param db
+ * @param worldId
  */
 export async function readPresence(db: DiscoveryDb, worldId: string,): Promise<Presence[]> {
   return db
@@ -118,6 +126,8 @@ export async function readPresence(db: DiscoveryDb, worldId: string,): Promise<P
  *
  * Also the `ORDER BY` that makes the write loop reproducible: the recompute
  * of row 2 must not depend on whether row 1 won a conflict.
+ * @param db
+ * @param worldId
  */
 export async function readProgress(db: DiscoveryDb, worldId: string,): Promise<ProgressRow[]> {
   return db
@@ -136,6 +146,12 @@ export async function readProgress(db: DiscoveryDb, worldId: string,): Promise<P
  * `last_explored_tick < tick` guard; the INSERT cannot re-fire because the
  * composite primary key collides and the conflict clause discards it. The
  * boolean is the same signal in both cases: did this tick actually write?
+ * @param db
+ * @param worldId
+ * @param row
+ * @param next
+ * @param tick
+ * @param nowMs
  */
 export async function persist(
   db: DiscoveryDb,
@@ -186,6 +202,11 @@ export async function persist(
  * re-derives the crossing, loses the event conflict, and latches here — the
  * event is never at risk of being lost, only duplicated, and duplication is
  * what the unique key prevents.
+ * @param db
+ * @param worldId
+ * @param row
+ * @param tick
+ * @param nowMs
  */
 export async function latch(
   db: DiscoveryDb,

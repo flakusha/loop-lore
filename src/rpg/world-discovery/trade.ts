@@ -5,7 +5,7 @@
  * src/rpg/world-discovery/trade.ts — `trade:route` per tick
  *
  * Reads the travel domain (`travel_parties`, `npc_migrations`, both from
- * `036_world_travel_simulation`) and leaves a `trade:route` event for every
+ * `040_world_travel_simulation`) and leaves a `trade:route` event for every
  * convoy that is in motion. No LLM call, no `Math.random()`: pure read plus
  * an idempotent insert, the deterministic tier of
  * `docs/spec/autonomy-determinism.md`. Nothing here draws from the tick RNG
@@ -89,6 +89,8 @@ interface Convoy {
  * `ORDER BY id ASC` for the same reason `travel.ts` uses it: a DB scan has
  * no inherent order, and a restore that hands rows back differently must
  * still produce the same events. `id` is unique, so the order is total.
+ * @param db
+ * @param worldId
  */
 async function readMovingParties(db: Kysely<DB>, worldId: string,): Promise<Convoy[]> {
   const rows = await travelDb(db,)
@@ -114,6 +116,8 @@ async function readMovingParties(db: Kysely<DB>, worldId: string,): Promise<Conv
  *
  * `actor_id` is unique per migration row in practice but not by constraint,
  * so `id` breaks the tie and the order stays total.
+ * @param db
+ * @param worldId
  */
 async function readMigrations(db: Kysely<DB>, worldId: string,): Promise<Convoy[]> {
   const rows = await travelDb(db,)
@@ -142,6 +146,8 @@ async function readMigrations(db: Kysely<DB>, worldId: string,): Promise<Convoy[
  * `parseRoute` treats it: a row that will not parse is a data bug, and a
  * convoy whose head of route is unreadable still reports its position — it
  * just reports no destination rather than failing the whole world tick.
+ * @param raw
+ * @param routeIndex
  */
 function edgeAhead(raw: string, routeIndex: number,): string | null {
   const parsed: unknown = jsonParseOr(raw, null,);
@@ -156,6 +162,8 @@ function edgeAhead(raw: string, routeIndex: number,): string | null {
  * The economy leg of "consult route and economy" — see the header. One
  * aggregate query, no per-party grouping, because there is nothing to group
  * by: `trade_history` is keyed by actor pair.
+ * @param db
+ * @param worldId
  */
 async function tradeVolume(db: Kysely<DB>, worldId: string,): Promise<number> {
   const row = await db

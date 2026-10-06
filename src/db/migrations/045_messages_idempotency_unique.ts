@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 040_messages_idempotency_unique
+ * 045_messages_idempotency_unique
  *
  * `idx_messages_idempotency` (001_init) is a plain non-unique index on
  * `messages.idempotency_key`, so the route's check-then-insert has a TOCTOU
@@ -57,7 +57,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   for (const dup of dups.rows) {
     process.emitWarning(
-      `[040_messages_idempotency_unique] chat ${dup.chat_id} has ${dup.n} rows sharing idempotency_key; collapsing to oldest.`,
+      `[045_messages_idempotency_unique] chat ${dup.chat_id} has ${dup.n} rows sharing idempotency_key; collapsing to oldest.`,
     );
 
     const survivor = await sql<RowId>`

@@ -5,6 +5,28 @@ import { describe, } from "bun:test";
 import { readFileSync, } from "node:fs";
 
 /**
+ * True when a `bun test` argv asks for per-file isolation: `--isolate` gives
+ * every file a fresh global and module registry, and `--parallel` does the
+ * same (each worker hands the next file a fresh global). NUL-anchored so
+ * `--no-isolate` and paths that merely contain the word do not match.
+ * @param cmdline NUL-separated argv of the `bun test` process
+ * @returns whether that invocation isolates test files from each other
+ */
+export const requestsPerFileIsolation = (cmdline: string,): boolean =>
+  /(^|\0)(--isolate|--parallel)(=|\0|$)/.test(cmdline,);
+
+let runnerCmdline = "";
+
+// Where procfs is unavailable the read throws and `runnerCmdline` stays "",
+// which makes a bare `bun test --isolate <file>` indistinguishable from a
+// shared run — the suite then skips out loud rather than vanishing.
+try {
+  runnerCmdline = readFileSync("/proc/self/cmdline", "utf8",);
+} catch {
+  runnerCmdline = "";
+}
+
+/**
  * True when each test file owns a fresh global and module registry, i.e. when
  * Bun runs the suite with per-file isolation.
  *
@@ -22,8 +44,6 @@ import { readFileSync, } from "node:fs";
  * suite skips and says so out loud instead of vanishing from the summary.
  */
 export const ISOLATED = process.env.BUN_TEST_WORKER_ID !== undefined || requestsPerFileIsolation(runnerCmdline,);
-  const globals = globalThis as Record<string, unknown>;
-export const describeOrSkip = ISOLATED ? describe : describe.skip;
 
 /**
  * True only under `bun run test:unit` (package.json: `bun test --parallel=4
@@ -40,17 +60,9 @@ export const STRICTLY_ISOLATED = process.env.npm_lifecycle_event === "test:unit"
  * `describe.skip`. For suites whose `mock.module` doubles cannot survive a
  * shared process (fixed-fake pins that poison later files).
  */
-export const describeOrSkipStrict = STRICTLY_ISOLATED ? describe : describe.skip;
-
-let runnerCmdline = "";
+export const describeOrSkip = ISOLATED ? describe : describe.skip;
 
 /**
- * True when a `bun test` argv asks for per-file isolation: `--isolate` gives
- * every file a fresh global and module registry, and `--parallel` does the
- * same (each worker hands the next file a fresh global). NUL-anchored so
- * `--no-isolate` and paths that merely contain the word do not match.
- * @param cmdline NUL-separated argv of the `bun test` process
- * @returns whether that invocation isolates test files from each other
+ * `describe` only under the strict `test:unit` isolation gate.
  */
-export const requestsPerFileIsolation = (cmdline: string,): boolean =>
-  /(^|\0)(--isolate|--parallel)(=|\0|$)/.test(cmdline,);
+export const describeOrSkipStrict = STRICTLY_ISOLATED ? describe : describe.skip;

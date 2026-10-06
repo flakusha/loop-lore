@@ -208,6 +208,7 @@ describe("validateItemPower", () => {
     for (const category of Object.values(ItemCategory,)) {
       expect(ITEM_POWER_BUDGETS[category],).toBeDefined();
     }
+
     expect(powerBudgetFor("not_a_category" as ItemCategory,),).toBe(ITEM_POWER_BUDGETS[ItemCategory.Other],);
   });
 });

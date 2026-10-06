@@ -109,6 +109,7 @@ export interface AudioPromptMessage {
  * Resolve an audio profile + template by profile id, model name, or default.
  * @param subtype - Audio sub-type the prompt targets
  * @param detail - Falls back to the `balanced` body, mirroring the image resolver.
+ * @param opts
  * @throws {Error} When the resolved profile does not support `subtype`.
  */
 export function resolveAudioProfile(
@@ -121,6 +122,7 @@ export function resolveAudioProfile(
   if (!profile.subtypes.includes(subtype,)) {
     throw new Error(`Audio profile "${profile.id}" does not support the "${subtype}" subtype`,);
   }
+
   const subtypeTemplates = profile.templates[subtype];
   let template = subtypeTemplates[detail] ?? subtypeTemplates.balanced;
   if (opts.templateOverride !== undefined) { template = opts.templateOverride; }
@@ -130,6 +132,9 @@ export function resolveAudioProfile(
 /**
  * Role-switch system message for audio prompt writing in the profile's
  * format (same pattern as the image `buildImageSystemPrompt`).
+ * @param profile
+ * @param subtype
+ * @param detail
  */
 export function buildAudioSystemPrompt(
   profile: AudioModelProfile,
@@ -142,6 +147,7 @@ export function buildAudioSystemPrompt(
     : profile.promptFormat === "ssml"
     ? "Output ONLY valid SSML wrapped in <speak>...</speak>."
     : "Output ONLY a natural language style direction.";
+
   return [
     `[New Task] Forget previous instructions. You are now an audio prompt writer.`,
     `Target: a ${subtype} clip. ${formatInstruction} Be ${verbosity}.`,
@@ -149,7 +155,13 @@ export function buildAudioSystemPrompt(
   ].join(" ",);
 }
 
-/** Build the [system, user] LLM message array for audio prompt generation. */
+/**
+ * Build the [system, user] LLM message array for audio prompt generation.
+ * @param subtype
+ * @param detail
+ * @param ctx
+ * @param opts
+ */
 export function buildAudioPromptMessages(
   subtype: AudioSubtype,
   detail: TemplateDetailLevel,

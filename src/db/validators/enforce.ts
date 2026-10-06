@@ -53,6 +53,9 @@ type GuardedTable =
 
 /**
  * Read a text axis column.
+ * @param row
+ * @param table
+ * @param column
  * @throws {Error} when the column is absent or not a string.
  */
 function readAxis(row: Record<string, unknown>, table: string, column: string,): string {
@@ -62,12 +65,16 @@ function readAxis(row: Record<string, unknown>, table: string, column: string,):
       `assertValidWrite: ${table}.${column} must be a string on the write, got ${typeof value}`,
     );
   }
+
   return value;
 }
 
 /**
  * Read a 0/1 integer axis column. Booleans are accepted and normalised to 0/1
  * (the importer's card-file data carries booleans; sqlite binds them as 0/1).
+ * @param row
+ * @param table
+ * @param column
  * @throws {Error} when the column is absent or not 0/1/true/false.
  */
 function readFlag(row: Record<string, unknown>, table: string, column: string,): 0 | 1 {
@@ -80,6 +87,7 @@ function readFlag(row: Record<string, unknown>, table: string, column: string,):
       `assertValidWrite: ${table}.${column} must be 0 or 1 on the write, got ${quoted.ok ? quoted.value : raw}`,
     );
   }
+
   return value;
 }
 
@@ -92,6 +100,11 @@ const KNOWN_VISIBILITIES: ReadonlySet<string> = new Set(Object.values(MessageVis
 /**
  * Assert a column value is a member of its own enum, tolerating one named
  * legacy default that predates the enum.
+ * @param column
+ * @param enumName
+ * @param value
+ * @param known
+ * @param legacy
  * @throws {Error} when the value is neither an enum member nor `legacy`.
  */
 function assertKnownAxis(
@@ -113,6 +126,11 @@ function assertKnownAxis(
 
 /**
  * Assert a two-axis pair against the validator's allowed set.
+ * @param table
+ * @param validator
+ * @param axisA
+ * @param axisB
+ * @param label
  * @throws {Error} when the pair is not in the allowed set.
  */
 function assertPair(
@@ -129,7 +147,10 @@ function assertPair(
   }
 }
 
-/** `messages.status` x `messages.visibility`. */
+/**
+ * `messages.status` x `messages.visibility`.
+ * @param row
+ */
 const guardMessages: RowGuard = (row,) => {
   const status = readAxis(row, "messages", "status",);
   const visibility = readAxis(row, "messages", "visibility",);
@@ -143,7 +164,10 @@ const guardMessages: RowGuard = (row,) => {
   assertPair("messages", messagesStatusVisibility, status, visibility, "status x visibility",);
 };
 
-/** `shadow_notes.status` x `shadow_notes.visibility`. */
+/**
+ * `shadow_notes.status` x `shadow_notes.visibility`.
+ * @param row
+ */
 const guardShadowNotes: RowGuard = (row,) => {
   assertPair(
     "shadow_notes",
@@ -154,11 +178,15 @@ const guardShadowNotes: RowGuard = (row,) => {
   );
 };
 
-/** `character_licensing.allow_derivatives` x `character_licensing.share_alike`. */
+/**
+ * `character_licensing.allow_derivatives` x `character_licensing.share_alike`.
+ * @param row
+ */
 const guardCharacterLicensing: RowGuard = (row,) => {
   const derivatives = readFlag(row, "character_licensing", "allow_derivatives",) === 1
     ? "allowed"
     : "forbidden";
+
   const shareAlike = readFlag(row, "character_licensing", "share_alike",) === 1 ? "yes" : "no";
   assertPair(
     "character_licensing",

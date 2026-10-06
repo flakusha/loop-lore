@@ -102,10 +102,12 @@ describe("per-modality template routes", () => {
       modality: "image",
       payload: JSON.stringify({ templateBody: "x", },),
     },);
+
     const videoId = await insertPromptTemplates(db, userId, "Seeded video", {
       modality: "video",
       payload: JSON.stringify({ body: "clip", },),
     },);
+
     const app = makeApp(db, userId,);
     const res = await app.handle(new Request("http://localhost/api/templates/video",),);
     expect(res.status,).toBe(200,);
@@ -136,6 +138,7 @@ describe("per-modality template routes", () => {
     const deleted = await app.handle(
       new Request(`http://localhost/api/templates/video/${id}`, { method: "DELETE", },),
     );
+
     expect(deleted.status,).toBe(204,);
     const gone = await app.handle(new Request(`http://localhost/api/templates/video/${id}`,),);
     expect(gone.status,).toBe(404,);
@@ -147,6 +150,7 @@ describe("per-modality template routes", () => {
       name: "Calm ambience",
       payload: { body: "{{mood}} ambience", },
     },);
+
     expect(created.status,).toBe(200,);
     const body = (await created.json()) as TemplateIdRow;
     const { id, } = body.template;
@@ -158,6 +162,7 @@ describe("per-modality template routes", () => {
     const deleted = await app.handle(
       new Request(`http://localhost/api/templates/audio/${id}`, { method: "DELETE", },),
     );
+
     expect(deleted.status,).toBe(204,);
   });
 
@@ -176,6 +181,7 @@ describe("per-modality template routes", () => {
       modality: "video",
       payload: JSON.stringify({ body: "x", },),
     },);
+
     const app = makeApp(db, userId,);
     const base = `http://localhost/api/templates/video/${rowId}`;
     const got = await app.handle(new Request(base,),);
@@ -191,6 +197,7 @@ describe("per-modality template routes", () => {
       modality: "audio",
       payload: JSON.stringify({ body: "original body", },),
     },);
+
     const app = makeApp(db, userId,);
     const got = await app.handle(new Request(`http://localhost/api/templates/video/${audioId}`,),);
     expect(got.status,).toBe(404,);
@@ -238,10 +245,12 @@ describe("per-modality template routes", () => {
       modality: "video",
       payload: JSON.stringify({ body: "x", },),
     },);
+
     const imageId = await insertPromptTemplates(db, userId, "Image row", {
       modality: "image",
       payload: JSON.stringify({ templateBody: "x", },),
     },);
+
     const unknownRes = await post(app, "/api/templates/video/does-not-exist/apply", {},);
     expect(unknownRes.status,).toBe(404,);
     const foreignRes = await post(app, `/api/templates/video/${foreignId}/apply`, {},);
@@ -256,6 +265,7 @@ describe("per-modality template routes", () => {
       name: "TTS line",
       payload: { body: "{{text}}", },
     },);
+
     const body = (await created.json()) as TemplateIdRow;
     const res = await post(app, `/api/templates/audio/${body.template.id}/apply`, {},);
     expect(res.status,).toBe(501,);

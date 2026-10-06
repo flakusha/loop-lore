@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 035_task_dependencies
+ * 039_task_dependencies
  *
  * Dependency edges for the workflow DAG engine
  * (TASK-workflow-dag-engine-task-dependencies). One row per

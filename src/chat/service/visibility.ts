@@ -43,6 +43,7 @@ export async function updateMessageVisibility(
     .select("status",)
     .where("id", "=", messageId,)
     .executeTakeFirst();
+
   if (!current) { return { ok: true, }; }
 
   assertValidWrite("messages", { status: current.status, visibility, },);

@@ -122,6 +122,7 @@ describe("assertValidWrite — character_licensing", () => {
     expect(() => {
       assertValidWrite("character_licensing", { allow_derivatives: true, share_alike: false, },);
     },).not.toThrow();
+
     expect(() => {
       assertValidWrite("character_licensing", { allow_derivatives: false, share_alike: true, },);
     },).toThrow(/not a legal state pair/,);
