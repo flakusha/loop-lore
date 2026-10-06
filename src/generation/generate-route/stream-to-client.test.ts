@@ -75,17 +75,6 @@ if (STRICTLY_ISOLATED) {
   mock.module("../../memory", () => ({
     extractAndStoreMemories: async () => {/* noop */},
   }),);
-
-  mock.module("../scheduler", () => ({
-    scheduledCallWithFailover: async (opts: {
-      failoverList: { name: string; provider: import("../providers/types").LLMProvider }[];
-      req: import("../providers/types").GenerateRequest;
-      handler?: (chunk: import("../providers/types").ChunkEvent,) => void;
-    },) => {
-      const { callWithFailover: failover, } = await import("../providers/call-with-failover");
-      return failover(opts.failoverList, opts.req, opts.handler,);
-    },
-  }),);
 }
 
 const { streamToClient, } = await import("./stream-to-client");
