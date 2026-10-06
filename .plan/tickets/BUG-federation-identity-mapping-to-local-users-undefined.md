@@ -61,4 +61,3 @@ Carried by `FEAT-activitypub-federation` (Not Started), which owns the inbox res
 service that looks up/inserts by `actor_uri`. Closing here records the decision; the
 migration and resolution service have not landed.
 
-**Resolved:** 2026-10-05 registry-driven close: git issue d6f2a94 (registry tip: 306b98448 Konstantin Fedotov Close issue)
