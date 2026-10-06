@@ -79,6 +79,19 @@ export async function tickWorld(deps: TickDeps, entry: WorldScheduleEntry, nowMs
   try {
     const chatId = await deps.store.chatIdFor(worldId,);
     const cfg = await resolveAutonomyConfig(deps.db, { worldId, chatId, },);
+    if (!cfg.enabled) {
+      const outcome: WorldTickOutcome = { skipped: "disabled", };
+      const nextTickAt = await advance(deps.store, worldId, state, nowMs, cfg.tickIntervalMs,);
+      emitSchedulerEvent(deps.db, EV_COMPLETED, {
+        world_id: worldId,
+        outcome: describe(outcome,),
+        next_tick_at: nextTickAt,
+        tick_count: state.tick_count + 1,
+      },);
+
+      return { worldId, nextTickAt, outcome, };
+    }
+
     // One stream per world-tick, derived here so every target on
     // this tick draws from the same one (the jitter coin flip in
     // the movement driver and any target's own draws must be
