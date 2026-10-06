@@ -139,7 +139,11 @@ export function validateFieldValue(field: ConfigMenuField, raw: unknown,): strin
   }
 }
 
-/** The Alpine component state factory. */
+/**
+ * The Alpine component state factory.
+ * @param opts
+ * @param opts.fetch
+ */
 export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
   const request: ApiFetchFn = opts.fetch ?? apiFetch;
   return {
@@ -183,7 +187,10 @@ export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
       }
     },
 
-    /** Switch the visible panel and deep-link it via the URL hash. */
+    /**
+     * Switch the visible panel and deep-link it via the URL hash.
+     * @param key
+     */
     selectSection(key: string,) {
       if (!key) { return; }
       this.activeSection = key;
@@ -202,7 +209,11 @@ export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
       return this.sections.find((s,) => s.key === this.activeSection);
     },
 
-    /** Record a new value, tracking dirtiness and re-validating the field. */
+    /**
+     * Record a new value, tracking dirtiness and re-validating the field.
+     * @param field
+     * @param raw
+     */
     setValue(field: ConfigMenuField, raw: unknown,) {
       this.values[field.key] = raw;
       if (!this.canEdit(field,)) { return; }
@@ -224,7 +235,10 @@ export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
       return this.isDirty(field.key,) ? validateFieldValue(field, this.values[field.key],) : null;
     },
 
-    /** Whether this role may write the field (catalog already filters by role; this is the defense-in-depth gate). */
+    /**
+     * Whether this role may write the field (catalog already filters by role; this is the defense-in-depth gate).
+     * @param field
+     */
     canEdit(field: ConfigMenuField,): boolean {
       return field.editable && (field.scope !== "admin" || this.role === "admin");
     },
