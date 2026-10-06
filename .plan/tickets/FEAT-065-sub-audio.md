@@ -3,7 +3,7 @@
 
 # FEAT-065-AUD: Audio/Sound Generation Templates
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: low
 **Labels**: generation, audio, sound, prompts, templates
 **Assignee**:
@@ -122,3 +122,5 @@ Audio prompts need **voice/emotion/pace** variables (TTS) or **genre/mood/instru
 - `src/generation/prompt-templates.ts` — image template pattern to mirror
 - `docs/spec/integrations/llm-serving.md` — provider presets (audio providers future)
 - FEAT-089/090/091 — audio provider features
+
+**Resolved:** 2026-10-06 registry-driven close: git issue 3d31188 (registry tip: ce1f50297 Konstantin Fedotov Auto-closed: appended .md marker marks FEAT-065-SUB-AUDIO done)

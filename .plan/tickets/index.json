@@ -14206,7 +14206,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-046.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# FEAT-046: Branch navigation API",
     "type": "FEAT"
@@ -14388,7 +14388,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-065-sub-audio.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# FEAT-065-AUD: Audio/Sound Generation Templates",
     "type": "FEAT"
@@ -14427,7 +14427,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-065-sub-video.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# FEAT-065-VID: Video Generation Templates",
     "type": "FEAT"
@@ -17545,7 +17545,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-010-plurals.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# TASK-010-plurals: i18n Plural Rules (Intl.PluralRules integration)",
     "type": "TASK"
@@ -17584,7 +17584,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "db",
       "state-machine",
@@ -17615,7 +17615,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-019-users-encryption-secret.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "`users.encryption_secret` — per-user HMAC key for token-indexed search",
     "type": "TASK"
