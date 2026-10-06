@@ -3,7 +3,7 @@
 
 # FEAT-065-VID: Video Generation Templates
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: low
 **Labels**: generation, video, prompts, templates
 **Assignee**:
@@ -116,3 +116,5 @@ Video prompts need **temporal variables** (motion, duration, camera movement) ab
 
 - `src/generation/prompt-templates.ts` — image template pattern to mirror
 - `docs/spec/integrations/image-generation.md` — video model mentions
+
+**Resolved:** 2026-10-06 registry-driven close: git issue 8f9281e (registry tip: 305db4736 Konstantin Fedotov Auto-closed: appended .md marker marks FEAT-065-SUB-VIDEO done)

@@ -3,7 +3,7 @@
 
 # TASK: Enforce state-machine + composite validators at write time
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium (one helper + 6 service wire-ups + tests)
 **Summary:** The validators added by `cc4b39ed4` (`feat(db): state-machine composite validators + write-path guards`) are defined and unit-tested but never consulted at runtime — write paths still use raw Kysely `insertInto`/`updateTable`. Add a single `assertValidWrite(table, row)` helper that picks the right `CompositeValidator` or `StateMachine`, and wire it into the 6 affected service entry points. No column changes.
@@ -32,3 +32,5 @@
 
 
 git issue: 63a45b3
+
+**Resolved:** 2026-10-06 registry-driven close: git issue 63a45b3 (registry tip: a891a41fc Konstantin Fedotov Auto-closed: appended .md marker marks TASK-019-ENFORCE-STATE-MACHINE-V)
