@@ -19,6 +19,63 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
+/** A decision service call: both `approve` and `reject` take the
+ * same arguments and return the same Result shape.
+ */
+type ReviewDecisionFn = (opts: {
+  database: Kysely<DB>;
+  actorId: string;
+  adminId: string;
+  reason?: string;
+},) => Promise<{ ok: true; value: void } | { ok: false; error: string }>;
+
+/**
+ * The `admin.character` gate the admin routes on this surface share:
+ * authenticated caller, then the permission check. Returns the caller's id
+ * so a handler does not have to re-extract it.
+ * @param ctx the Elysia request context
+ * @returns the caller id, or the refusal response to return as-is
+ */
+function requireCharacterReviewer(ctx: any,): string | Response {
+  const userId = requireUserId(ctx,);
+  if (typeof userId !== "string") { return userId; }
+  const userRole = ctx.userRole as string | null;
+  if (!can(userRole, "admin.character",)) {
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
+  }
+
+  return userId;
+}
+
+/**
+ * Shared approve/reject handler: admin gate, then the decision service, then
+ * the resulting review state. The two routes differ only in the service call
+ * and the state they echo back.
+ * @param ctx the Elysia request context
+ * @param database the request's Kysely handle
+ * @param decide the decision service to call
+ * @param reviewState the state to echo on success
+ */
+async function reviewDecision(
+  ctx: any,
+  database: Kysely<DB>,
+  decide: ReviewDecisionFn,
+  reviewState: string,
+) {
+  const userId = requireCharacterReviewer(ctx,);
+  if (userId instanceof Response) { return userId; }
+
+  const actorId = ctx.params.id as string;
+  const body = ctx.body as { reason?: string };
+  const result = await decide({ database, actorId, adminId: userId, reason: body?.reason, },);
+
+  if (!result.ok) {
+    return jsonError({ message: result.error, status: HttpStatus.BadRequest, },);
+  }
+
+  return jsonResponse({ id: actorId, review_state: reviewState, },);
+}
+
 /**
  * @param {HandlerOpts} opts
  * @param {string} prefix
@@ -51,22 +108,7 @@ export function approvalRoutes(opts: HandlerOpts, prefix = "/api",) {
     .post(
       `${prefix}/characters/:id/approve`,
       async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const userRole = ctx.userRole as string | null;
-        if (!can(userRole, "admin.character",)) {
-          return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
-        }
-
-        const actorId = ctx.params.id as string;
-        const body = ctx.body as { reason?: string };
-        const result = await approve({ database, actorId, adminId: userId, reason: body?.reason, },);
-
-        if (!result.ok) {
-          return jsonError({ message: result.error, status: HttpStatus.BadRequest, },);
-        }
-
-        return jsonResponse({ id: actorId, review_state: "approved", },);
+        return await reviewDecision(ctx, database, approve, "approved",);
       },
       {
         params: t.Object({ id: Id, },),
@@ -77,22 +119,7 @@ export function approvalRoutes(opts: HandlerOpts, prefix = "/api",) {
     .post(
       `${prefix}/characters/:id/reject`,
       async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const userRole = ctx.userRole as string | null;
-        if (!can(userRole, "admin.character",)) {
-          return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
-        }
-
-        const actorId = ctx.params.id as string;
-        const body = ctx.body as { reason?: string };
-        const result = await reject({ database, actorId, adminId: userId, reason: body?.reason, },);
-
-        if (!result.ok) {
-          return jsonError({ message: result.error, status: HttpStatus.BadRequest, },);
-        }
-
-        return jsonResponse({ id: actorId, review_state: "rejected", },);
+        return await reviewDecision(ctx, database, reject, "rejected",);
       },
       {
         params: t.Object({ id: Id, },),
@@ -103,12 +130,8 @@ export function approvalRoutes(opts: HandlerOpts, prefix = "/api",) {
     .get(
       `${prefix}/characters/pending-reviews`,
       async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const userRole = ctx.userRole as string | null;
-        if (!can(userRole, "admin.character",)) {
-          return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
-        }
+        const reviewer = requireCharacterReviewer(ctx,);
+        if (reviewer instanceof Response) { return reviewer; }
 
         const result = await getPendingReviews({ database, },);
 

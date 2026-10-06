@@ -110,3 +110,24 @@ export interface AutonomyDispatch {
 export type AutonomyDispatchResult =
   | { skipped: string }
   | { dispatched: number };
+
+/**
+ * The tick index every dispatch target on this tick must read.
+ *
+ * Both the travel and discovery-trade dispatches index their per-tick work
+ * off this row; if they ever disagreed about which tick they were on, a
+ * target would write against the wrong tick's world. They therefore read it
+ * through one function. The unseeded-world default is left to the caller —
+ * the two dispatches genuinely differ on it.
+ * @param ctx the scheduler's per-tick context
+ * @returns `world_simulation_state.tick_count`, or undefined when unseeded
+ */
+export async function readTickIndex(ctx: AutonomyDispatchContext,): Promise<number | undefined> {
+  const state = await ctx.db
+    .selectFrom("world_simulation_state",)
+    .select("tick_count",)
+    .where("world_id", "=", ctx.worldId,)
+    .executeTakeFirst();
+
+  return state?.tick_count;
+}

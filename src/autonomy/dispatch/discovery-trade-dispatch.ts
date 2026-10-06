@@ -36,6 +36,7 @@
  * list; this only states the requirement.
  */
 import { discoveryDb, runDiscoveryTick, runTradeTick, } from "../../rpg/world-discovery";
+import { readTickIndex, } from "../scheduler/types";
 import type { AutonomyDispatch, AutonomyDispatchContext, AutonomyDispatchResult, } from "../scheduler/types";
 
 /** Options for {@link createDiscoveryTradeDispatch}. */
@@ -90,11 +91,5 @@ export function createDiscoveryTradeDispatch(opts: DiscoveryTradeDispatchOptions
  * @returns `world_simulation_state.tick_count`, or null when the world is unseeded
  */
 async function currentTickIndex(ctx: AutonomyDispatchContext,): Promise<number | null> {
-  const state = await ctx.db
-    .selectFrom("world_simulation_state",)
-    .select("tick_count",)
-    .where("world_id", "=", ctx.worldId,)
-    .executeTakeFirst();
-
-  return state?.tick_count ?? null;
+  return (await readTickIndex(ctx,)) ?? null;
 }

@@ -10,7 +10,6 @@ import {
   setModelRoleOverride,
   VALID_ROLES,
 } from "../../admin/model-roles";
-import { can, } from "../../users/permissions";
 import {
   AdminModelRoleOverrideBody,
   ErrorResponse,
@@ -18,12 +17,12 @@ import {
 } from "../../validation/schemas";
 import {
   ErrorCode,
-  extractAuth,
   HttpStatus,
   jsonError,
   jsonNoContent,
   jsonResponse,
-  requireUserId,
+  requirePermissionUserId,
+  withPermissionAuth,
 } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
@@ -37,16 +36,8 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
     new Elysia({ name: "admin-model-roles", },)
       // ── Model role overrides ───────────────────────────────
       .get(`${prefix}/admin/model-roles`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const resolved = await resolveAllModelRoles(opts.config, opts.database,);
         const overrides = await getModelRoleOverrides(opts.database,);
@@ -59,16 +50,8 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
       },)
       .get(`${prefix}/admin/model-roles/:role`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const role = ctx.params.role as string;
         if (!(VALID_ROLES as readonly string[]).includes(role,)) {
@@ -92,47 +75,38 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .put(
         `${prefix}/admin/model-roles/:role`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const { userRole, } = extractAuth(ctx,);
-          if (!can(userRole, "admin.system",)) {
-            return jsonError({
-              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-              status: HttpStatus.Forbidden,
-              code: ErrorCode.Forbidden,
-            },);
-          }
+          return withPermissionAuth(ctx, "admin.system", async () => {
+            const role = ctx.params.role as string;
+            if (!(VALID_ROLES as readonly string[]).includes(role,)) {
+              return jsonError({
+                message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.BadRequest,
+              },);
+            }
 
-          const role = ctx.params.role as string;
-          if (!(VALID_ROLES as readonly string[]).includes(role,)) {
-            return jsonError({
-              message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,
-              status: HttpStatus.BadRequest,
-              code: ErrorCode.BadRequest,
-            },);
-          }
+            const { provider, model, temperature, maxTokens, } = ctx.body as {
+              provider: string;
+              model: string;
+              temperature?: number | null;
+              maxTokens?: number | null;
+            };
 
-          const { provider, model, temperature, maxTokens, } = ctx.body as {
-            provider: string;
-            model: string;
-            temperature?: number | null;
-            maxTokens?: number | null;
-          };
+            try {
+              await setModelRoleOverride(role as ModelRole, provider, model, opts.database, {
+                temperature,
+                maxTokens,
+              },);
 
-          try {
-            await setModelRoleOverride(role as ModelRole, provider, model, opts.database, {
-              temperature,
-              maxTokens,
-            },);
-
-            return jsonResponse({ ok: true, },);
-          } catch (error) {
-            return jsonError({
-              message: (error as Error).message,
-              status: HttpStatus.BadRequest,
-              code: ErrorCode.BadRequest,
-            },);
-          }
+              return jsonResponse({ ok: true, },);
+            } catch (error) {
+              return jsonError({
+                message: (error as Error).message,
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.BadRequest,
+              },);
+            }
+          },);
         },
         {
           body: AdminModelRoleOverrideBody,
@@ -140,16 +114,8 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
       )
       .delete(`${prefix}/admin/model-roles/:role`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const role = ctx.params.role as string;
         if (!(VALID_ROLES as readonly string[]).includes(role,)) {

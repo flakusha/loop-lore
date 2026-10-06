@@ -149,11 +149,9 @@ export function modalityTemplateRoutes(
         },);
       }
 
-      // Pre-check before any write: a wrong-modality (or foreign) id must
-      // 404 without mutating the row.
-      const existing = await ownedMatchingRow(ctx.params.id, userId,);
-      if (!existing) { return notFound("Template not found",); }
       try {
+        // Pre-check before any write: a wrong-modality (or foreign) id must
+        // 404 without mutating the row.
         const existing = await ownedMatchingRow(ctx.params.id, userId,);
         if (!existing) { return notFound("Template not found",); }
         const row = await updateTemplate(database, ctx.params.id, userId, patch,);

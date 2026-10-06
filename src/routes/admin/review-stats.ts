@@ -2,9 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  jsonResponse,
+  requirePermissionUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -22,16 +24,8 @@ export function reviewStatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-review-stats", },)
       .get(`${prefix}/admin/review/stats`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const [pendingResult, totalResult, dismissedResult, resolvedResult, dailyResult, topResult,] = await Promise
           .allSettled([

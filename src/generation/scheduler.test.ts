@@ -115,6 +115,34 @@ describe("scheduler seam", () => {
     await blocker.result;
   });
 
+  test("signal already aborted at submit still invokes the provider", async () => {
+    const mgr = new ResourceManager({ defaultMax: 8, },);
+    const controller = new AbortController();
+    controller.abort(new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, "early",),);
+
+    let calls = 0;
+    let sawAbort = false;
+    const res = await scheduledCallWithFailover({
+      id: "pre-aborted",
+      failoverList: providerList(),
+      req: req(controller.signal,),
+      scheduler: mgr,
+      call: (async (_providers: unknown, r: { signal?: AbortSignal },) => {
+        calls++;
+        sawAbort = r.signal?.aborted === true;
+        return { ...ok(), finishReason: "cancelled", };
+      }) as never,
+    },);
+
+    // The provider MUST run: stream-to-client relies on that call to register
+    // activeGenerations and emit the cancelled done frame. Cancelling the queued
+    // handle instead left calls=0 and the abort unobservable.
+    expect(calls,).toBe(1,);
+    expect(sawAbort,).toBe(true,);
+    expect(res.finishReason,).toBe("cancelled",);
+    expect(mgr.inFlight,).toBe(0,);
+  });
+
   test("dispatchThroughScheduler uses injected dispatch", async () => {
     const dispatched: string[] = [];
     const res = await dispatchThroughScheduler(

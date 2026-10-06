@@ -2,64 +2,17 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Browser-local strict numeric parsing. Mirrors src/utils/parse-number.ts
- * (frontend cannot import backend utils — see frontend/alpine/json.ts
- * precedent for safe-json). NumberResult is type-imported from the server
- * twin so the result shape can never drift; only the functions are mirrored.
+ * Browser entry point for the strict numeric parsers.
+ *
+ * Re-exports `src/utils/parse-number` — those helpers are pure and pull in no
+ * Node built-ins, so the browser bundle inlines them directly. The mirror that
+ * used to live here duplicated all four bodies; a fix to one silently skipped
+ * the other.
  */
-
-import type { NumberResult, } from "../../utils/parse-number";
-
-export type { NumberResult, };
-
-/**
- * Parse a base-10 integer strictly: the whole string must be a valid integer.
- * @param text - Raw input to parse.
- * @returns `{ ok: true, value }` or `{ ok: false, error }`.
- */
-export function safeParseInt(text: string,): NumberResult {
-  const trimmed = text.trim();
-  const asNumber = Number(trimmed,);
-  if (trimmed === "" || !Number.isInteger(asNumber,)) {
-    return { ok: false, error: new TypeError(`Not a valid integer: "${text}"`,), };
-  }
-
-  return { ok: true, value: asNumber, };
-}
-
-/**
- * Parse a float strictly: the whole string must be a valid finite number.
- * @param text - Raw input to parse.
- * @returns `{ ok: true, value }` or `{ ok: false, error }`.
- */
-export function safeParseFloat(text: string,): NumberResult {
-  const trimmed = text.trim();
-  const asNumber = Number(trimmed,);
-  if (trimmed === "" || !Number.isFinite(asNumber,)) {
-    return { ok: false, error: new TypeError(`Not a valid finite number: "${text}"`,), };
-  }
-
-  return { ok: true, value: asNumber, };
-}
-
-/**
- * Parse a base-10 integer, falling back on invalid input.
- * @param text - Raw input to parse.
- * @param fallback - Value returned when parsing fails.
- * @returns Parsed integer or `fallback`.
- */
-export function parseIntOr(text: string, fallback: number,): number {
-  const result = safeParseInt(text,);
-  return result.ok ? result.value : fallback;
-}
-
-/**
- * Parse a float, falling back on invalid input.
- * @param text - Raw input to parse.
- * @param fallback - Value returned when parsing fails.
- * @returns Parsed finite number or `fallback`.
- */
-export function parseFloatOr(text: string, fallback: number,): number {
-  const result = safeParseFloat(text,);
-  return result.ok ? result.value : fallback;
-}
+export {
+  parseFloatOr,
+  parseIntOr,
+  safeParseFloat,
+  safeParseInt,
+} from "../../utils/parse-number";
+export type { NumberResult, } from "../../utils/parse-number";

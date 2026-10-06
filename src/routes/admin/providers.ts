@@ -6,9 +6,14 @@ import type { Kysely, } from "kysely";
 import { getHealthCache, getProviderHealth, providerToSummary, scanAllProviders, } from "../../admin/provider-health";
 import type { DB, } from "../../db/schema";
 import { listProviders, } from "../../generation/providers/registry";
-import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  ErrorCode,
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  requirePermissionUserId,
+} from "../http-utils";
 
 /**
  * @param opts
@@ -44,16 +49,8 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
       },)
       // ── Provider management ────────────────────────────────
       .get(`${prefix}/admin/providers`, (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const health = getHealthCache();
         const providers = Array.from(listProviders(), (p,) => {
@@ -78,16 +75,8 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
         },
       },)
       .get(`${prefix}/admin/providers/:name/models`, (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const providerName = ctx.params.name as string;
 
@@ -114,16 +103,8 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
         },
       },)
       .post(`${prefix}/admin/providers/rescan`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const results = await scanAllProviders(opts.database,);
         return jsonResponse({

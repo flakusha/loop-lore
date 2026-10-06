@@ -5,9 +5,14 @@ import { Elysia, t, } from "elysia";
 import type { DB, } from "../../db/schema";
 import { seedDefaultActors, } from "../../db/seed";
 import { getLogger, } from "../../logger";
-import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  ErrorCode,
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  withPermissionAuth,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 const log = (): ReturnType<ReturnType<typeof getLogger>["child"]> =>
@@ -93,28 +98,19 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .post(
         `${prefix}/admin/audit/purge`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const { userRole, } = extractAuth(ctx,);
-          if (!can(userRole, "admin.system",)) {
-            return jsonError({
-              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-              status: HttpStatus.Forbidden,
-              code: ErrorCode.Forbidden,
-            },);
-          }
+          return withPermissionAuth(ctx, "admin.system", async () => {
+            if (ctx.body.confirmation !== "PURGE") {
+              return jsonError({
+                message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.ValidationError,
+              },);
+            }
 
-          if (ctx.body.confirmation !== "PURGE") {
-            return jsonError({
-              message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
-              status: HttpStatus.BadRequest,
-              code: ErrorCode.ValidationError,
-            },);
-          }
-
-          await audit("Audit log purge requested", "purge-audit",);
-          await db.deleteFrom("log_entries",).execute();
-          return jsonResponse({ purged: true, },);
+            await audit("Audit log purge requested", "purge-audit",);
+            await db.deleteFrom("log_entries",).execute();
+            return jsonResponse({ purged: true, },);
+          },);
         },
         {
           body: t.Object({ confirmation: t.String(), },),
@@ -129,30 +125,21 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .post(
         `${prefix}/admin/settings/reset`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const { userRole, } = extractAuth(ctx,);
-          if (!can(userRole, "admin.system",)) {
-            return jsonError({
-              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-              status: HttpStatus.Forbidden,
-              code: ErrorCode.Forbidden,
-            },);
-          }
+          return withPermissionAuth(ctx, "admin.system", async () => {
+            if (ctx.body.confirmation !== "RESET") {
+              return jsonError({
+                message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.ValidationError,
+              },);
+            }
 
-          if (ctx.body.confirmation !== "RESET") {
-            return jsonError({
-              message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
-              status: HttpStatus.BadRequest,
-              code: ErrorCode.ValidationError,
-            },);
-          }
-
-          await audit("System settings reset requested", "reset-settings",);
-          await db.deleteFrom("system_config",).execute();
-          const { seedDefaults, } = await import("../../admin/config");
-          await seedDefaults(db, config,);
-          return jsonResponse({ reset: true, },);
+            await audit("System settings reset requested", "reset-settings",);
+            await db.deleteFrom("system_config",).execute();
+            const { seedDefaults, } = await import("../../admin/config");
+            await seedDefaults(db, config,);
+            return jsonResponse({ reset: true, },);
+          },);
         },
         {
           body: t.Object({ confirmation: t.String(), },),
@@ -167,47 +154,38 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .post(
         `${prefix}/admin/factory-reset`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const { userRole, } = extractAuth(ctx,);
-          if (!can(userRole, "admin.system",)) {
-            return jsonError({
-              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-              status: HttpStatus.Forbidden,
-              code: ErrorCode.Forbidden,
-            },);
-          }
+          return withPermissionAuth(ctx, "admin.system", async () => {
+            if (ctx.body.confirmation !== "DELETE ALL") {
+              return jsonError({
+                message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.ValidationError,
+              },);
+            }
 
-          if (ctx.body.confirmation !== "DELETE ALL") {
-            return jsonError({
-              message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
-              status: HttpStatus.BadRequest,
-              code: ErrorCode.ValidationError,
-            },);
-          }
+            await audit("Factory reset requested", "factory-reset",);
+            // Errors propagate to the route handler boundary, where they are
+            // translated to a 500 response with a logged cause. The DB call
+            // itself never swallows an error.
+            try {
+              await db.transaction().execute(async (trx,) => {
+                for (const table of TABLE_LIST) {
+                  await trx.deleteFrom(table,).execute();
+                }
+              },);
 
-          await audit("Factory reset requested", "factory-reset",);
-          // Errors propagate to the route handler boundary, where they are
-          // translated to a 500 response with a logged cause. The DB call
-          // itself never swallows an error.
-          try {
-            await db.transaction().execute(async (trx,) => {
-              for (const table of TABLE_LIST) {
-                await trx.deleteFrom(table,).execute();
-              }
-            },);
+              await seedDefaultActors(db, config,);
+            } catch (error) {
+              log().error("Factory reset failed", error as Error,);
+              return jsonError({
+                message: ctx.t?.("admin.factoryResetFailed",) ?? "Factory reset failed",
+                status: HttpStatus.InternalServerError,
+                code: ErrorCode.ServerError,
+              },);
+            }
 
-            await seedDefaultActors(db, config,);
-          } catch (error) {
-            log().error("Factory reset failed", error as Error,);
-            return jsonError({
-              message: ctx.t?.("admin.factoryResetFailed",) ?? "Factory reset failed",
-              status: HttpStatus.InternalServerError,
-              code: ErrorCode.ServerError,
-            },);
-          }
-
-          return jsonResponse({ reset: true, },);
+            return jsonResponse({ reset: true, },);
+          },);
         },
         {
           body: t.Object({ confirmation: t.String(), },),

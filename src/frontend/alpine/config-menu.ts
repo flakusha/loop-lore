@@ -9,6 +9,7 @@
  * renders and batches writes. Pure helpers are exported separately so the
  * coercion/validation/grouping rules are unit-testable without a DOM.
  */
+import type { ConfigMenuField, ConfigMenuSection, } from "../../config/sections/menu";
 import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
@@ -16,30 +17,7 @@ import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "config-menu", },);
 
-export interface ConfigMenuField {
-  key: string;
-  path?: string;
-  label: string;
-  type: "boolean" | "string" | "number" | "enum" | "array" | "object";
-  description?: string;
-  default?: unknown;
-  required: boolean;
-  secret: boolean;
-  restart: boolean;
-  perChat: boolean;
-  editable: boolean;
-  scope: string;
-  options?: string[];
-}
-
-export interface ConfigMenuSection {
-  key: string;
-  title: string;
-  description?: string;
-  group?: string;
-  scope: string;
-  fields: ConfigMenuField[];
-}
+export type { ConfigMenuField, ConfigMenuScope, ConfigMenuSection, } from "../../config/sections/menu";
 
 export interface ConfigMenuGroup {
   group: string;

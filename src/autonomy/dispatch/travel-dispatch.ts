@@ -31,6 +31,7 @@
  * ids alone.
  */
 import { advancePartyTravel, DEFAULT_CEILING, migrateNpc, type TravelContext, } from "../../rpg/world-travel";
+import { readTickIndex, } from "../scheduler/types";
 import type { AutonomyDispatch, AutonomyDispatchContext, AutonomyDispatchResult, } from "../scheduler/types";
 
 /** Options for {@link createTravelDispatch}. */
@@ -82,11 +83,5 @@ export function createTravelDispatch(opts: TravelDispatchOptions = {},): Autonom
  * @returns `world_simulation_state.tick_count`, or 0 for an unseeded world
  */
 async function currentTickIndex(ctx: AutonomyDispatchContext,): Promise<number> {
-  const state = await ctx.db
-    .selectFrom("world_simulation_state",)
-    .select("tick_count",)
-    .where("world_id", "=", ctx.worldId,)
-    .executeTakeFirst();
-
-  return state?.tick_count ?? 0;
+  return (await readTickIndex(ctx,)) ?? 0;
 }
