@@ -13,7 +13,7 @@
 import { existsSync, readFileSync, writeFileSync, } from "node:fs";
 import { dirname, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
-import { envMap, jsonSchema, } from "../src/config/schema-class";
+import { envJsonSchema, envMap, jsonSchema, } from "../src/config/schema-class";
 import { safeJsonStringify, } from "../src/utils";
 
 const __dirname = dirname(fileURLToPath(import.meta.url,),);
@@ -57,6 +57,12 @@ function checkFile(path: string, content: string, label: string,): void {
 
 checkFile(jsonSchemaPath, newJsonSchemaStr, "JSON Schema",);
 checkFile(envMapPath, newEnvMapStr, "ENV_MAP snapshot",);
+
+// ── env schema ───────────────────────────────────────────────
+
+const envSchemaPath = resolve(ROOT, "schemas/env.schema.json",);
+const newEnvSchemaStr = toJson(envJsonSchema(),);
+checkFile(envSchemaPath, newEnvSchemaStr, "env schema",);
 
 if (stale) {
   console.log("\nRegenerate with: bun run schemas:check:fix",);
