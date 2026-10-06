@@ -87,6 +87,17 @@ if (STRICTLY_ISOLATED) {
       if (state.failThrows) { throw new Error("fail-track down",); }
     },
   }),);
+
+  mock.module("../scheduler", () => ({
+    scheduledCallWithFailover: async (opts: {
+      failoverList: { name: string; provider: import("../providers/types").LLMProvider }[];
+      req: import("../providers/types").GenerateRequest;
+      handler?: (chunk: import("../providers/types").ChunkEvent,) => void;
+    },) => {
+      const { callWithFailover: failover, } = await import("../providers/call-with-failover");
+      return failover(opts.failoverList, opts.req, opts.handler,);
+    },
+  }),);
 }
 
 if (STRICTLY_ISOLATED) {
