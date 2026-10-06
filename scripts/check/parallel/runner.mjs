@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 261
 
 /**
  * Gate execution for the parallel check runner: concurrency cap resolution,
@@ -107,7 +108,9 @@ function resolveGateTimeoutMs(name,) {
 }
 
 // oxlint-disable-next-line func-style
-async function runCheck(name, command,) {
+// Exported so tests can drive the real advisory-flag wiring; a hand-built
+// result in a test always carries `advisory`, so only runCheck catches a drop.
+export async function runCheck(name, command,) {
   const startedAt = performance.now(),
     timeoutMs = resolveGateTimeoutMs(name,);
 
@@ -152,6 +155,9 @@ async function runCheck(name, command,) {
       command,
       passed: !skipped && gate.ok,
       skipped,
+      // Without this field buildReport's advisoryCount is 0, so every advisory
+      // gate counts as a hard FAIL. Must be set in BOTH return paths below.
+      advisory: ADVISORY_GATES.has(name,),
       output,
       exitCode: gate.exitCode,
       durationMs: gate.durationMs,
@@ -165,6 +171,7 @@ async function runCheck(name, command,) {
       command,
       passed: false,
       skipped: false,
+      advisory: ADVISORY_GATES.has(name,),
       output: error.message,
       exitCode: 1,
       durationMs: Math.round(performance.now() - startedAt,),
