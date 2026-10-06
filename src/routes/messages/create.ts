@@ -61,6 +61,21 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         const muteRejection = await enforceMuteGate(database, chatId, actorId,);
         if (muteRejection) { return muteRejection; }
 
+        // ── Idempotency: short-circuit if a row already covers this key.
+        // Runs before any side effect (NSFW audit, backoff resets,
+        // slash-command dispatch, GM tools, mention/asset prep) so a
+        // retried POST returns the original row without re-running them.
+        // Empty string is "no key": storing "" would collide on the
+        // migration 045 unique index.
+        const idempotencyKey = body.idempotencyKey ? body.idempotencyKey : null;
+        const existingId = idempotencyKey
+          ? await findByIdempotencyKey(database, chatId, idempotencyKey,)
+          : null;
+
+        if (existingId) {
+          return jsonCreated({ id: existingId, context: {}, },);
+        }
+
         // ── `@asset:<id>` attachment mentions (component-buttons AC6/AC4) ──
         // Capture the ids before translation/moderation see the text, then
         // strip the tokens so the timeline never renders raw `@asset:` markup.
@@ -130,20 +145,6 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const id = uid();
         const parentId = body.parentId ?? null;
-        // ── Idempotency: short-circuit if a row already covers this key.
-        // Closes the duplicate-insert hazard for retried POSTs. The key is
-        // optional; the helper handles null by returning null.
-        // Empty string is "no key" (matches the schema-validation pin):
-        // storing "" would collide on the migration 045 unique index.
-        const idempotencyKey = body.idempotencyKey ? body.idempotencyKey : null;
-        const existingId = idempotencyKey
-          ? await findByIdempotencyKey(database, chatId, idempotencyKey,)
-          : null;
-
-        if (existingId) {
-          return jsonCreated({ id: existingId, context: {}, },);
-        }
-
         // ── Transactional insert + cross-chat parentId IDOR guard ──
         // The guard runs INSIDE the INSERT transaction, and insert failures
         // are mapped to their HTTP status inside the helper
