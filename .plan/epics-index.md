@@ -74,6 +74,7 @@
 | Not Started | Configs Path Resolution — File-Relative Paths + Windows/macOS Parity | High | Medium | 12 | [epic-configs-path-resolution.md](/.plan/epics/epic-configs-path-resolution.md) |
 | Not Started | Content Hashing & Distributed Integrity | High | Large | 5 | [epic-content-hashing-distributed-integrity.md](/.plan/epics/epic-content-hashing-distributed-integrity.md) |
 | In Progress | Continuous Improvement — Lint, TypeCheck, Build, Coverage | High | Medium | 8 | [epic-continuous-improvement.md](/.plan/epics/epic-continuous-improvement.md) |
+| Not Started | Conversation Branching | Medium | Medium | 4 | [epic-conversation-branching.md](/.plan/epics/epic-conversation-branching.md) |
 | Not Started | Core Testing Frameworks | High | Very High | 23 | [epic-core-testing-frameworks.md](/.plan/epics/epic-core-testing-frameworks.md) |
 | Not Started | Creative Studio | High (MVP), Medium (full) | High | 0 | [epic-creative-studio.md](/.plan/epics/epic-creative-studio.md) |
 | Not Started | Cross-Layer Reconciliation | High | Large (permanently ongoing) | 12 | [epic-cross-layer-reconciliation.md](/.plan/epics/epic-cross-layer-reconciliation.md) |
@@ -129,7 +130,6 @@
 | Not Started | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
 | Not Started | Epic: Context Injection Correctness | medium | Medium | 0 | [epic-context-injection-correctness.md](/.plan/epics/epic-context-injection-correctness.md) |
 | Not Started | Epic: Context Injection Templates | medium | Medium | 0 | [epic-context-injection-templates.md](/.plan/epics/epic-context-injection-templates.md) |
-| Not Started | Epic: Conversation Branching | Medium | Medium | 3 | [epic-conversation-branching.md](/.plan/epics/epic-conversation-branching.md) |
 | Done | Epic: Cron Scheduler (Internal Scheduled Tasks) | Medium | Medium | 0 | [epic-cron-scheduler.md](/.plan/epics/epic-cron-scheduler.md) |
 | Not Started | Epic: Database Backup & Recovery Infrastructure | medium | Medium | 0 | [epic-database-backup-recovery.md](/.plan/epics/epic-database-backup-recovery.md) |
 | Not Started | Epic: DB as Cold Storage for Extreme-Performance API-Heavy Workloads | Low (speculative — "far-fetched" scenario, only justified by measured need) | Large | 0 | [epic-db-cold-storage-high-perf.md](/.plan/epics/epic-db-cold-storage-high-perf.md) |
@@ -921,6 +921,17 @@ Benchmark Bun's async execution model extensions — Worker threads, `Bun.spawn`
 - **Tags:** lint, typecheck, build, coverage, eslint, typescript
 - **File:** `.plan/epics/epic-continuous-improvement.md`
 
+### Conversation Branching
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** chat, branching, tree-history, alternative-flows
+- **File:** `.plan/epics/epic-conversation-branching.md`
+
+Enable draft/alternative flows via tree-structured message history. Allows users to explore different conversation paths and merge branches back to the main thread.
+
 ### Core Testing Frameworks
 
 - **Status:** Not Started
@@ -1439,17 +1450,6 @@ Split the monolithic `config.toml` / `config.yaml` into domain-specific config f
 - **Type:** epic
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-context-injection-templates.md`
-
-### Epic: Conversation Branching
-
-- **Status:** Not Started
-- **Priority:** Medium
-- **Effort:** Medium
-- **Type:** Feature Epic
-- **Tags:** chat, branching, tree-history, alternative-flows
-- **File:** `.plan/epics/epic-conversation-branching.md`
-
-Enable draft/alternative flows via tree-structured message history. Allows users to explore different conversation paths and merge branches back to the main thread.
 
 ### Epic: Cron Scheduler (Internal Scheduled Tasks)
 

@@ -9,9 +9,9 @@
  * path unversioned and defeat the 308 version redirect enforced by
  * `versionResolver`. See `docs/spec/api-versioning.md`.
  */
+import type { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
-import type { Elysia, } from "elysia";
 import { agencyRoutes, } from "../routes/agency";
 import { buildIdRoutes, } from "../routes/build-id";
 import { configMenuRoutes, } from "../routes/config-menu";
