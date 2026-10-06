@@ -3,17 +3,15 @@
 
 import { Elysia, } from "elysia";
 import { discoveryDb, listWorldEvents, } from "../../rpg/world-discovery";
-import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { AdminPaginatedEnvelope, AdminWorldEventRow, } from "../../validation/schemas/responses";
 import {
   ErrorCode,
-  extractAuth,
   HttpStatus,
   jsonError,
   jsonResponse,
   parsePagination,
-  requireUserId,
+  withPermissionAuth,
 } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
@@ -41,36 +39,27 @@ export function worldEventsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .get(
         `${prefix}/admin/world-events`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const { userRole, } = extractAuth(ctx,);
-          if (!can(userRole, "admin.system",)) {
-            return jsonError({
-              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-              status: HttpStatus.Forbidden,
-              code: ErrorCode.Forbidden,
-            },);
-          }
+          return withPermissionAuth(ctx, "admin.system", async () => {
+            const url = new URL(ctx.request.url,);
+            const { page, pageSize, } = parsePagination(url.searchParams,);
+            const worldId = url.searchParams.get("world_id",);
+            if (!worldId) {
+              return jsonError({
+                message: "world_id is required",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.BadRequest,
+              },);
+            }
 
-          const url = new URL(ctx.request.url,);
-          const { page, pageSize, } = parsePagination(url.searchParams,);
-          const worldId = url.searchParams.get("world_id",);
-          if (!worldId) {
-            return jsonError({
-              message: "world_id is required",
-              status: HttpStatus.BadRequest,
-              code: ErrorCode.BadRequest,
+            const result = await listWorldEvents(discoveryDb(database,), {
+              worldId,
+              eventType: url.searchParams.get("event_type",) ?? undefined,
+              page,
+              pageSize,
             },);
-          }
 
-          const result = await listWorldEvents(discoveryDb(database,), {
-            worldId,
-            eventType: url.searchParams.get("event_type",) ?? undefined,
-            page,
-            pageSize,
+            return jsonResponse(result,);
           },);
-
-          return jsonResponse(result,);
         },
         {
           response: {

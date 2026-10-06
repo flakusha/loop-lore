@@ -2,9 +2,13 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  requirePermissionUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -17,16 +21,8 @@ export function keyRotationRoutes(opts: AdminRouteOpts, prefix = "/api",) {
     new Elysia({ name: "admin-key-rotation", },)
       // ── Manual key rotation trigger ─────────────────────────
       .post(`${prefix}/admin/rotate-expired-keys`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const { runAutoRotation, } = await import("../../crypto/key-rotation");
         const rotationDays = opts.config.encryption.keyRotationDays ?? 0;

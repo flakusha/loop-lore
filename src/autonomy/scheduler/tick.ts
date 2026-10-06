@@ -80,16 +80,7 @@ export async function tickWorld(deps: TickDeps, entry: WorldScheduleEntry, nowMs
     const chatId = await deps.store.chatIdFor(worldId,);
     const cfg = await resolveAutonomyConfig(deps.db, { worldId, chatId, },);
     if (!cfg.enabled) {
-      const outcome: WorldTickOutcome = { skipped: "disabled", };
-      const nextTickAt = await advance(deps.store, worldId, state, nowMs, cfg.tickIntervalMs,);
-      emitSchedulerEvent(deps.db, EV_COMPLETED, {
-        world_id: worldId,
-        outcome: describe(outcome,),
-        next_tick_at: nextTickAt,
-        tick_count: state.tick_count + 1,
-      },);
-
-      return { worldId, nextTickAt, outcome, };
+      return await completeTick(deps, worldId, state, nowMs, cfg, { skipped: "disabled", },);
     }
 
     // One stream per world-tick, derived here so every target on
@@ -111,15 +102,7 @@ export async function tickWorld(deps: TickDeps, entry: WorldScheduleEntry, nowMs
     },);
 
     const outcome = await dispatch(deps, worldId, chatId, nowMs, cfg, rng,);
-    const nextTickAt = await advance(deps.store, worldId, state, nowMs, cfg.tickIntervalMs,);
-    emitSchedulerEvent(deps.db, EV_COMPLETED, {
-      world_id: worldId,
-      outcome: describe(outcome,),
-      next_tick_at: nextTickAt,
-      tick_count: state.tick_count + 1,
-    },);
-
-    return { worldId, nextTickAt, outcome, };
+    return await completeTick(deps, worldId, state, nowMs, cfg, outcome,);
   } catch (err) {
     return await onWorldError(deps, worldId, state, err, nowMs,);
   }
@@ -163,6 +146,36 @@ async function dispatch(
   }
 
   return aggregate(results,);
+}
+
+/** Commit a finished world tick: advance the cursor, emit the completed
+ *  event, return the result. Both the disabled short-circuit and the normal
+ *  dispatch path end here — only the outcome they report differs.
+ *  @param deps the scheduler-owned state this tick reads
+ *  @param worldId world whose tick completed
+ *  @param state the cursor state this tick advanced from
+ *  @param nowMs the tick instant
+ *  @param cfg the resolved autonomy config (supplies the tick interval)
+ *  @param outcome what the tick did
+ *  @returns the committed tick result
+ */
+async function completeTick(
+  deps: TickDeps,
+  worldId: string,
+  state: SimulationState,
+  nowMs: number,
+  cfg: AutonomyConfig,
+  outcome: WorldTickOutcome,
+): Promise<WorldTickResult> {
+  const nextTickAt = await advance(deps.store, worldId, state, nowMs, cfg.tickIntervalMs,);
+  emitSchedulerEvent(deps.db, EV_COMPLETED, {
+    world_id: worldId,
+    outcome: describe(outcome,),
+    next_tick_at: nextTickAt,
+    tick_count: state.tick_count + 1,
+  },);
+
+  return { worldId, nextTickAt, outcome, };
 }
 
 /** Commit the advanced cursor. A skipped tick (budget, jitter,

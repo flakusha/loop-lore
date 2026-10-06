@@ -23,14 +23,17 @@ export const EDITABLE_KEY_MAP: Record<string, Record<string, string>> = {
   },
 };
 
-/** Standalone system_config keys not in any section meta. */
-export const STANDALONE_KEYS: {
+/** Descriptor for one standalone system_config key. */
+export interface StandaloneKey {
   key: string;
   label: string;
   type: ConfigMenuField["type"];
   description: string;
   section: string;
-}[] = [
+}
+
+/** Standalone system_config keys not in any section meta. */
+export const STANDALONE_KEYS: StandaloneKey[] = [
   {
     key: "log_retention_days",
     label: "Log Retention (days)",

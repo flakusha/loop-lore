@@ -30,6 +30,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { toDate, } from "../../utils/date";
+import type { TravelDb, } from "./types";
 import { travelDb, } from "./types";
 
 /** Budget units charged per action. The ticket's 0.05. */
@@ -65,6 +66,21 @@ export interface BudgetState {
   windowStartTick: number;
 }
 
+/** The persisted ledger row for a world, or undefined when the world has
+ * never been charged. Both the read and the charge open with this read, so
+ * the two always reason about the same row.
+ * @param handle the widened travel database handle
+ * @param worldId world whose ledger to read
+ * @returns the raw ledger row, or undefined
+ */
+async function readLedgerRow(handle: TravelDb, worldId: string,) {
+  return await handle
+    .selectFrom("world_travel_budget",)
+    .selectAll()
+    .where("world_id", "=", worldId,)
+    .executeTakeFirst();
+}
+
 /**
  * Read the ledger for `worldId`, rolling the window if `tick` has left it.
  *
@@ -83,11 +99,7 @@ export async function readBudget(
   defaultCeiling: number,
 ): Promise<BudgetState> {
   const handle = travelDb(db,);
-  const row = await handle
-    .selectFrom("world_travel_budget",)
-    .selectAll()
-    .where("world_id", "=", worldId,)
-    .executeTakeFirst();
+  const row = await readLedgerRow(handle, worldId,);
 
   if (!row) {
     return { spent: 0, ceiling: defaultCeiling, remaining: defaultCeiling, windowStartTick: tick, };
@@ -129,11 +141,7 @@ export async function chargeBudget(
   defaultCeiling: number,
 ): Promise<boolean> {
   const handle = travelDb(db,);
-  const row = await handle
-    .selectFrom("world_travel_budget",)
-    .selectAll()
-    .where("world_id", "=", worldId,)
-    .executeTakeFirst();
+  const row = await readLedgerRow(handle, worldId,);
 
   if (!row) {
     if (toMicro(cost,) > toMicro(defaultCeiling,)) { return false; }

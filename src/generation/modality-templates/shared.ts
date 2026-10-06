@@ -56,6 +56,40 @@ export function matchModalityProfile<P,>(
   return registry.profiles[profileId]!;
 }
 
+/** Template bodies keyed by detail level, with a `balanced` fallback. */
+export interface DetailTemplates {
+  instant?: string;
+  balanced?: string;
+  detailed?: string;
+}
+
+/**
+ * Pick the template body for a detail level: the requested level, else the
+ * `balanced` body. Every modality applies the same rule, and an explicit
+ * override replaces the pick entirely.
+ * @param templates - the profile's per-detail bodies
+ * @param detail - requested detail level
+ * @param override - explicit body that wins over the pick
+ * @returns {string}
+ */
+export function pickModalityTemplate(
+  templates: DetailTemplates,
+  detail: string,
+  override?: string,
+): string {
+  if (override !== undefined) { return override; }
+  return templates[detail as keyof DetailTemplates] ?? templates.balanced ?? "";
+}
+
+/**
+ * The verbosity word a detail level maps to in a role-switch system prompt.
+ * @param detail - requested detail level
+ * @returns {string} the adverb to slot into the instruction
+ */
+export function detailVerbosity(detail: string,): string {
+  return detail === "instant" ? "short" : (detail === "balanced" ? "concise" : "detailed");
+}
+
 /**
  * Substitute `{{key}}` tokens in a template body from a variable map.
  * Unknown tokens are left verbatim — same contract as `applySimpleTemplate`.

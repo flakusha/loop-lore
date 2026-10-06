@@ -14,7 +14,6 @@ import {
 } from "../../admin/config";
 import { HOT_APPLY_PATHS, } from "../../config/hot-apply";
 import { jsonSchema, } from "../../config/schema-class";
-import { can, } from "../../users/permissions";
 import {
   AdminSystemConfigBody,
   AdminSystemConfigImportBody,
@@ -23,12 +22,12 @@ import {
 } from "../../validation/schemas";
 import {
   ErrorCode,
-  extractAuth,
   HttpStatus,
   jsonError,
   jsonNoContent,
   jsonResponse,
-  requireUserId,
+  requirePermissionUserId,
+  withPermissionAuth,
 } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 /**
@@ -41,16 +40,8 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
     new Elysia({ name: "admin-system-config", },)
       // -- Config JSON Schema (single source: section *Meta) --
       .get(`${prefix}/admin/config-schema`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         return jsonResponse({
           ...jsonSchema(),
@@ -65,16 +56,8 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       },)
       // -- Export persisted system_config rows (yaml/toml) --
       .get(`${prefix}/admin/system-config/export`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const format = ctx.query?.format === "toml" ? "toml" : "yaml";
         const rows = await getAllConfig(opts.database,);
@@ -128,16 +111,8 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       },)
       // -- System configuration -------------------------------
       .get(`${prefix}/admin/system-config`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const configs = await getAllConfig(opts.database,);
         const decorated = configs.map((c,) => decorateConfigEntry(c,));
@@ -151,20 +126,11 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .patch(
         `${prefix}/admin/system-config`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const { userRole, } = extractAuth(ctx,);
-          if (!can(userRole, "admin.system",)) {
-            return jsonError({
-              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-              status: HttpStatus.Forbidden,
-              code: ErrorCode.Forbidden,
-            },);
-          }
-
-          const { key, value, description, } = ctx.body as { key: string; value: string; description?: string };
-          const requiresRestart = await setConfig(opts.database, key, value, description,);
-          return jsonResponse({ ok: true, requires_restart: requiresRestart, },);
+          return withPermissionAuth(ctx, "admin.system", async () => {
+            const { key, value, description, } = ctx.body as { key: string; value: string; description?: string };
+            const requiresRestart = await setConfig(opts.database, key, value, description,);
+            return jsonResponse({ ok: true, requires_restart: requiresRestart, },);
+          },);
         },
         { body: AdminSystemConfigBody, response: { 200: SuccessResponse, 403: ErrorResponse, }, },
       )
@@ -172,68 +138,51 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .post(
         `${prefix}/admin/system-config/import`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const { userRole, } = extractAuth(ctx,);
-          if (!can(userRole, "admin.system",)) {
-            return jsonError({
-              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-              status: HttpStatus.Forbidden,
-              code: ErrorCode.Forbidden,
-            },);
-          }
-
-          const { format, content, } = ctx.body as { format: "yaml" | "toml"; content: string };
-          try {
-            const results = await importConfigFromText(opts.database, content, format,);
-            // Audit trail: log only counts and secret-redacted keys, never values.
+          return withPermissionAuth(ctx, "admin.system", async () => {
+            const { format, content, } = ctx.body as { format: "yaml" | "toml"; content: string };
             try {
-              await opts.database
-                .insertInto("log_entries",)
-                .values({
-                  id: crypto.randomUUID(),
-                  level: 6,
-                  timestamp: Date.now(),
-                  time: new Date().toISOString(),
-                  message: `System config imported from ${format} (${results.length} keys)`,
-                  module: "admin-system-config",
-                  action: "system-config.import",
-                  event_type: "admin",
-                  entity_type: "system",
-                },)
-                .execute();
-            } catch {
-              // Audit trail is best-effort; import still succeeds.
-            }
+              const results = await importConfigFromText(opts.database, content, format,);
+              // Audit trail: log only counts and secret-redacted keys, never values.
+              try {
+                await opts.database
+                  .insertInto("log_entries",)
+                  .values({
+                    id: crypto.randomUUID(),
+                    level: 6,
+                    timestamp: Date.now(),
+                    time: new Date().toISOString(),
+                    message: `System config imported from ${format} (${results.length} keys)`,
+                    module: "admin-system-config",
+                    action: "system-config.import",
+                    event_type: "admin",
+                    entity_type: "system",
+                  },)
+                  .execute();
+              } catch {
+                // Audit trail is best-effort; import still succeeds.
+              }
 
-            return jsonResponse({
-              imported: results.filter((r,) => r.action === "added").length,
-              changed: results.filter((r,) => r.action === "changed").length,
-              skipped: results.filter((r,) => r.action === "skipped").length,
-              conflicts: results.filter((r,) => r.action === "conflict").length,
-              results,
-            },);
-          } catch (error) {
-            return jsonError({
-              message: `Failed to parse ${format} payload: ${(error as Error).message}`,
-              status: HttpStatus.BadRequest,
-              code: ErrorCode.ValidationError,
-            },);
-          }
+              return jsonResponse({
+                imported: results.filter((r,) => r.action === "added").length,
+                changed: results.filter((r,) => r.action === "changed").length,
+                skipped: results.filter((r,) => r.action === "skipped").length,
+                conflicts: results.filter((r,) => r.action === "conflict").length,
+                results,
+              },);
+            } catch (error) {
+              return jsonError({
+                message: `Failed to parse ${format} payload: ${(error as Error).message}`,
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.ValidationError,
+              },);
+            }
+          },);
         },
         { body: AdminSystemConfigImportBody, response: { 200: t.Any(), 400: ErrorResponse, 403: ErrorResponse, }, },
       )
       .delete(`${prefix}/admin/system-config/:key`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+        const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
-        const { userRole, } = extractAuth(ctx,);
-        if (!can(userRole, "admin.system",)) {
-          return jsonError({
-            message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
-        }
 
         const key = ctx.params.key as string;
         await deleteConfig(opts.database, key,);

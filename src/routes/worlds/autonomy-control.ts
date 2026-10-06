@@ -52,6 +52,23 @@ const AutonomyOverrideBody = t.Object(
 );
 
 /**
+ * The owner gate both write routes open with: resolve auth, then refuse
+ * unless the caller owns the world.
+ * @param database the request's Kysely handle
+ * @param ctx the Elysia request context
+ * @param worldId world the request targets
+ * @returns the refusal to return as-is, or null when the caller may proceed
+ */
+async function gateWorldOwner(
+  database: Kysely<DB>,
+  ctx: Context,
+  worldId: string,
+): Promise<Response | null> {
+  const { userId, userRole, } = extractAuth(ctx,);
+  return await requireWorldOwner(database, worldId, userId, userRole,);
+}
+
+/**
  * Run one owner-scoped control action against a world's tick loop.
  *
  * `step` returns the tick outcome, not the cursor: the point of stepping
@@ -65,9 +82,8 @@ export async function autonomyControl(
   database: Kysely<DB>,
   ctx: Context,
 ) {
-  const { userId, userRole, } = extractAuth(ctx,);
   const { worldId, } = ctx.params as { worldId: string };
-  const denied = await requireWorldOwner(database, worldId, userId, userRole,);
+  const denied = await gateWorldOwner(database, ctx, worldId,);
   if (denied) { return denied; }
 
   const scheduler = new AutonomyScheduler(database,);
@@ -97,9 +113,8 @@ export async function setActorAutonomy(
   database: Kysely<DB>,
   ctx: Context,
 ) {
-  const { userId, userRole, } = extractAuth(ctx,);
   const { worldId, actorId, } = ctx.params as { worldId: string; actorId: string };
-  const denied = await requireWorldOwner(database, worldId, userId, userRole,);
+  const denied = await gateWorldOwner(database, ctx, worldId,);
   if (denied) { return denied; }
 
   // Owning the world is not owning every actor in it: an admin can

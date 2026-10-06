@@ -15,6 +15,7 @@
 import { PER_CHAT_OVERRIDABLE_KEYS, REQUIRES_RESTART_KEYS, SECRET_KEY_PATTERN, } from "../../admin/config-keys";
 import { SettingsUpdateAllowedKeys, } from "../../validation/schemas";
 import { jsonSchema, } from "../schema-class";
+import type { StandaloneKey, } from "./menu-data";
 import {
   EDITABLE_KEY_MAP,
   enumOptions,
@@ -52,6 +53,27 @@ export interface ConfigMenuSection {
   group?: string;
   scope: ConfigMenuScope;
   fields: ConfigMenuField[];
+}
+
+/** Catalog field for a standalone system_config key. Every flag is derived
+ * from the key itself, so both emission sites (into a section that already
+ * exists, and into a synthetic orphan section) build the identical field.
+ * @param sk the standalone key descriptor
+ * @returns {ConfigMenuField}
+ */
+function standaloneField(sk: StandaloneKey,): ConfigMenuField {
+  return {
+    key: sk.key,
+    label: sk.label,
+    type: sk.type,
+    description: sk.description,
+    required: false,
+    secret: SECRET_KEY_PATTERN.test(sk.key,),
+    restart: REQUIRES_RESTART_KEYS[sk.key] === true,
+    perChat: PER_CHAT_OVERRIDABLE_KEYS[sk.key] === true,
+    editable: true,
+    scope: "admin",
+  };
 }
 
 function buildAdminSections(): ConfigMenuSection[] {
@@ -99,18 +121,7 @@ function buildAdminSections(): ConfigMenuSection[] {
 
     for (const sk of STANDALONE_KEYS.filter((s,) => s.section === sectionKey)) {
       consumedStandalone.add(sk.key,);
-      fields.push({
-        key: sk.key,
-        label: sk.label,
-        type: sk.type,
-        description: sk.description,
-        required: false,
-        secret: SECRET_KEY_PATTERN.test(sk.key,),
-        restart: REQUIRES_RESTART_KEYS[sk.key] === true,
-        perChat: PER_CHAT_OVERRIDABLE_KEYS[sk.key] === true,
-        editable: true,
-        scope: "admin",
-      },);
+      fields.push(standaloneField(sk,),);
     }
 
     if (fields.length > 0) {
@@ -130,18 +141,7 @@ function buildAdminSections(): ConfigMenuSection[] {
   // section per orphan bucket so every editable key stays reachable.
   for (const sk of STANDALONE_KEYS.filter((s,) => !consumedStandalone.has(s.key,))) {
     const existing = sections.find((s,) => s.key === sk.section);
-    const field: ConfigMenuField = {
-      key: sk.key,
-      label: sk.label,
-      type: sk.type,
-      description: sk.description,
-      required: false,
-      secret: SECRET_KEY_PATTERN.test(sk.key,),
-      restart: REQUIRES_RESTART_KEYS[sk.key] === true,
-      perChat: PER_CHAT_OVERRIDABLE_KEYS[sk.key] === true,
-      editable: true,
-      scope: "admin",
-    };
+    const field = standaloneField(sk,);
 
     if (existing) {
       existing.fields.push(field,);

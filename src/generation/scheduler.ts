@@ -105,9 +105,15 @@ export async function scheduledCallWithFailover(opts: ScheduledDispatchOpts,): P
     if (handle.state === "queued") { mgr.cancel(id, "request aborted",); }
   };
 
-  if (signal.aborted) {
-    onAbort();
-  } else {
+  // A signal that is ALREADY aborted when we submit is not a mid-flight
+  // cancel. The caller has already committed to this attempt, and the
+  // provider must still be invoked so it observes the abort: stream-to-client
+  // relies on that to register `activeGenerations` and emit a `cancelled`
+  // done frame, and `callWithFailover` maps the provider's own abort error
+  // back to the tracker's reason. Cancelling the queued handle here skipped
+  // the provider entirely (`calls` 0, abort unobservable).
+  // Only a signal that aborts AFTER submission releases the slot.
+  if (!signal.aborted) {
     signal.addEventListener("abort", onAbort, { once: true, },);
   }
 
