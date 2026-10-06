@@ -63,5 +63,3 @@ line 53), and it is called by `generateActivityPubKey`
 imports `activitypub-keys` (grep for the import — no matches), so nothing can currently
 mint a signing key, let alone publish. `setFederationConsent` itself documents that it
 does not check ownership and that authorization is the caller's job (line 79).
-
-**Resolved:** 2026-10-05 registry-driven close: git issue d50cdb6 (registry tip: fb352c23d Konstantin Fedotov Close issue)
