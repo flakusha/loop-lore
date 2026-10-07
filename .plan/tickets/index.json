@@ -2818,6 +2818,15 @@
     "title": "`src/middleware/elysia-auth.ts` is a dead shim with divergent failure-path logic",
     "type": "BUG"
   },
+  "BUG-EMOTION-AVATAR-BASEAVATARID-IS-UNCHECKED-CROSS-USER-ASSET-ME": {
+    "epic": "",
+    "extid": "BUG-EMOTION-AVATAR-BASEAVATARID-IS-UNCHECKED-CROSS-USER-ASSET-ME",
+    "git_issue": "f1b17c0",
+    "status": "Not Started",
+    "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md",
+    "hash": "f1b17c0",
+    "title": "Emotion-avatar baseAvatarId is unchecked: cross-user asset metadata leaks into generated prompts"
+  },
   "BUG-EMOTION-AVATAR-EMOTIONS-ARRAY-UNCAPPED-X-DEFAULT-RATE-POLICY": {
     "epic": "",
     "extid": "BUG-EMOTION-AVATAR-EMOTIONS-ARRAY-UNCAPPED-X-DEFAULT-RATE-POLICY",
@@ -16226,6 +16235,24 @@
     "status": "Not Started",
     "git_issue": "2eaea4f"
   },
+  "FEAT-LLM-ENHANCE-ANY-TEXT-SURFACE": {
+    "hash": "d441d46",
+    "git_issue": "d441d46",
+    "extid": "FEAT-LLM-ENHANCE-ANY-TEXT-SURFACE",
+    "type": "FEAT",
+    "title": "LLM enhance any text surface",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-chat-composer-flows",
+    "tags": [
+      "frontend",
+      "llm",
+      "enhance",
+      "composer"
+    ],
+    "source": ".plan/tickets/FEAT-llm-enhance-any-text-surface.md",
+    "status": "Not Started"
+  },
   "FEAT-LLM-ENHANCE-FOR-CHAT-AND-TEXT-WINDOWS-WITH-LEVELED-REWRITES": {
     "epic": "",
     "extid": "FEAT-LLM-ENHANCE-FOR-CHAT-AND-TEXT-WINDOWS-WITH-LEVELED-REWRITES",
@@ -16245,7 +16272,8 @@
     "git_issue": "bd93da5",
     "status": "Not Started",
     "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md",
-    "title": "# FEAT: LLM-enhance outside the chat composer"
+    "hash": "bd93da5",
+    "title": "LLM-enhance outside the chat composer"
   },
   "FEAT-LLM-REQUEST-COMPLEXITY-CLASSIFICATION": {
     "hash": "27f9dd5",
@@ -23274,6 +23302,96 @@
     "title": "Bound/Linked Travel Prompts (User + LLM Migration Suggestion)",
     "type": "TASK"
   },
+  "TASK-BRANCH-MERGE-CONTINUATION-SEMANTICS": {
+    "hash": "e9a494f",
+    "git_issue": "e9a494f",
+    "extid": "TASK-BRANCH-MERGE-CONTINUATION-SEMANTICS",
+    "type": "TASK",
+    "title": "Branch-merge continuation semantics",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-conversation-branching",
+    "tags": [
+      "branch-merge"
+    ],
+    "source": ".plan/tickets/TASK-branch-merge-continuation-semantics.md",
+    "status": "Not Started"
+  },
+  "TASK-BRANCH-MERGE-DB-MIGRATION-039": {
+    "hash": "df46848",
+    "git_issue": "df46848",
+    "extid": "TASK-BRANCH-MERGE-DB-MIGRATION-039",
+    "type": "TASK",
+    "title": "Branch-merge DB migration 040",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-conversation-branching",
+    "tags": [
+      "branch-merge"
+    ],
+    "source": ".plan/tickets/TASK-branch-merge-db-migration-039.md",
+    "status": "Not Started"
+  },
+  "TASK-BRANCH-MERGE-FRONTEND-WIZARD-UI": {
+    "hash": "6aff7e7",
+    "git_issue": "6aff7e7",
+    "extid": "TASK-BRANCH-MERGE-FRONTEND-WIZARD-UI",
+    "type": "TASK",
+    "title": "Branch-merge frontend wizard UI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-conversation-branching",
+    "tags": [
+      "branch-merge"
+    ],
+    "source": ".plan/tickets/TASK-branch-merge-frontend-wizard-ui.md",
+    "status": "Not Started"
+  },
+  "TASK-BRANCH-MERGE-SERVICE-AND-CRITERIA-ENGINE": {
+    "hash": "54e91d1",
+    "git_issue": "54e91d1",
+    "extid": "TASK-BRANCH-MERGE-SERVICE-AND-CRITERIA-ENGINE",
+    "type": "TASK",
+    "title": "Branch-merge service and criteria engine",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-conversation-branching",
+    "tags": [
+      "branch-merge"
+    ],
+    "source": ".plan/tickets/TASK-branch-merge-service-and-criteria-engine.md",
+    "status": "Not Started"
+  },
+  "TASK-BRANCH-MERGE-TESTS-AND-COVERAGE": {
+    "hash": "df5f873",
+    "git_issue": "df5f873",
+    "extid": "TASK-BRANCH-MERGE-TESTS-AND-COVERAGE",
+    "type": "TASK",
+    "title": "Branch-merge tests and coverage",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-conversation-branching",
+    "tags": [
+      "branch-merge"
+    ],
+    "source": ".plan/tickets/TASK-branch-merge-tests-and-coverage.md",
+    "status": "Not Started"
+  },
+  "TASK-BRANCH-MERGES-ROUTES-AND-TYPEBOX-SCHEMAS": {
+    "hash": "790a1d4",
+    "git_issue": "790a1d4",
+    "extid": "TASK-BRANCH-MERGES-ROUTES-AND-TYPEBOX-SCHEMAS",
+    "type": "TASK",
+    "title": "Branch-merges routes and TypeBox schemas",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-conversation-branching",
+    "tags": [
+      "branch-merge"
+    ],
+    "source": ".plan/tickets/TASK-branch-merges-routes-and-typebox-schemas.md",
+    "status": "Not Started"
+  },
   "TASK-BRANCH-WORKFLOW-DEV-STG-MASTER": {
     "epic": "",
     "extid": "TASK-BRANCH-WORKFLOW-DEV-STG-MASTER",
@@ -24025,6 +24143,15 @@
     "tags": [],
     "title": "Character Template — Full Canonical Model Coverage",
     "type": "TASK"
+  },
+  "TASK-CHARACTER-APPROVAL-WORKFLOW-NOT-IMPLEMENTED": {
+    "epic": "",
+    "extid": "TASK-CHARACTER-APPROVAL-WORKFLOW-NOT-IMPLEMENTED",
+    "git_issue": "86fc3c1",
+    "status": "Not Started",
+    "source": ".plan/tickets/TASK-character-approval-workflow-not-implemented.md",
+    "hash": "86fc3c1",
+    "title": "Character approval workflow not implemented"
   },
   "TASK-CHARACTER-AS-ASSISTANT-PICK-CHARACTER-AS-GM": {
     "epic": "epic-character-multi-personality",
@@ -26219,6 +26346,23 @@
     "tags": [],
     "title": "Composer message queue while generation is in flight",
     "type": "TASK"
+  },
+  "TASK-COMPOSER-PRIMITIVE-EXTRACTION": {
+    "hash": "6e8d3cd",
+    "git_issue": "6e8d3cd",
+    "extid": "TASK-COMPOSER-PRIMITIVE-EXTRACTION",
+    "type": "TASK",
+    "title": "Composer primitive extraction",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-chat-composer-flows",
+    "tags": [
+      "frontend",
+      "refactor",
+      "composer"
+    ],
+    "source": ".plan/tickets/TASK-composer-primitive-extraction.md",
+    "status": "Not Started"
   },
   "TASK-CONDITION-DRIVEN-NPC-BEHAVIOR": {
     "epic": "",
@@ -29415,6 +29559,15 @@
     "tags": [],
     "title": "EventBus + ToolRegistry Core Wiring",
     "type": "TASK"
+  },
+  "TASK-EXCLUDE-IMPERSONATED-ACTORS-FROM-AI-TURN-GENERATION": {
+    "epic": "",
+    "extid": "TASK-EXCLUDE-IMPERSONATED-ACTORS-FROM-AI-TURN-GENERATION",
+    "git_issue": "c2286b1",
+    "status": "Not Started",
+    "source": ".plan/tickets/TASK-exclude-impersonated-actors-from-ai-turn-generation.md",
+    "hash": "c2286b1",
+    "title": "Exclude impersonated actors from AI turn generation"
   },
   "TASK-EXIF-EXTRACTION-IMAGE-HASHING": {
     "epic": "proposed:epic-asset-metadata",
@@ -35365,6 +35518,23 @@
     "status": "done",
     "git_issue": "0c6e279"
   },
+  "TASK-MIGRATE-TEXT-SURFACES-TO-SHARED-PRIMITIVES": {
+    "hash": "492c9ba",
+    "git_issue": "492c9ba",
+    "extid": "TASK-MIGRATE-TEXT-SURFACES-TO-SHARED-PRIMITIVES",
+    "type": "TASK",
+    "title": "Migrate text surfaces to shared primitives",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-composer-flows",
+    "tags": [
+      "frontend",
+      "composer",
+      "migration"
+    ],
+    "source": ".plan/tickets/TASK-migrate-text-surfaces-to-shared-primitives.md",
+    "status": "Not Started"
+  },
   "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR": {
     "epic": "",
     "extid": "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR",
@@ -37397,6 +37567,15 @@
     "tags": [],
     "title": "Performance Dashboard & SLOs",
     "type": "TASK"
+  },
+  "TASK-PERSIST-CHAT-PURPOSE-ON-CREATION": {
+    "epic": "",
+    "extid": "TASK-PERSIST-CHAT-PURPOSE-ON-CREATION",
+    "git_issue": "3c241f7",
+    "status": "Not Started",
+    "source": ".plan/tickets/TASK-persist-chat-purpose-on-creation.md",
+    "hash": "3c241f7",
+    "title": "Persist chat purpose on creation"
   },
   "TASK-PERSIST-LOOT-DROPS": {
     "epic": "epic-item-systems-unification",
@@ -39823,6 +40002,15 @@
     "title": "Refactor: typed Kysely upsert-by-unique-key helpers",
     "type": "TASK"
   },
+  "TASK-REFINE-IMPERSONATION-CONSTRAINT-TO-LOCATION-TIMELINE-SCOPE": {
+    "epic": "",
+    "extid": "TASK-REFINE-IMPERSONATION-CONSTRAINT-TO-LOCATION-TIMELINE-SCOPE",
+    "git_issue": "322da5e",
+    "status": "Not Started",
+    "source": ".plan/tickets/TASK-refine-impersonation-constraint-to-location-timeline-scope.md",
+    "hash": "322da5e",
+    "title": "Refine impersonation constraint to location/timeline scope"
+  },
   "TASK-REGEN-ROUTES-AND-JOB-STATUS-ENDPOINTS": {
     "epic": "Emotion Avatar Regeneration Control",
     "extid": "TASK-REGEN-ROUTES-AND-JOB-STATUS-ENDPOINTS",
@@ -41807,6 +41995,24 @@
     "tags": [],
     "title": "Shared Schemas — Reputation, Consent, NSFW Content Rating",
     "type": "TASK"
+  },
+  "TASK-SHARED-TEXT-SURFACE-TOOLBAR": {
+    "hash": "a00d051",
+    "git_issue": "a00d051",
+    "extid": "TASK-SHARED-TEXT-SURFACE-TOOLBAR",
+    "type": "TASK",
+    "title": "Shared text-surface toolbar",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-chat-composer-flows",
+    "tags": [
+      "frontend",
+      "alpine",
+      "composer",
+      "ui"
+    ],
+    "source": ".plan/tickets/TASK-shared-text-surface-toolbar.md",
+    "status": "Not Started"
   },
   "TASK-SHOW-ASSETS-SCENES-WORLDS-ITEMS-TO-CHARACTER-VIA-CHAT-CONTEX": {
     "epic": "epic-context-injection-templates",
@@ -44775,6 +44981,15 @@
     "title": "Wire trust modifier to relationships",
     "type": "TASK"
   },
+  "TASK-WIRE-VARIANT-PICKER-INTO-NEW-CHAT-FORM": {
+    "epic": "",
+    "extid": "TASK-WIRE-VARIANT-PICKER-INTO-NEW-CHAT-FORM",
+    "git_issue": "8847e09",
+    "status": "Not Started",
+    "source": ".plan/tickets/TASK-wire-variant-picker-into-new-chat-form.md",
+    "hash": "8847e09",
+    "title": "Wire variant picker into new-chat form"
+  },
   "TASK-WIRE-WORLD-LOCATION-TRAITS-ROUTES": {
     "epic": "epic-locations",
     "extid": "TASK-WIRE-WORLD-LOCATION-TRAITS-ROUTES",
@@ -45593,53 +45808,5 @@
     "tags": [],
     "title": "nsfw-audit view route has no inline authz guard",
     "type": "WIRE"
-  },
-  "BUG-EMOTION-AVATAR-BASEAVATARID-IS-UNCHECKED-CROSS-USER-ASSET-ME": {
-    "epic": "",
-    "extid": "BUG-EMOTION-AVATAR-BASEAVATARID-IS-UNCHECKED-CROSS-USER-ASSET-ME",
-    "git_issue": "f1b17c0",
-    "status": "Not Started",
-    "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md",
-    "title": "# BUG: Emotion-avatar baseAvatarId is unchecked: cross-user asset metadata leaks into generated prompts"
-  },
-  "TASK-CHARACTER-APPROVAL-WORKFLOW-NOT-IMPLEMENTED": {
-    "epic": "",
-    "extid": "TASK-CHARACTER-APPROVAL-WORKFLOW-NOT-IMPLEMENTED",
-    "git_issue": "86fc3c1",
-    "status": "Not Started",
-    "source": ".plan/tickets/TASK-character-approval-workflow-not-implemented.md",
-    "title": "# TASK: Character approval workflow not implemented"
-  },
-  "TASK-EXCLUDE-IMPERSONATED-ACTORS-FROM-AI-TURN-GENERATION": {
-    "epic": "",
-    "extid": "TASK-EXCLUDE-IMPERSONATED-ACTORS-FROM-AI-TURN-GENERATION",
-    "git_issue": "c2286b1",
-    "status": "Not Started",
-    "source": ".plan/tickets/TASK-exclude-impersonated-actors-from-ai-turn-generation.md",
-    "title": "# TASK: Exclude impersonated actors from AI turn generation"
-  },
-  "TASK-PERSIST-CHAT-PURPOSE-ON-CREATION": {
-    "epic": "",
-    "extid": "TASK-PERSIST-CHAT-PURPOSE-ON-CREATION",
-    "git_issue": "3c241f7",
-    "status": "Not Started",
-    "source": ".plan/tickets/TASK-persist-chat-purpose-on-creation.md",
-    "title": "# TASK: Persist chat purpose on creation"
-  },
-  "TASK-REFINE-IMPERSONATION-CONSTRAINT-TO-LOCATION-TIMELINE-SCOPE": {
-    "epic": "",
-    "extid": "TASK-REFINE-IMPERSONATION-CONSTRAINT-TO-LOCATION-TIMELINE-SCOPE",
-    "git_issue": "322da5e",
-    "status": "Not Started",
-    "source": ".plan/tickets/TASK-refine-impersonation-constraint-to-location-timeline-scope.md",
-    "title": "# TASK: Refine impersonation constraint to location/timeline scope"
-  },
-  "TASK-WIRE-VARIANT-PICKER-INTO-NEW-CHAT-FORM": {
-    "epic": "",
-    "extid": "TASK-WIRE-VARIANT-PICKER-INTO-NEW-CHAT-FORM",
-    "git_issue": "8847e09",
-    "status": "Not Started",
-    "source": ".plan/tickets/TASK-wire-variant-picker-into-new-chat-form.md",
-    "title": "# TASK: Wire variant picker into new-chat form"
   }
 }
