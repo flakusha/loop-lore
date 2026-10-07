@@ -34,7 +34,7 @@ const NO_GAPS = JSON.stringify({ generatedAt: "1970-01-01T00:00:00.000Z", count:
  * Returns the exit code, both streams, and the baseline file as it stands
  * after the run (null when absent) so the write path is assertable.
  */
-function scanFixture(files, { baseline = NO_GAPS, args = [], } = {}) {
+function scanFixture(files, { baseline = NO_GAPS, args = [], } = {},) {
   const root = mkdtempSync(join(tmpdir(), "test-gaps-",),);
   try {
     const script = join(root, "scripts", "check", GATE,);
@@ -69,7 +69,7 @@ function scanFixture(files, { baseline = NO_GAPS, args = [], } = {}) {
 test("an export no test names is a gap; one a test names is not", () => {
   const { code, err, } = scanFixture({
     "src/thing.ts": "export function uncoveredFn() {\n  return 1;\n}\nexport function coveredFn() {\n  return 2;\n}\n",
-    "src/thing.test.ts": "import { coveredFn, } from \"./thing\";\ncoveredFn();\n",
+    "src/thing.test.ts": 'import { coveredFn, } from "./thing";\ncoveredFn();\n',
   },);
   expect(code,).toBe(1,);
   // Full table-row form throughout: "#getValue" is a prefix of
@@ -126,10 +126,11 @@ test("generated files and migrations yield no gaps, and the scan still ran", () 
 
 test("coverage is whole-word: getValueFactory does not cover getValue", () => {
   const { code, err, } = scanFixture({
-    "src/words.ts": "export function getValue() {\n  return 1;\n}\nexport function getValueFactory() {\n  return 2;\n}\n",
+    "src/words.ts":
+      "export function getValue() {\n  return 1;\n}\nexport function getValueFactory() {\n  return 2;\n}\n",
     // Names only the LONGER identifier — a substring match would wrongly
     // mark getValue covered.
-    "src/words.test.ts": "import { getValueFactory, } from \"./words\";\ngetValueFactory();\n",
+    "src/words.test.ts": 'import { getValueFactory, } from "./words";\ngetValueFactory();\n',
   },);
   expect(code,).toBe(1,);
   expect(err,).toContain("| src/words.ts#getValue |",);
@@ -146,15 +147,15 @@ test("an unreadable baseline fails closed rather than passing as zero known", ()
   ];
   // Mapped to [label, code] pairs so a failure diff names WHICH baseline
   // shape regressed, without relying on an `expect(value, message)` form.
-  expect(cases.map(([label, baseline,]) => [label, scanFixture(files, { baseline, },).code,],)).toEqual(
-    cases.map(([label,],) => [label, 2,],),
+  expect(cases.map(([label, baseline,],) => [label, scanFixture(files, { baseline, },).code,]),).toEqual(
+    cases.map(([label,],) => [label, 2,]),
   );
 });
 
 test("--write-baseline records exactly the measured gaps", () => {
   const { code, written, } = scanFixture({
     "src/thing.ts": "export function lonely() {\n  return 1;\n}\nexport function alsoLonely() {\n  return 2;\n}\n",
-  }, { args: ["--write-baseline"], },);
+  }, { args: ["--write-baseline",], },);
   expect(code,).toBe(0,);
-  expect(JSON.parse(written,).gaps,).toEqual(["src/thing.ts#alsoLonely", "src/thing.ts#lonely"],);
+  expect(JSON.parse(written,).gaps,).toEqual(["src/thing.ts#alsoLonely", "src/thing.ts#lonely",],);
 });
