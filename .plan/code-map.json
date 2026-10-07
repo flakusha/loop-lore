@@ -10284,6 +10284,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
     },
     {
@@ -12087,6 +12091,10 @@
       "source": ".plan/tickets/TASK-epic17-encryption-e2e-expansion.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-property-test-the-isencryptedpayload-predicate-against-the-d.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/encryption.md"
     },
@@ -12744,6 +12752,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-property-test-the-status-machines-and-composite-validators.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-sc2-narrator-mode-kind-stamp.md"
     },
     {
@@ -12904,6 +12916,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-property-test-the-status-machines-and-composite-validators.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-quest-status-transitions-bypass-state-machine.md"
     },
     {
@@ -12925,6 +12941,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-property-test-the-status-machines-and-composite-validators.md"
     }
   ],
   "src/db/enums-story/world.ts": [
@@ -28863,6 +28883,12 @@
       "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
     }
   ],
+  "src/regex/action-parser.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-property-test-the-regex-action-parser-verb-and-target-extrac.md"
+    }
+  ],
   "src/regex/game-state.ts": [
     {
       "kind": "ticket",
@@ -30039,6 +30065,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-blog-comments-post-accepts-non-public-posts-existence-oracle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
     }
   ],
   "src/routes/blog/follows.ts": [
@@ -30049,6 +30079,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-blog-followers-list-no-auth-reveals-follower-ids.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
     }
   ],
   "src/routes/blog/moderation.ts": [
@@ -30065,6 +30099,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-blog-post-get-bypasses-visibility-policy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
+    }
+  ],
+  "src/routes/blog/rag.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
     }
   ],
   "src/routes/build-id.test.ts": [
@@ -30191,12 +30235,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-emotion-definitions-crud-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
     }
   ],
   "src/routes/character-emotions/definitions.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-emotion-definitions-crud-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
     }
   ],
   "src/routes/character-growth.test.ts": [
@@ -33325,10 +33377,22 @@
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
+  "src/routes/quests/progress.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
+    }
+  ],
   "src/routes/quests/routes.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-026.md"
+    }
+  ],
+  "src/routes/quests/world.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
     }
   ],
   "src/routes/queue.ts": [
@@ -33750,6 +33814,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-item-definition-crud-frontend-editor.md"
     },
     {
@@ -33815,6 +33883,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-item-instance-transfer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
     }
   ],
   "src/routes/story-orchestration/index.ts": [
@@ -40015,6 +40087,16 @@
       "source": ".plan/tickets/TASK-scheduler-load-soak-bench-queued-llm-traffic.md"
     }
   ],
+  "src/test-utils/schema-arbitrary.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-property-test-the-db-schemas-insert-read-round-trip.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-property-test-the-status-machines-and-composite-validators.md"
+    }
+  ],
   "src/test/worktree.test.ts": [
     {
       "kind": "epic",
@@ -41112,6 +41194,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-property-test-the-db-schemas-insert-read-round-trip.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
     },
     {
@@ -41170,7 +41256,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-define-and-document-the-src-programmatic-api-surface.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas.md"
     }
   ],
   "src/validation/schemas.ts": [
@@ -41399,6 +41493,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merges-routes-and-typebox-schemas.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas.md"
     }
   ],
   "src/validation/schemas/music-links.ts": [
