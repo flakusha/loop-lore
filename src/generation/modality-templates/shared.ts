@@ -56,29 +56,26 @@ export function matchModalityProfile<P,>(
   return registry.profiles[profileId]!;
 }
 
-/** Template bodies keyed by detail level, with a `balanced` fallback. */
-export interface DetailTemplates {
-  instant?: string;
-  balanced?: string;
-  detailed?: string;
-}
-
 /**
  * Pick the template body for a detail level: the requested level, else the
  * `balanced` body. Every modality applies the same rule, and an explicit
  * override replaces the pick entirely.
+ *
+ * Deliberately NOT defaulted to "" when neither body is present: a profile
+ * missing its template must surface as an undefined body (which the caller's
+ * own validation rejects), not as an empty prompt that silently ships.
  * @param templates - the profile's per-detail bodies
  * @param detail - requested detail level
  * @param override - explicit body that wins over the pick
  * @returns {string}
  */
-export function pickModalityTemplate(
-  templates: DetailTemplates,
-  detail: string,
+export function pickModalityTemplate<T extends string,>(
+  templates: Record<T, string>,
+  detail: T,
   override?: string,
 ): string {
   if (override !== undefined) { return override; }
-  return templates[detail as keyof DetailTemplates] ?? templates.balanced ?? "";
+  return templates[detail] ?? (templates as Record<string, string>).balanced;
 }
 
 /**
