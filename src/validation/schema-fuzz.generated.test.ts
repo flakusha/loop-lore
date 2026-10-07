@@ -34,6 +34,7 @@ import * as blog from "@/validation/schemas/blog";
 import * as characterRelations from "@/validation/schemas/character-relations";
 import * as characterSystems from "@/validation/schemas/character-systems";
 import * as chat from "@/validation/schemas/chat";
+import * as comfyuiBuilder from "@/validation/schemas/comfyui-builder";
 import * as entities from "@/validation/schemas/entities";
 import * as invites from "@/validation/schemas/invites";
 import * as lore from "@/validation/schemas/lore";
@@ -258,6 +259,16 @@ describe("AdminUserRow [responses-admin]", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(responsesAdmin.AdminUserRow,));
 });
 
+describe("AdminWorldEventRow [responses]", () => {
+  test("accepts generated values", () => checkAllValid(responses.AdminWorldEventRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.AdminWorldEventRow,));
+});
+
+describe("AdminWorldEventRow [responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(responsesAdmin.AdminWorldEventRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responsesAdmin.AdminWorldEventRow,));
+});
+
 describe("AdminWorldRow [responses]", () => {
   test("accepts generated values", () => checkAllValid(responses.AdminWorldRow,));
   test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.AdminWorldRow,));
@@ -391,6 +402,26 @@ describe("BlogPostStatusBody", () => {
 describe("BlogPostUpdateBody", () => {
   test("accepts generated values", () => checkAllValid(blog.BlogPostUpdateBody,));
   test("survives a JSON round-trip", () => checkJsonRoundTrip(blog.BlogPostUpdateBody,));
+});
+
+describe("ChainCreateBody", () => {
+  test("accepts generated values", () => checkAllValid(comfyuiBuilder.ChainCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(comfyuiBuilder.ChainCreateBody,));
+});
+
+describe("ChainRunBody", () => {
+  test("accepts generated values", () => checkAllValid(comfyuiBuilder.ChainRunBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(comfyuiBuilder.ChainRunBody,));
+});
+
+describe("ChainStepSchema", () => {
+  test("accepts generated values", () => checkAllValid(comfyuiBuilder.ChainStepSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(comfyuiBuilder.ChainStepSchema,));
+});
+
+describe("ChainUpdateBody", () => {
+  test("accepts generated values", () => checkAllValid(comfyuiBuilder.ChainUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(comfyuiBuilder.ChainUpdateBody,));
 });
 
 describe("CharacterEmotionBody", () => {
@@ -686,6 +717,11 @@ describe("GmGuidanceUpdateBody", () => {
 describe("GmTurnPrioritySchema", () => {
   test("accepts generated values", () => checkAllValid(primitives.GmTurnPrioritySchema,));
   test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.GmTurnPrioritySchema,));
+});
+
+describe("GraphValidateBody", () => {
+  test("accepts generated values", () => checkAllValid(comfyuiBuilder.GraphValidateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(comfyuiBuilder.GraphValidateBody,));
 });
 
 describe("Id", () => {
@@ -1098,6 +1134,11 @@ describe("RenameAssetTagBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.RenameAssetTagBody,));
 });
 
+describe("ReviewDecisionBody", () => {
+  test("accepts generated values", () => checkAllValid(actors.ReviewDecisionBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(actors.ReviewDecisionBody,));
+});
+
 describe("SettingsUpdateBody", () => {
   test("accepts generated values", () => checkAllValid(settings.SettingsUpdateBody,));
   test("survives a JSON round-trip", () => checkJsonRoundTrip(settings.SettingsUpdateBody,));
@@ -1393,4 +1434,4 @@ describe("WorldVisibilitySchema", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.WorldVisibilitySchema,));
 });
 
-// 263 schemas discovered across 32 module(s).
+// 271 schemas discovered across 33 module(s).
