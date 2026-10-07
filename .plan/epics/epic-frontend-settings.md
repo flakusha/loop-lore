@@ -9,8 +9,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** Done
+**Status Note:** settings.html has 7 tabs (general, chat, api, notifications, data, keys, models)
 **Priority:** Medium
 
 ## Summary

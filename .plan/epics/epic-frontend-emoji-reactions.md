@@ -10,7 +10,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** Done
 **Area:** Frontend (chat, group chat, gallery comments)
 
 ## Scope

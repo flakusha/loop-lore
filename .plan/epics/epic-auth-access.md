@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** Done
+**Status Note:** Auth routes (login/register/logout/me) fully implemented and shipped
 **Priority:** High
 **Effort:** High
 **Type:** Foundation Epic
