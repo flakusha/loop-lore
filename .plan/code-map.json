@@ -808,6 +808,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-rate-limit-misses-post-emotion-avatars-single.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s.md"
     },
     {
@@ -11180,6 +11184,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-cron-registry-core.md"
     },
     {
@@ -13417,6 +13425,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-locations-reparent-guard-silently-reverted-by-d572dddec.md"
     },
     {
       "kind": "ticket",
@@ -15960,6 +15972,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-modality-template-patch-classifies-db-read-failures-as-400-w.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md"
     },
     {
@@ -16255,6 +16271,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-fan-out-queues-outbox-retries-only-for-push-failu.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o.md"
     }
   ],
   "src/federation/gossip.test.ts": [
@@ -16309,6 +16333,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-.md"
     }
   ],
   "src/federation/peer-fetch.ts": [
@@ -17375,6 +17407,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-conversation-branching.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-message-create-503-passthrough-omits-persisted-id-and-duplic.md"
     },
     {
       "kind": "ticket",
@@ -19786,6 +19822,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-message-create-503-passthrough-omits-persisted-id-and-duplic.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
     },
     {
@@ -21882,6 +21922,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-ollama-native-provider-drops-generationmessage-images-so-fil.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts.md"
     },
     {
@@ -23347,6 +23391,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-ollama-native-provider-drops-generationmessage-images-so-fil.md"
     },
     {
       "kind": "ticket",
@@ -25253,6 +25301,18 @@
       "source": ".plan/epics/epic-llm-request-scheduler.md"
     }
   ],
+  "src/locations": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-locations-reparent-guard-silently-reverted-by-d572dddec.md"
+    }
+  ],
+  "src/locations/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-locations-reparent-guard-silently-reverted-by-d572dddec.md"
+    }
+  ],
   "src/locations/positions.ts": [
     {
       "kind": "spec",
@@ -25305,6 +25365,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-locations.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-locations-reparent-guard-silently-reverted-by-d572dddec.md"
     },
     {
       "kind": "ticket",
@@ -32434,6 +32498,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-message-create-503-passthrough-omits-persisted-id-and-duplic.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-message-create-re-wraps-a-503-reply-into-201-jsoncreated.md"
     },
     {
@@ -32733,6 +32801,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-message-create-503-passthrough-omits-persisted-id-and-duplic.md"
     },
     {
       "kind": "ticket",
@@ -34013,7 +34085,17 @@
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
+  "src/routes/templates/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-modality-template-patch-classifies-db-read-failures-as-400-w.md"
+    }
+  ],
   "src/routes/templates/modality.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-modality-template-patch-classifies-db-read-failures-as-400-w.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-template-system.md"
@@ -34093,6 +34175,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-achievements.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rate-limit-misses-post-emotion-avatars-single.md"
     }
   ],
   "src/routes/v1/base-surface.ts": [
@@ -34407,9 +34493,17 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gallery-search-401s-anonymous-users-while-grid-serves-them.md"
     }
   ],
   "src/routes/views/plugin-pages.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gallery-search-401s-anonymous-users-while-grid-serves-them.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md"
@@ -34509,6 +34603,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rate-limit-misses-post-emotion-avatars-single.md"
     }
   ],
   "src/routes/weather.ts": [
@@ -34701,10 +34799,22 @@
       "source": ".plan/tickets/TASK-location-crud-tree-connections.md"
     }
   ],
+  "src/routes/worlds/locations-crud.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-locations-reparent-guard-silently-reverted-by-d572dddec.md"
+    }
+  ],
   "src/routes/worlds/locations-delete.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-location-crud-tree-connections.md"
+    }
+  ],
+  "src/routes/worlds/locations-reparent.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-locations-reparent-guard-silently-reverted-by-d572dddec.md"
     }
   ],
   "src/routes/worlds/locations-routes.test.ts": [
@@ -34715,6 +34825,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-location-delete-crashes-on-location-states-fk.md"
+    }
+  ],
+  "src/routes/worlds/locations-routes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-locations-reparent-guard-silently-reverted-by-d572dddec.md"
     }
   ],
   "src/routes/worlds/locations.ts": [
@@ -34729,6 +34845,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-location-delete-crashes-on-location-states-fk.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-locations-reparent-guard-silently-reverted-by-d572dddec.md"
     },
     {
       "kind": "ticket",
@@ -41225,6 +41345,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-modality-template-patch-classifies-db-read-failures-as-400-w.md"
     },
     {
       "kind": "ticket",
