@@ -21129,12 +21129,6 @@
       "source": ".plan/tickets/FEAT-065-sub-audio.md"
     }
   ],
-  "src/generation/audio-prompt-profiles.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-065-sub-audio.md"
-    }
-  ],
   "src/generation/audio-prompt-templates.ts": [
     {
       "kind": "ticket",
@@ -22998,14 +22992,6 @@
   "src/generation/modality-templates/shared.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-065-sub-audio.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-065-sub-video.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-template-system.md"
     }
   ],
@@ -23889,12 +23875,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-video-gen-route.md"
-    }
-  ],
-  "src/generation/video-prompt-profiles.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-065-sub-video.md"
     }
   ],
   "src/generation/video-prompt-templates.ts": [
@@ -27765,12 +27745,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-046.md"
-    }
-  ],
-  "src/plugins/plugin-dynamic.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
     }
   ],
   "src/plugins/registry.ts": [
@@ -33968,14 +33942,6 @@
     }
   ],
   "src/routes/templates/modality.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-065-sub-audio.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-065-sub-video.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-template-system.md"
@@ -42143,12 +42109,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-auth-access.md"
-    }
-  ],
-  "src/views/search.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
     }
   ],
   "src/views/settings.html": [
