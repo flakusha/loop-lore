@@ -106,6 +106,15 @@ export const checks = {
   // Shell reference guard (no .sh references in docs)
   "no - shell - refs": "bun run scripts/check-no-shell-refs.ts",
 
+  // Generated fuzz-test freshness: the committed
+  // src/validation/schema-fuzz.generated.test.ts must match what
+  // scripts/generate-schema-fuzz.ts emits from the current schema barrel.
+  "fuzz - generated tests": "bun run scripts/generate-schema-fuzz.ts --check",
+
+  // Test-gap ratchet: runtime exports no test file names, vs a committed
+  // baseline. Registered ADVISORY below — same drift profile as jscpd.
+  "tests - coverage gaps": "bun run scripts/check/test-gaps.mjs",
+
   // Coverage gate: per-module line % vs 80% floor (see AGENTS.md Verification Gates).
   // Bun writes lcov into the per-RUN coverage dir so concurrent and
   // successive runs do not clobber each other. `coverage.mjs` is told
@@ -151,6 +160,10 @@ export const ADVISORY_GATES = new Set([
   // jscpd ratchet: clone count vs committed baseline — drifts when dev
   // merges add or remove clones concurrently.
   "jscpd ratchet",
+  // Test-gap ratchet: measured untested-export set vs a committed baseline —
+  // same drift profile as jscpd. A dev merge that lands new exports moves
+  // the measured set before this branch's baseline was regenerated.
+  "tests - coverage gaps",
 ],);
 
 /**
