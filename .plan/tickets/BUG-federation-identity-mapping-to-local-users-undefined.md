@@ -32,6 +32,7 @@ Character consent remains covered by `src/characters/services/federation-consent
 The resolution service implementation lands with the FEAT.
 
 **Resolved:** 2026-10-06 registry-driven close: git issue d6f2a94 (registry tip: 306b98448 Konstantin Fedotov Close issue)
+
 ## Closure (2026-10-05, federation resolution review)
 
 RESOLUTION TYPE: **decision-only — the table is NOT implemented.**
