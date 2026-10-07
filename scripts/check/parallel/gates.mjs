@@ -108,11 +108,14 @@ export const checks = {
 
   // Generated fuzz-test freshness: the committed
   // src/validation/schema-fuzz.generated.test.ts must match what
-  // scripts/generate-schema-fuzz.ts emits from the current schema barrel.
+  // scripts/generate-schema-fuzz.ts emits from the schema modules on disk.
   "fuzz - generated tests": "bun run scripts/generate-schema-fuzz.ts --check",
 
   // Test-gap ratchet: runtime exports no test file names, vs a committed
-  // baseline. Registered ADVISORY below — same drift profile as jscpd.
+  // baseline. BLOCKING, not advisory: the matcher requires a real import
+  // edge (not an incidental token), so the signal is trustworthy enough to
+  // enforce. Adding the gate to ADVISORY_GATES is the escape hatch if it is
+  // ever found to drift like jscpd does.
   "tests - coverage gaps": "bun run scripts/check/test-gaps.mjs",
 
   // Coverage gate: per-module line % vs 80% floor (see AGENTS.md Verification Gates).
@@ -160,10 +163,6 @@ export const ADVISORY_GATES = new Set([
   // jscpd ratchet: clone count vs committed baseline — drifts when dev
   // merges add or remove clones concurrently.
   "jscpd ratchet",
-  // Test-gap ratchet: measured untested-export set vs a committed baseline —
-  // same drift profile as jscpd. A dev merge that lands new exports moves
-  // the measured set before this branch's baseline was regenerated.
-  "tests - coverage gaps",
 ],);
 
 /**

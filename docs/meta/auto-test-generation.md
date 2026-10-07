@@ -70,27 +70,41 @@ a second set of type semantics to keep in sync. The tradeoff flips the moment sc
 Schemas: then `Schema.toArbitrary` is strictly better than maintaining a mapper.
 
 **Text scan, not a compiler-API walk.** `scripts/check/test-gaps.mjs` regex-matches top-level
-export declarations (`export function` / `export const` / `export class` / `export (interface|type|enum)`)
-in `src/**/*.ts`, then checks whether each name appears as a whole word in the concatenated text of
-`src/**/*.test.ts`. It tokenizes the test corpus once and tests set membership, which is whole-word
-matching at one pass rather than one compiled regex per export. No ts-morph, no TypeScript compiler
-API, no new dependency. A ts-morph AST walk was the alternative on the table: it would have been
-more precise, but it buys precision this use does not need — the output is a *ratchet* over a set of
-gap keys, not a proof of coverage — while costing a new dependency, a program-construction step, and a
-full parse of the whole tree on every gate run. A handful of false positives in a ratchet are
-tolerable and self-correcting: each one is a real key that gets retired the moment someone writes a
-test. A heavyweight parse on every gate run is not tolerable.
+export declarations (`export function` / `export const` / `export class` / `export enum` / `export let` /
+`export var` / `export abstract class`) in `src/**/*.ts`, then asks whether any test file **imports**
+that symbol — from an import specifier, resolving directory imports against their `index.ts` — rather
+than merely by the name appearing somewhere in the file. No ts-morph, no TypeScript compiler API, no
+new dependency. A ts-morph AST walk was the alternative on the table: it would have been more precise,
+but it buys precision this use does not need — the output is a *ratchet* over a set of gap keys, not
+a proof of coverage — while costing a new dependency, a program-construction step, and a full parse of
+the whole tree on every gate run.
 
-The cost of taking the cheap option is real and worth stating plainly. Name collisions across modules,
-aliased imports, and dynamically accessed or re-exported symbols are counted imperfectly — the gate
-cannot tell "this name appears in a test file" apart from "this specific binding was exercised".
-The scan also deliberately skips shapes it cannot name confidently: `export default`, `export { a, b }
-from "…"` re-export lists, and the second name of a multi-declarator `export const a = 1, b = 2`.
-That imprecision is precisely why the gate **ratchets on a baseline rather than failing on absolute
-truth**: a set that only ever shrinks cannot be destabilised by a heuristic mis-reading, because every
-mis-reading is stable across runs and simply sits in the baseline until a test removes it. An
-AST-precise version of this gate would be the right upgrade if the gate ever needs to answer a
-question other than "did this set grow?".
+The first version of this gate matched on *any identifier token* in the test corpus and passed review
+with a fully green suite. Adversarially re-tested, it was toothless for exactly the names new code is
+most likely to use: a module exporting `get`, `run`, `parse`, `validate`, `load`, `save` and eight more,
+with zero tests, exited 0 — because those names appear somewhere in the test corpus incidentally, or
+as an unrelated object's member. Stripping comments and string literals recovered part of it;
+requiring a real import edge recovered the rest, on the order of several hundred false negatives
+across the tree.
+
+That is worth stating as the lesson rather than as the fix. **A scan whose result is reported as
+complete while being computed over a subset is worse than no scan**, because it converts an absence
+into false confidence — the exact failure the gate exists to prevent. A green fuzz or coverage gate
+that silently covers part of its intended surface is not a partial success; it is an active hazard,
+because it retires the reason anyone would otherwise have looked.
+
+The remaining imprecision is real and worth stating plainly. Name collisions across modules, aliased
+imports, and dynamically accessed or re-exported symbols are counted imperfectly — the gate cannot
+tell "this name appears in a test file" apart from "this specific binding was exercised". It also
+deliberately skips shapes it cannot name confidently: `export default`, `export { a, b } from "…"`
+re-export lists, and the second name of a multi-declarator `export const a = 1, b = 2`. That is why
+the gate **ratchets on a baseline rather than failing on absolute truth**: a set that only ever shrinks
+cannot be destabilised by a heuristic mis-reading, because every mis-reading is stable across runs and
+simply sits in the baseline until a test removes it. Because the matcher now requires an import edge,
+the signal is trustworthy enough to enforce, so the gate runs blocking, and `--write-baseline` refuses
+to grow the set without an explicit `--accept-new-debt` so new debt cannot be absorbed by accident. An
+AST-precise version would be the right upgrade if the gate ever needs to answer a question other than
+"did this set grow?".
 
 ---
 
@@ -115,13 +129,23 @@ failing one names the mapper branch that is wrong. The module exports three func
   `JSON.stringify`/parse cycle. A round-trip property built from such a schema would fail for a reason
   that has nothing to do with the code under test.
 
-The mapper is what landed on this branch. The **generator** that consumes it — walking the
-schema-bearing modules and emitting a real test file rather than a report, co-located `*.test.ts`
-following the repo's existing conventions — is the next slice of work. Its output shape is fixed by
-what the mapper exposes: each emitted property asserts that values from `schemaToArbitrary` pass
-`Value.Check`, and that round-trippable schemas survive `JSON.stringify` → `JSON.parse` deep-equality.
-Building the mapper first is what makes the generator cheap: its job is module discovery and code
-emission, not constraint modelling.
+`scripts/generate-schema-fuzz.ts` walks the schema-bearing modules and emits a real test file rather
+than a report — a co-located `*.test.ts` following the repo's existing conventions. Each emitted
+property asserts that values from `schemaToArbitrary` pass `Value.Check`, and that round-trippable
+schemas survive `JSON.stringify` → `JSON.parse` deep-equality. Every property runs at a fixed seed,
+so a failure is reproducible and the suite cannot flake on a lucky draw.
+
+**Discovery is directory-based, not barrel-based.** The generator globs `src/validation/schemas/*.ts`
+on disk and merges each module's namespace, rather than reading the exports of the barrel in that
+directory. This was not the original design: the first version iterated the barrel only, and four
+modules sitting beside it (`responses`, `responses-admin`, `responses-interaction`, `music-links`)
+are not re-exported from it. Forty-one schemas — validated by live routes and frontend modules — were
+therefore never fuzzed, while the gate cheerfully reported a clean count and exited 0. Reading the
+directory makes it structurally impossible for a new module to be missed.
+
+Schemas whose name repeats across modules are disambiguated by the module that owns them, so a
+generated `test()` always exercises the right one rather than silently collapsing onto whichever was
+imported first.
 
 **One `test()` per schema, not one loop over schemas.** A loop is dramatically shorter to write and
 strictly worse to debug: when the property fails, the failure message says *"counterexample found"*
