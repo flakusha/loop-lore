@@ -97,7 +97,7 @@ const SKIP_PATTERNS = [
   /^src\/validation\/db-schemas\.ts$/,
 ];
 
-function walk(dir, out = []) {
+function walk(dir, out = [],) {
   for (const entry of readdirSync(dir, { withFileTypes: true, },)) {
     const full = path.join(dir, entry.name,);
     if (entry.isDirectory()) {
@@ -110,7 +110,7 @@ function walk(dir, out = []) {
 }
 
 /** Top-level exported names in one file's source, deduped, first-seen order. */
-function exportedNames(source) {
+function exportedNames(source,) {
   const names = [];
   for (const pattern of EXPORT_PATTERNS) {
     for (const match of source.matchAll(pattern,)) {
@@ -125,7 +125,7 @@ function exportedNames(source) {
  * testing set membership IS whole-word matching, at one pass instead of one
  * compiled regex per export.
  */
-function identifierSet(text) {
+function identifierSet(text,) {
   const found = new Set();
   for (const token of text.matchAll(/[A-Za-z_$][\w$]*/g,)) { found.add(token[0],); }
   return found;
@@ -137,16 +137,16 @@ function identifierSet(text) {
  * excluded from BOTH sides so a name only a generated helper mentions cannot
  * mask a real gap elsewhere.
  */
-function collectGaps(files) {
-  const sources = files.map((abs) => ({
+function collectGaps(files,) {
+  const sources = files.map((abs,) => ({
     rel: path.relative(PROJECT_ROOT, abs,).split(path.sep,).join("/",),
     text: readFileSync(abs, "utf8",),
   }));
   const tested = sources.filter((f,) => f.rel.endsWith(".test.ts",));
   const subjects = sources.filter((f,) =>
-    !f.rel.endsWith(".test.ts",) && !SKIP_PATTERNS.some((re) => re.test(f.rel,),)
+    !f.rel.endsWith(".test.ts",) && !SKIP_PATTERNS.some((re,) => re.test(f.rel,))
   );
-  const corpus = identifierSet(tested.map((f,) => f.text,).join("\n",),);
+  const corpus = identifierSet(tested.map((f,) => f.text).join("\n",),);
 
   const gaps = [];
   for (const file of subjects) {
@@ -157,7 +157,7 @@ function collectGaps(files) {
   return gaps.sort();
 }
 
-function parseArgs(argv) {
+function parseArgs(argv,) {
   const args = { baseline: DEFAULT_BASELINE, write: false, quiet: false, };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--baseline" && argv[i + 1] !== undefined) {
@@ -172,14 +172,14 @@ function parseArgs(argv) {
   return args;
 }
 
-function readBaseline(baselinePath) {
+function readBaseline(baselinePath,) {
   let raw;
   try {
     raw = JSON.parse(readFileSync(baselinePath, "utf8",),);
   } catch (error) {
     throw new Error(`cannot read baseline ${baselinePath} (run with --write-baseline): ${error.message}`,);
   }
-  if (!Array.isArray(raw.gaps) || raw.gaps.some((g,) => typeof g !== "string",)) {
+  if (!Array.isArray(raw.gaps,) || raw.gaps.some((g,) => typeof g !== "string")) {
     throw new Error(`baseline has no usable gaps[] array: ${baselinePath}`,);
   }
   return raw;
@@ -188,7 +188,7 @@ function readBaseline(baselinePath) {
 function main() {
   const args = parseArgs(process.argv.slice(2,),);
   // stderr is the human channel and is dropped entirely under --json.
-  const human = args.quiet ? () => {} : (line) => console.error(line,);
+  const human = args.quiet ? () => {} : (line,) => console.error(line,);
   const baselinePath = path.resolve(args.baseline,);
   const fresh = collectGaps(walk(SRC_DIR,),);
 
@@ -203,7 +203,9 @@ function main() {
       renameSync(tmpPath, baselinePath,);
     } finally {
       // Rename consumed the temp; this only fires if the write threw.
-      try { unlinkSync(tmpPath); } catch { /* already renamed away */ }
+      try {
+        unlinkSync(tmpPath,);
+      } catch { /* already renamed away */ }
     }
     human(`test-gaps: baseline written — ${fresh.length} gap(s) (${baselinePath})`,);
     console.log(JSON.stringify({ mode: "write-baseline", count: fresh.length, gaps: fresh, },),);
@@ -212,7 +214,7 @@ function main() {
 
   const baseline = readBaseline(baselinePath,);
   const known = new Set(baseline.gaps,);
-  const newGaps = fresh.filter((gap,) => !known.has(gap,),);
+  const newGaps = fresh.filter((gap,) => !known.has(gap,));
 
   if (newGaps.length > 0) {
     human("| new test gap |",);
