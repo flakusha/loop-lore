@@ -3116,6 +3116,19 @@
     "title": "Federation delivery reliability (queue, retry, idempotency) undefined",
     "type": "BUG"
   },
+  "BUG-FEDERATION-FAN-OUT-QUEUES-OUTBOX-RETRIES-ONLY-FOR-PUSH-FAILU": {
+    "hash": "e7650fb",
+    "git_issue": "e7650fb",
+    "extid": "BUG-FEDERATION-FAN-OUT-QUEUES-OUTBOX-RETRIES-ONLY-FOR-PUSH-FAILU",
+    "type": "BUG",
+    "title": "Federation fan-out queues outbox retries only for push failures",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-federation-fan-out-queues-outbox-retries-only-for-push-failu.md",
+    "status": "Not Started"
+  },
   "BUG-FEDERATION-IDENTITY-MAPPING-TO-LOCAL-USERS-UNDEFINED": {
     "epic": "",
     "extid": "BUG-FEDERATION-IDENTITY-MAPPING-TO-LOCAL-USERS-UNDEFINED",
@@ -3128,6 +3141,19 @@
     "tags": [],
     "title": "Federation identity mapping to local users undefined",
     "type": "BUG"
+  },
+  "BUG-FEDERATION-OUTBOX-DRAIN-SKIPS-EXPORT-CONSENT-RE-CHECK-MESH-O": {
+    "hash": "f38633a",
+    "git_issue": "f38633a",
+    "extid": "BUG-FEDERATION-OUTBOX-DRAIN-SKIPS-EXPORT-CONSENT-RE-CHECK-MESH-O",
+    "type": "BUG",
+    "title": "Federation outbox drain skips export-consent re-check (mesh_outbox has no chat_id)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o.md",
+    "status": "Not Started"
   },
   "BUG-FEDERATION-TEST-HARNESS-NEEDS-IN-PROCESS-FIXTURES": {
     "epic": "",
@@ -3337,6 +3363,19 @@
     "tags": [],
     "title": "gallery grid onclick openAssetPreview ReferenceError when gallery not top-level",
     "type": "BUG"
+  },
+  "BUG-GALLERY-SEARCH-401S-ANONYMOUS-USERS-WHILE-GRID-SERVES-THEM": {
+    "hash": "2362ef9",
+    "git_issue": "2362ef9",
+    "extid": "BUG-GALLERY-SEARCH-401S-ANONYMOUS-USERS-WHILE-GRID-SERVES-THEM",
+    "type": "BUG",
+    "title": "Gallery search 401s anonymous users while grid serves them",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-gallery-search-401s-anonymous-users-while-grid-serves-them.md",
+    "status": "Not Started"
   },
   "BUG-GATES-CSV-EQUALS-FORM-IS-SILENTLY-IGNORED-ONLY-THE-SPACE-SEP": {
     "hash": "fcbfd8f",
@@ -4384,6 +4423,19 @@
     "title": "location DELETE crashes on location_states FK",
     "type": "BUG"
   },
+  "BUG-LOCATIONS-REPARENT-GUARD-SILENTLY-REVERTED-BY-D572DDDEC": {
+    "hash": "6e37975",
+    "git_issue": "6e37975",
+    "extid": "BUG-LOCATIONS-REPARENT-GUARD-SILENTLY-REVERTED-BY-D572DDDEC",
+    "type": "BUG",
+    "title": "Locations reparent guard silently reverted by d572dddec",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-locations-reparent-guard-silently-reverted-by-d572dddec.md",
+    "status": "Not Started"
+  },
   "BUG-LOCATIONS-TREE-TS-HEADER-NAMES-NONEXISTENT-TRIGGERS": {
     "epic": "",
     "extid": "BUG-LOCATIONS-TREE-TS-HEADER-NAMES-NONEXISTENT-TRIGGERS",
@@ -4655,6 +4707,19 @@
     "title": "Message attachments link arbitrary asset ids without ownership check",
     "type": "BUG"
   },
+  "BUG-MESSAGE-CREATE-503-PASSTHROUGH-OMITS-PERSISTED-ID-AND-DUPLIC": {
+    "hash": "86f9ce8",
+    "git_issue": "86f9ce8",
+    "extid": "BUG-MESSAGE-CREATE-503-PASSTHROUGH-OMITS-PERSISTED-ID-AND-DUPLIC",
+    "type": "BUG",
+    "title": "Message-create 503 passthrough omits persisted id and duplicates user messages on retry",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-message-create-503-passthrough-omits-persisted-id-and-duplic.md",
+    "status": "Not Started"
+  },
   "BUG-MESSAGE-CREATE-RE-WRAPS-A-503-REPLY-INTO-201-JSONCREATED": {
     "epic": "",
     "extid": "BUG-MESSAGE-CREATE-RE-WRAPS-A-503-REPLY-INTO-201-JSONCREATED",
@@ -4862,6 +4927,19 @@
     "tags": [],
     "title": "Migration ordering ambiguous via localeCompare + duplicate numeric prefixes",
     "type": "BUG"
+  },
+  "BUG-MODALITY-TEMPLATE-PATCH-CLASSIFIES-DB-READ-FAILURES-AS-400-W": {
+    "hash": "c997842",
+    "git_issue": "c997842",
+    "extid": "BUG-MODALITY-TEMPLATE-PATCH-CLASSIFIES-DB-READ-FAILURES-AS-400-W",
+    "type": "BUG",
+    "title": "Modality template PATCH classifies DB read failures as 400 with raw exception message",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-modality-template-patch-classifies-db-read-failures-as-400-w.md",
+    "status": "Not Started"
   },
   "BUG-MODEL-COMPARISONS-ANALYTICS-LEAKS-ALL-USERS-ROWS-MISSING-USE": {
     "epic": "",
@@ -5383,6 +5461,19 @@
     "title": "NsfwModerationService missing getOrCreateOwn wiring — block/ban/shadow all return 400",
     "type": "BUG"
   },
+  "BUG-OLLAMA-NATIVE-PROVIDER-DROPS-GENERATIONMESSAGE-IMAGES-SO-FIL": {
+    "hash": "02bb0b3",
+    "git_issue": "02bb0b3",
+    "extid": "BUG-OLLAMA-NATIVE-PROVIDER-DROPS-GENERATIONMESSAGE-IMAGES-SO-FIL",
+    "type": "BUG",
+    "title": "Ollama-native provider drops GenerationMessage.images so filename-only captions persist as alt_text",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-ollama-native-provider-drops-generationmessage-images-so-fil.md",
+    "status": "Not Started"
+  },
   "BUG-OLLAMA-OUTAGE-HARD-FAILS-ALL-GENERATIONS": {
     "epic": "",
     "extid": "BUG-OLLAMA-OUTAGE-HARD-FAILS-ALL-GENERATIONS",
@@ -5421,6 +5512,19 @@
     "tags": [],
     "title": "Out-of-order fetch race in loadMessages",
     "type": "BUG"
+  },
+  "BUG-OVERLAPPING-FEDERATION-OUTBOX-DRAIN-PASSES-RE-PUSH-THE-SAME-": {
+    "hash": "96279b9",
+    "git_issue": "96279b9",
+    "extid": "BUG-OVERLAPPING-FEDERATION-OUTBOX-DRAIN-PASSES-RE-PUSH-THE-SAME-",
+    "type": "BUG",
+    "title": "Overlapping federation outbox drain passes re-push the same rows",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-.md",
+    "status": "Not Started"
   },
   "BUG-PARALLEL-CHECK-RUNNER-HAS-NO-PER-GATE-TIMEOUT-SO-ONE-WEDGED-": {
     "hash": "dcd07fe",
@@ -5729,6 +5833,19 @@
     "tags": [],
     "title": "rate limit in-memory store never evicts idle keys",
     "type": "BUG"
+  },
+  "BUG-RATE-LIMIT-MISSES-POST-EMOTION-AVATARS-SINGLE": {
+    "hash": "3ee5466",
+    "git_issue": "3ee5466",
+    "extid": "BUG-RATE-LIMIT-MISSES-POST-EMOTION-AVATARS-SINGLE",
+    "type": "BUG",
+    "title": "Rate-limit misses POST /emotion-avatars/single",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rate-limit-misses-post-emotion-avatars-single.md",
+    "status": "Not Started"
   },
   "BUG-RATE-LIMIT-POLICIES-STARVE-NORMAL-CHAT-TRAFFIC-WITH-429S": {
     "epic": "",
