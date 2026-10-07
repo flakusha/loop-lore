@@ -37,10 +37,14 @@ vn-sprite-compositing) or the 25 existing TASK-chat-feature-* tickets.
 
 ## Tickets
 
-- TASK-msg-forward-across-chats.md (Done — route+service+Alpine wiring shipped; epic "no wiring" note is stale)
-- TASK-composer-draft-persistence.md (Done — ChatDraftStore shipped; ponytail marker added; reply-context inapplicable — implicit threading has no client state)
-- TASK-scheduled-messages-reminders.md
-- FEAT-llm-enhance-outside-the-chat-composer.md (filed 2026-10-03)
+- [TASK-msg-forward-across-chats](../tickets/TASK-msg-forward-across-chats.md) — Done
+- [TASK-composer-draft-persistence](../tickets/TASK-composer-draft-persistence.md) — Done
+- [TASK-scheduled-messages-reminders](../tickets/TASK-scheduled-messages-reminders.md)
+- [FEAT-llm-enhance-outside-the-chat-composer](../tickets/FEAT-llm-enhance-outside-the-chat-composer.md)
+- [TASK-composer-primitive-extraction](../tickets/TASK-composer-primitive-extraction.md)
+- [FEAT-llm-enhance-any-text-surface](../tickets/FEAT-llm-enhance-any-text-surface.md)
+- [TASK-shared-text-surface-toolbar](../tickets/TASK-shared-text-surface-toolbar.md)
+- [TASK-migrate-text-surfaces-to-shared-primitives](../tickets/TASK-migrate-text-surfaces-to-shared-primitives.md)
 
 ## Anchors
 

@@ -229,7 +229,6 @@ export class LoggerImpl implements Logger {
     this.levelBox.name = level;
     this.levelBox.threshold = levelFromConfig(level,);
   }
-
   /** */
   /**
    * @throws {Error}

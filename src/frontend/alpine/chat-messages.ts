@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { MessageListResponse, } from "../../validation/schemas/responses";
+import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { chatDraftMethods, } from "./chat-drafts";
 import { chatSeenMethods, } from "./chat-seen";
 import { chatSendMethods, } from "./chat-send";
@@ -187,8 +188,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
    * @returns {void}
    */
   autoResize(el: HTMLTextAreaElement,) {
-    el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 200,)}px`;
+    autoResizeImpl(el,);
   },
 
   /**
