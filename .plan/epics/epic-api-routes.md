@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** 30+ route files, v1 barrel, versioning implemented; some tasks may remain
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
