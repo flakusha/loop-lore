@@ -29,6 +29,31 @@ const OUT_PATH = new URL("../src/validation/schema-fuzz.generated.test.ts", impo
 /** Fixed run count + seed — a regenerated file must replay identical values. */
 const FC_RUNS = { numRuns: 100, seed: 20260101, };
 
+/**
+ * Normalize rendered text through the repo's dprint config, so the emitted file
+ * is already `format - dprint` clean and `--check` stays byte-stable.
+ *
+ * `src/validation/*.generated.test.ts` is NOT excluded by dprint.json, so the
+ * generated artifact must be formatted like any other source file. Formatting
+ * the RENDERED TEXT (not the written file) keeps --check honest: write and
+ * compare paths see identical normalized bytes.
+ */
+function format(source: string,): string {
+  const config = new URL("../dprint.json", import.meta.url,).pathname;
+  const proc = Bun.spawnSync({
+    cmd: ["bunx", "dprint", "fmt", "--config", config, "--stdin", OUT_PATH.pathname,],
+    cwd: new URL("..", import.meta.url,).pathname,
+    stdin: Buffer.from(source,),
+    stdout: "pipe",
+    stderr: "pipe",
+  },);
+  if (proc.exitCode !== 0) {
+    const detail = proc.stderr.toString().trim() || "no stderr";
+    throw new Error(`dprint fmt failed (exit ${proc.exitCode}): ${detail}`,);
+  }
+  return proc.stdout.toString();
+}
+
 /** Schema names in sorted order, so regeneration is byte-identical. */
 function discoverSchemas(): { names: string[]; nonSchema: number; throwing: number } {
   const namespace = schemas as unknown as Record<string, unknown>;
@@ -111,7 +136,7 @@ function render(names: string[],): string {
     lines.push(`describe("${name}", () => {`, ...casesFor(name,), "});", "",);
   }
   lines.push(`// ${names.length} schemas discovered by scripts/generate-schema-fuzz.ts.`,);
-  return `${lines.join("\n",)}\n`;
+  return format(`${lines.join("\n",)}\n`,);
 }
 
 // ── CLI ────────────────────────────────────────────────────────────────────
