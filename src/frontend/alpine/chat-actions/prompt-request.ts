@@ -13,7 +13,7 @@ import { jsonBody, } from "../json";
 export interface PromptRequest {
   mode: "improve" | "analyze";
   text: string;
-  chatId: string;
+  chatId?: string;
   /** Gradation level; omitted for `analyze`. */
   level?: string;
 }

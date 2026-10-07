@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import type { ChatState, Message, } from "./types";
 import { MessageListResponse, } from "../../validation/schemas/responses";
+import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { chatDraftMethods, } from "./chat-drafts";
 import { chatSeenMethods, } from "./chat-seen";
 import { chatSendMethods, } from "./chat-send";
@@ -16,9 +17,6 @@ const EMPTY_MESSAGE_PAGE = {
   pagination: { total: 0, page: 1, pageSize: 50, totalPages: 1, },
 };
 export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
-  ...chatDraftMethods,
-  ...chatSendMethods,
-  ...chatSeenMethods,
   /**
    * @returns {Promise<void>}
    */
@@ -177,8 +175,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
    * @returns {void}
    */
   autoResize(el: HTMLTextAreaElement,) {
-    el.style.height = "auto";
-    el.style.height = Math.min(el.scrollHeight, 200,) + "px";
+    autoResizeImpl(el,);
   },
 
   async sendMessage() {
@@ -255,6 +252,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       // non-critical
     }
   },
+
   /**
    * @param {string} msgId
    * @returns {Promise<void>}
@@ -280,6 +278,4 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     const ids = Array.from(this.messages, (m,) => m.id,);
     await Promise.allSettled(Array.from(ids, (id,) => this.loadMessageReactions(id,),),);
   },
-
-  ...chatSendMethods,
 };
