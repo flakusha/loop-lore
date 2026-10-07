@@ -19483,6 +19483,19 @@
     "title": "Add NsfwEncounterStatus state machine for nsfw_encounters.status",
     "type": "TASK"
   },
+  "TASK-ADD-OPENAPI-CONTRACT-FUZZING-VIA-SCHEMATHESIS-ONCE-ROUTE-SPE": {
+    "hash": "0218015",
+    "git_issue": "0218015",
+    "extid": "TASK-ADD-OPENAPI-CONTRACT-FUZZING-VIA-SCHEMATHESIS-ONCE-ROUTE-SPE",
+    "type": "TASK",
+    "title": "Add OpenAPI-contract fuzzing via Schemathesis once route specs stabilize",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-api-library-distribution.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-openapi-contract-fuzzing-via-schemathesis-once-route-spe.md",
+    "status": "Not Started"
+  },
   "TASK-ADD-OWNERSHIP-CHECKS-CHARACTERS": {
     "epic": "epic-logic-reconciliation",
     "extid": "TASK-ADD-OWNERSHIP-CHECKS-CHARACTERS",
@@ -20353,6 +20366,19 @@
     "tags": [],
     "title": "Adopt state machine framework in runtime status writes",
     "type": "TASK"
+  },
+  "TASK-ADOPT-STRYKERJS-MUTATION-TESTING-ONCE-THE-COVERAGE-BASELINE-": {
+    "hash": "679cd0c",
+    "git_issue": "679cd0c",
+    "extid": "TASK-ADOPT-STRYKERJS-MUTATION-TESTING-ONCE-THE-COVERAGE-BASELINE-",
+    "type": "TASK",
+    "title": "Adopt StrykerJS mutation testing once the coverage baseline is solid",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-api-library-distribution.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-strykerjs-mutation-testing-once-the-coverage-baseline-.md",
+    "status": "Not Started"
   },
   "TASK-ADOPT-VIEW-TRANSITIONS-API-FOR-NAVIGATION": {
     "epic": "epic-frontend-modernization.md",
@@ -28037,6 +28063,19 @@
     "title": "Deferred equipped-items outfit auto-mapping",
     "type": "TASK"
   },
+  "TASK-DEFINE-AND-DOCUMENT-THE-SRC-PROGRAMMATIC-API-SURFACE": {
+    "hash": "dd031be",
+    "git_issue": "dd031be",
+    "extid": "TASK-DEFINE-AND-DOCUMENT-THE-SRC-PROGRAMMATIC-API-SURFACE",
+    "type": "TASK",
+    "title": "Define and document the src/ programmatic API surface",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-api-library-distribution.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-define-and-document-the-src-programmatic-api-surface.md",
+    "status": "Not Started"
+  },
   "TASK-DEFINE-BOOLEANSTATE-STATE-MACHINE-FOR-SINGLE-BOOLEAN-FIELDS": {
     "epic": "epic-data-integrity-acid",
     "extid": "TASK-DEFINE-BOOLEANSTATE-STATE-MACHINE-FOR-SINGLE-BOOLEAN-FIELDS",
@@ -29658,6 +29697,19 @@
     "epic": "epic-headless-alternative-frontends.md",
     "tags": [],
     "source": ".plan/tickets/TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a.md",
+    "status": "Not Started"
+  },
+  "TASK-EXTEND-SCHEMA-FUZZ-GENERATION-BEYOND-SRC-VALIDATION-SCHEMAS": {
+    "hash": "b812ab3",
+    "git_issue": "b812ab3",
+    "extid": "TASK-EXTEND-SCHEMA-FUZZ-GENERATION-BEYOND-SRC-VALIDATION-SCHEMAS",
+    "type": "TASK",
+    "title": "Extend schema fuzz generation beyond src/validation/schemas",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-api-library-distribution.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas.md",
     "status": "Not Started"
   },
   "TASK-EXTRACT-CHAT-ROUTE-BUSINESS-LOGIC": {
@@ -32312,6 +32364,19 @@
     "tags": [],
     "title": "Hidden carriage TOML context block (chat config + injection)",
     "type": "TASK"
+  },
+  "TASK-HOIST-INLINE-ROUTE-RESPONSE-SCHEMAS-TO-EXPORTED-CONSTS": {
+    "hash": "7b17b86",
+    "git_issue": "7b17b86",
+    "extid": "TASK-HOIST-INLINE-ROUTE-RESPONSE-SCHEMAS-TO-EXPORTED-CONSTS",
+    "type": "TASK",
+    "title": "Hoist inline route response schemas to exported consts",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-api-library-distribution.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md",
+    "status": "Not Started"
   },
   "TASK-HOLD-INBOUND-HTTP-3-UNTIL-BUN-SUPPORTS-WEBSOCKET-OVER-H3": {
     "epic": "epic-http-protocol-features",
@@ -38552,6 +38617,58 @@
     "title": "Prompt Template Registry — Typed Purposes, Single Defaults Source",
     "type": "TASK"
   },
+  "TASK-PROPERTY-TEST-THE-DB-SCHEMAS-INSERT-READ-ROUND-TRIP": {
+    "hash": "f0cad30",
+    "git_issue": "f0cad30",
+    "extid": "TASK-PROPERTY-TEST-THE-DB-SCHEMAS-INSERT-READ-ROUND-TRIP",
+    "type": "TASK",
+    "title": "Property-test the db-schemas insert/read round-trip",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-api-library-distribution.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-property-test-the-db-schemas-insert-read-round-trip.md",
+    "status": "Not Started"
+  },
+  "TASK-PROPERTY-TEST-THE-ISENCRYPTEDPAYLOAD-PREDICATE-AGAINST-THE-D": {
+    "hash": "2284e69",
+    "git_issue": "2284e69",
+    "extid": "TASK-PROPERTY-TEST-THE-ISENCRYPTEDPAYLOAD-PREDICATE-AGAINST-THE-D",
+    "type": "TASK",
+    "title": "Property-test the isEncryptedPayload predicate against the decrypt path",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-api-library-distribution.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-property-test-the-isencryptedpayload-predicate-against-the-d.md",
+    "status": "Not Started"
+  },
+  "TASK-PROPERTY-TEST-THE-REGEX-ACTION-PARSER-VERB-AND-TARGET-EXTRAC": {
+    "hash": "0e536ad",
+    "git_issue": "0e536ad",
+    "extid": "TASK-PROPERTY-TEST-THE-REGEX-ACTION-PARSER-VERB-AND-TARGET-EXTRAC",
+    "type": "TASK",
+    "title": "Property-test the regex action parser verb and target extraction",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-api-library-distribution.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-property-test-the-regex-action-parser-verb-and-target-extrac.md",
+    "status": "Not Started"
+  },
+  "TASK-PROPERTY-TEST-THE-STATUS-MACHINES-AND-COMPOSITE-VALIDATORS": {
+    "hash": "f9de2d3",
+    "git_issue": "f9de2d3",
+    "extid": "TASK-PROPERTY-TEST-THE-STATUS-MACHINES-AND-COMPOSITE-VALIDATORS",
+    "type": "TASK",
+    "title": "Property-test the status machines and composite validators",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-api-library-distribution.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-property-test-the-status-machines-and-composite-validators.md",
+    "status": "Not Started"
+  },
   "TASK-PROVIDER-CONTRIBUTIONS-VIA-PLUGIN-SYSTEM": {
     "epic": "",
     "extid": "TASK-PROVIDER-CONTRIBUTIONS-VIA-PLUGIN-SYSTEM",
@@ -44044,6 +44161,19 @@
     "tags": [],
     "title": "update docs/spec/terminal-ui.md to match current src/tui/ file layout",
     "type": "TASK"
+  },
+  "TASK-UPGRADE-THE-TEST-GAP-GATE-TO-AN-AST-PRECISE-MATCHER": {
+    "hash": "7b18e61",
+    "git_issue": "7b18e61",
+    "extid": "TASK-UPGRADE-THE-TEST-GAP-GATE-TO-AN-AST-PRECISE-MATCHER",
+    "type": "TASK",
+    "title": "Upgrade the test-gap gate to an AST-precise matcher",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-api-library-distribution.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-upgrade-the-test-gap-gate-to-an-ast-precise-matcher.md",
+    "status": "Not Started"
   },
   "TASK-URL-IMPORT-CHUB": {
     "epic": "epic-import-export-io",
