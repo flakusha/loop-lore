@@ -73,7 +73,12 @@
     // "./anthropic" / "./ollama-native" / "./openai-compatible" index chain, so
     // anything imported only inside those provider subdirectories looks unused.
     // Same class as sharp above.
-    "effect"
+    "effect",
+    // fast-check: imported by src/test-utils/schema-arbitrary.ts (the TypeBox ->
+    // Arbitrary mapper) and by the generated src/validation/schema-fuzz.generated.test.ts.
+    // `project` covers scripts/tests/plugins but NOT src/**, so knip never loads
+    // either importer. Same class as the plugin-manifest and native-fallback entries.
+    "fast-check"
   ],
   "ignoreBinaries": [
     "abort", // worktree CLI subcommand literal in finalize-signal-safety.test.ts spawnSync; knip mistakes it for a binary
