@@ -4,11 +4,16 @@
 // Regenerate: bun run scripts/generate-schema-fuzz.ts
 
 /**
- * Schema fuzz (property) tests for the validation schema barrel.
+ * Schema fuzz (property) tests for the validation schema modules.
  *
- * Each `describe` block is one exported TypeBox schema. Arbitraries come
- * from `@/test-utils/schema-arbitrary`, which only emits schema-valid
- * values — a failure here means the mapper drifted from the schema.
+ * Each `describe` block is one TypeBox schema exported by a module under
+ * `@/validation/schemas`. Schemas are discovered from the directory, not the
+ * barrel, so modules index.ts does not re-export are covered too. Every schema
+ * is referenced through its own module namespace (`alias.Name`), so a name
+ * exported by several modules resolves to the right definition.
+ *
+ * Arbitraries come from `@/test-utils/schema-arbitrary`, which only emits
+ * schema-valid values — a failure here means the mapper drifted from the schema.
  */
 
 import type { TSchema, } from "@sinclair/typebox";
@@ -17,7 +22,39 @@ import { describe, expect, test, } from "bun:test";
 import fc from "fast-check";
 
 import { schemaToArbitrary, } from "@/test-utils/schema-arbitrary";
-import * as schemas from "@/validation/schemas";
+
+import * as actors from "@/validation/schemas/actors";
+import * as admin from "@/validation/schemas/admin";
+import * as adminTemplates from "@/validation/schemas/admin-templates";
+import * as apiKeys from "@/validation/schemas/api-keys";
+import * as assetTags from "@/validation/schemas/asset-tags";
+import * as assets from "@/validation/schemas/assets";
+import * as auth from "@/validation/schemas/auth";
+import * as blog from "@/validation/schemas/blog";
+import * as characterRelations from "@/validation/schemas/character-relations";
+import * as characterSystems from "@/validation/schemas/character-systems";
+import * as chat from "@/validation/schemas/chat";
+import * as entities from "@/validation/schemas/entities";
+import * as invites from "@/validation/schemas/invites";
+import * as lore from "@/validation/schemas/lore";
+import * as messages from "@/validation/schemas/messages";
+import * as musicLinks from "@/validation/schemas/music-links";
+import * as notifications from "@/validation/schemas/notifications";
+import * as primitives from "@/validation/schemas/primitives";
+import * as quests from "@/validation/schemas/quests";
+import * as responses from "@/validation/schemas/responses";
+import * as responsesAdmin from "@/validation/schemas/responses-admin";
+import * as responsesInteraction from "@/validation/schemas/responses-interaction";
+import * as settings from "@/validation/schemas/settings";
+import * as story from "@/validation/schemas/story";
+import * as storyItems from "@/validation/schemas/story-items";
+import * as telemetry from "@/validation/schemas/telemetry";
+import * as templates from "@/validation/schemas/templates";
+import * as users from "@/validation/schemas/users";
+import * as wardrobe from "@/validation/schemas/wardrobe";
+import * as worldSetup from "@/validation/schemas/world-setup";
+import * as worldState from "@/validation/schemas/world-state";
+import * as worlds from "@/validation/schemas/worlds";
 
 /** Fixed run count + seed — a regenerated file must replay identical values. */
 const FC_RUNS = { numRuns: 100, seed: 20260101, };
@@ -41,1109 +78,1319 @@ function checkJsonRoundTrip(schema: TSchema,): void {
   );
 }
 
+describe("ActionSchema [responses]", () => {
+  test("accepts generated values", () => checkAllValid(responses.ActionSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ActionSchema,));
+});
+
+describe("ActionSchema [responses-interaction]", () => {
+  test("accepts generated values", () => checkAllValid(responsesInteraction.ActionSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responsesInteraction.ActionSchema,));
+});
+
+describe("ActionVerb [responses]", () => {
+  test("accepts generated values", () => checkAllValid(responses.ActionVerb,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ActionVerb,));
+});
+
+describe("ActionVerb [responses-interaction]", () => {
+  test("accepts generated values", () => checkAllValid(responsesInteraction.ActionVerb,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responsesInteraction.ActionVerb,));
+});
+
+describe("ActivityEntry", () => {
+  test("accepts generated values", () => checkAllValid(responses.ActivityEntry,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ActivityEntry,));
+});
+
+describe("ActivitySnapshot", () => {
+  test("accepts generated values", () => checkAllValid(responses.ActivitySnapshot,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ActivitySnapshot,));
+});
+
 describe("ActorCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ActorCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ActorCreateBody,));
+  test("accepts generated values", () => checkAllValid(actors.ActorCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(actors.ActorCreateBody,));
 });
 
 describe("ActorEmotionParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ActorEmotionParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ActorEmotionParams,));
+  test("accepts generated values", () => checkAllValid(characterSystems.ActorEmotionParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.ActorEmotionParams,));
 });
 
 describe("ActorIdAssetIdParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ActorIdAssetIdParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ActorIdAssetIdParams,));
+  test("accepts generated values", () => checkAllValid(characterSystems.ActorIdAssetIdParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.ActorIdAssetIdParams,));
 });
 
 describe("ActorIdAvatarIdParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ActorIdAvatarIdParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ActorIdAvatarIdParams,));
+  test("accepts generated values", () => checkAllValid(characterSystems.ActorIdAvatarIdParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.ActorIdAvatarIdParams,));
 });
 
 describe("ActorIdAvatarParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ActorIdAvatarParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ActorIdAvatarParams,));
+  test("accepts generated values", () => checkAllValid(characterSystems.ActorIdAvatarParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.ActorIdAvatarParams,));
 });
 
 describe("ActorIdParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ActorIdParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ActorIdParams,));
-});
-
-describe("ActorTargetParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ActorTargetParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ActorTargetParams,));
-});
-
-describe("ActorTypeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ActorTypeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ActorTypeSchema,));
-});
-
-describe("ActorUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ActorUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ActorUpdateBody,));
-});
-
-describe("ActorVisibilitySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ActorVisibilitySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ActorVisibilitySchema,));
+  test("accepts generated values", () => checkAllValid(actors.ActorIdParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(actors.ActorIdParams,));
 });
 
 describe("ActorsQuery", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ActorsQuery,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ActorsQuery,));
+  test("accepts generated values", () => checkAllValid(actors.ActorsQuery,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(actors.ActorsQuery,));
+});
+
+describe("ActorTargetParams", () => {
+  test("accepts generated values", () => checkAllValid(characterRelations.ActorTargetParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterRelations.ActorTargetParams,));
+});
+
+describe("ActorTypeSchema", () => {
+  test("accepts generated values", () => checkAllValid(primitives.ActorTypeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ActorTypeSchema,));
+});
+
+describe("ActorUpdateBody", () => {
+  test("accepts generated values", () => checkAllValid(actors.ActorUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(actors.ActorUpdateBody,));
+});
+
+describe("ActorVisibilitySchema", () => {
+  test("accepts generated values", () => checkAllValid(primitives.ActorVisibilitySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ActorVisibilitySchema,));
 });
 
 describe("AddAssetTagBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AddAssetTagBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AddAssetTagBody,));
+  test("accepts generated values", () => checkAllValid(assetTags.AddAssetTagBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.AddAssetTagBody,));
+});
+
+describe("AdminAuditRow [responses]", () => {
+  test("accepts generated values", () => checkAllValid(responses.AdminAuditRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.AdminAuditRow,));
+});
+
+describe("AdminAuditRow [responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(responsesAdmin.AdminAuditRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responsesAdmin.AdminAuditRow,));
+});
+
+describe("AdminChatRow [responses]", () => {
+  test("accepts generated values", () => checkAllValid(responses.AdminChatRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.AdminChatRow,));
+});
+
+describe("AdminChatRow [responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(responsesAdmin.AdminChatRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responsesAdmin.AdminChatRow,));
 });
 
 describe("AdminChatUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AdminChatUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AdminChatUpdateBody,));
+  test("accepts generated values", () => checkAllValid(admin.AdminChatUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(admin.AdminChatUpdateBody,));
 });
 
 describe("AdminModelRoleOverrideBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AdminModelRoleOverrideBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AdminModelRoleOverrideBody,));
+  test("accepts generated values", () => checkAllValid(admin.AdminModelRoleOverrideBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(admin.AdminModelRoleOverrideBody,));
 });
 
 describe("AdminOverrideCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AdminOverrideCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AdminOverrideCreateBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.AdminOverrideCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.AdminOverrideCreateBody,));
 });
 
 describe("AdminRoleUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AdminRoleUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AdminRoleUpdateBody,));
+  test("accepts generated values", () => checkAllValid(admin.AdminRoleUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(admin.AdminRoleUpdateBody,));
 });
 
 describe("AdminSystemConfigBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AdminSystemConfigBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AdminSystemConfigBody,));
+  test("accepts generated values", () => checkAllValid(admin.AdminSystemConfigBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(admin.AdminSystemConfigBody,));
 });
 
 describe("AdminSystemConfigImportBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AdminSystemConfigImportBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AdminSystemConfigImportBody,));
+  test("accepts generated values", () => checkAllValid(admin.AdminSystemConfigImportBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(admin.AdminSystemConfigImportBody,));
 });
 
 describe("AdminTemplateCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AdminTemplateCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AdminTemplateCreateBody,));
+  test("accepts generated values", () => checkAllValid(adminTemplates.AdminTemplateCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(adminTemplates.AdminTemplateCreateBody,));
+});
+
+describe("AdminTemplateListResponse [responses]", () => {
+  test("accepts generated values", () => checkAllValid(responses.AdminTemplateListResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.AdminTemplateListResponse,));
+});
+
+describe("AdminTemplateListResponse [responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(responsesAdmin.AdminTemplateListResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responsesAdmin.AdminTemplateListResponse,));
+});
+
+describe("AdminTemplateProfile [responses]", () => {
+  test("accepts generated values", () => checkAllValid(responses.AdminTemplateProfile,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.AdminTemplateProfile,));
+});
+
+describe("AdminTemplateProfile [responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(responsesAdmin.AdminTemplateProfile,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responsesAdmin.AdminTemplateProfile,));
 });
 
 describe("AdminTemplateUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AdminTemplateUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AdminTemplateUpdateBody,));
+  test("accepts generated values", () => checkAllValid(adminTemplates.AdminTemplateUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(adminTemplates.AdminTemplateUpdateBody,));
+});
+
+describe("AdminUserRow [responses]", () => {
+  test("accepts generated values", () => checkAllValid(responses.AdminUserRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.AdminUserRow,));
+});
+
+describe("AdminUserRow [responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(responsesAdmin.AdminUserRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responsesAdmin.AdminUserRow,));
+});
+
+describe("AdminWorldRow [responses]", () => {
+  test("accepts generated values", () => checkAllValid(responses.AdminWorldRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.AdminWorldRow,));
+});
+
+describe("AdminWorldRow [responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(responsesAdmin.AdminWorldRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responsesAdmin.AdminWorldRow,));
 });
 
 describe("AgentTypeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AgentTypeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AgentTypeSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.AgentTypeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.AgentTypeSchema,));
 });
 
 describe("ApiKeyCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ApiKeyCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ApiKeyCreateBody,));
+  test("accepts generated values", () => checkAllValid(apiKeys.ApiKeyCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(apiKeys.ApiKeyCreateBody,));
 });
 
 describe("AssetSearchQuery", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AssetSearchQuery,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AssetSearchQuery,));
+  test("accepts generated values", () => checkAllValid(assets.AssetSearchQuery,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assets.AssetSearchQuery,));
 });
 
 describe("AssetSearchResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AssetSearchResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AssetSearchResponse,));
+  test("accepts generated values", () => checkAllValid(assets.AssetSearchResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assets.AssetSearchResponse,));
 });
 
 describe("AssetSearchResult", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AssetSearchResult,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AssetSearchResult,));
+  test("accepts generated values", () => checkAllValid(assets.AssetSearchResult,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assets.AssetSearchResult,));
 });
 
 describe("AssetTagListResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AssetTagListResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AssetTagListResponse,));
+  test("accepts generated values", () => checkAllValid(assetTags.AssetTagListResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.AssetTagListResponse,));
 });
 
 describe("AssetTagRecordSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AssetTagRecordSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AssetTagRecordSchema,));
+  test("accepts generated values", () => checkAllValid(assetTags.AssetTagRecordSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.AssetTagRecordSchema,));
 });
 
 describe("AssetTagResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AssetTagResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AssetTagResponse,));
+  test("accepts generated values", () => checkAllValid(assetTags.AssetTagResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.AssetTagResponse,));
 });
 
 describe("AssetTagScopeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AssetTagScopeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AssetTagScopeSchema,));
+  test("accepts generated values", () => checkAllValid(assetTags.AssetTagScopeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.AssetTagScopeSchema,));
 });
 
 describe("AssetTagSourceSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AssetTagSourceSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AssetTagSourceSchema,));
+  test("accepts generated values", () => checkAllValid(assetTags.AssetTagSourceSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.AssetTagSourceSchema,));
 });
 
 describe("AssetTypeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AssetTypeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AssetTypeSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.AssetTypeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.AssetTypeSchema,));
 });
 
 describe("AssetVisibilitySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AssetVisibilitySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AssetVisibilitySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.AssetVisibilitySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.AssetVisibilitySchema,));
 });
 
 describe("AvailabilityBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AvailabilityBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AvailabilityBody,));
+  test("accepts generated values", () => checkAllValid(characterRelations.AvailabilityBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterRelations.AvailabilityBody,));
 });
 
 describe("AvatarConfigBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AvatarConfigBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AvatarConfigBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.AvatarConfigBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.AvatarConfigBody,));
 });
 
 describe("AvatarCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AvatarCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AvatarCreateBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.AvatarCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.AvatarCreateBody,));
 });
 
 describe("AvatarResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AvatarResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AvatarResponse,));
+  test("accepts generated values", () => checkAllValid(characterSystems.AvatarResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.AvatarResponse,));
 });
 
 describe("AvatarSelectBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AvatarSelectBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AvatarSelectBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.AvatarSelectBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.AvatarSelectBody,));
 });
 
 describe("AvatarUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.AvatarUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.AvatarUpdateBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.AvatarUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.AvatarUpdateBody,));
 });
 
 describe("BatchIdsBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.BatchIdsBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.BatchIdsBody,));
+  test("accepts generated values", () => checkAllValid(chat.BatchIdsBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.BatchIdsBody,));
 });
 
 describe("BlogCommentCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.BlogCommentCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.BlogCommentCreateBody,));
+  test("accepts generated values", () => checkAllValid(blog.BlogCommentCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(blog.BlogCommentCreateBody,));
 });
 
 describe("BlogCommentResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.BlogCommentResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.BlogCommentResponse,));
+  test("accepts generated values", () => checkAllValid(blog.BlogCommentResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(blog.BlogCommentResponse,));
 });
 
 describe("BlogPostCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.BlogPostCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.BlogPostCreateBody,));
+  test("accepts generated values", () => checkAllValid(blog.BlogPostCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(blog.BlogPostCreateBody,));
 });
 
 describe("BlogPostResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.BlogPostResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.BlogPostResponse,));
+  test("accepts generated values", () => checkAllValid(blog.BlogPostResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(blog.BlogPostResponse,));
 });
 
 describe("BlogPostStatusBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.BlogPostStatusBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.BlogPostStatusBody,));
+  test("accepts generated values", () => checkAllValid(blog.BlogPostStatusBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(blog.BlogPostStatusBody,));
 });
 
 describe("BlogPostUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.BlogPostUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.BlogPostUpdateBody,));
+  test("accepts generated values", () => checkAllValid(blog.BlogPostUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(blog.BlogPostUpdateBody,));
 });
 
 describe("CharacterEmotionBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.CharacterEmotionBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.CharacterEmotionBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.CharacterEmotionBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.CharacterEmotionBody,));
 });
 
 describe("CharacterSystemsExportBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.CharacterSystemsExportBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.CharacterSystemsExportBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.CharacterSystemsExportBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.CharacterSystemsExportBody,));
 });
 
 describe("CharacterSystemsImportUrlBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.CharacterSystemsImportUrlBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.CharacterSystemsImportUrlBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.CharacterSystemsImportUrlBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.CharacterSystemsImportUrlBody,));
 });
 
 describe("ChatAutoTranslateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatAutoTranslateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatAutoTranslateBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatAutoTranslateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatAutoTranslateBody,));
+});
+
+describe("ChatBackgroundListResponse", () => {
+  test("accepts generated values", () => checkAllValid(responses.ChatBackgroundListResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ChatBackgroundListResponse,));
+});
+
+describe("ChatBackgroundRow", () => {
+  test("accepts generated values", () => checkAllValid(responses.ChatBackgroundRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ChatBackgroundRow,));
 });
 
 describe("ChatCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatCreateBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatCreateBody,));
 });
 
 describe("ChatHistoryCarrySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatHistoryCarrySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatHistoryCarrySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.ChatHistoryCarrySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ChatHistoryCarrySchema,));
 });
 
-describe("ChatIdParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatIdParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatIdParams,));
+describe("ChatIdParams [chat]", () => {
+  test("accepts generated values", () => checkAllValid(chat.ChatIdParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatIdParams,));
+});
+
+describe("ChatIdParams [music-links]", () => {
+  test("accepts generated values", () => checkAllValid(musicLinks.ChatIdParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(musicLinks.ChatIdParams,));
 });
 
 describe("ChatImpersonateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatImpersonateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatImpersonateBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatImpersonateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatImpersonateBody,));
+});
+
+describe("ChatListResponse", () => {
+  test("accepts generated values", () => checkAllValid(responses.ChatListResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ChatListResponse,));
+});
+
+describe("ChatLocationListResponse", () => {
+  test("accepts generated values", () => checkAllValid(responses.ChatLocationListResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ChatLocationListResponse,));
+});
+
+describe("ChatLocationRow", () => {
+  test("accepts generated values", () => checkAllValid(responses.ChatLocationRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ChatLocationRow,));
 });
 
 describe("ChatLocationUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatLocationUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatLocationUpdateBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatLocationUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatLocationUpdateBody,));
 });
 
 describe("ChatMarkReadBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatMarkReadBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatMarkReadBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatMarkReadBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatMarkReadBody,));
 });
 
 describe("ChatMigrateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatMigrateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatMigrateBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatMigrateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatMigrateBody,));
 });
 
 describe("ChatMigrateCarrySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatMigrateCarrySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatMigrateCarrySchema,));
+  test("accepts generated values", () => checkAllValid(chat.ChatMigrateCarrySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatMigrateCarrySchema,));
 });
 
 describe("ChatModeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatModeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatModeSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.ChatModeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ChatModeSchema,));
 });
 
 describe("ChatOutfitOverrideBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatOutfitOverrideBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatOutfitOverrideBody,));
+  test("accepts generated values", () => checkAllValid(wardrobe.ChatOutfitOverrideBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.ChatOutfitOverrideBody,));
 });
 
 describe("ChatParticipantParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatParticipantParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatParticipantParams,));
+  test("accepts generated values", () => checkAllValid(chat.ChatParticipantParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatParticipantParams,));
 });
 
 describe("ChatParticipantRoleSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatParticipantRoleSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatParticipantRoleSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.ChatParticipantRoleSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ChatParticipantRoleSchema,));
 });
 
 describe("ChatParticipantUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatParticipantUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatParticipantUpdateBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatParticipantUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatParticipantUpdateBody,));
 });
 
 describe("ChatPersonaUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatPersonaUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatPersonaUpdateBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatPersonaUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatPersonaUpdateBody,));
 });
 
 describe("ChatRenameBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatRenameBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatRenameBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatRenameBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatRenameBody,));
 });
 
 describe("ChatRenderingOverrideSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatRenderingOverrideSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatRenderingOverrideSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.ChatRenderingOverrideSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ChatRenderingOverrideSchema,));
+});
+
+describe("ChatRow", () => {
+  test("accepts generated values", () => checkAllValid(responses.ChatRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ChatRow,));
+});
+
+describe("ChatSectionListResponse", () => {
+  test("accepts generated values", () => checkAllValid(responses.ChatSectionListResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ChatSectionListResponse,));
+});
+
+describe("ChatSectionRow", () => {
+  test("accepts generated values", () => checkAllValid(responses.ChatSectionRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ChatSectionRow,));
 });
 
 describe("ChatSetupTemplateCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatSetupTemplateCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatSetupTemplateCreateBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatSetupTemplateCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatSetupTemplateCreateBody,));
 });
 
 describe("ChatSetupTemplateSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatSetupTemplateSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatSetupTemplateSchema,));
+  test("accepts generated values", () => checkAllValid(chat.ChatSetupTemplateSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatSetupTemplateSchema,));
 });
 
 describe("ChatSetupTemplateUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatSetupTemplateUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatSetupTemplateUpdateBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatSetupTemplateUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatSetupTemplateUpdateBody,));
 });
 
 describe("ChatTypeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatTypeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatTypeSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.ChatTypeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ChatTypeSchema,));
 });
 
 describe("ChatUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatUpdateBody,));
+  test("accepts generated values", () => checkAllValid(chat.ChatUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.ChatUpdateBody,));
 });
 
 describe("ChatVisibilitySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ChatVisibilitySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ChatVisibilitySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.ChatVisibilitySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ChatVisibilitySchema,));
 });
 
 describe("ContentEncodingSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ContentEncodingSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ContentEncodingSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.ContentEncodingSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ContentEncodingSchema,));
 });
 
 describe("ContentRatingSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ContentRatingSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ContentRatingSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.ContentRatingSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ContentRatingSchema,));
 });
 
 describe("DismissTagPropositionBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.DismissTagPropositionBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.DismissTagPropositionBody,));
+  test("accepts generated values", () => checkAllValid(assetTags.DismissTagPropositionBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.DismissTagPropositionBody,));
 });
 
 describe("DisplayName", () => {
-  test("accepts generated values", () => checkAllValid(schemas.DisplayName,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.DisplayName,));
+  test("accepts generated values", () => checkAllValid(primitives.DisplayName,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.DisplayName,));
 });
 
 describe("EmotionDefinitionCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.EmotionDefinitionCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.EmotionDefinitionCreateBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.EmotionDefinitionCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.EmotionDefinitionCreateBody,));
 });
 
 describe("EncryptionLevelSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.EncryptionLevelSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.EncryptionLevelSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.EncryptionLevelSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.EncryptionLevelSchema,));
 });
 
 describe("EntityCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.EntityCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.EntityCreateBody,));
+  test("accepts generated values", () => checkAllValid(entities.EntityCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(entities.EntityCreateBody,));
 });
 
 describe("EntityReviewStatusSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.EntityReviewStatusSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.EntityReviewStatusSchema,));
+  test("accepts generated values", () => checkAllValid(entities.EntityReviewStatusSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(entities.EntityReviewStatusSchema,));
 });
 
 describe("EntityScopeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.EntityScopeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.EntityScopeSchema,));
+  test("accepts generated values", () => checkAllValid(entities.EntityScopeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(entities.EntityScopeSchema,));
 });
 
 describe("EntityScopeUpdateSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.EntityScopeUpdateSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.EntityScopeUpdateSchema,));
+  test("accepts generated values", () => checkAllValid(entities.EntityScopeUpdateSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(entities.EntityScopeUpdateSchema,));
 });
 
 describe("EntityUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.EntityUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.EntityUpdateBody,));
+  test("accepts generated values", () => checkAllValid(entities.EntityUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(entities.EntityUpdateBody,));
+});
+
+describe("ErrorBody", () => {
+  test("accepts generated values", () => checkAllValid(responses.ErrorBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ErrorBody,));
+});
+
+describe("ErrorEvent", () => {
+  test("accepts generated values", () => checkAllValid(responses.ErrorEvent,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.ErrorEvent,));
 });
 
 describe("ErrorResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ErrorResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ErrorResponse,));
+  test("accepts generated values", () => checkAllValid(primitives.ErrorResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ErrorResponse,));
 });
 
 describe("GameStateAnalysisSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.GameStateAnalysisSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.GameStateAnalysisSchema,));
+  test("accepts generated values", () => checkAllValid(worldState.GameStateAnalysisSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldState.GameStateAnalysisSchema,));
 });
 
 describe("GameStateEntitySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.GameStateEntitySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.GameStateEntitySchema,));
+  test("accepts generated values", () => checkAllValid(worldState.GameStateEntitySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldState.GameStateEntitySchema,));
 });
 
 describe("GameStateItemSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.GameStateItemSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.GameStateItemSchema,));
+  test("accepts generated values", () => checkAllValid(worldState.GameStateItemSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldState.GameStateItemSchema,));
 });
 
 describe("GameStateMovementSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.GameStateMovementSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.GameStateMovementSchema,));
+  test("accepts generated values", () => checkAllValid(worldState.GameStateMovementSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldState.GameStateMovementSchema,));
 });
 
 describe("GameStateSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.GameStateSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.GameStateSchema,));
+  test("accepts generated values", () => checkAllValid(worldState.GameStateSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldState.GameStateSchema,));
 });
 
 describe("GenerationStatusSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.GenerationStatusSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.GenerationStatusSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.GenerationStatusSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.GenerationStatusSchema,));
 });
 
 describe("GmConfigSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.GmConfigSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.GmConfigSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.GmConfigSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.GmConfigSchema,));
 });
 
 describe("GmGuidanceSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.GmGuidanceSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.GmGuidanceSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.GmGuidanceSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.GmGuidanceSchema,));
 });
 
 describe("GmGuidanceUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.GmGuidanceUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.GmGuidanceUpdateBody,));
+  test("accepts generated values", () => checkAllValid(chat.GmGuidanceUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.GmGuidanceUpdateBody,));
 });
 
 describe("GmTurnPrioritySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.GmTurnPrioritySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.GmTurnPrioritySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.GmTurnPrioritySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.GmTurnPrioritySchema,));
 });
 
 describe("Id", () => {
-  test("accepts generated values", () => checkAllValid(schemas.Id,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.Id,));
+  test("accepts generated values", () => checkAllValid(primitives.Id,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.Id,));
 });
 
 describe("InviteChatParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.InviteChatParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.InviteChatParams,));
+  test("accepts generated values", () => checkAllValid(invites.InviteChatParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(invites.InviteChatParams,));
 });
 
 describe("InviteCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.InviteCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.InviteCreateBody,));
+  test("accepts generated values", () => checkAllValid(invites.InviteCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(invites.InviteCreateBody,));
 });
 
 describe("InviteJoinParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.InviteJoinParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.InviteJoinParams,));
+  test("accepts generated values", () => checkAllValid(invites.InviteJoinParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(invites.InviteJoinParams,));
 });
 
 describe("InviteParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.InviteParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.InviteParams,));
+  test("accepts generated values", () => checkAllValid(invites.InviteParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(invites.InviteParams,));
 });
 
 describe("InviteSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.InviteSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.InviteSchema,));
+  test("accepts generated values", () => checkAllValid(invites.InviteSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(invites.InviteSchema,));
 });
 
 describe("ItemCategorySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ItemCategorySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ItemCategorySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.ItemCategorySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ItemCategorySchema,));
 });
 
 describe("ItemRaritySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ItemRaritySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ItemRaritySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.ItemRaritySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ItemRaritySchema,));
 });
 
 describe("LicensingBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LicensingBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LicensingBody,));
+  test("accepts generated values", () => checkAllValid(characterRelations.LicensingBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterRelations.LicensingBody,));
 });
 
 describe("LlmTemplateSectionSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LlmTemplateSectionSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LlmTemplateSectionSchema,));
+  test("accepts generated values", () => checkAllValid(templates.LlmTemplateSectionSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(templates.LlmTemplateSectionSchema,));
 });
 
 describe("LocationOutfitBindingsBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LocationOutfitBindingsBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LocationOutfitBindingsBody,));
+  test("accepts generated values", () => checkAllValid(wardrobe.LocationOutfitBindingsBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.LocationOutfitBindingsBody,));
 });
 
 describe("LocationStateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LocationStateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LocationStateBody,));
+  test("accepts generated values", () => checkAllValid(worldState.LocationStateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldState.LocationStateBody,));
 });
 
 describe("LocationTraitCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LocationTraitCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LocationTraitCreateBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.LocationTraitCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.LocationTraitCreateBody,));
 });
 
 describe("LocationTraitUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LocationTraitUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LocationTraitUpdateBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.LocationTraitUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.LocationTraitUpdateBody,));
 });
 
 describe("LoginBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LoginBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LoginBody,));
+  test("accepts generated values", () => checkAllValid(auth.LoginBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(auth.LoginBody,));
 });
 
 describe("LoreEntrySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LoreEntrySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LoreEntrySchema,));
+  test("accepts generated values", () => checkAllValid(lore.LoreEntrySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(lore.LoreEntrySchema,));
 });
 
 describe("LorePositionSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LorePositionSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LorePositionSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.LorePositionSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.LorePositionSchema,));
 });
 
 describe("LoreScopeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LoreScopeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LoreScopeSchema,));
+  test("accepts generated values", () => checkAllValid(lore.LoreScopeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(lore.LoreScopeSchema,));
 });
 
 describe("LoreSubjectBaseSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LoreSubjectBaseSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LoreSubjectBaseSchema,));
+  test("accepts generated values", () => checkAllValid(lore.LoreSubjectBaseSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(lore.LoreSubjectBaseSchema,));
 });
 
 describe("LoreSubjectKindSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LoreSubjectKindSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LoreSubjectKindSchema,));
+  test("accepts generated values", () => checkAllValid(lore.LoreSubjectKindSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(lore.LoreSubjectKindSchema,));
 });
 
 describe("LoreSubjectSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.LoreSubjectSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.LoreSubjectSchema,));
+  test("accepts generated values", () => checkAllValid(lore.LoreSubjectSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(lore.LoreSubjectSchema,));
 });
 
 describe("MemoryCarrySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MemoryCarrySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MemoryCarrySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.MemoryCarrySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.MemoryCarrySchema,));
 });
 
 describe("MemoryTypeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MemoryTypeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MemoryTypeSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.MemoryTypeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.MemoryTypeSchema,));
 });
 
 describe("MessageAiActionBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageAiActionBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageAiActionBody,));
+  test("accepts generated values", () => checkAllValid(messages.MessageAiActionBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessageAiActionBody,));
+});
+
+describe("MessageAttachment", () => {
+  test("accepts generated values", () => checkAllValid(responses.MessageAttachment,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.MessageAttachment,));
 });
 
 describe("MessageAttachmentSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageAttachmentSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageAttachmentSchema,));
+  test("accepts generated values", () => checkAllValid(messages.MessageAttachmentSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessageAttachmentSchema,));
 });
 
 describe("MessageContentTypeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageContentTypeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageContentTypeSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.MessageContentTypeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.MessageContentTypeSchema,));
 });
 
 describe("MessageCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageCreateBody,));
+  test("accepts generated values", () => checkAllValid(messages.MessageCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessageCreateBody,));
 });
 
 describe("MessageForwardBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageForwardBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageForwardBody,));
+  test("accepts generated values", () => checkAllValid(messages.MessageForwardBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessageForwardBody,));
 });
 
 describe("MessageIdParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageIdParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageIdParams,));
+  test("accepts generated values", () => checkAllValid(messages.MessageIdParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessageIdParams,));
+});
+
+describe("MessageListResponse", () => {
+  test("accepts generated values", () => checkAllValid(responses.MessageListResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.MessageListResponse,));
 });
 
 describe("MessageRoleSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageRoleSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageRoleSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.MessageRoleSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.MessageRoleSchema,));
+});
+
+describe("MessageRow", () => {
+  test("accepts generated values", () => checkAllValid(responses.MessageRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.MessageRow,));
 });
 
 describe("MessageSearchQuery", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageSearchQuery,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageSearchQuery,));
+  test("accepts generated values", () => checkAllValid(messages.MessageSearchQuery,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessageSearchQuery,));
 });
 
 describe("MessageSearchResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageSearchResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageSearchResponse,));
+  test("accepts generated values", () => checkAllValid(messages.MessageSearchResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessageSearchResponse,));
 });
 
 describe("MessageSearchResult", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageSearchResult,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageSearchResult,));
-});
-
-describe("MessageStatusSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageStatusSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageStatusSchema,));
-});
-
-describe("MessageStatusUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageStatusUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageStatusUpdateBody,));
-});
-
-describe("MessageVariantQuery", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageVariantQuery,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageVariantQuery,));
-});
-
-describe("MessageVisibilitySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageVisibilitySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageVisibilitySchema,));
-});
-
-describe("MessageVisibilityUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessageVisibilityUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessageVisibilityUpdateBody,));
+  test("accepts generated values", () => checkAllValid(messages.MessageSearchResult,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessageSearchResult,));
 });
 
 describe("MessagesQuery", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MessagesQuery,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MessagesQuery,));
+  test("accepts generated values", () => checkAllValid(messages.MessagesQuery,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessagesQuery,));
+});
+
+describe("MessageStatusSchema", () => {
+  test("accepts generated values", () => checkAllValid(primitives.MessageStatusSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.MessageStatusSchema,));
+});
+
+describe("MessageStatusUpdateBody", () => {
+  test("accepts generated values", () => checkAllValid(messages.MessageStatusUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessageStatusUpdateBody,));
+});
+
+describe("MessageVariantQuery", () => {
+  test("accepts generated values", () => checkAllValid(messages.MessageVariantQuery,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessageVariantQuery,));
+});
+
+describe("MessageVisibilitySchema", () => {
+  test("accepts generated values", () => checkAllValid(primitives.MessageVisibilitySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.MessageVisibilitySchema,));
+});
+
+describe("MessageVisibilityUpdateBody", () => {
+  test("accepts generated values", () => checkAllValid(messages.MessageVisibilityUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MessageVisibilityUpdateBody,));
 });
 
 describe("MoodCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MoodCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MoodCreateBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.MoodCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.MoodCreateBody,));
 });
 
 describe("MoodDeltaBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MoodDeltaBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MoodDeltaBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.MoodDeltaBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.MoodDeltaBody,));
 });
 
 describe("MoodEventBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MoodEventBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MoodEventBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.MoodEventBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.MoodEventBody,));
 });
 
 describe("MoodStateResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MoodStateResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MoodStateResponse,));
+  test("accepts generated values", () => checkAllValid(characterSystems.MoodStateResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.MoodStateResponse,));
 });
 
 describe("MoodUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MoodUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MoodUpdateBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.MoodUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.MoodUpdateBody,));
+});
+
+describe("MusicLinkCreateBody", () => {
+  test("accepts generated values", () => checkAllValid(musicLinks.MusicLinkCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(musicLinks.MusicLinkCreateBody,));
+});
+
+describe("MusicLinkIdParams", () => {
+  test("accepts generated values", () => checkAllValid(musicLinks.MusicLinkIdParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(musicLinks.MusicLinkIdParams,));
 });
 
 describe("MusicLinkMessageSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.MusicLinkMessageSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.MusicLinkMessageSchema,));
+  test("accepts generated values", () => checkAllValid(messages.MusicLinkMessageSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(messages.MusicLinkMessageSchema,));
+});
+
+describe("MusicLinkResponse", () => {
+  test("accepts generated values", () => checkAllValid(musicLinks.MusicLinkResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(musicLinks.MusicLinkResponse,));
+});
+
+describe("MusicServiceSchema", () => {
+  test("accepts generated values", () => checkAllValid(musicLinks.MusicServiceSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(musicLinks.MusicServiceSchema,));
 });
 
 describe("Name", () => {
-  test("accepts generated values", () => checkAllValid(schemas.Name,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.Name,));
+  test("accepts generated values", () => checkAllValid(primitives.Name,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.Name,));
 });
 
 describe("NoteCategorySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.NoteCategorySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.NoteCategorySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.NoteCategorySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.NoteCategorySchema,));
+});
+
+describe("NotificationListItem", () => {
+  test("accepts generated values", () => checkAllValid(responses.NotificationListItem,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.NotificationListItem,));
 });
 
 describe("NotificationPreferencesBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.NotificationPreferencesBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.NotificationPreferencesBody,));
+  test("accepts generated values", () => checkAllValid(notifications.NotificationPreferencesBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(notifications.NotificationPreferencesBody,));
+});
+
+describe("NotificationsEvent", () => {
+  test("accepts generated values", () => checkAllValid(responses.NotificationsEvent,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.NotificationsEvent,));
+});
+
+describe("NotificationsRefresh", () => {
+  test("accepts generated values", () => checkAllValid(responses.NotificationsRefresh,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.NotificationsRefresh,));
 });
 
 describe("NpcStateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.NpcStateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.NpcStateBody,));
+  test("accepts generated values", () => checkAllValid(worldState.NpcStateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldState.NpcStateBody,));
 });
 
 describe("NullableChatRenderingOverrideSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.NullableChatRenderingOverrideSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.NullableChatRenderingOverrideSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.NullableChatRenderingOverrideSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.NullableChatRenderingOverrideSchema,));
 });
 
 describe("NullableId", () => {
-  test("accepts generated values", () => checkAllValid(schemas.NullableId,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.NullableId,));
+  test("accepts generated values", () => checkAllValid(primitives.NullableId,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.NullableId,));
 });
 
 describe("OptionalId", () => {
-  test("accepts generated values", () => checkAllValid(schemas.OptionalId,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.OptionalId,));
+  test("accepts generated values", () => checkAllValid(primitives.OptionalId,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.OptionalId,));
 });
 
 describe("OutfitGenerateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.OutfitGenerateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.OutfitGenerateBody,));
+  test("accepts generated values", () => checkAllValid(wardrobe.OutfitGenerateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.OutfitGenerateBody,));
 });
 
 describe("OutfitGenerateSingleBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.OutfitGenerateSingleBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.OutfitGenerateSingleBody,));
+  test("accepts generated values", () => checkAllValid(wardrobe.OutfitGenerateSingleBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.OutfitGenerateSingleBody,));
 });
 
 describe("OutfitResolveBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.OutfitResolveBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.OutfitResolveBody,));
+  test("accepts generated values", () => checkAllValid(wardrobe.OutfitResolveBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.OutfitResolveBody,));
 });
 
 describe("OutputStylePresetSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.OutputStylePresetSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.OutputStylePresetSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.OutputStylePresetSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.OutputStylePresetSchema,));
 });
 
 describe("PaginationQuery", () => {
-  test("accepts generated values", () => checkAllValid(schemas.PaginationQuery,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.PaginationQuery,));
+  test("accepts generated values", () => checkAllValid(primitives.PaginationQuery,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.PaginationQuery,));
 });
 
 describe("PinnedStateSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.PinnedStateSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.PinnedStateSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.PinnedStateSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.PinnedStateSchema,));
 });
 
 describe("QuestCategorySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.QuestCategorySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.QuestCategorySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.QuestCategorySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.QuestCategorySchema,));
 });
 
 describe("QuestCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.QuestCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.QuestCreateBody,));
+  test("accepts generated values", () => checkAllValid(story.QuestCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(story.QuestCreateBody,));
 });
 
 describe("QuestProgressBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.QuestProgressBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.QuestProgressBody,));
+  test("accepts generated values", () => checkAllValid(quests.QuestProgressBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(quests.QuestProgressBody,));
 });
 
 describe("QuestResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.QuestResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.QuestResponse,));
+  test("accepts generated values", () => checkAllValid(quests.QuestResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(quests.QuestResponse,));
 });
 
 describe("QuestStatusSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.QuestStatusSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.QuestStatusSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.QuestStatusSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.QuestStatusSchema,));
 });
 
 describe("QuestTypeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.QuestTypeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.QuestTypeSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.QuestTypeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.QuestTypeSchema,));
 });
 
 describe("QuestUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.QuestUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.QuestUpdateBody,));
+  test("accepts generated values", () => checkAllValid(quests.QuestUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(quests.QuestUpdateBody,));
 });
 
 describe("QuickReplyTriggerSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.QuickReplyTriggerSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.QuickReplyTriggerSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.QuickReplyTriggerSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.QuickReplyTriggerSchema,));
 });
 
 describe("RelationshipCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.RelationshipCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.RelationshipCreateBody,));
+  test("accepts generated values", () => checkAllValid(characterRelations.RelationshipCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterRelations.RelationshipCreateBody,));
 });
 
 describe("RelationshipEventBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.RelationshipEventBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.RelationshipEventBody,));
+  test("accepts generated values", () => checkAllValid(characterRelations.RelationshipEventBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterRelations.RelationshipEventBody,));
 });
 
 describe("RelationshipResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.RelationshipResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.RelationshipResponse,));
+  test("accepts generated values", () => checkAllValid(characterRelations.RelationshipResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterRelations.RelationshipResponse,));
 });
 
 describe("RelationshipUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.RelationshipUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.RelationshipUpdateBody,));
+  test("accepts generated values", () => checkAllValid(characterRelations.RelationshipUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterRelations.RelationshipUpdateBody,));
 });
 
 describe("RemoveAssetTagBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.RemoveAssetTagBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.RemoveAssetTagBody,));
+  test("accepts generated values", () => checkAllValid(assetTags.RemoveAssetTagBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.RemoveAssetTagBody,));
 });
 
 describe("RenameAssetTagBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.RenameAssetTagBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.RenameAssetTagBody,));
+  test("accepts generated values", () => checkAllValid(assetTags.RenameAssetTagBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.RenameAssetTagBody,));
 });
 
 describe("SettingsUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.SettingsUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.SettingsUpdateBody,));
+  test("accepts generated values", () => checkAllValid(settings.SettingsUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(settings.SettingsUpdateBody,));
 });
 
 describe("StorageBackendSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.StorageBackendSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.StorageBackendSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.StorageBackendSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.StorageBackendSchema,));
 });
 
 describe("StoryItemInstanceBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.StoryItemInstanceBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.StoryItemInstanceBody,));
+  test("accepts generated values", () => checkAllValid(storyItems.StoryItemInstanceBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(storyItems.StoryItemInstanceBody,));
 });
 
 describe("StoryItemResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.StoryItemResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.StoryItemResponse,));
+  test("accepts generated values", () => checkAllValid(storyItems.StoryItemResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(storyItems.StoryItemResponse,));
 });
 
 describe("StoryTurnCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.StoryTurnCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.StoryTurnCreateBody,));
+  test("accepts generated values", () => checkAllValid(story.StoryTurnCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(story.StoryTurnCreateBody,));
 });
 
 describe("SuccessResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.SuccessResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.SuccessResponse,));
+  test("accepts generated values", () => checkAllValid(primitives.SuccessResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.SuccessResponse,));
 });
 
 describe("TagAutocompleteResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TagAutocompleteResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TagAutocompleteResponse,));
+  test("accepts generated values", () => checkAllValid(assetTags.TagAutocompleteResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.TagAutocompleteResponse,));
 });
 
 describe("TagPropositionListResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TagPropositionListResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TagPropositionListResponse,));
+  test("accepts generated values", () => checkAllValid(assetTags.TagPropositionListResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.TagPropositionListResponse,));
 });
 
 describe("TagPropositionSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TagPropositionSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TagPropositionSchema,));
+  test("accepts generated values", () => checkAllValid(assetTags.TagPropositionSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(assetTags.TagPropositionSchema,));
 });
 
 describe("TagProvenanceSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TagProvenanceSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TagProvenanceSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.TagProvenanceSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.TagProvenanceSchema,));
+});
+
+describe("TargetRefSchema [responses]", () => {
+  test("accepts generated values", () => checkAllValid(responses.TargetRefSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.TargetRefSchema,));
+});
+
+describe("TargetRefSchema [responses-interaction]", () => {
+  test("accepts generated values", () => checkAllValid(responsesInteraction.TargetRefSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responsesInteraction.TargetRefSchema,));
 });
 
 describe("TelemetryAnalyticsErrorsRow", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TelemetryAnalyticsErrorsRow,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TelemetryAnalyticsErrorsRow,));
+  test("accepts generated values", () => checkAllValid(telemetry.TelemetryAnalyticsErrorsRow,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(telemetry.TelemetryAnalyticsErrorsRow,));
 });
 
 describe("TelemetryEventBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TelemetryEventBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TelemetryEventBody,));
+  test("accepts generated values", () => checkAllValid(telemetry.TelemetryEventBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(telemetry.TelemetryEventBody,));
 });
 
 describe("TemplateApplyBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TemplateApplyBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TemplateApplyBody,));
+  test("accepts generated values", () => checkAllValid(templates.TemplateApplyBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(templates.TemplateApplyBody,));
 });
 
 describe("TemplateCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TemplateCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TemplateCreateBody,));
+  test("accepts generated values", () => checkAllValid(templates.TemplateCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(templates.TemplateCreateBody,));
 });
 
 describe("TemplateDetailLevelSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TemplateDetailLevelSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TemplateDetailLevelSchema,));
+  test("accepts generated values", () => checkAllValid(templates.TemplateDetailLevelSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(templates.TemplateDetailLevelSchema,));
 });
 
 describe("TemplateImportBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TemplateImportBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TemplateImportBody,));
+  test("accepts generated values", () => checkAllValid(templates.TemplateImportBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(templates.TemplateImportBody,));
 });
 
 describe("TemplateImportResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TemplateImportResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TemplateImportResponse,));
+  test("accepts generated values", () => checkAllValid(templates.TemplateImportResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(templates.TemplateImportResponse,));
 });
 
 describe("TemplateModalitySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TemplateModalitySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TemplateModalitySchema,));
+  test("accepts generated values", () => checkAllValid(templates.TemplateModalitySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(templates.TemplateModalitySchema,));
 });
 
 describe("TemplateSummaryResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TemplateSummaryResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TemplateSummaryResponse,));
+  test("accepts generated values", () => checkAllValid(templates.TemplateSummaryResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(templates.TemplateSummaryResponse,));
 });
 
 describe("TemplateUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TemplateUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TemplateUpdateBody,));
+  test("accepts generated values", () => checkAllValid(templates.TemplateUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(templates.TemplateUpdateBody,));
 });
 
 describe("ThinkingVisibilitySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.ThinkingVisibilitySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.ThinkingVisibilitySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.ThinkingVisibilitySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.ThinkingVisibilitySchema,));
 });
 
 describe("TraitCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TraitCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TraitCreateBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.TraitCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.TraitCreateBody,));
 });
 
 describe("TraitResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TraitResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TraitResponse,));
+  test("accepts generated values", () => checkAllValid(characterSystems.TraitResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.TraitResponse,));
 });
 
 describe("TraitUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TraitUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TraitUpdateBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.TraitUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.TraitUpdateBody,));
+});
+
+describe("TranslationMapSchema", () => {
+  test("accepts generated values", () => checkAllValid(responses.TranslationMapSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(responses.TranslationMapSchema,));
 });
 
 describe("TurnSkipBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TurnSkipBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TurnSkipBody,));
+  test("accepts generated values", () => checkAllValid(chat.TurnSkipBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(chat.TurnSkipBody,));
 });
 
 describe("TurnStatusSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TurnStatusSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TurnStatusSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.TurnStatusSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.TurnStatusSchema,));
 });
 
 describe("TurnStrategySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TurnStrategySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TurnStrategySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.TurnStrategySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.TurnStrategySchema,));
 });
 
 describe("TurnTypeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.TurnTypeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.TurnTypeSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.TurnTypeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.TurnTypeSchema,));
 });
 
 describe("UserIdParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.UserIdParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.UserIdParams,));
+  test("accepts generated values", () => checkAllValid(users.UserIdParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(users.UserIdParams,));
 });
 
 describe("UserProfileUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.UserProfileUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.UserProfileUpdateBody,));
+  test("accepts generated values", () => checkAllValid(users.UserProfileUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(users.UserProfileUpdateBody,));
 });
 
 describe("UserRoleSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.UserRoleSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.UserRoleSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.UserRoleSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.UserRoleSchema,));
 });
 
 describe("UserStatusSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.UserStatusSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.UserStatusSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.UserStatusSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.UserStatusSchema,));
 });
 
 describe("WardrobeActorParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WardrobeActorParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WardrobeActorParams,));
+  test("accepts generated values", () => checkAllValid(wardrobe.WardrobeActorParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.WardrobeActorParams,));
 });
 
 describe("WardrobeBindBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WardrobeBindBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WardrobeBindBody,));
+  test("accepts generated values", () => checkAllValid(wardrobe.WardrobeBindBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.WardrobeBindBody,));
 });
 
 describe("WardrobeBindingParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WardrobeBindingParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WardrobeBindingParams,));
+  test("accepts generated values", () => checkAllValid(wardrobe.WardrobeBindingParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.WardrobeBindingParams,));
 });
 
 describe("WardrobeChatParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WardrobeChatParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WardrobeChatParams,));
+  test("accepts generated values", () => checkAllValid(wardrobe.WardrobeChatParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.WardrobeChatParams,));
 });
 
 describe("WardrobeItemCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WardrobeItemCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WardrobeItemCreateBody,));
+  test("accepts generated values", () => checkAllValid(wardrobe.WardrobeItemCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.WardrobeItemCreateBody,));
 });
 
 describe("WardrobeItemParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WardrobeItemParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WardrobeItemParams,));
+  test("accepts generated values", () => checkAllValid(wardrobe.WardrobeItemParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.WardrobeItemParams,));
 });
 
 describe("WardrobeItemUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WardrobeItemUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WardrobeItemUpdateBody,));
+  test("accepts generated values", () => checkAllValid(wardrobe.WardrobeItemUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(wardrobe.WardrobeItemUpdateBody,));
 });
 
 describe("WorldActorParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldActorParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldActorParams,));
+  test("accepts generated values", () => checkAllValid(characterSystems.WorldActorParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.WorldActorParams,));
 });
 
 describe("WorldAvatarConfigBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldAvatarConfigBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldAvatarConfigBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.WorldAvatarConfigBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.WorldAvatarConfigBody,));
 });
 
 describe("WorldCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldCreateBody,));
+  test("accepts generated values", () => checkAllValid(worlds.WorldCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worlds.WorldCreateBody,));
 });
 
 describe("WorldEventTypeSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldEventTypeSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldEventTypeSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.WorldEventTypeSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.WorldEventTypeSchema,));
 });
 
 describe("WorldIdParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldIdParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldIdParams,));
+  test("accepts generated values", () => checkAllValid(worlds.WorldIdParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worlds.WorldIdParams,));
 });
 
 describe("WorldInviteParams", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldInviteParams,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldInviteParams,));
+  test("accepts generated values", () => checkAllValid(invites.WorldInviteParams,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(invites.WorldInviteParams,));
 });
 
 describe("WorldInviteSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldInviteSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldInviteSchema,));
+  test("accepts generated values", () => checkAllValid(invites.WorldInviteSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(invites.WorldInviteSchema,));
 });
 
 describe("WorldKindSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldKindSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldKindSchema,));
+  test("accepts generated values", () => checkAllValid(primitives.WorldKindSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.WorldKindSchema,));
 });
 
 describe("WorldSetupInventoryItemSchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldSetupInventoryItemSchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldSetupInventoryItemSchema,));
+  test("accepts generated values", () => checkAllValid(worldSetup.WorldSetupInventoryItemSchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldSetup.WorldSetupInventoryItemSchema,));
 });
 
 describe("WorldSetupLoreEntrySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldSetupLoreEntrySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldSetupLoreEntrySchema,));
+  test("accepts generated values", () => checkAllValid(worldSetup.WorldSetupLoreEntrySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldSetup.WorldSetupLoreEntrySchema,));
 });
 
 describe("WorldSetupResolvedResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldSetupResolvedResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldSetupResolvedResponse,));
+  test("accepts generated values", () => checkAllValid(worldSetup.WorldSetupResolvedResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldSetup.WorldSetupResolvedResponse,));
 });
 
 describe("WorldSetupResponse", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldSetupResponse,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldSetupResponse,));
+  test("accepts generated values", () => checkAllValid(worldSetup.WorldSetupResponse,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldSetup.WorldSetupResponse,));
 });
 
 describe("WorldSetupUpsertBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldSetupUpsertBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldSetupUpsertBody,));
+  test("accepts generated values", () => checkAllValid(worldSetup.WorldSetupUpsertBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldSetup.WorldSetupUpsertBody,));
 });
 
 describe("WorldStateCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldStateCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldStateCreateBody,));
+  test("accepts generated values", () => checkAllValid(worldState.WorldStateCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worldState.WorldStateCreateBody,));
 });
 
 describe("WorldTraitCreateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldTraitCreateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldTraitCreateBody,));
+  test("accepts generated values", () => checkAllValid(characterSystems.WorldTraitCreateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(characterSystems.WorldTraitCreateBody,));
 });
 
 describe("WorldUpdateBody", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldUpdateBody,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldUpdateBody,));
+  test("accepts generated values", () => checkAllValid(worlds.WorldUpdateBody,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(worlds.WorldUpdateBody,));
 });
 
 describe("WorldVisibilitySchema", () => {
-  test("accepts generated values", () => checkAllValid(schemas.WorldVisibilitySchema,));
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(schemas.WorldVisibilitySchema,));
+  test("accepts generated values", () => checkAllValid(primitives.WorldVisibilitySchema,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(primitives.WorldVisibilitySchema,));
 });
 
-// 221 schemas discovered by scripts/generate-schema-fuzz.ts.
+// 263 schemas discovered across 32 module(s).

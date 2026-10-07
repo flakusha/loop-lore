@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 260
+// size-allow: 280
 
 import type { TSchema, } from "@sinclair/typebox";
 import fc from "fast-check";
@@ -68,7 +68,8 @@ const integerArb = (node: SchemaNode,): fc.Arbitrary<unknown> => {
   const declaredMax = node.exclusiveMaximum !== undefined ? node.exclusiveMaximum - 1 : node.maximum;
   const min = Math.max(INT_MIN, declaredMin ?? INT_MIN,);
   const max = Math.min(INT_MAX, declaredMax ?? INT_MAX,);
-  if (min >= max) { return fc.constant(min,); }
+  if (min > max) { throw new Error(`unsatisfiable bounds: minimum ${min} > maximum ${max}`,); }
+  if (min === max) { return fc.constant(min,); }
 
   return fc.integer({ min, max, },);
 };
@@ -81,7 +82,11 @@ const numberArb = (node: SchemaNode,): fc.Arbitrary<unknown> => {
     ...(node.exclusiveMaximum !== undefined ? { max: node.exclusiveMaximum - 1, } : {}),
   };
 
-  if ((declared.min ?? 0) >= (declared.max ?? 0)) { return fc.constant(declared.min ?? 0,); }
+  // An ABSENT bound is unbounded, not 0: `?? 0` made every "minimum only" or
+  // unconstrained number collapse to a constant, and the fuzz test went blind.
+  if (declared.min !== undefined && declared.max !== undefined && declared.min > declared.max) {
+    throw new Error(`unsatisfiable bounds: minimum ${declared.min} > maximum ${declared.max}`,);
+  }
 
   // `fc.float` emits `-0`; `normalizeZeros` scrubs it before it escapes.
   return fc.float({ ...declared, noNaN: true, noDefaultInfinity: true, },).map(normalizeZeros,);
@@ -106,10 +111,18 @@ const stringArb = (node: SchemaNode,): fc.Arbitrary<unknown> => {
     case "date":
       return fc.date({ min: DATE_MIN, max: DATE_MAX, noInvalidDate: true, },)
         .map((d,) => d.toISOString().slice(0, 10,));
-    default:
-      return typeof node.pattern === "string"
-        ? fc.stringMatching(new RegExp(node.pattern,), lengths,)
-        : fc.string(lengths,);
+    default: {
+      if (typeof node.pattern !== "string") { return fc.string(lengths,); }
+      // `stringMatching` accepts `maxLength` but NOT `minLength`; passing it in
+      // silently drops it and the mapper emits length-violating values.
+      const min = node.minLength ?? 0;
+      const matching = fc.stringMatching(
+        new RegExp(node.pattern,),
+        node.maxLength === undefined ? {} : { maxLength: node.maxLength, },
+      );
+
+      return min > 0 ? matching.filter((s,) => s.length >= min) : matching;
+    }
   }
 };
 

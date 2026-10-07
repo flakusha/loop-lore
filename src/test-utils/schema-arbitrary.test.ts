@@ -128,6 +128,91 @@ describe("closed value sets", () => {
   });
 });
 
+/**
+ * A constant passes every `Value.Check` assertion, so validity alone cannot
+ * tell a working arbitrary from one that emits a single value forever. These
+ * tests pin the SPREAD: each schema must yield many distinct values.
+ */
+describe("arbitrary diversity — a constant must not masquerade as a generator", () => {
+  const distinctOver = (schema: TSchema, runs = 200, seed = 20260101,): number =>
+    new Set(fc.sample(schemaToArbitrary(schema,), { numRuns: runs, seed, },),).size;
+
+  // `schemaToArbitrary` is typed `Arbitrary<unknown>`; a `type: "string"` node
+  // always yields strings, so narrowing here is sound and keeps the asserts typed.
+  const sampleStrings = (schema: TSchema, runs = 200, seed = 20260101,): string[] =>
+    fc.sample(schemaToArbitrary(schema,).map((v,) => v as string), { numRuns: runs, seed, },);
+
+  test("a minimum-only number spans values above the bound", () => {
+    // Regression: `(declared.min ?? 0) >= (declared.max ?? 0)` treated an absent
+    // maximum as 0, so every "minimum only" number collapsed to `fc.constant`.
+    expect(distinctOver(t.Numeric({ minimum: 1, },),),).toBeGreaterThan(20,);
+    expect(distinctOver(t.Number({ minimum: 10, },),),).toBeGreaterThan(20,);
+  });
+
+  test("an unconstrained number spans values on both sides of zero", () => {
+    expect(distinctOver(t.Numeric({},),),).toBeGreaterThan(20,);
+    const values = fc.sample(schemaToArbitrary(t.Numeric({},),), { numRuns: 200, seed: 20260101, },) as number[];
+    expect(values.some((v,) => v < 0),).toBe(true,);
+    expect(values.some((v,) => v > 0),).toBe(true,);
+  });
+
+  test("a maximum-only number spans values below the bound", () => {
+    expect(distinctOver(t.Numeric({ maximum: 10, },),),).toBeGreaterThan(20,);
+    expect(distinctOver(t.Numeric({ minimum: -5, },),),).toBeGreaterThan(20,);
+  });
+
+  test("a minimum-only integer spans values above the bound", () => {
+    expect(distinctOver(t.Integer({ minimum: 1000, },),),).toBeGreaterThan(20,);
+  });
+
+  test("pattern AND length bounds hold on every sample", () => {
+    // Regression: `stringMatching` has `maxLength` but no `minLength`, so the
+    // mapper's length constraints vanished and 80% of samples were invalid.
+    const pattern = "^[a-z]+$";
+    const schema = t.String({ pattern, minLength: 5, maxLength: 5, },);
+    const re = new RegExp(pattern,);
+    const samples = sampleStrings(schema,);
+
+    for (const sample of samples) {
+      expect(sample.length,).toBe(5,);
+      expect(re.test(sample,),).toBe(true,);
+      expect(Value.Check(schema, sample,),).toBe(true,);
+    }
+
+    expect(new Set(samples,).size,).toBeGreaterThan(20,);
+  });
+
+  test("pattern with a wide length range stays inside it", () => {
+    const schema = t.String({ pattern: "\\S", minLength: 4, maxLength: 9, },);
+    for (const sample of sampleStrings(schema,)) {
+      expect(sample.length,).toBeGreaterThanOrEqual(4,);
+      expect(sample.length,).toBeLessThanOrEqual(9,);
+    }
+  });
+
+  test("contradictory bounds throw instead of emitting a value the schema rejects", () => {
+    // No value satisfies `minimum: 5, maximum: 3`. Emitting `fc.constant(5)`
+    // produced a value `Value.Check` rejects, so the fuzz test lied.
+    const unsatisfiable = /unsatisfiable bounds/;
+    expect(() => schemaToArbitrary(t.Integer({ minimum: 5, maximum: 3, },),)).toThrow(unsatisfiable,);
+    expect(() => schemaToArbitrary(t.Number({ minimum: 5, maximum: 3, },),)).toThrow(unsatisfiable,);
+    expect(() => schemaToArbitrary(t.Object({ n: t.Number({ minimum: 5, maximum: 3, },), },),))
+      .toThrow(unsatisfiable,);
+  });
+
+  test("equal bounds still emit the one valid value", () => {
+    // The single satisfiable point is NOT a contradiction — it must not throw.
+    const cases: [TSchema, number,][] = [
+      [t.Integer({ minimum: 5, maximum: 5, },), 5,],
+      [t.Number({ minimum: 2.5, maximum: 2.5, },), 2.5,],
+    ];
+
+    for (const [schema, expected,] of cases) {
+      for (const value of checkAllValid(schema, 20,)) { expect(value,).toBe(expected,); }
+    }
+  });
+});
+
 describe("structural keywords", () => {
   test("maxProperties caps the generated key count", () => {
     const schema = t.Object(
