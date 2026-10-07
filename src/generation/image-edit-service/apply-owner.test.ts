@@ -18,7 +18,7 @@
  * other end). `mock.module` is process-global, hence the ISOLATED gate.
  */
 import type { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
@@ -26,6 +26,7 @@ import { join, } from "node:path";
 import { createAsset, } from "../../assets/service";
 import { makeMinimalPng, } from "../../assets/test-helpers";
 import * as realConfigLoad from "../../config/load";
+import type { ImageProviderConfig, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertUsers, } from "../../test-utils/insert-helpers";
@@ -67,7 +68,8 @@ const PARSED: ParsedCommand = {
   parameters: {},
 };
 
-const SD_PROVIDER = {
+/** The `sdapi` provider variant; the mutable loader swaps this per test. */
+const SDAPI_PROVIDER: ImageProviderConfig = {
   name: "stub-sd",
   label: "Stub SD",
   apiFamily: "sdapi",
@@ -78,21 +80,49 @@ const SD_PROVIDER = {
   defaults: { steps: 20, cfgScale: 7, sampler: "euler", width: 512, height: 512, },
 };
 
+/** The `openai` variant: `/v1/images/edits`, multipart body, optional bearer. */
+const OPENAI_PROVIDER: ImageProviderConfig = {
+  ...SDAPI_PROVIDER,
+  name: "stub-openai",
+  label: "Stub OpenAI",
+  apiFamily: "openai",
+  baseUrl: "http://127.0.0.1:9000",
+};
+
+/** The slice of the real config that `applyEdit` reads. */
+type TestConfig = {
+  assets: { uploadDir: string };
+  generation: { providers: { sd: ImageProviderConfig[] } };
+};
+
+/**
+ * @param sd - Provider list the mutable config exposes
+ * @returns A config object shaped like the real `loadConfig` return
+ */
+const configWith = (sd: ImageProviderConfig[],): TestConfig => ({
+  assets: { uploadDir, },
+  generation: { providers: { sd, }, },
+});
+
+// `mock.module` is process-global, so the loader is mocked ONCE against a
+// mutable binding; each test reassigns `currentConfig` instead of re-mocking.
+let currentConfig: TestConfig = configWith([],);
+// Same for the network edge: the stub delegates so tests can swap responses.
+let fetchImpl: (input: string | URL | Request, init?: RequestInit,) => Promise<Response> = async () =>
+  Response.json({ images: [], },);
+
 if (ISOLATED) {
   uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-apply-owner-",),);
 
   mock.module("../../config/load", () => ({
     ...realConfigLoad,
-    loadConfig: () => ({
-      assets: { uploadDir, },
-      generation: { providers: { sd: [SD_PROVIDER,], }, },
-    }),
+    loadConfig: () => currentConfig,
   }),);
 
   // `safeFetch` calls the global `fetch`; stubbing that keeps the whole
   // utils/safe-fetch path (headers, timeout, size cap) exercised for real.
-  globalThis.fetch = (async () =>
-    Response.json({ images: [RESULT_PNG.toString("base64",),], },)) as unknown as typeof fetch;
+  globalThis.fetch = ((input: string | URL | Request, init?: RequestInit,) =>
+    fetchImpl(input, init,)) as unknown as typeof fetch;
 
   // Dynamic import is required: `mock.module` must be registered BEFORE the
   // SUT module is evaluated, which a static import cannot guarantee.
@@ -123,6 +153,13 @@ describeOrSkip("applyEdit asset ownership", () => {
     },);
 
     sourceAssetId = asset.id;
+  },);
+
+  // `mock.module` cannot be re-registered per test, so every test starts from
+  // the sdapi happy path and reassigns the mutable bindings it needs.
+  beforeEach(() => {
+    currentConfig = configWith([SDAPI_PROVIDER,],);
+    fetchImpl = async () => Response.json({ images: [RESULT_PNG.toString("base64",),], },);
   },);
 
   afterAll(async () => {
@@ -187,5 +224,143 @@ describeOrSkip("applyEdit asset ownership", () => {
         },
       },),
     ).rejects.toThrow("no owning user",);
+  });
+
+  test("openai family: persists the edit under the actor's owning user", async () => {
+    currentConfig = configWith([OPENAI_PROVIDER,],);
+    fetchImpl = async () => Response.json({ data: [{ b64_json: RESULT_PNG.toString("base64",), },], },);
+
+    const row = await editAndReadAsset(OWNED_ACTOR,);
+
+    expect(row.owner_id,).toBe(OWNER_USER,);
+    expect(row.owner_id,).not.toBe(OWNED_ACTOR,);
+  });
+
+  test("openai family: sends a bearer token when the provider has an apiKey", async () => {
+    currentConfig = configWith([{ ...OPENAI_PROVIDER, apiKey: "sk-test-123", },],);
+    let seenUrl = "";
+    let seenAuth = "";
+    fetchImpl = async (input: string | URL | Request, init?: RequestInit,) => {
+      seenUrl = String(input,);
+      seenAuth = new Headers(init?.headers,).get("authorization",) ?? "";
+      return Response.json({ data: [{ b64_json: RESULT_PNG.toString("base64",), },], },);
+    };
+
+    const row = await editAndReadAsset(OWNED_ACTOR,);
+
+    expect(seenUrl,).toBe("http://127.0.0.1:9000/v1/images/edits",);
+    expect(seenAuth,).toBe("Bearer sk-test-123",);
+    expect(row.owner_id,).toBe(OWNER_USER,);
+  });
+
+  test("openai family: throws when the provider returns a non-OK status", async () => {
+    currentConfig = configWith([OPENAI_PROVIDER,],);
+    fetchImpl = async () => new Response("boom", { status: 500, statusText: "Server Error", },);
+
+    await expect(
+      applyEdit({
+        thisL: makeThisL(),
+        opts: { sourceAssetId, template: TEMPLATE, denoisingStrength: 0.4, parsed: PARSED, actorId: OWNED_ACTOR, },
+      },),
+    ).rejects.toThrow("Image edit failed: HTTP 500: Server Error",);
+  });
+
+  test("openai family: throws on undecodable base64 image data", async () => {
+    currentConfig = configWith([OPENAI_PROVIDER,],);
+    fetchImpl = async () => Response.json({ data: [{ b64_json: "!!!not-base64!!!", },], },);
+
+    await expect(
+      applyEdit({
+        thisL: makeThisL(),
+        opts: { sourceAssetId, template: TEMPLATE, denoisingStrength: 0.4, parsed: PARSED, actorId: OWNED_ACTOR, },
+      },),
+    ).rejects.toThrow("Image edit provider returned undecodable image data",);
+  });
+
+  test("rejects an api family that is not supported for img2img", async () => {
+    currentConfig = configWith([{ ...SDAPI_PROVIDER, apiFamily: "sdcpp", },],);
+
+    await expect(
+      applyEdit({
+        thisL: makeThisL(),
+        opts: { sourceAssetId, template: TEMPLATE, denoisingStrength: 0.4, parsed: PARSED, actorId: OWNED_ACTOR, },
+      },),
+    ).rejects.toThrow("not supported for img2img",);
+  });
+
+  test("rejects when no image generation provider is configured", async () => {
+    currentConfig = configWith([],);
+
+    await expect(
+      applyEdit({
+        thisL: makeThisL(),
+        opts: { sourceAssetId, template: TEMPLATE, denoisingStrength: 0.4, parsed: PARSED, actorId: OWNED_ACTOR, },
+      },),
+    ).rejects.toThrow("No image generation provider configured",);
+  });
+
+  test("rejects a provider whose base URL fails SSRF validation", async () => {
+    currentConfig = configWith([{ ...SDAPI_PROVIDER, baseUrl: "not a valid url", },],);
+
+    await expect(
+      applyEdit({
+        thisL: makeThisL(),
+        opts: { sourceAssetId, template: TEMPLATE, denoisingStrength: 0.4, parsed: PARSED, actorId: OWNED_ACTOR, },
+      },),
+    ).rejects.toThrow("Invalid image provider URL",);
+  });
+
+  test("sdapi: rejects when the source asset does not exist", async () => {
+    await expect(
+      applyEdit({
+        thisL: makeThisL(),
+        opts: {
+          sourceAssetId: "missing-asset-id",
+          template: TEMPLATE,
+          denoisingStrength: 0.4,
+          parsed: PARSED,
+          actorId: OWNED_ACTOR,
+        },
+      },),
+    ).rejects.toThrow("Source asset not found",);
+  });
+
+  test("openai family: rejects when the source asset does not exist", async () => {
+    currentConfig = configWith([OPENAI_PROVIDER,],);
+
+    await expect(
+      applyEdit({
+        thisL: makeThisL(),
+        opts: {
+          sourceAssetId: "missing-asset-id",
+          template: TEMPLATE,
+          denoisingStrength: 0.4,
+          parsed: PARSED,
+          actorId: OWNED_ACTOR,
+        },
+      },),
+    ).rejects.toThrow("Source asset not found",);
+  });
+
+  test("sdapi: throws when the provider returns a non-OK status", async () => {
+    fetchImpl = async () => new Response("boom", { status: 502, statusText: "Bad Gateway", },);
+
+    await expect(
+      applyEdit({
+        thisL: makeThisL(),
+        opts: { sourceAssetId, template: TEMPLATE, denoisingStrength: 0.4, parsed: PARSED, actorId: OWNED_ACTOR, },
+      },),
+    ).rejects.toThrow("img2img generation failed: HTTP 502: Bad Gateway",);
+  });
+
+  test("sdapi: throws on undecodable base64 image data", async () => {
+    fetchImpl = async () => Response.json({ images: ["!!!not-base64!!!",], },);
+
+    await expect(
+      applyEdit({
+        thisL: makeThisL(),
+        opts: { sourceAssetId, template: TEMPLATE, denoisingStrength: 0.4, parsed: PARSED, actorId: OWNED_ACTOR, },
+      },),
+    ).rejects.toThrow("img2img provider returned undecodable image data",);
   });
 },);
