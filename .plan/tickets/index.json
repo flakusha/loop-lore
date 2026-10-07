@@ -16244,7 +16244,8 @@
     "extid": "FEAT-LLM-ENHANCE-OUTSIDE-THE-CHAT-COMPOSER",
     "git_issue": "bd93da5",
     "status": "Not Started",
-    "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md"
+    "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md",
+    "title": "# FEAT: LLM-enhance outside the chat composer"
   },
   "FEAT-LLM-REQUEST-COMPLEXITY-CLASSIFICATION": {
     "hash": "27f9dd5",
@@ -45598,41 +45599,47 @@
     "extid": "BUG-EMOTION-AVATAR-BASEAVATARID-IS-UNCHECKED-CROSS-USER-ASSET-ME",
     "git_issue": "f1b17c0",
     "status": "Not Started",
-    "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md"
+    "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md",
+    "title": "# BUG: Emotion-avatar baseAvatarId is unchecked: cross-user asset metadata leaks into generated prompts"
   },
   "TASK-CHARACTER-APPROVAL-WORKFLOW-NOT-IMPLEMENTED": {
     "epic": "",
     "extid": "TASK-CHARACTER-APPROVAL-WORKFLOW-NOT-IMPLEMENTED",
     "git_issue": "86fc3c1",
     "status": "Not Started",
-    "source": ".plan/tickets/TASK-character-approval-workflow-not-implemented.md"
+    "source": ".plan/tickets/TASK-character-approval-workflow-not-implemented.md",
+    "title": "# TASK: Character approval workflow not implemented"
   },
   "TASK-EXCLUDE-IMPERSONATED-ACTORS-FROM-AI-TURN-GENERATION": {
     "epic": "",
     "extid": "TASK-EXCLUDE-IMPERSONATED-ACTORS-FROM-AI-TURN-GENERATION",
     "git_issue": "c2286b1",
     "status": "Not Started",
-    "source": ".plan/tickets/TASK-exclude-impersonated-actors-from-ai-turn-generation.md"
+    "source": ".plan/tickets/TASK-exclude-impersonated-actors-from-ai-turn-generation.md",
+    "title": "# TASK: Exclude impersonated actors from AI turn generation"
   },
   "TASK-PERSIST-CHAT-PURPOSE-ON-CREATION": {
     "epic": "",
     "extid": "TASK-PERSIST-CHAT-PURPOSE-ON-CREATION",
     "git_issue": "3c241f7",
     "status": "Not Started",
-    "source": ".plan/tickets/TASK-persist-chat-purpose-on-creation.md"
+    "source": ".plan/tickets/TASK-persist-chat-purpose-on-creation.md",
+    "title": "# TASK: Persist chat purpose on creation"
   },
   "TASK-REFINE-IMPERSONATION-CONSTRAINT-TO-LOCATION-TIMELINE-SCOPE": {
     "epic": "",
     "extid": "TASK-REFINE-IMPERSONATION-CONSTRAINT-TO-LOCATION-TIMELINE-SCOPE",
     "git_issue": "322da5e",
     "status": "Not Started",
-    "source": ".plan/tickets/TASK-refine-impersonation-constraint-to-location-timeline-scope.md"
+    "source": ".plan/tickets/TASK-refine-impersonation-constraint-to-location-timeline-scope.md",
+    "title": "# TASK: Refine impersonation constraint to location/timeline scope"
   },
   "TASK-WIRE-VARIANT-PICKER-INTO-NEW-CHAT-FORM": {
     "epic": "",
     "extid": "TASK-WIRE-VARIANT-PICKER-INTO-NEW-CHAT-FORM",
     "git_issue": "8847e09",
     "status": "Not Started",
-    "source": ".plan/tickets/TASK-wire-variant-picker-into-new-chat-form.md"
+    "source": ".plan/tickets/TASK-wire-variant-picker-into-new-chat-form.md",
+    "title": "# TASK: Wire variant picker into new-chat form"
   }
 }
