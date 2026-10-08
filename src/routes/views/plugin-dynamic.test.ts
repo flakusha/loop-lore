@@ -45,7 +45,10 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
 
     await insertWorlds(db, "owner", "Elm", { id: "world-elm" as never, },);
     await insertChats(db, "Alpha Chat", "owner", { id: "chat-a" as never, world_id: "world-elm", },);
-    await insertAssets(db, "owner", "x.png", "image/png", "image", 100, "p/x", { id: "g1" as never, },);
+    await insertAssets(db, "owner", "x.png", "image/png", "image", 100, "p/x", {
+      id: "g1" as never,
+      visibility: "public" as never,
+    },);
   },);
 
   afterAll(() => sqlite.close());
@@ -126,12 +129,19 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     expect(await res.text(),).toContain("asset-card-g1",);
   });
 
-  test("gallery search requires auth", async () => {
-    const res = await makeApp(db,).handle(
+  test("gallery search serves anonymous callers like the grid (BUG-gallery-search-401s-anonymous-users-while-grid-serves-them)", async () => {
+    const app = makeApp(db,);
+    const gridRes = await app.handle(
+      new Request("http://localhost/dynamic/gallery/grid", { headers: { "HX-Request": "true", }, },),
+    );
+
+    const searchRes = await app.handle(
       new Request("http://localhost/dynamic/gallery/search", { headers: { "HX-Request": "true", }, },),
     );
 
-    expect(res.status,).toBe(401,);
+    expect(gridRes.status,).toBe(200,);
+    expect(searchRes.status,).toBe(200,);
+    expect(await searchRes.text(),).toContain("asset-card-g1",);
   });
 
   test("characters search renders with HX-Request", async () => {
