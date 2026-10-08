@@ -54,38 +54,3 @@ export function parseCommand(input: string,): ParsedCommand | null {
   getLog().trace("Parsed command", { command, args, },);
   return { command, args, raw: trimmed, };
 }
-
-/** All registered command names */
-export const BUILTIN_COMMANDS = [
-  "help",
-  "roll",
-  "dice",
-  "clear",
-  "stats",
-  "improve",
-  "summarize",
-  "sum",
-  "impersonate",
-  "char",
-  "narrate",
-  "ooc",
-  "debug",
-  "detail",
-  "context",
-  "image",
-  "quest",
-  "video",
-  "sfx",
-  "sound",
-  "music",
-  "caption",
-] as const;
-
-/**
- * Check if a command name is a built-in command
- * @param command
- * @returns boolean
- */
-export function isBuiltinCommand(command: string,): boolean {
-  return (BUILTIN_COMMANDS as readonly string[]).includes(command.toLowerCase(),);
-}

@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../logger";
-import { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "./command-parser";
+import { parseCommand, } from "./command-parser";
 
 beforeAll(() => {
   createLogger({ level: "error", },);
@@ -48,38 +48,6 @@ describe("command-parser", () => {
     test("handles extra whitespace between args", () => {
       const result = parseCommand("/roll  2d6   +3",);
       expect(result,).toEqual({ command: "roll", args: ["2d6", "+3",], raw: "/roll  2d6   +3", },);
-    });
-  });
-
-  describe("isBuiltinCommand", () => {
-    test("returns true for known commands", () => {
-      expect(isBuiltinCommand("help",),).toBe(true,);
-      expect(isBuiltinCommand("roll",),).toBe(true,);
-      expect(isBuiltinCommand("dice",),).toBe(true,);
-      expect(isBuiltinCommand("clear",),).toBe(true,);
-      expect(isBuiltinCommand("stats",),).toBe(true,);
-      expect(isBuiltinCommand("improve",),).toBe(true,);
-    });
-
-    test("returns false for unknown commands", () => {
-      expect(isBuiltinCommand("attack",),).toBe(false,);
-      expect(isBuiltinCommand("foo",),).toBe(false,);
-    });
-
-    test("is case-insensitive", () => {
-      expect(isBuiltinCommand("HELP",),).toBe(true,);
-      expect(isBuiltinCommand("Roll",),).toBe(true,);
-    });
-  });
-
-  describe("BUILTIN_COMMANDS", () => {
-    test("contains expected commands", () => {
-      expect(BUILTIN_COMMANDS,).toContain("help",);
-      expect(BUILTIN_COMMANDS,).toContain("roll",);
-      expect(BUILTIN_COMMANDS,).toContain("dice",);
-      expect(BUILTIN_COMMANDS,).toContain("clear",);
-      expect(BUILTIN_COMMANDS,).toContain("stats",);
-      expect(BUILTIN_COMMANDS,).toContain("improve",);
     });
   });
 });

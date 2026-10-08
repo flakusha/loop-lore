@@ -38,6 +38,7 @@ export interface ChatCoreUiState {
   toggleReaction(msgId: string, emoji: string,): Promise<void>;
   loadMessageReactions(msgId: string,): Promise<void>;
   loadAllReactions(): Promise<void>;
+  loadQuickEmojis(): Promise<void>;
   _reactionPicker: { visible: boolean; messageId: string; x: number; y: number };
   _quickEmojis: string[];
   showReactionPicker(msgId: string, event: Event,): void;

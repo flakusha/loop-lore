@@ -187,4 +187,14 @@ describe("messageReactionsRoutes access checks", () => {
 
     expect(res.status,).toBe(400,);
   });
+
+  test("quick-emojis returns the picker allowlist", async () => {
+    const app = reactionApp(db, ownerId, null,);
+    const res = await app.handle(get(`/api/messages/quick-emojis`,),);
+    expect(res.status,).toBe(200,);
+    const list = (await res.json()) as unknown;
+    expect(Array.isArray(list,),).toBe(true,);
+    expect((list as string[]).length,).toBeGreaterThan(0,);
+    expect((list as string[]).every((e,) => typeof e === "string"),).toBe(true,);
+  });
 });

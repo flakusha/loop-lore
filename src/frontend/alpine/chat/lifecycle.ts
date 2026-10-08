@@ -3,6 +3,7 @@
 
 import { ChatListResponse, } from "../../../validation/schemas/responses";
 import { destroyVnRenderer, } from "../../vn";
+import { DEFAULT_QUICK_EMOJIS, } from "../chat-utils/emoji";
 import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
 import type { ChatState, } from "../types";
@@ -47,23 +48,7 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
       }
     }
 
-    this._quickEmojis = [
-      "👍",
-      "❤️",
-      "😂",
-      "🎭",
-      "⚔️",
-      "🗡️",
-      "🏰",
-      "✨",
-      "💀",
-      "🐉",
-      "🌲",
-      "⚡",
-      "🔥",
-      "💧",
-      "🌙",
-    ];
+    this._quickEmojis = [...DEFAULT_QUICK_EMOJIS,];
 
     // Force-reset panel visibility on every mount (belt-and-suspenders
     // against stale store state from a previous component instance).
