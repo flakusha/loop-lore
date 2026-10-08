@@ -107,6 +107,8 @@ export function textToolbar(opts: TextToolbarOptions,): TextToolbarComponent {
         internals.undo.push(target.value,);
         this.undoDepth = internals.undo.depth;
         target.value = improved;
+        // Sync x-model bindings (Alpine only updates on real input events).
+        target.dispatchEvent(new Event("input", { bubbles: true, },),);
         autoResize(target,);
         this.$dispatch?.("show-toast", { type: "success", message: t("toasts.promptImproved",), },);
       } catch {
@@ -125,6 +127,8 @@ export function textToolbar(opts: TextToolbarOptions,): TextToolbarComponent {
 
       target.value = previous;
       this.undoDepth = internals.undo.depth;
+      // Sync x-model bindings (Alpine only updates on real input events).
+      target.dispatchEvent(new Event("input", { bubbles: true, },),);
       autoResize(target,);
       this.$dispatch?.("show-toast", { type: "success", message: t("toasts.promptRestored",), },);
     },

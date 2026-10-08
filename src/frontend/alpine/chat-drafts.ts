@@ -49,9 +49,14 @@ export function defaultDraftStore(): DraftStore | null {
   }
 }
 
-// One factory instance per call keeps the historical signatures (storage is
-// a parameter, not ambient state); the instance itself is stateless.
-function chatDrafts(store: DraftStore,): KeyedDraftStore {
+/**
+ * One factory instance per call keeps the historical signatures (storage is
+ * a parameter, not ambient state); the instance itself is stateless. Shared
+ * by the desktop composer helpers and the mobile composer.
+ * @param store
+ * @returns A chat-draft store bound to `store` and the composer constants.
+ */
+export function chatDraftStoreFor(store: DraftStore,): KeyedDraftStore {
   return createKeyedDraftStore({
     prefix: DRAFT_PREFIX,
     indexKey: DRAFT_INDEX_KEY,
@@ -74,7 +79,7 @@ export function draftKey(chatId: string,): string {
  * @returns MRU-first chat ids with a draft; empty on corrupt data.
  */
 export function readDraftIndex(store: DraftStore,): string[] {
-  return chatDrafts(store,).readIndex();
+  return chatDraftStoreFor(store,).readIndex();
 }
 
 /**
@@ -83,7 +88,7 @@ export function readDraftIndex(store: DraftStore,): string[] {
  * @returns The stored draft, or null when absent or malformed.
  */
 export function readDraft(store: DraftStore, chatId: string,): ComposerDraft | null {
-  return chatDrafts(store,).read(chatId,);
+  return chatDraftStoreFor(store,).read(chatId,);
 }
 
 /**
@@ -95,7 +100,7 @@ export function readDraft(store: DraftStore, chatId: string,): ComposerDraft | n
  * @returns {void}
  */
 export function writeDraft(store: DraftStore, chatId: string, text: string,): void {
-  chatDrafts(store,).write(chatId, text,);
+  chatDraftStoreFor(store,).write(chatId, text,);
 }
 
 /**
@@ -104,7 +109,7 @@ export function writeDraft(store: DraftStore, chatId: string, text: string,): vo
  * @returns {void}
  */
 export function clearDraft(store: DraftStore, chatId: string,): void {
-  chatDrafts(store,).clear(chatId,);
+  chatDraftStoreFor(store,).clear(chatId,);
 }
 
 export const chatDraftMethods: Partial<ChatState> & ThisType<ChatState> = {
