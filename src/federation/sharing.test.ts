@@ -499,4 +499,76 @@ describe("sender fan-out", () => {
     expect(result.skipped[0]?.reason,).toMatch(/capacity/,);
     expect(attempted.some((url,) => url.startsWith("https://b.example",)),).toBe(false,);
   });
+
+  test("reservation failure queues a pending outbox retry row", async () => {
+    const { db, } = await createTestDb();
+    await twoPeers(db,);
+    // Peer refuses the reservation (capacity exhausted).
+    const post = (async (url: string,) => {
+      if (url.endsWith("/api/mesh-reserve",)) {
+        return { ok: false, status: 409, body: null, };
+      }
+
+      return { ok: true, status: 200, body: { verdict: "stored", }, };
+    }) as PeerPost;
+
+    const result = await fanOutContent(db, post, "https://a.example", POLICY, encryption, {
+      id: "fan-retry",
+      content: "retry me",
+      clock: 12,
+    },);
+
+    expect(result.failed,).toHaveLength(2,);
+    expect(result.failed[0]?.error,).toMatch(/reservation refused/,);
+    expect(result.failed[1]?.error,).toMatch(/reservation refused/,);
+
+    // Both targets must have a pending outbox row — the drain will retry them.
+    const rows = await db
+      .selectFrom("mesh_outbox",)
+      .select(["target_origin", "content_id", "status", "chat_id",],)
+      .where("content_id", "=", "fan-retry",)
+      .execute();
+
+    expect(rows,).toHaveLength(2,);
+    for (const row of rows) {
+      expect(row.status,).toBe("pending",);
+      expect(row.chat_id,).toBeNull();
+    }
+  });
+
+  test("clearance-denied target is NOT queued for retry", async () => {
+    const { db, } = await createTestDb();
+    await twoPeers(db,);
+    // Seed a chat without consent — the gate denies before any network call.
+    const { insertChats, insertUsers, } = await import("../test-utils/insert-helpers");
+    const user = await insertUsers(db, "u-noconsent", "U",);
+    await insertChats(db, "no consent chat", user, { id: "chat-noconsent", encryption_level: "standard", },);
+
+    const post = (async (url: string,) => {
+      if (url.endsWith("/api/mesh-reserve",)) {
+        return { ok: true, status: 200, body: { reservationId: "r-x", }, };
+      }
+
+      return { ok: true, status: 200, body: { verdict: "stored", }, };
+    }) as PeerPost;
+
+    const result = await fanOutContent(db, post, "https://a.example", POLICY, encryption, {
+      id: "fan-noconsent",
+      content: "secret",
+      chatId: "chat-noconsent",
+      clock: 13,
+    },);
+
+    expect(result.failed,).toHaveLength(2,);
+    expect(result.failed[0]?.error,).toContain("content clearance denied",);
+
+    // No outbox row — consent denial is not retryable.
+    const rows = await db
+      .selectFrom("mesh_outbox",)
+      .select("id",)
+      .where("content_id", "=", "fan-noconsent",)
+      .execute();
+
+    expect(rows,).toHaveLength(0,);
+  });
 });

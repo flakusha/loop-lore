@@ -1473,6 +1473,7 @@ export interface MeshOutbox {
   status: Generated<string>;
   next_attempt_at: string;
   created_at: Generated<string>;
+  chat_id: string | null;
 }
 
 // ── task_dependencies ────────────────────────────────────────────

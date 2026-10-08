@@ -629,6 +629,7 @@ export const SCHEMA = new SchemaManifest()
     status: col("text", { notNull: true, hasDefault: true, },),
     next_attempt_at: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
+    chat_id: col("text",),
   },)
   .table("mesh_peers", {
     origin: col("text", { primaryKey: true, },),

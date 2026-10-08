@@ -6,6 +6,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { pskCipher, } from "./cipher";
+import { grantChatFederationConsent, revokeChatFederationConsent, } from "./clearance";
 import { type ContentEnvelope, sealContent, } from "./envelope";
 import {
   markOutboxDone,
@@ -372,5 +373,92 @@ describe("runMeshOutboxPass", () => {
 
     expect(summary.checked,).toBe(0,);
     expect(calls,).toHaveLength(0,);
+  });
+
+  test("revoked consent dead-letters the row without any push", async () => {
+    const { db, } = await createTestDb();
+    const { insertChats, insertUsers, } = await import("../test-utils/insert-helpers");
+    const user = await insertUsers(db, "u-consent-revoked", "U",);
+    await insertChats(db, "consent revoked chat", user, { id: "chat-revoked", encryption_level: "standard", },);
+    const envelope = await sealed();
+    await queueOutboxRetry(db, { targetOrigin: TARGET, contentId: "content-1", envelope, chatId: "chat-revoked", },);
+    // Consent was granted at queue time, then revoked before the drain.
+    await grantChatFederationConsent(db, "chat-revoked",);
+    await revokeChatFederationConsent(db, "chat-revoked",);
+    const { post, calls, } = recordingPost(HEALTHY,);
+
+    const summary = await runMeshOutboxPass(db, { postImpl: post, now: T0, },);
+
+    expect(summary,).toEqual({ checked: 1, delivered: 0, retried: 0, dead: 1, },);
+    expect((await outboxRow(db, TARGET, "content-1",)).status,).toBe("dead",);
+    // The gate denied — no network call was made.
+    expect(calls,).toHaveLength(0,);
+  });
+
+  test("granted consent allows normal delivery", async () => {
+    const { db, } = await createTestDb();
+    const { insertChats, insertUsers, } = await import("../test-utils/insert-helpers");
+    const user = await insertUsers(db, "u-consent-ok", "U",);
+    await insertChats(db, "consent ok chat", user, { id: "chat-ok", encryption_level: "standard", },);
+    const envelope = await sealed();
+    await queueOutboxRetry(db, { targetOrigin: TARGET, contentId: "content-1", envelope, chatId: "chat-ok", },);
+    await grantChatFederationConsent(db, "chat-ok",);
+    const { post, calls, } = recordingPost(HEALTHY,);
+
+    const summary = await runMeshOutboxPass(db, { postImpl: post, now: T0, },);
+
+    expect(summary,).toEqual({ checked: 1, delivered: 1, retried: 0, dead: 0, },);
+    expect((await outboxRow(db, TARGET, "content-1",)).status,).toBe("done",);
+    expect(calls.map((c,) => c.url),).toEqual([
+      `${TARGET}/api/mesh-reserve`,
+      `${TARGET}/api/mesh-deliver`,
+    ],);
+  });
+
+  test("row without chat_id skips the consent gate", async () => {
+    const { db, } = await createTestDb();
+    const envelope = await sealed();
+    await queueOutboxRetry(db, { targetOrigin: TARGET, contentId: "content-1", envelope, },);
+    const { post, calls, } = recordingPost(HEALTHY,);
+
+    const summary = await runMeshOutboxPass(db, { postImpl: post, now: T0, },);
+
+    expect(summary,).toEqual({ checked: 1, delivered: 1, retried: 0, dead: 0, },);
+    expect((await outboxRow(db, TARGET, "content-1",)).status,).toBe("done",);
+    expect(calls,).toHaveLength(2,);
+  });
+
+  test("overlapping pass is skipped while first is in flight", async () => {
+    const { db, } = await createTestDb();
+    await queueOutboxRetry(db, { targetOrigin: TARGET, contentId: "content-1", envelope: await sealed(), },);
+
+    // A post that blocks until we release it — simulates a slow drain.
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve,) => {
+      release = resolve;
+    },);
+
+    const blockingPost: PeerPost = async (url: string,) => {
+      await gate;
+      if (url.endsWith("/api/mesh-reserve",)) {
+        return { ok: true, status: 200, body: { reservationId: "r-fresh", }, };
+      }
+
+      return { ok: true, status: 200, body: { verdict: "stored", }, };
+    };
+
+    // Start the first pass — it will block on the gate.
+    const first = runMeshOutboxPass(db, { postImpl: blockingPost, now: T0, },);
+    // Let the first pass reach the guard and set drainInFlight.
+    await new Promise((r,) => setTimeout(r, 10,));
+
+    // A second pass started while the first is in flight must be skipped.
+    const second = await runMeshOutboxPass(db, { postImpl: recordingPost(HEALTHY,).post, now: T0, },);
+    expect(second,).toEqual({ checked: 0, delivered: 0, retried: 0, dead: 0, },);
+
+    // Release the first pass and verify it completes normally.
+    release();
+    const firstSummary = await first;
+    expect(firstSummary.delivered,).toBe(1,);
   });
 });

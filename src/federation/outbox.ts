@@ -15,6 +15,7 @@ import type { FederationPeerTrustConfig, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { jsonStringifyOr, safeJsonParse, } from "../utils";
 import { toDate, } from "../utils/date";
+import { authorizeChatExport, } from "./clearance";
 import { pushEnvelope, } from "./delivery";
 import type { ContentEnvelope, } from "./envelope";
 import { requestReservation, } from "./fan-out";
@@ -36,11 +37,12 @@ export const OUTBOX_BATCH_SIZE = 25;
  * @param entry.targetOrigin
  * @param entry.contentId
  * @param entry.envelope
+ * @param entry.chatId
  * @returns {Promise<void>}
  */
 export async function queueOutboxRetry(
   database: Kysely<DB>,
-  entry: { targetOrigin: string; contentId: string; envelope: ContentEnvelope },
+  entry: { targetOrigin: string; contentId: string; envelope: ContentEnvelope; chatId?: string },
 ): Promise<void> {
   const envelope = jsonStringifyOr(entry.envelope, "{}",);
   const due = new Date().toISOString();
@@ -51,6 +53,7 @@ export async function queueOutboxRetry(
       content_id: entry.contentId,
       envelope,
       next_attempt_at: due,
+      chat_id: entry.chatId ?? null,
     },)
     .onConflict((oc,) =>
       oc.columns(["target_origin", "content_id",],).doUpdateSet({
@@ -58,6 +61,7 @@ export async function queueOutboxRetry(
         status: "pending",
         attempts: 0,
         next_attempt_at: due,
+        chat_id: entry.chatId ?? null,
       },)
     )
     .execute();
@@ -135,6 +139,31 @@ export async function runMeshOutboxPass(
     baseBackoffMs?: number;
   } = {},
 ): Promise<MeshOutboxPassSummary> {
+  // In-flight guard: skip this tick if a previous pass is still running.
+  // The drain can take >=250s (25 rows x 2 POSTs x 5s timeout) on a */2
+  // cron, so overlapping ticks would re-select and re-push the same rows.
+  if (drainInFlight) { return { checked: 0, delivered: 0, retried: 0, dead: 0, }; }
+  drainInFlight = true;
+  try {
+    return await runMeshOutboxPassInner(database, opts,);
+  } finally {
+    drainInFlight = false;
+  }
+}
+
+let drainInFlight = false;
+
+async function runMeshOutboxPassInner(
+  database: Kysely<DB>,
+  opts: {
+    trustByOrigin?: Record<string, FederationPeerTrustConfig | undefined>;
+    postImpl?: PeerPost;
+    now?: number;
+    batch?: number;
+    maxAttempts?: number;
+    baseBackoffMs?: number;
+  },
+): Promise<MeshOutboxPassSummary> {
   const nowMs = opts.now ?? Date.now();
   const maxAttempts = opts.maxAttempts ?? OUTBOX_MAX_ATTEMPTS;
   const baseBackoffMs = opts.baseBackoffMs ?? OUTBOX_BASE_BACKOFF_MS;
@@ -154,6 +183,24 @@ export async function runMeshOutboxPass(
 
   const summary: MeshOutboxPassSummary = { checked: due.length, delivered: 0, retried: 0, dead: 0, };
   for (const row of due) {
+    // Re-check per-chat content clearance before re-pushing. Consent may
+    // have been revoked (or the tier changed) since the row was queued;
+    // a denial dead-letters the row immediately — no network attempt.
+    if (row.chat_id !== null) {
+      try {
+        await authorizeChatExport(database, { chatId: row.chat_id, peerOrigin: row.target_origin, },);
+      } catch {
+        summary.dead += 1;
+        await database
+          .updateTable("mesh_outbox",)
+          .set({ status: "dead", },)
+          .where("id", "=", row.id,)
+          .execute();
+
+        continue;
+      }
+    }
+
     const envelope = parseEnvelope(row.envelope,);
     let delivered = false;
     if (envelope !== null) {

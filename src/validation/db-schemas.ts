@@ -3054,6 +3054,7 @@ export const MeshOutboxSchema = t.Object({
   attempts: t.Optional(t.Number(),),
   status: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
+  chat_id: t.Optional(t.String(),),
 },);
 
 // ── task_dependencies ────────────────────────────────────────────

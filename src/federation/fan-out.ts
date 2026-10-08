@@ -21,7 +21,7 @@ import {
   selectTargetsWithCapacity,
 } from "./duplication";
 import { type MeshEncryptionProvider, } from "./encryption";
-import { sealContent, } from "./envelope";
+import { type ContentEnvelope, sealContent, } from "./envelope";
 import { markOutboxDone, queueOutboxRetry, } from "./outbox";
 import { type PeerPost, } from "./peer-fetch";
 import { DEFAULT_RESERVATION_TTL_MS, } from "./sharing";
@@ -174,32 +174,43 @@ export async function fanOutContent(
       }
     }
 
-    const granted = await requestReservation(post, target, {
-      senderOrigin,
-      contentHash: probe.hash,
-      sizeBytes: probe.size,
-      contentType: type,
-    },);
-
-    const cipher = encryption.contentCipher(granted.contentKey,);
-    const envelope = await sealContent({
-      id: content.id,
-      origin: senderOrigin,
-      clock,
-      type,
-      content: content.content,
-      cipher,
-    },);
-
+    let envelope: ContentEnvelope = probe;
     try {
+      const granted = await requestReservation(post, target, {
+        senderOrigin,
+        contentHash: probe.hash,
+        sizeBytes: probe.size,
+        contentType: type,
+      },);
+
+      const cipher = encryption.contentCipher(granted.contentKey,);
+      envelope = await sealContent({
+        id: content.id,
+        origin: senderOrigin,
+        clock,
+        type,
+        content: content.content,
+        cipher,
+      },);
+
       const verdict = await pushEnvelope(post, target, envelope, granted.reservationId,);
       await markOutboxDone(database, target, content.id,);
       return { target, verdict, };
     } catch (error) {
+      // Queue a retry for ANY failure after the clearance gate — reserve,
+      // seal, or push. Use the probe envelope when sealing failed (the
+      // drain re-seals on every attempt anyway). The clearance-denied path
+      // above is NOT queued: a consent denial is not retryable.
+      const retryEnvelope = envelope ?? probe;
       try {
-        await queueOutboxRetry(database, { targetOrigin: target, contentId: content.id, envelope, },);
+        await queueOutboxRetry(database, {
+          targetOrigin: target,
+          contentId: content.id,
+          envelope: retryEnvelope,
+          chatId: content.chatId,
+        },);
       } catch {
-        // Outbox queueing failed — the push error is more important
+        // Outbox queueing failed — the original error is more important
       }
 
       throw error;
