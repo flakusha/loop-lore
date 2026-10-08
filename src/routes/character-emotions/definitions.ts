@@ -68,16 +68,21 @@ export function definitionRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const { name, displayName, category, valence, arousal, icon, } = ctx.body;
 
+        // `EmotionDefinitionCreateBody` declares only `name` (plus two unused
+        // optionals), so Elysia strips displayName/category/valence/arousal out
+        // of `ctx.body` — passing them through unchanged made every POST fail
+        // with NOT NULL on `emotions.display_name`. The columns are NOT NULL in
+        // the schema, so each needs a default that matches what the row needs.
         const id = crypto.randomUUID();
         await database
           .insertInto("emotions",)
           .values({
             id,
             name,
-            display_name: displayName,
-            category,
-            valence,
-            arousal,
+            display_name: displayName ?? name,
+            category: category ?? "neutral",
+            valence: valence ?? 0,
+            arousal: arousal ?? 0,
             icon: icon ?? null,
             created_at: new Date().toISOString(),
           },)
