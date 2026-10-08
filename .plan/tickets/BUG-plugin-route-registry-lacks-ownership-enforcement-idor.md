@@ -25,6 +25,43 @@
 
 **Verification.** A regression test that drives two distinct users through the same plugin route and asserts user B cannot read user A's row via a direct id.
 
+## Assessment 2026-10-08 — NOT resolved by the landed route-access work
+
+Commit `09039a8a3` (`feat(plugins): enforce declared access control on plugin
+routes`, module `src/plugins/route-access.ts`) is adjacent but does NOT close
+this ticket. It makes `requiresAuth` / `permissions` load-bearing at
+`route-access.ts:74-93` — a pre-handler admission check. This ticket is
+explicitly about the *row-level* check that module's own doc declines to do
+(`route-access.ts:35-37`: "They do NOT answer 'may this caller see this row?' —
+that is the handler's job"). The ticket's own Evidence already flagged
+`checkRouteAccess` as "a pre-handler admission check, not authorization over the
+rows the handler returns", so the two concerns never overlapped.
+
+**Still missing:**
+
+1. No shared ownership-assertion helper exists. `grep -rn 'ownership|ownerId|assertOwn|requireOwner' src/plugins/ plugins/` still returns only the
+   doc comment at `types.ts:158`. The Fix direction's first deliverable — a
+   primitive under `src/plugins/` returning `forbiddenResponse`/`unauthorizedResponse` — is unshipped.
+2. No cross-user regression test. The ticket asks for two distinct users
+   driven through one plugin route with user B refused user A's row by direct
+   id. `src/plugins/route-access.test.ts` covers 401/403 admission only;
+   `loader-dispatch.test.ts` covers matching and provenance only.
+3. No shipped plugin route reads a user-scoped row, so the "apply it to the
+   shipped routes" step has no current call site. `grep -rn 'userId|caller|selectFrom|database' plugins/` returns zero hits —
+   every shipped route handler (`plugins/core/{card-battle,rps,dice-roller,native-blake3}`,
+   `plugins/community/{trivia,nsfw-cards}`) is stateless. This lowers urgency,
+   not the ticket: the gap is that the next plugin author has no copy-paste
+   answer, which is exactly what the Fix direction asks for.
+
+**On the solo-mode caveat in `route-access.ts:18-33`:** that documented
+non-change is NOT this ticket's IDOR claim. Solo mode makes the route-level
+fields inert (every request resolves to one super-user holding `*`); the IDOR
+here is a multi-user deployment where an authenticated caller reads another
+user's row through a handler that never scoped by `caller.userId`. They are
+independent, so the solo-mode warning neither satisfies nor excuses this gap.
+
+Status left `Not Started`. No code changed by this assessment.
+
 **Context:**
 
 (fill in before starting: why this change, constraints, alternatives considered.)
