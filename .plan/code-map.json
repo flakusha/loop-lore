@@ -661,6 +661,12 @@
       "source": ".plan/tickets/TASK-harness-skills-runtime.md"
     }
   ],
+  "src/alpine/htmx.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-listener-leak-checker-exempt-top-level-module-registrations-.md"
+    }
+  ],
   "src/anonymity/tor/circuits.ts": [
     {
       "kind": "ticket",
