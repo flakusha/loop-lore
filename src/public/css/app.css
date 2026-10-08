@@ -3829,6 +3829,66 @@ html {
 }
 
 /* ============================================================
+   TEXT-EFFECT OVERLAYS (TASK-text-effects-overlays) — status bar
+   + badge overlays rendered by src/frontend/effects/overlays.ts.
+   Static by design (no keyframes), so prefers-reduced-motion needs
+   no override here; animated effects stay in the fx-* block above.
+   ============================================================ */
+
+.fx-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.fx-status-hpbar {
+  display: inline-block;
+  width: 48px;
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fx-status-hpbar > span {
+  display: block;
+  height: 100%;
+  background: var(--accent-green, #4ade80);
+}
+
+.fx-status-cond {
+  opacity: 0.85;
+}
+
+.fx-condition-icons {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.fx-condition-icon + .fx-condition-icon {
+  margin-left: 2px;
+}
+
+.fx-location-badge {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  padding: 1px 10px;
+  white-space: nowrap;
+}
+
+.fx-time-badge {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+/* ============================================================
    CONVERSATION BRANCHING (FEAT-047)
    Fork-point marker on messages, branch rows in the header
    dropdown + branch panel, merge/delete confirmation modals.
