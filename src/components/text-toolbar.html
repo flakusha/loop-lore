@@ -8,8 +8,13 @@
 
     <div x-data="textToolbar({ target: '#some-textarea', chatId: activeChat })">
       <textarea id="some-textarea"></textarea>
-      {{> text-toolbar.html}}
+      ...then the text-toolbar.html include
     </div>
+
+  The example names the include in prose, never verbatim: resolveIncludes()
+  expands include directives before HTML comments are stripped, so writing
+  the real one inside this component is a direct self-include and 500s every
+  view that pulls in the toolbar.
 
   `chatId` is optional — without it the style-* rows are hidden (they need
   chat context server-side). The component disables itself when the target
