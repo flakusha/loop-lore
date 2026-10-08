@@ -15,7 +15,13 @@ import { randomUUID, } from "node:crypto";
 import { MessageRole, } from "../../../db/enums";
 import { createLogger, } from "../../../logger";
 import { createTestDb, type TestDb, } from "../../../test-utils/create-test-db";
-import { insertActors, insertChats, insertMessages, insertUsers, } from "../../../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertChatBranches,
+  insertChats,
+  insertMessages,
+  insertUsers,
+} from "../../../test-utils/insert-helpers";
 import { ISOLATED, } from "../../../test-utils/isolate-only";
 
 const OWNER_ID = randomUUID();
@@ -113,10 +119,11 @@ async function seedConfirmedMerge(): Promise<string> {
     { parent_id: midId, } as never,
   );
 
+  const branchId = await insertChatBranches(tdb.db, chatId, resultMsgId, `merged-${randomUUID()}`,);
   await finalizeMergeRow(tdb.db, {
     mergeId,
     resultMessageId: resultMsgId,
-    mergedBranchId: "",
+    mergedBranchId: branchId,
     confirmedAt: new Date().toISOString(),
   },);
 
