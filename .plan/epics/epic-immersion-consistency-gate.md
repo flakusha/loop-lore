@@ -7,6 +7,7 @@
 
 
 **Status:** Not Started
+**Status Note:** Not Started — design and acceptance criteria are complete, but none of the six Work Items has code. The ground-truth state this gate reads is itself partially built (`src/rpg/skills`, `src/rpg/stats`, `src/story/items/`, `src/battle/resolution-integration/checks.ts`); the shared state module from `epic-player-state-machine.md` is not implemented, so the rule engine has no single source to check against. No ticket owns any Work Item.
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic
@@ -71,17 +72,55 @@ fiction, preserving story flow; reasons surfaced OOC only on hard-block.
 
 ## Work Items
 
-- [ ] **Claim extraction** — detect action/skill/item/movement claims from user messages (regex + aux).
-- [ ] **Deterministic rule engine** — checks against actor state, skills, inventory, pending failed-check consequences.
-- [ ] **Failed-check enforcement** — consume battle/dice outcomes to constrain follow-up actions.
-- [ ] **LLM classifier (opt-in)** — prose-level immersion audit via aux-pipeline, budget-governed.
-- [ ] **Refusal narration path** — soft-refusal → attempted-action framing into GM/narration generation.
-- [ ] **Config surface + audit** — per-chat severity, per-rule toggles, decision log for review/rollback.
+| # | Work Item | Status | Ticket |
+| - | --------- | ------ | ------ |
+| 1 | Claim extraction - detect action/skill/item/movement claims (regex + aux) | Not Started | none |
+| 2 | Deterministic rule engine - actor state, skills, inventory, pending failed-check consequences | Not Started | none |
+| 3 | Failed-check enforcement - consume battle/dice outcomes to constrain follow-up actions | Not Started | none |
+| 4 | LLM classifier (opt-in) - prose-level audit via aux-pipeline, budget-governed | Not Started | none |
+| 5 | Refusal narration path - soft-refusal to attempted-action framing into GM/narration | Not Started | none |
+| 6 | Config surface + audit - per-chat severity, per-rule toggles, decision log | Not Started | none |
+
+> **Every Work Item is unticketed.** This epic is a design with no implementation
+> vehicle; filing a ticket for it is the prerequisite for any of the above to start.
+
+## Dependencies
+
+- `epic-player-state-machine.md` - the layered state model is the ground truth this
+  gate checks against; not yet implemented
+- `src/regex/` - claim extraction reuses the existing extraction pipeline
+- `src/rpg/skills`, `src/rpg/stats`, `src/rpg/dice` - check sources
+- `src/story/items/` - inventory membership checks
+- `src/battle/resolution-integration/checks.ts` - battle resolution outcomes
+- `epic-actor-turn-skip.md` - the escape hatch offered on `hard-block`
+- `epic-generation-flow-control.md` - budget governance for the classifier
+
+## Related Epics
+
+- `epic-player-state-machine.md` - state layers = ground truth
+- `epic-actor-turn-skip.md` - escape hatch on hard-block
+- `epic-chat-lifecycle-moderation.md` - loop/hallucination protection
+- `epic-narration-pipeline.md` - refusal narration target
+- `epic-battle-integration-gaps.md` - skill-check outcomes
+- `epic-gm-shadow-notes.md` - GM notes integrate with note types
+- `epic-immersion-presentation.md` - narration presentation of refusals
+- `epic-generation-flow-control.md` - classifier budget
+- `epic-narration-actor-separation.md` - `MessageKind` for the OOC notice
+- `epic-social-interaction.md` - NPC reaction to blocked actions
+- `epic-assistant-gm-flows.md` - GM-side narration of refused actions
+- `epic-research-agency-decision.md` - NPC reaction state after a soft-refusal
+
+## Unticketed Gaps
+
+- No ticket file exists for this epic at all; all six Work Items are unowned.
+- The severity ladder has no config surface (`allow`/`annotate`/`soft-refuse`/`hard-block`
+  are design-only).
+- The decision log required by the audit acceptance criterion has no storage table.
 
 ## Non-Goals
 
 - NSFW/content-policy moderation (separate layer, `src/nsfw/`)
-- Authoritative state model implementation (owned by `epic-player-state-machine.md` — this epic consumes it)
+- Authoritative state model implementation (owned by `epic-player-state-machine.md` - this epic consumes it)
 - Retroactive correction of already-accepted messages (message editing/branching territory)
 
 ## Acceptance Criteria

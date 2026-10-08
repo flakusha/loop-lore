@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 316 epics
+**Total:** 317 epics
 
 ## Summary
 
@@ -72,7 +72,7 @@
 | Not Started | Companion, Pet & Mount Systems | Medium | Very High | 0 | [epic-companion-pet-mount.md](/.plan/epics/epic-companion-pet-mount.md) |
 | Not Started | Concurrency & Runtime Benchmarks | High | High | 13 | [epic-concurrency-runtime-benchmarks.md](/.plan/epics/epic-concurrency-runtime-benchmarks.md) |
 | Not Started | Configs Path Resolution — File-Relative Paths + Windows/macOS Parity | High | Medium | 12 | [epic-configs-path-resolution.md](/.plan/epics/epic-configs-path-resolution.md) |
-| In Progress | Content Hashing & Distributed Integrity | High | Large | 5 | [epic-content-hashing-distributed-integrity.md](/.plan/epics/epic-content-hashing-distributed-integrity.md) |
+| Not Started | Content Hashing & Distributed Integrity | High | Large | 5 | [epic-content-hashing-distributed-integrity.md](/.plan/epics/epic-content-hashing-distributed-integrity.md) |
 | In Progress | Continuous Improvement — Lint, TypeCheck, Build, Coverage | High | Medium | 8 | [epic-continuous-improvement.md](/.plan/epics/epic-continuous-improvement.md) |
 | Not Started | Conversation Branching | Medium | Medium | 4 | [epic-conversation-branching.md](/.plan/epics/epic-conversation-branching.md) |
 | Not Started | Core Testing Frameworks | High | Very High | 23 | [epic-core-testing-frameworks.md](/.plan/epics/epic-core-testing-frameworks.md) |
@@ -103,7 +103,7 @@
 | Not Started | Epic 16: Observability | medium | Medium | 4 | [epic-observability-telemetry.md](/.plan/epics/epic-observability-telemetry.md) |
 | Not Started | Epic 25: Deployment Topologies & Packaging — Implementation Plan | medium | Medium | 0 | [epic-deployment-topologies.md](/.plan/epics/epic-deployment-topologies.md) |
 | Not Started | Epic 26: Multi-Instance Reconciliation — Implementation Plan | medium | Medium | 1 | [epic-multi-instance-reconciliation.md](/.plan/epics/epic-multi-instance-reconciliation.md) |
-| In Progress | Epic 27: Data Integrity & ACID Guarantees — Implementation Plan | medium | Medium | 0 | [epic-data-integrity-acid.md](/.plan/epics/epic-data-integrity-acid.md) |
+| Not Started | Epic 27: Data Integrity & ACID Guarantees — Implementation Plan | medium | Medium | 0 | [epic-data-integrity-acid.md](/.plan/epics/epic-data-integrity-acid.md) |
 | In Progress | EPIC-036: Crafting, Memory & Chat Systems | High | Very High | 0 | [epic-crafting-professions.md](/.plan/epics/epic-crafting-professions.md) |
 | Not Started | EPIC-RESEARCH-AGENCY-AFFORDANCE: Verb x Target x Context Affordance Layer | High | Medium | 6 | [epic-research-agency-affordance.md](/.plan/epics/epic-research-agency-affordance.md) |
 | Not Started | EPIC-RESEARCH-AGENCY-DECISION: NPC Decision-Making Stack | High | Large | 5 | [epic-research-agency-decision.md](/.plan/epics/epic-research-agency-decision.md) |
@@ -127,9 +127,9 @@
 | Not Started | Epic: Chat Privacy | Medium | Medium | 10 | [epic-chat-privacy.md](/.plan/epics/epic-chat-privacy.md) |
 | Done | Epic: Config File Separation | High | High | 0 | [epic-config-file-separation.md](/.plan/epics/epic-config-file-separation.md) |
 | In Progress | Epic: Configurable Template System | High | Large | 0 | [epic-config-templates.md](/.plan/epics/epic-config-templates.md) |
-| In Progress | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
-| In Progress | Epic: Context Injection Correctness | medium | Medium | 0 | [epic-context-injection-correctness.md](/.plan/epics/epic-context-injection-correctness.md) |
-| In Progress | Epic: Context Injection Templates | medium | Medium | 0 | [epic-context-injection-templates.md](/.plan/epics/epic-context-injection-templates.md) |
+| Not Started | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
+| Not Started | Epic: Context Injection Correctness | medium | Medium | 0 | [epic-context-injection-correctness.md](/.plan/epics/epic-context-injection-correctness.md) |
+| Not Started | Epic: Context Injection Templates | medium | Medium | 0 | [epic-context-injection-templates.md](/.plan/epics/epic-context-injection-templates.md) |
 | Done | Epic: Cron Scheduler (Internal Scheduled Tasks) | Medium | Medium | 0 | [epic-cron-scheduler.md](/.plan/epics/epic-cron-scheduler.md) |
 | Not Started | Epic: Database Backup & Recovery Infrastructure | medium | Medium | 0 | [epic-database-backup-recovery.md](/.plan/epics/epic-database-backup-recovery.md) |
 | Not Started | Epic: DB as Cold Storage for Extreme-Performance API-Heavy Workloads | Low (speculative — "far-fetched" scenario, only justified by measured need) | Large | 0 | [epic-db-cold-storage-high-perf.md](/.plan/epics/epic-db-cold-storage-high-perf.md) |
@@ -150,7 +150,8 @@
 | Not Started | Epic: Instance Federation — Identity, Switching & Cross-Sync | Medium | High | 0 | [epic-instance-federation.md](/.plan/epics/epic-instance-federation.md) |
 | Done | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
 | In Progress | Epic: Inventory | High | High | 4 | [epic-inventory.md](/.plan/epics/epic-inventory.md) |
-| In Progress | Epic: Items | High | High | 4 | [epic-items.md](/.plan/epics/epic-items.md) |
+| In Progress | Epic: Items | High | High | 3 | [epic-items.md](/.plan/epics/epic-items.md) |
+| Not Started | Epic: Local Multi-Instance Federation — Sender Wiring & Dev Harness | High | High | 0 | [epic-local-multi-instance-federation.md](/.plan/epics/epic-local-multi-instance-federation.md) |
 | Not Started | Epic: Locations | High | High | 5 | [epic-locations.md](/.plan/epics/epic-locations.md) |
 | Not Started | Epic: Lore Knowledge System | High\ | Medium\ | 6 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
 | In Progress | Epic: Memory & Knowledge Systems | High | High | 12 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
@@ -210,7 +211,7 @@
 | Done | Housing System | Medium | Very High | 6 | [epic-housing.md](/.plan/epics/epic-housing.md) |
 | Not Started | I/O Formats | Medium | Medium | 5 | [epic-io-formats.md](/.plan/epics/epic-io-formats.md) |
 | In Progress | Immersion & Presentation | Medium | Medium | 0 | [epic-immersion-presentation.md](/.plan/epics/epic-immersion-presentation.md) |
-| Not Started | Immersion Consistency Gate (Actor-State Blockage & Refusal) | High | Large | 10 | [epic-immersion-consistency-gate.md](/.plan/epics/epic-immersion-consistency-gate.md) |
+| Not Started | Immersion Consistency Gate (Actor-State Blockage & Refusal) | High | Large | 4 | [epic-immersion-consistency-gate.md](/.plan/epics/epic-immersion-consistency-gate.md) |
 | In Progress | Impersonation System | Medium | Med | 2 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
 | Not Started | Implementation Guide | Medium | Medium | 0 | [epic-implementation.md](/.plan/epics/epic-implementation.md) |
 | Not Started | Instant Messaging Integrations | Medium | Medium | 9 | [epic-im-integrations.md](/.plan/epics/epic-im-integrations.md) |
@@ -642,6 +643,10 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Current State Assessment
 
+### Current State Assessment
+
+### Current State Assessment
+
 ### Benchmark CI & Performance Regression Detection
 
 - **Status:** In Progress
@@ -905,11 +910,11 @@ Benchmark Bun's async execution model extensions — Worker threads, `Bun.spawn`
 
 ### Content Hashing & Distributed Integrity
 
-- **Status:** In Progress
+- **Status:** Not Started
 - **Priority:** High
 - **Effort:** Large
 - **Type:** Feature Epic
-- **Tags:** content-hash, integrity, idempotency, dedup, revalidation
+- **Tags:** (none)
 - **File:** `.plan/epics/epic-content-hashing-distributed-integrity.md`
 
 ### Continuous Improvement — Lint, TypeCheck, Build, Coverage
@@ -1194,11 +1199,11 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 
 ### Epic 27: Data Integrity & ACID Guarantees — Implementation Plan
 
-- **Status:** In Progress
+- **Status:** Not Started
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** acid, optimistic-concurrency, format-version, backend-selection, wal
+- **Tags:** (none)
 - **File:** `.plan/epics/epic-data-integrity-acid.md`
 
 ### EPIC-036: Crafting, Memory & Chat Systems
@@ -1426,29 +1431,29 @@ Split the monolithic `config.toml` / `config.yaml` into domain-specific config f
 
 ### Epic: Configuration Extensions — Extensible Enumerations
 
-- **Status:** In Progress
+- **Status:** Not Started
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic / Cross-cutting Framework
-- **Tags:** config, extensibility, enumeration, avatar-emotions
+- **Tags:** (none)
 - **File:** `.plan/epics/epic-config-extensions.md`
 
 ### Epic: Context Injection Correctness
 
-- **Status:** In Progress
+- **Status:** Not Started
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** context-injection, prompt-assembly, group-chat, token-budget
+- **Tags:** (none)
 - **File:** `.plan/epics/epic-context-injection-correctness.md`
 
 ### Epic: Context Injection Templates
 
-- **Status:** In Progress
+- **Status:** Not Started
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** context-injection, templates, prompt-sections, examples, author-note
+- **Tags:** (none)
 - **File:** `.plan/epics/epic-context-injection-templates.md`
 
 ### Epic: Cron Scheduler (Internal Scheduled Tasks)
@@ -1653,6 +1658,18 @@ Inventory system specification — covers item storage, equipment slots, invento
 - **File:** `.plan/epics/epic-items.md`
 
 Items specification — covers item types, properties, interactions, loot tables, and item lifecycle. Supersedes item sections in `docs/spec/actors.md`.
+
+
+### Epic: Local Multi-Instance Federation — Sender Wiring & Dev Harness
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** federation, multi-instance, mesh, sender, consent, dev-harness, config
+- **File:** `.plan/epics/epic-local-multi-instance-federation.md`
+
+Make two loop-lore servers on one machine actually federate. The mesh **receiver** is built, mounted, and tested; the **sender** — the entire trust and replication path — has zero production call sites. Two healthy instances pointed at each other today exchange nothing, silently, because `mesh_peers` is never populated, chat consent can never be granted, and nothing ever triggers a push.
 
 ### Epic: Locations
 
@@ -2622,6 +2639,10 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 
 ### Current State Assessment
 
+### Current State Assessment
+
+### Current State Assessment
+
 ### NSFW Interaction UI
 
 - **Status:** Not Started
@@ -3046,6 +3067,10 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
+### Current State Assessment
+
+### Current State Assessment
+
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3343,4 +3368,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

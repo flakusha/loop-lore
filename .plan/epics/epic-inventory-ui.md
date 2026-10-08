@@ -7,7 +7,7 @@
 
 
 **Status:** Not Started
-**Status Note:** Not Started
+**Status Note:** Not Started — no inventory frontend directory exists (`src/frontend/inventory/` and `src/partials/inventory/` are absent). The trade backend ships (`src/routes/trade/`, `src/services/trade/`) and item CRUD ships (`src/routes/actor-items.ts`, `src/routes/story-items/`), so every capability below is frontend work with a backend to consume.
 **Priority:** P1 — High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -17,7 +17,7 @@
 
 Complete inventory management and trading interface, including item grid/list view, equipment loadout, NPC trading, and player-to-player trading.
 
-> **Backend dependency:** This epic depends on [`epic-item-systems-unification.md`](/epic-item-systems-unification) for the unified item types, trade system, and actor item service that the UI consumes.
+> **Backend dependency:** This epic depends on [`epic-item-systems-unification.md`](./epic-item-systems-unification.md) for the unified item types, trade system, and actor item service that the UI consumes.
 
 ## Core Features
 
@@ -246,7 +246,20 @@ Complete inventory management and trading interface, including item grid/list vi
 | TASK-trading-interface.md | P0       | ⬜ Not Started |
 | TASK-inventory-alpine.md  | P0       | ⬜ Not Started |
 
+## Backend Surfaces Consumed
+
+No inventory frontend directory exists yet. The UI consumes these shipped
+backend surfaces:
+
+- `src/routes/actor-items.ts` — per-actor item CRUD
+- `src/routes/story-items/` — world item definitions + instances
+- `src/routes/trade/` — trade offers, NPC counterparty, shared trade routes
+- `src/services/trade/` — `TradeService` (settlement primitive)
+- `src/services/actor-items/equip.ts` — equip/unequip
+
 ## Files to Create
+
+Planned, does not exist yet:
 
 - `src/frontend/inventory/inventory-grid.ts` — Inventory display
 - `src/frontend/inventory/equipment-slots.ts` — Equipment loadout
@@ -256,6 +269,33 @@ Complete inventory management and trading interface, including item grid/list vi
 
 ## Related Epics
 
-- **Epic Item System** — Backend item system
-- **Epic Trading & Inventory** — Backend trading system
-- **Epic Economy** — Backend economy system
+- `epic-item-systems-unification.md` — backend item system this UI consumes
+- `epic-inventory-system.md` — hub epic for the inventory stack
+- `epic-inventory.md` — actor-side inventory model
+- `epic-items.md` — item definitions and lifecycle
+- `epic-economy-trading.md` — backend economy system (gold, prices, market)
+- `epic-battle-integration-gaps.md` — battle item integration
+- `epic-crafting-professions.md` — repair station integration
+
+## Dependencies
+
+- `epic-item-systems-unification.md` — unified item types, trade service, and
+  actor item service (In Progress)
+- `src/routes/trade/` + `src/services/trade/` — trade backend
+- `src/routes/actor-items.ts` — inventory CRUD backend
+
+## Unticketed Gaps
+
+- Weight / encumbrance calculation: no service computes carried weight; the UI
+  has nothing to display for the weight bar in the layout above.
+- Bulk operations (sell all, trash all) have no backend endpoint.
+- Accessibility criteria (keyboard, screen reader) have no ticket; they are
+  acceptance criteria on this epic only.
+
+## Linked Tasks
+
+- `TASK-inventory-grid.md`
+- `TASK-equipment-slots.md`
+- `TASK-item-details.md`
+- `TASK-trading-interface.md`
+- `TASK-inventory-alpine.md`
