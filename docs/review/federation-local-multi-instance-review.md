@@ -18,7 +18,7 @@ The mesh receiver is finished and correct. Every inbound leg is present, tested,
   - Read endpoints in `src/routes/federation.ts` — `GET /.well-known/nodeinfo` (`:58`), `GET /nodeinfo/2.1` (`:79`), `GET /api/instance-state` (`:104`).
   - Mesh endpoints in `src/routes/federation-mesh.ts` — `POST /api/mesh-reserve` (`:81`), `POST /api/mesh-deliver` (`:163`).
   - Retraction in `src/routes/federation-mesh-retract.ts` — `POST /api/mesh-retract` (`:19`).
-- **Identity** — `canonicalOrigin` normalises peer origins for keying (`src/federation/peer-fetch.ts:64-78`).
+- **Identity** — `canonicalOrigin` normalises peer origins for keying (`src/federation/peer-fetch.ts:64-77`).
 - **Transport crypto** — PSK mesh cipher with per-sender inbound keys (`src/federation/cipher.ts`, `src/federation/peer-keys.ts`), SPKI pinning (`src/federation/spki-pin.ts`).
 - **Reservation lifecycle** — grant / advance / expire (`src/federation/sharing.ts`).
 - **LWW merge** — `receiveDelivery` applies `(clock, content_hash)` last-writer-wins with a stale short-circuit (`src/federation/delivery.ts:41-69`).
