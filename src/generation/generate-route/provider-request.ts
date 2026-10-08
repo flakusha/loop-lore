@@ -14,7 +14,7 @@ import type { DB, } from "../../db/schema";
 import type { ResolvedProvider, } from "../providers/registry";
 import type { GenerateRequest as ProviderRequest, } from "../providers/types";
 import type { GenerationMessage, } from "../types";
-import { gatePluginToolsByRole, } from "./tool-execution";
+import { gatePluginToolsByRole, } from "./tool-gate";
 import type { GenerateRequest, } from "./types";
 
 /**

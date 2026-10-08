@@ -13,5 +13,5 @@
 
 export { handleGenerate, } from "./handler";
 export type { HandleGenerateOpts, } from "./handler";
-export { gatePluginToolsByRole, } from "./tool-execution";
+export { gatePluginToolsByRole, } from "./tool-gate";
 export type { GenerateRequest, } from "./types";
