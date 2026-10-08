@@ -148,6 +148,8 @@
           rows="3"
           maxlength="5000"
           x-model="_customInstructions"
+          x-init="autoResize($el)"
+          @input="autoResize($el)"
           placeholder="Free-text steering for this story. Applied after your account-wide instructions; on conflict these win."
           data-testid="settings-custom-instructions"
         ></textarea>
@@ -705,6 +707,8 @@
                   class="form-input form-textarea"
                   rows="4"
                   x-model="_promptOverrideDraft"
+                  x-init="autoResize($el)"
+                  @input="autoResize($el)"
                   placeholder="Leave empty to use the default above (character / world / registry)"
                   style="font-size: var(--fs-xs); font-family: var(--font-mono, monospace); resize: vertical"
                   data-testid="prompt-template-override"
@@ -842,6 +846,8 @@
           rows="2"
           maxlength="500"
           x-model="_ownershipReason"
+          x-init="autoResize($el)"
+          @input="autoResize($el)"
           placeholder="Why are you transferring ownership?"
           data-testid="ownership-reason"
         ></textarea>

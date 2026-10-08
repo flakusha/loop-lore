@@ -22,19 +22,29 @@ const originalQuerySelector = globals.document.querySelector;
 interface FakeTextarea {
   value: string;
   style: Record<string, string>;
+  dispatchEvent: (event: Event,) => boolean;
 }
 
 let textarea: FakeTextarea;
 let dispatched: { event: string; detail: unknown }[];
+let inputEvents: string[];
 
 /** Minimal textarea twin for the selector-resolved target. */
 function makeTextarea(value: string,): FakeTextarea {
-  return { value, style: {}, };
+  return {
+    value,
+    style: {},
+    dispatchEvent: (event,) => {
+      inputEvents.push(event.type,);
+      return true;
+    },
+  };
 }
 
 beforeEach(() => {
   textarea = makeTextarea("rough draft",);
   dispatched = [];
+  inputEvents = [];
   globals.document.querySelector = (sel: string,) => sel === "#tt-test" ? textarea : null;
 
   globals.apiFetch = () => Promise.resolve(Response.json({ data: { content: "polished", }, },),);
@@ -62,6 +72,8 @@ describe("textToolbar", () => {
 
     expect(textarea.value,).toBe("polished",);
     expect(toolbar.undoDepth,).toBe(1,);
+    // x-model surfaces only sync on a real input event.
+    expect(inputEvents,).toEqual(["input",],);
     expect(dispatched.at(-1,),).toEqual({
       event: "show-toast",
       detail: { type: "success", message: "Prompt improved", },

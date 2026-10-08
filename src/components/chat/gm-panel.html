@@ -95,7 +95,10 @@
       <div class="gm-form-group">
         <textarea
           class="form-input"
+          id="gm-shadow-note-input"
           x-model="newShadowContent"
+          x-init="autoResize($el)"
+          @input="autoResize($el)"
           placeholder="Hidden narrative influence..."
           rows="3"
         ></textarea>
@@ -136,7 +139,10 @@
       <div class="gm-form-group">
         <textarea
           class="form-input"
+          id="gm-whitenote-input"
           x-model="newWhiteneoteContent"
+          x-init="autoResize($el)"
+          @input="autoResize($el)"
           placeholder="Visible GM annotation..."
           rows="3"
         ></textarea>
@@ -200,13 +206,22 @@
         </select>
       </div>
       <div class="gm-form-group">
-        <textarea
-          class="form-input"
-          x-model="entitySeed"
-          placeholder="Entity information gathered from the story..."
-          rows="4"
-          data-testid="gm-entity-seed"
-        ></textarea>
+        <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+          <textarea
+            class="form-input"
+            id="gm-entity-seed"
+            style="flex: 1"
+            x-model="entitySeed"
+            x-init="autoResize($el)"
+            @input="autoResize($el)"
+            placeholder="Entity information gathered from the story..."
+            rows="4"
+            data-testid="gm-entity-seed"
+          ></textarea>
+          <div x-data="textToolbar({ target: '#gm-entity-seed', chatId: activeChat || undefined })">
+            {{> text-toolbar.html }}
+          </div>
+        </div>
       </div>
       <button
         class="btn btn-primary btn-sm gm-full-width"

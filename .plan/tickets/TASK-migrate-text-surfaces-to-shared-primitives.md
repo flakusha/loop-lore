@@ -3,7 +3,7 @@
 
 # TASK: Migrate text surfaces to shared primitives
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-chat-composer-flows
@@ -36,10 +36,20 @@ Apply the extracted primitives (tickets 1–3) to every applicable frontend text
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The mobile composer was refactored onto shared primitives (auto-resize, draft store, text-enhance, text-toolbar) in tickets 1–3. This ticket migrates the remaining chat surfaces to use the same primitives for consistency. Constraints: additive wiring only — no behavior changes to existing flows; each surface must work within its existing Alpine scope (ChatState, gmPanel, gmGuidance, or standalone factory). The text-toolbar include pattern (`{{> text-toolbar.html }}` wrapped in `x-data="textToolbar({ target: '#id', chatId: ... })"`) is the documented approach for enhance/undo/preview. Auto-resize uses `x-init="autoResize($el)"` + `@input="autoResize($el)"` on textareas. Surfaces without a stable id (e.g. wizard fields using `:value` + `@input`) extend the existing handler chain with `autoResize($el)` inline.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete (batch A: chat surfaces)
+- [x] Tests passing
+- [x] Documentation updated
+
+### Batch A — Chat surfaces (this commit)
+
+- [x] Message edit textarea (`message-list.html`) — auto-resize
+- [x] GM guidance (`_gm-guidance-body.html`) — auto-resize + text-toolbar (pilot surface)
+- [x] GM panel (`gm-panel.html`) — auto-resize on shadow/whitenote/entity-seed textareas + toolbar on entity-seed
+- [x] Memory panel (`memory-panel.html`) — auto-resize on create + edit textareas + toolbar on create
+- [x] Chat settings modal (`chat-settings-modal.html`) — auto-resize on custom-instructions, prompt-override, ownership-reason
+- [x] Wizard panel (`wizard-panel.html`) — auto-resize on field textareas (inline in @input handler chain)
+- [x] Sections panel — no textareas present (inputs only), no changes needed

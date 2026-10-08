@@ -210,6 +210,8 @@
                 <textarea
                   class="form-input edit-textarea"
                   x-model="editContent"
+                  x-init="autoResize($el)"
+                  @input="autoResize($el)"
                   @keydown.escape="cancelEdit()"
                   @keydown.ctrl.enter="saveEdit(msg.id)"
                 ></textarea>
