@@ -13,7 +13,7 @@
 **Effort:** High
 **Type:** Feature Task
 **Tags:** rpg, stats, character, combat, foundation
-**Epic:** epic-character-core-system.md
+**Epic:** epic-character-core-system
 
 ## Summary
 

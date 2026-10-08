@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:**: epic-battle-integration-gaps
+**Epic:** epic-battle-integration-gaps
 **Related**:
 
 ## Summary

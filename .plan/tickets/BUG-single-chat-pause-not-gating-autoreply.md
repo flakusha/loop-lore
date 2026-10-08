@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-generation-flow-control.md
+**Epic:** epic-generation-flow-control
 **Status:** Done
 **Status Note:** (67c170fc3) — closed 2026-09-15
 **Priority:** Medium

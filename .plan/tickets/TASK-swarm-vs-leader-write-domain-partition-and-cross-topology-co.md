@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-multi-instance-reconciliation.md
+**Epic:** epic-multi-instance-reconciliation
 
 **Summary:**
 

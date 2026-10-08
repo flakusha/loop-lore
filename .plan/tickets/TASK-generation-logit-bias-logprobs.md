@@ -10,7 +10,7 @@
 - [ ] Biasing a token suppresses/promotes it (stubbed-provider test)
 - [ ] Unsupported provider returns 422 naming the parameter
 - [ ] Returned logprobs attach to message debug payload; viewer toggle renders them
-**Epic:** epic-provider-plugin-ecosystem.md
+**Epic:** epic-provider-plugin-ecosystem
 **Type:** Feature | **Priority:** Low | **Effort:** S
 
 ## Problem

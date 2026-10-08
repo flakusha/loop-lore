@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** Feature Task / Test Infrastructure
 **Tags:** testing, e2e, playwright, config
-**Epic:** epic-testing-qa.md
+**Epic:** epic-testing-qa
 
 ## Summary
 

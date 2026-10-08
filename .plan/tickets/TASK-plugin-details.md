@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** Feature Task
 **Tags:** plugin, frontend, ui, details
-**Epic:** epic-plugin-management-ui.md
+**Epic:** epic-plugin-management-ui
 
 ## Summary
 

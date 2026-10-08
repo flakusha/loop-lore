@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** TASK
 **Tags:** rag, email, imap
-**Epic:** epic-rag-document-processing.md
+**Epic:** epic-rag-document-processing
 **Parent:** TASK-rag-context-enrichment (umbrella)
 
 ## Summary

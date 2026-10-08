@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** nsfw, frontend, alpine, logic
-**Epic:** epic-nsfw-ui.md
+**Epic:** epic-nsfw-ui
 **Also Linked:** epic-frontend-backend-integration.md
 **Superseded By:** TASK-nsfw-frontend-integration.md (comprehensive integration task)
 

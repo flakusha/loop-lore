@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:**: epic-platform-integrations
+**Epic:** epic-platform-integrations
 **Related**:
 
 ## Summary

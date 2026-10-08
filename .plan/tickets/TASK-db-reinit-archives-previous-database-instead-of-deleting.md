@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** Task
 **Tags:** backup, reliability, db, reinit, data-stability
-**Epic:** epic-database-backup-recovery.md
+**Epic:** epic-database-backup-recovery
 **Related:** TASK-backup-restore-reliability-and-self-healing-for-federated-de.md, TASK-sqlite-backup-research.md
 
 ## Summary

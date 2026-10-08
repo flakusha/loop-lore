@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: backup, postgresql, infra
 **Assignee**:
-**Epic:**: epic-database-backup-recovery
+**Epic:** epic-database-backup-recovery
 **Related**: TASK-BKP-001-sqlite-automated-backup, TASK-BKP-002-recovery-validation
 
 ## Summary

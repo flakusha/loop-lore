@@ -13,7 +13,7 @@
 **Effort:** Large
 **Type:** Task
 **Tags:** cross-platform, windows, macos, portability, build
-**Epic:** epic-cross-platform-portability.md
+**Epic:** epic-cross-platform-portability
 
 ## Description
 

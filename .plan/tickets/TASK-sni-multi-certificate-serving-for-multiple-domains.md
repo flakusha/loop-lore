@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-certificate-and-tls-management.md
+**Epic:** epic-certificate-and-tls-management
 
 ## Summary
 

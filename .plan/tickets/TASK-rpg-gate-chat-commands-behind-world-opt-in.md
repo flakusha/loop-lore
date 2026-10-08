@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-mechanics-governance.md
+**Epic:** epic-mechanics-governance
 
 ## Summary
 

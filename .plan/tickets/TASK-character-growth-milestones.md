@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-character-core-system.md
+**Epic:** epic-character-core-system
 
 ## Summary
 

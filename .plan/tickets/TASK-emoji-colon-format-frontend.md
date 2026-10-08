@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-frontend-emoji-reactions.md
+**Epic:** epic-frontend-emoji-reactions
 **Status:** Not Started
 **Priority:** Medium
 

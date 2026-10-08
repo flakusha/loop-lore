@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Low
-**Epic:** epic-docs-reconciliation.md
+**Epic:** epic-docs-reconciliation
 
 ## Summary
 

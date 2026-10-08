@@ -13,7 +13,7 @@
 **Status**: Not Started
 **Priority**: medium
 **Tags**: nsfw, rpg, game-mechanics
-**Epic:**: epic-nsfw-game-mechanics
+**Epic:** epic-nsfw-game-mechanics
 
 ## Summary
 

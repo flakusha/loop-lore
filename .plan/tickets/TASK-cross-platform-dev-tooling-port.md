@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** cross-platform, windows, macos, tooling, scripts, worktree
-**Epic:** epic-cross-platform-portability.md
+**Epic:** epic-cross-platform-portability
 
 ## Description
 

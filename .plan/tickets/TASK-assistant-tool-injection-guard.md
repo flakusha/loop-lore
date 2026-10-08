@@ -13,7 +13,7 @@
 **Effort:** High
 **Type:** Feature Task (security)
 **Tags:** assistant, prompt-injection, security, sandbox, capability-matrix, aux-llm-judge, hardening
-**Epic:** epic-assistant-gm-flows.md
+**Epic:** epic-assistant-gm-flows
 
 ## Summary
 

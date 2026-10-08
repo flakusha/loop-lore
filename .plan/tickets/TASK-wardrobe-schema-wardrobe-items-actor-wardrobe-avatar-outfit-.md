@@ -12,7 +12,7 @@
 **Status Note:** completed 2026-10-01
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-wardrobe-avatar-variants.md
+**Epic:** epic-wardrobe-avatar-variants
 
 ## Summary
 

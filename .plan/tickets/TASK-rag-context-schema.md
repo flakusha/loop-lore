@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** TASK
 **Tags:** rag, schema, ingestion
-**Epic:** epic-rag-document-processing.md
+**Epic:** epic-rag-document-processing
 **Parent:** TASK-rag-context-enrichment (umbrella)
 
 ## Summary

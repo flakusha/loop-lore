@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-email-integration.md
+**Epic:** epic-email-integration
 
 **Summary:**
 

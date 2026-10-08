@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
-**Epic:** epic-api-governance.md
+**Epic:** epic-api-governance
 
 ## Summary
 

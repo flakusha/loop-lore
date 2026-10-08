@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** small
-**Epic:** epic-frontend-headers-management.md
+**Epic:** epic-frontend-headers-management
 
 ## Summary
 

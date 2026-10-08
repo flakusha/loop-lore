@@ -15,7 +15,7 @@
 **Priority**: high
 **Tags**: schemas, nsfw, rating
 **Assignee**:
-**Epic:**: epic-shared-schemas
+**Epic:** epic-shared-schemas
 **Related**: TASK-nsfw-rating-enforcement
 
 ## Summary

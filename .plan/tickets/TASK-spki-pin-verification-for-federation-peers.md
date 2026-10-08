@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-certificate-and-tls-management.md
+**Epic:** epic-certificate-and-tls-management
 **Related:** TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl
 
 ## Summary

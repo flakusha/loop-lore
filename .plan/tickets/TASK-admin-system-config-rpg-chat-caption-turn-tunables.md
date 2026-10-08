@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-frontend-admin.md
+**Epic:** epic-frontend-admin
 
 ## Summary
 
