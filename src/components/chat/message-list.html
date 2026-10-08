@@ -697,6 +697,13 @@
     <button @click="window.forkFromMessage(_contextMenu.messageId); closeContextMenu()" data-testid="context-menu-fork">
       &#11010; {{{t("branches.fromHere")}}}
     </button>
+    <button
+      x-show="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && m.role === 'assistant'; })()"
+      @click="window.openBranchMerge([{ tipMessageId: _contextMenu.messageId, branchId: null }]); closeContextMenu()"
+      data-testid="context-menu-merge-from"
+    >
+      &#8617; {{{t("branches.mergeFromHere")}}}
+    </button>
     <button @click="runMessageAiAction(_contextMenu.messageId, 'summarize'); closeContextMenu()">
       📝 {{{t("chats.aiSummarize")}}}
     </button>
@@ -886,6 +893,14 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost btn-sm" @click="closeVariants()">Cancel</button>
+        <button
+          class="btn btn-primary btn-sm"
+          @click="window.openBranchMerge(_variants.map(v => ({ tipMessageId: v.id, branchId: null }))); closeVariants()"
+          :disabled="_variants.length < 2"
+          data-testid="variants-merge-selected"
+        >
+          {{{t("branches.mergeVariants")}}}
+        </button>
       </div>
     </div>
   </div>

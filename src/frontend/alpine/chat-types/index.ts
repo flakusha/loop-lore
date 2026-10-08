@@ -9,6 +9,17 @@ export type { GmConfig, GmGuidance, GmParticipant, GmTurnPriority, } from "./gm"
 export type { ChatLocationState, } from "./location-state";
 export type { AuditAction, AuditEntry, MemoryEntry, MemoryPanelState, } from "./memory";
 export type { ChatMemoryState, } from "./memory-state";
+export type {
+  ChatMergeState,
+  MergeConfirmResult,
+  MergeContinueResult,
+  MergeDraftMessage,
+  MergeHunk,
+  MergePreviewResult,
+  MergeSourceTip,
+  MergeStep,
+  MergeTokenEstimate,
+} from "./merge-state";
 export type { ChatMessageSearchState, } from "./message-search-state";
 export type {
   GenerationDetail,

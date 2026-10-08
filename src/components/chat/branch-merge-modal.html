@@ -1,0 +1,475 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Branch merge wizard modal (FEA-2026-047). Four steps: sources → mode →
+  preview → confirm. Mounted beside branch-list-panel.html so it survives all
+  layouts. Reads $store.ui + window helpers — never chatState scope.
+-->
+<div
+  x-data="{
+    step: 'sources',
+    sources: [],
+    mode: null,
+    preview: null,
+    previewLoading: false,
+    error: null,
+    conflictChoices: new Map(),
+    draftEdits: [],
+    branchName: '',
+    activate: true,
+    mergeId: null,
+
+    init() {
+      this.$watch('$store.ui.mergeModalOpen', (open) => {
+        if (open) this.resetWizard();
+      });
+    },
+
+    resetWizard() {
+      this.step = 'sources';
+      this.sources = [];
+      this.mode = null;
+      this.preview = null;
+      this.previewLoading = false;
+      this.error = null;
+      this.conflictChoices = new Map();
+      this.draftEdits = [];
+      this.branchName = '';
+      this.activate = true;
+      this.mergeId = null;
+    },
+
+    open(sources) {
+      if (sources && sources.length >= 2) {
+        this.sources = sources;
+      }
+      this.resetWizard();
+      this.$store.ui.mergeModalOpen = true;
+    },
+
+    close() {
+      this.$store.ui.mergeModalOpen = false;
+    },
+
+    get canProceedToMode() {
+      return this.sources.length >= 2;
+    },
+
+    get canProceedToPreview() {
+      return this.mode !== null;
+    },
+
+    get canConfirm() {
+      if (!this.preview) return false;
+      if (this.preview.kind === 'overlay') {
+        return this.preview.hunks.every((h, i) => h.status !== 'conflict' || this.conflictChoices.has(i));
+      }
+      return this.draftEdits.length > 0;
+    },
+
+    get hasUnresolvedConflicts() {
+      if (!this.preview || this.preview.kind !== 'overlay') return false;
+      return this.preview.hunks.some((h, i) => h.status === 'conflict' && !this.conflictChoices.has(i));
+    },
+
+    get defaultBranchName() {
+      return 'Merged ' + this.sources.length;
+    },
+
+    async initiateMerge() {
+      if (!this.canProceedToPreview) return;
+      this.error = null;
+      try {
+        const chatId = this.$store.chat?.currentChat?.id;
+        if (!chatId) return;
+        const res = await window.apiFetch(`/api/v1/chats/${chatId}/branch-merges`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: this.mode, sourceTips: this.sources }),
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          this.error = body.error?.message || `HTTP ${res.status}`;
+          return;
+        }
+        const body = await res.json();
+        this.mergeId = body.data?.mergeId;
+        if (!this.mergeId) {
+          this.error = 'No mergeId returned';
+          return;
+        }
+        this.step = 'preview';
+        await this.loadPreview();
+      } catch (e) {
+        this.error = String(e);
+      }
+    },
+
+    async loadPreview(regenerate = false) {
+      if (!this.mergeId) return;
+      this.previewLoading = true;
+      this.error = null;
+      try {
+        const chatId = this.$store.chat?.currentChat?.id;
+        if (!chatId) return;
+        const res = await window.apiFetch(`/api/v1/chats/${chatId}/branch-merges/${this.mergeId}/preview`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(regenerate ? { regenerate: true } : {}),
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          this.error = body.error?.message || `HTTP ${res.status}`;
+          return;
+        }
+        const body = await res.json();
+        this.preview = body.data;
+        if (this.preview?.kind === 'llm' && this.preview.draft) {
+          this.draftEdits = this.preview.draft.map(m => ({ role: m.role, content: m.content }));
+        }
+        this.conflictChoices = new Map();
+      } catch (e) {
+        this.error = String(e);
+      } finally {
+        this.previewLoading = false;
+      }
+    },
+
+    async rerollPreview() {
+      await this.loadPreview(true);
+    },
+
+    setConflictChoice(hunkIndex, resolution) {
+      this.conflictChoices.set(hunkIndex, resolution);
+    },
+
+    async confirmMerge() {
+      if (!this.canConfirm || !this.mergeId) return;
+      this.error = null;
+      try {
+        const chatId = this.$store.chat?.currentChat?.id;
+        if (!chatId) return;
+        const body = { activate: this.activate };
+        if (this.branchName) body.branchName = this.branchName;
+        if (this.preview?.kind === 'llm' && this.draftEdits.length > 0) {
+          body.content = this.draftEdits.map(m => ({ role: m.role, content: m.content }));
+        }
+        if (this.preview?.kind === 'overlay' && this.conflictChoices.size > 0) {
+          body.conflictChoices = Array.from(this.conflictChoices.entries()).map(([hunkIndex, resolution]) => ({ hunkIndex, resolution }));
+        }
+        const res = await window.apiFetch(`/api/v1/chats/${chatId}/branch-merges/${this.mergeId}/confirm`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          this.error = body.error?.message || `HTTP ${res.status}`;
+          return;
+        }
+        this.$store.ui.mergeModalOpen = false;
+        window.loadBranches?.();
+        window.loadMessages?.();
+      } catch (e) {
+        this.error = String(e);
+      }
+    },
+
+    async continueFromMerge(prompt) {
+      if (!this.mergeId) return;
+      this.error = null;
+      try {
+        const chatId = this.$store.chat?.currentChat?.id;
+        if (!chatId) return;
+        const res = await window.apiFetch(`/api/v1/chats/${chatId}/branch-merges/${this.mergeId}/continue`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(prompt ? { prompt } : {}),
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          this.error = body.error?.message || `HTTP ${res.status}`;
+          return;
+        }
+        this.$store.ui.mergeModalOpen = false;
+        window.loadMessages?.();
+      } catch (e) {
+        this.error = String(e);
+      }
+    },
+
+    reorderSource(index, direction) {
+      const newIndex = index + direction;
+      if (newIndex < 0 || newIndex >= this.sources.length) return;
+      const arr = [...this.sources];
+      const [moved] = arr.splice(index, 1);
+      arr.splice(newIndex, 0, moved);
+      this.sources = arr;
+    },
+
+    removeSource(index) {
+      if (index < 0 || index >= this.sources.length) return;
+      this.sources = this.sources.filter((_, i) => i !== index);
+    },
+  }"
+  x-show="$store.ui.mergeModalOpen"
+  @keydown.escape.window="close()"
+  x-cloak
+  data-testid="branch-merge-wizard-modal"
+>
+  <div class="modal-overlay" @click.self="close()">
+    <div class="modal-panel" role="dialog" aria-modal="true" :aria-label="t('branches.mergeTitle')">
+      <div class="modal-header">
+        <h3 x-text="t('branches.mergeTitle')"></h3>
+        <button class="btn-icon btn-xs" @click="close()" :aria-label="t('common.close')">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Step 1: Sources review -->
+        <div x-show="step === 'sources'" data-testid="merge-step-sources">
+          <p class="modal-hint" x-text="t('branches.mergeSourcesHint')"></p>
+          <template x-for="(source, idx) in sources" :key="source.tipMessageId">
+            <div class="merge-source-row" data-testid="merge-source-row">
+              <span class="merge-ordinal" x-text="idx + 1"></span>
+              <div class="merge-source-info">
+                <span x-text="source.branchId ? 'Branch' : 'Variant'"></span>
+                <span x-text="source.tipMessageId.slice(0, 8)"></span>
+              </div>
+              <div class="merge-source-actions">
+                <button class="btn-icon btn-xs" @click="reorderSource(idx, -1)" :disabled="idx === 0">↑</button>
+                <button class="btn-icon btn-xs" @click="reorderSource(idx, 1)" :disabled="idx === sources.length - 1">
+                  ↓
+                </button>
+                <button class="btn-icon btn-xs" @click="removeSource(idx)">✕</button>
+              </div>
+            </div>
+          </template>
+          <div x-show="sources.length < 2" class="modal-hint" x-text="t('branches.mergeNeedTwoSources')"></div>
+        </div>
+
+        <!-- Step 2: Mode picker -->
+        <div x-show="step === 'mode'" data-testid="merge-step-mode">
+          <p class="modal-hint" x-text="t('branches.mergeModeHint')"></p>
+          <div class="merge-mode-list">
+            <label class="merge-mode-card" data-testid="merge-mode-combined">
+              <input type="radio" name="merge-mode" value="combined" x-model="mode">
+              <div>
+                <div class="merge-mode-title" x-text="t('branches.mergeMode.combined.title')"></div>
+                <div class="merge-mode-desc" x-text="t('branches.mergeMode.combined.desc')"></div>
+                <span class="merge-mode-tag" x-text="t('branches.mergeMode.aiAssisted')"></span>
+              </div>
+            </label>
+            <label class="merge-mode-card" data-testid="merge-mode-second-over-first">
+              <input type="radio" name="merge-mode" value="second-over-first" x-model="mode">
+              <div>
+                <div class="merge-mode-title" x-text="t('branches.mergeMode.secondOverFirst.title')"></div>
+                <div class="merge-mode-desc" x-text="t('branches.mergeMode.secondOverFirst.desc')"></div>
+                <span class="merge-mode-tag" x-text="t('branches.mergeMode.deterministic')"></span>
+              </div>
+            </label>
+            <label class="merge-mode-card" data-testid="merge-mode-first-over-second">
+              <input type="radio" name="merge-mode" value="first-over-second" x-model="mode">
+              <div>
+                <div class="merge-mode-title" x-text="t('branches.mergeMode.firstOverSecond.title')"></div>
+                <div class="merge-mode-desc" x-text="t('branches.mergeMode.firstOverSecond.desc')"></div>
+                <span class="merge-mode-tag" x-text="t('branches.mergeMode.deterministic')"></span>
+              </div>
+            </label>
+            <label class="merge-mode-card" data-testid="merge-mode-fresh-discovery">
+              <input type="radio" name="merge-mode" value="fresh-discovery" x-model="mode">
+              <div>
+                <div class="merge-mode-title" x-text="t('branches.mergeMode.freshDiscovery.title')"></div>
+                <div class="merge-mode-desc" x-text="t('branches.mergeMode.freshDiscovery.desc')"></div>
+                <span class="merge-mode-tag" x-text="t('branches.mergeMode.aiAssisted')"></span>
+              </div>
+            </label>
+            <label class="merge-mode-card" data-testid="merge-mode-single-plus-glean">
+              <input type="radio" name="merge-mode" value="single-plus-glean" x-model="mode">
+              <div>
+                <div class="merge-mode-title" x-text="t('branches.mergeMode.singlePlusGlean.title')"></div>
+                <div class="merge-mode-desc" x-text="t('branches.mergeMode.singlePlusGlean.desc')"></div>
+                <span class="merge-mode-tag" x-text="t('branches.mergeMode.aiAssisted')"></span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 3: Preview / diff -->
+        <div x-show="step === 'preview'" data-testid="merge-step-preview">
+          <div x-show="previewLoading" data-testid="merge-preview-loading">
+            <span class="spinner"></span>
+            <span x-text="t('branches.mergePreviewLoading')"></span>
+          </div>
+          <div x-show="!previewLoading && preview">
+            <!-- LLM mode: editable draft -->
+            <template x-if="preview?.kind === 'llm'">
+              <div data-testid="merge-preview-llm">
+                <div
+                  class="merge-token-chip"
+                  x-text="t('branches.mergeTokenEstimate') + ': ' + (preview?.tokenEstimate?.sharedPrefix ?? 0)"
+                >
+                </div>
+                <div x-show="preview?.truncated" class="merge-warning" x-text="t('branches.mergeTruncated')"></div>
+                <template x-for="(msg, idx) in draftEdits" :key="idx">
+                  <div class="merge-draft-row" data-testid="merge-draft-row">
+                    <select x-model="msg.role">
+                      <option value="assistant" x-text="t('branches.mergeRole.assistant')"></option>
+                      <option value="user" x-text="t('branches.mergeRole.user')"></option>
+                      <option value="character" x-text="t('branches.mergeRole.character')"></option>
+                    </select>
+                    <textarea x-model="msg.content" rows="3"></textarea>
+                  </div>
+                </template>
+                <button class="btn btn-ghost btn-sm" @click="rerollPreview()" data-testid="merge-reroll">
+                  ↻ <span x-text="t('branches.mergeReroll')"></span>
+                </button>
+              </div>
+            </template>
+            <!-- Overlay mode: diff with conflicts -->
+            <template x-if="preview?.kind === 'overlay'">
+              <div data-testid="merge-preview-overlay">
+                <template x-for="(hunk, idx) in preview?.hunks ?? []" :key="idx">
+                  <div class="merge-hunk" :class="'merge-hunk-' + hunk.status" data-testid="merge-hunk">
+                    <div class="merge-hunk-header">
+                      <span x-text="t('branches.mergeHunk.' + hunk.status)"></span>
+                    </div>
+                    <div class="merge-hunk-body">
+                      <template x-if="hunk.status === 'conflict'">
+                        <div class="merge-conflict-actions">
+                          <button
+                            class="btn btn-xs"
+                            @click="setConflictChoice(idx, 'base')"
+                            x-text="t('branches.mergeConflict.base')"
+                          >
+                          </button>
+                          <button
+                            class="btn btn-xs"
+                            @click="setConflictChoice(idx, 'overlay')"
+                            x-text="t('branches.mergeConflict.overlay')"
+                          >
+                          </button>
+                          <button
+                            class="btn btn-xs"
+                            @click="setConflictChoice(idx, 'manual')"
+                            x-text="t('branches.mergeConflict.manual')"
+                          >
+                          </button>
+                        </div>
+                      </template>
+                      <pre x-text="hunk.result?.join('\n') ?? hunk.base.join('\n')"></pre>
+                    </div>
+                  </div>
+                </template>
+                <div
+                  x-show="hasUnresolvedConflicts"
+                  class="merge-warning"
+                  x-text="t('branches.mergeUnresolvedConflicts')"
+                >
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- Step 4: Confirm -->
+        <div x-show="step === 'confirm'" data-testid="merge-step-confirm">
+          <div class="merge-confirm-row">
+            <label x-text="t('branches.mergeBranchName')"></label>
+            <input
+              type="text"
+              x-model="branchName"
+              :placeholder="defaultBranchName"
+              maxlength="120"
+              data-testid="merge-branch-name-input"
+            >
+          </div>
+          <div class="merge-confirm-row">
+            <label>
+              <input type="checkbox" x-model="activate" data-testid="merge-activate-toggle">
+              <span x-text="t('branches.mergeActivate')"></span>
+            </label>
+          </div>
+          <div
+            class="merge-confirm-summary"
+            x-text="t('branches.mergeSummary') + ': ' + sources.length + ' sources, mode ' + mode"
+          >
+          </div>
+        </div>
+
+        <!-- Error display -->
+        <div x-show="error" class="merge-error" x-text="error" data-testid="merge-error"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost btn-sm" @click="close()" x-text="t('common.cancel')"></button>
+        <button
+          class="btn btn-ghost btn-sm"
+          x-show="step === 'sources'"
+          @click="step = 'mode'"
+          :disabled="!canProceedToMode"
+          data-testid="merge-sources-next"
+          x-text="t('common.next')"
+        >
+        </button>
+        <button
+          class="btn btn-ghost btn-sm"
+          x-show="step === 'mode'"
+          @click="step = 'sources'"
+          data-testid="merge-mode-back"
+          x-text="t('common.back')"
+        >
+        </button>
+        <button
+          class="btn btn-primary btn-sm"
+          x-show="step === 'mode'"
+          @click="initiateMerge()"
+          :disabled="!canProceedToPreview"
+          data-testid="merge-mode-next"
+          x-text="t('common.next')"
+        >
+        </button>
+        <button
+          class="btn btn-ghost btn-sm"
+          x-show="step === 'preview'"
+          @click="step = 'mode'"
+          data-testid="merge-preview-back"
+          x-text="t('common.back')"
+        >
+        </button>
+        <button
+          class="btn btn-primary btn-sm"
+          x-show="step === 'preview'"
+          @click="step = 'confirm'"
+          :disabled="!canConfirm"
+          data-testid="merge-preview-next"
+          x-text="t('common.next')"
+        >
+        </button>
+        <button
+          class="btn btn-ghost btn-sm"
+          x-show="step === 'confirm'"
+          @click="step = 'preview'"
+          data-testid="merge-confirm-back"
+          x-text="t('common.back')"
+        >
+        </button>
+        <button
+          class="btn btn-primary btn-sm"
+          x-show="step === 'confirm'"
+          @click="confirmMerge()"
+          :disabled="!canConfirm"
+          data-testid="merge-confirm"
+          x-text="t('branches.mergeConfirmButton')"
+        >
+        </button>
+        <button
+          class="btn btn-ghost btn-sm"
+          x-show="step === 'confirm'"
+          @click="continueFromMerge()"
+          data-testid="merge-continue"
+          x-text="t('branches.mergeContinue')"
+        >
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
