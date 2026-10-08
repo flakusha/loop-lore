@@ -84,6 +84,12 @@ export interface InfoBubbleState {
  * Alpine entry point (`x-data="infoBubble({ helpKey })"`).
  * @param opts
  */
+type InfoBubbleFactory = typeof infoBubble;
+declare global {
+  // Ambient registration consumed by Alpine x-data="infoBubble()".
+  var infoBubble: InfoBubbleFactory;
+}
+
 export function infoBubble(opts: InfoBubbleOptions = {},): InfoBubbleState {
   return {
     helpKey: opts.helpKey ?? "",
