@@ -3,12 +3,17 @@
 
 # TASK: Autonomy rate governor for LLM actors
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Governance layer for autonomous character/NPC/GM LLM actions — deny-by-default governor, per-actor and per-user budgets, mandatory cooldown jitter, kill switch, per-actor cost accounting, and a dev-gated unlimited mode. Closed as a duplicate: the governor shipped under `TASK-autonomy-rate-governor` (Done), which covers four of the six criteria below.
+**Context:** Filed twice under `epic-actor-autonomy-story-drive`. `TASK-autonomy-rate-governor.md` (git issue `44dc2a8`, **Done**) implements the same governance layer in `src/autonomy/governor/`; the Duplicate-of section below carries the file:symbol evidence. Two criteria — global generation pause and per-actor cost ledger — are genuinely unmet and are NOT tracked by that duplicate; the registry note below says where each one lives.
+**Acceptance Criteria:**
+- [x] Ungoverned dispatch path is impossible: generation pipeline rejects autonomous actions lacking governor grant (tested).
+- [x] Budget exhaustion denies gracefully (actor idles, no error spam); partial-window refill verified.
+- [x] Jitter spread verified statistically in tests; zero-jitter only via explicit config.
+- [ ] Kill switch stops mid-loop within one action; unlimited mode refused without dev flag.
+- [ ] Cost ledger queryable per actor/world/window.
 
 
-**Status:** Wontfix
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-actor-autonomy-story-drive
@@ -73,8 +78,10 @@ and its firing counterpart). That knob is owned by
 `TASK-autonomy-config-surface.md` (Done) and is exercised by this epic's
 `TASK-autonomy-deterministic-turns` (open), not by this file.
 
-Wontfix recorded 2026-10-02; `**Epic:**` corrected from the non-existent id
-`epic-actor-autonomy-story-drive.md` to `epic-actor-autonomy-story-drive`. This is a
+`Wontfix` recorded 2026-10-02; `**Epic:**` corrected from the non-existent id
+`epic-actor-autonomy-story-drive.md` to `epic-actor-autonomy-story-drive`. Status
+history: `Wontfix` from 2026-10-02 until the 2026-10-08 registry close, `Done`
+since and permanently — see the registry note below. This is a
 close-as-duplicate, not a claim that the subsystem is finished: the two unticked
 boxes are genuinely unmet and are left visible rather than checked off.
 
@@ -104,8 +111,19 @@ boxes are genuinely unmet and are left visible rather than checked off.
   on `GenerationResult.tokenUsage` (line 35), computed per request and never joined
   to a per-actor ledger.
 
-Both gaps belong in a fresh ticket filed against `TASK-autonomy-rate-governor`,
-not here — re-filing them under this epic is what created the duplicate in the
-first place.
+Both gaps were routed out to a fresh ticket rather than re-filed under this
+epic — re-filing them here is what created the duplicate in the first place. That
+ticket is git issue `4cafdcf`; see the registry note below.
 
-**Registry note:** git issue `995a82c` closed 2026-10-08 during issue reconciliation (registry tip: 4d8cc4ace). The git issue registry has no `Wontfix` state, so the close forced `Done`; the status was restored to `Wontfix` here because this ticket was abandoned as a duplicate — the two unticked acceptance boxes above are genuinely unmet and were never shipped.
+**Registry note:** git issue `995a82c` closed 2026-10-08 during issue reconciliation (registry tip: 4d8cc4ace). The git issue registry is binary open-or-closed and has no `Wontfix` state, so `giwt sync` maps a closed issue to `Done` unconditionally and rewrites any non-done `.md` status line back to `Done` (`checkMdStatusDrift`, `sync-reconcile-checks.ts`). `Done` is therefore this ticket's permanent status: do NOT reset it to `Wontfix`, `Not Started`, or anything else — sync flips it back on the next run, and the flip-flop has cost three passes.
+
+`Done` here means *closed as a duplicate*, not *the work shipped*. The governor shipped under `TASK-autonomy-rate-governor` (Done), which covers four of the six criteria above. The two unticked boxes are genuinely unmet and were never shipped by anyone. Where each one lives:
+
+Both gaps were carried into git issue `4cafdcf` (open, filed 2026-10-08, titled "autonomy cost ledger kill switch"), whose body names this ticket as the source of its open acceptance criteria. It is a registry-side issue only: no `.plan/tickets/` `.md` backs it yet, so `plan sync` reports it as an orphan/foreign issue and it will not surface in the epic roster until its `.md` lands.
+
+- **Global generation pause (kill switch).** `TASK-global-generation-pause-kill-switch.md` (**Not Started**, epic-generation-flow-control) owns the shared `system_config` pause key that this file's Direction item 4 consumes. The autonomy-side half of it is in `4cafdcf`.
+- **Per-actor cost ledger.** Tracked by `4cafdcf` only.
+
+The boxes stay unticked deliberately so this `Done` cannot be misread as subsystem completion.
+
+**Resolved:** 2026-10-08 registry-driven close: git issue 995a82c (registry tip: 4d8cc4ace Konstantin Fedotov Close issue)

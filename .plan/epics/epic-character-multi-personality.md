@@ -9,7 +9,7 @@
 **Effort:** Medium
 **Type:** Feature Epic
 **Tags:** assistant, personality, presets, character, gm, tone-of-voice, scenario
-**Related:** epic-character-core-system, epic-character-internal-traits, epic-character-multi-personality-system, epic-assistant-gm-flows, epic-aux-enrichment-pipeline, epic-prompt-template-registry
+**Related:** `epic-character-core-system.md`, `epic-character-internal-traits.md`, `epic-character-multi-personality-system.md`, `epic-assistant-gm-flows.md`, `epic-aux-enrichment-pipeline.md`, `epic-prompt-template-registry.md`
 
 **Overview:**
 
@@ -135,3 +135,25 @@ appropriate block:
 - TASK-assistant-personality-composer-integration
 - TASK-assistant-personality-drift-aux-advisory
 - TASK-assistant-personality-continuity-across-chats
+
+## Acceptance Criteria
+
+- [ ] 8-12 canonical personality presets defined with voice, tone, and scenario seeds
+- [ ] Per-chat and per-world assistant-personality override functional
+- [ ] Character-as-assistant selector picks an existing character card as GM voice
+- [ ] System-prompt composer emits preset block or character persona block based on active state
+- [ ] Personality continuity persists per-user default across chats
+- [ ] Auxiliary LLM personality-drift advisory emits when assistant speech diverges from chosen voice
+- [ ] Reset-to-default personality command restores server-default behavior
+- [ ] Assistant personality editor UI provides preset grid + character picker
+- [ ] Tests cover server-side composer, aux drift, and persona continuity
+
+## Files (proposed)
+
+- `src/assistant/personality/presets.ts` — canonical personality preset catalog
+- `src/assistant/personality/selector.ts` — per-chat/world personality override
+- `src/assistant/personality/composer.ts` — system-prompt composer integration
+- `src/assistant/personality/drift.ts` — auxiliary LLM drift advisory
+- `src/assistant/personality/continuity.ts` — per-user default persistence
+- `src/assistant/personality/reset.ts` — reset-to-default command
+- `src/frontend/alpine/personality-editor/` — personality editor UI

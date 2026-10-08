@@ -3,7 +3,7 @@
 
 # EPIC: Assistant Step Planning Surfaces (Todo / Kanban / Graph)
 
-**Overview:** (see sections below)
+**Overview:** Three planning surfaces (todo / kanban / graph) over one planning-item model, giving the assistant a side-channel for multi-step flow tracking distinct from direct chat. Backend: SQLite tables + REST API. Frontend: htmx/Alpine views reusing existing chat/panel patterns.
 
 **Status:** Not Started
 **Priority:** High
@@ -11,6 +11,25 @@
 **Type:** Feature Epic
 **Tags:** assistant, planning, todo, kanban, graph, visualization
 **Related:** epic-workflow-engine.md, epic-assistant-creative-studio-workflows.md, epic-assistant-gm-flows.md, epic-rag-context-sources.md, epic-analytics-observability.md, epic-project-spaces-pm-integration.md
+
+## Current State (2026-10-08)
+
+### Backend: ❌ Not Started
+
+- No `plan_items` or `plan_links` tables exist
+- No `src/planning/` module
+- No planning REST API
+
+### Frontend: ❌ Not Started
+
+- No planning views (todo/kanban/graph)
+- No planning htmx partials
+
+### Dependencies: 🟡 Partial
+
+- `epic-workflow-engine.md` — workflow-runner exists (`src/assistant/workflow-runner.ts`), but no planning emission yet
+- `TASK-rag-knowledge-graph` — not landed; graph view will use `asset_links` + `plan_links` only
+- `FEAT-memory-visualizer` — not landed; graph view will use SVG/DOM rendering
 
 ## Summary
 
@@ -42,6 +61,19 @@ src/views/planning/    # htmx partials: todo list, kanban board, graph (SVG)
 - Assistant wiring: `src/assistant/workflow-runner.ts` emits plan steps to `src/planning/service.ts` (append, never rewrite history); `workflow-session-store.ts` holds active plan id per session.
 - Kanban ↔ todo same rows, different projection (state column vs ordered list). Graph is links + neighbor expansion (1-hop default, 2-hop on demand — `ponytail:` O(n^2) full-graph render avoided; cap nodes at 200 with "show more" paging).
 
+## Tasks
+
+- [ ] Database migration: `plan_items` + `plan_links` tables
+- [ ] `src/planning/service.ts` — CRUD, state machine, link management
+- [ ] `src/routes/planning.ts` — REST API (GET/POST /api/plans, advance, board, graph)
+- [ ] Assistant tool wiring: `plan.add`, `plan.advance`, `plan.list` tools
+- [ ] Workflow-runner emission: emit plan steps to planning service
+- [ ] Todo list view (htmx partial + Alpine)
+- [ ] Kanban board view (htmx partial + Alpine drag)
+- [ ] Graph view (SVG/DOM rendering, 1-hop default)
+- [ ] Ownership enforcement (checkChatAccess pattern)
+- [ ] Tests: migration roundtrip, API, state machine, ownership
+
 ## Acceptance Criteria
 
 - [ ] Assistant multi-step flow creates visible todo steps; advancing steps updates all three views from the same rows.
@@ -55,4 +87,14 @@ src/views/planning/    # htmx partials: todo list, kanban board, graph (SVG)
 - Prerequisite: none (standalone tables). Reuses but does not block on TASK-rag-knowledge-graph (entity storage) and epic-workflow-engine (template runtime).
 
 
-git issue: 07f52a6
+## Files
+
+- `src/planning/service.ts` — planning item CRUD, state machine, link management (to be created)
+- `src/routes/planning.ts` — REST API (to be created)
+- `src/views/planning/` — htmx partials: todo, kanban, graph (to be created)
+- `src/assistant/workflow-runner.ts` — existing; will emit plan steps
+- `src/assistant/workflow-session-store.ts` — existing; holds active plan id per session
+
+## References
+
+- git issue: 07f52a6

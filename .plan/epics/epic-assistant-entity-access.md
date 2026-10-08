@@ -3,15 +3,20 @@
 
 # EPIC: Assistant Entity Access & Manipulation
 
-**Overview:** (see sections below)
+**Overview:** Extends the assistant surface with commands to search, read, modify,
+duplicate, and adapt existing world, location, character, item, asset, and
+RAG-document entities — the complement to `epic-assistant-gm-flows.md` which
+covers *generation* of new entities. Organized into 10 feature areas (RAG,
+Asset, World, Location, Character, Item, Addition, Modification, Duplication,
+Adaptation) delivered across 6 batches.
 
 
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
-**Tags:** assistant, rag, assets, world, location, character, item, inventory, access, manipulation, duplication, adaptation
-**Related:** `epic-assistant-gm-flows.md` (generation), `epic-asset-platform-capabilities.md` (asset substrate), `epic-character-npc-lore-access.md` (character lore access), `epic-lore-knowledge.md` (secret lore), `epic-rag-assets-unified-storage-and-assistant-flows.md` (RAG decomposition)
+**Tags:** assistant, rag, assets, world, location, character, item, inventory, access, manipulation, duplication, adaptation, entity
+**Related:** `epic-assistant-gm-flows.md` (generation), `epic-assistant-generation-extensions.md` (SD/intent/scenario), `epic-asset-platform-capabilities.md` (asset substrate), `epic-character-npc-lore-access.md` (character lore access), `epic-lore-knowledge.md` (secret lore), `epic-rag-assets-unified-storage-and-assistant-flows.md` (RAG decomposition)
 
 ## Summary
 
@@ -236,19 +241,70 @@ The adaptation engine:
 - [ ] Unit tests for all command handlers
 - [ ] E2E tests for the full command flow (chat → command → response)
 
+## Tasks
+
+### B1 — RAG + Asset Access (MVP)
+
+- [ ] `/rag-search` command + FTS5 fallback
+- [ ] `/rag-ask` command with LLM analysis
+- [ ] `/asset-list` command
+- [ ] `/asset-preview` command
+- [ ] `/asset-search` command
+
+### B2 — World + Location Access
+
+- [ ] `/world-list` command
+- [ ] `/world-get` command
+- [ ] `/loc-list` command
+- [ ] `/loc-get` command
+- [ ] `/loc-update` command
+
+### B3 — Character + Item + Inventory Access
+
+- [ ] `/char-list` command
+- [ ] `/char-get` command
+- [ ] `/item-list` command
+- [ ] `/inventory` command
+- [ ] `/item-transfer` command
+- [ ] `/item-drop` command
+- [ ] `/item-pickup` command
+
+### B4 — Modification + Addition
+
+- [ ] `/modify` command with quality gates
+- [ ] `/apply` command for direct patches
+- [ ] `/import` command
+- [ ] `/add` command
+- [ ] `/clone` command
+
+### B5 — Duplication + Adaptation
+
+- [ ] `/duplicate` command
+- [ ] `/adapt` command
+- [ ] Adaptation engine with quality gates
+
+### B6 — Tests
+
+- [ ] Unit tests for all command handlers
+- [ ] E2E tests for full command flow
+
 ## Files
 
-- `src/assistant/commands/rag.ts` — `/rag-search`, `/rag-ask`, `/rag-preview`, `/rag-decompose`
-- `src/assistant/commands/assets.ts` — `/asset-list`, `/asset-preview`, `/asset-link`, `/asset-search`
-- `src/assistant/commands/worlds-access.ts` — `/world-list`, `/world-get`, `/world-update`, `/world-delete`
-- `src/assistant/commands/locations.ts` — `/loc-list`, `/loc-get`, `/loc-update`
-- `src/assistant/commands/characters-access.ts` — `/char-list`, `/char-get`, `/char-update`, `/char-adapt`
-- `src/assistant/commands/items.ts` — `/item-list`, `/item-get`, `/item-update`, `/inventory`, `/item-transfer`, `/item-drop`, `/item-pickup`
-- `src/assistant/commands/duplicate.ts` — `/duplicate`
-- `src/assistant/commands/adapt.ts` — `/adapt`
-- `src/assistant/commands/import.ts` — `/import`, `/add`
-- `src/assistant/quality/adaptation.ts` — Adaptation quality gates
-- `src/assistant/adapter/` — Entity adapter (read/modify/duplicate/adapt) composing with existing services
+- `src/assistant/commands/rag.ts` — `/rag-search`, `/rag-ask`, `/rag-preview`, `/rag-decompose` (TODO)
+- `src/assistant/commands/assets.ts` — `/asset-list`, `/asset-preview`, `/asset-link`, `/asset-search` (TODO)
+- `src/assistant/commands/worlds-access.ts` — `/world-list`, `/world-get`, `/world-update`, `/world-delete` (TODO)
+- `src/assistant/commands/locations.ts` — `/loc-list`, `/loc-get`, `/loc-update` (TODO)
+- `src/assistant/commands/characters-access.ts` — `/char-list`, `/char-get`, `/char-update`, `/char-adapt` (TODO)
+- `src/assistant/commands/items.ts` — `/item-list`, `/item-get`, `/item-update`, `/inventory`, `/item-transfer`, `/item-drop`, `/item-pickup` (TODO)
+- `src/assistant/commands/duplicate.ts` — `/duplicate` (TODO)
+- `src/assistant/commands/adapt.ts` — `/adapt` (TODO)
+- `src/assistant/commands/import.ts` — `/import`, `/add` (TODO)
+- `src/assistant/quality/adaptation.ts` — Adaptation quality gates (TODO)
+- `src/assistant/adapter/` — Entity adapter composing with existing services (TODO)
+- `src/assistant/commands/registry.ts` — command registry (exists)
+- `src/assistant/quality/entity-creation.ts` — quality-gating pipeline (exists)
+- `src/routes/worlds/worlds.ts` — world access guards (exists)
+- `src/routes/story-items/handlers.ts` — item transfer logic (exists)
 
 ## Batches
 

@@ -3,11 +3,18 @@
 
 # Epic: Assistant Creative Studio — Workflow Templates
 
-**Overview:** (see sections below)
+**Overview:** A workflow template system for the assistant creative studio. Users invoke a named
+workflow (e.g. "Minimax H3 video generation"); the assistant detects intent, previews the
+prompting steps based on the template, walks the user through prompt construction with
+recommendations on logic, order, contents, and syntax, requires final confirmation, then
+dispatches the designated generation pipeline / API call / scenario based on the template.
+Applicable to all assistant-related generation workflows, not just video. This epic is a
+coordination hub — implementation is split into 4 sub-epics (Workflow Engine, Model Family
+Presets, Entity Generation Workflows, Gallery Batch Operations).
 
 
-**Status:** Not Started
-**Status Note:** coordination hub — split into 4 sub-epics
+**Status:** In Progress
+**Status Note:** coordination hub — split into 4 sub-epics. In Progress because the Entity Generation Workflows sub-epic has landed work on dev: `matchWorkflowIntent` intent routing (`src/assistant/workflow-routing.ts`), the workflow template loader/validator including the `entityTypes` domain and `validateEntityTypePresets` (`src/config/templates-loader/validation-entity-types.ts`), the run/confirm flow (`src/assistant/workflow-runner.ts`, `src/routes/messages/command.ts`), optional-step support (`required !== false`), and the `entity-npc` template + preset (`configs/templates/workflows/entities.yaml`, `configs/templates/workflows/entity-types.yaml`). The other 3 sub-epics (Workflow Engine remainder, Model Family Presets, Gallery Batch Operations) have no landed code.
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Large
 **Type:** Feature Epic / Configuration
@@ -76,7 +83,7 @@ confirmable, template-driven prompt + dispatch plan.
 
 ---
 
-## Current State (2026-08-08)
+## Current State (2026-10-08)
 
 ### What exists (foundation to build on)
 
@@ -112,6 +119,29 @@ confirmable, template-driven prompt + dispatch plan.
 | Gallery batch        | Selection state + batch download/delete                                  | Gallery Batch Operations          |
 | Gallery edit         | Wrap `src/image-edit/` as workflow UX                                    | Not yet split                     |
 | Tests                | Workflow loader, step validation, intent matching                        | Workflow Engine (+ subs)          |
+
+## Tasks
+
+- [x] Entity-generation workflow schema + loader (`entityTypes` domain, `validateEntityTypePresets` — `src/config/templates-loader/validation-entity-types.ts`)
+- [x] Optional steps support (`required: false` skipped in preview + confirm — `src/assistant/workflow-runner.ts:66,127`; `commands/workflow.ts:135-137` gates dispatch on `missingStepIds` alone)
+- [x] Intent routing (`matchWorkflowIntent` → `INTENT_PATTERNS` → workflow — `src/assistant/workflow-routing.ts:94`)
+- [x] NPC end-to-end (EntityKind, quality gates, templates, `entity-npc` workflow + preset — `configs/templates/workflows/entities.yaml`, `entity-types.yaml`)
+- [ ] Workflow Engine: mostly landed on dev (template schema, multi-file directory discovery at `src/config/templates-loader/discovery.ts:84`, runtime flow + approval plumbing at `workflow-runner.ts` / `commands/workflow.ts` / `routes/messages/command.ts`); still open: per-step runtime flow beyond text capture and the per-preset `qualityGates` wiring
+- [ ] Model Family Presets: `model-families.yaml` authoring for 17 families, formatter application at dispatch
+- [ ] Gallery Batch Operations: selection model, batch-action bar, v1 batch download/delete
+- [ ] Species-generation workflow (blocked: no `bestiary_catalog` table)
+- [ ] Third-party API adapters (Minimax H3, Nano Banana, etc.)
+- [ ] NSFW prefiltering for third-party dispatch
+
+## Acceptance Criteria
+
+- [ ] All 4 sub-epics have implementation tasks filed and scoped
+- [ ] Workflow Engine sub-epic ships schema, loader, runner, and intent routing
+- [ ] Model Family Presets sub-epic ships `model-families.yaml` with 17 families + formatter
+- [ ] Entity Generation Workflows sub-epic ships all entity templates + quality gates
+- [ ] Gallery Batch Operations sub-epic ships selection + batch download/delete
+- [ ] End-to-end: user can invoke a workflow, see step preview, confirm, and dispatch
+- [ ] All workflows are config-driven (YAML) with merge strategy support
 
 ---
 
