@@ -1197,6 +1197,7 @@ export interface Chats extends AuditColumns {
   active_branch_id: string | null;
   autonomy_config: Generated<string>;
   purpose: string | null;
+  timeline_id: string | null;
 }
 // ── actors ────────────────────────────────────────────
 export interface Actors {
