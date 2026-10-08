@@ -29560,6 +29560,23 @@
     "title": "# TASK-epic-frontend-encryption-clarification-2026-09-26: clarify epic-frontend-encryption.md vs epic-encryption-workflow.md split",
     "type": "TASK"
   },
+  "TASK-EPIC-LINKAGE-INFRASTRUCTURE-TITLE-SLUG-LOOKUP-TABLE-MULTI-EP": {
+    "hash": "9853ab4",
+    "git_issue": "9853ab4",
+    "extid": "TASK-EPIC-LINKAGE-INFRASTRUCTURE-TITLE-SLUG-LOOKUP-TABLE-MULTI-EP",
+    "type": "TASK",
+    "title": "epic-linkage infrastructure: title-slug lookup table + multi-epic owner-picking rule",
+    "label": "task",
+    "priority": "high",
+    "epic": "` value that contains embedded separators — the index only records the first epic, so these tickets are linked to the wrong epic or no epic at all. Prior repair passes (commits `cb13e6464` and `41209f0f6`) fixed some, but the root infrastructure is still missing. The defect was deliberately not fixed because two pieces of infrastructure do not exist: (a) no owner-picking rule for when a ticket names two real epics, and (b) no title-to-slug lookup table for legacy epic titles embedded in epic fields.",
+    "tags": [
+      "epic-linkage",
+      "infrastructure",
+      "plan-hygiene"
+    ],
+    "source": ".plan/tickets/TASK-epic-linkage-infrastructure-title-slug-lookup-table-multi-ep.md",
+    "status": "Not Started"
+  },
   "TASK-EPIC-TRANSPORT-LAYER-EXPANSION-CLARIFICATION-2026-09-26": {
     "epic": "",
     "extid": "TASK-EPIC-TRANSPORT-LAYER-EXPANSION-CLARIFICATION-2026-09-26",
@@ -33140,6 +33157,56 @@
     "source": ".plan/tickets/TASK-inbound-webhook-ingestion-surface-hmac-verified-default-deny.md",
     "status": "Not Started"
   },
+  "TASK-INDEX-EPIC-VALUES-POINT-TO-NONEXISTENT-EPIC-FILES-7-BARE-SLU": {
+    "hash": "14f603f",
+    "git_issue": "14f603f",
+    "extid": "TASK-INDEX-EPIC-VALUES-POINT-TO-NONEXISTENT-EPIC-FILES-7-BARE-SLU",
+    "type": "TASK",
+    "title": "index epic values point to nonexistent epic files — 7 bare slugs unresolved",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "epic-linkage",
+      "plan-hygiene"
+    ],
+    "source": ".plan/tickets/TASK-index-epic-values-point-to-nonexistent-epic-files-7-bare-slu.md",
+    "status": "Not Started"
+  },
+  "TASK-INDEX-JSON-DUPLICATE-KEY-LOWERCASE-BUG-REDOS-SHADOW-ENTRY-BL": {
+    "hash": "f8ad9e4",
+    "git_issue": "f8ad9e4",
+    "extid": "TASK-INDEX-JSON-DUPLICATE-KEY-LOWERCASE-BUG-REDOS-SHADOW-ENTRY-BL",
+    "type": "TASK",
+    "title": "index.json duplicate key: lowercase BUG-redos shadow entry blocks clean diff",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "plan-hygiene",
+      "index",
+      "duplicate-key"
+    ],
+    "source": ".plan/tickets/TASK-index-json-duplicate-key-lowercase-bug-redos-shadow-entry-bl.md",
+    "status": "Not Started"
+  },
+  "TASK-INDEX-JSON-WRITER-SORTS-KEYS-ON-WRITE-HAND-APPENDED-ENTRY-CA": {
+    "hash": "93bc95f",
+    "git_issue": "93bc95f",
+    "extid": "TASK-INDEX-JSON-WRITER-SORTS-KEYS-ON-WRITE-HAND-APPENDED-ENTRY-CA",
+    "type": "TASK",
+    "title": "index.json writer sorts keys on write — hand-appended entry causes spurious churn",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "plan-hygiene",
+      "index",
+      "false-diff"
+    ],
+    "source": ".plan/tickets/TASK-index-json-writer-sorts-keys-on-write-hand-appended-entry-ca.md",
+    "status": "Not Started"
+  },
   "TASK-INFERENCE-BROWSER-WLLAMA-GGUF": {
     "epic": "",
     "extid": "TASK-INFERENCE-BROWSER-WLLAMA-GGUF",
@@ -33821,6 +33888,23 @@
     "title": "Language-gated lore visibility",
     "type": "TASK"
   },
+  "TASK-LICENSE-COMPLIANCE-CHECK-INERT-CHECK-PARALLEL-EMITS-INFO-SKI": {
+    "hash": "723402d",
+    "git_issue": "723402d",
+    "extid": "TASK-LICENSE-COMPLIANCE-CHECK-INERT-CHECK-PARALLEL-EMITS-INFO-SKI",
+    "type": "TASK",
+    "title": "license compliance check inert — check-parallel emits info skip when scancode and fossa absent",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "licensing",
+      "compliance",
+      "plan-hygiene"
+    ],
+    "source": ".plan/tickets/TASK-license-compliance-check-inert-check-parallel-emits-info-ski.md",
+    "status": "Not Started"
+  },
   "TASK-LICENSE-COMPLIANCE-GATE": {
     "epic": "epic-code-quality",
     "extid": "TASK-LICENSE-COMPLIANCE-GATE",
@@ -33885,6 +33969,23 @@
     "tags": [],
     "title": "Link previews (unfurl)",
     "type": "TASK"
+  },
+  "TASK-LISTENER-LEAK-CHECKER-EXEMPT-TOP-LEVEL-MODULE-REGISTRATIONS-": {
+    "hash": "34c7878",
+    "git_issue": "34c7878",
+    "extid": "TASK-LISTENER-LEAK-CHECKER-EXEMPT-TOP-LEVEL-MODULE-REGISTRATIONS-",
+    "type": "TASK",
+    "title": "listener-leak checker: exempt top-level module registrations from false positives",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "security",
+      "checker",
+      "false-positive"
+    ],
+    "source": ".plan/tickets/TASK-listener-leak-checker-exempt-top-level-module-registrations-.md",
+    "status": "Not Started"
   },
   "TASK-LIVING-WORLD-PERSISTENCE": {
     "epic": "epic-world-locations, epic-character-core-system",
@@ -44168,6 +44269,21 @@
     "tags": [],
     "title": "Turn skip GM absence contract",
     "type": "TASK"
+  },
+  "TASK-TWO-AUTO-FILED-STUB-TICKETS-NEED-EPIC-ASSIGNMENT-NO-EPIC-HEA": {
+    "hash": "59689bd",
+    "git_issue": "59689bd",
+    "extid": "TASK-TWO-AUTO-FILED-STUB-TICKETS-NEED-EPIC-ASSIGNMENT-NO-EPIC-HEA",
+    "type": "TASK",
+    "title": "two auto-filed stub tickets need epic assignment — no Epic header, Summary: (none captured)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "` header. Both require a product call to assign an epic. This ticket covers both.",
+    "tags": [
+      "plan-hygiene"
+    ],
+    "source": ".plan/tickets/TASK-two-auto-filed-stub-tickets-need-epic-assignment-no-epic-hea.md",
+    "status": "Not Started"
   },
   "TASK-TWO-FACTOR-MULTI-FACTOR-AUTH": {
     "epic": "epic-two-factor-auth",
