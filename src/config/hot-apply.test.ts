@@ -142,7 +142,9 @@ describe("applyHotConfig", () => {
     const child = root.child({ module: "test", },);
     child.addTransport({
       name: "probe",
-      write: async (entry) => { entries.push(entry.level,); },
+      write: async (entry,) => {
+        entries.push(entry.level,);
+      },
       flush: async () => {},
     },);
 
@@ -154,7 +156,7 @@ describe("applyHotConfig", () => {
 
     expect(entries,).not.toContain(10,);
     expect(entries,).toContain(40,);
-  },);
+  });
 
   test("applies ageGate.enabled live", () => {
     const config = makeConfig();
