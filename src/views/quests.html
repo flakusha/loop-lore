@@ -66,13 +66,21 @@
                 </label>
                 <label class="form-label" style="font-size: 12px">
                   {{{t("quests.description")}}}
-                  <textarea
-                    class="form-input form-textarea"
-                    rows="2"
-                    style="font-size: 13px"
-                    x-model="createDescription"
-                    :placeholder="t('quests.questDescription')"
-                  ></textarea>
+                  <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+                    <textarea
+                      id="quest-create-desc"
+                      class="form-input form-textarea"
+                      style="flex: 1; font-size: 13px"
+                      rows="2"
+                      x-model="createDescription"
+                      :placeholder="t('quests.questDescription')"
+                      x-init="autoResize($el)"
+                      @input="autoResize($el)"
+                    ></textarea>
+                    <div x-data="textToolbar({ target: '#quest-create-desc' })">
+                      {{> text-toolbar.html }}
+                    </div>
+                  </div>
                 </label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
                   <label class="form-label" style="font-size: 12px">
@@ -188,12 +196,20 @@
                           </label>
                           <label class="form-label" style="font-size: 11px">
                             Description
-                            <textarea
-                              class="form-input form-textarea"
-                              rows="2"
-                              style="font-size: 13px"
-                              x-model="editDescription"
-                            ></textarea>
+                            <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+                              <textarea
+                                id="quest-edit-desc"
+                                class="form-input form-textarea"
+                                style="flex: 1; font-size: 13px"
+                                rows="2"
+                                x-model="editDescription"
+                                x-init="autoResize($el)"
+                                @input="autoResize($el)"
+                              ></textarea>
+                              <div x-data="textToolbar({ target: '#quest-edit-desc' })">
+                                {{> text-toolbar.html }}
+                              </div>
+                            </div>
                           </label>
                           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
                             <label class="form-label" style="font-size: 11px">

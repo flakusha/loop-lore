@@ -6,6 +6,7 @@
 //   GET  /api/v1/actors/:actorId/systems/export
 //   POST /api/v1/actors/:actorId/systems/import[/url]
 // Pairs with `src/components/character/systems-panel.html`.
+import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, safeJsonParse, } from "./json";
@@ -82,6 +83,8 @@ export interface ActorSystemsState {
   importFromUrl(): Promise<void>;
   /** Clear the import status + form fields. */
   resetImport(): void;
+  /** Resize a textarea to fit its content. */
+  autoResize(el: HTMLTextAreaElement,): void;
 }
 
 export const actorSystems: ActorSystemsState = {
@@ -255,6 +258,10 @@ export const actorSystems: ActorSystemsState = {
     this.importResult = null;
     this.message = "";
     this.error = "";
+  },
+
+  autoResize(el: HTMLTextAreaElement,) {
+    autoResizeImpl(el,);
   },
 };
 

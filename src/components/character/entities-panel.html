@@ -49,13 +49,21 @@
       <div class="form-group">
         <label class="form-label" :for="`ent-${$data._entKind}-${field.key}`" x-text="field.label"></label>
         <template x-if="field.kind === 'textarea'">
-          <textarea
-            :id="`ent-${$data._entKind}-${field.key}`"
-            class="form-input form-textarea"
-            rows="3"
-            x-model="form[field.key]"
-            :data-testid="`${$data._entKind}-field-${field.key}`"
-          ></textarea>
+          <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+            <textarea
+              :id="`ent-${$data._entKind}-${field.key}`"
+              class="form-input form-textarea"
+              style="flex: 1"
+              rows="3"
+              x-model="form[field.key]"
+              x-init="autoResize($el)"
+              @input="autoResize($el)"
+              :data-testid="`${$data._entKind}-field-${field.key}`"
+            ></textarea>
+            <div x-data="textToolbar({ target: `#ent-${$data._entKind}-${field.key}` })">
+              {{> text-toolbar.html }}
+            </div>
+          </div>
         </template>
         <template x-if="field.kind === 'number'">
           <input

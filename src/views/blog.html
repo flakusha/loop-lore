@@ -48,14 +48,22 @@
             data-testid="blog-form-title"
             style="margin-bottom: var(--space-2)"
           />
-          <textarea
-            class="form-input"
-            rows="8"
-            x-bind:placeholder="t('blog.postBody')"
-            x-model="formBody"
-            data-testid="blog-form-body"
-            style="margin-bottom: var(--space-2)"
-          ></textarea>
+          <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+            <textarea
+              id="blog-form-body"
+              class="form-input"
+              style="flex: 1; margin-bottom: var(--space-2)"
+              rows="8"
+              x-bind:placeholder="t('blog.postBody')"
+              x-model="formBody"
+              data-testid="blog-form-body"
+              x-init="autoResize($el)"
+              @input="autoResize($el)"
+            ></textarea>
+            <div x-data="textToolbar({ target: '#blog-form-body' })">
+              {{> text-toolbar.html }}
+            </div>
+          </div>
           <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-2); flex-wrap: wrap">
             <select class="form-input" x-model="formVisibility" data-testid="blog-form-visibility" style="max-width: 12rem">
               <option value="public">public</option>

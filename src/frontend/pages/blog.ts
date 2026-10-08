@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { autoResize as autoResizeImpl, } from "../alpine/auto-resize";
 import { type BlogComment, type BlogPost, type BlogState, blogStore, } from "../alpine/blog";
 import { chatUtilsRender, } from "../alpine/chat-utils/render";
 import { log, } from "../alpine/logger";
@@ -59,6 +60,8 @@ interface BlogPageState {
   toggleFollow(): Promise<void>;
   toggleCreate(): void;
   submitPost(): Promise<void>;
+  /** Resize a textarea to fit its content. */
+  autoResize(el: HTMLTextAreaElement,): void;
 }
 
 globalThis.blogPage = function(): BlogPageState {
@@ -237,6 +240,10 @@ globalThis.blogPage = function(): BlogPageState {
       this.formVisibility = "public";
       this.showCreate = false;
       await this.store.loadPosts();
+    },
+
+    autoResize(el: HTMLTextAreaElement,) {
+      autoResizeImpl(el,);
     },
   };
 };

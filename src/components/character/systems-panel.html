@@ -43,7 +43,13 @@
 
   <details>
     <summary>From JSON payload</summary>
-    <textarea x-model="importPreview" rows="8" placeholder="Paste exported systems JSON"></textarea>
+    <textarea
+      x-model="importPreview"
+      rows="8"
+      placeholder="Paste exported systems JSON"
+      x-init="autoResize($el)"
+      @input="autoResize($el)"
+    ></textarea>
     <button type="button" :disabled="busy || !_sysActorId" @click="importFromPayload()">
       Import payload
     </button>

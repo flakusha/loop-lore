@@ -8,6 +8,7 @@
  * create / edit / delete, JSON payload preview, and pack import/export via
  * POST /api/v1/templates/import and GET /api/v1/templates/export.
  */
+import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { jsonBody, safeJsonParse, safeJsonStringify, } from "./json";
 
 interface TemplateSummary {
@@ -223,6 +224,10 @@ interface TemplateDetail extends TemplateSummary {
       } catch {
         this.error = "Import failed";
       }
+    },
+
+    autoResize(el: HTMLTextAreaElement,) {
+      autoResizeImpl(el,);
     },
   };
 };

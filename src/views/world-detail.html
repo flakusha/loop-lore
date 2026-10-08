@@ -84,13 +84,21 @@
         </div>
         <div class="form-group">
           <label for="tl-desc" x-text="t('worlds.timelineDesc')"></label>
-          <textarea
-            id="tl-desc"
-            x-model="newDesc"
-            :placeholder="t('worlds.timelineDescPlaceholder')"
-            maxlength="1000"
-            rows="3"
-          ></textarea>
+          <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+            <textarea
+              id="tl-desc"
+              style="flex: 1"
+              x-model="newDesc"
+              :placeholder="t('worlds.timelineDescPlaceholder')"
+              maxlength="1000"
+              rows="3"
+              x-init="autoResize($el)"
+              @input="autoResize($el)"
+            ></textarea>
+            <div x-data="textToolbar({ target: '#tl-desc' })">
+              {{> text-toolbar.html }}
+            </div>
+          </div>
         </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-secondary" @click="showCreate = false" x-text="t('common.cancel')">

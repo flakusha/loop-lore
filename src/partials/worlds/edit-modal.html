@@ -27,11 +27,37 @@
         </div>
         <div class="form-group">
           <label class="form-label" for="edit-description">{{{ t("worlds.description") }}}</label>
-          <textarea class="form-input" name="description" id="edit-description" rows="2"></textarea>
+          <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+            <textarea
+              class="form-input"
+              name="description"
+              id="edit-description"
+              style="flex: 1"
+              rows="2"
+              x-init="autoResize($el)"
+              @input="autoResize($el)"
+            ></textarea>
+            <div x-data="textToolbar({ target: '#edit-description' })">
+              {{> text-toolbar.html }}
+            </div>
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label" for="edit-lore">{{{ t("worlds.lore") }}}</label>
-          <textarea class="form-input" name="lore" id="edit-lore" rows="4"></textarea>
+          <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+            <textarea
+              class="form-input"
+              name="lore"
+              id="edit-lore"
+              style="flex: 1"
+              rows="4"
+              x-init="autoResize($el)"
+              @input="autoResize($el)"
+            ></textarea>
+            <div x-data="textToolbar({ target: '#edit-lore' })">
+              {{> text-toolbar.html }}
+            </div>
+          </div>
         </div>
         <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
           <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">

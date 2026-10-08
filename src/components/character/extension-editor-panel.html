@@ -46,6 +46,8 @@
       id="ext-payload"
       rows="14"
       x-model="JSON.stringify(draft, null, 2)"
+      x-init="autoResize($el)"
+      @input="autoResize($el)"
       data-testid="extension-editor-payload"
     ></textarea>
     <p class="form-hint">
