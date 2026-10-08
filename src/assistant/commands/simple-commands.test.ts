@@ -29,6 +29,7 @@ import {
   getCommand,
   getCommandRequirement,
   listCommands,
+  registerCommand,
 } from "./registry";
 
 /** Resolve a registered handler, failing loudly when the module didn't register. */
@@ -61,6 +62,30 @@ describe("/help", () => {
     expect(result.systemMessage,).toContain("**Available Commands:**",);
     expect(result.systemMessage,).toContain("- `/help`",);
     expect(result.systemMessage,).toContain("Type `/<command>` to execute.",);
+  });
+
+  it("hides owner-gated commands from a member caller's listing", () => {
+    registerCommand("help-probe-owner", () => ({ handled: true, }), {
+      requiredRole: ChatParticipantRole.Owner,
+    },);
+
+    const result = mustGet("help",)(
+      [],
+      baseCtx({ roleInChat: ChatParticipantRole.Member, },),
+    ) as CommandResult;
+
+    expect(result.systemMessage,).not.toContain("- `/debug`",);
+    expect(result.systemMessage,).not.toContain("- `/help-probe-owner`",);
+    expect(result.systemMessage,).toContain("- `/help`",);
+  });
+
+  it("shows owner-gated commands to an owner caller", () => {
+    const result = mustGet("help",)(
+      [],
+      baseCtx({ roleInChat: ChatParticipantRole.Owner, },),
+    ) as CommandResult;
+
+    expect(result.systemMessage,).toContain("- `/debug`",);
   });
 });
 

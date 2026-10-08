@@ -136,6 +136,25 @@ describeOrSkip("commandPalette.handleCommandInput", () => {
     expect(ctx._showCommandPalette,).toBe(true,);
     expect(ctx._filteredCommands,).toEqual([],);
   });
+
+  test("matches mixed-case registry names case-insensitively", () => {
+    const ctx = buildCtx();
+    ctx._commandList = [{ name: "Roll", descriptionKey: "k", description: "d", },];
+    commandPalette.handleCommandInput!.call(ctx as never, inputEvent("/roll",),);
+    expect(ctx._filteredCommands.map((c,) => c.name),).toEqual(["Roll",],);
+  });
+
+  test("a near-miss typo surfaces the did-you-mean suggestion", () => {
+    const ctx = buildCtx();
+    ctx._commandList = [
+      { name: "help", descriptionKey: "k1", description: "d1", },
+      { name: "roll", descriptionKey: "k2", description: "d2", },
+    ];
+
+    commandPalette.handleCommandInput!.call(ctx as never, inputEvent("/hep",),);
+    expect(ctx._showCommandPalette,).toBe(true,);
+    expect(ctx._filteredCommands.map((c,) => c.name),).toEqual(["help",],);
+  });
 },);
 
 describeOrSkip("commandPalette.selectCommand", () => {

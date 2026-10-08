@@ -36,7 +36,7 @@ import "./translate";
 import "./video";
 import "./workflow";
 
-export { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "../command-parser";
+export { parseCommand, } from "../command-parser";
 export type { ParsedCommand, } from "../command-parser";
 export { formatDiceResult, handleRollCommand, parseDiceNotation, rollDice, rollDie, } from "./dice";
 export type { DiceResult, DieRoll, } from "./dice";
