@@ -11,7 +11,8 @@
 **Epic:** epic-immersion-presentation
 **Priority:** Medium
 **Effort:** Low
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** info-bubble help tooltip component plus i18n keys
 **Source:** User request — info bubbles for `(?)` signs in menus, i18n intended
 
 ## Summary
