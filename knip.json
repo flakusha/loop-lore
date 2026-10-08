@@ -143,6 +143,10 @@
     // (WEAVE_BASE=<ref> bun run check --gates "weave - damage scan"),
     // not import-reachable — same class as coverage.mjs above.
     "scripts/check/weave-damage.mjs",
+    // Generated epic title lookup: produced by epic-owner-pick.ts --gen
+    // (run manually, not import-wired); consumed by the epic-owner rule
+    // through in-process scanEpicTitles(), never via an import edge.
+    "scripts/plan/epic-titles.generated.ts",
     // Frontend audit scripts: standalone CLI reporters (bun run scripts/...),
     // not import-reachable. Promoted from .tmp/ investigation scripts.
     "scripts/check-frontend-banned-patterns.ts",
