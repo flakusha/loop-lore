@@ -4866,7 +4866,7 @@ export async function insertMeshOutbox(
   content_id: string,
   envelope: string,
   next_attempt_at: string,
-  opts?: { id?: string; attempts?: number; status?: string; created_at?: string },
+  opts?: { id?: string; attempts?: number; status?: string; created_at?: string; chat_id?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();

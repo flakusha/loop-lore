@@ -1024,6 +1024,18 @@ export interface ActorPlanRevisions {
   created_at: Generated<string>;
 }
 
+export interface MeshOutbox {
+  id: Generated<string>;
+  target_origin: string;
+  content_id: string;
+  envelope: string;
+  attempts: Generated<number>;
+  status: Generated<string>;
+  next_attempt_at: string;
+  created_at: Generated<string>;
+  chat_id: string | null;
+}
+
 export interface TaskDependencies {
   task_id: string;
   depends_on_task_id: string;

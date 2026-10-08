@@ -3054,6 +3054,7 @@ export const MeshOutboxSchema = t.Object({
   attempts: t.Optional(t.Number(),),
   status: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
+  chat_id: t.Optional(t.String(),),
 },);
 
 export const TaskDependenciesSchema = t.Object({
@@ -3140,4 +3141,3 @@ export const MessageRemindersSchema = t.Object({
   user_id: t.String(),
   remind_at: t.String(),
 },);
-
