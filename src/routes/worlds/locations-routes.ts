@@ -11,6 +11,7 @@ import {
   handleUpdateLocation,
 } from "./locations";
 import { handleDeleteLocation, } from "./locations-delete";
+import { handleMoveLocation, } from "./locations-move";
 import type { HandleOpts, } from "./types";
 
 /**
@@ -126,6 +127,35 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
         detail: {
           summary: "Update location",
           description: "Update a location's properties.",
+          tags: ["Worlds",],
+        },
+      },
+    )
+    .post(
+      `${prefix}/worlds/:worldId/locations/:locId/move`,
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        return handleMoveLocation(
+          database,
+          ctx.params.worldId as string,
+          ctx.params.locId as string,
+          (ctx.body as { newParentId?: string | null }).newParentId ?? null,
+          userId,
+          userRole,
+        );
+      },
+      {
+        body: t.Object({ newParentId: t.Union([t.String(), t.Null(),],), },),
+        response: {
+          200: SuccessResponse,
+          400: ErrorResponse,
+          401: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Move location",
+          description:
+            "Move a location (and its subtree) under a new parent. Rejects self-parents, cycles and cross-world parents with 400.",
           tags: ["Worlds",],
         },
       },
