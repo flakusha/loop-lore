@@ -13,7 +13,25 @@
 
 /** Options for building a versioned OpenAPI document. */
 import { openapi as createOpenApiPlugin, } from "@elysia/openapi";
+import { FormatRegistry, } from "@sinclair/typebox";
 import type { Elysia, } from "elysia";
+import { fullFormats, } from "elysia/type-system/format";
+
+// `@elysia/openapi` force-registers valibot-strict format validators over
+// Elysia's canonical ones at module load — process-globally and unconditionally
+// (no `Has()` guard, unlike `elysia/type-system/format`). Its `uuid` demands
+// RFC version+variant nibbles, narrower than the shape regex every route schema
+// (`Id` / `OptionalId` / `ChatIdParams`, …) was written against. Re-apply
+// Elysia's canonical formats so validation semantics are identical whether or
+// not this module has been imported yet — and so a bare `bun test src/validation`
+// and the full-suite run validate the same strings the same way.
+for (const [name, format,] of Object.entries(fullFormats,)) {
+  if (format instanceof RegExp) {
+    FormatRegistry.Set(name, (value: string,) => format.test(value,),);
+  } else if (typeof format === "function") {
+    FormatRegistry.Set(name, format,);
+  }
+}
 
 export interface VersionedOpenApiOptions {
   /** API version, e.g. `"1"` → served under `/api/v1`. */
