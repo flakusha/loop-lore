@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // Quests Page component (quests.html)
+import { autoResize as autoResizeImpl, } from "../alpine/auto-resize";
 import { formatDisplayDate, } from "../alpine/chat-utils/time";
 import { jsonBody, } from "../alpine/json";
 import { log as rootLog, } from "../alpine/logger";
@@ -238,6 +239,10 @@ globalThis.questsPage = function() {
       } catch {
         showToast("error", "Network error",);
       }
+    },
+
+    autoResize(el: HTMLTextAreaElement,) {
+      autoResizeImpl(el,);
     },
   };
 };

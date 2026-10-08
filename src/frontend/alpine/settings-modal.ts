@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { jsonBody, } from "./json";
 
 (globalThis as any).settingsModal = function() {
@@ -85,6 +86,10 @@ import { jsonBody, } from "./json";
 
       document.body.classList.toggle("theme-no-icons", this.theme === "no-icons",);
       localStorage.setItem("theme-preference", this.theme,);
+    },
+
+    autoResize(el: HTMLTextAreaElement,) {
+      autoResizeImpl(el,);
     },
   };
 };

@@ -117,15 +117,23 @@
           <div class="form-group">
             <label class="form-label" for="settings-custom-instructions"
             >{{{ t("settings.customInstructions") }}}</label>
-            <textarea
-              id="settings-custom-instructions"
-              class="form-input"
-              rows="3"
-              maxlength="5000"
-              x-model="customInstructions"
-              @change="save('api')"
-              data-testid="settings-custom-instructions"
-            ></textarea>
+            <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+              <textarea
+                id="settings-custom-instructions"
+                class="form-input"
+                style="flex: 1"
+                rows="3"
+                maxlength="5000"
+                x-model="customInstructions"
+                x-init="autoResize($el)"
+                @input="autoResize($el)"
+                @change="save('api')"
+                data-testid="settings-custom-instructions"
+              ></textarea>
+              <div x-data="textToolbar({ target: '#settings-custom-instructions' })">
+                {{> text-toolbar.html }}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -255,6 +263,8 @@
                   rows="8"
                   x-model="draft.payload"
                   style="font-family: var(--font-mono, monospace)"
+                  x-init="autoResize($el)"
+                  @input="autoResize($el)"
                   data-testid="template-payload"
                 ></textarea>
               </div>

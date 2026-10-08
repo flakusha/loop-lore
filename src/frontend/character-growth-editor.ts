@@ -16,6 +16,7 @@
  * Template attribute: x-data="characterGrowthEditor({ ... })"
  */
 
+import { autoResize as autoResizeImpl, } from "./alpine/auto-resize";
 import { jsonBody, } from "./alpine/json";
 import { feFetch, } from "./fe-fetch";
 
@@ -55,6 +56,8 @@ export interface CharacterGrowthEditorComponent {
   rejectEntry(entryId: string,): Promise<void>;
   /** @internal — mutates a growth-log row's status on the client binding. */
   _updateEntryStatus(entryId: string, status: "applied" | "rejected",): void;
+  /** Resize a textarea to fit its content. */
+  autoResize(el: HTMLTextAreaElement,): void;
 }
 
 /**
@@ -172,6 +175,10 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
       if (idx >= 0) {
         this.entries[idx]!.status = status;
       }
+    },
+
+    autoResize(el: HTMLTextAreaElement,) {
+      autoResizeImpl(el,);
     },
   };
 }
