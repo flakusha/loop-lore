@@ -7,7 +7,7 @@
  * Stubs globalThis.document with a minimal fake (gallery-upload.test.ts
  * convention) sufficient for renderChoiceCards' DOM surface.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterAll, describe, expect, test, } from "bun:test";
 import { renderChoiceCards, } from "./choice-cards-render";
 
 // ── Fake DOM ────────────────────────────────────────────────────────────────
@@ -55,6 +55,9 @@ function makeEl(tag: string,): FakeEl {
   return el;
 }
 
+// Module-scope global write must be handed back in afterAll — later files in
+// the shared bun:test process need the load-time DOM surface.
+const originalDocument = (globalThis as { document?: unknown }).document;
 (globalThis as unknown as { document: unknown }).document = {
   createElement: (tag: string,) => makeEl(tag,),
   // Superset of tests/setup-globals.ts: real modules (e.g. alpine/htmx.ts)
@@ -63,6 +66,10 @@ function makeEl(tag: string,): FakeEl {
   dispatchEvent: () => true,
   querySelector: () => null,
 };
+
+afterAll(() => {
+  (globalThis as unknown as { document: unknown }).document = originalDocument;
+},);
 
 // ── Fixture builder (test seam) ─────────────────────────────────────────────
 

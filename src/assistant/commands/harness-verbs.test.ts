@@ -8,26 +8,39 @@
  * unconfigured) and the session-lifecycle contract: one live run per chat, and a
  * write-through to the session store so the existing 24h TTL applies.
  */
-import { beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { AssistantWorkflowConfig, } from "../../config/sections/templates";
 import { ChatParticipantRole, } from "../../db/enums";
+import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
+import { insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { clearSessions, getSession, } from "../workflow-session";
 import { type CommandContext, getCommand, getCommandRequirement, listCommands, } from "./registry";
+import "./harness-verbs";
 
-const saved: { chatId: string; workflowId: string }[] = [];
+// No mock.module here: bun's mock.module is process-global and cannot be
+// reliably un-hooked for statically-imported sibling files, so the saveSession
+// spy it installed broke every later file that persists workflow sessions for
+// real (entity-spec handoff, workflow-dispatch restart). The verbs run against
+// a real in-memory database instead and the persistence assertions read the
+// workflow_sessions table directly.
+let testDb: TestDb;
 
-// Override only `saveSession`; the real store module stays intact for
-// `workflow.ts`, which imports the cancel/load helpers from it.
-const realStore = await import("../workflow-session-store");
-mock.module("../workflow-session-store", () => ({
-  ...realStore,
-  saveSession: async (db: unknown, chatId: string, session: { workflow: { id: string } },) => {
-    void db;
-    saved.push({ chatId, workflowId: session.workflow.id, },);
-  },
-}),);
+beforeAll(async () => {
+  testDb = await createTestDb();
+  // workflow_sessions.chat_id references chats.id — seed an owner and one
+  // chat row per chat id used by run() so saveSession satisfies the FK.
+  await insertUsers(
+    testDb.db,
+    "harness-tester",
+    "Harness Tester",
+    { id: "harness-tester", password_hash: "h", } as never,
+  );
+},);
 
-await import("./harness-verbs");
+afterAll(async () => {
+  await testDb.db.destroy();
+  testDb.sqlite.close();
+},);
 
 function wf(id: string, name = id, description?: string,): AssistantWorkflowConfig {
   return {
@@ -55,7 +68,7 @@ const CONFIG = {
 } as unknown as CommandContext["config"];
 
 function makeCtx(chatId = "chat-1",): CommandContext {
-  return { chatId, config: CONFIG, db: {} as CommandContext["db"], };
+  return { chatId, config: CONFIG, db: testDb.db, } as CommandContext;
 }
 
 let chatSeq = 0;
@@ -64,12 +77,18 @@ let chatSeq = 0;
 async function run(verb: string, args: string[], chatId?: string,) {
   const handler = getCommand(verb,);
   if (!handler) { throw new Error(`${verb} not registered`,); }
-  return await handler(args, makeCtx(chatId ?? `chat-${++chatSeq}`,),);
+  const id = chatId ?? `chat-${++chatSeq}`;
+  try {
+    await insertChats(testDb.db, `Harness ${id}`, "harness-tester", { id, },);
+  } catch {
+    // Same chat id reused within a lifecycle test — the row already exists.
+  }
+
+  return await handler(args, makeCtx(id,),);
 }
 
 beforeEach(() => {
   clearSessions();
-  saved.length = 0;
 },);
 
 describe("harness verb registration", () => {
@@ -139,7 +158,13 @@ describe("workflow resolution", () => {
     expect(out.action,).toBeUndefined();
     expect(out.systemMessage,).toContain("unavailable",);
     expect(getSession("chat-empty",),).toBeUndefined();
-    expect(saved,).toHaveLength(0,);
+    const emptyRow = await testDb.db
+      .selectFrom("workflow_sessions",)
+      .where("chat_id", "=", "chat-empty",)
+      .selectAll()
+      .executeTakeFirst();
+
+    expect(emptyRow,).toBeUndefined();
   });
 
   test("a missing config block also degrades readably", async () => {
@@ -155,7 +180,13 @@ describe("workflow resolution", () => {
 describe("session lifecycle", () => {
   test("starting a run persists it through the session store (24h TTL applies)", async () => {
     await run("workflowz", [], "chat-ttl",);
-    expect(saved,).toEqual([{ chatId: "chat-ttl", workflowId: "harness-workflowz", },],);
+    const row = await testDb.db
+      .selectFrom("workflow_sessions",)
+      .where("chat_id", "=", "chat-ttl",)
+      .selectAll()
+      .executeTakeFirst();
+
+    expect(row?.workflow_id,).toBe("harness-workflowz",);
   });
 
   test("a second verb does not clobber an active run", async () => {
@@ -165,7 +196,14 @@ describe("session lifecycle", () => {
     expect(second.systemMessage,).toContain("already active",);
     expect(second.systemMessage,).toContain("Orchestrate",);
     expect(getSession("chat-busy",)?.workflow.id,).toBe("harness-orchestrate",);
-    expect(saved,).toHaveLength(1,);
+    const busyRows = await testDb.db
+      .selectFrom("workflow_sessions",)
+      .where("chat_id", "=", "chat-busy",)
+      .selectAll()
+      .execute();
+
+    expect(busyRows,).toHaveLength(1,);
+    expect(busyRows[0]?.workflow_id,).toBe("harness-orchestrate",);
   });
 
   test("a different chat is unaffected by another chat's active run", async () => {

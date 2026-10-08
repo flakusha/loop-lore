@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import "./i18n.test-helper";
-import { afterEach, expect, mock, test, } from "bun:test";
+import { afterAll, afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatBranches, } from "./chat-branches";
 import type { ChatState, } from "./types";
@@ -41,9 +41,17 @@ function mockFetch(status: number, body: unknown = {},) {
 
 // Alpine store stub — branches reads/writes $store.ui outside the browser.
 const uiStore: Record<string, unknown> = { branches: [], showBranchMenu: false, };
+const realAlpine = (globalThis as Record<string, unknown>).Alpine;
 (globalThis as Record<string, unknown>).Alpine = {
   store: (name: string,) => (name === "ui" ? uiStore : {}),
 };
+
+afterAll(() => {
+  // Restore the real (or absent) Alpine global: this stub has no initTree, so
+  // later files lazy-initializing Alpine modals crash on Alpine.initTree.
+  if (realAlpine === undefined) { delete (globalThis as Record<string, unknown>).Alpine; }
+  else { (globalThis as Record<string, unknown>).Alpine = realAlpine; }
+},);
 
 interface Toast {
   type: string;

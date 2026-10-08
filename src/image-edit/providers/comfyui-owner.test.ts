@@ -42,6 +42,10 @@ const IMAGE = makeMinimalPng(4, 4,);
 // Captured before `mock.module` swaps the registry entry: reaching through
 // `realConfigLoad` afterwards re-enters the mock and blows the stack.
 const realLoadConfig = realConfigLoad.loadConfig;
+// Value-snapshot of the whole real namespace, taken BEFORE any mock.module call.
+// Bun rewrites a namespace's live bindings when a mock registers, so an afterAll
+// that restores with the bare namespace would hand later files the stub.
+const REAL_CONFIG_LOAD: Record<string, unknown> = { ...realConfigLoad, };
 
 /** Every run downloads this one filename, so both users collide on bytes. */
 const FILENAME = "shared_output.png";
@@ -84,7 +88,7 @@ beforeAll(async () => {
   mock.module("../../generation/providers/comfyui", () => ({ ComfyUIClient: StubComfyUIClient, }),);
   uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-edit-owner-",),);
   mock.module("../../config/load", () => ({
-    ...realConfigLoad,
+    ...REAL_CONFIG_LOAD,
     loadConfig: () => ({
       ...realLoadConfig(),
       assets: { uploadDir, },
@@ -101,7 +105,7 @@ beforeAll(async () => {
 },);
 
 afterAll(async () => {
-  mock.module("../../config/load", () => realConfigLoad,);
+  mock.module("../../config/load", () => ({ ...REAL_CONFIG_LOAD, }),);
   setTestDatabase(null,);
   await db.destroy();
   rmSync(uploadDir, { recursive: true, force: true, },);

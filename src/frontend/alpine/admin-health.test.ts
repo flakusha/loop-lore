@@ -167,8 +167,15 @@ describe("healthPanelMethods.toggleHealthAutoRefresh", () => {
     panel.toggleHealthAutoRefresh();
     expect(panel.healthAutoRefresh,).toBe(false,);
     expect(panel.healthRefreshInterval,).toBeNull();
-    // Toggling off twice is safe.
+    // Repeated toggles are safe: back on, then off again. The toggle is a
+    // state flip, so a third call re-arms the 10s loadHealth interval — it
+    // MUST be toggled back off or the poll runs (and fetches) for the rest
+    // of the worker, failing unrelated later files.
     panel.toggleHealthAutoRefresh();
+    expect(panel.healthAutoRefresh,).toBe(true,);
+    panel.toggleHealthAutoRefresh();
+    expect(panel.healthAutoRefresh,).toBe(false,);
+    expect(panel.healthRefreshInterval,).toBeNull();
   });
 });
 
