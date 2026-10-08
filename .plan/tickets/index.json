@@ -3035,6 +3035,19 @@
     "title": "Factory reset deletes tables without transaction, silent per-table catch",
     "type": "BUG"
   },
+  "BUG-FAILED-PLUGIN-LOAD-LEAKS-A-REGISTERED-PLUGIN": {
+    "hash": "e622ba0",
+    "git_issue": "e622ba0",
+    "extid": "BUG-FAILED-PLUGIN-LOAD-LEAKS-A-REGISTERED-PLUGIN",
+    "type": "BUG",
+    "title": "Failed plugin load leaks a registered plugin",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/BUG-failed-plugin-load-leaks-a-registered-plugin.md",
+    "status": "done"
+  },
   "BUG-FAN-OUT-CONTENT-CLEARANCE-GATE-IS-OPT-IN-ON-A-CALLER-SUPPLIE": {
     "hash": "142027d",
     "git_issue": "142027d",
@@ -3402,6 +3415,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-gates-csv-equals-form-is-silently-ignored-only-the-space-sep.md",
     "status": "Not Started"
+  },
+  "BUG-GENERATE-ROUTE-AUTHORIZES-CHATID-BUT-NOT-ACTORID": {
+    "hash": "238220a",
+    "git_issue": "238220a",
+    "extid": "BUG-GENERATE-ROUTE-AUTHORIZES-CHATID-BUT-NOT-ACTORID",
+    "type": "BUG",
+    "title": "generate route authorizes chatId but not actorId",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md",
+    "status": "done"
   },
   "BUG-GENERATED-IMAGES-OWNED-BY-SYSTEM-ARE-INVISIBLE-TO-THE-REQUES": {
     "epic": "",
@@ -5253,6 +5279,19 @@
     "title": "NSFW body profile mass assignment — raw body into updateProfile",
     "type": "BUG"
   },
+  "BUG-NSFW-CARDS-SHIPS-UNGATED-POST-ROUTES": {
+    "hash": "ac70870",
+    "git_issue": "ac70870",
+    "extid": "BUG-NSFW-CARDS-SHIPS-UNGATED-POST-ROUTES",
+    "type": "BUG",
+    "title": "nsfw-cards ships ungated POST routes",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-security-sandboxing",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-cards-ships-ungated-post-routes.md",
+    "status": "Not Started"
+  },
   "BUG-NSFW-CONSENT-AUTO-GRANTED-IN-MEMORY-FOR-ANY-LOGGED-IN-USER-N": {
     "epic": "",
     "extid": "BUG-NSFW-CONSENT-AUTO-GRANTED-IN-MEMORY-FOR-ANY-LOGGED-IN-USER-N",
@@ -5711,6 +5750,45 @@
     "tags": [],
     "title": "plan:sync --fix mass-creates orphan git issues for placeholder hashes",
     "type": "BUG"
+  },
+  "BUG-PLUGIN-ROUTE-REGISTRY-LACKS-OWNERSHIP-ENFORCEMENT-IDOR": {
+    "hash": "7c24397",
+    "git_issue": "7c24397",
+    "extid": "BUG-PLUGIN-ROUTE-REGISTRY-LACKS-OWNERSHIP-ENFORCEMENT-IDOR",
+    "type": "BUG",
+    "title": "Plugin route registry lacks ownership enforcement (IDOR)",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "epic-security-sandboxing",
+    "tags": [],
+    "source": ".plan/tickets/BUG-plugin-route-registry-lacks-ownership-enforcement-idor.md",
+    "status": "Not Started"
+  },
+  "BUG-PLUGIN-STATE-IS-AUTO-APPROVED-ON-FIRST-SIGHT": {
+    "hash": "9085fe0",
+    "git_issue": "9085fe0",
+    "extid": "BUG-PLUGIN-STATE-IS-AUTO-APPROVED-ON-FIRST-SIGHT",
+    "type": "BUG",
+    "title": "Plugin state is auto-approved on first sight",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/BUG-plugin-state-is-auto-approved-on-first-sight.md",
+    "status": "done"
+  },
+  "BUG-PLUGIN-TOOL-AUTHORIZATION-FAILS-OPEN": {
+    "hash": "28c0c9c",
+    "git_issue": "28c0c9c",
+    "extid": "BUG-PLUGIN-TOOL-AUTHORIZATION-FAILS-OPEN",
+    "type": "BUG",
+    "title": "Plugin tool authorization fails open",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-security-sandboxing",
+    "tags": [],
+    "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md",
+    "status": "done"
   },
   "BUG-PLUGIN-TOOL-GATING-EMPTY-ROLE-BYPASS": {
     "epic": "epic-plugin-system",
@@ -19750,6 +19828,19 @@
     "title": "Add ownership checks to character routes",
     "type": "TASK"
   },
+  "TASK-ADD-PER-PLUGIN-UNLOAD": {
+    "hash": "b5883c1",
+    "git_issue": "b5883c1",
+    "extid": "TASK-ADD-PER-PLUGIN-UNLOAD",
+    "type": "TASK",
+    "title": "Add per-plugin unload",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-per-plugin-unload.md",
+    "status": "Not Started"
+  },
   "TASK-ADD-REQUESTRESULTSTATUS-AND-REQUESTPROGRESS-STATE-MACHINES-F": {
     "epic": "epic-middleware-request-lifecycle",
     "extid": "TASK-ADD-REQUESTRESULTSTATUS-AND-REQUESTPROGRESS-STATE-MACHINES-F",
@@ -27003,6 +27094,19 @@
     "title": "Consolidate chat/IM adapter abstraction above ProtocolHandler",
     "type": "TASK"
   },
+  "TASK-CONSOLIDATE-DUPLICATED-TOKEN-ESTIMATION": {
+    "hash": "fb79f57",
+    "git_issue": "fb79f57",
+    "extid": "TASK-CONSOLIDATE-DUPLICATED-TOKEN-ESTIMATION",
+    "type": "TASK",
+    "title": "Consolidate duplicated token estimation",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-chat-context-optimization",
+    "tags": [],
+    "source": ".plan/tickets/TASK-consolidate-duplicated-token-estimation.md",
+    "status": "Not Started"
+  },
   "TASK-CONSOLIDATE-QUEST-ENGINES": {
     "epic": "epic-quests-encounters",
     "extid": "TASK-CONSOLIDATE-QUEST-ENGINES",
@@ -29817,6 +29921,19 @@
     "title": "Enemies & Monsters Systems",
     "type": "TASK"
   },
+  "TASK-ENFORCE-PLUGIN-ORIGIN-AT-REQUEST-TIME": {
+    "hash": "72af3ec",
+    "git_issue": "72af3ec",
+    "extid": "TASK-ENFORCE-PLUGIN-ORIGIN-AT-REQUEST-TIME",
+    "type": "TASK",
+    "title": "Enforce plugin origin at request time",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-enforce-plugin-origin-at-request-time.md",
+    "status": "Not Started"
+  },
   "TASK-ENFORCE-VIEWER-ID-CONTRACT-IN-MEMORY-INJECTION": {
     "hash": "b64e902",
     "git_issue": "b64e902",
@@ -32172,6 +32289,19 @@
     "title": "GitHub Pages — VitePress Static Site Hosting",
     "type": "TASK"
   },
+  "TASK-GIWT-BATCH-COMMAND-FOR-RUN-FINALIZE-CHECK": {
+    "hash": "6461cbb",
+    "git_issue": "6461cbb",
+    "extid": "TASK-GIWT-BATCH-COMMAND-FOR-RUN-FINALIZE-CHECK",
+    "type": "TASK",
+    "title": "giwt: batch command for run/finalize/check",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-giwt-batch-command-for-run-finalize-check.md",
+    "status": "Not Started"
+  },
   "TASK-GIWT-ISSUES-GAINS-STATE-OPEN-CLOSED-ALL-FILTER": {
     "epic": "",
     "extid": "TASK-GIWT-ISSUES-GAINS-STATE-OPEN-CLOSED-ALL-FILTER",
@@ -32184,6 +32314,19 @@
     "tags": [],
     "title": "giwt issues gains --state open|closed|all filter",
     "type": "TASK"
+  },
+  "TASK-GIWT-LEDGER-EXPORT": {
+    "hash": "a61ac6c",
+    "git_issue": "a61ac6c",
+    "extid": "TASK-GIWT-LEDGER-EXPORT",
+    "type": "TASK",
+    "title": "giwt: ledger --export",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-giwt-ledger-export.md",
+    "status": "Not Started"
   },
   "TASK-GIWT-MIGRATION-OPEN-ITEMS": {
     "epic": "",
@@ -38958,6 +39101,19 @@
     "source": ".plan/tickets/TASK-plugin-host-contract-for-third-party-integration-plugins.md",
     "status": "Not Started"
   },
+  "TASK-PLUGIN-HOT-RELOAD-WITH-REAL-MODULE-CACHE-BUSTING": {
+    "hash": "fad3275",
+    "git_issue": "fad3275",
+    "extid": "TASK-PLUGIN-HOT-RELOAD-WITH-REAL-MODULE-CACHE-BUSTING",
+    "type": "TASK",
+    "title": "Plugin hot reload with real module cache busting",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-plugin-hot-reload-with-real-module-cache-busting.md",
+    "status": "Not Started"
+  },
   "TASK-PLUGIN-MANAGEMENT-API": {
     "epic": "epic-provider-plugin-ecosystem",
     "extid": "TASK-PLUGIN-MANAGEMENT-API",
@@ -41829,6 +41985,19 @@
     "tags": [],
     "title": "Role-scoped assistant command visibility",
     "type": "TASK"
+  },
+  "TASK-ROUTE-PLUGIN-CALLS-THROUGH-THE-SHARED-PROVIDER-PATH": {
+    "hash": "87881e3",
+    "git_issue": "87881e3",
+    "extid": "TASK-ROUTE-PLUGIN-CALLS-THROUGH-THE-SHARED-PROVIDER-PATH",
+    "type": "TASK",
+    "title": "Route plugin calls through the shared provider path",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-llm-request-scheduler",
+    "tags": [],
+    "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md",
+    "status": "Not Started"
   },
   "TASK-ROUTE-TEXT-MODERATION-AND-PROMPT-INJECTION-VERDICTS-THROUGH-": {
     "hash": "204dfb3",
@@ -45754,6 +45923,19 @@
     "tags": [],
     "title": "Weather & Environmental Effects",
     "type": "TASK"
+  },
+  "TASK-WIDEN-TYPECHECK-COVERAGE-TO-PLUGINS-AND-TESTS": {
+    "hash": "77b2d14",
+    "git_issue": "77b2d14",
+    "extid": "TASK-WIDEN-TYPECHECK-COVERAGE-TO-PLUGINS-AND-TESTS",
+    "type": "TASK",
+    "title": "Widen typecheck coverage to plugins/ and tests/",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-benchmark-ci-regression",
+    "tags": [],
+    "source": ".plan/tickets/TASK-widen-typecheck-coverage-to-plugins-and-tests.md",
+    "status": "Not Started"
   },
   "TASK-WIRE-ACHIEVEMENTS-ROUTES": {
     "epic": "epic-achievements",

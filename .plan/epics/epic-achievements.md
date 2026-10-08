@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Routes wired under `/api/v1/rpg/achievements` (`achievementsRoutes` + `achievementsPlayerRoutes` via `rpgRoutes` in `src/routes/rpg/index.ts`, mounted from `src/routes/v1/actors-surface.ts`); epic metadata reconciled 2026-10-02. Most tasks and acceptance criteria remain unchecked — unlock condition engine, notification, trophy case, secret reveal, social sharing, admin panel
 **Priority:** Medium
 **Effort:** Medium
@@ -199,3 +199,5 @@ interface SocialSharing {
 Resolution: mount it under `/api/rpg/achievements` (CRUD + progress/claim) via the WIRED-7
 mount pattern — tracked by `TASK-wire-achievements-routes`. Display/trophy-case remains separate
 frontend work tracked by FEAT-achievements.
+
+**Resolved:** 2026-10-08 registry-driven close: git issue f2f2e08 (registry tip: 100831863 Konstantin Fedotov Auto-closed: ticket EPIC-ACHIEVEMENTS marked done in index.json)

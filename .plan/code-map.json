@@ -7812,7 +7812,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-new-chat-vn-toggle-sends-visualnovel-but-backend-reads-rende.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
     },
     {
       "kind": "ticket",
@@ -7882,6 +7890,14 @@
     }
   ],
   "src/chat/service/crud/turn-skip.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-c2-bridged-turn-skip-propagation-bridge-only.md"
@@ -8162,6 +8178,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-rpg-chronological-navigation.md"
     },
     {
@@ -8274,7 +8298,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-injectnarration-hardcodes-actor-id-system-fk-drops-split-reu.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
     },
     {
       "kind": "ticket",
@@ -13658,6 +13690,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     },
     {
@@ -13679,6 +13715,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
     },
     {
       "kind": "ticket",
@@ -20590,6 +20630,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-stored-xss-unescaped-server-derived-asset-ids-labels-in-inne.md"
     },
     {
@@ -20688,6 +20732,10 @@
     }
   ],
   "src/frontend/pages/new-chat/submit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-new-chat-e2e-reads-chat-participants-once-before-the-best-ef.md"
@@ -22165,6 +22213,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-resolveactor-cascade-branch-does-not-verify-chat-partici.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
     }
   ],
   "src/generation/auto-gen/resolve-known-names.test.ts": [
@@ -22416,6 +22468,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
     },
     {
@@ -22487,6 +22543,12 @@
       "source": ".plan/tickets/BUG-chat-format-wrapper-corrupts-content-via-string-replace-repl.md"
     }
   ],
+  "src/generation/generate-route.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
+    }
+  ],
   "src/generation/generate-route.ts": [
     {
       "kind": "ticket",
@@ -22511,6 +22573,16 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/prompt-creation.md"
+    }
+  ],
+  "src/generation/generate-route/actor-authorization.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
     }
   ],
   "src/generation/generate-route/build-prompt.ts": [
@@ -22570,6 +22642,10 @@
     }
   ],
   "src/generation/generate-route/handler.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
@@ -22643,6 +22719,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    }
+  ],
+  "src/generation/generate-route/provider-request.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
     }
   ],
   "src/generation/generate-route/sse-utils.ts": [
@@ -22724,6 +22806,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
     },
     {
@@ -22763,6 +22849,16 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
+    }
+  ],
+  "src/generation/generate-route/validate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
     }
   ],
   "src/generation/generate.ts": [
@@ -22811,6 +22907,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-regeneratevariant-does-not-pass-style-to-api.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
     },
     {
       "kind": "ticket",
@@ -28417,7 +28517,21 @@
       "source": "docs/spec/testing.md"
     }
   ],
+  "src/plugins/route-access.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-route-registry-lacks-ownership-enforcement-idor.md"
+    }
+  ],
   "src/plugins/route-access.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-route-registry-lacks-ownership-enforcement-idor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-enforce-plugin-origin-at-request-time.md"
@@ -31158,6 +31272,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     },
     {
@@ -31577,6 +31695,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
     },
     {
       "kind": "ticket",
@@ -41687,6 +41809,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-cards-ships-ungated-post-routes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
     },
     {
       "kind": "ticket",
