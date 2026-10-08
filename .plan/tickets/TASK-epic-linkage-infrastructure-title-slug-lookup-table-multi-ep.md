@@ -81,6 +81,18 @@ Landed (Option A, infra + first pass):
   (bare slug or exact title-table hit). Entries where `.md` and index pick
   different owners are held back, never force-collapsed.
 
+Reconciled denominator (measured at pre-work base `7929fb66a` and at HEAD,
+same class definitions): 252 unresolvable epic values = 172 ticket-scope
+(39 comma + 26 slash + 6 semicolon + 106 whitespace-prose − 5 comma/slash
+both) + 80 single-token (`proposed:epic-x` ~41, dangling `epic-*` ~14,
+`review-dev-*`, `(none)`, backticked keynav x6, misc). 122 collapsed + 130
+remainder = 252 closes exactly (scope 172 − 122 = 50 remaining in-scope;
+80 singles untouched, 80 → 80; canonical singletons 1555 → 1677, +122 =
+collapsed count, zero unrelated index churn; keys 3331 → 3331, denominator
+did not move during this work). The filed 224 = the 172-scope class only;
+the 80 singles were never in scope. The filed freeform-158 exceeds measured
+whitespace-prose-106 by 52 (net 80 − 52 = the 28-entry gap).
+
 Remainder (130 entries held back, need product judgment):
 
 - Numbered `Epic NNN` aliases with no resolvable file (12): `Epic 26
