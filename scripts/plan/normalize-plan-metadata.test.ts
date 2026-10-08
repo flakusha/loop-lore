@@ -9,6 +9,7 @@
  * untouched; nothing is invented; and a normalized file is a fixed point.
  */
 import { describe, expect, test, } from "bun:test";
+import path from "node:path";
 import {
   applyRewrites,
   canonicalIndexOrder,
@@ -267,5 +268,53 @@ describe("applyRewrites", () => {
     const twice = planFile(FILE, once, SLUGS,).rewrites;
     expect(twice,).toEqual([],);
     expect(applyRewrites(once, twice,),).toBe(once,);
+  });
+});
+
+/**
+ * CLI surface of `bun run plan:metadata` (scripts/plan/normalize-plan-metadata.ts).
+ *
+ * Resource contract — why this suite is parallel-safe:
+ * - DISK: only the NON-MUTATING `--dry-run` / `--json --dry-run` paths are
+ *   spawned. The apply path (no `--dry-run`) rewrites `.plan/epics/*.md`,
+ *   `.plan/tickets/*.md` and `.plan/tickets/index.json`, so a test that ran it
+ *   would race a sibling `bun test` process — and a sibling agent — over the
+ *   real plan tree. `--dry-run` reads only.
+ * - PROCESS: each case is a spawned child; the script's `import.meta.main`
+ *   CLI block and its accumulators are per-invocation.
+ * - The JSON payload's counts are NOT pinned to literals — how much drift the
+ *   tree holds at any moment is concurrent repo state. What IS pinned is the
+ *   shape and the `dryRun` field, which prove the flag reached the writer.
+ * - No fixed-path fixtures, no shared globals, no ordering dependence.
+ */
+describe("normalize-plan-metadata CLI", () => {
+  const SCRIPT = path.join(import.meta.dir, "normalize-plan-metadata.ts",);
+
+  test("--help prints the brief and exits 0", () => {
+    const proc = Bun.spawnSync(["bun", SCRIPT, "--help",],);
+    expect(proc.exitCode,).toBe(0,);
+    expect(proc.stdout.toString(),).toContain("Unify .plan header-field dialects",);
+  });
+
+  test("--dry-run reports without rewriting", () => {
+    const proc = Bun.spawnSync(["bun", SCRIPT, "--dry-run",],);
+    const out = proc.stdout.toString();
+    expect(out,).toContain("=== Plan metadata normalization ===",);
+    expect(out,).toContain("dry-run: true",);
+    expect(proc.exitCode,).toBe(0,);
+  });
+
+  test("--json --dry-run emits parseable JSON with dryRun true", () => {
+    const proc = Bun.spawnSync(["bun", SCRIPT, "--json", "--dry-run",],);
+    const payload = JSON.parse(proc.stdout.toString(),) as { dryRun: boolean };
+    // dryRun: false here would mean --dry-run was dropped and the tree was
+    // rewritten before the report was printed.
+    expect(payload.dryRun,).toBe(true,);
+    expect(proc.exitCode,).toBe(0,);
+  });
+
+  test("an unknown option is rejected with exit 1", () => {
+    const proc = Bun.spawnSync(["bun", SCRIPT, "--no-such-flag",],);
+    expect(proc.exitCode,).toBe(1,);
   });
 });

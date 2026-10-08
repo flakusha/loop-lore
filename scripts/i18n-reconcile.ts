@@ -18,6 +18,7 @@
 
 import { readdirSync, readFileSync, writeFileSync, } from "fs";
 import { join, } from "path";
+import { flag, object, option, optional, runScript, string, withDefault, } from "../src/cli/parser";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -191,11 +192,18 @@ function fixLocale(
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
+const parser = object({
+  fix: withDefault(flag("--fix",), false,),
+  ci: withDefault(flag("--ci",), false,),
+  locale: optional(option("--locale", string(),),),
+},);
+
 function main() {
-  const args = process.argv.slice(2,);
-  const fixMode = args.includes("--fix",);
-  const ciMode = args.includes("--ci",);
-  const localeArg = args.find((a,) => a.startsWith("--locale=",))?.split("=",)[1];
+  const { fix: fixMode, ci: ciMode, locale: localeArg, } = runScript(parser, {
+    programName: "i18n:check",
+    brief: "Reconcile src/public/locales/*.json against en.json as the source of truth.",
+    help: "option",
+  },);
 
   const localesDir = join(import.meta.dir, "../src/public/locales",);
   const sourceFile = join(localesDir, "en.json",);

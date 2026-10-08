@@ -42,6 +42,7 @@
 
 import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
+import { flag, object, runScript, withDefault, } from "../../src/cli/parser";
 
 // `resolveStatus` / `normalizeStatus` are NOT in giwt's public API (its package
 // exports map has no subpaths), so they are reached by path until giwt exports
@@ -250,7 +251,14 @@ function report(title: string, tally: Tally, note = "",): void {
   console.log(`  ${"-".repeat(66,)}\n  total: ${[...tally.values(),].reduce((a, b,) => a + b, 0,)}${note}`,);
 }
 
-const check = process.argv.includes("--check",);
+const parser = object({
+  check: withDefault(flag("--check",), false,),
+},);
+const { check, } = runScript(parser, {
+  programName: "plan:status:normalize",
+  brief: "Normalize .plan status values onto their closed vocabularies (epic headers + ticket index).",
+  help: "option",
+},);
 console.log(`plan status normalize — ${check ? "check only" : "applying"} (root: ${ROOT})`,);
 
 const epics = normalizeEpics(check,);

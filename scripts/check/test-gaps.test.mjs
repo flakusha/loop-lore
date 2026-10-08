@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 317
+// size-allow: 358
 
 // Pins the test-gap ratchet contract: an export no test file names is a gap
 // and one a test does name is not; `export interface` / `export type` are not
@@ -18,7 +18,15 @@
 // code — so coverage survives the src/ re-export graph.
 
 import { expect, test, } from "bun:test";
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import {
+  copyFileSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir, } from "node:os";
 import { dirname, join, } from "node:path";
 
@@ -89,6 +97,16 @@ function scanFixture(files, { baseline = NO_GAPS, args = [], } = {},) {
     const script = join(root, "scripts", "check", GATE,);
     mkdirSync(join(root, "scripts", "check",), { recursive: true, },);
     copyFileSync(join(import.meta.dir, GATE,), script,);
+    // The gate imports the shared Optique wrapper, so the copy cannot resolve
+    // `../../src/cli/parser` without it. `src/cli` is SYMLINKED, not copied:
+    // walk() only descends into real directories, so a symlinked `cli` never
+    // enters the scan and cannot add a phantom `src/cli/parser.ts#runScript`
+    // gap to every fixture. node_modules is linked so @optique/* still
+    // resolves from inside the temp root.
+    const repoRoot = join(import.meta.dir, "..", "..",);
+    mkdirSync(join(root, "src",), { recursive: true, },);
+    symlinkSync(join(repoRoot, "src", "cli",), join(root, "src", "cli",), "dir",);
+    symlinkSync(join(repoRoot, "node_modules",), join(root, "node_modules",), "dir",);
     if (baseline !== null) { writeFileSync(join(root, BASELINE_REL,), baseline,); }
     for (const [name, content,] of Object.entries(files,)) {
       const file = join(root, name,);

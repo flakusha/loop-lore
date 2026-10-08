@@ -115,3 +115,52 @@ describe("sizeAllowFor", () => {
     expect(sizeAllowFor(pastLine5, 250,),).toBe(777,);
   });
 });
+
+// ── CLI ────────────────────────────────────────────────────────
+
+const CLI_SCRIPT = `${import.meta.dir}/check-file-size.ts`;
+const ROOT = `${import.meta.dir}/..`;
+
+/**
+ * Spawn the gate: `runScript` exits the process on a parse error or on
+ * `--help`, so nothing here is observable in-process. The gate only READS the
+ * tree — it owns no fixture, so parallel runs cannot collide.
+ */
+function run(...args: string[]) {
+  const proc = Bun.spawnSync(["bun", CLI_SCRIPT, ...args,], { cwd: ROOT, },);
+  return {
+    exitCode: proc.exitCode,
+    stdout: proc.stdout.toString(),
+    stderr: proc.stderr.toString(),
+  };
+}
+
+describe("check-file-size CLI", () => {
+  test("--help prints the brief and exits 0", () => {
+    const result = run("--help",);
+    expect(result.exitCode,).toBe(0,);
+    expect(result.stdout,).toContain("over the per-file line budget",);
+  });
+
+  test("--limit above every file: non-strict run exits 0", () => {
+    const result = run("--limit=100000",);
+    expect(result.exitCode,).toBe(0,);
+  });
+
+  test("--limit 1 --strict fails the gate with exit 1", () => {
+    const result = run("--limit=1", "--strict",);
+    expect(result.exitCode,).toBe(1,);
+    expect(result.stderr,).toContain("CI gate failed",);
+  });
+
+  test("non-numeric --limit is rejected with exit 1", () => {
+    const result = run("--limit=abc",);
+    expect(result.exitCode,).toBe(1,);
+  });
+
+  test("unknown flag is rejected with exit 1", () => {
+    const result = run("--no-such-flag",);
+    expect(result.exitCode,).toBe(1,);
+    expect(result.stderr,).toContain("--no-such-flag",);
+  });
+});

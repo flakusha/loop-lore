@@ -32,6 +32,7 @@
  */
 import { readFileSync, } from "node:fs";
 import path from "node:path";
+import { argument, object, optional, runScript, string, } from "../../src/cli/parser";
 
 const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 
@@ -76,7 +77,19 @@ function readAtBase(base, file,) {
 }
 
 function main() {
-  const base = process.argv[2] ?? process.env.WEAVE_BASE;
+  // Inside `main`, not at module scope: the colocated test IMPORTS this
+  // module, and a module-scope runScript would parse the importer's argv.
+  const args = runScript(
+    object({ base: optional(argument(string(),),), },),
+    {
+      programName: "weave-damage",
+      brief: "Fail when files gained consecutive duplicate lines vs a pre-rebase base ref.",
+      examples:
+        "weave-damage <pre-rebase-ref>   # scan against the given ref\n  WEAVE_BASE=<ref> weave-damage   # same, ref from the environment",
+      help: "option",
+    },
+  );
+  const base = args.base ?? process.env.WEAVE_BASE;
   if (!base) {
     console.log("weave - damage scan: skipped (no base ref; set WEAVE_BASE or pass <ref>)",);
     return;

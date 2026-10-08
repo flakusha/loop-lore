@@ -43,13 +43,21 @@
  * Exit codes: 0 in sync, 1 drift found, 2 tooling failure.
  */
 import path from "node:path";
+import { flag, object, runScript, withDefault, } from "../../src/cli/parser";
 
 const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 const SPEC_REL = "docs/reference/openapi.json";
 const DOC_REL = "docs/reference/api.md";
 const BASELINE_REL = "scripts/check/api-doc-drift-baseline.json";
 const METHODS = ["get", "post", "put", "patch", "delete", "head", "options",];
-const UPDATE_BASELINE = process.argv.includes("--update-baseline",);
+const UPDATE_BASELINE = runScript(
+  object({ updateBaseline: withDefault(flag("--update-baseline",), false,), },),
+  {
+    programName: "api-doc-drift",
+    brief: "Fail when docs/reference/api.md and the generated OpenAPI spec disagree.",
+    help: "option",
+  },
+).updateBaseline;
 
 /** `GET /api/v1/chats/:id/messages` -> `GET /api/v1/chats/{id}/messages`. */
 const normalize = (p,) => p.replace(/:([A-Za-z0-9_]+)/g, "{$1}",);

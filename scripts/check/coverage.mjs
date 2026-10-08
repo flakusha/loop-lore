@@ -21,12 +21,35 @@
  */
 import { existsSync, } from "node:fs";
 
+import {
+  integer,
+  object,
+  option,
+  optional,
+  runScript,
+  string,
+  withDefault,
+} from "../../src/cli/parser";
 import { runDiffFileMode, } from "./coverage/diff-mode.mjs";
 import { aggregateModules, parseRecords, } from "./coverage/lcov.mjs";
 import { WAIVERS, } from "./coverage/waivers.mjs";
 
-const floor = parseInt(process.argv.find((a,) => a.startsWith("--floor=",))?.split("=",)[1], 10,) || 80;
-const onlyArg = process.argv.find((a,) => a.startsWith("--only=",))?.split("=",)[1];
+const args = runScript(
+  object({
+    floor: withDefault(option("--floor", integer(),), 80,),
+    only: optional(option("--only", string(),),),
+    files: optional(option("--files", string(),),),
+    coverageDir: optional(option("--coverage-dir", string(),),),
+  },),
+  {
+    programName: "coverage",
+    brief: "Report per-module line coverage from an lcov.info file against a floor.",
+    showDefault: true,
+    help: "option",
+  },
+);
+const floor = args.floor;
+const onlyArg = args.only;
 // BUG-37a3763: diff-scoped runs previously passed `--only=<modules>` and
 // floored whole-module aggregates computed from a PARTIAL lcov (bun only
 // emits records for files the scoped tests actually loaded). Scoped runs
@@ -35,7 +58,7 @@ const onlyArg = process.argv.find((a,) => a.startsWith("--only=",))?.split("=",)
 // instead: each diff-touched non-test file that appears in lcov is floored
 // individually (module waivers still set that file's floor); files absent
 // from lcov were never loaded and are reported as SKIP (unmeasured).
-const filesArg = process.argv.find((a,) => a.startsWith("--files=",))?.split("=",)[1];
+const filesArg = args.files;
 const diffFiles = filesArg
   ? filesArg.split(",",).map((s,) => s.trim()).filter(Boolean,)
   : null;
@@ -50,7 +73,7 @@ const onlySet = onlyArg ? new Set(onlyArg.split(",",).map((s,) => s.trim()).filt
 // passes the matching `--coverage-dir=<dir>`; we resolve `lcov.info` inside
 // that directory. Falls back to the legacy `.tmp/coverage/` path for manual
 // `bun run scripts/check/coverage.mjs` invocations outside the runner.
-const coverageDir = process.argv.find((a,) => a.startsWith("--coverage-dir=",))?.split("=",)[1] ??
+const coverageDir = args.coverageDir ??
   process.env.COVERAGE_DIR ??
   ".tmp/coverage";
 const lcovPath = `${coverageDir.replace(/\/+$/, "",)}/lcov.info`;
