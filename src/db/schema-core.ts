@@ -1095,19 +1095,6 @@ export interface WorldEventLog {
   dedupe_key: string;
   created_at: Generated<string>;
 }
-
-export interface LocationDiscovery {
-  world_id: string;
-  location_id: string;
-  actor_id: string;
-  progress: Generated<number>;
-  last_explored_tick: Generated<number>;
-  discovered: Generated<number>;
-  discovered_tick: number | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
 export interface ScheduledMessages {
   id: Generated<string>;
   chat_id: string;
@@ -1248,6 +1235,7 @@ export interface Actors {
   creator: string | null;
 
   character_version: string | null;
+}
 
 // ── mesh_inbound_keys ────────────────────────────────────────────
 export interface MeshInboundKeys {
@@ -2487,5 +2475,24 @@ export interface LocationDiscovery {
   updated_at: Generated<string>;
 }
 
-  review_state: Generated<string>;
+// ── plan_items ────────────────────────────────────────────
+export interface PlanItems {
+  id: Generated<string>;
+  owner_id: string;
+  chat_id: string | null;
+  title: string;
+  state: Generated<string>;
+  kind: Generated<string>;
+  position: Generated<number>;
+  parent_id: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── plan_links ────────────────────────────────────────────
+export interface PlanLinks {
+  from_id: string;
+  to_id: string;
+  relation: string;
+  created_at: Generated<string>;
 }

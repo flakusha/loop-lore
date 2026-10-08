@@ -776,6 +776,24 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("plan_items", {
+    id: col("text", { primaryKey: true, },),
+    owner_id: col("text", { notNull: true, },),
+    chat_id: col("text",),
+    title: col("text", { notNull: true, },),
+    state: col("text", { notNull: true, hasDefault: true, },),
+    kind: col("text", { notNull: true, hasDefault: true, },),
+    position: col("integer", { notNull: true, hasDefault: true, },),
+    parent_id: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("plan_links", {
+    from_id: col("text", { notNull: true, },),
+    to_id: col("text", { notNull: true, },),
+    relation: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("player_achievements", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     player_id: col("text", { notNull: true, },),
