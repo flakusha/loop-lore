@@ -44,7 +44,11 @@ export interface ChatCoreUiState {
   loadAllReactions(): Promise<void>;
   loadQuickEmojis(): Promise<void>;
   _reactionPicker: { visible: boolean; messageId: string; x: number; y: number };
+  _reactionActiveIndex: number;
   _quickEmojis: string[];
   showReactionPicker(msgId: string, event: Event,): void;
   closeReactionPicker(): void;
+  moveReactionSelection(delta: 1 | -1,): void;
+  focusReactionOption(index: number,): void;
+  focusLastReactionOption(): void;
 }
