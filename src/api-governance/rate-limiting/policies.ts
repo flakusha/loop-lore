@@ -74,6 +74,12 @@ export const routePolicies: Array<[pattern: string, policy: RatePolicy, match?: 
   // default bucket. This suffix hits exactly the generation POSTs: the job
   // list/status/cancel paths end with `/jobs…` and stay unmatched.
   ["/emotion-avatars", generationPolicy, "suffix",],
+  // BUG-rate-limit-misses-post-emotion-avatars-single: the wardrobe
+  // single-generation endpoint POST /api/v1/actors/:actorId/wardrobe/:itemId/emotion-avatars/single
+  // ends with /single, so the /emotion-avatars suffix rule above misses it and
+  // it falls through to defaultPolicy (300/min) despite calling the same
+  // startBatchGeneration() fan-out as the batch endpoint.
+  ["/emotion-avatars/single", generationPolicy, "suffix",],
 ];
 
 /**
