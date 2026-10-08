@@ -453,28 +453,35 @@ auction, banking, and simulation layers above remain unbuilt.
 
 | Layer | Status | Where |
 | ----- | ------ | ----- |
-| Currency + two-sided transfer | Shipped | `src/services/trade/`, `src/routes/trade/` |
-| Offer/accept/cancel lifecycle | Not Started | only synchronous `POST /trade/execute` |
-| NPC counterparty | Partial | `src/routes/trade/npc.ts` |
-| Trade history | Not Started | no history table |
-| Market / auction / banking | Not Started | — |
+| Currency ledger + balance | Shipped | `src/services/trade/balance.ts` |
+| Two-sided atomic transfer | Shipped | `src/services/trade/core.ts` |
+| Offer/accept/cancel lifecycle | Shipped | `src/services/trade/lifecycle.ts`, `src/routes/trade/offers.ts` |
+| NPC counterparty | Shipped | `src/services/trade/npc.ts`, `src/services/trade/counter.ts`, `src/routes/trade/npc.ts` |
+| Trade history (read-only, world-scoped, optional actor filter) | Shipped | `src/routes/trade/history.ts` |
+| Market pricing / auction house | Not Started | — |
+| Banking | Not Started | — |
 | Economic simulation | Not Started | — |
 | Guild economy | Not Started | — |
 
+`TASK-trade-history-npc-counterparty.md` still reads Not Started in the index even
+though both halves ship in `src/routes/trade/{history,npc}.ts` with tests — the
+ticket is stale, not the code.
+
 ## Dependencies
 
-- `epic-item-systems-unification.md` — unified item types + the transfer primitive
+- `epic-item-systems-unification.md` - unified item types + the transfer primitive
   trade settles through
-- `src/services/trade/` — `TradeService`
-- `epic-faction-reputation.md` — faction currency and reputation-gated pricing
+- `src/services/trade/` - `TradeService`
+- `epic-faction-reputation.md` - faction currency and reputation-gated pricing
 
 ## Unticketed Gaps
 
-- Persistent trade offer lifecycle (place/accept/cancel with expiry) — deferred
-  out of `TASK-implement-trade.md`, never ticketed.
-- Trade history — no table, no query endpoint, no ticket.
-- Market pricing, auction house, and banking have no tickets beyond
-  `TASK-economy-trading.md` / `TASK-economy-player-shops.md`.
+- Market pricing has no model: every trade settles at a caller-supplied price,
+  so there is no inflation/deflation surface and no NPC valuation model.
+- Auction house and banking have no tickets beyond `TASK-economy-trading.md` /
+  `TASK-economy-player-shops.md`.
+- Trade history is paged by a bare `limit` (max 200) with no cursor; it reads
+  the `worlds.trades` table, which is world-scoped rather than per-actor.
 
 ## Related Epics
 
