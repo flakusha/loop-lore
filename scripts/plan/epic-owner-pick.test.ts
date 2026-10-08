@@ -22,6 +22,7 @@ const SLUGS = new Set([
   "epic-visual-novel-mode",
   "epic-aux-enrichment-pipeline",
   "epic-avatar-alpha-vn-layering",
+  "epic-wardrobe-avatar-variants",
 ],);
 const TITLES: Record<string, string> = {
   "Character Core System": "epic-character-core-system",
@@ -91,6 +92,13 @@ describe("pickEpicOwner", () => {
       SLUGS,
       TITLES,
     ),).toBe("epic-avatar-alpha-vn-layering",);
+  });
+
+  test("whole-value exact title wins over splitting on its separator", () => {
+    expect(pickEpicOwner("Wardrobe / Loadout Avatar Variants", SLUGS, {
+      ...TITLES,
+      "Wardrobe / Loadout Avatar Variants": "epic-wardrobe-avatar-variants",
+    },),).toBe("epic-wardrobe-avatar-variants",);
   });
 
   test("unresolvable values return null — reported, never guessed", () => {
