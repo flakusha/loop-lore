@@ -3,7 +3,7 @@
 
 # BUG: Fan-out content-clearance gate is opt-in on a caller-supplied chatId
 
-**Status:** Not Started
+**Status:** Wontfix
 **Priority:** medium
 **Effort:** Small
 **Tags:** security, federation
@@ -21,3 +21,21 @@ fanOutContent (src/federation/fan-out.ts:162-172) runs authorizeChatExport only 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Resolution
+
+Not reachable: `fanOutContent` (`src/federation/fan-out.ts:143`) has zero
+production callers. The only references are `src/federation/clearance.test.ts`,
+`src/federation/sharing.test.ts`, and
+`docs/review/federation-local-multi-instance-review.md:63`. No production path
+can pass chat-derived content without `chatId`, so the opt-in gate cannot be
+bypassed today.
+
+Latent issue recorded for whoever wires the sender trigger: `chatId?: string`
+on `FanOutContent` (`src/federation/fan-out.ts:49`) is held only by the doc
+comment at `:43-48`. When a federation sender trigger is wired, `chatId` must
+become REQUIRED at the chat-content entry point — enforced by the call site's
+type, not by inverting this condition. Inverting `content.chatId !== undefined`
+would break the deliberate non-chat blob path exercised by
+`src/federation/sharing.test.ts:555` and `src/federation/clearance.test.ts:177`.
