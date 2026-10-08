@@ -9,7 +9,7 @@
 
 **Summary:**
 
-Spec epic-openapi-reference.md:82-93 requires a static openapi.json exported at build time plus a markdown transform. Today the spec is served only at runtime via @elysia/openapi. No scripts/gen-openapi.ts, no docs:api script.
+Spec epic-openapi-reference.md:82-93 requires a static openapi.json exported at build time plus a markdown transform. `scripts/generate-openapi.ts` and the `openapi` package script already exist and emit the spec on demand, but nothing commits the output: no `docs:api` chain, and `docs/reference/` holds only the hand-maintained `api.md`. Still missing are `scripts/gen-api-docs.ts` and a committed `docs/reference/openapi.json`.
 
 **Context:**
 
