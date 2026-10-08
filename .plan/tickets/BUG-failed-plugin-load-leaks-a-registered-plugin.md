@@ -46,6 +46,15 @@ other plugin. `loadSinglePlugin` keeps the manifest in an outer `let` so the
 `onLoad` threw never finished loading, so its teardown state is undefined. No
 per-plugin unload primitive was added; that remains filed separately.
 
+The `onLoad` invocation was later moved out of `loadSinglePlugin` into the
+exported `initializePlugin`, because `onLoad` must not run at all for an
+unapproved plugin (see BUG-plugin-state-is-auto-approved-on-first-sight). That
+made the rollback span two steps: the `catch` now also drops the name from the
+loader-side `initializedPlugins` set, so a plugin whose hook threw is not left
+marked as initialized and can be re-initialized by a later enable. The rollback
+block itself — unregister on failure, never call `onUnload` — is unchanged, and
+its assertions in `loader.test.ts` still hold.
+
 **Acceptance Criteria:**
 
 - [x] Implementation complete

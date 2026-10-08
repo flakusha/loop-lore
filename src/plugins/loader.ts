@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 290
+// size-allow: 330
 // Cohesive loader module: scan, single load + rollback, approval state,
 // dispatch, shutdown.
 
@@ -20,7 +20,7 @@ import type { DB, PluginState } from "../db/schema";
 import type { PluginLogger, PluginManifest, PluginOrigin } from "./types";
 import { registry } from "./registry";
 import { mergePluginConfig } from "./config-merge";
-import { readStoredPluginConfig } from "./config-store";
+import { defaultPluginStatus, readStoredPluginConfig, } from "./config-store";
 import { checkRouteAccess, type PluginCaller, } from "./route-access";
 import { warnIfAccessFieldsAreInert, type LoadAllPluginsOpts, } from "./solo-mode-warning";
 import type { TranslatorFn, } from "../i18n/types";
@@ -33,6 +33,9 @@ import { itemCreationTool, } from "../generation/tools/create-item";
 
 /** Ordered list of plugin names for shutdown (reverse) */
 const loadOrder: string[] = [];
+
+/** Names whose `onLoad` has already run, so deferred init stays one-shot. */
+const initializedPlugins = new Set<string>();
 
 const PLUGIN_DIRS: { origin: PluginOrigin; dir: string }[] = [
   { origin: "core", dir: "plugins/core" },
@@ -161,25 +164,17 @@ export async function loadSinglePlugin(
     registry.register({ manifest, origin, directory: pluginDir, });
     // Approval is origin-scoped: a community/local plugin only runs once
     // plugin_state says so (see persistPluginState / isPluginActive).
-    registry.setEnabled(manifest.name, await isPluginActive({ db, name: manifest.name, origin, },),);
+    const approved = await isPluginActive({ db, name: manifest.name, origin, },);
+    registry.setEnabled(manifest.name, approved,);
     registerManifestExtensions(manifest,);
 
-    // FEAT-051: merge any admin-stored config over manifest defaults so the
-    // hook (and required-key enforcement) sees the effective config.
-    const storedConfig = await readStoredPluginConfig(db, manifest.name,);
-
-    // Call onLoad hook — allows dynamic registration
-    if (typeof manifest.onLoad === "function") {
-      await manifest.onLoad({
-        db,
-        config: mergePluginConfig(manifest.config ?? {}, storedConfig, manifest.configSchema),
-        logger: makeLogger(manifest.name,),
-        registerTool: (def) => { registry.addTools(manifest.name, [def,],); },
-        registerAgentRole: (def) => { registry.addAgentRoles(manifest.name, [def,],); },
-        registerApiRoute: (def) => { registry.addRoutes(manifest.name, [def,],); },
-        registerUiComponent: (def) => { registry.addUIComponents(manifest.name, [def,],); },
-        registerEventHandler: (def) => { registry.addEventHandlers(manifest.name, [def,],); },
-      });
+    // `onLoad` is code execution with a live `db` handle, so it runs only for
+    // an approved plugin. An unapproved one is inert: nothing is served while
+    // it is disabled, and the admin enable route performs this deferred init.
+    if (approved) {
+      await initializePlugin({ db, manifest, },);
+    } else {
+      log.warn({ message: `Plugin is not approved — onLoad deferred until enabled`, plugin: manifest.name, origin });
     }
 
     loadOrder.push(manifest.name);
@@ -190,10 +185,51 @@ export async function loadSinglePlugin(
     // plugin also drops both the manifest extensions and anything `onLoad`
     // registered before it threw. `onUnload` is deliberately NOT called: the
     // plugin never finished loading, so its teardown state is undefined.
-    if (registeredName) { registry.unregister(registeredName); }
+    if (registeredName) {
+      initializedPlugins.delete(registeredName);
+      registry.unregister(registeredName);
+    }
 
     log.error({ message: `Failed to load plugin`, plugin: pluginName, error: String(error,), });
   }
+}
+
+/** Inputs for {@link initializePlugin}. */
+export interface InitializePluginOpts {
+  db: Kysely<DB>;
+  manifest: PluginManifest;
+}
+
+/**
+ * Run a loaded plugin's `onLoad` once, with the effective config.
+ *
+ * Only ever called for an approved plugin: an unapproved plugin must not
+ * execute code, so its initialization is deferred to the admin enable route,
+ * which calls this in the plugin's stead. Idempotent — a plugin whose `onLoad`
+ * already ran is left alone, so disable→enable does not re-register.
+ * @param opts
+ * @param opts.db
+ * @param opts.manifest
+ */
+export async function initializePlugin({ db, manifest, }: InitializePluginOpts,): Promise<void> {
+  if (initializedPlugins.has(manifest.name,) || typeof manifest.onLoad !== "function") { return; }
+
+  // FEAT-051: merge any admin-stored config over manifest defaults so the
+  // hook (and required-key enforcement) sees the effective config.
+  const storedConfig = await readStoredPluginConfig(db, manifest.name,);
+
+  await manifest.onLoad({
+    db,
+    config: mergePluginConfig(manifest.config ?? {}, storedConfig, manifest.configSchema),
+    logger: makeLogger(manifest.name,),
+    registerTool: (def) => { registry.addTools(manifest.name, [def,],); },
+    registerAgentRole: (def) => { registry.addAgentRoles(manifest.name, [def,],); },
+    registerApiRoute: (def) => { registry.addRoutes(manifest.name, [def,],); },
+    registerUiComponent: (def) => { registry.addUIComponents(manifest.name, [def,],); },
+    registerEventHandler: (def) => { registry.addEventHandlers(manifest.name, [def,],); },
+  },);
+
+  initializedPlugins.add(manifest.name,);
 }
 
 /**
@@ -222,10 +258,15 @@ interface PluginApprovalOpts {
  * Only `core` self-approves; community/local land disabled until an admin
  * enables them, so dropping a directory in can never activate a plugin.
  * @param opts
+ * @param opts.db
+ * @param opts.name
+ * @param opts.origin
  */
 async function persistPluginState({ db, name, origin, }: PluginApprovalOpts): Promise<void> {
-  const selfApproved = origin === "core";
-  const status = selfApproved ? PluginStatus.Active : PluginStatus.Disabled;
+  // Same origin rule the config route's own insert uses (defaultPluginStatus),
+  // so a plugin row written by either path lands in the same state.
+  const status = defaultPluginStatus(origin,);
+  const selfApproved = status === PluginStatus.Active;
   try {
     await db
       .insertInto("plugin_state")
@@ -243,6 +284,9 @@ async function persistPluginState({ db, name, origin, }: PluginApprovalOpts): Pr
  * Whether a plugin may run. The persisted plugin_state row decides; a name
  * with no row falls back to origin, so only `core` self-approves on first sight.
  * @param opts
+ * @param opts.db
+ * @param opts.name
+ * @param opts.origin
  */
 async function isPluginActive({ db, name, origin, }: PluginApprovalOpts): Promise<boolean> {
   try {
@@ -318,6 +362,7 @@ export async function unloadAllPlugins(): Promise<void> {
 
   registry.unregisterAll();
   loadOrder.length = 0;
+  initializedPlugins.clear();
 }
 
 /** List all loaded plugins (for registry API routes) */
