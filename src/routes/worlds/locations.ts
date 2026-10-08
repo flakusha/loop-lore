@@ -17,6 +17,7 @@ import {
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import { createLocationChat, resolveLocationTemplate, } from "./location-chat";
 import { validateConnections, } from "./location-connections";
+import { reparentLocation, } from "./locations-reparent";
 
 /**
  * @param database
@@ -208,7 +209,12 @@ export async function handleUpdateLocation(
   const updates: Record<string, unknown> = {};
   if (body.name) { updates.name = body.name; }
   if (body.description) { updates.description = body.description; }
-  if (body.parentLocationId) { updates.parent_location_id = body.parentLocationId; }
+  const parentId = typeof body.parentLocationId === "string" ? body.parentLocationId : "";
+  if (parentId) {
+    const reparentErr = await reparentLocation(database, worldId, locId, parentId,);
+    if (reparentErr) { return reparentErr; }
+  }
+
   if (body.kind != null) { updates.kind = body.kind; }
   if (body.mobilityMode != null) { updates.mobility_mode = body.mobilityMode; }
   if (body.path !== undefined) { updates.path = body.path; }

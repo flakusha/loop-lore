@@ -51,6 +51,27 @@ export interface InsertLocationInput {
   parentLocationId: string | null;
 }
 
+/**
+ * Why `moveSubtree` refused a move. `code` lets callers map to HTTP statuses
+ * without string-matching messages.
+ */
+export type LocationMoveReason = "self-parent" | "not-found" | "cross-world" | "cycle";
+
+/** Typed rejection from `LocationTreeService.moveSubtree`. */
+export class LocationMoveError extends Error {
+  /**
+   * @param code machine-readable rejection reason
+   * @param message human-readable detail
+   */
+  constructor(
+    readonly code: LocationMoveReason,
+    message: string,
+  ) {
+    super(message,);
+    this.name = "LocationMoveError";
+  }
+}
+
 export class LocationTreeService {
   constructor(private readonly db: Kysely<DB>,) {}
 
@@ -233,10 +254,11 @@ export class LocationTreeService {
    * Move a subtree under a new parent (cross-world and cycle rejected at the app layer).
    * @param locationId
    * @param newParentId
+   * @throws {LocationMoveError} self-parent, not-found, cross-world, or cycle rejection
    */
   async moveSubtree(locationId: string, newParentId: string | null,): Promise<void> {
     if (newParentId === locationId) {
-      throw new Error("location cannot be its own parent",);
+      throw new LocationMoveError("self-parent", "location cannot be its own parent",);
     }
 
     if (newParentId !== null) {
@@ -249,16 +271,14 @@ export class LocationTreeService {
 
       const self = rows.find((r,) => r.id === locationId);
       const parent = rows.find((r,) => r.id === newParentId);
-      if (!self || !parent) { throw new Error("location or parent not found",); }
+      if (!self || !parent) { throw new LocationMoveError("not-found", "location or parent not found",); }
       if (self.world_id !== parent.world_id) {
-        throw new Error("cross-world move rejected",);
+        throw new LocationMoveError("cross-world", "cross-world move rejected",);
       }
 
-      if (newParentId !== null) {
-        const ancestors = await this.getAncestors(newParentId,);
-        if (ancestors.some((a,) => a.id === locationId)) {
-          throw new Error("move would create a cycle",);
-        }
+      const ancestors = await this.getAncestors(newParentId,);
+      if (ancestors.some((a,) => a.id === locationId)) {
+        throw new LocationMoveError("cycle", "move would create a cycle",);
       }
     }
 
