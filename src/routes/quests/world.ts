@@ -11,6 +11,7 @@ import {
   QuestResponse,
 } from "../../validation/schemas";
 import { handleCreateQuest, handleListQuests, } from "./handlers";
+export const WorldQuestListResponse = ListResponse(QuestResponse,);
 
 /**
  * @param root0
@@ -34,7 +35,7 @@ export function questWorldRoutes({ database, }: { database: Kysely<DB> }, prefix
       );
     }, {
       response: {
-        200: ListResponse(QuestResponse,),
+        200: WorldQuestListResponse,
         401: ErrorResponse,
         404: ErrorResponse,
       },

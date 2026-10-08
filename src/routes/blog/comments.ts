@@ -16,6 +16,7 @@ import {
 import { type HandlerOpts, } from "../actor-auth.js";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
 import { isReadablePost, } from "./post-read-policy.js";
+export const BlogCommentListResponse = ListResponse(BlogCommentResponse,);
 
 /**
  * @param opts
@@ -89,7 +90,7 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
       return jsonResponse({ success: true, comments, count: comments.length, },);
     }, {
       response: {
-        200: ListResponse(BlogCommentResponse,),
+        200: BlogCommentListResponse,
         404: ErrorResponse,
       },
       detail: {

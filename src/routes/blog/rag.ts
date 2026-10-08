@@ -13,6 +13,7 @@ import {
 } from "../../validation/schemas";
 import { type HandlerOpts, } from "../actor-auth.js";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils.js";
+export const BlogRagSourcesListResponse = ListResponse(BlogPostResponse,);
 
 /**
  * @param opts
@@ -29,7 +30,7 @@ export function blogRagRoutes(opts: HandlerOpts, prefix = "/api",) {
       return jsonResponse({ success: true, sources, count: sources.length, },);
     }, {
       response: {
-        200: ListResponse(BlogPostResponse,),
+        200: BlogRagSourcesListResponse,
       },
       detail: {
         summary: "List RAG sources",
