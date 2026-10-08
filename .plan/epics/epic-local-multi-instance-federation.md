@@ -141,3 +141,15 @@ Boot sequence: load config → `federation.enabled` gate → upsert peers from `
 ## Open Decisions
 
 Tracked as D1–D7 in `docs/review/federation-local-multi-instance-review.md` §5. The two that gate ticket shape: **D2** (what triggers fan-out — every message vs per-chat toggle vs per-peer targeting) and **D4** (who may grant consent — owner only vs any participant). Tickets are written to the review's stated defaults so they are actionable without a decision, and note the assumption.
+
+
+## Finalization Handoff Hazard
+
+These planning commits sit on a branch named `fix-unit-test-isolation`, which does **not** describe this content. The name matters at finalize time, not just cosmetically.
+
+- Under `--merge-strategy squash` the commit subject is derived mechanically from the **branch name** by `branchToSquashMessage` (`node_modules/giwt/src/commands/finalize/merge.ts:22-37`), called from `node_modules/giwt/src/commands/finalize/staging-strategy.ts:31` with no override flag — `parseFinalizeArgs` (`merge.ts:56-113`) accepts `--merge-strategy`, `--onto`, `--force`, `--gates`, `--skip-gates`, `--plan-gates`, and `--jobs`, and nothing that sets the subject.
+- For `fix-unit-test-isolation` this mints **`chore: Fix unit test isolation`** — a false description of federation planning.
+- The default strategy is `rebase` (`merge.ts:67`), under which the branch name never lands in the commit subject.
+- `AGENTS.md:379-381` recommends `--merge-strategy squash` for plan-only branches, so squash is the path a finalizer following the docs will take.
+
+**Do not finalize this branch with squash under its current name.** Rename it to something matching the conventional-commit regex at `merge.ts:26` (`^(feature|fix|refactor|perf|docs|test|chore)/`) before finalizing. `docs/local-multi-instance-federation` matches and mints `docs: Local multi instance federation`. Alternatively finalize with the default `rebase`, where the branch name is not used.
