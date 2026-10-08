@@ -3,12 +3,12 @@
 
 # EPIC: Content Hashing & Distributed Integrity
 
-**Tags:** (none)
+**Tags:** content-hash, integrity, idempotency, dedup, revalidation
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** Helper (`src/hash/record-hash.ts`) + registry (`src/db/content-version.ts`) + migration 034 + idempotency middleware (`src/middleware/idempotency-utils.ts`) all shipped. Service-layer hooks (compute `record_hash` before INSERT in asset create + message create), `X-Record-Hash` emission, revalidation/healing daemons, and frontend reconciliation are **not implemented**.
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic
@@ -86,13 +86,22 @@ Without a unified hash:
 - **Postgres-side checksum triggers** — SQLite portable code is the
   priority; follow-up once SQLite is stable.
 
+## Spec Alignment
+
+| Spec | Status | Notes |
+| --- | --- | --- |
+| `docs/spec/data-integrity-acid.md` | 🟡 partial | `format_version` optimistic concurrency (Phase 2) is owned by Epic 27, not this epic |
+| `docs/spec/architecture.md` | 🟡 partial | `record_hash` not mentioned in architecture spec; needs update when service hooks land |
+| `docs/spec/config-extensions.md` | ✅ aligned | No overlap |
+
 ## Sub-Tickets
 
-- [ ] TASK-middleware-fe-be-db-record-content-hashing.md
-- [ ] TASK-middleware-browser-side-storage-request-hash-reconciliation.md
-- [ ] TASK-middleware-migration-compaction-data-version-hash.md
-- [ ] TASK-middleware-content-assets-gallery-hashing-validation.md
-- [ ] TASK-middleware-distributed-healing-revalidation-backups.md
+- [ ] `TASK-middleware-fe-be-db-record-content-hashing.md` — **In Progress**: helper + registry shipped; service hooks + header emission pending
+- [ ] `TASK-middleware-browser-side-storage-request-hash-reconciliation.md` — Not Started
+- [x] `TASK-middleware-migration-compaction-data-version-hash.md` — **Done**: migration 034 shipped
+- [ ] `TASK-middleware-content-assets-gallery-hashing-validation.md` — **In Progress**: asset dedup UNIQUE constraint shipped; gallery validation pending
+- [ ] `TASK-middleware-distributed-healing-revalidation-backups.md` — Not Started
+- [ ] `TASK-backfill-data-version-record-hash-for-existing-rows.md` — **NEW**: backfill `data_version` + `record_hash` for existing rows (large blast radius)
 
 ## Files (planned)
 
@@ -123,6 +132,8 @@ Without a unified hash:
   — closed by the UNIQUE `(owner_id, content_hash)` constraint.
 - `BUG-chat-idempotency-not-enforced.md` — closed by the global
   idempotency layer + record_hash envelope.
+
+- **Epic Data Integrity & ACID** (`epic-data-integrity-acid.md`) — `format_version` optimistic concurrency is owned there; this epic's `record_hash` is complementary.
 
 ## Open Architectural Questions
 

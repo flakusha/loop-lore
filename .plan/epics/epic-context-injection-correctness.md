@@ -3,11 +3,13 @@
 
 # Epic: Context Injection Correctness
 
-**Status:** Not Started
+**Status:** In Progress
+
+**Status Note:** 3 of 4 filed bugs fixed in `src/`. 1 partial (manual route group participants). 2 new gaps identified during review (NG-1, NG-2). See Findings table for per-ticket status.
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** context-injection, prompt-assembly, group-chat, token-budget
 **Overview:** (see sections below)
 
 
@@ -30,14 +32,22 @@ consistently.
 - `src/chat/context-window.ts` — `computeContextWindow` sliding window
 - `src/group-chat/turn-selector.ts`, `src/group-chat/mention-parser.ts` — turn/mention logic
 
+## Spec Alignment
+
+| Spec | Status | Notes |
+| --- | --- | --- |
+| `docs/spec/architecture.md` | 🟡 partial | Prompt assembly pipeline not documented in architecture spec |
+| `docs/spec/messages.md` | ✅ aligned | Chat history window behavior matches spec intent |
+
 ## Findings → Tickets
 
-| Ticket | Severity | Summary |
-| ------ | -------- | ------- |
-| [BUG-chat-history-truncates-to-oldest-messages-drops-recent-turns](../tickets/BUG-chat-history-truncates-to-oldest-messages-drops-recent-turns.md) | high | Chat history ordered `created_at ASC` + `limit(tokenBudget/4)` keeps oldest, drops newest; `chatHistory` is `PRIORITY 0` so never trimmed. |
-| [BUG-auto-gen-assemble-omits-providerid-tokenbudget-and-never-compacts](../tickets/BUG-auto-gen-assemble-omits-providerid-tokenbudget-and-never-com.md) | high | `prepare-generation.ts:90` omits `providerId`/`tokenBudget`; budget defaults 32000, no compaction; `compactPromptHistory` dead. |
-| [BUG-group-participant-injection-absent-on-manual-generate-route](../tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md) | medium | `groupParticipantIds` only set in auto-gen; manual route + context-budget omit it; includes user participants. |
-| [BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest](../tickets/BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest.md) | low | `computeContextWindow` phase-3 keeps oldest on overflow; latent (handlers uses only `totalTokens`). |
+| Ticket | Severity | Status | Summary |
+| ------ | -------- | ------ | ------- |
+| `BUG-chat-history-truncates-to-oldest-messages-drops-recent-turns.md` | high | **Done** | Chat history ordered `created_at ASC` + `limit(tokenBudget/4)` keeps oldest, drops newest; `chatHistory` is `PRIORITY 0` so never trimmed. |
+| `BUG-auto-gen-assemble-omits-providerid-tokenbudget-and-never-compacts.md` | high | **Done** | `prepare-generation.ts:90` omits `providerId`/`tokenBudget`; budget defaults 32000, no compaction; `compactPromptHistory` dead. |
+| `BUG-group-participant-injection-absent-on-manual-generate-route.md` | medium | **Partial** | `groupParticipantIds` only set in auto-gen; manual route + context-budget omit it; includes user participants. Fix: add join to actors + `actor_type <> 'user'` in `prepare-generation.ts:89-92`. |
+| `BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest.md` | low | **Done** | `computeContextWindow` phase-3 keeps oldest on overflow; latent (handlers uses only `totalTokens`). |
+| `BUG-group-participant-user-actors-injected-in-auto-gen-path.md` | medium | **New** | Auto-gen path doesn't filter user actors from group participants → parity with manual route. |
 
 ## Open verification (not yet filed)
 
@@ -48,4 +58,4 @@ consistently.
 
 ## Status
 
-Tickets filed. Implementation pending. No code changes made during review.
+Tickets filed. 3 of 4 bugs fixed in `src/`. 1 partial fix (manual route group participants — needs `actor_type <> 'user'` filter). 2 new gaps identified during review (NG-1 auto-gen user-actor filter, NG-2 stale `compactPromptHistory` comment). Implementation ongoing.
