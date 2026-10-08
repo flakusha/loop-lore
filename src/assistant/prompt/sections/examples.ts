@@ -36,7 +36,11 @@ export const examplesSection: SectionBuilder = {
         ? "character"
         : (label === "user" || label === "{{user}}"
           ? "user"
-          : "user");
+          : (() => {
+            throw new Error(
+              `examplesSection: unrecognized label "${label}" — expected assistant|character|{{char}}|user|{{user}}`,
+            );
+          })());
 
       examples.push({ role, content, },);
     }

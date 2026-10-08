@@ -183,3 +183,7 @@ DOMAIN=lore.example.com ACME_EMAIL=admin@example.com \
 ## Platform Support
 
 See [`platform-support.md`](./platform-support.md) for Windows, Android (Termux), and cross-platform compatibility notes.
+
+## Related Specs
+
+- [`docs/spec/deployment.md`](./deployment.md) — ACID guarantees by backend, write-path notes, backend selection guidance
