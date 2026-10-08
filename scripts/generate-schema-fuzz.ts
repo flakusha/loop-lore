@@ -169,6 +169,7 @@ async function discoverSchemas(): Promise<{
   modules: string[];
   nonSchema: number;
   throwing: number;
+  importFailures: number;
 }> {
   const entries = await schemaModules();
   const aliases = new Map<string, string>();
@@ -176,6 +177,7 @@ async function discoverSchemas(): Promise<{
   const moduleImportPaths = new Map<string, string>();
   let nonSchema = 0;
   let throwing = 0;
+  let importFailures = 0;
 
   for (const { file, moduleId, importPath, directory, } of entries) {
     const alias = aliasFor(moduleId,);
@@ -187,10 +189,16 @@ async function discoverSchemas(): Promise<{
     moduleImportPaths.set(moduleId, importPath,);
     // Dynamic import is required: the module list comes from a directory read
     // at runtime, so no static import list can cover it.
-    // eslint-disable-next-line no-await-in-loop
-    const namespace: Record<string, unknown> = await import(
-      new URL(file, directory,).href
-    );
+    let namespace: Record<string, unknown>;
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      namespace = await import(new URL(file, directory,).href);
+    } catch {
+      // A route module can throw at import time (config read at module scope,
+      // missing env). Skip it — one bad module must not break the whole gate.
+      importFailures++;
+      continue;
+    }
     for (const name of Object.keys(namespace,).sort()) {
       let value: unknown;
       try {
@@ -214,7 +222,7 @@ async function discoverSchemas(): Promise<{
   found.sort((a, b,) => a.name.localeCompare(b.name,) || a.module.localeCompare(b.module,));
 
   const modules = entries.map((e,) => e.moduleId);
-  return { found, moduleImportPaths, modules, nonSchema, throwing, };
+  return { found, moduleImportPaths, modules, nonSchema, throwing, importFailures, };
 }
 
 /** Describe title — module-qualified only when the name alone is ambiguous. */
@@ -314,7 +322,14 @@ function render(
 
 // ── CLI ────────────────────────────────────────────────────────────────────
 if (import.meta.main) {
-  const { found, moduleImportPaths, modules, nonSchema, throwing, } = await discoverSchemas();
+  const {
+    found,
+    moduleImportPaths,
+    modules,
+    nonSchema,
+    throwing,
+    importFailures,
+  } = await discoverSchemas();
   const content = render(found, moduleImportPaths, modules.length,);
   const outPath = OUT_PATH.pathname;
 
@@ -330,9 +345,11 @@ if (import.meta.main) {
     console.log(`[schema-fuzz] wrote ${outPath} — ${found.length} schemas`,);
   }
 
-  const skipped = throwing > 0
-    ? `${nonSchema} non-schema, ${throwing} throwing on access`
-    : `${nonSchema} non-schema`;
+  const skipped = [
+    `${nonSchema} non-schema`,
+    ...(throwing > 0 ? [`${throwing} throwing on access`,] : []),
+    ...(importFailures > 0 ? [`${importFailures} failed to import`,] : []),
+  ].join(", ",);
   console.log(`[schema-fuzz] scanned ${modules.length} module(s); skipped ${skipped}`,);
 
   // ponytail: importing the schema modules (and, via their transitive imports,
