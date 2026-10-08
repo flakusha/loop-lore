@@ -8,7 +8,7 @@
 **Acceptance Criteria:** `chat_sections` table and `messages.section_id` exist; section-aware message queries work; location change records an event and auto-syncs the chat background; join returns location/section context; transfer records an event; VN transition fires on location change; create-chat-at-location works end-to-end; existing chat tests pass.
 
 
-**Status:** In Progress
+**Status:** in_progress
 **Status Note:** sectioning, location-event log, party join/leave and split/reunite shipped on dev; transfer event wiring, join location context, and VN renderer wiring are unmerged work in worktree `tree/epic-transfer-location` (not on dev).
 **Priority:** P2-B
 **Effort:** Medium
