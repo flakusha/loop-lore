@@ -214,4 +214,192 @@ describe("locationRoutes — create/get/update", () => {
 
     expect(row?.connections,).toBe(JSON.stringify([otherId,],),);
   });
+
+  test("PUT self-parent is rejected with 400", async () => {
+    const app = appWithAuth(db, ownerId, "solo",);
+    const worldId = uid();
+    await insertWorlds(db, ownerId, "Self Parent World", { id: worldId, } as never,);
+    const locId = uid();
+    await insertLocations(db, worldId, "Lone Hill", { id: locId, } as never,);
+
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds/${worldId}/locations/${locId}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ parentLocationId: locId, },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    const row = await db
+      .selectFrom("locations",)
+      .select("parent_location_id",)
+      .where("id", "=", locId,)
+      .executeTakeFirst();
+
+    expect(row?.parent_location_id,).toBeNull();
+  });
+
+  test("PUT creating a 2-node cycle is rejected with 400", async () => {
+    const app = appWithAuth(db, ownerId, "solo",);
+    const worldId = uid();
+    await insertWorlds(db, ownerId, "Cycle World", { id: worldId, } as never,);
+    const aId = uid();
+    const bId = uid();
+    await insertLocations(db, worldId, "Root A", { id: aId, } as never,);
+    await insertLocations(db, worldId, "Child B", { id: bId, parent_location_id: aId, } as never,);
+
+    // A -> B while B -> A would wedge the recursive-CTE path-rewrite trigger.
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds/${worldId}/locations/${aId}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ parentLocationId: bId, },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    const row = await db
+      .selectFrom("locations",)
+      .select("parent_location_id",)
+      .where("id", "=", aId,)
+      .executeTakeFirst();
+
+    expect(row?.parent_location_id,).toBeNull();
+  });
+
+  test("PUT moving a location under its own descendant is rejected with 400", async () => {
+    const app = appWithAuth(db, ownerId, "solo",);
+    const worldId = uid();
+    await insertWorlds(db, ownerId, "Descendant World", { id: worldId, } as never,);
+    const aId = uid();
+    const bId = uid();
+    const cId = uid();
+    await insertLocations(db, worldId, "Root A", { id: aId, } as never,);
+    await insertLocations(db, worldId, "Child B", { id: bId, parent_location_id: aId, } as never,);
+    await insertLocations(db, worldId, "Grandchild C", { id: cId, parent_location_id: bId, } as never,);
+
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds/${worldId}/locations/${aId}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ parentLocationId: cId, },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    const row = await db
+      .selectFrom("locations",)
+      .select("parent_location_id",)
+      .where("id", "=", aId,)
+      .executeTakeFirst();
+
+    expect(row?.parent_location_id,).toBeNull();
+  });
+
+  test("PUT with a nonexistent parent is rejected with 404", async () => {
+    const app = appWithAuth(db, ownerId, "solo",);
+    const worldId = uid();
+    await insertWorlds(db, ownerId, "Orphan Parent World", { id: worldId, } as never,);
+    const locId = uid();
+    await insertLocations(db, worldId, "Crossroads", { id: locId, } as never,);
+
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds/${worldId}/locations/${locId}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ parentLocationId: uid(), },),
+      },),
+    );
+
+    expect(res.status,).toBe(404,);
+  });
+
+  test("PUT with a parent from another world is rejected with 404", async () => {
+    const app = appWithAuth(db, ownerId, "solo",);
+    const worldA = uid();
+    const worldB = uid();
+    await insertWorlds(db, ownerId, "World A", { id: worldA, } as never,);
+    await insertWorlds(db, ownerId, "World B", { id: worldB, } as never,);
+    const locAId = uid();
+    const locBId = uid();
+    await insertLocations(db, worldA, "Home", { id: locAId, } as never,);
+    await insertLocations(db, worldB, "Far Away", { id: locBId, } as never,);
+
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds/${worldA}/locations/${locAId}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ parentLocationId: locBId, },),
+      },),
+    );
+
+    expect(res.status,).toBe(404,);
+    const row = await db
+      .selectFrom("locations",)
+      .select("parent_location_id",)
+      .where("id", "=", locAId,)
+      .executeTakeFirst();
+
+    expect(row?.parent_location_id,).toBeNull();
+  });
+
+  test("PUT reparent on a location from another world is rejected with 404", async () => {
+    const app = appWithAuth(db, ownerId, "solo",);
+    const worldA = uid();
+    const worldB = uid();
+    await insertWorlds(db, ownerId, "World A", { id: worldA, } as never,);
+    await insertWorlds(db, ownerId, "World B", { id: worldB, } as never,);
+    const locAId = uid();
+    const locBId = uid();
+    await insertLocations(db, worldA, "Not Here", { id: locAId, } as never,);
+    await insertLocations(db, worldB, "Local Parent", { id: locBId, } as never,);
+
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds/${worldB}/locations/${locAId}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ parentLocationId: locBId, },),
+      },),
+    );
+
+    expect(res.status,).toBe(404,);
+    const row = await db
+      .selectFrom("locations",)
+      .select("parent_location_id",)
+      .where("id", "=", locAId,)
+      .executeTakeFirst();
+
+    expect(row?.parent_location_id,).toBeNull();
+  });
+
+  test("PUT reparents a location under a valid parent", async () => {
+    const app = appWithAuth(db, ownerId, "solo",);
+    const worldId = uid();
+    await insertWorlds(db, ownerId, "Move World", { id: worldId, } as never,);
+    const aId = uid();
+    const bId = uid();
+    const cId = uid();
+    await insertLocations(db, worldId, "Root A", { id: aId, } as never,);
+    await insertLocations(db, worldId, "Root B", { id: bId, } as never,);
+    await insertLocations(db, worldId, "Child C", { id: cId, parent_location_id: aId, } as never,);
+
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds/${worldId}/locations/${cId}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ parentLocationId: bId, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const row = await db
+      .selectFrom("locations",)
+      .select(["parent_location_id", "path",],)
+      .where("id", "=", cId,)
+      .executeTakeFirst();
+
+    expect(row?.parent_location_id,).toBe(bId,);
+    expect(row?.path,).toBe(`/${bId}/${cId}/`,);
+  });
 });
