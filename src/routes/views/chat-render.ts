@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { toDate, } from "../../utils/date";
+import { renderShortcodes, } from "../shortcode-emoji";
 import { escapeHtml, } from "./layout";
 
 /**
@@ -119,7 +120,7 @@ function renderChatListItems(rows: {
 
     const preview = r.last_message
       ? `<div style="font-size:12px;color:var(--text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:500px">${
-        escapeHtml(r.last_message.slice(0, 80,),)
+        escapeHtml(renderShortcodes(r.last_message.slice(0, 80,),),)
       }${r.last_message.length > 80 ? "…" : ""}</div>`
       : "";
 
