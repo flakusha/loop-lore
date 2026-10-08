@@ -25916,6 +25916,19 @@
     "title": "CI/CD Pipeline",
     "type": "TASK"
   },
+  "TASK-CI-INTEGRATION-GITHUB-ACTIONS-MATRIX-ARTIFACT-UPLOAD-ON-CRAS": {
+    "hash": "4511095",
+    "git_issue": "4511095",
+    "extid": "TASK-CI-INTEGRATION-GITHUB-ACTIONS-MATRIX-ARTIFACT-UPLOAD-ON-CRAS",
+    "type": "TASK",
+    "title": "CI integration — GitHub Actions matrix + artifact upload on crash",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Fuzzing Infrastructure",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ci-integration-github-actions-matrix-artifact-upload-on-cras.md",
+    "status": "Not Started"
+  },
   "TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION": {
     "epic": "epic-prompt-improvement",
     "extid": "TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION",
@@ -26910,6 +26923,19 @@
     "title": "Context Window Monitor",
     "type": "TASK"
   },
+  "TASK-CONTINUOUS-FUZZING-CLUSTER-SCHEDULER-CORPUS-SYNC-CRASH-TRIAG": {
+    "hash": "714c995",
+    "git_issue": "714c995",
+    "extid": "TASK-CONTINUOUS-FUZZING-CLUSTER-SCHEDULER-CORPUS-SYNC-CRASH-TRIAG",
+    "type": "TASK",
+    "title": "Continuous fuzzing cluster — scheduler, corpus sync, crash triage",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Fuzzing Infrastructure",
+    "tags": [],
+    "source": ".plan/tickets/TASK-continuous-fuzzing-cluster-scheduler-corpus-sync-crash-triag.md",
+    "status": "Not Started"
+  },
   "TASK-CONVERSATION-BRANCHING": {
     "epic": "epic-conversation-branching",
     "extid": "TASK-CONVERSATION-BRANCHING",
@@ -27812,6 +27838,19 @@
     "tags": [],
     "title": "Ctx Token Accuracy",
     "type": "TASK"
+  },
+  "TASK-DASHBOARD-INTEGRATION-COVERAGE-CRASHES-CORPUS-PERFORMANCE-RO": {
+    "hash": "5763142",
+    "git_issue": "5763142",
+    "extid": "TASK-DASHBOARD-INTEGRATION-COVERAGE-CRASHES-CORPUS-PERFORMANCE-RO",
+    "type": "TASK",
+    "title": "Dashboard integration — coverage, crashes, corpus, performance, ROI panels",
+    "label": "task",
+    "priority": "low",
+    "epic": "Fuzzing Infrastructure",
+    "tags": [],
+    "source": ".plan/tickets/TASK-dashboard-integration-coverage-crashes-corpus-performance-ro.md",
+    "status": "Not Started"
   },
   "TASK-DATA-INTEGRITY-ACID": {
     "epic": "epic-data-integrity-acid",
@@ -31343,6 +31382,19 @@
     "tags": [],
     "title": "FTS5 cross-session recall and summarization for RAG-unified memory",
     "type": "TASK"
+  },
+  "TASK-FUZZING-INFRASTRUCTURE-HARNESS-RUNNER-CORPUS-MANAGER-CRASH-D": {
+    "hash": "3fa2ca2",
+    "git_issue": "3fa2ca2",
+    "extid": "TASK-FUZZING-INFRASTRUCTURE-HARNESS-RUNNER-CORPUS-MANAGER-CRASH-D",
+    "type": "TASK",
+    "title": "Fuzzing infrastructure — harness runner, corpus manager, crash deduplicator",
+    "label": "task",
+    "priority": "high",
+    "epic": "Fuzzing Infrastructure",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fuzzing-infrastructure-harness-runner-corpus-manager-crash-d.md",
+    "status": "Not Started"
   },
   "TASK-GALLERY-ASSET-LINKAGE-TO-CHAT-FROM-ASSISTANT": {
     "epic": "epic-rag-assets-unified-storage-and-assistant-flows",
@@ -36288,6 +36340,19 @@
     "title": "Gallery Asset Reuse for Multimodal Generation",
     "type": "TASK"
   },
+  "TASK-MUTATION-ENGINE-BITFLIP-ARITHMETIC-DICTIONARY-STRUCTURE-CROS": {
+    "hash": "abe12f8",
+    "git_issue": "abe12f8",
+    "extid": "TASK-MUTATION-ENGINE-BITFLIP-ARITHMETIC-DICTIONARY-STRUCTURE-CROS",
+    "type": "TASK",
+    "title": "Mutation engine — bitflip, arithmetic, dictionary, structure, crossover, generative",
+    "label": "task",
+    "priority": "high",
+    "epic": "Fuzzing Infrastructure",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mutation-engine-bitflip-arithmetic-dictionary-structure-cros.md",
+    "status": "Not Started"
+  },
   "TASK-NAMED-ARGUMENTS-FOR-SLASH-COMMANDS": {
     "epic": "epic-workflow-engine",
     "extid": "TASK-NAMED-ARGUMENTS-FOR-SLASH-COMMANDS",
@@ -38004,6 +38069,19 @@
     "tags": [],
     "title": "Per-model/per-provider cost attribution for LLM execution stats",
     "type": "TASK"
+  },
+  "TASK-PER-TARGET-FUZZING-HARNESSES-AUTH-ASSET-CHAT-LLM-ADMIN-IPC": {
+    "hash": "c0dc9f0",
+    "git_issue": "c0dc9f0",
+    "extid": "TASK-PER-TARGET-FUZZING-HARNESSES-AUTH-ASSET-CHAT-LLM-ADMIN-IPC",
+    "type": "TASK",
+    "title": "Per-target fuzzing harnesses — auth, asset, chat, llm, admin, IPC",
+    "label": "task",
+    "priority": "high",
+    "epic": "Fuzzing Infrastructure",
+    "tags": [],
+    "source": ".plan/tickets/TASK-per-target-fuzzing-harnesses-auth-asset-chat-llm-admin-ipc.md",
+    "status": "Not Started"
   },
   "TASK-PERFORMANCE-DASHBOARD-SLOS": {
     "epic": "epic-performance-dashboard-slo",
@@ -40656,6 +40734,19 @@
     "title": "Register username race and rate-limiter multi-instance gap",
     "type": "TASK"
   },
+  "TASK-REGRESSION-PROCESS-CRASH-CLASSIFICATION-MINIMIZATION-FIX-VER": {
+    "hash": "d5cf34b",
+    "git_issue": "d5cf34b",
+    "extid": "TASK-REGRESSION-PROCESS-CRASH-CLASSIFICATION-MINIMIZATION-FIX-VER",
+    "type": "TASK",
+    "title": "Regression process — crash classification, minimization, fix verification",
+    "label": "task",
+    "priority": "low",
+    "epic": "Fuzzing Infrastructure",
+    "tags": [],
+    "source": ".plan/tickets/TASK-regression-process-crash-classification-minimization-fix-ver.md",
+    "status": "Not Started"
+  },
   "TASK-RELATED-MEMORY-EVENT-INJECTION-HOOKS": {
     "epic": "epic-memory-knowledge-systems",
     "extid": "TASK-RELATED-MEMORY-EVENT-INJECTION-HOOKS",
@@ -42014,6 +42105,19 @@
     "source": ".plan/tickets/TASK-safe-buffer-add-base64url-throwing-variants-audit-call-sites.md",
     "status": "Not Started"
   },
+  "TASK-SANITIZER-INTEGRATION-ASAN-MSAN-UBSAN-TSAN": {
+    "hash": "e440d90",
+    "git_issue": "e440d90",
+    "extid": "TASK-SANITIZER-INTEGRATION-ASAN-MSAN-UBSAN-TSAN",
+    "type": "TASK",
+    "title": "Sanitizer integration — ASan, MSan, UBSan, TSan",
+    "label": "task",
+    "priority": "low",
+    "epic": "Fuzzing Infrastructure",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sanitizer-integration-asan-msan-ubsan-tsan.md",
+    "status": "Not Started"
+  },
   "TASK-SAVE-IMPROVED-PROMPT-AS-REUSABLE-TEMPLATE": {
     "epic": "epic-assistant-generation-extensions",
     "extid": "TASK-SAVE-IMPROVED-PROMPT-AS-REUSABLE-TEMPLATE",
@@ -42396,6 +42500,19 @@
     "tags": [],
     "title": "Search Telemetry & Quota Observability",
     "type": "TASK"
+  },
+  "TASK-SEED-CORPORA-10K-SEEDS-PER-FUZZING-TARGET": {
+    "hash": "bcb4342",
+    "git_issue": "bcb4342",
+    "extid": "TASK-SEED-CORPORA-10K-SEEDS-PER-FUZZING-TARGET",
+    "type": "TASK",
+    "title": "Seed corpora — 10k+ seeds per fuzzing target",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Fuzzing Infrastructure",
+    "tags": [],
+    "source": ".plan/tickets/TASK-seed-corpora-10k-seeds-per-fuzzing-target.md",
+    "status": "Not Started"
   },
   "TASK-SELECTION-ALGORITHM-V2-OUTFIT-EMOTION": {
     "epic": "epic-wardrobe-avatar-variants",
