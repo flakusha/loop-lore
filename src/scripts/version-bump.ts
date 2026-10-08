@@ -20,10 +20,27 @@ import {
   runScript,
   withDefault,
 } from "../cli/parser";
+import { createLogger, getLogger, type Logger, } from "../logger";
 import {
   readPackageJsonOrNull,
   setPackageJsonVersion as writePackageJsonVersion,
 } from "../utils/package-json";
+
+// Console-only logger: `bun run version` is a bare process with no host server
+// to have seeded a logger already.
+createLogger({ level: "info", },);
+
+/**
+ * Module logger accessor — null if no logger is initialized.
+ * @returns the child logger, or null when no logger is initialized.
+ */
+function log(): Logger | null {
+  try {
+    return getLogger().child({ module: "scripts/version-bump", },);
+  } catch {
+    return null;
+  }
+}
 
 interface Version {
   major: number;
@@ -229,7 +246,7 @@ function bumpVersion(bumpType: "major" | "minor" | "patch", shouldTag: boolean,)
   // Validate bump type matches prediction
   const actualBump = determineBump(getCommitsSinceTag(latestTag || "",),);
   if (actualBump && actualBump !== bumpType) {
-    console.warn(`Warning: commits suggest ${actualBump} bump, but --bump=${bumpType} requested`,);
+    log()?.warn("commits suggest a different bump than requested", { suggested: actualBump, requested: bumpType, },);
   }
 
   let nextVersion: Version;
@@ -243,16 +260,23 @@ function bumpVersion(bumpType: "major" | "minor" | "patch", shouldTag: boolean,)
 
   const next = formatVersion(nextVersion,);
 
+  // Release narration for the operator running the command: these lines
+  // report what just changed on disk / in the remote, not a diagnostic.
+  // eslint-disable-next-line no-console
   console.log(`Bumping ${getTagVersion()} → ${next} (${bumpType})`,);
   setPackageJsonVersion(next,);
 
   if (shouldTag) {
     // Tagging is a post-testing human decision — only the explicit --tag flag
     // may create one. Agents must never run with --tag.
+    // Release narration, see above.
+    // eslint-disable-next-line no-console
     console.log(`Creating tag: ${next}`,);
     execSync(`git tag -a "${next}" -m "Release ${next}"`, { stdio: "inherit", },);
     execSync(`git push origin "${next}"`, { stdio: "inherit", },);
   } else {
+    // Release narration, see above.
+    // eslint-disable-next-line no-console
     console.log("package.json updated — tag NOT created (tagging = post-testing human decision; add --tag to tag)",);
   }
 
@@ -266,10 +290,14 @@ function syncPackageJson(): void {
   const pkgVersion = getPackageJsonVersion();
 
   if (tagVersion === pkgVersion) {
+    // CI-facing report of the current state.
+    // eslint-disable-next-line no-console
     console.log(`package.json already in sync (${pkgVersion})`,);
     return;
   }
 
+  // CI-facing report of the current state.
+  // eslint-disable-next-line no-console
   console.log(`Syncing package.json: ${pkgVersion} → ${tagVersion}`,);
   setPackageJsonVersion(tagVersion,);
 }
@@ -316,9 +344,16 @@ function main(): void {
       bumpVersion(args.type ?? "patch", args.tag ?? false,);
       return;
     case "predict":
+      // Machine-readable output: `bun run version` prints the bare predicted
+      // version for shell consumers to capture verbatim.
+      // eslint-disable-next-line no-console
       console.log(predictVersion(),);
       return;
   }
 }
 
 main();
+// The log queue batches on a 100ms timer and its timer is unref'd, so nothing
+// keeps the process alive long enough to drain it — flush explicitly. A transport
+// rejection must not turn a successful run into a failing exit.
+await log()?.flush().catch(() => undefined);
