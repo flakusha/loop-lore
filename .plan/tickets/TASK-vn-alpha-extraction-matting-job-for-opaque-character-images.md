@@ -11,7 +11,7 @@
 **Status:** Done
 **Status Note:** already on dev, 2026-09-19
 **Priority:** high
-**Epic:** Avatar Alpha Channel + VN Layering; Aux Enrichment Pipeline
+**Epic:** epic-avatar-alpha-vn-layering
 **Effort:** Medium
 
 ## Summary

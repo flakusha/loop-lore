@@ -13,7 +13,7 @@
 **Priority:** high
 **Effort:** small
 **Type:** BUG
-**Epic:** epic-plugin-system, epic-plugin-extension-points
+**Epic:** epic-plugin-system
 **Files:** src/generation/generate-route/tool-execution.ts:29-40; src/generation/generate-route/handler.ts:166-183; src/plugins/registry.ts:113-115
 
 ## Issue

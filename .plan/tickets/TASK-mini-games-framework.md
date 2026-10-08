@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** Mini-Games & Interactive Mechanics
+**Epic:** epic-mini-games
 **Phase:** 1 (Framework + Tier 1 Games)
 **Priority:** High
 **Effort:** High

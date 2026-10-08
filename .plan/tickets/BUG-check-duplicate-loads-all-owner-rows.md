@@ -13,7 +13,7 @@
 **Priority:** medium
 **Effort:** small
 **Type:** BUG
-**Epic:** epic-assistant-gm-flows, epic-creative-studio
+**Epic:** epic-assistant-gm-flows
 **Files:** src/assistant/quality/entity-creation.ts:96-150
 
 ## Issue

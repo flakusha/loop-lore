@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** Avatar Alpha Channel + VN Layering
+**Epic:** epic-avatar-alpha-vn-layering
 
 ## Summary
 

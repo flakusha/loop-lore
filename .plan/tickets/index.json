@@ -510,7 +510,7 @@
     "type": "BUG"
   },
   "BUG-ASSISTANT-IMPROVE-TRANSLATE-REWRITE-NEVER-CALL-LLM": {
-    "epic": "epic-assistant-gm-flows, epic-output-control-transforms",
+    "epic": "epic-assistant-gm-flows",
     "extid": "BUG-ASSISTANT-IMPROVE-TRANSLATE-REWRITE-NEVER-CALL-LLM",
     "git_issue": "821e0d1",
     "hash": "pending",
@@ -1828,7 +1828,7 @@
     "type": "BUG"
   },
   "BUG-CHAT-PERSIST-INIT-HARDCODED-SCENE": {
-    "epic": "epic-battle-action-systems, epic-chat-lifecycle-moderation",
+    "epic": "epic-battle-action-systems",
     "extid": "BUG-CHAT-PERSIST-INIT-HARDCODED-SCENE",
     "git_issue": "2239de6",
     "hash": "pending",
@@ -1841,7 +1841,7 @@
     "type": "BUG"
   },
   "BUG-CHAT-PROMPT-OVERRIDE-BYPASS-ON-REPLY": {
-    "epic": "epic-output-control-transforms, epic-chat-lifecycle-moderation",
+    "epic": "epic-output-control-transforms",
     "extid": "BUG-CHAT-PROMPT-OVERRIDE-BYPASS-ON-REPLY",
     "git_issue": "4c97a16",
     "hash": "pending",
@@ -1972,7 +1972,7 @@
     "type": "BUG"
   },
   "BUG-CHAT-TRANSITIONS-MEMORY-POISONING": {
-    "epic": "epic-chat-lifecycle-moderation, epic-assistant-gm-flows",
+    "epic": "epic-chat-lifecycle-moderation",
     "extid": "BUG-CHAT-TRANSITIONS-MEMORY-POISONING",
     "git_issue": "f355410",
     "hash": "pending",
@@ -2037,7 +2037,7 @@
     "type": "BUG"
   },
   "BUG-CHECK-DUPLICATE-LOADS-ALL-OWNER-ROWS": {
-    "epic": "epic-assistant-gm-flows, epic-creative-studio",
+    "epic": "epic-assistant-gm-flows",
     "extid": "BUG-CHECK-DUPLICATE-LOADS-ALL-OWNER-ROWS",
     "git_issue": "2b01c97",
     "hash": "pending",
@@ -2102,7 +2102,7 @@
     "type": "BUG"
   },
   "BUG-CLASSIFY-INTENT-CONFIDENCE-UNBOUNDED": {
-    "epic": "epic-chat-lifecycle-moderation, epic-assistant-gm-flows",
+    "epic": "epic-chat-lifecycle-moderation",
     "extid": "BUG-CLASSIFY-INTENT-CONFIDENCE-UNBOUNDED",
     "git_issue": "ce245f4",
     "hash": "pending",
@@ -2841,7 +2841,7 @@
     "type": "BUG"
   },
   "BUG-EMOTION-AVATAR-FALLBACK-METADATA-INCOMPLETE": {
-    "epic": "epic-emotion-avatar-message-binding / epic-character-core-system",
+    "epic": "epic-emotion-avatar-message-binding",
     "extid": "BUG-EMOTION-AVATAR-FALLBACK-METADATA-INCOMPLETE",
     "git_issue": "4977df6",
     "hash": "4977df6",
@@ -3765,7 +3765,7 @@
     "type": "BUG"
   },
   "BUG-GROUP-CASCADE-MAX-TURNS-OFF-BY-ONE": {
-    "epic": "epic-chat-lifecycle-moderation, epic-chat-context-optimization",
+    "epic": "epic-chat-lifecycle-moderation",
     "extid": "BUG-GROUP-CASCADE-MAX-TURNS-OFF-BY-ONE",
     "git_issue": "bb174eb",
     "hash": "pending",
@@ -3791,7 +3791,7 @@
     "type": "BUG"
   },
   "BUG-GROUP-CHAT-MENTION-PREFIX-COLLISION": {
-    "epic": "epic-chat-lifecycle-moderation, epic-chat-context-optimization",
+    "epic": "epic-chat-lifecycle-moderation",
     "extid": "BUG-GROUP-CHAT-MENTION-PREFIX-COLLISION",
     "git_issue": "5d75396",
     "hash": "pending",
@@ -5700,7 +5700,7 @@
     "type": "BUG"
   },
   "BUG-PLUGIN-TOOL-GATING-EMPTY-ROLE-BYPASS": {
-    "epic": "epic-plugin-system, epic-plugin-extension-points",
+    "epic": "epic-plugin-system",
     "extid": "BUG-PLUGIN-TOOL-GATING-EMPTY-ROLE-BYPASS",
     "git_issue": "9860eb0",
     "hash": "pending",
@@ -7064,7 +7064,7 @@
     "status": "Blocked"
   },
   "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK": {
-    "epic": "epic-plugin-system, epic-assistant-gm-flows",
+    "epic": "epic-plugin-system",
     "extid": "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK",
     "git_issue": "b66dd45",
     "hash": "pending",
@@ -7077,7 +7077,7 @@
     "type": "BUG"
   },
   "BUG-TOOL-CALL-RESULT-NO-FRONTEND-RENDERING": {
-    "epic": "epic-assistant-gm-flows, epic-chat-lifecycle-moderation",
+    "epic": "epic-assistant-gm-flows",
     "extid": "BUG-TOOL-CALL-RESULT-NO-FRONTEND-RENDERING",
     "git_issue": "6a4f485",
     "hash": "pending",
@@ -15404,7 +15404,7 @@
     "type": "FEAT"
   },
   "FEAT-BACKGROUND": {
-    "epic": "Avatar Alpha Channel + VN Layering",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "FEAT-BACKGROUND",
     "git_issue": "99d8cff",
     "hash": "99d8cff",
@@ -17212,7 +17212,7 @@
     "type": "FEAT"
   },
   "FEAT-TOOL-CALL-BUBBLE-PERSISTED-ROWS": {
-    "epic": "epic-assistant-gm-flows, epic-chat-lifecycle-moderation",
+    "epic": "epic-assistant-gm-flows",
     "extid": "FEAT-TOOL-CALL-BUBBLE-PERSISTED-ROWS",
     "git_issue": "46d22ff",
     "hash": "46d22ff",
@@ -19022,7 +19022,7 @@
     "type": "TASK"
   },
   "TASK-ACCESS-PROFILE-GENERATION-FROM-ACTOR-EXPERIENCE": {
-    "epic": "Character & NPC Lore Access",
+    "epic": "epic-character-npc-lore-access",
     "extid": "TASK-ACCESS-PROFILE-GENERATION-FROM-ACTOR-EXPERIENCE",
     "git_issue": "c7a9b06",
     "hash": "c7a9b06",
@@ -19731,7 +19731,7 @@
     "type": "TASK"
   },
   "TASK-ADMIN-ASSISTANT-TOOLING-ALLOWLIST": {
-    "epic": "epic-byok-local-models.md (admin model surface extension) + epic-assistant-gm-flows.md (tooling)",
+    "epic": "epic-byok-local-models",
     "extid": "TASK-ADMIN-ASSISTANT-TOOLING-ALLOWLIST",
     "git_issue": "341a76d",
     "hash": "341a76d",
@@ -20654,7 +20654,7 @@
     "type": "TASK"
   },
   "TASK-AGENT-MEMORY-SCORING": {
-    "epic": "epic-memory-knowledge-systems, epic-character-core-system",
+    "epic": "epic-memory-knowledge-systems",
     "extid": "TASK-AGENT-MEMORY-SCORING",
     "git_issue": "522d9a8",
     "hash": "522d9a8",
@@ -20862,7 +20862,7 @@
     "type": "TASK"
   },
   "TASK-ALPHA-AWARE-GENERATION-REQUESTS-AND-FORMAT-PICK": {
-    "epic": "Avatar Alpha Channel + VN Layering",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-ALPHA-AWARE-GENERATION-REQUESTS-AND-FORMAT-PICK",
     "git_issue": "e1a63dc",
     "hash": "e1a63dc",
@@ -20875,7 +20875,7 @@
     "type": "TASK"
   },
   "TASK-ALPHA-AWARE-RENDER-BINDING-AND-MOOD-PANEL": {
-    "epic": "Avatar Alpha Channel + VN Layering",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-ALPHA-AWARE-RENDER-BINDING-AND-MOOD-PANEL",
     "git_issue": "e3861fc",
     "hash": "e3861fc",
@@ -20888,7 +20888,7 @@
     "type": "TASK"
   },
   "TASK-ALPHA-TESTS-CAPABILITY-MATRIX-DETECTION": {
-    "epic": "Avatar Alpha Channel + VN Layering",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-ALPHA-TESTS-CAPABILITY-MATRIX-DETECTION",
     "git_issue": "c9c6aac",
     "hash": "c9c6aac",
@@ -20901,7 +20901,7 @@
     "type": "TASK"
   },
   "TASK-ALPINE-CROPPER-COMPONENT-AND-INTEGRATIONS": {
-    "epic": "Asset Transform Editing + Metadata",
+    "epic": "epic-asset-transform-metadata",
     "extid": "TASK-ALPINE-CROPPER-COMPONENT-AND-INTEGRATIONS",
     "git_issue": "2fe7103",
     "hash": "2fe7103",
@@ -21333,7 +21333,7 @@
     "type": "TASK"
   },
   "TASK-ASSET-TRANSFORMS-MIGRATION-AND-TRANSFORMCONTEXT-ENUM": {
-    "epic": "Asset Transform Editing + Metadata",
+    "epic": "epic-asset-transform-metadata",
     "extid": "TASK-ASSET-TRANSFORMS-MIGRATION-AND-TRANSFORMCONTEXT-ENUM",
     "git_issue": "8c4905b",
     "hash": "8c4905b",
@@ -21372,7 +21372,7 @@
     "type": "TASK"
   },
   "TASK-ASSETS-HAS-ALPHA-COLUMN-AND-STORE-COMPUTATION": {
-    "epic": "Avatar Alpha Channel + VN Layering",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-ASSETS-HAS-ALPHA-COLUMN-AND-STORE-COMPUTATION",
     "git_issue": "f70bd6f",
     "hash": "f70bd6f",
@@ -21922,7 +21922,7 @@
     "status": "Not Started"
   },
   "TASK-ASSISTANT-SCENARIO-SOURCE": {
-    "epic": "epic-assistant-generation-extensions (Phase 4), epic-blog-system",
+    "epic": "epic-assistant-generation-extensions",
     "extid": "TASK-ASSISTANT-SCENARIO-SOURCE",
     "git_issue": "828ef68",
     "hash": "915842dc",
@@ -22505,7 +22505,7 @@
     "type": "TASK"
   },
   "TASK-AUX-EMOTION-AVATAR": {
-    "epic": "epic-aux-enrichment-pipeline / epic-emotion-avatar-message-binding",
+    "epic": "epic-aux-enrichment-pipeline",
     "extid": "TASK-AUX-EMOTION-AVATAR",
     "git_issue": "4e54f94",
     "hash": "4e54f94",
@@ -22557,7 +22557,7 @@
     "type": "TASK"
   },
   "TASK-AUX-LLM-EMOTION-CLASSIFIER": {
-    "epic": "epic-aux-enrichment-pipeline / epic-emotion-avatar-message-binding",
+    "epic": "epic-aux-enrichment-pipeline",
     "extid": "TASK-AUX-LLM-EMOTION-CLASSIFIER",
     "git_issue": "9700d19",
     "hash": "9700d19",
@@ -22962,7 +22962,7 @@
     "type": "TASK"
   },
   "TASK-BATTLE-ENVIRONMENT": {
-    "epic": "Battle & Action Systems, Weather & Environment",
+    "epic": "epic-battle-action-systems",
     "extid": "TASK-BATTLE-ENVIRONMENT",
     "git_issue": "737a642",
     "hash": "737a642",
@@ -23040,7 +23040,7 @@
     "type": "TASK"
   },
   "TASK-BATTLE-ITEM-INTEGRATION": {
-    "epic": "Battle & Action Systems, Item System Extensions",
+    "epic": "epic-battle-action-systems",
     "extid": "TASK-BATTLE-ITEM-INTEGRATION",
     "git_issue": "00878b7",
     "hash": "00878b7",
@@ -23079,7 +23079,7 @@
     "type": "TASK"
   },
   "TASK-BATTLE-NPC-AI": {
-    "epic": "Battle & Action Systems, NPC Navigation",
+    "epic": "epic-battle-action-systems",
     "extid": "TASK-BATTLE-NPC-AI",
     "git_issue": "b6f8035",
     "hash": "b6f8035",
@@ -23131,7 +23131,7 @@
     "type": "TASK"
   },
   "TASK-BATTLE-SOCIAL-CHESTS": {
-    "epic": "Battle & Action Systems, Social Interaction",
+    "epic": "epic-battle-action-systems",
     "extid": "TASK-BATTLE-SOCIAL-CHESTS",
     "git_issue": "cb5fc96",
     "hash": "cb5fc96",
@@ -24314,7 +24314,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-AVATAR-GALLERY-BINDING": {
-    "epic": "epic-frontend-gallery, epic-character-core-system",
+    "epic": "epic-frontend-gallery",
     "extid": "TASK-CHARACTER-AVATAR-GALLERY-BINDING",
     "git_issue": "5f54dbc",
     "hash": "5f54dbc",
@@ -24366,7 +24366,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-CREATOR-PREROGATIVE": {
-    "epic": "Character Core System",
+    "epic": "epic-character-core-system",
     "extid": "TASK-CHARACTER-CREATOR-PREROGATIVE",
     "git_issue": "f92bc27",
     "hash": "f92bc27",
@@ -24392,7 +24392,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-EMOTION-DEFINITIONS-CRUD-UI": {
-    "epic": "epic-character-core-system / epic-emotion-avatar-message-binding",
+    "epic": "epic-character-core-system",
     "extid": "TASK-CHARACTER-EMOTION-DEFINITIONS-CRUD-UI",
     "git_issue": "59badff",
     "hash": "59badff",
@@ -24522,7 +24522,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-MOOD-HAPPINESS": {
-    "epic": "Character Core System",
+    "epic": "epic-character-core-system",
     "extid": "TASK-CHARACTER-MOOD-HAPPINESS",
     "git_issue": "b19ece5",
     "hash": "b19ece5",
@@ -24548,7 +24548,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-MULTI-AVATAR": {
-    "epic": "Character Core System",
+    "epic": "epic-character-core-system",
     "extid": "TASK-CHARACTER-MULTI-AVATAR",
     "git_issue": "94fbf0e",
     "hash": "94fbf0e",
@@ -24561,7 +24561,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-MULTI-PERSONALITY": {
-    "epic": "RPG Mechanics & Extensible Game Systems",
+    "epic": "epic-rpg-mechanics",
     "extid": "TASK-CHARACTER-MULTI-PERSONALITY",
     "git_issue": "523a377",
     "hash": "523a377",
@@ -24587,7 +24587,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-PERSONALITY-INTEGRITY": {
-    "epic": "Character Core System",
+    "epic": "epic-character-core-system",
     "extid": "TASK-CHARACTER-PERSONALITY-INTEGRITY",
     "git_issue": "b54fdc4",
     "hash": "b54fdc4",
@@ -24782,7 +24782,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-WORLD-DATA-SEPARATION": {
-    "epic": "Character Core System",
+    "epic": "epic-character-core-system",
     "extid": "TASK-CHARACTER-WORLD-DATA-SEPARATION",
     "git_issue": "eb74848",
     "hash": "eb74848",
@@ -26995,7 +26995,7 @@
     "type": "TASK"
   },
   "TASK-CRAFTING-ENCHANTING": {
-    "epic": "Crafting & Professions, Magic & Spell Systems",
+    "epic": "epic-magic-spell-systems",
     "extid": "TASK-CRAFTING-ENCHANTING",
     "git_issue": "32bcaa6",
     "hash": "32bcaa6",
@@ -27060,7 +27060,7 @@
     "type": "TASK"
   },
   "TASK-CRAFTING-SYSTEM": {
-    "epic": "RPG Mechanics & Extensible Game Systems",
+    "epic": "epic-rpg-mechanics",
     "extid": "TASK-CRAFTING-SYSTEM",
     "git_issue": "9145b77",
     "hash": "9145b77",
@@ -28025,7 +28025,7 @@
     "type": "TASK"
   },
   "TASK-DECISION-AV3-TRANSFORMS-STORAGE-CANON": {
-    "epic": "Asset Transform Editing + Metadata",
+    "epic": "epic-asset-transform-metadata",
     "extid": "TASK-DECISION-AV3-TRANSFORMS-STORAGE-CANON",
     "git_issue": "6692293",
     "hash": "6692293",
@@ -28038,7 +28038,7 @@
     "type": "TASK"
   },
   "TASK-DECISION-AV4-MATTED-OUTPUT-REPRESENTATION": {
-    "epic": "Avatar Alpha Channel + VN Layering",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-DECISION-AV4-MATTED-OUTPUT-REPRESENTATION",
     "git_issue": "05d861e",
     "hash": "05d861e",
@@ -28329,7 +28329,7 @@
     "type": "TASK"
   },
   "TASK-DERIVE-BAKE-ENDPOINT-SERVER-SIDE-CROP": {
-    "epic": "Asset Transform Editing + Metadata",
+    "epic": "epic-asset-transform-metadata",
     "extid": "TASK-DERIVE-BAKE-ENDPOINT-SERVER-SIDE-CROP",
     "git_issue": "f604fa4",
     "hash": "f604fa4",
@@ -29205,7 +29205,7 @@
     "type": "TASK"
   },
   "TASK-EMOTION-INTENT-DETECTION": {
-    "epic": "Character Core System",
+    "epic": "epic-character-core-system",
     "extid": "TASK-EMOTION-INTENT-DETECTION",
     "git_issue": "888f6ff",
     "hash": "888f6ff",
@@ -31622,7 +31622,7 @@
     "type": "TASK"
   },
   "TASK-GENERATION-SEED-CAPTURE-AND-OVERRIDE-PER-AVATAR": {
-    "epic": "Emotion Avatar Regeneration Control",
+    "epic": "epic-avatar-regeneration-control",
     "extid": "TASK-GENERATION-SEED-CAPTURE-AND-OVERRIDE-PER-AVATAR",
     "git_issue": "62f51fd",
     "hash": "62f51fd",
@@ -32582,7 +32582,7 @@
     "type": "TASK"
   },
   "TASK-HOUSING-BASE-BUILDING": {
-    "epic": "epic-housing (umbrella) / epic-housing-base-building (design)",
+    "epic": "epic-housing",
     "extid": "TASK-HOUSING-BASE-BUILDING",
     "git_issue": "88b3959",
     "hash": "88b3959",
@@ -33227,7 +33227,7 @@
     "type": "TASK"
   },
   "TASK-INFO-BUBBLES": {
-    "epic": "Immersion & Presentation (EPIC-048)",
+    "epic": "epic-immersion-presentation",
     "extid": "TASK-INFO-BUBBLES",
     "git_issue": "219b3f1",
     "hash": "219b3f1",
@@ -33703,7 +33703,7 @@
     "type": "TASK"
   },
   "TASK-ITEM-SPEC-PARAMETERS": {
-    "epic": "RPG Mechanics & Extensible Game Systems",
+    "epic": "epic-rpg-mechanics",
     "extid": "TASK-ITEM-SPEC-PARAMETERS",
     "git_issue": "89146c6",
     "hash": "89146c6",
@@ -33988,7 +33988,7 @@
     "status": "Not Started"
   },
   "TASK-LIVING-WORLD-PERSISTENCE": {
-    "epic": "epic-world-locations, epic-character-core-system",
+    "epic": "epic-world-locations",
     "extid": "TASK-LIVING-WORLD-PERSISTENCE",
     "git_issue": "4567395",
     "hash": "4567395",
@@ -34503,7 +34503,7 @@
     "type": "TASK"
   },
   "TASK-LOGGING-SEPARATE-DATABASE-RESEARCH": {
-    "epic": "`epic-logging-telemetry.md` (logging), `epic-database-backup-recovery.md` (storage), `epic-multi-instance-reconciliation.md` (consistency)",
+    "epic": "epic-logging-telemetry",
     "extid": "TASK-LOGGING-SEPARATE-DATABASE-RESEARCH",
     "git_issue": "4894732",
     "hash": "4894732",
@@ -34568,7 +34568,7 @@
     "type": "TASK"
   },
   "TASK-LORE-ACCESS-END-TO-END-VERIFICATION": {
-    "epic": "Character & NPC Lore Access",
+    "epic": "epic-character-npc-lore-access",
     "extid": "TASK-LORE-ACCESS-END-TO-END-VERIFICATION",
     "git_issue": "2c1ed3d",
     "hash": "2c1ed3d",
@@ -34581,7 +34581,7 @@
     "type": "TASK"
   },
   "TASK-LORE-ACCESS-INTERSECTION-LOGIC": {
-    "epic": "Character & NPC Lore Access",
+    "epic": "epic-character-npc-lore-access",
     "extid": "TASK-LORE-ACCESS-INTERSECTION-LOGIC",
     "git_issue": "563d9e5",
     "hash": "563d9e5",
@@ -34594,7 +34594,7 @@
     "type": "TASK"
   },
   "TASK-LORE-ACCESS-PROFILE-SCHEMA-AND-MIGRATION": {
-    "epic": "Character & NPC Lore Access",
+    "epic": "epic-character-npc-lore-access",
     "extid": "TASK-LORE-ACCESS-PROFILE-SCHEMA-AND-MIGRATION",
     "git_issue": "6ed7cc4",
     "hash": "6ed7cc4",
@@ -34607,7 +34607,7 @@
     "type": "TASK"
   },
   "TASK-LORE-ENTRY-ACCESS-TAGS-AND-TAXONOMY": {
-    "epic": "Character & NPC Lore Access",
+    "epic": "epic-character-npc-lore-access",
     "extid": "TASK-LORE-ENTRY-ACCESS-TAGS-AND-TAXONOMY",
     "git_issue": "337dd4b",
     "hash": "337dd4b",
@@ -34685,7 +34685,7 @@
     "type": "TASK"
   },
   "TASK-LOREBOOK-TEMPLATE-SEEDING": {
-    "epic": "epic-character-core-system / epic-world-locations (cross-cutting)",
+    "epic": "epic-character-core-system",
     "extid": "TASK-LOREBOOK-TEMPLATE-SEEDING",
     "git_issue": "98ecdbb",
     "hash": "98ecdbb",
@@ -35225,7 +35225,7 @@
     "type": "TASK"
   },
   "TASK-MATTING-FALLBACK-AUX-PIPELINE-JOB": {
-    "epic": "Avatar Alpha Channel + VN Layering",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-MATTING-FALLBACK-AUX-PIPELINE-JOB",
     "git_issue": "8341527",
     "hash": "8341527",
@@ -35372,7 +35372,7 @@
     "status": "Not Started"
   },
   "TASK-MEMORY-RETRIEVAL-FILTERING-BY-LORE-ACCESS-PROFILE": {
-    "epic": "Character & NPC Lore Access",
+    "epic": "epic-character-npc-lore-access",
     "extid": "TASK-MEMORY-RETRIEVAL-FILTERING-BY-LORE-ACCESS-PROFILE",
     "git_issue": "dc745aa",
     "hash": "dc745aa",
@@ -35888,7 +35888,7 @@
     "type": "TASK"
   },
   "TASK-MINI-GAMES-FRAMEWORK": {
-    "epic": "Mini-Games & Interactive Mechanics",
+    "epic": "epic-mini-games",
     "extid": "TASK-MINI-GAMES-FRAMEWORK",
     "git_issue": "c157175",
     "hash": "c157175",
@@ -36009,7 +36009,7 @@
     "type": "TASK"
   },
   "TASK-MOOD-CONTAGION": {
-    "epic": "Character Core System",
+    "epic": "epic-character-core-system",
     "extid": "TASK-MOOD-CONTAGION",
     "git_issue": "e1842c7",
     "hash": "e1842c7",
@@ -36022,7 +36022,7 @@
     "type": "TASK"
   },
   "TASK-MOOD-CORE": {
-    "epic": "Character Core System",
+    "epic": "epic-character-core-system",
     "extid": "TASK-MOOD-CORE",
     "git_issue": "6edce3e",
     "hash": "6edce3e",
@@ -36035,7 +36035,7 @@
     "type": "TASK"
   },
   "TASK-MOOD-MULTI-DIMENSIONAL": {
-    "epic": "Character Core System",
+    "epic": "epic-character-core-system",
     "extid": "TASK-MOOD-MULTI-DIMENSIONAL",
     "git_issue": "d7bd0c5",
     "hash": "d7bd0c5",
@@ -36347,7 +36347,7 @@
     "type": "TASK"
   },
   "TASK-NPC-BDI-PLANNING": {
-    "epic": "epic-agency-story-points, NPC/Actor System",
+    "epic": "epic-agency-story-points",
     "extid": "TASK-NPC-BDI-PLANNING",
     "git_issue": "1de6c08",
     "hash": "1de6c08",
@@ -36360,7 +36360,7 @@
     "type": "TASK"
   },
   "TASK-NPC-BEHAVIOR": {
-    "epic": "NPC/Actor System, NPC Navigation",
+    "epic": "epic-npc-navigation",
     "extid": "TASK-NPC-BEHAVIOR",
     "git_issue": "9b17da2",
     "hash": "9b17da2",
@@ -36373,7 +36373,7 @@
     "type": "TASK"
   },
   "TASK-NPC-BEHAVIOR-LORE-ACCESS-GATING": {
-    "epic": "Character & NPC Lore Access",
+    "epic": "epic-character-npc-lore-access",
     "extid": "TASK-NPC-BEHAVIOR-LORE-ACCESS-GATING",
     "git_issue": "6baebbc",
     "hash": "6baebbc",
@@ -36515,7 +36515,7 @@
     "type": "TASK"
   },
   "TASK-NPC-MEMORY": {
-    "epic": "NPC/Actor System, Memory & Knowledge Systems",
+    "epic": "epic-memory-knowledge-systems",
     "extid": "TASK-NPC-MEMORY",
     "git_issue": "2d51dee",
     "hash": "2d51dee",
@@ -36714,7 +36714,7 @@
     "type": "TASK"
   },
   "TASK-NPC-TO-NPC-SOCIAL": {
-    "epic": "epic-social-interaction, NPC/Actor System",
+    "epic": "epic-social-interaction",
     "extid": "TASK-NPC-TO-NPC-SOCIAL",
     "git_issue": "794b6f2",
     "hash": "794b6f2",
@@ -36796,7 +36796,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-BODY-PHYSICAL": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-BODY-PHYSICAL",
     "git_issue": "c0e8a3c",
     "hash": "c0e8a3c",
@@ -36848,7 +36848,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-DISEASE": {
-    "epic": "NSFW Game Mechanics, Disease & Poison Systems",
+    "epic": "epic-disease-poison",
     "extid": "TASK-NSFW-DISEASE",
     "git_issue": "634b539",
     "hash": "634b539",
@@ -36874,7 +36874,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-ENCOUNTER-SYSTEM": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-ENCOUNTER-SYSTEM",
     "git_issue": "3e2c423",
     "hash": "3e2c423",
@@ -36887,7 +36887,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-FANTASY-KINK": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-FANTASY-KINK",
     "git_issue": "2478703",
     "hash": "2478703",
@@ -37040,7 +37040,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-INTIMACY-SYSTEM": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-INTIMACY-SYSTEM",
     "git_issue": "a44aa91",
     "hash": "a44aa91",
@@ -37053,7 +37053,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-LOCATION-ENVIRONMENT": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-LOCATION-ENVIRONMENT",
     "git_issue": "7fb840b",
     "hash": "7fb840b",
@@ -37092,7 +37092,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-MOOD-EMOTIONAL": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-MOOD-EMOTIONAL",
     "git_issue": "04a75f7",
     "hash": "04a75f7",
@@ -37118,7 +37118,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-PHEROMONES-CHEMISTRY": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-PHEROMONES-CHEMISTRY",
     "git_issue": "99a426c",
     "hash": "99a426c",
@@ -37131,7 +37131,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-PREGNANCY-REPRODUCTION": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-PREGNANCY-REPRODUCTION",
     "git_issue": "fb5607e",
     "hash": "fb5607e",
@@ -37196,7 +37196,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-REPUTATION-SOCIAL": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-REPUTATION-SOCIAL",
     "git_issue": "d2b1555",
     "hash": "d2b1555",
@@ -37209,7 +37209,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-SEDUCTION-DESIRE": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-SEDUCTION-DESIRE",
     "git_issue": "95a2bf0",
     "hash": "95a2bf0",
@@ -37222,7 +37222,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-SKILLS-EXPERIENCE": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-SKILLS-EXPERIENCE",
     "git_issue": "87620a5",
     "hash": "87620a5",
@@ -37261,7 +37261,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-SPECIES-MECHANICS": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-SPECIES-MECHANICS",
     "git_issue": "02a4fe6",
     "hash": "02a4fe6",
@@ -37274,7 +37274,7 @@
     "type": "TASK"
   },
   "TASK-NSFW-TRAUMA-RECOVERY": {
-    "epic": "AO NSFW Game Mechanics",
+    "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-NSFW-TRAUMA-RECOVERY",
     "git_issue": "bdf19a9",
     "hash": "bdf19a9",
@@ -37891,7 +37891,7 @@
     "type": "TASK"
   },
   "TASK-PERSISTENT-REGEN-JOB-STORE-MIGRATION": {
-    "epic": "Emotion Avatar Regeneration Control",
+    "epic": "epic-avatar-regeneration-control",
     "extid": "TASK-PERSISTENT-REGEN-JOB-STORE-MIGRATION",
     "git_issue": "ec5673f",
     "hash": "ec5673f",
@@ -38671,7 +38671,7 @@
     "type": "TASK"
   },
   "TASK-PROMPT-ASSEMBLY-LORE-FILTERING-BY-ACCESS-PROFILE": {
-    "epic": "Character & NPC Lore Access",
+    "epic": "epic-character-npc-lore-access",
     "extid": "TASK-PROMPT-ASSEMBLY-LORE-FILTERING-BY-ACCESS-PROFILE",
     "git_issue": "25d32a4",
     "hash": "25d32a4",
@@ -38918,7 +38918,7 @@
     "type": "TASK"
   },
   "TASK-PROVIDER-TRANSPARENCY-CAPABILITY-FLAG": {
-    "epic": "Avatar Alpha Channel + VN Layering",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-PROVIDER-TRANSPARENCY-CAPABILITY-FLAG",
     "git_issue": "99dbf42",
     "hash": "99dbf42",
@@ -38974,7 +38974,7 @@
     "type": "TASK"
   },
   "TASK-QUEST-STATE-MANAGEMENT": {
-    "epic": "RPG Mechanics & Extensible Game Systems",
+    "epic": "epic-rpg-mechanics",
     "extid": "TASK-QUEST-STATE-MANAGEMENT",
     "git_issue": "66dda71",
     "hash": "66dda71",
@@ -39000,7 +39000,7 @@
     "type": "TASK"
   },
   "TASK-QUEST-SYSTEM": {
-    "epic": "RPG Mechanics & Extensible Game Systems",
+    "epic": "epic-rpg-mechanics",
     "extid": "TASK-QUEST-SYSTEM",
     "git_issue": "4d49ee4",
     "hash": "4d49ee4",
@@ -39474,7 +39474,7 @@
     "type": "TASK"
   },
   "TASK-RE-ROLL-TRANSFORM-INHERITANCE-FROM-PARENT-AVATAR": {
-    "epic": "Asset Transform Editing + Metadata",
+    "epic": "epic-asset-transform-metadata",
     "extid": "TASK-RE-ROLL-TRANSFORM-INHERITANCE-FROM-PARENT-AVATAR",
     "git_issue": "6a86a55",
     "hash": "6a86a55",
@@ -40364,7 +40364,7 @@
     "title": "Refine impersonation constraint to location/timeline scope"
   },
   "TASK-REGEN-ROUTES-AND-JOB-STATUS-ENDPOINTS": {
-    "epic": "Emotion Avatar Regeneration Control",
+    "epic": "epic-avatar-regeneration-control",
     "extid": "TASK-REGEN-ROUTES-AND-JOB-STATUS-ENDPOINTS",
     "git_issue": "d26adc3",
     "hash": "d26adc3",
@@ -40377,7 +40377,7 @@
     "type": "TASK"
   },
   "TASK-REGEN-SERVICE-REGENERATEEMOTIONAVATARS-SCOPE-AND-REPLACE": {
-    "epic": "Emotion Avatar Regeneration Control",
+    "epic": "epic-avatar-regeneration-control",
     "extid": "TASK-REGEN-SERVICE-REGENERATEEMOTIONAVATARS-SCOPE-AND-REPLACE",
     "git_issue": "4475a8b",
     "hash": "4475a8b",
@@ -40390,7 +40390,7 @@
     "type": "TASK"
   },
   "TASK-REGEN-TESTS-SUBSET-REPLACE-ATOMICITY-RESTART": {
-    "epic": "Emotion Avatar Regeneration Control",
+    "epic": "epic-avatar-regeneration-control",
     "extid": "TASK-REGEN-TESTS-SUBSET-REPLACE-ATOMICITY-RESTART",
     "git_issue": "7d3f661",
     "hash": "7d3f661",
@@ -40403,7 +40403,7 @@
     "type": "TASK"
   },
   "TASK-REGEN-UI-RE-ROLL-AND-REGENERATE-ALL-CONTROLS": {
-    "epic": "Emotion Avatar Regeneration Control",
+    "epic": "epic-avatar-regeneration-control",
     "extid": "TASK-REGEN-UI-RE-ROLL-AND-REGENERATE-ALL-CONTROLS",
     "git_issue": "ff8f765",
     "hash": "ff8f765",
@@ -40676,7 +40676,7 @@
     "type": "TASK"
   },
   "TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES": {
-    "epic": "Asset Transform Editing + Metadata",
+    "epic": "epic-asset-transform-metadata",
     "extid": "TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES",
     "git_issue": "4484e39",
     "hash": "4484e39",
@@ -40874,7 +40874,7 @@
     "type": "TASK"
   },
   "TASK-RESOLUTION-INTEGRATION": {
-    "epic": "RPG Mechanics, Battle & Action Systems, Social Interaction, Magic & Spell Systems",
+    "epic": "epic-battle-action-systems",
     "extid": "TASK-RESOLUTION-INTEGRATION",
     "git_issue": "975d85c",
     "hash": "975d85c",
@@ -41280,7 +41280,7 @@
     "type": "TASK"
   },
   "TASK-RPG-CHAT-QUESTIONS": {
-    "epic": "RPG Mechanics & Extensible Game Systems",
+    "epic": "epic-rpg-mechanics",
     "extid": "TASK-RPG-CHAT-QUESTIONS",
     "git_issue": "c712140",
     "hash": "c712140",
@@ -42157,7 +42157,7 @@
     "type": "TASK"
   },
   "TASK-SEARCH-ALGORITHM-RESEARCH-RUST-FFI": {
-    "epic": "epic-platform-research.md (research) + epic-rag-document-processing.md (impl)",
+    "epic": "epic-platform-research",
     "extid": "TASK-SEARCH-ALGORITHM-RESEARCH-RUST-FFI",
     "git_issue": "20951be",
     "hash": "20951be",
@@ -42196,7 +42196,7 @@
     "type": "TASK"
   },
   "TASK-SEARCH-RAG-COVERAGE-BRIDGE": {
-    "epic": "epic-rag-assets-unified-storage-and-assistant-flows.md (recommended as bridge) + epic-rag-document-processing.md (core)",
+    "epic": "epic-rag-assets-unified-storage-and-assistant-flows",
     "extid": "TASK-SEARCH-RAG-COVERAGE-BRIDGE",
     "git_issue": "d5f5cb2",
     "hash": "d5f5cb2",
@@ -42552,7 +42552,7 @@
     "type": "TASK"
   },
   "TASK-SLOT-REPLACE-TRANSACTIONAL-REBIND-SEMANTICS": {
-    "epic": "Emotion Avatar Regeneration Control",
+    "epic": "epic-avatar-regeneration-control",
     "extid": "TASK-SLOT-REPLACE-TRANSACTIONAL-REBIND-SEMANTICS",
     "git_issue": "f2f155d",
     "hash": "f2f155d",
@@ -42844,7 +42844,7 @@
     "type": "TASK"
   },
   "TASK-STATE-MANAGEMENT-MODE-TRANSITIONS": {
-    "epic": "RPG Mechanics & Extensible Game Systems",
+    "epic": "epic-rpg-mechanics",
     "extid": "TASK-STATE-MANAGEMENT-MODE-TRANSITIONS",
     "git_issue": "6e7247d",
     "hash": "6e7247d",
@@ -43959,7 +43959,7 @@
     "type": "TASK"
   },
   "TASK-TRANSFORM-ROUTES-VALIDATION-AND-OWNERSHIP-AUTHZ": {
-    "epic": "Asset Transform Editing + Metadata",
+    "epic": "epic-asset-transform-metadata",
     "extid": "TASK-TRANSFORM-ROUTES-VALIDATION-AND-OWNERSHIP-AUTHZ",
     "git_issue": "12523de",
     "hash": "12523de",
@@ -43972,7 +43972,7 @@
     "type": "TASK"
   },
   "TASK-TRANSFORM-SERVICE-UPSERT-READ-DERIVED-DEFAULT": {
-    "epic": "Asset Transform Editing + Metadata",
+    "epic": "epic-asset-transform-metadata",
     "extid": "TASK-TRANSFORM-SERVICE-UPSERT-READ-DERIVED-DEFAULT",
     "git_issue": "9098139",
     "hash": "9098139",
@@ -43985,7 +43985,7 @@
     "type": "TASK"
   },
   "TASK-TRANSFORM-TESTS-IDEMPOTENCY-PRECEDENCE-AUTHZ": {
-    "epic": "Asset Transform Editing + Metadata",
+    "epic": "epic-asset-transform-metadata",
     "extid": "TASK-TRANSFORM-TESTS-IDEMPOTENCY-PRECEDENCE-AUTHZ",
     "git_issue": "416de71",
     "hash": "416de71",
@@ -44724,7 +44724,7 @@
     "type": "TASK"
   },
   "TASK-VN-ACTIVE-SPEAKER-SPRITE-HIGHLIGHT-AND-DIMMING": {
-    "epic": "Visual Novel Mode; Immersion & Presentation",
+    "epic": "epic-immersion-presentation",
     "extid": "TASK-VN-ACTIVE-SPEAKER-SPRITE-HIGHLIGHT-AND-DIMMING",
     "git_issue": "2fba05b",
     "hash": "2fba05b",
@@ -44737,7 +44737,7 @@
     "type": "TASK"
   },
   "TASK-VN-ALPHA-EXTRACTION-MATTING-JOB-FOR-OPAQUE-CHARACTER-IMAGES": {
-    "epic": "Avatar Alpha Channel + VN Layering; Aux Enrichment Pipeline",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-VN-ALPHA-EXTRACTION-MATTING-JOB-FOR-OPAQUE-CHARACTER-IMAGES",
     "git_issue": "ea6d881",
     "hash": "ea6d881",
@@ -44763,7 +44763,7 @@
     "type": "TASK"
   },
   "TASK-VN-CHARACTER-SPRITE-ROSTER-PER-CHAT": {
-    "epic": "Avatar Alpha Channel + VN Layering; Visual Novel Mode",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-VN-CHARACTER-SPRITE-ROSTER-PER-CHAT",
     "git_issue": "9cac2d4",
     "hash": "9cac2d4",
@@ -44815,7 +44815,7 @@
     "type": "TASK"
   },
   "TASK-VN-MULTI-CHARACTER-SPRITE-ORDERING-AND-POSITIONING": {
-    "epic": "Avatar Alpha Channel + VN Layering; Visual Novel Mode",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-VN-MULTI-CHARACTER-SPRITE-ORDERING-AND-POSITIONING",
     "git_issue": "9da9517",
     "hash": "9da9517",
@@ -44854,7 +44854,7 @@
     "type": "TASK"
   },
   "TASK-VN-SPRITE-CENTER-FACE-ANCHOR-SETUP-AND-DETECTION-FOR-GENERAT": {
-    "epic": "Avatar Alpha Channel + VN Layering; Asset Transform Metadata",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-VN-SPRITE-CENTER-FACE-ANCHOR-SETUP-AND-DETECTION-FOR-GENERAT",
     "git_issue": "5cf8b16",
     "hash": "5cf8b16",
@@ -44867,7 +44867,7 @@
     "type": "TASK"
   },
   "TASK-VN-SPRITE-LAYER-COMPOSITING": {
-    "epic": "Avatar Alpha Channel + VN Layering",
+    "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-VN-SPRITE-LAYER-COMPOSITING",
     "git_issue": "8b15b89",
     "hash": "8b15b89",
@@ -45770,7 +45770,7 @@
     "type": "TASK"
   },
   "TASK-WORLD-STATE-MANAGEMENT": {
-    "epic": "World & Locations",
+    "epic": "epic-world-locations",
     "extid": "TASK-WORLD-STATE-MANAGEMENT",
     "git_issue": "a612c78",
     "hash": "a612c78",

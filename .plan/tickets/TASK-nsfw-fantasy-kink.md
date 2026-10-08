@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** AO NSFW Game Mechanics
+**Epic:** epic-nsfw-game-mechanics
 **Priority:** Medium
 **Effort:** Large
 **Status:** Not Started

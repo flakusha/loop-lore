@@ -10,7 +10,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** Asset Transform Editing + Metadata
+**Epic:** epic-asset-transform-metadata
 
 ## Summary
 

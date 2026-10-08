@@ -10,7 +10,7 @@
 
 **Status:** Done
 **Priority:** medium
-**Epic:** Avatar Alpha Channel + VN Layering; Asset Transform Metadata
+**Epic:** epic-avatar-alpha-vn-layering
 **Effort:** Medium
 
 ## Summary

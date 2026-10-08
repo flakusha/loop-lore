@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** TASK
 **Tags:** characters, mood, contagion, group
-**Epic:** Character Core System
+**Epic:** epic-character-core-system
 **Parent:** TASK-character-mood-happiness (umbrella)
 
 ## Summary

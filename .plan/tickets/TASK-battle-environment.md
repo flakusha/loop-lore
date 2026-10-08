@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** Battle & Action Systems, Weather & Environment
+**Epic:** epic-battle-action-systems
 **Priority:** Medium
 **Effort:** High
 **Status:** Not Started

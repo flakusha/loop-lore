@@ -14,7 +14,7 @@
 **Priority:** medium
 **Effort:** small
 **Type:** BUG
-**Epic:** epic-battle-action-systems, epic-chat-lifecycle-moderation
+**Epic:** epic-battle-action-systems
 **Files:** src/routes/messages/post.ts:110-146
 
 ## Issue

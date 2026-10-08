@@ -13,7 +13,7 @@
 **Priority:** medium
 **Effort:** small
 **Type:** BUG
-**Epic:** epic-plugin-system, epic-assistant-gm-flows
+**Epic:** epic-plugin-system
 **Files:** src/generation/generate-route/tool-execution.ts:74-77
 
 ## Issue

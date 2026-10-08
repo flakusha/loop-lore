@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-world-locations, epic-character-core-system
+**Epic:** epic-world-locations
 **Priority:** Medium (P6+ deferred)
 **Effort:** High
 **Status:** Not Started

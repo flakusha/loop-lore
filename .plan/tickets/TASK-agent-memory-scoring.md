@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-memory-knowledge-systems, epic-character-core-system
+**Epic:** epic-memory-knowledge-systems
 **Priority:** Medium (P6+ deferred)
 **Effort:** High
 **Status:** Not Started
