@@ -21190,7 +21190,7 @@
     "type": "TASK"
   },
   "TASK-ASSET-PLATFORM-B1-CONTENT-FOUNDATION": {
-    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "epic": "epic-asset-platform-capabilities",
     "extid": "TASK-ASSET-PLATFORM-B1-CONTENT-FOUNDATION",
     "git_issue": "eb57d4e",
     "hash": "eb57d4e",
@@ -21203,7 +21203,7 @@
     "type": "TASK"
   },
   "TASK-ASSET-PLATFORM-B2-CHAT-UPLOAD-UX-PATTERNS": {
-    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "epic": "epic-asset-platform-capabilities",
     "extid": "TASK-ASSET-PLATFORM-B2-CHAT-UPLOAD-UX-PATTERNS",
     "git_issue": "43f1def",
     "hash": "43f1def",
@@ -21216,7 +21216,7 @@
     "type": "TASK"
   },
   "TASK-ASSET-PLATFORM-B3-LIFECYCLE-GOVERNANCE": {
-    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "epic": "epic-asset-platform-capabilities",
     "extid": "TASK-ASSET-PLATFORM-B3-LIFECYCLE-GOVERNANCE",
     "git_issue": "49b6e63",
     "hash": "49b6e63",
@@ -21229,7 +21229,7 @@
     "type": "TASK"
   },
   "TASK-ASSET-PLATFORM-B4-MACHINE-READABLE-SURFACE": {
-    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "epic": "epic-asset-platform-capabilities",
     "extid": "TASK-ASSET-PLATFORM-B4-MACHINE-READABLE-SURFACE",
     "git_issue": "0da4f14",
     "hash": "0da4f14",
@@ -21242,7 +21242,7 @@
     "type": "TASK"
   },
   "TASK-ASSET-PLATFORM-B5-DETERMINISTIC-ASSET-OPS": {
-    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "epic": "epic-asset-platform-capabilities",
     "extid": "TASK-ASSET-PLATFORM-B5-DETERMINISTIC-ASSET-OPS",
     "git_issue": "3179c33",
     "hash": "3179c33",
@@ -28012,7 +28012,7 @@
     "type": "TASK"
   },
   "TASK-DECISION-AV10-ALBUM-MESSAGE-KIND-AXIS": {
-    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "epic": "epic-asset-platform-capabilities",
     "extid": "TASK-DECISION-AV10-ALBUM-MESSAGE-KIND-AXIS",
     "git_issue": "7bface9",
     "hash": "7bface9",
@@ -28051,7 +28051,7 @@
     "type": "TASK"
   },
   "TASK-DECISION-AV8-AUX-CAPTIONING-ROLE": {
-    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "epic": "epic-asset-platform-capabilities",
     "extid": "TASK-DECISION-AV8-AUX-CAPTIONING-ROLE",
     "git_issue": "7c712bb",
     "hash": "7c712bb",
@@ -28168,7 +28168,7 @@
     "type": "TASK"
   },
   "TASK-DEFERRED-EQUIPPED-ITEMS-OUTFIT-AUTO-MAPPING": {
-    "epic": "Wardrobe / Loadout Avatar Variants",
+    "epic": "epic-wardrobe-avatar-variants",
     "extid": "TASK-DEFERRED-EQUIPPED-ITEMS-OUTFIT-AUTO-MAPPING",
     "git_issue": "0f93778",
     "hash": "0f93778",
@@ -37548,7 +37548,7 @@
     "type": "TASK"
   },
   "TASK-OUTFIT-SCOPED-GENERATION-JOBS-AND-PROMPT-SLOT": {
-    "epic": "Wardrobe / Loadout Avatar Variants",
+    "epic": "epic-wardrobe-avatar-variants",
     "extid": "TASK-OUTFIT-SCOPED-GENERATION-JOBS-AND-PROMPT-SLOT",
     "git_issue": "9ccbf3d",
     "hash": "9ccbf3d",
@@ -42235,7 +42235,7 @@
     "type": "TASK"
   },
   "TASK-SELECTION-ALGORITHM-V2-OUTFIT-EMOTION": {
-    "epic": "Wardrobe / Loadout Avatar Variants",
+    "epic": "epic-wardrobe-avatar-variants",
     "extid": "TASK-SELECTION-ALGORITHM-V2-OUTFIT-EMOTION",
     "git_issue": "6e22de3",
     "hash": "6e22de3",
@@ -42961,7 +42961,7 @@
     "type": "TASK"
   },
   "TASK-STORY-GM-OUTFIT-CHANGE-HOOK-ROUTING": {
-    "epic": "Wardrobe / Loadout Avatar Variants",
+    "epic": "epic-wardrobe-avatar-variants",
     "extid": "TASK-STORY-GM-OUTFIT-CHANGE-HOOK-ROUTING",
     "git_issue": "dda29da",
     "hash": "dda29da",
@@ -44945,7 +44945,7 @@
     "type": "TASK"
   },
   "TASK-WARDROBE-MANAGER-UI-AND-CHAT-OUTFIT-SWITCHER": {
-    "epic": "Wardrobe / Loadout Avatar Variants",
+    "epic": "epic-wardrobe-avatar-variants",
     "extid": "TASK-WARDROBE-MANAGER-UI-AND-CHAT-OUTFIT-SWITCHER",
     "git_issue": "ca24912",
     "hash": "ca24912",
@@ -44971,7 +44971,7 @@
     "type": "TASK"
   },
   "TASK-WARDROBE-ROUTES-VALIDATION-AND-PER-OUTFIT-AVATAR-ENDPOINTS": {
-    "epic": "Wardrobe / Loadout Avatar Variants",
+    "epic": "epic-wardrobe-avatar-variants",
     "extid": "TASK-WARDROBE-ROUTES-VALIDATION-AND-PER-OUTFIT-AVATAR-ENDPOINTS",
     "git_issue": "98db3a5",
     "hash": "98db3a5",
@@ -44997,7 +44997,7 @@
     "type": "TASK"
   },
   "TASK-WARDROBE-SCHEMA-ITEMS-BINDINGS-OUTFIT-ID": {
-    "epic": "Wardrobe / Loadout Avatar Variants",
+    "epic": "epic-wardrobe-avatar-variants",
     "extid": "TASK-WARDROBE-SCHEMA-ITEMS-BINDINGS-OUTFIT-ID",
     "git_issue": "405aad0",
     "hash": "405aad0",
@@ -45062,7 +45062,7 @@
     "type": "TASK"
   },
   "TASK-WARDROBE-TESTS-LADDER-PRECEDENCE-SCOPED-REGEN": {
-    "epic": "Wardrobe / Loadout Avatar Variants",
+    "epic": "epic-wardrobe-avatar-variants",
     "extid": "TASK-WARDROBE-TESTS-LADDER-PRECEDENCE-SCOPED-REGEN",
     "git_issue": "3c04fc1",
     "hash": "3c04fc1",

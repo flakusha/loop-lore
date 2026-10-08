@@ -72,6 +72,11 @@ export function pickEpicOwner(
   slugs: ReadonlySet<string>,
   titles: Readonly<Record<string, string>>,
 ): string | null {
+  // Whole-value exact title match FIRST: titles can contain separators
+  // (`Wardrobe / Loadout Avatar Variants`) that splitting would destroy.
+  const whole = raw.trim();
+  const wholeTitled = titles[whole];
+  if (wholeTitled && slugs.has(wholeTitled,)) { return wholeTitled; }
   for (const candidate of splitEpicCandidates(raw,)) {
     if (slugs.has(candidate,)) { return candidate; }
     const titled = titles[candidate];

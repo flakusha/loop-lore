@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** Wardrobe / Loadout Avatar Variants
+**Epic:** epic-wardrobe-avatar-variants
 
 ## Summary
 
