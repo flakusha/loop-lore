@@ -3,6 +3,8 @@
 
 import { Elysia, t, } from "elysia";
 import { checkChatAccess, } from "../../chat/service";
+import { recordLocationChange, } from "../../chat/service/location-events";
+import { autoSyncChatBackground, } from "../chat-backgrounds";
 import { forbiddenResponse as forbidden, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
@@ -35,10 +37,10 @@ export function transferRoutes(opts: HandlerOpts, prefix = "/api",) {
           const access = await checkChatAccess(database, chatId, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
-          // Get chat to check world_id
+          // Get chat to check world_id and capture the previous location
           const chat = await database
             .selectFrom("chats",)
-            .select("world_id",)
+            .select(["world_id", "current_location_id",],)
             .where("id", "=", chatId,)
             .executeTakeFirst();
 
@@ -49,7 +51,7 @@ export function transferRoutes(opts: HandlerOpts, prefix = "/api",) {
           // Verify location exists and belongs to same world
           const location = await database
             .selectFrom("locations",)
-            .select(["id", "world_id",],)
+            .select(["id", "world_id", "name",],)
             .where("id", "=", body.locationId,)
             .executeTakeFirst();
 
@@ -61,19 +63,29 @@ export function transferRoutes(opts: HandlerOpts, prefix = "/api",) {
             return jsonError({ message: "Location not in chat's world", status: 400, },);
           }
 
-          // Update chat location
-          await database
-            .updateTable("chats",)
-            .set({
-              current_location_id: body.locationId,
-              updated_at: new Date().toISOString(),
-            },)
-            .where("id", "=", chatId,)
-            .execute();
+          await database.transaction().execute(async (tx,) => {
+            await tx
+              .updateTable("chats",)
+              .set({
+                current_location_id: body.locationId,
+                updated_at: new Date().toISOString(),
+              },)
+              .where("id", "=", chatId,)
+              .execute();
+
+            await recordLocationChange(tx, {
+              chatId,
+              fromLocationId: chat.current_location_id,
+              toLocationId: body.locationId,
+              source: "manual",
+            },);
+
+            await autoSyncChatBackground(tx, chatId, body.locationId,);
+          },);
 
           log().info("Chat transferred", { chatId, locationId: body.locationId, },);
 
-          return jsonResponse({ ok: true, locationId: body.locationId, },);
+          return jsonResponse({ ok: true, locationId: body.locationId, location_name: location.name, },);
         },
         {
           params: t.Object({ id: t.String({ format: "uuid", },), },),

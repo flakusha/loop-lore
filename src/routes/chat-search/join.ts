@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import { getLocationHistory, } from "../../chat/service";
 import { ChatParticipantRole, } from "../../db/enums";
 import { WorldVisibility, } from "../../db/enums-story";
 import { can, } from "../../users/permissions";
@@ -89,7 +90,60 @@ export function joinRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           log().info("User joined chat", { chatId, userId, },);
 
-          return jsonCreated({ chatId, joined: true, },);
+          const chat = await database
+            .selectFrom("chats",)
+            .select(["name", "current_location_id", "world_id",],)
+            .where("id", "=", chatId,)
+            .executeTakeFirst();
+
+          let location: { id: string; name: string } | null = null;
+
+          if (chat?.current_location_id) {
+            const row = await database
+              .selectFrom("locations",)
+              .select(["id", "name",],)
+              .where("id", "=", chat.current_location_id,)
+              .where("world_id", "=", chat.world_id,)
+              .executeTakeFirst();
+
+            if (row) {
+              location = { id: row.id, name: row.name, };
+            }
+          }
+
+          let recentLocationEvents: Array<{
+            id: string;
+            fromLocationId: string | null;
+            toLocationId: string | null;
+            sectionId: string | null;
+            source: string;
+            createdAt: string;
+          }> = [];
+
+          if (location) {
+            try {
+              const history = await getLocationHistory(database, chatId,);
+
+              recentLocationEvents = history.slice(-10,).map((event,) => ({
+                id: event.id,
+                fromLocationId: event.fromLocationId,
+                toLocationId: event.toLocationId,
+                sectionId: event.sectionId,
+                source: event.source,
+                createdAt: event.createdAt,
+              }));
+            } catch {
+              recentLocationEvents = [];
+            }
+          }
+
+          return jsonCreated({
+            chatId,
+            joined: true,
+            chatTitle: chat?.name ?? null,
+            location,
+            recentLocationEvents,
+          },);
         },
         {
           params: t.Object({ id: t.String({ format: "uuid", },), },),

@@ -114,4 +114,54 @@ describe("chat-search transfer", () => {
 
     expect(res.status,).toBe(422,);
   });
+
+  test("records a manual location event and returns location_name", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/transfer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: locationB, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+
+    const body = (await res.json()) as { ok: boolean; locationId: string; location_name: string };
+    expect(body.location_name,).toBe("Location B",);
+
+    const events = await db
+      .selectFrom("chat_location_events",)
+      .select(["from_location_id", "to_location_id", "source", "section_id",],)
+      .where("chat_id", "=", chatId,)
+      .orderBy("created_at", "asc",)
+      .execute();
+
+    const latest = events[events.length - 1]!;
+    expect(latest.from_location_id,).toBe(locationA,);
+    expect(latest.to_location_id,).toBe(locationB,);
+    expect(latest.source,).toBe("manual",);
+    expect(latest.section_id,).toBeNull();
+  });
+
+  test("leaves background assignments untouched when the location has no default background", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/transfer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: locationA, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+
+    const assignments = await db
+      .selectFrom("chat_background_assignments",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+
+    expect(assignments,).toHaveLength(0,);
+  });
 });
