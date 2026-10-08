@@ -685,6 +685,7 @@ export interface Chats extends AuditColumns {
   autonomy_config: Generated<string>;
   federation_consented_at: string | null;
   purpose: string | null;
+  timeline_id: string | null;
 }
 
 // ── chat_random_events ────────────────────────────────────────────

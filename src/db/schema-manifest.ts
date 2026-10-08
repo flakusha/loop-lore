@@ -1962,6 +1962,7 @@ export const SCHEMA = new SchemaManifest()
     autonomy_config: col("text", { notNull: true, hasDefault: true, },),
     federation_consented_at: col("text",),
     purpose: col("text",),
+    timeline_id: col("text",),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
