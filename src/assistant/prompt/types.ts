@@ -207,6 +207,8 @@ export const PRIORITY = {
   storyContext: 1,
   travelPrompts: 0,
   gmNotes: 0,
+  /** Hidden carriage TOML block — off (empty) unless the chat opted in. */
+  carriage: 0,
   /** Turn-skip absence contract (TASK-turn-skip-gm-absence-contract) —
    *  behavior-critical when any skip is in play; trims only on extreme
    *  budget pressure. */

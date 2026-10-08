@@ -66,6 +66,7 @@ export const GM_CONFIG_PRESENTATION_KEYS = [
   "responseLengthPreset",
   "responseLengthCustom",
   "outputStyle",
+  "carriageEnabled",
 ] as const;
 
 /**
