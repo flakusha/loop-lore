@@ -33,10 +33,11 @@ afterEach(() => {
 
 interface PaletteCtx {
   $refs?: { messageInput: { value: string; focus: () => void } };
+  activeChat?: string | null;
   _showCommandPalette: boolean;
   _paletteActiveIndex: number;
-  _commandList: { name: string; descriptionKey: string; description: string }[];
-  _filteredCommands: { name: string; descriptionKey: string; description: string }[];
+  _commandList: { name: string; descriptionKey: string; description: string; requiredRole?: string }[];
+  _filteredCommands: { name: string; descriptionKey: string; description: string; requiredRole?: string }[];
 }
 
 function buildCtx(withInput?: boolean,): PaletteCtx {
@@ -101,6 +102,52 @@ describeOrSkip("commandPalette._loadCommandList", () => {
 
     await commandPalette._loadCommandList!();
     expect(commandPalette._commandList,).toEqual([],);
+  });
+
+  test("sends the active chat id so the server can scope roles", async () => {
+    handler = async () => Response.json({ data: [], },);
+    const ctx = { activeChat: "chat-1", _commandList: [], _filteredCommands: [], _showCommandPalette: false, };
+    await commandPalette._loadCommandList!.call(ctx as never,);
+    expect(calls[0]!.url,).toBe("/api/v1/commands?chatId=chat-1",);
+  });
+
+  test("hides owner-gated entries for a member role; shows all when role unknown", async () => {
+    handler = async () =>
+      Response.json({
+        data: [
+          { name: "roll", descriptionKey: "k1", },
+          { name: "debug", descriptionKey: "k2", requiredRole: "owner", },
+        ],
+        roleInChat: "member",
+      },);
+
+    const memberCtx = {
+      activeChat: "chat-1",
+      _commandList: [] as { name: string }[],
+      _filteredCommands: [] as { name: string }[],
+      _showCommandPalette: false,
+    };
+
+    await commandPalette._loadCommandList!.call(memberCtx as never,);
+    expect(memberCtx._commandList.map((c,) => c.name),).toEqual(["roll",],);
+
+    handler = async () =>
+      Response.json({
+        data: [
+          { name: "roll", descriptionKey: "k1", },
+          { name: "debug", descriptionKey: "k2", requiredRole: "owner", },
+        ],
+      },);
+
+    const unknownCtx = {
+      activeChat: "chat-1",
+      _commandList: [] as { name: string }[],
+      _filteredCommands: [] as { name: string }[],
+      _showCommandPalette: false,
+    };
+
+    await commandPalette._loadCommandList!.call(unknownCtx as never,);
+    expect(unknownCtx._commandList.map((c,) => c.name),).toEqual(["roll", "debug",],);
   });
 },);
 

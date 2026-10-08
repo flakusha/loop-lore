@@ -169,10 +169,14 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     if (selectReload.some((r,) => r.status === "rejected")) { throw new Error("select chat reload failed",); }
     // Independent post-load fetches — run concurrently (allSettled preserves
     // the throw-on-rejection contract of the sequential version).
+    // The palette reload re-fetches with ?chatId so role-gated entries filter
+    // to this chat's participant role (display-only; dispatch still enforces).
+    // Optional-chained: unit-test contexts stub only the loads they exercise.
     const postLoad = await Promise.allSettled([
       this.markChatAsRead(chatId,),
       this.loadChatKey(chatId, this._activeChatEncryptionLevel,),
       this.loadImpersonationState(),
+      this._loadCommandList?.() ?? Promise.resolve(),
     ],);
 
     if (postLoad.some((r,) => r.status === "rejected")) { throw new Error("select chat post-load failed",); }
