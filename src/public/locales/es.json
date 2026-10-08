@@ -1521,7 +1521,49 @@
     "failedFork": "No se pudo crear la rama",
     "failedSwitch": "No se pudo cambiar de rama",
     "failedDelete": "No se pudo eliminar la rama",
-    "failedMerge": "No se pudo fusionar la rama"
+    "failedMerge": "No se pudo fusionar la rama",
+    "mergeTitle": "Fusionar ramas",
+    "mergeSourcesHint": "Selecciona al menos 2 ramas para fusionar. El orden define la ordinal de la fusión.",
+    "mergeNeedTwoSources": "Selecciona al menos 2 fuentes para fusionar.",
+    "mergeModeHint": "Elige cómo fusionar las ramas seleccionadas.",
+    "mergeMode": {
+      "combined": { "title": "Combinado", "desc": "Tejer ambas versiones en una continuación" },
+      "secondOverFirst": {
+        "title": "Segunda sobre primera",
+        "desc": "Aplicar los cambios de la segunda rama sobre la primera"
+      },
+      "firstOverSecond": {
+        "title": "Primera sobre segunda",
+        "desc": "Aplicar los cambios de la primera rama sobre la segunda"
+      },
+      "freshDiscovery": {
+        "title": "Descubrimiento nuevo",
+        "desc": "Generar una nueva continuación consciente de ambas"
+      },
+      "singlePlusGlean": { "title": "Una más recolección", "desc": "Mantener una rama, injertar modificaciones leves" },
+      "aiAssisted": "Asistido por IA",
+      "deterministic": "Determinista"
+    },
+    "mergeTokenEstimate": "Estimación de tokens",
+    "mergeTruncated": "Vista previa truncada por límite de tokens",
+    "mergePreviewLoading": "Generando vista previa…",
+    "mergeReroll": "Regenerar",
+    "mergeRole": { "assistant": "Asistente", "user": "Usuario", "character": "Personaje" },
+    "mergeHunk": { "kept": "Conservado", "applied": "Aplicado", "conflict": "Conflicto" },
+    "mergeConflict": { "base": "Base", "overlay": "Superposición", "manual": "Editar en línea" },
+    "mergeUnresolvedConflicts": "Resuelve todos los conflictos para confirmar",
+    "mergeBranchName": "Nombre de rama",
+    "mergeActivate": "Activar rama fusionada",
+    "mergeSummary": "Resumen de fusión",
+    "mergeConfirmButton": "Confirmar fusión",
+    "mergeContinue": "Continuar desde aquí",
+    "mergeSelected": "Fusionar seleccionadas",
+    "mergeVariants": "Fusionar variantes…",
+    "mergeFromHere": "Fusionar desde aquí…",
+    "mergeFailedInitiate": "No se pudo iniciar la fusión",
+    "mergeFailedPreview": "No se pudo cargar la vista previa",
+    "mergeFailedConfirm": "No se pudo confirmar la fusión",
+    "mergeFailedContinue": "No se pudo continuar desde la fusión"
   },
   "wardrobe": {
     "baseOutfit": "Base outfit",

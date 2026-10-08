@@ -8,6 +8,7 @@ import type { ChatCoreState, } from "./core";
 import type { GifPickerState, } from "./gif-picker-state";
 import type { ChatLocationState, } from "./location-state";
 import type { ChatMemoryState, } from "./memory-state";
+import type { ChatMergeState, } from "./merge-state";
 import type { MessageActionsState, } from "./message-actions-state";
 import type { ChatMessageSearchState, } from "./message-search-state";
 import type { ChatMoodState, } from "./mood-state";
@@ -30,6 +31,7 @@ export interface ChatState
     ChatCoreState,
     ChatBattleState,
     ChatBranchesState,
+    ChatMergeState,
     ChatRpgState,
     ChatMoodState,
     ChatMemoryState,
