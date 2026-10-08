@@ -306,6 +306,32 @@ describe("chatSendMethods.sendMessage — failure paths", () => {
     expect(ctx.isGenerating,).toBe(false,);
     expect(ctx.toasts[0]!.type,).toBe("error",);
   });
+
+  test("503 with persisted id reconciles the temp message instead of dropping it", async () => {
+    const ctx = buildCtx();
+    ctx.$refs.messageInput.value = "hello";
+    handler = async () =>
+      Response.json(
+        {
+          error: "Could not persist reply due to high concurrency. Please retry.",
+          code: "SERVICE_UNAVAILABLE",
+          id: "persisted-42",
+          context: { usedTokens: 0, maxTokens: 8192, },
+        },
+        { status: 503, },
+      );
+
+    await chatSendMethods.sendMessage!.call(ctx as never,);
+    // The temp message is reconciled to the persisted id, not removed.
+    expect(ctx.messages,).toHaveLength(1,);
+    expect(ctx.messages[0]!.id,).toBe("persisted-42",);
+    // The composer is NOT restored — the message was stored.
+    expect(ctx.$refs.messageInput.value,).toBe("",);
+    expect(ctx.flushedDrafts,).toBe(0,);
+    // An error toast is still shown.
+    expect(ctx.toasts[0]!.type,).toBe("error",);
+    expect(ctx.isGenerating,).toBe(false,);
+  });
 });
 
 describe("chatSendMethods.sendMessage — composer drafts", () => {
