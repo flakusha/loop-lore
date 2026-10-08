@@ -2083,6 +2083,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-precompiled-templates-injection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     }
   ],
   "src/assistant/commands/dice.ts": [
@@ -2359,6 +2363,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-guided-regen-action-menu-on-assistant-messages.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     }
   ],
   "src/assistant/commands/registry.test.ts": [
@@ -2445,6 +2453,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/EPIC-2026-23.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     }
   ],
   "src/assistant/commands/rpg-gate.test.ts": [
@@ -2480,6 +2492,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-summarize-format-tldr-bullets-detailed-gradation.md"
     }
   ],
@@ -2505,6 +2521,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     }
   ],
   "src/assistant/commands/video.ts": [
@@ -6707,6 +6727,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     }
   ],
   "src/chat/composer/local-suggest.ts": [
@@ -7234,6 +7258,10 @@
     }
   ],
   "src/chat/pruning/prune.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-consolidate-duplicated-token-estimation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
@@ -8496,6 +8524,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-consolidate-duplicated-token-estimation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-recon-test-coverage.md"
     },
     {
@@ -8781,6 +8813,12 @@
       "source": ".plan/tickets/TASK-recursive-self-improvement-merge-readiness-pack-generator-fr.md"
     }
   ],
+  "src/cli.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-batch-command-for-run-finalize-check.md"
+    }
+  ],
   "src/cli/export.ts": [
     {
       "kind": "ticket",
@@ -8829,6 +8867,12 @@
       "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     }
   ],
+  "src/commands/batch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-batch-command-for-run-finalize-check.md"
+    }
+  ],
   "src/commands/finalize.ts": [
     {
       "kind": "ticket",
@@ -8847,6 +8891,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-diff-scoped-gates-diff-against-a-stale-merge-base-so-scope-e.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-batch-command-for-run-finalize-check.md"
     }
   ],
   "src/commands/finalize/merge.ts": [
@@ -8867,6 +8915,12 @@
       "source": ".plan/tickets/TASK-giwt-issues-gains-state-open-closed-all-filter.md"
     }
   ],
+  "src/commands/ledger.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-ledger-export.md"
+    }
+  ],
   "src/commands/rebase.ts": [
     {
       "kind": "ticket",
@@ -8883,6 +8937,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-giwt-new-scope-without-tickets-attempts-an-empty-commit-and-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-ledger-export.md"
     }
   ],
   "src/commands/show.ts": [
@@ -10029,6 +10087,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-plugin-hot-reload-with-real-module-cache-busting.md"
     },
     {
       "kind": "ticket",
@@ -16037,6 +16099,12 @@
       "source": ".plan/tickets/TASK-refactor-lift-crafting-station-world-id-scope-to-shared-help.md"
     }
   ],
+  "src/doctor/check/entry.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-batch-command-for-run-finalize-check.md"
+    }
+  ],
   "src/elysia-app.ts": [
     {
       "kind": "epic",
@@ -18777,6 +18845,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-2026-008.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-consolidate-duplicated-token-estimation.md"
     }
   ],
   "src/frontend/alpine/mention-autocomplete.ts": [
@@ -19089,6 +19161,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-response-length-control.md"
+    }
+  ],
+  "src/frontend/alpine/shortcuts-listener.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-plugin-hot-reload-with-real-module-cache-busting.md"
     }
   ],
   "src/frontend/alpine/shortcuts.ts": [
@@ -20585,6 +20663,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    }
+  ],
+  "src/frontend/pages/new-chat/helpers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-consolidate-duplicated-token-estimation.md"
     }
   ],
   "src/frontend/pages/new-chat/index.ts": [
@@ -22180,6 +22264,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-story-gm-generation-never-nsfw-gated-content-safety-bypass.md"
     }
   ],
@@ -22271,6 +22359,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     }
   ],
   "src/generation/context-compactor.ts": [
@@ -22281,6 +22373,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-context-memory-events.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-consolidate-duplicated-token-estimation.md"
     }
   ],
   "src/generation/context-compressor.test.ts": [
@@ -22297,6 +22393,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-admin-system-config-generation-tunables-context-window-guard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-consolidate-duplicated-token-estimation.md"
     },
     {
       "kind": "spec",
@@ -22621,6 +22721,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
     },
     {
       "kind": "ticket",
@@ -23571,6 +23675,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     },
     {
       "kind": "ticket",
@@ -28156,6 +28264,22 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-failed-plugin-load-leaks-a-registered-plugin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-cards-ships-ungated-post-routes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-route-registry-lacks-ownership-enforcement-idor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-state-is-auto-approved-on-first-sight.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-046.md"
     },
     {
@@ -28172,11 +28296,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-per-plugin-unload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-enforce-plugin-origin-at-request-time.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-programmatic-api.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-host-contract-for-third-party-integration-plugins.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-plugin-hot-reload-with-real-module-cache-busting.md"
     },
     {
       "kind": "ticket",
@@ -28209,6 +28345,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-046.md"
+    }
+  ],
+  "src/plugins/registry-policy.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-enforce-plugin-origin-at-request-time.md"
+    }
+  ],
+  "src/plugins/registry-store.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-per-plugin-unload.md"
     }
   ],
   "src/plugins/registry.ts": [
@@ -28250,6 +28398,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-per-plugin-unload.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-management-api.md"
     },
     {
@@ -28263,6 +28415,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/testing.md"
+    }
+  ],
+  "src/plugins/route-access.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-enforce-plugin-origin-at-request-time.md"
     }
   ],
   "src/plugins/sandbox.ts": [
@@ -28330,6 +28488,18 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-cards-ships-ungated-post-routes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-route-registry-lacks-ownership-enforcement-idor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-tool-authorization-fails-open.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-046.md"
     },
     {
@@ -28339,6 +28509,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-048.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-enforce-plugin-origin-at-request-time.md"
     },
     {
       "kind": "ticket",
@@ -32099,6 +32273,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     }
   ],
   "src/routes/generation/third-party.ts": [
@@ -32228,6 +32406,10 @@
     }
   ],
   "src/routes/http-utils": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-widen-typecheck-coverage-to-plugins-and-tests.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-achievements-routes.md"
@@ -33313,6 +33495,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    }
+  ],
+  "src/routes/messages/scene-transition-context-cut.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-consolidate-duplicated-token-estimation.md"
     }
   ],
   "src/routes/messages/swipe-race-insert.test.ts": [
@@ -34423,6 +34611,12 @@
       "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
     }
   ],
+  "src/routes/story-orchestration/helpers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
+    }
+  ],
   "src/routes/story-orchestration/index.ts": [
     {
       "kind": "ticket",
@@ -35069,6 +35263,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-generate-choices-never-persists-to-vn-choices.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     }
   ],
   "src/routes/vn-generate/index.ts": [
@@ -35079,6 +35277,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
+  "src/routes/vn-generate/story.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     }
   ],
   "src/routes/vn-questions.ts": [
@@ -41482,6 +41686,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-cards-ships-ungated-post-routes.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-032.md"
     },
     {
@@ -41633,6 +41841,12 @@
       "source": ".plan/tickets/BUG-tool-call-arg-parse-silent-fallback.md"
     }
   ],
+  "src/utils/ledger.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-ledger-export.md"
+    }
+  ],
   "src/utils/math.ts": [
     {
       "kind": "ticket",
@@ -41761,6 +41975,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2d-world-review-shared-seeded-rng-util-for-deterministic-pro.md"
+    }
+  ],
+  "src/utils/settings.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-batch-command-for-run-finalize-check.md"
     }
   ],
   "src/utils/statistics.ts": [
