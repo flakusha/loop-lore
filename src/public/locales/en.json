@@ -1490,7 +1490,67 @@
     "failedFork": "Failed to create branch",
     "failedSwitch": "Failed to switch branch",
     "failedDelete": "Failed to delete branch",
-    "failedMerge": "Failed to merge branch"
+    "failedMerge": "Failed to merge branch",
+    "mergeTitle": "Merge branches",
+    "mergeSourcesHint": "Select at least 2 branches to merge. The order defines the merge ordinal.",
+    "mergeNeedTwoSources": "Select at least 2 sources to merge.",
+    "mergeModeHint": "Choose how to fuse the selected branches.",
+    "mergeMode": {
+      "combined": {
+        "title": "Combined",
+        "desc": "Weave both versions into one continuation"
+      },
+      "secondOverFirst": {
+        "title": "Second over first",
+        "desc": "Apply second branch's changes onto the first"
+      },
+      "firstOverSecond": {
+        "title": "First over second",
+        "desc": "Apply first branch's changes onto the second"
+      },
+      "freshDiscovery": {
+        "title": "Fresh discovery",
+        "desc": "Generate a new continuation aware of both"
+      },
+      "singlePlusGlean": {
+        "title": "Single plus glean",
+        "desc": "Keep one branch, graft slight modifications"
+      },
+      "aiAssisted": "AI-assisted",
+      "deterministic": "Deterministic"
+    },
+    "mergeTokenEstimate": "Token estimate",
+    "mergeTruncated": "Preview truncated due to token limit",
+    "mergePreviewLoading": "Generating preview…",
+    "mergeReroll": "Re-roll",
+    "mergeRole": {
+      "assistant": "Assistant",
+      "user": "User",
+      "character": "Character"
+    },
+    "mergeHunk": {
+      "kept": "Kept",
+      "applied": "Applied",
+      "conflict": "Conflict"
+    },
+    "mergeConflict": {
+      "base": "Base",
+      "overlay": "Overlay",
+      "manual": "Edit inline"
+    },
+    "mergeUnresolvedConflicts": "Resolve all conflicts to confirm",
+    "mergeBranchName": "Branch name",
+    "mergeActivate": "Activate merged branch",
+    "mergeSummary": "Merge summary",
+    "mergeConfirmButton": "Confirm merge",
+    "mergeContinue": "Continue from here",
+    "mergeSelected": "Merge selected",
+    "mergeVariants": "Merge variants…",
+    "mergeFromHere": "Merge from here…",
+    "mergeFailedInitiate": "Failed to initiate merge",
+    "mergeFailedPreview": "Failed to load preview",
+    "mergeFailedConfirm": "Failed to confirm merge",
+    "mergeFailedContinue": "Failed to continue from merge"
   },
   "commands": {
     "help": "Show available commands",

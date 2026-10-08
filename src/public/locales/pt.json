@@ -1521,7 +1521,46 @@
     "failedFork": "Falha ao criar o ramo",
     "failedSwitch": "Falha ao mudar de ramo",
     "failedDelete": "Falha ao excluir o ramo",
-    "failedMerge": "Falha ao mesclar o ramo"
+    "failedMerge": "Falha ao mesclar o ramo",
+    "mergeTitle": "Mesclar ramos",
+    "mergeSourcesHint": "Selecione pelo menos 2 ramos para mesclar. A ordem define a ordinal da mesclagem.",
+    "mergeNeedTwoSources": "Selecione pelo menos 2 fontes para mesclar.",
+    "mergeModeHint": "Escolha como mesclar os ramos selecionados.",
+    "mergeMode": {
+      "combined": { "title": "Combinado", "desc": "Tecer ambas as versões em uma continuação" },
+      "secondOverFirst": {
+        "title": "Segunda sobre primeira",
+        "desc": "Aplicar as mudanças do segundo ramo sobre o primeiro"
+      },
+      "firstOverSecond": {
+        "title": "Primeira sobre segunda",
+        "desc": "Aplicar as mudanças do primeiro ramo sobre o segundo"
+      },
+      "freshDiscovery": { "title": "Nova descoberta", "desc": "Gerar uma nova continuação consciente de ambas" },
+      "singlePlusGlean": { "title": "Uma mais coleta", "desc": "Manter um ramo, enxertar modificações leves" },
+      "aiAssisted": "Assistido por IA",
+      "deterministic": "Determinístico"
+    },
+    "mergeTokenEstimate": "Estimativa de tokens",
+    "mergeTruncated": "Pré-visualização truncada por limite de tokens",
+    "mergePreviewLoading": "Gerando pré-visualização…",
+    "mergeReroll": "Regenerar",
+    "mergeRole": { "assistant": "Assistente", "user": "Usuário", "character": "Personagem" },
+    "mergeHunk": { "kept": "Mantido", "applied": "Aplicado", "conflict": "Conflito" },
+    "mergeConflict": { "base": "Base", "overlay": "Sobreposição", "manual": "Editar em linha" },
+    "mergeUnresolvedConflicts": "Resolva todos os conflitos para confirmar",
+    "mergeBranchName": "Nome do ramo",
+    "mergeActivate": "Ativar ramo mesclado",
+    "mergeSummary": "Resumo da mesclagem",
+    "mergeConfirmButton": "Confirmar mesclagem",
+    "mergeContinue": "Continuar daqui",
+    "mergeSelected": "Mesclar selecionados",
+    "mergeVariants": "Mesclar variantes…",
+    "mergeFromHere": "Mesclar daqui…",
+    "mergeFailedInitiate": "Falha ao iniciar mesclagem",
+    "mergeFailedPreview": "Falha ao carregar pré-visualização",
+    "mergeFailedConfirm": "Falha ao confirmar mesclagem",
+    "mergeFailedContinue": "Falha ao continuar da mesclagem"
   },
   "wardrobe": {
     "baseOutfit": "Base outfit",

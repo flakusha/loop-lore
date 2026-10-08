@@ -1521,7 +1521,49 @@
     "failedFork": "Verzweigung konnte nicht erstellt werden",
     "failedSwitch": "Verzweigung konnte nicht gewechselt werden",
     "failedDelete": "Verzweigung konnte nicht gelöscht werden",
-    "failedMerge": "Verzweigung konnte nicht zusammengeführt werden"
+    "failedMerge": "Verzweigung konnte nicht zusammengeführt werden",
+    "mergeTitle": "Verzweigungen zusammenführen",
+    "mergeSourcesHint": "Wähle mindestens 2 Verzweigungen zum Zusammenführen. Die Reihenfolge bestimmt die Ordnung.",
+    "mergeNeedTwoSources": "Wähle mindestens 2 Quellen zum Zusammenführen.",
+    "mergeModeHint": "Wähle, wie die ausgewählten Verzweigungen verschmolzen werden.",
+    "mergeMode": {
+      "combined": { "title": "Kombiniert", "desc": "Beide Versionen zu einer Fortsetzung verweben" },
+      "secondOverFirst": {
+        "title": "Zweite über erste",
+        "desc": "Änderungen der zweiten Verzweigung auf die erste anwenden"
+      },
+      "firstOverSecond": {
+        "title": "Erste über zweite",
+        "desc": "Änderungen der ersten Verzweigung auf die zweite anwenden"
+      },
+      "freshDiscovery": { "title": "Neue Entdeckung", "desc": "Eine neue Fortsetzung bewusst beider generieren" },
+      "singlePlusGlean": {
+        "title": "Einzeln plus Entnahme",
+        "desc": "Eine Verzweigung behalten, leichte Übernahmen einfügen"
+      },
+      "aiAssisted": "KI-gestützt",
+      "deterministic": "Deterministisch"
+    },
+    "mergeTokenEstimate": "Token-Schätzung",
+    "mergeTruncated": "Vorschau wegen Token-Limit gekürzt",
+    "mergePreviewLoading": "Vorschau wird generiert…",
+    "mergeReroll": "Neu generieren",
+    "mergeRole": { "assistant": "Assistent", "user": "Benutzer", "character": "Figur" },
+    "mergeHunk": { "kept": "Behalten", "applied": "Angewendet", "conflict": "Konflikt" },
+    "mergeConflict": { "base": "Basis", "overlay": "Überlagerung", "manual": "Inline bearbeiten" },
+    "mergeUnresolvedConflicts": "Löse alle Konflikte zum Bestätigen",
+    "mergeBranchName": "Verzweigungsname",
+    "mergeActivate": "Zusammengeführte Verzweigung aktivieren",
+    "mergeSummary": "Zusammenfassung",
+    "mergeConfirmButton": "Zusammenführen bestätigen",
+    "mergeContinue": "Von hier fortsetzen",
+    "mergeSelected": "Ausgewählte zusammenführen",
+    "mergeVariants": "Varianten zusammenführen…",
+    "mergeFromHere": "Von hier zusammenführen…",
+    "mergeFailedInitiate": "Zusammenführen konnte nicht gestartet werden",
+    "mergeFailedPreview": "Vorschau konnte nicht geladen werden",
+    "mergeFailedConfirm": "Zusammenführen konnte nicht bestätigt werden",
+    "mergeFailedContinue": "Fortsetzen von Zusammenführung fehlgeschlagen"
   },
   "wardrobe": {
     "baseOutfit": "Base outfit",
