@@ -25,29 +25,75 @@ Items specification — covers item types, properties, interactions, loot tables
 
 ## Implementation
 
-> **Active development tracked in:** [`epic-item-systems-unification.md`](/epic-item-systems-unification) — consolidates item types, links NPC inventory, wires crafting, implements trade, and closes loot/persistence gaps.
+> **Active development tracked in:** [`epic-item-systems-unification.md`](./epic-item-systems-unification.md) — consolidates item types, links NPC inventory, wires crafting, implements trade, and closes loot/persistence gaps.
 
 ## Item Systems
 
 ### Core Item Model
 
-interface Item {
-}
-interface ItemType {
-}
-interface ItemProperty {
-}
-interface LootTable {
-}
-interface ItemInteraction {
-}
+Items are split across three tables by lifetime, not by one polymorphic type:
+
+- `items` — world-scoped definitions (category, rarity, stats, visibility).
+- `world_items` — placed instances of a definition, owned by a location or an
+  actor, carrying quantity and durability.
+- `actor_items` — per-actor instances with an `equipped` flag.
+
+Definitions, instances, and their lifecycle are owned by `ItemsService` in
+`src/story/items/` (`definitions.ts`, `instances.ts`, `placement.ts`).
+Loot generation lives in `src/rpg/loot/`, crafting in `src/rpg/crafting/recipes/`.
+
+### Current State
+
+| Capability                     | Status                     | Where |
+| ------------------------------ | -------------------------- | ----- |
+| Single item taxonomy           | Shipped                    | `src/db/enums-story/items.ts` (`TASK-unify-item-types`, Done) |
+| Definition + instance CRUD     | Shipped                    | `src/routes/story-items/` |
+| Loot persists as instances     | Shipped                    | `src/rpg/loot/` (`TASK-persist-loot-drops`, Done) |
+| Effects parsing                | Shipped (3 kinds)          | `src/story/items/effects.ts` (`stat_delta`, `on_use`, `passive`) |
+| Destroy lifecycle              | Shipped                    | `src/story/items/instances.ts` (`destroy`) |
+| Richer effects (conditional, set, enchantment) | Not Started | `epic-item-system-extensions.md` |
+| Durability degradation model   | Partial                    | `src/battle/items-integration.ts` |
+| Loot tables                    | Not persisted              | `src/rpg/loot/` returns anonymous drops |
 
 ## Acceptance Criteria
 
-- [ ] Item type system implemented
-- [ ] Item properties and interactions working
-- [ ] Loot tables functional
-- [ ] Item lifecycle (create, use, destroy) operational
+- [x] Item type system implemented — one `ItemCategory`/`ItemRarity` taxonomy
+  across definitions, instances, and actor items (`TASK-unify-item-types`, Done)
+- [x] Item lifecycle (create, use, destroy) operational — `src/story/items/`
+- [x] Loot generation persists items as `world_items` instances
+  (`TASK-persist-loot-drops`, Done)
+- [ ] Item properties and interactions beyond `stat_delta` / `on_use` /
+  `passive` — conditional, set-bonus, and enchantment effects are unspecified in
+  code (`epic-item-system-extensions.md`)
+- [ ] Durable loot tables — `generateLoot()` returns drops without a table
+- [ ] Unique-item provenance tracking beyond per-world duplicate rejection
+
+## Related Epics
+
+- `epic-item-systems-unification.md` — active owner of the remaining backend work
+- `epic-item-system-extensions.md` — durability, effects, drift, dupe protection
+- `epic-inventory.md` — actor-side inventory model
+- `epic-inventory-ui.md` — item display, trading, equipment UI
+- `epic-crafting-professions.md` — crafting recipes and stations
+- `epic-economy-trading.md` — item value and trading
+
+## Dependencies
+
+- `src/story/items/` — `ItemsService`, the canonical item lifecycle
+- `src/rpg/crafting/recipes/` — `RecipesService` (recipe CRUD shipped, stations
+  and attempt execution deferred — `TASK-complete-crafting-system-services`)
+
+## Unticketed Gaps
+
+- Durable loot tables (`epic-inventory-system.md` records the same gap as
+  "loot not persisted"; the table layer itself has no ticket)
+
+## Linked Tasks
+
+- `TASK-unify-item-types.md` (Done)
+- `TASK-persist-loot-drops.md` (Done)
+- `TASK-item-generation.md`
+- `TASK-assistant-creative-studio-workflow-item.md`
 
 ## Generation via Creative Studio Workflows
 
