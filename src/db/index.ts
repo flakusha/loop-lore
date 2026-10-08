@@ -90,6 +90,16 @@ export function setTestDatabase(db: Kysely<DB> | null,): void {
   testDatabaseOverride = db;
 }
 
+/**
+ * Read the current test override WITHOUT materializing the production
+ * singleton. Unlike `getDatabase()`, this never touches disk — safe to call
+ * from teardown paths that only want to know whether an override is set.
+ * @returns The override Kysely handle, or null when none is set.
+ */
+export function getTestDatabaseOverride(): Kysely<DB> | null {
+  return testDatabaseOverride;
+}
+
 // Lazy production singleton — only created on the first getDatabase() call when no test
 // override is in effect. Eager initialization at module load forced every test that imports
 // `@/db` to materialize `loop-lore-data/loop-lore.db` (see BUG-eager-db-init-creates-on-disk-db-on-test-import).
