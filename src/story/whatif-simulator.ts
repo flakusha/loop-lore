@@ -134,6 +134,8 @@ export function createWhatIfSimulator(
     async simulateForkFor(hypothetical: string, targetTimelineId: string, count = 3,): Promise<WhatIfBeat[]> {
       // ponytail: deterministic diff, LLM outcome generation when narrative quality demands
       // Sequential awaits: no-restricted-syntax bans Promise.all (unhandled rejection risk).
+      // Bounded count: pagination upstream caps at listTimelineEntries' window.
+      const boundedCount = Math.min(50, Math.max(1, Math.floor(count,),),);
       const history = await listTimelineEntries({
         db: opts.db,
         worldId: opts.worldId,
@@ -144,7 +146,7 @@ export function createWhatIfSimulator(
         db: opts.db,
         worldId: opts.worldId,
         timelineId: targetTimelineId,
-        limit: count,
+        limit: boundedCount,
       },);
 
       const source = history.filter(
@@ -152,7 +154,7 @@ export function createWhatIfSimulator(
       );
 
       const beats: WhatIfBeat[] = [];
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < boundedCount; i++) {
         const anchor = source[i];
         const steerDesc = steerings[i]?.description;
         const anchorDesc = steerDesc ?? anchor?.description ?? "current state";
@@ -162,7 +164,7 @@ export function createWhatIfSimulator(
           divergesFrom: anchor ? [anchor.id,] : [],
           description: `If ${hypothetical}, then consequence ${
             i + 1
-          }/${count}: ${anchorDesc} may play out differently.`,
+          }/${boundedCount}: ${anchorDesc} may play out differently.`,
         },);
       }
 
