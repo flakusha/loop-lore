@@ -64,3 +64,4 @@ line 53), and it is called by `generateActivityPubKey`
 imports `activitypub-keys` (grep for the import — no matches), so nothing can currently
 mint a signing key, let alone publish. `setFederationConsent` itself documents that it
 does not check ownership and that authorization is the caller's job (line 79).
+
