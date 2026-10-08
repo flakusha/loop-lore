@@ -16,8 +16,9 @@
 
 - `src/alpine/htmx.ts` — 14 top-level `document.addEventListener` calls at module scope, no matching `removeEventListener`.
 - Additional top-level registrations across `src/` estimated ~20 more (total ~34).
-- Total `listener-leak` findings: ~90.
-- The detector pattern (register without teardown) is a genuine memory leak when used inside a component lifecycle, but is correct and intentional at module top level.
+- Total `listener-leak` findings before fix: ~90.
+- **Fix landed in commit `1ac20c052`** (`fix(tools): match giwt index comparator, exempt page-lifetime listeners`): exemption implemented — a finding is exempt only when receiver is `document`/`window`/`globalThis` AND brace depth is 0 at that line. Result: 90 → 66 findings, 24 suppressed. Suppression count is printed above the buckets.
+- **Remaining ceiling:** The per-file pairing mechanism only works within a single file. Cross-module register/teardown pairs (register in one module, teardown in another) still produce false positives. ~11 genuinely nested page-receiver sites are still correctly reported. This ticket remains open to track that ceiling.
 
 ## Known ceiling
 
