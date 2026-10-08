@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
-**Epic:** epic-rag-document-processing.md
+**Epic:** epic-rag-document-processing
 
 ## Summary
 

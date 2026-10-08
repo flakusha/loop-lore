@@ -13,7 +13,7 @@
 **Effort:** Low
 **Type:** Feature Task
 **Tags:** assistant, capability-disclosure, role-aware, introspection, by-role
-**Epic:** epic-assistant-gm-flows.md
+**Epic:** epic-assistant-gm-flows
 
 ## Summary
 

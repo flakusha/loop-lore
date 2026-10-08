@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:**: epic-nsfw-game-mechanics
+**Epic:** epic-nsfw-game-mechanics
 **Related**:
 
 ## Summary

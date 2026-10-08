@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** world, frontend, alpine, logic
-**Epic:** epic-world-management-ui.md
+**Epic:** epic-world-management-ui
 
 ## Summary
 

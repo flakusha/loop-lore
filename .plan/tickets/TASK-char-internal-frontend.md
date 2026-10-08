@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:**: epic-character-internal-traits
+**Epic:** epic-character-internal-traits
 **Related**:
 
 ## Summary

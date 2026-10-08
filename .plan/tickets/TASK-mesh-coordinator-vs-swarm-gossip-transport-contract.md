@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-mesh-federation-content-sharing.md
+**Epic:** epic-mesh-federation-content-sharing
 
 **Summary:**
 

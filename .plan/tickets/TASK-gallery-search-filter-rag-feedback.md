@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-frontend-gallery.md
+**Epic:** epic-frontend-gallery
 **See also:** epic-gallery-batch-operations.md
 **Status:** Not Started
 **Priority:** High

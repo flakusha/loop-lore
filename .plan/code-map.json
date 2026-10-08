@@ -28289,12 +28289,6 @@
       "source": ".plan/tickets/TASK-010-plurals.md"
     }
   ],
-  "src/public/locales": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-010-plurals.md"
-    }
-  ],
   "src/public/locales/en.json": [
     {
       "kind": "ticket",

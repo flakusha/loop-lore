@@ -15,7 +15,7 @@
 **Priority**: high
 **Tags**: refactor, file-split, god-module
 **Assignee**:
-**Epic:**: epic-file-splitting
+**Epic:** epic-file-splitting
 **Related**: TASK-size-strict-debt, TASK-split-messages-route
 
 ## Description

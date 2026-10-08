@@ -13,7 +13,7 @@
 **Effort:** Large
 **Type:** Task
 **Tags:** generation, rate-limit, concurrency, semaphore, flow-control
-**Epic:** epic-generation-flow-control.md
+**Epic:** epic-generation-flow-control
 **Related:** TASK-admin-generation-controls-runtime-surface.md
 
 ## Summary

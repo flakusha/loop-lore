@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
-**Epic:** epic-anonymity-decentralization.md
+**Epic:** epic-anonymity-decentralization
 
 ## Summary
 

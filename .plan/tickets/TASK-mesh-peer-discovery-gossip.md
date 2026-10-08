@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Large
-**Epic:** epic-federation-swarm-sync.md
+**Epic:** epic-federation-swarm-sync
 **Related:** TASK-instance-state-advertisement-endpoint, FEAT-swarm-mode-reconciliation
 
 ## Summary

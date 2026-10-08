@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-api-telemetry.md
+**Epic:** epic-api-telemetry
 **Related:** FEAT-liveness-readiness-endpoints-opt-in-config, TASK-prometheus-metrics-endpoint-opt-in
 
 ## Summary

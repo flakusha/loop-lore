@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: frontend, world-editor, ux, alpine, htmx
 **Assignee**:
-**Epic:**: epic-world-management-ui
+**Epic:** epic-world-management-ui
 **Related**: `src/routes/views/worlds.ts`, `src/frontend/alpine/world-edit.ts`, `docs/spec/worlds.md`
 
 ## Description

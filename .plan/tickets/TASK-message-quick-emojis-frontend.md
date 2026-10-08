@@ -16,7 +16,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:**: epic-frontend-backend-integration
+**Epic:** epic-frontend-backend-integration
 **Related**:
 
 ## Summary

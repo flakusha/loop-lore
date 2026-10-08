@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-hidden-carriage-context.md
+**Epic:** epic-hidden-carriage-context
 **See also:** epic-gm-shadow-notes.md, epic-assistant-gm-flows.md
 **Status:** Not Started
 **Priority:** Medium

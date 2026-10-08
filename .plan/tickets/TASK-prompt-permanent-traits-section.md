@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: prompt-assembly, character-traits, templates
 **Assignee**:
-**Epic:**: epic-character-core-system
+**Epic:** epic-character-core-system
 **Related**: `src/db/schema-character.ts` (CharacterPermanentTraits), `src/assistant/prompt/sections/character-traits.ts`
 
 ## Description

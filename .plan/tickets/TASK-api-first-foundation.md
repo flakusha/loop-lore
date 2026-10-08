@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** Medium
-**Epic:** epic-api-library-distribution.md
+**Epic:** epic-api-library-distribution
 
 ## Summary
 

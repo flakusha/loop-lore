@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-api-library-distribution.md
+**Epic:** epic-api-library-distribution
 
 **Summary:**
 

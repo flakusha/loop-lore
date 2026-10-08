@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** admin, generation, runtime-config, ui
-**Epic:** epic-generation-flow-control.md
+**Epic:** epic-generation-flow-control
 **Related:** TASK-global-generation-pause-kill-switch.md, TASK-generation-rate-limiting-and-concurrency-limits.md
 
 ## Summary

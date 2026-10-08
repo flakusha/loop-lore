@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-frontend-chat-commands.md
+**Epic:** epic-frontend-chat-commands
 **Status:** Not Started
 **Priority:** High
 

@@ -15,7 +15,7 @@
 **Priority**: high
 **Tags**: chat, bug, mode, validation
 **Assignee**:
-**Epic:**: epic-story-mode-ui
+**Epic:** epic-story-mode-ui
 **Related**: IDEA-chat-setup-templates
 
 ## Description

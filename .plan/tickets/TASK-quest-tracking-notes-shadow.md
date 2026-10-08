@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-quests-encounters.md
+**Epic:** epic-quests-encounters
 **See also:** epic-gm-shadow-notes.md
 **Status:** Not Started
 **Priority:** Medium

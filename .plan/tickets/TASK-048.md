@@ -13,7 +13,7 @@
 **Status**: Done
 **Priority**: medium
 **Tags**: plugins, security
-**Epic:**: epic-plugin-extension-points
+**Epic:** epic-plugin-extension-points
 **Assignee**:
 
 ## Summary

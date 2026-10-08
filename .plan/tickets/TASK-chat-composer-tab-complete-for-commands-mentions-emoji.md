@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-frontend-chat-commands.md
+**Epic:** epic-frontend-chat-commands
 
 ## Summary
 

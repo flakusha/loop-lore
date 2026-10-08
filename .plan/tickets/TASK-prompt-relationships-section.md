@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: prompt-assembly, character-traits, relationships, templates
 **Assignee**:
-**Epic:**: epic-character-core-system
+**Epic:** epic-character-core-system
 **Related**: `src/db/schema-character.ts` (CharacterRelationships), `docs/spec/relationships.md`
 
 ## Description

@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-config-extensions.md
+**Epic:** epic-config-extensions
 
 ## Summary
 

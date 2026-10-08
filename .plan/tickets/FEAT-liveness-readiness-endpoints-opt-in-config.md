@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-api-telemetry.md
+**Epic:** epic-api-telemetry
 **Related:** TASK-prometheus-metrics-endpoint-opt-in, TASK-observability-config-section
 
 ## Summary

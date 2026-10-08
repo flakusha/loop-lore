@@ -14,7 +14,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** story, frontend, alpine, logic
-**Epic:** epic-story-mode-ui.md
+**Epic:** epic-story-mode-ui
 
 ## Summary
 

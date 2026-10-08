@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** Feature Task
 **Tags:** story, frontend, ui, turn-order
-**Epic:** epic-story-mode-ui.md
+**Epic:** epic-story-mode-ui
 
 ## Summary
 

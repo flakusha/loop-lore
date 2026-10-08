@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** Task
 **Tags:** cross-platform, windows, macos, security, filesystem
-**Epic:** epic-cross-platform-portability.md
+**Epic:** epic-cross-platform-portability
 
 ## Description
 

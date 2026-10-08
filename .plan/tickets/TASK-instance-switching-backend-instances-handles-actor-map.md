@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-instance-federation.md
+**Epic:** epic-instance-federation
 
 **Summary:**
 

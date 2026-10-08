@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: nsfw, rating, ui, enforcement
 **Assignee**:
-**Epic:**: epic-nsfw-integration-gaps
+**Epic:** epic-nsfw-integration-gaps
 **Related**: TASK-nsfw-rating-schema
 
 ## Summary

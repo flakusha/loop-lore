@@ -10,7 +10,7 @@
 - [ ] Admin creates announcement → users see banner on next page load
 - [ ] Dismissal persists per user; expired window stops rendering without redeploy
 - [ ] Critical non-dismissible variant renders for maintenance notices
-**Epic:** epic-frontend-admin.md
+**Epic:** epic-frontend-admin
 **Type:** Feature | **Priority:** Low | **Effort:** S
 
 ## Problem

@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-social-hub.md
+**Epic:** epic-social-hub
 
 ## Summary
 

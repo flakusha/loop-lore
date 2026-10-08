@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-local-process-swarm.md
+**Epic:** epic-local-process-swarm
 
 ## Summary
 

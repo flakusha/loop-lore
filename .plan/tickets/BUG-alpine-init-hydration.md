@@ -14,7 +14,7 @@
 **Effort:** Medium
 **Type:** Bug
 **Tags:** frontend, alpine, bug, hydration, chat
-**Epic:** epic-testing-qa.md
+**Epic:** epic-testing-qa
 
 ## Resolution (2026-08-12)
 

@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-frontend-gallery.md
+**Epic:** epic-frontend-gallery
 **Status:** Done
 **Status Note:** commit c0c24103 — feat(gallery): tag facet + preview tag rename
 **Priority:** Medium

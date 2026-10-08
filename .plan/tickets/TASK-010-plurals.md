@@ -14,7 +14,7 @@
 **Status**: Done
 **Priority**: medium
 **Tags**: i18n, plurals, deferred
-**Epic:**: epic-frontend-internationalization
+**Epic:** epic-frontend-internationalization
 **Related**: TASK-010, src/i18n/translator.ts, src/i18n/types.ts
 
 ## Background

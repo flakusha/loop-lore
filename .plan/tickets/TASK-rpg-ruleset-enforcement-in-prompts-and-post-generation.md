@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-mechanics-governance.md
+**Epic:** epic-mechanics-governance
 
 ## Summary
 

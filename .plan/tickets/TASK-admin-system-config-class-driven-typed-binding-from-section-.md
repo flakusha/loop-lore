@@ -12,7 +12,7 @@
 **Status Note:** 2026-09-16, tree/admin-config-impl
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-frontend-admin.md
+**Epic:** epic-frontend-admin
 
 ## Summary
 

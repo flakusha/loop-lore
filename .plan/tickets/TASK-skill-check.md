@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** battle, frontend, ui, dice, animation
-**Epic:** epic-battle-ui.md
+**Epic:** epic-battle-ui
 
 ## Summary
 

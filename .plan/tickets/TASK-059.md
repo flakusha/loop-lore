@@ -15,7 +15,7 @@
 **Effort:** Medium
 **Tags**: transport, external-protocols, docs
 **Assignee**:
-**Epic:**: epic-transport-expansion
+**Epic:** epic-transport-expansion
 **Related**:
 
 ## Summary

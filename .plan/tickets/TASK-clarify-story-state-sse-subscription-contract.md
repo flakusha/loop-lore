@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-story-mode-ui.md
+**Epic:** epic-story-mode-ui
 **Tags:** frontend, story
 **Summary:** Subscribe window.storyState.refresh to the world-scoped snapshot/event SSE feed instead of poll-only re-pull.
 **Context:** TASK-story-alpine SSE criterion open; feed contract owned by git issue 580d430; refresh() re-pull retained as offline fallback.

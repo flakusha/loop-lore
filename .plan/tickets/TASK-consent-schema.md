@@ -15,7 +15,7 @@
 **Priority**: high
 **Tags**: schemas, consent, nsfw
 **Assignee**:
-**Epic:**: epic-shared-schemas
+**Epic:** epic-shared-schemas
 **Related**: TASK-nsfw-consent-integration
 
 ## Summary

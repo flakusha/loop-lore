@@ -12,7 +12,7 @@
 **Implementation:** Not started — no `src/rag/search/local/` implementation is present.
 **Priority:** High
 **Effort:** Medium
-**Epic:** epic-rag-document-processing.md
+**Epic:** epic-rag-document-processing
 
 ## Summary
 

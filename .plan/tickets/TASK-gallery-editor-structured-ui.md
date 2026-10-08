@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: frontend, gallery-editor, ux, alpine, htmx, assets
 **Assignee**:
-**Epic:**: epic-frontend-gallery
+**Epic:** epic-frontend-gallery
 **Related**: `src/routes/views/gallery.ts`, `src/routes/character-avatars.ts`, `docs/spec/assets.md`
 
 ## Description

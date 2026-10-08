@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: prompt-assembly, nsfw, character-traits, templates
 **Assignee**:
-**Epic:**: epic-nsfw-integration-gaps
+**Epic:** epic-nsfw-integration-gaps
 **Related**: `src/db/schema-character.ts` (7 NSFW tables), `docs/spec/nsfw-integration.md`
 
 ## Description

@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** Feature Task
 **Tags:** world, frontend, ui, location-details
-**Epic:** epic-world-management-ui.md
+**Epic:** epic-world-management-ui
 
 ## Summary
 
