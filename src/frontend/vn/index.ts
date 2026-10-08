@@ -71,3 +71,5 @@ export {
   type SceneCastView,
   type StageDirective,
 } from "./stage-directives";
+
+export { getLocationContext, saveLastLocation, } from "./location-events";
