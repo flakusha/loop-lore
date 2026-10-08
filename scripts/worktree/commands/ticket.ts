@@ -70,7 +70,7 @@ export async function ticket(args: string[], config: WorktreeConfig,): Promise<v
     log("info", `creating ticket file: ${ticketFile}`,);
 
     // Order and spelling are load-bearing: `plan:validate`'s format gate
-    // requires the three `**Field:**` lines, and its status-vocab gate
+    // requires the six `**Field:**` lines, and its status-vocab gate
     // rejects an emoji-prefixed status. Emitting only the `## Heading`
     // sections (or `⬜ Not Started`) produced tickets that failed the gate
     // the moment they were created.
