@@ -109,13 +109,63 @@ export const chatUtilsInteraction: ChatUtilsInteraction = {
       x: Math.min(rect.left, window.innerWidth - 240,),
       y: Math.max(rect.top - 44, 8,),
     };
+
+    // Reset the keyboard highlight and move DOM focus into the picker so
+    // the first option is reachable immediately (Enter/Space activate via
+    // native buttons; focus returns to the opener on close — see below).
+    this._reactionActiveIndex = 0;
+    this.focusReactionOption(0,);
+  },
+
+  /**
+   * @param {1 | -1} delta
+   * @returns {void}
+   */
+  moveReactionSelection(delta: 1 | -1,) {
+    const count = (this._quickEmojis ?? []).length;
+    if (count === 0 || !this._reactionPicker.visible) { return; }
+    const idx = ((this._reactionActiveIndex ?? 0) + delta + count) % count;
+    this.focusReactionOption(idx,);
+  },
+
+  /**
+   * @returns {void}
+   */
+  focusLastReactionOption() {
+    this.focusReactionOption((this._quickEmojis ?? []).length - 1,);
+  },
+
+  /**
+   * @param {number} index
+   * @returns {void}
+   */
+  focusReactionOption(index: number,) {
+    const count = (this._quickEmojis ?? []).length;
+    if (!this._reactionPicker.visible) { return; }
+    if (index < 0 || index >= count) { return; }
+    this._reactionActiveIndex = index;
+    // Buttons render via x-for; wait for Alpine to paint after open/index
+    // change before focusing (no-op if the picker closed meanwhile).
+    void this.$nextTick?.(() => {
+      if (!this._reactionPicker.visible) { return; }
+      document.querySelectorAll<HTMLElement>('[data-testid="reaction-picker"] .reaction-option',)[index]?.focus();
+    },);
   },
 
   /**
    * @returns {void}
    */
   closeReactionPicker() {
+    if (!this._reactionPicker.visible) { return; }
     this._reactionPicker.visible = false;
+    // Return focus to the opener that launched this picker so keyboard
+    // users land back where they started (mouse path unaffected — opener
+    // only takes :focus-visible styling, and only when already focused).
+    void this.$nextTick?.(() => {
+      const id = this._reactionPicker.messageId;
+      if (!id) { return; }
+      document.querySelector<HTMLElement>(`[data-message-id="${CSS.escape(id,)}"] .reaction-add-btn`,)?.focus();
+    },);
   },
 
   /**

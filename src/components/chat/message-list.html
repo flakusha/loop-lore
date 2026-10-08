@@ -282,6 +282,9 @@
                 class="reaction-add-btn"
                 @click="showReactionPicker(msg.id, $event)"
                 x-bind:title="t('chats.addReaction')"
+                :aria-label="t('chats.addReaction')"
+                aria-haspopup="menu"
+                :aria-expanded="_reactionPicker.visible && _reactionPicker.messageId === msg.id ? 'true' : 'false'"
                 data-testid="reaction-add"
               >
                 🙂
@@ -745,14 +748,28 @@
     class="dropdown-base reaction-picker"
     x-show="_reactionPicker.visible"
     :style="{ left: _reactionPicker.x + 'px', top: _reactionPicker.y + 'px' }"
+    role="menu"
+    :aria-label="t('chats.addReaction')"
     @click.outside="closeReactionPicker()"
     @keydown.escape.window="closeReactionPicker()"
+    @keydown.arrow-right.prevent="moveReactionSelection(1)"
+    @keydown.arrow-left.prevent="moveReactionSelection(-1)"
+    @keydown.arrow-down.prevent="moveReactionSelection(1)"
+    @keydown.arrow-up.prevent="moveReactionSelection(-1)"
+    @keydown.home.prevent="focusReactionOption(0)"
+    @keydown.end.prevent="focusLastReactionOption()"
     data-testid="reaction-picker"
     x-cloak
   >
-    <template x-for="emoji in _quickEmojis" :key="emoji">
-      <button class="reaction-option" @click="toggleReaction(_reactionPicker.messageId, emoji); closeReactionPicker()">
-        <span x-text="emoji"></span>
+    <template x-for="(emoji, idx) in _quickEmojis" :key="emoji">
+      <button
+        class="reaction-option"
+        role="menuitem"
+        :aria-label="emoji"
+        :class="_reactionActiveIndex === idx ? 'reaction-active' : ''"
+        @click="toggleReaction(_reactionPicker.messageId, emoji); closeReactionPicker()"
+      >
+        <span x-text="emoji" aria-hidden="true"></span>
       </button>
     </template>
   </div>
