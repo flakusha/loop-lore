@@ -67,10 +67,12 @@ Of the 39 comma-separated entries, 24 have at least one slug that does not resol
 Landed (Option A, infra + first pass):
 
 - `70883c05f` feat(tools): owner-picking rule + generated title table
-  (`scripts/plan/epic-owner-pick.ts`, 12 `bun test`s, `epic-titles.generated.ts`
+  (`scripts/plan/epic-owner-pick.ts`, 13 `bun test`s, `epic-titles.generated.ts`
   with 282 H1 titles, `scripts/plan/README.md` section).
 - `a2ec20016` fix(plan): 107 tickets collapsed to first-existing owner
   (`.md` headers + `index.json` + regenerated `feature-matrix.md`).
+  Follow-up: whole-value exact title match (titles containing `/` split
+  apart otherwise) collapsed 15 more (Wardrobe x8, Asset-Platform x7).
   Verified: index diff is 107 epic-value changes only (0 added/removed keys,
   key order unchanged, lowercase `BUG-redos-…` key unmoved); `bun run
   plan:validate` all 11 gates pass; `bun test scripts/plan/` 39 pass.
@@ -79,8 +81,7 @@ Landed (Option A, infra + first pass):
   (bare slug or exact title-table hit). Entries where `.md` and index pick
   different owners are held back, never force-collapsed.
 
-Remainder (130 entries held back, need product judgment — >50% of the
-freeform class, so stopping here per the ticket's stop rule):
+Remainder (130 entries held back, need product judgment):
 
 - Numbered `Epic NNN` aliases with no resolvable file (12): `Epic 26
   (Avatar & Expression)` x4, `Epic 28 (Asset Support)` x2, `Epic 36 (Chat
@@ -92,18 +93,18 @@ freeform class, so stopping here per the ticket's stop rule):
   TASK-TEXT-EFFECTS-OVERLAYS, TASK-VISUAL-NOVEL-MODE,
   TASK-BATTLE-ENCOUNTER-TEMPLATE-SYSTEM, TASK-BATTLE-TEMPLATE-ACTIONS.
 - `NPC/Actor System` + prose-second-candidate (4): TASK-NPC-INVENTORY,
-  TASK-NSFW-SOCIAL, TASK-NSFW-WEATHER, TASK-VN-EMOTION-MOOD-STAGING.
+  TASK-NSFW-SOCIAL, TASK-NSFW-WEATHER,
+  TASK-VN-EMOTION-MOOD-AND-ACTION-DRIVEN-SPRITE-STAGING.
   (Sibling entries where the FIRST candidate resolved were collapsed:
   TASK-NPC-BDI-PLANNING, TASK-NPC-BEHAVIOR/MEMORY/TO-NPC-SOCIAL,
   TASK-NSFW-DISEASE.)
-- `Wardrobe / Loadout Avatar Variants` (8): title resolves via the table to
-  `epic-wardrobe-avatar-variants`, but that file's H1 is a DIFFERENT title
-  (`Wardrobe / Loadout Avatar Variants` lives in another epic file — mapping
-  needs a product call, not a blind table hit):
+- `Wardrobe / Loadout Avatar Variants` (8, now resolved — whole-value exact
+  title match added to the rule after the first pass):
   TASK-DEFERRED-EQUIPPED-ITEMS-*, TASK-OUTFIT-SCOPED-*, TASK-SELECTION-*,
-  TASK-STORY-GM-OUTFIT-*, TASK-WARDROBE-* (4).
-- `Asset Platform Capabilities (Messenger/Social Patterns)` (7):
-  TASK-ASSET-PLATFORM-B1..B5, TASK-DECISION-AV10/AV8.
+  TASK-STORY-GM-OUTFIT-*, TASK-WARDROBE-* (4) -> `epic-wardrobe-avatar-variants`.
+- `Asset Platform Capabilities (Messenger/Social Patterns)` (7, now resolved
+  the same way): TASK-ASSET-PLATFORM-B1..B5, TASK-DECISION-AV10/AV8 ->
+  `epic-asset-platform-capabilities`.
 - `Authentication Channel Provisioning` (10, near-miss of H1
   `Authentication Channel Provisioning — Messenger / E-mail / …`, exact
   match required): TASK-AUTH-FACTORS-*-F1, TASK-F2..F10, TASK-TOTP-*.
