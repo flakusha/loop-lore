@@ -7,6 +7,8 @@
 
 
 **Status:** In Progress
+
+**Status Note:** Per-actor item CRUD ships (`src/routes/actor-items.ts` + service, equipment state in `src/db/enums`); no dedicated `src/rpg/inventory/` subsystem and all acceptance criteria are unchecked. Remaining work is tracked in `epic-item-systems-unification.md`.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic

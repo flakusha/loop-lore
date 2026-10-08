@@ -10,7 +10,9 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+
+**Status Note:** Message reactions shipped (`src/routes/message-reactions.ts` mounted via `src/routes/v1/chats-surface.ts`, optimistic `toggleReaction` in `src/frontend/alpine/chat-messages.ts`). `:shortcode:` parsing and the picker/autocomplete are unimplemented — no shortcode rendering exists in `src/`.
 **Area:** Frontend (chat, group chat, gallery comments)
 
 ## Scope

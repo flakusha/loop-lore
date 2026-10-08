@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
-**Status Note:** Auth routes (login/register/logout/me) fully implemented and shipped
+**Status:** In Progress
+**Status Note:** Auth routes (register/login/logout/me) implemented and mounted (`src/routes/auth/`, mounted via `src/routes/v1/base-surface.ts`); message-access and reaction-access gating Done. MFA/TOTP, encryption-access display, and authoring-ownership indicators remain unimplemented (`src/auth/` holds only JWT).
 **Priority:** High
 **Effort:** High
 **Type:** Foundation Epic

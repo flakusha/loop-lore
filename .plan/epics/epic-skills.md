@@ -7,7 +7,7 @@
 
 
 **Status:** Done
-**Status Note:** Code+tests+schema done (migration 036); wired via 51a7bc01 (routes + schemas + tests)
+**Status Note:** Code+tests+schema done (migration 036); wired — `skillsRoutes` + `skillsProgressionRoutes` mounted from `src/routes/rpg/index.ts` (routes + schemas + tests)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
