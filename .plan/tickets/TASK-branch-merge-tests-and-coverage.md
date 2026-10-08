@@ -17,7 +17,7 @@
 ## Summary
 
 - Service unit tests (`src/chat/service/merge/`): LCA/tail computation incl. unequal depths and the empty-tail `bad_request`; node-ceiling reject; overlay hunk classification; mode classification + option unions; token-budget allocation incl. prefix-overflow reject and the `truncated` flag; idempotent initiate replay; `merge_llm_parse` failure without partial writes.
-- Route tests: unauthenticated 401, non-participant forbidden/404, cross-chat tip IDOR, concurrent-confirm 409, repeated-key initiate replay (`replayed: true`), confirm-then-continue happy path, continue-before-confirm rejection.
+- Route tests: unauthenticated 401, non-participant forbidden/404, cross-chat tip IDOR, cross-chat `:mergeId` IDOR on preview/confirm/continue (→ 404, no state change), concurrent-confirm 409, repeated-key initiate replay (`replayed: true`), confirm-then-continue happy path, continue-before-confirm rejection.
 - Alpine module tests: wizard state-machine transitions, unresolved-conflict blocking of confirm, non-2xx → error toast without state mutation — following the chat-variants/chat-branches test patterns.
 - Coverage: each new module (`src/chat/service/merge/*`, `src/routes/chats/branch-merges.ts`, `src/frontend/alpine/chat-branch-merge.ts`) at the repo coverage floor.
 
