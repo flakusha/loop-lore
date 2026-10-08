@@ -49,13 +49,9 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 `PUT /api/v1/users/me` — body: `{ displayName, settings }`. Username immutable.
 
-### Get Current User Settings
-
-`GET /api/v1/users/me/settings` — returns user settings object
-
 ### Update Current User Settings
 
-`PUT /api/v1/users/me/settings` — body: settings fields
+`PATCH /api/v1/users/me/settings` — body: settings fields (merged, not replaced)
 
 ### Get User by ID
 
@@ -68,10 +64,6 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 ### Delete User
 
 `DELETE /api/v1/users/:id` — admin only, 204
-
-### Get User Settings
-
-`GET /api/v1/users/:id/settings` — admin only
 
 ### Update User Settings
 
@@ -101,11 +93,11 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Rename
 
-`PUT /api/v1/chats/:id/rename` — body: `{ name }`
+`POST /api/v1/chats/:id/rename` — body: `{ name }`
 
 ### Migrate
 
-`PUT /api/v1/chats/:id/migrate` — migrate chat schema
+`POST /api/v1/chats/:id/migrate` — migrate chat schema
 
 ### Move Location
 
@@ -191,17 +183,9 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 `GET /api/v1/chats/:id/vn-choices` — list VN choice cards
 
-### Create VN Choice
-
-`POST /api/v1/chats/:id/vn-choices` — body: choice card fields
-
 ### Select VN Choice
 
 `POST /api/v1/chats/:id/vn-choices/:choiceId/select` — select a choice
-
-### VN Choice History
-
-`GET /api/v1/chats/:id/vn-choices/history` — VN choice history
 
 ### Story Turns — List
 
@@ -235,7 +219,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Update
 
-`PUT /api/v1/messages/:id` — body: `{ content }`
+`PATCH /api/v1/messages/:id` — body: `{ content }`
 
 ### Delete
 
@@ -251,15 +235,15 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Archive
 
-`PUT /api/v1/messages/:id/archive` — archive message
+`POST /api/v1/messages/:id/archive` — archive message
 
 ### Restore
 
-`PUT /api/v1/messages/:id/restore` — restore archived message
+`POST /api/v1/messages/:id/restore` — restore archived message
 
 ### Purge Chat Messages
 
-`DELETE /api/v1/chats/:id/messages/purge` — purge all messages in chat
+`POST /api/v1/chats/:id/messages/purge` — purge all messages in chat
 
 ### Variants — List
 
@@ -495,7 +479,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Update Settings
 
-`PUT /api/v1/settings` — body: settings fields
+`PATCH /api/v1/settings` — body: settings fields
 
 ### Export Settings
 
@@ -542,10 +526,6 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 ### Rotate Keys
 
 `POST /api/v1/keys/rotate` — rotate encryption keys
-
-### Update Key
-
-`PUT /api/v1/keys/:id` — body: updated fields
 
 ### Delete Key
 
@@ -633,7 +613,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Get Locale
 
-`GET /api/v1/i18n/locale` — query: `lang` — get locale strings
+`PATCH /api/v1/i18n/locale` — body: `{ locale }` — switch active locale
 
 ## Plugins
 

@@ -16,7 +16,7 @@ import type { HandlerOpts, } from "./types";
 
 const OptionalString = t.Optional(t.String(),);
 
-const ActorEmotionsListResponse = ListResponse(t.Object({
+export const ActorEmotionsListResponse = ListResponse(t.Object({
   id: t.String(),
   actorId: t.String(),
   emotionId: t.String(),

@@ -147,6 +147,11 @@
     // (run manually, not import-wired); consumed by the epic-owner rule
     // through in-process scanEpicTitles(), never via an import edge.
     "scripts/plan/epic-titles.generated.ts",
+
+    // API reference drift gate: run via check-parallel.mjs shell string
+    // ("api - doc drift": bun run scripts/check/api-doc-drift.mjs), not
+    // import-reachable — same class as weave-damage.mjs above.
+    "scripts/check/api-doc-drift.mjs",
     // Frontend audit scripts: standalone CLI reporters (bun run scripts/...),
     // not import-reachable. Promoted from .tmp/ investigation scripts.
     "scripts/check-frontend-banned-patterns.ts",

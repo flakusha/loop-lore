@@ -21,6 +21,7 @@ import { isReadablePost, } from "./post-read-policy.js";
 
 /** Filter shape accepted by BlogService.listPosts. */
 type ListFilters = Parameters<InstanceType<typeof BlogService>["listPosts"]>[0];
+export const BlogPostListResponse = ListResponse(BlogPostResponse,);
 
 /**
  * @param opts
@@ -158,7 +159,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       return jsonResponse({ success: true, posts, count: posts.length, },);
     }, {
       response: {
-        200: ListResponse(BlogPostResponse,),
+        200: BlogPostListResponse,
       },
       detail: {
         summary: "List blog posts",
