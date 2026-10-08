@@ -9,7 +9,6 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Added
 
-
 - **Hot-apply config updates without restart** — a config change (fs watcher edit or an API write) now re-applies to running consumers without a restart. `src/config/hot-apply.ts` diffs the new `Config` against the previous snapshot, classifies every changed leaf path against an explicit registry (`HOT_APPLY_PATHS`), and emits a `ConfigChange` to subscribers (`onConfigChange`). `src/config/hot-apply-consumers.ts` maps registry entries onto the runtime stores that consumers actually read: `logging.level` → `Logger.setLevel` (now mutable on `LoggerImpl`/`LightLogger`), `nsfw.allowNsfw`/`nsfw.nsfwMinAge` → the NSFW runtime store, `ageGate.enabled`/`minimumAge`/`mode` → the age-gate runtime store. Restart-required paths (server port, DB dialect, auth, transport, provider registry, …) default to `restart` and are surfaced to the admin UI: `GET /api/admin/config-schema` gains `hot_apply_paths`, and `PATCH /api/admin/system-config` returns `requires_restart`. Wired in `src/server/start.ts` (snapshot seed + consumer subscription + watcher callback).
 - **Plugin UI mount points (FEAT-050)** — `GET /api/plugins/ui-components` (admin) lists registered UI components with an optional `?location=` filter. Web-capable components (`type` `web`/`both`) mount as inert host containers carrying `data-plugin-component` / `data-plugin-location` and HTML-escaped `props` JSON into `chat.header` / `chat.sidebar` / `chat.composer` (`src/views/chat.html`) and `admin.dashboard` (`src/views/admin.html`); TUI-only components are never mounted into web views.
 
@@ -71,7 +70,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 - Actor-scoped access control on RPG routes (`requireActorAccess`); pre-push hook blocks agent pushes (human-attested release pushes).
 
-
 ### Fixed
 
 - **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
@@ -83,4 +81,3 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 - `versionRedirect` double-prefix loop for `/api/v1/*` paths.
 - Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
-
