@@ -18,8 +18,8 @@ import type { PromptSectionReport, } from "./prompt/types";
  * Compact conversation history when prompt exceeds token budget.
  *
  * After the assembler drops low-priority sections, if the remaining messages
- * still exceed the budget, the ContextCompactor summarizes the older half
- * of chat history into a single system message.
+ * still exceed the budget, the ContextCompactor summarizes the older messages
+ * (all but the last 10) into a single system message.
  * @param messages - Assembled message list (mutated in place)
  * @param tokenBudget - Maximum token budget
  * @returns Summary text if compaction occurred, undefined otherwise
