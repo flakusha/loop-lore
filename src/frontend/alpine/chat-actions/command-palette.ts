@@ -15,7 +15,7 @@
 import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
 import { log as rootLog, } from "../logger";
-import { didYouMeanCandidate, } from "../slash-autocomplete";
+import { didYouMeanCandidate, } from "../slash-query";
 import type { ChatState, } from "../types";
 
 const log = rootLog.child({ module: "command-palette", },);
