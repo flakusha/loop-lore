@@ -471,9 +471,9 @@ describe("dispatchPluginRoute", () => {
 
     await loadSinglePlugin(stubDb(), "fixture-dispatch", dir, "local");
 
-    const res = await dispatchPluginRoute(
-      new Request("http://x/fixture-dispatch/ping", { method: "GET" }),
-    );
+    const res = await dispatchPluginRoute({
+      request: new Request("http://x/fixture-dispatch/ping", { method: "GET" }),
+    });
 
     expect(res).not.toBeNull();
     expect(await res!.text()).toBe("pong");
@@ -496,9 +496,9 @@ describe("dispatchPluginRoute", () => {
 
     await loadSinglePlugin(stubDb(), "fixture-dispatch-miss", dir, "local");
 
-    const res = await dispatchPluginRoute(
-      new Request("http://x/b", { method: "GET" }),
-    );
+    const res = await dispatchPluginRoute({
+      request: new Request("http://x/b", { method: "GET" }),
+    });
 
     expect(res).toBeNull();
   });
@@ -520,9 +520,9 @@ describe("dispatchPluginRoute", () => {
 
     await loadSinglePlugin(stubDb(), "fixture-dispatch-method", dir, "local");
 
-    const res = await dispatchPluginRoute(
-      new Request("http://x/a", { method: "POST" }),
-    );
+    const res = await dispatchPluginRoute({
+      request: new Request("http://x/a", { method: "POST" }),
+    });
 
     expect(res).toBeNull();
   });
@@ -545,9 +545,9 @@ describe("dispatchPluginRoute", () => {
     await loadSinglePlugin(stubDb(), "fixture-dispatch-off", dir, "local");
     registry.setEnabled("fixture-dispatch-off", false);
 
-    const res = await dispatchPluginRoute(
-      new Request("http://x/off", { method: "GET" }),
-    );
+    const res = await dispatchPluginRoute({
+      request: new Request("http://x/off", { method: "GET" }),
+    });
 
     expect(res).toBeNull();
   });

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 270
+// size-allow: 290
 
 /**
  * Elysia App Builder
@@ -21,6 +21,7 @@ import { createAsyncStore, setStore, } from "./async";
 import type { Config, } from "./config/schema";
 import { startAppScheduler, } from "./cron";
 import type { Db, } from "./db";
+import type { TranslatorFn, } from "./i18n/types";
 import { authenticate, } from "./middleware/auth";
 import {
   CSRF_EXEMPT_ROUTES,
@@ -48,7 +49,15 @@ export interface AppDeps {
   handleNonApiRequest: (request: Request,) => Promise<Response>;
   /** API catch-all dispatcher — server-internal, kept off the type to avoid
    *  elysia-app ↔ server cycle. Injected by `server/start.ts`. */
-  handleApiRequest: (opts: { request: Request; database: Db; config: Config },) => Promise<Response>;
+  handleApiRequest: (opts: {
+    request: Request;
+    database: Db;
+    config: Config;
+    /** Identity from the auth derive above, for plugin route access control. */
+    caller?: { userId: string | null; userRole: string | null };
+    /** Request-locale translator from the auth derive; localises 401/403 bodies. */
+    t?: TranslatorFn;
+  },) => Promise<Response>;
 }
 
 /**
@@ -256,7 +265,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.get("/register", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat" : "/views/register",),);
 
   // ── Catch-all: delegate to existing dispatch logic ───────────────────────────
-  app.all("/*", async ({ request, },) => {
+  app.all("/*", async ({ request, userId, userRole, t, }: any,) => {
     const url = new URL(request.url,);
 
     if (url.pathname.startsWith("/api/",)) {
@@ -268,7 +277,11 @@ export function createApp(deps: AppDeps,): Elysia {
         return versionRedirect("v1",)({ request, },);
       }
 
-      return handleApiRequest({ request, database, config, },);
+      // The auth derive above resolves identity without rejecting, so it has
+      // to be handed on explicitly — otherwise plugin routes can never enforce
+      // their own `requiresAuth` / `permissions`. `t` rides along so a denial
+      // body is localised the same way every other route's is.
+      return handleApiRequest({ request, database, config, caller: { userId, userRole, }, t, },);
     }
 
     return handleNonApiRequest(request,);
