@@ -66,4 +66,3 @@ Follow-on FEAT carrying the implementation:
 `FEAT-federate-blog-system-via-activitypub-lemmy-mastodon-reddit` (Not Started, marked
 BLOCKED on G15/G17 per `epic-federation-swarm-sync.md`). This ticket is closed as the
 decision being written down; the code work is not done and is tracked there.
-
