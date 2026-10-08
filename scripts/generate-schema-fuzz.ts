@@ -71,7 +71,7 @@ const OUT_PATH = new URL("../src/validation/schema-fuzz.generated.test.ts", impo
 const FC_RUNS = { numRuns: 100, seed: 20260101, };
 
 /** One discovered schema, pinned to the module that actually exports it. */
-interface Found {
+export interface Found {
   /** Export name, as spelled in its module. */
   name: string;
   /** Full moduleId (prefix + filename) — unique across all roots; used for alias. */
@@ -122,7 +122,7 @@ function format(source: string,): string {
  * yield `responsesAdmin`. `discoverSchemas` rejects that before render, so a
  * future module can never cross-wire another module's schemas.
  */
-function aliasFor(module: string,): string {
+export function aliasFor(module: string,): string {
   // Strip ALL path separators so "routes/api-keys" → "routesApiKeys"
   const noSlash = module.replace(/\//gu, "_",);
   const camel = noSlash.replace(/-([a-z])/gu, (_, c: string,) => c.toUpperCase(),);
@@ -218,7 +218,7 @@ async function discoverSchemas(): Promise<{
 }
 
 /** Describe title — module-qualified only when the name alone is ambiguous. */
-function titleFor(f: Found,): string {
+export function titleFor(f: Found,): string {
   return f.duplicate ? `${f.name} [${f.module}]` : f.name;
 }
 
@@ -231,7 +231,7 @@ function titleFor(f: Found,): string {
  * wraps is not knowable before formatting, so the separator is unconditional —
  * `format()` preserves it either way.
  */
-function casesFor(f: Found,): string[] {
+export function casesFor(f: Found,): string[] {
   const ref = `${aliasFor(f.module,)}.${f.name}`;
   const cases = [`  test("accepts generated values", () => checkAllValid(${ref}));`,];
   if (isJsonRoundTrippable(f.schema,)) {
