@@ -8,16 +8,36 @@
 **Effort:** Medium
 **Epic:** epic-local-multi-instance-federation
 
-**Summary:**
-
-DATA_DIR (src/config/constants.ts:13) is a hardcoded path.resolve(__dirname, '..', '..', 'loop-lore-data'). Every section default hangs off it - database.sqliteFilename (src/config/sections/database.ts:11), assets.uploadDir (src/config/sections/assets.ts:10), server.tls key/cert (src/config/sections/server.ts:16-19) - so two local instances cannot get distinct state without setting three separate per-var overrides, and TLS paths have no override at all. Read DATA_DIR from env with the current path as the default. Acceptance: DATA_DIR=/tmp/ll-b relocates db, uploads, and certs for that process; with DATA_DIR unset the resolved default is byte-identical to today; the JSON-schema placeholder rewrite (src/config/schema-class/json-schema/index.ts:36-47) still emits ${DATA_DIR} placeholders.
+**Summary:** Make `DATA_DIR` overridable by env var so two local instances can point at separate state directories.
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+`DATA_DIR` (`src/config/constants.ts:13`) is a bare `path.resolve(__dirname, "..", "..", "loop-lore-data")` with no env read. Every path-bearing default derives from it: `database.sqliteFilename` (`src/config/sections/database.ts:11`), `assets.uploadDir` (`src/config/sections/assets.ts:10`), and `server.tls.key` / `.cert` (`src/config/sections/server.ts:16-19`). Two instances on one machine therefore cannot get distinct state — and the TLS paths have no override at all, so a second TLS-enabled instance is impossible today.
+
+The constraint that shapes this: the published JSON Schema rewrites resolved `DATA_DIR`-anchored defaults back to `${DATA_DIR}` placeholders (`src/config/schema-class/json-schema/index.ts:35-47`) so the schema stays stable across machines. Section Meta must therefore keep carrying a **resolved absolute path** as the default while the schema output stays portable. Do not "fix" this by making the Meta default a placeholder — that breaks every consumer that joins against the constant.
+
+**Direction:**
+
+1. In `src/config/constants.ts`, read an env override with the current `path.resolve` expression as the fallback.
+2. Name the variable `DATA_DIR` to match the constant it overrides. Confirm it is not already claimed by another tool in the runtime before adopting it.
+3. Keep the resolved value absolute (`path.resolve` the override too) so downstream `path.join` calls are unaffected.
+4. Verify the placeholder rewrite still matches: `toPlaceholders` prefix-matches on `DATA_DIR`, so a relocated root must still rewrite cleanly.
+5. Tests: env set → `database.sqliteFilename`, `assets.uploadDir`, and `server.tls` all land under the new root; env unset → identical to today's resolved paths.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] With `DATA_DIR` set, `database.sqliteFilename`, `assets.uploadDir`, and `server.tls.key`/`.cert` all resolve under the new root
+- [ ] With `DATA_DIR` unset, all four defaults are identical to their current values
+- [ ] The published JSON Schema still emits `${DATA_DIR}` placeholders rather than a machine-specific absolute path
+- [ ] The override is documented in the schema description and in the local dev runbook
+- [ ] Config default tests cover both the set and unset cases; `bun run check` green
+
+**Dependencies:**
+
+- `TASK-add-a-two-instance-local-federation-dev-harness-and-runbook.md` — the harness needs per-instance state roots
+- `TASK-add-a-federation-e2e-test-that-boots-two-real-servers.md` — the e2e needs two separate DBs
+
+**Out of Scope:**
+
+- A general env-prefix mechanism (e.g. `LL_FEDERATION_ENABLED`) — see review §3 blocker 3
+- Relocating `DATA_DIR` out of `src/config/constants.ts` into the loader
