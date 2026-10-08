@@ -15,7 +15,7 @@ import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertQuests, insertUsers, insertWorlds, } from "../test-utils/insert-helpers";
-import { createPlotAutopilot, type PlotBeat, } from "./plot-autopilot";
+import { createPlotAutopilot, draftBeats, PlotAutopilot, type PlotBeat, } from "./plot-autopilot";
 import { QuestEngine, } from "./quest-engine";
 import { appendTimelineEvents, } from "./timeline/world-timeline";
 
@@ -150,6 +150,33 @@ describe("proposeBeats", () => {
 
       const again = await autopilot.proposeBeats();
       expect(again.some((beat,) => ids.has(beat.id,)),).toBe(false,);
+    } finally {
+      await sqlite.close();
+    }
+  });
+});
+
+describe("draftBeats + PlotAutopilot class", () => {
+  test("draftBeats matches service output and PlotAutopilot delegates", async () => {
+    ensureLogger();
+    const { db, sqlite, worldId, actorId, } = await setupWorld();
+    try {
+      await insertQuestWithHooks(db, worldId, actorId, [{ progress: 50, narrative: "Mid fight.", },],);
+      await appendEvent(db, worldId, "Something happens.", "2024-01-01T00:00:00Z",);
+
+      const opts = {
+        db,
+        questEngine: new QuestEngine(db,),
+        worldId,
+      };
+
+      const viaFn = await draftBeats(opts, 2,);
+      const direct = new PlotAutopilot(opts,);
+      const viaClass = await direct.proposeBeats(2,);
+
+      expect(viaFn,).toHaveLength(2,);
+      expect(viaClass,).toHaveLength(2,);
+      expect(viaClass.map((beat,) => beat.title),).toEqual(viaFn.map((beat,) => beat.title),);
     } finally {
       await sqlite.close();
     }

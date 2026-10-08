@@ -8,8 +8,8 @@
 **Tags:** authoring, creation, procedural-assets, plot-autopilot, what-if, community-share, builder-tools
 **Overview:** (see sections below)
 
-**Status:** In Progress
-**Status Note:** In Progress — three modules land on branch `authoring-creation` 2026-10-08 (plot-autopilot, whatif-simulator, asset-pipeline, all with unit tests); community template share is verify-only Done under `epic-import-export-io.md`. Audit surfaced one real gap (actor lorebook export missing → `BUG-community-share-missing-lorebook-export.md`, git issue 1485a72); worlds/templates/characters/world-lore/chats/locations/story/assets all verified covered.
+**Status:** Done
+**Status Note:** Done — three modules landed (plot-autopilot, whatif-simulator, asset-pipeline, all with unit tests); community template share is verify-only Done under `epic-import-export-io.md`. Audit surfaced one real gap (actor lorebook export missing → `BUG-community-share-missing-lorebook-export.md`, git issue 1485a72, still open); worlds/templates/characters/world-lore/chats/locations/story/assets all verified covered.
 **Priority:** Medium
 **Plan.md:** §47
 **Issue:** `EPIC-047`

@@ -7,7 +7,7 @@
 **Context:** Builder-layer tools from `docs/ideas/authoring-creation.md` ideas #15–#18. Four subtasks: three new modules (asset pipeline glue, plot autopilot, what-if simulator) plus one verify-only item (community template share, already Done under `epic-import-export-io.md`).
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Large
 **Epic:** epic-authoring-creation
@@ -32,35 +32,35 @@ simulator) plus one verify-only item (community template share, already Done und
 
 ### Procedural asset pipeline glue
 
-- [ ] `src/generation/asset-pipeline.ts` exists and extends auto-gen cascade
+- [x] `src/generation/asset-pipeline.ts` exists and extends auto-gen cascade
       output to audio via the existing prompt builders in
       `src/generation/audio-prompt-templates.ts`.
-- [ ] Image-engine providers are reused; no new generation backends added.
-- [ ] Exports wired into the `src/generation/index.ts` barrel.
-- [ ] Unit tests pass with ≥80% line coverage for the new module; no new deps.
+- [x] Image-engine providers are reused; no new generation backends added.
+- [x] Exports wired into the `src/generation/index.ts` barrel.
+- [x] Unit tests pass with ≥80% line coverage for the new module; no new deps.
 
 ### Plot autopilot
 
-- [ ] `src/story/plot-autopilot.ts` exists and proposes next plot beats from
+- [x] `src/story/plot-autopilot.ts` exists and proposes next plot beats from
       active quests in `src/story/quest-engine/` plus
       `src/story/timeline/world-timeline.ts` history.
-- [ ] Player picks from proposed beats; no beat auto-commits without player choice.
-- [ ] Exports wired into the `src/story/index.ts` barrel.
-- [ ] Unit tests pass with ≥80% line coverage for the new module; no new deps.
+- [x] Player picks from proposed beats; no beat auto-commits without player choice.
+- [x] Exports wired into the `src/story/index.ts` barrel.
+- [x] Unit tests pass with ≥80% line coverage for the new module; no new deps.
 
 ### What-if branch simulator
 
-- [ ] `src/story/whatif-simulator.ts` exists and forks world state via
+- [x] `src/story/whatif-simulator.ts` exists and forks world state via
       `src/story/world-state/` snapshot plus timeline `world_timelines` rows, and
       diff narratives between the fork and the live branch.
-- [ ] Exports wired into the `src/story/index.ts` barrel.
-- [ ] Unit tests pass with ≥80% line coverage for the new module; no new deps.
+- [x] Exports wired into the `src/story/index.ts` barrel.
+- [x] Unit tests pass with ≥80% line coverage for the new module; no new deps.
 
 ### Community template share (verify-only)
 
-- [ ] `FEAT-community-template-world-share-export-import.md` verified Done under
+- [x] `FEAT-community-template-world-share-export-import.md` verified Done under
       `epic-import-export-io.md`; this epic only links it, no new code.
 
 ### General
 
-- [ ] Documentation updated if user-visible behavior changed.
+- [x] Documentation updated if user-visible behavior changed.
