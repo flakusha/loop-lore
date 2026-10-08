@@ -6,7 +6,7 @@
  *
  * World item instances: placement, inventory, transfer, destroy.
  */
-import type { Transaction, } from "kysely";
+import type { Kysely, Transaction, } from "kysely";
 import { ItemVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
@@ -37,90 +37,94 @@ export async function transfer(
   toActorId?: string,
   trx?: Transaction<DB>,
 ): Promise<TransferResult> {
-  const db = trx ?? state.db;
-  const source = await db
-    .selectFrom("world_items",)
-    .selectAll()
-    .where("id", "=", worldItemId,)
-    .where("world_id", "=", worldId,)
-    .executeTakeFirst();
-
-  if (!source || !Number.isInteger(quantity,) || quantity <= 0 || (toLocationId && toActorId)) {
-    return { success: false, fromRemaining: 0, toQuantity: 0, transferred: 0, };
-  }
-
-  const definition = await db
-    .selectFrom("items",)
-    .select("id",)
-    .where("id", "=", source.item_id,)
-    .where("world_id", "=", worldId,)
-    .executeTakeFirst();
-
-  if (!definition) { return { success: false, fromRemaining: source.quantity, toQuantity: 0, transferred: 0, }; }
-  if (toLocationId) {
-    const location = await db
-      .selectFrom("locations",)
-      .select("id",)
-      .where("id", "=", toLocationId,)
+  const run = async (db: Kysely<DB>,): Promise<TransferResult> => {
+    const source = await db
+      .selectFrom("world_items",)
+      .selectAll()
+      .where("id", "=", worldItemId,)
       .where("world_id", "=", worldId,)
       .executeTakeFirst();
 
-    if (!location) { return { success: false, fromRemaining: source.quantity, toQuantity: 0, transferred: 0, }; }
-  }
+    if (!source || !Number.isInteger(quantity,) || quantity <= 0 || (toLocationId && toActorId)) {
+      return { success: false, fromRemaining: 0, toQuantity: 0, transferred: 0, };
+    }
 
-  const actualTransfer = Math.min(quantity, source.quantity,);
-  const remaining = source.quantity - actualTransfer;
-  if (remaining <= 0) {
-    await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,).execute();
-  } else {
-    await db
-      .updateTable("world_items",)
-      .set({ quantity: remaining, },)
-      .where("id", "=", worldItemId,)
+    const definition = await db
+      .selectFrom("items",)
+      .select("id",)
+      .where("id", "=", source.item_id,)
       .where("world_id", "=", worldId,)
-      .execute();
-  }
+      .executeTakeFirst();
 
-  if (toLocationId || toActorId) {
-    let query = db
-      .selectFrom("world_items",)
-      .selectAll()
-      .where("item_id", "=", source.item_id,)
-      .where("world_id", "=", worldId,);
-
-    if (toLocationId) { query = query.where("location_id", "=", toLocationId,); }
-    if (toActorId) { query = query.where("owner_actor_id", "=", toActorId,); }
-    const existing = await query.executeTakeFirst();
-    if (existing) {
-      await db
-        .updateTable("world_items",)
-        .set({ quantity: existing.quantity + actualTransfer, },)
-        .where("id", "=", existing.id,)
+    if (!definition) { return { success: false, fromRemaining: source.quantity, toQuantity: 0, transferred: 0, }; }
+    if (toLocationId) {
+      const location = await db
+        .selectFrom("locations",)
+        .select("id",)
+        .where("id", "=", toLocationId,)
         .where("world_id", "=", worldId,)
-        .execute();
+        .executeTakeFirst();
+
+      if (!location) { return { success: false, fromRemaining: source.quantity, toQuantity: 0, transferred: 0, }; }
+    }
+
+    const actualTransfer = Math.min(quantity, source.quantity,);
+    const remaining = source.quantity - actualTransfer;
+    if (remaining <= 0) {
+      await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,).execute();
     } else {
       await db
-        .insertInto("world_items",)
-        .values({
-          id: uid(),
-          world_id: worldId,
-          item_id: source.item_id,
-          location_id: toLocationId ?? null,
-          owner_actor_id: toActorId ?? null,
-          quantity: actualTransfer,
-          visibility: ItemVisibility.Visible,
-          respawnable: 0,
-          spawn_condition: null,
-          properties: source.properties,
-          max_durability: source.max_durability,
-          current_durability: source.current_durability,
-          is_active: source.is_active,
-        },)
+        .updateTable("world_items",)
+        .set({ quantity: remaining, },)
+        .where("id", "=", worldItemId,)
+        .where("world_id", "=", worldId,)
         .execute();
     }
-  }
 
-  return { success: true, fromRemaining: remaining, toQuantity: actualTransfer, transferred: actualTransfer, };
+    if (toLocationId || toActorId) {
+      let query = db
+        .selectFrom("world_items",)
+        .selectAll()
+        .where("item_id", "=", source.item_id,)
+        .where("world_id", "=", worldId,);
+
+      if (toLocationId) { query = query.where("location_id", "=", toLocationId,); }
+      if (toActorId) { query = query.where("owner_actor_id", "=", toActorId,); }
+      const existing = await query.executeTakeFirst();
+      if (existing) {
+        await db
+          .updateTable("world_items",)
+          .set({ quantity: existing.quantity + actualTransfer, },)
+          .where("id", "=", existing.id,)
+          .where("world_id", "=", worldId,)
+          .execute();
+      } else {
+        await db
+          .insertInto("world_items",)
+          .values({
+            id: uid(),
+            world_id: worldId,
+            item_id: source.item_id,
+            location_id: toLocationId ?? null,
+            owner_actor_id: toActorId ?? null,
+            quantity: actualTransfer,
+            visibility: ItemVisibility.Visible,
+            respawnable: 0,
+            spawn_condition: null,
+            properties: source.properties,
+            max_durability: source.max_durability,
+            current_durability: source.current_durability,
+            is_active: source.is_active,
+          },)
+          .execute();
+      }
+    }
+
+    return { success: true, fromRemaining: remaining, toQuantity: actualTransfer, transferred: actualTransfer, };
+  };
+
+  if (trx) { return run(trx,); }
+  return state.db.transaction().execute(run,);
 }
 
 /**

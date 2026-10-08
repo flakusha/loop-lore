@@ -425,7 +425,11 @@ interface GuildTax {
 
 ## Files
 
-- `src/rpg/economy/` — economy system
+This epic is a design spec — **none of the paths below exist**. There is no
+`src/rpg/economy/` module, no economy tables, and no economy API routes.
+
+Planned (does not exist yet):
+
 - `src/rpg/economy/currency.ts` — currency system
 - `src/rpg/economy/market.ts` — market system
 - `src/rpg/economy/trading.ts` — player trading
@@ -436,18 +440,57 @@ interface GuildTax {
 - `src/db/schema-economy.ts` — economy tables
 - `src/routes/economy.ts` — economy API
 
+Shipped today, and the actual entry point for trading:
+
+- `src/routes/trade/` — trade offers, NPC counterparty, shared trade routes
+- `src/services/trade/` — `TradeService` (settlement primitive)
+
+`TASK-implement-trade.md` (Done) delivered the synchronous transfer+currency
+primitive this epic would build on; the persistent offer lifecycle, market,
+auction, banking, and simulation layers above remain unbuilt.
+
+## Current State
+
+| Layer | Status | Where |
+| ----- | ------ | ----- |
+| Currency + two-sided transfer | Shipped | `src/services/trade/`, `src/routes/trade/` |
+| Offer/accept/cancel lifecycle | Not Started | only synchronous `POST /trade/execute` |
+| NPC counterparty | Partial | `src/routes/trade/npc.ts` |
+| Trade history | Not Started | no history table |
+| Market / auction / banking | Not Started | — |
+| Economic simulation | Not Started | — |
+| Guild economy | Not Started | — |
+
+## Dependencies
+
+- `epic-item-systems-unification.md` — unified item types + the transfer primitive
+  trade settles through
+- `src/services/trade/` — `TradeService`
+- `epic-faction-reputation.md` — faction currency and reputation-gated pricing
+
+## Unticketed Gaps
+
+- Persistent trade offer lifecycle (place/accept/cancel with expiry) — deferred
+  out of `TASK-implement-trade.md`, never ticketed.
+- Trade history — no table, no query endpoint, no ticket.
+- Market pricing, auction house, and banking have no tickets beyond
+  `TASK-economy-trading.md` / `TASK-economy-player-shops.md`.
+
 ## Related Epics
 
-- **Epic RPG Mechanics** — Stats, skills
-- **Epic Inventory System** — Item management
-- **Epic World & Locations** — Markets, banks
-- **Epic Faction System** — Faction currency
-- **Crime & Stealth** — Black market operates on market mechanics with crime-specific pricing; stolen goods enter economy
-- **Epic Crafting System** — Item sales
-- **Epic Guild System** — Guild banking
+- `epic-rpg-mechanics.md` — stats, skills (CHA/INT resolution)
+- `epic-inventory-system.md` — item management
+- `epic-world-locations.md` — markets, banks
+- `epic-faction-reputation.md` — faction currency, reputation-gated prices
+- `epic-stealth-crime.md` — black market operates on economy pricing (G12)
+- `epic-crafting-professions.md` — crafted item supply and sales
+- `epic-housing-base-building.md` — trading posts
+- `epic-item-systems-unification.md` — implements the core transfer primitive
 
 ## Linked Tasks
 
-- TASK-economy-trading.md
-- TASK-economy-player-shops.md
+- `TASK-economy-trading.md` (open)
+- `TASK-economy-player-shops.md` (open)
+- `TASK-implement-trade.md` (Done, `epic-item-systems-unification.md`)
+- `TASK-trade-history-npc-counterparty.md` (open, `epic-inventory-system.md`)
 

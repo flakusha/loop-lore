@@ -364,23 +364,29 @@ interface ScalingImplementation {
 
 ## Integration Points
 
-- **RPG Mechanics** — Core item system, stats
-- **Combat System** — Durability in combat, effects
-- **Crafting System** — Repair, enchanting
-- **Economy System** — Trading, value
-- **Plugin System** — Extensible effects
-- **Housing System** — Item display, storage
+| System                          | Relationship |
+| ------------------------------- | ------------ |
+| RPG Mechanics                   | Core item system, stats |
+| Battle & Action Systems         | Durability degradation in combat, effects |
+| Crafting & Professions          | Repair costs, enchanting |
+| Economy & Trading               | Item value, trading |
+| Plugin System                   | Extensible effects |
+| Housing & Base Building         | Item display, storage |
+
+> Epic file names: `epic-rpg-mechanics.md`, `epic-battle-action-systems.md`,
+> `epic-crafting-professions.md`, `epic-economy-trading.md`,
+> `epic-plugin-system.md`, `epic-housing-base-building.md`.
 
 ## Tasks
 
-| Task                 | Priority | Effort | Status         |
-| -------------------- | -------- | ------ | -------------- |
-| Durability System    | High     | Medium | ⬜ Not Started |
-| Item Effects System  | High     | High   | ⬜ Not Started |
-| Stats Drift System   | Medium   | High   | ⬜ Not Started |
-| Unique Item Tracking | Medium   | Medium | ⬜ Not Started |
-| Duplicate Protection | High     | Medium | ⬜ Not Started |
-| OP Item Management   | High     | High   | ⬜ Not Started |
+| Task                 | Ticket                            | Priority | Effort | Status |
+| -------------------- | --------------------------------- | -------- | ------ | ------ |
+| Durability System    | `TASK-item-system-extensions.md`  | High     | Medium | Not Started |
+| Item Effects System  | `TASK-item-system-extensions.md`  | High     | High   | Not Started |
+| Stats Drift System   | `TASK-item-system-extensions.md`  | Medium   | High   | Not Started |
+| Unique Item Tracking | `TASK-item-system-extensions.md`  | Medium   | Medium | Not Started |
+| Duplicate Protection | `TASK-item-system-extensions.md`  | High     | Medium | Not Started |
+| OP Item Management   | `TASK-item-system-extensions.md`  | High     | High   | Not Started |
 
 ## Open Questions
 
@@ -392,21 +398,53 @@ interface ScalingImplementation {
 
 ## Files
 
-- `src/rpg/items/durability.ts` — Durability system
-- `src/rpg/items/effects.ts` — Item effects
-- `src/rpg/items/drift.ts` — Stats drift
-- `src/rpg/items/unique.ts` — Unique item tracking
-- `src/rpg/items/duplication.ts` — Duplicate protection
-- `src/rpg/items/balance.ts` — OP item management
-- `src/db/schema-items-extended.ts` — Extended item tables
-- `src/routes/items-extended.ts` — Extended item API
+The interface blocks above are a design spec, not shipped code. The real
+implementations they extend are:
+
+- `src/battle/items-integration.ts` — durability (`applyDurabilityDamage`, `repairItem`)
+- `src/battle/item-mapping.ts` — `toEquipmentItem`, battle equipment mapping
+- `src/story/items/effects.ts` — effect parsing (`stat_delta` / `on_use` / `passive` only)
+- `src/story/items/balance.ts` — power budgets (`ITEM_POWER_BUDGETS`, `validateItemPower`, `rankItemPower`) and drift caps (`DRIFT_CAPS`, `parseItemDrift`)
+- `src/story/items/instances.ts` — unique-instance enforcement (per-world duplicate rejection)
+- `src/db/enums-story/items.ts` — `ItemCategory`, `ItemRarity`
+
+Planned (does not exist yet):
+
+- `src/db/schema-items-extended.ts` — extended item tables
+- `src/routes/items-extended.ts` — extended item API
+
+## Dependencies
+
+- `epic-item-systems-unification.md` — unified taxonomy, transfer, and trade
+  primitives this builds on
+- `src/story/items/` — `ItemsService`, the canonical item lifecycle
+- `src/battle/items-integration.ts` — current durability owner
+
+## Unticketed Gaps
+
+Beyond the six ticketed systems above, three surfaces have no code path at all:
+
+1. **Duplicate protection** — no service enforces drop/craft/quest/trade
+   duplicate limits. `src/story/items/instances.ts` only rejects a duplicate
+   unique item within one world; there is no account-bound, limited, or
+   time-limited handling, and no `AlternativeReward` compensation.
+2. **OP item management** — `src/story/items/balance.ts` has power budgets and
+   `rankItemPower`, but no `OPDetection`, no usage/win-rate metrics, no
+   community votes, and no `ScalingSolution`.
+3. **Rich stats drift** — `parseItemDrift` handles only `statMultipliers`,
+   `battleUses`, and `lastDriftAt`. None of the six drift triggers (use, time,
+   enchantment, corruption, attunement, environment), `stability` / `resonance`
+   / `corruption`, or `DriftOutcome` reversibility are implemented.
 
 ## Related Epics
 
-- **Epic RPG Mechanics** — Core item system
-- **Epic Crafting & Professions** — Repair, enchanting
-- **Epic Economy & Trading** — Item value, trading
-- **Epic Battle & Action Systems** — Combat effects
+- `epic-rpg-mechanics.md` — core item system
+- `epic-crafting-professions.md` — repair, enchanting
+- `epic-economy-trading.md` — item value, trading
+- `epic-battle-action-systems.md` — combat effects
+- `epic-item-systems-unification.md` — consumes this epic's durability and
+  effects work
+- `epic-inventory.md`, `epic-inventory-ui.md` — inventory surface
 
 ## Linked Tasks
 
