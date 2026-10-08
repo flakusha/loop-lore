@@ -48,6 +48,17 @@ export async function validateConnections(
 
   const existingIds = new Set(Array.from(existing, (l,) => l.id,),);
 
+  // Self-link first so a payload naming a location's OWN id is always a
+  // self-link 400 — on the create path the id is validated before the row
+  // exists, so the missing-id check below would otherwise shadow it.
+  if (excludeLocationId && connIds.includes(excludeLocationId,)) {
+    return jsonError({
+      message: "Location cannot connect to itself",
+      status: HttpStatus.BadRequest,
+      code: ErrorCode.ValidationError,
+    },);
+  }
+
   const missing: string[] = [];
   for (const id of connIds) {
     if (!existingIds.has(id,)) { missing.push(id,); }
@@ -56,14 +67,6 @@ export async function validateConnections(
   if (missing.length > 0) {
     return jsonError({
       message: `Invalid connection locations: ${missing.join(", ",)}`,
-      status: HttpStatus.BadRequest,
-      code: ErrorCode.ValidationError,
-    },);
-  }
-
-  if (excludeLocationId && connIds.includes(excludeLocationId,)) {
-    return jsonError({
-      message: "Location cannot connect to itself",
       status: HttpStatus.BadRequest,
       code: ErrorCode.ValidationError,
     },);
