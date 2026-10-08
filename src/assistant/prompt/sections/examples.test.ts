@@ -159,4 +159,41 @@ describe("examplesSection — mes_example few-shot injection", () => {
     expect(examplesSection.enabled(ctx,),).toBe(false,);
     expect(examplesSection.build(ctx,),).toEqual([],);
   });
+
+  test("throws on unrecognized label (validation, not silent user fallback)", () => {
+    const ctx: AssembleContext = {
+      db: {} as Kysely<DB>,
+      actor: {
+        id: "a",
+        type: "character",
+        display_name: null,
+        system_prompt: null,
+        description: null,
+        personality: null,
+        scenario: null,
+        post_history_instructions: null,
+        mes_example: "<START>invalid: this should throw",
+        agent_role: null,
+      },
+      chat: {
+        id: "c",
+        mode: "direct",
+        world_id: null,
+        current_location_id: null,
+      },
+      params: {
+        actorId: "a",
+        chatId: "c",
+        modelId: "m",
+        includeExamples: true,
+      },
+      isStory: false,
+      tokenBudget: 4096,
+    };
+
+    expect(examplesSection.enabled(ctx,),).toBe(true,);
+    expect(() => examplesSection.build(ctx,)).toThrow(
+      'examplesSection: unrecognized label "invalid"',
+    );
+  });
 });

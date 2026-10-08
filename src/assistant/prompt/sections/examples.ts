@@ -32,17 +32,15 @@ export const examplesSection: SectionBuilder = {
 
       const label = trimmed.slice(0, colonIdx,).trim().toLowerCase();
       const content = trimmed.slice(colonIdx + 1,).trim();
-      const role = ["assistant", "character", "{{char}}",].includes(label,)
-        ? "character"
-        : (label === "user" || label === "{{user}}"
-          ? "user"
-          : (() => {
-            throw new Error(
-              `examplesSection: unrecognized label "${label}" — expected assistant|character|{{char}}|user|{{user}}`,
-            );
-          })());
-
-      examples.push({ role, content, },);
+      if (["assistant", "character", "{{char}}",].includes(label,)) {
+        examples.push({ role: "character", content, },);
+      } else if (label === "user" || label === "{{user}}") {
+        examples.push({ role: "user", content, },);
+      } else {
+        throw new Error(
+          `examplesSection: unrecognized label "${label}" — expected assistant|character|{{char}}|user|{{user}}`,
+        );
+      }
     }
 
     return examples;
