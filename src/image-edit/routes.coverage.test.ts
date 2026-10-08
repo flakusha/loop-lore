@@ -36,6 +36,11 @@ import { handleRun, handleTemplates, imageEditRoutes, } from "./routes";
 import { templateRegistry, } from "./template-registry";
 import type { ImageEditBackend, WorkflowTemplate, } from "./types";
 
+// Value-snapshot the real module exports BEFORE any mock.module call. Bun rewrites
+// a namespace's live bindings when a mock registers, so an afterAll that restores
+// with the bare namespace hands later files the stub instead of the real loader.
+const REAL_CONFIG_LOAD: Record<string, unknown> = { ...realConfigLoad, };
+
 // Exercises the prefix the app actually mounts (src/routes/v1/content-surface.ts),
 // not the `/api` default, so the shipped surface stays covered.
 const V1_PREFIX = "/api/v1";
@@ -148,7 +153,7 @@ beforeAll(async () => {
   // moment a second worktree runs its own suite.
   const deadPort = await reserveDeadPort();
   mock.module("../config/load", () => ({
-    ...realConfigLoad,
+    ...REAL_CONFIG_LOAD,
     loadConfig: () => ({
       generation: {
         providers: {
@@ -211,7 +216,7 @@ beforeAll(async () => {
 },);
 
 afterAll(async () => {
-  mock.module("../config/load", () => realConfigLoad,);
+  mock.module("../config/load", () => ({ ...REAL_CONFIG_LOAD, }),);
   setTestDatabase(null,);
   await db.destroy();
 },);

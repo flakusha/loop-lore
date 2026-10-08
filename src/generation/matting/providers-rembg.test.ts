@@ -7,7 +7,7 @@
  * Contract (verified against rembg's FastAPI server): multipart POST to
  * `<base>/api/remove` with `file`, `model`, `dc` form fields; PNG bytes back.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../../logger";
 import { createRembgMattingProvider, } from "./providers";
 
@@ -21,8 +21,11 @@ interface CapturedCall {
   init: RequestInit;
 }
 
-/** Replace global fetch; captures the last call and returns canned bytes. Returns a restore fn. */
-function stubFetch(response: Response | Promise<Response>,): { calls: CapturedCall[]; restore: () => void } {
+/** Restore fn installed by the most recent stubFetch call. */
+let restoreFetch: (() => void) | null = null;
+
+/** Replace global fetch; captures the last call and returns canned bytes. */
+function stubFetch(response: Response | Promise<Response>,): { calls: CapturedCall[] } {
   const calls: CapturedCall[] = [];
   const original = globalThis.fetch;
   globalThis.fetch = (async (
@@ -33,13 +36,20 @@ function stubFetch(response: Response | Promise<Response>,): { calls: CapturedCa
     return await response;
   }) as typeof fetch;
 
-  return {
-    calls,
-    restore: () => {
-      globalThis.fetch = original;
-    },
+  restoreFetch = () => {
+    globalThis.fetch = original;
+    restoreFetch = null;
   };
+
+  return { calls, };
 }
+
+afterEach(() => {
+  // Un-stub global fetch: a leftover canned-response stub answers EVERY
+  // later file's HTTP calls (lora discovery, probes, retry suites) with this
+  // file's PNG/500 payloads and fails them wholesale.
+  restoreFetch?.();
+},);
 
 describe("createRembgMattingProvider", () => {
   test("posts multipart file/model/dc to /api/remove and returns PNG", async () => {

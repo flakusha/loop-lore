@@ -1,4 +1,4 @@
-import { afterEach, expect, mock, test, } from "bun:test";
+import { afterAll, afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatLocation, } from "./chat-location";
 import type { ChatState, } from "./types";
@@ -8,10 +8,17 @@ import type { ChatState, } from "./types";
 // `chat:location-changed` event. chat-location.ts dispatches via
 // `globalThis.dispatchEvent`.
 const windowEvents: Event[] = [];
+const realDispatchEvent = globalThis.dispatchEvent;
 (globalThis as { dispatchEvent: (e: Event,) => boolean }).dispatchEvent = (e: Event,) => {
   windowEvents.push(e,);
   return true;
 };
+
+afterAll(() => {
+  // Restore the real dispatcher: this stub swallows every window event and
+  // would leave later files (e.g. shortcuts keynav tests) capturing nothing.
+  (globalThis as { dispatchEvent: (e: Event,) => boolean }).dispatchEvent = realDispatchEvent;
+},);
 
 // ── Mock apiFetch (must override the real one set by htmx.ts at import) ──
 let fetchCalls: { url: string; opts: RequestInit }[] = [];

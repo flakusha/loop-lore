@@ -2,7 +2,7 @@
  * Frontend i18n utilities — unit tests
  */
 
-import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import {
   createFrontendTranslator,
   DEFAULT_LOCALE,
@@ -14,6 +14,12 @@ import {
   saveLocale,
   SUPPORTED_LOCALES,
 } from "../i18n";
+
+// Snapshot the load-time browser globals this file replaces. They are module-scope
+// writes, so they must be handed back in afterAll — later files in the shared
+// bun:test process (auto-resize, keynav, gif-picker, ...) need a working DOM shim.
+const originalDocument = (globalThis as { document?: unknown }).document;
+const originalLocalStorage = (globalThis as { localStorage?: unknown }).localStorage;
 
 // Mock localStorage for Bun test environment
 const storage = new Map<string, string>();
@@ -57,6 +63,10 @@ let savedLocaleStrings: unknown;
 // {common,greeting} stub below into later files in the worker.
 let hasSavedLocaleStrings = false;
 const localeStringsHost = globalThis as { __localeStrings?: unknown };
+// Pre-file catalog state: whatever earlier files in this worker left in place
+// (undefined when this file runs first, the real en.json catalog when a helper
+// loaded it). The restore guard below asserts this file hands back exactly this.
+const initialLocaleStrings = localeStringsHost.__localeStrings;
 beforeEach(async () => {
   const ui = await import("../ui");
   t = ui.t;
@@ -274,12 +284,26 @@ describe("globalThis.t (from ui.ts)", () => {
 describe("locale-string restore guard", () => {
   it("leaves no {common,greeting} stub for later files in this worker", () => {
     const current = localeStringsHost.__localeStrings as Record<string, unknown> | undefined;
-    // The stub is the only place {common,greeting} appears. If the restore guard
-    // silently skipped -- the old `!== undefined` check, which is wrong exactly
-    // when this file runs first in its worker and nothing has populated
-    // `__localeStrings` yet -- the stub survives into gif-picker.test.ts, which
-    // then resolves raw keys instead of the real en.json strings.
-    expect(current?.greeting,).toBeUndefined();
-    expect(current?.common,).toBeUndefined();
+    // The restore invariant: after the `globalThis.t` block, `__localeStrings`
+    // must be exactly what this file found at load time. NOTE: the real en.json
+    // catalog legitimately has a top-level `common` key, so "common is defined"
+    // is NOT evidence of the stub — equality with the pre-file state is. (The
+    // old `expect(current?.common).toBeUndefined()` false-failed whenever a
+    // helper-loaded catalog preceded this file, and true stub leaks are caught
+    // because the stub is never deep-equal to any real catalog.) If the restore
+    // silently skipped — e.g. an `!== undefined` guard that is wrong exactly
+    // when this file runs first — the stub would survive into gif-picker.test.ts,
+    // which then resolves raw keys instead of the real en.json strings.
+    expect(current,).toEqual(initialLocaleStrings,);
   });
 });
+
+// Hand the module-scope mock globals back so later files in this worker keep the
+// load-time DOM/localStorage surface (see snapshot comment at the top).
+// Assignment, not `delete`: the mock own property is non-configurable
+// (defineProperty default), and restoring the load-time VALUE is what siblings
+// observe anyway — bun's built-in `localStorage` resolves to `undefined` here.
+afterAll(() => {
+  (globalThis as { document?: unknown }).document = originalDocument;
+  (globalThis as { localStorage?: unknown }).localStorage = originalLocalStorage;
+},);
