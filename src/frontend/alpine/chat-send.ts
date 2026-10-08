@@ -160,6 +160,16 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         this.isGenerating = false;
         this._autoFired = false;
         const err = await res.json();
+        // A 503 carrying a persisted id means the user message was stored
+        // but the assistant reply failed — reconcile instead of duplicating.
+        if (err.id) {
+          this.messages = this.messages.map((m,) => m.id === tempId ? { ...m, id: err.id as string, } : m);
+
+          this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
+          await this.loadMessages();
+          return;
+        }
+
         this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
         removeTempMessage(this, tempId,);
         restoreInput();

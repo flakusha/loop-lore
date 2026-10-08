@@ -68,6 +68,7 @@ export function buildBody(
       ...(m.name && { name: m.name, }),
       ...(m.tool_call_id && { tool_call_id: m.tool_call_id, }),
       ...(m.tool_calls && m.tool_calls.length > 0 && { tool_calls: m.tool_calls, }),
+      ...(m.images && m.images.length > 0 && { images: m.images.map((i,) => i.base64), }),
     }),),
     stream,
   };

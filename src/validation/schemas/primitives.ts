@@ -155,7 +155,9 @@ export const GmConfigSchema = t.Object({
 export const ErrorResponse = t.Object({
   error: t.String(),
   code: t.Optional(t.String(),),
-  details: t.Optional(t.Any(),),
+  details: t.Optional(t.Any()),
+  id: t.Optional(t.String(),),
+  context: t.Optional(t.Any()),
 },);
 
 export const SuccessResponse = t.Object({

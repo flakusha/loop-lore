@@ -409,4 +409,39 @@ describe("createRoutes coverage", () => {
       }
     },
   );
+
+  test.skipIf(!registryPristine,)(
+    "503 body includes the persisted user message id",
+    async () => {
+      sqlite.run(`
+        CREATE TRIGGER force_swipe_collision
+        BEFORE INSERT ON messages
+        WHEN NEW.role = 'assistant'
+        BEGIN
+          SELECT RAISE(ABORT, 'UNIQUE constraint failed: messages.swipe_index');
+        END;
+      `,);
+
+      try {
+        const assistantConfig = {
+          assistant: { enabled: true, },
+          encryption: { compressThreshold: 1024, compressAlgorithm: "gzip", },
+          generation: { providers: { openaiCompatible: [], }, defaultProvider: null, },
+        } as unknown as Config;
+
+        const app = makeApp(db, owner, "user", assistantConfig,);
+        const res = await postMessage(app, chatA, { content: "hello", },);
+
+        expect(res.status,).toBe(503,);
+        const body = (await res.json()) as { code: string; id?: string; context?: unknown };
+        expect(body.code,).toBe("SERVICE_UNAVAILABLE",);
+        expect(body.id,).toBeDefined();
+        expect(typeof body.id,).toBe("string",);
+        expect(body.id!.length,).toBeGreaterThan(0,);
+        expect(body.context,).toBeDefined();
+      } finally {
+        sqlite.run("DROP TRIGGER force_swipe_collision",);
+      }
+    },
+  );
 });
