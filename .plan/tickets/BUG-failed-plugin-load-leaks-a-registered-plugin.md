@@ -3,7 +3,7 @@
 
 # BUG: Failed plugin load leaks a registered plugin
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Epic:** epic-plugin-system
 **Effort:** Medium
@@ -39,10 +39,15 @@ Registration at `:153-154` is not rolled back in the `catch` at `:177-179`. `unl
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+`PluginRegistry.unregister(name)` + `RegistryStore.removePlugin(name)` drop one
+plugin and its definitions; `unregisterAll()`/`clear()` would have torn down every
+other plugin. `loadSinglePlugin` keeps the manifest in an outer `let` so the
+`catch` can roll back. `onUnload` is deliberately not called — a plugin whose
+`onLoad` threw never finished loading, so its teardown state is undefined. No
+per-plugin unload primitive was added; that remains filed separately.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
