@@ -83,8 +83,10 @@ export async function prepareGeneration(opts: PrepareGenerationOpts,): Promise<P
   if (isGroupChat) {
     const participants = await database
       .selectFrom("chat_participants",)
-      .select(["actor_id",],)
+      .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+      .select(["chat_participants.actor_id",],)
       .where("chat_id", "=", chatId,)
+      .where("actors.actor_type", "<>", "user",)
       .execute();
 
     const participantIds: string[] = [];

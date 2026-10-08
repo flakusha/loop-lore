@@ -218,6 +218,7 @@ export const PRIORITY = {
   interactionContext: 0,
   postHistory: 4,
   examples: 5,
-  nsfwPolicy: 0,
+  nsfwPolicy: 2,
+  "output-style": 2,
   customInstructions: 0,
 } as const;
