@@ -80,6 +80,18 @@ export const routePolicies: Array<[pattern: string, policy: RatePolicy, match?: 
   // it falls through to defaultPolicy (300/min) despite calling the same
   // startBatchGeneration() fan-out as the batch endpoint.
   ["/emotion-avatars/single", generationPolicy, "suffix",],
+  // BUG-rate-limit-misses-generation-endpoints: these generation POSTs are
+  // nested under id-bearing paths, so no prefix rule reaches them and they
+  // fall through to defaultPolicy (300/min) despite calling LLM/image-gen
+  // services. Each suffix matches only the generation endpoint; sibling
+  // read/list/status paths stay on their current policy.
+  ["/image-edit/run", generationPolicy, "suffix",],
+  ["/comfyui-builder/runs", generationPolicy, "suffix",],
+  ["/story/step", generationPolicy, "suffix",],
+  ["/story/resume", generationPolicy, "suffix",],
+  ["/proactive-messaging/send", generationPolicy, "suffix",],
+  ["/vn/generate-story", generationPolicy, "suffix",],
+  ["/vn/generate-choices", generationPolicy, "suffix",],
 ];
 
 /**
