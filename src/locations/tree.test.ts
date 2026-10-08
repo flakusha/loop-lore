@@ -365,10 +365,6 @@ describe("LocationMoveError", () => {
     roomId = await insertLocation(worldId, "Room", regionId,);
   },);
 
-  function service(): LocationTreeService {
-    return new LocationTreeService(testDb.db,);
-  }
-
   /**
    * Await a `moveSubtree` call that must reject with a `LocationMoveError` and
    * return the typed rejection. Fails loudly when the call resolves, or when
@@ -408,7 +404,8 @@ describe("LocationMoveError", () => {
   });
 
   test("self-parent rejection carries code 'self-parent' and writes nothing", async () => {
-    const err = await rejectionFrom(service().moveSubtree(rootId, rootId,),);
+    const svc = new LocationTreeService(testDb.db,);
+    const err = await rejectionFrom(svc.moveSubtree(rootId, rootId,),);
     expect(err.code,).toBe("self-parent",);
     expect(err.message,).toBe("location cannot be its own parent",);
     expect(parentOnDisk(rootId,),).toBeNull();
@@ -416,7 +413,8 @@ describe("LocationMoveError", () => {
 
   test("cycle rejection carries code 'cycle' and writes nothing", async () => {
     // roomId is a descendant of rootId — re-parenting root under it would close the loop.
-    const err = await rejectionFrom(service().moveSubtree(rootId, roomId,),);
+    const svc = new LocationTreeService(testDb.db,);
+    const err = await rejectionFrom(svc.moveSubtree(rootId, roomId,),);
     expect(err.code,).toBe("cycle",);
     expect(err.message,).toBe("move would create a cycle",);
     expect(parentOnDisk(rootId,),).toBeNull();
@@ -426,15 +424,17 @@ describe("LocationMoveError", () => {
   test("cross-world rejection carries code 'cross-world' and writes nothing", async () => {
     const otherWorldId = await insertWorld("test-owner",);
     const otherRootId = await insertLocation(otherWorldId, "OtherRoot",);
-    const err = await rejectionFrom(service().moveSubtree(rootId, otherRootId,),);
+    const svc = new LocationTreeService(testDb.db,);
+    const err = await rejectionFrom(svc.moveSubtree(rootId, otherRootId,),);
     expect(err.code,).toBe("cross-world",);
     expect(err.message,).toBe("cross-world move rejected",);
     expect(parentOnDisk(rootId,),).toBeNull();
   });
 
   test("an unknown location and an unknown parent both carry code 'not-found'", async () => {
-    const missingSelf = await rejectionFrom(service().moveSubtree(randomUUID(), rootId,),);
-    const missingParent = await rejectionFrom(service().moveSubtree(rootId, randomUUID(),),);
+    const svc = new LocationTreeService(testDb.db,);
+    const missingSelf = await rejectionFrom(svc.moveSubtree(randomUUID(), rootId,),);
+    const missingParent = await rejectionFrom(svc.moveSubtree(rootId, randomUUID(),),);
     expect(missingSelf.code,).toBe("not-found",);
     expect(missingParent.code,).toBe("not-found",);
     expect(missingSelf.message,).toBe("location or parent not found",);
@@ -447,7 +447,7 @@ describe("LocationMoveError", () => {
     // each rejection path must still carry its own distinct code.
     const otherWorldId = await insertWorld("test-owner",);
     const otherRootId = await insertLocation(otherWorldId, "OtherRoot",);
-    const svc = service();
+    const svc = new LocationTreeService(testDb.db,);
     const raised = [
       (await rejectionFrom(svc.moveSubtree(rootId, rootId,),)).code,
       (await rejectionFrom(svc.moveSubtree(rootId, roomId,),)).code,
@@ -461,7 +461,7 @@ describe("LocationMoveError", () => {
   test("insertLocation rejections stay plain Errors, not LocationMoveError", async () => {
     // Load-bearing distinction: the routes layer maps LocationMoveError onto a 4xx
     // and rethrows anything else, so the two error families must not converge.
-    const caught = await service().insertLocation({
+    const caught = await new LocationTreeService(testDb.db,).insertLocation({
       worldId,
       name: "Orphan",
       parentLocationId: randomUUID(),
