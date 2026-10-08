@@ -18,6 +18,7 @@ import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
   insertActors,
+  insertChatParticipants,
   insertChats,
   insertMessages,
   insertUsers,
@@ -50,6 +51,10 @@ async function seed(): Promise<{ db: Kysely<DB>; sqlite: Database }> {
   await insertActors(db, "Owner User", { id: USER_ID, owner_id: USER_ID, } as never,);
   await insertActors(db, "Character", { id: ACTOR_ID, owner_id: USER_ID, } as never,);
   await insertChats(db, "Chat", USER_ID, { id: CHAT_ID, } as never,);
+  // Regenerate replays handleGenerate, which authorizes `actorId` against the
+  // chat's participants — so the seed must carry both rows like a real chat.
+  await insertChatParticipants(db, CHAT_ID, USER_ID, { role_in_chat: "owner", } as never,);
+  await insertChatParticipants(db, CHAT_ID, ACTOR_ID, { role_in_chat: "member", } as never,);
 
   // User prompt (root of the branch).
   await insertMessages(db, CHAT_ID, USER_ID, "user", "Hello", {

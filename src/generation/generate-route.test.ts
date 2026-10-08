@@ -139,6 +139,15 @@ async function seedMessage(
   overrides?: Partial<Record<string, unknown>>,
 ): Promise<string> {
   const id = (overrides?.id as string) ?? randomUUID();
+
+  // A message's author is by definition a participant of its chat, and
+  // `validateGenerateRequest` now enforces that for `actorId`. Every call
+  // site seeds the actor first, so the actors FK holds.
+  await testDb
+    .insertInto("chat_participants",)
+    .values({ chat_id: chatId, actor_id: actorId, },)
+    .execute();
+
   await testDb
     .insertInto("messages",)
     .values({
@@ -307,7 +316,13 @@ function captureWarnings(): CapturedWarn[] {
   return warns;
 }
 
-/** Reinstall the logger {@link captureWarnings} displaced, if there was one. */
+/**
+ * Reinstate a real logger, displacing the {@link captureWarnings} recorder.
+ *
+ * When nothing was installed the recorder would otherwise stay global and
+ * silently swallow logging for every later file in the run, so fall back to
+ * the same quiet logger the file-level `beforeEach` installs.
+ */
 function restoreLogger(): void {
   if (priorLogger) { setGlobalLogger(priorLogger,); }
 }
@@ -422,7 +437,16 @@ describe("handleGenerate — provider resolution", () => {
     const config = makeConfig();
     config.generation.defaultProvider = "nonexistent";
     // Seed chat so the access check passes; provider resolution fails after.
+    // The default `actorId` needs a participant row too — validate.ts checks
+    // that before it ever reaches provider resolution.
     await seedChat(testDb, { id: "chat-1", },);
+
+    await seedActor(testDb, { id: "actor-1", },);
+    await testDb
+      .insertInto("chat_participants",)
+      .values({ chat_id: "chat-1", actor_id: "actor-1", },)
+      .execute();
+
     const body = makeRequest({ provider: "nonexistent", },);
     const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
     expect(res.status,).toBe(422,);

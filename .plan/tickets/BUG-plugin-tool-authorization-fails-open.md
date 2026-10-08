@@ -50,9 +50,32 @@ call site rather than the ticket's wording:
   (`src/routes/characters/create.ts:76`, `update.ts:184`) and injected as a
   system-prompt section by `pluginAgentRoleSection`.
 - The caller runs inside `buildProviderRequest`, downstream of
-  `checkChatAccess` in `validate.ts:68`, so authentication and chat
-  authorization have already happened. `!agentRole` cannot mean
-  "unauthenticated".
+  `checkChatAccess` in `validate.ts:68`. **That bullet was wrong and has
+  been refuted.** `checkChatAccess` authorized `chatId` ONLY; `actorId` was
+  never checked against chat participation, so a caller authorized for chat A
+  could name any actor in the deployment — yielding a missing `actors` row and
+  therefore `roleRow === undefined` and `agentRole === null`, i.e. an
+  UNAUTHORIZED actor reaching the allow-all branch. The `!agentRole` branch is
+  safe only once `actorId` itself is authorized server-side.
+- **Now fixed upstream.** `validateGenerateRequest`
+  (`src/generation/generate-route/validate.ts`) rejects any `actorId` that is
+  not a participant of the very chat being generated — the same shape
+  `recordTurnSkip` uses (`src/chat/service/crud/turn-skip.ts:93-102`) —
+  returning 404 `"Actor is not a participant of this chat"`. With that in
+  place the `actors` lookup in the sole caller can only MISS for a character
+  that genuinely has no plugin persona: the benign case. `buildProviderRequest`
+  additionally distinguishes a FAILED lookup from an absent row and denies
+  (`[]`) on the former, so the only remaining path to `null` is
+  `agent_role IS NULL`.
+- Every chat flow was verified to carry participant rows for its actors before
+  that check landed: `createChat` inserts the owner and every `participantIds`
+  entry (`src/chat/service/crud/create.ts:48-65`); branch chats
+  (`src/chat/service/split-utils.ts:58-63`) and chat migration
+  (`src/chat/service/transitions.ts:120-122` → `carryParticipants`) do the
+  same; `chat_participants` has existed since the initial schema
+  (`src/db/migrations/001_init.ts:1706`) so no pre-existing chat predates it.
+  Solo mode is unaffected — it authenticates as a super-user but still creates
+  chats through the same route and service.
 - Failing closed there would return no tools for every character that has no
   role assigned — which is the default state (`schema-core.ts:412`,
   nullable, no default). Four shipped plugins register tools
@@ -77,7 +100,7 @@ so honoring it would require threading the caller's user role through
 (which user? the actor's owner? the requesting user?). Filed as follow-up
 work, not smuggled into this fix.
 
-Verification: `src/generation/generate-route.test.ts`, `describe("gatePluginToolsByRole")`.
+Verification: `src/generation/generate-route.test.ts`, `describe("gatePluginToolsByRole")`, plus `src/generation/generate-route/actor-authorization.test.ts` for the upstream `actorId` authorization the `!agentRole` branch now depends on.
 
 **Acceptance Criteria:**
 
