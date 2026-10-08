@@ -3,7 +3,7 @@
 
 # TASK: epic-linkage infrastructure: title-slug lookup table + multi-epic owner-picking rule
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** Medium
 **Tags:** epic-linkage, infrastructure, plan-hygiene
@@ -56,8 +56,64 @@ Of the 39 comma-separated entries, 24 have at least one slug that does not resol
 
 **Acceptance Criteria:**
 
-- [ ] Title-to-slug lookup table generated from existing epic filenames and titles
-- [ ] Owner-picking rule codified (e.g., first-existing-epic wins, with optional override field)
+- [x] Title-to-slug lookup table generated from existing epic filenames and titles
+- [x] Owner-picking rule codified (e.g., first-existing-epic wins, with optional override field)
 - [ ] All 224 remaining multi-value epic entries resolved to a single canonical epic slug
 - [ ] `epics-index.md` regenerated; `index.json` epic field consistent with resolved value
 - [ ] No spurious diff in `index.json` on next `plan:sync:fix` run
+
+## Progress (2026-10-08)
+
+Landed (Option A, infra + first pass):
+
+- `70883c05f` feat(tools): owner-picking rule + generated title table
+  (`scripts/plan/epic-owner-pick.ts`, 12 `bun test`s, `epic-titles.generated.ts`
+  with 282 H1 titles, `scripts/plan/README.md` section).
+- `a2ec20016` fix(plan): 107 tickets collapsed to first-existing owner
+  (`.md` headers + `index.json` + regenerated `feature-matrix.md`).
+  Verified: index diff is 107 epic-value changes only (0 added/removed keys,
+  key order unchanged, lowercase `BUG-redos-…` key unmoved); `bun run
+  plan:validate` all 11 gates pass; `bun test scripts/plan/` 39 pass.
+
+- Rule: first listed candidate naming an existing `.plan/epics/*.md` wins
+  (bare slug or exact title-table hit). Entries where `.md` and index pick
+  different owners are held back, never force-collapsed.
+
+Remainder (130 entries held back, need product judgment — >50% of the
+freeform class, so stopping here per the ticket's stop rule):
+
+- Numbered `Epic NNN` aliases with no resolvable file (12): `Epic 26
+  (Avatar & Expression)` x4, `Epic 28 (Asset Support)` x2, `Epic 36 (Chat
+  Lifecycle)` x4, `Epic 24/41`, `Epic 51`, `Epic Visual Novel Mode (51)`
+  x2, `Epic Immersion & Presentation (sub-task)` x2, `Epic Battle & Action
+  Systems` x2 —incl. TASK-3D-PERFORMANCE, TASK-3D-VIEW-MODES(+UI),
+  TASK-CHAT-MESSAGE-SEARCH, TASK-CHAT-ROOM-FILTERS/SEARCH-JOIN,
+  TASK-VN-SCENE-TEMPLATE-SYSTEM, TASK-VN-TEMPLATE-ACTIONS,
+  TASK-TEXT-EFFECTS-OVERLAYS, TASK-VISUAL-NOVEL-MODE,
+  TASK-BATTLE-ENCOUNTER-TEMPLATE-SYSTEM, TASK-BATTLE-TEMPLATE-ACTIONS.
+- `NPC/Actor System` + prose-second-candidate (4): TASK-NPC-INVENTORY,
+  TASK-NSFW-SOCIAL, TASK-NSFW-WEATHER, TASK-VN-EMOTION-MOOD-STAGING.
+  (Sibling entries where the FIRST candidate resolved were collapsed:
+  TASK-NPC-BDI-PLANNING, TASK-NPC-BEHAVIOR/MEMORY/TO-NPC-SOCIAL,
+  TASK-NSFW-DISEASE.)
+- `Wardrobe / Loadout Avatar Variants` (8): title resolves via the table to
+  `epic-wardrobe-avatar-variants`, but that file's H1 is a DIFFERENT title
+  (`Wardrobe / Loadout Avatar Variants` lives in another epic file — mapping
+  needs a product call, not a blind table hit):
+  TASK-DEFERRED-EQUIPPED-ITEMS-*, TASK-OUTFIT-SCOPED-*, TASK-SELECTION-*,
+  TASK-STORY-GM-OUTFIT-*, TASK-WARDROBE-* (4).
+- `Asset Platform Capabilities (Messenger/Social Patterns)` (7):
+  TASK-ASSET-PLATFORM-B1..B5, TASK-DECISION-AV10/AV8.
+- `Authentication Channel Provisioning` (10, near-miss of H1
+  `Authentication Channel Provisioning — Messenger / E-mail / …`, exact
+  match required): TASK-AUTH-FACTORS-*-F1, TASK-F2..F10, TASK-TOTP-*.
+- `proposed:epic-x` placeholders (39, no epic file exists — 2 resolve to
+  real files but are covered by sibling tickets, left for triage).
+- Dangling single slugs / prose / review tags / template text (50):
+  `epic-assets-*`, `epic-encryption-foundation`, `epic-memory-systems*`,
+  `epic-notification-expansion`, `epic-asset-support-expansion`,
+  `EPIC-2026-39`, `review-dev-2026-08-26-*`, this ticket's own quoted body
+  text, TASK-TEMPLATE placeholder, etc.
+
+Rerun: `bun run scripts/plan/epic-owner-pick.ts` (dry-run report) or with
+`--apply`; `--gen` regenerates the title table.
