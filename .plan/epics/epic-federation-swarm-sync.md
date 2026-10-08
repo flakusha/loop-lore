@@ -3,7 +3,7 @@
 
 # Epic: Federation, Swarm Sync & Decentralized Comms
 
-**Status:** Not Started
+**Status:** Done
 **Status Note:** open
 **Priority:** medium
 **Effort:** Medium
@@ -222,3 +222,5 @@ New gaps filed from this research:
 | `TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle` | one chat/IM adapter above `ProtocolHandler` | G16 |
 
 `blog_comments` threading (G15) and adapter consolidation (G16) remain the gating prerequisites.
+
+**Resolved:** 2026-10-08 registry-driven close: git issue 74d8f33 (registry tip: 80040e57d Konstantin Fedotov Close issue)

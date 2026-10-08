@@ -108,3 +108,4 @@ Both gaps belong in a fresh ticket filed against `TASK-autonomy-rate-governor`,
 not here — re-filing them under this epic is what created the duplicate in the
 first place.
 
+**Registry note:** git issue `995a82c` closed 2026-10-08 during issue reconciliation (registry tip: 4d8cc4ace). The git issue registry has no `Wontfix` state, so the close forced `Done`; the status was restored to `Wontfix` here because this ticket was abandoned as a duplicate — the two unticked acceptance boxes above are genuinely unmet and were never shipped.
