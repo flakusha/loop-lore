@@ -17,6 +17,9 @@ import type { PluginLogger, PluginManifest, PluginOrigin } from "./types";
 import { registry } from "./registry";
 import { mergePluginConfig } from "./config-merge";
 import { readStoredPluginConfig } from "./config-store";
+import { checkRouteAccess, type PluginCaller, } from "./route-access";
+import { warnIfAccessFieldsAreInert, type LoadAllPluginsOpts, } from "./solo-mode-warning";
+import type { TranslatorFn, } from "../i18n/types";
 import { getLogger } from "../logger";
 import { writeMemoryNoteTool, } from "../generation/tools/write-memory-note";
 import { characterCreationTool, } from "../generation/tools/create-character";
@@ -61,9 +64,13 @@ function makeLogger(pluginName: string): PluginLogger {
  *
  * Checks plugin_state table for previously disabled plugins.
  * @param db
+ * @param opts - load options (see {@link LoadAllPluginsOpts})
  * @returns Nothing.
  */
-export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
+export async function loadAllPlugins(
+  db: Kysely<DB>,
+  opts: LoadAllPluginsOpts = {},
+): Promise<void> {
   const log = getLogger();
   loadOrder.length = 0;
 
@@ -110,6 +117,10 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
     locationCreationTool,
     itemCreationTool,
   ],);
+
+  // Routes are only registered by now, so this is the earliest point at which
+  // the declared-but-unenforceable set is known.
+  warnIfAccessFieldsAreInert(opts,);
 }
 
 /**
@@ -199,18 +210,41 @@ async function persistPluginState(db: Kysely<DB>, name: string,): Promise<void> 
   }
 }
 
+/** Options for {@link dispatchPluginRoute}. */
+export interface DispatchPluginRouteOpts {
+  request: Request;
+  /** Identity resolved by the Elysia auth derive. Omitted → anonymous. */
+  caller?: PluginCaller;
+  /** Request-locale translator, so denial bodies are i18n'd like every other route. */
+  t?: TranslatorFn;
+}
+
 /**
- * Dispatch a request against all registered plugin routes (enabled only)
- * @param request
-  * @returns {Promise<Response | null>}
+ * Dispatch a request against all registered plugin routes (enabled only).
+ *
+ * First match on path + method wins. A matched route declaring `requiresAuth`
+ * or `permissions` that the caller does not satisfy short-circuits with a
+ * 401/403 and its handler is never invoked. See `./route-access`.
+ * @param opts - dispatch options
+ * @param opts.request - incoming `Request` to match against registered routes
+ * @param opts.caller - identity used to enforce `requiresAuth` / `permissions`
+ * @param opts.t - translator used to localise the denial response
+ * @returns {Promise<Response | null>}
 */
-export async function dispatchPluginRoute(request: Request): Promise<Response | null> {
+export async function dispatchPluginRoute(
+  { request, caller, t, }: DispatchPluginRouteOpts,
+): Promise<Response | null> {
+  const url = new URL(request.url);
   for (const route of registry.getEnabledRoutes()) {
-    const url = new URL(request.url);
-    if (url.pathname === route.path && request.method === route.method) {
-      const result = await route.handler(request);
-      if (result) return result;
-    }
+    if (url.pathname !== route.path || request.method !== route.method) { continue; }
+
+    const denial = checkRouteAccess({ route, request, caller, t, },);
+    if (denial) { return denial; }
+
+    // `caller` is what lets a handler do row-level authorization; route-level
+    // gating alone cannot tell it whose data it is allowed to touch.
+    const result = await route.handler(request, caller);
+    if (result) return result;
   }
 
   return null;

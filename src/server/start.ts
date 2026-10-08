@@ -195,7 +195,10 @@ export async function start() {
   await initBackgroundServices(database, config, serverLogger, serverManager,);
 
   // ── Load all plugins (core → community → local) ──────
-  await loadAllPlugins(database,);
+  // `authRequired` lets the loader warn when a plugin's `requiresAuth` /
+  // `permissions` cannot be enforced (solo mode auto-authenticates everyone
+  // as the `solo` super-user).
+  await loadAllPlugins(database, { authRequired: config.auth.required, },);
 
   // ── Pre-compress static assets + hash-inject HTML ──────
   await initAssetCompression(logger,);

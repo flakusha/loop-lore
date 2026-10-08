@@ -26,7 +26,10 @@ describe("dispatchPluginRoute", () => {
       },
     ],);
 
-    const res = await dispatchPluginRoute(new Request("http://localhost/plugin/demo",));
+    const res = await dispatchPluginRoute({
+      request: new Request("http://localhost/plugin/demo",),
+    },);
+
     expect(res?.status,).toBe(200,);
     expect(await res?.text(),).toBe("hello",);
   });
@@ -41,11 +44,13 @@ describe("dispatchPluginRoute", () => {
     ],);
 
     expect(
-      await dispatchPluginRoute(new Request("http://localhost/plugin/demo",)),
+      await dispatchPluginRoute({ request: new Request("http://localhost/plugin/demo",), },),
     ).toBeNull();
 
     expect(
-      await dispatchPluginRoute(new Request("http://localhost/other", { method: "POST", },)),
+      await dispatchPluginRoute({
+        request: new Request("http://localhost/other", { method: "POST", },),
+      },),
     ).toBeNull();
   });
 
@@ -55,7 +60,10 @@ describe("dispatchPluginRoute", () => {
       { method: "GET", path: "/x", handler: async () => new Response("second",), },
     ],);
 
-    const res = await dispatchPluginRoute(new Request("http://localhost/x",));
+    const res = await dispatchPluginRoute({
+      request: new Request("http://localhost/x",),
+    },);
+
     expect(await res?.text(),).toBe("second",);
   });
 });
@@ -68,7 +76,7 @@ describe("dispatch respects enabled state", () => {
 
     registry.setEnabled("demo", false,);
     expect(
-      await dispatchPluginRoute(new Request("http://localhost/x",)),
+      await dispatchPluginRoute({ request: new Request("http://localhost/x",), },),
     ).toBeNull();
 
     expect(registry.getAllRoutes(),).toHaveLength(0,);
@@ -81,7 +89,7 @@ describe("dispatch respects enabled state", () => {
     ],)).toThrow("unregistered plugin");
 
     expect(
-      await dispatchPluginRoute(new Request("http://localhost/g",)),
+      await dispatchPluginRoute({ request: new Request("http://localhost/g",), },),
     ).toBeNull();
   });
 });
@@ -95,7 +103,7 @@ describe("unloadAllPlugins", () => {
     await unloadAllPlugins();
     expect(registry.getAllRoutes(),).toEqual([],);
     expect(
-      await dispatchPluginRoute(new Request("http://localhost/x",)),
+      await dispatchPluginRoute({ request: new Request("http://localhost/x",), },),
     ).toBeNull();
   });
 });
