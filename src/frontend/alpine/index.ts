@@ -28,6 +28,7 @@ import "./gm-guidance";
 import "./gm-panel";
 import "./htmx";
 import "./i18n";
+import "./info-bubble";
 import "./key-management";
 import "./location-explorer";
 import "./memory-panel";

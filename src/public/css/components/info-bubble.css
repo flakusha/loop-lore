@@ -1,0 +1,95 @@
+/*
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ * SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+ */
+
+/* Info bubble help tooltip (TASK-info-bubbles). */
+
+.info-bubble-host {
+  position: relative;
+  display: inline-flex;
+}
+
+.info-bubble-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-left: var(--space-1);
+  padding: 0;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: var(--fs-xs);
+  line-height: 1;
+  cursor: help;
+}
+
+.info-bubble-trigger:hover,
+.info-bubble-trigger:focus-visible {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 1px;
+}
+
+.info-bubble-popover {
+  position: absolute;
+  z-index: var(--z-dropdown);
+  width: max-content;
+  max-width: 240px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  box-shadow: var(--shadow-md);
+  animation: info-bubble-in var(--transition-fast);
+}
+
+.info-bubble-top {
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.info-bubble-bottom {
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.info-bubble-right {
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.info-bubble-left {
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes info-bubble-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.info-bubble-no-anim {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .info-bubble-popover {
+    animation: none;
+  }
+}
