@@ -210,6 +210,26 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     ended_at: col("text",),
   },)
+  .table("branch_merge_sources", {
+    merge_id: col("text", { notNull: true, },),
+    ordinal: col("integer", { notNull: true, },),
+    branch_id: col("text",),
+    tip_message_id: col("text", { notNull: true, },),
+  },)
+  .table("branch_merges", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    base_message_id: col("text", { notNull: true, },),
+    mode: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    result_message_id: col("text",),
+    merged_branch_id: col("text",),
+    created_by: col("text", { notNull: true, },),
+    idempotency_key: col("text",),
+    metadata: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    confirmed_at: col("text",),
+  },)
   .table("carriage_records", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text", { notNull: true, },),
@@ -1986,6 +2006,7 @@ export const SCHEMA = new SchemaManifest()
     content_plaintext: col("text",),
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+    merge_id: col("text",),
   },)
   // ── NSFW & Moderation ──────────────────────────────────────────────
   .table("content_flags", {

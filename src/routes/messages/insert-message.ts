@@ -32,7 +32,7 @@ export interface InsertUserMessageParams {
   contentEncoding: ContentEncoding;
   idempotencyKey: string | null;
   /** Writes Elysia's response status before the guard error is thrown. */
-  setStatus: (status: number,) => void;
+  setStatus?: (status: number,) => void;
 }
 
 /**
@@ -80,12 +80,12 @@ export async function insertUserMessageRow(
           .executeTakeFirst();
 
         if (!parent) {
-          setStatus(404,);
+          setStatus?.(404,);
           throw new ParentMessageNotFoundError();
         }
 
         if (parent.chat_id !== chatId) {
-          setStatus(403,);
+          setStatus?.(403,);
           throw new ParentMessageNotInChatError();
         }
       }

@@ -2429,6 +2429,7 @@ export async function insertMessages(
     content_plaintext?: string | null;
     data_version?: number;
     record_hash?: string;
+    merge_id?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -5059,6 +5060,56 @@ export async function insertMessageReminders(
     message_id,
     user_id,
     remind_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a branch_merges row. */
+export async function insertBranchMerges(
+  db: Db,
+  chat_id: string,
+  base_message_id: string,
+  mode: string,
+  created_by: string,
+  opts?: {
+    id?: string;
+    status?: string;
+    result_message_id?: string | null;
+    merged_branch_id?: string | null;
+    idempotency_key?: string | null;
+    metadata?: string | null;
+    created_at?: string;
+    confirmed_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("branch_merges",).values({
+    id,
+    chat_id,
+    base_message_id,
+    mode,
+    created_by,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a branch_merge_sources row. */
+export async function insertBranchMergeSources(
+  db: Db,
+  merge_id: string,
+  ordinal: number,
+  tip_message_id: string,
+  opts?: { branch_id?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("branch_merge_sources",).values({
+    merge_id,
+    ordinal,
+    tip_message_id,
     ...restOpts,
   } as any,).execute();
   return id;
