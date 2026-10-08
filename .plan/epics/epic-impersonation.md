@@ -44,7 +44,7 @@ Character impersonation — 1 character can be impersonated once per world-locat
 | Command dispatch       | ✅ done  | `impersonate-toggle` + `impersonate-select` handled in `chat-actions/dispatch.ts:122-187` |
 | Name→Actor resolution  | ✅ done  | `impersonate-select` resolves name via participants list (`dispatch.ts:149-153`) |
 | De-duplication         | ✅ done  | `routes/chats/extras.ts:168` calls `updateImpersonation()` — no inline DB |
-| 1-per-world constraint | ✅/⏳     | Location scope DONE: helper checks `(world_id, current_location_id)`, falls back to world-level when chat has no location. Timeline scope DEFERRED: `chats` carries no `timeline_id` (timelines live in `world_timelines`, unreferenced by chats) — needs schema migration; see epic-timeline-system. Private/disconnected chats (no `world_id`) remain exempt. |
+| 1-per-world constraint | ✅ done | Location + timeline scope DONE: helper checks `(world_id, current_location_id, timeline_id)`, falls back to (world, location) when timeline unset and to world-level when chat has no location. Same character in different timelines may be impersonated by different users; same (world, location, timeline) still blocked. `chats.timeline_id` added via 047 (nullable text, no FK). Private/disconnected chats (no `world_id`) remain exempt. |
 | Memory isolation       | Low      | No special handling for impersonated character's memories (see epic-memory-isolation-design) |
 
 ## Refactored Task List
@@ -63,7 +63,7 @@ Character impersonation — 1 character can be impersonated once per world-locat
 - [x] **FIX**: Add name→actor ID resolution for `impersonate-select`
 - [x] **FIX**: Route calls `updateImpersonation()` instead of inline DB (verified `extras.ts:168`)
 - [x] **FIX**: Refine impersonation constraint from world-level to location scope (`participants.ts:48-59`)
-- [ ] **DEFERRED**: Timeline-scoped constraint — requires adding `timeline_id` to `chats` (schema migration); coordinate with epic-timeline-system
+- [x] **DEFERRED → DONE (047)**: Timeline-scoped constraint — `timeline_id` added to `chats` (nullable plain text, no FK, matching the `world_timeline_events.timeline_id` slug convention); `updateImpersonation()` narrows conflicts to same timeline when set, falls back to (world, location) when unset
 - [x] Docs: `docs/spec/impersonation.md` is a full spec (data model, endpoints, commands, frontend, constraint)
 - [ ] Docs/Memory: memory isolation for impersonated characters (Low; see epic-memory-isolation-design)
 

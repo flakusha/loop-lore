@@ -16,11 +16,15 @@ import type { ServiceError, } from "./types";
 /**
  * Update impersonation actor for a chat.
  *
- * Enforces 1-per-(world+location) constraint: when setting an
+ * Enforces 1-per-(world+location+timeline) constraint: when setting an
  * impersonate_actor_id, checks if that actor is already being impersonated
- * by another user in a chat sharing the same world AND current_location_id.
- * If the chat has no current_location_id (detached), falls back to the
- * world-level check. Private/disconnected chats are exempt.
+ * by another user in a chat sharing the same world AND current_location_id
+ * AND timeline_id. If the chat has no current_location_id (detached),
+ * falls back to the world-level check; if it has no timeline_id (unset),
+ * falls back to the (world, location) check so legacy rows keep the
+ * pre-existing behavior. A chat with a timeline only conflicts with chats
+ * on the same timeline, so the same character in different timelines may
+ * be impersonated by different users. Private/disconnected chats are exempt.
  * @param database
  * @param chatId
  * @param userId
@@ -34,17 +38,20 @@ export async function updateImpersonation(
   impersonateActorId: string | null,
 ): Promise<ServiceError | undefined> {
   if (impersonateActorId) {
-    // Look up this chat's world_id
+    // Look up this chat's world_id (+ location and timeline for scope)
     const chat = await database
       .selectFrom("chats",)
-      .select(["world_id", "type", "current_location_id",],)
+      .select(["world_id", "type", "current_location_id", "timeline_id",],)
       .where("id", "=", chatId,)
       .executeTakeFirst();
 
     if (chat?.world_id) {
       // Check if another user already impersonates this actor in the same world
-      // AND current location (when the chat has one). If the chat is detached
-      // from a location, fall back to world-level scope.
+      // AND current location (when the chat has one) AND timeline (when set).
+      // Fallbacks preserve legacy behavior: detached (no location) -> world
+      // scope; unset timeline -> (world, location) scope. A timeline-scoped
+      // chat only conflicts with chats on the same timeline (SQLite `=` never
+      // matches NULL, so legacy unset rows don't collide with scoped ones).
       let conflictQuery = database
         .selectFrom("chat_participants",)
         .innerJoin("chats", "chats.id", "chat_participants.chat_id",)
@@ -56,6 +63,11 @@ export async function updateImpersonation(
       if (chat.current_location_id) {
         conflictQuery = conflictQuery
           .where("chats.current_location_id", "=", chat.current_location_id,);
+      }
+
+      if (chat.timeline_id) {
+        conflictQuery = conflictQuery
+          .where("chats.timeline_id", "=", chat.timeline_id,);
       }
 
       const conflict = await conflictQuery.executeTakeFirst();
