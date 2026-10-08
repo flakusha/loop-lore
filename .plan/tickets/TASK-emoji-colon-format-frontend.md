@@ -12,6 +12,7 @@
 
 **Epic:** epic-frontend-emoji-reactions
 **Status:** In Progress
+**Scope:** server-rendered shortcode fallback for htmx partials
 **Priority:** Medium
 
 ## Scope
