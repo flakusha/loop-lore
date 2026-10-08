@@ -21,7 +21,7 @@ Config and DB already disagree: the gossip cron builds its trust list from `conf
 **Direction:**
 
 1. Add a `bootstrapPeersFromConfig(database, config)` entry point in `src/federation/`, following the options-object param style in `.agents/references/recommendations.md`.
-2. Iterate `config.federation.peers`, canonicalizing each `peer.origin` via `canonicalOrigin` (`src/federation/peer-fetch.ts:64-78`). Skip entries that fail to canonicalize — log a warning, do not throw.
+2. Iterate `config.federation.peers`, canonicalizing each `peer.origin` via `canonicalOrigin` (`src/federation/peer-fetch.ts:64-77`). Skip entries that fail to canonicalize — log a warning, do not throw.
 3. Call `upsertPeer` per peer with `{ origin, state: "trusted" }`. Pick and document the merge rule for a row already present in another state.
 4. Gate the whole pass on `config.federation.enabled`; when disabled, write nothing.
 5. Invoke it from the boot sequence after config load and DB construction, before the cron scheduler starts. The composition point is alongside where `registerPlugins` (`src/app/register-plugins.ts:49`) receives `database` + `config`.

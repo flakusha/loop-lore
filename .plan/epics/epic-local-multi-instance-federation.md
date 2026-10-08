@@ -156,12 +156,12 @@ These planning commits sit on a branch named `fix-unit-test-isolation`, which do
 
 ### Expected gate failure
 
-The `tickets` gate will be red at finalize time. The 12 federation `.md` files committed by the concurrent harness-research session exist on disk but are absent from this branch's `index.json` — classified as **`orphanFiles`**, which is **actionable/gating** (`sync-report.ts:21`). `orphanGitIssues` (advisory, `sync-report.ts:32`) is irrelevant here.
+The `tickets` gate will be red at finalize time. The 12 federation `.md` files authored by this epic exist on disk but are absent from this branch's `index.json` — classified as **`orphanFiles`**, which is **actionable/gating** (`node_modules/giwt/src/tickets/sync-report.ts:21`). `orphanGitIssues` (advisory, `node_modules/giwt/src/tickets/sync-report.ts:32`) is irrelevant here.
 
-`runSync` returns `1` when `totalIssues > 0` (`sync-index.ts:297`: `return totalIssues > 0 ? 1 : 0`), and `totalIssues` includes `orphanFiles`. `checkTicketIndex` propagates this as an error finding (`content-gates.ts:227-233`).
+`runSync` returns `1` when `totalIssues > 0` (`node_modules/giwt/src/tickets/sync-index.ts:297`: `return totalIssues > 0 ? 1 : 0`), and `totalIssues` includes `orphanFiles`. `checkTicketIndex` propagates this as an error finding (`node_modules/giwt/src/plan/validate/content-gates.ts:227-233`).
 
-This is **by design, not a defect**: `persistIndexCanonical` (`sync-index-write.ts:21-26`) intentionally skips index writes from a linked worktree — a worktree-local `index.json` would otherwise be `git add -A`-ed onto the feature branch and conflict at merge time.
+This is **by design, not a defect**: `persistIndexCanonical` (`node_modules/giwt/src/tickets/sync-index-write.ts:21-26`) intentionally skips index writes from a linked worktree — a worktree-local `index.json` would otherwise be `git add -A`-ed onto the feature branch and conflict at merge time.
 
-The 12 fed files do not yet exist on `dev` at all (verified: 6 are absent from dev index entirely; 6 are present in dev index as phantom entries, meaning dev's index already had entries for them but dev's .md count never grew to match — these 6 are among dev's 336 phantom entries). `dev`'s `tickets` gate was already non-zero before these 12 files existed, due to 336 phantom index entries with no backing `.md` file. The 12 fed files are additive noise on the worktree gate specifically, not a new cause of dev failure.
+Dev's index already carries pre-existing phantom entries from prior work; the 12 fed files are additive to that existing drift rather than its cause.
 
 **Post-merge follow-up required**: after the merge lands, run `giwt sync --fix` in the `dev` checkout to regenerate `dev`'s `index.json` and absorb the 12 new files. Without this, `dev`'s next finalize will also report `orphanFiles` for them.
