@@ -6,7 +6,10 @@
  * Tests for scripts/gen-pkg-from-deno.ts
  */
 
-import { describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
 import { buildPkgScripts, transformCommand, transformSegment, } from "./gen-pkg-from-deno";
 
 // ── gen-pkg-from-deno.ts — transformSegment ────────────────────
@@ -130,5 +133,75 @@ describe("round-trip: bun → deno → bun", () => {
     const original = "bun test --isolate";
     const forward = "deno test --isolate";
     expect(transformSegment(forward,),).toBe(original,);
+  });
+});
+
+// ── CLI ────────────────────────────────────────────────────────
+
+const SCRIPT = `${import.meta.dir}/gen-pkg-from-deno.ts`;
+
+const DENO_JSON = JSON.stringify({
+  tasks: { "build:frontend": "deno run -A npm:vitepress build", dev: "deno task start", },
+},);
+const PKG_JSON = JSON.stringify({ scripts: { start: "bun run src/server/index.ts", }, },);
+
+/** Run the generator in `cwd`; it resolves deno.json/package.json from there. */
+function run(cwd: string, ...args: string[]) {
+  const proc = Bun.spawnSync(["bun", SCRIPT, ...args,], { cwd, },);
+  return {
+    exitCode: proc.exitCode,
+    stdout: proc.stdout.toString(),
+    stderr: proc.stderr.toString(),
+  };
+}
+
+describe("gen-pkg-from-deno CLI", () => {
+  let dir: string;
+
+  beforeEach(() => {
+    dir = mkdtempSync(join(tmpdir(), "gen-pkg-from-deno-",),);
+    writeFileSync(join(dir, "deno.json",), DENO_JSON,);
+    writeFileSync(join(dir, "package.json",), PKG_JSON,);
+  },);
+
+  afterEach(() => {
+    rmSync(dir, { recursive: true, force: true, },);
+  },);
+
+  test("--dry-run prints the mapped scripts and writes nothing", () => {
+    const result = run(dir, "--dry-run",);
+    expect(result.exitCode,).toBe(0,);
+    expect(JSON.parse(result.stdout,).dev,).toBe("bun run start",);
+    expect(JSON.parse(readFileSync(join(dir, "package.json",), "utf8",),).scripts.dev,).toBeUndefined();
+  });
+
+  test("--check exits 1 when package.json scripts are stale", () => {
+    const result = run(dir, "--check",);
+    expect(result.exitCode,).toBe(1,);
+    expect(result.stderr,).toContain("package.json scripts stale",);
+  });
+
+  test("--check exits 0 once package.json matches deno.json", () => {
+    const expected = JSON.parse(run(dir, "--dry-run",).stdout,) as Record<string, string>;
+    writeFileSync(
+      join(dir, "package.json",),
+      JSON.stringify({ scripts: { start: "bun run src/server/index.ts", ...expected, }, },),
+    );
+    const result = run(dir, "--check",);
+    expect(result.exitCode,).toBe(0,);
+    expect(result.stdout,).toContain("package.json scripts up to date",);
+  });
+
+  test("missing deno.json exits 1", () => {
+    rmSync(join(dir, "deno.json",),);
+    const result = run(dir, "--check",);
+    expect(result.exitCode,).toBe(1,);
+    expect(result.stderr,).toContain("deno.json not found",);
+  });
+
+  test("unknown flag is rejected with exit 1", () => {
+    const result = run(dir, "--no-such-flag",);
+    expect(result.exitCode,).toBe(1,);
+    expect(result.stderr,).toContain("--no-such-flag",);
   });
 });

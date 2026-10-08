@@ -18,23 +18,30 @@
  */
 import { readFileSync, writeFileSync, } from "node:fs";
 import path from "node:path";
+import {
+  flag,
+  object,
+  option,
+  optional,
+  runScript,
+  string,
+  withDefault,
+} from "../../src/cli/parser";
 
 const DEFAULT_BASELINE = path.join(import.meta.dir, "jscpd-baseline.json",);
 
-function parseArgs(argv,) {
-  const args = { report: null, baseline: DEFAULT_BASELINE, update: false, };
-  for (let i = 0; i < argv.length; i++) {
-    if (argv[i] === "--report" && argv[i + 1] !== undefined) {
-      args.report = argv[i + 1];
-      i++;
-    } else if (argv[i] === "--baseline" && argv[i + 1] !== undefined) {
-      args.baseline = argv[i + 1];
-      i++;
-    } else if (argv[i] === "--update") {
-      args.update = true;
-    }
-  }
-  return args;
+function parseArgs() {
+  const parser = object({
+    report: optional(option("--report", string(),),),
+    baseline: withDefault(option("--baseline", string(),), DEFAULT_BASELINE,),
+    update: withDefault(flag("--update",), false,),
+  },);
+
+  return runScript(parser, {
+    programName: "jscpd-ratchet",
+    brief: "Fail when the jscpd clone count grows past the committed baseline.",
+    help: "option",
+  },);
 }
 
 function readClones(reportPath,) {
@@ -56,7 +63,7 @@ function readBaseline(baselinePath,) {
 }
 
 function main() {
-  const args = parseArgs(process.argv.slice(2,),);
+  const args = parseArgs();
   if (!args.report) {
     console.error("usage: jscpd-ratchet.mjs --report <jscpd-report.json> [--baseline <path>] [--update]",);
     process.exit(2,);

@@ -3,12 +3,12 @@
 
 # EPIC: Type-safe CLI Tooling via Optique
 
-**Tags:** (none)
+**Tags:** cli, tooling, dx, typescript
 **Overview:** (see sections below)
 
 
 **Status:** In Progress
-**Status Note:** foundation laid
+**Status Note:** every migratable argv call site is on the shared parser; the remaining ones are structurally blocked and tracked in a follow-up ticket
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Infrastructure / DX
@@ -22,16 +22,21 @@ for subcommands across every CLI entry point in the repo.
 
 ## Why
 
-Current state — at least four call sites parse argv by hand:
+Before this epic, every CLI entry point hand-rolled its own parsing. A repo-wide census found the
+pattern across `src/` and `scripts/` alike — boolean flags sniffed with `argv.includes("--x")`, values
+sliced out with `argv.find(a => a.startsWith("--x="))`, positionals read as `argv[2]`, and a few
+fully hand-written `parseArgs()` loops. Representative sites:
 
 - `src/scripts/version-bump.ts` (positional `command` + `--bump=<lvl>` + `--tag` flag)
 - `src/scripts/commit-check.ts` (`--all`, `--staged`, `--bump=<lvl>`, hook-mode)
 - `src/config/migrate-config.ts` (`--input`, `--output`, `--dry-run`, `--format`)
 - `src/build/compress.ts` (positional directories)
+- `scripts/check-file-size.ts`, `scripts/check-spdx.ts`, `scripts/check/test-gaps.mjs` (gate scripts
+  whose stdout and exit codes the parallel check runner consumes)
 
 Each one reimplements: flag detection, value coercion, error messages, exit codes, default values,
-and `--help`. None offers completion or has unit tests for argument parsing. Adding a new flag is a
-manual edit through every site.
+and `--help`. None offered completion or had tests for argument parsing, and the hand-rolled scans
+silently ignored unknown flags — so a typo in a gate invocation failed silently instead of loudly.
 
 ## Why Optique
 
@@ -69,18 +74,30 @@ manual edit through every site.
 
 ### Out of scope (for this epic)
 
-- Migrating `scripts/worktree/commands/*.ts` (already typed via custom command surface; this epic
+- Migrating `scripts/worktree/commands/*.ts` (already typed via a custom command surface; this epic
   doesn't refactor the worktree CLI itself, only proves the pattern).
 - Rewriting `src/tui/app.ts` (no argv surface).
-- Adding shell completion to every CLI — start with `version-bump` and `commit-check` (the most
-  user-facing), then opt in elsewhere.
+- Adding shell completion to every CLI — `completion` is wired into `runScript` and opt-in per call
+  site, rather than switched on everywhere at once.
+
+### Structurally blocked (tracked in the follow-up ticket)
+
+These still read argv by hand, and cannot move to `runScript` without restructuring their host:
+
+| Call site | Blocker |
+| --------- | ------- |
+| `scripts/check/parallel/config.mjs` | Parses `--ci` / `--fix` / `--report-ls` at module-init and exports the computed values; `runScript` returns a value, so this needs `check-parallel.mjs` to become the entry point that owns flag reading. |
+| `scripts/check/parallel/context.mjs` | `CHANGED_FILES` / `DIFF_BASE` / `GATES_FILTER` are resolved at import time and consumed by `gates.mjs` on import. Same restructure. |
+| `scripts/check/parallel/runner.mjs` | `JOBS` is resolved at module load and read throughout the runner. Same restructure. |
+| `scripts/worktree/index.ts` | A subcommand dispatcher (`const [cmdName, ...cmdArgs] = process.argv.slice(2)`); needs `command()` grammar or a `giwt`-style dispatcher, not a flat object parser. |
+| `scripts/worktree/finalize-lock-fixture.ts` | Test fixture spawned as a child process with positional temp-dir/mode slots; migrating it means changing the test harness, for no product benefit. |
 
 ## Library & version
 
 | Package       | Version | License | Why                                       |
 | ------------- | ------- | ------- | ----------------------------------------- |
-| `@optique/core` | `^1.2.6` | MIT     | Parser combinators + value parser catalog |
-| `@optique/run`  | `^1.2.6` | MIT     | Process-integrated `run()` runner         |
+| `@optique/core` | `^1.3.2` | MIT     | Parser combinators + value parser catalog |
+| `@optique/run`  | `^1.3.2` | MIT     | Process-integrated `run()` runner         |
 
 Declared engines: `node >= 20`, `bun >= 1.2.0`, `deno >= 2.3.0`. We are on Bun 1.4+ — compatible.
 
@@ -133,23 +150,47 @@ exit codes), then delete the `parseArgs()` block.
 
 - [x] Research Optique + integrate plan
 - [x] Epic + ticket filed
-- [ ] Phase 1 — Foundation (parser module)
-- [ ] Phase 2 — Migrate version-bump / commit-check / migrate-config / compress
-- [ ] Phase 3 — Tests + `bun run check` green
+- [x] Phase 1 — Foundation (`src/cli/parser.ts` + unit tests)
+- [x] Phase 2 — Migrate every migratable argv call site in `src/` and `scripts/`
+- [x] Phase 3 — Tests + `bun run check` green
+- [x] Documentation — `docs/spec/cli-tooling.md` with the MUST-use rule
+- [ ] Follow-up ticket — structurally blocked call sites (see Out of scope)
 
 ## Files
 
-- `src/cli/parser.ts` — new shared module
-- `src/cli/parser.test.ts` — new unit tests
-- `src/cli/valueparsers.ts` — new domain value parsers
-- `src/scripts/version-bump.ts` — migrate
-- `src/scripts/commit-check.ts` — migrate
-- `src/config/migrate-config.ts` — migrate
-- `src/build/compress.ts` — migrate
-- `docs/spec/cli-tooling.md` — new spec
+- `src/cli/parser.ts` — shared module: `runScript()` + the narrow re-export surface
+- `src/cli/parser.test.ts` — unit tests for the wrapper
+- `docs/spec/cli-tooling.md` — the house spec and the MUST-use rule
+- `src/scripts/version-bump.ts`, `src/scripts/commit-check.ts`, `src/config/migrate-config.ts`,
+  `src/build/compress.ts`, `src/scripts/backfill-users-encryption-secret.ts` — first migration wave
+- `src/aux-pipeline/eval/cli.ts`
+- `scripts/check-changelog.ts`, `scripts/check-licenses.ts`, `scripts/check-context-weight.ts`,
+  `scripts/check-file-size.ts`, `scripts/check-frontend-banned-patterns.ts`,
+  `scripts/audit-runtime-compat.ts`, `scripts/gen-deno-config.ts`, `scripts/gen-pkg-from-deno.ts`,
+  `scripts/i18n-reconcile.ts`, `scripts/run-benchmarks.ts`, `scripts/build-verify.ts`
+- `scripts/generate-schema-fuzz.ts`
+- `scripts/check-spdx.ts`
+- `scripts/plan/normalize-statuses.ts`, `scripts/plan/normalize-plan-metadata.ts`,
+  `scripts/plan/epic-owner-pick.ts`
+- `scripts/check/coverage.mjs`, `scripts/check/weave-damage.mjs`, `scripts/check/api-doc-drift.mjs`,
+  `scripts/check/jscpd-ratchet.mjs`, `scripts/check/test-gaps.mjs`
+- colocated `*.test.ts` / `*.test.mjs` beside each migrated script
+
+### Deliberately not built
+
+- `src/cli/valueparsers.ts` — dropped. Optique already ships a full value-parser catalog
+  (`string`, `integer`, `choice`, `path`, `url`, `port`, `cron`, …) and no migrated call site
+  needed a project-specific wrapper. Add one when a real caller needs it.
+- `src/cli/log.ts` — dropped. `runScript` writes its own diagnostics to stdout/stderr;
+  no call site needed an `onExit` bridge to `createLogger`.
 
 ## Related Epics
 
-- `epic-tooling-improvement.md` — parent permanent-tooling epic
-- `epic-script-migration.md` — `.sh` → `.mjs` / `.ts` migration; this epic is the type-safe parser
-  layer they all eventually depend on.
+- [`epic-tooling-improvement.md`](epic-tooling-improvement.md) — parent permanent-tooling epic;
+  this is the typed-CLI layer under its developer-experience scope.
+- [`epic-script-migration.md`](epic-script-migration.md) — records the `.mjs` vs `.ts` decision that
+  determines which migrated scripts are `.mjs` and which are `.ts`.
+- [`epic-code-quality.md`](epic-code-quality.md) — owns the lint/format/size gates the migrated
+  scripts must stay inside.
+- [`epic-cicd-pipeline.md`](epic-cicd-pipeline.md) — several migrated scripts are themselves CI
+  gates, so a parser change lands in the pipeline's blast radius.

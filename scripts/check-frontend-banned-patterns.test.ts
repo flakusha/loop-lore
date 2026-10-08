@@ -74,3 +74,28 @@ describe("listener-leak page-lifetime exemption", () => {
     expect(leakKeys(out,),).toEqual(["fixture.ts:2",],);
   });
 });
+
+describe("argv surface", () => {
+  test("a directory positional is honored (exits 0 when nothing is found)", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "banned-patterns-cli-",),);
+    try {
+      writeFileSync(path.join(dir, "clean.ts",), "export const ok = 1;\n",);
+      const proc = Bun.spawnSync([process.execPath, SCRIPT, dir,],);
+      expect(proc.exitCode,).toBe(0,);
+      expect(proc.stdout.toString(),).toContain("OK: No banned patterns found.",);
+    } finally {
+      rmSync(dir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("--help prints the brief and exits 0", () => {
+    const proc = Bun.spawnSync([process.execPath, SCRIPT, "--help",],);
+    expect(proc.exitCode,).toBe(0,);
+    expect(proc.stdout.toString(),).toContain("Advisory report of heuristic banned patterns",);
+  });
+
+  test("an unknown option is rejected with exit 1", () => {
+    const proc = Bun.spawnSync([process.execPath, SCRIPT, "--no-such-flag",],);
+    expect(proc.exitCode,).toBe(1,);
+  });
+});

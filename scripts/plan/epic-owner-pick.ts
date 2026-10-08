@@ -16,6 +16,7 @@
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
+import { flag, object, runScript, withDefault, } from "../../src/cli/parser";
 import {
   canonicalIndexOrder,
   fieldLines,
@@ -105,7 +106,15 @@ export function scanEpicTitles(dir: string,): { titles: Record<string, string>; 
 
 // ── CLI ────────────────────────────────────────────────────────
 if (import.meta.main) {
-  const argv = process.argv.slice(2,);
+  const parser = object({
+    gen: withDefault(flag("--gen",), false,),
+    apply: withDefault(flag("--apply",), false,),
+  },);
+  const { gen, apply, } = runScript(parser, {
+    programName: "epic-owner-pick",
+    brief: "Collapse multi-epic **Epic:** values to the first existing epic owner; --gen regenerates the title table.",
+    help: "option",
+  },);
   const ROOT = resolve(import.meta.dir, "..", "..",);
   const epicsDir = join(ROOT, ".plan", "epics",);
   const slugs = new Set(
@@ -115,7 +124,7 @@ if (import.meta.main) {
   );
   const { titles, ambiguous, } = scanEpicTitles(epicsDir,);
 
-  if (argv.includes("--gen",)) {
+  if (gen) {
     const body = Object.entries(titles,)
       .map(([title, slug,],) => `  ${JSON.stringify(title,)}: ${JSON.stringify(slug,)},`)
       .join("\n",);
@@ -128,7 +137,6 @@ if (import.meta.main) {
     process.exit(0,);
   }
 
-  const apply = argv.includes("--apply",);
   const indexPath = join(ROOT, ".plan", "tickets", "index.json",);
   const index = JSON.parse(readFileSync(indexPath, "utf8",),) as Record<string, IndexEntryLike>;
   const next: Record<string, IndexEntryLike> = { ...index, };

@@ -19,6 +19,7 @@
 import { readdirSync, readFileSync, } from "node:fs";
 import { join, relative, resolve, } from "node:path";
 import process from "node:process";
+import { flag, object, runScript, withDefault, } from "../src/cli/parser";
 
 // ── Compat map ─────────────────────────────────────────────────
 
@@ -206,10 +207,18 @@ function printTable(findings: Finding[],): void {
 // ── CLI ────────────────────────────────────────────────────────
 
 if (import.meta.main) {
-  const argv = process.argv.slice(2,);
-  const json = argv.includes("--json",);
-  const strict = argv.includes("--strict",);
-  const sharedOnly = argv.includes("--shared",);
+  const { json, strict, sharedOnly, } = runScript(
+    object({
+      json: withDefault(flag("--json",), false,),
+      strict: withDefault(flag("--strict",), false,),
+      sharedOnly: withDefault(flag("--shared",), false,),
+    },),
+    {
+      programName: "audit-runtime-compat",
+      brief: "Scan src/ for Bun-specific APIs and report Deno/Node equivalents.",
+      help: "option",
+    },
+  );
 
   const srcDir = resolve("src",);
   const files = walkTsFiles(srcDir,);

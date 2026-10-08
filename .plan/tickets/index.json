@@ -4174,6 +4174,19 @@
     "title": "Inbound federation content not moderated before display",
     "type": "BUG"
   },
+  "BUG-INDEX-JSON-RECORDS-EPIC-SOURCE-PATHS-UNDER-PLAN-TICKETS-FOR-": {
+    "hash": "8e81ae2",
+    "git_issue": "8e81ae2",
+    "extid": "BUG-INDEX-JSON-RECORDS-EPIC-SOURCE-PATHS-UNDER-PLAN-TICKETS-FOR-",
+    "type": "BUG",
+    "title": "index.json records epic source paths under .plan/tickets/ for epic entries",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-index-json-records-epic-source-paths-under-plan-tickets-for-.md",
+    "status": "Not Started"
+  },
   "BUG-INITDHRATCHETOPTS-THEIRINITIALPUB-DECLARED-BUT-NEVER-READ": {
     "epic": "",
     "extid": "BUG-INITDHRATCHETOPTS-THEIRINITIALPUB-DECLARED-BUT-NEVER-READ",
@@ -36553,6 +36566,19 @@
       "migration"
     ],
     "source": ".plan/tickets/TASK-migrate-text-surfaces-to-shared-primitives.md",
+    "status": "Not Started"
+  },
+  "TASK-MIGRATE-THE-STRUCTURALLY-BLOCKED-ARGV-CALL-SITES-TO-SRC-CLI-": {
+    "hash": "1784221",
+    "git_issue": "1784221",
+    "extid": "TASK-MIGRATE-THE-STRUCTURALLY-BLOCKED-ARGV-CALL-SITES-TO-SRC-CLI-",
+    "type": "TASK",
+    "title": "Migrate the structurally blocked argv call sites to src/cli/parser",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-cli-tooling-optique",
+    "tags": [],
+    "source": ".plan/tickets/TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-.md",
     "status": "Not Started"
   },
   "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR": {

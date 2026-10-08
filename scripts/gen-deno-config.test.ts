@@ -1,4 +1,7 @@
-import { afterEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { existsSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
 import { buildDenoConfig, stableStringify, transformCommand, } from "./gen-deno-config";
 
 const SAMPLE: {
@@ -106,6 +109,62 @@ describe("idempotency", () => {
   });
 });
 
-afterEach(() => {
-  // no shared state to reset
-},);
+// ── CLI ────────────────────────────────────────────────────────
+
+const SCRIPT = `${import.meta.dir}/gen-deno-config.ts`;
+
+/** Run the generator in `cwd`; it resolves package.json/deno.json from there. */
+function run(cwd: string, ...args: string[]) {
+  const proc = Bun.spawnSync(["bun", SCRIPT, ...args,], { cwd, },);
+  return {
+    exitCode: proc.exitCode,
+    stdout: proc.stdout.toString(),
+    stderr: proc.stderr.toString(),
+  };
+}
+
+describe("gen-deno-config CLI", () => {
+  let dir: string;
+
+  beforeEach(() => {
+    dir = mkdtempSync(join(tmpdir(), "gen-deno-config-",),);
+    writeFileSync(join(dir, "package.json",), JSON.stringify(SAMPLE,),);
+  },);
+
+  afterEach(() => {
+    rmSync(dir, { recursive: true, force: true, },);
+  },);
+
+  test("--dry-run prints deno.json and writes nothing", () => {
+    const result = run(dir, "--dry-run",);
+    expect(result.exitCode,).toBe(0,);
+    expect(JSON.parse(result.stdout,).nodeModulesDir,).toBe("auto",);
+    expect(existsSync(join(dir, "deno.json",),),).toBe(false,);
+  });
+
+  test("--check exits 1 when deno.json is missing", () => {
+    const result = run(dir, "--check",);
+    expect(result.exitCode,).toBe(1,);
+    expect(result.stderr,).toContain("deno.json missing",);
+  });
+
+  test("--check exits 0 once the generated file is committed", () => {
+    writeFileSync(join(dir, "deno.json",), run(dir, "--dry-run",).stdout,);
+    const result = run(dir, "--check",);
+    expect(result.exitCode,).toBe(0,);
+    expect(result.stdout,).toContain("deno.json up to date",);
+  });
+
+  test("--check exits 1 on drift", () => {
+    writeFileSync(join(dir, "deno.json",), "{}\n",);
+    const result = run(dir, "--check",);
+    expect(result.exitCode,).toBe(1,);
+    expect(result.stderr,).toContain("deno.json is stale",);
+  });
+
+  test("unknown flag is rejected with exit 1", () => {
+    const result = run(dir, "--no-such-flag",);
+    expect(result.exitCode,).toBe(1,);
+    expect(result.stderr,).toContain("--no-such-flag",);
+  });
+});

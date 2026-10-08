@@ -85,33 +85,58 @@ bun run scripts/version-bump.ts                            # predict path still 
 
 ## Acceptance Criteria
 
-- [x] `@optique/core` + `@optique/run` added at `^1.2.6`
-- [x] `src/cli/parser.ts` exports `runScript` + minimal re-exports (object, option, flag, optional, withDefault; string, integer, choice)
-- [x] `src/cli/parser.test.ts` covers parse success, defaults, message-layer passthrough, integer bounds (4 tests pass)
-- [x] `version-bump.ts` migrated; existing `--sync` and `--bump=TYPE` flag contract preserved
-- [x] `commit-check.ts` migrated; `--all` and `--staged` aliases preserved; hook mode preserved
-- [x] `migrate-config.ts` migrated; `--format` now rejects junk at the parser layer
-- [x] `compress.ts` migrated; positional `argv[N]` slots become named `--dist/--public/--views/--components` flags
+- [x] `@optique/core` + `@optique/run` added
+- [x] `src/cli/parser.ts` exports `runScript` + a narrow re-export surface (combinators
+      `argument`/`flag`/`multiple`/`object`/`option`/`optional`/`withDefault`; value parsers
+      `choice`/`integer`/`string`) — extended only as real call sites required
+- [x] `src/cli/parser.test.ts` covers parse success, defaults, message-layer passthrough, integer bounds
+- [x] First wave migrated: `version-bump.ts`, `commit-check.ts`, `migrate-config.ts`, `compress.ts`,
+      `backfill-users-encryption-secret.ts` — flag contracts preserved
+- [x] Second wave migrated — 21 further call sites across `src/aux-pipeline/eval/`, `scripts/*.ts`,
+      `scripts/plan/*.ts` and `scripts/check/*.mjs`, each with a colocated parse test
 - [x] `scripts/build-frontend.mjs` updated to invoke `compress.ts` with the new named flags
-- [x] `bun run typecheck` passes; `src/cli/parser.test.ts` 4/4 passes; `bun run build:frontend` runs end-to-end (RET 0, 23 .gz/.zst/.br files produced); all 4 wired-up package.json scripts work; negative paths return RET 1 with Optique-formatted errors
-- [x] `bun install --frozen-lockfile` succeeds against the updated `package.json`
-- [ ] `src/cli/valueparsers.ts` and `docs/spec/cli-tooling.md` (deferred — tracked as future ticket)
-  - Optique ships a comprehensive value-parser catalog (`string`, `integer`, `choice`, `path`, `url`,
-    `port`, `cron`, …); no project-specific wrappers needed yet. Spec doc deferred until a third CLI
-    is migrated.
+- [x] Every flag actually passed by `package.json`, `scripts/check/parallel/gates.mjs` and
+      `.github/workflows/` is declared by the corresponding parser
+- [x] Before/after exit codes compared against the pre-migration source for every migrated script;
+      unchanged (Optique's strict rejection of unknown flags and of non-numeric `integer()` input is
+      the only intentional behaviour change)
+- [x] `docs/spec/cli-tooling.md` written — the MUST-use rule, the `runScript` API, pattern table,
+      and the gotchas that actually bite
+- [x] `bun run check` green across the migration's blast radius: `typecheck - backend` / `- frontend` /
+      `- coverage` / `- scripts`, `format - dprint`, `plan - validate`, `size - check` / `- strict`,
+      `context - weight`, `fuzz - generated tests`, `api - doc drift`, `changelog - gate`,
+      `dead - code (knip)`, `coverage - per-module line %`, `e2e - browser (baseline)`,
+      `plan - matrix`, `code-map - freshness`, `backlog - index`, `plan - ticket index (sync)`
+- [ ] `lint - eslint` and `tests - coverage gaps` are red on `src/utils/content-hash.ts`
+      (2 `padding-line-between-statements` errors + the untested `dedupeByHash` export). That file
+      belongs to a concurrent session's content-dedup work and is not part of this migration; it was
+      left untouched deliberately rather than fixed here.
+- [x] `src/cli/valueparsers.ts` and `src/cli/log.ts` dropped rather than built — Optique ships a full
+      value-parser catalog and no call site needed a project-specific wrapper or an `onExit` logger
+      bridge. Recorded under the epic's "Deliberately not built".
 
 ## Files Touched
 
 ```
-.plan/epics/epic-cli-tooling-optique.md       (new — research & plan)
+.plan/epics/epic-cli-tooling-optique.md            (research, plan, status)
 .plan/tickets/TASK-optique-cli-tooling-integration.md  (this file)
-src/cli/parser.ts                             (new)
-src/cli/parser.test.ts                        (new)
-src/scripts/version-bump.ts                   (migrate)
-src/scripts/commit-check.ts                   (migrate)
-src/config/migrate-config.ts                  (migrate)
-src/build/compress.ts                         (migrate)
-scripts/build-frontend.mjs                    (update caller)
-package.json                                  (+ 2 deps)
-bun.lock                                      (auto)
+docs/spec/cli-tooling.md                          (new — house spec + MUST-use rule)
+src/cli/parser.ts                                 (new; re-export surface widened to argument/multiple)
+src/cli/parser.test.ts
+src/scripts/version-bump.ts
+src/scripts/commit-check.ts
+src/scripts/backfill-users-encryption-secret.ts
+src/config/migrate-config.ts
+src/build/compress.ts
+src/aux-pipeline/eval/cli.ts
+scripts/build-verify.ts, check-changelog.ts, check-context-weight.ts, check-file-size.ts,
+  check-frontend-banned-patterns.ts, check-licenses.ts, check-spdx.ts, audit-runtime-compat.ts,
+  gen-deno-config.ts, gen-pkg-from-deno.ts, generate-schema-fuzz.ts, i18n-reconcile.ts,
+  run-benchmarks.ts
+scripts/plan/normalize-statuses.ts, normalize-plan-metadata.ts, epic-owner-pick.ts
+scripts/check/coverage.mjs, weave-damage.mjs, api-doc-drift.mjs, jscpd-ratchet.mjs, test-gaps.mjs
+scripts/build-frontend.mjs                         (update caller)
+colocated *.test.ts / *.test.mjs                  (one per migrated script)
+package.json                                       (+ 2 deps)
+bun.lock                                          (auto)
 ```

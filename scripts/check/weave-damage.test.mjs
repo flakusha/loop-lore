@@ -8,7 +8,14 @@
 // legitimate >15-char repeat in it reads as weave damage.
 
 import { expect, test, } from "bun:test";
-import { copyFileSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import {
+  copyFileSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { countConsecutiveDupes, } from "./weave-damage.mjs";
@@ -85,8 +92,18 @@ function withRepo(fn,) {
   try {
     mkdirSync(join(dir, "scripts", "check",), { recursive: true, },);
     // The gate resolves its repo root from its own location, so the copy has
-    // to sit at <repo>/scripts/check/ for PROJECT_ROOT to be the fixture.
-    copyFileSync(join(import.meta.dir, "weave-damage.mjs",), join(dir, "scripts", "check", "weave-damage.mjs",),);
+    // to sit at <repo>/scripts/check/ for PROJECT_ROOT to be the fixture. It
+    // also imports the shared Optique wrapper, so `src/cli` and node_modules
+    // are symlinked in — the scan only reads git paths, so these never affect
+    // what the gate measures.
+    const repoRoot = join(import.meta.dir, "..", "..",);
+    copyFileSync(
+      join(import.meta.dir, "weave-damage.mjs",),
+      join(dir, "scripts", "check", "weave-damage.mjs",),
+    );
+    mkdirSync(join(dir, "src",), { recursive: true, },);
+    symlinkSync(join(repoRoot, "src", "cli",), join(dir, "src", "cli",), "dir",);
+    symlinkSync(join(repoRoot, "node_modules",), join(dir, "node_modules",), "dir",);
     git(["init", "-q", ".",],);
     git(["config", "user.email", "gate@example.com",],);
     git(["config", "user.name", "gate",],);
@@ -99,12 +116,15 @@ function withRepo(fn,) {
   }
 }
 
-function runGate(dir,) {
-  const proc = Bun.spawnSync(["bun", "run", join(dir, "scripts", "check", "weave-damage.mjs",),], {
+function runGate(dir, { args = [], weaveBase = "HEAD", } = {},) {
+  const env = { ...isolatedGitEnv(), };
+  if (weaveBase !== null) { env.WEAVE_BASE = weaveBase; }
+  else { delete env.WEAVE_BASE; }
+  const proc = Bun.spawnSync(["bun", "run", join(dir, "scripts", "check", "weave-damage.mjs",), ...args,], {
     cwd: dir,
     stdout: "pipe",
     stderr: "pipe",
-    env: { ...isolatedGitEnv(), WEAVE_BASE: "HEAD", },
+    env,
   },);
   return { code: proc.exitCode, out: new TextDecoder().decode(proc.stdout,), };
 }
@@ -130,5 +150,36 @@ test("a new file is skipped, not scored against a zero baseline", () => {
     expect(out,).toContain("1 new (no baseline)",);
     expect(out,).not.toContain("brand-new.ts",);
     expect(code,).toBe(0,);
+  },);
+});
+
+// Argv contract after the Optique migration: the positional ref, the
+// WEAVE_BASE fallback, and the zero-arg no-op the gate registry relies on
+// (`checks["weave - damage scan"]` is NOOP_OK unless WEAVE_BASE is set).
+test("a positional ref drives the scan with no WEAVE_BASE set", () => {
+  withRepo((dir,) => {
+    writeFileSync(join(dir, "tracked.ts",), `${sixteen}\n${sixteen}\n`, { flag: "a", },);
+    const { code, out, } = runGate(dir, { args: ["HEAD",], weaveBase: null, },);
+    expect(out,).toContain("tracked.ts",);
+    expect(code,).toBe(1,);
+  },);
+});
+
+test("zero args with no WEAVE_BASE is a skipped no-op that exits 0", () => {
+  withRepo((dir,) => {
+    const { code, out, } = runGate(dir, { weaveBase: null, },);
+    expect(out,).toContain("skipped (no base ref",);
+    expect(code,).toBe(0,);
+  },);
+});
+
+test("an undeclared flag is a parse error, not a base ref named --nope", () => {
+  withRepo((dir,) => {
+    const proc = Bun.spawnSync(
+      ["bun", "run", join(dir, "scripts", "check", "weave-damage.mjs",), "--nope",],
+      { cwd: dir, stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
+    );
+    expect(proc.exitCode,).toBe(1,);
+    expect(new TextDecoder().decode(proc.stderr,),).toContain("--nope",);
   },);
 });

@@ -12,6 +12,7 @@
  * increase on any task, 2 = harness error.
  * `--update-baseline` rewrites baseline.json from the current run.
  */
+import { flag, object, runScript, withDefault, } from "../../cli/parser";
 import { createLogger, getLogger, } from "../../logger";
 import { asError, safeJsonStringify, } from "../../utils";
 import { EVAL_CORPUS, } from "./corpus";
@@ -20,6 +21,10 @@ import { runPromptEval, } from "./runner";
 import { type Baseline, diffBaseline, reportMetrics, type TaskReport, } from "./score";
 
 const BASELINE_URL = new URL("./baseline.json", import.meta.url,);
+
+const parser = object({
+  updateBaseline: withDefault(flag("--update-baseline",), false,),
+},);
 
 /** Read the stored baseline; missing file ⇒ empty (first run seeds it). */
 async function readBaseline(): Promise<Baseline> {
@@ -57,7 +62,12 @@ function resolveMode(): Parameters<typeof createEvalEnv>[0] {
 async function main(): Promise<void> {
   createLogger({ level: "info", },);
   const log = getLogger().child({ module: "eval:prompts", },);
-  const updateBaseline = process.argv.includes("--update-baseline",);
+  const { updateBaseline, } = runScript(parser, {
+    programName: "eval:prompts",
+    brief: "Run the prompt-eval fixture corpus against the deterministic mock provider.",
+    help: "option",
+  },);
+
   let env;
   try {
     env = await createEvalEnv(resolveMode(), EVAL_CORPUS,);
