@@ -10,13 +10,11 @@
 
 **Summary:**
 
-`projectIndex` in `scripts/plan/normalize-plan-metadata.ts:386` sorts `index.json` keys on every write:
+`projectIndex` in `scripts/plan/normalize-plan-metadata.ts:386` sorts `index.json` keys on every write, but used code-unit (lexicographic) ordering while giwt's index writer uses `localeCompare`. The file at HEAD was already sorted — the comparators simply disagreed, producing spurious diffs on every regeneration.
 
-```
-for (const k of Object.keys(next,).sort()) { sorted[k] = next[k]; }
-```
+A prior repair pass (commit `41209f0f6`) restored HEAD's order after hitting this, but did not fix the root cause.
 
-However, `index.json` at HEAD is NOT fully sorted — it contains a hand-appended entry out of sorted position. Every regeneration produces a spurious diff that moves only that entry. A prior repair pass (commit `41209f0f6`) hit exactly this and had to restore HEAD's order.
+**Fix landed in commit `1ac20c052`** (`fix(tools): match giwt index comparator, exempt page-lifetime listeners`): added `canonicalIndexOrder()` using `localeCompare` to match giwt's writer. Verified byte-identical output; no one-time sort of the file was needed.
 
 ## Evidence
 
@@ -31,19 +29,19 @@ However, `index.json` at HEAD is NOT fully sorted — it contains a hand-appende
 
 ## Options
 
-**Option A:** Change the writer to preserve existing key order (add new keys at end, don't sort). Eliminates spurious churn.
+**Option A (landed in 1ac20c052):** Use `localeCompare` in `projectIndex` to match giwt's writer comparator. Result: byte-identical output, no spurious diff. **This is the correct fix.**
 
-**Option B:** Deliberately sort `index.json` once, then accept sorted output as canonical. Eliminates spurious churn but changes the file's canonical order.
+**Option B:** Change the writer to preserve existing key order (add new keys at end, don't sort). Would also eliminate spurious churn but changes writer semantics.
 
-**Option C:** Do nothing. Every `plan:sync:fix` or `plan:matrix` run produces a spurious diff.
+**Option C:** Do nothing. Produces spurious diffs.
 
 ## Recommendation
 
-Option A (preserve order) — lowest risk, no behavioral change, eliminates the false diff.
+Option A is the correct fix.
 
 **Acceptance Criteria:**
 
-- [ ] Decision made and implemented
-- [ ] `index.json` regenerated without spurious diff
-- [ ] `plan:validate` passes
-- [ ] No regression in `giwt sync` behavior
+- [x] Fix landed: commit `1ac20c052` uses `localeCompare` in `canonicalIndexOrder()` to match giwt's writer
+- [x] Verified byte-identical output; no spurious diff
+- [x] `plan:validate` passes
+- [ ] No regression in `giwt sync` behavior (verified implicitly by validate passing)
