@@ -115,20 +115,30 @@ Visual styling applied to the entire message bubble:
 
 ### Phase 2: Emotion-Triggered Effects
 
-- [ ] Create emotion → effect mapping configuration
-- [ ] Wire to emotion detection output (if available)
-- [ ] Apply effect class to message bubble based on emotion
-- [ ] Fallback: no effects if emotion detection disabled
-- [ ] Add max effects per message cap (default 3)
+- [x] Create emotion → effect mapping configuration
+- [x] Wire to emotion detection output (if available)
+- [x] Apply effect class to message bubble based on emotion
+- [x] Fallback: no effects if emotion detection disabled
+- [x] Add max effects per message cap (default 3)
+
+Notes: mapping lives in `src/frontend/effects/overlays.ts` (`emotionFx` /
+`emotionFxClass` / `applyEmotionFx`), reusing the shipped text-fx core
+classes — no new animation code. Only angry → shake, happy → glow,
+sad → fade have core equivalents; other emotions fall back to no effect.
+One emotion maps to one effect, so the cap holds inherently.
 
 ### Phase 3: Overlay Components
 
-- [ ] Create `src/frontend/effects/overlays.ts` — overlay renderer
-- [ ] Implement status bar overlay (HP, MP, conditions from RPG data)
-- [ ] Implement condition icons overlay (auto-detected from content)
-- [ ] Implement location badge (section boundary, click for info)
-- [ ] Implement time badge (in-world or real timestamp)
-- [ ] Add `aria-label` for screen reader accessibility
+- [x] Create `src/frontend/effects/overlays.ts` — overlay renderer
+- [x] Implement status bar overlay (HP, MP, conditions from RPG data)
+- [x] Implement condition icons overlay (auto-detected from content)
+- [x] Implement location badge (section boundary, click for info)
+- [x] Implement time badge (in-world or real timestamp)
+- [x] Add `aria-label` for screen reader accessibility
+
+Notes: location badge is a non-clickable span — no location-info panel
+exists to open, so title/aria-label carry the context instead. Helpers are
+exposed on window via `src/frontend/alpine-init.ts` for Alpine templates.
 
 ### Phase 4: Message Decoration
 
@@ -184,15 +194,15 @@ Visual styling applied to the entire message bubble:
 
 ## Acceptance Criteria
 
-- [ ] Typewriter effect renders text character-by-character
-- [ ] Glow effect applies colored text-shadow
-- [ ] Emotion-triggered effects work (angry → shake)
-- [ ] Status bar shows above messages (when RPG active)
-- [ ] Condition icons appear on relevant messages
-- [ ] Location badge shows at section boundaries
+- [x] Typewriter effect renders text character-by-character
+- [x] Glow effect applies colored text-shadow
+- [x] Emotion-triggered effects work (angry → shake)
+- [x] Status bar shows above messages (when RPG active)
+- [x] Condition icons appear on relevant messages
+- [x] Location badge shows at section boundaries
 - [ ] Border accent colors are unique per character
 - [ ] Background tints apply based on scene type
-- [ ] All effects respect prefers-reduced-motion
+- [x] All effects respect prefers-reduced-motion
 - [ ] Settings toggle works for each category
 - [ ] No performance degradation vs uneffected chat
 - [ ] Plugin interface allows custom effects
