@@ -73,7 +73,7 @@ Sources store an explicit `ordinal` ("first" = 0, "second" = 1) in
 `branch_merge_sources`, so the ordinal-sensitive modes are stable regardless
 of selection order.
 
-### Database — forward migration `040_conversation_merge.ts`
+### Database — forward migration `046_conversation_merge.ts`
 
 - `branch_merges` — one row per merge: `chat_id`, `base_message_id` (the
   lowest common ancestor), `mode` CHECK (`combined`, `second-over-first`,

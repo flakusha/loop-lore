@@ -114,6 +114,12 @@
 - [ ] **Assistant Entity Access & Manipulation** — assistant access to RAG documents, assets, worlds, locations, characters, items, inventory; addition, modification, duplication, adaptation. 12 tasks. Spec: `epic-assistant-entity-access.md`. | proposal
 - [x] **Token budget advisor** (`FEAT-068`) — ✅ done (real-time context-window usage meter + trim suggestions). |
 - [ ] **Conversation branching** (`FEAT-045`, `FEAT-046`, `FEAT-047`) — branching data model (tree-structured chat with fork points), branch navigation API, and branch UI controls (fork/resume/compare). Builds on existing chat tree with `parent_id`. |
+  - `TASK-branch-merge-db-migration-039.md` — merge-record schema
+  - `TASK-branch-merge-service-and-criteria-engine.md` — merge service + mode engine
+  - `TASK-branch-merges-routes-and-typebox-schemas.md` — HTTP surface
+  - `TASK-branch-merge-frontend-wizard-ui.md` — merge wizard UI
+  - `TASK-branch-merge-continuation-semantics.md` — synthetic branch + continue flow
+  - `TASK-branch-merge-tests-and-coverage.md` — service, route and frontend tests
 - [ ] **Emotion-avatar pipeline completion** — binding render path (persist→read→per-message resolve), regeneration control (subset/slot re-roll + durable jobs), context transforms + in-browser cropper — design: `matrix-emotion-avatar-assets.md` AV1–AV3, `epic-emotion-avatar-message-binding.md` +2 | proposal (docs on `plan-emotion-avatar-epics`)
 - [x] **VN mode settings exposure/access** — 7 interlocking bugs: visualNovel type mismatch (API Boolean vs DB Number), mode locked once chat has messages (in `KEY_MECHANIC_PARAMS`), redundant state (chats.visual_novel + gm_config.visualNovel), settings save blocks gmConfig for online chats, no Master/GM role restriction on settings change, 5 missing VN fields (imageScaling, autoAdvanceDelay, etc.), umbrella task `66c4c3d`. Umbrella ticket: `TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings` (HIGH) — ✅ Resolved 2026-09-05 (`1b9b0cdf`, `5266f2cb`, `e14d3aaa`, `a16490a7`; cluster file pruned 2026-09-26, resolution lives on the ticket) |
 - [ ] **Avatar alpha + VN sprite layering** — provider transparency capability, async matting fallback, `has_alpha` render branch, VN compositor layer — `epic-avatar-alpha-vn-layering.md` | proposal
