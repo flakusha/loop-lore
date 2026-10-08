@@ -1,9 +1,11 @@
 import { describe, expect, test, } from "bun:test";
 import {
   chatDraftMethods,
+  chatDraftStoreFor,
   clearDraft,
   DRAFT_MAX_CHARS,
   DRAFT_MAX_CHATS,
+  draftKey,
   type DraftStore,
   readDraft,
   readDraftIndex,
@@ -125,6 +127,20 @@ describe("draft storage helpers", () => {
     const store = throwingStore();
     expect(() => writeDraft(store, "c1", "hi",)).not.toThrow();
     expect(() => clearDraft(store, "c1",)).not.toThrow();
+  });
+});
+
+describe("chatDraftStoreFor", () => {
+  test("factory store shares one namespace with the module helpers", () => {
+    const store = memStore();
+    const drafts = chatDraftStoreFor(store,);
+    expect(drafts.key("c1",),).toBe(draftKey("c1",),);
+
+    writeDraft(store, "c1", "typed on desktop",);
+    expect(drafts.read("c1",)?.text,).toBe("typed on desktop",);
+
+    drafts.write("c1", "typed on mobile",);
+    expect(readDraft(store, "c1",)?.text,).toBe("typed on mobile",);
   });
 });
 
