@@ -11,6 +11,7 @@ import type { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { LoggerImpl, } from "../../logger/logger";
 import { registry, } from "../../plugins/registry";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, } from "../../test-utils/insert-helpers";
@@ -423,8 +424,12 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
     // partial DB outage mid-batch. The contract: executeToolCalls must catch
     // the error, log it, and still return the full results array so the
     // generation loop in non-stream.ts / stream-to-client.ts can continue.
-    // Capture console.error so the test output stays clean.
-    const errorSpy = spyOn(console, "error",).mockImplementation(() => {},);
+    // Capture the logger's error sink so the test output stays clean. The
+    // persist-failure path logs through the structured logger (epic-logging),
+    // so spy there rather than on console. `child()` returns a fresh instance
+    // per call, so the spy has to sit on LoggerImpl.prototype to be seen by the
+    // lazily-resolved child the production code obtains.
+    const errorSpy = spyOn(LoggerImpl.prototype, "error",).mockImplementation(() => {},);
 
     const realInsertInto = db.insertInto.bind(db,);
     let calls = 0;

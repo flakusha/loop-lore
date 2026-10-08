@@ -11,6 +11,7 @@
  */
 import { Elysia, t, } from "elysia";
 import { CharacterInternalTraitsService, } from "../../characters/services/internal-traits";
+import { getLogger, } from "../../logger";
 import { type HandlerOpts, requireActorAccess, } from "../actor-auth";
 import { jsonError, jsonResponse, } from "../http-utils";
 
@@ -213,10 +214,19 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts, prefix = "/api"
     },);
 }
 
+/** Child logger scoped to this route module. */
+function log() {
+  return getLogger().child({ module: "character-internal-traits", },);
+}
+
 /**
  * @param msg
  * @param err
  */
 function logErr(msg: string, err: unknown,): void {
-  console.error(`[character-internal-traits] ${msg}`, err,);
+  try {
+    log().error(msg, err instanceof Error ? err : undefined,);
+  } catch {
+    // Logger not initialized yet — nothing to log through, swallow.
+  }
 }

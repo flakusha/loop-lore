@@ -9,6 +9,7 @@
 import { Elysia, t, } from "elysia";
 import { NpcMovementIndicatorService, } from "../../chat/npc-movement";
 import { checkChatAccess, } from "../../chat/service";
+import { getLogger, type Logger, } from "../../logger";
 import type { HandlerOpts, } from "../actor-auth";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 
@@ -134,5 +135,17 @@ interface MovementEvent {
  * @param err
  */
 function logErr(msg: string, err: unknown,) {
-  console.error(`[npc-movement] ${msg}`, err,);
+  log()?.error(msg, err instanceof Error ? err : new Error(String(err,),),);
+}
+
+/**
+ * Lazily resolve the module logger (null before logger init).
+ * @returns the child logger, or null when no root logger exists yet
+ */
+function log(): Logger | null {
+  try {
+    return getLogger().child({ module: "npc-movement", },);
+  } catch {
+    return null;
+  }
 }
