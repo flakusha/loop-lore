@@ -43,8 +43,7 @@ if (ISOLATED) {
 }
 
 const { buildPreview, } = await import("./merge-preview");
-const { finalizeMergeRow, guardDraftToConfirmed, insertMergeRow, insertSourceRows, updateMergeMetadata, } =
-  await import("./merge-store");
+const { insertMergeRow, insertSourceRows, updateMergeMetadata, } = await import("./merge-store");
 
 const { MergeMode, } = await import("./merge-criteria");
 
