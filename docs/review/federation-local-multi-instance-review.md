@@ -127,10 +127,28 @@ Two structural notes:
 | D1 | **Cookie isolation mechanism**: per-instance cookie name (config key), hostname-scoped `Domain`, or dev-only recipe? | A cookie-name key is a config-surface change touching auth everywhere; the hostname recipe is free but depends on `*.localhost` resolving (it does on Chrome/Firefox, not on all resolvers or curl). | Dev-recipe only (distinct hostnames), no cookie-name change. Cheapest; documented limitation. |
 | D2 | **What triggers fan-out?** Every message in every consented chat, a per-chat "share with instance" toggle, or a per-chat target-peer list? | Determines the consent UI shape and whether `authorizeChatExport`'s per-peer semantics need widening. | Per-chat opt-in + all trusted peers; no per-peer targeting. |
 | D3 | **Is mesh replication user-visible on the receiving instance?** A separate "shared with me" surface, or injected into the normal chat? | Changes `mesh_deliveries` schema (needs an owning-chat FK if the latter) and the frontend scope. | Separate surface; no chat mutation from federation. |
-| D4 | **Who may grant consent** — chat owner only, or any participant? | `authorizeChatExport` gates on `federation_consented_at` alone today; a participant-granted consent may leak owner content. | Owner only. |
+| D4 | **Who may grant consent** — chat owner only, or any participant? | `authorizeChatExport` gates on `federation_consented_at` alone today; a participant-granted consent may leak owner content. Note `checkChatSettingsAccess` also admits `gm`, which is broader than "owner only" — see §6. | Owner only, and **narrow the helper or wrap it**, because the obvious reuse over-grants to GMs. |
 | D5 | **`DATA_DIR` override vs per-var overrides.** | `DATA_DIR` is a `path.resolve` at module scope (`src/config/constants.ts:13`); making it env-driven touches every section default and the JSON-schema placeholder rewrite (`src/config/schema-class/json-schema/index.ts:36-47`). | Env override with the resolved-path default preserved. |
 | D6 | **Migration safety for two processes** — leader election, or document "migrate first, then run both"? | Two SQLite processes racing DDL is a real corruption risk (`docs/spec/multi-instance-reconciliation.md`). | Document the sequence; defer leader election to the reconciliation epic. |
 | D7 | **Is `config.federation.peers` the sole peer source, or does admin UI write it?** | Two sources of truth for `mesh_peers` vs config drift. | Config is authoritative at boot; UI is read-only until an explicit override is designed. |
+
+## 6. Authorization gaps this review found in the code to be wired
+
+Distinct from the dead-path finding: these are properties of the **existing** functions that the new routes will expose. They are not visible from the dead-path evidence alone, and an implementer following the tickets without reading them would reproduce the gaps.
+
+| Function | Actor param? | What it actually enforces | Consequence if a route calls it directly |
+| --- | --- | --- | --- |
+| `grantChatFederationConsent` / `revokeChatFederationConsent` (`src/federation/clearance.ts:114,130`) | **No** — `(database, chatId)` | Nothing. `UPDATE chats SET federation_consented_at = ? WHERE id = ?` with no ownership predicate. | Any authenticated user could set or clear consent on **any** chat by id. An IDOR on the consent flag, which is exactly the gate that authorizes content egress. Owner check must live in the route; there is no service-layer defense. |
+| `authorizeChatExport` (`src/federation/clearance.ts:74-80`) | **No** — `(database, {chatId, peerOrigin})` | Chat exists, tier is `standard`, `federation_consented_at` is non-NULL. | Proves nothing about whether the *caller* may act on that chat. It is a content gate, not an authorization gate. Must not be mistaken for one. |
+| `assertTrustedPeer` (`src/federation/sharing.ts:67-79`) | Origin only | Row exists in `mesh_peers` with `state = 'trusted'`. | Peer-level trust. It answers "is this origin a trusted sender", never "may this user export this chat". Substituting it for a user check would authorize any peer to reach any consented chat. |
+| `upsertPeer` (`src/federation/coordinator.ts:49`) | **No** — `(database, {origin, state})` | Writes the trust row. | Legitimate **only** as an operator-boot path. Becomes a privilege grant the moment it is reachable from a request — relevant because bootstrapping peers from config (ticket 1) is what makes it non-empty for the first time. |
+
+The mesh receiver routes are already correct: `authorizeMeshPeer` (`src/routes/federation-mesh.ts:44-60`) canonicalizes the claimed origin (400) then requires a trusted peer (403), and it is default-deny because `mesh_peers` is empty in production today. Two consequences follow:
+
+1. The security posture of the whole mesh **inverts** when ticket 1 lands. Until then the deny path is total; afterward it is real. The negative case (unlisted origin → 403) needs an explicit test in that ticket or the change is untested at exactly the moment it starts mattering.
+2. Every new user-facing route must add its own **user**-level check. The available helper is `checkChatSettingsAccess` (`src/chat/service/access.ts:175`), which admits `admin.chat`, `chats.created_by`, `role_in_chat = 'owner'`, and `role_in_chat = 'gm'` (`:181-217`). Under decision D4 ("owner only") that is **too broad** — a GM could grant consent over the owner's objection. Reusing it unmodified would silently resolve D4 the permissive way. This is the one place where the obvious implementation is wrong.
+
+None of these are vulnerabilities today, because none of the functions is reachable from a route. They are landmines that arm the moment the wiring tickets land, which is why they are recorded here rather than discovered during implementation.
 
 ## Related work
 
