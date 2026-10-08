@@ -3,12 +3,12 @@
 
 # EPIC: Player Agency — Story Points
 
-**Tags:** (none)
+**Tags:** agency, story-points, meta-currency, reroll, player-control, bdi, npc, goal-pursuit, emergent-narrative, prompt-assembly
 **Overview:** (see sections below)
 
 
 **Status:** Not Started
-**Status Note:** Not Started
+**Status Note:** code audit 2026-10-08: `actor_story_points` table ships (migration 019); spend validation + pipeline hook + gradient acceptance open in `TASK-storypoints-acceptance.md`
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -160,6 +160,8 @@ When generating NPC plans and reactions, the prompt includes:
 
 ### Tasks
 
+> **REFERENCE ONLY — do not implement from this table.** The NPC goal-pursuit task table below is superseded: implemented under `epic-research-agency-decision.md` (see BDI scope note in §Related).
+
 | Task | Description | Priority | Status |
 |------|-------------|----------|--------|
 | `TASK-npc-bdi-planning` | BDI goal-pursuit loop: daily planning, task decomposition, reaction, plan revision, chat buffer | High | Not Started |
@@ -193,13 +195,19 @@ When generating NPC plans and reactions, the prompt includes:
 ## Tasks
 
 - TASK-story-points-prototype
-- Schema: `actor_story_points` table (per actor/world)
+- Schema: `actor_story_points` table (per actor/world) — ships (migration `019_actor_story_points.ts`); acceptance open in `TASK-storypoints-acceptance.md`
 - UI: spend affordance in chat input
 - Hook into generation pipeline (bias / retry path)
 
+## Spec Alignment
+
+- `docs/spec/agency-story-points.md` — authoritative for `actor.properties.storyPoints`: earn paths (trait roleplay, arc completion, in-world achievements) and spend paths (reroll, aspect invoke, twist, generation retry, memory/lorebook bias) plus the `/agency` UI spend affordance this epic's chat-input hook implements.
+- `docs/spec/autonomy-determinism.md` — seed/jitter contract governs the BDI reflection pass (`bdi-nightly.ts` / `bdi-reflection.ts`); reflection timing MUST use seeded jitter, never wall-clock randomness.
+- `docs/spec/npcs.md` — `npc_states` is the Belief layer for the BDI table above (semantic memory + world state); plan/reaction writes land there, not in ad-hoc tables.
+
 ## Related
 
-Autonomy orchestration + rate governance (scheduler, budgets, kill switch): `epic-actor-autonomy-story-drive.md` — BDI decisions are dispatched by that loop.
+Autonomy orchestration + rate governance (scheduler, budgets, kill switch): `epic-actor-autonomy-story-drive.md` — BDI decisions are dispatched by that loop. Backlink confirmed: autonomy Related cites this epic as its BDI loop host.
 
 `epic-rpg-mechanics.md`, `epic-assistant-generation-extensions.md`,
 `epic-emergent-narrative-design.md`
@@ -213,3 +221,4 @@ Autonomy orchestration + rate governance (scheduler, budgets, kill switch): `epi
 ## Linked Tasks
 
 - TASK-agency-story-points.md
+- `TASK-storypoints-acceptance.md` — spend validation, generation-pipeline hook, gradient levels (open)

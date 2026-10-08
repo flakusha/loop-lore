@@ -583,11 +583,17 @@ aspirations, disposition, coping, approach, autonomy, and voice.
 | `src/assistant/prompt/sections/actor-internal.test.ts` | Section emits hidden state + directive; coping triggers on low happiness; approach anti-collapse; autonomy + aspiration integration |
 | `src/characters/integration-internal.test.ts`          | create → validate → store → prompt → redacted-read pipeline (all 6 dimensions) |
 
+## Spec Gap
+
+No dedicated spec doc covers D7–D9 (coping, approach, autonomy). `docs/spec/character-spec.md` references them as first-class fields without a schema — this epic IS the spec. Do not invent a `docs/spec/internal-traits.md`; implement here and cite back from character-spec when done.
+
 ## Related Epics
 
 - `epic-character-core-system.md` — base character model, personality traits, RPG stats
 - `epic-character-spec.md` — unified spec, validation modes, review workflow (role model for redaction roles)
 - `epic-agency-story-points.md` — runtime goal progression consumes this epic's aspiration data
+- `epic-character-growth.md` — backlink: `toPublicCard()` merge target; growth's `redactForPlayerCard()` folds into this epic's shared redaction once it lands
+- `epic-actor-autonomy-story-drive.md` — backlink: D9 autonomy preferences consumed by the autonomy governor at runtime
 - `epic-world-diplomacy-karma.md` — karma/reputation (distinct from per-character disposition)
 - `epic-social-interaction.md` — deception/intimidation mechanics consume hidden disposition
 - `epic-assistant-gm-flows.md` — GM authoring UI for hidden state
@@ -613,3 +619,4 @@ The task-management skill is better suited for projects without existing task in
 ## Tickets
 
 - `.plan/tickets/TASK-char-internal-*.md` — one per task above (created on task start)
+- `TASK-traits-voice-priority-decision.md` — decide D10 Voice scope vs D1-D9 (record priority decision; epic is Draft)

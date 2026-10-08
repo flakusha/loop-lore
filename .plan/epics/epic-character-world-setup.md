@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** schema + service + seed hook shipped; resolution integration pending
+**Status Note:** code audit 2026-10-08: schema + service + seed hook + resolution helper ship (`001_init.ts:1444`); remaining work is Layer 3 story-overlay follow-on + NSFW world-scope decisions (`TASK-worldsetup-layer3-nsfw-decision.md`)
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -156,10 +156,11 @@ phase 2.
 - [x] Prompt assembly consumes `scenario_override` / `system_prompt_override`
 - [x] Starting inventory seeds `world_items` on first join
 - [x] Import/export carries `character_world_setup` rows
+- [ ] Layer 3 story-overlay follow-on + NSFW table world-scope decisions (desire/body/heat/fantasies: global vs world) — `TASK-worldsetup-layer3-nsfw-decision.md`
 
 ## Files
 
-- `src/db/migrations/060_character_world_setup.ts` — schema migration
+- `src/db/migrations/001_init.ts:1444` — schema migration (`character_world_setup` table; epic's old 060 path was wrong)
 - `src/db/schema-character.ts` — generated `CharacterWorldSetup` interface
 - `src/characters/world-setup/types.ts` — row + input + resolution types
 - `src/characters/world-setup/crud.ts` — CRUD dispatchers
@@ -167,6 +168,26 @@ phase 2.
 - `src/characters/world-setup/index.ts` — `CharacterWorldSetupService`
 - `src/story/world-state/init.ts` — seed hook
 - `src/test-utils/insert-helpers.ts` — generated insert helper
+
+## Spec Alignment
+
+- `docs/spec/worlds.md` — world model layers this setup bundle overlays
+  (Layer 2 on base, under current-state and story overlay).
+- `docs/spec/character-spec.md` — Layer 0 base fields (`actors` core)
+  the overrides merge over; overrides MUST NOT mutate base.
+- `docs/spec/inventory.md` — `starting_inventory` seed contract: seeds
+  `world_items` on first join when empty, never overwrites.
+- `docs/spec/lore.md` — `actor_lore_entries.world_id` scoping for the
+  world-scoped lore complement in this bundle.
+
+## Acceptance
+
+- Resolution order is base → world → current: later layers override
+  earlier; verified by a merge test with all three layers populated.
+- Seed-does-not-override: first join with non-empty `world_items`
+  leaves current inventory untouched.
+- Override-null-means-inherit: null `scenario_override` /
+  `system_prompt_override` falls back to base; only non-null overrides.
 
 ## Related
 
@@ -176,3 +197,4 @@ phase 2.
 - `epic-character-core-system.md` — base setup (Layer 0)
 - `TASK-world-item-instance-npc.md` — item placement onto NPCs
 - `epic-wardrobe-avatar-variants.md` — per-world outfit binding rules + `chat_wardrobe_overrides` live in `character_world_setup`/world avatar config; `starting_inventory` is the bridge to loadout-driven outfit switching
+- `epic-character-growth.md` — backlink: backstory/arc overlap; growth consumes per-world setup as arc baseline

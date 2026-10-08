@@ -6,6 +6,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
+// hint: Cosmetic change on both sides. Pick either version or combine formatting.
 **Tags:** chat, slash-commands, composer, autocomplete, command-palette, assistant-flows, group-chat
 **Overview:** Unified `/...` slash-command UX for direct chat, group chat, and assistant sessions: a server-backed command palette hydrating from the live assistant registry, keyboard-navigable autocomplete with did-you-mean, role-filtered `/help`, toggleable pre-send markdown preview, and Tab-accept parity across commands/mentions/emoji.
 
@@ -35,6 +36,7 @@
 
 ## Acceptance
 
+// hint: Structural and logic conflict. Both design and behavior differ.
 - [x] Same live registry drives the palette and both autocomplete surfaces (`GET /api/v1/commands` → `listCommands()`); new commands appear without an FE rebuild.
 - [x] `/help` lists only commands the caller's `roleInChat` satisfies (owner-gated `/attack`, `/battle`, `/create`, `/debug`, `/heal` hidden from members); unrestricted commands always listed.
 - [x] Unknown-command typos surface a did-you-mean suggestion in the palette (`/hep` → `/help`); explicit Tab/Enter to accept, Esc dismisses; unrelated input still yields no candidates.
@@ -42,6 +44,17 @@
 - [ ] Assistant `/continue` after reload resumes, not restarts, the flow — `/continue`, `/branch`, `/retry` are not registered commands; covered by the umbrella ticket.
 - [ ] Group-chat mention-aware variants (`/roll`, `/poll`) — `/roll` exists; `/poll` is unregistered; moderation-gated commands defer to `TASK-moderation-actions-frontend`.
 - [ ] `BUILTIN_COMMANDS` in `src/assistant/command-parser.ts` is a stale static list (missing `attack`, `battle`, `quest`, `workflow`, GM-guidance verbs, etc.) used only by `isBuiltinCommand`, which has no production callers outside the barrel re-export — delete it or regenerate from the registry when touching the parser.
+
+
+## Spec Alignment
+
+- `docs/frontend/chat/commands-and-misc.md` — palette behavior, fuzzy prefix
+  match, per-context capability filtering, and keyboard navigation this
+  registry implements.
+- `docs/frontend/chat/input.md` — composer toolbar extension point hosting
+  the `/` autocomplete popup.
+- `docs/frontend/chat/group-chat.md` — role definitions gating which
+  commands each composer exposes.
 
 ## Integration Points
 
@@ -75,3 +88,7 @@
 | ----- | --------- | ------- |
 | — | — | Frontend dispatch only; no backend command execution |
 
+
+## Related
+
+- `epic-frontend-emoji-reactions.md` — shared composer autocomplete registry (one popup, `/` + `:` triggers, Tab-accept parity).
