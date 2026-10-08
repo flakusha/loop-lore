@@ -38,7 +38,8 @@ export interface PlotAutopilotOptions {
   db: Kysely<DB>;
   questEngine: QuestEngine;
   worldId: string;
-  chatId: string;
+  /** Chat the beats are proposed for (reserved for future chat-scoped filtering). */
+  chatId?: string;
 }
 
 /** */
