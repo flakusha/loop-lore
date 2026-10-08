@@ -24,7 +24,7 @@ New directory `src/chat/service/merge/` (options-object params, strict TS, no `a
 | `merge-criteria.ts` | `MergeMode` const + discriminated union of per-mode preview/confirm option types; per-mode classification (`llm` vs `overlay`); system-prompt keys; output contract types. |
 | `merge-diff.ts` | Deterministic LCS line diff + three-way overlay (shared prefix = ancestor) producing `{ kept, applied, conflict }` hunks for the overlay modes — no new dependency. |
 | `merge-llm.ts` | Prompt assembly + LLM call + safe parse; system prompt from config templates with a built-in fallback so a missing template never 500s; output shape-validated to `{ role, content }[]`. |
-| `merge-store.ts` | Kysely persistence for `branch_merges` / `branch_merge_sources` / result-row inserts (swipe-race protected). |
+| `merge-store.ts` | Kysely persistence for `branch_merges` / `branch_merge_sources` / result-row inserts (swipe-race protected); every `branch_merges` load scoped `WHERE id = ? AND chat_id = ?` so a `mergeId` outside the caller's chat never loads (row-level ownership at the DB path). |
 | `merge-service.ts` | `initiateMerge` / `buildPreview` / `confirmMerge` / `continueFromMerge` orchestration. |
 
 Mode semantics (persisted verbatim in `branch_merges.mode`; ordinal = array index):
@@ -48,4 +48,5 @@ Idempotency: initiate replays an existing draft on a repeated key (`uq_branch_me
 - [ ] Token budget: shared-prefix-first, head+tail on version overflow with `truncated` flag, hard reject when the prefix alone overflows
 - [ ] `initiateMerge` replays a repeated idempotency key as `replayed: true`
 - [ ] Results are `{ ok: true, … } | ServiceError` with options-object params and `@throws` JSDoc where functions throw
+- [ ] `merge-store` loads `branch_merges` scoped by `chat_id`; a cross-chat `mergeId` yields `not_found` without leaking existence
 - [ ] Barrel export added to `src/chat/service/index.ts`

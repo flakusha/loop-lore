@@ -11,7 +11,7 @@
 
 **Summary:** New `src/routes/chats/branch-merges.ts` composed into `chatBranchRoutes`, with TypeBox schemas in `src/validation/schemas/branch-merges.ts`, serving initiate/preview/confirm/continue under `/api/v1/chats/:id/branch-merges`.
 **Context:** Branch-merge design §3.2 + research §4.2/§7: composition precedent `branch-crud` in `src/routes/chats/branches.ts:47-65`; `{ data }` envelope + `statusFor` error mapping from `src/routes/chats/branch-shared.ts` (no 409 mapping today — extend it or reuse `conflictResponse`, `src/routes/http-utils/errors.ts`); schema barrel `src/validation/schemas/index.ts` re-exported by `src/validation/index.ts` (Elysia `t`, not Zod).
-**Acceptance Criteria:** Initiate/preview/confirm/continue endpoints with validated bodies/responses, access-guarded, idempotent initiate, 409 on concurrent confirm, envelope + error mapping consistent with the branch routes.
+**Acceptance Criteria:** Initiate/preview/confirm/continue endpoints with validated bodies/responses, each endpoint server-side access-checked per request (default-deny) with tips and `:mergeId` scoped to `:id`, idempotent initiate, 409 on concurrent confirm, envelope + error mapping consistent with the branch routes.
 **Related:** FEAT-046.md, FEAT-047.md, FEAT-message-swipe-replay-branch.md
 
 ## Summary
@@ -22,7 +22,7 @@
   - `BranchMergePreviewBody` — optional `regenerate`, `styleHint` → 200 with `kind: "llm" | "overlay"`, editable `draft` or `hunks`, `tokenEstimate`, `truncated`.
   - `BranchMergeConfirmBody` — optional `content[]`, `conflictChoices[]`, `branchName` (≤ `MAX_BRANCH_NAME_LENGTH`), `activate` (default true) → 200 `{ data: { mergeId, resultMessageIds, mergedBranchId, activeBranchId } }`.
   - `BranchMergeContinueBody` — optional `prompt`, `actorId` → 201 `{ data: { id, context } }`, mirroring `POST /chats/:id/messages`.
-- Access check via the same guard as `withBranch` (`src/chat/service/branch-helpers.ts`); every tip verified to belong to `:id` inside the transaction.
+- Access check on every endpoint (initiate/preview/confirm/continue) via the same guard as `withBranch` (`src/chat/service/branch-helpers.ts` → `checkChatAccess`: server-side, default-deny — no session → 401 from the mount chain, non-member → 404); every `sourceTips` tip and the addressed `:mergeId` row verified to belong to `:id` inside the transaction — a cross-chat id yields 404, never a cross-chat read or write.
 - Error mapping: extend `statusFor` (or reuse `conflictResponse`) so `conflict` → 409; `not_found` → 404; `forbidden` → 403; everything else → 400. Idempotent initiate replays the existing draft with `replayed: true`.
 - Response envelope: `{ data: … }` as in `branchRoute` (`src/routes/chats/branch-shared.ts`).
 
@@ -31,6 +31,7 @@
 - [ ] Initiate/preview/confirm/continue endpoints composed into `chatBranchRoutes` and reachable under `/api/v1/chats/:id/branch-merges`
 - [ ] TypeBox bodies/response schemas live in `src/validation/schemas/branch-merges.ts` and are exported via the schemas barrel
 - [ ] Initiate is idempotent (`replayed: true` on a repeated key) and access-checked with tips verified against `:id`
+- [ ] Preview/confirm/continue resolve `:mergeId` within `:id` (cross-chat `:mergeId` → 404); no endpoint relies on client-side gating
 - [ ] Concurrent confirm maps to HTTP 409; other ServiceErrors map per the extended `statusFor`
 - [ ] Route responses use the `{ data: … }` envelope of `branchRoute`
 - [ ] Route tests cover auth, cross-chat tip IDOR, 409 and idempotent replay (see `TASK-branch-merge-tests-and-coverage.md`)
