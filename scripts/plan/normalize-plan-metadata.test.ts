@@ -11,6 +11,7 @@
 import { describe, expect, test, } from "bun:test";
 import {
   applyRewrites,
+  canonicalIndexOrder,
   fieldLines,
   normalizeEpicRef,
   planFile,
@@ -18,6 +19,35 @@ import {
   relatedRefs,
   tagsOf,
 } from "./normalize-plan-metadata";
+
+describe("canonicalIndexOrder", () => {
+  test("uses localeCompare order, matching what giwt writes", () => {
+    // The real index holds both casings and giwt's localeCompare keeps the
+    // lowercase key FIRST (case is a tertiary collation level). The default
+    // code-unit sort puts uppercase first and moved it — the spurious reorder
+    // this function exists to prevent.
+    const index = {
+      "BUG-REDOS-IN-A": {},
+      "BUG-redos-in-a": {},
+      "BUG-REDUNDANT": {},
+    };
+    expect(Object.keys(canonicalIndexOrder(index,),),).toEqual([
+      "BUG-redos-in-a",
+      "BUG-REDOS-IN-A",
+      "BUG-REDUNDANT",
+    ],);
+  });
+
+  test("an already-canonical index round-trips unchanged", () => {
+    const index = { "BUG-A": {}, "BUG-redos-in-a": {}, "BUG-REDUNDANT": {}, };
+    expect(canonicalIndexOrder(index,),).toEqual(index,);
+  });
+
+  test("sorting a sorted index is a fixed point", () => {
+    const once = canonicalIndexOrder({ "B": {}, "a": {}, "C-1": {}, },);
+    expect(canonicalIndexOrder(once,),).toEqual(once,);
+  });
+});
 
 describe("projectIndex", () => {
   const files: Record<string, string> = {
