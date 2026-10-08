@@ -240,6 +240,23 @@ export function epicOf(text: string,): string {
 }
 
 /**
+ * Index entries in the canonical order giwt writes them.
+ *
+ * `localeCompare`, NOT the default comparator: giwt sorts with
+ * `localeCompare` (sync-index.ts:218), the default sort is code-unit order.
+ * Where both `BUG-redos-…` and `BUG-REDOS-…` exist, a code-unit sort moves
+ * the lowercase key on every write — a diff that looks like the pass touched an
+ * entry it never read. Matching giwt makes the write a no-op on key order.
+ */
+export function canonicalIndexOrder(
+  index: Record<string, IndexEntryLike>,
+): Record<string, IndexEntryLike> {
+  return Object.fromEntries(
+    Object.entries(index,).sort(([a,], [b,],) => a.localeCompare(b,)),
+  );
+}
+
+/**
  * Project .md tags/epic onto index entries. Returns the updated index plus
  * per-field counts. Only `tags` and `epic` are touched — status, hash, and
  * provenance stay giwt's business.
@@ -382,9 +399,9 @@ if (import.meta.main) {
     epicsFilled = ef;
     indexChanged = tf > 0 || ef > 0;
     if (indexChanged && !dryRun && !linkedWorktree) {
-      const sorted: Record<string, IndexEntryLike> = {};
-      for (const k of Object.keys(next,).sort()) { sorted[k] = next[k]; }
-      writeFileSync(indexPath, JSON.stringify(sorted, null, 2,) + "\n",);
+      // Sorted, not written in insertion order, so a key added out of band
+      // lands where giwt expects it instead of wherever it was appended.
+      writeFileSync(indexPath, JSON.stringify(canonicalIndexOrder(next,), null, 2,) + "\n",);
     }
   }
 
