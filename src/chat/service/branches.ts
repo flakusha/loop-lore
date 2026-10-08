@@ -88,11 +88,11 @@ export async function forkBranch(
     .select(["id", "chat_id",],)
     .where("id", "=", messageId,)
     .executeTakeFirst();
+
   if (!message || message.chat_id !== chatId) {
     return { code: "not_found", message: "Fork point message not found in chat", };
   }
 
-// hint: Logic changed on both sides. Requires understanding intent of each change.
   const branchId = crypto.randomUUID();
   // insertForkRow demotes the previously active row, inserts the new one as
   // active, and syncs chats.active_branch_id atomically. It also resolves
