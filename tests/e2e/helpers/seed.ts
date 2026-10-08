@@ -328,6 +328,22 @@ export async function seedAll(db: Kysely<DB>,): Promise<void> {
   await seedUsers(db,);
   await seedCharacter(db,);
   await seedChat(db,);
+
+  // The seeded character speaks in this chat: generation authorizes `actorId`
+  // against `chat_participants`, so a generate call naming SEED.character.id
+  // is denied unless the character is a member of the very chat. This lives
+  // here, not in seedChat, because chat_participants.actor_id → actors.id
+  // and seedChat is also called on its own (without seedCharacter).
+  await db
+    .insertInto("chat_participants",)
+    .values({
+      chat_id: SEED.chat.id,
+      actor_id: SEED.character.id,
+      role_in_chat: "member",
+    },)
+    .onConflict((oc,) => oc.columns(["chat_id", "actor_id",],).doNothing())
+    .execute();
+
   await seedMessage(db,);
   await seedWorld(db,);
   await seedLocation(db,);
