@@ -149,11 +149,13 @@ export function modalityTemplateRoutes(
         },);
       }
 
+      // Pre-check before any write: a wrong-modality (or foreign) id must
+      // 404 without mutating the row. Kept OUTSIDE the try so a DB read
+      // failure propagates to the 500 boundary instead of being misclassified
+      // as a client 400.
+      const existing = await ownedMatchingRow(ctx.params.id, userId,);
+      if (!existing) { return notFound("Template not found",); }
       try {
-        // Pre-check before any write: a wrong-modality (or foreign) id must
-        // 404 without mutating the row.
-        const existing = await ownedMatchingRow(ctx.params.id, userId,);
-        if (!existing) { return notFound("Template not found",); }
         const row = await updateTemplate(database, ctx.params.id, userId, patch,);
         if (!row) { return notFound("Template not found",); }
         return jsonResponse({

@@ -52,6 +52,18 @@ describe("policyForRoute", () => {
     expect(policyForRoute("/api/v1/actors/a1/emotion-avatars/jobs/j9/cancel",),).toBe(defaultPolicy,);
   });
 
+  test("emotion-avatar single generation resolves the generation policy (BUG-rate-limit-misses-post-emotion-avatars-single)", () => {
+    // POST /api/v1/actors/:actorId/wardrobe/:itemId/emotion-avatars/single
+    // ends with /single, so the /emotion-avatars suffix rule misses it.
+    expect(policyForRoute("/api/v1/actors/a1/wardrobe/o1/emotion-avatars/single",),).toBe(generationPolicy,);
+    // Batch path still resolves generationPolicy.
+    expect(policyForRoute("/api/v1/actors/a1/emotion-avatars",),).toBe(generationPolicy,);
+    // Job list/status/cancel paths stay unmatched.
+    expect(policyForRoute("/api/v1/actors/a1/emotion-avatars/jobs",),).toBe(defaultPolicy,);
+    expect(policyForRoute("/api/v1/actors/a1/emotion-avatars/jobs/j9",),).toBe(defaultPolicy,);
+    expect(policyForRoute("/api/v1/actors/a1/emotion-avatars/jobs/j9/cancel",),).toBe(defaultPolicy,);
+  });
+
   test("auth prefix resolves the auth policy", () => {
     expect(policyForRoute("/api/v1/auth/login",),).toBe(authPolicy,);
   });

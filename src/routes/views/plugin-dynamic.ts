@@ -5,7 +5,6 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { SuccessResponse, } from "../../validation/schemas";
-import { requireUserId, } from "../http-utils";
 import { serveCharacterChatListDb, serveCharacterEditForm, serveCharactersGrid, } from "./characters";
 import { serveChatsListDb, serveChatsSearch, } from "./chats";
 import { serveGalleryGrid, } from "./gallery";
@@ -62,14 +61,11 @@ export function dynamicRoutes(database: Kysely<DB>,) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
 
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-
       const url = new URL(ctx.request.url,);
       return await serveGallerySearch(
         database,
         url.searchParams,
-        userId,
+        ctx.userId as string | null,
         (ctx.userRole as string | null) ?? null,
       );
     }, {

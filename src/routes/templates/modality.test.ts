@@ -219,6 +219,35 @@ describe("per-modality template routes", () => {
     expect(res.status,).toBe(400,);
   });
 
+  test("patch DB read failure surfaces as 500, not 400 (BUG-modality-template-patch-classifies-db-read-failures-as-400-w)", async () => {
+    const app = makeApp(db, userId,);
+    const id = await createVideoId(app,);
+
+    // Wrap the database in a proxy that throws on any query to simulate
+    // a server-side DB read failure (e.g. "database is locked").
+    const throwingDb = new Proxy(db, {
+      get(target, prop,) {
+        if (prop === "selectFrom") {
+          return () => {
+            throw new Error("database is locked",);
+          };
+        }
+
+        return Reflect.get(target, prop,);
+      },
+    },);
+
+    const throwingApp = makeApp(throwingDb as unknown as Kysely<DB>, userId,);
+    const res = await patch(throwingApp, `/api/templates/video/${id}`, { name: "X", },);
+    expect(res.status,).toBe(500,);
+  });
+
+  test("patch missing row still 404s (BUG-modality-template-patch-classifies-db-read-failures-as-400-w)", async () => {
+    const app = makeApp(db, userId,);
+    const res = await patch(app, "/api/templates/video/does-not-exist", { name: "X", },);
+    expect(res.status,).toBe(404,);
+  });
+
   test("patch rejects a modality move via body", async () => {
     const app = makeApp(db, userId,);
     const id = await createVideoId(app,);
