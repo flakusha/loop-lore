@@ -116,7 +116,7 @@ async function seedConfirmedMerge(): Promise<string> {
   await finalizeMergeRow(tdb.db, {
     mergeId,
     resultMessageId: resultMsgId,
-    mergedBranchId: null,
+    mergedBranchId: "",
     confirmedAt: new Date().toISOString(),
   },);
 
