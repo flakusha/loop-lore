@@ -13,6 +13,7 @@ import {
 } from "../../validation/schemas";
 import { type HandlerOpts, } from "../actor-auth.js";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
+export const BlogFollowersListResponse = ListResponse(BlogPostResponse,);
 
 /**
  * @param opts
@@ -92,7 +93,7 @@ export function blogFollowRoutes(opts: HandlerOpts, prefix = "/api",) {
       return jsonResponse({ success: true, followers, count: followers.length, },);
     }, {
       response: {
-        200: ListResponse(BlogPostResponse,),
+        200: BlogFollowersListResponse,
         401: ErrorResponse,
         403: ErrorResponse,
       },

@@ -12,6 +12,7 @@ import {
   SuccessResponse,
 } from "../../validation/schemas";
 import { handleDefinition, handleDefinitions, handleDeleteDefinition, } from "./handlers";
+export const StoryItemDefinitionListResponse = ListResponse(StoryItemResponse,);
 
 /**
  * @param root0
@@ -93,7 +94,7 @@ export function storyItemDefinitionsRoutes({ database, }: { database: Kysely<DB>
     }, {
       params: t.Object({ worldId: Id, },),
       response: {
-        200: ListResponse(StoryItemResponse,),
+        200: StoryItemDefinitionListResponse,
         401: ErrorResponse,
         404: ErrorResponse,
       },

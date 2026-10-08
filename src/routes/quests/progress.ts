@@ -12,6 +12,7 @@ import {
   QuestResponse,
 } from "../../validation/schemas";
 import { handleProgress, } from "./handlers";
+export const QuestProgressListResponse = ListResponse(QuestResponse,);
 
 /**
  * @param root0
@@ -59,7 +60,7 @@ export function questProgressRoutes({ database, }: { database: Kysely<DB> }, pre
     }, {
       params: t.Object({ id: Id, chatId: Id, },),
       response: {
-        200: ListResponse(QuestResponse,),
+        200: QuestProgressListResponse,
         401: ErrorResponse,
         404: ErrorResponse,
       },

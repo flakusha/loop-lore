@@ -1,22 +1,20 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 265
+// size-allow: 311
 
 /**
  * generate-schema-fuzz.ts — emits src/validation/schema-fuzz.generated.test.ts.
  *
- * Scans src/validation/schemas/*.ts ON DISK, keeps every TypeBox schema those
- * modules export, and writes one `describe` block per schema:
+ * Scans TypeBox schema modules ON DISK across multiple source roots (configured
+ * in SCAN_ROOTS below), keeps every TypeBox schema those modules export, and
+ * writes one `describe` block per schema:
  *
  *   - "accepts generated values"   → schemaToArbitrary only emits valid values
  *   - "survives a JSON round-trip" → only for isJsonRoundTrippable schemas
  *
- * Discovery does NOT go through src/validation/schemas/index.ts. The barrel is
- * not the public surface: music-links, responses, responses-admin and
- * responses-interaction export live schemas that no barrel line reaches, while
- * production code imports them by module path. Barrel-based discovery silently
- * skipped 41 of them; reading the directory makes a new schema module
- * impossible to leave unwired and unfuzzed.
+ * Discovery does NOT go through index.ts barrels. Barrel-based discovery silently
+ * skipped schemas; reading the directory makes a new schema module impossible
+ * to leave unwired and unfuzzed.
  *
  * Export names collide across modules (`ActionSchema`, `AdminAuditRow`, …), so
  * each module keeps its own namespace in the generated file and each `test()`
@@ -36,7 +34,37 @@ import {
   isTypeBoxSchema,
 } from "../src/test-utils/schema-arbitrary.ts";
 
-const SCHEMA_DIR = new URL("../src/validation/schemas/", import.meta.url,);
+/** Scan roots: each entry is a directory to scan for schema modules.
+ *
+ *   - directory: on-disk path handed to the glob. The glob is RECURSIVE
+ *     (`**\/*.ts`), so this must be the NARROWEST directory that still holds
+ *     every in-scope module. Pointing the validation root at `src/validation/`
+ *     instead of `src/validation/schemas/` drags in `db-schemas.ts` (333
+ *     schemas) that was never in scope.
+ *   - importPrefix: `@/` prefix for generated import lines. Must mirror
+ *     `directory` exactly, or the emitted import does not resolve.
+ *   - moduleIdPrefix: prepended to the glob-relative path to form moduleId,
+ *     which is both the alias source and the duplicate-disambiguation tag —
+ *     must be unique across ALL roots.
+ *
+ * Example for "src/routes/blog/comments.ts" under the `routes/` root:
+ *   - glob returns: "blog/comments.ts" (relative to src/routes/)
+ *   - importPath = "@/routes/blog/comments"
+ *   - moduleId = "routes/blog/comments"
+ */
+const SCAN_ROOTS = [
+  {
+    moduleIdPrefix: "validation/",
+    importPrefix: "@/validation/schemas",
+    directory: new URL("../src/validation/schemas/", import.meta.url,),
+  },
+  {
+    moduleIdPrefix: "routes/",
+    importPrefix: "@/routes",
+    directory: new URL("../src/routes/", import.meta.url,),
+  },
+] as const;
+
 const OUT_PATH = new URL("../src/validation/schema-fuzz.generated.test.ts", import.meta.url,);
 
 /** Fixed run count + seed — a regenerated file must replay identical values. */
@@ -46,7 +74,7 @@ const FC_RUNS = { numRuns: 100, seed: 20260101, };
 interface Found {
   /** Export name, as spelled in its module. */
   name: string;
-  /** Module basename without `.ts` — source of both import path and alias. */
+  /** Full moduleId (prefix + filename) — unique across all roots; used for alias. */
   module: string;
   /** True when the same export name is also found in another module. */
   duplicate: boolean;
@@ -95,44 +123,74 @@ function format(source: string,): string {
  * future module can never cross-wire another module's schemas.
  */
 function aliasFor(module: string,): string {
-  const camel = module.replace(/-([a-z])/gu, (_, c: string,) => c.toUpperCase(),);
+  // Strip ALL path separators so "routes/api-keys" → "routesApiKeys"
+  const noSlash = module.replace(/\//gu, "_",);
+  const camel = noSlash.replace(/-([a-z])/gu, (_, c: string,) => c.toUpperCase(),);
   return /^[A-Za-z_$]/u.test(camel,) ? camel : `_${camel}`;
 }
 
-/** Schema module files on disk — never `index.ts`, never `*.test.ts`. */
-async function schemaModules(): Promise<string[]> {
-  const entries = await Array.fromAsync(
-    new Bun.Glob("*.ts",).scan({ cwd: SCHEMA_DIR.pathname, },),
-  );
-  return entries
-    .filter((e,) => e !== "index.ts" && !e.endsWith(".test.ts",))
-    .map((e,) => e.slice(0, -3,))
-    .sort();
+/** All schema module entries across every scan root. */
+async function schemaModules(): Promise<
+  Array<{
+    file: string;
+    moduleId: string;
+    importPath: string;
+    directory: URL;
+  }>
+> {
+  const entries: Array<{
+    file: string;
+    moduleId: string;
+    importPath: string;
+    directory: URL;
+  }> = [];
+  for (const root of SCAN_ROOTS) {
+    const files = await Array.fromAsync(
+      new Bun.Glob("**/*.ts",).scan({ cwd: root.directory.pathname, },),
+    );
+    for (const file of files) {
+      if (file.endsWith(".test.ts",) || file === "index.ts" || file.endsWith("/index.ts",)) {
+        continue;
+      }
+      // e.g. "blog/comments.ts" → "routes/blog/comments"
+      const moduleId = `${root.moduleIdPrefix}${file.slice(0, -3,)}`;
+      // e.g. "blog/comments.ts" → "@/routes/blog/comments"
+      const importPath = `${root.importPrefix}/${file.slice(0, -3,)}`;
+      entries.push({ file, moduleId, importPath, directory: root.directory, },);
+    }
+  }
+  return entries.sort((a, b,) => a.moduleId.localeCompare(b.moduleId,));
 }
 
 /** Every schema exported by every module on disk, sorted for stable output. */
 async function discoverSchemas(): Promise<{
   found: Found[];
+  moduleImportPaths: Map<string, string>;
   modules: string[];
   nonSchema: number;
   throwing: number;
 }> {
-  const modules = await schemaModules();
+  const entries = await schemaModules();
   const aliases = new Map<string, string>();
   const found: Found[] = [];
+  const moduleImportPaths = new Map<string, string>();
   let nonSchema = 0;
   let throwing = 0;
 
-  for (const module of modules) {
-    const alias = aliasFor(module,);
+  for (const { file, moduleId, importPath, directory, } of entries) {
+    const alias = aliasFor(moduleId,);
     const clash = aliases.get(alias,);
     if (clash !== undefined) {
-      throw new Error(`alias collision: ${module} and ${clash} both map to "${alias}"`,);
+      throw new Error(`alias collision: ${moduleId} and ${clash} both map to "${alias}"`,);
     }
-    aliases.set(alias, module,);
+    aliases.set(alias, moduleId,);
+    moduleImportPaths.set(moduleId, importPath,);
     // Dynamic import is required: the module list comes from a directory read
     // at runtime, so no static import list can cover it.
-    const namespace: Record<string, unknown> = await import(new URL(`${module}.ts`, SCHEMA_DIR,).href);
+    // eslint-disable-next-line no-await-in-loop
+    const namespace: Record<string, unknown> = await import(
+      new URL(file, directory,).href
+    );
     for (const name of Object.keys(namespace,).sort()) {
       let value: unknown;
       try {
@@ -143,7 +201,7 @@ async function discoverSchemas(): Promise<{
         continue;
       }
       if (isTypeBoxSchema(value,)) {
-        found.push({ name, module, duplicate: false, schema: value, },);
+        found.push({ name, module: moduleId, duplicate: false, schema: value, },);
       } else {
         nonSchema++;
       }
@@ -155,7 +213,8 @@ async function discoverSchemas(): Promise<{
   for (const f of found) { f.duplicate = (occurrences.get(f.name,) ?? 0) > 1; }
   found.sort((a, b,) => a.name.localeCompare(b.name,) || a.module.localeCompare(b.module,));
 
-  return { found, modules, nonSchema, throwing, };
+  const modules = entries.map((e,) => e.moduleId);
+  return { found, moduleImportPaths, modules, nonSchema, throwing, };
 }
 
 /** Describe title — module-qualified only when the name alone is ambiguous. */
@@ -163,12 +222,20 @@ function titleFor(f: Found,): string {
   return f.duplicate ? `${f.name} [${f.module}]` : f.name;
 }
 
-/** One schema's two (or one) cases, as source lines. */
+/** One schema's two (or one) cases, as source lines.
+ *
+ * The blank line between the cases is NOT cosmetic: eslint's
+ * `padding-line-between-statements` demands one after any multi-line
+ * expression statement, and dprint wraps a `test(...)` call across lines once
+ * a module-qualified alias pushes it past the line width. Whether a given case
+ * wraps is not knowable before formatting, so the separator is unconditional —
+ * `format()` preserves it either way.
+ */
 function casesFor(f: Found,): string[] {
   const ref = `${aliasFor(f.module,)}.${f.name}`;
   const cases = [`  test("accepts generated values", () => checkAllValid(${ref}));`,];
   if (isJsonRoundTrippable(f.schema,)) {
-    cases.push(`  test("survives a JSON round-trip", () => checkJsonRoundTrip(${ref}));`,);
+    cases.push("", `  test("survives a JSON round-trip", () => checkJsonRoundTrip(${ref}));`,);
   }
   return cases;
 }
@@ -183,10 +250,10 @@ const PREAMBLE = `// SPDX-License-Identifier: LGPL-3.0-or-later
  * Schema fuzz (property) tests for the validation schema modules.
  *
  * Each \`describe\` block is one TypeBox schema exported by a module under
- * \`@/validation/schemas\`. Schemas are discovered from the directory, not the
- * barrel, so modules index.ts does not re-export are covered too. Every schema
- * is referenced through its own module namespace (\`alias.Name\`), so a name
- * exported by several modules resolves to the right definition.
+ * \`@/validation\` or \`@/routes\`. Schemas are discovered from the directory,
+ * not the barrel, so modules index.ts does not re-export are covered too. Every
+ * schema is referenced through its own module namespace (\`alias.Name\`), so a
+ * name exported by several modules resolves to the right definition.
  *
  * Arbitraries come from \`@/test-utils/schema-arbitrary\`, which only emits
  * schema-valid values — a failure here means the mapper drifted from the schema.
@@ -226,11 +293,16 @@ function checkJsonRoundTrip(schema: TSchema): void {
 `;
 
 /** Render the whole test file. Pure — same modules on disk in, same bytes out. */
-function render(found: Found[], moduleCount: number,): string {
+function render(
+  found: Found[],
+  moduleImportPaths: Map<string, string>,
+  moduleCount: number,
+): string {
   const used = [...new Set(found.map((f,) => f.module),),].sort();
   const lines = [PREAMBLE,];
   for (const module of used) {
-    lines.push(`import * as ${aliasFor(module,)} from "@/validation/schemas/${module}";`,);
+    const importPath = moduleImportPaths.get(module,) ?? "@/validation/schemas";
+    lines.push(`import * as ${aliasFor(module,)} from "${importPath}";`,);
   }
   lines.push(BODY,);
   for (const f of found) {
@@ -242,8 +314,8 @@ function render(found: Found[], moduleCount: number,): string {
 
 // ── CLI ────────────────────────────────────────────────────────────────────
 if (import.meta.main) {
-  const { found, modules, nonSchema, throwing, } = await discoverSchemas();
-  const content = render(found, modules.length,);
+  const { found, moduleImportPaths, modules, nonSchema, throwing, } = await discoverSchemas();
+  const content = render(found, moduleImportPaths, modules.length,);
   const outPath = OUT_PATH.pathname;
 
   if (process.argv.includes("--check",)) {
@@ -262,4 +334,13 @@ if (import.meta.main) {
     ? `${nonSchema} non-schema, ${throwing} throwing on access`
     : `${nonSchema} non-schema`;
   console.log(`[schema-fuzz] scanned ${modules.length} module(s); skipped ${skipped}`,);
+
+  // ponytail: importing the schema modules (and, via their transitive imports,
+  // 416 route modules) leaves open handles on the event loop, so the process
+  // never exits on its own (observed: hung until killed at the gate's 900s
+  // timeout, with the work already done). `discoverSchemas()` itself takes ~1s;
+  // the hang is entirely the wait to exit. Explicit exit after the write and
+  // the final log, rather than bisecting the offending module; revisit only if
+  // the generator ever has to run twice in one process.
+  process.exit(0,);
 }
