@@ -82,13 +82,21 @@
       </button>
 
       <div x-show="memoryPanel.showCreateForm" style="margin-bottom: var(--space-3)">
-        <textarea
-          class="form-input form-textarea"
-          rows="2"
-          style="font-size: 13px; margin-bottom: var(--space-2)"
-          x-bind:placeholder="t('chats.enterMemory')"
-          x-model="memoryPanel.newMemoryContent"
-        ></textarea>
+        <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+          <textarea
+            class="form-input form-textarea"
+            id="memory-create-input"
+            rows="2"
+            style="flex: 1; font-size: 13px; margin-bottom: var(--space-2)"
+            x-bind:placeholder="t('chats.enterMemory')"
+            x-model="memoryPanel.newMemoryContent"
+            x-init="autoResize($el)"
+            @input="autoResize($el)"
+          ></textarea>
+          <div x-data="textToolbar({ target: '#memory-create-input', chatId: activeChat || undefined })">
+            {{> text-toolbar.html }}
+          </div>
+        </div>
         <select
           class="form-input"
           style="font-size: 13px; margin-bottom: var(--space-2); width: 100%"
@@ -115,9 +123,12 @@
               <div>
                 <textarea
                   class="form-input form-textarea"
+                  x-bind:id="'memory-edit-' + mem.id"
                   rows="2"
                   style="font-size: 12px; margin-bottom: var(--space-2)"
                   x-model="memoryPanel.editMemoryContent"
+                  x-init="autoResize($el)"
+                  @input="autoResize($el)"
                 ></textarea>
                 <div style="display: flex; gap: var(--space-2)">
                   <button class="btn btn-secondary btn-xs" @click="cancelEditMemory()">{{{t("common.cancel")}}}</button>

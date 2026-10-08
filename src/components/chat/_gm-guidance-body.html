@@ -16,14 +16,23 @@
 <div class="gm-guidance-panel" data-testid="gm-guidance-panel">
   <div style="margin-top: var(--space-2)">
     <label class="form-label" for="gm-scene">Scene Description</label>
-    <textarea
-      class="form-input form-textarea"
-      id="gm-scene"
-      rows="2"
-      x-model="_gmGuidance.sceneDescription"
-      placeholder="Describe the current scene for all participants"
-      data-testid="gm-scene-description"
-    ></textarea>
+    <!-- Pilot surface for the shared text toolbar (enhance/undo/preview) -->
+    <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+      <textarea
+        class="form-input form-textarea"
+        id="gm-scene"
+        rows="2"
+        style="flex: 1"
+        x-model="_gmGuidance.sceneDescription"
+        x-init="autoResize($el)"
+        @input="autoResize($el)"
+        placeholder="Describe the current scene for all participants"
+        data-testid="gm-scene-description"
+      ></textarea>
+      <div x-data="textToolbar({ target: '#gm-scene', chatId: activeChat || undefined })">
+        {{> text-toolbar.html }}
+      </div>
+    </div>
   </div>
 
   <div style="margin-top: var(--space-2)">

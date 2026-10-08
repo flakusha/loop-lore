@@ -17,12 +17,17 @@
     <input
       type="text"
       name="content"
+      id="mobile-composer-input"
       x-ref="mobileInput"
       placeholder="Message..."
       autocomplete="off"
+      @input="saveMobileDraft()"
       @keydown.enter.prevent="submitMobile()"
       class="mobile-composer__input"
     />
+    <div x-data="textToolbar({ target: '#mobile-composer-input', chatId: typeof activeChat !== 'undefined' ? activeChat : undefined })">
+      {{> text-toolbar.html }}
+    </div>
     <button type="submit" class="mobile-composer__send" aria-label="Send">
       &#x2712;
     </button>
