@@ -3,7 +3,7 @@
 
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
-import { createSqliteDialect, } from "../db/index";
+import { createSqliteDialect, getTestDatabaseOverride, setTestDatabase, } from "../db/index";
 import { runMigrations, } from "../db/migrate";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
@@ -42,6 +42,43 @@ export async function createTestDb(): Promise<TestDb> {
   await runMigrations(db,);
 
   return { db, sqlite, };
+}
+
+/**
+ * Dispose a test DB created by {@link createTestDb}.
+ *
+ * Explicit and opt-in on purpose: `createTestDb` is called from ~600 files,
+ * ~460 of them inside `beforeAll` where one handle is shared by every test in
+ * the file. Any automatic teardown keyed to the create call would close a
+ * handle that sibling tests still hold, turning a silent leak into flaky
+ * "database is closed" failures under parallel runners — strictly worse than
+ * the leak. So the contract is spelled out here and adopted per call site.
+ *
+ * Safe to call twice (idempotent) so callers already closing `db`/`sqlite`
+ * in their own teardown can migrate without a double-destroy throw.
+ *
+ * @param fixture - The `{ db, sqlite }` pair returned by `createTestDb`.
+ * @returns void
+ */
+export async function destroyTestDb(fixture: TestDb,): Promise<void> {
+  // Clear a stale global override first: if this fixture is still the
+  // process-global test DB, destroying it would otherwise leave
+  // `getDatabase()` handing a closed handle to every sibling file.
+  // `getTestDatabaseOverride()` (not `getDatabase()`) so teardown never
+  // materializes the production singleton on disk.
+  if (getTestDatabaseOverride() === fixture.db) {
+    setTestDatabase(null,);
+  }
+
+  // Kysely `destroy()` drains the connection pool before closing the driver,
+  // so an in-flight write is flushed rather than dropped. It also closes the
+  // underlying bun:sqlite handle. Repeat calls are a no-op.
+  await fixture.db.destroy();
+  try {
+    fixture.sqlite.close();
+  } catch {
+    // Already closed by `db.destroy()` — nothing to do.
+  }
 }
 
 /**
