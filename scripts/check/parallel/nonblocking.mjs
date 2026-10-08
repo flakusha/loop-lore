@@ -53,6 +53,11 @@ export async function runNonBlockingChecks(notes,) {
             `Version drift: package.json=${packageVersion}, latest tag=${tagVersion}; run 'bun run version:sync'`,
         },);
       }
+    } else if (packageVersion) {
+      // No v* tag found — the check cannot run; emit a skipped note so the
+      // report is not silent about this.
+      console.log("warn: Version check skipped (no v* tag found)",);
+      notes.push({ level: "skipped", message: "Version check skipped: no v* tag found in repository", },);
     }
   } catch {
     console.log("warn: Version check skipped",);
@@ -100,10 +105,17 @@ export async function runNonBlockingChecks(notes,) {
     ],);
     const linksText = stdout + stderr;
     if (linksText.includes("broken",)) {
+      const brokenLines = linksText.trim().split("\n",).filter((line,) => line.includes("broken target",));
       console.log(`warn: Markdown stale-link check found broken internal links:`,);
-      for (const line of linksText.trim().split("\n",)) {
-        if (line.includes("broken target",)) { console.log(`  ${line}`,); }
-      }
+      for (const line of brokenLines) { console.log(`  ${line}`,); }
+      // ponytail: single summary note — one note per check run, not per target.
+      // Add per-target detail only if count is small to keep report bounded.
+      notes.push({
+        level: "warn",
+        message: brokenLines.length > 20
+          ? `Markdown stale-link check: ${brokenLines.length} broken targets found (see stdout for list)`
+          : `Markdown stale-link check found broken internal links:\n${brokenLines.join("\n",)}`,
+      },);
     } else {
       console.log("OK: Markdown links OK",);
       notes.push({ level: "ok", message: "Markdown links OK", },);
