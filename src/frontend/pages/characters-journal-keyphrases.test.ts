@@ -63,8 +63,8 @@ interface FakeButton {
 const host = globalThis as unknown as { document?: unknown };
 const originalDocument = host.document;
 
-/** Rows `saveJournalKeyphrases` walks — separate from the render fake. */
-let rows: FakeRow[];
+/** Explicit row fake for tests that need specific input values. */
+let rowOverride: FakeRow[] | null;
 
 /** Every load-more button handed out, newest last (each re-render makes a new one). */
 let loadMoreButtons: FakeButton[] = [];
@@ -108,11 +108,40 @@ function makeDiv(): { textContent: string; getHTML: () => string } {
 /** Row + control markup the user would actually see, load-more appends included. */
 const onScreen = (): string => listEl.innerHTML + listEl.appended;
 
+/** Inverse of `escapeHtml`, so a value read back out of markup round-trips. */
+const unescapeHtml = (value: string,): string =>
+  value
+    .replaceAll("&lt;", "<",)
+    .replaceAll("&gt;", ">",)
+    .replaceAll("&quot;", '"',)
+    .replaceAll("&#39;", "'",)
+    .replaceAll("&amp;", "&",);
+
+/**
+ * Rows as `document.querySelectorAll("#journal-keyphrase-list .journal-keyphrase-row")`
+ * would see them — parsed out of the rendered markup, load-more appends
+ * included. Default fake so the save path is exercised against real render
+ * output instead of a hand-fed array.
+ */
+const renderedRows = (): FakeRow[] => {
+  const found: FakeRow[] = [];
+  const pattern = /class="journal-keyphrase-row"\s+data-memory-id="([^"]*)"[\s\S]*?value="([^"]*)"/g;
+  for (const match of onScreen().matchAll(pattern,)) {
+    const value = unescapeHtml(match[2] ?? "",);
+    found.push({
+      dataset: { memoryId: unescapeHtml(match[1] ?? "",), },
+      querySelector: () => ({ value, }),
+    },);
+  }
+
+  return found;
+};
+
 beforeEach(() => {
   fetchCalls = [];
   toastCalls = [];
   feHandler = null;
-  rows = [];
+  rowOverride = null;
   loadMoreButtons = [];
   listEl = {
     innerHTML: "",
@@ -163,7 +192,10 @@ beforeEach(() => {
 
   host.document = {
     querySelector: (selector: string,) => selector === "#journal-keyphrase-list" ? listEl : null,
-    querySelectorAll: (selector: string,) => selector.includes(".journal-keyphrase-row",) ? rows : [],
+    // Default to rows parsed from the rendered markup; `rowOverride` wins so
+    // the typed-value save cases can supply input contents directly.
+    querySelectorAll: (selector: string,) =>
+      selector.includes(".journal-keyphrase-row",) ? (rowOverride ?? renderedRows()) : [],
     createElement: makeDiv,
   };
 },);
@@ -333,10 +365,61 @@ describeOrSkip("characters-journal-keyphrases", () => {
     expect(listEl.innerHTML,).not.toContain("save-keyphrases",);
   });
 
+  test("saves exactly the rows on screen, appended pages included", async () => {
+    feHandler = (url,) => {
+      if (url.includes("page=2",)) {
+        return new Response(
+          JSON.stringify(envelope(
+            [memory("m3", "Third", ["gamma",],),],
+            { total: 3, page: 2, totalPages: 2, },
+          ),),
+          { status: 200, },
+        );
+      }
+
+      return new Response(
+        JSON.stringify(envelope(
+          [
+            memory("m1", "First", ["alpha", "beta",],),
+            memory("m2", "Second", ["delta",],),
+          ],
+          { total: 3, totalPages: 2, },
+        ),),
+        { status: 200, },
+      );
+    };
+
+    // Dynamic import: the mocked module seams must be registered first.
+    await import("./characters-journal-keyphrases");
+    await page.initJournalKeyphrases("actor-1",);
+    await loadMoreButtons.at(-1,)!.click();
+
+    // No rowOverride: save walks the rows parsed out of the rendered markup.
+    await page.saveJournalKeyphrases("actor-1",);
+
+    expect(fetchCalls.slice(2,).map((call,) => call.url),).toEqual([
+      "/api/v1/actors/actor-1/memories/m1",
+      "/api/v1/actors/actor-1/memories/m2",
+      "/api/v1/actors/actor-1/memories/m3",
+    ],);
+
+    const bodies = fetchCalls.slice(2,).map((call,) =>
+      JSON.parse(call.opts!.body as string,) as { keywords: string[] }
+    );
+
+    expect(bodies.map((body,) => body.keywords),).toEqual([
+      ["alpha", "beta",],
+      ["delta",],
+      ["gamma",],
+    ],);
+
+    expect(toastCalls,).toEqual([{ type: "success", message: "Keyphrases saved (3)", },],);
+  });
+
   test("saves trimmed keywords per on-screen row and caps each list at 8", async () => {
     // Dynamic import: the mocked module seams must be registered first.
     await import("./characters-journal-keyphrases");
-    rows = [
+    rowOverride = [
       {
         dataset: { memoryId: "m1", },
         querySelector: () => ({ value: " moonstone , ,lantern, a, b, c, d, e, f, g ", }),
@@ -371,7 +454,7 @@ describeOrSkip("characters-journal-keyphrases", () => {
 
     // Dynamic import: the mocked module seams must be registered first.
     await import("./characters-journal-keyphrases");
-    rows = [
+    rowOverride = [
       { dataset: { memoryId: "m1", }, querySelector: () => ({ value: "alpha", }), },
       { dataset: { memoryId: "m2", }, querySelector: () => ({ value: "beta", }), },
     ];
