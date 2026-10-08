@@ -206,4 +206,60 @@ describe("TradeService facade delegation", () => {
     expect(await svc.getBalance(buyerId, worldId,),).toBe(20,);
     expect(await svc.getBalance(npcId, worldId,),).toBe(5,);
   });
+
+  describe("trade — no partial transfers", () => {
+    test("a failed item transfer rolls back the currency debit and credit", async () => {
+      // Seller's Iron Sword holds 5; asking for 99 must fail mid-transaction,
+      // AFTER debit+credit have already run. Balances are captured, not
+      // hardcoded — this suite shares one fixture across ordered tests.
+      await svc.credit(buyerId, worldId, 100,);
+      const buyerBefore = await svc.getBalance(buyerId, worldId,);
+      const sellerBefore = await svc.getBalance(sellerId, worldId,);
+
+      const result = await svc.trade({
+        worldId,
+        buyerActorId: buyerId,
+        sellerActorId: sellerId,
+        buyerItems: [],
+        sellerItems: [{ worldItemId: sellerWorldItemId, quantity: 99, },],
+        price: 30,
+      },);
+
+      expect(result.success,).toBe(false,);
+      // Neither side kept the money: the whole transaction rolled back.
+      expect(await svc.getBalance(buyerId, worldId,),).toBe(buyerBefore,);
+      expect(await svc.getBalance(sellerId, worldId,),).toBe(sellerBefore,);
+    });
+
+    test("a buyer cannot claim a world item a third party owns", async () => {
+      await svc.credit(buyerId, worldId, 100,);
+      const sellerBefore = await svc.getBalance(sellerId, worldId,);
+      const rowBefore = await db
+        .selectFrom("world_items",)
+        .select(["owner_actor_id", "quantity",],)
+        .where("id", "=", sellerWorldItemId,)
+        .executeTakeFirst();
+
+      const result = await svc.trade({
+        worldId,
+        buyerActorId: buyerId,
+        sellerActorId: sellerId,
+        buyerItems: [{ worldItemId: sellerWorldItemId, quantity: 1, },],
+        sellerItems: [],
+        price: 30,
+      },);
+
+      expect(result.success,).toBe(false,);
+      // Ownership unchanged — no theft by claiming the id.
+      const rowAfter = await db
+        .selectFrom("world_items",)
+        .select(["owner_actor_id", "quantity",],)
+        .where("id", "=", sellerWorldItemId,)
+        .executeTakeFirst();
+
+      expect(rowAfter?.owner_actor_id,).toBe(rowBefore?.owner_actor_id,);
+      expect(rowAfter?.quantity,).toBe(rowBefore?.quantity,);
+      expect(await svc.getBalance(sellerId, worldId,),).toBe(sellerBefore,);
+    });
+  });
 });

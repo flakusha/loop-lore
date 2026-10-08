@@ -22,19 +22,22 @@ export function tradeHistoryRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
       .get(`${prefix}/worlds/:worldId/trade/history`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
-        const actorId = ctx.query.actorId as string | undefined;
-        const limit = ctx.query.limit ? Number(ctx.query.limit,) : 50;
-        if (actorId) {
-          const denied = await resolveActorAccess(opts.database, actorId, userId,);
-          if (denied) { return denied; }
-        }
+        // actorId is required, not optional: history is participant-scoped, so
+        // omitting it would return every trade in the world to any caller.
+        const denied = await resolveActorAccess(opts.database, ctx.query.actorId, userId,);
+        if (denied) { return denied; }
 
-        const history = await opts.svc().getTradeHistory(ctx.params.worldId, actorId, limit,);
+        const history = await opts.svc().getTradeHistory(
+          ctx.params.worldId,
+          ctx.query.actorId,
+          ctx.query.limit,
+        );
+
         return jsonResponse({ history, },);
       }, {
         params: t.Object({ worldId: Id, },),
         query: t.Object({
-          actorId: t.Optional(Id,),
+          actorId: Id,
           limit: t.Optional(t.Integer({ minimum: 1, maximum: 200, },),),
         },),
         response: {
@@ -56,10 +59,11 @@ export function tradeHistoryRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
           },),
           401: ErrorResponse,
           403: ErrorResponse,
+          404: ErrorResponse,
         },
         detail: {
           summary: "Trade history",
-          description: "Query trade history for a world, optionally filtered by actor.",
+          description: "Query trade history for an actor in a world. Participant-scoped.",
           tags: ["Trade",],
         },
       },)
