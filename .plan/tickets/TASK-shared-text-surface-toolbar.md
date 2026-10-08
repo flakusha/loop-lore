@@ -31,10 +31,10 @@ Build a reusable Alpine component + server-rendered partial:
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Phase 2 of the composer-reuse epic: `textToolbar()` (src/frontend/alpine/text-toolbar.ts) resolves a host textarea by CSS selector — no ChatState, no `$refs.messageInput` — and wires `enhanceText`/`UndoEnhance`/`autoResize`/`renderPreviewHtml` behind a hamburger dropdown. The server-failure toast distinction (injection-blocked vs generic) is preserved via the same `onServerFailure` hook the composer uses; a missing target sets `disabled` so hosts can include the partial unconditionally. Tests stub `document.querySelector` per the repo's setup-globals DOM (no happy-dom in bun test). The `style-*` menu rows are hidden without `chatId` (server needs chat context). The storage option from the original sketch was dropped — nothing persists yet; it returns with the phase-3 host wiring if a surface needs drafts.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

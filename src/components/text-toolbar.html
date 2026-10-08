@@ -1,0 +1,108 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Shared Text-Surface Toolbar (epic-chat-composer-flows)
+  Reusable: enhance/undo/preview affordance for ANY textarea. The host
+  surface owns the textarea and wraps this include:
+
+    <div x-data="textToolbar({ target: '#some-textarea', chatId: activeChat })">
+      <textarea id="some-textarea"></textarea>
+      {{> text-toolbar.html}}
+    </div>
+
+  `chatId` is optional — without it the style-* rows are hidden (they need
+  chat context server-side). The component disables itself when the target
+  selector matches nothing.
+-->
+<div class="prompt-improve text-toolbar" x-show="!disabled" x-data="{ open: false }">
+  <button
+    type="button"
+    class="btn btn-ghost btn-sm"
+    title="Text tools"
+    :disabled="enhancing"
+    @click.prevent="open = !open"
+    data-testid="text-toolbar-menu"
+  >
+    ✨
+  </button>
+  <template x-if="open">
+    <div class="prompt-improve-levels" @click.outside="open = false">
+      <button
+        type="button"
+        class="prompt-improve-level"
+        @click.prevent="open = false; enhance('spellcheck')"
+        data-testid="text-toolbar-spellcheck"
+      >
+        Correct spelling
+      </button>
+      <button
+        type="button"
+        class="prompt-improve-level"
+        @click.prevent="open = false; enhance('wording')"
+        data-testid="text-toolbar-wording"
+      >
+        Improve wording
+      </button>
+      <button
+        type="button"
+        class="prompt-improve-level"
+        @click.prevent="open = false; enhance('expand')"
+        data-testid="text-toolbar-expand"
+      >
+        Expand
+      </button>
+      <button
+        type="button"
+        class="prompt-improve-level"
+        @click.prevent="open = false; enhance('strict')"
+        data-testid="text-toolbar-strict"
+      >
+        Strict rewrite
+      </button>
+      <button
+        type="button"
+        class="prompt-improve-level"
+        @click.prevent="open = false; enhance('creative')"
+        data-testid="text-toolbar-creative"
+      >
+        Creative rewrite
+      </button>
+      <button
+        type="button"
+        class="prompt-improve-level"
+        x-show="chatId"
+        @click.prevent="open = false; enhance('style-chat')"
+        data-testid="text-toolbar-style-chat"
+      >
+        Chat style
+      </button>
+      <button
+        type="button"
+        class="prompt-improve-level"
+        x-show="chatId"
+        @click.prevent="open = false; enhance('style-group')"
+        data-testid="text-toolbar-style-group"
+      >
+        Group style
+      </button>
+      <button
+        type="button"
+        class="prompt-improve-level"
+        x-show="undoDepth > 0"
+        @click.prevent="open = false; undo()"
+        data-testid="text-toolbar-undo"
+      >
+        <span x-text="'Undo — restore text (' + undoDepth + ' step' + (undoDepth === 1 ? '' : 's') + ' back)'"></span>
+      </button>
+      <button
+        type="button"
+        class="prompt-improve-level"
+        @click.prevent="open = false; togglePreview()"
+        data-testid="text-toolbar-preview"
+        x-text="showPreview ? 'Hide preview' : 'Preview markdown'"
+      >
+      </button>
+    </div>
+  </template>
+</div>
