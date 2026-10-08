@@ -120,10 +120,19 @@ failing one names the mapper branch that is wrong. The module exports three func
 - `isTypeBoxSchema(value: unknown): value is TSchema` — narrows an unknown barrel export to a schema
   object, so a consumer can walk a module's exports without importing them eagerly.
 - `schemaToArbitrary(schema: TSchema): fc.Arbitrary<unknown>` — the recursive mapper. It honours
-  `enum`, `const`, `minimum`/`maximum`, `minLength`/`maxLength`, `minItems`/`maxItems`, `properties`
-  plus `required`, `anyOf`/`oneOf`, and the `uuid`/`email`/`date-time` formats. `t.Optional(x)` is not a
-  wrapper node — it removes the key from `required` — so optional properties map to an optional
-  arbitrary rather than a nested one.
+  `enum`, `const`, `minimum`/`maximum`, `minLength`/`maxLength`, `minItems`/`maxItems`,
+  `maxProperties`, `properties` plus `required`, `additionalProperties`, `patternProperties`,
+  `anyOf`/`oneOf`, and the `uuid`/`email`/`date-time` formats.
+  `t.Optional(x)` is not a wrapper node — it removes the key from `required` — so optional properties
+  map to an optional arbitrary rather than a nested one. An object whose `properties` is empty but
+  whose `additionalProperties` is a subschema emits 1–3 bounded extra keys drawn from that subschema:
+  otherwise a recursive wire-facing map such as the i18n `TranslationMapSchema` yields `{}` on every
+  run and reports a green checkmark over zero real coverage. A `$ref` branch of that subschema is
+  dropped, because the recursive self-reference has no finite draw. `patternProperties` — the shape
+  every `t.Record(K, V)` emits — is read the same way: an object with no declared properties emits
+  1–3 bounded `[key, value]` entries whose keys are drawn to match the pattern, and an entry whose
+  value is a `$ref` is dropped under the same recursive-safety rule; without this, a `Record` map
+  froze at `{}` on every draw.
 - `isJsonRoundTrippable(schema: TSchema): boolean` — false when the tree contains a `t.Date()` branch,
   and false for bare `date-time`/`date` strings, which no longer compare deep-equal after a
   `JSON.stringify`/parse cycle. A round-trip property built from such a schema would fail for a reason
