@@ -29,6 +29,7 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../../db/enums";
+import { getLogger, type Logger, } from "../../logger";
 import { registry, } from "../../plugins/registry";
 import { executePluginTool, } from "../../plugins/tool-executor";
 import type { ToolExecutionContext, } from "../../plugins/types";
@@ -46,6 +47,18 @@ import { encryptStoredContent, } from "./tool-result-persist";
 
 /** Maximum rounds of tool calls in the generation loop. */
 export const MAX_TOOL_ROUNDS = 5;
+
+/**
+ * Lazily resolve the module logger (null before logger init).
+ * @returns the child logger, or null when no root logger exists yet
+ */
+function log(): Logger | null {
+  try {
+    return getLogger().child({ module: "generate-route/tool-execution", },);
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Strip dangerous HTML from tool output before re-injection into the
@@ -212,11 +225,15 @@ export async function executeToolCalls(
     try {
       await persistToolResults(ctx, results,);
     } catch (persistError) {
-      console.error("[tool-execution] inline tool-result persist failed; continuing without DB rows", {
-        chatId: ctx.chatId,
-        toolCallCount: results.length,
-        error: persistError instanceof Error ? persistError.message : String(persistError,),
-      },);
+      log()?.error(
+        "inline tool-result persist failed; continuing without DB rows",
+        persistError instanceof Error ? persistError : new Error(String(persistError,),),
+        {
+          chatId: ctx.chatId,
+          toolCallCount: results.length,
+          error: persistError instanceof Error ? persistError.message : String(persistError,),
+        },
+      );
     }
   }
 
