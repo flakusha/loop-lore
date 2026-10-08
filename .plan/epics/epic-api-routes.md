@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** 30+ route files, v1 barrel, versioning implemented; some tasks may remain
+**Status Note:** Route surface implemented across `src/routes/` with the v1 barrel (`src/routes/v1/index.ts`), v1 versioning/enforcement, and governance wiring; some tasks may remain
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
