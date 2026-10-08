@@ -4,13 +4,13 @@
 # TASK: `:...:` emoji shortcode support (frontend)
 
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Allowlisted `:shortcode:` rendering shared by chat, group chat, and blog/gallery comment paths.
+**Context:** Render core shipped in `src/frontend/alpine/chat-utils/emoji.ts` (`renderShortcodes`, hasOwn-guarded allowlist kept in sync with `QUICK_EMOJIS`) and hooked into `renderMarkdown`, so every consumer renders identically. Unknown codes and backtick spans stay literal.
+**Acceptance Criteria:** `:fire:` renders 🔥 in 1x1, group, and blog comments; unknown `:nope:` stays literal; no console errors.
 
 
 **Epic:** epic-frontend-emoji-reactions
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** Medium
 
 ## Scope

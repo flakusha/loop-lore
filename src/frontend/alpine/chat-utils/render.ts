@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { ChatState, } from "../types";
+import { renderShortcodes, } from "./emoji";
 
 /** */
 export type ChatUtilsRender = Partial<ChatState> & ThisType<ChatState>;
@@ -16,17 +17,21 @@ export const chatUtilsRender: ChatUtilsRender = {
    */
   renderMarkdown(content: string,): string {
     if (!content) { return ""; }
+    // Allowlisted `:shortcode:` substitution runs BEFORE markdown so every
+    // consumer (chat, group chat, blog comments) shares one render path.
+    // Codes inside backtick spans are exempt; unknown codes stay literal.
+    const withEmoji = renderShortcodes(content,);
     const marked = getMarked();
     const DOMPurify = getDOMPurify();
     if (!marked || !DOMPurify) {
       // Fail-safe: without the sanitizer we must not inject raw HTML —
       // escape the source text instead of rendering it.
       const div = document.createElement("div",);
-      div.textContent = content;
+      div.textContent = withEmoji;
       return div.getHTML();
     }
 
-    const html = marked.parse(content,) as string;
+    const html = marked.parse(withEmoji,) as string;
     return DOMPurify.sanitize(html, {
       ALLOWED_TAGS: [
         "b",

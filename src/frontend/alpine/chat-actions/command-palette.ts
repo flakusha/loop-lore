@@ -15,9 +15,29 @@
 import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
 import { log as rootLog, } from "../logger";
+import { didYouMeanCandidate, } from "../slash-autocomplete";
 import type { ChatState, } from "../types";
 
 const log = rootLog.child({ module: "command-palette", },);
+
+type PaletteEntry = { name: string; descriptionKey: string; description: string };
+
+/**
+ * Filter palette entries by substring, falling back to a single did-you-mean
+ * suggestion when nothing matches (`/hep` → `/help`). Unrelated input still
+ * yields an empty list. Tab/Enter accepts the suggestion; Escape dismisses.
+ * @param entries - hydrated command list.
+ * @param query - lowercase slash query (no leading `/`).
+ * @returns matching entries, the did-you-mean entry, or [].
+ */
+function filterPaletteEntries(entries: PaletteEntry[], query: string,): PaletteEntry[] {
+  const filtered: PaletteEntry[] = [];
+  for (const c of entries) { if (c.name.toLowerCase().includes(query,)) { filtered.push(c,); } }
+  if (filtered.length > 0) { return filtered; }
+  const suggestion = didYouMeanCandidate(entries.map((c,) => c.name), query,);
+  const match = suggestion === null ? undefined : entries.find((c,) => c.name === suggestion);
+  return match === undefined ? [] : [match,];
+}
 
 export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
   _showCommandPalette: false,
@@ -70,9 +90,7 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
       this._showCommandPalette = true;
       this._paletteActiveIndex = 0;
       if (query) {
-        const filtered: typeof this._commandList = [];
-        for (const c of this._commandList) { if (c.name.includes(query,)) { filtered.push(c,); } }
-        this._filteredCommands = filtered;
+        this._filteredCommands = filterPaletteEntries(this._commandList, query,);
       } else {
         this._filteredCommands = this._commandList;
       }

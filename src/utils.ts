@@ -27,6 +27,11 @@ export { safeFetch, safeFetchWithRetry, } from "./utils/safe-fetch";
 // cannot be tricked by out-of-range or non-finite input.
 export { clamp, clampUnit, } from "./utils/clamp";
 
+// ── Content Hash (dedup substrate, no callers wired yet) ────
+
+export type { DuplicateEntry, } from "./utils/content-hash";
+export { contentHash, dedupeByHash, } from "./utils/content-hash";
+
 // ── Safe Buffer ─────────────────────────────────────────────
 
 // NOTE: safe-buffer functions (safeFromBase64, safeToBase64, safeCompress, etc.)

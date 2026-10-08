@@ -4,9 +4,9 @@
 # TASK: `/...` slash commands for chat, group chat, assistant continuation
 
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Ship the unified `/...` registry surface: scope/role metadata per command, assistant continuation commands (`/continue`, `/branch`, `/retry`), and group-chat mention-aware variants (`/roll` exists, `/poll` new). Done already: server-backed palette, `/help` role-filtering, did-you-mean, Tab-accept, pre-send preview (see epic Status Note).
+**Context:** Live registry is `src/assistant/commands/registry.ts` (`requiredRole`, `available`); `GET /api/v1/commands` exposes names only with no per-chat scope, so the palette cannot role-filter yet. Unknown `/foo` falls through to LLM chat by design (`command.test.ts` pins `handled:false`); did-you-mean lives in the palette (`didYouMeanCandidate`), not the send path.
+**Acceptance Criteria:** `/help` lists only scope+role-allowed commands; `/continue` after reload resumes the flow; `/poll` registered with moderation gating; palette filters by role once the commands endpoint accepts an optional `chatId`.
 
 
 **Epic:** epic-frontend-chat-commands
