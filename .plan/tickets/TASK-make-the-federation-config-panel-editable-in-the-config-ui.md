@@ -16,7 +16,7 @@
 
 The field metadata this needs already exists. The published JSON Schema describes the whole section including `enabled`, `seeds`, `peers`, and `duplication` (`src/config/schema-class/json-schema/federation.ts`), and the TypeScript types are defined at `src/config/schema/federation.ts:41-52`. Only the editable mapping is missing, which makes this a small, well-bounded change.
 
-One field must stay out of scope. `meshPsk` is env-only by design — `src/config/schema/federation.ts:48` documents it as such — because a mesh PSK written to the config table is a secret that would end up readable through a UI that has no secret-field affordance.
+One field must stay out of scope. `meshPsk` is env-only by design — `src/config/schema/federation.ts:48-49` (doc comment on `:48`, `meshPsk: string;` on `:49`) documents it as such — because a mesh PSK written to the config table is a secret that would end up readable through a UI that has no secret-field affordance.
 
 **Direction:**
 
