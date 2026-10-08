@@ -56,3 +56,4 @@ _TBD — create implementation tickets._
 | ----- | --------- | ------- |
 | — | — | Server-rendered settings form |
 
+**Resolved:** 2026-10-08 registry-driven close: git issue 86b473d (registry tip: 95bf987f4 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-FRONTEND-SETTINGS done)
