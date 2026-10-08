@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** RPG Mechanics, Battle & Action Systems, Social Interaction, Magic & Spell Systems
+**Epic:** epic-battle-action-systems
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started

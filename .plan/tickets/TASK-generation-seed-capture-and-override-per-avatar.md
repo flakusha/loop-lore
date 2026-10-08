@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** Emotion Avatar Regeneration Control
+**Epic:** epic-avatar-regeneration-control
 
 ## Summary
 

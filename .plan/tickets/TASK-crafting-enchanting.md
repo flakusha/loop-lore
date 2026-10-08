@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** Crafting & Professions, Magic & Spell Systems
+**Epic:** epic-magic-spell-systems
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started

@@ -11,7 +11,7 @@
 **Status:** Done
 **Status Note:** (2026-09-10) — deterministic slots per cast size with z-order, stage renders for 2+ cast, solo scenes keep the legacy portrait
 **Priority:** medium
-**Epic:** Avatar Alpha Channel + VN Layering; Visual Novel Mode
+**Epic:** epic-avatar-alpha-vn-layering
 **Effort:** Medium
 
 ## Summary

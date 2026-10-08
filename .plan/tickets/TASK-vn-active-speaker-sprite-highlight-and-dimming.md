@@ -11,7 +11,7 @@
 **Status:** Done
 **Status Note:** (2026-09-10) — speaker-active/dimmed focus states from the message stream, narration dims all, reduced-motion respected
 **Priority:** medium
-**Epic:** Visual Novel Mode; Immersion & Presentation
+**Epic:** epic-immersion-presentation
 **Effort:** Medium
 
 ## Summary

@@ -14,7 +14,7 @@
 **Priority:** high
 **Effort:** medium
 **Type:** BUG
-**Epic:** epic-assistant-gm-flows, epic-output-control-transforms
+**Epic:** epic-assistant-gm-flows
 **Files:** src/assistant/commands/improve.ts:37-56; src/assistant/commands/translate.ts:99-100; src/assistant/commands/rewrite.ts:76-121
 
 ## Issue

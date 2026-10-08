@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** TASK
 **Tags:** characters, mood, emotions, pad-model
-**Epic:** Character Core System
+**Epic:** epic-character-core-system
 **Parent:** TASK-character-mood-happiness (umbrella)
 
 ## Summary

@@ -13,7 +13,7 @@
 **Priority:** high
 **Effort:** small
 **Type:** BUG
-**Epic:** epic-chat-lifecycle-moderation, epic-chat-context-optimization
+**Epic:** epic-chat-lifecycle-moderation
 **Files:** src/generation/auto-gen/group-cascade.ts:88-178 (especially 105-110)
 
 ## Issue

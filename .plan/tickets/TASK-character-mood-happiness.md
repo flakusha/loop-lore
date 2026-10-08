@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** Character Core System
+**Epic:** epic-character-core-system
 
 ## Summary
 

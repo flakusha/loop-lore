@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** World & Locations
+**Epic:** epic-world-locations
 **Priority:** High
 **Effort:** Large
 **Status:** Not Started

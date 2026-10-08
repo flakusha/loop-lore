@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** Battle & Action Systems, Item System Extensions
+**Epic:** epic-battle-action-systems
 **Priority:** High
 **Effort:** High
 **Status:** Done

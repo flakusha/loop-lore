@@ -9,7 +9,7 @@
 **Summary:** Background removal for generated character/sprite images — pluggable matting backends (ComfyUI BiRefNet graph, rembg HTTP sidecar, phase-2 in-process ONNX; sd.cpp ruled out — no matting endpoint), async matted derivative, and serving the cut-out on request (`GET /api/assets/:id/matted`).
 **Context:** Avatar Alpha Channel + VN Layering epic matting-fallback work item. Matting scaffold landed (`src/generation/matting/`: job lifecycle, state machine, derivative linking) but dormant — nothing constructs a provider from config, no routes trigger matting or serve the derivative, VN render ignores it.
 **Acceptance Criteria:** Config-driven backend live (rembg headless default / ComfyUI BiRefNet when enabled); matted derivative auto-produced after generation; cut-out served only when requested; VN sprite stage prefers it (no rectangular halo); owner re-matte route; license-safe model defaults pinned (Bria weights are CC-BY-NC); `bun run check` gates green.
-**Epic:** Avatar Alpha Channel + VN Layering
+**Epic:** epic-avatar-alpha-vn-layering
 **Tags:** avatar, alpha, matting, background-removal, assets, comfyui, sd-cpp, onnx
 **Related:** `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md` (job scaffold landed; this ticket absorbs its remaining scope — close at bookkeeping), `TASK-alpha-aware-generation-requests-and-format-pick.md` (generation-time transparency), `TASK-assets-has-alpha-column-and-store-computation.md`, `TASK-decision-av4-matted-output-representation.md`, `matrix-emotion-avatar-assets.md`, `epic-comfyui-plugin.md`
 

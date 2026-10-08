@@ -14,7 +14,7 @@
 **Priority:** medium
 **Effort:** small
 **Type:** BUG
-**Epic:** epic-chat-lifecycle-moderation, epic-assistant-gm-flows
+**Epic:** epic-chat-lifecycle-moderation
 **Files:** src/chat/transitions.ts:38-46, 128-177
 
 ## Issue
