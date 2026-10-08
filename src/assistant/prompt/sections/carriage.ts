@@ -4,9 +4,9 @@
 /**
  * Hidden carriage section — flat TOML episode context (`[[characters]]` form).
  *
- * Per-chat opt-in via `story_state.carriageEnabled` (offline/ch creation
- * toggle; mirrors the auto-translate story_state channel — no migration, no
- * new column). Toggle off → section returns [] (byte-identical baseline).
+ * Per-chat opt-in via `gm_config.carriageEnabled` (offline/ch-creation
+ * toggle; online-mutable presentation key like outputStyle — no migration,
+ * no new column). Toggle off → section returns [] (byte-identical baseline).
  * Toggle on → latest `carriage_records` payload for the chat runs the
  * heal → validate → size-check → approve gate; invalid/oversize cancels
  * with a dev-visible warning and injects nothing (never partial state).
@@ -19,21 +19,18 @@ import { healCarriage, } from "../../../utils/structured-output";
 import { wrapSection, } from "../../xml-utils";
 import type { SectionBuilder, } from "../types";
 
-/** `story_state` JSON key holding the per-chat carriage opt-in. */
-export const CARRIAGE_STATE_KEY = "carriageEnabled";
-
-/** `story_state` JSON key holding the last carriage cancel warning (dev-visible). */
-export const CARRIAGE_WARNING_KEY = "carriageWarning";
+/** `gm_config` JSON key holding the per-chat carriage opt-in. */
+export const CARRIAGE_CONFIG_KEY = "carriageEnabled";
 
 /**
- * Read the per-chat carriage opt-in from a `story_state` JSON blob.
- * @param storyState - raw `chats.story_state` value
+ * Read the per-chat carriage opt-in from a `gm_config` JSON blob.
+ * @param gmConfig - raw `chats.gm_config` value
  * @returns true when the chat opted into hidden carriage injection
  */
-export function isCarriageEnabled(storyState: string | null | undefined,): boolean {
-  if (!storyState) { return false; }
-  const parsed = safeJsonParse<Record<string, unknown>>(storyState,);
-  return parsed.ok && parsed.value[CARRIAGE_STATE_KEY] === true;
+export function isCarriageEnabled(gmConfig: string | null | undefined,): boolean {
+  if (!gmConfig) { return false; }
+  const parsed = safeJsonParse<Record<string, unknown>>(gmConfig,);
+  return parsed.ok && parsed.value[CARRIAGE_CONFIG_KEY] === true;
 }
 
 /** Instruction carried in the system template alongside the carriage block. */
@@ -45,13 +42,16 @@ export const carriageSection: SectionBuilder = {
   name: "carriage",
   enabled: () => true,
   build: async (ctx,) => {
-    const chat = await ctx.db
+    // gm_config rides the AssembleChat projection (prompt-assembler
+    // loadProjections selects it) — prefer it, fall back to a live read
+    // so direct section.build callers in tests stay covered.
+    const gmConfig = ctx.chat.gm_config ?? (await ctx.db
       .selectFrom("chats",)
-      .select(["story_state",],)
+      .select(["gm_config",],)
       .where("id", "=", ctx.chat.id,)
-      .executeTakeFirst();
+      .executeTakeFirst())?.gm_config;
 
-    if (!chat || !isCarriageEnabled(chat.story_state,)) { return []; }
+    if (!isCarriageEnabled(gmConfig,)) { return []; }
 
     const row = await ctx.db
       .selectFrom("carriage_records",)
