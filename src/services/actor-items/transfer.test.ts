@@ -194,4 +194,34 @@ describe("transferItems — full-quantity transfer", () => {
     expect(targetRows.length,).toBe(1,);
     expect(targetRows[0]!.quantity,).toBe(4,);
   });
+
+  describe("transferItems — transaction atomicity", () => {
+    test("a failed target insert rolls back the source deduction", async () => {
+      await insertActorItems(db, fromActor, "Ghost Rune", "consumable", { quantity: 5, },);
+      const rows = await db
+        .selectFrom("actor_items",)
+        .select("id",)
+        .where("actor_id", "=", fromActor,)
+        .where("name", "=", "Ghost Rune",)
+        .execute();
+
+      const runeId = rows[0]!.id;
+      // toActorId has an FK to actors.id, so the target INSERT fails after the
+      // source UPDATE has already run inside the transaction.
+      const missing = uid();
+
+      await expect(
+        transferItems(db, fromActor, missing, runeId, 2,),
+      ).rejects.toThrow();
+
+      const sourceAfter = await db
+        .selectFrom("actor_items",)
+        .select("quantity",)
+        .where("id", "=", runeId,)
+        .executeTakeFirst();
+
+      // The whole point: the deduction was rolled back, not left applied.
+      expect(sourceAfter?.quantity,).toBe(5,);
+    });
+  });
 });

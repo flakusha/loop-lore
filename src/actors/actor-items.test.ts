@@ -188,4 +188,24 @@ describe("actor items service", () => {
     const admin = await listActorItems(db, actorId, "user-other", "admin",);
     expect(admin.ok,).toBe(true,);
   });
+
+  it("reaches a user persona (user_id set, owner_id NULL)", async () => {
+    const persona = await insertActors(db, "Myself", {
+      id: "actor-persona",
+      user_id: "user-owner",
+      owner_id: null,
+    } as never,);
+
+    const created = await createActorItem(db, persona, "user-owner", "user", {
+      name: "Worn Coat",
+    },);
+
+    expect(created.ok,).toBe(true,);
+
+    const listed = await listActorItems(db, persona, "user-owner", "user",);
+    expect(listed.ok,).toBe(true,);
+
+    const stranger = await listActorItems(db, persona, "user-other", "user",);
+    expect(stranger,).toEqual({ ok: false, code: "forbidden", message: "Not allowed", },);
+  });
 });

@@ -4,12 +4,15 @@
 /**
  * Actor ownership guard for the child-resource services.
  *
- * Mirrors `checkActorOwnership` (src/routes/actor-auth.ts): an actor is
- * accessible when `actors.owner_id` matches the requester or the requester
- * holds the `admin.character` bypass permission. Unlike the route-level
- * helper — which collapses both cases into a 404 — services distinguish a
- * missing actor (`not_found`) from an existing one owned by someone else
- * (`forbidden`) so callers can choose their own disclosure policy.
+ * Ownership is either link, matching `resolveActorAccess`
+ * (src/routes/actor-access.ts): `actors.user_id` marks the user's own persona
+ * (owner_id NULL), `actors.owner_id` marks a companion character they own
+ * (user_id NULL). Checking `owner_id` alone denied every user persona. The
+ * `admin.character` bypass applies as in `checkActorOwnership`
+ * (src/routes/actor-auth.ts). Unlike the route-level helper — which collapses
+ * both cases into a 404 — services distinguish a missing actor (`not_found`)
+ * from an existing one owned by someone else (`forbidden`) so callers can
+ * choose their own disclosure policy.
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
@@ -32,7 +35,7 @@ export async function requireActorOwnership(
 ): Promise<ActorServiceError | null> {
   const actor = await database
     .selectFrom("actors",)
-    .select("owner_id",)
+    .select(["user_id", "owner_id",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
 
@@ -40,7 +43,9 @@ export async function requireActorOwnership(
     return { ok: false, code: "not_found", message: "Actor not found", };
   }
 
-  if (actor.owner_id === userId || can(userRole, "admin.character",)) {
+  if (
+    actor.user_id === userId || actor.owner_id === userId || can(userRole, "admin.character",)
+  ) {
     return null;
   }
 
