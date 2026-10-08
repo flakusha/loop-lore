@@ -25,6 +25,8 @@ interface SchemaNode {
   required?: string[];
   properties?: Record<string, SchemaNode>;
   items?: SchemaNode;
+  additionalProperties?: SchemaNode | boolean;
+  patternProperties?: Record<string, SchemaNode>;
   anyOf?: SchemaNode[];
   oneOf?: SchemaNode[];
   allOf?: SchemaNode[];
@@ -150,10 +152,36 @@ const objectArb = (node: SchemaNode,): fc.Arbitrary<unknown> => {
     if (keys.length >= budget) { break; }
 
     const arb = schemaToArbitrary(sub as TSchema,);
-    // ponytail: additionalProperties (true or a subschema) emits no extra keys;
-    // generating a key dictionary is only worth it once a schema needs it.
     fields[key] = required.has(key,) ? arb : fc.option(arb, { freq: 2, nil: undefined, },);
     keys.push(key,);
+  }
+
+  // An object with NO declared property is still open when `additionalProperties`
+  // is a subschema — that subschema is the only source of keys. Without this,
+  // `properties` is `{}`, the loop emits nothing, and a deep recursive
+  // wire-facing map (e.g. the i18n `TranslationMapSchema`) generated `{}` on
+  // every run behind a green checkmark.
+  // `budget` is 0 whenever `properties` is empty, so the extra-key ceiling is
+  // read from `maxProperties` DIRECTLY — it bounds declared AND extra keys alike.
+  const extra = additionalArb(node,);
+  const maxExtra = node.maxProperties ?? EXTRA_KEYS;
+  if (keys.length === 0 && extra !== undefined && maxExtra > 0) {
+    return fc.dictionary(EXTRA_KEYS_ARB, extra, { minKeys: 1, maxKeys: Math.min(EXTRA_KEYS, maxExtra,), },);
+  }
+
+  // `Type.Record(Type.String(), T)` — every `Record` in the corpus — is emitted as
+  // `patternProperties: { "^(.*)$": T }` with `properties: {}` and NO
+  // `additionalProperties`. Neither branch above can see it: `additionalArb`
+  // returns undefined, so the object fell through to `fc.record({})` and emitted
+  // `{}` on EVERY draw. A constant passes every `Value.Check`, so the fuzz suite
+  // stayed green while exercising one value (e.g. `ActivitySnapshot.chats`,
+  // `LocationOutfitBindingsBody.bindings`).
+  if (keys.length === 0 && maxExtra > 0) {
+    const patterned = patternPropertiesArb(node,);
+    if (patterned !== undefined) {
+      return fc.array(patterned, { minLength: 1, maxLength: Math.min(EXTRA_KEYS, maxExtra,), },)
+        .map((entries,) => Object.fromEntries(entries,));
+    }
   }
 
   // `fc.option(nil: undefined)` leaves an omitted optional key present with an
@@ -162,6 +190,72 @@ const objectArb = (node: SchemaNode,): fc.Arbitrary<unknown> => {
     .map((record,) =>
       Object.fromEntries(Object.entries(record,).filter(([k, v,],) => v !== undefined || required.has(k,)),)
     );
+};
+
+/** Extra-key count for an open object. A validity generator, not a coverage-max. */
+const EXTRA_KEYS = 3;
+
+/** Key shape for a generated open object: non-empty, bounded, no prototype keys. */
+const EXTRA_KEYS_ARB = fc.string({ minLength: 1, maxLength: 8, },);
+
+/**
+ * Value arbitrary for `additionalProperties`, or undefined when the node is
+ * closed (`false`) or unconstrained (`true`/absent).
+ *
+ * A `$ref` branch is dropped for the same reason `arrayArb` drops a `$ref`
+ * element: a recursive self-reference has no finite draw. Keeping it would emit
+ * `fc.jsonValue()`, whose arrays, numbers and nulls the RECURSIVE schema
+ * rejects — turning a green checkmark into a red one without adding coverage.
+ *
+ * ponytail: drops every extra key from a recursive-only `additionalProperties`,
+ * so such a map still generates `{}`. Un-nest it once a real schema needs
+ * deeper maps than the non-recursive branches reach.
+ *
+ * @param node The object node whose `additionalProperties` supplies values.
+ * @returns The value arbitrary, or undefined when the node is closed or bare.
+ */
+const additionalArb = (node: SchemaNode,): fc.Arbitrary<unknown> | undefined => {
+  const additional = node.additionalProperties;
+  if (additional === undefined || typeof additional === "boolean") { return undefined; }
+  if (typeof additional.$ref === "string") { return undefined; }
+
+  const branches = additional.anyOf ?? additional.oneOf;
+  if (branches === undefined) { return schemaToArbitrary(additional as TSchema,); }
+
+  const kept = branches.filter((branch,) => typeof branch.$ref !== "string");
+  return kept.length === 0
+    ? undefined
+    : schemaToArbitrary({ ...additional, anyOf: kept, oneOf: undefined, } as unknown as TSchema,);
+};
+
+/**
+ * `[key, value]` pair arbitrary for a `patternProperties` entry, or undefined
+ * when the node has none or every entry is ungeneratable.
+ *
+ * The KEY must match the pattern the schema names — `Value.Check` rejects a
+ * key the pattern does not accept, so the pattern drives key generation rather
+ * than the free-form `EXTRA_KEYS_ARB`. Values go through the same value-arb
+ * rules as `additionalProperties`, so a recursive `$ref` value is dropped for
+ * the same reason it is there.
+ *
+ * With N patterns the entries are combined with `fc.oneof`, which keeps a
+ * pattern's key coupled to ITS value instead of letting a key drawn for one
+ * pattern carry another pattern's value.
+ *
+ * @param node The object node whose `patternProperties` supplies the entries.
+ * @returns The pair arbitrary, or undefined when nothing is generatable.
+ */
+const patternPropertiesArb = (node: SchemaNode,): fc.Arbitrary<[string, unknown,]> | undefined => {
+  const pairs = Object.entries(node.patternProperties ?? {},)
+    .filter(([, sub,],) => typeof sub.$ref !== "string")
+    .map(([pattern, sub,],) =>
+      fc.tuple(
+        fc.stringMatching(new RegExp(pattern,), { maxLength: 8, },),
+        schemaToArbitrary(sub as TSchema,),
+      )
+    );
+
+  return pairs.length === 0 ? undefined : fc.oneof(...pairs,);
 };
 
 /**
