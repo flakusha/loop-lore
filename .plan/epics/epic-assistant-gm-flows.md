@@ -3,20 +3,20 @@
 
 # EPIC: Assistant/GM Flows Reconciliation
 
-**Overview:** (see sections below)
+**Overview:** Reconciles assistant/GM generation flows — entity creation via `/create` with quality gating (schema/duplicate/consistency) and user confirmation, plus GM-guided story creation where the user acts as Game Master. Extensions: AI Director (narrative pacing/tension) and pre-compiled template injection (schema+example steering for generation prompts).
 
 
 **Status:** In Progress
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
-**Tags:** assistant, gm, generation, content-creation, quality-gating
+**Tags:** assistant, gm, generation, content-creation, quality-gating, entity-creation, confirmation, pre-compiled-templates, ai-director
 
 ## Summary
 
 Assistant/GM flows reconciliation — generation of new characters, items, worlds, locations, etc. with API call integrations AND confirmation/quality gating. Also encompasses GM-guided story creation where the user acts as Game Master, guiding LLM characters in chat/group-chat to create a story together.
 
-## Current State (2026-08-14)
+## Current State (2026-10-08)
 
 ### Frontend: 🟡 Partial
 
@@ -27,14 +27,15 @@ Assistant/GM flows reconciliation — generation of new characters, items, world
 - ✅ GM role switching has runtime effect (GM-guided creation flow: new-chat "Game Master guided story" toggle pre-sets `assistantRole:gm` + `mode:story` and auto-opens settings; story-mode generation runs `GameMasterService`)
 - ❌ Tool call display in chat bubbles
 
-### Backend: 🟡 Partial
+### Backend: 🟢 Mostly Shipped
 
 - ✅ GameMasterService wired into story-mode generation (`auto-gen.ts:184,792` — see `TASK-wire-gm-service-story-mode.md`)
 - ✅ `/create` LLM entity generation command (char/loc/world/item)
-- 🟡 **System prompts config-driven** — assistant + gm prompts resolved via `resolveSystemPrompt()` (`src/prompts/registry.ts`, 12 purposes, `configs/templates/llm.yaml` override) shipped `9aefe593`; `.plan/epics/epic-config-templates.md` + `TASK-prompt-template-registry.md` harden typing/defaults/validation. **Inline strings in `/create` generation commands remain** (`src/assistant/prompt/templates/` still absent) — those are entity-gen prompt bodies, not system prompts; separate gap.
-- ❌ No quality validation pipeline
-- ❌ No confirmation gating
-- ✅ GmConfig shape gap CLOSED: chat settings author `GameMasterConfig.type` (llm/human/hybrid) + `llmConfig` (model/provider/temperature/maxTokens) + `actorModels` (per-actor model/provider); `story-mode.ts` resolves the per-actor provider per generation call (commit `022f9a82`)
+- 🟡 **System prompts config-driven** — assistant + gm prompts resolved via `resolveSystemPrompt()` (`src/prompts/registry.ts`; override shape documented in `configs/templates/llm.example.yaml`, no checked-in `llm.yaml`); `.plan/epics/epic-config-templates.md` + `TASK-prompt-template-registry.md` harden typing/defaults/validation. **Inline strings in `/create` generation commands remain** — the entity-gen prompt bodies now live in `src/assistant/prompt/templates/entity-generation.ts` (`DEFAULT_PROMPTS`, overridable per kind); those are entity-gen prompts, not system prompts; separate gap.
+- ✅ **Quality validation pipeline** — `src/assistant/quality/entity-creation-gates.ts` (schema validation, duplicate check, consistency check); wired into `create.ts:174` via `runQualityGates()`
+- ✅ **Confirmation gating** — `POST /api/chats/:id/create-entity` (`src/routes/messages/create-entity-confirm.ts`); `create.ts` returns `create-entity-preview` action, entity NOT persisted until user confirms
+- ✅ **Pre-compiled template injection** — `src/assistant/prompt/templates/entity-generation.ts` (`buildEntityTemplateBlock`, `resolveEntityGenerationPrompt` with `config.templates.llm.entityTemplatePosition`); `create.ts:126` imports and uses `resolveEntityGenerationPrompt` (cutover gap CLOSED)
+- ✅ GmConfig shape gap CLOSED: chat settings author `GameMasterConfig.type` (llm/human/hybrid) + `llmConfig` (model/provider/temperature/maxTokens) + `actorModels` (per-actor model/provider) — `src/chat/types/config.ts`, `src/frontend/alpine/chat-settings/gm-config.ts`; `src/generation/auto-gen/story-mode.ts` resolves the per-actor provider per generation call (commit sha previously cited here, `022f9a82`, is not a reachable object in this repo — dropped rather than restated)
 
 ## Reference
 
@@ -69,13 +70,13 @@ User request → Assistant processes → Generate content → Quality check → 
 
 ## Tasks
 
-- [ ] Character generation prompt templates
-- [ ] Item generation prompt templates
-- [ ] World/location generation prompt templates
+- [x] Character generation prompt templates — `src/assistant/prompt/templates/entity-generation.ts` + `entity-templates.ts`
+- [x] Item generation prompt templates — same
+- [x] World/location generation prompt templates — same
 - [ ] API call integration framework
-- [ ] Confirmation dialog component
-- [ ] Quality validation pipeline
-- [ ] Generated content preview
+- [x] Confirmation dialog component — `src/frontend/alpine/creation-wizard.ts` + `chat-actions/wizard.ts`
+- [x] Quality validation pipeline — `src/assistant/quality/entity-creation-gates.ts`
+- [x] Generated content preview — `create-entity-preview` action in `create.ts:222`
 - [x] GM-guided creation flow shipped (new-chat toggle pre-sets GM role + auto-opens settings; story-mode orchestration via `GameMasterService`) — see `TASK-assistant-gm-flows-reconciliation.md`; full gmGuidance UX (scene/constraints/target) in `TASK-gm-guided-story-creation.md` (orchestrator consumption pending)
 
 ## AI Director / Narrative Pacing (Extension — Research-Driven)
@@ -250,13 +251,13 @@ Creative processes such as character creation, prompt creation, image/video/audi
 ### Integration
 
 - Extend `resolveEntityGenerationPrompt` (already the single source of truth for entity-gen prompts) to embed the precompiled schema+example.
-- **Precondition:** `src/assistant/commands/create.ts` currently uses inline `entityPrompts` + `generateEntityData` and does **not** import `resolveEntityGenerationPrompt` — the centralized template system is orphaned from the command flow. Wiring `create.ts` to the centralized builder is part of this work (closes the cutover gap from the quality-gating effort).
+- **Status:** `create.ts:126` imports and uses `resolveEntityGenerationPrompt` — the cutover gap is CLOSED. The pre-compiled template registry (`entity-templates.ts`) and injection helper (`buildEntityTemplateBlock`) are wired into the `/create` flow.
 
 ### Tasks
 
 | Task | Description | Priority | Status |
 |------|-------------|----------|--------|
-| TASK-precompiled-templates-injection | Pre-compiled template registry + injection helper + wire into `/create` | Medium | Not Started |
+| TASK-precompiled-templates-injection | Pre-compiled template registry + injection helper + wire into `/create` | Medium | Done |
 | TASK-precompiled-templates-story | Extend injection to story creation | Low | Not Started |
 | TASK-precompiled-templates-media | Extend injection to image/video/audio prompting | Low | Not Started |
 | TASK-precompiled-templates-tests | Position / config-override / precedence tests | Medium | Not Started |
@@ -269,19 +270,30 @@ Creative processes such as character creation, prompt creation, image/video/audi
 
 ## Files
 
-- `src/assistant/commands/generate.ts` — generation commands
-- `src/assistant/prompt/templates/` — prompt templates
+- `src/assistant/commands/create.ts` — `/create` command (generate → quality gates → preview)
+- `src/assistant/commands/create-entity.ts` — entity insertion extraction point
+- `src/assistant/quality/entity-creation.ts` — quality pipeline re-export shim
+- `src/assistant/quality/entity-creation-gates.ts` — schema/duplicate/consistency gates
+- `src/assistant/quality/entity-creation-types.ts` — shared types, constants, clamp utils
+- `src/assistant/quality/entity-creation-lore.ts` — lore-entry validation & normalization
+- `src/assistant/quality/entity-creation.test.ts` — quality pipeline tests
+- `src/assistant/prompt/templates/entity-generation.ts` — prompt builder + pre-compiled template injection
+- `src/assistant/prompt/templates/entity-templates.ts` — per-kind schema+example registry
+- `src/routes/messages/create-entity-confirm.ts` — confirmation endpoint (POST /api/chats/:id/create-entity)
+- `src/frontend/alpine/creation-wizard.ts` — entity creation wizard UI
+- `src/frontend/alpine/chat-actions/wizard.ts` — wizard action handlers (create-entity-preview)
+- `src/components/chat/gm-panel.html` + `src/frontend/alpine/gm-panel.ts` — GM panel sidebar
 - `src/components/generation-preview.html` — preview component
-- `src/validation/` — quality validation
+- `src/validation/` — quality validation schemas
 
 ## Acceptance Criteria
 
-- [ ] Generation commands for characters, items, worlds, locations
-- [ ] Quality validation catches schema errors and inconsistencies
-- [ ] User confirmation required before entity creation
-- [ ] Generated content preview shows what will be created
-- [ ] Tests passing
-- [ ] GM-guided story creation: user can direct characters in group chat, set scene constraints, control turn order
+- [x] Generation commands for characters, items, worlds, locations
+- [x] Quality validation catches schema errors and inconsistencies
+- [x] User confirmation required before entity creation
+- [x] Generated content preview shows what will be created
+- [x] Tests passing — `src/assistant/quality/entity-creation.test.ts`, `src/routes/messages/create-entity-confirm.test.ts`, `src/assistant/commands/create.test.ts`
+- [ ] GM-guided story creation: user can direct characters in group chat, set scene constraints, control turn order (partial — GM role switching shipped; full gmGuidance UX pending)
 
 ## Related Epics
 

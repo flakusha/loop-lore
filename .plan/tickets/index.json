@@ -2153,6 +2153,19 @@
     "title": "dispatchCommand awaits async handler without safety net — a thrown promise becomes a 500 instead of a friendly systemMessage",
     "type": "BUG"
   },
+  "BUG-COMMUNITY-SHARE-MISSING-LOREBOOK-EXPORT": {
+    "hash": "1485a72",
+    "git_issue": "1485a72",
+    "extid": "BUG-COMMUNITY-SHARE-MISSING-LOREBOOK-EXPORT",
+    "type": "BUG",
+    "title": "Community lorebook share has no export epilogue",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "epic-import-export-io",
+    "tags": [],
+    "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md",
+    "status": "Not Started"
+  },
   "BUG-COMPUTECONTEXTWINDOW-PHASE-3-TRIMS-NEWEST-INSTEAD-OF-OLDEST": {
     "epic": "",
     "extid": "BUG-COMPUTECONTEXTWINDOW-PHASE-3-TRIMS-NEWEST-INSTEAD-OF-OLDEST",
@@ -9132,7 +9145,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-authoring-creation.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "(none)"
     ],
@@ -11754,7 +11767,7 @@
     "git_issue": "04ef186"
   },
   "EPIC-LOCAL-MULTI-INSTANCE-FEDERATION": {
-    "hash": "pending",
+    "hash": "61f4a4d",
     "extid": "EPIC-LOCAL-MULTI-INSTANCE-FEDERATION",
     "type": "EPIC",
     "title": "Local Multi-Instance Federation — Sender Wiring & Dev Harness",
@@ -11771,7 +11784,8 @@
       "config"
     ],
     "source": ".plan/tickets/epic-local-multi-instance-federation.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "61f4a4d"
   },
   "EPIC-LOCAL-PROCESS-SWARM": {
     "epic": "",
@@ -22707,7 +22721,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-authoring-creation.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "EPIC: Authoring & Creation Tools",
     "type": "TASK"
