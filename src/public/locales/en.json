@@ -1599,7 +1599,10 @@
     "empty": "No journal entries yet.",
     "loadFailed": "Failed to load journal entries.",
     "placeholder": "phrase, another phrase",
-    "save": "Save Keyphrases"
+    "save": "Save Keyphrases",
+    "showing": "Showing {shown} of {total}",
+    "loadMore": "Load More",
+    "loadMoreFailed": "Failed to load more journal entries."
   },
   "harness": {
     "tabLabel": "Harness",
