@@ -5,8 +5,10 @@
  * Command palette Alpine.js state slice.
  *
  * Hydrates its command list from `GET /api/v1/commands` on init (single source
- * of truth — the assistant command registry). Falls back to an empty list
- * when the request fails so the UI degrades gracefully.
+ * of truth — the assistant command registry). Passes the active chat id when
+ * known so the server can return per-entry `requiredRole` + caller
+ * `roleInChat`; entries the caller's role does not satisfy are hidden.
+ * Unknown role fails open (show all) — display-only, the server still denies.
  * (WIRE-assistant-command-palette-stale-static-list: prior implementation
  * hardcoded 22 commands; new server-side commands were missing from the
  * palette until a FE rebuild. Now the registry drives the list.)
@@ -46,8 +48,25 @@ export function satisfiesPaletteRole(actual: string | undefined, required: strin
   return (PALETTE_ROLE_PRIORITY[actual ?? "member"] ?? 1) >= (PALETTE_ROLE_PRIORITY[required] ?? 0);
 }
 
-type PaletteEntry = { name: string; descriptionKey: string; description: string };
+type PaletteEntry = { name: string; descriptionKey: string; description: string; requiredRole?: string };
 
+/**
+ * Client mirror of the registry's role ordering (guest < observer < member/gm < owner).
+ * Display-only: the server dispatch gate still denies unauthorized runs.
+ * Unknown roles fail open (entry shown).
+ * @param actual - caller's role in the chat, if known
+ * @param required - minimum role the entry requires, if any
+ * @returns true when the entry should stay visible
+ */
+function satisfiesClientRole(actual: string | undefined, required: string | undefined,): boolean {
+  if (!required) { return true; }
+  if (!actual) { return true; }
+  const order: Record<string, number> = { guest: -1, observer: 0, member: 1, gm: 1, owner: 2, };
+  const a = order[actual];
+  const r = order[required];
+  if (a === undefined || r === undefined) { return true; }
+  return a >= r;
+}
 /**
  * Filter palette entries by substring, falling back to a single did-you-mean
  * suggestion when nothing matches (`/hep` → `/help`). Unrelated input still
@@ -66,13 +85,6 @@ function filterPaletteEntries(entries: PaletteEntry[], query: string,): PaletteE
 }
 
 export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
-  _showCommandPalette: false,
-  _activeCommand: "",
-  _paletteActiveIndex: 0,
-  _commandList: [],
-  _filteredCommands: [],
-  _hiddenCommandCount: 0,
-
   /**
    * @returns {Promise<void>}
    */
@@ -85,19 +97,27 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
    */
   async _loadCommandList(): Promise<void> {
     try {
-      const res = await apiFetch("/api/v1/commands",);
+const chatId = typeof this.activeChat === "string" ? this.activeChat : undefined;
+      const url = chatId ? `/api/v1/commands?chatId=${encodeURIComponent(chatId,)}` : "/api/v1/commands";
+      const res = await apiFetch(url,);
       if (!res.ok) {
         log.warn("command list fetch failed", { status: res.status, },);
         return;
       }
 
-      const body = await res.json() as { data?: { name: string; descriptionKey: string; requiredRole?: string }[] };
+      const body = await res.json() as {
+        data?: { name: string; descriptionKey: string; requiredRole?: string }[];
+        roleInChat?: string;
+      };
+
       const entries = Array.isArray(body.data,) ? body.data : [];
-      this._commandList = entries.map((entry,) => ({
+      const roleInChat = typeof body.roleInChat === "string" ? body.roleInChat : undefined;
+      const visible = entries.filter((entry,) => satisfiesClientRole(roleInChat, entry.requiredRole,));
+      this._commandList = visible.map((entry,) => ({
         name: entry.name,
         descriptionKey: entry.descriptionKey,
         description: t(entry.descriptionKey,),
-        requiredRole: entry.requiredRole,
+        ...(entry.requiredRole ? { requiredRole: entry.requiredRole, } : {}),
       }));
 
       // Slice-safe: tests invoke this on partial state without the composed
