@@ -3,10 +3,9 @@
 
 # TASK: EPIC: Authoring & Creation Tools
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
-
+**Summary:** Builder-layer authoring tools: procedural asset pipeline glue, plot autopilot, what-if branch simulator, and community template share (verify-only).
+**Context:** Builder-layer tools from `docs/ideas/authoring-creation.md` ideas #15–#18. Four subtasks: three new modules (asset pipeline glue, plot autopilot, what-if simulator) plus one verify-only item (community template share, already Done under `epic-import-export-io.md`).
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 **Status:** Not Started
 **Priority:** Medium
@@ -15,14 +14,53 @@
 
 ## Summary
 
-Builder-layer tools: procedural asset generation, plot autopilot, what-if branching, community template sharing.
+Builder-layer authoring tools: procedural asset pipeline glue, plot autopilot,
+what-if branch simulator, and community template share (verify-only).
 
 ## Linked Epics
 
 - `epic-authoring-creation.md`
 
+## Context
+
+Builder-layer tools from `docs/ideas/authoring-creation.md` ideas #15–#18. Four
+subtasks: three new modules (asset pipeline glue, plot autopilot, what-if
+simulator) plus one verify-only item (community template share, already Done under
+`epic-import-export-io.md`).
+
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+### Procedural asset pipeline glue
+
+- [ ] `src/generation/asset-pipeline.ts` exists and extends auto-gen cascade
+      output to audio via the existing prompt builders in
+      `src/generation/audio-prompt-templates.ts`.
+- [ ] Image-engine providers are reused; no new generation backends added.
+- [ ] Exports wired into the `src/generation/index.ts` barrel.
+- [ ] Unit tests pass with ≥80% line coverage for the new module; no new deps.
+
+### Plot autopilot
+
+- [ ] `src/story/plot-autopilot.ts` exists and proposes next plot beats from
+      active quests in `src/story/quest-engine/` plus
+      `src/story/timeline/world-timeline.ts` history.
+- [ ] Player picks from proposed beats; no beat auto-commits without player choice.
+- [ ] Exports wired into the `src/story/index.ts` barrel.
+- [ ] Unit tests pass with ≥80% line coverage for the new module; no new deps.
+
+### What-if branch simulator
+
+- [ ] `src/story/whatif-simulator.ts` exists and forks world state via
+      `src/story/world-state/` snapshot plus timeline `world_timelines` rows, and
+      diff narratives between the fork and the live branch.
+- [ ] Exports wired into the `src/story/index.ts` barrel.
+- [ ] Unit tests pass with ≥80% line coverage for the new module; no new deps.
+
+### Community template share (verify-only)
+
+- [ ] `FEAT-community-template-world-share-export-import.md` verified Done under
+      `epic-import-export-io.md`; this epic only links it, no new code.
+
+### General
+
+- [ ] Documentation updated if user-visible behavior changed.

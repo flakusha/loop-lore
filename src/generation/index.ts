@@ -125,3 +125,10 @@ export {
 export { OpenAiCompatibleProvider, } from "./providers/openai-compatible";
 export { buildFailoverList, } from "./providers/registry";
 // TODO: export additional providers when implemented.
+
+export type {
+  AssetPipelineKind,
+  AssetPipelineRequest,
+  AssetPipelineResult,
+} from "./asset-pipeline";
+export { buildAssetPipeline, } from "./asset-pipeline";
