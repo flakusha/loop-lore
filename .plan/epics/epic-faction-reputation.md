@@ -41,12 +41,29 @@ social layer that predates engines (forum-RP reputation/consent systems, §4.3).
 
 | Task | Ticket | Status |
 | ---- | ------ | ------ |
-| Faction standing schema + migration | `TASK-faction-standing-schema.md` | ⬜ Not Started |
-| Faction CRUD + world linkage | `TASK-faction-relations-list-and-standing.md` | ⬜ Not Started |
-| Standing computation on choice events | `TASK-faction-standing-and-reputation-drift-integration.md` | ⬜ Not Started |
-| Quest / NPC gating by standing | (covered in quest/encounter epic) | ⬜ Not Started |
-| World-state persistence + archival | `TASK-faction-politics-coups-and-expansion-engine.md` | ⬜ Not Started |
-| Faction leader + cadre generation | `TASK-faction-leaders-and-cadre-generation.md` | ⬜ Not Started |
+| Faction standing schema + migration | `TASK-faction-standing-schema.md` | open |
+| Faction CRUD + world linkage | `TASK-faction-relations-list-and-standing.md` | Done |
+| Standing computation on choice events | `TASK-faction-standing-and-reputation-drift-integration.md` | Not Started |
+| Quest / NPC gating by standing | (covered in quest/encounter epic) | Not Started |
+| World-state persistence + archival | `TASK-faction-politics-coups-and-expansion-engine.md` | Not Started |
+| Faction leader + cadre generation | `TASK-faction-leaders-and-cadre-generation.md` | Not Started |
+
+## Current State
+
+| Surface | Status | Where |
+| ------ | ------ | ----- |
+| `ReputationScore` shared schema | Shipped | `src/schemas/reputation.ts` — consumed by Social, NSFW, Crime, Narrative |
+| Faction CRUD + relations list | Shipped | `TASK-faction-relations-list-and-standing.md` (Done) |
+| Faction standing schema + migration | Not Started | `TASK-faction-standing-schema.md` |
+| `FactionStanding` type | Not Started | declared in Shared Data Contracts below; no `src/rpg/faction/` module |
+| Standing drift on choice events | Not Started | — |
+| Faction politics engine | Not Started | `src/factions/politics.ts` does not exist |
+| Faction leaders / cadre | Not Started | — |
+
+> There is no `src/rpg/faction/` directory. `src/schemas/reputation.ts` is the one
+> shipped artifact, and it is a shared contract rather than faction machinery.
+> The AC file cited by `TASK-faction-politics-coups-and-expansion-engine.md`
+> (`src/factions/politics.ts` exporting `tickFactionPolitics`) is planned, not present.
 
 ## Integration Points
 
@@ -93,8 +110,29 @@ social layer that predates engines (forum-RP reputation/consent systems, §4.3).
 
 `epic-worlds-extension.md`, `epic-social-interaction.md`,
 `epic-crafting-professions.md` (reputation-gated blueprints), `epic-rpg-mechanics.md`,
-`epic-emergent-narrative-design.md`
+`epic-emergent-narrative-design.md`, `epic-economy-trading.md`, `epic-stealth-crime.md`,
+`epic-world-locations.md`, `epic-character-core-system.md`
+
+## Dependencies
+
+- `src/schemas/reputation.ts` — the `ReputationScore` contract this epic must
+  match exactly (G14)
+- `epic-social-interaction.md` — reputation schema and relationship state
+- `epic-rpg-mechanics.md` — stats and quest requirements
+- `epic-stealth-crime.md` — criminal factions and law enforcement
+
+## Unticketed Gaps
+
+- Quest / NPC gating by standing is listed as a task but has no ticket of its own
+  (noted as "covered in quest/encounter epic", but no epic file carries it).
+- Faction territory control (`faction.territory_changed`) has no ticket; the
+  event is declared in Cross-System Events with no emitter.
 
 ## Linked Tasks
 
 - TASK-faction-reputation.md
+- `TASK-faction-standing-schema.md` (open)
+- `TASK-faction-relations-list-and-standing.md` (Done)
+- `TASK-faction-standing-and-reputation-drift-integration.md` (Not Started)
+- `TASK-faction-politics-coups-and-expansion-engine.md` (Not Started)
+- `TASK-faction-leaders-and-cadre-generation.md` (Not Started)

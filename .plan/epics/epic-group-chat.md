@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** `src/group-chat` modules exist (mention-parser, turn-selector, index) but the feature was never captured as a first-class epic; linked defects resolved, feature tickets track remaining completion.
+**Status Note:** `src/group-chat/` ships `mention-parser.ts`, `turn-selector.ts`, and `index.ts`; the `[PASS]` filter lives in `src/generation/auto-gen/pass-filter.ts`. Mention routing is Done, turn orchestration remains open.
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -23,21 +23,68 @@ feature surface and closes the open defects.
 ## Scope
 
 In scope:
+
 - @mention parsing and routing to the correct actor (prefix-collision safe)
 - Turn orchestration: talkativity weighting, silence-pass, context-mention boost
 - Pause/resume of auto-generation
 - Group-chat frontend viewer (mention UI, turn indicators) — tracked under frontend epics
 
 Out of scope:
-- World/channel invites (covered by `epic-world-chat-channels-invites`)
-- Lifecycle/moderation transitions (covered by `epic-chat-lifecycle-moderation`)
+
+- World/channel invites (covered by `epic-world-chat-channels-invites.md`)
+- Lifecycle/moderation transitions (covered by `epic-chat-lifecycle-moderation.md`)
 
 ## Task List
 
 | Ticket | Type | Status |
 | --- | --- | --- |
-| TASK-group-chat-mention-routing | TASK | ⬜ Not Started |
-| TASK-group-chat-turn-orchestration | TASK | ⬜ Not Started |
-| BUG-group-chat-mention-prefix-collision | BUG | ✅ Resolved — ambiguous prefix returns null, disambiguation prompt |
-| BUG-group-chat-talkativity-not-surfaced-in-prompt | BUG | ✅ Resolved — 359a3d3, group-talkativity prompt section |
-| BUG-group-chat-silence-pass-not-implemented | BUG | ✅ Resolved — batch-9, pass-filter.ts |
+| TASK-group-chat-mention-routing | TASK | Done — `src/group-chat/mention-parser.ts` |
+| TASK-group-chat-turn-orchestration | TASK | open |
+| BUG-group-chat-mention-prefix-collision | BUG | Done — ambiguous prefix returns null, disambiguation prompt |
+| BUG-group-chat-talkativity-not-surfaced-in-prompt | BUG | Done — group-talkativity prompt section |
+| BUG-group-chat-silence-pass-not-implemented | BUG | Done — `detectPassToken` (`src/group-chat/mention-parser.ts`) + `filterPassedActors` (`src/generation/auto-gen/pass-filter.ts`) |
+
+## Current State
+
+| Piece | Status | Where |
+| --- | --- | --- |
+| Mention parsing (prefix-collision safe) | Shipped | `src/group-chat/mention-parser.ts` |
+| `[PASS]` opt-out token | Shipped | `src/group-chat/mention-parser.ts` (`detectPassToken`) |
+| Pass filtering in the cascade | Shipped | `src/generation/auto-gen/pass-filter.ts` (`filterPassedActors`) |
+| Turn selection (talkativity weighting) | Shipped | `src/group-chat/turn-selector.ts` |
+| Cascade orchestration | Shipped | `src/generation/auto-gen/group-cascade.ts` |
+| Turn orchestration ticket closure | open | `TASK-group-chat-turn-orchestration.md` |
+| Frontend viewer (mention UI, turn indicators) | Not Started | — |
+
+## Integration Points
+
+| System | Relationship |
+| --- | --- |
+| `epic-world-chat-channels-invites.md` | Group membership inside a world/channel; invites and channel routing are owned there |
+| `epic-chat-lifecycle-moderation.md` | Pause/resume and auto-generation lifecycle transitions |
+| `epic-impersonation.md` | User-vs-actor turn attribution inside a multi-actor conversation |
+
+## Dependencies
+
+- `src/generation/auto-gen/group-cascade.ts` — the orchestration entry point
+- `src/group-chat/` — mention parsing and turn selection
+
+## Related Epics
+
+- `epic-world-chat-channels-invites.md` — world/channel invites (out of scope here)
+- `epic-chat-lifecycle-moderation.md` — lifecycle/moderation (out of scope here)
+- `epic-impersonation.md` — turn attribution when a user speaks as an actor
+- `epic-frontend-chat-commands.md` — frontend command surface
+
+## Unticketed Gaps
+
+- Frontend group-chat viewer (mention UI, turn indicators) has no ticket; it is
+  named in Scope but owns no task.
+
+## Linked Tasks
+
+- `TASK-group-chat-mention-routing.md` (Done)
+- `TASK-group-chat-turn-orchestration.md` (open)
+- `BUG-group-chat-mention-prefix-collision.md` (Done)
+- `BUG-group-chat-talkativity-not-surfaced-in-prompt.md` (Done)
+- `BUG-group-chat-silence-pass-not-implemented.md` (Done)

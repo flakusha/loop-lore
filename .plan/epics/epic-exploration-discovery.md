@@ -391,7 +391,11 @@ interface TravelEncounter {
 
 ## Files
 
-- `src/rpg/exploration/` — exploration system
+This epic is a design spec — **none of the paths below exist**. There is no
+`src/rpg/exploration/` module, no exploration tables, and no exploration API.
+
+Planned (does not exist yet):
+
 - `src/rpg/exploration/maps.ts` — map system
 - `src/rpg/exploration/fog.ts` — fog of war
 - `src/rpg/exploration/discovery.ts` — discovery system
@@ -402,15 +406,50 @@ interface TravelEncounter {
 - `src/db/schema-exploration.ts` — exploration tables
 - `src/routes/exploration.ts` — exploration API
 
+Shipped today, as tick-level autonomy logic rather than the typed interfaces
+this epic specifies:
+
+- `src/rpg/world-discovery/` — `runDiscoveryTick` accrual, progress, discovery
+  events, and world discovery↔trade coupling
+- `src/rpg/world-travel/` — `advancePartyTravel`, travel budget, and walk
+  simulation
+
+## Current State
+
+| Layer | Status | Where |
+| ----- | ------ | ----- |
+| Discovery accrual | Shipped (tick-level) | `src/rpg/world-discovery/discovery.ts` |
+| Party travel / movement | Shipped (tick-level) | `src/rpg/world-travel/travel.ts` |
+| Maps / fog of war | Not Started | — |
+| Navigation + hazards | Not Started | — |
+| Cartography | Not Started | — |
+| Secrets / hidden content | Not Started | — |
+| Exploration API | Not Started | — |
+
+## Dependencies
+
+- `src/rpg/world-discovery/` + `src/rpg/world-travel/` — the shipped primitives
+- `epic-world-locations.md` — location model
+- `epic-rpg-mechanics.md` — skills, stats, XP
+
+## Unticketed Gaps
+
+- Fog of war / revealed tiles, cartography, and secrets have no ticket; they are
+  specified here but owned by neither linked ticket.
+- `exploration.location_discovered` and `exploration.encounter_triggered` are
+  declared as emitted events with no emitter in the codebase.
+
 ## Related Epics
 
-- **Epic World & Locations** — World map, terrain
-- **Epic RPG Mechanics** — Skills, stats, XP
-- **Epic Quest System** — Discovery objectives
-- **Epic Combat System** — Travel encounters
-- **Epic Crafting System** — Map making
+- `epic-world-locations.md` — world map, terrain
+- `epic-rpg-mechanics.md` — skills, stats, XP
+- `epic-quests-encounters.md` — discovery objectives
+- `epic-battle-action-systems.md` — travel encounters
+- `epic-crafting-professions.md` — map-making materials
+- `epic-companion-pet-mount.md` — spawn/wild areas
+- `epic-weather-environment.md` — biome/terrain
 
 ## Linked Tasks
 
-- TASK-exploration-discovery.md
-- TASK-exploration-expedition-teams.md
+- `TASK-exploration-discovery.md` (open)
+- `TASK-exploration-expedition-teams.md` (open)

@@ -128,6 +128,35 @@ describe("ItemsService.transfer", () => {
     expect(res.success,).toBe(false,);
     expect(res.transferred,).toBe(0,);
   });
+
+  test("rolls back the source deduction when the destination grant fails", async () => {
+    const wId = uid();
+    const item = uid();
+    await insertItems(db, worldId, "Iron Sword", "weapon", { id: item, } as never,);
+    await insertWorldItems(db, worldId, item, { id: wId, location_id: locationA, quantity: 4, } as never,);
+    const svc = new ItemsService(db,);
+
+    // `owner_actor_id` references `actors.id`, so a non-existent actor makes the
+    // destination INSERT fail AFTER the source row has been deleted. Without a
+    // transaction the deducted items are destroyed.
+    await expect(svc.transfer(wId, worldId, 4, undefined, uid(),),).rejects.toThrow();
+
+    const source = await db.selectFrom("world_items",).select("quantity",).where("id", "=", wId,).executeTakeFirst();
+    expect(source?.quantity,).toBe(4,);
+  });
+
+  test("rolls back a partial deduction when the destination grant fails", async () => {
+    const wId = uid();
+    const item = uid();
+    await insertItems(db, worldId, "Iron Sword", "weapon", { id: item, } as never,);
+    await insertWorldItems(db, worldId, item, { id: wId, location_id: locationA, quantity: 4, } as never,);
+    const svc = new ItemsService(db,);
+
+    await expect(svc.transfer(wId, worldId, 2, undefined, uid(),),).rejects.toThrow();
+
+    const source = await db.selectFrom("world_items",).select("quantity",).where("id", "=", wId,).executeTakeFirst();
+    expect(source?.quantity,).toBe(4,);
+  });
 });
 
 describe("ItemsService.getNpcInventoryBatch", () => {

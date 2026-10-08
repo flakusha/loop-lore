@@ -18,13 +18,13 @@ with ownership, ownership transfer, and trading. Implementation is split
 across member epics; this file owns the shared model, sequencing, and
 cross-cutting acceptance criteria.
 
-> **Note:** `epic-trading-inventory.md` (trading flows sub-epic of
-> `epic-battle-action-systems.md`) is referenced by `epic-items-economy-crafting.md`,
-> `epic-rpg-mechanics.md`, and `epic-inventory-ui.md` but does not exist as a
-> file at HEAD — trading backend coverage lives in `epic-item-systems-unification.md`
-> (`TASK-implement-trade`), `epic-economy-trading.md`, and
-> `TASK-trade-history-npc-counterparty.md`. If that file is created, link it
-> here as a member.
+> **Note:** The sub-epic name 'Trading & Inventory' cited by
+> `epic-items-economy-crafting.md` (line 45), `epic-rpg-mechanics.md` (line 38),
+> and `epic-battle-action-systems.md` (line 31) has no corresponding epic file -
+> the file was never created. Trading backend coverage lives in
+> `epic-item-systems-unification.md` (`TASK-implement-trade.md`, Done),
+> `epic-economy-trading.md`, and `TASK-trade-history-npc-counterparty.md`.
+> Those three citations are stale pointers, not member links.
 
 ## Scope
 
@@ -53,8 +53,34 @@ cross-cutting acceptance criteria.
 
 ## Acceptance Criteria
 
-- [ ] `actor_items` CRUD (create/read/update/delete + actor-scoped list) enforces `requireActorOwnership`; strangers get 403, missing rows 404
+- [ ] `actor_items` CRUD (create/read/update/delete + actor-scoped list) enforces `requireActorOwnership`; strangers get 403, missing rows 404. The guard exists in `src/actors/actor-items.ts` (5 call sites) but `TASK-actor-items-crud-ownership.md` is still Not Started, so the 403/404 contract is not pinned by tests.
 - [ ] Ownership transfer is atomic on the actor side: actor-to-actor `transferItems` runs source-deduct + target-grant in a single transaction leaving no orphans on partial failure. World-instance `transfer` (`src/story/items/instances.ts`) is NOT transaction-wrapped at HEAD (uses `trx ?? state.db`, and `handleTransfer` passes no `trx`) — world-side atomicity is out of scope until that path is wrapped in `db.transaction()`.
 - [ ] Trade offer/accept/cancel lifecycle settles through the transfer primitives (no parallel transfer path)
 - [ ] Equipped items feed loadout/battle consumers via the `equipped` flag (`src/characters/services/wardrobe/loadout-bridge.ts`, `src/routes/battle/equipment-durability.ts`)
 - [ ] `TASK-actor-items-crud-ownership.md`, `TASK-actor-item-service.md` (done), `TASK-implement-trade.md` (done), `TASK-actors-child-tables-crud.md`, `TASK-actors-api-routes.md` linked as implementers
+
+## Dependencies
+
+- `epic-item-systems-unification.md` — unified taxonomy, transfer, and trade
+  primitives (In Progress)
+- `src/story/items/` — `ItemsService`, the canonical item lifecycle
+- `src/actors/access.ts` — ownership primitives
+
+## Unticketed Gaps
+
+- World-instance transfer atomicity: `src/story/items/instances.ts` deducts from
+  the source `world_items` row before granting to the destination, with no
+  transaction wrapper and no `trx` supplied by `handleTransfer`. A failed grant
+  destroys the items. No ticket covers this.
+- `TASK-actors-child-tables-crud.md` and `TASK-actors-api-routes.md` have no
+  status in `.plan/tickets/index.json` — they are referenced here as
+  implementers but are untracked.
+
+## Linked Tasks
+
+- `TASK-actor-items-crud-ownership.md` (Not Started)
+- `TASK-actor-item-service.md` (Done)
+- `TASK-implement-trade.md` (Done)
+- `TASK-trade-history-npc-counterparty.md` (open)
+- `TASK-actors-child-tables-crud.md` (no index entry)
+- `TASK-actors-api-routes.md` (no index entry)
