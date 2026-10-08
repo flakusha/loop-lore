@@ -8,6 +8,7 @@
 import type { SectionBuilder, } from "./types";
 import { actorGrowthSection, } from "./sections/actor-growth";
 import { actorHeaderSection, } from "./sections/actor-header";
+import { assistantPersonalitySection, } from "./sections/assistant-personality";
 import { authorNoteSection, } from "./sections/author-note";
 import { carriageSection, } from "./sections/carriage";
 import { chatHistorySection, } from "./sections/chat-history";
@@ -46,6 +47,10 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   customInstructionsSection,
   actorHeaderSection,
   pluginAgentRoleSection,
+  // Assistant personality voice (epic-character-multi-personality). Sits with
+  // the assistant-identity blocks so the chosen preset/character voice lands
+  // next to the agent role it colors. Emits nothing for server-default chats.
+  assistantPersonalitySection,
   groupParticipantsSection,
   groupTalkativitySection,
   userPersonaSection,

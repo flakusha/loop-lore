@@ -27,6 +27,7 @@ import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
 import { dropOverBudgetSections, reorderPromptMessages, } from "./prompt-budget";
 import { withResolvedOutfit, } from "./prompt-outfit";
+import { withResolvedPersonality, } from "./prompt-personality";
 import { loadUserPromptPreferences, } from "./prompt-user-preferences";
 import { parseJsonOr, } from "./prompt-utils";
 import { PROMPT_SECTIONS, } from "./prompt/registry";
@@ -268,6 +269,13 @@ export class PromptAssembler {
     // outfit) so narration sees situational appearance. Best-effort, like the
     // mood lookup above.
     efParams = await withResolvedOutfit(this.db, efParams, chat,);
+
+    // Wire the assistant-personality voice (epic-character-multi-personality):
+    // the assistantPersonality section fires only when params.assistantPersonality
+    // is set. Resolved from the chat's `gm_config.assistantPersonality` binding
+    // (canonical preset or character-as-assistant); server-default chats emit
+    // nothing. Best-effort, like the mood/outfit lookups above.
+    efParams = await withResolvedPersonality(this.db, efParams, chat,);
 
     const ctx: AssembleContext = {
       db: this.db,

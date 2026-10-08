@@ -70,6 +70,12 @@ export interface PromptParams {
   assistantName?: string;
   /** Optional game-master name for task-clarification injection. */
   gmName?: string;
+  /**
+   * Pre-composed assistant-personality prompt block (preset voice or
+   * character-as-assistant persona). Resolved by the assembler from the chat's
+   * `gm_config.assistantPersonality` binding; `undefined` keeps the section off.
+   */
+  assistantPersonality?: string;
 }
 
 /** */
@@ -203,6 +209,8 @@ export const PRIORITY = {
   /** Behavior-critical for both static and dynamic characters. */
   actorGrowth: 1,
   pluginAgentRole: 0,
+  /** Assistant personality voice block — behavior-critical when set. */
+  assistantPersonality: 0,
   chatHistory: 0,
   storyContext: 1,
   travelPrompts: 0,
