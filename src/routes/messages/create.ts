@@ -244,7 +244,11 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           // instead of re-wrapping it into a 201 whose body lacks the
           // declared id (BUG-message-create-re-wraps-a-503-reply-into-201-jsoncreated).
           if (generation && (generation.status < 200 || generation.status >= 300)) {
-            return generation;
+            const errorBody = (await generation.json()) as Record<string, unknown>;
+            return Response.json(
+              { ...errorBody, id, context, },
+              { status: generation.status, headers: generation.headers, },
+            );
           }
 
           return jsonCreated({ ...(await generation?.json?.()), context, },);
