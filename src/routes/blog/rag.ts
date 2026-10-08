@@ -12,7 +12,8 @@ import {
   SuccessResponse,
 } from "../../validation/schemas";
 import { type HandlerOpts, } from "../actor-auth.js";
-import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils.js";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
+import { isReadablePost, } from "./post-read-policy.js";
 export const BlogRagSourcesListResponse = ListResponse(BlogPostResponse,);
 
 /**
@@ -26,11 +27,27 @@ export function blogRagRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "blog-rag", },)
     .get(`${prefix}/blog/posts/:id/sources`, async (ctx: any,) => {
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const { userRole, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
+
+      // Same post-level read policy as the rest of the blog surface: the
+      // source list must not reveal a non-public post's existence nor its
+      // private source URIs. Denials answer 404 (not 403) so post
+      // existence is not leaked.
+      const post = await svc.getPost(ctx.params.id,);
+      if (post === undefined || !isReadablePost(post, userId, can(userRole, "admin.settings",),)) {
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
+      }
+
       const sources = await svc.getRAGSources(ctx.params.id,);
       return jsonResponse({ success: true, sources, count: sources.length, },);
     }, {
       response: {
         200: BlogRagSourcesListResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
       },
       detail: {
         summary: "List RAG sources",
