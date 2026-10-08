@@ -26,6 +26,7 @@
  *   SPDX_CHECK=1 bun run scripts/check-spdx.ts --staged  # staged, blocking
  *   bun run scripts/check-spdx.ts src/foo.ts docs/bar.md  # explicit files
  */
+import { argument, flag, multiple, object, runScript, string, withDefault, } from "../src/cli/parser";
 import { checkHeader, parseReuseToml, } from "./lib/reuse-toml.ts";
 import {
   getStagedFiles,
@@ -40,6 +41,20 @@ import { fixFiles, } from "./lib/spdx-fix.ts";
 const BLOCKING = process.env.SPDX_CHECK === "1";
 
 async function main() {
+  const parser = object({
+    fix: withDefault(flag("--fix",), false,),
+    staged: withDefault(flag("--staged",), false,),
+    files: multiple(argument(string(),),),
+  },);
+  const args = runScript(parser, {
+    programName: "spdx:check",
+    brief: "Validate (or --fix) the SPDX headers of tracked, staged, or named files.",
+    showDefault: true,
+    help: "option",
+  },);
+  const useFix = args.fix;
+  const explicitFiles = args.files;
+  const useStaged = args.staged;
   // Load and parse REUSE.toml
   const reusePath = new URL("../REUSE.toml", import.meta.url,).pathname;
   let reuseContent: string;
@@ -55,13 +70,7 @@ async function main() {
     console.warn("[spdx] No [[annotations]] in REUSE.toml - nothing to check.",);
     process.exit(0,);
   }
-
   // Collect files to check
-  const useFix = process.argv.includes("--fix",);
-  const explicitFiles = process.argv.slice(2,).filter(
-    (a,) => a !== "--staged" && a !== "--fix",
-  );
-  const useStaged = process.argv.includes("--staged",);
   const files = explicitFiles.length > 0
     ? explicitFiles.filter(hasCheckableExtension,).filter((f,) => !isExcluded(f,))
     : useStaged

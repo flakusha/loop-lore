@@ -10,6 +10,7 @@
  * guessed; an already-canonical slug passes through unchanged.
  */
 import { describe, expect, test, } from "bun:test";
+import path from "node:path";
 import { pickEpicOwner, scanEpicTitles, splitEpicCandidates, } from "./epic-owner-pick";
 
 const SLUGS = new Set([
@@ -127,5 +128,49 @@ describe("scanEpicTitles", () => {
     const { titles, ambiguous, } = scanEpicTitles(".plan/epics",);
     expect(ambiguous.length,).toBeGreaterThanOrEqual(1,);
     expect(titles["Internationalization (i18n)"],).toBe("epic-frontend-internationalization",);
+  });
+});
+
+/**
+ * CLI surface of `bun run scripts/plan/epic-owner-pick.ts`.
+ *
+ * Resource contract — why this suite is parallel-safe:
+ * - DISK: only the DEFAULT (no-flag) report path is spawned, which reads
+ *   `.plan/tickets/index.json` and the tickets it names and writes nothing.
+ *   `--apply` rewrites ticket `.md` files and index.json, and `--gen`
+ *   overwrites `epic-titles.generated.ts` — a checked-in source file. Neither
+ *   may be spawned here: both would race a sibling `bun test` process or a
+ *   sibling agent over shared state. Their flag RECOGNITION is covered instead
+ *   by the `--help` and unknown-option cases below.
+ * - The reported owner/remainer COUNTS are not pinned to literals — how much
+ *   multi-epic drift the tree holds is concurrent repo state. What is pinned is
+ *   the `dry-run: true` banner, which proves `--apply` was not passed.
+ * - PROCESS: each case is a spawned child, so the `import.meta.main` CLI block
+ *   and its accumulators are per-invocation.
+ * - No fixed-path fixtures, no shared globals, no ordering dependence.
+ */
+describe("epic-owner-pick CLI", () => {
+  const SCRIPT = path.join(import.meta.dir, "epic-owner-pick.ts",);
+
+  test("--help prints the brief and exits 0", () => {
+    const proc = Bun.spawnSync(["bun", SCRIPT, "--help",],);
+    expect(proc.exitCode,).toBe(0,);
+    expect(proc.stdout.toString(),).toContain("Collapse multi-epic",);
+  });
+
+  test("the default mode is a dry run", () => {
+    const proc = Bun.spawnSync(["bun", SCRIPT,],);
+    const out = proc.stdout.toString();
+    // `dry-run: false` here would mean --apply was somehow set without being
+    // passed, and the ticket .md files would already have been rewritten.
+    expect(out,).toContain("dry-run: true",);
+    expect(out,).toContain("owners: ",);
+    expect(out,).toContain("remainder (untouched, needs a human):",);
+    expect(proc.exitCode,).toBe(0,);
+  });
+
+  test("an unknown option is rejected with exit 1", () => {
+    const proc = Bun.spawnSync(["bun", SCRIPT, "--no-such-flag",],);
+    expect(proc.exitCode,).toBe(1,);
   });
 });

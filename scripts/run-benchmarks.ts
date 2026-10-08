@@ -20,6 +20,7 @@
 
 import { readdirSync, } from "node:fs";
 import { join, } from "node:path";
+import { argument, object, optional, runScript, string, } from "../src/cli/parser";
 
 const BENCH_DIR = join(import.meta.dir, "..", "tests", "benchmarks",);
 const BENCH_GLOB = /\.bench\.ts$/;
@@ -65,8 +66,16 @@ async function runBench({ name, path, }: BenchFile,): Promise<boolean> {
   return ok;
 }
 
+const parser = object({
+  filter: optional(argument(string(),),),
+},);
+const { filter, } = runScript(parser, {
+  programName: "bench",
+  brief: "Discover and run tests/benchmarks/*.bench.ts sequentially.",
+  help: "option",
+},);
+
 async function main(): Promise<void> {
-  const filter = process.argv[2];
   const benches = discoverBenches(filter,);
   console.log(`[bench] ${benches.length} benchmark(s): ${benches.map((b,) => b.name).join(", ",)}`,);
 

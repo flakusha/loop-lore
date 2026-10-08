@@ -26,6 +26,7 @@
  *   bun run scripts/check-licenses.ts --strict     # blocking
  */
 import { $, } from "bun";
+import { flag, object, runScript, withDefault, } from "../src/cli/parser";
 
 // ── Config ──────────────────────────────────────────────────────
 
@@ -170,7 +171,17 @@ async function runFossa(): Promise<FossaViolation[]> {
 
 // ── Main ────────────────────────────────────────────────────────
 
-const BLOCKING = process.env.LICENSE_CHECK === "1" || process.argv.includes("--strict",);
+const { strict, } = runScript(
+  object({ strict: withDefault(flag("--strict",), false,), },),
+  {
+    programName: "check-licenses",
+    brief: "Check src/ and dependencies for GPL/AGPL license violations.",
+    help: "option",
+  },
+);
+
+// LICENSE_CHECK=1 stays the CI env-var switch; --strict is the CLI equivalent.
+const BLOCKING = process.env.LICENSE_CHECK === "1" || strict;
 
 async function main() {
   console.log("[license] Running license compliance checks...",);
