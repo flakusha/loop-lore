@@ -9,7 +9,14 @@ import {
   ListResponse,
   SuccessResponse,
 } from "../../validation/schemas";
-import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  conflictResponse,
+  HttpStatus,
+  jsonCreated,
+  jsonError,
+  jsonResponse,
+  requireUserId,
+} from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
 const OptionalString = t.Optional(t.String(),);
@@ -74,19 +81,29 @@ export function definitionRoutes(opts: HandlerOpts, prefix = "/api",) {
         // with NOT NULL on `emotions.display_name`. The columns are NOT NULL in
         // the schema, so each needs a default that matches what the row needs.
         const id = crypto.randomUUID();
-        await database
-          .insertInto("emotions",)
-          .values({
-            id,
-            name,
-            display_name: displayName ?? name,
-            category: category ?? "neutral",
-            valence: valence ?? 0,
-            arousal: arousal ?? 0,
-            icon: icon ?? null,
-            created_at: new Date().toISOString(),
-          },)
-          .execute();
+        try {
+          await database
+            .insertInto("emotions",)
+            .values({
+              id,
+              name,
+              display_name: displayName ?? name,
+              category: category ?? "neutral",
+              valence: valence ?? 0,
+              arousal: arousal ?? 0,
+              icon: icon ?? null,
+              created_at: new Date().toISOString(),
+            },)
+            .execute();
+        } catch (error) {
+          // `uq_emotions_name` makes a duplicate name a client conflict, not a
+          // server fault: without this the driver error surfaces as a 500.
+          if (!(error instanceof Error && error.message.includes("UNIQUE constraint failed",))) {
+            throw error;
+          }
+
+          return conflictResponse(`Emotion "${name}" already exists`,);
+        }
 
         return jsonCreated({ id, },);
       }, {
@@ -95,6 +112,7 @@ export function definitionRoutes(opts: HandlerOpts, prefix = "/api",) {
           200: SuccessResponse,
           401: ErrorResponse,
           403: ErrorResponse,
+          409: ErrorResponse,
         },
         detail: {
           summary: "Create emotion definition",
