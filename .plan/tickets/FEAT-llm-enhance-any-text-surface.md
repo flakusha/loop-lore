@@ -32,10 +32,10 @@ Cross-reference: `FEAT-llm-enhance-outside-the-chat-composer` (may merge later).
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+`enhanceText` in `text-enhance.ts` lifts the composer's local-first chain (deterministic → browser model → POST /api/v1/generation/prompt) into a standalone primitive with no `$refs`/active-chat coupling; `prompt-request.ts` already had optional `chatId`, matching the backend route. The composer's `improvePrompt` now delegates to it — observer hooks (`onLocal`, `onServerFailure`) preserve the exact toast copy including the injection-blocked variant and the local-engine debug log. `UndoEnhance` is a bounded LIFO; the composer keeps its reactive `_promptImproveHistory` array because `input-area.html` binds its length.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

@@ -15,7 +15,12 @@
  * ponytail: local-only drafts, server sync if multi-device demand.
  */
 
-import { jsonParseOr, safeJsonStringify, } from "./json";
+import {
+  type ComposerDraft,
+  createKeyedDraftStore,
+  type DraftStore,
+  type KeyedDraftStore,
+} from "./draft-store";
 import type { ChatState, } from "./types";
 
 /** Key prefix for per-chat drafts; the chat id is appended verbatim. */
@@ -29,18 +34,7 @@ export const DRAFT_MAX_CHARS = 10 * 1024;
 /** Most chats with a retained draft; older entries are evicted. */
 export const DRAFT_MAX_CHATS = 20;
 
-/** Minimal storage surface so tests can inject an in-memory fake. */
-export interface DraftStore {
-  getItem(key: string,): string | null;
-  setItem(key: string, value: string,): void;
-  removeItem(key: string,): void;
-}
-
-/** Draft payload. */
-export interface ComposerDraft {
-  text: string;
-  savedAt: string;
-}
+export type { ComposerDraft, DraftStore, };
 
 /**
  * @returns The ambient localStorage, or null outside a browser context.
@@ -53,6 +47,18 @@ export function defaultDraftStore(): DraftStore | null {
   } catch {
     return null;
   }
+}
+
+// One factory instance per call keeps the historical signatures (storage is
+// a parameter, not ambient state); the instance itself is stateless.
+function chatDrafts(store: DraftStore,): KeyedDraftStore {
+  return createKeyedDraftStore({
+    prefix: DRAFT_PREFIX,
+    indexKey: DRAFT_INDEX_KEY,
+    maxChars: DRAFT_MAX_CHARS,
+    maxEntries: DRAFT_MAX_CHATS,
+    storage: store,
+  },);
 }
 
 /**
@@ -68,11 +74,7 @@ export function draftKey(chatId: string,): string {
  * @returns MRU-first chat ids with a draft; empty on corrupt data.
  */
 export function readDraftIndex(store: DraftStore,): string[] {
-  const raw = store.getItem(DRAFT_INDEX_KEY,);
-  if (!raw) { return []; }
-  const parsed = jsonParseOr<unknown>(raw, [],);
-  if (!Array.isArray(parsed,)) { return []; }
-  return parsed.filter((id,): id is string => typeof id === "string");
+  return chatDrafts(store,).readIndex();
 }
 
 /**
@@ -81,13 +83,7 @@ export function readDraftIndex(store: DraftStore,): string[] {
  * @returns The stored draft, or null when absent or malformed.
  */
 export function readDraft(store: DraftStore, chatId: string,): ComposerDraft | null {
-  const raw = store.getItem(draftKey(chatId,),);
-  if (!raw) { return null; }
-  const parsed = jsonParseOr<unknown>(raw, null,);
-  if (typeof parsed !== "object" || parsed === null) { return null; }
-  const text = (parsed as Record<string, unknown>).text;
-  if (typeof text !== "string" || text === "") { return null; }
-  return { text, savedAt: new Date().toISOString(), };
+  return chatDrafts(store,).read(chatId,);
 }
 
 /**
@@ -99,37 +95,7 @@ export function readDraft(store: DraftStore, chatId: string,): ComposerDraft | n
  * @returns {void}
  */
 export function writeDraft(store: DraftStore, chatId: string, text: string,): void {
-  const trimmed = text.slice(0, DRAFT_MAX_CHARS,);
-  if (trimmed === "") {
-    clearDraft(store, chatId,);
-    return;
-  }
-
-  const payload = safeJsonStringify({ text: trimmed, savedAt: new Date().toISOString(), },);
-  if (!payload.ok) { return; }
-  try {
-    store.setItem(draftKey(chatId,), payload.value,);
-  } catch {
-    return;
-  }
-
-  const index = readDraftIndex(store,).filter((id,) => id !== chatId);
-  index.unshift(chatId,);
-  for (const evicted of index.slice(DRAFT_MAX_CHATS,)) {
-    try {
-      store.removeItem(draftKey(evicted,),);
-    } catch {
-      /* keep evicting the rest */
-    }
-  }
-
-  const encoded = safeJsonStringify(index.slice(0, DRAFT_MAX_CHATS,),);
-  if (!encoded.ok) { return; }
-  try {
-    store.setItem(DRAFT_INDEX_KEY, encoded.value,);
-  } catch {
-    /* index loss only forfeits LRU order */
-  }
+  chatDrafts(store,).write(chatId, text,);
 }
 
 /**
@@ -138,19 +104,7 @@ export function writeDraft(store: DraftStore, chatId: string, text: string,): vo
  * @returns {void}
  */
 export function clearDraft(store: DraftStore, chatId: string,): void {
-  try {
-    store.removeItem(draftKey(chatId,),);
-  } catch {
-    return;
-  }
-
-  try {
-    const index = readDraftIndex(store,).filter((id,) => id !== chatId);
-    const encoded = safeJsonStringify(index,);
-    if (encoded.ok) { store.setItem(DRAFT_INDEX_KEY, encoded.value,); }
-  } catch {
-    /* index loss only forfeits LRU order */
-  }
+  chatDrafts(store,).clear(chatId,);
 }
 
 export const chatDraftMethods: Partial<ChatState> & ThisType<ChatState> = {
