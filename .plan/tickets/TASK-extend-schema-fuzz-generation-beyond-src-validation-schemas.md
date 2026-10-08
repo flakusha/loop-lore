@@ -22,7 +22,13 @@ Report findings before implementing: the point is to find which schemas are cont
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The schema-fuzz generator (`scripts/generate-schema-fuzz.ts`) is scoped to `src/validation/schemas/` — the directory that was known to hold route contracts at the time. TypeBox schemas also live in `src/config/schema.ts` (env config, not a route contract) and `plugins/core/` (plugin-contributed routes, also contracts). Leaving these out means zero fuzz coverage for those wire surfaces, which is exactly the class of bug schema-fuzz was built to catch.
+
+Two hard lessons from `feat-auto-test-generation` apply: (1) barrel-only walks miss sibling modules not re-exported in `index.ts` — disk glob, not import graph traversal; (2) schema names colliding across modules silently resolve to whichever is imported first in the generated test, so each collision must be disambiguated by owning module. Both caused silent-green gates.
+
+Constraint: not every `t.Object` in the tree is a fuzz-worthy contract. `src/config/schema.ts` env schemas are internal defaults, not wire contracts. Plugin schemas are contracts only if they represent external-facing routes. An audit must precede the implementation to classify each candidate.
+
+Alternative: do nothing and accept zero coverage for out-of-tree schemas. Accepted for `src/config/schema.ts` (internal). Not acceptable for plugin route schemas (external surface). The ticket is scoped accordingly.
 
 **Acceptance Criteria:**
 

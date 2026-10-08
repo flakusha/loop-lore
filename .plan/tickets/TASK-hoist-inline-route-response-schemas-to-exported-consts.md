@@ -18,7 +18,11 @@ For this epic (src/ as a programmatic API) the deeper problem is that a consumer
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Eleven Elysia route handlers define their 200-response schemas inline inside the route declaration, e.g. `response: { 200: ListResponse(QuestResponse,) }` at src/routes/blog/posts.ts:161, src/routes/quests/progress.ts:62, etc. The schema-fuzz generator reads module-level exports from `src/validation/schemas/*.ts`; inline declarations are invisible to it, so these 11 contracts receive zero fuzz coverage. An external consumer also cannot import them.
+
+Constraint: the refactor must not change the schema object — routes must continue returning the identical shape. This is a pure rename+export operation; the acceptance criteria confirm the schema count rises after `generate-schema-fuzz.ts` re-run and no new test gaps appear.
+
+Alternative: leave them inline. Accepted if these endpoints are considered internal-only. For the `epic-api-library-distribution.md` goal of exposing `src/` as a programmatic API, they must be importable — this ticket is required.
 
 **Acceptance Criteria:**
 

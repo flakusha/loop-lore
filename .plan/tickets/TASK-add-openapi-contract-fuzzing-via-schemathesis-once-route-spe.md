@@ -18,7 +18,11 @@ This is the last piece for external consumers: it is what proves the published c
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The existing schema-fuzz generator validates that inputs conform to declared schemas (validity-only). It never proves the live server honors those contracts at runtime — a schema can be correctly defined but mis-implemented. Schemathesis probes a running server against its OpenAPI spec, catching the gap between "schema says 200" and "server actually returns 200". This is the only intersystem test that can catch that class of regression.
+
+Constraint: requires a Python sidecar process, a running server, and a CI step — significantly heavier than the existing Bun-based suite. Also requires `epic-api-first-foundation.md` (OpenAPI spec generation from Elysia routes) to land first; without stable specs there is nothing for Schemathesis to read. Deferred accordingly.
+
+Alternative: rely on schema-fuzz alone. Accepted while routes and OpenAPI specs are in flux. Once `epic-api-first-foundation.md` lands, this ticket is unblocked and required for external consumers to trust the published contract.
 
 **Acceptance Criteria:**
 

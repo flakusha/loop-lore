@@ -39175,6 +39175,12 @@
       "source": ".plan/tickets/TASK-golden-corpus-and-scoring-ratchet-for-prompt-injection-signa.md"
     }
   ],
+  "src/validation/schema-fuzz.generated.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fuzzing-infrastructure-harness-runner-corpus-manager-crash-d.md"
+    }
+  ],
   "src/validation/schemas": [
     {
       "kind": "ticket",
