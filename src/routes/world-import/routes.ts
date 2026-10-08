@@ -7,7 +7,7 @@ import { authenticate, } from "../../middleware/auth";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import type { WorldBundle, } from "../export-shared";
 import { HttpStatus, jsonCreated, jsonError, } from "../http-utils";
-import { importWorldBundle, } from "./bundle";
+import { ImportCycleError, importWorldBundle, } from "./bundle";
 import { rowOf, } from "./rows";
 import type { HandlerOpts, } from "./types";
 
@@ -42,8 +42,16 @@ export function worldImportRoutes({ database, config, }: HandlerOpts, prefix = "
       },);
     }
 
-    const { worldId, counts, } = await importWorldBundle(database, userId, body as WorldBundle,);
-    return jsonCreated({ id: worldId, imported: counts, },);
+    try {
+      const { worldId, counts, } = await importWorldBundle(database, userId, body as WorldBundle,);
+      return jsonCreated({ id: worldId, imported: counts, },);
+    } catch (error) {
+      if (error instanceof ImportCycleError) {
+        return jsonError({ message: error.message, status: HttpStatus.BadRequest, },);
+      }
+
+      throw error;
+    }
   }, {
     // Loose payload: a WorldBundle is a nested, versioned structure. Elysia
     // cannot statically infer through Type.Unknown, so the handler asserts the
