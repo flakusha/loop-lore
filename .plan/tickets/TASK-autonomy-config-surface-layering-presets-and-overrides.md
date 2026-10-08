@@ -60,3 +60,4 @@ as a duplicate rather than worked.
 Wontfix recorded 2026-10-02; `**Epic:**` corrected from the non-existent id
 `epic-actor-autonomy-story-drive.md` to `epic-actor-autonomy-story-drive`.
 
+**Registry note:** git issue `db98e0e` closed 2026-10-08 during issue reconciliation (registry tip: 1fd08e96a). The git issue registry has no `Wontfix` state, so the close forced `Done`; the status was restored to `Wontfix` here because this ticket was abandoned as a duplicate, never implemented.

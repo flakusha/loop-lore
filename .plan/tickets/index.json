@@ -4293,6 +4293,32 @@
     "source": ".plan/tickets/BUG-journal-keyphrase-panel-reads-only-page-1-of-the-paginated-m.md",
     "status": "Not Started"
   },
+  "BUG-JSCPD-RATCHET-COUNTS-CLUSTERS-NOT-DUPLICATED-LINES": {
+    "hash": "47b15be",
+    "git_issue": "47b15be",
+    "extid": "BUG-JSCPD-RATCHET-COUNTS-CLUSTERS-NOT-DUPLICATED-LINES",
+    "type": "BUG",
+    "title": "jscpd-ratchet-counts-clusters-not-duplicated-lines",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-jscpd-ratchet-counts-clusters-not-duplicated-lines.md",
+    "status": "Not Started"
+  },
+  "BUG-JSCPD-RATCHET-GATE-ADVISORY-NOT-BLOCKING": {
+    "hash": "bc37d87",
+    "git_issue": "bc37d87",
+    "extid": "BUG-JSCPD-RATCHET-GATE-ADVISORY-NOT-BLOCKING",
+    "type": "BUG",
+    "title": "jscpd-ratchet-gate-advisory-not-blocking",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-jscpd-ratchet-gate-advisory-not-blocking.md",
+    "status": "Not Started"
+  },
   "BUG-JSCPD-RATCHET-GATE-SILENTLY-REMOVED-WITHOUT-TICKET": {
     "hash": "8b06f29",
     "git_issue": "8b06f29",
@@ -4305,6 +4331,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-jscpd-ratchet-gate-silently-removed-without-ticket.md",
     "status": "done"
+  },
+  "BUG-JSCPD-RATCHET-UPDATE-CANNOT-RAISE-BASELINE": {
+    "hash": "b1cc7bb",
+    "extid": "BUG-JSCPD-RATCHET-UPDATE-CANNOT-RAISE-BASELINE",
+    "type": "BUG",
+    "title": "jscpd-ratchet-update-cannot-raise-baseline",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-jscpd-ratchet-update-cannot-raise-baseline.md",
+    "status": "Not Started",
+    "git_issue": "b1cc7bb"
   },
   "BUG-JWT-PAYLOAD-PARSE-FAILURE-YIELDS-EMPTY-OBJECT-ACCEPTED-AS-VA": {
     "epic": "",
@@ -6955,6 +6994,19 @@
     "tags": [],
     "title": "Stream cancel leaves attempt stuck Processing forever — no cleanup/persist",
     "type": "BUG"
+  },
+  "BUG-SYNC-INDEX-TYPE-FILTER-SILENTLY-EXCLUDES-IDEA-TICKETS-FROM-E": {
+    "hash": "28d0678",
+    "git_issue": "28d0678",
+    "extid": "BUG-SYNC-INDEX-TYPE-FILTER-SILENTLY-EXCLUDES-IDEA-TICKETS-FROM-E",
+    "type": "BUG",
+    "title": "sync-index type filter silently excludes IDEA tickets from every --fix mode",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-sync-index-type-filter-silently-excludes-idea-tickets-from-e.md",
+    "status": "Not Started"
   },
   "BUG-T-ANY-SCHEMAS-PERSIST-ARBITRARY-JSON-ACTOR-SETTINGS-ENTITY-D": {
     "epic": "",
@@ -10667,7 +10719,7 @@
     "label": "epic",
     "priority": "medium",
     "source": ".plan/tickets/EPIC-federation-swarm-sync.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Federation, Swarm Sync & Decentralized Comms",
     "type": "EPIC"
@@ -22707,7 +22759,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-autonomy-config-surface-layering-presets-and-overrides.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Autonomy config surface layering presets and overrides",
     "type": "TASK"
@@ -22753,7 +22805,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-autonomy-rate-governor-for-llm-actors.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Autonomy rate governor for LLM actors",
     "type": "TASK"
@@ -36411,7 +36463,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md",
-    "status": "🟡 Partial (commit 85657ffb on dev, 2026-08-26; middleware not wired into route chain)",
+    "status": "done",
     "tags": [],
     "title": "Middleware — global idempotency replay for re-fired requests",
     "type": "TASK"
@@ -41913,7 +41965,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-restart-required-indicator-on-system-config-changes.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "Restart-required indicator on system_config changes",
     "type": "TASK"
