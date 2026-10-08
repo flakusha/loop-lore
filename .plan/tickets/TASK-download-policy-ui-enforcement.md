@@ -13,7 +13,7 @@
 **Priority:** high
 **Effort:** Small
 **Tags:** byok, local-models, policy, browser, security
-**Epic:** epic-byok-local-models.md
+**Epic:** epic-byok-local-models
 **Related:** FEAT-byok-local-models.md
 
 ## Summary

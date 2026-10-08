@@ -15,7 +15,7 @@
 **Effort**: Medium
 **Tags**: character, world, data-model, architecture
 **Assignee**:
-**Epic:**: epic-character-world-setup
+**Epic:** epic-character-world-setup
 **Related**:
 
 ## Summary

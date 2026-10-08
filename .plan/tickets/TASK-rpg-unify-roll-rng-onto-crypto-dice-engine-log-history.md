@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-rpg-mechanics.md
+**Epic:** epic-rpg-mechanics
 
 ## Summary
 

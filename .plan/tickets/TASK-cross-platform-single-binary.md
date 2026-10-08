@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** cross-platform, build, compile, single-binary, bun
-**Epic:** epic-cross-platform-portability.md
+**Epic:** epic-cross-platform-portability
 
 ## Description
 

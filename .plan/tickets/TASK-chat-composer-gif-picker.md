@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-chat-rich-engagement.md
+**Epic:** epic-chat-rich-engagement
 
 ## Summary
 

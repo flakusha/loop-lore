@@ -15,7 +15,7 @@
 **Priority**: high
 **Tags**: frontend, validation, character-editor, schema
 **Assignee**:
-**Epic:**: epic-character-core-system
+**Epic:** epic-character-core-system
 **Related**: `docs/spec/character-spec.md` §5.1, §7, `src/validation/schemas/`, `src/characters/spec/`
 
 ## Description

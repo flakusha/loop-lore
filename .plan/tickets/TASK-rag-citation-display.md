@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** Feature Task
 **Tags:** rag, frontend, ui, citations
-**Epic:** epic-rag-ui.md
+**Epic:** epic-rag-ui
 
 ## Summary
 

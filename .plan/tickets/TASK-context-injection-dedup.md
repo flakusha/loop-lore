@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-hidden-carriage-context.md
+**Epic:** epic-hidden-carriage-context
 **See also:** epic-context-injection-templates.md, epic-quests-encounters.md, epic-gm-shadow-notes.md
 **Status:** Not Started
 **Priority:** High

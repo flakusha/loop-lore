@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: prompt-assembly, character-traits, mood, templates
 **Assignee**:
-**Epic:**: epic-character-core-system
+**Epic:** epic-character-core-system
 **Related**: `src/db/schema-character.ts` (CharacterMood, MoodEvents), `src/assistant/prompt/sections/emotion-avatar.ts`
 
 ## Description

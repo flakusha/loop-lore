@@ -14,7 +14,7 @@
 **Effort:** medium
 **Type:** Bug
 **Area:** frontend, security
-**Epic:** epic-frontend-gallery.md
+**Epic:** epic-frontend-gallery
 **Tags:** xss, frontend, security, innerHTML, assets
 **Source:** OpenAgent frontend review (existing-code audit, 2026-08-23)
 **Related:** `BUG-gallery-openAssetPreview-context-safety.md` (distinct — that is a ReferenceError, not XSS)

@@ -13,7 +13,7 @@
 **Priority:** high
 **Effort:** Small
 **Tags:** byok, local-models, wasm, gguf, browser
-**Epic:** epic-byok-local-models.md
+**Epic:** epic-byok-local-models
 **Related:** FEAT-byok-local-models.md, TASK-wllama-gguf-inference-engine-browser.md
 
 ## Summary

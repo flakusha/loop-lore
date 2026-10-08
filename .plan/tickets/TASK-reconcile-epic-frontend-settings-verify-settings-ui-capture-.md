@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** small
-**Epic:** epic-frontend-settings.md
+**Epic:** epic-frontend-settings
 
 ## Summary
 

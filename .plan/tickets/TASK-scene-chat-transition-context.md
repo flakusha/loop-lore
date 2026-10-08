@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-chat-transfer-location.md
+**Epic:** epic-chat-transfer-location
 **See also:** epic-game-frontend-scenes.md
 **Status:** Not Started
 **Priority:** High

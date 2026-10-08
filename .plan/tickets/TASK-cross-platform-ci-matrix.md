@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** cross-platform, ci, windows, macos, github-actions
-**Epic:** epic-cross-platform-portability.md
+**Epic:** epic-cross-platform-portability
 
 ## Description
 

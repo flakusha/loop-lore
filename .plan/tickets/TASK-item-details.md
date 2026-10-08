@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** Feature Task
 **Tags:** inventory, frontend, ui, item-details
-**Epic:** epic-inventory-ui.md
+**Epic:** epic-inventory-ui
 
 ## Summary
 

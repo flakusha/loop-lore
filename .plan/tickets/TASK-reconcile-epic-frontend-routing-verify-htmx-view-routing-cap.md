@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** small
-**Epic:** epic-frontend-routing.md
+**Epic:** epic-frontend-routing
 
 ## Summary
 

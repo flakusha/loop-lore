@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** generation, pause, admin, kill-switch, flow-control
-**Epic:** epic-generation-flow-control.md
+**Epic:** epic-generation-flow-control
 **Related:** TASK-unified-hold-semantics-per-chat-pause-gates-primary-generate.md, TASK-admin-generation-controls-runtime-surface.md
 
 ## Summary

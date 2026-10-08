@@ -15,7 +15,7 @@
 **Priority**: low
 **Tags**: code-quality, codemod, refactor
 **Assignee**:
-**Epic:**: epic-code-quality
+**Epic:** epic-code-quality
 **Related**:
 
 ## Summary

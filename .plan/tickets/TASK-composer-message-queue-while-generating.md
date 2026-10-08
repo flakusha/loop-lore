@@ -10,7 +10,7 @@
 - [ ] Enqueue → completion → sequential auto-send round-trip; survives page reload
 - [ ] Queue flush uses normal message-create path (moderation not bypassed)
 - [ ] Idempotency: concurrent completion + flush cannot double-send
-**Epic:** epic-chat-composer-flows.md
+**Epic:** epic-chat-composer-flows
 **Type:** Feature | **Priority:** Medium | **Effort:** S
 
 ## Problem

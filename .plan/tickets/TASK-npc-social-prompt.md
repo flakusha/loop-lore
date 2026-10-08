@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:**: epic-social-interaction
+**Epic:** epic-social-interaction
 **Related**:
 
 **Summary:**

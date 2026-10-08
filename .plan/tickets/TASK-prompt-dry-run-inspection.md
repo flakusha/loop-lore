@@ -10,7 +10,7 @@
 - [ ] Dry-run output block-matches the actual next-turn prompt (fixture test)
 - [ ] Token totals equal context-stats accounting; no LLM call made
 - [ ] Encrypted content redacted per chat-privacy rules
-**Epic:** epic-chat-context-optimization.md
+**Epic:** epic-chat-context-optimization
 **Type:** Feature | **Priority:** Medium | **Effort:** S–M
 
 ## Problem

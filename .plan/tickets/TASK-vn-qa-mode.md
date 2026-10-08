@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** visual-novel, qa-mode, interactive-storytelling
-**Epic:** epic-visual-novel-mode.md
+**Epic:** epic-visual-novel-mode
 
 ## Summary
 

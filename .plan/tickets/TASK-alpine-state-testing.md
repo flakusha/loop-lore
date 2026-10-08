@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task / Test Infrastructure
 **Tags:** testing, e2e, browser, alpine, playwright
-**Epic:** epic-testing-qa.md
+**Epic:** epic-testing-qa
 
 ## Summary
 

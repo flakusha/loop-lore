@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-federation-swarm-sync.md
+**Epic:** epic-federation-swarm-sync
 **Related:** BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent, TASK-instance-state-advertisement-endpoint
 
 ## Summary

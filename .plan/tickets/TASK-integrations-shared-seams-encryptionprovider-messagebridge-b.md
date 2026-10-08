@@ -6,7 +6,7 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-integrations-core.md
+**Epic:** epic-integrations-core
 
 **Summary:**
 

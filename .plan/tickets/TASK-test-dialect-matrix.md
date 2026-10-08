@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:**: epic-testing-qa
+**Epic:** epic-testing-qa
 **Related**:
 
 ## Summary

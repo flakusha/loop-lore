@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** plugin, frontend, ui, browser
-**Epic:** epic-plugin-management-ui.md
+**Epic:** epic-plugin-management-ui
 
 ## Summary
 

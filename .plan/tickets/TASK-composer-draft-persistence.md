@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-chat-composer-flows.md
+**Epic:** epic-chat-composer-flows
 
 **Status Note:** ChatDraftStore shipped (commit 4d3fbd12a) — localStorage per-chatId, debounced 300ms save, 10KB cap, LRU 20 chats, wired into `chat-send.ts` (clearComposerDraft on send, flushComposerDraft on send path) and `world.ts` (flush on chat switch, restoreComposerDraft on select). `// ponytail:` marker added to `chat-drafts.ts` module doc (server sync deferred). Reply-context AC is inapplicable: `chat-send.ts:45-46` resolves reply target implicitly at send time from `messages.findLast()` — there is no client-side reply-target state to persist; grep across `src/frontend/alpine/` confirms no `setReply`/`replyTo`/`_reply` field exists. Text restore and send-clear both verified.
 **Type:** Feature | **Priority:** High | **Effort:** S

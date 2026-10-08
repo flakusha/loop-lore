@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** Feature Task
 **Tags:** battle, frontend, ui, health, component
-**Epic:** epic-battle-ui.md
+**Epic:** epic-battle-ui
 
 ## Summary
 

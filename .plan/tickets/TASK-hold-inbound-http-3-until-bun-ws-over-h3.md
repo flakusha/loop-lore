@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-http-protocol-features.md
+**Epic:** epic-http-protocol-features
 
 ## Summary
 

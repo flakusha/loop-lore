@@ -15,7 +15,7 @@
 **Effort:** Medium
 **Tags**: text-effects, overlay, ui, immersion
 **Assignee**:
-**Epic:**: epic-frontend-components
+**Epic:** epic-frontend-components
 **Related**:
 
 ## Summary

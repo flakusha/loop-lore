@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** e2e, llama.cpp, llama-swap, sd-server, fixture, opt-in, real-server
-**Epic:** epic-e2e-integration-testing.md
+**Epic:** epic-e2e-integration-testing
 **Related:** TASK-generation-mock-scenario-provider.md, TASK-generation-cassette-replay.md, FEAT-byok-local-models.md, TASK-ollama-native-provider.md, epic-cross-platform-portability.md
 
 ## Summary
