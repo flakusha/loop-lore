@@ -38,7 +38,7 @@
 | In Progress | Assistant/GM Flows Reconciliation | High | High | 13 | [epic-assistant-gm-flows.md](/.plan/epics/epic-assistant-gm-flows.md) |
 | Not Started | Audio, Video & Sound Generation | Medium | Very High (split into 5 sub-epics) | 0 | [epic-audio-video-sound.md](/.plan/epics/epic-audio-video-sound.md) |
 | Not Started | Authentication Channel Provisioning — Messenger / E-mail / Federated Login & Unlock | High (security-critical provisioning) | High | 19 | [epic-auth-channel-provisioning.md](/.plan/epics/epic-auth-channel-provisioning.md) |
-| Not Started | Authoring & Creation Tools | Medium | Medium | 0 | [epic-authoring-creation.md](/.plan/epics/epic-authoring-creation.md) |
+| In Progress | Authoring & Creation Tools | Medium | Medium | 0 | [epic-authoring-creation.md](/.plan/epics/epic-authoring-creation.md) |
 | In Progress | Authorization & Access Control | High | High | 12 | [epic-auth-access.md](/.plan/epics/epic-auth-access.md) |
 | In Progress | AUX LLM Enrichment Pipeline | P2-B | Medium | 10 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
 | Not Started | Avatar Alpha Channel + VN Layering | Medium | Medium | 7 | [epic-avatar-alpha-vn-layering.md](/.plan/epics/epic-avatar-alpha-vn-layering.md) |
@@ -580,7 +580,7 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Authoring & Creation Tools
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
@@ -3355,4 +3355,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

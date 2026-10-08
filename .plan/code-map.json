@@ -5354,6 +5354,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-faction-leaders-and-cadre-generation.md"
     }
   ],
@@ -5494,6 +5498,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-epic14-import-export-reconciliation.md"
     }
   ],
@@ -5501,6 +5509,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     },
     {
       "kind": "ticket",
@@ -30140,6 +30152,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
     }
   ],
@@ -31337,6 +31353,12 @@
       "source": ".plan/tickets/TASK-frontend-char-world-setup-resolve.md"
     }
   ],
+  "src/routes/characters": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
   "src/routes/characters-internal.test.ts": [
     {
       "kind": "epic",
@@ -31447,6 +31469,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
+    }
+  ],
+  "src/routes/characters/export.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     }
   ],
   "src/routes/characters/license.ts": [
@@ -32349,6 +32377,12 @@
       "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
     }
   ],
+  "src/routes/export-shared": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
   "src/routes/export-shared.test.ts": [
     {
       "kind": "ticket",
@@ -32361,6 +32395,12 @@
       "source": ".plan/tickets/TASK-codemod-fetch-json-safe-utils.md"
     }
   ],
+  "src/routes/export-shared/characters.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
   "src/routes/export-shared/chats.ts": [
     {
       "kind": "ticket",
@@ -32371,6 +32411,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
+    }
+  ],
+  "src/routes/export-shared/story.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     }
   ],
   "src/routes/export-sse.ts": [
@@ -32397,6 +32443,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-export-status-download-endpoints-leak-other-users-jobs-via-u.md"
+    }
+  ],
+  "src/routes/export-sse/jobs.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     }
   ],
   "src/routes/export-sse/start.ts": [
@@ -32437,6 +32489,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-link-share-json-routes-500-body-already-used-elysia-su.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     },
     {
       "kind": "ticket",
@@ -32866,6 +32922,10 @@
   "src/routes/import/actor.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-char-editor-import-export-ui.md"
     }
   ],
@@ -32892,6 +32952,10 @@
     }
   ],
   "src/routes/import/lorebook.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-lorebook-template-seeding.md"
@@ -35636,6 +35700,10 @@
     }
   ],
   "src/routes/world-import/bundle.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-bundle-import-untransacted-partial-import-corrupts-wor.md"
