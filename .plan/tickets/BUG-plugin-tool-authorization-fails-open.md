@@ -3,7 +3,7 @@
 
 # BUG: Plugin tool authorization fails open
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Epic:** epic-security-sandboxing
 **Effort:** Medium
@@ -34,10 +34,53 @@ The asymmetry is visible on adjacent lines: `:80` treats *no tools configured* a
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Resolved in `src/generation/generate-route/tool-execution.ts` —
+`gatePluginToolsByRole` now returns `[]` and calls `auditUnresolvedRole()`
+(getLogger child, `module: "authz"`, best-effort try/catch like
+`auditDenial` in `src/plugins/route-access.ts:104`) when
+`registry.getAgentRole()` returns undefined.
+
+**The `!agentRole` branch was investigated and deliberately LEFT allow-all.**
+Callers: exactly one production call site, `provider-request.ts:56`
+(`gatePluginToolsByRole(roleRow?.agent_role ?? null,)`). Reasoning from that
+call site rather than the ticket's wording:
+
+- `actors.agent_role` is a per-character plugin persona, not an authz
+  principal. It is written by the actor's owner at character create/update
+  (`src/routes/characters/create.ts:76`, `update.ts:184`) and injected as a
+  system-prompt section by `pluginAgentRoleSection`.
+- The caller runs inside `buildProviderRequest`, downstream of
+  `checkChatAccess` in `validate.ts:68`, so authentication and chat
+  authorization have already happened. `!agentRole` cannot mean
+  "unauthenticated".
+- Failing closed there would return no tools for every character that has no
+  role assigned — which is the default state (`schema-core.ts:412`,
+  nullable, no default). Four shipped plugins register tools
+  (`plugins/core/card-battle`, `plugins/core/rps`,
+  `plugins/community/trivia`, `plugins/community/nsfw-cards`); the change
+  would silently disable their entire tool surface for every unassigned
+  character. That is a functional regression, not a security fix.
+- This matches the codebase's established convention for the sibling gate:
+  a plugin route declaring neither `requiresAuth` nor `permissions` stays
+  public (`src/plugins/route-access.ts:14-16`). "Declared nothing" means
+  unrestricted; "declared something that does not resolve" means deny.
+
+Both branches are now pinned by tests, so a future flip is a deliberate edit.
+
+**`ToolDefinition.permissions` was deliberately NOT honored here.** It is a
+separate concern, not a one-line filter: no shipped plugin declares it
+(`grep -rn 'permissions:' plugins/` returns nothing), the gate has no access
+to the caller's `userRole` (it receives only an agent-role id, and the RBAC
+check needs `hasAll(userRole, perms)` from `src/users/permissions.ts:119`),
+so honoring it would require threading the caller's user role through
+`buildProviderRequest` — a signature change with its own design questions
+(which user? the actor's owner? the requesting user?). Filed as follow-up
+work, not smuggled into this fix.
+
+Verification: `src/generation/generate-route.test.ts`, `describe("gatePluginToolsByRole")`.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
