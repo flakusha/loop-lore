@@ -9,6 +9,7 @@
 import { actorGrowthSection, } from "./sections/actor-growth";
 import { actorHeaderSection, } from "./sections/actor-header";
 import { authorNoteSection, } from "./sections/author-note";
+import { carriageSection, } from "./sections/carriage";
 import { chatHistorySection, } from "./sections/chat-history";
 import { customInstructionsSection, } from "./sections/custom-instructions";
 import { dynamicContextSection, } from "./sections/dynamic-context";
@@ -59,6 +60,10 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   storyContextSection,
   travelSection,
   gmNotesSection,
+  // Hidden carriage TOML block (epic-hidden-carriage-context). Sits with
+  // the steering block near gmNotes; returns [] unless the chat opted in
+  // via story_state.carriageEnabled, so toggle-off stays byte-identical.
+  carriageSection,
   // Game canvas state emission + snapshot summary (TASK-game-canvas).
   // Sits with the steering block near gmNotes so layout-emission rules
   // travel with other scene directives.

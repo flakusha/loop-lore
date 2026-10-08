@@ -148,6 +148,8 @@ export const GmConfigSchema = t.Object({
     },),
     t.Null(),
   ],),),
+  // Hidden carriage opt-in (epic-hidden-carriage-context) — display-state, not GM execution.
+  carriageEnabled: t.Optional(t.Boolean(),),
 },);
 
 // ── Response schemas ──────────────────────────────────────
