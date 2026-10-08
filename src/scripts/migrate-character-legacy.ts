@@ -25,7 +25,20 @@ import { Kysely, } from "kysely";
 import { loadConfig, } from "../config/load";
 import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { getLogger, type Logger, } from "../logger";
 import { safeJsonParse, safeJsonStringify, } from "../utils/safe-json";
+
+/**
+ * Module logger accessor — null until the CLI guard calls `createLogger()`.
+ * @returns the child logger, or null when no logger is initialized.
+ */
+function log(): Logger | null {
+  try {
+    return getLogger().child({ module: "scripts/migrate:character:legacy", },);
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Result of normalizing a single `data_raw` payload.
@@ -194,7 +207,7 @@ export async function main(): Promise<number> {
   const config = loadConfig();
   const sqliteFilename = config.db.sqliteFilename;
   if (!sqliteFilename || sqliteFilename === ":memory:") {
-    console.error("migrate:character:legacy requires a real on-disk DB; got:", sqliteFilename,);
+    log()?.error("requires a real on-disk DB; got:", undefined, { sqliteFilename, },);
     return 1;
   }
 
@@ -204,15 +217,25 @@ export async function main(): Promise<number> {
 
   const summary = await runMigration(db,);
 
+  // Human-facing report block on stdout: the CLI-guard test asserts the
+  // summary reaches stdout verbatim, so these stay direct writes.
+  // eslint-disable-next-line no-console
   console.log("--- migrate:character:legacy summary ---",);
+  // eslint-disable-next-line no-console
   console.log(`total actors : ${summary.totalActors}`,);
+  // eslint-disable-next-line no-console
   console.log(`candidates   : ${summary.candidates}`,);
+  // eslint-disable-next-line no-console
   console.log(`changed      : ${summary.changed}`,);
+  // eslint-disable-next-line no-console
   console.log(`unchanged    : ${summary.unchanged}`,);
+  // eslint-disable-next-line no-console
   console.log(`skipped      : ${summary.skipped}`,);
   if (Object.keys(summary.fieldsAdded,).length > 0) {
+    // eslint-disable-next-line no-console
     console.log("fields added:",);
     for (const [field, count,] of Object.entries(summary.fieldsAdded,)) {
+      // eslint-disable-next-line no-console
       console.log(`  ${field}: ${count}`,);
     }
   }
@@ -231,7 +254,11 @@ if (import.meta.main) {
   // If main() throws, let bun's unhandled-rejection handler print the
   // stack trace and exit non-zero — same observable behavior as a typed
   // handler, with fewer lines to cover and less ceremony to maintain.
-  await main().then(
-    (code,) => process.exit(code,),
-  );
+  await main().then(async (code,) => {
+    // The log queue batches on a 100ms timer; drain it before the exit takes
+    // the queued diagnostic down with the process. A transport rejection must
+    // not skip the exit — `code` is this script's contract.
+    await log()?.flush().catch(() => undefined);
+    process.exit(code,);
+  },);
 }

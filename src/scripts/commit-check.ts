@@ -15,6 +15,24 @@
 
 import { execSync, } from "child_process";
 import { flag, object, runScript, withDefault, } from "../cli/parser";
+import { createLogger, getLogger, type Logger, } from "../logger";
+
+// Console-only logger: the githook runs this file as a bare process, with no
+// host server to have seeded a logger already.
+createLogger({ level: "info", },);
+
+/**
+ * Module logger accessor — null if no logger is initialized.
+ * @returns the child logger, or null when no logger is initialized.
+ */
+function log(): Logger | null {
+  try {
+    return getLogger().child({ module: "scripts/commit-check", },);
+  } catch {
+    return null;
+  }
+}
+
 const COMMIT_PATTERN = /^(\w+)(?:\(([^)]+)\))?(!)?:\s(.+)$/;
 const VALID_TYPES = [
   "feat",
@@ -179,8 +197,12 @@ async function main(): Promise<void> {
       process.exit(0,);
     }
 
+    // The hook lets stdout through to the developer's terminal (it only reads
+    // the exit code), so the rejection reasons stay a direct human report.
+    // eslint-disable-next-line no-console
     console.log("Invalid commit message:",);
     for (const warn of commitInfo.warnings) {
+      // eslint-disable-next-line no-console
       console.log(`  ${warn}`,);
     }
 
@@ -191,6 +213,9 @@ async function main(): Promise<void> {
   const commits = getCommitsSinceLastTag();
 
   if (commits.length === 0) {
+    // ANSI green is a terminal affordance; a structured log line would carry
+    // the escape codes as noise.
+    // eslint-disable-next-line no-console
     console.log(green("No commits to validate",),);
     process.exit(0,);
   }
@@ -199,14 +224,21 @@ async function main(): Promise<void> {
   const failures = results.filter((r,) => !r.valid);
 
   if (failures.length === 0) {
+    // ANSI green is terminal-only output.
+    // eslint-disable-next-line no-console
     console.log(green(`${commits.length} commits valid`,),);
     process.exit(0,);
   }
 
+  // Human-readable report of which commits failed and why; `bun run commit:lint`
+  // is read by a person fixing their history, so it stays on stdout verbatim.
+  // eslint-disable-next-line no-console
   console.log("Invalid commits found:",);
   for (const f of failures) {
+    // eslint-disable-next-line no-console
     console.log(`  ${f.message}`,);
     for (const warn of f.warnings) {
+      // eslint-disable-next-line no-console
       console.log(`    ${warn}`,);
     }
   }
@@ -214,8 +246,12 @@ async function main(): Promise<void> {
   process.exit(1,);
 }
 
-main().catch((error: unknown,) => {
+main().catch(async (error: unknown,) => {
   const msg = error instanceof Error ? error.message : String(error,);
-  console.error(msg,);
+  log()?.error(msg, error instanceof Error ? error : undefined,);
+  // The log queue batches on a 100ms timer; drain it before the exit takes
+  // the queued diagnostic down with the process. A transport rejection must
+  // not skip the exit — the hook branches on the exit code.
+  await log()?.flush().catch(() => undefined);
   process.exit(1,);
 },);

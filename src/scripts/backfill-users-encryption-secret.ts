@@ -20,6 +20,19 @@ import { loadConfig, } from "../config/load";
 import { generateEncryptionSecret, } from "../crypto/user-secret";
 import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { getLogger, type Logger, } from "../logger";
+
+/**
+ * Module logger accessor — null until the CLI guard calls `createLogger()`.
+ * @returns the child logger, or null when no logger is initialized.
+ */
+function log(): Logger | null {
+  try {
+    return getLogger().child({ module: "scripts/backfill:users:encryption-secret", },);
+  } catch {
+    return null;
+  }
+}
 
 /** Counts describing one backfill pass. */
 export interface BackfillSummary {
@@ -82,7 +95,7 @@ export async function main(): Promise<number> {
   const config = loadConfig();
   const sqliteFilename = config.db.sqliteFilename;
   if (!sqliteFilename || sqliteFilename === ":memory:") {
-    console.error("backfill:users:encryption-secret requires a real on-disk DB; got:", sqliteFilename,);
+    log()?.error("requires a real on-disk DB; got:", undefined, { sqliteFilename, },);
     return 1;
   }
 
@@ -91,8 +104,13 @@ export async function main(): Promise<number> {
   const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
 
   const summary = await runBackfill(db, { dryRun: args.dryRun, },);
+  // Human-facing report block on stdout; the summary is the product of this
+  // script and the test suite asserts on it, so it stays a direct write.
+  // eslint-disable-next-line no-console
   console.log("--- backfill:users:encryption-secret summary ---",);
+  // eslint-disable-next-line no-console
   console.log(`missing keys : ${summary.missing}`,);
+  // eslint-disable-next-line no-console
   console.log(`${summary.dryRun ? "would update" : "updated"} : ${summary.updated}`,);
   return 0;
 }
@@ -103,5 +121,11 @@ if (import.meta.main) {
   // without a host process pre-seeding it.
   const { createLogger, } = await import("../logger");
   createLogger({ level: "info", },);
-  await main().then((code,) => process.exit(code,));
+  await main().then(async (code,) => {
+    // The log queue batches on a 100ms timer; drain it before the exit takes
+    // the queued diagnostic down with the process. A transport rejection must
+    // not skip the exit — `code` is this script's contract.
+    await log()?.flush().catch(() => undefined);
+    process.exit(code,);
+  },);
 }
