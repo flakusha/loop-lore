@@ -6,6 +6,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { dispatchPluginRoute, } from "../plugins/loader";
 import { registry, } from "../plugins/registry";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { jsonStringifyOr, } from "../utils";
@@ -158,6 +159,97 @@ describe("POST /api/plugins/:name/disable", () => {
     );
 
     expect(res.status,).toBe(404,);
+  });
+});
+
+describe("POST /api/plugins/:name/enable — deferred onLoad", () => {
+  let db: Kysely<DB>;
+
+  beforeAll(async () => {
+    ({ db, } = await createTestDb());
+    // Stands in for a plugin that loaded while unapproved: registered, but
+    // its `onLoad` never ran, so it has no dynamic route yet.
+    registry.register({
+      manifest: {
+        name: "deferred-plugin",
+        version: "1.0",
+        description: "",
+        author: "test",
+        async onLoad(ctx,) {
+          ctx.registerApiRoute({
+            method: "GET",
+            path: "/deferred/dynamic",
+            handler: async () => new Response("dynamic",),
+          },);
+        },
+      },
+      origin: "community",
+      directory: "/tmp",
+    },);
+
+    registry.setEnabled("deferred-plugin", false,);
+  },);
+
+  afterAll(async () => {
+    registry.unregisterAll();
+    await db.destroy();
+  },);
+
+  test("a plugin that never ran onLoad serves nothing while disabled", async () => {
+    expect(registry.getPluginRoutes("deferred-plugin",),).toEqual([],);
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://localhost/deferred/dynamic",), },),
+    ).toBeNull();
+  });
+
+  test("enabling runs the deferred onLoad so its route now dispatches", async () => {
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/deferred-plugin/enable", { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(200,);
+    expect(registry.isEnabled("deferred-plugin",),).toBe(true,);
+    expect(registry.getPluginRoutes("deferred-plugin",).map((r,) => r.path),).toContain("/deferred/dynamic",);
+    const dispatched = await dispatchPluginRoute({ request: new Request("http://localhost/deferred/dynamic",), },);
+    expect(dispatched,).not.toBeNull();
+    expect(await dispatched?.text(),).toBe("dynamic",);
+  });
+
+  test("the enable is persisted as active", async () => {
+    const row = await db
+      .selectFrom("plugin_state",)
+      .select("status",)
+      .where("name", "=", "deferred-plugin",)
+      .executeTakeFirst();
+
+    expect(row?.status,).toBe("active",);
+  });
+
+  test("a throwing onLoad leaves the plugin disabled and returns 500", async () => {
+    registry.register({
+      manifest: {
+        name: "boom-plugin",
+        version: "1.0",
+        description: "",
+        author: "test",
+        async onLoad() {
+          throw new Error("hook failed",);
+        },
+      },
+      origin: "community",
+      directory: "/tmp",
+    },);
+
+    registry.setEnabled("boom-plugin", false,);
+
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/boom-plugin/enable", { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(500,);
+    expect(registry.isEnabled("boom-plugin",),).toBe(false,);
   });
 });
 

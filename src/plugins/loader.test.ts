@@ -24,7 +24,8 @@ import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { jsonStringifyOr, } from "../utils";
 import { writeMemoryNoteTool, } from "../generation/tools/write-memory-note";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { dispatchPluginRoute, loadAllPlugins, loadSinglePlugin, registry, unloadAllPlugins, } from "./loader";
+import { writeStoredPluginConfig, } from "./config-store";
+import { dispatchPluginRoute, initializePlugin, loadAllPlugins, loadSinglePlugin, registry, unloadAllPlugins, } from "./loader";
 
 // ── Fixture sources (written to temp dirs, imported by the loader) ──
 
@@ -259,7 +260,7 @@ afterEach(async () => {
   }
 
   tempDirs = [];
-  for (const key of ["__llFixtureCtx", "__llUnloadOrder", "__llUnloadCount",]) {
+  for (const key of ["__llFixtureCtx", "__llUnloadOrder", "__llUnloadCount", "__llOnLoadRan",]) {
     delete globals()[key];
   }
 
@@ -433,7 +434,8 @@ describe("loadSinglePlugin", () => {
   });
 
   test("merges a stored config override over manifest defaults into onLoad ctx.config", async () => {
-    const db = stubDb({ configRow: { config_json: jsonStringifyOr({ mode: "stored", },), }, });
+    // Approved, so `onLoad` (where ctx.config is observed) is reached at all.
+    const db = stubDb({ stateRow: { status: "active", }, configRow: { config_json: jsonStringifyOr({ mode: "stored", },), }, });
     const dir = makePluginDir({ "plugin.ts": FULL_PLUGIN, });
 
     await loadSinglePlugin(db, "fixture-full", dir, "community",);
@@ -449,7 +451,7 @@ describe("loadSinglePlugin", () => {
       warn: (entry: unknown,) => { warns.push(entry,); },
     },);
 
-    const db = stubDb({ configRow: { config_json: "{ not json", }, });
+    const db = stubDb({ stateRow: { status: "active", }, configRow: { config_json: "{ not json", }, });
     const dir = makePluginDir({ "plugin.ts": FULL_PLUGIN, });
 
     await loadSinglePlugin(db, "fixture-full", dir, "community",);
@@ -621,7 +623,9 @@ describe("loadAllPlugins", () => {
     // Real directory scan: the shipped community plugins are registered but
     // not approved, so their definitions are filtered out.
     expect(registry.isEnabled("trivia"),).toBe(false,);
-    expect(registry.getPluginRoutes("trivia").length,).toBeGreaterThan(0,);
+    // trivia registers its routes from `onLoad`, which an unapproved plugin
+    // never runs — so it has nothing registered at all, let alone served.
+    expect(registry.getPluginRoutes("trivia"),).toEqual([],);
     expect(registry.getEnabledRoutes().map((r,) => r.path,),).not.toContain("/api/trivia/start",);
   });
 
@@ -651,6 +655,27 @@ function routeOnlyPlugin(name: string, path: string, body: string,): string {
   description: "approval fixture",
   author: "test",
   apiRoutes: [{ method: "GET", path: "${path}", handler: async () => new Response("${body}"), },],
+};
+`;
+}
+
+/**
+ * A plugin that declares one static route and registers another from `onLoad`,
+ * flipping a module-level flag so the hook's execution is observable.
+ * @param name
+ * @param token
+ */
+function deferredInitPlugin(name: string, token: string,): string {
+  return `export const plugin = {
+  name: "${name}",
+  version: "1.0.0",
+  description: "deferred init fixture",
+  author: "test",
+  apiRoutes: [{ method: "GET", path: "/${name}/static", handler: async () => new Response("static"), },],
+  async onLoad(ctx) {
+    globalThis.__llOnLoadRan = (globalThis.__llOnLoadRan ?? []).concat("${token}");
+    ctx.registerApiRoute({ method: "GET", path: "/${name}/dynamic", handler: async () => new Response("dynamic"), });
+  },
 };
 `;
 }
@@ -702,6 +727,50 @@ describe("origin-scoped approval", () => {
     expect(registry.isEnabled("fixture-approval-core",),).toBe(true,);
     const res = await dispatchPluginRoute({ request: new Request("http://x/approval/core",), },);
     expect(await res?.text(),).toBe("core",);
+  });
+
+  test("an unapproved community plugin never runs onLoad", async () => {
+    const dir = makePluginDir({ "plugin.ts": deferredInitPlugin("fixture-unapproved", "unapproved",), });
+
+    await loadSinglePlugin(db, "fixture-unapproved", dir, "community",);
+
+    expect(await persistedStatus("fixture-unapproved",),).toBe("disabled",);
+    // The hook itself never ran: no execution, so no side state and no route.
+    expect(globals().__llOnLoadRan,).toBeUndefined();
+    expect(registry.getPluginRoutes("fixture-unapproved",).map((r,) => r.path,),).toEqual(["/fixture-unapproved/static",],);
+    // Nothing serves while it is disabled — not the statically declared route.
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://x/fixture-unapproved/static",), },),
+    ).toBeNull();
+
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://x/fixture-unapproved/dynamic",), },),
+    ).toBeNull();
+  });
+
+  test("a core plugin with no row stays active after a config write creates one", async () => {
+    // No prior row: this is what a failed persistPluginState leaves behind.
+    expect(await persistedStatus("fixture-cfg-first"),).toBeUndefined();
+    await writeStoredPluginConfig(db, "fixture-cfg-first", { mode: "stored", }, "core",);
+
+    const dir = makePluginDir({ "plugin.ts": deferredInitPlugin("fixture-cfg-first", "cfg-first",), });
+    await loadSinglePlugin(db, "fixture-cfg-first", dir, "core",);
+
+    expect(await persistedStatus("fixture-cfg-first",),).toBe("active",);
+    expect(registry.isEnabled("fixture-cfg-first",),).toBe(true,);
+    expect(globals().__llOnLoadRan,).toEqual(["cfg-first",],);
+    expect(registry.getPluginRoutes("fixture-cfg-first").map((r,) => r.path,),).toContain("/fixture-cfg-first/dynamic",);
+  });
+
+  test("initializePlugin is one-shot for a plugin that already ran onLoad", async () => {
+    const dir = makePluginDir({ "plugin.ts": deferredInitPlugin("fixture-once", "once",), });
+    await loadSinglePlugin(db, "fixture-once", dir, "core",);
+    expect(globals().__llOnLoadRan,).toEqual(["once",],);
+
+    // A second call (e.g. disable → enable) must not re-run the hook.
+    await initializePlugin({ db, manifest: registry.getPlugin("fixture-once")!.manifest, },);
+
+    expect(globals().__llOnLoadRan,).toEqual(["once",],);
   });
 
   test("an existing row decides regardless of origin", async () => {

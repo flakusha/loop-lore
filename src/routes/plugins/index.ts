@@ -17,6 +17,7 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { initializePlugin, } from "../../plugins/loader";
 import { getComponentsForMountPoint, } from "../../plugins/mount-points";
 import { registry, } from "../../plugins/registry";
 import { can, } from "../../users/permissions";
@@ -121,6 +122,18 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
 
         registry.setEnabled(name, true,);
 
+        // A plugin loaded while unapproved never ran `onLoad`, so enabling has
+        // to perform the initialization the loader deferred. A hook that
+        // throws leaves the plugin disabled again — the same rollback the
+        // loader does on a failed load.
+        try {
+          await initializePlugin({ db: database, manifest: plugin.manifest, },);
+        } catch (error) {
+          registry.setEnabled(name, false,);
+          log().error({ message: `Plugin failed to initialize`, plugin: name, error: String(error,), },);
+          return jsonError({ message: "Plugin failed to initialize", status: HttpStatus.InternalServerError, },);
+        }
+
         try {
           await database
             .insertInto("plugin_state",)
@@ -144,6 +157,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
           400: ErrorResponse,
           403: ErrorResponse,
           404: ErrorResponse,
+          500: ErrorResponse,
         },
         detail: {
           summary: "Enable plugin",

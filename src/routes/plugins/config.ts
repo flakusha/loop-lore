@@ -79,6 +79,9 @@ export function pluginConfigRoutes({ database, }: { database: Kysely<DB> }, pref
         if ("error" in resolved) { return resolved.error; }
         const { plugin } = resolved;
         const name = plugin.manifest.name;
+        // `origin` is passed so a row this write has to create lands with the
+        // loader's origin default instead of silently disabling a core plugin.
+        const origin = plugin.origin;
         const body = ctx.body;
 
         if (body === null || typeof body !== "object" || Array.isArray(body,)) {
@@ -95,7 +98,7 @@ export function pluginConfigRoutes({ database, }: { database: Kysely<DB> }, pref
         }
 
         try {
-          await writeStoredPluginConfig(database, name, stored,);
+          await writeStoredPluginConfig(database, name, stored, origin,);
         } catch (error) {
           getLogger().error({
             message: "Failed to persist plugin config",
