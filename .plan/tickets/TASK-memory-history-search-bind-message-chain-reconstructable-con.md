@@ -12,7 +12,7 @@
 **Status Note:** memory-history-search worktree — pending finalize
 **Priority:** high
 **Effort:** Large
-**Epic:** epic-memory-knowledge-systems.md
+**Epic:** epic-memory-knowledge-systems
 
 **Summary:**
 Memory entries are low-context compacted summaries of chat events. At extraction time we need to bind the full chain of source message IDs (plural — current schema only stores a single `source_message_id`) so that "try hard to remember" lookups can reconstruct the original conversation by walking the message chain.

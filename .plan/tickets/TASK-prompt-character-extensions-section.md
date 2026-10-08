@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: prompt-assembly, character-spec, extensions, templates
 **Assignee**:
-**Epic:**: epic-character-core-system
+**Epic:** epic-character-core-system
 **Related**: `docs/spec/character-spec.md` §1.3 (CharacterExtensions), `src/characters/character.ts`
 
 ## Description

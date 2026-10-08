@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-rpg-progression.md
+**Epic:** epic-rpg-progression
 
 ## Summary
 

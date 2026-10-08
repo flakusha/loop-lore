@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:**: epic-agency-story-points
+**Epic:** epic-agency-story-points
 **Related**:
 
 **Summary:**

@@ -14,7 +14,7 @@
 **Priority:** high
 **Tags:** rpg, crafting, routes
 **Assignee**:
-**Epic:** epic-rpg-wiring-phase3.md
+**Epic:** epic-rpg-wiring-phase3
 **Related:** TASK-wire-crafting-routes.md, TASK-complete-crafting-system-services.md
 
 ## Summary

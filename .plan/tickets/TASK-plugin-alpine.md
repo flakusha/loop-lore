@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** plugin, frontend, alpine, logic
-**Epic:** epic-plugin-management-ui.md
+**Epic:** epic-plugin-management-ui
 
 ## Summary
 

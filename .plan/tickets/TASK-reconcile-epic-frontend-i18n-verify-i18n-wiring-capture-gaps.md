@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** small
-**Epic:** epic-frontend-internationalization.md
+**Epic:** epic-frontend-internationalization
 
 ## Summary
 

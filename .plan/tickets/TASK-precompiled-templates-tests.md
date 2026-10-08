@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-assistant-gm-flows.md
+**Epic:** epic-assistant-gm-flows
 
 ## Summary
 

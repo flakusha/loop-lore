@@ -14,7 +14,7 @@
 **Status**: Not Started
 **Priority**: high
 **Tags**: devops, docker, containerization
-**Epic:**: epic-deployment-infrastructure
+**Epic:** epic-deployment-infrastructure
 **Assignee**: DevOps Team
 
 ## Description

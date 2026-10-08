@@ -13,7 +13,7 @@
 **Status**: Not Started
 **Priority**: medium
 **Tags**: items, rpg, effects
-**Epic:**: epic-items
+**Epic:** epic-items
 **Assignee**:
 
 ## Summary

@@ -15,7 +15,7 @@
 **Priority**: high
 **Tags**: schemas, reputation
 **Assignee**:
-**Epic:**: epic-shared-schemas
+**Epic:** epic-shared-schemas
 **Related**: TASK-faction-reputation, TASK-nsfw-reputation-social, TASK-nsfw-reputation-consequences
 
 ## Summary

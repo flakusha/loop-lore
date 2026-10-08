@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-frontend-gallery.md
+**Epic:** epic-frontend-gallery
 **Status:** Not Started
 **Priority:** Medium
 

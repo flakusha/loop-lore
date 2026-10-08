@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-frontend-routing.md
+**Epic:** epic-frontend-routing
 
 **Summary:**
 

@@ -11,7 +11,7 @@
 
 **Status:** Done
 **Priority:** Medium
-**Epic:** epic-api-validation-guardrails.md
+**Epic:** epic-api-validation-guardrails
 
 ## Summary
 

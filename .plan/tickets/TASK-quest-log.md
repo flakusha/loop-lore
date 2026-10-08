@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** story, frontend, ui, quest, log
-**Epic:** epic-story-mode-ui.md
+**Epic:** epic-story-mode-ui
 
 ## Summary
 

@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** small
-**Epic:** epic-frontend-age-gate.md
+**Epic:** epic-frontend-age-gate
 
 ## Summary
 

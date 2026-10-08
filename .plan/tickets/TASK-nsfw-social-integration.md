@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:**: epic-nsfw-integration-gaps
+**Epic:** epic-nsfw-integration-gaps
 **Related**:
 
 ## Summary

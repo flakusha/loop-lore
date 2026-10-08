@@ -15,7 +15,7 @@
 **Effort:** Medium
 **Tags**: 3d, view-mode, frontend, immersion
 **Assignee**:
-**Epic:**: epic-3d-generation
+**Epic:** epic-3d-generation
 **Related**:
 
 ## Summary

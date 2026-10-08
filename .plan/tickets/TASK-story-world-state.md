@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** Feature Task
 **Tags:** story, frontend, ui, world-state
-**Epic:** epic-story-mode-ui.md
+**Epic:** epic-story-mode-ui
 
 ## Summary
 

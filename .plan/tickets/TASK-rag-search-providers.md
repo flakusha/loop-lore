@@ -12,7 +12,7 @@
 **Implementation:** Partial — fallback/error/quarantine primitives exist, but concrete provider integrations remain open.
 **Priority:** High
 **Effort:** High
-**Epic:** epic-rag-document-processing.md
+**Epic:** epic-rag-document-processing
 
 ## Summary
 

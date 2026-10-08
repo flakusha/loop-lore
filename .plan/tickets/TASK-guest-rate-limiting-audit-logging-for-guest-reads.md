@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-guest-access.md
+**Epic:** epic-guest-access
 
 **Summary:**
 

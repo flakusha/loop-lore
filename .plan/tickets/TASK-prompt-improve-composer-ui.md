@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-prompt-improvement.md
+**Epic:** epic-prompt-improvement
 **Status:** In Progress
 **Priority:** High
 

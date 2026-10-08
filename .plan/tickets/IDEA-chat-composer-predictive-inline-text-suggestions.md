@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** epic-chat-product-features.md
+**Epic:** epic-chat-product-features
 
 ## Summary
 

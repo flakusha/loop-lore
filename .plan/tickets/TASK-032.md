@@ -17,7 +17,7 @@
 **Effort**: Medium
 **Tags**: user, seeding, roles, onboarding
 **Assignee**:
-**Epic:**: epic-auth-access
+**Epic:** epic-auth-access
 **Related**:
 
 ## Summary

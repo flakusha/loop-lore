@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** nsfw, frontend, ui, body-state
-**Epic:** epic-nsfw-ui.md
+**Epic:** epic-nsfw-ui
 
 ## Summary
 

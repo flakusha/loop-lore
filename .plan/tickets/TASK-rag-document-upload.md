@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** rag, frontend, ui, upload
-**Epic:** epic-rag-ui.md
+**Epic:** epic-rag-ui
 
 ## Summary
 

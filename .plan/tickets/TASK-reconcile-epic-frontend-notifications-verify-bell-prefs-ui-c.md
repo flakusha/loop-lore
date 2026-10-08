@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** small
-**Epic:** epic-frontend-notifications.md
+**Epic:** epic-frontend-notifications
 
 ## Summary
 

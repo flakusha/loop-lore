@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Low
-**Epic:** epic-database-backup-recovery.md
+**Epic:** epic-database-backup-recovery
 
 ## Summary
 

@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: character-spec, import-export, spec-compliance, schema
 **Assignee**:
-**Epic:**: epic-character-core-system
+**Epic:** epic-character-core-system
 **Related**: `docs/spec/character-spec.md` §1.3, §7, `docs/spec/io-formats.md` §1.1
 
 ## Description

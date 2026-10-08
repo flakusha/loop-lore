@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-social-hub.md
+**Epic:** epic-social-hub
 
 **Summary:**
 

@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** Task
 **Tags:** frontend, sse, activity, notifications, dedupe
-**Epic:** epic-frontend-backend-integration.md
+**Epic:** epic-frontend-backend-integration
 
 ## Description
 

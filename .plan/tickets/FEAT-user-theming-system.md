@@ -10,7 +10,7 @@
 - [ ] Create/edit/switch a theme live; persists across sessions
 - [ ] Malicious import JSON rejected (unknown keys, script in names)
 - [ ] Bundled themes still pass CSS token gates
-**Epic:** epic-frontend-settings.md
+**Epic:** epic-frontend-settings
 **Type:** Feature | **Priority:** Medium | **Effort:** M
 
 ## Problem

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-headless-alternative-frontends.md
+**Epic:** epic-headless-alternative-frontends
 
 **Summary:**
 

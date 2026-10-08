@@ -16,7 +16,7 @@
 **Priority**: medium
 **Tags**: tooling, size-check, ci, refactor
 **Assignee**:
-**Epic:**: epic-file-splitting
+**Epic:** epic-file-splitting
 **Related**: TASK-PLAN-SIZE-STRICT-DEBT, TASK-promote-size-check-to-ci
 
 ## Description

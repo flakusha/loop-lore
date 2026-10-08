@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-federation-swarm-sync.md
+**Epic:** epic-federation-swarm-sync
 **Related:** TASK-nodeinfo-well-known-discovery-endpoints, TASK-mesh-peer-discovery-gossip
 
 ## Summary

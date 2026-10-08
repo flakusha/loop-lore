@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** generation, pause, hold, ux, flow-control
-**Epic:** epic-generation-flow-control.md
+**Epic:** epic-generation-flow-control
 **Related:** TASK-global-generation-pause-kill-switch.md, TASK-generation-rate-limiting-and-concurrency-limits.md
 
 ## Summary

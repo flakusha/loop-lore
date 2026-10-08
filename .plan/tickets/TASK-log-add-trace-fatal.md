@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:**: epic-logging-telemetry
+**Epic:** epic-logging-telemetry
 **Related**:
 
 ## Summary

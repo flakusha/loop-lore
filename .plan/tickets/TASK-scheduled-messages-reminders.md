@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-chat-composer-flows.md
+**Epic:** epic-chat-composer-flows
 **Type:** Feature | **Priority:** Medium | **Effort:** M
 
 ## Problem

@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-world-chat-channels-invites.md
+**Epic:** epic-world-chat-channels-invites
 **See also:** epic-chat-lifecycle-moderation.md, epic-group-chat.md
 **Status:** Not Started
 **Priority:** High

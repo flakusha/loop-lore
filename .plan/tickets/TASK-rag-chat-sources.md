@@ -13,7 +13,7 @@
 **Effort:** Small
 **Type:** TASK
 **Tags:** rag, slack, discord, matrix
-**Epic:** epic-rag-document-processing.md
+**Epic:** epic-rag-document-processing
 **Parent:** TASK-rag-context-enrichment (umbrella)
 
 ## Summary

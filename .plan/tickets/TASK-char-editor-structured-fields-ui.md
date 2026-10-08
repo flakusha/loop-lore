@@ -15,7 +15,7 @@
 **Priority**: high
 **Tags**: frontend, character-editor, ux, alpine, htmx
 **Assignee**:
-**Epic:**: epic-character-core-system
+**Epic:** epic-character-core-system
 **Related**: `src/frontend/pages/characters-edit-form.ts`, `src/routes/views/character-edit-form.ts`, `docs/spec/character-spec.md` §5
 
 ## Description

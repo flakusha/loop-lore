@@ -10,7 +10,7 @@
 - [ ] Ephemeral chat leaves no `messages`/`asset_links`/FTS rows after close
 - [ ] Memory extraction + aux pipeline skip ephemeral turns
 - [ ] Admin deny-switch blocks ephemeral mode with clear error
-**Epic:** epic-chat-privacy.md
+**Epic:** epic-chat-privacy
 **Type:** Feature | **Priority:** Medium | **Effort:** M
 
 ## Problem

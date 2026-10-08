@@ -15,7 +15,7 @@
 **Priority**: low
 **Tags**: config, documentation, templates
 **Assignee**:
-**Epic:**: epic-config-templates
+**Epic:** epic-config-templates
 **Related**: `configs/templates/llm.example.yaml`, `configs/templates/llm.example.toml`
 
 ## Description

@@ -16,7 +16,7 @@
 **Priority**: low
 **Tags**: chat, migration, messages, swipe, tree, carry
 **Assignee**:
-**Epic:**: epic-messages
+**Epic:** epic-messages
 **Related**: FEAT-chat-template-config-lifecycle, FEAT-message-swipe-replay-branch,
 .plan/epics/epic-config-templates.md
 

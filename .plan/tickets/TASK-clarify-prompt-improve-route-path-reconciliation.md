@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-prompt-improvement.md
+**Epic:** epic-prompt-improvement
 **Tags:** docs, prompt-improve
 **Summary:** Reconcile stale prompt-route path strings with the single live mount POST /api/v1/generation/prompt.
 **Context:** Prompt-improve route-path drift across TASK-prompt-improve-shared-service, TASK-prompt-improve-composer-ui, and src/generation/prompt-route.ts header.

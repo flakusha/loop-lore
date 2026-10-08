@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** inventory, frontend, ui, grid
-**Epic:** epic-inventory-ui.md
+**Epic:** epic-inventory-ui
 
 ## Summary
 

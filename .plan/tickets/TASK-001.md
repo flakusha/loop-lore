@@ -15,7 +15,7 @@
 **Effort:** Medium
 **Tags**: frontend, gallery, avatar, ui
 **Assignee**:
-**Epic:**: epic-frontend-components
+**Epic:** epic-frontend-components
 **Related**:
 
 ## Summary

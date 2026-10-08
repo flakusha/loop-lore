@@ -15,7 +15,7 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic:**: epic-frontend-bundle-optimization
+**Epic:** epic-frontend-bundle-optimization
 **Related**:
 
 ## Summary

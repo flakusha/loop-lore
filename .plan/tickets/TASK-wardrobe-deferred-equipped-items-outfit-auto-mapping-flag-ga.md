@@ -12,7 +12,7 @@
 **Status Note:** completed 2026-10-01 — flag `system_config.wardrobe_loadout_bridge` default off; read-side rung, no equip-time writes
 **Priority:** low
 **Effort:** Large
-**Epic:** epic-wardrobe-avatar-variants.md
+**Epic:** epic-wardrobe-avatar-variants
 
 ## Summary
 

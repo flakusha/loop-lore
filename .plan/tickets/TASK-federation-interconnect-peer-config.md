@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-federation-swarm-sync.md
+**Epic:** epic-federation-swarm-sync
 **Related:** TASK-instance-state-advertisement-endpoint, TASK-mesh-peer-discovery-gossip, TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl
 
 ## Summary

@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large (ongoing)
-**Epic:** epic-code-quality.md
+**Epic:** epic-code-quality
 
 ## Summary
 

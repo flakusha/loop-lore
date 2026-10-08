@@ -15,7 +15,7 @@
 **Priority**: medium
 **Tags**: frontend, character-editor, ux, import-export
 **Assignee**:
-**Epic:**: epic-character-core-system
+**Epic:** epic-character-core-system
 **Related**: `docs/spec/character-spec.md` §4.2, §10, `docs/spec/io-formats.md` §1.6-1.7
 
 ## Description

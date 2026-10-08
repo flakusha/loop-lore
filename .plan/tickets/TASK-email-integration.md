@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-communications-integrations.md
+**Epic:** epic-communications-integrations
 
 ## Summary
 

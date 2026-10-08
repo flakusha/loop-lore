@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-hidden-carriage-context.md
+**Epic:** epic-hidden-carriage-context
 **Status:** Not Started
 **Priority:** High
 
