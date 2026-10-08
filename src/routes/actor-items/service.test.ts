@@ -333,4 +333,82 @@ describe("actorItemsGameplayRoutes", () => {
     const body = await res.json() as { error?: string };
     expect(body.error,).toBeTruthy();
   });
+
+  test("companion character (user_id NULL, owner_id set) is reachable by its owner", async () => {
+    const db = await makeDb();
+    await seed(db,);
+    // The standard shape for a character a user owns: user_id NULL, owner_id set.
+    const companion = randomUUID();
+    await db.insertInto("actors",).values({
+      id: companion,
+      display_name: "Companion",
+      user_id: null,
+      owner_id: OWNER,
+      settings: "{}",
+    },).execute();
+
+    await db.insertInto("actor_items",).values({
+      id: randomUUID(),
+      actor_id: companion,
+      name: "Charm",
+      description: null,
+      item_type: ItemCategory.Weapon,
+      quantity: 1,
+      value: 0,
+      weight: 1,
+      tags: "[]",
+      metadata: "{}",
+      equipped: EquipState.Equipped,
+      sort_order: 0,
+      durability: 100,
+      max_durability: 100,
+    },).execute();
+
+    const res = await makeApp(db, OWNER,).handle(
+      new Request(`http://localhost/api/actors/${companion}/items/equipped`,),
+    );
+
+    expect(res.status,).toBe(200,);
+  });
+
+  test("admin.character bypasses ownership on gameplay routes", async () => {
+    const db = await makeDb();
+    await seed(db,);
+    const foreign = randomUUID();
+    await db.insertInto("actors",).values({
+      id: foreign,
+      display_name: "Foreign",
+      user_id: STRANGER,
+      owner_id: STRANGER,
+      settings: "{}",
+    },).execute();
+
+    const app = new Elysia().derive(() => ({ userId: OWNER, userRole: "admin", }))
+      .use(actorItemsGameplayRoutes({ database: db, },),);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${foreign}/items/equipped`,),
+    );
+
+    expect(res.status,).toBe(200,);
+  });
+
+  test("non-owner is still denied 403 after the owner_id widening", async () => {
+    const db = await makeDb();
+    await seed(db,);
+    const foreign = randomUUID();
+    await db.insertInto("actors",).values({
+      id: foreign,
+      display_name: "Foreign",
+      user_id: STRANGER,
+      owner_id: STRANGER,
+      settings: "{}",
+    },).execute();
+
+    const res = await makeApp(db, OWNER,).handle(
+      new Request(`http://localhost/api/actors/${foreign}/items/equipped`,),
+    );
+
+    expect(res.status,).toBe(403,);
+  });
 });
