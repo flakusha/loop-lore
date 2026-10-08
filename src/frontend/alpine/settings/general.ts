@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { storageGet, } from "../../storage";
 import { isLocalInferenceOptedIn, } from "../local-inference";
 import { log as rootLog, } from "../logger";
 import type { LocaleInfoArray, SettingsState, } from "./types";
@@ -17,17 +18,17 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
      * @returns {Promise<void>}
      */
     async init() {
-      const savedTheme = localStorage.getItem("theme-reference",);
+      const savedTheme = storageGet("local", "theme-reference",);
       if (savedTheme) { this.theme = savedTheme; }
-      const savedLocale = localStorage.getItem("locale",);
+      const savedLocale = storageGet("local", "locale",);
       if (savedLocale) { this.locale = savedLocale; }
-      const enter = localStorage.getItem("chat-enter-to-send",);
+      const enter = storageGet("local", "chat-enter-to-send",);
       if (enter !== null) { this.enterToSend = enter === "1"; }
-      const scroll = localStorage.getItem("chat-auto-scroll",);
+      const scroll = storageGet("local", "chat-auto-scroll",);
       if (scroll !== null) { this.autoScroll = scroll === "1"; }
-      const preview = localStorage.getItem("chat-inline-preview",);
+      const preview = storageGet("local", "chat-inline-preview",);
       if (preview !== null) { this.inlinePreview = preview === "1"; }
-      const detail = localStorage.getItem("chat-detail-level",);
+      const detail = storageGet("local", "chat-detail-level",);
       if (detail) { this.detailLevel = detail; }
       this.localInferenceOptIn = isLocalInferenceOptedIn();
       await this.loadLocales();

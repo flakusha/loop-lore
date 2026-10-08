@@ -27,6 +27,8 @@
  * with a known camera.
  */
 
+import { storageGet, storageSet, } from "../storage";
+
 const VALID_MODES = ["orbit", "first-person", "cinematic",] as const;
 export type ViewMode = typeof VALID_MODES[number];
 
@@ -60,25 +62,13 @@ function isValidMode(s: string | null | undefined,): s is ViewMode {
   return s !== null && s !== undefined && (VALID_MODES as readonly string[]).includes(s,);
 }
 
-function safeStorage(): Storage | null {
-  try {
-    return globalThis.sessionStorage;
-  } catch {
-    return null;
-  }
-}
-
 function readSession(): ViewMode | null {
-  const v = safeStorage()?.getItem(SESSION_KEY,);
+  const v = storageGet("session", SESSION_KEY,);
   return isValidMode(v,) ? v : null;
 }
 
 function writeSession(mode: ViewMode,): void {
-  const s = safeStorage();
-  if (!s) { return; }
-  try {
-    s.setItem(SESSION_KEY, mode,);
-  } catch { /* quota or private mode */ }
+  storageSet("session", SESSION_KEY, mode,);
 }
 
 function readUrl(): ViewMode | null {
