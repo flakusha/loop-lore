@@ -11,6 +11,7 @@
 
 **Epic:** epic-hidden-carriage-context
 **Status:** Done
+**Scope:** hidden-carriage TOML toggle plus healing utils plus assembler wiring
 **Priority:** High
 
 ## Scope
