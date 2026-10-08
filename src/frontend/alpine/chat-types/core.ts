@@ -145,6 +145,8 @@ export interface ChatCoreState
     | "western";
   /** How strongly the style is imposed (0–1). */
   _outputStyleIntensity: number;
+  /** Hidden carriage opt-in (flat TOML episode context). */
+  _carriageEnabled: boolean;
   /** Story tier of the two-tier custom instructions ("" = unset). */
   _customInstructions: string;
   /** Auto-translate target lang code ("" = off). */

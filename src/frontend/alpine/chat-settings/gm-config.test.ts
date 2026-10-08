@@ -45,6 +45,7 @@ const fullFields = {
   responseLengthCustom: 777,
   outputStylePreset: "noir",
   outputStyleIntensity: 0.9,
+  carriageEnabled: true,
 } as const;
 
 describe("readGmSettings", () => {
@@ -75,6 +76,7 @@ describe("readGmSettings", () => {
       responseLengthCustom: 1000,
       outputStylePreset: "",
       outputStyleIntensity: 0.5,
+      carriageEnabled: false,
     },);
   });
 
@@ -107,6 +109,7 @@ describe("readGmSettings", () => {
       responseLengthPreset: "short",
       responseLengthCustom: 42,
       outputStyle: { preset: "noir", intensity: 1, },
+      carriageEnabled: true,
     } as GmConfig;
 
     const fields = readGmSettings(config,);
@@ -120,6 +123,7 @@ describe("readGmSettings", () => {
     expect(fields.responseLengthPreset,).toBe("short",);
     expect(fields.outputStylePreset,).toBe("noir",);
     expect(fields.outputStyleIntensity,).toBe(1,);
+    expect(fields.carriageEnabled,).toBe(true,);
   });
 });
 
@@ -144,6 +148,7 @@ describe("buildGmConfig", () => {
     expect(out.responseLengthPreset,).toBe("custom",);
     expect(out.responseLengthCustom,).toBe(777,);
     expect(out.outputStyle,).toEqual({ preset: "noir", intensity: 0.9, },);
+    expect(out.carriageEnabled,).toBe(true,);
     expect(out.assistantTuning,).toEqual({ temperature: 1.2, maxTokens: 3000, },);
   });
 
@@ -153,6 +158,7 @@ describe("buildGmConfig", () => {
       gmType: "llm",
       responseLengthPreset: "long",
       outputStylePreset: "",
+      carriageEnabled: false,
       vnEnabled: false,
     };
 
@@ -162,6 +168,7 @@ describe("buildGmConfig", () => {
     expect("escalationThreshold" in out,).toBe(false,);
     expect("responseLengthCustom" in out,).toBe(false,);
     expect("outputStyle" in out,).toBe(false,);
+    expect("carriageEnabled" in out,).toBe(false,);
     // Tuning is orthogonal to the GM sections — it survives GM pruning.
     expect(out.assistantTuning,).toEqual({ temperature: 1.2, maxTokens: 3000, },);
   });
@@ -214,9 +221,15 @@ describe("presentationGmConfig", () => {
       type: "llm", // not a presentation key — must be dropped
       llmConfig: { model: "m", },
       responseLengthPreset: "long",
+      carriageEnabled: true,
     },);
 
-    expect(out,).toEqual({ renderingOverride: "visual_novel", responseLengthPreset: "long", },);
+    expect(out,).toEqual({
+      renderingOverride: "visual_novel",
+      responseLengthPreset: "long",
+      carriageEnabled: true,
+    },);
+
     expect(Object.keys(out,).every((k,) => (GM_CONFIG_PRESENTATION_KEYS as readonly string[]).includes(k,)),).toBe(
       true,
     );
