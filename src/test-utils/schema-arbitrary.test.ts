@@ -6,6 +6,11 @@ import { Value, } from "@sinclair/typebox/value";
 import { describe, expect, test, } from "bun:test";
 import { t, } from "elysia";
 import fc from "fast-check";
+import * as actors from "../validation/schemas/actors";
+import * as assets from "../validation/schemas/assets";
+import * as chat from "../validation/schemas/chat";
+import * as responses from "../validation/schemas/responses";
+import * as wardrobe from "../validation/schemas/wardrobe";
 import { isJsonRoundTrippable, isTypeBoxSchema, schemaToArbitrary, } from "./schema-arbitrary";
 
 /** Every sample the mapper emits must satisfy the schema it came from. */
@@ -134,8 +139,14 @@ describe("closed value sets", () => {
  * tests pin the SPREAD: each schema must yield many distinct values.
  */
 describe("arbitrary diversity — a constant must not masquerade as a generator", () => {
+  // Distinctness must count SERIALIZED values: `new Set` over object references
+  // counts identity, so a schema emitting `{}` on every run still reports 50
+  // distinct and this whole block passes on a frozen generator.
   const distinctOver = (schema: TSchema, runs = 200, seed = 20260101,): number =>
-    new Set(fc.sample(schemaToArbitrary(schema,), { numRuns: runs, seed, },),).size;
+    new Set(
+      fc.sample(schemaToArbitrary(schema,), { numRuns: runs, seed, },)
+        .map((v,) => JSON.stringify(v,)),
+    ).size;
 
   // `schemaToArbitrary` is typed `Arbitrary<unknown>`; a `type: "string"` node
   // always yields strings, so narrowing here is sound and keeps the asserts typed.
@@ -211,6 +222,106 @@ describe("arbitrary diversity — a constant must not masquerade as a generator"
       for (const value of checkAllValid(schema, 20,)) { expect(value,).toBe(expected,); }
     }
   });
+
+  test("a Record map spans keys AND values, not one constant object", () => {
+    // Regression: `Type.Record(String(), T)` emits `patternProperties` with no
+    // `properties` and no `additionalProperties`. The mapper read neither, so
+    // every draw was `{}` — valid on every run, which is exactly why the freeze
+    // survived a green suite. Asserting only `Value.Check` would pass here too.
+    const schema = t.Object({ map: t.Record(t.String(), t.String(),), },);
+    const samples = fc.sample(schemaToArbitrary(schema,), { numRuns: 200, seed: 20260101, },);
+
+    expect(distinctOver(schema,),).toBeGreaterThan(100,);
+    for (const value of samples) {
+      expect(Value.Check(schema, value,),).toBe(true,);
+      const map = (value as { map: Record<string, string> }).map;
+      // Non-empty: an empty map IS valid, so only the spread can catch the freeze.
+      expect(Object.keys(map,).length,).toBeGreaterThan(0,);
+      for (const leaf of Object.values(map,)) { expect(typeof leaf,).toBe("string",); }
+    }
+  });
+
+  test("the frozen corpus schemas are varied, not constant", () => {
+    // The two production schemas a corpus sweep found emitting ONE distinct value
+    // across 50 samples. `Value.Check` passes for both frozen and varied, so the
+    // assertion is on distinctness.
+    for (const schema of [responses.ActivitySnapshot, wardrobe.LocationOutfitBindingsBody,] as TSchema[]) {
+      expect(distinctOver(schema,),).toBeGreaterThan(100,);
+    }
+  });
+
+  test("a patternProperties KEY satisfies the pattern the schema names", () => {
+    // A free-form key would fail `Value.Check` against a real pattern, so the
+    // key generator must be driven by the pattern itself.
+    const schema = t.Object({}, { patternProperties: { "^x-[a-z]+$": t.String(), }, },);
+    const samples = fc.sample(schemaToArbitrary(schema,), { numRuns: 200, seed: 20260101, },);
+
+    expect(samples.every((v,) => Object.keys(v as object,).length > 0),).toBe(true,);
+    for (const value of samples) {
+      expect(Value.Check(schema, value,),).toBe(true,);
+      for (const key of Object.keys(value as object,)) { expect(key,).toMatch(/^x-[a-z]+$/u,); }
+    }
+  });
+
+  test("maxProperties still bounds a patternProperties map", () => {
+    const schema = t.Object(
+      {},
+      { patternProperties: { "^(.*)$": t.Integer(), }, maxProperties: 2, },
+    );
+
+    for (const value of checkAllValid(schema, 200,)) {
+      expect(Object.keys(value as object,).length,).toBeGreaterThan(0,);
+      expect(Object.keys(value as object,).length,).toBeLessThanOrEqual(2,);
+    }
+  });
+
+  test("a recursive-only patternProperties map emits {} rather than an invalid value", () => {
+    // Same rule as `additionalProperties`: a `$ref` value resolves to
+    // `fc.jsonValue()`, whose arrays/numbers/nulls the recursive schema rejects.
+    const schema = t.Object({}, { patternProperties: { "^(.*)$": { $ref: "#", }, }, },);
+    for (const value of checkAllValid(schema, 100,)) { expect(value,).toEqual({},); }
+  });
+
+  // Generic backstop for the whole FREEZE CLASS, not just the two named shapes:
+  // walk real corpus modules and assert every non-closed-set schema varies. A
+  // keyword the mapper forgets to read (as it did for `patternProperties`) makes
+  // a whole CATEGORY constant at once, so pinning only the reported instances
+  // leaves the next unmodelled keyword free to do the same thing again.
+  //
+  // Closed sets are exempt because a small `enum`/`const` has at most that many
+  // distinct values BY DESIGN — flagging one would be a false positive that gets
+  // the guard deleted rather than fixed.
+  test("no corpus schema freezes to a single value", () => {
+    const modules: Record<string, Record<string, unknown>> = {
+      responses,
+      wardrobe,
+      actors,
+      assets,
+      chat,
+    };
+
+    const frozen: string[] = [];
+
+    for (const [moduleName, exports,] of Object.entries(modules,)) {
+      for (const [name, value,] of Object.entries(exports,)) {
+        if (!isTypeBoxSchema(value,)) { continue; }
+        const node = value as Record<string, unknown>;
+        const closed = node["enum"];
+        if ("const" in node || (Array.isArray(closed,) && closed.length <= 3)) { continue; }
+
+        if (
+          new Set(
+            fc.sample(schemaToArbitrary(value,), { numRuns: 50, seed: 20260101, },)
+              .map((v,) => JSON.stringify(v,)),
+          ).size <= 2
+        ) {
+          frozen.push(`${moduleName}.${name}`,);
+        }
+      }
+    }
+
+    expect(frozen,).toEqual([],);
+  });
 });
 
 describe("structural keywords", () => {
@@ -246,6 +357,95 @@ describe("structural keywords", () => {
     const schema = t.Object({ children: t.Array({ $ref: "T0", } as unknown as TSchema,), },);
     for (const value of checkAllValid(schema, 200,)) {
       expect((value as { children: unknown[] }).children,).toEqual([],);
+    }
+  });
+
+  test("an open object with no declared properties emits extra keys", () => {
+    // Regression: `properties` is `{}`, so the declared-key loop emitted nothing
+    // and `additionalProperties` was never consulted — every sample was `{}`.
+    const schema = t.Object({}, { additionalProperties: t.String(), },);
+    const samples = fc.sample(schemaToArbitrary(schema,), { numRuns: 200, seed: 20260101, },);
+
+    expect(samples.every((v,) => Object.keys(v as object,).length > 0),).toBe(true,);
+    expect(new Set(samples.map((v,) => JSON.stringify(v,)),).size,).toBeGreaterThan(50,);
+    for (const value of samples) {
+      expect(Value.Check(schema, value,),).toBe(true,);
+      expect(Object.keys(value as object,).length,).toBeLessThanOrEqual(3,);
+    }
+  });
+
+  test("the extra-key cap is a bound, and some draws reach it", () => {
+    // `EXTRA_KEYS = 3` is a deliberate breadth choice, not a contract, so this
+    // pins the BOUND and its use rather than a magic exact count: a cap of 1
+    // would still pass `toBeLessThanOrEqual(3)` but leaves most of the map
+    // unexercised, which the `toBe(3)` case below catches.
+    const schema = t.Object({}, { additionalProperties: t.String(), },);
+    const samples = fc.sample(schemaToArbitrary(schema,), { numRuns: 300, seed: 20260101, },);
+
+    for (const value of samples) { expect(Object.keys(value as object,).length,).toBeLessThanOrEqual(3,); }
+    expect(samples.some((v,) => Object.keys(v as object,).length === 3),).toBe(true,);
+  });
+
+  test("an open object stays closed when additionalProperties is false or true", () => {
+    // `false` forbids extras; `true` permits anything, so `{}` is the only value
+    // this generator can promise to be valid without a subschema to draw from.
+    for (const additionalProperties of [false, true,] as const) {
+      const schema = t.Object({}, { additionalProperties, },);
+      for (const value of checkAllValid(schema, 50,)) { expect(value,).toEqual({},); }
+    }
+  });
+
+  test("maxProperties still caps extra keys, and 0 emits none", () => {
+    const capped = t.Object({}, { additionalProperties: t.String(), maxProperties: 2, },);
+    for (const value of checkAllValid(capped, 200,)) {
+      expect(Object.keys(value as object,).length,).toBeLessThanOrEqual(2,);
+    }
+
+    const none = t.Object({}, { additionalProperties: t.String(), maxProperties: 0, },);
+    for (const value of checkAllValid(none, 50,)) { expect(value,).toEqual({},); }
+  });
+
+  test("maxProperties: 1 still emits one key — the boundary is > 0, not > 1", () => {
+    // Mutation guard: gating on `maxExtra > 1` collapses `maxProperties: 1`
+    // back to `{}` — the exact vacuous behaviour this mapper fix removes.
+    const schema = t.Object({}, { additionalProperties: t.String(), maxProperties: 1, },);
+    const samples = fc.sample(schemaToArbitrary(schema,), { numRuns: 200, seed: 20260101, },);
+
+    expect(samples.every((v,) => Object.keys(v as object,).length > 0),).toBe(true,);
+    for (const value of samples) {
+      expect(Value.Check(schema, value,),).toBe(true,);
+      expect(Object.keys(value as object,).length,).toBeLessThanOrEqual(1,);
+    }
+  });
+
+  test("declared properties win over additionalProperties", () => {
+    const schema = t.Object({ a: t.String(), }, { additionalProperties: t.Integer(), },);
+    for (const value of checkAllValid(schema, 200,)) {
+      expect(Object.keys(value as object,),).toEqual(["a",],);
+    }
+  });
+
+  test("a recursive-only additionalProperties emits {} rather than an invalid value", () => {
+    // The `$ref` branch resolves to `fc.jsonValue()`, whose arrays, numbers and
+    // nulls the recursive schema REJECTS. Dropping it keeps the test green;
+    // keeping it turns a green checkmark red without adding coverage.
+    const schema = t.Object({}, { additionalProperties: { $ref: "#", } as unknown as TSchema, },);
+    for (const value of checkAllValid(schema, 100,)) { expect(value,).toEqual({},); }
+  });
+
+  test("a recursive map drops the $ref branch but keeps the concrete one", () => {
+    // Mirrors the i18n `TranslationMapSchema`: Union([String, Self]).
+    const schema = t.Object({}, {
+      additionalProperties: t.Union([t.String(), { $ref: "#", } as unknown as TSchema,],),
+    },);
+
+    const samples = fc.sample(schemaToArbitrary(schema,), { numRuns: 200, seed: 20260101, },);
+    expect(samples.every((v,) => Object.keys(v as object,).length > 0),).toBe(true,);
+    for (const value of samples) {
+      expect(Value.Check(schema, value,),).toBe(true,);
+      for (const leaf of Object.values(value as Record<string, unknown>,)) {
+        expect(typeof leaf,).toBe("string",);
+      }
     }
   });
 
