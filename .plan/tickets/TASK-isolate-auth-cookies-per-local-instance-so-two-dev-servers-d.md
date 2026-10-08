@@ -14,7 +14,9 @@
 
 `src/routes/auth/shared.ts:73-74` declares `TOKEN_COOKIE = "ll_token"` and `COOKIE_PATH = "/"`; the cookie is emitted at `:96-102` with `Path`, `Max-Age`, `HttpOnly`, and `SameSite=Lax`, and **no `Domain`**. Cookies are not port-scoped (RFC 6265 §5.1.4, §5.2.3), so `localhost:3000` and `localhost:3001` share a single cookie jar: logging into instance B overwrites the token instance A is using, and the user is logged out of A mid-session. The symptom — random logouts with no visible cause — reads like a session-expiry bug and sends people looking in the wrong place.
 
-Hostname-based isolation does work, because cookie matching ignores the port. `a.localhost` and `b.localhost` resolve to loopback on Chrome and Firefox, so they get separate jars from the same browser. This ticket's shape depends on decision **D1** in `docs/review/federation-local-multi-instance-review.md` §5.
+Hostname-based isolation does work, because cookie matching ignores the port — two distinct hostnames get separate jars from the same browser, whereas two ports on one hostname share one. This ticket's shape depends on decision **D1** in `docs/review/federation-local-multi-instance-review.md` §5.
+
+**The resolver behaviour is a runtime fact this ticket must verify, not a premise it may rely on.** That `a.localhost` / `b.localhost` resolve to loopback in Chrome and Firefox is browser-and-DNS behaviour with **no evidence in this repo** — it is not asserted by `src/`, a test, or the harness. Direction item 2 exists to verify it empirically on the target environment before the recipe is written into the runbook. The documented alternative is an explicit `/etc/hosts` entry mapping both names to `127.0.0.1`, which makes the setup resolver-independent and is required anyway for `curl`, which does not apply browser resolver rules. If verification fails on any supported browser, the hostname recipe does not hold and D1 has to be re-opened.
 
 **Direction:**
 

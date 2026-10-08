@@ -14,7 +14,7 @@
 
 `DATA_DIR` (`src/config/constants.ts:13`) is a bare `path.resolve(__dirname, "..", "..", "loop-lore-data")` with no env read. Every path-bearing default derives from it: `database.sqliteFilename` (`src/config/sections/database.ts:11`), `assets.uploadDir` (`src/config/sections/assets.ts:10`), and `server.tls.key` / `.cert` (`src/config/sections/server.ts:16-19`). Two instances on one machine therefore cannot get distinct state — and the TLS paths have no override at all, so a second TLS-enabled instance is impossible today.
 
-The constraint that shapes this: the published JSON Schema rewrites resolved `DATA_DIR`-anchored defaults back to `${DATA_DIR}` placeholders (`src/config/schema-class/json-schema/index.ts:35-47`) so the schema stays stable across machines. Section Meta must therefore keep carrying a **resolved absolute path** as the default while the schema output stays portable. Do not "fix" this by making the Meta default a placeholder — that breaks every consumer that joins against the constant.
+The constraint that shapes this: the published JSON Schema rewrites resolved `DATA_DIR`-anchored defaults back to `${DATA_DIR}` placeholders (`src/config/schema-class/json-schema/index.ts:42-55`) so the schema stays stable across machines. Section Meta must therefore keep carrying a **resolved absolute path** as the default while the schema output stays portable. Do not "fix" this by making the Meta default a placeholder — that breaks every consumer that joins against the constant.
 
 **Direction:**
 
