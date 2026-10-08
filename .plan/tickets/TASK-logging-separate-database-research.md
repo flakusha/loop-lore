@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Low
-**Epic:** `epic-logging-telemetry.md` (logging), `epic-database-backup-recovery.md` (storage), `epic-multi-instance-reconciliation.md` (consistency)
+**Epic:** epic-logging-telemetry
 **Issue:** TBD
 **Related:**
 - `src/logger/` — DB transport writes to `log_entries` in the **main app DB**

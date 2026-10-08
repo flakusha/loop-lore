@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** NSFW Game Mechanics, Disease & Poison Systems
+**Epic:** epic-disease-poison
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started

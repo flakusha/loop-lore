@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** High
-**Epic:** epic-housing (umbrella) / epic-housing-base-building (design)
+**Epic:** epic-housing
 
 ## Summary
 

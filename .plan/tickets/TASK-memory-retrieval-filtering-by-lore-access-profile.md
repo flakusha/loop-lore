@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** medium
-**Epic:** Character & NPC Lore Access
+**Epic:** epic-character-npc-lore-access
 
 **Summary:**
 Filter memory retrieval so recalled memories referencing lore entries respect the actor access profile (consistency with personal narrative). Part of epic Character & NPC Lore Access.

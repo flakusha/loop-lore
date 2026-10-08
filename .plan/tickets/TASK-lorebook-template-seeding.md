@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task / Coordination
 **Tags:** lorebook, config, templates, seeding, characters, worlds
-**Epic:** epic-character-core-system / epic-world-locations (cross-cutting)
+**Epic:** epic-character-core-system
 **Related:** TASK-char-template-full-model-coverage, TASK-world-template-full-model-coverage,
 TASK-lorebook-export, TASK-character-spec-adopt-sillytavern-extensions
 

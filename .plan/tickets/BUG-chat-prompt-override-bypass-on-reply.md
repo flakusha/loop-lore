@@ -13,7 +13,7 @@
 **Priority:** medium
 **Effort:** small
 **Type:** BUG
-**Epic:** epic-output-control-transforms, epic-chat-lifecycle-moderation
+**Epic:** epic-output-control-transforms
 **Files:** src/routes/messages/reply.ts:55-141; src/routes/messages/command.ts:101-117; src/routes/chats/manage.ts:106; src/routes/chats/prompt-template.ts
 
 ## Issue

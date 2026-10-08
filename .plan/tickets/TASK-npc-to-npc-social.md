@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-social-interaction, NPC/Actor System
+**Epic:** epic-social-interaction
 **Priority:** Medium (P6+ deferred)
 **Effort:** High
 **Status:** Not Started

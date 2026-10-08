@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** RPG Mechanics & Extensible Game Systems
+**Epic:** epic-rpg-mechanics
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started
