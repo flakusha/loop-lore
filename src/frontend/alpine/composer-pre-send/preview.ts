@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/**
+ * Shared markdown-preview primitive (composer-pre-send) — framework-
+ * agnostic, importable by any text surface needing sanitized preview
+ * rendering or the stream-preference keys.
+ */
 import { STREAM_PREF_KEY, } from "./constants";
 
 /** Minimal DOMPurify surface the preview renderer accepts. */

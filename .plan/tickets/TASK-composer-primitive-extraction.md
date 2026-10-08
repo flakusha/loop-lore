@@ -33,10 +33,10 @@ Extract framework-agnostic primitives into standalone modules:
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The previous attempt landed `auto-resize.ts` on dev but lost `draft-store.ts`. This slice completes the extraction: `draft-store.ts` now owns the MRU/LRU draft bodies (blank-removes, quota-swallow, corrupt-index→empty) parametrized by prefix/limits/TTL/clock, while `chat-drafts.ts` keeps its historical export surface as thin delegations so its tests pass unmodified. Storage stays a call-time parameter (not a module singleton) because the helpers' signatures predate the factory. Deliberately NOT unified with `composer-pre-send/draft-codec.ts` (TTL-keyed per-chat, different semantics); `preview.ts` gained a shared-primitive header note instead of code change.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
