@@ -10,7 +10,9 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+
+**Status Note:** Command palette shipped and server-backed (`src/frontend/alpine/chat-actions/command-palette.ts` hydrating from `GET /api/v1/commands`; `src/routes/commands/` mounted via `src/routes/v1/admin-surface.ts`); markdown pre-render (`src/frontend/alpine/chat-utils/render.ts`) and composer tab-complete Done. `TASK-slash-commands-chat-group-assistant.md` remains Not Started.
 **Area:** Frontend composer + assistant continuation flows
 
 ## Scope
