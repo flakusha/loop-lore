@@ -7,14 +7,15 @@
  * Uses in-memory SQLite + Kysely test DB. Mocks provider via registry.
  */
 import type { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { Config, } from "../config/schema";
 import { configSchema, } from "../config/schema-class";
 import { setTestDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
-import { createLogger, } from "../logger";
+import { createLogger, getLogger, setGlobalLogger, } from "../logger";
+import type { Logger, } from "../logger";
 import { registry, } from "../plugins/registry";
 import type { ToolDefinition, } from "../plugins/types";
 import { createTestDb, resetTestDb, } from "../test-utils/create-test-db";
@@ -267,6 +268,56 @@ describe("handleGenerate — input validation", () => {
   });
 });
 
+/** The logger {@link captureWarnings} displaced; null when none was installed. */
+let priorLogger: Logger | null = null;
+
+/**
+ * Swap the global logger for a warn recorder and return the array it fills.
+ *
+ * `getLogger()` throws when no logger is installed and this file must run
+ * standalone, so the prior logger is snapshotted defensively — the same shape
+ * `solo-mode-warning.test.ts` uses. {@link restoreLogger} puts it back.
+ */
+function captureWarnings(): CapturedWarn[] {
+  const warns: CapturedWarn[] = [];
+  const recorder: Logger = {
+    trace: () => {},
+    fatal: () => {},
+    info: () => {},
+    debug: () => {},
+    error: () => {},
+    warn: (message: string | Record<string, unknown>, meta?: Record<string, unknown>,) => {
+      warns.push({ message: typeof message === "string" ? message : "", meta, },);
+    },
+    child: () => recorder,
+    addTransport: () => {},
+    setBindings: () => {},
+    setLevel: () => {},
+    flush: async () => {},
+  };
+
+  priorLogger = null;
+  try {
+    priorLogger = getLogger();
+  } catch {
+    // None installed — restoreLogger then leaves the recorder in place.
+  }
+
+  setGlobalLogger(recorder,);
+  return warns;
+}
+
+/** Reinstall the logger {@link captureWarnings} displaced, if there was one. */
+function restoreLogger(): void {
+  if (priorLogger) { setGlobalLogger(priorLogger,); }
+}
+
+/** One captured warn call. */
+interface CapturedWarn {
+  message: string;
+  meta?: Record<string, unknown>;
+}
+
 describe("gatePluginToolsByRole", () => {
   const toolA: ToolDefinition = {
     name: "play_card_battle",
@@ -300,14 +351,46 @@ describe("gatePluginToolsByRole", () => {
     registry.addTools("rps", [toolB,],);
   },);
 
-  test("returns all tools when no role assigned", () => {
+  afterEach(() => {
+    restoreLogger();
+  },);
+
+  test("returns every registered tool when no role assigned", () => {
+    // UNASSIGNED is not an authorization failure. `agent_role` is a per-character
+    // plugin persona, not an authz principal, and the caller has already run
+    // `checkChatAccess`. Denying here would disable every plugin tool in any
+    // deployment where no character is given a role — see the JSDoc on the gate.
     const tools = gatePluginToolsByRole(null,);
     expect(tools.map((t,) => t.name),).toEqual(["play_card_battle", "play_rps",],);
   });
 
-  test("returns all tools when role not registered", () => {
+  test("returns zero tools when the assigned role is not registered (fail closed)", () => {
+    // SECURITY (BUG-plugin-tool-authorization-fails-open): an id that no plugin
+    // registers — a typo, a stale assignment, a role from a disabled plugin —
+    // used to return the FULL tool list, so an unresolvable role widened the
+    // surface instead of narrowing it. It must deny, exactly like an empty
+    // allowlist, and log so the misconfiguration is diagnosable.
+    const warns = captureWarnings();
     const tools = gatePluginToolsByRole("missing-role",);
-    expect(tools.map((t,) => t.name),).toEqual(["play_card_battle", "play_rps",],);
+
+    expect(tools,).toEqual([],);
+    expect(warns.some((w,) => w.message.includes("unresolvable agent role",)),).toBe(true,);
+    expect(warns.find((w,) => w.message.includes("unresolvable agent role",))?.meta?.agentRole,)
+      .toBe("missing-role",);
+  });
+
+  test("still denies (and does not log) for an empty role when the id resolves", () => {
+    registry.addAgentRoles("card-battle", [
+      { id: "empty-role", name: "Empty", description: "", systemPrompt: "", tools: [], },
+    ],);
+
+    const warns = captureWarnings();
+    const tools = gatePluginToolsByRole("empty-role",);
+
+    expect(tools,).toEqual([],);
+    // An empty allowlist is a configured deny, not a misconfiguration — the
+    // audit line is reserved for ids that cannot be resolved at all.
+    expect(warns.some((w,) => w.message.includes("unresolvable agent role",)),).toBe(false,);
   });
 
   test("gates tools to the role's declared list", () => {
