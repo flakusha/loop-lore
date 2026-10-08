@@ -71,8 +71,13 @@ export function sanitizeToolOutput(content: string,): string {
  * Gate plugin tools by the actor's assigned agent role.
  *
  * UNASSIGNED (`null`) keeps every registered tool: `agent_role` is a per-character
- * plugin persona (`actors.agent_role`), not an authz principal, and the sole caller
- * (`./provider-request.ts:56`) runs after `checkChatAccess` authorized the request.
+ * plugin persona (`actors.agent_role`), not an authz principal. The INVARIANT that
+ * makes this safe is upstream, not here: `validateGenerateRequest`
+ * (`./validate.ts`) rejects any `actorId` that is not a participant of the very
+ * chat being generated, so the `actors` lookup in the sole caller
+ * (`./provider-request.ts:56`) can only MISS for a character that genuinely has
+ * no plugin persona — the benign case. If that check is ever relaxed, a missing
+ * or failed lookup returns `null` again and this branch becomes an authz bypass.
  * An ASSIGNED role that does not resolve DENIES instead — a typo or a disabled
  * plugin's role must never widen the surface (BUG-plugin-tool-authorization-fails-open).
  * @param agentRole - The actor's assigned plugin agent role id (or null)

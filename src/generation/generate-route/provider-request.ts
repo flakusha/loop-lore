@@ -43,6 +43,7 @@ export async function buildProviderRequest(opts: {
   const { input, resolved, messages, database, abortSignal, stream, } = opts;
 
   let roleRow: { agent_role: string | null } | undefined;
+  let lookupFailed = false;
   try {
     roleRow = await database
       .selectFrom("actors",)
@@ -50,10 +51,12 @@ export async function buildProviderRequest(opts: {
       .where("id", "=", input.actorId,)
       .executeTakeFirst();
   } catch {
-    // Role lookup is best-effort — default to exposing all plugin tools.
+    // A FAILED lookup is not the same as "this character has no persona" —
+    // only the latter may widen the surface. Fail closed: no tools.
+    lookupFailed = true;
   }
 
-  const pluginTools = gatePluginToolsByRole(roleRow?.agent_role ?? null,);
+  const pluginTools = lookupFailed ? [] : gatePluginToolsByRole(roleRow?.agent_role ?? null,);
 
   const tools = pluginTools.length > 0
     ? Array.from(pluginTools, (t,) => ({

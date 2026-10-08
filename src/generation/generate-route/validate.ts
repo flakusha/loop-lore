@@ -12,7 +12,7 @@
 import type { Kysely, } from "kysely";
 import { checkChatAccess, } from "../../chat/service";
 import type { DB, } from "../../db/schema";
-import { forbiddenResponse, jsonError, requireUserId, } from "../../routes/http-utils";
+import { forbiddenResponse, jsonError, notFoundResponse, requireUserId, } from "../../routes/http-utils";
 import type { GenerateRequest, } from "./types";
 
 /** Inputs for {@link validateGenerateRequest}. */
@@ -67,6 +67,25 @@ export async function validateGenerateRequest({
   if (typeof authUserId !== "string") { return authUserId; }
   const access = await checkChatAccess(database, input.chatId, authUserId, userRole,);
   if (!access.ok) { return forbiddenResponse(); }
+
+  // `chatId` authorization does NOT cover `actorId`: the caller picks which
+  // actor generates, so a participant of chat A could name any actor in the
+  // deployment and speak as it inside chat A. Gate the target the same way
+  // `recordTurnSkip` does (chat/service/crud/turn-skip.ts:93-102) — the actor
+  // must be a participant of the very chat being generated. Membership, not
+  // ownership: admins, group casts, regenerate (actorId read from the parent
+  // variant row) and impersonation (the impersonator's own participant row is
+  // the actorId; the impersonated character is excluded from generation) all
+  // satisfy it. Without this, an unauthorized actorId resolves to no role row
+  // and `gatePluginToolsByRole(null)` hands back the full plugin tool list.
+  const participant = await database
+    .selectFrom("chat_participants",)
+    .select("actor_id",)
+    .where("chat_id", "=", input.chatId,)
+    .where("actor_id", "=", input.actorId,)
+    .executeTakeFirst();
+
+  if (!participant) { return notFoundResponse("Actor is not a participant of this chat",); }
   if (input.prompt !== undefined && !Array.isArray(input.prompt,)) {
     return jsonError({ message: "prompt must be an array", status: 400, },);
   }
