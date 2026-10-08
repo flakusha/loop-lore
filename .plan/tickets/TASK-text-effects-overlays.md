@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** text-effects overlay components on text-fx core
 **Priority:** Low
 **Effort:** Med
 **Epic:** Epic Immersion & Presentation (sub-task)
