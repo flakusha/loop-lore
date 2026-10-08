@@ -205,19 +205,12 @@ export default [
       "no-restricted-globals": "off",
       // Structured logging is the only log entry point (epic-logging). A server-side
       // `console.*` bypasses the async queue, the censors and the transports, so the
-      // line never reaches `log_entries` or the JSONL file. Scripts and the frontend
-      // carry an explicit exemption below — both write human-facing output with no
-      // request context to bind a child logger to.
+      // line never reaches `log_entries` or the JSONL file. The frontend carries an
+      // explicit exemption below — it writes human-facing output with no request
+      // context to bind a child logger to. Standalone scripts under `src/scripts/`
+      // are held to the rule too; each one routes its diagnostics through a
+      // module-scoped logger and marks the remaining human report lines inline.
       "no-console": "error",
-    },
-  },
-  // `src/scripts/**` are standalone CLI entry points whose stdout IS the product —
-  // gate scripts whose output the parallel check runner parses. Delete this block
-  // once each one has a module-scoped `getLogger()` with a meaningful module name.
-  {
-    files: ["src/scripts/**/*.ts"],
-    rules: {
-      "no-console": "off",
     },
   },
   // JSDoc — kept at `warn` (best-effort). Lifted to `error` only when coverage is high

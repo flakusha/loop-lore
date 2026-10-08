@@ -8,7 +8,7 @@
 
 
 **Status:** In Progress
-**Status Note:** the logging platform itself is built and shipped — `src/logger/` is complete, the six-level set is live end-to-end, `/api/telemetry` exists, and `log_entries` is indexed and queryable. The `no-console` rule is now enforced (`error`) for server-side `src/**`, and the eight server-side call sites are migrated onto `getLogger()` — leaving only a time-boxed `src/scripts/**` exemption and one justified boot-time fallback. What this epic still owns: (1) migrating `src/scripts/**` so the exemption can be deleted; (2) the ad-hoc log query surface, specced against a `/var/log/loop-lore/` directory that does not exist in this repo and needing reframing against the real `log_entries` table; (3) the OTLP sink, specced but with zero code; (4) the spec/code level drift. Trace/fatal and canonical-JSONL are NOT this epic's scope — `epic-logging-telemetry.md` owns them and records all four of its tickets as merged (2026-08-07).
+**Status Note:** the logging platform itself is built and shipped — `src/logger/` is complete, the six-level set is live end-to-end, `/api/telemetry` exists, and `log_entries` is indexed and queryable. The `no-console` rule is now enforced (`error`) for server-side `src/**` including `src/scripts/**` — the exemption block is deleted, and all six scripts route diagnostics through a module-scoped lazy `log()` accessor (`backfill-users-encryption-secret`, `commit-check`, `migrate-character-legacy`, `smoke-app`, `version-bump`, `log-query`). Landed in this pass: the `src/scripts/**` migration, the `log_entries` query surface (`bun run logs:query`, `src/scripts/log-query.ts` + `log-query.test.ts`), and the spec/code level reconciliation (`docs/spec/logging.md` now documents all six levels). What this epic still owns: verifying the sibling in-flight `log-query.ts` review items (flush handling, readonly proof, size gate) and checking off the acceptance boxes below. OTLP stays a tracked follow-up ticket, not built. Trace/fatal and canonical-JSONL are NOT this epic's scope — `epic-logging-telemetry.md` owns them and records all four of its tickets as merged (2026-08-07).
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Infrastructure
@@ -42,11 +42,10 @@ levels; it cannot stay split.
 
 ## Remaining Scope
 
-### 1. `console.*` → `getLogger` (rule landed; `src/scripts/**` still exempted)
+### 1. `console.*` → `getLogger` (rule landed; `src/scripts/**` migrated, exemption deleted)
 
-`no-console` is now `error` for server-side `src/**`, with explicit exemptions for
-`src/scripts/**` (standalone CLI entry points whose stdout IS the product — gate scripts whose
-output the parallel check runner parses), `src/frontend/**` (browser code, and the frontend
+`no-console` is now `error` for all of server-side `src/**` with no script exemption. The remaining
+exemptions are `src/frontend/**` (browser code, and the frontend
 logger transports whose `console.*` IS the sink rather than a violation), and test files
 (they print runner diagnostics on purpose).
 
@@ -59,9 +58,16 @@ One exception is deliberate and carries an inline justification: `src/middleware
 keeps a `console.warn` inside the `catch` that fires precisely when `getLogger()` threw, so no
 logger exists to route through.
 
-**Still open:** the `src/scripts/**` exemption is a time-boxed carve-out, not a permanent
-answer. Once each script has a module-scoped `getLogger()` with a meaningful module name,
-delete the exemption block and migrate the scripts.
+**Landed in this pass:** all six `src/scripts/**` entry points
+(`backfill-users-encryption-secret`, `commit-check`, `migrate-character-legacy`,
+`smoke-app`, `version-bump`, `log-query`) route diagnostics through a module-scoped lazy
+`log()` accessor that returns `null` until the CLI guard calls `createLogger()` — so importing a
+script never throws. Human/machine product output (report blocks, ANSI narration, JSONL/table
+query rows, bare predicted version) stays on `console.*` with a per-line justification;
+only diagnostics moved to the logger. Every guard that sits before a `process.exit` (or a
+drained event loop) ends with `await log()?.flush().catch(() => undefined)` — the queue timer
+is unref'd, so without the flush the diagnostic would be silently dropped. The `src/scripts/**`
+`no-console: off` block in `eslint.config.mjs` is deleted.
 
 ### 2. Ad-hoc log query surface — reframe, do not re-spec
 
@@ -82,6 +88,8 @@ indexed `log_entries` table. The honest scope is a thin read-only query command 
 `log_entries` (entity / event / user / level / time-range filters), reusing the existing indexes
 rather than scanning a log file. Drop the 1GB timing requirement — it constrained an artifact
 whose presence is deployment-dependent. See `## Open Questions` before choosing the target.
+
+**Landed in this pass:** `bun run logs:query` (`src/scripts/log-query.ts`, 290 lines + `log-query.test.ts`, 11 tests green). Query helpers (`normalizeTimestamp`, `parseEntitySelector`, `clampLimit`, `queryLogEntries`, `formatTable`) are exported and unit-tested against a real test DB. Filters: `--event` / `--user` exact matches, `--entity <type>[:<id>]` (empty halves throw), `--level` minimum severity, `--since`/`--until` inclusive `created_at` bounds, `--q` substring LIKE capped at 200 chars exactly like `src/routes/admin/audit.ts`, `--limit` clamped to `LIMIT_CAP` 500 (default 50), `--format jsonl|table` (JSONL via `jsonStringifyOr`, one object per line, jq-friendly). Read-only by construction: single `SELECT`, handle opened `{ readonly: true }`. The answered open question below is the DB table — the JSONL-file counter-argument stays documented for operators without DB access, but no file-scoped tool was built.
 
 ### 3. OTLP sink
 
@@ -118,18 +126,22 @@ Already met (kept as regression guards, not pending work):
 
 Genuinely unshipped:
 
-- [x] `no-console` is `error` for server-side `src/**` in `eslint.config.mjs`, with explicit
-      exemptions for `src/scripts/**`, `src/frontend/**`, and test files.
+- [x] `no-console` is `error` for all of server-side `src/**` in `eslint.config.mjs` — the `src/scripts/**` exemption block is deleted; only `src/frontend/**` and test files stay exempt.
 - [x] No `console.*` calls remain in server-side non-test `src/` files outside the one
       justified `src/middleware/permissions.ts` boot-time fallback.
 - [x] The eight migrated call sites resolve the logger lazily, so importing a module before
       `createLogger()` cannot throw — matching the `src/assets/signed-url.ts` precedent.
-- [ ] `src/scripts/**` no longer needs its exemption — each script has a module-scoped
-      `getLogger()` with a meaningful module name, and the exemption block is deleted.
-- [ ] An ad-hoc log query command exists and reads the indexed `log_entries` table, not a
-      log-file directory — filters cover at least entity, event, user, level, and time range.
-- [ ] `docs/spec/logging.md` and the six-level reality agree — the level table documents
-      `trace` and `fatal` (or the code drops them; the two cannot stay split).
+- [x] `src/scripts/**` no longer needs its exemption — each of the six scripts has a module-scoped
+      lazy `log()` accessor, and the exemption block is deleted.
+- [x] An ad-hoc log query command exists and reads the indexed `log_entries` table, not a
+      log-file directory — `bun run logs:query` filters entity, event, user, level, time range,
+      message substring, and row cap (see `### 2` for the full surface).
+- [x] `docs/spec/logging.md` and the six-level reality agree — the level table now documents all six
+  levels (TRACE 5 … FATAL 50) with console colours, CSS values, and the default-`debug` /
+  hot-apply semantics (landed by the sibling SpecLevelDrift agent in this same pass).
+- [x] `bun run logs:query` is covered directly — `src/scripts/log-query.test.ts` exercises
+  `queryLogEntries` filters, `clampLimit`/`normalizeTimestamp`/`parseEntitySelector`, `formatTable`,
+  and both `main()` paths (`:memory:` rejection, on-disk happy path).
 - [ ] Tests cover redaction (including the depth cutoff), level filtering, and child-logger
       context propagation.
 - [ ] OTLP sink, if built, is gated on config and default-off — no OTLP traffic unless
@@ -139,22 +151,21 @@ Genuinely unshipped:
 
 1. **Does the ad-hoc query target `log_entries` or the JSONL file?** This epic assumes the DB
    table, because it is indexed and present in every deployment. The counter-argument is real:
-   bare-metal deploys write `/var/log/loop-lore/app.jsonl`, so a file-scoped tool would serve
-   operators who have no DB access. Decide before implementing.
+   operators who have no DB access. **Decided: the DB table.** `bun run logs:query` ships against
+   `log_entries`; no file-scoped tool was built.
 
    Note the config key is `logging.jsonlPath` (`src/config/sections/logging.ts`), **not** the
    `LOG_JSONL_PATH` env var that `docs/spec/logging.md:79` claims — no such env binding exists.
    `schemas/env-map.snapshot.json` binds only `LOG_LEVEL` / `LOGGING_LEVEL` to `logging.level`.
    `logging.dbEnabled` is likewise config-file-only. The spec's env list is wrong on three keys;
    fixing that table is a separate docs task, not logging scope.
-2. **Six levels or four?** `docs/spec/logging.md` documents four; the code ships six. Either
-   the spec table moves to six (trace 5 / fatal 50), or `trace`/`fatal` come back out of
-   `LogLevelNumeric` and the `Logger` interface. The spec is the one that is behind.
+2. **Six levels or four?** `docs/spec/logging.md` documented four; the code ships six. **Decided:
+   six.** The spec table now documents trace 5 / fatal 50 with colours and semantics.
 
 ## Specs
 
-- [`docs/spec/logging.md`](../../docs/spec/logging.md) — the house spec; its level table is
-  currently behind the implementation (see `## Open Questions`).
+- [`docs/spec/logging.md`](../../docs/spec/logging.md) — the house spec; reconciled to six levels
+  in this pass (see `## Open Questions`, both now decided).
 
 ## Related Epics
 

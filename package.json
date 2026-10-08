@@ -130,6 +130,7 @@
     "backfill:users:encryption-secret:dry": "bun run src/scripts/backfill-users-encryption-secret.ts --dry-run",
     "commit:lint": "bun run src/scripts/commit-check.ts --all",
     "commit:check": "bun run src/scripts/commit-check.ts --staged",
+    "logs:query": "bun run src/scripts/log-query.ts",
     "bench": "bun run scripts/run-benchmarks.ts",
     "bench:native": "bun run scripts/run-benchmarks.ts blake3",
     "bench:ci": "bun run scripts/run-benchmarks.ts",

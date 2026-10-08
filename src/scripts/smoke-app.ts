@@ -8,7 +8,23 @@ import { createSqliteDialect, } from "../db/index";
 import { up, } from "../db/migrations/001_init";
 import type { DB, } from "../db/schema";
 import { createApp, } from "../elysia-app";
+import { createLogger, getLogger, type Logger, } from "../logger";
 import { safeFetch, } from "../utils";
+
+// Console-only logger: a one-shot smoke run has no host process to seed one.
+createLogger({ level: "info", },);
+
+/**
+ * Module logger accessor — null if no logger is initialized.
+ * @returns the child logger, or null when no logger is initialized.
+ */
+function log(): Logger | null {
+  try {
+    return getLogger().child({ module: "scripts/smoke-app", },);
+  } catch {
+    return null;
+  }
+}
 
 const sqlite = new Database(":memory:",);
 sqlite.run("PRAGMA foreign_keys = ON",);
@@ -29,12 +45,15 @@ const app = createApp({
   handleApiRequest: async () => new Response("Not found", { status: 404, },),
 },);
 
-console.log("createApp succeeded",);
+log()?.info("createApp succeeded",);
 
 const server = Bun.serve({ port: 0, fetch: app.fetch, },);
-console.log("Bun.serve started on port", server.port,);
+log()?.info("Bun.serve started on port", { port: server.port, },);
 const result = await safeFetch(`http://localhost:${server.port}/api/health`,);
-console.log("Health check:", result.ok ? result.status : result.error.message,);
+log()?.info("Health check", { detail: result.ok ? result.status : result.error.message, },);
 server.stop();
-console.log("Server stopped",);
+log()?.info("Server stopped",);
+// The log queue batches on a 100ms timer; drain it before the exit. A transport
+// rejection must not skip `process.exit(0)` — exit 0 is this script's contract.
+await log()?.flush().catch(() => undefined);
 process.exit(0,);

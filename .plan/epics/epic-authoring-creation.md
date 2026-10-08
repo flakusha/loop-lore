@@ -5,6 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
+// hint: Logic and cosmetic changes overlap. Resolve logic first, then reformat.
 **Tags:** authoring, creation, procedural-assets, plot-autopilot, what-if, community-share, builder-tools
 **Overview:** (see sections below)
 
@@ -97,9 +98,12 @@ artifact(s)" resolution pointing here):
 
 ## Linked Tasks
 
+// hint: Structural and logic conflict. Both design and behavior differ.
 - `TASK-authoring-creation.md` — implementation tasks
 - `BUG-community-share-missing-lorebook-export.md` — new gap from the community-share audit (actor lorebook export missing, import-only), implementation not in this branch
 - `FEAT-plot-autopilot-ai-proposes-next-plot-beats.md` — duplicate stub (closed)
 - `FEAT-what-if-branch-simulator-fork-world-state-diff-narratives.md` — duplicate stub (closed)
 - `FEAT-procedural-asset-pipelines-maps-portraits-music-sfx.md` — duplicate stub (closed)
 - `FEAT-community-template-world-share-export-import.md` — duplicate stub (closed)
+
+**Resolved:** 2026-10-08 registry-driven close: git issue 5481523 (registry tip: f244ea09c Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-AUTHORING-CREATION done)

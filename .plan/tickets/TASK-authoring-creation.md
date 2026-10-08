@@ -3,6 +3,7 @@
 
 # TASK: EPIC: Authoring & Creation Tools
 
+// hint: All three dimensions conflict. Manual review required.
 **Summary:** Builder-layer authoring tools: procedural asset pipeline glue, plot autopilot, what-if branch simulator, and community template share (verify-only).
 **Context:** Builder-layer tools from `docs/ideas/authoring-creation.md` ideas #15–#18. Four subtasks: three new modules (asset pipeline glue, plot autopilot, what-if simulator) plus one verify-only item (community template share, already Done under `epic-import-export-io.md`).
 **Acceptance Criteria:** `src/generation/asset-pipeline.ts` (extends the auto-gen cascade to audio via `src/generation/audio-prompt-templates.ts`), `src/story/plot-autopilot.ts` (beat proposals from `src/story/quest-engine/` + `src/story/timeline/world-timeline.ts`, player picks), and `src/story/whatif-simulator.ts` (world-state fork + narrative diff) each exist, add no new generation backends or deps, wire into the `src/generation/index.ts` / `src/story/index.ts` barrels, and carry unit tests at >=80% line coverage; `FEAT-community-template-world-share-export-import.md` verified Done under `epic-import-export-io.md`; documentation updated if user-visible behavior changed.
@@ -31,6 +32,11 @@ simulator) plus one verify-only item (community template share, already Done und
 
 ## Acceptance Criteria
 
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
+
+**Resolved:** 2026-10-08 registry-driven close: git issue eb42411 (registry tip: a1ddf8acc Konstantin Fedotov Auto-closed: appended .md marker marks TASK-AUTHORING-CREATION done)
 ### Procedural asset pipeline glue
 
 - [x] `src/generation/asset-pipeline.ts` exists and extends auto-gen cascade
