@@ -20,7 +20,17 @@ import { loadAllPlugins, } from "./loader";
 import { warnIfAccessFieldsAreInert, } from "./solo-mode-warning";
 import { registry, } from "./registry";
 
-const priorLogger = getLogger();
+/**
+ * The logger that was installed before this test ran, restored afterwards.
+ *
+ * Deliberately NOT resolved at module scope: `getLogger()` throws when no
+ * logger exists yet, and this file must run standalone. Whether one exists
+ * depends on whether some sibling test file happened to call createLogger()
+ * first — an ordering accident, not a contract. So the snapshot is taken
+ * lazily inside `beforeEach`, and the restore is guarded exactly the way
+ * production guards its own logger access (solo-mode-warning.ts, route-access.ts).
+ */
+let priorLogger: Logger | null = null;
 
 /** Warn calls the loader emitted during the current test. */
 const warns: { message: string; meta?: Record<string, unknown>, }[] = [];
@@ -32,6 +42,16 @@ const ourWarnings = (): typeof warns => {
 
 beforeEach(() => {
   warns.length = 0;
+
+  // Lazy snapshot: `getLogger()` throws when nothing installed one, and a
+  // `null` here means "there was none" — afterEach then leaves the recorder
+  // in place rather than trying to restore something that never existed.
+  try {
+    priorLogger = getLogger();
+  } catch {
+    priorLogger = null;
+  }
+
   // Spreading a real logger does not work: its methods live on the prototype,
   // so the spread yields `error: undefined` and the loader's own error paths
   // blow up. Same explicit shape loader.test.ts uses for its nullLogger.
@@ -62,7 +82,11 @@ beforeEach(() => {
 
 afterEach(() => {
   registry.unregisterAll();
-  setGlobalLogger(priorLogger,);
+
+  // Only restore when there was something to restore. Guarded the same way
+  // production guards logger access (solo-mode-warning.ts, route-access.ts):
+  // a missing logger must never turn a passing test into an error.
+  if (priorLogger) { setGlobalLogger(priorLogger,); }
 },);
 
 describe("warnIfAccessFieldsAreInert", () => {
