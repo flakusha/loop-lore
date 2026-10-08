@@ -46,6 +46,7 @@ import "./sidebar";
 import "./story-controls";
 import "./story-state";
 import "./template-library";
+import "./text-toolbar";
 import "./theme";
 import "./types";
 import "./user-info";
