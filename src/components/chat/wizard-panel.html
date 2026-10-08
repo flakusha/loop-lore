@@ -58,7 +58,8 @@
               <textarea
                 class="wizard-field-textarea"
                 :value="value ?? ''"
-                @input="updateWizardField(field, $event.target.value)"
+                @input="updateWizardField(field, $event.target.value); autoResize($el)"
+                x-init="autoResize($el)"
                 rows="2"
               ></textarea>
             </div>
