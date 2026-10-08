@@ -11,7 +11,7 @@
 **Effort:** Large
 **Type:** Feature Epic
 **Tags:** autonomy, npc, actors, story-drive, simulation, rate-limiting, scheduler, bdi
-**Related:** epic-agency-story-points.md (BDI loop host), epic-npc-navigation.md (movement executor), epic-assistant-gm-flows.md (GM roles + AI director), epic-npcs.md, epic-world-travel-time.md (world clock)
+**Related:** epic-agency-story-points.md (BDI loop host), epic-character-internal-traits.md (D9 autonomy preferences consumed by the governor), epic-npc-navigation.md (movement executor), epic-assistant-gm-flows.md (GM roles + AI director), epic-npcs.md, epic-world-travel-time.md (world clock)
 
 ## Summary
 
@@ -108,6 +108,17 @@ Key decisions:
 - [ ] Scheduler survives restart (simulation state persisted); pause/resume/step verified end-to-end.
 - [ ] Pacing presets produce measurably different action cadence (jitter verified).
 
+## Spec Alignment
+
+- `docs/spec/autonomy-determinism.md` — authoritative determinism contract
+  for this loop: seeded jitter on every cooldown/reschedule, replayable
+  tick ordering; wall-clock randomness is a spec violation.
+- `docs/spec/npc-navigation.md` — tick cadence the movement dispatch
+  target executes under (`runNpcMovementTick` via `opts.dispatch`).
+- `docs/spec/generation-scheduler.md` — complementary admission control:
+  the provider scheduler gates generation capacity while the governor
+  holds actor budgets; neither reimplements the other.
+
 ## Related
 
 Host epics retain their scopes; this epic owns scheduling + governance only.
@@ -134,7 +145,8 @@ The `autonomy_preferences` data schema (AutonomyProfile, D9) is owned by
 | Autonomy config surface | `TASK-autonomy-config-surface.md` | yes | Done — layered resolver, presets, world/chat/per-actor write routes, Autonomy tab + chat settings modal |
 | Per-agent/user budget caps UI (gap-audit E15) | `TASK-autonomy-rate-governor.md` | yes | Done — `AutonomyGovernor.tryConsume` + budget-remaining and reset-window UI in both settings surfaces |
 | Config layering / presets / overrides (dup) | `TASK-autonomy-config-surface-layering-presets-and-overrides.md` | yes | Wontfix — duplicate of `TASK-autonomy-config-surface.md` (Done); all four ACs met and tested |
-| Rate governor for LLM actors (dup) | `TASK-autonomy-rate-governor-for-llm-actors.md` | yes | Wontfix — duplicate of `TASK-autonomy-rate-governor.md` (Done); cost ledger + global kill switch still unmet, filed forward |
+| Rate governor for LLM actors (dup) | `TASK-autonomy-rate-governor-for-llm-actors.md` | yes | Wontfix — duplicate of `TASK-autonomy-rate-governor.md` (Done); cost ledger + global kill switch still unmet, filed forward as `TASK-autonomy-cost-ledger-kill-switch.md` (open) |
+| Per-actor cost ledger + global kill switch | `TASK-autonomy-cost-ledger-kill-switch.md` | yes | open — per-actor cost ledger + global kill switch (open ACs from autonomy governor duplicate) |
 
 All referenced tickets are filed on disk. The scheduler's BDI and GM dispatch work was split into the two follow-up tickets above after scoping found neither had a callable, non-greenfield entry point. The 2026-09-23 gap-audit was stale — this table supersedes it.
 
