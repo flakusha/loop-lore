@@ -1,6 +1,7 @@
 import "./i18n.test-helper";
 import { afterAll, afterEach, describe, expect, mock, test, } from "bun:test";
 import { chatMessages, } from "./chat-messages";
+import { chatReactionMethods, } from "./chat-reactions";
 import type { ChatState, Message, } from "./types";
 
 // ── Mock global apiFetch (chat-messages uses bare `apiFetch` = globalThis.apiFetch) ──
@@ -122,10 +123,10 @@ describe("chatMessages", () => {
       const state: ReactionState = {
         activeChat: "chat-1",
         messages: [mockMessage("msg-1",),],
-        loadMessageReactions: chatMessages.loadMessageReactions,
+        loadMessageReactions: chatReactionMethods.loadMessageReactions,
       };
 
-      await chatMessages.toggleReaction!.call(state, "msg-1", "👍",);
+      await chatReactionMethods.toggleReaction!.call(state, "msg-1", "👍",);
 
       const post = fetchCalls.find((c,) => c.opts?.method === "POST");
       expect(post?.url,).toBe("/api/v1/messages/msg-1/reactions",);
@@ -138,7 +139,7 @@ describe("chatMessages", () => {
 
     test("does nothing without an active chat", async () => {
       const state: ReactionState = { activeChat: null, messages: [], };
-      await chatMessages.toggleReaction!.call(state, "msg-1", "👍",);
+      await chatReactionMethods.toggleReaction!.call(state, "msg-1", "👍",);
       expect(fetchCalls,).toHaveLength(0,);
     });
 
@@ -147,10 +148,10 @@ describe("chatMessages", () => {
       const state: ReactionState = {
         activeChat: "chat-1",
         messages: [],
-        loadMessageReactions: chatMessages.loadMessageReactions,
+        loadMessageReactions: chatReactionMethods.loadMessageReactions,
       };
 
-      await expect(chatMessages.toggleReaction!.call(state, "msg-1", "👍",),).resolves.toBeUndefined();
+      await expect(chatReactionMethods.toggleReaction!.call(state, "msg-1", "👍",),).resolves.toBeUndefined();
     });
 
     test("rolls back the optimistic chip when the server rejects", async () => {
@@ -159,10 +160,10 @@ describe("chatMessages", () => {
       const state: ReactionState = {
         activeChat: "chat-1",
         messages: [{ ...mockMessage("msg-1",), reactions: before.map((r,) => ({ ...r, })), },],
-        loadMessageReactions: chatMessages.loadMessageReactions,
+        loadMessageReactions: chatReactionMethods.loadMessageReactions,
       };
 
-      await chatMessages.toggleReaction!.call(state, "msg-1", "👍",);
+      await chatReactionMethods.toggleReaction!.call(state, "msg-1", "👍",);
 
       expect(state.messages[0]!.reactions,).toEqual(before,);
     });
@@ -172,10 +173,10 @@ describe("chatMessages", () => {
       const state: ReactionState = {
         activeChat: "chat-1",
         messages: [mockMessage("msg-1",),],
-        loadMessageReactions: chatMessages.loadMessageReactions,
+        loadMessageReactions: chatReactionMethods.loadMessageReactions,
       };
 
-      await chatMessages.toggleReaction!.call(state, "msg-1", "👍",);
+      await chatReactionMethods.toggleReaction!.call(state, "msg-1", "👍",);
 
       expect(state.messages[0]!.reactions,).toBeUndefined();
     });
@@ -191,7 +192,7 @@ describe("chatMessages", () => {
       mockFetch(200, [{ emoji: "❤️", count: 2, userReacted: false, },],);
       const state: ReactionState = { messages: [mockMessage("msg-1",), mockMessage("msg-2",),], };
 
-      await chatMessages.loadMessageReactions!.call(state, "msg-2",);
+      await chatReactionMethods.loadMessageReactions!.call(state, "msg-2",);
 
       expect(fetchCalls,).toHaveLength(1,);
       expect(fetchCalls[0]!.url,).toBe("/api/v1/messages/msg-2/reactions",);
@@ -201,7 +202,7 @@ describe("chatMessages", () => {
     test("leaves messages untouched on error", async () => {
       mockFetch(500, {},);
       const state: ReactionState = { messages: [mockMessage("msg-1",),], };
-      await chatMessages.loadMessageReactions!.call(state, "msg-1",);
+      await chatReactionMethods.loadMessageReactions!.call(state, "msg-1",);
       expect(state.messages[0]!.reactions,).toBeUndefined();
     });
   });
@@ -216,7 +217,7 @@ describe("chatMessages", () => {
       mockFetch(200, ["👍", "🔥",],);
       const state = { _quickEmojis: ["👍",], };
 
-      await chatMessages.loadQuickEmojis!.call(state,);
+      await chatReactionMethods.loadQuickEmojis!.call(state,);
 
       expect(fetchCalls[0]!.url,).toBe("/api/v1/messages/quick-emojis",);
       expect(state._quickEmojis,).toEqual(["👍", "🔥",],);
@@ -225,10 +226,10 @@ describe("chatMessages", () => {
     test("keeps defaults when the server errs or returns junk", async () => {
       const state = { _quickEmojis: ["👍",], };
       mockFetch(500, {},);
-      await chatMessages.loadQuickEmojis!.call(state,);
+      await chatReactionMethods.loadQuickEmojis!.call(state,);
       expect(state._quickEmojis,).toEqual(["👍",],);
       mockFetch(200, { not: "a list", },);
-      await chatMessages.loadQuickEmojis!.call(state,);
+      await chatReactionMethods.loadQuickEmojis!.call(state,);
       expect(state._quickEmojis,).toEqual(["👍",],);
     });
   });

@@ -12,13 +12,14 @@
  */
 
 import { describe, expect, test, } from "bun:test";
+import { slashAutocomplete, } from "./slash-autocomplete";
 import {
   didYouMeanCandidate,
   extractSlashQuery,
   filterSlashCandidates,
-  slashAutocomplete,
+  findCaretToken,
   slashTokenRe,
-} from "./slash-autocomplete";
+} from "./slash-query";
 
 interface FakeTextarea {
   tagName: string;
@@ -95,6 +96,38 @@ const commandFixtures = [
 ];
 
 // ── Pure helpers ─────────────────────────────────────────────
+
+describe("findCaretToken", () => {
+  test("returns the token that ends at the caret, with its leading separator", () => {
+    const m = findCaretToken("say /he",);
+    expect(m,).not.toBeNull();
+    expect(m![0],).toBe(" /he",);
+    expect(m![1],).toBe("he",);
+    expect(m!.index,).toBe(3,);
+  });
+
+  test("matches a bare slash at the caret", () => {
+    const m = findCaretToken("hi /",);
+    expect(m,).not.toBeNull();
+    expect(m![1],).toBeUndefined();
+  });
+
+  test("returns null when the token does not end at the caret", () => {
+    // `/cmd args` fully typed — the caret is past the token, so interception
+    // must not fire; the same reason the whole-text regex alone is unusable.
+    expect(findCaretToken("/cmd args",),).toBeNull();
+    expect(findCaretToken("no slash here",),).toBeNull();
+    // A slash glued to a word (URL path, email) never starts a token.
+    expect(findCaretToken("http://x/y",),).toBeNull();
+  });
+
+  test("is stateless across calls (the shared regex carries no lastIndex)", () => {
+    const text = "a /one b /two";
+    expect(findCaretToken(text,)![1],).toBe("two",);
+    expect(findCaretToken(text,)![1],).toBe("two",);
+    expect(slashTokenRe.lastIndex,).toBe(0,);
+  });
+});
 
 describe("extractSlashQuery", () => {
   test("captures a multi-character prefix at start of string", () => {
