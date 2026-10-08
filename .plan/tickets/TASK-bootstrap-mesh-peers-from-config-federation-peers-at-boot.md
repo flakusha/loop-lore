@@ -23,6 +23,8 @@ Config and DB already disagree: the gossip cron builds its trust list from `conf
 3. Call `upsertPeer` per peer with `{ origin, state: "trusted" }`. Pick and document the merge rule for a row already present in another state.
 4. Gate the whole pass on `config.federation.enabled`; when disabled, write nothing.
 5. Invoke it from the boot sequence after config load and DB construction, before the cron scheduler starts. The composition point is alongside where `registerPlugins` (`src/app/register-plugins.ts:49`) receives `database` + `config`.
+
+   **Trust boundary (verified, not assumed):** this ticket is what makes `assertTrustedPeer` (`src/federation/sharing.ts:67-79`) return non-null for the first time, and that function is the sole peer-level authorization on every `/api/mesh-*` receiver route (`authorizeMeshPeer`, `src/routes/federation-mesh.ts:44-60`) — including the DEK import route planned in `TASK-expose-dek-export-and-import-over-the-federation-wire-routes.md`. Before this ticket a `federation.peers` entry is inert; after it, that entry grants inbound delivery and key import to that origin. Treat `federation.peers` as security-relevant config, not a discovery hint. `upsertPeer` takes no actor and has no caller identity by design — operator-supplied boot configuration is a legitimate trust boundary only because it is set by the operator and not reachable from a request; note that explicitly so a later change does not move peer registration behind a route without adding its own authz. Default-deny still holds for anything not listed: an unlisted origin keeps receiving 403.
 6. Unit tests in `src/federation/`: two configured peers → two rows; disabled → zero rows; unparseable origin skipped without throwing; boot twice is idempotent.
 
 **Acceptance Criteria:**
@@ -33,6 +35,7 @@ Config and DB already disagree: the gossip cron builds its trust list from `conf
 - [ ] Booting twice with the same config does not duplicate rows and does not change final state
 - [ ] A peer whose origin is not a valid http(s) URL is skipped with a warning; boot does not throw
 - [ ] The merge rule for a pre-existing non-`trusted` row is documented in the PR description
+- [ ] A test asserts the negative: an origin absent from `federation.peers` is still rejected by `assertTrustedPeer` and still receives 403 from every mesh route (default-deny, not just the happy path)
 - [ ] `bun run check` green
 
 **Dependencies:**

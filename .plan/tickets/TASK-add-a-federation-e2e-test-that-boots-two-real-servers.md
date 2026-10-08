@@ -24,14 +24,17 @@ This is the acceptance test for the whole epic. It should be written last, once 
 2. Configure each instance with the other as a trusted peer and one shared `MESH_PSK`.
 3. Drive a real message through the **actual create-message path**, so both the `runPostInsertChatEffects` fan-out and the boot-time `upsertPeer` are exercised. Do not call `fanOutContent` or `sealContent` directly — that is exactly what the existing transfer test does wrong.
 4. Assert the message is readable on the receiving instance once the deliver request completes.
-5. No external network, no fixed ports, no sleeps longer than necessary. Prefer awaiting the delivery over polling.
-6. Wire it into the suite that can tolerate real sockets; do not put it in the default `bun test` run if that run forbids `Bun.serve`.
+5. Include a **negative authorization assertion** in the same e2e: an unauthenticated request to the mesh deliver/reserve route, and an export/consent route call for a chat the acting user does not own, must be refused (401/403). A two-instance happy-path test that never exercises the deny path is what let the entire sender/trust gap stay invisible — the negative case is part of the point of this ticket, not an extra.
+6. No external network, no fixed ports, no sleeps longer than necessary. Prefer awaiting the delivery over polling.
+7. Wire it into the suite that can tolerate real sockets; do not put it in the default `bun test` run if that run forbids `Bun.serve`.
 
 **Acceptance Criteria:**
 
 - [ ] Removing the `fanOutContent` call from the message write path makes this test fail
 - [ ] Removing the boot-time `upsertPeer` call makes this test fail
 - [ ] The message is readable on the receiving instance after `POST /api/mesh-deliver` completes
+- [ ] The deny path is covered in the same test: an unauthenticated mesh deliver/reserve call is refused, and a user cannot reach another user's chat through the consent or DEK export routes
+- [ ] Authorization assertions are server-side — removing the authz call makes this test fail (mutation-style, not a code-inspection claim)
 - [ ] Both servers run on ephemeral ports bound to `127.0.0.1` — no fixed ports, no external network
 - [ ] The test exercises the real message-create route rather than calling federation internals directly
 - [ ] Servers and DBs are torn down between runs; no state leaks into other suites

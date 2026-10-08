@@ -18,7 +18,9 @@ The migration's own docblock states the invariant this must preserve: mesh membe
 
 **Direction:**
 
-1. **(assumption D4: chat owner only may grant or revoke.)** Add `POST /api/chats/:id/federation-consent` and `DELETE` on the same path — two explicit verbs rather than an action parameter. Reuse the existing chat ownership/authz helper so a non-owner is rejected before the handler body runs.
+1. **(assumption D4: chat owner only may grant or revoke.)** Add `POST /api/chats/:id/federation-consent` and `DELETE` on the same path — two explicit verbs rather than an action parameter. Call `checkChatSettingsAccess(database, chatId, sessionUserId, sessionUserRole)` (`src/chat/service/access.ts:175`) **before** the handler body runs, and map its `forbidden` error to 403.
+
+   **Authorization requirement (verified, not assumed):** `grantChatFederationConsent` and `revokeChatFederationConsent` take `(database, chatId)` and no actor — they run `UPDATE chats SET federation_consented_at = ? WHERE id = ?` (`clearance.ts:114-123,130-139`) with **no ownership predicate whatsoever**. They are unsafe to call directly from a route. The owner check must live in the route handler; there is no service-layer defense behind it. `checkChatSettingsAccess` is the correct helper: it allows `admin.chat`, `chats.created_by`, `chat_participants.role_in_chat = 'owner'`, or `role_in_chat = 'gm'` (`access.ts:181-217`) — i.e. it is slightly broader than "owner only", so confirm that GM-granted consent is acceptable under D4 or narrow the check. Deny by default: an unauthenticated request must 401 before reaching this helper.
 2. Handlers call `grantChatFederationConsent` / `revokeChatFederationConsent` and return the resulting consent state so the UI can render without a second fetch.
 3. Add a toggle to the chat settings surface (`src/views/chat.html` and the Alpine component that owns chat settings), reflecting current state and only enabled for the owner.
 4. Do **not** grant consent on chat creation under any circumstance — the column must remain `NULL` by default.
@@ -30,6 +32,7 @@ The migration's own docblock states the invariant this must preserve: mesh membe
 - [ ] The chat owner can grant and revoke consent from the chat settings UI, and the control reflects true state after a page reload
 - [ ] `authorizeChatExport` flips from `no-consent` to success on grant, and back on revoke
 - [ ] A non-owner participant receives 403 on both the grant and revoke verbs
+- [ ] The route calls `checkChatSettingsAccess` (`src/chat/service/access.ts:175`) **before** invoking grant/revoke — see the authz note below
 - [ ] Repeated grants are idempotent — the timestamp refreshes and no error is raised
 - [ ] Existing `src/federation/clearance.test.ts` coverage stays green and is not weakened
 - [ ] `bun run check` green

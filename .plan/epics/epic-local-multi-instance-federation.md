@@ -84,6 +84,16 @@ Boot sequence: load config → `federation.enabled` gate → upsert peers from `
 
 ## Testing Strategy
 
+**Authorization is a first-class gate here, not a per-route afterthought.** Every function this epic wires into a route is currently actor-less, so an implementer who trusts the service layer will ship an IDOR. `docs/review/federation-local-multi-instance-review.md` §6 catalogues the exact gaps; the rules that follow from it:
+
+- Every **new user-facing route** enforces authorization server-side, before the handler body, per resource — never per-route-only, never client-side-hidden. A chat id in a URL is a resource reference, not a capability.
+- `grantChatFederationConsent` / `revokeChatFederationConsent` / `authorizeChatExport` (`src/federation/clearance.ts:74-107,114,130`) take **no actor**. They are content gates, not authorization gates. The owner check must be added in the route.
+- `assertTrustedPeer` (`src/federation/sharing.ts:67-79`) authorizes a **peer**, never a user. It must not be used to satisfy a user-level check.
+- Default-deny: unauthenticated → 401, wrong user → 403, untrusted origin → 403, absent config → no rows and no access.
+- Each route's authorization gets an **explicit negative test** (IDOR case with two distinct users), and the e2e asserts the deny path, not only the happy path.
+- Peer registration (`upsertPeer`) stays an operator-boot trust boundary and must not become request-reachable without its own authz.
+
+
 - **Peer bootstrap:** boot with `config.federation.peers` set → `mesh_peers` rows exist → `assertTrustedPeer` accepts a configured origin and still rejects an unlisted one.
 - **Consent:** default-deny holds with no consent; grant → export allowed; revoke → export denied again; non-owner cannot grant (decision D4).
 - **Sender trigger:** persist a message in a consented chat → exactly one reservation + one push; a failed push writes a `mesh_outbox` row the drain cron re-pushes; an unconsented chat pushes nothing.

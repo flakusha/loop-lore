@@ -20,7 +20,13 @@ Neither function has a wire route, so no encrypted-tier chat can cross an instan
 
 1. Add `POST /api/federation/dek/export` taking `{ chatId, peerOrigin }`. Resolve clearance **only** via `authorizeChatExport`, then call `exportChatDekForPeer` with the peer's inbound key.
 2. Add `POST /api/federation/dek/import` accepting the `RewrappedDek` artifact; call `importChatDek`.
-3. Apply the same mesh authz as the existing `/api/mesh-*` routes (`src/routes/federation.ts`): the receiver must pass `assertTrustedPeer` for the sender's origin, and vice versa.
+3. **Authorization — two distinct trust boundaries, both mandatory.**
+
+   **(a) User-facing export route.** `POST /api/federation/dek/export` is reached by a logged-in user, so it needs a *user* check, not a peer check: call `checkChatSettingsAccess(database, chatId, sessionUserId, sessionUserRole)` (`src/chat/service/access.ts:175`) before resolving clearance, mapping `forbidden` → 403. Unauthenticated → 401. Verified: `authorizeChatExport` (`src/federation/clearance.ts:74-80`) takes `(database, {chatId, peerOrigin})` and **no actor** — it proves the chat exists, is `standard`-tier, and is consented, but proves nothing about whether the caller may touch it. It is not an ownership check and must not be relied on as one.
+
+   **(b) Mesh-facing import route.** `POST /api/federation/dek/import` is a service-to-service entry point. Reuse `authorizeMeshPeer` (`src/routes/federation-mesh.ts:44-60`), which canonicalizes the claimed origin (400 when unusable) and requires `assertTrustedPeer` to return `state === "trusted"` (403 otherwise). Note this is **peer** authorization, not user authorization — `assertTrustedPeer` (`src/federation/sharing.ts:67-79`) answers "is this origin a trusted sender", never "may this user export this chat". Do not let one substitute for the other.
+
+   The trust boundary for (b) rests on the shared mesh PSK (unauthenticated HTTP carrying an encrypted, integrity-protected envelope from a trusted origin), which is a real boundary — but it is only as good as the `mesh_peers` row. Since ticket `TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md` creates those rows from config at boot, a misconfigured `federation.peers` entry grants inbound DEK import to that origin. Keep peer removal (`revokeDekExportsForPeer`) reachable so a removed peer loses access immediately rather than at next restart.
 4. Keep `revokeDekExportsForPeer` reachable so defederation invalidates outstanding exports.
 5. Assert in a test that the route path cannot obtain a `ChatClearance` without passing through `authorizeChatExport` — the type already enforces it; the test pins it.
 
@@ -31,6 +37,10 @@ Neither function has a wire route, so no encrypted-tier chat can cross an instan
 - [ ] No route constructs a `ChatClearance` without calling `authorizeChatExport`, asserted by a test
 - [ ] `encrypted_chat_key` is never placed on the wire verbatim — the wire carries only the rewrapped artifact
 - [ ] Both routes enforce `assertTrustedPeer` against the counterparty origin
+- [ ] **IDOR check:** user A cannot export user B's chat DEK by supplying B's `chatId` to the export route — 403, tested explicitly with two distinct users
+- [ ] The export route 401s when unauthenticated, before any clearance lookup
+- [ ] The import route 403s an origin that is absent from `mesh_peers` or in any state other than `trusted`
+- [ ] Authorization is enforced server-side in the route; a test that deletes the authz call and observes a 200 is treated as a failure, not a skipped case
 - [ ] `revokeDekExportsForPeer` invalidates outstanding exports for a removed peer
 - [ ] `bun run check` green
 
