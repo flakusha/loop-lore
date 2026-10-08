@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** commit 85657ffb on dev, 2026-08-26; middleware not wired into route chain
 **Priority:** high
 **Effort:** Medium
@@ -172,3 +172,5 @@ Refreshed deltas:
 
 - 2026-08-26 (Closing Notes): middleware module + unit tests existed (`idempotent()`, memory/table backends) but zero production callers; no bypass header; no enabled flag; TTL 5 min.
 - Since then: `src/elysia-app.ts` gained the full lifecycle chain — request-id `.derive()` (line 77) → idempotency `beforeHandle` (157) → route handlers → `recordResponse` afterHandle (159-176) → `recordLifecycle` afterHandle (180) → `onError` fail path (185-192). Config surface `config.idempotency.{backend,ttlMs,enabled,bypassHeader}` added; TTL default raised to 24h matching `messages.idempotencyExpiryHours`; bypass + enabled flags implemented in `idempotency.ts:106-110`; error-path `fail()` scoped by `userId` (BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user). Child `wire-into-elysia` ticket flipped to done. Only the per-route `ctx.requestId` substitution (child ticket) remains.
+
+**Resolved:** 2026-10-08 registry-driven close: git issue 385f05a (registry tip: 61060fc3e Konstantin Fedotov Close issue)

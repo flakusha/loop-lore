@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-frontend-admin
@@ -33,3 +33,5 @@ Reference: InstitutionalAardvark audit documented the restart-required key list 
 - [ ] Banner clears after dismiss or after server restart signal
 - [ ] Tests: constant covers all restart-required schema sections; banner renders for PATCH; pill rendering per row
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-08 registry-driven close: git issue 5e62e8c (registry tip: dcbb6e03e Konstantin Fedotov Close issue)
