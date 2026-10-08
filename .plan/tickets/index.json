@@ -11584,6 +11584,26 @@
     "status": "Proposed",
     "git_issue": "04ef186"
   },
+  "EPIC-LOCAL-MULTI-INSTANCE-FEDERATION": {
+    "hash": "pending",
+    "extid": "EPIC-LOCAL-MULTI-INSTANCE-FEDERATION",
+    "type": "EPIC",
+    "title": "Local Multi-Instance Federation — Sender Wiring & Dev Harness",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "federation",
+      "multi-instance",
+      "mesh",
+      "sender",
+      "consent",
+      "dev-harness",
+      "config"
+    ],
+    "source": ".plan/tickets/epic-local-multi-instance-federation.md",
+    "status": "Not Started"
+  },
   "EPIC-LOCAL-PROCESS-SWARM": {
     "epic": "",
     "extid": "EPIC-LOCAL-PROCESS-SWARM",
