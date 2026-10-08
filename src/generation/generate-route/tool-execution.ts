@@ -29,6 +29,7 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../../db/enums";
+import { getLogger, } from "../../logger";
 import { registry, } from "../../plugins/registry";
 import { executePluginTool, } from "../../plugins/tool-executor";
 import type { ToolDefinition, ToolExecutionContext, } from "../../plugins/types";
@@ -68,6 +69,12 @@ export function sanitizeToolOutput(content: string,): string {
 
 /**
  * Gate plugin tools by the actor's assigned agent role.
+ *
+ * UNASSIGNED (`null`) keeps every registered tool: `agent_role` is a per-character
+ * plugin persona (`actors.agent_role`), not an authz principal, and the sole caller
+ * (`./provider-request.ts:56`) runs after `checkChatAccess` authorized the request.
+ * An ASSIGNED role that does not resolve DENIES instead — a typo or a disabled
+ * plugin's role must never widen the surface (BUG-plugin-tool-authorization-fails-open).
  * @param agentRole - The actor's assigned plugin agent role id (or null)
  * @returns The filtered list of plugin tool definitions
  */
@@ -76,7 +83,12 @@ export function gatePluginToolsByRole(agentRole: string | null,): ToolDefinition
   if (!agentRole) { return pluginTools; }
 
   const role = registry.getAgentRole(agentRole,);
-  if (!role) { return pluginTools; }
+  // Fail CLOSED — an unresolvable id must never yield MORE tools than a resolvable one.
+  if (!role) {
+    auditUnresolvedRole(agentRole,);
+    return [];
+  }
+
   if (!role.tools?.length) { return []; }
 
   const allowed: Record<string, true> = {};
@@ -84,6 +96,19 @@ export function gatePluginToolsByRole(agentRole: string | null,): ToolDefinition
   const out: ToolDefinition[] = [];
   for (const t of pluginTools) { if (allowed[t.name]) { out.push(t,); } }
   return out;
+}
+
+/** Log a denial from an agent role id no plugin registers (best-effort, like `auditDenial` in src/plugins/route-access.ts). */
+function auditUnresolvedRole(agentRole: string,): void {
+  try {
+    getLogger().warn("plugin tool gate denied: unresolvable agent role", {
+      module: "authz",
+      agentRole,
+      registeredRoles: registry.getAllAgentRoles().map((r,) => r.id),
+    },);
+  } catch {
+    // Logger not initialised — swallow.
+  }
 }
 
 interface ToolCallItem {
