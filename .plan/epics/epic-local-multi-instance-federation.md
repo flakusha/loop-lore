@@ -25,11 +25,26 @@ This epic is the operator/dev enablement layer under `epic-instance-federation.m
 
 ### Sender Path — Making the Dead Code Live
 
-- **Peer bootstrap.** `config.federation.peers` → `upsertPeer` (`src/federation/coordinator.ts:49`) during startup. This is the root fix: until `mesh_peers` has rows, `assertTrustedPeer` (`src/federation/sharing.ts:67-79`) denies every inbound `/api/mesh-*` request.
+- **Peer bootstrap.** `config.federation.peers` → `upsertPeer` (`src/federation/coordinator.ts:49`) during startup. Until `mesh_peers` has rows, `assertTrustedPeer` (`src/federation/sharing.ts:67-79`) denies every inbound `/api/mesh-*` request. This is the cheapest proof the mesh is real, but it is **one of four independent wires, not the root cause** — see "No single root fix" below.
 - **Consent surface.** Authenticated route + UI control calling `grantChatFederationConsent` / `revokeChatFederationConsent` (`src/federation/clearance.ts:114,130`), closing the permanent default-deny in `authorizeChatExport` (`src/federation/clearance.ts:74-107`). Explicit opt-in only; never implicit.
 - **Sender trigger.** After a chat message persists, run clearance → `fanOutContent` (`src/federation/fan-out.ts:143`) for that chat. This is the missing production caller; it also makes `sealContent` and the `mesh_outbox` retry queue reachable.
 - **Payload persistence.** `mesh_deliveries` stores metadata only (`src/federation/delivery.ts:55-62`). Store the decrypted payload so received content is readable after the request completes.
 - **DEK over the wire.** Expose `exportChatDekForPeer` / `importChatDek` (`src/federation/dek-rewrap.ts:73,184`) on the wire so `encrypted`-tier chats can span instances. The existing type-level clearance binding must be preserved — it is what makes the export path unbypassable.
+
+
+### No single root fix
+
+The five sender-path items above are **five independent wires, not a chain with one head**. Each one is a real gap that stops the others from mattering, but none is upstream of the rest in the sense of a root cause, and fixing any one alone leaves two instances exchanging nothing:
+
+| # | Wire | Blocking gap | Alone, it does not… |
+|---|---|---|---|
+| 1 | Peer trust bootstrap | `upsertPeer` has no production caller → `mesh_peers` empty → receiver denies every envelope | make anything send |
+| 2 | Consent surface | no route/UI calls grant/revoke → `authorizeChatExport` is permanently default-deny | unblock a sender that does not exist |
+| 3 | Sender trigger | `fanOutContent` has no production caller → nothing seals, reserves, or pushes | make anything arrive — the receiver still 403s |
+| 4 | Payload persistence | `mesh_deliveries` keeps four metadata columns (`src/federation/delivery.ts:55-62`); the decrypted body is dropped | make a delivery useful when none arrives |
+| 5 | DEK transport | no wire route for export/import | affect the `standard` tier, which federates on wires 1–4 alone |
+
+**Peer bootstrap (wire 1) is the smallest first step, not the fix.** It is the cheapest way to prove the mesh is real, and it is sequenced early for that reason — but the peer-bootstrap ticket on its own does **not** deliver a federating system. It yields a receiver that trusts its partners and then receives nothing. Wires 2, 3, and 4 remain required for plain content; wire 5 remains required for the `encrypted` tier.
 
 ### Local Multi-Instance Enablement
 
@@ -66,7 +81,10 @@ src/federation/
 └── outbox.ts             # mesh_outbox retries — finally has rows to drain
 
 src/routes/
-└── federation.ts         # + consent routes, + DEK export/import routes
+├── federation.ts         # read endpoints: nodeinfo, /api/instance-state
+├── federation-mesh.ts    # mesh receiver: /api/mesh-reserve, /api/mesh-deliver
+├── federation-mesh-retract.ts  # POST /api/mesh-retract
+└── <new module>          # + consent routes, + DEK export/import routes
 
 dev/federation-local/     # two-instance harness: compose + runbook + env recipes
 ```

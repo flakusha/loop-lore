@@ -39,8 +39,11 @@ The migration's own docblock states the invariant this must preserve: mesh membe
 
 **Dependencies:**
 
-- `TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-.md` — the sender trigger is inert without a way to open the gate
 - `BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md` — the already-open consent race; this ticket must not regress it
+
+**Related Tickets:**
+
+- `TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-.md` — **pairs with this ticket; ship them together.** The sender trigger is inert without a way to open the gate, and this route is inert without something to gate. Neither is independently observable, so neither is a prerequisite for the other — implement them as one change, in either order.
 - `TASK-federation-content-clearance-gate-per-chat-consent-before-me.md` (Done) — built the gate this exposes
 
 **Out of Scope:**

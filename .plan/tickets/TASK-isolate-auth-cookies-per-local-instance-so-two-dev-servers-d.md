@@ -36,7 +36,11 @@ If D1 later resolves toward a cookie-name config key, the shape changes: add the
 
 **Dependencies:**
 
-- `TASK-add-a-two-instance-local-federation-dev-harness-and-runbook.md` — this ticket supplies the runbook constraint it must document
+- None within this epic. This ticket's deliverable is a runbook constraint (distinct hostnames, with the RFC citation) plus a regression test pinning the current cookie attributes — neither needs the harness, `DATA_DIR`, or any other epic ticket to exist first. It is evidence-driven from `src/routes/auth/shared.ts` and decision D1 alone, so it can be scheduled at any point.
+
+**Related Tickets:**
+
+- `TASK-add-a-two-instance-local-federation-dev-harness-and-runbook.md` — **bidirectional, ships together.** This ticket supplies the runbook constraint the harness must follow (distinct hostnames, not distinct ports); the harness supplies the place the constraint is written down. Neither blocks the other, which is why the link is recorded here rather than as a dependency in either direction.
 
 **Out of Scope:**
 
