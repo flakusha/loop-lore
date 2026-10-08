@@ -109,7 +109,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Set Impersonate
 
-`PUT /api/v1/chats/:id/impersonate` — body: `{ actorId }`
+`PUT /api/v1/chats/:id/impersonate` — body: `{ impersonateActorId }`
 
 ### Mark Read
 
@@ -117,15 +117,15 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Batch Archive
 
-`POST /api/v1/chats/batch/archive` — body: `{ chatIds }`
+`POST /api/v1/chats/batch/archive` — body: `{ ids }`
 
 ### Batch Delete
 
-`POST /api/v1/chats/batch/delete` — body: `{ chatIds }`
+`POST /api/v1/chats/batch/delete` — body: `{ ids }`
 
 ### Batch Export
 
-`POST /api/v1/chats/batch/export` — body: `{ chatIds }`
+`POST /api/v1/chats/batch/export` — body: `{ ids }`
 
 ### Participants
 
@@ -161,7 +161,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Create Template
 
-`POST /api/v1/chat-setup-templates` — body: template fields
+`POST /api/v1/chat-setup-templates` — body: `{ slug, name, description?, mode?, turnStrategy?, worldId?, gmConfig?, renderingOverride?, features?, visibility? }` — `slug` and `name` required
 
 ### Invites — List
 
@@ -263,7 +263,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Remove Reaction
 
-`DELETE /api/v1/messages/:id/reactions` — body: `{ emoji }`
+`DELETE /api/v1/messages/:id/reactions` — no body; removes ALL of the caller's reactions on the message
 
 ### Quick Emojis
 
@@ -357,7 +357,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Create Relationship
 
-`POST /api/v1/actors/:actorId/relationships` — body: `{ targetActorId, type, strength }`
+`POST /api/v1/actors/:actorId/relationships` — body: `{ target_actor_id, relationship_type, world_id?, standing?, trust?, familiarity?, is_bidirectional?, metadata? }`
 
 ### Update Relationship
 
@@ -369,7 +369,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Record Relationship Event
 
-`POST /api/v1/actors/:actorId/relationships/events` — body: `{ targetActorId, eventType, impact }`
+`POST /api/v1/actors/:actorId/relationships/events` — body: `{ target_actor_id, event_type, world_id?, standing_delta?, trust_delta?, familiarity_delta?, metadata? }`
 
 ## Worlds
 
@@ -423,7 +423,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Execute Trade
 
-`POST /api/v1/worlds/:worldId/trade/execute` — body: trade details
+`POST /api/v1/worlds/:worldId/trade/execute` — body: `{ buyerActorId, sellerActorId, buyerItems, sellerItems, price }` — each item line is `{ worldItemId, quantity }`
 
 ## World Locations
 
@@ -507,7 +507,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Create
 
-`POST /api/v1/user-api-keys` — body: `{ provider, key }`
+`POST /api/v1/user-api-keys` — body: `{ name, api_key }` — `name` is the provider name
 
 ### Delete
 
@@ -521,7 +521,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Create Key
 
-`POST /api/v1/keys` — body: key fields
+`POST /api/v1/keys` — body: `{ name }` — `name` required and non-empty
 
 ### Rotate Keys
 
@@ -551,7 +551,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Model Comparisons — Create
 
-`POST /api/v1/analytics/comparisons` — body: comparison fields
+`POST /api/v1/analytics/comparisons` — body: `{ messageId, referenceModel, preference, confidence }` — `messageId` and `referenceModel` required; `preference` is one of `better`, `worse`, `same`
 
 ### List Comparisons
 
@@ -565,7 +565,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Record Event
 
-`POST /api/v1/telemetry/event` — body: `{ eventType, data }`
+`POST /api/v1/telemetry/event` — body: `{ type, data }`
 
 ### Analytics Summary
 
@@ -597,13 +597,13 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Export Data
 
-`POST /api/v1/export` — body: `{ type, ids }` — triggers export job
+`POST /api/v1/export` — body: `{ include?, format?, chat_ids? }` — returns the ZIP synchronously; `include` defaults to `["characters", "chats"]`, `format` to `"json"`
 
 ## Frontend Logs
 
 ### Submit Logs
 
-`POST /api/v1/frontend/logs` — body: `{ logs }` — submit frontend log entries
+`POST /api/v1/frontend/logs` — body: `{ entries }` — non-empty array of `{ level, module, message, timestamp, meta? }` — submit frontend log entries
 
 ## i18n
 
