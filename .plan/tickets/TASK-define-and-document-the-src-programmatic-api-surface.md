@@ -21,7 +21,11 @@ Prefer the repo's existing barrel convention (subdir + index.ts re-exporting the
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+`epic-api-library-distribution.md` declares `src/` as importable but never defined the public surface. The consequences were discovered by accident: the first schema-fuzz generator walked the `src/validation/schemas` barrel and missed 4 sibling modules not re-exported in `index.ts`; the first test-gap matcher counted incidental token matches as coverage. Both were silent because there was no contract to fail against.
+
+Constraint: the surface must stay in sync as the codebase evolves. A manifest that drifts from reality is worse than no manifest (it gives false confidence). A gate is needed to catch drift — a module on the public surface with zero outside importers is either dead code or a manifest that stopped listing it.
+
+Alternative: leave the surface undefined. Not acceptable given the two accidents already caused by undefined boundaries. The existing barrel convention (subdir index.ts re-exporting public names) is already in place; this ticket formalizes it.
 
 **Acceptance Criteria:**
 
