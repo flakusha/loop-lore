@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * Ordered registry of prompt sections — the single source of truth for prompt
  * assembly order. Add a section: create a builder under ./sections and add it
  * here. The orchestrator runs them in this exact order.
  */
+import type { SectionBuilder, } from "./types";
 import { actorGrowthSection, } from "./sections/actor-growth";
 import { actorHeaderSection, } from "./sections/actor-header";
+import { assistantPersonalitySection, } from "./sections/assistant-personality";
 import { authorNoteSection, } from "./sections/author-note";
 import { carriageSection, } from "./sections/carriage";
 import { chatHistorySection, } from "./sections/chat-history";
@@ -26,17 +27,16 @@ import { loreSection, } from "./sections/lore";
 import { memorySection, } from "./sections/memories";
 import { nsfwPolicySection, } from "./sections/nsfw-policy";
 import { outfitContextSection, } from "./sections/outfit-context";
-import { styleSection, } from "./sections/output-style";
 import { pluginAgentRoleSection, } from "./sections/plugin-agent-role";
 import { postHistorySection, } from "./sections/post-history";
 import { recentEventsSection, } from "./sections/recent-events";
 import { storyContextSection, } from "./sections/story-context";
+import { styleSection, } from "./sections/output-style";
 import { systemSection, } from "./sections/system";
 import { taskClarificationSection, } from "./sections/task-clarification";
 import { travelSection, } from "./sections/travel";
 import { turnSkipAbsenceSection, } from "./sections/turn-skip-absence";
 import { userPersonaSection, } from "./sections/user-persona";
-import type { SectionBuilder, } from "./types";
 
 export const PROMPT_SECTIONS: SectionBuilder[] = [
   systemSection,
@@ -47,6 +47,10 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   customInstructionsSection,
   actorHeaderSection,
   pluginAgentRoleSection,
+  // Assistant personality voice (epic-character-multi-personality). Sits with
+  // the assistant-identity blocks so the chosen preset/character voice lands
+  // next to the agent role it colors. Emits nothing for server-default chats.
+  assistantPersonalitySection,
   groupParticipantsSection,
   groupTalkativitySection,
   userPersonaSection,

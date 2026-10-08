@@ -1,0 +1,33 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Planning Todo — htmx partial for plan items.
+  Renders a todo list with advance buttons.
+  Data: .Items (array of plan items with .id, .title, .state)
+-->
+{{if .Items}}
+<div class="planning-todo" data-testid="planning-todo">
+  <ul class="planning-todo-list">
+    {{range .Items}}
+    <li class="planning-todo-item" data-state="{{.state}}" data-id="{{.id}}">
+      <span class="planning-todo-title">{{.title}}</span>
+      <span class="planning-todo-state">{{.state}}</span>
+      {{if ne .state "done"}}
+      <button
+        class="planning-todo-advance"
+        hx-post="/api/v1/plans/{{.id}}/advance"
+        hx-vals='{"state": "{{if eq .state "todo"}}doing{{else}}done{{end}}"}'
+        hx-target="closest li"
+        hx-swap="outerHTML"
+      >
+        Advance
+      </button>
+      {{end}}
+    </li>
+    {{end}}
+  </ul>
+</div>
+{{else}}
+<p class="planning-todo-empty">No plan items yet.</p>
+{{end}}

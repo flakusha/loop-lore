@@ -202,4 +202,6 @@ export interface DB {
   message_reminders: import("./schema-core").MessageReminders;
   branch_merges: import("./schema-core").BranchMerges;
   branch_merge_sources: import("./schema-core").BranchMergeSources;
+  plan_items: import("./schema-core").PlanItems;
+  plan_links: import("./schema-core").PlanLinks;
 }
