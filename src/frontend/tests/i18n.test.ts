@@ -66,7 +66,10 @@ const localeStringsHost = globalThis as { __localeStrings?: unknown };
 // Pre-file catalog state: whatever earlier files in this worker left in place
 // (undefined when this file runs first, the real en.json catalog when a helper
 // loaded it). The restore guard below asserts this file hands back exactly this.
-const initialLocaleStrings = localeStringsHost.__localeStrings;
+// Narrowed at the declaration — the same `Record<string, unknown> | undefined` shape
+// the restore guard already applies to `current` — so the `toEqual` call site carries
+// no cast. `__localeStrings` is genuinely a locale catalog record.
+const initialLocaleStrings = localeStringsHost.__localeStrings as Record<string, unknown> | undefined;
 beforeEach(async () => {
   const ui = await import("../ui");
   t = ui.t;
