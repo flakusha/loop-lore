@@ -11860,7 +11860,7 @@
     "type": "EPIC"
   },
   "EPIC-MEMORY-ISOLATION-DESIGN": {
-    "epic": "`epic-memory-knowledge-systems.md`",
+    "epic": "epic-memory-knowledge-systems",
     "extid": "EPIC-MEMORY-ISOLATION-DESIGN",
     "git_issue": "97c01ac",
     "hash": "97c01ac",
@@ -15040,7 +15040,7 @@
     "type": "FEAT"
   },
   "FEAT-2026-IRC-GROUP-CHAT-INTEGRATION": {
-    "epic": "epic-communications-integrations.md",
+    "epic": "epic-communications-integrations",
     "extid": "FEAT-2026-IRC-GROUP-CHAT-INTEGRATION",
     "git_issue": "eed7cfa",
     "hash": "eed7cfa",
@@ -15378,7 +15378,7 @@
     "type": "FEAT"
   },
   "FEAT-AUTOMATED-BALANCE-PLAYTEST-BOT": {
-    "epic": "proposed:epic-balance-bot",
+    "epic": "epic-platform-research",
     "extid": "FEAT-AUTOMATED-BALANCE-PLAYTEST-BOT",
     "git_issue": "86d6b0a",
     "hash": "86d6b0a",
@@ -16080,7 +16080,7 @@
     "status": "done"
   },
   "FEAT-FORGE-ENGINE-ENERGY-POOL-SAGE-ACTION-ECONOMY": {
-    "epic": "proposed:epic-rpg-action-economy",
+    "epic": "epic-resolution-system",
     "extid": "FEAT-FORGE-ENGINE-ENERGY-POOL-SAGE-ACTION-ECONOMY",
     "git_issue": "14ac4d0",
     "hash": "14ac4d0",
@@ -16346,7 +16346,7 @@
     "title": "llama-swap rotation and exclusion policy",
     "label": "feat",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "epic": "epic-llm-request-scheduler",
     "tags": [],
     "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md",
     "status": "Not Started",
@@ -16399,7 +16399,7 @@
     "title": "LLM request complexity classification and priority derivation",
     "label": "feat",
     "priority": "high",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "epic": "epic-llm-request-scheduler",
     "tags": [],
     "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md",
     "status": "Not Started",
@@ -16412,7 +16412,7 @@
     "title": "Resource-aware admission control",
     "label": "feat",
     "priority": "high",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "epic": "epic-llm-request-scheduler",
     "tags": [],
     "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md",
     "status": "Not Started",
@@ -16425,7 +16425,7 @@
     "title": "Scheduler config surface (`[generation.scheduler]`)",
     "label": "feat",
     "priority": "high",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "epic": "epic-llm-request-scheduler",
     "tags": [],
     "source": ".plan/tickets/FEAT-llm-scheduler-config-surface.md",
     "status": "Not Started",
@@ -16484,7 +16484,7 @@
     "type": "FEAT"
   },
   "FEAT-MEMORY-KNOWLEDGE-GRAPH-VISUALIZER": {
-    "epic": "proposed:epic-knowledge-graph-viz",
+    "epic": "epic-analytics-observability",
     "extid": "FEAT-MEMORY-KNOWLEDGE-GRAPH-VISUALIZER",
     "git_issue": "b764f06",
     "hash": "b764f06",
@@ -16796,7 +16796,7 @@
     "type": "FEAT"
   },
   "FEAT-PUBLIC-STORY-FEED-MODERATION": {
-    "epic": "proposed:epic-public-feed",
+    "epic": "epic-social-hub",
     "extid": "FEAT-PUBLIC-STORY-FEED-MODERATION",
     "git_issue": "ed7b89b",
     "hash": "ed7b89b",
@@ -17134,7 +17134,7 @@
     "type": "FEAT"
   },
   "FEAT-SYNTHETIC-FINE-TUNE-DATA-EXPORT": {
-    "epic": "proposed:epic-finetune-export",
+    "epic": "epic-lora-discovery-application",
     "extid": "FEAT-SYNTHETIC-FINE-TUNE-DATA-EXPORT",
     "git_issue": "8acbfc2",
     "hash": "8acbfc2",
@@ -17472,7 +17472,7 @@
     "type": "FIX"
   },
   "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL": {
-    "epic": "epic-chat-product-features.md",
+    "epic": "epic-chat-product-features",
     "extid": "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL",
     "hash": "8ae1e91",
     "label": "idea",
@@ -17496,7 +17496,7 @@
     "type": "IDEA"
   },
   "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF": {
-    "epic": "epic-platform-research.md",
+    "epic": "epic-platform-research",
     "extid": "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF",
     "git_issue": "387a34f",
     "hash": "387a34f",
@@ -20823,7 +20823,7 @@
     "type": "TASK"
   },
   "TASK-AI-MESSAGE-UTILITIES": {
-    "epic": "epic-chat-rich-engagement.md (proposed)",
+    "epic": "epic-chat-rich-engagement",
     "extid": "TASK-AI-MESSAGE-UTILITIES",
     "git_issue": "11a3988",
     "hash": "11a3988",
@@ -21115,7 +21115,7 @@
     "title": "Asset B1 — BLAKE3 content-addressed store (blob + refcount)",
     "label": "task",
     "priority": "medium",
-    "epic": "`epic-asset-platform-capabilities` (Batch B1)",
+    "epic": "epic-asset-platform-capabilities",
     "tags": [],
     "source": ".plan/tickets/TASK-asset-b1-blake3-content-store.md",
     "status": "Not Started",
@@ -21128,7 +21128,7 @@
     "title": "Asset B1 — rendition pipeline (`asset_renditions` + thumbs/LQIP)",
     "label": "task",
     "priority": "medium",
-    "epic": "`epic-asset-platform-capabilities` (Batch B1)",
+    "epic": "epic-asset-platform-capabilities",
     "tags": [],
     "source": ".plan/tickets/TASK-asset-b1-rendition-pipeline.md",
     "status": "Not Started",
@@ -21450,7 +21450,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-CHARACTER": {
-    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-CHARACTER",
     "git_issue": "3830800",
     "hash": "3830800",
@@ -21463,7 +21463,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-GALLERY-BATCH": {
-    "epic": "`epic-assistant-creative-studio-workflows` (§7.7)",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-GALLERY-BATCH",
     "git_issue": "1f493e9",
     "hash": "1f493e9",
@@ -21476,7 +21476,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-GALLERY-EDIT": {
-    "epic": "`epic-assistant-creative-studio-workflows` (§7.8)",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-GALLERY-EDIT",
     "git_issue": "83976a9",
     "hash": "83976a9",
@@ -21489,7 +21489,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-ITEM": {
-    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-ITEM",
     "git_issue": "b498d5c",
     "hash": "b498d5c",
@@ -21502,7 +21502,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-LOCATION": {
-    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-LOCATION",
     "git_issue": "c46cee3",
     "hash": "c46cee3",
@@ -21515,7 +21515,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-NPC": {
-    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-NPC",
     "git_issue": "9c6c78c",
     "hash": "9c6c78c",
@@ -21528,7 +21528,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-SPECIES": {
-    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-SPECIES",
     "git_issue": "ef8690c",
     "hash": "ef8690c",
@@ -21541,7 +21541,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-WORLD": {
-    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-WORLD",
     "git_issue": "5bd1ab7",
     "hash": "5bd1ab7",
@@ -21554,7 +21554,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS": {
-    "epic": "`epic-assistant-creative-studio-workflows`",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS",
     "git_issue": "ad082ef",
     "hash": "9544668",
@@ -21808,7 +21808,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-NSFW-API-PREFILTERING": {
-    "epic": "`epic-assistant-creative-studio-workflows`",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-NSFW-API-PREFILTERING",
     "git_issue": "b8d5f1a",
     "hash": "b8d5f1a",
@@ -21974,7 +21974,7 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-THIRD-PARTY-API-INTEGRATION": {
-    "epic": "`epic-assistant-creative-studio-workflows`",
+    "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-THIRD-PARTY-API-INTEGRATION",
     "git_issue": "e36efe7",
     "hash": "e36efe7",
@@ -22446,7 +22446,7 @@
     "type": "TASK"
   },
   "TASK-AUTONOMY-CONFIG-SURFACE-LAYERING-PRESETS-AND-OVERRIDES": {
-    "epic": "epic-actor-autonomy-story-drive.md",
+    "epic": "epic-actor-autonomy-story-drive",
     "extid": "TASK-AUTONOMY-CONFIG-SURFACE-LAYERING-PRESETS-AND-OVERRIDES",
     "git_issue": "db98e0e",
     "hash": "db98e0e",
@@ -22492,7 +22492,7 @@
     "type": "TASK"
   },
   "TASK-AUTONOMY-RATE-GOVERNOR-FOR-LLM-ACTORS": {
-    "epic": "epic-actor-autonomy-story-drive.md",
+    "epic": "epic-actor-autonomy-story-drive",
     "extid": "TASK-AUTONOMY-RATE-GOVERNOR-FOR-LLM-ACTORS",
     "git_issue": "995a82c",
     "hash": "995a82c",
@@ -22858,7 +22858,7 @@
     "type": "TASK"
   },
   "TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE": {
-    "epic": "epic-database-backup-recovery.md (cross: epic-federation-swarm-sync.md, epic-db-asset-snapshot-recovery.md)",
+    "epic": "epic-database-backup-recovery",
     "extid": "TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE",
     "git_issue": "cd70f50",
     "hash": "cd70f50",
@@ -24275,7 +24275,7 @@
     "type": "TASK"
   },
   "TASK-CHAR-TEMPLATE-FULL-MODEL-COVERAGE": {
-    "epic": "epic-character-core-system (config-templates sub-area)",
+    "epic": "epic-character-core-system",
     "extid": "TASK-CHAR-TEMPLATE-FULL-MODEL-COVERAGE",
     "git_issue": "657da3b",
     "hash": "657da3b",
@@ -24652,7 +24652,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-SPEC-UNIFIED-API": {
-    "epic": "`epic-character-spec.md`",
+    "epic": "epic-character-spec",
     "extid": "TASK-CHARACTER-SPEC-UNIFIED-API",
     "git_issue": "136220e",
     "hash": "136220e",
@@ -24769,7 +24769,7 @@
     "type": "TASK"
   },
   "TASK-CHARACTER-VOICE-PROFILE": {
-    "epic": "epic-character-internal-traits (D10)",
+    "epic": "epic-character-internal-traits",
     "extid": "TASK-CHARACTER-VOICE-PROFILE",
     "git_issue": "4d8aeb6",
     "hash": "4d8aeb6",
@@ -24821,7 +24821,7 @@
     "type": "TASK"
   },
   "TASK-CHAT-ASK-TYPE-FAST-MENU": {
-    "epic": "epic-game-frontend-scenes.md (parent: epic-embeddable-engine-game-frontend.md)",
+    "epic": "epic-game-frontend-scenes",
     "extid": "TASK-CHAT-ASK-TYPE-FAST-MENU",
     "git_issue": "212220c",
     "hash": "212220c",
@@ -24964,7 +24964,7 @@
     "type": "TASK"
   },
   "TASK-CHAT-CONTEXT-PREFERENCE-PER-SCOPE": {
-    "epic": "epic-chat-context-optimization.md",
+    "epic": "epic-chat-context-optimization",
     "extid": "TASK-CHAT-CONTEXT-PREFERENCE-PER-SCOPE",
     "git_issue": "5147e05",
     "hash": "5147e05",
@@ -27151,7 +27151,7 @@
     "type": "TASK"
   },
   "TASK-CREATIVE-STUDIO-ITEM-MODAL": {
-    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "epic": "epic-creative-studio",
     "extid": "TASK-CREATIVE-STUDIO-ITEM-MODAL",
     "git_issue": "bc32c48",
     "hash": "bc32c48",
@@ -27164,7 +27164,7 @@
     "type": "TASK"
   },
   "TASK-CREATIVE-STUDIO-NOTE-MODAL": {
-    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "epic": "epic-creative-studio",
     "extid": "TASK-CREATIVE-STUDIO-NOTE-MODAL",
     "git_issue": "b2b585c",
     "hash": "b2b585c",
@@ -27177,7 +27177,7 @@
     "type": "TASK"
   },
   "TASK-CREATIVE-STUDIO-SEARCH-API": {
-    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "epic": "epic-creative-studio",
     "extid": "TASK-CREATIVE-STUDIO-SEARCH-API",
     "git_issue": "9adfebc",
     "hash": "9adfebc",
@@ -27190,7 +27190,7 @@
     "type": "TASK"
   },
   "TASK-CREATIVE-STUDIO-SEARCH-FRONTEND": {
-    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "epic": "epic-creative-studio",
     "extid": "TASK-CREATIVE-STUDIO-SEARCH-FRONTEND",
     "git_issue": "d02b422",
     "hash": "d02b422",
@@ -27203,7 +27203,7 @@
     "type": "TASK"
   },
   "TASK-CREATIVE-STUDIO-TOOLBAR": {
-    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "epic": "epic-creative-studio",
     "extid": "TASK-CREATIVE-STUDIO-TOOLBAR",
     "git_issue": "08bd4dd",
     "hash": "08bd4dd",
@@ -27216,7 +27216,7 @@
     "type": "TASK"
   },
   "TASK-CREATIVE-STUDIO-WORLD-MODAL": {
-    "epic": "epic-creative-studio.md (MVP Tier 1)",
+    "epic": "epic-creative-studio",
     "extid": "TASK-CREATIVE-STUDIO-WORLD-MODAL",
     "git_issue": "f2de730",
     "hash": "f2de730",
@@ -27391,7 +27391,7 @@
     "status": "Not Started"
   },
   "TASK-CROSS-STORY-PROPAGATION": {
-    "epic": "`epic-timeline-system.md`",
+    "epic": "epic-timeline-system",
     "extid": "TASK-CROSS-STORY-PROPAGATION",
     "git_issue": "3fd6c65",
     "hash": "3fd6c65",
@@ -31126,7 +31126,7 @@
     "type": "TASK"
   },
   "TASK-FRONTEND-TOUCH-GESTURES": {
-    "epic": "epic-accessibility-input (Phase 2 Mobile Support, 🟡)",
+    "epic": "epic-accessibility-input",
     "extid": "TASK-FRONTEND-TOUCH-GESTURES",
     "git_issue": "a88cf96",
     "hash": "915842dc",
@@ -31165,7 +31165,7 @@
     "type": "TASK"
   },
   "TASK-FRONTEND-TSCONFIG-STRICTNESS-ALIGNMENT": {
-    "epic": "proposed:epic-frontend-strictness",
+    "epic": "epic-tooling-improvement",
     "extid": "TASK-FRONTEND-TSCONFIG-STRICTNESS-ALIGNMENT",
     "git_issue": "fc252b2",
     "hash": "fc252b2",
@@ -31256,7 +31256,7 @@
     "type": "TASK"
   },
   "TASK-GALLERY-FUZZY-SEARCH-PAGINATION": {
-    "epic": "epic-frontend-gallery.md (Phase 3 Polish)",
+    "epic": "epic-frontend-gallery",
     "extid": "TASK-GALLERY-FUZZY-SEARCH-PAGINATION",
     "git_issue": "d2ba391",
     "hash": "d2ba391",
@@ -32100,7 +32100,7 @@
     "title": "Harness assistant personalities (presets + card split)",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-assistant-personalities.md",
     "status": "Not Started",
@@ -32113,7 +32113,7 @@
     "title": "Harness backlog + Jira (frontmatter, enum, provider)",
     "label": "task",
     "priority": "low",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-backlog-jira.md",
     "status": "Not Started",
@@ -32126,7 +32126,7 @@
     "title": "Harness LLM cache + dedup + cost budgets",
     "label": "task",
     "priority": "high",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-cache-budgets.md",
     "status": "Not Started",
@@ -32139,7 +32139,7 @@
     "title": "Harness canvas viz (mermaid panels first)",
     "label": "task",
     "priority": "low",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-canvas-viz.md",
     "status": "Not Started",
@@ -32152,7 +32152,7 @@
     "title": "Harness commit grounding (unify + diff warns)",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-commit-grounding.md",
     "status": "Not Started",
@@ -32165,7 +32165,7 @@
     "title": "Harness context templates (purposes + harness YAMLs)",
     "label": "task",
     "priority": "low",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-context-templates.md",
     "status": "Not Started",
@@ -32178,7 +32178,7 @@
     "title": "Harness DB tables (runs + calls + embedding scope)",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-db-tables.md",
     "status": "Not Started",
@@ -32191,7 +32191,7 @@
     "title": "Harness eval harness (ground-truth task suites)",
     "label": "task",
     "priority": "high",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-eval-harness.md",
     "status": "Not Started",
@@ -32204,7 +32204,7 @@
     "title": "Harness exec log (JSONL run records)",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-exec-log.md",
     "status": "Not Started",
@@ -32217,7 +32217,7 @@
     "title": "Harness frontend consolidation (admin Runs tab)",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-frontend-consolidation.md",
     "status": "Not Started",
@@ -32230,7 +32230,7 @@
     "title": "Harness giwt JSON surface (reads + conflicts)",
     "label": "task",
     "priority": "high",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-giwt-json-surface.md",
     "status": "Not Started",
@@ -32243,7 +32243,7 @@
     "title": "Harness IRC bus + TTSR steering contracts",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-irc-ttsr.md",
     "status": "Not Started",
@@ -32256,7 +32256,7 @@
     "title": "Harness lean-ctx tools (MCP wrapper + anchored seam)",
     "label": "task",
     "priority": "high",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-lean-ctx-tools.md",
     "status": "Not Started",
@@ -32269,7 +32269,7 @@
     "title": "Harness merge coordination (concerns protocol)",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-merge-coordination.md",
     "status": "Not Started",
@@ -32282,7 +32282,7 @@
     "title": "Harness task-signal model routing",
     "label": "task",
     "priority": "high",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-model-routing.md",
     "status": "Not Started",
@@ -32295,7 +32295,7 @@
     "title": "Harness OTEL tracing + deterministic replay",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-otel-replay.md",
     "status": "Not Started",
@@ -32308,7 +32308,7 @@
     "title": "Harness plugin runtime field (polyglot adapters)",
     "label": "task",
     "priority": "low",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-plugin-runtime.md",
     "status": "Not Started",
@@ -32321,7 +32321,7 @@
     "title": "Harness programmatic API (omp RPC wrap)",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-programmatic-api.md",
     "status": "Not Started",
@@ -32350,7 +32350,7 @@
     "title": "Harness skills runtime (SKILL.md loader + curator)",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-skills-runtime.md",
     "status": "Not Started",
@@ -32363,7 +32363,7 @@
     "title": "Harness stats dashboard (events + rollups + tab)",
     "label": "task",
     "priority": "high",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-stats-dashboard.md",
     "status": "Not Started",
@@ -32376,7 +32376,7 @@
     "title": "Harness subagent delegation (delegate batch above TurnManager)",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-subagent-delegation.md",
     "status": "Not Started",
@@ -32389,7 +32389,7 @@
     "title": "Harness ledger v2 (kinds + slot claims)",
     "label": "task",
     "priority": "high",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-sync-ledger-v2.md",
     "status": "Not Started",
@@ -32402,7 +32402,7 @@
     "title": "Harness tool-call sandbox (worker isolation)",
     "label": "task",
     "priority": "high",
-    "epic": "`.plan/epics/epic-harness-integration.md`",
+    "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-tool-sandbox.md",
     "status": "Not Started",
@@ -32815,7 +32815,7 @@
     "type": "TASK"
   },
   "TASK-I18N-TEMPLATE-STRINGS": {
-    "epic": "epic-i18n (Phase 3)",
+    "epic": "epic-i18n",
     "extid": "TASK-I18N-TEMPLATE-STRINGS",
     "git_issue": "bf0bdbc",
     "hash": "bf0bdbc",
@@ -33874,7 +33874,7 @@
     "type": "TASK"
   },
   "TASK-LINK-PREVIEWS-UNFURL": {
-    "epic": "epic-chat-rich-engagement.md (proposed)",
+    "epic": "epic-chat-rich-engagement",
     "extid": "TASK-LINK-PREVIEWS-UNFURL",
     "git_issue": "4eb00ea",
     "hash": "4eb00ea",
@@ -34004,7 +34004,7 @@
     "status": "Not Started"
   },
   "TASK-LLM-MOCK-INTEGRATION-SUITE": {
-    "epic": "epic-testing-qa.md (see also epic-prompt-improvement.md)",
+    "epic": "epic-testing-qa",
     "extid": "TASK-LLM-MOCK-INTEGRATION-SUITE",
     "git_issue": "b03d10f",
     "hash": "b03d10f",
@@ -34062,14 +34062,14 @@
     "title": "LLM scheduler observability",
     "label": "task",
     "priority": "medium",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "epic": "epic-llm-request-scheduler",
     "tags": [],
     "source": ".plan/tickets/TASK-llm-scheduler-observability.md",
     "status": "Not Started",
     "git_issue": "1051b53"
   },
   "TASK-LOCAL-IMAGE-GENERATION-QUEUE": {
-    "epic": "epic-llm-queue.md (see also epic-generation-flow-control.md)",
+    "epic": "epic-llm-queue",
     "extid": "TASK-LOCAL-IMAGE-GENERATION-QUEUE",
     "git_issue": "71cd705",
     "hash": "71cd705",
@@ -34127,7 +34127,7 @@
     "title": "Location CRUD + tree service + connection validation hardening",
     "label": "task",
     "priority": "high",
-    "epic": "`epic-locations`",
+    "epic": "epic-locations",
     "tags": [],
     "source": ".plan/tickets/TASK-location-crud-tree-connections.md",
     "status": "Not Started",
@@ -34545,7 +34545,7 @@
     "type": "TASK"
   },
   "TASK-LORE-TIMELINE-REVEAL": {
-    "epic": "`epic-lore-knowledge.md`",
+    "epic": "epic-lore-knowledge",
     "extid": "TASK-LORE-TIMELINE-REVEAL",
     "git_issue": "40c0f0e",
     "hash": "40c0f0e",
@@ -35137,7 +35137,7 @@
     "type": "TASK"
   },
   "TASK-MEMORY-CHARACTER-INTEGRATION": {
-    "epic": "`epic-memory-knowledge-systems.md` (FEA-2026-057)",
+    "epic": "epic-memory-knowledge-systems",
     "extid": "TASK-MEMORY-CHARACTER-INTEGRATION",
     "git_issue": "bb7d0be",
     "hash": "bb7d0be",
@@ -35193,7 +35193,7 @@
     "type": "TASK"
   },
   "TASK-MEMORY-EMOTION-IMPACT": {
-    "epic": "`epic-memory-knowledge-systems.md` (FEA-2026-056)",
+    "epic": "epic-memory-knowledge-systems",
     "extid": "TASK-MEMORY-EMOTION-IMPACT",
     "git_issue": "adb4391",
     "hash": "adb4391",
@@ -35310,7 +35310,7 @@
     "status": "Not Started"
   },
   "TASK-MEMORY-TIMESCAPE": {
-    "epic": "`epic-memory-knowledge-systems.md` (FEA-2026-058)",
+    "epic": "epic-memory-knowledge-systems",
     "extid": "TASK-MEMORY-TIMESCAPE",
     "git_issue": "754b456",
     "hash": "754b456",
@@ -35427,7 +35427,7 @@
     "type": "TASK"
   },
   "TASK-MESSAGE-POLLS-VOTES": {
-    "epic": "epic-chat-rich-engagement.md (proposed)",
+    "epic": "epic-chat-rich-engagement",
     "extid": "TASK-MESSAGE-POLLS-VOTES",
     "git_issue": "f5b705b",
     "hash": "f5b705b",
@@ -35596,7 +35596,7 @@
     "type": "TASK"
   },
   "TASK-MIDDLEWARE-CONTENT-ASSETS-GALLERY-HASHING-VALIDATION": {
-    "epic": "epic-content-hashing-distributed-integrity (cross-cuts with `epic-frontend-gallery`)",
+    "epic": "epic-content-hashing-distributed-integrity",
     "extid": "TASK-MIDDLEWARE-CONTENT-ASSETS-GALLERY-HASHING-VALIDATION",
     "git_issue": "b98c8f7",
     "hash": "b98c8f7",
@@ -35609,7 +35609,7 @@
     "type": "TASK"
   },
   "TASK-MIDDLEWARE-DISTRIBUTED-HEALING-REVALIDATION-BACKUPS": {
-    "epic": "epic-content-hashing-distributed-integrity (cross-cuts with `epic-database-backup-recovery`, `epic-multi-instance-reconciliation`, `epic-federation-swarm-sync`)",
+    "epic": "epic-content-hashing-distributed-integrity",
     "extid": "TASK-MIDDLEWARE-DISTRIBUTED-HEALING-REVALIDATION-BACKUPS",
     "git_issue": "e832fe1",
     "hash": "e832fe1",
@@ -35674,7 +35674,7 @@
     "type": "TASK"
   },
   "TASK-MIDDLEWARE-MIGRATION-COMPACTION-DATA-VERSION-HASH": {
-    "epic": "epic-content-hashing-distributed-integrity (cross-cuts with `epic-db-content-versioning`)",
+    "epic": "epic-content-hashing-distributed-integrity",
     "extid": "TASK-MIDDLEWARE-MIGRATION-COMPACTION-DATA-VERSION-HASH",
     "git_issue": "37d31dd",
     "hash": "37d31dd",
@@ -36025,7 +36025,7 @@
     "type": "TASK"
   },
   "TASK-MULTIMODAL-ASSET-REUSE": {
-    "epic": "epic-audio-video-sound (Phase 5)",
+    "epic": "epic-audio-video-sound",
     "extid": "TASK-MULTIMODAL-ASSET-REUSE",
     "git_issue": "281a12a",
     "hash": "281a12a",
@@ -36064,7 +36064,7 @@
     "type": "TASK"
   },
   "TASK-NARRATION-PIPELINE": {
-    "epic": "epic-audio-video-sound (Phase 6)",
+    "epic": "epic-audio-video-sound",
     "extid": "TASK-NARRATION-PIPELINE",
     "git_issue": "95b140e",
     "hash": "95b140e",
@@ -37920,7 +37920,7 @@
     "type": "TASK"
   },
   "TASK-PLAN-INDEX-TAGGING-BINDING-RECONCILIATION": {
-    "epic": "`, `**Related:**`) live only in the `.md` frontmatter — the index doesn't know which tickets belong to which epic beyond `epic: \"epic-foo\"` (and only some tickets have that field). Future features (`/find-work`, admin panel filtering, agent routing by tag) need a queryable, parseable source of truth. The validator already accepts the inline format (`**Tags:** rpg, math, dice, …`), so the spec is parseable; the missing piece is round-tripping to the index.",
+    "epic": "epic-task-management-integration",
     "extid": "TASK-PLAN-INDEX-TAGGING-BINDING-RECONCILIATION",
     "git_issue": "158caaa",
     "hash": "158caaa",
@@ -39230,7 +39230,7 @@
     "type": "TASK"
   },
   "TASK-RAG-SEARCH-CAPTCHA-RESILIENCE-DETECTION-QUARANTINE-FALLBACK": {
-    "epic": "epic-rag-context-sources.md (extends `TASK-rag-search-providers.md`, `TASK-rag-search-robots-quota.md`)",
+    "epic": "epic-rag-context-sources",
     "extid": "TASK-RAG-SEARCH-CAPTCHA-RESILIENCE-DETECTION-QUARANTINE-FALLBACK",
     "git_issue": "9b837f9",
     "hash": "9b837f9",
@@ -39269,7 +39269,7 @@
     "type": "TASK"
   },
   "TASK-RAG-SEARCH-ROBOTS-QUOTA": {
-    "epic": "epic-rag-context-sources.md (extends `TASK-rag-search-providers.md`)",
+    "epic": "epic-rag-context-sources",
     "extid": "TASK-RAG-SEARCH-ROBOTS-QUOTA",
     "git_issue": "1e0b830",
     "hash": "1e0b830",
@@ -39589,7 +39589,7 @@
     "status": "Not Started"
   },
   "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION": {
-    "epic": "epic-deno-support (future Deno parity)",
+    "epic": "epic-deno-support",
     "extid": "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION",
     "git_issue": "8700aac",
     "hash": "8700aac",
@@ -40721,7 +40721,7 @@
     "type": "TASK"
   },
   "TASK-RESEARCH-CHARACTER-SYSTEMS-LANDSCAPE": {
-    "epic": "epic-character-core-system (research sub-area)",
+    "epic": "epic-character-core-system",
     "extid": "TASK-RESEARCH-CHARACTER-SYSTEMS-LANDSCAPE",
     "git_issue": "d3124bf",
     "hash": "d3124bf",
@@ -40734,7 +40734,7 @@
     "type": "TASK"
   },
   "TASK-RESEARCH-CREATIVE-CONTENT-SYSTEMS-LANDSCAPE": {
-    "epic": "epic-creative-studio (research sub-area)",
+    "epic": "epic-creative-studio",
     "extid": "TASK-RESEARCH-CREATIVE-CONTENT-SYSTEMS-LANDSCAPE",
     "git_issue": "8d31b76",
     "hash": "8d31b76",
@@ -40747,7 +40747,7 @@
     "type": "TASK"
   },
   "TASK-RESEARCH-WORLD-LOCATION-SYSTEMS-LANDSCAPE": {
-    "epic": "epic-world-locations (research sub-area)",
+    "epic": "epic-world-locations",
     "extid": "TASK-RESEARCH-WORLD-LOCATION-SYSTEMS-LANDSCAPE",
     "git_issue": "bedfbd1",
     "hash": "bedfbd1",
@@ -42023,14 +42023,14 @@
     "title": "sd.cpp provider — secondary-backend adapter (Phase 1)",
     "label": "task",
     "priority": "medium",
-    "epic": "`epic-assistant-generation-extensions` (Phase 1)",
+    "epic": "epic-assistant-generation-extensions",
     "tags": [],
     "source": ".plan/tickets/TASK-sd-cpp-provider.md",
     "status": "Not Started",
     "git_issue": "f1be651"
   },
   "TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE": {
-    "epic": "epic-e2e-integration-testing.md (Pillar 3 — real-server tier)",
+    "epic": "epic-e2e-integration-testing",
     "extid": "TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE",
     "git_issue": "74cafdc",
     "hash": "74cafdc",
@@ -42069,7 +42069,7 @@
     "type": "TASK"
   },
   "TASK-SEARCH-ENCRYPTED-BACKFILL": {
-    "epic": "epic-rag-document-processing.md",
+    "epic": "epic-rag-document-processing",
     "extid": "TASK-SEARCH-ENCRYPTED-BACKFILL",
     "git_issue": "64186c6",
     "hash": "64186c6",
@@ -42082,7 +42082,7 @@
     "type": "TASK"
   },
   "TASK-SEARCH-QUOTA-COST-CEILING": {
-    "epic": "epic-assistant-entity-access.md (extends quota engine)",
+    "epic": "epic-assistant-entity-access",
     "extid": "TASK-SEARCH-QUOTA-COST-CEILING",
     "git_issue": "272aa2b",
     "hash": "272aa2b",
@@ -42108,7 +42108,7 @@
     "type": "TASK"
   },
   "TASK-SEARCH-SERVICE-UNIFIED": {
-    "epic": "epic-rag-document-processing.md",
+    "epic": "epic-rag-document-processing",
     "extid": "TASK-SEARCH-SERVICE-UNIFIED",
     "git_issue": "2438d7c",
     "hash": "2438d7c",
@@ -42121,7 +42121,7 @@
     "type": "TASK"
   },
   "TASK-SEARCH-TELEMETRY-OBSERVABILITY": {
-    "epic": "epic-analytics-observability.md",
+    "epic": "epic-analytics-observability",
     "extid": "TASK-SEARCH-TELEMETRY-OBSERVABILITY",
     "git_issue": "cc74252",
     "hash": "cc74252",
@@ -43592,7 +43592,7 @@
     "type": "TASK"
   },
   "TASK-TIMELINE-BRANCHING-UI": {
-    "epic": "`epic-timeline-system.md`",
+    "epic": "epic-timeline-system",
     "extid": "TASK-TIMELINE-BRANCHING-UI",
     "git_issue": "ed8dd6e",
     "hash": "ed8dd6e",
@@ -43605,7 +43605,7 @@
     "type": "TASK"
   },
   "TASK-TIMELINE-ID-WORLD-TIMELINE-EVENTS": {
-    "epic": "`epic-timeline-system.md`",
+    "epic": "epic-timeline-system",
     "extid": "TASK-TIMELINE-ID-WORLD-TIMELINE-EVENTS",
     "git_issue": "1e8e0e9",
     "hash": "1e8e0e9",
@@ -43618,7 +43618,7 @@
     "type": "TASK"
   },
   "TASK-TIMELINE-MEMORY-INJECTION": {
-    "epic": "`epic-memory-propagation.md`",
+    "epic": "epic-memory-propagation",
     "extid": "TASK-TIMELINE-MEMORY-INJECTION",
     "git_issue": "aaf3f31",
     "hash": "aaf3f31",
@@ -43631,7 +43631,7 @@
     "type": "TASK"
   },
   "TASK-TIMELINE-RARITY-MULTIPLIER": {
-    "epic": "`epic-rarity-extensions.md`",
+    "epic": "epic-rarity-extensions",
     "extid": "TASK-TIMELINE-RARITY-MULTIPLIER",
     "git_issue": "e3b4f90",
     "hash": "e3b4f90",
@@ -43644,7 +43644,7 @@
     "type": "TASK"
   },
   "TASK-TIMELINE-SELECTION-API": {
-    "epic": "`epic-timeline-system.md`",
+    "epic": "epic-timeline-system",
     "extid": "TASK-TIMELINE-SELECTION-API",
     "git_issue": "0cc4bc6",
     "hash": "0cc4bc6",
@@ -44549,7 +44549,7 @@
     "title": "Video generation route (`POST /api/generation/video`)",
     "label": "task",
     "priority": "low",
-    "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
+    "epic": "epic-audio-video-sound",
     "tags": [],
     "source": ".plan/tickets/TASK-video-gen-route.md",
     "status": "Not Started",
@@ -44562,7 +44562,7 @@
     "title": "Video provider — MiniMax H3 dispatch",
     "label": "task",
     "priority": "low",
-    "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
+    "epic": "epic-audio-video-sound",
     "tags": [],
     "source": ".plan/tickets/TASK-video-provider-minimax-h3.md",
     "status": "Not Started",
@@ -44575,7 +44575,7 @@
     "title": "Video prompt template schema (FEAT-065 video slice)",
     "label": "task",
     "priority": "low",
-    "epic": "`epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)",
+    "epic": "epic-audio-video-sound",
     "tags": [],
     "source": ".plan/tickets/TASK-video-template-schema.md",
     "status": "Not Started",
@@ -44777,7 +44777,7 @@
     "type": "TASK"
   },
   "TASK-VOICE-NOTES-PLAYBACK": {
-    "epic": "epic-chat-rich-engagement.md (proposed)",
+    "epic": "epic-chat-rich-engagement",
     "extid": "TASK-VOICE-NOTES-PLAYBACK",
     "git_issue": "22e0581",
     "hash": "22e0581",
@@ -45125,7 +45125,7 @@
     "title": "Wire `src/llm` ResourceManager into generation dispatch",
     "label": "task",
     "priority": "high",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "epic": "epic-llm-request-scheduler",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md",
     "status": "Not Started",
@@ -45680,7 +45680,7 @@
     "type": "TASK"
   },
   "TASK-WORLD-TEMPLATE-FULL-MODEL-COVERAGE": {
-    "epic": "epic-world-locations (config-templates sub-area)",
+    "epic": "epic-world-locations",
     "extid": "TASK-WORLD-TEMPLATE-FULL-MODEL-COVERAGE",
     "git_issue": "04ba3d9",
     "hash": "04ba3d9",
