@@ -8,6 +8,7 @@
  */
 
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
+import { storageGet, storageRemove, storageSet, } from "../storage";
 
 /** */
 export interface VnSettings {
@@ -74,9 +75,7 @@ export function getVnSettings(gmConfig?: Record<string, unknown>,): VnSettings {
 export function saveVnSettings(settings: Partial<VnSettings>,): void {
   const current = getVnSettings();
   const merged = { ...current, ...settings, };
-  try {
-    localStorage.setItem(STORAGE_KEY, jsonStringifyOr(merged,),);
-  } catch { /* ignore quota errors */ }
+  storageSet("local", STORAGE_KEY, jsonStringifyOr(merged,),);
 }
 
 /**
@@ -84,13 +83,11 @@ export function saveVnSettings(settings: Partial<VnSettings>,): void {
  * @returns {void}
  */
 export function resetVnSettings(): void {
-  try {
-    localStorage.removeItem(STORAGE_KEY,);
-  } catch { /* ignore */ }
+  storageRemove("local", STORAGE_KEY,);
 }
 
 /** */
 function loadFromStorage(): Partial<VnSettings> {
-  const raw = localStorage.getItem(STORAGE_KEY,);
+  const raw = storageGet("local", STORAGE_KEY,);
   return raw ? jsonParseOr(raw, {},) : {};
 }
