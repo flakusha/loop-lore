@@ -482,3 +482,25 @@ the in-memory flag, so no restart). A `loadSinglePlugin` failure unregisters the
 plugin and every extension point it registered, so a throw in `onLoad` leaves
 the registry as it was. Per-plugin *unload* (the mirror of that rollback) is
 still open — `unloadAllPlugins` remains the only teardown.
+
+**Update — unapproved plugins do not execute, and config writes never decide
+approval.** Two invariants close the remaining holes in the origin-scoped
+approval above:
+
+1. **No `onLoad` without approval.** `loadSinglePlugin` gated only the registry
+   surface, so a `disabled` `community`/`local` plugin still ran its `onLoad` on
+   every boot with a live `db` handle — arbitrary code, only unserved. The loader
+   now runs `onLoad` *only* for an approved plugin and otherwise defers it.
+   Statically declared extensions are still registered (the registry filters
+   every read by enabled state), so a disabled plugin serves nothing. The admin
+   enable route performs the deferred initialization through the loader's
+   exported `initializePlugin`, so enabling a plugin does not need a restart;
+   a hook that throws leaves it disabled and returns 500, mirroring the loader's
+   load rollback.
+2. **A config write never decides approval.** `writeStoredPluginConfig` created a
+   `plugin_state` row with a hardcoded `disabled`, so an admin config write could
+   permanently disable a `core` plugin whose row was missing (the loader's own
+   insert is best-effort). It now takes the loaded plugin's `origin` and inserts
+   the same origin default the loader would have written — `defaultPluginStatus`
+   is the single definition of that rule, shared by both writers. An existing
+   row's status is untouched, so an admin decision is never overwritten.

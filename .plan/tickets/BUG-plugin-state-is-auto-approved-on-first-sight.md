@@ -44,10 +44,37 @@ async function persistPluginState(db, name): Promise<void> {          // :201
 sets the in-memory flag, falling back to the origin default when no row exists.
 No migration was needed: `plugin_state.status` is a plain TEXT column (no CHECK
 /enum) and `PluginStatus` already carries `disabled` — the same value the admin
-disable route writes. `writeStoredPluginConfig` no longer self-approves a
-brand-new row either. The admin enable/disable routes were already flipping
-`registry.setEnabled` in memory, so enabling a pending plugin takes effect
-without a restart.
+disable route writes. The admin enable/disable routes flip `registry.setEnabled`
+in memory, so enabling a pending plugin takes effect without a restart.
+
+**Adversarial review found two blocking holes in the above; both are closed.**
+
+*Approval could still be decided by a config write.* `writeStoredPluginConfig`
+inserted a brand-new `plugin_state` row with a hardcoded `status: Disabled`. Since
+`persistPluginState` is best-effort, a `core` plugin could be left with no row at
+all (a failed insert), and the next admin config write would create that row
+disabled — permanently switching the core plugin off on the following boot, with
+no operator action. The writer now takes the loaded plugin's `origin` and inserts
+`defaultPluginStatus(origin)` — the same rule the loader applies — exported from
+`config-store` so both writers share one definition. **A config write never
+decides approval**: it only reproduces the origin default when it has to create
+the row, and never touches the status of a row that already exists. The invariant
+is stated in the function's own doc comment.
+
+*Unapproved plugins still executed.* `setEnabled` gated only the registry
+surface; `registerManifestExtensions` ran unconditionally and `onLoad` was gated
+on `typeof manifest.onLoad === "function"` alone. A `disabled` `community`/`local`
+plugin therefore ran its `onLoad` on every boot with a live `db` handle —
+arbitrary writes, migrations prep, network — merely unserved. That is the
+supply-chain case this ticket exists to close, and it contradicted the Impact
+note above ("a plugin cannot start unapproved"): it still *started*. `onLoad` now
+runs only for an approved plugin. The loader's `initializePlugin` is exported so
+the admin enable route performs the deferred initialization rather than leaving
+a permanently half-registered plugin; enable therefore still needs no restart.
+A hook that throws at enable time leaves the plugin disabled and returns 500,
+matching the loader's own load rollback. Statically declared extensions stay
+registered but unreadable while disabled (the registry filters every read by
+enabled state), so an unapproved plugin serves nothing.
 
 **Acceptance Criteria:**
 
