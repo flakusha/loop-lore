@@ -327,4 +327,85 @@ describe("worldImportRoutes — POST /api/import/world", () => {
     // Should succeed or fail validation; should not crash the process.
     expect([201, 400, 413, 422,],).toContain(res.status,);
   });
+
+  test("route rejects a bundle with a 2-node parent cycle and commits nothing", async () => {
+    const app = createApp(db,);
+    const aId = uid();
+    const bId = uid();
+    const res = await app.handle(
+      new Request("http://localhost/api/import/world", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          schema_version: "1.0",
+          world: { name: "Cycle World", },
+          locations: [
+            { id: aId, name: "A", parent_location_id: bId, },
+            { id: bId, name: "B", parent_location_id: aId, },
+          ],
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    const worlds = await db.selectFrom("worlds",).select("id",).where("name", "=", "Cycle World",).execute();
+    expect(worlds,).toHaveLength(0,);
+  });
+
+  test("route rejects a bundle with a self-parent location", async () => {
+    const app = createApp(db,);
+    const aId = uid();
+    const res = await app.handle(
+      new Request("http://localhost/api/import/world", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          schema_version: "1.0",
+          world: { name: "Self Parent World", },
+          locations: [
+            { id: aId, name: "A", parent_location_id: aId, },
+          ],
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    const worlds = await db.selectFrom("worlds",).select("id",).where("name", "=", "Self Parent World",).execute();
+    expect(worlds,).toHaveLength(0,);
+  });
+
+  test("route imports a valid bundle with parent relationships", async () => {
+    const app = createApp(db,);
+    const rootId = uid();
+    const childId = uid();
+    const res = await app.handle(
+      new Request("http://localhost/api/import/world", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          schema_version: "1.0",
+          world: { name: "Valid Tree World", },
+          locations: [
+            { id: rootId, name: "Root", },
+            { id: childId, name: "Child", parent_location_id: rootId, },
+          ],
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(201,);
+    const parsed = (await res.json()) as { id: string; imported: Record<string, number> };
+    expect(parsed.imported.locations,).toBe(2,);
+
+    const locs = await db
+      .selectFrom("locations",)
+      .select(["id", "name", "parent_location_id",],)
+      .where("world_id", "=", parsed.id,)
+      .execute();
+
+    const root = locs.find((l,) => l.name === "Root");
+    const child = locs.find((l,) => l.name === "Child");
+    expect(root?.parent_location_id,).toBeNull();
+    expect(child?.parent_location_id,).toBe(root?.id,);
+  });
 });
