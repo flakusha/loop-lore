@@ -94,6 +94,35 @@ describe("dispatch respects enabled state", () => {
   });
 });
 
+describe("unregister", () => {
+  test("drops one plugin's routes from dispatch and leaves the others serving", async () => {
+    registry.register({
+      manifest: { name: "other", version: "1", description: "d", author: "t", },
+      origin: "local",
+      directory: "test",
+    },);
+
+    registry.addRoutes("demo", [
+      { method: "GET", path: "/x", handler: async () => new Response("x",), },
+    ],);
+
+    registry.addRoutes("other", [
+      { method: "GET", path: "/y", handler: async () => new Response("y",), },
+    ],);
+
+    registry.unregister("demo",);
+
+    expect(registry.getPlugin("demo",),).toBeUndefined();
+    expect(registry.getAllRoutes(),).toHaveLength(1,);
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://localhost/x",), },),
+    ).toBeNull();
+
+    const res = await dispatchPluginRoute({ request: new Request("http://localhost/y",), },);
+    expect(await res?.text(),).toBe("y",);
+  },);
+});
+
 describe("unloadAllPlugins", () => {
   test("clears all registrations", async () => {
     registry.addRoutes("demo", [

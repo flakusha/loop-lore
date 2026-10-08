@@ -3,7 +3,7 @@
 
 # BUG: Plugin state is auto-approved on first sight
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Epic:** epic-plugin-system
 **Effort:** Medium
@@ -39,10 +39,18 @@ async function persistPluginState(db, name): Promise<void> {          // :201
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+`persistPluginState` takes the origin and writes `disabled` for `community` /
+`local`; `isPluginActive` reads the persisted row during `loadSinglePlugin` and
+sets the in-memory flag, falling back to the origin default when no row exists.
+No migration was needed: `plugin_state.status` is a plain TEXT column (no CHECK
+/enum) and `PluginStatus` already carries `disabled` — the same value the admin
+disable route writes. `writeStoredPluginConfig` no longer self-approves a
+brand-new row either. The admin enable/disable routes were already flipping
+`registry.setEnabled` in memory, so enabling a pending plugin takes effect
+without a restart.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

@@ -33,6 +33,10 @@ enable(name: string): void {
  * @returns {boolean}
  */
 isEnabled(name: string): boolean {
+    // The fallback only covers "core" — the pseudo-plugin the builtin tools
+    // register under without a LoadedPlugin. Every real plugin gets an
+    // explicit entry from `enable()`/`setEnabled()` during load, so an
+    // unapproved community plugin cannot fall through to enabled here.
     return this.enabledMap.get(name) ?? name === "core";
   }
 
@@ -152,6 +156,19 @@ getAllMigrations(): MigrationDefinition[] {
   /**
  * @returns {void}
  */
+removePlugin(pluginName: string): void {
+    this.routes.delete(pluginName);
+    this.tools.delete(pluginName);
+    this.agentRoles.delete(pluginName);
+    this.uiComponents.delete(pluginName);
+    this.eventHandlers.delete(pluginName);
+    this.migrations.delete(pluginName);
+    this.enabledMap.delete(pluginName);
+  }
+
+  /**
+   * @returns {void}
+   */
 clear(): void {
     this.routes.clear();
     this.tools.clear();

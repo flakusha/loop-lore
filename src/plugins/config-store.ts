@@ -11,6 +11,7 @@
  */
 
 import type { Kysely, } from "kysely";
+import { PluginStatus, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { jsonStringifyOr, } from "../utils";
@@ -60,7 +61,8 @@ export async function writeStoredPluginConfig(
   const configJson = jsonStringifyOr(stored,);
   await db
     .insertInto("plugin_state",)
-    .values({ name, status: "active", config_json: configJson, },)
+    // Storing config is not an approval: a brand-new row starts disabled.
+    .values({ name, status: PluginStatus.Disabled, config_json: configJson, },)
     .onConflict((oc,) => oc.column("name",).doUpdateSet({ config_json: configJson, },))
     .execute();
 }
