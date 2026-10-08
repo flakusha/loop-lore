@@ -786,6 +786,7 @@ export interface Messages {
   content_plaintext: string | null;
   data_version: Generated<number>;
   record_hash: Generated<string>;
+  merge_id: string | null;
 }
 
 // ── music_links ────────────────────────────────────────────
@@ -1570,4 +1571,28 @@ export interface MessageReminders {
   message_id: string;
   user_id: string;
   remind_at: string;
+}
+
+// ── branch_merges ────────────────────────────────────────────
+export interface BranchMerges {
+  id: Generated<string>;
+  chat_id: string;
+  base_message_id: string;
+  mode: string;
+  status: Generated<string>;
+  result_message_id: string | null;
+  merged_branch_id: string | null;
+  created_by: string;
+  idempotency_key: string | null;
+  metadata: string | null;
+  created_at: Generated<string>;
+  confirmed_at: string | null;
+}
+
+// ── branch_merge_sources ────────────────────────────────────────────
+export interface BranchMergeSources {
+  merge_id: string;
+  ordinal: number;
+  branch_id: string | null;
+  tip_message_id: string;
 }

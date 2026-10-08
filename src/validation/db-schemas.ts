@@ -1830,6 +1830,7 @@ export const MessagesSchema = t.Object({
   content_plaintext: t.Optional(t.String(),),
   data_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
+  merge_id: t.Optional(t.String(),),
 },);
 
 // ── music_links ────────────────────────────────────────────
@@ -3146,4 +3147,27 @@ export const MessageRemindersSchema = t.Object({
   message_id: t.String(),
   user_id: t.String(),
   remind_at: t.String(),
+},);
+
+// ── branch_merges ────────────────────────────────────────────
+export const BranchMergesSchema = t.Object({
+  chat_id: t.String(),
+  base_message_id: t.String(),
+  mode: t.String(),
+  created_by: t.String(),
+  status: t.Optional(t.String(),),
+  result_message_id: t.Optional(t.String(),),
+  merged_branch_id: t.Optional(t.String(),),
+  idempotency_key: t.Optional(t.String(),),
+  metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  confirmed_at: t.Optional(t.String(),),
+},);
+
+// ── branch_merge_sources ────────────────────────────────────────────
+export const BranchMergeSourcesSchema = t.Object({
+  merge_id: t.String(),
+  ordinal: t.Number(),
+  tip_message_id: t.String(),
+  branch_id: t.Optional(t.String(),),
 },);

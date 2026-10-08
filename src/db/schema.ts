@@ -200,4 +200,6 @@ export interface DB {
   location_discovery: import("./schema-core").LocationDiscovery;
   scheduled_messages: import("./schema-core").ScheduledMessages;
   message_reminders: import("./schema-core").MessageReminders;
+  branch_merges: import("./schema-core").BranchMerges;
+  branch_merge_sources: import("./schema-core").BranchMergeSources;
 }
