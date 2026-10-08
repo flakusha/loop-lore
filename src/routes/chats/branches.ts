@@ -24,6 +24,7 @@ import { forkBranch, switchActiveBranch, } from "../../chat/service/branches";
 import type { DB, } from "../../db/schema";
 import { HttpStatus, jsonCreated, jsonError, } from "../http-utils";
 import { branchCrudRoutes, } from "./branch-crud";
+import { branchMergeRoutes, } from "./branch-merges";
 import {
   BranchListQuery,
   BranchName,
@@ -61,7 +62,8 @@ export function chatBranchRoutes(opts: HandlerOpts, prefix = "/api",) {
       params: ChatIdParams.params,
       query: BranchListQuery,
     },)
-    .use(branchCrudRoutes(opts, prefix,),);
+    .use(branchCrudRoutes(opts, prefix,),)
+    .use(branchMergeRoutes(opts, prefix,),);
 }
 
 /**
