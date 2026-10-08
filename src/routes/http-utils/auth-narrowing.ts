@@ -91,24 +91,26 @@ export async function withUserAuth<T,>(
  *
  * `resolveOwner` must return a denial `Response` (404/403) or `null` when allowed.
  * Folds the universal `requireUserId + resolveOwner + if (denied) return denied`
- * trio into one expression.
+ * trio into one expression. The caller's role is passed through so ownership
+ * guards can apply their `admin.*` bypass without re-reading the context.
  * @param ctx - Elysia request context
- * @param resolveOwner - ownership check: returns denial Response or null
+ * @param resolveOwner - ownership check: receives (userId, userRole), returns denial Response or null
  * @param fn - body invoked with the resolved userId
  * @returns the fn's return value or a denial Response
  * @example
- *   return withOwnerAuth(ctx, (uid) => resolveActorOwner(db, actorId, uid), async (userId) => {
+ *   return withOwnerAuth(ctx, (uid, role) => resolveActorOwner(db, actorId, uid, role), async (userId) => {
  *     return await svc.equip(actorId, itemId, userId);
  *   });
  */
 export async function withOwnerAuth<T,>(
   ctx: unknown,
-  resolveOwner: (userId: string,) => Promise<Response | null>,
+  resolveOwner: (userId: string, userRole?: string | null,) => Promise<Response | null>,
   fn: (userId: string,) => Promise<T> | T,
 ): Promise<T | Response> {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
-  const denied = await resolveOwner(userId,);
+  const { userRole, } = extractAuth(ctx,);
+  const denied = await resolveOwner(userId, userRole,);
   if (denied) { return denied; }
   return await fn(userId,);
 }

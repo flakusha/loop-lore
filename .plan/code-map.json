@@ -35439,6 +35439,10 @@
   ],
   "src/routes/trade/history.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-economy-trading.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-trade-history-npc-counterparty.md"
     }
@@ -35464,6 +35468,10 @@
     }
   ],
   "src/routes/trade/offers.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-economy-trading.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
@@ -40539,16 +40547,44 @@
       "source": ".plan/tickets/TASK-implement-trade.md"
     }
   ],
+  "src/services/trade/balance.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-economy-trading.md"
+    }
+  ],
   "src/services/trade/core.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-economy-trading.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-services-tradecore-validatelines-lacks-world-id-filter-cross.md"
+    }
+  ],
+  "src/services/trade/counter.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-economy-trading.md"
     }
   ],
   "src/services/trade/index.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    }
+  ],
+  "src/services/trade/lifecycle.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-economy-trading.md"
+    }
+  ],
+  "src/services/trade/npc.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-economy-trading.md"
     }
   ],
   "src/social-hub/adapters/adapter.ts": [
