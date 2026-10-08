@@ -4,14 +4,14 @@
 # TASK: In-context / out-of-context message reactions
 
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** One reaction store serving in-bubble chips and out-of-context affordances (quotes/replies/notification jumps), with optimistic add/remove and rollback.
+**Context:** In-context shipped: chips + picker popover in `src/components/chat/message-list.html`, optimistic `toggleReaction` with rollback + `chats.reactionFailed` toast, picker hydrated from `GET quick-emojis`. Endpoints are reused (`POST` toggle / `DELETE`), not duplicated. Left: out-of-context affordance wired to the same store, seen-state interplay.
+**Acceptance Criteria:** React from bubble and from a quoted reply converges to same count; failed request rolls back the optimistic chip + toast.
 
 
 **Epic:** epic-frontend-emoji-reactions
 **See also:** epic-messages.md, epic-message-seen-state.md
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** Medium
 
 ## Scope

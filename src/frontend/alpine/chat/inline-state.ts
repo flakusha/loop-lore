@@ -4,6 +4,7 @@
 // Chat inline state: core fields, getters, and panel mixins (incl. RPG
 // questions) spread into chatState(). Extracted from bootstrap.ts.
 import { type AssistantToolCall, collectAssistantToolCalls, } from "../chat-panels";
+import { DEFAULT_QUICK_EMOJIS, } from "../chat-utils/emoji";
 import { t, } from "../i18n";
 import { memoryPanel, } from "../memory-panel";
 import { moodState, } from "../mood";
@@ -125,8 +126,8 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
   _flagReason: "",
   _flagOther: "",
   _flagBusy: false,
-  // _quickEmojis: set in init() lines 48-64 — also define here for first-render safety.
-  _quickEmojis: ["👍", "❤️", "😂", "🎭", "⚔️", "🗡️", "🏰", "✨", "💀", "🐉", "🌲", "⚡", "🔥", "💧", "🌙",],
+  // _quickEmojis: set in init() — also define here for first-render safety.
+  _quickEmojis: [...DEFAULT_QUICK_EMOJIS,],
   // _draftBackup: chat-drafts sets it; default undefined to keep type stable for first-render reads.
   _draftBackup: undefined as string | undefined,
   _searchResults: [] as {

@@ -913,6 +913,7 @@
     "generateImage": "Generate Image",
     "captionImages": "Caption",
     "addReaction": "Add reaction",
+    "reactionFailed": "Could not update that reaction.",
     "model": "Model",
     "provider": "Provider",
     "promptTokens": "Prompt tokens",

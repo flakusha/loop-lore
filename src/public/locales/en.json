@@ -893,6 +893,7 @@
     "aiSummarize": "Summarize",
     "forwardTargetPrompt": "Forward to chat ID:",
     "addReaction": "Add reaction",
+    "reactionFailed": "Could not update that reaction.",
     "flag": "Flag",
     "flagTitle": "Flag Content",
     "flagHint": "Report this content to moderators for review.",

@@ -13,6 +13,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import {
+  didYouMeanCandidate,
   extractSlashQuery,
   filterSlashCandidates,
   slashAutocomplete,
@@ -139,6 +140,25 @@ describe("filterSlashCandidates", () => {
 
   test("returns an empty array when no candidate matches", () => {
     expect(filterSlashCandidates(names, "zzz",),).toEqual([],);
+  });
+
+  test("falls back to the closest name for a near-miss typo", () => {
+    expect(filterSlashCandidates(names, "hep",),).toEqual(["help",],);
+    expect(filterSlashCandidates(names, "rool",),).toEqual(["roll",],);
+  });
+
+  test("unrelated input still yields no candidates", () => {
+    expect(filterSlashCandidates(names, "zzz",),).toEqual([],);
+    expect(filterSlashCandidates([], "hep",),).toEqual([],);
+  });
+});
+
+describe("didYouMeanCandidate", () => {
+  test("returns the closest name and null for unrelated input", () => {
+    expect(didYouMeanCandidate(["help", "roll",], "hep",),).toBe("help",);
+    expect(didYouMeanCandidate(["help", "roll",], "zzz",),).toBeNull();
+    expect(didYouMeanCandidate([], "hep",),).toBeNull();
+    expect(didYouMeanCandidate(["help", "roll",], "",),).toBeNull();
   });
 });
 

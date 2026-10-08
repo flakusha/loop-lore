@@ -152,6 +152,33 @@ describe("chatMessages", () => {
 
       await expect(chatMessages.toggleReaction!.call(state, "msg-1", "👍",),).resolves.toBeUndefined();
     });
+
+    test("rolls back the optimistic chip when the server rejects", async () => {
+      fetchHandler = () => new Response("{}", { status: 500, },);
+      const before = [{ emoji: "👍", count: 2, userReacted: false, },];
+      const state: ReactionState = {
+        activeChat: "chat-1",
+        messages: [{ ...mockMessage("msg-1",), reactions: before.map((r,) => ({ ...r, })), },],
+        loadMessageReactions: chatMessages.loadMessageReactions,
+      };
+
+      await chatMessages.toggleReaction!.call(state, "msg-1", "👍",);
+
+      expect(state.messages[0]!.reactions,).toEqual(before,);
+    });
+
+    test("removes the optimistic chip when there were no prior reactions", async () => {
+      fetchHandler = () => new Response("{}", { status: 500, },);
+      const state: ReactionState = {
+        activeChat: "chat-1",
+        messages: [mockMessage("msg-1",),],
+        loadMessageReactions: chatMessages.loadMessageReactions,
+      };
+
+      await chatMessages.toggleReaction!.call(state, "msg-1", "👍",);
+
+      expect(state.messages[0]!.reactions,).toBeUndefined();
+    });
   });
 
   describe("loadMessageReactions", () => {
@@ -176,6 +203,33 @@ describe("chatMessages", () => {
       const state: ReactionState = { messages: [mockMessage("msg-1",),], };
       await chatMessages.loadMessageReactions!.call(state, "msg-1",);
       expect(state.messages[0]!.reactions,).toBeUndefined();
+    });
+  });
+
+  describe("loadQuickEmojis", () => {
+    afterEach(() => {
+      fetchCalls = [];
+      fetchHandler = null;
+    },);
+
+    test("replaces the picker row with the server allowlist", async () => {
+      mockFetch(200, ["👍", "🔥",],);
+      const state = { _quickEmojis: ["👍",], };
+
+      await chatMessages.loadQuickEmojis!.call(state,);
+
+      expect(fetchCalls[0]!.url,).toBe("/api/v1/messages/quick-emojis",);
+      expect(state._quickEmojis,).toEqual(["👍", "🔥",],);
+    });
+
+    test("keeps defaults when the server errs or returns junk", async () => {
+      const state = { _quickEmojis: ["👍",], };
+      mockFetch(500, {},);
+      await chatMessages.loadQuickEmojis!.call(state,);
+      expect(state._quickEmojis,).toEqual(["👍",],);
+      mockFetch(200, { not: "a list", },);
+      await chatMessages.loadQuickEmojis!.call(state,);
+      expect(state._quickEmojis,).toEqual(["👍",],);
     });
   });
 });
