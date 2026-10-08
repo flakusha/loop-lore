@@ -4,7 +4,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { randomUUID, } from "node:crypto";
 import { createTestDb, resetTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../test-utils/insert-helpers";
-import { LocationTreeService, } from "./tree";
+import { LocationMoveError, LocationTreeService, } from "./tree";
 
 let testDb: TestDb;
 
@@ -347,5 +347,128 @@ describe("LocationTreeService", () => {
 
       expect(childRow.path,).toBe(`/${moveRoot}/${moveChild}/`,);
     });
+  });
+});
+
+describe("LocationMoveError", () => {
+  let worldId: string;
+  let rootId: string;
+  let regionId: string;
+  let roomId: string;
+
+  beforeAll(async () => {
+    await reset();
+    await insertUsers(testDb.db, "test-owner", "Test Owner", { id: "test-owner", },);
+    worldId = await insertWorld("test-owner",);
+    rootId = await insertLocation(worldId, "Root",);
+    regionId = await insertLocation(worldId, "Region", rootId,);
+    roomId = await insertLocation(worldId, "Room", regionId,);
+  },);
+
+  function service(): LocationTreeService {
+    return new LocationTreeService(testDb.db,);
+  }
+
+  /**
+   * Await a `moveSubtree` call that must reject with a `LocationMoveError` and
+   * return the typed rejection. Fails loudly when the call resolves, or when
+   * the rejection is some other error family.
+   * @param move
+   */
+  async function rejectionFrom(move: Promise<void>,): Promise<LocationMoveError> {
+    let caught: unknown = undefined;
+    try {
+      await move;
+    } catch (error) {
+      caught = error;
+    }
+
+    if (!(caught instanceof LocationMoveError)) {
+      throw new Error(`expected a LocationMoveError, got ${String(caught,)}`,);
+    }
+
+    return caught;
+  }
+
+  /** Current `parent_location_id` read straight from SQLite. */
+  function parentOnDisk(locationId: string,): string | null {
+    const row = testDb.sqlite.query(
+      `SELECT parent_location_id FROM locations WHERE id = ?`,
+    ).get(locationId,) as { parent_location_id: string | null };
+
+    return row.parent_location_id;
+  }
+
+  test("carries the reason code, the message, and a stable name", () => {
+    const err = new LocationMoveError("cross-world", "cross-world move rejected",);
+    expect(err.code,).toBe("cross-world",);
+    expect(err.message,).toBe("cross-world move rejected",);
+    expect(err.name,).toBe("LocationMoveError",);
+    expect(err,).toBeInstanceOf(Error,);
+  });
+
+  test("self-parent rejection carries code 'self-parent' and writes nothing", async () => {
+    const err = await rejectionFrom(service().moveSubtree(rootId, rootId,),);
+    expect(err.code,).toBe("self-parent",);
+    expect(err.message,).toBe("location cannot be its own parent",);
+    expect(parentOnDisk(rootId,),).toBeNull();
+  });
+
+  test("cycle rejection carries code 'cycle' and writes nothing", async () => {
+    // roomId is a descendant of rootId — re-parenting root under it would close the loop.
+    const err = await rejectionFrom(service().moveSubtree(rootId, roomId,),);
+    expect(err.code,).toBe("cycle",);
+    expect(err.message,).toBe("move would create a cycle",);
+    expect(parentOnDisk(rootId,),).toBeNull();
+    expect(parentOnDisk(roomId,),).toBe(regionId,);
+  });
+
+  test("cross-world rejection carries code 'cross-world' and writes nothing", async () => {
+    const otherWorldId = await insertWorld("test-owner",);
+    const otherRootId = await insertLocation(otherWorldId, "OtherRoot",);
+    const err = await rejectionFrom(service().moveSubtree(rootId, otherRootId,),);
+    expect(err.code,).toBe("cross-world",);
+    expect(err.message,).toBe("cross-world move rejected",);
+    expect(parentOnDisk(rootId,),).toBeNull();
+  });
+
+  test("an unknown location and an unknown parent both carry code 'not-found'", async () => {
+    const missingSelf = await rejectionFrom(service().moveSubtree(randomUUID(), rootId,),);
+    const missingParent = await rejectionFrom(service().moveSubtree(rootId, randomUUID(),),);
+    expect(missingSelf.code,).toBe("not-found",);
+    expect(missingParent.code,).toBe("not-found",);
+    expect(missingSelf.message,).toBe("location or parent not found",);
+    expect(missingParent.message,).toBe("location or parent not found",);
+    expect(parentOnDisk(rootId,),).toBeNull();
+  });
+
+  test("the codes moveSubtree raises are exactly the declared reasons", async () => {
+    // Guards the LocationMoveReason union against drifting from the throw sites:
+    // each rejection path must still carry its own distinct code.
+    const otherWorldId = await insertWorld("test-owner",);
+    const otherRootId = await insertLocation(otherWorldId, "OtherRoot",);
+    const svc = service();
+    const raised = [
+      (await rejectionFrom(svc.moveSubtree(rootId, rootId,),)).code,
+      (await rejectionFrom(svc.moveSubtree(rootId, roomId,),)).code,
+      (await rejectionFrom(svc.moveSubtree(rootId, otherRootId,),)).code,
+      (await rejectionFrom(svc.moveSubtree(randomUUID(), rootId,),)).code,
+    ];
+
+    expect(raised,).toEqual(["self-parent", "cycle", "cross-world", "not-found",],);
+  });
+
+  test("insertLocation rejections stay plain Errors, not LocationMoveError", async () => {
+    // Load-bearing distinction: the routes layer maps LocationMoveError onto a 4xx
+    // and rethrows anything else, so the two error families must not converge.
+    const caught = await service().insertLocation({
+      worldId,
+      name: "Orphan",
+      parentLocationId: randomUUID(),
+    },).catch((error: unknown,) => error);
+
+    expect(caught,).toBeInstanceOf(Error,);
+    expect(caught,).not.toBeInstanceOf(LocationMoveError,);
+    expect((caught as Error).message,).toBe("parent location not found",);
   });
 });
