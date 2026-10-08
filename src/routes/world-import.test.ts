@@ -14,7 +14,7 @@ import { resetSoloUserCache, } from "../middleware/auth";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { exportStoryToZip, type WorldBundle, } from "./export-shared";
-import { importWorldBundle, worldImportRoutes, } from "./world-import";
+import { ImportCycleError, importWorldBundle, worldImportRoutes, } from "./world-import";
 
 /**
  * @param db
@@ -407,5 +407,206 @@ describe("worldImportRoutes — POST /api/import/world", () => {
     const child = locs.find((l,) => l.name === "Child");
     expect(root?.parent_location_id,).toBeNull();
     expect(child?.parent_location_id,).toBe(root?.id,);
+  });
+});
+
+describe("importWorldBundle — ImportCycleError", () => {
+  let db: Kysely<DB>;
+  let userId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    resetSoloUserCache();
+    ({ db, } = await createTestDb());
+    userId = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: userId,
+        username: `cycle-user-${userId}`,
+        display_name: "Cycle User",
+        role: "solo",
+        status: "active",
+        settings: "{}",
+      },)
+      .execute();
+
+    await db
+      .insertInto("actors",)
+      .values({
+        id: userId,
+        actor_type: "user",
+        display_name: "Cycle User",
+        user_id: userId,
+        owner_id: userId,
+        agent_type: "none",
+        settings: "{}",
+        format_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+      },)
+      .execute();
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  /** A minimal bundle whose only interesting member is the location parent graph. */
+  function bundleWithLocations(
+    worldName: string,
+    locations: Array<{ id: string; name: string; parent_location_id: string | null }>,
+  ): WorldBundle {
+    return {
+      schema_version: "1.0",
+      world: { name: worldName, },
+      locations,
+      world_lore_entries: [],
+      quests: [],
+      world_states: [],
+      location_states: [],
+    } as unknown as WorldBundle;
+  }
+
+  /** Await an import that must reject with an `ImportCycleError`. */
+  async function cycleRejectionFrom(importPromise: Promise<unknown>,): Promise<ImportCycleError> {
+    let caught: unknown = undefined;
+    try {
+      await importPromise;
+    } catch (error) {
+      caught = error;
+    }
+
+    if (!(caught instanceof ImportCycleError)) {
+      throw new Error(`expected an ImportCycleError, got ${String(caught,)}`,);
+    }
+
+    return caught;
+  }
+
+  /** Worlds whose name starts with the given prefix — proves the transaction rolled back. */
+  async function committedWorlds(prefix: string,): Promise<number> {
+    const rows = await db
+      .selectFrom("worlds",)
+      .select("id",)
+      .where("name", "like", `${prefix}%`,)
+      .execute();
+
+    return rows.length;
+  }
+
+  test("a self-parent location is rejected before anything is written", async () => {
+    const aId = uid();
+    const err = await cycleRejectionFrom(
+      importWorldBundle(
+        db,
+        userId,
+        bundleWithLocations("SelfParentBundle", [
+          { id: aId, name: "A", parent_location_id: aId, },
+        ],),
+      ),
+    );
+
+    expect(err.name,).toBe("ImportCycleError",);
+    expect(err.message,).toBe(`location ${aId} cannot be its own parent`,);
+    expect(err,).toBeInstanceOf(Error,);
+    expect(await committedWorlds("SelfParentBundle",),).toBe(0,);
+  });
+
+  test("a two-node parent cycle is rejected and names a node on the cycle", async () => {
+    const aId = uid();
+    const bId = uid();
+    const err = await cycleRejectionFrom(
+      importWorldBundle(
+        db,
+        userId,
+        bundleWithLocations("TwoNodeCycleBundle", [
+          { id: aId, name: "A", parent_location_id: bId, },
+          { id: bId, name: "B", parent_location_id: aId, },
+        ],),
+      ),
+    );
+
+    expect(err.message,).toMatch(/location parent graph contains a cycle at /,);
+    // The reported node must be one of the two actually on the cycle.
+    const reported = err.message.slice(err.message.lastIndexOf(" ",) + 1,);
+    expect([aId, bId,],).toContain(reported,);
+    expect(await committedWorlds("TwoNodeCycleBundle",),).toBe(0,);
+  });
+
+  test("a three-node parent cycle is rejected even when rows arrive child-first", async () => {
+    const aId = uid();
+    const bId = uid();
+    const cId = uid();
+    const err = await cycleRejectionFrom(
+      importWorldBundle(
+        db,
+        userId,
+        bundleWithLocations("ThreeNodeCycleBundle", [
+          // Every hop has to be followed before the loop back to A is visible,
+          // so a single-pass or insertion-order check would miss this shape.
+          { id: cId, name: "C", parent_location_id: aId, },
+          { id: bId, name: "B", parent_location_id: cId, },
+          { id: aId, name: "A", parent_location_id: bId, },
+        ],),
+      ),
+    );
+
+    expect(err.message,).toMatch(/location parent graph contains a cycle at /,);
+    expect(await committedWorlds("ThreeNodeCycleBundle",),).toBe(0,);
+  });
+
+  test("a parent id absent from the bundle is not treated as a cycle", async () => {
+    // The parent id is not a row in this bundle, so it is not an edge in the
+    // graph; the guard must not mistake the dangling reference for a loop.
+    const orphanId = uid();
+    const { worldId, counts, } = await importWorldBundle(
+      db,
+      userId,
+      bundleWithLocations("DanglingParentBundle", [
+        { id: orphanId, name: "Orphan", parent_location_id: uid(), },
+      ],),
+    );
+
+    expect(counts.locations,).toBe(1,);
+    const imported = await db
+      .selectFrom("locations",)
+      .select(["parent_location_id",],)
+      .where("world_id", "=", worldId,)
+      .execute();
+
+    // No mapped parent survives the remap pass, so the FK lands null.
+    expect(imported[0]?.parent_location_id,).toBeNull();
+  });
+
+  test("two locations sharing one parent are a DAG, not a cycle, and import cleanly", async () => {
+    // The guard must tell revisiting an ANCESTOR (cycle) apart from revisiting
+    // an already-finished node (fan-out). A naive seen-set rejects this shape.
+    const rootId = uid();
+    const eastId = uid();
+    const westId = uid();
+    const { worldId, counts, } = await importWorldBundle(
+      db,
+      userId,
+      bundleWithLocations("DiamondBundle", [
+        { id: westId, name: "West", parent_location_id: rootId, },
+        { id: rootId, name: "Root", parent_location_id: null, },
+        { id: eastId, name: "East", parent_location_id: rootId, },
+      ],),
+    );
+
+    expect(counts.locations,).toBe(3,);
+    const imported = await db
+      .selectFrom("locations",)
+      .select(["id", "name", "parent_location_id",],)
+      .where("world_id", "=", worldId,)
+      .execute();
+
+    const root = imported.find((l,) => l.name === "Root");
+    expect(root?.parent_location_id,).toBeNull();
+    // Both branches point at the SAME imported root id, remapped from the old one.
+    expect(imported.find((l,) => l.name === "East")?.parent_location_id,).toBe(root?.id,);
+    expect(imported.find((l,) => l.name === "West")?.parent_location_id,).toBe(root?.id,);
+    expect(await committedWorlds("DiamondBundle",),).toBe(1,);
   });
 });

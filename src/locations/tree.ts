@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 260
 
 /**
  * Tree Integrity Service — Fractal Locations (TASK-locations-tree-integrity-service).
