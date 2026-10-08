@@ -80,11 +80,11 @@ export interface AssembledEntries {
  */
 export function assembleEntries(entries: readonly InjectableEntry[], role: AssembleRole,): AssembledEntries {
   const visible = filterVisible(entries, role,);
-  const unshadowed = visible.filter(
-    (e,) => !(e.system === "carriage" && SHADOW_SYSTEMS.has(e.system,)) && !isShadowLeak(e,),
-  );
-
-  const { unique, duplicates, } = dedupeByHash(unshadowed, (e,) => `${e.system}:${e.content}`,);
+  // Cross-system negative read: shadow-system entries with a non-shadow
+  // visibility class never flow into a player-scoped assembly.
+  const unshadowed = visible.filter((e,) => !isShadowLeak(e,));
+  // Same fact from two systems injected once, attributed to first source.
+  const { unique, duplicates, } = dedupeByHash(unshadowed, (e,) => e.content,);
   return { entries: unique, duplicates, };
 }
 
@@ -120,9 +120,11 @@ export function guardShadowWriteback(
 
 /**
  * Hash an entry's content for the `{ source, id, hash }` debug contract.
+ * Content-only (not system-qualified) so the same fact from two systems
+ * shares one dedup key — matching `assembleEntries`.
  * @param entry - entry to hash
  * @returns 8-char dedup key
  */
 export function entryHash(entry: InjectableEntry,): string {
-  return contentHash(`${entry.system}:${entry.content}`,);
+  return contentHash(entry.content,);
 }

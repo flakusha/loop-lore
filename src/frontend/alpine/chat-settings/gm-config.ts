@@ -50,6 +50,8 @@ export interface GmSettingsFields {
   /** "" = no style directive (section stays off). */
   outputStylePreset: "" | OutputStylePreset;
   outputStyleIntensity: number;
+  /** Hidden carriage opt-in — flat TOML episode context injects when true. */
+  carriageEnabled: boolean;
 }
 
 /**
@@ -86,6 +88,7 @@ export function readGmSettings(config: GmConfig,): GmSettingsFields {
     responseLengthCustom: config.responseLengthCustom ?? 1000,
     outputStylePreset: config.outputStyle?.preset ?? "",
     outputStyleIntensity: config.outputStyle?.intensity ?? 0.5,
+    carriageEnabled: config.carriageEnabled ?? false,
   };
 }
 
@@ -164,6 +167,12 @@ export function buildGmConfig(
     };
   } else {
     delete gmConfig.outputStyle;
+  }
+
+  if (fields.carriageEnabled) {
+    gmConfig.carriageEnabled = true;
+  } else {
+    delete gmConfig.carriageEnabled;
   }
 
   // Per-chat assistant tuning persists through the existing gm_config JSON
