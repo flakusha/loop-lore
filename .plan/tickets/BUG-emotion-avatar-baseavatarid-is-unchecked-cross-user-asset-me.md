@@ -3,7 +3,7 @@
 
 # BUG: Emotion-avatar baseAvatarId is unchecked: cross-user asset metadata leaks into generated prompts
 
-**Status:** Not Started
+**Status:** Wontfix
 **Priority:** high
 **Effort:** Medium
 
@@ -36,3 +36,32 @@ Fix direction: check the base asset before use, reusing canAccessAsset or an own
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Resolution
+
+ALREADY PREVENTED — the audit missed a load-bearing guard. Both entry points
+converge on `EmotionAvatarService.startBatchGeneration`, which rejects a
+foreign base avatar before any asset is read:
+
+- `src/characters/services/emotion-avatar-service/index.ts:86-94` — loads the
+  base avatar and throws `Base avatar does not belong to actor <id>` when
+  `baseAvatar.actorId !== opts.actorId`. This runs before job creation
+  (`:97`), so `extractAvatarMetadata` is never reached with a foreign id.
+- `src/routes/character-emotion-avatars.ts:138-147` — enforces
+  `checkActorOwnership` upstream (body at `src/routes/actor-auth.ts:90-97`),
+  so the caller must already own the actor whose avatar is required.
+- `src/routes/wardrobe-avatars.ts:52` — the converging route requires an owned
+  wardrobe item, binding `actorId` to the caller's own asset before the service
+  guard runs.
+
+Pinned by an existing test:
+`src/characters/services/emotion-avatar-service/index.test.ts:81-83` asserts
+`rejects.toThrow("does not belong",)` when `startBatchGeneration` is called with
+a random `actorId` and another actor's `baseAvatarId`.
+
+The probe in the Summary called `extractAvatarMetadata` directly, bypassing the
+service guard that every production entry point must cross. The described IDOR
+is not reachable from any route. Wontfix rather than Done: the guard already
+exists and is test-covered, so there is nothing to implement. The `canAccessAsset`
+hardening remains a defence-in-depth option, not a fix for a live defect.
