@@ -2906,6 +2906,13 @@ html {
   justify-content: center;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .reaction-picker,
+  .reaction-option {
+    transition: none;
+  }
+}
+
 /* ── Seen-state ──────────────────────────────────── */
 .message-seen {
   display: flex;

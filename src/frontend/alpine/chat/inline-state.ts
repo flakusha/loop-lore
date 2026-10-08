@@ -122,6 +122,7 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
   _isScrolledUp: false,
   _contextMenu: { visible: false, messageId: null, x: 0, y: 0, },
   _reactionPicker: { visible: false, messageId: "", x: 0, y: 0, },
+  _reactionActiveIndex: 0,
   _flagDialog: { open: false, contentType: "message", contentId: null, chatId: null, },
   _flagReason: "",
   _flagOther: "",
