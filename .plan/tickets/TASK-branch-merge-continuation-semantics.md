@@ -25,7 +25,7 @@ Confirm — a single transaction (throw-to-rollback `MergeTxAbort`, the `BranchT
 5. Emit the `message.merged` plugin event (registry pattern of `message.variant.created`, `src/chat/service/write.ts:157-169`).
 6. Sources are NEVER deleted — only the display pointer moves.
 
-Continue (`POST /api/v1/chats/:id/branch-merges/:mergeId/continue`, requires `status = "confirmed"`):
+Continue (`POST /api/v1/chats/:id/branch-merges/:mergeId/continue`, requires `:mergeId` scoped to `:id` — cross-chat → 404 before any state change — and `status = "confirmed"`):
 
 - With `prompt`: insert a user message parented on the merged tip through `insertUserMessageRow` (IDOR-guarded), then trigger auto-reply (`maybeAutoReply`).
 - Without `prompt`: trigger an assistant continuation directly.
@@ -37,5 +37,5 @@ Continue (`POST /api/v1/chats/:id/branch-merges/:mergeId/continue`, requires `st
 - [ ] Confirm runs as one transaction: guarded draft→confirmed transition (409 on zero rows), result-row insert, synthetic branch, pointer lockstep
 - [ ] Result rows parent on `base_message_id`, carry `merge_id` + `merge:<mergeId>:<ordinal>`, and survive a concurrent sibling insert (swipe-race retry)
 - [ ] Source branches remain intact after confirm; `message.merged` emitted
-- [ ] Continue requires `confirmed`; with `prompt` it inserts via `insertUserMessageRow` and triggers `maybeAutoReply`
+- [ ] Continue requires a `:mergeId` belonging to `:id` plus `status = confirmed`; with `prompt` it inserts via `insertUserMessageRow` and triggers `maybeAutoReply`
 - [ ] Composer parents on the merged tip after reload; regeneration creates ordinary sibling swipes
