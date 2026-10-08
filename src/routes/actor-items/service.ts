@@ -18,6 +18,7 @@ import type { Kysely, } from "kysely";
 import type { Db, } from "../../db";
 import type { DB, } from "../../db/schema";
 import { ActorItemsService, } from "../../services/actor-items";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, Id, } from "../../validation/schemas";
 import { badRequestResponse, jsonError, jsonResponse, notFoundResponse, } from "../http-utils";
 import { withOwnerAuth, } from "../http-utils/auth-narrowing";
@@ -39,23 +40,33 @@ const transferBody = t.Object({ toActorId: Id, quantity: t.Number(), },);
 
 /**
  * Resolve the actor's owner; returns a denial Response or null when allowed.
+ *
+ * Ownership is either link, matching `resolveActorAccess`: `user_id` marks the
+ * user's own persona, `owner_id` marks a companion character they own. Checking
+ * only `user_id` denied companion characters on every gameplay route here.
+ * `admin.character` bypasses, as in `checkActorOwnership` (`src/routes/actor-auth.ts`).
  * @param db
  * @param actorId
  * @param userId
+ * @param userRole
  */
 async function resolveActorOwner(
   db: Kysely<DB>,
   actorId: string,
   userId: string,
+  userRole?: string | null,
 ): Promise<Response | null> {
   const actor = await db
     .selectFrom("actors",)
-    .select("user_id",)
+    .select(["user_id", "owner_id",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
 
   if (!actor) { return notFoundResponse("Actor",); }
-  if (actor.user_id !== userId) { return jsonError("Not allowed", 403,); }
+  if (actor.user_id !== userId && actor.owner_id !== userId && !can(userRole, "admin.character",)) {
+    return jsonError("Not allowed", 403,);
+  }
+
   return null;
 }
 
@@ -64,8 +75,11 @@ async function resolveActorOwner(
  * @param db
  * @param actorId
  */
-function actorOwnerCheck(db: Kysely<DB>, actorId: string,): (userId: string,) => Promise<Response | null> {
-  return (userId,) => resolveActorOwner(db, actorId, userId,);
+function actorOwnerCheck(
+  db: Kysely<DB>,
+  actorId: string,
+): (userId: string, userRole?: string | null,) => Promise<Response | null> {
+  return (userId, userRole,) => resolveActorOwner(db, actorId, userId, userRole,);
 }
 
 /**
