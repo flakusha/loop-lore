@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** Immersion & Presentation (EPIC-048)
+**Epic:** epic-immersion-presentation
 **Priority:** Medium
 **Effort:** Low
 **Status:** Not Started

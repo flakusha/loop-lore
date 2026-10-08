@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** NPC/Actor System, Memory & Knowledge Systems
+**Epic:** epic-memory-knowledge-systems
 **Priority:** High
 **Effort:** Medium
 **Status:** Not Started

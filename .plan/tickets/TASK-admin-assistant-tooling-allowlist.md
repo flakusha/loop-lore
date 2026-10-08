@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task (admin + moderator UI)
 **Tags:** admin, moderator, assistant, tooling, allowlist, capability-levels, frontend
-**Epic:** epic-byok-local-models.md (admin model surface extension) + epic-assistant-gm-flows.md (tooling), epic-rag-assets-unified-storage-and-assistant-flows (B-R3 dep)
+**Epic:** epic-byok-local-models
 
 ## Summary
 

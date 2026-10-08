@@ -13,7 +13,7 @@
 **Priority:** low
 **Effort:** small
 **Type:** BUG
-**Epic:** epic-chat-lifecycle-moderation, epic-assistant-gm-flows
+**Epic:** epic-chat-lifecycle-moderation
 **Files:** src/generation/auto-gen/classify-intent.ts:49; src/assistant/gm-tool-detection.ts:84
 
 ## Issue

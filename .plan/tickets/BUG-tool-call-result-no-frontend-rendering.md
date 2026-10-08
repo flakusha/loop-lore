@@ -12,7 +12,7 @@
 **Severity:** medium
 **Priority:** medium
 **Effort:** medium
-**Epic:** epic-assistant-gm-flows, epic-chat-lifecycle-moderation
+**Epic:** epic-assistant-gm-flows
 **Files:** src/db/enums-core/messages.ts:18-26 (MessageContentType enum); src/db/migrations/037_message_tool_calls.ts; src/views/chat-render.ts (or equivalent); src/frontend/alpine/chat-bubble.ts
 
 ## Issue

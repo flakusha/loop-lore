@@ -12,7 +12,7 @@
 **Status Note:** already on dev, 2026-09-19
 **Priority:** medium
 **Effort:** Medium
-**Epic:** Avatar Alpha Channel + VN Layering
+**Epic:** epic-avatar-alpha-vn-layering
 
 ## Summary
 

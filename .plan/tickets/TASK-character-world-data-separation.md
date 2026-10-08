@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** Character Core System
+**Epic:** epic-character-core-system
 **Priority:** High
 **Effort:** Very High
 **Status:** Done

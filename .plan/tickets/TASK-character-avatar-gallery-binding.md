@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** High
 **Effort:** Medium
-**Epic:** epic-frontend-gallery, epic-character-core-system
+**Epic:** epic-frontend-gallery
 
 ## Summary
 

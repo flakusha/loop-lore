@@ -11,7 +11,7 @@
 
 **Status:** Done
 **Priority:** P2
-**Epic:** epic-emotion-avatar-message-binding / epic-character-core-system
+**Epic:** epic-emotion-avatar-message-binding
 **Tags:** emotion-avatar, fallback, character-description
 **Related:** TASK-emotions-avatar-edit-model.md, src/characters/services/emotion-avatar-fallback.ts, src/characters/services/emotion-avatar-service/generation.ts:158-162
 

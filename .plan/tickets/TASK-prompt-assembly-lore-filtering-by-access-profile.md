@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** medium
-**Epic:** Character & NPC Lore Access
+**Epic:** epic-character-npc-lore-access
 
 ## Summary
 

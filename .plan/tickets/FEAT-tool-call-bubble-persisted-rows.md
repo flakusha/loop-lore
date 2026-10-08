@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-assistant-gm-flows, epic-chat-lifecycle-moderation
+**Epic:** epic-assistant-gm-flows
 
 ## Summary
 

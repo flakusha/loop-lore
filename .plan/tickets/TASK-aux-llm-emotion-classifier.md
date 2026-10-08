@@ -11,7 +11,7 @@
 
 **Status:** Not Started
 **Priority:** P3
-**Epic:** epic-aux-enrichment-pipeline / epic-emotion-avatar-message-binding
+**Epic:** epic-aux-enrichment-pipeline
 **Tags:** aux-llm, emotion, classifier, hybrid
 **Related:** TASK-aux-emotion-avatar.md, TASK-aux-mood-classification.md, src/generation/hooks/emotion-hook.ts, src/aux-pipeline/runner.ts
 

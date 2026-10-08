@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** NPC/Actor System, NPC Navigation
+**Epic:** epic-npc-navigation
 **Priority:** High
 **Effort:** Medium
 **Status:** Not Started

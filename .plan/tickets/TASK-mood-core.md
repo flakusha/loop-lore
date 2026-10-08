@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** TASK
 **Tags:** characters, mood, expression
-**Epic:** Character Core System
+**Epic:** epic-character-core-system
 **Parent:** TASK-character-mood-happiness (umbrella)
 
 ## Summary

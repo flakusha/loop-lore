@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Large
-**Epic:** epic-assistant-generation-extensions (Phase 4), epic-blog-system
+**Epic:** epic-assistant-generation-extensions
 
 ## Summary
 
