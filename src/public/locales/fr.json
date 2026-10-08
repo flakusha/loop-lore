@@ -1521,7 +1521,52 @@
     "failedFork": "Échec de la création de la branche",
     "failedSwitch": "Échec du changement de branche",
     "failedDelete": "Échec de la suppression de la branche",
-    "failedMerge": "Échec de la fusion de la branche"
+    "failedMerge": "Échec de la fusion de la branche",
+    "mergeTitle": "Fusionner les branches",
+    "mergeSourcesHint": "Sélectionnez au moins 2 branches à fusionner. L'ordre définit l'ordinal de la fusion.",
+    "mergeNeedTwoSources": "Sélectionnez au moins 2 sources à fusionner.",
+    "mergeModeHint": "Choisissez comment fusionner les branches sélectionnées.",
+    "mergeMode": {
+      "combined": { "title": "Combiné", "desc": "Tisser les deux versions en une continuation" },
+      "secondOverFirst": {
+        "title": "Seconde sur première",
+        "desc": "Appliquer les changements de la seconde branche sur la première"
+      },
+      "firstOverSecond": {
+        "title": "Première sur seconde",
+        "desc": "Appliquer les changements de la première branche sur la seconde"
+      },
+      "freshDiscovery": {
+        "title": "Nouvelle découverte",
+        "desc": "Générer une nouvelle continuation consciente des deux"
+      },
+      "singlePlusGlean": {
+        "title": "Une plus collecte",
+        "desc": "Garder une branche, greffer des modifications légères"
+      },
+      "aiAssisted": "Assisté par IA",
+      "deterministic": "Déterministe"
+    },
+    "mergeTokenEstimate": "Estimation de tokens",
+    "mergeTruncated": "Aperçu tronqué par limite de tokens",
+    "mergePreviewLoading": "Génération de l'aperçu…",
+    "mergeReroll": "Régénérer",
+    "mergeRole": { "assistant": "Assistant", "user": "Utilisateur", "character": "Personnage" },
+    "mergeHunk": { "kept": "Conservé", "applied": "Appliqué", "conflict": "Conflit" },
+    "mergeConflict": { "base": "Base", "overlay": "Superposition", "manual": "Éditer en ligne" },
+    "mergeUnresolvedConflicts": "Résolvez tous les conflits pour confirmer",
+    "mergeBranchName": "Nom de branche",
+    "mergeActivate": "Activer la branche fusionnée",
+    "mergeSummary": "Résumé de la fusion",
+    "mergeConfirmButton": "Confirmer la fusion",
+    "mergeContinue": "Continuer depuis ici",
+    "mergeSelected": "Fusionner la sélection",
+    "mergeVariants": "Fusionner les variantes…",
+    "mergeFromHere": "Fusionner depuis ici…",
+    "mergeFailedInitiate": "Échec du lancement de la fusion",
+    "mergeFailedPreview": "Échec du chargement de l'aperçu",
+    "mergeFailedConfirm": "Échec de la confirmation de la fusion",
+    "mergeFailedContinue": "Échec de la continuation depuis la fusion"
   },
   "wardrobe": {
     "baseOutfit": "Base outfit",

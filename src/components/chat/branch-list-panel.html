@@ -9,7 +9,7 @@
   chatState scope.
 -->
 <div
-  x-data="{ open: false, mergeFor: null, mergeTarget: '', deleteFor: null }"
+  x-data="{ open: false, mergeFor: null, mergeTarget: '', deleteFor: null, selectedBranches: [] }"
   @open-branches-panel.window="open = true; window.loadBranches?.()"
   data-testid="branch-panel"
 >
@@ -23,6 +23,13 @@
       </div>
       <template x-for="b in $store.ui.branches" :key="b.id">
         <div class="panel-item" :class="{ 'is-active': b.isActive }" data-testid="branch-panel-row">
+          <input
+            type="checkbox"
+            :checked="selectedBranches.includes(b.id)"
+            @change="if ($event.target.checked) { selectedBranches.push(b.id); } else { selectedBranches = selectedBranches.filter(id => id !== b.id); }"
+            :data-testid="'branch-panel-select-' + b.id"
+            class="branch-select-checkbox"
+          >
           <div style="display: grid; gap: 1px; overflow: hidden">
             <span style="font-weight: 600; font-size: 13px" x-text="b.name"></span>
             <span style="font-size: 11px; color: var(--text-secondary)" data-testid="branch-panel-forkpoint">
@@ -68,6 +75,16 @@
           </div>
         </div>
       </template>
+    </div>
+    <div class="panel-toolbar" x-show="selectedBranches.length > 0" data-testid="branch-panel-toolbar">
+      <button
+        class="btn btn-sm btn-primary"
+        @click="window.openBranchMerge(selectedBranches.map(id => { const b = $store.ui.branches.find(x => x.id === id); return b ? { tipMessageId: b.parentMessageId, branchId: b.id } : null; }).filter(Boolean))"
+        :disabled="selectedBranches.length < 2"
+        data-testid="branch-panel-merge-selected"
+      >
+        {{{t("branches.mergeSelected")}}} (<span x-text="selectedBranches.length"></span>)
+      </button>
     </div>
   </aside>
 
