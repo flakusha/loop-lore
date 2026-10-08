@@ -1,12 +1,13 @@
 import type { loadConfig, } from "../config/load";
 import type { getDatabase, } from "../db/index";
+import type { TranslatorFn, } from "../i18n/types";
 import type { getLogger, } from "../logger";
 import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "../middleware";
 import { generateNonce, } from "../middleware/csp-nonce";
 import type { HandleResolver, } from "../middleware/handle-resolver";
 import { createHandleResolver, } from "../middleware/handle-resolver";
 import { applyRequestId, resolveRequestId, } from "../middleware/request-id";
-import { dispatchPluginRoute, } from "../plugins";
+import { dispatchPluginRoute, type PluginCaller, } from "../plugins";
 
 /**
  * Wrap the Elysia app so EVERY outgoing response (routes, errors, static,
@@ -120,6 +121,11 @@ export interface HandleApiRequestOpts {
   request: Request;
   database: ReturnType<typeof getDatabase>;
   config: ReturnType<typeof loadConfig>;
+  /** Identity resolved by the Elysia auth derive. Omitted → anonymous, which
+   *  is what an unauthenticated request produces anyway. */
+  caller?: PluginCaller;
+  /** Request-locale translator from the auth derive; localises 401/403 bodies. */
+  t?: TranslatorFn;
 }
 
 /**
@@ -127,10 +133,14 @@ export interface HandleApiRequestOpts {
  * All other API routes are handled by Elysia plugins.
  * @param root0 - options object
  * @param root0.request - incoming `Request` to dispatch
+ * @param root0.caller - identity used to enforce plugin route `requiresAuth` / `permissions`
+ * @param root0.t - translator used to localise plugin route denial bodies
  * @returns `Response` from the matched plugin route (404 when no plugin matches).
  */
-export async function handleApiRequest({ request, }: HandleApiRequestOpts,): Promise<Response> {
-  let pluginResult = await dispatchPluginRoute(request,);
+export async function handleApiRequest(
+  { request, caller, t, }: HandleApiRequestOpts,
+): Promise<Response> {
+  let pluginResult = await dispatchPluginRoute({ request, caller, t, },);
   if (pluginResult) { return pluginResult; }
 
   // Versioned fallback: the v1 barrel doesn't cover every route module yet.
@@ -140,7 +150,7 @@ export async function handleApiRequest({ request, }: HandleApiRequestOpts,): Pro
   if (url.pathname.startsWith("/api/v1/",)) {
     const strippedUrl = new URL(url.pathname.slice("/api/v1".length,) + url.search, url,);
     const strippedRequest = new Request(strippedUrl, request,);
-    pluginResult = await dispatchPluginRoute(strippedRequest,);
+    pluginResult = await dispatchPluginRoute({ request: strippedRequest, caller, t, },);
     if (pluginResult) { return pluginResult; }
   }
 

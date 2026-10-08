@@ -136,14 +136,47 @@ export interface AgentRoleDefinition {
 }
 
 /**
+ * Identity resolved by the app's auth middleware and handed to plugin route
+ * handlers. Declared here (not in ./route-access) so `RouteDefinition` does
+ * not have to import from a module that imports it back.
+ */
+export interface PluginCaller {
+  /** Resolved user id, or null when the request is unauthenticated. */
+  userId: string | null;
+  /** Resolved role, or null when the request is unauthenticated. */
+  userRole: string | null;
+}
+
+/**
+ * A plugin-registered HTTP route, dispatched by `dispatchPluginRoute` from the
+ * app's catch-all.
  *
+ * ACCESS CONTROL IS ROUTE-LEVEL, NOT ROW-LEVEL. `requiresAuth` and
+ * `permissions` only decide whether the request reaches `handler` at all. They
+ * do NOT scope the data a handler reads or returns: a route guarded only by
+ * `requiresAuth` will happily hand any authenticated user another user's row
+ * unless the handler performs its own ownership check. Always pass `caller`
+ * into the handler and scope queries by `caller.userId`.
+ *
+ * SOLO MODE CAVEAT. `auth.required` defaults to false, and in that mode
+ * `authenticate` auto-resolves every request to a single super-user (role
+ * `solo`, which holds `*`). So in solo mode `requiresAuth` never denies and
+ * `permissions` never denies — the declarations below restrict nothing there.
+ * See ./route-access and the boot-time warning emitted by the loader.
  */
 export interface RouteDefinition {
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   path: string;
-  handler: (request: Request) => Promise<Response | null>;
+  /**
+   * Handle the request. `caller` is the resolved identity (omitted when
+   * anonymous). One-argument handlers stay valid — the second parameter is
+   * additive.
+   */
+  handler: (request: Request, caller?: PluginCaller) => Promise<Response | null>;
   description?: string;
+  /** Require a resolved session. See the solo-mode caveat above. */
   requiresAuth?: boolean;
+  /** Every listed permission must be granted to `caller.userRole`. */
   permissions?: string[];
 }
 
