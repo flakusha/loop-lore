@@ -14,7 +14,10 @@
 
 The mesh receiver is finished and correct. Every inbound leg is present, tested, and mounted:
 
-- **Wire routes** — `GET /.well-known/nodeinfo`, `GET /nodeinfo/2.1`, `GET /api/instance-state`, `POST /api/mesh-reserve`, `POST /api/mesh-deliver`, `POST /api/mesh-retract` (`src/routes/federation.ts:51-53`, mounted at `src/app/register-plugins.ts:56`), all gated on `config.federation.enabled`.
+- **Wire routes** — six endpoints across three modules, all mounted by `federationRoutes` (`src/app/register-plugins.ts:56`) and gated on `config.federation.enabled` (`src/routes/federation.ts:51-53`):
+  - Read endpoints in `src/routes/federation.ts` — `GET /.well-known/nodeinfo` (`:58`), `GET /nodeinfo/2.1` (`:79`), `GET /api/instance-state` (`:104`).
+  - Mesh endpoints in `src/routes/federation-mesh.ts` — `POST /api/mesh-reserve` (`:81`), `POST /api/mesh-deliver` (`:163`).
+  - Retraction in `src/routes/federation-mesh-retract.ts` — `POST /api/mesh-retract` (`:19`).
 - **Identity** — `canonicalOrigin` normalises peer origins for keying (`src/federation/peer-fetch.ts:64-78`).
 - **Transport crypto** — PSK mesh cipher with per-sender inbound keys (`src/federation/cipher.ts`, `src/federation/peer-keys.ts`), SPKI pinning (`src/federation/spki-pin.ts`).
 - **Reservation lifecycle** — grant / advance / expire (`src/federation/sharing.ts`).
@@ -49,7 +52,7 @@ Nothing exists for local multi-instance operation. See §3.
 
 ## 2. Evidence — dead-in-production call sites
 
-Each symbol below was searched across `src/`; every hit is in a `*.test.ts` file or in the symbol's own definition site. Zero production callers.
+Every symbol in this table was searched across `src/`. For seven of them — `upsertPeer`, `grantChatFederationConsent`, `revokeChatFederationConsent`, `authorizeChatExport`, `fanOutContent`, `exportChatDekForPeer`, `importChatDek` — every hit is in a `*.test.ts` file or in the symbol's own definition site, and the **Production callers** column reads `none`. The remaining three rows are *not* caller-free: `sealContent` is called from `fan-out.ts`, `runMeshOutboxPass` is driven by the cron, and `receiveDelivery` is called from a route handler. Those three are listed for completeness of the trace, not as instances of the zero-caller finding.
 
 | Symbol | Defined at | Production callers | Consequence |
 |---|---|---|---|
@@ -62,9 +65,21 @@ Each symbol below was searched across `src/`; every hit is in a `*.test.ts` file
 | `exportChatDekForPeer` | `src/federation/dek-rewrap.ts:73` | none | no cross-instance DEK export; encrypted chat cannot federate |
 | `importChatDek` | `src/federation/dek-rewrap.ts:184` | none | no inbound DEK import over the wire |
 | `runMeshOutboxPass` | `src/federation/outbox.ts:127-215` | cron only | drains a table nothing writes |
-| `receiveDelivery` | `src/federation/delivery.ts` | `src/routes/federation.ts` | reachable, but only for peers that pass `assertTrustedPeer` — i.e. never |
+| `receiveDelivery` | `src/federation/delivery.ts:34` | `src/routes/federation-mesh.ts:216` (inside the `/api/mesh-deliver` handler) | reachable, but only for peers that pass `assertTrustedPeer` — i.e. never |
 
-The single production root of the failure is `upsertPeer`. Everything else is downstream of a sender that has no trigger.
+There is **no single root**. The failure has four independent wires, plus a fifth for the encrypted tier, and no one of them is sufficient on its own:
+
+| # | Wire | Missing today | Fixing it alone does not… |
+|---|---|---|---|
+| 1 | **Peer trust bootstrap** | no production caller for `upsertPeer` → `mesh_peers` empty → `assertTrustedPeer` denies every `/api/mesh-*` | make anything *send*: there is still no trigger |
+| 2 | **Consent surface** | no route/UI calls `grantChatFederationConsent` / `revokeChatFederationConsent` → `authorizeChatExport` is permanently default-deny | unblock the sender on its own; with no trigger, granting consent changes nothing |
+| 3 | **Sender trigger** | no production caller for `fanOutContent` → nothing seals, reserves, pushes, or writes `mesh_outbox` | make anything *arrive*: with `mesh_peers` empty the receiver still 403s every envelope |
+| 4 | **Payload persistence** | `mesh_deliveries` stores four metadata columns only (`src/federation/delivery.ts:55-62`); the decrypted body is dropped on arrival | make the delivery *useful*: without 1–3 no payload ever arrives to persist |
+| 5 | **DEK transport** (encrypted tier only) | no wire route for `exportChatDekForPeer` / `importChatDek` | affect the `standard` tier: 1–4 federate plain content regardless of this |
+
+Each wire is a genuine gap that blocks the others from mattering, but none is *upstream* of the rest in the sense of a root cause. Any one of them, fixed alone, leaves two healthy instances exchanging nothing.
+
+**Where `upsertPeer` does fit:** it is the *smallest first step*, not the root fix. It flips the receiver from deny-everything to working and it is the cheapest proof that the mesh is real at all — which is why §4 sequences it third. But shipping ticket 1 alone does **not** deliver a federating system: it produces a receiver that trusts its peers and then receives nothing. Wires 2, 3, and 4 are all still required, and DEK transport is still required for the encrypted tier. The §3 "Required" list has nine items for exactly this reason.
 
 ## 3. Two instances locally: today vs required
 
@@ -108,7 +123,7 @@ Ordered by dependency, cheapest-first. The rationale is that each step makes the
 
 1. **Config plumbing** (`federation` in `DOMAINS`, `DATA_DIR` override). Pure config, zero risk, and without it nothing downstream is expressible.
 2. **Cookie isolation.** Must land before the harness, or the harness produces flaky, misattributed logouts that will be blamed on federation.
-3. **Peer bootstrap at boot.** This is the single change that flips the receiver from "denies everything" to "works". Smallest possible proof that the mesh is real.
+3. **Peer bootstrap at boot.** This is the smallest change that flips the receiver from "denies everything" to "works". Smallest possible proof that the mesh is real. It fixes **only wire 1** of §2 — it is not sufficient on its own, and steps 4 and 5 below are not optional extras.
 4. **Sender trigger** (chat → clearance → `fanOutContent`). The missing production caller. Consent lands with it, because the trigger is useless without it.
 5. **Payload persistence in `mesh_deliveries`.** Without it, federation delivers a hash and discards the message — the demo will appear to succeed while being useless.
 6. **DEK rewrap over the wire.** Last of the sender work: it only matters once the plain path already works, and it touches the crypto surface.

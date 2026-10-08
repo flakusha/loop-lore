@@ -39,8 +39,11 @@ The seam already exists. `runPostInsertChatEffects` (`src/routes/messages/post-i
 
 **Dependencies:**
 
-- `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md` — without a way to grant consent this trigger is permanently inert
 - `TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md` — no trusted peers means no duplication targets
+
+**Related Tickets:**
+
+- `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md` — **pairs with this ticket; ship them together.** This trigger is inert without a way to grant consent, and that route is inert without something to gate. Neither is a prerequisite for the other, so neither is recorded as a dependency.
 - `TASK-add-federation-to-the-config-domains-list-so-config-federati.md` — `MESH_PSK` and peer list come from config
 - `BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie.md` — the caller-side contract this must satisfy
 
