@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Routes wired under `/api/v1/rpg/achievements` (`achievementsRoutes` + `achievementsPlayerRoutes` via `rpgRoutes` in `src/routes/rpg/index.ts`, mounted from `src/routes/v1/actors-surface.ts`); epic metadata reconciled 2026-10-02. **6/10 acceptance criteria remain unchecked** (unlock condition engine, notification, trophy case, secret reveal, social sharing, admin panel)
+**Status Note:** Routes wired under `/api/v1/rpg/achievements` (`achievementsRoutes` + `achievementsPlayerRoutes` via `rpgRoutes` in `src/routes/rpg/index.ts`, mounted from `src/routes/v1/actors-surface.ts`); epic metadata reconciled 2026-10-02. Most tasks and acceptance criteria remain unchecked — unlock condition engine, notification, trophy case, secret reveal, social sharing, admin panel
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic

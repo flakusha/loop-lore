@@ -7,6 +7,8 @@
 
 
 **Status:** In Progress
+
+**Status Note:** Item routes ship (`src/routes/story-items/` definitions/handlers/instances, `src/routes/actor-items.ts`) with crafting and loot subsystems under `src/rpg/`; no consolidated item-type system and all acceptance criteria are unchecked. Remaining work is tracked in `epic-item-systems-unification.md`.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic

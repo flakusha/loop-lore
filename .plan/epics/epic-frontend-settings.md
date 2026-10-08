@@ -10,7 +10,7 @@
 
 
 **Status:** Done
-**Status Note:** settings.html has 7 tabs (general, chat, api, notifications, data, keys, models)
+**Status Note:** `src/views/settings.html` ships tabs general, chat, api, notifications, data, keys and models, mounted via `settingsRoutes` from `src/routes/v1/base-surface.ts`
 **Priority:** Medium
 
 ## Summary
