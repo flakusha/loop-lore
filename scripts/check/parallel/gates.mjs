@@ -64,6 +64,13 @@ export const checks = {
   "wiring - check": "bun run scripts/check-wiring.ts",
   "fe-be - harmony": "bun run scripts/check-fe-be-harmonization.ts",
 
+  // API reference drift: docs/reference/api.md vs the generated spec.
+  // BLOCKING, not advisory: the gate regenerates the spec itself (~1s) from
+  // tracked sources only, so unlike the .plan/ freshness checks it cannot drift
+  // from a concurrent dev merge — api.md and the route modules both move in the
+  // same commit that would have to touch them.
+  "api - doc drift": "bun run scripts/check/api-doc-drift.mjs",
+
   // Changelog gate (Keep-a-Changelog structure; latest tag must have a section)
   "changelog - gate": "bun run scripts/check-changelog.ts",
 

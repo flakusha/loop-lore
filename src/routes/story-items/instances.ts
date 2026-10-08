@@ -15,6 +15,8 @@ import {
 } from "../../validation/schemas";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, } from "../http-utils";
 import { checkWorldOwnership, handleInstance, handleInstances, handleTransfer, } from "./handlers";
+export const StoryItemInstanceListResponse = ListResponse(StoryItemResponse,);
+export const StoryItemInstanceByItemListResponse = ListResponse(StoryItemResponse,);
 
 /**
  * @param root0
@@ -84,7 +86,7 @@ export function storyItemInstanceRoutes({ database, }: { database: Kysely<DB> },
     }, {
       params: t.Object({ worldId: Id, },),
       response: {
-        200: ListResponse(StoryItemResponse,),
+        200: StoryItemInstanceListResponse,
         401: ErrorResponse,
         404: ErrorResponse,
       },
@@ -102,7 +104,7 @@ export function storyItemInstanceRoutes({ database, }: { database: Kysely<DB> },
     }, {
       params: t.Object({ worldId: Id, itemId: Id, },),
       response: {
-        200: ListResponse(StoryItemResponse,),
+        200: StoryItemInstanceByItemListResponse,
         401: ErrorResponse,
         404: ErrorResponse,
       },
