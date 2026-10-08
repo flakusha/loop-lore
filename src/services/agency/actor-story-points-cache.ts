@@ -62,7 +62,7 @@ export async function refreshActorStoryPointsCache(
       // intentional side effect: surface the cached value in dev logs
       // when the operator opts in.
 
-      console.debug("story_points_cache.refresh", { actorId, balance: bal.balance, },);
+      log.trace("story_points_cache.refresh", { actorId, balance: bal.balance, },);
     }
   } catch (error) {
     // Best-effort: the canonical store (actor_story_points) is already

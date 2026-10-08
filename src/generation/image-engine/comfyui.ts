@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { ImageProviderConfig, } from "../../config/schema";
+import { getLogger, type Logger, } from "../../logger";
 import { validateProviderUrl, } from "../../utils/url-validation";
 import { discoverLoras, } from "../lora/discovery";
 import { injectComfyUILora, } from "../lora/discovery-comfyui";
@@ -11,6 +12,18 @@ import type { ComfyUIWorkflow, } from "../providers/comfyui";
 import { loadComfyUIWorkflow, } from "../workflow-loader";
 import { failure, ok, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
+
+/**
+ * Lazily resolve the module logger (null before logger init).
+ * @returns the child logger, or null when no root logger exists yet
+ */
+function log(): Logger | null {
+  try {
+    return getLogger().child({ module: "image-engine/comfyui", },);
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Generate images via a ComfyUI workflow (loaded + substituted from disk).
@@ -55,8 +68,9 @@ export async function generateComfyUI(
         opts.lora.strength,
       ) as ComfyUIWorkflow;
     } else {
-      console.warn(
-        `[comfyui] LoRA "${opts.lora.name}" not found on backend "${sdConfig.baseUrl}", skipping injection`,
+      log()?.warn(
+        "LoRA not found on backend, skipping injection",
+        { loraName: opts.lora.name, backendUrl: sdConfig.baseUrl, },
       );
     }
   }

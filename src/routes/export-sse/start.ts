@@ -4,11 +4,24 @@
 import { Elysia, } from "elysia";
 import crypto from "node:crypto";
 import { loadConfig, } from "../../config/load";
+import { getLogger, type Logger, } from "../../logger";
 import { resolveUserIdFromRequest, } from "../../middleware/auth";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { HttpStatus, jsonError, } from "../http-utils";
 import { jobs, processExport, sseData, } from "./jobs";
 import type { ExportJob, HandlerOpts, } from "./types";
+
+/**
+ * Lazily resolve the module logger (null before logger init).
+ * @returns the child logger, or null when no root logger exists yet
+ */
+function log(): Logger | null {
+  try {
+    return getLogger().child({ module: "export-sse", },);
+  } catch {
+    return null;
+  }
+}
 
 /**
  * @param root0
@@ -51,7 +64,11 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
         try {
           await processExport(jobId, ctx.request, database, userId,);
         } catch (error) {
-          console.error(`Export job ${jobId} failed:`, error,);
+          log()?.error(
+            "Export job failed",
+            error instanceof Error ? error : new Error(String(error,),),
+            { jobId, userId, },
+          );
         }
       })();
 

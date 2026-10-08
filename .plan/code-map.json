@@ -1647,6 +1647,10 @@
       "source": ".plan/epics/epic-guest-access.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
     },
@@ -10488,10 +10492,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
     },
     {
@@ -11031,6 +11031,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
+    }
+  ],
+  "src/config/sections/logging.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
     }
   ],
   "src/config/sections/menu-data.ts": [
@@ -18855,10 +18861,6 @@
   ],
   "src/frontend/alpine/logger.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md"
     },
@@ -19163,12 +19165,6 @@
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
-  "src/frontend/alpine/queue.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    }
-  ],
   "src/frontend/alpine/rag-dashboard.ts": [
     {
       "kind": "epic",
@@ -19431,12 +19427,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-inventory-frontend.md"
-    }
-  ],
-  "src/frontend/alpine/transports/console.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
     }
   ],
   "src/frontend/alpine/transports/server.ts": [
@@ -19998,10 +19988,6 @@
     }
   ],
   "src/frontend/character-growth-editor.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia.md"
@@ -26169,6 +26155,10 @@
       "source": ".plan/epics/epic-logging-telemetry.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md"
     },
@@ -27319,6 +27309,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "ticket",
@@ -30539,10 +30533,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-analytics-observability.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "ticket",
@@ -38987,10 +38977,6 @@
       "source": ".plan/epics/epic-cli-tooling-optique.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
     }
@@ -39003,10 +38989,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-harness-integration.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "ticket",
@@ -39029,28 +39011,14 @@
   ],
   "src/scripts/migrate-character-legacy.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-migration-tooling-for-legacy-to-rich-character-data.md"
-    }
-  ],
-  "src/scripts/smoke-app.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
     }
   ],
   "src/scripts/version-bump.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-cli-tooling-optique.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "ticket",

@@ -8,7 +8,7 @@
 
 
 **Status:** In Progress
-**Status Note:** the logging platform itself is built and shipped — `src/logger/` is complete, the six-level set is live end-to-end, `/api/telemetry` exists, and `log_entries` is indexed and queryable. What this epic still owns is narrower: (1) `getLogger` is not yet the only entry point — `console.*` survives in 21 non-test files under `src/` (58 call sites) with no `no-console` lint rule enabled; (2) the ad-hoc log query surface was specced against a JSONL file whose presence is deployment-dependent, and must be reframed against the real `log_entries` table; (3) the OTLP sink is specced but has zero code. Trace/fatal and canonical-JSONL are NOT this epic's scope — `epic-logging-telemetry.md` owns them and its status note records all four of its tickets as merged (2026-08-07).
+**Status Note:** the logging platform itself is built and shipped — `src/logger/` is complete, the six-level set is live end-to-end, `/api/telemetry` exists, and `log_entries` is indexed and queryable. The `no-console` rule is now enforced (`error`) for server-side `src/**`, and the eight server-side call sites are migrated onto `getLogger()` — leaving only a time-boxed `src/scripts/**` exemption and one justified boot-time fallback. What this epic still owns: (1) migrating `src/scripts/**` so the exemption can be deleted; (2) the ad-hoc log query surface, specced against a `/var/log/loop-lore/` directory that does not exist in this repo and needing reframing against the real `log_entries` table; (3) the OTLP sink, specced but with zero code; (4) the spec/code level drift. Trace/fatal and canonical-JSONL are NOT this epic's scope — `epic-logging-telemetry.md` owns them and records all four of its tickets as merged (2026-08-07).
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Infrastructure
@@ -42,34 +42,26 @@ levels; it cannot stay split.
 
 ## Remaining Scope
 
-### 1. `console.*` → `getLogger` (unstarted)
+### 1. `console.*` → `getLogger` (rule landed; `src/scripts/**` still exempted)
 
-ESLint has **no `no-console` rule enabled repo-wide**. The rule is explicitly turned *off* for
-`src/frontend/**` (`eslint.config.mjs:301`) and never turned *on* anywhere, so nothing enforces
-the "only entry point" rule today.
+`no-console` is now `error` for server-side `src/**`, with explicit exemptions for
+`src/scripts/**` (standalone CLI entry points whose stdout IS the product — gate scripts whose
+output the parallel check runner parses), `src/frontend/**` (browser code, and the frontend
+logger transports whose `console.*` IS the sink rather than a violation), and test files
+(they print runner diagnostics on purpose).
 
-Console call sites that must be migrated, worst offenders first. Census excludes `*.test.*`
-files, comments, and doc-comment examples:
+The eight server-side production call sites are migrated onto `getLogger()` via a lazy,
+null-returning accessor — matching the precedent in `src/assets/signed-url.ts`, since a
+throwing accessor would break test imports of these modules. `console.debug` mapped to
+`log.trace`, and console's variadic arguments became one named meta object.
 
-| File                                              | `console.*` calls |
-| ------------------------------------------------- | ----------------- |
-| `src/scripts/migrate-character-legacy.ts`         | 9                 |
-| `src/scripts/commit-check.ts`                     | 8                 |
-| `src/scripts/version-bump.ts`                     | 7                 |
-| `src/frontend/alpine/logger.ts`                   | 5                 |
-| `src/scripts/backfill-users-encryption-secret.ts` | 4                 |
-| `src/scripts/smoke-app.ts`                        | 4                 |
-| `src/frontend/character-growth-editor.ts`         | 4                 |
-| `src/frontend/alpine/transports/console.ts`       | 4                 |
-| 13 further non-test files                         | 1 each            |
+One exception is deliberate and carries an inline justification: `src/middleware/permissions.ts`
+keeps a `console.warn` inside the `catch` that fires precisely when `getLogger()` threw, so no
+logger exists to route through.
 
-Plan: enable `no-console` repo-wide with an explicit allowlist for `src/scripts/**` and
-`src/frontend/**` (both legitimately write human-facing CLI output with no request context to
-bind), then migrate the script call sites onto `getLogger` where a module name is meaningful.
-
-Note `src/frontend/alpine/logger.ts`, `src/frontend/alpine/transports/console.ts`, and
-`src/frontend/alpine/queue.ts` are the frontend logger itself — their `console.*` uses are the
-sink, not a violation, and belong in the allowlist rather than in the migration.
+**Still open:** the `src/scripts/**` exemption is a time-boxed carve-out, not a permanent
+answer. Once each script has a module-scoped `getLogger()` with a meaningful module name,
+delete the exemption block and migrate the scripts.
 
 ### 2. Ad-hoc log query surface — reframe, do not re-spec
 
@@ -126,14 +118,14 @@ Already met (kept as regression guards, not pending work):
 
 Genuinely unshipped:
 
-- [ ] `no-console` is enabled in `eslint.config.mjs` with an explicit allowlist for
-      `src/scripts/**` and `src/frontend/**`, and running the linter flags every remaining
-      `console.*` under `src/`.
-- [ ] No `console.*` calls remain in non-test `src/` files outside the declared allowlist.
-- [ ] The top offenders (`migrate-character-legacy.ts`, `commit-check.ts`, `version-bump.ts`,
-      `alpine/logger.ts`, `backfill-users-encryption-secret.ts`, `smoke-app.ts`,
-      `character-growth-editor.ts`, `alpine/transports/console.ts`) are either migrated to
-      `getLogger`, allowlisted as sink code, or carry an inline justification comment.
+- [x] `no-console` is `error` for server-side `src/**` in `eslint.config.mjs`, with explicit
+      exemptions for `src/scripts/**`, `src/frontend/**`, and test files.
+- [x] No `console.*` calls remain in server-side non-test `src/` files outside the one
+      justified `src/middleware/permissions.ts` boot-time fallback.
+- [x] The eight migrated call sites resolve the logger lazily, so importing a module before
+      `createLogger()` cannot throw — matching the `src/assets/signed-url.ts` precedent.
+- [ ] `src/scripts/**` no longer needs its exemption — each script has a module-scoped
+      `getLogger()` with a meaningful module name, and the exemption block is deleted.
 - [ ] An ad-hoc log query command exists and reads the indexed `log_entries` table, not a
       log-file directory — filters cover at least entity, event, user, level, and time range.
 - [ ] `docs/spec/logging.md` and the six-level reality agree — the level table documents

@@ -203,6 +203,21 @@ export default [
       "@typescript-eslint/prefer-regexp-exec": "off",
       "@typescript-eslint/no-unnecessary-template-expression": "off",
       "no-restricted-globals": "off",
+      // Structured logging is the only log entry point (epic-logging). A server-side
+      // `console.*` bypasses the async queue, the censors and the transports, so the
+      // line never reaches `log_entries` or the JSONL file. Scripts and the frontend
+      // carry an explicit exemption below — both write human-facing output with no
+      // request context to bind a child logger to.
+      "no-console": "error",
+    },
+  },
+  // `src/scripts/**` are standalone CLI entry points whose stdout IS the product —
+  // gate scripts whose output the parallel check runner parses. Delete this block
+  // once each one has a module-scoped `getLogger()` with a meaningful module name.
+  {
+    files: ["src/scripts/**/*.ts"],
+    rules: {
+      "no-console": "off",
     },
   },
   // JSDoc — kept at `warn` (best-effort). Lifted to `error` only when coverage is high
@@ -305,6 +320,9 @@ export default [
   {
     files: ["src/**/*.test.ts", "src/**/*.integration.test.ts"],
     rules: {
+      // Tests print diagnostic output to the runner's stdout on purpose; there is
+      // no server process and no structured-log contract to route it through.
+      "no-console": "off",
       "no-restricted-syntax": "off",
       "no-empty": "off",
       "@typescript-eslint/no-empty-function": "off",
