@@ -69,6 +69,13 @@ export { type ItemDefinition, type ItemInstance, ItemsService, type TransferResu
 
 export { createQuestEngine, QuestEngine, type QuestProgressEntry, } from "./quest-engine";
 
+export {
+  createPlotAutopilot,
+  type PlotAutopilotOptions,
+  type PlotAutopilotService,
+  type PlotBeat,
+} from "./plot-autopilot";
+
 export { SyntheticGenerator, type SyntheticGeneratorOptions, } from "./synthetic/generator";
 export {
   type SyntheticTestCaseResult,
@@ -79,3 +86,9 @@ export {
   type SyntheticTestStatus,
 } from "./synthetic/runner";
 export type { SyntheticCase, SyntheticSource, } from "./synthetic/types";
+export {
+  createWhatIfSimulator,
+  type WhatIfBeat,
+  type WhatIfSimulatorOptions,
+  type WhatIfSimulatorService,
+} from "./whatif-simulator";
