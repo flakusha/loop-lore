@@ -9,6 +9,7 @@ import { fractalTravelRoutes, } from "./fractal-travel-routes";
 import { locationRoutes, } from "./locations-routes";
 import { timelinesRoutes, } from "./timelines";
 import type { HandleOpts, } from "./types";
+import { worldStreamRoutes, } from "./world-stream";
 import { worldRoutes, } from "./worlds-routes";
 /**
  * @param opts
@@ -23,5 +24,6 @@ export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
     .use(timelinesRoutes(opts, prefix,),)
     .use(autonomyRoutes(opts, prefix,),)
     .use(fractalLocationsRoutes(opts, prefix,),)
-    .use(fractalTravelRoutes(opts, prefix,),);
+    .use(fractalTravelRoutes(opts, prefix,),)
+    .use(worldStreamRoutes(opts, prefix,),);
 }
