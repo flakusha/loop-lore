@@ -3,16 +3,16 @@
 
 # EPIC: Enemies & Monsters Systems
 
-**Effort:** Medium
-**Type:** epic
-**Tags:** (none)
+**Tags:** bestiary, ecology, world, rpg, monsters, flora, fauna, repopulation
 **Overview:** (see sections below)
 
 
 **Status:** Not Started
-**Status Note:** Not Started
+**Status Note:** the RPG/battle/loot substrate this epic builds on is implemented (combat primitives, battle orchestration, NPC state, NPC AI, loot); this epic's own deliverable — the bestiary catalog, ecology model, and repopulation engine — has no code behind it yet, and every bound ticket is still Not Started. The encounter→battle gap recorded in `docs/spec/enemies-monsters.md` blocks the bestiary→encounter-integration work: species combat stats can only reach a battle once an encounter can actually start one.
 **Priority:** Low
 **Epic ID:** EPIC-2026-37
+**Effort:** Medium
+**Type:** epic
 
 ## Summary
 
@@ -25,6 +25,30 @@ drive counts over the world timeline.
 
 This epic expands the previously-stubbed `epic-enemies-monsters.md` into
 the full bestiary + ecology + repopulation system.
+
+## Implementation Status
+
+**Nothing in this epic is built.** There is no `src/bestiary/`, no
+`bestiary_entries` table, and no `location_population` table in
+`src/db/schema*.ts` or `src/db/migrations/001_init.ts`. All eight bound
+`TASK-bestiary-*` tickets are `Not Started`.
+
+The prerequisite substrate does exist and is what this epic plugs into:
+
+| Substrate | Path |
+| --------- | ---- |
+| Combat primitives (actions, attacks, conditions, damage, initiative, saves) | `src/rpg/combat/` |
+| Battle orchestration + persistence | `src/rpg/service/battles/` |
+| NPC state (`npc_states`) | `src/db/schema-story.ts`, `src/story/world-state/` |
+| NPC AI (movement/pathfinding; battle decisions) | `src/rpg/npc-navigation/service/`, `src/battle/npc-integration/` |
+| Loot (generation, tables, templates, weights) | `src/rpg/loot/` |
+
+Encounters also exist (`src/rpg/encounters/` — `index.ts` plus `service/` with
+crud, defaults, participant-legs, phases, reputation-leg, row, types, venue),
+but **`EncounterService` is not wired to the battle engine**: no route or state
+machine connects them. That gap is a blocking dependency for the
+bestiary→encounter-integration task below, because a species' combat stats only
+matter if an encounter can actually start a battle.
 
 ## Scope
 
@@ -46,7 +70,7 @@ the full bestiary + ecology + repopulation system.
 | ------ | ---------------- | --------------------- |
 | World & Locations | Location grid + travel rules | Per-location population tables |
 | World NPCs | NPC placement engine | Predators/herders register as world NPCs |
-| World Encounters | Encounter tables | Bestiary entries are encounter-table sources |
+| World Encounters | Encounter tables | Bestiary entries are encounter-table sources — **blocked** until encounter→battle is wired |
 | Timeline System | World tick | Per-tick population + ecology update |
 | Time Scale | Compressed real-time → game-time | Repopulation cadence realigned to game-time |
 | Items & Economy | Loot tables + currency | Bestiary loot rolls reuse economy tables |
@@ -57,37 +81,32 @@ the full bestiary + ecology + repopulation system.
 
 ## Tasks
 
-- [ ] Bestiary catalog schema
-- [ ] Bestiary CRUD endpoints (admin/GM only)
-- [ ] Bestiary UI (compendium + per-location population)
-- [ ] Population tables per location per species
-- [ ] Time-based repopulation engine
-- [ ] Admin/GM force spawn and force cull endpoints
-- [ ] Ecology pressure model
-- [ ] Per-species quest bindings
-- [ ] Bestiary → encounter table integration
-- [ ] Bestiary → loot table integration
-- [ ] Bestiary → XP award integration
-- [ ] Bestiary state snapshots
-- [ ] Migration for bestiary + population tables
-- [ ] Species generation workflow (LLM, gated, review/approved) — `TASK-assistant-creative-studio-workflow-species.md`
-- [ ] Bestiary catalog schema — `TASK-bestiary-catalog-schema-and-migration`
-- [ ] Bestiary CRUD endpoints (admin/GM only) — `TASK-bestiary-crud-routes-admin-gm`
-- [ ] Bestiary UI (compendium + per-location population) — `TASK-bestiary-ui-compendium-and-per-location-population`
-- [ ] Population tables per location per species — `TASK-bestiary-catalog-schema-and-migration`
-- [ ] Time-based repopulation engine — `TASK-bestiary-time-based-repopulation-engine`
-- [ ] Admin/GM force spawn and force cull endpoints — `TASK-bestiary-admin-gm-force-spawn-and-cull`
-- [ ] Ecology pressure model — `TASK-bestiary-ecology-pressure-model`
-- [ ] Per-species quest bindings — `TASK-bestiary-quest-bindings-integration`
-- [ ] Bestiary → encounter table integration (in `epic-world-encounters.md`)
-- [ ] Bestiary → loot table integration — `TASK-bestiary-loot-and-xp-integration`
-- [ ] Bestiary → XP award integration — `TASK-bestiary-loot-and-xp-integration`
-- [ ] Bestiary state snapshots (covered by schema + repopulation engine)
-- [ ] Migration for bestiary + population tables — `TASK-bestiary-catalog-schema-and-migration`
+- [ ] Bestiary catalog schema — species table + per-location population table and the
+      migration that creates both — [TASK-bestiary-catalog-schema-and-migration.md](../tickets/TASK-bestiary-catalog-schema-and-migration.md)
+- [ ] Bestiary CRUD endpoints (admin/GM only) — [TASK-bestiary-crud-routes-admin-gm.md](../tickets/TASK-bestiary-crud-routes-admin-gm.md)
+- [ ] Bestiary UI (compendium + per-location population) — [TASK-bestiary-ui-compendium-and-per-location-population.md](../tickets/TASK-bestiary-ui-compendium-and-per-location-population.md)
+- [ ] Time-based repopulation engine — [TASK-bestiary-time-based-repopulation-engine.md](../tickets/TASK-bestiary-time-based-repopulation-engine.md)
+- [ ] Admin/GM force spawn and force cull endpoints — [TASK-bestiary-admin-gm-force-spawn-and-cull.md](../tickets/TASK-bestiary-admin-gm-force-spawn-and-cull.md)
+- [ ] Ecology pressure model — [TASK-bestiary-ecology-pressure-model.md](../tickets/TASK-bestiary-ecology-pressure-model.md)
+- [ ] Per-species quest bindings — [TASK-bestiary-quest-bindings-integration.md](../tickets/TASK-bestiary-quest-bindings-integration.md)
+- [ ] Bestiary → loot table and XP award integration (both share one ticket) — [TASK-bestiary-loot-and-xp-integration.md](../tickets/TASK-bestiary-loot-and-xp-integration.md)
+- [ ] Species generation workflow (LLM, gated, review/approved) — [TASK-assistant-creative-studio-workflow-species.md](../tickets/TASK-assistant-creative-studio-workflow-species.md)
+- [ ] Bestiary → encounter table integration — **no ticket yet; blocked** on the
+      encounter→battle wiring gap. Owned by `epic-world-encounters.md`.
+
+The migration for the catalog and population tables, the per-location/per-species
+population rows, and bestiary state snapshots (health, alive/dead, generation
+count, time-of-death) are folded into the schema, repopulation, and ecology
+tickets above rather than tracked as separate rows.
 
 ## Design
 
 ### Bestiary Entry
+
+Persisted as `bestiary_entries`, with `behaviour`, `stats`, `quest_ids`, `habitat`,
+and `generation` stored as JSON columns (`behaviour_json`, `stats_json`,
+`quest_ids_json`, `habitat_json`, `generation_json`) and FK
+`world_id -> worlds.id`. `category` is validated as `flora|fauna|monster`.
 
 ```typescript
 interface BestiaryEntry {
@@ -130,10 +149,14 @@ interface RepopulationRule {
 
 ### Population State Per Location
 
+Persisted as `location_population` with `PRIMARY KEY(location_id, species_id)`
+and FK `species_id -> bestiary_entries.id`, so a species appears at most once per
+location and removing a species takes its population rows with it.
+
 ```typescript
 interface LocationPopulation {
   locationId: string;
-  speciesId: string;
+  speciesId: string; // FK -> BestiaryEntry.id; half of the composite primary key
   count: number;
   lastDeathTick: number;
   lastSpawnTick: number;
@@ -173,14 +196,29 @@ Bestiary entries are not only admin-authored rows — species are a first-class
 - Predator-prey simulation: continual or world-tick only?
 - Ecology imbalance triggering NPC faction events?
 
+## Related Epics
+
+- [`epic-world-encounters.md`](epic-world-encounters.md) — owns encounter tables and the
+  blocked bestiary→encounter integration.
+- [`epic-battle-action-systems.md`](epic-battle-action-systems.md) — combat resolution
+  that consumes species stats, and the encounter→battle wiring gap.
+- [`epic-rpg-core-wiring.md`](epic-rpg-core-wiring.md) — the RPG substrate (stats, dice,
+  XP) that species entries plug into.
+- [`epic-entity-generation-workflows.md`](epic-entity-generation-workflows.md) — parent of
+  the species generation workflow.
+- [`epic-assistant-creative-studio-workflows.md`](epic-assistant-creative-studio-workflows.md)
+  — owns the assistant-side workflow generation and review surface for species.
+- [`epic-items-economy-crafting.md`](epic-items-economy-crafting.md) — loot tables and
+  currency that bestiary loot rolls reuse.
+
 ## Bind Tickets
 
-- TASK-bestiary-catalog-schema-and-migration
-- TASK-bestiary-crud-routes-admin-gm
-- TASK-bestiary-ui-compendium-and-per-location-population
-- TASK-bestiary-time-based-repopulation-engine
-- TASK-bestiary-admin-gm-force-spawn-and-cull
-- TASK-bestiary-ecology-pressure-model
-- TASK-bestiary-quest-bindings-integration
-- TASK-bestiary-loot-and-xp-integration
-- TASK-assistant-creative-studio-workflow-species
+- [TASK-bestiary-catalog-schema-and-migration.md](../tickets/TASK-bestiary-catalog-schema-and-migration.md)
+- [TASK-bestiary-crud-routes-admin-gm.md](../tickets/TASK-bestiary-crud-routes-admin-gm.md)
+- [TASK-bestiary-ui-compendium-and-per-location-population.md](../tickets/TASK-bestiary-ui-compendium-and-per-location-population.md)
+- [TASK-bestiary-time-based-repopulation-engine.md](../tickets/TASK-bestiary-time-based-repopulation-engine.md)
+- [TASK-bestiary-admin-gm-force-spawn-and-cull.md](../tickets/TASK-bestiary-admin-gm-force-spawn-and-cull.md)
+- [TASK-bestiary-ecology-pressure-model.md](../tickets/TASK-bestiary-ecology-pressure-model.md)
+- [TASK-bestiary-quest-bindings-integration.md](../tickets/TASK-bestiary-quest-bindings-integration.md)
+- [TASK-bestiary-loot-and-xp-integration.md](../tickets/TASK-bestiary-loot-and-xp-integration.md)
+- [TASK-assistant-creative-studio-workflow-species.md](../tickets/TASK-assistant-creative-studio-workflow-species.md)
