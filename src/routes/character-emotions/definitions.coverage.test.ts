@@ -15,7 +15,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { uid, } from "../../utils";
+import { insertEmotions, } from "../../test-utils/insert-helpers";
 import { definitionRoutes, } from "./definitions";
 
 createLogger({ level: "error", },);
@@ -36,21 +36,7 @@ function app(userId: string | null, userRole: string | null,): Elysia {
  * @param name
  */
 async function seedEmotion(name: string,): Promise<string> {
-  const id = uid();
-  await db
-    .insertInto("emotions",)
-    .values({
-      id,
-      name,
-      display_name: name,
-      category: "neutral",
-      valence: 0,
-      arousal: 0,
-      created_at: new Date().toISOString(),
-    },)
-    .execute();
-
-  return id;
+  return insertEmotions(db, name, name, "neutral", 0, 0, new Date().toISOString(),);
 }
 
 beforeAll(async () => {
