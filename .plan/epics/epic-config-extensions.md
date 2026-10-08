@@ -3,12 +3,12 @@
 
 # Epic: Configuration Extensions — Extensible Enumerations
 
-**Tags:** (none)
+**Tags:** config, extensibility, enumeration, avatar-emotions
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** description pending (formerly planned in `chore-docs-reconcile`, worktree merged 2026-08-14)
+**Status:** In Progress
+**Status Note:** Phase 1 (ECE primitive) not started — no `src/config/ece/` module exists. Phase 2 (avatar emotions flagship) ~60% shipped: emotion tables (`src/db/schema-emotions.ts`), service (`src/characters/emotion-service.ts`), routes (`src/routes/emotions.ts`), prompt section (`src/assistant/prompt/sections/emotion-avatar.ts`), per-message binding all exist in `src/`.
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic / Cross-cutting Framework
@@ -40,6 +40,15 @@ precompiled emotion list so any emotion (built-in or custom) can be targeted rel
 | ECE primitive         | —                                                                    | ❌    | No "built-in set + extensions + precompile" primitive anywhere (semantic sweep: 0). |
 | Emotion config/doc    | —                                                                    | ❌    | No emotion concept in `docs/spec/*`.                                                |
 | Message detail levels | `docs/spec/messages.md`                                              | 🟡    | Detail levels exist as a concept but are not modeled as an extensible enum.         |
+
+## Spec Alignment
+
+| Spec | Status | Notes |
+| --- | --- | --- |
+| `docs/spec/config-extensions.md` | ✅ aligned | ECE design matches spec: built-in defaults + extension store + precompile + validation |
+| `docs/spec/emotion-avatar.md` | ✅ aligned | Avatar emotion contract matches per-message intent design |
+| `docs/spec/messages.md` | 🟡 partial | Detail levels concept exists but not modeled as ECE (Phase 3 candidate) |
+| `docs/spec/rpg-mechanics.md` | 🟡 partial | Status effects / skill categories are ECE candidates (Phase 3) |
 
 ---
 
@@ -178,6 +187,8 @@ extensions surface a clear error at precompile time.
 - **Epic Code Quality & Best Practices** — ECE validation should satisfy type-coverage / complexity gates.
 - **Epic World Locations** — another extensible-set candidate (location types/tags).
 
+- **Epic Context Injection Templates** (`epic-context-injection-templates.md`) — `emotionAvatar` prompt section consumes the precompiled emotion list.
+
 ## Scope Boundary
 
 - **IN:** ECE primitive (defaults + extensions + precompile + cache + validation), avatar-emotions
@@ -189,3 +200,5 @@ extensions surface a clear error at precompile time.
 
 - TASK-config-extensions.md
 - TASK-config-gallery-attachment-idempotent.md
+
+- `TASK-ece-primitive-phase-1.md` — **NEW** Phase 1 spike: ECE types + merge/precompile on a toy enum

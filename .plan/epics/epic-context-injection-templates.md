@@ -3,11 +3,13 @@
 
 # Epic: Context Injection Templates
 
-**Status:** Not Started
+**Status:** In Progress
+
+**Status Note:** 3 of 4 filed bugs fixed in `src/`. 1 wontfix (chatFormats — no usages, dead config). 3 new gaps identified during review (output-style/nsfwPolicy PRIORITY, examples label validation, author_note column decision). See Findings table for per-ticket status.
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** context-injection, templates, prompt-sections, examples, author-note
 **Overview:** (see sections below)
 
 
@@ -47,19 +49,19 @@ and not duplicated, disabled, or dead.
 
 ## Findings → Tickets
 
-| Ticket | Severity | Summary |
-| ------ | -------- | ------- |
-| [BUG-author-note-section-duplicates-post-history-instructions](../tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md) | high | authorNote + postHistory both gated on `post_history_instructions`; same text injected twice as `<author_note>` + `<post_history>`; no real author-note field. |
-| [BUG-example-dialogue-mes-example-few-shot-never-injected](../tickets/BUG-example-dialogue-mes-example-few-shot-never-injected-include.md) | high | `examplesSection` needs `includeExamples` (default false); no caller sets it → character `mes_example` never injected. |
-| [BUG-chatformats-template-config-defined-but-unused](../tickets/BUG-chatformats-template-config-defined-but-unused-dead-standard.md) | medium | `LlmTemplateConfig.chatFormats` has 0 usages in `src`; message-format wrapping unimplemented. |
-| [BUG-post-history-instruction-relocated-to-front](../tickets/BUG-post-history-instruction-relocated-to-front-not-after-histor.md) | medium | `reorderPromptMessages` moves all system-role msgs to front; `<post_history>` lands at prompt top, not after history. |
+| Ticket | Severity | Status | Summary |
+| ------ | -------- | ------ | ------- |
+| `BUG-author-note-section-duplicates-post-history-instructions-sam.md` | high | **Done** | authorNote + postHistory both gated on `post_history_instructions`; same text injected twice as `<author_note>` + `<post_history>`; no real author-note field. |
+| `BUG-example-dialogue-mes-example-few-shot-never-injected-include.md` | high | **Done** | `examplesSection` needs `includeExamples` (default false); no caller sets it → character `mes_example` never injected. |
+| `BUG-chatformats-template-config-defined-but-unused-dead-standard.md` | medium | **Wontfix** | `LlmTemplateConfig.chatFormats` has 0 usages in `src`; message-format wrapping unimplemented. |
+| `BUG-post-history-instruction-relocated-to-front-not-after-histor.md` | medium | **Done** | `reorderPromptMessages` moves all system-role msgs to front; `<post_history>` lands at prompt top, not after history. |
+| `TASK-output-style-and-nsfwpolicy-sections-lack-priority-budget-en.md` | medium | **New** | `output-style` + `nsfwPolicy` sections lack PRIORITY entries → immune from budget dropping. |
+| `TASK-validate-unrecognized-examples-section-role-labels-instead-o.md` | low | **New** | `examplesSection` unrecognized label silently maps to `role:"user"` — validate instead. |
 
 ## Open verification (not filed)
 
-- `examplesSection` unrecognized label silently maps to `role:"user"` — validate instead.
-- Confirm whether a distinct `author_note` DB column should be added (vs reusing post-history).
 - Confirm `examples` placement (right before chatHistory, after system-front reorder) is the intended few-shot position.
 
 ## Status
 
-Tickets filed. Implementation pending. No code changes made during review.
+Tickets filed. 3 of 4 bugs fixed in `src/`. 1 wontfix (chatFormats — dead config, no usages). 3 new gaps identified during review (output-style/nsfwPolicy PRIORITY entries, examples label validation, author_note column decision). Implementation ongoing.

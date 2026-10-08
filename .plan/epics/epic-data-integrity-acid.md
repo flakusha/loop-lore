@@ -6,12 +6,12 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** acid, optimistic-concurrency, format-version, backend-selection, wal
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\
+**Status:** In Progress
+**Status Note:** Phase 1 (backend selection + config guards) shipped. Phase 2 (`format_version` optimistic concurrency) partial — actors only; `messages`/`chat_participants`/`actor_memories`/`world_states` not enforced. Phase 3 (ACID matrix doc) not started.
 **Proposed Epic Branch:** `epic/27`\
 **Owner:** TBD\
 **Depends on:** Epic 26 (Multi-Instance Reconciliation) — hard prerequisite. Epic 27 and Epic 25 are independently sequenced after Epic 26 (suggested order: 26 → 27 → 25); neither lists the other as a dependency. Epic 25 consumes this epic's backend guards but is not a prerequisite.
@@ -28,6 +28,14 @@
 | Data transforms   | `data_migrations` table                                                             | ✅    | Tracks `from_version → to_version` rewrites.                            |
 | Config validation | `src/config/load.ts`                                                                | ✅    | No guard against SQLite + multi-instance.                               |
 | ACID doc          | —                                                                                   | ❌    | No authoritative ACID matrix per backend.                               |
+
+## Spec Alignment
+
+| Spec | Status | Notes |
+| --- | --- | --- |
+| `docs/spec/data-integrity-acid.md` | 🟡 partial | Spec describes full Phase 1-3; Phase 1 shipped, Phase 2 partial, Phase 3 absent |
+| `docs/spec/architecture.md` | 🟡 partial | Stale MySQL claim corrected in Phase 1; `format_version` enforcement not yet documented |
+| `docs/spec/deployment.md` | ❌ missing | ACID matrix not authored (Phase 3 task) |
 
 ---
 
@@ -147,6 +155,8 @@ The integrity contract is implicit and partly unenforced:
 - **Epic 25 (Deployment Topologies)** — consumes the backend-selection + ACID guards produced here to gate SQLite-vs-Postgres topologies.
 - **Epic 27 → Epic Testing & QA** — `format_version` optimistic-concurrency (Phase 2) needs the concurrency test work tracked in Epic Testing & QA (integration conflict tests, type/complexity gates).
 
+- **Epic Content Hashing & Distributed Integrity** (`epic-content-hashing-distributed-integrity.md`) — `record_hash` is complementary to `format_version`; both are row-integrity anchors.
+
 ## Scope Boundary
 
 - **IN:** backend-selection guards, `format_version` write-path enforcement, ACID reference doc.
@@ -155,3 +165,6 @@ The integrity contract is implicit and partly unenforced:
 ## Linked Tasks
 
 - TASK-data-integrity-acid.md
+
+- `TASK-author-docs-spec-deployment-md-with-the-sqlite-vs-postgres-a.md` — **NEW**: Phase 3 ACID matrix doc
+- `TASK-enforce-format-version-optimistic-concurrency-on-messages-an.md` — **NEW**: Phase 2 extension to high-contention tables
