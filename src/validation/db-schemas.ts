@@ -404,6 +404,9 @@ export const NsfwLocationTypeSchema = t.UnionEnum([
   "workshop",
 ],);
 export const PinnedStateSchema = t.UnionEnum(["unpinned", "pinned", "archived",],);
+export const PlanItemKindSchema = t.UnionEnum(["story", "task", "context", "step", "creative", "draft",],);
+export const PlanItemStateSchema = t.UnionEnum(["todo", "doing", "done", "blocked",],);
+export const PlanLinkRelationSchema = t.UnionEnum(["blocks", "relates", "derives", "references",],);
 export const PlayerAchievementStatusSchema = t.UnionEnum(["locked", "unlocked", "claimed",],);
 export const PlaythroughStatusSchema = t.UnionEnum(["active", "completed",],);
 export const PluginStatusSchema = t.UnionEnum(["active", "disabled", "error",],);
@@ -3149,7 +3152,6 @@ export const MessageRemindersSchema = t.Object({
   user_id: t.String(),
   remind_at: t.String(),
 },);
-
 // ── branch_merges ────────────────────────────────────────────
 export const BranchMergesSchema = t.Object({
   chat_id: t.String(),
@@ -3171,4 +3173,25 @@ export const BranchMergeSourcesSchema = t.Object({
   ordinal: t.Number(),
   tip_message_id: t.String(),
   branch_id: t.Optional(t.String(),),
+},);
+
+// ── plan_items ────────────────────────────────────────────
+export const PlanItemsSchema = t.Object({
+  owner_id: t.String(),
+  title: t.String(),
+  chat_id: t.Optional(t.String(),),
+  state: t.Optional(t.String(),),
+  kind: t.Optional(t.String(),),
+  position: t.Optional(t.Number(),),
+  parent_id: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── plan_links ────────────────────────────────────────────
+export const PlanLinksSchema = t.Object({
+  from_id: t.String(),
+  to_id: t.String(),
+  relation: t.String(),
+  created_at: t.Optional(t.String(),),
 },);

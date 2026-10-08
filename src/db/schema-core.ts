@@ -1573,7 +1573,6 @@ export interface MessageReminders {
   user_id: string;
   remind_at: string;
 }
-
 // ── branch_merges ────────────────────────────────────────────
 export interface BranchMerges {
   id: Generated<string>;
@@ -1596,4 +1595,26 @@ export interface BranchMergeSources {
   ordinal: number;
   branch_id: string | null;
   tip_message_id: string;
+}
+
+// ── plan_items ────────────────────────────────────────────
+export interface PlanItems {
+  id: Generated<string>;
+  owner_id: string;
+  chat_id: string | null;
+  title: string;
+  state: Generated<string>;
+  kind: Generated<string>;
+  position: Generated<number>;
+  parent_id: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── plan_links ────────────────────────────────────────────
+export interface PlanLinks {
+  from_id: string;
+  to_id: string;
+  relation: string;
+  created_at: Generated<string>;
 }

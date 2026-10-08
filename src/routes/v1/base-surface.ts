@@ -17,6 +17,7 @@ import { keyManagementRoutes, } from "../key-management";
 import { messageEncryptionRoutes, } from "../message-encryption";
 import { deprecationAfterHandle, } from "../middleware/deprecation-headers";
 import { versionResolver, } from "../middleware/version-resolver";
+import { planningRoutes, } from "../planning";
 import { requestStatusRoutes, } from "../requests";
 import { sessionsRoutes, } from "../sessions";
 import { switchSessionRoutes, } from "../sessions-switch";
@@ -62,6 +63,7 @@ export function baseSurface(opts: RegisterPluginsOpts,) {
     .use(switchSessionRoutes(handleOpts, prefix,),)
     .use(apiKeysRoutes(handleOpts, prefix,),)
     .use(settingsRoutes(handleOpts, prefix,),)
+    .use(planningRoutes({ database, }, prefix,),)
     .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
     .use(messageEncryptionRoutes(handleOpts, prefix,),)
     .use(keyManagementRoutes({ database, }, prefix,),);
