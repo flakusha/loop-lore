@@ -473,3 +473,12 @@ The following memory-related tasks have been migrated to Epic 36 as they are cor
 ## Docs-Gap Audit Remainders (2026-09-19)
 
 - [ ] [gap-audit E6] Elysia startup-time plugin route registration (replace O(n) dispatchPluginRoute scan, src/plugins/loader.ts:195)
+
+**Update — approval is origin-scoped, failed loads roll back.** `plugin_state`
+rows are now written per origin: only `core` self-inserts as `active`;
+`community` and `local` land `disabled` and their definitions stay out of
+`getEnabledRoutes()` until an admin enables them (the enable route already flips
+the in-memory flag, so no restart). A `loadSinglePlugin` failure unregisters the
+plugin and every extension point it registered, so a throw in `onLoad` leaves
+the registry as it was. Per-plugin *unload* (the mirror of that rollback) is
+still open — `unloadAllPlugins` remains the only teardown.

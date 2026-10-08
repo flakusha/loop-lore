@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 290
+// Cohesive loader module: scan, single load + rollback, approval state,
+// dispatch, shutdown.
 
 /**
  * Plugin Loader — Scans plugin directories, loads manifests, calls lifecycle hooks
@@ -12,6 +15,7 @@
 import { readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import type { Kysely, Selectable } from "kysely";
+import { PluginStatus } from "../db/enums";
 import type { DB, PluginState } from "../db/schema";
 import type { PluginLogger, PluginManifest, PluginOrigin } from "./types";
 import { registry } from "./registry";
@@ -86,7 +90,7 @@ export async function loadAllPlugins(
   }
 
   for (const row of rawStates) {
-    registry.setEnabled(row.name, row.status === "active");
+    registry.setEnabled(row.name, row.status === PluginStatus.Active,);
   }
 
   for (const { origin, dir } of PLUGIN_DIRS) {
@@ -142,6 +146,9 @@ export async function loadSinglePlugin(
   const pluginFile = join(pluginDir, "plugin.ts");
   if (!existsSync(pluginFile)) { return; }
 
+  // Held outside the try so the catch can roll back a partial registration.
+  let registeredName: string | undefined;
+
   try {
     const mod = (await import(/* @vite-ignore */ pluginFile)) as Record<string, unknown>;
     const manifest = mod.plugin as PluginManifest | undefined;
@@ -150,7 +157,11 @@ export async function loadSinglePlugin(
       return;
     }
 
+    registeredName = manifest.name;
     registry.register({ manifest, origin, directory: pluginDir, });
+    // Approval is origin-scoped: a community/local plugin only runs once
+    // plugin_state says so (see persistPluginState / isPluginActive).
+    registry.setEnabled(manifest.name, await isPluginActive({ db, name: manifest.name, origin, },),);
     registerManifestExtensions(manifest,);
 
     // FEAT-051: merge any admin-stored config over manifest defaults so the
@@ -173,8 +184,14 @@ export async function loadSinglePlugin(
 
     loadOrder.push(manifest.name);
     log.info({ message: `Loaded plugin`, plugin: manifest.name, origin });
-    await persistPluginState(db, manifest.name,);
+    await persistPluginState({ db, name: manifest.name, origin, },);
   } catch (error) {
+    // RegistryStore keys every definition Map by plugin name, so removing the
+    // plugin also drops both the manifest extensions and anything `onLoad`
+    // registered before it threw. `onUnload` is deliberately NOT called: the
+    // plugin never finished loading, so its teardown state is undefined.
+    if (registeredName) { registry.unregister(registeredName); }
+
     log.error({ message: `Failed to load plugin`, plugin: pluginName, error: String(error,), });
   }
 }
@@ -193,21 +210,54 @@ function registerManifestExtensions(manifest: PluginManifest,): void {
   if (manifest.eventHandlers?.length) { registry.addEventHandlers(manifest.name, manifest.eventHandlers,); }
 }
 
+/** Inputs for the plugin_state approval read/write pair. */
+interface PluginApprovalOpts {
+  db: Kysely<DB>;
+  name: string;
+  origin: PluginOrigin;
+}
+
 /**
  * Persist a new plugin to plugin_state if not already tracked (best-effort).
- * @param db
- * @param name
+ * Only `core` self-approves; community/local land disabled until an admin
+ * enables them, so dropping a directory in can never activate a plugin.
+ * @param opts
  */
-async function persistPluginState(db: Kysely<DB>, name: string,): Promise<void> {
+async function persistPluginState({ db, name, origin, }: PluginApprovalOpts): Promise<void> {
+  const selfApproved = origin === "core";
+  const status = selfApproved ? PluginStatus.Active : PluginStatus.Disabled;
   try {
     await db
       .insertInto("plugin_state")
-      .values({ name, status: "active", enabled_at: new Date().toISOString(), })
+      .values({ name, status, enabled_at: selfApproved ? new Date().toISOString() : null, })
       .onConflict((oc) => oc.column("name").doNothing(),)
       .execute();
-  } catch {
-    // Persisting plugin state is best-effort
+  } catch (error) {
+    // Best-effort, but never silent: a caller that assumes the row landed
+    // would otherwise run a plugin whose approval state it never learned.
+    getLogger().error({ message: `Failed to persist plugin state`, plugin: name, error: String(error,), });
   }
+}
+
+/**
+ * Whether a plugin may run. The persisted plugin_state row decides; a name
+ * with no row falls back to origin, so only `core` self-approves on first sight.
+ * @param opts
+ */
+async function isPluginActive({ db, name, origin, }: PluginApprovalOpts): Promise<boolean> {
+  try {
+    const row = await db
+      .selectFrom("plugin_state")
+      .select("status")
+      .where("name", "=", name,)
+      .executeTakeFirst();
+
+    if (row) { return row.status === PluginStatus.Active; }
+  } catch {
+    // plugin_state may not exist on first boot — fall through to the origin default.
+  }
+
+  return origin === "core";
 }
 
 /** Options for {@link dispatchPluginRoute}. */

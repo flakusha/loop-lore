@@ -181,6 +181,16 @@ class PluginRegistry {
 
   // ── Lifecycle ─────────────────────────────────────────────
 
+  /**
+   * Drop a single plugin and every extension it registered, leaving the
+   * other plugins untouched. Used to roll back a failed load.
+   * @param name
+   */
+  unregister(name: string): void {
+    this.plugins.delete(name);
+    this.store.removePlugin(name);
+  }
+
   unregisterAll(): void {
     this.plugins.clear();
     this.store.clear();
