@@ -3,7 +3,7 @@
 
 # TASK: Location CRUD + tree service + connection validation hardening
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** Medium
 **Epic:** `epic-locations`
