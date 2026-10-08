@@ -102,7 +102,9 @@ export function buildAssetPipeline(): {
         ...metaParts,
       ].join(". ",);
 
-      const imagePrompt = `${interpolate(raw, req.meta,)}.`;
+      // Strip a trailing period from the description first so prompts ending
+      // in punctuation do not grow a doubled one.
+      const imagePrompt = `${interpolate(raw, req.meta,).replace(/\.+$/, "",)}.`;
 
       const subtype = AUDIO_SUBTYPE_BY_KIND[req.kind];
       const audioPrompt = subtype === "tts"

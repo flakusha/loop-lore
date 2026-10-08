@@ -4,7 +4,7 @@
 # BUG: Community lorebook share has no export epilogue
 
 **Status:** Not Started
-**Priority:** medium
+**Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-import-export-io
 
