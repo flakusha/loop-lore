@@ -57,6 +57,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   // Output styling (genre/register/tone)
   _outputStylePreset: "" as "" | OutputStylePreset,
   _outputStyleIntensity: 0.5,
+  // Hidden carriage opt-in (epic-hidden-carriage-context)
+  _carriageEnabled: false,
   // Two-tier custom instructions — story tier (TASK-two-tier-custom-instructions)
   _customInstructions: "",
   _chatAutoTranslateLang: "",
@@ -105,6 +107,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._responseLengthCustom = fields.responseLengthCustom;
     this._outputStylePreset = fields.outputStylePreset;
     this._outputStyleIntensity = fields.outputStyleIntensity;
+    this._carriageEnabled = fields.carriageEnabled;
     this._customInstructions = chat?.custom_instructions ?? "";
     const storyState = chat?.story_state ? jsonParseOr<Record<string, unknown>>(chat.story_state, {},) : {};
     const autoLang = storyState.autoTranslateLang;
@@ -173,6 +176,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         responseLengthCustom: this._responseLengthCustom,
         outputStylePreset: this._outputStylePreset,
         outputStyleIntensity: this._outputStyleIntensity,
+        carriageEnabled: this._carriageEnabled,
       }, this._actorModels,);
 
       const body: Record<string, unknown> = {

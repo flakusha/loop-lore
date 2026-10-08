@@ -60,9 +60,10 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   storyContextSection,
   travelSection,
   gmNotesSection,
-  // Hidden carriage TOML block (epic-hidden-carriage-context). Sits with
-  // the steering block near gmNotes; returns [] unless the chat opted in
-  // via story_state.carriageEnabled, so toggle-off stays byte-identical.
+  // Hidden carriage TOML block (epic-hidden-carriage-context). Runs
+  // unconditionally like gmNotes: build() returns [] unless the chat
+  // opted in via gm_config.carriageEnabled, so toggle-off stays
+  // byte-identical.
   carriageSection,
   // Game canvas state emission + snapshot summary (TASK-game-canvas).
   // Sits with the steering block near gmNotes so layout-emission rules
