@@ -63,6 +63,7 @@ import * as validation_assetTags from "@/validation/schemas/asset-tags";
 import * as validation_assets from "@/validation/schemas/assets";
 import * as validation_auth from "@/validation/schemas/auth";
 import * as validation_blog from "@/validation/schemas/blog";
+import * as validation_branchMerges from "@/validation/schemas/branch-merges";
 import * as validation_characterRelations from "@/validation/schemas/character-relations";
 import * as validation_characterSystems from "@/validation/schemas/character-systems";
 import * as validation_chat from "@/validation/schemas/chat";
@@ -638,6 +639,36 @@ describe("BranchListQuery", () => {
   test("accepts generated values", () => checkAllValid(routes_chats_branchShared.BranchListQuery,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_chats_branchShared.BranchListQuery,));
+});
+
+describe("BranchMergeConfirmBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_branchMerges.BranchMergeConfirmBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_branchMerges.BranchMergeConfirmBody,));
+});
+
+describe("BranchMergeContinueBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_branchMerges.BranchMergeContinueBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_branchMerges.BranchMergeContinueBody,));
+});
+
+describe("BranchMergeInitiateBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_branchMerges.BranchMergeInitiateBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_branchMerges.BranchMergeInitiateBody,));
+});
+
+describe("BranchMergeParams", () => {
+  test("accepts generated values", () => checkAllValid(validation_branchMerges.BranchMergeParams,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_branchMerges.BranchMergeParams,));
+});
+
+describe("BranchMergePreviewBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_branchMerges.BranchMergePreviewBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_branchMerges.BranchMergePreviewBody,));
 });
 
 describe("BranchName", () => {
@@ -1424,6 +1455,30 @@ describe("MemoryTypeSchema", () => {
   test("accepts generated values", () => checkAllValid(validation_primitives.MemoryTypeSchema,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_primitives.MemoryTypeSchema,));
+});
+
+describe("MergeConflictChoiceSchema", () => {
+  test("accepts generated values", () => checkAllValid(validation_branchMerges.MergeConflictChoiceSchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_branchMerges.MergeConflictChoiceSchema,));
+});
+
+describe("MergeContentEntrySchema", () => {
+  test("accepts generated values", () => checkAllValid(validation_branchMerges.MergeContentEntrySchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_branchMerges.MergeContentEntrySchema,));
+});
+
+describe("MergeModeSchema", () => {
+  test("accepts generated values", () => checkAllValid(validation_branchMerges.MergeModeSchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_branchMerges.MergeModeSchema,));
+});
+
+describe("MergeSourceTipSchema", () => {
+  test("accepts generated values", () => checkAllValid(validation_branchMerges.MergeSourceTipSchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_branchMerges.MergeSourceTipSchema,));
 });
 
 describe("MessageAiActionBody", () => {
@@ -2491,4 +2546,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 394 schemas discovered across 452 module(s).
+// 403 schemas discovered across 454 module(s).
