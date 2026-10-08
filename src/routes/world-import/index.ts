@@ -9,5 +9,5 @@
 // world owned by the importing user, remapping identifiers so the bundle
 // round-trips.
 
-export { importWorldBundle, } from "./bundle";
+export { ImportCycleError, importWorldBundle, } from "./bundle";
 export { worldImportRoutes, } from "./routes";

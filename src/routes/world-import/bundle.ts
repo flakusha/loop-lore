@@ -20,6 +20,59 @@ import { num, rowOf, rowsOf, str, strOrNull, } from "./rows";
 import type { ImportCounts, } from "./types";
 
 /**
+ * Thrown when a bundle's location parent graph contains a cycle or self-parent.
+ * A cycle would wedge the recursive-CTE path-rewrite trigger (same hazard as the
+ * PUT reparent P0).
+ */
+export class ImportCycleError extends Error {
+  constructor(message: string,) {
+    super(message,);
+    this.name = "ImportCycleError";
+  }
+}
+
+/**
+ * Detect cycles in the location parent graph before applying updates.
+ * A cycle would wedge the recursive-CTE path-rewrite trigger.
+ * @param locationRows
+ * @throws {ImportCycleError} if a cycle or self-parent is detected
+ */
+function assertAcyclicParentGraph(locationRows: ReturnType<typeof rowsOf>,): void {
+  const parentOf = new Map<string, string>();
+  for (const row of locationRows) {
+    const oldId = str(row, "id",);
+    const oldParent = str(row, "parent_location_id",);
+    if (oldId && oldParent) {
+      if (oldId === oldParent) {
+        throw new ImportCycleError(`location ${oldId} cannot be its own parent`,);
+      }
+
+      parentOf.set(oldId, oldParent,);
+    }
+  }
+
+  const visited = new Set<string>();
+  const inStack = new Set<string>();
+
+  function visit(id: string,): void {
+    if (inStack.has(id,)) {
+      throw new ImportCycleError(`location parent graph contains a cycle at ${id}`,);
+    }
+
+    if (visited.has(id,)) { return; }
+    inStack.add(id,);
+    const parent = parentOf.get(id,);
+    if (parent) { visit(parent,); }
+    inStack.delete(id,);
+    visited.add(id,);
+  }
+
+  for (const id of parentOf.keys()) {
+    visit(id,);
+  }
+}
+
+/**
  * Re-insert a {@link WorldBundle} as a new world owned by `userId`.
  * Generates fresh ids for every row and remaps parent/child foreign keys so
  * the bundle round-trips without colliding with existing rows.
@@ -69,6 +122,10 @@ export async function importWorldBundle(
     // order locations appear in the bundle. Insert with a null parent first to
     // avoid FK ordering issues, then backfill parents in a second pass.
     const locationRows = rowsOf(bundle.locations,);
+
+    // Validate the parent graph BEFORE inserting anything — a cycle would wedge
+    // the recursive-CTE path-rewrite trigger (same hazard as the PUT reparent P0).
+    assertAcyclicParentGraph(locationRows,);
     const locationIdMap = new Map<string, string>();
     const locationValues: Insertable<Locations>[] = [];
     for (const row of locationRows) {
