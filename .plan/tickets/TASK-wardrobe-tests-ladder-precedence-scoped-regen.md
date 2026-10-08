@@ -12,7 +12,7 @@
 **Status Note:** completed 2026-10-01
 **Priority:** medium
 **Effort:** Medium
-**Epic:** Wardrobe / Loadout Avatar Variants
+**Epic:** epic-wardrobe-avatar-variants
 
 ## Summary
 

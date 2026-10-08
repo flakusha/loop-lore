@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** Asset Platform Capabilities (Messenger/Social Patterns)
+**Epic:** epic-asset-platform-capabilities
 
 ## Summary
 
