@@ -16,26 +16,21 @@
  *   2  — script/network error (printed to stderr)
  */
 import { computeBuildIdentity, } from "../src/build/identity";
+import { flag, object, option, optional, runScript, string, withDefault, } from "../src/cli/parser";
 
-interface CliArgs {
-  url?: string;
-  admin?: boolean;
-}
+function parseArgs() {
+  const parser = object({
+    url: optional(option("--url", string(),),),
+    admin: withDefault(flag("--admin",), false,),
+  },);
 
-function parseArgs(argv: readonly string[],): CliArgs {
-  const out: CliArgs = {};
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i];
-    if (a === "--url") {
-      const v = argv[i + 1];
-      if (!v) { throw new Error("--url requires a value",); }
-      out.url = v;
-      i++;
-    } else if (a === "--admin") {
-      out.admin = true;
-    }
-  }
-  return out;
+  return runScript(parser, {
+    programName: "build:verify",
+    brief: "Recompute the local build hash and optionally compare it with a remote instance.",
+    examples:
+      "build:verify                          # print local buildHash\n  build:verify --url <origin>           # print local, then fetch + diff remote\n  build:verify --url <origin> --admin   # also fetch /api/admin/build-id",
+    help: "option",
+  },);
 }
 
 async function fetchRemote(origin: string, path: string, adminToken?: string,): Promise<Record<string, unknown>> {
@@ -49,7 +44,7 @@ async function fetchRemote(origin: string, path: string, adminToken?: string,): 
 }
 
 async function main(): Promise<number> {
-  const args = parseArgs(process.argv.slice(2,),);
+  const args = parseArgs();
   const local = await computeBuildIdentity({ force: true, },);
 
   process.stdout.write(`local buildHash:    ${local.buildHash}\n`,);

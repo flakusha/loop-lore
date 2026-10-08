@@ -25,6 +25,7 @@
 import { execSync, } from "node:child_process";
 import { readFileSync, } from "node:fs";
 import { resolve, } from "node:path";
+import { flag, object, runScript, withDefault, } from "../src/cli/parser";
 
 const PROJECT_ROOT = resolve(import.meta.dir, "..",);
 const CHANGELOG_PATH = resolve(PROJECT_ROOT, "CHANGELOG.md",);
@@ -102,7 +103,14 @@ function latestGitTag(): string | null {
 }
 
 function main(): void {
-  const ignoreTag = process.argv.includes("--ignore-tag",);
+  const { ignoreTag, } = runScript(
+    object({ ignoreTag: withDefault(flag("--ignore-tag",), false,), },),
+    {
+      programName: "check-changelog",
+      brief: "Validate CHANGELOG.md structure and latest-tag coverage.",
+      help: "option",
+    },
+  );
   let content: string;
   try {
     content = readFileSync(CHANGELOG_PATH, "utf-8",);

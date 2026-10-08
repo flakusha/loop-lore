@@ -24,12 +24,18 @@
 import { Glob, } from "bun";
 import { existsSync, readFileSync, } from "node:fs";
 import { relative, resolve, } from "node:path";
+import {
+  flag,
+  integer,
+  object,
+  option,
+  optional,
+  runScript,
+  string,
+  withDefault,
+} from "../src/cli/parser";
 
 // ── Args ──────────────────────────────────────────────────────
-
-const args = process.argv.slice(2,);
-const JSON_MODE = args.includes("--json",);
-const STRICT = args.includes("--strict",);
 
 const BUDGET_PRESETS: Record<string, number> = {
   ultra_lean: 8_000,
@@ -37,15 +43,24 @@ const BUDGET_PRESETS: Record<string, number> = {
   balanced: 15_000,
 };
 
-const budgetArg = args.find((a,) => a.startsWith("--budget=",));
-const budgetPreset = budgetArg
-  ? BUDGET_PRESETS[budgetArg.split("=",)[1]]
-  : undefined;
+const args = runScript(
+  object({
+    json: withDefault(flag("--json",), false,),
+    strict: withDefault(flag("--strict",), false,),
+    budget: optional(option("--budget", string(),),),
+    threshold: optional(option("--threshold", integer(),),),
+  },),
+  {
+    programName: "check-context-weight",
+    brief: "Measure agent context files (AGENTS.md, CLAUDE.md, .agents/) token weight.",
+    help: "option",
+  },
+);
+const JSON_MODE = args.json;
+const STRICT = args.strict;
 
-const thresholdArg = args.find((a,) => a.startsWith("--threshold=",));
-const THRESHOLD = thresholdArg
-  ? parseInt(thresholdArg.split("=",)[1], 10,)
-  : budgetPreset ?? 8_000;
+const budgetPreset = args.budget === undefined ? undefined : BUDGET_PRESETS[args.budget];
+const THRESHOLD = args.threshold ?? budgetPreset ?? 8_000;
 
 // ── File discovery ────────────────────────────────────────────
 

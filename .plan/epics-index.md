@@ -61,7 +61,7 @@
 | Not Started | Chat Product Features | High | High | 24 | [epic-chat-product-features.md](/.plan/epics/epic-chat-product-features.md) |
 | Not Started | Chat Rich Engagement (draft for new worktree) | Medium — messenger/AI parity gap | Medium | 0 | [epic-chat-rich-engagement.md](/.plan/epics/epic-chat-rich-engagement.md) |
 | Not Started | Chat Variants Taxonomy | High | Medium | 15 | [epic-chat-variants-taxonomy.md](/.plan/epics/epic-chat-variants-taxonomy.md) |
-| In Progress | Chat/Group Chat Transfer & Location Change Mechanics | P2-B | High | 20 | [epic-chat-transfer-location.md](/.plan/epics/epic-chat-transfer-location.md) |
+| In Progress | Chat/Group Chat Transfer & Location Change Mechanics | P2-B | High | 6 | [epic-chat-transfer-location.md](/.plan/epics/epic-chat-transfer-location.md) |
 | Not Started | CI/CD Pipeline | Low | Medium | 6 | [epic-cicd-pipeline.md](/.plan/epics/epic-cicd-pipeline.md) |
 | Not Started | Client-Side Routing | Medium | Medium | 0 | [epic-frontend-routing.md](/.plan/epics/epic-frontend-routing.md) |
 | In Progress | Code Quality & Best Practices (Permanently Ongoing) | High | Continuous | 0 | [epic-code-quality.md](/.plan/epics/epic-code-quality.md) |
@@ -210,9 +210,9 @@
 | Not Started | Housing & Base Building | Medium | Very High | 0 | [epic-housing-base-building.md](/.plan/epics/epic-housing-base-building.md) |
 | Done | Housing System | Medium | Very High | 6 | [epic-housing.md](/.plan/epics/epic-housing.md) |
 | Not Started | I/O Formats | Medium | Medium | 5 | [epic-io-formats.md](/.plan/epics/epic-io-formats.md) |
-| Not Started | Immersion & Presentation | Medium | Medium | 0 | [epic-immersion-presentation.md](/.plan/epics/epic-immersion-presentation.md) |
+| In Progress | Immersion & Presentation | Medium | Medium | 0 | [epic-immersion-presentation.md](/.plan/epics/epic-immersion-presentation.md) |
 | Not Started | Immersion Consistency Gate (Actor-State Blockage & Refusal) | High | Large | 10 | [epic-immersion-consistency-gate.md](/.plan/epics/epic-immersion-consistency-gate.md) |
-| In Progress | Impersonation System | Medium | Med | 3 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
+| In Progress | Impersonation System | Medium | Med | 2 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
 | Not Started | Implementation Guide | Medium | Medium | 0 | [epic-implementation.md](/.plan/epics/epic-implementation.md) |
 | Not Started | Instant Messaging Integrations | Medium | Medium | 9 | [epic-im-integrations.md](/.plan/epics/epic-im-integrations.md) |
 | In Progress | Integrations Core | Medium | Medium | 7 | [epic-integrations-core.md](/.plan/epics/epic-integrations-core.md) |
@@ -314,7 +314,7 @@
 | In Progress | Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport) | Medium | Medium (remaining gaps only) | 4 | [epic-transport-expansion.md](/.plan/epics/epic-transport-expansion.md) |
 | Not Started | Two-Factor / Multi-Factor Authentication | Medium | Medium | 9 | [epic-two-factor-auth.md](/.plan/epics/epic-two-factor-auth.md) |
 | Not Started | Two-Pass Message Delivery (Draft → Finalization) | Medium | Large | 11 | [epic-two-pass-delivery.md](/.plan/epics/epic-two-pass-delivery.md) |
-| In Progress | Type-safe CLI Tooling via Optique | Medium | Medium | 3 | [epic-cli-tooling-optique.md](/.plan/epics/epic-cli-tooling-optique.md) |
+| In Progress | Type-safe CLI Tooling via Optique | Medium | Medium | 1 | [epic-cli-tooling-optique.md](/.plan/epics/epic-cli-tooling-optique.md) |
 | In Progress | UI Components Library | Medium | Medium | 0 | [epic-frontend-components.md](/.plan/epics/epic-frontend-components.md) |
 | Done | Unified Spec Framework for `.plan/` | High | Large (spread across 4 phases) | 17 | [epic-unified-spec-framework.md](/.plan/epics/epic-unified-spec-framework.md) |
 | Not Started | Use Case: Agentic Workspace | Medium | Medium | 0 | [epic-use-case-agentic-workspace.md](/.plan/epics/epic-use-case-agentic-workspace.md) |
@@ -584,7 +584,7 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** authoring, creation, procedural-assets, plot-autopilot, what-if, community-share, builder-tools
 - **File:** `.plan/epics/epic-authoring-creation.md`
 
 ### Authorization & Access Control
@@ -2109,7 +2109,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** frontend, chat, group-chat, emoji, reactions, a11y
 - **File:** `.plan/epics/epic-frontend-emoji-reactions.md`
 
 ### Frontend Gallery & Media Viewer
@@ -2212,7 +2212,7 @@ Group chat lets multiple characters participate in one conversation. The runtime
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** carriage, context-injection, toml, structured-output, dedup, shadow-notes, gm
 - **File:** `.plan/epics/epic-hidden-carriage-context.md`
 
 ### Housing & Base Building
@@ -2246,11 +2246,11 @@ Player housing and base building system — personal homes, guild halls, craftin
 
 ### Immersion & Presentation
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** immersion, presentation, visual-novel, portraits, text-effects, 3d, soundscape, tts, director-mode
 - **File:** `.plan/epics/epic-immersion-presentation.md`
 
 ### Immersion Consistency Gate (Actor-State Blockage & Refusal)
@@ -2268,7 +2268,7 @@ Player housing and base building system — personal homes, guild halls, craftin
 - **Priority:** Medium
 - **Effort:** Med
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** impersonation, persona, chat, prompt, slash-commands
 - **File:** `.plan/epics/epic-impersonation.md`
 
 ### Implementation Guide
@@ -3214,7 +3214,7 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Infrastructure / DX
-- **Tags:** (none)
+- **Tags:** cli, tooling, dx, typescript
 - **File:** `.plan/epics/epic-cli-tooling-optique.md`
 
 ### UI Components Library

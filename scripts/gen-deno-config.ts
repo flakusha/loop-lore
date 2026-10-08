@@ -21,6 +21,7 @@
 import { existsSync, readFileSync, writeFileSync, } from "node:fs";
 import { resolve, } from "node:path";
 import process from "node:process";
+import { flag, object, runScript, withDefault, } from "../src/cli/parser";
 
 interface PackageJson {
   name?: string;
@@ -145,9 +146,17 @@ export function buildDenoConfig(pkg: PackageJson,): DenoConfig {
 
 // ── CLI ────────────────────────────────────────────────────────────────────
 if (import.meta.main) {
-  const argv = process.argv.slice(2,);
-  const dryRun = argv.includes("--dry-run",);
-  const check = argv.includes("--check",);
+  const { dryRun, check, } = runScript(
+    object({
+      dryRun: withDefault(flag("--dry-run",), false,),
+      check: withDefault(flag("--check",), false,),
+    },),
+    {
+      programName: "gen-deno-config",
+      brief: "Generate deno.json (import map + tasks) from package.json.",
+      help: "option",
+    },
+  );
 
   const root = resolve(process.cwd(),);
   const pkgPath = resolve(root, "package.json",);

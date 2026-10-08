@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 311
+// size-allow: 321
 
 /**
  * generate-schema-fuzz.ts — emits src/validation/schema-fuzz.generated.test.ts.
@@ -29,6 +29,7 @@
  *   bun run scripts/generate-schema-fuzz.ts --check    # exit 1 if stale
  */
 
+import { flag, object, runScript, withDefault, } from "../src/cli/parser";
 import {
   isJsonRoundTrippable,
   isTypeBoxSchema,
@@ -322,6 +323,15 @@ function render(
 
 // ── CLI ────────────────────────────────────────────────────────────────────
 if (import.meta.main) {
+  const { check, } = runScript(
+    object({ check: withDefault(flag("--check",), false,), },),
+    {
+      programName: "schema-fuzz",
+      brief: "Generate the schema fuzz test file (--check verifies it is current).",
+      help: "option",
+    },
+  );
+
   const {
     found,
     moduleImportPaths,
@@ -333,7 +343,7 @@ if (import.meta.main) {
   const content = render(found, moduleImportPaths, modules.length,);
   const outPath = OUT_PATH.pathname;
 
-  if (process.argv.includes("--check",)) {
+  if (check) {
     const existing = await Bun.file(OUT_PATH,).text().catch(() => "");
     if (existing !== content) {
       console.error(`[schema-fuzz] ${outPath} is stale — regenerate it`,);

@@ -89,7 +89,9 @@ export function runScript<
 // Re-export the Optique symbols actually used by call-sites in this repo.
 // Add symbols here only when a migration script needs them.
 export {
+  argument,
   flag,
+  multiple,
   object,
   option,
   optional,

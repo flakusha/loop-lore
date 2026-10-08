@@ -22,13 +22,20 @@
 
 import { readdirSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
+import { argument, object, runScript, string, withDefault, } from "../src/cli/parser";
 
 const ROOT = path.resolve(import.meta.dir, "..",);
 // Overridable so the scope-aware exemption can be exercised against a fixture
 // instead of only against whatever the frontend happens to contain today.
-const TARGET = process.argv[2] === undefined
-  ? path.join(ROOT, "src", "frontend",)
-  : path.resolve(process.argv[2],);
+const parser = object({
+  target: withDefault(argument(string(),), path.join(ROOT, "src", "frontend",),),
+},);
+const { target, } = runScript(parser, {
+  programName: "check-frontend-banned-patterns",
+  brief: "Advisory report of heuristic banned patterns in frontend production code.",
+  help: "option",
+},);
+const TARGET = path.resolve(target,);
 
 type Bucket = { count: number; examples: string[] };
 const buckets: Record<string, Bucket> = {};

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 377
+// size-allow: 406
 
 /**
  * test-gap ratchet — the static half of "auto generate the coverage": it
@@ -57,6 +57,14 @@
  */
 import { existsSync, readdirSync, readFileSync, renameSync, unlinkSync, writeFileSync, } from "node:fs";
 import path from "node:path";
+import {
+  flag,
+  object,
+  option,
+  runScript,
+  string,
+  withDefault,
+} from "../../src/cli/parser";
 
 const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 const SRC_DIR = path.join(PROJECT_ROOT, "src",);
@@ -283,21 +291,19 @@ function collectGaps(files,) {
   return gaps.sort();
 }
 
-function parseArgs(argv,) {
-  const args = { acceptNewDebt: false, baseline: DEFAULT_BASELINE, quiet: false, write: false, };
-  for (let i = 0; i < argv.length; i++) {
-    if (argv[i] === "--baseline" && argv[i + 1] !== undefined) {
-      args.baseline = argv[i + 1];
-      i++;
-    } else if (argv[i] === "--accept-new-debt") {
-      args.acceptNewDebt = true;
-    } else if (argv[i] === "--write-baseline") {
-      args.write = true;
-    } else if (argv[i] === "--json") {
-      args.quiet = true;
-    }
-  }
-  return args;
+function parseArgs() {
+  const parser = object({
+    acceptNewDebt: withDefault(flag("--accept-new-debt",), false,),
+    baseline: withDefault(option("--baseline", string(),), DEFAULT_BASELINE,),
+    write: withDefault(flag("--write-baseline",), false,),
+    quiet: withDefault(flag("--json",), false,),
+  },);
+
+  return runScript(parser, {
+    programName: "test:gaps",
+    brief: "Fail when the set of src/ exports no test reaches grows past the committed baseline.",
+    help: "option",
+  },);
 }
 
 function readBaseline(baselinePath,) {
@@ -322,7 +328,7 @@ function readBaselineIfPresent(baselinePath,) {
 }
 
 function main() {
-  const args = parseArgs(process.argv.slice(2,),);
+  const args = parseArgs();
   // stderr is the human channel and is dropped entirely under --json.
   const human = args.quiet ? () => {} : (line,) => console.error(line,);
   const baselinePath = path.resolve(args.baseline,);

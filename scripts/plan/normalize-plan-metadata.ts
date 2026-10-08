@@ -45,6 +45,7 @@
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
+import { flag, object, runScript, withDefault, } from "../../src/cli/parser";
 
 // ── Field-line grammars ────────────────────────────────────────
 // Header fields are matched PER LINE. giwt matches against the first 30
@@ -324,9 +325,15 @@ export function relatedRefs(
 
 // ── CLI ────────────────────────────────────────────────────────
 if (import.meta.main) {
-  const argv = process.argv.slice(2,);
-  const dryRun = argv.includes("--dry-run",);
-  const json = argv.includes("--json",);
+  const parser = object({
+    dryRun: withDefault(flag("--dry-run",), false,),
+    json: withDefault(flag("--json",), false,),
+  },);
+  const { dryRun, json, } = runScript(parser, {
+    programName: "plan:metadata",
+    brief: "Unify .plan header-field dialects (**Tags:**/**Labels:**, **Epic**:) and report broken epic links.",
+    help: "option",
+  },);
   const ROOT = resolve(import.meta.dir, "..", "..",);
 
   const epicsDir = join(ROOT, ".plan", "epics",);

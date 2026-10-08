@@ -26,11 +26,15 @@
  * Usage: `bun run scripts/check-file-size.ts [--strict] [--limit N]`
  */
 import { Glob, } from "bun";
+import {
+  flag,
+  integer,
+  object,
+  option,
+  runScript,
+  withDefault,
+} from "../src/cli/parser";
 
-const args = process.argv.slice(2,);
-const STRICT = args.includes("--strict",);
-const LIMIT_ARG = args.find((a,) => a.startsWith("--limit=",));
-const LIMIT = LIMIT_ARG ? parseInt(LIMIT_ARG.split("=",)[1], 10,) : 250;
 // src is the original scope; scripts/ and plugins/ joined when their drift was
 // called out (see BUG-size-strict-pre-existing-dev-drift). tests/ stays exempt:
 // flows and helpers are test specifications. scripts/worktree/ is the giwt fork
@@ -103,6 +107,18 @@ export function sizeAllowFor(text: string, limit: number,): number {
 // CLI guard: only scan when executed directly, so the helpers above stay
 // importable by check-file-size.test.ts.
 if (import.meta.main) {
+  const { strict: STRICT, limit: LIMIT, } = runScript(
+    object({
+      strict: withDefault(flag("--strict",), false,),
+      limit: withDefault(option("--limit", integer(),), 250,),
+    },),
+    {
+      programName: "check-file-size",
+      brief: "Report source files over the per-file line budget (250 by default).",
+      help: "option",
+    },
+  );
+
   let errors = 0;
   let warnings = 0;
   for (const pattern of GLOBS) {
