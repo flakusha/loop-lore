@@ -7,7 +7,7 @@
  * seam (chat-location.test.ts convention); DOM is a minimal fake sufficient
  * for renderChoiceCards.
  */
-import { afterEach, expect, mock, test, } from "bun:test";
+import { afterAll, afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { destroyChoiceCards, getAccumulatedImpacts, initChoiceCards, loadChoices, } from "./choice-cards";
 
@@ -79,6 +79,9 @@ function makeEl(): FakeEl {
   return el;
 }
 
+// Module-scope global write must be handed back in afterAll — later files in
+// the shared bun:test process need the load-time DOM surface.
+const originalDocument = (globalThis as { document?: unknown }).document;
 (globalThis as unknown as { document: unknown }).document = {
   createElement: () => makeEl(),
   // Superset of tests/setup-globals.ts: real modules (e.g. alpine/htmx.ts)
@@ -87,6 +90,10 @@ function makeEl(): FakeEl {
   dispatchEvent: () => true,
   querySelector: () => null,
 };
+
+afterAll(() => {
+  (globalThis as unknown as { document: unknown }).document = originalDocument;
+},);
 
 // ── Fixtures ────────────────────────────────────────────────────────────────
 

@@ -7,7 +7,7 @@
  * Alpine store's impersonate() method instead of typing a slash command
  * into the message input.
  */
-import { afterEach, beforeEach, describe, expect, it, mock, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, mock, } from "bun:test";
 
 // Side-effect import: registers `(globalThis as ...).commandButtons` factory.
 import "./command-buttons";
@@ -40,6 +40,11 @@ const fakeStorage: Storage = {
   },
 };
 
+// Module-scope global writes must be handed back in afterAll — later files in
+// the shared bun:test process need the load-time DOM/localStorage surface.
+const originalDocument = (globalThis as { document?: unknown }).document;
+const originalLocalStorage = (globalThis as { localStorage?: unknown }).localStorage;
+
 (globalThis as unknown as { localStorage: Storage }).localStorage = fakeStorage;
 
 // bun:test has no DOM; command-buttons.ts touches document at registration
@@ -48,6 +53,11 @@ const fakeStorage: Storage = {
   querySelector: () => null,
   addEventListener: () => {},
 } as unknown as Document;
+
+afterAll(() => {
+  (globalThis as unknown as { document: Document }).document = originalDocument as Document;
+  (globalThis as unknown as { localStorage: Storage }).localStorage = originalLocalStorage as Storage;
+},);
 
 /** */
 function loadCommandButtons(): CommandButtonsApi {

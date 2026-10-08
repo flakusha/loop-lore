@@ -90,6 +90,8 @@ export const createConfigSchema = () => {
     seeding: deepClone(SEEDING_DEFAULTS,),
     cron: deepClone(CRON_DEFAULTS,),
     integrations: deepClone(INTEGRATIONS_DEFAULTS,),
+    templates: deepClone(TEMPLATES_DEFAULTS,),
+    characters: deepClone(CHARACTERS_DEFAULTS,),
   };
 
   return {
@@ -120,8 +122,8 @@ export const createConfigSchema = () => {
         federation: sections.federation,
         seeding: sections.seeding,
         cron: sections.cron,
-        templates: TEMPLATES_DEFAULTS,
-        characters: CHARACTERS_DEFAULTS,
+        templates: sections.templates,
+        characters: sections.characters,
         integrations: sections.integrations,
       };
     },

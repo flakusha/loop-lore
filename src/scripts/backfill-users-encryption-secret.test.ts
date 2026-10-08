@@ -17,6 +17,11 @@ import { insertUsers, } from "../test-utils/insert-helpers";
 import { describeOrSkip, } from "../test-utils/isolate-only";
 import { main, runBackfill, } from "./backfill-users-encryption-secret";
 
+// Value-snapshot BEFORE any mock.module call: bun rewrites the namespace's live
+// bindings when a mock registers, so restoring with the bare namespace would
+// hand later files the partial stub instead of the real loader.
+const REAL_CONFIG_LOAD: Record<string, unknown> = { ...realConfigLoad, };
+
 let db: Kysely<DB>;
 let sqlite: Database;
 let keyedId: string;
@@ -88,7 +93,7 @@ describeOrSkip("main() CLI entry", () => {
   /** Point `loadConfig()` at `sqliteFilename` for the duration of one test. */
   const useConfig = (sqliteFilename: string,): void => {
     mock.module("../config/load", () => ({
-      ...realConfigLoad,
+      ...REAL_CONFIG_LOAD,
       loadConfig: () => ({ db: { type: "sqlite", sqliteFilename, }, }),
     }),);
   };
@@ -150,7 +155,7 @@ describeOrSkip("main() CLI entry", () => {
   afterAll(() => {
     console.log = origLog;
     console.error = origErr;
-    mock.module("../config/load", () => realConfigLoad,);
+    mock.module("../config/load", () => ({ ...REAL_CONFIG_LOAD, }),);
     for (const dir of tmpDirs) {
       rmSync(dir, { recursive: true, force: true, },);
     }

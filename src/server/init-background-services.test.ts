@@ -14,7 +14,7 @@ import { join, } from "node:path";
 import type { Config, } from "../config/schema";
 import { createConfigSchema, } from "../config/schema-class";
 import type { DB, } from "../db/schema";
-import { getProvider, } from "../generation";
+import { getProvider, listProviders, } from "../generation";
 import { unregisterProvider, } from "../generation/providers/registry";
 import type { Logger, } from "../logger/types";
 import type { ServerExternalManager, } from "../services/server-external-manager";
@@ -84,7 +84,15 @@ function makeManager(behavior: {
 
 let db: Kysely<DB>;
 let uploadDir: string;
-let registeredProviders: string[] = [];
+
+// initBackgroundServices registers auto-started servers in the process-global
+// provider registry. Snapshot the registry per test and drop whatever the
+// test added, instead of trusting per-test bookkeeping: the old
+// `registeredProviders` pushes drifted out of sync (two tests never recorded
+// their names), so "mymodel"/"llama" survived the file and flipped
+// isLlmGenerationConfigured() for routes/messages/reply.test.ts and
+// create.coverage.test.ts in a shared-process run.
+let registryBaseline: Set<string>;
 
 function makeConfig(overrides: {
   charactersEnabled?: boolean;
@@ -118,12 +126,14 @@ async function countTemplateActors(): Promise<number> {
 beforeEach(async () => {
   ({ db, } = await createTestDb());
   uploadDir = mkdtempSync(join(tmpdir(), "ll-bg-assets-",),);
-  registeredProviders = [];
+  registryBaseline = new Set(listProviders().map((p,) => p.name),);
 },);
 
 afterEach(() => {
   rmSync(uploadDir, { recursive: true, force: true, },);
-  for (const name of registeredProviders) { unregisterProvider(name,); }
+  for (const { name, } of listProviders()) {
+    if (!registryBaseline.has(name,)) { unregisterProvider(name,); }
+  }
 },);
 
 // ── Tests ────────────────────────────────────────────────────
@@ -187,7 +197,6 @@ describe("initBackgroundServices", () => {
 
     expect(managerCalls.llamaCpp,).toHaveLength(1,);
     // The auto-started server is reachable through the provider registry.
-    registeredProviders.push("mymodel",);
     expect(getProvider("mymodel",),).toBeDefined();
     // No defaultProvider configured → the auto-started server becomes it.
     expect(config.generation.defaultProvider,).toBe("mymodel",);
@@ -203,7 +212,6 @@ describe("initBackgroundServices", () => {
     },);
 
     await initBackgroundServices(db, config, logger, manager,);
-    registeredProviders.push("llama",);
     expect(getProvider("llama",),).toBeDefined();
     expect(config.generation.defaultProvider,).toBe("llama",);
   });
@@ -218,7 +226,6 @@ describe("initBackgroundServices", () => {
     },);
 
     await initBackgroundServices(db, config, logger, manager,);
-    registeredProviders.push("mymodel",);
     expect(getProvider("mymodel",),).toBeDefined();
     expect(config.generation.defaultProvider,).toBe("existing",);
   });
@@ -246,7 +253,6 @@ describe("initBackgroundServices", () => {
 
     config.generation.defaultModels["mymodel"] = "preexisting";
     await initBackgroundServices(db, config, logger, manager,);
-    registeredProviders.push("mymodel",);
     expect(getProvider("mymodel",),).toBeDefined();
     // ??= keeps the pre-existing model mapping.
     expect(config.generation.defaultModels["mymodel"],).toBe("preexisting",);

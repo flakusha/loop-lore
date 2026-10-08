@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { ageGateConfig, } from "../age-gate/controller";
+import { ageGateConfig, initAgeGate, } from "../age-gate/controller";
 import { createLogger, getLogger, type LogLevel, setGlobalLogger, } from "../logger";
 import { getRuntimeNsfwConfig, resetNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import {
@@ -17,6 +17,7 @@ import {
 import { applyHotConfig, } from "./hot-apply-consumers";
 import { createConfigSchema, } from "./schema-class";
 import type { Config, } from "./schema/config";
+import { AGE_GATE_DEFAULTS, } from "./sections/age-gate";
 
 function makeConfig(): Config {
   return structuredClone(createConfigSchema().defaults,) as Config;
@@ -33,6 +34,11 @@ beforeEach(() => {
 afterEach(() => {
   resetConfigHotApply();
   resetNsfwRuntimeConfig();
+  // applyHotConfig writes ageGate.* hot paths into the process-wide runtime
+  // store. Without this re-seed, a test that hot-applies ageGate.enabled=true
+  // leaves the gate enabled for every later file in the worker, and their
+  // POST /api/chats requests are rejected with 403 (age gate not passed).
+  initAgeGate({ ...AGE_GATE_DEFAULTS, },);
   getLogger().setLevel("error",);
 },);
 

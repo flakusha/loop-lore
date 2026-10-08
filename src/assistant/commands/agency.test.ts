@@ -28,6 +28,10 @@ beforeAll(async () => {
 },);
 
 afterAll(async () => {
+  // Clear the process-global override BEFORE destroying the handle — otherwise
+  // every later file's getDatabase() resolves this destroyed Kysely instance
+  // (src/db/index.ts: tests MUST clear the override in afterAll/finally).
+  setTestDatabase(null,);
   await db.destroy();
 },);
 
