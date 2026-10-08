@@ -17,6 +17,7 @@
 // tsc project (ES2026 target, no `@/` paths).
 import type { BundleCharacterRequirements, } from "../../plugins/types";
 import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
+import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
@@ -74,6 +75,8 @@ export interface CharacterExtensionEditorState {
   validateAgainstBundle(): BundleValidationReport;
   serialize(): string;
   save(): Promise<void>;
+  /** Resize a textarea to fit its content. */
+  autoResize(el: HTMLTextAreaElement,): void;
 }
 
 const emptyPayload = (): CharacterExtensionsPayload => ({});
@@ -223,6 +226,10 @@ const seed: CharacterExtensionEditorState = {
     } finally {
       this.saving = false;
     }
+  },
+
+  autoResize(el: HTMLTextAreaElement,) {
+    autoResizeImpl(el,);
   },
 };
 

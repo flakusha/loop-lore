@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 
@@ -210,6 +211,10 @@ globalThis.personasPage = function() {
      */
     onDefaultChange() {
       // handled on save
+    },
+
+    autoResize(el: HTMLTextAreaElement,) {
+      autoResizeImpl(el,);
     },
   };
 };

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
@@ -110,6 +111,10 @@ const log = rootLog.child({ module: "world-edit", },);
       } catch {
         showToast("error", t("toasts.failedDeleteWorld",),);
       }
+    },
+
+    autoResize(el: HTMLTextAreaElement,) {
+      autoResizeImpl(el,);
     },
   };
 };

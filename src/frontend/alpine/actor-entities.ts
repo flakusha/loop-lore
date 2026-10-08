@@ -5,6 +5,7 @@
 // ── Actor entity CRUD panel state.
 // Generic plugin for `/api/v1/actors/:actorId/{notes,items,lore-entries}`.
 // One factory instance per panel; the kind is bound at construction.
+import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -104,6 +105,8 @@ export interface ActorEntitiesState {
   remove(id: string,): Promise<void>;
   /** Cancel an in-progress edit and reset the form. */
   cancelEdit(): void;
+  /** Resize a textarea to fit its content. */
+  autoResize(el: HTMLTextAreaElement,): void;
 }
 
 const emptyForm = (kind: EntityKind,): Record<string, string> => {
@@ -271,6 +274,10 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
 
   cancelEdit() {
     this.resetForm();
+  },
+
+  autoResize(el: HTMLTextAreaElement,) {
+    autoResizeImpl(el,);
   },
 });
 

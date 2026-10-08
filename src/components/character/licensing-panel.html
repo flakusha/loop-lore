@@ -70,13 +70,21 @@
 
     <div class="form-group" x-show="licenseForm.license_type === 'custom'">
       <label class="form-label" for="lic-custom">Custom License Text</label>
-      <textarea
-        id="lic-custom"
-        class="form-input form-textarea"
-        rows="3"
-        x-model="licenseForm.custom_license_text"
-        data-testid="licensing-custom-text"
-      ></textarea>
+      <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+        <textarea
+          id="lic-custom"
+          class="form-input form-textarea"
+          style="flex: 1"
+          rows="3"
+          x-model="licenseForm.custom_license_text"
+          x-init="autoResize($el)"
+          @input="autoResize($el)"
+          data-testid="licensing-custom-text"
+        ></textarea>
+        <div x-data="textToolbar({ target: '#lic-custom' })">
+          {{> text-toolbar.html }}
+        </div>
+      </div>
     </div>
 
     <div class="form-group">

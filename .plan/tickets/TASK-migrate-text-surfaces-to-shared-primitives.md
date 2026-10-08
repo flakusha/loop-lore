@@ -53,3 +53,23 @@ The mobile composer was refactored onto shared primitives (auto-resize, draft st
 - [x] Chat settings modal (`chat-settings-modal.html`) — auto-resize on custom-instructions, prompt-override, ownership-reason
 - [x] Wizard panel (`wizard-panel.html`) — auto-resize on field textareas (inline in @input handler chain)
 - [x] Sections panel — no textareas present (inputs only), no changes needed
+
+### Batch B — View surfaces (this commit)
+
+- [x] Character entities panel (`entities-panel.html`) — auto-resize + toolbar on textarea fields (dynamic id in x-for)
+- [x] Character licensing panel (`licensing-panel.html`) — auto-resize + toolbar on `#lic-custom`
+- [x] Character systems panel (`systems-panel.html`) — auto-resize on JSON import textarea (no toolbar — JSON)
+- [x] Character extension editor (`extension-editor-panel.html`) — auto-resize on JSON payload textarea (no toolbar — JSON)
+- [x] Traits panel (`traits-panel.html`) — no textareas (inputs only), no changes needed
+- [x] Wardrobe panel (`wardrobe-panel.html`) — no textareas (inputs only), no changes needed
+- [x] World create modal (`create-modal.html`) — auto-resize + toolbar on description + lore
+- [x] World edit modal (`edit-modal.html`) — auto-resize + toolbar on description + lore
+- [x] World edit view (`world-edit.html`) — auto-resize + toolbar on `#edit-description` + `#edit-lore`
+- [x] Settings modal (`settings.html`) — auto-resize + toolbar on `#settings-custom-instructions`; auto-resize only on `#template-payload` (JSON, no toolbar)
+- [x] Personas view (`personas.html`) — auto-resize + toolbar on `#persona-description`
+- [x] Quests view (`quests.html`) — auto-resize + toolbar on create + edit description textareas
+- [x] Blog view (`blog.html`) — auto-resize + toolbar on `#blog-form-body`
+- [x] World detail timeline (`world-detail.html`) — auto-resize + toolbar on `#tl-desc`
+- [x] Character growth editor (`character-growth-editor.html`) — auto-resize + toolbar on `#arc-description`
+- [x] 12 Alpine factory files — added `autoResize` wrapper method delegating to shared util
+- [x] `auto-resize.ts` — registered `autoResize` on `globalThis` for bare-identifier use in plain modals

@@ -96,21 +96,37 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="edit-description">{{{t("worlds.description")}}}</label>
-                  <textarea
-                    class="form-input form-textarea"
-                    id="edit-description"
-                    x-model="world.description"
-                    rows="3"
-                  ></textarea>
+                  <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+                    <textarea
+                      class="form-input form-textarea"
+                      id="edit-description"
+                      style="flex: 1"
+                      x-model="world.description"
+                      rows="3"
+                      x-init="autoResize($el)"
+                      @input="autoResize($el)"
+                    ></textarea>
+                    <div x-data="textToolbar({ target: '#edit-description' })">
+                      {{> text-toolbar.html }}
+                    </div>
+                  </div>
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="edit-lore">{{{t("worlds.lore")}}}</label>
-                  <textarea
-                    class="form-input form-textarea"
-                    id="edit-lore"
-                    x-model="world.lore"
-                    rows="6"
-                  ></textarea>
+                  <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+                    <textarea
+                      class="form-input form-textarea"
+                      id="edit-lore"
+                      style="flex: 1"
+                      x-model="world.lore"
+                      rows="6"
+                      x-init="autoResize($el)"
+                      @input="autoResize($el)"
+                    ></textarea>
+                    <div x-data="textToolbar({ target: '#edit-lore' })">
+                      {{> text-toolbar.html }}
+                    </div>
+                  </div>
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="world-tags">{{{t("worlds.tags")}}}</label>

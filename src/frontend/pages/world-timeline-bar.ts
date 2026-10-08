@@ -4,6 +4,7 @@
 /**
  * World Timeline Bar — Alpine component for world-detail timeline branch selector.
  */
+import { autoResize as autoResizeImpl, } from "../alpine/auto-resize";
 import { log as rootLog, } from "../alpine/logger";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
@@ -30,6 +31,8 @@ interface WorldTimelineBarState {
   loadTimelines(): Promise<void>;
   switchTimeline(): Promise<void>;
   createTimeline(): Promise<void>;
+  /** Resize a textarea to fit its content. */
+  autoResize(el: HTMLTextAreaElement,): void;
 }
 
 /**
@@ -118,6 +121,10 @@ function worldTimelineBarImpl(
       } catch {
         showToast("error", "Network error",);
       }
+    },
+
+    autoResize(el: HTMLTextAreaElement,) {
+      autoResizeImpl(el,);
     },
   };
 }

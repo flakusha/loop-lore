@@ -8,6 +8,7 @@
 // Drives `/api/v1/actors/:actorId/licensing` (GET / POST / DELETE). Pairs with
 // `src/components/character/licensing-panel.html`.
 import { LicenseType, } from "../../db/enums-character/content";
+import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -89,6 +90,8 @@ export interface ActorLicensingState {
   remove(): Promise<void>;
   /** Resolve a human label for a license type code. */
   describeLicense(code: string,): string;
+  /** Resize a textarea to fit its content. */
+  autoResize(el: HTMLTextAreaElement,): void;
 }
 
 const EMPTY_FORM: ActorLicensingState["licenseForm"] = {
@@ -251,6 +254,10 @@ export const actorLicensing: ActorLicensingState = {
 
   describeLicense(code: string,) {
     return LICENSE_LABELS[code] ?? code;
+  },
+
+  autoResize(el: HTMLTextAreaElement,) {
+    autoResizeImpl(el,);
   },
 };
 
