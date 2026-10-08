@@ -3,14 +3,15 @@
 
 # `scripts/plan` — plan-metadata normalizers
 
-Two idempotent scripts that converge `.plan/` header fields onto the spellings giwt
+Three idempotent scripts that converge `.plan/` header fields onto the spellings giwt
 actually reads. Neither derives a value; both only make an author-written value
 visible to the generators.
 
-| Script                       | Command                         | Owns                                                            |
-| ---------------------------- | ------------------------------- | --------------------------------------------------------------- |
-| `normalize-plan-metadata.ts` | `bun run plan:metadata`         | `**Tags**`, `**Epic**`, and the `index.json` projection of both |
-| `normalize-statuses.ts`      | `bun run plan:status:normalize` | `**Status:**` (epic + ticket)                                   |
+| Script                       | Command                                             | Owns                                                                          |
+| ---------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `normalize-plan-metadata.ts` | `bun run plan:metadata`                             | `**Tags**`, `**Epic**`, and the `index.json` projection of both               |
+| `normalize-statuses.ts`      | `bun run plan:status:normalize`                     | `**Status:**` (epic + ticket)                                                 |
+| `epic-owner-pick.ts`         | `bun run scripts/plan/epic-owner-pick.ts [--apply]` | multi-epic `**Epic:**` collapse (first-existing-wins + generated title table) |
 
 Both accept `--dry-run` (report, touch nothing) and `--json` (machine-readable).
 Both are safe to re-run: a second run reports 0 changes.
@@ -77,6 +78,21 @@ the feature branch and conflict at merge time, because the index is regenerated
 post-merge on the target branch. This script honours that guard — it prints the
 counts and a `NOT WRITTEN` note instead. Re-run it in the main checkout to
 persist. The `.md` rewrites are unaffected; only the index write is gated.
+
+## `epic-owner-pick.ts` — multi-epic owner rule
+
+Tickets that name two or more epics in one `**Epic:**` header (separator
+lists, `+`-joined pairs, or legacy prose titles) collapse to one owner:
+**first listed candidate that names an existing `.plan/epics/*.md` wins**
+(a bare slug, or an exact hit in `epic-titles.generated.ts`, itself
+regenerated from epic H1s via `--gen`). Unresolvable values — numbered
+`Epic 26` aliases, `NPC/Actor System` prose, `proposed:epic-x` placeholders,
+dangling slugs — are reported, never guessed. Entries where the `.md`
+header and the index value pick different owners are held back too.
+
+Dry-run by default; `--apply` rewrites the 107 agreeing `.md` headers,
+projects onto `index.json` in `canonicalIndexOrder`, then `bun run
+plan:matrix` regenerates the matrix.
 
 ## What it deliberately does not do
 
