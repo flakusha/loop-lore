@@ -38,6 +38,16 @@ import "./scene/view-mode";
 // ── 10c. TASK-025: text effects (shake / glow / typewriter / fade) ──
 import { toDate, } from "../utils/date";
 import { applyFx, isFxActive, prefersReducedMotion, } from "./effects/text-fx";
+// ── 10d. TASK-text-effects-overlays: emotion triggers + status/badge overlays ──
+import {
+  applyEmotionFx,
+  conditionIconsHtml,
+  emotionFx,
+  emotionFxClass,
+  locationBadgeHtml,
+  statusBarHtml,
+  timeBadgeHtml,
+} from "./effects/overlays";
 
 // ── 2. Expose on globalThis ─────────────────────────────────────
 const g = globalThis as Record<string, unknown>;
@@ -47,6 +57,14 @@ g.Alpine = Alpine;
 g.applyFx = applyFx;
 g.isFxActive = isFxActive;
 g.prefersReducedMotion = prefersReducedMotion;
+// TASK-text-effects-overlays: emotion triggers + overlay builders for templates.
+g.emotionFx = emotionFx;
+g.emotionFxClass = emotionFxClass;
+g.applyEmotionFx = applyEmotionFx;
+g.statusBarHtml = statusBarHtml;
+g.conditionIconsHtml = conditionIconsHtml;
+g.locationBadgeHtml = locationBadgeHtml;
+g.timeBadgeHtml = timeBadgeHtml;
 
 // ── 3. Alpine plugins ───────────────────────────────────────────
 Alpine.plugin(morph,);
