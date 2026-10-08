@@ -24,7 +24,11 @@ import { readdirSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
 
 const ROOT = path.resolve(import.meta.dir, "..",);
-const TARGET = path.join(ROOT, "src", "frontend",);
+// Overridable so the scope-aware exemption can be exercised against a fixture
+// instead of only against whatever the frontend happens to contain today.
+const TARGET = process.argv[2] === undefined
+  ? path.join(ROOT, "src", "frontend",)
+  : path.resolve(process.argv[2],);
 
 type Bucket = { count: number; examples: string[] };
 const buckets: Record<string, Bucket> = {};
@@ -56,6 +60,14 @@ function walk(dir: string,): string[] {
 // reports its own premise as a finding. `void` is exempt when the statement it
 // opens ends in `.catch(` — that is the difference between fire-and-forget and
 // a deliberately swallowed rejection.
+//
+// `listener-leak` is scope-aware too: a `document`/`window`/`globalThis`
+// registration at MODULE TOP LEVEL is a page-lifetime registration. It lives
+// exactly as long as the document does and has no teardown path by
+// construction, so reporting it is noise that buries the real findings. The
+// same receiver inside a component, handler, or callback is STILL reported —
+// only depth 0 is exempt. The suppressed count is printed so the rule can be
+// challenged instead of trusted.
 const re = {
   voidFire: /\bvoid\s+[A-Za-z_$][\w$]*\s*\(/,
   fetchNoCatch: /\bfetch\s*\(/,
@@ -68,6 +80,10 @@ const re = {
   addTarget: /([\w$]+(?:\s*\.\s*[\w$]+)*)\s*\.\s*addEventListener\s*\(/,
   rmTarget: /([\w$]+(?:\s*\.\s*[\w$]+)*)\s*\.\s*removeEventListener\s*\(/,
   guardOpen: /\b(?:try|catch)\s*\{/,
+  // Receivers that outlive every component on the page. Only meaningful
+  // together with the depth-0 scope test — a page receiver used inside a
+  // component is a real leak and stays reported.
+  pageReceiver: /^(?:document|window|globalThis)$/,
 };
 
 /**
@@ -98,6 +114,8 @@ let inBlock = false;
 let depth = 0;
 /** Brace depths at which a `try`/`catch` block was opened, innermost last. */
 const guards: number[] = [];
+/** Findings withheld by the page-lifetime rule, printed so it stays challengeable. */
+let suppressed = 0;
 
 for (const file of walk(TARGET,)) {
   const rel = path.relative(ROOT, file,);
@@ -141,9 +159,23 @@ for (const file of walk(TARGET,)) {
     if (re.eval.test(line,)) { add("eval-usage", `${rel}:${ln}`, t,); }
     if (re.addEv.test(line,)) {
       const target = re.addTarget.exec(line,)?.[1]?.replace(/\s+/g, "",);
-      // No capturable receiver (optional chain, computed access) — cannot prove
-      // a matching remove exists, so report it.
-      if (target === undefined || !removed.has(target,)) {
+      // Page-lifetime exemption: a page receiver registered at MODULE TOP
+      // LEVEL (depth 0 — nothing encloses it, so nothing can ever unregister
+      // it) cannot leak by construction. Narrow on purpose: the receiver test
+      // alone would silence real component-lifetime leaks, so the scope test
+      // is required too. `depth` is read before this line's own braces are
+      // counted, so a top-level statement is depth 0 and a call inside a
+      // function, method, or callback is not. A site already paired with a
+      // removeEventListener is not a finding and is not counted as suppressed.
+      //
+      // `target === undefined` (optional chain, computed access) can never
+      // prove a matching remove exists, so it stays a finding either way.
+      const paired = target !== undefined && removed.has(target,);
+      if (paired) {
+        // Nothing to report and nothing to suppress.
+      } else if (target !== undefined && depth === 0 && re.pageReceiver.test(target,)) {
+        suppressed++;
+      } else {
         add("listener-leak", `${rel}:${ln}`, t,);
       }
     }
@@ -157,6 +189,15 @@ for (const file of walk(TARGET,)) {
 }
 
 console.log("=== Frontend heuristic banned-pattern report (advisory, ESLint-gap) ===",);
+// Printed before the empty-bucket exit: a run whose only listener findings were
+// page-lifetime exemptions must still show what was withheld, or the rule
+// becomes invisible exactly when it is doing all the work.
+if (suppressed > 0) {
+  console.log(
+    `\nsuppressed: ${suppressed} page-lifetime listener registration(s) ` +
+      "(document/window/globalThis at module top level — page-scoped, no teardown path exists).",
+  );
+}
 const keys = Object.keys(buckets,);
 if (keys.length === 0) {
   console.log("OK: No banned patterns found.",);
