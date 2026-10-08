@@ -34,8 +34,12 @@ The constraint that shapes this: the published JSON Schema rewrites resolved `DA
 
 **Dependencies:**
 
-- `TASK-add-a-two-instance-local-federation-dev-harness-and-runbook.md` — the harness needs per-instance state roots
-- `TASK-add-a-federation-e2e-test-that-boots-two-real-servers.md` — the e2e needs two separate DBs
+- None — this is the prerequisite the harness and the e2e both consume, not a consumer of either. Two instances cannot have separate state roots until this lands, so neither of those tickets can be implemented first.
+
+**Related Tickets:**
+
+- `TASK-add-a-two-instance-local-federation-dev-harness-and-runbook.md` — consumes this; the harness needs per-instance state roots. Downstream of this ticket, one-way.
+- `TASK-add-a-federation-e2e-test-that-boots-two-real-servers.md` — consumes this; the e2e needs two separate DBs. Downstream of this ticket, one-way.
 
 **Out of Scope:**
 
