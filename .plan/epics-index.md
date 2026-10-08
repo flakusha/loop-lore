@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 316 epics
+**Total:** 317 epics
 
 ## Summary
 
@@ -24,7 +24,7 @@
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Not Started | API Governance — Epic | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance.md](/.plan/epics/epic-api-governance.md) |
 | Not Started | API Governance — Quick Reference | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance-quickref.md](/.plan/epics/epic-api-governance-quickref.md) |
-| Not Started | API Routes | High | Medium | 0 | [epic-api-routes.md](/.plan/epics/epic-api-routes.md) |
+| In Progress | API Routes | High | Medium | 0 | [epic-api-routes.md](/.plan/epics/epic-api-routes.md) |
 | Not Started | API-First Foundation | Medium | Medium | 8 | [epic-api-first-foundation.md](/.plan/epics/epic-api-first-foundation.md) |
 | Not Started | API/Library Distribution Mode | High | High | 25 | [epic-api-library-distribution.md](/.plan/epics/epic-api-library-distribution.md) |
 | Not Started | Architecture Overview | High | Medium | 0 | [epic-architecture.md](/.plan/epics/epic-architecture.md) |
@@ -39,7 +39,7 @@
 | Not Started | Audio, Video & Sound Generation | Medium | Very High (split into 5 sub-epics) | 0 | [epic-audio-video-sound.md](/.plan/epics/epic-audio-video-sound.md) |
 | Not Started | Authentication Channel Provisioning — Messenger / E-mail / Federated Login & Unlock | High (security-critical provisioning) | High | 19 | [epic-auth-channel-provisioning.md](/.plan/epics/epic-auth-channel-provisioning.md) |
 | Not Started | Authoring & Creation Tools | Medium | Medium | 0 | [epic-authoring-creation.md](/.plan/epics/epic-authoring-creation.md) |
-| Not Started | Authorization & Access Control | High | High | 12 | [epic-auth-access.md](/.plan/epics/epic-auth-access.md) |
+| In Progress | Authorization & Access Control | High | High | 12 | [epic-auth-access.md](/.plan/epics/epic-auth-access.md) |
 | In Progress | AUX LLM Enrichment Pipeline | P2-B | Medium | 10 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
 | Not Started | Avatar Alpha Channel + VN Layering | Medium | Medium | 7 | [epic-avatar-alpha-vn-layering.md](/.plan/epics/epic-avatar-alpha-vn-layering.md) |
 | Not Started | Battle & Action Systems | Medium | Very High (split into 5 sub-epics) | 20 | [epic-battle-action-systems.md](/.plan/epics/epic-battle-action-systems.md) |
@@ -149,8 +149,9 @@
 | Not Started | Epic: HTTP/2 / HTTP/3 / Elysia Protocol & Feature Adoption | Medium | Medium | 6 | [epic-http-protocol-features.md](/.plan/epics/epic-http-protocol-features.md) |
 | Not Started | Epic: Instance Federation — Identity, Switching & Cross-Sync | Medium | High | 0 | [epic-instance-federation.md](/.plan/epics/epic-instance-federation.md) |
 | Done | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
-| Not Started | Epic: Inventory | High | High | 4 | [epic-inventory.md](/.plan/epics/epic-inventory.md) |
-| Not Started | Epic: Items | High | High | 4 | [epic-items.md](/.plan/epics/epic-items.md) |
+| In Progress | Epic: Inventory | High | High | 4 | [epic-inventory.md](/.plan/epics/epic-inventory.md) |
+| In Progress | Epic: Items | High | High | 4 | [epic-items.md](/.plan/epics/epic-items.md) |
+| Not Started | Epic: Local Multi-Instance Federation — Sender Wiring & Dev Harness | High | High | 0 | [epic-local-multi-instance-federation.md](/.plan/epics/epic-local-multi-instance-federation.md) |
 | Not Started | Epic: Locations | High | High | 5 | [epic-locations.md](/.plan/epics/epic-locations.md) |
 | Not Started | Epic: Lore Knowledge System | High\ | Medium\ | 6 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
 | In Progress | Epic: Memory & Knowledge Systems | High | High | 12 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
@@ -194,12 +195,12 @@
 | Done | Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI | High | High | 9 | [epic-frontend-backend-integration.md](/.plan/epics/epic-frontend-backend-integration.md) |
 | Not Started | Frontend Bundle Optimization | High | Medium | 2 | [epic-frontend-bundle-optimization.md](/.plan/epics/epic-frontend-bundle-optimization.md) |
 | Not Started | Frontend Component Architecture | Medium | Medium | 0 | [epic-frontend-component-architecture.md](/.plan/epics/epic-frontend-component-architecture.md) |
-| Not Started | Frontend Emoji (`:...:`) and Message Reactions | medium | Medium | 0 | [epic-frontend-emoji-reactions.md](/.plan/epics/epic-frontend-emoji-reactions.md) |
+| In Progress | Frontend Emoji (`:...:`) and Message Reactions | medium | Medium | 0 | [epic-frontend-emoji-reactions.md](/.plan/epics/epic-frontend-emoji-reactions.md) |
 | Done | Frontend Gallery & Media Viewer | Medium | Medium | 2 | [epic-frontend-gallery.md](/.plan/epics/epic-frontend-gallery.md) |
 | Done | Frontend HTML Deduplication & HTMX AJAX Reuse | Medium | Medium | 4 | [epic-frontend-html-dedup-htmx-reuse.md](/.plan/epics/epic-frontend-html-dedup-htmx-reuse.md) |
 | Not Started | Frontend Overview | Medium | Medium | 0 | [epic-frontend-overview.md](/.plan/epics/epic-frontend-overview.md) |
-| Not Started | Frontend Slash Commands (`/...`) for Chat, Group Chat, Assistant | medium | Medium | 0 | [epic-frontend-chat-commands.md](/.plan/epics/epic-frontend-chat-commands.md) |
-| Not Started | Fuzzing Infrastructure | Medium | Medium | 9 | [epic-fuzzing-infrastructure.md](/.plan/epics/epic-fuzzing-infrastructure.md) |
+| In Progress | Frontend Slash Commands (`/...`) for Chat, Group Chat, Assistant | medium | Medium | 0 | [epic-frontend-chat-commands.md](/.plan/epics/epic-frontend-chat-commands.md) |
+| In Progress | Fuzzing Infrastructure | Medium | Medium | 9 | [epic-fuzzing-infrastructure.md](/.plan/epics/epic-fuzzing-infrastructure.md) |
 | In Progress | GM/Assistant Story Whitenotes & Shadow Notes | High | Medium | 1 | [epic-gm-shadow-notes.md](/.plan/epics/epic-gm-shadow-notes.md) |
 | In Progress | Group Chat | High | Medium | 0 | [epic-group-chat.md](/.plan/epics/epic-group-chat.md) |
 | Not Started | Guest Access — Unauthenticated Public Browsing (draft for new worktree) | High — public reach / demo-ability gap | Large | 7 | [epic-guest-access.md](/.plan/epics/epic-guest-access.md) |
@@ -294,7 +295,7 @@
 | In Progress | Script Migration to Modular Architecture | Medium | Medium | 0 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Not Started | Security & Sandboxing — Epic | medium | Medium | 27 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
 | Not Started | Security & Sandboxing — Quick Reference | High | High | 0 | [epic-security-sandboxing-quickref.md](/.plan/epics/epic-security-sandboxing-quickref.md) |
-| Not Started | Settings & Preferences UI | Medium | Medium | 0 | [epic-frontend-settings.md](/.plan/epics/epic-frontend-settings.md) |
+| Done | Settings & Preferences UI | Medium | Medium | 0 | [epic-frontend-settings.md](/.plan/epics/epic-frontend-settings.md) |
 | Not Started | Shared Client SDK | Medium | Medium | 5 | [epic-shared-client-sdk.md](/.plan/epics/epic-shared-client-sdk.md) |
 | Done | Shared Schemas — Reputation, Consent, NSFW Content Rating | High | Medium | 1 | [epic-shared-schemas.md](/.plan/epics/epic-shared-schemas.md) |
 | Not Started | Social Hub — Epic | medium | Medium | 19 | [epic-social-hub.md](/.plan/epics/epic-social-hub.md) |
@@ -449,7 +450,7 @@ OpenAPI specification, request validation, rate limiting, telemetry, and resourc
 
 ### API Routes
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -588,7 +589,7 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Authorization & Access Control
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Foundation Epic
@@ -1634,7 +1635,7 @@ Full internationalization of loop-lore UI. Infrastructure complete (custom i18n 
 
 ### Epic: Inventory
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -1645,7 +1646,7 @@ Inventory system specification — covers item storage, equipment slots, invento
 
 ### Epic: Items
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -1653,6 +1654,17 @@ Inventory system specification — covers item storage, equipment slots, invento
 - **File:** `.plan/epics/epic-items.md`
 
 Items specification — covers item types, properties, interactions, loot tables, and item lifecycle. Supersedes item sections in `docs/spec/actors.md`.
+
+### Epic: Local Multi-Instance Federation — Sender Wiring & Dev Harness
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** federation, multi-instance, mesh, sender, consent, dev-harness, config
+- **File:** `.plan/epics/epic-local-multi-instance-federation.md`
+
+Make two loop-lore servers on one machine actually federate. The mesh **receiver** is built, mounted, and tested; the **sender** — the entire trust and replication path — has zero production call sites. Two healthy instances pointed at each other today exchange nothing, silently, because `mesh_peers` is never populated, chat consent can never be granted, and nothing ever triggers a push.
 
 ### Epic: Locations
 
@@ -2093,7 +2105,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 
 ### Frontend Emoji (`:...:`) and Message Reactions
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
@@ -2129,7 +2141,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 
 ### Frontend Slash Commands (`/...`) for Chat, Group Chat, Assistant
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
@@ -2138,7 +2150,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 
 ### Fuzzing Infrastructure
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Infrastructure Epic
@@ -3019,7 +3031,7 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Settings & Preferences UI
 
-- **Status:** Not Started
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
