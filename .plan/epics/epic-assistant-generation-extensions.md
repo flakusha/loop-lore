@@ -3,16 +3,28 @@
 
 # EPIC: Assistant Generation Extensions (SD, Intent, Scenario Source)
 
-**Overview:** (see sections below)
+**Overview:** Extends the Assistant/GM generation surface (see `epic-assistant-gm-flows.md`)
+with three capabilities not covered there:
+
+1. **Stable Diffusion integration** — generate images/assets alongside text
+   entities (items, locations, worlds, characters).
+2. **Intent detection** — decide whether a user request should be routed to
+   generation, to a directly-approved tool execution, or to an external API call.
+3. **Scenario source** — creative LLMs generate new worlds/ideas that become
+   reusable assistant scenario sources for future generation of scenarios.
+
+This epic assumes the confirmation/quality gating flow from
+`epic-assistant-gm-flows.md` still applies; it adds the _routing_ and _media_
+layers on top.
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** In Progress on the pre-existing foundation, not on the epic's own deliverables. Landed on dev: `/image` command registered with action dispatch (`src/assistant/commands/image.ts`), avatar-change intent detection (`src/assistant/intent.ts`), `/improve` via the shared prompt-improvement service (`src/prompt-improve/service.ts`), `/quest` list/create/status/complete, `/caption` via `src/generation/caption-route.ts`, and the emotion-avatar fallback path (`src/characters/services/emotion-avatar-fallback.ts`). None of the epic's three headline capabilities is complete: the ComfyUI/sd.cpp image adapter, general intent routing, and the scenario-source store (removed 2026-08-14, needs reimplementation) all remain open.
 **Priority:** Medium
 **Effort:** High
 **Issue:** `29d4e8c`
 **Type:** Feature Epic
-**Tags:** assistant, stable-diffusion, intent-detection, tool-execution, scenario-source
+**Tags:** assistant, stable-diffusion, intent-detection, tool-execution, scenario-source, emotion-avatar, prompt-improvement, image-generation, comfyui
 
 ## Overview
 
@@ -178,8 +190,8 @@ interface ScenarioSource {
 
 ### Phase 1: Core Image Generation (MVP)
 
+- [x] `/image` command registered (stub + action dispatch; backend adapter pending)
 - [ ] Image generation request/response adapter (ComfyUI primary, sd.cpp secondary)
-- [ ] `/image <prompt>` command (txt2img via ComfyUI workflow)
 - [ ] Entity-to-asset mapping for characters/items/locations/worlds
 - [ ] Backend routing logic (ComfyUI for complex, sd.cpp for simple)
 
@@ -194,47 +206,69 @@ interface ScenarioSource {
 
 - [ ] `/image style <ref-image>` command (Krea 2 style reference or LoRA)
 - [ ] `/image upscale <file>` command (ESRGAN template)
-- [ ] Intent detection model + routing table
+- [x] Intent detection — avatar change intent (`src/assistant/intent.ts`); general intent routing pending
 
 ### Phase 4: Advanced Features (Lower Priority)
 
 - [ ] `/image edit <prompt> --mask <file>` command (inpainting, low priority)
 - [ ] Approved tool-execution allowlist + policy
 - [ ] External API call policy gate
-- [ ] Scenario source store + reuse in generation
+- [ ] Scenario source store + reuse in generation (removed 2026-08-14; reimplement from scratch)
 - [ ] Bridge scenario source to blog world seed
+
+### Completed Features (Pre-Existing)
+
+- [x] `/improve` command — full implementation via shared prompt-improvement service (`src/prompt-improve/service.ts`)
+- [x] `/quest` command — full implementation (list/create/status/complete)
+- [x] `/caption` command — full implementation (image captioning via `src/generation/caption-route`)
+- [x] Emotion avatar fallback — `extractAvatarMetadata()`, `buildEmotionPrompt()`, `fallbackMode` config gate
+- [x] `/video`, `/sfx`, `/music` commands — registered (stub-level, action dispatch)
+- [x] `/roll`, `/summarize`, `/impersonate`, `/narrate`, `/ooc`, `/help` — complete
 
 ## Files
 
-- `src/assistant/commands/image.ts` — /image command with subcommands (TODO: create)
-- `src/assistant/sd.ts` — ~~Image generation adapter~~ REMOVED 2026-08-14 (dead stub, zero imports; reimplement from scratch)
-- `src/assistant/intent.ts` — intent detection + routing (TODO: create)
+- `src/assistant/commands/image.ts` — `/image` command (registered, action dispatch; backend adapter pending)
+- `src/assistant/sd.ts` — REMOVED 2026-08-14 (dead stub, zero imports; reimplement from scratch)
+- `src/assistant/intent.ts` — avatar change intent detection (exists); general intent routing pending
 - `src/assistant/tools.ts` — approved tool execution (TODO: create)
-- `src/assistant/scenario-source.ts` — ~~scenario store~~ REMOVED 2026-08-14 (dead stub, zero imports; reimplement from scratch)
+- `src/assistant/scenario-source.ts` — REMOVED 2026-08-14 (dead stub, zero imports; reimplement from scratch)
 - `src/assistant/commands/generate.ts` — extends existing generation commands (TODO: create)
+- `src/assistant/commands/improve.ts` — `/improve` command (exists, full implementation)
+- `src/assistant/commands/quest.ts` — `/quest` command (exists, full implementation)
+- `src/assistant/commands/caption.ts` — `/caption` command (exists, full implementation)
+- `src/assistant/commands/video.ts` — `/video` command (exists, stub-level)
+- `src/assistant/commands/sfx.ts` — `/sfx` + `/sound` commands (exists, stub-level)
+- `src/assistant/commands/music.ts` — `/music` command (exists, stub-level)
+- `src/prompt-improve/service.ts` — shared prompt-improvement service (exists)
+- `src/characters/services/emotion-avatar-fallback.ts` — emotion avatar fallback utilities (exists)
+- `src/characters/services/emotion-avatar-service/` — emotion avatar generation service (exists)
 
 ## Current Implementation Status
 
-The command system is partially built (2026-08-01 review — table refreshed):
+The command system is partially built (2026-10-08 review):
 
 | Command        | Status                                                     | File                                    |
 | -------------- | ---------------------------------------------------------- | --------------------------------------- |
-| `/improve`     | ✅ Basic impl                                              | `src/assistant/commands/improve.ts`     |
+| `/improve`     | ✅ Full impl (shared prompt-improvement service)           | `src/assistant/commands/improve.ts`     |
 | `/image`       | 🟡 Command stub + action dispatch; backend adapter pending | `src/assistant/commands/image.ts`       |
-| `/quest`       | ✅ Registered (stub-level)                                 | `src/assistant/commands/quest.ts`       |
-| `/video`       | ✅ Registered (stub-level)                                 | `src/assistant/commands/video.ts`       |
-| `/sfx`         | ✅ Registered (stub-level)                                 | `src/assistant/commands/sfx.ts`         |
-| `/sound`       | ✅ Registered (alias for /sfx)                             | `src/assistant/commands/sfx.ts`         |
-| `/music`       | ✅ Registered (stub-level)                                 | `src/assistant/commands/music.ts`       |
-| `/caption`     | ✅ Registered (stub-level)                                 | `src/assistant/commands/caption.ts`     |
+| `/quest`       | ✅ Full impl (list/create/status/complete)                 | `src/assistant/commands/quest.ts`       |
+| `/video`       | 🟡 Registered (stub-level, action dispatch)                | `src/assistant/commands/video.ts`       |
+| `/sfx`         | 🟡 Registered (stub-level, action dispatch)                | `src/assistant/commands/sfx.ts`         |
+| `/sound`       | 🟡 Registered (alias for /sfx)                             | `src/assistant/commands/sfx.ts`         |
+| `/music`       | 🟡 Registered (stub-level, action dispatch)                | `src/assistant/commands/music.ts`       |
+| `/caption`     | ✅ Full impl (image captioning)                            | `src/assistant/commands/caption.ts`     |
 | `/roll`        | ✅ Complete                                                | `src/assistant/commands/dice.ts`        |
 | `/summarize`   | ✅ Complete                                                | `src/assistant/commands/summarize.ts`   |
 | `/impersonate` | ✅ Complete                                                | `src/assistant/commands/impersonate.ts` |
 | `/narrate`     | ✅ Complete                                                | `src/assistant/commands/narrate.ts`     |
 | `/ooc`         | ✅ Complete                                                | `src/assistant/commands/ooc.ts`         |
 | `/help`        | ✅ Complete                                                | `src/assistant/commands/help.ts`        |
+| `/create`      | ✅ Full impl (generation + quality gates)                  | `src/assistant/commands/create.ts`      |
+| `/review`      | ✅ Full impl (entity review)                               | `src/assistant/commands/review.ts`      |
 
-Gap: most commands return system-message/action stubs — only `/roll`, `/summarize`, `/impersonate`, `/narrate`, `/create` do real work. Image/audio/video generation adapters (ComfyUI/sd.cpp) pending.
+Gap: image/audio/video generation adapters (ComfyUI/sd.cpp) pending. Intent
+detection partially implemented (avatar change only). Scenario source removed
+2026-08-14, needs reimplementation.
 
 ### `/improve` Command (Existing)
 
@@ -634,6 +668,21 @@ User prompt → Intent detection → Entity type routing → Generation pipeline
 - Generated assets (images, audio) linked via asset system
 - Version tracking for regenerated content
 - Ownership tracking (who generated what)
+
+## Related Epics
+
+- `epic-assistant-gm-flows.md` — generation (complementary epic)
+- `epic-assistant-entity-access.md` — entity access & manipulation
+- `epic-prompt-improvement.md` — shared prompt-improvement service
+- `epic-asset-platform-capabilities.md` — asset substrate
+
+## References
+
+- `src/assistant/commands/registry.ts` — command registry
+- `src/prompt-improve/service.ts` — shared prompt-improvement service
+- `src/characters/services/emotion-avatar-fallback.ts` — emotion avatar fallback
+- `src/characters/services/emotion-avatar-service/` — emotion avatar generation
+- `src/generation/caption-route.ts` — image captioning route
 
 ## Linked Tasks
 

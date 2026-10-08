@@ -3,12 +3,13 @@
 
 # TASK: Chat Split/Reunite Engine (Party Branch & Merge)
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Phase 3 (party split/reunite engine) and Phase 4 (VN choice-card location actions) of the travel-party migration umbrella `TASK-travel-party-migration.md`.
+**Context:** Depends on the stable party model from Phases 1-2 (`TASK-party-join-leave.md`, `TASK-party-aux-transition.md`). Split branches a chat via `POST /api/chats/:id/split` into per-sub-group child chats with `parent_chat_id` and copied context; reunite merges secondary chats back via `POST /api/chats/:id/reunite`. VN choice cards carry a `location:` action that drives `PUT /api/chats/:id/location`.
+**Acceptance Criteria:** Party split creates branched chats with correct participants; party merge combines messages and deduplicates participants (Phase 3); VN choice cards can trigger location changes (Phase 4).
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** split/reunite engine + routes shipped (verified 2026-10-08: `src/chat/service/split.ts`, `src/routes/chats/split.ts`, tests in `split.test.ts`/`branch-nav.test.ts`); remaining: regex narration split/reunite detection, VN split/reunite + choice-card location effects
 **Priority:** P2-B
 **Effort:** High
 **Epic:** epic-chat-transfer-location
@@ -100,11 +101,11 @@ enabled.
 
 ### Phase 3: Party Split/Merge
 
-- [ ] Create split detection regex patterns
-- [ ] Implement `POST /api/chats/:id/split` endpoint
-- [ ] Implement `POST /api/chats/:id/reunite` endpoint
-- [ ] Add VN split/reunite visual effects
-- [ ] Wire parent-child chat linking
+- [x] Implement `POST /api/chats/:id/split` endpoint — shipped (`src/routes/chats/split.ts`, IDOR-guarded, `splitParty` service)
+- [x] Implement `POST /api/chats/:id/reunite` endpoint — shipped (same file, `reuniteChats` service)
+- [x] Wire parent-child chat linking — shipped (`parent_chat_id` on branch chats, carried context via `carry-*` modules)
+- [ ] Create split/reunite detection regex  patterns — narration path open
+- [ ] Add VN split/reunite visual effects — open
 
 ### Phase 4: VN Choice Card Integration
 
@@ -115,6 +116,6 @@ enabled.
 
 ## Acceptance Criteria
 
-- [ ] Party split creates branched chats with correct participants (Phase 3)
-- [ ] Party merge combines messages and deduplicates participants (Phase 3)
+- [x] Party split creates branched chats with correct participants (Phase 3) — `splitParty` (`src/chat/service/split.ts:81`) → `createBranchChat` per sub-group with `parent_chat_id`, destination `current_location_id`, and the branch's `actorIds`
+- [x] Party merge combines messages and deduplicates participants (Phase 3) — `reuniteChats` (`src/chat/service/split.ts:170`) → `copyMessagesToPrimary` + `mergeParticipantsIntoPrimary` (dedupes by `actor_id`, `src/chat/service/split-utils.ts:82`); covered by `src/chat/service/split.test.ts`
 - [ ] VN choice cards can trigger location changes (Phase 4)

@@ -3,12 +3,16 @@
 
 # TASK: Autonomy config surface layering presets and overrides
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Layered autonomy pacing config (world default <- chat override <- per-actor override), pacing presets, a dev-gated unlimited stress preset, and live budget observability. Closed as a duplicate: the shipped surface is `TASK-autonomy-config-surface` (Done), which meets all four criteria below.
+**Context:** Filed twice under `epic-actor-autonomy-story-drive`. `TASK-autonomy-config-surface.md` (git issue `d08a0f2`, **Done**) implements the identical scope in `src/autonomy/config/`; the Duplicate-of section below carries the file:symbol evidence. `**Epic:**` was corrected from the non-existent id `epic-actor-autonomy-story-drive.md` to `epic-actor-autonomy-story-drive`.
+**Acceptance Criteria:**
+- [x] Precedence verified: per-actor > chat > world > preset defaults.
+- [x] Unlimited preset refused outside dev builds (config validation test).
+- [x] Preset switching changes observed cadence in a scheduler integration test.
+- [x] Settings UI shows live budget consumption per actor.
 
 
-**Status:** Wontfix
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actor-autonomy-story-drive
@@ -57,7 +61,13 @@ the budget line from `GET /api/worlds/:worldId/autonomy`, and
 override save end to end. Nothing here is unimplemented, so this file is closed
 as a duplicate rather than worked.
 
-Wontfix recorded 2026-10-02; `**Epic:**` corrected from the non-existent id
-`epic-actor-autonomy-story-drive.md` to `epic-actor-autonomy-story-drive`.
+`Wontfix` recorded 2026-10-02; `**Epic:**` corrected from the non-existent id
+`epic-actor-autonomy-story-drive.md` to `epic-actor-autonomy-story-drive`. Status
+history: `Wontfix` from 2026-10-02 until the 2026-10-08 registry close, `Done`
+since and permanently — see the registry note below.
 
-**Registry note:** git issue `db98e0e` closed 2026-10-08 during issue reconciliation (registry tip: 1fd08e96a). The git issue registry has no `Wontfix` state, so the close forced `Done`; the status was restored to `Wontfix` here because this ticket was abandoned as a duplicate, never implemented.
+**Registry note:** git issue `db98e0e` closed 2026-10-08 during issue reconciliation (registry tip: 1fd08e96a). The git issue registry is binary open-or-closed and has no `Wontfix` state, so `giwt sync` maps a closed issue to `Done` unconditionally and rewrites any non-done `.md` status line back to `Done` (`checkMdStatusDrift`, `sync-reconcile-checks.ts`). `Done` is therefore this ticket's permanent status: do NOT reset it to `Wontfix`, `Not Started`, or anything else — sync flips it back on the next run, and the flip-flop has cost three passes.
+
+`Done` here means *closed as a duplicate*, not *this work shipped*. The work shipped under `TASK-autonomy-config-surface` (Done), which meets all four acceptance criteria above; the evidence is in the Duplicate-of section. Nothing remains open from this file.
+
+**Resolved:** 2026-10-08 registry-driven close: git issue db98e0e (registry tip: 1fd08e96a Konstantin Fedotov Close issue)

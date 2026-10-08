@@ -29,17 +29,18 @@ Chat location change, party travel, and multi-location chat spanning. Covers:
 | -------------------------------- | ----------------------- | ------------------------------------------------------ |
 | `chats.current_location_id`      | ✅ DB column            | `schema-core.ts`                                       |
 | `chats.parent_chat_id`           | ✅ DB column            | `schema-core.ts`                                       |
-| `PUT /api/chats/:id/location`    | ✅ Simple update        | `routes/chats.ts`                                      |
-| `POST /api/chats/:id/transfer`   | ✅ Transfer to location | `routes/chat-search.ts`                                |
-| `POST /api/chats/:id/join`       | ✅ Join existing chat   | `routes/chat-search.ts`                                |
-| `GET /api/chats/joinable`        | ✅ Discover chats       | `routes/chat-search.ts`                                |
-| `GET /api/chats/search`          | ✅ Search chats         | `routes/chat-search.ts`                                |
-| Transition detection             | ✅ Regex-based          | `chat/transitions.ts`                                  |
-| `ChatTransition.location_change` | ✅ Type exists          | `chat/types.ts`                                        |
+| `PUT /api/chats/:id/location`    | ✅ Simple update        | `routes/chats/extras.ts`                               |
+| `POST /api/chats/:id/transfer`   | ✅ Transfer to location | `routes/chat-search/transfer.ts`                       |
+| `POST /api/chats/:id/join`       | ✅ Join existing chat   | `routes/chat-search/join.ts`                           |
+| `GET /api/chats/joinable`        | ✅ Discover chats       | `routes/chat-search/joinable.ts`                       |
+| `GET /api/chats/search`          | ✅ Search chats         | `routes/chat-search/search.ts`                         |
+| Transition detection             | ✅ Regex-based          | `chat/transition-classifier.ts` + `chat/transitions.ts`|
+| `ChatTransition.location_change` | ✅ Type exists          | `chat/types/transitions.ts`                            |
 | Chat sections (multi-location)   | ✅ DB table + CRUD      | `routes/chat-sections/` (access/assign/create/list/remove/reorder/update) + `schema-core.ts` |
-| Location change event log        | ✅ Migration 040        | `routes/chat-search/log.ts` + migration `040_chat_location_events.ts` |
-| Party join/leave                 | ❌ No logic             | —                                                      |
-| VN-driven location transitions   | ❌ No integration       | —                                                      |
+| Location change event log        | ✅ Table + writer       | `chat/service/location-events.ts` (`recordLocationChange`) + `chat_location_events` in `migrations/001_init.ts` |
+| Party join/leave                 | ✅ Shipped              | `src/chat/service/party.ts` + `src/routes/chats/participants.ts` (joinParty/leaveParty with VN narration; VN renderer wiring + leave-state-snapshot still open in TASK-party-join-leave) |
+| Party split/reunite              | ✅ Shipped              | `src/chat/service/split.ts` (splitParty/reuniteChats) + `src/routes/chats/split.ts` (POST /split, /reunite) |
+| VN-driven location transitions   | ⚠️ Partial              | `on_location_change` trigger + transition engine exist; no renderer wiring/sync |
 
 ## Design
 
@@ -206,35 +207,35 @@ Selecting a card triggers the corresponding location change.
 
 ### Phase 1: In-Chat Location Change + Sectioning
 
-- [ ] Create `chat_sections` table (migration)
-- [ ] Add `section_id` to messages table
-- [ ] Wire location change to section creation
-- [ ] Add section-aware message queries
-- [ ] VN scene transition on location change
-- [ ] Background/sound sync per section
+- [x] Create `chat_sections` table (`label/sort_index/location_id` shape, inside `migrations/001_init.ts`)
+- [x] Add `section_id` to messages table
+- [ ] ~~Wire location change to section creation~~ — shipped as event-log model (`recordLocationChange`), not section-lifecycle; `POST /:id/transfer` still records no event on dev
+- [ ] Add section-aware message queries — section CRUD + dividers + migration-carry shipped, but the `sectionId` filter on `listMessages` is not implemented
+- [ ] VN scene transition on location change (trigger + engine exist; renderer wiring is unmerged work in `tree/epic-transfer-location`)
+- [ ] Background/sound sync per section — background half shipped (`autoSyncChatBackground` on location PUT); ambient-sound half open
 
 ### Phase 2: Party Join/Leave
 
-- [ ] Extend participant API with VN narration
+- [x] Extend participant API with VN narration (`joinParty`/`leaveParty`)
 - [ ] Character state snapshot on leave
-- [ ] Welcome message generation for joins
+- [ ] Welcome message generation for joins — `joinParty` posts a fixed narrator line (`src/chat/service/party.ts:118`), not the character's `welcome_message`
 - [ ] VN entrance/exit animations
-- [ ] Talkativity/initiative seeding for new members
+- [ ] Talkativity/initiative seeding for new members — `talkativity: 5` is set on insert (`party.ts:113`); `initiative` is not seeded
 
 ### Phase 3: Party Split/Merge
 
-- [ ] Split detection (regex + explicit command)
-- [ ] Branch chat creation with context copy
-- [ ] Merge message logic with dedup
+- [x] Split detection (explicit command; regex detection not wired)
+- [x] Branch chat creation with context copy (`splitParty`)
+- [x] Merge message logic with dedup (`reuniteChats`)
 - [ ] VN split/reunite visual effects
-- [ ] Parent-child chat linking
+- [x] Parent-child chat linking (`parent_chat_id` in branch creation)
 
 ### Phase 4: New Chat + Join Existing
 
-- [ ] "Create chat at location" flow
-- [ ] "Join existing chat" flow with context preview
-- [ ] Transition narration bridging old → new chat
-- [ ] Parent chat linking for journey tracking
+- [ ] "Create chat at location" flow (no `POST /:id/create-at-location` route)
+- [ ] "Join existing chat" flow with context preview — joinable discovery ships (`src/routes/chat-search/joinable.ts`), but `join.ts` returns no section/location history; that part is unmerged work in `tree/epic-transfer-location`
+- [ ] Transition narration bridging old → new chat — `injectPartyNarration` covers join/leave only; no old→new chat bridging ships
+- [ ] Parent chat linking for journey tracking — `chats.parent_chat_id` exists and is set on split branch creation, but nothing ties it to a journey yet
 
 ## Tasks
 
@@ -248,19 +249,21 @@ Selecting a card triggers the corresponding location change.
 
 ### Existing (to modify)
 
-- `src/routes/chats.ts` — add section-aware queries
-- `src/routes/chat-search.ts` — extend transfer endpoint
-- `src/chat/service.ts` — add section CRUD, party join/leave
+> Paths corrected against dev HEAD `29602550b`; several flat modules became directories.
+
+- `src/routes/chats/extras.ts` — add section-aware queries
+- `src/routes/chat-search/transfer.ts` — extend transfer endpoint
+- `src/chat/service/location-events.ts` — section/event CRUD; party join/leave in `src/chat/service/party.ts`
 - `src/chat/transitions.ts` — wire section creation to transitions
-- `src/chat/types.ts` — add section types
-- `src/db/schema-core.ts` — add chat_sections, section_id on messages
-- `src/frontend/vn/scene-renderer.ts` — location transition effects
+- `src/chat/types/` — add section types
+- `src/db/schema-core.ts` — add chat_sections, section_id on messages (SHIPPED)
+- `src/frontend/vn/scene-renderer/` — location transition effects
 - `src/frontend/vn/choice-cards.ts` — location choice cards
 
 ### New (to create)
 
-- `src/db/migrations/031_chat_sections.ts` — chat_sections table
-- `src/routes/chat-sections.ts` — section CRUD endpoints
+- ~~`src/db/migrations/031_chat_sections.ts`~~ — never existed; `chat_sections` and `chat_location_events` shipped inside `src/db/migrations/001_init.ts`
+- ~~`src/routes/chat-sections.ts`~~ — shipped as the directory `src/routes/chat-sections/`
 - `src/frontend/alpine/travel-panel.ts` — travel UI
 - `src/frontend/alpine/party-roster.ts` — party join/leave UI
 

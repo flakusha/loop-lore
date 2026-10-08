@@ -3,11 +3,16 @@
 
 # Epic: Entity Generation Workflows
 
-**Overview:** (see sections below)
+**Overview:** Entity generation — character, world, location, item, npc — as a first-class workflow
+category. These workflows give the existing `/create` assistant command the prompt preview,
+validation, and confirmation gating it currently lacks. Image/video vary by model family
+(`epic-model-family-presets.md`); entity workflows vary by entity shape. This epic is a
+sub-epic of `epic-assistant-creative-studio-workflows.md` and depends on the Workflow Engine
+sub-epic for schema/loader/runner/approval plumbing.
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** All five entity workflow templates (character/npc/world/location/item) ship in `configs/templates/workflows/entities.yaml` with `entity_type_presets` cross-validated by `validateEntityTypePresets` (`src/config/templates-loader/validation-entity-types.ts`); intent routing via `matchWorkflowIntent` (`src/assistant/workflow-routing.ts`) against the `npc` target in `src/regex/intent.ts:57`; run/confirm/dispatch via `src/assistant/workflow-runner.ts` + `src/routes/messages/command.ts` + `src/assistant/commands/workflow.ts`, dispatching to `/create` (quality gates in `src/assistant/quality/entity-creation-gates.ts`). Remaining: species workflow (blocked, no `bestiary_catalog` table) and the item `balance` gate.
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Medium
 **Type:** Feature Epic
@@ -36,9 +41,9 @@ feeds straight into `WorkflowRunner.startWorkflow(...)`.
 | NPC       | `npc`           | ❌ — needs new target | actor insert with `is_npc`                                                     |
 | Species   | `species`       | ❌ — needs new target | bestiary insert (`TASK-assistant-creative-studio-workflow-species.md`)          |
 
-**Decision (open):** add `npc` as a distinct `INTENT_PATTERNS` target (preferred — clean
-separation, matches `epic-npcs.md`), OR route NPC generation through the `character`
-target with an `is_npc: true` step default. Default to adding the `npc` target. `species` (bestiary flora/fauna/monster) follows the same rule — a distinct target, per `TASK-assistant-creative-studio-workflow-species.md`.
+**Decision (resolved):** `npc` added as a distinct `INTENT_PATTERNS` target — clean separation,
+matches `epic-npcs.md`. `species` (bestiary flora/fauna/monster) follows the same rule — a
+distinct target, per `TASK-assistant-creative-studio-workflow-species.md`.
 
 ### Per-Entity Step Schemas (§7.6b)
 
@@ -111,13 +116,24 @@ no per-kind forks.
 
 ## Tasks
 
-- [ ] Entity-generation workflow templates (character/world/location/item/npc) with `entity_type_presets` (§7.6c) + per-entity quality gates (§7.6d); wire `intent.target` bindings (§7.6a)
-- [ ] Decide and implement the NPC intent target: distinct `INTENT_PATTERNS` target (preferred) vs. routing through `character` with an `is_npc: true` step default
+- [x] Entity-generation workflow templates (character/world/location/item/npc) with `entity_type_presets` (§7.6c) + per-entity quality gates (§7.6d); wire `intent.target` bindings (§7.6a) — `configs/templates/workflows/entities.yaml` + `entity-types.yaml`
+- [x] Decide and implement the NPC intent target: distinct `INTENT_PATTERNS` target (preferred) vs. routing through `character` with an `is_npc: true` step default — shipped, `src/regex/intent.ts:57`
 
 
-- [ ] Entity-generation workflows (character/world/location/item/npc), each with: intent routing to its `INTENT_PATTERNS` target, per-entity step schema (§7.6b), `entity_type_presets` validation (§7.6c), schema/consistency/duplicate (+balance for items) quality gates, confirmation, and dispatch to the correct creation backend
-- [ ] User can add/override/replace workflows via config (merge strategies work)
+- [x] Entity-generation workflows (character/world/location/item/npc), each with: intent routing to its `INTENT_PATTERNS` target, per-entity step schema (§7.6b), `entity_type_presets` validation (§7.6c), schema/consistency/duplicate quality gates, confirmation, and dispatch to the correct creation backend — except the item `balance` gate, which does not exist (`grep -r balance src/assistant/quality/` is empty)
+- [x] User can add/override/replace workflows via config (merge strategies work) — `mergeWorkflowConfig` + multi-file discovery (`src/config/templates-loader/discovery.ts:84`)
 - [ ] Species-generation workflow template (`species` intent target, bestiary step schema, `entity_type_presets.species`, +balance gate); dispatch to bestiary insert — `TASK-assistant-creative-studio-workflow-species.md`
+
+## Acceptance Criteria
+
+- [x] NPC workflow template (`entity-npc`) with `entity_type_presets.npc` + quality gates
+- [x] NPC intent target added to `INTENT_PATTERNS`
+- [x] Schema/loader supports `entityTypes` domain with cross-validation
+- [x] Intent routing (`matchWorkflowIntent`) routes entity messages to workflows
+- [x] Character/world/location/item workflow templates with per-entity step schemas
+- [ ] Species-generation workflow (blocked: no `bestiary_catalog` table)
+- [ ] All entity workflows have schema/consistency/duplicate quality gates — `runQualityGates` runs schema/duplicate/consistency (`src/assistant/quality/entity-creation-gates.ts:208`) but the per-preset `qualityGates` list in `entity-types.yaml` is not read by the runner, and the item `balance` gate does not exist
+- [ ] `/create` command gated by workflow confirmation — `/create` still runs standalone; the workflow path feeds INTO `/create`, not the reverse
 
 ## Dependencies
 

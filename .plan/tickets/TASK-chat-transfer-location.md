@@ -3,13 +3,13 @@
 
 # TASK: Chat Transfer & Location Change — Implementation
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Implement chat transfer between locations - in-chat location change, transfer to another location, create-chat-at-location, and join-existing-chat - plus VN scene transitions on location change and chat sectioning.
+**Context:** Builds on the already-shipped `PUT /api/chats/:id/location`, `POST /api/chats/:id/transfer`, `POST /api/chats/:id/join`, `GET /api/chats/joinable`, and the regex transition classifier. Sectioning shipped in a different shape than this ticket's original DDL (event-log + `label/sort_index/location_id`), so Steps 1-2 are superseded - see the Code Verification section below.
+**Acceptance Criteria:** `chat_sections` table and `messages.section_id` exist; section-aware message queries work; location change records an event and auto-syncs the chat background; join returns location/section context; transfer records an event; VN transition fires on location change; create-chat-at-location works end-to-end; existing chat tests pass.
 
 
 **Status:** In Progress
-**Status Note:** exists
+**Status Note:** sectioning, location-event log, party join/leave and split/reunite shipped on dev; transfer event wiring, join location context, and VN renderer wiring are unmerged work in worktree `tree/epic-transfer-location` (not on dev).
 **Priority:** P2-B
 **Effort:** Medium
 **Epic:** epic-chat-transfer-location
@@ -75,36 +75,16 @@ export async function getCurrentSection(db, chatId) { ... }
 export async function listSections(db, chatId) { ... }
 ```
 
-### Step 3: Wire Location Change to Section Creation
+### Step 3: Wire Location Change to Event/Background Lifecycle (SHIPPED for PUT; transfer in flight)
 
-Modify `PUT /api/chats/:id/location`:
+> ✅ `PUT /api/chats/:id/location` already does: transaction → `recordLocationChange` → `autoSyncChatBackground` (`src/routes/chats/extras.ts:96-113`).
+> 🔧 NOT ON DEV: `POST /api/chats/:id/transfer` does NOT yet get the SAME lifecycle. On dev HEAD `29602550b`, `src/routes/chat-search/transfer.ts` updates `current_location_id` with no `recordLocationChange` call. The equivalent wiring is unmerged work in worktree `tree/epic-transfer-location`.
 
-1. End current section (set `ended_at`)
-2. Create new section at target location
-3. Return section metadata in response
+### Step 4: VN Transition Integration (trigger shipped; renderer wiring in flight)
 
-Modify `POST /api/chats/:id/transfer`:
-
-1. Same section lifecycle as above
-2. Also trigger VN transition event
-
-### Step 4: VN Transition Integration
-
-When a location change occurs:
-
-1. Emit `chat.location_changed` event with section data
-2. VN scene renderer receives event
-3. Triggers scene transition effect (fade/cut/dissolve)
-4. Background image changes to match new location
-5. Ambient sound crossfades
-
-Wire via existing `src/chat/transitions.ts`:
-
-```typescript
-// In createTransition(), when type is "location_change":
-// → emit event with { oldSection, newSection, transitionType }
-// → frontend picks up and triggers VN transition
-```
+> ✅ `on_location_change` trigger + `evaluateTriggers` + transition engine (fade/cut/dissolve) exist.
+> 🔧 NOT ON DEV: a browser-side ledger (`src/frontend/vn/location-events.ts`, `saveLastLocation`/`getLocationContext`) plus scene-renderer wiring is unmerged work in worktree `tree/epic-transfer-location` (branch behind dev, no commits of its own). The file exists there and as an untracked file in this checkout's working tree, but is not committed on dev HEAD `29602550b`. Do not treat it as shipped.
+> Ambient-sound crossfade remains open (no sound system wired to sections).
 
 ### Step 5: "Create Chat at Location" Flow
 
@@ -142,41 +122,55 @@ Modify `listMessages` in `chat/service.ts`:
 
 ## Files to Create
 
-- `src/db/migrations/031_chat_sections.ts` — chat_sections table
-- `src/routes/chat-sections.ts` — section CRUD endpoints
+> Superseded — the chat_sections table and section CRUD both landed on `dev` in
+> a different shape than this ticket designed (see Code Verification below). No
+> files below remain to be created.
+
+- ~~`src/db/migrations/031_chat_sections.ts`~~ — never existed; `chat_sections` and
+  `chat_location_events` were both folded into `src/db/migrations/001_init.ts`
+- ~~`src/routes/chat-sections.ts`~~ — shipped as the directory
+  `src/routes/chat-sections/` (access/assign/bulk/create/list/narrative/remove/reorder/update)
 
 ## Files to Modify
 
-- `src/db/schema-core.ts` — add ChatsSections interface
-- `src/db/schema-manifest.ts` — regenerate
-- `src/chat/service.ts` — add section CRUD, wire to location change
-- `src/chat/types.ts` — add section types
-- `src/routes/chats.ts` — section-aware location update
-- `src/routes/chat-search.ts` — extend transfer with section creation
+> Paths corrected against dev HEAD `29602550b`; several were stale post-refactor
+> (flat modules became directories, and `src/chat/types.ts` became `src/chat/types/`).
+
+- `src/db/schema-core.ts` — `ChatSections` interface (SHIPPED)
+- `src/db/schema-manifest.ts` — regenerate (SHIPPED)
+- `src/chat/service/location-events.ts` — SHIPPED `recordLocationChange` + `getLocationHistory`
+  (the event-log model that replaced this ticket's planned `src/chat/service.ts`
+  section CRUD; both exported from `src/chat/service/index.ts:138`)
+- `src/chat/types/` — section/location types (SHIPPED as `src/chat/types/transitions.ts`)
+- `src/routes/chats/extras.ts` — section-aware location update (SHIPPED)
+- `src/routes/chat-search/transfer.ts` — extend transfer with event recording (OPEN on dev)
 - `src/chat/transitions.ts` — emit section events
-- `src/frontend/vn/scene-renderer.ts` — handle location transition events
+- `src/frontend/vn/scene-renderer/` — handle location transition events (directory, not `scene-renderer.ts`)
 - `src/frontend/vn/choice-cards.ts` — location choice cards
 
 ## Acceptance Criteria
 
-- [ ] `chat_sections` table created with proper schema
-- [ ] `messages.section_id` column added
-- [ ] Location change creates new section automatically
-- [ ] Section-aware message queries work
-- [ ] VN transition fires on location change
-- [ ] "Create chat at location" flow works end-to-end
-- [ ] "Join existing chat" returns section context
-- [ ] Background/sound sync per section
+- [x] `chat_sections` table created with proper schema (shipped shape: label/sort_index/location_id/background_id — NOT the ticket DDL; both `chat_sections` and `chat_location_events` live in `src/db/migrations/001_init.ts`)
+- [x] `messages.section_id` column added
+- [ ] Location change creates new section automatically — superseded by event-log model; `POST /:id/transfer` still records no event on dev
+- [ ] Section-aware message queries work — section CRUD/assign/reorder + frontend dividers shipped (`src/routes/chat-sections/`, `src/frontend/alpine/chat-sections.ts`), but the Step 7 `sectionId` filter on `listMessages` (`src/chat/service/read.ts:58`) is NOT implemented
+- [ ] VN transition fires on location change — trigger + engine shipped; renderer wiring is unmerged work in `tree/epic-transfer-location`, not on dev
+- [ ] "Create chat at location" flow works end-to-end — open (no `POST /:id/create-at-location` route)
+- [ ] "Join existing chat" returns section context — NOT on dev: `src/routes/chat-search/join.ts:92` returns only `{ chatId, joined: true }`, no section/location history. The version that returns location history is unmerged work in `tree/epic-transfer-location`
+- [ ] Background/sound sync per section — background half shipped (`autoSyncChatBackground` on `PUT /:id/location`); ambient-sound half open, no sound system wired to sections
 - [ ] All existing chat tests still pass
 
-## Verification
+## Code Verification 2026-10-08
 
-```bash
-bun run check
-bun test src/chat/
-bun test src/routes/chats.ts
-bun test src/routes/chat-search.ts
-```
+Verified against the `dev` HEAD `29602550b` source tree (`git ls-tree`/`git grep` against
+that ref, not the dirty working tree — a concurrent migration edits `src/` here):
+- Phase 1: sectioning shipped to a DIFFERENT but sufficient shape than the ticket's DDL — `chat_sections(label, description, location_id NULLABLE, sort_index, background_id)` + `messages.section_id` + `chat_location_events` append-only log + full section CRUD (`src/routes/chat-sections/`: access/assign/bulk/create/list/narrative/remove/reorder/update) + frontend section nav/panel/dividers + migration-carry (`carryHistory`/`carryLocation`) + `autoSyncChatBackground` wired to `PUT /:id/location` (`src/routes/chats/extras.ts:110-112`). Do NOT re-run this ticket's Step 1 DDL — superseded.
+- Phase 2: party join/leave shipped (`joinParty`/`leaveParty` in `src/chat/service/party.ts`, routes in `src/routes/chats/participants.ts`, guest role enum, idempotent rejoin). Open: VN renderer entrance/exit animation wiring + character state snapshot on leave.
+- Phase 3: split/reunite shipped (`splitParty`/`reuniteChats` in `src/chat/service/split.ts`, routes `POST /api/chats/:id/split` + `/reunite` in `src/routes/chats/split.ts` with IDOR-safe actorId guard, carried context via `carry-*` modules). Open: regex split/reunite narration detection, VN split/reunite visual effects.
+- Phase 4: "create chat at location" flow NOT shipped (no `POST /:id/create-at-location` route). Join-flow location context NOT on dev either — `src/routes/chat-search/join.ts` returns `{ chatId, joined: true }` only; the location-history version is unmerged work in worktree `tree/epic-transfer-location`.
+- VN: `on_location_change` transition trigger + transition engine using `VnTriggerContext.currentLocationId/previousLocationId` SHIPPED; scene-renderer wiring for background/ambient sync NOT shipped on dev — the frontend ledger (`src/frontend/vn/location-events.ts`) exists only as unmerged work in `tree/epic-transfer-location` (and as an untracked file in this checkout), never committed.
+
+## Remaining delta after this session's in-flight slices (transfer event wiring, join context, VN ledger+renderer hook)
 
 
 ## Verification 2026-09-26
