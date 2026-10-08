@@ -29,6 +29,7 @@ function renderContainer(component: UIComponentDefinition,): string {
   const props = component.props == null
     ? ""
     : ` data-plugin-props="${escapeHtml(jsonStringifyOr(component.props,),)}"`;
+
   return `<div class="plugin-mount" data-plugin-component="${escapeHtml(component.name,)}" data-plugin-location="${
     escapeHtml(component.location,)
   }"${props}></div>`;
