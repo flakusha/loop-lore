@@ -71,8 +71,16 @@ function withDraft(value: string,): void {
   Object.defineProperty(globalThis, "document", { value: stub, configurable: true, writable: true, },);
 }
 
+/** Load-time document (tests/setup-globals.ts shim or a prior file's value). */
+const originalDocument = (globalThis as { document?: unknown }).document;
+
+/**
+ * Restore — NOT delete: `document === undefined` would break every later test
+ * file in the shared bun:test process (the preload shim only installs when the
+ * global is absent at load time).
+ */
 function clearDocument(): void {
-  Object.defineProperty(globalThis, "document", { value: undefined, configurable: true, writable: true, },);
+  Object.defineProperty(globalThis, "document", { value: originalDocument, configurable: true, writable: true, },);
 }
 
 afterEach(() => {

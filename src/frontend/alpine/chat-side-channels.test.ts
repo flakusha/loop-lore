@@ -1,5 +1,5 @@
 import "./i18n.test-helper";
-import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { afterAll, afterEach, beforeEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatSideChannels, } from "./chat-side-channels";
 import type { ChatState, } from "./types";
@@ -33,12 +33,20 @@ function mockFetch(status: number, body: unknown = {},) {
 // Alpine store stub — side-channels reads/writes $store.ui. Provide a minimal
 // in-memory store so Alpine.store works outside the browser.
 const uiStore: Record<string, unknown> = {};
+const fileRealAlpine = (globalThis as Record<string, unknown>).Alpine;
 (globalThis as Record<string, unknown>).Alpine = {
   store: (name: string,) => {
     if (name === "ui") { return uiStore; }
     return {};
   },
 };
+
+afterAll(() => {
+  // Restore the real (or absent) Alpine global: this stub has no initTree, so
+  // later files lazy-initializing Alpine modals crash on Alpine.initTree.
+  if (fileRealAlpine === undefined) { delete (globalThis as Record<string, unknown>).Alpine; }
+  else { (globalThis as Record<string, unknown>).Alpine = fileRealAlpine; }
+},);
 
 interface Toast {
   type: string;

@@ -4,7 +4,7 @@
  * Stubs globalThis.document with a minimal mock to exercise initDropZone
  * without requiring happy-dom.
  */
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { ALLOWED_TYPES, initDropZone, isAllowedType, } from "./gallery-upload";
 
 // ── DOM stub ────────────────────────────────────────────────────────────────
@@ -67,6 +67,12 @@ let textEl: FakeEl | null = null;
 
 const elements: Record<string, FakeEl> = {};
 
+// Snapshot the load-time globals this file replaces (module-scope writes must be
+// handed back in afterAll — later files in the shared bun:test process need a
+// working DOM shim with createElement/style).
+const originalDocument = (globalThis as { document?: unknown }).document;
+const originalCSS = (globalThis as { CSS?: unknown }).CSS;
+
 (globalThis as any).document = {
   querySelector(sel: string,): any {
     return elements[sel] ?? null;
@@ -80,6 +86,11 @@ const elements: Record<string, FakeEl> = {};
 };
 
 (globalThis as any).CSS = { escape: (s: string,) => s, };
+
+afterAll(() => {
+  (globalThis as { document?: unknown }).document = originalDocument;
+  (globalThis as { CSS?: unknown }).CSS = originalCSS;
+},);
 
 // ── Tests ───────────────────────────────────────────────────────────────────
 

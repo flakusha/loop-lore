@@ -361,9 +361,12 @@ describe("transferOwnership", () => {
     // ownership.ts resolves to a counting spy. Bun re-evaluates the
     // module graph on dynamic import, so the spy actually intercepts.
     const realAccess = await import("./access");
+    // Value-snapshot BEFORE the mock: bun rewrites the namespace's live bindings
+    // on mock.module, so a bare-namespace restore would hand later files the spy.
+    const realAccessSnapshot: Record<string, unknown> = { ...realAccess, };
     const calls: unknown[][] = [];
     mock.module("./access", () => ({
-      ...realAccess,
+      ...realAccessSnapshot,
       reconcileModeratorGrants: (dbArg: unknown, chatId: string, previousOwnerId: string, newOwnerId: string,) => {
         calls.push([dbArg, chatId, previousOwnerId, newOwnerId,],);
         return Promise.resolve();
@@ -385,7 +388,7 @@ describe("transferOwnership", () => {
       expect(calls[0]?.[2],).toBe(OWNER_ID,);
       expect(calls[0]?.[3],).toBe(PARTICIPANT_ID,);
     } finally {
-      mock.module("./access", () => realAccess,);
+      mock.module("./access", () => realAccessSnapshot,);
     }
   });
 
@@ -415,9 +418,11 @@ describe("transferOwnership", () => {
 
   test("post-transfer: reconcileModeratorGrants throw is logged but does not roll back", async () => {
     const realAccess = await import("./access");
+    // Value-snapshot BEFORE the mock (see the sibling spy test above).
+    const realAccessSnapshot: Record<string, unknown> = { ...realAccess, };
     let callCount = 0;
     mock.module("./access", () => ({
-      ...realAccess,
+      ...realAccessSnapshot,
       reconcileModeratorGrants: () => {
         callCount += 1;
         return Promise.reject(new Error("synthetic reconcile failure",),);
@@ -444,7 +449,7 @@ describe("transferOwnership", () => {
 
       expect(after.created_by,).toBe(PARTICIPANT_ID,);
     } finally {
-      mock.module("./access", () => realAccess,);
+      mock.module("./access", () => realAccessSnapshot,);
     }
   });
 

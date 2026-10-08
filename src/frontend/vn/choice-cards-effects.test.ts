@@ -5,7 +5,7 @@
  * Tests for frontend/vn/choice-cards.ts selectChoice effects — location change
  * dispatch and split/reunite consequences (mock-module seam convention).
  */
-import { afterEach, expect, mock, test, } from "bun:test";
+import { afterAll, afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { destroyChoiceCards, initChoiceCards, loadChoices, selectChoice, } from "./choice-cards";
 
@@ -40,6 +40,10 @@ function jsonRes(body: unknown, status = 200,): Response {
 
 // Capture chat:location-changed dispatches (globalThis.dispatchEvent stub).
 const windowEvents: Event[] = [];
+// Module-scope global writes must be handed back in afterAll — later files in
+// the shared bun:test process need the load-time DOM/window surface.
+const originalDispatchEvent = (globalThis as { dispatchEvent?: unknown }).dispatchEvent;
+const originalDocument = (globalThis as { document?: unknown }).document;
 (globalThis as unknown as { dispatchEvent: (e: Event,) => boolean }).dispatchEvent = (e: Event,) => {
   windowEvents.push(e,);
   return true;
@@ -68,6 +72,17 @@ function fakeEl(): HTMLElement {
   dispatchEvent: () => true,
   querySelector: () => null,
 };
+
+afterAll(() => {
+  (globalThis as unknown as { document: unknown }).document = originalDocument;
+  if (originalDispatchEvent === undefined) {
+    delete (globalThis as { dispatchEvent?: unknown }).dispatchEvent;
+  } else {
+    (globalThis as unknown as { dispatchEvent: (e: Event,) => boolean }).dispatchEvent = originalDispatchEvent as (
+      e: Event,
+    ) => boolean;
+  }
+},);
 
 // ── Fixtures ────────────────────────────────────────────────────────────────
 
