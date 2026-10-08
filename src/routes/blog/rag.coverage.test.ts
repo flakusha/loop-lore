@@ -16,7 +16,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
-import { insertBlogPosts, insertUsers, } from "../../test-utils/insert-helpers";
+import { insertBlogPosts, insertBlogRagSources, insertUsers, } from "../../test-utils/insert-helpers";
 import { blogRagRoutes, } from "./rag";
 
 createLogger({ level: "error", },);
@@ -25,6 +25,8 @@ let db: Kysely<DB>;
 let sqlite: Database;
 const ADMIN = "rag-route-admin";
 const USER = "rag-route-user";
+
+const STRANGER = "rag-route-stranger";
 let postId: string;
 
 /**
@@ -52,6 +54,29 @@ function postSource(userId: string, userRole: string, body: unknown,): Promise<R
   );
 }
 
+/**
+ * @param visibility
+ * @param status
+ * @param authorId
+ */
+async function seedPost(visibility: string, status: string, authorId: string,): Promise<string> {
+  return insertBlogPosts(db, authorId, "Gated Post", "Body", {
+    visibility,
+    status,
+  },);
+}
+
+/**
+ * @param userId
+ * @param userRole
+ * @param targetId
+ */
+function getSources(userId: string | null, userRole: string | null, targetId: string,): Promise<Response> {
+  return app(userId, userRole,).handle(
+    new Request(`http://localhost/api/blog/posts/${targetId}/sources`,),
+  );
+}
+
 beforeAll(async () => {
   const ctx = await createTestDb();
   db = ctx.db;
@@ -62,7 +87,13 @@ beforeEach(async () => {
   resetTestDb(sqlite,);
   await insertUsers(db, "rag-admin", "Admin", { id: ADMIN, },);
   await insertUsers(db, "rag-user", "User", { id: USER, },);
-  postId = await insertBlogPosts(db, ADMIN, "Lore Post", "Body", { id: "rag-route-post", },);
+
+  await insertUsers(db, "rag-stranger", "Stranger", { id: STRANGER, },);
+  postId = await insertBlogPosts(db, ADMIN, "Lore Post", "Body", {
+    id: "rag-route-post",
+    visibility: "public",
+    status: "published",
+  },);
 },);
 
 afterAll(async () => {
@@ -135,5 +166,100 @@ describe("blog RAG source routes", () => {
     const body: { count: number; sources: { title: string }[] } = await res.json();
     expect(body.count,).toBe(2,);
     expect(body.sources.map((s,) => s.title),).toEqual(["High", "Low",],);
+  });
+});
+
+describe("GET sources read policy (BUG-blog-rag-sources-leaks-private-post-data)", () => {
+  const SECRET_URI = "https://secret.example/plan-of-attack";
+
+  /**
+   * @param authorId
+   * @param visibility
+   * @param status
+   */
+  async function privatePostWithSecret(
+    authorId: string,
+    visibility: string,
+    status: string,
+  ): Promise<string> {
+    const id = await seedPost(visibility, status, authorId,);
+    await insertBlogRagSources(db, id, "external_web", SECRET_URI, "Secret",);
+    return id;
+  }
+
+  test("anonymous caller gets 401, not the private source list", async () => {
+    const target = await privatePostWithSecret(ADMIN, "private", "draft",);
+
+    const res = await getSources(null, null, target,);
+
+    expect(res.status,).toBe(401,);
+    const body: { error: string; code: string } = await res.json();
+    expect(body.code,).toBe("UNAUTHORIZED",);
+    expect(body.error,).toBe("Unauthorized",);
+    expect(JSON.stringify(body,),).not.toContain(SECRET_URI,);
+  });
+
+  test("a stranger gets 404 and no trace of the private source uri", async () => {
+    const target = await privatePostWithSecret(ADMIN, "private", "draft",);
+
+    const res = await getSources(STRANGER, "user", target,);
+
+    expect(res.status,).toBe(404,);
+    const body: { error: string; code: string } = await res.json();
+    expect(body.code,).toBe("NOT_FOUND",);
+    expect(body.error,).toBe("errors.notFound",);
+    expect(JSON.stringify(body,),).not.toContain(SECRET_URI,);
+  });
+
+  test("a stranger gets 404 on a public-but-unpublished draft too", async () => {
+    const target = await privatePostWithSecret(ADMIN, "public", "draft",);
+
+    const res = await getSources(STRANGER, "user", target,);
+
+    expect(res.status,).toBe(404,);
+    const body: { error: string; code: string } = await res.json();
+    expect(body.code,).toBe("NOT_FOUND",);
+    expect(JSON.stringify(body,),).not.toContain(SECRET_URI,);
+  });
+
+  test("the author reads their own private draft's sources", async () => {
+    const target = await privatePostWithSecret(ADMIN, "private", "draft",);
+
+    const res = await getSources(ADMIN, "user", target,);
+
+    expect(res.status,).toBe(200,);
+    const body: { count: number; sources: { uri: string }[] } = await res.json();
+    expect(body.count,).toBe(1,);
+    expect(body.sources[0]?.uri,).toBe(SECRET_URI,);
+  });
+
+  test("an admin with admin.settings reads a private post's sources", async () => {
+    const target = await privatePostWithSecret(ADMIN, "private", "draft",);
+
+    const res = await getSources(STRANGER, "admin", target,);
+
+    expect(res.status,).toBe(200,);
+    const body: { count: number; sources: { uri: string }[] } = await res.json();
+    expect(body.count,).toBe(1,);
+    expect(body.sources[0]?.uri,).toBe(SECRET_URI,);
+  });
+
+  test("a logged-in stranger reads a public published post's sources", async () => {
+    const target = await privatePostWithSecret(ADMIN, "public", "published",);
+
+    const res = await getSources(STRANGER, "user", target,);
+
+    expect(res.status,).toBe(200,);
+    const body: { count: number; sources: { uri: string }[] } = await res.json();
+    expect(body.count,).toBe(1,);
+    expect(body.sources[0]?.uri,).toBe(SECRET_URI,);
+  });
+
+  test("an unknown post id is 404 for an authenticated caller", async () => {
+    const res = await getSources(STRANGER, "user", "11111111-1111-4111-8111-111111111111",);
+
+    expect(res.status,).toBe(404,);
+    const body: { code: string } = await res.json();
+    expect(body.code,).toBe("NOT_FOUND",);
   });
 });

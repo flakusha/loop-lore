@@ -119,4 +119,36 @@ describe("emotion definition routes", () => {
     const stored = await db.selectFrom("emotions",).selectAll().execute();
     expect(stored.some((row,) => row.name === "envy"),).toBe(false,);
   });
+
+  test("POST /api/emotions answers 409 for a duplicate name (uq_emotions_name)", async () => {
+    const first = await app("u1", "admin",).handle(
+      new Request("http://localhost/api/emotions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "dup", },),
+      },),
+    );
+
+    expect(first.status,).toBe(201,);
+    const created: { id: string } = await first.json();
+    const afterFirst = await db.selectFrom("emotions",).selectAll().execute();
+    expect(afterFirst.filter((row,) => row.name === "dup").length,).toBe(1,);
+
+    const second = await app("u1", "admin",).handle(
+      new Request("http://localhost/api/emotions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "dup", },),
+      },),
+    );
+
+    expect(second.status,).toBe(409,);
+    const conflict: { error: string } = await second.json();
+    expect(conflict.error,).toBe('Emotion "dup" already exists',);
+
+    const afterSecond = await db.selectFrom("emotions",).selectAll().execute();
+    const duplicates = afterSecond.filter((row,) => row.name === "dup");
+    expect(duplicates.length,).toBe(1,);
+    expect(duplicates[0]?.id,).toBe(created.id,);
+  });
 });
