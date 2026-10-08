@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** Schema-driven generation ships: `scripts/generate-schema-fuzz.ts` scans TypeBox schema modules across `src/validation/schemas/` and `src/routes/` and emits the committed, seeded `src/validation/schema-fuzz.generated.test.ts` (`bun run fuzz:gen` / `fuzz:check`), built on the schema-to-arbitrary primitives in `src/test-utils/schema-arbitrary.ts`. That layer exercises valid inputs only. Not yet built: the harness runner, mutation engine, seed corpora, per-target harnesses, sanitizer integration, CI integration, and the continuous-fuzzing cluster — see Linked Tasks.
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Infrastructure Epic
@@ -23,6 +23,20 @@ Systematic approach to generating diverse, malicious, and edge-case inputs for f
 ## Sub-Epic of
 
 Part of the **Testing, Benchmarking & Performance** epic. See parent epic for the shared pressure/fuzzing test tiers.
+
+## Linked Tasks
+
+| Task                                                             | Title                                                              | Priority | Status      |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------ | -------- | ----------- |
+| TASK-fuzzing-infrastructure-harness-runner-corpus-manager-crash-d | Fuzzing infrastructure — harness runner, corpus manager, crash deduplicator | high     | Not Started |
+| TASK-mutation-engine-bitflip-arithmetic-dictionary-structure-cros  | Mutation engine — bitflip, arithmetic, dictionary, structure, crossover, generative | high     | Not Started |
+| TASK-per-target-fuzzing-harnesses-auth-asset-chat-llm-admin-ipc    | Per-target fuzzing harnesses — auth, asset, chat, llm, admin, IPC     | high     | Not Started |
+| TASK-seed-corpora-10k-seeds-per-fuzzing-target                    | Seed corpora — 10k+ seeds per fuzzing target                        | medium   | Not Started |
+| TASK-ci-integration-github-actions-matrix-artifact-upload-on-cras   | CI integration — GitHub Actions matrix + artifact upload on crash   | medium   | Not Started |
+| TASK-continuous-fuzzing-cluster-scheduler-corpus-sync-crash-triag  | Continuous fuzzing cluster — scheduler, corpus sync, crash triage  | medium   | Not Started |
+| TASK-dashboard-integration-coverage-crashes-corpus-performance-ro   | Dashboard integration — coverage, crashes, corpus, performance, ROI | low      | Not Started |
+| TASK-sanitizer-integration-asan-msan-ubsan-tsan                    | Sanitizer integration — ASan, MSan, UBSan, TSan                     | low      | Not Started |
+| TASK-regression-process-crash-classification-minimization-fix-ver   | Regression process — crash classification, minimization, fix verification | low      | Not Started |
 
 ## Input Categories
 
