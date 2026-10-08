@@ -3,7 +3,9 @@
 
 import type { Kysely, } from "kysely";
 import { PublicationStatus, } from "../../db/enums-story";
+import { LOCATION_DEPTH_LIMIT, } from "../../db/enums-story/world";
 import type { DB, } from "../../db/schema";
+import { LocationTreeService, } from "../../locations";
 import { getLogger, } from "../../logger";
 import { safeJsonStringify, uid, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
@@ -92,12 +94,18 @@ export async function handleCreateLocation(
   const name = body.name as string | undefined;
   if (!name) { return jsonError({ message: "name is required", status: HttpStatus.BadRequest, },); }
 
+  // The id is generated up front so `connections` can be validated against the
+  // new row's own id: a payload naming its own id is a self-link and must be
+  // rejected 400 exactly like on the update path.
+  const id = uid();
+
+  const parentErr = await validateParentForCreate(database, worldId, body.parentLocationId,);
+  if (parentErr) { return parentErr; }
+
   if (body.connections) {
-    const connError = await validateConnections(database, worldId, body.connections,);
+    const connError = await validateConnections(database, worldId, body.connections, id,);
     if (connError) { return connError; }
   }
-
-  const id = uid();
 
   // Resolve the template BEFORE opening the transaction — bun:sqlite is
   // single-connection, so a query on `database` inside the tx would deadlock.
@@ -125,7 +133,6 @@ export async function handleCreateLocation(
             : "[]",
           kind: ((body.kind as string | undefined) ?? "region") as never,
           mobility_mode: ((body.mobilityMode as string | undefined) ?? "static") as never,
-          path: ((body.path as string | undefined) ?? undefined) as never,
           coord_x: (body.coordX as number | undefined) ?? null,
           coord_y: (body.coordY as number | undefined) ?? null,
           coord_z: (body.coordZ as number | undefined) ?? null,
@@ -217,7 +224,9 @@ export async function handleUpdateLocation(
 
   if (body.kind != null) { updates.kind = body.kind; }
   if (body.mobilityMode != null) { updates.mobility_mode = body.mobilityMode; }
-  if (body.path !== undefined) { updates.path = body.path; }
+  // Client-supplied `path` is never written: the path column is owned by the
+  // DB triggers + LocationTreeService.repairPath, and trusting it would let a
+  // forged value desync the materialized tree.
   if (body.coordX !== undefined) { updates.coord_x = body.coordX; }
   if (body.coordY !== undefined) { updates.coord_y = body.coordY; }
   if (body.coordZ !== undefined) { updates.coord_z = body.coordZ; }
@@ -243,4 +252,46 @@ export async function handleUpdateLocation(
     .execute();
 
   return jsonResponse({ ok: true, },);
+}
+
+/**
+ * Depth/parent validation for HTTP creates, mirroring the app-layer checks in
+ * LocationTreeService.insertLocation: the parent must exist in the same world
+ * and the child must not exceed LOCATION_DEPTH_LIMIT. Without this the depth
+ * ceiling only bound service callers — HTTP creates could nest arbitrarily
+ * deep.
+ * @param database
+ * @param worldId
+ * @param parentLocationId
+ * @returns error Response, or null when the parent is acceptable
+ */
+async function validateParentForCreate(
+  database: Kysely<DB>,
+  worldId: string,
+  parentLocationId: unknown,
+): Promise<Response | null> {
+  if (typeof parentLocationId !== "string" || parentLocationId === "") { return null; }
+
+  const parent = await database
+    .selectFrom("locations",)
+    .where("id", "=", parentLocationId,)
+    .select(["id", "world_id", "path",],)
+    .executeTakeFirst();
+
+  if (!parent) {
+    return jsonError({ message: "Parent location not found", status: HttpStatus.BadRequest, },);
+  }
+
+  if (parent.world_id !== worldId) {
+    return jsonError({ message: "Parent location belongs to another world", status: HttpStatus.BadRequest, },);
+  }
+
+  if (LocationTreeService.depth(parent.path,) + 1 > LOCATION_DEPTH_LIMIT) {
+    return jsonError({
+      message: `location depth exceeds limit (${LOCATION_DEPTH_LIMIT})`,
+      status: HttpStatus.BadRequest,
+    },);
+  }
+
+  return null;
 }
