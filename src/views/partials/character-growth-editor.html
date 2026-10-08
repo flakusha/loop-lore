@@ -58,11 +58,20 @@
       <option value="resolution">Resolution</option>
       <option value="epilogue">Epilogue</option>
     </select>
-    <textarea
-      x-model="arcDescription"
-      placeholder="Stage description (optional)"
-      data-testid="arc-description"
-    ></textarea>
+    <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+      <textarea
+        id="arc-description"
+        style="flex: 1"
+        x-model="arcDescription"
+        placeholder="Stage description (optional)"
+        data-testid="arc-description"
+        x-init="autoResize($el)"
+        @input="autoResize($el)"
+      ></textarea>
+      <div x-data="textToolbar({ target: '#arc-description' })">
+        {{> text-toolbar.html }}
+      </div>
+    </div>
     <button @click="saveArc()" type="button" data-testid="save-arc">
       Save Arc
     </button>

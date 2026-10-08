@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 // Quests Page component (quests.html)
 import type { QuestRow, WorldOption, } from "./quests-parts";
+import { autoResize as autoResizeImpl, } from "../alpine/auto-resize";
 import { feFetch, } from "../fe-fetch";
 import { formatDisplayDate, } from "../alpine/chat-utils/time";
 import { getErrorMessage, } from "./shared";
@@ -237,6 +238,10 @@ globalThis.questsPage = function() {
       } catch {
         showToast("error", "Network error",);
       }
+    },
+
+    autoResize(el: HTMLTextAreaElement,) {
+      autoResizeImpl(el,);
     },
   };
 };
