@@ -13910,6 +13910,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-db-migration-compaction.md"
     },
     {
@@ -14492,10 +14496,6 @@
     }
   ],
   "src/db/migrations/060_character_world_setup.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-world-setup.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"

@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** code audit 2026-10-08: `growth_log`/`character_arc` tables, growth-service, skills/traits/relationships bridges, and `actorGrowthSection` prompt section all ship in `src/` — reconciliation tracked in `TASK-growth-epic-reconciliation.md`; remaining work is API + frontend + growth_mode toggle
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -302,10 +303,10 @@ export interface GrowthLogEntry {
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------- | ----------- |
 | TASK-char-growth-schema               | Fold growth schema into `parts/004_actors.ts` + `parts/005_characters.ts` + regenerate schemas                                                                      | High     | Not Started |
 | TASK-char-growth-types                | `src/characters/spec/growth.ts` + `CanonicalCharacter` extension                                       | High     | Not Started |
-| TASK-char-growth-service              | `src/characters/services/growth-service/` (CRUD, redact, llm-assist)                                  | High     | Not Started |
-| TASK-char-growth-bridges              | Skills / traits / relationships bridges                                                                | High     | Not Started |
+| TASK-char-growth-service              | `src/characters/services/growth-service/` (CRUD, redact, llm-assist)                                  | High     | Shipped — service exists; LLM-assist pass still stub |
+| TASK-char-growth-bridges              | Skills / traits / relationships bridges                                                                | High     | Shipped — bridges exist |
 | TASK-char-growth-validation           | Extend `src/characters/validator/fields.ts`                                                            | Medium   | Not Started |
-| TASK-char-growth-prompt               | `actorGrowthSection` builder + registry + PRIORITY                                                    | High     | Not Started |
+| TASK-char-growth-prompt               | `actorGrowthSection` builder + registry + PRIORITY                                                    | High     | Shipped — `actorGrowthSection` exists and is registered |
 | TASK-char-growth-api                  | `/api/character-growth/*` routes + PATCH on actors                                                    | Medium   | Not Started |
 | TASK-char-growth-frontend             | Player card "Character Journey" + author/GM editor + Alpine.js wiring                                 | Medium   | Not Started |
 | TASK-char-growth-llm-assist           | Replace stub with aux-pipeline pass                                                                    | Low      | Not Started |
@@ -350,6 +351,18 @@ export interface GrowthLogEntry {
 ## Tickets
 
 - `.plan/tickets/TASK-char-growth-*.md` — one per task above.
+- `TASK-growth-epic-reconciliation.md` — reconcile Not Started status vs shipped code (growth_log/character_arc tables, growth-service, bridges, actorGrowthSection); update Current State + task statuses.
+
+## Spec Alignment
+
+- `docs/spec/character-spec.md` — `extensions` map + `growth_mode` live on
+  `CanonicalCharacter`; this epic's schema adds fields there, not in a
+  sidecar type.
+- `docs/spec/rpg-mechanics.md` + `docs/spec/skills.md` — skill-acquisition
+  events layer on the existing skills service (`createSkill` /
+  `character_skills`); baseline seeds are not growth events.
+- `docs/spec/character-interactions.md` — relationship tier / strength
+  transitions this epic records as `relationship_shifted` growth events.
 
 ## Related Epics
 

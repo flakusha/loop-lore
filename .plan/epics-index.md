@@ -53,7 +53,7 @@
 | Not Started | Character & NPC Lore Access | High | High | 17 | [epic-character-npc-lore-access.md](/.plan/epics/epic-character-npc-lore-access.md) |
 | Not Started | Character ↔ World Integration (Shared Domain Models) | High | Large (composite) | 14 | [epic-character-world-integration.md](/.plan/epics/epic-character-world-integration.md) |
 | In Progress | Character Core System | High | High | 3 | [epic-character-core-system.md](/.plan/epics/epic-character-core-system.md) |
-| Not Started | Character Growth & Arc Progression | High | High | 0 | [epic-character-growth.md](/.plan/epics/epic-character-growth.md) |
+| In Progress | Character Growth & Arc Progression | High | High | 0 | [epic-character-growth.md](/.plan/epics/epic-character-growth.md) |
 | Not Started | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
 | In Progress | Character Specification & Unified API | High | High | 0 | [epic-character-spec.md](/.plan/epics/epic-character-spec.md) |
 | In Progress | Chat Composer Flows (draft for new worktree) | High — messenger parity gap | Medium | 0 | [epic-chat-composer-flows.md](/.plan/epics/epic-chat-composer-flows.md) |
@@ -255,7 +255,7 @@
 | Not Started | NSFW Interaction UI | P0 — Critical | Medium | 14 | [epic-nsfw-ui.md](/.plan/epics/epic-nsfw-ui.md) |
 | Done | OpenAPI-Driven API Reference | P1-High | Medium | 23 | [epic-openapi-reference.md](/.plan/epics/epic-openapi-reference.md) |
 | Not Started | Party Migration & Travel | Low | Medium | 15 | [epic-party-migration.md](/.plan/epics/epic-party-migration.md) |
-| In Progress | Per-World Character Setup & Overlay | High | Medium | 0 | [epic-character-world-setup.md](/.plan/epics/epic-character-world-setup.md) |
+| In Progress | Per-World Character Setup & Overlay | High | Medium | 1 | [epic-character-world-setup.md](/.plan/epics/epic-character-world-setup.md) |
 | Not Started | Performance Dashboard & SLO Tracking | High | High | 19 | [epic-performance-dashboard-slo.md](/.plan/epics/epic-performance-dashboard-slo.md) |
 | Not Started | Perspective & Voice Control (1st / 3rd / Narrator) | High | Medium | 7 | [epic-perspective-narration-voice.md](/.plan/epics/epic-perspective-narration-voice.md) |
 | Not Started | Platform & Provider Integrations (EPIC-046) | P1-High | Very High | 0 | [epic-platform-integrations.md](/.plan/epics/epic-platform-integrations.md) |
@@ -721,7 +721,7 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 ### Character Growth & Arc Progression
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -2109,6 +2109,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 - **Tags:** frontend, chat, group-chat, emoji, reactions, a11y
 - **File:** `.plan/epics/epic-frontend-emoji-reactions.md`
 
@@ -2145,6 +2146,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 - **Tags:** chat, slash-commands, composer, autocomplete, command-palette, assistant-flows, group-chat
 - **File:** `.plan/epics/epic-frontend-chat-commands.md`
 
@@ -2718,7 +2720,7 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** agency, story-points, meta-currency, reroll, player-control, bdi, npc, goal-pursuit, emergent-narrative, prompt-assembly
 - **File:** `.plan/epics/epic-agency-story-points.md`
 
 ### Player State Machine — Cross-System Design
@@ -3355,4 +3357,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-
