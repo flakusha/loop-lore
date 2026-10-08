@@ -85,6 +85,7 @@ const CREATED_AT_PATTERN = /^\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2}(?::\d{2})?)?/;
 
 /**
  * Normalise ISO-8601 into SQLite's `created_at` text form.
+ * @param iso
  * @throws {Error} when `iso` is not a recognisable date/datetime
  */
 export function normalizeTimestamp(iso: string,): string {
@@ -103,6 +104,7 @@ export function normalizeTimestamp(iso: string,): string {
 
 /**
  * Split a `<type>[:<id>]` selector; `entityId` is absent when not supplied.
+ * @param value
  * @throws {Error} when either half of the selector is empty
  */
 export function parseEntitySelector(
@@ -118,7 +120,10 @@ export function parseEntitySelector(
   return entityId === undefined ? { entityType, } : { entityType, entityId, };
 }
 
-/** Clamp a requested row count into `[1, LIMIT_CAP]` (`undefined` yields `DEFAULT_LIMIT`). */
+/**
+ * Clamp a requested row count into `[1, LIMIT_CAP]` (`undefined` yields `DEFAULT_LIMIT`).
+ * @param limit
+ */
 export function clampLimit(limit?: number,): number {
   if (limit === undefined) { return DEFAULT_LIMIT; }
   return Math.max(1, Math.min(limit, LIMIT_CAP,),);
@@ -128,6 +133,8 @@ export function clampLimit(limit?: number,): number {
  * Query `log_entries`. Read-only: a single `SELECT`, newest first, capped at `LIMIT_CAP`.
  * Ordering is `created_at DESC`, served by the composite indexes when a filter
  * narrows the leading column.
+ * @param db
+ * @param opts
  * @throws {Error} on a malformed `--entity` selector or ISO timestamp
  */
 export async function queryLogEntries(
@@ -170,7 +177,10 @@ export async function queryLogEntries(
   return query.execute() as Promise<LogEntry[]>;
 }
 
-/** Render rows as a fixed-width table for humans. */
+/**
+ * Render rows as a fixed-width table for humans.
+ * @param entries
+ */
 export function formatTable(entries: LogEntry[],): string {
   const header = ["CREATED_AT", "LEVEL", "EVENT", "ENTITY", "USER", "MESSAGE",];
   const rows: string[][] = entries.map((entry,) => [
@@ -228,7 +238,17 @@ export async function main(): Promise<number> {
   }
 
   let entries: LogEntry[];
-  const sqlite = new Database(sqliteFilename, { readonly: true, },);
+  let sqlite: Database;
+  try {
+    sqlite = new Database(sqliteFilename, { readonly: true, },);
+  } catch (error) {
+    log()?.error(error instanceof Error ? error.message : String(error,), error instanceof Error ? error : undefined, {
+      sqliteFilename,
+    },);
+
+    return 1;
+  }
+
   try {
     const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
     entries = await queryLogEntries(db, {
@@ -241,6 +261,12 @@ export async function main(): Promise<number> {
       q: args.q,
       limit: args.limit,
     },);
+  } catch (error) {
+    log()?.error(error instanceof Error ? error.message : String(error,), error instanceof Error ? error : undefined, {
+      sqliteFilename,
+    },);
+
+    return 1;
   } finally {
     sqlite.close();
   }

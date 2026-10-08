@@ -265,6 +265,22 @@ describeIsolated("main() CLI entry", () => {
     }
   });
 
+  test("unreadable DB file returns 1 instead of throwing", async () => {
+    tmpDir = mkdtempSync(join(tmpdir(), "loop-lore-logs-",),);
+    try {
+      mock.module("../config/load", () => ({
+        ...realConfigLoad,
+        loadConfig: () => ({
+          db: { type: "sqlite", sqliteFilename: join(tmpDir, "missing.db",), },
+        }),
+      }),);
+
+      expect(await main(),).toBe(1,);
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true, },);
+    }
+  });
+
   test("happy path: returns 0 against a real on-disk DB", async () => {
     tmpDir = mkdtempSync(join(tmpdir(), "loop-lore-logs-",),);
     const dbPath = join(tmpDir, "loop-lore.db",);

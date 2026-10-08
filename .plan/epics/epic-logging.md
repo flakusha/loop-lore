@@ -141,7 +141,7 @@ Genuinely unshipped:
   hot-apply semantics (landed by the sibling SpecLevelDrift agent in this same pass).
 - [x] `bun run logs:query` is covered directly — `src/scripts/log-query.test.ts` exercises
   `queryLogEntries` filters, `clampLimit`/`normalizeTimestamp`/`parseEntitySelector`, `formatTable`,
-  and both `main()` paths (`:memory:` rejection, on-disk happy path).
+  and all three `main()` paths (`:memory:` rejection, unreadable-file exit 1, on-disk happy path).
 - [ ] Tests cover redaction (including the depth cutoff), level filtering, and child-logger
       context propagation.
 - [ ] OTLP sink, if built, is gated on config and default-off — no OTLP traffic unless
