@@ -5,8 +5,10 @@ import {
   preloadSceneImages,
   type SceneImages,
 } from "../image-preloader";
+import { getLocationContext, saveLastLocation, } from "../location-events";
 import { getPortraitUrl, } from "../portrait-manager";
 import { resolveSpriteUrl, } from "../sprite-stage";
+import { evaluateTriggers, } from "../templates/transition-triggers";
 import { state, } from "./state";
 import type { VnMessage, VnScene, } from "./types";
 
@@ -98,6 +100,27 @@ export function handleLocationChanged(e: Event,): void {
   if (!container || !state.settings) { return; }
   const sceneEl = container.querySelector<HTMLElement>(".vn-scene",);
   if (!sceneEl) { return; }
+
+  if (detail.locationId) {
+    const chatId = detail.chatId ?? state.currentChatId;
+    if (chatId) {
+      const stored = getLocationContext(chatId,);
+      if (stored.currentLocationId !== undefined && stored.currentLocationId !== detail.locationId) {
+        evaluateTriggers({
+          currentLocationId: detail.locationId,
+          previousLocationId: stored.currentLocationId,
+          combatActive: false,
+          charactersInScene: [],
+          previousCharacters: [],
+          choiceSelected: false,
+          sceneEnding: false,
+        },);
+      }
+
+      saveLastLocation(chatId, detail.locationId,);
+    }
+  }
+
   sceneEl.style.transition = "opacity 280ms ease";
   sceneEl.style.opacity = "0";
   globalThis.setTimeout(() => {

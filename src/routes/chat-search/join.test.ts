@@ -12,8 +12,10 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
+  insertChatLocationEvents,
   insertChatParticipants,
   insertChats,
+  insertLocations,
   insertUsers,
   insertWorldMembers,
   insertWorlds,
@@ -41,6 +43,16 @@ interface JoinErrorBody {
 interface JoinSuccessBody {
   chatId: string;
   joined: true;
+  chatTitle: string | null;
+  location: { id: string; name: string } | null;
+  recentLocationEvents: Array<{
+    id: string;
+    fromLocationId: string | null;
+    toLocationId: string | null;
+    sectionId: string | null;
+    source: string;
+    createdAt: string;
+  }>;
   meta: unknown;
 }
 
@@ -322,6 +334,92 @@ describe("joinRoutes — POST /api/chats/:id/join", () => {
     expect(res.status,).toBe(400,);
     const body = (await res.json()) as JoinErrorBody;
     expect(body.error,).toMatch(/already a participant/i,);
+
+    await db.destroy();
+  });
+
+  test("returns location context when the chat has a current location", async () => {
+    createLogger({ level: "error", },);
+    const { db, } = await createTestDb();
+    const ownerId = uid();
+    const userId = uid();
+    const worldId = uid();
+    const chatId = uid();
+    const locationA = uid();
+    const locationB = uid();
+    await insertUsers(db, `u-${ownerId}`, "Owner", { id: ownerId, } as never,);
+    await insertUsers(db, `u-${userId}`, "User", { id: userId, } as never,);
+    await insertActors(db, "Owner Actor", { id: ownerId, actor_type: "user", } as never,);
+    await insertActors(db, "User Actor", { id: userId, actor_type: "user", } as never,);
+    await insertWorlds(db, ownerId, "Public", {
+      id: worldId,
+      visibility: WorldVisibility.Public,
+    } as never,);
+
+    await insertLocations(db, worldId, "Harbor", { id: locationA, } as never,);
+    await insertLocations(db, worldId, "Citadel", { id: locationB, } as never,);
+    await insertChats(db, "Located Chat", ownerId, {
+      id: chatId,
+      type: "group",
+      mode: "story",
+      world_id: worldId,
+      current_location_id: locationB,
+    } as never,);
+
+    await insertChatLocationEvents(db, chatId, "manual", {
+      from_location_id: locationA,
+      to_location_id: locationB,
+      section_id: null,
+    },);
+
+    const app = makeApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/join`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(201,);
+    const body = (await res.json()) as JoinSuccessBody;
+    expect(body.chatTitle,).toBe("Located Chat",);
+    expect(body.location,).toEqual({ id: locationB, name: "Citadel", },);
+    expect(body.recentLocationEvents.length,).toBeGreaterThanOrEqual(1,);
+    expect(body.recentLocationEvents[0]!.toLocationId,).toBe(locationB,);
+
+    await db.destroy();
+  });
+
+  test("returns null location and empty history when the chat has no location", async () => {
+    createLogger({ level: "error", },);
+    const { db, } = await createTestDb();
+    const ownerId = uid();
+    const userId = uid();
+    const worldId = uid();
+    const chatId = uid();
+    await insertUsers(db, `u-${ownerId}`, "Owner", { id: ownerId, } as never,);
+    await insertUsers(db, `u-${userId}`, "User", { id: userId, } as never,);
+    await insertActors(db, "Owner Actor", { id: ownerId, actor_type: "user", } as never,);
+    await insertActors(db, "User Actor", { id: userId, actor_type: "user", } as never,);
+    await insertWorlds(db, ownerId, "Public", {
+      id: worldId,
+      visibility: WorldVisibility.Public,
+    } as never,);
+
+    await insertChats(db, "Nowhere Chat", ownerId, {
+      id: chatId,
+      type: "group",
+      mode: "story",
+      world_id: worldId,
+      current_location_id: null,
+    } as never,);
+
+    const app = makeApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/join`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(201,);
+    const body = (await res.json()) as JoinSuccessBody;
+    expect(body.location,).toBeNull();
+    expect(body.recentLocationEvents,).toEqual([],);
 
     await db.destroy();
   });
