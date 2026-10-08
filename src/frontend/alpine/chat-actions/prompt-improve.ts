@@ -10,42 +10,14 @@
  */
 import { requireActiveChat, } from "../chat-guards";
 import { t, } from "../i18n";
-import { getLocalEngine, } from "../local-engine";
-import { LocalInferenceUnavailable, runLocalPromptImprove, shouldOffloadTask, } from "../local-inference";
-import type { LocalInferenceResult, } from "../local-inference";
-import { runLocalModelImprove, } from "../local-model-improve";
 import { log as rootLog, } from "../logger";
+import { enhanceText, } from "../text-enhance";
 import type { ChatState, } from "../types";
-import { promptContent, requestPrompt, } from "./prompt-request";
 
 const log = rootLog.child({ module: "chat", },);
 
 /** Undo depth for the composer improve stack — 5 levels back is plenty. */
 const MAX_IMPROVE_HISTORY = 5;
-
-/**
- * Opt-in browser inference: deterministic cleanup first, then the downloaded
- * browser model when one is flagged ready. Anything unavailable returns null
- * and the caller falls back to the server — local inference never blocks.
- * @param text - Draft to improve.
- * @param level - Gradation level.
- * @returns Local result, or null when the server should handle it.
- */
-async function tryLocalImprove(text: string, level: string,): Promise<LocalInferenceResult | null> {
-  if (!shouldOffloadTask("prompt-improve",)) { return null; }
-  try {
-    return runLocalPromptImprove({ text, level, },);
-  } catch (error) {
-    if (!(error instanceof LocalInferenceUnavailable)) { throw error; }
-  }
-
-  try {
-    return await runLocalModelImprove(getLocalEngine(), { text, level, },);
-  } catch (error) {
-    if (!(error instanceof LocalInferenceUnavailable)) { throw error; }
-    return null;
-  }
-}
 
 export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
   // Reactive defaults — input-area.html binds `:disabled="!activeChat ||
@@ -82,37 +54,33 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
       const requestedLevel = level ??
         (this.isGroupChat ? "style-group" : "style-chat");
 
-      // Opt-in browser inference first: eligible levels run locally so the
-      // draft never reaches the server. Null → fall through to server.
-      const local = await tryLocalImprove(text, requestedLevel,);
-      if (local) {
-        this.pushPromptImproveHistory(text,);
-        input.value = local.content;
-        this.autoResize(input,);
-        log.debug("Prompt improved locally, server bypassed", { engine: local.engine, },);
-        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.promptImproved",), },);
-        return;
-      }
+      // Text transformation is delegated to the standalone primitive; the
+      // hooks keep the composer's toast/log behavior verbatim.
+      let serverFailed = false;
+      const improved = await enhanceText(
+        { text, level: requestedLevel, chatId: this.activeChat, },
+        {
+          onLocal: (engine,) => {
+            log.debug("Prompt improved locally, server bypassed", { engine, },);
+          },
+          onServerFailure: (failure,) => {
+            serverFailed = true;
+            const message = failure.injectionBlocked
+              ? t("toasts.promptInjectionBlocked",)
+              : failure.message ?? t("toasts.promptImproveFailed",);
 
-      const result = await requestPrompt({
-        mode: "improve",
-        level: requestedLevel,
-        text,
-        chatId: this.activeChat,
-      },);
+            this.$dispatch?.("show-toast", { type: "error", message, },);
+          },
+        },
+      );
 
-      if (!result.ok) {
-        const message = result.injectionBlocked
-          ? t("toasts.promptInjectionBlocked",)
-          : result.message ?? t("toasts.promptImproveFailed",);
-
-        this.$dispatch?.("show-toast", { type: "error", message, },);
-        return;
-      }
-
-      const improved = promptContent(result.data,);
       if (!improved) {
-        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.promptImproveFailed",), },);
+        // Empty envelope (200 without content) — the hook already toasted
+        // real failures, so only this branch needs the generic copy.
+        if (!serverFailed) {
+          this.$dispatch?.("show-toast", { type: "error", message: t("toasts.promptImproveFailed",), },);
+        }
+
         return;
       }
 
