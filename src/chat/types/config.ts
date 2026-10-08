@@ -140,6 +140,12 @@ export interface GmConfig {
   /** VN portrait:text split ratio (split layout). */
   vnSplitRatio?: number;
   storyMode?: boolean;
+  /**
+   * Hidden carriage opt-in (epic-hidden-carriage-context): the flat TOML
+   * episode-context block injects into the prompt only when true.
+   * Display-state, not GM execution — mutable once a chat is online.
+   */
+  carriageEnabled?: boolean;
   /** Active human-GM narrative guidance (persisted, mutable at runtime). */
   gmGuidance?: GmGuidance;
   /**
