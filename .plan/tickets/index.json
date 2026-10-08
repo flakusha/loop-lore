@@ -19364,6 +19364,19 @@
     "title": "Adaptive Audio",
     "type": "TASK"
   },
+  "TASK-ADD-A-FEDERATION-E2E-TEST-THAT-BOOTS-TWO-REAL-SERVERS": {
+    "hash": "6240dc2",
+    "git_issue": "6240dc2",
+    "extid": "TASK-ADD-A-FEDERATION-E2E-TEST-THAT-BOOTS-TWO-REAL-SERVERS",
+    "type": "TASK",
+    "title": "Add a federation e2e test that boots two real servers",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-a-federation-e2e-test-that-boots-two-real-servers.md",
+    "status": "Not Started"
+  },
   "TASK-ADD-A-PRE-MERGE-CONFLICT-MARKER-SCAN-TO-THE-CHECK-OR-HOOK-PA": {
     "hash": "18d8a03",
     "git_issue": "18d8a03",
@@ -19377,6 +19390,19 @@
       "infra"
     ],
     "source": ".plan/tickets/TASK-add-a-pre-merge-conflict-marker-scan-to-the-check-or-hook-pa.md",
+    "status": "Not Started"
+  },
+  "TASK-ADD-A-TWO-INSTANCE-LOCAL-FEDERATION-DEV-HARNESS-AND-RUNBOOK": {
+    "hash": "387d2de",
+    "git_issue": "387d2de",
+    "extid": "TASK-ADD-A-TWO-INSTANCE-LOCAL-FEDERATION-DEV-HARNESS-AND-RUNBOOK",
+    "type": "TASK",
+    "title": "Add a two-instance local federation dev harness and runbook",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-a-two-instance-local-federation-dev-harness-and-runbook.md",
     "status": "Not Started"
   },
   "TASK-ADD-ACHIEVEMENTCATEGORY-AND-ACHIEVEMENTTIER-ENUMS-FOR-ACHIEV": {
@@ -19470,6 +19496,19 @@
     "title": "Add CompositeValidator for boolean × enum state combinations",
     "type": "TASK"
   },
+  "TASK-ADD-CONSENT-ROUTE-AND-UI-TO-GRANT-AND-REVOKE-CHAT-FEDERATION": {
+    "hash": "7255b72",
+    "git_issue": "7255b72",
+    "extid": "TASK-ADD-CONSENT-ROUTE-AND-UI-TO-GRANT-AND-REVOKE-CHAT-FEDERATION",
+    "type": "TASK",
+    "title": "Add consent route and UI to grant and revoke chat federation consent",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md",
+    "status": "Not Started"
+  },
   "TASK-ADD-CONSENTACTION-AND-CONSENTSCOPE-ENUMS-FOR-NSFW-CONSENT-ST": {
     "epic": "epic-chat-lifecycle-moderation",
     "extid": "TASK-ADD-CONSENTACTION-AND-CONSENTSCOPE-ENUMS-FOR-NSFW-CONSENT-ST",
@@ -19547,6 +19586,19 @@
     "tags": [],
     "title": "Add FantasyCategory and IntensityLevel enums for character_fantasies",
     "type": "TASK"
+  },
+  "TASK-ADD-FEDERATION-TO-THE-CONFIG-DOMAINS-LIST-SO-CONFIG-FEDERATI": {
+    "hash": "168de41",
+    "git_issue": "168de41",
+    "extid": "TASK-ADD-FEDERATION-TO-THE-CONFIG-DOMAINS-LIST-SO-CONFIG-FEDERATI",
+    "type": "TASK",
+    "title": "Add federation to the config DOMAINS list so config.federation.toml loads",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md",
+    "status": "Not Started"
   },
   "TASK-ADD-HEATPHASE-STATE-MACHINE-FOR-CHARACTER-HEAT-CYCLE-CURRENT": {
     "epic": "epic-character-core-system",
@@ -20860,6 +20912,19 @@
     "tags": [],
     "title": "Alignment dialogue gating + context-aware speech formality",
     "type": "TASK"
+  },
+  "TASK-ALLOW-DATA-DIR-TO-BE-OVERRIDDEN-BY-ENV-VAR": {
+    "hash": "8e9279e",
+    "git_issue": "8e9279e",
+    "extid": "TASK-ALLOW-DATA-DIR-TO-BE-OVERRIDDEN-BY-ENV-VAR",
+    "type": "TASK",
+    "title": "Allow DATA_DIR to be overridden by env var",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-allow-data-dir-to-be-overridden-by-env-var.md",
+    "status": "Not Started"
   },
   "TASK-ALPHA-AWARE-GENERATION-REQUESTS-AND-FORMAT-PICK": {
     "epic": "epic-avatar-alpha-vn-layering",
@@ -23431,6 +23496,19 @@
     "tags": [],
     "title": "chat-bugfix-batch-1 scope discovery (2 of 3 stale)",
     "type": "TASK"
+  },
+  "TASK-BOOTSTRAP-MESH-PEERS-FROM-CONFIG-FEDERATION-PEERS-AT-BOOT": {
+    "hash": "e583784",
+    "git_issue": "e583784",
+    "extid": "TASK-BOOTSTRAP-MESH-PEERS-FROM-CONFIG-FEDERATION-PEERS-AT-BOOT",
+    "type": "TASK",
+    "title": "Bootstrap mesh_peers from config.federation.peers at boot",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md",
+    "status": "Not Started"
   },
   "TASK-BOUND-LINKED-TRAVEL-PROMPTS": {
     "epic": "epic-chat-transfer-location",
@@ -26838,6 +26916,19 @@
     "title": "Convert Generated<number> boolean shims to boolean state machines across schema",
     "type": "TASK"
   },
+  "TASK-CORRECT-DEAD-FILE-REFERENCES-AND-STORE-SHAPE-DRIFT-IN-THE-IN": {
+    "hash": "0a4df5c",
+    "git_issue": "0a4df5c",
+    "extid": "TASK-CORRECT-DEAD-FILE-REFERENCES-AND-STORE-SHAPE-DRIFT-IN-THE-IN",
+    "type": "TASK",
+    "title": "Correct dead file references and store shape drift in the instance switcher spec",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md",
+    "status": "Not Started"
+  },
   "TASK-CORS-MIDDLEWARE": {
     "epic": "epic-headless-alternative-frontends",
     "extid": "TASK-CORS-MIDDLEWARE",
@@ -29819,6 +29910,19 @@
     "tags": [],
     "title": "Export Frontend Progress UI",
     "type": "TASK"
+  },
+  "TASK-EXPOSE-DEK-EXPORT-AND-IMPORT-OVER-THE-FEDERATION-WIRE-ROUTES": {
+    "hash": "742e1ef",
+    "git_issue": "742e1ef",
+    "extid": "TASK-EXPOSE-DEK-EXPORT-AND-IMPORT-OVER-THE-FEDERATION-WIRE-ROUTES",
+    "type": "TASK",
+    "title": "Expose DEK export and import over the federation wire routes",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-expose-dek-export-and-import-over-the-federation-wire-routes.md",
+    "status": "Not Started"
   },
   "TASK-EXTEND-FE-BE-HARMONIZATION-GATE-TO-COVER-EXTERNAL-NON-HTMX-A": {
     "hash": "229d7a3",
@@ -33572,6 +33676,19 @@
     "title": "I/O Formats",
     "type": "TASK"
   },
+  "TASK-ISOLATE-AUTH-COOKIES-PER-LOCAL-INSTANCE-SO-TWO-DEV-SERVERS-D": {
+    "hash": "49a01ed",
+    "git_issue": "49a01ed",
+    "extid": "TASK-ISOLATE-AUTH-COOKIES-PER-LOCAL-INSTANCE-SO-TWO-DEV-SERVERS-D",
+    "type": "TASK",
+    "title": "Isolate auth cookies per local instance so two dev servers do not clobber each other",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-isolate-auth-cookies-per-local-instance-so-two-dev-servers-d.md",
+    "status": "Not Started"
+  },
   "TASK-ITEM-ASSET-AVATAR-DISPLAY-IN-INVENTORY-TRADING-AND-PROVISION": {
     "epic": "",
     "extid": "TASK-ITEM-ASSET-AVATAR-DISPLAY-IN-INVENTORY-TRADING-AND-PROVISION",
@@ -34735,6 +34852,19 @@
     "tags": [],
     "title": "Magic & Spell Systems",
     "type": "TASK"
+  },
+  "TASK-MAKE-THE-FEDERATION-CONFIG-PANEL-EDITABLE-IN-THE-CONFIG-UI": {
+    "hash": "ce1d28a",
+    "git_issue": "ce1d28a",
+    "extid": "TASK-MAKE-THE-FEDERATION-CONFIG-PANEL-EDITABLE-IN-THE-CONFIG-UI",
+    "type": "TASK",
+    "title": "Make the federation config panel editable in the config UI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-make-the-federation-config-panel-editable-in-the-config-ui.md",
+    "status": "Not Started"
   },
   "TASK-MANAGEMENT-INTEGRATION": {
     "epic": "epic-task-management-integration",
@@ -37876,6 +38006,19 @@
     "source": ".plan/tickets/TASK-persist-chat-purpose-on-creation.md",
     "hash": "3c241f7",
     "title": "Persist chat purpose on creation"
+  },
+  "TASK-PERSIST-DELIVERED-MESH-PAYLOAD-IN-MESH-DELIVERIES-NOT-METADA": {
+    "hash": "f6fe7e4",
+    "git_issue": "f6fe7e4",
+    "extid": "TASK-PERSIST-DELIVERED-MESH-PAYLOAD-IN-MESH-DELIVERIES-NOT-METADA",
+    "type": "TASK",
+    "title": "Persist delivered mesh payload in mesh_deliveries, not metadata only",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-persist-delivered-mesh-payload-in-mesh-deliveries-not-metada.md",
+    "status": "Not Started"
   },
   "TASK-PERSIST-LOOT-DROPS": {
     "epic": "epic-item-systems-unification",
@@ -45350,6 +45493,19 @@
     "tags": [],
     "title": "Wire Skills Routes",
     "type": "TASK"
+  },
+  "TASK-WIRE-THE-CHAT-WRITE-PATH-TO-FANOUTCONTENT-AS-THE-PRODUCTION-": {
+    "hash": "5075aab",
+    "git_issue": "5075aab",
+    "extid": "TASK-WIRE-THE-CHAT-WRITE-PATH-TO-FANOUTCONTENT-AS-THE-PRODUCTION-",
+    "type": "TASK",
+    "title": "Wire the chat write path to fanOutContent as the production sender trigger",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-multi-instance-federation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-.md",
+    "status": "Not Started"
   },
   "TASK-WIRE-TRANSITIONS": {
     "epic": "epic-logic-reconciliation",

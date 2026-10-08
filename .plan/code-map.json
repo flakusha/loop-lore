@@ -980,6 +980,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
     },
     {
@@ -6137,6 +6141,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-activitypub-federation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md"
     }
   ],
   "src/characters/services/growth-service/events.test.ts": [
@@ -7421,6 +7429,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-mode-locked-once-chat-has-confirmed-messages.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-expose-dek-export-and-import-over-the-federation-wire-routes.md"
     },
     {
       "kind": "ticket",
@@ -9849,6 +9865,10 @@
       "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-allow-data-dir-to-be-overridden-by-env-var.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/testing.md"
     }
@@ -10031,6 +10051,12 @@
       "source": "docs/spec/implementation.md"
     }
   ],
+  "src/config/load/constants.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md"
+    }
+  ],
   "src/config/load/domain.ts": [
     {
       "kind": "epic",
@@ -10160,6 +10186,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-integration-config-surface-schemas-example-toml-env-map.md"
     },
     {
@@ -10183,6 +10213,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-activitypub-federation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md"
     }
   ],
   "src/config/schema-class/frontend.ts": [
@@ -10211,6 +10249,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md"
+    }
+  ],
+  "src/config/schema-class/json-schema/federation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-make-the-federation-config-panel-editable-in-the-config-ui.md"
     }
   ],
   "src/config/schema-class/json-schema/headers.ts": [
@@ -10223,6 +10275,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-allow-data-dir-to-be-overridden-by-env-var.md"
     }
   ],
   "src/config/schema-class/json-schema/server.ts": [
@@ -10423,6 +10479,16 @@
       "source": ".plan/tickets/TASK-item-config-templates.md"
     }
   ],
+  "src/config/schema/federation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-make-the-federation-config-panel-editable-in-the-config-ui.md"
+    }
+  ],
   "src/config/schema/frontend.ts": [
     {
       "kind": "ticket",
@@ -10561,6 +10627,12 @@
       "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md"
     }
   ],
+  "src/config/sections/assets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-allow-data-dir-to-be-overridden-by-env-var.md"
+    }
+  ],
   "src/config/sections/auth.ts": [
     {
       "kind": "ticket",
@@ -10668,6 +10740,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-allow-data-dir-to-be-overridden-by-env-var.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-data-integrity-phase1.md"
     },
     {
@@ -10771,6 +10847,12 @@
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     }
   ],
+  "src/config/sections/menu-data.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-make-the-federation-config-panel-editable-in-the-config-ui.md"
+    }
+  ],
   "src/config/sections/messages.ts": [
     {
       "kind": "ticket",
@@ -10801,6 +10883,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-a-two-instance-local-federation-dev-harness-and-runbook.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-allow-data-dir-to-be-overridden-by-env-var.md"
     },
     {
       "kind": "ticket",
@@ -11168,11 +11258,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-scheduler-implementation-internal-cron-jobs.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-.md"
     },
     {
       "kind": "spec",
@@ -14912,6 +15010,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     },
     {
@@ -16191,10 +16293,24 @@
       "source": ".plan/tickets/BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin.md"
     }
   ],
+  "src/federation/clearance.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md"
+    }
+  ],
   "src/federation/clearance.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-expose-dek-export-and-import-over-the-federation-wire-routes.md"
     }
   ],
   "src/federation/clock.ts": [
@@ -16207,6 +16323,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-runresyncpass-fetches-peer-advertisements-without-the-spki-p.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md"
     },
     {
       "kind": "ticket",
@@ -16233,6 +16353,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-expose-dek-export-and-import-over-the-federation-wire-routes.md"
     }
   ],
   "src/federation/delivery.ts": [
@@ -16241,14 +16365,28 @@
       "source": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-persist-delivered-mesh-payload-in-mesh-deliveries-not-metada.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/federation-trust-mechanism.md"
+    }
+  ],
+  "src/federation/duplication.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-.md"
     }
   ],
   "src/federation/encryption.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-integrations-shared-seams-encryptionprovider-messagebridge-b.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-.md"
     },
     {
       "kind": "spec",
@@ -16263,6 +16401,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/IDEA-cross-instance-conversation-threading-mention-inreplyto.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-.md"
     }
   ],
   "src/federation/fan-out.ts": [
@@ -16285,6 +16427,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-.md"
     }
   ],
   "src/federation/gossip.test.ts": [
@@ -16349,10 +16495,20 @@
       "source": ".plan/tickets/BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-.md"
     }
   ],
+  "src/federation/peer-fetch.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-a-federation-e2e-test-that-boots-two-real-servers.md"
+    }
+  ],
   "src/federation/peer-fetch.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-spki-pin-gate-is-not-enforced-across-http-redirects.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md"
     },
     {
       "kind": "ticket",
@@ -16391,6 +16547,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-expose-dek-export-and-import-over-the-federation-wire-routes.md"
     },
     {
       "kind": "ticket",
@@ -17898,6 +18062,10 @@
     }
   ],
   "src/frontend/alpine/command-palette.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/federation-instance-switcher.md"
@@ -20596,6 +20764,10 @@
     }
   ],
   "src/frontend/stores/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/federation-instance-switcher.md"
@@ -30028,6 +30200,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-isolate-auth-cookies-per-local-instance-so-two-dev-servers-d.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rate-limit-coverage-expansion.md"
     }
   ],
@@ -31575,9 +31751,21 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/IDEA-cross-instance-conversation-threading-mention-inreplyto.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-expose-dek-export-and-import-over-the-federation-wire-routes.md"
     }
   ],
   "src/routes/federation-transfer.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-a-federation-e2e-test-that-boots-two-real-servers.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
@@ -32645,6 +32833,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-message-seen-state.md"
+    }
+  ],
+  "src/routes/messages/post-insert.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-.md"
     }
   ],
   "src/routes/messages/post.test.ts": [
@@ -38595,6 +38789,12 @@
       "source": ".plan/epics/epic-cron-scheduler.md"
     }
   ],
+  "src/server/start.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-a-federation-e2e-test-that-boots-two-real-servers.md"
+    }
+  ],
   "src/server/start.ts": [
     {
       "kind": "epic",
@@ -41986,6 +42186,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-multi-avatar.md"
     },
     {
@@ -42136,6 +42340,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-define-shared-nav-state-contract-between-client-side-routing.md"
     },
     {
@@ -42272,6 +42480,10 @@
     }
   ],
   "src/views/partials/top-bar.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/federation-instance-switcher.md"
