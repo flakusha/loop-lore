@@ -56,7 +56,7 @@ Each symbol below was searched across `src/`; every hit is in a `*.test.ts` file
 | `upsertPeer` | `src/federation/coordinator.ts:49` | none | `mesh_peers` never populated → `assertTrustedPeer` (`src/federation/sharing.ts:67-79`) denies every inbound `/api/mesh-*` |
 | `grantChatFederationConsent` | `src/federation/clearance.ts:114` | none | `chats.federation_consented_at` never set |
 | `revokeChatFederationConsent` | `src/federation/clearance.ts:130` | none | same; no revocation path exists either |
-| `authorizeChatExport` | `src/federation/clearance.ts:74-107` | none (only reachable from `fan-out.ts:162`) | permanent default-deny on chat export |
+| `authorizeChatExport` | `src/federation/clearance.ts:74-107` | none (only reachable from `fan-out.ts:168-170`) | permanent default-deny on chat export |
 | `fanOutContent` | `src/federation/fan-out.ts:143` | none | no reservation request, no sealed push, no outbox row written |
 | `sealContent` | `src/federation/envelope.ts:41` | `fan-out.ts:154,185` only | sealing exists only on the unreachable path |
 | `exportChatDekForPeer` | `src/federation/dek-rewrap.ts:73` | none | no cross-instance DEK export; encrypted chat cannot federate |
