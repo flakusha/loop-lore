@@ -1,0 +1,45 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Info bubble help tooltip (TASK-info-bubbles).
+  The host owns the Alpine scope (includes take no params) and positions
+  the popover; this partial only renders trigger + tooltip:
+
+    <span class="info-bubble-host" x-data="infoBubble({ helpKey: 'help.settings.theme' })">
+      {{> info-bubble.html }}
+    </span>
+
+  Dismissal mirrors the emoji-reactions popover contract (Escape +
+  click-away via declarative handlers, same as message-list.html); the
+  popover animation is gated on prefers-reduced-motion in both the
+  component (animate flag) and CSS.
+-->
+<button
+  type="button"
+  class="info-bubble-trigger"
+  :aria-label="label()"
+  :aria-describedby="bubbleId"
+  :aria-expanded="String(open)"
+  @click="toggle()"
+  @mouseenter="onEnter()"
+  @mouseleave="onLeave()"
+  @focus="onFocus()"
+  @blur="onBlur()"
+  data-testid="info-bubble-trigger"
+>
+  ?
+</button>
+<template x-if="open">
+  <div
+    class="info-bubble-popover"
+    :class="[popoverClass(), animate ? '' : 'info-bubble-no-anim']"
+    role="tooltip"
+    :id="bubbleId"
+    @click.outside="hide()"
+    @keydown.escape.window="hide()"
+    data-testid="info-bubble-popover"
+  >
+    <span x-text="text()"></span>
+  </div>
+</template>

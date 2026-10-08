@@ -114,18 +114,25 @@ Examples:
 
 ## Tasks
 
-- [ ] Design `<info-bubble>` Alpine.js component (hover/click/auto modes)
-- [ ] Implement popover positioning (placement: top/right/bottom/left)
-- [ ] Wire i18n `t()` function for help text resolution
-- [ ] Add CSS styles + CSS variables for theming
-- [ ] Ensure keyboard accessibility (focus, Escape, ARIA)
-- [ ] Add info bubbles to Settings page (General, Chat, API, Data sections)
+- [x] Design `<info-bubble>` Alpine.js component (hover/click/auto modes)
+- [x] Implement popover positioning (placement: top/right/bottom/left)
+- [x] Wire i18n `t()` function for help text resolution
+- [x] Add CSS styles + CSS variables for theming
+- [x] Ensure keyboard accessibility (focus, Escape, ARIA)
+- [x] Add info bubbles to Settings page — General (theme, language), Chat (enterToSend, detailLevel), API (provider, apiKey, model, maxTokens, temperature); Data/character/world/admin left for follow-ups
 - [ ] Add info bubbles to Character edit form
 - [ ] Add info bubbles to World edit form
 - [ ] Add info bubbles to Admin config pages
-- [ ] Add i18n message keys for all help text
+- [x] Add i18n message keys for all help text — `help.*` keys already exist in all locales (en/de/fr/es/ja/ko/pt/ru/zh/ar); no new keys needed
 - [ ] Write unit tests for the component
 - [ ] Write E2E tests for hover/click/escape behavior
+
+## Progress (followup-info-bubble)
+
+- New `src/frontend/alpine/info-bubble.ts` (`infoBubble({ helpKey, placement, mode })`, registered on globalThis + `src/frontend/alpine/index.ts`); popover dismisses via template `@keydown.escape.window` / `@click.outside` (emoji-reactions contract), reduced-motion via `prefersReducedMotion()` + CSS media query.
+- New `src/components/info-bubble.html` partial (host owns x-data scope; trigger is a focusable button with aria-describedby/aria-expanded, popover is role=tooltip).
+- New `src/public/css/components/info-bubble.css` (linked from `src/views/layout.html`; served via existing src/public → dist copy).
+- Wired into `src/views/settings.html` (General/Chat/API fields above) as the single proof surface.
 
 ## Files
 
