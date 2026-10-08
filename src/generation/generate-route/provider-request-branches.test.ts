@@ -147,7 +147,7 @@ describe("buildProviderRequest", () => {
     expect(req.model,).toBe("prov-model",);
   });
 
-  test("falls back to all tools when the database throws", async () => {
+  test("fails closed (no tools) when the database throws", async () => {
     const brokenDb = null as unknown as Kysely<DB>;
     const req = await buildProviderRequest({
       input: makeInput(),
