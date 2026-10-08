@@ -244,6 +244,19 @@
     "title": "Align seedDefaults null handling with resolveModelRole defensive checks",
     "type": "BUG"
   },
+  "BUG-ALPINE-HYDRATION-FAILURES-UNDECLARED-TEMPLATE-VARS-UNTESTED": {
+    "hash": "b0ab7a1",
+    "git_issue": "b0ab7a1",
+    "extid": "BUG-ALPINE-HYDRATION-FAILURES-UNDECLARED-TEMPLATE-VARS-UNTESTED",
+    "type": "BUG",
+    "title": "Alpine hydration failures (undeclared template vars) untested",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-alpine-hydration-failures-undeclared-template-vars-untested.md",
+    "status": "Not Started"
+  },
   "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED": {
     "epic": "",
     "extid": "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED",
@@ -6341,6 +6354,19 @@
     "title": "safeDecompress pre-check rejects compressed payloads over ~10KB (silent garbage reads)",
     "type": "BUG"
   },
+  "BUG-SCHEMA-VERSION-TABLE-DROPPED-BY-MIGRATION-COLLAPSE-FEAT-040-": {
+    "hash": "acc9318",
+    "git_issue": "acc9318",
+    "extid": "BUG-SCHEMA-VERSION-TABLE-DROPPED-BY-MIGRATION-COLLAPSE-FEAT-040-",
+    "type": "BUG",
+    "title": "schema_version table dropped by migration collapse; FEAT-040 still Done",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-schema-version-table-dropped-by-migration-collapse-feat-040-.md",
+    "status": "Not Started"
+  },
   "BUG-SCOPED-COVERAGE-GATE-OMITS-THE-E2E-SAFEGUARD-PREFIX-ITS-PLAI": {
     "hash": "9efafa4",
     "git_issue": "9efafa4",
@@ -10928,7 +10954,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-settings.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "(none)"
     ],
@@ -19028,6 +19054,32 @@
     "title": "# TASK-3d-vrm-foundation: 3D foundation — VRM avatars + rendering pipeline (Phases 1–2)",
     "type": "TASK"
   },
+  "TASK-AC10-ENUMERATION-SAFE-AUTH-ERROR-STRINGS-LOGIN-ONLY": {
+    "hash": "233b1de",
+    "git_issue": "233b1de",
+    "extid": "TASK-AC10-ENUMERATION-SAFE-AUTH-ERROR-STRINGS-LOGIN-ONLY",
+    "type": "TASK",
+    "title": "AC10 enumeration-safe auth error strings (login-only)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ac10-enumeration-safe-auth-error-strings-login-only.md",
+    "status": "Not Started"
+  },
+  "TASK-AC9-NOTIFYFACTORCHANGE-TRIGGER-HELPER-LADDER-READY-NO-TABLES": {
+    "hash": "c0108a5",
+    "git_issue": "c0108a5",
+    "extid": "TASK-AC9-NOTIFYFACTORCHANGE-TRIGGER-HELPER-LADDER-READY-NO-TABLES",
+    "type": "TASK",
+    "title": "AC9 notifyFactorChange trigger helper (ladder-ready, no tables)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ac9-notifyfactorchange-trigger-helper-ladder-ready-no-tables.md",
+    "status": "Not Started"
+  },
   "TASK-ACCESS-MODEL-COMPOSITION": {
     "epic": "proposed:epic-access-model",
     "extid": "TASK-ACCESS-MODEL-COMPOSITION",
@@ -19918,6 +19970,19 @@
     "tags": [],
     "title": "Admin Overview Dashboard",
     "type": "TASK"
+  },
+  "TASK-ADMIN-REVISION-HISTORY-TAB": {
+    "hash": "7f78b62",
+    "git_issue": "7f78b62",
+    "extid": "TASK-ADMIN-REVISION-HISTORY-TAB",
+    "type": "TASK",
+    "title": "Admin Revision History tab",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-revision-history-tab.md",
+    "status": "Not Started"
   },
   "TASK-ADMIN-REVISIONS-DIFF-REVERT": {
     "epic": "epic-frontend-admin",
@@ -20893,6 +20958,19 @@
     "tags": [],
     "title": "Internalize AI Dungeon 2021 Moderation Lesson",
     "type": "TASK"
+  },
+  "TASK-AI-GUARDRAILS-INPUT-SANITIZATION-CONTENT-FILTERING-OUTPUT-VA": {
+    "hash": "1061ef7",
+    "git_issue": "1061ef7",
+    "extid": "TASK-AI-GUARDRAILS-INPUT-SANITIZATION-CONTENT-FILTERING-OUTPUT-VA",
+    "type": "TASK",
+    "title": "AI guardrails: input sanitization, content filtering, output validation, safety scoring",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ai-guardrails-input-sanitization-content-filtering-output-va.md",
+    "status": "Not Started"
   },
   "TASK-AI-MESSAGE-UTILITIES": {
     "epic": "epic-chat-rich-engagement",
@@ -22706,6 +22784,19 @@
     "title": "AUX LLM — Scene Context Extraction",
     "type": "TASK"
   },
+  "TASK-AV1-CROSS-PANEL-REGEN-TRIGGERS-AVATAR-CACHE-RELOAD-REGENXBIN": {
+    "hash": "1d07056",
+    "git_issue": "1d07056",
+    "extid": "TASK-AV1-CROSS-PANEL-REGEN-TRIGGERS-AVATAR-CACHE-RELOAD-REGENXBIN",
+    "type": "TASK",
+    "title": "AV1 cross-panel regen triggers avatar cache reload (RegenxBinding)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin.md",
+    "status": "Not Started"
+  },
   "TASK-AVATARS-DYNAMIC-2D": {
     "epic": "Epic 26 (Avatar & Expression)",
     "extid": "TASK-AVATARS-DYNAMIC-2D",
@@ -23813,6 +23904,19 @@
     "title": "Build identity hash for tamper detection (searxng-style commit-pin)",
     "type": "TASK"
   },
+  "TASK-BUILD-TIME-OPENAPI-EXPORT-SCRIPTS-GEN-OPENAPI-TS-GEN-API-DOC": {
+    "hash": "16f4732",
+    "git_issue": "16f4732",
+    "extid": "TASK-BUILD-TIME-OPENAPI-EXPORT-SCRIPTS-GEN-OPENAPI-TS-GEN-API-DOC",
+    "type": "TASK",
+    "title": "Build-time OpenAPI export (scripts/gen-openapi.ts, gen-api-docs.ts, docs:api)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-build-time-openapi-export-scripts-gen-openapi-ts-gen-api-doc.md",
+    "status": "Not Started"
+  },
   "TASK-BULK-EXPORT-ZIP": {
     "epic": "epic-import-export-io\\",
     "extid": "TASK-BULK-EXPORT-ZIP",
@@ -23838,6 +23942,118 @@
     "tags": [],
     "title": "BYOK API Keys (Bring Your Own Key)",
     "type": "TASK"
+  },
+  "TASK-C1-MODERATION-ACTION-NOTICES-WITH-ACTOR-THUMB": {
+    "hash": "3aa7c0a",
+    "git_issue": "3aa7c0a",
+    "extid": "TASK-C1-MODERATION-ACTION-NOTICES-WITH-ACTOR-THUMB",
+    "type": "TASK",
+    "title": "C1: Moderation-action notices with actor thumb",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [
+      "composition",
+      "matrix-c1"
+    ],
+    "source": ".plan/tickets/TASK-c1-moderation-action-notices-with-actor-thumb.md",
+    "status": "Not Started"
+  },
+  "TASK-C2-BRIDGED-TURN-SKIP-PROPAGATION-BRIDGE-ONLY": {
+    "hash": "76388cc",
+    "git_issue": "76388cc",
+    "extid": "TASK-C2-BRIDGED-TURN-SKIP-PROPAGATION-BRIDGE-ONLY",
+    "type": "TASK",
+    "title": "C2: Bridged turn-skip propagation (bridge-only)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-group-chat",
+    "tags": [
+      "composition",
+      "matrix-c2"
+    ],
+    "source": ".plan/tickets/TASK-c2-bridged-turn-skip-propagation-bridge-only.md",
+    "status": "Not Started"
+  },
+  "TASK-C3-QUIET-HOURS-AWARE-FEDERATED-WORLD-EVENT-NOTICES": {
+    "hash": "0e55756",
+    "git_issue": "0e55756",
+    "extid": "TASK-C3-QUIET-HOURS-AWARE-FEDERATED-WORLD-EVENT-NOTICES",
+    "type": "TASK",
+    "title": "C3: Quiet-hours-aware federated world-event notices",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-instance-federation",
+    "tags": [
+      "composition",
+      "matrix-c3"
+    ],
+    "source": ".plan/tickets/TASK-c3-quiet-hours-aware-federated-world-event-notices.md",
+    "status": "Not Started"
+  },
+  "TASK-C4-INBOUND-FEDERATED-CONTENT-VERDICT-NOTICES": {
+    "hash": "e797fcf",
+    "git_issue": "e797fcf",
+    "extid": "TASK-C4-INBOUND-FEDERATED-CONTENT-VERDICT-NOTICES",
+    "type": "TASK",
+    "title": "C4: Inbound federated content verdict notices",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-instance-federation",
+    "tags": [
+      "composition",
+      "matrix-c4"
+    ],
+    "source": ".plan/tickets/TASK-c4-inbound-federated-content-verdict-notices.md",
+    "status": "Not Started"
+  },
+  "TASK-C5-SWARM-MERGEABLE-SKIP-PRESERVATION-WITH-BEAT-RECLAIM-PARKE": {
+    "hash": "5bfefb2",
+    "git_issue": "5bfefb2",
+    "extid": "TASK-C5-SWARM-MERGEABLE-SKIP-PRESERVATION-WITH-BEAT-RECLAIM-PARKE",
+    "type": "TASK",
+    "title": "C5: Swarm-mergeable skip preservation with beat reclaim (parked)",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-instance-federation",
+    "tags": [
+      "composition",
+      "matrix-c5"
+    ],
+    "source": ".plan/tickets/TASK-c5-swarm-mergeable-skip-preservation-with-beat-reclaim-parke.md",
+    "status": "Not Started"
+  },
+  "TASK-C6-OUTFIT-GATE-VERDICT-NOTICES-WITH-AVATAR-REFRESH": {
+    "hash": "6295d51",
+    "git_issue": "6295d51",
+    "extid": "TASK-C6-OUTFIT-GATE-VERDICT-NOTICES-WITH-AVATAR-REFRESH",
+    "type": "TASK",
+    "title": "C6: Outfit-gate verdict notices with avatar refresh",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-wardrobe-avatar-variants",
+    "tags": [
+      "composition",
+      "matrix-c6"
+    ],
+    "source": ".plan/tickets/TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh.md",
+    "status": "Not Started"
+  },
+  "TASK-C7-THROTTLED-LOGIN-PLUS-ROLE-CHANGE-SECURITY-DIGEST": {
+    "hash": "defcc62",
+    "git_issue": "defcc62",
+    "extid": "TASK-C7-THROTTLED-LOGIN-PLUS-ROLE-CHANGE-SECURITY-DIGEST",
+    "type": "TASK",
+    "title": "C7: Throttled login plus role-change security digest",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-frontend-login",
+    "tags": [
+      "composition",
+      "matrix-c7"
+    ],
+    "source": ".plan/tickets/TASK-c7-throttled-login-plus-role-change-security-digest.md",
+    "status": "Not Started"
   },
   "TASK-CADDY-TLS-TERMINATION-WITH-AUTOMATIC-HTTPS": {
     "epic": "",
@@ -30293,6 +30509,84 @@
     "title": "Fast-action utility & flow-control catalog (/pass /story /draft /see /lore /more-actions …)",
     "type": "TASK"
   },
+  "TASK-FB12-ADMIN-ROLE-CHANGE-NOTIFIES-AFFECTED-USER-ADMXNTF": {
+    "hash": "b592892",
+    "git_issue": "b592892",
+    "extid": "TASK-FB12-ADMIN-ROLE-CHANGE-NOTIFIES-AFFECTED-USER-ADMXNTF",
+    "type": "TASK",
+    "title": "FB12 admin role-change notifies affected user (ADMxNTF)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fb12-admin-role-change-notifies-affected-user-admxntf.md",
+    "status": "Not Started"
+  },
+  "TASK-FB3-FRONTEND-HUB-INDEX-OVR-SUBSYSTEMS": {
+    "hash": "1b94430",
+    "git_issue": "1b94430",
+    "extid": "TASK-FB3-FRONTEND-HUB-INDEX-OVR-SUBSYSTEMS",
+    "type": "TASK",
+    "title": "FB3 frontend hub index (OVR subsystems)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fb3-frontend-hub-index-ovr-subsystems.md",
+    "status": "Not Started"
+  },
+  "TASK-FB5-ROUTE-TRANSITIONS-REUSE-CENTRAL-HTMX-SWAP-LIFECYCLE-RTGX": {
+    "hash": "215a8ad",
+    "git_issue": "215a8ad",
+    "extid": "TASK-FB5-ROUTE-TRANSITIONS-REUSE-CENTRAL-HTMX-SWAP-LIFECYCLE-RTGX",
+    "type": "TASK",
+    "title": "FB5 route transitions reuse central htmx swap lifecycle (RTGxDED)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx.md",
+    "status": "Not Started"
+  },
+  "TASK-FB7-EAGER-VS-LAZY-COMPONENT-SPLIT-MAP-CMPXBND": {
+    "hash": "d42724c",
+    "git_issue": "d42724c",
+    "extid": "TASK-FB7-EAGER-VS-LAZY-COMPONENT-SPLIT-MAP-CMPXBND",
+    "type": "TASK",
+    "title": "FB7 eager-vs-lazy component split map (CMPxBND)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd.md",
+    "status": "Not Started"
+  },
+  "TASK-FB8-LOGIN-SUCCESS-AND-FAILURE-NOTIFICATION-LOGXNTF": {
+    "hash": "4253155",
+    "git_issue": "4253155",
+    "extid": "TASK-FB8-LOGIN-SUCCESS-AND-FAILURE-NOTIFICATION-LOGXNTF",
+    "type": "TASK",
+    "title": "FB8 login success and failure notification (LOGxNTF)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fb8-login-success-and-failure-notification-logxntf.md",
+    "status": "Not Started"
+  },
+  "TASK-FB9-GALLERY-PRIVATE-ASSET-AUTH-GATING-LOGXGAL": {
+    "hash": "31974f6",
+    "git_issue": "31974f6",
+    "extid": "TASK-FB9-GALLERY-PRIVATE-ASSET-AUTH-GATING-LOGXGAL",
+    "type": "TASK",
+    "title": "FB9 gallery private-asset auth gating (LOGxGAL)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fb9-gallery-private-asset-auth-gating-logxgal.md",
+    "status": "Not Started"
+  },
   "TASK-FE-BE-TRIAGE-VERIFY-OR-FIX-REMAINING-HARMONY-FINDINGS-PERSON": {
     "epic": "",
     "extid": "TASK-FE-BE-TRIAGE-VERIFY-OR-FIX-REMAINING-HARMONY-FINDINGS-PERSON",
@@ -31394,6 +31688,35 @@
     "epic": "Fuzzing Infrastructure",
     "tags": [],
     "source": ".plan/tickets/TASK-fuzzing-infrastructure-harness-runner-corpus-manager-crash-d.md",
+    "status": "Not Started"
+  },
+  "TASK-FUZZING-RUNTIME-HARNESS-TESTS-FUZZ-HARNESS-CORPUS-MUTATION-E": {
+    "hash": "7a757a1",
+    "git_issue": "7a757a1",
+    "extid": "TASK-FUZZING-RUNTIME-HARNESS-TESTS-FUZZ-HARNESS-CORPUS-MUTATION-E",
+    "type": "TASK",
+    "title": "Fuzzing runtime harness (tests/fuzz/: harness, corpus, mutation engine, CI)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fuzzing-runtime-harness-tests-fuzz-harness-corpus-mutation-e.md",
+    "status": "Not Started"
+  },
+  "TASK-G5-UNIFIED-DICE-RUNTIME-LAYER-NDS-M-CONTRACT-PLUS-CALLER-MIG": {
+    "hash": "4ee33a1",
+    "git_issue": "4ee33a1",
+    "extid": "TASK-G5-UNIFIED-DICE-RUNTIME-LAYER-NDS-M-CONTRACT-PLUS-CALLER-MIG",
+    "type": "TASK",
+    "title": "G5: Unified dice runtime layer (NdS+M contract plus caller migration)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-resolution-system",
+    "tags": [
+      "composition",
+      "matrix-g5"
+    ],
+    "source": ".plan/tickets/TASK-g5-unified-dice-runtime-layer-nds-m-contract-plus-caller-mig.md",
     "status": "Not Started"
   },
   "TASK-GALLERY-ASSET-LINKAGE-TO-CHAT-FROM-ASSISTANT": {
@@ -39930,6 +40253,19 @@
     "source": ".plan/tickets/TASK-reconcile-social-hub-notifications-block-with-protocoladapte.md",
     "status": "Not Started"
   },
+  "TASK-RECONCILE-STALE-PLAN-STATUS-FOR-SHIPPED-SUBSYSTEMS": {
+    "hash": "adde248",
+    "git_issue": "adde248",
+    "extid": "TASK-RECONCILE-STALE-PLAN-STATUS-FOR-SHIPPED-SUBSYSTEMS",
+    "type": "TASK",
+    "title": "Reconcile stale .plan/ status for shipped subsystems",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-stale-plan-status-for-shipped-subsystems.md",
+    "status": "Not Started"
+  },
   "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION": {
     "epic": "epic-deno-support",
     "extid": "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION",
@@ -42079,6 +42415,19 @@
     "title": "Runtime Integrity Watchdog & Crash Recovery",
     "type": "TASK"
   },
+  "TASK-RUNTIME-LINE-BRANCH-COVERAGE-FLOOR-IN-THE-CHECK-GATE": {
+    "hash": "b7ee7e9",
+    "git_issue": "b7ee7e9",
+    "extid": "TASK-RUNTIME-LINE-BRANCH-COVERAGE-FLOOR-IN-THE-CHECK-GATE",
+    "type": "TASK",
+    "title": "Runtime line/branch coverage floor in the check gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-runtime-line-branch-coverage-floor-in-the-check-gate.md",
+    "status": "Not Started"
+  },
   "TASK-RUNTIME-MIGRATION-STALENESS-GUARD": {
     "epic": "",
     "extid": "TASK-RUNTIME-MIGRATION-STALENESS-GUARD",
@@ -42130,6 +42479,32 @@
     "tags": [],
     "title": "Save improved prompt as reusable template",
     "type": "TASK"
+  },
+  "TASK-SC-SCENE-STARVED-NARRATOR-ABSENT-COVERAGE-SIGNAL-SCENE-COVER": {
+    "hash": "60cabe7",
+    "git_issue": "60cabe7",
+    "extid": "TASK-SC-SCENE-STARVED-NARRATOR-ABSENT-COVERAGE-SIGNAL-SCENE-COVER",
+    "type": "TASK",
+    "title": "SC scene.starved narrator-absent coverage signal (scene-coverage.ts)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sc-scene-starved-narrator-absent-coverage-signal-scene-cover.md",
+    "status": "Not Started"
+  },
+  "TASK-SC-TURN-SKIPPED-HOOK-EMIT-FOLLOW-CREATE-TS-EMITPLUGINEVENT-P": {
+    "hash": "52ca5eb",
+    "git_issue": "52ca5eb",
+    "extid": "TASK-SC-TURN-SKIPPED-HOOK-EMIT-FOLLOW-CREATE-TS-EMITPLUGINEVENT-P",
+    "type": "TASK",
+    "title": "SC turn.skipped hook emit (follow create.ts emitPluginEvent pattern)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sc-turn-skipped-hook-emit-follow-create-ts-emitpluginevent-p.md",
+    "status": "Not Started"
   },
   "TASK-SC1-PERSPECTIVE-GATE-BYPASS": {
     "epic": "epic-immersion-consistency-gate",
@@ -46156,6 +46531,19 @@
     "tags": [],
     "title": "EPIC: Worlds Extension (Shareability, Epochs, Maps, Mode Switches)",
     "type": "TASK"
+  },
+  "TASK-X3-FEDERATED-OTP-CARRY-BUT-REVERIFY-PHASE-1-MATRIX-DM-SEND-V": {
+    "hash": "e3c9233",
+    "git_issue": "e3c9233",
+    "extid": "TASK-X3-FEDERATED-OTP-CARRY-BUT-REVERIFY-PHASE-1-MATRIX-DM-SEND-V",
+    "type": "TASK",
+    "title": "X3: Federated OTP carry-but-reverify phase-1 (Matrix-DM send via auth-challenge flag)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-x3-federated-otp-carry-but-reverify-phase-1-matrix-dm-send-v.md",
+    "status": "Not Started"
   },
   "TASK-XMPP-INTEGRATION": {
     "epic": "epic-communications-integrations",
