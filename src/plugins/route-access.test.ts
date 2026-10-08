@@ -10,6 +10,7 @@
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { dispatchPluginRoute, registry, unloadAllPlugins, } from "./loader";
+import { checkRouteAccess, } from "./route-access";
 
 let calls = 0;
 
@@ -313,4 +314,121 @@ describe("unloadAllPlugins", () => {
       await dispatchPluginRoute({ request: new Request("http://x/x",), },),
     ).toBeNull();
   },);
+});
+
+/**
+ * `checkRouteAccess` is the exported unit; every block above reaches it only
+ * through `dispatchPluginRoute`, which can observe the resulting HTTP status
+ * but not the contract the dispatcher branches on. These call it directly to
+ * pin that contract: a `Response` on denial and `null` on allow, the 401 gate
+ * returning before the permission matrix is consulted, and the two falsy
+ * guards that stop an undeclared field from ever reaching `hasAll`.
+ */
+describe("checkRouteAccess", () => {
+  /** Minimal route definition — only the access fields vary per test. */
+  function route(access: { requiresAuth?: boolean; permissions?: string[]; }) {
+    return {
+      method: "GET" as const,
+      path: "/direct",
+      handler: okHandler("direct"),
+      ...access,
+    };
+  }
+
+  const req = () => new Request("http://x/direct",);
+
+  test("returns null — not a Response — when the route declares neither field", () => {
+    const denial = checkRouteAccess({ route: route({}), request: req(), },);
+
+    expect(denial,).toBeNull();
+  });
+
+  test("returns null for a caller that satisfies both gates", () => {
+    const denial = checkRouteAccess({
+      route: route({ requiresAuth: true, permissions: ["admin.settings",], },),
+      request: req(),
+      caller: { userId: "a-1", userRole: "admin", },
+    },);
+
+    expect(denial,).toBeNull();
+  });
+
+  test("returns a 401 Response when `caller` is omitted entirely", () => {
+    const denial = checkRouteAccess({
+      route: route({ requiresAuth: true, },),
+      request: req(),
+    },);
+
+    expect(denial,).toBeInstanceOf(Response,);
+    expect(denial?.status,).toBe(401,);
+  });
+
+  test("401 short-circuits before the permission check runs", async () => {
+    const denial = checkRouteAccess({
+      route: route({ requiresAuth: true, permissions: ["admin.settings",], },),
+      request: req(),
+      caller: { userId: null, userRole: "user", },
+    },);
+
+    // `user` does not hold admin.settings, so a permission-first ordering would
+    // answer 403. The auth gate returns first, and the body says nothing about
+    // which permission failed.
+    expect(denial?.status,).toBe(401,);
+    expect(await denial?.json(),).toMatchObject({ error: "Unauthorized", },);
+  });
+
+  test("an authenticated caller with no role is forbidden, not unauthenticated", () => {
+    const denial = checkRouteAccess({
+      route: route({ permissions: ["admin.settings",], },),
+      request: req(),
+      caller: { userId: "u-1", userRole: null, },
+    },);
+
+    // `can(null, ...)` is false, so a real userId without a role is a 403.
+    expect(denial?.status,).toBe(403,);
+  });
+
+  test("requiresAuth is compared to `true`, so an explicit false never denies", () => {
+    const denial = checkRouteAccess({
+      route: route({ requiresAuth: false, permissions: ["admin.settings",], },),
+      request: req(),
+      caller: { userId: null, userRole: "user", },
+    },);
+
+    // Only the permission gate is live here, and `user` does not hold it.
+    expect(denial?.status,).toBe(403,);
+  });
+
+  test("an empty permissions array never reaches hasAll", () => {
+    const denial = checkRouteAccess({
+      route: route({ permissions: [], },),
+      request: req(),
+      caller: { userId: null, userRole: null, },
+    },);
+
+    // `hasAll(null, [])` is vacuously true, so the `.length` guard is the only
+    // thing keeping a role-less anonymous caller on the allow path.
+    expect(denial,).toBeNull();
+  });
+
+  test("localises the 401 through the threaded translator", async () => {
+    const denial = checkRouteAccess({
+      route: route({ requiresAuth: true, },),
+      request: req(),
+      t: (key: string,) => "de:" + key + ":",
+    },);
+
+    expect(await denial?.json(),).toMatchObject({ error: "de:errors.unauthorized:", },);
+  });
+
+  test("localises the 403 through the threaded translator", async () => {
+    const denial = checkRouteAccess({
+      route: route({ permissions: ["admin.settings",], },),
+      request: req(),
+      caller: { userId: "u-1", userRole: "user", },
+      t: (key: string,) => "de:" + key + ":",
+    },);
+
+    expect(await denial?.json(),).toMatchObject({ error: "de:errors.forbidden:", },);
+  });
 });
