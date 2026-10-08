@@ -4,6 +4,7 @@
 import { MessageRole, } from "../../db/enums";
 import { safeJsonStringify, } from "../../utils";
 import { sqliteUtcToIso, } from "../../utils/date";
+import { renderShortcodes, } from "../shortcode-emoji";
 import type { MessageData, } from "./types";
 
 /**
@@ -114,7 +115,7 @@ export function formatHtml(chat: { name: string; type: string; mode: string }, m
         <span class="sender">${escapeHtml(roleLabel,)}</span>
         <span class="time"><time datetime="${time}" data-client-date="datetime">${time}</time></span>
       </div>
-      <div class="content">${escapeHtml(msg.content,)}</div>
+      <div class="content">${escapeHtml(renderShortcodes(msg.content,),)}</div>
     </div>`;
   },).join("\n",);
 
