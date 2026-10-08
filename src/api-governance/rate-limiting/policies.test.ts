@@ -64,6 +64,23 @@ describe("policyForRoute", () => {
     expect(policyForRoute("/api/v1/actors/a1/emotion-avatars/jobs/j9/cancel",),).toBe(defaultPolicy,);
   });
 
+  test("remaining generation endpoints resolve the generation policy (BUG-rate-limit-misses-generation-endpoints)", () => {
+    // These generation POSTs are nested under id-bearing paths, so no prefix
+    // rule reaches them; the suffix rules move them out of the shared 300/min
+    // default bucket.
+    expect(policyForRoute("/api/v1/image-edit/run",),).toBe(generationPolicy,);
+    expect(policyForRoute("/api/v1/comfyui-builder/runs",),).toBe(generationPolicy,);
+    expect(policyForRoute("/api/chats/abc/story/step",),).toBe(generationPolicy,);
+    expect(policyForRoute("/api/chats/abc/story/resume",),).toBe(generationPolicy,);
+    expect(policyForRoute("/api/proactive-messaging/send",),).toBe(generationPolicy,);
+    expect(policyForRoute("/api/chats/abc/vn/generate-story",),).toBe(generationPolicy,);
+    expect(policyForRoute("/api/chats/abc/vn/generate-choices",),).toBe(generationPolicy,);
+    // Sibling read/list/status paths must NOT starve in the 20/min bucket.
+    expect(policyForRoute("/api/v1/comfyui-builder/runs/j9",),).toBe(defaultPolicy,);
+    expect(policyForRoute("/api/chats/abc/story/state",),).toBe(defaultPolicy,);
+    expect(policyForRoute("/api/proactive-messaging/config",),).toBe(defaultPolicy,);
+  });
+
   test("auth prefix resolves the auth policy", () => {
     expect(policyForRoute("/api/v1/auth/login",),).toBe(authPolicy,);
   });
