@@ -2028,6 +2028,10 @@
   "src/assistant/commands/create-entity.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-locations.md"
     },
     {
@@ -2043,7 +2047,17 @@
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
+  "src/assistant/commands/create.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    }
+  ],
   "src/assistant/commands/create.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-gm-flows.md"
@@ -2157,10 +2171,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-assistant-gm-flows.md"
     },
     {
       "kind": "ticket",
@@ -2397,6 +2407,10 @@
       "source": ".plan/epics/epic-assistant-entity-access.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
     },
@@ -2450,6 +2464,10 @@
     }
   ],
   "src/assistant/commands/review.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
@@ -2556,6 +2574,10 @@
     }
   ],
   "src/assistant/commands/workflow.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-entity-generation-workflows.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-workflow-confirm-session-treats-optional-steps-as-required.md"
@@ -2831,10 +2853,44 @@
       "source": ".plan/epics/epic-memory-propagation.md"
     }
   ],
+  "src/assistant/personality/composer.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    }
+  ],
+  "src/assistant/personality/continuity.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    }
+  ],
+  "src/assistant/personality/drift.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    }
+  ],
   "src/assistant/personality/presets.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-personality-presets-catalog.md"
+    }
+  ],
+  "src/assistant/personality/reset.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    }
+  ],
+  "src/assistant/personality/selector.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
     }
   ],
   "src/assistant/prompt-assembler.test.ts": [
@@ -3575,12 +3631,22 @@
   ],
   "src/assistant/prompt/templates/entity-generation.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-generation-review-parity-extract-category-rarity-stats-.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-precompiled-templates-injection.md"
+    }
+  ],
+  "src/assistant/prompt/templates/entity-templates.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
     }
   ],
   "src/assistant/prompt/types.ts": [
@@ -3625,7 +3691,33 @@
       "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
     }
   ],
+  "src/assistant/quality/entity-creation-gates.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-entity-generation-workflows.md"
+    }
+  ],
+  "src/assistant/quality/entity-creation-lore.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    }
+  ],
+  "src/assistant/quality/entity-creation-types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    }
+  ],
   "src/assistant/quality/entity-creation.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-check-duplicate-loads-all-owner-rows.md"
@@ -3635,6 +3727,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
     },
     {
       "kind": "ticket",
@@ -3810,6 +3906,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-entity-generation-workflows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-project-spaces-pm-integration.md"
     },
     {
@@ -3875,6 +3975,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-entity-generation-workflows.md"
     },
     {
       "kind": "epic",
@@ -3962,6 +4066,10 @@
     }
   ],
   "src/assistant/workflow-session-store.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-harness-integration.md"
@@ -4459,6 +4567,24 @@
       "source": "docs/spec/autonomy-determinism.md"
     }
   ],
+  "src/autonomy/dispatch/bdi-dispatch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    }
+  ],
+  "src/autonomy/dispatch/dispatch-targets.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    }
+  ],
+  "src/autonomy/dispatch/gm-beat-dispatch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
+    }
+  ],
   "src/autonomy/governor/cache.ts": [
     {
       "kind": "spec",
@@ -4474,7 +4600,29 @@
   "src/autonomy/governor/index.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-rate-governor-for-llm-actors.md"
+    }
+  ],
+  "src/autonomy/governor/kill-switch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
+    }
+  ],
+  "src/autonomy/governor/ledger.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
+    }
+  ],
+  "src/autonomy/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
     }
   ],
   "src/autonomy/rng.ts": [
@@ -4535,6 +4683,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/generation-scheduler.md"
+    }
+  ],
+  "src/autonomy/scheduler/tick.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
+    }
+  ],
+  "src/autonomy/scheduler/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
     }
   ],
   "src/aux-pipeline": [
@@ -5366,6 +5526,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-faction-leaders-and-cadre-generation.md"
     }
   ],
@@ -5506,6 +5670,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-epic14-import-export-reconciliation.md"
     }
   ],
@@ -5513,6 +5681,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     },
     {
       "kind": "ticket",
@@ -6050,6 +6222,10 @@
     }
   ],
   "src/characters/services/emotion-avatar-fallback.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md"
@@ -7392,10 +7568,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-chat-transfer-location.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
     },
     {
@@ -8007,12 +8179,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-service-and-criteria-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-transfer-location.md"
     }
   ],
   "src/chat/service/location-events.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-transfer-location.md"
     },
     {
       "kind": "ticket",
@@ -8139,6 +8319,10 @@
       "source": ".plan/epics/epic-chat-product-features.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-transfer-location.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat.md"
     },
@@ -8164,7 +8348,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-transfer-location.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-party-join-leave.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
     },
     {
       "kind": "ticket",
@@ -8179,6 +8371,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-transfer-location.md"
     },
     {
       "kind": "ticket",
@@ -8220,6 +8416,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-rpg-chronological-navigation.md"
     },
     {
@@ -8235,12 +8435,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
   "src/chat/service/split.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-transfer-location.md"
     },
     {
       "kind": "ticket",
@@ -8256,7 +8468,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-rpg-chronological-navigation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-transfer-location.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
     },
     {
       "kind": "ticket",
@@ -8733,15 +8957,15 @@
   ],
   "src/chat/types.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-chat-transfer-location.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
     }
   ],
   "src/chat/types/config.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
@@ -8827,6 +9051,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-location-transition-transfer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-transfer-location.md"
     }
   ],
   "src/chat/types/variants.ts": [
@@ -11298,6 +11526,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-entity-generation-workflows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-workflow-engine.md"
     },
     {
@@ -11328,6 +11560,14 @@
     }
   ],
   "src/config/templates-loader/validation-entity-types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-entity-generation-workflows.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
@@ -11490,7 +11730,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
     },
     {
       "kind": "ticket",
@@ -13732,6 +13980,14 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-transfer-location.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-db-migration-compaction.md"
     },
     {
@@ -13837,6 +14093,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-archival-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-transfer-location.md"
     },
     {
       "kind": "ticket",
@@ -14318,10 +14578,6 @@
     }
   ],
   "src/db/migrations/060_character_world_setup.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-world-setup.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"
@@ -17657,6 +17913,12 @@
       "source": ".plan/tickets/TASK-prompt-improve-composer-ui.md"
     }
   ],
+  "src/frontend/alpine/chat-actions/wizard.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    }
+  ],
   "src/frontend/alpine/chat-activity.ts": [
     {
       "kind": "epic",
@@ -17813,6 +18075,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-reactions-in-out-context.md"
     }
   ],
   "src/frontend/alpine/chat-music-links.ts": [
@@ -17879,6 +18145,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-sections-loadsections-leaves-sectionsloading-true-forev.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-transfer-location.md"
     }
   ],
   "src/frontend/alpine/chat-seen.test.ts": [
@@ -17939,6 +18209,10 @@
       "source": ".plan/tickets/TASK-branch-merge-continuation-semantics.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-slash-commands-chat-group-assistant.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/crypto.md"
     }
@@ -17980,6 +18254,10 @@
     }
   ],
   "src/frontend/alpine/chat-settings/gm-config.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md"
@@ -18474,6 +18752,10 @@
     }
   ],
   "src/frontend/alpine/creation-wizard.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-creation-wizard-bug-wizardid-unused.md"
@@ -20057,6 +20339,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
     }
   ],
   "src/frontend/chat-vendor": [
@@ -20709,6 +20995,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-journal-keyphrase-panel-reads-only-page-1-of-the-paginated-m.md"
+    }
+  ],
+  "src/frontend/pages/characters-journey.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
     }
   ],
   "src/frontend/pages/characters-proactive.ts": [
@@ -21423,6 +21715,12 @@
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     }
   ],
+  "src/frontend/vn/location-events.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-transfer-location.md"
+    }
+  ],
   "src/frontend/vn/portrait-manager.ts": [
     {
       "kind": "ticket",
@@ -21456,14 +21754,6 @@
     }
   ],
   "src/frontend/vn/scene-renderer.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-chat-transfer-location.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-chat-transfer-location.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-visual-novel-mode.md"
@@ -21775,6 +22065,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-authoring-creation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-authoring-creation.md"
     }
   ],
   "src/generation/assistant-tuning.ts": [
@@ -21795,12 +22089,20 @@
   ],
   "src/generation/audio-prompt-templates.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-authoring-creation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-sub-audio.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-template-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-authoring-creation.md"
     }
   ],
   "src/generation/audio/ambient.ts": [
@@ -22419,6 +22721,10 @@
   ],
   "src/generation/auto-gen/story-mode.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
     },
@@ -22515,7 +22821,17 @@
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
+  "src/generation/caption-route": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    }
+  ],
   "src/generation/caption-route.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
@@ -23509,6 +23825,16 @@
     {
       "kind": "spec",
       "source": "docs/spec/template-system.md"
+    }
+  ],
+  "src/generation/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-authoring-creation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-authoring-creation.md"
     }
   ],
   "src/generation/karaoke-tts.ts": [
@@ -28165,6 +28491,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
     }
   ],
   "src/partials/characters/export-modal.html": [
@@ -28904,6 +29234,10 @@
     }
   ],
   "src/prompt-improve/service.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-analyze-slash-command-over-prompt-analysis-service.md"
@@ -30160,6 +30494,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
     }
   ],
@@ -31365,6 +31703,12 @@
       "source": ".plan/tickets/TASK-frontend-char-world-setup-resolve.md"
     }
   ],
+  "src/routes/characters": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
   "src/routes/characters-internal.test.ts": [
     {
       "kind": "epic",
@@ -31477,6 +31821,12 @@
       "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
     }
   ],
+  "src/routes/characters/export.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
   "src/routes/characters/license.ts": [
     {
       "kind": "ticket",
@@ -31565,20 +31915,12 @@
   ],
   "src/routes/chat-search.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-chat-transfer-location.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-e2e-test-infrastructure-fixes.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-room-search-join.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-chat-transfer-location.md"
     },
     {
       "kind": "frontend",
@@ -31602,10 +31944,18 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-transfer-location.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md"
     }
   ],
   "src/routes/chat-search/joinable.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-transfer-location.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
@@ -31636,6 +31986,10 @@
     }
   ],
   "src/routes/chat-search/transfer.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-transfer-location.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-chat-transfer-location-change.md"
@@ -31677,10 +32031,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-archival-workflow.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-chat-transfer-location.md"
     },
     {
       "kind": "epic",
@@ -31729,10 +32079,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-sectioning-multi-location.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-chat-transfer-location.md"
     },
     {
       "kind": "ticket",
@@ -31906,6 +32252,10 @@
   "src/routes/chats/extras.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-chat-transfer-location.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
     },
     {
@@ -32025,6 +32375,10 @@
   ],
   "src/routes/chats/participants.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-transfer-location.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rotatekeyonleave-partial-failure-leaves-mixed-key-state-non-.md"
     },
@@ -32034,7 +32388,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-transfer-location.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-party-join-leave.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
   "src/routes/chats/prompt-template.ts": [
@@ -32051,8 +32413,24 @@
   ],
   "src/routes/chats/split.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-transfer-location.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-reunite-secondary-ownership-check-missing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-transfer-location.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-party-migration.md"
     }
   ],
   "src/routes/chats/templates.ts": [
@@ -32349,6 +32727,12 @@
       "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
     }
   ],
+  "src/routes/export-shared": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
   "src/routes/export-shared.test.ts": [
     {
       "kind": "ticket",
@@ -32361,6 +32745,12 @@
       "source": ".plan/tickets/TASK-codemod-fetch-json-safe-utils.md"
     }
   ],
+  "src/routes/export-shared/characters.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
   "src/routes/export-shared/chats.ts": [
     {
       "kind": "ticket",
@@ -32371,6 +32761,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
+    }
+  ],
+  "src/routes/export-shared/story.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     }
   ],
   "src/routes/export-sse.ts": [
@@ -32397,6 +32793,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-export-status-download-endpoints-leak-other-users-jobs-via-u.md"
+    }
+  ],
+  "src/routes/export-sse/jobs.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     }
   ],
   "src/routes/export-sse/start.ts": [
@@ -32437,6 +32839,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-link-share-json-routes-500-body-already-used-elysia-su.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     },
     {
       "kind": "ticket",
@@ -32866,6 +33272,10 @@
   "src/routes/import/actor.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-char-editor-import-export-ui.md"
     }
   ],
@@ -32892,6 +33302,10 @@
     }
   ],
   "src/routes/import/lorebook.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-lorebook-template-seeding.md"
@@ -32998,10 +33412,6 @@
   "src/routes/marketplace.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-authoring-creation.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-output-control-transforms.md"
     },
     {
@@ -33055,6 +33465,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-message-reactions-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-reactions-in-out-context.md"
     },
     {
       "kind": "ticket",
@@ -33342,6 +33756,10 @@
   "src/routes/messages/command.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-entity-generation-workflows.md"
     },
     {
@@ -33383,6 +33801,10 @@
   ],
   "src/routes/messages/create-entity-confirm.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-human-in-the-loop-approval-gates.md"
     },
@@ -33392,6 +33814,10 @@
     }
   ],
   "src/routes/messages/create-entity-confirm.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-create-entity-confirm-bypasses-world-ownership.md"
@@ -34319,6 +34745,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-personality-integrity.md"
+    }
+  ],
+  "src/routes/planning.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
     }
   ],
   "src/routes/plugins.ts": [
@@ -35401,6 +35833,12 @@
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
+  "src/routes/views/character-growth-section.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
+    }
+  ],
   "src/routes/views/character-panels-section.ts": [
     {
       "kind": "ticket",
@@ -35644,6 +36082,10 @@
     }
   ],
   "src/routes/world-import/bundle.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-bundle-import-untransacted-partial-import-corrupts-wor.md"
@@ -40023,6 +40465,18 @@
       "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"
     }
   ],
+  "src/services/agency/bdi-plan-recompute.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    }
+  ],
+  "src/services/agency/bdi-plan-recompute.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    }
+  ],
   "src/services/agency/bdi-reflection.ts": [
     {
       "kind": "ticket",
@@ -40473,6 +40927,18 @@
       "source": ".plan/tickets/TASK-world-simulation-discovery-and-trade-events.md"
     }
   ],
+  "src/story/game-master/beat.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
+    }
+  ],
+  "src/story/game-master/beat.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
+    }
+  ],
   "src/story/game-master/decisions.ts": [
     {
       "kind": "ticket",
@@ -40543,6 +41009,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-error-handling-gaps-detector-abort-void-promises.md"
+    }
+  ],
+  "src/story/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-authoring-creation.md"
     }
   ],
   "src/story/items": [
@@ -40795,6 +41267,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-plot-autopilot-ai-proposes-next-plot-beats.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-authoring-creation.md"
     }
   ],
   "src/story/quality": [
@@ -40946,11 +41422,19 @@
   "src/story/timeline/world-timeline.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-authoring-creation.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-memory-propagation.md"
     },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-timeline-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-authoring-creation.md"
     },
     {
       "kind": "ticket",
@@ -40983,6 +41467,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-authoring-creation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-authoring-creation.md"
     }
   ],
   "src/story/world-state": [
@@ -42654,6 +43142,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
@@ -43351,6 +43843,12 @@
       "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
     }
   ],
+  "src/views/partials/character-growth-": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
+    }
+  ],
   "src/views/partials/character-growth-editor.html": [
     {
       "kind": "epic",
@@ -43363,6 +43861,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-char-growth-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
     }
   ],
   "src/views/partials/character-journey.html": [
