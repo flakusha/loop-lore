@@ -20,7 +20,7 @@ the file's body is dominated by blessed widget binding (box / list / textbox)
 and event-handler wiring that requires a live terminal to exercise. The new
 diff surface (sessionToken threading + empty-string normalization in the
 constructor) IS covered by the mock.module-based test file at
-src/tui/chat/index.test.ts (3 tests, all pass). The remaining uncovered lines
+src/tui/chat/index.test.ts (its full suite passes). The remaining uncovered lines
 are blessed widget plumbing exercised end-to-end via the blessed REPL harness
 and `test:e2e`, neither of which the unit-suite coverage gate counts.
 

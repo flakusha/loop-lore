@@ -24,6 +24,9 @@
  * double-press idempotence is exercised rather than assumed.
  */
 import { afterEach, beforeAll, beforeEach, expect, it, mock, spyOn, } from "bun:test";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { join, } from "node:path";
+import { setGlobalLogger, } from "../logger";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import type { safeFetch, } from "../utils";
 import type { FetchResult, } from "../utils/safe-fetch/types";
@@ -63,6 +66,10 @@ interface WidgetStub {
 interface WidgetOpts {
   hidden?: boolean;
 }
+
+/** Repo-root `.tmp/` — scratch that resolves node_modules, so a child preload there can import `blessed`. */
+const REPO_TMP = join(import.meta.dir, "..", "..", "..", ".tmp",);
+mkdirSync(REPO_TMP, { recursive: true, },);
 
 /** Text widgets created per test, in creation order; never reset by mock(). */
 const textWidgets: WidgetStub[] = [];
@@ -184,6 +191,17 @@ beforeAll(async () => {
 },);
 
 beforeEach(() => {
+  // Clear the global logger so every test starts from the pristine
+  // "never initialized" state `getLogger()` throws on. `createLogger` seeds
+  // the root with `??=` (src/logger/index.ts:31), so WITHOUT this reset the
+  // first createTUIApp() in the file seeds it for good and the ordering test
+  // below passes on a logger some earlier test happened to create — the
+  // createLogger -> new TUIApp() order in createTUIApp is load-bearing and
+  // would be unpinned. Resetting here (not around the one test) keeps every
+  // test independent; createTUIApp re-seeds on its own, so nothing else
+  // observes the null. The cast: setGlobalLogger is typed for a real Logger,
+  // but the test needs the reachable null the holder starts at.
+  setGlobalLogger(null as never,);
   configError = null;
   configToken = "test-token";
   textWidgets.length = 0;
@@ -420,4 +438,74 @@ describeOrSkip("TUIApp", () => {
       expect(exitSpy,).toHaveBeenCalledWith(0,);
     });
   }
+},);
+
+// ── Entry-point guard ─────────────────────────────────────────────────────
+// The `if (import.meta.main)` guard is the shipped TUI's launch switch: neuter
+// it and `bun run src/tui/app.ts` exits without building anything. No test
+// above can see that — every one reaches the shell through createTUIApp(),
+// never through the guard — so the only honest witness runs app.ts as a REAL
+// entry point in a child process and watches it construct.
+//
+// The child gets a preload that swaps blessed's factories for counting stubs:
+// the real ones open a terminal and block on terminal events outside a TTY.
+// Preload runs before the entry module, so the swap is in place by the time
+// the guard fires, and it counts only what the ENTRY builds — the child's
+// module registry is its own, so nothing the parent did can reach it.
+// `bun --preload` rather than mock.module because a child process has no test
+// runner to register the mock with.
+//
+// The preload is written under the repo's `.tmp/` (not os tmpdir) on purpose:
+// `import blessed from "blessed"` resolves through node_modules, which only
+// exists inside the repo — an os-tmpdir preload resolves nothing, the stub
+// never lands, and the count reads 0 for the wrong reason. Verified both ways.
+const ENTRY_PRELOAD = `
+import blessed from "blessed";
+
+let screens = 0;
+const widget = () => ({
+  visible: true, content: "", items: [], destroyed: false, renderCount: 0,
+  keyHandlers: [], focused: null,
+  on() {}, emit() {}, key() {}, render() {}, setContent() {}, show() {}, hide() {},
+  focus() {}, destroy() {}, clearValue() {}, getValue() { return ""; }, setValue() {},
+  submit() {}, clearItems() {}, add() {}, addItem() {}, setItems() {}, select() {}, append() {},
+});
+
+blessed.screen = () => { screens += 1; return widget(); };
+blessed.box = () => widget();
+blessed.list = () => widget();
+blessed.text = () => widget();
+blessed.textbox = () => widget();
+
+process.on("exit", () => { console.log("SCREENS_CREATED=" + screens); });
+`;
+
+describeOrSkip("entry-point guard", () => {
+  // spawnSync's `timeout` is the anti-wedge guard, not decoration: the real TUI
+  // has no exit path outside a TTY, so a regression that left the child holding
+  // terminal handles would hang this suite forever. Measured exit is ~0.08s;
+  // 10s leaves slack for a cold module graph, and past it the child is killed,
+  // turning a wedge into an ordinary assertion failure.
+  it("builds the shell when app.ts runs as an entry point", () => {
+    const dir = mkdtempSync(join(REPO_TMP, "tui-entry-",),);
+    const preload = join(dir, "preload.ts",);
+    writeFileSync(preload, ENTRY_PRELOAD, "utf8",);
+
+    try {
+      const proc = Bun.spawnSync({
+        cmd: [process.execPath, "--preload", preload, join(import.meta.dir, "app.ts",),],
+        cwd: dir,
+        timeout: 10_000,
+        stdout: "pipe",
+        stderr: "pipe",
+      },);
+
+      // The count is the assertion; exit code alone would pass on a crash that
+      // happened after the screen. stderr rides along as the failure message.
+      expect(proc.stdout.toString(), proc.stderr.toString(),).toContain("SCREENS_CREATED=1",);
+      expect(proc.exitCode, proc.stderr.toString(),).toBe(0,);
+    } finally {
+      rmSync(dir, { recursive: true, force: true, },);
+    }
+  });
 },);
