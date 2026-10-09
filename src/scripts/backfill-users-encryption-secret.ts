@@ -20,19 +20,13 @@ import { loadConfig, } from "../config/load";
 import { generateEncryptionSecret, } from "../crypto/user-secret";
 import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
-import { getLogger, type Logger, } from "../logger";
+import { getChildLogger, type Logger, } from "../logger";
 
 /**
  * Module logger accessor — null until the CLI guard calls `createLogger()`.
  * @returns the child logger, or null when no logger is initialized.
  */
-function log(): Logger | null {
-  try {
-    return getLogger().child({ module: "scripts/backfill:users:encryption-secret", },);
-  } catch {
-    return null;
-  }
-}
+const log = (): Logger | null => getChildLogger("scripts/backfill:users:encryption-secret",);
 
 /** Counts describing one backfill pass. */
 export interface BackfillSummary {
