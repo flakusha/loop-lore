@@ -5066,40 +5066,6 @@ export async function insertMessageReminders(
   return id;
 }
 
-/** Insert a vn_questions row. */
-export async function insertVnQuestions(
-  db: Db,
-  chat_id: string,
-  scene_index: number,
-  question_text: string,
-  created_at: string,
-  opts?: {
-    id?: string;
-    question_type?: string;
-    speaker_id?: string | null;
-    options?: string;
-    next_scene_id?: string | null;
-    consequences?: string;
-    relationship_impact?: string;
-    mood_impact?: string;
-    status?: string;
-    selected_option_id?: string | null;
-    answered_at?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("vn_questions",).values({
-    id,
-    chat_id,
-    scene_index,
-    question_text,
-    created_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
 /** Insert a branch_merges row. */
 export async function insertBranchMerges(
   db: Db,
@@ -5191,6 +5157,40 @@ export async function insertPlanLinks(
     from_id,
     to_id,
     relation,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a vn_questions row. */
+export async function insertVnQuestions(
+  db: Db,
+  chat_id: string,
+  scene_index: number,
+  question_text: string,
+  created_at: string,
+  opts?: {
+    id?: string;
+    question_type?: string;
+    speaker_id?: string | null;
+    options?: string;
+    next_scene_id?: string | null;
+    consequences?: string;
+    relationship_impact?: string;
+    mood_impact?: string;
+    status?: string;
+    selected_option_id?: string | null;
+    answered_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("vn_questions",).values({
+    id,
+    chat_id,
+    scene_index,
+    question_text,
+    created_at,
     ...restOpts,
   } as any,).execute();
   return id;
