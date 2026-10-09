@@ -31,6 +31,7 @@ function baseSettings(): VnSettings {
     dialogueBoxOpacity: 0.75,
     portraitSize: 35,
     splitRatio: 40,
+    vnChoicesEnabled: true,
   };
 }
 

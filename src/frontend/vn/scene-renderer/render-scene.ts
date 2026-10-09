@@ -223,7 +223,11 @@ export async function renderCurrentScene(
   sceneEl.append(createDialogue(scene, settings, textEl,),);
   sceneEl.append(createNav(navigate,),);
 
-  if (state.currentChatId) {
+  // Gated on the per-chat opt-in, not just the chat id: initChoiceCards and
+  // loadQuestions each fire an HTTP GET on every scene render, so mounting and
+  // hiding afterwards would still cost two round-trips per scene. Read from the
+  // overlaid `settings`, not `baseSettings`, like every other VN field here.
+  if (state.currentChatId && settings.vnChoicesEnabled) {
     const choicesEl = document.createElement("div",);
     choicesEl.className = "vn-choices-container";
     sceneEl.append(choicesEl,);

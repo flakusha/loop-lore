@@ -55,3 +55,47 @@ describe("getVnSettings enabled precedence", () => {
     expect(settings.enabled,).toBe(true,);
   });
 });
+
+describe("getVnSettings vnChoicesEnabled", () => {
+  beforeEach(() => {
+    globalThis.localStorage = createStorageStub();
+  },);
+
+  test("defaults to off when gm_config carries no flag", () => {
+    expect(getVnSettings({ vnLayout: "overlay", },).vnChoicesEnabled,).toBe(false,);
+  });
+
+  test("reads true from gm_config", () => {
+    expect(getVnSettings({ vnChoicesEnabled: true, },).vnChoicesEnabled,).toBe(true,);
+  });
+
+  test("reads false from gm_config", () => {
+    expect(getVnSettings({ vnChoicesEnabled: false, },).vnChoicesEnabled,).toBe(false,);
+  });
+
+  // The one that matters: every sibling field falls back to localStorage, but
+  // this one is a per-chat permission. If it ever joins the stored merge, an
+  // opt-in on chat A silently enables cards on chat B.
+  test("does NOT leak across chats via localStorage", () => {
+    saveVnSettings({ vnChoicesEnabled: true, },);
+
+    const optedIn = getVnSettings({ vnChoicesEnabled: true, },);
+    expect(optedIn.vnChoicesEnabled,).toBe(true,);
+
+    // Same browser, next chat: its gm_config says nothing about choices.
+    const other = getVnSettings({ vnLayout: "overlay", },);
+    expect(other.vnChoicesEnabled,).toBe(false,);
+  });
+
+  test("a stored true cannot re-enable a chat that never opted in", () => {
+    saveVnSettings({ vnChoicesEnabled: true, },);
+    expect(getVnSettings(undefined,).vnChoicesEnabled,).toBe(false,);
+  });
+
+  // Control: the merge IS active for other fields, so the test above is
+  // meaningful rather than passing because localStorage is inert here.
+  test("other fields still merge from localStorage", () => {
+    saveVnSettings({ layout: "split", },);
+    expect(getVnSettings({},).layout,).toBe("split",);
+  });
+});
