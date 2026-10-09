@@ -12,7 +12,11 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema.js";
 import type { Combatant, } from "../../rpg/combat.js";
-import { buildCombatant, } from "../../rpg/service/battles.js";
+import {
+  type BattleItemView,
+  type BattleWithRoster,
+  buildCombatant,
+} from "../../rpg/service/battles.js";
 
 /** */
 export interface ResolvedRosterItem {
@@ -113,4 +117,81 @@ export function findCombatant(
 export function formatRosterNames(combatants: { name: string }[],): string {
   if (combatants.length === 0) { return "none"; }
   return Array.from(combatants, (c,) => c.name,).join(", ",);
+}
+
+/**
+ * Render a battle as a readable markdown block.
+ * @param battle - The battle to format
+ * @returns A markdown roster block
+ */
+export function formatBattle(battle: BattleWithRoster,): string {
+  const acting = battle.combatants[battle.turnIndex];
+  const lines = [
+    `**Battle — Round ${battle.round}** (${battle.status})`,
+    "",
+  ];
+
+  for (const c of battle.combatants) {
+    const marker = c.id === acting?.id ? "➤ " : "  ";
+    const gone = c.hp <= 0 ? " 💀" : "";
+    lines.push(`${marker}**${c.name}** — HP ${Math.max(0, c.hp,)}/${c.maxHp} · AC ${c.ac}${gone}`,);
+  }
+
+  if (acting) {
+    lines.push("", `_${acting.name}'s turn._`,);
+  }
+
+  const nonEmpty: string[] = [];
+  for (const line of lines) {
+    if (line) { nonEmpty.push(line,); }
+  }
+
+  return nonEmpty.join("\n",);
+}
+
+/**
+ * The combatant that acts on the commander's behalf: the first player-side
+ * combatant, falling back to the first roster entry (the `/attack` source
+ * convention — the calling user is the commander, not a combatant).
+ * @param battle - The active battle
+ * @returns The acting combatant, or null with an empty roster
+ */
+export function actingCombatant(battle: BattleWithRoster,): Combatant | null {
+  return battle.combatants.find((c,) => !c.isNpc) ?? battle.combatants[0] ?? null;
+}
+
+/**
+ * Serialize the battle for a frontend action payload, including the acting
+ * combatant's battle-usable items for the panel's Item group.
+ * @param battle - The battle to serialize
+ * @param usableItems - The acting combatant's battle-usable items
+ * @returns The panel `BattleView` payload
+ */
+export function serializeBattle(
+  battle: BattleWithRoster,
+  usableItems: BattleItemView[] = [],
+): {
+  id: string;
+  status: string;
+  round: number;
+  turnIndex: number;
+  items: BattleItemView[];
+  combatants: { id: string; name: string; hp: number; maxHp: number; initiative: number }[];
+} {
+  const combatants = Array.from(battle.combatants, (c,) => ({
+    id: c.id,
+    name: c.name,
+    hp: Math.max(0, c.hp,),
+    maxHp: c.maxHp,
+    initiative: c.initiative,
+  }),);
+
+  return {
+    id: battle.id,
+    status: battle.status,
+    round: battle.round,
+    turnIndex: battle.turnIndex,
+    items: usableItems,
+    combatants,
+  };
 }

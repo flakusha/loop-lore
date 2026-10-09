@@ -32,6 +32,7 @@ export function view(overrides: Partial<BattleView> = {},): BattleView {
       { id: "alice", name: "Alice", hp: 25, maxHp: 30, initiative: 18, },
       { id: "orc", name: "Orc Grunt", hp: 8, maxHp: 20, initiative: 5, },
     ],
+    items: [],
     ...overrides,
   };
 }

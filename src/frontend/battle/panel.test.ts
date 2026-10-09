@@ -24,6 +24,7 @@ import {
   tile,
   view,
 } from "../tests/battle-fake-mount";
+import { actionAvailable, battleItemCommandFor, } from "./commands";
 import {
   type BattleCombatantView,
   battleCommandFor,
@@ -78,6 +79,66 @@ describe("battleCommandFor", () => {
 
   it("ignores a target id that is not in the roster", () => {
     expect(battleCommandFor("attack", "ghost", roster,),).toBeNull();
+  });
+
+  it("maps each social verb to /battle social <verb> <target>", () => {
+    expect(battleCommandFor("social-intimidate", "orc", roster,),).toBe(`/battle social intimidate "Orc Grunt"`,);
+    expect(battleCommandFor("social-taunt", "alice", roster,),).toBe("/battle social taunt Alice",);
+    expect(battleCommandFor("social-negotiate", "alice", roster,),).toBe("/battle social negotiate Alice",);
+    expect(battleCommandFor("social-surrender", "orc", roster,),).toBe(`/battle social surrender "Orc Grunt"`,);
+  });
+
+  it("social verbs need a selected target", () => {
+    expect(battleCommandFor("social-intimidate", null, roster,),).toBeNull();
+  });
+
+  it("the item action maps to null (it toggles the item menu)", () => {
+    expect(battleCommandFor("item", "alice", roster,),).toBeNull();
+  });
+});
+
+describe("actionAvailable", () => {
+  const active = { battleActive: true, hasTarget: true, itemCount: 1, };
+
+  it("end is always available", () => {
+    expect(actionAvailable("end", { battleActive: false, hasTarget: false, itemCount: 0, },),).toBe(true,);
+    expect(actionAvailable("end", active,),).toBe(true,);
+  });
+
+  it("every non-end action needs an active battle", () => {
+    const inactive = { battleActive: false, hasTarget: true, itemCount: 1, };
+    expect(actionAvailable("attack", inactive,),).toBe(false,);
+    expect(actionAvailable("item", inactive,),).toBe(false,);
+    expect(actionAvailable("social-taunt", inactive,),).toBe(false,);
+  });
+
+  it("targeted actions need a selected target", () => {
+    const noTarget = { battleActive: true, hasTarget: false, itemCount: 1, };
+    expect(actionAvailable("attack", noTarget,),).toBe(false,);
+    expect(actionAvailable("heal", noTarget,),).toBe(false,);
+    expect(actionAvailable("social-surrender", noTarget,),).toBe(false,);
+    expect(actionAvailable("attack", active,),).toBe(true,);
+  });
+
+  it("the item action needs at least one usable item", () => {
+    expect(actionAvailable("item", { battleActive: true, hasTarget: true, itemCount: 0, },),).toBe(false,);
+    expect(actionAvailable("item", active,),).toBe(true,);
+  });
+});
+
+describe("battleItemCommandFor", () => {
+  const potion = { id: "i1", name: "Healing Potion", quantity: 2, };
+
+  it("uses the item on the selected target, quoting names with spaces", () => {
+    expect(battleItemCommandFor(potion, "orc", roster,),).toBe(`/battle use "Healing Potion" "Orc Grunt"`,);
+  });
+
+  it("omits the target without a selection (self-use)", () => {
+    expect(battleItemCommandFor(potion, null, roster,),).toBe(`/battle use "Healing Potion"`,);
+  });
+
+  it("falls back to self-use when the target id is not in the roster", () => {
+    expect(battleItemCommandFor(potion, "ghost", roster,),).toBe(`/battle use "Healing Potion"`,);
   });
 });
 

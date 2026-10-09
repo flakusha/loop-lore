@@ -17,18 +17,24 @@ import type { Kysely, } from "kysely";
 import { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import {
+  type BattleItemView,
   BattleStatus,
   type BattleWithRoster,
   endBattle,
   getActiveBattle,
+  listUsableBattleItems,
   startBattle,
 } from "../../rpg/service/battles";
 import { checkCommandMechanic, RpgMechanic, } from "../../rpg/service/world-gate";
+import { handleBattleSocial, handleBattleUse, } from "./battle-actions";
 import {
+  actingCombatant,
   CombatAlignment,
   findCombatant,
+  formatBattle,
   formatRosterNames,
   resolveBattleRoster,
+  serializeBattle,
 } from "./battle-utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
@@ -61,7 +67,12 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
     return {
       systemMessage: formatBattle(active,),
       action: "battle-status",
-      actionPayload: { battle: serializeBattle(active,), },
+      actionPayload: {
+        battle: serializeBattle(
+          active,
+          await payloadItems(db, active,),
+        ),
+      },
       handled: true,
     };
   }
@@ -92,7 +103,12 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
       return {
         systemMessage: `**Battle started!**\n\nCombatants: ${names}\n\n${formatBattle(battle,)}`,
         action: "battle-started",
-        actionPayload: { battle: serializeBattle(battle,), },
+        actionPayload: {
+          battle: serializeBattle(
+            battle,
+            await payloadItems(db, battle,),
+          ),
+        },
         handled: true,
       };
     } catch (error) {
@@ -124,8 +140,19 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
     return alignCombatant(db, ctx.chatId, userId, args[1] ?? "", args[2] ?? "",);
   }
 
+  // ── use ────────────────────────────────────────────────
+  if (sub === "use") {
+    return handleBattleUse(args.slice(1,), ctx,);
+  }
+
+  // ── social ─────────────────────────────────────────────
+  if (sub === "social") {
+    return handleBattleSocial(args.slice(1,), ctx,);
+  }
+
   return {
-    systemMessage: "Usage: `/battle [start|status|align <target> <player|enemy>|end]`",
+    systemMessage:
+      "Usage: `/battle [start|status|align <target> <player|enemy>|use <item> [target]|social <action> <target>|end]`",
     handled: true,
   };
 }, { requiredRole: ChatParticipantRole.Owner, },);
@@ -177,60 +204,15 @@ async function alignCombatant(
 }
 
 /**
- * Render a battle as a readable markdown block.
- * @param battle
- * @returns string
+ * List the acting combatant's battle-usable items for a panel payload.
+ * @param db - Database handle
+ * @param battle - The battle being serialized
  */
-export function formatBattle(battle: BattleWithRoster,): string {
-  const acting = battle.combatants[battle.turnIndex];
-  const lines = [
-    `**Battle — Round ${battle.round}** (${battle.status})`,
-    "",
-  ];
-
-  for (const c of battle.combatants) {
-    const marker = c.id === acting?.id ? "➤ " : "  ";
-    const gone = c.hp <= 0 ? " 💀" : "";
-    lines.push(`${marker}**${c.name}** — HP ${Math.max(0, c.hp,)}/${c.maxHp} · AC ${c.ac}${gone}`,);
-  }
-
-  if (acting) {
-    lines.push("", `_${acting.name}'s turn._`,);
-  }
-
-  const nonEmpty: string[] = [];
-  for (const line of lines) {
-    if (line) { nonEmpty.push(line,); }
-  }
-
-  return nonEmpty.join("\n",);
-}
-
-/**
- * Serialize the battle for a frontend action payload.
- * @param battle
- * @returns void
- */
-export function serializeBattle(battle: BattleWithRoster,): {
-  id: string;
-  status: string;
-  round: number;
-  turnIndex: number;
-  combatants: { id: string; name: string; hp: number; maxHp: number; initiative: number }[];
-} {
-  const combatants = Array.from(battle.combatants, (c,) => ({
-    id: c.id,
-    name: c.name,
-    hp: Math.max(0, c.hp,),
-    maxHp: c.maxHp,
-    initiative: c.initiative,
-  }),);
-
-  return {
-    id: battle.id,
-    status: battle.status,
-    round: battle.round,
-    turnIndex: battle.turnIndex,
-    combatants,
-  };
+async function payloadItems(
+  db: Kysely<DB>,
+  battle: BattleWithRoster,
+): Promise<BattleItemView[]> {
+  const actor = actingCombatant(battle,);
+  if (!actor) { return []; }
+  return listUsableBattleItems({ database: db, }, actor.id,);
 }
