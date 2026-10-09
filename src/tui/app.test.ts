@@ -2,8 +2,15 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Tests for tui/app.ts — the TUI shell: shortcut dispatch, the F2 asset and
- * F3 harness toggles, resize repaint, and shutdown.
+ * Tests for tui/app.ts — the TUI shell: construction (screen-per-call, config
+ * session-token threading, anonymous fallback), shortcut dispatch, the F2 asset
+ * and F3 harness toggles, resize and status-change repaint, the F5 refresh
+ * chain, the chat-change re-point, and shutdown.
+ *
+ * The two repaint tests are separate on purpose: the resize test cannot see
+ * updateStatus's render (the resize handler renders on its own), so the
+ * status-change test counts renders with the toggle's own show()/hide()
+ * renders stubbed out.
  *
  * `blessed` is stubbed via `mock.module` for the same reason chat/index.test.ts
  * stubs it: the real implementation opens a terminal and blocks on terminal
@@ -288,14 +295,22 @@ describeOrSkip("TUIApp", () => {
     const onChatChange = chat.onChatChange;
     if (!onChatChange) { throw new Error("shell wired no onChatChange into the ChatWidget",); }
     spyOn(app.assets, "loadAssets",).mockResolvedValue(undefined,);
-    const loadMessages = spyOn(app.chat, "loadMessages",).mockResolvedValue(undefined,);
+    // Observable stand-in for a call count: the refresh the closure fires must
+    // observe the asset view already re-pointed, so record what the widget
+    // reports at the moment it is asked to reload. Dropping the setChatId
+    // call, or moving it after the refresh, lands null here.
+    const chatIdAtRefresh: (string | null)[] = [];
+    spyOn(app.chat, "loadMessages",).mockImplementation(() => {
+      chatIdAtRefresh.push(app.assets.getChatId(),);
+      return Promise.resolve();
+    },);
 
     onChatChange("0123456789abcdef",);
     await flushMicrotasks();
 
     expect(app.assets.getChatId(),).toBe("0123456789abcdef",);
     expect(statusBar().content,).toContain("chat: 01234567...",);
-    expect(loadMessages,).toHaveBeenCalledTimes(1,);
+    expect(chatIdAtRefresh,).toEqual(["0123456789abcdef",],);
   });
 
   it("toggles the asset sidebar with F2 and back off the next press", () => {
@@ -392,8 +407,9 @@ describeOrSkip("TUIApp", () => {
   });
 
   // Parameterized over ALL THREE names on the quit binding. A single-case
-  // version silently accepts dropping `q` or `C-c` from the array — verified by
-  // mutation: narrowing the binding to escape alone left the suite green.
+  // version silently accepts dropping `q` or `C-c` from the array. Verified by
+  // mutation: narrowing the binding to escape alone fails the `q` and `C-c`
+  // cases (2 of 20 red).
   for (const quitKey of ["escape", "q", "C-c",]) {
     it(`destroys the screen and exits on ${quitKey}`, () => {
       const app = createTUIApp();
