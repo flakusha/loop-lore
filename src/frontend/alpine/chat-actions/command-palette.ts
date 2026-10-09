@@ -67,6 +67,7 @@ function satisfiesClientRole(actual: string | undefined, required: string | unde
   if (a === undefined || r === undefined) { return true; }
   return a >= r;
 }
+
 /**
  * Filter palette entries by substring, falling back to a single did-you-mean
  * suggestion when nothing matches (`/hep` → `/help`). Unrelated input still
@@ -97,7 +98,7 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
    */
   async _loadCommandList(): Promise<void> {
     try {
-const chatId = typeof this.activeChat === "string" ? this.activeChat : undefined;
+      const chatId = typeof this.activeChat === "string" ? this.activeChat : undefined;
       const url = chatId ? `/api/v1/commands?chatId=${encodeURIComponent(chatId,)}` : "/api/v1/commands";
       const res = await apiFetch(url,);
       if (!res.ok) {
@@ -112,18 +113,25 @@ const chatId = typeof this.activeChat === "string" ? this.activeChat : undefined
 
       const entries = Array.isArray(body.data,) ? body.data : [];
       const roleInChat = typeof body.roleInChat === "string" ? body.roleInChat : undefined;
-      const visible = entries.filter((entry,) => satisfiesClientRole(roleInChat, entry.requiredRole,));
-      this._commandList = visible.map((entry,) => ({
+      // Keep every entry in `_commandList` — `_applyPaletteFilter` hides the
+      // ones the viewer may not use and derives `_hiddenCommandCount` from the
+      // difference, which drives the "need a higher role" note. Pre-filtering
+      // here would make that count permanently 0.
+      this._commandList = entries.map((entry,) => ({
         name: entry.name,
         descriptionKey: entry.descriptionKey,
         description: t(entry.descriptionKey,),
         ...(entry.requiredRole ? { requiredRole: entry.requiredRole, } : {}),
       }));
 
+      // Server-resolved role wins over the client copy when the chat id is
+      // known; it is the same role the dispatch gate enforces.
+      const role = roleInChat ?? commandPalette._viewerRole?.call(this,) ?? "member";
+
       // Slice-safe: tests invoke this on partial state without the composed
       // helpers, so call the module's own methods instead of this-dispatch.
       if (this._showCommandPalette) {
-        commandPalette._applyPaletteFilter?.call(this, commandPalette._viewerRole?.call(this,) ?? "member",);
+        commandPalette._applyPaletteFilter?.call(this, role,);
       }
     } catch (err) {
       log.warn("command list fetch threw", { err, },);
