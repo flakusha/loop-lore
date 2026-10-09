@@ -81,20 +81,18 @@ describe("planningRoutes ownership guards", () => {
     expect(res.status,).toBe(404,);
   });
 
-  // NOTE: the happy path cannot assert 201 yet. `service.addLink` uses
-  // `.returningAll()`, but the dialect wrapper in src/db/index.ts classifies
-  // `INSERT ... RETURNING` as a non-reader statement, so Kysely routes it via
-  // `stmt.run()` and discards the returned rows — `executeTakeFirstOrThrow()`
-  // then throws "no result" and the route answers 500. The INSERT itself lands;
-  // only the response body is lost. This test pins the ownership contract and
-  // the persisted row; the status assertion documents the real (broken) reply.
+  // `service.addLink` ends in `.returningAll()`, so the route can only answer 201
+  // with the created link when the dialect wrapper reports the INSERT as a reader.
   test("POST /plans/:id/links persists the link for owned source and target", async () => {
     const res = await makeApp(db, "user1",).handle(
       linkRequest(ownItem, ownTarget, PlanLinkRelation.Relates,),
     );
 
-    // FIXME: should be 201 once the RETURNING clause is honoured.
-    expect(res.status,).not.toBe(404,);
+    expect(res.status,).toBe(201,);
+    const body = (await res.json()) as { from_id: string; to_id: string; relation: string };
+    expect(body.from_id,).toBe(ownItem,);
+    expect(body.to_id,).toBe(ownTarget,);
+    expect(body.relation,).toBe(PlanLinkRelation.Relates,);
 
     const links = await db
       .selectFrom("plan_links",)
@@ -176,9 +174,10 @@ describe("planningRoutes ownership guards", () => {
   });
 });
 
-// KNOWN BUG — these two fail today and are kept as executable documentation.
-// See the block comment above and src/db/index.ts:48-51.
-describe.todo("sqlite RETURNING clause", () => {
+// Kysely keeps a statement's rows only when the dialect wrapper reports it as a
+// reader. The wrapper now asks SQLite for the statement's result columns, so
+// INSERT/UPDATE ... RETURNING come back as rows like any SELECT.
+describe("RETURNING-backed writes", () => {
   let db: Kysely<DB>;
   let sqlite: Database;
 
@@ -189,11 +188,6 @@ describe.todo("sqlite RETURNING clause", () => {
 
   afterAll(() => sqlite.close());
 
-  // The dialect wrapper's `reader` getter (src/db/index.ts) is a prefix test
-  // for SELECT/WITH/PRAGMA. INSERT...RETURNING and UPDATE...RETURNING are
-  // misclassified as writers, so Kysely discards the RETURNING rows and every
-  // service method built on .returningAll() throws "no result". That is what
-  // makes POST /plans and POST /plans/:id/links answer 500 today.
   test("INSERT ... RETURNING returns the inserted row", async () => {
     const row = await db
       .insertInto("plan_items",)
@@ -222,5 +216,53 @@ describe.todo("sqlite RETURNING clause", () => {
       .executeTakeFirstOrThrow();
 
     expect(row.title,).toBe("Updated",);
+  });
+
+  test("POST /api/plans returns the created item with 201", async () => {
+    const req = new Request("http://localhost/api/plans", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: JSON.stringify({ title: "Created", },),
+    },);
+
+    const res = await makeApp(db, "user1",).handle(req,);
+
+    expect(res.status,).toBe(201,);
+    const body = (await res.json()) as { id: string; title: string; state: string };
+    expect(body.title,).toBe("Created",);
+    expect(body.state,).toBe("todo",);
+    expect(typeof body.id,).toBe("string",);
+  });
+
+  test("POST /api/plans/:id/advance returns the updated item, not 404", async () => {
+    const id = await insertPlanItems(db, "user1", "Advance Me",);
+    const req = new Request(`http://localhost/api/plans/${id}/advance`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: JSON.stringify({ state: "doing", },),
+    },);
+
+    const res = await makeApp(db, "user1",).handle(req,);
+
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { id: string; state: string };
+    expect(body.id,).toBe(id,);
+    expect(body.state,).toBe("doing",);
+  });
+
+  test("PATCH /api/plans/:id returns the updated item, not 404", async () => {
+    const id = await insertPlanItems(db, "user1", "Patch Me",);
+    const req = new Request(`http://localhost/api/plans/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", },
+      body: JSON.stringify({ title: "Renamed", },),
+    },);
+
+    const res = await makeApp(db, "user1",).handle(req,);
+
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { id: string; title: string };
+    expect(body.id,).toBe(id,);
+    expect(body.title,).toBe("Renamed",);
   });
 });
