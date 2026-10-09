@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** schema + loader + runtime shipped (engine schema/loader, runner state machine, per-chat session persistence, group-chat mention strip, GM routing/shadow-note/reuse-runner slices all landed). Remaining: model-family formatter matrix, real video-dispatch backend, frontend step UI + confirmation modal, plugin extension point.
+**Status Note:** schema + loader + runtime shipped (engine schema/loader, multi-file discovery, runner state machine, per-chat session persistence, group-chat mention strip, GM routing/shadow-note/reuse-runner slices, regex intent routing all landed; the NSFW `nsfwPolicy` dispatch field exists in schema + defaults). Remaining: real video-dispatch backend (non-`assistant-create` backends only return a frontend action), NSFW enforcement wired to `src/nsfw/` moderation at dispatch, per-preset `qualityGates` wiring, frontend step UI + confirmation modal, plugin extension point. The former AUX `classifyIntent` blocker (timeout/apiKey) is resolved on the shared AUX runner; workflow intent routing itself is regex-driven (`matchWorkflowIntent`/`matchWorkflowTrigger`).
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Large
 **Type:** Feature Epic
@@ -117,7 +117,7 @@ moderation and `epic-nsfw-capabilities.md` consent infrastructure.
 - [x] Implement `src/assistant/workflow-runner.ts` (start/preview/step/confirm/dispatch)
 - [x] Implement step validation + recommendation engine
 - [ ] Wire dispatch to `POST /api/generation/video` + existing generation pipelines
-- [x] Add NSFW policy field to dispatch + integrate with `src/nsfw/` moderation
+- [x] Add NSFW policy field to dispatch (`nsfwPolicy` in schema + `defaults.yaml`) — enforcement/integration with `src/nsfw/` moderation at dispatch is still open (owned by `TASK-assistant-nsfw-api-prefiltering.md`)
 - [ ] Frontend: creative studio step UI + confirmation modal
 - [ ] Plugin extension point for assistant workflows
 - [x] Unit tests for loader, step validation, intent→workflow routing
@@ -139,8 +139,12 @@ moderation and `epic-nsfw-capabilities.md` consent infrastructure.
 - **Blocks:** `epic-model-family-presets.md` (formatter hooks into Phase 2b),
   `epic-entity-generation-workflows.md` (entity templates are workflow instances),
   `epic-gallery-batch-operations.md` (batch modeled as an optional workflow).
-- External prerequisite: `TASK-assistant-command-execution-intent-detection.md`
-  (fixes `classifyIntent` timeout/apiKey — blocking dependency for intent routing).
+- External prerequisite, downgraded: `TASK-assistant-command-execution-intent-detection.md`
+  no longer blocks intent routing — routing is regex-driven (`matchWorkflowIntent` /
+  `matchWorkflowTrigger` over `INTENT_PATTERNS` in `src/assistant/workflow-routing.ts`),
+  and the AUX `classifyIntent` timeout/apiKey gap is fixed on the shared AUX runner
+  (`src/generation/auto-gen/classify-intent.ts`). The ticket now only tracks LLM-vocabulary
+  alignment and AUX-intent → tool-dispatch routing.
 
 ## Related Epics
 

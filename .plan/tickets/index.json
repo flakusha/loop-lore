@@ -21908,11 +21908,11 @@
     "epic": "epic-assistant-creative-studio-workflows",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS",
     "git_issue": "ad082ef",
-    "hash": "9544668",
+    "hash": "ad082ef",
     "label": "task",
     "priority": "High (MVP scoped, post-Gate C)",
     "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md",
-    "status": "Done",
+    "status": "open",
     "tags": [],
     "title": "Assistant Creative Studio — Workflow Templates",
     "type": "TASK"
@@ -22101,7 +22101,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-assistant-generation-extensions.md",
-    "status": "Done",
+    "status": "open",
     "tags": [],
     "title": "EPIC: Assistant Generation Extensions (Image Gen, Intent, Scenario Source)",
     "type": "TASK"

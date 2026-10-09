@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** command surface shipped (`/image` availability-gated action dispatch, `/improve`, `/quest`, `/caption`, emotion-avatar fallback); still open per the unchecked acceptance criteria below: ComfyUI/sd.cpp backend adapter, entity-to-asset mapping, `/image edit/style/upscale`, general intent routing, scenario-source store (removed 2026-08-14, to reimplement). Reopened 2026-10-09 — was marked Done with all acceptance criteria unchecked.
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-assistant-generation-extensions

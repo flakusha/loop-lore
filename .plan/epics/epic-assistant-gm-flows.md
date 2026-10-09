@@ -7,6 +7,7 @@
 
 
 **Status:** In Progress
+**Status Note:** core flows shipped — `/create` generation with quality gates + confirmation (`src/assistant/quality/entity-creation-gates.ts`, `src/routes/messages/create-entity-confirm.ts`), pre-compiled template injection (`src/assistant/prompt/templates/entity-generation.ts`), and the full GM-guided story loop (guidance UX + `GameMasterService` consumption of `gmGuidance`, including `targetCharacter`/`turnPriority` steering in `src/story/game-master/decisions.ts`). Remaining: API-call/tool-exec integration framework (approved tool allowlist + policy gate), the AI Director extension (all tickets Not Started), and the precompiled-template extensions to story/media flows.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -23,7 +24,7 @@ Assistant/GM flows reconciliation — generation of new characters, items, world
 - ✅ GM panel sidebar (shadow notes + whitenotes) — `src/components/chat/gm-panel.html` + `src/frontend/alpine/gm-panel.ts`
 - ✅ Command buttons expanded (guide, scene, summarize, rewrite, translate)
 - ✅ GmConfig extended (assistantRole, visualNovel); role dropdown in chat settings
-- ✅ Slash command parser + dispatch wired (`src/routes/messages.ts:543`, 21 handlers)
+- ✅ Slash command parser + dispatch wired (`src/routes/messages/command.ts`, shared by slash and GM tool-execution paths)
 - ✅ GM role switching has runtime effect (GM-guided creation flow: new-chat "Game Master guided story" toggle pre-sets `assistantRole:gm` + `mode:story` and auto-opens settings; story-mode generation runs `GameMasterService`)
 - ❌ Tool call display in chat bubbles
 
@@ -77,7 +78,7 @@ User request → Assistant processes → Generate content → Quality check → 
 - [x] Confirmation dialog component — `src/frontend/alpine/creation-wizard.ts` + `chat-actions/wizard.ts`
 - [x] Quality validation pipeline — `src/assistant/quality/entity-creation-gates.ts`
 - [x] Generated content preview — `create-entity-preview` action in `create.ts:222`
-- [x] GM-guided creation flow shipped (new-chat toggle pre-sets GM role + auto-opens settings; story-mode orchestration via `GameMasterService`) — see `TASK-assistant-gm-flows-reconciliation.md`; full gmGuidance UX (scene/constraints/target) in `TASK-gm-guided-story-creation.md` (orchestrator consumption pending)
+- [x] GM-guided creation flow shipped (new-chat toggle pre-sets GM role + auto-opens settings; story-mode orchestration via `GameMasterService`) — see `TASK-gm-guided-story-creation.md`; the full gmGuidance UX (scene/constraints/target) is consumed by the orchestrator (`src/story/game-master/decisions.ts` steering + `execute.ts` scene narration)
 
 ## AI Director / Narrative Pacing (Extension — Research-Driven)
 
@@ -293,7 +294,7 @@ Creative processes such as character creation, prompt creation, image/video/audi
 - [x] User confirmation required before entity creation
 - [x] Generated content preview shows what will be created
 - [x] Tests passing — `src/assistant/quality/entity-creation.test.ts`, `src/routes/messages/create-entity-confirm.test.ts`, `src/assistant/commands/create.test.ts`
-- [ ] GM-guided story creation: user can direct characters in group chat, set scene constraints, control turn order (partial — GM role switching shipped; full gmGuidance UX pending)
+- [x] GM-guided story creation: user can direct characters in group chat, set scene constraints, control turn order — `gmGuidance.targetCharacter` hard override + `turnPriority` soft bias consumed by turn selection (`src/story/game-master/decisions.ts`), scene direction narrated (`execute.ts`); tested in `src/story/game-master.test.ts`
 
 ## Related Epics
 

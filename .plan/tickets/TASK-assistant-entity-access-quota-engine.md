@@ -13,6 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** assistant, quota, enforcement, rationing
+**Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `epic-resource-provision.md`
 
 ## Summary
