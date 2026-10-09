@@ -7,6 +7,7 @@
 
 
 **Status:** Not Started
+**Status Note:** Partially covered by shipped NSFW encounter engine (`src/rpg/encounters/*`, `nsfw_encounters`) and battle loot; generic random-encounter/anomaly/resource extraction/unique-places/cataclysm surfaces unstarted.
 **Priority:** Medium
 **Effort:** High
 **Type:** Feature Epic

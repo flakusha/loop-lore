@@ -2384,6 +2384,22 @@ export const SCHEMA = new SchemaManifest()
     is_prime: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("world_timescale", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    epoch: col("text", { notNull: true, hasDefault: true, },),
+    scale_size: col("real", { notNull: true, hasDefault: true, },),
+    advanced_minutes: col("real", { notNull: true, hasDefault: true, },),
+    anchor_at: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("world_timescale_history", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    epoch: col("text", { notNull: true, },),
+    changed_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("world_travel_budget", {
     world_id: col("text", { primaryKey: true, },),
     spent: col("real", { notNull: true, hasDefault: true, },),

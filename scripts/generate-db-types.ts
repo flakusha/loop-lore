@@ -127,6 +127,8 @@ const DOMAIN_MAP: Record<string, string> = {
   world_states: "story",
   npc_states: "story",
   location_states: "story",
+  world_timescale: "story",
+  world_timescale_history: "story",
   // Generation
   generation_attempts: "generation",
   synthetic_data: "synthetic",

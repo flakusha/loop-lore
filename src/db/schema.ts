@@ -205,4 +205,6 @@ export interface DB {
   plan_items: import("./schema-core").PlanItems;
   plan_links: import("./schema-core").PlanLinks;
   vn_questions: import("./schema-core").VnQuestions;
+  world_timescale: import("./schema-story").WorldTimescale;
+  world_timescale_history: import("./schema-story").WorldTimescaleHistory;
 }

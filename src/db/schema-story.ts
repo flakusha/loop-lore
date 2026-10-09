@@ -332,3 +332,23 @@ export interface RpgQuestions {
   max_value: number | null;
   effect: Generated<string>;
 }
+
+// ── world_timescale ────────────────────────────────────────────
+export interface WorldTimescale {
+  id: Generated<string>;
+  world_id: string;
+  epoch: Generated<string>;
+  scale_size: Generated<number>;
+  advanced_minutes: Generated<number>;
+  anchor_at: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── world_timescale_history ────────────────────────────────────────────
+export interface WorldTimescaleHistory {
+  id: Generated<string>;
+  world_id: string;
+  epoch: string;
+  changed_at: Generated<string>;
+}

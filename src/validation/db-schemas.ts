@@ -3217,3 +3217,21 @@ export const VnQuestionsSchema = t.Object({
   selected_option_id: t.Optional(t.String(),),
   answered_at: t.Optional(t.String(),),
 },);
+
+// ── world_timescale ────────────────────────────────────────────
+export const WorldTimescaleSchema = t.Object({
+  world_id: t.String(),
+  epoch: t.Optional(t.String(),),
+  scale_size: t.Optional(t.Number(),),
+  advanced_minutes: t.Optional(t.Number(),),
+  anchor_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_timescale_history ────────────────────────────────────────────
+export const WorldTimescaleHistorySchema = t.Object({
+  world_id: t.String(),
+  epoch: t.String(),
+  changed_at: t.Optional(t.String(),),
+},);
