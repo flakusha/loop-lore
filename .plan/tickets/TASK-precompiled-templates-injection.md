@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-assistant-gm-flows
@@ -55,3 +55,5 @@ Creative processes such as character creation, prompt creation, image/video/audi
 - `TASK-creation-quality-gating-confirmation.md` — same `/create` flow; this adds deterministic prompt steering on top of the quality gates.
 - `FEAT-lore-structured-generation-via-assistant.md` — structured generation context.
 - `epic-assistant-gm-flows.md` — "Pre-compiled Templates Message/Context Injection (Extension)" section.
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 2c5c03c (registry tip: 3ddcd1ceb Konstantin Fedotov Close issue)
