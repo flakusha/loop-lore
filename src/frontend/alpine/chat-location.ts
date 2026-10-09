@@ -123,6 +123,11 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
     return this._locations.find((l,) => l.id === this._chatCurrentLocationId)?.name ?? null;
   },
 
+  /** Shared <option> view-model for the location-options.html partial. */
+  get optionItems() {
+    return this._locations;
+  },
+
   /** Change the chat's location in place (PUT). Ownership-gated server-side. */
   async changeChatLocation() {
     if (!this.activeChat || !this._selectedLocationId || this._locationBusy) { return; }

@@ -4,12 +4,10 @@
 import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, } from "./json";
-import { log as rootLog, } from "./logger";
+import { fetchWorldJson, } from "./world-fetch";
 import { worldInvites, } from "./world-invites";
 import { worldItems, } from "./world-items";
 import { worldLocations, } from "./world-locations";
-
-const log = rootLog.child({ module: "world-edit", },);
 
 (globalThis as any).worldEditState = function() {
   return {
@@ -40,9 +38,16 @@ const log = rootLog.child({ module: "world-edit", },);
       this.loading = true;
       this.error = false;
       try {
-        const res = await apiFetch(`/api/v1/worlds/${this.worldId}`, { headers: { Accept: "application/json", }, },);
-        if (res.ok) {
-          const data = await res.json();
+        const data = await fetchWorldJson<{
+          name?: string;
+          description?: string;
+          lore?: string;
+          kind?: "rpg" | "chat";
+          visibility?: "private" | "unlisted" | "public";
+          settings?: string;
+        }>(this.worldId, "",);
+
+        if (data) {
           this.world = {
             name: data.name ?? "",
             description: data.description ?? "",
@@ -56,8 +61,7 @@ const log = rootLog.child({ module: "world-edit", },);
             this.tagsStr = (settings.tags || []).join(", ",);
           }
         } else { this.error = true; }
-      } catch (error) {
-        log.warn("loadWorld failed", { error: String(error,), },);
+      } catch {
         this.error = true;
       }
 

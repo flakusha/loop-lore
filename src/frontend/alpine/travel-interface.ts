@@ -15,12 +15,9 @@
  *   and parties (world-travel simulation) from /travel/status, refreshed
  *   whenever the conditions SSE stream ticks
  */
-import { apiFetch, } from "./htmx";
-import { log as rootLog, } from "./logger";
 import { estimateTravelMinutes, formatEta, resolveTravelMethod, } from "./travel-methods";
+import { fetchWorldJson, } from "./world-fetch";
 import type { WorldLocationLite, WorldPageState, } from "./world-types";
-
-const log = rootLog.child({ module: "travel-interface", },);
 
 /** Destination selection, ETA and status state for the world page. */
 export const travelInterface: Partial<WorldPageState> & ThisType<WorldPageState> = {
@@ -38,16 +35,8 @@ export const travelInterface: Partial<WorldPageState> & ThisType<WorldPageState>
   async loadTravelStatus() {
     this.travelLoading = true;
     try {
-      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/travel/status`, {
-        headers: { Accept: "application/json", },
-      },);
-
-      if (res.ok) {
-        const body = (await res.json()) as { data?: WorldPageState["travelStatus"] };
-        this.travelStatus = body.data ?? { transports: [], parties: [], };
-      }
-    } catch (error) {
-      log.warn("travel status load failed", { error: String(error,), },);
+      const body = await fetchWorldJson<{ data?: WorldPageState["travelStatus"] }>(this.worldId, "/travel/status",);
+      if (body?.data) { this.travelStatus = body.data; }
     } finally {
       this.travelLoading = false;
     }

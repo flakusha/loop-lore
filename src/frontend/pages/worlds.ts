@@ -3,6 +3,7 @@
 
 // ── Worlds page: search, create ──────────────────────────────
 import { jsonBody, } from "../alpine/json";
+import { locationEditActions, } from "../alpine/location-edit-actions";
 import { log as rootLog, } from "../alpine/logger";
 import { eventTarget, } from "../dom";
 import { feFetch, } from "../fe-fetch";
@@ -121,56 +122,7 @@ globalThis.worldDetail = function(initial: {
       return this.locations.length;
     },
 
-    /**
-     * @param {string} locId
-     * @returns {void}
-     */
-    expandLoc(locId: string,) {
-      if (this.expandedLoc === locId) {
-        this.expandedLoc = "";
-        return;
-      }
-
-      this.expandedLoc = locId;
-      const loc = this.locations.find((l: LocationData,) => l.id === locId);
-      if (loc) {
-        this.editLocName = loc.name;
-        this.editLocDesc = loc.description || "";
-      }
-    },
-
-    /**
-     * @param {string} locId
-     * @returns {Promise<void>}
-     */
-    async saveLocation(locId: string,) {
-      try {
-        const res = await feFetch(`/api/v1/worlds/${this.worldId}/locations/${locId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({
-            name: this.editLocName.trim(),
-            description: this.editLocDesc.trim() || null,
-          },),
-        },);
-
-        if (res.ok) {
-          const loc = this.locations.find((l: LocationData,) => l.id === locId);
-          if (loc) {
-            loc.name = this.editLocName.trim();
-            loc.description = this.editLocDesc.trim() || null;
-          }
-
-          this.expandedLoc = "";
-          showToast("success", "Location updated",);
-        } else {
-          const err = await res.json();
-          showToast("error", err.message || "Failed",);
-        }
-      } catch {
-        showToast("error", "Network error",);
-      }
-    },
+    ...locationEditActions,
 
     /**
      * @returns {Promise<void>}

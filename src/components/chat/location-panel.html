@@ -38,9 +38,7 @@
       <div class="form-label">Choose a location</div>
       <select class="form-input" x-model="_selectedLocationId" @change="loadLocationJoinable()">
         <option value="">Select location…</option>
-        <template x-for="loc in _locations" :key="loc.id">
-          <option :value="loc.id" x-text="loc.name"></option>
-        </template>
+        {{> location-options.html }}
       </select>
       <div x-show="_locationsLoading && _locations.length === 0" style="font-size: 12px; color: var(--text-secondary)">
         Loading locations…
