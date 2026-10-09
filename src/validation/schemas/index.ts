@@ -40,3 +40,4 @@ export * from "./admin-templates";
 export * from "./templates";
 export * from "./comfyui-builder";
 export * from "./branch-merges";
+export * from "./emotion-avatars";

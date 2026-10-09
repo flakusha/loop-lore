@@ -64,9 +64,13 @@ Today batch generation exists (`POST /actors/:actorId/emotion-avatars` →
 ## Work Items
 
 - [ ] Service: `regenerateEmotionAvatars(actorId, { emotions?, replace })` —
-      subset filter over batch, per-slot result reporting
-- [ ] Routes: regenerate endpoint + job status GETs; validation schema in
-      `src/validation/schemas/`
+      subset filter over batch, per-slot result reporting (satisfied via the
+      regenerate endpoint delegating to `startBatchGeneration` with a slot
+      filter — no duplicated service method)
+- [x] Routes: regenerate endpoint + job status GETs; validation schema in
+      `src/validation/schemas/` (endpoint: `POST /actors/:actorId/emotion-avatars/regenerate`;
+      job status GETs/SSE/cancel reuse the existing batch job routes;
+      schema: `src/validation/schemas/emotion-avatars.ts`)
 - [ ] Slot-replace semantics: re-point binding, cleanup old asset, transactional
 - [ ] Persistent job store (migration + regen schema artifacts) with
       in-memory cache; restart reconciliation for orphaned jobs
