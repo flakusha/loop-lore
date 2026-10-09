@@ -43605,7 +43605,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-slash-commands-chat-group-assistant.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "`/...` slash commands for chat, group chat, assistant continuation",
     "type": "TASK"
