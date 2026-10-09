@@ -111,43 +111,45 @@ describeOrSkip("commandPalette._loadCommandList", () => {
     expect(calls[0]!.url,).toBe("/api/v1/commands?chatId=chat-1",);
   });
 
-  test("hides owner-gated entries for a member role; shows all when role unknown", async () => {
-    handler = async () =>
-      Response.json({
-        data: [
-          { name: "roll", descriptionKey: "k1", },
-          { name: "debug", descriptionKey: "k2", requiredRole: "owner", },
-        ],
-        roleInChat: "member",
-      },);
+  test("keeps every entry in the list; the palette hides owner-gated entries for a member role", async () => {
+    const gated = [
+      { name: "roll", descriptionKey: "k1", },
+      { name: "debug", descriptionKey: "k2", requiredRole: "owner", },
+    ];
+
+    handler = async () => Response.json({ data: gated, roleInChat: "member", },);
 
     const memberCtx = {
       activeChat: "chat-1",
       _commandList: [] as { name: string }[],
       _filteredCommands: [] as { name: string }[],
-      _showCommandPalette: false,
+      _hiddenCommandCount: 0,
+      _showCommandPalette: true,
     };
 
     await commandPalette._loadCommandList!.call(memberCtx as never,);
-    expect(memberCtx._commandList.map((c,) => c.name),).toEqual(["roll",],);
+    // The registry list stays complete — role gating happens in the palette,
+    // not at hydration, so `_hiddenCommandCount` can report what is withheld.
+    expect(memberCtx._commandList.map((c,) => c.name),).toEqual(["roll", "debug",],);
+    expect(memberCtx._filteredCommands.map((c,) => c.name),).toEqual(["roll",],);
+    expect(memberCtx._hiddenCommandCount,).toBe(1,);
 
-    handler = async () =>
-      Response.json({
-        data: [
-          { name: "roll", descriptionKey: "k1", },
-          { name: "debug", descriptionKey: "k2", requiredRole: "owner", },
-        ],
-      },);
+    // No `roleInChat`: the viewer role is resolved client-side instead, and an
+    // owner sees the gated entry the member role withheld.
+    handler = async () => Response.json({ data: gated, },);
 
-    const unknownCtx = {
+    const ownerCtx = {
       activeChat: "chat-1",
+      userRole: "owner",
       _commandList: [] as { name: string }[],
       _filteredCommands: [] as { name: string }[],
-      _showCommandPalette: false,
+      _hiddenCommandCount: 0,
+      _showCommandPalette: true,
     };
 
-    await commandPalette._loadCommandList!.call(unknownCtx as never,);
-    expect(unknownCtx._commandList.map((c,) => c.name),).toEqual(["roll", "debug",],);
+    await commandPalette._loadCommandList!.call(ownerCtx as never,);
+    expect(ownerCtx._filteredCommands.map((c,) => c.name),).toEqual(["roll", "debug",],);
+    expect(ownerCtx._hiddenCommandCount,).toBe(0,);
   });
 },);
 
