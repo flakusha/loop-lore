@@ -181,13 +181,10 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
  *  and the existing emoji tests keep working without a multi-file churn.
  */
 export type { EmojiCandidate, } from "./emoji-autocomplete";
-
-  extractEmojiQuery,
-
-  filterEmojiCandidates,
-
-  didYouMeanCandidate,
-
-  emojiTokenRe,
-
+export {
   editDistance,
+  emojiTokenRe,
+  extractEmojiQuery,
+  filterEmojiCandidates,
+} from "./emoji-autocomplete";
+export { didYouMeanCandidate, } from "./slash-query";
