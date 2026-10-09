@@ -11,7 +11,7 @@
  * combined state object exactly as before.
  */
 
-import { listEmojiShortcodes, } from "./chat-utils/render";
+import { listEmojiShortcodes, } from "./chat-utils/emoji";
 import { emojiPicker, } from "./emoji-picker";
 import type { ChatState, } from "./types";
 

@@ -12,9 +12,12 @@ export const EMOJI_SHORTCODES: Record<string, string> = {
   thumbsup: "👍",
   heart: "❤️",
   joy: "😂",
+  laugh: "😂",
   performing_arts: "🎭",
   theater: "🎭",
+  mask: "🎭",
   crossed_swords: "⚔️",
+  swords: "⚔️",
   dagger: "🗡️",
   castle: "🏰",
   sparkles: "✨",
@@ -70,4 +73,11 @@ export function renderShortcodes(content: string,): string {
         )
     )
     .join("",);
+}
+
+/** All known shortcodes for picker/autocomplete (registry order).
+ * @returns { name, emoji } pairs in registry order.
+ */
+export function listEmojiShortcodes(): { name: string; emoji: string }[] {
+  return Object.entries(EMOJI_SHORTCODES,).map(([name, emoji,],) => ({ name, emoji, }));
 }
