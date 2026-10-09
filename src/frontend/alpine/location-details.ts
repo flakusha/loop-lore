@@ -25,6 +25,18 @@ export const locationDetails: Partial<WorldPageState> & ThisType<WorldPageState>
   detailNpcs: [],
   showItems: false,
 
+  /** Hazards of the selected location's state, as a string list. */
+  /** @returns {string[]} */
+  get detailHazards(): string[] {
+    return parseJsonList(this.detail?.state?.hazards,);
+  },
+
+  /** Items available at the selected location, as a string list. */
+  /** @returns {string[]} */
+  get detailItems(): string[] {
+    return parseJsonList(this.detail?.state?.items_available,);
+  },
+
   /** @returns {Promise<void>} */
   async selectLocation(id: string,) {
     if (this.selectedLocationId === id && this.detail) { return; }
