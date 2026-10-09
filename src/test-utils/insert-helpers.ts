@@ -5066,52 +5066,6 @@ export async function insertMessageReminders(
   return id;
 }
 
-/** Insert a plan_items row. */
-export async function insertPlanItems(
-  db: Db,
-  owner_id: string,
-  title: string,
-  opts?: {
-    id?: string;
-    chat_id?: string | null;
-    state?: string;
-    kind?: string;
-    position?: number;
-    parent_id?: string | null;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("plan_items",).values({
-    id,
-    owner_id,
-    title,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a plan_links row. */
-export async function insertPlanLinks(
-  db: Db,
-  from_id: string,
-  to_id: string,
-  relation: string,
-  opts?: { created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("plan_links",).values({
-    from_id,
-    to_id,
-    relation,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
 /** Insert a branch_merges row. */
 export async function insertBranchMerges(
   db: Db,
@@ -5157,6 +5111,52 @@ export async function insertBranchMergeSources(
     merge_id,
     ordinal,
     tip_message_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a plan_items row. */
+export async function insertPlanItems(
+  db: Db,
+  owner_id: string,
+  title: string,
+  opts?: {
+    id?: string;
+    chat_id?: string | null;
+    state?: string;
+    kind?: string;
+    position?: number;
+    parent_id?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("plan_items",).values({
+    id,
+    owner_id,
+    title,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a plan_links row. */
+export async function insertPlanLinks(
+  db: Db,
+  from_id: string,
+  to_id: string,
+  relation: string,
+  opts?: { created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("plan_links",).values({
+    from_id,
+    to_id,
+    relation,
     ...restOpts,
   } as any,).execute();
   return id;
