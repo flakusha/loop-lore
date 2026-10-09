@@ -51,24 +51,6 @@ export function satisfiesPaletteRole(actual: string | undefined, required: strin
 type PaletteEntry = { name: string; descriptionKey: string; description: string; requiredRole?: string };
 
 /**
- * Client mirror of the registry's role ordering (guest < observer < member/gm < owner).
- * Display-only: the server dispatch gate still denies unauthorized runs.
- * Unknown roles fail open (entry shown).
- * @param actual - caller's role in the chat, if known
- * @param required - minimum role the entry requires, if any
- * @returns true when the entry should stay visible
- */
-function satisfiesClientRole(actual: string | undefined, required: string | undefined,): boolean {
-  if (!required) { return true; }
-  if (!actual) { return true; }
-  const order: Record<string, number> = { guest: -1, observer: 0, member: 1, gm: 1, owner: 2, };
-  const a = order[actual];
-  const r = order[required];
-  if (a === undefined || r === undefined) { return true; }
-  return a >= r;
-}
-
-/**
  * Filter palette entries by substring, falling back to a single did-you-mean
  * suggestion when nothing matches (`/hep` → `/help`). Unrelated input still
  * yields an empty list. Tab/Enter accepts the suggestion; Escape dismisses.
