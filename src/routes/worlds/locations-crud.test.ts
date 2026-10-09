@@ -7,6 +7,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { seedChatSetupTemplates, } from "../../chat/service";
 import type { Config, } from "../../config/schema";
+import { LOCATION_DEPTH_LIMIT, } from "../../db/enums-story/world";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -140,6 +141,81 @@ describe("locationRoutes — create/get/update", () => {
     );
 
     expect(res.status,).toBe(404,);
+  });
+
+  test("PUT ignores a forged client path (trigger-materialized value wins)", async () => {
+    const app = appWithAuth(db, ownerId, "solo",);
+    const worldId = uid();
+    await insertWorlds(db, ownerId, "Forged Path World", { id: worldId, } as never,);
+    const parentId = uid();
+    const locId = uid();
+    await insertLocations(db, worldId, "Parent", { id: parentId, } as never,);
+    await insertLocations(db, worldId, "Child", { id: locId, parent_location_id: parentId, } as never,);
+
+    const before = await db
+      .selectFrom("locations",)
+      .select("path",)
+      .where("id", "=", locId,)
+      .executeTakeFirst();
+
+    expect(before?.path,).toBeTruthy();
+
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds/${worldId}/locations/${locId}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "X", path: "/forged/path/", },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+
+    const row = await db
+      .selectFrom("locations",)
+      .select("path",)
+      .where("id", "=", locId,)
+      .executeTakeFirst();
+
+    expect(row?.path,).toBe(before?.path,);
+    expect(row?.path,).not.toBe("/forged/path/",);
+  });
+
+  test("POST beyond LOCATION_DEPTH_LIMIT is rejected with 400", async () => {
+    const app = appWithAuth(db, ownerId, "solo",);
+    const worldId = uid();
+    await insertWorlds(db, ownerId, "Deep World", { id: worldId, } as never,);
+
+    // Build the deepest legal chain via HTTP creates: levels 1..LIMIT.
+    let parentId: string | null = null;
+    for (let level = 1; level <= LOCATION_DEPTH_LIMIT; level++) {
+      const created = await app.handle(
+        new Request(`${BASE}/api/worlds/${worldId}/locations`, {
+          method: "POST",
+          headers: { "content-type": "application/json", },
+          body: JSON.stringify(
+            parentId ? { name: `Level ${level}`, parentLocationId: parentId, } : { name: `Level ${level}`, },
+          ),
+        },),
+      );
+
+      expect(created.status,).toBe(201,);
+      const { id, } = (await created.json()) as { id: string };
+      parentId = id;
+    }
+
+    // The 13th level is one past the ceiling.
+    const tooDeep = await app.handle(
+      new Request(`${BASE}/api/worlds/${worldId}/locations`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "Too Deep", parentLocationId: parentId, },),
+      },),
+    );
+
+    expect(tooDeep.status,).toBe(400,);
+    const err = (await tooDeep.json()) as { error?: string; message?: string };
+    const detail = String(err.error ?? err.message ?? "",);
+    expect(detail,).toContain("depth",);
   });
 
   test("PUT renames the location and persists", async () => {

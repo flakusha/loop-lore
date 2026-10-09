@@ -8,6 +8,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertLocations, insertLocationStates, insertWorlds, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
+import { validateConnections, } from "./location-connections";
 import { locationRoutes, } from "./locations-routes";
 import type { HandleOpts, } from "./types";
 
@@ -149,6 +150,43 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
       .executeTakeFirst();
 
     expect(count?.total,).toBe(0,);
+  });
+
+  test("2.8: connections referencing a nonexistent location are rejected with 400", async () => {
+    const app = appWithAuth(db, ownerId, "solo",);
+    const worldId = uid();
+    await insertWorlds(db, ownerId, "Missing Link World", { id: worldId, } as never,);
+
+    const created = await createLocationViaApi(app, worldId, {
+      name: "Bridge to Nowhere",
+      connections: [uid(),],
+    },);
+
+    expect(created.status,).toBe(400,);
+    expect(String(created.body.error ?? "",),).toContain("Invalid connection locations",);
+
+    const count = await db
+      .selectFrom("locations",)
+      .select(db.fn.countAll<number>().as("total",),)
+      .where("name", "=", "Bridge to Nowhere",)
+      .executeTakeFirst();
+
+    expect(count?.total,).toBe(0,);
+  });
+
+  test("validateConnections rejects a self-link with 400", async () => {
+    const worldId = uid();
+    await insertWorlds(db, ownerId, "Self Link World", { id: worldId, } as never,);
+    const locId = uid();
+    await insertLocations(db, worldId, "Mirror Gate", { id: locId, } as never,);
+
+    const res = await validateConnections(db, worldId, [locId,], locId,);
+
+    expect(res,).not.toBeNull();
+    expect(res!.status,).toBe(400,);
+    const body = (await res!.json()) as { error?: string; message?: string };
+    const detail = String(body.error ?? body.message ?? "",);
+    expect(detail,).toContain("itself",);
   });
 
   test("2.8: valid string connections persist as JSON strings only", async () => {
