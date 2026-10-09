@@ -102,13 +102,16 @@ describe("initVnRenderer", () => {
     expect(container.querySelector(".vn-choices-container",),).toBeNull();
   });
 
-  test("re-init unsubscribes the previous location handler first", () => {
+  test("re-init unsubscribes the previous handlers first", () => {
     initTwo(freshContainer(),);
     initTwo(freshContainer(),);
 
-    expect(added,).toHaveLength(2,);
-    expect(removed,).toHaveLength(1,);
-    expect(removed[0]![1],).toBe(added[0]![1],);
+    // Two subscriptions per init: the location transition and the gate's
+    // stranded-decision recovery hop. Both must be torn down before re-adding,
+    // or a re-init leaks one live listener per pass.
+    expect(added,).toHaveLength(4,);
+    expect(removed,).toHaveLength(2,);
+    expect(removed.map(([, fn,],) => fn),).toEqual(added.slice(0, 2,).map(([, fn,],) => fn),);
   });
 
   test("with zero messages it mounts no scene and keeps the indicator", async () => {
@@ -229,5 +232,68 @@ describe("destroyVnRenderer", () => {
   test("destroy without init is a safe no-op", () => {
     expect(() => destroyVnRenderer()).not.toThrow();
     expect(state.container,).toBeNull();
+  });
+
+  // DEADLOCK RECOVERY. The send gate is chat-scoped while cards are
+  // per-scene, so a decision stranded at scene 0 renders no card — and no Skip
+  // button — while the player sits at scene 1. `chat-send.ts` dispatches this
+  // event with the sceneIndex the 409 carried; the stage must move there so the
+  // Skip control becomes reachable.
+  test("vn:navigate-to-scene moves the stage to the stranded decision's scene", () => {
+    const container = freshContainer();
+    initVnRenderer(
+      container as unknown as HTMLElement,
+      [msg("m1", "First.",), msg("m2", "Second.",), msg("m3", "Third.",),],
+      GM_CONFIG,
+    );
+
+    expect(getCurrentSceneIndex(),).toBe(2,);
+
+    const handler = added.find(([type,],) => type === "vn:navigate-to-scene")?.[1] as (e: Event,) => void;
+    expect(handler,).toBeDefined();
+
+    handler(new CustomEvent("vn:navigate-to-scene", { detail: { sceneIndex: 0, }, },),);
+
+    expect(getCurrentSceneIndex(),).toBe(0,);
+  });
+
+  test("vn:navigate-to-scene ignores a non-integer or absent sceneIndex", () => {
+    const container = freshContainer();
+    initVnRenderer(
+      container as unknown as HTMLElement,
+      [msg("m1", "First.",), msg("m2", "Second.",),],
+      GM_CONFIG,
+    );
+
+    const handler = added.find(([type,],) => type === "vn:navigate-to-scene")?.[1] as (e: Event,) => void;
+    handler(new CustomEvent("vn:navigate-to-scene", { detail: { sceneIndex: "two", }, },),);
+    handler(new CustomEvent("vn:navigate-to-scene", { detail: {}, },),);
+    handler(new CustomEvent("vn:navigate-to-scene", { detail: { sceneIndex: 1.5, }, },),);
+
+    expect(getCurrentSceneIndex(),).toBe(1,);
+  });
+
+  test("vn:navigate-to-scene ignores an out-of-range index", () => {
+    const container = freshContainer();
+    initVnRenderer(
+      container as unknown as HTMLElement,
+      [msg("m1", "First.",), msg("m2", "Second.",),],
+      GM_CONFIG,
+    );
+
+    const handler = added.find(([type,],) => type === "vn:navigate-to-scene")?.[1] as (e: Event,) => void;
+    handler(new CustomEvent("vn:navigate-to-scene", { detail: { sceneIndex: 99, }, },),);
+
+    expect(getCurrentSceneIndex(),).toBe(1,);
+  });
+
+  test("destroy removes the navigate listener", () => {
+    const container = freshContainer();
+    initVnRenderer(container as unknown as HTMLElement, [msg("m1", "First.",),], GM_CONFIG,);
+
+    destroyVnRenderer();
+
+    expect(removed.some(([type,],) => type === "vn:navigate-to-scene"),).toBe(true,);
+    expect(state.navigateHandler,).toBeNull();
   });
 });

@@ -9,9 +9,9 @@ import { isMuted, } from "../../chat/moderation";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { jsonParseOr, safeJsonStringify, } from "../../utils";
+import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { checkPromptInjection, } from "../../validation/prompt-injection";
-import { conflictResponse, jsonResponse, } from "../http-utils";
+import { conflictResponse, internalErrorResponse, jsonResponse, } from "../http-utils";
 import type { HttpStatusCode, } from "../http-utils";
 import { AttachmentOwnershipError, } from "./attachment-ownership";
 import { attachMessageAttachments, } from "./post";
@@ -137,7 +137,7 @@ export async function enforceMuteGate(
  * @param kind
  * @returns {string}
  */
-function VN_DECISION_MESSAGE(kind: "choice" | "question",): string {
+function vnDecisionMessage(kind: "choice" | "question",): string {
   return `Resolve the pending VN ${kind} before sending a message. Skip it from the card to continue.`;
 }
 
@@ -149,9 +149,27 @@ function VN_DECISION_MESSAGE(kind: "choice" | "question",): string {
  * `chat-quick-replies.ts` posts through the same `sendMessage` path without
  * going through the composer UI at all.
  *
- * Scope is the whole chat, not the current scene: the send path carries no
+ * SCOPE is the whole chat, not the current scene: the send path carries no
  * scene index to scope against, and a row left `available` at scene 0 is still
- * dangling at scene 12.
+ * dangling at scene 12. Scoping the gate down to the current scene would
+ * reintroduce exactly those dangling rows — the player could advance past an
+ * unresolved decision and send freely.
+ *
+ * RECOVERY follows from that scope. Cards only ever render for the CURRENT
+ * scene (`listVnChoices`/`listVnQuestions` filter on `scene_index`), so a
+ * decision left pending at scene 0 shows no card — and therefore no Skip
+ * button — while the player sits at scene 12. Blocking without a way out is a
+ * wedge. So the 409 carries the blocking row's `sceneIndex`, and the client
+ * navigates there (`chat-send.ts` → `jumpToScene`), putting the Skip control
+ * exactly where the player is blocked.
+ *
+ * EXCLUSIONS, all intentional — the gate is about PLAYER free-send:
+ *   - `messages/forward.ts` has its own idempotency block and is not gated;
+ *     forwarding a historical message is not authoring a new turn.
+ *   - Proactive/automated sends (`chat-proactive.ts`) post elsewhere and are
+ *     not gated either. They still get rejected by this gate on the shared
+ *     route if they traverse it; the client-side guard exempts `_autoFired`
+ *     only to avoid a toast storm, not to bypass the server.
  *
  * Cost control: one by-primary-key read of `chats.gm_config`, early-out when the
  * chat never opted in. Deliberately does NOT widen `checkChatAccess`'s select to
@@ -175,45 +193,70 @@ export async function enforceVnDecisionGate(
 
   if (!chat?.gm_config) { return null; }
 
-  const gmConfig = jsonParseOr<{ vnChoicesEnabled?: boolean }>(chat.gm_config, {},);
-  if (!gmConfig.vnChoicesEnabled) { return null; }
+  // FAIL CLOSED on unparseable gm_config. `gm_config` is hand-written JSON
+  // from several writers, so malformed text is the likeliest real-world fault,
+  // and returning null here would silently permit every send in a chat that
+  // DID opt in — the gate's only fail-open path, while every other failure
+  // (query error, missing table) already surfaces as a 500. A chat that
+  // genuinely never opted in has parseable JSON with the key absent, which is
+  // the early-out below and stays permitted.
+  const parsed = safeJsonParse<{ vnChoicesEnabled?: boolean }>(chat.gm_config,);
+  if (!parsed.ok) {
+    getLogger().child({ module: "messages/create", },).error(
+      "VN decision gate: malformed gm_config, refusing to guess the opt-in",
+      new Error("Malformed gm_config JSON",),
+      { chatId, actorId, },
+    );
+
+    return internalErrorResponse("Cannot evaluate VN settings for this chat",);
+  }
+
+  if (!parsed.value.vnChoicesEnabled) { return null; }
 
   // Both tables carry a parallel `status` column defaulting to 'available', so
   // the gate has to consult both. `dismissed` rows are resolved and must not
   // block. Sequential awaits, not Promise.all: the project bans it (an
   // unhandled rejection here would silently unblock the gate) and these are
   // two indexed LIMIT 1 lookups on the same connection anyway.
-  const pendingChoices = await database
+  const pendingChoice = await database
     .selectFrom("vn_choices",)
-    .select("id",)
+    .select(["id", "scene_index",],)
     .where("chat_id", "=", chatId,)
     .where("status", "=", "available",)
     .limit(1,)
     .execute();
 
-  if (pendingChoices.length > 0) {
+  if (pendingChoice[0]) {
     getLogger().child({ module: "messages/create", },).info(
       "Message rejected: a VN choice is still pending",
-      { chatId, actorId, },
+      { chatId, actorId, sceneIndex: pendingChoice[0].scene_index, },
     );
 
-    return conflictResponse(VN_DECISION_MESSAGE("choice",),);
+    return conflictResponse(vnDecisionMessage("choice",), {
+      kind: "choice",
+      decisionId: pendingChoice[0].id,
+      sceneIndex: pendingChoice[0].scene_index,
+    },);
   }
 
-  const pendingQuestions = await database
+  const pendingQuestion = await database
     .selectFrom("vn_questions",)
-    .select("id",)
+    .select(["id", "scene_index",],)
     .where("chat_id", "=", chatId,)
     .where("status", "=", "available",)
     .limit(1,)
     .execute();
 
-  if (pendingQuestions.length === 0) { return null; }
+  if (!pendingQuestion[0]) { return null; }
 
   getLogger().child({ module: "messages/create", },).info(
     "Message rejected: a VN question is still pending",
-    { chatId, actorId, },
+    { chatId, actorId, sceneIndex: pendingQuestion[0].scene_index, },
   );
 
-  return conflictResponse(VN_DECISION_MESSAGE("question",),);
+  return conflictResponse(vnDecisionMessage("question",), {
+    kind: "question",
+    decisionId: pendingQuestion[0].id,
+    sceneIndex: pendingQuestion[0].scene_index,
+  },);
 }

@@ -184,8 +184,14 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
     // working while a decision is pending — the gate blocks free send, not the
     // command surface.
     //
-    // _autoFired sends are exempt: the automated loop cannot answer a card, so
-    // gating it would deadlock the loop's own consecutive-fire guard.
+    // _autoFired sends are exempt, but NOT because gating them would deadlock:
+    // `_consecutiveAutoFires` only increments inside the `res.ok` branch, so a
+    // refused auto-send simply does not advance the counter and there is no
+    // re-fire to starve — the loop would just pause until a human resolves the
+    // decision. The exemption is about noise: an automated burst that cannot
+    // answer a card would raise one warning toast per message. The server gate
+    // does not exempt them — they are still rejected with a 409 there, and
+    // `restoreInput()` puts the composed text back.
     if (!this._autoFired && isVnDecisionPending()) {
       this.$dispatch?.("show-toast", {
         type: "warning",
@@ -282,6 +288,25 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
           this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
           await this.loadMessages();
           return;
+        }
+
+        // A 409 from the VN decision gate names the scene holding the
+        // unresolved card. Cards only render for the CURRENT scene, so without
+        // this jump the player sits at scene 12 staring at an empty stage with
+        // every send rejected and no Skip control in sight — the 409 text says
+        // "skip it from the card", but there is no card to skip. Navigate first,
+        // then report.
+        //
+        // Dispatched as an event rather than a direct `jumpToScene` call: the
+        // composer must not import the scene renderer (it would drag the whole
+        // sprite/portrait/transition chain into the chat bundle for a code path
+        // most chats never hit). Same seam the location handler already uses.
+        if (res.status === 409 && Number.isInteger(err.data?.sceneIndex,)) {
+          globalThis.dispatchEvent(
+            new CustomEvent("vn:navigate-to-scene", {
+              detail: { sceneIndex: err.data.sceneIndex as number, },
+            },),
+          );
         }
 
         this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);

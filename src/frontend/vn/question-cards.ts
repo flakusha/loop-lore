@@ -9,8 +9,9 @@
  * seam, same "side effects never lose the recorded answer" discipline.
  */
 import { apiFetch, } from "../alpine/htmx";
+import { t, } from "../alpine/i18n";
 import { jsonBody, } from "../alpine/json";
-import { setVnDecisionPending, } from "./pending-decision";
+import { setQuestionPending, } from "./pending-decision";
 import { renderQuestionCards, } from "./question-cards-render";
 
 const LOCATION_CHANGED_EVENT = "chat:location-changed";
@@ -86,7 +87,7 @@ export function initQuestionCards(
 export function destroyQuestionCards(): void {
   // Leaving the flag set would wedge the composer: the cards are gone, so
   // nothing can resolve the decision the gate is still waiting on.
-  setVnDecisionPending(false,);
+  setQuestionPending(false,);
   container = null;
   chatId = null;
   questions = [];
@@ -105,11 +106,11 @@ export async function loadQuestions(): Promise<void> {
     const raw: VnQuestion[] = data.questions ?? data.data ?? [];
     questions = Array.from(raw, (q,) => ({ ...q, options: q.options ?? [], }),);
 
-    setVnDecisionPending(questions.some((q,) => q.status === "available"),);
+    setQuestionPending(questions.some((q,) => q.status === "available"),);
     renderQuestions();
   } catch {
     questions = [];
-    setVnDecisionPending(false,);
+    setQuestionPending(false,);
   }
 }
 
@@ -119,23 +120,46 @@ export async function loadQuestions(): Promise<void> {
  * @returns {Promise<boolean>} true when the skip was accepted.
  */
 export async function skipQuestion(questionId: string,): Promise<boolean> {
-  if (!chatId) { return false; }
+  if (!chatId) {
+    reportSkipFailure();
+
+    return false;
+  }
 
   try {
     const res = await apiFetch(`/api/v1/chats/${chatId}/vn-questions/${questionId}/dismiss`, {
       method: "POST",
     },);
 
-    if (!res.ok) { return false; }
+    if (!res.ok) {
+      reportSkipFailure();
+
+      return false;
+    }
   } catch {
+    reportSkipFailure();
+
     return false;
   }
 
   questions = questions.filter((q,) => q.id !== questionId);
-  setVnDecisionPending(questions.some((q,) => q.status === "available"),);
+  setQuestionPending(questions.some((q,) => q.status === "available"),);
   renderQuestions();
 
   return true;
+}
+
+/**
+ * A rejected skip leaves the row `available` server-side, so the flag stays set
+ * and the gate keeps 409ing. Without this toast the only recovery is a full
+ * page reload, which reads as "the button is broken".
+ */
+function reportSkipFailure(): void {
+  document.dispatchEvent(
+    new CustomEvent("show-toast", {
+      detail: { type: "error", message: t("toasts.vnSkipFailed",), },
+    },),
+  );
 }
 
 /**
@@ -170,7 +194,7 @@ export async function answerQuestion(
     questions = Array.from(questions, (q, i,) => (i === idx ? updated : q),);
     // Answering one question leaves its siblings 'available' server-side, so
     // the gate stays closed while any remain.
-    setVnDecisionPending(questions.some((q,) => q.status === "available"),);
+    setQuestionPending(questions.some((q,) => q.status === "available"),);
 
     let locationChanged = false;
     if (locationId) {

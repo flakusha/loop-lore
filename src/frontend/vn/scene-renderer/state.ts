@@ -20,6 +20,8 @@ export const state: {
   currentChatId: string | null;
   loadingIndicator: LoadingIndicator | null;
   locationChangeHandler: ((e: Event,) => void) | null;
+  /** Listener for `vn:navigate-to-scene` (send-gate recovery). */
+  navigateHandler: ((e: Event,) => void) | null;
   roster: SpriteRoster | null;
 } = {
   scenes: [],
@@ -29,5 +31,6 @@ export const state: {
   currentChatId: null,
   loadingIndicator: null,
   locationChangeHandler: null,
+  navigateHandler: null,
   roster: null,
 };

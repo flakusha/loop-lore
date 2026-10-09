@@ -16,7 +16,7 @@ import {
   loadChoices,
   skipChoice,
 } from "./choice-cards";
-import { isVnDecisionPending, } from "./pending-decision";
+import { isVnDecisionPending, setQuestionPending, } from "./pending-decision";
 
 // ── Mock apiFetch ───────────────────────────────────────────────────────────
 
@@ -89,12 +89,23 @@ function makeEl(): FakeEl {
 // Module-scope global write must be handed back in afterAll — later files in
 // the shared bun:test process need the load-time DOM surface.
 const originalDocument = (globalThis as { document?: unknown }).document;
+// Captured so the failed-skip toast can be asserted; the card modules report a
+// rejected skip through the same global `show-toast` channel context-window.ts
+// already uses.
+const toasts: { type: string; message: string }[] = [];
 (globalThis as unknown as { document: unknown }).document = {
   createElement: () => makeEl(),
   // Superset of tests/setup-globals.ts: real modules (e.g. alpine/htmx.ts)
   // re-evaluate mid-process and touch these.
   addEventListener: () => {},
-  dispatchEvent: () => true,
+  dispatchEvent: (e: Event,) => {
+    if (e.type === "show-toast") {
+      const detail = (e as CustomEvent<{ type: string; message: string }>).detail;
+      toasts.push({ type: detail?.type, message: detail?.message, },);
+    }
+
+    return true;
+  },
   querySelector: () => null,
 };
 
@@ -277,6 +288,57 @@ describeOrSkip("loadChoices", () => {
     apiHandler = () => jsonRes({ error: "boom", }, 500,);
 
     expect(await skipChoice("c1",),).toBe(false,);
+    expect(isVnDecisionPending(),).toBe(true,);
+  });
+
+  test("a failed skip surfaces a toast instead of failing silently", async () => {
+    boot();
+    apiHandler = () => jsonRes({ choices: [rawChoice({},),], },);
+    await loadChoices();
+    toasts.length = 0;
+    apiHandler = () => jsonRes({ error: "not found", }, 404,);
+
+    expect(await skipChoice("c1",),).toBe(false,);
+
+    // A 404 leaves the row `available` server-side, so the gate keeps 409ing.
+    // Without feedback the only recovery is a reload, which reads as "broken".
+    expect(toasts.length,).toBe(1,);
+    expect(toasts[0]!.type,).toBe("error",);
+  });
+
+  test("a successful skip raises no toast", async () => {
+    boot();
+    apiHandler = () => jsonRes({ choices: [rawChoice({},),], },);
+    await loadChoices();
+    toasts.length = 0;
+    apiHandler = () => jsonRes({ dismissed: "c1", },);
+
+    expect(await skipChoice("c1",),).toBe(true,);
+    expect(toasts.length,).toBe(0,);
+  });
+
+  // The two card modules load fire-and-forget from render-scene.ts, so with a
+  // single shared boolean the last writer wins and one source's pending state
+  // silently vanishes. Each owns a slot; the reader ORs them.
+  test("a pending question survives an empty choice load (per-source tracking)", async () => {
+    boot();
+    setQuestionPending(true,);
+
+    // The choice load resolves LAST and finds nothing — the exact ordering
+    // that used to clobber the question's flag.
+    apiHandler = () => jsonRes({ choices: [], },);
+    await loadChoices();
+
+    expect(isVnDecisionPending(),).toBe(true,);
+    setQuestionPending(false,);
+  });
+
+  test("a pending choice survives when no question is pending", async () => {
+    boot();
+    setQuestionPending(false,);
+    apiHandler = () => jsonRes({ choices: [rawChoice({},),], },);
+    await loadChoices();
+
     expect(isVnDecisionPending(),).toBe(true,);
   });
 },);

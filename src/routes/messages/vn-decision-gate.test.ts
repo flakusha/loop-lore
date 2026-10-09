@@ -30,13 +30,13 @@ let questionId: string;
 
 /** Create a chat whose gm_config toggles the per-chat VN opt-in. */
 async function makeChat(name: string, enabled: boolean,): Promise<string> {
+  return makeChatWithConfig(name, JSON.stringify({ vnChoicesEnabled: enabled, },),);
+}
+
+/** Create a chat with a raw (possibly malformed) gm_config string. */
+async function makeChatWithConfig(name: string, gmConfig: string,): Promise<string> {
   const id = uid();
-  await insertChats(
-    db,
-    name,
-    ownerId,
-    { id, gm_config: JSON.stringify({ vnChoicesEnabled: enabled, },), } as never,
-  );
+  await insertChats(db, name, ownerId, { id, gm_config: gmConfig, } as never,);
 
   return id;
 }
@@ -75,12 +75,17 @@ async function seedPending(): Promise<void> {
 
 /** Insert a single pending choice into an arbitrary chat. */
 async function seedChoice(chat: string, label: string,): Promise<void> {
+  return seedChoiceAtScene(chat, label, 0,);
+}
+
+/** Insert a pending choice pinned to a specific scene. */
+async function seedChoiceAtScene(chat: string, label: string, sceneIndex: number,): Promise<void> {
   await db
     .insertInto("vn_choices",)
     .values({
       id: uid(),
       chat_id: chat,
-      scene_index: 0,
+      scene_index: sceneIndex,
       label,
       status: "available",
       created_at: NOW,
@@ -189,5 +194,61 @@ describe("enforceVnDecisionGate", () => {
 
   test("passes for a chat that does not exist", async () => {
     expect(await enforceVnDecisionGate(db, uid(), ownerId,),).toBeNull();
+  });
+
+  // DEADLOCK REGRESSION. The gate is chat-scoped (the send path carries no
+  // scene index) but cards render per-scene, so a decision stranded at scene 0
+  // shows no card — and no Skip button — while the player sits at scene 12.
+  // The 409 must therefore name the blocking scene so the client can navigate
+  // there and put the Skip control in reach.
+  test("a decision stranded at an earlier scene carries its sceneIndex in the 409", async () => {
+    const stranded = await makeChat("Stranded", true,);
+    await seedChoiceAtScene(stranded, "left behind", 0,);
+
+    const res = await enforceVnDecisionGate(db, stranded, ownerId,);
+    expect(res!.status,).toBe(409,);
+
+    const body = await res!.json() as { data?: { sceneIndex?: number; kind?: string } };
+    expect(body.data?.sceneIndex,).toBe(0,);
+    expect(body.data?.kind,).toBe("choice",);
+  });
+
+  test("a question stranded at a later scene carries that sceneIndex", async () => {
+    const stranded = await makeChat("Stranded Q", true,);
+    await db
+      .insertInto("vn_questions",)
+      .values({
+        id: uid(),
+        chat_id: stranded,
+        scene_index: 12,
+        question_text: "still waiting",
+        status: "available",
+        created_at: NOW,
+      },)
+      .execute();
+
+    const res = await enforceVnDecisionGate(db, stranded, ownerId,);
+    const body = await res!.json() as { data?: { sceneIndex?: number; kind?: string } };
+    expect(body.data?.sceneIndex,).toBe(12,);
+    expect(body.data?.kind,).toBe("question",);
+  });
+
+  // FAIL CLOSED. gm_config is hand-written JSON from several writers, so
+  // malformed text is the likeliest real fault. Treating it as `{}` (key
+  // absent -> opted out) was the gate's only fail-open path.
+  test("malformed gm_config fails closed with a 500, not a permitted send", async () => {
+    const broken = await makeChatWithConfig("Broken Config", "{not valid json",);
+    await seedChoice(broken, "pending",);
+
+    const res = await enforceVnDecisionGate(db, broken, ownerId,);
+    expect(res,).not.toBeNull();
+    expect(res!.status,).toBe(500,);
+  });
+
+  test("a parseable config with the key absent still early-outs (genuine opt-out)", async () => {
+    const noKey = await makeChatWithConfig("No Key", JSON.stringify({ assistantRole: "gm", },),);
+    await seedChoice(noKey, "pending",);
+
+    expect(await enforceVnDecisionGate(db, noKey, ownerId,),).toBeNull();
   });
 });
