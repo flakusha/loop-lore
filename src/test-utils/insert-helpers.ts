@@ -5073,7 +5073,6 @@ export async function insertMessageReminders(
   } as any,).execute();
   return id;
 }
-
 /** Insert a world_timescale row. */
 export async function insertWorldTimescale(
   db: Db,
