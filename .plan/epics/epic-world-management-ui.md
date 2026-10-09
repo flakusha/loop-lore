@@ -6,12 +6,13 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** Partially shipped — world list/detail/edit pages, location explorer (TASK-location-explorer ✅ Done, verified 2026-10-08), world edit/items/invites/channels/admin-worlds UIs. Travel interface, time/weather widget, and world creation wizard not present.
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic
 **Tags:** world, locations, travel, ui, frontend
+**Parent Epic:** World & Locations (epic-world-locations.md)
 
 ## Summary
 
@@ -155,11 +156,14 @@ Complete world and location management interface, including world CRUD, location
 
 ## Current files
 
+- `src/routes/views/worlds.ts` — worlds routes (list/detail/edit/IO).
+- `src/views/worlds.html` — world list page and modal triggers.
+- `src/views/world-detail.html` — world detail with location explorer.
+- `src/views/world-edit.html` — world editor.
 - `src/frontend/pages/worlds.ts` — world page actions.
-- `src/frontend/pages/worlds-io.ts` — world import actions.
-- `src/partials/worlds/create-modal.html` — world creation form.
-- `src/partials/worlds/import-modal.html` — world bundle import form.
-- `src/views/worlds.html` — world page and modal triggers.
+- `src/frontend/pages/worlds-io.ts` — world import/export actions.
+- `src/frontend/pages/world-timeline-bar.ts` — world timeline bar component.
+- Alpine components: `location-explorer` (+ controls), `world-edit`, items/invites/channels/admin-worlds.
 
 ## Related Epics
 

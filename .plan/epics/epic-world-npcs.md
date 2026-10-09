@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -38,8 +38,8 @@ Part of the **World & Locations** mega-epic. See parent epic for full scope and 
 
 ## Tasks
 
-- [ ] Implement NPC placement system
-- [ ] Implement NPC migration system
+- [x] Implement NPC placement system
+- [x] Implement NPC migration system (npc_migrations table + src/rpg/npc-navigation)
 - [ ] Implement NPC inventories
 - [ ] Implement monster/enemy NPC system
 - [ ] Implement NPC memory system
@@ -49,6 +49,12 @@ Part of the **World & Locations** mega-epic. See parent epic for full scope and 
 - [ ] Create NPC management UI
 - [ ] Create monster compendium UI
 - [ ] Create NPC memory/relationship UI
+
+## Implemented (verified 2026-10-08)
+
+- **Tables:** `npc_states`, `actor_locations` (001); `actor_daily_plans` + BDI-lite plan tables (011); `npc_migrations` (040).
+- **Modules:** `src/rpg/npc-navigation/` (movement, pathfinding, tick-driver); routes `rpg/npc-navigation` + `npc-movement`.
+- **Shipped:** placement and migration. Inventories, memory decay/emotional state, and monsters/bestiary remain unstarted.
 
 ## Design
 

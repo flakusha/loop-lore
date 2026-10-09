@@ -3,7 +3,7 @@
 
 # EPIC: World & Locations
 
-**Tags:** (none)
+**Tags:** world, locations, hub
 **Overview:** (see sections below)
 
 
@@ -22,12 +22,12 @@ World and location system hub — overall conditions, lore following/quality inv
 
 ## Sub-Epics
 
-| Sub-Epic                   | Epic File                       | Scope                                                                     | Priority |
-| -------------------------- | ------------------------------- | ------------------------------------------------------------------------- | -------- |
-| **Travel & Time**          | `epic-world-travel-time.md`     | World conditions, weather/time/season, travel, random location generation | High     |
-| **NPCs & Memories**        | `epic-world-npcs.md`            | NPC placement/migration/inventories, NPC memory system                    | High     |
-| **Encounters & Resources** | `epic-world-encounters.md`      | Anomalies, resource extraction, item search/generation, unique places     | Medium   |
-| **Diplomacy & Karma**      | `epic-world-diplomacy-karma.md` | Factions, reputation/karma, lore-following/quality, world state           | Medium   |
+| Sub-Epic                   | Epic File                       | Scope                                                                     | Priority | Status      |
+| -------------------------- | ------------------------------- | ------------------------------------------------------------------------- | -------- | ----------- |
+| **Travel & Time**          | `epic-world-travel-time.md`     | World conditions, weather/time/season, travel, random location generation | High     | In Progress |
+| **NPCs & Memories**        | `epic-world-npcs.md`            | NPC placement/migration/inventories, NPC memory system                    | High     | In Progress |
+| **Encounters & Resources** | `epic-world-encounters.md`      | Anomalies, resource extraction, item search/generation, unique places     | Medium   | Not Started |
+| **Diplomacy & Karma**      | `epic-world-diplomacy-karma.md` | Factions, reputation/karma, lore-following/quality, world state           | Medium   | Not Started |
 
 ## Sequencing
 
@@ -125,17 +125,19 @@ interface LocationConditions {
 
 ## Files
 
-- `src/world/` — world system (does not exist yet)
-- `src/world/world.ts` — world management
-- `src/world/location.ts` — location system
-- `src/world/anomaly.ts` — anomaly system
-- `src/world/resources.ts` — resource system
-- `src/world/storage.ts` — persistent storage
-- `src/world/npc.ts` — NPC placement/migration
-- `src/world/generation.ts` — procedural generation
-- `src/db/schema-world.ts` — world tables
-- `src/routes/world.ts` — world API
-- `src/frontend/world/` — world UI components
+Implemented (verified 2026-10-08):
+
+- `src/rpg/world-travel/` — world travel: `travel`, `budget`, `migration`, `walk`
+- `src/locations/` — location system: `travel-engine.ts`, `tree.ts`
+- `src/rpg/npc-navigation/` — NPC movement, pathfinding, tick-driver
+- `src/rpg/world-discovery/` — location discovery
+- `src/routes/worlds/` — world API incl. `fractal-travel-routes.ts`, `fractal-locations-routes.ts`
+- `src/routes/views/worlds.ts` + `src/views/worlds*.html` + `src/frontend/pages/worlds*.ts` — world management UI
+
+Planned (do not exist yet):
+
+- `src/db/schema-world.ts` — world tables (planned)
+- `src/frontend/world/` — world UI components (planned)
 
 ## Open Questions
 
