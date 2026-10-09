@@ -86,6 +86,15 @@ export interface AnswerVnQuestionSuccess {
 /** */
 export type AnswerVnQuestionResult = AnswerVnQuestionSuccess | ServiceError;
 
+/** Successful dismissal of a pending VN question. */
+export interface DismissVnQuestionSuccess {
+  ok: true;
+  questionId: string;
+}
+
+/** */
+export type DismissVnQuestionResult = DismissVnQuestionSuccess | ServiceError;
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 const QUESTION_COLUMNS = [
@@ -286,4 +295,35 @@ export async function answerVnQuestion(
     nextSceneId: option.next_scene_id ?? parsed.next_scene_id,
     locationId,
   };
+}
+
+/**
+ * Dismiss a pending question so it stops blocking free sends.
+ *
+ * Mirrors `dismissVnChoice`: writes `status` rather than a `dismissed_at`
+ * timestamp, because a timestamp leaves `status='available'` and the gate's
+ * pending query would keep matching forever.
+ * @param database
+ * @param params
+ * @returns {Promise<DismissVnQuestionResult>}
+ */
+export async function dismissVnQuestion(
+  database: Kysely<DB>,
+  params: { chatId: string; questionId: string },
+): Promise<DismissVnQuestionResult> {
+  const { chatId, questionId, } = params;
+
+  const updated = await database
+    .updateTable("vn_questions",)
+    .set({ status: "dismissed", },)
+    .where("id", "=", questionId,)
+    .where("chat_id", "=", chatId,)
+    .where("status", "=", "available",)
+    .executeTakeFirst();
+
+  if (Number(updated.numUpdatedRows ?? 0,) === 0) {
+    return { code: "not_found", message: "Question not found or already resolved", };
+  }
+
+  return { ok: true, questionId, };
 }
