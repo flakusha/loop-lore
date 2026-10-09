@@ -4,7 +4,7 @@ import type { DB, } from "../db/schema";
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
 import { createApp, } from "../elysia-app";
-import { createLogger, getLogger, type Logger, } from "../logger";
+import { createLogger, getChildLogger, type Logger, } from "../logger";
 import { createSqliteDialect, } from "../db/index";
 import { loadConfig, } from "../config/load";
 import { safeFetch, } from "../utils";
@@ -49,10 +49,4 @@ process.exit(0,);
  * Module logger accessor — null if no logger is initialized.
  * @returns the child logger, or null when no logger is initialized.
  */
-function log(): Logger | null {
-  try {
-    return getLogger().child({ module: "scripts/smoke-app", },);
-  } catch {
-    return null;
-  }
-}
+const log = (): Logger | null => getChildLogger("scripts/smoke-app",);

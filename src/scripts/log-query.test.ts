@@ -5,7 +5,7 @@ import { Database, } from "bun:sqlite";
 import type { Database as SqliteDatabase, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
 import { Kysely, } from "kysely";
-import { mkdtempSync, rmSync, } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { createSqliteDialect, } from "../db/index";
@@ -329,6 +329,42 @@ describeIsolated("main() CLI entry", () => {
       expect(code,).toBe(0,);
     } finally {
       rmSync(tmpDir, { recursive: true, force: true, },);
+    }
+  });
+},);
+
+describeIsolated("CLI error path", () => {
+  // Regression: the guard used to flush a *different* logger instance than the
+  // one `log()` logged through, so every diagnostic was swallowed and the
+  // script exited 1 in silence. Spawned as a real process — the in-process
+  // `main()` tests above never run the guard, so they cannot see this.
+  test("an unusable DB emits its diagnostic to stderr before exiting 1", async () => {
+    const configDir = mkdtempSync(join(tmpdir(), "loop-lore-cli-cfg-",),);
+    const secret = crypto.randomUUID().repeat(4,);
+    const scriptPath = join(import.meta.dir, "log-query.ts",);
+
+    writeFileSync(
+      join(configDir, "config.toml",),
+      `[db]\nsqliteFilename = ":memory:"\n`,
+    );
+
+    try {
+      const proc = Bun.spawn({
+        cmd: ["bun", "run", scriptPath,],
+        cwd: configDir,
+        env: { ...process.env, NSFW_FLAG_REPORTER_HASH_SECRET: secret, },
+        stdout: "pipe",
+        stderr: "pipe",
+      },);
+
+      const exitCode = await proc.exited;
+      const stderr = await new Response(proc.stderr,).text();
+      await new Response(proc.stdout,).text();
+
+      expect(exitCode,).toBe(1,);
+      expect(stderr,).toContain("requires a real on-disk DB",);
+    } finally {
+      rmSync(configDir, { recursive: true, force: true, },);
     }
   });
 },);

@@ -20,7 +20,7 @@ import {
   runScript,
   withDefault,
 } from "../cli/parser";
-import { createLogger, getLogger, type Logger, } from "../logger";
+import { createLogger, getChildLogger, type Logger, } from "../logger";
 import {
   readPackageJsonOrNull,
   setPackageJsonVersion as writePackageJsonVersion,
@@ -348,10 +348,4 @@ await log()?.flush().catch(() => undefined);
  * Module logger accessor — null if no logger is initialized.
  * @returns the child logger, or null when no logger is initialized.
  */
-function log(): Logger | null {
-  try {
-    return getLogger().child({ module: "scripts/version-bump", },);
-  } catch {
-    return null;
-  }
-}
+const log = (): Logger | null => getChildLogger("scripts/version-bump",);
