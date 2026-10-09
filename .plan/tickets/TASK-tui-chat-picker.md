@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
-**Epic:** `.plan/epics/epic-terminal-ui.md`
+**Epic:** `epic-terminal-ui`
 **Tags:** tui, chat
 **Summary:** Chat-list picker screen so the TUI can start a chat at all — `ChatWidget` currently requires a pre-selected `chatId`, leaving no path into a conversation.
 **Context:** `ChatWidget` (`src/tui/chat/index.ts`) requires a pre-selected `chatId`, so the TUI cannot currently start a chat — this is the single highest-value missing screen. The web counterpart is `src/routes/views/chats.ts` + `src/views/chat-list.html`. Reuse-first: the `setFetch` seam already exists in `src/tui/chat/api.ts`, and the blessed `list` pattern is already used at `src/tui/harness/index.ts:67`. No new widget library, no second screen framework.

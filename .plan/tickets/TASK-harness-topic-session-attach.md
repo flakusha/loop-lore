@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** `epic-harness-integration`
 **Tags:** harness, data-model, lineage
 **Summary:** Append-only `harness_work_topic_sessions` join recording session↔work-topic attachment lineage, plus a `work_topic_id` field on the §8 exec-log record.
 **Context:** Three session concepts already exist and are reused, not re-created: in-memory `WorkflowSession` keyed by `chatId` with no TTL (`src/assistant/workflow-session.ts:23`), the `workflow_sessions` table with 24h `WORKFLOW_SESSION_TTL_MS` (`src/assistant/workflow-session-store.ts:19`), and `request_results` with a 24h window (`src/async/store.ts:78` TTL). A harness run session is a NEW concept layered above all three and keyed by run id — say so in the epic, do not blur it with the auth `sessions` table (`src/db/schema-manifest.ts:2441`). Attachment is a first-class record (matching the §8 "one record per run, append-only" posture), not a mutable pointer.
