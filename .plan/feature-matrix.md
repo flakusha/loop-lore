@@ -1157,7 +1157,7 @@ Total tickets: **3424** — untagged: **2858** — unbound to epic: **1554**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2858 | 1151 | 58 | 1208 | 36 | 0 | 405 |
+| (untagged) | 2858 | 1152 | 58 | 1207 | 36 | 0 | 405 |
 
 ## By epic × status
 
@@ -1330,7 +1330,7 @@ Total tickets: **3424** — untagged: **2858** — unbound to epic: **1554**
 | epic-http-protocol-features | 10 | 0 | 0 | 10 | 0 | 0 | 0 |
 | epic-i18n | 12 | 8 | 1 | 3 | 0 | 0 | 0 |
 | epic-immersion-consistency-gate | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| epic-immersion-presentation | 8 | 4 | 0 | 4 | 0 | 0 | 0 |
+| epic-immersion-presentation | 8 | 5 | 0 | 3 | 0 | 0 | 0 |
 | epic-impersonation | 3 | 1 | 2 | 0 | 0 | 0 | 0 |
 | epic-implementation | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-import-export-io | 7 | 2 | 0 | 4 | 0 | 0 | 1 |
