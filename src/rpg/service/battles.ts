@@ -23,7 +23,9 @@ import { log, } from "./log.js";
 import type { RpgServiceDeps, } from "./types.js";
 
 export * from "./battles/actions.js";
+export * from "./battles/items.js";
 export * from "./battles/persistence.js";
+export * from "./battles/social.js";
 export * from "./battles/types.js";
 /**
  * @param deps

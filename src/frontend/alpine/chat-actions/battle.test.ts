@@ -45,7 +45,21 @@ describe("battleActionHandlers rendering actions", () => {
         { id: "c1", name: "Hero", hp: 80, maxHp: 100, initiative: 12, },
         { id: "c2", name: "Ogre", hp: 150, maxHp: 150, initiative: 6, },
       ],
+      items: [],
     },],);
+  });
+
+  test("battle-started forwards usable items to the panel view", () => {
+    const ctx = buildCtx();
+    battleActionHandlers["battle-started"]!(ctx, {
+      battle: {
+        ...validBattle.battle,
+        items: [{ id: "i1", name: "Potion", quantity: 2, },],
+      },
+    }, "chat-1",);
+
+    const view = ctx.rendered[0] as { items: unknown[] };
+    expect(view.items,).toEqual([{ id: "i1", name: "Potion", quantity: 2, },],);
   });
 
   test("battle-updated and battle-status route through the same renderer", () => {

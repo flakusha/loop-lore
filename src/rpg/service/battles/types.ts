@@ -87,6 +87,99 @@ export interface ResolvedHeal {
   healed: number;
   battleId: string;
 }
+
+/**
+ * Social verbs the battle panel surfaces. A subset of the social-integration
+ * `SocialCombatAction` union — the verbs backed by the implemented
+ * calculators (`src/battle/social-integration`).
+ */
+export type BattleSocialAction = "intimidate" | "taunt" | "negotiate" | "surrender";
+
+/** Social verbs accepted by `/battle social`, parsed from command args. */
+export const BATTLE_SOCIAL_ACTIONS: readonly BattleSocialAction[] = [
+  "intimidate",
+  "taunt",
+  "negotiate",
+  "surrender",
+];
+
+/**
+ * Parse a social verb from a raw command arg.
+ * @param raw - First argument of `/battle social` (any casing)
+ * @returns The canonical verb, or null when unrecognized
+ */
+export function parseSocialAction(raw: string | undefined,): BattleSocialAction | null {
+  const needle = (raw ?? "").trim().toLowerCase();
+  return (BATTLE_SOCIAL_ACTIONS as readonly string[]).includes(needle,)
+    ? needle as BattleSocialAction
+    : null;
+}
+
+/** A consumable inventory item usable in battle (serialized for the panel). */
+export interface BattleItemView {
+  /** `actor_items` row id. */
+  id: string;
+  /** Item name (as sent back by `/battle use`). */
+  name: string;
+  /** Stacked units remaining. */
+  quantity: number;
+}
+
+/** */
+export interface UseItemParams {
+  battleId: string;
+  /** Acting combatant (the item's owner in the roster). */
+  actorId: string;
+  /** Target combatant; defaults to the actor itself. */
+  targetId?: string;
+  /** `actor_items` id or (loose) item name to use. */
+  itemId: string;
+}
+
+/** How an item use resolved, plus the updated roster. */
+export interface ResolvedItemUse {
+  /** The item that was consumed. */
+  item: BattleItemView;
+  /** Acting combatant (item owner). */
+  actor: Combatant;
+  /** Combatant the item was used on. */
+  target: Combatant;
+  /** HP restored by the item's on-use heal effect. */
+  healed: number;
+  /** Updated roster after the use. */
+  combatants: Combatant[];
+  battleId: string;
+}
+
+/** */
+export interface SocialActionParams {
+  battleId: string;
+  action: BattleSocialAction;
+  /** Acting (player-side) combatant. */
+  actorId: string;
+  /** Combatant the social action is aimed at. */
+  targetId: string;
+}
+
+/** How a social action resolved (the calculators' output, surfaced). */
+export interface ResolvedSocialAction {
+  action: BattleSocialAction;
+  /** Acting combatant. */
+  actor: Combatant;
+  /** Target combatant. */
+  target: Combatant;
+  /** Whether the check succeeded. */
+  success: boolean;
+  /** Human-readable result line (calculator narrative). */
+  outcome: string;
+  /** Surrender chance (surrender only, 0–90). */
+  surrenderChance?: number;
+  /** Whether surrender is viable (surrender only). */
+  canSurrender?: boolean;
+  /** Roster (unchanged by social actions). */
+  combatants: Combatant[];
+  battleId: string;
+}
 /**
  * Build a Combatant from an actor's persisted stats.
  * @param actorId - Actor/character id
