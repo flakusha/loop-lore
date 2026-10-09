@@ -89,7 +89,13 @@ export async function loadTravelStatus(database: Kysely<DB>, worldId: string,): 
     ],)
     .execute();
 
-  const routeIds = Array.from(new Set(transports.map((row,) => row.routeId),),);
+  // The join + `is not null` guarantee routeId at runtime, but Kysely types
+  // locations.current_route_id as nullable — narrow once, explicitly.
+  const boundTransports = transports.filter(
+    (row,): row is typeof row & { routeId: string } => row.routeId !== null,
+  );
+
+  const routeIds = Array.from(new Set(boundTransports.map((row,) => row.routeId),),);
   const stopCounts = new Map<string, number>();
   const stopNamesByRoute = new Map<string, Map<number, string>>();
   if (routeIds.length > 0) {
@@ -113,10 +119,10 @@ export async function loadTravelStatus(database: Kysely<DB>, worldId: string,): 
     }
   }
 
-  const transportLocationIds = Array.from(new Set(transports.map((row,) => row.locationId),),);
+  const transportLocationIds = Array.from(new Set(boundTransports.map((row,) => row.locationId),),);
   const hazardsByLocation = new Map<string, string[]>(await loadHazardsByLocation(database, transportLocationIds,),);
 
-  const transportStatuses: TransportStatus[] = transports.map((row,) => {
+  const transportStatuses: TransportStatus[] = boundTransports.map((row,) => {
     const stopCount = stopCounts.get(row.routeId,) ?? 0;
     const names = stopNamesByRoute.get(row.routeId,);
     const progress = Number(row.progress,) || 0;
