@@ -6,15 +6,17 @@
 **Overview:** Visual Novel Mode turns a chat into a cinematic scene-based
 experience — full-screen backgrounds, character portraits, transitions,
 typewriter text, and branching decisions. The renderer, the choices and
-story-generation backends, and the chat-view wiring are landed and live.
-What remains is (a) the choice-card UI, which is built and tested but never
-mounted, (b) the Q&A interaction loop, which does not exist in `src/` at
-all, (c) the template engines, which are built and unit-tested but never
-read at render time, (d) per-chat opt-in and the pending-choice send gate,
-(e) choice consequences never reaching the relationship/mood systems, and
-(f) dynamic image generation, deferred to `epic-comfyui-plugin`. This epic
-owns the remaining VN work; `epic-immersion-presentation` mirrors this epic's
-state rather than tracking VN independently.
+story-generation backends, and the chat-view wiring are landed and live. As of
+2026-10-09 three more gaps closed on branch `vn-mode-qa-loop`: the choice cards
+are mounted at render time, the Q&A interaction loop exists end-to-end (routes,
+service, `vn_questions` table, question cards), and scene templates are consumed
+via `templates/apply.ts`. What remains is (a) per-chat opt-in and the
+pending-choice send gate, (b) choice and question consequences never reaching
+the relationship/mood systems, (c) the rest of the template engine (composites,
+conditions/delays, dialogue templates, GM builder UI), and (d) dynamic image
+generation, deferred to `epic-comfyui-plugin`. This epic owns the remaining VN
+work; `epic-immersion-presentation` mirrors this epic's state rather than
+tracking VN independently.
 
 **Status:** In Progress
 **Priority:** Medium
@@ -61,8 +63,12 @@ the file that proves it.
 - ✅ Chat view wiring — `src/views/chat.html:36` `#vn-container`
   (`data-testid="vn-container"`); `src/frontend/alpine/chat-settings/vn.ts`
   `syncVnRenderer` rebuilds the renderer from persisted `gm_config`.
-  `chats.visual_novel` was dropped in migration 076; the live source of
-  truth is `gm_config.renderingOverride` (`ChatRenderingOverride`).
+  The live source of truth is `gm_config.renderingOverride`
+  (`ChatRenderingOverride`, `src/db/enums-core/chat.ts:30`). There is no
+  `chats.visual_novel` column — `visual_novel` appears in `src/db` only as
+  that enum value (corrected 2026-10-09: an earlier revision of this epic
+  cited a "migration 076" that dropped the column; no such migration
+  exists — migrations end at `046_mesh_outbox_chat_id.ts`).
 - ✅ Branching choices backend — `GET /api/chats/:id/vn-choices` and
   `POST /api/chats/:id/vn-choices/:choiceId/select`
   (`src/routes/chats/vn-choices.ts`, mounted in `src/routes/chats/index.ts:57`),
@@ -81,42 +87,58 @@ the file that proves it.
   validator**, not the Q&A interaction loop. Grep across `src/` returns
   only `qa-mode.ts` and `qa-mode.test.ts` — no chat view or route
   consumes it.
-- ⚠️ Choice cards UI — `src/frontend/vn/choice-cards.ts` + `choice-cards-render.ts`
-  render cards, load choices, and fire selection with location / split /
-  reunite consequences, all unit-tested. `render-scene.ts:218-222` creates a
-  `.vn-choices-container` div per scene, but **`initChoiceCards` is never
-  called** — the only production importer of the module is
-  `scene-renderer/controller.ts`, which calls `destroyChoiceCards()` and
-  nothing else. Cards never reach the DOM at runtime.
 - ⚠️ Choice consequences — `relationship_impact`, `mood_impact`, and
   `unlock_conditions` are columns on `vn_choices` and are parsed by
   `chat/service/vn-choices.ts`, but `getAccumulatedImpacts()` has no
   production consumer and no code writes to the relationship or mood
   systems. The `vn_choice_selections` table named by the ticket's
   choice-history AC does not exist.
-- ⚠️ Template engines — `src/frontend/vn/templates/template-engine.ts`
-  (variable resolution, inheritance, composites, localStorage CRUD,
-  JSON import/export) and `scene-templates/`, `transition-triggers.ts`,
-  `search.ts` are all built and tested. Grep shows importers limited to
-  their own modules and test files: no import from `scene-renderer/`,
-  `typewriter.ts`, `transition-engine.ts`, `chat.html`, or any chat view.
-  Templates are defined but never consumed at render time.
+- ⚠️ Template engine extras — `src/frontend/vn/templates/template-engine.ts`
+  (variable resolution, inheritance, localStorage CRUD, JSON import/export)
+  is now read at render time via `templates/apply.ts`, but only for the
+  `layout` / `imageScaling` / `transition` / `typewriterSpeed` subset of
+  `body`. Composite execution, conditional steps, step delays, variable
+  type validation, and the GM builder/gallery UI remain absent.
+  `transition-triggers.ts` (`evaluateTriggers`) still has no caller.
 
 ### Not started
 
-- ❌ Q&A interaction loop — no `vn/questions` route exists anywhere in
-  `src/`. `src/routes/vn-generate/index.ts` mounts only `storyRoutes`
-  and `choicesRoutes`. (The `questionsRoutes` in `src/routes/rpg/questions.ts`
-  is the RPG question surface at `/api/chats/:id/questions` — unrelated.)
 - ❌ Per-chat VN choice opt-in flag — no opt-in field exists. VN
   rendering has `gm_config.renderingOverride`, but choices themselves are
   always on. Grep for `vnChoices`/`choicesEnabled`/`pendingChoice` in
   `src/` returns only the `vnChoices` prompt-template section, not a flag.
 - ❌ Pending-choice send gate — nothing blocks free-text send while a
-  choice is unresolved.
+  choice or question is unresolved.
+- ❌ Choice / question consequences applied to character systems — both
+  services return impacts to the caller rather than writing to the
+  relationship or mood services.
 - ❌ Text-to-VN importer — no importer, parser, or segmentation code.
 - ❌ Dynamic image generation — deferred to `epic-comfyui-plugin`;
   `POST /api/chats/:id/vn/generate-image` does not exist.
+
+### Landed after this epic's first pass (branch `vn-mode-qa-loop`)
+
+Three previously-open gaps closed. Verified against `vn-mode-qa-loop` at
+`e87bd19c0` / `5e5af1d81`, not against this branch:
+
+- ✅ Choice cards mounted at render time — `render-scene.ts:232` calls
+  `initChoiceCards(choicesEl, …)` and `:233` `loadChoices()` on the
+  `.vn-choices-container` the renderer already built.
+- ✅ Q&A interaction loop built end-to-end — migration
+  `047_vn_questions.ts` (`vn_questions`), service
+  `src/chat/service/vn-questions.ts`, routes
+  `src/routes/chats/vn-questions.ts` (`GET …/vn-questions`,
+  `POST …/vn-questions/:questionId/answer`, both `checkChatAccess`-guarded),
+  generation in `src/routes/vn-generate/questions.ts`, and
+  `src/frontend/vn/question-cards.ts` + `question-cards-render.ts` wired at
+  `render-scene.ts:238-239`. Options are native `<button>` elements, so
+  tab/enter selection and focus order come from the platform.
+- ✅ Templates consumed at render time — `render-scene.ts:202` calls
+  `applyTemplateOverrides(baseSettings, scene)` from
+  `src/frontend/vn/templates/apply.ts`, which resolves the scene's
+  `templateId` against the built-in registry and merges the whitelisted
+  overrides. Fails closed to base settings on a thrown `resolveVariables`
+  or an out-of-union value.
 
 ## Opt-in + pending-choice gate (extension gap)
 
@@ -218,30 +240,37 @@ on 2026-10-09.
 
 ### Open — this is what the epic is carrying
 
-- [ ] Choice cards are mounted at render time: `initChoiceCards` is called on the
-      `.vn-choices-container` that `render-scene.ts:219` creates per scene.
-      Today `initChoiceCards` has **no production caller** — the only importer
-      is `scene-renderer/controller.ts`, which calls `destroyChoiceCards` only,
-      so the container stays empty at runtime.
-- [ ] Q&A interaction loop is fully wired end-to-end: a `vn/questions` route
-      is mounted alongside `storyRoutes`/`choicesRoutes`, a question card
-      renders in the VN scene, and an answer applies its consequence. Today
-      `qa-mode.ts` is a static validator with no route and no caller.
-- [ ] Templates are consumed at render time: `scene-renderer`, `typewriter`,
-      and `transition-engine` read from the template registry and apply
-      layout/transition/pacing from the resolved template. Today the engines
-      exist and are only imported by their own tests and sibling modules.
+- [x] Choice cards are mounted at render time — `render-scene.ts:232` calls
+      `initChoiceCards(choicesEl, …)` and `:233` `loadChoices()` on the
+      `.vn-choices-container` the renderer builds per scene. (Landed on
+      `vn-mode-qa-loop` at `e87bd19c0`.) Caveat: mounting is not
+      consequence application — see the last box in this section.
+- [x] Q&A interaction loop is wired end-to-end — `GET …/vn-questions` +
+      `POST …/vn-questions/:questionId/answer` (`src/routes/chats/vn-questions.ts`,
+      `checkChatAccess`-guarded) over the `vn_questions` table (migration
+      `047_vn_questions.ts`), generation in
+      `src/routes/vn-generate/questions.ts`, and a question card mounted at
+      `render-scene.ts:238-239` that lists and answers. Answering returns the
+      option's impacts to the caller. (Landed on `vn-mode-qa-loop` at
+      `e87bd19c0` / `5e5af1d81`.)
+- [x] Templates are consumed at render time — `render-scene.ts:202` calls
+      `applyTemplateOverrides` (`src/frontend/vn/templates/apply.ts`), which
+      resolves the scene's `templateId` against the built-in registry and
+      merges `layout` / `imageScaling` / `transition` / `typewriterSpeed`.
+      (Landed on `vn-mode-qa-loop` at `e87bd19c0`.) Partial: no composites,
+      no conditional steps, no trigger evaluation at render time.
 - [ ] Per-chat VN choice opt-in flag exists and defaults to off, so a chat
       that has not opted in never shows choice UI. No such field exists today.
 - [ ] Send is blocked while a choice is pending, until the player resolves or
       explicitly dismisses it. Nothing gates free-text send on a pending
-      choice today.
+      choice today — and now also not on a pending question.
 - [ ] Choice consequences reach the systems they claim to affect.
       `relationship_impact` / `mood_impact` / `unlock_conditions` are parsed off
       the row and summed by `getAccumulatedImpacts()`, which has no production
-      consumer; nothing writes to the relationship or mood systems. There is
-      no `vn_choice_selections` table — the choice-history AC names one that was
-      never created.
+      consumer; nothing writes to the relationship or mood systems. The same
+      holds for the question side: `answerVnQuestion` returns impacts rather
+      than applying them. There is no `vn_choice_selections` table — the
+      choice-history AC names one that was never created.
 
 ### Deferred — tracked, not blocking
 
@@ -256,11 +285,11 @@ on 2026-10-09.
 | Ticket | Status | One-line state |
 | ------ | ------ | -------------- |
 | `TASK-visual-novel-mode.md` | Done | Base renderer, chat-view wiring, settings — verified in `src/frontend/vn/scene-renderer/` and `src/views/chat.html` |
-| `TASK-vn-branching-choices.md` | In Progress | Routes, table, and card UI all exist, but `initChoiceCards` is never called and choice impacts never reach the relationship/mood systems |
+| `TASK-vn-branching-choices.md` | In Progress | Routes, table, and card UI all exist and the cards are now mounted at render time (`render-scene.ts:232`); choice impacts still never reach the relationship/mood systems and there is no choice-history table |
 | `TASK-vn-dynamic-generation.md` | In Progress | Story generation shipped and mounted; all image-generation ACs deferred to `epic-comfyui-plugin` |
-| `TASK-vn-qa-mode.md` | In Progress | QA validator shipped (but callerless); Q&A interaction loop has no code at all |
-| `TASK-vn-template-actions.md` | In Progress | Scene/dialogue template data + triggers built; renderer never reads the registry |
-| `TASK-vn-scene-template-system.md` | In Progress | Template engine shipped (variables, inheritance, composites, CRUD); no renderer wiring, no GM builder UI |
+| `TASK-vn-qa-mode.md` | In Progress | Q&A interaction loop built end-to-end on `vn-mode-qa-loop` (migration 047, service, guarded routes, `question-cards.ts` mounted at `render-scene.ts:238`); consequences are returned, not applied, and the static validator is still callerless |
+| `TASK-vn-template-actions.md` | In Progress | Scene templates are now applied at render time via `templates/apply.ts`; dialogue templates and `evaluateTriggers` still have no consumer, and there is no picker UI |
+| `TASK-vn-scene-template-system.md` | In Progress | Template engine shipped and its render-time subset is wired; composite execution, conditional steps, and the GM builder UI remain absent |
 | `TASK-vn-choice-opt-in.md` | Not Started | No per-chat opt-in flag, no pending-choice send gate |
 | `TASK-text-to-visual-novel-importer.md` | Not Started | No importer, parser, or segmentation code |
 
