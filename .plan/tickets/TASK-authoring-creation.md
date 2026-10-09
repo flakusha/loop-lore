@@ -37,6 +37,7 @@ simulator) plus one verify-only item (community template share, already Done und
 - [ ] Documentation updated
 
 **Resolved:** 2026-10-08 registry-driven close: git issue eb42411 (registry tip: a1ddf8acc Konstantin Fedotov Auto-closed: appended .md marker marks TASK-AUTHORING-CREATION done)
+
 ### Procedural asset pipeline glue
 
 - [x] `src/generation/asset-pipeline.ts` exists and extends auto-gen cascade
