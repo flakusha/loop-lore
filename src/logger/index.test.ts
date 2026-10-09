@@ -69,7 +69,7 @@ describe("logger coverage", () => {
   });
 
   it("getChildLogger cache is invalidated when root is replaced", () => {
-    const root1 = createLogger({ level: "info", },);
+    createLogger({ level: "info", },);
     const child1 = getChildLogger("module-a",);
     expect(child1,).not.toBeNull();
     // Replace root — cache should rebuild on next call
