@@ -12,6 +12,7 @@
  */
 import { Elysia, } from "elysia";
 import { choicesRoutes, } from "./choices";
+import { questionsRoutes, } from "./questions";
 import { storyRoutes, } from "./story";
 import type { VnGenerateRouteOpts, } from "./types";
 
@@ -25,5 +26,6 @@ export type { VnGenerateRouteOpts, } from "./types";
 export function vnGenerateRoutes(opts: VnGenerateRouteOpts, prefix = "/api",) {
   return new Elysia({ prefix: `${prefix}/chats`, },)
     .use(storyRoutes(opts,),)
-    .use(choicesRoutes(opts,),);
+    .use(choicesRoutes(opts,),)
+    .use(questionsRoutes(opts,),);
 }

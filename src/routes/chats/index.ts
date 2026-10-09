@@ -19,6 +19,7 @@ import { templatesRoutes, } from "./templates";
 import { turnOrderRoutes, } from "./turn-order";
 import type { HandlerOpts, } from "./types";
 import { vnChoiceRoutes, } from "./vn-choices";
+import { vnQuestionRoutes, } from "./vn-questions";
 
 /**
  * @param opts
@@ -55,6 +56,7 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(partySplitRoutes(opts, prefix,),)
       .use(chatBranchRoutes(opts, prefix,),)
       .use(vnChoiceRoutes(opts, prefix,),)
+      .use(vnQuestionRoutes(opts, prefix,),)
       .use(extrasRoutes(opts, prefix,),)
       .use(generateEntityRoutes(opts, prefix,),)
       .use(entitySuggestionRoutes(opts, prefix,),)

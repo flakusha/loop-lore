@@ -3196,3 +3196,21 @@ export const PlanLinksSchema = t.Object({
   relation: t.String(),
   created_at: t.Optional(t.String(),),
 },);
+
+// ── vn_questions ────────────────────────────────────────────
+export const VnQuestionsSchema = t.Object({
+  chat_id: t.String(),
+  scene_index: t.Number(),
+  question_text: t.String(),
+  created_at: t.String(),
+  question_type: t.Optional(t.String(),),
+  speaker_id: t.Optional(t.String(),),
+  options: t.Optional(t.String(),),
+  next_scene_id: t.Optional(t.String(),),
+  consequences: t.Optional(t.String(),),
+  relationship_impact: t.Optional(t.String(),),
+  mood_impact: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  selected_option_id: t.Optional(t.String(),),
+  answered_at: t.Optional(t.String(),),
+},);

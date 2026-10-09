@@ -54,4 +54,16 @@ describe("vnGenerateRoutes", () => {
 
     expect(res.status,).toBe(401,);
   });
+
+  it("POST /api/chats/:chatId/vn/generate-questions requires auth", async () => {
+    const res = await app.handle(
+      new Request("http://localhost/api/chats/test-chat-id/vn/generate-questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ sceneIndex: 0, count: 2, },),
+      },),
+    );
+
+    expect(res.status,).toBe(401,);
+  });
 });

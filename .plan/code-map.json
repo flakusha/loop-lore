@@ -8703,6 +8703,12 @@
       "source": ".plan/tickets/TASK-chat-feature-settings-templates-compat-matrix.md"
     }
   ],
+  "src/chat/service/vn-questions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
   "src/chat/service/write.test.ts": [
     {
       "kind": "ticket",
@@ -14519,6 +14525,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-sqlite-fk-pragma-no-op-in-migration-047-rebuild.md"
+    }
+  ],
+  "src/db/migrations/047_vn_questions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
   "src/db/migrations/050_lorebook_activation.ts": [
@@ -21741,6 +21753,18 @@
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
+  "src/frontend/vn/question-cards": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
+  "src/frontend/vn/question-cards.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
   "src/frontend/vn/scene-renderer.ts": [
     {
       "kind": "ticket",
@@ -21831,6 +21855,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
+    }
+  ],
+  "src/frontend/vn/templates/apply.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
   "src/frontend/vn/templates/dialogue-templates.ts": [
@@ -29409,6 +29439,10 @@
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/chat/text-effects-overlays.md"
     },
@@ -32461,6 +32495,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-branching-choices.md"
+    }
+  ],
+  "src/routes/chats/vn-questions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
   "src/routes/commands/index.test.ts": [
@@ -35995,10 +36035,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-dynamic-generation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
   "src/routes/vn-generate/questions.ts": [
