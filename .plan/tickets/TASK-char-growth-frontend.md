@@ -22,4 +22,4 @@ Player card "Character Journey" partial (`src/views/partials/character-journey.h
 - [ ] Author editor: growth_mode radio, llm_assist toggle, arc dropdown, growth log table with confirm/reject
 - [ ] Alpine.js component invokes the API surface (saveMode, saveArc, confirmEntry, rejectEntry)
 
-**Resolved:** 2026-10-10 registry-driven close: git issue cd1388f (registry tip: 150bc9a70 Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-09 registry-driven close: git issue cd1388f (registry tip: 150bc9a70 Konstantin Fedotov Close issue)

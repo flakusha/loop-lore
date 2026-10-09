@@ -6,6 +6,7 @@
 **Overview:** (see sections below)
 
 **Status:** Not Started
+**Status Note:** verified 2026-10-09 — genuinely not started: the character rich fields are still types-only (`src/characters/spec/character-richer-fields.ts`, imported by no module outside `spec/`), none of the ten `TASK-*` work items has code, and the world-side inputs this epic would consume are equally absent (no faction-standing schema, no world state machine, no layered weather, no market dynamics, no dialogue conditions in `src/`); only the two already-shared read-side pieces exist (`src/assistant/lore/audience.ts`, `src/battle/weather-integration/`).
 **Priority:** High
 **Effort:** Large (composite)
 **Type:** Feature Epic
@@ -25,20 +26,45 @@ consumed by both character logic and world systems, so world events shape
 characters and character state shapes world resolution — the precondition for
 emergent behavior.
 
-## Status Context (reviewed 2026-09-21)
+## Implemented (verified 2026-10-09)
 
-- Character side: rich fields are types-only (`AbilityScore`, `Skill`,
-  `EquipmentSlot`, `Vital`, `Motivation`, `Condition`, `SpeechPatterns`,
-  `languages`, `alignment` on `CanonicalCharacter`) — no DB columns, no
-  validator/API handling, no prompt section, no FE editors. Implemented
-  runtime counterparts: `Relationship` (relationships-service), character
-  `Skill` (`src/rpg/skills/service`), combat conditions and equipment
-  plumbing (`src/rpg/service/character-stats.ts`, `src/rpg/combat/`).
-- World side: lore `audience_scope` gating implemented
-  (`src/assistant/lore/audience.ts`); battle-scoped weather/hazard modifiers
-  implemented (`src/battle/weather-integration/`); faction standing schema,
-  layered weather, world state machine (War/Festival/Plague/Famine),
-  biome hazards, market dynamics, and dialogue conditions are planning-only.
+Nothing in this epic has landed, but three building blocks it depends on are real:
+
+- **Character rich field types** — `src/characters/spec/character-richer-fields.ts`
+  declares `AbilityScore`, `Skill`, `EquipmentSlot`, `Vital`, `Motivation`,
+  `Condition`, `SpeechPatterns`, `PersonalityTrait`, `AppearanceDetails`, `Tag`,
+  inventory item shapes. Imported only by `src/characters/spec/character.ts:22` — no
+  DB columns, no validator branch, no prompt section, no frontend editor consumes them.
+- **Read-side world inputs already shared** — lore `audience_scope` gating
+  (`src/assistant/lore/audience.ts`, see `epic-character-npc-lore-access.md`) and
+  battle-scoped weather/hazard modifiers (`src/battle/weather-integration/`).
+- **Runtime counterparts that exist for other epics** — `Relationship`
+  (relationships-service), character `Skill` (`src/rpg/skills/service`), combat
+  conditions and equipment plumbing (`src/rpg/service/character-stats.ts`,
+  `src/rpg/combat.ts`).
+
+## Current State
+
+| Surface | Status | Where |
+| ------- | ------ | ----- |
+| Character rich fields (`AbilityScore`, `Vital`, `Motivation`, `Condition`, `SpeechPatterns`, …) | Types only | `src/characters/spec/character-richer-fields.ts` (imported solely by `spec/character.ts:22`) |
+| DB columns / validator / prompt / FE editors for those fields | Not shipped | no `abilities`/`vitals`/`motivations` columns in `src/db/` |
+| Lore `audience_scope` gating (read-side input) | Shipped | `src/assistant/lore/audience.ts` |
+| Battle weather/hazard modifiers (read-side input) | Shipped | `src/battle/weather-integration/` |
+| Faction standing schema, layered weather, world state machine, biome hazards, market dynamics, dialogue conditions | Not shipped | no matches anywhere in `src/` |
+| All ten `TASK-*` work items below | Not started | no code |
+
+## Unticketed Gaps
+
+The epic's first work item — "Shared domain model promotion" — has no ticket of its
+own beyond `TASK-shared-character-domain-models`, yet it is the prerequisite for the
+other nine: until `AbilityScore` / `Vital` / `Motivation` / `Condition` are promoted out
+of `src/characters/spec/`, every downstream item would import a type that nothing
+persists, so a write-back integration would silently drop data. There is also no
+planned migration for the rich fields themselves — `Non-Goals` defers "full DB
+persistence" to the stat-allocation tickets under `epic-character-core-system.md`, but
+those cover only stat allocation, not vitals/equipment/motivation storage. Both are
+sequencing gaps without a ticket; the ten work items below carry the feature scope.
 
 ## Design Principles
 
@@ -52,20 +78,38 @@ emergent behavior.
    induced condition, standing-shifted relationship) must surface in prompt
    assembly so the LLM narrates it.
 
-## Work Items
+## Linked Tasks
 
-Integration tickets (new, this epic):
+Integration tickets for this epic — all ten ticket files read **Not Started**
+(statuses read 2026-10-09); no code exists for any of them.
 
-- [ ] Shared domain model promotion. → TASK-shared-character-domain-models
-- [ ] Biome hazards × skill countermeasures. → TASK-skill-biome-hazard-countermeasures
-- [ ] Skill-check slash commands (dice × Skill × AbilityScore). → TASK-skill-check-slash-commands
-- [ ] Weather layers → conditions + vitals drain + equipment protection. → TASK-weather-conditions-vitals-bridge
-- [ ] World state machine as motivation/goal context. → TASK-world-state-motivation-context
-- [ ] Faction membership → relationships + standing propagation. → TASK-faction-membership-relationship-propagation
-- [ ] Language-gated lore visibility. → TASK-language-gated-lore-visibility
-- [ ] Equipment/inventory ↔ market demand feedback. → TASK-equipment-market-demand-feedback
-- [ ] Condition-driven NPC behavior. → TASK-condition-driven-npc-behavior
-- [ ] Alignment dialogue gating + context-aware speech formality. → TASK-alignment-speech-social-context
+- `TASK-shared-character-domain-models.md` (Not Started) — promote the rich field types out of `src/characters/spec/`
+- `TASK-skill-biome-hazard-countermeasures.md` (Not Started) — biome hazards × skill countermeasures
+- `TASK-skill-check-slash-commands.md` (Not Started) — skill checks (dice × Skill × AbilityScore)
+- `TASK-weather-conditions-vitals-bridge.md` (Not Started) — weather layers → conditions + vitals drain + equipment protection
+- `TASK-world-state-motivation-context.md` (Not Started) — world state machine as motivation/goal context
+- `TASK-faction-membership-relationship-propagation.md` (Not Started) — faction membership → relationships + standing
+- `TASK-language-gated-lore-visibility.md` (Not Started) — language-gated lore visibility
+- `TASK-equipment-market-demand-feedback.md` (Not Started) — equipment/inventory ↔ market demand
+- `TASK-condition-driven-npc-behavior.md` (Not Started) — condition-driven NPC behaviour
+- `TASK-alignment-speech-social-context.md` (Not Started) — alignment dialogue gating + speech formality
+
+## Files
+
+Implemented (verified 2026-10-09) — inputs only, none of them is this epic's output:
+
+- `src/characters/spec/character-richer-fields.ts` — the rich field type definitions
+- `src/characters/spec/character.ts:22` — sole importer of those types
+- `src/assistant/lore/audience.ts` — lore audience gating consumed for language/identity-gated visibility
+- `src/battle/weather-integration/` — battle-scoped weather/hazard modifiers
+- `src/rpg/service/character-stats.ts`, `src/rpg/combat.ts` — runtime stat/condition plumbing
+
+Planned (do not exist yet):
+
+- the promoted shared domain module (this epic proposes `src/domain/` if circular imports demand it)
+- DB columns, validator handling, prompt section and frontend editors for the rich fields
+- faction standing schema, layered weather, world state machine, biome hazard rules,
+  market dynamics and dialogue conditions — all still planning-only
 
 Already ticketed elsewhere (referenced, not duplicated here):
 

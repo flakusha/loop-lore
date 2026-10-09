@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** crafting DB layer + memory injection + chat infrastructure merged; Professions/Stations/Quality services + UI pending
+**Status Note:** crafting DB layer (12 tables in `src/db/schema-crafting.ts`), Recipes/Stations/Process/Orders services, and the crafting HTTP surface (`src/routes/crafting/`, `src/routes/rpg/crafting-*.ts`) are shipped; memory injection + chat infrastructure merged; ProfessionsService/QualityService/GatheringService/DiscoveryService and all crafting UI are still pending (verified 2026-10-09)
 **Priority:** High
 **Effort:** Very High
 **Issue:** `328843b`
@@ -224,15 +224,59 @@ Multi-system epic combining:
 - **Memory System** — Decay, promotion, provision, trust
 - **Prompt Assembly** — Memory/event injection into context
 
+## Implemented (verified 2026-10-09)
+
+**Tables:**
+
+- `crafting_attempts`, `crafting_orders`, `crafting_recipe_materials`, `crafting_recipes`, `crafting_station_defs`, `crafting_station_instances`, `gathering_node_defs`, `gathering_node_instances`, `gathering_node_materials`, `professions`, `profession_specializations`, `recipe_discoveries` — `src/db/schema-crafting.ts`; created in `src/db/migrations/001_init.ts`, audit columns from `src/db/migrations/033_audit_columns_underdocumented_tables.ts`
+- Enums (disciplines, `QualityLevel` Poor→Legendary, `GatheringNodeType`, `DiscoveryMethod`) — `src/db/enums-crafting.ts`
+
+**Modules:**
+
+- `src/rpg/crafting/process.ts` — `CraftingProcessService`: attempt → consume materials → roll → output
+- `src/rpg/crafting/stations.ts` — `StationsService`: station def + instance CRUD
+- `src/rpg/crafting/orders.ts` — `CraftingOrderService`: player commissions (accept/fulfil/cancel) settled through `TradeService`
+- `src/rpg/crafting/recipes/` — `RecipesService` (`index.ts`) over `crud.ts` / `materials.ts` / `update.ts`
+- `src/rpg/crafting/index.ts` still TODO-comments `ProfessionsService`, `QualityService`, `GatheringService`, `DiscoveryService` — none implemented
+
+**Shipped:**
+
+- `POST /api/worlds/:worldId/craft` + craft-attempt reads — `src/routes/crafting/attempt.ts`
+- `POST|GET /api/worlds/:worldId/crafting-orders` + accept/fulfil/cancel — `src/routes/crafting/orders.ts`
+- recipes CRUD + material replace — `src/routes/crafting/recipes.ts`; mounted in `src/routes/v1/actors-surface.ts`
+- station defs/instances CRUD — `src/routes/crafting/station-defs.ts` + `station-instances.ts` (barrel `src/routes/crafting/stations.ts`)
+- `POST /api/rpg/craft` and `/api/rpg/crafting/stations` — `src/routes/rpg/crafting-execution.ts` + `crafting-stations.ts` + `crafting-station-instances.ts`, mounted in `src/routes/rpg/index.ts`
+
+## Current State
+
+| Surface | Status | Where |
+| ------- | ------ | ----- |
+| Recipes (CRUD + materials) | Shipped | `src/rpg/crafting/recipes/`, `src/routes/crafting/recipes.ts` |
+| Stations (defs + instances) | Shipped | `src/rpg/crafting/stations.ts`, `src/routes/crafting/stations.ts` |
+| Craft attempts (process) | Shipped | `src/rpg/crafting/process.ts`, `src/routes/crafting/attempt.ts`, `src/routes/rpg/crafting-execution.ts` |
+| Crafting orders (commissions) | Shipped | `src/rpg/crafting/orders.ts`, `src/routes/crafting/orders.ts` |
+| Profession progression | Schema only | `professions` + `profession_specializations` tables; no `ProfessionsService` (`src/rpg/crafting/index.ts` TODO) |
+| Quality (6-tier) | Enum only | `QualityLevel` in `src/db/enums-crafting.ts`; no `QualityService` |
+| Gathering | Schema only | `gathering_node_*` tables; no `GatheringService`, no route |
+| Recipe discovery | Dead schema | `recipe_discoveries` has no non-test consumer (schema + `src/test-utils/insert-helpers.ts` only) |
+| Crafting UI | Not Started | no crafting surface in `src/frontend/` (only an NPC stat label in `src/frontend/alpine/npc-mock.ts`) |
+
 ## Files
 
 ### Crafting
 
-- `src/rpg/crafting/` — crafting system root
-- `src/db/schema-crafting.ts` — crafting tables
+Implemented (verified 2026-10-09):
+
+- `src/rpg/crafting/` — crafting system root (`process.ts`, `stations.ts`, `orders.ts`, `recipes/`)
+- `src/db/schema-crafting.ts` — crafting/gathering/profession tables
 - `src/db/enums-crafting.ts` — crafting enums
-- `src/db/migrations/026_crafting_professions.ts` — migration
-- `src/routes/crafting.ts` — crafting API
+- `src/db/migrations/001_init.ts` — creates the crafting tables
+- `src/routes/crafting/` — attempt/orders/recipes/stations API
+- `src/routes/rpg/crafting-execution.ts`, `src/routes/rpg/crafting-stations.ts`, `src/routes/rpg/crafting-station-instances.ts` — rpg-prefix crafting API
+
+Planned (do not exist yet):
+
+- `src/rpg/crafting/professions.ts`, `src/rpg/crafting/quality.ts`, `src/rpg/crafting/gathering.ts`, `src/rpg/crafting/discovery.ts` — remaining services
 
 ### Memory
 
@@ -251,29 +295,55 @@ Multi-system epic combining:
 - `src/chat/random-events.ts` — event injection (new)
 - `src/chat/feature-permissions.ts` — UI gating (new)
 
+## Unticketed Gaps
+
+- `recipe_discoveries` is schema-only: its only consumers are `src/db/schema-crafting.ts`,
+  `src/validation/db-schemas.ts`, and `src/test-utils/insert-helpers.ts` — no service or route
+  reads or writes it. `DiscoveryService` sits nominally inside
+  `TASK-complete-crafting-system-services`, but nothing owns the orphaned table itself.
+- The four `TASK-frontend-crafting-*-ui` tickets plus `TASK-implement-crafting-ui` cover
+  attempts/orders/recipes/stations UI; no ticket tracks a professions/progression UI.
+
+## Related Epics
+
+- `epic-items-economy-crafting.md` — economy-side crafting consumption
+- `epic-skills-professions-config.md` — professions config + frontend
+- `epic-item-systems-unification.md` — close-out that landed the crafting routes
+- `epic-rpg-mechanics.md` — stats/skill checks feeding crafting rolls
+
 ## Linked Tasks
 
 ### Done
 
-- TASK-context-cut-memory-promotion ✅
-- TASK-related-memory-event-injection-hooks ✅
-- TASK-repetition-hallucination-guards ✅
-- TASK-local-random-event-generator ✅
-- TASK-character-memory-injection ✅
-- TASK-character-memory-injection-privacy ✅
-- TASK-memory-selection-ui ✅
+- `TASK-context-cut-memory-promotion.md` (Done)
+- `TASK-related-memory-event-injection-hooks.md` (Done)
+- `TASK-repetition-hallucination-guards.md` (Done)
+- `TASK-local-random-event-generator.md` (Done)
+- `TASK-character-memory-injection.md` (Done)
+- `TASK-character-memory-injection-privacy.md` (Done)
+- `TASK-memory-selection-ui.md` (Done)
+- `TASK-rpg-crafting-professions.md` (Done — recipes/stations/process shipped in `src/rpg/crafting/`; its professions/gathering scope is not)
+- `TASK-crafting-stations-execution.md` (Done — `src/routes/rpg/crafting-execution.ts`)
+- `TASK-wire-crafting-routes.md` (Done — `src/routes/crafting/` mounted in `src/routes/v1/actors-surface.ts`)
+- `FEAT-item-crafting-system.md` (Done)
 
 ### In Progress / Open
 
-- TASK-crafting-professions.md
-- TASK-rpg-crafting-professions.md
-- TASK-crafting-system.md
-- TASK-memory-decay-logic.md
-- TASK-memory-promotion-pipeline.md
-- TASK-memory-provision-wiring.md
-- TASK-memory-trust-modifier-wiring.md
-- TASK-chat-route-extraction.md
-- TASK-chat-context-feature-permissions.md
+- `TASK-crafting-professions.md` (open)
+- `TASK-crafting-system.md` (open)
+- `TASK-crafting-rare-discovery.md` (open)
+- `TASK-economy-crafting-slash-interactions.md` (Not Started)
+- `TASK-memory-decay-logic.md` (open)
+- `TASK-memory-promotion-pipeline.md` (open)
+- `TASK-memory-provision-wiring.md` (open)
+- `TASK-memory-trust-modifier-wiring.md` (open)
+- `TASK-chat-route-extraction.md` (open)
+- `TASK-chat-context-feature-permissions.md` (open)
+- `TASK-frontend-crafting-attempts-ui.md` (open)
+- `TASK-frontend-crafting-orders-ui.md` (open)
+- `TASK-frontend-crafting-recipes-ui.md` (open)
+- `TASK-frontend-crafting-stations-ui.md` (open)
+- `TASK-implement-crafting-ui.md` (open)
 
 ### New (from lint/merge review)
 
@@ -285,8 +355,8 @@ Multi-system epic combining:
 - TASK-wire-trust-modifier-to-relationships — trustModifier never set
 - TASK-extract-chat-route-business-logic — chats.ts 785L, messages.ts 910L
 - TASK-implement-ui-feature-permissions — no UI-level feature gating
-- TASK-complete-crafting-system-services — 6 services missing (professions, stations, quality, process, gathering, discovery)
-- TASK-implement-crafting-ui — no crafting UI exists
+- `TASK-complete-crafting-system-services.md` (open — summary stale: claims 6 services missing, but `StationsService` + `CraftingProcessService` shipped; remaining are ProfessionsService, QualityService, GatheringService, DiscoveryService)
+- `TASK-implement-crafting-ui.md` (open — claim still accurate: no crafting UI exists)
 
 ### Postponed (Moderation)
 
@@ -296,6 +366,10 @@ Multi-system epic combining:
 
 ## Wiring & Resolution Plan (2026-08-08 audit)
 
-`RecipesService` (`src/rpg/crafting/recipes/`) is built; the remaining 5 crafting services
-(professions, stations, quality, process, gathering) + wiring are tracked by existing tickets
-`TASK-complete-crafting-system-services` and `TASK-wire-crafting-routes` — no new ticket needed.
+Update (verified 2026-10-09): `RecipesService`, `StationsService`, `CraftingProcessService`, and
+`CraftingOrderService` are built and wired — `src/routes/crafting/` (mounted in
+`src/routes/v1/actors-surface.ts`) plus `src/routes/rpg/crafting-execution.ts` /
+`crafting-stations.ts` / `crafting-station-instances.ts` (mounted in `src/routes/rpg/index.ts`).
+`TASK-wire-crafting-routes` and `TASK-crafting-stations-execution` are Done. The remaining 4
+services (professions, quality, gathering, discovery) stay tracked by
+`TASK-complete-crafting-system-services` — whose summary still lists all 6 as missing — no new ticket needed.

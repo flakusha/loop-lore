@@ -74,9 +74,10 @@ Characters today are authored as fixed snapshots (`CanonicalCharacter` at
   skill gains) cannot be distinguished from baseline skills.
 - **Internal traits already have a prompt section but no growth surface.**
   `src/assistant/prompt/sections/internal-traits.ts` already exists and is
-  wired in `src/assistant/prompt/registry.ts:46` between `actorHeaderSection`
-  and `loreSection`. The internal-traits epic (`epic-character-internal-traits.md`)
-  is itself 🟡 Draft — its `toPublicCard()` transform is not yet implemented.
+  wired in `src/assistant/prompt/registry.ts:55` between `outfitContextSection`
+  and `actorGrowthSection`. The internal-traits epic
+  (`epic-character-internal-traits.md`) is **In Progress** — its
+  `toPublicCard()` transform is still not implemented (verified 2026-10-09).
   Growth shares the player's redaction boundary but MUST NOT block on it;
   growth defines its own `redactForPlayerCard()` helper until internal-traits
   lands and they unify.
@@ -369,10 +370,10 @@ export interface GrowthLogEntry {
 - `epic-character-core-system.md` — base character model
   (`CanonicalCharacter`).
 - `epic-character-internal-traits.md` — internal traits + aspirations.
-  Player-card redaction is **NOT** shared yet (internal-traits is Draft;
-  `toPublicCard()` not implemented). Growth ships its own
-  `redactForPlayerCard()`; merge into a shared `toPublicCard()` once
-  internal-traits lands (Q7 follow-on).
+  Player-card redaction is **NOT** shared yet (internal-traits is In
+  Progress; `toPublicCard()` still unimplemented, verified 2026-10-09).
+  Growth ships its own `redactForPlayerCard()`; merge into a shared
+  `toPublicCard()` once internal-traits lands (Q7 follow-on).
 - `epic-character-spec.md` — validation modes (strict / relaxed), review
   workflow role model.
 - `epic-character-world-setup.md` — per-world setup.

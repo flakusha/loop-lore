@@ -22,4 +22,4 @@ Add `src/characters/spec/growth.ts` (GrowthMode, ArcStage, GrowthAxis, GrowthEve
 - [ ] `CanonicalCharacter.growth_mode` defaults to `'dynamic'` when absent
 - [ ] `CanonicalCharacter.llm_assist_enabled` defaults to `false` when absent
 
-**Resolved:** 2026-10-10 registry-driven close: git issue 856006e (registry tip: 014524e10 Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-09 registry-driven close: git issue 856006e (registry tip: 014524e10 Konstantin Fedotov Close issue)

@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** reputation is canonical and shipped — `src/schemas/reputation.ts` (`ReputationScore`, tiers, `applyReputationChange`) is consumed by NSFW seduction tiers, encounter completion, assistant commands, and battle surrender; faction machinery (tables, CRUD, standing, politics) has no backend and the faction UI is mock-only (`src/frontend/alpine/npc-faction-mock.ts`); `.plan/tickets/index.json` marks `FEAT-faction-system-backend` Done although no faction backend exists (verified 2026-10-09)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -42,25 +42,62 @@ social layer that predates engines (forum-RP reputation/consent systems, §4.3).
 | Task | Ticket | Status |
 | ---- | ------ | ------ |
 | Faction standing schema + migration | `TASK-faction-standing-schema.md` | open |
-| Faction CRUD + world linkage | `TASK-faction-relations-list-and-standing.md` | Done |
+| Faction CRUD + world linkage | `TASK-faction-relations-list-and-standing.md` | Done (UI mock only — no backend) |
 | Standing computation on choice events | `TASK-faction-standing-and-reputation-drift-integration.md` | Not Started |
 | Quest / NPC gating by standing | (covered in quest/encounter epic) | Not Started |
 | World-state persistence + archival | `TASK-faction-politics-coups-and-expansion-engine.md` | Not Started |
 | Faction leader + cadre generation | `TASK-faction-leaders-and-cadre-generation.md` | Not Started |
 
+## Implemented (verified 2026-10-09)
+
+**Tables:**
+
+- None. Faction standing has no table; reputation deltas persist in the existing
+  `status_effect` rows (`category: "reputation"`, written by `src/rpg/reputation.ts`).
+
+**Modules:**
+
+- `src/schemas/reputation.ts` — `ReputationScore`, `REPUTATION_TIERS` (hostile → devoted),
+  `REPUTATION_TIER_ORDER`, `getReputationTier`, `clampReputation`, `createReputationScore`,
+  `applyReputationChange`, `applyReputationDecay`; re-exported from `src/schemas/index.ts`
+- `src/rpg/reputation.ts` — NSFW `ReputationService`: applies deltas and replays them through
+  the canonical calculator; per design there is no NSFW-private reputation table
+
+**Shipped:**
+
+- Tier-gated seduction prerequisites — `src/nsfw/seduction-prerequisites.ts` via
+  `src/nsfw/social-integration.ts`; wired in `src/routes/nsfw/seduction.ts` (`reputationTier` param)
+- Encounter reputation legs — `src/rpg/encounters/service/reputation-leg.ts`
+- Assistant interaction commands — `src/assistant/commands/interaction.ts` (`getReputationTier`)
+- Battle surrender weighs attacker reputation as a plain number —
+  `src/battle/social-integration/surrender.ts` (`calculateSurrenderChance`)
+- Integration-registry declarations only — `src/rpg/integration-registry/edges/faction.ts`
+  (`FACTION_EDGES`; the `faction.standing_changed` event has no emitter)
+
 ## Current State
 
 | Surface | Status | Where |
-| ------ | ------ | ----- |
-| `ReputationScore` shared schema | Shipped | `src/schemas/reputation.ts` — consumed by Social, NSFW, Crime, Narrative |
-| Faction CRUD + relations list | Shipped | `TASK-faction-relations-list-and-standing.md` (Done) |
-| Faction standing schema + migration | Not Started | `TASK-faction-standing-schema.md` |
+| ------- | ------ | ----- |
+| `ReputationScore` shared schema | Shipped | `src/schemas/reputation.ts`; re-exported in `src/schemas/index.ts` |
+| Reputation persistence + replay (NSFW) | Shipped | `src/rpg/reputation.ts` — `status_effect` rows (`category: "reputation"`) replayed through the canonical calculator |
+| Reputation consumers | Shipped | `src/nsfw/social-integration.ts` + `src/nsfw/seduction-prerequisites.ts`, `src/routes/nsfw/seduction.ts`, `src/rpg/encounters/service/reputation-leg.ts`, `src/assistant/commands/interaction.ts`, `src/battle/social-integration/surrender.ts` (numeric input) |
+| Faction CRUD + relations list | UI mock only | `src/frontend/alpine/npc.ts` + `src/frontend/alpine/npc-faction-mock.ts` (`MOCK_FACTIONS`); `TASK-faction-relations-list-and-standing.md` (Done — "Mock data — no backend dependency") |
+| Faction tables / routes / services | Not Started | `rg -i faction src/db src/routes` → 0 hits; no `src/factions/`, no `src/rpg/faction/` |
+| Faction standing schema + migration | Not Started | `TASK-faction-standing-schema.md` (open) |
 | `FactionStanding` type | Not Started | declared in Shared Data Contracts below; no `src/rpg/faction/` module |
 | Standing drift on choice events | Not Started | — |
 | Faction politics engine | Not Started | `src/factions/politics.ts` does not exist |
 | Faction leaders / cadre | Not Started | — |
 
-> There is no `src/rpg/faction/` directory. `src/schemas/reputation.ts` is the one
+> **Discrepancy (recorded, not resolved here):** `.plan/tickets/index.json` marks
+> `FEAT-FACTION-SYSTEM-BACKEND` (epic: `epic-faction-reputation`, git issue `1ce0576`)
+> as **Done**, and `.plan/tickets/FEAT-faction-system-backend.md` closed it on 2026-09-19
+> as a "duplicate" covered by `src/schemas/reputation.ts`. But that ticket's scope
+> (`src/factions/` + relations + standings) does not exist in `src/` — only the reputation
+> schema it cited shipped. `TASK-rpg-faction-reputation.md` is likewise marked Done while
+> its faction standing/quests/gated-blueprints scope has no implementation. Faction
+> machinery remains unbuilt; those two ticket statuses overstate the code.
+> There is no `src/rpg/faction/` directory; `src/schemas/reputation.ts` is the one
 > shipped artifact, and it is a shared contract rather than faction machinery.
 > The AC file cited by `TASK-faction-politics-coups-and-expansion-engine.md`
 > (`src/factions/politics.ts` exporting `tickFactionPolitics`) is planned, not present.
@@ -106,12 +143,17 @@ social layer that predates engines (forum-RP reputation/consent systems, §4.3).
 
 ---
 
-## Related
+## Related Epics
 
-`epic-worlds-extension.md`, `epic-social-interaction.md`,
-`epic-crafting-professions.md` (reputation-gated blueprints), `epic-rpg-mechanics.md`,
-`epic-emergent-narrative-design.md`, `epic-economy-trading.md`, `epic-stealth-crime.md`,
-`epic-world-locations.md`, `epic-character-core-system.md`
+- `epic-worlds-extension.md` — world state persistence
+- `epic-social-interaction.md` — reputation schema and relationship state
+- `epic-crafting-professions.md` — reputation-gated blueprints
+- `epic-rpg-mechanics.md` — stats and quest requirements
+- `epic-emergent-narrative-design.md` — persistent consequences
+- `epic-economy-trading.md` — faction currency and trade pacts
+- `epic-stealth-crime.md` — criminal factions and law reputation
+- `epic-world-locations.md` — territory control
+- `epic-character-core-system.md` — NPC-faction loyalty modeling
 
 ## Dependencies
 
@@ -130,9 +172,13 @@ social layer that predates engines (forum-RP reputation/consent systems, §4.3).
 
 ## Linked Tasks
 
-- TASK-faction-reputation.md
+- `TASK-faction-reputation.md` (open)
 - `TASK-faction-standing-schema.md` (open)
-- `TASK-faction-relations-list-and-standing.md` (Done)
+- `TASK-faction-relations-list-and-standing.md` (Done — UI mock only, no backend)
 - `TASK-faction-standing-and-reputation-drift-integration.md` (Not Started)
 - `TASK-faction-politics-coups-and-expansion-engine.md` (Not Started)
 - `TASK-faction-leaders-and-cadre-generation.md` (Not Started)
+- `TASK-rpg-faction-reputation.md` (Done in `.plan/tickets/index.json` — disputed: claimed faction standing/quests/gated-blueprints scope has no implementation)
+- `FEAT-faction-system-backend.md` (Done in `.plan/tickets/index.json` — disputed: closed as duplicate of `src/schemas/reputation.ts`, but `src/factions/` does not exist)
+- `TASK-faction-membership-relationship-propagation.md` (Not Started)
+- `TASK-faction-relation-graph-on-2d-canvas-backend-first.md` (Not Started)

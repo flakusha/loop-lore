@@ -26,4 +26,4 @@ Add `InternalTrait`/`Aspiration`/`MoralDisposition`/`CopingProfile`/`ApproachPro
 
 - [ ] Complete
 
-**Resolved:** 2026-10-10 registry-driven close: git issue 9ebed8b (registry tip: a280654f1 Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-09 registry-driven close: git issue 9ebed8b (registry tip: a280654f1 Konstantin Fedotov Close issue)

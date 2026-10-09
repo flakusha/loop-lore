@@ -26,4 +26,4 @@ Migration: internal-traits + aspirations + coping + approach + autonomy + voice 
 
 - [ ] Complete
 
-**Resolved:** 2026-10-10 registry-driven close: git issue 0447bed (registry tip: c37309289 Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-09 registry-driven close: git issue 0447bed (registry tip: c37309289 Konstantin Fedotov Close issue)

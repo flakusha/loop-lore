@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** Largely shipped — all five core gaps (G1–G5) have live integration code (verified 2026-10-09); economy integration and battle-scoped UI exposure of social/item actions remain open.
 **Priority:** High
 **Effort:** High
 **Issue:** `e8b0c6b`
@@ -17,6 +17,28 @@
 ## Summary
 
 The Battle epic is the most impactful gap in cross-system integration. It touches most RPG sub-systems but references only RPG Mechanics and World & Locations. This epic tracks adding integration sections for Items/Inventory, Social, NPC/Actor, Weather/Terrain, and Resolution System.
+
+## Implemented (verified 2026-10-09)
+
+- **Modules:** `src/battle/items-integration.ts` + `src/battle/item-mapping.ts` (equipment stats, durability, loot generation); `src/battle/social-integration/` (`offensive.ts`, `support.ts`, `morale.ts`, `surrender.ts`); `src/battle/npc-integration/` (`decision.ts`, `memory.ts`, `personality.ts`); `src/battle/weather-integration/` (`modifiers.ts`, `hazards.ts`, `position.ts`, `terrain.ts`); `src/battle/resolution-integration/` + `src/battle/integration-schemas/`
+- **Routes:** `src/routes/battle/` — `equipment.ts` (loot route at `:180` persists drops via `giveToNpc`/`placeInLocation` at `:233`), `equipment-durability.ts`, `social.ts`, `morale.ts`, `npc.ts`, `weather.ts`, `resolution.ts`; mounted via `src/routes/v1/actors-surface.ts:90`
+- **Shipped:** all five gaps G1–G5 closed; loot-drop-to-inventory pipeline live (battle loot lands in `world_items` via NPC or location destination). Still open: economy integration, battle-scoped UI exposure of social/item actions.
+
+## Current State
+
+| Surface | Status | Where |
+| --- | --- | --- |
+| G1 Battle ↔ Items/Inventory (equipment, durability, loot) | Shipped | `src/battle/items-integration.ts`, `src/routes/battle/equipment.ts:180` |
+| G2 Battle ↔ Social (intimidate/taunt/surrender/morale) | Shipped | `src/battle/social-integration/`, `src/routes/battle/social.ts`, `src/routes/battle/morale.ts` |
+| G3 Battle ↔ NPC (decision engine) | Shipped | `src/battle/npc-integration/`, `src/routes/battle/npc.ts` |
+| G4 Battle ↔ Weather/Terrain (modifiers, hazards) | Shipped | `src/battle/weather-integration/`, `src/routes/battle/weather.ts` |
+| G5 Resolution unification (dice, DCs) | Shipped | `src/battle/resolution-integration/`, `src/routes/battle/resolution.ts` |
+| Battle-scoped UI exposure of social/item actions | Not Started | — (see `./epic-battle-ui.md`) |
+| Economy integration (loot valuation, market impact) | Not Started | — (see `./epic-economy-trading.md`) |
+
+## Unticketed Gaps
+
+The backend social actions and combat item-use ship behind HTTP routes (`src/routes/battle/social.ts`, `src/routes/battle/equipment.ts`), but the battle panel exposes only Attack/Heal/End (`src/frontend/battle/commands.ts:38-41`) — no in-battle UI surface reaches them, and wiring the panel to these routes is unticketed (see `./epic-battle-ui.md`). Inventory capacity management is also absent: loot lands in `world_items`/NPC inventories with no cap or overflow handling, and that gap has no ticket.
 
 ## Overview
 
@@ -31,13 +53,15 @@ The Battle epic is the most impactful gap in cross-system integration. It touche
 
 #### 🔴 High — Missing bidirectional links between major systems
 
-| #  | System A       | System B                    | Current State                                                                                                                                                               | Recommended Action                                                                                              |
+> **Verified 2026-10-09:** all five gaps below now have shipped integration code under `src/battle/*-integration/` + `src/routes/battle/`. G1's "No loot-drop-to-inventory pipeline" claim is stale — the pipeline exists.
+
+| #  | System A       | System B                    | Current State (verified 2026-10-09)                                                                                                                                         | Evidence                                                                                                        |
 | -- | -------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| G1 | **Battle**     | **Items/Inventory**         | Battle uses "Use item" as action type but never references `epic-item-system-extensions` or inventory for loadout/equipment management. No loot-drop-to-inventory pipeline. | Add integration: equipment affects battle stats, loot drops feed inventory, item durability degrades in combat. |
-| G2 | **Battle**     | **Social Interaction**      | Social lists "Intimidation in combat" as integration; Battle never references social skills as combat options (taunt, negotiate, surrender).                                | Add integration: social checks during combat for morale breaks, surrender, intimidation effects.                |
-| G3 | **Battle**     | **NPC/Actor System**        | Battle has NPC enemies but never references Actor system for personality-driven AI, morale, memory of past defeats.                                                         | Add integration: NPC actors drive enemy decisions, morale system from Social applies in combat.                 |
-| G4 | **Battle**     | **Weather/Terrain**         | Weather lists "Combat System" integration; Battle never references weather/terrain modifiers.                                                                               | Add integration: environmental combat modifiers from Weather system, terrain cover from Exploration.            |
-| G5 | **Resolution** | **All Combat/Social/Magic** | Resolution claims to unify dice resolution but has no integration section. Never references Battle, Social, Magic, or RPG.                                                  | Add integration section referencing all systems that use dice resolution.                                       |
+| G1 | **Battle**     | **Items/Inventory**         | Closed — equipment stats/durability/combat-use, loot generation and persistence to `world_items` via NPC or location destination. | `src/battle/items-integration.ts`, `src/battle/item-mapping.ts`, `src/routes/battle/equipment.ts:180` (loot route mints `world_items` via `giveToNpc`/`placeInLocation`) |
+| G2 | **Battle**     | **Social Interaction**      | Closed — intimidate/taunt/rally/inspire/demoralize, surrender, and morale are live backend surfaces. | `src/battle/social-integration/` (`offensive.ts`, `support.ts`, `morale.ts`, `surrender.ts`), `src/routes/battle/social.ts`, `src/routes/battle/morale.ts` |
+| G3 | **Battle**     | **NPC/Actor System**        | Closed — NPC decision engine with memory wired to HTTP. | `src/battle/npc-integration/` (`decision.ts`, `memory.ts`, `personality.ts`), `src/routes/battle/npc.ts` |
+| G4 | **Battle**     | **Weather/Terrain**         | Closed — environmental modifiers, visibility, hazards, position. | `src/battle/weather-integration/` (`modifiers.ts`, `hazards.ts`, `position.ts`), `src/routes/battle/weather.ts` |
+| G5 | **Resolution** | **All Combat/Social/Magic** | Closed — unified resolution integrated and routed; boundary + check coverage in `src/battle/resolution-integration/`. | `src/battle/resolution-integration/`, `src/routes/battle/resolution.ts` |
 
 ## Integration Points
 
@@ -159,37 +183,41 @@ The Battle epic is the most impactful gap in cross-system integration. It touche
 
 ## Files
 
-- `src/battle/equipment.ts` — equipment system
-- `src/battle/social.ts` — social combat mechanics
-- `src/battle/npc-ai.ts` — NPC decision making
-- `src/battle/environment.ts` — weather and terrain
-- `src/battle/resolution.ts` — unified dice system
-- `src/battle/loot.ts` — loot and inventory integration
-- `src/db/schema-battle.ts` — battle database tables
-- `src/routes/battle.ts` — battle API endpoints
+Implemented (verified 2026-10-09):
+- `src/battle/items-integration.ts`, `src/battle/item-mapping.ts` — equipment stats, durability, loot generation + persistence
+- `src/battle/social-integration/` — `offensive.ts`, `support.ts`, `morale.ts`, `surrender.ts`
+- `src/battle/npc-integration/` — `decision.ts`, `memory.ts`, `personality.ts`
+- `src/battle/weather-integration/` — `modifiers.ts`, `hazards.ts`, `position.ts`, `terrain.ts`
+- `src/battle/resolution-integration/` + `src/battle/integration-schemas/` — unified dice resolution
+- `src/routes/battle/` — `equipment.ts`, `equipment-durability.ts`, `social.ts`, `morale.ts`, `npc.ts`, `weather.ts`, `resolution.ts`
 - `docs/spec/battle-integration.md` — integration documentation
+
+Planned (do not exist yet):
+- `src/battle/equipment.ts`, `src/battle/social.ts`, `src/battle/npc-ai.ts`, `src/battle/environment.ts`, `src/battle/resolution.ts`, `src/battle/loot.ts` — superseded by the shipped `*-integration` modules above
+- `src/db/schema-battle.ts` — battle tables live in `src/db/schema-core.ts:881-931` instead
+- `src/routes/battle.ts` — superseded by `src/routes/battle/`
 
 ## Related Epics
 
-- **Epic RPG Mechanics** — Stats, skills
-- **Epic Item System** — Equipment, inventory
-- **Epic Social Interaction** — Morale, reputation
-- **Epic Actor System** — NPC personality
-- **Epic Weather** — Environmental modifiers
-- **Epic Resolution System** — Dice resolution
-- **Epic Character Core** — Traits, mood
-- **Epic NSFW** — Rough play, power exchange
-- **Epic Economy** — Loot valuation
+- `epic-rpg-mechanics.md` — stats and dice shared with battle
+- `epic-items.md` — equipment/inventory backing G1
+- `epic-social-interaction.md` — morale and reputation backing G2
+- `epic-actors.md` — NPC personality backing G3
+- `epic-weather-environment.md` — environmental modifiers backing G4
+- `epic-resolution-system.md` — unified dice resolution backing G5
+- `epic-character-core-system.md` — traits and mood for combat behavior
+- `epic-nsfw-game-mechanics.md` — rough-play / power-exchange mechanics
+- `epic-economy-trading.md` — loot valuation and market impact
 
 ## Linked Tasks
 
-- `TASK-battle-integration-gaps.md`
-- `TASK-battle-equipment-integration.md`
-- `TASK-battle-social-integration.md`
-- `TASK-battle-npc-integration.md`
-- `TASK-battle-environment-integration.md`
-- `TASK-battle-resolution-integration.md`
-- `TASK-battle-loot-integration.md`
+- `TASK-battle-integration-gaps.md` (Done)
+- `TASK-battle-equipment-integration.md` (Done)
+- `TASK-battle-social-integration.md` (open)
+- `TASK-battle-npc-integration.md` (open)
+- `TASK-battle-environment-integration.md` (open)
+- `TASK-battle-resolution-integration.md` (open)
+- `TASK-battle-loot-integration.md` (open)
 
 ## Open Questions
 
