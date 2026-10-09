@@ -28,6 +28,44 @@ export interface GenerateChoicesBody {
 }
 
 /** */
+export interface GenerateQuestionsBody {
+  sceneIndex: number;
+  count?: number;
+  context?: string;
+  questionType?: "lore" | "relationship" | "combat" | "exploration" | "social";
+  maxTokens?: number;
+}
+
+/** One answer option as produced by the LLM (option ids are assigned here). */
+export interface GeneratedQuestionOption {
+  text: string;
+  emotion_modifier: number;
+  relationship_modifier: number;
+  next_scene_id?: string | null;
+  consequence?: Record<string, unknown>;
+}
+
+/** */
+export interface QuestionGenerationResult {
+  questions: {
+    questionType: string;
+    questionText: string;
+    speakerId: string | null;
+    options: GeneratedQuestionOption[];
+    nextSceneId: string | null;
+    consequences: Record<string, unknown>;
+    relationshipImpact: Record<string, number>;
+    moodImpact: Record<string, number>;
+  }[];
+  sceneIndex: number;
+  metadata: {
+    model?: string;
+    provider?: string;
+    tokens?: number;
+  };
+}
+
+/** */
 export interface StoryGenerationResult {
   content: string;
   sceneIndex: number;
