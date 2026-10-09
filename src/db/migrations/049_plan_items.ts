@@ -2,11 +2,18 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 047_plan_items
+ * 049_plan_items
  *
  * Step-planning tables (epic-assistant-step-planning):
  *   - plan_items: user-owned planning items with state machine
  *   - plan_links: append-only directed edges between plan items
+ *
+ * Numbering: authored as 047, but 047 is the first free slot on dev and is
+ * taken by 047_conversation_merge (feat-branch-merge). Finalize order is
+ * 047_conversation_merge -> 048_chats_timeline_id (followup-timeline-scope)
+ * -> 049_plan_items (this branch), so the prefix run stays gapless at every
+ * finalize boundary. Never applied to any DB, so no kysely_migration row
+ * holds an earlier name.
  */
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
