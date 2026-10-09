@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** asset_transforms table + service + GET/PUT routes + sprite-context anchor landed; cropper UI, bake/derive endpoint, and re-roll inheritance pending
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -35,14 +35,22 @@ Metadata-first (store rect/zoom/rotation, apply at render) means:
 - re-roll-safe: new generation can auto-inherit the previous crop as starting
   guess
 
-## Current State
+## Current State (verified 2026-10-09)
 
 - `src/assets/` service: `create/read/links/detect/validate` +
-  `metadata.ts` — extraction on **upload** (dimensions/type), immutable after.
-- DB: `assets`, `asset_links` (`src/db/migrations/parts/002_assets.ts`) —
-  polymorphic linking; **no transform/crop storage**.
-- Frontend: static `object-fit`/CSS per component; no editor UI; no per-context
-  framing.
+  `metadata.ts` — extraction on **upload** (dimensions/type/alpha), immutable
+  after.
+- DB: `assets`, `asset_links`, and **`asset_transforms`**
+  (`TransformContext` enum incl. `default`/`sprite`) — per-context framing
+  rows exist; `createAsset` seeds a base (default-context) transform on every
+  image upload; asset delete cleans transforms in the same transaction.
+- Service: `src/assets/service/transforms.ts` — upsert/read with
+  context-row-over-default precedence; routes `GET/PUT /api/assets/:id/transform`
+  (`context` query param, ownership-checked).
+- Frontend: sprite-context anchor placement persists transform rows
+  (`src/frontend/asset-anchor.ts`, preview modal prefills from the sprite
+  transform); the full cropper editor and chat/card render consumption are
+  still open.
 
 ## Architecture
 
@@ -55,10 +63,11 @@ Metadata-first (store rect/zoom/rotation, apply at render) means:
 - **Auto-center seed:** on upload, compute a focal point (cheap heuristic or
   existing aux-pipeline) → base transform defaults to centered-on-focal crop;
   user edits override.
-- **API:** `PUT /assets/:id/transforms/:context` (idempotent upsert, validated),
-  `GET /assets/:id/transforms`, delete-to-reset. Ownership check via
-  `asset_links` — never accept blind asset ids (IDOR class already ticketed for
-  avatars: `fix-character-avatar-idor`).
+- **API:** realized as `GET /assets/:id/transform?context=` +
+  `PUT /assets/:id/transform?context=` (idempotent upsert, validated),
+  delete-to-reset via the service. Ownership check on the asset — never accept
+  blind asset ids (IDOR class ticketed for avatars:
+  `BUG-character-avatar-put-delete-idor-by-bare-avatarid.md`, done).
 - **Render:** frontend resolves transform → CSS `object-position`/`transform`
   (no server crop on hot path); optional **export/bake** endpoint
   (`POST /assets/:id/derive`) producing a cropped asset for consumers that need
@@ -69,21 +78,25 @@ Metadata-first (store rect/zoom/rotation, apply at render) means:
 
 ## Work Items
 
-- [ ] Migration: `asset_transforms` + `TransformContext` enum; regen generated
-      schema artifacts (`db:sync-types`, `db:sync-manifest`)
-- [ ] Service: upsert/read/derived-default transform; focal-point auto-seed on
-      upload
-- [ ] Routes + validation schemas + ownership authz
+- [x] Migration: `asset_transforms` + `TransformContext` enum; generated
+      schema artifacts regenerated
+- [x] Service: upsert/read with context-over-default precedence; base
+      transform seeded on upload (fixed-center focal seed — content-aware
+      focal heuristic still open)
+- [x] Routes + validation schemas + ownership authz
 - [ ] Cropper component (Alpine) + integration points: emotion avatar grid,
-      character/portrait, gallery tile, message-bubble avatar
+      character/portrait, gallery tile, message-bubble avatar (only the
+      sprite-context anchor marker exists today)
 - [ ] Render path: `resolveTransform(assetId, context)` used by chat message
       loop + cards (falls back to CSS default when no row)
 - [ ] Bake endpoint `POST /assets/:id/derive` (server-side crop via Bun.image)
 - [ ] Re-roll inheritance: regeneration (see
       `epic-avatar-regeneration-control.md`) copies previous transform to the
       new asset when prompt/emotion unchanged
-- [ ] Tests: upsert idempotency, context-override precedence, authz on foreign
-      asset, derive output dimensions, frontend resolve unit tests
+      → `TASK-re-roll-transform-inheritance-from-parent-avatar`
+- [x] Tests: upsert idempotency, context-override precedence, authz on
+      foreign asset (service + route suites; derive tests follow the bake
+      endpoint)
 
 ## Non-Goals
 

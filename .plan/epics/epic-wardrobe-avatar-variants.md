@@ -7,6 +7,7 @@
 
 
 **Status:** Done
+**Status Note:** shipped 2026-10-01 — schema, selection ladder v2, outfit-scoped generation, routes, manager UI, story/GM hooks; loadout bridge flag is read-side, default off
 **Status Note:** Done (registry-driven close 2026-10-09 — git issue 2cf55b8 closed with the .md done-marker appended)
 **Priority:** Medium
 **Effort:** Large
@@ -34,16 +35,17 @@ competing with it.
 
 ## Current State
 
-- Selection: `src/characters/services/avatar-service/` +
+- Selection: `src/characters/services/avatar-service/selection.ts` +
   `POST /actors/:actorId/avatars/select`, config via
-  `PUT .../avatars/config`; `TASK-character-multi-avatar.md`
-  defines the schema and selection-rules design (avatar contexts incl. world
-  config) — not yet landed as wardrobe.
-- Emotion generation: `emotion-avatar-service` generates per-`EmotionType` only;
-  prompts assembled from emotion entries in config templates — no outfit
-  descriptor slot.
-- RPG adjacency: inventory/items exist (`src/rpg/`, `epic-inventory-ui.md`) but
-  items carry no avatar/visual linkage.
+  `PUT .../avatars/config`; the multi-avatar design
+  (`TASK-character-multi-avatar.md`, done) is landed and extended with the
+  outfit axis (`runOutfitLadder` + `wardrobe/resolve.ts`).
+- Emotion generation: `emotion-avatar-service` accepts an outfit scope
+  (`outfitId`); prompts compose identity-anchor + outfit-descriptor +
+  emotion-descriptor (`single-generation.ts`).
+- RPG adjacency: inventory items exist (`src/rpg/`, `epic-inventory-ui.md`);
+  the wardrobe↔inventory binding seam (`wardrobe/bindings.ts`) attaches owned
+  item instances to outfits.
 
 ## Architecture
 
@@ -72,32 +74,52 @@ competing with it.
 
 ## Work Items
 
-- [ ] **Schema** — `wardrobe_items`, `actor_wardrobe`, avatar-row `outfit_id` column
+- [x] **Schema** — `wardrobe_items`, `actor_wardrobe`, avatar-row `outfit_id` column
       (+ binding-rules storage per multi-avatar design); regen generated schema
       → `TASK-wardrobe-schema-wardrobe-items-actor-wardrobe-avatar-outfit-.md`
-- [ ] **Selection algorithm v2** — (outfit, emotion) resolution with
+- [x] **Selection algorithm v2** — (outfit, emotion) resolution with
       fallback ladder; context overrides (chat > location > default)
       → `TASK-wardrobe-selection-algorithm-v2-outfit-emotion-resolution-la.md`
-- [ ] **Outfit-scoped generation** — batch/single jobs (prompt composition slot);
+- [x] **Outfit-scoped generation** — batch/single jobs (prompt composition slot);
       integrates `epic-avatar-regeneration-control.md` scope params
       → `TASK-wardrobe-outfit-scoped-avatar-generation-batch-single.md`
-- [ ] **Routes + validation** — wardrobe CRUD, per-outfit avatar generate/regenerate,
+- [x] **Routes + validation** — wardrobe CRUD, per-outfit avatar generate/regenerate,
       chat/scene outfit override endpoints (ownership-checked)
       → `TASK-wardrobe-routes-validation-crud-outfit-override-endpoints.md`
-- [ ] **UI** — wardrobe manager on character sheet; outfit switcher in chat header;
+- [x] **UI** — wardrobe manager on character sheet; outfit switcher in chat header;
       variant grid grouped by outfit × emotion
       → `TASK-wardrobe-frontend-manager-on-character-sheet-outfit-switcher.md`
-- [ ] **Story/GM integration** — narration hook — outfit change events visible to
+- [x] **Story/GM integration** — narration hook — outfit change events visible to
       prompt context (`src/assistant/prompt/sections/emotion-avatar.ts` analog
       or extension); refuse/block interaction note: wardrobe change of the
       *player* actor routes through the immersion gate
       (`epic-immersion-consistency-gate.md`)
       → `TASK-wardrobe-story-gm-integration-outfit-change-events.md`
-- [ ] **Tests** — fallback ladder order, override precedence, outfit-scoped regen
+- [x] **Tests** — fallback ladder order, override precedence, outfit-scoped regen
       isolation (emotion re-roll doesn't cross outfits), migration/schema-sync
       → `TASK-wardrobe-tests-fallback-ladder-override-precedence-outfit-sc.md`
-- [ ] **Deferred phase** — equipped-items → outfit auto-mapping (flag-gated)
+- [x] **Deferred phase** — equipped-items → outfit auto-mapping (flag-gated)
       → `TASK-wardrobe-deferred-equipped-items-outfit-auto-mapping-flag-ga.md`
+      (flag `system_config.wardrobe_loadout_bridge` default off; read-side rung
+      only — no equip-time writes yet)
+
+
+## Implemented (verified 2026-10-09)
+
+- **Tables:** `wardrobe_items`, `actor_wardrobe` (incl. inventory-instance
+  bindings); avatar rows carry `outfit_id`.
+- **Modules:** `src/characters/services/wardrobe/` (crud, resolve,
+  selection-ladder, bindings, change-gate); outfit-scoped generation in
+  `src/characters/services/emotion-avatar-service/` (batch + single,
+  outfit-scoped replace isolation); routes `src/routes/wardrobe*.ts`.
+- **Frontend:** `src/components/character/wardrobe-panel.html` + Alpine
+  `actor-wardrobe` component (outfit CRUD, variant grid grouped by outfit ×
+  emotion, chat outfit switcher).
+- **Story/GM:** outfit narration section (`src/assistant/prompt-outfit.ts`,
+  `sections/outfit-context.ts`) + outfit-change routing seam
+  (`wardrobe/change-gate.ts`, ready to plug the immersion gate).
+- The immersion gate itself does not exist yet — the change gate is an
+  injectable seam per `epic-immersion-consistency-gate.md`.
 
 ## Non-Goals
 
