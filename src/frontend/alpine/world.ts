@@ -102,6 +102,7 @@ function coreState(worldId: string,): WorldPageState {
       void this.loadLocations();
       void this.loadWorldChats();
       void this.loadTravelStatus();
+      void this.loadGraphEdges();
       void this.loadLore();
       this.connectConditionsStream();
 

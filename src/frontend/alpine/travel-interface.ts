@@ -17,7 +17,7 @@
  */
 import { estimateTravelMinutes, formatEta, resolveTravelMethod, } from "./travel-methods";
 import { fetchWorldJson, } from "./world-fetch";
-import type { WorldLocationLite, WorldPageState, } from "./world-types";
+import type { WorldEdgeLink, WorldLocationLite, WorldPageState, } from "./world-types";
 
 /** Destination selection, ETA and status state for the world page. */
 export const travelInterface: Partial<WorldPageState> & ThisType<WorldPageState> = {
@@ -30,6 +30,9 @@ export const travelInterface: Partial<WorldPageState> & ThisType<WorldPageState>
   travelChatId: "",
   travelBusy: false,
   travelMessage: "",
+  edgeLinks: [],
+  edgesLoaded: false,
+  edgesLoading: false,
 
   /** @returns {Promise<void>} */
   async loadTravelStatus() {
@@ -42,7 +45,41 @@ export const travelInterface: Partial<WorldPageState> & ThisType<WorldPageState>
     }
   },
 
-  /** Destinations for the chosen origin: connected locations first. */
+  /**
+   * Lazy-load the 047 adjacency edges once per page. The server filters
+   * requires_discovery edges to the caller's latched subgraph, so players
+   * only ever receive the discovered part of the graph here.
+   * @returns {Promise<void>}
+   */
+  async loadGraphEdges() {
+    if (this.edgesLoaded || this.edgesLoading) { return; }
+    this.edgesLoading = true;
+    try {
+      const body = await fetchWorldJson<{ data?: WorldEdgeLink[] }>(this.worldId, "/edges",);
+      this.edgeLinks = (body?.data ?? []).filter(
+        (e,) => typeof e?.from_id === "string" && typeof e?.to_id === "string" && typeof e?.mode === "string",
+      );
+
+      this.edgesLoaded = true;
+    } finally {
+      this.edgesLoading = false;
+    }
+  },
+
+  /** Direct 047 edge from the chosen origin to the chosen destination. */
+  /** @returns {WorldEdgeLink | undefined} */
+  get edgeToDestination(): WorldEdgeLink | undefined {
+    if (!this.originId || !this.destinationId) { return undefined; }
+    return this.edgeLinks.find(
+      (e,) =>
+        (e.from_id === this.originId && e.to_id === this.destinationId) ||
+        (e.from_id === this.destinationId && e.to_id === this.originId),
+    );
+  },
+
+  /** Destinations for the chosen origin: edge-connected first, then
+   * connection-graph-connected, then the rest. Locked edges (invisible to
+   * players) can never mark a destination connected. */
   /** @returns {WorldLocationLite[]} */
   get destinations(): WorldLocationLite[] {
     const others = this.locations.filter((l,) => l.id !== this.originId);
@@ -50,30 +87,45 @@ export const travelInterface: Partial<WorldPageState> & ThisType<WorldPageState>
     if (!origin) { return others; }
 
     const connected = new Set(this.connectionIdsOf(origin,),);
-    return [
-      ...others.filter((l,) => connected.has(l.id,)),
-      ...others.filter((l,) => !connected.has(l.id,)),
-    ];
+    const edgeConnected = new Set(
+      this.edgeLinks
+        .filter((e,) => e.from_id === this.originId || e.to_id === this.originId)
+        .map((e,) => (e.from_id === this.originId ? e.to_id : e.from_id)),
+    );
+
+    const rank = (id: string,): number => (edgeConnected.has(id,) ? 0 : connected.has(id,) ? 1 : 2);
+    return [...others,].sort((x, y,) => rank(x.id,) - rank(y.id,));
   },
 
-  /** True when origin and destination are directly connected in the graph. */
+  /** True when origin and destination are directly connected: a 047 edge
+   * (either direction) or a legacy connection-graph link. */
   /** @returns {boolean} */
   get travelConnected(): boolean {
     const origin = this.locationById(this.originId,);
     const destination = this.locationById(this.destinationId,);
     if (!origin || !destination) { return false; }
-    return this.connectionIdsOf(origin,).includes(destination.id,);
+    return (
+      this.edgeToDestination !== undefined ||
+      this.connectionIdsOf(origin,).includes(destination.id,)
+    );
   },
 
-  /** Human ETA for the current origin/destination/method selection. */
+  /** Human ETA for the current origin/destination/method selection. An
+   * explicit edge wins: its game_hours IS the trip length (estimate note
+   * still applies — game hours ≠ wall clock). */
   /** @returns {string} */
   get travelEtaLabel(): string {
     const origin = this.locationById(this.originId,);
     const destination = this.locationById(this.destinationId,);
     if (!origin || !destination) { return "—"; }
 
+    const edge = this.edgeToDestination;
+    if (edge !== undefined) {
+      return `${formatEta(edge.game_hours * 60,)} (${edge.mode}, est.)`;
+    }
+
     const method = resolveTravelMethod(this.travelMethodId,);
-    const hops = this.travelConnected ? 1 : null;
+    const hops = this.connectionIdsOf(origin,).includes(destination.id,) ? 1 : null;
     // WorldLocationLite stores snake_case coords; adapt to TravelPoint.
     return formatEta(
       estimateTravelMinutes(
@@ -83,6 +135,16 @@ export const travelInterface: Partial<WorldPageState> & ThisType<WorldPageState>
         hops,
       ),
     );
+  },
+
+  /** One-line summary of the direct edge for the travel panel. */
+  /** @returns {string} */
+  get edgeInfoLabel(): string {
+    const edge = this.edgeToDestination;
+    if (edge === undefined) { return ""; }
+    return `Edge: ${edge.mode}, ${edge.game_hours} game h${
+      edge.requires_discovery ? " (locked until discovered)" : ""
+    }`;
   },
 
   /** @returns {Array<{ name: string; pct: number; routeName: string; nextStopName: string | null; hazards: string[] }>} */
