@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** `epic-harness-integration`
 **Tags:** harness, prompt, budget
 **Summary:** `ContextTier` (`task | session | workTopic | project` → 0/1/2/3) as an ORTHOGONAL axis composed with the existing section `PRIORITY` map; tier ranks content by provenance, priority ranks sections within a prompt.
 **Context:** Two axes, not one. Existing axis — `PRIORITY` (`src/assistant/prompt/types.ts:192-223`) ranks prompt SECTIONS within one prompt, 0 = protected, 5 = `examples` dropped first, unknown names default `?? 0` and are immune; enforced by `dropOverBudgetSections()` (`src/assistant/prompt-budget.ts:62`) which sorts ascending and drops from lowest upward while `priorityOf(s.name) > 0`. New axis — tier ranks CONTENT BY PROVENANCE: 0 `task` (current work item), 1 `session` (current session context), 2 `workTopic` (work-topic-scoped runs/notes/decisions), 3 `project` (repo-overall, always eligible for trim). Composed drop order is TIER FIRST, then section priority WITHIN the tier: a tier-3 priority-0 section still outranks a tier-2 priority-5 section. Memory injection has its own independent sub-budget in `selectWithinBudget()` (`src/memory/budget.ts:25`, `respectPins: true`, hardcoded `maxTokens: 1024` at `src/memory/provision.ts:82`) — tier ranks alongside pins, never replaces them.
