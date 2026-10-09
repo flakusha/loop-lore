@@ -24,6 +24,8 @@ export interface GmSettingsFields {
   vnTypewriterSpeed: number;
   vnTransition: "fade" | "cut" | "dissolve" | "slide" | "wipe";
   vnAutoAdvance: boolean;
+  /** Per-chat opt-in for VN branching choices and Q&A cards. */
+  vnChoicesEnabled: boolean;
   imageScaling: "contain" | "cover" | "fill" | "auto";
   autoAdvanceDelay: number;
   dialogueBoxOpacity: number;
@@ -70,6 +72,7 @@ export function readGmSettings(config: GmConfig,): GmSettingsFields {
     vnTypewriterSpeed: config.vnTypewriterSpeed ?? 30,
     vnTransition: config.vnTransition ?? "fade",
     vnAutoAdvance: config.vnAutoAdvance ?? false,
+    vnChoicesEnabled: config.vnChoicesEnabled ?? false,
     imageScaling: config.vnImageScaling ?? "auto",
     autoAdvanceDelay: config.vnAutoAdvanceDelay ?? 5,
     dialogueBoxOpacity: config.vnDialogueBoxOpacity ?? 0.75,
@@ -114,6 +117,7 @@ export function buildGmConfig(
     vnTypewriterSpeed: fields.vnTypewriterSpeed,
     vnTransition: fields.vnTransition,
     vnAutoAdvance: fields.vnAutoAdvance,
+    vnChoicesEnabled: fields.vnChoicesEnabled,
     vnImageScaling: fields.imageScaling,
     vnAutoAdvanceDelay: fields.autoAdvanceDelay,
     vnDialogueBoxOpacity: fields.dialogueBoxOpacity,

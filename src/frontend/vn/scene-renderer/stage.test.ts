@@ -41,6 +41,7 @@ const SETTINGS = {
   dialogueBoxOpacity: 0.75,
   portraitSize: 35,
   splitRatio: 40,
+  vnChoicesEnabled: true,
 } as const;
 
 function castMember(id: string, name: string,): { characterId: string; name: string; avatarAssetId: string } {

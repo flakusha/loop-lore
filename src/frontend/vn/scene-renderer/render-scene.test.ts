@@ -45,6 +45,7 @@ const SETTINGS = {
   dialogueBoxOpacity: 0.75,
   portraitSize: 35,
   splitRatio: 40,
+  vnChoicesEnabled: true,
 } as const;
 
 function baseScene(overrides: Partial<VnScene> = {},): VnScene {
@@ -57,13 +58,25 @@ function baseScene(overrides: Partial<VnScene> = {},): VnScene {
   };
 }
 
-function install(scenes: VnScene[], index: number, opts: { chatId?: string; typewriter?: boolean } = {},): FakeEl {
+function install(
+  scenes: VnScene[],
+  index: number,
+  opts: { chatId?: string | null; typewriter?: boolean; vnChoicesEnabled?: boolean } = {},
+): FakeEl {
   const container = makeEl();
   state.container = container as unknown as HTMLElement;
-  state.settings = { ...SETTINGS, typewriter: opts.typewriter ?? false, };
+  state.settings = {
+    ...SETTINGS,
+    typewriter: opts.typewriter ?? false,
+    vnChoicesEnabled: opts.vnChoicesEnabled ?? SETTINGS.vnChoicesEnabled,
+  };
+
   state.scenes = scenes;
+
   state.currentIndex = index;
+
   state.currentChatId = opts.chatId ?? null;
+
   return container;
 }
 
@@ -257,5 +270,77 @@ describe("renderCurrentScene guards and interaction", () => {
     const sceneEls = container.children.filter((c,) => c.className.startsWith("vn-scene",));
     expect(sceneEls,).toHaveLength(1,);
     expect(sceneEls[0]!.querySelector(".vn-text",)!.textContent,).toBe("Second.",);
+  });
+});
+
+// ── Per-chat choice opt-in ─────────────────────────────────────────────────
+
+describe("renderCurrentScene choice opt-in", () => {
+  let fetchCalls: string[];
+  let realFetch: typeof globalThis.fetch;
+
+  beforeEach(() => {
+    fetchCalls = [];
+    realFetch = globalThis.fetch;
+    globalThis.fetch = ((input: RequestInfo | URL,) => {
+      fetchCalls.push(String(input,),);
+      return Promise.resolve(new Response("{}", { status: 200, },),);
+    }) as typeof globalThis.fetch;
+  },);
+
+  afterEach(() => {
+    globalThis.fetch = realFetch;
+  },);
+
+  // Regression guard for the mount landed earlier: both containers must still
+  // appear when the chat opts in.
+  test("flag on mounts both the choices and questions containers", async () => {
+    const container = install([baseScene({},),], 0, { chatId: "chat-1", vnChoicesEnabled: true, },);
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    expect(container.querySelector(".vn-choices-container",),).not.toBeNull();
+    expect(container.querySelector(".vn-questions-container",),).not.toBeNull();
+  });
+
+  test("flag on issues the choice and question fetches", async () => {
+    install([baseScene({},),], 0, { chatId: "chat-1", vnChoicesEnabled: true, },);
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    expect(fetchCalls.some((u,) => u.includes("/vn-choices",)),).toBe(true,);
+    expect(fetchCalls.some((u,) => u.includes("/vn-questions",)),).toBe(true,);
+  });
+
+  test("flag off creates neither container", async () => {
+    const container = install([baseScene({},),], 0, { chatId: "chat-1", vnChoicesEnabled: false, },);
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    expect(container.querySelector(".vn-choices-container",),).toBeNull();
+    expect(container.querySelector(".vn-questions-container",),).toBeNull();
+  });
+
+  // Init-then-hide would satisfy the DOM assertions above while still firing
+  // two GETs per scene render. Pin the network behaviour, not just the shape.
+  test("flag off issues no choice or question fetch", async () => {
+    install([baseScene({},),], 0, { chatId: "chat-1", vnChoicesEnabled: false, },);
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    expect(fetchCalls.filter((u,) => u.includes("/vn-choices",) || u.includes("/vn-questions",)),).toHaveLength(0,);
+  });
+
+  test("flag off still renders the scene itself", async () => {
+    const container = install([baseScene({},),], 0, { chatId: "chat-1", vnChoicesEnabled: false, },);
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    expect(container.querySelector(".vn-scene",)!.querySelector(".vn-text",)!.textContent,).toBe("Well met.",);
+  });
+
+  // A chat with no id never mounted cards in the first place; the added
+  // predicate must not change that.
+  test("no chat id mounts nothing regardless of the flag", async () => {
+    const container = install([baseScene({},),], 0, { chatId: null, vnChoicesEnabled: true, },);
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    expect(container.querySelector(".vn-choices-container",),).toBeNull();
+    expect(container.querySelector(".vn-questions-container",),).toBeNull();
   });
 });
