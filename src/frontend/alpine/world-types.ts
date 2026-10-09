@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 270
 
 /** */
 export interface WorldEditState {
@@ -102,4 +103,165 @@ export interface WorldEditState {
   createInvite(): Promise<void>;
   copyInviteCode(code: string,): void;
   revokeInvite(inviteId: string,): Promise<void>;
+}
+
+/** The world summary the world page header/panels need. */
+export interface WorldSummary {
+  id: string;
+  name: string;
+  description: string | null;
+  kind: string;
+}
+
+/** The SSE `conditions` event payload (routes/worlds/world-stream.ts). */
+export interface WorldConditionsSnapshot {
+  timeOfDay: string | null;
+  weather: string | null;
+  sampledLocationId: string | null;
+  sampledLocationName: string | null;
+  sampledAt: string | null;
+}
+
+/** A location row as the world page list needs it. */
+export interface WorldLocationLite {
+  id: string;
+  name: string;
+  description: string | null;
+  parent_location_id: string | null;
+  connections: string;
+  coord_x: number | null;
+  coord_y: number | null;
+}
+
+/** GET /worlds/:worldId/locations/:locId/details payload (location-explorer route). */
+export interface WorldLocationDetail {
+  id: string;
+  name: string;
+  description: string | null;
+  parent_location_id: string | null;
+  parent: { id: string; name: string } | null;
+  connections: Array<{ id: string; name: string }>;
+  state: {
+    description_override: string | null;
+    atmosphere: string | null;
+    npcs_present: string;
+    items_available: string;
+    time_of_day: string | null;
+    weather: string | null;
+    hazards: string;
+  } | null;
+}
+
+/** A chat the current user participates in (GET /worlds/:worldId/chats). */
+export interface WorldChatLite {
+  id: string;
+  name: string;
+  current_location_id: string | null;
+  location_name: string | null;
+}
+
+/** GET /worlds/:worldId/npcs-at/:locationId row. */
+export interface NpcPresent {
+  actorId: string;
+  displayName: string;
+}
+
+/** A transport following a route (GET /worlds/:worldId/travel/status). */
+export interface TransportStatus {
+  locationId: string;
+  name: string;
+  routeId: string;
+  routeName: string;
+  loop: boolean;
+  progress: number;
+  stopCount: number;
+  nextStopName: string | null;
+  hazards: string[];
+}
+
+/** A party walking a stored route (GET /worlds/:worldId/travel/status). */
+export interface PartyStatus {
+  id: string;
+  name: string;
+  status: string;
+  routeIndex: number;
+  travelProgress: number;
+  currentLocationId: string | null;
+  currentLocationName: string | null;
+  hazards: string[];
+}
+
+/** The whole travel-status payload. */
+export interface TravelStatusPayload {
+  transports: TransportStatus[];
+  parties: PartyStatus[];
+}
+
+/** The merged world-page Alpine state. Mixins fill disjoint slices. */
+export interface WorldPageState {
+  // ── core (world.ts) ──
+  worldId: string;
+  world: WorldSummary | null;
+  worldLoading: boolean;
+  worldError: boolean;
+  locations: WorldLocationLite[];
+  locationsLoading: boolean;
+  sseConnected: boolean;
+  _conditionsSse: EventSource | null;
+  init(): () => void;
+  loadWorld(): Promise<void>;
+  loadLocations(): Promise<void>;
+  connectConditionsStream(): void;
+  applyConditions(snapshot: WorldConditionsSnapshot,): void;
+  locationById(id: string,): WorldLocationLite | undefined;
+  connectionIdsOf(location: WorldLocationLite,): string[];
+
+  // ── time/weather widget (time-weather.ts) ──
+  timeOfDay: string | null;
+  weather: string | null;
+  conditionsLocationName: string | null;
+  conditionsAt: string | null;
+
+  // ── location details (location-details.ts) ──
+  selectedLocationId: string;
+  detail: WorldLocationDetail | null;
+  detailLoading: boolean;
+  detailError: boolean;
+  detailNpcs: NpcPresent[];
+  showItems: boolean;
+  selectLocation(id: string,): Promise<void>;
+  loadLocationDetail(id: string,): Promise<void>;
+
+  // ── quick actions (location-actions.ts) ──
+  worldChats: WorldChatLite[];
+  chatsLoading: boolean;
+  loadWorldChats(): Promise<void>;
+  chatsAt(locationId: string | null,): WorldChatLite[];
+  moveChatTo(chatId: string, locationId: string,): Promise<void>;
+  navigateExplore(): void;
+
+  // ── travel interface (travel-interface.ts) ──
+  originId: string;
+  destinationId: string;
+  travelMethodId: string;
+  travelStatus: TravelStatusPayload | null;
+  travelLoading: boolean;
+  showTravelConfirm: boolean;
+  travelChatId: string;
+  travelBusy: boolean;
+  travelMessage: string;
+  loadTravelStatus(): Promise<void>;
+  readonly destinations: WorldLocationLite[];
+  readonly travelEtaLabel: string;
+  readonly travelConnected: boolean;
+  readonly transportProgresses: Array<{
+    name: string;
+    pct: number;
+    routeName: string;
+    nextStopName: string | null;
+    hazards: string[];
+  }>;
+  readonly partyStatuses: PartyStatus[];
+  openTravelConfirm(): void;
+  confirmTravel(): Promise<void>;
 }
