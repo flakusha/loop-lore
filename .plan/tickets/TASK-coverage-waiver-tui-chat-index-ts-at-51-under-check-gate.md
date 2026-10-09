@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Low
 **Effort:** Trivial
 
@@ -26,8 +26,14 @@ and `test:e2e`, neither of which the unit-suite coverage gate counts.
 
 ## Acceptance Criteria:
 
-- [x] Implementation complete — per-file waiver added to
-  scripts/check/coverage.mjs WAIVERS, key `tui:src/tui/chat/index.ts`, floor 51.
+- [x] Waiver added — a per-file waiver for `src/tui/chat/index.ts` was added to
+  `scripts/check/coverage/waivers.mjs`, keyed `tui:src/tui/chat/index.ts`, floor 51.
 - [x] Tests passing — new mock.module suite covers sessionToken threading;
   pre-existing coverage of blessed widget paths remains as before the diff.
-- [x] Documentation updated — this ticket + waiver entry reference each other.
+- [x] Waiver retired — once `src/tui/chat/index.ts` became importable under test
+  and reached full coverage, the waiver it carried was deleted. The entry no longer
+  appears in `scripts/check/coverage/waivers.mjs`; this was done on the
+  `tui-shell-ac-closeout` branch, together with `TASK-tui-shell-testability.md`,
+  whose AC3 required the retirement.
+- [x] Documentation updated — this ticket records the waiver's addition and its
+  retirement; no live waiver entry remains to cross-reference.
