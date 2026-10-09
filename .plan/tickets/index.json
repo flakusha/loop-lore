@@ -3907,6 +3907,19 @@
     "title": "Group participant injection absent on manual generate route",
     "type": "BUG"
   },
+  "BUG-GROUP-PARTICIPANT-USER-ACTORS-INJECTED-IN-AUTO-GEN-PATH": {
+    "hash": "18b8bfa",
+    "git_issue": "18b8bfa",
+    "extid": "BUG-GROUP-PARTICIPANT-USER-ACTORS-INJECTED-IN-AUTO-GEN-PATH",
+    "type": "BUG",
+    "title": "Group participant user actors injected in auto-gen path",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-context-injection-correctness",
+    "tags": [],
+    "source": ".plan/tickets/BUG-group-participant-user-actors-injected-in-auto-gen-path.md",
+    "status": "Not Started"
+  },
   "BUG-GUARDMESSAGES-BYPASS-PASSES-THROUGH-EVERY-UNKNOWN-STATUS-NOT-JUST": {
     "hash": "fc37920",
     "git_issue": "fc37920",
@@ -22700,6 +22713,32 @@
     "title": "Auth/session hardening batch from 2026-10-04 review",
     "type": "TASK"
   },
+  "TASK-AUTHOR-DOCS-SPEC-DEPLOYMENT-MD-WITH-THE-SQLITE-VS-POSTGRES-A": {
+    "hash": "425c4f2",
+    "git_issue": "425c4f2",
+    "extid": "TASK-AUTHOR-DOCS-SPEC-DEPLOYMENT-MD-WITH-THE-SQLITE-VS-POSTGRES-A",
+    "type": "TASK",
+    "title": "Author docs/spec/deployment.md with the SQLite vs Postgres ACID matrix",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-data-integrity-acid",
+    "tags": [],
+    "source": ".plan/tickets/TASK-author-docs-spec-deployment-md-with-the-sqlite-vs-postgres-a.md",
+    "status": "Not Started"
+  },
+  "TASK-AUTHOR-NOTE-DISTINCT-COLUMN-DECISION-ADD-DB-COLUMN-VS-REUSE-": {
+    "hash": "6b3f5ef",
+    "git_issue": "6b3f5ef",
+    "extid": "TASK-AUTHOR-NOTE-DISTINCT-COLUMN-DECISION-ADD-DB-COLUMN-VS-REUSE-",
+    "type": "TASK",
+    "title": "Author-note distinct column decision: add DB column vs reuse post-history",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-context-injection-templates",
+    "tags": [],
+    "source": ".plan/tickets/TASK-author-note-distinct-column-decision-add-db-column-vs-reuse-.md",
+    "status": "Not Started"
+  },
   "TASK-AUTHOR-TASK-CLARIFICATION-PROMPT-TEMPLATES-PER-TASK-TYPE": {
     "epic": "epic-context-injection-templates",
     "extid": "TASK-AUTHOR-TASK-CLARIFICATION-PROMPT-TEMPLATES-PER-TASK-TYPE",
@@ -22992,6 +23031,19 @@
     "tags": [],
     "title": "# TASK-avatars-dynamic-2d: Dota-style dynamic 2D avatars (Phase 4)",
     "type": "TASK"
+  },
+  "TASK-BACKFILL-DATA-VERSION-RECORD-HASH-FOR-EXISTING-ROWS": {
+    "hash": "6f0c192",
+    "git_issue": "6f0c192",
+    "extid": "TASK-BACKFILL-DATA-VERSION-RECORD-HASH-FOR-EXISTING-ROWS",
+    "type": "TASK",
+    "title": "Backfill data_version + record_hash for existing rows",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-content-hashing-distributed-integrity",
+    "tags": [],
+    "source": ".plan/tickets/TASK-backfill-data-version-record-hash-for-existing-rows.md",
+    "status": "Not Started"
   },
   "TASK-BACKLOG-BUILD-INTEGRITY-CLUSTER-CLOSE-OUT": {
     "epic": "",
@@ -29449,6 +29501,19 @@
     "title": "# TASK-e2ee-receiver-wiring: Client-Side E2E — Phase E receiver-side wiring",
     "type": "TASK"
   },
+  "TASK-ECE-PRIMITIVE-PHASE-1-SPIKE-TYPES-MERGE-PRECOMPILE-ON-TOY-EN": {
+    "hash": "f9fa4a4",
+    "git_issue": "f9fa4a4",
+    "extid": "TASK-ECE-PRIMITIVE-PHASE-1-SPIKE-TYPES-MERGE-PRECOMPILE-ON-TOY-EN",
+    "type": "TASK",
+    "title": "ECE primitive Phase 1 spike: types + merge/precompile on toy enum",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-config-extensions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ece-primitive-phase-1-spike-types-merge-precompile-on-toy-en.md",
+    "status": "Not Started"
+  },
   "TASK-ECONOMY-CRAFTING-SLASH-INTERACTIONS": {
     "epic": "epic-crafting-professions",
     "extid": "TASK-ECONOMY-CRAFTING-SLASH-INTERACTIONS",
@@ -30025,6 +30090,19 @@
     "tags": [],
     "title": "Enemies & Monsters Systems",
     "type": "TASK"
+  },
+  "TASK-ENFORCE-FORMAT-VERSION-OPTIMISTIC-CONCURRENCY-ON-MESSAGES-AN": {
+    "hash": "9a3b7cd",
+    "git_issue": "9a3b7cd",
+    "extid": "TASK-ENFORCE-FORMAT-VERSION-OPTIMISTIC-CONCURRENCY-ON-MESSAGES-AN",
+    "type": "TASK",
+    "title": "Enforce format_version optimistic concurrency on messages and high-contention tables",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-data-integrity-acid",
+    "tags": [],
+    "source": ".plan/tickets/TASK-enforce-format-version-optimistic-concurrency-on-messages-an.md",
+    "status": "Not Started"
   },
   "TASK-ENFORCE-PLUGIN-ORIGIN-AT-REQUEST-TIME": {
     "hash": "72af3ec",
@@ -38398,6 +38476,19 @@
     "title": "output-control-transforms.md silent on UI and VALID_REGEN_STYLES",
     "type": "TASK"
   },
+  "TASK-OUTPUT-STYLE-AND-NSFWPOLICY-SECTIONS-LACK-PRIORITY-BUDGET-EN": {
+    "hash": "fd62671",
+    "git_issue": "fd62671",
+    "extid": "TASK-OUTPUT-STYLE-AND-NSFWPOLICY-SECTIONS-LACK-PRIORITY-BUDGET-EN",
+    "type": "TASK",
+    "title": "Output-style and nsfwPolicy sections lack PRIORITY budget entries",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-context-injection-templates",
+    "tags": [],
+    "source": ".plan/tickets/TASK-output-style-and-nsfwpolicy-sections-lack-priority-budget-en.md",
+    "status": "Not Started"
+  },
   "TASK-OWNERSHIP-ACCESS-CONTROL-REFACTOR": {
     "epic": "",
     "extid": "TASK-OWNERSHIP-ACCESS-CONTROL-REFACTOR",
@@ -45551,6 +45642,19 @@
     "tags": [],
     "title": "Validate and fix FE/BE/DB gaps for chat/VN settings",
     "type": "TASK"
+  },
+  "TASK-VALIDATE-UNRECOGNIZED-EXAMPLES-SECTION-ROLE-LABELS-INSTEAD-O": {
+    "hash": "c773846",
+    "git_issue": "c773846",
+    "extid": "TASK-VALIDATE-UNRECOGNIZED-EXAMPLES-SECTION-ROLE-LABELS-INSTEAD-O",
+    "type": "TASK",
+    "title": "Validate unrecognized examples-section role labels instead of silent user fallback",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-context-injection-templates",
+    "tags": [],
+    "source": ".plan/tickets/TASK-validate-unrecognized-examples-section-role-labels-instead-o.md",
+    "status": "Not Started"
   },
   "TASK-VECTOR-GEN-ANIMATED-RASTER": {
     "hash": "f156320",
