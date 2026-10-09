@@ -1602,20 +1602,6 @@ export interface BranchMergeSources {
   tip_message_id: string;
 }
 
-// ── location_edges ────────────────────────────────────────────
-export interface LocationEdges {
-  id: Generated<string>;
-  world_id: string;
-  from_id: string;
-  to_id: string;
-  mode: Generated<LocationEdgeMode>;
-  game_hours: Generated<number>;
-  requires_discovery: Generated<number>;
-  cost_json: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
 // ── plan_items ────────────────────────────────────────────
 export interface PlanItems {
   id: Generated<string>;
@@ -1655,4 +1641,18 @@ export interface VnQuestions {
   selected_option_id: string | null;
   answered_at: string | null;
   created_at: string;
+}
+
+// ── location_edges ────────────────────────────────────────────
+export interface LocationEdges {
+  id: Generated<string>;
+  world_id: string;
+  from_id: string;
+  to_id: string;
+  mode: Generated<LocationEdgeMode>;
+  game_hours: Generated<number>;
+  requires_discovery: Generated<number>;
+  cost_json: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
 }

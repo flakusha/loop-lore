@@ -3180,19 +3180,6 @@ export const BranchMergeSourcesSchema = t.Object({
   branch_id: t.Optional(t.String(),),
 },);
 
-// ── location_edges ────────────────────────────────────────────
-export const LocationEdgesSchema = t.Object({
-  world_id: t.String(),
-  from_id: t.String(),
-  to_id: t.String(),
-  mode: t.Optional(LocationEdgeModeSchema,),
-  game_hours: t.Optional(t.Number(),),
-  requires_discovery: t.Optional(t.Number(),),
-  cost_json: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
 // ── plan_items ────────────────────────────────────────────
 export const PlanItemsSchema = t.Object({
   owner_id: t.String(),
@@ -3248,4 +3235,17 @@ export const WorldTimescaleHistorySchema = t.Object({
   world_id: t.String(),
   epoch: t.String(),
   changed_at: t.Optional(t.String(),),
+},);
+
+// ── location_edges ────────────────────────────────────────────
+export const LocationEdgesSchema = t.Object({
+  world_id: t.String(),
+  from_id: t.String(),
+  to_id: t.String(),
+  mode: t.Optional(LocationEdgeModeSchema,),
+  game_hours: t.Optional(t.Number(),),
+  requires_discovery: t.Optional(t.Number(),),
+  cost_json: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
