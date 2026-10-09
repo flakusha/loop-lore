@@ -10,7 +10,7 @@
  */
 
 import { describe, expect, test, } from "bun:test";
-import { EMOJI_SHORTCODES, } from "./chat-utils/render";
+import { EMOJI_SHORTCODES, } from "./chat-utils/emoji";
 import {
   didYouMeanCandidate,
   editDistance,

@@ -66,6 +66,13 @@ function filterPaletteEntries(entries: PaletteEntry[], query: string,): PaletteE
 }
 
 export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
+  _showCommandPalette: false,
+  _activeCommand: "",
+  _paletteActiveIndex: 0,
+  _commandList: [],
+  _filteredCommands: [],
+  _hiddenCommandCount: 0,
+
   /**
    * @returns {Promise<void>}
    */
@@ -184,9 +191,7 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
     const query = (this._activeCommand ?? "").toLowerCase();
     const visible = (this._commandList ?? []).filter((entry,) => satisfiesPaletteRole(role, entry.requiredRole,));
     this._hiddenCommandCount = (this._commandList ?? []).length - visible.length;
-    this._filteredCommands = query
-      ? visible.filter((entry,) => entry.name.includes(query,))
-      : visible;
+    this._filteredCommands = query ? filterPaletteEntries(visible, query,) : visible;
 
     this._paletteActiveIndex = 0;
   },

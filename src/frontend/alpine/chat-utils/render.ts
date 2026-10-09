@@ -10,42 +10,6 @@ export type ChatUtilsRender = Partial<ChatState> & ThisType<ChatState>;
 const getMarked = () => globalThis.__marked;
 const getDOMPurify = () => globalThis.__DOMPurify;
 
-/** Allowlisted `:shortcode:` to emoji map shared by chat + group chat (both render through `renderMarkdown`). Unknown codes stay literal. */
-export const EMOJI_SHORTCODES: Record<string, string> = {
-  thumbsup: "👍",
-  "+1": "👍",
-  heart: "❤️",
-  laugh: "😂",
-  joy: "😂",
-  mask: "🎭",
-  swords: "⚔️",
-  dagger: "🗡️",
-  castle: "🏰",
-  sparkles: "✨",
-  skull: "💀",
-  dragon: "🐉",
-  tree: "🌲",
-  zap: "⚡",
-  fire: "🔥",
-  droplet: "💧",
-  moon: "🌙",
-};
-const SHORTCODE_RE = /:([a-z0-9_+\-]+):/gi;
-const CODE_SPAN_RE = /(```[\s\S]*?```|`[^`]*`)/g;
-
-/** Expand allowlisted `:shortcode:` to emoji; code spans untouched. Replacement values are emoji text (never HTML), safe pre-markdown. */
-export function expandEmojiShortcodes(text: string,): string {
-  if (!text || !text.includes(":",)) { return text; }
-  return text.split(CODE_SPAN_RE,).map((part, index,) => {
-    if (index % 2 === 1) { return part; }
-    return part.replace(SHORTCODE_RE, (match, name: string,) => EMOJI_SHORTCODES[name.toLowerCase()] ?? match,);
-  },).join("",);
-}
-
-/** All known shortcodes for picker/autocomplete. */
-export function listEmojiShortcodes(): { name: string; emoji: string }[] {
-  return Object.entries(EMOJI_SHORTCODES,).map(([name, emoji,],) => ({ name, emoji, }));
-}
 export const chatUtilsRender: ChatUtilsRender = {
   /**
    * @param {string} content
@@ -53,20 +17,21 @@ export const chatUtilsRender: ChatUtilsRender = {
    */
   renderMarkdown(content: string,): string {
     if (!content) { return ""; }
-    // Shared `:shortcode:` expansion for chat + group chat (same map, same
-    // allowlist). Allowlisted emoji text only — safe before marked/sanitize.
-    const expanded = expandEmojiShortcodes(content,);
+    // Allowlisted `:shortcode:` substitution runs BEFORE markdown so every
+    // consumer (chat, group chat, blog comments) shares one render path.
+    // Codes inside backtick spans are exempt; unknown codes stay literal.
+    const withEmoji = renderShortcodes(content,);
     const marked = getMarked();
     const DOMPurify = getDOMPurify();
     if (!marked || !DOMPurify) {
       // Fail-safe: without the sanitizer we must not inject raw HTML —
       // escape the source text instead of rendering it.
       const div = document.createElement("div",);
-      div.textContent = expanded;
+      div.textContent = withEmoji;
       return div.getHTML();
     }
 
-    const html = marked.parse(expanded,) as string;
+    const html = marked.parse(withEmoji,) as string;
     return DOMPurify.sanitize(html, {
       ALLOWED_TAGS: [
         "b",
