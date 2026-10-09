@@ -10,19 +10,26 @@
  */
 
 import {
+  actionAvailable,
   ACTIONS,
   type BattleActionKind,
+  type BattleItemView,
   type BattleView,
   escapeHtml,
   hpPercent,
+  SOCIAL_ACTIONS,
 } from "./commands.js";
 
 /** */
 export interface BattleRenderCallbacks {
   /** Toggle target selection for a combatant id (null = clear). */
   select: (id: string,) => void;
-  /** Execute a battle action (attack/heal/end). */
+  /** Execute a battle action (attack/heal/end/social-*). */
   execute: (kind: BattleActionKind,) => void;
+  /** Toggle the battle-item menu. */
+  toggleItems: () => void;
+  /** Use a battle item on the selected target (or the actor itself). */
+  executeItem: (item: BattleItemView,) => void;
 }
 
 /**
@@ -93,11 +100,15 @@ export function renderRoster(
 }
 
 /**
+ * @param battle
+ * @param itemsOpen
  * @param selectedTargetId
  * @param callbacks
  * @returns {HTMLElement}
  */
 export function renderActions(
+  battle: BattleView,
+  itemsOpen: boolean,
   selectedTargetId: string | null,
   callbacks: BattleRenderCallbacks,
 ): HTMLElement {
@@ -106,20 +117,88 @@ export function renderActions(
   bar.setAttribute("role", "toolbar",);
   bar.setAttribute("aria-label", "Battle actions",);
 
-  for (const action of ACTIONS) {
+  const availability = {
+    battleActive: battle.status === "active",
+    hasTarget: selectedTargetId !== null,
+    itemCount: battle.items.length,
+  };
+
+  const itemButton = (
+    kind: BattleActionKind,
+    label: string,
+    onActivate: () => void,
+    disabled: boolean,
+  ): HTMLElement => {
     const btn = document.createElement("button",);
     btn.type = "button";
     btn.className = "battle-action";
-    btn.dataset.battleAction = action.kind;
-    btn.textContent = action.label;
-    btn.disabled = action.kind !== "end" && !selectedTargetId;
+    btn.dataset.battleAction = kind;
+    btn.textContent = label;
+    btn.disabled = disabled;
+    if (kind === "item") { btn.setAttribute("aria-expanded", String(itemsOpen,),); }
+    btn.addEventListener("click", onActivate,);
+    return btn;
+  };
 
-    btn.addEventListener("click", () => {
-      callbacks.execute(action.kind,);
-    },);
+  for (const action of ACTIONS) {
+    bar.append(itemButton(
+      action.kind,
+      action.label,
+      () => callbacks.execute(action.kind,),
+      !actionAvailable(action.kind, availability,),
+    ),);
+  }
 
-    bar.append(btn,);
+  bar.append(itemButton(
+    "item",
+    "Item",
+    () => callbacks.toggleItems(),
+    !actionAvailable("item", availability,),
+  ),);
+
+  for (const social of SOCIAL_ACTIONS) {
+    bar.append(itemButton(
+      social.kind,
+      social.label,
+      () => callbacks.execute(social.kind,),
+      !actionAvailable(social.kind, availability,),
+    ),);
   }
 
   return bar;
+}
+
+/**
+ * Render the battle-item menu (the Item group's picker).
+ * @param battle - The battle whose items are offered
+ * @param callbacks - Interaction callbacks
+ * @returns {HTMLElement | null} The item list, or null when there is nothing to show
+ */
+export function renderItems(
+  battle: BattleView,
+  callbacks: BattleRenderCallbacks,
+): HTMLElement | null {
+  if (battle.items.length === 0) { return null; }
+
+  const list = document.createElement("div",);
+  list.className = "battle-items";
+  list.setAttribute("role", "list",);
+  list.setAttribute("aria-label", "Battle items",);
+
+  for (const item of battle.items) {
+    const row = document.createElement("button",);
+    row.type = "button";
+    row.className = "battle-action battle-item";
+    row.dataset.battleItem = item.id;
+    row.setAttribute("role", "listitem",);
+    row.textContent = `${item.name} ×${item.quantity}`;
+    row.disabled = battle.status !== "active";
+    row.addEventListener("click", () => {
+      callbacks.executeItem(item,);
+    },);
+
+    list.append(row,);
+  }
+
+  return list;
 }

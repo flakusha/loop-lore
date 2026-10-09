@@ -20,8 +20,7 @@ import {
   performAttack,
 } from "../../rpg/service/battles";
 import { checkCommandMechanic, RpgMechanic, } from "../../rpg/service/world-gate";
-import { formatBattle, } from "./battle";
-import { findCombatant, formatRosterNames, } from "./battle-utils";
+import { findCombatant, formatBattle, formatRosterNames, } from "./battle-utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
 const VALID_SIDES = new Set<DiceSides>([4, 6, 8, 10, 12, 20, 100,],);

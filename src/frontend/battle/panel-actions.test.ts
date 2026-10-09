@@ -38,8 +38,19 @@ afterEach(() => {
   restoreDom();
 },);
 
-/** Focus cycle slots in canonical order (alive combatants, then actions). */
-const CYCLE = ["alice", "orc", "attack", "heal", "end",];
+/** Focus cycle slots: alive combatants, then the action bar (attack/heal/end, item, socials). */
+const CYCLE = [
+  "alice",
+  "orc",
+  "attack",
+  "heal",
+  "end",
+  "item",
+  "social-intimidate",
+  "social-taunt",
+  "social-negotiate",
+  "social-surrender",
+];
 
 const nextOf = (slot: string,): string => CYCLE[(CYCLE.indexOf(slot,) + 1) % CYCLE.length]!;
 const prevOf = (slot: string,): string => CYCLE[(CYCLE.indexOf(slot,) + CYCLE.length - 1) % CYCLE.length]!;
@@ -97,8 +108,8 @@ describe("arrow key focus cycle", () => {
     expect(tile(container, "orc",).disabled,).toBe(true,);
     advance(container, "alice",);
     advance(container, "attack",);
-    advance(container, "end",);
-    pressKey(container, "ArrowRight",); // wraps over four slots, orc gone
+    advance(container, CYCLE[CYCLE.length - 1]!,); // last slot — orc is gone
+    pressKey(container, "ArrowRight",); // wraps to the first slot
     expect(focusSlot(),).toBe("alice",);
     expect(focusSlot(),).not.toBe("orc",);
   });

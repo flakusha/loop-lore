@@ -16,8 +16,7 @@ import {
   getActiveBattle,
   performHeal,
 } from "../../rpg/service/battles";
-import { formatBattle, } from "./battle";
-import { findCombatant, formatRosterNames, } from "./battle-utils";
+import { findCombatant, formatBattle, formatRosterNames, } from "./battle-utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
 registerCommand("heal", async (args, ctx,): Promise<CommandResult> => {
