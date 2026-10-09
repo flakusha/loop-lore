@@ -46,6 +46,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _vnTypewriterSpeed: 30,
   _vnTransition: "fade" as "fade" | "cut" | "dissolve" | "slide" | "wipe",
   _vnAutoAdvance: false,
+  /** Per-chat opt-in for VN branching choices and Q&A cards. */
+  _vnChoicesEnabled: false,
   _imageScaling: "auto" as "contain" | "cover" | "fill" | "auto",
   _autoAdvanceDelay: 5,
   _dialogueBoxOpacity: 0.75,
@@ -89,6 +91,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._vnTypewriterSpeed = fields.vnTypewriterSpeed;
     this._vnTransition = fields.vnTransition;
     this._vnAutoAdvance = fields.vnAutoAdvance;
+    this._vnChoicesEnabled = fields.vnChoicesEnabled;
     this._imageScaling = fields.imageScaling;
     this._autoAdvanceDelay = fields.autoAdvanceDelay;
     this._dialogueBoxOpacity = fields.dialogueBoxOpacity;
@@ -158,6 +161,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         vnTypewriterSpeed: this._vnTypewriterSpeed,
         vnTransition: this._vnTransition,
         vnAutoAdvance: this._vnAutoAdvance,
+        vnChoicesEnabled: this._vnChoicesEnabled,
         imageScaling: this._imageScaling,
         autoAdvanceDelay: this._autoAdvanceDelay,
         dialogueBoxOpacity: this._dialogueBoxOpacity,
