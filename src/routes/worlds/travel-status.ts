@@ -18,42 +18,16 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { jsonParseOr, } from "../../utils";
+import { parseJsonList, } from "../../utils";
 import { ErrorResponse, } from "../../validation/schemas";
+import type {
+  PartyStatus,
+  TransportStatus,
+  TravelStatusPayload,
+} from "../../validation/schemas/travel-wire";
 import { extractAuth, jsonResponse, } from "../http-utils";
 import { requireWorldAccess, } from "./access";
 import type { HandleOpts, } from "./types";
-
-/** A transport (or any route-bound location) currently following a route. */
-export interface TransportStatus {
-  locationId: string;
-  name: string;
-  routeId: string;
-  routeName: string;
-  loop: boolean;
-  progress: number;
-  stopCount: number;
-  nextStopName: string | null;
-  hazards: string[];
-}
-
-/** A party walking a stored route (world-travel simulation). */
-export interface PartyStatus {
-  id: string;
-  name: string;
-  status: string;
-  routeIndex: number;
-  travelProgress: number;
-  currentLocationId: string | null;
-  currentLocationName: string | null;
-  hazards: string[];
-}
-
-/** The whole travel-status payload. */
-export interface TravelStatus {
-  transports: TransportStatus[];
-  parties: PartyStatus[];
-}
 
 /**
  * Parse a location_states.hazards JSON column into a string list.
@@ -61,10 +35,7 @@ export interface TravelStatus {
  * @returns hazard strings, empty when the column is unusable
  */
 export function parseHazards(raw: string | null,): string[] {
-  if (!raw) { return []; }
-  const parsed = jsonParseOr<unknown>(raw, null,);
-  if (!Array.isArray(parsed,)) { return []; }
-  return parsed.filter((h,): h is string => typeof h === "string");
+  return parseJsonList(raw,);
 }
 
 /**
@@ -73,7 +44,7 @@ export function parseHazards(raw: string | null,): string[] {
  * @param database
  * @param worldId
  */
-export async function loadTravelStatus(database: Kysely<DB>, worldId: string,): Promise<TravelStatus> {
+export async function loadTravelStatus(database: Kysely<DB>, worldId: string,): Promise<TravelStatusPayload> {
   const transports = await database
     .selectFrom("locations",)
     .innerJoin("travel_routes", "travel_routes.id", "locations.current_route_id",)

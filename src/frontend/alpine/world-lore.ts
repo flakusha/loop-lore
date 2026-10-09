@@ -12,8 +12,8 @@
  */
 import { Type, } from "@sinclair/typebox";
 import { jsonStringifyOr, } from "../../utils";
+import { parseJsonList, } from "../../utils/safe-json";
 import { apiFetch, } from "./htmx";
-import { parseJsonList, } from "./location-details";
 import { parseOr, } from "./validation";
 import { fetchWorldJson, } from "./world-fetch";
 import type { WorldLoreEntry, WorldPageState, } from "./world-types";

@@ -17,8 +17,9 @@
  */
 import { Type, } from "@sinclair/typebox";
 import { jsonParseOr, } from "../../utils";
+import { parseJsonList, } from "../../utils/safe-json";
 import { locationActions, } from "./location-actions";
-import { locationDetails, parseJsonList, } from "./location-details";
+import { locationDetails, } from "./location-details";
 import { timeWeatherWidget, } from "./time-weather";
 import { travelInterface, } from "./travel-interface";
 import { parseOr, } from "./validation";
@@ -84,15 +85,6 @@ function coreState(worldId: string,): WorldPageState {
     locationsLoading: false,
     sseConnected: false,
     _conditionsSse: null,
-    originId: "",
-    destinationId: "",
-    travelMethodId: "walk",
-    travelStatus: null,
-    travelLoading: false,
-    showTravelConfirm: false,
-    travelChatId: "",
-    travelBusy: false,
-    travelMessage: "",
 
     /**
      * @returns {() => void}

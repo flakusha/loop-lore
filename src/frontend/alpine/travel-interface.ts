@@ -17,7 +17,12 @@
  */
 import { estimateTravelMinutes, formatEta, resolveTravelMethod, } from "./travel-methods";
 import { fetchWorldJson, } from "./world-fetch";
-import type { WorldEdgeLink, WorldLocationLite, WorldPageState, } from "./world-types";
+import type {
+  TransportProgress,
+  WorldEdgeLink,
+  WorldLocationLite,
+  WorldPageState,
+} from "./world-types";
 
 /** Destination selection, ETA and status state for the world page. */
 export const travelInterface: Partial<WorldPageState> & ThisType<WorldPageState> = {
@@ -147,14 +152,8 @@ export const travelInterface: Partial<WorldPageState> & ThisType<WorldPageState>
     }`;
   },
 
-  /** @returns {Array<{ name: string; pct: number; routeName: string; nextStopName: string | null; hazards: string[] }>} */
-  get transportProgresses(): Array<{
-    name: string;
-    pct: number;
-    routeName: string;
-    nextStopName: string | null;
-    hazards: string[];
-  }> {
+  /** @returns {TransportProgress[]} */
+  get transportProgresses(): TransportProgress[] {
     return (this.travelStatus?.transports ?? []).map((t,) => ({
       name: t.name,
       routeName: t.routeName,

@@ -3,8 +3,7 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { LocationMoveError, LocationTreeService, } from "../../locations";
-import { HttpStatus, jsonError, } from "../http-utils";
+import { moveLocationOrError, } from "./location-tree-move";
 
 /**
  * Reparent a location through LocationTreeService.moveSubtree. A raw
@@ -24,30 +23,6 @@ export async function reparentLocation(
   locId: string,
   parentId: string,
 ): Promise<Response | null> {
-  const loc = await database
-    .selectFrom("locations",)
-    .where("id", "=", locId,)
-    .where("world_id", "=", worldId,)
-    .select("id",)
-    .executeTakeFirst();
-
-  if (!loc) {
-    return jsonError({ message: "Location not found", status: HttpStatus.NotFound, },);
-  }
-
-  try {
-    await new LocationTreeService(database,).moveSubtree(locId, parentId,);
-  } catch (error) {
-    if (error instanceof LocationMoveError) {
-      const status = error.code === "not-found" || error.code === "cross-world"
-        ? HttpStatus.NotFound
-        : HttpStatus.BadRequest;
-
-      return jsonError({ message: error.message, status, },);
-    }
-
-    throw error;
-  }
-
-  return null;
+  // A missing row is 404; a cross-world parent also reads as not-found here.
+  return await moveLocationOrError(database, worldId, locId, parentId, ["not-found", "cross-world",],);
 }

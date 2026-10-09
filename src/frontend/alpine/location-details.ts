@@ -9,7 +9,7 @@
  * feed (`GET /worlds/:worldId/npcs-at/:locId`). The quick actions live in
  * location-actions.ts; this slice is the read-only picture of a place.
  */
-import { jsonParseOr, } from "../../utils";
+import { parseJsonList, } from "../../utils/safe-json";
 import { fetchWorldJson, } from "./world-fetch";
 import type { NpcPresent, WorldLocationDetail, WorldPageState, } from "./world-types";
 
@@ -74,15 +74,3 @@ export const locationDetails: Partial<WorldPageState> & ThisType<WorldPageState>
     }
   },
 };
-
-/**
- * Parse a JSON string column (npcs_present / items_available / hazards)
- * into a string list. Tolerates numbers/objects by dropping them.
- * @param raw the raw column value
- */
-export function parseJsonList(raw: string | null | undefined,): string[] {
-  if (!raw) { return []; }
-  const parsed = jsonParseOr<unknown>(raw, null,);
-  if (!Array.isArray(parsed,)) { return []; }
-  return parsed.filter((v,): v is string => typeof v === "string");
-}
