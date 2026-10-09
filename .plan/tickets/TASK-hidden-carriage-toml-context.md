@@ -10,7 +10,7 @@
 
 
 **Epic:** epic-hidden-carriage-context
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 
 ## Scope
@@ -29,3 +29,5 @@
 - Toggle on → carriage injects; toggle off → byte-identical prompt to
   pre-feature baseline.
 - Flat character list fails validation with actionable repair message.
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 8c8601a (registry tip: 5ba2603af Konstantin Fedotov Auto-closed: appended .md marker marks TASK-HIDDEN-CARRIAGE-TOML-CONTEX)

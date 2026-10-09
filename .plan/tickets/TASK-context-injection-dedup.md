@@ -11,7 +11,7 @@
 
 **Epic:** epic-hidden-carriage-context
 **See also:** epic-context-injection-templates.md, epic-quests-encounters.md, epic-gm-shadow-notes.md
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 
 ## Scope
@@ -28,3 +28,5 @@
 
 - Identical fact in a note and the carriage yields one prompt block.
 - Budget usage reflects single inclusion; debug view lists the merge.
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 3ca1ab6 (registry tip: 69c46faea Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CONTEXT-INJECTION-DEDUP don)

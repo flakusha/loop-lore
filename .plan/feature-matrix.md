@@ -1154,7 +1154,7 @@ Total tickets: **3407** — untagged: **2848** — unbound to epic: **1553**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2848 | 1143 | 58 | 1215 | 36 | 0 | 396 |
+| (untagged) | 2848 | 1149 | 58 | 1210 | 36 | 0 | 395 |
 
 ## By epic × status
 
@@ -1320,7 +1320,7 @@ Total tickets: **3407** — untagged: **2848** — unbound to epic: **1553**
 | epic-guest-access | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
 | epic-harness-integration | 23 | 0 | 0 | 0 | 0 | 0 | 23 |
 | epic-headless-alternative-frontends | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
-| epic-hidden-carriage-context | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
+| epic-hidden-carriage-context | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-housing | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-housing-base-building | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-http-protocol-features | 10 | 0 | 0 | 10 | 0 | 0 | 0 |
@@ -1496,7 +1496,7 @@ Total tickets: **3407** — untagged: **2848** — unbound to epic: **1553**
 | proposed:epic-user-engagement | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | review-dev-2026-08-26-late-merges | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | review-dev-2026-08-26-security-data-integrity-merges | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
-| (unbound) | 1553 | 641 | 57 | 405 | 51 | 0 | 399 |
+| (unbound) | 1553 | 642 | 57 | 405 | 51 | 0 | 398 |
 
 ## Ticket detail
 

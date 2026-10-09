@@ -11,7 +11,7 @@
 
 **Epic:** epic-hidden-carriage-context
 **See also:** epic-gm-shadow-notes.md, epic-quests-encounters.md
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 
 ## Scope
@@ -33,3 +33,5 @@
 - Player prompt build contains zero `gm`-class entries (failing test
   exists before the fix lands).
 - Quest/carriage pipelines return empty for shadow-scoped queries.
+
+**Resolved:** 2026-10-09 registry-driven close: git issue aca80b9 (registry tip: 006fa159b Konstantin Fedotov Auto-closed: appended .md marker marks TASK-SHADOW-CONTEXT-ISOLATION do)
