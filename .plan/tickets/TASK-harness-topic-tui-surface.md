@@ -28,4 +28,6 @@
 - `.plan/epics/epic-harness-integration.md` (no-second-TUI rule)
 - `TASK-harness-work-topics`, `TASK-tui-shell-testability`
 
+*Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
 git issue: d8c69da

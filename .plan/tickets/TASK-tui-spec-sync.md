@@ -27,4 +27,6 @@
 - `.plan/epics/epic-terminal-ui.md` (Related Epics link)
 - `TASK-update-terminal-ui-spec-to-actual-file-layout.md`, `TASK-tui-enabled-config-flag-never-read.md`
 
+*Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
 git issue: 769db3d
