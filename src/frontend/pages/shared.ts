@@ -6,6 +6,7 @@
 
 import { log as rootLog, } from "../alpine/logger";
 import { feFetch, } from "../fe-fetch";
+import { escapeHtml, } from "../html-escape";
 
 const log = rootLog.child({ module: "shared", },);
 const PARTIALS_HEADERS = { "HX-Request": "true", } as const;
@@ -24,15 +25,10 @@ export async function fetchPartial(path: string,): Promise<string | null> {
   return resp.text();
 }
 
-/**
- * @param str
- * @returns {string}
- */
-export function escapeHtml(str: string,): string {
-  const div = document.createElement("div",);
-  div.textContent = str;
-  return div.getHTML();
-}
+// Escapes `& < > " '` — safe for text nodes AND quoted attribute values.
+// Re-exported from the canonical helper so callers in this module tree and
+// the chat renderers share one implementation.
+export { escapeHtml, };
 
 /**
  * @param bytes

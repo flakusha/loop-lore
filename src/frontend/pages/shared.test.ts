@@ -46,23 +46,14 @@ interface El {
   getHTML: () => string;
 }
 
+/**
+ * Browser text-node serialization, per the HTML fragment serialization
+ * algorithm: only `&`, `<` and `>` are encoded — `"` and `'` come back
+ * verbatim. Escaping the quotes here would have hidden a live XSS behind a
+ * fake that was stronger than the real DOM.
+ */
 function escapeText(s: string,): string {
-  return s.replace(/[&<>"']/g, (c,) => {
-    switch (c) {
-      case "&":
-        return "&amp;";
-      case "<":
-        return "&lt;";
-      case ">":
-        return "&gt;";
-      case '"':
-        return "&quot;";
-      case "'":
-        return "&#39;";
-      default:
-        return c;
-    }
-  },);
+  return s.replace(/&/g, "&amp;",).replace(/</g, "&lt;",).replace(/>/g, "&gt;",);
 }
 
 function makeEl(overrides: Partial<El> = {},): El {
@@ -193,10 +184,21 @@ describeOrSkip("fetchPartial", () => {
 },);
 
 describeOrSkip("escapeHtml / filterCards", () => {
-  test("escapeHtml escapes via textContent round-trip", async () => {
+  test("escapeHtml escapes all five HTML-special characters", async () => {
     const { escapeHtml, } = await import("./shared");
     installDocument({ createElement: () => makeEl(), },);
-    expect(escapeHtml("<b>&\"'",),).toBe("&lt;b&gt;&amp;&quot;&#39;",);
+    // The five-character contract: `& < > " '`. Escaping only `& < >` (what a
+    // div.getHTML() text-node round-trip does) lets a quote close the
+    // surrounding attribute — the stored-XSS this guards against.
+    expect(escapeHtml(`& < > " '`,),).toBe("&amp; &lt; &gt; &quot; &#39;",);
+  });
+
+  test("escapeHtml neutralizes an attribute-breakout payload", async () => {
+    const { escapeHtml, } = await import("./shared");
+    installDocument({ createElement: () => makeEl(), },);
+    const escaped = escapeHtml(`x" onerror="alert(1)`,);
+    expect(escaped,).toBe("x&quot; onerror=&quot;alert(1)",);
+    expect(escaped.includes('"',),).toBe(false,);
   });
 
   test("filterCards hides non-matching cards and injects an empty state", async () => {
