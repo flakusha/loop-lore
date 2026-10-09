@@ -11,6 +11,7 @@
  * toggle, LLM-assist toggle, and arc-stage save.
  */
 
+import { jsonStringifyOr, } from "../../utils/safe-json";
 import { escapeHtml, } from "./escape-html";
 
 /** Input values for the growth section */
@@ -78,9 +79,9 @@ export function growthSection(
     escapeAttr(v.growthMode,)
   }', initialLlmAssist: ${v.llmAssistEnabled ? "true" : "false"}, initialArcStage: '${
     escapeAttr(v.arcStage,)
-  }', initialArcDescription: '${
-    escapeAttr(v.arcDescription,)
-  }', initialEntries: [], dataVersion: ${v.dataVersion} })" data-testid="character-growth-editor">
+  }', initialArcDescription: ${
+    escapeAttr(jsonStringifyOr(v.arcDescription, '""',),)
+  }, initialEntries: [], dataVersion: ${v.dataVersion} })" data-testid="character-growth-editor">
             <fieldset class="growth-mode-fieldset">
               <legend>Growth Mode</legend>
               <label><input type="radio" name="growth_mode" value="dynamic" x-model="growthMode" data-testid="growth-mode-dynamic" /> Dynamic — character may evolve through the story</label>
