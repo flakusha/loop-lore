@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** actor-level emotion-avatar regenerate endpoint
 **Priority:** medium
 **Effort:** Medium
@@ -20,6 +20,6 @@ Service with {emotions?, replace} params + validation schema. Part of epic Emoti
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
