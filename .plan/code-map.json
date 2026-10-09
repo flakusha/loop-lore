@@ -8725,18 +8725,6 @@
       "source": ".plan/tickets/TASK-giwt-batch-command-for-run-finalize-check.md"
     }
   ],
-  "src/commands/finalize/merge.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    }
-  ],
-  "src/commands/finalize/staging-strategy.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    }
-  ],
   "src/commands/issues.ts": [
     {
       "kind": "ticket",
@@ -9765,10 +9753,6 @@
       "source": ".plan/epics/epic-configs-path-resolution.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
     },
@@ -9920,10 +9904,6 @@
     }
   ],
   "src/config/load/constants.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md"
@@ -10666,10 +10646,6 @@
     }
   ],
   "src/config/sections/menu-data.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-make-the-federation-config-panel-editable-in-the-config-ui.md"
@@ -15657,10 +15633,6 @@
   ],
   "src/federation/clearance.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md"
     },
@@ -15684,10 +15656,6 @@
     }
   ],
   "src/federation/coordinator.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-runresyncpass-fetches-peer-advertisements-without-the-spki-p.md"
@@ -15713,10 +15681,6 @@
   ],
   "src/federation/dek-rewrap.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md"
     },
@@ -15730,10 +15694,6 @@
     }
   ],
   "src/federation/delivery.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-inbound-federation-content-not-moderated-before-display.md"
@@ -15786,10 +15746,6 @@
     }
   ],
   "src/federation/fan-out.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md"
@@ -15916,10 +15872,6 @@
     }
   ],
   "src/federation/sharing.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md"
@@ -17438,10 +17390,6 @@
     }
   ],
   "src/frontend/alpine/command-palette.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"
@@ -20144,10 +20092,6 @@
     }
   ],
   "src/frontend/stores/index.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"
@@ -26865,12 +26809,6 @@
       "source": ".plan/tickets/BUG-ticket-epic-triage-and-triage-p3-idea-tickets-assign.md"
     }
   ],
-  "src/plan/validate/content-gates.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    }
-  ],
   "src/planning/service.ts": [
     {
       "kind": "epic",
@@ -29241,10 +29179,6 @@
       "source": ".plan/epics/epic-guest-access.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-auth-rate-limiter-tests-seed-per-ip-buckets-via-getclientip-.md"
     },
@@ -30856,10 +30790,6 @@
     }
   ],
   "src/routes/federation-transfer.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-a-federation-e2e-test-that-boots-two-real-servers.md"
@@ -39339,17 +39269,7 @@
       "source": ".plan/epics/epic-script-migration.md"
     }
   ],
-  "src/tickets/sync-index-write.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    }
-  ],
   "src/tickets/sync-index.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-giwt-sync-fix-needs-two-passes-to-converge-when-an-index-ent.md"
@@ -39367,12 +39287,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status.md"
-    }
-  ],
-  "src/tickets/sync-report.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
     }
   ],
   "src/tickets/sync-ticket.ts": [
@@ -41394,10 +41308,6 @@
     }
   ],
   "src/views/partials/top-bar.html": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-local-multi-instance-federation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"

@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 317 epics
+**Total:** 316 epics
 
 ## Summary
 
@@ -151,7 +151,6 @@
 | Done | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
 | In Progress | Epic: Inventory | High | High | 4 | [epic-inventory.md](/.plan/epics/epic-inventory.md) |
 | In Progress | Epic: Items | High | High | 4 | [epic-items.md](/.plan/epics/epic-items.md) |
-| Not Started | Epic: Local Multi-Instance Federation — Sender Wiring & Dev Harness | High | High | 0 | [epic-local-multi-instance-federation.md](/.plan/epics/epic-local-multi-instance-federation.md) |
 | Not Started | Epic: Locations | High | High | 5 | [epic-locations.md](/.plan/epics/epic-locations.md) |
 | Not Started | Epic: Lore Knowledge System | High\ | Medium\ | 6 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
 | In Progress | Epic: Memory & Knowledge Systems | High | High | 12 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
@@ -640,6 +639,8 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Type:** Feature Epic
 - **Tags:** battle, items, social, npc, weather, resolution, integration
 - **File:** `.plan/epics/epic-battle-integration-gaps.md`
+
+### Current State Assessment
 
 ### Current State Assessment
 
@@ -1655,17 +1656,6 @@ Inventory system specification — covers item storage, equipment slots, invento
 
 Items specification — covers item types, properties, interactions, loot tables, and item lifecycle. Supersedes item sections in `docs/spec/actors.md`.
 
-### Epic: Local Multi-Instance Federation — Sender Wiring & Dev Harness
-
-- **Status:** Not Started
-- **Priority:** High
-- **Effort:** High
-- **Type:** Feature Epic
-- **Tags:** federation, multi-instance, mesh, sender, consent, dev-harness, config
-- **File:** `.plan/epics/epic-local-multi-instance-federation.md`
-
-Make two loop-lore servers on one machine actually federate. The mesh **receiver** is built, mounted, and tested; the **sender** — the entire trust and replication path — has zero production call sites. Two healthy instances pointed at each other today exchange nothing, silently, because `mesh_peers` is never populated, chat consent can never be granted, and nothing ever triggers a push.
-
 ### Epic: Locations
 
 - **Status:** Not Started
@@ -2634,6 +2624,8 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### NSFW Interaction UI
 
 - **Status:** Not Started
@@ -3058,6 +3050,8 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3355,4 +3349,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-
