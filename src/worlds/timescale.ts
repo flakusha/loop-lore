@@ -4,7 +4,7 @@
 /**
  * src/worlds/timescale.ts — epoch + time-scale engine
  *
- * One row per world (`world_timescale`, 047) carries the current epoch
+ * One row per world (`world_timescale`, migration 052) carries the current epoch
  * label and the world clock: `scale_size` world-minutes elapse per each
  * real-minute passed to `advance`, and `advanced_minutes` accumulates
  * them. There is no other canonical world-time column —
