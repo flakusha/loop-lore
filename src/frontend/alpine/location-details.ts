@@ -10,11 +10,8 @@
  * location-actions.ts; this slice is the read-only picture of a place.
  */
 import { jsonParseOr, } from "../../utils";
-import { apiFetch, } from "./htmx";
-import { log as rootLog, } from "./logger";
+import { fetchWorldJson, } from "./world-fetch";
 import type { NpcPresent, WorldLocationDetail, WorldPageState, } from "./world-types";
-
-const log = rootLog.child({ module: "location-details", },);
 
 /** Detail + NPC state for the world page. */
 export const locationDetails: Partial<WorldPageState> & ThisType<WorldPageState> = {
@@ -37,7 +34,10 @@ export const locationDetails: Partial<WorldPageState> & ThisType<WorldPageState>
     return parseJsonList(this.detail?.state?.items_available,);
   },
 
-  /** @returns {Promise<void>} */
+  /**
+   * @param id
+   * @returns {Promise<void>}
+   */
   async selectLocation(id: string,) {
     if (this.selectedLocationId === id && this.detail) { return; }
     this.selectedLocationId = id;
@@ -45,30 +45,29 @@ export const locationDetails: Partial<WorldPageState> & ThisType<WorldPageState>
     await this.loadLocationDetail(id,);
   },
 
-  /** @returns {Promise<void>} */
+  /**
+   * @param id
+   * @returns {Promise<void>}
+   */
   async loadLocationDetail(id: string,) {
     this.detailLoading = true;
     this.detailError = false;
     try {
-      const detailRes = await apiFetch(`/api/v1/worlds/${this.worldId}/locations/${id}/details`, {
-        headers: { Accept: "application/json", },
-      },);
+      const detailBody = await fetchWorldJson<{ data?: WorldLocationDetail }>(
+        this.worldId,
+        `/locations/${id}/details`,
+      );
 
-      const npcsRes = await apiFetch(`/api/v1/worlds/${this.worldId}/npcs-at/${id}`, {
-        headers: { Accept: "application/json", },
-      },);
+      const npcBody = await fetchWorldJson<NpcPresent[]>(this.worldId, `/npcs-at/${id}`,);
 
-      if (!detailRes.ok || !npcsRes.ok) {
+      if (detailBody === null || npcBody === null) {
         this.detailError = true;
         return;
       }
 
-      const detailBody = (await detailRes.json()) as { data?: WorldLocationDetail };
       this.detail = detailBody.data ?? null;
-      const npcBody = (await npcsRes.json()) as NpcPresent[];
       this.detailNpcs = Array.isArray(npcBody,) ? npcBody : [];
-    } catch (error) {
-      log.warn("location detail load failed", { error: String(error,), },);
+    } catch {
       this.detailError = true;
     } finally {
       this.detailLoading = false;

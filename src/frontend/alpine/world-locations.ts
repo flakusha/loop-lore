@@ -4,7 +4,9 @@
 import { filterCards, } from "../pages/shared";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
+import { locationEditActions, } from "./location-edit-actions";
 import { log as rootLog, } from "./logger";
+import { fetchWorldJson, } from "./world-fetch";
 import type { WorldEditState, } from "./world-types";
 
 const log = rootLog.child({ module: "world-locations", },);
@@ -36,36 +38,32 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
     this.loadingLocations = true;
     this.locationsLoaded = false;
     try {
-      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations`, {
-        headers: { Accept: "application/json", },
-      },);
+      const data = await fetchWorldJson<{
+        data?: Array<{
+          id: string;
+          name: string;
+          description: string | null;
+          parent_location_id: string | null;
+          connections?: unknown[];
+        }>;
+      }>(this.worldId, "/locations",);
 
-      if (res.ok) {
-        const data = await res.json();
-        this.locations = Array.from(
-          (data.data ?? []) as Array<{
-            id: string;
-            name: string;
-            description: string | null;
-            parent_location_id: string | null;
-            connections?: unknown[];
-          }>,
-          (l,) => ({
-            id: l.id,
-            name: l.name,
-            description: l.description,
-            parent_location_id: l.parent_location_id,
-            connections: l.connections || [],
-          }),
-        );
+      if (data) {
+        this.locations = (data.data ?? []).map((l,) => ({
+          id: l.id,
+          name: l.name,
+          description: l.description,
+          parent_location_id: l.parent_location_id,
+          connections: l.connections || [],
+        }));
 
         this.locationsLoaded = true;
         const nextTick = (this as unknown as { $nextTick?: (callback: () => void,) => void }).$nextTick;
         if (nextTick) { nextTick(() => this.filterLocations()); }
         else { this.filterLocations(); }
       }
-    } catch (error) {
-      log.warn("loadLocations failed", { error: String(error,), },);
+    } catch {
+      log.warn("loadLocations failed",);
     }
 
     this.loadingLocations = false;
@@ -124,52 +122,7 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
    * @param {string} locId
    * @returns {void}
    */
-  expandLoc(locId: string,) {
-    if (this.expandedLoc === locId) {
-      this.expandedLoc = "";
-      return;
-    }
-
-    this.expandedLoc = locId;
-    const loc = this.locations.find((l,) => l.id === locId);
-    if (loc) {
-      this.editLocName = loc.name;
-      this.editLocDesc = loc.description || "";
-    }
-  },
-
-  /**
-   * @param {string} locId
-   * @returns {Promise<void>}
-   */
-  async saveLocation(locId: string,) {
-    try {
-      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations/${locId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", },
-        body: jsonBody({
-          name: this.editLocName.trim(),
-          description: this.editLocDesc.trim() || null,
-        },),
-      },);
-
-      if (res.ok) {
-        const loc = this.locations.find((l,) => l.id === locId);
-        if (loc) {
-          loc.name = this.editLocName.trim();
-          loc.description = this.editLocDesc.trim() || null;
-        }
-
-        this.expandedLoc = "";
-        showToast("success", t("toasts.locationUpdated",),);
-      } else {
-        const err = await res.json();
-        showToast("error", err.message || t("toasts.failed",),);
-      }
-    } catch {
-      showToast("error", t("toasts.networkError",),);
-    }
-  },
+  ...locationEditActions,
 
   /**
    * @param {string} locId

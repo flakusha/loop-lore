@@ -249,6 +249,8 @@ export interface WorldPageState {
   showItems: boolean;
   readonly detailHazards: string[];
   readonly detailItems: string[];
+  /** Shared <option> view-model consumed by location-options.html. */
+  readonly optionItems: WorldLocationLite[];
 
   // ── lore editor (world-lore.ts) ──
   loreEntries: WorldLoreEntry[];

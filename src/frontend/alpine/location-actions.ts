@@ -11,12 +11,9 @@
  * items-available list, explore = the world editor's explore tab. None of
  * these mutate world state beyond the documented chat move.
  */
-import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
-import { log as rootLog, } from "./logger";
+import { fetchWorldJson, } from "./world-fetch";
 import type { WorldChatLite, WorldPageState, } from "./world-types";
-
-const log = rootLog.child({ module: "location-actions", },);
 
 /** Chat list + move action for the world page. */
 export const locationActions: Partial<WorldPageState> & ThisType<WorldPageState> = {
@@ -27,16 +24,8 @@ export const locationActions: Partial<WorldPageState> & ThisType<WorldPageState>
   async loadWorldChats() {
     this.chatsLoading = true;
     try {
-      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/chats`, {
-        headers: { Accept: "application/json", },
-      },);
-
-      if (res.ok) {
-        const body = (await res.json()) as { data?: WorldChatLite[] };
-        this.worldChats = Array.isArray(body.data,) ? body.data : [];
-      }
-    } catch (error) {
-      log.warn("world chats load failed", { error: String(error,), },);
+      const body = await fetchWorldJson<{ data?: WorldChatLite[] }>(this.worldId, "/chats",);
+      if (body) { this.worldChats = Array.isArray(body.data,) ? body.data : []; }
     } finally {
       this.chatsLoading = false;
     }
