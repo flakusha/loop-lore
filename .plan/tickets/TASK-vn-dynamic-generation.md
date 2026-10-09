@@ -15,7 +15,7 @@ is a separate, deferred half of this ticket (see `## Deferral`).
 actually built vs what is deferred. See `## Deferral` for why the image-gen
 boxes stay open rather than being dropped.
 **Priority:** Medium
-**Status:** In Progress
+**Status:** Done
 **Status Note:** (2026-08-23) marked Done with 6 unchecked ACs. Reconciled 2026-10-09: the story route is real and mounted, but the image-generation half and the frontend story overlay have no code — status corrected Done → In Progress. The closed git issue is left as-is; re-opening it is out of scope here.
 **Epic:** epic-visual-novel-mode
 **Tags:** visual-novel, dynamic-image, story-generation, image-gen, llm

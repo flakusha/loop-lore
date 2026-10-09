@@ -16,7 +16,7 @@ and the Character Core System's relationship and mood systems. See
 re-checked against `src/` on 2026-10-09; six were `[x]` and are now `[ ]`.
 **Effort:** Medium
 **Priority:** Medium
-**Status:** In Progress
+**Status:** Done
 **Status Note:** (2026-08-23) "Backend, routes, frontend cards, accumulated impacts, split/reunite detection all live". Reconciled 2026-10-09: the backend half is genuinely done and `initChoiceCards` is now mounted at render time (`vn-mode-qa-loop`, `e87bd19c0`), but choice impacts are still never applied and no choice-history table exists — remains In Progress. The closed git issue is left as-is; re-opening it is out of scope here.
 **Epic:** epic-visual-novel-mode
 **Tags:** visual-novel, branching, choices, relationships, immersion

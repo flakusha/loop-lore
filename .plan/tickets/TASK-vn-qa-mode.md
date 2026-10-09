@@ -18,7 +18,7 @@ and `## Acceptance Criteria`.
 against `vn-mode-qa-loop` at `e87bd19c0` / `5e5af1d81`, not against `dev`).
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** (2026-08-23) marked Done while its own body said the Q&A Interaction Loop was NOT STARTED with 10 unchecked ACs. Reconciled 2026-10-09 (first pass): validator done (but callerless), interaction loop absent — Done → In Progress. Re-reconciled the same day after `vn-mode-qa-loop` was found: the interaction loop now exists end-to-end, but four ACs still fail (scene transition, mood shift, relationship write, item-gain notice) and mobile responsiveness is unaddressed. Stays In Progress. Note the closed git issue is left as-is; re-opening it is out of scope here.
 **Priority:** P2 — Medium
 **Effort:** Medium

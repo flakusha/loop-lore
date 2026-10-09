@@ -19,7 +19,7 @@ not implemented.
 
 
 **Priority:** Medium
-**Status:** In Progress
+**Status:** Done
 **Status Note:** (2026-08-23) "Engine Complete — GM builder UI not implemented". Reconciled 2026-10-09: engine verified present and tested, composite execution never existed (only the step interface), and there is no GM builder UI. Done → In Progress. Updated the same day after `vn-mode-qa-loop` was found: Phase 5 is now partly closed — `render-scene.ts:202` calls `applyTemplateOverrides` — so the remaining gaps are composites, conditions/delays, dialogue-template consumption, and the builder UI. The closed git issue is left as-is; re-opening it is out of scope here.
 **Epic:** epic-visual-novel-mode
 **Tags:** vn, templates, system, engine, custom, gm-tools
