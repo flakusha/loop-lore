@@ -26,4 +26,4 @@ Planned work item for epic-battle-integration-gaps.
 
 - [ ] Complete
 
-**Resolved:** 2026-10-10 registry-driven close: git issue 2d106c8 (registry tip: 69ed240a7 Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-09 registry-driven close: git issue 2d106c8 (registry tip: 69ed240a7 Konstantin Fedotov Close issue)

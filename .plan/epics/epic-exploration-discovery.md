@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** tick-level discovery/trade accrual (`src/rpg/world-discovery/`), party travel + NPC migration + budget ledger (`src/rpg/world-travel/`), and the read-only location explorer API (`src/routes/location-explorer.ts`) are shipped and wired into the autonomy scheduler (`src/cron/jobs.ts`); maps/fog of war/cartography/secrets/navigation and the typed exploration API are not started (verified 2026-10-09)
 **Priority:** Medium
 **Effort:** High
 **Issue:** `a8b30aa`
@@ -391,40 +391,60 @@ interface TravelEncounter {
 
 ## Files
 
-This epic is a design spec — **none of the paths below exist**. There is no
-`src/rpg/exploration/` module, no exploration tables, and no exploration API.
+Implemented (verified 2026-10-09):
 
-Planned (does not exist yet):
+- `src/rpg/world-discovery/` — `runDiscoveryTick` accrual (`discovery.ts`), decay/threshold constants (`progress.ts`), world-event emit/list (`events.ts`), `trade:route` detection (`trade.ts`); tables `location_discovery` + `world_event_log` (`src/db/schema-core.ts`)
+- `src/rpg/world-travel/` — `advancePartyTravel` (`travel.ts`), NPC relocation (`migration.ts`), fractional budget ledger (`budget.ts`), route walking (`walk.ts`); tables `travel_parties` + `npc_migrations` + `world_travel_budget` (`src/db/schema-core.ts`)
+- `src/autonomy/dispatch/discovery-trade-dispatch.ts` — `createDiscoveryTradeDispatch`: runs discovery + trade per world tick (after the travel target, no governor charge)
+- `src/cron/jobs.ts` — registers the dispatch in the autonomy scheduler
+- `src/routes/location-explorer.ts` — read-only location tree + detail for the world location browser UI
 
-- `src/rpg/exploration/maps.ts` — map system
-- `src/rpg/exploration/fog.ts` — fog of war
-- `src/rpg/exploration/discovery.ts` — discovery system
-- `src/rpg/exploration/navigation.ts` — navigation
-- `src/rpg/exploration/cartography.ts` — map making
-- `src/rpg/exploration/secrets.ts` — hidden content
-- `src/rpg/exploration/travel.ts` — travel system
+Planned (do not exist yet):
+
+- `src/rpg/exploration/` — maps/fog/navigation/cartography/secrets typed interfaces (no such module)
 - `src/db/schema-exploration.ts` — exploration tables
 - `src/routes/exploration.ts` — exploration API
 
-Shipped today, as tick-level autonomy logic rather than the typed interfaces
-this epic specifies:
+## Implemented (verified 2026-10-09)
 
-- `src/rpg/world-discovery/` — `runDiscoveryTick` accrual, progress, discovery
-  events, and world discovery↔trade coupling
-- `src/rpg/world-travel/` — `advancePartyTravel`, travel budget, and walk
-  simulation
+**Tables:**
+
+- `location_discovery`, `world_event_log` — discovery/progress/event store (`src/db/schema-core.ts`, read via `src/rpg/world-discovery/types.ts` `discoveryDb`)
+- `travel_parties`, `npc_migrations`, `world_travel_budget` — party travel, NPC relocation, budget ledger (`src/db/schema-core.ts`, read via `src/rpg/world-travel/types.ts` `travelDb`)
+
+**Modules:**
+
+- `src/rpg/world-discovery/discovery.ts` — `runDiscoveryTick` (explore accrual, decay, threshold → discovery)
+- `src/rpg/world-discovery/trade.ts` — `runTradeTick` (`trade:route` claims decision)
+- `src/rpg/world-discovery/events.ts` — `emitWorldEvent` / `listWorldEvents`
+- `src/rpg/world-travel/travel.ts` — `advancePartyTravel` (collision rule)
+- `src/rpg/world-travel/migration.ts` — `migrateNpc`
+- `src/rpg/world-travel/budget.ts` — `chargeBudget` / `readBudget`
+- `src/autonomy/dispatch/discovery-trade-dispatch.ts` — `createDiscoveryTradeDispatch`
+
+**Shipped:**
+
+- `location:discovered` + `trade:route` world events (`src/rpg/world-discovery/types.ts`)
+- Scheduler wiring: `src/cron/jobs.ts` orders the `discovery` target after `travel`
+- `src/routes/location-explorer.ts` — read-only location tree/detail endpoints
 
 ## Current State
 
-| Layer | Status | Where |
-| ----- | ------ | ----- |
-| Discovery accrual | Shipped (tick-level) | `src/rpg/world-discovery/discovery.ts` |
-| Party travel / movement | Shipped (tick-level) | `src/rpg/world-travel/travel.ts` |
+| Surface | Status | Where |
+| ------- | ------ | ----- |
+| Discovery accrual (tick-level) | Shipped | `src/rpg/world-discovery/discovery.ts` + `progress.ts` |
+| World discovery ↔ trade coupling | Shipped | `src/rpg/world-discovery/trade.ts` |
+| Discovery/trade world events | Shipped | `src/rpg/world-discovery/events.ts` + `types.ts` into `world_event_log` |
+| Party travel / movement | Shipped | `src/rpg/world-travel/travel.ts`, `walk.ts` |
+| NPC migration | Shipped | `src/rpg/world-travel/migration.ts` |
+| Travel budget ledger | Shipped | `src/rpg/world-travel/budget.ts` |
+| Scheduler wiring | Shipped | `src/autonomy/dispatch/discovery-trade-dispatch.ts`, `src/cron/jobs.ts` |
+| Location explorer read API | Shipped | `src/routes/location-explorer.ts` |
 | Maps / fog of war | Not Started | — |
 | Navigation + hazards | Not Started | — |
 | Cartography | Not Started | — |
 | Secrets / hidden content | Not Started | — |
-| Exploration API | Not Started | — |
+| Typed exploration API (`src/routes/exploration.ts`) | Not Started | — |
 
 ## Dependencies
 
@@ -436,8 +456,10 @@ this epic specifies:
 
 - Fog of war / revealed tiles, cartography, and secrets have no ticket; they are
   specified here but owned by neither linked ticket.
-- `exploration.location_discovered` and `exploration.encounter_triggered` are
-  declared as emitted events with no emitter in the codebase.
+- The epic's `exploration.location_discovered` has a shipped tick-level
+  counterpart — `location:discovered` via `emitWorldEvent`
+  (`src/rpg/world-discovery/events.ts`, `types.ts`) — but
+  `exploration.encounter_triggered` still has no emitter in the codebase.
 
 ## Related Epics
 
@@ -453,3 +475,4 @@ this epic specifies:
 
 - `TASK-exploration-discovery.md` (open)
 - `TASK-exploration-expedition-teams.md` (open)
+- `TASK-rpg-exploration-discovery.md` (Done — over-claim: only tick-level discovery/trade/travel shipped in `src/rpg/world-discovery/` + `src/rpg/world-travel/`; map exploration, hidden areas, and rewards tables are not)

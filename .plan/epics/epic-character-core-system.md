@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** character core services (traits, mood, relationships, avatars, licensing) + API/IO routes + tests complete; RPG stat system + template system in progress
+**Status Note:** verified 2026-10-09: the character API and its companion services ship (`charactersRoutes` + traits/mood/relationships/avatars/emotions/availability/licensing/IO mounted in `src/routes/v1/actors-surface.ts:56-76`), the RPG stat system ships (`src/rpg/stats/` + `src/rpg/service/character-stats.ts`), and character template seeding ships (`src/characters/seed/`); open — the six-slice stat-allocation extension (no `character_stat_allocation` / `requires_stats` anywhere in `src/` or `configs/`) and the four-tier memory extension (no episodic/semantic/procedural tables).
 **Priority:** High
 **Effort:** High
 **Type:** Foundation Epic
@@ -19,7 +19,7 @@ Core character data model and services — mandatory/optional fields, RPG stats,
 
 ## Reference
 
-- Spec: `docs/spec/character-spec.md` (611 lines — authoritative)
+- Spec: `docs/spec/character-spec.md` (authoritative; compressed to 37 lines — the detailed constraint tables now live in `src/characters/validator/`, per its own "Unique content" note)
 - Spec: `docs/spec/character-interactions.md`
 - Spec: `docs/spec/rpg-mechanics.md`
 
@@ -32,37 +32,108 @@ Core character data model and services — mandatory/optional fields, RPG stats,
 - Character validation (field lengths, constraints)
 - Unified character API
 
-## Current State (verified 2026-08-04)
+## Implemented (verified 2026-10-09)
 
-The unified character API is **implemented and wired** — no `TBD` remains in `src/routes/characters.ts`:
+- **Unified character API** — `charactersRoutes` registered at
+  `src/routes/v1/actors-surface.ts:56` and mounted through `src/routes/v1/index.ts:61`;
+  the sub-plugins `list` / `create` / `read` / `card` / `update` / `remove` / `export` /
+  `approval` are assembled in `src/routes/characters/index.ts:23-33`. Routes cover
+  `GET/POST /api/actors`, `GET/PUT/DELETE /api/actors/:actorId`,
+  `GET /api/actors/:actorId/card`, `GET /api/actors/:actorId/export`, `POST /api/actors/import`.
+- **Companion character sub-routes** — all mounted in
+  `src/routes/v1/actors-surface.ts:62-76`: `character-traits`,
+  `character-world-setup`, `character-internal-traits`, `character-growth`,
+  `character-mood`, `character-relationships`, `character-avatars`,
+  `character-emotions`, `character-emotion-avatars`, `character-availability`,
+  `character-licensing`, `character-io` (plus wardrobe and outfit overrides).
+- **Personality + traits services** — `src/characters/services/personality-service/`
+  and `src/characters/services/traits-service/` (directories, not the flat files this
+  epic used to cite), with the immutability rules at `personality-service/integrity.ts`.
+- **Character validation** — `src/characters/validator/` (`validateCharacter`, strict /
+  relaxed) plus the TypeBox shapes in `src/validation/schemas/` (a directory — the
+  flat `schemas.ts` this epic used to cite does not exist).
+- **RPG stat system** — `src/rpg/stats/`: `types.ts` (`StatBlock`, `AbilityName`,
+  `SkillName`), `generation.ts` (`pointBuy` / `standardArray` / `rollStats4d6` /
+  `statBlockFromArray`), `modifiers.ts` (`abilityModifier` / `computeModifiers` /
+  `getModifier`), `proficiency.ts` (`proficiencyBonus`), `validation.ts`
+  (`validateStatBlock`, `MIN_STAT`/`MAX_STAT`), all re-exported from `stats/index.ts`;
+  runtime persistence in `src/rpg/service/character-stats.ts`
+  (`createCharacterStats` / `getCharacterStats` / `updateCharacterStats`). Tests:
+  `src/rpg/stats/*.test.ts`, `src/rpg/service/character-stats.test.ts`.
+- **RPG subsystem** — dice, combat, achievements, crafting and encounters under
+  `src/rpg/` (and `src/rpg/stats/`); there is **no spells module** anywhere in `src/`,
+  so the long-standing "dice, combat, achievements, crafting, encounters, spells" claim
+  was wrong on its last item. HTTP surfaces live under `src/routes/rpg/`.
+- **Character template seeding** — see the merged section at the end of this file;
+  wired at `src/server/init-background-services.ts:37-52`.
+- **Import/export** — per `epic-import-export-io.md`; single-actor IO at
+  `src/routes/character-io/`.
 
-- `charactersRoutes` mounted at `src/elysia-app.ts:163`
-- Full CRUD: `GET/POST /api/actors`, `GET /api/actors/:actorId`, `GET /api/actors/:actorId/card`, `PUT/DELETE /api/actors/:actorId`, `GET /api/actors/:actorId/export`, `POST /api/actors/import`
-- Companion character sub-routes all wired: `character-traits`, `character-mood`, `character-relationships`, `character-avatars`, `character-emotions`, `character-emotion-avatars`, `character-availability`, `character-licensing`, `character-io` (each mounted in `elysia-app.ts`)
-- Personality + traits services: `src/characters/services/personality-service.ts`, `traits-service.ts`
-- RPG subsystem (dice, combat, achievements, crafting, encounters, spells) under `src/rpg/`
-- Import/export per `epic-import-export-io.md`
+## Current State
+
+| Surface | Status | Where |
+| ------- | ------ | ----- |
+| Unified character API (CRUD + card + export) | Shipped | `src/routes/characters/`, mounted at `src/routes/v1/actors-surface.ts:56` |
+| Companion character sub-routes | Shipped | `src/routes/v1/actors-surface.ts:62-76` |
+| Personality + traits services | Shipped | `src/characters/services/personality-service/`, `src/characters/services/traits-service/` |
+| Character validation schemas | Shipped | `src/characters/validator/`, `src/validation/schemas.ts` |
+| RPG stat system (base stats, modifiers, derived) | Shipped | `src/rpg/stats/`, `src/rpg/service/character-stats.ts` |
+| Character search/filter (`page` / `pageSize` / `type`) | Shipped | `src/routes/characters/list.ts:21-24` |
+| Character template seeding | Shipped | `src/characters/seed/`, `src/server/init-background-services.ts:37` |
+| Import/export | Shipped | `src/routes/character-io/`, `src/characters/parser.ts` — see `epic-import-export-io.md` |
+| Stat-allocation extension (the six slices below) | Not shipped | no `character_stat_allocation`, `character_trait_assignments`, `requires_stats` or `stat_point_budget` anywhere in `src/` or `configs/` |
+| Four-tier memory extension (`CharacterMemory`) | Not shipped | no episodic / semantic / procedural / consolidation tables in `src/db/migrations/001_init.ts` |
+| Character-growth research extension (table below) | Superseded by `epic-character-growth.md` | `character_arc` (`001_init.ts:1096`) and `growth_log` (`:1106`) now ship; rows below annotated |
+| Cross-system events (`character.stats_changed`, `character.relationship_changed`, `memory.emotion_applied`) | Not shipped | no emitter or subscriber anywhere in `src/` |
+
+## Unticketed Gaps
+
+Two things here have no ticket. The **cross-system events table further down** promises
+`character.stats_changed`, `character.relationship_changed` and `memory.emotion_applied`
+as an integration contract, but no string, emitter or subscriber for any of the three
+exists in `src/` — downstream systems (achievements, battle, companion bonding) are
+reading stat and relationship state directly instead of reacting to it, so a stat change
+is invisible to anything not polling. Second, **stat provenance is undocumented**: the
+stat system ships generation, modifiers, proficiency and persistence, yet nothing in
+`src/` records where a given character's numbers came from (point-buy versus roll
+versus GM edit), so `TASK-character-stat-allocation-*` cannot distinguish a baseline
+block from an allocated one when it lands. The six stat-allocation slices and the
+eleven memory/growth rows below all have tickets; these two do not.
 
 ## Tasks
 
-- [x] Character validation schemas (field lengths, required fields) — TypeBox `src/validation/schemas.ts`
-- [x] Personality trait system — `traits-service.ts` + `personality-service.ts`
-- [x] Character CRUD API routes — `src/routes/characters.ts` (wired, tested)
-- [x] Character search/filter — `GET /api/actors` with `page`/`pageSize`/`type` query
-- [ ] RPG stat system (base stats, modifiers, derived stats) — `src/rpg/` partial (dice/combat exist)
-- [ ] Character template system — pending prompt-template-registry work
+- [x] Character validation schemas (field lengths, required fields) — TypeBox `src/validation/schemas/`
+- [x] Personality trait system — `src/characters/services/traits-service/` + `src/characters/services/personality-service/`
+- [x] Character CRUD API routes — `src/routes/characters/` (wired at `src/routes/v1/actors-surface.ts:56`, tested)
+- [x] Character search/filter — `GET /api/actors` with `page`/`pageSize`/`type` query (`src/routes/characters/list.ts:24`)
+- [x] RPG stat system (base stats, modifiers, derived stats) — shipped: `src/rpg/stats/` (point-buy / standard-array / 4d6 generation, `abilityModifier` + `computeModifiers`, `proficiencyBonus`, `validateStatBlock`) with `src/rpg/service/character-stats.ts` for persistence (verified 2026-10-09)
+- [x] Character template system — template seeding shipped: `src/characters/seed/` (`mergeCharacterTemplates` / `seedCharacterTemplates`) called from `src/server/init-background-services.ts:37-52` (verified 2026-10-09); the prompt-template-registry work named here is a separate concern
 
 ## Files
 
+Implemented (verified 2026-10-09):
+
 - `src/db/schema-core.ts` — Actors table (shared with actor system)
-- `src/routes/characters.ts` — character API (implemented, wired)
-- `src/rpg/` — RPG stat calculations (partial: dice, combat, achievements, etc.)
+- `src/routes/characters/` — character API directory (supersedes the flat `src/routes/characters.ts` this epic used to cite)
+- `src/routes/v1/actors-surface.ts` — mounting point for the character surface
+- `src/characters/validator/` — field/outfit/content-rating/extension validation
+- `src/characters/services/personality-service/`, `src/characters/services/traits-service/` — trait system
+- `src/rpg/stats/`, `src/rpg/service/character-stats.ts` — stat calculations and persistence
+- `src/characters/seed/` — character template seeding
+- `src/validation/schemas/` — TypeBox request/response schemas
+
+Planned (do not exist yet):
+
+- `src/routes/characters.ts` — superseded by the `src/routes/characters/` directory
+- `src/validation/schemas.ts` — superseded by the `src/validation/schemas/` directory
+- a spells module under `src/rpg/` — never built (the epic's old "dice, combat, achievements, crafting, encounters, spells" line named it in error)
+- `character_stat_allocation` / `character_trait_assignments` tables, the `requires_stats` world config and the allocation modal — the six-stat-allocation slices below
 
 ## Acceptance Criteria
 
 - [x] Character creation with mandatory fields validated
 - [x] Optional fields with correct defaults
-- [ ] RPG stats calculate correctly
+- [x] RPG stats calculate correctly — `src/rpg/stats/validation.test.ts` (bounds + `defaultStatBlock`) and `src/rpg/stats/modifiers.test.ts` (ability-modifier curve), verified 2026-10-09
 - [x] Character API serves full character data
 - [x] Tests passing
 
@@ -122,9 +193,15 @@ The unified character API is **implemented and wired** — no `TBD` remains in `
   (mood/coping weight episodic memories; see Memory Architecture section below)
 - `epic-wardrobe-avatar-variants.md` — seeded `CharacterTemplate` carries the per-character default outfit + loadout descriptor; the (outfit × emotion) variant key extends this epic's selection algorithm
 
-## Tickets
+## Linked Tasks
 
-- `TASK-character-core-system.md` — implementation tasks
+Statuses read from the ticket files on 2026-10-09.
+
+- `TASK-character-core-system.md` (Done) — implementation tasks for this epic
+- `TASK-character-template-seeding.md` (Not Started) — the seeding code ships (see the merged section below) but the ticket file is still open; close via `plan:sync`
+- `TASK-character-rpg-stats.md` (Not Started) — the stat-allocation-era stat ticket; the stat system itself ships as of 2026-10-09
+- `TASK-char-template-full-model-coverage.md` (Not Started) — template coverage for internal traits and voice
+- `TASK-character-migration-route.md` (Not Started) — version-migration route (owned by `epic-character-spec.md`)
 
 ### Stat Allocation & Trait Selection (Extension — 2026-09-18)
 
@@ -133,6 +210,12 @@ a point-buy stat block and pick gameplay-impact traits. The catalog drives dice,
 combat, and save outcomes; the modal surfaces the budget and trait picker to
 authors. Implementation slices below; new tickets are sequenced DB → catalog →
 engine → API → FE → tests so each phase has a verifiable boundary.
+
+> **Verified 2026-10-09 — none of the six slices has started.** `requires_stats`,
+> `stat_point_budget`, `stat_min`, `stat_max`, `character_stat_allocation` and
+> `character_trait_assignments` appear nowhere in `src/` or `configs/`, and all six
+> ticket files still read **Not Started**. The stat system this extension builds on
+> *does* ship (`src/rpg/stats/`), so the sequence can start from a working base.
 
 | Task | Ticket | Status |
 | ---- | ------ | ------ |
@@ -300,6 +383,11 @@ interface ProceduralRoutine {
 | TASK-char-memory-api | CRUD routes for memory management | Medium | Not Started |
 | TASK-char-memory-tests | Schema, consolidation, prompt, API tests | High | Not Started |
 
+> **Verified 2026-10-09 — none of the six has started.** `001_init.ts` contains no
+> episodic, semantic, procedural or consolidation tables (`actor_memories` at `:3072`
+> is the existing single-bag store, unrelated to this four-tier design), and all six
+> `TASK-char-memory-*` ticket files still read **Not Started**.
+
 ### Open Questions
 
 1. Should episodic memories decay automatically, or only through consolidation?
@@ -313,7 +401,7 @@ interface ProceduralRoutine {
 
 Characters evolve over time through experiences, challenges, and relationships.
 This is distinct from personality (immutable) and mood (reactive state) — it is
-the _trajectory_ of a character's development arc.
+the *trajectory* of a character's development arc.
 
 ### Growth Dimensions
 
@@ -518,13 +606,13 @@ When generating dialogue or behavior, the prompt includes:
 
 | Task | Description | Priority | Status |
 |------|-------------|----------|--------|
-| TASK-char-growth-schema | Add `CharacterGrowth` types + `CanonicalCharacter` fields | High | Not Started |
-| TASK-char-growth-events | Growth event system with typed events | High | Not Started |
-| TASK-char-growth-milestones | Narrative milestone thresholds | Medium | Not Started |
-| TASK-char-growth-arcs | Character arc templates and progression | Medium | Not Started |
-| TASK-char-growth-memory | Integration with memory system | High | Not Started |
-| TASK-char-growth-prompt | Prompt assembly for growth context | High | Not Started |
-| TASK-char-growth-tests | Growth events, milestones, arcs, memory tests | High | Not Started |
+| TASK-char-growth-schema | Add `CharacterGrowth` types + `CanonicalCharacter` fields | High | Shipped (verified 2026-10-09) — `character_arc` (`001_init.ts:1096`) + `growth_log` (`:1106`), types in `src/characters/spec/growth.ts`; `CanonicalCharacter` grew `growth_mode`/`llm_assist_enabled` rather than a `CharacterGrowth` struct |
+| TASK-char-growth-events | Growth event system with typed events | High | Partial (verified 2026-10-09) — `GrowthEventType` in `spec/growth.ts` covers arc/skill/trait/relationship/observation only; the wider taxonomy below (moral_choice, betrayal, sacrifice, …) is unimplemented |
+| TASK-char-growth-milestones | Narrative milestone thresholds | Medium | Not Started (verified 2026-10-09) — no `narrative_milestone` table |
+| TASK-char-growth-arcs | Character arc templates and progression | Medium | Partial (verified 2026-10-09) — `character_arc` carries `current_stage` only; no arc phases or templates |
+| TASK-char-growth-memory | Integration with memory system | High | Not Started (verified 2026-10-09) — blocked by the four-tier memory rows above |
+| TASK-char-growth-prompt | Prompt assembly for growth context | High | Shipped (verified 2026-10-09) — `src/assistant/prompt/sections/actor-growth.ts`, registered at `src/assistant/prompt/registry.ts:56` |
+| TASK-char-growth-tests | Growth events, milestones, arcs, memory tests | High | Shipped for what exists (verified 2026-10-09) — growth-service, routes and section coverage; see `epic-character-growth.md` |
 
 ### Open Questions
 
@@ -540,9 +628,10 @@ When generating dialogue or behavior, the prompt includes:
 
 # Feature: Character Template Seeding
 
-**Status:** ✅ Implemented
+**Status:** Done
+**Status Note:** verified 2026-10-09 — seeding runs at startup from `src/server/init-background-services.ts:37-52` (`mergeCharacterTemplates` + `seedCharacterTemplates`); the flat paths this block used to cite (`sections/characters.ts`, `templates-loader.ts`, `seed.ts`, `server.ts`) never existed in that shape and are corrected in the Files split below. The ticket file `.plan/tickets/TASK-character-template-seeding.md` still reads Not Started.
 **Epic:** 46 (Creative Studio) — related
-**Files:** `src/config/sections/characters.ts`, `src/config/character-loader.ts`, `src/config/templates-loader.ts`, `src/characters/seed.ts`, `src/server.ts`
+**Files:** see the Files split at the end of this section
 
 ## Summary
 

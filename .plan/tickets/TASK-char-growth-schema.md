@@ -25,4 +25,4 @@ See `.plan/epics/epic-character-growth.md` (Schema section).
 - [ ] `bun run schemas:check` green
 - [ ] `bun test src/db/schema-sync.test.ts` green
 
-**Resolved:** 2026-10-10 registry-driven close: git issue 12264b2 (registry tip: 8aaed7ab5 Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-09 registry-driven close: git issue 12264b2 (registry tip: 8aaed7ab5 Konstantin Fedotov Close issue)

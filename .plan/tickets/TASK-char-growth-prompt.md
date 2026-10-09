@@ -23,4 +23,4 @@ Implement `actorGrowthSection` in `src/assistant/prompt/sections/actor-growth.ts
 - [ ] Dynamic-mode directive honors recorded evolution
 - [ ] `PRIORITY.actorGrowth` is set in `src/assistant/prompt/types.ts`
 
-**Resolved:** 2026-10-10 registry-driven close: git issue 45e0718 (registry tip: d3db5efd7 Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-09 registry-driven close: git issue 45e0718 (registry tip: d3db5efd7 Konstantin Fedotov Close issue)

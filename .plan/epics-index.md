@@ -42,19 +42,19 @@
 | In Progress | Authorization & Access Control | High | High | 12 | [epic-auth-access.md](/.plan/epics/epic-auth-access.md) |
 | In Progress | AUX LLM Enrichment Pipeline | P2-B | Medium | 10 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
 | In Progress | Avatar Alpha Channel + VN Layering | Medium | Medium | 3 | [epic-avatar-alpha-vn-layering.md](/.plan/epics/epic-avatar-alpha-vn-layering.md) |
-| Not Started | Battle & Action Systems | Medium | Very High (split into 5 sub-epics) | 20 | [epic-battle-action-systems.md](/.plan/epics/epic-battle-action-systems.md) |
-| Not Started | Battle & Combat UI | P0 — Critical | High | 12 | [epic-battle-ui.md](/.plan/epics/epic-battle-ui.md) |
-| Not Started | Battle Integration Gaps — Items, Social, NPC, Weather, Resolution | High | High | 7 | [epic-battle-integration-gaps.md](/.plan/epics/epic-battle-integration-gaps.md) |
+| In Progress | Battle & Action Systems | Medium | Very High (split into 5 sub-epics) | 20 | [epic-battle-action-systems.md](/.plan/epics/epic-battle-action-systems.md) |
+| In Progress | Battle & Combat UI | P0 — Critical | High | 11 | [epic-battle-ui.md](/.plan/epics/epic-battle-ui.md) |
+| In Progress | Battle Integration Gaps — Items, Social, NPC, Weather, Resolution | High | High | 7 | [epic-battle-integration-gaps.md](/.plan/epics/epic-battle-integration-gaps.md) |
 | In Progress | Benchmark CI & Performance Regression Detection | High | High | 10 | [epic-benchmark-ci-regression.md](/.plan/epics/epic-benchmark-ci-regression.md) |
-| In Progress | Blog System | Medium | High | 28 | [epic-blog-system.md](/.plan/epics/epic-blog-system.md) |
+| In Progress | Blog System | Medium | High | 24 | [epic-blog-system.md](/.plan/epics/epic-blog-system.md) |
 | Not Started | BYOK API Keys (Bring Your Own Key) | High | Large | 10 | [epic-byok-api-keys.md](/.plan/epics/epic-byok-api-keys.md) |
 | Not Started | BYOK Local Models (Bring Your Own Model) | High | Large | 16 | [epic-byok-local-models.md](/.plan/epics/epic-byok-local-models.md) |
 | In Progress | Certificate & TLS Management | High | Large | 6 | [epic-certificate-and-tls-management.md](/.plan/epics/epic-certificate-and-tls-management.md) |
-| Not Started | Character & NPC Lore Access | High | High | 17 | [epic-character-npc-lore-access.md](/.plan/epics/epic-character-npc-lore-access.md) |
-| Not Started | Character ↔ World Integration (Shared Domain Models) | High | Large (composite) | 14 | [epic-character-world-integration.md](/.plan/epics/epic-character-world-integration.md) |
-| In Progress | Character Core System | High | High | 3 | [epic-character-core-system.md](/.plan/epics/epic-character-core-system.md) |
+| In Progress | Character & NPC Lore Access | High | High | 7 | [epic-character-npc-lore-access.md](/.plan/epics/epic-character-npc-lore-access.md) |
+| Not Started | Character ↔ World Integration (Shared Domain Models) | High | Large (composite) | 4 | [epic-character-world-integration.md](/.plan/epics/epic-character-world-integration.md) |
+| In Progress | Character Core System | High | High | 0 | [epic-character-core-system.md](/.plan/epics/epic-character-core-system.md) |
 | In Progress | Character Growth & Arc Progression | High | High | 0 | [epic-character-growth.md](/.plan/epics/epic-character-growth.md) |
-| Not Started | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
+| In Progress | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
 | In Progress | Character Specification & Unified API | High | High | 0 | [epic-character-spec.md](/.plan/epics/epic-character-spec.md) |
 | In Progress | Chat Composer Flows (draft for new worktree) | High — messenger parity gap | Medium | 0 | [epic-chat-composer-flows.md](/.plan/epics/epic-chat-composer-flows.md) |
 | Done | Chat Lifecycle, Transitions & Moderation | High | High | 8 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
@@ -182,9 +182,9 @@
 | Not Started | Epic: World NPCs | High | High | 11 | [epic-world-npcs.md](/.plan/epics/epic-world-npcs.md) |
 | Not Started | Epic: World Travel & Time | High | High | 25 | [epic-world-travel-time.md](/.plan/epics/epic-world-travel-time.md) |
 | Not Started | Error Envelope | Medium | Medium | 6 | [epic-error-envelope.md](/.plan/epics/epic-error-envelope.md) |
-| Not Started | Exploration & Discovery Systems | Medium | High | 0 | [epic-exploration-discovery.md](/.plan/epics/epic-exploration-discovery.md) |
+| In Progress | Exploration & Discovery Systems | Medium | High | 0 | [epic-exploration-discovery.md](/.plan/epics/epic-exploration-discovery.md) |
 | Not Started | External Search Providers & Context Enrichment | Medium | Low | 6 | [epic-rag-context-sources.md](/.plan/epics/epic-rag-context-sources.md) |
-| Not Started | Factions, Reputation & Persistent Consequences | High | High | 0 | [epic-faction-reputation.md](/.plan/epics/epic-faction-reputation.md) |
+| In Progress | Factions, Reputation & Persistent Consequences | High | High | 0 | [epic-faction-reputation.md](/.plan/epics/epic-faction-reputation.md) |
 | In Progress | FE-BE Harmonization — Epic | High | Small (one check script + gate) | 0 | [epic-fe-be-harmonization.md](/.plan/epics/epic-fe-be-harmonization.md) |
 | Done | File Splitting & God-Module Refactor | High | Very High | 5 | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md) |
 | Not Started | Flexible RPG Patterns | Medium | Medium | 0 | [epic-rpg-patterns.md](/.plan/epics/epic-rpg-patterns.md) |
@@ -615,7 +615,7 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Battle & Action Systems
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Very High (split into 5 sub-epics)
 - **Type:** Feature Epic
@@ -624,7 +624,7 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Battle & Combat UI
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** P0 — Critical
 - **Effort:** High
 - **Type:** Feature Epic
@@ -633,7 +633,7 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Battle Integration Gaps — Items, Social, NPC, Weather, Resolution
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -693,7 +693,7 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 ### Character & NPC Lore Access
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -729,7 +729,7 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 ### Character Internal Traits, Aspirations & Moral Disposition
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -1979,7 +1979,7 @@ Scene animation from narration via open video models (Phase 4 of the parent
 
 ### Exploration & Discovery Systems
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** High
 - **Type:** Feature Epic
@@ -1999,7 +1999,7 @@ Exploration and discovery mechanics — map exploration, fog of war, discovery r
 
 ### Factions, Reputation & Persistent Consequences
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic

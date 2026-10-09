@@ -7,14 +7,44 @@
 
 
 **Status:** In Progress
-**Status Note:** core CRUD + comments + follows + moderation built
+**Status Note:** Partially shipped — CRUD, threaded comments, follows + new-post notifications, tags, visibility tiers, admin post moderation, and reader frontend are live (verified 2026-10-09); LLM authoring modes, scheduled-publish activation, and authoring/admin UIs remain open.
 **Priority:** Medium
 **Effort:** High
 **Issue:** `8b193c8`
 **Type:** Feature Epic
 **Tags:** blog, llm-authored, human-authored, comments, followings, privacy, assets, moderation, rag, creative-generation
 
-> **Wiring status (verified 2026-08-04):** `blogRoutes` is **mounted and alive** at `src/elysia-app.ts:207` (`app.use(blogRoutes({ database }))`) — the "code exists but not integrated / blog inactive" assessment is stale. The blog system is active on the backend; open work is LLM-authored authoring modes + frontend.
+> **Wiring status (verified 2026-10-09):** `blogRoutes` is **mounted and alive** at `src/routes/v1/content-surface.ts:60` (`.use(blogRoutes({ database, }, prefix,))`) — the old `src/elysia-app.ts:207` citation is stale; wiring moved into the versioned content surface. The blog system is active on backend + reader frontend; open work is LLM authoring modes, scheduled-publish activation, and authoring/admin UIs.
+
+## Implemented (verified 2026-10-09)
+
+- **Tables:** `blog_posts`, `blog_comments`, `blog_follows`, `blog_tags`, `blog_rag_sources` (`src/db/schema-blog.ts`)
+- **Modules:** `src/rpg/blog/service/` — `posts.ts`, `posts-delete.ts`, `posts-views.ts`, `comments.ts`, `follows.ts`, `follows-service.ts`, `tags.ts`, `rag.ts`, `types.ts`
+- **Routes:** `src/routes/blog/` — `posts.ts` (CRUD), `comments.ts`, `follows.ts`, `rag.ts` (RAG-source attach/read), `moderation.ts` (admin post status), `post-read-policy.ts`; mounted via `src/routes/v1/content-surface.ts:60`
+- **UI:** `src/views/blog.html` + `src/frontend/pages/blog.ts` + `src/frontend/alpine/blog.ts` — reader list/detail/create surfaces with sidebar entry
+- **Shipped:** post CRUD with visibility tiers (public/followers/private; follower-gated listing in `src/rpg/blog/service/posts.ts:162`), threaded comments (`blog_comments.parent_comment_id`), follows with new-post notifications (`src/rpg/blog/service/posts.ts:68`), tags/categories (`src/rpg/blog/service/tags.ts`; `category`/`world_id`/`character_id` columns), RAG-source storage (`blog_rag_sources`), admin post moderation (`src/routes/blog/moderation.ts` — draft/published/hidden/disabled), `scheduled_at` column + `scheduled` status on create
+- **Not shipped:** LLM authoring modes (`author_type` enum includes `'llm'` — `src/rpg/blog/service/types.ts:23` — but no generation path), RAG retrieval/consumption (`src/rpg/blog/service/rag.ts` stores sources only), scheduled-publish activation queue (column exists; no cron/queue activates scheduled posts), comment moderation route, follower tiers (reader/subscriber/patron/vip), profile visibility, creative world generation + promotion, version history, rich-text editor, blog-admin bulk/analytics routes
+
+## Current State
+
+| Surface | Status | Where |
+| --- | --- | --- |
+| Post CRUD + visibility tiers (public/followers/private) | Shipped | `src/rpg/blog/service/posts.ts`, `src/routes/blog/posts.ts` |
+| Threaded comments | Shipped | `src/rpg/blog/service/comments.ts`, `src/routes/blog/comments.ts` |
+| Follows + new-post notifications | Shipped | `src/rpg/blog/service/follows.ts`, `src/rpg/blog/service/posts.ts:68` |
+| Tags & categories | Shipped | `src/rpg/blog/service/tags.ts`, `src/db/schema-blog.ts` |
+| Admin post moderation (hide/disable) | Shipped | `src/routes/blog/moderation.ts` |
+| Reader frontend (list/detail/create) | Shipped | `src/views/blog.html`, `src/frontend/pages/blog.ts`, `src/frontend/alpine/blog.ts` |
+| RAG sources | Partial | storage only — `src/rpg/blog/service/rag.ts`, `blog_rag_sources` |
+| LLM authoring modes (automated/deep-research/news) | Not Started | enum only — `src/rpg/blog/service/types.ts:23` |
+| Scheduled-publish activation | Not Started | `scheduled_at` column exists; no activation queue |
+| Human authoring UI (editor, drafts, version history) | Not Started | plain-markdown create form only |
+| Creative generation + promotion workflow | Not Started | — |
+| Profile visibility / follower tiers | Not Started | — |
+
+## Unticketed Gaps
+
+`blog_posts.scheduled_at` (`src/db/schema-blog.ts:41`) can be set at create time and flips the post to `scheduled`, but nothing in the codebase activates scheduled posts when their time arrives — the missing queue/cron is untracked outside this epic's task list. `blog_rag_sources` rows are written but never retrieved or fed into any generation path, and `blog_comments.status` exists with no comment-moderation route. Follower notification preferences have no schema (new-post notifications fan out to all followers unconditionally).
 
 ## Overview
 
@@ -396,45 +426,43 @@ interface FollowerTierConfig {
 - [ ] Asset generation reuse for blog posts (images, audio, video)
 - [ ] Attachment pipeline reuse (upload, link, inline)
 - [ ] Gallery linkage (blog assets in asset gallery, filterable)
-- [ ] Blog record comments (threaded, chat-message reuse)
+- [x] Blog record comments (threaded, chat-message reuse) (`src/rpg/blog/service/comments.ts`, `src/routes/blog/comments.ts`; dedicated `blog_comments` table, not chat-record reuse)
 - [ ] Creative world generation (world seeds, ideas, experiences, scenarios, items, NPCs)
 - [ ] Structured output schemas for creative generation
 - [ ] Promotion workflow (generated content → game world)
-- [ ] Post visibility tiers (public / followers / private)
+- [x] Post visibility tiers (public / followers / private) (`blog_posts.visibility` + follower-gated listing in `src/rpg/blog/service/posts.ts:162`)
 - [ ] Profile visibility tiers (public / followers / private)
 - [ ] Follower tiers (reader / subscriber / patron / vip)
 - [ ] Follow relationships + notification preferences
-- [ ] Blog post CRUD routes
+- [x] Blog post CRUD routes (`src/routes/blog/posts.ts` over `src/rpg/blog/service/posts.ts`)
 - [x] Blog frontend: post list, post detail, create form (`src/views/blog.html` + sidebar link on `blog-frontend-left-menu`; edit form open)
 - [ ] Blog moderation UI (admin + author)
 - [ ] Follower management UI
 - [ ] Human authoring UI (markdown editor, media insertion, preview; plain-markdown create form landed on `blog-frontend-left-menu`)
 - [ ] Draft management (list, resume, delete, auto-save)
 - [ ] Version history (edit tracking, restore previous versions)
-- [ ] Tags & categories (free tags, categories, world/character links)
+- [x] Tags & categories (free tags, categories, world/character links) (`src/rpg/blog/service/tags.ts`; `category`/`world_id`/`character_id` in `src/db/schema-blog.ts`)
 - [ ] Scheduled publishing (future publish date, queued activation)
 - [ ] Post management (bulk ops, analytics, re-publish)
 - [ ] Rich text editor (CommonMark + GFM, embeds, code blocks)
 
 ## Files
 
-- `src/blog/post.ts` — blog post model + authoring
-- `src/blog/research.ts` — deep-research / news / RAG gathering
-- `src/blog/moderation.ts` — content moderation pipeline, hide/disable
-- `src/blog/comments.ts` — threaded comments (chat-message reuse)
-- `src/blog/social.ts` — followings, follower tiers
-- `src/blog/profile.ts` — reader profile + visibility
-- `src/blog/creative.ts` — creative generation (worlds, items, scenarios)
-- `src/blog/promotion.ts` — promote generated content to game world
+Implemented (verified 2026-10-09):
+- `src/rpg/blog/service/` — posts.ts, posts-delete.ts, posts-views.ts, comments.ts, follows.ts, follows-service.ts, tags.ts, rag.ts, types.ts
+- `src/routes/blog/` — posts.ts, comments.ts, follows.ts, rag.ts, moderation.ts, post-read-policy.ts, index.ts
+- `src/routes/v1/content-surface.ts:60` — `blogRoutes` mount
+- `src/db/schema-blog.ts` — blog_posts, blog_comments, blog_follows, blog_tags, blog_rag_sources
+- `src/views/blog.html`, `src/frontend/pages/blog.ts`, `src/frontend/alpine/blog.ts` — reader frontend
 - `src/assistant/scenario-source.ts` — ~~consume generated-world seeds~~ REMOVED 2026-08-14 (dead stub; reimplement when blog system is active)
-- `src/db/schema.ts` — blog_post, blog_comment, blog_follow, blog_follow_tier, creative_generation tables
-- `src/routes/blog.ts` — blog API routes
-- `src/views/blog/` — blog frontend templates
 
+Planned (do not exist yet):
+- `src/blog/post.ts`, `src/blog/research.ts`, `src/blog/moderation.ts`, `src/blog/comments.ts`, `src/blog/social.ts`, `src/blog/profile.ts`, `src/blog/creative.ts`, `src/blog/promotion.ts` — planned `src/blog/` layout superseded by `src/rpg/blog/service/` + `src/routes/blog/` (creative generation and promotion remain unimplemented)
 - `src/blog/editor.ts` — human authoring UI components (markdown editor, media picker)
 - `src/blog/drafts.ts` — draft management, auto-save, version history
-- `src/blog/schedule.ts` — scheduled publishing queue
+- `src/blog/schedule.ts` — scheduled publishing queue (activation still missing)
 - `src/routes/blog-admin.ts` — blog management routes (CRUD, bulk ops, analytics)
+- `src/views/blog/` — blog frontend templates (a single `src/views/blog.html` shipped instead)
 
 ## Dependencies
 
@@ -446,6 +474,13 @@ interface FollowerTierConfig {
 - Memory systems (Epic 25) — RAG retrieval from memories
 - Plugin system (Epic 37) — research tool plugins
 
+## Related Epics
+
+- `epic-chat-lifecycle-moderation.md` — comment moderation reuse
+- `epic-frontend-gallery.md` — asset generation/attachment reuse for posts
+- `epic-world-locations.md` — world seed promotion target
+- `epic-item-system-extensions.md` — item blueprint promotion target
+
 ## Linked Tasks
 
-- TASK-blog-system.md
+- `TASK-blog-system.md` (Done)
