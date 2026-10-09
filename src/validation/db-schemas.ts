@@ -283,6 +283,7 @@ export const LicenseTypeSchema = t.UnionEnum([
   "proprietary",
   "custom",
 ],);
+export const LocationEdgeModeSchema = t.UnionEnum(["walk", "ride", "fly", "teleport", "port-gate", "free-jump",],);
 export const LocationKindSchema = t.UnionEnum([
   "region",
   "settlement",
@@ -3177,6 +3178,19 @@ export const BranchMergeSourcesSchema = t.Object({
   ordinal: t.Number(),
   tip_message_id: t.String(),
   branch_id: t.Optional(t.String(),),
+},);
+
+// ── location_edges ────────────────────────────────────────────
+export const LocationEdgesSchema = t.Object({
+  world_id: t.String(),
+  from_id: t.String(),
+  to_id: t.String(),
+  mode: t.Optional(LocationEdgeModeSchema,),
+  game_hours: t.Optional(t.Number(),),
+  requires_discovery: t.Optional(t.Number(),),
+  cost_json: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── plan_items ────────────────────────────────────────────
