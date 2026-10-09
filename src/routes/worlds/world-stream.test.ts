@@ -20,6 +20,8 @@ import {
 import { uid, } from "../../utils";
 import type { HandleOpts, } from "./types";
 import {
+  CONDITIONS_KEEPALIVE_MS,
+  CONDITIONS_POLL_INTERVAL_MS,
   loadWorldConditions,
   WorldConditionsStreamer,
   worldStreamRoutes,
@@ -245,5 +247,13 @@ describe("worldStreamRoutes", () => {
     const app = appWithAuth(db, null, null,);
     const res = await app.handle(new Request(`http://localhost/api/worlds/${worldId}/stream`,),);
     expect([401, 404,],).toContain(res.status,);
+  });
+});
+
+describe("world stream timing constants", () => {
+  test("keepalive beats the poll interval and Bun's 10s idle timeout", () => {
+    expect(CONDITIONS_POLL_INTERVAL_MS,).toBeGreaterThan(0,);
+    expect(CONDITIONS_KEEPALIVE_MS,).toBeLessThan(CONDITIONS_POLL_INTERVAL_MS,);
+    expect(CONDITIONS_KEEPALIVE_MS,).toBeLessThan(10_000,);
   });
 });

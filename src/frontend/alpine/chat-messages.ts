@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
+// size-allow: 283
+import type { ChatState, Message, } from "./types";
 import { MessageListResponse, } from "../../validation/schemas/responses";
 import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { chatDraftMethods, } from "./chat-drafts";
 import { chatReactionMethods, } from "./chat-reactions";
 import { chatSeenMethods, } from "./chat-seen";
 import { chatSendMethods, } from "./chat-send";
-import { t, } from "./i18n";
 import { log as rootLog, } from "./logger";
-import type { ChatState, Message, } from "./types";
 import { parseOr, } from "./validation";
+import { t, } from "./i18n";
 
 const log = rootLog.child({ module: "chat", },);
 

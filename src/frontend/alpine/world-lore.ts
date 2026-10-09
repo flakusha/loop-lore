@@ -11,7 +11,7 @@
  * display via {@link parseLoreKeys}.
  */
 import { Type, } from "@sinclair/typebox";
-import { jsonParseOr, safeJsonStringify, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import { apiFetch, } from "./htmx";
 import { log as rootLog, } from "./logger";
 import { parseOr, } from "./validation";
@@ -141,7 +141,7 @@ export const worldLore: Partial<WorldPageState> & ThisType<WorldPageState> = {
       const payload = {
         name: this.loreForm.name.trim() || undefined,
         content: this.loreForm.content,
-        keys: parseLoreKeys(safeJsonStringify(
+        keys: parseLoreKeys(jsonStringifyOr(
           this.loreForm.keys.split(",",).map((k,) => k.trim()).filter((k,) => k.length > 0),
         ),),
         priority: Number(this.loreForm.priority,) || 100,
@@ -156,7 +156,7 @@ export const worldLore: Partial<WorldPageState> & ThisType<WorldPageState> = {
       const res = await apiFetch(url, {
         method: this.loreEditingId ? "PUT" : "POST",
         headers: { "Content-Type": "application/json", },
-        body: safeJsonStringify(payload,),
+        body: jsonStringifyOr(payload,),
       },);
 
       if (res.ok) {

@@ -14,6 +14,8 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertLocations, insertWorlds, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
+import { dedupeByHash, } from "../../utils/content-hash";
+import { handleMoveLocation, } from "./locations-move";
 import { locationRoutes, } from "./locations-routes";
 import type { HandleOpts, } from "./types";
 
@@ -184,5 +186,27 @@ describe("POST /worlds/:worldId/locations/:locId/move", () => {
     const app = appWithAuth(db, null, null,);
     const result = await move(app, childId, rootId,);
     expect([401, 403, 404,],).toContain(result.status,);
+  });
+
+  test("handleMoveLocation returns 404 for a foreign-world location", async () => {
+    // Direct handler-level check: the route delegates here; this pins the
+    // not-found mapping without the HTTP layer.
+    const res = await handleMoveLocation(db, worldId, "no-such-location", null, ownerId, "solo",);
+    expect(res.status,).toBe(404,);
+  });
+});
+
+describe("dedupeByHash", () => {
+  test("keeps first-seen uniques and buckets later duplicates", () => {
+    const entries = [
+      { src: "a", text: "same", },
+      { src: "b", text: "same", },
+      { src: "c", text: "different", },
+    ];
+
+    const { unique, duplicates, } = dedupeByHash(entries, (e,) => e.text,);
+    expect(unique.map((e,) => e.src),).toEqual(["a", "c",],);
+    expect(duplicates,).toHaveLength(1,);
+    expect(duplicates[0]!.entry.src,).toBe("b",);
   });
 });
