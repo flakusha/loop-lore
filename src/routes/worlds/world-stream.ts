@@ -19,9 +19,9 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { safeJsonStringify, } from "../../utils";
 import { ErrorResponse, } from "../../validation/schemas";
 import { extractAuth, } from "../http-utils";
+import { sseStream, } from "../sse-stream";
 import { requireWorldAccess, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -105,21 +105,9 @@ export class WorldConditionsStreamer {
    * @returns {Response}
    */
   open(): Response {
-    const encoder = new TextEncoder();
-    let timer: ReturnType<typeof setInterval> | undefined;
-    let keepalive: ReturnType<typeof setInterval> | undefined;
     let lastFingerprint = "";
 
-    const send = (controller: ReadableStreamDefaultController, event: string, data: unknown,) => {
-      try {
-        const payload = safeJsonStringify(data,);
-        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${payload.ok ? payload.value : "{}"}\n\n`,),);
-      } catch {
-        // controller closed — ignore
-      }
-    };
-
-    const tick = async (controller: ReadableStreamDefaultController,): Promise<void> => {
+    return sseStream(async (send,) => {
       // loadWorldConditions never rejects for query failures; a transient DB
       // error skips the beat silently and the client keeps its stale snapshot.
       try {
@@ -127,36 +115,14 @@ export class WorldConditionsStreamer {
         const fp = fingerprint(snap,);
         if (fp !== lastFingerprint) {
           lastFingerprint = fp;
-          send(controller, "conditions", snap,);
+          send("conditions", snap,);
         }
       } catch {
         // transient DB error — skip this tick, keep stream alive
       }
-    };
-
-    const stream = new ReadableStream({
-      start: (controller,) => {
-        void tick(controller,);
-
-        timer = setInterval(() => {
-          void tick(controller,);
-        }, this.intervalMs,);
-
-        keepalive = setInterval(() => send(controller, "ping", { t: Date.now(), },), CONDITIONS_KEEPALIVE_MS,);
-      },
-      cancel: () => {
-        if (timer) { clearInterval(timer,); }
-        if (keepalive) { clearInterval(keepalive,); }
-      },
-    },);
-
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-        "X-Accel-Buffering": "no",
-      },
+    }, {
+      intervalMs: this.intervalMs,
+      keepaliveMs: CONDITIONS_KEEPALIVE_MS,
     },);
   }
 }
