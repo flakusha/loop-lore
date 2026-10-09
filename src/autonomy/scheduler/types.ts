@@ -38,6 +38,7 @@ export type TickSkipReason =
   | "disabled"
   | "jitter"
   | "budget"
+  | "kill_switch"
   | "error";
 
 /** Result of dispatching one due world. Either a short-circuit reason

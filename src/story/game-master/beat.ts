@@ -26,6 +26,12 @@
  * config-resolution helper that only wants *some* chat for the autonomy
  * config layers — deliberately does not apply. It supersedes `chatIdFor`
  * for the beat, which needs a GM-capable chat rather than any chat.
+ *
+ * Group-cascade guards (`max_turns` / `auto_advance` on the chat row) are
+ * chat-scoped admission for user-driven cascades and stay there: a world
+ * beat only fires in a world context, honours the story's own stop
+ * controls (`isPaused` / `isComplete`, read from `story_state` /
+ * `max_turns` below), and never drives a group chat's cascade.
  */
 import type { Kysely, } from "kysely";
 import { ChatMode, GameMasterType, } from "../../db/enums";

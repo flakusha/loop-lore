@@ -77,4 +77,28 @@ export interface ChatCoreFilterState {
   moveSlashSelection(delta: 1 | -1,): void;
   handleSlashKeydown(event: KeyboardEvent,): void;
   handleSlashEnter(): boolean;
+  // `:` emoji autocomplete (slash-autocomplete.ts) — shares the `/` popup
+  // pattern (Tab-accept parity); candidates come from the allowlisted
+  // shortcode map in chat-utils/render.ts.
+  _emojiQuery: string;
+  _emojiCandidates: { name: string; emoji: string }[];
+  _showEmojiPopover: boolean;
+  _emojiActiveIndex: number;
+  handleEmojiInput(event: Event,): void;
+  selectEmojiCandidate(candidate: { name: string; emoji: string },): void;
+  hideEmojiPopover(): void;
+  acceptEmojiAtIndex(index: number,): boolean;
+  moveEmojiSelection(delta: 1 | -1,): void;
+  handleEmojiKeydown(event: KeyboardEvent,): void;
+  handleEmojiEnter(): boolean;
+  _emojiPickerOpen: boolean;
+  _emojiPickerQuery: string;
+  _emojiPickerResults: { name: string; emoji: string }[];
+  _emojiPickerActiveIndex: number;
+  toggleEmojiPicker(): void;
+  closeEmojiPicker(): void;
+  filterEmojiPicker(): void;
+  insertEmoji(candidate: { name: string; emoji: string },): void;
+  insertEmojiAtIndex(index: number,): void;
+  moveEmojiPickerSelection(delta: 1 | -1,): void;
 }

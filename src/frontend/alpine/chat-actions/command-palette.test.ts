@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
-import { commandPalette, } from "./command-palette";
+import { commandPalette, satisfiesPaletteRole, } from "./command-palette";
 
 import type { ApiFetchMock, } from "../../tests/test-types";
 
@@ -205,5 +205,19 @@ describeOrSkip("commandPalette palette selection", () => {
     expect(ctx._paletteActiveIndex,).toBe(1,);
     commandPalette.movePaletteSelection!.call(ctx as never, 1,);
     expect(ctx._paletteActiveIndex,).toBe(0,);
+  });
+},);
+
+describeOrSkip("satisfiesPaletteRole", () => {
+  test("unrestricted commands pass for any viewer", () => {
+    expect(satisfiesPaletteRole(undefined, undefined,),).toBe(true,);
+    expect(satisfiesPaletteRole("observer", undefined,),).toBe(true,);
+  });
+
+  test("enforces the observer < member < owner ordering", () => {
+    expect(satisfiesPaletteRole("owner", "member",),).toBe(true,);
+    expect(satisfiesPaletteRole("member", "member",),).toBe(true,);
+    expect(satisfiesPaletteRole("observer", "member",),).toBe(false,);
+    expect(satisfiesPaletteRole("member", "owner",),).toBe(false,);
   });
 },);

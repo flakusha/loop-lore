@@ -212,6 +212,7 @@ function makeModal(withName = true,): El {
       "mood-bar",
       "mood-happiness",
       "gallery",
+      "journey",
     ]
   ) {
     qs[`[data-field='${f}']`] = el("div",);
@@ -457,6 +458,12 @@ describe("characters.ts page actions", () => {
         "/api/v1/actors/a1": () =>
           jsonResponse({ display_name: "Alice", description: "Brave", system_prompt: "SP", avatar_asset_id: "av1", },),
         "/api/v1/actors/a1/mood": () => jsonResponse({ currentMood: "happy", happiness: 80, },),
+        "/api/v1/character-growth/arc?actorId=a1": () =>
+          jsonResponse({ arc: { currentStage: "crisis", stageDescription: "The fall", }, },),
+        "/api/v1/character-growth/growth-log?actorId=a1": () =>
+          jsonResponse({
+            entries: [{ axis: "trait", eventType: "trait_drifted", reason: "Growth", recordedAt: "t", },],
+          },),
       },);
 
       await mod.selectCharacterCard("a1",);
@@ -480,6 +487,7 @@ describe("characters.ts page actions", () => {
       expect(modal._qs["[data-field='mood-bar']"]!.style.width,).toBe("80%",);
       expect(modal._qs["[data-field='mood-bar']"]!.style.backgroundColor,).toBe("var(--accent-green,)",);
       expect(modal._qs["[data-field='mood-happiness']"]!.textContent,).toBe("80%",);
+      expect(modal._qs["[data-field='journey']"]!.innerHTML,).toContain("crisis",);
     });
 
     test("actor fetch 404 → error toast, modal left closed", async () => {
@@ -550,6 +558,56 @@ describe("characters.ts page actions", () => {
 
       await mod.selectCharacterCard("a1",);
       expect(modal._qs["[data-field='mood-section']"]!.style.display,).not.toBe("block",);
+    });
+
+    test("journey renders arc stage + recent entries", async () => {
+      const modal = makeModal();
+      doc.selectors.set("#character-detail-modal", modal,);
+      routeFetch({
+        "/api/v1/actors/a1": () => jsonResponse({ display_name: "Alice", },),
+        "/api/v1/actors/a1/avatars": () => jsonResponse([],),
+        "/api/v1/actors/a1/mood": () => jsonResponse({}, 404,),
+        "/api/v1/character-growth/arc?actorId=a1": () =>
+          jsonResponse({ arc: { currentStage: "crisis", stageDescription: "The fall", }, },),
+        "/api/v1/character-growth/growth-log?actorId=a1": () =>
+          jsonResponse({
+            entries: [{ axis: "trait", eventType: "trait_drifted", reason: "Growth", recordedAt: "t", },],
+          },),
+      },);
+
+      await mod.selectCharacterCard("a1",);
+      const journey = modal._qs["[data-field='journey']"]!;
+      expect(journey.innerHTML,).toContain("crisis",);
+      expect(journey.innerHTML,).toContain("The fall",);
+      expect(journey.innerHTML,).toContain("Growth",);
+    });
+
+    test("journey fetch failure → unavailable message", async () => {
+      const modal = makeModal();
+      doc.selectors.set("#character-detail-modal", modal,);
+      routeFetch({
+        "/api/v1/actors/a1": () => jsonResponse({ display_name: "Alice", },),
+        "/api/v1/actors/a1/avatars": () => jsonResponse([],),
+        "/api/v1/actors/a1/mood": () => jsonResponse({}, 404,),
+        "/api/v1/character-growth/arc?actorId=a1": () => jsonResponse({}, 500,),
+      },);
+
+      await mod.selectCharacterCard("a1",);
+      expect(modal._qs["[data-field='journey']"]!.innerHTML,).toContain("Journey unavailable.",);
+    });
+
+    test("missing arc → no-growth message", async () => {
+      const modal = makeModal();
+      doc.selectors.set("#character-detail-modal", modal,);
+      routeFetch({
+        "/api/v1/actors/a1": () => jsonResponse({ display_name: "Alice", },),
+        "/api/v1/actors/a1/avatars": () => jsonResponse([],),
+        "/api/v1/actors/a1/mood": () => jsonResponse({}, 404,),
+        "/api/v1/character-growth/arc?actorId=a1": () => jsonResponse({ arc: null, },),
+      },);
+
+      await mod.selectCharacterCard("a1",);
+      expect(modal._qs["[data-field='journey']"]!.innerHTML,).toContain("No growth recorded yet.",);
     });
   });
 
