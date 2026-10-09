@@ -141,12 +141,17 @@ globalThis.initJournalKeyphrases = async function(characterId: string,) {
 
     // Rows live in their own container so load-more can append without
     // re-rendering (and wiping) keyphrase inputs the user has already typed.
-    el.innerHTML = `<div data-testid="journal-keyphrase-rows">${renderRows(items,)}</div>` +
+    // Shell is static markup; the rows go in as one whole-value assignment
+    // because `renderRows` already escapes every value it interpolates —
+    // re-escaping here would double-encode the keyphrase text.
+    el.innerHTML = `<div data-testid="journal-keyphrase-rows"></div>` +
       `<div data-testid="journal-keyphrase-controls"></div>`;
 
     const rowsEl = el.querySelector<HTMLElement>("[data-testid='journal-keyphrase-rows']",);
     const controlsEl = el.querySelector<HTMLElement>("[data-testid='journal-keyphrase-controls']",);
     if (!rowsEl || !controlsEl) { return; }
+
+    rowsEl.innerHTML = renderRows(items,);
 
     const renderControls = (hasMore: boolean,) => {
       controlsEl.innerHTML =
