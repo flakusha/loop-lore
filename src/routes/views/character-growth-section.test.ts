@@ -65,6 +65,17 @@ describe("growthSection", () => {
     expect(html,).toContain("No growth recorded yet.",);
   });
 
+  test("arc descriptions with quotes and newlines stay valid editor seeds", () => {
+    const html = growthSection(
+      { ...BASE, arcDescription: "hero's fall\nand rise <b>bold</b>", },
+      escapeAttr,
+    );
+
+    // JSON-encoded seed: double-quoted, newline escaped, markup entity-encoded.
+    expect(html,).toContain("initialArcDescription: &quot;hero&#39;s fall\\nand rise &lt;b&gt;bold&lt;/b&gt;&quot;",);
+    expect(html,).not.toContain("'hero",);
+  });
+
   test("escapes the character id for quoted attributes", () => {
     const html = growthSection({ ...BASE, characterId: "evil'); alert(1); ('", }, escapeAttr,);
 
