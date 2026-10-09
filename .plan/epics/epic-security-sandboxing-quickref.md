@@ -108,9 +108,11 @@ src/security/
 
 ## Linked Tasks
 
-**None.** This doc owns no tickets. The security & sandboxing tickets are all bound to the
-parent epic via their own `**Epic:** epic-security-sandboxing` headers — listed here so this
-page can be found from them, not to duplicate the binding:
+**None.** This doc owns no tickets. The section below is deliberately empty of owned work —
+every entry lives under the cross-epic heading, because all of them are bound to
+`epic-security-sandboxing.md` by their own `**Epic:**` headers.
+
+### Cross-epic references
 
 - `TASK-llm-sandboxing.md`
 - `FEAT-tool-execution-sandbox-wasm-container-isolation.md`
