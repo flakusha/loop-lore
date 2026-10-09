@@ -24,8 +24,14 @@ import { expect, it, mock, } from "bun:test";
 import { readdirSync, } from "node:fs";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 
-/** Blessed factory calls since the last reset — zero is the contract. */
+/** Blessed factory calls across EVERY import in this file — the contract is
+ *  that this total never leaves zero. */
 let constructions = 0;
+/** Specifier whose import first pushed the counter off zero. This is the
+ *  IMPORTER, not necessarily the offender: the construction may live in a
+ *  transitive dependency, so the message says so rather than blaming the
+ *  first specifier that happened to pull it in. */
+let firstImporter: string | null = null;
 
 const widget = (): Record<string, unknown> => ({
   append: () => {},
@@ -70,9 +76,23 @@ describeOrSkip("tui import purity", () => {
 
   for (const specifier of tuiModules) {
     it(`${specifier} constructs nothing at import time`, async () => {
-      constructions = 0;
+      // The counter is deliberately NOT reset per test. One file shares one
+      // module registry, so a module an earlier specifier already pulled in
+      // transitively (app.ts reaches asset-view, chat and harness) is a cached
+      // no-op here and reads a vacuous 0: resetting per test turned a
+      // module-scope blessed.screen() in any transitively-imported module into
+      // a silent pass. Asserting the ABSOLUTE total instead fails every test
+      // from the first construction on, whichever module caused it.
       await import(specifier);
-      expect(constructions,).toBe(0,);
+      if (constructions > 0 && firstImporter === null) {
+        firstImporter = specifier;
+      }
+
+      const why = firstImporter === null
+        ? ""
+        : `first blessed construction came while importing ${firstImporter} (directly or transitively)`;
+
+      expect(constructions, why,).toBe(0,);
     });
   }
 },);
