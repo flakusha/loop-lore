@@ -1655,6 +1655,10 @@
       "source": ".plan/epics/epic-guest-access.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
     },
@@ -10743,6 +10747,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations-architecture.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/logging.md"
     }
   ],
   "src/config/schema-class/federation.ts": [
@@ -10943,10 +10951,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/config-extensions.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/logging.md"
     },
     {
       "kind": "spec",
@@ -11403,6 +11407,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
+    }
+  ],
+  "src/config/sections/logging.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/logging.md"
     }
   ],
   "src/config/sections/menu-data.ts": [
@@ -14118,6 +14132,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-enemies-monsters.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
     },
     {
@@ -14131,6 +14149,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-locations.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "ticket",
@@ -15267,6 +15289,10 @@
   ],
   "src/db/schema": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-enemies-monsters.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-message-create-swipe-race.md"
     },
@@ -15601,6 +15627,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-item-systems-unification.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "epic",
@@ -16231,6 +16261,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-actors.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-enemies-monsters.md"
     },
     {
       "kind": "epic",
@@ -26657,6 +26691,10 @@
   ],
   "src/logger/censors.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested-.md"
     },
@@ -26707,6 +26745,10 @@
   ],
   "src/logger/index.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-code-quality.md"
     },
@@ -26728,6 +26770,10 @@
     }
   ],
   "src/logger/levels.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/logging.md"
@@ -26755,6 +26801,10 @@
       "source": ".plan/epics/epic-logging-telemetry.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md"
     },
@@ -26775,6 +26825,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-deep-analysis-logging-and-telemet.md"
+    }
+  ],
+  "src/logger/queue-base.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/logging.md"
     }
   ],
   "src/logger/queue.ts": [
@@ -26807,6 +26863,16 @@
   ],
   "src/logger/transports/console.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/logging.md"
+    }
+  ],
+  "src/logger/transports/db.ts": [
+    {
       "kind": "spec",
       "source": "docs/spec/logging.md"
     }
@@ -26825,6 +26891,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-logging-hardening-minors-injection-rotation-races-sink-path-.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/logging.md"
     }
   ],
   "src/logger/types.ts": [
@@ -26837,14 +26907,12 @@
       "source": ".plan/epics/epic-logging-telemetry.md"
     },
     {
-      "kind": "spec",
-      "source": "docs/spec/logging.md"
-    }
-  ],
-  "src/logging/redact-list.ts": [
-    {
       "kind": "epic",
       "source": ".plan/epics/epic-logging.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/logging.md"
     }
   ],
   "src/lorebook/consistency.ts": [
@@ -27943,6 +28011,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "ticket",
@@ -30887,6 +30959,10 @@
       "source": ".plan/epics/epic-frontend-admin.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-audit-selectAll-schema-mismatch-empty.md"
     },
@@ -30913,6 +30989,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-local-process-swarm.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "ticket",
@@ -35651,6 +35731,10 @@
   ],
   "src/routes/telemetry.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids.md"
     },
@@ -39827,6 +39911,18 @@
       "source": "docs/spec/platform-support.md"
     }
   ],
+  "src/scripts/log-query.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    }
+  ],
+  "src/scripts/log-query.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
+    }
+  ],
   "src/scripts/migrate-character-legacy.test.ts": [
     {
       "kind": "ticket",
@@ -40493,6 +40589,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-fswatcher-onreload-callback-in-server-startup.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/logging.md"
     }
   ],
   "src/server/static-files.ts": [

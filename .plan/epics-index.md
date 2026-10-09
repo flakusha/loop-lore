@@ -98,7 +98,7 @@
 | In Progress | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
 | In Progress | Encryption UI | Medium | Medium | 0 | [epic-frontend-encryption.md](/.plan/epics/epic-frontend-encryption.md) |
 | In Progress | Encryption Workflow | Medium | Medium | 16 | [epic-encryption-workflow.md](/.plan/epics/epic-encryption-workflow.md) |
-| Not Started | Enemies & Monsters Systems | Low | Medium | 27 | [epic-enemies-monsters.md](/.plan/epics/epic-enemies-monsters.md) |
+| Not Started | Enemies & Monsters Systems | Low | Medium | 10 | [epic-enemies-monsters.md](/.plan/epics/epic-enemies-monsters.md) |
 | Done | Epic 14: Import/Export & Data Portability | Medium | ~~High~~ Low (remaining work) | 3 | [epic-import-export-io.md](/.plan/epics/epic-import-export-io.md) |
 | Not Started | Epic 16: Observability | medium | Medium | 4 | [epic-observability-telemetry.md](/.plan/epics/epic-observability-telemetry.md) |
 | Not Started | Epic 25: Deployment Topologies & Packaging — Implementation Plan | medium | Medium | 0 | [epic-deployment-topologies.md](/.plan/epics/epic-deployment-topologies.md) |
@@ -225,7 +225,7 @@
 | Not Started | LLM Request Scheduler — Complexity, Resources, Model Rotation | high | Large | 0 | [epic-llm-request-scheduler.md](/.plan/epics/epic-llm-request-scheduler.md) |
 | Not Started | LLM Request Throughput & Message Scheduling | Medium | Large | 13 | [epic-llm-queue.md](/.plan/epics/epic-llm-queue.md) |
 | Not Started | Local Process Swarm (Bun-Managed Multi-Process Decomposition) | Medium | Very High | 0 | [epic-local-process-swarm.md](/.plan/epics/epic-local-process-swarm.md) |
-| Not Started | Logging & Structured Logging | Medium | Medium | 5 | [epic-logging.md](/.plan/epics/epic-logging.md) |
+| In Progress | Logging & Structured Logging | Medium | Medium | 2 | [epic-logging.md](/.plan/epics/epic-logging.md) |
 | In Progress | Logging & Telemetry — Complete Level Set + Canonical JSONL | High | Medium | 5 | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md) |
 | In Progress | Logic Reconciliation (Permanently Ongoing) | High | Continuous | 0 | [epic-logic-reconciliation.md](/.plan/epics/epic-logic-reconciliation.md) |
 | Not Started | Login & Authentication UI | Medium | Medium | 0 | [epic-frontend-login.md](/.plan/epics/epic-frontend-login.md) |
@@ -1153,7 +1153,7 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** bestiary, ecology, world, rpg, monsters, flora, fauna, repopulation
 - **File:** `.plan/epics/epic-enemies-monsters.md`
 
 ### Epic 14: Import/Export & Data Portability
@@ -2380,11 +2380,11 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 
 ### Logging & Structured Logging
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Medium
-- **Type:** epic
-- **Tags:** (none)
+- **Type:** Infrastructure
+- **Tags:** logging, telemetry, observability, jsonl, redaction, infrastructure
 - **File:** `.plan/epics/epic-logging.md`
 
 ### Logging & Telemetry — Complete Level Set + Canonical JSONL
