@@ -19,7 +19,7 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../../test-utils/insert-helpers";
-import { carriageSection, isCarriageEnabled, } from "./carriage";
+import { CARRIAGE_CONFIG_KEY, carriageSection, isCarriageEnabled, } from "./carriage";
 
 const VALID_TOML = [
   "episode = 4",
@@ -81,7 +81,15 @@ describe("isCarriageEnabled", () => {
     expect(isCarriageEnabled(null,),).toBe(false,);
     expect(isCarriageEnabled("{bad json",),).toBe(false,);
     expect(isCarriageEnabled("{}",),).toBe(false,);
-    expect(isCarriageEnabled(JSON.stringify({ carriageEnabled: true, },),),).toBe(true,);
+    expect(isCarriageEnabled(JSON.stringify({ [CARRIAGE_CONFIG_KEY]: true, },),),).toBe(true,);
+  });
+
+  test("reads the persisted gm_config key, nothing else", () => {
+    // The gm_config blob is a stored presentation key — a rename here
+    // silently disables the feature for every already-persisted chat.
+    expect(CARRIAGE_CONFIG_KEY,).toBe("carriageEnabled",);
+    expect(isCarriageEnabled(JSON.stringify({ carriageEnabled: "yes", },),),).toBe(false,);
+    expect(isCarriageEnabled(JSON.stringify({ carriageEnabled: false, },),),).toBe(false,);
   });
 });
 
@@ -96,7 +104,7 @@ describe("carriageSection", () => {
 
   test("toggle on → canonical block injects with the instruction", async () => {
     const { db, } = await createTestDb();
-    const gmConfig = JSON.stringify({ carriageEnabled: true, },);
+    const gmConfig = JSON.stringify({ [CARRIAGE_CONFIG_KEY]: true, },);
     await seedChat(db, gmConfig,);
     await insertCarriageRecords(db, "chat-1", "session", VALID_TOML, "2026-08-01T00:00:00Z",);
     const messages = await carriageSection.build(makeCtx(db, "chat-1", gmConfig,),);
@@ -110,7 +118,7 @@ describe("carriageSection", () => {
 
   test("flat character list cancels with zero messages", async () => {
     const { db, } = await createTestDb();
-    const gmConfig = JSON.stringify({ carriageEnabled: true, },);
+    const gmConfig = JSON.stringify({ [CARRIAGE_CONFIG_KEY]: true, },);
     await seedChat(db, gmConfig,);
     await insertCarriageRecords(
       db,
@@ -126,7 +134,7 @@ describe("carriageSection", () => {
 
   test("oversize payload cancels with zero messages", async () => {
     const { db, } = await createTestDb();
-    const gmConfig = JSON.stringify({ carriageEnabled: true, },);
+    const gmConfig = JSON.stringify({ [CARRIAGE_CONFIG_KEY]: true, },);
     await seedChat(db, gmConfig,);
     await insertCarriageRecords(db, "chat-1", "session", `x = "${"y".repeat(9_000,)}"`, "2026-08-01T00:00:00Z",);
     const messages = await carriageSection.build(makeCtx(db, "chat-1", gmConfig,),);

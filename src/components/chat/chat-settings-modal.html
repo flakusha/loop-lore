@@ -626,14 +626,13 @@
         </div>
       </div>
       <div class="form-group">
-        <label style="display: flex; align-items: center; gap: var(--space-2)">
-          <input
-            type="checkbox"
-            x-model="_carriageEnabled"
-            data-testid="settings-carriage-toggle"
-          />
-          Hidden carriage context
-        </label>
+        <label class="form-label" for="settings-carriage">Hidden carriage context</label>
+        <input
+          type="checkbox"
+          id="settings-carriage"
+          x-model="_carriageEnabled"
+          data-testid="settings-carriage-toggle"
+        />
         <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
           Inject the hidden TOML episode-context block (dev/debug-visible). Off keeps the prompt byte-identical.
         </small>
