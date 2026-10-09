@@ -22,6 +22,7 @@ import type {
   ItemCategory,
   KeyStatus,
   KeyType,
+  LocationEdgeMode,
   LoreEntryStatus,
   MessageContentFormat,
   MessageContentType,
@@ -1599,6 +1600,20 @@ export interface BranchMergeSources {
   ordinal: number;
   branch_id: string | null;
   tip_message_id: string;
+}
+
+// ── location_edges ────────────────────────────────────────────
+export interface LocationEdges {
+  id: Generated<string>;
+  world_id: string;
+  from_id: string;
+  to_id: string;
+  mode: Generated<LocationEdgeMode>;
+  game_hours: Generated<number>;
+  requires_discovery: Generated<number>;
+  cost_json: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
 }
 
 // ── plan_items ────────────────────────────────────────────

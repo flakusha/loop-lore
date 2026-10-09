@@ -122,6 +122,9 @@ export const PART_2: Record<string, Record<string, string>> = {
     "kind": "LocationKind",
     "mobility_mode": "MobilityMode",
   },
+  "LocationEdges": {
+    "mode": "LocationEdgeMode",
+  },
   "TravelRoutes": {
     "kind": "TransportKind",
   },
