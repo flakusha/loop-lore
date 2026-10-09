@@ -5,8 +5,10 @@
 
 **Summary:** The custom-template engine behind VN templates — variable
 substitution, inheritance, per-world persistence, JSON import/export, and
-composite steps. The engine is complete and tested; no GM UI, no composite
-executor, and no consumer outside its own tests.
+composite steps. The engine is complete and tested, and its render-time subset
+is now consumed by `render-scene.ts` via `templates/apply.ts`; the composite
+executor and the GM UI do not exist, and nothing outside the renderer and the
+engine's own tests touches it.
 **Context:** Extends `TASK-vn-template-actions.md` (built-in templates) with
 user-authored templates that reference character stats, locations, inventory,
 and story state. See `## Design` (types, `{{var}}` syntax, inheritance,
@@ -18,7 +20,7 @@ not implemented.
 
 **Priority:** Medium
 **Status:** In Progress
-**Status Note:** (2026-08-23) "Engine Complete — GM builder UI not implemented". Reconciled 2026-10-09: engine verified present and tested, but composite execution never existed (only the step interface), and the engine is also not wired into the renderer (Phase 5 open) with no GM builder UI. Done → In Progress. The closed git issue is left as-is; re-opening it is out of scope here.
+**Status Note:** (2026-08-23) "Engine Complete — GM builder UI not implemented". Reconciled 2026-10-09: engine verified present and tested, composite execution never existed (only the step interface), and there is no GM builder UI. Done → In Progress. Updated the same day after `vn-mode-qa-loop` was found: Phase 5 is now partly closed — `render-scene.ts:202` calls `applyTemplateOverrides` — so the remaining gaps are composites, conditions/delays, dialogue-template consumption, and the builder UI. The closed git issue is left as-is; re-opening it is out of scope here.
 **Epic:** epic-visual-novel-mode
 **Tags:** vn, templates, system, engine, custom, gm-tools
 **Effort:** Med
@@ -172,7 +174,9 @@ Example: `combat_intro` composite:
 
 ### Phase 5: Integration
 
-- [ ] Wire template engine to `scene-renderer.ts`
+- [x] Wire template engine to `scene-renderer.ts` — partially: `render-scene.ts:202`
+      calls `applyTemplateOverrides` (`templates/apply.ts`), merging the
+      layout / transition / typewriter-speed subset (2026-10-09)
 - [ ] Wire template engine to `typewriter.ts`
 - [ ] Wire template engine to `transition-engine.ts`
 - [ ] Template quick-apply in chat toolbar
@@ -190,7 +194,7 @@ Example: `combat_intro` composite:
 
 ## Files to Modify
 
-- `src/frontend/vn/scene-renderer.ts` — consume template engine
+- `src/frontend/vn/scene-renderer/render-scene.ts` — consume template engine (done via `templates/apply.ts`; the path in the original list, `src/frontend/vn/scene-renderer.ts`, does not exist)
 - `src/frontend/vn/typewriter.ts` — consume dialogue template variables
 - `src/frontend/vn/transition-engine.ts` — consume composite templates
 - `src/components/chat/chat-settings-modal.html` — add template builder UI
@@ -219,16 +223,24 @@ Verified 2026-10-09 in `src/frontend/vn/templates/template-engine.ts`
       description, and tags across scene + dialogue templates
       (`scene-templates/search.ts:12`); no category filter
 
-### ⬜ Not implemented
+### 🟡 Partially wired / not implemented
 
 - [ ] Composite template execution — **the 2026-08-23 AC claiming a
       "composite executor" was false**: only the `VnCompositeStep` *interface*
       exists (`template-engine.ts:66`); nothing in `src/` steps through a
       composite, evaluates a step `condition`, or honours a step `delay`
-- [ ] Renderer/UI wiring (Phase 5) — grep for `templates/` imports across
-      `src/frontend/` outside `src/frontend/vn/templates/` returns nothing; the
-      only importers are the templates' own tests. `scene-renderer/`,
-      `typewriter.ts`, and `transition-engine.ts` never read a template
+- [x] Scene-renderer reads the template registry (Phase 5, partial) —
+      `render-scene.ts:202` calls `applyTemplateOverrides(baseSettings, scene)`
+      from `src/frontend/vn/templates/apply.ts`, which resolves the scene's
+      `templateId` and merges the whitelisted `layout` / `imageScaling` /
+      `transition` / `typewriterSpeed` subset of `body`. Landed on
+      `vn-mode-qa-loop` at `e87bd19c0`. Narrower than "the renderer consumes the
+      engine": composites, conditions, and delays are still absent, and
+      `apply.ts` deliberately fails closed to base settings rather than
+      propagating an unresolved variable.
+- [ ] `typewriter.ts` wiring — reads `settings.typewriterSpeed` only; it never
+      reads a dialogue template
+- [ ] `transition-engine.ts` wiring — `evaluateTriggers` still has no caller
 - [ ] GM builder UI — `template-builder.ts` and `template-gallery.ts` were
       never created (see `## Files to Create`)
 - [ ] Template builder UI allows drag-and-drop scene element configuration
@@ -236,7 +248,8 @@ Verified 2026-10-09 in `src/frontend/vn/templates/template-engine.ts`
 - [ ] Variable autocomplete shows available variables in GM UI
 - [ ] Variable type validation — `resolveVariables` accepts any type; the
       `enum` / `asset` types on `VnTemplateVariable` are declared but never
-      checked
+      checked (`apply.ts` compensates by discarding out-of-union values at the
+      call site rather than by validating)
 - [ ] Context sources 1-5 in `## Design` (character → location → chat → GM →
       default) — `resolveVariables` takes a flat `Record<string, unknown>`; the
       per-source lookup chain is not implemented
@@ -245,8 +258,9 @@ Verified 2026-10-09 in `src/frontend/vn/templates/template-engine.ts`
 
 ### 🟢 Performance
 
-- [x] No performance regression in VN mode rendering — holds trivially; no
-      render path reads a template (2026-10-09)
+- [x] No performance regression in VN mode rendering — one registry lookup per
+      scene, and `apply.ts` is built to fail closed to the base settings object
+      rather than throw mid-render (2026-10-09)
 
 ## Risk
 
@@ -258,3 +272,5 @@ Med — template engine is a significant feature but stays within frontend (no D
 - `TASK-visual-novel-mode.md` — base VN renderer
 - `TASK-vn-dynamic-generation.md` — dynamic generation can output templates
 - `TASK-vn-branching-choices.md` — choices can trigger template changes
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 83a03a9 (registry tip: 3d7069c37 Konstantin Fedotov Ticket status: done)

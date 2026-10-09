@@ -84,3 +84,5 @@ What this epic still owes independently of ComfyUI (tracked under "Still open
 on this epic" above): the frontend story overlay that consumes
 `/vn/generate-story`, and a per-world/chat toggle for dynamic generation.
 Those do not need ComfyUI and can land now.
+
+**Resolved:** 2026-10-09 registry-driven close: git issue d539123 (registry tip: 4f8b09641 Konstantin Fedotov Ticket status: done)
