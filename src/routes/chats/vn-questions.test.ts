@@ -307,4 +307,104 @@ describe("guarded VN questions routes under /api/v1", () => {
 
     await db.destroy();
   });
+
+  // The sequential test above passes even with an unguarded UPDATE, because
+  // awaiting serially means the second call observes the first one's write.
+  // Firing both at once is what exposes a missing status predicate: both used
+  // to return 200 while the row silently kept only the second option.
+  test("two concurrent answers yield exactly one success", async () => {
+    const { db, } = await createTestDb();
+    const questionIds = ids();
+    await seed(db, questionIds,);
+
+    const app = makeApp(db, PARTICIPANT_ID,);
+    const url = `http://localhost/api/v1/chats/${CHAT_ID}/vn-questions/${questionIds.mine}/answer`;
+    const post = (optionId: string,) =>
+      app.handle(
+        new Request(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ optionId, },),
+        },),
+      );
+
+    const [resA, resB,] = await Promise.all([post("o1",), post("o2",),],);
+
+    const statuses = [resA.status, resB.status,].sort();
+    expect(statuses,).toEqual([200, 400,],);
+
+    const winner = resA.status === 200 ? await resA.json() : await resB.json();
+    const row = await db
+      .selectFrom("vn_questions",)
+      .select(["status", "selected_option_id",],)
+      .where("id", "=", questionIds.mine,)
+      .executeTakeFirstOrThrow();
+
+    expect(row.status,).toBe("answered",);
+    // The stored option must be the one the 200 actually reported, not the
+    // loser's — that divergence is the bug this test exists to catch.
+    expect(row.selected_option_id,).toBe((winner as { option: { id: string } }).option.id,);
+
+    await db.destroy();
+  });
+
+  // The frontend branches on `locationId` to PUT the player into the new place.
+  // If the route stops returning it that branch dies silently, so pin the
+  // contract in both directions here.
+  test("the answer returns the option's consequence location", async () => {
+    const { db, } = await createTestDb();
+    const questionIds = ids();
+    await seed(db, questionIds,);
+
+    await db
+      .updateTable("vn_questions",)
+      .set({
+        options: JSON.stringify([
+          { id: "o1", text: "Go with her", consequence: { location: "loc-42", }, },
+        ],),
+      },)
+      .where("id", "=", questionIds.mine,)
+      .execute();
+
+    const app = makeApp(db, PARTICIPANT_ID,);
+    const res = await app.handle(
+      new Request(
+        `http://localhost/api/v1/chats/${CHAT_ID}/vn-questions/${questionIds.mine}/answer`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ optionId: "o1", },),
+        },
+      ),
+    );
+
+    expect(res.status,).toBe(200,);
+    expect((await res.json() as { locationId?: string }).locationId,).toBe("loc-42",);
+
+    await db.destroy();
+  });
+
+  test("the answer omits locationId when no consequence carries one", async () => {
+    const { db, } = await createTestDb();
+    const questionIds = ids();
+    await seed(db, questionIds,);
+
+    const app = makeApp(db, PARTICIPANT_ID,);
+    const res = await app.handle(
+      new Request(
+        `http://localhost/api/v1/chats/${CHAT_ID}/vn-questions/${questionIds.mine}/answer`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ optionId: "o1", },),
+        },
+      ),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { locationId?: string };
+    expect(body.locationId ?? null,).toBeNull();
+
+    await db.destroy();
+  });
 });

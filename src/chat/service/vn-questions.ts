@@ -75,6 +75,12 @@ export interface AnswerVnQuestionSuccess {
   option: VnQuestionOption;
   /** Next scene id from the option, falling back to the question's own. */
   nextSceneId: string | null;
+  /**
+   * Location the answer sends the player to, from the option's
+   * `consequence.location` falling back to the question's `consequences.location`.
+   * Absent when neither carries one.
+   */
+  locationId?: string;
 }
 
 /** */
@@ -248,15 +254,36 @@ export async function answerVnQuestion(
 
   const now = new Date().toISOString();
 
-  await database
+  // The status predicate makes the answer single-shot. A bare `.where("id")`
+  // lets two concurrent answers both "succeed": both clients get 200 with
+  // their own option while last-writer-wins silently overwrites the row.
+  // Zero affected rows means another answer landed first, so report it.
+  const updated = await database
     .updateTable("vn_questions",)
     .set({ status: "answered", selected_option_id: optionId, answered_at: now, },)
     .where("id", "=", questionId,)
-    .execute();
+    .where("status", "=", "available",)
+    .executeTakeFirst();
+
+  if (Number(updated.numUpdatedRows ?? 0,) === 0) {
+    return { code: "bad_request", message: "Question already answered", };
+  }
 
   parsed.status = "answered";
   parsed.selected_option_id = optionId;
   parsed.answered_at = now;
 
-  return { ok: true, question: parsed, option, nextSceneId: option.next_scene_id ?? parsed.next_scene_id, };
+  // An option-level consequence wins over the question-level one, mirroring how
+  // next_scene_id resolves above. The frontend branches on this to push the
+  // player to the new location.
+  const locationId = (typeof option.consequence?.location === "string" ? option.consequence.location : undefined) ??
+    (typeof parsed.consequences?.location === "string" ? parsed.consequences.location : undefined);
+
+  return {
+    ok: true,
+    question: parsed,
+    option,
+    nextSceneId: option.next_scene_id ?? parsed.next_scene_id,
+    locationId,
+  };
 }
