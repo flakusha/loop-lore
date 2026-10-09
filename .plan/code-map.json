@@ -9573,6 +9573,12 @@
       "source": ".plan/tickets/TASK-housing-frontend.md"
     }
   ],
+  "src/components/info-bubble.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-info-bubbles.md"
+    }
+  ],
   "src/components/key-management.html": [
     {
       "kind": "epic",
@@ -17837,6 +17843,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-info-bubbles.md"
     },
     {
       "kind": "ticket",
@@ -27541,6 +27551,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-author-task-clarification-prompt-templates-per-task-type.md"
+    }
+  ],
+  "src/public": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-info-bubbles.md"
     }
   ],
   "src/public/css/app.css": [
@@ -41543,6 +41559,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-info-bubbles.md"
     },
     {
       "kind": "ticket",
