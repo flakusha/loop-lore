@@ -14161,7 +14161,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-wardrobe-avatar-variants.md",
-    "status": "🔴 Not Started",
+    "status": "done",
     "tags": [
       "avatar",
       "wardrobe",
