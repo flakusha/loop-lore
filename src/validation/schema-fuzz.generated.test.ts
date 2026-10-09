@@ -68,6 +68,7 @@ import * as validation_characterRelations from "@/validation/schemas/character-r
 import * as validation_characterSystems from "@/validation/schemas/character-systems";
 import * as validation_chat from "@/validation/schemas/chat";
 import * as validation_comfyuiBuilder from "@/validation/schemas/comfyui-builder";
+import * as validation_emotionAvatars from "@/validation/schemas/emotion-avatars";
 import * as validation_entities from "@/validation/schemas/entities";
 import * as validation_invites from "@/validation/schemas/invites";
 import * as validation_lore from "@/validation/schemas/lore";
@@ -1093,6 +1094,12 @@ describe("DisplayName", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_primitives.DisplayName,));
 });
 
+describe("EmotionAvatarActorParams", () => {
+  test("accepts generated values", () => checkAllValid(validation_emotionAvatars.EmotionAvatarActorParams,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_emotionAvatars.EmotionAvatarActorParams,));
+});
+
 describe("EmotionDefinitionCreateBody", () => {
   test("accepts generated values", () => checkAllValid(validation_characterSystems.EmotionDefinitionCreateBody,));
 
@@ -1944,6 +1951,12 @@ describe("recordSecretBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_replayabilitySchemas.recordSecretBody,));
 });
 
+describe("RegenerateEmotionAvatarsBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_emotionAvatars.RegenerateEmotionAvatarsBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_emotionAvatars.RegenerateEmotionAvatarsBody,));
+});
+
 describe("RelationshipCreateBody", () => {
   test("accepts generated values", () => checkAllValid(validation_characterRelations.RelationshipCreateBody,));
 
@@ -2558,4 +2571,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 405 schemas discovered across 459 module(s).
+// 407 schemas discovered across 461 module(s).
