@@ -40,6 +40,58 @@
       </label>
     </div>
   </template>
+  <!-- Batch-action bar: operates on selectedAssetIds (UI-only selection). -->
+  <template x-if="activeChat && galleryAssets.length > 0">
+    <div
+      class="gallery-batch-bar"
+      style="margin-bottom: var(--space-3); padding: var(--space-2); border: 1px solid var(--border-secondary); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: var(--space-2)"
+      data-testid="gallery-batch-bar"
+    >
+      <div
+        style="font-size: 12px; color: var(--text-secondary)"
+        x-text="t('chats.galleryBatchSelected', { count: selectedAssetIds.length })"
+        data-testid="gallery-selection-count"
+      >
+      </div>
+      <div style="display: flex; gap: var(--space-2); flex-wrap: wrap">
+        <button
+          class="btn btn-secondary btn-sm"
+          @click="selectAllVisibleGalleryAssets()"
+          x-bind:title="t('chats.gallerySelectAll')"
+          data-testid="gallery-select-all"
+        >
+          {{{t("chats.gallerySelectAll")}}}
+        </button>
+        <button
+          class="btn btn-secondary btn-sm"
+          @click="clearGalleryAssetSelection()"
+          :disabled="selectedAssetIds.length === 0"
+          x-bind:title="t('chats.galleryClearSelection')"
+          data-testid="gallery-clear-selection"
+        >
+          {{{t("chats.galleryClearSelection")}}}
+        </button>
+        <button
+          class="btn btn-primary btn-sm"
+          @click="downloadSelectedAssets()"
+          :disabled="selectedAssetIds.length === 0"
+          x-bind:title="t('chats.galleryBatchDownload')"
+          data-testid="gallery-batch-download"
+        >
+          {{{t("chats.galleryBatchDownload")}}}
+        </button>
+        <button
+          class="btn btn-danger btn-sm"
+          @click="deleteSelectedAssets()"
+          :disabled="selectedAssetIds.length === 0"
+          x-bind:title="t('chats.galleryBatchDelete')"
+          data-testid="gallery-batch-delete"
+        >
+          {{{t("chats.galleryBatchDelete")}}}
+        </button>
+      </div>
+    </div>
+  </template>
   <div id="gallery-items">
     <template x-if="!activeChat">
       <div class="gallery-empty">
@@ -55,6 +107,16 @@
     </template>
     <template x-for="asset in galleryAssets" :key="asset.id">
       <div class="gallery-item" @click="openAssetPreview(asset)">
+        <input
+          type="checkbox"
+          class="gallery-item-check"
+          style="accent-color: var(--accent, var(--accent-primary, #7c6ff0)); cursor: pointer; flex-shrink: 0"
+          :checked="selectedAssetIds.includes(asset.id)"
+          @click.stop="toggleGalleryAssetSelection(asset.id, $event.shiftKey)"
+          :aria-label="t('chats.galleryBatchToggle')"
+          x-bind:title="t('chats.galleryBatchToggle')"
+          :data-testid="'gallery-asset-check-' + asset.id"
+        />
         <div class="gallery-item-thumb">
           <template x-if="asset.asset_type === 'image'">
             <img
