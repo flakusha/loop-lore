@@ -102,7 +102,10 @@ describe("tradeHistoryRoutes", () => {
   function authedApp(actingUserId: string | null,): Elysia {
     return new Elysia({ name: "test-trade-history-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
-      .use(tradeHistoryRoutes({ database: db, svc: () => svc, },),);
+      // Elysia `.use()` returns a plugin-merged instance whose `onStart`
+      // signature is structurally unassignable to bare `Elysia`; the sibling
+      // route tests widen the same way. Runtime is unaffected.
+      .use(tradeHistoryRoutes({ database: db, svc: () => svc, },),) as unknown as Elysia;
   }
 
   /**
