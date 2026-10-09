@@ -270,6 +270,13 @@
                 x-text="`Estimated time: ${travelEtaLabel}${travelConnected ? ' (direct connection)' : ''} — estimate only`"
               >
               </div>
+              <div
+                class="muted"
+                x-show="edgeInfoLabel"
+                x-text="edgeInfoLabel"
+                data-testid="travel-edge-info"
+              >
+              </div>
               <button class="btn btn-primary btn-sm" data-testid="travel-confirm-open" @click="openTravelConfirm()">
                 Travel
               </button>
