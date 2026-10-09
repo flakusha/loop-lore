@@ -39,7 +39,7 @@ background).
   header-detected alpha — PNG tRNS, WebP ALPH/VP8L, GIF transparency in
   `src/assets/alpha-detect.ts`); deleting a matted derivative reverts the source
   to `raw`.
-- VN sprite stage **shipped**: `src/frontend/alpine/vn/` (sprite-stage,
+- VN sprite stage **shipped**: `src/frontend/vn/` (sprite-stage,
   sprite-anchor, scene-renderer) composites character over background;
   `TransformContext.Sprite` rows (anchor/scale) persist via the frontend asset
   anchor; serve paths resolve the matted derivative for sprite-stage consumers.
@@ -83,7 +83,7 @@ background).
       status (no background fill, no hard circle clip) — VN sprite stage done,
       chat bubble styling pending
 - [x] VN scene renderer: sprite layer compositing (bg → sprite → UI), anchor +
-      scale via `sprite` transform context (`src/frontend/alpine/vn/`)
+      scale via `sprite` transform context (`src/frontend/vn/`)
 - [x] Tests: alpha flag detection (png tRNS, webp vp8l/alff, gif transparency),
       alpha status transitions, matting-job lifecycle (success/fail keeps raw
       usable)
