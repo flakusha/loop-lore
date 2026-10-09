@@ -72,6 +72,8 @@ let loadMoreButtons: FakeButton[] = [];
 interface ListFake {
   innerHTML: string;
   querySelector: (selector: string,) => unknown;
+  /** Page-1 row HTML, assigned wholesale into the rows container. */
+  rows: string;
   /** Row HTML appended by load-more, in order. */
   appended: string;
   /** Controls block HTML (count line + buttons) as of the last render. */
@@ -85,28 +87,8 @@ const page = globalThis as unknown as {
   saveJournalKeyphrases: (characterId: string,) => Promise<void>;
 };
 
-/**
- * Minimal `createElement` — the real escapeHtml round-trips through a div
- * (`textContent` in, `getHTML()` out).
- */
-function makeDiv(): { textContent: string; getHTML: () => string } {
-  let text = "";
-  return {
-    set textContent(value: string,) {
-      text = value;
-    },
-    getHTML: () =>
-      text
-        .replaceAll("&", "&amp;",)
-        .replaceAll("<", "&lt;",)
-        .replaceAll(">", "&gt;",)
-        .replaceAll('"', "&quot;",)
-        .replaceAll("'", "&#39;",),
-  } as { textContent: string; getHTML: () => string };
-}
-
 /** Row + control markup the user would actually see, load-more appends included. */
-const onScreen = (): string => listEl.innerHTML + listEl.appended;
+const onScreen = (): string => listEl.innerHTML + listEl.rows + listEl.appended;
 
 /** Inverse of `escapeHtml`, so a value read back out of markup round-trips. */
 const unescapeHtml = (value: string,): string =>
@@ -145,6 +127,7 @@ beforeEach(() => {
   loadMoreButtons = [];
   listEl = {
     innerHTML: "",
+    rows: "",
     appended: "",
     controls: "",
     querySelector: (selector: string,) => {
@@ -180,6 +163,12 @@ beforeEach(() => {
       // Rows container: append-only, never re-rendered.
       if (selector.includes("journal-keyphrase-rows",)) {
         return {
+          set innerHTML(value: string,) {
+            listEl.rows = value;
+          },
+          get innerHTML() {
+            return listEl.rows;
+          },
           insertAdjacentHTML: (_position: string, html: string,) => {
             listEl.appended += html;
           },
@@ -196,7 +185,6 @@ beforeEach(() => {
     // the typed-value save cases can supply input contents directly.
     querySelectorAll: (selector: string,) =>
       selector.includes(".journal-keyphrase-row",) ? (rowOverride ?? renderedRows()) : [],
-    createElement: makeDiv,
   };
 },);
 
@@ -236,10 +224,45 @@ describeOrSkip("characters-journal-keyphrases", () => {
     await page.initJournalKeyphrases("actor-9",);
 
     expect(fetchCalls[0]!.url,).toBe("/api/v1/actors/actor-9/memories?page=1&pageSize=50",);
-    expect(listEl.innerHTML,).toContain('data-memory-id="m9"',);
-    expect(listEl.innerHTML,).toContain('value="moonstone, rite"',);
+    expect(onScreen(),).toContain('data-memory-id="m9"',);
+    expect(onScreen(),).toContain('value="moonstone, rite"',);
     expect(listEl.controls,).toContain('data-testid="save-keyphrases"',);
     expect(listEl.controls,).toContain("Showing 2 of 2",);
+  });
+
+  test("escapes keyphrase text and memory content so markup cannot break out", async () => {
+    // Keyphrase/memory text is user-controlled and lands in attributes
+    // (`value=`, `title=`, `data-memory-id=`). A quote must not close them.
+    feHandler = () =>
+      new Response(
+        JSON.stringify(envelope(
+          [memory('m1" onmouseover="alert(1)', 'He said "<script>alert(2)</script>"', [
+            'alpha" autofocus onfocus="alert(3)',
+            "<img src=x onerror=alert(4)>",
+          ],),],
+          { total: 1, totalPages: 1, },
+        ),),
+        { status: 200, },
+      );
+
+    await import("./characters-journal-keyphrases");
+    await page.initJournalKeyphrases("actor-1",);
+
+    const screen = onScreen();
+    // No raw markup reaches the DOM as markup.
+    expect(screen,).not.toContain("<script>",);
+    expect(screen,).not.toContain("<img src=x",);
+    // The whole hostile payload sits inside the quoted value, fully encoded:
+    // quotes are entities, so nothing can terminate the attribute early.
+    const encoded = [
+      'value="alpha&quot; autofocus onfocus=&quot;alert(3), &lt;img src=x onerror=alert(4)&gt;"',
+      'data-memory-id="m1&quot; onmouseover=&quot;alert(1)"',
+      'title="He said &quot;&lt;script&gt;alert(2)&lt;/script&gt;&quot;"',
+    ];
+
+    for (const fragment of encoded) {
+      expect(screen,).toContain(fragment,);
+    }
   });
 
   test("a single page renders no load-more control", async () => {
