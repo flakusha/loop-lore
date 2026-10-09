@@ -3,15 +3,21 @@
 
 # TASK: Text to visual novel importer
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Import a TXT/MD/PDF story into a playable VN — segment it into
+scenes, extract characters, and scaffold dialogue beats and backgrounds
+instead of a chat thread.
+**Context:** Emergent-sweep candidate #36. Reuses the Depict compiler
+(`TASK-depict-style-state-to-image-scene-compiler`) for style-consistent art;
+export is owned by the story-bundle ticket. See `## Summary` and `## Acceptance`.
+**Acceptance Criteria:** The boxes in `## Acceptance`.
 
 
 **Status:** Not Started
 **Priority:** medium
 **Effort:** high
+**Tags:** visual-novel, importer, text-to-vn, art, parser
 **Epic:** epic-visual-novel-mode
+**Git Issue:** 74b22f4
 
 ## Summary
 
@@ -27,8 +33,8 @@ Ingest plain text sources (TXT/MD/PDF), segment into scenes, extract characters,
 - [ ] Output playable in VN mode; export via story bundle ticket
 - [ ] Fixture tests for segmentation
 
-## Acceptance Criteria
+## Delivery
 
-- [ ] Implementation complete
+- [ ] Implementation complete (all five boxes in `## Acceptance`)
 - [ ] Tests passing
 - [ ] Documentation updated
