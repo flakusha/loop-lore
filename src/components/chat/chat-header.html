@@ -424,12 +424,13 @@
         <span class="context-label" x-text="`${percentage}%`"></span>
       </div>
     </div>
-    <div class="notif-bell" x-data="notificationsBell()" x-show="unreadCount > 0">
+    <div class="notif-bell" x-data="notificationsBell()" x-show="unreadCount > 0" data-testid="notifications-bell">
       <button
         class="btn-icon"
         x-bind:title="t('chats.notifications')"
         x-bind:aria-label="t('chats.notifications')"
         @click="toggle()"
+        data-testid="notifications-bell-toggle"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -445,7 +446,7 @@
           <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
           <path d="M13.73 21a2 2 0 0 1-3.46 0" />
         </svg>
-        <span class="badge" x-show="unreadCount > 0" x-text="unreadCount"></span>
+        <span class="badge" x-show="unreadCount > 0" x-text="unreadCount" data-testid="notifications-bell-badge"></span>
       </button>
       <div
         class="notif-dropdown"
@@ -453,6 +454,7 @@
         @click.outside="open = false"
         role="region"
         aria-label="Notification list"
+        data-testid="notifications-bell-dropdown"
       >
         <div class="notif-header">
           <span>{{{t("chats.notifications")}}}</span>
@@ -465,18 +467,31 @@
           </button>
         </div>
         <template x-for="n in items" :key="n.id">
-          <div class="notif-item" :class="{ unread: !n.read }" @click="goTo(n.link)">
+          <div
+            class="notif-item"
+            :class="{ unread: !n.read }"
+            @click="goTo(n.link)"
+            :data-testid="'notifications-bell-item-' + n.id"
+          >
             <span class="notif-icon" x-text="iconFor(n.type)"></span>
             <div class="notif-body">
               <div class="notif-title" x-text="n.title"></div>
               <div class="notif-sub" x-text="n.body" x-show="n.body"></div>
             </div>
-            <button class="btn-icon-sm" x-bind:title="t('chats.dismiss')" @click.stop="dismiss(n.id)">✕</button>
+            <button
+              class="btn-icon-sm"
+              x-bind:title="t('chats.dismiss')"
+              @click.stop="dismiss(n.id)"
+              :data-testid="'notifications-bell-dismiss-' + n.id"
+            >
+              ✕
+            </button>
             <button
               class="btn-icon-sm"
               x-bind:title="t('chats.markRead')"
               x-show="!n.read"
               @click.stop="markRead(n.id)"
+              :data-testid="'notifications-bell-mark-read-' + n.id"
             >
               ✓
             </button>
