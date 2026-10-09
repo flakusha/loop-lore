@@ -145,7 +145,7 @@
 | Not Started | Epic: Game Engine SDKs (Unity / Godot) | Low | High | 11 | [epic-game-engine-sdks.md](/.plan/epics/epic-game-engine-sdks.md) |
 | Not Started | Epic: Game Frontend Scenes (2D/3D) | Low | Medium | 3 | [epic-game-frontend-scenes.md](/.plan/epics/epic-game-frontend-scenes.md) |
 | Not Started | Epic: Generation Flow Control — Pause, Throttling & Concurrency | High | Medium | 0 | [epic-generation-flow-control.md](/.plan/epics/epic-generation-flow-control.md) |
-| Not Started | Epic: Harness Integration (Agent Runtime Consolidation) | High | Very High (phased; each phase ships standalone value) | 23 | [epic-harness-integration.md](/.plan/epics/epic-harness-integration.md) |
+| Not Started | Epic: Harness Integration (Agent Runtime Consolidation) | High | Very High (phased; each phase ships standalone value) | 27 | [epic-harness-integration.md](/.plan/epics/epic-harness-integration.md) |
 | Not Started | Epic: HTTP/2 / HTTP/3 / Elysia Protocol & Feature Adoption | Medium | Medium | 6 | [epic-http-protocol-features.md](/.plan/epics/epic-http-protocol-features.md) |
 | Not Started | Epic: Instance Federation — Identity, Switching & Cross-Sync | Medium | High | 0 | [epic-instance-federation.md](/.plan/epics/epic-instance-federation.md) |
 | Done | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
@@ -305,7 +305,7 @@
 | Not Started | Task Management Integration | Medium | Medium | 6 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
 | Done | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
 | Not Started | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation | High | Medium | 18 | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md) |
-| In Progress | Terminal UI (TUI) | Low | Medium | 0 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
+| In Progress | Terminal UI (TUI) | Low | Medium | 4 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
 | In Progress | Testing & Quality Assurance (Permanently Ongoing) | High | Continuous | 0 | [epic-testing-qa.md](/.plan/epics/epic-testing-qa.md) |
 | In Progress | Testing, Benchmarking & Performance | High | Very High (split into 7 sub-epics) | 0 | [epic-testing-benchmarking.md](/.plan/epics/epic-testing-benchmarking.md) |
 | In Progress | Tooling Support & Improvement (Permanently Ongoing) | Medium | Continuous | 1 | [epic-tooling-improvement.md](/.plan/epics/epic-tooling-improvement.md) |
@@ -1598,7 +1598,7 @@ Containerize the loop-lore application and establish deployment strategies for b
 - **Priority:** High
 - **Effort:** Very High (phased; each phase ships standalone value)
 - **Type:** Feature Epic
-- **Tags:** harness, orchestration, agents, routing, telemetry, worktree, giwt, skills, subagents, dashboard, eval, sandbox
+- **Tags:** harness, orchestration, agents, routing, telemetry, worktree, giwt, skills, subagents, dashboard, eval, sandbox, topics, context-tier
 - **File:** `.plan/epics/epic-harness-integration.md`
 
 ### Epic: HTTP/2 / HTTP/3 / Elysia Protocol & Feature Adoption
@@ -3130,7 +3130,7 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** tui, blessed, terminal, harness, chat, assets
 - **File:** `.plan/epics/epic-terminal-ui.md`
 
 ### Testing & Quality Assurance (Permanently Ongoing)
@@ -3343,4 +3343,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-
