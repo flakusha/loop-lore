@@ -79,7 +79,6 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
   _filteredCommands: [] as PaletteEntry[],
   _paletteActiveIndex: 0,
   _hiddenCommandCount: 0,
-
   /**
    * @returns {Promise<void>}
    */
