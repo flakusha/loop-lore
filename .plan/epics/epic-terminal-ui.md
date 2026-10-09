@@ -121,6 +121,13 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 - `TASK-adopt-bun-color-for-tui-colors.md` — adopt `Bun.color()` for theme
 - `TASK-adopt-bun-stringwidth-for-tui.md` — adopt `Bun.stringWidth()` for safe truncation (fixes `formatMessageLine` surrogate-pair split)
 
+### Deferred
+
+The following open tickets exist on the branch but are not yet surfaced from this epic:
+
+- `TASK-adopt-bun-color-for-tui-colors.md` — adopt `Bun.color()` for theme
+- `TASK-adopt-bun-stringwidth-for-tui.md` — adopt `Bun.stringWidth()` for safe truncation (fixes `formatMessageLine` surrogate-pair split)
+
 ### Cross-epic
 
 - `TASK-harness-work-topics` — work-topic entity, CRUD, epic binding, auto-scoping ladder (`epic-harness-integration.md`)
