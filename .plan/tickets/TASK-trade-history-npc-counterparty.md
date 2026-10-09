@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Tags:** rpg, trade, economy, routes
 **Assignee**:
@@ -62,3 +62,5 @@ queryable trade history and a counterparty wrapper so NPCs (world actors) can tr
 - `epic-rpg-wiring-phase3.md` — parent epic
 - `TASK-implement-trade.md` — landed ledger + two-sided service
 - `TASK-npc-inventory-frontend.md` — NPC inventory UI (frontend counterpart)
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 7546ede (registry tip: 23a410c95 Konstantin Fedotov Close issue)

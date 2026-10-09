@@ -19395,7 +19395,7 @@
       "crud"
     ],
     "source": ".plan/tickets/TASK-actor-items-crud-ownership.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "280cb5d"
   },
   "TASK-ACTOR-LICENSING-FRONTEND": {
@@ -22790,6 +22790,19 @@
     "tags": [],
     "title": "Autonomy config surface layering presets and overrides",
     "type": "TASK"
+  },
+  "TASK-AUTONOMY-COST-LEDGER-KILL-SWITCH": {
+    "hash": "4cafdcf",
+    "git_issue": "4cafdcf",
+    "extid": "TASK-AUTONOMY-COST-LEDGER-KILL-SWITCH",
+    "type": "TASK",
+    "title": "autonomy-cost-ledger-kill-switch",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-actor-autonomy-story-drive",
+    "tags": [],
+    "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md",
+    "status": "done"
   },
   "TASK-AUTONOMY-DETERMINISTIC-TURNS": {
     "hash": "adb5001",
@@ -32675,6 +32688,19 @@
     "title": "Group Chat Turn Orchestration",
     "type": "TASK"
   },
+  "TASK-GROWTH-EPIC-RECONCILIATION": {
+    "hash": "3b66ae3",
+    "git_issue": "3b66ae3",
+    "extid": "TASK-GROWTH-EPIC-RECONCILIATION",
+    "type": "TASK",
+    "title": "growth-epic-reconciliation",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-growth",
+    "tags": [],
+    "source": ".plan/tickets/TASK-growth-epic-reconciliation.md",
+    "status": "done"
+  },
   "TASK-GUARD-ASYNC-SPILL-NAMESPACE-SURVIVES-A-WEAVE-DRIVEN-REBASE": {
     "hash": "65fbb96",
     "git_issue": "65fbb96",
@@ -36308,7 +36334,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-message-reactions-in-out-context.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "In-context / out-of-context message reactions",
     "type": "TASK"
@@ -43980,6 +44006,19 @@
     "title": "Story World State Display",
     "type": "TASK"
   },
+  "TASK-STORYPOINTS-ACCEPTANCE": {
+    "hash": "5424f58",
+    "git_issue": "5424f58",
+    "extid": "TASK-STORYPOINTS-ACCEPTANCE",
+    "type": "TASK",
+    "title": "storypoints-acceptance",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-agency-story-points",
+    "tags": [],
+    "source": ".plan/tickets/TASK-storypoints-acceptance.md",
+    "status": "Not Started"
+  },
   "TASK-STRUCTURED-LLM-OUTPUT-HEALING-UTILS": {
     "epic": "epic-hidden-carriage-context",
     "extid": "TASK-STRUCTURED-LLM-OUTPUT-HEALING-UTILS",
@@ -44856,7 +44895,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-trade-history-npc-counterparty.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Trade History + NPC Counterparty",
     "type": "TASK"
@@ -44873,6 +44912,19 @@
     "tags": [],
     "title": "Trading Interface",
     "type": "TASK"
+  },
+  "TASK-TRAITS-VOICE-PRIORITY-DECISION": {
+    "hash": "0815b98",
+    "git_issue": "0815b98",
+    "extid": "TASK-TRAITS-VOICE-PRIORITY-DECISION",
+    "type": "TASK",
+    "title": "traits-voice-priority-decision",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-character-internal-traits",
+    "tags": [],
+    "source": ".plan/tickets/TASK-traits-voice-priority-decision.md",
+    "status": "Not Started"
   },
   "TASK-TRANSFORM-ROUTES-VALIDATION-AND-OWNERSHIP-AUTHZ": {
     "epic": "epic-asset-transform-metadata",
@@ -46805,6 +46857,19 @@
     "tags": [],
     "title": "EPIC: Worlds Extension (Shareability, Epochs, Maps, Mode Switches)",
     "type": "TASK"
+  },
+  "TASK-WORLDSETUP-LAYER3-NSFW-DECISION": {
+    "hash": "b10489e",
+    "git_issue": "b10489e",
+    "extid": "TASK-WORLDSETUP-LAYER3-NSFW-DECISION",
+    "type": "TASK",
+    "title": "worldsetup-layer3-nsfw-decision",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-character-world-setup",
+    "tags": [],
+    "source": ".plan/tickets/TASK-worldsetup-layer3-nsfw-decision.md",
+    "status": "Not Started"
   },
   "TASK-X3-FEDERATED-OTP-CARRY-BUT-REVERIFY-PHASE-1-MATRIX-DM-SEND-V": {
     "hash": "e3c9233",
