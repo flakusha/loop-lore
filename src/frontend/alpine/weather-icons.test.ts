@@ -2,7 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import { isNight, timeOfDayIcon, WEATHER_ICONS, weatherIcon, } from "./weather-icons";
+import {
+  isNight,
+  NIGHT_TIME_OF_DAY,
+  TIME_OF_DAY_ICONS,
+  timeOfDayIcon,
+  WEATHER_ICONS,
+  weatherIcon,
+} from "./weather-icons";
 
 describe("weatherIcon", () => {
   test("maps known weather values", () => {
@@ -48,5 +55,26 @@ describe("isNight", () => {
 
   test("is case-insensitive", () => {
     expect(isNight("Dusk",),).toBe(true,);
+  });
+});
+
+describe("icon map tables", () => {
+  test("night set entries with icons map to non-empty icons", () => {
+    expect(NIGHT_TIME_OF_DAY.size,).toBeGreaterThan(0,);
+    for (const value of NIGHT_TIME_OF_DAY) {
+      const icon = TIME_OF_DAY_ICONS[value];
+      if (icon !== undefined) { expect(icon.length,).toBeGreaterThan(0,); }
+    }
+  });
+
+  test("day times are outside the night set", () => {
+    expect(NIGHT_TIME_OF_DAY.has("morning",),).toBe(false,);
+    expect(NIGHT_TIME_OF_DAY.has("noon",),).toBe(false,);
+  });
+
+  test("every mapped weather value renders a non-empty icon", () => {
+    for (const icon of Object.values(WEATHER_ICONS,)) {
+      expect(icon.length,).toBeGreaterThan(0,);
+    }
   });
 });

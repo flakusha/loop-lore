@@ -19,7 +19,7 @@ import {
   insertWorlds,
 } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import { loadTravelStatus, travelStatusRoutes, } from "./travel-status";
+import { loadTravelStatus, parseHazards, travelStatusRoutes, } from "./travel-status";
 import type { HandleOpts, } from "./types";
 
 describe("loadTravelStatus", () => {
@@ -164,5 +164,18 @@ describe("travelStatusRoutes", () => {
     const app = appWithAuth(db, null, null,);
     const res = await app.handle(new Request(`http://localhost/api/worlds/${worldId}/travel/status`,),);
     expect([401, 404,],).toContain(res.status,);
+  });
+});
+
+describe("parseHazards", () => {
+  test("parses the stored hazards JSON array", () => {
+    expect(parseHazards('["storm","ambush"]',),).toEqual(["storm", "ambush",],);
+  });
+
+  test("returns empty for null, garbage or non-array JSON", () => {
+    expect(parseHazards(null,),).toEqual([],);
+    expect(parseHazards("",),).toEqual([],);
+    expect(parseHazards("not json",),).toEqual([],);
+    expect(parseHazards('{"x":1}',),).toEqual([],);
   });
 });

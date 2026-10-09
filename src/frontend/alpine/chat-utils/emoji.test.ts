@@ -19,6 +19,15 @@ describe("renderShortcodes", () => {
   });
 });
 
+describe("emoji tables", () => {
+  test("quick emoji row entries all come from the shortcode table", () => {
+    expect(DEFAULT_QUICK_EMOJIS.length,).toBeGreaterThan(0,);
+    for (const emoji of DEFAULT_QUICK_EMOJIS) {
+      expect(Object.values(EMOJI_SHORTCODES,),).toContain(emoji,);
+    }
+  });
+});
+
 describe("EMOJI_SHORTCODES", () => {
   test("every key is a name renderShortcodes can actually match", () => {
     // The renderer only matches `[a-z0-9_+-]+` inside colons; a key outside
