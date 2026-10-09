@@ -45,9 +45,14 @@ export function createSqliteDialect(database: Database,): SqliteDialect {
     prepare: (sql: string,) => {
       const statement = database.prepare(sql,);
       return {
+        // Kysely's SqliteConnection (kysely/dist/dialect/sqlite/sqlite-driver.js:59)
+        // branches on this flag: readers go through all() and keep their rows, writers
+        // go through run() and get rows: []. A statement yields rows iff SQLite gave it
+        // result columns, so ask SQLite instead of matching SQL text — `INSERT ...
+        // RETURNING` and `UPDATE ... RETURNING` have columns, while `INSERT` of a value
+        // containing the word "returning" does not. No substring test can tell those.
         get reader() {
-          const s = sql.trim().toUpperCase();
-          return s.startsWith("SELECT",) || s.startsWith("WITH",) || s.startsWith("PRAGMA",);
+          return statement.columnNames.length > 0;
         },
 
         all: (parameters: readonly unknown[],) => statement.all(...(parameters as any[]),),
