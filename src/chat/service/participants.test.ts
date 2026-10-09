@@ -207,4 +207,73 @@ describe("updateImpersonation", () => {
 
     expect(row?.impersonate_actor_id,).toBe(heroActorId,);
   });
+
+  test("rejects a second holder when a chat created without a timeline shares world+location with a 'prime' chat", async () => {
+    // Regression: a chat created post-migration with no timeline_id is stored
+    // as 'prime' (NOT NULL DEFAULT 'prime', migration 048_chats_timeline_id).
+    // When the timeline scope was skipped for a NULL timeline_id, SQLite `=`
+    // never matched the NULL row and both users ended up holding the same
+    // actor in one world+location.
+    const regWorld = "test-world-null-timeline";
+    const regLocation = crypto.randomUUID();
+    const regHolder = crypto.randomUUID();
+    const regClaimer = crypto.randomUUID();
+    const regHero = crypto.randomUUID();
+    const chatNoTimeline = crypto.randomUUID();
+    const chatPrime = crypto.randomUUID();
+
+    await insertUsers(db, `user-null-holder-${regHolder}`, "Holder", { id: regHolder, } as never,);
+    await insertUsers(db, `user-null-claimer-${regClaimer}`, "Claimer", { id: regClaimer, } as never,);
+    await insertActors(db, "Holder", { id: regHolder, user_id: regHolder, owner_id: regHolder, } as never,);
+    await insertActors(db, "Claimer", { id: regClaimer, user_id: regClaimer, owner_id: regClaimer, } as never,);
+    await insertActors(db, "Reg Hero", { id: regHero, user_id: regHolder, owner_id: regHolder, } as never,);
+    await db.insertInto("worlds",).values({ id: regWorld, name: "Null Timeline World", owner_id: regHolder, },)
+      .execute();
+
+    await insertLocations(db, regWorld, "Reg Location", { id: regLocation, },);
+
+    // Created WITHOUT timeline_id — the column default must supply 'prime'.
+    await insertChats(db, "No Timeline", regHolder, {
+      id: chatNoTimeline,
+      world_id: regWorld,
+      current_location_id: regLocation,
+    } as never,);
+
+    await insertChats(db, "Prime", regClaimer, {
+      id: chatPrime,
+      world_id: regWorld,
+      current_location_id: regLocation,
+      timeline_id: "prime",
+    } as never,);
+
+    // The default really is applied at insert time, not just on old rows.
+    const stored = await db
+      .selectFrom("chats",)
+      .select("timeline_id",)
+      .where("id", "=", chatNoTimeline,)
+      .executeTakeFirst();
+
+    expect(stored?.timeline_id,).toBe("prime",);
+
+    await insertChatParticipants(db, chatNoTimeline, regHolder, {},);
+    await insertChatParticipants(db, chatPrime, regClaimer, {},);
+
+    const first = await updateImpersonation(db, chatNoTimeline, regHolder, regHero,);
+    expect(first,).toBeUndefined();
+
+    const second = await updateImpersonation(db, chatPrime, regClaimer, regHero,);
+    expect(second,).toEqual({
+      code: "bad_request",
+      message: "This character is already being impersonated by another user at this location",
+    },);
+
+    const row = await db
+      .selectFrom("chat_participants",)
+      .select("impersonate_actor_id",)
+      .where("chat_id", "=", chatPrime,)
+      .where("actor_id", "=", regClaimer,)
+      .executeTakeFirst();
+
+    expect(row?.impersonate_actor_id,).toBeNull();
+  });
 });
