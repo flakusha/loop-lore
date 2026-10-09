@@ -69,6 +69,28 @@ describe("Alpine state contract E2E", () => {
       expect(state._chatKey,).toBeNull();
       expect(state._encryptionEnabled,).toBe(false,);
       expect(state._keyId,).toBeNull();
+      expect(state._activeChatEncryptionLevel,).toBeNull();
+
+      // chat-settings module state (src/frontend/alpine/chat-settings.ts:42-51).
+      expect(state._vnEnabled,).toBe(false,);
+      expect(state._vnLayout,).toBe("overlay",);
+      expect(state._vnTypewriter,).toBe(true,);
+      expect(state._vnTypewriterSpeed,).toBe(30,);
+      expect(state._vnTransition,).toBe("fade",);
+      expect(state._vnAutoAdvance,).toBe(false,);
+      expect(state._imageScaling,).toBe("auto",);
+      expect(state._autoAdvanceDelay,).toBe(5,);
+      expect(state._dialogueBoxOpacity,).toBe(0.75,);
+
+      // message-search module state (src/frontend/alpine/message-search.ts:30-34).
+      expect(state._msgSearchQuery,).toBe("",);
+      expect(state._msgSearchMatches,).toEqual([],);
+      expect(state._msgSearchTotal,).toBe(0,);
+      expect(state._msgSearchIndex,).toBe(0,);
+      expect(state._msgSearchLoading,).toBe(false,);
+
+      // inline-state module state (src/frontend/alpine/chat/inline-state.ts:134).
+      expect(state._searchResults,).toEqual([],);
     } finally {
       errors.assert();
       errors.detach();
@@ -92,6 +114,7 @@ describe("Alpine state contract E2E", () => {
       expect(ui.showSectionsPanel,).toBe(false,);
       expect(ui.showBackgroundPanel,).toBe(false,);
       expect(ui.showLocationPanel,).toBe(false,);
+      expect(ui.showMusicLinksPanel,).toBe(false,);
       expect(ui.showUploadModal,).toBe(false,);
       expect(ui.showImportForm,).toBe(false,);
       expect(ui.showCreateForm,).toBe(false,);
@@ -109,8 +132,58 @@ describe("Alpine state contract E2E", () => {
       expect(ui.gmAssistantTab,).toBe("shadow",);
       expect(Array.isArray(ui.sideChannels,),).toBe(true,);
       expect(ui.newSideChannelName,).toBe("",);
+      expect(ui.showBranchMenu,).toBe(false,);
+      expect(Array.isArray(ui.branches,),).toBe(true,);
+      expect(ui.showTransitionPicker,).toBe(false,);
+      expect(ui.transitionDestinationId,).toBe("",);
+      expect(Array.isArray(ui.transitionLocations,),).toBe(true,);
+      expect(ui.transitionBusy,).toBe(false,);
       expect(ui.activePersona,).toBeNull();
       expect(ui.userRole,).toBe("member",);
+      expect(ui.banner,).toBe("",);
+      expect(ui.ticker,).toBe("",);
+
+      // Exhaustive key-set pin: any key added to or removed from
+      // src/frontend/stores/ui-store.ts must update this contract — that is
+      // what makes a typo'd `$store.ui.someNewFlag` fail loudly here instead
+      // of silently rendering undefined.
+      expect(Object.keys(ui,).sort(),).toEqual([
+        "activePersona",
+        "banner",
+        "branches",
+        "gmAssistantTab",
+        "hasActiveChat",
+        "newSideChannelName",
+        "showBackgroundPanel",
+        "showBranchMenu",
+        "showCharacterInfo",
+        "showChatList",
+        "showChatSettings",
+        "showCreateForm",
+        "showEditModal",
+        "showGallery",
+        "showGmGuidance",
+        "showGmPanel",
+        "showImportForm",
+        "showLocationPanel",
+        "showMemoryPanel",
+        "showMusicLinksPanel",
+        "showParticipants",
+        "showPersonaForm",
+        "showPreviewModal",
+        "showQuestLog",
+        "showRenameModal",
+        "showSectionsPanel",
+        "showSideChannels",
+        "showTransitionPicker",
+        "showUploadModal",
+        "sideChannels",
+        "ticker",
+        "transitionBusy",
+        "transitionDestinationId",
+        "transitionLocations",
+        "userRole",
+      ],);
     } finally {
       errors.assert();
       errors.detach();
