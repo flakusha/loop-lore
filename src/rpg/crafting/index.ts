@@ -6,6 +6,13 @@
  *
  * Re-exports all crafting services for use by routes and other modules.
  */
+export {
+  DiscoveryService,
+  emitRecipeDiscovered,
+  getDiscovery,
+  hasDiscovery,
+  insertDiscovery,
+} from "./discovery";
 export { CraftingProcessService, } from "./process";
 export { RecipesService, } from "./recipes";
 export { StationsService, } from "./stations";
@@ -13,4 +20,3 @@ export { StationsService, } from "./stations";
 // export { ProfessionsService, } from "./professions";
 // export { QualityService, } from "./quality";
 // export { GatheringService, } from "./gathering";
-// export { DiscoveryService, } from "./discovery";

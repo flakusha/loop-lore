@@ -82,6 +82,7 @@ describe("Crafting routes", () => {
     await insertCraftingRecipes(db, W, "Sword", "smithing", SWORD, NOW, NOW, {
       id: RCP as never,
       base_success_chance: 1 as never,
+      discovered_by_default: 1 as never,
       output_quantity: 1 as never,
       station_type_required: "anvil",
     },);

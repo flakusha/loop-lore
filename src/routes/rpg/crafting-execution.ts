@@ -21,6 +21,7 @@ const CraftBody = t.Object({
   actorId: Id,
   recipeId: Id,
   stationInstanceId: t.Optional(Id,),
+  experiment: t.Optional(t.Boolean(),),
 },);
 
 // ── Routes ───────────────────────────────────────────────
@@ -43,6 +44,7 @@ export function craftingExecutionRoutes(opts: HandlerOpts, prefix = "/api",): El
           actorId: string;
           recipeId: string;
           stationInstanceId?: string;
+          experiment?: boolean;
         };
 
         // Actor ownership check — shared trust-boundary guard.
@@ -62,6 +64,7 @@ export function craftingExecutionRoutes(opts: HandlerOpts, prefix = "/api",): El
             recipeId: body.recipeId,
             stationInstanceId: body.stationInstanceId,
             worldId: recipe.world_id,
+            experiment: body.experiment,
           },);
 
           return jsonResponse(result,);
