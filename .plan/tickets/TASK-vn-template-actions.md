@@ -3,14 +3,20 @@
 
 # TASK: VN Pre-Configured Scene & Dialogue Templates
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Pre-configured scene and dialogue templates for VN mode — a GM
+picks "Confrontation" and the engine pre-fills layout, transition, pacing, and
+portrait position. The template data exists; nothing renders from it.
+**Context:** Lets a GM compose VN scenes without hand-configuring every element.
+See `## Summary`, `## Pre-Configured Templates` (the catalog), `## Design`
+(the two template interfaces), and `## Implementation` (phased plan).
+**Acceptance Criteria:** Split in `## Acceptance Criteria` — data boxes
+(verified in `src/frontend/vn/templates/`) vs wiring boxes (no consumer).
 
 
 **Priority:** Medium
-**Status:** Done
-**Epic:** Epic Visual Novel Mode (51)
+**Status:** In Progress
+**Status Note:** (2026-08-23) marked Done. Reconciled 2026-10-09: the template arrays and trigger list are real, but no renderer module imports them — `scene-renderer/`, `typewriter.ts`, `transition-engine.ts`, and `chat.html` all have zero references. Done → In Progress. The closed git issue is left as-is; re-opening it is out of scope here.
+**Epic:** epic-visual-novel-mode
 **Tags:** vn, templates, scenes, dialogue, pre-configured, ux
 **Effort:** Med
 
@@ -135,16 +141,25 @@ interface VnDialogueTemplate {
 
 ### ✅ Pre-defined Data (DONE)
 
-- [x] Scene templates defined as `SCENE_TEMPLATES` array (`src/frontend/vn/templates/scene-templates/scene-templates.ts`) — 10 scenes (introduction, confrontation, resolution, flashback, discovery, farewell, combat_start, quiet_moment, mystery, celebration)
-- [x] Dialogue templates defined as `DIALOGUE_TEMPLATES` array (`src/frontend/vn/templates/scene-templates/dialogue-templates.ts`) — 7 dialogue styles
-- [x] Transition triggers defined as `TRANSITION_TRIGGERS` array (`src/frontend/vn/templates/transition-triggers.ts`) — 5 built-in triggers (location change, combat start, character enter, emotion shift, choice result, scene end)
-- [x] Template registry accessors — `getSceneTemplate`, `listSceneTemplates`, `getDialogueTemplate`, `listDialogueTemplates`, `findMatchingTriggers`
+- [x] Scene templates defined as `SCENE_TEMPLATES` array (`src/frontend/vn/templates/scene-templates/scene-templates.ts:16-240`) — 10 scenes (introduction, confrontation, resolution, flashback, discovery, farewell, combat_start, quiet_moment, mystery, celebration)
+- [x] Dialogue templates defined as `DIALOGUE_TEMPLATES` array (`src/frontend/vn/templates/scene-templates/dialogue-templates.ts:8-140`) — 7 dialogue styles
+- [x] Transition triggers defined as `TRANSITION_TRIGGERS` array (`src/frontend/vn/templates/transition-triggers.ts:40-90`) — 6 built-in triggers (location change, combat start, character enter, emotion shift, choice result, scene end)
+- [x] Scene registry accessors — `getSceneTemplate`, `listSceneTemplates` (`scene-registry.ts:11,18`)
+- [x] Dialogue registry accessors — `getDialogueTemplate`, `listDialogueTemplates` (`dialogue-templates.ts:152,159`)
+- [x] Trigger evaluation + debug history — `evaluateTriggers`, `recordTrigger`, `getTriggerHistory`, `clearTriggerHistory` (`transition-triggers.ts:98,133,148,155`)
+- [ ] `findMatchingTriggers` accessor — **does not exist**; the 2026-08-23 AC
+      claimed it does. Nearest real equivalent is `evaluateTriggers`, which
+      returns a single template rather than the matching list
 
 ### ⬜ Renderer/UI Wiring (NOT IMPLEMENTED)
 
+Gap confirmed 2026-10-09: grep for `templates/` imports across
+`src/frontend/` outside `src/frontend/vn/templates/` returns nothing — the
+only importers are the templates' own tests and `transition-triggers.ts`.
+
 - [ ] Scene templates apply layout, transition, emotion defaults to VN scenes (renderer does not yet read from template registry)
 - [ ] Dialogue templates control typewriter speed, pauses, text style (typewriter does not yet consume dialogue template variables)
-- [ ] Transition triggers auto-fire on location change, combat start, etc. (trigger list defined but no consumer)
+- [ ] Transition triggers auto-fire on location change, combat start, etc. (`evaluateTriggers` exists but nothing calls it)
 - [ ] GM can browse and select templates from a picker UI (no modal/sidebar UI)
 - [ ] Templates can be overridden per-scene without modifying the template
 - [ ] Template chaining works (apply intro → dialogue → resolution sequence)
@@ -152,7 +167,8 @@ interface VnDialogueTemplate {
 
 ### 🟢 Performance
 
-- [x] No performance regression in VN mode rendering
+- [x] No performance regression in VN mode rendering — holds trivially; the
+      templates are never read at render time (2026-10-09)
 
 ## Risk
 

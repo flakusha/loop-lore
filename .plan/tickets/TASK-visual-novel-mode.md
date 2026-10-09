@@ -3,16 +3,23 @@
 
 # TASK: Visual Novel Mode
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Base Visual Novel Mode — render chat messages as cinematic
+scenes with backgrounds, portraits, transitions, and typewriter text.
+Renderer, chat-view wiring, settings, and CSS are landed.
+**Context:** Base deliverable the rest of `epic-visual-novel-mode` extends.
+See `## Summary` for the product description, `## Architecture` for the
+scene model and layout heuristic, `## Current State` for the shipped file
+inventory, and `## Acceptance Criteria` for the verified checklist.
+**Acceptance Criteria:** The nine items in `## Acceptance Criteria` — all
+verified in `src/frontend/vn/scene-renderer/`, `src/frontend/vn/typewriter.ts`,
+`src/frontend/vn/transition-engine.ts`, and `src/views/chat.html:36`.
 
 
 **Status:** Done
-**Status Note:** (2026-08-23) — Modal UI, scene renderer, choice/QA wiring all live
+**Status Note:** (2026-08-23) claimed 'Modal UI, scene renderer, choice/QA wiring all live'. Re-verified 2026-10-09: the modal UI and scene renderer are live — `vn.ts::syncVnRenderer` builds the renderer from persisted `gm_config.renderingOverride`, the renderer calls `transitionScene` and `typewrite` directly, and `chat.html:34` gates `#vn-container` on `_vnEnabled`. The choice/QA half of that sentence is **not** part of this ticket and does not hold: choice cards are never mounted (see `TASK-vn-branching-choices.md`) and `qa-mode.ts` has no production caller (see `TASK-vn-qa-mode.md`). The nine ACs below stay `[x]` — all verified in `src/`.
 **Priority:** Medium
 **Effort:** Med-High (frontend rendering)
-**Epic:** Epic Immersion & Presentation (sub-task)
+**Epic:** epic-visual-novel-mode
 **Tags:** chat, vn, visual-novel, rendering, ux
 **Spec:** `docs/frontend/chat/visual-novel-mode.md`
 **Git Issues:** `8be84a7` (frontend implementation), `cb9e1b7` (chat settings toggle)
@@ -51,7 +58,8 @@ into a visual novel experience.
 ```
 Chat Settings → "Visual Novel Mode" toggle
   ↓
-Chat stores visual_novel (int 0/1 in DB)
+Chat persists gm_config.renderingOverride = "visual_novel"
+  (the legacy chats.visual_novel column was dropped in migration 076)
   ↓
 On chat load: if enabled, render VN layout instead of bubbles
   ↓
@@ -140,19 +148,19 @@ src/frontend/vn/
 - [x] Add VN settings saving in `chat-settings.ts` (PUT `/api/chats/:id` with `visualNovel` body)
 - [x] Add VN toggle UI to `src/components/chat/chat-settings-modal.html`
 
-### Phase 2: VN Mode Container & Toggle
+### Phase 2: VN Mode Container & Toggle ✅
 
-- [ ] Modify `src/views/chat.html` to add VN mode container (conditional: VN layout vs bubble list)
-- [ ] Add `x-show`/`x-transition` logic for VN vs bubble mode mutual exclusivity
-- [ ] Add VN toggle button in chat header or settings
-- [ ] Wire VN mode state to Alpine.js chat component
+- [x] Modify `src/views/chat.html` to add VN mode container (conditional: VN layout vs bubble list) — `src/views/chat.html:33-41`, `#vn-container` with `x-show="_vnEnabled"` inside `.chat-container`
+- [x] Add `x-show`/`x-transition` logic for VN vs bubble mode mutual exclusivity — `x-show="_vnEnabled"` on the VN container
+- [x] Add VN toggle button in chat header or settings — `chat-settings-modal.html:425-441`, `data-testid="vn-settings"` with `x-model="_vnEnabled"`
+- [x] Wire VN mode state to Alpine.js chat component — `src/frontend/alpine/chat-settings/vn.ts::syncVnRenderer`
 
-### Phase 3: Scene Renderer (`src/frontend/vn/scene-renderer.ts`) ✅
+### Phase 3: Scene Renderer (`src/frontend/vn/scene-renderer/`) ✅
 
-- [x] Map `messages[]` → `VnScene[]` (group consecutive same-role messages)
-- [ ] Resolve background URL from `currentLocationId` → location asset
+- [x] Map `messages[]` → `VnScene[]` (group consecutive same-role messages) — `render.ts::msgToScene`
+- [ ] Resolve background URL from `currentLocationId` → location asset — backgrounds come from `msg.background_url`; no location→asset resolution
 - [x] Implement 3 layout modes: `overlay`, `below`, `split`
-- [ ] Image scaling: `contain`/`cover`/`fill`/`auto`
+- [x] Image scaling: `contain`/`cover`/`fill`/`auto` — `render-scene.ts::createBackground` maps `settings.imageScaling` to `backgroundSize` (`auto` → `cover`)
 - [x] Dialogue box rendering with speaker name + markdown content
 
 ### Phase 4: Portrait Manager (`src/frontend/vn/portrait-manager.ts`) ✅
@@ -169,8 +177,8 @@ src/frontend/vn/
 - [x] Implement `slide` (new image slides from right, 300ms)
 - [x] Implement `wipe` (horizontal reveal, 400ms)
 - [x] Implement `dissolve` (pixelated dissolve, 600ms)
-- [ ] Trigger on background change (location, scene)
-- [ ] Preload next scene image
+- [x] Trigger on background change (location, scene) — `render-scene.ts:237` runs `transitionScene` on every scene swap
+- [x] Preload next scene image — `render.ts::preloadCurrentAndUpcoming` warms current + next 2 scenes; called from every navigation path in `controller.ts`
 
 ### Phase 6: Typewriter & Navigation (`src/frontend/vn/typewriter.ts`) ✅
 
@@ -194,12 +202,14 @@ src/frontend/vn/
 
 ## Files to Create
 
-- `src/frontend/vn/scene-renderer.ts`
-- `src/frontend/vn/portrait-manager.ts`
-- `src/frontend/vn/transition-engine.ts`
-- `src/frontend/vn/typewriter.ts`
-- `src/frontend/vn/settings.ts`
-- `src/frontend/vn/styles.css`
+All shipped (verified 2026-10-09 under `src/frontend/vn/`):
+
+- `scene-renderer/` — a directory, not the flat `scene-renderer.ts` this list assumed
+- `portrait-manager.ts`
+- `transition-engine.ts`
+- `typewriter.ts`
+- `settings.ts`
+- VN styles ship as `src/public/css/vn.css`, not `src/frontend/vn/styles.css`
 
 ## Files to Modify
 
