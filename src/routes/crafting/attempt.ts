@@ -39,6 +39,7 @@ const craftResultSchema = t.Object({
   outputQuantity: t.Integer(),
   materialsConsumed: t.Array(materialRecordSchema,),
   materialsSaved: t.Array(materialRecordSchema,),
+  recipeDiscovered: t.Boolean(),
 },);
 
 const craftAttemptSchema = t.Object({
@@ -75,7 +76,13 @@ export function craftingAttemptRoutes({ database, }: { database: Db }, prefix = 
     .post(`${prefix}/worlds/:worldId/craft`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
-      const body = ctx.body as { actorId: string; recipeId: string; stationInstanceId?: string };
+      const body = ctx.body as {
+        actorId: string;
+        recipeId: string;
+        stationInstanceId?: string;
+        experiment?: boolean;
+      };
+
       const denied = await resolveActorAccess(database, body.actorId, userId,);
       if (denied) { return denied; }
       const result = await svc().attemptCraft({
@@ -83,6 +90,7 @@ export function craftingAttemptRoutes({ database, }: { database: Db }, prefix = 
         worldId: ctx.params.worldId,
         recipeId: body.recipeId,
         stationInstanceId: body.stationInstanceId,
+        experiment: body.experiment,
       },);
 
       return jsonResponse(result,);
@@ -92,6 +100,7 @@ export function craftingAttemptRoutes({ database, }: { database: Db }, prefix = 
         actorId: Id,
         recipeId: Id,
         stationInstanceId: t.Optional(Id,),
+        experiment: t.Optional(t.Boolean(),),
       },),
       response: {
         200: craftResultSchema,

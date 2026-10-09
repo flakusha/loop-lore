@@ -51,4 +51,22 @@ export const SOCIAL_CRAFTING_EDGES: IntegrationEdge[] = [
       },
     ],
   },
+
+  {
+    source: "crafting",
+    target: "character_core",
+    direction: EdgeDirection.DependsOn,
+    interfaces: [],
+    events: [
+      {
+        id: "crafting.recipe_discovered",
+        payload: "{ actorId, worldId, recipeId, method, discoveredAt }",
+        direction: EventDirection.Emits,
+        source: "crafting",
+        target: "character_core",
+        notes: "New recipe knowledge for character progression (EPIC-036)",
+      },
+    ],
+    notes: "Crafting reports recipe knowledge gains to character core",
+  },
 ];

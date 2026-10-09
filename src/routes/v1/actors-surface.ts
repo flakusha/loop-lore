@@ -27,6 +27,7 @@ import { characterWorldSetupRoutes, } from "../character-world-setup";
 import { charactersRoutes, } from "../characters";
 import { craftingRecipeRoutes, } from "../crafting";
 import { craftingAttemptRoutes, } from "../crafting/attempt";
+import { craftingDiscoveryRoutes, } from "../crafting/discoveries";
 import { craftingOrderRoutes, } from "../crafting/orders";
 import { craftingStationRoutes, } from "../crafting/stations";
 import { gmNotesRoutes, } from "../gm-notes";
@@ -84,6 +85,7 @@ export function actorsSurface(opts: RegisterPluginsOpts,) {
     .use(craftingRecipeRoutes(handleOpts, prefix,),)
     .use(craftingStationRoutes(handleOpts, prefix,),)
     .use(craftingAttemptRoutes(handleOpts, prefix,),)
+    .use(craftingDiscoveryRoutes(handleOpts, prefix,),)
     .use(craftingOrderRoutes(handleOpts, prefix,),)
     .use(npcMovementRoutes(handleOpts, prefix,),)
     .use(rpgRoutes(handleOpts, prefix,),)

@@ -1,19 +1,22 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 291
+// size-allow: 389
 
-import type { Kysely, } from "kysely";
-import { CraftingAttemptStatus, EquipState, } from "../../db/enums";
+import type { Kysely, Selectable, } from "kysely";
+import { CraftingAttemptStatus, DiscoveryMethod, EquipState, } from "../../db/enums";
 import type { ItemCategory, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import type { CraftingRecipeMaterials, } from "../../db/schema-crafting";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
+import { emitRecipeDiscovered, hasDiscovery, insertDiscovery, } from "./discovery";
 import type {
   CraftAttempt,
   CraftAttemptOpts,
   CraftResult,
   ItemDef,
   MaterialRecord,
+  RecipeDiscovery,
   StationBonuses,
 } from "./types";
 
@@ -112,6 +115,79 @@ function toCraftAttempt(r: {
   };
 }
 
+/**
+ * Consume each recipe material from the actor's inventory inside the craft
+ * transaction, deleting rows that reach zero.
+ * @throws when an item definition or the stocked quantity is missing
+ */
+async function consumeRecipeMaterials(
+  trx: Kysely<DB>,
+  actorId: string,
+  matRows: Selectable<CraftingRecipeMaterials>[],
+  defMap: Map<string, { name: string }>,
+): Promise<MaterialRecord[]> {
+  const consumed: MaterialRecord[] = [];
+  for (const mat of matRows) {
+    const def = defMap.get(mat.item_id,);
+    if (!def) { throw new Error(`Item not found: ${mat.item_id}`,); }
+    const ai = await trx.selectFrom("actor_items",)
+      .select(["id", "quantity",],)
+      .where("actor_id", "=", actorId,).where("name", "=", def.name,)
+      .executeTakeFirst();
+
+    if (!ai || ai.quantity < mat.quantity) {
+      throw new Error(`Insufficient ${def.name}: need ${mat.quantity}`,);
+    }
+
+    const rem = ai.quantity - mat.quantity;
+    if (rem === 0) {
+      await trx.deleteFrom("actor_items",).where("id", "=", ai.id,).execute();
+    } else {
+      await trx.updateTable("actor_items",).set({ quantity: rem, },)
+        .where("id", "=", ai.id,).execute();
+    }
+
+    consumed.push({ itemId: mat.item_id, quantity: mat.quantity, },);
+  }
+
+  return consumed;
+}
+
+/**
+ * EPIC-036 discovery gate: a recipe not flagged `discovered_by_default` must
+ * be discovered first; an experimentation attempt bypasses the gate.
+ * @returns true when this attempt experiments on an undiscovered recipe
+ * @throws when the recipe is undiscovered and not an experiment
+ */
+async function requireDiscovery(
+  db: Kysely<DB>,
+  opts: CraftAttemptOpts,
+  recipe: { discovered_by_default: number },
+): Promise<boolean> {
+  if (recipe.discovered_by_default === 1) { return false; }
+  const known = await hasDiscovery(db, opts.actorId, opts.recipeId,);
+  if (known || opts.experiment === true) { return !known; }
+  throw new Error(`Recipe discovery required: ${opts.recipeId}`,);
+}
+
+/**
+ * Record an experimentation discovery inside the craft transaction: only on
+ * a successful roll; unique on (actor, recipe) makes it idempotent.
+ */
+async function recordExperimentation(
+  trx: Kysely<DB>,
+  opts: CraftAttemptOpts,
+  success: boolean,
+): Promise<RecipeDiscovery | null> {
+  if (!success) { return null; }
+  return insertDiscovery(trx, {
+    actorId: opts.actorId,
+    worldId: opts.worldId,
+    recipeId: opts.recipeId,
+    method: DiscoveryMethod.Experimentation,
+  },);
+}
+
 /** Crafting process — attempt, consume materials, roll, produce output. */
 export class CraftingProcessService {
   private readonly db: Kysely<DB>;
@@ -129,6 +205,10 @@ export class CraftingProcessService {
       .where("id", "=", opts.recipeId,).executeTakeFirst();
 
     if (!recipe) { throw new Error(`Recipe not found: ${opts.recipeId}`,); }
+
+    // EPIC-036 discovery gate (see requireDiscovery).
+    const experimentingUndiscovered = await requireDiscovery(this.db, opts, recipe,);
+
     const matRows = await this.db.selectFrom("crafting_recipe_materials",)
       .selectAll().where("recipe_id", "=", opts.recipeId,).execute();
 
@@ -183,31 +263,9 @@ export class CraftingProcessService {
       };
     }
 
-    // Transactional: validate → consume → roll → produce → record
-    return this.db.transaction().execute(async (trx,) => {
-      const consumed: MaterialRecord[] = [];
-      for (const mat of matRows) {
-        const def = defMap.get(mat.item_id,);
-        if (!def) { throw new Error(`Item not found: ${mat.item_id}`,); }
-        const ai = await trx.selectFrom("actor_items",)
-          .select(["id", "quantity",],)
-          .where("actor_id", "=", opts.actorId,).where("name", "=", def.name,)
-          .executeTakeFirst();
-
-        if (!ai || ai.quantity < mat.quantity) {
-          throw new Error(`Insufficient ${def.name}: need ${mat.quantity}`,);
-        }
-
-        const rem = ai.quantity - mat.quantity;
-        if (rem === 0) {
-          await trx.deleteFrom("actor_items",).where("id", "=", ai.id,).execute();
-        } else {
-          await trx.updateTable("actor_items",).set({ quantity: rem, },)
-            .where("id", "=", ai.id,).execute();
-        }
-
-        consumed.push({ itemId: mat.item_id, quantity: mat.quantity, },);
-      }
+    // Transactional: validate → consume → roll → produce → record → discover
+    const outcome = await this.db.transaction().execute(async (trx,) => {
+      const consumed = await consumeRecipeMaterials(trx, opts.actorId, matRows, defMap,);
 
       // Roll success
       const chance = Math.min(1, recipe.base_success_chance + (station?.successBonus ?? 0),);
@@ -274,7 +332,13 @@ export class CraftingProcessService {
         created_at: new Date().toISOString(),
       },).execute();
 
-      return {
+      // Experimentation success records the discovery in the same trx as the
+      // attempt (unique on actor+recipe keeps knowledge single-row).
+      const discovered = experimentingUndiscovered
+        ? await recordExperimentation(trx, opts, success,)
+        : null;
+
+      const result: CraftResult = {
         attemptId,
         status,
         quality,
@@ -282,8 +346,24 @@ export class CraftingProcessService {
         outputQuantity,
         materialsConsumed: consumed,
         materialsSaved: saved,
+        recipeDiscovered: discovered !== null,
       };
+
+      return { result, discoveredRecipe: discovered, };
     },);
+
+    if (outcome.discoveredRecipe !== null) {
+      // Post-commit: fan the contract event out to plugin handlers.
+      await emitRecipeDiscovered({
+        actorId: opts.actorId,
+        worldId: opts.worldId,
+        recipeId: opts.recipeId,
+        method: DiscoveryMethod.Experimentation,
+        discoveredAt: outcome.discoveredRecipe.discoveredAt,
+      },);
+    }
+
+    return outcome.result;
   }
 
   /**
