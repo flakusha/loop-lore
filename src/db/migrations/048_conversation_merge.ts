@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 046_conversation_merge
+ * 048_conversation_merge
  *
  * Content-merge schema (FEA-2026-047): fuses two or more conversation
  * branches into ONE continuation. Distinct from the structural splice-merge
@@ -13,6 +13,13 @@
  * `branch_merge_sources` join (N source tips -> one merge record), and the
  * result rows hang off the merge's `base_message_id` (the LCA) carrying
  * `messages.merge_id` as a badge/regeneration backref.
+ *
+ * Numbering: authored as 046, which dev had already spent on
+ * 046_mesh_outbox_chat_id.ts (migrations.test.ts pins prefixes unique +
+ * gapless, so the duplicate was a hard gate failure). Renumbered to 048
+ * before ever landing: 047 is claimed by followup-timeline-scope
+ * (047_chats_timeline_id.ts), so followup-timeline-scope MUST finalize first.
+ * Never applied to any DB, so no kysely_migration row holds the old name.
  *
  * Enum CHECKs follow `ck_mesh_outbox_status` (038); single ADD COLUMN per
  * `alterTable` (SQLite limitation, 014 precedent). `down()` is loss-tolerant:
