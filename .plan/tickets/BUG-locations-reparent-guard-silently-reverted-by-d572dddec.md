@@ -3,7 +3,7 @@
 
 # BUG: Locations reparent guard silently reverted by d572dddec
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ Evidence (approved finding 1, P0; .tmp/concern-dev-2026-10-07.md, .tmp/concern-l
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 6e37975 (registry tip: 8443b4d2e Konstantin Fedotov Auto-closed: appended .md marker marks BUG-LOCATIONS-REPARENT-GUARD-SIL)
