@@ -29,8 +29,8 @@
 | Not Started | API/Library Distribution Mode | High | High | 25 | [epic-api-library-distribution.md](/.plan/epics/epic-api-library-distribution.md) |
 | Not Started | Architecture Overview | High | Medium | 0 | [epic-architecture.md](/.plan/epics/epic-architecture.md) |
 | In Progress | Archival Workflow | Medium | Medium | 0 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
-| Not Started | Asset Platform Capabilities (Messenger/Social Patterns) | Medium | Large (batch-decomposable; each batch ships standalone value) | 9 | [epic-asset-platform-capabilities.md](/.plan/epics/epic-asset-platform-capabilities.md) |
-| Not Started | Asset Transform Editing + Metadata | Medium | Medium | 8 | [epic-asset-transform-metadata.md](/.plan/epics/epic-asset-transform-metadata.md) |
+| In Progress | Asset Platform Capabilities (Messenger/Social Patterns) | Medium | Large (batch-decomposable; each batch ships standalone value) | 8 | [epic-asset-platform-capabilities.md](/.plan/epics/epic-asset-platform-capabilities.md) |
+| In Progress | Asset Transform Editing + Metadata | Medium | Medium | 4 | [epic-asset-transform-metadata.md](/.plan/epics/epic-asset-transform-metadata.md) |
 | Not Started | Assistant Entity Access & Manipulation | High | High | 37 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
 | In Progress | Assistant Generation Extensions (SD, Intent, Scenario Source) | Medium | High | 14 | [epic-assistant-generation-extensions.md](/.plan/epics/epic-assistant-generation-extensions.md) |
 | Not Started | Assistant Personality — Presets & Character-as-Assistant | High | Medium | 19 | [epic-character-multi-personality.md](/.plan/epics/epic-character-multi-personality.md) |
@@ -41,7 +41,7 @@
 | Done | Authoring & Creation Tools | Medium | Medium | 0 | [epic-authoring-creation.md](/.plan/epics/epic-authoring-creation.md) |
 | In Progress | Authorization & Access Control | High | High | 12 | [epic-auth-access.md](/.plan/epics/epic-auth-access.md) |
 | In Progress | AUX LLM Enrichment Pipeline | P2-B | Medium | 10 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
-| Not Started | Avatar Alpha Channel + VN Layering | Medium | Medium | 7 | [epic-avatar-alpha-vn-layering.md](/.plan/epics/epic-avatar-alpha-vn-layering.md) |
+| In Progress | Avatar Alpha Channel + VN Layering | Medium | Medium | 3 | [epic-avatar-alpha-vn-layering.md](/.plan/epics/epic-avatar-alpha-vn-layering.md) |
 | Not Started | Battle & Action Systems | Medium | Very High (split into 5 sub-epics) | 20 | [epic-battle-action-systems.md](/.plan/epics/epic-battle-action-systems.md) |
 | Not Started | Battle & Combat UI | P0 — Critical | High | 12 | [epic-battle-ui.md](/.plan/epics/epic-battle-ui.md) |
 | Not Started | Battle Integration Gaps — Items, Social, NPC, Weather, Resolution | High | High | 7 | [epic-battle-integration-gaps.md](/.plan/epics/epic-battle-integration-gaps.md) |
@@ -93,8 +93,8 @@
 | Not Started | Email Integration | Medium | Medium | 11 | [epic-email-integration.md](/.plan/epics/epic-email-integration.md) |
 | Not Started | Embeddable Engine & 2D/3D Game Frontend (Far Fetched) | Low | Very High (split into 5 sub-epics) | 0 | [epic-embeddable-engine-game-frontend.md](/.plan/epics/epic-embeddable-engine-game-frontend.md) |
 | Not Started | Emergent Narrative Design Principles | Medium | Low | 0 | [epic-emergent-narrative-design.md](/.plan/epics/epic-emergent-narrative-design.md) |
-| Not Started | Emotion Avatar Regeneration Control | Medium | Small | 6 | [epic-avatar-regeneration-control.md](/.plan/epics/epic-avatar-regeneration-control.md) |
-| In Progress | Emotion-Avatar Message Binding | High | Medium | 14 | [epic-emotion-avatar-message-binding.md](/.plan/epics/epic-emotion-avatar-message-binding.md) |
+| In Progress | Emotion Avatar Regeneration Control | Medium | Small | 6 | [epic-avatar-regeneration-control.md](/.plan/epics/epic-avatar-regeneration-control.md) |
+| In Progress | Emotion-Avatar Message Binding | High | Medium | 9 | [epic-emotion-avatar-message-binding.md](/.plan/epics/epic-emotion-avatar-message-binding.md) |
 | In Progress | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
 | In Progress | Encryption UI | Medium | Medium | 0 | [epic-frontend-encryption.md](/.plan/epics/epic-frontend-encryption.md) |
 | In Progress | Encryption Workflow | Medium | Medium | 16 | [epic-encryption-workflow.md](/.plan/epics/epic-encryption-workflow.md) |
@@ -320,7 +320,7 @@
 | In Progress | User Story & Use Case Improvements (Permanently Ongoing) | Medium | Continuous | 0 | [epic-user-stories.md](/.plan/epics/epic-user-stories.md) |
 | Not Started | Vector Graphics & Animated Image Generation | Medium | Medium (phased; each phase ships standalone value) | 17 | [epic-vector-graphics-generation.md](/.plan/epics/epic-vector-graphics-generation.md) |
 | In Progress | Visual Novel Mode — Dynamic Generation & Q&A Mode | Medium | Very High | 8 | [epic-visual-novel-mode.md](/.plan/epics/epic-visual-novel-mode.md) |
-| Done | Wardrobe / Loadout Avatar Variants | Medium | Large | 8 | [epic-wardrobe-avatar-variants.md](/.plan/epics/epic-wardrobe-avatar-variants.md) |
+| Done | Wardrobe / Loadout Avatar Variants | Medium | Large | 0 | [epic-wardrobe-avatar-variants.md](/.plan/epics/epic-wardrobe-avatar-variants.md) |
 | Not Started | Weather & Environmental Effects | Medium | High | 0 | [epic-weather-environment.md](/.plan/epics/epic-weather-environment.md) |
 | Not Started | World & Location Management UI | P0 — Critical | High | 14 | [epic-world-management-ui.md](/.plan/epics/epic-world-management-ui.md) |
 | Not Started | World & Locations | Medium | Very High total (split across 4 sub-epics: travel-time High, npcs High, encounters High, diplomacy-karma High) | 0 | [epic-world-locations.md](/.plan/epics/epic-world-locations.md) |
@@ -494,16 +494,16 @@ OpenAPI specification, request validation, rate limiting, telemetry, and resourc
 
 ### Asset Platform Capabilities (Messenger/Social Patterns)
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Large (batch-decomposable; each batch ships standalone value)
 - **Type:** Feature Epic
-- **Tags:** assets, messages, uploads, renditions, dedup, RAG, assistant
+- **Tags:** assets, messages, uploads, renditions, dedup, rag, assistant
 - **File:** `.plan/epics/epic-asset-platform-capabilities.md`
 
 ### Asset Transform Editing + Metadata
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -606,7 +606,7 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Avatar Alpha Channel + VN Layering
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -1104,7 +1104,7 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 
 ### Emotion Avatar Regeneration Control
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Small
 - **Type:** Feature Epic
