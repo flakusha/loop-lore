@@ -154,7 +154,7 @@ describe("locationGraphState.editing", () => {
     expect(draft?.gameHours,).toBe(2,);
     expect(draft?.requiresDiscovery,).toBe(true,);
     expect(draft?.costJson,).toBe('{"gold":2}',);
-    expect(state.editDraftOf("edge-1",),).toBe(draft,);
+    expect(draft,).toEqual(state.editDraftOf("edge-1",),);
   });
 
   test("editDraftOf falls back when no draft exists", () => {

@@ -82,6 +82,56 @@ interface CreateEdgeBody {
   cost?: unknown;
 }
 
+/** Wire list response shared by the two graph reads. */
+const EdgeListResponse = {
+  200: t.Object({ data: t.Array(EdgeSchema,), },),
+  401: ErrorResponse,
+  404: ErrorResponse,
+};
+
+/** Response of the owner-only DELETE. */
+const DeletedEdgeResponse = {
+  204: t.Void(),
+  401: ErrorResponse,
+  403: ErrorResponse,
+  404: ErrorResponse,
+};
+
+/**
+ * Shared caller resolution + world-permission check.
+ * @param database Kysely handle
+ * @param ctx Elysia context carrying derived auth
+ * @param require the access or owner check to apply
+ * @returns err Response (401/403) when denied, plus the resolved caller
+ */
+async function guard(
+  database: HandleOpts["database"],
+  ctx: any,
+  require: typeof requireWorldOwner,
+): Promise<{ err: Response | null; userId: string | null; userRole: string | null }> {
+  const { userId, userRole, } = extract(ctx,);
+  const err = await require(database, ctx.params.worldId as string, userId, userRole,);
+  return { err, userId, userRole, };
+}
+
+/**
+ * Build an Elysia beforeHandle gate from one world-permission check: a
+ * returned Response short-circuits the route before its handler runs.
+ * @param database Kysely handle
+ * @param require the access or owner check to apply
+ * @returns short-circuit hook for the route's beforeHandle option
+ */
+function gate(
+  database: HandleOpts["database"],
+  require: typeof requireWorldOwner,
+): (ctx: any,) => Promise<any> {
+  return async (ctx: any,) => {
+    const { err, } = await guard(database, ctx, require,);
+    if (err) { return err; }
+    return undefined;
+  };
+}
+
 /**
  * Location adjacency-graph routes (047): edge CRUD (world owner/admin),
  * the world graph with discovery filtering, actor travel, and the admin
@@ -95,15 +145,13 @@ interface CreateEdgeBody {
  */
 export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
   const { database, } = opts;
+  const ownerGate = gate(database, requireWorldOwner,);
+  const accessGate = gate(database, requireWorldAccess,);
 
   return new Elysia({ name: "worlds-location-edges", },)
     .post(
       `${prefix}/worlds/:worldId/locations/:locId/edges`,
       async (ctx: any,) => {
-        const { userId, userRole, } = extract(ctx,);
-        const ownerErr = await requireWorldOwner(database, ctx.params.worldId as string, userId, userRole,);
-        if (ownerErr) { return ownerErr; }
-
         const body = ctx.body as CreateEdgeBody;
         try {
           const edge = await new LocationEdgeService(database,).createEdge(ctx.params.worldId as string, {
@@ -121,6 +169,7 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
         }
       },
       {
+        beforeHandle: [ownerGate,],
         body: t.Object({
           toId: t.String(),
           mode: t.Union(EDGE_MODES.map((m,) => t.Literal(m,)),),
@@ -145,19 +194,12 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
     .get(
       `${prefix}/worlds/:worldId/locations/:locId/edges`,
       async (ctx: any,) => {
-        const { userId, userRole, } = extract(ctx,);
-        const accessErr = await requireWorldAccess(database, ctx.params.worldId as string, userId, userRole,);
-        if (accessErr) { return accessErr; }
-
         const edges = await new LocationEdgeService(database,).edgesAt(ctx.params.locId as string,);
         return jsonResponse({ data: edges.map((e,) => toWire(e,)), },);
       },
       {
-        response: {
-          200: t.Object({ data: t.Array(EdgeSchema,), },),
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
+        beforeHandle: [accessGate,],
+        response: EdgeListResponse,
         detail: {
           summary: "List edges at a location",
           description: "All adjacency edges touching a location, in both directions.",
@@ -170,8 +212,6 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       async (ctx: any,) => {
         const { userId, userRole, } = extract(ctx,);
         const worldId = ctx.params.worldId as string;
-        const accessErr = await requireWorldAccess(database, worldId, userId, userRole,);
-        if (accessErr) { return accessErr; }
 
         const isPrivileged = await isOwnerOrAdmin(database, worldId, userId, userRole,);
         const hint = typeof ctx.query?.actorId === "string" ? (ctx.query.actorId as string) : null;
@@ -190,12 +230,9 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
         return jsonResponse({ data: edges.map((e,) => toWire(e,)), },);
       },
       {
+        beforeHandle: [accessGate,],
         query: t.Optional(t.Object({ actorId: t.Optional(t.String(),), },),),
-        response: {
-          200: t.Object({ data: t.Array(EdgeSchema,), },),
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
+        response: EdgeListResponse,
         detail: {
           summary: "World location graph",
           description: "The world's adjacency edges. Non-privileged callers get the discovery-filtered subgraph: " +
@@ -207,10 +244,6 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
     .put(
       `${prefix}/worlds/:worldId/edges/:edgeId`,
       async (ctx: any,) => {
-        const { userId, userRole, } = extract(ctx,);
-        const ownerErr = await requireWorldOwner(database, ctx.params.worldId as string, userId, userRole,);
-        if (ownerErr) { return ownerErr; }
-
         const body = ctx.body as {
           mode?: string;
           gameHours?: number;
@@ -236,6 +269,7 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
         }
       },
       {
+        beforeHandle: [ownerGate,],
         body: t.Partial(t.Object({
           mode: t.Union(EDGE_MODES.map((m,) => t.Literal(m,)),),
           gameHours: t.Number({ minimum: 0, },),
@@ -259,10 +293,6 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
     .delete(
       `${prefix}/worlds/:worldId/edges/:edgeId`,
       async (ctx: any,) => {
-        const { userId, userRole, } = extract(ctx,);
-        const ownerErr = await requireWorldOwner(database, ctx.params.worldId as string, userId, userRole,);
-        if (ownerErr) { return ownerErr; }
-
         try {
           await new LocationEdgeService(database,).deleteEdge(
             ctx.params.worldId as string,
@@ -275,12 +305,8 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
         return new Response(null, { status: 204, },);
       },
       {
-        response: {
-          204: t.Void(),
-          401: ErrorResponse,
-          403: ErrorResponse,
-          404: ErrorResponse,
-        },
+        beforeHandle: [ownerGate,],
+        response: DeletedEdgeResponse,
         detail: {
           summary: "Delete location edge",
           description: "Remove one adjacency edge. Owner/admin only.",
@@ -292,8 +318,6 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       `${prefix}/worlds/:worldId/locations/:locId/travel`,
       async (ctx: any,) => {
         const { userId, userRole, } = extract(ctx,);
-        const accessErr = await requireWorldAccess(database, ctx.params.worldId as string, userId, userRole,);
-        if (accessErr) { return accessErr; }
         if (!userId) { return jsonError({ message: "Authentication required", status: HttpStatus.Unauthorized, },); }
 
         const body = ctx.body as { toId: string; mode: string; actorId?: string };
@@ -315,6 +339,7 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
         }
       },
       {
+        beforeHandle: [accessGate,],
         body: t.Object({
           toId: t.String(),
           mode: t.String(),
@@ -343,10 +368,6 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
     .post(
       `${prefix}/worlds/:worldId/locations/:locId/discover`,
       async (ctx: any,) => {
-        const { userId, userRole, } = extract(ctx,);
-        const ownerErr = await requireWorldOwner(database, ctx.params.worldId as string, userId, userRole,);
-        if (ownerErr) { return ownerErr; }
-
         const body = ctx.body as { actorId: string };
         try {
           await forceDiscover(database, ctx.params.worldId as string, ctx.params.locId as string, body.actorId,);
@@ -356,14 +377,9 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
         }
       },
       {
+        beforeHandle: [ownerGate,],
         body: t.Object({ actorId: t.String(), },),
-        response: {
-          200: t.Object({ ok: t.Boolean(), },),
-          400: ErrorResponse,
-          401: ErrorResponse,
-          403: ErrorResponse,
-          404: ErrorResponse,
-        },
+        response: DiscoveredResponse,
         detail: {
           summary: "Force-unlock discovery",
           description: "Latch a visit record for one actor at a location (GM override). Owner/admin only.",
@@ -372,6 +388,15 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       },
     );
 }
+
+/** Response of the owner-only force-discover POST. */
+const DiscoveredResponse = {
+  200: t.Object({ ok: t.Boolean(), },),
+  400: ErrorResponse,
+  401: ErrorResponse,
+  403: ErrorResponse,
+  404: ErrorResponse,
+};
 
 /**
  * @param ctx Elysia context carrying derived auth
