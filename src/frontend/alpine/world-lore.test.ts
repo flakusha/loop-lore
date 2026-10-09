@@ -128,7 +128,7 @@ describeOrSkip("worldLore.saveLore", () => {
     expect(body.content,).toBe("Old lore.",);
     expect(body.constant,).toBe(1,);
     expect(body.priority,).toBe(42,);
-    expect(JSON.parse(String(body.keys,),),).toEqual(["dragon", "wyrm",],);
+    expect(body.keys,).toEqual(["dragon", "wyrm",],);
     expect(ctx.loreFormOpen,).toBe(false,);
   });
 
