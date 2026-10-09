@@ -11,11 +11,13 @@
  */
 import { afterAll, afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { isVnDecisionPending, setChoicePending, setQuestionPending, } from "./pending-decision";
 import {
   answerQuestion,
   destroyQuestionCards,
   initQuestionCards,
   loadQuestions,
+  skipQuestion,
 } from "./question-cards";
 
 // ── Mock apiFetch ───────────────────────────────────────────────────────────
@@ -78,10 +80,19 @@ function makeEl(): FakeEl {
 }
 
 const originalDocument = (globalThis as { document?: unknown }).document;
+// Captured so the failed-skip toast can be asserted; mirrors choice-cards.test.ts.
+const toasts: { type: string; message: string }[] = [];
 (globalThis as unknown as { document: unknown }).document = {
   createElement: () => makeEl(),
   addEventListener: () => {},
-  dispatchEvent: () => true,
+  dispatchEvent: (e: Event,) => {
+    if (e.type === "show-toast") {
+      const detail = (e as CustomEvent<{ type: string; message: string }>).detail;
+      toasts.push({ type: detail?.type, message: detail?.message, },);
+    }
+
+    return true;
+  },
   querySelector: () => null,
 };
 
@@ -324,5 +335,48 @@ describeOrSkip("answerQuestion", () => {
     const callsBefore = apiCalls.length;
     expect(await answerQuestion("no-such-question", "o1",),).toBeNull();
     expect(apiCalls.length,).toBe(callsBefore,);
+  });
+
+  test("skipQuestion posts the dismiss endpoint and clears the flag", async () => {
+    boot();
+    apiHandler = () => jsonRes({ questions: [rawQuestion(),], },);
+    await loadQuestions();
+    toasts.length = 0;
+    apiHandler = () => jsonRes({ dismissed: "q1", },);
+
+    expect(await skipQuestion("q1",),).toBe(true,);
+    const call = apiCalls.find((c,) => c.url.includes("/dismiss",));
+    expect(call?.opts.method,).toBe("POST",);
+    expect(isVnDecisionPending(),).toBe(false,);
+    expect(toasts.length,).toBe(0,);
+  });
+
+  test("a failed skip keeps the flag set and surfaces a toast", async () => {
+    boot();
+    apiHandler = () => jsonRes({ questions: [rawQuestion(),], },);
+    await loadQuestions();
+    toasts.length = 0;
+    apiHandler = () => jsonRes({ error: "not found", }, 404,);
+
+    expect(await skipQuestion("q1",),).toBe(false,);
+    expect(isVnDecisionPending(),).toBe(true,);
+
+    // The gate keeps 409ing; silence here reads as a broken button.
+    expect(toasts.length,).toBe(1,);
+    expect(toasts[0]!.type,).toBe("error",);
+  });
+
+  test("a pending choice survives a pending-question load (per-source tracking)", async () => {
+    boot();
+    setChoicePending(true,);
+    setQuestionPending(false,);
+
+    // An empty question load resolves LAST — the ordering that used to
+    // clobber the choice's flag under a single shared boolean.
+    apiHandler = () => jsonRes({ questions: [], },);
+    await loadQuestions();
+
+    expect(isVnDecisionPending(),).toBe(true,);
+    setChoicePending(false,);
   });
 },);
