@@ -5,7 +5,6 @@
  * assembly order. Add a section: create a builder under ./sections and add it
  * here. The orchestrator runs them in this exact order.
  */
-import type { SectionBuilder, } from "./types";
 import { actorGrowthSection, } from "./sections/actor-growth";
 import { actorHeaderSection, } from "./sections/actor-header";
 import { assistantPersonalitySection, } from "./sections/assistant-personality";
@@ -27,16 +26,17 @@ import { loreSection, } from "./sections/lore";
 import { memorySection, } from "./sections/memories";
 import { nsfwPolicySection, } from "./sections/nsfw-policy";
 import { outfitContextSection, } from "./sections/outfit-context";
+import { styleSection, } from "./sections/output-style";
 import { pluginAgentRoleSection, } from "./sections/plugin-agent-role";
 import { postHistorySection, } from "./sections/post-history";
 import { recentEventsSection, } from "./sections/recent-events";
 import { storyContextSection, } from "./sections/story-context";
-import { styleSection, } from "./sections/output-style";
 import { systemSection, } from "./sections/system";
 import { taskClarificationSection, } from "./sections/task-clarification";
 import { travelSection, } from "./sections/travel";
 import { turnSkipAbsenceSection, } from "./sections/turn-skip-absence";
 import { userPersonaSection, } from "./sections/user-persona";
+import type { SectionBuilder, } from "./types";
 
 export const PROMPT_SECTIONS: SectionBuilder[] = [
   systemSection,
