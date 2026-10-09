@@ -2795,10 +2795,6 @@
       "source": ".plan/epics/epic-character-world-integration.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-spec-inclusion-race-origin-culture.md"
     },
@@ -2817,10 +2813,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-seed-default-characters-identity.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-work-topics.md"
     },
     {
       "kind": "ticket",
@@ -4615,6 +4607,24 @@
       "source": "docs/spec/autonomy-determinism.md"
     }
   ],
+  "src/autonomy/dispatch/bdi-dispatch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    }
+  ],
+  "src/autonomy/dispatch/dispatch-targets.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    }
+  ],
+  "src/autonomy/dispatch/gm-beat-dispatch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
+    }
+  ],
   "src/autonomy/governor/cache.ts": [
     {
       "kind": "spec",
@@ -4630,7 +4640,29 @@
   "src/autonomy/governor/index.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-rate-governor-for-llm-actors.md"
+    }
+  ],
+  "src/autonomy/governor/kill-switch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
+    }
+  ],
+  "src/autonomy/governor/ledger.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
+    }
+  ],
+  "src/autonomy/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
     }
   ],
   "src/autonomy/rng.ts": [
@@ -4691,6 +4723,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/generation-scheduler.md"
+    }
+  ],
+  "src/autonomy/scheduler/tick.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
+    }
+  ],
+  "src/autonomy/scheduler/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
     }
   ],
   "src/aux-pipeline": [
@@ -11720,7 +11764,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
     },
     {
       "kind": "ticket",
@@ -13962,6 +14014,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-character-world-setup.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-transfer-location.md"
     },
     {
@@ -14548,10 +14604,6 @@
     }
   ],
   "src/db/migrations/060_character_world_setup.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-world-setup.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"
@@ -18045,6 +18097,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-reactions-in-out-context.md"
     }
   ],
   "src/frontend/alpine/chat-music-links.ts": [
@@ -18173,6 +18229,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-continuation-semantics.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-slash-commands-chat-group-assistant.md"
     },
     {
       "kind": "spec",
@@ -20301,6 +20361,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
     }
   ],
   "src/frontend/chat-vendor": [
@@ -20953,6 +21017,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-journal-keyphrase-panel-reads-only-page-1-of-the-paginated-m.md"
+    }
+  ],
+  "src/frontend/pages/characters-journey.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
     }
   ],
   "src/frontend/pages/characters-proactive.ts": [
@@ -28437,6 +28507,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
     }
   ],
   "src/partials/characters/export-modal.html": [
@@ -33410,6 +33484,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-reactions-in-out-context.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-message-seen-state-service-route.md"
     }
   ],
@@ -35765,6 +35843,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    }
+  ],
+  "src/routes/views/character-growth-section.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
     }
   ],
   "src/routes/views/character-panels-section.ts": [
@@ -40391,6 +40475,18 @@
       "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"
     }
   ],
+  "src/services/agency/bdi-plan-recompute.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    }
+  ],
+  "src/services/agency/bdi-plan-recompute.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    }
+  ],
   "src/services/agency/bdi-reflection.ts": [
     {
       "kind": "ticket",
@@ -40839,6 +40935,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-simulation-discovery-and-trade-events.md"
+    }
+  ],
+  "src/story/game-master/beat.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
+    }
+  ],
+  "src/story/game-master/beat.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
     }
   ],
   "src/story/game-master/decisions.ts": [
@@ -43136,6 +43244,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
@@ -43871,6 +43983,12 @@
       "source": ".plan/epics/epic-terminal-ui.md"
     }
   ],
+  "src/views/partials/character-growth-": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
+    }
+  ],
   "src/views/partials/character-growth-editor.html": [
     {
       "kind": "epic",
@@ -43883,6 +44001,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-char-growth-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
     }
   ],
   "src/views/partials/character-journey.html": [

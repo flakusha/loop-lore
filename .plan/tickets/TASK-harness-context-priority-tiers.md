@@ -33,4 +33,6 @@
 - `.plan/epics/epic-harness-integration.md` (§7 dashboard, §8 exec log)
 - `TASK-harness-work-topics`, `TASK-harness-topic-session-attach`
 
+*Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
 git issue: 1584986

@@ -9,7 +9,7 @@
 **Epic:** `.plan/epics/epic-harness-integration.md`
 **Tags:** harness, data-model, context
 **Summary:** Named work scope (`WorkTopic` / `harness_work_topics` / `workTopicId`) that harness runs attach to, resolved by a deterministic 5-rung auto-scoping ladder.
-**Context:** Bare `topic` is taken four ways: lore subject `LoreSubject {kind:"topic"}` (`src/assistant/lore/audience.ts:24`), gossip pub/sub `topic` (`epic-anonymity-decentralization.md:205-216`), chat side-threads (`TASK-chat-feature-topics-side-threads`), NPC topic selection (`epic-social-interaction.md:95`). The harness concept is therefore `WorkTopic`. Scoping is a nullable FK on the harness-side record only — `MemoryScope` stays closed at `character | assistant | world` (`src/memory/types.ts:15`). Reuse-first: the intent taxonomy already exists as `INTENT_PATTERNS` (`src/regex/intent.ts:19`), which `matchWorkflowIntent()` already iterates (`src/assistant/workflow-routing.ts:102`); the epic index already exists at `.plan/epics-index.md`.
+**Context:** Bare `topic` is taken three ways: gossip pub/sub channel (`epic-anonymity-decentralization.md:205-216`), chat side-threads (`TASK-chat-feature-topics-side-threads`, title "Chat Topics — Side-Conversations Within a Chat"), NPC conversation topics (`epic-social-interaction.md:95,106`). The harness concept is therefore `WorkTopic`. Scoping is a nullable FK on the harness-side record only — `MemoryScope` stays closed at `character | assistant | world` (`src/memory/types.ts:15`). Reuse-first: the intent taxonomy already exists as `INTENT_PATTERNS` (`src/regex/intent.ts:19`), which `matchWorkflowIntent()` already iterates (`src/assistant/workflow-routing.ts:102`); the epic index already exists at `.plan/epics-index.md`.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Acceptance Criteria
@@ -26,9 +26,12 @@
 ## Related Files
 
 - `src/harness/` (new — entity, store, scoping ladder), `.plan/epics-index.md`
-- `src/regex/intent.ts:19` (rung 3 intent taxonomy, reused not re-created), `src/assistant/workflow-routing.ts:102` (existing consumer of it), `src/assistant/lore/audience.ts:24` (collision)
+- `src/regex/intent.ts:19` (rung 3 intent taxonomy, reused not re-created), `src/assistant/workflow-routing.ts:102` (existing consumer of it)
+- `.plan/epics/epic-anonymity-decentralization.md:205-216`, `TASK-chat-feature-topics-side-threads`, `.plan/epics/epic-social-interaction.md:95` (name collisions)
 - `src/memory/types.ts:15` (scope boundary — NOT extended)
 - `.plan/epics/epic-harness-integration.md` (§11 storage, §8 exec log)
 - `TASK-harness-topic-session-attach`, `TASK-harness-context-priority-tiers`, `TASK-harness-topic-tui-surface`
+
+*Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
 
 git issue: 4910513

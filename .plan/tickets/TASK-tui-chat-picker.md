@@ -29,4 +29,6 @@
 - `src/routes/views/chats.ts`, `src/views/chat-list.html` (web counterpart)
 - `TASK-tui-shell-testability`, `TASK-tui-spec-sync`
 
+*Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
 git issue: ebcb788
