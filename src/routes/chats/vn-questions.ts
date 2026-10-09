@@ -118,6 +118,7 @@ function handleAnswerVnQuestion(database: Kysely<DB>,) {
       question: result.question,
       option: result.option,
       nextSceneId: result.nextSceneId,
+      locationId: result.locationId,
       relationshipImpact: result.question.relationship_impact,
       moodImpact: result.question.mood_impact,
     },);

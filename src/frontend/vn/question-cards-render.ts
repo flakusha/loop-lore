@@ -92,7 +92,9 @@ export function renderQuestionCards(
 
     const options = document.createElement("div",);
     options.className = "vn-question-card-options";
-    for (const option of question.options) {
+    // Guarded: a question persisted with an empty options array renders as a
+    // dead card rather than a zero-button card the player can never answer.
+    for (const option of question.options ?? []) {
       options.append(renderOption(question, option,),);
     }
 
