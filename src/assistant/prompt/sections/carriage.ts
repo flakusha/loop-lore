@@ -13,6 +13,7 @@
  * Hidden in normal UI; the `?` debug view reads `carriage_records` + the
  * section report directly (no player-visible surface).
  */
+import { listCarriage, } from "../../../chat/service/carriage";
 import { getLogger, } from "../../../logger";
 import { safeJsonParse, } from "../../../utils/safe-json";
 import { healCarriage, } from "../../../utils/structured-output";
@@ -53,16 +54,13 @@ export const carriageSection: SectionBuilder = {
 
     if (!isCarriageEnabled(gmConfig,)) { return []; }
 
-    const row = await ctx.db
-      .selectFrom("carriage_records",)
-      .select(["payload",],)
-      .where("chat_id", "=", ctx.chat.id,)
-      .orderBy("created_at", "desc",)
-      .executeTakeFirst();
+    // listCarriage already owns the newest-first per-chat query — reusing
+    // it keeps one SQL shape for carriage reads instead of two.
+    const [latest,] = await listCarriage(ctx.db, ctx.chat.id, { limit: 1, },);
 
-    if (!row) { return []; }
+    if (!latest) { return []; }
 
-    const result = healCarriage(row.payload,);
+    const result = healCarriage(latest.payload,);
     if (!result.ok) {
       getLogger().warn("carriage: injection cancelled", {
         chatId: ctx.chat.id,
