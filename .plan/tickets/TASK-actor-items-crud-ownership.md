@@ -3,7 +3,7 @@
 
 # TASK: actor_items CRUD + Ownership + Transfer
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Task
@@ -51,3 +51,5 @@ trade lifecycle in `TASK-implement-trade.md`, child-table lifecycle hooks in
 - `TASK-trade-history-npc-counterparty.md` (history + NPC counterparty)
 - `TASK-actors-child-tables-crud.md` (child-table lifecycle hooks)
 - `TASK-actors-api-routes.md` (HTTP surface)
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 280cb5d (registry tip: 45d9e1b09 Konstantin Fedotov Close issue)
