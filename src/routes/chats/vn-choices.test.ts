@@ -50,7 +50,7 @@ function makeApp(db: Kysely<DB>, userId: string,) {
  * the participant added. One VN choice at scene 0.
  * @param db
  */
-async function seed(db: Kysely<DB>,): Promise<void> {
+async function seed(db: Kysely<DB>,): Promise<string> {
   await insertUsers(db, `owner-${OWNER_ID}`, "Owner", { id: OWNER_ID, } as never,);
   await insertActors(db, "Owner", { id: OWNER_ID, user_id: OWNER_ID, owner_id: OWNER_ID, } as never,);
   await insertUsers(db, `participant-${PARTICIPANT_ID}`, "Participant", { id: PARTICIPANT_ID, } as never,);
@@ -71,7 +71,7 @@ async function seed(db: Kysely<DB>,): Promise<void> {
 
   await insertChatParticipants(db, CHAT_ID, PARTICIPANT_ID, {} as never,);
 
-  await insertVnChoices(
+  const choiceId = await insertVnChoices(
     db,
     CHAT_ID,
     0,
@@ -79,6 +79,8 @@ async function seed(db: Kysely<DB>,): Promise<void> {
     new Date().toISOString(),
     { status: "available" as never, },
   );
+
+  return choiceId;
 }
 
 describe("guarded VN choices route under /api/v1", () => {
@@ -134,6 +136,336 @@ describe("guarded VN choices route under /api/v1", () => {
 
     // Guarded handler: outsider → 404, NOT 200-owner-only.
     expect(res.status,).toBe(404,);
+
+    await db.destroy();
+  });
+});
+
+// ── POST /vn-choices/:choiceId/select ──────────────────────────────────────
+
+describe("POST /api/v1/chats/:id/vn-choices/:choiceId/select", () => {
+  test("participant selects a choice: row flips to selected and the payload reports it", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+
+    const res = await makeApp(db, PARTICIPANT_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/select`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { choice: { id: string; selected: number }; locationId?: string };
+    expect(body.choice.id,).toBe(choiceId,);
+    // The response mirrors the mutation: a client that got 200 must see selected=1,
+    // otherwise it believes it chose while the row still reads available.
+    expect(body.choice.selected,).toBe(1,);
+
+    // Observable persisted state, not just the echoed payload.
+    const row = await db.selectFrom("vn_choices",).select(["status", "selected_at",],)
+      .where("id", "=", choiceId,).executeTakeFirstOrThrow();
+
+    expect(row.status,).toBe("selected",);
+    expect(row.selected_at,).not.toBeNull();
+
+    await db.destroy();
+  });
+
+  test("a second select of the same choice is rejected (single-shot), not silently re-applied", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+
+    const app = makeApp(db, PARTICIPANT_ID,);
+    const url = `http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/select`;
+    expect((await app.handle(new Request(url, { method: "POST", },),)).status,).toBe(200,);
+
+    // The status predicate makes selection single-shot; without it this would
+    // return 200 again and the client would think its re-pick won.
+    const second = await app.handle(new Request(url, { method: "POST", },),);
+    expect(second.status,).toBe(400,);
+    const body = await second.json() as { error: string };
+    expect(body.error,).toBe("Choice already selected",);
+
+    await db.destroy();
+  });
+
+  test("select surfaces a 'location' consequence as locationId", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+    await db.updateTable("vn_choices",).set({ consequences: JSON.stringify({ location: "loc-42", },), },)
+      .where("id", "=", choiceId,).execute();
+
+    const res = await makeApp(db, PARTICIPANT_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/select`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { locationId?: string };
+    // The FE drives PUT /chats/:id/location from this field; a missing extraction
+    // silently strands the player on the old scene.
+    expect(body.locationId,).toBe("loc-42",);
+
+    await db.destroy();
+  });
+
+  test("select on an unknown choice id is 404 and leaves no row behind", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const res = await makeApp(db, PARTICIPANT_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${randomUUID()}/select`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(404,);
+    const body = await res.json() as { error: string };
+    expect(body.error,).toBe("Choice not found",);
+
+    await db.destroy();
+  });
+
+  test("select is IDOR-guarded: a choice from another chat reads as not_found", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    // A second chat the actor owns, holding its own available choice.
+    const otherChatId = randomUUID();
+    await insertChats(db, "Other VN Chat", OWNER_ID, { id: otherChatId, type: "group", mode: "vn", } as never,);
+    await insertChatParticipants(db, otherChatId, PARTICIPANT_ID, {} as never,);
+    const otherChoiceId = await insertVnChoices(
+      db,
+      otherChatId,
+      0,
+      "Other chat choice",
+      new Date().toISOString(),
+      { status: "available" as never, },
+    );
+
+    // Participant is a member of BOTH chats, so only the chat_id predicate in
+    // selectVnChoice can keep the two choices separated.
+    const res = await makeApp(db, PARTICIPANT_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${otherChoiceId}/select`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(404,);
+
+    // The cross-chat choice must remain untouched, not resolved by a foreign request.
+    const row = await db.selectFrom("vn_choices",).select(["status",],)
+      .where("id", "=", otherChoiceId,).executeTakeFirstOrThrow();
+
+    expect(row.status,).toBe("available",);
+
+    await db.destroy();
+  });
+
+  test("a non-participant cannot select (404 before the service is reached)", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+
+    const res = await makeApp(db, OUTSIDER_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/select`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(404,);
+    const row = await db.selectFrom("vn_choices",).select(["status",],)
+      .where("id", "=", choiceId,).executeTakeFirstOrThrow();
+
+    expect(row.status,).toBe("available",);
+
+    await db.destroy();
+  });
+});
+
+// ── POST /vn-choices/:choiceId/dismiss ─────────────────────────────────────
+
+describe("POST /api/v1/chats/:id/vn-choices/:choiceId/dismiss", () => {
+  test("participant dismisses a pending choice: status flips to dismissed", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+
+    const res = await makeApp(db, PARTICIPANT_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/dismiss`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { dismissed: string };
+    expect(body.dismissed,).toBe(choiceId,);
+
+    // The escape hatch must write status, not a timestamp column: a `dismissed_at`
+    // write would leave status='available' and keep the decision gate blocked.
+    const row = await db.selectFrom("vn_choices",).select(["status", "selected_at",],)
+      .where("id", "=", choiceId,).executeTakeFirstOrThrow();
+
+    expect(row.status,).toBe("dismissed",);
+    expect(row.selected_at,).toBeNull();
+
+    await db.destroy();
+  });
+
+  test("dismissing an already-dismissed choice is 404, not a second success", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+
+    const app = makeApp(db, PARTICIPANT_ID,);
+    const url = `http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/dismiss`;
+    expect((await app.handle(new Request(url, { method: "POST", },),)).status,).toBe(200,);
+
+    // Zero updated rows must not be reported as a fresh dismissal.
+    const second = await app.handle(new Request(url, { method: "POST", },),);
+    expect(second.status,).toBe(404,);
+    const body = await second.json() as { error: string };
+    expect(body.error,).toBe("Choice not found or already resolved",);
+
+    await db.destroy();
+  });
+
+  test("dismissing a choice that was already selected is 404 (status predicate is not 'available')", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+
+    const app = makeApp(db, PARTICIPANT_ID,);
+    const selectUrl = `http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/select`;
+    expect((await app.handle(new Request(selectUrl, { method: "POST", },),)).status,).toBe(200,);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/dismiss`, { method: "POST", },),
+    );
+
+    // A selected choice is resolved; dismissing must not overwrite that verdict.
+    expect(res.status,).toBe(404,);
+    const row = await db.selectFrom("vn_choices",).select(["status",],)
+      .where("id", "=", choiceId,).executeTakeFirstOrThrow();
+
+    expect(row.status,).toBe("selected",);
+
+    await db.destroy();
+  });
+
+  test("dismiss is IDOR-guarded: another chat's choice is not_found and stays available", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const otherChatId = randomUUID();
+    await insertChats(db, "Other VN Chat", OWNER_ID, { id: otherChatId, type: "group", mode: "vn", } as never,);
+    await insertChatParticipants(db, otherChatId, PARTICIPANT_ID, {} as never,);
+    const otherChoiceId = await insertVnChoices(
+      db,
+      otherChatId,
+      0,
+      "Other chat choice",
+      new Date().toISOString(),
+      { status: "available" as never, },
+    );
+
+    const res = await makeApp(db, PARTICIPANT_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${otherChoiceId}/dismiss`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(404,);
+    const row = await db.selectFrom("vn_choices",).select(["status",],)
+      .where("id", "=", otherChoiceId,).executeTakeFirstOrThrow();
+
+    expect(row.status,).toBe("available",);
+
+    await db.destroy();
+  });
+
+  test("a non-participant cannot dismiss, and the choice stays pending", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+
+    const res = await makeApp(db, OUTSIDER_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/dismiss`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(404,);
+    const row = await db.selectFrom("vn_choices",).select(["status",],)
+      .where("id", "=", choiceId,).executeTakeFirstOrThrow();
+
+    expect(row.status,).toBe("available",);
+
+    await db.destroy();
+  });
+
+  test("dismissing an unknown choice id is 404", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const res = await makeApp(db, PARTICIPANT_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${randomUUID()}/dismiss`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(404,);
+
+    await db.destroy();
+  });
+});
+
+// ── list: sceneIndex validation ────────────────────────────────────────────
+
+describe("GET /api/v1/chats/:id/vn-choices validation", () => {
+  test("a non-integer sceneIndex is 400", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const res = await makeApp(db, PARTICIPANT_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices?sceneIndex=abc`,),
+    );
+
+    expect(res.status,).toBe(400,);
+    const body = await res.json() as { error: string };
+    expect(body.error,).toBe("sceneIndex must be a non-negative integer",);
+
+    await db.destroy();
+  });
+
+  test("a negative sceneIndex is 400", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const res = await makeApp(db, PARTICIPANT_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices?sceneIndex=-1`,),
+    );
+
+    // -1 is a valid integer but not a valid scene; the guard is `>= 0`, not
+    // merely "is an integer".
+    expect(res.status,).toBe(400,);
+
+    await db.destroy();
+  });
+
+  test("a selected choice disappears from the list (status='available' filter)", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+
+    const app = makeApp(db, PARTICIPANT_ID,);
+    const listUrl = `http://localhost/api/v1/chats/${CHAT_ID}/vn-choices?sceneIndex=0`;
+
+    const before = await (await app.handle(new Request(listUrl,),)).json() as { choices: unknown[] };
+    expect(before.choices,).toHaveLength(1,);
+
+    await app.handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/select`, { method: "POST", },),
+    );
+
+    // Once resolved, the pending query must stop returning it or the decision
+    // gate stays wedged on a choice the player already answered.
+    const after = await (await app.handle(new Request(listUrl,),)).json() as { choices: unknown[] };
+    expect(after.choices,).toHaveLength(0,);
+
+    await db.destroy();
+  });
+
+  test("a dismissed choice disappears from the pending list", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+
+    const app = makeApp(db, PARTICIPANT_ID,);
+    const listUrl = `http://localhost/api/v1/chats/${CHAT_ID}/vn-choices?sceneIndex=0`;
+
+    await app.handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/dismiss`, { method: "POST", },),
+    );
+
+    const after = await (await app.handle(new Request(listUrl,),)).json() as { choices: unknown[] };
+    expect(after.choices,).toHaveLength(0,);
 
     await db.destroy();
   });
