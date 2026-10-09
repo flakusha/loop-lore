@@ -115,16 +115,12 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 - [ ] `TASK-tui-spec-sync` — correct spec drift across all four rows in §Spec drift
 - [ ] `TASK-tui-chat-picker` — list view for existing chats; highest-value missing TUI screen
 - [ ] `TASK-update-terminal-ui-spec-to-actual-file-layout.md` — spec drift on file layout; superseded in practice by `TASK-tui-spec-sync` (work that one instead)
+
+### Deferred / Open
+
 - `TASK-tui-dedupe-api-base.md` — `API_BASE` declared in both `chat/api.ts` and `harness/api.ts`; harness re-exports from chat so one declaration is redundant (blocked on P1)
 - `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — banned patterns in `AssetView.setChatId` (blocked on P1)
 - `TASK-tui-enabled-config-flag-never-read.md` — decide wire / remove / document-and-remove-from-env-map
-- `TASK-adopt-bun-color-for-tui-colors.md` — adopt `Bun.color()` for theme
-- `TASK-adopt-bun-stringwidth-for-tui.md` — adopt `Bun.stringWidth()` for safe truncation (fixes `formatMessageLine` surrogate-pair split)
-
-### Deferred
-
-The following open tickets exist on the branch but are not yet surfaced from this epic:
-
 - `TASK-adopt-bun-color-for-tui-colors.md` — adopt `Bun.color()` for theme
 - `TASK-adopt-bun-stringwidth-for-tui.md` — adopt `Bun.stringWidth()` for safe truncation (fixes `formatMessageLine` surrogate-pair split)
 
