@@ -15,7 +15,7 @@ See `## Summary`, `## Pre-Configured Templates` (the catalog), `## Design`
 
 **Priority:** Medium
 **Status:** In Progress
-**Status Note:** (2026-08-23) marked Done. Reconciled 2026-10-09: the template arrays and trigger list are real, but no renderer module imports them — `scene-renderer/`, `typewriter.ts`, `transition-engine.ts`, and `chat.html` all have zero references. Done → In Progress. The closed git issue is left as-is; re-opening it is out of scope here.
+**Status Note:** (2026-08-23) marked Done. Reconciled 2026-10-09: the template arrays and trigger list are real, but no renderer module imported them — `scene-renderer/`, `typewriter.ts`, `transition-engine.ts`, and `chat.html` all had zero references. Done → In Progress. Updated the same day after `vn-mode-qa-loop` was found: `render-scene.ts:202` now calls `applyTemplateOverrides`, so the scene side is wired; dialogue templates, `evaluateTriggers`, and the picker UI remain open. The closed git issue is left as-is; re-opening it is out of scope here.
 **Epic:** epic-visual-novel-mode
 **Tags:** vn, templates, scenes, dialogue, pre-configured, ux
 **Effort:** Med
@@ -151,24 +151,35 @@ interface VnDialogueTemplate {
       claimed it does. Nearest real equivalent is `evaluateTriggers`, which
       returns a single template rather than the matching list
 
-### ⬜ Renderer/UI Wiring (NOT IMPLEMENTED)
+### 🟡 Renderer/UI Wiring (partially wired 2026-10-09)
 
-Gap confirmed 2026-10-09: grep for `templates/` imports across
-`src/frontend/` outside `src/frontend/vn/templates/` returns nothing — the
-only importers are the templates' own tests and `transition-triggers.ts`.
+The first reconciliation pass (against `dev`) found no `templates/` import
+anywhere under `src/frontend/` outside `src/frontend/vn/templates/` — the only
+importers were the templates' own tests and `transition-triggers.ts`. Branch
+`vn-mode-qa-loop` (`e87bd19c0`) added `templates/apply.ts` and calls it from
+`render-scene.ts:202`, so the scene side is now wired. Dialogue templates and
+trigger evaluation are still callerless.
 
-- [ ] Scene templates apply layout, transition, emotion defaults to VN scenes (renderer does not yet read from template registry)
-- [ ] Dialogue templates control typewriter speed, pauses, text style (typewriter does not yet consume dialogue template variables)
-- [ ] Transition triggers auto-fire on location change, combat start, etc. (`evaluateTriggers` exists but nothing calls it)
-- [ ] GM can browse and select templates from a picker UI (no modal/sidebar UI)
-- [ ] Templates can be overridden per-scene without modifying the template
-- [ ] Template chaining works (apply intro → dialogue → resolution sequence)
-- [ ] Templates don't conflict with manual VN settings
-
-### 🟢 Performance
-
-- [x] No performance regression in VN mode rendering — holds trivially; the
-      templates are never read at render time (2026-10-09)
+- [x] Scene templates apply layout and transition defaults to VN scenes —
+      `render-scene.ts:202` calls `applyTemplateOverrides(baseSettings, scene)`
+      from `src/frontend/vn/templates/apply.ts`, which resolves the scene's
+      `templateId` against the built-in registry and merges the
+      `layout` / `imageScaling` / `transition` / `typewriterSpeed` subset.
+      Landed on `vn-mode-qa-loop` at `e87bd19c0`. Narrower than the original
+      "emotion defaults": `apply.ts` ignores every other template key.
+- [ ] Dialogue templates control typewriter speed, pauses, text style —
+      `typewriter.ts` still consumes only `settings.typewriterSpeed`; it never
+      reads a dialogue template. The one speed field that is merged comes in as
+      a layout setting, not a dialogue-style one.
+- [ ] Transition triggers auto-fire on location change, combat start, etc. —
+      `evaluateTriggers` still has no caller.
+- [ ] GM can browse and select templates from a picker UI — no modal/sidebar
+      UI; selection is implicit via a scene's `templateId`.
+- [ ] Template override — user/GM can override individual template fields
+- [ ] Template chaining — apply multiple templates sequentially
+- [x] No performance regression in VN mode rendering — the merge is one
+      registry lookup per scene and was designed to fail closed to base
+      settings on a thrown `resolveVariables` or an out-of-union value (2026-10-09)
 
 ## Risk
 
@@ -180,3 +191,5 @@ Low — templates are pure configuration overlays on existing VN renderer. No sc
 - `TASK-vn-branching-choices.md` — choices integrate with dialogue templates
 - `TASK-vn-dynamic-generation.md` — dynamic generation can produce templates
 - `TASK-vn-scene-template-system.md` — template engine for custom templates
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 5cf3d0c (registry tip: 1cfc44a32 Konstantin Fedotov Ticket status: done)
