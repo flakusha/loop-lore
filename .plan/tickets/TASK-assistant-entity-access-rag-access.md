@@ -13,6 +13,7 @@
 **Effort:** High
 **Type:** Task
 **Tags:** assistant, rag, search, retrieval
+**Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `epic-rag-assets-unified-storage-and-assistant-flows.md`
 
 ## Summary

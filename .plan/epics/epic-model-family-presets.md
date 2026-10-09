@@ -7,7 +7,7 @@
 
 
 **Status:** Not Started
-**Status Note:** Not Started
+**Status Note:** Not Started (verified 2026-10-09: `configs/templates/workflows/model-families.yaml` does not exist and no formatter engine is implemented in `src/assistant/workflow-runner.ts`)
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Medium
 **Type:** Feature Epic / Configuration
@@ -245,6 +245,10 @@ Task breakdown (same deliverable, sequenced):
 
 
 - [ ] Model family presets handle per-family prompt formatting (SD tags, Flux natural, Ideogram JSON, etc.)
+
+## Tickets
+
+No dedicated ticket — tracked through the parent hub ticket `TASK-assistant-creative-studio-workflows.md` (its model-family acceptance criteria and `model-families.yaml` plan items are unchecked).
 
 ## Dependencies
 

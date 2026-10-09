@@ -12,6 +12,7 @@ Adaptation) delivered across 6 batches.
 
 
 **Status:** Not Started
+**Status Note:** Not Started (verified 2026-10-09: none of the ten feature areas has command files or handlers in `src/assistant/commands/` — no RAG, asset, world/loc/char/item access, modification, duplication, adaptation, or import commands are registered)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -305,6 +306,26 @@ The adaptation engine:
 - `src/assistant/quality/entity-creation.ts` — quality-gating pipeline (exists)
 - `src/routes/worlds/worlds.ts` — world access guards (exists)
 - `src/routes/story-items/handlers.ts` — item transfer logic (exists)
+
+## Tickets
+
+All Not Started; filed per batch/feature area:
+
+- `TASK-assistant-entity-access-schema.md` — EntityAdapter interface + command scaffolding
+- `TASK-assistant-entity-access-batch-rag-asset.md` — B1 RAG + Asset Access MVP
+- `TASK-assistant-entity-access-rag-access.md` — `/rag-search`, `/rag-ask`, `/rag-preview`, `/rag-decompose`
+- `TASK-assistant-entity-access-asset-access.md` — `/asset-list`, `/asset-preview`, `/asset-link`, `/asset-search`
+- `TASK-assistant-entity-access-world-location-access.md` — B2 world + location access
+- `TASK-assistant-entity-access-character-item-inventory.md` — B3 character/item/inventory access
+- `TASK-assistant-entity-access-modification-addition.md` — B4 modification + addition (`/modify`, `/apply`, `/import`, `/add`, `/clone`)
+- `TASK-assistant-entity-access-duplication.md` — B5 duplication
+- `TASK-assistant-entity-access-adaptation.md` — B5 adaptation engine
+- `TASK-assistant-entity-access-quota-engine.md` — quota enforcement for RAG/asset operations
+- `TASK-assistant-entity-access-adapter.md` — entity adapter composing with existing services
+- `TASK-assistant-entity-access-tests.md` — unit tests for command handlers
+- `TASK-assistant-entity-access-e2e.md` — E2E command flow tests
+
+Dependency tickets (not owned by this epic): `TASK-rag-knowledge-graph.md`, `FEAT-memory-visualizer-knowledge-graph-over-asset-links.md` (both Not Started).
 
 ## Batches
 

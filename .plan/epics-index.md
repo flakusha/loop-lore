@@ -35,7 +35,7 @@
 | In Progress | Assistant Generation Extensions (SD, Intent, Scenario Source) | Medium | High | 14 | [epic-assistant-generation-extensions.md](/.plan/epics/epic-assistant-generation-extensions.md) |
 | Not Started | Assistant Personality — Presets & Character-as-Assistant | High | Medium | 19 | [epic-character-multi-personality.md](/.plan/epics/epic-character-multi-personality.md) |
 | Not Started | Assistant Step Planning Surfaces (Todo / Kanban / Graph) | High | Large | 15 | [epic-assistant-step-planning.md](/.plan/epics/epic-assistant-step-planning.md) |
-| In Progress | Assistant/GM Flows Reconciliation | High | High | 2 | [epic-assistant-gm-flows.md](/.plan/epics/epic-assistant-gm-flows.md) |
+| In Progress | Assistant/GM Flows Reconciliation | High | High | 1 | [epic-assistant-gm-flows.md](/.plan/epics/epic-assistant-gm-flows.md) |
 | Not Started | Audio, Video & Sound Generation | Medium | Very High (split into 5 sub-epics) | 0 | [epic-audio-video-sound.md](/.plan/epics/epic-audio-video-sound.md) |
 | Not Started | Authentication Channel Provisioning — Messenger / E-mail / Federated Login & Unlock | High (security-critical provisioning) | High | 19 | [epic-auth-channel-provisioning.md](/.plan/epics/epic-auth-channel-provisioning.md) |
 | Done | Authoring & Creation Tools | Medium | Medium | 0 | [epic-authoring-creation.md](/.plan/epics/epic-authoring-creation.md) |
@@ -93,7 +93,7 @@
 | Not Started | Email Integration | Medium | Medium | 11 | [epic-email-integration.md](/.plan/epics/epic-email-integration.md) |
 | Not Started | Embeddable Engine & 2D/3D Game Frontend (Far Fetched) | Low | Very High (split into 5 sub-epics) | 0 | [epic-embeddable-engine-game-frontend.md](/.plan/epics/epic-embeddable-engine-game-frontend.md) |
 | Not Started | Emergent Narrative Design Principles | Medium | Low | 0 | [epic-emergent-narrative-design.md](/.plan/epics/epic-emergent-narrative-design.md) |
-| Not Started | Emotion Avatar Regeneration Control | Medium | Small | 7 | [epic-avatar-regeneration-control.md](/.plan/epics/epic-avatar-regeneration-control.md) |
+| Not Started | Emotion Avatar Regeneration Control | Medium | Small | 6 | [epic-avatar-regeneration-control.md](/.plan/epics/epic-avatar-regeneration-control.md) |
 | In Progress | Emotion-Avatar Message Binding | High | Medium | 14 | [epic-emotion-avatar-message-binding.md](/.plan/epics/epic-emotion-avatar-message-binding.md) |
 | In Progress | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
 | In Progress | Encryption UI | Medium | Medium | 0 | [epic-frontend-encryption.md](/.plan/epics/epic-frontend-encryption.md) |
@@ -3343,3 +3343,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+

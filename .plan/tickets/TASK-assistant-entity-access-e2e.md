@@ -13,6 +13,7 @@
 **Effort:** High
 **Type:** Task
 **Tags:** assistant, tests, e2e, entity-access
+**Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`
 
 ## Summary

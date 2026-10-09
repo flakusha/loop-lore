@@ -13,6 +13,7 @@
 **Effort:** High
 **Type:** Task
 **Tags:** assistant, modification, addition, import, quality-gates
+**Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `src/assistant/quality/entity-creation.ts`
 
 ## Summary
