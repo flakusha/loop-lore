@@ -22,4 +22,4 @@ Extend `src/characters/validator/fields.ts` with `validateGrowthFields` and wire
 - [ ] `llm_assist_enabled` rejects non-boolean values
 - [ ] Both fields are optional: relaxed mode accepts absence
 
-**Resolved:** 2026-10-10 registry-driven close: git issue 6151a1a (registry tip: 6a853a982 Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-09 registry-driven close: git issue 6151a1a (registry tip: 6a853a982 Konstantin Fedotov Close issue)
