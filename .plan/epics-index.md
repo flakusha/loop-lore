@@ -98,7 +98,7 @@
 | In Progress | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
 | In Progress | Encryption UI | Medium | Medium | 0 | [epic-frontend-encryption.md](/.plan/epics/epic-frontend-encryption.md) |
 | In Progress | Encryption Workflow | Medium | Medium | 16 | [epic-encryption-workflow.md](/.plan/epics/epic-encryption-workflow.md) |
-| Not Started | Enemies & Monsters Systems | Low | Medium | 10 | [epic-enemies-monsters.md](/.plan/epics/epic-enemies-monsters.md) |
+| Not Started | Enemies & Monsters Systems | Low | Medium | 27 | [epic-enemies-monsters.md](/.plan/epics/epic-enemies-monsters.md) |
 | Done | Epic 14: Import/Export & Data Portability | Medium | ~~High~~ Low (remaining work) | 3 | [epic-import-export-io.md](/.plan/epics/epic-import-export-io.md) |
 | Not Started | Epic 16: Observability | medium | Medium | 4 | [epic-observability-telemetry.md](/.plan/epics/epic-observability-telemetry.md) |
 | Not Started | Epic 25: Deployment Topologies & Packaging — Implementation Plan | medium | Medium | 0 | [epic-deployment-topologies.md](/.plan/epics/epic-deployment-topologies.md) |
@@ -150,7 +150,7 @@
 | Not Started | Epic: Instance Federation — Identity, Switching & Cross-Sync | Medium | High | 0 | [epic-instance-federation.md](/.plan/epics/epic-instance-federation.md) |
 | Done | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
 | In Progress | Epic: Inventory | High | High | 4 | [epic-inventory.md](/.plan/epics/epic-inventory.md) |
-| In Progress | Epic: Items | High | High | 3 | [epic-items.md](/.plan/epics/epic-items.md) |
+| In Progress | Epic: Items | High | High | 4 | [epic-items.md](/.plan/epics/epic-items.md) |
 | Not Started | Epic: Locations | High | High | 5 | [epic-locations.md](/.plan/epics/epic-locations.md) |
 | Not Started | Epic: Lore Knowledge System | High\ | Medium\ | 6 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
 | In Progress | Epic: Memory & Knowledge Systems | High | High | 12 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
@@ -210,8 +210,8 @@
 | Done | Housing System | Medium | Very High | 6 | [epic-housing.md](/.plan/epics/epic-housing.md) |
 | Not Started | I/O Formats | Medium | Medium | 5 | [epic-io-formats.md](/.plan/epics/epic-io-formats.md) |
 | In Progress | Immersion & Presentation | Medium | Medium | 0 | [epic-immersion-presentation.md](/.plan/epics/epic-immersion-presentation.md) |
-| Not Started | Immersion Consistency Gate (Actor-State Blockage & Refusal) | High | Large | 4 | [epic-immersion-consistency-gate.md](/.plan/epics/epic-immersion-consistency-gate.md) |
-| In Progress | Impersonation System | Medium | Med | 1 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
+| Not Started | Immersion Consistency Gate (Actor-State Blockage & Refusal) | High | Large | 10 | [epic-immersion-consistency-gate.md](/.plan/epics/epic-immersion-consistency-gate.md) |
+| In Progress | Impersonation System | Medium | Med | 2 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
 | Not Started | Implementation Guide | Medium | Medium | 0 | [epic-implementation.md](/.plan/epics/epic-implementation.md) |
 | Not Started | Instant Messaging Integrations | Medium | Medium | 9 | [epic-im-integrations.md](/.plan/epics/epic-im-integrations.md) |
 | In Progress | Integrations Core | Medium | Medium | 7 | [epic-integrations-core.md](/.plan/epics/epic-integrations-core.md) |
@@ -225,7 +225,7 @@
 | Not Started | LLM Request Scheduler — Complexity, Resources, Model Rotation | high | Large | 0 | [epic-llm-request-scheduler.md](/.plan/epics/epic-llm-request-scheduler.md) |
 | Not Started | LLM Request Throughput & Message Scheduling | Medium | Large | 13 | [epic-llm-queue.md](/.plan/epics/epic-llm-queue.md) |
 | Not Started | Local Process Swarm (Bun-Managed Multi-Process Decomposition) | Medium | Very High | 0 | [epic-local-process-swarm.md](/.plan/epics/epic-local-process-swarm.md) |
-| In Progress | Logging & Structured Logging | Medium | Medium | 2 | [epic-logging.md](/.plan/epics/epic-logging.md) |
+| Not Started | Logging & Structured Logging | Medium | Medium | 5 | [epic-logging.md](/.plan/epics/epic-logging.md) |
 | In Progress | Logging & Telemetry — Complete Level Set + Canonical JSONL | High | Medium | 5 | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md) |
 | In Progress | Logic Reconciliation (Permanently Ongoing) | High | Continuous | 0 | [epic-logic-reconciliation.md](/.plan/epics/epic-logic-reconciliation.md) |
 | Not Started | Login & Authentication UI | Medium | Medium | 0 | [epic-frontend-login.md](/.plan/epics/epic-frontend-login.md) |
@@ -319,7 +319,7 @@
 | Not Started | Use Case: Agentic Workspace | Medium | Medium | 0 | [epic-use-case-agentic-workspace.md](/.plan/epics/epic-use-case-agentic-workspace.md) |
 | In Progress | User Story & Use Case Improvements (Permanently Ongoing) | Medium | Continuous | 0 | [epic-user-stories.md](/.plan/epics/epic-user-stories.md) |
 | Not Started | Vector Graphics & Animated Image Generation | Medium | Medium (phased; each phase ships standalone value) | 17 | [epic-vector-graphics-generation.md](/.plan/epics/epic-vector-graphics-generation.md) |
-| In Progress | Visual Novel Mode — Dynamic Generation & Q&A Mode | Medium | Very High | 5 | [epic-visual-novel-mode.md](/.plan/epics/epic-visual-novel-mode.md) |
+| In Progress | Visual Novel Mode — Dynamic Generation & Q&A Mode | Medium | Very High | 0 | [epic-visual-novel-mode.md](/.plan/epics/epic-visual-novel-mode.md) |
 | Done | Wardrobe / Loadout Avatar Variants | Medium | Large | 8 | [epic-wardrobe-avatar-variants.md](/.plan/epics/epic-wardrobe-avatar-variants.md) |
 | Not Started | Weather & Environmental Effects | Medium | High | 0 | [epic-weather-environment.md](/.plan/epics/epic-weather-environment.md) |
 | Not Started | World & Location Management UI | P0 — Critical | High | 14 | [epic-world-management-ui.md](/.plan/epics/epic-world-management-ui.md) |
@@ -1153,7 +1153,7 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** bestiary, ecology, world, rpg, monsters, flora, fauna, repopulation
+- **Tags:** (none)
 - **File:** `.plan/epics/epic-enemies-monsters.md`
 
 ### Epic 14: Import/Export & Data Portability
@@ -2380,11 +2380,11 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 
 ### Logging & Structured Logging
 
-- **Status:** In Progress
+- **Status:** Not Started
 - **Priority:** Medium
 - **Effort:** Medium
-- **Type:** Infrastructure
-- **Tags:** logging, telemetry, observability, jsonl, redaction, infrastructure
+- **Type:** epic
+- **Tags:** (none)
 - **File:** `.plan/epics/epic-logging.md`
 
 ### Logging & Telemetry — Complete Level Set + Canonical JSONL
