@@ -7,11 +7,30 @@
 
 
 **Status:** In Progress
-**Status Note:** 2026-08-01 — GM notes panel done; world/NPC/event controls + quest log + turn order pending
+**Status Note:** GM panel, GM guidance commands, quest panel and the story-state read models are wired; world/NPC state editing, turn-order display and the story-state SSE subscription contract are still open
 **Priority:** P1 — High
 **Effort:** Medium
 **Type:** Feature Epic
 **Tags:** story, gm, quest, ui, frontend
+
+## Goals
+
+- Let the user act as Game Master over a story session — target characters, set the scene, constrain tone and control turn order from chat.
+- Surface quest, world and turn state in the chat UI without a page reload.
+- Reuse the story/quest/world backend routes rather than reimplementing state in the client.
+
+## Scope
+
+- GM panel (notes, entities) and the GM guidance slash commands in chat.
+- Quest panel rendering backed by `src/routes/quests/`.
+- Read-only story-state read models (`src/frontend/alpine/story-state/`).
+- World/NPC state editing and turn-order display once their tickets land.
+
+## Out of Scope
+
+- Backend story, quest and world systems — owned by their own epics; this epic consumes their routes.
+- The story-state SSE subscription contract — a clarification ticket, not UI work.
+- Terminal UI parity; the TUI is a separate epic.
 
 ## Summary
 
@@ -104,20 +123,14 @@ The user as Game Master has explicit control over narrative direction in group-c
 
 ## Acceptance Criteria
 
-- [ ] GM control panel with turn management
-- [ ] Actor selection and management
-- [ ] Quality evaluation display
-- [ ] Regeneration controls
-- [ ] Quest log with active/completed/failed
-- [ ] Quest objectives and progress
-- [ ] Quest rewards display
-- [ ] World state display
-- [ ] Turn order visualization
-- [ ] Mobile responsive
-- [ ] Keyboard accessible
-- [ ] Screen reader support
-- [ ] GM-guided story creation: user can direct characters in group chat, set scene constraints, control turn order
-- [ ] `/guide`, `/target`, `/constraint`, `/scene`, `/skip`, `/priority` commands functional
+- [x] GM control panel renders GM notes and panel entities inside chat (`src/frontend/alpine/gm-panel.ts`, `src/components/chat/gm-panel.html`).
+- [x] Quest panel renders the active quests for the chat's world (`src/components/chat/gm-quests-panel.html` against `src/routes/quests/`).
+- [x] GM-guided story creation: `/guide`, `/target`, `/constraint`, `/scene`, `/skip`, `/priority` are handled in story mode — recognised via `activeChat.mode === 'story'` **or** `gm_config.storyMode` (`src/frontend/alpine/gm-guidance.ts`, `src/assistant/commands/gm-guidance.ts`).
+- [x] Story state is readable in chat via fetch-based read models (`src/frontend/alpine/story-state/`).
+- [ ] World-state and NPC-state editing is reachable from chat (backend routes exist under `src/routes/story-states/`; the frontend CRUD tickets are open).
+- [ ] Turn-order visualization shows the current actor, the queue and actor status — no turn-order frontend module exists yet.
+- [ ] The story-state SSE subscription contract is written down and the story-state read models use it instead of polling.
+- [ ] The story surfaces are keyboard operable and expose accessible names for screen readers.
 
 ## Implementation Phases
 
@@ -152,25 +165,42 @@ The user as Game Master has explicit control over narrative direction in group-c
 - Keyboard accessible
 - Screen reader support
 
-## Tasks
+## Linked Tasks
 
-| Task                             | Priority | Status         |
-| -------------------------------- | -------- | -------------- |
-| TASK-gm-panel.md                 | P0       | ⬜ Not Started |
-| TASK-quest-log.md                | P0       | ⬜ Not Started |
-| TASK-story-world-state.md        | P0       | ⬜ Not Started |
-| TASK-story-turn-order.md         | P0       | ⬜ Not Started |
-| TASK-story-alpine.md             | P0       | ⬜ Not Started |
-| TASK-gm-guided-story-creation.md | P1       | ⬜ Not Started |
+Bound to this epic via the `**Epic:** epic-story-mode-ui` header on each ticket.
 
-## Files to Create
+- `TASK-gm-panel.md` — GM panel
+- `TASK-quest-log.md` — Quest log
+- `TASK-story-world-state.md` — World state display
+- `TASK-story-turn-order.md` — Turn order
+- `TASK-story-alpine.md` — Story Alpine.js logic
+- `TASK-clarify-story-state-sse-subscription-contract.md` — SSE contract decision
+- `TASK-frontend-story-world-states-crud.md` — world-state editing UI
+- `TASK-frontend-story-npc-state.md` — NPC-state GET/PUT UI
+- `TASK-frontend-story-turn-by-id.md` — turn-by-id lookup UI
+- `FEAT-multi-llm-story-mode-frontend.md`
+- `BUG-chat-settings-modal-invalid-mode.md`
+- `FEAT-chat-template-config-lifecycle.md`
 
-- `src/frontend/story/gm-panel.ts` — GM control panel
-- `src/frontend/story/quest-log.ts` — Quest log
-- `src/frontend/story/world-state.ts` — World state display
-- `src/frontend/story/turn-order.ts` — Turn order visualization
-- `src/frontend/alpine/story.ts` — Alpine.js story logic
-- `src/frontend/alpine/gm-guidance.ts` — GM guidance panel (new)
+### Cross-epic references
+
+Owned by another epic — listed here for traceability, **not** bound here:
+
+- `TASK-gm-guided-story-creation.md` — bound to `epic-assistant-gm-flows.md`; shipped as `src/frontend/alpine/gm-guidance.ts` + `src/components/chat/gm-guidance-panel.html`.
+- `TASK-frontend-story-mode-ui.md` — bound to `epic-assistant-gm-flows.md`; umbrella for the story-mode frontend.
+
+## Frontend Surface
+
+Paths verified against `src/`. Landed:
+
+- `src/frontend/alpine/gm-panel.ts` (+ `gm-panel-entities.ts`, `gm-panel-types.ts`) — GM control panel
+- `src/frontend/alpine/gm-guidance.ts` — GM guidance commands
+- `src/frontend/alpine/story-state.ts` + `src/frontend/alpine/story-state/` — story-state read models
+- `src/components/chat/gm-panel.html`, `gm-guidance-panel.html`, `gm-quests-panel.html`, `gm-story-panel.html`
+
+Not built yet (no such module exists): turn-order visualization, and the editing side of
+world-state / NPC-state. The `src/frontend/story/` tree named in earlier revisions of this
+doc was never created — the Alpine modules above are where this surface actually lives.
 
 ## Related Epics
 
