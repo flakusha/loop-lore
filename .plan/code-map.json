@@ -40035,6 +40035,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-shell-testability.md"
     }
   ],
   "src/tui/app.ts": [
@@ -40273,6 +40277,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
+    }
+  ],
+  "src/tui/import-purity.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-shell-testability.md"
     }
   ],
   "src/tui/input.ts": [
