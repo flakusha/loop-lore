@@ -157,6 +157,8 @@ export class TUIApp {
  * behind this factory is what makes importing the module side-effect free —
  * nothing touches a terminal until a caller asks for the app.
  * @returns {TUIApp} the constructed shell, with its screen and widgets bound
+ * @throws if `new TUIApp()` fails — the constructor's own config-load catch
+ *   calls `getLogger()`, which throws when no logger is initialized
  */
 export function createTUIApp(): TUIApp {
   createLogger({ level: "warn", },);
