@@ -36,6 +36,8 @@ import { chatUtils, } from "../chat-utils";
 import { chatVariants, } from "../chat-variants";
 import { attachValidateDraft, createComposerPreSend, } from "../composer-pre-send";
 import { creationWizard, } from "../creation-wizard";
+import { emojiAutocomplete, } from "../emoji-autocomplete";
+import { emojiPicker, } from "../emoji-picker";
 import { messageArchive, } from "../message-archive";
 import { messageSearch, } from "../message-search";
 import type { AlpineState, ChatState, } from "../types";
@@ -60,6 +62,8 @@ export function chatState() {
     ...chatKeys,
     ...chatGroup,
     ...slashAutocomplete,
+    ...emojiAutocomplete,
+    ...emojiPicker,
     ...chatSettings,
     ...chatPromptTemplate,
     ...chatQuickReplies,

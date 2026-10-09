@@ -36,6 +36,8 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
    * @returns {void}
    */
   handleSlashInput(event: Event,) {
+    // Slash takes precedence; when no `/` token is at the caret, fall
+    // through to `:` emoji autocomplete so one input handler drives both.
     const textarea = event.target as HTMLTextAreaElement;
     const value = textarea.value;
     const cursorPos = textarea.selectionStart;
@@ -43,9 +45,11 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
     const query = extractSlashQuery(beforeCursor,);
     if (query === null) {
       this.hideSlashPopover();
+      this.handleEmojiInput?.(event,);
       return;
     }
 
+    this.hideEmojiPopover?.();
     const list = this._commandList ?? [];
     const names = list.map((entry,) => entry.name);
     const matched = filterSlashCandidates(names, query,);
@@ -128,6 +132,13 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
    * @param event - keydown event from the composer textarea.
    */
   handleSlashKeydown(event: KeyboardEvent,) {
+    // Emoji popover first: both can never be open at once (handleSlashInput
+    // closes the other), so whichever is open owns Tab/arrows/Escape.
+    if (this._showEmojiPopover) {
+      this.handleEmojiKeydown?.(event,);
+      return;
+    }
+
     const target = event.target as { tagName?: string } | null;
     if (!target || target.tagName !== "TEXTAREA") { return; }
     if (event.isComposing) { return; }
@@ -163,3 +174,20 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
     return this.acceptSlashAtIndex(this._slashActiveIndex,);
   },
 };
+
+/** Re-exported for backward compatibility: chat-send.ts and existing tests
+ *  import these helpers from `./slash-autocomplete`. New code SHOULD import
+ *  from `./emoji-autocomplete` directly. Kept so `chat-send.ts` (did-you-mean)
+ *  and the existing emoji tests keep working without a multi-file churn.
+ */
+export type { EmojiCandidate, } from "./emoji-autocomplete";
+
+  extractEmojiQuery,
+
+  filterEmojiCandidates,
+
+  didYouMeanCandidate,
+
+  emojiTokenRe,
+
+  editDistance,

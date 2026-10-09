@@ -6,7 +6,14 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertActors, insertAssets, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertAssets,
+  insertCharacterArc,
+  insertChats,
+  insertGrowthLog,
+  insertUsers,
+} from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { serveCharacterChatListDb, serveCharacterEditForm, serveCharactersGrid, } from "./characters";
 
@@ -124,6 +131,40 @@ describe("views/characters", () => {
       const html = await (await serveCharacterEditForm(id, db,)).text();
       expect(html,).toContain("/api/v1/assets/asset-9/thumb",);
       expect(html,).toContain("Remove",);
+    });
+
+    test("seeds growth section from actors row + character_arc", async () => {
+      const id = uid();
+      await insertActors(db, "Growing", {
+        id: id as never,
+        actor_type: "character" as never,
+        growth_mode: "static",
+        llm_assist_enabled: 1,
+      },);
+
+      await insertCharacterArc(db, id, "crisis", new Date().toISOString(), {
+        stage_description: "The fall",
+      },);
+
+      await insertGrowthLog(db, id, "trait", "trait_drifted", new Date().toISOString(), {
+        status: "applied",
+        reason: "Faced the fall",
+      },);
+
+      await insertGrowthLog(db, id, "skill", "skill_acquired", new Date().toISOString(), {
+        status: "pending",
+        reason: "Not yet confirmed",
+      },);
+
+      const html = await (await serveCharacterEditForm(id, db,)).text();
+      expect(html,).toContain("character-growth-section",);
+      expect(html,).toContain("initialMode: 'static'",);
+      expect(html,).toContain("initialLlmAssist: true",);
+      expect(html,).toContain('<option value="crisis" selected>',);
+      expect(html,).toContain("The fall",);
+      // Only applied entries seed the section; pending proposals stay hidden.
+      expect(html,).toContain("Faced the fall",);
+      expect(html,).not.toContain("Not yet confirmed",);
     });
   });
 

@@ -179,6 +179,10 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
 
+    // Shared `/` + `:` typed-token popovers (slash-autocomplete.ts) run on
+    // every composer — accept the active entry instead of sending.
+    if (typeof this.handleSlashEnter === "function" && this.handleSlashEnter()) { return; }
+
     void this.sendMessage().catch(() => {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSend",), },);
     },);
@@ -239,6 +243,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     // ESC when no autocomplete/palette open → flush the debounced draft so
     // the last keystrokes survive a chat switch or reload.
     if (event.key === "Escape") {
+      if (typeof this.closeEmojiPicker === "function") { this.closeEmojiPicker(); }
       this.flushComposerDraft();
       return;
     }

@@ -104,7 +104,61 @@
             <span class="command-desc" x-text="cmd.description"></span>
           </button>
         </template>
+        <div
+          class="command-hidden-note"
+          x-show="_hiddenCommandCount > 0"
+          x-text="t('toasts.hiddenCommandsNote', { count: String(_hiddenCommandCount) })"
+          data-testid="command-hidden-note"
+        ></div>
       </div>
+      <!-- Emoji picker (shares the `:` shortcode registry with autocomplete) -->
+      <button
+        type="button"
+        class="btn btn-ghost"
+        title="Insert emoji"
+        aria-label="Insert emoji"
+        :disabled="!activeChat"
+        @click.prevent="toggleEmojiPicker()"
+        data-testid="emoji-picker-button"
+      >😀</button>
+      <template x-if="_emojiPickerOpen">
+        <div
+          class="emoji-picker-panel"
+          role="dialog"
+          aria-label="Emoji picker"
+          @click.outside="closeEmojiPicker()"
+          @keydown.escape="closeEmojiPicker()"
+          data-testid="emoji-picker-panel"
+        >
+          <input
+            type="text"
+            x-model="_emojiPickerQuery"
+            @input="filterEmojiPicker()"
+            placeholder="Search emoji"
+            aria-label="Search emoji"
+            @keydown.enter.prevent="insertEmojiAtIndex(_emojiPickerActiveIndex)"
+            @keydown.escape="closeEmojiPicker()"
+            @keydown.arrow-down.prevent="moveEmojiPickerSelection(1)"
+            @keydown.arrow-up.prevent="moveEmojiPickerSelection(-1)"
+            data-testid="emoji-picker-search"
+          />
+          <div class="emoji-picker-grid" role="listbox" aria-label="Emoji choices">
+            <template x-for="(emo, emoIdx) in _emojiPickerResults" :key="emo.name">
+              <button
+                type="button"
+                role="option"
+                :aria-selected="emoIdx === _emojiPickerActiveIndex"
+                :aria-label="emo.emoji + ' :' + emo.name + ':'"
+                :title="':' + emo.name + ':'"
+                :class="_emojiPickerActiveIndex === emoIdx ? 'emoji-cell emoji-active' : 'emoji-cell'"
+                @click.prevent="insertEmoji(emo)"
+                @mouseenter="_emojiPickerActiveIndex = emoIdx"
+                :data-testid="'emoji-picker-result-' + emo.name"
+              ><span x-text="emo.emoji"></span></button>
+            </template>
+          </div>
+        </div>
+      </template>
       <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px; padding: var(--space-2)">
         📎
         <input
@@ -171,6 +225,38 @@
           </button>
         </template>
       </div>
+      <!-- `:` emoji autocomplete — same popup pattern as `/` (Tab-accept parity). -->
+      <div
+        x-show="_showEmojiPopover && _emojiCandidates.length > 0"
+        x-transition:enter="transition ease-out duration-100"
+        x-transition:enter-start="opacity-0 transform -translate-y-1"
+        x-transition:enter-end="opacity-100 transform translate-y-0"
+        class="slash-autocomplete emoji-autocomplete"
+        role="listbox"
+        aria-label="Emoji suggestions"
+        :aria-activedescendant="_showEmojiPopover ? 'emoji-option-' + _emojiActiveIndex : null"
+        @click.outside="hideEmojiPopover()"
+        data-testid="emoji-autocomplete"
+        style="position: absolute; bottom: 100%; left: 40px; right: 40px; max-height: 200px; overflow-y: auto; background: var(--bg-primary, #1a1a2e); border: 1px solid var(--border, #333); border-radius: 8px; box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3); z-index: 51"
+      >
+        <template x-for="(emo, emoIdx) in _emojiCandidates" :key="emo.name">
+          <button
+            type="button"
+            :id="'emoji-option-' + emoIdx"
+            role="option"
+            :aria-selected="emoIdx === _emojiActiveIndex"
+            :aria-label="emo.emoji + ' :' + emo.name + ':'"
+            class="slash-option"
+            @click.prevent="selectEmojiCandidate(emo)"
+            @mouseenter="_emojiActiveIndex = emoIdx"
+            style="display: block; width: 100%; text-align: left; padding: 8px 12px; border: none; background: none; color: var(--text-primary, #e0e0e0); cursor: pointer; font-size: 14px"
+            :data-testid="'emoji-option-' + emo.name"
+          >
+            <span x-text="emo.emoji"></span>
+            <span style="opacity: 0.5; font-size: 12px; margin-left: 6px" x-text="':' + emo.name + ':'"></span>
+          </button>
+        </template>
+      </div>
       <!-- Composer markdown preview (Ctrl+Shift+P) -->
       <div
         class="composer-preview"
@@ -187,7 +273,7 @@
         @keydown.enter.prevent="handleSlashEnter() || handleComposerEnter()"
         @keydown="handleComposerKeydown($event); handleSlashKeydown($event)"
         @input="autoResize($el); handleMentionInput($event); handleSlashInput($event); handleCommandInput($event); saveComposerDraft()"
-        @keydown.escape="hideMentionAutocomplete(); hideSlashPopover()"
+        @keydown.escape="hideMentionAutocomplete(); hideSlashPopover(); hideEmojiPopover()"
         required
         :disabled="!activeChat || (isStoryMode && running)"
         data-testid="message-input"

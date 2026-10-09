@@ -10,21 +10,22 @@
 // `governor.budget.exceeded` once per denial, fire-and-forget.
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { getLogger, } from "../../logger";
-import { record, } from "../../telemetry/service";
 import { toDate, } from "../../utils/date";
 import { BudgetCache, } from "./cache";
 import { capFromConfig, resolveScopeConfig, } from "./caps";
+import { emitBudgetExceeded, } from "./deny";
+import { isKillSwitchEngaged, } from "./kill-switch";
+import { LIMIT_CATALOG, } from "./limits";
 import type {
   AutonomyScope,
   BudgetRow,
   GovernedWindow,
-  GovernorLimitCatalog,
   GovernorLimitName,
   GovernorResult,
   TryConsumeOptions,
 } from "./types";
 import { effectiveWindow, } from "./window";
+export { LIMIT_CATALOG, } from "./limits";
 export type {
   AutonomyScope,
   BudgetRow,
@@ -36,24 +37,12 @@ export type {
   TryConsumeOptions,
 } from "./types";
 
-/** Telemetry event type emitted on every cap trip. */
-const TELEMETRY_EVENT_TRIPPED = "governor.budget.exceeded";
-
 /** Cache TTL: how long a cached budget row is trusted. Short, so a
  *  missed writer can't keep the cache stale for long.
  *  ponytail: per-process in-memory cache; per-machine consistency
  *  would need Redis/etc. (current single-process deploy).
  */
 const DEFAULT_CACHE_TTL_MS = 1000;
-
-/** Fixed catalog of limit definitions. Per-scope caps come from the
- *  resolved `AutonomyConfig` at runtime.
- */
-export const LIMIT_CATALOG: GovernorLimitCatalog = {
-  per_tick_action: { windowMs: 60_000, cap: null, },
-  per_minute_generation: { windowMs: 60_000, cap: null, },
-  per_hour_beat_dispatch: { windowMs: 3_600_000, cap: null, },
-} as const;
 
 /**
  * Autonomy rate governor.
@@ -154,6 +143,24 @@ export class AutonomyGovernor {
     const nowMs = opts.nowMs ?? Date.now();
     const nowIso = toDate(nowMs,).toISOString();
 
+    // Global kill switch: engaged → every consume denies, even unbounded
+    // (`unlimited-stress`) scopes. Checked before the cap path so the
+    // flag wins over the dev/stress preset, and before any DB work so a
+    // killed consume never advances a counter or writes a row.
+    if (isKillSwitchEngaged()) {
+      emitBudgetExceeded(db, opts, {
+        scope,
+        limitName,
+        cap: 0,
+        windowCount: 0,
+        windowResetAt: toDate(nowMs + limit.windowMs,).toISOString(),
+        timestamp: nowIso,
+        killSwitch: true,
+      },);
+
+      return { ok: false, remaining: 0, resetAt: nowMs + limit.windowMs, cap: 0, count: 0, };
+    }
+
     // Step 1: resolve cap (caller override > scope default). When the
     // caller supplies `opts.cap` explicitly we skip the config SELECT —
     // the resolver reads 2–3 rows on every call.
@@ -192,24 +199,13 @@ export class AutonomyGovernor {
       };
 
       this.#cache.write(scope, limitName, unchangedRow, nowMs,);
-
-      record(db, {
-        eventType: TELEMETRY_EVENT_TRIPPED,
-        sessionId: opts.sessionId ?? null,
-        chatId: opts.chatId ?? null,
-        data: {
-          scope_kind: scope.kind,
-          scope_id: scope.id,
-          limit_name: limitName,
-          cap,
-          window_count: win.count,
-          window_reset_at: toDate(win.resetAtMs,).toISOString(),
-          timestamp: nowIso,
-        },
-      },).catch((err: unknown,) => {
-        getLogger()
-          .child({ module: "autonomy.governor", },)
-          .warn("Failed to emit governor.budget.exceeded", { error: String(err,), },);
+      emitBudgetExceeded(db, opts, {
+        scope,
+        limitName,
+        cap,
+        windowCount: win.count,
+        windowResetAt: toDate(win.resetAtMs,).toISOString(),
+        timestamp: nowIso,
       },);
 
       return { ok: false, remaining: 0, resetAt: win.resetAtMs, cap, count: win.count, };

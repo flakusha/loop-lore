@@ -106,6 +106,26 @@ async function serveCharacterEditForm(
   const contentRating = (actor.content_rating as string | null) ?? "sfw";
   const avatarFocusX = actor.avatar_focus_x ?? 50;
   const avatarFocusY = actor.avatar_focus_y ?? 50;
+  const growthMode = (actor as { growth_mode?: string | null }).growth_mode ?? "dynamic";
+  const llmAssistEnabled = Boolean((actor as { llm_assist_enabled?: number | null }).llm_assist_enabled ?? 0,);
+  // character_arc is keyed 1:1 on actor_id; missing row means "introduction".
+  const arc = await database
+    .selectFrom("character_arc",)
+    .select(["current_stage", "stage_description",],)
+    .where("actor_id", "=", characterId,)
+    .executeTakeFirst();
+
+  // Recent applied growth entries, newest first (server-rendered, player-safe:
+  // only axis/reason/recorded_at reach the template — no pending proposals,
+  // no before/after payloads).
+  const recentRows = await database
+    .selectFrom("growth_log",)
+    .select(["axis", "reason", "recorded_at",],)
+    .where("actor_id", "=", characterId,)
+    .where("status", "=", "applied",)
+    .orderBy("recorded_at", "desc",)
+    .limit(5,)
+    .execute();
 
   const rawNonce = request ? getNonce(request,) : null;
   const cspNonce = rawNonce ?? undefined;
@@ -128,6 +148,15 @@ async function serveCharacterEditForm(
     dataVersion: actor.format_version,
     avatarFocusX,
     avatarFocusY,
+    growthMode,
+    llmAssistEnabled,
+    arcStage: arc?.current_stage ?? "introduction",
+    arcDescription: arc?.stage_description ?? "",
+    recentEntries: recentRows.map((r,) => ({
+      axis: r.axis,
+      reason: r.reason,
+      recordedAt: r.recorded_at,
+    })),
   }, { cspNonce, },),);
 }
 

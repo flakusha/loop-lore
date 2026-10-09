@@ -22,6 +22,7 @@ import { toDate, } from "../../utils/date";
 import type { AutonomyConfig, } from "../config";
 import { resolveAutonomyConfig, } from "../config";
 import type { AutonomyGovernor, } from "../governor";
+import { isKillSwitchEngaged, } from "../governor/kill-switch";
 import { deriveTickRng, } from "../rng";
 import type { SimulationStore, } from "./store";
 import { aggregate, describe, } from "./targets";
@@ -79,6 +80,14 @@ export async function tickWorld(deps: TickDeps, entry: WorldScheduleEntry, nowMs
   try {
     const chatId = await deps.store.chatIdFor(worldId,);
     const cfg = await resolveAutonomyConfig(deps.db, { worldId, chatId, },);
+    // Global kill switch: engaged → skip dispatch before any target runs
+    // (and before any governor consume), so no LLM call can fire and no
+    // budget row is spent. The cursor still advances via completeTick,
+    // so a killed world reschedules rather than wedging the due set.
+    if (isKillSwitchEngaged()) {
+      return await completeTick(deps, worldId, state, nowMs, cfg, { skipped: "kill_switch", },);
+    }
+
     if (!cfg.enabled) {
       return await completeTick(deps, worldId, state, nowMs, cfg, { skipped: "disabled", },);
     }
