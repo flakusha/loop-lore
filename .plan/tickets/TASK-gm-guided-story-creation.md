@@ -26,7 +26,7 @@ Implemented in worktree `feature/gm-guided-story-ui` (commit `669d7912`, GPG-sig
 - ✅ Documented in `docs/frontend/chat/group-chat.md`
 - ✅ Service + component tests (9 passing)
 
-**Resolved (2026-08-14):** `gmGuidance` is now consumed by `GameMasterService` (commit `4b0dd146` threads it into the service; `game-master.test.ts` verifies `targetCharacter` override + `constraints`/`scene` appear in the prompt). `PUT /api/v1/chats/:id/gm-guidance` persists it (service + route + tests). The only remaining gap is runtime turn-order steering from `gmGuidance.turnPriority` (captured, not yet wired into the turn selector) — tracked below.
+**Resolved (2026-08-14):** `gmGuidance` is now consumed by `GameMasterService` (commit `4b0dd146` threads it into the service; `game-master.test.ts` verifies `targetCharacter` override + `constraints`/`scene` appear in the prompt). `PUT /api/v1/chats/:id/gm-guidance` persists it (service + route + tests). ~~The only remaining gap is runtime turn-order steering from `gmGuidance.turnPriority` (captured, not yet wired into the turn selector)~~ — superseded: `turnPriority` soft bias + `targetCharacter` hard override are consumed in `src/story/game-master/decisions.ts` (verified 2026-10-09).
 
 ## Summary
 
@@ -118,8 +118,8 @@ export interface GroupChatParticipant {
 - [x] User-GM can set scene description visible to all participants (via `gmGuidance.sceneDescription`)
 - [x] User-GM can constrain character responses (in-character, topic, tone) (via `gmGuidance.constraints`)
 - [x] `PUT /api/v1/chats/:id/gm-guidance` persists `gmGuidance`; `GameMasterService` consumes it (commit `4b0dd146`, tested)
-- [ ] GM turn-order control wired into group chat message flow in `chat.ts` (turnPriority captured, runtime turn-order steering not yet wired)
-- [ ] Turn order UI respects GM-set priorities
+- [x] GM turn-order control wired into group chat message flow (`turnPriority` soft bias + `targetCharacter` hard override consumed in `src/story/game-master/decisions.ts`)
+- [x] Turn order UI respects GM-set priorities (per-participant priority selectors in the GM guidance panel; priorities steer orchestrator turn selection)
 - [x] All new code has passing TypeScript checks
 
 ## Integration Points

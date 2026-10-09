@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** shipped and verified 2026-10-09 — `create.ts` imports and uses `resolveEntityGenerationPrompt` (inline `entityPrompts` gone), the schema+example block is injected by `buildEntityTemplateBlock` with `before`/`after` positioning, and the position is config-driven via `entityTemplatePosition` (schema + loader validation in `src/config/templates-loader/entity-position.ts`, tests in `src/assistant/quality/entity-creation.test.ts` and `src/assistant/prompt/templates/template-render.test.ts`)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-assistant-gm-flows
@@ -23,10 +24,11 @@ This is the "pre-compiled templates message/context injection" extension to the 
 
 Creative processes such as character creation, prompt creation, image/video/audio prompting, item/world/location/story creation each carry an internal schema and a worked example. Appending (or prepending) that schema-as-example to the assistant message adds deterministic clarity to the creative process and yields schema-compliant / schema-steered documents.
 
-## Current State (precondition)
+
+## Current State (resolved)
 
 - `src/assistant/prompt/templates/entity-generation.ts` centralizes entity-gen prompts via `resolveEntityGenerationPrompt(config, kind, description)`, with a config override at `config.templates.llm.entityGeneration`.
-- **Gap:** `src/assistant/commands/create.ts` still uses its own inline `entityPrompts` + `generateEntityData` and does **not** import `resolveEntityGenerationPrompt`. The centralized template system is therefore orphaned from the command flow. This task depends on closing that wiring gap.
+- ~~**Gap:** `src/assistant/commands/create.ts` still uses its own inline `entityPrompts` + `generateEntityData` and does **not** import `resolveEntityGenerationPrompt`.~~ CLOSED — `create.ts` imports `resolveEntityGenerationPrompt` and no inline `entityPrompts` remain.
 
 ## Design / Approach
 
@@ -39,10 +41,10 @@ Creative processes such as character creation, prompt creation, image/video/audi
 
 ## Acceptance Criteria
 
-- [ ] Schema + example injected per kind at the configured position.
-- [ ] `create.ts` uses the centralized prompt builder (inline `entityPrompts` removed).
-- [ ] Config override (`before`/`after`/`off`) honored; default `after`.
-- [ ] Unit tests pass; no regression in `entity-creation.test.ts` / `create.test.ts`.
+- [x] Schema + example injected per kind at the configured position.
+- [x] `create.ts` uses the centralized prompt builder (inline `entityPrompts` removed).
+- [x] Config override (`before`/`after`/`off`) honored; default `after` (`src/config/templates-loader/entity-position.ts`).
+- [x] Unit tests pass; no regression in `entity-creation.test.ts` / `create.test.ts` (plus `template-render.test.ts`, `validation.test.ts`).
 
 ## Open Questions
 

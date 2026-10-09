@@ -13,6 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** assistant, world, location, access, crud
+**Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `src/routes/worlds/worlds.ts`
 
 ## Summary

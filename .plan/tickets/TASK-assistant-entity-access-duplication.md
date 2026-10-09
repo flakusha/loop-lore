@@ -13,6 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** assistant, duplication, clone, copy
+**Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `src/assistant/adapter/duplicate.ts`
 
 ## Summary

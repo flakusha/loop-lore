@@ -222,7 +222,7 @@ interface ScenarioSource {
 - [x] `/quest` command — full implementation (list/create/status/complete)
 - [x] `/caption` command — full implementation (image captioning via `src/generation/caption-route`)
 - [x] Emotion avatar fallback — `extractAvatarMetadata()`, `buildEmotionPrompt()`, `fallbackMode` config gate
-- [x] `/video`, `/sfx`, `/music` commands — registered (stub-level, action dispatch)
+- [x] `/video`, `/sfx`, `/music` commands — registered (action dispatch, availability-gated on a configured provider)
 - [x] `/roll`, `/summarize`, `/impersonate`, `/narrate`, `/ooc`, `/help` — complete
 
 ## Files
@@ -252,10 +252,10 @@ The command system is partially built (2026-10-08 review):
 | `/improve`     | ✅ Full impl (shared prompt-improvement service)           | `src/assistant/commands/improve.ts`     |
 | `/image`       | 🟡 Command stub + action dispatch; backend adapter pending | `src/assistant/commands/image.ts`       |
 | `/quest`       | ✅ Full impl (list/create/status/complete)                 | `src/assistant/commands/quest.ts`       |
-| `/video`       | 🟡 Registered (stub-level, action dispatch)                | `src/assistant/commands/video.ts`       |
-| `/sfx`         | 🟡 Registered (stub-level, action dispatch)                | `src/assistant/commands/sfx.ts`         |
-| `/sound`       | 🟡 Registered (alias for /sfx)                             | `src/assistant/commands/sfx.ts`         |
-| `/music`       | 🟡 Registered (stub-level, action dispatch)                | `src/assistant/commands/music.ts`       |
+| `/video`       | 🟡 Registered, availability-gated (action dispatch; hidden until a video provider is configured) | `src/assistant/commands/video.ts`       |
+| `/sfx`         | 🟡 Registered, availability-gated off (action dispatch; no audio provider wired) | `src/assistant/commands/sfx.ts`         |
+| `/sound`       | 🟡 Registered, availability-gated off (alias for /sfx)     | `src/assistant/commands/sfx.ts`         |
+| `/music`       | 🟡 Registered, availability-gated (action dispatch; hidden until an audio provider is configured) | `src/assistant/commands/music.ts`       |
 | `/caption`     | ✅ Full impl (image captioning)                            | `src/assistant/commands/caption.ts`     |
 | `/roll`        | ✅ Complete                                                | `src/assistant/commands/dice.ts`        |
 | `/summarize`   | ✅ Complete                                                | `src/assistant/commands/summarize.ts`   |

@@ -13,6 +13,7 @@
 **Effort:** High
 **Type:** Task
 **Tags:** assistant, character, item, inventory, access
+**Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `src/routes/story-items/handlers.ts`, `epic-character-npc-lore-access.md`
 
 ## Summary

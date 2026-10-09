@@ -135,6 +135,12 @@ no per-kind forks.
 - [ ] All entity workflows have schema/consistency/duplicate quality gates — `runQualityGates` runs schema/duplicate/consistency (`src/assistant/quality/entity-creation-gates.ts:208`) but the per-preset `qualityGates` list in `entity-types.yaml` is not read by the runner, and the item `balance` gate does not exist
 - [ ] `/create` command gated by workflow confirmation — `/create` still runs standalone; the workflow path feeds INTO `/create`, not the reverse
 
+## Tickets
+
+- `TASK-assistant-creative-studio-workflow-species.md` — species-generation workflow (Not Started; blocked on a bestiary table)
+- `TASK-wire-intent-output-to-workflow-runner-startworkflow.md` — LLM-side intent output → `startWorkflow` handoff (Not Started; regex routing already wired, owned by `epic-workflow-engine.md`)
+- `TASK-item-generation.md` — item creation backend + `balance` gate context (Not Started, owned by `epic-item-systems-unification.md`)
+
 ## Dependencies
 
 - **Parent hub:** Assistant Creative Studio — Workflow Templates (`epic-assistant-creative-studio-workflows.md`)

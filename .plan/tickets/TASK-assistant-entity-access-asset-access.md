@@ -13,6 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** assistant, assets, gallery, search
+**Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `epic-asset-platform-capabilities.md`
 
 ## Summary

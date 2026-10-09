@@ -6,6 +6,7 @@
 **Overview:** Three planning surfaces (todo / kanban / graph) over one planning-item model, giving the assistant a side-channel for multi-step flow tracking distinct from direct chat. Backend: SQLite tables + REST API. Frontend: htmx/Alpine views reusing existing chat/panel patterns.
 
 **Status:** Not Started
+**Status Note:** Not Started (verified 2026-10-09: no `plan_items`/`plan_links` tables in any migration, no `src/planning/` module, no planning REST routes or htmx views)
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic
@@ -94,6 +95,13 @@ src/views/planning/    # htmx partials: todo list, kanban board, graph (SVG)
 - `src/views/planning/` — htmx partials: todo, kanban, graph (to be created)
 - `src/assistant/workflow-runner.ts` — existing; will emit plan steps
 - `src/assistant/workflow-session-store.ts` — existing; holds active plan id per session
+
+## Tickets
+
+- `TASK-assistant-todo-planning-tables-service-assistant-wiring.md` — `plan_items`/`plan_links` tables, planning service, assistant tool wiring
+- `TASK-kanban-board-for-story-task-context-creative-drafts-planning.md` — kanban board view over the planning-item model
+
+Both Not Started. Dependency tickets (not owned by this epic): `TASK-rag-knowledge-graph.md` (entity storage reuse) and `FEAT-memory-visualizer-knowledge-graph-over-asset-links.md` (graph rendering reuse), both Not Started.
 
 ## References
 
