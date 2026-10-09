@@ -21,6 +21,9 @@ import type { VnMessage, } from "./types";
 
 const navigate: SceneNavigator = { next: nextScene, prev: prevScene, };
 
+/** Event `chat-send.ts` dispatches when the VN gate refuses a send. */
+const NAVIGATE_EVENT = "vn:navigate-to-scene";
+
 /**
  * Rebuild the per-chat sprite roster from the loaded scenes.
  * Scenes already carry their cast (msgToScene synthesizes single-speaker
@@ -75,6 +78,17 @@ export function initVnRenderer(
   state.locationChangeHandler = handleLocationChanged;
   globalThis.addEventListener("chat:location-changed", state.locationChangeHandler,);
 
+  // Recovery path for the chat-scoped send gate: chat-send dispatches this with
+  // the sceneIndex a 409 carried so the pending card (and its Skip button)
+  // becomes reachable. Registered here, next to the location listener, so both
+  // are torn down together in destroyVnRenderer.
+  if (state.navigateHandler) {
+    globalThis.removeEventListener(NAVIGATE_EVENT, state.navigateHandler,);
+  }
+
+  state.navigateHandler = handleNavigateToScene;
+  globalThis.addEventListener(NAVIGATE_EVENT, state.navigateHandler,);
+
   // Preload images for current and upcoming scenes
   void preloadCurrentAndUpcoming();
 
@@ -89,6 +103,11 @@ export function destroyVnRenderer(): void {
   if (state.locationChangeHandler) {
     globalThis.removeEventListener("chat:location-changed", state.locationChangeHandler,);
     state.locationChangeHandler = null;
+  }
+
+  if (state.navigateHandler) {
+    globalThis.removeEventListener(NAVIGATE_EVENT, state.navigateHandler,);
+    state.navigateHandler = null;
   }
 
   destroyChoiceCards();
@@ -147,6 +166,28 @@ export function jumpToScene(index: number,): void {
   state.currentIndex = index;
   void preloadCurrentAndUpcoming();
   renderCurrentScene(true, navigate,);
+}
+
+/**
+ * Handle `vn:navigate-to-scene` — jump the stage to `sceneIndex`.
+ *
+ * The recovery path for a chat-scoped send gate. A decision left pending at an
+ * earlier scene renders no card (cards are per-scene), so the player has no Skip
+ * control while the server refuses every send. `chat-send.ts` dispatches this
+ * with the `sceneIndex` the 409 carried, putting the Skip button exactly where
+ * the player is blocked.
+ *
+ * Guards on the same `state` preconditions as every other entry point: an
+ * unmounted renderer has no scenes, and `jumpToScene` already range-checks.
+ * @param e
+ * @returns {void}
+ */
+export function handleNavigateToScene(e: Event,): void {
+  const detail = (e as CustomEvent<{ sceneIndex?: unknown }>).detail;
+  const sceneIndex = detail?.sceneIndex;
+  if (typeof sceneIndex !== "number" || !Number.isInteger(sceneIndex,)) { return; }
+  if (!state.container || !state.settings) { return; }
+  jumpToScene(sceneIndex,);
 }
 
 /**

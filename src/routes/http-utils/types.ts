@@ -46,6 +46,12 @@ export interface JsonErrorOptions {
   code?: ErrorCode;
   /** Translation function — if provided, message is treated as i18n key */
   t?: TranslatorFn;
+  /**
+   * Machine-readable payload for clients that must act on the failure rather
+   * than just display it. Serialized as `data` alongside `error`/`code`.
+   * Omitted entirely when unset, so existing error bodies are unchanged.
+   */
+  data?: Record<string, unknown>;
 }
 
 /** */

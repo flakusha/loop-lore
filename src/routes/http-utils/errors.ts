@@ -47,7 +47,9 @@ export function jsonError(
   const message = opts.t ? opts.t(opts.message,) : opts.message;
   const resolvedStatus = opts.status ?? (typeof messageOrOptions === "string" ? status : HttpStatus.BadRequest);
   const resolvedCode = opts.code ?? STATUS_TO_CODE[resolvedStatus];
-  const body = { error: message, code: resolvedCode, meta: API_META, };
+  // `data` is spread rather than always present so an unset payload leaves the
+  // serialized body byte-identical to before.
+  const body = { error: message, code: resolvedCode, meta: API_META, ...(opts.data ? { data: opts.data, } : {}), };
   return Response.json(body, { status: resolvedStatus, },);
 }
 
@@ -118,9 +120,27 @@ export function badRequestResponse(message: string,): Response {
  * 409 Conflict — well-formed request that resolves to no single target
  * (ambiguous identifier, optimistic-lock mismatch).
  * @param message
+ * @param data Machine-readable payload for clients that must act on the
+ * conflict. Omitted from the body when unset.
+ * @returns {Response}
  */
-export function conflictResponse(message: string,): Response {
-  return jsonError({ message, status: HttpStatus.Conflict, code: ErrorCode.Conflict, },);
+export function conflictResponse(message: string, data?: Record<string, unknown>,): Response {
+  return jsonError({ message, status: HttpStatus.Conflict, code: ErrorCode.Conflict, ...(data ? { data, } : {}), },);
+}
+
+/**
+ * 500 Internal Server Error — a server-side invariant the caller cannot fix.
+ * @param message
+ * @param data
+ * @returns {Response}
+ */
+export function internalErrorResponse(message: string, data?: Record<string, unknown>,): Response {
+  return jsonError({
+    message,
+    status: HttpStatus.InternalServerError,
+    code: ErrorCode.ServerError,
+    ...(data ? { data, } : {}),
+  },);
 }
 
 /**
