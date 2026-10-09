@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** `epic-harness-integration`
 **Tags:** harness, tui
 **Summary:** Work-topic column, F4 cycle filter, and status-bar indicator on the EXISTING `src/tui/harness/` overlay — rows and a key handler, zero new widgets.
 **Context:** The overlay already exists and already has the seams this needs: `loadRuns` / `setFetch` (`src/tui/harness/api.ts`) and pure formatters (`src/tui/harness/display.ts`). A separate work-topic screen would violate the harness epic's no-second-TUI rule. `src/tui/app.ts` is where the status bar and key conventions live.
