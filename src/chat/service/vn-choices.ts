@@ -57,6 +57,15 @@ export interface SelectVnChoiceSuccess {
 /** */
 export type SelectVnChoiceResult = SelectVnChoiceSuccess | ServiceError;
 
+/** Successful dismissal of a pending VN choice. */
+export interface DismissVnChoiceSuccess {
+  ok: true;
+  choiceId: string;
+}
+
+/** */
+export type DismissVnChoiceResult = DismissVnChoiceSuccess | ServiceError;
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 /**
@@ -225,4 +234,40 @@ export async function selectVnChoice(
   }
 
   return { ok: true, choice: parsed, locationId, };
+}
+
+/**
+ * Dismiss a pending choice so it stops blocking free sends.
+ *
+ * The escape hatch out of the VN decision gate. It writes `status`
+ * (`dismissed`) rather than a `dismissed_at` timestamp on purpose: a timestamp
+ * would leave `status='available'`, so the gate's pending query would keep
+ * matching and the chat would stay permanently blocked.
+ * @param database
+ * @param params
+ * @returns {Promise<DismissVnChoiceResult>}
+ */
+export async function dismissVnChoice(
+  database: Kysely<DB>,
+  params: { chatId: string; choiceId: string },
+): Promise<DismissVnChoiceResult> {
+  const { chatId, choiceId, } = params;
+
+  // chat_id in the WHERE so a choice from another chat reads as not_found
+  // rather than leaking existence (IDOR guard).
+  const updated = await database
+    .updateTable("vn_choices",)
+    .set({ status: "dismissed", },)
+    .where("id", "=", choiceId,)
+    .where("chat_id", "=", chatId,)
+    .where("status", "=", "available",)
+    .executeTakeFirst();
+
+  // Zero rows covers both "no such choice in this chat" and "already
+  // resolved" — neither should be reported as a fresh dismissal.
+  if (Number(updated.numUpdatedRows ?? 0,) === 0) {
+    return { code: "not_found", message: "Choice not found or already resolved", };
+  }
+
+  return { ok: true, choiceId, };
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, test, } from "bun:test";
 import { renderQaReport, runQaCheck, type VnQaReport, } from "./qa-mode";
 
 interface QaScene {
@@ -41,6 +41,16 @@ function installFakeDocument(): void {
     createElement: (tag: string,) => makeElement(tag,),
   } as unknown as Document;
 }
+
+// Bun runs every test file in one process and one module registry, so this
+// fake leaks into files that run later. It matters now that
+// render-scene.test.ts pulls in the htmx module chain, which registers a
+// `document.addEventListener` listener at module scope and throws against
+// this stub — an unhandled error that silently drops the tests after it.
+const REAL_DOCUMENT = globalThis.document;
+afterEach(() => {
+  globalThis.document = REAL_DOCUMENT;
+},);
 
 function render(container: FakeElement, report: VnQaReport,): FakeElement[] {
   installFakeDocument();

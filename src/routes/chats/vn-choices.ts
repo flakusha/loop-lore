@@ -10,7 +10,7 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { checkChatAccess, } from "../../chat/service";
-import { listVnChoices, selectVnChoice, } from "../../chat/service/vn-choices";
+import { dismissVnChoice, listVnChoices, selectVnChoice, } from "../../chat/service/vn-choices";
 import type { DB, } from "../../db/schema";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { serviceErrorToResponse, } from "../messages/helpers";
@@ -39,7 +39,44 @@ export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
         handleSelectVnChoice(database,),
         { params: tChoiceIdParams, },
       )
+      .post(
+        `${prefix}/chats/:id/vn-choices/:choiceId/dismiss`,
+        handleDismissVnChoice(database,),
+        { params: tChoiceIdParams, },
+      )
   );
+}
+
+/**
+ * Skip a pending choice without picking one. Reopens free sending.
+ * @param database
+ */
+function handleDismissVnChoice(database: Kysely<DB>,) {
+  return async (ctx: any,) => {
+    const userId = requireUserId(ctx,);
+    if (typeof userId !== "string") { return userId; }
+
+    // IDOR guard, same shape as select: a choice from another chat must read
+    // as not_found rather than being dismissable cross-chat.
+    const chatId = ctx.params.id;
+    const userRole = ctx.userRole as string | null;
+    const access = await checkChatAccess(database, chatId, userId, userRole,);
+    if (!access.ok) {
+      return serviceErrorToResponse(access.error,);
+    }
+
+    const choiceId = ctx.params.choiceId;
+    if (!choiceId) {
+      return jsonError("choiceId is required", HttpStatus.BadRequest,);
+    }
+
+    const result = await dismissVnChoice(database, { chatId, choiceId, },);
+    if ("code" in result) {
+      return jsonError(result.message, HttpStatus.NotFound, result.code as never,);
+    }
+
+    return jsonResponse({ dismissed: result.choiceId, },);
+  };
 }
 
 /**

@@ -9,7 +9,14 @@
  */
 import { afterAll, afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
-import { destroyChoiceCards, getAccumulatedImpacts, initChoiceCards, loadChoices, } from "./choice-cards";
+import {
+  destroyChoiceCards,
+  getAccumulatedImpacts,
+  initChoiceCards,
+  loadChoices,
+  skipChoice,
+} from "./choice-cards";
+import { isVnDecisionPending, } from "./pending-decision";
 
 // ── Mock apiFetch ───────────────────────────────────────────────────────────
 
@@ -232,5 +239,44 @@ describeOrSkip("loadChoices", () => {
 
     await loadChoices();
     expect(getAccumulatedImpacts(),).toEqual({ relationships: {}, moods: {}, },);
+  });
+
+  test("loadChoices raises the pending flag", async () => {
+    boot();
+    apiHandler = () => jsonRes({ choices: [rawChoice({},),], },);
+    await loadChoices();
+    expect(isVnDecisionPending(),).toBe(true,);
+  });
+
+  test("destroyChoiceCards clears the pending flag", async () => {
+    boot();
+    apiHandler = () => jsonRes({ choices: [rawChoice({},),], },);
+    await loadChoices();
+    destroyChoiceCards();
+
+    // Otherwise the composer stays blocked on a decision whose cards are gone.
+    expect(isVnDecisionPending(),).toBe(false,);
+  });
+
+  test("skipChoice posts the dismiss endpoint and clears the flag", async () => {
+    boot();
+    apiHandler = () => jsonRes({ choices: [rawChoice({},),], },);
+    await loadChoices();
+    apiHandler = () => jsonRes({ dismissed: "c1", },);
+
+    expect(await skipChoice("c1",),).toBe(true,);
+    const call = apiCalls.find((c,) => c.url.includes("/dismiss",));
+    expect(call?.opts.method,).toBe("POST",);
+    expect(isVnDecisionPending(),).toBe(false,);
+  });
+
+  test("a failed skip keeps the flag set so the chat is never silently wedged open", async () => {
+    boot();
+    apiHandler = () => jsonRes({ choices: [rawChoice({},),], },);
+    await loadChoices();
+    apiHandler = () => jsonRes({ error: "boom", }, 500,);
+
+    expect(await skipChoice("c1",),).toBe(false,);
+    expect(isVnDecisionPending(),).toBe(true,);
   });
 },);
