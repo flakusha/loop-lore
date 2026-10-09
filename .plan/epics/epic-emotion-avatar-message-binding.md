@@ -39,9 +39,10 @@ selection path is a manual `POST /api/actors/:actorId/avatars/select`.
 
 - **`messages.emotion`** (`text`, nullable) — the dominant emotion of an
   assistant message, recorded at message-create time.
-  - Migration: added in place to `src/db/migrations/parts/006_messages_keys.ts`
-    (messages table) and the `Messages` interface (`src/db/schema-core.ts`);
-    `schema-manifest.ts` regenerated. ✅ done.
+  - Migration: the column lives in `src/db/migrations/001_init.ts` (migration
+    set since squashed — the original in-place edit to
+    `006_messages_keys.ts` was folded in) and the `Messages` interface
+    (`src/db/schema-core.ts`); `schema-manifest.ts` regenerated. ✅ done.
 - Resolution at render: for each assistant message with an `emotion`, call
   `AvatarService.selectAvatar(actorId, { emotion }, worldId)` (or a frontend
   mapping over the actor's emotion-tagged avatars) to pick the variant.
@@ -93,7 +94,8 @@ selection path is a manual `POST /api/actors/:actorId/avatars/select`.
 
 ## Files
 
-- `src/db/migrations/parts/006_messages_keys.ts` (migration) — done
+- `src/db/migrations/001_init.ts` (messages.emotion column; migration set
+  squashed) — done
 - `src/db/schema-core.ts` / `src/db/schema-manifest.ts` (schema) — done
 - `src/generation/hooks/emotion-hook.ts` (detect) — done
 - `src/generation/auto-gen/content-hooks.ts` / `store-message.ts` (persist) — done

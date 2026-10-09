@@ -82,15 +82,21 @@ landed (verified 2026-10-09):
 - [x] Routes: regenerate endpoint + job status GETs; validation schema in
       `src/validation/schemas/` (endpoint: `POST /actors/:actorId/emotion-avatars/regenerate`;
       job status GETs/SSE/cancel reuse the existing batch job routes;
-      schema: `src/validation/schemas/emotion-avatars.ts`)
-- [ ] Slot-replace semantics: re-point binding, cleanup old asset, transactional
+      schema: `src/validation/schemas/emotion-avatars.ts`);
+      outfit-scoped batch/single generation with ownership-checked wardrobe item params
+- [ ] Slot-replace semantics: re-point binding, cleanup old asset,
+      transactional, (emotion, outfit)-scoped isolation
 - [ ] Persistent job store (migration + regen schema artifacts) with
       in-memory cache; restart reconciliation for orphaned jobs
-- [ ] Seed capture/override per generation
+- [ ] Seed capture/override per generation — providers already accept a seed
+      (`ImageGenOptions.seed?` threaded to sdcpp/comfyui); the emotion-avatar
+      path never sets or records one
+      → `TASK-generation-seed-capture-and-override-per-avatar`
 - [ ] UI: per-avatar "re-roll" button on emotion grid + "regenerate all" +
-      subset picker + job progress
+      subset picker + job progress (SSE)
 - [ ] Tests: subset regen, replace-atomicity (old variant never unbound-mid-
-      flight), restart-durable job status, route authz (actor ownership)
+      flight), restart-durable job status, route authz (actor + wardrobe-item
+      ownership)
 
 ## Non-Goals
 
