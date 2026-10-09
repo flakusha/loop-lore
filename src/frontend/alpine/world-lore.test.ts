@@ -11,13 +11,17 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({ data: [], },);
 
+const mockedApiFetch = (url: string, opts?: RequestInit,): Promise<Response> => {
+  calls.push({ url, opts: opts ?? {}, },);
+  return handler(url, opts,);
+};
+
 if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: ((url: string, opts?: RequestInit,) => {
-      calls.push({ url, opts: opts ?? {}, },);
-      return handler(url, opts,);
-    }) satisfies ApiFetchMock,
-  }),);
+  mock.module("./htmx", () => ({ apiFetch: mockedApiFetch, }),);
+  // world-fetch.ts resolves the bare global at call time; point it at the
+  // same mock so loadLore is intercepted too.
+  const g = globalThis as unknown as { apiFetch?: ApiFetchMock };
+  g.apiFetch = mockedApiFetch;
 }
 
 const entry = (over: Partial<WorldLoreEntry>,): WorldLoreEntry => ({
@@ -37,6 +41,10 @@ const loreCtx = (): WorldPageState => ({ worldId: "w1", ...worldLore, }) as Worl
 afterEach(() => {
   handler = async () => Response.json({ data: [], },);
   calls = [];
+  if (ISOLATED) {
+    const g = globalThis as unknown as { apiFetch?: ApiFetchMock };
+    delete g.apiFetch;
+  }
 },);
 
 describeOrSkip("parseLoreKeys (pure)", () => {

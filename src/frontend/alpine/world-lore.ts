@@ -11,13 +11,12 @@
  * display via {@link parseLoreKeys}.
  */
 import { Type, } from "@sinclair/typebox";
-import { jsonParseOr, jsonStringifyOr, } from "../../utils";
+import { jsonStringifyOr, } from "../../utils";
 import { apiFetch, } from "./htmx";
-import { log as rootLog, } from "./logger";
+import { parseJsonList, } from "./location-details";
 import { parseOr, } from "./validation";
+import { fetchWorldJson, } from "./world-fetch";
 import type { WorldLoreEntry, WorldPageState, } from "./world-types";
-
-const log = rootLog.child({ module: "world-lore", },);
 
 /** Strict decoder for one lore list row. */
 const LoreEntrySchema = Type.Object({
@@ -42,10 +41,7 @@ const EMPTY_FORM = { name: "", keys: "", content: "", priority: "100", constant:
  * @returns {string[]}
  */
 export function parseLoreKeys(raw: string | null | undefined,): string[] {
-  if (!raw) { return []; }
-  const parsed = jsonParseOr<unknown>(raw, null,);
-  if (!Array.isArray(parsed,)) { return []; }
-  return parsed.filter((k,): k is string => typeof k === "string");
+  return parseJsonList(raw,);
 }
 
 /**
@@ -81,18 +77,13 @@ export const worldLore: Partial<WorldPageState> & ThisType<WorldPageState> = {
     this.loreLoading = true;
     this.loreError = false;
     try {
-      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/lore-entries?pageSize=500`, {
-        headers: { Accept: "application/json", },
-      },);
-
-      if (res.ok) {
-        const body = parseOr(LoreListSchema, await res.json(), { data: [], },);
-        this.loreEntries = body.data;
+      const body = await fetchWorldJson<unknown>(this.worldId, "/lore-entries?pageSize=500",);
+      if (body !== null) {
+        this.loreEntries = parseOr(LoreListSchema, body, { data: [], },).data;
       } else {
         this.loreError = true;
       }
-    } catch (error) {
-      log.warn("lore list load failed", { error: String(error,), },);
+    } catch {
       this.loreError = true;
     } finally {
       this.loreLoading = false;
