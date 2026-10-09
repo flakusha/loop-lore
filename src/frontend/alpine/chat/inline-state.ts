@@ -75,6 +75,8 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
     height?: number;
     alt_text?: string;
   }[],
+  selectedAssetIds: [] as string[],
+  _gallerySelectionAnchorId: null as string | null,
   userDisplayName: t("common.user",),
   userRole: "solo",
   currentCharacter: null as {

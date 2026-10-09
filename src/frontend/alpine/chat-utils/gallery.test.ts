@@ -6,6 +6,7 @@
  */
 import { afterEach, describe, expect, test, } from "bun:test";
 import { chatUtilsGallery, } from "./gallery";
+import { chatUtilsGalleryBatch, } from "./gallery-batch";
 
 const realPreviewAsset = (globalThis as { __previewAsset?: unknown }).__previewAsset;
 
@@ -281,10 +282,16 @@ describe("loadGalleryAssets / loadMoreGalleryAssets / deletePreviewAsset", () =>
       galleryAssets: [] as { id: string }[],
       galleryPage: 1,
       galleryTotal: 0,
+      selectedAssetIds: [] as string[],
+      _gallerySelectionAnchorId: null as string | null,
       previewMediaAsset: null as any,
     };
 
     ctx.loadGalleryAssets = (chatUtilsGallery as any).loadGalleryAssets.bind(ctx,);
+    // Unbound on purpose: loadGalleryAssets invokes it as
+    // `this.clearGalleryAssetSelection()`, so spread copies of this ctx
+    // still clear their own selection fields.
+    ctx.clearGalleryAssetSelection = (chatUtilsGallery as any).clearGalleryAssetSelection;
     return ctx;
   }
 
@@ -362,6 +369,17 @@ describe("loadGalleryAssets / loadMoreGalleryAssets / deletePreviewAsset", () =>
     (globalThis as any).deleteAssetPreview = async () => false;
     await (chatUtilsGallery as any).deletePreviewAsset.call(ctx,);
     expect(ctx.previewMediaAsset,).toEqual({ id: "a", },);
+  });
+
+  test("a fresh gallery load clears any stale selection", async () => {
+    const ctx: any = makeGalleryCtx();
+    ctx.selectedAssetIds = ["stale-id",];
+    ctx._gallerySelectionAnchorId = "stale-id";
+    (globalThis as any).apiFetch = async () => Response.json({ data: [{ id: "a", },], pagination: { total: 1, }, },);
+
+    await (chatUtilsGallery as any).loadGalleryAssets.call(ctx,);
+    expect(ctx.selectedAssetIds,).toEqual([],);
+    expect(ctx._gallerySelectionAnchorId,).toBeNull();
   });
 });
 
@@ -475,13 +493,19 @@ describe("gallery network edges", () => {
 
   /** */
   function makeCtx(overrides: Record<string, unknown> = {},) {
-    return {
+    const ctx: Record<string, unknown> = {
       activeChat: "chat-1",
       galleryAssets: [] as { id: string }[],
       galleryPage: 1,
       galleryTotal: 0,
+      selectedAssetIds: [] as string[],
+      _gallerySelectionAnchorId: null as string | null,
       ...overrides,
     };
+
+    // Unbound so `this.clearGalleryAssetSelection()` clears the caller ctx.
+    ctx.clearGalleryAssetSelection = (chatUtilsGallery as any).clearGalleryAssetSelection;
+    return ctx;
   }
 
   test("loadGalleryAssets tolerates a missing data envelope", async () => {
@@ -704,5 +728,230 @@ describe("loadCharacterInfo", () => {
 
     await (chatUtilsGallery as any).loadCharacterInfo.call(ctx,);
     expect(ctx.currentCharacter,).toBeNull();
+  });
+});
+
+// ── gallery batch selection model — toggle, shift range, select-all ──
+
+describe("gallery batch selection model", () => {
+  /** Bare selection ctx over the given visible assets (ChatState subset). */
+  function makeSelectionCtx(assets: { id: string }[],) {
+    return {
+      galleryAssets: assets,
+      selectedAssetIds: [] as string[],
+      _gallerySelectionAnchorId: null as string | null,
+    };
+  }
+
+  test("toggles an id on and off, anchoring later shift ranges", () => {
+    const ctx: any = makeSelectionCtx([{ id: "a", }, { id: "b", }, { id: "c", },],);
+    (chatUtilsGallery as any).toggleGalleryAssetSelection.call(ctx, "b",);
+    expect(ctx.selectedAssetIds,).toEqual(["b",],);
+    expect(ctx._gallerySelectionAnchorId,).toBe("b",);
+    (chatUtilsGallery as any).toggleGalleryAssetSelection.call(ctx, "b",);
+    expect(ctx.selectedAssetIds,).toEqual([],);
+    expect(ctx._gallerySelectionAnchorId,).toBe("b",);
+  });
+
+  test("ignores an empty asset id", () => {
+    const ctx: any = makeSelectionCtx([{ id: "a", },],);
+    (chatUtilsGallery as any).toggleGalleryAssetSelection.call(ctx, "",);
+    expect(ctx.selectedAssetIds,).toEqual([],);
+    expect(ctx._gallerySelectionAnchorId,).toBeNull();
+  });
+
+  test("shift-click selects the forward range without moving the anchor", () => {
+    const ctx: any = makeSelectionCtx([{ id: "a", }, { id: "b", }, { id: "c", }, { id: "d", },],);
+    (chatUtilsGallery as any).toggleGalleryAssetSelection.call(ctx, "b",);
+    (chatUtilsGallery as any).toggleGalleryAssetSelection.call(ctx, "d", true,);
+    expect(ctx.selectedAssetIds,).toEqual(["b", "c", "d",],);
+    expect(ctx._gallerySelectionAnchorId,).toBe("b",);
+  });
+
+  test("shift-click selects the backward range from a later anchor", () => {
+    const ctx: any = makeSelectionCtx([{ id: "a", }, { id: "b", }, { id: "c", }, { id: "d", },],);
+    (chatUtilsGallery as any).toggleGalleryAssetSelection.call(ctx, "d",);
+    (chatUtilsGallery as any).toggleGalleryAssetSelection.call(ctx, "a", true,);
+    expect(ctx.selectedAssetIds,).toEqual(["d", "a", "b", "c",],);
+    expect(ctx._gallerySelectionAnchorId,).toBe("d",);
+  });
+
+  test("shift-click with a stale anchor falls back to a plain toggle", () => {
+    const ctx: any = makeSelectionCtx([{ id: "a", }, { id: "b", },],);
+    ctx._gallerySelectionAnchorId = "gone";
+    (chatUtilsGallery as any).toggleGalleryAssetSelection.call(ctx, "a", true,);
+    expect(ctx.selectedAssetIds,).toEqual(["a",],);
+    expect(ctx._gallerySelectionAnchorId,).toBe("a",);
+  });
+
+  test("select-all keeps ids already selected outside the visible list", () => {
+    const ctx: any = makeSelectionCtx([{ id: "a", }, { id: "b", },],);
+    ctx.selectedAssetIds = ["earlier-page-id",];
+    (chatUtilsGallery as any).selectAllVisibleGalleryAssets.call(ctx,);
+    expect(ctx.selectedAssetIds,).toEqual(["earlier-page-id", "a", "b",],);
+  });
+
+  test("clear drops the selection and the shift-click anchor", () => {
+    const ctx: any = makeSelectionCtx([{ id: "a", },],);
+    ctx.selectedAssetIds = ["a",];
+    ctx._gallerySelectionAnchorId = "a";
+    (chatUtilsGallery as any).clearGalleryAssetSelection.call(ctx,);
+    expect(ctx.selectedAssetIds,).toEqual([],);
+    expect(ctx._gallerySelectionAnchorId,).toBeNull();
+  });
+});
+
+// ── gallery batch actions — download + delete selection flows ──────────
+
+describe("gallery batch actions", () => {
+  const realApiFetch = (globalThis as { apiFetch?: unknown }).apiFetch;
+  afterEach(() => {
+    (globalThis as any).apiFetch = realApiFetch;
+  },);
+
+  /** */
+  function makeBatchCtx() {
+    const toasts: { type?: string; message?: string }[] = [];
+    const ctx: any = {
+      selectedAssetIds: ["a1", "a2",] as string[],
+      _gallerySelectionAnchorId: "a2" as string | null,
+      reloads: 0,
+      $dispatch: (event: string, detail?: { type?: string; message?: string },) => {
+        if (event === "show-toast" && detail) { toasts.push(detail,); }
+      },
+      clearGalleryAssetSelection: (chatUtilsGallery as any).clearGalleryAssetSelection,
+      loadGalleryAssets: async function(this: any,) {
+        this.reloads += 1;
+      },
+    };
+
+    return { ctx, toasts, };
+  }
+
+  test("both actions no-op on an empty selection", async () => {
+    const { ctx, } = makeBatchCtx();
+    ctx.selectedAssetIds = [];
+    let calls = 0;
+    (globalThis as any).apiFetch = async () => {
+      calls += 1;
+      return Response.json({},);
+    };
+
+    await (chatUtilsGallery as any).downloadSelectedAssets.call(ctx,);
+    await (chatUtilsGallery as any).deleteSelectedAssets.call(ctx,);
+    expect(calls,).toBe(0,);
+    expect(ctx.reloads,).toBe(0,);
+  });
+
+  test("download posts the selection as a zip and toasts success", async () => {
+    const { ctx, toasts, } = makeBatchCtx();
+    const posts: { url: string; body?: string }[] = [];
+    (globalThis as any).apiFetch = async (url: string, opts?: RequestInit,) => {
+      posts.push({ url, body: opts?.body as string | undefined, },);
+      return new Response(new Uint8Array([1, 2, 3,],), { status: 200, },);
+    };
+
+    const clicks: string[] = [];
+    const hadDocument = "document" in globalThis;
+    const realDocument = (globalThis as any).document;
+    const realCreateObjectURL = (URL as any).createObjectURL as unknown;
+    const realRevokeObjectURL = (URL as any).revokeObjectURL as unknown;
+    (globalThis as any).document = {
+      createElement: () => ({
+        href: "",
+        download: "",
+        click: () => {
+          clicks.push("clicked",);
+        },
+      }),
+    };
+
+    (URL as any).createObjectURL = () => "blob:gallery-batch";
+    (URL as any).revokeObjectURL = () => {};
+
+    try {
+      await (chatUtilsGallery as any).downloadSelectedAssets.call(ctx,);
+    } finally {
+      if (hadDocument) {
+        (globalThis as any).document = realDocument;
+      } else {
+        delete (globalThis as any).document;
+      }
+
+      if (realCreateObjectURL === undefined) {
+        delete (URL as any).createObjectURL;
+      } else {
+        (URL as any).createObjectURL = realCreateObjectURL;
+      }
+
+      if (realRevokeObjectURL === undefined) {
+        delete (URL as any).revokeObjectURL;
+      } else {
+        (URL as any).revokeObjectURL = realRevokeObjectURL;
+      }
+    }
+
+    expect(posts[0]?.url,).toBe("/api/v1/assets/batch-download",);
+    expect(posts[0]?.body ?? "",).toContain("a1",);
+    expect(clicks,).toEqual(["clicked",],);
+    expect(toasts[0]?.type,).toBe("success",);
+  });
+
+  test("download surfaces the server error message", async () => {
+    const { ctx, toasts, } = makeBatchCtx();
+    (globalThis as any).apiFetch = async () => Response.json({ error: "boom", }, { status: 404, },);
+    await (chatUtilsGallery as any).downloadSelectedAssets.call(ctx,);
+    expect(toasts.length,).toBe(1,);
+    expect(toasts[0]?.type,).toBe("error",);
+    expect(toasts[0]?.message,).toBe("boom",);
+  });
+
+  test("delete posts the selection, clears it, and reloads the sidebar", async () => {
+    const { ctx, toasts, } = makeBatchCtx();
+    const posts: { url: string; body?: string }[] = [];
+    (globalThis as any).apiFetch = async (url: string, opts?: RequestInit,) => {
+      posts.push({ url, body: opts?.body as string | undefined, },);
+      return Response.json({ ok: true, deleted: ["a1", "a2",], }, { status: 200, },);
+    };
+
+    await (chatUtilsGallery as any).deleteSelectedAssets.call(ctx,);
+    expect(posts[0]?.url,).toBe("/api/v1/assets/batch-delete",);
+    expect(posts[0]?.body ?? "",).toContain("a2",);
+    expect(ctx.selectedAssetIds,).toEqual([],);
+    expect(ctx._gallerySelectionAnchorId,).toBeNull();
+    expect(ctx.reloads,).toBe(1,);
+    expect(toasts[0]?.type,).toBe("success",);
+  });
+
+  test("delete keeps the selection when the server rejects", async () => {
+    const { ctx, toasts, } = makeBatchCtx();
+    (globalThis as any).apiFetch = async () => Response.json({ error: "nope", }, { status: 500, },);
+    await (chatUtilsGallery as any).deleteSelectedAssets.call(ctx,);
+    expect(ctx.selectedAssetIds,).toEqual(["a1", "a2",],);
+    expect(ctx.reloads,).toBe(0,);
+    expect(toasts[0]?.type,).toBe("error",);
+    expect(toasts[0]?.message,).toBe("nope",);
+  });
+
+  test("both actions toast a network error when the fetch throws", async () => {
+    const { ctx, toasts, } = makeBatchCtx();
+    (globalThis as any).apiFetch = async () => {
+      throw new Error("network down",);
+    };
+
+    await (chatUtilsGallery as any).downloadSelectedAssets.call(ctx,);
+    await (chatUtilsGallery as any).deleteSelectedAssets.call(ctx,);
+    expect(toasts.length,).toBe(2,);
+    expect(toasts.every((entry,) => entry.type === "error"),).toBe(true,);
+    expect(ctx.reloads,).toBe(0,);
+    expect(ctx.selectedAssetIds,).toEqual(["a1", "a2",],);
+  });
+});
+
+describe("gallery batch module wiring", () => {
+  test("batch methods are merged into chatUtilsGallery by reference", () => {
+    for (const [key, value,] of Object.entries(chatUtilsGalleryBatch,)) {
+      expect((chatUtilsGallery as Record<string, unknown>)[key],).toBe(value,);
+    }
   });
 });

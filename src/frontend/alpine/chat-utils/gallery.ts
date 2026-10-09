@@ -4,10 +4,13 @@
 import { t, } from "../i18n";
 import { jsonBody, } from "../json";
 import type { ChatState, } from "../types";
+import { chatUtilsGalleryBatch, } from "./gallery-batch";
 
 export type ChatUtilsGallery = Partial<ChatState> & ThisType<ChatState>;
 
 export const chatUtilsGallery: ChatUtilsGallery = {
+  ...chatUtilsGalleryBatch,
+
   getMediaStyle(asset: any, totalCount: number,): Record<string, string> {
     const style: Record<string, string> = {};
     if (asset.type === "image" && asset.width && asset.height) {
@@ -110,6 +113,10 @@ export const chatUtilsGallery: ChatUtilsGallery = {
       this.galleryAssets = [];
       this.galleryTotal = 0;
     }
+
+    // The selection belongs to the freshly loaded view — ids from the
+    // previous chat/page must not feed the next batch operation.
+    this.clearGalleryAssetSelection();
   },
 
   /** Append the next gallery page; a no-op when everything is loaded. */

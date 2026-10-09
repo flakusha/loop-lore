@@ -17,6 +17,7 @@ import { activityStreamRoutes, } from "../activity-stream";
 import { analyticsRoutes, } from "../analytics";
 import { assetSearchRoutes, } from "../asset-search";
 import { assetTagRoutes, } from "../asset-tags";
+import { assetsRoutes, } from "../assets";
 import { blogRoutes, } from "../blog";
 import { comfyuiBuilderRoutes, } from "../comfyui-builder";
 import { comparisonsExportRoutes, } from "../comparisons-export";
@@ -43,6 +44,7 @@ export function contentSurface(opts: RegisterPluginsOpts,) {
     .use(generationRoutes({ database, config, }, prefix,),)
     .use(loraRoutes({ config, }, prefix,),)
     .use(assetRoutes({ database, config, }, prefix,),)
+    .use(assetsRoutes(handleOpts, prefix,),)
     .use(mattingRoutes({ database, config, }, prefix,),)
     .use(assetSearchRoutes(handleOpts, prefix,),)
     .use(assetTagRoutes({ database, }, prefix,),)
