@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** `epic-harness-integration`
 **Tags:** harness, data-model, context
 **Summary:** Named work scope (`WorkTopic` / `harness_work_topics` / `workTopicId`) that harness runs attach to, resolved by a deterministic 5-rung auto-scoping ladder.
 **Context:** Bare `topic` is taken three ways: gossip pub/sub channel (`epic-anonymity-decentralization.md:205-216`), chat side-threads (`TASK-chat-feature-topics-side-threads`, title "Chat Topics — Side-Conversations Within a Chat"), NPC conversation topics (`epic-social-interaction.md:95,106`). The harness concept is therefore `WorkTopic`. Scoping is a nullable FK on the harness-side record only — `MemoryScope` stays closed at `character | assistant | world` (`src/memory/types.ts:15`). Reuse-first: the intent taxonomy already exists as `INTENT_PATTERNS` (`src/regex/intent.ts:19`), which `matchWorkflowIntent()` already iterates (`src/assistant/workflow-routing.ts:102`); the epic index already exists at `.plan/epics-index.md`.

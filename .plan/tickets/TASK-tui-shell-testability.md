@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-terminal-ui.md`
+**Epic:** `epic-terminal-ui`
 **Tags:** tui, testing
 **Summary:** Remove module-scope `new TUIApp()` from `src/tui/app.ts:157` and put screen construction behind an injectable factory so the TUI modules are constructible under test.
 **Context:** `src/tui/app.ts:157` runs `new TUIApp()` at module scope and the constructor calls `blessed.screen()` at `src/tui/app.ts:41`, so importing the module blocks on terminal events in any non-TTY context. `src/tui/asset-view.ts:44` (`blessed.box()`) and `src/tui/harness/index.ts:53,67` have the same constructor problem. The pattern is already proven in-tree: the `createHarnessView` factory in `src/tui/harness/index.ts`. Consequence today: `TASK-tui-dedupe-api-base.md` and `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` are blocked ONLY because they live in untestable files, and `src/tui/chat/index.ts` carries a per-file coverage waiver in `scripts/check/coverage.mjs`.

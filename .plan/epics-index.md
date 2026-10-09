@@ -320,7 +320,7 @@
 | In Progress | User Story & Use Case Improvements (Permanently Ongoing) | Medium | Continuous | 0 | [epic-user-stories.md](/.plan/epics/epic-user-stories.md) |
 | Not Started | Vector Graphics & Animated Image Generation | Medium | Medium (phased; each phase ships standalone value) | 17 | [epic-vector-graphics-generation.md](/.plan/epics/epic-vector-graphics-generation.md) |
 | In Progress | Visual Novel Mode — Dynamic Generation & Q&A Mode | Medium | Very High | 0 | [epic-visual-novel-mode.md](/.plan/epics/epic-visual-novel-mode.md) |
-| Not Started | Wardrobe / Loadout Avatar Variants | Medium | Large | 8 | [epic-wardrobe-avatar-variants.md](/.plan/epics/epic-wardrobe-avatar-variants.md) |
+| Done | Wardrobe / Loadout Avatar Variants | Medium | Large | 8 | [epic-wardrobe-avatar-variants.md](/.plan/epics/epic-wardrobe-avatar-variants.md) |
 | Not Started | Weather & Environmental Effects | Medium | High | 0 | [epic-weather-environment.md](/.plan/epics/epic-weather-environment.md) |
 | Not Started | World & Location Management UI | P0 — Critical | High | 14 | [epic-world-management-ui.md](/.plan/epics/epic-world-management-ui.md) |
 | Not Started | World & Locations | Medium | Very High total (split across 4 sub-epics: travel-time High, npcs High, encounters High, diplomacy-karma High) | 0 | [epic-world-locations.md](/.plan/epics/epic-world-locations.md) |
@@ -3263,7 +3263,7 @@ Loop-lore has 281 epics and ~2100 tickets under `.plan/`. Each is hand-shaped pr
 
 ### Wardrobe / Loadout Avatar Variants
 
-- **Status:** Not Started
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Large
 - **Type:** Feature Epic
@@ -3343,3 +3343,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+
