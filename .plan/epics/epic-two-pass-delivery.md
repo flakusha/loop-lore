@@ -14,6 +14,26 @@
 **Related:** epic-narration-pipeline.md, epic-generation-flow-control.md (2× call budget), epic-assistant-gm-flows.md (quality gating), epic-narration-actor-separation.md (who writes what in each pass), epic-chat-context-optimization.md
 **Matrix:** `matrix-story-coherence.md` (SC4–SC6, SC9)
 
+## Goals
+
+- Get mood set before actions, so actors foreshadow each other instead of reacting blind.
+- Stop draft-echo contamination: an actor's final message must not carry another actor's raw draft.
+- Keep delivery alive when the draft stage fails — a 2× cost pass must never hard-fail a turn.
+
+## Scope
+
+- A typed, persisted draft artifact (`GenerationDraft`) and the pass-1 stage that produces it.
+- Pass-2 finalization: narration rewrite with hint dosage, then per-actor isolated refinement inside the cascade.
+- The isolation contract, the pass-1 failure fallback to single-pass, and the "composing…" UI status while pass 2 runs.
+- A draft-utilization scorer so a paid-for draft cannot be silently ignored.
+
+## Out of Scope
+
+- Multi-sample best-of-N inference (a separate cost/benefit question).
+- Surfacing an editable draft to users; user-facing iteration stays on the existing regenerate/variant flows.
+- Raw chain-of-thought display — "possible reactions" are structured intents.
+- The frontend draft/enhance primitives that already exist (§Current State); they are a separate surface, not the two-pass pipeline.
+
 ## Summary
 
 Deliver each beat in **two LLM passes**:
@@ -31,7 +51,7 @@ Deliver each beat in **two LLM passes**:
 Goal: coherence the single-pass cascade can't reach — actors foreshadow each other, mood
 is set before actions, and per-actor isolation prevents draft-echo contamination.
 
-## Current State (reviewed 2026-09-01)
+## Current State
 
 - Single-pass only: auto-gen cascade generates each actor once, sequentially; GM
   (`src/story/game-master/`) reacts to user turns in one shot.
@@ -40,6 +60,12 @@ is set before actions, and per-actor isolation prevents draft-echo contamination
   `smart-regen.ts` re-roll after scoring failure. No proactive draft→refine pass, no
   persisted draft artifact.
 - `src/aux-pipeline/` provides the sidecar-LLM substrate for a draft stage.
+- Composer-side draft primitives have landed independently of this epic and are **not**
+  the two-pass pipeline: `src/frontend/alpine/draft-store.ts` (MRU/LRU persistence),
+  `src/frontend/alpine/text-enhance.ts` (standalone LLM rewrite), `chat-drafts.ts`
+  (localStorage drafts) and `composer-pre-send/` (+ its `composer-pre-send.ts` facade —
+  `constants`, `draft-codec`, `preview`, `send-gate`, `validate`). None of them orchestrate
+  draft → enhance → confirm → send; no such pipeline exists in `src/`.
 - Cost reality: 2 passes ≈ ≥2× inference per beat → hard dependency on
   `epic-generation-flow-control.md` holds/budgets before default-on.
 
@@ -71,15 +97,24 @@ is set before actions, and per-actor isolation prevents draft-echo contamination
 - [ ] **Draft-utilization scorer** — verify refinement consumed the draft.
 - [ ] **UI status semantics** — composing indicator, pass-2-only streaming.
 
-## Non-Goals
+## Linked Tasks
 
-- Multi-sample best-of-N inference (separate cost/benefit question)
-- Editable draft surfaced to users (draft stays internal; user-facing iteration = existing regenerate/variant flows)
-- Chain-of-thought *display* — "possible reactions" are structured intents, not raw CoT exposure
+Bound to this epic via the `**Epic:** epic-two-pass-delivery` header on each ticket.
+
+- `TASK-matrix-story-coherence-gate-pass2-qa-decide-whether-gate-ver.md` — decide whether gate verdict engines run in pass-2 QA (SC4, still open)
+- `TASK-matrix-story-coherence-perspective-aware-draft-set-perspecti.md` — perspective-aware mood/intent dosage for drafts (SC9, still open)
+
+### Cross-epic references
+
+Owned by another epic — listed here for traceability, **not** bound here:
+
+- `TASK-sc10-player-state-machine-adapters.md` — `epic-player-state-machine.md`; SC10.
+- `TASK-sc2-narrator-mode-kind-stamp.md` — `epic-narration-actor-separation.md`; SC2, the message-kind axis pass 2 depends on.
 
 ## Acceptance Criteria
 
 - [ ] With two-pass on, every delivered beat has both passes journaled; draft never renders in chat.
+- [ ] No draft artifact is reachable from the chat render path.
 - [ ] Actor A's final message contains no verbatim content from actor B's draft (isolation test).
 - [ ] Hint dosage `explicit` measurably raises reaction-anticipation coherence vs `none` (scorer comparison).
 - [ ] Pass-1 failure degrades to single-pass with no user-visible error; 2× cost is accounted per chat and holdable via flow-control.
