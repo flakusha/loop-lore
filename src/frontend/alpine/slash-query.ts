@@ -78,6 +78,33 @@ export function filterSlashCandidates(
 }
 
 /**
+ * Bounded Levenshtein distance (iterative, single row). Canonical home — both
+ * composer modules share this one instead of each carrying a copy.
+ * @param a
+ * @param b
+ * @returns Levenshtein distance between the lowercased inputs.
+ */
+export function editDistance(a: string, b: string,): number {
+  const x = a.toLowerCase();
+  const y = b.toLowerCase();
+  let prev: number[] = Array.from({ length: y.length + 1, }, (_, i,) => i,);
+  for (let i = 1; i <= x.length; i++) {
+    const curr: number[] = [i,];
+    for (let j = 1; j <= y.length; j++) {
+      curr[j] = Math.min(
+        (prev[j] ?? 0) + 1,
+        (curr[j - 1] ?? 0) + 1,
+        (prev[j - 1] ?? 0) + (x[i - 1] === y[j - 1] ? 0 : 1),
+      );
+    }
+
+    prev = curr;
+  }
+
+  return prev[y.length] ?? 0;
+}
+
+/**
  * Did-you-mean fallback: closest registry name to a zero-substring-match
  * query, or null when nothing is close enough to suggest. Tab/Enter accepts
  * the suggestion explicitly; Escape dismisses it untouched.
@@ -102,28 +129,4 @@ export function didYouMeanCandidate(names: readonly string[], needle: string,): 
 
   if (best === null || bestScore > Math.max(1, Math.floor(query.length / 2,),)) { return null; }
   return best;
-}
-
-/**
- * Bounded Levenshtein distance (iterative, single row).
- * @param a - first string (already lowercased).
- * @param b - second string (already lowercased).
- * @returns edit distance between the two strings.
- */
-function editDistance(a: string, b: string,): number {
-  let prev: number[] = Array.from({ length: b.length + 1, }, (_, i,) => i,);
-  for (let i = 1; i <= a.length; i++) {
-    const curr: number[] = [i,];
-    for (let j = 1; j <= b.length; j++) {
-      curr[j] = Math.min(
-        (prev[j] ?? 0) + 1,
-        (curr[j - 1] ?? 0) + 1,
-        (prev[j - 1] ?? 0) + (a[i - 1] === b[j - 1] ? 0 : 1),
-      );
-    }
-
-    prev = curr;
-  }
-
-  return prev[b.length] ?? 0;
 }
