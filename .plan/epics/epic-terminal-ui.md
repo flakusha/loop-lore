@@ -105,13 +105,12 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 ### Landed
 
 - [x] `TASK-tui.md` — umbrella task for the chat/api modernization + tests batch
-- [x] `TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate.md` — per-file waiver added to `scripts/check/coverage/waivers.mjs`; mock.module suite covers sessionToken threading
+- [x] `TASK-tui-shell-testability.md` — `createTUIApp()` factory behind an `import.meta.main` guard, mirroring `createHarnessView`; importing any `src/tui/` module now constructs zero blessed objects, which unblocked the two bug-fix tickets stuck in untestable files
 - [x] `BUG-tui-app-getlogger-throws-when-running-standalone.md` — `createLogger({level:"warn"})` at `src/tui/app.ts:155` before `new TUIApp()`
 - [x] `BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md` — `config.tui.sessionToken` threaded into `ChatWidget`; empty-string normalized to undefined
 
 ### Open
 
-- [ ] `TASK-tui-shell-testability` — remove module-scope `new TUIApp()` from `src/tui/app.ts:157`; unblocks two bug-fix tickets currently stuck in untestable files
 - [ ] `TASK-tui-spec-sync` — correct spec drift across all four rows in §Spec drift
 - [ ] `TASK-tui-chat-picker` — list view for existing chats; highest-value missing TUI screen
 - [ ] `TASK-update-terminal-ui-spec-to-actual-file-layout.md` — spec drift on file layout; superseded in practice by `TASK-tui-spec-sync` (work that one instead)
@@ -123,6 +122,10 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 - `TASK-tui-enabled-config-flag-never-read.md` — decide wire / remove / document-and-remove-from-env-map
 - `TASK-adopt-bun-color-for-tui-colors.md` — adopt `Bun.color()` for theme
 - `TASK-adopt-bun-stringwidth-for-tui.md` — adopt `Bun.stringWidth()` for safe truncation (fixes `formatMessageLine` surrogate-pair split)
+
+### Retired
+
+- `TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate.md` — the per-file waiver it tracked was added, then retired once `src/tui/chat/index.ts` became importable and reached full coverage under the check gate
 
 ### Cross-epic
 
