@@ -15,7 +15,7 @@
 
 ## Summary
 
-The TUI is a shipped-but-hollow shell. Three panels are wired over a `blessed.screen()`: a `ChatWidget` (F2 toggles an `AssetView` sidebar), and a `HarnessView` overlay (F3). The layout core (`src/tui/app.ts`) contains the full blessed lifecycle — `screen()` at `:41`, and a module-scope `new TUIApp()` at `:157` that executes on every import of `app.ts`. Every bug in shortcut registration, F2/F3 toggle, or resize currently requires manual smoke-test verification because the shell is not importable in non-TTY environments. The web feature surface has almost no TUI coverage.
+The TUI is a shipped-but-hollow shell. Three panels are wired over a `blessed.screen()`: a `ChatWidget` (F2 toggles an `AssetView` sidebar), and a `HarnessView` overlay (F3). The layout core (`src/tui/app.ts`) contains the full blessed lifecycle — `screen()` at `:41`. Construction now sits behind an exported `createTUIApp()` factory and an `import.meta.main` guard, so importing the module builds nothing. Every bug in shortcut registration, F2/F3 toggle, or resize is verifiable under test rather than by manual smoke test. The web feature surface has almost no TUI coverage.
 
 ## Implementation analysis
 
@@ -23,10 +23,10 @@ The TUI is a shipped-but-hollow shell. Three panels are wired over a `blessed.sc
 
 | File | Lines | Key exports | Blessed-at | Testable? |
 |---|---|---|---|---|
-| `src/tui/app.ts` | 158 | `TUIApp`, default `app` | `blessed.screen()` at `:41` in ctor; `createLogger` at `:155` + `new TUIApp()` at `:157` run on import | **No** — module-scope construction blocks all non-TTY imports |
-| `src/tui/asset-view.ts` | 237 | `AssetView`, `LinkedAsset` | `blessed.box()` at `:44` in ctor | **No** — same class; `loadAssets()` calls `/api/v1/assets` at `:206` |
-| `src/tui/harness/index.ts` | 214 | `createHarnessView`, `HarnessView` | `blessed.box()` at `:53` + `blessed.list()` at `:67` in ctor | **No** — class is the untestable knot; factory is the seam |
-| `src/tui/chat/index.ts` | 251 | `ChatWidget`, `API_BASE` re-export | widget construction in ctor (`:50`, `:59`) | Via `mock.module('blessed')`, covered by `index.test.ts` under an `ISOLATED` gate; per-file coverage waiver at 51% (`scripts/check/coverage/waivers.mjs:160`) |
+| `src/tui/app.ts` | 173 | `TUIApp`, `createTUIApp` | `blessed.screen()` at `:41` in ctor; `createLogger` at `:164` inside `createTUIApp()`, called only under the `import.meta.main` guard at `:171` | **Yes** — importing builds nothing (`app.test.ts` asserts zero screens at import); `mock.module('blessed')` covers construction |
+| `src/tui/asset-view.ts` | 237 | `AssetView`, `LinkedAsset` | `blessed.box()` at `:44` in ctor | **Yes** — constructed by `app.ts` and by suites via the `mock.module('blessed')` stub, no production change |
+| `src/tui/harness/index.ts` | 214 | `createHarnessView`, `HarnessView` | `blessed.box()` at `:53` + `blessed.list()` at `:67` in ctor | **Yes** — `createHarnessView` at `:28` is the seam; covered by `harness/index.test.ts` |
+| `src/tui/chat/index.ts` | 251 | `ChatWidget`, `API_BASE` re-export | widget construction in ctor (`:50`, `:59`) | Via `mock.module('blessed')`, covered by `index.test.ts` under an `ISOLATED` gate; its former per-file coverage waiver is retired |
 | `src/tui/chat/api.ts` | 104 | `API_BASE`, `handleSend`, `loadMessages`, `setFetch` seam | none | **Yes** — pure HTTP dispatcher, `setFetch` enables full stubbing |
 | `src/tui/chat/display.ts` | 17 | `formatMessageLine` | none | **Yes** — pure formatter |
 | `src/tui/chat/types.ts` | 38 | pure types (`ChatMessage`, `ChatWidgetOptions`, `ChatHost`) | none | **Yes** — types only |
@@ -39,7 +39,7 @@ The TUI is a shipped-but-hollow shell. Three panels are wired over a `blessed.sc
 
 ### Testability debt
 
-Three files are untestable at construction: `app.ts` (fully), `asset-view.ts` (fully), and `harness/index.ts` (class; factory is the seam). Consequence: every bug in shortcut registration, F2/F3 toggle, or resize must be verified by manual smoke test. The current workaround is the per-file coverage waiver for `src/tui/chat/index.ts` in `scripts/check/coverage/waivers.mjs:160` — the `ISOLATED` gate in `src/tui/chat/index.test.ts` covers `ChatWidget`'s session-token threading without importing blessed.
+Resolved. Construction is no longer reachable at import time: `createTUIApp()` builds the shell on demand and the `import.meta.main` guard keeps importing the module inert, so every module under `src/tui/` constructs zero blessed objects at import. `AssetView` and `HarnessView` needed no production change — the existing `mock.module('blessed')` seam already covers them. Shortcut registration, F2/F3 toggle, and resize are exercised by `src/tui/app.test.ts`. The per-file coverage waiver that used to cover `src/tui/chat/index.ts` is retired; `scripts/check/coverage/waivers.mjs` keeps only the module-wide `tui` floor for screens that are built but never driven.
 
 ## Spec drift
 
@@ -49,7 +49,7 @@ Three files are untestable at construction: `app.ts` (fully), `asset-view.ts` (f
 | API routes (assets) | `:15` claims integration with `/api/assets` | Code calls `/api/v1/assets` (`asset-view.ts:206`) | `TASK-tui-spec-sync` |
 | API routes (chat) | `:15` claims integration with `/api/assistant` | `/api/assistant` is called nowhere in `src/tui/`; chat calls `/api/v1/chats/:id/messages` (`chat/api.ts:32,77`) | `TASK-tui-spec-sync` |
 | Feature list | Feature list predates `src/tui/harness/` and `/api/v1/harness/runs` | Harness overlay and API exist in code but not in spec | `TASK-tui-spec-sync` |
-| `ENABLE_TUI` env var | Maps to `tui.enabled` (`env-map.ts:113`); defaults `true` (`config/sections/tui.ts:7`) | No runtime code reads `tui.enabled`; the TUI starts unconditionally on import | `TASK-tui-enabled-config-flag-never-read.md` |
+| `ENABLE_TUI` env var | Maps to `tui.enabled` (`env-map.ts:113`); defaults `true` (`config/sections/tui.ts:7`) | No runtime code reads `tui.enabled`; the shell starts under the `import.meta.main` guard regardless of the flag | `TASK-tui-enabled-config-flag-never-read.md` |
 
 ## Feature research — coverage gap vs the web UI
 
@@ -75,7 +75,7 @@ The TUI currently covers exactly three things: chat send/load, asset sidebar, an
 
 ### Sequencing
 
-1. **Testability first** — unblocks `TASK-tui-dedupe-api-base.md` and `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md`; both tickets are in untestable files.
+1. **Testability first** — done (`TASK-tui-shell-testability.md`); it unblocked `TASK-tui-dedupe-api-base.md` and `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md`, whose files are now testable.
 2. **Chat picker** — the single highest-value gap; without it the TUI cannot start a chat from scratch.
 3. **Bounded set** — after chat picker, pick ONE more screen from the deferred list per cycle, driven by user need, not a roadmap to mirror all 20 web surfaces.
 
@@ -94,7 +94,7 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 
 ## Plan
 
-1. **P1 — Testability seam** — `createHarnessView` already exists at `harness/index.ts:28` as a factory; apply the same pattern to `AssetView` (extract `createAssetView`); move `new TUIApp()` out of module scope into an explicit `start()` call. Unblocks `TASK-tui-shell-testability`, `TASK-tui-dedupe-api-base.md`, `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md`. Cheap and unblocked: `TASK-adopt-bun-color-for-tui-colors.md`, `TASK-adopt-bun-stringwidth-for-tui.md`.
+1. **P1 — Testability seam** — shipped (`TASK-tui-shell-testability.md`): `new TUIApp()` moved out of module scope into `createTUIApp()` behind an `import.meta.main` guard, following the `createHarnessView` factory at `harness/index.ts:28`. No `createAssetView` extraction was needed — `AssetView` was already constructible under the `mock.module('blessed')` stub. Unblocked `TASK-tui-dedupe-api-base.md` and `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md`. Cheap and unblocked: `TASK-adopt-bun-color-for-tui-colors.md`, `TASK-adopt-bun-stringwidth-for-tui.md`.
 2. **P2 — Spec sync** — correct `docs/spec/terminal-ui.md` against code: route paths, feature list addition of harness overlay. Unblocks `TASK-tui-spec-sync`.
 3. **P3 — Chat picker** — list existing chats, pre-select on enter, wire `ChatWidget.setChatId`. Unblocks `TASK-tui-chat-picker`.
 4. **P4 — Work-topic surface** — add topic column + F4 filter to harness overlay. Unblocks `TASK-harness-topic-tui-surface`.
@@ -106,7 +106,7 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 
 - [x] `TASK-tui.md` — umbrella task for the chat/api modernization + tests batch
 - [x] `TASK-tui-shell-testability.md` — `createTUIApp()` factory behind an `import.meta.main` guard, mirroring `createHarnessView`; importing any `src/tui/` module now constructs zero blessed objects, which unblocked the two bug-fix tickets stuck in untestable files
-- [x] `BUG-tui-app-getlogger-throws-when-running-standalone.md` — `createLogger({level:"warn"})` at `src/tui/app.ts:155` before `new TUIApp()`
+- [x] `BUG-tui-app-getlogger-throws-when-running-standalone.md` — `createLogger({level:"warn"})` inside `createTUIApp()` before `new TUIApp()`
 - [x] `BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md` — `config.tui.sessionToken` threaded into `ChatWidget`; empty-string normalized to undefined
 
 ### Open
@@ -117,8 +117,8 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 
 ### Deferred / Open
 
-- `TASK-tui-dedupe-api-base.md` — `API_BASE` declared in both `chat/api.ts` and `harness/api.ts`; harness re-exports from chat so one declaration is redundant (blocked on P1)
-- `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — banned patterns in `AssetView.setChatId` (blocked on P1)
+- `TASK-tui-dedupe-api-base.md` — `API_BASE` declared in both `chat/api.ts` and `harness/api.ts`; harness re-exports from chat so one declaration is redundant (unblocked — P1 landed)
+- `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — banned patterns in `AssetView.setChatId` (unblocked — P1 landed)
 - `TASK-tui-enabled-config-flag-never-read.md` — decide wire / remove / document-and-remove-from-env-map
 - `TASK-adopt-bun-color-for-tui-colors.md` — adopt `Bun.color()` for theme
 - `TASK-adopt-bun-stringwidth-for-tui.md` — adopt `Bun.stringWidth()` for safe truncation (fixes `formatMessageLine` surrogate-pair split)

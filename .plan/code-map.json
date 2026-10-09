@@ -40031,6 +40031,12 @@
       "source": ".plan/tickets/TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3.md"
     }
   ],
+  "src/tui/app.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    }
+  ],
   "src/tui/app.ts": [
     {
       "kind": "epic",
@@ -40158,10 +40164,6 @@
     }
   ],
   "src/tui/chat/index.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
