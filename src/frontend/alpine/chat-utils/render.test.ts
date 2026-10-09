@@ -8,6 +8,10 @@
  * textContent → getHTML serialization, so the test installs a fake
  * createElement whose getHTML mimics browser text-node escaping
  * (& < > escaped; quotes left as-is).
+ *
+ * escapeHtml does NOT use that serialization — it delegates to the canonical
+ * five-character escaper, so these tests pin the contract independently of
+ * the fake's (deliberately weak) text-node behaviour.
  */
 
 import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
@@ -209,9 +213,21 @@ describe("chatUtilsRender.escapeHtml", () => {
     expect(chatUtilsRender.escapeHtml!("<b>",),).toBe("&lt;b&gt;",);
   });
 
-  it("leaves quotes untouched (text-node serialization)", () => {
+  it("escapes every HTML-special character, quotes included", () => {
     clearMarkdownLibs();
-    expect(chatUtilsRender.escapeHtml!("\"quoted\" 'single'",),).toBe("\"quoted\" 'single'",);
+    // The five-character contract: `& < > " '`. Escaping only `& < >` (what a
+    // div.getHTML() text-node round-trip does) lets a quote close the
+    // surrounding attribute — the stored-XSS this guards against.
+    expect(chatUtilsRender.escapeHtml!(`& < > " '`,),).toBe(
+      "&amp; &lt; &gt; &quot; &#39;",
+    );
+  });
+
+  it("neutralizes an attribute-breakout payload", () => {
+    clearMarkdownLibs();
+    const escaped = chatUtilsRender.escapeHtml!(`x" onerror="alert(1)`,);
+    expect(escaped,).toBe("x&quot; onerror=&quot;alert(1)",);
+    expect(escaped.includes('"',),).toBe(false,);
   });
 
   it("returns empty string for empty input", () => {
