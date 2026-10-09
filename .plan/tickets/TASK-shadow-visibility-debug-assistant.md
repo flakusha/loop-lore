@@ -11,7 +11,7 @@
 
 **Epic:** epic-hidden-carriage-context
 **See also:** epic-gm-shadow-notes.md, epic-assistant-gm-flows.md
-**Status:** Done
+**Status:** Not Started
 **Priority:** Medium
 
 ## Scope
