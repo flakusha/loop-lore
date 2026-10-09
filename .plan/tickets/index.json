@@ -4538,7 +4538,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-locations-reparent-guard-silently-reverted-by-d572dddec.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-LOCATIONS-TREE-TS-HEADER-NAMES-NONEXISTENT-TRIGGERS": {
     "epic": "",
@@ -27298,7 +27298,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-context-injection-dedup.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Single-assembly dedup across carriage, notes, quests, memory injection",
     "type": "TASK"
@@ -33258,7 +33258,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-hidden-carriage-toml-context.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Hidden carriage TOML context block (chat config + injection)",
     "type": "TASK"
@@ -43249,7 +43249,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-shadow-context-isolation.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Shadow context isolation — no cross-system leaks",
     "type": "TASK"
@@ -43262,7 +43262,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-shadow-visibility-debug-assistant.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Relaxed shadow visibility for debug and assistant flows",
     "type": "TASK"
@@ -44027,7 +44027,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-structured-llm-output-healing-utils.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Structured LLM output utils — heal, revalidate, size-check, approve/cancel",
     "type": "TASK"
