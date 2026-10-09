@@ -15,6 +15,7 @@ import { describe, expect, test, } from "bun:test";
 import { slashAutocomplete, } from "./slash-autocomplete";
 import {
   didYouMeanCandidate,
+  editDistance,
   extractSlashQuery,
   filterSlashCandidates,
   findCaretToken,
@@ -192,6 +193,17 @@ describe("didYouMeanCandidate", () => {
     expect(didYouMeanCandidate(["help", "roll",], "zzz",),).toBeNull();
     expect(didYouMeanCandidate([], "hep",),).toBeNull();
     expect(didYouMeanCandidate(["help", "roll",], "",),).toBeNull();
+  });
+
+  // editDistance is now shared with the emoji autocomplete surface. The
+  // slash-side caller always passed pre-lowercased strings, so the merge is
+  // behaviour-preserving only if the shared helper's own lowercasing stays
+  // inert for them: these pin that contract at the call site.
+  test("lowercases its own inputs, so mixed-case registries still match", () => {
+    expect(editDistance("HELP", "hep",),).toBe(1,);
+    expect(editDistance("help", "hep",),).toBe(1,);
+    expect(editDistance("roll", "roll",),).toBe(0,);
+    expect(didYouMeanCandidate(["Help",], "hep",),).toBe("Help",);
   });
 });
 

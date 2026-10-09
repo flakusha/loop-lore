@@ -13,7 +13,12 @@
 
 import { listEmojiShortcodes, } from "./chat-utils/emoji";
 import { emojiPicker, } from "./emoji-picker";
+import { editDistance, } from "./slash-query";
 import type { ChatState, } from "./types";
+
+// editDistance is canonically defined in the pure ./slash-query module and
+// re-exported here so this surface keeps its existing public name.
+export { editDistance, };
 
 /** Match a `:`-prefixed emoji token ending at the caret (start/whitespace-anchored, like slashTokenRe). */
 export const emojiTokenRe = /(?:^|\s):([a-z0-9_+\-]*)(?=\s|$)/i;
@@ -64,30 +69,6 @@ export function filterEmojiCandidates(query: string,): EmojiCandidate[] {
   const needle = query.toLowerCase();
 
   return all.filter((entry,) => entry.name.toLowerCase().includes(needle,));
-}
-
-/**
- * Small edit-distance helper for unknown-command did-you-mean (≤2 = typo).
- * @param a
- * @param b
- * @returns Levenshtein distance between the lowercased inputs.
- */
-export function editDistance(a: string, b: string,): number {
-  const x = a.toLowerCase();
-  const y = b.toLowerCase();
-  let prev: number[] = Array.from({ length: y.length + 1, }, (_, i,) => i,);
-
-  for (let i = 1; i <= x.length; i++) {
-    const curr: number[] = [i,];
-
-    for (let j = 1; j <= y.length; j++) {
-      curr[j] = Math.min(prev[j]! + 1, curr[j - 1]! + 1, prev[j - 1]! + (x[i - 1] === y[j - 1] ? 0 : 1),);
-    }
-
-    prev = curr;
-  }
-
-  return prev[y.length]!;
 }
 
 /**
