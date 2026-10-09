@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** actor-level emotion-avatar regenerate endpoint
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-avatar-regeneration-control
