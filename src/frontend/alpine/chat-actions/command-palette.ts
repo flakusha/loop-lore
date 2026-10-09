@@ -68,6 +68,18 @@ function filterPaletteEntries(entries: PaletteEntry[], query: string,): PaletteE
 }
 
 export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
+  // ── State defaults ──────────────────────────────────────
+  // input-area.html references these at hydration time; without declared
+  // defaults the x-for/x-show expressions throw ReferenceErrors during Alpine
+  // tree processing and abort hydration of the whole chat subtree (the
+  // BUG-alpine-hydration-failures-undeclared-template-vars-untested class).
+  _showCommandPalette: false,
+  _activeCommand: "",
+  _commandList: [] as PaletteEntry[],
+  _filteredCommands: [] as PaletteEntry[],
+  _paletteActiveIndex: 0,
+  _hiddenCommandCount: 0,
+
   /**
    * @returns {Promise<void>}
    */
