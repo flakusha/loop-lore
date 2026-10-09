@@ -27,7 +27,7 @@ import {
 import type { LlmTemplateConfig, } from "../config/sections/templates";
 import { ASSISTANT_SYSTEM_PROMPT, } from "./assistant-system";
 import type { PromptPurpose, } from "./purposes";
-import { VN_CHOICES_PROMPT, VN_STORY_PROMPT, } from "./vn";
+import { VN_CHOICES_PROMPT, VN_QUESTIONS_PROMPT, VN_STORY_PROMPT, } from "./vn";
 
 // Re-export the NSFW prompts so the public API of `src/prompts/registry.ts`
 // (and therefore `src/prompts`) is unchanged: callers that imported
@@ -82,6 +82,8 @@ export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
   vn: VN_STORY_PROMPT,
   /** VN branching choice generation */
   vnChoices: VN_CHOICES_PROMPT,
+  /** VN Q&A question generation (interaction loop) */
+  vnQuestions: VN_QUESTIONS_PROMPT,
   /** Aux: chat → scene transition classification */
   transition: TRANSITION_CLASSIFIER_PROMPT,
   /** Aux: pre-generation intent classification */

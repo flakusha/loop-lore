@@ -1067,6 +1067,23 @@ export const SCHEMA = new SchemaManifest()
     selected_at: col("text",),
     created_at: col("text", { notNull: true, },),
   },)
+  .table("vn_questions", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    scene_index: col("integer", { notNull: true, },),
+    question_type: col("text", { notNull: true, hasDefault: true, },),
+    question_text: col("text", { notNull: true, },),
+    speaker_id: col("text",),
+    options: col("text", { notNull: true, hasDefault: true, },),
+    next_scene_id: col("text",),
+    consequences: col("text", { notNull: true, hasDefault: true, },),
+    relationship_impact: col("text", { notNull: true, hasDefault: true, },),
+    mood_impact: col("text", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    selected_option_id: col("text",),
+    answered_at: col("text",),
+    created_at: col("text", { notNull: true, },),
+  },)
   .table("wardrobe_items", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text",),

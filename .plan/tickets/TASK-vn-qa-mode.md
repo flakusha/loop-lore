@@ -5,21 +5,18 @@
 
 **Summary:** Question↔answer interaction inside VN scenes — a question card the
 player answers, with the answer driving emotion, relationship, and scene
-changes. Shipped on `vn-mode-qa-loop` (routes, service, `vn_questions` table,
-`question-cards.ts` mounted at `render-scene.ts:238`); the answer's mood /
-relationship impacts are still returned to the caller and never applied.
+changes. The static QA validator half shipped; the interaction loop has no
+implementation in `src/`.
 **Context:** Two unrelated deliverables share this ticket. (1) A static content
 validator for VN scenes — shipped, but with no production caller. (2) A Q&A
-interaction loop — built end-to-end on `vn-mode-qa-loop`, but four of its ACs
-still fail and `next_scene_id` is discarded. See `## Status Split`, `## Scope`,
-and `## Acceptance Criteria`.
+interaction loop — not started. See `## Status Split` and `## Scope`.
 **Acceptance Criteria:** Split in `## Acceptance Criteria` — validator boxes
-(verified in `src/frontend/vn/qa-mode.ts`) vs interaction-loop boxes (verified
-against `vn-mode-qa-loop` at `e87bd19c0` / `5e5af1d81`, not against `dev`).
+(verified in `src/frontend/vn/qa-mode.ts`) vs interaction-loop boxes (no code).
 
 
-**Status:** Done
-**Status Note:** (2026-08-23) marked Done while its own body said the Q&A Interaction Loop was NOT STARTED with 10 unchecked ACs. Reconciled 2026-10-09 (first pass): validator done (but callerless), interaction loop absent — Done → In Progress. Re-reconciled the same day after `vn-mode-qa-loop` was found: the interaction loop now exists end-to-end, but four ACs still fail (scene transition, mood shift, relationship write, item-gain notice) and mobile responsiveness is unaddressed. Stays In Progress. Note the closed git issue is left as-is; re-opening it is out of scope here.
+**Status:** In Progress
+**Status Note:** (2026-08-23) marked Done while its own body said the Q&A Interaction Loop was NOT STARTED with 10 unchecked ACs. Reconciled 2026-10-09: validator done (but callerless), interaction loop absent — Done → In Progress. Note the closed git issue is left as-is; re-opening it is out of scope here.
+**Status Note (2026-10-09):** Q&A interaction loop shipped (minimal, choices-parity). Three ACs remain deferred — mood shift / relationship change / item gain write-back — and one partial (`nextSceneId` is returned but no caller acts on it). The static QA validator still has no production caller. Status stays In Progress until the deferred ACs land; see `## Acceptance Criteria` for the un-defer trigger.
 **Priority:** P2 — Medium
 **Effort:** Medium
 **Type:** Feature Task
@@ -49,27 +46,18 @@ Not part of the Q&A interaction loop. **It also has no production caller**
 `qa-mode.test.ts`. The 2026-08-23 claim that it is "invoked by the chat panel /
 GM tooling" does not hold — there is no import from any view, route, or panel.
 
-### 🟡 Q&A Interaction Loop (built 2026-10-09, consequences unapplied)
+### ✅ Q&A Interaction Loop (SHIPPED 2026-10-09 — minimal)
 
-Built on branch `vn-mode-qa-loop` (`e87bd19c0` / `5e5af1d81`). The first
-reconciliation pass on 2026-10-09 wrongly recorded this as NOT STARTED — that
-verdict was made against `dev`, before the branch was found.
+The question-card → answer pipeline now exists end to end:
 
-- `POST /api/chats/:id/vn/generate-questions` — wired (`vn-generate/questions.ts`)
-- `GET /api/chats/:id/vn-questions?sceneIndex=N` and
-  `POST /api/chats/:id/vn-questions/:questionId/answer` — wired
-  (`routes/chats/vn-questions.ts`, both `checkChatAccess`-guarded, over the
-  `vn_questions` table from migration `047_vn_questions.ts`)
-- `src/frontend/vn/question-cards.ts` + `question-cards-render.ts` — mounted at
-  `render-scene.ts:238-239`
-- `qa-mode.ts` still covers static validation only, not interaction
+- `GET /api/chats/:id/vn-questions?sceneIndex=N` — list available questions
+- `POST /api/chats/:id/vn-questions/:qid/answer` — record an answer
+- `POST /api/chats/:id/vn/generate-questions` — LLM generation (persists before returning)
+- `src/frontend/vn/question-cards.ts` renders the cards and records the answer
 
-What the branch does **not** do: apply `mood_impact` or `relationship_impact`
-to the character systems, notify on item gain, or follow `next_scene_id` to a
-new scene (the click handler discards the returned `nextSceneId`; only a
-location change actually moves the player). See `## Acceptance Criteria`.
-
-An earlier plan to move the interaction-loop scope to a separate follow-up ticket was not carried out; both deliverables stay tracked by this ticket (QA Validator ✅ / Interaction Loop 🟡), which keeps static validation and the interactive feature from being conflated.
+`src/frontend/vn/qa-mode.ts` remains the **validator**; it was not repurposed.
+Impacts are stored and returned, not written back to the character systems — see
+the deferred ACs under `## Acceptance Criteria` for why.
 
 ## Scope
 
@@ -154,74 +142,90 @@ interface VNConsequence {
 - [ ] Validator is reachable from GM tooling — **no production caller**; the
       module is imported only by its own test
 
-### Q&A Interaction Loop — built on `vn-mode-qa-loop`, consequences not applied
+### Q&A Interaction Loop — shipped 2026-10-09 (minimal, choices-parity)
 
-Landed at `e87bd19c0` / `5e5af1d81` on branch `vn-mode-qa-loop`; verified
-against that branch, not against this one.
+Implemented: migration `047_vn_questions`, service `src/chat/service/vn-questions.ts`,
+routes `src/routes/chats/vn-questions.ts` + `src/routes/vn-generate/questions.ts`,
+frontend `src/frontend/vn/question-cards{,-render}.ts`, mounted from
+`scene-renderer/render-scene.ts`.
 
-- [x] `POST /api/chats/:id/vn/generate-questions` route mounted —
-      `src/routes/vn-generate/questions.ts:145`, mounted from
-      `vn-generate/index.ts`; persists each generated question so the GET can
-      list it
-- [x] `GET /api/chats/:id/vn-questions?sceneIndex=N` —
-      `src/routes/chats/vn-questions.ts:43`, `checkChatAccess`-guarded, reads
-      the `vn_questions` table (migration `047_vn_questions.ts`)
-- [x] `POST /api/chats/:id/vn-questions/:questionId/answer` —
-      `src/routes/chats/vn-questions.ts:48`, access-guarded, flips the row to
-      `answered` with an optimistic `status = "available"` guard
-- [x] Question card displays in VN scene with speaker + question text —
-      `src/frontend/vn/question-cards-render.ts`, mounted at
-      `render-scene.ts:238-239`
-- [x] Answer options show text + impact preview — each option renders a
-      `.vn-question-option-impact` `+N`/`−N` label derived from
-      `relationship_modifier` (inline, not a hover tooltip)
-- [ ] Selecting answer triggers scene transition — `answerQuestion` returns
-      `nextSceneId`, but `initQuestionCards` discards it: the click handler is
-      `void answerQuestion(questionId, optionId)`. Location change *is* applied
-      (`PUT /api/chats/:id/location` + `chat:location-changed` event), so a
-      location-bearing option does move the scene; a bare `next_scene_id` does
-      not.
-- [ ] Mood shift applied and visible in character portrait — `mood_impact` is
-      parsed and returned by `answerVnQuestion`; the service comment states
-      "Impacts are returned, not persisted to the character systems", and no
-      portrait code reads them.
+- [x] `POST /api/chats/:id/vn/generate-questions` route mounted
+      (`src/routes/vn-generate/questions.ts`) — generates AND persists, so the
+      list endpoint can read it back (the shipped BUG the choices path warns
+      about). Prompt purpose `vnQuestions` registered in the LLM prompt
+      registry, so the resolver does not fall back to an empty system prompt.
+- [x] `GET /api/chats/:id/vn-questions?sceneIndex=N` — guarded by
+      `checkChatAccess` + `serviceErrorToResponse`, so a non-participant gets
+      404 (not 403) and a cross-chat question id is rejected
+- [x] `POST /api/chats/:id/vn-questions/:qid/answer` — records the answer,
+      returns the option's impacts
+- [x] Question card displays in the VN scene with speaker + question text
+- [x] Answer options show text + an impact preview rendered as text
+      (`relationship_modifier`), so it is readable without a tooltip impl
+- [x] Answering disables the options; the answer survives a failing side effect
+      (each side effect has its own try/catch, matching `selectChoice`)
+- [x] Q&A persists across chat turns — rows live in `vn_questions` keyed by
+      `(chat_id, scene_index)`
+- [x] Keyboard navigable — options are native `<button>` elements, so tab
+      order and Enter activation come from the platform
+- [x] Mobile responsive — flex-column card CSS in `src/public/css/vn.css`
+
+**Deferred — impact application to the real systems.** The original ACs asked for
+mood shift / relationship change / item gain to be written to the character
+systems. That is NOT what this ships:
+
+- [ ] Mood shift applied and visible in character portrait — **DEFERRED**.
+      Impacts are stored on the row and returned; nothing writes them back.
 - [ ] Relationship change applied and reflected in relationship system —
-      same: returned, never written.
-- [ ] Item gain notification shown — no toast/notification path exists in
-      `question-cards.ts`.
-- [x] Q&A sessions persist across chat turns — questions are rows in
-      `vn_questions` keyed by `(chat_id, scene_index)`; a reload re-runs
-      `loadQuestions()` and unanswered rows re-appear.
-- [x] LLM question generation produces contextually appropriate questions —
-      `generateVnQuestions` runs the `PromptAssembler` from the chat's first
-      participant, same step-for-step path as `choices.ts`.
-- [ ] Mobile responsive — `src/public/css/vn.css` has no width-based media
-      query; `.vn-question-card` is a fixed two-row flex column with no
-      narrow-viewport rules.
-- [x] Keyboard navigable (tab through options, enter to select) — options are
-      native `<button>` elements (`question-cards-render.ts`), so focus order
-      and activation come from the platform.
+      **DEFERRED**, same reason.
+- [ ] Item gain notification shown — **DEFERRED**, same reason.
+- [ ] Selecting answer triggers scene transition — **PARTIAL**. The answer
+      returns `nextSceneId`; no caller acts on it yet.
 
-## Files — actual names
+Why deferred: `updateRelationship` and `updateMood` both take a service locator
+the VN routes do not carry, and both THROW when no row exists yet
+(`write.ts:119-123`, `update-mood.ts:44-46`) — so a first answer with no prior
+relationship row would break. The shipped `vn_choices` precedent stores impacts
+and sums them in memory only; this matches it exactly.
 
-The original list guessed wrong on both counts; neither `qa-mode.ts` nor
-`src/routes/vn-questions.ts` is where the loop ended up.
+**Un-defer trigger:** the VN routes gain access to the character service locator
+AND `updateRelationship`/`updateMood` create-or-update instead of throwing on a
+missing row. Both, not either.
 
-- `src/frontend/vn/qa-mode.ts` — ✅ exists, but is the **static validator**, not
-  a question-card component
-- `src/frontend/vn/question-cards.ts` + `question-cards-render.ts` — the real
-  Q&A component (mounted at `render-scene.ts:238-239`)
-- `src/chat/service/vn-questions.ts` — list / answer service over `vn_questions`
-- `src/routes/chats/vn-questions.ts` — list + answer routes
-- `src/routes/vn-generate/questions.ts` — generation route, mounted from
-  `src/routes/vn-generate/index.ts` alongside `storyRoutes`/`choicesRoutes`
-- `src/frontend/alpine/qa-mode.ts` — never created; Q&A is vanilla DOM, not
-  Alpine
+### Choice card mount (shipped 2026-10-09)
+
+- [x] `initChoiceCards` + `loadChoices` are called from `renderCurrentScene`;
+      previously only `destroyChoiceCards` was wired, so branching choices
+      rendered nothing at runtime
+
+### Scene templates at render time (shipped 2026-10-09)
+
+- [x] `src/frontend/vn/templates/apply.ts` applies a scene's template onto the
+      effective settings, called at the top of `renderCurrentScene` so all five
+      render paths funnel through it
+- [x] Out-of-union template `transition` (`"fade-in"`, `"none"`) falls back to
+      the base value — it would otherwise leave the scene at `opacity: 0`
+      forever, since `transition-engine.ts` has no `default` case
+- [x] A missing required template variable falls back instead of throwing
+      (`resolveVariables` throws; `renderCurrentScene` has no handler)
+
+## Files
+
+Shipped paths (the list originally guessed `src/frontend/alpine/qa-mode.ts` and
+`src/routes/vn-questions.ts`; neither was the right home):
+
+- `src/frontend/vn/qa-mode.ts` — the **validator** (unchanged; never repurposed)
+- `src/frontend/vn/question-cards.ts` + `question-cards-render.ts` — the
+  question-card component (module-scope state, mirroring `choice-cards.ts`)
+- `src/routes/chats/vn-questions.ts` — guarded list + answer routes, mounted
+  from `chatsRoutes` alongside `vn-choices.ts`
+- `src/routes/vn-generate/questions.ts` — LLM generation, mounted from
+  `vn-generate/index.ts` alongside `storyRoutes`/`choicesRoutes`
+- `src/chat/service/vn-questions.ts` — service layer
+- `src/db/migrations/047_vn_questions.ts` — table + indexes
 
 ## Related Tickets
 
 - `TASK-vn-dynamic-generation.md` — dynamic image/story generation (complementary)
 - `TASK-vn-branching-choices.md` — branching choices (Q&A extends this)
 - `TASK-visual-novel-mode.md` — base VN rendering (dependency, ✅ complete)
-
-**Resolved:** 2026-10-09 registry-driven close: git issue 0f9d87d (registry tip: 990dcaee8 Konstantin Fedotov Ticket status: done)

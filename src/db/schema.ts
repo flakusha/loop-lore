@@ -204,4 +204,5 @@ export interface DB {
   branch_merge_sources: import("./schema-core").BranchMergeSources;
   plan_items: import("./schema-core").PlanItems;
   plan_links: import("./schema-core").PlanLinks;
+  vn_questions: import("./schema-core").VnQuestions;
 }

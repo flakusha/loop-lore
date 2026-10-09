@@ -1619,3 +1619,22 @@ export interface PlanLinks {
   relation: string;
   created_at: Generated<string>;
 }
+
+// ── vn_questions ────────────────────────────────────────────
+export interface VnQuestions {
+  id: Generated<string>;
+  chat_id: string;
+  scene_index: number;
+  question_type: Generated<string>;
+  question_text: string;
+  speaker_id: string | null;
+  options: Generated<string>;
+  next_scene_id: string | null;
+  consequences: Generated<string>;
+  relationship_impact: Generated<string>;
+  mood_impact: Generated<string>;
+  status: Generated<string>;
+  selected_option_id: string | null;
+  answered_at: string | null;
+  created_at: string;
+}

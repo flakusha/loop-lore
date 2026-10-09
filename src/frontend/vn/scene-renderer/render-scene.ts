@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { initChoiceCards, loadChoices, } from "../choice-cards";
 import {
   createPortraitElement,
   getPortraitPosition,
   getPortraitUrl,
 } from "../portrait-manager";
+import { initQuestionCards, loadQuestions, } from "../question-cards";
 import { decorateStageAnchors, } from "../sprite-anchor";
+import { applyTemplateOverrides, } from "../templates/apply";
 import { transitionScene, } from "../transition-engine";
 import { isTypewriting, skipTypewrite, typewrite, } from "../typewriter";
 import { createStage, } from "./stage";
@@ -187,11 +190,16 @@ export async function renderCurrentScene(
   navigate: SceneNavigator,
 ): Promise<void> {
   const container = state.container;
-  const settings = state.settings;
-  if (!container || !settings) { return; }
+  const baseSettings = state.settings;
+  if (!container || !baseSettings) { return; }
 
   const scene = state.scenes[state.currentIndex];
   if (!scene) { return; }
+
+  // Scene templates override the base settings for this render only. Never
+  // mutates state.settings — applyTemplateOverrides returns a copy (or the
+  // base object itself on any fallback path).
+  const settings = applyTemplateOverrides(baseSettings, scene,);
   const prevIndex = animate ? state.currentIndex - 1 : -1;
   const outgoing = animate && prevIndex >= 0 ? container.querySelector<HTMLElement>(".vn-scene",) : null;
 
@@ -219,6 +227,16 @@ export async function renderCurrentScene(
     const choicesEl = document.createElement("div",);
     choicesEl.className = "vn-choices-container";
     sceneEl.append(choicesEl,);
+    // Mount + hydrate: these containers were created but never initialized,
+    // so choice cards never reached the DOM at runtime.
+    initChoiceCards(choicesEl, state.currentChatId, state.currentIndex,);
+    void loadChoices();
+
+    const questionsEl = document.createElement("div",);
+    questionsEl.className = "vn-questions-container";
+    sceneEl.append(questionsEl,);
+    initQuestionCards(questionsEl, state.currentChatId, state.currentIndex,);
+    void loadQuestions();
   }
 
   const attachmentsEl = createAttachments(scene,);
