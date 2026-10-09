@@ -79,6 +79,14 @@
               </button>
               <button
                 class="world-edit-tab"
+                :class="{ active: activeTab === 'edges' }"
+                @click="activeTab = 'edges'"
+                data-testid="tab-edges"
+              >
+                Edges
+              </button>
+              <button
+                class="world-edit-tab"
                 :class="{ active: activeTab === 'autonomy' }"
                 @click="activeTab = 'autonomy'"
                 data-testid="tab-autonomy"
@@ -924,6 +932,189 @@
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <!--
+              Edges Tab (047 adjacency graph editor: connect two nodes,
+              per-edge attribute editing, delete)
+            -->
+            <div
+              x-show="activeTab === 'edges'"
+              x-data="locationGraphState('{{worldId}}')"
+              data-testid="location-graph"
+            >
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
+                <h3 style="margin: 0">Edges</h3>
+                <button
+                  class="btn btn-secondary"
+                  @click="load()"
+                  :disabled="loading"
+                  data-testid="edges-refresh"
+                >
+                  <span x-show="loading">…</span>
+                  <span x-show="!loading">↻</span>
+                </button>
+              </div>
+
+              <div x-show="error" class="muted" data-testid="edges-error">
+                Failed to load the location graph.
+              </div>
+
+              <!-- Connect two nodes -->
+              <div class="panel" style="margin-bottom: var(--space-4)">
+                <h4 style="margin: 0 0 var(--space-2) 0">Connect two locations</h4>
+                <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: end">
+                  <div class="form-group" style="flex: 1 1 180px">
+                    <label class="form-label" for="edge-from">From</label>
+                    <select id="edge-from" class="form-select" x-model="newEdge.fromId">
+                      <option value="">—</option>
+                      <template x-for="n in nodes" :key="n.id">
+                        <option :value="n.id" x-text="n.name"></option>
+                      </template>
+                    </select>
+                  </div>
+                  <div class="form-group" style="flex: 1 1 180px">
+                    <label class="form-label" for="edge-to">To</label>
+                    <select id="edge-to" class="form-select" x-model="newEdge.toId">
+                      <option value="">—</option>
+                      <template x-for="n in nodes" :key="n.id">
+                        <option :value="n.id" x-text="n.name"></option>
+                      </template>
+                    </select>
+                  </div>
+                  <div class="form-group" style="flex: 0 1 130px">
+                    <label class="form-label" for="edge-mode">Mode</label>
+                    <select id="edge-mode" class="form-select" x-model="newEdge.mode">
+                      <template x-for="m in modeOptions" :key="m">
+                        <option :value="m" x-text="m"></option>
+                      </template>
+                    </select>
+                  </div>
+                  <div class="form-group" style="flex: 0 1 110px">
+                    <label class="form-label" for="edge-hours">Game hours</label>
+                    <input
+                      id="edge-hours"
+                      class="form-input"
+                      type="number"
+                      min="0"
+                      step="0.5"
+                      x-model.number="newEdge.gameHours"
+                    />
+                  </div>
+                  <label class="form-label" style="display: flex; gap: 6px; align-items: center">
+                    <input type="checkbox" x-model="newEdge.requiresDiscovery" />
+                    Requires discovery
+                  </label>
+                  <div class="form-group" style="flex: 2 1 220px">
+                    <label class="form-label" for="edge-cost">Cost JSON (optional)</label>
+                    <input
+                      id="edge-cost"
+                      class="form-input"
+                      type="text"
+                      placeholder='{"gold":5,"cooldownHours":2}'
+                      x-model="newEdge.costJson"
+                    />
+                  </div>
+                  <button
+                    class="btn btn-primary"
+                    @click="createEdge()"
+                    :disabled="busy || !newEdge.fromId || !newEdge.toId"
+                    data-testid="edge-create"
+                  >
+                    Connect
+                  </button>
+                </div>
+              </div>
+
+              <!-- Edge list with inline attribute editing -->
+              <div class="panel">
+                <div x-show="loaded && edges.length === 0" class="muted" data-testid="edges-empty">
+                  No edges yet — connect two locations above.
+                </div>
+                <template x-for="edge in edges" :key="edge.id">
+                  <div
+                    style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; padding: var(--space-2) 0; border-bottom: 1px solid var(--border-subtle)"
+                    :data-testid="`edge-row-${edge.id}`"
+                  >
+                    <template x-if="!editDrafts[edge.id]">
+                      <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; flex: 1">
+                        <strong>
+                          <span x-text="nodeNames[edge.from_id] || edge.from_id"></span>
+                          →
+                          <span x-text="nodeNames[edge.to_id] || edge.to_id"></span>
+                        </strong>
+                        <span class="muted" x-text="edge.mode"></span>
+                        <span class="muted" x-text="`${edge.game_hours} game h`"></span>
+                        <span class="muted" x-show="edge.requires_discovery">🔒 discovery-gated</span>
+                        <span class="muted" x-show="costLabel(edge.cost)" x-text="costLabel(edge.cost)"></span>
+                        <span style="flex: 1"></span>
+                        <button
+                          class="btn btn-secondary"
+                          @click="startEdit(edge.id)"
+                          :disabled="busy"
+                          :data-testid="`edge-edit-${edge.id}`"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          class="btn btn-danger"
+                          @click="deleteEdge(edge.id)"
+                          :disabled="busy"
+                          :data-testid="`edge-delete-${edge.id}`"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </template>
+                    <template x-if="editDrafts[edge.id]">
+                      <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; flex: 1">
+                        <select
+                          class="form-select"
+                          style="flex: 0 1 120px"
+                          x-model="editDrafts[edge.id].mode"
+                          aria-label="Edge mode"
+                        >
+                          <template x-for="m in modeOptions" :key="m">
+                            <option :value="m" x-text="m"></option>
+                          </template>
+                        </select>
+                        <input
+                          class="form-input"
+                          style="flex: 0 1 90px"
+                          type="number"
+                          min="0"
+                          step="0.5"
+                          x-model.number="editDrafts[edge.id].gameHours"
+                          aria-label="Game hours"
+                        />
+                        <label class="form-label" style="display: flex; gap: 6px; align-items: center">
+                          <input type="checkbox" x-model="editDrafts[edge.id].requiresDiscovery" />
+                          Requires discovery
+                        </label>
+                        <input
+                          class="form-input"
+                          style="flex: 2 1 200px"
+                          type="text"
+                          placeholder='{"gold":5}'
+                          x-model="editDrafts[edge.id].costJson"
+                          aria-label="Cost JSON"
+                        />
+                        <button
+                          class="btn btn-primary"
+                          @click="saveEdit(edge.id)"
+                          :disabled="busy"
+                          :data-testid="`edge-save-${edge.id}`"
+                        >
+                          Save
+                        </button>
+                        <button class="btn btn-secondary" @click="delete editDrafts[edge.id]" :disabled="busy">
+                          Cancel
+                        </button>
+                      </div>
+                    </template>
+                  </div>
+                </template>
               </div>
             </div>
 

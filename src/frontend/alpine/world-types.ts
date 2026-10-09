@@ -197,6 +197,17 @@ export interface TravelStatusPayload {
   parties: PartyStatus[];
 }
 
+/** One 047 adjacency edge as served to the world page (discovery-filtered
+ * server-side; locked edges never reach a player here). */
+export interface WorldEdgeLink {
+  id: string;
+  from_id: string;
+  to_id: string;
+  mode: string;
+  game_hours: number;
+  requires_discovery: boolean;
+}
+
 /** GET /worlds/:worldId/lore-entries row (camelCase projection). */
 export interface WorldLoreEntry {
   id: string;
@@ -283,6 +294,13 @@ export interface WorldPageState {
   originId: string;
   destinationId: string;
   travelMethodId: string;
+  /** 047 adjacency edges visible to this caller (undiscovered ones are
+   * hidden server-side for players); lazy-loaded once per page. */
+  edgeLinks: WorldEdgeLink[];
+  edgesLoaded: boolean;
+  edgesLoading: boolean;
+  loadGraphEdges(): Promise<void>;
+  readonly edgeInfoLabel: string;
   travelStatus: TravelStatusPayload | null;
   travelLoading: boolean;
   showTravelConfirm: boolean;
@@ -293,6 +311,7 @@ export interface WorldPageState {
   readonly destinations: WorldLocationLite[];
   readonly travelEtaLabel: string;
   readonly travelConnected: boolean;
+  readonly edgeToDestination: WorldEdgeLink | undefined;
   readonly transportProgresses: Array<{
     name: string;
     pct: number;

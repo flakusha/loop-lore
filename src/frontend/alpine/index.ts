@@ -31,6 +31,7 @@ import "./i18n";
 import "./info-bubble";
 import "./key-management";
 import "./location-explorer";
+import "./location-graph";
 import "./memory-panel";
 import "./model-manager";
 import "./notification-center";
