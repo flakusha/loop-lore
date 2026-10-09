@@ -181,6 +181,14 @@ describeOrSkip("fetchPartial", () => {
     expect(await fetchPartial("/partials/bad",),).toBeNull();
     expect(calls[0]!.opts!.headers,).toEqual({ "HX-Request": "true", },);
   });
+
+  test("escapeHtml encodes quotes so attribute values cannot break out", async () => {
+    const { escapeHtml, } = await import("./shared");
+    // No document installed on purpose: escaping must not depend on a DOM
+    // round-trip, which leaves `"` and `'` unencoded in attribute context.
+    expect(escapeHtml("<b>&\"'",),).toBe("&lt;b&gt;&amp;&quot;&#39;",);
+    expect(escapeHtml('a" onload="alert(1)',),).toBe("a&quot; onload=&quot;alert(1)",);
+  });
 },);
 
 describeOrSkip("escapeHtml / filterCards", () => {
