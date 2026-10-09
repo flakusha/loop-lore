@@ -10,7 +10,7 @@
 
 
 **Epic:** epic-frontend-chat-commands
-**Status:** in_progress
+**Status:** In Progress
 
 **Progress:** `interceptSlashSend` routes `/continue` (resume last
 assistant/character message via `continueMessage`), `/retry [attempt step]`
