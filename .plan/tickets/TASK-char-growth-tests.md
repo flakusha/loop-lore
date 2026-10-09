@@ -25,4 +25,4 @@ Unit + integration tests for character growth: schema, validation, integrity int
 - [ ] `src/routes/character-growth.test.ts` — API + role gating
 - [ ] `src/characters/integration-growth.test.ts` — end-to-end for 4 axes
 
-**Resolved:** 2026-10-10 registry-driven close: git issue 403b493 (registry tip: 77f7955ef Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-09 registry-driven close: git issue 403b493 (registry tip: 77f7955ef Konstantin Fedotov Close issue)

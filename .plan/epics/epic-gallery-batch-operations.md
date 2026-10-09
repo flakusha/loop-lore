@@ -7,7 +7,7 @@
 
 
 **Status:** Not Started
-**Status Note:** Not Started
+**Status Note:** batch operations are genuinely absent — no `src/routes/assets.ts`, no `batch-download` handler, and no `selectedAssetIds` selection state anywhere in `src/frontend/`; only the base gallery ships (`src/components/chat/gallery-sidebar.html` + `src/frontend/alpine/chat-utils/gallery.ts`), and the sole "batch" code is the unrelated chats batch delete (`src/routes/chats/batch.ts`) (verified 2026-10-09)
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Medium
 **Type:** Feature Epic / UI
@@ -68,6 +68,24 @@ Task breakdown (same deliverable, sequenced):
 - [ ] Default workflows cover media: video generation, image generation, image editing
 - [ ] NSFW prefiltering + labeling + consent gate wired for third-party API backends
 
+## Current State
+
+| Surface | Status | Where |
+| ------- | ------ | ----- |
+| Base gallery UI | Shipped | `src/components/chat/gallery-sidebar.html`, `src/frontend/alpine/chat-utils/gallery.ts`, `src/frontend/alpine/chat-types/core.ts` |
+| Selection model (`selectedAssetIds`) | Not Started | — (0 hits in `src/frontend/`) |
+| Batch-action bar | Not Started | — |
+| Batch download endpoint | Not Started | `src/routes/assets.ts` does not exist; no `batch-download` handler in `src/routes/` |
+| Batch delete | Not Started | — |
+| NSFW/ownership gates for batch ops | Not Started | — |
+
+> The only "batch" code in the repo is chat-scoped: `src/routes/chats/batch.ts`
+> (`/chats/batch/delete`) — unrelated to gallery assets.
+> Mount-plan drift: the epic's design predates API versioning — the inline asset
+> upload now lives at `/api/v1/assets` in `src/elysia-app.ts` (legacy `/api/assets`
+> 308-redirects), so a batch endpoint would mount under the v1 barrel, not the
+> legacy path.
+
 ## Dependencies
 
 - **Parent hub:** Assistant Creative Studio — Workflow Templates (`epic-assistant-creative-studio-workflows.md`)
@@ -82,3 +100,8 @@ Task breakdown (same deliverable, sequenced):
 - `epic-nsfw-capabilities.md` — consent/rating infrastructure reused by the gates
 
 > **Bridge:** NSFW ratings/consent/age-gate: see `epic-nsfw-capabilities.md`; moderation enforcement: see `epic-nsfw-moderation-priority.md`.
+
+## Linked Tasks
+
+- `TASK-assistant-creative-studio-workflow-gallery-batch.md` (draft — parent creative-studio epic's workflow ticket)
+- Epic ticket `EPIC-GALLERY-BATCH-OPERATIONS` (⬜ Not Started in `.plan/tickets/index.json`; tracks this epic file)

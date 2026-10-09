@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** Partially shipped — chat battle panel with roster HP, attack/heal/end action bar, and keyboard nav is live (verified 2026-10-09); battle log, status-effect badges, turn-order visualization, and skill-check UI remain open.
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic
@@ -16,6 +16,30 @@
 ## Summary
 
 Complete battle interface for turn-based combat, including state display, action selection, turn order visualization, and battle log. Required to make the battle system usable by end users.
+
+## Implemented (verified 2026-10-09)
+
+- **Modules:** `src/frontend/battle/panel.ts` (VN-style overlay panel: mount/destroy/render, keyboard focus cycle over combatants + actions), `src/frontend/battle/commands.ts` (attack/heal/end action set + slash-command mapping), `src/frontend/battle/render.ts` (header/roster/actions DOM builders with HP-percentage display); `src/frontend/alpine/chat-battle.ts` + `src/frontend/alpine/chat-actions/battle.ts` (chat-side dispatch of `/attack`, `/heal`, `/battle` commands)
+- **Shipped:** battle screen embedded in chat, combatant roster with HP display, single-target selection via focus cycle, keyboard shortcuts (arrows/Enter/Space), dispatch into the backend battle routes
+- **Not shipped:** item-use/social/spell/flee buttons (action bar is attack/heal/end only — `src/frontend/battle/commands.ts:38-41`), battle log component, status-effect badges, dedicated health-bar/turn-order widget, skill-check dice animation, dynamic backgrounds
+
+## Current State
+
+| Surface | Status | Where |
+| --- | --- | --- |
+| Battle panel (roster + action bar) | Shipped | `src/frontend/battle/panel.ts`, `src/frontend/battle/render.ts` |
+| Chat battle dispatch (`/attack`, `/heal`, `/battle`) | Shipped | `src/frontend/alpine/chat-battle.ts`, `src/frontend/alpine/chat-actions/battle.ts` |
+| Action bar breadth (attack/heal/end only) | Partial | `src/frontend/battle/commands.ts:38-41` |
+| Health display (HP only; no mana/stamina widget) | Partial | `hpPercent` + roster in `src/frontend/battle/render.ts` |
+| Turn order visualization | Not Started | — |
+| Status effect badges | Not Started | — |
+| Battle log viewer | Not Started | — |
+| Skill check UI (dice animation) | Not Started | — |
+| Dynamic backgrounds | Not Started | — (see `./epic-battle-action-systems.md`) |
+
+## Unticketed Gaps
+
+The backend social actions and combat item-use routes already ship (`src/routes/battle/social.ts`, `src/routes/battle/equipment.ts`), but the shipped action bar cannot reach them — adding item-use/social/flee buttons to `src/frontend/battle/commands.ts` is unticketed (see `./epic-battle-integration-gaps.md`). No battle-scoped status-effect badge or reusable health-bar component exists under `src/frontend/` — the only status-effect surface there is character-condition state in `src/frontend/alpine/rpg-stats.ts` (`statusEffects`), despite the reuse expectations in the component table below.
 
 ## Core Features
 
@@ -103,7 +127,7 @@ Complete battle interface for turn-based combat, including state display, action
 - [ ] Skill check UI with dice roll animation
 - [ ] Environmental effects display
 - [ ] Mobile responsive (touch-friendly action buttons)
-- [ ] Keyboard shortcuts for common actions
+- [x] Keyboard shortcuts for common actions (`src/frontend/battle/panel.ts` arrow/Enter/Space focus cycle)
 - [ ] Accessibility (ARIA labels, screen reader support)
 
 ## Implementation Phases
@@ -141,32 +165,39 @@ Complete battle interface for turn-based combat, including state display, action
 - Accessibility
 - Animations
 
-## Tasks
+## Linked Tasks
 
-| Task                           | Priority | Status         |
-| ------------------------------ | -------- | -------------- |
-| TASK-battle-screen.md          | P0       | ⬜ Not Started |
-| TASK-battle-state-display.md   | P0       | ⬜ Not Started |
-| TASK-battle-action-selector.md | P0       | ⬜ Not Started |
-| TASK-battle-log.md             | P0       | ⬜ Not Started |
-| TASK-skill-check.md            | P0       | ⬜ Not Started |
-| TASK-health-bar.md             | P0       | ⬜ Not Started |
-| TASK-status-effects.md         | P0       | ⬜ Not Started |
-| TASK-battle-alpine.md          | P0       | ⬜ Not Started |
+- `TASK-battle-screen.md` (open)
+- `TASK-battle-alpine.md` (open)
+- `TASK-battle-state-display.md` (Not Started)
+- `TASK-battle-action-selector.md` (Not Started)
+- `TASK-battle-log.md` (Not Started)
+- `TASK-skill-check.md` (Not Started)
+- `TASK-health-bar.md` (Not Started)
+- `TASK-status-effects.md` (Not Started)
 
-## Files to Create
+## Files
 
-- `src/frontend/battle/battle-screen.ts` — Main battle page
-- `src/frontend/battle/battle-state.ts` — State display component
-- `src/frontend/battle/action-selector.ts` — Action selection UI
-- `src/frontend/battle/battle-log.ts` — Battle log component
-- `src/frontend/battle/skill-check.ts` — Dice roll animation
-- `src/frontend/battle/health-bar.ts` — Reusable health bar
-- `src/frontend/battle/status-effects.ts` — Status effect badges
-- `src/frontend/alpine/battle.ts` — Alpine.js battle logic
+Implemented (verified 2026-10-09):
+- `src/frontend/battle/panel.ts` — battle panel mount/state/keyboard
+- `src/frontend/battle/commands.ts` — action set + slash-command mapping
+- `src/frontend/battle/render.ts` — roster/actions DOM builders
+- `src/frontend/alpine/chat-battle.ts` — chat battle mode glue
+- `src/frontend/alpine/chat-actions/battle.ts` — `/attack`, `/heal`, `/battle` dispatch
+
+Planned (do not exist yet):
+- `src/frontend/battle/battle-screen.ts` — main battle page
+- `src/frontend/battle/battle-state.ts` — state display component
+- `src/frontend/battle/action-selector.ts` — action selection UI
+- `src/frontend/battle/battle-log.ts` — battle log component
+- `src/frontend/battle/skill-check.ts` — dice roll animation
+- `src/frontend/battle/health-bar.ts` — reusable health bar
+- `src/frontend/battle/status-effects.ts` — status effect badges
+- `src/frontend/alpine/battle.ts` — standalone Alpine battle logic (chat-battle.ts covers the chat surface)
 
 ## Related Epics
 
-- **Epic Battle & Action Systems** — Backend battle mechanics
-- **Epic RPG Mechanics** — Stats, dice, damage calculation
-- **Epic Resolution System** — Unified dice resolution
+- `epic-battle-action-systems.md` — backend battle mechanics this panel drives
+- `epic-battle-integration-gaps.md` — social/item backends not yet exposed on the action bar
+- `epic-rpg-mechanics.md` — stats, dice, damage calculation
+- `epic-resolution-system.md` — unified dice resolution for skill-check UI

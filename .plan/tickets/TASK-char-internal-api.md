@@ -26,4 +26,4 @@ CRUD routes for internal-traits / aspirations / moral-disposition / coping / app
 
 - [ ] Complete
 
-**Resolved:** 2026-10-10 registry-driven close: git issue c6f772c (registry tip: 6eb26a0f1 Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-09 registry-driven close: git issue c6f772c (registry tip: 6eb26a0f1 Konstantin Fedotov Close issue)

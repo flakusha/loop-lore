@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** extended with behavioral dimensions (D7–D9: coping, approach, autonomy)
+**Status:** In Progress
+**Status Note:** verified 2026-10-09: schema + DB + service + prompt section + API + author-facing edit-form UI ship (`character_internal_traits` table, `src/characters/services/internal-traits/`, `src/assistant/prompt/sections/internal-traits.ts` at registry position with ±30 disposition classification, `src/routes/character-internal-traits/` with owner/admin authz); diverged from the proposed schema (single JSON-columns row, numeric lawful↔chaotic / good↔evil axes, aspiration visibility `hidden|hinted|open`); still open: `toPublicCard()` shared redaction, player-facing two-tier UI, validator/fields coverage, coping prompt rendering + mood-threshold activation, export/migration
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -46,34 +46,75 @@ Converse risk: hidden state leaking to the player (via the API or the prompt) ki
 intrigue. So the epic has a **hard visibility/encapsulation requirement**: hidden fields
 reach the LLM prompt but are stripped from player-facing API responses.
 
-## Current State (verified 2026-08-12)
+## Implemented (verified 2026-10-09)
 
-- **Personality is free-text.** `CanonicalCharacter` (`src/characters/spec/character.ts:86-107`)
-  has `personality: string` (mandatory) plus `description`, `scenario`, `system_prompt`,
-  `post_history_instructions`; injected verbatim into the prompt by
-  `actorHeaderSection` (`src/assistant/prompt/sections/actor-header.ts:15`).
-- **Traits are unstructured key/value rows, no visibility dimension.**
-  `character_permanent_traits` / `character_world_traits` / `character_location_traits`
-  store `(trait_name, trait_value)` string pairs with a `trait_category`
-  (`src/characters/services/traits-service/types.ts`, `resolve.ts`).
-- **Moral/aspiration keys already exist as immutable _names_, but unmodeled.**
-  `personality-service/integrity.ts:6-28` lists `alignment`, `desires`, `ideals`,
-  `strives`, `fears`, `core_values` as immutable personality traits — but they are
-  free-form string traits with no schema, no openness axis, no visibility, no prompt role.
-- **No hidden/secret concept anywhere.** No visibility field, no author-only masking,
-  no API-level redaction. Everything a player can read via the character API, the player
-  can see — there is no "internal" tier.
-- **No goal/aspiration entity.** Nothing ties a character to an aim or a plan to achieve it.
-- **Frontend has no visibility tiering.** The character edit form is a single
-  server-rendered template — `serveCharacterEditForm` (`src/routes/views/characters.ts:41`)
-  — that renders every field (`personality`, `description`, `system_prompt`, …) to whoever
-  reaches the route; the `characters.html` grid and `characters/detail-modal.html` likewise
-  show everything. There is no per-field visibility, no author-vs-player split, no masking.
+- **Schema + DB** — `character_internal_traits` table
+  (`src/db/migrations/001_init.ts:1261`, actor FK cascade +
+  `idx_character_internal_traits_actor` at `:1561`); generated row type
+  `CharacterInternalTraits` (`src/db/schema-core.ts:449`). Storage is a **sidecar
+  row per actor**, not columns on `CanonicalCharacter` — the design's
+  "extend `CanonicalCharacter`" note was not the shape that shipped.
+- **Service (6 profiles)** — `src/characters/services/internal-traits/`: aspirations,
+  moral disposition, autonomy preferences, coping mechanisms, approach tendencies,
+  voice patterns, plus a field-level `visibility: string[]` gate. `get` / `upsert` /
+  `delete` and `buildPromptSection(actorId, includeHidden)` (`index.ts:209`).
+- **Prompt section** — `src/assistant/prompt/sections/internal-traits.ts` exported as
+  `internalTraitsSection` and registered at `src/assistant/prompt/registry.ts:55`.
+  Renders aspirations, ±30 `lawful_chaotic` × `good_evil` disposition
+  classification, approach tendencies and voice patterns, each gated by
+  `isVisible()` (`services/internal-traits/prompt-section.ts`).
+- **API** — `src/routes/character-internal-traits/index.ts`: `GET` / `PUT` /
+  `DELETE /api/character-internal-traits` plus `GET /api/character-internal-traits/prompt`,
+  every handler behind `requireActorAccess` (owner or admin). Mounted at
+  `src/routes/v1/actors-surface.ts:64` (imported at `:20`).
+- **Author edit-form section** — collapsible "Internal Traits & Personality Depth"
+  block, `src/routes/views/character-edit-sections.ts:13`
+  (`data-testid="internal-traits-section"`), asserted by
+  `src/routes/views/character-edit-form.test.ts:103`.
+- **Traits page (author-facing)** — `src/frontend/pages/characters-traits.ts` reads and
+  writes the same endpoint (visibility select includes `hidden|hinted|open`).
+- **Tests** — `services/internal-traits/prompt-section.test.ts`,
+  `assistant/prompt/sections/internal-traits.test.ts`,
+  `routes/character-internal-traits/index.test.ts` (IDOR owner/admin authz),
+  `routes/views/character-edit-form.test.ts`, `frontend/pages/characters-traits.test.ts`.
 
-**Gap:** the primitives to _express_ personality exist, but there is no way to express
-_internal_ state, _aspiration-driven agency_, _moral disposition_, _coping strategies_,
-_approach tendencies_, or _autonomy preferences_ — and no encapsulation boundary to
-keep author secrets from players.
+Baseline that this epic builds on is unchanged: `personality` is still free text on
+`CanonicalCharacter` (`src/characters/spec/character.ts`), injected verbatim by
+`actorHeaderSection` (`src/assistant/prompt/sections/actor-header.ts:15`), and traits
+are still `(trait_name, trait_value)` rows with a `trait_category`
+(`src/characters/services/traits-service/types.ts`).
+
+## Current State
+
+| Surface | Status | Where |
+| ------- | ------ | ----- |
+| `character_internal_traits` table + migration + generated types | Shipped | `src/db/migrations/001_init.ts:1261`, `src/db/schema-core.ts:449` |
+| Service, 6 profiles, field-level visibility gate | Shipped | `src/characters/services/internal-traits/` |
+| Prompt section + registry wiring | Shipped — 4 of 6 dimensions | `src/assistant/prompt/sections/internal-traits.ts`, `registry.ts:55` |
+| Coping + autonomy rendered into the prompt | Not shipped | `buildPromptSection` appends aspirations / disposition / approach / voice only (`index.ts:224-227`) |
+| Hard anti-collapse directives (D4 / D8 / D10) | Not shipped | only the generic privacy line (`services/internal-traits/index.ts:217-222`); no per-dimension countermand |
+| Owner/admin API (`GET` / `PUT` / `DELETE` / `prompt`) | Shipped | `src/routes/character-internal-traits/index.ts` |
+| Player-visible redaction on `GET /api/actors/:actorId` | Not shipped | no `toPublicCard()`; only `requireActorAccess` on the dedicated routes |
+| Author edit-form + traits page | Shipped | `src/routes/views/character-edit-sections.ts:13`, `src/frontend/pages/characters-traits.ts` |
+| Player two-tier card / detail modal | Not shipped | no player-side render path emits internal traits |
+| Validator coverage for the new fields | Not shipped | no internal-traits branch anywhere in `src/characters/validator/` |
+| Export include/exclude of hidden state | Not shipped | `src/characters/exporters/` has no internal-traits mapping |
+| Spec-version migration / auto-fill for new fields | Not shipped | `MigrationStatus` exists (`src/characters/spec/enums.ts:57`) but no character-version migration runs |
+
+## Unticketed Gaps
+
+Two divergences from the design have no ticket and no code. First, the **disposition
+openness axis** (D2's `open` / `guarded` / `deceptive` / `hidden`) does not exist:
+moral disposition ships as numeric `lawful_chaotic` and `good_evil` only
+(`services/internal-traits/types.ts`), so "openly evil" versus "secretly evil" cannot
+be expressed, and nothing on the read path can distinguish a world-known disposition
+from a concealed one. Second, the aspiration visibility value **`hinted`** is a
+persisted, validated enum member (`types.ts:23`, route schema `index.ts:23`, page
+select `characters-traits.ts:119`) that behaves identically to `hidden` —
+`appendAspirations` only ever treats `open` as visible
+(`services/internal-traits/prompt-section.ts:25`) — so an author can select it and gets
+no distinct hinting behaviour anywhere. Everything else open above is already carried
+by `TASK-char-internal-*` tickets; those need no duplicates.
 
 ## Scope
 
@@ -449,30 +490,44 @@ through `data_json` on player-facing reads — see D1 redaction.
 
 ## Prompt Assembly
 
-- New builder `actorInternalSection` in `src/assistant/prompt/sections/actor-internal.ts`,
-  registered after `actorHeaderSection` in `src/assistant/prompt/registry.ts`.
-- Emits a `<internal>` block: hidden internal traits, active aspirations + hidden
-  methods, disposition directive (D4), and behavioral dimensions (D7–D9).
-- Visible traits/aspirations may ALSO be emitted but must be marked as known-to-the-world
-  (visible) so the model distinguishes what the character is open about from what it hides.
-- **Coping (D7):** emitted conditionally when mood `happiness ≤ 40` or a trigger
-  event matches. Includes primary/secondary style and integration note.
-- **Approach (D8):** always emitted when set. Anti-collapse directive included
-  when tendency is not "altruistic".
-- **Autonomy (D9):** always emitted when set. Includes preference, initiative
-  score, and separation/reunion triggers. Integration with aspirations and
-  relationships referenced in the directive.
-- **Voice (D10):** always emitted when set. Includes formality, verbosity,
-  pace, accent, dialect, catchphrases, and verbal tics. Anti-collapse directive
-  prevents default AI speech patterns.
+Design as written below; the shipped shape is marked per bullet (verified 2026-10-09).
+
+- **Shipped** — builder `internalTraitsSection` in
+  `src/assistant/prompt/sections/internal-traits.ts`, registered at
+  `src/assistant/prompt/registry.ts:55`. Emits `<internal_traits>` wrapping
+  `buildPromptSection(actorId, includeHidden)`, which opens with the generic privacy
+  line ("track these naturally — do not announce them unless contextually
+  appropriate") and appends the visible dimensions.
+- Visibility gate: a dimension renders only when its key is in the `visibility` set
+  (`aspirations`, `moralDisposition`, `approachTendencies`, `voicePatterns`, or the
+  `*` wildcard); aspirations additionally render when a single aspiration is `open`.
+- **Shipped** — aspirations with goal/priority/progress; disposition as a ±30
+  lawful↔chaotic × good↔evil classification label; approach as decision style + risk
+  tolerance + initiative; voice as vocabulary/sentence-structure/humor/verbal tics.
+- **Coping (D7) — not shipped:** no coping append in `buildPromptSection`, and no
+  mood `happiness ≤ 40` activation. The `coping_mechanisms` column is stored and
+  editable but never reaches the prompt.
+- **Autonomy (D9) — not shipped as prompt content:** `autonomy_preferences` is read
+  only by `src/autonomy/config/resolver.ts` for pacing override; nothing renders
+  preference, initiative or separation/reunion triggers into the character prompt.
+- **Anti-collapse directives (D4 / D8 / D10) — not shipped:** only the generic
+  privacy line exists; there is no per-dimension countermand such as
+  "this character's approach is manipulative — do not rationalize it away" or
+  "do not default to helpful-AI speech".
+- Hidden traits are **not** emitted section-wide: `includeHidden` defaults to `false`
+  on the registry path, so hidden aspirations are dropped rather than emitted-but-marked
+  (the design's "emitted but marked known-to-the-world" variant did not ship).
 
 ## Frontend / UI Visibility
 
-The character edit form is today a single server-rendered template —
-`serveCharacterEditForm` in `src/routes/views/characters.ts:41` — that renders every
-field (`personality`, `description`, `system_prompt`, …) to whoever reaches the route,
-plus `characters.html` grid + `characters/detail-modal.html`. There is no per-field
-visibility, and no author-vs-player tiering.
+The character edit form is a server-rendered template — `serveCharacterEditForm` in
+`src/routes/views/characters.ts:67` delegating to `buildEditFormHtml` in
+`src/routes/views/character-edit-form.ts` — plus the `characters.html` grid and
+`characters/detail-modal.html`. Verified 2026-10-09: the **author** tier ships (the
+collapsible Internal Traits block at `character-edit-sections.ts:13`, and the traits
+page at `src/frontend/pages/characters-traits.ts`). The **player** tier does not: no
+render path filters hidden state out of the card, grid or detail modal, so tiering is
+still author-only-in-practice rather than author-vs-player.
 
 This epic introduces two view tiers (per D6):
 
@@ -491,6 +546,34 @@ by both the player API read and the player UI render, so the API and the UI can 
 drift apart and leak. The transform must handle all 7 hidden dimensions: internal traits,
 aspirations, disposition, coping, approach, autonomy, and voice.
 
+## Files
+
+Implemented (verified 2026-10-09):
+
+- `src/db/migrations/001_init.ts:1261` — `character_internal_traits` table (+ index at `:1561`)
+- `src/db/schema-core.ts:449` — generated `CharacterInternalTraits` row type
+- `src/characters/services/internal-traits/index.ts` — service, 6 profiles, `buildPromptSection`
+- `src/characters/services/internal-traits/types.ts` — profile + visibility types
+- `src/characters/services/internal-traits/prompt-section.ts` (+ `.test.ts`) — dimension renderers
+- `src/assistant/prompt/sections/internal-traits.ts` (+ `.test.ts`) — prompt section
+- `src/assistant/prompt/registry.ts:55` — section wiring
+- `src/routes/character-internal-traits/index.ts` (+ `index.test.ts`) — `GET` / `PUT` / `DELETE` / `prompt`
+- `src/routes/v1/actors-surface.ts:64` — route mount (import at `:20`)
+- `src/routes/views/character-edit-sections.ts:13` — collapsible author edit-form block
+- `src/routes/views/character-edit-form.ts` — form builder that embeds it
+- `src/frontend/pages/characters-traits.ts` (+ `.test.ts`) — author traits page
+
+Planned (do not exist yet):
+
+- `src/characters/spec/internal.ts` — proposed shared type module; the types shipped in the service instead
+- `src/characters/to-public-card.ts` (+ `to-public-card.test.ts`) — shared player-facing redaction (D6 / Open Q5)
+- `src/assistant/prompt/sections/actor-internal.ts` — superseded by `sections/internal-traits.ts`
+- `src/characters/spec/internal.test.ts`, `src/characters/validator-internal.test.ts`,
+  `src/routes/characters-internal.test.ts`, `src/characters/integration-internal.test.ts`,
+  `src/assistant/prompt/sections/actor-internal.test.ts` — the files named in the
+  `## Testing` table below; none of them exist yet
+- `src/routes/characters.ts` — superseded by the `src/routes/characters/` directory
+
 ## API Surface
 
 - `GET /api/actors/:actorId` — **redacts** hidden internal traits, hidden aspirations,
@@ -504,7 +587,7 @@ aspirations, disposition, coping, approach, autonomy, and voice.
 
 ## Current-State Verification Required Before Implementation
 
-- Confirm how `data_json` is serialized on read routes (`src/routes/characters.ts`) to
+- Confirm how `data_json` is serialized on read routes (`src/routes/characters/`) to
   place the redaction boundary (do not rely on the DB layer alone).
 - Confirm which endpoint feeds the player character card / details / edit render
   (`src/views/characters.html`, `characters/detail-modal.html`, `character-edit.html` →
@@ -523,16 +606,16 @@ aspirations, disposition, coping, approach, autonomy, and voice.
 
 | Task                          | Description                                                                             | Priority | Status      |
 | ----------------------------- | --------------------------------------------------------------------------------------- | -------- | ----------- |
-| TASK-char-internal-schema     | Add `InternalTrait`/`Aspiration`/`MoralDisposition`/`CopingProfile`/`ApproachProfile`/`AutonomyProfile`/`VoiceProfile` types + `CanonicalCharacter` fields | High     | Not Started |
-| TASK-char-internal-db         | Migration: internal-traits + aspirations + coping + approach + autonomy + voice tables; `db:sync-types`/`db:sync-manifest`     | High     | Not Started |
-| TASK-char-internal-validation | Extend `validator/fields.ts` + strict/relaxed modes for new fields                      | High     | Not Started |
-| TASK-char-internal-redaction  | Visibility-based redaction on read routes (author/GM/owner vs player)                   | High     | Not Started |
-| TASK-char-internal-prompt     | `actorInternalSection` builder + registry wiring + anti-collapse directive + coping/approach/autonomy/voice directives | High     | Not Started |
-| TASK-char-internal-api        | CRUD routes for internal-traits / aspirations / moral-disposition / coping / approach / autonomy / voice | Medium   | Not Started |
-| TASK-char-internal-frontend   | Player card + settings redaction via `toPublicCard()`; author/GM editor visibility badge + toggle | High     | Not Started |
-| TASK-char-internal-migration  | Character spec version bump + auto-fill for new fields                                  | Medium   | Not Started |
-| TASK-char-internal-export     | Include/exclude hidden state in export formats per visibility                           | Medium   | Not Started |
-| TASK-char-internal-tests      | Schema, validation, redaction, prompt, API tests (all 7 behavioral dimensions)          | High     | Not Started |
+| TASK-char-internal-schema     | Add `InternalTrait`/`Aspiration`/`MoralDisposition`/`CopingProfile`/`ApproachProfile`/`AutonomyProfile`/`VoiceProfile` types + `CanonicalCharacter` fields | High     | Partial — types + sidecar row ship (`services/internal-traits/types.ts`); `CanonicalCharacter` gains no fields (verified 2026-10-09) |
+| TASK-char-internal-db         | Migration: internal-traits + aspirations + coping + approach + autonomy + voice tables; `db:sync-types`/`db:sync-manifest`     | High     | Shipped — `character_internal_traits` (`001_init.ts:1261`), generated `schema-core.ts:449` (verified 2026-10-09) |
+| TASK-char-internal-validation | Extend `validator/fields.ts` + strict/relaxed modes for new fields                      | High     | Open — no internal-traits branch anywhere in `src/characters/validator/` (verified 2026-10-09) |
+| TASK-char-internal-redaction  | Visibility-based redaction on read routes (author/GM/owner vs player)                   | High     | Open — no `toPublicCard()`; only `requireActorAccess` on the dedicated routes (verified 2026-10-09) |
+| TASK-char-internal-prompt     | `actorInternalSection` builder + registry wiring + anti-collapse directive + coping/approach/autonomy/voice directives | High     | Partial — `internalTraitsSection` registered (`registry.ts:55`) rendering aspirations/disposition/approach/voice; coping + autonomy rendering and hard anti-collapse directives missing (verified 2026-10-09) |
+| TASK-char-internal-api        | CRUD routes for internal-traits / aspirations / moral-disposition / coping / approach / autonomy / voice | Medium   | Shipped — `GET`/`PUT`/`DELETE` + `/prompt` on `/api/character-internal-traits`, owner/admin (verified 2026-10-09) |
+| TASK-char-internal-frontend   | Player card + settings redaction via `toPublicCard()`; author/GM editor visibility badge + toggle | High     | Partial — author edit-form section + traits page ship; player card/settings redaction missing (verified 2026-10-09) |
+| TASK-char-internal-migration  | Character spec version bump + auto-fill for new fields                                  | Medium   | Open — no character-version migration runs (verified 2026-10-09) |
+| TASK-char-internal-export     | Include/exclude hidden state in export formats per visibility                           | Medium   | Open — `src/characters/exporters/` has no internal-traits mapping (verified 2026-10-09) |
+| TASK-char-internal-tests      | Schema, validation, redaction, prompt, API tests (all 7 behavioral dimensions)          | High     | Partial — service/section/route/form/page tests exist; redaction + validator coverage absent (verified 2026-10-09) |
 
 ## Open Questions
 
@@ -598,9 +681,6 @@ No dedicated spec doc covers D7–D9 (coping, approach, autonomy). `docs/spec/ch
 - `epic-social-interaction.md` — deception/intimidation mechanics consume hidden disposition
 - `epic-assistant-gm-flows.md` — GM authoring UI for hidden state
 - `epic-chat-context-optimization.md` — lossless tiering: hidden state is a lossless system/persona tier
-- `TASK-character-mood-happiness.md` — mood state (coping activates when mood drops)
-- `TASK-character-relationships.md` — relationship graph (autonomy + coping reference relationship strength)
-- `TASK-character-personality-integrity.md` — immutable personality (behavioral dimensions are expression, not personality)
 - `epic-wardrobe-avatar-variants.md` — visible/hidden split is also the right encapsulation boundary for wardrobe descriptors (author vs player visibility on outfit metadata); wardrobe consumes character traits/identity for outfit switching triggers
 
 ## Task Management Note (2026-08-15)
@@ -616,7 +696,23 @@ No dedicated spec doc covers D7–D9 (coping, approach, autonomy). `docs/spec/ch
 
 The task-management skill is better suited for projects without existing task infrastructure.
 
-## Tickets
+## Linked Tasks
 
-- `.plan/tickets/TASK-char-internal-*.md` — one per task above (created on task start)
-- `TASK-traits-voice-priority-decision.md` — decide D10 Voice scope vs D1-D9 (record priority decision; epic is Draft)
+All ten `TASK-char-internal-*` ticket files still read **Not Started** on disk; the
+per-slice code reality is in the Tasks table above (verified 2026-10-09). The three
+dependency tickets below moved here from Related Epics.
+
+- `TASK-char-internal-schema.md` (Not Started)
+- `TASK-char-internal-db.md` (Not Started)
+- `TASK-char-internal-validation.md` (Not Started)
+- `TASK-char-internal-redaction.md` (Not Started)
+- `TASK-char-internal-prompt.md` (Not Started)
+- `TASK-char-internal-api.md` (Not Started)
+- `TASK-char-internal-frontend.md` (Not Started)
+- `TASK-char-internal-migration.md` (Not Started)
+- `TASK-char-internal-export.md` (Not Started)
+- `TASK-char-internal-tests.md` (Not Started)
+- `TASK-character-mood-happiness.md` (Done) — mood state; coping activates when mood drops
+- `TASK-character-relationships.md` (Done) — relationship graph; autonomy + coping reference its strength
+- `TASK-character-personality-integrity.md` (Done) — immutable personality; behavioral dimensions are expression, not personality
+- `TASK-traits-voice-priority-decision.md` (Not Started) — decide D10 Voice scope vs D1-D9

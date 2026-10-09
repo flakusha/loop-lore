@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** Partially shipped — combat core, battle integrations (items/social/npc/weather/resolution), loot pipeline, and a minimal battle UI panel are live (verified 2026-10-09); spells/skills, LLM battle modes, and trading UI remain open.
 **Priority:** Medium
 **Effort:** Very High (split into 5 sub-epics)
 **Type:** Feature Epic
@@ -19,7 +19,35 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 
 > **⚠️ This epic is too large to ship in one pass.** It has been split into 5 sub-epics below. Each sub-epic delivers independently shippable value.
 >
-> **Wiring status (verified 2026-08-04):** `battleRoutes` is **mounted and alive** at `src/elysia-app.ts:204` (`app.use(battleRoutes(handleOpts))`). The "battle system non-functional / code not wired" assessment is stale. Open work is the full gameplay sub-epics below (turn-based UI, trading, spells) — there is no backend-wiring gap.
+> **Wiring status (verified 2026-10-09):** `battleRoutes` is **mounted and alive** at `src/routes/v1/actors-surface.ts:90` (`.use(battleRoutes(handleOpts, prefix))`; the route barrel is `src/routes/battle/index.ts:30`). The old `src/elysia-app.ts:204` citation is stale — wiring moved into the versioned surface. Open work is the full gameplay sub-epics below (turn-based UI breadth, trading, spells).
+
+## Implemented (verified 2026-10-09)
+
+- **Tables:** `battles`, `dice_roll_history`, `loot_tables`, `loot_entries` (`src/db/schema-core.ts:881-931`, migration `src/db/migrations/001_init.ts:2792-2842`)
+- **Modules:** `src/rpg/combat/` (actions, attacks, conditions, damage, initiative, saves); `src/battle/items-integration.ts` + `src/battle/item-mapping.ts` (equipment stats, durability, loot generation); `src/battle/social-integration/` (intimidate/taunt/rally/inspire/demoralize, surrender, morale); `src/battle/npc-integration/` (NPC decisions); `src/battle/weather-integration/` (modifiers, hazards, position); `src/battle/resolution-integration/`; `src/battle/integration-schemas/`
+- **Routes:** `src/routes/battle/` — equipment (calculate/can-equip/durability/repair/loot/combat-use), social, npc, weather, resolution, morale endpoints (`src/routes/battle/index.ts:19`)
+- **UI:** `src/frontend/battle/{panel,commands,render}.ts` (VN-style panel, keyboard nav), `src/frontend/alpine/chat-battle.ts` + `src/frontend/alpine/chat-actions/battle.ts` (chat dispatch via `/attack`, `/heal`, `/battle` slash commands)
+- **Shipped:** turn-based combat loop, initiative, saves/conditions, damage, morale + surrender, equipment/durability, loot generation + persistence to `world_items`, unified dice resolution, environmental modifiers
+- **Not shipped:** LLM battle modes (`half_llm`/`full_llm` mode selection — no such config found in `src/rpg/combat/`), spell casting actions, flee/negotiate panel buttons (surrender exists via API + social integration but is not on the panel action bar), dynamic backgrounds
+
+## Current State
+
+| Surface | Status | Where |
+| --- | --- | --- |
+| Turn-based combat (initiative, actions, damage, conditions) | Shipped | `src/rpg/combat/`, `src/routes/rpg/combat.ts` |
+| Equipment / durability / loot pipeline | Shipped | `src/battle/items-integration.ts`, `src/routes/battle/equipment.ts:180` |
+| Social combat (intimidate/taunt/surrender/morale) | Shipped | `src/battle/social-integration/`, `src/routes/battle/social.ts` |
+| NPC decisions / morale | Shipped | `src/battle/npc-integration/`, `src/routes/battle/npc.ts` |
+| Weather/terrain modifiers, hazards | Shipped | `src/battle/weather-integration/`, `src/routes/battle/weather.ts` |
+| Unified resolution / dice | Shipped | `src/battle/resolution-integration/`, `src/routes/battle/resolution.ts` |
+| Battle UI panel (attack/heal/end only) | Partial | `src/frontend/battle/panel.ts`, `src/frontend/battle/commands.ts:38` |
+| LLM battle modes (scripted/half/full) | Not Started | — |
+| Spells & actions system | Not Started | — |
+| Trading UI / market dynamics | Not Started | see `./epic-economy-trading.md` |
+
+## Unticketed Gaps
+
+The battle panel action bar offers only Attack / Heal / End (`src/frontend/battle/commands.ts:38-41`) — no item-use, spell, flee, negotiate, or social-action buttons, even though the backing APIs exist (`src/routes/battle/social.ts`, `src/routes/battle/equipment.ts`). Wiring the panel to those surfaces is unticketed.
 
 ## Sub-Epics
 
@@ -430,24 +458,26 @@ interface BackgroundTransition {
 
 ## Files
 
-- `src/battle/` — battle system (does not exist yet)
-- `src/battle/battle.ts` — battle management
-- `src/battle/modes.ts` — battle modes (scripted/half-llm/full-llm)
-- `src/battle/actions.ts` — battle actions
-- `src/battle/utilities.ts` — battle utilities
-- `src/trading/` — trading system (does not exist yet)
-- `src/trading/trade.ts` — trade management
-- `src/trading/market.ts` — market dynamics
-- `src/inventory/` — inventory system (expand existing)
-- `src/spells/` — spells & actions (does not exist yet)
-- `src/skills/` — skill checks (does not exist yet)
-- `src/backgrounds/` — dynamic backgrounds (does not exist yet)
-- `src/db/schema-battle.ts` — battle tables
-- `src/routes/battle.ts` — battle API
-- `src/frontend/battle/` — battle UI
-- `src/frontend/trading/` — trading UI
-- `src/frontend/inventory/` — inventory UI
-- `src/frontend/backgrounds/` — background UI
+Implemented (verified 2026-10-09):
+- `src/rpg/combat/` — combat core (actions, attacks, checks, dc, initiative)
+- `src/battle/` — items-integration.ts, item-mapping.ts, social-integration/, npc-integration/, weather-integration/, resolution-integration/, integration-schemas/
+- `src/routes/rpg/combat.ts` — combat API
+- `src/routes/battle/` — equipment, equipment-durability, social, morale, npc, weather, resolution, log
+- `src/routes/v1/actors-surface.ts:90` — `battleRoutes` mount
+- `src/db/schema-core.ts:881-931` — `battles`, `dice_roll_history`, `loot_entries`, `loot_tables`
+- `src/frontend/battle/` — panel.ts, commands.ts, render.ts
+- `src/frontend/alpine/chat-battle.ts` + `src/frontend/alpine/chat-actions/battle.ts` — chat battle dispatch
+
+Planned (do not exist yet):
+- `src/battle/battle.ts`, `src/battle/modes.ts`, `src/battle/actions.ts`, `src/battle/utilities.ts` — battle management/modes/utilities (combat core shipped in `src/rpg/combat/` instead; LLM modes still absent)
+- `src/trading/` (`trade.ts`, `market.ts`) — trading system (see `./epic-economy-trading.md`)
+- `src/inventory/` — inventory management (see `./epic-inventory-ui.md`)
+- `src/spells/` — spells & actions (see `./epic-magic-spell-systems.md`)
+- `src/skills/` — skill checks (see `./epic-skills.md`)
+- `src/backgrounds/` — dynamic backgrounds
+- `src/db/schema-battle.ts` — battle tables live in `src/db/schema-core.ts:881-931` instead
+- `src/routes/battle.ts` — battle API lives in `src/routes/battle/` instead
+- `src/frontend/trading/`, `src/frontend/inventory/`, `src/frontend/backgrounds/` — future UIs
 
 ## Open Questions
 
@@ -585,15 +615,17 @@ interface BackgroundTransition {
 
 ## Related Epics
 
-- **Epic Platform Research** — combat / trading / skill-check adoption tracked there.
-- **Epic RPG Mechanics** — combat, loot, inventory, skills shared; this epic owns battle UI/flow, RPG owns the mechanics.
-- **Epic World & Locations** — encounters, monsters, and location-based random encounters overlap; world owns location data.
+- `epic-platform-research.md` — combat / trading / skill-check adoption tracked there.
+- `epic-rpg-mechanics.md` — combat, loot, inventory, skills shared; this epic owns battle UI/flow, RPG owns the mechanics.
+- `epic-world-locations.md` — encounters, monsters, and location-based random encounters overlap; world owns location data.
+- `epic-battle-ui.md` — panel/chat battle frontend for this epic's mechanics.
+- `epic-battle-integration-gaps.md` — items/social/npc/weather/resolution integration tracking.
 
 ## Linked Tasks
 
-- TASK-battle-action-systems.md
-- TASK-battle-arena-spectator.md
-- TASK-chat-battle-mode-switch.md
-- TASK-enemies-monsters-systems.md
-- TASK-battle-template-actions.md
-- TASK-battle-encounter-template-system.md
+- `TASK-rpg-battle-action-systems.md` (Done)
+- `TASK-battle-arena-spectator.md` (Not Started)
+- `TASK-chat-battle-mode-switch.md` (Not Started)
+- `TASK-enemies-monsters-systems.md` (Not Started)
+- `TASK-battle-template-actions.md` (Not Started)
+- `TASK-battle-encounter-template-system.md` (Not Started)

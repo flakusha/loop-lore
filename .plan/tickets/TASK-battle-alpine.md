@@ -38,4 +38,4 @@ Alpine.js state management and logic for battle system.
 
 - `src/frontend/alpine/battle.ts`
 
-**Resolved:** 2026-10-10 registry-driven close: git issue c68a0e6 (registry tip: 9d90ac0e1 Konstantin Fedotov Close issue)
+**Resolved:** 2026-10-09 registry-driven close: git issue c68a0e6 (registry tip: 9d90ac0e1 Konstantin Fedotov Close issue)
