@@ -172,43 +172,6 @@ describe("rag commands", () => {
 
   // ── /rag-ask ──────────────────────────────────────────────
 
-  test("answers from the retrieved context and lists its sources", async () => {
-    callAuxMock.mockImplementation(() => Promise.resolve(auxResult("The city drowned.",),));
-    const result = await ragAsk(["where is the city",], ownerCtx(),);
-    expect(result.handled,).toBe(true,);
-    expect(result.action,).toBe("rag-answer",);
-    expect(result.systemMessage,).toContain("The city drowned.",);
-    expect(result.systemMessage,).toContain("**Sources:**",);
-    expect(result.actionPayload!.answer,).toBe("The city drowned.",);
-    expect((result.actionPayload!.citations as unknown[]).length,).toBeGreaterThan(0,);
-  });
-
-  test("passes the retrieved lore to the aux model as system context", async () => {
-    // Captured inside the double rather than via mock.calls — the arg list is
-    // positional and easy to mis-index.
-    let captured: Array<{ role: string; content: string }> = [];
-    callAuxMock.mockImplementation((_task, _config, _db, messages,) => {
-      captured = messages as Array<{ role: string; content: string }>;
-      return Promise.resolve(auxResult("ok",),);
-    },);
-
-    await ragAsk(["tide",], ownerCtx(),);
-
-    expect(callAuxMock,).toHaveBeenCalled();
-    expect(captured,).toHaveLength(2,);
-    expect(captured[0]!.role,).toBe("system",);
-    expect(captured[0]!.content,).toContain("Drowned City",);
-    expect(captured[0]!.content,).toContain("Iria",);
-    expect(captured[1]!.role,).toBe("user",);
-    expect(captured[1]!.content,).toBe("tide",);
-  });
-
-  test("answers unavailable when no aux provider is configured", async () => {
-    callAuxMock.mockImplementation(() => Promise.resolve(null,));
-    const result = await ragAsk(["tide",], ownerCtx(),);
-    expect(result.systemMessage,).toBe("**RAG unavailable:** no answer service configured.",);
-  });
-
   test("shows usage with an empty question", async () => {
     expect((await ragAsk(["  ",], ownerCtx(),)).systemMessage,).toBe("Usage: /rag-ask <question>",);
   });
@@ -230,18 +193,72 @@ describe("rag commands", () => {
     expect(result.systemMessage,).toBe("**Access denied:** cannot search documents in this world.",);
   });
 
-  test("reports no results before calling the model", async () => {
-    callAuxMock.mockImplementation(() => Promise.resolve(auxResult("should not happen",),));
-    const result = await ragAsk(["zzzznothing",], ownerCtx(),);
-    expect(result.systemMessage,).toBe('No results for "zzzznothing".',);
-    expect(callAuxMock,).not.toHaveBeenCalled();
-  });
-});
+  // ── Aux-dependent /rag-ask behaviour ─────────────────────────
+  //
+  // These need the `callAux` double installed at the top of this file, and
+  // `mock.module` is process-global: without per-file isolation it is NOT
+  // installed, so the real callAux runs. Two of these then fail outright, and
+  // "no answer service configured" passes for the WRONG reason (real callAux
+  // also returns null rather than throwing). describeOrSkip makes the suite skip
+  // out loud in a shared-process `bun test src/` run instead of reporting either
+  // a false red or a false green. Everything above this block — retrieval,
+  // ranking, world/asset denial, and every missing-db / missing-config path —
+  // has no dependency on the double and runs everywhere.
+  describeOrSkip("rag-ask aux integration", () => {
+    test("the aux double is installed when the file is isolated", () => {
+      expect(ISOLATED,).toBe(true,);
+    });
 
-// The aux-mocked half only means anything under per-file isolation; the
-// world-access and retrieval paths above run everywhere.
-describeOrSkip("rag-ask aux integration", () => {
-  test("the aux double is installed when the file is isolated", () => {
-    expect(ISOLATED,).toBe(true,);
-  });
-},);
+    test("answers from the retrieved context and lists its sources", async () => {
+      callAuxMock.mockImplementation(() => Promise.resolve(auxResult("The city drowned.",),));
+      const result = await ragAsk(["where is the city",], ownerCtx(),);
+      expect(result.handled,).toBe(true,);
+      expect(result.action,).toBe("rag-answer",);
+      expect(result.systemMessage,).toContain("The city drowned.",);
+      expect(result.actionPayload!.answer,).toBe("The city drowned.",);
+
+      // Pin the citations by CONTENT, not by heading. `toContain("**Sources:**")`
+      // passes even with zero citations, and `citations.length > 0` passes even
+      // when the payload carries the wrong rows — both are regressions this
+      // command can really make, so assert the names and sources appear.
+      const cites = result.actionPayload!.citations as Array<{ name: string; source: string }>;
+      expect(cites.length,).toBeGreaterThan(0,);
+      expect(cites.map((c,) => c.name),).toContain("Drowned City",);
+      expect(cites.map((c,) => c.source),).toContain("world",);
+      expect(result.systemMessage,).toContain("**Sources:** Drowned City (world)",);
+    });
+
+    test("passes the retrieved lore to the aux model as system context", async () => {
+      // Captured inside the double rather than via mock.calls — the arg list is
+      // positional and easy to mis-index.
+      let captured: Array<{ role: string; content: string }> = [];
+      callAuxMock.mockImplementation((_task, _config, _db, messages,) => {
+        captured = messages as Array<{ role: string; content: string }>;
+        return Promise.resolve(auxResult("ok",),);
+      },);
+
+      await ragAsk(["tide",], ownerCtx(),);
+
+      expect(callAuxMock,).toHaveBeenCalled();
+      expect(captured,).toHaveLength(2,);
+      expect(captured[0]!.role,).toBe("system",);
+      expect(captured[0]!.content,).toContain("Drowned City",);
+      expect(captured[0]!.content,).toContain("Iria",);
+      expect(captured[1]!.role,).toBe("user",);
+      expect(captured[1]!.content,).toBe("tide",);
+    });
+
+    test("answers unavailable when no aux provider is configured", async () => {
+      callAuxMock.mockImplementation(() => Promise.resolve(null,));
+      const result = await ragAsk(["tide",], ownerCtx(),);
+      expect(result.systemMessage,).toBe("**RAG unavailable:** no answer service configured.",);
+    });
+
+    test("reports no results before calling the model", async () => {
+      callAuxMock.mockImplementation(() => Promise.resolve(auxResult("should not happen",),));
+      const result = await ragAsk(["zzzznothing",], ownerCtx(),);
+      expect(result.systemMessage,).toBe('No results for "zzzznothing".',);
+      expect(callAuxMock,).not.toHaveBeenCalled();
+    });
+  },);
+});
