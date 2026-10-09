@@ -135,7 +135,10 @@ BDI reflection and GM beat dispatch are **split out**, not deferred:
 targets** — separate budgets, separate short-circuit reasons, separate
 failures — rather than folded into the movement path, because neither
 could ride along inside it without double-moving NPCs (GM) or authoring
-the decision layer from scratch (BDI). See the split-out ACs in
+the decision layer from scratch (BDI). Both now ship (`createBdiDispatch`,
+`createGmBeatDispatch`, each with tick-shared jitter and its own
+`per_hour_beat_dispatch` governor charge) and are registered on the
+production cron tick (`autonomy.world-tick`). See the split-out ACs in
 `.plan/tickets/TASK-story-auto-drive-scheduler.md`.
 
 ## Persistence

@@ -20,6 +20,32 @@ import type { ChatState, } from "../types";
 
 const log = rootLog.child({ module: "command-palette", },);
 
+export interface PaletteCommand {
+  name: string;
+  descriptionKey: string;
+  description: string;
+  requiredRole?: string;
+}
+
+/** Role privilege ordering shared with the BE registry (observer < member < owner). */
+const PALETTE_ROLE_PRIORITY: Record<string, number> = {
+  guest: -1,
+  observer: 0,
+  member: 1,
+  owner: 2,
+};
+
+/**
+ * Whether the viewer's role satisfies a command's minimum required role.
+ * @param actual - viewer role (defaults to member when unknown).
+ * @param required - minimum role, if any.
+ * @returns true when unrestricted or the viewer meets the minimum.
+ */
+export function satisfiesPaletteRole(actual: string | undefined, required: string | undefined,): boolean {
+  if (!required) { return true; }
+  return (PALETTE_ROLE_PRIORITY[actual ?? "member"] ?? 1) >= (PALETTE_ROLE_PRIORITY[required] ?? 0);
+}
+
 type PaletteEntry = { name: string; descriptionKey: string; description: string };
 
 /**
@@ -40,12 +66,6 @@ function filterPaletteEntries(entries: PaletteEntry[], query: string,): PaletteE
 }
 
 export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
-  _showCommandPalette: false,
-  _activeCommand: "",
-  _paletteActiveIndex: 0,
-  _commandList: [] as { name: string; descriptionKey: string; description: string }[],
-  _filteredCommands: [] as { name: string; descriptionKey: string; description: string }[],
-
   /**
    * @returns {Promise<void>}
    */
@@ -64,15 +84,20 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
         return;
       }
 
-      const body = await res.json() as { data?: { name: string; descriptionKey: string }[] };
+      const body = await res.json() as { data?: { name: string; descriptionKey: string; requiredRole?: string }[] };
       const entries = Array.isArray(body.data,) ? body.data : [];
       this._commandList = entries.map((entry,) => ({
         name: entry.name,
         descriptionKey: entry.descriptionKey,
         description: t(entry.descriptionKey,),
+        requiredRole: entry.requiredRole,
       }));
 
-      if (this._showCommandPalette) { this._filteredCommands = this._commandList; }
+      // Slice-safe: tests invoke this on partial state without the composed
+      // helpers, so call the module's own methods instead of this-dispatch.
+      if (this._showCommandPalette) {
+        commandPalette._applyPaletteFilter?.call(this, commandPalette._viewerRole?.call(this,) ?? "member",);
+      }
     } catch (err) {
       log.warn("command list fetch threw", { err, },);
     }
@@ -88,12 +113,10 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
     if (value.startsWith("/",) && !value.includes(" ",)) {
       const query = value.slice(1,).toLowerCase();
       this._showCommandPalette = true;
-      this._paletteActiveIndex = 0;
-      if (query) {
-        this._filteredCommands = filterPaletteEntries(this._commandList, query,);
-      } else {
-        this._filteredCommands = this._commandList;
-      }
+      this._activeCommand = query;
+      // Slice-safe: partial contexts may lack the composed helpers, so call
+      // the module's own methods with this state instead of this-dispatch.
+      commandPalette._applyPaletteFilter?.call(this, commandPalette._viewerRole?.call(this,) ?? "member",);
     } else {
       this._showCommandPalette = false;
     }
@@ -131,5 +154,40 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
     const count = this._filteredCommands.length;
     if (count === 0) { return; }
     this._paletteActiveIndex = (this._paletteActiveIndex + delta + count) % count;
+  },
+
+  /**
+   * Viewer role for capability gating (falls back to member when unknown).
+   * @returns {string}
+   */
+  _viewerRole(): string {
+    const role = (this as { userRole?: string }).userRole ?? (this as { user?: { role?: string } }).user?.role;
+    return role ?? "member";
+  },
+
+  /**
+   * Commands visible to the current viewer (disallowed hidden, counted).
+   * @returns {typeof this._filteredCommands}
+   */
+  _visibleCommands() {
+    // Slice-safe: partial state may carry a viewer role without the helper.
+    const role = commandPalette._viewerRole?.call(this,) ?? "member";
+    return (this._commandList ?? []).filter((entry,) => satisfiesPaletteRole(role, entry.requiredRole,));
+  },
+
+  /**
+   * Recompute the filtered list for a query, hiding disallowed commands.
+   * @param {string} role
+   * @returns {void}
+   */
+  _applyPaletteFilter(role: string,) {
+    const query = (this._activeCommand ?? "").toLowerCase();
+    const visible = (this._commandList ?? []).filter((entry,) => satisfiesPaletteRole(role, entry.requiredRole,));
+    this._hiddenCommandCount = (this._commandList ?? []).length - visible.length;
+    this._filteredCommands = query
+      ? visible.filter((entry,) => entry.name.includes(query,))
+      : visible;
+
+    this._paletteActiveIndex = 0;
   },
 };

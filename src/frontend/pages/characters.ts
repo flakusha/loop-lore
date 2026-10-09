@@ -13,6 +13,8 @@ import { escapeHtml, fetchPartial, filterCards, } from "./shared";
 // Initialize traits + proactive messaging modules
 import { initProactive, } from "./characters-proactive";
 import "./characters-edit-form";
+import { loadCharacterGallery, } from "./characters-gallery";
+import { initJourney, loadCharacterJourney, } from "./characters-journey";
 import "./characters-journal-keyphrases";
 import { initTraits, } from "./characters-traits";
 import "../character-growth-editor";
@@ -71,6 +73,7 @@ async function populateModal(modal: HTMLElement, char: Record<string, unknown>, 
   modal.querySelector("[data-action='submit-for-review']",)?.setAttribute("data-id", id,);
   modal.classList.add("open",);
   await loadCharacterGallery(modal, id,);
+  await loadCharacterJourney(modal, id,);
 
   const moodSection = modal.querySelector<HTMLElement>("[data-field='mood-section']",);
   if (!moodSection) { return; }
@@ -89,46 +92,6 @@ async function populateModal(modal: HTMLElement, char: Record<string, unknown>, 
   }
 
   if (happinessEl) { happinessEl.textContent = `${mood.happiness}%`; }
-}
-
-/**
- * Load the character's linked gallery assets (avatars) into the modal's Gallery tab.
- * @param modal
- * @param id
- */
-async function loadCharacterGallery(modal: HTMLElement, id: string,): Promise<void> {
-  const container = modal.querySelector<HTMLElement>("[data-field='gallery']",);
-  if (!container) { return; }
-  try {
-    const resp = await feFetch(`/api/v1/actors/${id}/avatars`,);
-    const avatars = await resp.json() as Array<{ id: string; assetId: string; label: string }>;
-    if (!Array.isArray(avatars,) || avatars.length === 0) {
-      container.innerHTML = "<div data-field='gallery-empty'>No linked assets.</div>";
-      return;
-    }
-
-    container.innerHTML = Array.from(
-      avatars,
-      (av,) =>
-        `<div class="avatar-gallery-item" style="display:flex;flex-direction:column;align-items:center;gap:var(--space-1)">
-      <div style="width:56px;height:56px;border-radius:var(--radius-sm);overflow:hidden;background:var(--bg-tertiary);border:1px solid var(--border-default)">
-        <img src="/api/v1/assets/${escapeHtml(av.assetId,)}/thumb" alt="${
-          escapeHtml(av.label || "avatar",)
-        }" style="width:100%;height:100%;object-fit:cover" />
-      </div>
-      <span style="font-size:var(--fs-base-xs);color:var(--text-secondary);max-width:56px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${
-          escapeHtml(av.label || "",)
-        }</span>
-      <button class="btn btn-ghost btn-sm" data-action="unlink-asset" data-asset-id="${
-          escapeHtml(av.assetId,)
-        }" data-actor-id="${
-          escapeHtml(id,)
-        }" x-on:click="window.unlinkCharacterAsset($el)" title="Unlink from character">✕ Unlink</button>
-    </div>`,
-    ).join("",);
-  } catch {
-    container.innerHTML = "<div data-field='gallery-empty'>Failed to load gallery.</div>";
-  }
 }
 
 export async function unlinkCharacterAsset(btn: HTMLElement,) {
@@ -293,3 +256,4 @@ Object.assign(globalThis, {
 
 initTraits(feFetch,);
 initProactive(feFetch,);
+initJourney(feFetch,);

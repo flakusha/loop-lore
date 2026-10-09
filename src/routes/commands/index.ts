@@ -17,13 +17,14 @@
  * requires the calling user but does not surface any per-user data.
  */
 import { Elysia, } from "elysia";
-import { listCommands, } from "../../assistant/commands/registry";
+import { getCommandRequirement, listCommands, } from "../../assistant/commands/registry";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas/primitives";
 import { requireUserId, } from "../http-utils";
 
 interface CommandDescriptor {
   name: string;
   descriptionKey: string;
+  requiredRole?: string;
 }
 
 /**
@@ -42,6 +43,7 @@ export function commandsRoutes(opts: { prefix?: string },) {
         const data: CommandDescriptor[] = listCommands().map((name,) => ({
           name,
           descriptionKey: `commands.${name}`,
+          requiredRole: getCommandRequirement(name,),
         }));
 
         return Response.json({ data, },);

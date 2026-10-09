@@ -72,7 +72,10 @@ async function gateWorldOwner(
  * Run one owner-scoped control action against a world's tick loop.
  *
  * `step` returns the tick outcome, not the cursor: the point of stepping
- * is to see what the tick actually did.
+ * is to see what the tick actually did. Pause and step ride the same tick
+ * path as `tickOnce` (see `tickWorld` in the scheduler), so every
+ * registered dispatch target — movement, BDI, GM beats — is covered by
+ * the same pause/step controls with no per-target wiring.
  *
  * @param database the request's Kysely handle
  * @param ctx the Elysia request context

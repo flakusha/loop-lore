@@ -23,6 +23,11 @@ const BASE: EditFormValues = {
   dataVersion: 4,
   avatarFocusX: 50,
   avatarFocusY: 50,
+  growthMode: "dynamic",
+  llmAssistEnabled: false,
+  arcStage: "introduction",
+  arcDescription: "",
+  recentEntries: [],
 };
 
 describe("views/character-edit-form", () => {
@@ -71,6 +76,28 @@ describe("views/character-edit-form", () => {
     // characterId inside an onclick string must not break out of the quote.
     expect(html,).toContain("evil&#39;); alert(1); (&#39;",);
     expect(html,).not.toContain("evil'); alert(1); ('",);
+  });
+
+  test("renders growth section with server seed values", () => {
+    const html = buildEditFormHtml({ ...BASE, growthMode: "static", arcStage: "crisis", arcDescription: "The fall", },);
+    expect(html,).toContain("character-growth-section",);
+    expect(html,).toContain("characterGrowthEditor",);
+    expect(html,).toContain("initialMode: 'static'",);
+    expect(html,).toContain('<option value="crisis" selected>',);
+    expect(html,).toContain("The fall",);
+  });
+
+  test("renders growth recent entries with escaping", () => {
+    const html = buildEditFormHtml({
+      ...BASE,
+      recentEntries: [
+        { axis: "trait", reason: "<b>Growth</b>", recordedAt: "2026-01-01", },
+      ],
+    },);
+
+    expect(html,).toContain("character-growth-entries",);
+    expect(html,).toContain("&lt;b&gt;Growth&lt;/b&gt;",);
+    expect(html,).not.toContain("<b>Growth</b>",);
   });
 
   test("includes internal traits section", () => {
@@ -139,5 +166,21 @@ describe("views/character-edit-form", () => {
     const html = buildEditFormHtml({ ...BASE, characterId: "evil'); alert(1); ('", },);
     expect(html,).toContain("characterExtensionEditorFactory('evil&#39;); alert(1); (&#39;', undefined,)",);
     expect(html,).not.toContain("characterExtensionEditorFactory('evil'); alert(1); ('', undefined,)",);
+  });
+
+  test("renders growth section with server seed values", () => {
+    const html = buildEditFormHtml({ ...BASE, growthMode: "static", arcStage: "crisis", arcDescription: "The fall", },);
+    expect(html,).toContain("character-growth-section",);
+    expect(html,).toContain("characterGrowthEditor({",);
+    expect(html,).toContain("initialMode: 'static'",);
+    expect(html,).toContain('<option value="crisis" selected>',);
+    expect(html,).toContain("The fall",);
+    expect(html,).toContain("dataVersion: 4",);
+  });
+
+  test("escapes arc description in growth section", () => {
+    const html = buildEditFormHtml({ ...BASE, arcDescription: "a'); alert(1); ('", },);
+    expect(html,).toContain("a&#39;); alert(1); (&#39;",);
+    expect(html,).not.toContain("a'); alert(1); ('",);
   });
 });

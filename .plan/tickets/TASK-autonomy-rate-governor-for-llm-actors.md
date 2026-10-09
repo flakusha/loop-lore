@@ -78,6 +78,7 @@ and its firing counterpart). That knob is owned by
 `TASK-autonomy-config-surface.md` (Done) and is exercised by this epic's
 `TASK-autonomy-deterministic-turns` (open), not by this file.
 
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 `Wontfix` recorded 2026-10-02; `**Epic:**` corrected from the non-existent id
 `epic-actor-autonomy-story-drive.md` to `epic-actor-autonomy-story-drive`. Status
 history: `Wontfix` from 2026-10-02 until the 2026-10-08 registry close, `Done`
