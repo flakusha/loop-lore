@@ -148,11 +148,24 @@ export class TUIApp {
   }
 }
 
-// Initialize the global logger before module-scope TUIApp construction.
-// The constructor calls loadConfig(), which logs via getLogger(); without
-// this init, a config failure crashes the TUI inside its own catch block
-// (see BUG-tui-app-getlogger-throws-when-running-standalone).
-createLogger({ level: "warn", },);
+/**
+ * Boot the TUI shell: initialize the global logger, then construct the app.
+ *
+ * The constructor calls loadConfig(), which logs via getLogger(); without the
+ * init here a config failure crashes the TUI inside its own catch block (see
+ * BUG-tui-app-getlogger-throws-when-running-standalone). Keeping both steps
+ * behind this factory is what makes importing the module side-effect free —
+ * nothing touches a terminal until a caller asks for the app.
+ * @returns {TUIApp} the constructed shell, with its screen and widgets bound
+ */
+export function createTUIApp(): TUIApp {
+  createLogger({ level: "warn", },);
+  return new TUIApp();
+}
 
-const app = new TUIApp();
-export default app;
+// Entry-point guard — the idiom every script under scripts/ uses. The TUI
+// still auto-starts under `bun run src/tui/app.ts`, and stays inert when a
+// test runner or any other tool imports the module.
+if (import.meta.main) {
+  createTUIApp();
+}
