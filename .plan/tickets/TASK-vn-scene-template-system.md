@@ -3,15 +3,23 @@
 
 # TASK: VN Scene Template System
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** The custom-template engine behind VN templates — variable
+substitution, inheritance, per-world persistence, JSON import/export, and
+composite steps. The engine is complete and tested; no GM UI, no composite
+executor, and no consumer outside its own tests.
+**Context:** Extends `TASK-vn-template-actions.md` (built-in templates) with
+user-authored templates that reference character stats, locations, inventory,
+and story state. See `## Design` (types, `{{var}}` syntax, inheritance,
+composition) and `## Implementation` (the 5-phase plan).
+**Acceptance Criteria:** Split in `## Acceptance Criteria` — engine boxes
+(verified in `src/frontend/vn/templates/template-engine.ts`) vs boxes that are
+not implemented.
 
 
 **Priority:** Medium
-**Status:** Done
-**Status Note:** Engine Complete (2026-08-23) — Template core done; GM builder UI not implemented
-**Epic:** Epic Visual Novel Mode (51)
+**Status:** In Progress
+**Status Note:** (2026-08-23) "Engine Complete — GM builder UI not implemented". Reconciled 2026-10-09: engine verified present and tested, but composite execution never existed (only the step interface), and the engine is also not wired into the renderer (Phase 5 open) with no GM builder UI. Done → In Progress. The closed git issue is left as-is; re-opening it is out of scope here.
+**Epic:** epic-visual-novel-mode
 **Tags:** vn, templates, system, engine, custom, gm-tools
 **Effort:** Med
 
@@ -172,11 +180,13 @@ Example: `combat_intro` composite:
 
 ## Files to Create
 
-- `src/frontend/vn/templates/template-engine.ts`
-- `src/frontend/vn/templates/variable-resolver.ts`
-- `src/frontend/vn/templates/template-builder.ts`
-- `src/frontend/vn/templates/template-gallery.ts`
-- `src/frontend/vn/templates/template-storage.ts`
+- `src/frontend/vn/templates/template-engine.ts` — ✅ exists
+- `src/frontend/vn/templates/variable-resolver.ts` — not created; the resolver
+  is `resolveVariables` inside `template-engine.ts`
+- `src/frontend/vn/templates/template-builder.ts` — not created
+- `src/frontend/vn/templates/template-gallery.ts` — not created
+- `src/frontend/vn/templates/template-storage.ts` — not created; storage is
+  inlined in `template-engine.ts` (`localStorage`, key `vn-templates-<worldId>`)
 
 ## Files to Modify
 
@@ -188,25 +198,55 @@ Example: `combat_intro` composite:
 
 ## Acceptance Criteria
 
-### ✅ Engine (DONE)
+### ✅ Engine
 
-- [x] GM can create custom scene templates with variables — `VnTemplate` / `VnTemplateVariable` types in `src/frontend/vn/templates/template-engine.ts`
-- [x] Variable substitution works in text fields (`{{name}}` → resolved value) — `resolveVariables`, `substituteTemplate`
-- [x] Template inheritance works (child inherits parent, overrides fields) — `resolveTemplate`
-- [x] Composite templates execute sequential steps with delays — composite executor in `template-engine.ts`
-- [x] Templates persist per-world in localStorage — localStorage CRUD
-- [x] Templates can be exported/imported as JSON — `exportTemplate` / `importTemplate`
-- [x] Required variables enforce presence before template application — `resolveVariables` raises on missing required
+Verified 2026-10-09 in `src/frontend/vn/templates/template-engine.ts`
+(covered by `template-engine.test.ts`):
 
-### ⬜ GM Builder UI (NOT IMPLEMENTED)
+- [x] `VnTemplate` / `VnTemplateVariable` / `VnTemplateBody` types exist —
+      `template-engine.ts:16,32,42`
+- [x] Variable substitution works in text fields (`{{name}}` → resolved value) —
+      `substituteTemplate` `:107`; unresolved names are left as-is `:113`
+- [x] Required variables enforce presence before template application —
+      `resolveVariables` throws on missing required `:90`
+- [x] Templates persist per-world in localStorage — `getTemplatesForWorld`
+      `:171`, `saveTemplate` `:183` (bumps `version`), `deleteTemplate` `:208`
+- [x] Templates can be exported/imported as JSON — `exportTemplate` `:235`,
+      `importTemplate` `:244` (rejects a payload with no `id`/`name`/`worldId`)
+- [x] Template inheritance works (child inherits parent, overrides fields) —
+      `resolveTemplate` `:133` merges parent `body` then child, child variables win
+- [x] Built-in template free-text search — `searchTemplates` matches name,
+      description, and tags across scene + dialogue templates
+      (`scene-templates/search.ts:12`); no category filter
 
+### ⬜ Not implemented
+
+- [ ] Composite template execution — **the 2026-08-23 AC claiming a
+      "composite executor" was false**: only the `VnCompositeStep` *interface*
+      exists (`template-engine.ts:66`); nothing in `src/` steps through a
+      composite, evaluates a step `condition`, or honours a step `delay`
+- [ ] Renderer/UI wiring (Phase 5) — grep for `templates/` imports across
+      `src/frontend/` outside `src/frontend/vn/templates/` returns nothing; the
+      only importers are the templates' own tests. `scene-renderer/`,
+      `typewriter.ts`, and `transition-engine.ts` never read a template
+- [ ] GM builder UI — `template-builder.ts` and `template-gallery.ts` were
+      never created (see `## Files to Create`)
 - [ ] Template builder UI allows drag-and-drop scene element configuration
 - [ ] Template gallery shows all templates by category
 - [ ] Variable autocomplete shows available variables in GM UI
+- [ ] Variable type validation — `resolveVariables` accepts any type; the
+      `enum` / `asset` types on `VnTemplateVariable` are declared but never
+      checked
+- [ ] Context sources 1-5 in `## Design` (character → location → chat → GM →
+      default) — `resolveVariables` takes a flat `Record<string, unknown>`; the
+      per-source lookup chain is not implemented
+- [ ] Conditional steps (`condition` expression evaluation)
+- [ ] Step delay for timing control
 
 ### 🟢 Performance
 
-- [x] No performance regression in VN mode rendering
+- [x] No performance regression in VN mode rendering — holds trivially; no
+      render path reads a template (2026-10-09)
 
 ## Risk
 
