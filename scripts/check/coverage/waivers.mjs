@@ -35,16 +35,14 @@ export const WAIVERS = {
   "tests": { floor: 50, reason: "bun preload before coverage tracking starts (tests/setup-globals.ts)", },
   // Gate pass: TUI module body is dominated by blessed widget binding
   // (box / list / textbox) and event-handler wiring that requires a live
-  // terminal to exercise. The mock.module-based test file
-  // (src/tui/chat/index.test.ts) covers the diff-scoped new surface
-  // (sessionToken threading + empty-string normalization). Per-file
-  // waiver in this same WAIVERS map keys `tui:src/tui/chat/index.ts`
-  // down to 51 for the diff gate; this module-wide floor covers the
-  // full-run path where blessed binding dominates the denominator.
+  // terminal to exercise. The mock.module-based test files under src/tui/
+  // stub blessed and construct every view without a terminal. This
+  // module-wide floor covers the full-run path, where the screens that are
+  // only ever built (never driven) dominate the denominator.
   "tui": {
     floor: 74,
     reason:
-      "blessed widget binding + event-handler wiring dominates uncovered lines; mock.module suite covers sessionToken threading; per-file waiver tui:src/tui/chat/index.ts at 51 for diff gate",
+      "blessed widget binding + event-handler wiring dominates uncovered lines; mock.module suites construct the views without a terminal",
   },
   // Gate pass: pure DOM-bound UI code (htmx event listeners, Alpine
   // directives, focus-trap, modals, panels). Playwright DOM-coverage is
@@ -149,18 +147,6 @@ export const WAIVERS = {
     floor: 75,
     reason:
       "dedicated coverage suite is describeOrSkipStrict-gated (skips in check gate); module split moved uncovered paths in; TASK-coverage-waiver-stream-to-client-ts-at-75-3-under-check-gate",
-  },
-  // Gate pass: ChatWidget body is dominated by blessed widget binding (box /
-  // list / textbox) and event-handler wiring that requires a live terminal.
-  // The mock.module-based suite covers the constructor's sessionToken
-  // threading + empty-string normalization, which is the diff-scoped new
-  // surface; the rest of the widget is exercised end-to-end through the
-  // blessed REPL harness and `test:e2e` (not the unit suite). Owning ticket:
-  // TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate.
-  "tui:src/tui/chat/index.ts": {
-    floor: 51,
-    reason:
-      "blessed widget binding + event-handler wiring dominates uncovered lines; mock.module suite covers sessionToken threading + empty-string normalization (the new diff surface); e2e/REPL exercise the rest; TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate",
   },
   // Gate pass: htmx.ts is document.addEventListener wiring (configRequest,
   // beforeSwap, afterSwap, responseError, asset/character/world events,
