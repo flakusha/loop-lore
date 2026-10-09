@@ -123,7 +123,7 @@ Total tickets: **3417** — untagged: **2858** — unbound to epic: **1554**
 | autonomy | 4 | 1 | 0 | 1 | 1 | 0 | 1 |
 | aux | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | aux-pipeline | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| avatar | 6 | 0 | 2 | 0 | 0 | 0 | 4 |
+| avatar | 6 | 1 | 2 | 0 | 0 | 0 | 3 |
 | avatar-matting | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | avoid | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | backend | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
@@ -372,7 +372,7 @@ Total tickets: **3417** — untagged: **2858** — unbound to epic: **1554**
 | embedding | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | embeddings | 5 | 1 | 0 | 0 | 0 | 0 | 4 |
 | emergence | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| emotion | 3 | 0 | 1 | 0 | 0 | 0 | 2 |
+| emotion | 3 | 1 | 1 | 0 | 0 | 0 | 1 |
 | emotion-impact | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | enchanting | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | encounters | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -582,7 +582,7 @@ Total tickets: **3417** — untagged: **2858** — unbound to epic: **1554**
 | llm-narrative | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | llm-provider | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | load-testing | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| loadout | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| loadout | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | local-models | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | localization | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | location | 7 | 0 | 0 | 1 | 1 | 0 | 5 |
@@ -700,7 +700,7 @@ Total tickets: **3417** — untagged: **2858** — unbound to epic: **1554**
 | openspec | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | opentelemetry | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | orchestration | 2 | 1 | 0 | 0 | 1 | 0 | 0 |
-| outfit | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| outfit | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | overlay | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | ownership | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 | p2-c | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -916,7 +916,7 @@ Total tickets: **3417** — untagged: **2858** — unbound to epic: **1554**
 | seed | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | seeding | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | seen | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| selection | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| selection | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | self-confirming-loop | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | self-heal | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | semantic | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -1099,7 +1099,7 @@ Total tickets: **3417** — untagged: **2858** — unbound to epic: **1554**
 | validator | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
 | validators | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | variant | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| variants | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| variants | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | vector | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | vector-store | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | versioning | 4 | 0 | 1 | 0 | 1 | 0 | 2 |
@@ -1120,7 +1120,7 @@ Total tickets: **3417** — untagged: **2858** — unbound to epic: **1554**
 | WAC4 | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | waivers | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wan | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wardrobe | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wardrobe | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | warnings | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | wasm | 3 | 0 | 1 | 0 | 0 | 0 | 2 |
 | watchdog | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
@@ -1497,7 +1497,7 @@ Total tickets: **3417** — untagged: **2858** — unbound to epic: **1554**
 | proposed:epic-user-engagement | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | review-dev-2026-08-26-late-merges | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | review-dev-2026-08-26-security-data-integrity-merges | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
-| (unbound) | 1554 | 642 | 57 | 405 | 51 | 0 | 399 |
+| (unbound) | 1554 | 643 | 57 | 405 | 51 | 0 | 398 |
 
 ## Ticket detail
 
