@@ -7,7 +7,7 @@ import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertUsers, } from "../../test-utils/insert-helpers";
-import { listVnChoices, selectVnChoice, } from "./vn-choices";
+import { dismissVnChoice, listVnChoices, selectVnChoice, } from "./vn-choices";
 
 describe("VN choice card service (C7 Phase 4)", () => {
   let db: Kysely<DB>;
@@ -183,6 +183,104 @@ describe("VN choice card service (C7 Phase 4)", () => {
         code: "not_found",
         message: "Choice not found",
       },);
+    });
+  });
+
+  describe("dismissVnChoice", () => {
+    // Own chat + own choice so a dismissal never mutates rows the suites above
+    // assert on (they share one seeded DB via beforeAll).
+    let dismissChatId: string;
+
+    beforeAll(async () => {
+      dismissChatId = crypto.randomUUID();
+      await db.insertInto("chats",).values({
+        id: dismissChatId,
+        name: "Dismiss Chat",
+        type: "direct" as const,
+        mode: "group" as const,
+        created_by: ownerId,
+      },).execute();
+
+      await db.insertInto("vn_choices",).values({
+        id: "choice-dismiss-me",
+        chat_id: dismissChatId,
+        scene_index: 0,
+        label: "Ignore this",
+        description: null,
+        consequences: JSON.stringify({},),
+        relationship_impact: JSON.stringify({},),
+        mood_impact: JSON.stringify({},),
+        unlock_conditions: JSON.stringify({},),
+        status: "available",
+        created_at: new Date().toISOString(),
+      },).execute();
+    },);
+
+    /** Current `status` of a choice, read straight from the row. */
+    async function statusOf(choiceId: string, chat: string = dismissChatId,): Promise<string | undefined> {
+      const row = await db
+        .selectFrom("vn_choices",)
+        .select("status",)
+        .where("id", "=", choiceId,)
+        .where("chat_id", "=", chat,)
+        .executeTakeFirst();
+
+      return row?.status;
+    }
+
+    test("writes status=dismissed, so the choice stops blocking free sends", async () => {
+      const result = await dismissVnChoice(db, {
+        chatId: dismissChatId,
+        choiceId: "choice-dismiss-me",
+      },);
+
+      expect(result,).toEqual({ ok: true, choiceId: "choice-dismiss-me", },);
+      // A dismissed choice must fall out of the pending query the gate runs.
+      expect(await statusOf("choice-dismiss-me",),).toBe("dismissed",);
+
+      const listed = await listVnChoices(db, { chatId: dismissChatId, sceneIndex: 0, },);
+      if ("code" in listed) { throw new Error(`Unexpected error: ${listed.code}`,); }
+      expect(listed.choices,).toHaveLength(0,);
+    });
+
+    test("dismissing twice reports not_found the second time", async () => {
+      const result = await dismissVnChoice(db, {
+        chatId: dismissChatId,
+        choiceId: "choice-dismiss-me",
+      },);
+
+      expect(result,).toEqual({
+        code: "not_found",
+        message: "Choice not found or already resolved",
+      },);
+    });
+
+    test("an already-selected choice is not dismissable", async () => {
+      // `choice-cave` was resolved by the selectVnChoice suite above.
+      const result = await dismissVnChoice(db, { chatId, choiceId: "choice-cave", },);
+
+      expect(result,).toEqual({
+        code: "not_found",
+        message: "Choice not found or already resolved",
+      },);
+
+      expect(await statusOf("choice-cave", chatId,),).toBe("selected",);
+    });
+
+    test("a choice from another chat reads as not_found and leaves the row alone", async () => {
+      // `choice-tower-avail` is still available in `chatId`; dismissing it
+      // through the wrong chat must not resolve it there.
+      const result = await dismissVnChoice(db, {
+        chatId: missingChatId,
+        choiceId: "choice-tower-avail",
+      },);
+
+      expect(result,).toEqual({
+        code: "not_found",
+        message: "Choice not found or already resolved",
+      },);
+
+      expect(await statusOf("choice-tower-avail", chatId,),).toBe("available",);
     });
   });
 });

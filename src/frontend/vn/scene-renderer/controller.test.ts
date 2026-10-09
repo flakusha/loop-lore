@@ -16,6 +16,7 @@ import {
   destroyVnRenderer,
   getCurrentSceneIndex,
   getSceneCount,
+  handleNavigateToScene,
   initVnRenderer,
   jumpToScene,
   nextScene,
@@ -204,6 +205,67 @@ describe("navigation", () => {
     ],);
 
     expect(state.scenes[2]?.emotion,).toBe("happy",);
+  });
+});
+
+// ── Gate recovery event ─────────────────────────────────────────────────────
+
+describe("handleNavigateToScene", () => {
+  /** Event shape chat-send dispatches: `{ detail: { sceneIndex } }`. */
+  function navEvent(detail: unknown,): Event {
+    return { detail, } as unknown as Event;
+  }
+
+  test("jumps the stage to the sceneIndex the 409 carried", () => {
+    const container = freshContainer();
+    initTwo(container,);
+    // Init mounts the LAST scene; the blocked one is back at scene 0.
+    expect(getCurrentSceneIndex(),).toBe(1,);
+
+    handleNavigateToScene(navEvent({ sceneIndex: 0, },),);
+    expect(getCurrentSceneIndex(),).toBe(0,);
+  });
+
+  test("the registered listener is this handler, so the recovery path is wired", async () => {
+    initTwo(freshContainer(),);
+    await tick();
+
+    // The handler init registers must be the one under test — otherwise the
+    // gate's recovery event reaches nothing.
+    const registration = added.find(([type,],) => type === "vn:navigate-to-scene");
+    expect(registration?.[1],).toBe(handleNavigateToScene,);
+  });
+
+  test("an out-of-range sceneIndex leaves the stage where it was", () => {
+    initTwo(freshContainer(),);
+
+    handleNavigateToScene(navEvent({ sceneIndex: 7, },),);
+    expect(getCurrentSceneIndex(),).toBe(1,);
+
+    handleNavigateToScene(navEvent({ sceneIndex: -1, },),);
+    expect(getCurrentSceneIndex(),).toBe(1,);
+  });
+
+  test("a non-integer or missing sceneIndex is ignored, not coerced", () => {
+    initTwo(freshContainer(),);
+
+    handleNavigateToScene(navEvent({ sceneIndex: 0.5, },),);
+    handleNavigateToScene(navEvent({ sceneIndex: "0", },),);
+    handleNavigateToScene(navEvent({},),);
+    handleNavigateToScene(navEvent(undefined,),);
+    handleNavigateToScene(navEvent(null,),);
+
+    expect(getCurrentSceneIndex(),).toBe(1,);
+  });
+
+  test("an unmounted renderer ignores the event instead of jumping", () => {
+    initTwo(freshContainer(),);
+    destroyVnRenderer();
+
+    handleNavigateToScene(navEvent({ sceneIndex: 0, },),);
+
+    expect(getCurrentSceneIndex(),).toBe(0,);
+    expect(getSceneCount(),).toBe(0,);
   });
 });
 
