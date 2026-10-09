@@ -166,3 +166,24 @@ export type TransportKind = (typeof TransportKind)[keyof typeof TransportKind];
  * Enforced at the application layer in LocationTreeService.insertLocation.
  */
 export const LOCATION_DEPTH_LIMIT = 12;
+
+/**
+ * How one `location_edges` row (047) may be traversed.
+ *
+ * Adjacency modes (walk/ride/fly/teleport/port-gate) require the edge to
+ * exist — that is what makes the pair connected. `free-jump` is still an
+ * explicit edge but ignores adjacency in the gameplay sense: it may link
+ * any two locations and charges cost_json (gold, itemId, cooldownHours,
+ * requiresFactionStanding — TASK-party-free-jump-location-graph-edge)
+ * for the hop.
+ */
+export const LocationEdgeMode = {
+  Walk: "walk",
+  Ride: "ride",
+  Fly: "fly",
+  Teleport: "teleport",
+  PortGate: "port-gate",
+  FreeJump: "free-jump",
+} as const;
+/** */
+export type LocationEdgeMode = (typeof LocationEdgeMode)[keyof typeof LocationEdgeMode];
