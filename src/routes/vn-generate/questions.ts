@@ -199,7 +199,14 @@ export function questionsRoutes(opts: VnGenerateRouteOpts,) {
             },);
 
             return jsonResponse({ data: result, },);
-          } catch {
+          } catch (err) {
+            // Logged, not swallowed: a mid-loop insertInto failure leaves earlier
+            // questions committed, and a bare 500 gives no way to tell that apart
+            // from "generation produced nothing".
+            log().error("vn question generation failed", err instanceof Error ? err : new Error(String(err,),), {
+              chatId,
+            },);
+
             return jsonError("Generation failed", 500,);
           }
         },

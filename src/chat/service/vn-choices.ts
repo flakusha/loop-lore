@@ -197,11 +197,19 @@ export async function selectVnChoice(
 
   const now = new Date().toISOString();
 
-  await database
+  // The status predicate makes the selection single-shot. Without it two
+  // concurrent selects both return ok and the second silently overwrites the
+  // first, so the client believes it chose while the row records another.
+  const updated = await database
     .updateTable("vn_choices",)
     .set({ status: "selected", selected_at: now, },)
     .where("id", "=", choiceId,)
-    .execute();
+    .where("status", "=", "available",)
+    .executeTakeFirst();
+
+  if (Number(updated.numUpdatedRows ?? 0,) === 0) {
+    return { code: "bad_request", message: "Choice already selected", };
+  }
 
   const parsed = parseVnChoice(row,);
   parsed.selected = 1;
