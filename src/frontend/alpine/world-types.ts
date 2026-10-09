@@ -221,6 +221,11 @@ export interface WorldPageState {
   weather: string | null;
   conditionsLocationName: string | null;
   conditionsAt: string | null;
+  readonly hasConditions: boolean;
+  readonly timeIcon: string;
+  readonly weatherIcon: string;
+  readonly dayNightLabel: string;
+  readonly forecastAvailable: boolean;
 
   // ── location details (location-details.ts) ──
   selectedLocationId: string;
@@ -229,6 +234,8 @@ export interface WorldPageState {
   detailError: boolean;
   detailNpcs: NpcPresent[];
   showItems: boolean;
+  readonly detailHazards: string[];
+  readonly detailItems: string[];
   selectLocation(id: string,): Promise<void>;
   loadLocationDetail(id: string,): Promise<void>;
 
