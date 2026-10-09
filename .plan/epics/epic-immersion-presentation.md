@@ -24,7 +24,7 @@
 | ---- | ----- | ------ | ------ | --------- |
 | Emotion-reactive portraits | multi-avatar selection (shipped) | Med | ✅ Done — superseded by `TASK-character-multi-avatar.md` (Done) + `TASK-emotion-intent-detection.md` (Done); no `src/assets/emotion-portraits.ts` needed | — |
 | Visual Novel Mode renderer | `src/frontend/vn/` | Med | ✅ Done — `TASK-visual-novel-mode.md` Done (2026-08-23); see `epic-visual-novel-mode.md` | `TASK-visual-novel-mode.md` |
-| VN branching + dynamic gen + Q&A | `src/frontend/vn/` | Med | ✅ Done — `TASK-vn-branching-choices.md`, `TASK-vn-dynamic-generation.md`, `TASK-vn-qa-mode.md` all Done | — |
+| VN branching + dynamic gen + Q&A | `src/frontend/vn/` | Med | 🟡 Partial — owned by `epic-visual-novel-mode.md`, which carries the open ACs: choice cards are never mounted, the Q&A interaction loop has no code, and all image generation is deferred to `epic-comfyui-plugin`. Reconciled 2026-10-09; the prior `✅ Done — all Done` row did not match `src/` | — |
 | Text Effects & Overlays | `src/frontend/effects/text-fx.ts` (landed: shake/glow/typewriter/fade) | Med | 🟡 Partial — core helper shipped; overlay components (status bars, badges) open in `TASK-text-effects-overlays.md` (Not Started) | `TASK-text-effects-overlays.md` |
 | 3D View Modes (consolidated) | `src/frontend/3d/` (does not exist — no 3D code shipped) | High | ⬜ Open — deferred, `TASK-3d-view-modes.md` umbrella Not Started | `TASK-3d-view-modes.md` |
 | Chat backgrounds + location sync | — (no implementation) | Med–High | ⬜ Open — deferred, `TASK-chat-backgrounds-location-sync.md` Not Started | `TASK-chat-backgrounds-location-sync.md` |
@@ -47,7 +47,7 @@
 
 ## Related Epics
 
-- `epic-visual-novel-mode.md` (In Progress) — owns all VN rendering, branching, dynamic generation, Q&A; this epic's VN rows are Done and tracked there.
+- `epic-visual-novel-mode.md` (In Progress) — owns all VN rendering, branching, dynamic generation, and Q&A. This epic's VN rows mirror that epic's state rather than being a second source of truth: the renderer row is Done, the branching/Q&A/dynamic-gen row is Partial with its open ACs carried by `epic-visual-novel-mode.md` (reconciled 2026-10-09 — this line previously claimed every VN row was Done).
 - `epic-wardrobe-avatar-variants.md` (Not Started) — `visual = f(emotion, wardrobe, context)`; extends the shipped multi-avatar/emotion selection this epic's portrait row relied on.
 - `epic-avatar-alpha-vn-layering.md` (Not Started) — RGBA sprites + matting fallback so VN portraits composite without halos; consumes `FEAT-background.md`.
 - `epic-audio-video-sound.md` (Not Started) + `epic-ambient-music-sfx.md` + `epic-tts-foundation.md` (all Not Started) — own the soundscape and karaoke-TTS rows; no audio code is built here.

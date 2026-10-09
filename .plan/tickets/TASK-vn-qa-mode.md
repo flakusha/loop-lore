@@ -3,12 +3,19 @@
 
 # TASK: VN Q&A Mode
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Question↔answer interaction inside VN scenes — a question card the
+player answers, with the answer driving emotion, relationship, and scene
+changes. The static QA validator half shipped; the interaction loop has no
+implementation in `src/`.
+**Context:** Two unrelated deliverables share this ticket. (1) A static content
+validator for VN scenes — shipped, but with no production caller. (2) A Q&A
+interaction loop — not started. See `## Status Split` and `## Scope`.
+**Acceptance Criteria:** Split in `## Acceptance Criteria` — validator boxes
+(verified in `src/frontend/vn/qa-mode.ts`) vs interaction-loop boxes (no code).
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** (2026-08-23) marked Done while its own body said the Q&A Interaction Loop was NOT STARTED with 10 unchecked ACs. Reconciled 2026-10-09: validator done (but callerless), interaction loop absent — Done → In Progress. Note the closed git issue is left as-is; re-opening it is out of scope here.
 **Priority:** P2 — Medium
 **Effort:** Medium
 **Type:** Feature Task
@@ -32,7 +39,11 @@ This ticket covers two distinct deliverables — only the first is done.
 - `runQaCheck()` produces a report
 - `renderQaReport()` surfaces issues to the GM
 
-Invoked by the chat panel / GM tooling, not as part of the Q&A interaction loop.
+Not part of the Q&A interaction loop. **It also has no production caller**
+(reconciled 2026-10-09): grep for `qa-mode`, `runQaCheck`, and
+`renderQaReport` across `src/` returns only `qa-mode.ts` itself and
+`qa-mode.test.ts`. The 2026-08-23 claim that it is "invoked by the chat panel /
+GM tooling" does not hold — there is no import from any view, route, or panel.
 
 ### ⬜ Q&A Interaction Loop (NOT STARTED)
 
@@ -117,6 +128,23 @@ interface VNConsequence {
 
 ## Acceptance Criteria
 
+### QA Validator — shipped
+
+- [x] Static scene-content validator: blank text → error, missing character
+      name → warning (narration exempt), missing background → info, text over
+      2000 chars → warning, consecutive-narration pacing check
+      (`src/frontend/vn/qa-mode.ts:36-122`, covered by `qa-mode.test.ts`)
+- [x] `runQaCheck()` returns a `VnQaReport` with totals and per-issue severity
+- [x] `renderQaReport()` renders the report into a container
+- [ ] Validator is reachable from GM tooling — **no production caller**; the
+      module is imported only by its own test
+
+### Q&A Interaction Loop — not started
+
+- [ ] `POST /api/chats/:id/vn/questions` route mounted — no `vn/questions`
+      route exists anywhere in `src/`
+- [ ] `GET /api/chats/:id/vn/questions` — same
+- [ ] `POST /api/chats/:id/vn/questions/:qid/answer` — same
 - [ ] Question card displays in VN scene with speaker + question text
 - [ ] Answer options show text + hover preview of impact
 - [ ] Selecting answer triggers scene transition
@@ -130,9 +158,12 @@ interface VNConsequence {
 
 ## Files to Create
 
-- `src/frontend/vn/qa-mode.ts` — question card component
-- `src/frontend/alpine/qa-mode.ts` — Alpine.js Q&A logic
-- `src/routes/vn-questions.ts` — API routes (or extend `src/routes/vn.ts`)
+- `src/frontend/vn/qa-mode.ts` — ✅ exists, but is the **validator**, not the
+  question-card component this list assumed
+- `src/frontend/alpine/qa-mode.ts` — Alpine.js Q&A logic — does not exist
+- `src/routes/vn-questions.ts` — API routes — does not exist; the natural home
+  is `src/routes/vn-generate/questions.ts`, mounted from
+  `src/routes/vn-generate/index.ts` alongside `storyRoutes`/`choicesRoutes`
 
 ## Related Tickets
 

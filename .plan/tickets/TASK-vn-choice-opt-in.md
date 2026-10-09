@@ -3,14 +3,24 @@
 
 # TASK: VN choice opt-in with pending-choice send block
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Make VN choices opt-in per chat and make a pending choice block
+the send button until it is resolved or dismissed.
+**Context:** Choices today are unconditional and the turn send gate has no idea
+choices exist. See `## Summary` for the intent; the five boxes in
+`## Acceptance Criteria` are the deliverable.
+**Acceptance Criteria:** The five boxes in `## Acceptance Criteria`.
 
 
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Tags:** visual-novel, choices, opt-in, send-gate
+**Epic:** epic-visual-novel-mode
+**Git Issue:** ce429a2
+
+**Related:** `TASK-vn-branching-choices.md` (choice generation + the send path
+this gate must intercept), `TASK-visual-novel-mode.md` (where a per-chat VN
+flag would be persisted).
 
 ## Summary
 
