@@ -67,8 +67,14 @@ interface WidgetOpts {
   hidden?: boolean;
 }
 
-/** Repo-root `.tmp/` — scratch that resolves node_modules, so a child preload there can import `blessed`. */
-const REPO_TMP = join(import.meta.dir, "..", "..", "..", ".tmp",);
+/**
+ * This worktree's `.tmp/` — scratch that can resolve node_modules, so a child
+ * preload written there can import `blessed`.
+ *
+ * Exactly TWO levels up from src/tui: one lands on `src/`, and three escapes
+ * into the shared `tree/` parent, a directory no single worktree owns.
+ */
+const REPO_TMP = join(import.meta.dir, "..", "..", ".tmp",);
 mkdirSync(REPO_TMP, { recursive: true, },);
 
 /** Text widgets created per test, in creation order; never reset by mock(). */
@@ -455,10 +461,12 @@ describeOrSkip("TUIApp", () => {
 // `bun --preload` rather than mock.module because a child process has no test
 // runner to register the mock with.
 //
-// The preload is written under the repo's `.tmp/` (not os tmpdir) on purpose:
-// `import blessed from "blessed"` resolves through node_modules, which only
-// exists inside the repo — an os-tmpdir preload resolves nothing, the stub
-// never lands, and the count reads 0 for the wrong reason. Verified both ways.
+// The preload is written under THIS worktree's `.tmp/` (not os tmpdir) on
+// purpose. A tmpdir preload does NOT fail to resolve — bun falls back to its
+// global install cache (`~/.bun/install/cache/blessed@…`), so the preload patches
+// THAT copy of blessed while app.ts loads the node_modules copy. The stub never
+// lands and the count reads 0 for the wrong reason: a dual module instance, not a
+// missing package. Verified both ways.
 const ENTRY_PRELOAD = `
 import blessed from "blessed";
 
@@ -502,7 +510,15 @@ describeOrSkip("entry-point guard", () => {
 
       // The count is the assertion; exit code alone would pass on a crash that
       // happened after the screen. stderr rides along as the failure message.
-      expect(proc.stdout.toString(), proc.stderr.toString(),).toContain("SCREENS_CREATED=1",);
+      //
+      // Word-bounded, NOT a bare substring: `toContain("SCREENS_CREATED=1")` also
+      // matches "SCREENS_CREATED=10" and "SCREENS_CREATED=12", so a regression that
+      // built several screens would sail through. `\b` after the digit admits only a
+      // non-digit (or end of input) next.
+      expect(proc.stdout.toString(), proc.stderr.toString(),).toMatch(/SCREENS_CREATED=1\b/,);
+      // Not redundant with the stdout check: a wedged child is killed at the
+      // timeout above, and bun then reports exitCode null (bun 1.4.2), which this
+      // catches. Kept as the second witness.
       expect(proc.exitCode, proc.stderr.toString(),).toBe(0,);
     } finally {
       rmSync(dir, { recursive: true, force: true, },);
