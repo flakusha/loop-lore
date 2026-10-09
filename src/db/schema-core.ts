@@ -1573,6 +1573,7 @@ export interface MessageReminders {
   user_id: string;
   remind_at: string;
 }
+
 // ── branch_merges ────────────────────────────────────────────
 export interface BranchMerges {
   id: Generated<string>;
