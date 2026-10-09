@@ -48,6 +48,10 @@
   "src/actors/actor-memories.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-relation-graph-on-2d-canvas.md"
     },
     {
@@ -2999,12 +3003,20 @@
       "source": ".plan/epics/epic-context-injection-templates.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-context-inclusion-budget-policy.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     }
   ],
   "src/assistant/prompt/assembly.ts": [
@@ -3077,6 +3089,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-char-growth-prompt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     },
     {
       "kind": "ticket",
@@ -3671,6 +3687,10 @@
       "source": ".plan/epics/epic-context-injection-templates.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-sectionbuilder-interface-missing-included-memory-ids-field.md"
     },
@@ -3681,6 +3701,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     },
     {
       "kind": "ticket",
@@ -3922,6 +3946,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-project-spaces-pm-integration.md"
     },
     {
@@ -3947,6 +3975,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-skills-runtime.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-work-topics.md"
     }
   ],
   "src/assistant/workflow-runner.test.ts": [
@@ -4092,6 +4124,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-topic-session-attach.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-workflow-persist-run-sessions-beyond-process-memory.md"
     },
     {
@@ -4103,6 +4139,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-topic-session-attach.md"
     },
     {
       "kind": "ticket",
@@ -4413,6 +4453,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-subagent-delegation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-topic-session-attach.md"
     },
     {
       "kind": "ticket",
@@ -8757,6 +8801,16 @@
       "source": ".plan/tickets/TASK-chat-feature-settings-templates-compat-matrix.md"
     }
   ],
+  "src/chat/service/vn-questions.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
   "src/chat/service/write.test.ts": [
     {
       "kind": "ticket",
@@ -10091,6 +10145,12 @@
       "source": ".plan/tickets/TASK-housing-frontend.md"
     }
   ],
+  "src/components/info-bubble.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-info-bubbles.md"
+    }
+  ],
   "src/components/key-management.html": [
     {
       "kind": "epic",
@@ -11104,6 +11164,10 @@
     }
   ],
   "src/config/schema/tui.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
@@ -12821,6 +12885,10 @@
   ],
   "src/db": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-silence-pass-not-implemented.md"
     },
@@ -13271,6 +13339,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
     },
     {
       "kind": "ticket",
@@ -15866,7 +15938,15 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-multi-instance-reconciliation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
     },
     {
       "kind": "ticket",
@@ -15922,6 +16002,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-topic-session-attach.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-matrix-auth-per-role-factor-policy-shape-decide-per-role-min.md"
     },
     {
@@ -15935,6 +16019,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-timeline-id-world-timeline-events.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-branching-choices.md"
     },
     {
       "kind": "ticket",
@@ -18353,6 +18441,10 @@
   ],
   "src/frontend/alpine/chat-settings/vn.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     }
@@ -19135,6 +19227,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-info-bubbles.md"
     },
     {
       "kind": "ticket",
@@ -21715,6 +21811,12 @@
       "source": ".plan/tickets/TASK-frontend-lazy-vendor.md"
     }
   ],
+  "src/frontend/vn/choice-cards-render.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-branching-choices.md"
+    }
+  ],
   "src/frontend/vn/choice-cards.ts": [
     {
       "kind": "epic",
@@ -21795,8 +21897,28 @@
   ],
   "src/frontend/vn/qa-mode.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
+  "src/frontend/vn/question-cards-render.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
+  "src/frontend/vn/question-cards.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
     },
     {
       "kind": "ticket",
@@ -21807,10 +21929,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-visual-novel-mode.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-visual-novel-mode.md"
     },
     {
       "kind": "ticket",
@@ -21827,6 +21945,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
+    }
+  ],
+  "src/frontend/vn/scene-renderer/render-scene.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-scene-template-system.md"
     }
   ],
   "src/frontend/vn/settings.test.ts": [
@@ -21899,6 +22023,20 @@
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
+  "src/frontend/vn/templates/apply.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-scene-template-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-template-actions.md"
+    }
+  ],
   "src/frontend/vn/templates/dialogue-templates.ts": [
     {
       "kind": "ticket",
@@ -21940,6 +22078,10 @@
     }
   ],
   "src/frontend/vn/templates/template-engine.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-scene-template-system.md"
@@ -22935,6 +23077,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-consolidate-duplicated-token-estimation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     }
   ],
   "src/generation/context-compressor.test.ts": [
@@ -26748,6 +26894,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-hidden-carriage-context.md"
     },
     {
@@ -26769,6 +26919,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-injection-dedup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     },
     {
       "kind": "ticket",
@@ -26978,6 +27132,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-hidden-carriage-context.md"
     },
     {
@@ -26995,6 +27153,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     },
     {
       "kind": "ticket",
@@ -27123,12 +27285,24 @@
   ],
   "src/memory/types.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-2026-003.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-memory-extraction.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-work-topics.md"
     },
     {
       "kind": "ticket",
@@ -29301,6 +29475,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-dynamic-generation.md"
     }
   ],
   "src/prompts/registry": [
@@ -29379,6 +29557,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-author-task-clarification-prompt-templates-per-task-type.md"
+    }
+  ],
+  "src/public": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-info-bubbles.md"
     }
   ],
   "src/public/css/app.css": [
@@ -29483,6 +29667,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     },
     {
       "kind": "frontend",
@@ -30248,6 +30436,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-research-agency-affordance.md"
     },
     {
@@ -30297,6 +30489,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-work-topics.md"
     },
     {
       "kind": "ticket",
@@ -32317,8 +32513,16 @@
   ],
   "src/routes/chats/index.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-branching-choices.md"
     }
   ],
   "src/routes/chats/list.ts": [
@@ -32511,6 +32715,10 @@
   ],
   "src/routes/chats/vn-choices.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-vn-choices-idor-cross-user-read-and-select.md"
     },
@@ -32533,6 +32741,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-branching-choices.md"
+    }
+  ],
+  "src/routes/chats/vn-questions.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
   "src/routes/commands/index.test.ts": [
@@ -35647,6 +35865,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-emoji-reactions.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
     }
   ],
   "src/routes/v1/content-surface.ts": [
@@ -35911,6 +36133,16 @@
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
+  "src/routes/views/chats.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-chat-picker.md"
+    }
+  ],
   "src/routes/views/gallery.ts": [
     {
       "kind": "epic",
@@ -36067,6 +36299,10 @@
   ],
   "src/routes/vn-generate/choices.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-generate-choices-never-persists-to-vn-choices.md"
     },
@@ -36085,19 +36321,31 @@
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
-  "src/routes/vn-generate/story.ts": [
+  "src/routes/vn-generate/questions.ts": [
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
-    }
-  ],
-  "src/routes/vn-questions.ts": [
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
-  "src/routes/vn.ts": [
+  "src/routes/vn-generate/story.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-dynamic-generation.md"
+    }
+  ],
+  "src/routes/vn-questions.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
@@ -36279,6 +36527,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-locations.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
     },
     {
       "kind": "spec",
@@ -42202,7 +42454,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-topic-tui-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-chat-picker.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-dedupe-api-base.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-shell-testability.md"
     },
     {
       "kind": "spec",
@@ -42210,6 +42474,10 @@
     }
   ],
   "src/tui/asset-view.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-harness-integration.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
@@ -42221,6 +42489,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-shell-testability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-spec-sync.md"
     },
     {
       "kind": "spec",
@@ -42243,15 +42519,15 @@
   ],
   "src/tui/chat/api.test.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
     }
   ],
   "src/tui/chat/api.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-harness-integration.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
@@ -42262,7 +42538,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-chat-picker.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-dedupe-api-base.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-spec-sync.md"
     },
     {
       "kind": "ticket",
@@ -42275,21 +42559,25 @@
   ],
   "src/tui/chat/display.test.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
     }
   ],
   "src/tui/chat/display.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
     }
   ],
   "src/tui/chat/index.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
@@ -42300,6 +42588,10 @@
     }
   ],
   "src/tui/chat/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
@@ -42314,7 +42606,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-chat-picker.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-dedupe-api-base.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-shell-testability.md"
     },
     {
       "kind": "ticket",
@@ -42322,6 +42622,10 @@
     }
   ],
   "src/tui/chat/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
@@ -42331,6 +42635,50 @@
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
     }
   ],
+  "src/tui/harness/api.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-topic-tui-surface.md"
+    }
+  ],
+  "src/tui/harness/display.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-topic-tui-surface.md"
+    }
+  ],
+  "src/tui/harness/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-topic-tui-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-chat-picker.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-shell-testability.md"
+    }
+  ],
+  "src/tui/harness/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    }
+  ],
   "src/tui/input.ts": [
     {
       "kind": "ticket",
@@ -42338,10 +42686,6 @@
     }
   ],
   "src/tui/nsfw-filter.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
@@ -43297,8 +43641,16 @@
   ],
   "src/validation/schemas/entities.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-harness-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     }
   ],
   "src/validation/schemas/index.ts": [
@@ -43431,6 +43783,10 @@
       "source": ".plan/epics/epic-harness-integration.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
     },
@@ -43511,6 +43867,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-blog-system.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
     },
     {
       "kind": "ticket",
@@ -43615,12 +43975,20 @@
   ],
   "src/views/chat-list.html": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-html-inline-scripts.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-chat-picker.md"
     }
   ],
   "src/views/chat-render.ts": [
@@ -43633,6 +44001,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
     },
     {
       "kind": "ticket",
@@ -43789,6 +44161,10 @@
   ],
   "src/views/gallery.html": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-2025-002-reference-error-view-not-defined.md"
     },
@@ -43854,6 +44230,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-info-bubbles.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     },
     {
@@ -43909,8 +44289,18 @@
   ],
   "src/views/notifications.html": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
+    }
+  ],
+  "src/views/nsfw-moderation.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
     }
   ],
   "src/views/partials/character-growth-": [
@@ -44063,6 +44453,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-settings.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
     },
     {
       "kind": "ticket",
