@@ -109,8 +109,7 @@ export async function upsertByUnique<
  * insert from an updated conflict row. Same caveat as `insertUnique`:
  * the underlying `numInsertedOrUpdatedRows` is 1 in both cases for
  * SQLite (insert writes 1 row, update touches 1 row), so we disambiguate
- * by inspecting the inserted id — but our `BunSqliteWrapper` discards
- * RETURNING results for INSERT. We sidestep this by running a guarded
+ * by inspecting the inserted id. We sidestep this by running a guarded
  * SELECT for the row's primary key after the upsert: if the row's
  * `format_version` matches the inserted value, we treat it as fresh;
  * otherwise as updated. In practice the caller already knows the PK,
@@ -164,11 +163,10 @@ export async function upsertByUniqueWith<
  * INSERT a row, or on conflict DO NOTHING.
  *
  * Returns a discriminator so the caller can distinguish a fresh insert
- * from a silently-skipped duplicate. Kysely does not surface this
- * distinction through `RETURNING` reliably across our wrappers (Bun's
- * sqlite adapter routes INSERT-with-RETURNING through `run`, dropping
- * rows). Instead we read `numInsertedOrUpdatedRows` from the
- * `InsertResult`: 1 on a fresh insert, 0 on a DO NOTHING skip.
+ * from a silently-skipped duplicate. This insert carries no `RETURNING`
+ * clause, so Kysely reports it as a writer and we read
+ * `numInsertedOrUpdatedRows` from the `InsertResult`: 1 on a fresh
+ * insert, 0 on a DO NOTHING skip.
  *
  * Dialect-portability caveat
  * (BUG-insertunique-discriminator-relies-on-adapter-specific-row-co):
