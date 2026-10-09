@@ -19,6 +19,7 @@ import { safeJsonStringify, } from "../utils";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { computeActivity, } from "./activity";
 import { requireUserId, } from "./http-utils";
+import { type SseSend, sseStream, } from "./sse-stream";
 
 const POLL_INTERVAL_MS = 5000;
 const KEEPALIVE_MS = 8000;
@@ -63,39 +64,29 @@ export class ActivityStreamer {
    * @returns {Response}
    */
   open(): Response {
-    const encoder = new TextEncoder();
-    let timer: ReturnType<typeof setInterval> | undefined;
-    let keepalive: ReturnType<typeof setInterval> | undefined;
     let lastSnapshot = "";
 
-    const send = (controller: ReadableStreamDefaultController, event: string, data: unknown,) => {
-      try {
-        const payload = safeJsonStringify(data,);
-        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${payload.ok ? payload.value : "{}"}\n\n`,),);
-      } catch {
-        // controller closed — ignore
-      }
-    };
-
-    const tick = async (controller: ReadableStreamDefaultController,): Promise<void> => {
+    const tick = async (send: SseSend,): Promise<void> => {
       try {
         const next = await computeActivity(this.database, this.userId,);
         const nextSnap = snapshotOf(next,);
         if (nextSnap !== lastSnapshot) {
           lastSnapshot = nextSnap;
-          send(controller, "activity", { chats: next, },);
+          send("activity", { chats: next, },);
         }
       } catch {
         // transient DB error — skip this tick, keep stream alive
       }
     };
 
-    const stream = new ReadableStream({
-      start: async (controller,) => {
+    return sseStream(tick, {
+      intervalMs: this.intervalMs,
+      keepaliveMs: KEEPALIVE_MS,
+      onStart: async (send,) => {
         try {
           const initial = await computeActivity(this.database, this.userId,);
           lastSnapshot = snapshotOf(initial,);
-          send(controller, "activity", { chats: initial, },);
+          send("activity", { chats: initial, },);
         } catch (error) {
           // Never leak error internals to the client; log with a correlation id.
           const correlationId = crypto.randomUUID();
@@ -105,27 +96,8 @@ export class ActivityStreamer {
             { correlationId, },
           );
 
-          send(controller, "stream-error", { message: "stream error, retry", correlationId, },);
+          send("stream-error", { message: "stream error, retry", correlationId, },);
         }
-
-        timer = setInterval(() => {
-          void tick(controller,);
-        }, this.intervalMs,);
-
-        keepalive = setInterval(() => send(controller, "ping", { t: Date.now(), },), KEEPALIVE_MS,);
-      },
-      cancel: () => {
-        if (timer) { clearInterval(timer,); }
-        if (keepalive) { clearInterval(keepalive,); }
-      },
-    },);
-
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-        "X-Accel-Buffering": "no",
       },
     },);
   }
