@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { escapeHtml, } from "../../html-escape";
 import type { ChatState, } from "../types";
 import { renderShortcodes, } from "./emoji";
 
@@ -73,13 +74,6 @@ export const chatUtilsRender: ChatUtilsRender = {
     },);
   },
 
-  /**
-   * @param {string} str
-   * @returns {string}
-   */
-  escapeHtml(str: string,) {
-    const div = document.createElement("div",);
-    div.textContent = str;
-    return div.getHTML();
-  },
+  // Escapes `& < > " '` — safe in text nodes and quoted attributes.
+  escapeHtml,
 };
