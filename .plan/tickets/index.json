@@ -26328,6 +26328,19 @@
     "source": ".plan/tickets/TASK-ci-integration-github-actions-matrix-artifact-upload-on-cras.md",
     "status": "Not Started"
   },
+  "TASK-CI-NO-CHECK-GATE-EXECUTES-SCRIPTS-SMOKE-TESTS": {
+    "hash": "0857aa3",
+    "git_issue": "0857aa3",
+    "extid": "TASK-CI-NO-CHECK-GATE-EXECUTES-SCRIPTS-SMOKE-TESTS",
+    "type": "TASK",
+    "title": "CI: no check gate executes scripts/** smoke tests",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ci-no-check-gate-executes-scripts-smoke-tests.md",
+    "status": "Not Started"
+  },
   "TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION": {
     "epic": "epic-prompt-improvement",
     "extid": "TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION",
