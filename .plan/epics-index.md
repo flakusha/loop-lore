@@ -179,8 +179,8 @@
 | In Progress | Epic: Workflow Engine | High (MVP scoped, post-Gate C) | Large | 12 | [epic-workflow-engine.md](/.plan/epics/epic-workflow-engine.md) |
 | Not Started | Epic: World Diplomacy & Karma | Medium | High | 17 | [epic-world-diplomacy-karma.md](/.plan/epics/epic-world-diplomacy-karma.md) |
 | Not Started | Epic: World Encounters & Resources | Medium | High | 12 | [epic-world-encounters.md](/.plan/epics/epic-world-encounters.md) |
-| Not Started | Epic: World NPCs | High | High | 11 | [epic-world-npcs.md](/.plan/epics/epic-world-npcs.md) |
-| Not Started | Epic: World Travel & Time | High | High | 25 | [epic-world-travel-time.md](/.plan/epics/epic-world-travel-time.md) |
+| In Progress | Epic: World NPCs | High | High | 9 | [epic-world-npcs.md](/.plan/epics/epic-world-npcs.md) |
+| In Progress | Epic: World Travel & Time | High | High | 18 | [epic-world-travel-time.md](/.plan/epics/epic-world-travel-time.md) |
 | Not Started | Error Envelope | Medium | Medium | 6 | [epic-error-envelope.md](/.plan/epics/epic-error-envelope.md) |
 | In Progress | Exploration & Discovery Systems | Medium | High | 0 | [epic-exploration-discovery.md](/.plan/epics/epic-exploration-discovery.md) |
 | Not Started | External Search Providers & Context Enrichment | Medium | Low | 6 | [epic-rag-context-sources.md](/.plan/epics/epic-rag-context-sources.md) |
@@ -322,11 +322,11 @@
 | In Progress | Visual Novel Mode — Dynamic Generation & Q&A Mode | Medium | Very High | 8 | [epic-visual-novel-mode.md](/.plan/epics/epic-visual-novel-mode.md) |
 | Done | Wardrobe / Loadout Avatar Variants | Medium | Large | 0 | [epic-wardrobe-avatar-variants.md](/.plan/epics/epic-wardrobe-avatar-variants.md) |
 | Not Started | Weather & Environmental Effects | Medium | High | 0 | [epic-weather-environment.md](/.plan/epics/epic-weather-environment.md) |
-| Not Started | World & Location Management UI | P0 — Critical | High | 14 | [epic-world-management-ui.md](/.plan/epics/epic-world-management-ui.md) |
+| In Progress | World & Location Management UI | P0 — Critical | High | 14 | [epic-world-management-ui.md](/.plan/epics/epic-world-management-ui.md) |
 | Not Started | World & Locations | Medium | Very High total (split across 4 sub-epics: travel-time High, npcs High, encounters High, diplomacy-karma High) | 0 | [epic-world-locations.md](/.plan/epics/epic-world-locations.md) |
 | Done | World Chat Channels & Invite-Driven Membership | Medium | Medium | 0 | [epic-world-chat-channels-invites.md](/.plan/epics/epic-world-chat-channels-invites.md) |
 | Not Started | World Shaping & Divine Intervention | Low | Medium | 0 | [epic-world-shaping-divine.md](/.plan/epics/epic-world-shaping-divine.md) |
-| Not Started | Worlds Extension (Shareability, Epochs, Maps, Mode Switches) | Medium | High | 13 | [epic-worlds-extension.md](/.plan/epics/epic-worlds-extension.md) |
+| In Progress | Worlds Extension (Shareability, Epochs, Maps, Mode Switches) | Medium | High | 13 | [epic-worlds-extension.md](/.plan/epics/epic-worlds-extension.md) |
 | Not Started | XMPP Integration | Medium | Medium | 11 | [epic-xmpp-integration.md](/.plan/epics/epic-xmpp-integration.md) |
 
 ---
@@ -1952,7 +1952,7 @@ Scene animation from narration via open video models (Phase 4 of the parent
 
 ### Epic: World NPCs
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -1961,7 +1961,7 @@ Scene animation from narration via open video models (Phase 4 of the parent
 
 ### Epic: World Travel & Time
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -3283,7 +3283,7 @@ Weather and environmental mechanics — dynamic weather systems, terrain effects
 
 ### World & Location Management UI
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** P0 — Critical
 - **Effort:** High
 - **Type:** Feature Epic
@@ -3296,7 +3296,7 @@ Weather and environmental mechanics — dynamic weather systems, terrain effects
 - **Priority:** Medium
 - **Effort:** Very High total (split across 4 sub-epics: travel-time High, npcs High, encounters High, diplomacy-karma High)
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** world, locations, hub
 - **File:** `.plan/epics/epic-world-locations.md`
 
 ### World Chat Channels & Invite-Driven Membership
@@ -3321,7 +3321,7 @@ Non-RPG (chat-only) worlds organize chats Discord/Slack-style: locations act as
 
 ### Worlds Extension (Shareability, Epochs, Maps, Mode Switches)
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** High
 - **Type:** Feature Epic
@@ -3343,4 +3343,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

@@ -33,10 +33,6 @@
       "source": ".plan/epics/epic-inventory-system.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-inventory.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-items-crud-ownership.md"
     },
@@ -45,17 +41,7 @@
       "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md"
     }
   ],
-  "src/actors/actor-lore.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    }
-  ],
   "src/actors/actor-memories.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-relation-graph-on-2d-canvas.md"
@@ -876,10 +862,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-feat-rate-limit-per-route-rate-limit-analytics-dashboard.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-otel-replay.md"
     },
     {
@@ -986,14 +968,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md"
     },
     {
@@ -1059,10 +1033,6 @@
   ],
   "src/assets/alpha-detect.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-avatar-alpha-vn-layering.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md"
     }
@@ -1105,10 +1075,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance.md"
     },
     {
       "kind": "ticket",
@@ -1211,12 +1177,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-immersion-presentation.md"
-    }
-  ],
-  "src/assets/matting-routes.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-avatar-alpha-vn-layering.md"
     }
   ],
   "src/assets/metadata.test.ts": [
@@ -1663,10 +1623,6 @@
   ],
   "src/assets/service/transforms.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-asset-transform-metadata.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
     }
@@ -1689,10 +1645,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-guest-access.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "ticket",
@@ -2069,12 +2021,6 @@
       "source": ".plan/tickets/FEAT-creative-process-commit-gating.md"
     }
   ],
-  "src/assistant/commands/create-entity-lore.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    }
-  ],
   "src/assistant/commands/create-entity.ts": [
     {
       "kind": "epic",
@@ -2227,12 +2173,6 @@
       "source": ".plan/tickets/TASK-assistant-gm-flows.md"
     }
   ],
-  "src/assistant/commands/gm-guidance.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-story-mode-ui.md"
-    }
-  ],
   "src/assistant/commands/help.ts": [
     {
       "kind": "epic",
@@ -2281,10 +2221,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
     },
     {
       "kind": "epic",
@@ -2344,10 +2280,6 @@
     }
   ],
   "src/assistant/commands/interaction.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-math-ai-bridge.md"
@@ -2849,19 +2781,11 @@
   ],
   "src/assistant/lore/audience.test.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-race-origin-lore-identity-model.md"
     }
   ],
   "src/assistant/lore/audience.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-world-integration.md"
@@ -2923,12 +2847,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-memory-propagation.md"
-    }
-  ],
-  "src/assistant/messages/create-entity-confirm.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
     }
   ],
   "src/assistant/personality/composer.ts": [
@@ -3077,26 +2995,12 @@
       "source": ".plan/epics/epic-context-injection-templates.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-context-inclusion-budget-policy.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
-    }
-  ],
-  "src/assistant/prompt-outfit.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-wardrobe-avatar-variants.md"
     }
   ],
   "src/assistant/prompt/assembly.ts": [
@@ -3120,10 +3024,6 @@
   "src/assistant/prompt/registry.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
     },
     {
@@ -3137,10 +3037,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-context-injection-templates.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-gm-shadow-notes.md"
     },
     {
       "kind": "ticket",
@@ -3176,10 +3072,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-feature-flags-conditional-injection.md"
     },
     {
@@ -3206,10 +3098,6 @@
     }
   ],
   "src/assistant/prompt/sections/actor-growth.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
@@ -3328,10 +3216,6 @@
   "src/assistant/prompt/sections/emotion-avatar.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-config-extensions.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
     },
     {
@@ -3398,10 +3282,6 @@
     }
   ],
   "src/assistant/prompt/sections/gm-notes.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-gm-shadow-notes.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-hidden-carriage-context.md"
@@ -3491,10 +3371,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
     }
   ],
   "src/assistant/prompt/sections/lore-activation.ts": [
@@ -3507,12 +3383,6 @@
       "source": ".plan/tickets/TASK-redos-lore-activation-builds-regexp-from-author-controlled-k.md"
     }
   ],
-  "src/assistant/prompt/sections/lore-identity.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    }
-  ],
   "src/assistant/prompt/sections/lore-lifecycle-gate.ts": [
     {
       "kind": "ticket",
@@ -3521,29 +3391,17 @@
   ],
   "src/assistant/prompt/sections/lore-load.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression.md"
     }
   ],
   "src/assistant/prompt/sections/lore.test.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
     }
   ],
   "src/assistant/prompt/sections/lore.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-lore-knowledge.md"
@@ -3787,12 +3645,6 @@
       "source": ".plan/epics/epic-assistant-gm-flows.md"
     }
   ],
-  "src/assistant/prompt/templates/template-render.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-precompiled-templates-injection.md"
-    }
-  ],
   "src/assistant/prompt/types.ts": [
     {
       "kind": "epic",
@@ -3801,10 +3653,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-context-injection-templates.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
     },
     {
       "kind": "ticket",
@@ -3817,10 +3665,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     },
     {
       "kind": "ticket",
@@ -3873,10 +3717,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-check-duplicate-loads-all-owner-rows.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-precompiled-templates-injection.md"
     }
   ],
   "src/assistant/quality/entity-creation.ts": [
@@ -4066,15 +3906,7 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-project-spaces-pm-integration.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-workflow-engine.md"
     },
     {
       "kind": "ticket",
@@ -4099,10 +3931,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-skills-runtime.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-work-topics.md"
     }
   ],
   "src/assistant/workflow-runner.test.ts": [
@@ -4151,10 +3979,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-harness-integration.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-model-family-presets.md"
     },
     {
       "kind": "epic",
@@ -4252,10 +4076,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-topic-session-attach.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-workflow-persist-run-sessions-beyond-process-memory.md"
     },
     {
@@ -4267,10 +4087,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-harness-integration.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-topic-session-attach.md"
     },
     {
       "kind": "ticket",
@@ -4584,10 +4400,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-topic-session-attach.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-logging-separate-database-research.md"
     },
     {
@@ -4654,10 +4466,6 @@
     }
   ],
   "src/auth/jwt.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-security-sandboxing-quickref.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-jwt-payload-parse-failure-yields-empty-object-accepted-as-va.md"
@@ -4741,19 +4549,11 @@
   ],
   "src/autonomy/config/resolver.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-config-surface-layering-presets-and-overrides.md"
     }
   ],
   "src/autonomy/config/types.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-deterministic-turns.md"
@@ -4765,24 +4565,8 @@
   ],
   "src/autonomy/dispatch/bdi-dispatch.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
-    }
-  ],
-  "src/autonomy/dispatch/bdi-due.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    }
-  ],
-  "src/autonomy/dispatch/discovery-trade-dispatch.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
     }
   ],
   "src/autonomy/dispatch/dispatch-targets.test.ts": [
@@ -4832,10 +4616,6 @@
     }
   ],
   "src/autonomy/index.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
@@ -5052,10 +4832,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-inbound-federation-content-not-moderated-before-display.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md"
     },
     {
@@ -5085,12 +4861,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/generation-scheduler.md"
-    }
-  ],
-  "src/aux-pipeline/task-detect.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-task-management-integration.md"
     }
   ],
   "src/aux-pipeline/tasks/emotion-avatar.ts": [
@@ -5335,40 +5105,10 @@
       "source": "docs/spec/weather-environment.md"
     }
   ],
-  "src/battle/item-mapping.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-integration-gaps.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-item-system-extensions.md"
-    }
-  ],
   "src/battle/items-integration.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-integration-gaps.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-item-system-extensions.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-item-systems-unification.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-items.md"
     },
     {
       "kind": "ticket",
@@ -5490,10 +5230,6 @@
     }
   ],
   "src/battle/social-integration/surrender.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-battle-surrender-cansurrender-is-always-true-when-morale-30-.md"
@@ -5845,10 +5581,6 @@
   ],
   "src/characters/charx.test.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-characters-charx-roundtrip-untested.md"
     }
@@ -5893,12 +5625,6 @@
       "source": ".plan/tickets/TASK-character-world-data-separation.md"
     }
   ],
-  "src/characters/emotion-service.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-config-extensions.md"
-    }
-  ],
   "src/characters/equipment.ts": [
     {
       "kind": "ticket",
@@ -5922,10 +5648,6 @@
     }
   ],
   "src/characters/exporters.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-ts2322-exporters-test.md"
@@ -5963,12 +5685,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic14-import-export-reconciliation.md"
-    }
-  ],
-  "src/characters/exporters/character-systems.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-affordance.md"
     }
   ],
   "src/characters/exporters/index.ts": [
@@ -6221,21 +5937,7 @@
       "source": ".plan/epics/epic-db-asset-snapshot-recovery.md"
     }
   ],
-  "src/characters/parser.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
   "src/characters/parser.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
@@ -6449,18 +6151,6 @@
       "source": ".plan/tickets/TASK-actors-data-versioning.md"
     }
   ],
-  "src/characters/service/approval.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
-  "src/characters/service/approval.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
   "src/characters/service/memory-lifecycle.ts": [
     {
       "kind": "ticket",
@@ -6504,10 +6194,6 @@
     }
   ],
   "src/characters/services/avatar-service/selection.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-wardrobe-avatar-variants.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-avatar-select-empty-throws-no-frontend-fallback.md"
@@ -6580,6 +6266,10 @@
   "src/characters/services/emotion-avatar-service/generation.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-avatar-regeneration-control.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
     },
     {
@@ -6615,17 +6305,7 @@
       "source": "docs/spec/emotion-avatars.md"
     }
   ],
-  "src/characters/services/emotion-avatar-service/index.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md"
-    }
-  ],
   "src/characters/services/emotion-avatar-service/index.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md"
-    },
     {
       "kind": "spec",
       "source": "docs/spec/emotion-avatars.md"
@@ -6719,24 +6399,8 @@
   ],
   "src/characters/services/internal-traits/index.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
-    }
-  ],
-  "src/characters/services/internal-traits/prompt-section.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    }
-  ],
-  "src/characters/services/internal-traits/types.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
     }
   ],
   "src/characters/services/mood-service.test.ts": [
@@ -6779,6 +6443,10 @@
   ],
   "src/characters/services/personality-service.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-core-system.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-spec-inclusion-race-origin-culture.md"
     },
@@ -6808,10 +6476,6 @@
     }
   ],
   "src/characters/services/personality-service/utility-scorer.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-reaction-system.md"
@@ -6935,18 +6599,6 @@
       "source": ".plan/tickets/TASK-character-spec-unified-api.md"
     }
   ],
-  "src/characters/spec/character-record.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
-  "src/characters/spec/character-richer-fields.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-world-integration.md"
-    }
-  ],
   "src/characters/spec/character.ts": [
     {
       "kind": "epic",
@@ -6955,10 +6607,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-internal-traits.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
     },
     {
       "kind": "epic",
@@ -7011,10 +6659,6 @@
   ],
   "src/characters/spec/enums.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-approval-workflow-not-implemented.md"
     },
@@ -7030,10 +6674,6 @@
   "src/characters/spec/growth.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
     },
     {
@@ -7041,19 +6681,7 @@
       "source": ".plan/tickets/TASK-char-growth-types.md"
     }
   ],
-  "src/characters/spec/inclusion.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
   "src/characters/spec/internal.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    }
-  ],
-  "src/characters/spec/internal.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-internal-traits.md"
@@ -7066,10 +6694,6 @@
     }
   ],
   "src/characters/steganography.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
@@ -7109,10 +6733,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
     }
   ],
   "src/characters/types.ts": [
@@ -7185,30 +6805,6 @@
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
     }
   ],
-  "src/characters/validator/content-rating.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
-  "src/characters/validator/content-rating.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
-  "src/characters/validator/extensions.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
-  "src/characters/validator/fields.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
   "src/characters/validator/fields.ts": [
     {
       "kind": "epic",
@@ -7223,10 +6819,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
     }
   ],
   "src/characters/world-overlay.ts": [
@@ -7448,10 +7040,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-context-window-willtrim-is-stale-after-injectmemories-inject.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-memory-injection.md"
     },
     {
@@ -7670,14 +7258,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-applyflag-skips-self-target-guard.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-inbound-federation-content-not-moderated-before-display.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-c1-moderation-action-notices-with-actor-thumb.md"
     },
     {
@@ -7802,10 +7382,6 @@
     }
   ],
   "src/chat/proactive/index.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-proactive-backoff-increment-loses-updates-under-concurrency.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-c3-quiet-hours-aware-federated-world-event-notices.md"
@@ -7993,6 +7569,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crafting-professions.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
     },
     {
       "kind": "epic",
@@ -9145,10 +8725,6 @@
       "source": ".plan/epics/epic-chat-product-features.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     },
@@ -9639,6 +9215,18 @@
       "source": ".plan/tickets/TASK-giwt-batch-command-for-run-finalize-check.md"
     }
   ],
+  "src/commands/finalize/merge.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    }
+  ],
+  "src/commands/finalize/staging-strategy.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    }
+  ],
   "src/commands/issues.ts": [
     {
       "kind": "ticket",
@@ -9929,12 +9517,6 @@
       "source": ".plan/tickets/TASK-actor-traits-frontend.md"
     }
   ],
-  "src/components/character/wardrobe-panel.html": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-wardrobe-avatar-variants.md"
-    }
-  ],
   "src/components/chat/QuestionPrompt.vue": [
     {
       "kind": "ticket",
@@ -10117,10 +9699,6 @@
   ],
   "src/components/chat/gm-guidance-panel.html": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-story-mode-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-per-chat-assistant-gm-frontend.md"
     },
@@ -10137,10 +9715,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-gm-shadow-notes.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-story-mode-ui.md"
     },
     {
       "kind": "ticket",
@@ -10168,10 +9742,6 @@
     }
   ],
   "src/components/chat/gm-quests-panel.html": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-story-mode-ui.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-quest-log-ui-extended-to-full-spec-quest-browser.md"
@@ -10485,12 +10055,6 @@
       "source": ".plan/tickets/TASK-housing-frontend.md"
     }
   ],
-  "src/components/info-bubble.html": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-info-bubbles.md"
-    }
-  ],
   "src/components/key-management.html": [
     {
       "kind": "epic",
@@ -10733,6 +10297,10 @@
       "source": ".plan/epics/epic-configs-path-resolution.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
     },
@@ -10787,12 +10355,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/config-extensions.md"
-    }
-  ],
-  "src/config/generate-character-schema/index.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
     }
   ],
   "src/config/generate-domain-schemas.ts": [
@@ -10935,6 +10497,10 @@
   ],
   "src/config/load/constants.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md"
     }
@@ -11010,19 +10576,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cors-middleware.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/deployment.md"
     }
   ],
   "src/config/migrate-config.ts": [
@@ -11072,19 +10630,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-server-host-config-and-host-env-override-are-dead-start-ts-n.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en.md"
     },
     {
       "kind": "ticket",
@@ -11101,10 +10651,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations-architecture.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/logging.md"
     }
   ],
   "src/config/schema-class/federation.ts": [
@@ -11308,6 +10854,10 @@
     },
     {
       "kind": "spec",
+      "source": "docs/spec/logging.md"
+    },
+    {
+      "kind": "spec",
       "source": "docs/spec/transport-unified.md"
     },
     {
@@ -11371,10 +10921,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-docs-config-add-missing-sections-to-config-examples.md"
     },
     {
       "kind": "ticket",
@@ -11453,12 +10999,6 @@
       "source": ".plan/tickets/TASK-async-store-retention-cap.md"
     }
   ],
-  "src/config/schema/integrations.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal.md"
-    }
-  ],
   "src/config/schema/messages.ts": [
     {
       "kind": "spec",
@@ -11527,10 +11067,6 @@
   ],
   "src/config/schema/tui.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
     },
@@ -11548,25 +11084,7 @@
   "src/config/sections/auth.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
-    }
-  ],
-  "src/config/sections/autonomy.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
     }
   ],
   "src/config/sections/byo-key.ts": [
@@ -11679,10 +11197,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/architecture.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/deployment.md"
     }
   ],
   "src/config/sections/encryption.ts": [
@@ -11744,10 +11258,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-integration-config-surface-schemas-example-toml-env-map.md"
     }
   ],
@@ -11785,17 +11295,11 @@
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     }
   ],
-  "src/config/sections/logging.ts": [
+  "src/config/sections/menu-data.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
     },
-    {
-      "kind": "spec",
-      "source": "docs/spec/logging.md"
-    }
-  ],
-  "src/config/sections/menu-data.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-make-the-federation-config-panel-editable-in-the-config-ui.md"
@@ -11827,10 +11331,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-local-process-swarm.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md"
     },
     {
       "kind": "ticket",
@@ -12033,10 +11533,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-entity-template-position-config-unvalidated-typos-silently-b.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-precompiled-templates-injection.md"
     }
   ],
   "src/config/templates-loader/index.ts": [
@@ -12218,15 +11714,7 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-locations.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
     },
     {
       "kind": "ticket",
@@ -12645,10 +12133,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md"
     },
     {
       "kind": "ticket",
@@ -13291,10 +12775,6 @@
   ],
   "src/db": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-silence-pass-not-implemented.md"
     },
@@ -13780,10 +13260,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-inventory.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-item-systems-unification.md"
     },
     {
@@ -13961,10 +13437,6 @@
   ],
   "src/db/enums-gm.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-gm-shadow-notes.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     },
@@ -13986,15 +13458,7 @@
   "src/db/enums-story/items.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-item-system-extensions.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-item-systems-unification.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-items.md"
     },
     {
       "kind": "ticket",
@@ -14508,26 +13972,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-character-world-setup.md"
     },
     {
@@ -14536,19 +13980,7 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-db-migration-compaction.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-enemies-monsters.md"
     },
     {
       "kind": "epic",
@@ -14560,15 +13992,7 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-inventory.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-locations.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "ticket",
@@ -14601,10 +14025,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-inbound-federation-content-not-moderated-before-display.md"
     },
     {
       "kind": "ticket",
@@ -14853,12 +14273,6 @@
       "source": ".plan/epics/epic-math-ledger.md"
     }
   ],
-  "src/db/migrations/011_actor_bdi_lite.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    }
-  ],
   "src/db/migrations/011_bennies.ts": [
     {
       "kind": "epic",
@@ -15011,6 +14425,12 @@
       "source": ".plan/tickets/FEAT-045.md"
     }
   ],
+  "src/db/migrations/026_crafting_professions.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crafting-professions.md"
+    }
+  ],
   "src/db/migrations/026_rpg_mechanics.ts": [
     {
       "kind": "ticket",
@@ -15045,12 +14465,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
-    }
-  ],
-  "src/db/migrations/033_audit_columns_underdocumented_tables.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
     }
   ],
   "src/db/migrations/034_message_search_fts.ts": [
@@ -15099,12 +14513,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
-    }
-  ],
-  "src/db/migrations/042_actor_review_state.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
     }
   ],
   "src/db/migrations/047_conversation_merge.ts": [
@@ -15413,6 +14821,12 @@
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
+  "src/db/migrations/parts/002_assets.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-asset-transform-metadata.md"
+    }
+  ],
   "src/db/migrations/parts/003_worlds.ts": [
     {
       "kind": "ticket",
@@ -15510,6 +14924,10 @@
     }
   ],
   "src/db/migrations/parts/006_messages_keys.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-045.md"
@@ -15713,10 +15131,6 @@
   ],
   "src/db/schema": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-enemies-monsters.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-message-create-swipe-race.md"
     },
@@ -15848,10 +15262,6 @@
     }
   ],
   "src/db/schema-blog.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
@@ -16026,23 +15436,7 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-integration-gaps.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-character-core-system.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
     },
     {
       "kind": "epic",
@@ -16066,19 +15460,11 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
     },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-item-systems-unification.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "epic",
@@ -16091,10 +15477,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rarity-extensions.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
     },
     {
       "kind": "epic",
@@ -16305,10 +15687,6 @@
   ],
   "src/db/schema-emotions.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-config-extensions.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
     }
@@ -16420,10 +15798,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-multi-instance-reconciliation.md"
     },
     {
@@ -16481,10 +15855,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-topic-session-attach.md"
     },
     {
       "kind": "ticket",
@@ -16716,14 +16086,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-enemies-monsters.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-item-systems-unification.md"
     },
     {
@@ -16854,6 +16216,10 @@
     }
   ],
   "src/db/schema.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-blog-system.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
@@ -17146,6 +16512,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-character-core-system.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-db-cold-storage-high-perf.md"
     },
     {
@@ -17218,27 +16588,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o.md"
     },
     {
       "kind": "ticket",
@@ -17323,10 +16677,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-.md"
     },
     {
       "kind": "ticket",
@@ -17427,10 +16777,6 @@
   ],
   "src/factions/politics.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-faction-politics-coups-and-expansion-engine.md"
     }
@@ -17478,18 +16824,14 @@
   "src/federation/clearance.test.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md"
     }
   ],
   "src/federation/clearance.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md"
@@ -17514,6 +16856,10 @@
     }
   ],
   "src/federation/coordinator.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-runresyncpass-fetches-peer-advertisements-without-the-spki-p.md"
@@ -17543,16 +16889,10 @@
       "source": "docs/spec/federation-defederation-admin.md"
     }
   ],
-  "src/federation/dek-rewrap.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md"
-    }
-  ],
   "src/federation/dek-rewrap.ts": [
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md"
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
     },
     {
       "kind": "ticket",
@@ -17565,8 +16905,8 @@
   ],
   "src/federation/delivery.ts": [
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-inbound-federation-content-not-moderated-before-display.md"
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
     },
     {
       "kind": "ticket",
@@ -17624,6 +16964,10 @@
     }
   ],
   "src/federation/fan-out.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md"
@@ -17759,17 +17103,11 @@
       "source": ".plan/tickets/TASK-federation-peer-audit-probe-zero-trust-cross-instance-verifi.md"
     }
   ],
-  "src/federation/sharing.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie.md"
-    }
-  ],
   "src/federation/sharing.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md"
@@ -18127,10 +17465,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-builder-track-a-alpine-preset-chain-form.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-text-effects-overlays.md"
     }
   ],
   "src/frontend/alpine/a11y.ts": [
@@ -18447,10 +17781,6 @@
   ],
   "src/frontend/alpine/blog.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-blog-system.md"
     },
@@ -18469,16 +17799,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-quick-regen-button.md"
-    }
-  ],
-  "src/frontend/alpine/chat-actions/battle.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-ui.md"
     }
   ],
   "src/frontend/alpine/chat-actions/command-palette.ts": [
@@ -18601,16 +17921,6 @@
       "source": ".plan/tickets/TASK-chat-backgrounds-location-sync.md"
     }
   ],
-  "src/frontend/alpine/chat-battle.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-ui.md"
-    }
-  ],
   "src/frontend/alpine/chat-branch-merge.ts": [
     {
       "kind": "epic",
@@ -18720,6 +18030,10 @@
     }
   ],
   "src/frontend/alpine/chat-messages.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-components.md"
@@ -19127,10 +18441,6 @@
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-gallery-batch-operations.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     },
@@ -19198,6 +18508,10 @@
     }
   ],
   "src/frontend/alpine/chat.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-message-swipe-replay-branch.md"
@@ -19373,6 +18687,10 @@
   ],
   "src/frontend/alpine/command-palette.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"
     },
@@ -19448,10 +18766,6 @@
     }
   ],
   "src/frontend/alpine/draft-store.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-two-pass-delivery.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-composer-primitive-extraction.md"
@@ -19607,10 +18921,6 @@
       "source": ".plan/epics/epic-gm-shadow-notes.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-story-mode-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-alpine-init-hydration.md"
     },
@@ -19761,10 +19071,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-info-bubbles.md"
     },
     {
       "kind": "ticket",
@@ -20061,10 +19367,6 @@
   ],
   "src/frontend/alpine/mood/avatars.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-avatar-select-empty-throws-no-frontend-fallback.md"
     },
@@ -20107,10 +19409,6 @@
   ],
   "src/frontend/alpine/npc-faction-mock.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-faction-relation-graph-on-2d-canvas-backend-first.md"
     }
@@ -20121,12 +19419,6 @@
       "source": ".plan/tickets/TASK-npc-inventory-frontend.md"
     }
   ],
-  "src/frontend/alpine/npc-mock.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    }
-  ],
   "src/frontend/alpine/npc-trading.ts": [
     {
       "kind": "ticket",
@@ -20134,10 +19426,6 @@
     }
   ],
   "src/frontend/alpine/npc.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-npc-management-ui.md"
@@ -20264,10 +19552,6 @@
     }
   ],
   "src/frontend/alpine/rpg-stats.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-ui.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-backend-integration.md"
@@ -20433,16 +19717,18 @@
   ],
   "src/frontend/alpine/story-state.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-story-mode-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-alpine.md"
+    }
+  ],
+  "src/frontend/alpine/story.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-story-mode-ui.md"
     }
   ],
   "src/frontend/alpine/swipe-gestures.test.ts": [
@@ -20458,10 +19744,6 @@
     }
   ],
   "src/frontend/alpine/text-enhance.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-two-pass-delivery.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-enhance-any-text-surface.md"
@@ -20643,12 +19925,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-archival-workflow.md"
-    }
-  ],
-  "src/frontend/asset-anchor.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-asset-transform-metadata.md"
     }
   ],
   "src/frontend/asset-preview-anchor.test.ts": [
@@ -20863,20 +20139,6 @@
       "source": ".plan/tickets/TASK-battle-encounter-template-system.md"
     }
   ],
-  "src/frontend/battle/commands.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-integration-gaps.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-ui.md"
-    }
-  ],
   "src/frontend/battle/dice-animation.ts": [
     {
       "kind": "ticket",
@@ -20895,22 +20157,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-health-bar.md"
-    }
-  ],
-  "src/frontend/battle/panel.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-ui.md"
-    }
-  ],
-  "src/frontend/battle/render.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-ui.md"
     }
   ],
   "src/frontend/battle/skill-check-display.ts": [
@@ -21713,10 +20959,6 @@
   ],
   "src/frontend/pages/blog.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-blog-system.md"
     },
@@ -21764,10 +21006,6 @@
     }
   ],
   "src/frontend/pages/characters-traits.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
@@ -21957,8 +21195,18 @@
   ],
   "src/frontend/pages/world-timeline-bar.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-management-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-canvas-viz.md"
+    }
+  ],
+  "src/frontend/pages/worlds": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-locations.md"
     }
   ],
   "src/frontend/pages/worlds-io.ts": [
@@ -22231,6 +21479,10 @@
   ],
   "src/frontend/stores/index.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"
     },
@@ -22277,6 +21529,10 @@
   ],
   "src/frontend/story/gm-panel.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-story-mode-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-panel.md"
     }
@@ -22288,6 +21544,10 @@
     }
   ],
   "src/frontend/story/quest-log.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-story-mode-ui.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-quest-log.md"
@@ -22301,6 +21561,10 @@
   ],
   "src/frontend/story/turn-order.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-story-mode-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-turn-order.md"
     }
@@ -22312,6 +21576,10 @@
     }
   ],
   "src/frontend/story/world-state.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-story-mode-ui.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-world-state.md"
@@ -22529,12 +21797,6 @@
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
-  "src/frontend/vn/scene-renderer/render-scene.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-vn-scene-template-system.md"
-    }
-  ],
   "src/frontend/vn/settings.test.ts": [
     {
       "kind": "ticket",
@@ -22609,14 +21871,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-vn-scene-template-system.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-vn-template-actions.md"
     }
   ],
   "src/frontend/vn/templates/dialogue-templates.ts": [
@@ -22948,11 +22202,19 @@
   "src/generation/auto-gen.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
     },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
     },
     {
       "kind": "epic",
@@ -23102,15 +22364,7 @@
   "src/generation/auto-gen/classify-intent.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-workflow-engine.md"
     },
     {
       "kind": "ticket",
@@ -23152,10 +22406,6 @@
     }
   ],
   "src/generation/auto-gen/content-hooks.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-content-hooks-ts-missing-imports-breaks-typecheck.md"
@@ -23239,10 +22489,6 @@
   ],
   "src/generation/auto-gen/group-cascade.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-group-chat.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-cascade-mid-cascade-pause-ignores-abort.md"
     },
@@ -23297,10 +22543,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-actor-turn-skip.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-group-chat.md"
     },
     {
       "kind": "ticket",
@@ -23547,12 +22789,6 @@
       "source": ".plan/tickets/TASK-story-gm-generation-never-nsfw-gated-content-safety-bypass.md"
     }
   ],
-  "src/generation/auto-gen/story-store.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
-    }
-  ],
   "src/generation/auto-gen/stream-render.ts": [
     {
       "kind": "ticket",
@@ -23622,10 +22858,6 @@
   "src/generation/caption-route.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-asset-platform-capabilities.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
     },
     {
@@ -23673,10 +22905,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-consolidate-duplicated-token-estimation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     }
   ],
   "src/generation/context-compressor.test.ts": [
@@ -25844,6 +25072,10 @@
   "src/group-chat": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-group-chat.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-rpg-patterns.md"
     }
   ],
@@ -25915,10 +25147,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-context-injection-correctness.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-group-chat.md"
     },
     {
       "kind": "epic",
@@ -26005,10 +25233,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-federation-swarm-sync.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-group-chat.md"
     },
     {
       "kind": "epic",
@@ -26812,14 +26036,6 @@
   "src/integrations/secrets.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-adapter-secret-storage-encrypted-credential-envelope.md"
     },
     {
@@ -27173,6 +26389,10 @@
       "source": ".plan/epics/epic-locations.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-travel-time.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-location-crud-tree-connections.md"
     },
@@ -27253,10 +26473,6 @@
   ],
   "src/logger/censors.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested-.md"
     },
@@ -27307,10 +26523,6 @@
   ],
   "src/logger/index.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-code-quality.md"
     },
@@ -27332,10 +26544,6 @@
     }
   ],
   "src/logger/levels.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
     {
       "kind": "spec",
       "source": "docs/spec/logging.md"
@@ -27363,10 +26571,6 @@
       "source": ".plan/epics/epic-logging-telemetry.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md"
     },
@@ -27387,12 +26591,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-deep-analysis-logging-and-telemet.md"
-    }
-  ],
-  "src/logger/queue-base.ts": [
-    {
-      "kind": "spec",
-      "source": "docs/spec/logging.md"
     }
   ],
   "src/logger/queue.ts": [
@@ -27425,16 +26623,6 @@
   ],
   "src/logger/transports/console.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/logging.md"
-    }
-  ],
-  "src/logger/transports/db.ts": [
-    {
       "kind": "spec",
       "source": "docs/spec/logging.md"
     }
@@ -27453,10 +26641,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-logging-hardening-minors-injection-rotation-races-sink-path-.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/logging.md"
     }
   ],
   "src/logger/types.ts": [
@@ -27469,12 +26653,14 @@
       "source": ".plan/epics/epic-logging-telemetry.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/logging.md"
+    }
+  ],
+  "src/logging/redact-list.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-logging.md"
     }
   ],
   "src/lorebook/consistency.ts": [
@@ -27524,10 +26710,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-hidden-carriage-context.md"
     },
     {
@@ -27549,10 +26731,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-injection-dedup.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     },
     {
       "kind": "ticket",
@@ -27762,10 +26940,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-hidden-carriage-context.md"
     },
     {
@@ -27783,10 +26957,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-lossless-lossy-tiering.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     },
     {
       "kind": "ticket",
@@ -27915,24 +27085,12 @@
   ],
   "src/memory/types.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-2026-003.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-memory-extraction.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-work-topics.md"
     },
     {
       "kind": "ticket",
@@ -28018,15 +27176,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-auth-make-session-expiry-handling-agree-across-authentic.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md"
     },
     {
       "kind": "ticket",
@@ -28065,10 +27215,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-auth-channel-provisioning.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-auth-make-session-expiry-handling-agree-across-authentic.md"
     },
     {
       "kind": "ticket",
@@ -28169,10 +27315,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-logout-route-exempt-from-csrf-verification-logoff-csrf.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te.md"
     },
     {
       "kind": "ticket",
@@ -28292,10 +27434,6 @@
     }
   ],
   "src/middleware/idempotency-utils.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md"
@@ -28589,14 +27727,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-security-sandboxing-quickref.md"
     },
     {
       "kind": "ticket",
@@ -29249,10 +28379,6 @@
   ],
   "src/nsfw/seduction-prerequisites.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-wire-seduction-encounter-preconditions.md"
     }
@@ -29264,10 +28390,6 @@
     }
   ],
   "src/nsfw/social-integration.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-mini-games-design.md"
@@ -29449,22 +28571,10 @@
       "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
     }
   ],
-  "src/partials/worlds/create-modal.html": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-management-ui.md"
-    }
-  ],
   "src/partials/worlds/edit-modal.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md"
-    }
-  ],
-  "src/partials/worlds/import-modal.html": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-management-ui.md"
     }
   ],
   "src/partials/worlds/item-create-modal.html": [
@@ -29623,6 +28733,12 @@
       "source": ".plan/tickets/BUG-ticket-epic-triage-and-triage-p3-idea-tickets-assign.md"
     }
   ],
+  "src/plan/validate/content-gates.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    }
+  ],
   "src/planning/service.ts": [
     {
       "kind": "epic",
@@ -29742,18 +28858,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-plugins-append-onload-registrations-to-manifest-registra.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-plugins-define-plugin-route-matching-semantics.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-plugins-make-plugin-discovery-failures-visible.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-cards-ships-ungated-post-routes.md"
     },
     {
@@ -29840,14 +28944,6 @@
     }
   ],
   "src/plugins/registry-store.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-plugins-append-onload-registrations-to-manifest-registra.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-plugins-define-plugin-route-matching-semantics.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-per-plugin-unload.md"
@@ -30233,22 +29329,12 @@
   ],
   "src/prompts/task-clarification.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-task-management-integration.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-task-clarification-injection-template-for-chat-assistant-gen.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-author-task-clarification-prompt-templates-per-task-type.md"
-    }
-  ],
-  "src/public": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-info-bubbles.md"
     }
   ],
   "src/public/css/app.css": [
@@ -31035,17 +30121,7 @@
       "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
     }
   ],
-  "src/regex/action-parser.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-affordance.md"
-    }
-  ],
   "src/regex/action-parser.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-affordance.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-property-test-the-regex-action-parser-verb-and-target-extrac.md"
@@ -31132,10 +30208,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-research-agency-affordance.md"
     },
     {
@@ -31188,10 +30260,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-work-topics.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-item-generation.md"
     },
     {
@@ -31233,22 +30301,6 @@
       "source": ".plan/tickets/IDEA-idea-regex-precision-telemetry-opt-in-per-pattern-match-coun.md"
     }
   ],
-  "src/regex/stage2-llm.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    }
-  ],
-  "src/regex/stage2-llm.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-affordance.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    }
-  ],
   "src/regex/story-events.test.ts": [
     {
       "kind": "ticket",
@@ -31274,10 +30326,6 @@
     }
   ],
   "src/routes": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
@@ -31354,10 +30402,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-401-guard-helpers.md"
     }
   ],
@@ -31375,10 +30419,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-inventory-system.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-inventory-ui.md"
     },
     {
       "kind": "epic",
@@ -31433,19 +30473,11 @@
       "source": ".plan/epics/epic-inventory-system.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-inventory.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-items-crud-ownership.md"
     }
   ],
   "src/routes/actor-lore-entries.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-lore-knowledge.md"
@@ -31476,10 +30508,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-actors-api-routes.md"
     },
     {
@@ -31499,22 +30527,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/gm-shadow-notes.md"
-    }
-  ],
-  "src/routes/actor-plan.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    }
-  ],
-  "src/routes/actor-plan.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-agency-bdi-reflection-cycle.md"
     }
   ],
   "src/routes/actor-stats.ts": [
@@ -31572,10 +30584,6 @@
   "src/routes/admin-templates/update.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-admin-template-update-writes-to-unvalidated-detail-mode-keys.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-templates-update-remove-lack-admin-settings-gate.md"
     }
   ],
@@ -31631,14 +30639,6 @@
       "source": ".plan/epics/epic-frontend-admin.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-admin-audit-get-by-id-has-no-params-schema-validation.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-audit-selectAll-schema-mismatch-empty.md"
     },
@@ -31665,10 +30665,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-local-process-swarm.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
     },
     {
       "kind": "ticket",
@@ -31699,10 +30695,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-admin-chat-patch-accepts-arbitrary-string-for-is-pinned.md"
     }
   ],
   "src/routes/admin/context-window.ts": [
@@ -31799,10 +30791,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-admin-providers-list-endpoint-is-public.md"
     }
   ],
   "src/routes/admin/sd-status.ts": [
@@ -31844,10 +30832,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-admin-system-config-delete-passes-user-controlled-key-withou.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
     }
   ],
@@ -31871,10 +30855,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-admin-user-delete-has-no-self-delete-or-last-admin-guard.md"
     },
     {
       "kind": "ticket",
@@ -32181,27 +31161,9 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-auth-content-negotiate-the-429-rate-limit-response-like-.md"
-    }
-  ],
-  "src/routes/auth/responses.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-auth-content-negotiate-the-429-rate-limit-response-like-.md"
     }
   ],
   "src/routes/auth/session.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-logout-deletes-session-without-signature-or-ownership-check.md"
@@ -32223,6 +31185,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-guest-access.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
     },
     {
       "kind": "ticket",
@@ -32331,18 +31297,6 @@
   ],
   "src/routes/battle/equipment.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-integration-gaps.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
     },
@@ -32355,65 +31309,13 @@
       "source": ".plan/tickets/TASK-persist-loot-drops.md"
     }
   ],
-  "src/routes/battle/index.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    }
-  ],
-  "src/routes/battle/morale.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-integration-gaps.md"
-    }
-  ],
-  "src/routes/battle/npc.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-integration-gaps.md"
-    }
-  ],
-  "src/routes/battle/resolution.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-integration-gaps.md"
-    }
-  ],
   "src/routes/battle/social.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-integration-gaps.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-ui.md"
-    },
     {
       "kind": "spec",
       "source": "docs/spec/social-interaction.md"
     }
   ],
   "src/routes/battle/weather.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-integration-gaps.md"
-    },
     {
       "kind": "spec",
       "source": "docs/spec/weather-environment.md"
@@ -32431,11 +31333,13 @@
       "source": ".plan/epics/epic-blog-system.md"
     }
   ],
-  "src/routes/blog/comments.ts": [
+  "src/routes/blog.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-blog-system.md"
-    },
+    }
+  ],
+  "src/routes/blog/comments.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
@@ -32465,19 +31369,11 @@
   ],
   "src/routes/blog/moderation.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
     }
   ],
   "src/routes/blog/posts.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
@@ -32671,10 +31567,6 @@
   ],
   "src/routes/character-internal-traits/index.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-internal-traits-idor-actor-ownership-never-checked.md"
     },
@@ -32708,6 +31600,10 @@
     }
   ],
   "src/routes/character-licensing.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-worlds-extension.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-licensing-upsert-records-license-history-for-any-a.md"
@@ -32871,18 +31767,6 @@
       "source": ".plan/tickets/TASK-rigged-model-buffer-render.md"
     }
   ],
-  "src/routes/characters/approval.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
-  "src/routes/characters/approval.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
   "src/routes/characters/create.test.ts": [
     {
       "kind": "ticket",
@@ -32929,26 +31813,10 @@
       "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     }
   ],
-  "src/routes/characters/index.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    }
-  ],
   "src/routes/characters/license.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
-    }
-  ],
-  "src/routes/characters/list.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
     }
   ],
   "src/routes/characters/update.ts": [
@@ -33160,6 +32028,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-file-splitting.md"
     },
     {
@@ -33283,12 +32155,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
-    }
-  ],
-  "src/routes/chats/batch.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-gallery-batch-operations.md"
     }
   ],
   "src/routes/chats/branch-crud.ts": [
@@ -33669,12 +32535,6 @@
       "source": ".plan/epics/epic-companion-pet-mount.md"
     }
   ],
-  "src/routes/config-menu.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
-    }
-  ],
   "src/routes/crafting.test.ts": [
     {
       "kind": "ticket",
@@ -33686,6 +32546,10 @@
     }
   ],
   "src/routes/crafting.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-crafting-professions.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-recipe-constructor-frontend-editor.md"
@@ -33702,10 +32566,6 @@
     }
   ],
   "src/routes/crafting/attempt.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
@@ -33739,10 +32599,6 @@
   ],
   "src/routes/crafting/orders.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
     },
@@ -33761,10 +32617,6 @@
   ],
   "src/routes/crafting/recipes.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
     },
@@ -33778,10 +32630,6 @@
     }
   ],
   "src/routes/crafting/station-defs.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
@@ -33821,10 +32669,6 @@
   ],
   "src/routes/crafting/stations.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
     },
@@ -33852,10 +32696,6 @@
     }
   ],
   "src/routes/emotions.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-config-extensions.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
@@ -33931,6 +32771,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
+  "src/routes/export-shared/worlds.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-worlds-extension.md"
     }
   ],
   "src/routes/export-sse.ts": [
@@ -34060,6 +32906,10 @@
     }
   ],
   "src/routes/federation-transfer.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-a-federation-e2e-test-that-boots-two-real-servers.md"
@@ -34191,10 +33041,6 @@
   ],
   "src/routes/gm-notes.test.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-gm-shadow-notes.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gm-notes-get-500-sql-syntax-error.md"
     },
@@ -34212,6 +33058,10 @@
     }
   ],
   "src/routes/gm-notes.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-gm-shadow-notes.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gm-notes-get-500-sql-syntax-error.md"
@@ -34267,10 +33117,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-liveness-readiness-endpoints-opt-in-config.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h.md"
     }
   ],
   "src/routes/housing.ts": [
@@ -34354,10 +33200,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merges-routes-and-typebox-schemas.md"
     }
   ],
@@ -34377,10 +33219,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso.md"
     },
     {
       "kind": "ticket",
@@ -34541,12 +33379,6 @@
       "source": ".plan/tickets/TASK-encryption-architecture-clarification.md"
     }
   ],
-  "src/routes/liveness.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h.md"
-    }
-  ],
   "src/routes/location-explorer.test.ts": [
     {
       "kind": "ticket",
@@ -34554,10 +33386,6 @@
     }
   ],
   "src/routes/location-explorer.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-locations.md"
@@ -34772,6 +33600,10 @@
   "src/routes/messages.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-assistant-gm-flows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-config-extensions.md"
     },
     {
@@ -34935,10 +33767,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-assistant-gm-flows.md"
     },
     {
       "kind": "epic",
@@ -35261,10 +34089,6 @@
       "source": ".plan/epics/epic-db-cold-storage-high-perf.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
     },
@@ -35539,20 +34363,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-docs-api-disambiguate-infra-metrics-from-governance-api-v1-m.md"
     }
   ],
   "src/routes/middleware/deprecation-headers.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-038.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-.md"
     },
     {
       "kind": "ticket",
@@ -35593,10 +34409,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-api-versioning.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s.md"
     },
     {
       "kind": "ticket",
@@ -35923,12 +34735,6 @@
       "source": ".plan/tickets/TASK-world-editor-structured-ui.md"
     }
   ],
-  "src/routes/nsfw/seduction.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    }
-  ],
   "src/routes/openapi.ts": [
     {
       "kind": "epic",
@@ -36176,10 +34982,6 @@
   "src/routes/rpg/combat.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-rpg-core-wiring.md"
     },
     {
@@ -36195,23 +34997,7 @@
       "source": ".plan/tickets/TASK-wire-combat-routes.md"
     }
   ],
-  "src/routes/rpg/crafting-": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    }
-  ],
-  "src/routes/rpg/crafting-execution.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    }
-  ],
   "src/routes/rpg/crafting-station-instances.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
@@ -36223,20 +35009,10 @@
       "source": ".plan/tickets/TASK-027.md"
     }
   ],
-  "src/routes/rpg/crafting-stations.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    }
-  ],
   "src/routes/rpg/index.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-achievements.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
     },
     {
       "kind": "epic",
@@ -36458,10 +35234,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-settings-export-endpoint-has-no-rate-limiting.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-format-version-migration.md"
     },
     {
@@ -36621,10 +35393,6 @@
   ],
   "src/routes/story-turns.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-turn-by-id.md"
     }
@@ -36651,20 +35419,12 @@
   ],
   "src/routes/telemetry.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te.md"
     },
     {
       "kind": "ticket",
@@ -36689,10 +35449,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-error-monitoring-alerting.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-feat-telemetry-telemetry-quota-and-abuse-dashboard.md"
     },
     {
       "kind": "ticket",
@@ -36795,10 +35551,6 @@
   ],
   "src/routes/trade/history.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-economy-trading.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-trade-history-npc-counterparty.md"
     }
@@ -36815,19 +35567,11 @@
   ],
   "src/routes/trade/npc.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-economy-trading.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-trade-history-npc-counterparty.md"
     }
   ],
   "src/routes/trade/offers.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-economy-trading.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
@@ -36843,30 +35587,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-achievements.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-action-systems.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-integration-gaps.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-gm-shadow-notes.md"
     },
     {
       "kind": "ticket",
@@ -36889,10 +35609,6 @@
       "source": ".plan/epics/epic-frontend-settings.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-.md"
     }
@@ -36908,10 +35624,6 @@
     }
   ],
   "src/routes/v1/content-surface.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md"
@@ -36959,14 +35671,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-feat-rate-limit-per-route-rate-limit-analytics-dashboard.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-docs-api-disambiguate-infra-metrics-from-governance-api-v1-m.md"
     }
   ],
   "src/routes/v1/index.ts": [
@@ -36977,26 +35681,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-api-versioning.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-integrations-wire-bridge-secrets-seams-or-return-503-not.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
     },
     {
       "kind": "ticket",
@@ -37024,21 +35708,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-integrations-inbound-webhook-ingestion-endpoint.md"
     },
     {
       "kind": "spec",
       "source": "docs/spec/integrations-architecture.md"
-    }
-  ],
-  "src/routes/v1/integrations-surface.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal.md"
     }
   ],
   "src/routes/v1/integrations-surface.ts": [
@@ -37048,19 +35722,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-integrations-wire-bridge-secrets-seams-or-return-503-not.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal.md"
     },
     {
       "kind": "ticket",
@@ -37145,19 +35811,11 @@
   ],
   "src/routes/views/character-edit-form.test.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-edit-form-renders-unescaped-user-fields-stored-xss.md"
     }
   ],
   "src/routes/views/character-edit-form.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-csp-unsafe-inline-defeats-per-request-nonce.md"
@@ -37191,12 +35849,6 @@
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
-  "src/routes/views/character-edit-sections.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-internal-traits.md"
-    }
-  ],
   "src/routes/views/character-growth-section.ts": [
     {
       "kind": "ticket",
@@ -37217,16 +35869,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
-    }
-  ],
-  "src/routes/views/chats.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-chat-picker.md"
     }
   ],
   "src/routes/views/gallery.ts": [
@@ -37343,6 +35985,14 @@
   ],
   "src/routes/views/worlds.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-locations.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-management-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-worlds-frontend-list-detail-timeline-location-travel-ui.md"
     },
@@ -37433,17 +36083,7 @@
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
-  "src/routes/wardrobe": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-wardrobe-avatar-variants.md"
-    }
-  ],
   "src/routes/wardrobe-avatars.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-avatar-regeneration-control.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md"
@@ -37478,10 +36118,6 @@
     }
   ],
   "src/routes/world-import/bundle.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
@@ -37526,10 +36162,6 @@
     }
   ],
   "src/routes/world.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-locations.md"
-    },
     {
       "kind": "spec",
       "source": "docs/spec/worlds.md"
@@ -37625,15 +36257,15 @@
       "source": ".plan/epics/epic-locations.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/exploration-discovery.md"
     }
   ],
   "src/routes/worlds/fractal-travel-routes.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-travel-time.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor.md"
@@ -37819,12 +36451,6 @@
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
-  "src/rpc/npc-navigation/service/processing.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-patrolroute-cast-without-array-validation.md"
-    }
-  ],
   "src/rpg": [
     {
       "kind": "epic",
@@ -37895,10 +36521,6 @@
   ],
   "src/rpg/blog/service/comments.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
     },
@@ -37908,10 +36530,6 @@
     }
   ],
   "src/rpg/blog/service/follows.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
@@ -37933,10 +36551,6 @@
   ],
   "src/rpg/blog/service/posts.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
     },
@@ -37951,24 +36565,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-updatepost-has-no-ownership-check-any-authenticated-user-can.md"
-    }
-  ],
-  "src/rpg/blog/service/rag.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
-    }
-  ],
-  "src/rpg/blog/service/tags.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
-    }
-  ],
-  "src/rpg/blog/service/types.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-blog-system.md"
     }
   ],
   "src/rpg/body-chemistry-trauma.test.ts": [
@@ -38128,10 +36724,6 @@
   "src/rpg/combat.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-character-world-integration.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-rpg-mechanics.md"
     },
     {
@@ -38205,33 +36797,13 @@
       "source": ".plan/tickets/TASK-response-validation-logic-additions.md"
     }
   ],
-  "src/rpg/crafting/discovery.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    }
-  ],
-  "src/rpg/crafting/gathering.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    }
-  ],
   "src/rpg/crafting/index.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-complete-crafting-system-services.md"
     }
   ],
   "src/rpg/crafting/orders.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-recipe-constructor-frontend-editor.md"
@@ -38257,10 +36829,6 @@
   ],
   "src/rpg/crafting/process.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
@@ -38279,12 +36847,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/crafting-professions.md"
-    }
-  ],
-  "src/rpg/crafting/professions.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
     }
   ],
   "src/rpg/crafting/professions/crud.ts": [
@@ -38311,12 +36873,6 @@
       "source": ".plan/tickets/TASK-professions-service-routes.md"
     }
   ],
-  "src/rpg/crafting/quality.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    }
-  ],
   "src/rpg/crafting/station-types.ts": [
     {
       "kind": "ticket",
@@ -38324,10 +36880,6 @@
     }
   ],
   "src/rpg/crafting/stations.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-051.md"
@@ -38623,10 +37175,6 @@
   ],
   "src/rpg/encounters/service/reputation-leg.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-036.md"
     },
@@ -38685,6 +37233,48 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-weather-environment.md"
+    }
+  ],
+  "src/rpg/exploration/cartography.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-exploration-discovery.md"
+    }
+  ],
+  "src/rpg/exploration/discovery.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-exploration-discovery.md"
+    }
+  ],
+  "src/rpg/exploration/fog.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-exploration-discovery.md"
+    }
+  ],
+  "src/rpg/exploration/maps.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-exploration-discovery.md"
+    }
+  ],
+  "src/rpg/exploration/navigation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-exploration-discovery.md"
+    }
+  ],
+  "src/rpg/exploration/secrets.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-exploration-discovery.md"
+    }
+  ],
+  "src/rpg/exploration/travel.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-exploration-discovery.md"
     }
   ],
   "src/rpg/fantasies.ts": [
@@ -38906,10 +37496,6 @@
   "src/rpg/integration-registry/edges/faction.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-shared-schemas.md"
     }
   ],
@@ -39107,6 +37693,42 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-spec-parameters.md"
+    }
+  ],
+  "src/rpg/items/balance.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-item-system-extensions.md"
+    }
+  ],
+  "src/rpg/items/drift.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-item-system-extensions.md"
+    }
+  ],
+  "src/rpg/items/duplication.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-item-system-extensions.md"
+    }
+  ],
+  "src/rpg/items/durability.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-item-system-extensions.md"
+    }
+  ],
+  "src/rpg/items/effects.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-item-system-extensions.md"
+    }
+  ],
+  "src/rpg/items/unique.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-item-system-extensions.md"
     }
   ],
   "src/rpg/llm-integration.ts": [
@@ -39419,6 +38041,12 @@
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
     }
   ],
+  "src/rpg/npc-navigation": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-npcs.md"
+    }
+  ],
   "src/rpg/npc-navigation/index.ts": [
     {
       "kind": "ticket",
@@ -39662,14 +38290,6 @@
   "src/rpg/questions/service.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-answerquestion-double-answer-race-toctou-on-status-check.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-answerquestion-ignores-time-limit-expired-questions-still-an.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     }
   ],
@@ -39790,10 +38410,6 @@
     }
   ],
   "src/rpg/replayability/service/playthrough.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-recordsecretfound-read-modify-write-loses-concurrent-secrets.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play.md"
@@ -39918,11 +38534,7 @@
   "src/rpg/reputation.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-deriverumors-exposes-internal-actor-uuid-in-user-facing-text.md"
+      "source": ".plan/epics/epic-world-diplomacy-karma.md"
     },
     {
       "kind": "ticket",
@@ -40080,10 +38692,6 @@
   "src/rpg/seduction/service/skills.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-awardxp-only-levels-up-once-per-call-multi-level-overflow-lo.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-034.md"
     },
     {
@@ -40113,35 +38721,7 @@
       "source": ".plan/tickets/TASK-action-applicability-gate.md"
     }
   ],
-  "src/rpg/service/battles.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-endbattle-overwrites-completed-battles-no-active-status-guar.md"
-    }
-  ],
-  "src/rpg/service/battles/items.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory.md"
-    }
-  ],
-  "src/rpg/service/battles/persistence.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-persistbattle-lost-update-race-read-modify-write-without-tra.md"
-    }
-  ],
-  "src/rpg/service/character-stats.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    }
-  ],
   "src/rpg/service/character-stats.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-world-integration.md"
@@ -40404,21 +38984,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-addxp-accepts-negative-xp-producing-nan-level-stored-in-db.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-040.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr.md"
-    }
-  ],
-  "src/rpg/skills/service/tree.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-buildskilltree-silently-drops-orphan-nodes.md"
     }
   ],
   "src/rpg/skills/service/types.ts": [
@@ -40561,12 +39131,6 @@
       "source": ".plan/tickets/FEAT-gurps-point-buy-character-creation.md"
     }
   ],
-  "src/rpg/stats/modifiers.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    }
-  ],
   "src/rpg/stats/modifiers.ts": [
     {
       "kind": "ticket",
@@ -40597,12 +39161,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
-    }
-  ],
-  "src/rpg/stats/validation.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
     }
   ],
   "src/rpg/stats/validation.ts": [
@@ -40745,76 +39303,10 @@
       "source": ".plan/epics/epic-weather-environment.md"
     }
   ],
-  "src/rpg/world-discovery/discovery.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
-    }
-  ],
-  "src/rpg/world-discovery/events.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
-    }
-  ],
-  "src/rpg/world-discovery/trade.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-edgeahead-does-not-validate-location-existence.md"
-    }
-  ],
-  "src/rpg/world-discovery/types.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
-    }
-  ],
   "src/rpg/world-travel/budget.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-diff-scoped-gates-diff-against-a-stale-merge-base-so-scope-e.md"
-    }
-  ],
-  "src/rpg/world-travel/migration.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-inconsistent-db-handle-in-migration-ts-npc-states-write.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o.md"
-    }
-  ],
-  "src/rpg/world-travel/travel.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-dead-code-guard-in-advancepartytravel.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-locations-query-loads-all-worlds-not-just-current-one.md"
-    }
-  ],
-  "src/rpg/world-travel/types.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-exploration-discovery.md"
     }
   ],
   "src/rpg/xp": [
@@ -40936,10 +39428,6 @@
   "src/schemas/index.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-shared-schemas.md"
     }
   ],
@@ -40954,10 +39442,6 @@
     }
   ],
   "src/schemas/nsfw-rating.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-nsfw-capabilities.md"
@@ -41022,10 +39506,6 @@
     }
   ],
   "src/schemas/reputation.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-faction-reputation.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-nsfw-integration-gaps.md"
@@ -41103,18 +39583,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/platform-support.md"
-    }
-  ],
-  "src/scripts/log-query.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
-    }
-  ],
-  "src/scripts/log-query.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-logging.md"
     }
   ],
   "src/scripts/migrate-character-legacy.test.ts": [
@@ -41548,14 +40016,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
     },
     {
@@ -41565,10 +40025,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cors-middleware.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-.md"
     },
     {
       "kind": "ticket",
@@ -41638,19 +40094,7 @@
   "src/server/init-background-services.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-character-core-system.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-cron-scheduler.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-server-log-rejected-background-init-promises-with-module.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o.md"
     }
   ],
   "src/server/start.test.ts": [
@@ -41718,22 +40162,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
     },
     {
@@ -41759,10 +40187,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h.md"
     },
     {
       "kind": "ticket",
@@ -41827,10 +40251,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-fswatcher-onreload-callback-in-server-startup.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/logging.md"
     }
   ],
   "src/server/static-files.ts": [
@@ -41849,10 +40269,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs.md"
     },
     {
       "kind": "ticket",
@@ -41881,10 +40297,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-ui-endpoint-linkage.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-perf-server-no-cache-html-entry-points-stream-static-files-w.md"
     }
   ],
   "src/server/watchdog/cli.ts": [
@@ -42041,68 +40453,14 @@
       "source": "docs/spec/crafting-professions.md"
     }
   ],
-  "src/services/actor-items/affordance.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-affordance.md"
-    }
-  ],
-  "src/services/actor-items/equip.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-inventory-ui.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-inventory.md"
-    }
-  ],
   "src/services/actor-items/transfer.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-inventory-system.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-inventory.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-items-crud-ownership.md"
-    }
-  ],
-  "src/services/affordance/categories.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-affordance.md"
-    }
-  ],
-  "src/services/affordance/lookup.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-affordance.md"
-    }
-  ],
-  "src/services/affordance/lookup.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-affordance.md"
-    }
-  ],
-  "src/services/affordance/telemetry.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    }
-  ],
-  "src/services/affordance/telemetry.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-affordance.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
     }
   ],
   "src/services/agency/bdi-nightly.test.ts": [
@@ -42115,10 +40473,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-agency-story-points.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
     },
     {
       "kind": "ticket",
@@ -42161,12 +40515,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"
-    }
-  ],
-  "src/services/agency/quality-metrics.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
     }
   ],
   "src/services/agency/spend-helpers.ts": [
@@ -42228,10 +40576,6 @@
     }
   ],
   "src/services/loot/budget-gate.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-affordance.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-loot-budget-affordance-gate.md"
@@ -42357,44 +40701,16 @@
       "source": ".plan/tickets/TASK-implement-trade.md"
     }
   ],
-  "src/services/trade/balance.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-economy-trading.md"
-    }
-  ],
   "src/services/trade/core.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-economy-trading.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-services-tradecore-validatelines-lacks-world-id-filter-cross.md"
-    }
-  ],
-  "src/services/trade/counter.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-economy-trading.md"
     }
   ],
   "src/services/trade/index.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
-    }
-  ],
-  "src/services/trade/lifecycle.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-economy-trading.md"
-    }
-  ],
-  "src/services/trade/npc.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-economy-trading.md"
     }
   ],
   "src/social-hub/adapters/adapter.ts": [
@@ -42567,6 +40883,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-item-systems-unification.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-travel-time.md"
     }
   ],
   "src/story/events/extraction.ts": [
@@ -42604,10 +40924,6 @@
     }
   ],
   "src/story/game-master.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-assistant-gm-flows.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
@@ -42658,10 +40974,6 @@
     }
   ],
   "src/story/game-master/decisions.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-assistant-gm-flows.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
@@ -42763,10 +41075,6 @@
   ],
   "src/story/items/balance.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-item-system-extensions.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-056.md"
     }
@@ -42804,14 +41112,6 @@
     }
   ],
   "src/story/items/effects.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-item-system-extensions.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-items.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-052.md"
@@ -42874,19 +41174,7 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-inventory.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-item-system-extensions.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-item-systems-unification.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-items.md"
     },
     {
       "kind": "ticket",
@@ -43165,12 +41453,6 @@
       "source": ".plan/epics/epic-timeline-system.md"
     }
   ],
-  "src/story/timeline/world-timeline.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-npc-lore-access.md"
-    }
-  ],
   "src/story/timeline/world-timeline.ts": [
     {
       "kind": "epic",
@@ -43389,10 +41671,6 @@
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys.md"
     },
@@ -43529,7 +41807,17 @@
       "source": ".plan/epics/epic-script-migration.md"
     }
   ],
+  "src/tickets/sync-index-write.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    }
+  ],
   "src/tickets/sync-index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-giwt-sync-fix-needs-two-passes-to-converge-when-an-index-ent.md"
@@ -43549,6 +41837,12 @@
       "source": ".plan/tickets/BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status.md"
     }
   ],
+  "src/tickets/sync-report.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    }
+  ],
   "src/tickets/sync-ticket.ts": [
     {
       "kind": "ticket",
@@ -43565,6 +41859,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fail-safe-execution-work-safety.md"
+    }
+  ],
+  "src/trading/market.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-battle-action-systems.md"
+    }
+  ],
+  "src/trading/trade.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-battle-action-systems.md"
     }
   ],
   "src/transport": [
@@ -43841,16 +42147,6 @@
       "source": ".plan/tickets/TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3.md"
     }
   ],
-  "src/tui/app.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-shell-testability.md"
-    }
-  ],
   "src/tui/app.ts": [
     {
       "kind": "epic",
@@ -43870,19 +42166,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-topic-tui-surface.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-chat-picker.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-dedupe-api-base.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-shell-testability.md"
     },
     {
       "kind": "spec",
@@ -43890,10 +42174,6 @@
     }
   ],
   "src/tui/asset-view.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
@@ -43905,14 +42185,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-shell-testability.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-spec-sync.md"
     },
     {
       "kind": "spec",
@@ -43935,15 +42207,15 @@
   ],
   "src/tui/chat/api.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
     }
   ],
   "src/tui/chat/api.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
@@ -43954,15 +42226,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-chat-picker.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-dedupe-api-base.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-spec-sync.md"
     },
     {
       "kind": "ticket",
@@ -43975,15 +42239,15 @@
   ],
   "src/tui/chat/display.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
     }
   ],
   "src/tui/chat/display.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
@@ -43997,17 +42261,9 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-shell-testability.md"
     }
   ],
   "src/tui/chat/index.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
@@ -44022,15 +42278,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-chat-picker.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-dedupe-api-base.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-shell-testability.md"
     },
     {
       "kind": "ticket",
@@ -44039,72 +42287,12 @@
   ],
   "src/tui/chat/types.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
-    }
-  ],
-  "src/tui/harness/api.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-topic-tui-surface.md"
-    }
-  ],
-  "src/tui/harness/display.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-topic-tui-surface.md"
-    }
-  ],
-  "src/tui/harness/index.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-shell-testability.md"
-    }
-  ],
-  "src/tui/harness/index.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-topic-tui-surface.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-chat-picker.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-shell-testability.md"
-    }
-  ],
-  "src/tui/harness/types.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    }
-  ],
-  "src/tui/import-purity.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-shell-testability.md"
     }
   ],
   "src/tui/input.ts": [
@@ -44115,8 +42303,8 @@
   ],
   "src/tui/nsfw-filter.test.ts": [
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-shell-testability.md"
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
     },
     {
       "kind": "ticket",
@@ -44704,10 +42892,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-crafting-professions.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-cross-layer-reconciliation.md"
     },
     {
@@ -44794,10 +42978,6 @@
   "src/validation/middleware.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     },
     {
@@ -44818,10 +42998,6 @@
     }
   ],
   "src/validation/prompt-injection.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-security-sandboxing-quickref.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md"
@@ -45007,12 +43183,6 @@
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
-  "src/validation/schemas/admin.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-admin-chat-patch-accepts-arbitrary-string-for-is-pinned.md"
-    }
-  ],
   "src/validation/schemas/any-tightening.test.ts": [
     {
       "kind": "ticket",
@@ -45089,24 +43259,10 @@
       "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
     }
   ],
-  "src/validation/schemas/emotion-avatars.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-avatar-regeneration-control.md"
-    }
-  ],
   "src/validation/schemas/entities.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-harness-integration.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
     }
   ],
   "src/validation/schemas/index.ts": [
@@ -45239,14 +43395,6 @@
       "source": ".plan/epics/epic-harness-integration.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-admin-analytics-tab-crashes-when-api-omits-fields.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
     },
@@ -45327,10 +43475,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-blog-system.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
     },
     {
       "kind": "ticket",
@@ -45435,20 +43579,12 @@
   ],
   "src/views/chat-list.html": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-html-inline-scripts.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-chat-picker.md"
     }
   ],
   "src/views/chat-render.ts": [
@@ -45621,10 +43757,6 @@
   ],
   "src/views/gallery.html": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-2025-002-reference-error-view-not-defined.md"
     },
@@ -45658,10 +43790,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-notification-bell-visible-on-login-register-pages.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
     },
     {
@@ -45691,10 +43819,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-info-bubbles.md"
     },
     {
       "kind": "ticket",
@@ -45753,18 +43877,8 @@
   ],
   "src/views/notifications.html": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
-    }
-  ],
-  "src/views/nsfw-moderation.html": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
     }
   ],
   "src/views/partials/character-growth-": [
@@ -45777,10 +43891,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-character-growth-editor-arc-description-not-json-encoded.md"
     },
     {
       "kind": "ticket",
@@ -45842,6 +43952,10 @@
     }
   ],
   "src/views/partials/top-bar.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-multi-instance-federation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"
@@ -45923,10 +44037,6 @@
       "source": ".plan/epics/epic-frontend-settings.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
     },
@@ -45973,6 +44083,10 @@
   ],
   "src/views/world-detail.html": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-management-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md"
     },
@@ -45985,6 +44099,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-npc-management-ui.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-management-ui.md"
     },
     {
       "kind": "ticket",
@@ -46023,16 +44141,16 @@
       "source": ".plan/tickets/TASK-world-item-frontend.md"
     }
   ],
+  "src/views/worlds": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-locations.md"
+    }
+  ],
   "src/views/worlds.html": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-management-ui.md"
-    }
-  ],
-  "src/world/anomaly.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-locations.md"
     }
   ],
   "src/world/conditions.ts": [
@@ -46059,12 +44177,6 @@
       "source": ".plan/tickets/TASK-world-state-management.md"
     }
   ],
-  "src/world/generation.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-locations.md"
-    }
-  ],
   "src/world/integration.ts": [
     {
       "kind": "ticket",
@@ -46075,12 +44187,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-state-management.md"
-    }
-  ],
-  "src/world/location.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-locations.md"
     }
   ],
   "src/world/lore.ts": [
@@ -46095,12 +44201,6 @@
       "source": "docs/spec/worlds.md"
     }
   ],
-  "src/world/npc.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-locations.md"
-    }
-  ],
   "src/world/npcs.ts": [
     {
       "kind": "ticket",
@@ -46111,12 +44211,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-state-management.md"
-    }
-  ],
-  "src/world/resources.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-locations.md"
     }
   ],
   "src/world/rules.ts": [
@@ -46141,12 +44235,6 @@
       "source": ".plan/tickets/TASK-world-state-management.md"
     }
   ],
-  "src/world/storage.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-locations.md"
-    }
-  ],
   "src/world/time.ts": [
     {
       "kind": "spec",
@@ -46169,12 +44257,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-043.md"
-    }
-  ],
-  "src/world/world.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-locations.md"
     }
   ],
   "src/worlds/license.ts": [
