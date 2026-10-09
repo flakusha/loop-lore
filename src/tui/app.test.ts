@@ -254,6 +254,50 @@ describeOrSkip("TUIApp", () => {
     expect(screen.renderCount,).toBeGreaterThan(before,);
   });
 
+  // The resize test above cannot see updateStatus's repaint: the resize
+  // handler renders on its own, so `toBeGreaterThan` across the emit stays
+  // green with updateStatus's `this.screen.render()` deleted. This one counts
+  // renders across a status change instead, with F2's `assets.toggle()` — which
+  // renders by way of show()/hide() — stubbed out, so the only thing that can
+  // move renderCount is updateStatus itself. Verified by mutation: deleting
+  // app.ts:136 drops this to 0 renders and the suite goes red.
+  it("repaints the screen on a status change", () => {
+    const app = createTUIApp();
+    const screen = app.screen as unknown as WidgetStub;
+    spyOn(app.assets, "toggle",).mockImplementation(() => {},);
+    const before = screen.renderCount;
+
+    pressKey(app, "f2",);
+
+    expect(statusBar().content,).toContain("Assets:",);
+    expect(screen.renderCount - before,).toBe(1,);
+  });
+
+  // Drives the `onChatChange` closure the shell hands the ChatWidget
+  // constructor. ChatWidget keeps it in a private field and fires it only from
+  // setChatId, so reaching for it on the instance is the honest way in —
+  // stubbing the whole ./chat module would cost the session-token and
+  // message-list doubles the other tests read. Both fetch chains the callback
+  // fans out to are stubbed, so the test stays offline and its assertions land
+  // on what the closure did rather than on what it was handed.
+  it("re-points the status bar and asset view at the chat a change reports", async () => {
+    const app = createTUIApp();
+    // Unchecked cast: onChatChange is private on ChatWidget; this reads the
+    // exact function the app.ts constructor supplied.
+    const chat = app.chat as unknown as { onChatChange?: (chatId: string,) => void };
+    const onChatChange = chat.onChatChange;
+    if (!onChatChange) { throw new Error("shell wired no onChatChange into the ChatWidget",); }
+    spyOn(app.assets, "loadAssets",).mockResolvedValue(undefined,);
+    const loadMessages = spyOn(app.chat, "loadMessages",).mockResolvedValue(undefined,);
+
+    onChatChange("0123456789abcdef",);
+    await flushMicrotasks();
+
+    expect(app.assets.getChatId(),).toBe("0123456789abcdef",);
+    expect(statusBar().content,).toContain("chat: 01234567...",);
+    expect(loadMessages,).toHaveBeenCalledTimes(1,);
+  });
+
   it("toggles the asset sidebar with F2 and back off the next press", () => {
     const app = createTUIApp();
     expect(app.assets.isVisible(),).toBe(false,);
