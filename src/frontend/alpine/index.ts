@@ -52,6 +52,7 @@ import "./theme";
 import "./types";
 import "./user-info";
 import "./user-notifications";
+import "./world";
 import "./world-edit";
 
 export { useRequestStatus, } from "./use-request-status";

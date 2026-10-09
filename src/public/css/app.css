@@ -3995,3 +3995,123 @@ html {
     min-width: 44px;
   }
 }
+
+/* --- World page panels (world-management UI epic: conditions, location
+       details, travel). Scoped under .world-page so dashboard/world-edit
+       styles stay untouched. --- */
+.world-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.world-page .panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.world-page-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (width <= 900px) {
+  .world-page-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.conditions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.condition {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-tertiary, rgb(127 127 127 / 12%));
+  font-size: var(--fs-xs, 12px);
+}
+
+.sse-dot {
+  font-size: var(--fs-xs, 12px);
+  font-weight: 600;
+}
+
+.sse-dot.on {
+  color: var(--accent-primary, #2a9d8f);
+}
+
+.sse-dot.off {
+  color: var(--text-tertiary, #999);
+}
+
+.detail-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.quick-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin: var(--space-3) 0;
+  flex-wrap: wrap;
+}
+
+.items-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.travel-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.methods-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.methods-row .condition {
+  cursor: pointer;
+}
+
+.transport-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.progress-track {
+  height: 8px;
+  background: var(--bg-tertiary, rgb(127 127 127 / 25%));
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent-primary, #2a9d8f);
+}
+
+.world-page .muted {
+  color: var(--text-tertiary, #888);
+  font-size: var(--fs-xs, 12px);
+}
