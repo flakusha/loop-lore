@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 047_world_timescale
+ * 052_world_timescale
  *
  * Per-world epoch clock + time-scale (epic-worlds-extension,
  * "Epoch + time-scale engine"). Two tables, both world-scoped:
