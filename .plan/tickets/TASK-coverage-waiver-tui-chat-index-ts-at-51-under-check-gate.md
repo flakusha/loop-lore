@@ -11,6 +11,7 @@
 **Status:** Done
 **Priority:** Low
 **Effort:** Trivial
+**Epic:** epic-terminal-ui
 
 ## Summary:
 

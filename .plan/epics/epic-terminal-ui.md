@@ -13,6 +13,28 @@
 **Status Note:** Built — blessed + blessed-contrib scaffolding shipped; `src/tui/harness/` overlay shipped and wired to F3; integration hardening in progress
 **Priority:** Low
 
+
+## Goals
+
+- A terminal client for the harness loop: talk to a chat, watch runs, inspect the chat's linked assets.
+- Keep the TUI importable outside a TTY so shortcut, toggle and resize changes can be covered by tests instead of smoke tests.
+- Make the written spec (`docs/spec/terminal-ui.md`) match what the code actually calls.
+
+
+## Scope
+
+- `src/tui/app.ts` layout and key bindings, `src/tui/chat/`, `src/tui/asset-view.ts`, `src/tui/harness/`, `src/tui/nsfw-filter.ts`.
+- `src/config/sections/tui.ts` — TUI config section (`sessionToken`, `enabled`).
+- The chat picker screen, once `TASK-tui-chat-picker` lands.
+- The harness work-topic surface, on the existing harness overlay rather than a new screen.
+
+
+## Out of Scope
+
+- Mirroring the web feature surface. Characters, worlds, quests, admin, settings, notifications and the asset gallery are not TUI targets; RPG/battle surfaces belong to their own epics.
+- Any `src/` change made by this reconciliation — code fixes are filed as tickets here, not applied.
+- The harness work-topic data model itself, owned by `epic-harness-integration.md`.
+
 ## Summary
 
 The TUI is a shipped-but-hollow shell. Three panels are wired over a `blessed.screen()`: a `ChatWidget` (F2 toggles an `AssetView` sidebar), and a `HarnessView` overlay (F3). The layout core (`src/tui/app.ts`) contains the full blessed lifecycle — `screen()` at `:41`. Construction now sits behind an exported `createTUIApp()` factory and an `import.meta.main` guard, so importing the module builds nothing. Every bug in shortcut registration, F2/F3 toggle, or resize is verifiable under test rather than by manual smoke test. The web feature surface has almost no TUI coverage.
@@ -70,7 +92,7 @@ The TUI currently covers exactly three things: chat send/load, asset sidebar, an
 | Global asset gallery | `src/routes/asset-tags/`, `src/views/gallery.html` | `AssetView` only shows the current chat's linked assets | — | Deferred |
 | Wardrobe, trade, crafting, battle | `—` (wardrobe absent); `src/routes/trade/`, `src/routes/crafting/`, `src/routes/rpg/`, `src/routes/battle/` | Not present | — | Separate epic |
 | Character growth / traits / mood | `src/routes/character-growth/`, `src/routes/character-traits/`, `src/routes/character-mood/` | Not present | — | Separate epic |
-| Story state | `src/routes/story-states/` (story-turns absent) | Not present | — | Separate epic |
+| Story state | `src/routes/story-states/`, `src/routes/story-turns.ts` (by-id lookup at `:102`) | Not present | — | Separate epic |
 | Auth | `src/routes/auth/` | TUI runs anonymous or with a config-supplied token only; no login flow | — | Deferred |
 
 ### Sequencing
@@ -100,7 +122,23 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 4. **P4 — Work-topic surface** — add topic column + F4 filter to harness overlay. Unblocks `TASK-harness-topic-tui-surface`.
 5. **P5 — `ENABLE_TUI` config flag** — `TASK-tui-enabled-config-flag-never-read.md`: decide wire / remove / document-and-remove-from-env-map. One decision, not three dangling options.
 
-## Tickets
+
+## Acceptance Criteria
+
+- [x] `src/tui/app.ts` creates its logger before constructing the screen, so importing it standalone does not throw (`createLogger` at `:155` precedes `new TUIApp()` at `:157`).
+- [x] `config.tui.sessionToken` reaches `ChatWidget`, with an empty string normalized to undefined.
+- [x] `ChatWidget` message send/load is covered by tests that stub fetch instead of mounting blessed.
+- [ ] `import("src/tui/app.ts")` in a non-TTY process does not construct a screen — move `new TUIApp()` behind an explicit `start()`.
+- [ ] `AssetView` and the harness overlay are constructible in tests (factory seam for `AssetView`, matching `createHarnessView`).
+- [ ] Every row in §Spec drift is closed against `docs/spec/terminal-ui.md`: the spec cites `/api/v1/assets` and `/api/v1/chats/:id/messages` instead of `/api/assets` and `/api/assistant`, and lists the harness overlay and `/api/v1/harness/*`.
+- [ ] A chat-picker screen exists, so the TUI can start a chat without an externally supplied `chatId`.
+- [ ] `ENABLE_TUI` either gates startup or is removed from `env-map.ts` — one decision, not a dangling option.
+- [ ] `Bun.color()` / `Bun.stringWidth()` are adopted for TUI colors and truncation (neither is used under `src/tui/` today).
+
+
+## Linked Tasks
+
+Bound to this epic via the `**Epic:** epic-terminal-ui` header on each ticket.
 
 ### Landed
 
@@ -117,8 +155,8 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 
 ### Deferred / Open
 
-- `TASK-tui-dedupe-api-base.md` — `API_BASE` declared in both `chat/api.ts` and `harness/api.ts`; harness re-exports from chat so one declaration is redundant (unblocked — P1 landed)
-- `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — banned patterns in `AssetView.setChatId` (unblocked — P1 landed)
+- `TASK-tui-dedupe-api-base.md` — **premise no longer holds**: `API_BASE` is declared once at `src/tui/chat/api.ts:7`, re-exported by `harness/api.ts:8` and imported by `app.ts:16`, which is exactly what the ticket asks for. Re-scope or close rather than re-implement (blocked on P1 only because the edit is in untestable `app.ts`)
+- `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — banned patterns in `AssetView.setChatId` (blocked on P1)
 - `TASK-tui-enabled-config-flag-never-read.md` — decide wire / remove / document-and-remove-from-env-map
 - `TASK-adopt-bun-color-for-tui-colors.md` — adopt `Bun.color()` for theme
 - `TASK-adopt-bun-stringwidth-for-tui.md` — adopt `Bun.stringWidth()` for safe truncation (fixes `formatMessageLine` surrogate-pair split)

@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** trivial
+**Epic:** epic-terminal-ui
 
 ## Summary
 
