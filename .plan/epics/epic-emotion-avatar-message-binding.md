@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** migration + schema done
+**Status Note:** backend persist + read + per-message frontend binding shipped (cbf8ec95); group-chat per-actor resolution and the end-to-end integration test pending
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -68,30 +68,42 @@ selection path is a manual `POST /api/actors/:actorId/avatars/select`.
 
 ## Tasks
 
-- [ ] Migration: add `messages.emotion` column (in place) + regen schema ✅
-- [ ] Backend: persist `dominantEmotion` to `messages.emotion` on assistant
-      message create (consume `EmotionHook` output in the generation/chat path)
-- [ ] Backend: expose `emotion` in the messages read API
-- [ ] Frontend: message loop resolves per-message avatar from `message.emotion`
+- [x] Migration: add `messages.emotion` column (in place) + regen schema
+- [x] Backend: persist `dominantEmotion` to `messages.emotion` on assistant
+      message create (`content-hooks.ts` extracts the `emotion_change` payload;
+      `store-message.ts` and `story-store.ts` write it on both generation paths)
+- [x] Backend: expose `emotion` in the messages read API (message reads select
+      all columns; emotion rides along)
+- [x] Frontend: message loop resolves per-message avatar from `message.emotion`
       + actor's emotion-tagged avatars; fallback to base avatar
-- [ ] Frontend: drop the global `_currentEmotionAvatar` mood-driven swap for
-      per-message rendering (keep mood-avatar for non-message areas if needed)
-- [ ] Tests: migration/schema-sync, message-persist, message-read, and
-      frontend message-list avatar resolution
-- [ ] Reconcile related epics/tickets (`TASK-aux-emotion-avatar`,
-      `TASK-emotions-avatar-edit-model`,
-      `FEAT-avatar-expression-system`, `TASK-character-mood-happiness`) to the
-      new message-bound model
+      (`avatarForMessage` in `src/frontend/alpine/mood/avatars.ts`)
+- [x] Frontend: per-message rendering no longer mutates the global
+      `_currentEmotionAvatar` mood-driven swap (pure resolver; mood-avatar
+      stays for non-message areas)
+- [ ] Group chats: resolve the avatar per speaking actor instead of the chat's
+      current character
+- [x] Tests: migration/schema-sync, message-persist (hook→`messages.emotion`),
+      and frontend `avatarForMessage` resolution unit-tested
+- [ ] End-to-end integration test hook → `messages.emotion` →
+      `avatarForMessage` (`TEST-emotion-hook-to-avatarForMessage-integration`)
+- [x] Reconcile related epics/tickets (`TASK-aux-emotion-avatar` status note
+      updated to the binding model; `TASK-emotions-avatar-edit-model` and
+      `TASK-character-mood-happiness` done; `FEAT-avatar-expression-system`
+      remains its own feature epic)
 
 ## Files
 
-- `src/db/migrations/parts/006_messages_keys.ts` (migration) — ✅
-- `src/db/schema-core.ts` / `src/db/schema-manifest.ts` (schema) — ✅
-- `src/generation/hooks/emotion-hook.ts` / `src/generation/auto-gen.ts` (persist)
+- `src/db/migrations/parts/006_messages_keys.ts` (migration) — done
+- `src/db/schema-core.ts` / `src/db/schema-manifest.ts` (schema) — done
+- `src/generation/hooks/emotion-hook.ts` (detect) — done
+- `src/generation/auto-gen/content-hooks.ts` / `store-message.ts` (persist) — done
+- `src/generation/auto-gen/story-store.ts` (story-mode persist) — done
 - `src/characters/services/avatar-service/` (selection.ts selectAvatar)
-- `src/routes/chats.ts` / `src/chat/service.ts` (message read/create)
-- `src/frontend/alpine/chat.ts` / `src/frontend/alpine/chat-messages.ts`
-- `src/components/chat/message-list.html` (render)
+- `src/chat/service/write.ts` / `read.ts` + `src/routes/messages/read.ts`
+  (message create/read)
+- `src/frontend/alpine/mood/avatars.ts` (`avatarForMessage`) +
+  `mood-state.ts`
+- `src/components/chat/message-list.html` (render) — done
 
 ## Acceptance Criteria
 

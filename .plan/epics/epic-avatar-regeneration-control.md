@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** durable jobs, emotions-subset, outfit-scoped replace + single-slot re-roll shipped; dedicated actor-level regenerate route, seed capture, per-avatar UI re-roll pending
 **Priority:** Medium
 **Effort:** Small
 **Type:** Feature Epic
@@ -22,26 +22,38 @@ durable job status.
 
 ## Motivation
 
-Today batch generation exists (`POST /actors/:actorId/emotion-avatars` →
-`runBatchGeneration`) but regeneration does not:
+Batch generation exists (`POST /actors/:actorId/emotion-avatars` →
+`startBatchGeneration`), and the regeneration control surface is partially
+landed (verified 2026-10-09):
 
-- No route to re-roll **one** emotion (e.g. `angry` came out malformed) without
-  re-rolling the whole set — wasting provider spend and discarding good
-  variants.
-- Job state lives in an in-memory store (`job-store.ts` `Map`) — cancel/list
-  survive only the process; a restart orphans in-flight batches and clients
-  polling `jobs/:jobId`.
-- No replace-vs-duplicate policy for a slot that already has an avatar.
+- Single-slot re-roll exists **under wardrobe scope**
+  (`POST /actors/:actorId/wardrobe/:itemId/emotion-avatars/single`, replace
+  default true) and batch accepts an `emotions` subset — but there is still no
+  actor-level regenerate route for avatars outside any outfit.
+- Job state is mirrored to the `generation_jobs` table (`job-records.ts`) so
+  list/status survive restart; restart reconciliation of orphaned `running`
+  jobs is still open.
+- Replace-vs-duplicate is settled: `replace` deletes prior variants for the
+  same (emotion, outfit scope) only — outfit-scoped regen isolation.
 
-## Current State
 
-- `src/characters/services/emotion-avatar-service/generation.ts` —
-  `runBatchGeneration` (whole set) + `generateEmotionAvatar` (single, internal,
-  un-routed).
+## Current State (verified 2026-10-09)
+
+- `src/characters/services/emotion-avatar-service/` — batch generation with
+  `emotions` subset filter, per-slot results, `replace` semantics, and a
+  single-slot path (`single-generation.ts`) with outfit descriptor + auto
+  matting.
 - `src/characters/services/emotion-avatar-service/job-store.ts` — in-memory
-  `createJob/getJob/listJobs/cancelJob`.
-- `src/routes/character-emotion-avatars.ts` — `POST .../emotion-avatars`
-  (batch), `POST .../jobs/:jobId/cancel`. No regenerate/delete-by-emotion.
+  live store; `job-records.ts` mirrors jobs into the `generation_jobs` table
+  (status/results persist across restart; no orphan reconciliation yet).
+- `src/routes/character-emotion-avatars.ts` — batch `POST .../emotion-avatars`
+  (emotions validated/capped/deduped), job list + status + SSE stream +
+  cancel.
+- `src/routes/wardrobe-avatars.ts` — outfit-scoped batch + single-slot
+  generation (single defaults to replace; sibling slots untouched) +
+  outfit/avatar resolution endpoint.
+- Defects fixed along the way: job-route authz, single-generation rate-limit
+  policy, uncapped `emotions` fan-out (tickets below).
 
 ## Architecture
 
@@ -106,3 +118,9 @@ Today batch generation exists (`POST /actors/:actorId/emotion-avatars` →
   wardrobe dimension exists
 - `epic-asset-platform-capabilities.md` — B3 GC owns the delete-and-replace
   churn; B1 dedup absorbs re-roll byte cost
+- [`BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-.md`](../tickets/BUG-bug-emotion-avatar-job-routes-authorize-only-the-path-actor-.md)
+  — job-route authz (done)
+- [`BUG-rate-limit-misses-post-emotion-avatars-single.md`](../tickets/BUG-rate-limit-misses-post-emotion-avatars-single.md)
+  — single-slot generation rate policy (done)
+- [`BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy.md`](../tickets/BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy.md)
+  — `emotions` subset cap on the batch route (done)

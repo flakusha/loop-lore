@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** matting pipeline + alpha status machine + VN sprite stage shipped; provider transparency capability and alpha-aware chat styling pending
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -28,16 +28,23 @@ alpha; today the character can only be a rectangle floating over the scene.
 This also improves small placements (bubble avatar over textured chat
 background).
 
-## Current State
+## Current State (verified 2026-10-09)
 
-- Generation path (`emotion-avatar-service/generation.ts`, aux-pipeline image
-  providers) stores whatever bytes come back; no transparency request, no
-  post-processing, format handling in `src/assets/service/` is type-detect only.
-- `epic-visual-novel-mode.md` renders scenes with backgrounds + expression
-  changes (emotion binding) — no sprite layering; no alpha anywhere in pipeline
-  (grep: no matting/transparency handling).
-- Storage/delivery: `src/assets/` store-file + encryption path — format-agnostic
-  blobs; PNG/WebP fine already.
+- Matting fallback **shipped**: `src/generation/matting/` (pluggable backend via
+  generation config) auto-enqueues opaque generated sprites
+  (`enqueueAutoMatting`), keeps raw + matted as asset→asset derivative links,
+  and is re-runnable; job routes serve status and re-run (`src/assets/matting-routes.ts`).
+- Alpha tracking **shipped**: `assets.alpha_status` state machine
+  (`unknown → raw → matting_pending → matted | matting_failed`; `native` for
+  header-detected alpha — PNG tRNS, WebP ALPH/VP8L, GIF transparency in
+  `src/assets/alpha-detect.ts`); deleting a matted derivative reverts the source
+  to `raw`.
+- VN sprite stage **shipped**: `src/frontend/alpine/vn/` (sprite-stage,
+  sprite-anchor, scene-renderer) composites character over background;
+  `TransformContext.Sprite` rows (anchor/scale) persist via the frontend asset
+  anchor; serve paths resolve the matted derivative for sprite-stage consumers.
+- Provider transparency **not started**: no `transparency` capability on image
+  providers; generation still requests opaque rectangles only.
 
 ## Architecture
 
@@ -50,9 +57,9 @@ background).
   endpoint) producing alpha; **async** (job status), never inline in generate
   request; store both raw + matted as linked assets (`asset_links` self-relation
   or `derived_from` column) so matting is re-runnable with better models.
-- **Asset flag:** `assets.has_alpha` (computed at store time, cheap header
-  check) — render sites branch on it for frame styling (no circle-crop for
-  sprites).
+- **Asset flag:** realized as `assets.alpha_status` (state machine, not a
+  boolean — computed at store time via header check) — render sites branch on
+  it for frame styling (no circle-crop for sprites).
 - **VN compositor contract:** sprite layer = `(asset + transform + anchor)`:
   standing-figure framing from `epic-asset-transform-metadata.md` context
   `sprite` (feet/belly anchor, scale-vs-stage), z-order above background, below
@@ -65,17 +72,21 @@ background).
 - [ ] Capability: `transparency` flag on image providers + config schema;
       pass-through in generation request builder
 - [ ] Generation: request alpha when supported; pick PNG/WebP accordingly;
-      record `provider_transparent: bool` in avatar metadata
-- [ ] Matting fallback: aux-pipeline job (model pluggable), raw + matted asset
-      pair, job status surface
-- [ ] `assets.has_alpha` column + computation at store; regen schema artifacts
-- [ ] Render: emotion-avatar message binding + mood panel respect alpha (no
-      background fill, no hard circle clip)
-- [ ] VN scene renderer: sprite layer compositing (bg → sprite → UI), anchor +
-      scale via `sprite` transform context
-- [ ] Tests: alpha flag detection (png rgba vs rgb, webp vp8l), capability
-      negotiation, matting-job lifecycle (success/fail keeps raw usable), VN
-      layer order unit test
+      record provider transparency in avatar metadata
+- [x] Matting fallback: pluggable background-removal job
+      (`src/generation/matting/`), raw + matted asset pair, job status surface
+      + re-run (`src/assets/matting-routes.ts`)
+- [x] `assets.alpha_status` column + state machine + header-level alpha
+      detection at store (supersedes the boolean `has_alpha` sketch); schema
+      artifacts regenerated
+- [ ] Render: emotion-avatar message binding + mood panel branch on alpha
+      status (no background fill, no hard circle clip) — VN sprite stage done,
+      chat bubble styling pending
+- [x] VN scene renderer: sprite layer compositing (bg → sprite → UI), anchor +
+      scale via `sprite` transform context (`src/frontend/alpine/vn/`)
+- [x] Tests: alpha flag detection (png tRNS, webp vp8l/alff, gif transparency),
+      alpha status transitions, matting-job lifecycle (success/fail keeps raw
+      usable)
 
 ## Non-Goals
 

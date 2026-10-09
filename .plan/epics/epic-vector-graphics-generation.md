@@ -3,14 +3,14 @@
 
 # EPIC: Vector Graphics & Animated Image Generation
 
-**File:** `.plan/epics/epic-vector-graphics-generation.md`
-**Overview:** (see sections below)
+**Overview:** (see ## Background and ## Scope below)
+
 **Status:** Not Started
-**Type:** Feature Epic
-**Tags:** assets, svg, vector, animation, smil, image-generation, sanitization
+**Status Note:** design settled; no SVG persist path or sanitizer exists yet (validate.ts still blocks image/svg+xml outright, verified 2026-10-09)
 **Priority:** Medium
 **Effort:** Medium (phased; each phase ships standalone value)
-**Overview:** See ## Background and ## Scope below.
+**Type:** Feature Epic
+**Tags:** assets, svg, vector, animation, smil, image-generation, sanitization
 
 **Overview:** Vector graphics and animated image generation on top of the existing image pipeline — LLM-authored SVG with a sanitizer gate, SMIL/animated-vector support, and server-side APNG/animated-WebP/GIF assembly, all persisted through the existing `createAsset` path. Phased so each phase ships standalone value; every vector path goes through the existing `validate.ts` mime allowlist, never around it.
 
