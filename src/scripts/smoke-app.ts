@@ -8,7 +8,7 @@ import { createSqliteDialect, } from "../db/index";
 import { up, } from "../db/migrations/001_init";
 import type { DB, } from "../db/schema";
 import { createApp, } from "../elysia-app";
-import { createLogger, getLogger, type Logger, } from "../logger";
+import { createLogger, getChildLogger, type Logger, } from "../logger";
 import { safeFetch, } from "../utils";
 
 // Console-only logger: a one-shot smoke run has no host process to seed one.
@@ -18,13 +18,7 @@ createLogger({ level: "info", },);
  * Module logger accessor — null if no logger is initialized.
  * @returns the child logger, or null when no logger is initialized.
  */
-function log(): Logger | null {
-  try {
-    return getLogger().child({ module: "scripts/smoke-app", },);
-  } catch {
-    return null;
-  }
-}
+const log = (): Logger | null => getChildLogger("scripts/smoke-app",);
 
 const sqlite = new Database(":memory:",);
 sqlite.run("PRAGMA foreign_keys = ON",);

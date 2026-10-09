@@ -15,7 +15,7 @@
 
 import { execSync, } from "child_process";
 import { flag, object, runScript, withDefault, } from "../cli/parser";
-import { createLogger, getLogger, type Logger, } from "../logger";
+import { createLogger, getChildLogger, type Logger, } from "../logger";
 
 // Console-only logger: the githook runs this file as a bare process, with no
 // host server to have seeded a logger already.
@@ -25,13 +25,7 @@ createLogger({ level: "info", },);
  * Module logger accessor — null if no logger is initialized.
  * @returns the child logger, or null when no logger is initialized.
  */
-function log(): Logger | null {
-  try {
-    return getLogger().child({ module: "scripts/commit-check", },);
-  } catch {
-    return null;
-  }
-}
+const log = (): Logger | null => getChildLogger("scripts/commit-check",);
 
 const COMMIT_PATTERN = /^(\w+)(?:\(([^)]+)\))?(!)?:\s(.+)$/;
 const VALID_TYPES = [
