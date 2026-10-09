@@ -1,6 +1,26 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 290
+// size-allow: 310
+
+import type {
+  PartyStatus,
+  TravelStatusPayload,
+} from "../../validation/schemas/travel-wire";
+
+/**
+ * One world invite row returned by GET /api/v1/worlds/:worldId/invites.
+ * Mirrors the backend `WorldInviteRow` in src/chat/world-invites.ts.
+ */
+export interface WorldInviteRow {
+  id: string;
+  worldId: string;
+  code: string;
+  createdAt: string;
+  expiresAt: string | null;
+  maxUses: number | null;
+  uses: number;
+  status: string;
+}
 
 /** */
 export interface WorldEditState {
@@ -69,16 +89,7 @@ export interface WorldEditState {
   placeLocationId: string;
   placeQuantity: string;
   worldId: string | null;
-  invites: {
-    id: string;
-    worldId: string;
-    code: string;
-    createdAt: string;
-    expiresAt: string | null;
-    maxUses: number | null;
-    uses: number;
-    status: string;
-  }[];
+  invites: WorldInviteRow[];
   loadingInvites: boolean;
   invitesLoaded: boolean;
   newInviteMaxUses: string;
@@ -167,34 +178,21 @@ export interface NpcPresent {
 }
 
 /** A transport following a route (GET /worlds/:worldId/travel/status). */
-export interface TransportStatus {
-  locationId: string;
-  name: string;
-  routeId: string;
-  routeName: string;
-  loop: boolean;
-  progress: number;
-  stopCount: number;
-  nextStopName: string | null;
-  hazards: string[];
-}
+export type { TransportStatus, } from "../../validation/schemas/travel-wire";
 
 /** A party walking a stored route (GET /worlds/:worldId/travel/status). */
-export interface PartyStatus {
-  id: string;
-  name: string;
-  status: string;
-  routeIndex: number;
-  travelProgress: number;
-  currentLocationId: string | null;
-  currentLocationName: string | null;
-  hazards: string[];
-}
+export type { PartyStatus, } from "../../validation/schemas/travel-wire";
 
 /** The whole travel-status payload. */
-export interface TravelStatusPayload {
-  transports: TransportStatus[];
-  parties: PartyStatus[];
+export type { TravelStatusPayload, } from "../../validation/schemas/travel-wire";
+
+/** One in-flight transport rendered as a progress row. */
+export interface TransportProgress {
+  name: string;
+  pct: number;
+  routeName: string;
+  nextStopName: string | null;
+  hazards: string[];
 }
 
 /** One 047 adjacency edge as served to the world page (discovery-filtered
@@ -312,13 +310,7 @@ export interface WorldPageState {
   readonly travelEtaLabel: string;
   readonly travelConnected: boolean;
   readonly edgeToDestination: WorldEdgeLink | undefined;
-  readonly transportProgresses: Array<{
-    name: string;
-    pct: number;
-    routeName: string;
-    nextStopName: string | null;
-    hazards: string[];
-  }>;
+  readonly transportProgresses: TransportProgress[];
   readonly partyStatuses: PartyStatus[];
   openTravelConfirm(): void;
   confirmTravel(): Promise<void>;

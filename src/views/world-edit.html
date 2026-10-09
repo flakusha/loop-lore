@@ -965,30 +965,25 @@
               <div class="panel" style="margin-bottom: var(--space-4)">
                 <h4 style="margin: 0 0 var(--space-2) 0">Connect two locations</h4>
                 <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: end">
-                  <div class="form-group" style="flex: 1 1 180px">
-                    <label class="form-label" for="edge-from">From</label>
-                    <select id="edge-from" class="form-select" x-model="newEdge.fromId">
-                      <option value="">—</option>
-                      <template x-for="n in nodes" :key="n.id">
-                        <option :value="n.id" x-text="n.name"></option>
-                      </template>
-                    </select>
-                  </div>
-                  <div class="form-group" style="flex: 1 1 180px">
-                    <label class="form-label" for="edge-to">To</label>
-                    <select id="edge-to" class="form-select" x-model="newEdge.toId">
-                      <option value="">—</option>
-                      <template x-for="n in nodes" :key="n.id">
-                        <option :value="n.id" x-text="n.name"></option>
-                      </template>
-                    </select>
-                  </div>
+                  <template x-for="field in ['fromId', 'toId']" :key="field">
+                    <div class="form-group" style="flex: 1 1 180px">
+                      <label
+                        class="form-label"
+                        :for="`edge-${field}`"
+                        x-text="field === 'fromId' ? 'From' : 'To'"
+                      ></label>
+                      <select :id="`edge-${field}`" class="form-select" x-model="newEdge[field]">
+                        <option value="">—</option>
+                        <template x-for="n in nodes" :key="n.id">
+                          <option :value="n.id" x-text="n.name"></option>
+                        </template>
+                      </select>
+                    </div>
+                  </template>
                   <div class="form-group" style="flex: 0 1 130px">
                     <label class="form-label" for="edge-mode">Mode</label>
                     <select id="edge-mode" class="form-select" x-model="newEdge.mode">
-                      <template x-for="m in modeOptions" :key="m">
-                        <option :value="m" x-text="m"></option>
-                      </template>
+                      {{> edge-mode-options.html }}
                     </select>
                   </div>
                   <div class="form-group" style="flex: 0 1 110px">
@@ -1075,9 +1070,7 @@
                           x-model="editDrafts[edge.id].mode"
                           aria-label="Edge mode"
                         >
-                          <template x-for="m in modeOptions" :key="m">
-                            <option :value="m" x-text="m"></option>
-                          </template>
+                          {{> edge-mode-options.html }}
                         </select>
                         <input
                           class="form-input"

@@ -2,8 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
+import { parseJsonList, } from "../../utils/safe-json";
 import { locationActions, } from "./location-actions";
-import { locationDetails, parseJsonList, } from "./location-details";
+import { locationDetails, } from "./location-details";
 import { timeWeatherWidget, } from "./time-weather";
 import { travelInterface, } from "./travel-interface";
 import { buildWorldPageState, } from "./world";

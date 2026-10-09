@@ -10,6 +10,7 @@
 // locations lives in the Locations tab.
 
 import { jsonStringifyOr, } from "../../utils/safe-json";
+import type { TravelRouteStopRow, } from "../../validation/schemas/travel-wire";
 import { apiFetch, } from "./htmx";
 import { log as rootLog, } from "./logger";
 import { fetchWorldJson, } from "./world-fetch";
@@ -32,15 +33,7 @@ interface RouteRow {
 }
 
 interface RouteDetail extends RouteRow {
-  stops: Array<{
-    id: string;
-    location_id: string;
-    stop_order: number;
-    dwell_seconds: number;
-    coord_x: number | null;
-    coord_y: number | null;
-    coord_z: number | null;
-  }>;
+  stops: TravelRouteStopRow[];
 }
 
 export interface FractalState {

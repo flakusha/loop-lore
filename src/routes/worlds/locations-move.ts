@@ -3,9 +3,9 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { LocationMoveError, LocationTreeService, } from "../../locations";
-import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { jsonResponse, } from "../http-utils";
 import { requireWorldOwner, } from "./access";
+import { moveLocationOrError, } from "./location-tree-move";
 
 /**
  * Move a location (and its subtree) under a new parent via
@@ -33,30 +33,8 @@ export async function handleMoveLocation(
   const worldErr = await requireWorldOwner(database, worldId, userId, userRole,);
   if (worldErr) { return worldErr; }
 
-  const loc = await database
-    .selectFrom("locations",)
-    .where("id", "=", locId,)
-    .where("world_id", "=", worldId,)
-    .select("id",)
-    .executeTakeFirst();
-
-  if (!loc) {
-    return jsonError({ message: "Location not found", status: HttpStatus.NotFound, },);
-  }
-
-  try {
-    await new LocationTreeService(database,).moveSubtree(locId, newParentId,);
-  } catch (error) {
-    if (error instanceof LocationMoveError) {
-      // Cycle/self-parent/cross-world are client errors (400); only a truly
-      // missing row is a 404.
-      const status = error.code === "not-found" ? HttpStatus.NotFound : HttpStatus.BadRequest;
-
-      return jsonError({ message: error.message, status, },);
-    }
-
-    throw error;
-  }
-
-  return jsonResponse({ ok: true, },);
+  // Cycle/self-parent/cross-world are client errors (400); only a truly
+  // missing row is a 404.
+  const moveErr = await moveLocationOrError(database, worldId, locId, newParentId, ["not-found",],);
+  return moveErr ?? jsonResponse({ ok: true, },);
 }

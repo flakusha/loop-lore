@@ -12,7 +12,14 @@ import { randomBytes, randomUUID, } from "node:crypto";
 // ── Safe JSON (re-exported from no-dep sub-module) ──────────
 
 export type { JsonResult, SafeJsonStringifyOptions, } from "./utils/safe-json";
-export { isJsonString, jsonParseOr, jsonStringifyOr, safeJsonParse, safeJsonStringify, } from "./utils/safe-json";
+export {
+  isJsonString,
+  jsonParseOr,
+  jsonStringifyOr,
+  parseJsonList,
+  safeJsonParse,
+  safeJsonStringify,
+} from "./utils/safe-json";
 
 // ── Safe Fetch ──────────────────────────────────────────────
 

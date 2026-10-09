@@ -4,24 +4,9 @@
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
-import type { WorldEditState, } from "./world-types";
+import type { WorldEditState, WorldInviteRow, } from "./world-types";
 
 const log = rootLog.child({ module: "world-invites", },);
-
-/**
- * One world invite row returned by GET /api/v1/worlds/:worldId/invites.
- * Mirrors the backend `WorldInviteRow` in src/chat/world-invites.ts.
- */
-export interface WorldInviteRow {
-  id: string;
-  worldId: string;
-  code: string;
-  createdAt: string;
-  expiresAt: string | null;
-  maxUses: number | null;
-  uses: number;
-  status: string;
-}
 
 export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = {
   invites: [] as WorldInviteRow[],

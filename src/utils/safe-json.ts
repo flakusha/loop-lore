@@ -111,6 +111,20 @@ export function jsonStringifyOr(value: unknown, fallback = "{}",): string {
   return r.ok ? r.value : fallback;
 }
 
+/**
+ * Parse a JSON column holding a plain array of strings (e.g.
+ * `location_states.hazards`, `locations.connections`) into a string list.
+ * Never throws — corrupt or non-array values degrade to `[]`.
+ * @param raw raw column value (nullish allowed)
+ * @returns the string entries, empty when the value is unusable
+ */
+export function parseJsonList(raw: string | null | undefined,): string[] {
+  if (!raw) { return []; }
+  const parsed = jsonParseOr<unknown>(raw, null,);
+  if (!Array.isArray(parsed,)) { return []; }
+  return parsed.filter((entry,): entry is string => typeof entry === "string");
+}
+
 // ── Guards ───────────────────────────────────────────────────
 
 /**
