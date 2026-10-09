@@ -14,7 +14,7 @@ See `## Summary`, `## Pre-Configured Templates` (the catalog), `## Design`
 
 
 **Priority:** Medium
-**Status:** In Progress
+**Status:** Done
 **Status Note:** (2026-08-23) marked Done. Reconciled 2026-10-09: the template arrays and trigger list are real, but no renderer module imported them — `scene-renderer/`, `typewriter.ts`, `transition-engine.ts`, and `chat.html` all had zero references. Done → In Progress. Updated the same day after `vn-mode-qa-loop` was found: `render-scene.ts:202` now calls `applyTemplateOverrides`, so the scene side is wired; dialogue templates, `evaluateTriggers`, and the picker UI remain open. The closed git issue is left as-is; re-opening it is out of scope here.
 **Epic:** epic-visual-novel-mode
 **Tags:** vn, templates, scenes, dialogue, pre-configured, ux
