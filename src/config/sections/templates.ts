@@ -37,6 +37,8 @@ export interface LlmSystemPrompts {
   vn?: string;
   /** VN branching choice generation */
   vnChoices?: string;
+  /** VN Q&A question generation (interaction loop) */
+  vnQuestions?: string;
   /** Aux: chat → scene transition classification */
   transition?: string;
   /** Aux: pre-generation intent classification */

@@ -55,6 +55,9 @@ export function msgToScene(msg: VnMessage,): VnScene {
       : [{ characterId: speakerId, name: displayName, avatarAssetId: msg.avatar_asset_id, },]),
     speakerId,
     emotion: msg.emotion,
+    // Explicit — msgToScene builds a literal, so a spread would not pick these up.
+    templateId: msg.templateId,
+    templateVars: msg.templateVars,
   };
 }
 

@@ -21,6 +21,10 @@ export interface VnScene {
   /** Emotion key for variant resolution. */
   emotion?: string;
   transition?: TransitionType;
+  /** Scene template id applied at render time (scene-templates registry). */
+  templateId?: string;
+  /** Variable values fed to the template; see templates/apply.ts. */
+  templateVars?: Record<string, unknown>;
   attachments?: MessageAttachment[];
 }
 
@@ -39,5 +43,9 @@ export interface VnMessage {
   speakerId?: string | null;
   /** Emotion key for variant resolution. */
   emotion?: string;
+  /** Scene template id applied at render time (scene-templates registry). */
+  templateId?: string;
+  /** Variable values fed to the template; see templates/apply.ts. */
+  templateVars?: Record<string, unknown>;
   attachments?: MessageAttachment[];
 }

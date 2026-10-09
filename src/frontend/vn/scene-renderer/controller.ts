@@ -3,6 +3,7 @@
 
 import { destroyChoiceCards, } from "../choice-cards";
 import { createLoadingIndicator, } from "../image-preloader";
+import { destroyQuestionCards, } from "../question-cards";
 import { getVnSettings, } from "../settings";
 import { addToRoster, createRoster, } from "../sprite-stage";
 import { applyStageDirectives, deriveStageDirectives, type SceneCastView, } from "../stage-directives";
@@ -91,6 +92,7 @@ export function destroyVnRenderer(): void {
   }
 
   destroyChoiceCards();
+  destroyQuestionCards();
   state.loadingIndicator = null;
   if (state.container) {
     state.container.replaceChildren();

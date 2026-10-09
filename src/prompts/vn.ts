@@ -20,6 +20,17 @@ Style guidelines:
 - Maintain consistency with established characters and locations
 - End with a natural transition point for the next scene`;
 
+/** System prompt for VN Q&A question generation (interaction loop). */
+export const VN_QUESTIONS_PROMPT =
+  `You are a Visual Novel question designer. Generate questions characters ask the player mid-scene.
+
+Question guidelines:
+- Ask questions a character would plausibly ask in the moment, in their voice
+- Offer 2-4 answer options that reflect meaningfully different approaches
+- Keep option text short and in-character (one line of speech)
+- Set emotion_modifier and relationship_modifier in the range -100 to 100
+- Use consequences only when an answer genuinely changes the scene`;
+
 /** System prompt for VN branching choice generation. */
 export const VN_CHOICES_PROMPT =
   `You are a Visual Novel branching narrative designer. Generate meaningful player choices that affect the story.
