@@ -6,12 +6,12 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** B1 dedup defect wave fixed; alt_text + VLM captioning + tag propositions shipped; content-addressed store, renditions, GC, ops language still open
 **Priority:** Medium
 **Effort:** Large (batch-decomposable; each batch ships standalone value)
 **Type:** Feature Epic
-**Tags:** assets, messages, uploads, renditions, dedup, RAG, assistant
+**Tags:** assets, messages, uploads, renditions, dedup, rag, assistant
 
 ## Summary
 
@@ -26,23 +26,27 @@ Positioning: the four avatar epics (regen / transforms / alpha / wardrobe) are
 renditions row for baked crops, a pHash for sprite dedup, a backlink query for
 "where is this avatar used"). Build it once here, feed every feature batch.
 
-## Current State
+## Current State (verified 2026-10-09)
 
 - `src/assets/`: service (create/read/delete/links/detect/validate/store-file/
-  upload-encryption), `metadata.ts` = **upload-time extract only** (dimensions,
-  type — cf. `BUG-asset-webp-vp8x-dimension-truncation`), `shares.ts` =
-  visibility + per-user share records. `assets` + `asset_links` polymorphic
-  linking (`002_assets.ts`).
-- Gallery (`epic-frontend-gallery.md`) renders full-size blobs at 4:3 cards —
-  **no server-side rendition ladder**.
-- `ModelRole.Captioning` exists in config but is a **dead role** (documented in
-  `epic-aux-enrichment-pipeline.md` — nothing resolves it).
-- `content_hash` (SHA-256) exists and `createAsset` dedups on it, but only per
-  `(content_hash, owner_id)`, with no unique index, no cross-user dedup, and no
-  blob/refcount layer — the B1 content-addressed store is still unbuilt. A
-  2026-10-01 review filed the blocking defects against the current dedup under
-  **B1 Defect tickets** below. No orphan GC, no alt/caption field, no albums, no
-  sticker concept, no storage budget, no "recent assets" picker.
+  upload-encryption), `metadata.ts` = **upload-time extract** (dimensions,
+  type, header-level alpha — cf. `BUG-asset-webp-vp8x-dimension-truncation`),
+  `shares.ts` = visibility + per-user share records. `assets` + `asset_links`
+  polymorphic linking (`002_assets.ts`). Upload accepts `alt_text`
+  (sanitized); asset tags + tag propositions (`tag-propositions.ts`) are live.
+- Gallery (`epic-frontend-gallery.md`) still renders full-size blobs at 4:3
+  cards — **no server-side rendition ladder** (thumbs are per-file
+  best-effort, not a rendition table).
+- `ModelRole.Captioning` is **wired**: `resolveModelRole` resolves it;
+  `src/generation/caption-route.ts` + the assistant `/caption` command persist
+  VLM captions into `assets.alt_text`.
+- `content_hash` (SHA-256) dedup is correct as of the defect wave below: the
+  key covers owner + hash + encryption tier (+ key id when encrypted) under
+  partial unique indexes with a conflict-skip insert, and `dedupe: false`
+  persists a NULL hash. Still per-owner (no cross-user dedup) and no
+  blob/refcount layer — the B1 content-addressed store is unbuilt. No orphan
+  GC, no albums, no sticker concept, no storage budget, no "recent assets"
+  picker.
 
 ## Batches (each independently shippable)
 
@@ -62,12 +66,13 @@ renditions row for baked crops, a pHash for sprite dedup, a backlink query for
   stripped derivative to other users. `has_location` flag from `metadata.ts`
   extraction decides when the strip path fires.
 
-#### B1 Defect tickets (filed 2026-10-01, gallery/dedup review)
+#### B1 Defect tickets (filed 2026-10-01, gallery/dedup review — all fixed)
 
-Blocking defects in the *existing* per-owner `content_hash` dedup. These are
-prerequisites for the B1 content-addressed store: the B1 design assumes the
-current dedup is at least correct, and it is not. Fix in this order — each is
-independently shippable.
+Blocking defects in the *then-current* per-owner `content_hash` dedup. All six
+are fixed; the dedup key now covers owner + hash + encryption tier (+ key id
+when encrypted) under partial unique indexes with a conflict-skip insert, and
+derivative links carry proper asset→asset provenance. Kept as the design
+record the B1 content-addressed store builds on.
 
 - [`BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md`](../tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md)
   — ComfyUI image-edit passes `ownerId: "system"`, violating the
@@ -178,15 +183,16 @@ independently shippable.
       pipeline (Bun.image) + gallery/bubble switch; EXIF strip path on
       external serve
 
-- [ ] B1 defects (see B1 Defect tickets): ComfyUI ownerId FK, cross-user dedup
+- [x] B1 defects (see B1 Defect tickets): ComfyUI ownerId FK, cross-user dedup
       collapse, edit-iteration collapse, encryption-tier blindness, TOCTOU race,
-      derivative-link entity_type — all before the B1 content-addressed store
+      derivative-link entity_type — all fixed; B1 store design proceeds on top
 - [ ] B2: optimistic upload state machine + retry queue; client downscale;
       album message kind; recent-picker; shared-media tab
 - [ ] B3: ref-count view + GC sweep job; soft-delete column + restore; budget
       checker (structured-logging + admin report); share token expiry/views
-- [ ] B4: `alt_text`/`description` columns; Captioning role wiring; pHash on
-      store; usage/backlinks query + endpoint; RAG ingestion adapter
+- [ ] B4: pHash on store; usage/backlinks query + endpoint; RAG ingestion
+      adapter (alt_text columns + Captioning-role captioning into alt_text are
+      done — see Current State)
 - [ ] B5: ops-list storage + deterministic executor (sandboxed sharp-class ops
       only); assistant tool emitting ops; sticker kind atop alpha + recents
 - [ ] B6: `caption_version` + stale flag; strip-before-index rule; ingestion
