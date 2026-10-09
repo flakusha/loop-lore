@@ -10,7 +10,7 @@
 
 
 **Epic:** epic-hidden-carriage-context
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 
 ## Scope
@@ -28,3 +28,5 @@
 
 - Fuzz-corrupted TOML either heals to valid schema or cancels with code.
 - Oversize payload always cancels, never truncates silently.
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 694a0f2 (registry tip: 6c6b95dbe Konstantin Fedotov Auto-closed: appended .md marker marks TASK-STRUCTURED-LLM-OUTPUT-HEALI)

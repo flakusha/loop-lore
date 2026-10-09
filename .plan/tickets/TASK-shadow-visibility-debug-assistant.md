@@ -11,7 +11,7 @@
 
 **Epic:** epic-hidden-carriage-context
 **See also:** epic-gm-shadow-notes.md, epic-assistant-gm-flows.md
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 
 ## Scope
@@ -29,3 +29,5 @@
 - Assistant `/continue` sees shadow context; resulting player-visible
   writes contain no shadow-derived facts (asserted by test).
 - Debug view labels every shadow entry; no silent mixing.
+
+**Resolved:** 2026-10-09 registry-driven close: git issue a90cec0 (registry tip: 34b70dbb5 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-SHADOW-VISIBILITY-DEBUG-ASS)
