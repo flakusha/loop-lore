@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 047_vn_questions
+ * 050_vn_questions
  *
  * VN Q&A interaction loop storage — the question cards a scene surfaces and
  * the single answer the player picks. Modelled on `vn_choices` (001_init):

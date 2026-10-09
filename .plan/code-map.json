@@ -14527,16 +14527,16 @@
       "source": ".plan/tickets/BUG-sqlite-fk-pragma-no-op-in-migration-047-rebuild.md"
     }
   ],
-  "src/db/migrations/047_vn_questions.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-vn-qa-mode.md"
-    }
-  ],
   "src/db/migrations/050_lorebook_activation.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-055.md"
+    }
+  ],
+  "src/db/migrations/050_vn_questions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
   "src/db/migrations/054_chat_keys.ts": [
