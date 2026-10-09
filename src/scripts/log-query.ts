@@ -21,7 +21,7 @@ import {
 import { loadConfig, } from "../config/load";
 import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
-import { createLogger, getLogger, type Logger, } from "../logger";
+import { createLogger, getChildLogger, type Logger, } from "../logger";
 import { jsonStringifyOr, } from "../utils/safe-json";
 
 /** Rows returned when `--limit` is omitted. */
@@ -31,13 +31,7 @@ export const DEFAULT_LIMIT = 50;
 export const LIMIT_CAP = 500;
 
 /** Null until the CLI guard calls `createLogger()`; keeps bare imports throw-free. */
-function log(): Logger | null {
-  try {
-    return getLogger().child({ module: "scripts/log-query", },);
-  } catch {
-    return null;
-  }
-}
+const log = (): Logger | null => getChildLogger("scripts/log-query",);
 
 /** Longest LIKE pattern accepted, mirroring the admin audit endpoint. */
 export const LIKE_MAX = 200;

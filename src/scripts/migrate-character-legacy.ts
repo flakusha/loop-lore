@@ -25,20 +25,14 @@ import { Kysely, } from "kysely";
 import { loadConfig, } from "../config/load";
 import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
-import { getLogger, type Logger, } from "../logger";
+import { getChildLogger, type Logger, } from "../logger";
 import { safeJsonParse, safeJsonStringify, } from "../utils/safe-json";
 
 /**
  * Module logger accessor — null until the CLI guard calls `createLogger()`.
  * @returns the child logger, or null when no logger is initialized.
  */
-function log(): Logger | null {
-  try {
-    return getLogger().child({ module: "scripts/migrate:character:legacy", },);
-  } catch {
-    return null;
-  }
-}
+const log = (): Logger | null => getChildLogger("scripts/migrate:character:legacy",);
 
 /**
  * Result of normalizing a single `data_raw` payload.
