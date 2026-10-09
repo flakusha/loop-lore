@@ -17,7 +17,7 @@ re-checked against `src/` on 2026-10-09; six were `[x]` and are now `[ ]`.
 **Effort:** Medium
 **Priority:** Medium
 **Status:** In Progress
-**Status Note:** (2026-08-23) "Backend, routes, frontend cards, accumulated impacts, split/reunite detection all live". Reconciled 2026-10-09: the backend half is genuinely done, but `initChoiceCards` has no production caller and choice impacts are never applied — downgraded from Done. The closed git issue is left as-is; re-opening it is out of scope here.
+**Status Note:** (2026-08-23) "Backend, routes, frontend cards, accumulated impacts, split/reunite detection all live". Reconciled 2026-10-09: the backend half is genuinely done and `initChoiceCards` is now mounted at render time (`vn-mode-qa-loop`, `e87bd19c0`), but choice impacts are still never applied and no choice-history table exists — remains In Progress. The closed git issue is left as-is; re-opening it is out of scope here.
 **Epic:** epic-visual-novel-mode
 **Tags:** visual-novel, branching, choices, relationships, immersion
 
@@ -35,9 +35,10 @@ Builds on the Visual Novel Mode UX spec (`docs/frontend/chat/visual-novel-mode.m
 - [x] `GET /api/chats/:id/vn-choices?sceneIndex=N` — list available choices (`src/routes/chats/vn-choices.ts:32`)
 - [x] Choice card DOM rendering with label, optional description, and `aria-selected` on the selected card (`src/frontend/vn/choice-cards-render.ts`)
 - [x] Selection triggers location change, chat split, and chat reunite consequences (`src/frontend/vn/choice-cards.ts:170-222`)
-- [ ] Branching choice UI reaches the DOM — `render-scene.ts:218-222`
-      creates the `.vn-choices-container` div, but nothing calls
-      `initChoiceCards`, so the container is empty at runtime
+- [x] Branching choice UI reaches the DOM — `render-scene.ts:232` calls
+      `initChoiceCards(choicesEl, …)` and `:233` `loadChoices()` on the
+      `.vn-choices-container` it builds per scene (landed on `vn-mode-qa-loop`
+      at `e87bd19c0`)
 - [ ] Choice consequences tracked per scene and surfaced in the UI —
       `getAccumulatedImpacts()` exists but has no production consumer
 - [ ] Relationship impact reaches the relationship system —
@@ -79,11 +80,14 @@ Re-checked every AC against `src/` on `dev`.
 
 **Does not hold (was checked `[x]`):**
 
-- `initChoiceCards` is called only from `choice-cards*.test.ts`. The single
-  production import, `scene-renderer/controller.ts:4`, imports
-  `destroyChoiceCards` and calls it in `destroyVnRenderer()` — nothing
-  constructs the component. `render-scene.ts:218-222` creates the
-  `.vn-choices-container` div and leaves it empty.
+- `initChoiceCards` was called only from `choice-cards*.test.ts`. The single
+  production import, `scene-renderer/controller.ts:4`, imported
+  `destroyChoiceCards` and called it in `destroyVnRenderer()` — nothing
+  constructed the component, and `render-scene.ts` created the
+  `.vn-choices-container` div and left it empty.
+  **Superseded 2026-10-09:** branch `vn-mode-qa-loop` (`e87bd19c0`) mounts it
+  — `render-scene.ts:232` calls `initChoiceCards(choicesEl, …)` and `:233`
+  `loadChoices()`. The AC is now `[x]`.
 - `getAccumulatedImpacts()` (`choice-cards.ts:233`) has no production
   consumer — only test assertions.
 - Nothing writes `relationship_impact` or `mood_impact` to the relationship or
@@ -98,3 +102,5 @@ Re-checked every AC against `src/` on `dev`.
 Consequence: status moved Done → In Progress. The backend half is finished;
 the frontend half is dead code until `initChoiceCards` is called on the
 container the renderer already creates.
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 768f67a (registry tip: bf8f2562a Konstantin Fedotov Ticket status: done)
