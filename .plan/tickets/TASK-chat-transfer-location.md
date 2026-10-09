@@ -9,6 +9,7 @@
 
 
 **Status:** in_progress
+**Scope:** timeline_id on chats plus timeline-scoped impersonation constraint
 **Status Note:** sectioning, location-event log, party join/leave and split/reunite shipped on dev; transfer event wiring, join location context, and VN renderer wiring are unmerged work in worktree `tree/epic-transfer-location` (not on dev).
 **Priority:** P2-B
 **Effort:** Medium
