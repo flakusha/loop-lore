@@ -14,6 +14,7 @@ import {
   insertActors,
   insertChatParticipants,
   insertChats,
+  insertLocations,
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import { updateImpersonation, } from "./participants";
@@ -29,6 +30,10 @@ describe("updateImpersonation", () => {
   const chatWorld2 = crypto.randomUUID();
   const chatOtherWorld = crypto.randomUUID();
   const chatNoWorld = crypto.randomUUID();
+
+  const sharedLocationId = crypto.randomUUID();
+  const chatTimeline1 = crypto.randomUUID();
+  const chatTimeline2 = crypto.randomUUID();
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
@@ -62,6 +67,27 @@ describe("updateImpersonation", () => {
     } as never,);
 
     await insertChats(db, "Chat No World", userA, { id: chatNoWorld, } as never,);
+
+    // Two chats in the SAME world at the SAME location but on DIFFERENT
+    // timelines — the impersonation conflict narrows to the timeline.
+    await insertLocations(db, worldId, "Shared Location", { id: sharedLocationId, },);
+
+    await insertChats(db, "Chat T1", userA, {
+      id: chatTimeline1,
+      world_id: worldId,
+      current_location_id: sharedLocationId,
+      timeline_id: "prime",
+    } as never,);
+
+    await insertChats(db, "Chat T2", userB, {
+      id: chatTimeline2,
+      world_id: worldId,
+      current_location_id: sharedLocationId,
+      timeline_id: "alt",
+    } as never,);
+
+    await insertChatParticipants(db, chatTimeline1, userA, {},);
+    await insertChatParticipants(db, chatTimeline2, userB, {},);
 
     await insertChatParticipants(db, chatWorld, userA, {},);
     await insertChatParticipants(db, chatWorld2, userA, {},);
@@ -162,5 +188,23 @@ describe("updateImpersonation", () => {
   test("does not throw when the chat does not exist", async () => {
     const result = await updateImpersonation(db, "missing-chat", userA, heroActorId,);
     expect(result,).toBeUndefined();
+  });
+
+  test("allows impersonation across different timelines in the same world and location", async () => {
+    // userB holds Hero on the 'alt' timeline; userA claiming Hero on the
+    // 'prime' timeline of the same world+location must NOT conflict.
+    await updateImpersonation(db, chatTimeline2, userB, heroActorId,);
+
+    const result = await updateImpersonation(db, chatTimeline1, userA, heroActorId,);
+    expect(result,).toBeUndefined();
+
+    const row = await db
+      .selectFrom("chat_participants",)
+      .select("impersonate_actor_id",)
+      .where("chat_id", "=", chatTimeline1,)
+      .where("actor_id", "=", userA,)
+      .executeTakeFirst();
+
+    expect(row?.impersonate_actor_id,).toBe(heroActorId,);
   });
 });
