@@ -61,10 +61,9 @@ cron jobs); "ledger" means three things (seen-ledger, story-points, economy);
 agent skills). New code MUST NOT reuse these bare names.
 
 Taken terms (do not use bare):
-- `topic` — lore `LoreSubject` (`src/assistant/lore/audience.ts:24`), gossip
-  pub/sub (`epic-anonymity-decentralization.md:205-216`), chat side-threads
-  (`TASK-chat-feature-topics-side-threads`), NPC topic selection
-  (`epic-social-interaction.md:106`); harness entity is `WorkTopic` /
+- `topic` — gossip pub/sub channel (`epic-anonymity-decentralization.md:205-216`),
+  chat side-threads (`TASK-chat-feature-topics-side-threads`), NPC conversation
+  topics (`epic-social-interaction.md:95,106`); harness entity is `WorkTopic` /
   `harness_work_topics` / `workTopicId`.
 - `scope` — `actor_memories.scope`, `asset_tags.scope`,
   `message_search_tokens.scope`.
@@ -363,7 +362,7 @@ Taken terms (do not use bare):
   `src/db/schema-manifest.ts:2441`). It is a NEW concept layered above
   `WorkflowSession` in-memory (`src/assistant/workflow-session.ts:23`),
   `workflow_sessions` DB table (`src/assistant/workflow-session-store.ts:19`),
-  `request_results` (`src/async/store.ts:27-46`), and the auth `sessions`
+  `request_results` (`src/async/store.ts:78` TTL, `:195` table read), and the auth `sessions`
   table — keyed by run id, not chat id.
 - **Storage:** `harness_work_topics` + `harness_work_topic_sessions` join table.
   Folded into the §11 `harness_runs`/`harness_calls` migration batch, not a new

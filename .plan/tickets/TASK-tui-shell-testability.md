@@ -27,4 +27,6 @@
 - `.plan/epics/epic-terminal-ui.md`
 - `TASK-tui-dedupe-api-base.md`, `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md`, `TASK-tui-chat-picker`
 
+*Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
 git issue: 47b85ad
