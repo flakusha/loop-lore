@@ -21,6 +21,7 @@ import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import type { TransportKind, } from "../db/enums-story/world";
 import { jsonStringifyOr, } from "../utils/safe-json";
+import type { TravelRouteStopRow, } from "../validation/schemas/travel-wire";
 
 export interface CreateTravelRouteInput {
   worldId: string;
@@ -100,17 +101,7 @@ export class TravelRouteService {
     return id;
   }
 
-  async getStops(routeId: string,): Promise<
-    Array<{
-      id: string;
-      location_id: string;
-      stop_order: number;
-      dwell_seconds: number;
-      coord_x: number | null;
-      coord_y: number | null;
-      coord_z: number | null;
-    }>
-  > {
+  async getStops(routeId: string,): Promise<TravelRouteStopRow[]> {
     return await this.db
       .selectFrom("travel_route_stops",)
       .where("route_id", "=", routeId,)
@@ -218,17 +209,7 @@ export class TravelRouteService {
     await this.db.deleteFrom("travel_route_stops",).where("id", "=", stopId,).execute();
   }
 
-  async listStops(routeId: string,): Promise<
-    Array<{
-      id: string;
-      location_id: string;
-      stop_order: number;
-      dwell_seconds: number;
-      coord_x: number | null;
-      coord_y: number | null;
-      coord_z: number | null;
-    }>
-  > {
+  async listStops(routeId: string,): Promise<TravelRouteStopRow[]> {
     return this.getStops(routeId,);
   }
 }

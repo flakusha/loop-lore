@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 340
 
 // ── Location Graph Editor — world edit page ─────────────
 //
@@ -25,7 +26,7 @@ import { fetchWorldJson, } from "./world-fetch";
 const log = rootLog.child({ module: "location-graph", },);
 
 /** Wire shape of one location_edges row (booleans decoded server-side). */
-export const EdgeSchema = Type.Object({
+const EdgeSchema = Type.Object({
   id: Type.String(),
   from_id: Type.String(),
   to_id: Type.String(),
@@ -88,6 +89,7 @@ export interface LocationGraphState {
   init(): void;
   load(): Promise<void>;
   createEdge(): Promise<void>;
+  edgeMutation(edgeId: string, init: RequestInit,): Promise<boolean>;
   startEdit(edgeId: string,): void;
   editDraftOf(edgeId: string,): EditEdgeDraft;
   saveEdit(edgeId: string,): Promise<void>;
@@ -252,36 +254,24 @@ export function buildLocationGraphState(worldId: string,): LocationGraphState {
     },
 
     /**
+     * Shared PUT/DELETE scaffold: fetch, warn on rejection, then refresh the
+     * graph and drop the editor draft. Resolves false when the API rejected.
      * @param {string} edgeId
-     * @returns {Promise<void>}
+     * @param {RequestInit} init
+     * @returns {Promise<boolean>}
      */
-    async saveEdit(edgeId: string,) {
-      const draft = this.editDraftOf(edgeId,);
+    async edgeMutation(edgeId: string, init: RequestInit,): Promise<boolean> {
       this.busy = true;
       try {
-        const body: Record<string, unknown> = {
-          mode: draft.mode,
-          gameHours: draft.gameHours,
-          requiresDiscovery: draft.requiresDiscovery,
-        };
-
-        if (draft.costJson.trim() !== "") {
-          body.cost = parseCostJson(draft.costJson,);
-        }
-
-        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/edges/${edgeId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", Accept: "application/json", },
-          body: jsonStringifyOr(body,),
-        },);
-
+        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/edges/${edgeId}`, init,);
         if (!res.ok) {
-          log.warn("edge update rejected", { status: res.status, },);
-          return;
+          log.warn(`edge ${String(init.method ?? "GET",).toLowerCase()} rejected`, { status: res.status, },);
+          return false;
         }
 
         delete this.editDrafts[edgeId];
         await this.load();
+        return true;
       } finally {
         this.busy = false;
       }
@@ -291,24 +281,31 @@ export function buildLocationGraphState(worldId: string,): LocationGraphState {
      * @param {string} edgeId
      * @returns {Promise<void>}
      */
-    async deleteEdge(edgeId: string,) {
-      this.busy = true;
-      try {
-        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/edges/${edgeId}`, {
-          method: "DELETE",
-          headers: { Accept: "application/json", },
-        },);
+    async saveEdit(edgeId: string,) {
+      const draft = this.editDraftOf(edgeId,);
+      const body: Record<string, unknown> = {
+        mode: draft.mode,
+        gameHours: draft.gameHours,
+        requiresDiscovery: draft.requiresDiscovery,
+      };
 
-        if (!res.ok) {
-          log.warn("edge delete rejected", { status: res.status, },);
-          return;
-        }
-
-        delete this.editDrafts[edgeId];
-        await this.load();
-      } finally {
-        this.busy = false;
+      if (draft.costJson.trim() !== "") {
+        body.cost = parseCostJson(draft.costJson,);
       }
+
+      await this.edgeMutation(edgeId, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Accept: "application/json", },
+        body: jsonStringifyOr(body,),
+      },);
+    },
+
+    /**
+     * @param {string} edgeId
+     * @returns {Promise<void>}
+     */
+    async deleteEdge(edgeId: string,) {
+      await this.edgeMutation(edgeId, { method: "DELETE", headers: { Accept: "application/json", }, },);
     },
 
     /**
