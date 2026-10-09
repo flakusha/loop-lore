@@ -7,6 +7,7 @@
 
 
 **Status:** Not Started
+**Status Note:** No faction/karma tables or code at HEAD; adjacent shipped: per-actor-pair relationship scores in `character_relationships` (standing/trust/familiarity) and NSFW-scoped `src/rpg/reputation.ts`.
 **Priority:** Medium
 **Effort:** High
 **Type:** Feature Epic

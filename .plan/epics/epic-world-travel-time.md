@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -38,17 +38,17 @@ Part of the **World & Locations** mega-epic. See parent epic for full scope and 
 
 ## Tasks
 
-- [ ] Design world data model
+- [x] Design world data model (worlds/world_states/world_timeline tables)
 - [ ] Implement world conditions system
 - [ ] Implement world style system
 - [ ] Implement random location generation
-- [ ] Implement distance calculation system
-- [ ] Implement travel time estimation
-- [ ] Implement travel mechanics (walking, riding, flying, teleportation)
+- [x] Implement distance calculation system
+- [x] Implement travel time estimation
+- [x] Implement travel mechanics (walking shipped; riding/flying/teleportation still open)
 - [ ] Implement travel hazards and encounters
 - [ ] Implement fast travel unlock system
 - [ ] Implement travel resource consumption
-- [ ] Implement time tracking system
+- [x] Implement time tracking system (story TimeAdvancement handlers advance location_states.time_of_day)
 - [ ] Implement quest-based time progression
 - [ ] Implement message-based time progression (time attack)
 - [ ] Implement transfer-based time progression
@@ -58,11 +58,18 @@ Part of the **World & Locations** mega-epic. See parent epic for full scope and 
 - [ ] Implement time-limited quests/events
 - [ ] Implement travel-based random encounters
 - [ ] Implement time-limited locations
-- [ ] Create world management UI
-- [ ] Create location explorer UI
+- [x] Create world management UI (worlds pages shipped)
+- [x] Create location explorer UI (shipped — Alpine location-explorer)
 - [ ] Create travel UI
 - [ ] Create time tracking UI
 - [ ] Write tests for world system
+
+## Implemented (verified 2026-10-08)
+
+- **Tables:** `travel_parties`, `world_travel_budget`, `npc_migrations` (migration 040); `travel_routes`, `travel_route_stops`, `location_discovery`, `world_event_log` (migration 041).
+- **Modules:** `src/rpg/world-travel/` (`travel`, `budget`, `migration`, `walk`); `src/locations/travel-engine.ts` + `tree.ts`; `src/routes/worlds/fractal-travel-routes.ts` + `fractal-locations-routes.ts`.
+- **Time tracking:** `location_states.time_of_day` advanced by story TimeAdvancement handlers (`src/story/events/application/handlers.ts:139-151`).
+- **Weather:** narrative column on world/location state plus battle-only `CombatWeather`; no standalone weather engine yet.
 
 ## Design
 
