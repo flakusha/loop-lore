@@ -52,13 +52,32 @@ const EMPTY_CONDITIONS: WorldConditionsSnapshot = {
 };
 
 /**
+ * Mixin slices carrying live getters. They must NOT be object-spread into
+ * the state: spreading INVOKES each getter at composition time with the
+ * slice itself as `this` (no `locations`, no `worldId`) and freezes its
+ * result. Instead the getters' property descriptors are defined onto the
+ * finished state, keeping them live with `this` bound to the full state.
+ */
+const MIXIN_SLICES = [
+  locationDetails,
+  locationActions,
+  travelInterface,
+  timeWeatherWidget,
+  worldLore,
+] as const;
+
+const MIXIN_DESCRIPTORS = Object.assign(
+  {},
+  ...MIXIN_SLICES.map((slice,) => Object.getOwnPropertyDescriptors(slice,)),
+);
+
+/**
  * @param {string} worldId
  * @returns {WorldPageState}
  */
-export function buildWorldPageState(worldId: string,): WorldPageState {
-  // The mixins are Partial slices; the spread below fills every member at
-  // runtime, but TS cannot prove it — assert once, here, at the composition
-  // point (the only place slices are merged).
+function coreState(worldId: string,): WorldPageState {
+  // The cast covers the mixin props this literal omits (they arrive via
+  // MIXIN_DESCRIPTORS in buildWorldPageState below).
   return {
     worldId,
     world: null,
@@ -78,16 +97,10 @@ export function buildWorldPageState(worldId: string,): WorldPageState {
     travelBusy: false,
     travelMessage: "",
 
-    ...locationDetails,
-    ...locationActions,
-    ...travelInterface,
-    ...timeWeatherWidget,
-    ...worldLore,
-
     /**
      * @returns {() => void}
      */
-    init() {
+    init(this: WorldPageState,) {
       void this.loadWorld();
       void this.loadLocations();
       void this.loadWorldChats();
@@ -102,7 +115,7 @@ export function buildWorldPageState(worldId: string,): WorldPageState {
     },
 
     /** @returns {Promise<void>} */
-    async loadWorld() {
+    async loadWorld(this: WorldPageState,) {
       this.worldLoading = true;
       this.worldError = false;
       try {
@@ -123,6 +136,7 @@ export function buildWorldPageState(worldId: string,): WorldPageState {
         }
       } catch (error) {
         log.warn("world load failed", { error: String(error,), },);
+
         this.worldError = true;
       } finally {
         this.worldLoading = false;
@@ -130,7 +144,7 @@ export function buildWorldPageState(worldId: string,): WorldPageState {
     },
 
     /** @returns {Promise<void>} */
-    async loadLocations() {
+    async loadLocations(this: WorldPageState,) {
       this.locationsLoading = true;
       try {
         const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations?pageSize=500`, {
@@ -162,7 +176,7 @@ export function buildWorldPageState(worldId: string,): WorldPageState {
     },
 
     /** @returns {void} */
-    connectConditionsStream() {
+    connectConditionsStream(this: WorldPageState,) {
       if (typeof EventSource === "undefined") { return; }
       this._conditionsSse?.close();
 
@@ -191,7 +205,7 @@ export function buildWorldPageState(worldId: string,): WorldPageState {
      * @param {WorldConditionsSnapshot} snapshot decoded SSE payload
      * @returns {void}
      */
-    applyConditions(snapshot: WorldConditionsSnapshot,) {
+    applyConditions(this: WorldPageState, snapshot: WorldConditionsSnapshot,) {
       this.timeOfDay = snapshot.timeOfDay;
       this.weather = snapshot.weather;
       this.conditionsLocationName = snapshot.sampledLocationName;
@@ -202,7 +216,7 @@ export function buildWorldPageState(worldId: string,): WorldPageState {
      * @param {string} id
      * @returns {WorldLocationLite | undefined}
      */
-    locationById(id: string,): WorldLocationLite | undefined {
+    locationById(this: WorldPageState, id: string,): WorldLocationLite | undefined {
       return this.locations.find((l,) => l.id === id);
     },
 
@@ -210,10 +224,18 @@ export function buildWorldPageState(worldId: string,): WorldPageState {
      * @param {WorldLocationLite} location
      * @returns {string[]}
      */
-    connectionIdsOf(location: WorldLocationLite,): string[] {
-      return parseJsonList(jsonParseOr(location.connections, "[]",),);
+    connectionIdsOf(this: WorldPageState, location: WorldLocationLite,): string[] {
+      return parseJsonList(location.connections,);
     },
-  } as WorldPageState;
+  } as unknown as WorldPageState;
+}
+
+/**
+ * @param {string} worldId
+ * @returns {WorldPageState}
+ */
+export function buildWorldPageState(worldId: string,): WorldPageState {
+  return Object.defineProperties(coreState(worldId,), MIXIN_DESCRIPTORS,);
 }
 
 (globalThis as unknown as { worldState?: (id: string,) => WorldPageState }).worldState = buildWorldPageState;
