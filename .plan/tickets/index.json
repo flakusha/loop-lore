@@ -17544,6 +17544,19 @@
     "title": "Visual Novel Mode Full Implementation",
     "type": "FEAT"
   },
+  "FEAT-WEBHOOK-INGESTION-BOOTSTRAP-WIRE-SEAMS-AT-THE-V1-SURFACE-CAL": {
+    "hash": "07b75d4",
+    "git_issue": "07b75d4",
+    "extid": "FEAT-WEBHOOK-INGESTION-BOOTSTRAP-WIRE-SEAMS-AT-THE-V1-SURFACE-CAL",
+    "type": "FEAT",
+    "title": "Webhook ingestion bootstrap: wire seams at the v1 surface call site",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-integrations-core",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal.md",
+    "status": "Not Started"
+  },
   "FEAT-WHAT-IF-BRANCH-SIMULATOR-FORK-WORLD-STATE-DIFF-NARRATIVES": {
     "epic": "proposed:epic-branch-simulator",
     "extid": "FEAT-WHAT-IF-BRANCH-SIMULATOR-FORK-WORLD-STATE-DIFF-NARRATIVES",
