@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 047_chats_timeline_id
+ * 048_chats_timeline_id
  *
  * Add nullable `timeline_id` to chats so the impersonation conflict scope
  * can narrow to (world_id, current_location_id, timeline_id). Plain text,
