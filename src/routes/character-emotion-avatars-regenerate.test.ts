@@ -223,6 +223,17 @@ describeOrSkip("emotion-avatars regenerate endpoint", () => {
     expect(startCalls[0]?.baseAvatarId,).toBe(primaryId,);
   });
 
+  test("treats an empty emotions array as the full batch (no silent no-op)", async () => {
+    startCalls.length = 0;
+    const res = await post({ replace: "slot", baseAvatarId: "av-1", emotions: [], },);
+
+    expect(res.status,).toBe(201,);
+    expect(startCalls,).toHaveLength(1,);
+    // [] must NOT be forwarded: startBatchGeneration would treat it as a
+    // zero-slot job and report success without doing anything.
+    expect(startCalls[0]?.emotions,).toBeUndefined();
+  });
+
   test("accepts and ignores seedStrategy (separate open item)", async () => {
     startCalls.length = 0;
     const res = await post({

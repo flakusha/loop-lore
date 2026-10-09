@@ -271,7 +271,9 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
         const jobId = await emotionAvatarService.startBatchGeneration({
           actorId,
           baseAvatarId,
-          emotions: emotionsParam ? emotionsParam as EmotionType[] : undefined,
+          emotions: emotionsParam && emotionsParam.length > 0
+            ? emotionsParam as EmotionType[]
+            : undefined,
           replace: body.replace === "slot" ? true : undefined,
         },);
 
