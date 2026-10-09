@@ -54,6 +54,7 @@ import "./user-info";
 import "./user-notifications";
 import "./world";
 import "./world-edit";
+import "./world-lore";
 
 export { useRequestStatus, } from "./use-request-status";
 export type { RequestStatusKind, RequestStatusPayload, UseRequestStatusOptions, } from "./use-request-status";

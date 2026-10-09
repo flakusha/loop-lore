@@ -351,6 +351,94 @@
             </template>
           </section>
         </div>
+
+        <!-- World lore editor (TASK-world-dashboard) -->
+        <section class="panel world-lore-panel" data-testid="world-lore">
+          <h3>Lore</h3>
+          <div class="quick-actions">
+            <button class="btn btn-primary btn-sm" data-testid="lore-new" @click="openLoreForm(null)">New entry</button>
+          </div>
+          <div x-show="loreLoading" class="muted">Loading…</div>
+          <div x-show="loreError" class="muted">Could not load lore.</div>
+          <div x-show="loreMessage" class="muted" x-text="loreMessage"></div>
+
+          <!-- Editor form (create + edit) -->
+          <template x-if="loreFormOpen">
+            <div class="lore-form" data-testid="lore-form">
+              <div class="form-group">
+                <label class="form-label" for="lore-name">Name</label>
+                <input id="lore-name" class="form-input" x-model="loreForm.name" placeholder="Entry title (optional)" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lore-content">Content</label>
+                <textarea
+                  id="lore-content"
+                  class="form-input"
+                  x-model="loreForm.content"
+                  rows="4"
+                  placeholder="Lore text (required)"
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lore-keys">Keywords</label>
+                <input
+                  id="lore-keys"
+                  class="form-input"
+                  x-model="loreForm.keys"
+                  placeholder="comma, separated, keywords"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lore-priority">Priority</label>
+                <input id="lore-priority" class="form-input" type="number" x-model="loreForm.priority" />
+                <label class="condition"><input type="checkbox" x-model="loreForm.constant" /> Always included</label>
+              </div>
+              <div class="quick-actions">
+                <button class="btn btn-secondary btn-sm" @click="cancelLoreForm()">Cancel</button>
+                <button
+                  class="btn btn-primary btn-sm"
+                  :disabled="loreBusy"
+                  data-testid="lore-save"
+                  @click="saveLore()"
+                  x-text="loreEditingId ? 'Save' : 'Create'"
+                >
+                </button>
+              </div>
+            </div>
+          </template>
+
+          <!-- Entries grouped: constant / enabled / disabled -->
+          <div x-show="!loreLoading && loreEntries.length === 0" class="muted">No lore entries yet.</div>
+          <template
+            x-for="group in [{ label: 'Always included', rows: loreGroups.constant }, { label: 'Enabled', rows: loreGroups.enabled }, { label: 'Disabled', rows: loreGroups.disabled }]"
+            :key="group.label"
+          >
+            <div x-show="group.rows.length > 0" class="lore-group">
+              <h5 x-text="group.label"></h5>
+              <template x-for="entry in group.rows" :key="entry.id">
+                <div class="lore-entry" data-testid="lore-entry">
+                  <div>
+                    <strong x-text="entry.name || 'Untitled'"></strong>
+                    <span class="muted" x-show="entry.priority" x-text="` · priority ${entry.priority}`"></span>
+                    <div
+                      class="muted"
+                      x-show="parseLoreKeys(entry.keys).length"
+                      x-text="parseLoreKeys(entry.keys).join(', ')"
+                    >
+                    </div>
+                    <p class="lore-content" x-text="entry.content"></p>
+                  </div>
+                  <div class="quick-actions">
+                    <button class="btn btn-secondary btn-sm" @click="openLoreForm(entry.id)">Edit</button>
+                    <button class="btn btn-secondary btn-sm" :disabled="loreBusy" @click="deleteLore(entry.id)">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+        </section>
       </div>
     </div>
     <div id="modal-container"></div>
