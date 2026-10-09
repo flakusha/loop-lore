@@ -5124,7 +5124,6 @@ export async function insertBranchMergeSources(
   } as any,).execute();
   return id;
 }
-
 /** Insert a location_edges row. */
 export async function insertLocationEdges(
   db: Db,
