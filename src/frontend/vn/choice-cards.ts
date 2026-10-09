@@ -12,6 +12,7 @@ import { apiFetch, } from "../alpine/htmx";
 import { jsonBody, } from "../alpine/json";
 import { feFetch, } from "../fe-fetch";
 import { renderChoiceCards, } from "./choice-cards-render";
+import { setVnDecisionPending, } from "./pending-decision";
 
 const LOCATION_CHANGED_EVENT = "chat:location-changed";
 
@@ -65,8 +66,40 @@ export function initChoiceCards(
   sceneIndex = currentSceneIndex;
 }
 
+/**
+ * Skip a pending choice — the escape hatch out of the VN decision gate.
+ *
+ * Server-side this sets `status='dismissed'` (see `dismissVnChoice`); client
+ * side we drop the row so the card disappears rather than showing a permanent
+ * "skipped" state that the server no longer returns on the next load.
+ * @param choiceId
+ * @returns {Promise<boolean>} true when the skip was accepted.
+ */
+export async function skipChoice(choiceId: string,): Promise<boolean> {
+  if (!chatId) { return false; }
+
+  try {
+    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices/${choiceId}/dismiss`, {
+      method: "POST",
+    },);
+
+    if (!res.ok) { return false; }
+  } catch {
+    return false;
+  }
+
+  choices = choices.filter((c,) => c.id !== choiceId);
+  setVnDecisionPending(choices.some((c,) => !c.selected),);
+  renderChoices();
+
+  return true;
+}
+
 /** Destroy the choice cards component. */
 export function destroyChoiceCards(): void {
+  // Leaving the flag set here would wedge the composer: the cards are gone, so
+  // nothing can resolve the decision the gate is still waiting on.
+  setVnDecisionPending(false,);
   container = null;
   chatId = null;
   choices = [];
@@ -92,9 +125,11 @@ export async function loadChoices(): Promise<void> {
       },);
     }
 
+    setVnDecisionPending(choices.length > 0,);
     renderChoices();
   } catch {
     choices = [];
+    setVnDecisionPending(false,);
   }
 }
 
@@ -162,6 +197,9 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
 
     const updated = { ...returned, selected: true, label: returnedLabel, } as VnChoice;
     choices = Array.from(choices, (c, i,) => (i === idx ? updated : c),);
+    // Only the picked choice stopped being 'available' server-side; siblings
+    // are still resolvable, so the gate must stay closed while any remain.
+    setVnDecisionPending(choices.some((c,) => !c.selected),);
 
     let locationChanged = false;
     let splitTriggered = false;
@@ -259,5 +297,10 @@ export function getAccumulatedImpacts(): {
  */
 function renderChoices(): void {
   if (!container) { return; }
-  renderChoiceCards(container, choices, (id,) => void selectChoice(id,),);
+  renderChoiceCards(
+    container,
+    choices,
+    (id,) => void selectChoice(id,),
+    (id,) => void skipChoice(id,),
+  );
 }

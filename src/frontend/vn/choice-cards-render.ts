@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /** Choice card DOM rendering. */
+import { t, } from "../alpine/i18n";
 import type { VnChoice, } from "./choice-cards";
 
 // ── Internal ────────────────────────────────────────────────────────────────
@@ -12,7 +13,12 @@ import type { VnChoice, } from "./choice-cards";
  * @param onSelect
  * @returns {void}
  */
-export function renderChoiceCards(container: HTMLElement, choices: VnChoice[], onSelect: (id: string,) => void,): void {
+export function renderChoiceCards(
+  container: HTMLElement,
+  choices: VnChoice[],
+  onSelect: (id: string,) => void,
+  onSkip?: (id: string,) => void,
+): void {
   if (!container) {
     return;
   }
@@ -72,4 +78,20 @@ export function renderChoiceCards(container: HTMLElement, choices: VnChoice[], o
   }
 
   container.append(choiceList,);
+
+  // Skip control. Only rendered while something is still available — with
+  // every card resolved there is no decision left to skip.
+  if (available.length > 0 && onSkip) {
+    const skip = document.createElement("button",);
+    skip.className = "vn-choice-skip";
+    skip.type = "button";
+    skip.textContent = t("toasts.vnSkipChoice",);
+    skip.addEventListener("click", () => {
+      for (const c of available) {
+        void onSkip(c.id,);
+      }
+    },);
+
+    container.append(skip,);
+  }
 }

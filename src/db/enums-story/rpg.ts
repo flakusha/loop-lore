@@ -39,6 +39,10 @@ export type SkillLockState = (typeof SkillLockState)[keyof typeof SkillLockState
 export const VnChoiceStatus = {
   Available: "available",
   Selected: "selected",
+  // Player skipped a pending decision. A status value, not a timestamp: a
+  // `dismissed_at` column would leave status='available', so the pending
+  // query would keep matching and the send gate would never reopen.
+  Dismissed: "dismissed",
 } as const;
 /** */
 export type VnChoiceStatus = (typeof VnChoiceStatus)[keyof typeof VnChoiceStatus];
@@ -83,13 +87,16 @@ const skillLockStateDef: StateDef<SkillLockState> = {
 export const skillLockStateMachine = createMachine(skillLockStateDef,);
 
 const vnChoiceStatusDef: StateDef<VnChoiceStatus> = {
-  values: ["available", "selected",] as const,
+  values: ["available", "selected", "dismissed",] as const,
   initial: "available",
   transitions: {
-    available: ["selected",],
+    // `dismissed` is the skip path out of the send gate; both it and `selected`
+    // are terminal — a decision is resolved exactly once.
+    available: ["selected", "dismissed",],
     selected: [],
+    dismissed: [],
   },
-  terminal: ["selected",],
+  terminal: ["selected", "dismissed",],
 };
 
 export const vnChoiceStatusMachine = createMachine(vnChoiceStatusDef,);
