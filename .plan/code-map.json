@@ -14509,7 +14509,7 @@
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     }
   ],
-  "src/db/migrations/046_conversation_merge.ts": [
+  "src/db/migrations/047_conversation_merge.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-db-migration-039.md"
