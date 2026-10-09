@@ -443,6 +443,18 @@ describe("appealIdParam", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_nsfwModeration_appeals.appealIdParam,));
 });
 
+describe("AssetBatchDeleteResponse", () => {
+  test("accepts generated values", () => checkAllValid(validation_assets.AssetBatchDeleteResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetBatchDeleteResponse,));
+});
+
+describe("AssetBatchIdsBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_assets.AssetBatchIdsBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetBatchIdsBody,));
+});
+
 describe("AssetIdParams", () => {
   test("accepts generated values", () => checkAllValid(routes_assetTags_helpers.AssetIdParams,));
 
@@ -2546,4 +2558,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 403 schemas discovered across 458 module(s).
+// 405 schemas discovered across 459 module(s).
