@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 047_location_edges
+ * 051_location_edges
  *
  * First-class location adjacency graph
  * (TASK-location-travel-connected-fast-and-free-jump).
@@ -21,8 +21,8 @@
  * actor) visits in `discovered`. A `requires_discovery` edge becomes
  * travelable once BOTH endpoints are latched for the traveling actor.
  *
- * NOTE (merge-order): 047 was free on this branch's base. If
- * epic-world-review's uncommitted 047_world_timescale lands first, this
+ * NOTE (merge-order): 051 was free on this branch's base. If
+ * epic-world-review's uncommitted 052_world_timescale lands first, this
  * file must be renumbered before EITHER ships — both are unshipped, so
  * the append-only policy permits the renumber.
  */
