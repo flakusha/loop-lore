@@ -34152,7 +34152,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-info-bubbles.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Info Bubbles Implementation",
     "type": "TASK"

@@ -11,7 +11,7 @@
 **Epic:** epic-immersion-presentation
 **Priority:** Medium
 **Effort:** Low
-**Status:** In Progress
+**Status:** Done
 **Scope:** info-bubble help tooltip component plus i18n keys
 **Source:** User request — info bubbles for `(?)` signs in menus, i18n intended
 
@@ -154,3 +154,5 @@ Examples:
 - `docs/frontend/settings.md` — settings page spec (info bubble placement)
 - `docs/frontend/internationalization.md` — i18n Layer 1 (Application Interface)
 - `TASK-chat-context-feature-permissions.md` — uses `fallback_tooltip` pattern (similar concept)
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 219b3f1 (registry tip: 7d02c83b6 Konstantin Fedotov Close issue)
