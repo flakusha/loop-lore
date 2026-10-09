@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** Done
 **Status Note:** Not Started
 **Priority:** Medium
 **Effort:** Large
@@ -126,3 +126,5 @@ competing with it.
 - `epic-avatar-alpha-vn-layering.md` — outfit sprites share alpha pipeline
 - `epic-inventory-ui.md` / `src/rpg/` — future equipped-loadout bridge
 - `epic-immersion-consistency-gate.md` — actor state vs appearance-change gating
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 2cf55b8 (registry tip: f22420bea Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-WARDROBE-AVATAR-VARIANTS do)
