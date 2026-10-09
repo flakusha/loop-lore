@@ -40169,6 +40169,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-shell-testability.md"
     }
   ],
   "src/tui/chat/index.ts": [
@@ -40239,6 +40243,12 @@
       "source": ".plan/tickets/TASK-harness-topic-tui-surface.md"
     }
   ],
+  "src/tui/harness/index.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-shell-testability.md"
+    }
+  ],
   "src/tui/harness/index.ts": [
     {
       "kind": "epic",
@@ -40270,6 +40280,10 @@
     }
   ],
   "src/tui/nsfw-filter.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-shell-testability.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"

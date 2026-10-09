@@ -305,7 +305,7 @@
 | Not Started | Task Management Integration | Medium | Medium | 6 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
 | Done | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
 | Not Started | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation | High | Medium | 18 | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md) |
-| In Progress | Terminal UI (TUI) | Low | Medium | 4 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
+| In Progress | Terminal UI (TUI) | Low | Medium | 3 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
 | In Progress | Testing & Quality Assurance (Permanently Ongoing) | High | Continuous | 0 | [epic-testing-qa.md](/.plan/epics/epic-testing-qa.md) |
 | In Progress | Testing, Benchmarking & Performance | High | Very High (split into 7 sub-epics) | 0 | [epic-testing-benchmarking.md](/.plan/epics/epic-testing-benchmarking.md) |
 | In Progress | Tooling Support & Improvement (Permanently Ongoing) | Medium | Continuous | 1 | [epic-tooling-improvement.md](/.plan/epics/epic-tooling-improvement.md) |
@@ -3343,4 +3343,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-
