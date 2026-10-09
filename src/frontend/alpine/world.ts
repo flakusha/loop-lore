@@ -24,6 +24,7 @@ import { log as rootLog, } from "./logger";
 import { timeWeatherWidget, } from "./time-weather";
 import { travelInterface, } from "./travel-interface";
 import { parseOr, } from "./validation";
+import { worldLore, } from "./world-lore";
 import type {
   WorldConditionsSnapshot,
   WorldLocationLite,
@@ -81,6 +82,7 @@ export function buildWorldPageState(worldId: string,): WorldPageState {
     ...locationActions,
     ...travelInterface,
     ...timeWeatherWidget,
+    ...worldLore,
 
     /**
      * @returns {() => void}
@@ -90,6 +92,7 @@ export function buildWorldPageState(worldId: string,): WorldPageState {
       void this.loadLocations();
       void this.loadWorldChats();
       void this.loadTravelStatus();
+      void this.loadLore();
       this.connectConditionsStream();
 
       return () => {
