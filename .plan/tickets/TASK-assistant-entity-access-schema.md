@@ -13,6 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** assistant, entity, schema, access, adapter
+**Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `epic-assistant-gm-flows.md`
 
 ## Summary

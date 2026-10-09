@@ -7,7 +7,7 @@
 
 
 **Status:** Done
-**Status Note:** Not Started
+**Status Note:** Done (registry-driven close 2026-10-09 — git issue 2cf55b8 closed with the .md done-marker appended)
 **Priority:** Medium
 **Effort:** Large
 **Type:** Feature Epic

@@ -14,7 +14,7 @@ Presets, Entity Generation Workflows, Gallery Batch Operations).
 
 
 **Status:** In Progress
-**Status Note:** coordination hub — split into 4 sub-epics. In Progress because the Entity Generation Workflows sub-epic has landed work on dev: `matchWorkflowIntent` intent routing (`src/assistant/workflow-routing.ts`), the workflow template loader/validator including the `entityTypes` domain and `validateEntityTypePresets` (`src/config/templates-loader/validation-entity-types.ts`), the run/confirm flow (`src/assistant/workflow-runner.ts`, `src/routes/messages/command.ts`), optional-step support (`required !== false`), and the `entity-npc` template + preset (`configs/templates/workflows/entities.yaml`, `configs/templates/workflows/entity-types.yaml`). The other 3 sub-epics (Workflow Engine remainder, Model Family Presets, Gallery Batch Operations) have no landed code.
+**Status Note:** coordination hub — split into 4 sub-epics. In Progress: the Entity Generation Workflows sub-epic has landed work on dev (`matchWorkflowIntent` intent routing in `src/assistant/workflow-routing.ts`, the workflow template loader/validator with the `entityTypes` domain and `validateEntityTypePresets` in `src/config/templates-loader/validation-entity-types.ts`, the run/confirm flow in `src/assistant/workflow-runner.ts` + `src/routes/messages/command.ts`, optional-step support, and the `entity-npc` template + preset in `configs/templates/workflows/`), and the Workflow Engine sub-epic has landed its core (schema + multi-file loader discovery, runner state machine, per-chat session persistence, regex intent routing, NSFW policy field). Still open across sub-epics: video-dispatch backend, frontend step UI, plugin extension point, NSFW enforcement, per-preset `qualityGates` wiring (engine); `model-families.yaml` + formatter (Model Family Presets — no landed code); gallery batch (no landed code). The AUX `classifyIntent` blocker (timeout/apiKey) is resolved on the shared AUX runner.
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Large
 **Type:** Feature Epic / Configuration
@@ -65,16 +65,13 @@ merge: `replace` | `extend` | `override`) and the **`AssistantIntent` taxonomy**
 
 Today the assistant command system has:
 
-- 21 slash commands wired (`src/assistant/commands/`, `src/assistant/command-parser.ts`
-  — 2026-08-01 review), but most (`/image`, `/video`, `/music`, `/sfx`, `/caption`, `/quest`)
-  return system-message stubs or frontend action dispatches with **no prompt preview, no
-  step-by-step guidance, no confirmation gating**.
-- `/image` delegates to a frontend action (`action: "generate-image"`, 832 bytes,
-  `src/assistant/commands/image.ts`) — the backend `SDRequest` interface and
-  `generateImage()` in `src/assistant/sd.ts` are dead stubs with no provider wiring.
-- `src/assistant/scenario-source.ts` has the `ScenarioSource` interface and
-  `storeScenarioSources` / `findScenarioSources` / `bridgeToBlog` stubs — no DB table, no
-  reuse in generation.
+- The slash command surface is wired (`src/assistant/commands/`, `src/assistant/command-parser.ts`), but the generation-flavored commands (`/image`, `/video`, `/music`, `/sfx`) remain frontend action dispatches with **no prompt preview, no step-by-step guidance, no confirmation gating**.
+- `/image` delegates to a frontend action (`action: "generate-image"`,
+  `src/assistant/commands/image.ts`, hidden until an SD provider is configured) — the
+  dead `SDRequest` / `generateImage()` stubs in `src/assistant/sd.ts` were removed
+  2026-08-14 and the adapter awaits reimplementation.
+- The `ScenarioSource` stubs in `src/assistant/scenario-source.ts` were removed
+  2026-08-14 (no DB table, zero callers); scenario-source is to be reimplemented from scratch.
 - No mechanism for **configurable, sourceable workflow templates** that describe a multi-step
   generation scenario (prompt phases, parameter slots, backend routing, approval policy).
 
@@ -93,7 +90,7 @@ confirmable, template-driven prompt + dispatch plan.
 | Merge strategies (replace/extend/override) | ✅ Shipped            | `src/config/sections/templates.ts`                                    |
 | `AssistantIntent` taxonomy                 | ✅ Shipped            | `src/regex/intent.ts:11`                                              |
 | `INTENT_PATTERNS` keyword array            | ✅ Shipped            | `src/regex/intent.ts:17-97`                                           |
-| `classifyIntent` (LLM)                     | ⚠️ Partial            | `src/generation/auto-gen.ts:74` (no timeout, no apiKey, temp 0.1)     |
+| `classifyIntent` (LLM)                     | ✅ Shipped            | `src/generation/auto-gen/classify-intent.ts` (shared AUX runner: 2s timeout, BYO key, temp 0) |
 | Slash command parser + registry            | ✅ Shipped            | `src/assistant/command-parser.ts`, `commands/registry.ts`             |
 | Prompt assembler (section pipeline)        | ✅ Shipped            | `src/assistant/prompt-assembler.ts`                                   |
 | `SDRequest` / `generateImage`              | ✅ Removed 2026-08-14 | `src/assistant/sd.ts` deleted (dead stub, zero imports)               |
@@ -306,8 +303,9 @@ Spans Workflow Engine (intent routing, runner, approval) + Model Family Presets
 (`minimax-h3` family):
 
 1. **User** types: *"Generate a 5-second video of a cyberpunk samurai drawing his sword in the rain."*
-2. **Intent detection** (`classifyIntent` in `src/generation/auto-gen.ts:74`) matches
-   `minimax` + `video` triggers → routes to the `minimax-h3-video` workflow template.
+2. **Intent detection** (`matchWorkflowIntent` / `matchWorkflowTrigger` in
+   `src/assistant/workflow-routing.ts`, over the `INTENT_PATTERNS` taxonomy)
+   matches `minimax` + `video` triggers → routes to the `video-minimax-h3` workflow template.
 3. **Workflow runner** (`src/assistant/workflow-runner.ts`) loads the template, previews
    3 steps (Scene Description, Motion & Style, Parameters) with recommendations.
 4. **Step-by-step prompting**: scene validated (10–500 chars); motion recommended with
@@ -447,8 +445,8 @@ workflow and no create backend.
 - `src/assistant/prompt-assembler.ts` — ordered section pipeline (pattern to follow)
 - `src/assistant/sd.ts` — ~~dead stubs~~ REMOVED 2026-08-14 (to reimplement from scratch)
 - `src/assistant/scenario-source.ts` — ~~dead stubs~~ REMOVED 2026-08-14 (to reimplement from scratch)
-- `src/assistant/commands/image.ts` — current `/image` action dispatch (832 bytes)
-- `src/generation/auto-gen.ts:74` — `classifyIntent` LLM routing (needs timeout/apiKey fix)
+- `src/assistant/commands/image.ts` — current `/image` action dispatch (availability-gated)
+- `src/generation/auto-gen/classify-intent.ts` — `classifyIntent` LLM routing on the shared AUX runner (timeout/BYO key resolved; vocabulary-alignment follow-up tracked in `TASK-assistant-command-execution-intent-detection.md`)
 - `docs/spec/creative-studio.md` — creative studio spec (stub)
 - `docs/spec/assistant-commands.md` — command spec (may drift)
 - `configs/templates/llm.example.yaml`, `sd.example.yaml`, `avatar.example.yaml`,

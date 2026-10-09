@@ -4,12 +4,12 @@
 # EPIC: Assistant Personality — Presets & Character-as-Assistant
 
 **Status:** Not Started
-**Status Note:** Not Started
+**Status Note:** Not Started (verified 2026-10-09: no `src/assistant/personality/` module, no personality task in `src/aux-pipeline/`; all six bound tickets Not Started)
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
 **Tags:** assistant, personality, presets, character, gm, tone-of-voice, scenario
-**Related:** `epic-character-core-system.md`, `epic-character-internal-traits.md`, `epic-character-multi-personality-system.md`, `epic-assistant-gm-flows.md`, `epic-aux-enrichment-pipeline.md`, `epic-prompt-template-registry.md`
+**Related:** `epic-character-core-system.md`, `epic-character-internal-traits.md`, `epic-assistant-gm-flows.md`, `epic-aux-enrichment-pipeline.md` (aux `personality` drift task — `TASK-aux-personality-drift.md`), `epic-config-templates.md` (prompt template registry / system-prompt assembly)
 
 **Overview:**
 
@@ -56,7 +56,7 @@ assistant/GM slot.
 | Character Core System | Character cards, traits, personality | Pick-a-character-as-assistant reads character card |
 | Character Internal Traits | Coping, mood, behavioral dimensions | Personality preset borrows axes from this layer |
 | Assistant / GM Flows | GM chat, prompt assembly, command surface | Wire preset/character selector into GM role |
-| AUX LLM Enrichment Pipeline | Personality drift detector | Reuse detector (and fix `aux.personality` enable bit) |
+| AUX LLM Enrichment Pipeline | Personality drift detector | Reuse detector once it exists — the aux `personality` task is not built yet (`TASK-aux-personality-drift.md`, owned by `epic-aux-enrichment-pipeline`) |
 | Prompt Template Registry | System-prompt assembly | Inject preset voice + character persona blocks |
 | Persona Service | Persona-to-character conversion | Character-as-assistant flows through persona->character |
 

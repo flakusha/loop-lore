@@ -9,7 +9,7 @@
 
 
 **Status:** In Progress
-**Status Note:** slash command parser + AUX `classifyIntent` exist; no timeout/apiKey on AUX path, `detectIntent` dead (2026-08-01)
+**Status Note:** AUX runner migration DONE — `classifyIntent` runs on the shared `callAux("intent", …)` runner (2s timeout, BYO key, temp 0; `src/generation/auto-gen/classify-intent.ts`), and the dead `detectIntent`/`APPROVED_TOOLS` classifier was deleted. Still open (2026-09-26 verification below): single intent vocabulary across `src/regex/intent.ts` and the LLM `intent` prompt, AUX-intent → tool-dispatch routing decision, and per-command tiered-access enforcement end-to-end.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-assistant-gm-flows
