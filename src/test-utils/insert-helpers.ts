@@ -2263,7 +2263,7 @@ export async function insertChats(
     autonomy_config?: string;
     federation_consented_at?: string | null;
     purpose?: string | null;
-    timeline_id?: string | null;
+    timeline_id?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
