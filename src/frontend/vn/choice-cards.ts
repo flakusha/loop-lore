@@ -9,10 +9,11 @@
  * Renders branching choice cards in VN mode and handles selection.
  */
 import { apiFetch, } from "../alpine/htmx";
+import { t, } from "../alpine/i18n";
 import { jsonBody, } from "../alpine/json";
 import { feFetch, } from "../fe-fetch";
 import { renderChoiceCards, } from "./choice-cards-render";
-import { setVnDecisionPending, } from "./pending-decision";
+import { setChoicePending, } from "./pending-decision";
 
 const LOCATION_CHANGED_EVENT = "chat:location-changed";
 
@@ -76,30 +77,53 @@ export function initChoiceCards(
  * @returns {Promise<boolean>} true when the skip was accepted.
  */
 export async function skipChoice(choiceId: string,): Promise<boolean> {
-  if (!chatId) { return false; }
+  if (!chatId) {
+    reportSkipFailure();
+
+    return false;
+  }
 
   try {
     const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices/${choiceId}/dismiss`, {
       method: "POST",
     },);
 
-    if (!res.ok) { return false; }
+    if (!res.ok) {
+      reportSkipFailure();
+
+      return false;
+    }
   } catch {
+    reportSkipFailure();
+
     return false;
   }
 
   choices = choices.filter((c,) => c.id !== choiceId);
-  setVnDecisionPending(choices.some((c,) => !c.selected),);
+  setChoicePending(choices.some((c,) => !c.selected),);
   renderChoices();
 
   return true;
+}
+
+/**
+ * A rejected skip leaves the row `available` server-side, so the flag stays set
+ * and the gate keeps 409ing. Without this toast the only recovery is a full
+ * page reload, which reads as "the button is broken".
+ */
+function reportSkipFailure(): void {
+  document.dispatchEvent(
+    new CustomEvent("show-toast", {
+      detail: { type: "error", message: t("toasts.vnSkipFailed",), },
+    },),
+  );
 }
 
 /** Destroy the choice cards component. */
 export function destroyChoiceCards(): void {
   // Leaving the flag set here would wedge the composer: the cards are gone, so
   // nothing can resolve the decision the gate is still waiting on.
-  setVnDecisionPending(false,);
+  setChoicePending(false,);
   container = null;
   chatId = null;
   choices = [];
@@ -125,11 +149,11 @@ export async function loadChoices(): Promise<void> {
       },);
     }
 
-    setVnDecisionPending(choices.length > 0,);
+    setChoicePending(choices.length > 0,);
     renderChoices();
   } catch {
     choices = [];
-    setVnDecisionPending(false,);
+    setChoicePending(false,);
   }
 }
 
@@ -199,7 +223,7 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
     choices = Array.from(choices, (c, i,) => (i === idx ? updated : c),);
     // Only the picked choice stopped being 'available' server-side; siblings
     // are still resolvable, so the gate must stay closed while any remain.
-    setVnDecisionPending(choices.some((c,) => !c.selected),);
+    setChoicePending(choices.some((c,) => !c.selected),);
 
     let locationChanged = false;
     let splitTriggered = false;
