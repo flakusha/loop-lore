@@ -11766,27 +11766,6 @@
     "status": "Proposed",
     "git_issue": "04ef186"
   },
-  "EPIC-LOCAL-MULTI-INSTANCE-FEDERATION": {
-    "hash": "61f4a4d",
-    "extid": "EPIC-LOCAL-MULTI-INSTANCE-FEDERATION",
-    "type": "EPIC",
-    "title": "Local Multi-Instance Federation — Sender Wiring & Dev Harness",
-    "label": "epic",
-    "priority": "High",
-    "epic": "",
-    "tags": [
-      "federation",
-      "multi-instance",
-      "mesh",
-      "sender",
-      "consent",
-      "dev-harness",
-      "config"
-    ],
-    "source": ".plan/tickets/epic-local-multi-instance-federation.md",
-    "status": "Not Started",
-    "git_issue": "61f4a4d"
-  },
   "EPIC-LOCAL-PROCESS-SWARM": {
     "epic": "",
     "extid": "EPIC-LOCAL-PROCESS-SWARM",
@@ -32922,23 +32901,6 @@
     "status": "Not Started",
     "git_issue": "f279c9f"
   },
-  "TASK-HARNESS-CONTEXT-PRIORITY-TIERS": {
-    "epic": "epic-harness-integration",
-    "extid": "TASK-HARNESS-CONTEXT-PRIORITY-TIERS",
-    "git_issue": "1584986",
-    "hash": "1584986",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-harness-context-priority-tiers.md",
-    "status": "Not Started",
-    "tags": [
-      "harness",
-      "prompt",
-      "budget"
-    ],
-    "title": "Harness context priority tiers",
-    "type": "TASK"
-  },
   "TASK-HARNESS-CONTEXT-TEMPLATES": {
     "hash": "b01d03b",
     "extid": "TASK-HARNESS-CONTEXT-TEMPLATES",
@@ -33188,56 +33150,6 @@
     "source": ".plan/tickets/TASK-harness-tool-sandbox.md",
     "status": "Not Started",
     "git_issue": "13bfecb"
-  },
-  "TASK-HARNESS-TOPIC-SESSION-ATTACH": {
-    "epic": "epic-harness-integration",
-    "extid": "TASK-HARNESS-TOPIC-SESSION-ATTACH",
-    "git_issue": "668a941",
-    "hash": "668a941",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-harness-topic-session-attach.md",
-    "status": "Not Started",
-    "tags": [
-      "harness",
-      "data-model",
-      "lineage"
-    ],
-    "title": "Harness work-topic session attachment",
-    "type": "TASK"
-  },
-  "TASK-HARNESS-TOPIC-TUI-SURFACE": {
-    "epic": "epic-harness-integration",
-    "extid": "TASK-HARNESS-TOPIC-TUI-SURFACE",
-    "git_issue": "d8c69da",
-    "hash": "d8c69da",
-    "label": "task",
-    "priority": "medium",
-    "source": ".plan/tickets/TASK-harness-topic-tui-surface.md",
-    "status": "Not Started",
-    "tags": [
-      "harness",
-      "tui"
-    ],
-    "title": "Harness work-topic TUI surface",
-    "type": "TASK"
-  },
-  "TASK-HARNESS-WORK-TOPICS": {
-    "epic": "epic-harness-integration",
-    "extid": "TASK-HARNESS-WORK-TOPICS",
-    "git_issue": "4910513",
-    "hash": "4910513",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-harness-work-topics.md",
-    "status": "Not Started",
-    "tags": [
-      "harness",
-      "data-model",
-      "context"
-    ],
-    "title": "Harness work topics",
-    "type": "TASK"
   },
   "TASK-HASH-MENTION-RETRIEVAL-UX-FOR-CHAT-CONTEXT": {
     "epic": "epic-rag-assets-unified-storage-and-assistant-flows",
@@ -45201,22 +45113,6 @@
     "title": "tui/asset-view.ts: remove silent catch + void-without-catch pattern in setChatId",
     "type": "TASK"
   },
-  "TASK-TUI-CHAT-PICKER": {
-    "epic": "epic-terminal-ui",
-    "extid": "TASK-TUI-CHAT-PICKER",
-    "git_issue": "ebcb788",
-    "hash": "ebcb788",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-tui-chat-picker.md",
-    "status": "Not Started",
-    "tags": [
-      "tui",
-      "chat"
-    ],
-    "title": "TUI chat picker screen",
-    "type": "TASK"
-  },
   "TASK-TUI-DEDUPE-API-BASE": {
     "epic": "",
     "extid": "TASK-TUI-DEDUPE-API-BASE",
@@ -45241,38 +45137,6 @@
     "status": "open",
     "tags": [],
     "title": "tui.enabled config flag mapped from env but never read at runtime",
-    "type": "TASK"
-  },
-  "TASK-TUI-SHELL-TESTABILITY": {
-    "epic": "epic-terminal-ui",
-    "extid": "TASK-TUI-SHELL-TESTABILITY",
-    "git_issue": "47b85ad",
-    "hash": "47b85ad",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-tui-shell-testability.md",
-    "status": "Not Started",
-    "tags": [
-      "tui",
-      "testing"
-    ],
-    "title": "TUI shell testability",
-    "type": "TASK"
-  },
-  "TASK-TUI-SPEC-SYNC": {
-    "epic": "epic-terminal-ui",
-    "extid": "TASK-TUI-SPEC-SYNC",
-    "git_issue": "769db3d",
-    "hash": "769db3d",
-    "label": "task",
-    "priority": "medium",
-    "source": ".plan/tickets/TASK-tui-spec-sync.md",
-    "status": "Not Started",
-    "tags": [
-      "tui",
-      "docs"
-    ],
-    "title": "Terminal UI spec sync",
     "type": "TASK"
   },
   "TASK-TURN-SEND-GATE": {
@@ -47469,120 +47333,5 @@
     "tags": [],
     "source": ".plan/tickets/TASK-validate-unrecognized-examples-section-role-labels-instead-o.md",
     "status": "Not Started"
-  },
-  "TASK-HARNESS-CONTEXT-PRIORITY-TIERS": {
-    "epic": "epic-harness-integration",
-    "extid": "TASK-HARNESS-CONTEXT-PRIORITY-TIERS",
-    "git_issue": "1584986",
-    "hash": "1584986",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-harness-context-priority-tiers.md",
-    "status": "Not Started",
-    "tags": [
-      "harness",
-      "prompt",
-      "budget"
-    ],
-    "title": "Harness context priority tiers",
-    "type": "TASK"
-  },
-  "TASK-HARNESS-TOPIC-SESSION-ATTACH": {
-    "epic": "epic-harness-integration",
-    "extid": "TASK-HARNESS-TOPIC-SESSION-ATTACH",
-    "git_issue": "668a941",
-    "hash": "668a941",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-harness-topic-session-attach.md",
-    "status": "Not Started",
-    "tags": [
-      "harness",
-      "data-model",
-      "lineage"
-    ],
-    "title": "Harness work-topic session attachment",
-    "type": "TASK"
-  },
-  "TASK-HARNESS-TOPIC-TUI-SURFACE": {
-    "epic": "epic-harness-integration",
-    "extid": "TASK-HARNESS-TOPIC-TUI-SURFACE",
-    "git_issue": "d8c69da",
-    "hash": "d8c69da",
-    "label": "task",
-    "priority": "medium",
-    "source": ".plan/tickets/TASK-harness-topic-tui-surface.md",
-    "status": "Not Started",
-    "tags": [
-      "harness",
-      "tui"
-    ],
-    "title": "Harness work-topic TUI surface",
-    "type": "TASK"
-  },
-  "TASK-HARNESS-WORK-TOPICS": {
-    "epic": "epic-harness-integration",
-    "extid": "TASK-HARNESS-WORK-TOPICS",
-    "git_issue": "4910513",
-    "hash": "4910513",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-harness-work-topics.md",
-    "status": "Not Started",
-    "tags": [
-      "harness",
-      "data-model",
-      "context"
-    ],
-    "title": "Harness work topics",
-    "type": "TASK"
-  },
-  "TASK-TUI-CHAT-PICKER": {
-    "epic": "epic-terminal-ui",
-    "extid": "TASK-TUI-CHAT-PICKER",
-    "git_issue": "ebcb788",
-    "hash": "ebcb788",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-tui-chat-picker.md",
-    "status": "Not Started",
-    "tags": [
-      "tui",
-      "chat"
-    ],
-    "title": "TUI chat picker screen",
-    "type": "TASK"
-  },
-  "TASK-TUI-SHELL-TESTABILITY": {
-    "epic": "epic-terminal-ui",
-    "extid": "TASK-TUI-SHELL-TESTABILITY",
-    "git_issue": "47b85ad",
-    "hash": "47b85ad",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-tui-shell-testability.md",
-    "status": "Not Started",
-    "tags": [
-      "tui",
-      "testing"
-    ],
-    "title": "TUI shell testability",
-    "type": "TASK"
-  },
-  "TASK-TUI-SPEC-SYNC": {
-    "epic": "epic-terminal-ui",
-    "extid": "TASK-TUI-SPEC-SYNC",
-    "git_issue": "769db3d",
-    "hash": "769db3d",
-    "label": "task",
-    "priority": "medium",
-    "source": ".plan/tickets/TASK-tui-spec-sync.md",
-    "status": "Not Started",
-    "tags": [
-      "tui",
-      "docs"
-    ],
-    "title": "Terminal UI spec sync",
-    "type": "TASK"
   }
 }
