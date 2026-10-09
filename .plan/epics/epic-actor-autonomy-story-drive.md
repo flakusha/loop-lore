@@ -42,6 +42,10 @@ exists solely for headless stress-testing and is explicitly gated.
 - Still outstanding: BDI-decision and GM-beat dispatch from the tick loop. Both need the
   decision layer from `epic-agency-story-points.md`, which is planned but not built. Until
   it lands, the scheduler dispatches movement ticks only.
+  → Landed: both dispatch as targets through `opts.dispatch` — `createBdiDispatch`
+  (nightly reflection over due actors) and `createGmBeatDispatch` (world-scoped
+  narrative beats) — each jittered, governor-charged, and registered on the
+  production cron tick. Movement still always runs first.
 - GM orchestration remains reactive: `GameMasterService` generates on user turns only;
   `GameMasterConfig.type: llm|human|hybrid` + per-actor model routing exist.
 - Group-chat cascade has max-turns / consecutive-turn guards — chat-scoped, not world-scoped,
@@ -139,14 +143,14 @@ The `autonomy_preferences` data schema (AutonomyProfile, D9) is owned by
 | Work Item | Ticket | On-disk | Status |
 | --------- | ------ | ------- | ------ |
 | Story auto-drive scheduler | `TASK-story-auto-drive-scheduler.md` | yes | Done — loop, selection, dispatch via `runNpcMovementTick`, controls, persistence, telemetry all ship. BDI + GM dispatch split out: `TASK-bdi-plan-recompute-implementation`, `TASK-gm-beat-scheduling` |
-| BDI plan recompute implementation | `TASK-bdi-plan-recompute-implementation.md` | yes | open — `planRecompute` has no production impl; blocks BDI dispatch |
-| GM beat scheduling | `TASK-gm-beat-scheduling.md` | yes | open — GM is turn-driven only; double-movement + chat-vs-world blockers |
+| BDI plan recompute implementation | `TASK-bdi-plan-recompute-implementation.md` | yes | Done — production `createPlanRecompute` (`callLlm`-backed, state-derived fallback) drives `runNightlyReflectionCycle` through the `bdi` dispatch target (due-actor cadence + tick-shared jitter + `per_hour_beat_dispatch` world-scope charge, per-actor peek), registered on the cron tick |
+| GM beat scheduling | `TASK-gm-beat-scheduling.md` | yes | Done — `runGmBeat` (world→one-story-chat resolution, `moveNpcs: false`) wrapped as the `gm` dispatch target (per-target `disabled` check + tick-shared jitter + `per_hour_beat_dispatch` charge, story `gm_paused`/`gm_story_complete` stops; group-cascade guards stay chat-scoped), registered on the cron tick |
 | NPC navigation tick driver | `TASK-world-simulation-npc-navigation-tick-driver.md` | yes | Done — `src/rpg/npc-navigation/tick-driver.ts` (`runNpcMovementTick`) is the scheduler's caller; jitter + `perUserCap` governor gate |
 | Autonomy config surface | `TASK-autonomy-config-surface.md` | yes | Done — layered resolver, presets, world/chat/per-actor write routes, Autonomy tab + chat settings modal |
 | Per-agent/user budget caps UI (gap-audit E15) | `TASK-autonomy-rate-governor.md` | yes | Done — `AutonomyGovernor.tryConsume` + budget-remaining and reset-window UI in both settings surfaces |
 | Config layering / presets / overrides (dup) | `TASK-autonomy-config-surface-layering-presets-and-overrides.md` | yes | Wontfix — duplicate of `TASK-autonomy-config-surface.md` (Done); all four ACs met and tested |
-| Rate governor for LLM actors (dup) | `TASK-autonomy-rate-governor-for-llm-actors.md` | yes | Wontfix — duplicate of `TASK-autonomy-rate-governor.md` (Done); cost ledger + global kill switch still unmet, filed forward as `TASK-autonomy-cost-ledger-kill-switch.md` (open) |
-| Per-actor cost ledger + global kill switch | `TASK-autonomy-cost-ledger-kill-switch.md` | yes | open — per-actor cost ledger + global kill switch (open ACs from autonomy governor duplicate) |
+| Rate governor for LLM actors (dup) | `TASK-autonomy-rate-governor-for-llm-actors.md` | yes | Wontfix — duplicate of `TASK-autonomy-rate-governor.md` (Done); cost ledger + global kill switch filed forward as `TASK-autonomy-cost-ledger-kill-switch.md` (now Done) |
+| Per-actor cost ledger + global kill switch | `TASK-autonomy-cost-ledger-kill-switch.md` | yes | Done — `spendForActor` folds `autonomy_budget` rows into per-actor spend over window (no new table); `AUTONOMY_KILL_SWITCH` denies every `tryConsume` and skips all dispatch (`kill_switch`), winning even over unbounded `unlimited-stress` scopes |
 
 All referenced tickets are filed on disk. The scheduler's BDI and GM dispatch work was split into the two follow-up tickets above after scoping found neither had a callable, non-greenfield entry point. The 2026-09-23 gap-audit was stale — this table supersedes it.
 

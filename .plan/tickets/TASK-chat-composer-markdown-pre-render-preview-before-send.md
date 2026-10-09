@@ -9,6 +9,10 @@
 
 
 **Status:** Done
+
+**Linked work:** composer preview renders through the same `renderMarkdown`
+path, so `:shortcode:` expansion shows pre-send too (`render.ts`,
+`input-area.html` composer-preview).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-chat-commands

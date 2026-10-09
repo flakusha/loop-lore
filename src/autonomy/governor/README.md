@@ -28,7 +28,8 @@ await doWork();
 
 Actor-scoped consumes consult `AutonomyConfig.perAgentCap`; user-scoped
 consumes consult `perUserCap`. `null` = unbounded (skip DB, skip
-telemetry).
+telemetry) — unless the global kill switch (`AUTONOMY_KILL_SWITCH`) is
+engaged, which denies every consume, including unbounded ones.
 
 ## Persistence
 
@@ -42,7 +43,17 @@ same process.
 Emits `governor.budget.exceeded` on every denied consume. Fire-and-forget
 — never blocks the gate decision. Payload includes `scope_kind`,
 `scope_id`, `limit_name`, `cap`, `window_count`, `window_reset_at`,
-`timestamp`.
+`timestamp`. Kill-switch denials carry `kill_switch: true` with
+`cap: 0` and `window_count: 0`.
+
+## Cost ledger
+
+`spendForActor(db, { actorId })` sums an actor's in-window consumes
+across its `autonomy_budget` rows (per-limit `counts` plus `total`). No
+new table: the budget rows already carry per-actor spend, so the ledger
+folds them with the governor's own window arithmetic. Denied consumes
+(budget or kill switch) never write rows, so the ledger only reflects
+allowed work.
 
 ## Constraints
 

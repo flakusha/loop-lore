@@ -8,6 +8,7 @@
 **Context:** Render core shipped in `src/frontend/alpine/chat-utils/emoji.ts` (`renderShortcodes`, hasOwn-guarded allowlist kept in sync with `QUICK_EMOJIS`) and hooked into `renderMarkdown`, so every consumer renders identically. Unknown codes and backtick spans stay literal.
 **Acceptance Criteria:** `:fire:` renders 🔥 in 1x1, group, and blog comments; unknown `:nope:` stays literal; no console errors.
 
+**Progress:** emoji shortcode allowlist + render helper, `:` autocomplete (Tab-accept parity), and keyboard/grid picker landed; chat + group chat share one render path.
 
 **Epic:** epic-frontend-emoji-reactions
 **Status:** In Progress

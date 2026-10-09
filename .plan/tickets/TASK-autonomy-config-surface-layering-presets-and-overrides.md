@@ -61,6 +61,7 @@ the budget line from `GET /api/worlds/:worldId/autonomy`, and
 override save end to end. Nothing here is unimplemented, so this file is closed
 as a duplicate rather than worked.
 
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 `Wontfix` recorded 2026-10-02; `**Epic:**` corrected from the non-existent id
 `epic-actor-autonomy-story-drive.md` to `epic-actor-autonomy-story-drive`. Status
 history: `Wontfix` from 2026-10-02 until the 2026-10-08 registry close, `Done`

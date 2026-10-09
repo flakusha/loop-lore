@@ -14,8 +14,11 @@
 //      movement, but the scheduler itself does not gate extra targets — each
 //      target checks, so a GM-only configuration cannot narrate a world the
 //      operator switched off.
-//   2. governor charge (`per_hour_beat_dispatch`) → skip `gm_budget`.
-//   3. `runGmBeat` resolves the world→chat rule and runs the turn.
+//   2. jitter coin flip from the tick's shared stream → skip `gm_jitter`.
+//      Same flip as the movement driver: world beats spread across ticks
+//      instead of narrating every world in lockstep.
+//   3. governor charge (`per_hour_beat_dispatch`) → skip `gm_budget`.
+//   4. `runGmBeat` resolves the world→chat rule and runs the turn.
 //
 // The charge is taken BEFORE the beat and is the only one. The beat itself
 // calls no governor, so a dispatch can never double-spend: a denied beat
@@ -47,6 +50,7 @@ const TARGET_NAME = "gm";
  *  unchanged, so one outcome string says which layer declined.
  */
 const SKIP_DISABLED = "disabled";
+const SKIP_JITTER = "gm_jitter";
 const SKIP_BUDGET = "gm_budget";
 
 /** Scope identity passed to the governor. World-scoped, matching the
@@ -97,6 +101,12 @@ async function runBeat(
   createGm: GmBeatFactory,
 ): Promise<AutonomyDispatchResult> {
   if (!ctx.cfg.enabled) { return { skipped: SKIP_DISABLED, }; }
+
+  // Jitter: the same coin flip as the movement driver, drawn from the
+  // tick's shared stream — spreads world beats across ticks instead of
+  // narrating every world in lockstep. Beats are hourly-budgeted LLM
+  // work, so an extra dropped tick costs nothing but pacing.
+  if (ctx.cfg.jitterRatio > 0 && ctx.rng() < ctx.cfg.jitterRatio) { return { skipped: SKIP_JITTER, }; }
 
   const governor: AutonomyGovernor = ctx.governor ?? new AutonomyGovernor();
   const gate = await governor.tryConsume(

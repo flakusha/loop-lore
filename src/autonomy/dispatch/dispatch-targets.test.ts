@@ -253,4 +253,38 @@ describe("createBdiDispatch", () => {
     const target = createBdiDispatch({ db, planRecompute, today: "2026-01-01", },);
     expect(await target.run(makeCtx(),),).toEqual({ dispatched: 1, },);
   });
+
+  test("a jitter draw below the ratio skips before any governor charge", async () => {
+    await makeWorld();
+    await addMember("actor-jitter",);
+
+    let recomputed = 0;
+    const planRecompute: PlanRecomputeFn = async () => {
+      recomputed += 1;
+      return { summary: "never", priority: "low", activities: [], };
+    };
+
+    const target = createBdiDispatch({ db, planRecompute, today: "2026-01-01", },);
+    const ctx = makeCtx({ cfg: { ...CFG, jitterRatio: 0.5, }, rng: () => 0, },);
+    expect(await target.run(ctx,),).toEqual({ skipped: BDI_SKIP.Jitter, },);
+    expect(recomputed,).toBe(0,);
+    // No charge was taken: the full hourly budget is still available.
+    const budget = await db.selectFrom("autonomy_budget",).selectAll().execute();
+    expect(budget,).toEqual([],);
+  });
+
+  test("a jitter draw above the ratio recomputes", async () => {
+    await makeWorld();
+    await addMember("actor-lucky",);
+
+    const planRecompute: PlanRecomputeFn = async () => ({
+      summary: "spread out",
+      priority: "high",
+      activities: [{ description: "patrol", score: 0.5, },],
+    });
+
+    const target = createBdiDispatch({ db, planRecompute, today: "2026-01-01", },);
+    const ctx = makeCtx({ cfg: { ...CFG, jitterRatio: 0.5, }, rng: () => 1, },);
+    expect(await target.run(ctx,),).toEqual({ dispatched: 1, },);
+  });
 });

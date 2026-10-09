@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** code audit 2026-10-08: `growth_log`/`character_arc` tables, growth-service, skills/traits/relationships bridges, and `actorGrowthSection` prompt section all ship in `src/` — reconciliation tracked in `TASK-growth-epic-reconciliation.md`; remaining work is API + frontend + growth_mode toggle
+**Status Note:** reconciled 2026-10-09: schema/types/service/bridges/validator/prompt/API all ship (see task table); this round wired the last-mile frontend (edit-form Growth & Arc section + detail-modal journey slot) and declared the actors-PUT growth fields. Open: LLM-assist aux pass (Low, deferred), journey export (O2 follow-on), character.grew emission (no subscribers yet — intentionally unwired).
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -301,16 +301,16 @@ export interface GrowthLogEntry {
 
 | Task                                  | Description                                                                                            | Priority | Status      |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------- | ----------- |
-| TASK-char-growth-schema               | Fold growth schema into `parts/004_actors.ts` + `parts/005_characters.ts` + regenerate schemas                                                                      | High     | Not Started |
-| TASK-char-growth-types                | `src/characters/spec/growth.ts` + `CanonicalCharacter` extension                                       | High     | Not Started |
-| TASK-char-growth-service              | `src/characters/services/growth-service/` (CRUD, redact, llm-assist)                                  | High     | Shipped — service exists; LLM-assist pass still stub |
-| TASK-char-growth-bridges              | Skills / traits / relationships bridges                                                                | High     | Shipped — bridges exist |
-| TASK-char-growth-validation           | Extend `src/characters/validator/fields.ts`                                                            | Medium   | Not Started |
-| TASK-char-growth-prompt               | `actorGrowthSection` builder + registry + PRIORITY                                                    | High     | Shipped — `actorGrowthSection` exists and is registered |
-| TASK-char-growth-api                  | `/api/character-growth/*` routes + PATCH on actors                                                    | Medium   | Not Started |
-| TASK-char-growth-frontend             | Player card "Character Journey" + author/GM editor + Alpine.js wiring                                 | Medium   | Not Started |
-| TASK-char-growth-llm-assist           | Replace stub with aux-pipeline pass                                                                    | Low      | Not Started |
-| TASK-char-growth-tests                | Schema, validation, integrity, events, prompt section, API, integration                               | High     | Not Started |
+| TASK-char-growth-schema               | Fold growth schema into `parts/004_actors.ts` + `parts/005_characters.ts` + regenerate schemas                                                                      | High     | Shipped — `001_init.ts` actors columns + `character_arc`/`growth_log` tables; generated `schema.ts`/`schema-core.ts` carry them |
+| TASK-char-growth-types                | `src/characters/spec/growth.ts` + `CanonicalCharacter` extension                                       | High     | Shipped — `spec/growth.ts` enums/shapes + `spec/character.ts:216-219` `growth_mode`/`llm_assist_enabled` |
+| TASK-char-growth-service              | `src/characters/services/growth-service/` (CRUD, redact, llm-assist)                                  | High     | Shipped — CRUD + redact live; LLM-assist intentionally stub (`llm-assist.ts`, needs aux-pipeline) |
+| TASK-char-growth-bridges              | Skills / traits / relationships bridges                                                                | High     | Shipped — `skills-service-bridge.ts` / `traits-service-bridge.ts` / `relationships-service-bridge.ts` enforce static mode |
+| TASK-char-growth-validation           | Extend `src/characters/validator/fields.ts`                                                            | Medium   | Shipped — `validateGrowthFields` (`fields.ts:182-222`) gates `growth_mode`/`llm_assist_enabled` |
+| TASK-char-growth-prompt               | `actorGrowthSection` builder + registry + PRIORITY                                                    | High     | Shipped — `sections/actor-growth.ts` registered; `PRIORITY.actorGrowth = 1` |
+| TASK-char-growth-api                  | `/api/character-growth/*` routes + PATCH on actors                                                    | Medium   | Shipped — `routes/character-growth/index.ts` mounted (`v1/actors-surface.ts:65`); actors PUT writes `growth_mode`/`llm_assist_enabled` (`update.ts:198-199`); `ActorUpdateBody` now declares both (this round) |
+| TASK-char-growth-frontend             | Player card "Character Journey" + author/GM editor + Alpine.js wiring                                 | Medium   | Shipped (this round) — edit-form `character-growth-section.ts` (server-seeded toggle + arc) mounted in `character-edit-form.ts`; modal journey slot (`detail-modal.html` + `characters-journey.ts`); `characterGrowthEditor.saveMode` sends CHAR-1 `dataVersion` (`schemas/actors.ts` declares `growthMode`/`llmAssistEnabled`) |
+| TASK-char-growth-llm-assist           | Replace stub with aux-pipeline pass                                                                    | Low      | Open — deferred; needs aux-pipeline (out of scope per assignment) |
+| TASK-char-growth-tests                | Schema, validation, integrity, events, prompt section, API, integration                               | High     | Shipped — coverage exists (`routes.coverage.test.ts`, `crud.test.ts`, `redact-branches.test.ts`, `llm-assist.test.ts`, validator `fields.test.ts`, `character-growth-editor.test.ts`); this round adds form-seed + journey tests |
 
 ## Current-State Verification Required Before Implementation
 

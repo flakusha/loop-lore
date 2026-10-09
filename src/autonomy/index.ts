@@ -17,6 +17,9 @@ export type {
   GovernorResult,
   TryConsumeOptions,
 } from "./governor";
+export { isKillSwitchEngaged, KILL_SWITCH_ENV_VAR, } from "./governor/kill-switch";
+export { spendForActor, } from "./governor/ledger";
+export type { ActorSpend, } from "./governor/ledger";
 export { AutonomyScheduler, SimulationStore, } from "./scheduler";
 export type { AutonomySchedulerOptions, } from "./scheduler";
 export type {

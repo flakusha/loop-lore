@@ -39,6 +39,8 @@ export interface CharacterGrowthEditorOptions {
   initialArcStage: string;
   initialArcDescription: string;
   initialEntries: GrowthLogEntry[];
+  /** Optimistic-concurrency version from GET /api/v1/actors/:actorId (CHAR-1). */
+  dataVersion?: number;
 }
 
 /** Alpine x-data component object (methods bound to `this`). */
@@ -50,6 +52,8 @@ export interface CharacterGrowthEditorComponent {
   arcDescription: string;
   entries: GrowthLogEntry[];
   message: string;
+  /** Latest known actors.format_version; refreshed from the PUT response. */
+  dataVersion?: number;
   saveMode(): Promise<void>;
   saveArc(): Promise<void>;
   confirmEntry(entryId: string,): Promise<void>;
@@ -75,21 +79,26 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
     arcDescription: opts.initialArcDescription || "",
     entries: Array.isArray(opts.initialEntries,) ? opts.initialEntries : [],
     message: "",
+    dataVersion: opts.dataVersion,
 
     /**
      * @returns {Promise<void>}
      */
     async saveMode() {
       try {
-        await feFetch(`/api/v1/actors/${encodeURIComponent(this.actorId,)}`, {
+        const res = await feFetch(`/api/v1/actors/${encodeURIComponent(this.actorId,)}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({
             growthMode: this.growthMode,
             llmAssistEnabled: this.llmAssistEnabled,
+            // CHAR-1: the actors PUT requires the version from the prior GET.
+            ...(this.dataVersion !== undefined ? { dataVersion: this.dataVersion, } : {}),
           },),
         },);
 
+        const data = await res.json().catch(() => null) as { dataVersion?: number } | null;
+        if (typeof data?.dataVersion === "number") { this.dataVersion = data.dataVersion; }
         this.message = "Saved.";
       } catch (err) {
         this.message = "Failed to save growth mode.";

@@ -8,10 +8,11 @@
 **Context:** In-context shipped: chips + picker popover in `src/components/chat/message-list.html`, optimistic `toggleReaction` with rollback + `chats.reactionFailed` toast, picker hydrated from `GET quick-emojis`. Endpoints are reused (`POST` toggle / `DELETE`), not duplicated. Left: out-of-context affordance wired to the same store, seen-state interplay.
 **Acceptance Criteria:** React from bubble and from a quoted reply converges to same count; failed request rolls back the optimistic chip + toast.
 
-
 **Epic:** epic-frontend-emoji-reactions
 **See also:** epic-messages.md, epic-message-seen-state.md
-**Status:** In Progress
+**Status:** Done
+
+**Progress:** `toggleReaction` optimistic react/unreact shipped (`src/frontend/alpine/chat-messages.ts`, `src/routes/message-reactions.ts`); kept untouched — no full re-render, rollback toast on failure.
 **Priority:** Medium
 
 ## Scope

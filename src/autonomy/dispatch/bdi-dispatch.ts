@@ -5,11 +5,14 @@
  * src/autonomy/dispatch/bdi-dispatch.ts — BDI nightly reflection target
  *
  * Runs `runNightlyReflectionCycle` for one world, governor-gated and
- * cadence-gated. Two short-circuits matter:
+ * cadence-gated. Three short-circuits matter:
  *
  *  - **Cadence.** The cycle is nightly; the scheduler tick is not. An
  *    actor already carrying a plan for today is dropped before any LLM
  *    spend, so a per-minute tick cannot replan the same NPC sixty times.
+ *  - **Jitter.** A coin flip from the tick's shared stream drops a
+ *    fraction of otherwise-due ticks (`bdi_jitter`), so due worlds do not
+ *    all recompute in lockstep. Same flip as the movement driver.
  *  - **Budget.** One `per_hour_beat_dispatch` charge per dispatch, billed
  *    to the world scope. The cycle's `budgetApprove` below is a PEEK, not
  *    a second charge: the dispatch already paid, so charging again per
@@ -45,6 +48,8 @@ export const BDI_SKIP = {
   NoActors: "bdi_no_actors",
   /** Every member already holds a plan for today. */
   OffCadence: "bdi_off_cadence",
+  /** The jitter draw dropped this tick. */
+  Jitter: "bdi_jitter",
   /** The governor denied the dispatch. */
   Budget: "bdi_budget",
 } as const;
@@ -100,6 +105,12 @@ async function runBdiDispatch(
     // so they report different reasons.
     return { skipped: await hasMembers(db, worldId,) ? BDI_SKIP.OffCadence : BDI_SKIP.NoActors, };
   }
+
+  // Jitter: the same coin flip as the movement driver, drawn from the
+  // tick's shared stream — spreads due worlds across ticks instead of
+  // recomputing every world in lockstep. The daily-plan check above is
+  // the cooldown; this draw is the spread.
+  if (cfg.jitterRatio > 0 && ctx.rng() < cfg.jitterRatio) { return { skipped: BDI_SKIP.Jitter, }; }
 
   const gate = await args.governor.tryConsume(db, worldScope(worldId,), BEAT_LIMIT, {
     cap: cfg.perUserCap,

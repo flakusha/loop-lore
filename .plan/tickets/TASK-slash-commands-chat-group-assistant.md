@@ -10,7 +10,15 @@
 
 
 **Epic:** epic-frontend-chat-commands
-**Status:** Not Started
+**Status:** In Progress
+
+**Progress:** `interceptSlashSend` routes `/continue` (resume last
+assistant/character message via `continueMessage`), `/retry [attempt step]`
+(`retryFromPoint`), `/branch [name]` (`forkFromMessage`) in
+`src/frontend/alpine/chat-send.ts` (shared chat + group send path);
+unknown `/...` toasts with `didYouMeanCandidate` and never sends;
+palette hides disallowed commands with `_hiddenCommandCount` explanation
+(`command-palette.ts`, `input-area.html`).
 **Priority:** High
 
 ## Scope

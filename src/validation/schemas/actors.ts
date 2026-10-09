@@ -55,6 +55,10 @@ export const ActorUpdateBody = t.Object({
   // Constrained JSON object — matches project convention (e.g. character-relations metadata).
   // Rejects top-level arrays/primitives while preserving freeform values.
   settings: t.Optional(t.Record(t.String(), t.Any(),),),
+  /** Author growth toggle (epic-character-growth D1); dynamic (default) or static. */
+  growthMode: t.Optional(t.Union([t.Literal("dynamic",), t.Literal("static",),],),),
+  /** Opt-in LLM-assist pass (epic-character-growth D6); off by default. */
+  llmAssistEnabled: t.Optional(t.Boolean(),),
   /** Avatar crop focus as percentages; clamped to 0-100 server-side (TASK-001). */
   avatarFocusX: t.Optional(t.Number(),),
   avatarFocusY: t.Optional(t.Number(),),

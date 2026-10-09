@@ -27,9 +27,13 @@ export interface ChatCoreUiState {
   _debugView: boolean;
   _showCommandPalette: boolean;
   _activeCommand: string;
-  _commandList: { name: string; descriptionKey: string; description: string }[];
-  _filteredCommands: { name: string; descriptionKey: string; description: string }[];
+  _commandList: { name: string; descriptionKey: string; description: string; requiredRole?: string }[];
+  _filteredCommands: { name: string; descriptionKey: string; description: string; requiredRole?: string }[];
   _paletteActiveIndex: number;
+  _hiddenCommandCount: number;
+  _viewerRole(): string;
+  _visibleCommands(): { name: string; descriptionKey: string; description: string; requiredRole?: string }[];
+  _applyPaletteFilter(role: string,): void;
   _loadCommandList(): Promise<void>;
   acceptPaletteAtIndex(index: number,): void;
   movePaletteSelection(delta: 1 | -1,): void;

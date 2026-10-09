@@ -9,6 +9,10 @@
 
 
 **Status:** Done
+
+**Linked work:** `:` emoji autocomplete + picker share the `/` popup pattern
+with Tab-accept parity (`slash-autocomplete.ts`, `input-area.html`); all
+three popovers (slash/emoji/mention) Tab-accept, arrows move, Esc dismisses.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-chat-commands

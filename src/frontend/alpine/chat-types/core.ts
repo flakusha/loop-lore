@@ -192,6 +192,7 @@ export interface ChatCoreState
   loadOlderMessages(): Promise<void>;
   setupInfiniteScroll(): void;
   sendMessage(): Promise<void>;
+  interceptSlashSend(text: string, input: HTMLTextAreaElement,): Promise<boolean>;
   saveComposerDraft(store?: DraftStore,): void;
   flushComposerDraft(store?: DraftStore,): void;
   restoreComposerDraft(store?: DraftStore,): void;
