@@ -158,9 +158,7 @@
               data-testid="details-select"
             >
               <option value="">Choose a location…</option>
-              <template x-for="loc in locations" :key="loc.id">
-                <option :value="loc.id" x-text="loc.name"></option>
-              </template>
+              {{> location-options.html }}
             </select>
 
             <div x-show="detailLoading" class="muted">Loading…</div>
@@ -235,9 +233,7 @@
             <div class="travel-form">
               <label class="form-label" for="travel-origin">From</label>
               <select id="travel-origin" class="form-select" x-model="originId" data-testid="travel-origin">
-                <template x-for="loc in locations" :key="loc.id">
-                  <option :value="loc.id" x-text="loc.name"></option>
-                </template>
+                {{> location-options.html }}
               </select>
 
               <label class="form-label" for="travel-destination">To</label>

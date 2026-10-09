@@ -1,0 +1,12 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Shared location <option> rows for Alpine selects. Iterates
+  `optionItems` on the host scope — each host exposes it as a view-model
+  getter over its own location list (WorldPageState.optionItems,
+  ChatState.optionItems).
+-->
+<template :key="loc.id" x-for="loc in optionItems">
+  <option x-text="loc.name" :value="loc.id"></option>
+</template>

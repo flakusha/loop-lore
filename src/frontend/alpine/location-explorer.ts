@@ -11,6 +11,7 @@
 import { jsonParseOr, } from "../../utils";
 import { locationExplorerControls, } from "./location-explorer-controls";
 import { log as rootLog, } from "./logger";
+import { fetchWorldJson, } from "./world-fetch";
 
 const log = rootLog.child({ module: "location-explorer", },);
 /** */
@@ -179,25 +180,22 @@ const safeParseList = (raw: string,): string[] => {
       this.loading = true;
       this.error = false;
       try {
-        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/location-explorer`, {
-          headers: { Accept: "application/json", },
-        },);
+        const body = await fetchWorldJson<{
+          data?: { locations?: ExplorerLocation[]; states?: ExplorerLocationState[] };
+        }>(this.worldId, "/location-explorer",);
 
-        if (!res.ok) {
+        if (body === null) {
           this.error = true;
-          return;
+        } else {
+          this.locations = body.data?.locations || [];
+          this.states = body.data?.states || [];
+          this.loaded = true;
+          this._refreshOptionLists();
+          if (this.locations.length > 0 && !this.selectedLocId) {
+            this.selectLoc(this.locations[0]!.id,);
+          }
         }
-
-        const body = await res.json();
-        this.locations = (body.data?.locations as ExplorerLocation[]) || [];
-        this.states = (body.data?.states as ExplorerLocationState[]) || [];
-        this.loaded = true;
-        this._refreshOptionLists();
-        if (this.locations.length > 0 && !this.selectedLocId) {
-          this.selectLoc(this.locations[0]!.id,);
-        }
-      } catch (error) {
-        log.warn("location explorer load failed", { error: String(error,), },);
+      } catch {
         this.error = true;
       }
 
@@ -218,17 +216,17 @@ const safeParseList = (raw: string,): string[] => {
       }
 
       try {
-        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations/${locId}/details`, {
-          headers: { Accept: "application/json", },
-        },);
+        const body = await fetchWorldJson<{ data?: ExplorerDetail }>(
+          this.worldId,
+          `/locations/${locId}/details`,
+        );
 
-        if (!res.ok) { return; }
-        const body = await res.json();
-        const detail = body.data as ExplorerDetail;
-        this.detail = detail;
-        this._detailCache[locId] = detail;
-      } catch (error) {
-        log.warn("location detail load failed", { error: String(error,), },);
+        if (body?.data) {
+          this.detail = body.data;
+          this._detailCache[locId] = body.data;
+        }
+      } catch {
+        log.warn("location detail load failed",);
       }
     },
 

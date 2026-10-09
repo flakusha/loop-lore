@@ -12,6 +12,7 @@
 import { jsonStringifyOr, } from "../../utils/safe-json";
 import { apiFetch, } from "./htmx";
 import { log as rootLog, } from "./logger";
+import { fetchWorldJson, } from "./world-fetch";
 
 const log = rootLog.child({ module: "fractal-locations", },);
 
@@ -118,20 +119,15 @@ export function buildFractalState(worldId: string,): FractalState {
       this.loadingTree = true;
       this.error = false;
       try {
-        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations/tree`, {
-          headers: { Accept: "application/json", },
-        },);
-
-        if (!res.ok) {
+        const body = await fetchWorldJson<{ data?: TreeNode[] }>(this.worldId, "/locations/tree",);
+        if (body === null) {
           this.error = true;
           return;
         }
 
-        const body = await res.json();
-        this.tree = (body?.data ?? []) as TreeNode[];
+        this.tree = body.data ?? [];
         this.loadedTree = true;
-      } catch (e) {
-        log.warn("tree load failed", { error: String(e,), },);
+      } catch {
         this.error = true;
       } finally {
         this.loadingTree = false;
@@ -144,19 +140,16 @@ export function buildFractalState(worldId: string,): FractalState {
     async loadRoutes() {
       this.loadingRoutes = true;
       try {
-        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/travel-routes`, {
-          headers: { Accept: "application/json", },
-        },);
-
-        if (!res.ok) { return; }
-        const body = await res.json();
-        this.routes = (body?.data ?? []) as RouteRow[];
-        this.loadedRoutes = true;
-        if (this.routes.length > 0 && !this.selectedRouteId) {
-          await this.selectRoute(this.routes[0]!.id,);
+        const body = await fetchWorldJson<{ data?: RouteRow[] }>(this.worldId, "/travel-routes",);
+        if (body) {
+          this.routes = body.data ?? [];
+          this.loadedRoutes = true;
+          if (this.routes.length > 0 && !this.selectedRouteId) {
+            await this.selectRoute(this.routes[0]!.id,);
+          }
         }
-      } catch (e) {
-        log.warn("routes load failed", { error: String(e,), },);
+      } catch {
+        log.warn("routes load failed",);
       } finally {
         this.loadingRoutes = false;
       }

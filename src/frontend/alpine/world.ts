@@ -17,13 +17,12 @@
  */
 import { Type, } from "@sinclair/typebox";
 import { jsonParseOr, } from "../../utils";
-import { apiFetch, } from "./htmx";
 import { locationActions, } from "./location-actions";
 import { locationDetails, parseJsonList, } from "./location-details";
-import { log as rootLog, } from "./logger";
 import { timeWeatherWidget, } from "./time-weather";
 import { travelInterface, } from "./travel-interface";
 import { parseOr, } from "./validation";
+import { fetchWorldJson, } from "./world-fetch";
 import { worldLore, } from "./world-lore";
 import type {
   WorldConditionsSnapshot,
@@ -31,8 +30,6 @@ import type {
   WorldPageState,
   WorldSummary,
 } from "./world-types";
-
-const log = rootLog.child({ module: "world", },);
 
 /** Strict decoder for the SSE `conditions` event payload. */
 const ConditionsEvent = Type.Object({
@@ -119,12 +116,8 @@ function coreState(worldId: string,): WorldPageState {
       this.worldLoading = true;
       this.worldError = false;
       try {
-        const res = await apiFetch(`/api/v1/worlds/${this.worldId}`, {
-          headers: { Accept: "application/json", },
-        },);
-
-        if (res.ok) {
-          const data = (await res.json()) as Partial<WorldSummary>;
+        const data = await fetchWorldJson<Partial<WorldSummary>>(this.worldId, "",);
+        if (data) {
           this.world = {
             id: this.worldId,
             name: data.name ?? "",
@@ -134,9 +127,7 @@ function coreState(worldId: string,): WorldPageState {
         } else {
           this.worldError = true;
         }
-      } catch (error) {
-        log.warn("world load failed", { error: String(error,), },);
-
+      } catch {
         this.worldError = true;
       } finally {
         this.worldLoading = false;
@@ -147,12 +138,12 @@ function coreState(worldId: string,): WorldPageState {
     async loadLocations(this: WorldPageState,) {
       this.locationsLoading = true;
       try {
-        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations?pageSize=500`, {
-          headers: { Accept: "application/json", },
-        },);
+        const body = await fetchWorldJson<{ data?: Partial<WorldLocationLite>[] }>(
+          this.worldId,
+          "/locations?pageSize=500",
+        );
 
-        if (res.ok) {
-          const body = (await res.json()) as { data?: Partial<WorldLocationLite>[] };
+        if (body) {
           this.locations = (body.data ?? []).map((l,) => ({
             id: l.id ?? "",
             name: l.name ?? "",
@@ -168,8 +159,6 @@ function coreState(worldId: string,): WorldPageState {
             this.originId = this.locations[0]!.id;
           }
         }
-      } catch (error) {
-        log.warn("world locations load failed", { error: String(error,), },);
       } finally {
         this.locationsLoading = false;
       }
@@ -226,6 +215,14 @@ function coreState(worldId: string,): WorldPageState {
      */
     connectionIdsOf(this: WorldPageState, location: WorldLocationLite,): string[] {
       return parseJsonList(location.connections,);
+    },
+
+    /** Shared <option> view-model for the location-options.html partial. */
+    get optionItems(): WorldLocationLite[] {
+      // The literal is assembled with MIXIN_DESCRIPTORS at runtime; the
+      // compiler cannot see the merged shape, so read it via the annotated view.
+      const self = this as unknown as WorldPageState;
+      return self.locations;
     },
   } as unknown as WorldPageState;
 }

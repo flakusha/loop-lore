@@ -104,6 +104,8 @@ export interface ChatLocationState {
   joinLocationChat(chatId: string,): Promise<void>;
   readonly selectedLocationName: string | null;
   readonly currentLocationName: string | null;
+  /** Shared <option> view-model consumed by location-options.html. */
+  readonly optionItems: { id: string; name: string; description: string | null }[];
   changeChatLocation(): Promise<void>;
   transferChatLocation(): Promise<void>;
   _locationWorldId(): Promise<string | null>;
