@@ -9,6 +9,7 @@
  * (see `epic-item-systems-unification` / A8 close-out).
  */
 export { craftingAttemptRoutes, } from "./attempt";
+export { craftingDiscoveryRoutes, } from "./discoveries";
 export { craftingOrderRoutes, } from "./orders";
 export { craftingRecipeRoutes, } from "./recipes";
 export { craftingStationRoutes, } from "./stations";
