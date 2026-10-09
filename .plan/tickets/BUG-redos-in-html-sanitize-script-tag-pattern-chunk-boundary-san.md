@@ -10,7 +10,7 @@
 **Summary:** `src/regex/html-sanitize.ts` (via `src/regex/html-sanitize-core.ts`) applies `sanitizeHtml` per chunk in the SSE streaming path. When a `<script>...</script>` tag pair is split across two SSE chunks, the per-chunk `sanitizeHtml` processes chunk 1's raw `<script>alert(1)` (no closer) and emits it unsanitized, then chunk 2's `</script>` closes the tag client-side. `src/regex/html-sanitize-streaming.ts` (introduced to fix this) provides `createStreamingSanitizer` which holds back incomplete tag openers until the matching closer arrives.
 **Context:** Found 2026-08-25 security review. `src/generation/auto-gen/call-llm.ts` imports `createStreamingSanitizer`. `src/regex/html-sanitize-streaming.test.ts` explicitly tests the chunk-boundary attack. The fix is already in place.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Git Issue:** b465c08
+**Git Issue:** b465b08
 
 ## What
 

@@ -2109,7 +2109,6 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-// hint: Logic changed on both sides. Requires understanding intent of each change.
 - **Tags:** frontend, chat, group-chat, emoji, reactions, a11y
 - **File:** `.plan/epics/epic-frontend-emoji-reactions.md`
 
@@ -2146,7 +2145,6 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-// hint: Logic changed on both sides. Requires understanding intent of each change.
 - **Tags:** chat, slash-commands, composer, autocomplete, command-palette, assistant-flows, group-chat
 - **File:** `.plan/epics/epic-frontend-chat-commands.md`
 
@@ -3357,3 +3355,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+
