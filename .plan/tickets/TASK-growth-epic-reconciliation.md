@@ -21,13 +21,13 @@ Epic task table (§300-313) was stale: every row read Not Started while the code
 
 - `src/validation/schemas/actors.ts` — declared `growthMode` (dynamic|static) + `llmAssistEnabled` on `ActorUpdateBody`.
 - `src/frontend/character-growth-editor.ts` (+ test) — `saveMode` sends CHAR-1 `dataVersion` and refreshes it from the PUT response.
-- `src/routes/views/character-growth-section.ts` (new, 80L) — server-rendered Growth & Arc section seeded from the actors row + `character_arc`; mounted in `character-edit-form.ts`; `characters.ts` queries the arc row.
-- `src/partials/characters/detail-modal.html` + `src/frontend/pages/characters-journey.ts` (new, 63L) — modal journey slot rendering arc stage + last 3 applied entries (player-safe: no pending/internal drift detail).
+- `src/routes/views/character-growth-section.ts` (new, 101L) — server-rendered Growth & Arc section seeded from the actors row + `character_arc`; mounted in `character-edit-form.ts`; `characters.ts` queries the arc row.
+- `src/partials/characters/detail-modal.html` + `src/frontend/pages/characters-journey.ts` (new, 74L) — modal journey slot rendering arc stage + last 3 applied entries (player-safe: no pending/internal drift detail).
 - Epic task table reconciled with file:line evidence; only llm-assist stays Open.
 - `src/views/partials/character-growth-editor.html` + `character-journey.html` remain as reference templates (unreferenced); the live surfaces are the server-rendered section + modal slot above.
 
 **Acceptance Criteria:**
 
 - [x] Implementation complete
-- [ ] Tests passing (orchestrator verifies at phase end — gates skipped per assignment)
+- [x] Tests passing — verified 2026-10-09: 39 pass / 0 fail across `character-growth-editor.test.ts`, `character-growth-section.test.ts`, `character-edit-form.test.ts`, `characters-journey.test.ts`
 - [x] Documentation updated
