@@ -7,8 +7,13 @@
   the popover; this partial only renders trigger + tooltip:
 
     <span class="info-bubble-host" x-data="infoBubble({ helpKey: 'help.settings.theme' })">
-      {{> info-bubble.html }}
+      ...then the info-bubble.html include
     </span>
+
+  The example names the include in prose, never verbatim: resolveIncludes()
+  expands include directives before HTML comments are stripped, so writing
+  the real one inside this component is a direct self-include and 500s every
+  view that pulls in the bubble (same trap as text-toolbar.html).
 
   Dismissal mirrors the emoji-reactions popover contract (Escape +
   click-away via declarative handlers, same as message-list.html); the
