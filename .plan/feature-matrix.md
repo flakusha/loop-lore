@@ -1157,7 +1157,7 @@ Total tickets: **3424** — untagged: **2858** — unbound to epic: **1554**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2858 | 1150 | 58 | 1209 | 36 | 0 | 405 |
+| (untagged) | 2858 | 1151 | 58 | 1208 | 36 | 0 | 405 |
 
 ## By epic × status
 
@@ -1216,7 +1216,7 @@ Total tickets: **3424** — untagged: **2858** — unbound to epic: **1554**
 | epic-assistant-creative-studio-workflows | 12 | 2 | 0 | 0 | 10 | 0 | 0 |
 | epic-assistant-entity-access | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-assistant-generation-extensions | 9 | 2 | 0 | 5 | 0 | 0 | 2 |
-| epic-assistant-gm-flows | 32 | 8 | 4 | 17 | 0 | 0 | 3 |
+| epic-assistant-gm-flows | 32 | 9 | 4 | 16 | 0 | 0 | 3 |
 | epic-assistant-step-planning | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | epic-audio-video-sound | 9 | 0 | 0 | 6 | 0 | 0 | 3 |
 | epic-auth | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
