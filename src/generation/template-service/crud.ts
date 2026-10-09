@@ -206,8 +206,8 @@ export async function updateTemplate(
   const serialized = serializeTemplateInput(merged,);
   if (!serialized.ok) { throw new Error(serialized.error,); }
 
-  // bun:sqlite Kysely dialect does not surface RETURNING rows on UPDATE —
-  // execute, then re-select (repo-wide convention).
+  // execute, then re-select (repo-wide convention — this path also owns the
+  // not-found case via getOwnedTemplate's 404).
   await db.updateTable("prompt_templates",)
     .set({
       ...merged,
