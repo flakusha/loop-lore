@@ -14168,6 +14168,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-enemies-monsters.md"
     },
     {
@@ -15118,10 +15122,6 @@
     }
   ],
   "src/db/migrations/parts/006_messages_keys.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-045.md"
