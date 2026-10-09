@@ -347,12 +347,17 @@ describeOrSkip("TUIApp", () => {
     expect(statusBar().content,).toContain("load failed",);
   });
 
-  it("destroys the screen and exits on the quit keys", () => {
-    const app = createTUIApp();
-    exitSpy = spyOn(process, "exit",).mockImplementation((() => {}) as never,);
+  // Parameterized over ALL THREE names on the quit binding. A single-case
+  // version silently accepts dropping `q` or `C-c` from the array — verified by
+  // mutation: narrowing the binding to escape alone left the suite green.
+  for (const quitKey of ["escape", "q", "C-c",]) {
+    it(`destroys the screen and exits on ${quitKey}`, () => {
+      const app = createTUIApp();
+      exitSpy = spyOn(process, "exit",).mockImplementation((() => {}) as never,);
 
-    pressKey(app, "escape",);
-    expect((app.screen as unknown as WidgetStub).destroyed,).toBe(true,);
-    expect(exitSpy,).toHaveBeenCalledWith(0,);
-  });
+      pressKey(app, quitKey,);
+      expect((app.screen as unknown as WidgetStub).destroyed,).toBe(true,);
+      expect(exitSpy,).toHaveBeenCalledWith(0,);
+    });
+  }
 },);
