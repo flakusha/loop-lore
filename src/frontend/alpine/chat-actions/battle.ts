@@ -8,7 +8,7 @@
  * chat-action router) so each file stays under 250L.
  */
 
-import type { BattleCombatantView, BattleView, } from "../../battle/panel";
+import type { BattleCombatantView, BattleItemView, BattleView, } from "../../battle/panel";
 
 import type { ActionHandler, } from "./dispatch";
 
@@ -43,6 +43,7 @@ function renderBattleFromPayload(
     round: raw.round,
     turnIndex: raw.turnIndex,
     combatants,
+    items: Array.isArray(raw.items,) ? raw.items.filter(isItemShape,) : [],
   };
 
   const panel = ctx as { renderBattlePanel(view: BattleView,): void } | null;
@@ -59,6 +60,7 @@ function isBattleViewShape(value: unknown,): value is {
   round: number;
   turnIndex: number;
   combatants: unknown[];
+  items?: unknown;
 } {
   if (!value || typeof value !== "object") { return false; }
   const v = value as Record<string, unknown>;
@@ -85,6 +87,20 @@ function isCombatantShape(value: unknown,): value is BattleCombatantView {
     typeof v.hp === "number" &&
     typeof v.maxHp === "number" &&
     typeof v.initiative === "number"
+  );
+}
+
+/**
+ * @param value
+ * @returns true when `value` has a battle-item view shape.
+ */
+function isItemShape(value: unknown,): value is BattleItemView {
+  if (!value || typeof value !== "object") { return false; }
+  const v = value as Record<string, unknown>;
+  return (
+    typeof v.id === "string" &&
+    typeof v.name === "string" &&
+    typeof v.quantity === "number"
   );
 }
 
