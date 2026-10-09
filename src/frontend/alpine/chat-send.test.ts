@@ -334,6 +334,205 @@ describe("chatSendMethods.sendMessage — failure paths", () => {
   });
 });
 
+describe("chatSendMethods.interceptSlashSend", () => {
+  type SlashCtx = SendCtx & {
+    messages: { id: string; role: string; content: string; created_at: string }[];
+    _commandList?: { name: string }[];
+    activeAttemptId?: string | null;
+    continueMessage?: (id: string,) => Promise<void>;
+    retryFromPoint?: (id: string, step: number,) => Promise<void>;
+    forkFromMessage?: (id: string, name?: string,) => Promise<void>;
+    interceptSlashSend?: (text: string, input: HTMLTextAreaElement,) => Promise<boolean>;
+  };
+
+  function slashCtx(overrides?: Partial<SlashCtx>,): SlashCtx {
+    return buildCtx({
+      messages: [],
+      ...overrides,
+    },) as SlashCtx;
+  }
+
+  function msg(id: string, role: string,): { id: string; role: string; content: string; created_at: string } {
+    return { id, role, content: "", created_at: "2026-01-01T00:00:00.000Z", };
+  }
+
+  test("empty command name passes through to a normal send", async () => {
+    const ctx = slashCtx();
+    const input = { value: "/", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/", input,),).toBe(false,);
+  });
+
+  test("/continue resumes the last assistant message and clears the input", async () => {
+    const continued: string[] = [];
+    const ctx = slashCtx({
+      messages: [msg("u1", "user",), msg("a1", "assistant",),],
+      continueMessage: async (id,) => {
+        continued.push(id,);
+      },
+    },);
+
+    const input = { value: "/continue", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/continue", input,),).toBe(true,);
+    expect(continued,).toEqual(["a1",],);
+    expect(input.value,).toBe("",);
+  });
+
+  test("/continue with no prior assistant message warns", async () => {
+    const ctx = slashCtx({ messages: [msg("u1", "user",),], },);
+    const input = { value: "/continue", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/continue", input,),).toBe(true,);
+    expect(ctx.toasts[0]!.type,).toBe("warning",);
+  });
+
+  test("/continue works when the cross-slice method is absent", async () => {
+    const ctx = slashCtx({ messages: [msg("a1", "character",),], },);
+
+    delete ctx.continueMessage;
+    const input = { value: "/continue", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/continue", input,),).toBe(true,);
+    expect(input.value,).toBe("",);
+  });
+
+  test("/retry prefers the active attempt and parses the step", async () => {
+    const retried: [string, number,][] = [];
+    const ctx = slashCtx({
+      activeAttemptId: "a1",
+      retryFromPoint: async (id, step,) => {
+        retried.push([id, step,],);
+      },
+    },);
+
+    const input = { value: "/retry 2", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/retry 2", input,),).toBe(true,);
+    expect(retried,).toEqual([["a1", 2,],],);
+    expect(input.value,).toBe("",);
+  });
+
+  test("/retry takes the attempt id from args when no attempt is active", async () => {
+    const retried: [string, number,][] = [];
+    const ctx = slashCtx({
+      activeAttemptId: null,
+      retryFromPoint: async (id, step,) => {
+        retried.push([id, step,],);
+      },
+    },);
+
+    const input = { value: "/retry a9 3", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/retry a9 3", input,),).toBe(true,);
+    expect(retried,).toEqual([["a9", 3,],],);
+  });
+
+  test("/retry with no attempt id warns", async () => {
+    const ctx = slashCtx({ activeAttemptId: null, },);
+    const input = { value: "/retry", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/retry", input,),).toBe(true,);
+    expect(ctx.toasts[0]!.type,).toBe("warning",);
+  });
+
+  test("/branch forks the last assistant message with the trailing prompt", async () => {
+    const forked: [string, string | undefined,][] = [];
+    const ctx = slashCtx({
+      messages: [msg("a1", "assistant",),],
+      forkFromMessage: async (id, name,) => {
+        forked.push([id, name,],);
+      },
+    },);
+
+    const input = { value: "/branch alt take", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/branch alt take", input,),).toBe(true,);
+    expect(forked,).toEqual([["a1", "alt take",],],);
+    expect(input.value,).toBe("",);
+  });
+
+  test("/branch with no prior assistant message warns", async () => {
+    const ctx = slashCtx({ messages: [], },);
+    const input = { value: "/branch", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/branch", input,),).toBe(true,);
+    expect(ctx.toasts[0]!.type,).toBe("warning",);
+  });
+
+  test("unknown commands toast, with a did-you-mean hint when close", async () => {
+    const ctx = slashCtx({ _commandList: [{ name: "roll", }, { name: "help", },], },);
+    const input = { value: "/rol", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/rol", input,),).toBe(true,);
+    expect(ctx.toasts[0]!.type,).toBe("warning",);
+    expect(String(ctx.toasts[0]!.message,),).toContain("/rol",);
+    expect(String(ctx.toasts[0]!.message,),).toContain("/roll",);
+  });
+
+  test("unknown commands toast plainly when nothing is near", async () => {
+    const ctx = slashCtx({ _commandList: [{ name: "roll", },], },);
+    const input = { value: "/zzz", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/zzz", input,),).toBe(true,);
+    expect(ctx.toasts[0]!.type,).toBe("warning",);
+    expect(String(ctx.toasts[0]!.message,),).toContain("/zzz",);
+  });
+
+  test("known commands and an empty registry pass through", async () => {
+    const ctx = slashCtx({ _commandList: [{ name: "roll", },], },);
+    const input = { value: "/roll", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(ctx as never, "/roll", input,),).toBe(false,);
+    const bare = slashCtx();
+    const bareInput = { value: "/zzz", } as unknown as HTMLTextAreaElement;
+
+    expect(await chatSendMethods.interceptSlashSend!.call(bare as never, "/zzz", bareInput,),).toBe(false,);
+  });
+
+  test("sendMessage routes slash text through the interceptor", async () => {
+    const continued: string[] = [];
+    const ctx = slashCtx({
+      messages: [msg("a1", "assistant",),],
+      interceptSlashSend: chatSendMethods.interceptSlashSend,
+      continueMessage: async (id,) => {
+        continued.push(id,);
+      },
+    },);
+
+    ctx.$refs.messageInput.value = "/continue";
+    handler = async () => Response.json({ id: "m1", },);
+    await chatSendMethods.sendMessage!.call(ctx as never,);
+    expect(continued,).toEqual(["a1",],);
+    expect(calls,).toEqual([],);
+  });
+
+  test("sendMessage skips interception when assets are pending or the slice is absent", async () => {
+    const intercepted: string[] = [];
+    const ctx = slashCtx({
+      pendingAssets: [{ assetId: "a1", filename: "pic.png", },],
+      interceptSlashSend: async (text: string,) => {
+        intercepted.push(text,);
+
+        return true;
+      },
+    },);
+
+    ctx.$refs.messageInput.value = "/continue";
+    handler = async () => Response.json({ id: "m1", },);
+    await chatSendMethods.sendMessage!.call(ctx as never,);
+    expect(intercepted,).toEqual([],);
+    expect(calls.length,).toBeGreaterThan(0,);
+    const bare = buildCtx();
+
+    delete (bare as unknown as Record<string, unknown>).interceptSlashSend;
+    bare.$refs.messageInput.value = "/roll";
+    handler = async () => Response.json({ id: "m1", },);
+    await chatSendMethods.sendMessage!.call(bare as never,);
+    expect(calls.length,).toBeGreaterThan(0,);
+  });
+});
+
 describe("chatSendMethods.sendMessage — composer drafts", () => {
   test("clears the composer draft after a successful send", async () => {
     const ctx = buildCtx();

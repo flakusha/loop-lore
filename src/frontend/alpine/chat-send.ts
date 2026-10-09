@@ -108,7 +108,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.nothingToContinue",), },);
       } else {
         input.value = "";
-        await this.continueMessage(target,);
+        await this.continueMessage?.(target,);
       }
 
       return true;
@@ -125,7 +125,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.nothingToRetry",), },);
       } else {
         input.value = "";
-        await this.retryFromPoint(String(attemptId,), Number.isFinite(step,) ? step : 0,);
+        await this.retryFromPoint?.(String(attemptId,), Number.isFinite(step,) ? step : 0,);
       }
 
       return true;
@@ -137,7 +137,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.nothingToBranch",), },);
       } else {
         input.value = "";
-        await this.forkFromMessage(target, args.join(" ",) || undefined,);
+        await this.forkFromMessage?.(target, args.join(" ",) || undefined,);
       }
 
       return true;
