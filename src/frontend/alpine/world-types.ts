@@ -197,6 +197,19 @@ export interface TravelStatusPayload {
   parties: PartyStatus[];
 }
 
+/** GET /worlds/:worldId/lore-entries row (camelCase projection). */
+export interface WorldLoreEntry {
+  id: string;
+  name: string | null;
+  content: string;
+  /** Raw JSON string of trigger keys; parse with `parseLoreKeys`. */
+  keys: string | null;
+  enabled: string;
+  constant: number | null;
+  priority: number | null;
+  comment: string | null;
+}
+
 /** The merged world-page Alpine state. Mixins fill disjoint slices. */
 export interface WorldPageState {
   // ── core (world.ts) ──
@@ -236,6 +249,23 @@ export interface WorldPageState {
   showItems: boolean;
   readonly detailHazards: string[];
   readonly detailItems: string[];
+
+  // ── lore editor (world-lore.ts) ──
+  loreEntries: WorldLoreEntry[];
+  loreLoading: boolean;
+  loreError: boolean;
+  loreFormOpen: boolean;
+  loreEditingId: string | null;
+  loreBusy: boolean;
+  loreMessage: string;
+  loreForm: { name: string; keys: string; content: string; priority: string; constant: boolean };
+  loadLore(): Promise<void>;
+  openLoreForm(id: string | null,): void;
+  cancelLoreForm(): void;
+  saveLore(): Promise<void>;
+  deleteLore(id: string,): Promise<void>;
+  parseLoreKeys(raw: string | null | undefined,): string[];
+  readonly loreGroups: { constant: WorldLoreEntry[]; enabled: WorldLoreEntry[]; disabled: WorldLoreEntry[] };
   selectLocation(id: string,): Promise<void>;
   loadLocationDetail(id: string,): Promise<void>;
 
