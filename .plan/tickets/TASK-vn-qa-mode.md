@@ -144,7 +144,7 @@ interface VNConsequence {
 
 ### Q&A Interaction Loop — shipped 2026-10-09 (minimal, choices-parity)
 
-Implemented: migration `047_vn_questions`, service `src/chat/service/vn-questions.ts`,
+Implemented: migration `050_vn_questions`, service `src/chat/service/vn-questions.ts`,
 routes `src/routes/chats/vn-questions.ts` + `src/routes/vn-generate/questions.ts`,
 frontend `src/frontend/vn/question-cards{,-render}.ts`, mounted from
 `scene-renderer/render-scene.ts`.
@@ -222,7 +222,7 @@ Shipped paths (the list originally guessed `src/frontend/alpine/qa-mode.ts` and
 - `src/routes/vn-generate/questions.ts` — LLM generation, mounted from
   `vn-generate/index.ts` alongside `storyRoutes`/`choicesRoutes`
 - `src/chat/service/vn-questions.ts` — service layer
-- `src/db/migrations/047_vn_questions.ts` — table + indexes
+- `src/db/migrations/050_vn_questions.ts` — table + indexes
 
 ## Related Tickets
 
