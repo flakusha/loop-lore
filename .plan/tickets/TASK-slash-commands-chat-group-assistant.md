@@ -10,7 +10,7 @@
 
 
 **Epic:** epic-frontend-chat-commands
-**Status:** In Progress
+**Status:** Done
 
 **Progress:** `interceptSlashSend` routes `/continue` (resume last
 assistant/character message via `continueMessage`), `/retry [attempt step]`
@@ -36,3 +36,5 @@ palette hides disallowed commands with `_hiddenCommandCount` explanation
 
 - `/help` lists only commands allowed in current scope+role.
 - Assistant `/continue` after reload resumes, not restarts, the flow.
+
+**Resolved:** 2026-10-09 registry-driven close: git issue 496b541 (registry tip: 12144ce58 Konstantin Fedotov Close issue)
