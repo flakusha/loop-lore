@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /** Question card DOM rendering. Mirrors ./choice-cards-render.ts. */
+import { t, } from "../alpine/i18n";
 import type { VnQuestion, VnQuestionOption, } from "./question-cards";
 
 // ── Internal ────────────────────────────────────────────────────────────────
@@ -26,6 +27,7 @@ export function renderQuestionCards(
   container: HTMLElement,
   questions: VnQuestion[],
   onAnswer: (questionId: string, optionId: string,) => void,
+  onSkip?: (questionId: string,) => void,
 ): void {
   if (!container) {
     return;
@@ -96,6 +98,20 @@ export function renderQuestionCards(
     // dead card rather than a zero-button card the player can never answer.
     for (const option of question.options ?? []) {
       options.append(renderOption(question, option,),);
+    }
+
+    // Skip control, shown only while the question is still open.
+    if (question.status === "available" && onSkip) {
+      const skip = document.createElement("button",);
+      skip.className = "vn-question-skip";
+      skip.type = "button";
+      skip.dataset.questionId = question.id;
+      skip.textContent = t("toasts.vnSkipQuestion",);
+      skip.addEventListener("click", () => {
+        void onSkip(question.id,);
+      },);
+
+      card.append(skip,);
     }
 
     card.append(options,);

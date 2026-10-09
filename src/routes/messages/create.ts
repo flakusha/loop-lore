@@ -15,7 +15,12 @@ import { ChatIdParams, ErrorResponse, MessageCreateBody, } from "../../validatio
 import { badRequestResponse, jsonCreated, requireUserId, } from "../http-utils";
 import { dispatchCommand, } from "./command";
 import { createEntityConfirmRoutes, } from "./create-entity-confirm";
-import { attachAttachmentsOrForbidden, enforceInjectionGate, enforceMuteGate, } from "./guards";
+import {
+  attachAttachmentsOrForbidden,
+  enforceInjectionGate,
+  enforceMuteGate,
+  enforceVnDecisionGate,
+} from "./guards";
 import { serviceErrorToResponse, } from "./helpers";
 import { persistInitiative, } from "./initiative";
 import { insertUserMessageRow, } from "./insert-message";
@@ -75,6 +80,18 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (existingId) {
           return jsonCreated({ id: existingId, context: {}, },);
         }
+
+        // ── VN decision gate ────────────────────────────────────────
+        // Deliberately AFTER the idempotency short-circuit above, not beside
+        // enforceMuteGate: that block documents that a retried POST returns
+        // the original row without re-running any side effect. Gating earlier
+        // would turn an idempotent retry into a 409, which is exactly the bug
+        // the short-circuit exists to prevent.
+        //
+        // Still precedes every real side effect (message row write, backoff
+        // resets, GM tool execution), which is what makes the gate meaningful.
+        const vnDecisionRejection = await enforceVnDecisionGate(database, chatId, actorId,);
+        if (vnDecisionRejection) { return vnDecisionRejection; }
 
         // ── `@asset:<id>` attachment mentions (component-buttons AC6/AC4) ──
         // Capture the ids before translation/moderation see the text, then
@@ -264,6 +281,8 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           401: ErrorResponse,
           403: ErrorResponse,
           404: ErrorResponse,
+          // Pending VN choice / question — a state conflict, not a permission one.
+          409: ErrorResponse,
           503: ErrorResponse,
         },
       },

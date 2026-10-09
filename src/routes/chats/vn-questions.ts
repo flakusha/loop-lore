@@ -13,7 +13,7 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { checkChatAccess, } from "../../chat/service";
-import { answerVnQuestion, listVnQuestions, } from "../../chat/service/vn-questions";
+import { answerVnQuestion, dismissVnQuestion, listVnQuestions, } from "../../chat/service/vn-questions";
 import type { DB, } from "../../db/schema";
 import { HttpStatus, type HttpStatusCode, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { serviceErrorToResponse, } from "../messages/helpers";
@@ -49,6 +49,11 @@ export function vnQuestionRoutes(opts: HandlerOpts, prefix = "/api",) {
         `${prefix}/chats/:id/vn-questions/:questionId/answer`,
         handleAnswerVnQuestion(database,),
         { params: tAnswerParams, body: AnswerBodySchema, },
+      )
+      .post(
+        `${prefix}/chats/:id/vn-questions/:questionId/dismiss`,
+        handleDismissVnQuestion(database,),
+        { params: tAnswerParams, },
       )
   );
 }
@@ -122,5 +127,37 @@ function handleAnswerVnQuestion(database: Kysely<DB>,) {
       relationshipImpact: result.question.relationship_impact,
       moodImpact: result.question.mood_impact,
     },);
+  };
+}
+
+/**
+ * Skip a pending question without answering it. Reopens free sending.
+ * @param database
+ */
+function handleDismissVnQuestion(database: Kysely<DB>,) {
+  return async (ctx: any,) => {
+    const userId = requireUserId(ctx,);
+    if (typeof userId !== "string") { return userId; }
+
+    // IDOR guard, same shape as answer: a question from another chat must read
+    // as not_found rather than being dismissable cross-chat.
+    const chatId = ctx.params.id;
+    const userRole = ctx.userRole as string | null;
+    const access = await checkChatAccess(database, chatId, userId, userRole,);
+    if (!access.ok) {
+      return serviceErrorToResponse(access.error,);
+    }
+
+    const questionId = ctx.params.questionId;
+    if (!questionId) {
+      return jsonError("questionId is required", HttpStatus.BadRequest,);
+    }
+
+    const result = await dismissVnQuestion(database, { chatId, questionId, },);
+    if ("code" in result) {
+      return jsonError(result.message, HttpStatus.NotFound, result.code as never,);
+    }
+
+    return jsonResponse({ dismissed: result.questionId, },);
   };
 }

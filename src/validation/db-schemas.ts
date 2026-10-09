@@ -585,7 +585,7 @@ export const UserRoleSchema = t.UnionEnum([
 ],);
 export const UserStatusSchema = t.UnionEnum(["active", "disabled", "deactivated",],);
 export const VisibilityOverrideSchema = t.UnionEnum(["none", "private", "unlisted", "public",],);
-export const VnChoiceStatusSchema = t.UnionEnum(["available", "selected",],);
+export const VnChoiceStatusSchema = t.UnionEnum(["available", "selected", "dismissed",],);
 export const WhiteneoteScopeSchema = t.UnionEnum(["scene", "chapter", "session", "world",],);
 export const WhiteneoteTypeSchema = t.UnionEnum([
   "narrative_direction",

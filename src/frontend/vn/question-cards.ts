@@ -10,6 +10,7 @@
  */
 import { apiFetch, } from "../alpine/htmx";
 import { jsonBody, } from "../alpine/json";
+import { setVnDecisionPending, } from "./pending-decision";
 import { renderQuestionCards, } from "./question-cards-render";
 
 const LOCATION_CHANGED_EVENT = "chat:location-changed";
@@ -83,6 +84,9 @@ export function initQuestionCards(
 
 /** Destroy the question cards component. */
 export function destroyQuestionCards(): void {
+  // Leaving the flag set would wedge the composer: the cards are gone, so
+  // nothing can resolve the decision the gate is still waiting on.
+  setVnDecisionPending(false,);
   container = null;
   chatId = null;
   questions = [];
@@ -101,10 +105,37 @@ export async function loadQuestions(): Promise<void> {
     const raw: VnQuestion[] = data.questions ?? data.data ?? [];
     questions = Array.from(raw, (q,) => ({ ...q, options: q.options ?? [], }),);
 
+    setVnDecisionPending(questions.some((q,) => q.status === "available"),);
     renderQuestions();
   } catch {
     questions = [];
+    setVnDecisionPending(false,);
   }
+}
+
+/**
+ * Skip a pending question — the escape hatch out of the VN decision gate.
+ * @param questionId
+ * @returns {Promise<boolean>} true when the skip was accepted.
+ */
+export async function skipQuestion(questionId: string,): Promise<boolean> {
+  if (!chatId) { return false; }
+
+  try {
+    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-questions/${questionId}/dismiss`, {
+      method: "POST",
+    },);
+
+    if (!res.ok) { return false; }
+  } catch {
+    return false;
+  }
+
+  questions = questions.filter((q,) => q.id !== questionId);
+  setVnDecisionPending(questions.some((q,) => q.status === "available"),);
+  renderQuestions();
+
+  return true;
 }
 
 /**
@@ -137,6 +168,9 @@ export async function answerQuestion(
 
     const updated: VnQuestion = { ...returned, status: "answered", selected_option_id: optionId, };
     questions = Array.from(questions, (q, i,) => (i === idx ? updated : q),);
+    // Answering one question leaves its siblings 'available' server-side, so
+    // the gate stays closed while any remain.
+    setVnDecisionPending(questions.some((q,) => q.status === "available"),);
 
     let locationChanged = false;
     if (locationId) {
@@ -174,7 +208,12 @@ export async function answerQuestion(
  */
 function renderQuestions(): void {
   if (!container) { return; }
-  renderQuestionCards(container, questions, (questionId, optionId,) => {
-    void answerQuestion(questionId, optionId,);
-  },);
+  renderQuestionCards(
+    container,
+    questions,
+    (questionId, optionId,) => {
+      void answerQuestion(questionId, optionId,);
+    },
+    (questionId,) => void skipQuestion(questionId,),
+  );
 }

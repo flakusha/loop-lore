@@ -15,6 +15,7 @@
  */
 
 import { browserCompressThenEncrypt, browserRandomUUIDv7, } from "../browser";
+import { isVnDecisionPending, } from "../vn/pending-decision";
 import { requireActiveChat, } from "./chat-guards";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -171,6 +172,27 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
     if (text.startsWith("/",) && pendingAssets.length === 0 && typeof this.interceptSlashSend === "function") {
       const handled = await this.interceptSlashSend(text, input,);
       if (handled) { return; }
+    }
+
+    // VN decision gate (client side). The server is authoritative —
+    // enforceVnDecisionGate 409s regardless of what happens here. This exists
+    // only so the player does not see a message optimistically appear and then
+    // roll back: the push below happens at ~188 and the input clears at ~197,
+    // both BEFORE the POST.
+    //
+    // Placed AFTER slash interception so /continue, /retry and /branch keep
+    // working while a decision is pending — the gate blocks free send, not the
+    // command surface.
+    //
+    // _autoFired sends are exempt: the automated loop cannot answer a card, so
+    // gating it would deadlock the loop's own consecutive-fire guard.
+    if (!this._autoFired && isVnDecisionPending()) {
+      this.$dispatch?.("show-toast", {
+        type: "warning",
+        message: t("toasts.vnDecisionPending",),
+      },);
+
+      return;
     }
 
     // A human-initiated send resets the automated-fire consecutive counter.
