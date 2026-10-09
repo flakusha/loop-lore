@@ -1154,7 +1154,7 @@ Total tickets: **3417** — untagged: **2858** — unbound to epic: **1554**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2858 | 1149 | 58 | 1210 | 36 | 0 | 405 |
+| (untagged) | 2858 | 1150 | 58 | 1209 | 36 | 0 | 405 |
 
 ## By epic × status
 
@@ -1302,7 +1302,7 @@ Total tickets: **3417** — untagged: **2858** — unbound to epic: **1554**
 | epic-frontend-age-gate | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-frontend-backend-integration | 27 | 11 | 1 | 15 | 0 | 0 | 0 |
 | epic-frontend-bundle-optimization | 8 | 1 | 0 | 7 | 0 | 0 | 0 |
-| epic-frontend-chat-commands | 5 | 2 | 0 | 1 | 0 | 0 | 2 |
+| epic-frontend-chat-commands | 5 | 3 | 0 | 0 | 0 | 0 | 2 |
 | epic-frontend-components | 3 | 2 | 0 | 1 | 0 | 0 | 0 |
 | epic-frontend-emoji-reactions | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-frontend-gallery | 9 | 4 | 0 | 5 | 0 | 0 | 0 |
