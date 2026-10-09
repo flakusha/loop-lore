@@ -19,6 +19,8 @@ import type {
   ItemCategory,
   KeyStatus,
   KeyType,
+  LocationEdgeMode,
+  LoreEntryStatus,
   MessageContentFormat,
   MessageContentType,
   MessageRole,
@@ -1097,45 +1099,6 @@ export interface WorldEventLog {
   dedupe_key: string;
   created_at: Generated<string>;
 }
-export interface ScheduledMessages {
-  id: Generated<string>;
-  chat_id: string;
-  author_id: string;
-  body: string;
-  send_at: string;
-  status: Generated<string>;
-}
-
-// ── message_reminders ────────────────────────────────────────────
-export interface MessageReminders {
-  id: Generated<string>;
-  message_id: string;
-  user_id: string;
-  remind_at: string;
-}
-
-export interface BranchMerges {
-  id: Generated<string>;
-  chat_id: string;
-  base_message_id: string;
-  mode: string;
-  status: Generated<string>;
-  result_message_id: string | null;
-  merged_branch_id: string | null;
-  created_by: string;
-  idempotency_key: string | null;
-  metadata: string | null;
-  created_at: Generated<string>;
-  confirmed_at: string | null;
-}
-
-export interface BranchMergeSources {
-  merge_id: string;
-  ordinal: number;
-  branch_id: string | null;
-  tip_message_id: string;
-}
-
 // ── chat_mentions ────────────────────────────────────────────
 export interface ChatMentions {
   id: Generated<string>;
@@ -2451,6 +2414,62 @@ export interface LocationDiscovery {
   last_explored_tick: Generated<number>;
   discovered: Generated<number>;
   discovered_tick: number | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── scheduled_messages ────────────────────────────────────────────
+export interface ScheduledMessages {
+  id: Generated<string>;
+  chat_id: string;
+  author_id: string;
+  body: string;
+  send_at: string;
+  status: Generated<string>;
+}
+
+// ── message_reminders ────────────────────────────────────────────
+export interface MessageReminders {
+  id: Generated<string>;
+  message_id: string;
+  user_id: string;
+  remind_at: string;
+}
+
+// ── branch_merges ────────────────────────────────────────────
+export interface BranchMerges {
+  id: Generated<string>;
+  chat_id: string;
+  base_message_id: string;
+  mode: string;
+  status: Generated<string>;
+  result_message_id: string | null;
+  merged_branch_id: string | null;
+  created_by: string;
+  idempotency_key: string | null;
+  metadata: string | null;
+  created_at: Generated<string>;
+  confirmed_at: string | null;
+}
+
+// ── branch_merge_sources ────────────────────────────────────────────
+export interface BranchMergeSources {
+  merge_id: string;
+  ordinal: number;
+  branch_id: string | null;
+  tip_message_id: string;
+}
+
+// ── location_edges ────────────────────────────────────────────
+export interface LocationEdges {
+  id: Generated<string>;
+  world_id: string;
+  from_id: string;
+  to_id: string;
+  mode: Generated<LocationEdgeMode>;
+  game_hours: Generated<number>;
+  requires_discovery: Generated<number>;
+  cost_json: Generated<string>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }

@@ -6,6 +6,7 @@ import { autonomyRoutes, } from "./autonomy-routes";
 import { chatsRoutes, } from "./chats";
 import { fractalLocationsRoutes, } from "./fractal-locations-routes";
 import { fractalTravelRoutes, } from "./fractal-travel-routes";
+import { locationEdgeRoutes, } from "./location-edges";
 import { locationRoutes, } from "./locations-routes";
 import { timelinesRoutes, } from "./timelines";
 import { travelStatusRoutes, } from "./travel-status";
@@ -27,5 +28,6 @@ export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
     .use(fractalLocationsRoutes(opts, prefix,),)
     .use(fractalTravelRoutes(opts, prefix,),)
     .use(worldStreamRoutes(opts, prefix,),)
-    .use(travelStatusRoutes(opts, prefix,),);
+    .use(travelStatusRoutes(opts, prefix,),)
+    .use(locationEdgeRoutes(opts, prefix,),);
 }

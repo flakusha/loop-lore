@@ -2157,6 +2157,18 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("location_edges", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    from_id: col("text", { notNull: true, },),
+    to_id: col("text", { notNull: true, },),
+    mode: col("text", { notNull: true, hasDefault: true, },),
+    game_hours: col("real", { notNull: true, hasDefault: true, },),
+    requires_discovery: col("integer", { notNull: true, hasDefault: true, },),
+    cost_json: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("location_nsfw_config", {
     id: col("text", { primaryKey: true, },),
     location_id: col("text", { notNull: true, },),
