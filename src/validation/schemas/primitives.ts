@@ -133,6 +133,7 @@ export const GmConfigSchema = t.Object({
   vnTypewriterSpeed: t.Optional(t.Number(),),
   vnTransition: t.Optional(t.UnionEnum(["fade", "cut", "dissolve", "slide", "wipe",],),),
   vnAutoAdvance: t.Optional(t.Boolean(),),
+  vnChoicesEnabled: t.Optional(t.Boolean(),),
   vnImageScaling: t.Optional(t.UnionEnum(["contain", "cover", "fill", "auto",],),),
   vnAutoAdvanceDelay: t.Optional(t.Number({ minimum: 0, },),),
   vnDialogueBoxOpacity: t.Optional(t.Number({ minimum: 0, maximum: 1, },),),

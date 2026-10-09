@@ -23,6 +23,14 @@ export interface VnSettings {
   dialogueBoxOpacity: number;
   portraitSize: number;
   splitRatio: number;
+  /**
+   * Per-chat opt-in for VN branching choices and Q&A cards.
+   *
+   * Deliberately absent from the localStorage merge below: every other field
+   * falls back to `stored.*`, but this one is a per-chat permission. Persisting
+   * it client-side would leak an opt-in from one chat into the next.
+   */
+  vnChoicesEnabled: boolean;
 }
 
 const STORAGE_KEY = "vn-settings";
@@ -39,6 +47,7 @@ const DEFAULTS: VnSettings = {
   dialogueBoxOpacity: 0.75,
   portraitSize: 35,
   splitRatio: 40,
+  vnChoicesEnabled: false,
 };
 
 /**
@@ -64,6 +73,8 @@ export function getVnSettings(gmConfig?: Record<string, unknown>,): VnSettings {
       DEFAULTS.dialogueBoxOpacity,
     portraitSize: (gmConfig?.vnPortraitSize as number) ?? stored.portraitSize ?? DEFAULTS.portraitSize,
     splitRatio: (gmConfig?.vnSplitRatio as number) ?? stored.splitRatio ?? DEFAULTS.splitRatio,
+    // No `stored.` fallback on purpose — see the VnSettings field doc.
+    vnChoicesEnabled: (gmConfig?.vnChoicesEnabled as boolean) ?? DEFAULTS.vnChoicesEnabled,
   };
 }
 

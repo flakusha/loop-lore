@@ -118,6 +118,8 @@ export interface ChatCoreState
   _vnTypewriterSpeed: number;
   _vnTransition: "fade" | "cut" | "dissolve" | "slide" | "wipe";
   _vnAutoAdvance: boolean;
+  /** Per-chat opt-in for VN branching choices and Q&A cards. */
+  _vnChoicesEnabled: boolean;
   /** VN image scaling (contain/cover/fill/auto). */
   _imageScaling: "contain" | "cover" | "fill" | "auto";
   /** VN auto-advance delay in seconds. */

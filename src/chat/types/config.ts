@@ -129,6 +129,8 @@ export interface GmConfig {
   vnTransition?: "fade" | "cut" | "dissolve" | "slide" | "wipe";
   /** VN auto-advance between scenes. */
   vnAutoAdvance?: boolean;
+  /** Per-chat opt-in for VN branching choices and Q&A cards. Default off. */
+  vnChoicesEnabled?: boolean;
   /** VN image scaling (contain/cover/fill/auto). */
   vnImageScaling?: "contain" | "cover" | "fill" | "auto";
   /** VN auto-advance delay in seconds. */

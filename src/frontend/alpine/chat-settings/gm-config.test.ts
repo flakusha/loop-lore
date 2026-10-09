@@ -1,4 +1,5 @@
 import { describe, expect, test, } from "bun:test";
+import { GM_CONFIG_PRESENTATION_KEYS as SERVER_GM_CONFIG_PRESENTATION_KEYS, } from "../../../chat/service/access";
 import type { GmConfig, } from "../types";
 import {
   buildActorModels,
@@ -27,6 +28,7 @@ const fullFields = {
   vnTypewriterSpeed: 60,
   vnTransition: "dissolve",
   vnAutoAdvance: true,
+  vnChoicesEnabled: true,
   imageScaling: "cover",
   autoAdvanceDelay: 9,
   dialogueBoxOpacity: 0.9,
@@ -58,6 +60,7 @@ describe("readGmSettings", () => {
       vnTypewriterSpeed: 30,
       vnTransition: "fade",
       vnAutoAdvance: false,
+      vnChoicesEnabled: false,
       imageScaling: "auto",
       autoAdvanceDelay: 5,
       dialogueBoxOpacity: 0.75,
@@ -96,6 +99,7 @@ describe("readGmSettings", () => {
       vnTypewriterSpeed: 10,
       vnTransition: "slide",
       vnAutoAdvance: true,
+      vnChoicesEnabled: true,
       vnImageScaling: "fill",
       vnAutoAdvanceDelay: 2,
       vnDialogueBoxOpacity: 0.5,
@@ -238,6 +242,29 @@ describe("presentationGmConfig", () => {
   test("returns an empty object for an empty or foreign blob", () => {
     expect(presentationGmConfig({},),).toEqual({},);
     expect(presentationGmConfig({ type: "human", },),).toEqual({},);
+  });
+
+  // vnChoicesEnabled is allowlisted on both sides. A one-sided edit is the
+  // failure this catches: the frontend would forward a key the backend 409s on,
+  // and the flag would silently never save.
+  test("the frontend allowlist matches the backend allowlist exactly", () => {
+    expect([...GM_CONFIG_PRESENTATION_KEYS,].sort(),).toEqual([...SERVER_GM_CONFIG_PRESENTATION_KEYS,].sort(),);
+  });
+
+  test("vnChoicesEnabled survives the presentation round trip", () => {
+    const out = presentationGmConfig({ vnChoicesEnabled: true, },);
+    expect(out,).toEqual({ vnChoicesEnabled: true, },);
+  });
+
+  test("vnChoicesEnabled survives buildGmConfig → readGmSettings", () => {
+    const base = readGmSettings({},);
+    const built = buildGmConfig({}, { ...base, vnChoicesEnabled: true, }, {},);
+    expect(built.vnChoicesEnabled,).toBe(true,);
+    expect(readGmSettings(built,).vnChoicesEnabled,).toBe(true,);
+  });
+
+  test("vnChoicesEnabled defaults to off for a chat that never set it", () => {
+    expect(readGmSettings({},).vnChoicesEnabled,).toBe(false,);
   });
 });
 

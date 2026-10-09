@@ -58,6 +58,7 @@ export const GM_CONFIG_PRESENTATION_KEYS = [
   "vnTypewriterSpeed",
   "vnTransition",
   "vnAutoAdvance",
+  "vnChoicesEnabled",
   "vnImageScaling",
   "vnAutoAdvanceDelay",
   "vnDialogueBoxOpacity",
