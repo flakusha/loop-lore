@@ -1,4 +1,5 @@
 import { afterAll, afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import "./i18n.test-helper";
 import { chatSendMethods, } from "./chat-send";
 import type { Message, } from "./types";
 
