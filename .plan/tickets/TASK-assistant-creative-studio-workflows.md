@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** entity-workflow slice shipped (schema + `entityTypes` loader domain, optional steps, regex intent routing, `entity-npc` end-to-end). Still open per the unchecked acceptance criteria below: `POST /api/generation/video` dispatch, `model-families.yaml` + formatter engine, frontend step UI + confirmation modal, plugin extension point, NSFW prefiltering/consent for third-party backends, Minimax H3 end-to-end integration test. Reopened 2026-10-09 — the ticket had been marked Done while most acceptance criteria were unchecked (git issue ad082ef had been auto-closed by the stale index Done; index entry previously cross-linked to the resolved doc-fidelity bug issue).
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Large
