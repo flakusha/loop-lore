@@ -4,7 +4,7 @@
 # EPIC-RESEARCH-AGENCY-DECISION: NPC Decision-Making Stack
 
 **Status:** Done
-**Status Note:** 2026-10-10 — all surfaces ship; telemetry AC is half-open by scope: `bdi:<step>` stamps have a production write path (dispatch consumes decisionEvents → recordActorDecisionType); `utility:<kind>` stamping waits on the reaction wiring (scoreReaction has no production caller yet — deliberate, not faked). Cadence, endpoint, and the other ACs are fully met (see Current State).
+**Status Note:** 2026-10-10 — shipped surfaces are scoped: cadence, plan endpoint, and `bdi:<step>` decision stamping (dispatch consumes decisionEvents → recordActorDecisionType) are fully in; the telemetry AC is half-open by scope — `utility:<kind>` stamping waits on the reaction wiring (scoreReaction has no production caller yet — deliberate, not faked). All other ACs are fully met (see Current State).
 **Priority:** High
 **Effort:** Large
 **Type:** Research epic (drives implementation tickets)
@@ -73,7 +73,7 @@ Shipped, verified in-tree (same 185-test run as the affordance epic):
 - Nightly cycle: `src/services/agency/bdi-nightly.ts` — `runNightlyReflectionCycle(db, actorIds, { budgetApprove, planRecompute, today })` (per-actor budget peek; `skippedBudget` on deny); `recordChatTurn` enforces `cooldown_minutes` (default 15) + `max_consecutive_chats` (default 3) per partner pair. Plan shaping/parsing: `bdi-plan-shape.ts` (`DailyPlan`, 4 priority buckets, text bounds); LLM recompute: `bdi-plan-recompute.ts` (`createPlanRecompute`, deterministic fallback on provider failure). Reflection checkpoint: `bdi-reflection.ts` — `applyReflectionCheckpoint` emits `actor_plan_revisions` rows on priority shift only.
 - Cron wiring: `src/cron/jobs.ts` registers `createBdiDispatch` on the autonomy tick; `src/autonomy/dispatch/bdi-dispatch.ts` — `BDI_DISPATCH_NAME = "bdi"`, governor-gated via `per_hour_beat_dispatch` (peek + tryConsume), jitter and off-cadence skip; exported from `src/autonomy/index.ts`.
 - Telemetry (partial): `src/services/agency/quality-metrics.ts` stamps `interaction_logs.agency_mode` (migration 009 added the column).
-- All previously-open gaps closed 2026-10-10: plan endpoint, every-N-steps reflection cadence, and per-actor decision telemetry shipped (see Current State above).
+- All previously-open gaps closed 2026-10-10: plan endpoint and every-N-steps reflection cadence shipped; bdi decision stamping shipped; utility stamping scoped out (see Current State above).
 
 ## Out of Scope
 
