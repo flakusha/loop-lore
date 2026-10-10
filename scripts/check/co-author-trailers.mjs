@@ -27,12 +27,14 @@
  *     `src/utils/coauthors.ts`) and keep a trailer verbatim.
  *
  * Usage:
- *   bun run scripts/check/co-author-trailers.mjs              < message
+ *   bun run scripts/check/co-author-trailers.mjs < message
+ *   bun run scripts/check/co-author-trailers.mjs --range
  *   bun run scripts/check/co-author-trailers.mjs --range main..HEAD
  *
- * With no arguments the commit message is read from stdin. `--range` instead
- * audits every commit message already in the range (used by the pre-commit
- * hook, which runs before a message exists to read).
+ * Mode is explicit. `--range` audits real commit messages: with no value it
+ * audits this branch's unmerged range (what pre-commit wants), with a value it
+ * audits that range. No `--range` audits the single commit message on stdin
+ * (what prepare-commit-msg wants). Nothing is inferred from stdin being empty.
  *
  * Exit codes: 0 clean, 1 offending trailers found, 2 tooling failure.
  */
@@ -227,18 +229,25 @@ function defaultRange() {
 }
 
 function main() {
+  // Mode is explicit, never inferred from stdin: pre-commit runs with empty
+  // stdin, and inferring "message mode" from that made it audit nothing while
+  // reporting success. --range with no value means this branch's unmerged range.
   const rangeArg = process.argv.indexOf("--range",);
-  const range = rangeArg === -1 ? defaultRange() : process.argv[rangeArg + 1];
-  let commits = collectCommits(range,);
-  // A fresh branch has an empty unmerged range; the canonical config identity
-  // is then the entire population, so a fabricated trailer would pass
-  // vacuously. Widen to the recent history of the range's base instead.
-  if (commits.length === 0) {
-    commits = collectCommits(range.endsWith("..HEAD",) ? `${range.split("..",)[0]}~150` : "HEAD~150",);
-  }
-  const population = buildPopulation(commits,);
-  // --range audits real commits; bare stdin audits one message against the
-  // same population.
+  const range = rangeArg !== -1
+    ? (process.argv[rangeArg + 1] ?? defaultRange())
+    : defaultRange();
+  const commits = collectCommits(range,);
+
+  // The POPULATION (who may be claimed) and the AUDITED SET (which messages are
+  // inspected) are different things. Widening the audited set on an empty range
+  // re-audited 150 commits of dev history and blocked every fresh-branch commit
+  // on the repo's own 14 old trailers. Population may widen; the audited set
+  // never does.
+  const populationCommits = commits.length > 0
+    ? commits
+    : collectCommits(range.endsWith("..HEAD",) ? `${range.split("..",)[0]}~150` : "HEAD~150",);
+  const population = buildPopulation(populationCommits,);
+
   const audited = rangeArg === -1
     ? [{ sha: "HEAD", ident: "", committer: "", message: readFileSync(0, "utf8",), },]
     : commits;
