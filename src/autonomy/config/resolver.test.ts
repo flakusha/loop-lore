@@ -26,6 +26,13 @@ import {
 } from "../../test-utils/insert-helpers";
 import { resolveAutonomyConfig, UnboundedStressGatedError, } from "./index";
 import { getPreset, PRESETS, } from "./presets";
+import { DEFAULT_BDI_REFLECTION_STEP_INTERVAL, } from "./resolver";
+
+describe("BDI reflection cadence default", () => {
+  test("DEFAULT_BDI_REFLECTION_STEP_INTERVAL is 0 (nightly-only preserved)", () => {
+    expect(DEFAULT_BDI_REFLECTION_STEP_INTERVAL,).toBe(0,);
+  });
+});
 
 let testDb: TestDb;
 

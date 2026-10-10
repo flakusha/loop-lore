@@ -22,7 +22,7 @@
  * @module autonomy/dispatch/bdi-dispatch
  */
 
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db";
 import { runNightlyReflectionCycle, } from "../../services/agency/bdi-nightly";
 import type { PlanRecomputeFn, } from "../../services/agency/bdi-nightly";
@@ -98,7 +98,18 @@ async function runBdiDispatch(
   const { db, worldId, nowMs, cfg, } = ctx;
   const planDate = args.today ?? isoDate(nowMs,);
   const limit = args.maxActors ?? DEFAULT_MAX_ACTORS;
-  const actors = await dueActors(db, worldId, planDate, limit,);
+  const stepInterval = Math.max(0, cfg.bdiReflectionStepInterval ?? 0,);
+
+  // Reflection cadence: each dispatched beat step ages every plan in the
+  // world by one step (capped at the interval so counters stay bounded);
+  // plans that reach the interval join the due set for this tick. With
+  // the default interval 0 nothing ages and only unplanned actors are due
+  // — the once-per-night behavior.
+  if (stepInterval > 0) {
+    await ageReflectionSteps(db, worldId, planDate, stepInterval,);
+  }
+
+  const actors = await dueActors(db, worldId, planDate, limit, stepInterval,);
   if (actors.length === 0) {
     // Nobody is due. A world with no members at all and a world whose
     // members are all planned today are different operational stories,
@@ -138,22 +149,27 @@ async function runBdiDispatch(
     planRecompute: args.planRecompute,
     maxActors: limit,
     today: planDate,
+    reflectionStepInterval: stepInterval,
   },);
 
   return { dispatched: result.processed, };
 }
 
-/** World members with no plan row for `planDate`, id-ordered so the set
+/** World members due for a plan (re)compute: no plan row for `planDate`,
+ *  or — when cadence is enabled — an existing plan whose reflection step
+ *  counter has reached the interval. Id-ordered so the set is identical
+ *  across restarts.
  * @param db
  * @param worldId
  * @param planDate
  * @param limit
- *  is identical across restarts. */
+ * @param stepInterval */
 async function dueActors(
   db: Kysely<DB>,
   worldId: string,
   planDate: string,
   limit: number,
+  stepInterval: number,
 ): Promise<string[]> {
   const planned = await db
     .selectFrom("actor_daily_plans",)
@@ -170,7 +186,44 @@ async function dueActors(
     .orderBy("actor_id", "asc",)
     .execute();
 
-  return members.map((m,) => m.actor_id).filter((id,) => !plannedIds.has(id,)).slice(0, limit,);
+  const due = new Set(members.map((m,) => m.actor_id).filter((id,) => !plannedIds.has(id,)),);
+
+  if (stepInterval > 0) {
+    const cadenceDue = await db
+      .selectFrom("actor_daily_plans",)
+      .select("actor_id",)
+      .where("world_id", "=", worldId,)
+      .where("plan_date", "=", planDate,)
+      .where("reflection_step_count", ">=", stepInterval,)
+      .execute();
+
+    for (const row of cadenceDue) { due.add(row.actor_id,); }
+  }
+
+  return [...due,].sort().slice(0, limit,);
+}
+
+/** Age every today-plan in the world by one reflection step. Counters
+ *  cap at the interval so a plan that keeps missing the budget cannot
+ *  accumulate an unbounded count.
+ * @param db
+ * @param worldId
+ * @param planDate
+ * @param stepInterval
+ */
+async function ageReflectionSteps(
+  db: Kysely<DB>,
+  worldId: string,
+  planDate: string,
+  stepInterval: number,
+): Promise<void> {
+  await sql`
+    UPDATE actor_daily_plans
+    SET reflection_step_count = reflection_step_count + 1
+    WHERE world_id = ${worldId}
+      AND plan_date = ${planDate}
+      AND reflection_step_count < ${stepInterval}
+  `.execute(db,);
 }
 
 /**

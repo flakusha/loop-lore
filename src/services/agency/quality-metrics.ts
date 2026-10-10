@@ -47,6 +47,33 @@ export async function recordAgencyMode(
 }
 
 /**
+ * Stamp the decision outcome on an existing `interaction_logs` row's
+ * `action_type` column. Vocabulary: `utility:<reaction-kind>` for a
+ * utility-scorer winner (e.g. `utility:attack`) and `bdi:<step>` for a
+ * BDI reflection step (e.g. `bdi:priority_shift`, `bdi:plan_created`).
+ *
+ * Companion to {@link recordAgencyMode} — together they feed the two
+ * decision-telemetry columns the decision epic calls for.
+ *
+ * @param db
+ * @param logId - interaction_logs.id
+ * @param actionType - `utility:<kind>` or `bdi:<step>` token
+ */
+export async function recordActionType(
+  db: Kysely<DB>,
+  logId: string,
+  actionType: string,
+): Promise<void> {
+  await db
+    .updateTable("interaction_logs",)
+    .set({ action_type: actionType, },)
+    .where("id", "=", logId,)
+    .execute();
+
+  log.debug("action_type recorded", { logId, actionType, },);
+}
+
+/**
  * Upsert a dimension counter row. Increments `count` (and `meaningful`
  * if the agency event was consequential) on the (world, chat, dimension,
  * hour_bucket) tuple.

@@ -16,7 +16,12 @@ export const AUTONOMY_DEFAULTS = {
   /** Default per-tick cap; can be overridden at world or chat layer. */
   perAgentCap: 8,
   perUserCap: 24,
-} satisfies Pick<AutonomyConfig, "enabled" | "preset" | "perAgentCap" | "perUserCap">;
+  /** BDI reflection cadence. 0 = once-per-night (checkpoint every visit). */
+  bdiReflectionStepInterval: 0,
+} satisfies Pick<
+  AutonomyConfig,
+  "enabled" | "preset" | "perAgentCap" | "perUserCap" | "bdiReflectionStepInterval"
+>;
 
 /** */
 export class AutonomySection implements AutonomyConfig {
@@ -26,6 +31,7 @@ export class AutonomySection implements AutonomyConfig {
   jitterRatio = 0;
   perAgentCap = AUTONOMY_DEFAULTS.perAgentCap;
   perUserCap = AUTONOMY_DEFAULTS.perUserCap;
+  bdiReflectionStepInterval = AUTONOMY_DEFAULTS.bdiReflectionStepInterval;
   // Unseeded by default, like every shipped preset — process-wide TOML
   // does not set a replay seed. Not in `AUTONOMY_DEFAULTS` for the same
   // reason `tickIntervalMs` / `jitterRatio` are not: the section carries
@@ -66,6 +72,11 @@ export const autonomyMeta = {
       default: AUTONOMY_DEFAULTS.perUserCap,
       description: "Default per-user tick cap per chat session",
     },
+    bdiReflectionStepInterval: {
+      type: "integer",
+      default: AUTONOMY_DEFAULTS.bdiReflectionStepInterval,
+      description: "BDI reflection checkpoint cadence: fire every N beat steps (0 = once per night)",
+    },
   },
-  required: ["enabled", "preset", "perAgentCap", "perUserCap",] as const,
+  required: ["enabled", "preset", "perAgentCap", "perUserCap", "bdiReflectionStepInterval",] as const,
 };

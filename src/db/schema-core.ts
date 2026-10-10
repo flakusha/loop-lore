@@ -962,6 +962,7 @@ export interface InteractionLogs {
   state_changes: Generated<string>;
   created_at: Generated<string>;
   agency_mode: Generated<AgencyMode>;
+  action_type: string | null;
 }
 
 export interface AgencyPlayCounters {
@@ -993,6 +994,7 @@ export interface ActorDailyPlans {
   summary: string;
   priority: Generated<string>;
   created_at: Generated<string>;
+  reflection_step_count: Generated<number>;
 }
 
 export interface ActorPlannedActivities {
@@ -1189,52 +1191,30 @@ export interface Chats extends AuditColumns {
 // ── actors ────────────────────────────────────────────
 export interface Actors {
   id: Generated<string>;
-
   actor_type: Generated<ActorType>;
-
   display_name: string;
-
   user_id: string | null;
-
   owner_id: string | null;
-
   avatar_asset_id: string | null;
-
   description: string | null;
-
   system_prompt: string | null;
-
   agent_type: Generated<AgentType>;
-
   settings: Generated<string>;
-
   format_version: Generated<number>;
-
   visibility: Generated<string>;
-
   welcome_message: string | null;
-
   personality: string | null;
-
   appearance: string | null;
-
   default_outfit: string | null;
-
   outfits: string | null;
-
   scenario: string | null;
-
   mes_example: string | null;
-
   alternate_greetings: string | null;
-
   post_history_instructions: string | null;
-
   creator_notes: string | null;
-
   creator: string | null;
-
   character_version: string | null;
+  plan_visible: Generated<number>;
 }
 
 // ── mesh_inbound_keys ────────────────────────────────────────────
