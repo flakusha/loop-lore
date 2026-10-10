@@ -19,9 +19,9 @@ import { join, resolve, } from "node:path";
 import { flag, object, runScript, withDefault, } from "../../src/cli/parser";
 import {
   canonicalIndexOrder,
-  fieldLines,
   type IndexEntryLike,
-} from "./normalize-plan-metadata";
+} from "./plan-index-projection";
+import { fieldLines, } from "./plan-markdown-fields";
 
 /** Split a multi-epic value into candidates, in author order. A `/` inside
  * parentheses (`A (X/Y)`) or a `.plan/epics/…` path is not a separator. */
