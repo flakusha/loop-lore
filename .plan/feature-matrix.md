@@ -112,7 +112,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | attribution | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | auction | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | audio | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
-| audit | 9 | 1 | 0 | 1 | 1 | 0 | 6 |
+| audit | 9 | 2 | 0 | 1 | 1 | 0 | 5 |
 | auth | 12 | 0 | 0 | 3 | 0 | 0 | 9 |
 | authentication | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | authorization | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -226,7 +226,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | ci | 6 | 0 | 1 | 0 | 0 | 0 | 5 |
 | cicd | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | citations | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| cleanup | 4 | 1 | 0 | 1 | 0 | 0 | 2 |
+| cleanup | 4 | 2 | 0 | 1 | 0 | 0 | 1 |
 | cli | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | click-to-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | client | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -302,7 +302,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | db | 10 | 2 | 0 | 6 | 0 | 0 | 2 |
 | db-types | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | dead-code | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
-| debt | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| debt | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | debuffs | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | decentralization | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | deception | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -454,7 +454,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | geography | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | gestures | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | git | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| giwt | 9 | 0 | 0 | 0 | 1 | 0 | 8 |
+| giwt | 9 | 1 | 0 | 0 | 1 | 0 | 7 |
 | gm | 12 | 1 | 3 | 1 | 0 | 0 | 7 |
 | go-no-go | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | goals | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
@@ -513,7 +513,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | import | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | in-chat-edit | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | incentives | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| index | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
+| index | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 | inference | 3 | 1 | 0 | 0 | 1 | 0 | 1 |
 | infra | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | infrastructure | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
@@ -742,7 +742,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | plan-hygiene | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | plan-management | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | plan-sync | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
-| planning | 9 | 1 | 0 | 0 | 2 | 0 | 6 |
+| planning | 9 | 2 | 0 | 0 | 2 | 0 | 5 |
 | playback | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | player-state | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | playwright | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1050,7 +1050,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | tool-execution | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | tool-executor | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | toolbar | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| tooling | 6 | 2 | 0 | 0 | 0 | 0 | 4 |
+| tooling | 6 | 3 | 0 | 0 | 0 | 0 | 3 |
 | tor | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | touch | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
 | trace | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -1426,7 +1426,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | epic-social-interaction | 8 | 2 | 0 | 5 | 0 | 0 | 1 |
 | epic-stealth-crime | 5 | 1 | 0 | 1 | 0 | 0 | 3 |
 | epic-story-mode-ui | 12 | 4 | 1 | 6 | 0 | 0 | 1 |
-| epic-task-management-integration | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
+| epic-task-management-integration | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 | epic-terminal-ui | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-testing | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | epic-testing-benchmarking | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
