@@ -153,6 +153,8 @@ describe("Alpine state contract E2E", () => {
         "branches",
         "gmAssistantTab",
         "hasActiveChat",
+        "mergeDraft",
+        "mergeModalOpen",
         "newSideChannelName",
         "showBackgroundPanel",
         "showBranchMenu",
