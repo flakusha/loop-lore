@@ -15,7 +15,7 @@ import {
   declaredTags,
   orphanBindings,
   orphanTags,
-} from "./report-plan-metadata";
+} from "./plan-report-queries";
 
 describe("declaredTags", () => {
   test("collects tags from every plan file, lowercased and deduplicated", () => {

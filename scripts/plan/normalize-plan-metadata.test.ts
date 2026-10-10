@@ -11,15 +11,17 @@
 import { describe, expect, test, } from "bun:test";
 import path from "node:path";
 import {
-  applyRewrites,
   canonicalIndexOrder,
+  projectIndex,
+} from "./plan-index-projection";
+import {
+  applyRewrites,
   fieldLines,
   normalizeEpicRef,
   planFile,
-  projectIndex,
   relatedRefs,
   tagsOf,
-} from "./normalize-plan-metadata";
+} from "./plan-markdown-fields";
 
 describe("canonicalIndexOrder", () => {
   test("uses localeCompare order, matching what giwt writes", () => {
