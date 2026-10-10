@@ -25,8 +25,6 @@ export async function fetchPartial(path: string,): Promise<string | null> {
   return resp.text();
 }
 
-// hint: Logic and cosmetic changes overlap. Resolve logic first, then reformat.
-
 // Escapes `& < > " '` — safe for text nodes AND quoted attribute values.
 // Re-exported from the canonical helper so callers in this module tree and
 // the chat renderers share one implementation.
