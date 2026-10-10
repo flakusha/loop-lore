@@ -34,10 +34,20 @@ echo ""
 # The message being written is checked separately, in prepare-commit-msg,
 # which is the only hook that has a message file.
 echo "--- Step 0: Co-Authored-By trailers ---"
-if bun run scripts/check/co-author-trailers.mjs --range >/dev/null; then
+# A worktree can have this hook without the script (17 of 19 under tree/ did).
+# `bun run` on a missing module exits 1 — the same code as a real finding —
+# so the guard is what keeps a tooling gap out of the policy report.
+if [ ! -f "scripts/check/co-author-trailers.mjs" ]; then
+  yellow "  ⚠ co-author-trailers check missing — skipping (tooling gap, not a trailer violation)"
+elif bun run scripts/check/co-author-trailers.mjs --range >/dev/null; then
   green "  ✓ Co-Authored-By trailers name real identities"
 else
-  red "  ✗ Unattributed Co-Authored-By trailer(s)"
+  status=$?
+  if [ "$status" -eq 1 ]; then
+    red "  ✗ Unattributed Co-Authored-By trailer(s)"
+  else
+    red "  ✗ Co-Authored-By check could not run (exit $status) — tooling failure, not a trailer violation"
+  fi
   failures=$((failures + 1))
 fi
 echo ""
