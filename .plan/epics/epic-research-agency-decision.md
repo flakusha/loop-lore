@@ -3,8 +3,8 @@
 
 # EPIC-RESEARCH-AGENCY-DECISION: NPC Decision-Making Stack
 
-**Status:** In Progress
-**Status Note:** utility scorer + BDI reflection cycle shipped (see Current State); open: player-visible plan JSON endpoint, decision telemetry counters. `TASK-agency-bdi-reflection-cycle` remains open — plan-visibility AC unmet.
+**Status:** Done
+**Status Note:** all ACs verified 2026-10-10 — cadence knob, plan endpoint, and action_type telemetry landed (see Current State). The recompute cadence rides the autonomy world tick (`dueActors` selects unplanned actors plus cadence-due plans), not a standalone nightly timer.
 **Priority:** High
 **Effort:** Large
 **Type:** Research epic (drives implementation tickets)
@@ -43,18 +43,28 @@ GOAP is **explicitly out of scope** (over-engineered for chat-RPG; see research 
 
 ## Acceptance Criteria
 
-- [x] Utility scorer for the reaction step covering all 6 reaction modes (`chat | wait | do_other | flee | attack | ignore`). (Shipped as `scoreReaction` in `src/characters/services/personality-service/utility-scorer.ts`; the originally named `PersonalityModifierResolver` does not exist in `src/`.)
+- [x] `PersonalityModifierResolver`-style utility scorer covering all 6 reaction modes (`chat | wait | do_other | flee | attack | ignore`). (Shipped as `scoreReaction` in `src/characters/services/personality-service/utility-scorer.ts`; `REACTION_KIND` in `utility-scorer-types.ts` is the closed 6-kind enum.)
 - [x] BDI types from `epic-agency-story-points.md` (DailyPlan, PlannedActivity, ReactionDecision, PlanRevision, ChatBuffer) materialized as a Kysely table set with migration.
-- [ ] Reflection cycle: nightly job (configurable cron) recomputes `DailyPlan` per active actor; reflection checkpoints every N steps; budget-gated by `epic-actor-autonomy-story-drive.md` governor. (Nightly recompute + budget gating ship; reflection runs once per night in `applyReflectionCheckpoint` — the configurable every-N-steps cadence is not implemented.)
-- [ ] Player-visible plan surface opt-in: actor's active plan summarisable on demand (defer UI; ship JSON API first). (`src/routes/planning.ts` serves author plan items, not `actor_daily_plans`; no endpoint reads an actor's current plan.)
-- [ ] Telemetry: per-actor decision counts (utility winner, BDI step type) feed `interaction_log.action_type` and `agency_mode`. (Partial: `src/services/agency/quality-metrics.ts` stamps `interaction_logs.agency_mode`; per-actor decision counts and `action_type` feed are not shipped.)
+- [x] Reflection cycle: nightly job (configurable cron) recomputes `DailyPlan` per active actor; reflection checkpoints every N steps; budget-gated by `epic-actor-autonomy-story-drive.md` governor. (Cadence knob `bdiReflectionStepInterval` in the autonomy config layer (default 0 = once-per-night, unchanged); counter column `actor_daily_plans.reflection_step_count` (migration 051); the dispatch ages steps and re-checkpoints every N.)
+- [x] Player-visible plan surface opt-in: actor's active plan summarisable on demand (defer UI; ship JSON API first). (`GET /api/v1/actors/:actorId/plan` in `src/routes/actor-plan.ts`; opt-in via `actors.plan_visible` default 0; 404 for not-opted-in / foreign / missing.)
+- [x] Telemetry: per-actor decision counts (utility winner, BDI step type) feed `interaction_log.action_type` and `agency_mode`. (`interaction_logs.action_type` column (migration 051) + `recordActionType` in `src/services/agency/quality-metrics.ts`; `runNightlyReflectionCycle` emits per-actor `decisionEvents` (`bdi:plan_created` / `bdi:priority_shift`); `agency_mode` stamping already shipped in `quality-metrics.ts`.)
 
 ## Work Items (Lazy Ladder)
 
 1. **`TASK-agency-utility-scorer`** — wire the personality profile weights as the reaction utility scorer. P0. 2 days. **Done.**
-2. **`TASK-agency-bdi-reflection-cycle`** — migration + nightly BDI reflection job. P1. 1 week. **In Progress.**
+2. **`TASK-agency-bdi-reflection-cycle`** — migration + nightly BDI reflection job. P1. 1 week. **Done.**
 
-## Current State (2026-10-10)
+## Current State (2026-10-10, updated after AC completion)
+
+Additional to the shipped list below:
+
+- Cadence: `bdiReflectionStepInterval` knob in the autonomy config layer (`src/autonomy/config/types.ts`, resolver, TOML section `src/config/sections/autonomy.ts`); default 0 = once-per-night (behavior unchanged). Migration 051 added `actor_daily_plans.reflection_step_count`; `bdi-dispatch.ts` ages world plans one step per beat tick and selects plans that reached the interval for a recompute + `applyReflectionCheckpoint` + counter reset (`shouldReflectAt` / `incrementReflectionSteps` / `resetReflectionSteps` in `bdi-reflection.ts`).
+- Plan endpoint: `src/routes/actor-plan.ts` — `GET /api/v1/actors/:actorId/plan`, opt-in via `actors.plan_visible` (migration 051, default 0); ownership via `owner_id`/`user_id`; one 404 covers missing/foreign/not-opted-in. Registered in `src/routes/v1/base-surface.ts`. Tests: `src/routes/actor-plan.test.ts`.
+- Decision telemetry: migration 051 added `interaction_logs.action_type`; `recordActionType` in `quality-metrics.ts` stamps `utility:<kind>` / `bdi:<step>` tokens; `runNightlyReflectionCycle` returns per-actor `decisionEvents` (`bdi:plan_created`, `bdi:priority_shift`).
+- Stage-2 fallback: `src/regex/stage2-llm.ts` — `createStage2Parser` wires `parseAction`'s `Stage2LLMFn` to the real pipeline with the model chosen via `resolveModelRole(auxiliary)` → `resolveProvider` → `callLlm`; `validateStage2Output` enforces the closed verb enum + inventory/scene member sets and rejects invalid output with `null`. Tests: `src/regex/stage2-llm.test.ts`.
+- Parser/affordance telemetry: `src/services/affordance/telemetry.ts` records `action_parser` (stage, verb) and `affordance_allow`/`affordance_denial` (verb, reason) events on the existing `telemetry_events` sink. Tests: `src/services/affordance/telemetry.test.ts`.
+
+## Previously Shipped (2026-10-10 audit)
 
 Shipped, verified in-tree (same 185-test run as the affordance epic):
 
@@ -63,7 +73,7 @@ Shipped, verified in-tree (same 185-test run as the affordance epic):
 - Nightly cycle: `src/services/agency/bdi-nightly.ts` — `runNightlyReflectionCycle(db, actorIds, { budgetApprove, planRecompute, today })` (per-actor budget peek; `skippedBudget` on deny); `recordChatTurn` enforces `cooldown_minutes` (default 15) + `max_consecutive_chats` (default 3) per partner pair. Plan shaping/parsing: `bdi-plan-shape.ts` (`DailyPlan`, 4 priority buckets, text bounds); LLM recompute: `bdi-plan-recompute.ts` (`createPlanRecompute`, deterministic fallback on provider failure). Reflection checkpoint: `bdi-reflection.ts` — `applyReflectionCheckpoint` emits `actor_plan_revisions` rows on priority shift only.
 - Cron wiring: `src/cron/jobs.ts` registers `createBdiDispatch` on the autonomy tick; `src/autonomy/dispatch/bdi-dispatch.ts` — `BDI_DISPATCH_NAME = "bdi"`, governor-gated via `per_hour_beat_dispatch` (peek + tryConsume), jitter and off-cadence skip; exported from `src/autonomy/index.ts`.
 - Telemetry (partial): `src/services/agency/quality-metrics.ts` stamps `interaction_logs.agency_mode` (migration 009 added the column).
-- Not shipped: JSON endpoint reading an actor's current plan (`src/routes/planning.ts` serves author plan items, not `actor_daily_plans`); configurable every-N-steps reflection cadence; per-actor decision-count telemetry.
+- All previously-open gaps closed 2026-10-10: plan endpoint, every-N-steps reflection cadence, and per-actor decision telemetry shipped (see Current State above).
 
 ## Out of Scope
 
@@ -73,3 +83,5 @@ Shipped, verified in-tree (same 185-test run as the affordance epic):
 
 
 git issue: d5b9924
+
+**Resolved:** 2026-10-10 registry-driven close: git issue d5b9924 (registry tip: 1952054b7 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-RESEARCH-AGENCY-DECISION do)
