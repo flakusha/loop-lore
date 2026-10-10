@@ -77,28 +77,6 @@ export function shouldReflectAt(stepCount: number, interval: number,): boolean {
 }
 
 /**
- * Increment the reflection step counter of one plan, returning the new
- * value. Called once per dispatched beat step by the BDI dispatch.
- * @param db
- * @param planId
- */
-export async function incrementReflectionSteps(db: Kysely<DB>, planId: string,): Promise<number> {
-  await db
-    .updateTable("actor_daily_plans",)
-    .set((eb,) => ({ reflection_step_count: eb("reflection_step_count", "+", 1,), }))
-    .where("id", "=", planId,)
-    .execute();
-
-  const row = await db
-    .selectFrom("actor_daily_plans",)
-    .select("reflection_step_count",)
-    .where("id", "=", planId,)
-    .executeTakeFirst();
-
-  return row?.reflection_step_count ?? 0;
-}
-
-/**
  * Reset a plan's reflection step counter after a checkpoint fired.
  * @param db
  * @param planId
