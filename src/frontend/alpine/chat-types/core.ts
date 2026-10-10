@@ -1,28 +1,43 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 325
 import type { DraftStore, } from "../chat-drafts";
-import type { AlpineMagicThis, GalleryAsset, GmConfig, QuickReplyButton, } from "../types";
+import type { AlpineMagicThis, GalleryAsset, QuickReplyButton, } from "../types";
+import type { ChatCoreChatListActions, } from "./chat-list-actions";
+import type { ChatRow, } from "./chat-row";
 import type * as filterState from "./filter-state";
-import type { GenerationDetail, GroupedMessage, Message, } from "./messages";
+import type { ChatCoreGenerationState, } from "./generation-state";
+import type { ChatCoreGmSettingsState, } from "./gm-settings";
+import type { GroupedMessage, Message, } from "./messages";
+import type { ChatCoreSeenState, } from "./seen-state";
 import type * as uiState from "./ui-state";
+import type { ChatCoreVnSettingsState, } from "./vn-settings";
 import type { ChatWorldChannelsState, } from "./world-channels";
+export type { ChatCoreChatListActions, } from "./chat-list-actions";
+export type { ChatRow, } from "./chat-row";
 export type { ChatCoreFilterState, } from "./filter-state";
+export type { ChatCoreGenerationState, } from "./generation-state";
+export type { ChatCoreGmSettingsState, } from "./gm-settings";
+export type { ChatCoreSeenState, SeenStateRow, } from "./seen-state";
 export type { ChatCoreUiState, } from "./ui-state";
+export type { ChatCoreVnSettingsState, } from "./vn-settings";
 /** Chat page core state and methods (messages, lists, editing, VN, filters). */
 export interface ChatCoreState
-  extends AlpineMagicThis, ChatWorldChannelsState, filterState.ChatCoreFilterState, uiState.ChatCoreUiState
+  extends
+    AlpineMagicThis,
+    ChatWorldChannelsState,
+    filterState.ChatCoreFilterState,
+    uiState.ChatCoreUiState,
+    ChatCoreChatListActions,
+    ChatCoreGenerationState,
+    ChatCoreGmSettingsState,
+    ChatCoreSeenState,
+    ChatCoreVnSettingsState
 {
   isGenerating: boolean;
   generationLabel: string;
   activeAttemptId: string | null;
   continuingMessageId: string | null;
   isContinuing: boolean;
-  _generationEventSource: EventSource | null;
-  /** Rendered tool-call blocks emitted during live streaming (prepended to stream container). */
-  _streamToolCalls: string[];
-  /** Latest streamed content HTML (preserved so tool-call renders don't wipe it). */
-  _streamContent: string;
   chats: {
     id: string;
     name?: string;
@@ -62,7 +77,6 @@ export interface ChatCoreState
     description?: string;
     avatar_asset_id?: string;
   } | null;
-  generationDetail: GenerationDetail | null;
   detailLevel: "Immersion" | "Basic" | "Detailed";
   impersonationActive: boolean;
   impersonatingActorId: string | null;
@@ -97,39 +111,6 @@ export interface ChatCoreState
   _ownershipSubmitting: boolean;
   _ownershipError: string;
   _impersonatingActorId: string | null;
-  _assistantRole: "off" | "helper" | "gm" | "moderator";
-  _gmType: "llm" | "human" | "hybrid";
-  _gmHumanActorId: string;
-  _gmEscalationThreshold: number;
-  // GM LLM settings + per-actor overrides (multi-LLM story mode) — persisted to gm_config.
-  _gmModel: string;
-  _gmProvider: string;
-  _gmTemperature: number;
-  _gmMaxTokens: number;
-  _assistantTemperature: number | null;
-  _assistantMaxTokens: number | null;
-  _actorModels: Record<string, { model: string; provider: string }>;
-  readonly _actorModelRows: { actor_id: string; label: string; slot: { model: string; provider: string } }[];
-  loadActorModels: (config: GmConfig,) => void;
-  // VN (visual novel) mode settings — persisted to gm_config.
-  _vnEnabled: boolean;
-  _vnLayout: "overlay" | "below" | "split";
-  _vnTypewriter: boolean;
-  _vnTypewriterSpeed: number;
-  _vnTransition: "fade" | "cut" | "dissolve" | "slide" | "wipe";
-  _vnAutoAdvance: boolean;
-  /** Per-chat opt-in for VN branching choices and Q&A cards. */
-  _vnChoicesEnabled: boolean;
-  /** VN image scaling (contain/cover/fill/auto). */
-  _imageScaling: "contain" | "cover" | "fill" | "auto";
-  /** VN auto-advance delay in seconds. */
-  _autoAdvanceDelay: number;
-  /** VN dialogue-box opacity (0–1, overlay layout). */
-  _dialogueBoxOpacity: number;
-  /** VN portrait size as percentage of scene width. */
-  _portraitSize: number;
-  /** VN portrait:text split ratio (split layout). */
-  _splitRatio: number;
   _responseLengthPreset: "short" | "medium" | "long" | "custom";
   _responseLengthCustom: number;
   /** Chat-level output-style preset ("" = none). */
@@ -224,12 +205,6 @@ export interface ChatCoreState
   dispatchCommandAction(action: string, payload: Record<string, unknown> | null, chatId: string,): Promise<void>;
   loadImpersonationState(): Promise<void>;
   loadChatParticipants(): Promise<void>;
-  openOwnershipTransferModal(): void;
-  closeOwnershipTransferModal(): void;
-  submitOwnershipTransfer(): Promise<void>;
-  canTransferOwnership(): boolean;
-  loadPersonas(): Promise<void>;
-  setPersona(): Promise<void>;
   toggleImpersonation(): Promise<void>;
   generateImageFromMessage(msgId: string,): Promise<void>;
   captionMessage(msgId: string,): Promise<void>;
@@ -248,25 +223,8 @@ export interface ChatCoreState
     generation_time_ms?: number;
     token_count_total?: number;
   },): string;
-  connectGenerationSSE(chatId: string,): void;
-  sendWithPreferredMode(chatId: string, onDone?: () => void,): Promise<void>;
-  renderStreamContainer(): void;
-  _cleanupSSE(): void;
-  cancelGeneration(): Promise<void>;
   markChatAsRead(chatId: string,): Promise<void>;
   getUnseenCount(chatId: string,): number;
-  regenerateResponse(): Promise<void>;
-  regenerateVariant(messageId: string,): Promise<void>;
-  switchVariant(messageId: string, direction: number,): Promise<void>;
-  _variantsOpen: boolean;
-  _variantsLoading: boolean;
-  _variantsFor: string | null;
-  _variants: { id: string; content: string }[];
-  openVariants(messageId: string,): Promise<void>;
-  closeVariants(): void;
-  selectVariantByIndex(messageId: string, index: number,): Promise<void>;
-  continueMessage(messageId: string,): Promise<void>;
-  retryFromPoint(attemptId: string, step: number,): Promise<void>;
   getChatId(): string | null;
   handleAttach(event: Event,): Promise<void>;
   escapeHtml(str: string,): string;
@@ -282,48 +240,9 @@ export interface ChatCoreState
   updateVnMode(): void;
   saveChatSettings(): Promise<void>;
   isChatPaused(chat: any,): boolean;
-  readonly currentChat: {
-    id: string;
-    name?: string;
-    type?: string;
-    mode?: string;
-    turn_strategy?: string;
-    story_state?: string;
-    gm_config?: string;
-    thinking_visibility?: string;
-  } | null;
-  toggleGroupPause(): Promise<void>;
-  renameChat(chatId: string,): Promise<void>;
-  openRenameModal(chatId: string,): void;
-  confirmRenameChat(): Promise<void>;
-  deleteChat(chatId: string, event: Event,): Promise<void>;
-  toggleChatPin(chatId: string,): Promise<void>;
-  unarchiveChat(chatId: string,): Promise<void>;
-  toggleChatSelection(chatId: string,): void;
-  batchArchive(): Promise<void>;
-  batchDelete(): Promise<void>;
-  batchExport(): Promise<void>;
+  readonly currentChat: ChatRow | null;
   loadChatKey(chatId: string, encryptionLevel?: string | null,): Promise<void>;
   checkGenerationStatus(chatId: string,): Promise<void>;
   registerPanelHandlers(): void;
   unregisterPanelHandlers(): void;
-
-  // ── Seen-state popover ─────────────────────────────────────────
-  _seenPopoverOpen: boolean;
-  _seenPopoverX: number;
-  _seenPopoverY: number;
-  _seenPopoverViewers: Array<{ actorId: string; state: string; seenAt: string | null }>;
-
-  initSeenPopover(): void;
-  _seenPollTimer: ReturnType<typeof setInterval> | null;
-  startSeenPolling(): void;
-  stopSeenPolling(): void;
-
-  // ── Seen-state tracking ─────────────────────────────────────────
-  loadMessageSeen(msgId: string,): Promise<void>;
-  loadAllSeen(): Promise<void>;
-  markSeen(msgId: string, state: "seen" | "processing",): Promise<void>;
-  openSeenPopover(msgId: string, event: Event,): void;
-  seenTitle(seenState: Array<{ actorId: string; state: string; seenAt: string | null }>,): string;
-  seenCount(seenState: Array<{ actorId: string; state: string; seenAt: string | null }>,): number;
 }
