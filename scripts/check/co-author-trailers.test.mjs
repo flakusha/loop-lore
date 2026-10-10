@@ -8,7 +8,7 @@
 // a lax one is the defect this gate exists for.
 
 import { expect, test, } from "bun:test";
-import { auditCommits, } from "./co-author-trailers.mjs";
+import { auditCommits, parseAllowedTrailers, } from "./co-author-trailers.mjs";
 
 const population = {
   emails: new Map([
@@ -117,5 +117,36 @@ test("--range audits the branch range, never stdin", () => {
 test("a range whose only commits are clean passes even with empty stdin", () => {
   expect(
     auditCommits([commit("chore: clean\n",),], population,),
+  ).toEqual([],);
+});
+
+// Regression: a CRLF message left a trailing \r on every line, which the
+// anchored trailer regex never matched — the identical message read clean
+// under CRLF and was refused under LF. Line endings must not decide a verdict.
+test("a CRLF message is audited exactly like its LF twin", () => {
+  const lf = auditCommits([commit("fix: t\n\nCo-Authored-By: Ghost <ghost@no-such.example>\n",),],
+    population,);
+  const crlf = auditCommits([commit("fix: t\r\n\r\nCo-Authored-By: Ghost <ghost@no-such.example>\r\n",),],
+    population,);
+  expect(crlf.map((f) => f.email,),).toEqual(lf.map((f) => f.email,),);
+  expect(crlf,).toHaveLength(1,);
+  expect(crlf[0].subject,).toBe("fix: t",);
+});
+// Regression: giwt documents ALLOWED_TRAILERS quoted. Fragments that kept
+// their quotes matched no trailer, so every consented identity was silently
+// refused. These are the exact fragments giwt's own loader returns for the
+// same value (src/utils/coauthors.test.ts).
+test("a quoted ALLOWED_TRAILERS value parses into giwt's fragments", () => {
+  expect(parseAllowedTrailers('"bot@corp.example, other@x"',),).toEqual([
+    "bot@corp.example",
+    "other@x",
+  ]);
+  expect(parseAllowedTrailers("a@b, c@d",),).toEqual(["a@b", "c@d",]);
+  // The consented identity must actually pass the audit that consumes it.
+  expect(
+    auditCommits([commit("chore: t\n\nCo-Authored-By: Other <other@x>\n",),], {
+      emails: new Map([],),
+      allowed: parseAllowedTrailers('"bot@corp.example, other@x"',),
+    },),
   ).toEqual([],);
 });
