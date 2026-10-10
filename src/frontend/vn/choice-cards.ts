@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 258
-
 /**
  * VN Choice Cards
  *
@@ -11,7 +9,12 @@
 import { apiFetch, } from "../alpine/htmx";
 import { t, } from "../alpine/i18n";
 import { jsonBody, } from "../alpine/json";
-import { feFetch, } from "../fe-fetch";
+import {
+  extractReunionSource,
+  extractSplitBranches,
+  triggerReunite,
+  triggerSplit,
+} from "./choice-cards-consequences";
 import { renderChoiceCards, } from "./choice-cards-render";
 import { setChoicePending, } from "./pending-decision";
 
@@ -158,45 +161,6 @@ export async function loadChoices(): Promise<void> {
 }
 
 /**
- * Detect a split consequence: { action: "split", branches: [...] }
- * @param consequences
- */
-function extractSplitBranches(
-  consequences: Record<string, unknown>,
-): { locationId: string; actorIds: string[] }[] | null {
-  const action = consequences.action;
-  const branches = consequences.branches;
-  if (action !== "split" || !Array.isArray(branches,)) { return null; }
-  const out: { locationId: string; actorIds: string[] }[] = [];
-  for (const b of branches) {
-    if (!b || typeof b !== "object") { continue; }
-    const rec = b as Record<string, unknown>;
-    const locationId = rec.locationId;
-    const actorIds = rec.actorIds;
-    if (typeof locationId !== "string" || !Array.isArray(actorIds,)) { continue; }
-    const ids: string[] = [];
-    for (const id of actorIds) {
-      if (typeof id === "string") { ids.push(id,); }
-    }
-
-    if (ids.length === 0) { continue; }
-    out.push({ locationId, actorIds: ids, },);
-  }
-
-  return out.length >= 2 ? out : null;
-}
-
-/**
- * Detect a reunion consequence: { action: "reunite", secondaryChatId }
- * @param consequences
- */
-function extractReunionSource(consequences: Record<string, unknown>,): string | null {
-  if (consequences.action !== "reunite") { return null; }
-  const id = consequences.secondaryChatId;
-  return typeof id === "string" ? id : null;
-}
-
-/**
  * Select a choice, apply its effects, and trigger location/split/reunite
  * consequences via their dedicated endpoints.
  * @param choiceId
@@ -254,32 +218,12 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
     // Phase 4: split/reunite consequences on choice cards.
     const splitBranches = extractSplitBranches(returned.consequences,);
     if (splitBranches) {
-      try {
-        const splitRes = await feFetch(`/api/v1/chats/${chatId}/split`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({ branches: splitBranches, },),
-        },);
-
-        splitTriggered = splitRes.ok;
-      } catch {
-        splitTriggered = false;
-      }
+      splitTriggered = await triggerSplit(chatId, splitBranches,);
     }
 
     const reunionSource = extractReunionSource(returned.consequences,);
     if (reunionSource) {
-      try {
-        const reuniteRes = await feFetch(`/api/v1/chats/${chatId}/reunite`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({ secondaryChatId: reunionSource, },),
-        },);
-
-        reunionTriggered = reuniteRes.ok;
-      } catch {
-        reunionTriggered = false;
-      }
+      reunionTriggered = await triggerReunite(chatId, reunionSource,);
     }
 
     return { choice: returned, locationId, splitTriggered, reunionTriggered, locationChanged, };
