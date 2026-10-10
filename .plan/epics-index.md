@@ -106,7 +106,7 @@
 | In Progress | Epic 27: Data Integrity & ACID Guarantees — Implementation Plan | medium | Medium | 0 | [epic-data-integrity-acid.md](/.plan/epics/epic-data-integrity-acid.md) |
 | In Progress | EPIC-036: Crafting, Memory & Chat Systems | High | Very High | 0 | [epic-crafting-professions.md](/.plan/epics/epic-crafting-professions.md) |
 | In Progress | EPIC-RESEARCH-AGENCY-AFFORDANCE: Verb x Target x Context Affordance Layer | High | Medium | 1 | [epic-research-agency-affordance.md](/.plan/epics/epic-research-agency-affordance.md) |
-| Done | EPIC-RESEARCH-AGENCY-DECISION: NPC Decision-Making Stack | High | Large | 0 | [epic-research-agency-decision.md](/.plan/epics/epic-research-agency-decision.md) |
+| Done | EPIC-RESEARCH-AGENCY-DECISION: NPC Decision-Making Stack | High | Large | 1 | [epic-research-agency-decision.md](/.plan/epics/epic-research-agency-decision.md) |
 | Not Started | EPIC-RESEARCH-AGENCY-QUALITY: Player Agency Quality Telemetry & Coordination | Medium | Medium | 4 | [epic-research-agency-quality.md](/.plan/epics/epic-research-agency-quality.md) |
 | Not Started | EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract | medium | Medium (typed contract + prompt section + regression tests) | 0 | [epic-math-ai-bridge.md](/.plan/epics/epic-math-ai-bridge.md) |
 | Not Started | EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy | medium | Medium (turn budget table + Bennies table + dispatch enforcement) | 0 | [epic-math-economy.md](/.plan/epics/epic-math-economy.md) |

@@ -4641,6 +4641,12 @@
       "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
     }
   ],
+  "src/autonomy/dispatch/bdi-due.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-decision.md"
+    }
+  ],
   "src/autonomy/dispatch/dispatch-targets.test.ts": [
     {
       "kind": "ticket",

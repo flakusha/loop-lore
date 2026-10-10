@@ -12,8 +12,40 @@ import {
   incrementDimensionCounter,
   queryAgencyMetrics,
   recordActionType,
+  recordActorDecisionType,
   recordAgencyMode,
 } from "./quality-metrics";
+
+describe("recordActorDecisionType — production decision write path", () => {
+  test("stamps the actor's latest interaction log row", async () => {
+    raw.exec(
+      `INSERT INTO interaction_logs(id, chat_id, actor_id, command, category, skill, difficulty, outcome, created_at)` +
+        ` VALUES ('old-log', 'chat1', 'actor1', 'move', 'social', 'movement', 0, 'success', datetime('now', '-1 day'));`,
+    );
+
+    raw.exec(
+      `INSERT INTO interaction_logs(id, chat_id, actor_id, command, category, skill, difficulty, outcome, created_at)` +
+        ` VALUES ('new-log', 'chat1', 'actor1', 'attack', 'combat', 'melee', 10, 'success', datetime('now'));`,
+    );
+
+    await recordActorDecisionType(db, "actor1", "bdi:priority_shift",);
+
+    const stamped = raw.query("SELECT action_type FROM interaction_logs WHERE id='new-log'",).get() as {
+      action_type: string | null;
+    };
+
+    const untouched = raw.query("SELECT action_type FROM interaction_logs WHERE id='old-log'",).get() as {
+      action_type: string | null;
+    };
+
+    expect(stamped.action_type,).toBe("bdi:priority_shift",);
+    expect(untouched.action_type,).toBeNull();
+  });
+
+  test("an actor with no interaction log is a silent no-op", async () => {
+    await recordActorDecisionType(db, "actor-without-logs", "bdi:plan_created",);
+  });
+});
 
 describe("recordActionType", () => {
   test("stamps interaction_logs.action_type without touching agency_mode", async () => {
