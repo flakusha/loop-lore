@@ -21,6 +21,21 @@ echo ""
 echo "=== loop-lore pre-commit (staged files) ==="
 echo ""
 
+# ── Step 0: Co-Authored-By trailer attribution ───────────────
+# A Co-Authored-By trailer is only attribution if the identity it names authors
+# or commits in the set being landed; 14 fabricated trailers on dev named
+# agents that appear nowhere in the author/committer population. Audits the
+# unmerged branch range (the commits being finalized) and reads git state only.
+# The message being written is checked in prepare-commit-msg — no message file
+# exists yet at pre-commit time.
+echo "--- Step 0: Co-Authored-By trailers ---"
+if bun run scripts/check/co-author-trailers.mjs >/dev/null; then
+  green "  ✓ Co-Authored-By trailers name real identities"
+else
+  red "  ✗ Unattributed Co-Authored-By trailer(s)"
+  failures=$((failures + 1))
+fi
+echo ""
 # ── Get staged files ──────────────────────────────────────────
 STAGED_TS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.tsx?$' || true)
 STAGED_CSS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.css$' || true)
