@@ -221,6 +221,15 @@ function planFiles(dir: string,): string[] {
 // is deleted and re-added. That is why tickets carried tags in their .md and
 // `tags: []` in the index. This pass projects the .md fields onto existing
 // entries so the rewrite above actually reaches the generated matrix.
+//
+// Tags are frontmatter-wins, not fill-only: giwt's parser reads each field as
+// the FIRST bold-colon match inside the first 30 lines, so an inline field
+// mention in header prose can scrape prose fragments into an entry's tags
+// (it happened to TASK-PLAN-INDEX-TAGGING-BINDING-RECONCILIATION), and a
+// fill-only rule would preserve that corruption forever — nothing else
+// re-reads .md fields for entries already in the index. A .md with no Tags
+// line still leaves the entry alone; nothing is inferred. Epic stays
+// fill-only-empty — ownership has its own resolver (epic-owner-pick.ts).
 export interface IndexEntryLike {
   tags?: string[];
   epic?: string;
@@ -259,8 +268,10 @@ export function canonicalIndexOrder(
 
 /**
  * Project .md tags/epic onto index entries. Returns the updated index plus
- * per-field counts. Only `tags` and `epic` are touched — status, hash, and
- * provenance stay giwt's business.
+ * per-field counts. Tags are frontmatter-wins: an entry whose `tags` are
+ * empty OR diverge from the .md list is (re)written from the .md; a .md with
+ * no Tags line leaves the entry untouched. Epic stays fill-only-empty.
+ * Status, hash, and provenance stay giwt's business.
  */
 export function projectIndex(
   index: Record<string, IndexEntryLike>,
@@ -276,7 +287,10 @@ export function projectIndex(
     const tags = tagsOf(text,);
     const epic = epicOf(text,);
     const patch: IndexEntryLike = {};
-    if (tags.length > 0 && (entry.tags ?? []).length === 0) {
+    if (
+      tags.length > 0 &&
+      JSON.stringify(tags,) !== JSON.stringify(entry.tags ?? [],)
+    ) {
       patch.tags = tags;
       tagsFilled++;
     }
