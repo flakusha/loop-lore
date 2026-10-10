@@ -415,6 +415,7 @@ export interface Actors {
   avatar_focus_x: Generated<number>;
   avatar_focus_y: Generated<number>;
   review_state: Generated<string>;
+  plan_visible: Generated<number>;
 }
 
 // ── character_arc ────────────────────────────────────────────
@@ -1275,6 +1276,7 @@ export interface InteractionLogs {
   state_changes: Generated<string>;
   created_at: Generated<string>;
   agency_mode: Generated<AgencyMode>;
+  action_type: string | null;
 }
 
 // ── agency_play_counters ────────────────────────────────────────────
@@ -1309,6 +1311,7 @@ export interface ActorDailyPlans {
   summary: string;
   priority: Generated<string>;
   created_at: Generated<string>;
+  reflection_step_count: Generated<number>;
 }
 
 // ── actor_planned_activities ────────────────────────────────────────────

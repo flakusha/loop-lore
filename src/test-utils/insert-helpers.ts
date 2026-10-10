@@ -1193,6 +1193,7 @@ export async function insertActors(
     avatar_focus_x?: number;
     avatar_focus_y?: number;
     review_state?: string;
+    plan_visible?: number;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -4477,6 +4478,7 @@ export async function insertInteractionLogs(
     state_changes?: string;
     created_at?: string;
     agency_mode?: AgencyMode;
+    action_type?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -4544,7 +4546,13 @@ export async function insertActorDailyPlans(
   actor_id: string,
   plan_date: string,
   summary: string,
-  opts?: { id?: string; world_id?: string | null; priority?: string; created_at?: string },
+  opts?: {
+    id?: string;
+    world_id?: string | null;
+    priority?: string;
+    created_at?: string;
+    reflection_step_count?: number;
+  },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();

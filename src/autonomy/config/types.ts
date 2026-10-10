@@ -46,13 +46,25 @@ export interface AutonomyConfig {
   /** Replay seed. null = unseeded (production default; organic worlds stay varied).
    *  A non-null seed makes a world's tick stream reproducible — see docs/spec/autonomy-determinism.md. */
   seed: number | null;
+  /** BDI reflection checkpoint cadence: fire the checkpoint every N beat
+   *  steps for a plan. 0 / undefined = nightly-only (once per plan per
+   *  day, the pre-cadence behavior). Must be >= 0 when set. Optional so
+   *  pre-cadence config literals and DB layer overrides stay valid. */
+  bdiReflectionStepInterval?: number;
 }
 
 /** Partial override at any single layer. */
 export type AutonomyConfigOverride = Partial<
   Pick<
     AutonomyConfig,
-    "preset" | "enabled" | "tickIntervalMs" | "jitterRatio" | "perAgentCap" | "perUserCap" | "seed"
+    | "preset"
+    | "enabled"
+    | "tickIntervalMs"
+    | "jitterRatio"
+    | "perAgentCap"
+    | "perUserCap"
+    | "seed"
+    | "bdiReflectionStepInterval"
   >
 >;
 

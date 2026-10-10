@@ -46,6 +46,7 @@ const log: Logger = {
   flush: async () => {},
   addTransport: () => {},
   setBindings: () => {},
+  setLevel: () => {},
 };
 
 const SKIP_REAL = process.env.LL_REAL_E2E_SKIP === "1";
