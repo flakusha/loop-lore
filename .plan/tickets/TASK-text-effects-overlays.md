@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** text-effects overlay components on text-fx core
 **Priority:** Low
 **Effort:** Med
@@ -212,3 +212,5 @@ exposed on window via `src/frontend/alpine-init.ts` for Alpine templates.
 Low — CSS-based effects are lightweight and well-understood. Overlay
 components are small DOM additions. Main risk is visual clutter if too
 many effects are enabled simultaneously (mitigated by `maxEffectsPerMessage`).
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 1eff0c7 (registry tip: 2f75aadde Konstantin Fedotov Close issue)

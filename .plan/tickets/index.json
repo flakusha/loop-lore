@@ -44671,7 +44671,7 @@
     "label": "task",
     "priority": "Low",
     "source": ".plan/tickets/TASK-text-effects-overlays.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Text Effects & Overlays",
     "type": "TASK"
