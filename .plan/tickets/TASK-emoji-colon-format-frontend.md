@@ -11,7 +11,7 @@
 **Progress:** emoji shortcode allowlist + render helper, `:` autocomplete (Tab-accept parity), and keyboard/grid picker landed; chat + group chat share one render path.
 
 **Epic:** epic-frontend-emoji-reactions
-**Status:** In Progress
+**Status:** Done
 **Scope:** server-rendered shortcode fallback for htmx partials
 **Priority:** Medium
 
@@ -27,3 +27,5 @@
 
 - `:smile:` + custom set render identically in 1x1, group, gallery.
 - Unknown `:nope:` stays literal; no console errors.
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 05685aa (registry tip: 82886185e Konstantin Fedotov Close issue)

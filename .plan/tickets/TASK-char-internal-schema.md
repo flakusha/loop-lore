@@ -3,7 +3,7 @@
 
 # TASK: Char Internal Schema
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -25,3 +25,5 @@ Add `InternalTrait`/`Aspiration`/`MoralDisposition`/`CopingProfile`/`ApproachPro
 ## Acceptance
 
 - [ ] Complete
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 9ebed8b (registry tip: a280654f1 Konstantin Fedotov Close issue)

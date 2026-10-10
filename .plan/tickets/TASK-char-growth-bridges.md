@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 
@@ -21,3 +21,5 @@ Skills / traits / relationships bridges (`src/characters/services/*-bridge.ts`) 
 - [ ] `recordSkillAcquisition` writes growth_log when `acquisitionSource === 'story'`
 - [ ] `recordTraitDrift` re-checks `checkPersonalityIntegrity` and refuses locked categories
 - [ ] `recordRelationshipShift` respects `evolution_tracked` and refuses static mode
+
+**Resolved:** 2026-10-10 registry-driven close: git issue a16b5ba (registry tip: 924cb1eca Konstantin Fedotov Close issue)

@@ -3907,6 +3907,19 @@
     "title": "Group participant injection absent on manual generate route",
     "type": "BUG"
   },
+  "BUG-GROUP-PARTICIPANT-USER-ACTORS-INJECTED-IN-AUTO-GEN-PATH": {
+    "hash": "18b8bfa",
+    "git_issue": "18b8bfa",
+    "extid": "BUG-GROUP-PARTICIPANT-USER-ACTORS-INJECTED-IN-AUTO-GEN-PATH",
+    "type": "BUG",
+    "title": "Group participant user actors injected in auto-gen path",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-context-injection-correctness",
+    "tags": [],
+    "source": ".plan/tickets/BUG-group-participant-user-actors-injected-in-auto-gen-path.md",
+    "status": "Not Started"
+  },
   "BUG-GUARDMESSAGES-BYPASS-PASSES-THROUGH-EVERY-UNKNOWN-STATUS-NOT-JUST": {
     "hash": "fc37920",
     "git_issue": "fc37920",
@@ -4565,6 +4578,19 @@
     "tags": [],
     "title": "Logger censor depth cutoff returns subtree untouched — nested secrets bypass denylist",
     "type": "BUG"
+  },
+  "BUG-LOGGER-SKIPCENSOR-OPT-OUT-IS-UNREACHABLE-AND-DBENABLED-CONFI": {
+    "hash": "efbc3c8",
+    "git_issue": "efbc3c8",
+    "extid": "BUG-LOGGER-SKIPCENSOR-OPT-OUT-IS-UNREACHABLE-AND-DBENABLED-CONFI",
+    "type": "BUG",
+    "title": "Logger skipCensor opt-out is unreachable and dbEnabled config is never read",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-logging",
+    "tags": [],
+    "source": ".plan/tickets/BUG-logger-skipcensor-opt-out-is-unreachable-and-dbenabled-confi.md",
+    "status": "Not Started"
   },
   "BUG-LOGGER-TESTS-LEAK-GLOBAL-LOGGER-STATE": {
     "epic": "",
@@ -17510,6 +17536,19 @@
     "title": "Visual Novel Mode Full Implementation",
     "type": "FEAT"
   },
+  "FEAT-WEBHOOK-INGESTION-BOOTSTRAP-WIRE-SEAMS-AT-THE-V1-SURFACE-CAL": {
+    "hash": "07b75d4",
+    "git_issue": "07b75d4",
+    "extid": "FEAT-WEBHOOK-INGESTION-BOOTSTRAP-WIRE-SEAMS-AT-THE-V1-SURFACE-CAL",
+    "type": "FEAT",
+    "title": "Webhook ingestion bootstrap: wire seams at the v1 surface call site",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-integrations-core",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal.md",
+    "status": "Not Started"
+  },
   "FEAT-WHAT-IF-BRANCH-SIMULATOR-FORK-WORLD-STATE-DIFF-NARRATIVES": {
     "epic": "proposed:epic-branch-simulator",
     "extid": "FEAT-WHAT-IF-BRANCH-SIMULATOR-FORK-WORLD-STATE-DIFF-NARRATIVES",
@@ -22679,6 +22718,32 @@
     "title": "Auth/session hardening batch from 2026-10-04 review",
     "type": "TASK"
   },
+  "TASK-AUTHOR-DOCS-SPEC-DEPLOYMENT-MD-WITH-THE-SQLITE-VS-POSTGRES-A": {
+    "hash": "425c4f2",
+    "git_issue": "425c4f2",
+    "extid": "TASK-AUTHOR-DOCS-SPEC-DEPLOYMENT-MD-WITH-THE-SQLITE-VS-POSTGRES-A",
+    "type": "TASK",
+    "title": "Author docs/spec/deployment.md with the SQLite vs Postgres ACID matrix",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-data-integrity-acid",
+    "tags": [],
+    "source": ".plan/tickets/TASK-author-docs-spec-deployment-md-with-the-sqlite-vs-postgres-a.md",
+    "status": "Not Started"
+  },
+  "TASK-AUTHOR-NOTE-DISTINCT-COLUMN-DECISION-ADD-DB-COLUMN-VS-REUSE-": {
+    "hash": "6b3f5ef",
+    "git_issue": "6b3f5ef",
+    "extid": "TASK-AUTHOR-NOTE-DISTINCT-COLUMN-DECISION-ADD-DB-COLUMN-VS-REUSE-",
+    "type": "TASK",
+    "title": "Author-note distinct column decision: add DB column vs reuse post-history",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-context-injection-templates",
+    "tags": [],
+    "source": ".plan/tickets/TASK-author-note-distinct-column-decision-add-db-column-vs-reuse-.md",
+    "status": "Not Started"
+  },
   "TASK-AUTHOR-TASK-CLARIFICATION-PROMPT-TEMPLATES-PER-TASK-TYPE": {
     "epic": "epic-context-injection-templates",
     "extid": "TASK-AUTHOR-TASK-CLARIFICATION-PROMPT-TEMPLATES-PER-TASK-TYPE",
@@ -22972,6 +23037,19 @@
     "title": "# TASK-avatars-dynamic-2d: Dota-style dynamic 2D avatars (Phase 4)",
     "type": "TASK"
   },
+  "TASK-BACKFILL-DATA-VERSION-RECORD-HASH-FOR-EXISTING-ROWS": {
+    "hash": "6f0c192",
+    "git_issue": "6f0c192",
+    "extid": "TASK-BACKFILL-DATA-VERSION-RECORD-HASH-FOR-EXISTING-ROWS",
+    "type": "TASK",
+    "title": "Backfill data_version + record_hash for existing rows",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-content-hashing-distributed-integrity",
+    "tags": [],
+    "source": ".plan/tickets/TASK-backfill-data-version-record-hash-for-existing-rows.md",
+    "status": "Not Started"
+  },
   "TASK-BACKLOG-BUILD-INTEGRITY-CLUSTER-CLOSE-OUT": {
     "epic": "",
     "extid": "TASK-BACKLOG-BUILD-INTEGRITY-CLUSTER-CLOSE-OUT",
@@ -23255,7 +23333,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-battle-alpine.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Battle Alpine.js Logic",
     "type": "TASK"
@@ -23320,7 +23398,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-battle-environment-integration.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Battle Environment Integration",
     "type": "TASK"
@@ -23411,7 +23489,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-battle-loot-integration.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Battle Loot Integration",
     "type": "TASK"
@@ -23437,7 +23515,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-battle-npc-integration.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Battle Npc Integration",
     "type": "TASK"
@@ -23450,7 +23528,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-battle-resolution-integration.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Battle Resolution Integration",
     "type": "TASK"
@@ -23489,7 +23567,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-battle-social-integration.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Battle Social Integration",
     "type": "TASK"
@@ -24342,7 +24420,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-char-growth-api.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "char-growth-api",
     "type": "TASK"
@@ -24368,7 +24446,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-char-growth-bridges.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "char-growth-bridges",
     "type": "TASK"
@@ -24394,7 +24472,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-char-growth-frontend.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "char-growth-frontend",
     "type": "TASK"
@@ -24446,7 +24524,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-char-growth-prompt.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Char Growth Prompt",
     "type": "TASK"
@@ -24459,7 +24537,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-char-growth-schema.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Char Growth Schema",
     "type": "TASK"
@@ -24472,7 +24550,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-char-growth-service.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "char-growth-service",
     "type": "TASK"
@@ -24485,7 +24563,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-char-growth-tests.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Char Growth Tests",
     "type": "TASK"
@@ -24498,7 +24576,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-char-growth-types.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "char-growth-types",
     "type": "TASK"
@@ -24511,7 +24589,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-char-growth-validation.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "char-growth-validation",
     "type": "TASK"
@@ -24524,7 +24602,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-char-internal-api.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Char Internal Api",
     "type": "TASK"
@@ -24537,7 +24615,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-char-internal-db.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Char Internal Db",
     "type": "TASK"
@@ -24563,7 +24641,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-char-internal-frontend.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Char Internal Frontend",
     "type": "TASK"
@@ -24589,7 +24667,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-char-internal-prompt.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Char Internal Prompt",
     "type": "TASK"
@@ -24615,7 +24693,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-char-internal-schema.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Char Internal Schema",
     "type": "TASK"
@@ -25213,7 +25291,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-character-template-seeding.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# TASK-2026-046: Character Template Seeding",
     "type": "TASK"
@@ -26305,6 +26383,19 @@
     "epic": "Fuzzing Infrastructure",
     "tags": [],
     "source": ".plan/tickets/TASK-ci-integration-github-actions-matrix-artifact-upload-on-cras.md",
+    "status": "Not Started"
+  },
+  "TASK-CI-NO-CHECK-GATE-EXECUTES-SCRIPTS-SMOKE-TESTS": {
+    "hash": "0857aa3",
+    "git_issue": "0857aa3",
+    "extid": "TASK-CI-NO-CHECK-GATE-EXECUTES-SCRIPTS-SMOKE-TESTS",
+    "type": "TASK",
+    "title": "CI: no check gate executes scripts/** smoke tests",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ci-no-check-gate-executes-scripts-smoke-tests.md",
     "status": "Not Started"
   },
   "TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION": {
@@ -29415,6 +29506,19 @@
     "title": "# TASK-e2ee-receiver-wiring: Client-Side E2E — Phase E receiver-side wiring",
     "type": "TASK"
   },
+  "TASK-ECE-PRIMITIVE-PHASE-1-SPIKE-TYPES-MERGE-PRECOMPILE-ON-TOY-EN": {
+    "hash": "f9fa4a4",
+    "git_issue": "f9fa4a4",
+    "extid": "TASK-ECE-PRIMITIVE-PHASE-1-SPIKE-TYPES-MERGE-PRECOMPILE-ON-TOY-EN",
+    "type": "TASK",
+    "title": "ECE primitive Phase 1 spike: types + merge/precompile on toy enum",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-config-extensions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ece-primitive-phase-1-spike-types-merge-precompile-on-toy-en.md",
+    "status": "Not Started"
+  },
   "TASK-ECONOMY-CRAFTING-SLASH-INTERACTIONS": {
     "epic": "epic-crafting-professions",
     "extid": "TASK-ECONOMY-CRAFTING-SLASH-INTERACTIONS",
@@ -29714,7 +29818,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-emoji-colon-format-frontend.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "`:...:` emoji shortcode support (frontend)",
     "type": "TASK"
@@ -29991,6 +30095,19 @@
     "tags": [],
     "title": "Enemies & Monsters Systems",
     "type": "TASK"
+  },
+  "TASK-ENFORCE-FORMAT-VERSION-OPTIMISTIC-CONCURRENCY-ON-MESSAGES-AN": {
+    "hash": "9a3b7cd",
+    "git_issue": "9a3b7cd",
+    "extid": "TASK-ENFORCE-FORMAT-VERSION-OPTIMISTIC-CONCURRENCY-ON-MESSAGES-AN",
+    "type": "TASK",
+    "title": "Enforce format_version optimistic concurrency on messages and high-contention tables",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-data-integrity-acid",
+    "tags": [],
+    "source": ".plan/tickets/TASK-enforce-format-version-optimistic-concurrency-on-messages-an.md",
+    "status": "Not Started"
   },
   "TASK-ENFORCE-PLUGIN-ORIGIN-AT-REQUEST-TIME": {
     "hash": "72af3ec",
@@ -32901,6 +33018,23 @@
     "status": "Not Started",
     "git_issue": "f279c9f"
   },
+  "TASK-HARNESS-CONTEXT-PRIORITY-TIERS": {
+    "hash": "1584986",
+    "git_issue": "1584986",
+    "extid": "TASK-HARNESS-CONTEXT-PRIORITY-TIERS",
+    "type": "TASK",
+    "title": "Harness context priority tiers",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-harness-integration`",
+    "tags": [
+      "harness",
+      "prompt",
+      "budget"
+    ],
+    "source": ".plan/tickets/TASK-harness-context-priority-tiers.md",
+    "status": "Not Started"
+  },
   "TASK-HARNESS-CONTEXT-TEMPLATES": {
     "hash": "b01d03b",
     "extid": "TASK-HARNESS-CONTEXT-TEMPLATES",
@@ -33150,6 +33284,56 @@
     "source": ".plan/tickets/TASK-harness-tool-sandbox.md",
     "status": "Not Started",
     "git_issue": "13bfecb"
+  },
+  "TASK-HARNESS-TOPIC-SESSION-ATTACH": {
+    "hash": "668a941",
+    "git_issue": "668a941",
+    "extid": "TASK-HARNESS-TOPIC-SESSION-ATTACH",
+    "type": "TASK",
+    "title": "Harness work-topic session attachment",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-harness-integration`",
+    "tags": [
+      "harness",
+      "data-model",
+      "lineage"
+    ],
+    "source": ".plan/tickets/TASK-harness-topic-session-attach.md",
+    "status": "Not Started"
+  },
+  "TASK-HARNESS-TOPIC-TUI-SURFACE": {
+    "hash": "d8c69da",
+    "git_issue": "d8c69da",
+    "extid": "TASK-HARNESS-TOPIC-TUI-SURFACE",
+    "type": "TASK",
+    "title": "Harness work-topic TUI surface",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-harness-integration`",
+    "tags": [
+      "harness",
+      "tui"
+    ],
+    "source": ".plan/tickets/TASK-harness-topic-tui-surface.md",
+    "status": "Not Started"
+  },
+  "TASK-HARNESS-WORK-TOPICS": {
+    "hash": "4910513",
+    "git_issue": "4910513",
+    "extid": "TASK-HARNESS-WORK-TOPICS",
+    "type": "TASK",
+    "title": "Harness work topics",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-harness-integration`",
+    "tags": [
+      "harness",
+      "data-model",
+      "context"
+    ],
+    "source": ".plan/tickets/TASK-harness-work-topics.md",
+    "status": "Not Started"
   },
   "TASK-HASH-MENTION-RETRIEVAL-UX-FOR-CHAT-CONTEXT": {
     "epic": "epic-rag-assets-unified-storage-and-assistant-flows",
@@ -38299,6 +38483,19 @@
     "title": "Adopt @optique/core + @optique/run for typed CLI parsing",
     "type": "TASK"
   },
+  "TASK-OTLP-SINK-DECIDE-BACKEND-SIGNALS-AND-WHETHER-TO-BUILD": {
+    "hash": "0b67182",
+    "git_issue": "0b67182",
+    "extid": "TASK-OTLP-SINK-DECIDE-BACKEND-SIGNALS-AND-WHETHER-TO-BUILD",
+    "type": "TASK",
+    "title": "OTLP sink — decide backend, signals, and whether to build",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-logging",
+    "tags": [],
+    "source": ".plan/tickets/TASK-otlp-sink-decide-backend-signals-and-whether-to-build.md",
+    "status": "Not Started"
+  },
   "TASK-OUTBOUND-FETCH-HTTP-2-3-PROTOCOL-HINTS": {
     "epic": "epic-http-protocol-features",
     "extid": "TASK-OUTBOUND-FETCH-HTTP-2-3-PROTOCOL-HINTS",
@@ -38363,6 +38560,19 @@
     "tags": [],
     "title": "output-control-transforms.md silent on UI and VALID_REGEN_STYLES",
     "type": "TASK"
+  },
+  "TASK-OUTPUT-STYLE-AND-NSFWPOLICY-SECTIONS-LACK-PRIORITY-BUDGET-EN": {
+    "hash": "fd62671",
+    "git_issue": "fd62671",
+    "extid": "TASK-OUTPUT-STYLE-AND-NSFWPOLICY-SECTIONS-LACK-PRIORITY-BUDGET-EN",
+    "type": "TASK",
+    "title": "Output-style and nsfwPolicy sections lack PRIORITY budget entries",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-context-injection-templates",
+    "tags": [],
+    "source": ".plan/tickets/TASK-output-style-and-nsfwpolicy-sections-lack-priority-budget-en.md",
+    "status": "Not Started"
   },
   "TASK-OWNERSHIP-ACCESS-CONTROL-REFACTOR": {
     "epic": "",
@@ -45113,6 +45323,22 @@
     "title": "tui/asset-view.ts: remove silent catch + void-without-catch pattern in setChatId",
     "type": "TASK"
   },
+  "TASK-TUI-CHAT-PICKER": {
+    "hash": "ebcb788",
+    "git_issue": "ebcb788",
+    "extid": "TASK-TUI-CHAT-PICKER",
+    "type": "TASK",
+    "title": "TUI chat picker screen",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-terminal-ui`",
+    "tags": [
+      "tui",
+      "chat"
+    ],
+    "source": ".plan/tickets/TASK-tui-chat-picker.md",
+    "status": "Not Started"
+  },
   "TASK-TUI-DEDUPE-API-BASE": {
     "epic": "",
     "extid": "TASK-TUI-DEDUPE-API-BASE",
@@ -45138,6 +45364,38 @@
     "tags": [],
     "title": "tui.enabled config flag mapped from env but never read at runtime",
     "type": "TASK"
+  },
+  "TASK-TUI-SHELL-TESTABILITY": {
+    "hash": "47b85ad",
+    "git_issue": "47b85ad",
+    "extid": "TASK-TUI-SHELL-TESTABILITY",
+    "type": "TASK",
+    "title": "TUI shell testability",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-terminal-ui`",
+    "tags": [
+      "tui",
+      "testing"
+    ],
+    "source": ".plan/tickets/TASK-tui-shell-testability.md",
+    "status": "Not Started"
+  },
+  "TASK-TUI-SPEC-SYNC": {
+    "hash": "769db3d",
+    "git_issue": "769db3d",
+    "extid": "TASK-TUI-SPEC-SYNC",
+    "type": "TASK",
+    "title": "Terminal UI spec sync",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-terminal-ui`",
+    "tags": [
+      "tui",
+      "docs"
+    ],
+    "source": ".plan/tickets/TASK-tui-spec-sync.md",
+    "status": "Not Started"
   },
   "TASK-TURN-SEND-GATE": {
     "epic": "epic-group-chat",
@@ -45517,6 +45775,19 @@
     "tags": [],
     "title": "Validate and fix FE/BE/DB gaps for chat/VN settings",
     "type": "TASK"
+  },
+  "TASK-VALIDATE-UNRECOGNIZED-EXAMPLES-SECTION-ROLE-LABELS-INSTEAD-O": {
+    "hash": "c773846",
+    "git_issue": "c773846",
+    "extid": "TASK-VALIDATE-UNRECOGNIZED-EXAMPLES-SECTION-ROLE-LABELS-INSTEAD-O",
+    "type": "TASK",
+    "title": "Validate unrecognized examples-section role labels instead of silent user fallback",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-context-injection-templates",
+    "tags": [],
+    "source": ".plan/tickets/TASK-validate-unrecognized-examples-section-role-labels-instead-o.md",
+    "status": "Not Started"
   },
   "TASK-VECTOR-GEN-ANIMATED-RASTER": {
     "hash": "f156320",
@@ -47203,135 +47474,5 @@
     "tags": [],
     "title": "nsfw-audit view route has no inline authz guard",
     "type": "WIRE"
-  },
-  "BUG-GROUP-PARTICIPANT-USER-ACTORS-INJECTED-IN-AUTO-GEN-PATH": {
-    "hash": "18b8bfa",
-    "git_issue": "18b8bfa",
-    "extid": "BUG-GROUP-PARTICIPANT-USER-ACTORS-INJECTED-IN-AUTO-GEN-PATH",
-    "type": "BUG",
-    "title": "Group participant user actors injected in auto-gen path",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "epic-context-injection-correctness",
-    "tags": [],
-    "source": ".plan/tickets/BUG-group-participant-user-actors-injected-in-auto-gen-path.md",
-    "status": "Not Started"
-  },
-  "FEAT-WEBHOOK-INGESTION-BOOTSTRAP-WIRE-SEAMS-AT-THE-V1-SURFACE-CAL": {
-    "hash": "07b75d4",
-    "git_issue": "07b75d4",
-    "extid": "FEAT-WEBHOOK-INGESTION-BOOTSTRAP-WIRE-SEAMS-AT-THE-V1-SURFACE-CAL",
-    "type": "FEAT",
-    "title": "Webhook ingestion bootstrap: wire seams at the v1 surface call site",
-    "label": "feat",
-    "priority": "high",
-    "epic": "epic-integrations-core",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal.md",
-    "status": "Not Started"
-  },
-  "TASK-AUTHOR-DOCS-SPEC-DEPLOYMENT-MD-WITH-THE-SQLITE-VS-POSTGRES-A": {
-    "hash": "425c4f2",
-    "git_issue": "425c4f2",
-    "extid": "TASK-AUTHOR-DOCS-SPEC-DEPLOYMENT-MD-WITH-THE-SQLITE-VS-POSTGRES-A",
-    "type": "TASK",
-    "title": "Author docs/spec/deployment.md with the SQLite vs Postgres ACID matrix",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-data-integrity-acid",
-    "tags": [],
-    "source": ".plan/tickets/TASK-author-docs-spec-deployment-md-with-the-sqlite-vs-postgres-a.md",
-    "status": "Not Started"
-  },
-  "TASK-AUTHOR-NOTE-DISTINCT-COLUMN-DECISION-ADD-DB-COLUMN-VS-REUSE-": {
-    "hash": "6b3f5ef",
-    "git_issue": "6b3f5ef",
-    "extid": "TASK-AUTHOR-NOTE-DISTINCT-COLUMN-DECISION-ADD-DB-COLUMN-VS-REUSE-",
-    "type": "TASK",
-    "title": "Author-note distinct column decision: add DB column vs reuse post-history",
-    "label": "task",
-    "priority": "low",
-    "epic": "epic-context-injection-templates",
-    "tags": [],
-    "source": ".plan/tickets/TASK-author-note-distinct-column-decision-add-db-column-vs-reuse-.md",
-    "status": "Not Started"
-  },
-  "TASK-BACKFILL-DATA-VERSION-RECORD-HASH-FOR-EXISTING-ROWS": {
-    "hash": "6f0c192",
-    "git_issue": "6f0c192",
-    "extid": "TASK-BACKFILL-DATA-VERSION-RECORD-HASH-FOR-EXISTING-ROWS",
-    "type": "TASK",
-    "title": "Backfill data_version + record_hash for existing rows",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-content-hashing-distributed-integrity",
-    "tags": [],
-    "source": ".plan/tickets/TASK-backfill-data-version-record-hash-for-existing-rows.md",
-    "status": "Not Started"
-  },
-  "TASK-CI-NO-CHECK-GATE-EXECUTES-SCRIPTS-SMOKE-TESTS": {
-    "hash": "0857aa3",
-    "git_issue": "0857aa3",
-    "extid": "TASK-CI-NO-CHECK-GATE-EXECUTES-SCRIPTS-SMOKE-TESTS",
-    "type": "TASK",
-    "title": "CI: no check gate executes scripts/** smoke tests",
-    "label": "task",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-ci-no-check-gate-executes-scripts-smoke-tests.md",
-    "status": "Not Started"
-  },
-  "TASK-ECE-PRIMITIVE-PHASE-1-SPIKE-TYPES-MERGE-PRECOMPILE-ON-TOY-EN": {
-    "hash": "f9fa4a4",
-    "git_issue": "f9fa4a4",
-    "extid": "TASK-ECE-PRIMITIVE-PHASE-1-SPIKE-TYPES-MERGE-PRECOMPILE-ON-TOY-EN",
-    "type": "TASK",
-    "title": "ECE primitive Phase 1 spike: types + merge/precompile on toy enum",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-config-extensions",
-    "tags": [],
-    "source": ".plan/tickets/TASK-ece-primitive-phase-1-spike-types-merge-precompile-on-toy-en.md",
-    "status": "Not Started"
-  },
-  "TASK-ENFORCE-FORMAT-VERSION-OPTIMISTIC-CONCURRENCY-ON-MESSAGES-AN": {
-    "hash": "9a3b7cd",
-    "git_issue": "9a3b7cd",
-    "extid": "TASK-ENFORCE-FORMAT-VERSION-OPTIMISTIC-CONCURRENCY-ON-MESSAGES-AN",
-    "type": "TASK",
-    "title": "Enforce format_version optimistic concurrency on messages and high-contention tables",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-data-integrity-acid",
-    "tags": [],
-    "source": ".plan/tickets/TASK-enforce-format-version-optimistic-concurrency-on-messages-an.md",
-    "status": "Not Started"
-  },
-  "TASK-OUTPUT-STYLE-AND-NSFWPOLICY-SECTIONS-LACK-PRIORITY-BUDGET-EN": {
-    "hash": "fd62671",
-    "git_issue": "fd62671",
-    "extid": "TASK-OUTPUT-STYLE-AND-NSFWPOLICY-SECTIONS-LACK-PRIORITY-BUDGET-EN",
-    "type": "TASK",
-    "title": "Output-style and nsfwPolicy sections lack PRIORITY budget entries",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-context-injection-templates",
-    "tags": [],
-    "source": ".plan/tickets/TASK-output-style-and-nsfwpolicy-sections-lack-priority-budget-en.md",
-    "status": "Not Started"
-  },
-  "TASK-VALIDATE-UNRECOGNIZED-EXAMPLES-SECTION-ROLE-LABELS-INSTEAD-O": {
-    "hash": "c773846",
-    "git_issue": "c773846",
-    "extid": "TASK-VALIDATE-UNRECOGNIZED-EXAMPLES-SECTION-ROLE-LABELS-INSTEAD-O",
-    "type": "TASK",
-    "title": "Validate unrecognized examples-section role labels instead of silent user fallback",
-    "label": "task",
-    "priority": "low",
-    "epic": "epic-context-injection-templates",
-    "tags": [],
-    "source": ".plan/tickets/TASK-validate-unrecognized-examples-section-role-labels-instead-o.md",
-    "status": "Not Started"
   }
 }
