@@ -4619,6 +4619,10 @@
   ],
   "src/autonomy/config/types.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-decision.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-deterministic-turns.md"
     },
@@ -11205,6 +11209,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
+    }
+  ],
+  "src/config/sections/autonomy.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-decision.md"
     }
   ],
   "src/config/sections/byo-key.ts": [
@@ -30641,6 +30651,22 @@
       "source": ".plan/tickets/IDEA-idea-regex-precision-telemetry-opt-in-per-pattern-match-coun.md"
     }
   ],
+  "src/regex/stage2-llm.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-decision.md"
+    }
+  ],
+  "src/regex/stage2-llm.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-affordance.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-decision.md"
+    }
+  ],
   "src/regex/story-events.test.ts": [
     {
       "kind": "ticket",
@@ -30879,6 +30905,22 @@
     {
       "kind": "spec",
       "source": "docs/spec/gm-shadow-notes.md"
+    }
+  ],
+  "src/routes/actor-plan.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-decision.md"
+    }
+  ],
+  "src/routes/actor-plan.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-decision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agency-bdi-reflection-cycle.md"
     }
   ],
   "src/routes/actor-stats.ts": [
@@ -35107,14 +35149,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-step-planning.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-research-agency-decision.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-agency-bdi-reflection-cycle.md"
     }
   ],
   "src/routes/plugins.ts": [
@@ -35981,6 +36015,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-settings.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-decision.md"
     },
     {
       "kind": "ticket",
@@ -40879,6 +40917,22 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-research-agency-affordance.md"
+    }
+  ],
+  "src/services/affordance/telemetry.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-decision.md"
+    }
+  ],
+  "src/services/affordance/telemetry.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-affordance.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-decision.md"
     }
   ],
   "src/services/agency/bdi-nightly.test.ts": [

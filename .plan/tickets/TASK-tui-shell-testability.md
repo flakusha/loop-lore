@@ -30,3 +30,5 @@
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
 
 git issue: 47b85ad
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 47b85ad (registry tip: e522408c9 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-TUI-SHELL-TESTABILITY done)
