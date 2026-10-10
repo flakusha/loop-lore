@@ -106,6 +106,76 @@ unrelated to tracking: `src/prompts/task-clarification.ts` (a prompt template) a
    - "When task-management task completes, update ticket status."
    - "Never create task-management entries for BUG tickets (single-fix)."
 
+## Ticket ↔ Task Contract (2026-10-10 — chosen and in force)
+
+Grounded in the real `task-management` skill schema (user-level,
+`~/.config/opencode/skills/task-management/`; its `scripts/task-cli.ts`
+validator is the schema authority — `SKILL.md`'s examples lag it: subtasks
+require a nullable `agent_id`, and the CLI runs under `bun`, not
+`npx ts-node`). Task files: `.tmp/tasks/{slug}/task.json` (id, name, status
+`active|completed|blocked|archived`, objective, `context_files`,
+`reference_files`, `exit_criteria`, subtask/completed counts) and
+`.tmp/tasks/{slug}/subtask_XX.json` (id `{slug}-{seq}`, seq, title, status
+`pending|in_progress|completed|blocked`, `depends_on`, `parallel`,
+`context_files`, `reference_files`, `acceptance_criteria`, `deliverables`,
+`agent_id`, timestamps, `completion_summary`).
+
+### Granularity matrix
+
+| Dimension | `.plan/tickets/*.md` | `.tmp/tasks/{slug}/` |
+|-----------|----------------------|----------------------|
+| Question answered | WHAT to build (build ledger) | HOW to build it this session |
+| Lifetime | Cross-session, permanent | One session (`.tmp/`, gitignored) |
+| Git-tracked | Yes, reviewed in PRs | No — scratchpad |
+| Linkage | `**Epic:**`, `**Related:**`, git issues | `context_files`/`reference_files` paths |
+| Gating | `plan validate` gates | `task-cli validate` (schema, deps, cycles) |
+| Granularity | Ticket-level work items | Atomic subtasks with dependency graph |
+| Status vocabulary | Not Started/In Progress/Blocked/Done/Wontfix/Postponed | pending/in_progress/completed/blocked |
+| Querying | `plan:report`, feature-matrix, `/find-work` | `task-cli status/next/blocked/parallel/deps` |
+
+### Integration pattern — Option B chosen (task references ticket)
+
+The ticket is the durable WHAT/ledger; the task breakdown is the session HOW.
+Cross-referencing flows ONE way: `task.json`/`subtask` `context_files` and
+`reference_files` name the ticket path (and any spec/source files); the ticket
+carries no `.tmp/` slugs — its `**Related:**` must resolve to plan files, and
+`.tmp/` is ephemeral, so a slug there would dangle and rot. This keeps the
+git-tracked ledger authoritative and makes the session breakdown disposable
+without touching ticket history. The durable proof of a decomposition lives as
+a quoted fenced block in the ticket md, not as a pointer into `.tmp/`.
+
+### Lifecycle mapping
+
+```
+ticket Not Started
+  └─(agent: complexity >3 steps → decompose via task-management)─► ticket In Progress
+       └─ subtasks pending → in_progress → completed (task-cli complete <feature> <seq> "summary")
+             └─ all subtasks completed AND task.json exit_criteria met
+                   └─(agent, same session)─► ticket Done (md Status; giwt sync/git issue reconcile)
+
+reverse edges:
+  subtask blocked (explicit) or no ready tasks → nothing to execute →
+    ticket Blocked (agent updates md + giwt state) until unblocked
+  session ends with subtasks open → ticket stays In Progress (ledger survives;
+    .tmp breakdown is re-created next session or quoted into the ticket)
+```
+
+Who updates the ticket: the agent driving the session, at the moment of the
+transition — In Progress when the decomposition is authored, Done only when
+`exit_criteria` are verifiably met (never on subtask completion alone).
+
+### Agent workflow guide
+
+- Pick ONE primary tracker per piece of work; never duplicate state.
+- FEAT/TASK spanning >3 steps → decompose into `.tmp/tasks/` first; BUG stays
+  single-fix unless the fix spans >3 files.
+- Work `task-cli next`; keep `task-cli validate` green; `complete` subtasks
+  with real summaries.
+- Update the ticket at transitions (In Progress / Blocked / Done) — the ticket,
+  not `.tmp/`, is what operators see.
+- Quote the decomposition (slugs + subtask structure) into the ticket md as a
+  fenced block before the session ends; `.tmp/` will not survive.
+
 ## Out of Scope
 
 - Replacing either system (both have distinct value)
@@ -123,12 +193,12 @@ Bound to this epic via the `**Epic:** epic-task-management-integration` header o
 
 ## Acceptance Criteria
 
-- [ ] Granularity matrix documented in this epic or AGENTS.md
-- [ ] Integration pattern chosen and documented
-- [ ] Lifecycle mapping shows ticket ↔ task transitions
-- [ ] Agent workflow guide added to AGENTS.md or skill docs
-- [ ] At least 2 real tickets decomposed via task-management as proof-of-concept
-- [ ] No duplicate state: each piece of work tracked in exactly one primary system
+- [x] Granularity matrix documented in this epic or AGENTS.md
+- [x] Integration pattern chosen and documented
+- [x] Lifecycle mapping shows ticket ↔ task transitions
+- [x] Agent workflow guide added to AGENTS.md or skill docs
+- [x] At least 2 real tickets decomposed via task-management as proof-of-concept
+- [x] No duplicate state: each piece of work tracked in exactly one primary system
 
 ## Dependencies
 
