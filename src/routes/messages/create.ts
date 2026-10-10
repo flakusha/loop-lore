@@ -15,6 +15,7 @@ import { ChatIdParams, ErrorResponse, MessageCreateBody, } from "../../validatio
 import { badRequestResponse, jsonCreated, requireUserId, } from "../http-utils";
 import { dispatchCommand, } from "./command";
 import { createEntityConfirmRoutes, } from "./create-entity-confirm";
+import { createResponse, } from "./create-response";
 import {
   attachAttachmentsOrForbidden,
   enforceInjectionGate,
@@ -254,24 +255,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           opts.asyncStore,
         );
 
-        if (reply.replied) {
-          const generation = reply.response;
-          // A failed generation (e.g. assistant swipe retries exhausted)
-          // surfaces as a non-2xx jsonError Response. Propagate it verbatim
-          // instead of re-wrapping it into a 201 whose body lacks the
-          // declared id (BUG-message-create-re-wraps-a-503-reply-into-201-jsoncreated).
-          if (generation && (generation.status < 200 || generation.status >= 300)) {
-            const errorBody = (await generation.json()) as Record<string, unknown>;
-            return Response.json(
-              { ...errorBody, id, context, },
-              { status: generation.status, headers: generation.headers, },
-            );
-          }
-
-          return jsonCreated({ ...(await generation?.json?.()), context, },);
-        }
-
-        return jsonCreated({ id, context, },);
+        return await createResponse(reply, id, context,);
       },
       {
         params: ChatIdParams,
