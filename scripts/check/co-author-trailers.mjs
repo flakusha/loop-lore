@@ -228,13 +228,18 @@ function defaultRange() {
 
 function main() {
   const rangeArg = process.argv.indexOf("--range",);
-  const commits = collectCommits(
-    rangeArg === -1 ? defaultRange() : process.argv[rangeArg + 1],
-  );
+  const range = rangeArg === -1 ? defaultRange() : process.argv[rangeArg + 1];
+  let commits = collectCommits(range,);
+  // A fresh branch has an empty unmerged range; the canonical config identity
+  // is then the entire population, so a fabricated trailer would pass
+  // vacuously. Widen to the recent history of the range's base instead.
+  if (commits.length === 0) {
+    commits = collectCommits(range.endsWith("..HEAD",) ? `${range.split("..",)[0]}~150` : "HEAD~150",);
+  }
   const population = buildPopulation(commits,);
   // --range audits real commits; bare stdin audits one message against the
   // same population.
-  const audited = rangeArg === -1 && commits.length > 0
+  const audited = rangeArg === -1
     ? [{ sha: "HEAD", ident: "", committer: "", message: readFileSync(0, "utf8",), },]
     : commits;
 
