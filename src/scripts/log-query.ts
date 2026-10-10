@@ -23,6 +23,11 @@ import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { createLogger, getChildLogger, type Logger, } from "../logger";
 import { jsonStringifyOr, } from "../utils/safe-json";
+import { formatTable, } from "./log-query-format";
+
+// Re-exported so `formatTable` keeps its public import path; the renderer
+// itself lives in log-query-format.ts (per-file size gate).
+export { formatTable, };
 
 /** Rows returned when `--limit` is omitted. */
 export const DEFAULT_LIMIT = 50;
@@ -169,30 +174,6 @@ export async function queryLogEntries(
   }
 
   return query.execute() as Promise<LogEntry[]>;
-}
-
-/**
- * Render rows as a fixed-width table for humans.
- * @param entries
- */
-export function formatTable(entries: LogEntry[],): string {
-  const header = ["CREATED_AT", "LEVEL", "EVENT", "ENTITY", "USER", "MESSAGE",];
-  const rows: string[][] = entries.map((entry,) => [
-    String(entry.created_at ?? "-",),
-    String(entry.level,),
-    String(entry.event_type ?? "-",),
-    entry.entity_id === null
-      ? String(entry.entity_type ?? "-",)
-      : `${entry.entity_type}:${entry.entity_id}`,
-    String(entry.user_id ?? "-",),
-    String(entry.message,).slice(0, 60,),
-  ]);
-
-  const widths = header.map((cell, i,) => Math.max(cell.length, ...rows.map((row,) => row[i]!.length),));
-
-  const line = (cells: string[],): string => cells.map((cell, i,) => cell.padEnd(widths[i]!,)).join("  ",).trimEnd();
-
-  return [line(header,), ...rows.map(line,),].join("\n",);
 }
 
 /** CLI entry point. @returns 0 on success, 1 on a bad selector/timestamp or unreadable DB */
