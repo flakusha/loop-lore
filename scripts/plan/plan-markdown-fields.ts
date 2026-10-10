@@ -51,7 +51,7 @@ export function fieldLines(text: string,): FieldLine[] {
 /** Placeholder tag values that mean "no tags", never a literal tag. */
 export const TAG_PLACEHOLDER = /^\(?\s*(none|n\/a|-|tbd)?\s*\)?$/i;
 /** Epic values that name no epic. */
-export const EPIC_PLACEHOLDER = /^\(?\s*(none|n\/a|-|if applicable)?\s*\)?$/i;
+const EPIC_PLACEHOLDER = /^\(?\s*(none|n\/a|-|if applicable)?\s*\)?$/i;
 
 /**
  * Normalize one epic reference to its bare slug, or null when it does
