@@ -6,7 +6,6 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-// hint: Cosmetic change on both sides. Pick either version or combine formatting.
 **Tags:** chat, slash-commands, composer, autocomplete, command-palette, assistant-flows, group-chat
 **Overview:** Unified `/...` slash-command UX for direct chat, group chat, and assistant sessions: a server-backed command palette hydrating from the live assistant registry, keyboard-navigable autocomplete with did-you-mean, role-filtered `/help`, toggleable pre-send markdown preview, and Tab-accept parity across commands/mentions/emoji.
 
@@ -36,7 +35,6 @@
 
 ## Acceptance
 
-// hint: Structural and logic conflict. Both design and behavior differ.
 - [x] Same live registry drives the palette and both autocomplete surfaces (`GET /api/v1/commands` → `listCommands()`); new commands appear without an FE rebuild.
 - [x] `/help` lists only commands the caller's `roleInChat` satisfies (owner-gated `/attack`, `/battle`, `/create`, `/debug`, `/heal` hidden from members); unrestricted commands always listed.
 - [x] Unknown-command typos surface a did-you-mean suggestion in the palette (`/hep` → `/help`); explicit Tab/Enter to accept, Esc dismisses; unrelated input still yields no candidates.
