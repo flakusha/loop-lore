@@ -110,8 +110,8 @@ function emailOf(ident,) {
 // (src/utils/coauthors.ts): giwt documents the quoted form, so a value keeping
 // its quotes yields fragments matching no trailer.
 export function parseAllowedTrailers(value,) {
-  return value.split(",",).map((f,) => f.trim().replace(/^"|"$/g, "",).toLowerCase(),)
-    .filter((f,) => f !== "",);
+  return value.split(",",).map((f,) => f.trim().replace(/^"|"$/g, "",).toLowerCase())
+    .filter((f,) => f !== "");
 }
 
 function readAllowedTrailers() {

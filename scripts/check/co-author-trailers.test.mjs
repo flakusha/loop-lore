@@ -124,11 +124,9 @@ test("a range whose only commits are clean passes even with empty stdin", () => 
 // anchored trailer regex never matched — the identical message read clean
 // under CRLF and was refused under LF. Line endings must not decide a verdict.
 test("a CRLF message is audited exactly like its LF twin", () => {
-  const lf = auditCommits([commit("fix: t\n\nCo-Authored-By: Ghost <ghost@no-such.example>\n",),],
-    population,);
-  const crlf = auditCommits([commit("fix: t\r\n\r\nCo-Authored-By: Ghost <ghost@no-such.example>\r\n",),],
-    population,);
-  expect(crlf.map((f) => f.email,),).toEqual(lf.map((f) => f.email,),);
+  const lf = auditCommits([commit("fix: t\n\nCo-Authored-By: Ghost <ghost@no-such.example>\n",),], population,);
+  const crlf = auditCommits([commit("fix: t\r\n\r\nCo-Authored-By: Ghost <ghost@no-such.example>\r\n",),], population,);
+  expect(crlf.map((f,) => f.email),).toEqual(lf.map((f,) => f.email),);
   expect(crlf,).toHaveLength(1,);
   expect(crlf[0].subject,).toBe("fix: t",);
 });
@@ -140,8 +138,8 @@ test("a quoted ALLOWED_TRAILERS value parses into giwt's fragments", () => {
   expect(parseAllowedTrailers('"bot@corp.example, other@x"',),).toEqual([
     "bot@corp.example",
     "other@x",
-  ]);
-  expect(parseAllowedTrailers("a@b, c@d",),).toEqual(["a@b", "c@d",]);
+  ],);
+  expect(parseAllowedTrailers("a@b, c@d",),).toEqual(["a@b", "c@d",],);
   // The consented identity must actually pass the audit that consumes it.
   expect(
     auditCommits([commit("chore: t\n\nCo-Authored-By: Other <other@x>\n",),], {
