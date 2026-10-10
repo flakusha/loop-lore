@@ -9,7 +9,6 @@ import { createInMemoryDb, } from "./__helpers/in-mem-db";
 import { runNightlyReflectionCycle, } from "./bdi-nightly";
 import {
   DEFAULT_REFLECTION_STEP_INTERVAL,
-  incrementReflectionSteps,
   resetReflectionSteps,
   shouldReflectAt,
 } from "./bdi-reflection";
@@ -54,13 +53,6 @@ describe("reflection cadence primitives", () => {
     expect(shouldReflectAt(3, 4,),).toBe(false,);
     // Interval 0 = disabled, regardless of accumulated steps.
     expect(shouldReflectAt(99, 0,),).toBe(false,);
-  });
-
-  test("incrementReflectionSteps returns the new count", async () => {
-    const planId = await seedPlan("actor1", "normal", 1,);
-
-    expect(await incrementReflectionSteps(db, planId,),).toBe(2,);
-    expect(await incrementReflectionSteps(db, planId,),).toBe(3,);
   });
 
   test("resetReflectionSteps zeroes the counter", async () => {

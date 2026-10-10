@@ -22,15 +22,17 @@
  * @module autonomy/dispatch/bdi-dispatch
  */
 
-import { type Kysely, sql, } from "kysely";
+import { type Kysely, } from "kysely";
 import type { DB, } from "../../db";
 import { runNightlyReflectionCycle, } from "../../services/agency/bdi-nightly";
 import type { PlanRecomputeFn, } from "../../services/agency/bdi-nightly";
 import { createPlanRecompute, } from "../../services/agency/bdi-plan-recompute";
+import { recordActorDecisionType, } from "../../services/agency/quality-metrics";
 import { toDate, } from "../../utils/date";
 import { AutonomyGovernor, } from "../governor";
 import type { AutonomyScope, GovernorLimitName, } from "../governor";
 import type { AutonomyDispatch, AutonomyDispatchContext, AutonomyDispatchResult, } from "../scheduler";
+import { ageReflectionSteps, dueActors, } from "./bdi-due";
 
 /** Stable name — appears verbatim in the scheduler's outcome telemetry. */
 export const BDI_DISPATCH_NAME = "bdi";
@@ -152,78 +154,15 @@ async function runBdiDispatch(
     reflectionStepInterval: stepInterval,
   },);
 
-  return { dispatched: result.processed, };
-}
-
-/** World members due for a plan (re)compute: no plan row for `planDate`,
- *  or — when cadence is enabled — an existing plan whose reflection step
- *  counter has reached the interval. Id-ordered so the set is identical
- *  across restarts.
- * @param db
- * @param worldId
- * @param planDate
- * @param limit
- * @param stepInterval */
-async function dueActors(
-  db: Kysely<DB>,
-  worldId: string,
-  planDate: string,
-  limit: number,
-  stepInterval: number,
-): Promise<string[]> {
-  const planned = await db
-    .selectFrom("actor_daily_plans",)
-    .select("actor_id",)
-    .where("world_id", "=", worldId,)
-    .where("plan_date", "=", planDate,)
-    .execute();
-
-  const plannedIds = new Set(planned.map((p,) => p.actor_id),);
-  const members = await db
-    .selectFrom("world_members",)
-    .select("actor_id",)
-    .where("world_id", "=", worldId,)
-    .orderBy("actor_id", "asc",)
-    .execute();
-
-  const due = new Set(members.map((m,) => m.actor_id).filter((id,) => !plannedIds.has(id,)),);
-
-  if (stepInterval > 0) {
-    const cadenceDue = await db
-      .selectFrom("actor_daily_plans",)
-      .select("actor_id",)
-      .where("world_id", "=", worldId,)
-      .where("plan_date", "=", planDate,)
-      .where("reflection_step_count", ">=", stepInterval,)
-      .execute();
-
-    for (const row of cadenceDue) { due.add(row.actor_id,); }
+  // Decision telemetry: consume the cycle's per-actor decision events and
+  // stamp them on each actor's latest interaction log (no-op when the
+  // actor has no logged interaction). This is the production write path
+  // for interaction_logs.action_type.
+  for (const event of result.decisionEvents) {
+    await recordActorDecisionType(db, event.actorId, event.actionType,);
   }
 
-  return [...due,].sort().slice(0, limit,);
-}
-
-/** Age every today-plan in the world by one reflection step. Counters
- *  cap at the interval so a plan that keeps missing the budget cannot
- *  accumulate an unbounded count.
- * @param db
- * @param worldId
- * @param planDate
- * @param stepInterval
- */
-async function ageReflectionSteps(
-  db: Kysely<DB>,
-  worldId: string,
-  planDate: string,
-  stepInterval: number,
-): Promise<void> {
-  await sql`
-    UPDATE actor_daily_plans
-    SET reflection_step_count = reflection_step_count + 1
-    WHERE world_id = ${worldId}
-      AND plan_date = ${planDate}
-      AND reflection_step_count < ${stepInterval}
-  `.execute(db,);
+  return { dispatched: result.processed, };
 }
 
 /**
