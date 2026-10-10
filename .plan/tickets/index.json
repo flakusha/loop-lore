@@ -39021,7 +39021,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-plan-index-orphan-phantom-cleanup.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "planning",
       "giwt",
