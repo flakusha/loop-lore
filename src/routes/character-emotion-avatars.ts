@@ -18,7 +18,7 @@ import {
   ErrorResponse,
   RegenerateEmotionAvatarsBody,
 } from "../validation/schemas";
-import { checkActorOwnership, } from "./actor-auth";
+import { requireOwnedActor, } from "./actor-auth";
 import {
   emotionJobNotFoundResponse,
   HttpStatus,
@@ -29,6 +29,7 @@ import {
 } from "./http-utils";
 
 import { handleJobStream, } from "./character-emotion-avatars-stream";
+import { validateEmotionsParam, } from "./character-emotions/emotion-request";
 
 /**
  * Character Emotion Avatars Routes
@@ -54,34 +55,22 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
   return new Elysia({ name: "character-emotion-avatars", },)
     // ── List batch generation jobs ────────────────────────────────
     .get(`${prefix}/actors/:actorId/emotion-avatars/jobs`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const actorId = ctx.params.actorId as string;
-      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+      const access = await requireOwnedActor(ctx, database,);
+      if (access instanceof Response) { return access; }
+      const { actorId, } = access;
 
       const jobs = emotionAvatarService.listJobs(actorId,);
       return jsonResponse(jobs,);
     },)
     // ── Get specific job status ───────────────────────────────────
     .get(`${prefix}/actors/:actorId/emotion-avatars/jobs/:jobId`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const actorId = ctx.params.actorId as string;
-      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+      const access = await requireOwnedActor(ctx, database,);
+      if (access instanceof Response) { return access; }
+      const { actorId, } = access;
 
       const { jobId, } = ctx.params as { jobId: string };
       const job = emotionAvatarService.getJobStatus(jobId as any,);
-      // checkActorOwnership only proves the caller owns the actor in the PATH.
+      // requireOwnedActor only proves the caller owns the actor in the PATH.
       // The job carries its own actor, so owning any single actor would let a
       // caller read another tenant's job (IDOR).
       if (!job || job.actorId !== actorId) {
@@ -92,15 +81,9 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
     },)
     // ── Stream job progress over SSE ────────────────────────────
     .get(`${prefix}/actors/:actorId/emotion-avatars/jobs/:jobId/stream`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const actorId = ctx.params.actorId as string;
-      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+      const access = await requireOwnedActor(ctx, database,);
+      if (access instanceof Response) { return access; }
+      const { actorId, } = access;
 
       const { jobId, } = ctx.params as { jobId: string };
       const job = emotionAvatarService.getJobStatus(jobId as any,);
@@ -112,15 +95,9 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
     },)
     // ── Cancel a running job ──────────────────────────────────────
     .post(`${prefix}/actors/:actorId/emotion-avatars/jobs/:jobId/cancel`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const actorId = ctx.params.actorId as string;
-      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+      const access = await requireOwnedActor(ctx, database,);
+      if (access instanceof Response) { return access; }
+      const { actorId, } = access;
 
       const { jobId, } = ctx.params as { jobId: string };
       // ORDER IS LOAD-BEARING: cancelJob returns only a boolean and
@@ -143,15 +120,9 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
     },)
     // ── Start batch generation ───────────────────────────────────
     .post(`${prefix}/actors/:actorId/emotion-avatars`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const actorId = ctx.params.actorId as string;
-      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+      const access = await requireOwnedActor(ctx, database,);
+      if (access instanceof Response) { return access; }
+      const { actorId, } = access;
 
       const body = ctx.body as Record<string, unknown>;
 
@@ -165,30 +136,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       }
 
       // Validate emotions if provided
-      if (emotionsParam && emotionsParam.length > 0) {
-        const validEmotions = Object.values(EmotionType,) as string[];
-        // BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy:
-        // every entry fans out into its own image-gen job, so the array is
-        // capped at one entry per emotion and duplicates are rejected —
-        // uncapped, a single request could enqueue unbounded generation work.
-        if (emotionsParam.length > validEmotions.length) {
-          return jsonError({
-            message: `emotions accepts at most ${validEmotions.length} entries`,
-            status: HttpStatus.BadRequest,
-          },);
-        }
-
-        for (const e of emotionsParam) {
-          if (!validEmotions.includes(e,)) {
-            return jsonError({ message: `Invalid emotion: ${e}`, status: HttpStatus.BadRequest, },);
-          }
-        }
-
-        const seenEmotions = new Set(emotionsParam,);
-        if (seenEmotions.size !== emotionsParam.length) {
-          return jsonError({ message: "emotions must not contain duplicates", status: HttpStatus.BadRequest, },);
-        }
-      }
+      const emotionsError = validateEmotionsParam(emotionsParam,);
+      if (emotionsError) { return emotionsError; }
 
       const emotions = emotionsParam ? emotionsParam as EmotionType[] : undefined;
 
@@ -209,15 +158,9 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
     },)
     // ── Start actor-level regeneration (base/outfitless slots) ────
     .post(`${prefix}/actors/:actorId/emotion-avatars/regenerate`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const actorId = ctx.params.actorId as string;
-      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+      const access = await requireOwnedActor(ctx, database,);
+      if (access instanceof Response) { return access; }
+      const { actorId, } = access;
 
       const body = ctx.body as {
         emotions?: string[];
@@ -228,28 +171,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       };
 
       const emotionsParam = body.emotions;
-      if (emotionsParam && emotionsParam.length > 0) {
-        const validEmotions = Object.values(EmotionType,) as string[];
-        // Same fan-out cap as the batch route: one entry per emotion, no
-        // duplicates — each entry becomes its own image-gen job.
-        if (emotionsParam.length > validEmotions.length) {
-          return jsonError({
-            message: `emotions accepts at most ${validEmotions.length} entries`,
-            status: HttpStatus.BadRequest,
-          },);
-        }
-
-        for (const e of emotionsParam) {
-          if (!validEmotions.includes(e,)) {
-            return jsonError({ message: `Invalid emotion: ${e}`, status: HttpStatus.BadRequest, },);
-          }
-        }
-
-        const seenEmotions = new Set(emotionsParam,);
-        if (seenEmotions.size !== emotionsParam.length) {
-          return jsonError({ message: "emotions must not contain duplicates", status: HttpStatus.BadRequest, },);
-        }
-      }
+      const emotionsError = validateEmotionsParam(emotionsParam,);
+      if (emotionsError) { return emotionsError; }
 
       // Re-roll derives from an existing avatar: explicit base, else the
       // actor's primary avatar.
