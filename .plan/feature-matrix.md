@@ -1155,7 +1155,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2860 | 1174 | 58 | 1185 | 36 | 0 | 407 |
+| (untagged) | 2860 | 1175 | 58 | 1184 | 36 | 0 | 407 |
 
 ## By epic × status
 
@@ -1183,7 +1183,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | Epic 36 (Chat Lifecycle), Epic 41 (Chat Transfer) | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Epic 51 (Output Control & Transforms) | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | Epic Battle & Action Systems | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
-| Epic Immersion & Presentation (sub-task) | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
+| Epic Immersion & Presentation (sub-task) | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | Epic Visual Novel Mode (51) | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | EPIC-2026-39 (Config File Separation) | 7 | 0 | 0 | 7 | 0 | 0 | 0 |
 | epic-2d-sprite-world | 9 | 0 | 0 | 0 | 0 | 0 | 9 |
