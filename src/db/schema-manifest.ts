@@ -553,6 +553,7 @@ export const SCHEMA = new SchemaManifest()
     state_changes: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     agency_mode: col("text", { notNull: true, hasDefault: true, },),
+    action_type: col("text",),
   },)
   .table("log_entries", {
     id: col("text", { primaryKey: true, },),
@@ -1174,6 +1175,7 @@ export const SCHEMA = new SchemaManifest()
     summary: col("text", { notNull: true, },),
     priority: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
+    reflection_step_count: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("actor_e2e_pubkeys", {
     id: col("text", { primaryKey: true, },),
@@ -1680,6 +1682,7 @@ export const SCHEMA = new SchemaManifest()
     avatar_focus_x: col("real", { notNull: true, hasDefault: true, },),
     avatar_focus_y: col("real", { notNull: true, hasDefault: true, },),
     review_state: col("text", { notNull: true, hasDefault: true, },),
+    plan_visible: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("characters", {
     id: col("text", { primaryKey: true, },),

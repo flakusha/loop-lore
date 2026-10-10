@@ -11,8 +11,27 @@ import { createInMemoryDb, } from "./__helpers/in-mem-db";
 import {
   incrementDimensionCounter,
   queryAgencyMetrics,
+  recordActionType,
   recordAgencyMode,
 } from "./quality-metrics";
+
+describe("recordActionType", () => {
+  test("stamps interaction_logs.action_type without touching agency_mode", async () => {
+    await recordActionType(db, "log1", "utility:attack",);
+
+    const row = raw.query("SELECT action_type, agency_mode FROM interaction_logs WHERE id='log1'",).get() as {
+      action_type: string | null;
+      agency_mode: string;
+    };
+
+    expect(row.action_type,).toBe("utility:attack",);
+    expect(row.agency_mode,).toBe("free",);
+  });
+
+  test("a missing log id is a no-op, not an error", async () => {
+    await recordActionType(db, "log-does-not-exist", "bdi:plan_created",);
+  });
+});
 
 let db: Kysely<DB>;
 let raw: Database;

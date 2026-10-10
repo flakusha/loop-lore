@@ -29,6 +29,13 @@ import type {
 const DEFAULT_PRESET: PacingPresetName = "organic";
 
 /**
+ * Default BDI reflection step interval. 0 = checkpoint once per night
+ * (the behavior before the cadence knob existed); a positive N revisits
+ * a plan's checkpoint every N dispatched beat steps.
+ */
+export const DEFAULT_BDI_REFLECTION_STEP_INTERVAL = 0;
+
+/**
  * Read the autonomy JSON column from a single row. Empty / missing
  * rows return `{}` so every layer can opt into specific keys without
  * copying the preset shape.
@@ -104,6 +111,13 @@ function applyLayer(out: AutonomyConfig, layer: AutonomyConfigOverride,): void {
   if (layer.seed !== undefined && (layer.seed === null || Number.isInteger(layer.seed,))) {
     out.seed = layer.seed;
   }
+
+  if (
+    layer.bdiReflectionStepInterval !== undefined && Number.isInteger(layer.bdiReflectionStepInterval,) &&
+    layer.bdiReflectionStepInterval >= 0
+  ) {
+    out.bdiReflectionStepInterval = layer.bdiReflectionStepInterval;
+  }
 }
 
 /**
@@ -167,6 +181,9 @@ function mergeLayers(
     perAgentCap: preset.perAgentCap,
     perUserCap: preset.perUserCap,
     seed: preset.seed,
+    // Not preset-varying: reflection cadence is an operator knob, not a
+    // pacing identity. 0 keeps the once-per-night behavior.
+    bdiReflectionStepInterval: DEFAULT_BDI_REFLECTION_STEP_INTERVAL,
   };
 
   applyLayer(out, world,);

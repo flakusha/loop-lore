@@ -1195,6 +1195,7 @@ export const ActorsSchema = t.Object({
   avatar_focus_x: t.Optional(t.Number(),),
   avatar_focus_y: t.Optional(t.Number(),),
   review_state: t.Optional(t.String(),),
+  plan_visible: t.Optional(t.Number(),),
 },);
 
 // ── admin_character_overrides ────────────────────────────────────────────
@@ -2875,6 +2876,7 @@ export const InteractionLogsSchema = t.Object({
   state_changes: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   agency_mode: t.Optional(AgencyModeSchema,),
+  action_type: t.Optional(t.String(),),
 },);
 
 // ── agency_play_counters ────────────────────────────────────────────
@@ -2906,6 +2908,7 @@ export const ActorDailyPlansSchema = t.Object({
   world_id: t.Optional(t.String(),),
   priority: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
+  reflection_step_count: t.Optional(t.Number(),),
 },);
 
 // ── actor_planned_activities ────────────────────────────────────────────

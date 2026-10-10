@@ -8,6 +8,7 @@ import { Elysia, } from "elysia";
 import { ageGateRoutes, } from "../../age-gate/controller";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
 import { localInferenceRoutes, } from "../../inference/routes";
+import { actorPlanRoutes, } from "../actor-plan";
 import { apiKeysRoutes, } from "../api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "../auth";
 import { frontendLogsRoutes, } from "../frontend-logs";
@@ -64,6 +65,7 @@ export function baseSurface(opts: RegisterPluginsOpts,) {
     .use(apiKeysRoutes(handleOpts, prefix,),)
     .use(settingsRoutes(handleOpts, prefix,),)
     .use(planningRoutes({ database, }, prefix,),)
+    .use(actorPlanRoutes({ database, }, prefix,),)
     .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
     .use(messageEncryptionRoutes(handleOpts, prefix,),)
     .use(keyManagementRoutes({ database, }, prefix,),);
