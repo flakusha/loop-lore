@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** command surface shipped (`/image` availability-gated action dispatch, `/improve`, `/quest`, `/caption`, emotion-avatar fallback); still open per the unchecked acceptance criteria below: ComfyUI/sd.cpp backend adapter, entity-to-asset mapping, `/image edit/style/upscale`, general intent routing, scenario-source store (removed 2026-08-14, to reimplement). Reopened 2026-10-09 — was marked Done with all acceptance criteria unchecked.
 **Priority:** Medium
 **Effort:** High
@@ -70,3 +70,5 @@ ComfyUI is the primary backend. Finalized workflow files are the API contract.
 ## Related
 
 - **Feature spec:** `FEAT-assistant-generation-extensions.md`
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 1f56cfc (registry tip: 4d407558e Konstantin Fedotov Auto-closed: ticket TASK-ASSISTANT-GENERATION-EXTENSIONS marked done in)

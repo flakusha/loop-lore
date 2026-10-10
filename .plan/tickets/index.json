@@ -21912,7 +21912,7 @@
     "label": "task",
     "priority": "High (MVP scoped, post-Gate C)",
     "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Assistant Creative Studio — Workflow Templates",
     "type": "TASK"
@@ -22101,7 +22101,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-assistant-generation-extensions.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "EPIC: Assistant Generation Extensions (Image Gen, Intent, Scenario Source)",
     "type": "TASK"
