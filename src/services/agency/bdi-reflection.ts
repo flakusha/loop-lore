@@ -58,3 +58,55 @@ export async function applyReflectionCheckpoint(
 
   return { emitted: true, revisionId: id, };
 }
+
+/** Default reflection cadence: 0 = checkpoint on the nightly visit only
+ *  (the pre-cadence behavior). A positive N fires the checkpoint every
+ *  N dispatched beat steps for the plan. */
+export const DEFAULT_REFLECTION_STEP_INTERVAL = 0;
+
+/**
+ * Should a reflection checkpoint fire for a plan that has accumulated
+ * `stepCount` steps under cadence `interval`? Only positive intervals
+ * gate: 0 means the cadence is disabled and the caller falls back to
+ * the once-per-night visit.
+ * @param stepCount Steps accumulated since the last checkpoint.
+ * @param interval Configured cadence (0 = disabled).
+ */
+export function shouldReflectAt(stepCount: number, interval: number,): boolean {
+  return interval > 0 && stepCount >= interval;
+}
+
+/**
+ * Increment the reflection step counter of one plan, returning the new
+ * value. Called once per dispatched beat step by the BDI dispatch.
+ * @param db
+ * @param planId
+ */
+export async function incrementReflectionSteps(db: Kysely<DB>, planId: string,): Promise<number> {
+  await db
+    .updateTable("actor_daily_plans",)
+    .set((eb,) => ({ reflection_step_count: eb("reflection_step_count", "+", 1,), }))
+    .where("id", "=", planId,)
+    .execute();
+
+  const row = await db
+    .selectFrom("actor_daily_plans",)
+    .select("reflection_step_count",)
+    .where("id", "=", planId,)
+    .executeTakeFirst();
+
+  return row?.reflection_step_count ?? 0;
+}
+
+/**
+ * Reset a plan's reflection step counter after a checkpoint fired.
+ * @param db
+ * @param planId
+ */
+export async function resetReflectionSteps(db: Kysely<DB>, planId: string,): Promise<void> {
+  await db
+    .updateTable("actor_daily_plans",)
+    .set({ reflection_step_count: 0, },)
+    .where("id", "=", planId,)
+    .execute();
+}

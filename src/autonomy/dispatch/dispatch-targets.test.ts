@@ -287,4 +287,82 @@ describe("createBdiDispatch", () => {
     const ctx = makeCtx({ cfg: { ...CFG, jitterRatio: 0.5, }, rng: () => 1, },);
     expect(await target.run(ctx,),).toEqual({ dispatched: 1, },);
   });
+
+  test("reflection cadence: a planned actor below the interval is not due and ages one step", async () => {
+    await makeWorld();
+    await addMember("actor-cadence",);
+    await insertActorDailyPlans(db, "actor-cadence", "2026-01-01", "old", {
+      id: "plan-cadence",
+      world_id: WORLD_ID,
+      priority: "normal",
+      reflection_step_count: 0,
+    },);
+
+    let recomputed = 0;
+    const planRecompute: PlanRecomputeFn = async () => {
+      recomputed += 1;
+      return { summary: "hold", priority: "normal", activities: [], };
+    };
+
+    const target = createBdiDispatch({ db, planRecompute, today: "2026-01-01", },);
+    const ctx = makeCtx({ cfg: { ...CFG, bdiReflectionStepInterval: 3, }, },);
+    expect(await target.run(ctx,),).toEqual({ skipped: BDI_SKIP.OffCadence, },);
+    expect(recomputed,).toBe(0,);
+
+    const row = await db
+      .selectFrom("actor_daily_plans",)
+      .select("reflection_step_count",)
+      .where("id", "=", "plan-cadence",)
+      .executeTakeFirst();
+
+    expect(row?.reflection_step_count,).toBe(1,);
+  });
+
+  test("reflection cadence: a plan that reaches the interval is recomputed and reset", async () => {
+    await makeWorld();
+    await addMember("actor-cadence",);
+    await insertActorDailyPlans(db, "actor-cadence", "2026-01-01", "old", {
+      id: "plan-cadence",
+      world_id: WORLD_ID,
+      priority: "normal",
+      reflection_step_count: 2,
+    },);
+
+    const planRecompute: PlanRecomputeFn = async () => ({
+      summary: "re-prioritised",
+      priority: "normal",
+      activities: [],
+    });
+
+    const target = createBdiDispatch({ db, planRecompute, today: "2026-01-01", },);
+    const ctx = makeCtx({ cfg: { ...CFG, bdiReflectionStepInterval: 3, }, },);
+    expect(await target.run(ctx,),).toEqual({ dispatched: 1, },);
+
+    const row = await db
+      .selectFrom("actor_daily_plans",)
+      .select("reflection_step_count",)
+      .where("id", "=", "plan-cadence",)
+      .executeTakeFirst();
+
+    expect(row?.reflection_step_count,).toBe(0,);
+  });
+
+  test("reflection cadence default (0) leaves planned actors undisturbed", async () => {
+    await makeWorld();
+    await addMember("actor-calm",);
+    await insertActorDailyPlans(db, "actor-calm", "2026-01-01", "old", {
+      id: "plan-calm",
+      world_id: WORLD_ID,
+      priority: "normal",
+      reflection_step_count: 99,
+    },);
+
+    const target = createBdiDispatch({
+      db,
+      planRecompute: async () => ({ summary: "x", priority: "low", activities: [], }),
+      today: "2026-01-01",
+    },);
+
+    expect(await target.run(makeCtx(),),).toEqual({ skipped: BDI_SKIP.OffCadence, },);
+  });
 });
