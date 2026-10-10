@@ -59,8 +59,14 @@ index it repairs hashes and source paths but never re-reads the ticket's fields 
 so adding `**Tags:**` to a long-filed ticket changes nothing until the ticket is
 deleted and re-added. `normalize-plan-metadata.ts` closes that gap: after
 rewriting the markdown it projects each ticket's `.md` tags and epic onto its
-index entry, but **only where the index is empty**. A value the index already has
-is never overwritten.
+index entry. Tags are **frontmatter-wins**: an entry whose `tags` are empty OR
+diverge from the `.md` list is rewritten from the `.md` — giwt's parser reads each
+field as the first bold-colon match inside the first 30 lines, so an inline field
+mention in header prose can scrape prose fragments into an entry, and a fill-only
+rule would preserve that corruption forever (it happened to
+`TASK-plan-index-tagging-binding-reconciliation`). A `.md` with no `Tags:` line
+still leaves the entry untouched — nothing is inferred. `epic` stays
+fill-only-empty; ownership has its own resolver (`epic-owner-pick.ts`).
 
 Run it _before_ the generators:
 
