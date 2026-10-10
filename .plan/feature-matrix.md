@@ -1155,7 +1155,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2860 | 1175 | 58 | 1184 | 36 | 0 | 407 |
+| (untagged) | 2860 | 1176 | 58 | 1183 | 36 | 0 | 407 |
 
 ## By epic × status
 
@@ -1226,7 +1226,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | epic-authoring-creation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-aux-enrichment-pipeline | 13 | 3 | 4 | 5 | 0 | 0 | 1 |
 | epic-avatar-alpha-vn-layering | 13 | 5 | 0 | 7 | 0 | 0 | 1 |
-| epic-avatar-regeneration-control | 7 | 0 | 0 | 7 | 0 | 0 | 0 |
+| epic-avatar-regeneration-control | 7 | 1 | 0 | 6 | 0 | 0 | 0 |
 | epic-battle-action-systems | 14 | 5 | 0 | 9 | 0 | 0 | 0 |
 | epic-battle-integration-gaps | 7 | 7 | 0 | 0 | 0 | 0 | 0 |
 | epic-battle-ui | 8 | 1 | 0 | 7 | 0 | 0 | 0 |

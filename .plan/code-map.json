@@ -41203,6 +41203,12 @@
       "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
     }
   ],
+  "src/validation/schemas/emotion-avatars.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-avatar-regeneration-control.md"
+    }
+  ],
   "src/validation/schemas/entities.ts": [
     {
       "kind": "epic",

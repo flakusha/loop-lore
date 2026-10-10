@@ -41424,7 +41424,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-regen-service-regenerateemotionavatars-scope-and-replace.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Regen service regenerateEmotionAvatars scope and replace",
     "type": "TASK"
