@@ -1023,7 +1023,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | terrain | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | territory | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | test | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| testing | 8 | 1 | 1 | 1 | 0 | 0 | 5 |
+| testing | 8 | 2 | 1 | 1 | 0 | 0 | 4 |
 | testing-qa | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | tests | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | thievery | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1072,7 +1072,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | truncation | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | tts | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | tty-free | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| tui | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
+| tui | 4 | 1 | 0 | 0 | 0 | 0 | 3 |
 | turn | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | turn-orchestration | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | turn-skip | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1155,7 +1155,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2860 | 1176 | 58 | 1183 | 36 | 0 | 407 |
+| (untagged) | 2860 | 1177 | 58 | 1182 | 36 | 0 | 407 |
 
 ## By epic × status
 
@@ -1168,7 +1168,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | ` value that contains embedded separators — the index only records the first epic, so these tickets are linked to the wrong epic or no epic at all. Prior repair passes (commits `cb13e6464` and `41209f0f6`) fixed some, but the root infrastructure is still missing. The defect was deliberately not fixed because two pieces of infrastructure do not exist: (a) no owner-picking rule for when a ticket names two real epics, and (b) no title-to-slug lookup table for legacy epic titles embedded in epic fields. | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | `epic-frontend-keynav-mobile` | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
 | `epic-harness-integration` | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
-| `epic-terminal-ui` | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
+| `epic-terminal-ui` | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 | achievements | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Authentication Channel Provisioning | 10 | 0 | 0 | 10 | 0 | 0 | 0 |
 | Chat Lifecycle & Moderation | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1500,7 +1500,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | proposed:epic-user-engagement | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | review-dev-2026-08-26-late-merges | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | review-dev-2026-08-26-security-data-integrity-merges | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
-| (unbound) | 1553 | 653 | 57 | 395 | 51 | 0 | 397 |
+| (unbound) | 1553 | 654 | 57 | 394 | 51 | 0 | 397 |
 
 ## Ticket detail
 
