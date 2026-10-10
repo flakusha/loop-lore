@@ -4,7 +4,6 @@
 # BUG: Tests delete app-installed globals, breaking every later test file
 
 **Status:** Done
-// hint: Structural and logic conflict. Both design and behavior differ.
 **Priority:** low
 **Effort:** Done
 
