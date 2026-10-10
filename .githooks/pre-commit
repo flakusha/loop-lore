@@ -24,12 +24,17 @@ echo ""
 # ── Step 0: Co-Authored-By trailer attribution ───────────────
 # A Co-Authored-By trailer is only attribution if the identity it names authors
 # or commits in the set being landed; 14 fabricated trailers on dev named
-# agents that appear nowhere in the author/committer population. Audits the
-# unmerged branch range (the commits being finalized) and reads git state only.
-# The message being written is checked in prepare-commit-msg — no message file
-# exists yet at pre-commit time.
+# agents that appear nowhere in the author/committer population.
+#
+# --range is REQUIRED here, not optional: with no argument the script audits
+# the commit message on stdin, and pre-commit runs with empty stdin — the
+# check would report success while auditing nothing. --range with no value
+# audits this branch's unmerged range (the commits being finalized).
+#
+# The message being written is checked separately, in prepare-commit-msg,
+# which is the only hook that has a message file.
 echo "--- Step 0: Co-Authored-By trailers ---"
-if bun run scripts/check/co-author-trailers.mjs >/dev/null; then
+if bun run scripts/check/co-author-trailers.mjs --range >/dev/null; then
   green "  ✓ Co-Authored-By trailers name real identities"
 else
   red "  ✗ Unattributed Co-Authored-By trailer(s)"
@@ -44,8 +49,16 @@ STAGED_HTML=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.html$
 STAGED_JSON=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.json$' || true)
 STAGED_SH=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.sh$' || true)
 
+# Skipping the FILE gates must not skip Step 0: a commit staging only files
+# no file gate covers (.txt, .sql, ...) reaches here with every STAGED_* empty,
+# and an unconditional exit 0 would discard a Step 0 failure already counted.
 if [[ -z "$STAGED_TS" && -z "$STAGED_CSS" && -z "$STAGED_MD" && -z "$STAGED_HTML" && -z "$STAGED_JSON" && -z "$STAGED_SH" ]]; then
-  yellow "No staged files to check — skipping"
+  yellow "No staged files for file gates — skipping"
+  if [ "$failures" -gt 0 ]; then
+    red "=== $failures check(s) failed — commit blocked ==="
+    red "To commit without checks: git commit --no-verify"
+    exit 1
+  fi
   exit 0
 fi
 
