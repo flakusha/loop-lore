@@ -6,7 +6,6 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-// hint: Cosmetic change on both sides. Pick either version or combine formatting.
 **Tags:** frontend, chat, group-chat, emoji, reactions, a11y
 **Overview:** Chat and group-chat emoji: `:shortcode:` rendering in the shared message pipeline plus in-bubble message reactions. Reactions API + optimistic toggle shipped; picker hydrates from the server allowlist. Remaining: composer autocomplete, server-rendered fallback, out-of-context affordances, picker a11y.
 
@@ -40,7 +39,6 @@
 
 ## Acceptance
 
-// hint: Structural and logic conflict. Both design and behavior differ.
 - Typing `:fire:` renders 🔥 consistently in chat + group chat (shared `renderMarkdown` path covers both; gallery/blog comments ride the same helper).
 - Unknown `:nope:` stays literal; `:fire:` inside backticks stays literal; no console errors.
 - React/unreact updates the chip instantly, converges to the server count on success, rolls back + toasts (`chats.reactionFailed`) on failure — no full message re-render.
