@@ -302,7 +302,7 @@
 | Not Started | Social Interaction Systems | Medium | High | 0 | [epic-social-interaction.md](/.plan/epics/epic-social-interaction.md) |
 | Not Started | Stealth & Crime Systems | Medium | High | 0 | [epic-stealth-crime.md](/.plan/epics/epic-stealth-crime.md) |
 | In Progress | Story Mode UI | P1 — High | Medium | 4 | [epic-story-mode-ui.md](/.plan/epics/epic-story-mode-ui.md) |
-| In Progress | Task Management Integration | Medium | Medium | 6 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
+| In Progress | Task Management Integration | Medium | Medium | 0 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
 | Done | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
 | Not Started | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation | High | Medium | 18 | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md) |
 | In Progress | Terminal UI (TUI) | Low | Medium | 9 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
