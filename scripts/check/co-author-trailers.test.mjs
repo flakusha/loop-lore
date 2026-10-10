@@ -100,3 +100,22 @@ test("email is the key: same email under any name passes", () => {
     auditCommits([commit("chore: t\n\nCo-Authored-By: Wrong Name <jane@example.com>\n",),], population,),
   ).toEqual([],);
 });
+
+// Regression: pre-commit invokes the script with EMPTY stdin. Mode used to be
+// inferred from --range absence, so the range gate silently audited the empty
+// message, reported success, and let a branch already carrying a fabricated
+// trailer through. Mode is now explicit; these pin that --range is a range
+// audit and bare stdin is a message audit, with no inference in between.
+test("--range audits the branch range, never stdin", () => {
+  // The planted violating commit is in the range, not on stdin.
+  const range = [commit("fix: planted\n\nCo-Authored-By: Ghost <ghost@no-such.example>\n",),];
+  expect(auditCommits(range, population,).length,).toBe(1,);
+  // Empty stdin (what pre-commit hands it) contributes no message at all.
+  expect(auditCommits([], population,),).toEqual([],);
+});
+
+test("a range whose only commits are clean passes even with empty stdin", () => {
+  expect(
+    auditCommits([commit("chore: clean\n",),], population,),
+  ).toEqual([],);
+});
