@@ -542,6 +542,35 @@ canonical ones via `[status.aliases]` in `giwt.toml`.
 Prefer `giwt ticket` / `giwt state` over hand-writing ticket `.md` files: the
 generator emits the exact `**Field:**` lines the `format` gate requires.
 
+### Ticket ↔ scratch-task granularity (task-management)
+
+Two trackers coexist; pick ONE primary per piece of work — never duplicate state.
+
+- `.plan/tickets/*.md` (git-tracked, epic-bound, gated by `plan validate`): the
+  WHAT and the build ledger. Cross-session work, anything epic-bound, anything
+  an operator must see.
+- `.tmp/tasks/{slug}/` (`task.json` + `subtask_*.json`, scratchpad, gitignored):
+  the HOW for one session — fine-grained subtasks with `depends_on`,
+  `acceptance_criteria`, `deliverables`. Schema is owned by the user-level
+  `task-management` skill (`~/.config/opencode/skills/task-management/`).
+
+- Rule of thumb: ticket = what to build; task = how to build it this session.
+- FEAT/TASK work spanning more than 3 steps → decompose into `.tmp/tasks/`
+  first; the ticket stays the ledger and is updated as subtasks land.
+- BUG fixes are single-fix by default — no scratch-task breakdown unless the
+  fix spans more than 3 files.
+- Cross-reference one way only: `task.json` `context_files`/`reference_files`
+  name the ticket path; never put `.tmp/tasks/` slugs into a ticket's
+  `**Related:**` (refs there must resolve to plan files).
+- Lifecycle: ticket Not Started → (decompose) → In Progress → subtasks
+  `pending` → `in_progress` → `completed` (via the CLI `complete`, with a
+  summary) → feature `exit_criteria` met → ticket Done. A `blocked` subtask
+  with nothing ready blocks the ticket.
+- Drive it with the skill CLI (bun, from repo root):
+  `bun ~/.config/opencode/skills/task-management/scripts/task-cli.ts status|next|blocked|deps|validate|complete <feature> <seq> "<summary>"`
+- `.tmp/tasks/` is ephemeral — quote durable decomposition proof into the
+  ticket md before the session ends.
+
 ## Memory (Engram)
 
 ```bash
