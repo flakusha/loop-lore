@@ -27595,7 +27595,7 @@
     "label": "task",
     "priority": "Low",
     "source": ".plan/tickets/TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Coverage waiver: tui/chat/index.ts at 51% under check gate",
     "type": "TASK"
@@ -45379,7 +45379,7 @@
       "testing"
     ],
     "source": ".plan/tickets/TASK-tui-shell-testability.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-TUI-SPEC-SYNC": {
     "hash": "769db3d",
