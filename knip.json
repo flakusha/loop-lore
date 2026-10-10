@@ -212,5 +212,10 @@
     // as the .browser.ts entries above: Playwright discovers by glob, knip
     // cannot trace a shell glob as an import edge.
     "tests/e2e/flows/browser/autonomy-panel.browser.ts",
+    // Alpine hydration regression coverage. Same class as the .browser.ts
+    // entries above: run-browser-tests.ts discovers by directory glob, knip
+    // cannot trace a shell glob as an import edge.
+    "tests/e2e/flows/browser/alpine-hydration-smoke.browser.ts",
+    "tests/e2e/flows/browser/alpine-post-swap.browser.ts",
   ]
 }
