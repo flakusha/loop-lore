@@ -3,7 +3,7 @@
 
 # TASK: Char Internal Db
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -25,3 +25,5 @@ Migration: internal-traits + aspirations + coping + approach + autonomy + voice 
 ## Acceptance
 
 - [ ] Complete
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 0447bed (registry tip: c37309289 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # TASK: Battle Environment Integration
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -25,3 +25,5 @@ Planned work item for epic-battle-integration-gaps.
 ## Acceptance
 
 - [ ] Complete
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 4efe401 (registry tip: 7c49e3e46 Konstantin Fedotov Close issue)

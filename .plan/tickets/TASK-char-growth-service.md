@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 
@@ -22,3 +22,5 @@ Implement `src/characters/services/growth-service/` (index, types, crud, redact,
 - [ ] Static mode refuses growth_log inserts except `arc_stage_set`
 - [ ] `redactForPlayerCard()` filters applied-only and strips internal fields
 - [ ] `runLlmAssist()` produces pending entries when `llm_assist_enabled=true`
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 7f5915c (registry tip: b85fd6708 Konstantin Fedotov Close issue)

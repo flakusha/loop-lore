@@ -3,7 +3,7 @@
 
 # TASK-2026-046: Character Template Seeding
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Tags**: feature, characters, config
 **Assignee**:
@@ -50,3 +50,5 @@ Example formats:
 - `configs/characters/group-fantasy-scifi.yaml` — Multi-character
 - `configs/characters/elara-nightwhisper.toml` — TOML format
 - `configs/templates/character.example.yaml` — Template documentation
+
+**Resolved:** 2026-10-10 registry-driven close: git issue e9ac22b (registry tip: aedade899 Konstantin Fedotov Close issue)

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Small
 
@@ -21,3 +21,5 @@ CRUD routes under `/api/character-growth`: GET/PATCH `/arc`, GET `/growth-log`, 
 - [ ] All endpoints registered in `register-plugins.ts`
 - [ ] `GrowthServiceError` mapped to HTTP status (409 for static/integrity, 404 not_found, 400 invalid_input)
 - [ ] `requireActorAccess` enforced on every mutation
+
+**Resolved:** 2026-10-10 registry-driven close: git issue bf47d88 (registry tip: aa9617883 Konstantin Fedotov Close issue)

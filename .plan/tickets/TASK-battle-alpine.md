@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Task
@@ -37,3 +37,5 @@ Alpine.js state management and logic for battle system.
 ## Files to Create
 
 - `src/frontend/alpine/battle.ts`
+
+**Resolved:** 2026-10-10 registry-driven close: git issue c68a0e6 (registry tip: 9d90ac0e1 Konstantin Fedotov Close issue)
