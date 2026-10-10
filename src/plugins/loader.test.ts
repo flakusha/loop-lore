@@ -24,6 +24,7 @@ import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { jsonStringifyOr, } from "../utils";
 import { writeMemoryNoteTool, } from "../generation/tools/write-memory-note";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { templateRegistry, } from "../image-edit/template-registry";
 import { writeStoredPluginConfig, } from "./config-store";
 import { dispatchPluginRoute, initializePlugin, loadAllPlugins, loadSinglePlugin, registry, unloadAllPlugins, } from "./loader";
 
@@ -264,7 +265,17 @@ afterEach(async () => {
     delete globals()[key];
   }
 
+  // `unloadAllPlugins` runs the shipped plugins' `onUnload`, and
+  // image-editing's clears the shared `templateRegistry` singleton. Its
+  // built-ins are guarded by a one-shot flag that `clear()` does not reset,
+  // so a later file that mounts the routes re-registers nothing and sees an
+  // empty registry. Snapshot and restore, same as the logger below.
+  const priorTemplates = templateRegistry.listAll();
   await unloadAllPlugins();
+  for (const template of priorTemplates) {
+    templateRegistry.register(template,);
+  }
+
   // Restore a real logger: leaving `nullLogger` installed makes every later
   // test file in this process inherit a stub instead of the real one.
   setGlobalLogger(priorLogger ?? createLogger({ level: "error", },),);
