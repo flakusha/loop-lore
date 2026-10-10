@@ -41,7 +41,6 @@
     "@alpinejs/morph",
     "@markuplint/html-spec",
     "@markuplint/mustache-parser", // referenced by .markuplintrc.json (config), not imported in code
-    "markuplint", // CLI binary invoked by pre-commit hook, not imported
     "@elysia/openapi",
     "@types/clean-css",
     "@types/dompurify",
@@ -138,10 +137,6 @@
     // (bun run test:coverage && bun run scripts/check/coverage.mjs --floor=80),
     // not import-reachable — same class as check-db-schemas.ts above.
     "scripts/check/coverage.mjs",
-    // Weave-damage scan gate: run via check-parallel.mjs shell string
-    // (WEAVE_BASE=<ref> bun run check --gates "weave - damage scan"),
-    // not import-reachable — same class as coverage.mjs above.
-    "scripts/check/weave-damage.mjs",
     // Generated epic title lookup: produced by epic-owner-pick.ts --gen
     // (run manually, not import-wired); consumed by the epic-owner rule
     // through in-process scanEpicTitles(), never via an import edge.
@@ -212,5 +207,9 @@
     // cannot trace a shell glob as an import edge.
     "tests/e2e/flows/browser/alpine-hydration-smoke.browser.ts",
     "tests/e2e/flows/browser/alpine-post-swap.browser.ts",
+    // Chat-header notification bell coverage. Same class as the entries
+    // above: run-browser-tests.ts discovers by directory glob, knip cannot
+    // trace a shell glob as an import edge.
+    "tests/e2e/flows/browser/notifications-bell.browser.ts",
   ]
 }
