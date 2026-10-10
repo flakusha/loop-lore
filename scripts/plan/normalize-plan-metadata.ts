@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// size-allow: 440
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Plan metadata normalizer — unify the header-field dialects that silently
- * split the generated matrices, and report the epic↔ticket↔code links that
+ * Plan metadata normalizer — the CLI that walks `.plan/`, applies the header
+ * rewrites its field layer plans, and reports the epic↔ticket↔code links that
  * stay broken.
+ *
+ * The field grammars and the index.json projection live in sibling modules
+ * (`plan-markdown-fields.ts`, `plan-index-projection.ts`); this file is the
+ * orchestration and reporting around them.
  *
  * Root causes this fixes (measured; see `scripts/plan/README.md`):
  *
@@ -46,145 +49,17 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
 import { flag, object, runScript, withDefault, } from "../../src/cli/parser";
-
-// ── Field-line grammars ────────────────────────────────────────
-// Header fields are matched PER LINE. giwt matches against the first 30
-// lines joined into one blob, which is how a `**Related**:` line sitting
-// directly under an empty `**Epic**:` came to be read as that epic's
-// value; line-scoped matching is what the author wrote and what this
-// script round-trips.
-//
-// Three historical spellings exist per field name:
-//   `**Tags:**`  canonical — what sync-parse.ts and gen-docs.ts read
-//   `**Tags**:`  colon outside the bold — emitted by the `giwt show`
-//                template and by hand-written tickets
-//   `**Tags**`   bare, no colon — ditto
-const FIELD_LINE = /^\s*(?:[-*>]\s*)?\*\*(?<name>Tags|Labels|Epic):?\*\*\s*:?\s*(?<value>.*?)\s*$/i;
-/** The canonical `**Epic:**` spelling — colon INSIDE the bold, the only form
- * giwt's ticket parser (sync-parse.ts) and the linkage gate read. */
-const EPIC_CANONICAL = /^\s*(?:[-*>]\s*)?\*\*Epic:\*\*/i;
-
-/** One parsed header field line. */
-export interface FieldLine {
-  index: number;
-  name: string;
-  value: string;
-  raw: string;
-}
-
-/** Every `**Tags**`/`**Labels**`/`**Epic**` field line in a file, in order. */
-export function fieldLines(text: string,): FieldLine[] {
-  const out: FieldLine[] = [];
-  for (const [index, line,] of text.split("\n",).entries()) {
-    const groups = FIELD_LINE.exec(line,)?.groups;
-    if (groups?.["name"] !== undefined) {
-      out.push({ index, name: groups["name"], value: (groups["value"] ?? "").trim(), raw: line, },);
-    }
-  }
-  return out;
-}
-
-/** Placeholder tag values that mean "no tags", never a literal tag. */
-export const TAG_PLACEHOLDER = /^\(?\s*(none|n\/a|-|tbd)?\s*\)?$/i;
-/** Epic values that name no epic. */
-export const EPIC_PLACEHOLDER = /^\(?\s*(none|n\/a|-|if applicable)?\s*\)?$/i;
-
-/**
- * Normalize one epic reference to its bare slug, or null when it does
- * not name exactly one epic file. Accepts the shapes tickets actually
- * use: `epic-x`, `epic-x.md`, `` `epic-x` ``, `.plan/epics/epic-x.md`,
- * `epic-x.md (MVP Tier 1)`, `epic-x (§7.6)`. Rejects anything listing
- * more than one epic and anything freeform (`Epic 26 (…)`, `proposed:x`).
- */
-export function normalizeEpicRef(raw: string,): string | null {
-  const v = raw.replace(/[`*]/g, "",).trim();
-  if (!v || EPIC_PLACEHOLDER.test(v,)) { return null; }
-  // Drop a trailing prose annotation (` (MVP Tier 1)`, ` (§7.6)`) BEFORE
-  // stripping `.md` — otherwise `x.md (MVP Tier 1)` keeps the extension.
-  const norm = v
-    .replace(/^\.plan\/epics\//, "",)
-    .replace(/\s*(?:§|\()[^)]*\)?\s*$/, "",)
-    .replace(/\.md$/i, "",)
-    .trim();
-  // A comma or slash means the author listed two or more epics; there is no
-  // single epic to bind to, so refuse rather than pick one.
-  if (!norm.startsWith("epic-",) || /[,/;]/.test(norm,)) { return null; }
-  return norm;
-}
-
-/** One line-level edit. `from` is the full source line, `to` its replacement. */
-export interface PlanRewrite {
-  file: string;
-  kind: "labels-to-tags" | "epic-colon-outside";
-  from: string;
-  to: string;
-}
-
-/** Per-file analysis result. */
-export interface FilePlan {
-  rewrites: PlanRewrite[];
-  dangling: { file: string; value: string }[];
-  /** True when the file will carry at least one real tag after rewrite. */
-  hasTags: boolean;
-}
-
-/** Rewrite a `**Labels**:` line to `**Tags**:`, keeping value and spacing. */
-function tagsFromLabels(raw: string,): string {
-  return raw.replace(/\bLabels(?=:?\*\*)/i, "Tags",);
-}
-
-/** Rewrite an `**Epic**:` line to the canonical `**Epic:**` spelling. */
-function canonicalEpic(raw: string,): string {
-  // Swallow a colon that already follows the bold, so `**Epic**: x` becomes
-  // `**Epic:** x` and not `**Epic:**: x`.
-  return raw.replace(/\*\*Epic\*\*(\s*):?\s*/, "**Epic:** ",);
-}
-
-/**
- * Analyze one plan file. Returns the edits that apply; an empty rewrite
- * list means the file already follows the canonical spelling.
- */
-export function planFile(file: string, text: string, epicSlugs: Set<string>,): FilePlan {
-  const rewrites: PlanRewrite[] = [];
-  const dangling: { file: string; value: string }[] = [];
-  let hasTags = false;
-
-  for (const f of fieldLines(text,)) {
-    if (f.name === "Labels") {
-      if (!TAG_PLACEHOLDER.test(f.value,)) {
-        rewrites.push({ file, kind: "labels-to-tags", from: f.raw, to: tagsFromLabels(f.raw,), },);
-        hasTags = true;
-      }
-      continue;
-    }
-    if (f.name === "Tags") {
-      if (!TAG_PLACEHOLDER.test(f.value,)) { hasTags = true; }
-      continue;
-    }
-    // Epic: canonicalize the spelling, then check that it resolves.
-    const slug = normalizeEpicRef(f.value,);
-    if (!EPIC_CANONICAL.test(f.raw,)) {
-      if (slug) {
-        rewrites.push({ file, kind: "epic-colon-outside", from: f.raw, to: canonicalEpic(f.raw,), },);
-        if (!epicSlugs.has(slug,)) { dangling.push({ file, value: f.value, },); }
-      }
-      continue;
-    }
-    if (slug && !epicSlugs.has(slug,)) { dangling.push({ file, value: f.value, },); }
-  }
-  return { rewrites, dangling, hasTags, };
-}
-
-/** Apply rewrites by exact full-line match, so no other line can shift. */
-export function applyRewrites(text: string, rewrites: PlanRewrite[],): string {
-  const lines = text.split("\n",);
-  for (const r of rewrites) {
-    const idx = lines.indexOf(r.from,);
-    if (idx === -1) { continue; }
-    lines[idx] = r.to;
-  }
-  return lines.join("\n",);
-}
+import {
+  canonicalIndexOrder,
+  type IndexEntryLike,
+  projectIndex,
+} from "./plan-index-projection";
+import {
+  applyRewrites,
+  planFile,
+  type PlanRewrite,
+  relatedRefs,
+} from "./plan-markdown-fields";
 
 /**
  * True when `root` is a linked git worktree rather than the main checkout
@@ -211,130 +86,6 @@ export function isLinkedWorktree(root: string,): boolean {
 function planFiles(dir: string,): string[] {
   if (!existsSync(dir,)) { return []; }
   return readdirSync(dir,).filter((f,) => f.endsWith(".md",)).sort().map((f,) => join(dir, f,));
-}
-
-// ── index.json projection ─────────────────────────────────────
-// `giwt sync --fix` writes `tags`/`epic` onto an index entry only when it
-// ADOPTS an orphan file (sync-fix-index.ts:202). For an entry already in the
-// index it repairs hashes and sources but never re-reads the .md fields — so
-// adding `**Tags:**` to a long-filed ticket changes nothing until the ticket
-// is deleted and re-added. That is why tickets carried tags in their .md and
-// `tags: []` in the index. This pass projects the .md fields onto existing
-// entries so the rewrite above actually reaches the generated matrix.
-//
-// Tags are frontmatter-wins, not fill-only: giwt's parser reads each field as
-// the FIRST bold-colon match inside the first 30 lines, so an inline field
-// mention in header prose can scrape prose fragments into an entry's tags
-// (it happened to TASK-PLAN-INDEX-TAGGING-BINDING-RECONCILIATION), and a
-// fill-only rule would preserve that corruption forever — nothing else
-// re-reads .md fields for entries already in the index. A .md with no Tags
-// line still leaves the entry alone; nothing is inferred. Epic stays
-// fill-only-empty — ownership has its own resolver (epic-owner-pick.ts).
-export interface IndexEntryLike {
-  tags?: string[];
-  epic?: string;
-  source?: string;
-}
-
-/** Tags as giwt's sync-parse.ts splits them: comma-separated, trimmed. */
-export function tagsOf(text: string,): string[] {
-  const f = fieldLines(text,).find((l,) => l.name === "Tags");
-  if (!f) { return []; }
-  return f.value.split(",",).map((t,) => t.trim()).filter(Boolean,);
-}
-
-/** Epic as giwt's sync-parse.ts reads it: the canonical field, trimmed. */
-export function epicOf(text: string,): string {
-  const f = fieldLines(text,).find((l,) => l.name === "Epic");
-  return f?.value ?? "";
-}
-
-/**
- * Index entries in the canonical order giwt writes them.
- *
- * `localeCompare`, NOT the default comparator: giwt sorts with
- * `localeCompare` (sync-index.ts:218), the default sort is code-unit order.
- * Where both `BUG-redos-…` and `BUG-REDOS-…` exist, a code-unit sort moves
- * the lowercase key on every write — a diff that looks like the pass touched an
- * entry it never read. Matching giwt makes the write a no-op on key order.
- */
-export function canonicalIndexOrder(
-  index: Record<string, IndexEntryLike>,
-): Record<string, IndexEntryLike> {
-  return Object.fromEntries(
-    Object.entries(index,).sort(([a,], [b,],) => a.localeCompare(b,)),
-  );
-}
-
-/**
- * Project .md tags/epic onto index entries. Returns the updated index plus
- * per-field counts. Tags are frontmatter-wins: an entry whose `tags` are
- * empty OR diverge from the .md list is (re)written from the .md; a .md with
- * no Tags line leaves the entry untouched. Epic stays fill-only-empty.
- * Status, hash, and provenance stay giwt's business.
- */
-export function projectIndex(
-  index: Record<string, IndexEntryLike>,
-  readFile: (source: string,) => string | null,
-): { next: Record<string, IndexEntryLike>; tagsFilled: number; epicsFilled: number } {
-  const next = { ...index, };
-  let tagsFilled = 0;
-  let epicsFilled = 0;
-  for (const [extid, entry,] of Object.entries(index,)) {
-    if (!entry.source) { continue; }
-    const text = readFile(entry.source,);
-    if (text === null) { continue; }
-    const tags = tagsOf(text,);
-    const epic = epicOf(text,);
-    const patch: IndexEntryLike = {};
-    if (
-      tags.length > 0 &&
-      JSON.stringify(tags,) !== JSON.stringify(entry.tags ?? [],)
-    ) {
-      patch.tags = tags;
-      tagsFilled++;
-    }
-    if (epic && !entry.epic) {
-      patch.epic = epic;
-      epicsFilled++;
-    }
-    if (patch.tags || patch.epic) { next[extid] = { ...entry, ...patch, }; }
-  }
-  return { next, tagsFilled, epicsFilled, };
-}
-
-// ── **Related:** scan ──────────────────────────────────────────
-// Reported, never rewritten. `**Related:**` is the one field in the plan
-// format with NO reader in giwt and NO validator — it is invisible to every
-// generated artifact. This counts the well-formed refs it already contains
-// and lists the ones that resolve to no file, so the existing cross-links
-// become visible without inventing a hard gate over legacy prose.
-
-/**
- * A ref token: an id or slug ending in `.md`, or a bare TYPED id
- * (`FEAT-036`, `BUG-nsfw-gate-not-logged`). An untyped bare slug is prose —
- * `epic-items` in a sentence is indistinguishable from a reference, so it is
- * only counted when written as a path.
- */
-const RELATED_REF =
-  /(?:^|[\s,(`])((?:[A-Z]{2,6}-)?[a-z0-9][a-z0-9._-]*\.md|(?:BUG|FEAT|TASK|TEST|DOC|EPIC)-[A-Za-z0-9][A-Za-z0-9._-]*)(?=$|[\s,)`])/gi;
-
-/** Every `**Related:**` ref in a file that names a known plan file. */
-export function relatedRefs(
-  text: string,
-  known: Set<string>,
-): { refs: string[]; dangling: string[] } {
-  const line = text.match(/^\s*\*\*Related:?\*\*\s*(.*)$/im,)?.[1]?.trim();
-  const refs: string[] = [];
-  const dangling: string[] = [];
-  if (!line) { return { refs, dangling, }; }
-  for (const hit of line.matchAll(RELATED_REF,)) {
-    const ref = hit[1];
-    const slug = ref.replace(/^\.plan\/(?:tickets|epics)\//, "",).replace(/\.md$/, "",);
-    if (known.has(slug,) || known.has(slug.replace(/^[A-Z]{2,6}-/, "",),)) { refs.push(ref,); }
-    else { dangling.push(ref,); }
-  }
-  return { refs, dangling, };
 }
 
 // ── CLI ────────────────────────────────────────────────────────
