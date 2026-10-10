@@ -3,8 +3,8 @@
 
 # TASK-agency-bdi-reflection-cycle: BDI-lite nightly job + reflection checkpoints
 
-**Status:** In Progress
-**Status Note:** audit 2026-10-10: migration 011, nightly cycle + cron dispatch, budget gating, ChatBuffer cooldown/cap, priority-shift `PlanRevision` all ship with tests (185 green in the agency/affordance run). Open: player-visible JSON endpoint for an actor's current plan; configurable every-N-steps reflection cadence (`applyReflectionCheckpoint` runs once per night).
+**Status:** Done
+**Status Note:** all ACs met 2026-10-10. Cadence: `bdiReflectionStepInterval` config knob + `actor_daily_plans.reflection_step_count` (migration 051); plan endpoint `GET /api/v1/actors/:actorId/plan` (opt-in via `actors.plan_visible`, `src/routes/actor-plan.ts`); decision telemetry `interaction_logs.action_type` + `recordActionType` + per-actor `decisionEvents`. Forward-only migration policy holds (051 is additive; 011's `down()` matches repo convention across all 50 prior migrations).
 **Priority:** P1 (within EPIC-RESEARCH-AGENCY-DECISION)
 **Effort:** 1 week
 **Parent epic:** `epic-research-agency-decision.md`
@@ -28,10 +28,10 @@ Materialise the BDI-lite types drafted in `epic-agency-story-points.md` as a Kys
 
 - [x] Kysely migration adds `actor_daily_plans`, `actor_planned_activities`, `actor_chat_buffers`, `actor_plan_revisions` tables per the drafted schemas.
 - [x] Nightly cron recomputes `DailyPlan` for every active actor; cost-tracked via `epic-actor-autonomy-story-drive.md` governor (refuses when budget exceeded).
-- [ ] Reflection checkpoint every N planned steps (configurable, default 4): re-prioritises activities; emits `PlanRevision` row when priorities shift. (Shift detection + `PlanRevision` emission ship via `applyReflectionCheckpoint`, but it runs once per nightly cycle — no configurable N-steps cadence.)
+- [x] Reflection checkpoint every N planned steps (configurable, default 4): re-prioritises activities; emits `PlanRevision` row when priorities shift. (Shipped 2026-10-10: `bdiReflectionStepInterval` config knob; default 0 preserves the once-per-night behavior per the unchanged-default requirement — any positive N re-checkpoints every N beat steps with counter `actor_daily_plans.reflection_step_count`, migration 051.)
 - [x] ChatBuffer prevents same-partner spam: `cooldown_minutes` + `max_consecutive_chats` enforced.
 - [x] Migration is **forward-only** (append-only policy; no destructive alter on existing rows).
-- [ ] Plan visibility: JSON API endpoint to read an actor's current plan (player opt-in only; off by default). (No endpoint reads `actor_daily_plans`; `src/routes/planning.ts` is the unrelated author plan-items API.)
+- [x] Plan visibility: JSON API endpoint to read an actor's current plan (player opt-in only; off by default). (`GET /api/v1/actors/:actorId/plan` in `src/routes/actor-plan.ts`; `actors.plan_visible` default 0; tests cover 200/plan-null/404 not-opted-in/foreign/missing.)
 
 ## Out of Scope
 
@@ -41,3 +41,5 @@ Materialise the BDI-lite types drafted in `epic-agency-story-points.md` as a Kys
 
 
 git issue: cf7879a
+
+**Resolved:** 2026-10-10 registry-driven close: git issue cf7879a (registry tip: 5123ff0d7 Konstantin Fedotov Close issue)
