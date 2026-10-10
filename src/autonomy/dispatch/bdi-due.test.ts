@@ -200,7 +200,9 @@ describe("dueActors — cadence interval edge", () => {
 });
 
 describe("dueActors — ordering and limit", () => {
-  test("the due set is id-sorted, not insertion-ordered", async () => {
+  // Ordering is inherited from the world_members query's ORDER BY; .sort()
+  // is defence-in-depth. This asserts the observable contract.
+  test("the due set is sorted by actor id", async () => {
     await makeWorlds();
     await addMember(WORLD_ID, "actor-c",);
     await addMember(WORLD_ID, "actor-a",);
