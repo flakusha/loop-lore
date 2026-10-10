@@ -3,7 +3,7 @@
 
 # TASK: Char Internal Frontend
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -25,3 +25,5 @@ Player card + settings redaction via `toPublicCard()`; author/GM editor visibili
 ## Acceptance
 
 - [ ] Complete
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 8ed24f5 (registry tip: eaf26024f Konstantin Fedotov Close issue)
