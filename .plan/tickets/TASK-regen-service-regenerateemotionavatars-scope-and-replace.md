@@ -23,3 +23,5 @@ Service with {emotions?, replace} params + validation schema. Part of epic Emoti
 - [x] Implementation complete
 - [x] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 4475a8b (registry tip: aae36041d Konstantin Fedotov Close issue)
