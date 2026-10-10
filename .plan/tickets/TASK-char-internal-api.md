@@ -3,7 +3,7 @@
 
 # TASK: Char Internal Api
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -25,3 +25,5 @@ CRUD routes for internal-traits / aspirations / moral-disposition / coping / app
 ## Acceptance
 
 - [ ] Complete
+
+**Resolved:** 2026-10-10 registry-driven close: git issue c6f772c (registry tip: 6eb26a0f1 Konstantin Fedotov Close issue)

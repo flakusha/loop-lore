@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 
@@ -24,3 +24,5 @@ See `.plan/epics/epic-character-growth.md` (Schema section).
 - [ ] `bun run db:sync-types && bun run db:sync-manifest` succeeds
 - [ ] `bun run schemas:check` green
 - [ ] `bun test src/db/schema-sync.test.ts` green
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 12264b2 (registry tip: 8aaed7ab5 Konstantin Fedotov Close issue)

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Small
 
@@ -22,3 +22,5 @@ Implement `actorGrowthSection` in `src/assistant/prompt/sections/actor-growth.ts
 - [ ] Static-mode directive explicitly forbids drift
 - [ ] Dynamic-mode directive honors recorded evolution
 - [ ] `PRIORITY.actorGrowth` is set in `src/assistant/prompt/types.ts`
+
+**Resolved:** 2026-10-10 registry-driven close: git issue 45e0718 (registry tip: d3db5efd7 Konstantin Fedotov Close issue)
