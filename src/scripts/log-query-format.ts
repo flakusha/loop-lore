@@ -11,7 +11,7 @@
 /** The subset of a `log_entries` row the table renders. */
 export interface LogTableRow {
   created_at?: string | number | null;
-  level: string | number;
+  level: string | number | null;
   event_type?: string | number | null;
   entity_type?: string | number | null;
   entity_id?: string | number | null;
