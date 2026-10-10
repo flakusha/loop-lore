@@ -1155,7 +1155,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2860 | 1177 | 58 | 1182 | 36 | 0 | 407 |
+| (untagged) | 2860 | 1179 | 58 | 1182 | 34 | 0 | 407 |
 
 ## By epic × status
 
@@ -1500,7 +1500,7 @@ Total tickets: **3425** — untagged: **2860** — unbound to epic: **1553**
 | proposed:epic-user-engagement | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | review-dev-2026-08-26-late-merges | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | review-dev-2026-08-26-security-data-integrity-merges | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
-| (unbound) | 1553 | 654 | 57 | 394 | 51 | 0 | 397 |
+| (unbound) | 1553 | 656 | 57 | 394 | 49 | 0 | 397 |
 
 ## Ticket detail
 

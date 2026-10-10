@@ -13316,7 +13316,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-research-agency-decision.md",
-    "status": "draft",
+    "status": "done",
     "tags": [],
     "title": "# EPIC-RESEARCH-AGENCY-DECISION: NPC Decision-Making Stack",
     "type": "EPIC"
@@ -20921,7 +20921,7 @@
     "label": "task",
     "priority": "P1 (within EPIC-RESEARCH-AGENCY-DECISION)",
     "source": ".plan/tickets/TASK-agency-bdi-reflection-cycle.md",
-    "status": "draft",
+    "status": "done",
     "tags": [],
     "title": "# TASK-agency-bdi-reflection-cycle: BDI-lite nightly job + reflection checkpoints",
     "type": "TASK"
