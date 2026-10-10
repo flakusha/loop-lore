@@ -55,14 +55,20 @@ describe("projectIndex", () => {
     ".plan/tickets/BUG-001.md": "**Tags:** chat, bug\n**Epic:** epic-items\n",
     ".plan/tickets/BUG-002.md": "**Status:** Done\n",
     ".plan/tickets/BUG-003.md": "**Tags:** already\n**Epic:** epic-other\n",
+    ".plan/tickets/BUG-006.md": "**Tags:** fresh-list\n**Epic:** epic-new\n",
   };
   const read = (src: string,): string | null => files[src] ?? null;
   const index = {
     "BUG-001": { source: ".plan/tickets/BUG-001.md", tags: [], epic: "", },
     "BUG-002": { source: ".plan/tickets/BUG-002.md", tags: [], epic: "", },
-    "BUG-003": { source: ".plan/tickets/BUG-003.md", tags: ["already",], epic: "epic-other", },
+    "BUG-003": {
+      source: ".plan/tickets/BUG-003.md",
+      tags: ["` lines) but are **not** propagated", "fragments", "from prose",],
+      epic: "epic-other",
+    },
     "BUG-004": { source: ".plan/tickets/BUG-gone.md", tags: [], epic: "", },
     "BUG-005": { source: "", tags: [], epic: "", },
+    "BUG-006": { source: ".plan/tickets/BUG-006.md", tags: ["stale",], epic: "epic-old", },
   };
 
   test("fills empty tags/epic from the .md, counting each", () => {
@@ -72,7 +78,7 @@ describe("projectIndex", () => {
       tags: ["chat", "bug",],
       epic: "epic-items",
     },);
-    expect({ tagsFilled, epicsFilled, },).toEqual({ tagsFilled: 1, epicsFilled: 1, },);
+    expect({ tagsFilled, epicsFilled, },).toEqual({ tagsFilled: 3, epicsFilled: 1, },);
   });
 
   test("leaves a ticket with no tags in the .md untagged — nothing inferred", () => {
@@ -80,16 +86,30 @@ describe("projectIndex", () => {
     expect(next["BUG-002"],).toEqual(index["BUG-002"],);
   });
 
-  test("never overwrites values the index already has", () => {
+  test("regression: prose-fragment tags scraped by a header-window parse are replaced by the .md list — frontmatter wins", () => {
     const { next, } = projectIndex(index, read,);
-    expect(next["BUG-003"],).toEqual(index["BUG-003"],);
+    expect(next["BUG-003"],).toEqual({
+      source: ".plan/tickets/BUG-003.md",
+      tags: ["already",],
+      epic: "epic-other",
+    },);
+  });
+
+  test("epic stays fill-only-empty — a differing epic value is never overwritten", () => {
+    const { next, epicsFilled, } = projectIndex(index, read,);
+    expect(next["BUG-006"],).toEqual({
+      source: ".plan/tickets/BUG-006.md",
+      tags: ["fresh-list",],
+      epic: "epic-old",
+    },);
+    expect(epicsFilled,).toBe(1,);
   });
 
   test("skips an entry whose source is missing or empty", () => {
     const { next, tagsFilled, } = projectIndex(index, read,);
     expect(next["BUG-004"],).toEqual(index["BUG-004"],);
     expect(next["BUG-005"],).toEqual(index["BUG-005"],);
-    expect(tagsFilled,).toBe(1,);
+    expect(tagsFilled,).toBe(3,);
   });
 
   test("is idempotent — a second projection changes nothing", () => {
