@@ -63,7 +63,6 @@ export const uiStoreDefinition: Record<string, unknown> = {
   branches: [] as ChatBranchRow[],
   // ── Branch merge wizard (FEA-2026-047) ──────────────────
   mergeModalOpen: false,
-  mergeDraft: null as unknown,
   // ── Transition-mode picker (location-transition remainder) ──
   showTransitionPicker: false,
   transitionDestinationId: "",
