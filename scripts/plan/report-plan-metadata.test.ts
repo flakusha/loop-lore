@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// Resource contract: every test is pure — in-memory Record/Set fixtures built
+// per describe block, read-only after construction; no filesystem, ports, DB,
+// env, or shared mutable state; nothing to tear down. Safe under any runner
+// parallelism and any test order.
+
 import { describe, expect, test, } from "bun:test";
 import {
   aggregate,
