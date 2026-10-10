@@ -74,6 +74,38 @@ export async function recordActionType(
 }
 
 /**
+ * Stamp the latest `interaction_logs` row of one actor with a decision
+ * outcome — the production write path for per-actor decision telemetry.
+ *
+ * The nightly BDI cycle is not itself a chat interaction, so there is no
+ * log row to create; the stamp lands on the actor's most recent logged
+ * interaction. Actors with no interaction log are a silent no-op.
+ *
+ * @param db
+ * @param actorId
+ * @param actionType - `bdi:<step>` or `utility:<kind>` token
+ */
+export async function recordActorDecisionType(
+  db: Kysely<DB>,
+  actorId: string,
+  actionType: string,
+): Promise<void> {
+  const row = await db
+    .selectFrom("interaction_logs",)
+    .select("id",)
+    .where("actor_id", "=", actorId,)
+    .orderBy("created_at", "desc",)
+    .executeTakeFirst();
+
+  if (!row) {
+    log.debug("no interaction log for actor — decision not stamped", { actorId, actionType, },);
+    return;
+  }
+
+  await recordActionType(db, row.id, actionType,);
+}
+
+/**
  * Upsert a dimension counter row. Increments `count` (and `meaningful`
  * if the agency event was consequential) on the (world, chat, dimension,
  * hour_bucket) tuple.

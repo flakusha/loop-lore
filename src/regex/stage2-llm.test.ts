@@ -8,7 +8,7 @@
  */
 import { describe, expect, test, } from "bun:test";
 import { parseAction, VERB, } from "./action-parser";
-import { createStage2Parser, validateStage2Output, } from "./stage2-llm";
+import { createStage2Parser, MAX_STAGE2_RAW_CHARS, MAX_STAGE2_REF_CHARS, validateStage2Output, } from "./stage2-llm";
 
 const CTX = { inventory: ["iron sword", "health potion",], sceneActors: ["orc warlord",], };
 
@@ -78,6 +78,21 @@ describe("validateStage2Output — constrained schema", () => {
   test("an out-of-range confidence falls back to the default instead of rejecting", () => {
     const action = validateStage2Output(JSON.stringify({ verb: "search", confidence: 42, },), CTX,);
     expect(action?.confidence,).toBe(0.5,);
+  });
+
+  test("an oversized completion is rejected outright", () => {
+    const bloated = JSON.stringify({ verb: "search", note: "x".repeat(MAX_STAGE2_RAW_CHARS,), },);
+    expect(bloated.length,).toBeGreaterThan(MAX_STAGE2_RAW_CHARS,);
+    expect(validateStage2Output(bloated, CTX,),).toBeNull();
+  });
+
+  test("an oversized displayName is rejected", () => {
+    const raw = JSON.stringify({
+      verb: "use",
+      target: { kind: "item", displayName: "x".repeat(MAX_STAGE2_REF_CHARS + 1,), },
+    },);
+
+    expect(validateStage2Output(raw, CTX,),).toBeNull();
   });
 });
 

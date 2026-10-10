@@ -48,6 +48,13 @@ const log = getLogger().child({ module: "regex/stage2-llm", },);
 /** Chat id handed to `callLlm` — parsing is not chat-scoped. */
 const NO_CHAT = "__none__";
 
+/** Max accepted completion length. A completion beyond this is junk
+ *  (the schema fits in a few hundred chars) and is rejected outright. */
+export const MAX_STAGE2_RAW_CHARS = 4_000;
+
+/** Max accepted `displayName` length on a target/instrument ref. */
+export const MAX_STAGE2_REF_CHARS = 80;
+
 /** One text-generation call. Defaults to the real `callLlm` pipeline
  *  with the model resolved via `resolveModelRole("auxiliary")`; tests
  *  inject a stub. */
@@ -123,6 +130,8 @@ export function createStage2Parser(opts: Stage2ParserOptions,): Stage2LLMFn {
  * @param ctx
  */
 export function validateStage2Output(raw: string, ctx: ParseContext,): Action | null {
+  if (raw.length > MAX_STAGE2_RAW_CHARS) { return null; }
+
   const result = safeJsonParse<unknown>(raw,);
   if (!result.ok) { return null; }
   const parsed = result.value;
@@ -178,7 +187,8 @@ function validateRef(
     typeof kind !== "string" ||
     !kinds.includes(kind as "item" | "actor",) ||
     typeof displayName !== "string" ||
-    displayName.trim().length < 1
+    displayName.trim().length < 1 ||
+    displayName.trim().length > MAX_STAGE2_REF_CHARS
   ) {
     return undefined;
   }
