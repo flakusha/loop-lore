@@ -3,13 +3,18 @@
 # Install: git config core.hooksPath .githooks && chmod +x .githooks/prepare-commit-msg
 
 COMMIT_MSG_FILE="$1"
+COMMIT_SOURCE="$2"
 
-# Audit every commit message that carries one. The old guard skipped every
-# source except `-m`/`-F`, so an interactive commit (empty $2), a template,
-# a merge and a squash were never audited — fabricated trailers sailed
+# Audit every commit message that carries one, whatever built it. The old guard
+# skipped every source except `-m`/`-F`, so an interactive commit (empty $2), a
+# template, a merge and a squash were never audited — fabricated trailers sailed
 # through. Only a genuinely empty message has nothing to audit.
 if [ -n "$COMMIT_MSG_FILE" ] && [ -f "$COMMIT_MSG_FILE" ] &&
   [ -n "$(tr -d '[:space:]' < "$COMMIT_MSG_FILE")" ]; then
+  # Co-Authored-By trailers must name an identity that authors or commits in
+  # the set being landed. This is the message-mode entry point (pre-commit has
+  # no message file yet); scripts/check/co-author-trailers.mjs is the same
+  # script the pre-commit hook calls in range mode.
   if command -v bun &> /dev/null && [ -f "scripts/check/co-author-trailers.mjs" ]; then
     if ! bun run scripts/check/co-author-trailers.mjs < "$COMMIT_MSG_FILE"; then
       exit 1
@@ -17,12 +22,14 @@ if [ -n "$COMMIT_MSG_FILE" ] && [ -f "$COMMIT_MSG_FILE" ] &&
   fi
 fi
 
-# Co-Authored-By trailers must name an identity that authors or commits in the
-# set being landed. This is the message-mode entry point (pre-commit has no
-# message file yet); scripts/check/co-author-trailers.mjs is the same script the
-# pre-commit hook calls in range mode.
+# Run commitlint. git builds the merge, squash and template messages itself and
+# none of them carry a subject the type(scope): subject rule can read, so they
+# are exempt here — but not from the trailer audit above.
+if [ -z "$COMMIT_SOURCE" ] || [ "$COMMIT_SOURCE" = "template" ] ||
+  [ "$COMMIT_SOURCE" = "merge" ] || [ "$COMMIT_SOURCE" = "squash" ]; then
+  exit 0
+fi
 
-# Check if commitlint is available and run validation
 if command -v bun &> /dev/null; then
   if bun run src/scripts/commit-check.ts < "$COMMIT_MSG_FILE" 2>/dev/null; then
     exit 0
