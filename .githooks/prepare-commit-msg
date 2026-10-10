@@ -10,6 +10,16 @@ if [ -z "$COMMIT_SOURCE" ] || [ "$COMMIT_SOURCE" = "template" ] || [ "$COMMIT_SO
   exit 0
 fi
 
+# Co-Authored-By trailers must name an identity that authors or commits in the
+# set being landed. This is the message-mode entry point (pre-commit has no
+# message file yet); scripts/check/co-author-trailers.mjs is the same script the
+# pre-commit hook calls in range mode.
+if command -v bun &> /dev/null && [ -f "scripts/check/co-author-trailers.mjs" ]; then
+  if ! bun run scripts/check/co-author-trailers.mjs < "$COMMIT_MSG_FILE"; then
+    exit 1
+  fi
+fi
+
 # Check if commitlint is available and run validation
 if command -v bun &> /dev/null; then
   if bun run src/scripts/commit-check.ts < "$COMMIT_MSG_FILE" 2>/dev/null; then
