@@ -14,27 +14,22 @@
  * present in the author/committer population). The trailer asserts someone
  * wrote code they did not write.
  *
- * Semantics — deliberately conservative, only flag on a total miss:
- *   - email is the primary key and a match is proof; name is a secondary
- *     signal only, never sufficient on its own;
- *   - a trailer matching its own commit's author/committer always passes;
- *   - `Signed-off-by:` / `Reviewed-by:` are out of scope — only
- *     `Co-Authored-By:` lines are parsed;
- *   - a trailer naming the repo-canonical identity passes (the
- *     `Konstantin Fedotov (Agent) <zenflak@gmail.com>` shape on 103 commits);
- *   - `ALLOWED_TRAILERS` fragments from .credentials.env are the repo's
- *     existing consent mechanism (same rule giwt applies in
- *     `src/utils/coauthors.ts`) and keep a trailer verbatim.
+ * Semantics — deliberately conservative, only flag on a total miss: the email
+ * is the primary key and a match is proof (name is a secondary signal, never
+ * sufficient alone); a trailer matching its own commit's author/committer, the
+ * repo-canonical config identity (`Konstantin Fedotov (Agent) <zenflak@gmail.com>`
+ * on 103 commits), or an `ALLOWED_TRAILERS` fragment from .credentials.env (the
+ * repo's existing consent mechanism, same rule giwt applies in
+ * `src/utils/coauthors.ts`) passes verbatim. Only `Co-Authored-By:` is parsed —
+ * `Signed-off-by:` / `Reviewed-by:` are out of scope.
  *
- * Usage:
- *   bun run scripts/check/co-author-trailers.mjs < message
- *   bun run scripts/check/co-author-trailers.mjs --range
- *   bun run scripts/check/co-author-trailers.mjs --range main..HEAD
+ * Usage: `bun run scripts/check/co-author-trailers.mjs [--range [<range>]]`,
+ * with the commit message on stdin.
  *
- * Mode is explicit. `--range` audits real commit messages: with no value it
- * audits this branch's unmerged range (what pre-commit wants), with a value it
- * audits that range. No `--range` audits the single commit message on stdin
- * (what prepare-commit-msg wants). Nothing is inferred from stdin being empty.
+ * Mode is explicit. `--range` audits real commit messages (no value: this
+ * branch's unmerged range, what pre-commit wants); bare stdin audits the one
+ * message on stdin (what prepare-commit-msg wants). Nothing is inferred from
+ * stdin being empty.
  *
  * Exit codes: 0 clean, 1 offending trailers found, 2 tooling failure.
  */
