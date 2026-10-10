@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Process / Tooling Epic
@@ -16,7 +16,7 @@
 
 - Give agents one written rule for which tracker to reach for, so a ticket and a scratch task never both claim the same work.
 - Make the plan index queryable by tag and binding, which is what tooling (`/find-work`, admin filtering, routing by tag) needs.
-- Clear the pre-existing index orphans and phantoms that keep the `tickets` gate red.
+- Keep the plan index reconciled — the pre-existing orphan/phantom backlog that used to redden the `tickets` gate is resolved (the cleanup ticket closed Wontfix: the condition no longer exists).
 
 ## Summary
 
@@ -50,7 +50,7 @@ a `.tmp/tasks/` task? When do they cross-reference? What's the source of truth?
 ### `task-management` skill (newer)
 
 - JSON-based task + subtask files in `.tmp/tasks/`
-- CLI: `bun .opencode/skills/task-management/scripts/task-cli.ts` — **that path does not exist in this repo**; no `task-management` skill is vendored under `.opencode/skills/` or `.agents/skills/`. Confirm where the skill lives before relying on this row.
+- CLI: `bun ~/.config/opencode/skills/task-management/scripts/task-cli.ts` — the skill lives at user level (`~/.config/opencode/skills/task-management/`, with `SKILL.md`, `router.sh`, and `scripts/task-cli.ts`) and is **not vendored** in this repo: no `.opencode/` directory exists here and nothing under `.agents/skills/` shadows it.
 - Supports: dependencies, exit criteria, context/reference files, parallel execution
 - Integrates with `TaskManager` subagent for breakdown
 - Ephemeral by design (`.tmp/` is gitignored, scratchpad)
@@ -61,6 +61,20 @@ There is no task-management system in `src/`. The only two files that touch the 
 unrelated to tracking: `src/prompts/task-clarification.ts` (a prompt template) and
 `src/aux-pipeline/task-detect.ts` (aux-task classification from prompt shape). Nothing in
 `src/` creates, stores or resolves tickets or scratch tasks.
+
+### Plan-index state (2026-10-10)
+
+- The orphan/phantom backlog is resolved: a fresh `bun run plan:sync` reports no orphan
+  files and no phantom entries, with only non-gating advisories. The `tickets`-gate premise
+  the cleanup ticket was filed against is gone; that ticket is closed Wontfix.
+- One known index defect: `TASK-plan-index-tagging-binding-reconciliation`'s entry carries
+  prose fragments instead of its tags. giwt's parser takes the FIRST bold-colon match of a
+  field inside the first 30 lines, and an inline `**Tags:**` mention in the ticket's
+  `**Context:**` prose won over the real field, which sat just outside the window. The
+  ticket header is regrouped and the `scripts/plan/` projection now repairs divergent tag
+  arrays (frontmatter wins); giwt itself stays a pinned external dependency.
+- giwt has no `plan report` subcommand, and giwt is pinned externally (never modified
+  in-repo) — reconciliation reporting ships as a `plan:*` script under `scripts/plan/`.
 
 ### Gap
 
@@ -104,8 +118,8 @@ unrelated to tracking: `src/prompts/task-clarification.ts` (a prompt template) a
 Bound to this epic via the `**Epic:** epic-task-management-integration` header on each ticket.
 
 - `TASK-MANAGEMENT-INTEGRATION.md` — the granularity/pattern research this epic is built around
-- `TASK-plan-index-tagging-binding-reconciliation.md` — round-trip `**Tags:**` / `**Epic:**` into the index and add `giwt plan report`
-- `TASK-plan-index-orphan-phantom-cleanup.md` — prune the pre-existing phantom index entries
+- `TASK-plan-index-tagging-binding-reconciliation.md` — round-trip `**Tags:**` / `**Epic:**` into the index and add reconciliation reporting (giwt is pinned external, so the report ships repo-side under `scripts/plan/`)
+- `TASK-plan-index-orphan-phantom-cleanup.md` — resolved Wontfix (2026-10-10): the phantom condition it targeted no longer exists
 
 ## Acceptance Criteria
 
@@ -118,7 +132,7 @@ Bound to this epic via the `**Epic:** epic-task-management-integration` header o
 
 ## Dependencies
 
-- `task-management` skill (`.opencode/skills/task-management/` — not vendored in this repo; resolve its real location before this epic can complete)
+- `task-management` skill (user-level, `~/.config/opencode/skills/task-management/` — not vendored in this repo)
 - `.plan/tickets/` system (established)
 - `worktree.sh` ticket workflow
 
