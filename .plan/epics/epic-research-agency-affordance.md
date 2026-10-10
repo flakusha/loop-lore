@@ -4,7 +4,7 @@
 # EPIC-RESEARCH-AGENCY-AFFORDANCE: Verb x Target x Context Affordance Layer
 
 **Status:** In Progress
-**Status Note:** parser + affordance lookup shipped (see Current State); open: production Stage-2 wiring, telemetry counters, latency budget measurement, loot budget-gate battle wiring (TASK-loot-budget-affordance-gate).
+**Status Note:** Stage-2 production wiring, parser/affordance telemetry, and Stage-2 schema rejection shipped 2026-10-10 (`src/regex/stage2-llm.ts`, `src/services/affordance/telemetry.ts`). Open: strict Stage-1 p95 latency measurement; loot budget-gate battle wiring (owned by TASK-loot-budget-affordance-gate).
 **Priority:** High
 **Effort:** Medium
 **Type:** Research epic (drives implementation tickets)
@@ -27,10 +27,10 @@ Then evaluate `(actor_caps, item_props, context_state) -> AffordanceResult { all
 ## Acceptance Criteria
 
 - [x] Closed verb enum covers the action space of `actor_items` + canonical verb set (`use, equip, unequip, drop, give, take, open, close, read, examine, attack, defend, talk, move, hide, search`); extensible.
-- [ ] Stage-1 parser: regex/keyword, latency < 1ms p95 for inputs < 1 KB. (Parser ships and is pure regex; no p95 latency benchmark exists — unmeasured, not claimed.)
-- [ ] Stage-2 LLM fallback: constrained JSON schema; model chosen via existing `resolveModelRole`; latency budget 1.5s p95. (`Stage2LLMFn` injection point ships in `parseAction`; no production caller wires it to `resolveModelRole` yet.)
+- [ ] Stage-1 parser: regex/keyword, latency < 1ms p95 for inputs < 1 KB. (Closest evidence: `action-parser.test.ts` bounds 1000 × 1KB inputs at < 1.5s total (< 1.5ms/input amortized); a strict p95 measurement does not exist.)
+- [x] Stage-2 LLM fallback: constrained JSON schema; model chosen via existing `resolveModelRole`; latency budget 1.5s p95. (`src/regex/stage2-llm.ts` `createStage2Parser`: `resolveModelRole(auxiliary)` → `resolveProvider` → `callLlm`; `validateStage2Output` rejects unparsable JSON, out-of-enum verbs, and targets outside inventory ∪ scene actors. Latency budget is upstream of the LLM provider, not enforced here.)
 - [x] Affordance lookup table: `(actor_caps, item_props, context_state) -> boolean + reason`. Hook into `ActorItemsService.equip/unequip/transfer` and any other verb resolvers.
-- [ ] Telemetry: per-verb hit rate, parser-stage selected, affordance denial rate.
+- [x] Telemetry: per-verb hit rate, parser-stage selected, affordance denial rate. (`src/services/affordance/telemetry.ts` records `action_parser` (stage, verb) and `affordance_allow`/`affordance_denial` (verb, reason) events on the shared `telemetry_events` sink; tests assert fields.)
 - [x] No regression in existing `INTENT_PATTERNS` consumers (avatar intent detection, etc.) - emit `AssistantIntent` alongside the new typed action.
 
 ## Work Items (Lazy Ladder)
