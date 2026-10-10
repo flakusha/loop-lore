@@ -131,8 +131,7 @@
     "scripts/fe-be-harmonization/**",
     // Finalize-lock child-process fixture: spawned by
     // scripts/worktree/finalize-lock-cleanup.test.ts via path (not a static
-    // import knip can trace) — same class as the chat-state-contract
-    // fixture below.
+    // import knip can trace).
     "scripts/worktree/finalize-lock-fixture.ts",
 
     // Coverage gate script: run via check-parallel.mjs shell string
@@ -157,10 +156,6 @@
     "scripts/check-frontend-banned-patterns.ts",
     "scripts/check-frontend-innerhtml-xss.ts",
     "scripts/check-epic-coverage.ts",
-
-    // Chat-state contract fixture: type-pinned test helper imported by tests
-    // but not by production code (tests/ only, not in knip entry graph)
-    "tests/e2e/fixtures/chat-state-contract.ts",
 
     "tests/e2e/flows/browser/admin-dashboard-populated.browser.ts",
     "tests/e2e/flows/browser/auth-flow.browser.ts",
