@@ -88,6 +88,7 @@ export async function migrateNpc(
     if (kind === "npc_arrive") {
       const destination = row.destination_location_id;
       if (!destination) {
+        // Destination was deleted — complete silently rather than retry forever
         await handle
           .updateTable("npc_migrations",)
           .set({ status: "arrived", updated_at: stamp, },)
