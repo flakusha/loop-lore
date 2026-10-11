@@ -17,7 +17,7 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../../db/enums";
-import { uid, } from "../../utils";
+import { jsonParseOr, safeJsonStringify, uid, } from "../../utils";
 import {
   ChatIdParams,
   PaginationQuery,
@@ -30,7 +30,7 @@ import {
   notFoundResponse as notFound,
   requireUserId,
 } from "../http-utils";
-import { NoteIdParams, ShadowNoteBody, } from "./schemas";
+import { NoteIdParams, RevealBody, ShadowNoteBody, } from "./schemas";
 import type { HandlerOpts, } from "./types";
 
 import { ShadowNoteStatus, ShadowNoteVisibility, } from "../../db/enums-gm";
@@ -137,7 +137,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           // which SQLite rejects with "near 'from': syntax error".
           // Queries also run sequentially (not Promise.all) — bun:sqlite
           // is single-connection and interleaving is safer to avoid.
-          const items = await database
+          const rows = await database
             .selectFrom("shadow_notes",)
             .selectAll()
             .where("chat_id", "=", id,)
@@ -145,6 +145,14 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             .limit(pageSize,)
             .offset(offset,)
             .execute();
+
+          // `revealed_to` is a JSON-array text column — decode for callers.
+          const items = Array.from(rows, (row,) => ({
+            ...row,
+            revealed_to: row.revealed_to
+              ? jsonParseOr<string[]>(row.revealed_to, [],)
+              : null,
+          }),);
 
           const countResult = await database
             .selectFrom("shadow_notes",)
@@ -185,6 +193,8 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             // when present so GM-panel callers can tag gm/system notes.
             author_type: (body.authorType ?? "user") as never,
             expires_at: body.expiresAt ?? null,
+            // Free-form trigger expression — stored verbatim.
+            trigger_condition: body.triggerCondition ?? null,
           };
 
           assertValidWrite("shadow_notes", noteRow,);
@@ -205,21 +215,39 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
-          // Fetch content before update so we can use it in narration.
+          // Fetch content + reveal bookkeeping before update so narration and
+          // the `revealed_to` append can use them.
           const note = await database
             .selectFrom("shadow_notes",)
-            .select(["content", "visibility",],)
+            .select(["content", "visibility", "revealed_to",],)
             .where("id", "=", noteId,)
             .where("chat_id", "=", id,)
             .executeTakeFirst();
 
           if (!note) { return notFound("Shadow note not found",); }
 
+          const body = ctx.body as typeof RevealBody.static;
+          const incoming = body?.revealedTo ?? [];
+          // Append + dedupe: an already-revealed note may be surfaced to
+          // more players; existing ids are never dropped.
+          const existing = note.revealed_to
+            ? jsonParseOr<string[]>(note.revealed_to, [],)
+            : [];
+
+          const unique = new Set([...existing, ...incoming,],);
+          const revealedTo = Array.from(unique,);
+
           assertValidWrite("shadow_notes", { status: ShadowNoteStatus.Revealed, visibility: note.visibility, },);
 
+          const serialized = safeJsonStringify(revealedTo,);
           const result = await database
             .updateTable("shadow_notes",)
-            .set({ status: ShadowNoteStatus.Revealed, },)
+            .set({
+              status: ShadowNoteStatus.Revealed,
+              // String[] always serializes; fall back to the prior value so a
+              // (theoretical) failure never drops recorded ids.
+              revealed_to: serialized.ok ? serialized.value : note.revealed_to,
+            },)
             .where("id", "=", noteId,)
             .where("chat_id", "=", id,)
             .executeTakeFirst();
@@ -234,7 +262,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           return jsonNoContent();
         },
-        { params: NoteIdParams, },
+        { params: NoteIdParams, body: RevealBody, },
       )
       .delete(
         `${prefix}/chats/:id/shadow-notes/:noteId`,

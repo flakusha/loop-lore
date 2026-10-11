@@ -950,6 +950,8 @@ export const SCHEMA = new SchemaManifest()
     author_type: col("text", { notNull: true, hasDefault: true, },),
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+    trigger_condition: col("text",),
+    revealed_to: col("text",),
   },)
   .table("status_effect", {
     id: col("text", { primaryKey: true, },),
@@ -1107,6 +1109,7 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, },),
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+    message_id: col("text",),
   },)
   .table("workflow_sessions", {
     chat_id: col("text", { primaryKey: true, },),

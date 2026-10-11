@@ -10,11 +10,18 @@
  */
 import { describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { ShadowNoteStatus, ShadowNoteType, WhiteneoteType, } from "../../../db/enums";
+import {
+  MessageRole,
+  ShadowNoteStatus,
+  ShadowNoteType,
+  WhiteneoteType,
+} from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import {
+  insertActors,
   insertChats,
+  insertMessages,
   insertShadowNotes,
   insertUsers,
   insertWhitenotes,
@@ -84,6 +91,54 @@ describe("gmNotesSection", () => {
     expect(content,).toContain("priority 8",);
     expect(content,).toContain("The king is a lich.",);
     expect(content,).toContain("world_secret",);
+  });
+
+  test("labels message-scoped whitenotes and shadow triggers", async () => {
+    const { db, } = await createTestDb();
+    await insertUsers(db, "user1", "User 1", { id: "user-1", } as any,);
+    await insertWorlds(db, "user-1", "Test World", { id: "world-1", } as any,);
+    await insertChats(db, "Test Chat", "user-1", {
+      id: "chat-1",
+      world_id: "world-1",
+      gm_config: JSON.stringify({ assistantRole: "gm", },),
+    } as any,);
+
+    await insertActors(
+      db,
+      "Narrator",
+      { id: "narrator-1", actor_type: "narrator", agent_type: "narrator", } as never,
+    );
+
+    const messageId = await insertMessages(
+      db,
+      "chat-1",
+      "narrator-1",
+      MessageRole.System,
+      "The door creaks.",
+    );
+
+    await insertWhitenotes(
+      db,
+      "chat-1",
+      WhiteneoteType.Tone,
+      "Keep it eerie.",
+      "2026-08-01T00:00:00Z",
+      { priority: 7, message_id: messageId, },
+    );
+
+    await insertShadowNotes(
+      db,
+      "chat-1",
+      ShadowNoteType.Foreshadowing,
+      "A storm gathers.",
+      "2026-08-01T00:00:00Z",
+      { trigger_condition: "when the party leaves the inn", },
+    );
+
+    const messages = await gmNotesSection.build(makeCtx(db, "chat-1",),);
+    const content = messages[0]!.content;
+    expect(content,).toContain(`[message ${messageId}]`,);
+    expect(content,).toContain("[trigger: when the party leaves the inn]",);
   });
 
   test("filters expired whitenotes at assembly time", async () => {

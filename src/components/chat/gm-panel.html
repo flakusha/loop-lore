@@ -103,6 +103,15 @@
           rows="3"
         ></textarea>
       </div>
+      <div class="gm-form-group">
+        <label class="form-label">Trigger condition</label>
+        <input
+          type="text"
+          class="form-input"
+          x-model="newShadowTrigger"
+          placeholder="When to activate (optional, free-form)..."
+        />
+      </div>
       <button class="btn btn-primary btn-sm gm-full-width" @click="addShadowNote()">Add Shadow Note</button>
 
       <div class="gm-count"><span x-text="shadowNotes.length"></span> shadow note(s)</div>
@@ -110,11 +119,18 @@
         <div class="gm-note-card">
           <div class="gm-note-header">
             <span class="gm-note-type" x-text="note.type"></span>
-            <span x-show="note.revealed" class="gm-badge-revealed">Revealed</span>
+            <span x-show="note.status === 'revealed'" class="gm-badge-revealed">Revealed</span>
           </div>
           <p class="gm-note-content" x-text="note.content"></p>
+          <p class="gm-note-content" x-show="note.trigger_condition" x-text="`Trigger: ${note.trigger_condition}`"></p>
+          <p
+            class="gm-note-content"
+            x-show="note.revealed_to && note.revealed_to.length > 0"
+            x-text="`Revealed to: ${note.revealed_to.join(', ')}`"
+          >
+          </p>
           <div class="gm-note-actions">
-            <button class="btn btn-ghost btn-sm" @click="revealShadowNote(note.id)" x-show="!note.revealed">
+            <button class="btn btn-ghost btn-sm" @click="revealShadowNote(note.id)" x-show="note.status !== 'revealed'">
               Reveal to Players
             </button>
             <button class="btn btn-ghost btn-sm gm-danger" @click="deleteShadowNote(note.id)">Delete</button>
@@ -151,6 +167,15 @@
         <label class="form-label">Priority (<span x-text="newWhiteneotePriority"></span>)</label>
         <input type="range" min="1" max="10" x-model.number="newWhiteneotePriority" />
       </div>
+      <div class="gm-form-group">
+        <label class="form-label">Message ID</label>
+        <input
+          type="text"
+          class="form-input"
+          x-model="newWhiteneoteMessageId"
+          placeholder="Anchor to a message (optional)..."
+        />
+      </div>
       <button class="btn btn-primary btn-sm gm-full-width" @click="addWhiteneote()">Add Whiteneote</button>
 
       <div class="gm-count"><span x-text="whitenotes.length"></span> whiteneote(s)</div>
@@ -161,6 +186,7 @@
             <span class="gm-note-priority">P<span x-text="note.priority"></span></span>
           </div>
           <p class="gm-note-content" x-text="note.content"></p>
+          <p class="gm-note-content" x-show="note.message_id" x-text="`Message: ${note.message_id}`"></p>
           <button class="btn btn-ghost btn-sm gm-danger" @click="deleteWhiteneote(note.id)">Delete</button>
         </div>
       </template>
