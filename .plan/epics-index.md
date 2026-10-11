@@ -15,7 +15,7 @@
 | Not Started | 2D Sprite World | High | Very High total (split across sub-epics below) | 0 | [epic-2d-sprite-world.md](/.plan/epics/epic-2d-sprite-world.md) |
 | Not Started | 3D Asset Generation (Future) | Low | Very High | 25 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
 | In Progress | Accessibility & Input Systems | P0 — Critical | High | 2 | [epic-accessibility-input.md](/.plan/epics/epic-accessibility-input.md) |
-| In Progress | Actor Autonomy & Story Auto-Drive | High | Large | 4 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
+| Done | Actor Autonomy & Story Auto-Drive | High | Large | 4 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
 | Done | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 4 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
 | Done | Actors & Entity System | High | High | 12 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | Done | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
@@ -28,7 +28,7 @@
 | Not Started | API-First Foundation | Medium | Medium | 8 | [epic-api-first-foundation.md](/.plan/epics/epic-api-first-foundation.md) |
 | Not Started | API/Library Distribution Mode | High | High | 25 | [epic-api-library-distribution.md](/.plan/epics/epic-api-library-distribution.md) |
 | Not Started | Architecture Overview | High | Medium | 0 | [epic-architecture.md](/.plan/epics/epic-architecture.md) |
-| In Progress | Archival Workflow | Medium | Medium | 0 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
+| Done | Archival Workflow | Medium | Medium | 0 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
 | In Progress | Asset Platform Capabilities (Messenger/Social Patterns) | Medium | Large (batch-decomposable; each batch ships standalone value) | 8 | [epic-asset-platform-capabilities.md](/.plan/epics/epic-asset-platform-capabilities.md) |
 | In Progress | Asset Transform Editing + Metadata | Medium | Medium | 4 | [epic-asset-transform-metadata.md](/.plan/epics/epic-asset-transform-metadata.md) |
 | Not Started | Assistant Entity Access & Manipulation | High | High | 37 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
@@ -127,7 +127,7 @@
 | Not Started | Epic: Chat Context Optimization | High | High | 0 | [epic-chat-context-optimization.md](/.plan/epics/epic-chat-context-optimization.md) |
 | Not Started | Epic: Chat Privacy | Medium | Medium | 10 | [epic-chat-privacy.md](/.plan/epics/epic-chat-privacy.md) |
 | Done | Epic: Config File Separation | High | High | 0 | [epic-config-file-separation.md](/.plan/epics/epic-config-file-separation.md) |
-| In Progress | Epic: Configurable Template System | High | Large | 0 | [epic-config-templates.md](/.plan/epics/epic-config-templates.md) |
+| Done | Epic: Configurable Template System | High | Large | 0 | [epic-config-templates.md](/.plan/epics/epic-config-templates.md) |
 | In Progress | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
 | In Progress | Epic: Context Injection Correctness | medium | Medium | 0 | [epic-context-injection-correctness.md](/.plan/epics/epic-context-injection-correctness.md) |
 | In Progress | Epic: Context Injection Templates | medium | Medium | 0 | [epic-context-injection-templates.md](/.plan/epics/epic-context-injection-templates.md) |
@@ -292,7 +292,7 @@
 | Not Started | RPG Skills, Professions & Config Templates | High | High | 9 | [epic-skills-professions-config.md](/.plan/epics/epic-skills-professions-config.md) |
 | In Progress | RPG Wiring Completion — Phase 3 | High | High | 0 | [epic-rpg-wiring-phase3.md](/.plan/epics/epic-rpg-wiring-phase3.md) |
 | Done | Runtime Integrity, Crash Recovery & Fail-Safes | medium | Medium | 0 | [epic-runtime-integrity-fail-safes.md](/.plan/epics/epic-runtime-integrity-fail-safes.md) |
-| In Progress | Script Migration to Modular Architecture | Medium | Medium | 0 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
+| Done | Script Migration to Modular Architecture | Medium | Medium | 0 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Not Started | Security & Sandboxing — Epic | medium | Medium | 27 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
 | Not Started | Security & Sandboxing — Quick Reference | High | High | 4 | [epic-security-sandboxing-quickref.md](/.plan/epics/epic-security-sandboxing-quickref.md) |
 | Done | Settings & Preferences UI | Medium | Medium | 0 | [epic-frontend-settings.md](/.plan/epics/epic-frontend-settings.md) |
@@ -303,7 +303,7 @@
 | Not Started | Social Interaction Systems | Medium | High | 0 | [epic-social-interaction.md](/.plan/epics/epic-social-interaction.md) |
 | Not Started | Stealth & Crime Systems | Medium | High | 0 | [epic-stealth-crime.md](/.plan/epics/epic-stealth-crime.md) |
 | In Progress | Story Mode UI | P1 — High | Medium | 4 | [epic-story-mode-ui.md](/.plan/epics/epic-story-mode-ui.md) |
-| In Progress | Task Management Integration | Medium | Medium | 0 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
+| Done | Task Management Integration | Medium | Medium | 0 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
 | Done | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
 | Not Started | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation | High | Medium | 18 | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md) |
 | In Progress | Terminal UI (TUI) | Low | Medium | 9 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
@@ -365,7 +365,7 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 
 ### Actor Autonomy & Story Auto-Drive
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Large
 - **Type:** Feature Epic
@@ -486,7 +486,7 @@ OpenAPI specification, request validation, rate limiting, telemetry, and resourc
 
 ### Archival Workflow
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -1427,7 +1427,7 @@ Split the monolithic `config.toml` / `config.yaml` into domain-specific config f
 
 ### Epic: Configurable Template System
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Large
 - **Type:** Feature Epic / Configuration
@@ -3000,7 +3000,7 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 
 ### Script Migration to Modular Architecture
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Infrastructure
@@ -3109,7 +3109,7 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 
 ### Task Management Integration
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Process / Tooling Epic
@@ -3353,4 +3353,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

@@ -4813,11 +4813,19 @@
   ],
   "src/autonomy/governor/index.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-actor-autonomy-story-drive.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-rate-governor-for-llm-actors.md"
     }
   ],
   "src/autonomy/governor/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-actor-autonomy-story-drive.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
@@ -4827,10 +4835,22 @@
       "source": ".plan/tickets/TASK-autonomy-rate-governor-for-llm-actors.md"
     }
   ],
+  "src/autonomy/governor/kill-switch.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-actor-autonomy-story-drive.md"
+    }
+  ],
   "src/autonomy/governor/kill-switch.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
+    }
+  ],
+  "src/autonomy/governor/ledger.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-actor-autonomy-story-drive.md"
     }
   ],
   "src/autonomy/governor/ledger.ts": [
@@ -4866,6 +4886,10 @@
     }
   ],
   "src/autonomy/scheduler/index.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-actor-autonomy-story-drive.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-config-surface-layering-presets-and-overrides.md"
@@ -4941,6 +4965,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-undocumented-src-content-src-aux-pipeline-and-src-imag.md"
     },
     {
       "kind": "ticket",
@@ -10978,6 +11006,10 @@
   "src/config/load/load.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-config-templates.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-configs-path-resolution.md"
     },
     {
@@ -11965,6 +11997,12 @@
       "source": ".plan/tickets/TASK-templates-loader-merge-strategy-consistency.md"
     }
   ],
+  "src/config/template-expansion/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-config-templates.md"
+    }
+  ],
   "src/config/template-expansion/run.ts": [
     {
       "kind": "ticket",
@@ -12050,6 +12088,10 @@
   "src/config/templates-loader/index.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-config-templates.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-configs-path-resolution.md"
     },
     {
@@ -12109,6 +12151,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-docs-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-undocumented-src-content-src-aux-pipeline-and-src-imag.md"
     }
   ],
   "src/content/compress.test.ts": [
@@ -12220,6 +12266,10 @@
     }
   ],
   "src/cron/jobs.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-actor-autonomy-story-drive.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-archival-workflow.md"
@@ -12831,6 +12881,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal.md"
     }
   ],
   "src/crypto/e2e/ratchet.ts": [
@@ -12847,6 +12901,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal.md"
     }
   ],
   "src/crypto/hasher.ts": [
@@ -13200,6 +13258,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-property-test-the-isencryptedpayload-predicate-against-the-d.md"
     },
     {
@@ -13340,6 +13402,10 @@
     }
   ],
   "src/db/column-types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-achievements-enum-revival-promote-service-layer-to-db-barrel.md"
@@ -15334,6 +15400,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-fts-encrypt-mismatch.md"
     },
     {
@@ -15769,6 +15839,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me.md"
     },
     {
       "kind": "ticket",
@@ -16769,6 +16843,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-project-spaces-pm-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me.md"
     },
     {
       "kind": "ticket",
@@ -21385,6 +21463,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-e2ee-double-ratchet.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal.md"
     }
   ],
   "src/frontend/e2e/recipient-pubkey.ts": [
@@ -25019,6 +25101,10 @@
       "source": ".plan/epics/epic-chat-product-features.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-config-templates.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-template-system.md"
     },
@@ -26141,6 +26227,12 @@
       "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
     }
   ],
+  "src/hooks/nsfw-rating.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-nsfw-5-tier-rating-into-enforcement-epic-open-item-b4.md"
+    }
+  ],
   "src/i18n/__tests/middleware.test.ts": [
     {
       "kind": "ticket",
@@ -26213,6 +26305,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-edit.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-undocumented-src-content-src-aux-pipeline-and-src-imag.md"
     },
     {
       "kind": "ticket",
@@ -28603,6 +28699,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-wire-consent-gate-into-nsfw-surfaces.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-nsfw-5-tier-rating-into-enforcement-epic-open-item-b4.md"
     },
     {
       "kind": "spec",
@@ -31433,6 +31533,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal.md"
     }
   ],
   "src/routes/actor-items.ts": [
@@ -37371,12 +37475,20 @@
   ],
   "src/routes/views/layout.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-docs-reconciliation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-undocumented-src-content-src-aux-pipeline-and-src-imag.md"
     },
     {
       "kind": "ticket",
@@ -41033,6 +41145,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-exploration-discovery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-emit-exploration-encounter-triggered-from-the-discovery-even.md"
     }
   ],
   "src/rpg/world-discovery/trade.ts": [
@@ -41329,6 +41445,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-nsfw-5-tier-rating-into-enforcement-epic-open-item-b4.md"
     },
     {
       "kind": "spec",
@@ -42401,6 +42521,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-items-crud-ownership.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-make-world-item-transfer-atomic-when-the-destination-actor-i.md"
     }
   ],
   "src/services/affordance/categories.ts": [
@@ -43275,6 +43399,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-inventory-view-page.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-make-world-item-transfer-atomic-when-the-destination-actor-i.md"
     }
   ],
   "src/story/items/npc-inventory.ts": [
@@ -45049,6 +45177,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me.md"
     },
     {
       "kind": "ticket",

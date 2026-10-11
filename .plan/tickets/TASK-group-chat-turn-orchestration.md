@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-group-chat
@@ -49,3 +49,5 @@ Remaining open scope (talkativity wiring, verbosity design) stays in Acceptance 
 - [ ] Context-mention boost verified
 - [ ] Both linked bugs closed
 - [ ] `bun run check` green
+
+**Resolved:** 2026-10-11 registry-driven close: git issue 6af81fc (registry tip: 2f14cb5b5 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-GROUP-CHAT-TURN-ORCHESTRATI)
