@@ -1806,11 +1806,13 @@
                 <div class="admin-stat-label">Tokens</div>
               </div>
               <div class="admin-stat-card">
-                <div class="admin-stat-value" x-text="conversationOverview.averageSessionLength.toFixed(1)">0</div>
+                <div class="admin-stat-value" x-text="(conversationOverview.averageSessionLength ?? 0).toFixed(1)">
+                  0
+                </div>
                 <div class="admin-stat-label">Avg Session Messages</div>
               </div>
               <div class="admin-stat-card">
-                <div class="admin-stat-value" x-text="conversationOverview.avgLatencyMs.toFixed(0)">0</div>
+                <div class="admin-stat-value" x-text="(conversationOverview.avgLatencyMs ?? 0).toFixed(0)">0</div>
                 <div class="admin-stat-label">Avg Latency (ms)</div>
               </div>
             </div>

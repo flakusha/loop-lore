@@ -111,9 +111,14 @@ export async function awardXp(
     return { leveled: false, newLevel: skill.level, };
   }
 
-  // Level up
-  const newLevel = Math.min(MAX_SKILL_LEVEL, skill.level + 1,);
-  const overflowXp = newXp - skill.xpToNext;
+  // Level up — loop for multi-level overflow
+  let newLevel = skill.level;
+  let overflowXp = newXp;
+  while (newLevel < MAX_SKILL_LEVEL && overflowXp >= xpForLevel(newLevel,)) {
+    overflowXp -= xpForLevel(newLevel,);
+    newLevel++;
+  }
+
   const now = new Date().toISOString();
 
   await db

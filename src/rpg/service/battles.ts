@@ -105,6 +105,10 @@ export async function endBattle(
     throw new Error(`Battle ${battleId} not found.`,);
   }
 
+  if (battle.status !== BattleStatus.Active) {
+    throw new Error(`Battle ${battleId} is not active.`,);
+  }
+
   await deps.database
     .updateTable("battles",)
     .set({ status, ended_at: new Date().toISOString(), updated_at: new Date().toISOString(), },)
