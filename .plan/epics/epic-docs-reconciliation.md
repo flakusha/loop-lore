@@ -100,3 +100,5 @@ README.md                         ← features table links extended (2026-08-26)
 - API reference auto-generation (JSDoc/TSDoc → Typedoc) proposed for
   `docs/reference/api.md` (currently hand-maintained) — see
   TASK-doc-audit-undocumented-src-modules.md.
+
+**Reconciliation note (verified against dev):** the docs surface is largely shipped — `isDocsServed()` + `{{docsNav}}` injection at `src/routes/views/layout.ts:65`, dead sidebar links fixed in `docs/.vitepress/config.mts`, and how-to guides under `docs/guide/`. The epic is nonetheless **not** complete: AC6 ("Undocumented `src/` modules audited") is unmet — `TASK-doc-audit-undocumented-src-modules.md` covering `src/content`, `src/aux-pipeline`, and `src/image-edit` is still Not Started. Left open pending that ticket.
