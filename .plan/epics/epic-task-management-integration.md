@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Process / Tooling Epic
@@ -219,3 +219,5 @@ Bound to this epic via the `**Epic:** epic-task-management-integration` header o
 - `epic-docs-reconciliation.md` — docs ↔ code alignment (similar reconciliation spirit)
 - `epic-logic-reconciliation.md` — logic drift detection
 - `.agents/skills/sync-tickets/` — ticket ↔ git issue sync
+
+**Closure evidence (reconciled against dev):** all six acceptance criteria are met by `scripts/plan/` — `plan-index-guard`, the `normalize-*` family, and the `report-*` family are present and run. The epic's own status note describing it as "In Progress" was stale; this epic is research guidance plus the tooling that operationalises it, and that tooling has landed.

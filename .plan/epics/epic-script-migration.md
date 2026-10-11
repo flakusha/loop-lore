@@ -7,7 +7,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** tasks 1-2 complete
 **Priority:** Medium
 **Effort:** Medium
@@ -88,3 +88,5 @@ Use `.mjs` for:
 - `src/scripts/lib/` (new location)
 - `src/scripts-workflow.md` (roadmap)
 - `src/test/worktree.test.ts` (test suite)
+
+**Closure evidence (reconciled against dev):** the migration is complete and enforced. `scripts/lib/` holds the ported utilities (`check-utils.ts`, `assertions.ts`, `colors.ts` — commit `b90819813`); `scripts/worktree/index.ts` registers the full command set from `./commands/` and the shell entrypoint was removed in `4b1c224d2` (`refactor(scripts): remove worktree.sh — native bun only`); the enforcement gate `scripts/check-no-shell-refs.ts` is registered in `scripts/check/parallel/gates.mjs:114` as `no - shell - refs`; no `.sh` remains invocable from `scripts/`. `scripts/worktree/` is deliberately retained as a documented retired duplicate (see `AGENTS.md`), not an orphaned leftover — its removal is tracked separately and is out of scope for this epic.
