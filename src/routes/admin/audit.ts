@@ -168,6 +168,7 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
         return jsonResponse(entry,);
       }, {
+        params: t.Object({ id: t.String(), },),
         response: {
           200: t.Any(),
           403: ErrorResponse,
