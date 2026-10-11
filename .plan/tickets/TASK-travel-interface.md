@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Task
@@ -39,3 +39,5 @@ Travel UI for moving between locations.
 
 - `src/frontend/world/travel-interface.ts`
 - `src/frontend/world/travel-methods.ts`
+
+**Resolved:** 2026-10-11 registry-driven close: git issue 997c0f5 (registry tip: 446d6ba1d Konstantin Fedotov Close issue)

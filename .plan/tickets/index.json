@@ -38174,7 +38174,7 @@
     "epic": "`epic-locations`",
     "tags": [],
     "source": ".plan/tickets/TASK-location-crud-tree-connections.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "571512d"
   },
   "TASK-LOCATION-DETAILS": {
@@ -38185,7 +38185,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-location-details.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "world",
       "frontend",
@@ -48510,7 +48510,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-time-weather-widget.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Time Weather Widget",
     "type": "TASK"
@@ -48909,7 +48909,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-travel-interface.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "world",
       "frontend",
@@ -50635,7 +50635,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-world-alpine.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "world",
       "frontend",
@@ -50653,7 +50653,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-world-dashboard.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "World Dashboard",
     "type": "TASK"

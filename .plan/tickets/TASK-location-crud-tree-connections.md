@@ -3,7 +3,7 @@
 
 # TASK: Location CRUD + tree service + connection validation hardening
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** `epic-locations`
@@ -61,3 +61,5 @@ equivalent depth check) so HTTP creates respect `LOCATION_DEPTH_LIMIT`
   and asserts the 13th is rejected
 - [ ] Existing suites green: `locations-crud.test.ts`,
   `locations-routes.test.ts`, `src/locations/tree.test.ts`
+
+**Resolved:** 2026-10-11 registry-driven close: git issue 571512d (registry tip: d1033539f Konstantin Fedotov Close issue)

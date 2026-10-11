@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Epic:** epic-world-management-ui
@@ -433,3 +433,5 @@ export interface WorldLore {
 - TASK-location-explorer.md
 - TASK-travel-interface.md
 - TASK-time-weather-widget.md
+
+**Resolved:** 2026-10-11 registry-driven close: git issue 5609ef0 (registry tip: c192eada2 Konstantin Fedotov Close issue)

@@ -80,7 +80,7 @@ Total tickets: **3493** — untagged: **2329** — unbound to epic: **1371**
 | allocation | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | allowlist | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | alpha | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| alpine | 24 | 4 | 1 | 15 | 0 | 0 | 4 |
+| alpine | 24 | 5 | 1 | 14 | 0 | 0 | 4 |
 | alpn | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | alternate-paths | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | alternative-flows | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -622,7 +622,7 @@ Total tickets: **3493** — untagged: **2329** — unbound to epic: **1371**
 | free-will | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | fresh | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | friends | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| frontend | 134 | 32 | 5 | 69 | 0 | 0 | 28 |
+| frontend | 134 | 35 | 5 | 66 | 0 | 0 | 28 |
 | fts | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | furniture | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | future | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -827,7 +827,7 @@ Total tickets: **3493** — untagged: **2329** — unbound to epic: **1371**
 | local-models | 5 | 2 | 0 | 2 | 0 | 0 | 1 |
 | localization | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | location | 14 | 2 | 1 | 4 | 1 | 0 | 6 |
-| location-details | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| location-details | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | location-editor | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | location-explorer | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | location-graph | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -836,7 +836,7 @@ Total tickets: **3493** — untagged: **2329** — unbound to epic: **1371**
 | log-entries | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | logger | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
 | logging | 5 | 2 | 1 | 0 | 0 | 0 | 2 |
-| logic | 8 | 2 | 1 | 5 | 0 | 0 | 0 |
+| logic | 8 | 3 | 1 | 4 | 0 | 0 | 0 |
 | login | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | loot | 8 | 1 | 3 | 0 | 1 | 0 | 3 |
 | lora | 4 | 2 | 0 | 1 | 0 | 0 | 1 |
@@ -1480,7 +1480,7 @@ Total tickets: **3493** — untagged: **2329** — unbound to epic: **1371**
 | transparency | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | transport | 17 | 0 | 1 | 4 | 0 | 0 | 12 |
 | transports | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| travel | 14 | 1 | 1 | 2 | 1 | 0 | 9 |
+| travel | 14 | 2 | 1 | 1 | 1 | 0 | 9 |
 | tray | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | tree | 10 | 0 | 0 | 1 | 0 | 0 | 9 |
 | tree-history | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -1506,7 +1506,7 @@ Total tickets: **3493** — untagged: **2329** — unbound to epic: **1371**
 | types | 4 | 2 | 0 | 0 | 0 | 0 | 2 |
 | typescript | 5 | 2 | 2 | 0 | 0 | 0 | 1 |
 | typescript7 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| ui | 56 | 8 | 1 | 33 | 0 | 0 | 14 |
+| ui | 56 | 10 | 1 | 31 | 0 | 0 | 14 |
 | unification | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | unified | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | unified-search | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -1580,7 +1580,7 @@ Total tickets: **3493** — untagged: **2329** — unbound to epic: **1371**
 | workspace-mode | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | worktree | 7 | 2 | 0 | 1 | 1 | 0 | 3 |
 | worktree-isolation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| world | 33 | 7 | 0 | 13 | 3 | 0 | 10 |
+| world | 33 | 10 | 0 | 10 | 3 | 0 | 10 |
 | world events | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | world-building | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | world-change | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1603,13 +1603,13 @@ Total tickets: **3493** — untagged: **2329** — unbound to epic: **1371**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2329 | 907 | 45 | 917 | 32 | 0 | 428 |
+| (untagged) | 2329 | 910 | 45 | 915 | 32 | 0 | 427 |
 
 ## By epic × status
 
 | Epic | Total | done | in_progress | open | draft | cancelled | other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| : | 114 | 26 | 0 | 88 | 0 | 0 | 0 |
+| : | 114 | 27 | 0 | 87 | 0 | 0 | 0 |
 | (if applicable) | 40 | 37 | 0 | 3 | 0 | 0 | 0 |
 | (none — no dedicated frontend epic tracks this spec) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | (none) | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
@@ -1626,7 +1626,7 @@ Total tickets: **3493** — untagged: **2329** — unbound to epic: **1371**
 | `epic-character-spec.md` | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | `epic-frontend-keynav-mobile` | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
 | `epic-harness-integration` | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
-| `epic-locations` | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| `epic-locations` | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | `epic-lore-knowledge.md` | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | `epic-memory-knowledge-systems.md` | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | `epic-memory-knowledge-systems.md` (FEA-2026-056) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1951,7 +1951,7 @@ Total tickets: **3493** — untagged: **2329** — unbound to epic: **1371**
 | epic-world-locations (config-templates sub-area) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-world-locations (research sub-area) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-world-locations, epic-config-templates, epic-chat-transfer-location | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-world-management-ui | 8 | 2 | 0 | 6 | 0 | 0 | 0 |
+| epic-world-management-ui | 8 | 6 | 0 | 2 | 0 | 0 | 0 |
 | epic-world-travel-time | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
 | Fuzzing Infrastructure | 9 | 0 | 0 | 0 | 0 | 0 | 9 |
