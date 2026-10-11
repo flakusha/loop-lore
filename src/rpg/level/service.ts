@@ -140,24 +140,27 @@ export async function awardXpToActor(
 
   const before = await ensureCharacterStats(db, input.actorId,);
   const applied = awardXp(before.level, before.xp, input.amount,);
+  // Never decrease a persisted level, even if the stored level/xp pair was
+  // inconsistent with the threshold table (defensive; the math is xp-driven).
+  const newLevel = Math.max(before.level, applied.newLevel,);
 
   const hitDie = parseHitDie(before.hit_dice,);
   const conMod = abilityModifier(before.con,);
 
   let hpGained = 0;
   let asiGranted = 0;
-  for (let level = before.level + 1; level <= applied.newLevel; level++) {
+  for (let level = before.level + 1; level <= newLevel; level++) {
     hpGained += hpOnLevelUp(hitDie, conMod,);
     if (grantsAsi(level,)) { asiGranted += 1; }
   }
 
-  const nextXpToNext = xpToNextLevel(applied.newLevel, applied.newXp,);
+  const nextXpToNext = xpToNextLevel(newLevel, applied.newXp,);
   const persistedXpToNext = Number.isFinite(nextXpToNext,)
     ? nextXpToNext
     : XP_TO_NEXT_MAX_SENTINEL;
 
   await updateCharacterStats({ database: db, }, before.id, {
-    level: applied.newLevel,
+    level: newLevel,
     xp: applied.newXp,
     xpToNext: persistedXpToNext,
     maxHp: before.max_hp + hpGained,
@@ -196,7 +199,7 @@ export async function awardXpToActor(
   return toResult({
     ledgerId,
     actorId: input.actorId,
-    stats: after ?? { ...before, level: applied.newLevel, xp: applied.newXp, },
+    stats: after ?? { ...before, level: newLevel, xp: applied.newXp, },
     previousLevel: before.level,
     hpGained,
     asiGranted,
