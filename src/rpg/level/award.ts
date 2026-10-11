@@ -12,7 +12,6 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema.js";
-import { safeJsonParse, } from "../../utils.js";
 import { createCharacterStats, updateCharacterStats, } from "../service/character-stats.js";
 import { logXp, } from "../service/xp.js";
 import { abilityModifier, } from "../stats/modifiers.js";
@@ -20,10 +19,10 @@ import { awardXp, xpToNextLevel, } from "../xp/calculation.js";
 import { grantsAsi, hpOnLevelUp, } from "../xp/levelup.js";
 import { autoResolveIfAutonomous, stageLevelUpDecision, } from "./decisions.js";
 import { applyOrganicGrowth, } from "./growth.js";
+import { parseHitDie, toResult, } from "./result.js";
 import {
   type AwardXpInput,
   type AwardXpResult,
-  DEFAULT_HIT_DIE,
   ENSURED_STATS_DEFAULTS,
   LevelServiceError,
   XP_TO_NEXT_MAX_SENTINEL,
@@ -99,7 +98,7 @@ export async function ensureCharacterStats(
  * @param stats Current sheet row (already ensured).
  * @param grant
  */
-async function applySheetBenefits(
+export async function applySheetBenefits(
   db: Kysely<DB>,
   stats: StatsRow,
   grant: LedgerGrant,
@@ -188,60 +187,6 @@ export async function applyGrant(db: Kysely<DB>, grant: LedgerGrant,): Promise<A
   },);
 }
 
-/**
- * Resolve a replay: the ledger row already exists for the dedupe key.
- * If the sheet is stale relative to the recorded grant (crash between the
- * ledger insert and the sheet write, or a deleted/lost sheet), re-apply the
- * recorded amount; staleness is approximated by `sheet.xp < recorded amount`
- * — a sheet that already banked the grant (or more) is left untouched.
- * @param db Transaction-scoped handle.
- * @param grant
- * @param ledgerId The already-recorded ledger row id.
- */
-export async function replayGrant(db: Kysely<DB>, grant: LedgerGrant, ledgerId: string,): Promise<AwardXpResult> {
-  const stats = await ensureCharacterStats(db, grant.actorId,);
-
-  if (stats.xp < grant.amount) {
-    // Reconcile: apply the recorded amount to the stale sheet. The ledger
-    // row stays untouched — the audit trail already contains it.
-    const { hpGained, asiGranted, stats: after, } = await applySheetBenefits(db, stats, grant,);
-
-    return toResult({
-      ledgerId,
-      actorId: grant.actorId,
-      stats: after,
-      previousLevel: stats.level,
-      hpGained,
-      asiGranted,
-      deduped: true,
-    },);
-  }
-
-  return toResult({
-    ledgerId,
-    actorId: grant.actorId,
-    stats,
-    previousLevel: stats.level,
-    hpGained: 0,
-    asiGranted: 0,
-    deduped: true,
-  },);
-}
-
-/**
- * Detect the (actor, source, reference_id) unique-constraint violation from
- * a concurrent winner so the loser can downgrade to a replay.
- * @param cause
- */
-export function isLedgerUniqueViolation(cause: unknown,): boolean {
-  const code = (cause as { code?: unknown } | null)?.code;
-  const message = cause instanceof Error ? cause.message : String(cause ?? "",);
-  return (
-    (code === "SQLITE_CONSTRAINT_UNIQUE" || /UNIQUE constraint failed/.test(message,)) &&
-    /xp_ledger/.test(message,)
-  );
-}
-
 export async function readStats(db: Kysely<DB>, actorId: string,): Promise<StatsRow | null> {
   const row = await db
     .selectFrom("character_stats",)
@@ -266,49 +211,4 @@ export async function readStats(db: Kysely<DB>, actorId: string,): Promise<Stats
     .executeTakeFirst();
 
   return row ?? null;
-}
-
-export function toResult(params: {
-  ledgerId: string;
-  actorId: string;
-  stats: StatsRow;
-  previousLevel: number;
-  hpGained: number;
-  asiGranted: number;
-  deduped: boolean;
-},): AwardXpResult {
-  const { stats, previousLevel, } = params;
-  const raw = xpToNextLevel(stats.level, stats.xp,);
-
-  return {
-    ledgerId: params.ledgerId,
-    actorId: params.actorId,
-    previousLevel,
-    level: stats.level,
-    xp: stats.xp,
-    xpToNext: Number.isFinite(raw,) ? raw : null,
-    leveledUp: stats.level > previousLevel,
-    levelsGained: stats.level - previousLevel,
-    hpGained: params.hpGained,
-    asiGranted: params.asiGranted,
-    deduped: params.deduped,
-  };
-}
-
-/**
- * Parse the hit die out of the `hit_dice` JSON column.
- * Accepts `{ "die": N }` (and tolerates the `'{}'` default), falling back to
- * the d8 baseline for rows that never recorded a die size.
- * @param raw
- * @returns Hit die size (minimum d1, default d8).
- */
-export function parseHitDie(raw: string,): number {
-  const parsed = safeJsonParse<{ die?: unknown; hitDie?: unknown }>(raw,);
-  const candidate = parsed.ok
-    ? parsed.value.die ?? parsed.value.hitDie
-    : undefined;
-
-  return typeof candidate === "number" && Number.isFinite(candidate,) && candidate >= 1
-    ? Math.floor(candidate,)
-    : DEFAULT_HIT_DIE;
 }
