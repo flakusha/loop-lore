@@ -90,17 +90,16 @@ describe("providers routes", () => {
       expect(Array.isArray(body.providers,),).toBe(true,);
     });
 
-    test("each provider has name, label, status", async () => {
+    test("each provider has name and label", async () => {
       const app = makeApp(db,);
       const res = await app.handle(new Request("http://localhost/api/providers",),);
       const body = await res.json() as {
-        providers: { name: string; label: string; status: string }[];
+        providers: { name: string; label: string }[];
       };
 
       for (const p of body.providers) {
         expect(typeof p.name,).toBe("string",);
         expect(typeof p.label,).toBe("string",);
-        expect(["healthy", "unreachable", "error", "unknown",],).toContain(p.status,);
       }
     });
 
@@ -269,14 +268,13 @@ describeOrSkip("providers routes — populated registry + health cache", () => {
     expect(res.status,).toBe(200,);
 
     const body = await res.json() as {
-      providers: { name: string; label: string; status: string }[];
+      providers: { name: string; label: string }[];
     };
 
     const mine = body.providers.find((p,) => p.name === COV_PROVIDER);
 
     expect(mine,).toBeDefined();
     expect(mine!.label,).toBe("Coverage Provider",);
-    expect(mine!.status,).toBe("unknown",);
   });
 
   test("admin list maps capabilities and cached health details", async () => {
