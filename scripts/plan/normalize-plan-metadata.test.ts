@@ -123,13 +123,19 @@ describe("projectIndex", () => {
       return src === ".plan/tickets/BUG-007.md" ? "**Status:** In Progress\n" : null;
     };
 
+    // Snapshot the expectation BEFORE the call. `projectIndex` copies the index
+    // but not the entries, so `next["BUG-007"]` IS `INDEX_007["BUG-007"]`
+    // whenever no patch is written — asserting against the fixture compares the
+    // object with itself and passes even if the tags were wiped in place.
+    const EXPECTED_007 = structuredClone(INDEX_007["BUG-007"],);
+
     const { next, tagsFilled, } = projectIndex(INDEX_007, read007,);
     // The entry MUST have been consulted, or this case proves nothing: a
     // reader that never opens the .md skips the entry and leaves it looking
     // exactly like a reader that opened it and found no Tags line. Counting
     // the read is what separates "read, no Tags" from "never read".
     expect(reads,).toBe(1,);
-    expect(next["BUG-007"],).toEqual(INDEX_007["BUG-007"],);
+    expect(next["BUG-007"],).toEqual(EXPECTED_007,);
     // 0, not 3: the deleted Tags line is not a retraction.
     expect(tagsFilled,).toBe(0,);
   });
@@ -523,6 +529,24 @@ describe("index.json write guard", () => {
     expect(probe.reason,).toContain("exited 128",);
     expect(probe.reason,).toContain("dubious ownership",);
     expect(decideIndexWrite(probe, true, false,),).toBe("skip-probe-failed",);
+  });
+
+  test("a malformed ok:true probe does not authorize the write either", () => {
+    // `WorktreeProbe` is an exported type, so the decision cannot assume every
+    // `ok: true` came out of `classifyProbe`. A structurally-valid probe
+    // carrying the wrong number of paths must fail closed, not read as
+    // "not a linked worktree" (which is what authorized the write before).
+    // Two EQUAL paths is the main-checkout verdict and must stay writable, so
+    // only the wrong path COUNT is malformed — not empty path strings.
+    for (const dirs of [[], [".git",], [".git", ".git", ".git",],]) {
+      const probe: WorktreeProbe = { ok: true, dirs, };
+      expect(decideIndexWrite(probe, true, false,),).toBe("skip-probe-failed",);
+    }
+    // The two-path shapes still decide normally.
+    expect(decideIndexWrite({ ok: true, dirs: [".git", ".git",], }, true, false,),).toBe("write",);
+    expect(
+      decideIndexWrite({ ok: true, dirs: ["/r/.git/worktrees/w", "/r/.git",], }, true, false,),
+    ).toBe("skip-linked-worktree",);
   });
 
   test("a failed probe never authorizes the write, whatever the probe reason", () => {
