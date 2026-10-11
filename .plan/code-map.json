@@ -876,6 +876,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-feat-rate-limit-per-route-rate-limit-analytics-dashboard.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-otel-replay.md"
     },
     {
@@ -979,6 +983,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dual-vn-choices-route-registration-shadows-guarded-route.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
     },
     {
       "kind": "ticket",
@@ -1093,6 +1105,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance.md"
     },
     {
       "kind": "ticket",
@@ -7432,6 +7448,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-context-window-willtrim-is-stale-after-injectmemories-inject.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-memory-injection.md"
     },
     {
@@ -7650,6 +7670,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-applyflag-skips-self-target-guard.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-inbound-federation-content-not-moderated-before-display.md"
     },
     {
@@ -7778,6 +7802,10 @@
     }
   ],
   "src/chat/proactive/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-proactive-backoff-increment-loses-updates-under-concurrency.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-c3-quiet-hours-aware-federated-world-event-notices.md"
@@ -10982,6 +11010,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
     },
     {
@@ -11040,11 +11072,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-server-host-config-and-host-env-override-are-dead-start-ts-n.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en.md"
     },
     {
       "kind": "ticket",
@@ -11334,6 +11374,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-docs-config-add-missing-sections-to-config-examples.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-item-config-templates.md"
     }
   ],
@@ -11502,6 +11546,18 @@
     }
   ],
   "src/config/sections/auth.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
@@ -11771,6 +11827,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-local-process-swarm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md"
     },
     {
       "kind": "ticket",
@@ -17158,11 +17218,27 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o.md"
     },
     {
       "kind": "ticket",
@@ -17247,6 +17323,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-.md"
     },
     {
       "kind": "ticket",
@@ -27938,7 +28018,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-auth-make-session-expiry-handling-agree-across-authentic.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md"
     },
     {
       "kind": "ticket",
@@ -27977,6 +28065,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-auth-channel-provisioning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-auth-make-session-expiry-handling-agree-across-authentic.md"
     },
     {
       "kind": "ticket",
@@ -28077,6 +28169,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-logout-route-exempt-from-csrf-verification-logoff-csrf.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te.md"
     },
     {
       "kind": "ticket",
@@ -29646,6 +29742,18 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-plugins-append-onload-registrations-to-manifest-registra.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-plugins-define-plugin-route-matching-semantics.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-plugins-make-plugin-discovery-failures-visible.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-cards-ships-ungated-post-routes.md"
     },
     {
@@ -29732,6 +29840,14 @@
     }
   ],
   "src/plugins/registry-store.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-plugins-append-onload-registrations-to-manifest-registra.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-plugins-define-plugin-route-matching-semantics.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-per-plugin-unload.md"
@@ -31360,6 +31476,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-actors-api-routes.md"
     },
     {
@@ -31452,6 +31572,10 @@
   "src/routes/admin-templates/update.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-template-update-writes-to-unvalidated-detail-mode-keys.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-templates-update-remove-lack-admin-settings-gate.md"
     }
   ],
@@ -31509,6 +31633,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-logging.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-audit-get-by-id-has-no-params-schema-validation.md"
     },
     {
       "kind": "ticket",
@@ -31571,6 +31699,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-chat-patch-accepts-arbitrary-string-for-is-pinned.md"
     }
   ],
   "src/routes/admin/context-window.ts": [
@@ -31667,6 +31799,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-providers-list-endpoint-is-public.md"
     }
   ],
   "src/routes/admin/sd-status.ts": [
@@ -31708,6 +31844,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-system-config-delete-passes-user-controlled-key-withou.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
     }
   ],
@@ -31731,6 +31871,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-user-delete-has-no-self-delete-or-last-admin-guard.md"
     },
     {
       "kind": "ticket",
@@ -32037,9 +32181,27 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-auth-content-negotiate-the-429-rate-limit-response-like-.md"
+    }
+  ],
+  "src/routes/auth/responses.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-auth-content-negotiate-the-429-rate-limit-response-like-.md"
     }
   ],
   "src/routes/auth/session.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-logout-deletes-session-without-signature-or-ownership-check.md"
@@ -33507,6 +33669,12 @@
       "source": ".plan/epics/epic-companion-pet-mount.md"
     }
   ],
+  "src/routes/config-menu.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
+    }
+  ],
   "src/routes/crafting.test.ts": [
     {
       "kind": "ticket",
@@ -34099,6 +34267,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-liveness-readiness-endpoints-opt-in-config.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h.md"
     }
   ],
   "src/routes/housing.ts": [
@@ -34182,6 +34354,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merges-routes-and-typebox-schemas.md"
     }
   ],
@@ -34201,6 +34377,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso.md"
     },
     {
       "kind": "ticket",
@@ -34359,6 +34539,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-architecture-clarification.md"
+    }
+  ],
+  "src/routes/liveness.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h.md"
     }
   ],
   "src/routes/location-explorer.test.ts": [
@@ -35353,12 +35539,20 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-docs-api-disambiguate-infra-metrics-from-governance-api-v1-m.md"
     }
   ],
   "src/routes/middleware/deprecation-headers.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-038.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-.md"
     },
     {
       "kind": "ticket",
@@ -35399,6 +35593,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-api-versioning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s.md"
     },
     {
       "kind": "ticket",
@@ -36260,6 +36458,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-settings-export-endpoint-has-no-rate-limiting.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-format-version-migration.md"
     },
     {
@@ -36462,6 +36664,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
     },
     {
@@ -36483,6 +36689,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-error-monitoring-alerting.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-feat-telemetry-telemetry-quota-and-abuse-dashboard.md"
     },
     {
       "kind": "ticket",
@@ -36749,6 +36959,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-feat-rate-limit-per-route-rate-limit-analytics-dashboard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-docs-api-disambiguate-infra-metrics-from-governance-api-v1-m.md"
     }
   ],
   "src/routes/v1/index.ts": [
@@ -36763,6 +36981,22 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-core-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-integrations-wire-bridge-secrets-seams-or-return-503-not.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
     },
     {
       "kind": "ticket",
@@ -36811,6 +37045,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-integrations-wire-bridge-secrets-seams-or-return-503-not.md"
     },
     {
       "kind": "ticket",
@@ -37579,6 +37817,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    }
+  ],
+  "src/rpc/npc-navigation/service/processing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-patrolroute-cast-without-array-validation.md"
     }
   ],
   "src/rpg": [
@@ -39418,6 +39662,14 @@
   "src/rpg/questions/service.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-answerquestion-double-answer-race-toctou-on-status-check.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-answerquestion-ignores-time-limit-expired-questions-still-an.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     }
   ],
@@ -39538,6 +39790,10 @@
     }
   ],
   "src/rpg/replayability/service/playthrough.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-recordsecretfound-read-modify-write-loses-concurrent-secrets.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play.md"
@@ -39663,6 +39919,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-faction-reputation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-deriverumors-exposes-internal-actor-uuid-in-user-facing-text.md"
     },
     {
       "kind": "ticket",
@@ -39820,6 +40080,10 @@
   "src/rpg/seduction/service/skills.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-awardxp-only-levels-up-once-per-call-multi-level-overflow-lo.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-034.md"
     },
     {
@@ -39847,6 +40111,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-action-applicability-gate.md"
+    }
+  ],
+  "src/rpg/service/battles.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-endbattle-overwrites-completed-battles-no-active-status-guar.md"
+    }
+  ],
+  "src/rpg/service/battles/items.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory.md"
+    }
+  ],
+  "src/rpg/service/battles/persistence.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-persistbattle-lost-update-race-read-modify-write-without-tra.md"
     }
   ],
   "src/rpg/service/character-stats.test.ts": [
@@ -40122,11 +40404,21 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-addxp-accepts-negative-xp-producing-nan-level-stored-in-db.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-040.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr.md"
+    }
+  ],
+  "src/rpg/skills/service/tree.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-buildskilltree-silently-drops-orphan-nodes.md"
     }
   ],
   "src/rpg/skills/service/types.ts": [
@@ -40469,6 +40761,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-exploration-discovery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-edgeahead-does-not-validate-location-existence.md"
     }
   ],
   "src/rpg/world-discovery/types.ts": [
@@ -40491,12 +40787,28 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-exploration-discovery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-inconsistent-db-handle-in-migration-ts-npc-states-write.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o.md"
     }
   ],
   "src/rpg/world-travel/travel.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-exploration-discovery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dead-code-guard-in-advancepartytravel.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-locations-query-loads-all-worlds-not-just-current-one.md"
     }
   ],
   "src/rpg/world-travel/types.ts": [
@@ -41236,6 +41548,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
     },
     {
@@ -41245,6 +41565,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cors-middleware.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-.md"
     },
     {
       "kind": "ticket",
@@ -41319,6 +41643,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-log-rejected-background-init-promises-with-module.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o.md"
     }
   ],
   "src/server/start.test.ts": [
@@ -41386,6 +41718,22 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
     },
     {
@@ -41411,6 +41759,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h.md"
     },
     {
       "kind": "ticket",
@@ -41500,6 +41852,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
@@ -41525,6 +41881,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-ui-endpoint-linkage.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-perf-server-no-cache-html-entry-points-stream-static-files-w.md"
     }
   ],
   "src/server/watchdog/cli.ts": [
@@ -44434,6 +44794,10 @@
   "src/validation/middleware.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     },
     {
@@ -44641,6 +45005,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    }
+  ],
+  "src/validation/schemas/admin.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-chat-patch-accepts-arbitrary-string-for-is-pinned.md"
     }
   ],
   "src/validation/schemas/any-tightening.test.ts": [
@@ -44871,6 +45241,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-analytics-tab-crashes-when-api-omits-fields.md"
     },
     {
       "kind": "ticket",
@@ -45284,6 +45658,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-notification-bell-visible-on-login-register-pages.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
     },
     {
@@ -45399,6 +45777,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-growth-editor-arc-description-not-json-encoded.md"
     },
     {
       "kind": "ticket",

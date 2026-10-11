@@ -1,0 +1,22 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+
+# BUG: deriveRumors exposes internal actor UUID in user-facing text
+
+**Status:** Not Started
+**Priority:** high
+**Effort:** Medium
+
+**Summary:**
+
+The rumor string (src/rpg/reputation.ts:156) embeds actorId (a UUID) directly in user-facing narrative text: They speak  of  (, ). Impact: Players see raw UUIDs instead of character names, breaking immersion and potentially leaking internal IDs. Fix: Resolve the actor's display name before interpolating, or accept a displayName parameter.
+
+**Context:**
+
+(fill in before starting: why this change, constraints, alternatives considered.)
+
+**Acceptance Criteria:**
+
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
