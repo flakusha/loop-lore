@@ -30,12 +30,8 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema.js";
-import {
-  applyGrant,
-  isLedgerUniqueViolation,
-  type LedgerGrant,
-  replayGrant,
-} from "./award.js";
+import { applyGrant, type LedgerGrant, } from "./award.js";
+import { isLedgerUniqueViolation, replayGrant, } from "./replay.js";
 import { type AwardXpInput, type AwardXpResult, LevelServiceError, } from "./types.js";
 
 export { ensureCharacterStats, } from "./award.js";
