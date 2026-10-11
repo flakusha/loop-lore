@@ -133,7 +133,7 @@ function gate(
 }
 
 /**
- * Location adjacency-graph routes (052): edge CRUD (world owner/admin),
+ * Location adjacency-graph routes (053): edge CRUD (world owner/admin),
  * the world graph with discovery filtering, actor travel, and the admin
  * force-unlock. World-scoped per repo convention — the ticket's
  * `/api/locations/:id/...` shape is realized as
