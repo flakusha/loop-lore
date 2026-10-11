@@ -168,7 +168,7 @@ export type TransportKind = (typeof TransportKind)[keyof typeof TransportKind];
 export const LOCATION_DEPTH_LIMIT = 12;
 
 /**
- * How one `location_edges` row (052) may be traversed.
+ * How one `location_edges` row (053) may be traversed.
  *
  * Adjacency modes (walk/ride/fly/teleport/port-gate) require the edge to
  * exist — that is what makes the pair connected. `free-jump` is still an
