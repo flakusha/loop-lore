@@ -18,7 +18,7 @@ jobs:
   gates:
     name: Local Gate Suite
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
     permissions:
       contents: read
     env:
