@@ -15,7 +15,8 @@ import type { Kysely, } from "kysely";
 import { QuestCategory, } from "../../db/enums";
 import type { DB, } from "../../db/schema.js";
 import { getLogger, } from "../../logger";
-import { awardXpToActor, ensureCharacterStats, } from "../../rpg/level/index.js";
+import { awardXpToActor, } from "../../rpg/level/index.js";
+import { getCharacterStats, } from "../../rpg/service/character-stats.js";
 import { xpForQuest, } from "../../rpg/xp/sources.js";
 
 /** Minimal quest projection the XP leg needs. */
@@ -40,9 +41,30 @@ export async function awardQuestCompletionXp(
   try {
     if (!quest.creator_id) { return; }
 
-    const stats = await ensureCharacterStats(db, quest.creator_id,);
+    // character_stats / xp_ledger carry no FK to actors: a dangling
+    // creator_id (deleted or never-existing actor) would bootstrap a ghost
+    // sheet and pay out. Verify existence before awarding.
+    const creator = await db
+      .selectFrom("actors",)
+      .select("id",)
+      .where("id", "=", quest.creator_id,)
+      .executeTakeFirst();
+
+    if (!creator) {
+      log.debug("Quest completion XP skipped: creator actor does not exist", {
+        questId: quest.id,
+        actorId: quest.creator_id,
+      },);
+
+      return;
+    }
+
+    // Read (never ensure) the creator's sheet for the payout level: the
+    // award pipeline bootstraps missing rows inside its own transaction, so
+    // a concurrent completion cannot duplicate the sheet here.
+    const stats = await getCharacterStats({ database: db, }, quest.creator_id,);
     const difficulty = difficultyForCategory(quest.category,);
-    const amount = xpForQuest(stats.level, difficulty,);
+    const amount = xpForQuest(stats?.level ?? 1, difficulty,);
 
     await awardXpToActor(db, {
       actorId: quest.creator_id,
