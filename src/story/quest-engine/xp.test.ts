@@ -67,7 +67,7 @@ describe("applyDiscoveryXpLeg", () => {
     const rows = await ledgerFor(explorer,);
     expect(rows,).toHaveLength(1,);
     expect(rows[0]!.source,).toBe("discovery",);
-    expect(rows[0]!.reference_id,).toBe("world-1:loc-9",);
+    expect(rows[0]!.reference_id,).toBe(JSON.stringify(["world-1", "loc-9",],),);
     expect(rows[0]!.amount,).toBe(50,);
   });
 });

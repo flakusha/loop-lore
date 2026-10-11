@@ -8,19 +8,10 @@
  * grantsAsi) to persisted `character_stats` rows and the `xp_ledger`
  * audit trail. See `.plan/epics/epic-character-xp-leveling.md`.
  */
+import type { LogXpParams, } from "../service/xp.js";
 
-/** Input for {@link awardXpToActor}. */
-export interface AwardXpInput {
-  actorId: string;
-  /** XP to grant. Must be a finite, non-negative number. */
-  amount: number;
-  /** Ledger source string (`combat`, `quest`, `discovery`, `travel`, …). */
-  source: string;
-  description?: string;
-  /** When set, the grant is idempotent per (actor, source, referenceId). */
-  referenceId?: string;
-  chatId?: string;
-}
+/** Input for {@link awardXpToActor} — the ledger grant fields. */
+export interface AwardXpInput extends LogXpParams {}
 
 /** Outcome of one XP award through the pipeline. */
 export interface AwardXpResult {

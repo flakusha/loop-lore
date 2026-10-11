@@ -10,6 +10,11 @@
  * size (`xpForEnemyDefeat`), one `xp_ledger` row per participant keyed to
  * the battle id so a replayed resolution can never double-pay.
  *
+ * Per-participant isolation: each survivor is wrapped individually, so one
+ * broken sheet starves nobody else. Survivors are deduped by actor id (a
+ * roster echo must not dilute the split), and a floored-to-0 share writes
+ * nothing — the dedupe key must not be consumed by an award nobody earned.
+ *
  * Mirrors the encounters participant-legs contract: the leg is best-effort —
  * a reward failure is logged and swallowed so resolution never fails
  * because bookkeeping did.
@@ -43,28 +48,45 @@ export async function applyVictoryXpLeg(
 ): Promise<void> {
   try {
     const fallen = ctx.combatants.filter((c,) => c.isNpc && c.hp <= 0);
-    const survivors = ctx.combatants.filter((c,) => !c.isNpc && c.hp > 0);
-    if (fallen.length === 0 || survivors.length === 0) { return; }
+    // Roster echoes (the same actor listed twice) must not dilute the split.
+    const survivorIds = new Set<string>();
+    for (const combatant of ctx.combatants) {
+      if (!combatant.isNpc && combatant.hp > 0) { survivorIds.add(combatant.id,); }
+    }
 
-    for (const survivor of survivors) {
-      const amount = fallen.reduce(
-        (sum, foe,) => sum + xpForEnemyDefeat(foe.level, survivors.length,),
-        0,
-      );
+    if (fallen.length === 0 || survivorIds.size === 0) { return; }
 
-      await awardXpToActor(db, {
-        actorId: survivor.id,
-        amount,
-        source: "combat",
-        referenceId: ctx.battleId,
-        chatId: ctx.chatId,
-        description: `Victory over ${fallen.map((f,) => f.name).join(", ",)}`,
-      },);
+    for (const actorId of survivorIds) {
+      try {
+        const amount = fallen.reduce(
+          (sum, foe,) => sum + xpForEnemyDefeat(foe.level, survivorIds.size,),
+          0,
+        );
+
+        // A 0 share (huge party, floor split) writes nothing: the battle-id
+        // dedupe key must stay spendable for a corrected re-resolution.
+        if (amount <= 0) { continue; }
+
+        await awardXpToActor(db, {
+          actorId,
+          amount,
+          source: "combat",
+          referenceId: ctx.battleId,
+          chatId: ctx.chatId,
+          description: `Victory over ${fallen.map((f,) => f.name).join(", ",)}`,
+        },);
+      } catch (cause) {
+        // One participant's failure (broken/missing sheet) must not starve
+        // the rest of the roster.
+        log().warn(`Victory XP skipped for ${actorId} in battle ${ctx.battleId}:`, {
+          error: cause instanceof Error ? cause.message : String(cause,),
+        },);
+      }
     }
 
     log().debug("Battle victory XP granted", {
       battleId: ctx.battleId,
-      participants: survivors.length,
+      participants: survivorIds.size,
       foes: fallen.length,
     },);
   } catch (cause) {

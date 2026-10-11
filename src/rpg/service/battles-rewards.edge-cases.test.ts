@@ -57,6 +57,11 @@ async function statsFor(actorId: string,) {
   return db.selectFrom("character_stats",).selectAll().where("actor_id", "=", actorId,).executeTakeFirstOrThrow();
 }
 
+async function statsRowCount(actorId: string,) {
+  return db.selectFrom("character_stats",).select((eb,) => eb.fn.countAll<number>().as("c",))
+    .where("actor_id", "=", actorId,).executeTakeFirstOrThrow().then((r,) => r.c);
+}
+
 function ctxFor(battleId: string, combatants: Combatant[],) {
   return { battleId, chatId: "chat-edges", combatants, };
 }
@@ -104,11 +109,9 @@ describe("applyVictoryXpLeg edges", () => {
     expect(rows[0]!.amount,).toBe(100 + 100,);
   });
 
-  test("BUG: a huge party floors the split to 0 XP but still consumes every dedupe key", async () => {
-    // floor(200 / 201) = 0: each of the 201 survivors gets a zero-amount
-    // ledger row keyed to the battle id. The replay guard is therefore
-    // spent even though nobody earned anything — a re-run with a corrected
-    // split could never pay. Pinned; flip when zero-awards skip the ledger.
+  test("a huge party floors the split to 0 XP and consumes no dedupe key", async () => {
+    // floor(200 / 201) = 0: a share nobody earned writes nothing, so the
+    // battle-id dedupe keys stay spendable for a corrected re-resolution.
     const army: string[] = [];
     const combatants: Combatant[] = [];
     for (let i = 0; i < 201; i++) {
@@ -122,24 +125,16 @@ describe("applyVictoryXpLeg edges", () => {
     await applyVictoryXpLeg(db, ctxFor("battle-army", combatants,),);
 
     const rows = await db.selectFrom("xp_ledger",).selectAll().where("reference_id", "=", "battle-army",).execute();
-    expect(rows,).toHaveLength(201,);
-    for (const row of rows) {
-      expect(row.amount,).toBe(0,);
-      expect(row.source,).toBe("combat",);
-    }
+    expect(rows,).toHaveLength(0,);
 
-    // Nobody leveled, nobody gained, but every key is burned.
-    const first = await statsFor(army[0]!,);
-    expect(first.xp,).toBe(0,);
-    expect(first.level,).toBe(1,);
+    // Nobody leveled, nobody gained, and no key — or even a sheet — was
+    // created, because the zero award never reached the pipeline.
+    expect(await statsRowCount(army[0]!,),).toBe(0,);
   });
 
-  test("the same actor listed twice among survivors is paid once — at a diluted split", async () => {
-    // The loop awards per roster entry; the second entry hits the battle-id
-    // dedupe key written by the first and short-circuits. But survivors.length
-    // counts BOTH entries, so the split is floor(200 / 2) = 100: the echo
-    // halves the payout and the duplicate's share evaporates. Pinned; flip
-    // when roster entries are deduped before the split.
+  test("the same actor listed twice among survivors is paid once — at the full split", async () => {
+    // Roster entries are deduped by actor id before the split, so the echo
+    // neither dilutes the share nor double-pays: one survivor, floor(200/1).
     const hero = await seedActor("Double Listed",);
 
     await applyVictoryXpLeg(
@@ -153,11 +148,11 @@ describe("applyVictoryXpLeg edges", () => {
 
     const rows = await ledgerFor(hero,);
     expect(rows,).toHaveLength(1,);
-    expect(rows[0]!.amount,).toBe(100,);
-    expect((await statsFor(hero,)).xp,).toBe(100,);
+    expect(rows[0]!.amount,).toBe(200,);
+    expect((await statsFor(hero,)).xp,).toBe(200,);
   });
 
-  test("BUG: a replay after the stats row is deleted re-bootstraps but never restores the award", async () => {
+  test("a replay after the stats row is deleted restores the lost award", async () => {
     const hero = await seedActor("Wiped Sheet",);
     const ctx = ctxFor("battle-wipe", [
       combatant(hero, "Wiped Sheet", { hp: 10, },),
@@ -170,13 +165,13 @@ describe("applyVictoryXpLeg edges", () => {
     await db.deleteFrom("character_stats",).where("actor_id", "=", hero,).execute();
     await applyVictoryXpLeg(db, ctx,);
 
-    // No throw (best-effort leg), no second payment — but the fresh baseline
-    // row keeps level 1 / xp 0: the dedupe short-circuit trusts the ledger
-    // and never re-applies the lost XP to the sheet.
+    // No throw (best-effort leg), no second payment — and the reconcile
+    // replay re-applies the recorded amount to the fresh baseline sheet
+    // (200 XP below the level-2 threshold, so the level stays 1).
     expect(await ledgerFor(hero,),).toHaveLength(1,);
     const row = await statsFor(hero,);
     expect(row.level,).toBe(1,);
-    expect(row.xp,).toBe(0,);
+    expect(row.xp,).toBe(200,);
   });
 
   test("BUG: a bootstrap failure is swallowed and starves every later survivor", async () => {
