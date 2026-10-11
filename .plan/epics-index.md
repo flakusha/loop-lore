@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 316 epics
+**Total:** 317 epics
 
 ## Summary
 
@@ -56,6 +56,7 @@
 | In Progress | Character Growth & Arc Progression | High | High | 0 | [epic-character-growth.md](/.plan/epics/epic-character-growth.md) |
 | In Progress | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
 | In Progress | Character Specification & Unified API | High | High | 0 | [epic-character-spec.md](/.plan/epics/epic-character-spec.md) |
+| Not Started | Character XP, Leveling & Stat Progression in World | High | High | 6 | [epic-character-xp-leveling.md](/.plan/epics/epic-character-xp-leveling.md) |
 | In Progress | Chat Composer Flows (draft for new worktree) | High — messenger parity gap | Medium | 0 | [epic-chat-composer-flows.md](/.plan/epics/epic-chat-composer-flows.md) |
 | Done | Chat Lifecycle, Transitions & Moderation | High | High | 8 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
 | Not Started | Chat Product Features | High | High | 24 | [epic-chat-product-features.md](/.plan/epics/epic-chat-product-features.md) |
@@ -642,6 +643,8 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### Benchmark CI & Performance Regression Detection
 
 - **Status:** In Progress
@@ -744,6 +747,16 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 - **Type:** Feature Epic
 - **Tags:** character, spec, api, validation, format-conversion
 - **File:** `.plan/epics/epic-character-spec.md`
+
+
+### Character XP, Leveling & Stat Progression in World
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** rpg, xp, leveling, stats, progression, world, autonomous-actors
+- **File:** `.plan/epics/epic-character-xp-leveling.md`
 
 ### Chat Composer Flows (draft for new worktree)
 
@@ -2622,6 +2635,8 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### NSFW Interaction UI
 
 - **Status:** Not Started
@@ -3046,6 +3061,8 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3343,4 +3360,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

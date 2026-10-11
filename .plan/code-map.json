@@ -14532,6 +14532,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-transfer-location.md"
     },
     {
@@ -16046,6 +16050,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
     },
     {
@@ -16119,6 +16127,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-personas-converttocharacter-drops-title-temperature-max-toke.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md"
     },
     {
       "kind": "ticket",
@@ -20905,6 +20921,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-battle-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-progression-api-and-character-menu-surface-for-xp-level-and-.md"
     }
   ],
   "src/frontend/battle/render.ts": [
@@ -36378,6 +36398,10 @@
   "src/routes/rpg/xp-loot.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-rpg-core-wiring.md"
     },
     {
@@ -36391,6 +36415,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md"
     },
     {
       "kind": "ticket",
@@ -37887,6 +37915,12 @@
       "source": ".plan/tickets/BUG-achievement-claimrewards-double-credit-race-and-lost-reward-.md"
     }
   ],
+  "src/rpg/achievements/service/reward-apply.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    }
+  ],
   "src/rpg/achievements/service/types.ts": [
     {
       "kind": "ticket",
@@ -38611,6 +38645,14 @@
   ],
   "src/rpg/encounters/service/participant-legs.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-battle-rewards-grant-character-xp-on-enemy-defeat.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-036.md"
     },
@@ -39250,6 +39292,14 @@
     }
   ],
   "src/rpg/loot/persist.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-049.md"
@@ -40049,6 +40099,16 @@
       "source": ".plan/tickets/TASK-034.md"
     }
   ],
+  "src/rpg/seduction/service.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md"
+    }
+  ],
   "src/rpg/seduction/service/arousal.ts": [
     {
       "kind": "ticket",
@@ -40098,6 +40158,10 @@
     }
   ],
   "src/rpg/seduction/service/settle.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-034.md"
@@ -40175,6 +40239,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-world-integration.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md"
     },
     {
       "kind": "ticket",
@@ -40266,7 +40342,15 @@
   "src/rpg/service/xp.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-rpg-core-wiring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md"
     },
     {
       "kind": "ticket",
@@ -40433,8 +40517,16 @@
       "source": ".plan/epics/epic-character-growth.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-addxp-accepts-negative-xp-producing-nan-level-stored-in-db.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a.md"
     },
     {
       "kind": "ticket",
@@ -40598,6 +40690,10 @@
     }
   ],
   "src/rpg/stats/modifiers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-progression-api-and-character-menu-surface-for-xp-level-and-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-040.md"
@@ -40779,6 +40875,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-exploration-discovery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel.md"
     }
   ],
   "src/rpg/world-discovery/events.ts": [
@@ -40839,6 +40939,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-locations-query-loads-all-worlds-not-just-current-one.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel.md"
     }
   ],
   "src/rpg/world-travel/types.ts": [
@@ -40885,7 +40989,53 @@
       "source": ".plan/tickets/TASK-rpg-mechanics.md"
     }
   ],
+  "src/rpg/xp/calculation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md"
+    }
+  ],
+  "src/rpg/xp/constants.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md"
+    }
+  ],
+  "src/rpg/xp/levelup.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md"
+    }
+  ],
   "src/rpg/xp/sources.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-battle-rewards-grant-character-xp-on-enemy-defeat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/agency-story-points.md"
