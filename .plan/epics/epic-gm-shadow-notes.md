@@ -29,7 +29,7 @@ Add GM/Assistant story whitenotes and shadow notes for system/user message LLM s
 - ✅ Route tests — `src/routes/gm-notes.test.ts`
 - ❌ `shadow_notes.trigger_condition` column absent — the design's `trigger_condition` has no column; `status`/`visibility`/`expires_at`/`author_type` are the only behavioural fields (ticketed: `TASK-gm-shadow-note-trigger-condition-and-revealed-to-columns.md`)
 - ❌ Design says `message_id`-attached whitenotes; implementation is chat-scoped (no `message_id` column) (ticketed: `TASK-gm-whitenote-message-scoping.md`)
-- ✅ Reveal narration — reveal emits a narrator system message into the chat (`injectShadowRevealNarration`, `src/routes/gm-notes/shadow.ts`), not a bare row update
+- ✅ Reveal narration — reveal emits a narrator chat message (`[Shadow Revealed] …`, `injectShadowRevealNarration`, `src/routes/gm-notes/shadow.ts`), not a bare row update; caveat: if no narrator actor exists the helper silently no-ops and reveal degrades to a row update only
 
 ## Design
 
