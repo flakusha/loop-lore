@@ -23,6 +23,7 @@ import { logXp, } from "../service/xp.js";
 import { abilityModifier, } from "../stats/modifiers.js";
 import { awardXp, xpToNextLevel, } from "../xp/calculation.js";
 import { grantsAsi, hpOnLevelUp, } from "../xp/levelup.js";
+import { applyOrganicGrowth, } from "./growth.js";
 import {
   type AwardXpInput,
   type AwardXpResult,
@@ -164,6 +165,13 @@ export async function awardXpToActor(
     hp: Math.min(before.hp + hpGained, before.max_hp + hpGained,),
     pendingAsi: before.pending_asi + asiGranted,
   },);
+
+  // Organic drift: one activity-weighted ability point per level gained,
+  // applied after the HP bookkeeping (the roll above used the pre-drift
+  // CON modifier — drift never retroactively re-rolls earlier levels).
+  for (let i = 0; i < applied.levelsGained; i++) {
+    await applyOrganicGrowth(db, input.actorId,);
+  }
 
   const ledgerId = await logXp({ database: db, }, {
     actorId: input.actorId,
