@@ -633,7 +633,8 @@
     "closeSidebar": "닫기",
     "notifications": "알림",
     "openSidebar": "메뉴 열기",
-    "docs": "문서"
+    "docs": "문서",
+    "config": "Config"
   },
   "modals": {
     "confirm": "확인",
@@ -1070,7 +1071,14 @@
     "toolCalls": "최근 도구 호출",
     "noCommands": "사용 가능한 명령이 없습니다",
     "noToolCalls": "아직 도구 호출이 없습니다",
-    "assistant": "어시스턴트"
+    "assistant": "어시스턴트",
+    "questRewards": "Rewards",
+    "questStatus": {
+      "active": "Active",
+      "completed": "Completed",
+      "failed": "Failed",
+      "abandoned": "Abandoned"
+    }
   },
   "crypto": {
     "encryptionNotConfigured": "Encryption not configured",
@@ -1324,7 +1332,19 @@
     "wizardConfirmFailed": "Failed to save entity from wizard",
     "entityCreated": "Entity \"{name}\" created successfully",
     "failedCreateEntity": "Failed to create entity",
-    "networkErrorCreatingEntity": "Network error — could not create entity"
+    "networkErrorCreatingEntity": "Network error — could not create entity",
+    "nothingToContinue": "Nothing to continue — no assistant message yet.",
+    "nothingToRetry": "Nothing to retry — no generation attempt yet.",
+    "vnDecisionPending": "Answer or skip the pending choice or question first.",
+    "vnSkipChoice": "Skip",
+    "vnSkipQuestion": "Skip",
+    "vnSkipFailed": "Could not skip the pending choice or question. Reload to retry.",
+    "nothingToBranch": "Nothing to branch — no assistant message yet.",
+    "unknownCommand": "Unknown command /{name}.",
+    "unknownCommandSuggest": "Unknown command /{name} — did you mean /{suggestion}?",
+    "hiddenCommandsNote": "{count} more command(s) need a higher role.",
+    "keyphrasesSaved": "Keyphrases saved ({count})",
+    "keyphrasesSaveFailed": "Keyphrases: {failed} failed, {saved} saved"
   },
   "status": {
     "characterResponding": "캐릭터가 응답 중...",
@@ -1371,9 +1391,12 @@
     "clear": "채팅 지우기",
     "stats": "채팅 통계 표시",
     "link": "Attach a gallery asset to this chat",
-    "orchestrate": "작업을 에이전트 풀에 분산(풀 우선, 평가, 근거 인용)",
-    "workflowz": "다단계 하네스 워크플로 실행",
-    "omp": "omp 기반 소형 코딩 에이전트 구동"
+    "guide": "GM: give narrative direction (/guide <direction>)",
+    "target": "GM: pick the character to respond next (/target <character>)",
+    "constraint": "GM: add a narrative constraint (/constraint <rule>)",
+    "scene": "GM: set the scene description (/scene <description>)",
+    "priority": "GM: set a character's turn priority (/priority <character> <high|medium|low>)",
+    "skip": "GM: skip a character's turn (/skip <character>)"
   },
   "participants": {
     "title": "Participants",
@@ -1437,7 +1460,6 @@
     "rateLimited": "Too many skips — try again in a minute.",
     "failed": "Could not skip the turn."
   },
-
   "harness": {
     "tabLabel": "하네스",
     "title": "에이전트 하네스",
@@ -1505,7 +1527,6 @@
       "harnessCreative": "창작"
     }
   },
-
   "branches": {
     "title": "분기",
     "none": "아직 분기가 없습니다",
@@ -1538,11 +1559,26 @@
     "mergeNeedTwoSources": "병합할 소스를 2개 이상 선택하세요.",
     "mergeModeHint": "선택한 분기의 병합 방법을 선택하세요.",
     "mergeMode": {
-      "combined": { "title": "결합", "desc": "두 버전을 하나의 계속으로 엮기" },
-      "secondOverFirst": { "title": "두 번째를 첫 번째 위에", "desc": "두 번째 분기의 변경 사항을 첫 번째에 적용" },
-      "firstOverSecond": { "title": "첫 번째를 두 번째 위에", "desc": "첫 번째 분기의 변경 사항을 두 번째에 적용" },
-      "freshDiscovery": { "title": "새 발견", "desc": "둘 모두를 인식하는 새 계속 생성" },
-      "singlePlusGlean": { "title": "단일 수확", "desc": "하나의 분기를 유지하고 가벼운 수정 이식" },
+      "combined": {
+        "title": "결합",
+        "desc": "두 버전을 하나의 계속으로 엮기"
+      },
+      "secondOverFirst": {
+        "title": "두 번째를 첫 번째 위에",
+        "desc": "두 번째 분기의 변경 사항을 첫 번째에 적용"
+      },
+      "firstOverSecond": {
+        "title": "첫 번째를 두 번째 위에",
+        "desc": "첫 번째 분기의 변경 사항을 두 번째에 적용"
+      },
+      "freshDiscovery": {
+        "title": "새 발견",
+        "desc": "둘 모두를 인식하는 새 계속 생성"
+      },
+      "singlePlusGlean": {
+        "title": "단일 수확",
+        "desc": "하나의 분기를 유지하고 가벼운 수정 이식"
+      },
       "aiAssisted": "AI 지원",
       "deterministic": "결정론적"
     },
@@ -1550,9 +1586,21 @@
     "mergeTruncated": "토큰 제한으로 미리보기가 잘렸습니다",
     "mergePreviewLoading": "미리보기 생성 중…",
     "mergeReroll": "다시 생성",
-    "mergeRole": { "assistant": "어시스턴트", "user": "사용자", "character": "캐릭터" },
-    "mergeHunk": { "kept": "유지", "applied": "적용", "conflict": "충돌" },
-    "mergeConflict": { "base": "기본", "overlay": "오버레이", "manual": "인라인 편집" },
+    "mergeRole": {
+      "assistant": "어시스턴트",
+      "user": "사용자",
+      "character": "캐릭터"
+    },
+    "mergeHunk": {
+      "kept": "유지",
+      "applied": "적용",
+      "conflict": "충돌"
+    },
+    "mergeConflict": {
+      "base": "기본",
+      "overlay": "오버레이",
+      "manual": "인라인 편집"
+    },
     "mergeUnresolvedConflicts": "확인하려면 모든 충돌을 해결하세요",
     "mergeBranchName": "분기 이름",
     "mergeActivate": "병합된 분기 활성화",
@@ -1573,14 +1621,12 @@
     "outfitSwitcher": "Outfit",
     "empty": "No outfits yet"
   },
-
   "scheduled": {
     "scheduled": "Scheduled — it'll send itself.",
     "pickTime": "Pick a time to send at.",
     "emptyDraft": "Type a message before scheduling.",
     "failed": "Could not schedule that message."
   },
-
   "reminders": {
     "menu": "Remind me",
     "in10": "in 10 minutes",
@@ -1588,5 +1634,17 @@
     "in1440": "tomorrow",
     "armed": "Reminder set.",
     "failed": "Could not set that reminder."
+  },
+  "journalKeyphrases": {
+    "title": "Journal Keyphrases",
+    "hint": "Trigger phrases per journal entry (max 8, comma-separated). When a chat message mentions a phrase, that entry is injected into the next prompt — repeat injections are cooled down per chat.",
+    "loading": "Loading journal entries…",
+    "empty": "No journal entries yet.",
+    "loadFailed": "Failed to load journal entries.",
+    "placeholder": "phrase, another phrase",
+    "save": "Save Keyphrases",
+    "showing": "Showing {shown} of {total}",
+    "loadMore": "Load More",
+    "loadMoreFailed": "Failed to load more journal entries."
   }
 }

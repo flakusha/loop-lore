@@ -3,6 +3,19 @@
   "entry": [
     "src/server/index.ts",
     "src/tui/app.ts",
+    // Migrations are discovered by filename (getMigrationFiles in
+    // src/db/migrate.ts), never statically imported — declare the glob.
+    "src/db/migrations/*.ts",
+    // Browser bundle roots: spawned as CLI args by scripts/build-frontend.mjs
+    // (`bun build ... src/frontend/<root>.ts`), never imported from src/server.
+    "src/frontend/alpine-init.ts",
+    "src/frontend/pages.ts",
+    "src/frontend/chat-vendor.ts",
+    "src/frontend/chat-list.ts",
+    "src/frontend/locale-init.ts",
+    "src/frontend/wasm-loader.ts",
+    "src/frontend/alpine/local-engine.worker.ts",
+    "src/frontend/alpine/wllama-engine.worker.ts",
     "plugins/core/*/plugin.ts",
     "plugins/core/*/index.ts",
     "plugins/community/*/plugin.ts",
@@ -15,6 +28,10 @@
     "scripts/lib/colors.ts"
   ],
   "project": [
+    // src/** is only scanned when knip runs with --no-gitignore (see the
+    // dead:code scripts in package.json): src/.gitignore contains `.` to keep
+    // untracked junk out of git, which otherwise makes knip skip every src/ file.
+    "src/**/*.ts",
     "scripts/**/*.ts",
     "scripts/**/*.mjs",
     "tests/**/*.ts",
@@ -25,59 +42,23 @@
   // /** @knipignore */ tags at their declaration instead of a global gag.
   "ignoreDependencies": [
     // Runtime/string-resolved -- used via plugin manifest paths, build scripts,
-    // or dynamic imports knip can't follow (elysia app def, frontend bundle,
-    // blessed TUI, htmx extensions, asset pipeline).
+    // or dynamic imports knip can't follow (blessed TUI internals, htmx
+    // extensions, html build plugin).
     "blessed-contrib",
     "htmx-ext-alpine-morph",
-    "htmx-ext-sse",
-    "jszip",
-    "marked",
-    "obscenity",
-    "clean-css",
-    "dompurify",
-    "alpinejs",
     "bun-plugin-html",
-    "htmx.org",
-    "@alpinejs/morph",
     "@markuplint/html-spec",
     "@markuplint/mustache-parser", // referenced by .markuplintrc.json (config), not imported in code
-    "@elysia/openapi",
-    "@types/clean-css",
     "@types/dompurify",
-    "@types/html-minifier-terser",
     "@types/js-yaml",
     "@types/jszip",
-    "@types/terser",
-    // Native fallback: subpath import "@noble/hashes/blake3.js" (src/native/
-    // fallback/blake3.ts) not traced by knip; also used by benchmarks.
-    "@noble/hashes",
-    // CLI parsing migration (@optique): accessed via src/cli/parser.ts
-    // (no longer ignored — reachable via src/build/compress.ts etc.).
-    // Same class as @noble/hashes.
-    "@optique/core",
-    "@optique/run",
     // Mermaid docs stack: resolved via docs/.vitepress/{config.mts,theme/index.ts}
     // (not in knip's entry list) + invoked by bun run mermaid:lint (shell
-    // string, not import). Same class as @optique.
+    // string, not import). Same class as @markuplint.
     "@mermaid-js/parser",
     "mermaid",
     "vitepress-mermaid-renderer",
-    "vitepress-plugin-mermaid",
-    // sharp: used by src/assets/service/thumbnail.ts (imports + tests) which is
-    // reached only via routes/import/actor -> createAsset (not a static chain
-    // from knip's entry roots). Same class as @optique.
-    "sharp",
-    // effect: imported by src/generation/providers/retry.ts (the shared provider
-    // retry policy). knip reaches providers/registry.ts but does not follow its
-    // "./anthropic" / "./ollama-native" / "./openai-compatible" index chain, so
-    // anything imported only inside those provider subdirectories looks unused.
-    // Same class as sharp above.
-    "effect",
-    // fast-check: imported by src/test-utils/schema-arbitrary.ts (the TypeBox ->
-    // Arbitrary mapper) and by the generated src/validation/schema-fuzz.generated.test.ts.
-    // `project` covers scripts/tests/plugins but NOT src/**, so knip never loads
-    // either importer. Same class as the plugin-manifest and native-fallback entries.
-    "fast-check"
+    "vitepress-plugin-mermaid"
   ],
   "ignoreBinaries": [
     "abort", // worktree CLI subcommand literal in finalize-signal-safety.test.ts spawnSync; knip mistakes it for a binary
@@ -137,10 +118,18 @@
     // (bun run test:coverage && bun run scripts/check/coverage.mjs --floor=80),
     // not import-reachable — same class as check-db-schemas.ts above.
     "scripts/check/coverage.mjs",
+    // Sub-modules of the coverage gate: statically imported only by the
+    // ignored standalone CLI above, so unreachable from knip entrypoints —
+    // same class as scripts/fe-be-harmonization/** below.
+    "scripts/check/coverage/**",
     // Generated epic title lookup: produced by epic-owner-pick.ts --gen
     // (run manually, not import-wired); consumed by the epic-owner rule
     // through in-process scanEpicTitles(), never via an import edge.
     "scripts/plan/epic-titles.generated.ts",
+
+    // Ambient window typings for the Alpine scope: consumed through the
+    // tsconfig include, never imported — knip cannot see that edge.
+    "src/frontend/alpine/window-types.ts",
 
     // API reference drift gate: run via check-parallel.mjs shell string
     // ("api - doc drift": bun run scripts/check/api-doc-drift.mjs), not
