@@ -185,6 +185,15 @@ subcommand because giwt is a pinned external dependency; the queries live in
 | `bun run plan:report orphans`   | (a) index tags no `.md` declares, (b) `epic` values naming no epic file, (c) dangling `**Related:**` refs |
 | any of the above `--json`       | the same result, machine-readable                                                                         |
 
+An **orphan tag** is a tag on an index entry that no `.plan/tickets/*.md` or
+`.plan/epics/*.md` frontmatter declares — matched case-insensitively across
+both directories, with the placeholder tokens above excluded as "no tags".
+An **orphan binding** is an index `epic` value naming no
+`.plan/epics/<slug>.md`.
+
+Exit codes: `0` on success, `1` on a usage error (unknown subcommand, or
+`tags`/`epic` without the required value).
+
 Orphans are advisory: nothing fails on them.
 
 ## What it deliberately does not do
