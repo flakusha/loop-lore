@@ -5073,47 +5073,7 @@ export async function insertMessageReminders(
   } as any,).execute();
   return id;
 }
-/** Insert a world_timescale row. */
-export async function insertWorldTimescale(
-  db: Db,
-  world_id: string,
-  opts?: {
-    id?: string;
-    epoch?: string;
-    scale_size?: number;
-    advanced_minutes?: number;
-    anchor_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("world_timescale",).values({
-    id,
-    world_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
 
-/** Insert a world_timescale_history row. */
-export async function insertWorldTimescaleHistory(
-  db: Db,
-  world_id: string,
-  epoch: string,
-  opts?: { id?: string; changed_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("world_timescale_history",).values({
-    id,
-    world_id,
-    epoch,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
 /** Insert a branch_merges row. */
 export async function insertBranchMerges(
   db: Db,
@@ -5239,6 +5199,48 @@ export async function insertVnQuestions(
     scene_index,
     question_text,
     created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a world_timescale row. */
+export async function insertWorldTimescale(
+  db: Db,
+  world_id: string,
+  opts?: {
+    id?: string;
+    epoch?: string;
+    scale_size?: number;
+    advanced_minutes?: number;
+    anchor_at?: string;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_timescale",).values({
+    id,
+    world_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a world_timescale_history row. */
+export async function insertWorldTimescaleHistory(
+  db: Db,
+  world_id: string,
+  epoch: string,
+  opts?: { id?: string; changed_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_timescale_history",).values({
+    id,
+    world_id,
+    epoch,
     ...restOpts,
   } as any,).execute();
   return id;
