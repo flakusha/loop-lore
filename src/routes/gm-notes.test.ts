@@ -7,10 +7,16 @@
 import { describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { ShadowNoteType, WhiteneoteType, } from "../db/enums";
+import { MessageRole, ShadowNoteType, WhiteneoteType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertChats, insertUsers, insertWorlds, } from "../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertChats,
+  insertMessages,
+  insertUsers,
+  insertWorlds,
+} from "../test-utils/insert-helpers";
 import { gmNotesRoutes, } from "./gm-notes";
 
 const BASE = "http://localhost";
@@ -235,6 +241,161 @@ describe("gmNotesRoutes", () => {
     );
 
     expect(missing.status,).toBe(404,);
+  });
+
+  test("shadow note trigger_condition round-trips verbatim", async () => {
+    const db = await setup();
+    const app = makeApp(db, "owner-1",);
+    const chatPath = `${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`;
+
+    const withTrigger = await app.handle(
+      new Request(chatPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          type: "foreshadowing",
+          content: "The well whispers at midnight.",
+          triggerCondition: "when the player enters the crypt",
+        },),
+      },),
+    );
+
+    expect(withTrigger.status,).toBe(201,);
+
+    const withoutTrigger = await app.handle(
+      new Request(chatPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ type: "consequence", content: "Bare note.", },),
+      },),
+    );
+
+    expect(withoutTrigger.status,).toBe(201,);
+
+    const list = await getJson<{
+      items: { content: string; trigger_condition: string | null }[];
+    }>(await app.handle(new Request(chatPath,),),);
+
+    const whispered = list.items.find((n,) => n.content === "The well whispers at midnight.")!;
+    expect(whispered.trigger_condition,).toBe("when the player enters the crypt",);
+
+    const bare = list.items.find((n,) => n.content === "Bare note.")!;
+    expect(bare.trigger_condition,).toBeNull();
+  });
+
+  test("whitenote message_id scoping rejects dangling references", async () => {
+    const db = await setup();
+    await insertActors(
+      db,
+      "Narrator",
+      { id: "narrator-1", actor_type: "narrator", agent_type: "narrator", } as never,
+    );
+
+    const messageId = await insertMessages(
+      db,
+      "11111111-1111-4111-8111-111111111111",
+      "narrator-1",
+      MessageRole.System,
+      "The door creaks open.",
+    );
+
+    const app = makeApp(db, "owner-1",);
+    const chatPath = `${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes`;
+
+    const anchored = await app.handle(
+      new Request(chatPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          type: "tone",
+          content: "Eerie near the door.",
+          messageId,
+        },),
+      },),
+    );
+
+    expect(anchored.status,).toBe(201,);
+
+    const dangling = await app.handle(
+      new Request(chatPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          type: "tone",
+          content: "Dangling anchor.",
+          messageId: "00000000-0000-4000-8000-000000000009",
+        },),
+      },),
+    );
+
+    expect(dangling.status,).toBe(404,);
+
+    const list = await getJson<{
+      items: { content: string; message_id: string | null }[];
+    }>(await app.handle(new Request(chatPath,),),);
+
+    const anchoredRow = list.items.find((n,) => n.content === "Eerie near the door.")!;
+    expect(anchoredRow.message_id,).toBe(messageId,);
+
+    const unscoped = list.items.find((n,) => n.content === "High priority.");
+    expect(unscoped,).toBeUndefined();
+  });
+
+  test("whitenote without messageId stays chat-scoped (null)", async () => {
+    const db = await setup();
+    const app = makeApp(db, "owner-1",);
+
+    const created = await app.handle(
+      new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ type: "tone", content: "Chat-scoped.", },),
+      },),
+    );
+
+    expect(created.status,).toBe(201,);
+
+    const list = await getJson<{ items: { message_id: string | null }[] }>(
+      await app.handle(
+        new Request(`${BASE}/api/chats/11111111-1111-4111-8111-111111111111/whitenotes`,),
+      ),
+    );
+
+    expect(list.items[0]!.message_id,).toBeNull();
+  });
+
+  test("reveal appends revealed_to ids with dedupe (empty body tolerated)", async () => {
+    const db = await setup();
+    const app = makeApp(db, "owner-1",);
+    const chatPath = `${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`;
+
+    const created = await app.handle(
+      new Request(chatPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ type: "world_secret", content: "The king is a lich.", },),
+      },),
+    );
+
+    const { id, } = await getJson<{ id: string }>(created,);
+
+    const reveal = (revealedTo?: string[],): Request =>
+      new Request(`${chatPath}/${id}/reveal`, {
+        method: "POST",
+        headers: revealedTo ? { "Content-Type": "application/json", } : undefined,
+        body: revealedTo ? JSON.stringify({ revealedTo, },) : undefined,
+      },);
+
+    expect((await app.handle(reveal(),)).status,).toBe(204,);
+    expect((await app.handle(reveal(["char-1", "char-2",],),)).status,).toBe(204,);
+    expect((await app.handle(reveal(["char-2", "char-3",],),)).status,).toBe(204,);
+
+    const list = await getJson<{
+      items: { id: string; revealed_to: string[] | null }[];
+    }>(await app.handle(new Request(chatPath,),),);
+
+    const note = list.items.find((n,) => n.id === id)!;
+    expect(note.revealed_to,).toEqual(["char-1", "char-2", "char-3",],);
   });
 
   test("enum values accepted for both note types", async () => {

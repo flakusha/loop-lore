@@ -2012,6 +2012,8 @@ export const ShadowNotesSchema = t.Object({
   author_type: t.Optional(ShadowNoteAuthorTypeSchema,),
   data_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
+  trigger_condition: t.Optional(t.String(),),
+  revealed_to: t.Optional(t.String(),),
 },);
 
 // ── whitenotes ────────────────────────────────────────────
@@ -2025,6 +2027,7 @@ export const WhitenotesSchema = t.Object({
   expires_at: t.Optional(t.String(),),
   data_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
+  message_id: t.Optional(t.String(),),
 },);
 
 // ── crafting_attempts ────────────────────────────────────────────

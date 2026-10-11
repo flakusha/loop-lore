@@ -18,6 +18,9 @@ export const ShadowNoteBody = t.Object({
     "narrative_hook",
   ],),
   content: t.String({ minLength: 1, },),
+  // Free-form activation trigger, stored verbatim. Evaluation is the
+  // GM/assistant's job; the column only carries the declaration.
+  triggerCondition: OptionalNullableString,
   // Optional TTL — when set, the note is filtered out of LLM injection
   // once `expiresAt` is in the past, and purged by a background sweep.
   expiresAt: OptionalNullableString,
@@ -43,8 +46,16 @@ export const WhiteneoteBody = t.Object({
   content: t.String({ minLength: 1, },),
   priority: t.Optional(t.Numeric({ minimum: 1, maximum: 10, default: 5, },),),
   scope: t.Optional(t.UnionEnum(["scene", "chapter", "session", "world",],),),
+  // Optional message anchor — reconciles the spec's message-scoped notes
+  // with the chat-scoped shipped schema (nullable FK, migration 054).
+  messageId: t.Optional(t.String({ format: "uuid", },),),
   expiresAt: OptionalNullableString,
 },);
+
+/** Optional reveal payload — player/character ids the note was surfaced to. */
+export const RevealBody = t.Optional(
+  t.Object({ revealedTo: t.Optional(t.Array(t.String({ minLength: 1, },),),), },),
+);
 
 export const NoteIdParams = t.Object({
   id: t.String({ format: "uuid", },),

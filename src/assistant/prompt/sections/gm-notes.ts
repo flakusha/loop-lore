@@ -27,6 +27,7 @@ interface WhiteneoteRow {
   content: string;
   priority: number;
   scope: string;
+  message_id: string | null;
 }
 
 /**
@@ -42,7 +43,7 @@ async function fetchActiveWhitenotes(
   const now = new Date().toISOString();
   const rows = await db
     .selectFrom("whitenotes",)
-    .select(["type", "content", "priority", "scope",],)
+    .select(["type", "content", "priority", "scope", "message_id",],)
     .where("chat_id", "=", chatId,)
     .where((eb,) =>
       eb.or([
@@ -60,6 +61,7 @@ async function fetchActiveWhitenotes(
     content: r.content,
     priority: r.priority,
     scope: r.scope,
+    message_id: r.message_id,
   }),);
 }
 
@@ -67,6 +69,8 @@ async function fetchActiveWhitenotes(
 export interface ShadowSteeringNote {
   type: string;
   content: string;
+  /** Free-form activation trigger, verbatim; null when undeclared. */
+  trigger: string | null;
 }
 
 /**
@@ -90,7 +94,7 @@ export async function fetchUnrevealedShadowNotes(
   const now = new Date().toISOString();
   const rows = await db
     .selectFrom("shadow_notes",)
-    .select(["type", "content",],)
+    .select(["type", "content", "trigger_condition",],)
     .where("chat_id", "=", chatId,)
     .where("status", "=", "hidden",)
     .where((eb,) =>
@@ -103,7 +107,11 @@ export async function fetchUnrevealedShadowNotes(
     .limit(MAX_SHADOW_NOTES,)
     .execute();
 
-  return Array.from(rows, (r,) => ({ type: r.type, content: r.content, }),);
+  return Array.from(rows, (r,) => ({
+    type: r.type,
+    content: r.content,
+    trigger: r.trigger_condition,
+  }),);
 }
 
 /**
@@ -114,7 +122,11 @@ export async function fetchUnrevealedShadowNotes(
  */
 export function formatShadowSteering(notes: readonly ShadowSteeringNote[],): string {
   if (notes.length === 0) { return ""; }
-  const text = Array.from(notes, (n,) => `- [${n.type}] ${n.content}`,).join("\n",);
+  const text = Array.from(notes, (n,) =>
+    n.trigger
+      ? `- [${n.type}][trigger: ${n.trigger}] ${n.content}`
+      : `- [${n.type}] ${n.content}`,).join("\n",);
+
   return wrapSection("shadow_notes", text,);
 }
 
@@ -150,8 +162,12 @@ export const gmNotesSection: SectionBuilder = {
 
     const parts: string[] = [];
     if (whitenotes.length > 0) {
-      const text = Array.from(whitenotes, (n,) => `- [${n.type}][priority ${n.priority}][${n.scope}] ${n.content}`,)
-        .join("\n",);
+      // Message-scoped notes carry a `[message <id>]` label so the model can
+      // tell anchored directives apart from chat-scoped ones.
+      const text = Array.from(whitenotes, (n,) =>
+        n.message_id
+          ? `- [${n.type}][priority ${n.priority}][${n.scope}][message ${n.message_id}] ${n.content}`
+          : `- [${n.type}][priority ${n.priority}][${n.scope}] ${n.content}`,).join("\n",);
 
       parts.push(wrapSection("whitenotes", text,),);
     }

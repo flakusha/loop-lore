@@ -2765,6 +2765,8 @@ export async function insertShadowNotes(
     author_type?: ShadowNoteAuthorType;
     data_version?: number;
     record_hash?: string;
+    trigger_condition?: string | null;
+    revealed_to?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -2794,6 +2796,7 @@ export async function insertWhitenotes(
     expires_at?: string | null;
     data_version?: number;
     record_hash?: string;
+    message_id?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
