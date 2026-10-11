@@ -52,10 +52,12 @@ import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
 import { flag, object, runScript, withDefault, } from "../../src/cli/parser";
 import {
-  canonicalIndexOrder,
-  type IndexEntryLike,
-  projectIndex,
-} from "./plan-index-projection";
+  type IndexOutcome,
+  loadIndex,
+  probeWorktree,
+  projectIndexOntoDisk,
+  type WorktreeProbe,
+} from "./plan-index-guard";
 import {
   applyRewrites,
   planFile,
@@ -65,151 +67,9 @@ import {
 
 // ── linked-worktree guard ──────────────────────────────────────────────────
 //
-// `index.json` must never be written from a linked worktree: a worktree-local
-// index gets `git add -A`-ed onto the feature branch and conflicts at merge
-// time, because giwt regenerates the index post-merge on the target branch.
-// giwt refuses that write itself (`sync-index-write.ts:20`); this guard exists so
-// `plan:metadata` does not quietly defeat it.
-//
-// The guard is split in two so the DECISION is testable without git:
-//
-//   probeWorktree      impure — spawns git; the only subprocess in this module
-//   decideIndexWrite   pure  — the answer, from the probe's own output
-//
-// A probe that cannot run is NOT evidence of "main checkout": it resolves to
-// "do not write", loudly (see `decideIndexWrite`).
-
-/** What the git probe reported. `ok: false` is a FAILED PROBE, not a verdict. */
-export type WorktreeProbe =
-  | { ok: true; dirs: string[] }
-  | { ok: false; reason: string };
-
-/**
- * Pure: does this probe output describe a linked worktree?
- *
- * `git rev-parse --git-dir --git-common-dir` prints one path per line. In a
- * normal checkout both are `.git` (equal); in a linked worktree they diverge —
- * `<repo>/.git/worktrees/<name>` vs `<repo>/.git`. Anything that is not exactly
- * two lines is not a verdict this function will act on.
- */
-export function isLinkedWorktreeFrom(dirs: string[],): boolean {
-  return dirs.length === 2 && dirs[0] !== dirs[1];
-}
-
-/**
- * Impure half of the guard, mirroring giwt's own probe
- * (`utils/worktree-probe.ts`). Never throws: an unrunnable probe comes back as
- * `{ ok: false, reason }` so the caller fails closed instead of reading the
- * absence of evidence as a clean bill of health.
- */
-export function probeWorktree(root: string,): WorktreeProbe {
-  let probe: { exitCode: number; stdout: Uint8Array; stderr: Uint8Array };
-  try {
-    probe = Bun.spawnSync(
-      ["git", "-C", root, "rev-parse", "--git-dir", "--git-common-dir",],
-      { stdout: "pipe", stderr: "pipe", },
-    );
-  } catch (err) {
-    return { ok: false, reason: `git could not be run: ${err instanceof Error ? err.message : String(err,)}`, };
-  }
-  if (probe.exitCode !== 0) {
-    const why = probe.stderr.toString().trim() || "(no stderr)";
-    return { ok: false, reason: `git rev-parse exited ${probe.exitCode}: ${why}`, };
-  }
-  return { ok: true, dirs: probe.stdout.toString().trim().split("\n",).map((line,) => line.trim()), };
-}
-
-/** The one decision this guard exists to make. */
-export type IndexWrite =
-  | "write"
-  | "skip-dry-run"
-  | "skip-no-change"
-  | "skip-no-index"
-  | "skip-linked-worktree"
-  | "skip-probe-failed";
-
-/**
- * May `index.json` be written? Pure, and FAIL CLOSED: `ok: false` resolves to
- * `skip-probe-failed`, never `write`. A git missing from PATH, a repo blocked by
- * `safe.directory`, or a spawn failure previously reported "not a linked
- * worktree", which authorized the exact write this guard exists to prevent.
- */
-export function decideIndexWrite(probe: WorktreeProbe, indexChanged: boolean, dryRun: boolean,): IndexWrite {
-  if (dryRun) { return "skip-dry-run"; }
-  if (!indexChanged) { return "skip-no-change"; }
-  if (!probe.ok) { return "skip-probe-failed"; }
-  return isLinkedWorktreeFrom(probe.dirs,) ? "skip-linked-worktree" : "write";
-}
-
-/** Everything the caller needs to know about the guarded write. */
-export interface IndexOutcome {
-  tagsFilled: number;
-  epicsFilled: number;
-  decision: IndexWrite;
-  written: boolean;
-  /** Operator-facing explanation; non-null only when a guard held the write. */
-  notice: string | null;
-  /** LOUD; non-null when the guard itself could not be evaluated at all. */
-  error: string | null;
-}
-
-/**
- * Project the normalized `.md` fields onto the ticket index, then write it only
- * if `decideIndexWrite` says so.
- *
- * `index` arrives already-parsed (see `loadIndex`) so the parse can happen
- * BEFORE the markdown pass and abort a malformed index with the tree untouched.
- */
-export function projectIndexOntoDisk(
-  root: string,
-  indexPath: string,
-  index: Record<string, IndexEntryLike> | null,
-  probe: WorktreeProbe,
-  dryRun: boolean,
-): IndexOutcome {
-  const base = { tagsFilled: 0, epicsFilled: 0, written: false, notice: null, error: null, };
-  if (index === null) { return { ...base, decision: "skip-no-index", }; }
-
-  const { next, tagsFilled, epicsFilled, } = projectIndex(index, (src,) => {
-    const abs = join(root, src,);
-    return existsSync(abs,) ? readFileSync(abs, "utf8",) : null;
-  },);
-  const decision = decideIndexWrite(probe, tagsFilled > 0 || epicsFilled > 0, dryRun,);
-  if (decision === "write") {
-    // Sorted, not written in insertion order, so a key added out of band lands
-    // where giwt expects it instead of wherever it was appended.
-    writeFileSync(indexPath, JSON.stringify(canonicalIndexOrder(next,), null, 2,) + "\n",);
-  }
-
-  const held = tagsFilled + epicsFilled;
-  let notice: string | null = null;
-  let error: string | null = null;
-  if (!probe.ok) {
-    error = `plan:metadata: could NOT verify the worktree layout — ${probe.reason}. ` +
-      "index.json is left untouched on purpose: this script will not write the ticket index when it " +
-      "cannot prove it is in the main checkout. Restore git (PATH / safe.directory) and re-run.";
-    if (held > 0) {
-      notice = `  ^ NOT WRITTEN: the worktree probe failed, so plan:metadata cannot prove this is the main ` +
-        `checkout. ${held} backfill(s) are pending — re-run it in the main checkout.`;
-    }
-  } else if (decision === "skip-linked-worktree" && held > 0) {
-    notice = "  ^ NOT WRITTEN: linked worktree. giwt regenerates index.json post-merge on the target branch;" +
-      " re-run this script in the main checkout to persist.";
-  }
-  return { tagsFilled, epicsFilled, decision, written: decision === "write", notice, error, };
-}
-
-/**
- * The ticket index, or `null` when there is no index file (a repo without one
- * degrades: the markdown pass still runs). Throws on malformed JSON on purpose
- * — callers MUST call this before any write, so conflict markers left in
- * `index.json` by a ticket-branch merge abort the run instead of leaving half
- * the `.md` files rewritten with no report at all.
- */
-export function loadIndex(indexPath: string,): Record<string, IndexEntryLike> | null {
-  if (!existsSync(indexPath,)) { return null; }
-  return JSON.parse(readFileSync(indexPath, "utf8",),) as Record<string, IndexEntryLike>;
-}
+// The guard that decides whether `.plan/tickets/index.json` may be written —
+// fail-closed, and split so the decision is testable without git — lives in
+// `plan-index-guard.ts`. This file is the orchestration and the reporting.
 
 /** Every plan markdown file in a directory, sorted for stable output. */
 function planFiles(dir: string,): string[] {
