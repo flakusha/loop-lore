@@ -116,6 +116,9 @@ DELETE /api/chats/:id/purge    → 204
 - `FEAT-chat-archive-gc-job-daily-sweep-of-expired-archives` — daily GC sweep of chats where is_pinned='archived' and updated_at older than archive_retention_days; hard-deletes via hardDeleteChat, writes audit event, registers on cron registry @ 0 3 ** * (issue `69e23ba`).
 - `FEAT-chat-archive-retention-config-archive-retention-days-admin-s` — admin-config key `archive_retention_days` (default 90 days); wires purge handler to read from `system_config` instead of hardcoded literal at `src/routes/messages/archiving.ts:94` (issue `ce84227`).
 
+<<<<<<< ours — heading `Tickets` (F, confidence: medium)
 **Closure evidence (reconciled against dev):** archive/restore/purge routes shipped at `src/routes/chats/archive-routes.ts` (`archiveChat`, `unarchiveChat`, purge handler cascading `hardDeleteChat`); service at `src/chat/service/crud/archive.ts:104-162`; retention GC at `src/gc/archive-expiration.ts:42-98` reading `retentionDays` from system config; the sweep is wired to cron at `src/cron/jobs.ts:45-55` (`chat.archive-expiration`, `0 3 * * *`); archived filtering in the chat list at `src/routes/chats/list.ts:136-139`; asset cascade at `archive.ts:126-132`; confirm dialog at `src/components/chat/archive-confirm.html`. Covered by `src/chat/service/crud/archive.test.ts` and `src/routes/messages/archiving.coverage.test.ts`. Merged 2026-09-25 (`40e7ab20f`).
 
+=======
+>>>>>>> theirs — heading `Tickets` (F, confidence: medium)
 **Resolved:** 2026-10-11 registry-driven close: git issue 2c23033 (registry tip: 710450961 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-ARCHIVAL-WORKFLOW done)
