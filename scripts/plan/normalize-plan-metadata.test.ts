@@ -542,6 +542,17 @@ describe("index.json write guard", () => {
       const probe: WorktreeProbe = { ok: true, dirs, };
       expect(decideIndexWrite(probe, true, false,),).toBe("skip-probe-failed",);
     }
+    // The DECISION alone is not the operator's whole story: this denial used to
+    // return a clean count with no notice and nothing on stderr, which is what a
+    // successful run looks like. Both surfaces must speak.
+    const root = fixture(INDEX,);
+    const { result, out, err, } = run(root, { ok: true, dirs: [".git",], },);
+    expect(result.index.decision,).toBe("skip-probe-failed",);
+    expect(result.index.written,).toBe(false,);
+    expect(readFileSync(indexPath(root,), "utf8",),).toBe(INDEX,);
+    expect(out,).toContain("NOT WRITTEN",);
+    expect(err,).toContain("could NOT verify the worktree layout",);
+    expect(err,).toContain("the probe answered, but not with the two git dirs",);
     // The two-path shapes still decide normally.
     expect(decideIndexWrite({ ok: true, dirs: [".git", ".git",], }, true, false,),).toBe("write",);
     expect(
