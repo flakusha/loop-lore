@@ -519,6 +519,7 @@ export interface CharacterStats {
   conditions: Generated<string>;
   active_effects: Generated<string>;
   combat_alignment: Generated<string>;
+  pending_asi: Generated<number>;
 }
 
 // ── characters ────────────────────────────────────────────
