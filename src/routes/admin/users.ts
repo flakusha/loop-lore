@@ -200,13 +200,56 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .delete(
         `${prefix}/admin/users/:id`,
         async (ctx: any,) => {
-          return withPermissionAuth(ctx, "admin.users", async () => {
+          return withPermissionAuth(ctx, "admin.users", async (userId,) => {
             const { id, } = ctx.params as { id: string };
+
+            if (id === userId) {
+              return jsonError({
+                message: ctx.t?.("admin.cannotDeleteSelf",) ?? "Cannot delete your own account",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.BadRequest,
+              },);
+            }
+
+            const target = await db
+              .selectFrom("users",)
+              .select("role",)
+              .where("id", "=", id,)
+              .executeTakeFirst();
+
+            if (!target) {
+              return jsonError({
+                message: ctx.t?.("admin.userNotFound",) ?? "User not found",
+                status: HttpStatus.NotFound,
+                code: ErrorCode.NotFound,
+              },);
+            }
+
+            if (target.role === "admin") {
+              const remaining = await db
+                .selectFrom("users",)
+                .select(db.fn.count("id",).as("count",),)
+                .where("role", "=", "admin",)
+                .where("id", "!=", id,)
+                .executeTakeFirst();
+
+              if (!remaining || Number(remaining.count,) === 0) {
+                return jsonError({
+                  message: ctx.t?.("admin.cannotDeleteLastAdmin",) ?? "Cannot delete the last admin account",
+                  status: HttpStatus.BadRequest,
+                  code: ErrorCode.BadRequest,
+                },);
+              }
+            }
+
             await db.deleteFrom("users",).where("id", "=", id,).execute();
             return jsonNoContent();
           },);
         },
-        { params: UserIdParams, response: { 204: t.Void(), 403: ErrorResponse, }, },
+        {
+          params: UserIdParams,
+          response: { 204: t.Void(), 400: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        },
       )
   );
 }
