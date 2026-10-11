@@ -191,7 +191,7 @@ export async function recordSecretFound(
     secrets.push(secretId,);
   }
 
-  await (db as any)
+  const result = await db
     .updateTable("playthroughs",)
     .set({
       secrets_found: secrets.length,
@@ -202,5 +202,10 @@ export async function recordSecretFound(
       updated_at: new Date().toISOString(),
     },)
     .where("id", "=", playthroughId,)
-    .execute();
+    .where("updated_at", "=", playthrough.updatedAt,)
+    .executeTakeFirst();
+
+  if (Number(result.numUpdatedRows ?? 0,) === 0) {
+    throw new Error(`Playthrough ${playthroughId} was modified concurrently`,);
+  }
 }

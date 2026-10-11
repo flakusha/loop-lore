@@ -148,7 +148,7 @@ export async function processPatrolMovement(
   schedule: Record<string, unknown>,
   ctx: TickCtx,
 ): Promise<MovementResult | null> {
-  const route = (schedule.patrolRoute as string[]) ?? [];
+  const route = Array.isArray(schedule.patrolRoute,) ? (schedule.patrolRoute as string[]) : [];
   const index = (schedule.patrolIndex as number) ?? 0;
 
   if (route.length === 0) { return null; }
