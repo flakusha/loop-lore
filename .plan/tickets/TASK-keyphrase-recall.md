@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Done (2026-10-01)
+**Status:** Done
 **Priority:** Low-Medium
 **Effort:** Low-Medium
 **Created:** 2026-08-14
@@ -40,6 +40,10 @@ Implement keyphrase-triggered memory recall system where specific memories can b
 - [x] Per-message recall limit configurable (default 3, `memory_keyphrase_*` system config, feature flag `memory_keyphrase_recall` default ON)
 - [x] Global vs character keyphrase separation (inherits existing memory `scope`/`privacy` selection in memorySection)
 - [x] UI for managing keyphrases (Journal Keyphrases section in the character edit form)
+
+## Resolution
+
+Closed 2026-10-01 — all acceptance criteria verified above.
 
 ## References
 
