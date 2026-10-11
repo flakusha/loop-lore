@@ -78,11 +78,18 @@ export async function buildSkillTree(
     if (prerequisites.length === 0) {
       roots.push(node,);
     } else {
+      let attached = false;
       for (const parentId of prerequisites) {
         const parent = nodeMap.get(parentId,);
         if (parent) {
           parent.children.push(node,);
+          attached = true;
         }
+      }
+
+      if (!attached) {
+        // Orphan node — parent not in tree, attach to root
+        roots.push(node,);
       }
     }
   }
