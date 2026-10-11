@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Implementation Landed (2026-09-25) — chat-level confirm dialog open
 **Priority:** Medium
 **Effort:** Medium
@@ -115,3 +115,5 @@ DELETE /api/chats/:id/purge    → 204
 - `BUG-archive-retention-hardcoded-30-days-should-be-configurable-9` — purge cutoff at src/routes/messages/archiving.ts:94 hardcodes 30 days; spec calls for configurable 90-day default sourced from admin config (issue `0b135d4`).
 - `FEAT-chat-archive-gc-job-daily-sweep-of-expired-archives` — daily GC sweep of chats where is_pinned='archived' and updated_at older than archive_retention_days; hard-deletes via hardDeleteChat, writes audit event, registers on cron registry @ 0 3 ** * (issue `69e23ba`).
 - `FEAT-chat-archive-retention-config-archive-retention-days-admin-s` — admin-config key `archive_retention_days` (default 90 days); wires purge handler to read from `system_config` instead of hardcoded literal at `src/routes/messages/archiving.ts:94` (issue `ce84227`).
+
+**Closure evidence (reconciled against dev):** archive/restore/purge routes shipped at `src/routes/chats/archive-routes.ts` (`archiveChat`, `unarchiveChat`, purge handler cascading `hardDeleteChat`); service at `src/chat/service/crud/archive.ts:104-162`; retention GC at `src/gc/archive-expiration.ts:42-98` reading `retentionDays` from system config; the sweep is wired to cron at `src/cron/jobs.ts:45-55` (`chat.archive-expiration`, `0 3 * * *`); archived filtering in the chat list at `src/routes/chats/list.ts:136-139`; asset cascade at `archive.ts:126-132`; confirm dialog at `src/components/chat/archive-confirm.html`. Covered by `src/chat/service/crud/archive.test.ts` and `src/routes/messages/archiving.coverage.test.ts`. Merged 2026-09-25 (`40e7ab20f`).
