@@ -5124,33 +5124,7 @@ export async function insertBranchMergeSources(
   } as any,).execute();
   return id;
 }
-/** Insert a location_edges row. */
-export async function insertLocationEdges(
-  db: Db,
-  world_id: string,
-  from_id: string,
-  to_id: string,
-  opts?: {
-    id?: string;
-    mode?: LocationEdgeMode;
-    game_hours?: number;
-    requires_discovery?: number;
-    cost_json?: string;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("location_edges",).values({
-    id,
-    world_id,
-    from_id,
-    to_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
+
 /** Insert a plan_items row. */
 export async function insertPlanItems(
   db: Db,
@@ -5268,6 +5242,34 @@ export async function insertWorldTimescaleHistory(
     id,
     world_id,
     epoch,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a location_edges row. */
+export async function insertLocationEdges(
+  db: Db,
+  world_id: string,
+  from_id: string,
+  to_id: string,
+  opts?: {
+    id?: string;
+    mode?: LocationEdgeMode;
+    game_hours?: number;
+    requires_discovery?: number;
+    cost_json?: string;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("location_edges",).values({
+    id,
+    world_id,
+    from_id,
+    to_id,
     ...restOpts,
   } as any,).execute();
   return id;
