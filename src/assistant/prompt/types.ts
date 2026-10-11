@@ -17,6 +17,11 @@ import type { DB, } from "../../db/schema";
 import type { GenerationMessage, } from "../../generation/gen-types-options";
 
 /** */
+import type { AssembleRole, AssemblyInjectables, InjectableReport, } from "./carriage-isolation";
+
+export type { AssembleRole, } from "./carriage-isolation";
+
+/** */
 export interface PromptParams {
   /** Actor generating the response (character/narrator) */
   actorId: string;
@@ -76,6 +81,13 @@ export interface PromptParams {
    * `gm_config.assistantPersonality` binding; `undefined` keeps the section off.
    */
   assistantPersonality?: string;
+  /**
+   * Explicit assembly-role override (epic-hidden-carriage-context): "debug"
+   * admits debug-visibility entries and "assistant"/"gm" admit gm-class
+   * entries (marked read-only). Omitted, the role derives from the chat's
+   * `gm_config.assistantRole` ("gm" → "gm", else "player").
+   */
+  assembleRole?: AssembleRole;
 }
 
 /** */
@@ -100,6 +112,12 @@ export interface AssembledPrompt {
   sections: PromptSectionReport[];
   /** Resolved response-length config (wires buildLengthConfig into assembly). */
   responseLength?: ResponseLengthConfig | null;
+  /**
+   * Injection gate provenance (epic-hidden-carriage-context): the assembly
+   * role plus dropped duplicates and suppressed entries for the debug `?`
+   * view. Absent when the gate was inactive — the pre-feature baseline.
+   */
+  injectables?: InjectableReport;
 }
 
 /** Minimal actor projection the section builders need. */
@@ -183,6 +201,15 @@ export interface AssembleContext {
    * `memorySection` end-to-end run is deterministic instead of ~25-35% flaky.
    */
   randomFn?: () => number;
+  /**
+   * Single-assembly injection gate (epic-hidden-carriage-context). Present
+   * only when the chat opted into the hidden carriage or an explicit
+   * `params.assembleRole` was given: sections submit candidate entries and
+   * render only the survivors — `{ system, visibility }` filtering +
+   * content-hash dedup enforced server-side in one place. Absent → sections
+   * render unfiltered (byte-identical pre-feature baseline).
+   */
+  injectables?: AssemblyInjectables;
 }
 
 /** Builds one prompt section's messages. */

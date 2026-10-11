@@ -84,6 +84,45 @@ describe("healStructuredOutput", () => {
 });
 
 describe("healCarriage", () => {
+  test("the epic's normative example round-trips approve unhealed", () => {
+    // Normative shape from .plan/epics/epic-hidden-carriage-context.md —
+    // heal → validate must approve it and hash the raw document.
+    const out = healCarriage([
+      "episode = 4",
+      'title = "The Sleeper\'s Warning"',
+      'setting = "Ruin on largest island, Archipelago of Whispers"',
+      "",
+      "[[characters]]",
+      'name = "K"',
+      'status = "Inside the ruin, fate unknown"',
+      "",
+      "[[characters]]",
+      'name = "G"',
+      'status = "With party, outside"',
+      "",
+      "[[characters]]",
+      'name = "First Elder"',
+      'status = "Voice only"',
+      "",
+      'artifacts = ["The Key (inserted into ruin)"]',
+      'locations_discovered = ["Interior of the ruin (K has entered)"]',
+      "elders_awakened = 1",
+      "primal_aura_intensity = 10",
+      'companions = ["G"]',
+      "next_episode = 5",
+    ].join("\n",),);
+
+    expect(out.ok,).toBe(true,);
+    if (out.ok) {
+      expect(out.healed,).toBe(false,);
+      expect(out.value.episode,).toBe(4,);
+      expect(out.value.title,).toBe("The Sleeper's Warning",);
+      expect(out.value.setting,).toBe("Ruin on largest island, Archipelago of Whispers",);
+      expect(out.value.characters,).toHaveLength(3,);
+      expect(out.value.characters?.[0],).toEqual({ name: "K", status: "Inside the ruin, fate unknown", },);
+    }
+  });
+
   test("flat characters list fails with the repair hint", () => {
     const out = healCarriage('characters = ["K", "G"]\n',);
     expect(out.ok,).toBe(false,);
