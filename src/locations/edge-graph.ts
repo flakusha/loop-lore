@@ -28,7 +28,7 @@ export interface EdgeAttributes {
 export type EdgePatch = Partial<Pick<EdgeAttributes, "mode" | "gameHours" | "requiresDiscovery" | "cost">>;
 
 /**
- * CRUD over the location adjacency graph (053_location_edges).
+ * CRUD over the location adjacency graph (052_location_edges).
  * Travel-time enforcement lives in ./edge-travel; discovery gating and
  * hop eventing live in ./edge-discovery.
  */
