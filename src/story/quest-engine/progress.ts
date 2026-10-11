@@ -16,6 +16,7 @@ import { PROGRESS_CALCULATORS, } from "../quests/registry";
 import { requireQuestTransition, selectActiveQuests, upsertQuestProgress, } from "../shared/story-utils";
 import type { QuestConfig, QuestReward, WorldEvent, } from "../types";
 import type { ProgressQuestRow, QuestProgressEntry, QuestState, } from "./types";
+import { awardQuestCompletionXp, } from "./xp";
 
 /**
  * Get completion percentage for a quest
@@ -185,6 +186,7 @@ async function applyProgress(
 
   if (completed) {
     await distributeRewards(state, quest.id, quest.world_id, quest.rewards,);
+    await awardQuestCompletionXp(state.db, quest,);
   }
 
   return {
