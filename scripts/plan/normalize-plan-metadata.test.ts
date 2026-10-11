@@ -9,7 +9,16 @@
  * untouched; nothing is invented; and a normalized file is a fixed point.
  */
 import { describe, expect, test, } from "bun:test";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import path from "node:path";
+import {
+  decideIndexWrite,
+  isLinkedWorktreeFrom,
+  probeWorktree,
+  runPlanMetadata,
+  type WorktreeProbe,
+} from "./normalize-plan-metadata";
 import {
   canonicalIndexOrder,
   projectIndex,
@@ -338,5 +347,198 @@ describe("normalize-plan-metadata CLI", () => {
   test("an unknown option is rejected with exit 1", () => {
     const proc = Bun.spawnSync(["bun", SCRIPT, "--no-such-flag",],);
     expect(proc.exitCode,).toBe(1,);
+  });
+});
+
+/**
+ * The linked-worktree guard — the decision that decides whether
+ * `.plan/tickets/index.json` is written at all, plus the write-ordering
+ * invariant that a malformed index leaves the tree untouched.
+ *
+ * Every assertion here is about the DECISION (`decision`, the bytes on disk,
+ * what the operator is told), never about a value merely being non-empty.
+ *
+ * Resource contract — why this suite is parallel-safe:
+ * - DISK: every case builds its own `mkdtemp` root; the repo's real `.plan/` is
+ *   never read or written, so this suite cannot race a sibling `bun test` or a
+ *   sibling agent over the plan tree.
+ * - PROCESS: `runPlanMetadata` is called in-process with the probe injected, so
+ *   no git subprocess and no CLI/global state is shared between cases.
+ */
+describe("index.json write guard", () => {
+  const TICKET = "# BUG-x\n\n**Labels:** alpha, beta\n**Epic**: epic-items\n";
+  const INDEX = JSON.stringify({ "BUG-x": { source: ".plan/tickets/BUG-x.md", tags: [], epic: "", }, }, null, 2,) +
+    "\n";
+  const MAIN: WorktreeProbe = { ok: true, dirs: [".git", ".git",], };
+  const LINKED: WorktreeProbe = { ok: true, dirs: ["/repo/.git/worktrees/wt", "/repo/.git",], };
+  const BROKEN: WorktreeProbe = { ok: false, reason: "git rev-parse exited 128: detected dubious ownership", };
+
+  const mdPath = (root: string,): string => path.join(root, ".plan", "tickets", "BUG-x.md",);
+  const indexPath = (root: string,): string => path.join(root, ".plan", "tickets", "index.json",);
+
+  function fixture(index: string | null,): string {
+    const root = mkdtempSync(path.join(tmpdir(), "plan-meta-guard-",),);
+    mkdirSync(path.join(root, ".plan", "epics",), { recursive: true, },);
+    mkdirSync(path.join(root, ".plan", "tickets",), { recursive: true, },);
+    writeFileSync(mdPath(root,), TICKET,);
+    if (index !== null) { writeFileSync(indexPath(root,), index,); }
+    return root;
+  }
+
+  function run(root: string, probe: WorktreeProbe, dryRun = false,) {
+    const out: string[] = [];
+    const err: string[] = [];
+    const result = runPlanMetadata(root, {
+      dryRun,
+      json: false,
+      probe,
+      log: (line,) => {
+        out.push(line,);
+      },
+      warn: (line,) => {
+        err.push(line,);
+      },
+    },);
+    return { result, out: out.join("\n",), err: err.join("\n",), };
+  }
+
+  // ── pure predicate ───────────────────────────────────────────────────────
+
+  test("a normal checkout (git-dir == git-common-dir) is not a linked worktree", () => {
+    expect(isLinkedWorktreeFrom([".git", ".git",],),).toBe(false,);
+  });
+
+  test("two differing git dirs are a linked worktree", () => {
+    expect(isLinkedWorktreeFrom(["/repo/.git/worktrees/wt", "/repo/.git",],),).toBe(true,);
+  });
+
+  test("probe output that is not two lines is not a linked-worktree verdict", () => {
+    expect(isLinkedWorktreeFrom([],),).toBe(false,);
+    expect(isLinkedWorktreeFrom([".git",],),).toBe(false,);
+  });
+
+  // ── the write decision ───────────────────────────────────────────────────
+
+  const MAIN_CHECKOUT = { dirs: [".git", ".git",], indexChanged: true, want: "write", };
+  const LINKED_WORKTREE = {
+    dirs: ["/repo/.git/worktrees/wt", "/repo/.git",],
+    indexChanged: true,
+    want: "skip-linked-worktree",
+  };
+  const PROBE_FAILED = { dirs: null, indexChanged: true, want: "skip-probe-failed", };
+
+  for (const row of [MAIN_CHECKOUT, LINKED_WORKTREE, PROBE_FAILED,]) {
+    const label = row.dirs === null ? "a probe that failed" : `dirs ${JSON.stringify(row.dirs,)}`;
+    test(`write authorization for ${label} is ${row.want}`, () => {
+      const probe: WorktreeProbe = row.dirs === null
+        ? { ok: false, reason: "git rev-parse exited 128", }
+        : { ok: true, dirs: row.dirs, };
+      expect(decideIndexWrite(probe, row.indexChanged, false,),).toBe(row.want,);
+    });
+  }
+
+  test("a failed probe never authorizes the write, whatever the probe reason", () => {
+    for (const reason of ["git could not be run: ENOENT", "git rev-parse exited 128: dubious ownership", "",]) {
+      expect(decideIndexWrite({ ok: false, reason, }, true, false,),).toBe("skip-probe-failed",);
+    }
+  });
+
+  test("dry-run and no-op projection never write", () => {
+    expect(decideIndexWrite(MAIN, true, true,),).toBe("skip-dry-run",);
+    expect(decideIndexWrite(MAIN, false, false,),).toBe("skip-no-change",);
+  });
+
+  // ── end to end: the write, or the refusal ────────────────────────────────
+
+  test("main checkout: index.json IS written and backfilled", () => {
+    const root = fixture(INDEX,);
+    const { result, } = run(root, MAIN,);
+    expect(result.index.decision,).toBe("write",);
+    expect(result.index.written,).toBe(true,);
+    const onDisk = JSON.parse(readFileSync(indexPath(root,), "utf8",),) as Record<
+      string,
+      { tags: string[]; epic: string }
+    >;
+    expect(onDisk["BUG-x"]!.tags,).toEqual(["alpha", "beta",],);
+  });
+
+  test("linked worktree: index.json is NOT written and the notice IS printed", () => {
+    const root = fixture(INDEX,);
+    const { result, out, err, } = run(root, LINKED,);
+    expect(result.index.decision,).toBe("skip-linked-worktree",);
+    expect(result.index.written,).toBe(false,);
+    // the bytes on disk are the guard's real invariant, not the return value
+    expect(readFileSync(indexPath(root,), "utf8",),).toBe(INDEX,);
+    expect(out,).toContain("NOT WRITTEN",);
+    expect(err,).toBe("",);
+  });
+
+  test("failed probe: index.json is NOT written and the cause is surfaced LOUDLY", () => {
+    const root = fixture(INDEX,);
+    const { result, out, err, } = run(root, BROKEN,);
+    // Fail closed: a probe that could not run must not read as "main checkout".
+    expect(result.index.decision,).toBe("skip-probe-failed",);
+    expect(result.index.written,).toBe(false,);
+    expect(readFileSync(indexPath(root,), "utf8",),).toBe(INDEX,);
+    // …and the operator must not be handed a clean unqualified count.
+    expect(err,).toContain("could NOT verify the worktree layout",);
+    expect(err,).toContain("dubious ownership",);
+    expect(out,).toContain("NOT WRITTEN",);
+  });
+
+  test("a failed probe is reported even when there was nothing to write", () => {
+    const root = fixture(
+      JSON.stringify(
+        { "BUG-x": { source: ".plan/tickets/BUG-x.md", tags: ["alpha", "beta",], epic: "epic-items", }, },
+        null,
+        2,
+      ),
+    );
+    const { result, err, } = run(root, BROKEN,);
+    expect(result.index.tagsFilled + result.index.epicsFilled,).toBe(0,);
+    expect(result.index.decision,).toBe("skip-no-change",);
+    expect(err,).toContain("could NOT verify the worktree layout",);
+  });
+
+  test("dry-run writes nothing in the main checkout", () => {
+    const root = fixture(INDEX,);
+    const { result, } = run(root, MAIN, true,);
+    expect(result.index.decision,).toBe("skip-dry-run",);
+    expect(readFileSync(indexPath(root,), "utf8",),).toBe(INDEX,);
+    expect(readFileSync(mdPath(root,), "utf8",),).toBe(TICKET,);
+  });
+
+  // ── the real subprocess, failing for real ────────────────────────────────
+
+  test("probeWorktree reports a failure instead of a clean checkout", () => {
+    const missing = path.join(mkdtempSync(path.join(tmpdir(), "plan-meta-probe-",),), "no-such-dir",);
+    const probe = probeWorktree(missing,);
+    expect(probe.ok,).toBe(false,);
+    if (probe.ok) { throw new Error("unreachable — the assertion above failed",); }
+    expect(probe.reason,).toContain("exited",);
+    expect(decideIndexWrite(probe, true, false,),).toBe("skip-probe-failed",);
+  });
+
+  // ── write ordering: a malformed index must not half-mutate ───────────────
+
+  test("a malformed index aborts the run with the .md files untouched", () => {
+    const conflicted =
+      '{\n<<<<<<< HEAD\n  "BUG-x": {},\n=======\n  "BUG-x": { "source": ".plan/tickets/BUG-x.md" },\n>>>>>>> dev\n}\n';
+    const root = fixture(conflicted,);
+    const quiet = { log: (): void => {}, warn: (): void => {}, };
+    expect(() => runPlanMetadata(root, { dryRun: false, json: false, probe: MAIN, ...quiet, },)).toThrow();
+    // The invariant: a run that dies on the index must not have already
+    // rewritten the plan markdown — that half-applied state was
+    // indistinguishable from a failed no-op at the terminal.
+    expect(readFileSync(mdPath(root,), "utf8",),).toBe(TICKET,);
+    expect(readFileSync(indexPath(root,), "utf8",),).toBe(conflicted,);
+  });
+
+  test("a missing index degrades: the markdown pass still runs", () => {
+    const root = fixture(null,);
+    const { result, } = run(root, MAIN,);
+    expect(result.index.decision,).toBe("skip-no-index",);
+    expect(result.filesChanged,).toBe(1,);
+    expect(readFileSync(mdPath(root,), "utf8",),).toContain("**Tags:**",);
   });
 });
