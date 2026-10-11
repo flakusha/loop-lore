@@ -13,6 +13,7 @@
 
 import { registerContentVersion, } from "../../db/content-version";
 import { QuestStatus, QuestType, } from "../../db/enums-story";
+import { awardQuestCompletionXp, } from "../../story/quest-engine/xp";
 import { requireQuestTransition, } from "../../story/shared/story-utils";
 import { uid, } from "../../utils";
 import { type CommandResult, registerCommand, } from "./registry";
@@ -160,7 +161,7 @@ registerCommand("quest", async (args, ctx,): Promise<CommandResult> => {
         .where("world_id", "=", worldId,)
         .where("name", "like", `%${questName}%`,)
         .where("status", "=", QuestStatus.Active,)
-        .select(["id", "name",],)
+        .select(["id", "name", "creator_id", "category",],)
         .executeTakeFirst();
 
       if (!quest) {
@@ -182,6 +183,10 @@ registerCommand("quest", async (args, ctx,): Promise<CommandResult> => {
         },)
         .where("id", "=", quest.id,)
         .execute();
+
+      // Completion XP rides the shared pipeline; the leg is best-effort and
+      // idempotent per quest id, so a replay of this command cannot double-pay.
+      await awardQuestCompletionXp(db, quest,);
 
       return {
         systemMessage: `**Quest completed:** ${quest.name}`,
