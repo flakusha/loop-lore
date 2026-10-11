@@ -1620,6 +1620,7 @@ export const SCHEMA = new SchemaManifest()
     conditions: col("text", { notNull: true, hasDefault: true, },),
     active_effects: col("text", { notNull: true, hasDefault: true, },),
     combat_alignment: col("text", { notNull: true, hasDefault: true, },),
+    pending_asi: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("character_world_setup", {
     id: col("text", { primaryKey: true, },),

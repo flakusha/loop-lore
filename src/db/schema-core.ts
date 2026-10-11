@@ -1537,6 +1537,7 @@ export interface CharacterStats {
   conditions: Generated<string>;
   active_effects: Generated<string>;
   combat_alignment: Generated<string>;
+  pending_asi: Generated<number>;
 }
 
 // ── xp_ledger ────────────────────────────────────────────
@@ -1808,7 +1809,6 @@ export interface CharacterInternalTraits {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
-
 // ── rotation_history ────────────────────────────────────────────
 export interface RotationHistory {
   id: Generated<string>;

@@ -181,6 +181,8 @@ export interface UpdateCharacterStatsParams {
   characterState?: CharacterState;
   conditions?: string;
   activeEffects?: string;
+  /** Allocatable ASI/level points staged but not yet spent. */
+  pendingAsi?: number;
 }
 
 /**
@@ -220,6 +222,7 @@ export async function updateCharacterStats(
   if (params.characterState !== undefined) { updates.character_state = params.characterState; }
   if (params.conditions !== undefined) { updates.conditions = params.conditions; }
   if (params.activeEffects !== undefined) { updates.active_effects = params.activeEffects; }
+  if (params.pendingAsi !== undefined) { updates.pending_asi = params.pendingAsi; }
 
   if (Object.keys(updates,).length === 0) {
     return false;
