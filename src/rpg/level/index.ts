@@ -5,6 +5,24 @@
 
 export { type AbilityName, ALL_ABILITIES, } from "../stats/types.js";
 export {
+  allocateAsi,
+  type AllocateAsiInput,
+  type AllocateAsiResult,
+} from "./asi.js";
+export {
+  autoAllocateAsi,
+  autoResolveIfAutonomous,
+  type LevelUpChoice,
+  type LevelUpResolution,
+  resolveLevelUpDecision,
+  stageLevelUpDecision,
+} from "./decisions.js";
+export {
+  applyOrganicGrowth,
+  ORGANIC_GROWTH_CAP,
+  type OrganicGrowthResult,
+} from "./growth.js";
+export {
   awardXpToActor,
   ensureCharacterStats,
 } from "./service.js";
