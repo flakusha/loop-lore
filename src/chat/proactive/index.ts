@@ -10,7 +10,7 @@
  *
  * See .plan/tickets/TASK-proactive-messaging.md
  */
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { toDate, } from "../../utils/date";
 import {
@@ -179,13 +179,10 @@ export class ProactiveMessagingService {
    * @param actorId
    */
   async incrementBackoff(chatId: string, actorId: string,): Promise<void> {
-    const config = await this.getConfig(chatId, actorId,);
-    if (!config) { return; }
-
     await this.db
       .updateTable("proactive_messaging_config",)
       .set({
-        backoff_count: config.backoffCount + 1,
+        backoff_count: sql`backoff_count + 1`,
         updated_at: new Date().toISOString(),
       },)
       .where("chat_id", "=", chatId,)
