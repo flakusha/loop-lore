@@ -83,8 +83,8 @@
     "size:check": "bun run scripts/check-file-size.ts",
     "wiring:check": "bun run scripts/check-wiring.ts",
     "changelog:check": "bun run scripts/check-changelog.ts",
-    "dead:code": "knip",
-    "dead:code:ci": "knip --no-progress",
+    "dead:code": "knip --no-gitignore",
+    "dead:code:ci": "knip --no-gitignore --no-progress",
     "circular:check": "madge --circular --ts-config tsconfig.json --extensions ts,tsx --no-color src/ tests/ scripts/",
     "circular:summary": "madge --ts-config tsconfig.json --extensions ts,tsx --summary --warning src/ tests/ scripts/",
     "circular:graph": "madge --ts-config tsconfig.json --extensions ts,tsx --json src/ tests/ scripts/ > .tmp/madge-graph.json",
@@ -153,6 +153,7 @@
     "effect": "4.0.0",
     "elysia": "^1.4.30",
     "giwt": "github:flakusha/giwt",
+    "html-minifier-terser": "^7.0.2",
     "htmx-ext-alpine-morph": "^2.0.2",
     "htmx-ext-sse": "^2.2.4",
     "js-yaml": "^5.4.2",
@@ -160,7 +161,8 @@
     "kysely": "^0.29.6",
     "marked": "^18.0.14",
     "obscenity": "^0.4.6",
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "terser": "^5.37.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",
@@ -176,7 +178,6 @@
     "@types/html-minifier-terser": "^7.0.2",
     "@types/js-yaml": "^4.0.9",
     "@types/jszip": "^3.4.1",
-    "@types/terser": "^3.12.0",
     "@typescript/native-preview": "^7.0.0-dev.20260707.2",
     "bun-plugin-html": "2.2.8",
     "dprint": "^0.60.1",

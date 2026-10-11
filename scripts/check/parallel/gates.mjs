@@ -118,6 +118,12 @@ export const checks = {
   // scripts/generate-schema-fuzz.ts emits from the schema modules on disk.
   "fuzz - generated tests": "bun run scripts/generate-schema-fuzz.ts --check",
 
+  // Locale catalog reconciliation: every public/public/locales/*.json must
+  // match en.json (missing keys get the English fallback, extras are stale).
+  // BLOCKING, not advisory: the check is deterministic over tracked files and
+  // cannot drift from a concurrent dev merge. `bun run i18n:fix` repairs.
+  "i18n - reconcile": "bun run scripts/i18n-reconcile.ts --ci",
+
   // Test-gap ratchet: runtime exports no test file names, vs a committed
   // baseline. BLOCKING, not advisory: the matcher requires a real import
   // edge (not an incidental token), so the signal is trustworthy enough to
