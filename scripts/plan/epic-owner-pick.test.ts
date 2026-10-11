@@ -191,19 +191,36 @@ describe("scanEpicTitles", () => {
  *   by `giwt sync`, `plan:sync`, `plan:docs` and `epic-owner-pick --apply`,
  *   and `scanEpicTitles` walks it file-by-file with no snapshot, so asserting on
  *   its contents made the suite a function of concurrent repo state.
- * - DISK (CLI): only the DEFAULT (no-flag) report path is spawned, which reads
- *   `.plan/tickets/index.json` and the tickets it names and writes nothing.
- *   `--apply` rewrites ticket `.md` files and index.json, and `--gen`
- *   overwrites `epic-titles.generated.ts` — a checked-in source file. Neither
- *   may be spawned here: both would race a sibling `bun test` process or a
- *   sibling agent over shared state. Their flag RECOGNITION is covered instead
- *   by the `--help` and unknown-option cases below.
- * - The reported owner/remainer COUNTS are not pinned to literals — how much
- *   multi-epic drift the tree holds is concurrent repo state. What is pinned is
- *   the `dry-run: true` banner, which proves `--apply` was not passed.
+ * - DISK (CLI): these three cases ALLOCATE NOTHING — they own no unique
+ *   resource. They are the one place this file deliberately touches the LIVE
+ *   tree, and only the dry-run case does: it makes the child resolve
+ *   `.plan/epics/*.md`, `.plan/tickets/index.json`, and the ticket `.md` files
+ *   that index names. All three paths are anchored to the SCRIPT's
+ *   `import.meta.dir`, never to `process.cwd()`, so the cases behave
+ *   identically from any directory. The `--help` and unknown-option cases never
+ *   reach the tree at all — `runScript` (Optique `run`) exits on help and on a
+ *   parse error before the `ROOT`/`readdirSync` block.
+ * - READ-ONLY: only the DEFAULT no-flag path is spawned and it writes nothing.
+ *   `--apply` rewrites ticket `.md` files and index.json, and `--gen` overwrites
+ *   `epic-titles.generated.ts` — a checked-in source file. Neither may be
+ *   spawned here: both would race a sibling `bun test` process or a sibling
+ *   agent over shared state. Their flag RECOGNITION is covered instead by the
+ *   `--help` and unknown-option cases.
+ * - WHY the shared live reads cannot flake on ordering: no assertion here pins
+ *   repo CONTENT. `index.json` is replaced atomically — giwt writes a tmp file
+ *   then `renameSync`s it over the target (`src/tickets/sync-index-write.ts`),
+ *   so a concurrent reader sees the old or the new complete file, never a torn
+ *   one. The `.md` reads are unsnapshotted, so the assertions deliberately pin
+ *   only what holds for EVERY tree state: the `dry-run: true` banner (proving
+ *   `--apply` was not passed), the `owners: ` and `remainder (untouched, needs
+ *   a human):` section headers, and the exit code of a non-mutating path. The
+ *   reported owner/remainer COUNTS are never pinned to literals — how much
+ *   multi-epic drift the tree holds is concurrent repo state.
  * - PROCESS: each case is a spawned child, so the `import.meta.main` CLI block
  *   and its accumulators are per-invocation.
- * - No fixed-path fixtures, no shared globals, no ordering dependence.
+ * - No shared mutable state and no ordering dependence anywhere in this file.
+ *   Fixed-path fixtures exist ONLY for the unit cases above, and each of those
+ *   owns its own `epic-owner-pick-` temp root.
  */
 describe("epic-owner-pick CLI", () => {
   const SCRIPT = path.join(import.meta.dir, "epic-owner-pick.ts",);
