@@ -32001,6 +32001,12 @@
       "source": ".plan/tickets/TASK-admin-overview-dashboard.md"
     }
   ],
+  "src/routes/admin/system-config.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp.md"
+    }
+  ],
   "src/routes/admin/system-config.ts": [
     {
       "kind": "epic",
@@ -32013,6 +32019,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-system-config-delete-passes-user-controlled-key-withou.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp.md"
     },
     {
       "kind": "ticket",
