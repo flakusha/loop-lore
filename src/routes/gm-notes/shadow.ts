@@ -17,6 +17,7 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../../db/enums";
+import { getChildLogger, } from "../../logger";
 import { jsonParseOr, safeJsonStringify, uid, } from "../../utils";
 import {
   ChatIdParams,
@@ -237,13 +238,23 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           const unique = new Set([...existing, ...incoming,],);
           const revealedTo = Array.from(unique,);
 
-          assertValidWrite("shadow_notes", { status: ShadowNoteStatus.Revealed, visibility: note.visibility, },);
+          // A revealed note must sit on the user-visible surface per the
+          // `shadowNotesStatusVisibility` invariant (`revealed:hidden` is
+          // leak/drift) — so revealing a gm_only note also flips its
+          // visibility. Revealed notes are excluded from LLM injection by
+          // `status`, so the flip only affects the reading surface.
+          const nextVisibility = note.visibility === ShadowNoteVisibility.UserVisible
+            ? note.visibility
+            : ShadowNoteVisibility.UserVisible;
+
+          assertValidWrite("shadow_notes", { status: ShadowNoteStatus.Revealed, visibility: nextVisibility, },);
 
           const serialized = safeJsonStringify(revealedTo,);
           const result = await database
             .updateTable("shadow_notes",)
             .set({
               status: ShadowNoteStatus.Revealed,
+              visibility: nextVisibility,
               // String[] always serializes; fall back to the prior value so a
               // (theoretical) failure never drops recorded ids.
               revealed_to: serialized.ok ? serialized.value : note.revealed_to,
@@ -256,9 +267,19 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             return notFound("Shadow note not found",);
           }
 
-          // Emit a narrator message so the reveal has real narrative impact
-          // instead of silently flipping the status in the background.
-          await injectShadowRevealNarration(database, id, note.content,);
+          // Emit a narrator message so a player-visible reveal has real
+          // narrative impact instead of silently flipping the status. A
+          // gm_only (`hidden`) reveal must NEVER reach the player surface —
+          // the row still updates, but the narration is suppressed and the
+          // reveal is surfaced in the dev log instead.
+          if (note.visibility === ShadowNoteVisibility.UserVisible) {
+            await injectShadowRevealNarration(database, id, note.content,);
+          } else {
+            getChildLogger("gm-notes",)?.info(
+              "gm.note.reveal: gm_only note revealed — narration suppressed",
+              { chatId: id, noteId, visibility: note.visibility, },
+            );
+          }
 
           return jsonNoContent();
         },

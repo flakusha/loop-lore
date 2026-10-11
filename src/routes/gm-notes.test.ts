@@ -7,13 +7,19 @@
 import { describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { MessageRole, ShadowNoteType, WhiteneoteType, } from "../db/enums";
+import {
+  MessageRole,
+  ShadowNoteType,
+  ShadowNoteVisibility,
+  WhiteneoteType,
+} from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
   insertActors,
   insertChats,
   insertMessages,
+  insertShadowNotes,
   insertUsers,
   insertWorlds,
 } from "../test-utils/insert-helpers";
@@ -426,6 +432,96 @@ describe("gmNotesRoutes", () => {
 
     const note = list.items.find((n,) => n.id === id)!;
     expect(note.revealed_to,).toEqual(["char-1", "char-2", "char-3",],);
+  });
+
+  test("gm_only reveal updates the row but emits NO narration message", async () => {
+    const db = await setup();
+    // Real narrator actor so any narration call would actually insert.
+    await insertActors(
+      db,
+      "Narrator",
+      { id: "narrator-1", actor_type: "narrator", agent_type: "narrator", } as never,
+    );
+
+    const noteId = await insertShadowNotes(
+      db,
+      "11111111-1111-4111-8111-111111111111",
+      ShadowNoteType.WorldSecret,
+      "GM-only: the king is a lich.",
+      "2026-08-01T00:00:00Z",
+      { visibility: ShadowNoteVisibility.Hidden, },
+    );
+
+    const app = makeApp(db, "owner-1",);
+    const chatId = "11111111-1111-4111-8111-111111111111";
+
+    const revealed = await app.handle(
+      new Request(`${BASE}/api/chats/${chatId}/shadow-notes/${noteId}/reveal`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ revealedTo: ["char-1",], },),
+      },),
+    );
+
+    expect(revealed.status,).toBe(204,);
+
+    const row = await db
+      .selectFrom("shadow_notes",)
+      .select(["status", "visibility", "revealed_to",],)
+      .where("id", "=", noteId,)
+      .executeTakeFirst();
+
+    expect(row?.status,).toBe("revealed",);
+    // Invariant: revealed notes sit on the user-visible surface.
+    expect(row?.visibility,).toBe("user_visible",);
+    expect(JSON.parse(row?.revealed_to ?? "[]",),).toEqual(["char-1",],);
+
+    // The leak: gm_only content must never reach the player-visible surface.
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+
+    expect(messages,).toHaveLength(0,);
+  });
+
+  test("user_visible reveal emits a narration message", async () => {
+    const db = await setup();
+    await insertActors(
+      db,
+      "Narrator",
+      { id: "narrator-1", actor_type: "narrator", agent_type: "narrator", } as never,
+    );
+
+    const app = makeApp(db, "owner-1",);
+    const chatId = "11111111-1111-4111-8111-111111111111";
+    const chatPath = `${BASE}/api/chats/${chatId}/shadow-notes`;
+
+    const created = await app.handle(
+      new Request(chatPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          type: "world_secret",
+          content: "The well whispers at midnight.",
+        },),
+      },),
+    );
+
+    const { id, } = await getJson<{ id: string }>(created,);
+
+    const revealed = await app.handle(new Request(`${chatPath}/${id}/reveal`, { method: "POST", },),);
+    expect(revealed.status,).toBe(204,);
+
+    const narration = await db
+      .selectFrom("messages",)
+      .selectAll()
+      .where("chat_id", "=", chatId,)
+      .execute();
+
+    expect(narration,).toHaveLength(1,);
+    expect(narration[0]!.content,).toContain("The well whispers at midnight.",);
   });
 
   test("enum values accepted for both note types", async () => {
