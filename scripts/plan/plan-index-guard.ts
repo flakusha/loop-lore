@@ -112,6 +112,11 @@ export function decideIndexWrite(probe: WorktreeProbe, indexChanged: boolean, dr
   if (dryRun) { return "skip-dry-run"; }
   if (!indexChanged) { return "skip-no-change"; }
   if (!probe.ok) { return "skip-probe-failed"; }
+  // Re-check the shape HERE, not only in `classifyProbe`: `WorktreeProbe` is an
+  // exported type, so any caller may hand this function a structurally-valid
+  // `ok: true` carrying the wrong number of paths. Without this line such a
+  // probe reads as "not a linked worktree" and authorizes the write.
+  if (probe.dirs.length !== 2) { return "skip-probe-failed"; }
   return isLinkedWorktreeFrom(probe.dirs,) ? "skip-linked-worktree" : "write";
 }
 
