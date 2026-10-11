@@ -130,7 +130,7 @@ export async function migrateNpc(
       const destination = row.destination_location_id;
       if (destination) {
         claims.add(destination,);
-        await db
+        await handle
           .updateTable("npc_states",)
           .set({ location_id: destination, },)
           .where("actor_id", "=", row.actor_id,)

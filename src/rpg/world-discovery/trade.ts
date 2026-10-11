@@ -101,14 +101,21 @@ async function readMovingParties(db: Kysely<DB>, worldId: string,): Promise<Conv
     .orderBy("id", "asc",)
     .execute();
 
-  return rows.map((row,) => ({
-    id: row.id,
-    actorId: null,
-    source: "party",
-    from: row.current_location_id,
-    to: edgeAhead(row.route, row.route_index,),
-    routeIndex: row.route_index,
-  }));
+  const locations = await db.selectFrom("locations",).select(["id",],).where("world_id", "=", worldId,).execute();
+
+  const alive = new Set(locations.map((loc,) => loc.id),);
+
+  return rows.map((row,) => {
+    const next = edgeAhead(row.route, row.route_index,);
+    return {
+      id: row.id,
+      actorId: null,
+      source: "party",
+      from: row.current_location_id,
+      to: next && alive.has(next,) ? next : null,
+      routeIndex: row.route_index,
+    };
+  },);
 }
 
 /**
