@@ -545,6 +545,10 @@ describe("index.json write guard", () => {
     // The DECISION alone is not the operator's whole story: this denial used to
     // return a clean count with no notice and nothing on stderr, which is what a
     // successful run looks like. Both surfaces must speak.
+    //
+    // Resource contract — owns its own `fixture()` root (unique `mkdtempSync`,
+    // reclaimed by this block's `afterEach` on pass or fail) and shares nothing
+    // with the `MAIN`/`LINKED`/`BROKEN` constants above.
     const root = fixture(INDEX,);
     const { result, out, err, } = run(root, { ok: true, dirs: [".git",], },);
     expect(result.index.decision,).toBe("skip-probe-failed",);
@@ -645,30 +649,21 @@ describe("index.json write guard", () => {
   test("probeWorktree fails closed when git cannot be SPAWNED at all", () => {
     // The case above only makes git exit 128 — `classifyProbe`'s non-zero
     // branch. An UNRUNNABLE git is the catch, and the catch is the branch that
-    // once read as a clean main checkout. `spawnSync` resolves against the
-    // process's OWN environment, so the probe runs in a child bun whose PATH
-    // names a directory that does not exist; an EMPTY PATH is not enough,
-    // because Bun then falls back to a default search path.
-    const guard = path.join(import.meta.dir, "plan-index-guard.ts",);
-    const script = `import { probeWorktree, decideIndexWrite } from ${JSON.stringify(guard,)};\n` +
-      "const probe = probeWorktree(process.cwd());\n" +
-      "console.log(JSON.stringify({ probe, decision: decideIndexWrite(probe, true, false), }));";
-    const child = Bun.spawnSync([process.execPath, "--eval", script,], {
-      cwd: import.meta.dir,
-      env: { ...process.env, PATH: path.join(tmpdir(), "no-such-bin-dir-",), },
-      stdout: "pipe",
-      stderr: "pipe",
-      timeout: 15_000,
-    },);
-    expect(child.exitCode,).toBe(0,);
-    const { probe, decision, } = JSON.parse(child.stdout.toString(),) as {
-      probe: WorktreeProbe;
-      decision: string;
-    };
+    // once read as a clean main checkout. A name that cannot resolve makes
+    // `spawnSync` throw before any process exists, so `classifyProbe` is never
+    // reached and no exit code is ever produced. The reason string tells the two
+    // branches apart: only the catch says "could not be run".
+    //
+    // Resource contract — owns NOTHING. No temp dir, no port, no fixture file,
+    // no shared global. It deliberately does NOT scrub `PATH` to unresolve the
+    // real git: `PATH` is process-wide, so mutating it races every other test
+    // sharing the process, and `spawnSync` ignores a post-startup change anyway.
+    const probe = probeWorktree(process.cwd(), "definitely-not-a-real-git-binary",);
     expect(probe.ok,).toBe(false,);
     if (probe.ok) { throw new Error("unreachable — the assertion above failed",); }
     expect(probe.reason,).toContain("git could not be run",);
-    expect(decision,).toBe("skip-probe-failed",);
+    expect(probe.reason,).not.toContain("exited",);
+    expect(decideIndexWrite(probe, true, false,),).toBe("skip-probe-failed",);
   });
 
   // ── write ordering: a malformed index must not half-mutate ───────────────
