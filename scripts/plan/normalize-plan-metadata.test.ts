@@ -114,13 +114,21 @@ describe("projectIndex", () => {
     // zero self-evident — this case writes nothing. Nothing is mutated here
     // and nothing is shared; `projectIndex` copies the index and writes fresh
     // entry objects, so the case cannot leak into a sibling either way.
+    let reads = 0;
     const INDEX_007 = {
       "BUG-007": { source: ".plan/tickets/BUG-007.md", tags: ["prior", "index", "tags",], epic: "", },
     };
-    const read007 = (src: string,): string | null =>
-      src === ".plan/tickets/BUG-007.md" ? "**Status:** In Progress\n" : null;
+    const read007 = (src: string,): string | null => {
+      reads++;
+      return src === ".plan/tickets/BUG-007.md" ? "**Status:** In Progress\n" : null;
+    };
 
     const { next, tagsFilled, } = projectIndex(INDEX_007, read007,);
+    // The entry MUST have been consulted, or this case proves nothing: a
+    // reader that never opens the .md skips the entry and leaves it looking
+    // exactly like a reader that opened it and found no Tags line. Counting
+    // the read is what separates "read, no Tags" from "never read".
+    expect(reads,).toBe(1,);
     expect(next["BUG-007"],).toEqual(INDEX_007["BUG-007"],);
     // 0, not 3: the deleted Tags line is not a retraction.
     expect(tagsFilled,).toBe(0,);
