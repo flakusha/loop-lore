@@ -1999,6 +1999,12 @@ describe("resolveFlagBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_nsfwModeration_shared.resolveFlagBody,));
 });
 
+describe("RevealBody", () => {
+  test("accepts generated values", () => checkAllValid(routes_gmNotes_schemas.RevealBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_gmNotes_schemas.RevealBody,));
+});
+
 describe("reviewAppealBody", () => {
   test("accepts generated values", () => checkAllValid(routes_nsfwModeration_appeals.reviewAppealBody,));
 
@@ -2571,4 +2577,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 407 schemas discovered across 472 module(s).
+// 408 schemas discovered across 473 module(s).

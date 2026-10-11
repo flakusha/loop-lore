@@ -8,6 +8,12 @@ import { t, } from "elysia";
 
 const OptionalNullableString = t.Optional(t.Nullable(t.String(),),);
 
+// Free-form trigger text, bounded so a hostile GM input cannot bloat rows or
+// the prompt block; control characters are stripped at the route layer.
+const OptionalBoundedNullableString = t.Optional(
+  t.Nullable(t.String({ maxLength: 512, },),),
+);
+
 export const ShadowNoteBody = t.Object({
   type: t.UnionEnum([
     "foreshadowing",
@@ -18,9 +24,10 @@ export const ShadowNoteBody = t.Object({
     "narrative_hook",
   ],),
   content: t.String({ minLength: 1, },),
-  // Free-form activation trigger, stored verbatim. Evaluation is the
-  // GM/assistant's job; the column only carries the declaration.
-  triggerCondition: OptionalNullableString,
+  // Free-form activation trigger, stored verbatim (modulo control-character
+  // stripping) and bounded at 512 chars. Evaluation is the GM/assistant's
+  // job; the column only carries the declaration.
+  triggerCondition: OptionalBoundedNullableString,
   // Optional TTL — when set, the note is filtered out of LLM injection
   // once `expiresAt` is in the past, and purged by a background sweep.
   expiresAt: OptionalNullableString,

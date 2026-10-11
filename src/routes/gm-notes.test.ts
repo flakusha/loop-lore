@@ -4,6 +4,8 @@
  * Covers auth (401), access control (403), create/list/reveal/delete,
  * and validation (400).
  */
+import { OptionalKind, } from "@sinclair/typebox";
+import { Value, } from "@sinclair/typebox/value";
 import { describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
@@ -24,6 +26,8 @@ import {
   insertWorlds,
 } from "../test-utils/insert-helpers";
 import { gmNotesRoutes, } from "./gm-notes";
+import { injectShadowRevealNarration, } from "./gm-notes/narration";
+import { RevealBody, } from "./gm-notes/schemas";
 
 const BASE = "http://localhost";
 
@@ -524,6 +528,178 @@ describe("gmNotesRoutes", () => {
     expect(narration[0]!.content,).toContain("The well whispers at midnight.",);
   });
 
+  test("RevealBody schema: revealedTo is an optional array of strings", () => {
+    // The body itself is optional (bare reveal without payload is valid;
+    // Elysia enforces that at the body layer — the marker lives on the
+    // schema, and raw Value.Check treats top-level undefined as invalid).
+    const schema = RevealBody as unknown as Record<symbol, unknown>;
+    expect(schema[OptionalKind],).toBe("Optional",);
+
+    expect(Value.Check(RevealBody, {},),).toBe(true,);
+    expect(Value.Check(RevealBody, { revealedTo: ["char-1", "char-2",], },),).toBe(true,);
+    expect(Value.Check(RevealBody, { revealedTo: [], },),).toBe(true,);
+    // Shape violations.
+    expect(Value.Check(RevealBody, { revealedTo: "char-1", },),).toBe(false,);
+    expect(Value.Check(RevealBody, { revealedTo: [1,], },),).toBe(false,);
+    expect(Value.Check(RevealBody, { revealedTo: ["",], },),).toBe(false,);
+  });
+
+  test("reveal survives hostile revealed_to JSON already in the DB", async () => {
+    const db = await setup();
+    const app = makeApp(db, "owner-1",);
+    const chatPath = `${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`;
+
+    const created = await app.handle(
+      new Request(chatPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ type: "world_secret", content: "Hostile json.", },),
+      },),
+    );
+
+    const { id, } = await getJson<{ id: string }>(created,);
+
+    // An object where an array belongs must not 500 (uncatched spread of a
+    // non-iterable) — it is treated as no prior audience.
+    await db
+      .updateTable("shadow_notes",)
+      .set({ revealed_to: JSON.stringify({ a: 1, },), },)
+      .where("id", "=", id,)
+      .execute();
+
+    const revealed = await app.handle(
+      new Request(`${chatPath}/${id}/reveal`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ revealedTo: ["char-9",], },),
+      },),
+    );
+
+    expect(revealed.status,).toBe(204,);
+
+    // A bare string must not silently char-split into an audience of
+    // single characters either.
+    await db
+      .updateTable("shadow_notes",)
+      .set({ revealed_to: JSON.stringify("solo",), },)
+      .where("id", "=", id,)
+      .execute();
+
+    const revealedAgain = await app.handle(
+      new Request(`${chatPath}/${id}/reveal`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ revealedTo: ["char-8",], },),
+      },),
+    );
+
+    expect(revealedAgain.status,).toBe(204,);
+
+    const row = await db
+      .selectFrom("shadow_notes",)
+      .select("revealed_to",)
+      .where("id", "=", id,)
+      .executeTakeFirst();
+
+    expect(JSON.parse(row?.revealed_to ?? "[]",),).toEqual(["char-8",],);
+  });
+
+  test("trigger_condition is bounded and control characters are stripped", async () => {
+    const db = await setup();
+    const app = makeApp(db, "owner-1",);
+    const chatPath = `${BASE}/api/chats/11111111-1111-4111-8111-111111111111/shadow-notes`;
+
+    // > 512 chars -> rejected at the schema.
+    const tooLong = await app.handle(
+      new Request(chatPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          type: "foreshadowing",
+          content: "Bounded trigger.",
+          triggerCondition: "x".repeat(513,),
+        },),
+      },),
+    );
+
+    expect(tooLong.status,).toBe(422,);
+
+    // Control characters (C0 + DEL) are stripped before storage.
+    const sanitized = await app.handle(
+      new Request(chatPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          type: "foreshadowing",
+          content: "Sanitized trigger.",
+          triggerCondition: "when\u0001the\u0007bell\u007Frings",
+        },),
+      },),
+    );
+
+    expect(sanitized.status,).toBe(201,);
+
+    const list = await getJson<{
+      items: { content: string; trigger_condition: string | null }[];
+    }>(await app.handle(new Request(chatPath,),),);
+
+    const row = list.items.find((n,) => n.content === "Sanitized trigger.")!;
+    expect(row.trigger_condition,).toBe("whenthebellrings",);
+  });
+
+  test("re-revealing an already-revealed note does not re-narrate", async () => {
+    const db = await setup();
+    await insertActors(
+      db,
+      "Narrator",
+      { id: "narrator-1", actor_type: "narrator", agent_type: "narrator", } as never,
+    );
+
+    const app = makeApp(db, "owner-1",);
+    const chatId = "11111111-1111-4111-8111-111111111111";
+    const chatPath = `${BASE}/api/chats/${chatId}/shadow-notes`;
+
+    const created = await app.handle(
+      new Request(chatPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          type: "world_secret",
+          content: "Narrate once only.",
+        },),
+      },),
+    );
+
+    const { id, } = await getJson<{ id: string }>(created,);
+
+    const revealPath = `${chatPath}/${id}/reveal`;
+    await app.handle(new Request(revealPath, { method: "POST", },),);
+    await app.handle(
+      new Request(revealPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ revealedTo: ["char-2",], },),
+      },),
+    );
+
+    const narration = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+
+    expect(narration,).toHaveLength(1,);
+
+    // The re-reveal still appended the new audience id.
+    const row = await db
+      .selectFrom("shadow_notes",)
+      .select("revealed_to",)
+      .where("id", "=", id,)
+      .executeTakeFirst();
+
+    expect(JSON.parse(row?.revealed_to ?? "[]",),).toEqual(["char-2",],);
+  });
+
   test("enum values accepted for both note types", async () => {
     const db = await setup();
     const app = makeApp(db, "owner-1",);
@@ -551,5 +727,48 @@ describe("gmNotesRoutes", () => {
 
       expect(res.status,).toBe(201,);
     }
+  });
+});
+
+describe("injectShadowRevealNarration", () => {
+  test("no narrator actor -> no-op (no messages rows)", async () => {
+    const db = await setup();
+
+    await injectShadowRevealNarration(
+      db,
+      "11111111-1111-4111-8111-111111111111",
+      "Unheard narration.",
+    );
+
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .execute();
+
+    expect(messages,).toHaveLength(0,);
+  });
+
+  test("with narrator actor -> inserts a narration message", async () => {
+    const db = await setup();
+    await insertActors(
+      db,
+      "Narrator",
+      { id: "narrator-1", actor_type: "narrator", agent_type: "narrator", } as never,
+    );
+
+    const chatId = "11111111-1111-4111-8111-111111111111";
+
+    await injectShadowRevealNarration(db, chatId, "The secret is out.",);
+
+    const messages = await db
+      .selectFrom("messages",)
+      .selectAll()
+      .where("chat_id", "=", chatId,)
+      .execute();
+
+    expect(messages,).toHaveLength(1,);
+    expect(messages[0]!.content,).toContain("[Shadow Revealed] The secret is out.",);
+    expect(messages[0]!.content_type,).toBe("narration",);
+    expect(messages[0]!.visibility,).toBe("visible",);
   });
 });
