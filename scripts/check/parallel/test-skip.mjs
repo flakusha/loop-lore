@@ -9,28 +9,28 @@
  * --path-ignore-patterns both still ran `src/db/migrations.test.ts`), so
  * the runner builds a filtered path list at command-build time instead.
  *
- * Why these defaults:
- *   - `src/db/migrations.test.ts` / `src/db/migration-roundtrip.test.ts`
- *     hold the SQLite write-lock for the entire migration chain (full up +
- *     full down roundtrip), serialize behind `--parallel=4`, and the FTS5
- *     trigger dependency on `001_init.down()` is broken pre-fix
- *     (migration 013_generation.ts DROP TABLE fires
- *     `actor_memories_fts_ad` against the already-dropped `memories_fts`).
- *     Until the upstream migration is fixed (see
- *     .plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md),
- *     these tests take 3+ min AND fail, which made `giwt finalize` blow
- *     past any caller timeout. Skipping by default restores sub-5min
- *     finalize; the heavy suite stays one env override away.
+ * Why the list is empty:
+ *   It used to hold `src/db/migrations.test.ts` and
+ *   `src/db/migration-roundtrip.test.ts`, justified as "3+ min AND fail".
+ *   Both halves are false: the chain is gapless and green in seconds. The
+ *   real reason was contention — the two suites share the process-global
+ *   `testDatabaseOverride` (`src/db/index.ts`) that every other DB-backed
+ *   suite also clears in `afterEach` — but the stated reason hid that behind
+ *   a wrong one, and the gapless-chain assertion escaped a green run twice
+ *   while skipped. Serial gates (default `CHECK_JOBS=1`) resolve the
+ *   contention, so the migration chain is gated by default.
+ *
+ * Add an entry back only together with a measured reason and the wall-clock
+ * cost, and re-verify the gate both with and without it. The env overrides
+ * below are inert while this list is empty; they exist so a future skip can
+ * be toggled without editing the source.
  *
  * Override (full re-inclusion): `CHECK_INCLUDE_HEAVY_DB_TESTS=1` → empty
  * skip list. Per-pattern override: `CHECK_TEST_KEEP_REGEX='migrations'`
  * removes any pattern whose substring appears in that string (allows
  * trimming the skip set without editing the source).
  */
-const DEFAULT_TEST_SKIP_PATTERNS = [
-  "src/db/migrations.test.ts",
-  "src/db/migration-roundtrip.test.ts",
-];
+const DEFAULT_TEST_SKIP_PATTERNS = [];
 
 export const SKIP_PATTERNS = (() => {
   if (process.env.CHECK_INCLUDE_HEAVY_DB_TESTS === "1") { return []; }

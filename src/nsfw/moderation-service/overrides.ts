@@ -7,6 +7,7 @@
  * Computing the effective NSFW setting for a chat and setting chat/world
  * level overrides.
  */
+import { findWorld, } from "../../worlds/lookup";
 import type { NsfwModerationServiceContext, NsfwUserPrefs, } from "./types";
 
 /** */
@@ -132,10 +133,7 @@ export interface SetWorldNsfwOverrideArgs {
 export async function setWorldNsfwOverride(
   { thisL, worldId, override, performedBy, }: SetWorldNsfwOverrideArgs,
 ): Promise<void> {
-  const world = await thisL.db.selectFrom("worlds",)
-    .select("id",)
-    .where("id", "=", worldId,)
-    .executeTakeFirst();
+  const world = await findWorld(thisL.db, worldId,);
 
   if (!world) {
     throw new Error(`world_not_found:${worldId}`,);
