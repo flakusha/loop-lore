@@ -87,7 +87,17 @@ export async function migrateNpc(
 
     if (kind === "npc_arrive") {
       const destination = row.destination_location_id;
-      if (destination && claims.has(destination,)) {
+      if (!destination) {
+        await handle
+          .updateTable("npc_migrations",)
+          .set({ status: "arrived", updated_at: stamp, },)
+          .where("id", "=", row.id,)
+          .execute();
+
+        continue;
+      }
+
+      if (claims.has(destination,)) {
         result.deferred += 1;
         continue;
       }
