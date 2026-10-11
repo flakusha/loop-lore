@@ -15316,7 +15316,9 @@
     "source": ".plan/tickets/epic-world-locations.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "world",
+      "locations",
+      "hub"
     ],
     "title": "World & Locations",
     "type": "EPIC"
