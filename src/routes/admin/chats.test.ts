@@ -118,7 +118,7 @@ describe("admin chats routes", () => {
       new Request(`http://localhost/api/admin/chats/${TEST_CHAT}`, {
         method: "PATCH",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ is_pinned: "true", },),
+        body: JSON.stringify({ is_pinned: "pinned", },),
       },),
     );
 
