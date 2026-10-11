@@ -17,6 +17,7 @@
  */
 
 import type { Kysely, } from "kysely";
+import { authorCarriageIfEnabled, } from "../../chat/service/carriage-authoring";
 import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -311,6 +312,19 @@ export function streamToClient({
             userId,
           },).catch((error: unknown,) => {
             log.error("Memory extraction failed", error instanceof Error ? error : undefined,);
+          },);
+
+          // Hidden carriage authoring (epic-hidden-carriage-context):
+          // best-effort background estimate of the chat's episode-context
+          // TOML. Explicit .catch so a hook failure cannot surface as an
+          // unhandled rejection.
+          void authorCarriageIfEnabled(database, {
+            chatId: input.chatId,
+            aiContent: result.content,
+            config: cfg,
+            userId,
+          },).catch((error: unknown,) => {
+            log.error("Carriage authoring failed", error instanceof Error ? error : undefined,);
           },);
         }
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 245
+// size-allow: 262
 
 /**
  * Memory section — the actor's most important memories, provision-filtered
@@ -199,22 +199,41 @@ export const memorySection: SectionBuilder = {
     const injected = await applyKeyphraseRecalls(ctx, injectionResult.selected, keyphraseHits,);
     if (injected.length === 0) { return []; }
 
+    // Single-assembly gate (epic-hidden-carriage-context): submit candidate
+    // entries so `{ system, visibility }` filtering + content-hash dedup run
+    // server-side; a fact another system already submitted drops here and is
+    // never touched, audited, or rendered. Entry `content` is the plain fact
+    // text — the cross-system dedup key; rendering stays on the memory
+    // objects below. Without the gate every provisioned memory passes
+    // through unchanged (byte-identical baseline).
+    const candidates = injected.map((m,) => ({
+      system: "memory",
+      id: m.id,
+      content: m.content,
+      visibility: "player" as const,
+    }));
+
+    const kept = ctx.injectables ? ctx.injectables.submit(candidates,) : candidates;
+    const keptIds = new Set(kept.map((e,) => e.id),);
+    const finalInjected = injected.filter((m,) => keptIds.has(m.id,));
+    if (finalInjected.length === 0) { return []; }
+
     // Touch last_accessed on every injected memory (BUG-TOUCHMEMORY). Prompt
     // assembly must never fail because the touch write fails.
     try {
-      await touchMemories(ctx.db, injected.map((m,) => m.id),);
+      await touchMemories(ctx.db, finalInjected.map((m,) => m.id),);
     } catch (err) {
       getLogger().warn(
         "memory section: failed to touch injected memories",
         {
           err: err instanceof Error ? err.message : String(err,),
           chatId: ctx.chat.id,
-          memoryIds: injected.map((m,) => m.id),
+          memoryIds: finalInjected.map((m,) => m.id),
         },
       );
     }
 
-    const memoryText = injected
+    const memoryText = finalInjected
       .map((m,) => `- [${m.memoryType}] ${m.content}`)
       .join("\n",);
 
@@ -222,7 +241,7 @@ export const memorySection: SectionBuilder = {
     // the full set of included memory IDs. This centralizes injection
     // tracking at the single point that decides what was actually injected.
     const auditByActor = new Map<string, string[]>();
-    const selectedWithActor = injected.filter((m,) => typeof m.actorId === "string");
+    const selectedWithActor = finalInjected.filter((m,) => typeof m.actorId === "string");
     for (const mem of selectedWithActor) {
       const list = auditByActor.get(mem.actorId as string,) ?? [];
       list.push(mem.id,);

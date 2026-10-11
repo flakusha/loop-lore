@@ -16,10 +16,16 @@ import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { safeJsonStringify, } from "../../utils";
 
-/** Context boundary a carriage record describes. */
-export const CARRIAGE_SCOPES = ["section", "party", "session",] as const;
+/** Context boundary a carriage record describes.
+ *
+ * `carriage` holds the hidden TOML episode-context block
+ * (epic-hidden-carriage-context): payload `{ toml: string }` authored by
+ * the LLM carriage writer (see ./carriage-authoring) and injected by the
+ * `carriage` prompt section.
+ */
+export const CARRIAGE_SCOPES = ["section", "party", "session", "carriage",] as const;
 
-/** One of `section` / `party` / `session`. */
+/** One of `section` / `party` / `session` / `carriage`. */
 export type CarriageScope = (typeof CARRIAGE_SCOPES)[number];
 
 /** Persisted carriage row (payload held as a JSON string). */
@@ -110,18 +116,23 @@ export async function recordCarriage(
  * @param chatId
  * @param opts
  * @param opts.limit - row cap (clamped to 1..500; default 100)
+ * @param opts.scope - restrict to one scope (e.g. the `carriage` TOML
+ *   block); omitted returns every scope
  * @returns Matching carriage records.
  */
 export async function listCarriage(
   db: Kysely<DB>,
   chatId: string,
-  opts: { limit?: number } = {},
+  opts: { limit?: number; scope?: CarriageScope } = {},
 ): Promise<CarriageRecord[]> {
   const limit = Math.min(Math.max(opts.limit ?? 100,), 500,);
-  const rows = await db
+  let query = db
     .selectFrom("carriage_records",)
     .select(["id", "chat_id", "source_chat_id", "scope", "payload", "created_at",],)
-    .where("chat_id", "=", chatId,)
+    .where("chat_id", "=", chatId,);
+
+  if (opts.scope !== undefined) { query = query.where("scope", "=", opts.scope,); }
+  const rows = await query
     .limit(limit,)
     .orderBy("created_at", "desc",)
     .execute();

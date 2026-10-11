@@ -19,7 +19,8 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../../test-utils/insert-helpers";
-import { CARRIAGE_CONFIG_KEY, carriageSection, isCarriageEnabled, } from "./carriage";
+import { createAssemblyGate, } from "../carriage-isolation";
+import { CARRIAGE_CONFIG_KEY, carriageEntries, carriageSection, isCarriageEnabled, } from "./carriage";
 
 const VALID_TOML = [
   "episode = 4",
@@ -28,6 +29,16 @@ const VALID_TOML = [
   'name = "K"',
   'status = "Inside the ruin"',
 ].join("\n",);
+
+/**
+ * Persisted scope=`carriage` payload shape: `{ toml }` authored by the LLM
+ * writer (src/chat/service/carriage-authoring.ts).
+ * @param toml - raw carriage TOML
+ * @returns the JSON payload string to seed
+ */
+function tomlPayload(toml: string,): string {
+  return JSON.stringify({ toml, },);
+}
 
 /**
  * @param db
@@ -97,7 +108,7 @@ describe("carriageSection", () => {
   test("toggle off → empty section", async () => {
     const { db, } = await createTestDb();
     await seedChat(db, null,);
-    await insertCarriageRecords(db, "chat-1", "session", VALID_TOML, "2026-08-01T00:00:00Z",);
+    await insertCarriageRecords(db, "chat-1", "carriage", tomlPayload(VALID_TOML,), "2026-08-01T00:00:00Z",);
     const messages = await carriageSection.build(makeCtx(db, "chat-1", null,),);
     expect(messages,).toHaveLength(0,);
   });
@@ -106,7 +117,7 @@ describe("carriageSection", () => {
     const { db, } = await createTestDb();
     const gmConfig = JSON.stringify({ [CARRIAGE_CONFIG_KEY]: true, },);
     await seedChat(db, gmConfig,);
-    await insertCarriageRecords(db, "chat-1", "session", VALID_TOML, "2026-08-01T00:00:00Z",);
+    await insertCarriageRecords(db, "chat-1", "carriage", tomlPayload(VALID_TOML,), "2026-08-01T00:00:00Z",);
     const messages = await carriageSection.build(makeCtx(db, "chat-1", gmConfig,),);
     expect(messages,).toHaveLength(1,);
     expect(messages[0]!.role,).toBe("system",);
@@ -116,6 +127,54 @@ describe("carriageSection", () => {
     expect(messages[0]!.content,).toContain("hidden memory context",);
   });
 
+  test("gate-on rendering is byte-identical to the direct render", async () => {
+    const { db, } = await createTestDb();
+    const gmConfig = JSON.stringify({ [CARRIAGE_CONFIG_KEY]: true, },);
+    await seedChat(db, gmConfig,);
+    await insertCarriageRecords(db, "chat-1", "carriage", tomlPayload(VALID_TOML,), "2026-08-01T00:00:00Z",);
+    const bare = await carriageSection.build(makeCtx(db, "chat-1", gmConfig,),);
+    const gated = await carriageSection.build({
+      ...makeCtx(db, "chat-1", gmConfig,),
+      injectables: createAssemblyGate("player",),
+    },);
+
+    expect(gated,).toEqual(bare,);
+  });
+
+  test("gate-on dedup: a fact another system submitted drops from the block", async () => {
+    const { db, } = await createTestDb();
+    const gmConfig = JSON.stringify({ [CARRIAGE_CONFIG_KEY]: true, },);
+    await seedChat(db, gmConfig,);
+    await insertCarriageRecords(db, "chat-1", "carriage", tomlPayload(VALID_TOML,), "2026-08-01T00:00:00Z",);
+    const gate = createAssemblyGate("player",);
+    // Another system (memory) already injected K's carriage fact.
+    gate.submit([
+      { system: "memory", id: "m1", content: "K: Inside the ruin", visibility: "player", },
+    ],);
+
+    const messages = await carriageSection.build({
+      ...makeCtx(db, "chat-1", gmConfig,),
+      injectables: gate,
+    },);
+
+    expect(messages,).toHaveLength(1,);
+    expect(messages[0]!.content,).not.toContain('name = "K"',);
+    expect(messages[0]!.content,).toContain("episode = 4",);
+    expect(gate.report().duplicates,).toHaveLength(1,);
+  });
+
+  test("carry-log rows never reach the TOML block (scope filter)", async () => {
+    const { db, } = await createTestDb();
+    const gmConfig = JSON.stringify({ [CARRIAGE_CONFIG_KEY]: true, },);
+    await seedChat(db, gmConfig,);
+    // Newest row is a cross-context carry record — not carriage TOML.
+    await insertCarriageRecords(db, "chat-1", "carriage", tomlPayload(VALID_TOML,), "2026-08-01T00:00:00Z",);
+    await insertCarriageRecords(db, "chat-1", "session", JSON.stringify({ step: 1, },), "2026-08-02T00:00:00Z",);
+    const messages = await carriageSection.build(makeCtx(db, "chat-1", gmConfig,),);
+    expect(messages,).toHaveLength(1,);
+    expect(messages[0]!.content,).toContain('name = "K"',);
+  });
+
   test("flat character list cancels with zero messages", async () => {
     const { db, } = await createTestDb();
     const gmConfig = JSON.stringify({ [CARRIAGE_CONFIG_KEY]: true, },);
@@ -123,8 +182,8 @@ describe("carriageSection", () => {
     await insertCarriageRecords(
       db,
       "chat-1",
-      "session",
-      'characters = ["K", "G"]\n',
+      "carriage",
+      tomlPayload('characters = ["K", "G"]\n',),
       "2026-08-01T00:00:00Z",
     );
 
@@ -136,8 +195,54 @@ describe("carriageSection", () => {
     const { db, } = await createTestDb();
     const gmConfig = JSON.stringify({ [CARRIAGE_CONFIG_KEY]: true, },);
     await seedChat(db, gmConfig,);
-    await insertCarriageRecords(db, "chat-1", "session", `x = "${"y".repeat(9_000,)}"`, "2026-08-01T00:00:00Z",);
+    await insertCarriageRecords(
+      db,
+      "chat-1",
+      "carriage",
+      tomlPayload(`x = "${"y".repeat(9_000,)}"`,),
+      "2026-08-01T00:00:00Z",
+    );
+
     const messages = await carriageSection.build(makeCtx(db, "chat-1", gmConfig,),);
     expect(messages,).toHaveLength(0,);
+  });
+
+  test("missing or malformed { toml } payload injects nothing", async () => {
+    const { db, } = await createTestDb();
+    const gmConfig = JSON.stringify({ [CARRIAGE_CONFIG_KEY]: true, },);
+    await seedChat(db, gmConfig,);
+    await insertCarriageRecords(db, "chat-1", "carriage", JSON.stringify({ other: 1, },), "2026-08-01T00:00:00Z",);
+    expect(await carriageSection.build(makeCtx(db, "chat-1", gmConfig,),),).toHaveLength(0,);
+    await insertCarriageRecords(db, "chat-1", "carriage", "{broken", "2026-08-03T00:00:00Z",);
+    expect(await carriageSection.build(makeCtx(db, "chat-1", gmConfig,),),).toHaveLength(0,);
+  });
+});
+
+describe("carriageEntries", () => {
+  test("splits an approved doc into one plain-fact entry per fact", () => {
+    const entries = carriageEntries({
+      episode: 4,
+      title: "The Sleeper's Warning",
+      setting: "Ruin on largest island",
+      characters: [
+        { name: "K", status: "Inside the ruin", },
+        { name: "G", status: "With party", },
+      ],
+    },);
+
+    expect(entries,).toEqual([
+      { system: "carriage", id: "episode", content: "episode 4", visibility: "player", },
+      { system: "carriage", id: "title", content: "The Sleeper's Warning", visibility: "player", },
+      { system: "carriage", id: "setting", content: "Ruin on largest island", visibility: "player", },
+      { system: "carriage", id: "character-0", content: "K: Inside the ruin", visibility: "player", },
+      { system: "carriage", id: "character-1", content: "G: With party", visibility: "player", },
+    ],);
+  });
+
+  test("omits absent fields and tolerates a characterless doc", () => {
+    expect(carriageEntries({},),).toEqual([],);
+    expect(carriageEntries({ episode: 1, },),).toEqual([
+      { system: "carriage", id: "episode", content: "episode 1", visibility: "player", },
+    ],);
   });
 });

@@ -22,7 +22,8 @@ export type AuxTaskName =
   | "injection-check"
   | "message-action"
   | "chat-title"
-  | "rag-ask";
+  | "rag-ask"
+  | "carriage";
 
 /** Per-call options for `callAux`. All optional — runner defaults apply. */
 export interface AuxCallOptions {
