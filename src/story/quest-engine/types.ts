@@ -55,6 +55,7 @@ export interface QuestRow {
 export interface ProgressQuestRow {
   id: string;
   world_id: string;
+  creator_id: string;
   type: string;
   config: string;
   progress: number;

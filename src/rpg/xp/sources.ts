@@ -90,3 +90,29 @@ export function xpForSkillChallenge(
   const baseXp = 100 * characterLevel;
   return Math.floor(baseXp * (multipliers[difficulty] ?? 0.5),);
 }
+
+/** Flat award for a first-time location discovery. */
+export const DISCOVERY_XP = 50;
+
+/**
+ * XP for charting a location for the first time.
+ * Flat by design: discovery ticks are the deterministic tier, so the award
+ * must not draw RNG or scale with state a replay could not reproduce.
+ * @returns {number}
+ */
+export function xpForDiscovery(): number {
+  return DISCOVERY_XP;
+}
+
+/** Flat award for one completed travel hop (a migration arrival). */
+export const TRAVEL_LEG_XP = 25;
+
+/**
+ * XP for finishing one world-travel leg.
+ * Flat for the same determinism reason as {@link xpForDiscovery}; long
+ * routes simply accrue one award per completed hop.
+ * @returns {number}
+ */
+export function xpForTravelLeg(): number {
+  return TRAVEL_LEG_XP;
+}
