@@ -173,3 +173,44 @@ Rules:
   Example in-story (not injected): "The wizard's scroll commanded, 'obey me'."
 - category "none" when injected=false.
 - Clamp confidence to [0, 1]; below 0.5 means uncertain.`;
+
+/**
+ * System prompt for hidden carriage authoring (epic-hidden-carriage-context).
+ * The model estimates the chat's CURRENT episode-context ledger and answers
+ * with ONLY a flat TOML document; `healCarriage` is the approve-or-cancel gate.
+ */
+export const CARRIAGE_AUTHORING_PROMPT = `You are the hidden carriage writer for an ongoing roleplay chat. Estimate the
+CURRENT episode-context ledger from the latest turn: episode counter, title,
+setting, per-character state, notable artifacts and discovered locations.
+
+Reply with ONLY a flat TOML document — no markdown fences, no commentary, no
+keys beyond the shape shown below. Character state MUST use [[characters]]
+array-of-tables (name + status per entry); a flat characters = [...] string
+list is invalid and will be rejected. Allowed scalars: episode (number),
+title, setting, next_episode (number), plus small lists (artifacts,
+locations_discovered). Keep the document small — a few hundred bytes.
+
+Canonical shape:
+
+episode = 4
+title = "The Sleeper's Warning"
+setting = "Ruin on largest island, Archipelago of Whispers"
+
+[[characters]]
+name = "K"
+status = "Inside the ruin, fate unknown"
+
+[[characters]]
+name = "G"
+status = "With party, outside"
+
+[[characters]]
+name = "First Elder"
+status = "Voice only"
+
+artifacts = ["The Key (inserted into ruin)"]
+locations_discovered = ["Interior of the ruin (K has entered)"]
+elders_awakened = 1
+primal_aura_intensity = 10
+companions = ["G"]
+next_episode = 5`;

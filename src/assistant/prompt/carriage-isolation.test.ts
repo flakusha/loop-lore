@@ -10,6 +10,7 @@
 import { describe, expect, test, } from "bun:test";
 import {
   assembleEntries,
+  createAssemblyGate,
   entryHash,
   filterVisible,
   guardShadowWriteback,
@@ -70,6 +71,55 @@ describe("assembleEntries", () => {
     const a = fact("carriage",);
     const b: InjectableEntry = { ...fact("notes",), content: "The elder woke.", };
     expect(assembleEntries([a, b,], "player",).entries,).toHaveLength(2,);
+  });
+});
+
+describe("createAssemblyGate", () => {
+  test("dedups across sections: first submitting section wins", () => {
+    const gate = createAssemblyGate("player",);
+    const first = gate.submit([fact("memory",),],);
+    const second = gate.submit([fact("carriage",),],);
+    expect(first,).toHaveLength(1,);
+    expect(second,).toHaveLength(0,);
+    const report = gate.report();
+    expect(report.role,).toBe("player",);
+    expect(report.duplicates,).toHaveLength(1,);
+    expect(report.duplicates[0]!.entry.system,).toBe("carriage",);
+    expect(report.duplicates[0]!.firstIndex,).toBe(0,);
+  });
+
+  test("reports shadow-leak entries for the player role", () => {
+    const gate = createAssemblyGate("player",);
+    const kept = gate.submit([
+      fact("notes",),
+      // A shadow-system entry mis-tagged player-visible: the leak guard
+      // drops it and reports it (cross-system negative read).
+      { ...fact("gmNotes-shadow", "s1",), visibility: "player" as const, },
+    ],);
+
+    expect(kept,).toHaveLength(1,);
+    expect(gate.report().suppressed,).toHaveLength(1,);
+    expect(gate.report().suppressed[0]!.id,).toBe("s1",);
+  });
+
+  test("a fact can repeat inside one submission and across submissions", () => {
+    const gate = createAssemblyGate("player",);
+    const first = gate.submit([fact("memory",), fact("memory", "2",),],);
+    expect(first,).toHaveLength(1,);
+    expect(gate.submit([fact("notes",),],),).toHaveLength(0,);
+    expect(gate.report().duplicates,).toHaveLength(2,);
+  });
+
+  test("gm flow admits gm-class entries exactly once across submissions", () => {
+    const gate = createAssemblyGate("gm",);
+    const [first,] = gate.submit([
+      { ...fact("gmNotes-shadow", "s1",), visibility: "gm" as const, },
+    ],);
+
+    expect(first!.shadowReadOnly,).toBe(true,);
+    expect(gate.submit([
+      { ...fact("memory", "s1-copy",), visibility: "gm" as const, },
+    ],),).toHaveLength(0,);
   });
 });
 

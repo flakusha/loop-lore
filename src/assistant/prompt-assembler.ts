@@ -8,7 +8,7 @@
 // budget, and returns the assembled prompt. See
 // docs/frontend/chat/prompt-creation.md for section ordering rationale.
 
-// size-allow: 330
+// size-allow: 352
 import type { Kysely, } from "kysely";
 import { getContextWindowForModel, } from "../admin/model-capabilities";
 import { MoodService, } from "../characters/services/mood-service";
@@ -30,7 +30,9 @@ import { withResolvedOutfit, } from "./prompt-outfit";
 import { withResolvedPersonality, } from "./prompt-personality";
 import { loadUserPromptPreferences, } from "./prompt-user-preferences";
 import { parseJsonOr, } from "./prompt-utils";
+import { createAssemblyGate, } from "./prompt/carriage-isolation";
 import { PROMPT_SECTIONS, } from "./prompt/registry";
+import { isCarriageEnabled, } from "./prompt/sections/carriage";
 import type {
   AssembleActor,
   AssembleChat,
@@ -99,6 +101,8 @@ export class PromptAssembler {
       tokenBudget: ctx.tokenBudget,
       sections,
       responseLength: resolvedResponseLength,
+      // Debug `?` provenance — only when the gate ran.
+      ...(ctx.injectables ? { injectables: ctx.injectables.report(), } : {}),
     };
   }
 
@@ -192,6 +196,16 @@ export class PromptAssembler {
   ): Promise<{ ctx: AssembleContext; resolvedResponseLength: ResponseLengthConfig }> {
     // ── Resolve output style + response length (chat → user → server) ──
     const gmConfig = parseJsonOr<GmConfig | null>(chat.gm_config, null,);
+
+    // Single-assembly injection gate (epic-hidden-carriage-context): active
+    // only when the chat opted into the hidden carriage, or an explicit
+    // params.assembleRole override requests one. Absent → sections render
+    // unfiltered, keeping the toggle-off prompt byte-identical to the
+    // pre-feature baseline.
+    const injectables = isCarriageEnabled(chat.gm_config,) || params.assembleRole !== undefined
+      ? createAssemblyGate(params.assembleRole ?? (gmConfig?.assistantRole === "gm" ? "gm" : "player"),)
+      : undefined;
+
     const userPrefs = await loadUserPromptPreferences(this.db, params.userId,);
     const userOutputStylePreset = userPrefs.outputStylePreset;
     const userResponseLengthPreset = userPrefs.responseLengthPreset;
@@ -299,6 +313,7 @@ export class PromptAssembler {
       responseLength: resolvedResponseLength,
       userCustomInstructions,
       isStory,
+      injectables,
     };
 
     return { ctx, resolvedResponseLength, };

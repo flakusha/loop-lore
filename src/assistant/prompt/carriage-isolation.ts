@@ -128,3 +128,79 @@ export function guardShadowWriteback(
 export function entryHash(entry: InjectableEntry,): string {
   return contentHash(entry.content,);
 }
+
+/** Provenance for the debug `?` view: one assembly's gate outcome. */
+export interface InjectableReport {
+  /** Role the assembly served. */
+  role: AssembleRole;
+  /** Entries dropped as duplicates of an earlier submission. */
+  duplicates: DuplicateEntry<InjectableEntry>[];
+  /** Entries suppressed by the visibility filter. */
+  suppressed: InjectableEntry[];
+}
+
+/**
+ * Per-assembly injection gate — the incremental form of
+ * {@link assembleEntries}. The assembler creates one gate per assembly run
+ * and hangs it on `AssembleContext.injectables`; sections submit candidate
+ * entries and render only the survivors, so visibility filtering +
+ * content-hash dedup are enforced server-side in one place.
+ */
+export interface AssemblyInjectables {
+  /** Role this assembly serves (drives filtering + shadow read-only marking). */
+  readonly role: AssembleRole;
+  /**
+   * Submit candidates for this assembly.
+   * @param entries - candidate entries in source-priority order
+   * @returns the survivors, in submission order (first source wins)
+   */
+  submit(entries: readonly InjectableEntry[],): InjectableEntry[];
+  /** Debug `?` provenance: dropped duplicates + suppressed entries. */
+  report(): InjectableReport;
+}
+
+/**
+ * Create an assembly-scoped gate. Semantics match {@link assembleEntries}
+ * (filter by role server-side, shadow-leak check, dedup by content hash)
+ * but accumulate across the section loop, so the same fact submitted by two
+ * sections injects once, attributed to the first submitting section.
+ * @param role - role the prompt is being assembled for
+ * @returns the gate
+ */
+export function createAssemblyGate(role: AssembleRole,): AssemblyInjectables {
+  // Dynamic membership (runtime insert, .size ordering) — a Map is the
+  // correct structure here, not a static Record.
+  const seen = new Map<string, number>();
+  const duplicates: DuplicateEntry<InjectableEntry>[] = [];
+  const suppressed: InjectableEntry[] = [];
+  const survivors: InjectableEntry[] = [];
+
+  return {
+    role,
+    submit(entries,) {
+      const visible = filterVisible(entries, role,);
+      // Batch-local: submit returns only THIS batch's survivors; the global
+      // list keeps accumulating for the whole assembly.
+      const admitted: InjectableEntry[] = [];
+      for (const entry of visible) {
+        if (isShadowLeak(entry,)) {
+          suppressed.push(entry,);
+          continue;
+        }
+
+        const hash = entryHash(entry,);
+        const firstIndex = seen.get(hash,);
+        if (firstIndex === undefined) {
+          seen.set(hash, seen.size,);
+          survivors.push(entry,);
+          admitted.push(entry,);
+        } else {
+          duplicates.push({ entry, hash, firstIndex, },);
+        }
+      }
+
+      return admitted;
+    },
+    report: () => ({ role, duplicates, suppressed, }),
+  };
+}

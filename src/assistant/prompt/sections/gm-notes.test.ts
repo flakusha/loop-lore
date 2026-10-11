@@ -27,7 +27,12 @@ import {
   insertWhitenotes,
   insertWorlds,
 } from "../../../test-utils/insert-helpers";
-import { fetchUnrevealedShadowNotes, formatShadowSteering, gmNotesSection, } from "./gm-notes";
+import {
+  fetchUnrevealedShadowNotes,
+  formatShadowSteering,
+  gmNoteEntries,
+  gmNotesSection,
+} from "./gm-notes";
 
 /**
  * @param db
@@ -306,5 +311,41 @@ describe("fetchUnrevealedShadowNotes + formatShadowSteering", () => {
 
     const notes = await fetchUnrevealedShadowNotes(db, "chat-1",);
     expect(notes.map((n,) => n.content),).toEqual(["Fresh.", "No TTL.",],);
+  });
+});
+
+describe("gmNoteEntries", () => {
+  test("player-class whitenotes first, then gm-class shadow notes", () => {
+    const entries = gmNoteEntries(
+      [{ type: "direction", content: "Keep the ruin ominous.", priority: 5, scope: "scene", message_id: null, },],
+      [{ type: "foreshadowing", content: "The First Elder never sleeps.", trigger: null, },],
+    );
+
+    expect(entries,).toEqual([
+      {
+        system: "notes",
+        id: "whitenote-0",
+        content: "Keep the ruin ominous.",
+        visibility: "player",
+      },
+      {
+        system: "gmNotes-shadow",
+        id: "shadow-0",
+        content: "The First Elder never sleeps.",
+        visibility: "gm",
+      },
+    ],);
+  });
+
+  test("plain note text is the dedup key, not the labeled render", () => {
+    const entries = gmNoteEntries(
+      [{ type: "direction", content: "Slow-burn the betrayal.", priority: 7, scope: "story", message_id: null, },],
+      [],
+    );
+
+    // Entry content is the bare note text so a fact another system already
+    // submitted dedups; the labeled `- [type][priority][scope]` line is a
+    // render detail owned by the section.
+    expect(entries[0]!.content,).toBe("Slow-burn the betrayal.",);
   });
 });
