@@ -14,7 +14,6 @@ import {
 } from "../../admin/config";
 import { HOT_APPLY_PATHS, } from "../../config/hot-apply";
 import { jsonSchema, } from "../../config/schema-class";
-import { buildConfigMenu, } from "../../config/sections/menu";
 import {
   AdminSystemConfigBody,
   AdminSystemConfigImportBody,
@@ -186,13 +185,8 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         if (typeof userId !== "string") { return userId; }
 
         const key = ctx.params.key as string;
-        const adminSections = buildConfigMenu(true,);
-        const userSections = buildConfigMenu(false,);
-        const knownKey = [...adminSections, ...userSections,]
-          .flatMap((s,) => s.fields)
-          .find((f,) => f.key === key);
-
-        if (!knownKey) {
+        const allConfig = await getAllConfig(opts.database,);
+        if (!allConfig.find((c,) => c.key === key)) {
           return jsonError(`Unknown config key: ${key}`, HttpStatus.BadRequest, ErrorCode.BadRequest,);
         }
 
