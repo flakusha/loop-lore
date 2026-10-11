@@ -68,7 +68,6 @@ describe("projectIndex", () => {
     ".plan/tickets/BUG-002.md": "**Status:** Done\n",
     ".plan/tickets/BUG-003.md": "**Tags:** already\n**Epic:** epic-other\n",
     ".plan/tickets/BUG-006.md": "**Tags:** fresh-list\n**Epic:** epic-new\n",
-    ".plan/tickets/BUG-007.md": "**Status:** In Progress\n",
   };
   const read = (src: string,): string | null => files[src] ?? null;
   const index = {
@@ -82,7 +81,6 @@ describe("projectIndex", () => {
     "BUG-004": { source: ".plan/tickets/BUG-gone.md", tags: [], epic: "", },
     "BUG-005": { source: "", tags: [], epic: "", },
     "BUG-006": { source: ".plan/tickets/BUG-006.md", tags: ["stale",], epic: "epic-old", },
-    "BUG-007": { source: ".plan/tickets/BUG-007.md", tags: ["prior", "index", "tags",], epic: "", },
   };
 
   test("fills empty tags/epic from the .md, counting each", () => {
@@ -107,9 +105,25 @@ describe("projectIndex", () => {
     // Deletion is not a retraction — an entry whose Tags line is gone reads
     // as `tags: []`, and treating that as authoritative would wipe every tag
     // on every ticket that drops the line.
-    const { next, tagsFilled, } = projectIndex(index, read,);
-    expect(next["BUG-007"],).toEqual(index["BUG-007"],);
-    expect(tagsFilled,).toBe(3,);
+    //
+    // Resource contract — this case owns BOTH its fixture entries and shares
+    // nothing with the block-level `files`/`index` above. That fixture's
+    // `tagsFilled` is a SUM over every entry it holds, so a case that asserts
+    // a count through it is coupled to its siblings: adding one entry above
+    // silently changes this expectation. Owning the fixture also makes the
+    // zero self-evident — this case writes nothing. Nothing is mutated here
+    // and nothing is shared; `projectIndex` copies the index and writes fresh
+    // entry objects, so the case cannot leak into a sibling either way.
+    const INDEX_007 = {
+      "BUG-007": { source: ".plan/tickets/BUG-007.md", tags: ["prior", "index", "tags",], epic: "", },
+    };
+    const read007 = (src: string,): string | null =>
+      src === ".plan/tickets/BUG-007.md" ? "**Status:** In Progress\n" : null;
+
+    const { next, tagsFilled, } = projectIndex(INDEX_007, read007,);
+    expect(next["BUG-007"],).toEqual(INDEX_007["BUG-007"],);
+    // 0, not 3: the deleted Tags line is not a retraction.
+    expect(tagsFilled,).toBe(0,);
   });
 
   test("regression: prose-fragment tags scraped by a header-window parse are replaced by the .md list — frontmatter wins", () => {
