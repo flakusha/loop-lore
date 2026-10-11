@@ -131,7 +131,11 @@ DECISION is testable without git, and it refuses to guess:
     cannot be run or exits non-zero (no git on `PATH`, a `safe.directory`
     refusal, a spawn failure) resolves to `skip-probe-failed` and **never** to
     `write`. The cause is named on stderr and in the report, so a held-back
-    write can never be mistaken for a clean `tags backfilled: N`.
+    write can never be mistaken for a clean `tags backfilled: N`. It re-checks
+    the two-path shape ITSELF rather than trusting that every `ok: true` came out
+    of `classifyProbe` — `WorktreeProbe` is exported, so a caller may hand it a
+    structurally-valid probe carrying the wrong path count, and that resolves to
+    `skip-probe-failed` too, never to `write`.
   - `projectIndexOntoDisk` is the only path that performs the write, and the
     normalizer calls `loadIndex` BEFORE the `.md` pass.
 - The decision is always reported: the human line ends with it (`write`,
