@@ -176,13 +176,17 @@ export function injectMemories(
     addedTokens += m.tokenCount;
   }
 
+  const newTokens = context.totalTokens + addedTokens;
+  const newPercentage = context.maxTokens > 0
+    ? Math.round((newTokens / context.maxTokens) * 100,)
+    : 0;
+
   return {
     ...context,
     injectedMemories: [...context.injectedMemories, ...accepted,],
-    totalTokens: context.totalTokens + addedTokens,
-    usagePercentage: context.maxTokens > 0
-      ? Math.round(((context.totalTokens + addedTokens) / context.maxTokens) * 100,)
-      : 0,
+    totalTokens: newTokens,
+    usagePercentage: newPercentage,
+    willTrim: newPercentage >= DEFAULT_THRESHOLDS.imminent,
   };
 }
 
@@ -210,12 +214,16 @@ export function injectEvents(
     addedTokens += e.tokenCount;
   }
 
+  const newTokens = context.totalTokens + addedTokens;
+  const newPercentage = context.maxTokens > 0
+    ? Math.round((newTokens / context.maxTokens) * 100,)
+    : 0;
+
   return {
     ...context,
     injectedEvents: [...context.injectedEvents, ...accepted,],
-    totalTokens: context.totalTokens + addedTokens,
-    usagePercentage: context.maxTokens > 0
-      ? Math.round(((context.totalTokens + addedTokens) / context.maxTokens) * 100,)
-      : 0,
+    totalTokens: newTokens,
+    usagePercentage: newPercentage,
+    willTrim: newPercentage >= DEFAULT_THRESHOLDS.imminent,
   };
 }
