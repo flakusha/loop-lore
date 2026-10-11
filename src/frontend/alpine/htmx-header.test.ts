@@ -1,5 +1,14 @@
-import { describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, test, } from "bun:test";
 import { normalizeHeaderSlot, } from "./htmx-header";
+
+// Every test here swaps in a `mockDoc` whose `createElement` has no `style`.
+// Without this restore the last one stays installed for every later file in
+// the shared process, and anything reading `el.style` (auto-resize.test.ts)
+// fails with `undefined is not an object`.
+const realDocument = globalThis.document;
+afterEach(() => {
+  globalThis.document = realDocument;
+},);
 
 /**
  * @param overrides
