@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Done (2026-10-01)
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-chat-product-features
