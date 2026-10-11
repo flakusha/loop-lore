@@ -46,6 +46,8 @@ export const GrowthAxis = {
   Skill: "skill",
   Trait: "trait",
   Relationship: "relationship",
+  /** Organic ability-score drift (XP/leveling epic). */
+  Stat: "stat",
 } as const;
 /** */
 export type GrowthAxis = (typeof GrowthAxis)[keyof typeof GrowthAxis];
@@ -65,6 +67,8 @@ export const GrowthEventType = {
   RelationshipShifted: "relationship_shifted",
   /** LLM-assist observation with no state change (status='applied' immediately). */
   Observation: "observation",
+  /** Organic activity-weighted ability drift on level-up (axis='stat'). */
+  StatDrifted: "stat_drifted",
 } as const;
 /** */
 export type GrowthEventType = (typeof GrowthEventType)[keyof typeof GrowthEventType];

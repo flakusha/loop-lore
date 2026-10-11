@@ -38,6 +38,7 @@ export const listLogQuery = t.Object({
     t.Literal(GrowthAxis.Skill,),
     t.Literal(GrowthAxis.Trait,),
     t.Literal(GrowthAxis.Relationship,),
+    t.Literal(GrowthAxis.Stat,),
   ],),),
   status: t.Optional(t.Union([
     t.Literal(GrowthEntryStatus.Pending,),
