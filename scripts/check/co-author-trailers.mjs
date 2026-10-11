@@ -208,7 +208,12 @@ function defaultRange() {
   const head = readGit(["rev-parse", "--verify", "-q", "HEAD",], [0, 1,],).trim();
   if (head === "") { return ""; }
   const branch = readGit(["rev-parse", "--abbrev-ref", "HEAD",], [0, 1,],).trim();
-  for (const base of ["dev", "main", "master",]) {
+  const BASE_BRANCHES = ["dev", "main", "master"];
+  if (BASE_BRANCHES.includes(branch)) {
+    return "HEAD~1..HEAD";
+  }
+
+  for (const base of BASE_BRANCHES) {
     if (branch === base) { continue; }
     const verify = Bun.spawnSync(["git", "rev-parse", "--verify", "-q", base,], {
       cwd: PROJECT_ROOT,

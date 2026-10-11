@@ -110,7 +110,7 @@ export async function persistBattle(
 
   const endedAt = status === BattleStatus.Active ? null : new Date().toISOString();
 
-  await deps.database
+  const result = await deps.database
     .updateTable("battles",)
     .set({
       round,
@@ -122,7 +122,12 @@ export async function persistBattle(
       updated_at: new Date().toISOString(),
     },)
     .where("id", "=", battleId,)
-    .execute();
+    .where("status", "=", BattleStatus.Active,)
+    .executeTakeFirst();
+
+  if (Number(result.numUpdatedRows ?? 0,) === 0) {
+    throw new Error(`Battle ${battleId} is no longer active (concurrent modification)`,);
+  }
 }
 
 /**

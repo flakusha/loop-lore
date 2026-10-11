@@ -123,6 +123,16 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           return withPermissionAuth(ctx, "admin.system", async () => {
             const { id, } = ctx.params as { id: string };
             const { is_pinned, world_id, } = ctx.body as { is_pinned?: string; world_id?: string | null };
+
+            const VALID_PINNED_STATES: readonly string[] = ["pinned", "unpinned", "archived",];
+            if (is_pinned !== undefined && !VALID_PINNED_STATES.includes(is_pinned,)) {
+              return jsonError({
+                message: ctx.t?.("admin.invalidPinnedState",) ?? "Invalid is_pinned value",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.BadRequest,
+              },);
+            }
+
             const updates: Record<string, unknown> = {};
             if (is_pinned !== undefined) { updates.is_pinned = is_pinned; }
             if (world_id !== undefined) { updates.world_id = world_id; }
