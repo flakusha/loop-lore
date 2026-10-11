@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** character-xp-leveling
+**Related:** .plan/tickets/FEAT-battle-rewards-grant-character-xp-on-enemy-defeat.md (first consumer — grants via this service), .plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md (extends the level-up bookkeeping with ASI allocation)
 
 **Summary:**
 

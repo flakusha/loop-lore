@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** Large
 **Epic:** character-xp-leveling
+**Related:** .plan/epics/epic-actor-autonomy-story-drive.md (decision/turn machinery the staged level-up resolves through), .plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md (pending ASI budget this decision spends)
 
 **Summary:**
 
