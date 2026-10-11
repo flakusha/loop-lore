@@ -23,6 +23,7 @@ import { logXp, } from "../service/xp.js";
 import { abilityModifier, } from "../stats/modifiers.js";
 import { awardXp, xpToNextLevel, } from "../xp/calculation.js";
 import { grantsAsi, hpOnLevelUp, } from "../xp/levelup.js";
+import { autoResolveIfAutonomous, stageLevelUpDecision, } from "./decisions.js";
 import { applyOrganicGrowth, } from "./growth.js";
 import {
   type AwardXpInput,
@@ -171,6 +172,14 @@ export async function awardXpToActor(
   // CON modifier — drift never retroactively re-rolls earlier levels).
   for (let i = 0; i < applied.levelsGained; i++) {
     await applyOrganicGrowth(db, input.actorId,);
+  }
+
+  // Stage the level-up decision surface for the ASI budget: a chat question
+  // when the award carries a chat, and an immediate affinity spend for
+  // autonomous actors so a threshold never blocks an LLM turn.
+  if (asiGranted > 0) {
+    await stageLevelUpDecision(db, input.actorId, input.chatId,);
+    await autoResolveIfAutonomous(db, input.actorId,);
   }
 
   const ledgerId = await logXp({ database: db, }, {

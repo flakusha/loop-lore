@@ -17,6 +17,8 @@ export const RpgQuestionType = {
   Exploration: "exploration",
   Combat: "combat",
   Custom: "custom",
+  /** Pending level-up / ASI spend decision (XP-leveling epic). */
+  LevelUp: "level_up",
 } as const;
 /** */
 export type RpgQuestionType = (typeof RpgQuestionType)[keyof typeof RpgQuestionType];
