@@ -156,6 +156,45 @@
     "source": ".plan/tickets/BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-.md",
     "status": "Not Started"
   },
+  "BUG-ADDXP-ACCEPTS-NEGATIVE-XP-PRODUCING-NAN-LEVEL-STORED-IN-DB": {
+    "hash": "8924253",
+    "git_issue": "8924253",
+    "extid": "BUG-ADDXP-ACCEPTS-NEGATIVE-XP-PRODUCING-NAN-LEVEL-STORED-IN-DB",
+    "type": "BUG",
+    "title": "addXp accepts negative XP producing NaN level stored in DB",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-addxp-accepts-negative-xp-producing-nan-level-stored-in-db.md",
+    "status": "Not Started"
+  },
+  "BUG-ADMIN-ANALYTICS-TAB-CRASHES-WHEN-API-OMITS-FIELDS": {
+    "hash": "05bcb6e",
+    "git_issue": "05bcb6e",
+    "extid": "BUG-ADMIN-ANALYTICS-TAB-CRASHES-WHEN-API-OMITS-FIELDS",
+    "type": "BUG",
+    "title": "Admin analytics tab crashes when API omits fields",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-analytics-tab-crashes-when-api-omits-fields.md",
+    "status": "Not Started"
+  },
+  "BUG-ADMIN-AUDIT-GET-BY-ID-HAS-NO-PARAMS-SCHEMA-VALIDATION": {
+    "hash": "48bdbbb",
+    "git_issue": "48bdbbb",
+    "extid": "BUG-ADMIN-AUDIT-GET-BY-ID-HAS-NO-PARAMS-SCHEMA-VALIDATION",
+    "type": "BUG",
+    "title": "Admin audit get-by-id has no params schema validation",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-audit-get-by-id-has-no-params-schema-validation.md",
+    "status": "Not Started"
+  },
   "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY": {
     "epic": "epic-frontend-admin",
     "extid": "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY",
@@ -195,6 +234,19 @@
     "title": "`/api/admin/telemetry/aux` returns `userId` + `chatId` + raw `error` string per AUX call — no scoping, no hashing",
     "type": "BUG"
   },
+  "BUG-ADMIN-CHAT-PATCH-ACCEPTS-ARBITRARY-STRING-FOR-IS-PINNED": {
+    "hash": "6888d8f",
+    "git_issue": "6888d8f",
+    "extid": "BUG-ADMIN-CHAT-PATCH-ACCEPTS-ARBITRARY-STRING-FOR-IS-PINNED",
+    "type": "BUG",
+    "title": "Admin chat PATCH accepts arbitrary string for is_pinned",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-chat-patch-accepts-arbitrary-string-for-is-pinned.md",
+    "status": "Not Started"
+  },
   "BUG-ADMIN-DASHBOARD-BROWSER-TESTS-REPEAT-THE-LOGIN-HX-REDIRECT-R": {
     "hash": "cd3e6ad",
     "git_issue": "cd3e6ad",
@@ -208,6 +260,45 @@
     "source": ".plan/tickets/BUG-admin-dashboard-browser-tests-repeat-the-login-hx-redirect-r.md",
     "status": "done"
   },
+  "BUG-ADMIN-PROVIDERS-LIST-ENDPOINT-IS-PUBLIC": {
+    "hash": "bf85b93",
+    "git_issue": "bf85b93",
+    "extid": "BUG-ADMIN-PROVIDERS-LIST-ENDPOINT-IS-PUBLIC",
+    "type": "BUG",
+    "title": "Admin providers list endpoint is public",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-providers-list-endpoint-is-public.md",
+    "status": "Not Started"
+  },
+  "BUG-ADMIN-SYSTEM-CONFIG-DELETE-PASSES-USER-CONTROLLED-KEY-WITHOU": {
+    "hash": "daacc4b",
+    "git_issue": "daacc4b",
+    "extid": "BUG-ADMIN-SYSTEM-CONFIG-DELETE-PASSES-USER-CONTROLLED-KEY-WITHOU",
+    "type": "BUG",
+    "title": "Admin system-config DELETE passes user-controlled key without validation",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-system-config-delete-passes-user-controlled-key-withou.md",
+    "status": "Not Started"
+  },
+  "BUG-ADMIN-TEMPLATE-UPDATE-WRITES-TO-UNVALIDATED-DETAIL-MODE-KEYS": {
+    "hash": "0549655",
+    "git_issue": "0549655",
+    "extid": "BUG-ADMIN-TEMPLATE-UPDATE-WRITES-TO-UNVALIDATED-DETAIL-MODE-KEYS",
+    "type": "BUG",
+    "title": "Admin template update writes to unvalidated detail/mode keys",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-template-update-writes-to-unvalidated-detail-mode-keys.md",
+    "status": "Not Started"
+  },
   "BUG-ADMIN-TEMPLATES-UPDATE-REMOVE-LACK-ADMIN-SETTINGS-GATE": {
     "epic": "",
     "extid": "BUG-ADMIN-TEMPLATES-UPDATE-REMOVE-LACK-ADMIN-SETTINGS-GATE",
@@ -220,6 +311,19 @@
     "tags": [],
     "title": "admin-templates update-remove lack admin.settings gate",
     "type": "BUG"
+  },
+  "BUG-ADMIN-USER-DELETE-HAS-NO-SELF-DELETE-OR-LAST-ADMIN-GUARD": {
+    "hash": "2e1a123",
+    "git_issue": "2e1a123",
+    "extid": "BUG-ADMIN-USER-DELETE-HAS-NO-SELF-DELETE-OR-LAST-ADMIN-GUARD",
+    "type": "BUG",
+    "title": "Admin user DELETE has no self-delete or last-admin guard",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-user-delete-has-no-self-delete-or-last-admin-guard.md",
+    "status": "Not Started"
   },
   "BUG-ADVERTISED-SFX-MUSIC-VIDEO-COMMANDS-ARE-STUBS": {
     "epic": "",
@@ -323,6 +427,32 @@
     "title": "analytics per-user routes filter telemetry_events by raw IDs but record() stores hashed IDs",
     "type": "BUG"
   },
+  "BUG-ANSWERQUESTION-DOUBLE-ANSWER-RACE-TOCTOU-ON-STATUS-CHECK": {
+    "hash": "fc864ee",
+    "git_issue": "fc864ee",
+    "extid": "BUG-ANSWERQUESTION-DOUBLE-ANSWER-RACE-TOCTOU-ON-STATUS-CHECK",
+    "type": "BUG",
+    "title": "answerQuestion double-answer race (TOCTOU on status check)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-answerquestion-double-answer-race-toctou-on-status-check.md",
+    "status": "Not Started"
+  },
+  "BUG-ANSWERQUESTION-IGNORES-TIME-LIMIT-EXPIRED-QUESTIONS-STILL-AN": {
+    "hash": "a90f770",
+    "git_issue": "a90f770",
+    "extid": "BUG-ANSWERQUESTION-IGNORES-TIME-LIMIT-EXPIRED-QUESTIONS-STILL-AN",
+    "type": "BUG",
+    "title": "answerQuestion ignores time_limit (expired questions still answerable)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-answerquestion-ignores-time-limit-expired-questions-still-an.md",
+    "status": "Not Started"
+  },
   "BUG-ANTHROPIC-RETRY-AFTER-TEST-COVERS-MISSING-HEADER-BUT-NOT-UNP": {
     "hash": "68e4956",
     "git_issue": "68e4956",
@@ -361,6 +491,19 @@
     "tags": [],
     "title": "app: registerPlugins accepts asyncStore but never uses it",
     "type": "BUG"
+  },
+  "BUG-APPLYFLAG-SKIPS-SELF-TARGET-GUARD": {
+    "hash": "af59426",
+    "git_issue": "af59426",
+    "extid": "BUG-APPLYFLAG-SKIPS-SELF-TARGET-GUARD",
+    "type": "BUG",
+    "title": "applyFlag skips self-target guard",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-applyflag-skips-self-target-guard.md",
+    "status": "Not Started"
   },
   "BUG-ARCHIVE-RETENTION-HARDCODED-30-DAYS-SHOULD-BE-CONFIGURABLE-9": {
     "epic": "epic-archival-workflow",
@@ -787,6 +930,19 @@
     ],
     "title": "selectionRule branches action_first / context_first / weighted are no-ops",
     "type": "BUG"
+  },
+  "BUG-AWARDXP-ONLY-LEVELS-UP-ONCE-PER-CALL-MULTI-LEVEL-OVERFLOW-LO": {
+    "hash": "0a1aa03",
+    "git_issue": "0a1aa03",
+    "extid": "BUG-AWARDXP-ONLY-LEVELS-UP-ONCE-PER-CALL-MULTI-LEVEL-OVERFLOW-LO",
+    "type": "BUG",
+    "title": "awardXp only levels up once per call (multi-level overflow lost)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-awardxp-only-levels-up-once-per-call-multi-level-overflow-lo.md",
+    "status": "Not Started"
   },
   "BUG-BACKFILL-OF-HISTORICAL-POSTS-ON-NEW-FOLLOWER-UNSPECIFIED": {
     "epic": "",
@@ -1339,6 +1495,19 @@
     "title": "BUG: SSE stream render relies on weak regex HTML sanitizer (residual XSS)",
     "type": "BUG"
   },
+  "BUG-BUILDSKILLTREE-SILENTLY-DROPS-ORPHAN-NODES": {
+    "hash": "174d08d",
+    "git_issue": "174d08d",
+    "extid": "BUG-BUILDSKILLTREE-SILENTLY-DROPS-ORPHAN-NODES",
+    "type": "BUG",
+    "title": "buildSkillTree silently drops orphan nodes",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-buildskilltree-silently-drops-orphan-nodes.md",
+    "status": "Not Started"
+  },
   "BUG-BUILDSTYLEPROMPT-NEVER-INJECTED-INTO-LLM-REQUEST": {
     "epic": "",
     "extid": "BUG-BUILDSTYLEPROMPT-NEVER-INJECTED-INTO-LLM-REQUEST",
@@ -1546,6 +1715,19 @@
     "tags": [],
     "title": "Character federation lacks owner consent or NSFW gate",
     "type": "BUG"
+  },
+  "BUG-CHARACTER-GROWTH-EDITOR-ARC-DESCRIPTION-NOT-JSON-ENCODED": {
+    "hash": "ec7ebd3",
+    "git_issue": "ec7ebd3",
+    "extid": "BUG-CHARACTER-GROWTH-EDITOR-ARC-DESCRIPTION-NOT-JSON-ENCODED",
+    "type": "BUG",
+    "title": "Character growth editor arc description not JSON-encoded",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-growth-editor-arc-description-not-json-encoded.md",
+    "status": "Not Started"
   },
   "BUG-CHARACTER-GROWTH-PATCH-CONFIRM-REJECT-ALWAYS-422-DEAD-ENDPOI": {
     "epic": "",
@@ -2177,6 +2359,19 @@
     "title": "classifyIntent / parseGmToolDetection accept LLM confidence without numeric bounds check",
     "type": "BUG"
   },
+  "BUG-CO-AUTHORED-BY-TRAILER-VALIDATION-GAP-ON-BASE-BRANCHES": {
+    "hash": "d05f21f",
+    "git_issue": "d05f21f",
+    "extid": "BUG-CO-AUTHORED-BY-TRAILER-VALIDATION-GAP-ON-BASE-BRANCHES",
+    "type": "BUG",
+    "title": "Co-Authored-By trailer validation gap on base branches",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-co-authored-by-trailer-validation-gap-on-base-branches.md",
+    "status": "Not Started"
+  },
   "BUG-COMFYUI-EDIT-PROVIDER-PERSISTS-NOTHING-OWNERID-SYSTEM-VIOLAT": {
     "hash": "713ef5c",
     "git_issue": "713ef5c",
@@ -2283,6 +2478,19 @@
     "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md",
     "status": "Not Started"
   },
+  "BUG-CONSUMEINVENTORYUNIT-USES-STALE-QUANTITY-TOCTOU-ON-INVENTORY": {
+    "hash": "aba5489",
+    "git_issue": "aba5489",
+    "extid": "BUG-CONSUMEINVENTORYUNIT-USES-STALE-QUANTITY-TOCTOU-ON-INVENTORY",
+    "type": "BUG",
+    "title": "consumeInventoryUnit uses stale quantity (TOCTOU on inventory)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory.md",
+    "status": "Not Started"
+  },
   "BUG-CONTENT-HOOKS-TS-MISSING-IMPORTS-BREAKS-TYPECHECK": {
     "epic": "",
     "extid": "BUG-CONTENT-HOOKS-TS-MISSING-IMPORTS-BREAKS-TYPECHECK",
@@ -2321,6 +2529,19 @@
     "tags": [],
     "title": "Context window trim keeps oldest messages, drops newest when over budget",
     "type": "BUG"
+  },
+  "BUG-CONTEXT-WINDOW-WILLTRIM-IS-STALE-AFTER-INJECTMEMORIES-INJECT": {
+    "hash": "5226154",
+    "git_issue": "5226154",
+    "extid": "BUG-CONTEXT-WINDOW-WILLTRIM-IS-STALE-AFTER-INJECTMEMORIES-INJECT",
+    "type": "BUG",
+    "title": "Context window willTrim is stale after injectMemories/injectEvents",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-context-window-willtrim-is-stale-after-injectmemories-inject.md",
+    "status": "Not Started"
   },
   "BUG-COVERAGE-MJS-COUNTS-TOP-LEVEL-SRC-FILES-AS-MODULES": {
     "epic": "",
@@ -2517,6 +2738,19 @@
     "title": "db-reinit archive directory has no rotation; PII accumulates indefinitely",
     "type": "BUG"
   },
+  "BUG-DEAD-CODE-GUARD-IN-ADVANCEPARTYTRAVEL": {
+    "hash": "cbcacc6",
+    "git_issue": "cbcacc6",
+    "extid": "BUG-DEAD-CODE-GUARD-IN-ADVANCEPARTYTRAVEL",
+    "type": "BUG",
+    "title": "Dead-code guard in advancePartyTravel",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-dead-code-guard-in-advancepartytravel.md",
+    "status": "Not Started"
+  },
   "BUG-DELETE-AUDIT-ACTION-HAS-NO-UNIT-TEST": {
     "epic": "",
     "extid": "BUG-DELETE-AUDIT-ACTION-HAS-NO-UNIT-TEST",
@@ -2581,6 +2815,19 @@
     "tags": [],
     "title": "Demo login endpoint bypasses rate limiter",
     "type": "BUG"
+  },
+  "BUG-DERIVERUMORS-EXPOSES-INTERNAL-ACTOR-UUID-IN-USER-FACING-TEXT": {
+    "hash": "4db0605",
+    "git_issue": "4db0605",
+    "extid": "BUG-DERIVERUMORS-EXPOSES-INTERNAL-ACTOR-UUID-IN-USER-FACING-TEXT",
+    "type": "BUG",
+    "title": "deriveRumors exposes internal actor UUID in user-facing text",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-deriverumors-exposes-internal-actor-uuid-in-user-facing-text.md",
+    "status": "Not Started"
   },
   "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION": {
     "epic": "epic-emotion-avatar-message-binding",
@@ -2897,6 +3144,19 @@
     "source": ".plan/tickets/BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on.md",
     "status": "done"
   },
+  "BUG-EDGEAHEAD-DOES-NOT-VALIDATE-LOCATION-EXISTENCE": {
+    "hash": "649e9eb",
+    "git_issue": "649e9eb",
+    "extid": "BUG-EDGEAHEAD-DOES-NOT-VALIDATE-LOCATION-EXISTENCE",
+    "type": "BUG",
+    "title": "edgeAhead does not validate location existence",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-edgeahead-does-not-validate-location-existence.md",
+    "status": "Not Started"
+  },
   "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC": {
     "epic": "epic-architecture",
     "extid": "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC",
@@ -3014,6 +3274,19 @@
     "tags": [],
     "title": "Encryption tier (`encryption_level`) is never enforced; default `\"public\"` is out-of-enum",
     "type": "BUG"
+  },
+  "BUG-ENDBATTLE-OVERWRITES-COMPLETED-BATTLES-NO-ACTIVE-STATUS-GUAR": {
+    "hash": "ea119af",
+    "git_issue": "ea119af",
+    "extid": "BUG-ENDBATTLE-OVERWRITES-COMPLETED-BATTLES-NO-ACTIVE-STATUS-GUAR",
+    "type": "BUG",
+    "title": "endBattle overwrites completed battles (no active-status guard)",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-endbattle-overwrites-completed-battles-no-active-status-guar.md",
+    "status": "Not Started"
   },
   "BUG-ENTITY-TEMPLATE-POSITION-CONFIG-UNVALIDATED-TYPOS-SILENTLY-B": {
     "epic": "",
@@ -3295,6 +3568,97 @@
     "title": "finalize concurrent-merge race corrupts dev checkout",
     "type": "BUG"
   },
+  "BUG-FIX-API-APPLY-GOVERNANCE-DEPRECATION-TO-THE-API-V1-LEGACY-FA": {
+    "hash": "afe12b9",
+    "git_issue": "afe12b9",
+    "extid": "BUG-FIX-API-APPLY-GOVERNANCE-DEPRECATION-TO-THE-API-V1-LEGACY-FA",
+    "type": "BUG",
+    "title": "fix(api): apply governance + deprecation to the /api/v1 legacy fallback path",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "routing-versioning-consolidation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-API-RETURN-400-406-FOR-UNKNOWN-API-VERSIONS-INSTEAD-OF-S": {
+    "hash": "4d3dab7",
+    "git_issue": "4d3dab7",
+    "extid": "BUG-FIX-API-RETURN-400-406-FOR-UNKNOWN-API-VERSIONS-INSTEAD-OF-S",
+    "type": "BUG",
+    "title": "fix(api): return 400/406 for unknown API versions instead of silent v1 coercion",
+    "label": "bug",
+    "priority": "low",
+    "epic": "routing-versioning-consolidation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-API-UNIFY-ERROR-RESPONSE-ENVELOPES-KILL-RAW-RESPONSE-JSO": {
+    "hash": "39603d6",
+    "git_issue": "39603d6",
+    "extid": "BUG-FIX-API-UNIFY-ERROR-RESPONSE-ENVELOPES-KILL-RAW-RESPONSE-JSO",
+    "type": "BUG",
+    "title": "fix(api): unify error/response envelopes, kill raw Response.json errors",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "routing-versioning-consolidation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-AUTH-CONTENT-NEGOTIATE-THE-429-RATE-LIMIT-RESPONSE-LIKE-": {
+    "hash": "7a46501",
+    "git_issue": "7a46501",
+    "extid": "BUG-FIX-AUTH-CONTENT-NEGOTIATE-THE-429-RATE-LIMIT-RESPONSE-LIKE-",
+    "type": "BUG",
+    "title": "fix(auth): content-negotiate the 429 rate-limit response like other auth errors",
+    "label": "bug",
+    "priority": "low",
+    "epic": "auth-config-contracts",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-auth-content-negotiate-the-429-rate-limit-response-like-.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-AUTH-MAKE-SESSION-EXPIRY-HANDLING-AGREE-ACROSS-AUTHENTIC": {
+    "hash": "ae8d5df",
+    "git_issue": "ae8d5df",
+    "extid": "BUG-FIX-AUTH-MAKE-SESSION-EXPIRY-HANDLING-AGREE-ACROSS-AUTHENTIC",
+    "type": "BUG",
+    "title": "fix(auth): make session-expiry handling agree across authenticate() and token.ts (fail closed)",
+    "label": "bug",
+    "priority": "low",
+    "epic": "auth-config-contracts",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-auth-make-session-expiry-handling-agree-across-authentic.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-AUTH-WARN-WHEN-SESSIONTIMEOUTHOURS-AND-JWTEXPIRESIN-DIVE": {
+    "hash": "094b3b5",
+    "git_issue": "094b3b5",
+    "extid": "BUG-FIX-AUTH-WARN-WHEN-SESSIONTIMEOUTHOURS-AND-JWTEXPIRESIN-DIVE",
+    "type": "BUG",
+    "title": "fix(auth): warn when sessionTimeoutHours and jwtExpiresIn diverge",
+    "label": "bug",
+    "priority": "low",
+    "epic": "auth-config-contracts",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-CONFIG-WIRE-AUTH-JWT-SECRET-AUTH-CSRF-SECRET-ENV-NAMES-D": {
+    "hash": "87d3164",
+    "git_issue": "87d3164",
+    "extid": "BUG-FIX-CONFIG-WIRE-AUTH-JWT-SECRET-AUTH-CSRF-SECRET-ENV-NAMES-D",
+    "type": "BUG",
+    "title": "fix(config): wire AUTH_JWT_SECRET/AUTH_CSRF_SECRET env names (documented names are ignored)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "auth-config-contracts",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d.md",
+    "status": "Not Started"
+  },
   "BUG-FIX-CSRF-CTX-SET-HEADERS-APPEND-IS-UNDEFINED-IN-ELYSIA-1-4-H": {
     "epic": "",
     "extid": "BUG-FIX-CSRF-CTX-SET-HEADERS-APPEND-IS-UNDEFINED-IN-ELYSIA-1-4-H",
@@ -3320,6 +3684,175 @@
     "tags": [],
     "title": "fix(csrf): extract csrfPlugin factory so tests exercise the production wiring",
     "type": "BUG"
+  },
+  "BUG-FIX-INTEGRATIONS-WIRE-BRIDGE-SECRETS-SEAMS-OR-RETURN-503-NOT": {
+    "hash": "b36adbe",
+    "git_issue": "b36adbe",
+    "extid": "BUG-FIX-INTEGRATIONS-WIRE-BRIDGE-SECRETS-SEAMS-OR-RETURN-503-NOT",
+    "type": "BUG",
+    "title": "fix(integrations): wire bridge/secrets seams or return 503-not-configured",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-integrations-wire-bridge-secrets-seams-or-return-503-not.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-PLUGINS-APPEND-ONLOAD-REGISTRATIONS-TO-MANIFEST-REGISTRA": {
+    "hash": "23a4754",
+    "git_issue": "23a4754",
+    "extid": "BUG-FIX-PLUGINS-APPEND-ONLOAD-REGISTRATIONS-TO-MANIFEST-REGISTRA",
+    "type": "BUG",
+    "title": "fix(plugins): append onLoad registrations to manifest registrations",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-plugins-append-onload-registrations-to-manifest-registra.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-PLUGINS-DEFINE-PLUGIN-ROUTE-MATCHING-SEMANTICS": {
+    "hash": "cdc764a",
+    "git_issue": "cdc764a",
+    "extid": "BUG-FIX-PLUGINS-DEFINE-PLUGIN-ROUTE-MATCHING-SEMANTICS",
+    "type": "BUG",
+    "title": "fix(plugins): define plugin route matching semantics",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-plugins-define-plugin-route-matching-semantics.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-PLUGINS-MAKE-PLUGIN-DISCOVERY-FAILURES-VISIBLE": {
+    "hash": "60f5f74",
+    "git_issue": "60f5f74",
+    "extid": "BUG-FIX-PLUGINS-MAKE-PLUGIN-DISCOVERY-FAILURES-VISIBLE",
+    "type": "BUG",
+    "title": "fix(plugins): make plugin discovery failures visible",
+    "label": "bug",
+    "priority": "low",
+    "epic": "plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-plugins-make-plugin-discovery-failures-visible.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-ROUTING-BRING-POST-API-V1-ASSETS-UNDER-BARREL-GOVERNANCE": {
+    "hash": "3dd5054",
+    "git_issue": "3dd5054",
+    "extid": "BUG-FIX-ROUTING-BRING-POST-API-V1-ASSETS-UNDER-BARREL-GOVERNANCE",
+    "type": "BUG",
+    "title": "fix(routing): bring POST /api/v1/assets under barrel governance or pin the carve-out",
+    "label": "bug",
+    "priority": "high",
+    "epic": "routing-versioning-consolidation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-ROUTING-CONSOLIDATE-VERSIONED-MOUNTS-INTO-V1-BARREL-DROP": {
+    "hash": "2374b1c",
+    "git_issue": "2374b1c",
+    "extid": "BUG-FIX-ROUTING-CONSOLIDATE-VERSIONED-MOUNTS-INTO-V1-BARREL-DROP",
+    "type": "BUG",
+    "title": "fix(routing): consolidate versioned mounts into v1 barrel, drop unversioned halves",
+    "label": "bug",
+    "priority": "high",
+    "epic": "routing-versioning-consolidation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-ROUTING-MOUNT-STORY-ORCHESTRATION-AGENCY-CONFIG-MENU-UND": {
+    "hash": "3f07a06",
+    "git_issue": "3f07a06",
+    "extid": "BUG-FIX-ROUTING-MOUNT-STORY-ORCHESTRATION-AGENCY-CONFIG-MENU-UND",
+    "type": "BUG",
+    "title": "fix(routing): mount story-orchestration, agency, config-menu under /api/v1 or declare unversioned-by-spec",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "routing-versioning-consolidation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-SERVER-EXIT-NON-ZERO-ON-UNCAUGHTEXCEPTION-UNHANDLEDREJEC": {
+    "hash": "7e870f6",
+    "git_issue": "7e870f6",
+    "extid": "BUG-FIX-SERVER-EXIT-NON-ZERO-ON-UNCAUGHTEXCEPTION-UNHANDLEDREJEC",
+    "type": "BUG",
+    "title": "fix(server): exit non-zero on uncaughtException/unhandledRejection shutdown",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "server-hardening",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-SERVER-FAIL-CLOSED-WHEN-CONFIGURED-TLS-CERTS-CANNOT-BE-P": {
+    "hash": "6525fcd",
+    "git_issue": "6525fcd",
+    "extid": "BUG-FIX-SERVER-FAIL-CLOSED-WHEN-CONFIGURED-TLS-CERTS-CANNOT-BE-P",
+    "type": "BUG",
+    "title": "fix(server): fail closed when configured TLS certs cannot be provisioned",
+    "label": "bug",
+    "priority": "high",
+    "epic": "server-hardening",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-SERVER-GATE-DOCS-SERVING-ON-CONFIG-REDIRECT-DOCS-TO-DOCS": {
+    "hash": "fcf58ae",
+    "git_issue": "fcf58ae",
+    "extid": "BUG-FIX-SERVER-GATE-DOCS-SERVING-ON-CONFIG-REDIRECT-DOCS-TO-DOCS",
+    "type": "BUG",
+    "title": "fix(server): gate docs serving on config, redirect /docs to /docs/",
+    "label": "bug",
+    "priority": "low",
+    "epic": "server-hardening",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-SERVER-GATE-TRAFFIC-UNTIL-PLUGINS-SEEDS-ASSETS-ARE-READY": {
+    "hash": "b08d8f3",
+    "git_issue": "b08d8f3",
+    "extid": "BUG-FIX-SERVER-GATE-TRAFFIC-UNTIL-PLUGINS-SEEDS-ASSETS-ARE-READY",
+    "type": "BUG",
+    "title": "fix(server): gate traffic until plugins/seeds/assets are ready (or document the boot window)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "server-hardening",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-SERVER-LOG-REJECTED-BACKGROUND-INIT-PROMISES-WITH-MODULE": {
+    "hash": "8b894a7",
+    "git_issue": "8b894a7",
+    "extid": "BUG-FIX-SERVER-LOG-REJECTED-BACKGROUND-INIT-PROMISES-WITH-MODULE",
+    "type": "BUG",
+    "title": "fix(server): log rejected background-init promises with module + error",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "server-hardening",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-server-log-rejected-background-init-promises-with-module.md",
+    "status": "Not Started"
+  },
+  "BUG-FIX-SERVER-TRACK-AND-CLEAR-THE-REGEX-TELEMETRY-FLUSH-TIMER-O": {
+    "hash": "6a8d9e6",
+    "git_issue": "6a8d9e6",
+    "extid": "BUG-FIX-SERVER-TRACK-AND-CLEAR-THE-REGEX-TELEMETRY-FLUSH-TIMER-O",
+    "type": "BUG",
+    "title": "fix(server): track and clear the regex-telemetry flush timer on app stop",
+    "label": "bug",
+    "priority": "low",
+    "epic": "server-hardening",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o.md",
+    "status": "Not Started"
   },
   "BUG-FIX-WORKTREE-ASSERT-GPG-UNLOCKED-ON-EVERY-SIGNING-PATH-SURFA": {
     "epic": "",
@@ -4065,6 +4598,32 @@
     "title": "handleExportAll leaks group-chat participants messages - exports all messages in chats created_by caller, ignoring participant membership",
     "type": "BUG"
   },
+  "BUG-HARDEN-AUTH-REFUSE-OR-LOUDLY-GATE-NON-LOOPBACK-BIND-WHILE-AU": {
+    "hash": "efe1b48",
+    "git_issue": "efe1b48",
+    "extid": "BUG-HARDEN-AUTH-REFUSE-OR-LOUDLY-GATE-NON-LOOPBACK-BIND-WHILE-AU",
+    "type": "BUG",
+    "title": "harden(auth): refuse or loudly gate non-loopback bind while auth.required=false",
+    "label": "bug",
+    "priority": "low",
+    "epic": "auth-config-contracts",
+    "tags": [],
+    "source": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md",
+    "status": "Not Started"
+  },
+  "BUG-HARDEN-TELEMETRY-GATE-OR-RATE-LIMIT-ANONYMOUS-POST-API-V1-TE": {
+    "hash": "c48fd6c",
+    "git_issue": "c48fd6c",
+    "extid": "BUG-HARDEN-TELEMETRY-GATE-OR-RATE-LIMIT-ANONYMOUS-POST-API-V1-TE",
+    "type": "BUG",
+    "title": "harden(telemetry): gate or rate-limit anonymous POST /api/v1/telemetry/event writes",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "auth-config-contracts",
+    "tags": [],
+    "source": ".plan/tickets/BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te.md",
+    "status": "Not Started"
+  },
   "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
     "epic": "epic-nsfw-moderation-priority",
     "extid": "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B",
@@ -4279,6 +4838,19 @@
     "tags": [],
     "title": "Inbound federation content not moderated before display",
     "type": "BUG"
+  },
+  "BUG-INCONSISTENT-DB-HANDLE-IN-MIGRATION-TS-NPC-STATES-WRITE": {
+    "hash": "dfcf59f",
+    "git_issue": "dfcf59f",
+    "extid": "BUG-INCONSISTENT-DB-HANDLE-IN-MIGRATION-TS-NPC-STATES-WRITE",
+    "type": "BUG",
+    "title": "Inconsistent DB handle in migration.ts npc_states write",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-inconsistent-db-handle-in-migration-ts-npc-states-write.md",
+    "status": "Not Started"
   },
   "BUG-INDEX-JSON-RECORDS-EPIC-SOURCE-PATHS-UNDER-PLAN-TICKETS-FOR-": {
     "hash": "8e81ae2",
@@ -4619,6 +5191,19 @@
     "tags": [],
     "title": "location DELETE crashes on location_states FK",
     "type": "BUG"
+  },
+  "BUG-LOCATIONS-QUERY-LOADS-ALL-WORLDS-NOT-JUST-CURRENT-ONE": {
+    "hash": "c1c56b0",
+    "git_issue": "c1c56b0",
+    "extid": "BUG-LOCATIONS-QUERY-LOADS-ALL-WORLDS-NOT-JUST-CURRENT-ONE",
+    "type": "BUG",
+    "title": "Locations query loads all worlds not just current one",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-locations-query-loads-all-worlds-not-just-current-one.md",
+    "status": "Not Started"
   },
   "BUG-LOCATIONS-REPARENT-GUARD-SILENTLY-REVERTED-BY-D572DDDEC": {
     "hash": "6e37975",
@@ -5372,6 +5957,19 @@
     "source": ".plan/tickets/BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua.md",
     "status": "Not Started"
   },
+  "BUG-NOTIFICATION-BELL-VISIBLE-ON-LOGIN-REGISTER-PAGES": {
+    "hash": "64b4832",
+    "git_issue": "64b4832",
+    "extid": "BUG-NOTIFICATION-BELL-VISIBLE-ON-LOGIN-REGISTER-PAGES",
+    "type": "BUG",
+    "title": "Notification bell visible on login/register pages",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-notification-bell-visible-on-login-register-pages.md",
+    "status": "Not Started"
+  },
   "BUG-NOTIFICATION-STREAM-ERROR-UNREACHABLE": {
     "epic": "",
     "extid": "BUG-NOTIFICATION-STREAM-ERROR-UNREACHABLE",
@@ -5397,6 +5995,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-notifications-sse-frames-never-parse-read-shipped-as-string-.md",
     "status": "Done"
+  },
+  "BUG-NPC-MIGRATION-WITH-DELETED-DESTINATION-LEAVES-NPC-STUCK-AT-O": {
+    "hash": "e70009f",
+    "git_issue": "e70009f",
+    "extid": "BUG-NPC-MIGRATION-WITH-DELETED-DESTINATION-LEAVES-NPC-STUCK-AT-O",
+    "type": "BUG",
+    "title": "NPC migration with deleted destination leaves NPC stuck at origin",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o.md",
+    "status": "Not Started"
   },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
     "epic": "",
@@ -5844,6 +6455,19 @@
     "title": "PATCH settings endpoint has no key allowlist - {...currentSettings, ...body} silently accepts arbitrary keys",
     "type": "BUG"
   },
+  "BUG-PATROLROUTE-CAST-WITHOUT-ARRAY-VALIDATION": {
+    "hash": "3d95126",
+    "git_issue": "3d95126",
+    "extid": "BUG-PATROLROUTE-CAST-WITHOUT-ARRAY-VALIDATION",
+    "type": "BUG",
+    "title": "patrolRoute cast without array validation",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-patrolroute-cast-without-array-validation.md",
+    "status": "Not Started"
+  },
   "BUG-PER-SENDER-RATE-LIMITER-BUCKETS-ARE-NEVER-EVICTED-UNBOUNDED-": {
     "hash": "30d4991",
     "git_issue": "30d4991",
@@ -5857,6 +6481,19 @@
       "integrations"
     ],
     "source": ".plan/tickets/BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-.md",
+    "status": "Not Started"
+  },
+  "BUG-PERSISTBATTLE-LOST-UPDATE-RACE-READ-MODIFY-WRITE-WITHOUT-TRA": {
+    "hash": "cf7fe39",
+    "git_issue": "cf7fe39",
+    "extid": "BUG-PERSISTBATTLE-LOST-UPDATE-RACE-READ-MODIFY-WRITE-WITHOUT-TRA",
+    "type": "BUG",
+    "title": "persistBattle lost-update race (read-modify-write without transaction)",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-persistbattle-lost-update-race-read-modify-write-without-tra.md",
     "status": "Not Started"
   },
   "BUG-PERSONA-UPDATE-ON-CROSS-USER-ID-RETURNS-200-OK-INSTEAD-OF-40": {
@@ -6095,6 +6732,19 @@
     "title": "\"Private\"/E2E tier is server-mediated symmetric encryption — no true E2E",
     "type": "BUG"
   },
+  "BUG-PROACTIVE-BACKOFF-INCREMENT-LOSES-UPDATES-UNDER-CONCURRENCY": {
+    "hash": "1d91169",
+    "git_issue": "1d91169",
+    "extid": "BUG-PROACTIVE-BACKOFF-INCREMENT-LOSES-UPDATES-UNDER-CONCURRENCY",
+    "type": "BUG",
+    "title": "Proactive backoff increment loses updates under concurrency",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-proactive-backoff-increment-loses-updates-under-concurrency.md",
+    "status": "Not Started"
+  },
   "BUG-PROMPTOVERRIDE-SCHEMA-HAS-NO-MAXLENGTH-TOKEN-BOMB-STORAGE-VE": {
     "epic": "",
     "extid": "BUG-PROMPTOVERRIDE-SCHEMA-HAS-NO-MAXLENGTH-TOKEN-BOMB-STORAGE-VE",
@@ -6291,6 +6941,19 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin.md",
+    "status": "Not Started"
+  },
+  "BUG-RECORDSECRETFOUND-READ-MODIFY-WRITE-LOSES-CONCURRENT-SECRETS": {
+    "hash": "b9235db",
+    "git_issue": "b9235db",
+    "extid": "BUG-RECORDSECRETFOUND-READ-MODIFY-WRITE-LOSES-CONCURRENT-SECRETS",
+    "type": "BUG",
+    "title": "recordSecretFound read-modify-write loses concurrent secrets",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-recordsecretfound-read-modify-write-loses-concurrent-secrets.md",
     "status": "Not Started"
   },
   "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san": {
@@ -6791,6 +7454,19 @@
     "tags": [],
     "title": "setTestDatabase-global-leak-on-test-throw",
     "type": "BUG"
+  },
+  "BUG-SETTINGS-EXPORT-ENDPOINT-HAS-NO-RATE-LIMITING": {
+    "hash": "283539d",
+    "git_issue": "283539d",
+    "extid": "BUG-SETTINGS-EXPORT-ENDPOINT-HAS-NO-RATE-LIMITING",
+    "type": "BUG",
+    "title": "Settings export endpoint has no rate limiting",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-settings-export-endpoint-has-no-rate-limiting.md",
+    "status": "Not Started"
   },
   "BUG-SETTINGS-SAVE-OMITS-GMCONFIG-FOR-ONLINE-CHATS": {
     "epic": "",
@@ -16773,6 +17449,136 @@
     ],
     "title": "FATE Stress Tracks + Consequences",
     "type": "FEAT"
+  },
+  "FEAT-FEAT-API-VERSION-MIGRATION-ASSISTANT-ENDPOINT": {
+    "hash": "da5e9ad",
+    "git_issue": "da5e9ad",
+    "extid": "FEAT-FEAT-API-VERSION-MIGRATION-ASSISTANT-ENDPOINT",
+    "type": "FEAT",
+    "title": "feat(api): version-migration assistant endpoint",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-feat-api-version-migration-assistant-endpoint.md",
+    "status": "Not Started"
+  },
+  "FEAT-FEAT-CONFIG-CONFIG-DOCTOR-WITH-EXAMPLE-DRIFT-CI": {
+    "hash": "276a41d",
+    "git_issue": "276a41d",
+    "extid": "FEAT-FEAT-CONFIG-CONFIG-DOCTOR-WITH-EXAMPLE-DRIFT-CI",
+    "type": "FEAT",
+    "title": "feat(config): config doctor with example-drift CI",
+    "label": "feat",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-feat-config-config-doctor-with-example-drift-ci.md",
+    "status": "Not Started"
+  },
+  "FEAT-FEAT-MEDIA-RESUMABLE-MEDIA-DELIVERY-WITH-CACHE-MANIFEST": {
+    "hash": "e92af3b",
+    "git_issue": "e92af3b",
+    "extid": "FEAT-FEAT-MEDIA-RESUMABLE-MEDIA-DELIVERY-WITH-CACHE-MANIFEST",
+    "type": "FEAT",
+    "title": "feat(media): resumable media delivery with cache-manifest",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-feat-media-resumable-media-delivery-with-cache-manifest.md",
+    "status": "Not Started"
+  },
+  "FEAT-FEAT-OPS-BOOT-READINESS-GATE-WITH-STARTUP-DIAGNOSTICS-REPORT": {
+    "hash": "4534c66",
+    "git_issue": "4534c66",
+    "extid": "FEAT-FEAT-OPS-BOOT-READINESS-GATE-WITH-STARTUP-DIAGNOSTICS-REPORT",
+    "type": "FEAT",
+    "title": "feat(ops): boot-readiness gate with startup diagnostics report",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-feat-ops-boot-readiness-gate-with-startup-diagnostics-report.md",
+    "status": "Not Started"
+  },
+  "FEAT-FEAT-PLUGINS-PLUGIN-HEALTH-INSPECTOR": {
+    "hash": "9b7ef25",
+    "git_issue": "9b7ef25",
+    "extid": "FEAT-FEAT-PLUGINS-PLUGIN-HEALTH-INSPECTOR",
+    "type": "FEAT",
+    "title": "feat(plugins): plugin health inspector",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-feat-plugins-plugin-health-inspector.md",
+    "status": "Not Started"
+  },
+  "FEAT-FEAT-RATE-LIMIT-PER-ROUTE-RATE-LIMIT-ANALYTICS-DASHBOARD": {
+    "hash": "730c670",
+    "git_issue": "730c670",
+    "extid": "FEAT-FEAT-RATE-LIMIT-PER-ROUTE-RATE-LIMIT-ANALYTICS-DASHBOARD",
+    "type": "FEAT",
+    "title": "feat(rate-limit): per-route rate-limit analytics dashboard",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-feat-rate-limit-per-route-rate-limit-analytics-dashboard.md",
+    "status": "Not Started"
+  },
+  "FEAT-FEAT-SDK-GENERATED-TYPED-ERROR-CATALOG-FOR-THE-CLIENT-SDK": {
+    "hash": "e05db92",
+    "git_issue": "e05db92",
+    "extid": "FEAT-FEAT-SDK-GENERATED-TYPED-ERROR-CATALOG-FOR-THE-CLIENT-SDK",
+    "type": "FEAT",
+    "title": "feat(sdk): generated typed error catalog for the client SDK",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-feat-sdk-generated-typed-error-catalog-for-the-client-sdk.md",
+    "status": "Not Started"
+  },
+  "FEAT-FEAT-SECURITY-SECURITY-POSTURE-SELF-AUDIT-ENDPOINT": {
+    "hash": "c52cfc8",
+    "git_issue": "c52cfc8",
+    "extid": "FEAT-FEAT-SECURITY-SECURITY-POSTURE-SELF-AUDIT-ENDPOINT",
+    "type": "FEAT",
+    "title": "feat(security): security-posture self-audit endpoint",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-feat-security-security-posture-self-audit-endpoint.md",
+    "status": "Not Started"
+  },
+  "FEAT-FEAT-TELEMETRY-TELEMETRY-QUOTA-AND-ABUSE-DASHBOARD": {
+    "hash": "03a4b76",
+    "git_issue": "03a4b76",
+    "extid": "FEAT-FEAT-TELEMETRY-TELEMETRY-QUOTA-AND-ABUSE-DASHBOARD",
+    "type": "FEAT",
+    "title": "feat(telemetry): telemetry quota and abuse dashboard",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-feat-telemetry-telemetry-quota-and-abuse-dashboard.md",
+    "status": "Not Started"
+  },
+  "FEAT-FEAT-WEBHOOKS-WEBHOOK-DELIVERY-STATUS-CONSOLE-WITH-RETRY": {
+    "hash": "67a6d3f",
+    "git_issue": "67a6d3f",
+    "extid": "FEAT-FEAT-WEBHOOKS-WEBHOOK-DELIVERY-STATUS-CONSOLE-WITH-RETRY",
+    "type": "FEAT",
+    "title": "feat(webhooks): webhook delivery-status console with retry",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-feat-webhooks-webhook-delivery-status-console-with-retry.md",
+    "status": "Not Started"
   },
   "FEAT-FEDERATE-BLOG-SYSTEM-VIA-ACTIVITYPUB-LEMMY-MASTODON-REDDIT": {
     "epic": "",
@@ -30961,6 +31767,45 @@
     "title": "Document Regex Extraction pipeline spec",
     "type": "TASK"
   },
+  "TASK-DOCS-API-DISAMBIGUATE-INFRA-METRICS-FROM-GOVERNANCE-API-V1-M": {
+    "hash": "904a48d",
+    "git_issue": "904a48d",
+    "extid": "TASK-DOCS-API-DISAMBIGUATE-INFRA-METRICS-FROM-GOVERNANCE-API-V1-M",
+    "type": "TASK",
+    "title": "docs(api): disambiguate infra /metrics from governance /api/v1/metrics",
+    "label": "task",
+    "priority": "low",
+    "epic": "plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-api-disambiguate-infra-metrics-from-governance-api-v1-m.md",
+    "status": "Not Started"
+  },
+  "TASK-DOCS-CONFIG-ADD-MISSING-SECTIONS-TO-CONFIG-EXAMPLES": {
+    "hash": "52b00c3",
+    "git_issue": "52b00c3",
+    "extid": "TASK-DOCS-CONFIG-ADD-MISSING-SECTIONS-TO-CONFIG-EXAMPLES",
+    "type": "TASK",
+    "title": "docs(config): add missing sections to config examples",
+    "label": "task",
+    "priority": "low",
+    "epic": "auth-config-contracts",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-config-add-missing-sections-to-config-examples.md",
+    "status": "Not Started"
+  },
+  "TASK-DOCS-CONFIG-DOCUMENT-SECRET-PROBE-IDEMPOTENCY-ENV-KEYS-IN-EN": {
+    "hash": "b136d14",
+    "git_issue": "b136d14",
+    "extid": "TASK-DOCS-CONFIG-DOCUMENT-SECRET-PROBE-IDEMPOTENCY-ENV-KEYS-IN-EN",
+    "type": "TASK",
+    "title": "docs(config): document secret + probe + idempotency env keys in env.example.yaml",
+    "label": "task",
+    "priority": "low",
+    "epic": "auth-config-contracts",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en.md",
+    "status": "Not Started"
+  },
   "TASK-DOCS-FIX-DANGLING-LINKS": {
     "epic": "epic-docs-reconciliation",
     "extid": "TASK-DOCS-FIX-DANGLING-LINKS",
@@ -30986,6 +31831,19 @@
     "tags": [],
     "title": "User guide how-tos",
     "type": "TASK"
+  },
+  "TASK-DOCS-PROBES-FIX-READINESS-DOCSTRING-DOCUMENT-API-HEALTH-VS-H": {
+    "hash": "2da5455",
+    "git_issue": "2da5455",
+    "extid": "TASK-DOCS-PROBES-FIX-READINESS-DOCSTRING-DOCUMENT-API-HEALTH-VS-H",
+    "type": "TASK",
+    "title": "docs(probes): fix readiness docstring; document /api/health vs /health/* for load balancers",
+    "label": "task",
+    "priority": "low",
+    "epic": "auth-config-contracts",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h.md",
+    "status": "Not Started"
   },
   "TASK-DOCS-RECONCILE-IMPLEMENTATION": {
     "epic": "epic-docs-reconciliation",
@@ -32807,6 +33665,19 @@
     "tags": [],
     "title": "FE-BE triage: verify-or-fix remaining harmony findings (personas PUT, story action, movement, plugins POST, review PUTs)",
     "type": "TASK"
+  },
+  "TASK-FEAT-API-EMIT-DEPRECATION-HEADERS-ON-LEGACY-UNVERSIONED-API-": {
+    "hash": "e7168cf",
+    "git_issue": "e7168cf",
+    "extid": "TASK-FEAT-API-EMIT-DEPRECATION-HEADERS-ON-LEGACY-UNVERSIONED-API-",
+    "type": "TASK",
+    "title": "feat(api): emit deprecation headers on legacy unversioned /api/* responses",
+    "label": "task",
+    "priority": "low",
+    "epic": "routing-versioning-consolidation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-.md",
+    "status": "Not Started"
   },
   "TASK-FEDERATION-ADMIN-UI-FOR-FOLLOWS-BLOCKLISTS-KEY-ROTATION": {
     "epic": "epic-federation-swarm-sync",
@@ -41204,6 +42075,19 @@
     "epic": "Fuzzing Infrastructure",
     "tags": [],
     "source": ".plan/tickets/TASK-per-target-fuzzing-harnesses-auth-asset-chat-llm-admin-ipc.md",
+    "status": "Not Started"
+  },
+  "TASK-PERF-SERVER-NO-CACHE-HTML-ENTRY-POINTS-STREAM-STATIC-FILES-W": {
+    "hash": "91d9c92",
+    "git_issue": "91d9c92",
+    "extid": "TASK-PERF-SERVER-NO-CACHE-HTML-ENTRY-POINTS-STREAM-STATIC-FILES-W",
+    "type": "TASK",
+    "title": "perf(server): no-cache HTML entry points; stream static files with Range support",
+    "label": "task",
+    "priority": "low",
+    "epic": "server-hardening",
+    "tags": [],
+    "source": ".plan/tickets/TASK-perf-server-no-cache-html-entry-points-stream-static-files-w.md",
     "status": "Not Started"
   },
   "TASK-PERFORMANCE-DASHBOARD-SLOS": {
