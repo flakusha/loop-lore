@@ -111,3 +111,14 @@ without confirmation.
   `@knipignore` tags instead of global gag (verify tag support in v6 first).
 - `scripts/check-parallel-HEAD-probe.mjs` → dev-checkout scratch, delete or
   move to `.tmp/` (user's untracked file — needs user confirm; not committed).
+
+## Update 2026-10-11
+
+Both open tool-state items above are resolved on `fix-knip-src-blindspot`:
+- `dead:code` / `dead:code:ci` rewritten to `knip --no-gitignore` /
+  `knip --no-gitignore --no-progress` — the v6-removed `--ci` flag was the breakage.
+- "src empirically in scope" was the suspected false positive: `src/.gitignore`
+  blanket-ignores `.` and knip honors gitignore — src was never scanned. Fixed via
+  `knip.json` + the `dead:code` scripts (see both for the current entry set).
+- The knip gate is RED pending triage — see the filed triage ticket;
+  keep-vs-wire-vs-remove per the directive above.
