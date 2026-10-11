@@ -95,14 +95,16 @@ export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api",) {
           const noteId = uid();
           const now = new Date().toISOString();
 
-          // Optional message anchor: reject dangling references here so the
-          // caller gets a 404 instead of an opaque FK violation (the FK is
-          // enforced — PRAGMA foreign_keys = ON).
+          // Optional message anchor: reject dangling or cross-chat
+          // references here so the caller gets a 404 instead of an opaque
+          // FK violation (the FK is enforced — PRAGMA foreign_keys = ON)
+          // or a note anchored outside its own chat.
           if (body.messageId) {
             const message = await database
               .selectFrom("messages",)
               .select("id",)
               .where("id", "=", body.messageId,)
+              .where("chat_id", "=", id,)
               .executeTakeFirst();
 
             if (!message) { return notFound("Message not found",); }
