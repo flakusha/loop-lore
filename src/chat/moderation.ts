@@ -531,6 +531,10 @@ export async function applyFlag(
   opts: ApplyOptions,
   content?: string,
 ): Promise<ApplyResult> {
+  if (opts.targetActorId === opts.byActorId) {
+    return { ok: false, reason: "Cannot apply moderation action to yourself", };
+  }
+
   if (!opts.chatId) {
     return { ok: false, reason: "chatId is required", };
   }
