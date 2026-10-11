@@ -3,7 +3,7 @@
 
 # BUG: register rate limiter consumes on username-collision retries
 
-**Status:** Done (commit fba9dbcd8 — peek/record/refund split in src/middleware/rate-limit.ts:165-226, plus 3f6329b02 size refactor and register.ts gate swap to `peek` at the gate and `record` after commit.)
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Summary:** src/routes/auth/shared.ts `registerLimiter.consume(ip)` ran at register.ts line 37 before the insertUnique uniqueness check. A user fat-fingering a username burned 1 of 3 tokens on the resulting 409; an attacker brute-forcing the password gate with a claimed username burned the victim's per-IP budget. Move `consume()` after the gate returns a valid form AND a successful insert (or refund the token on 409 from insertUnique). Caught from post-merge audit of ba2871422.

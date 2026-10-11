@@ -9,7 +9,7 @@
 
 
  **Status Note:** All 6 ACs green — final AC (moderator/GM re-eval) verified against src + scoped tests 2026-10-01.
- **Status:** Done (2026-10-01)
+ **Status:** Done
 **Priority:** Low
 **Effort:** Medium
 **Epic:** epic-chat-product-features
