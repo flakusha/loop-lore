@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** DB, CRUD routes, GM panel, and prompt-section wiring all ship. `gmNotesSection` is registered in `src/assistant/prompt/registry.ts` and reads both tables, so notes do reach the LLM. Open: `trigger_condition`, `message_id`, and reveal narration.
+**Status Note:** DB, CRUD routes, GM panel, prompt-section wiring, and reveal narration all ship. `gmNotesSection` is registered in `src/assistant/prompt/registry.ts` and reads both tables, so notes do reach the LLM; reveal emits a narrator chat message (`injectShadowRevealNarration` in `src/routes/gm-notes/shadow.ts`). Open: `trigger_condition`, `message_id`, `revealed_to`, and the story-notes role-access matrix.
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -17,7 +17,7 @@
 
 Add GM/Assistant story whitenotes and shadow notes for system/user message LLM story steering. Whitenotes are visible context cues that guide the LLM's narrative direction. Shadow notes are hidden metadata that influence story generation without being exposed to players.
 
-## Current State (2026-08-01)
+## Current State (2026-10-11)
 
 - ✅ DB tables — `src/db/schema-gm.ts`
   - `whitenotes`: id, chat_id, type, content, priority, scope, expires_at, created_at, data_version, record_hash
@@ -27,9 +27,9 @@ Add GM/Assistant story whitenotes and shadow notes for system/user message LLM s
 - ✅ **Prompt injection** — `src/assistant/prompt/sections/gm-notes.ts` reads both tables (`fetchActiveWhitenotes`, unrevealed shadow notes, expiry filtered, `MAX_WHITENOTES`/`MAX_SHADOW_NOTES` caps) and is registered in `src/assistant/prompt/registry.ts` as `gmNotesSection`. Notes DO reach prompt assembly.
 - ✅ `shadow_notes.visibility` — `ShadowNoteVisibility` enum + `shadowNotesStatusVisibility` state machine (`src/db/enums-gm.ts`)
 - ✅ Route tests — `src/routes/gm-notes.test.ts`
-- ❌ `shadow_notes.trigger_condition` column absent — the design's `trigger_condition` has no column; `status`/`visibility`/`expires_at`/`author_type` are the only behavioural fields
-- ❌ Reveal does not emit a player-visible chat message (row update only)
-- ❌ Design says `message_id`-attached whitenotes; implementation is chat-scoped (no `message_id` column)
+- ❌ `shadow_notes.trigger_condition` column absent — the design's `trigger_condition` has no column; `status`/`visibility`/`expires_at`/`author_type` are the only behavioural fields (ticketed: `TASK-gm-shadow-note-trigger-condition-and-revealed-to-columns.md`)
+- ❌ Design says `message_id`-attached whitenotes; implementation is chat-scoped (no `message_id` column) (ticketed: `TASK-gm-whitenote-message-scoping.md`)
+- ✅ Reveal narration — reveal emits a narrator system message into the chat (`injectShadowRevealNarration`, `src/routes/gm-notes/shadow.ts`), not a bare row update
 
 ## Design
 
@@ -92,13 +92,17 @@ Story steering uses whitenotes and shadow notes to guide the LLM's narrative dir
 
 - `TASK-gm-whitenotes.md`
 - `TASK-gm-shadow-notes.md`
+- `TASK-gm-shadow-note-trigger-condition-and-revealed-to-columns.md` — trigger_condition + revealed_to schema columns
+- `TASK-gm-whitenote-message-scoping.md` — message-scoped whitenotes vs chat-scoped schema
+- `TASK-gm-story-notes-role-access-matrix.md` — story-notes panel role-access matrix (gap-audit E8)
 - `TASK-gm-trigger-and-timeline-backfill-propagation.md` — GM triggers fire and backfill the timeline via memory propagation
 - `TASK-invisible-gm-only-quest-and-ark-system.md` — GM-only quests + ARK system integration
 - `TASK-invisible-note-scope-global-local-temporal-random.md` — invisible-note scope (global/local/temporal/random)
 
 ## Docs-Gap Audit Remainders (2026-09-19)
 
-- [ ] [gap-audit E8] Story-notes panel: 3-tab structure + role-access matrix (GM notes panel core done)
+- [x] [gap-audit E8] Story-notes panel tab structure — `src/components/chat/gm-panel.html` ships the tab strip (shadow, whitenotes, story, quests, entities, assistant) driven by `$store.ui.gmAssistantTab`
+- [ ] [gap-audit E8] Story-notes role-access matrix (tab strip done; no role gating visible in `gm-panel.html` / `src/frontend/alpine/gm-panel.ts`) — ticketed as `TASK-gm-story-notes-role-access-matrix.md`
 
 ## Integration Points
 
@@ -131,14 +135,12 @@ Story steering uses whitenotes and shadow notes to guide the LLM's narrative dir
 
 ### Unticketed Gaps
 
-- `shadow_notes.trigger_condition` — the design specifies per-note activation
-  triggers; no column and no ticket.
-- `whitenotes.message_id` — the design is message-scoped, the schema is
-  chat-scoped; no ticket reconciles the two.
-- Reveal narration: `gm.note.reveal` is declared as an emitted event in
-  Cross-System Events but `reveal()` only updates the row — no emitter exists.
-- `revealed_to` (per-player reveal tracking) from the design has no column.
-- Story-notes panel 3-tab structure + role-access matrix ([gap-audit E8]).
+None — the former gaps are ticketed:
+
+- `shadow_notes.trigger_condition` + `revealed_to` — `TASK-gm-shadow-note-trigger-condition-and-revealed-to-columns.md`
+- `whitenotes.message_id` (message-scoped vs chat-scoped) — `TASK-gm-whitenote-message-scoping.md`
+- Reveal narration — shipped (`injectShadowRevealNarration` in `src/routes/gm-notes/shadow.ts`); no longer a gap
+- Story-notes role-access matrix ([gap-audit E8]) — `TASK-gm-story-notes-role-access-matrix.md`
 
 ### Shared Data Contracts
 

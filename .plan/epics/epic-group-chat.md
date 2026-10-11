@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** `src/group-chat/` ships `mention-parser.ts`, `turn-selector.ts`, and `index.ts`; the `[PASS]` filter lives in `src/generation/auto-gen/pass-filter.ts`. Mention routing is Done, turn orchestration remains open.
+**Status Note:** `src/group-chat/` ships `mention-parser.ts`, `turn-selector.ts`, and `index.ts`; the `[PASS]` filter lives in `src/generation/auto-gen/pass-filter.ts` and the cascade in `src/generation/auto-gen/group-cascade.ts`. Mention routing and turn orchestration are Done (talkativity surfaced via the group-talkativity prompt section, silence-pass via `detectPassToken` + `filterPassedActors`, context-mention boost in `turn-selector.ts`). Open: group-chat frontend viewer (ticketed).
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -39,10 +39,12 @@ Out of scope:
 | Ticket | Type | Status |
 | --- | --- | --- |
 | TASK-group-chat-mention-routing | TASK | Done — `src/group-chat/mention-parser.ts` |
-| TASK-group-chat-turn-orchestration | TASK | open |
+| TASK-group-chat-turn-orchestration | TASK | Done — talkativity prompt section, silence-pass filtering, context-mention boost all verified in `src/group-chat/turn-selector.ts` |
+| TASK-group-chat-frontend-viewer | TASK | Not Started — mention UI + turn indicators |
 | BUG-group-chat-mention-prefix-collision | BUG | Done — ambiguous prefix returns null, disambiguation prompt |
 | BUG-group-chat-talkativity-not-surfaced-in-prompt | BUG | Done — group-talkativity prompt section |
 | BUG-group-chat-silence-pass-not-implemented | BUG | Done — `detectPassToken` (`src/group-chat/mention-parser.ts`) + `filterPassedActors` (`src/generation/auto-gen/pass-filter.ts`) |
+| BUG-group-cascade-max-turns-off-by-one | BUG | Done |
 
 ## Current State
 
@@ -53,8 +55,8 @@ Out of scope:
 | Pass filtering in the cascade | Shipped | `src/generation/auto-gen/pass-filter.ts` (`filterPassedActors`) |
 | Turn selection (talkativity weighting) | Shipped | `src/group-chat/turn-selector.ts` |
 | Cascade orchestration | Shipped | `src/generation/auto-gen/group-cascade.ts` |
-| Turn orchestration ticket closure | open | `TASK-group-chat-turn-orchestration.md` |
-| Frontend viewer (mention UI, turn indicators) | Not Started | — |
+| Turn orchestration ticket closure | Done | `TASK-group-chat-turn-orchestration.md` |
+| Frontend viewer (mention UI, turn indicators) | Not Started | `TASK-group-chat-frontend-viewer.md` |
 
 ## Integration Points
 
@@ -78,13 +80,14 @@ Out of scope:
 
 ## Unticketed Gaps
 
-- Frontend group-chat viewer (mention UI, turn indicators) has no ticket; it is
-  named in Scope but owns no task.
+None — the frontend group-chat viewer is ticketed as `TASK-group-chat-frontend-viewer.md`.
 
 ## Linked Tasks
 
 - `TASK-group-chat-mention-routing.md` (Done)
-- `TASK-group-chat-turn-orchestration.md` (open)
+- `TASK-group-chat-turn-orchestration.md` (Done)
+- `TASK-group-chat-frontend-viewer.md` (Not Started)
 - `BUG-group-chat-mention-prefix-collision.md` (Done)
 - `BUG-group-chat-talkativity-not-surfaced-in-prompt.md` (Done)
 - `BUG-group-chat-silence-pass-not-implemented.md` (Done)
+- `BUG-group-cascade-max-turns-off-by-one.md` (Done)
