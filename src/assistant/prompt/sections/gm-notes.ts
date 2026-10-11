@@ -17,6 +17,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
 import { jsonParseOr, } from "../../../utils";
 import { wrapSection, } from "../../xml-utils";
+import type { InjectableEntry, } from "../carriage-isolation";
 import type { SectionBuilder, } from "../types";
 
 const MAX_WHITENOTES = 10;
@@ -130,6 +131,73 @@ export function formatShadowSteering(notes: readonly ShadowSteeringNote[],): str
   return wrapSection("shadow_notes", text,);
 }
 
+/**
+ * Build the injectable entries for one assembly: whitenotes are player-class
+ * story steering; shadow notes are gm-class hidden metadata. Entry `content`
+ * is the plain note text — the cross-system dedup key (a fact another system
+ * already submitted drops here); the section re-renders the labeled line per
+ * kept id, so gate-off rendering is byte-identical to the pre-gate path.
+ * @param whitenotes - active whitenotes (highest priority first)
+ * @param shadowNotes - unrevealed shadow notes (already role-gated upstream)
+ * @returns entries in canonical render order (whitenotes, then shadow)
+ */
+export function gmNoteEntries(
+  whitenotes: readonly WhiteneoteRow[],
+  shadowNotes: readonly ShadowSteeringNote[],
+): InjectableEntry[] {
+  const entries: InjectableEntry[] = [];
+  whitenotes.forEach((n, i,) => {
+    entries.push({
+      system: "notes",
+      id: `whitenote-${i}`,
+      content: n.content,
+      visibility: "player",
+    },);
+  },);
+
+  for (const [i, n,] of shadowNotes.entries()) {
+    entries.push({
+      system: "gmNotes-shadow",
+      id: `shadow-${i}`,
+      content: n.content,
+      visibility: "gm",
+    },);
+  }
+
+  return entries;
+}
+
+/**
+ * Canonical labeled render line per note entry id.
+ * @param whitenotes - active whitenotes (highest priority first)
+ * @param shadowNotes - unrevealed shadow notes
+ * @returns id → exact `- [type]…` line, byte-identical to the pre-gate render
+ */
+function gmNoteRenderLines(
+  whitenotes: readonly WhiteneoteRow[],
+  shadowNotes: readonly ShadowSteeringNote[],
+): Map<string, string> {
+  const lines = new Map<string, string>();
+  whitenotes.forEach((n, i,) => {
+    // Message-scoped notes carry a `[message <id>]` label so the model can
+    // tell anchored directives apart from chat-scoped ones.
+    lines.set(
+      `whitenote-${i}`,
+      n.message_id
+        ? `- [${n.type}][priority ${n.priority}][${n.scope}][message ${n.message_id}] ${n.content}`
+        : `- [${n.type}][priority ${n.priority}][${n.scope}] ${n.content}`,
+    );
+  },);
+
+  shadowNotes.forEach((n, i,) => {
+    lines.set(
+      `shadow-${i}`,
+      n.trigger ? `- [${n.type}][trigger: ${n.trigger}] ${n.content}` : `- [${n.type}] ${n.content}`,
+    );
+  },);
+
+  return lines;
+}
 export const gmNotesSection: SectionBuilder = {
   name: "gmNotes",
   enabled: () => true,
@@ -160,20 +228,26 @@ export const gmNotesSection: SectionBuilder = {
 
     if (whitenotes.length === 0 && shadowNotes.length === 0) { return []; }
 
-    const parts: string[] = [];
-    if (whitenotes.length > 0) {
-      // Message-scoped notes carry a `[message <id>]` label so the model can
-      // tell anchored directives apart from chat-scoped ones.
-      const text = Array.from(whitenotes, (n,) =>
-        n.message_id
-          ? `- [${n.type}][priority ${n.priority}][${n.scope}][message ${n.message_id}] ${n.content}`
-          : `- [${n.type}][priority ${n.priority}][${n.scope}] ${n.content}`,).join("\n",);
+    // Single-assembly gate: with the gate active the entries flow through
+    // { system, visibility } filtering + content-hash dedup server-side;
+    // without it the same entries render verbatim (byte-identical baseline).
+    // Rendering uses the canonical labeled line per kept id — never entry
+    // content (the plain note text is the dedup key, not the render unit).
+    const candidates = gmNoteEntries(whitenotes, shadowNotes,);
+    const kept = ctx.injectables ? ctx.injectables.submit(candidates,) : candidates;
+    const renderLines = gmNoteRenderLines(whitenotes, shadowNotes,);
+    const keptWhitenotes = kept.filter((e,) => e.system === "notes");
+    const keptShadow = kept.filter((e,) => e.system === "gmNotes-shadow");
 
-      parts.push(wrapSection("whitenotes", text,),);
+    if (keptWhitenotes.length === 0 && keptShadow.length === 0) { return []; }
+
+    const parts: string[] = [];
+    if (keptWhitenotes.length > 0) {
+      parts.push(wrapSection("whitenotes", keptWhitenotes.map((e,) => renderLines.get(e.id,) ?? "").join("\n",),),);
     }
 
-    if (shadowNotes.length > 0) {
-      parts.push(formatShadowSteering(shadowNotes,),);
+    if (keptShadow.length > 0) {
+      parts.push(wrapSection("shadow_notes", keptShadow.map((e,) => renderLines.get(e.id,) ?? "").join("\n",),),);
     }
 
     return [{ role: "system", content: parts.join("\n\n",), },];

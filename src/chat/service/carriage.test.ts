@@ -17,6 +17,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
+  insertCarriageRecords,
   insertChatParticipants,
   insertChats,
   insertChatSetupTemplates,
@@ -101,6 +102,31 @@ describe("carriage service", () => {
 
     expect(await listCarriage(db, chatA,),).toHaveLength(0,);
     expect(await listCarriage(db, chatB,),).toHaveLength(1,);
+  });
+
+  test("scope option restricts the listing to one scope", async () => {
+    const chatId = crypto.randomUUID();
+    await insertChats(db, "Scoped", OWNER_ID, { id: chatId, } as never,);
+    await insertCarriageRecords(db, chatId, "section", "{}", "2026-08-01T00:00:00Z",);
+    await new Promise((resolve,) => setTimeout(resolve, 5,));
+    await insertCarriageRecords(
+      db,
+      chatId,
+      "carriage",
+      JSON.stringify({ toml: "episode = 1", },),
+      "2026-08-02T00:00:00Z",
+    );
+
+    const scoped = await listCarriage(db, chatId, { scope: "carriage", },);
+    expect(scoped,).toHaveLength(1,);
+    expect(scoped[0]!.scope,).toBe("carriage",);
+
+    const carryLog = await listCarriage(db, chatId, { scope: "section", },);
+    expect(carryLog,).toHaveLength(1,);
+    expect(carryLog[0]!.scope,).toBe("section",);
+
+    // Default keeps the full carry log across scopes.
+    expect(await listCarriage(db, chatId,),).toHaveLength(2,);
   });
 
   test("limit option clamps the row count", async () => {
