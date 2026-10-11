@@ -10,6 +10,7 @@ import { craftingExecutionRoutes, } from "./crafting-execution";
 import { craftingStationRoutes, } from "./crafting-stations";
 import { diceRoutes, } from "./dice";
 import { npcNavigationRoutes, } from "./npc-navigation";
+import { progressionRoutes, } from "./progression";
 import { questionsRoutes, } from "./questions";
 import { replayabilityRoutes, } from "./replayability";
 import { skillsRoutes, } from "./skills";
@@ -59,6 +60,12 @@ import { xpLootTablesRoutes, } from "./xp-loot-tables";
  *     POST/GET /api/chats/:id/questions — create/list open questions
  *     POST /api/questions/:id/answer — record a choice
  *
+ *   Progression (XP-leveling epic):
+ *     GET  /api/rpg/progression/:actorId — level/xp/pending ASI read surface
+ *     POST /api/rpg/progression/:actorId/award — XP through the LevelService
+ *     POST /api/rpg/progression/:actorId/asi — allocate pending points
+ *     POST /api/rpg/progression/:actorId/level-up — resolve a decision
+ *
  *   World & Location Traits:
  *     /api/rpg/world-location-traits/worlds|locations/... — trait CRUD
  *     /api/rpg/world-location-traits/actors/:actorId — aggregate
@@ -86,5 +93,6 @@ export function rpgRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(craftingExecutionRoutes(opts, prefix,),)
       .use(xpLootRoutes(opts, prefix,),)
       .use(xpLootTablesRoutes(opts, prefix,),)
+      .use(progressionRoutes(opts, prefix,),)
   );
 }
