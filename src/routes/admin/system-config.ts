@@ -20,7 +20,7 @@ import {
   ErrorResponse,
   SuccessResponse,
 } from "../../validation/schemas";
-import { buildConfigMenu, findField, } from "../config-menu";
+
 import {
   ErrorCode,
   HttpStatus,
@@ -186,10 +186,8 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         if (typeof userId !== "string") { return userId; }
 
         const key = ctx.params.key as string;
-        const adminSections = buildConfigMenu(true,);
-        const userSections = buildConfigMenu(false,);
-        const field = findField(adminSections, key,) ?? findField(userSections, key,);
-        if (!field) {
+        const allConfig = await getAllConfig(opts.database,);
+        if (!allConfig.find((c,) => c.key === key)) {
           return jsonError(`Unknown config key: ${key}`, HttpStatus.BadRequest, ErrorCode.BadRequest,);
         }
 
