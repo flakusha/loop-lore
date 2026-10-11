@@ -330,6 +330,36 @@ describe("gmNotesRoutes", () => {
 
     expect(dangling.status,).toBe(404,);
 
+    // A real message from ANOTHER chat is not a valid anchor either.
+    await insertChats(
+      db,
+      "Other Chat",
+      "owner-1",
+      { id: "22222222-2222-4222-8222-222222222222", world_id: "world-1", } as any,
+    );
+
+    const foreignMessageId = await insertMessages(
+      db,
+      "22222222-2222-4222-8222-222222222222",
+      "narrator-1",
+      MessageRole.System,
+      "Belongs elsewhere.",
+    );
+
+    const foreign = await app.handle(
+      new Request(chatPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          type: "tone",
+          content: "Cross-chat anchor.",
+          messageId: foreignMessageId,
+        },),
+      },),
+    );
+
+    expect(foreign.status,).toBe(404,);
+
     const list = await getJson<{
       items: { content: string; message_id: string | null }[];
     }>(await app.handle(new Request(chatPath,),),);
