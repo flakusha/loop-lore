@@ -19,10 +19,14 @@ export {
 } from "./calculation.js";
 
 export {
+  DISCOVERY_XP,
+  TRAVEL_LEG_XP,
   XP_BY_CR,
+  xpForDiscovery,
   xpForEnemyDefeat,
   xpForQuest,
   xpForSkillChallenge,
+  xpForTravelLeg,
 } from "./sources.js";
 
 export {

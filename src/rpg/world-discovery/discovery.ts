@@ -47,6 +47,7 @@
 import { discoveredKey, emitWorldEvent, } from "./events";
 import { latch, persist, type ProgressRow, readPresence, readProgress, recompute, } from "./progress";
 import { type DiscoveryDb, type DiscoveryResult, LOCATION_DISCOVERED, } from "./types";
+import { applyDiscoveryXpLeg, } from "./xp-leg";
 /**
  * Advance every NPC's exploration progress in the world by one tick.
  *
@@ -120,7 +121,14 @@ export async function runDiscoveryTick(
       dedupeKey: discoveredKey(worldId, row.location_id,),
     },);
 
-    if (landed) { events++; }
+    if (landed) {
+      events++;
+      // The location was charted: pay the discoverer. Best-effort, and the
+      // ledger key (actor, discovery, world:location) is idempotent, so a
+      // replayed tick cannot double-pay even if the latch lost the race.
+      await applyDiscoveryXpLeg(db, row.actor_id, worldId, row.location_id,);
+    }
+
     discovered++;
     await latch(db, worldId, row, currentTick, nowMs,);
   }
