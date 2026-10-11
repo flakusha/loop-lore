@@ -17,6 +17,7 @@ import JSZip from "jszip";
 import type { Kysely, } from "kysely";
 import { ActorType, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { createRateLimiter, } from "../middleware/rate-limit";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
 import { ErrorResponse, SettingsUpdateAllowedKeys, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";

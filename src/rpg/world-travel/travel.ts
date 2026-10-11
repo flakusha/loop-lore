@@ -166,7 +166,7 @@ export async function advancePartyTravel(
   // per tick beats one per party, and this is the only place a route id is
   // ever checked against the world.
   const alive = new Set(
-    (await db.selectFrom("locations",).select(["id", "world_id",],).execute())
+    (await db.selectFrom("locations",).select(["id", "world_id",],).where("world_id", "=", worldId,).execute())
       .map((loc,) => loc.world_id + ":" + loc.id),
   );
 
