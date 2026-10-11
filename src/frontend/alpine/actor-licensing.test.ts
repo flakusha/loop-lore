@@ -7,9 +7,8 @@ import {
   actorLicensing,
   actorLicensingFactory,
   type ActorLicensingState,
-  type CharacterLicensing,
-  LICENSE_TYPES,
 } from "./actor-licensing";
+import { type CharacterLicensing, LICENSE_TYPES, } from "./actor-licensing-model";
 
 // ── Mock ../htmx (must precede importing ./actor-licensing) ──
 type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;

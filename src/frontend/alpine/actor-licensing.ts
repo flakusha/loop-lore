@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 280
 
-// size-allow: 260
-
-// ── Character licensing panel.
+// ── Character licensing panel state plugin.
 // Drives `/api/v1/actors/:actorId/licensing` (GET / POST / DELETE). Pairs with
-// `src/components/character/licensing-panel.html`.
-import { LicenseType, } from "../../db/enums-character/content";
+// `src/components/character/licensing-panel.html`. Domain model (types, labels,
+// dropdown options) lives in `./actor-licensing-model`.
+import {
+  type ActorLicensingState,
+  type CharacterLicensing,
+  type LicenseHistoryEntry,
+} from "./actor-licensing-model";
 import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
@@ -16,31 +18,14 @@ import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "actor-licensing", },);
 
-/** All license type options surfaced in the editor dropdown. */
-export const LICENSE_TYPES: string[] = Object.values(LicenseType,);
-
-/** License row returned by the GET endpoint (matches `character_licensing` shape). */
-export interface CharacterLicensing {
-  id: string;
-  actor_id: string;
-  license_type: string;
-  custom_license_text: string | null;
-  attribution: string | null;
-  allow_derivatives: number;
-  allow_commercial: number;
-  share_alike: number;
-  created_at: string;
-  updated_at: string;
-}
-
-/** Audit entry for a licensing change (`character_license_history`). */
-export interface LicenseHistoryEntry {
-  id: string;
-  license_type: string;
-  attribution: string | null;
-  changed_by: string;
-  created_at: string;
-}
+const EMPTY_FORM: ActorLicensingState["licenseForm"] = {
+  license_type: "proprietary",
+  custom_license_text: "",
+  attribution: "",
+  allow_derivatives: true,
+  allow_commercial: false,
+  share_alike: false,
+};
 
 /** Human label for a license type. */
 const LICENSE_LABELS: Record<string, string> = {
@@ -52,55 +37,6 @@ const LICENSE_LABELS: Record<string, string> = {
   cc_by_nc_sa: "CC BY-NC-SA",
   proprietary: "Proprietary",
   custom: "Custom",
-};
-
-/**
- * State plugin for the character-licensing panel. Bound to a single actor via
- * `setActorId`. Read-only by default; `save()` POSTs the current draft; the
- * panel toggles into "edit mode" by mutating `licenseForm` in-place.
- */
-export interface ActorLicensingState {
-  _licActorId: string | null;
-  license: CharacterLicensing | null;
-  licenseForm: {
-    license_type: string;
-    custom_license_text: string;
-    attribution: string;
-    allow_derivatives: boolean;
-    allow_commercial: boolean;
-    share_alike: boolean;
-  };
-  licenseLoading: boolean;
-  licenseSaving: boolean;
-  licenseError: string;
-  licenseDirty: boolean;
-  /** Audit trail of licensing changes, newest first. */
-  licenseHistory: LicenseHistoryEntry[];
-  /** Bind the panel to a specific actor; clears any prior license data. */
-  setActorId(actorId: string,): void;
-  /** Fetch the current licensing record (200 → populates; 404 → null). */
-  loadLicensing(): Promise<void>;
-  /** Fetch the licensing change history for the bound actor. */
-  loadLicenseHistory(): Promise<void>;
-  /** Mark the form as dirty and surface the changes in `licenseForm`. */
-  markDirty(): void;
-  /** POST the current `licenseForm` to the upsert endpoint. */
-  save(): Promise<void>;
-  /** DELETE the licensing record and clear `license`. */
-  remove(): Promise<void>;
-  /** Resolve a human label for a license type code. */
-  describeLicense(code: string,): string;
-  /** Resize a textarea to fit its content. */
-  autoResize(el: HTMLTextAreaElement,): void;
-}
-
-const EMPTY_FORM: ActorLicensingState["licenseForm"] = {
-  license_type: "proprietary",
-  custom_license_text: "",
-  attribution: "",
-  allow_derivatives: true,
-  allow_commercial: false,
-  share_alike: false,
 };
 
 export const actorLicensing: ActorLicensingState = {
