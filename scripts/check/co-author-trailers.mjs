@@ -1,6 +1,9 @@
 #!/usr/bin/env bun
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 260
+// Single-purpose pre-commit hook: one entry point, one audit, no importers.
+// Splitting it would only add an import boundary no caller crosses.
 
 /**
  * Co-Authored-By trailer check — a trailer is only attribution if the identity
@@ -208,8 +211,8 @@ function defaultRange() {
   const head = readGit(["rev-parse", "--verify", "-q", "HEAD",], [0, 1,],).trim();
   if (head === "") { return ""; }
   const branch = readGit(["rev-parse", "--abbrev-ref", "HEAD",], [0, 1,],).trim();
-  const BASE_BRANCHES = ["dev", "main", "master"];
-  if (BASE_BRANCHES.includes(branch)) {
+  const BASE_BRANCHES = ["dev", "main", "master",];
+  if (BASE_BRANCHES.includes(branch,)) {
     return "HEAD~1..HEAD";
   }
 
