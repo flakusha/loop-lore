@@ -633,7 +633,8 @@
     "closeSidebar": "إغلاق",
     "notifications": "الإشعارات",
     "openSidebar": "فتح القائمة",
-    "docs": "التوثيق"
+    "docs": "التوثيق",
+    "config": "Config"
   },
   "modals": {
     "confirm": "تأكيد",
@@ -1070,7 +1071,14 @@
     "toolCalls": "استدعاءات الأدوات الأخيرة",
     "noCommands": "لا توجد أوامر متاحة",
     "noToolCalls": "لا توجد استدعاءات بعد",
-    "assistant": "مُساعد"
+    "assistant": "مُساعد",
+    "questRewards": "Rewards",
+    "questStatus": {
+      "active": "Active",
+      "completed": "Completed",
+      "failed": "Failed",
+      "abandoned": "Abandoned"
+    }
   },
   "crypto": {
     "encryptionNotConfigured": "Encryption not configured",
@@ -1324,7 +1332,19 @@
     "wizardConfirmFailed": "Failed to save entity from wizard",
     "entityCreated": "Entity \"{name}\" created successfully",
     "failedCreateEntity": "Failed to create entity",
-    "networkErrorCreatingEntity": "Network error — could not create entity"
+    "networkErrorCreatingEntity": "Network error — could not create entity",
+    "nothingToContinue": "Nothing to continue — no assistant message yet.",
+    "nothingToRetry": "Nothing to retry — no generation attempt yet.",
+    "vnDecisionPending": "Answer or skip the pending choice or question first.",
+    "vnSkipChoice": "Skip",
+    "vnSkipQuestion": "Skip",
+    "vnSkipFailed": "Could not skip the pending choice or question. Reload to retry.",
+    "nothingToBranch": "Nothing to branch — no assistant message yet.",
+    "unknownCommand": "Unknown command /{name}.",
+    "unknownCommandSuggest": "Unknown command /{name} — did you mean /{suggestion}?",
+    "hiddenCommandsNote": "{count} more command(s) need a higher role.",
+    "keyphrasesSaved": "Keyphrases saved ({count})",
+    "keyphrasesSaveFailed": "Keyphrases: {failed} failed, {saved} saved"
   },
   "status": {
     "characterResponding": "الشخصية ترد...",
@@ -1371,9 +1391,12 @@
     "clear": "مسح المحادثة",
     "stats": "عرض إحصائيات المحادثة",
     "link": "Attach a gallery asset to this chat",
-    "orchestrate": "وزّع المهمة على مجموعة الوكلاء (المجموعة أولاً، مع التقييم والأدلة)",
-    "workflowz": "شغّل سير عمل harness متعدد الخطوات",
-    "omp": "قد وكيل برمجة صغير مدعوم بـ omp"
+    "guide": "GM: give narrative direction (/guide <direction>)",
+    "target": "GM: pick the character to respond next (/target <character>)",
+    "constraint": "GM: add a narrative constraint (/constraint <rule>)",
+    "scene": "GM: set the scene description (/scene <description>)",
+    "priority": "GM: set a character's turn priority (/priority <character> <high|medium|low>)",
+    "skip": "GM: skip a character's turn (/skip <character>)"
   },
   "participants": {
     "title": "Participants",
@@ -1437,7 +1460,6 @@
     "rateLimited": "Too many skips — try again in a minute.",
     "failed": "Could not skip the turn."
   },
-
   "harness": {
     "tabLabel": "Harness",
     "title": "وكيل Harness",
@@ -1505,7 +1527,6 @@
       "harnessCreative": "إبداعي"
     }
   },
-
   "branches": {
     "title": "الفروع",
     "none": "لا توجد فروع بعد",
@@ -1538,11 +1559,26 @@
     "mergeNeedTwoSources": "اختر مصدرين على الأقل للدمج.",
     "mergeModeHint": "اختر كيفية دمج الفروع المحددة.",
     "mergeMode": {
-      "combined": { "title": "مدمج", "desc": "نسج النسختين في استمرارية واحدة" },
-      "secondOverFirst": { "title": "الثاني فوق الأول", "desc": "تطبيق تغييرات الفرع الثاني على الأول" },
-      "firstOverSecond": { "title": "الأول فوق الثاني", "desc": "تطبيق تغييرات الفرع الأول على الثاني" },
-      "freshDiscovery": { "title": "اكتشاف جديد", "desc": "توليد استمرارية جديدة مدركة للاثنين" },
-      "singlePlusGlean": { "title": "واحد مع التقاط", "desc": "الاحتفاظ بفرع واحد وإضافة تعديلات طفيفة" },
+      "combined": {
+        "title": "مدمج",
+        "desc": "نسج النسختين في استمرارية واحدة"
+      },
+      "secondOverFirst": {
+        "title": "الثاني فوق الأول",
+        "desc": "تطبيق تغييرات الفرع الثاني على الأول"
+      },
+      "firstOverSecond": {
+        "title": "الأول فوق الثاني",
+        "desc": "تطبيق تغييرات الفرع الأول على الثاني"
+      },
+      "freshDiscovery": {
+        "title": "اكتشاف جديد",
+        "desc": "توليد استمرارية جديدة مدركة للاثنين"
+      },
+      "singlePlusGlean": {
+        "title": "واحد مع التقاط",
+        "desc": "الاحتفاظ بفرع واحد وإضافة تعديلات طفيفة"
+      },
       "aiAssisted": "بمساعدة الذكاء الاصطناعي",
       "deterministic": "حتمي"
     },
@@ -1550,9 +1586,21 @@
     "mergeTruncated": "تم اقتطاع المعاينة بسبب حد الرموز",
     "mergePreviewLoading": "جاري توليد المعاينة…",
     "mergeReroll": "إعادة التوليد",
-    "mergeRole": { "assistant": "مساعد", "user": "مستخدم", "character": "شخصية" },
-    "mergeHunk": { "kept": "محفوظ", "applied": "مطبق", "conflict": "تعارض" },
-    "mergeConflict": { "base": "الأساس", "overlay": "التراكب", "manual": "تحرير مباشر" },
+    "mergeRole": {
+      "assistant": "مساعد",
+      "user": "مستخدم",
+      "character": "شخصية"
+    },
+    "mergeHunk": {
+      "kept": "محفوظ",
+      "applied": "مطبق",
+      "conflict": "تعارض"
+    },
+    "mergeConflict": {
+      "base": "الأساس",
+      "overlay": "التراكب",
+      "manual": "تحرير مباشر"
+    },
     "mergeUnresolvedConflicts": "حل جميع التعارضات للتأكيد",
     "mergeBranchName": "اسم الفرع",
     "mergeActivate": "تفعيل الفرع المدمج",
@@ -1573,14 +1621,12 @@
     "outfitSwitcher": "Outfit",
     "empty": "No outfits yet"
   },
-
   "scheduled": {
     "scheduled": "Scheduled — it'll send itself.",
     "pickTime": "Pick a time to send at.",
     "emptyDraft": "Type a message before scheduling.",
     "failed": "Could not schedule that message."
   },
-
   "reminders": {
     "menu": "Remind me",
     "in10": "in 10 minutes",
@@ -1588,5 +1634,17 @@
     "in1440": "tomorrow",
     "armed": "Reminder set.",
     "failed": "Could not set that reminder."
+  },
+  "journalKeyphrases": {
+    "title": "Journal Keyphrases",
+    "hint": "Trigger phrases per journal entry (max 8, comma-separated). When a chat message mentions a phrase, that entry is injected into the next prompt — repeat injections are cooled down per chat.",
+    "loading": "Loading journal entries…",
+    "empty": "No journal entries yet.",
+    "loadFailed": "Failed to load journal entries.",
+    "placeholder": "phrase, another phrase",
+    "save": "Save Keyphrases",
+    "showing": "Showing {shown} of {total}",
+    "loadMore": "Load More",
+    "loadMoreFailed": "Failed to load more journal entries."
   }
 }

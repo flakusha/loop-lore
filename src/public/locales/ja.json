@@ -633,7 +633,8 @@
     "closeSidebar": "閉じる",
     "notifications": "通知",
     "openSidebar": "メニューを開く",
-    "docs": "ドキュメント"
+    "docs": "ドキュメント",
+    "config": "Config"
   },
   "modals": {
     "confirm": "確認",
@@ -1070,7 +1071,14 @@
     "toolCalls": "最近のツール呼び出し",
     "noCommands": "利用可能なコマンドがありません",
     "noToolCalls": "ツール呼び出しはまだありません",
-    "assistant": "アシスタント"
+    "assistant": "アシスタント",
+    "questRewards": "Rewards",
+    "questStatus": {
+      "active": "Active",
+      "completed": "Completed",
+      "failed": "Failed",
+      "abandoned": "Abandoned"
+    }
   },
   "crypto": {
     "encryptionNotConfigured": "Encryption not configured",
@@ -1324,7 +1332,19 @@
     "wizardConfirmFailed": "Failed to save entity from wizard",
     "entityCreated": "Entity \"{name}\" created successfully",
     "failedCreateEntity": "Failed to create entity",
-    "networkErrorCreatingEntity": "Network error — could not create entity"
+    "networkErrorCreatingEntity": "Network error — could not create entity",
+    "nothingToContinue": "Nothing to continue — no assistant message yet.",
+    "nothingToRetry": "Nothing to retry — no generation attempt yet.",
+    "vnDecisionPending": "Answer or skip the pending choice or question first.",
+    "vnSkipChoice": "Skip",
+    "vnSkipQuestion": "Skip",
+    "vnSkipFailed": "Could not skip the pending choice or question. Reload to retry.",
+    "nothingToBranch": "Nothing to branch — no assistant message yet.",
+    "unknownCommand": "Unknown command /{name}.",
+    "unknownCommandSuggest": "Unknown command /{name} — did you mean /{suggestion}?",
+    "hiddenCommandsNote": "{count} more command(s) need a higher role.",
+    "keyphrasesSaved": "Keyphrases saved ({count})",
+    "keyphrasesSaveFailed": "Keyphrases: {failed} failed, {saved} saved"
   },
   "status": {
     "characterResponding": "キャラクターが応答中...",
@@ -1371,9 +1391,12 @@
     "clear": "チャットをクリア",
     "stats": "チャットの統計を表示",
     "link": "Attach a gallery asset to this chat",
-    "orchestrate": "タスクをエージェントプールに分散（プール優先・評価・根拠付き）",
-    "workflowz": "複数ステップのハーネスワークフローを実行",
-    "omp": "omp バックエンドの小さなコーディングエージェントを操作"
+    "guide": "GM: give narrative direction (/guide <direction>)",
+    "target": "GM: pick the character to respond next (/target <character>)",
+    "constraint": "GM: add a narrative constraint (/constraint <rule>)",
+    "scene": "GM: set the scene description (/scene <description>)",
+    "priority": "GM: set a character's turn priority (/priority <character> <high|medium|low>)",
+    "skip": "GM: skip a character's turn (/skip <character>)"
   },
   "participants": {
     "title": "Participants",
@@ -1437,7 +1460,6 @@
     "rateLimited": "Too many skips — try again in a minute.",
     "failed": "Could not skip the turn."
   },
-
   "harness": {
     "tabLabel": "ハーネス",
     "title": "エージェントハーネス",
@@ -1505,7 +1527,6 @@
       "harnessCreative": "クリエイティブ"
     }
   },
-
   "branches": {
     "title": "分岐",
     "none": "まだ分岐がありません",
@@ -1538,11 +1559,26 @@
     "mergeNeedTwoSources": "マージするソースを2つ以上選択してください。",
     "mergeModeHint": "選択した分岐のマージ方法を選択してください。",
     "mergeMode": {
-      "combined": { "title": "統合", "desc": "両方のバージョンを1つの継続に織り込む" },
-      "secondOverFirst": { "title": "2番目を1番目に", "desc": "2番目の分岐の変更を1番目に適用" },
-      "firstOverSecond": { "title": "1番目を2番目に", "desc": "1番目の分岐の変更を2番目に適用" },
-      "freshDiscovery": { "title": "新しい発見", "desc": "両方を認識した新しい継続を生成" },
-      "singlePlusGlean": { "title": "単一＋拾得", "desc": "1つの分岐を保持し、軽い修正を接ぎ木" },
+      "combined": {
+        "title": "統合",
+        "desc": "両方のバージョンを1つの継続に織り込む"
+      },
+      "secondOverFirst": {
+        "title": "2番目を1番目に",
+        "desc": "2番目の分岐の変更を1番目に適用"
+      },
+      "firstOverSecond": {
+        "title": "1番目を2番目に",
+        "desc": "1番目の分岐の変更を2番目に適用"
+      },
+      "freshDiscovery": {
+        "title": "新しい発見",
+        "desc": "両方を認識した新しい継続を生成"
+      },
+      "singlePlusGlean": {
+        "title": "単一＋拾得",
+        "desc": "1つの分岐を保持し、軽い修正を接ぎ木"
+      },
       "aiAssisted": "AI支援",
       "deterministic": "決定論的"
     },
@@ -1550,9 +1586,21 @@
     "mergeTruncated": "トークン制限によりプレビューが切り捨てられました",
     "mergePreviewLoading": "プレビューを生成中…",
     "mergeReroll": "再生成",
-    "mergeRole": { "assistant": "アシスタント", "user": "ユーザー", "character": "キャラクター" },
-    "mergeHunk": { "kept": "保持", "applied": "適用", "conflict": "競合" },
-    "mergeConflict": { "base": "ベース", "overlay": "オーバーレイ", "manual": "インライン編集" },
+    "mergeRole": {
+      "assistant": "アシスタント",
+      "user": "ユーザー",
+      "character": "キャラクター"
+    },
+    "mergeHunk": {
+      "kept": "保持",
+      "applied": "適用",
+      "conflict": "競合"
+    },
+    "mergeConflict": {
+      "base": "ベース",
+      "overlay": "オーバーレイ",
+      "manual": "インライン編集"
+    },
     "mergeUnresolvedConflicts": "確認するにはすべての競合を解決してください",
     "mergeBranchName": "分岐名",
     "mergeActivate": "マージした分岐を有効化",
@@ -1573,14 +1621,12 @@
     "outfitSwitcher": "Outfit",
     "empty": "No outfits yet"
   },
-
   "scheduled": {
     "scheduled": "Scheduled — it'll send itself.",
     "pickTime": "Pick a time to send at.",
     "emptyDraft": "Type a message before scheduling.",
     "failed": "Could not schedule that message."
   },
-
   "reminders": {
     "menu": "Remind me",
     "in10": "in 10 minutes",
@@ -1588,5 +1634,17 @@
     "in1440": "tomorrow",
     "armed": "Reminder set.",
     "failed": "Could not set that reminder."
+  },
+  "journalKeyphrases": {
+    "title": "Journal Keyphrases",
+    "hint": "Trigger phrases per journal entry (max 8, comma-separated). When a chat message mentions a phrase, that entry is injected into the next prompt — repeat injections are cooled down per chat.",
+    "loading": "Loading journal entries…",
+    "empty": "No journal entries yet.",
+    "loadFailed": "Failed to load journal entries.",
+    "placeholder": "phrase, another phrase",
+    "save": "Save Keyphrases",
+    "showing": "Showing {shown} of {total}",
+    "loadMore": "Load More",
+    "loadMoreFailed": "Failed to load more journal entries."
   }
 }

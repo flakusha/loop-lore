@@ -633,7 +633,8 @@
     "closeSidebar": "关闭",
     "notifications": "通知",
     "openSidebar": "打开菜单",
-    "docs": "文档"
+    "docs": "文档",
+    "config": "Config"
   },
   "modals": {
     "confirm": "确认",
@@ -1070,7 +1071,14 @@
     "toolCalls": "最近的工具调用",
     "noCommands": "没有可用命令",
     "noToolCalls": "暂无工具调用",
-    "assistant": "助手"
+    "assistant": "助手",
+    "questRewards": "Rewards",
+    "questStatus": {
+      "active": "Active",
+      "completed": "Completed",
+      "failed": "Failed",
+      "abandoned": "Abandoned"
+    }
   },
   "crypto": {
     "encryptionNotConfigured": "Encryption not configured",
@@ -1324,7 +1332,19 @@
     "wizardConfirmFailed": "Failed to save entity from wizard",
     "entityCreated": "Entity \"{name}\" created successfully",
     "failedCreateEntity": "Failed to create entity",
-    "networkErrorCreatingEntity": "Network error — could not create entity"
+    "networkErrorCreatingEntity": "Network error — could not create entity",
+    "nothingToContinue": "Nothing to continue — no assistant message yet.",
+    "nothingToRetry": "Nothing to retry — no generation attempt yet.",
+    "vnDecisionPending": "Answer or skip the pending choice or question first.",
+    "vnSkipChoice": "Skip",
+    "vnSkipQuestion": "Skip",
+    "vnSkipFailed": "Could not skip the pending choice or question. Reload to retry.",
+    "nothingToBranch": "Nothing to branch — no assistant message yet.",
+    "unknownCommand": "Unknown command /{name}.",
+    "unknownCommandSuggest": "Unknown command /{name} — did you mean /{suggestion}?",
+    "hiddenCommandsNote": "{count} more command(s) need a higher role.",
+    "keyphrasesSaved": "Keyphrases saved ({count})",
+    "keyphrasesSaveFailed": "Keyphrases: {failed} failed, {saved} saved"
   },
   "status": {
     "characterResponding": "角色正在回复……",
@@ -1371,9 +1391,12 @@
     "clear": "清空聊天",
     "stats": "显示聊天统计",
     "link": "Attach a gallery asset to this chat",
-    "orchestrate": "将任务分派给智能体池（池优先、评审、附证据）",
-    "workflowz": "运行多步骤 harness 工作流",
-    "omp": "驱动一个基于 omp 的小型编码智能体"
+    "guide": "GM: give narrative direction (/guide <direction>)",
+    "target": "GM: pick the character to respond next (/target <character>)",
+    "constraint": "GM: add a narrative constraint (/constraint <rule>)",
+    "scene": "GM: set the scene description (/scene <description>)",
+    "priority": "GM: set a character's turn priority (/priority <character> <high|medium|low>)",
+    "skip": "GM: skip a character's turn (/skip <character>)"
   },
   "participants": {
     "title": "Participants",
@@ -1437,7 +1460,6 @@
     "rateLimited": "Too many skips — try again in a minute.",
     "failed": "Could not skip the turn."
   },
-
   "harness": {
     "tabLabel": "Harness",
     "title": "代理 Harness",
@@ -1505,7 +1527,6 @@
       "harnessCreative": "创作"
     }
   },
-
   "branches": {
     "title": "分支",
     "none": "暂无分支",
@@ -1538,11 +1559,26 @@
     "mergeNeedTwoSources": "选择至少 2 个来源进行合并。",
     "mergeModeHint": "选择如何合并所选分支。",
     "mergeMode": {
-      "combined": { "title": "组合", "desc": "将两个版本编织为一个延续" },
-      "secondOverFirst": { "title": "第二覆盖第一", "desc": "将第二分支的修改应用到第一分支" },
-      "firstOverSecond": { "title": "第一覆盖第二", "desc": "将第一分支的修改应用到第二分支" },
-      "freshDiscovery": { "title": "新发现", "desc": "生成了解两者的新延续" },
-      "singlePlusGlean": { "title": "单一加拾取", "desc": "保留一个分支，嫁接轻微修改" },
+      "combined": {
+        "title": "组合",
+        "desc": "将两个版本编织为一个延续"
+      },
+      "secondOverFirst": {
+        "title": "第二覆盖第一",
+        "desc": "将第二分支的修改应用到第一分支"
+      },
+      "firstOverSecond": {
+        "title": "第一覆盖第二",
+        "desc": "将第一分支的修改应用到第二分支"
+      },
+      "freshDiscovery": {
+        "title": "新发现",
+        "desc": "生成了解两者的新延续"
+      },
+      "singlePlusGlean": {
+        "title": "单一加拾取",
+        "desc": "保留一个分支，嫁接轻微修改"
+      },
       "aiAssisted": "AI 辅助",
       "deterministic": "确定性"
     },
@@ -1550,9 +1586,21 @@
     "mergeTruncated": "预览因 token 限制被截断",
     "mergePreviewLoading": "正在生成预览…",
     "mergeReroll": "重新生成",
-    "mergeRole": { "assistant": "助手", "user": "用户", "character": "角色" },
-    "mergeHunk": { "kept": "保留", "applied": "已应用", "conflict": "冲突" },
-    "mergeConflict": { "base": "基准", "overlay": "覆盖", "manual": "行内编辑" },
+    "mergeRole": {
+      "assistant": "助手",
+      "user": "用户",
+      "character": "角色"
+    },
+    "mergeHunk": {
+      "kept": "保留",
+      "applied": "已应用",
+      "conflict": "冲突"
+    },
+    "mergeConflict": {
+      "base": "基准",
+      "overlay": "覆盖",
+      "manual": "行内编辑"
+    },
     "mergeUnresolvedConflicts": "解决所有冲突以确认",
     "mergeBranchName": "分支名称",
     "mergeActivate": "激活合并分支",
@@ -1573,14 +1621,12 @@
     "outfitSwitcher": "Outfit",
     "empty": "No outfits yet"
   },
-
   "scheduled": {
     "scheduled": "Scheduled — it'll send itself.",
     "pickTime": "Pick a time to send at.",
     "emptyDraft": "Type a message before scheduling.",
     "failed": "Could not schedule that message."
   },
-
   "reminders": {
     "menu": "Remind me",
     "in10": "in 10 minutes",
@@ -1588,5 +1634,17 @@
     "in1440": "tomorrow",
     "armed": "Reminder set.",
     "failed": "Could not set that reminder."
+  },
+  "journalKeyphrases": {
+    "title": "Journal Keyphrases",
+    "hint": "Trigger phrases per journal entry (max 8, comma-separated). When a chat message mentions a phrase, that entry is injected into the next prompt — repeat injections are cooled down per chat.",
+    "loading": "Loading journal entries…",
+    "empty": "No journal entries yet.",
+    "loadFailed": "Failed to load journal entries.",
+    "placeholder": "phrase, another phrase",
+    "save": "Save Keyphrases",
+    "showing": "Showing {shown} of {total}",
+    "loadMore": "Load More",
+    "loadMoreFailed": "Failed to load more journal entries."
   }
 }
