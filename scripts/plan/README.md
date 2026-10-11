@@ -29,14 +29,15 @@ tree reports 0 changes.
 
 ## Module layout
 
-The logic lives in three shared modules so the header grammar is parsed one way
+The logic lives in four shared modules so the header grammar is parsed one way
 everywhere; each CLI is a thin shell over them.
 
-| Module                     | Owns                                                                                                               | Used by                       |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------- |
-| `plan-markdown-fields.ts`  | the field grammar: `fieldLines`, `tagsOf`, `epicOf`, `normalizeEpicRef`, `planFile`/`applyRewrites`, `relatedRefs` | normalizer, `plan:report`     |
-| `plan-index-projection.ts` | `projectIndex` (`.md` fields → `index.json` entries) and `canonicalIndexOrder` (giwt's `localeCompare` key order)  | normalizer, `epic-owner-pick` |
-| `plan-report-queries.ts`   | the read-only queries: `aggregate`, `byTag`, `byEpic`, `orphanTags`, `orphanBindings`, `danglingRelated`           | `plan:report`                 |
+| Module                     | Owns                                                                                                                         | Used by                       |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `plan-markdown-fields.ts`  | the field grammar: `fieldLines`, `tagsOf`, `epicOf`, `normalizeEpicRef`, `planFile`/`applyRewrites`, `relatedRefs`           | normalizer, `plan:report`     |
+| `plan-index-projection.ts` | `projectIndex` (`.md` fields → `index.json` entries) and `canonicalIndexOrder` (giwt's `localeCompare` key order)            | normalizer, `epic-owner-pick` |
+| `plan-index-guard.ts`      | the `index.json` write guard: `probeWorktree` (the only subprocess), `decideIndexWrite`, `projectIndexOntoDisk`, `loadIndex` | normalizer                    |
+| `plan-report-queries.ts`   | the read-only queries: `aggregate`, `byTag`, `byEpic`, `orphanTags`, `orphanBindings`, `danglingRelated`                     | `plan:report`                 |
 
 Alongside them: the four CLI files above, and `epic-titles.generated.ts` —
 **DO NOT EDIT**, `epic-owner-pick.ts --gen` owns it.
@@ -116,14 +117,18 @@ persist. The `.md` rewrites are unaffected; only the index write is gated.
 a routine condition here, not an edge case. The guard is therefore split so the
 DECISION is testable without git, and it refuses to guess:
 
-- `probeWorktree` — the only subprocess: `git -C <root> rev-parse --git-dir
-  --git-common-dir`. Two identical paths ⇒ main checkout; two different paths ⇒
-  linked worktree.
-- `decideIndexWrite` — turns the probe into the write decision. A probe that
-  cannot be run or exits non-zero (no git on `PATH`, a `safe.directory` refusal,
-  a spawn failure) resolves to `skip-probe-failed` and **never** to `write`.
-  The cause is named on stderr and in the report, so a held-back write can
-  never be mistaken for a clean `tags backfilled: N`.
+- `plan-index-guard.ts` holds the guard, split so the DECISION is testable
+  without git:
+  - `probeWorktree` — the only subprocess: `git -C <root> rev-parse --git-dir
+    --git-common-dir`. Two identical paths ⇒ main checkout; two different paths
+    ⇒ linked worktree.
+  - `decideIndexWrite` — turns the probe into the write decision. A probe that
+    cannot be run or exits non-zero (no git on `PATH`, a `safe.directory`
+    refusal, a spawn failure) resolves to `skip-probe-failed` and **never** to
+    `write`. The cause is named on stderr and in the report, so a held-back
+    write can never be mistaken for a clean `tags backfilled: N`.
+  - `projectIndexOntoDisk` is the only path that performs the write, and the
+    normalizer calls `loadIndex` BEFORE the `.md` pass.
 - The decision is always reported: the human line ends with it (`write`,
   `skip-linked-worktree`, `skip-probe-failed`, …), and `--json` carries it as
   `indexWrite`.

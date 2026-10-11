@@ -12,13 +12,13 @@ import { describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import path from "node:path";
+import { runPlanMetadata, } from "./normalize-plan-metadata";
 import {
   decideIndexWrite,
   isLinkedWorktreeFrom,
   probeWorktree,
-  runPlanMetadata,
   type WorktreeProbe,
-} from "./normalize-plan-metadata";
+} from "./plan-index-guard";
 import {
   canonicalIndexOrder,
   projectIndex,
