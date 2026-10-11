@@ -163,6 +163,7 @@ export function getThresholdState(
 export function injectMemories(
   context: ContextWindow,
   memories: MemoryRef[],
+  thresholds: ContextThresholds = DEFAULT_THRESHOLDS,
 ): ContextWindow {
   const remaining = context.maxTokens - context.totalTokens;
   if (remaining <= 0) { return context; }
@@ -176,17 +177,16 @@ export function injectMemories(
     addedTokens += m.tokenCount;
   }
 
-  const newTokens = context.totalTokens + addedTokens;
   const newPercentage = context.maxTokens > 0
-    ? Math.round((newTokens / context.maxTokens) * 100,)
+    ? Math.round(((context.totalTokens + addedTokens) / context.maxTokens) * 100,)
     : 0;
 
   return {
     ...context,
     injectedMemories: [...context.injectedMemories, ...accepted,],
-    totalTokens: newTokens,
+    totalTokens: context.totalTokens + addedTokens,
     usagePercentage: newPercentage,
-    willTrim: newPercentage >= DEFAULT_THRESHOLDS.imminent,
+    willTrim: newPercentage >= thresholds.imminent,
   };
 }
 
@@ -201,6 +201,7 @@ export function injectMemories(
 export function injectEvents(
   context: ContextWindow,
   events: EventRef[],
+  thresholds: ContextThresholds = DEFAULT_THRESHOLDS,
 ): ContextWindow {
   const remaining = context.maxTokens - context.totalTokens;
   if (remaining <= 0) { return context; }
@@ -214,16 +215,15 @@ export function injectEvents(
     addedTokens += e.tokenCount;
   }
 
-  const newTokens = context.totalTokens + addedTokens;
   const newPercentage = context.maxTokens > 0
-    ? Math.round((newTokens / context.maxTokens) * 100,)
+    ? Math.round(((context.totalTokens + addedTokens) / context.maxTokens) * 100,)
     : 0;
 
   return {
     ...context,
     injectedEvents: [...context.injectedEvents, ...accepted,],
-    totalTokens: newTokens,
+    totalTokens: context.totalTokens + addedTokens,
     usagePercentage: newPercentage,
-    willTrim: newPercentage >= DEFAULT_THRESHOLDS.imminent,
+    willTrim: newPercentage >= thresholds.imminent,
   };
 }

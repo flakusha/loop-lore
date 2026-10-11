@@ -20,7 +20,7 @@ import type { DB, } from "../db/schema";
 import { createRateLimiter, } from "../middleware/rate-limit";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
 import { ErrorResponse, SettingsUpdateAllowedKeys, } from "../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
+import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 const exportLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: 10, },);
 
@@ -219,7 +219,7 @@ export function settingsRoutes({ database, }: { database: Kysely<DB> }, prefix =
         if (typeof userId !== "string") { return userId; }
         const result = exportLimiter.consume(userId,);
         if (!result.allowed) {
-          return jsonError("Rate limit exceeded", HttpStatus.TooManyRequests, ErrorCode.TooManyRequests,);
+          return jsonError({ message: "Rate limit exceeded", status: 429, },);
         }
 
         return handleExportAll(database, userId,);
@@ -228,6 +228,7 @@ export function settingsRoutes({ database, }: { database: Kysely<DB> }, prefix =
         response: {
           200: t.Any(),
           401: ErrorResponse,
+          429: ErrorResponse,
         },
         detail: {
           summary: "Export settings",
