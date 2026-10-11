@@ -52,7 +52,9 @@ effects onto it. Long-term, status effects fold into the layered Player State mo
 (`epic-player-state-machine.md`) — design against that migration.
 
 > **Ownership boundary:** spells/casting and battle-side skill rolls belong to the Spells &
-> Skills sub-epic of Epic Battle & Action Systems (`epic-spells-skills.md`). This epic owns the
+> Skills sub-epic of Epic Battle & Action Systems (the Spells & Skills section of
+> `epic-battle-action-systems.md`; no standalone `epic-spells-skills.md` file exists yet).
+> This epic owns the
 > RPG-side skill/ability progression system (trees, points, cooldowns) only — do not duplicate.
 
 ## Tasks
