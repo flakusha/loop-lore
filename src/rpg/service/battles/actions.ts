@@ -17,6 +17,7 @@ import {
 import { log, } from "../log.js";
 import type { RpgServiceDeps, } from "../types.js";
 import { persistBattle, requireActiveBattle, } from "./persistence.js";
+import { applyVictoryXpLeg, } from "./rewards.js";
 import type { AttackParams, BattleWithRoster, HealParams, ResolvedAttack, ResolvedHeal, } from "./types.js";
 import { BattleStatus, } from "./types.js";
 /**
@@ -89,6 +90,13 @@ export async function performAttack(
 
   if (over) {
     log().info("Battle completed", { battleId: battle.id, winner, },);
+    if (winner === "player") {
+      await applyVictoryXpLeg(deps.database, {
+        battleId: battle.id,
+        chatId: battle.chatId,
+        combatants: updated,
+      },);
+    }
   }
 
   return { attack, combatants: updated, over, winner, battleId: battle.id, };
