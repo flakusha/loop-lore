@@ -233,19 +233,29 @@ async function consumeInventoryUnit(
   current: number,
 ): Promise<number> {
   if (current <= 1) {
-    await deps.database
+    const result = await deps.database
       .deleteFrom("actor_items",)
       .where("id", "=", itemId,)
-      .execute();
+      .where("quantity", "=", current,)
+      .executeTakeFirst();
+
+    if (Number(result.numDeletedRows ?? 0,) === 0) {
+      throw new Error(`Item ${itemId} was modified concurrently`,);
+    }
 
     return 0;
   }
 
-  await deps.database
+  const result = await deps.database
     .updateTable("actor_items",)
     .set({ quantity: current - 1, },)
     .where("id", "=", itemId,)
-    .execute();
+    .where("quantity", "=", current,)
+    .executeTakeFirst();
+
+  if (Number(result.numUpdatedRows ?? 0,) === 0) {
+    throw new Error(`Item ${itemId} was modified concurrently`,);
+  }
 
   return current - 1;
 }
