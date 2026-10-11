@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** character-xp-leveling
+**Related:** .plan/epics/epic-quests-encounters.md (owns quest completion events this hooks), .plan/epics/epic-exploration-discovery.md (owns discovery/travel completion events this hooks), .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (grants persist through this service)
 
 **Summary:**
 

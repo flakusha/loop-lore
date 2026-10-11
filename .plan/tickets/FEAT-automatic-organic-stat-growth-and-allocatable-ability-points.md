@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** Large
 **Epic:** character-xp-leveling
+**Related:** .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (its ASI bookkeeping feeds the pending-point budget here), .plan/epics/epic-character-growth.md (growth_log reuse for organic stat drift audit), .plan/epics/epic-character-core-system.md (owns the character_stats schema this writes)
 
 **Summary:**
 

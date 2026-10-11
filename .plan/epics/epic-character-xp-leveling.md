@@ -59,16 +59,38 @@ Known hazards pinned by tests: skill `awardXp` accepts negative/NaN/Infinity XP
 This epic owns the mechanical XP→level→stat pipeline only. It does NOT duplicate:
 
 - `epic-rpg-progression.md` — traits, skill trees/points, buffs/debuffs engine
-  (`StatusEffect` contract stays there).
+  (`StatusEffect` contract stays there). That epic owns trait/skill-point growth;
+  this epic owns the XP→level threshold that feeds it.
 - `epic-character-growth.md` — narrative growth (`growth_mode`, `character_arc`,
   `growth_log`, trait drift, relationship evolution). Stat-growth events in this
-  epic REUSE `growth_log` for audit but the triggering semantics live here.
+  epic REUSE `growth_log` for audit but the triggering semantics live here; the
+  narrative-growth semantics stay there.
+- `epic-character-core-system.md` — owns the `character_stats` schema and its
+  CRUD/stat read helpers (`src/rpg/service/character-stats.ts`, `src/rpg/stats/`);
+  this epic only writes level/xp/ability increments through them.
 - `epic-exploration-discovery.md` — discovery/travel mechanics themselves; this
-  epic only adds the XP reward leg to their completion events.
+  epic only adds the XP reward leg to their completion events, which that epic
+  emits without awarding anything.
 - `epic-quests-encounters.md` — quest generation/tracking; this epic only adds
-  the quest-completion XP reward.
+  the quest-completion XP reward, hooked into that epic's completion events.
 - `epic-spells-skills.md` (Battle sub-epic) — spell casting and battle-side
   skill rolls; battle VICTORY XP belongs here.
+
+### Related Epics
+
+Two-way connections beyond the boundaries above:
+
+- `.plan/epics/epic-battle-action-systems.md` — its dependency table already
+  expects "XP rewards, level-up after combat" from RPG mechanics; battle
+  resolution (`src/battle/resolution-integration/`) stays theirs, the
+  character-XP grant leg is the battle-rewards ticket here.
+- `.plan/epics/epic-nsfw-game-mechanics.md` — the only production XP awarders
+  today live on its side (`src/rpg/seduction/service/settle.ts`,
+  `src/rpg/encounters/service/participant-legs.ts`); they keep owning the award
+  triggers, this epic owns the pipeline those triggers call into.
+- `.plan/epics/epic-actor-autonomy-story-drive.md` — autonomous actors resolve
+  staged level-up decisions through that epic's decision/turn machinery; this
+  epic stages the pending decision, that epic owns how an actor settles it.
 
 ## Unticketed Gaps
 

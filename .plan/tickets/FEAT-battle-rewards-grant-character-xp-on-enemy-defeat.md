@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** character-xp-leveling
+**Related:** .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (grants persist through this service), .plan/epics/epic-battle-action-systems.md (owns battle resolution — this adds only the character-XP grant leg)
 
 **Summary:**
 
