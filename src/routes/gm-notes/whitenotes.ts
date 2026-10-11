@@ -95,6 +95,19 @@ export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api",) {
           const noteId = uid();
           const now = new Date().toISOString();
 
+          // Optional message anchor: reject dangling references here so the
+          // caller gets a 404 instead of an opaque FK violation (the FK is
+          // enforced — PRAGMA foreign_keys = ON).
+          if (body.messageId) {
+            const message = await database
+              .selectFrom("messages",)
+              .select("id",)
+              .where("id", "=", body.messageId,)
+              .executeTakeFirst();
+
+            if (!message) { return notFound("Message not found",); }
+          }
+
           await database
             .insertInto("whitenotes",)
             .values({
@@ -106,6 +119,7 @@ export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api",) {
               scope: (body.scope) ?? "scene",
               expires_at: body.expiresAt ?? null,
               created_at: now,
+              message_id: body.messageId ?? null,
             },)
             .execute();
 

@@ -23,9 +23,11 @@ export interface GmPanel {
   whitenotes: Whiteneote[];
   newShadowContent: string;
   newShadowType: ShadowNote["type"];
+  newShadowTrigger: string;
   newWhiteneoteContent: string;
   newWhiteneoteType: Whiteneote["type"];
   newWhiteneotePriority: number;
+  newWhiteneoteMessageId: string;
   init(): Promise<void>;
   loadShadowNotes(chatId: string,): Promise<void>;
   loadWhitenotes(chatId: string,): Promise<void>;
@@ -43,9 +45,11 @@ export interface GmPanel {
     whitenotes: [] as Whiteneote[],
     newShadowContent: "",
     newShadowType: "foreshadowing" as ShadowNote["type"],
+    newShadowTrigger: "",
     newWhiteneoteContent: "",
     newWhiteneoteType: "narrative_direction" as Whiteneote["type"],
     newWhiteneotePriority: 5,
+    newWhiteneoteMessageId: "",
 
     async init() {
       const chatId = (this as any).activeChat;
@@ -92,11 +96,13 @@ export interface GmPanel {
           body: jsonBody({
             type: this.newShadowType,
             content: this.newShadowContent.trim(),
+            triggerCondition: this.newShadowTrigger.trim() || null,
           },),
         },);
 
         if (res.ok) {
           this.newShadowContent = "";
+          this.newShadowTrigger = "";
           await this.loadShadowNotes(chatId,);
         }
       } catch (error) {
@@ -118,11 +124,15 @@ export interface GmPanel {
             content: this.newWhiteneoteContent.trim(),
             priority: this.newWhiteneotePriority,
             scope: "scene",
+            ...(this.newWhiteneoteMessageId.trim()
+              ? { messageId: this.newWhiteneoteMessageId.trim(), }
+              : {}),
           },),
         },);
 
         if (res.ok) {
           this.newWhiteneoteContent = "";
+          this.newWhiteneoteMessageId = "";
           await this.loadWhitenotes(chatId,);
         }
       } catch (error) {
