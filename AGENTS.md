@@ -262,7 +262,7 @@ See `.agents/references/recommendations.md` — use these:
 ## Verification Gates (Required Before "Done")
 
 ```bash
-bun run check        # parallel gate runner (check-parallel.mjs): typecheck ×4, lint (ts/css/html/html-scripts/chaining), dprint, md lint, db schema gate, conflict markers, size, context-weight, jscpd ratchet, unit + e2e tests
+bun run check        # parallel gate runner (check-parallel.mjs): typecheck ×4, lint (ts/css/html/html-scripts/chaining), dprint, md lint, db schema gate, conflict markers, size, context-weight, i18n reconcile, jscpd ratchet, unit + e2e tests
 #                     # `jscpd ratchet` is ADVISORY (see ADVISORY_GATES in
 #                     # scripts/check/parallel/gates.mjs): it runs and reports like any
 #                     # other gate, but a clone count past scripts/check/jscpd-baseline.json
