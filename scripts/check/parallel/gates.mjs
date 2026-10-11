@@ -327,12 +327,14 @@ function e2eBrowserCommand() {
 checks["e2e - browser (baseline)"] = e2eBrowserCommand();
 
 /**
- * Blocking jscpd ratchet gate: run jscpd into the per-RUN scratch dir, then
- * compare the clone count against the committed baseline
+ * jscpd ratchet gate: run jscpd into the per-RUN scratch dir, then compare
+ * the clone count against the committed baseline
  * (`scripts/check/jscpd-baseline.json`) via `scripts/check/jscpd-ratchet.mjs`.
- * Replaces the former advisory warn-only block in `runNonBlockingChecks`
- * (a permanent "N clones" warning never moved the number; the block was
- * silently dropped by a carry-over fold — BUG-jscpd-ratchet-gate-silently-removed-without-ticket).
+ * ADVISORY — it is listed in ADVISORY_GATES above, so a raised clone count is
+ * reported without failing the run. The gate itself replaces the former
+ * warn-only block in `runNonBlockingChecks` (a permanent "N clones" warning
+ * never moved the number; the block was silently dropped by a carry-over fold
+ * — BUG-jscpd-ratchet-gate-silently-removed-without-ticket).
  */
 function jscpdGateCommand() {
   const jscpdScan =
