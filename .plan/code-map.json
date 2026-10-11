@@ -2014,6 +2014,10 @@
   "src/assistant/commands/attack.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
     }
   ],
@@ -2351,6 +2355,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-math-ai-bridge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md"
     },
     {
       "kind": "spec",
@@ -14644,7 +14652,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md"
     },
     {
       "kind": "ticket",
@@ -15902,6 +15918,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-mood-classification.md"
     },
     {
@@ -16131,6 +16151,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md"
     },
     {
       "kind": "ticket",
@@ -16752,7 +16776,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-lore-structured-generation-via-assistant.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md"
     },
     {
       "kind": "ticket",
@@ -22001,6 +22033,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-management-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md"
     },
     {
       "kind": "ticket",
@@ -29483,6 +29519,12 @@
       "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
     }
   ],
+  "src/partials/worlds/create-modal.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md"
+    }
+  ],
   "src/partials/worlds/edit-modal.html": [
     {
       "kind": "ticket",
@@ -36334,6 +36376,14 @@
   "src/routes/rpg/skills-progression.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-skill-tree-visualization-frontend.md"
     }
   ],
@@ -36366,6 +36416,14 @@
     }
   ],
   "src/routes/rpg/stats-actor.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
@@ -36415,6 +36473,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
     },
     {
       "kind": "ticket",
@@ -37816,6 +37878,14 @@
   "src/routes/worlds/world-rpg-flags.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
@@ -37829,6 +37899,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-lore-silently-stripped-on-create-and-update.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
     },
     {
       "kind": "ticket",
@@ -38320,6 +38394,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-052.md"
     },
     {
@@ -38651,6 +38729,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-battle-rewards-grant-character-xp-on-enemy-defeat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md"
     },
     {
       "kind": "ticket",
@@ -39295,6 +39381,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-xp-leveling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md"
     },
     {
       "kind": "ticket",
@@ -40164,6 +40254,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-034.md"
     },
     {
@@ -40175,6 +40273,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-awardxp-only-levels-up-once-per-call-multi-level-overflow-lo.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md"
     },
     {
       "kind": "ticket",
@@ -40250,6 +40352,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md"
     },
     {
@@ -40314,6 +40420,10 @@
   "src/rpg/service/world-gate.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
@@ -40321,6 +40431,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-mechanics-governance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md"
     },
     {
       "kind": "ticket",
@@ -40347,6 +40469,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-core-wiring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md"
     },
     {
       "kind": "ticket",
@@ -40497,6 +40623,16 @@
       "source": ".plan/tickets/TASK-rpg-skill-points-on-level-up.md"
     }
   ],
+  "src/rpg/skills/service/helpers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md"
+    }
+  ],
   "src/rpg/skills/service/index.ts": [
     {
       "kind": "epic",
@@ -40526,7 +40662,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md"
     },
     {
       "kind": "ticket",
@@ -41007,6 +41155,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md"
     },
     {
       "kind": "ticket",
@@ -45379,6 +45531,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-lore-silently-stripped-on-create-and-update.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md"
     },
     {
       "kind": "ticket",

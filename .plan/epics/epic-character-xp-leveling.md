@@ -73,8 +73,9 @@ This epic owns the mechanical XP→level→stat pipeline only. It does NOT dupli
   emits without awarding anything.
 - `epic-quests-encounters.md` — quest generation/tracking; this epic only adds
   the quest-completion XP reward, hooked into that epic's completion events.
-- `epic-spells-skills.md` (Battle sub-epic) — spell casting and battle-side
-  skill rolls; battle VICTORY XP belongs here.
+- `.plan/epics/epic-battle-action-systems.md` (Spells & Skills sub-epic — the
+  referenced `epic-spells-skills.md` split target has no standalone file yet) —
+  spell casting and battle-side skill rolls; battle VICTORY XP belongs here.
 
 ### Related Epics
 
@@ -110,3 +111,7 @@ Two-way connections beyond the boundaries above:
 - [ ] Automatic organic stat growth and allocatable ability points on level-up — `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md` (Not Started)
 - [ ] Level-up decision interface for autonomous LLM actors with affinity auto-allocation — `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a.md` (Not Started)
 - [ ] Progression API and character menu surface for XP, level, and stats in world — `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-.md` (Not Started)
+- [ ] Skill usage XP: award skill and character XP when skills are exercised — `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md` (Not Started)
+- [ ] Integrate skill progression with LevelService as one guarded award pipeline — `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md` (Not Started)
+- [ ] Gate XP and skill XP awards behind the per-world rpg_xp opt-in — `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md` (Not Started)
+- [ ] Per-world skills mechanic flag and world-creation opt-in UI — `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md` (Not Started)
