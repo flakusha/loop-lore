@@ -26,15 +26,10 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
     new Elysia({ name: "admin-providers", },)
       // ── Public providers list (no auth) ───────────────────
       .get(`${prefix}/providers`, () => {
-        const health = getHealthCache();
-        const providers = Array.from(listProviders(), (p,) => {
-          const status = health.find((h,) => h.name === p.name);
-          return {
-            name: p.name,
-            label: p.capabilities.label,
-            status: status?.status ?? "unknown",
-          };
-        },);
+        const providers = Array.from(listProviders(), (p,) => ({
+          name: p.name,
+          label: p.capabilities.label,
+        }),);
 
         return jsonResponse({ providers, },);
       }, {

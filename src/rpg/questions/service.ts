@@ -18,6 +18,7 @@ import {
 } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
 import { safeJsonStringify, uid, } from "../../utils";
+import { toDate, } from "../../utils/date";
 import { getRpgLog, parseJsonField, } from "../shared/rpg-service-utils";
 import { applyQuestionEffects, } from "./effects";
 import type {
@@ -211,11 +212,19 @@ export async function answerQuestion(
     throw new QuestionError(`Question ${questionId} is not open`, "not_open",);
   }
 
+  if (row.time_limit !== null) {
+    // eslint-disable-next-line no-restricted-syntax -- epoch-ms arithmetic is allowed; toDate() cannot add durations
+    const expiresAt = new Date(toDate(row.created_at,).getTime() + row.time_limit * 1000,);
+    if (expiresAt <= new Date()) {
+      throw new QuestionError(`Question ${questionId} has expired`, "not_open",);
+    }
+  }
+
   const options = parseJsonField<RpgQuestionOption[]>(row.options, [],);
   const resolved = resolveAnswer(row, options, answer, questionId,);
 
   const answeredAt = new Date().toISOString();
-  await db.updateTable("rpg_questions",)
+  const result = await db.updateTable("rpg_questions",)
     .set({
       status: RpgQuestionStatus.Answered,
       selected_option_id: resolved.selectedOptionId,
@@ -223,7 +232,12 @@ export async function answerQuestion(
       answered_at: answeredAt,
     },)
     .where("id", "=", questionId,)
-    .execute();
+    .where("status", "=", RpgQuestionStatus.Open,)
+    .executeTakeFirst();
+
+  if (Number(result.numUpdatedRows ?? 0,) === 0) {
+    throw new QuestionError(`Question ${questionId} is no longer open`, "not_open",);
+  }
 
   const effect = parseJsonField<QuestionEffect>(row.effect, {},);
   const { effectsApplied, messageParts, } = await applyQuestionEffects(
