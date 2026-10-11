@@ -5,18 +5,8 @@
  * GM Notes — shadow notes CRUD.
  */
 import { Elysia, } from "elysia";
-import { randomUUID, } from "node:crypto";
 import { checkChatSettingsAccess, } from "../../chat/service";
-import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../../crypto";
 import { registerContentVersion, } from "../../db/content-version";
-import {
-  ContentEncoding,
-  MessageContentFormat,
-  MessageContentType,
-  MessageRole,
-  MessageStatus,
-  MessageVisibility,
-} from "../../db/enums";
 import { getChildLogger, } from "../../logger";
 import { jsonParseOr, safeJsonStringify, uid, } from "../../utils";
 import {
@@ -31,6 +21,7 @@ import {
   notFoundResponse as notFound,
   requireUserId,
 } from "../http-utils";
+import { injectShadowRevealNarration, } from "./narration";
 import { NoteIdParams, RevealBody, ShadowNoteBody, } from "./schemas";
 import type { HandlerOpts, } from "./types";
 
@@ -47,66 +38,6 @@ registerContentVersion("shadow_notes", 0, [
   "visibility",
   "author_type",
 ],);
-
-/**
- * Inject a narrator system message into the chat when a shadow note is revealed.
- * Reveals are rare and high-impact — the narration makes the moment memorable
- * instead of silently flipping the note's status in the background.
- *
- * Mirrors the pattern from `src/story/game-master/narration.ts`.
- * @param database
- * @param chatId
- * @param content
- */
-async function injectShadowRevealNarration(
-  database: HandlerOpts["database"],
-  chatId: string,
-  content: string,
-): Promise<void> {
-  const narrator = await database
-    .selectFrom("actors",)
-    .select("id",)
-    .where("actor_type", "=", "narrator",)
-    .where("agent_type", "=", "narrator",)
-    .executeTakeFirst();
-
-  if (!narrator) { return; }
-
-  const text = `[Shadow Revealed] ${content}`;
-
-  let storedContent = text;
-  let storedKeyId: string | null = null;
-  if (isEncryptionEnabled()) {
-    const smk = getSmk()!;
-    const enc = await encryptMessageContent({
-      database,
-      chatId,
-      actorId: narrator.id,
-      plaintext: text,
-      smk,
-    },);
-
-    storedContent = enc.storedContent;
-    storedKeyId = enc.keyId ?? null;
-  }
-
-  await database
-    .insertInto("messages",)
-    .values({
-      id: randomUUID() as string,
-      chat_id: chatId,
-      actor_id: narrator.id,
-      role: MessageRole.System,
-      content: storedContent,
-      key_id: storedKeyId,
-      content_type: MessageContentType.Narration,
-      content_format: MessageContentFormat.Markdown,
-      content_encoding: ContentEncoding.Identity,
-      status: MessageStatus.Confirmed,
-      visibility: MessageVisibility.Visible,
-    },)
-    .execute();
-}
 
 /**
  * @param opts
@@ -194,8 +125,12 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             // when present so GM-panel callers can tag gm/system notes.
             author_type: (body.authorType ?? "user") as never,
             expires_at: body.expiresAt ?? null,
-            // Free-form trigger expression — stored verbatim.
-            trigger_condition: body.triggerCondition ?? null,
+            // Free-form trigger expression — stored verbatim except that
+            // control characters (C0 + DEL) are stripped: they carry no
+            // meaning, break the one-line prompt rendering, and are a
+            // log-injection vector.
+            trigger_condition: body.triggerCondition?.replace(/[\u0000-\u001F\u007F]/g, "",) ??
+              null,
           };
 
           assertValidWrite("shadow_notes", noteRow,);
@@ -220,7 +155,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           // the `revealed_to` append can use them.
           const note = await database
             .selectFrom("shadow_notes",)
-            .select(["content", "visibility", "revealed_to",],)
+            .select(["content", "status", "visibility", "revealed_to",],)
             .where("id", "=", noteId,)
             .where("chat_id", "=", id,)
             .executeTakeFirst();
@@ -229,20 +164,20 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           const body = ctx.body as typeof RevealBody.static;
           const incoming = body?.revealedTo ?? [];
-          // Append + dedupe: an already-revealed note may be surfaced to
-          // more players; existing ids are never dropped.
-          const existing = note.revealed_to
-            ? jsonParseOr<string[]>(note.revealed_to, [],)
+          // Append + dedupe; only real arrays feed the append — hostile
+          // stored values (objects, bare strings) count as no audience.
+          const parsed = note.revealed_to
+            ? jsonParseOr<unknown>(note.revealed_to, [],)
             : [];
+
+          const existing = Array.isArray(parsed,) ? parsed : [];
 
           const unique = new Set([...existing, ...incoming,],);
           const revealedTo = Array.from(unique,);
 
-          // A revealed note must sit on the user-visible surface per the
-          // `shadowNotesStatusVisibility` invariant (`revealed:hidden` is
-          // leak/drift) — so revealing a gm_only note also flips its
-          // visibility. Revealed notes are excluded from LLM injection by
-          // `status`, so the flip only affects the reading surface.
+          // `revealed:hidden` is drift per the status x visibility invariant,
+          // so revealing also flips visibility; revealed notes are excluded
+          // from LLM injection by `status`, so the flip only affects reading.
           const nextVisibility = note.visibility === ShadowNoteVisibility.UserVisible
             ? note.visibility
             : ShadowNoteVisibility.UserVisible;
@@ -267,14 +202,12 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             return notFound("Shadow note not found",);
           }
 
-          // Emit a narrator message so a player-visible reveal has real
-          // narrative impact instead of silently flipping the status. A
-          // gm_only (`hidden`) reveal must NEVER reach the player surface —
-          // the row still updates, but the narration is suppressed and the
-          // reveal is surfaced in the dev log instead.
-          if (note.visibility === ShadowNoteVisibility.UserVisible) {
+          // Narrate only on the hidden -> revealed transition — re-revealing
+          // must not re-emit; gm_only reveals never narrate (dev log only).
+          const wasRevealed = note.status === ShadowNoteStatus.Revealed;
+          if (!wasRevealed && note.visibility === ShadowNoteVisibility.UserVisible) {
             await injectShadowRevealNarration(database, id, note.content,);
-          } else {
+          } else if (!wasRevealed) {
             getChildLogger("gm-notes",)?.info(
               "gm.note.reveal: gm_only note revealed — narration suppressed",
               { chatId: id, noteId, visibility: note.visibility, },
