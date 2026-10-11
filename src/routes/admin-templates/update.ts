@@ -6,6 +6,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { BUILTIN_PROFILES, type DetailLevel, type SdGenMode, } from "../../generation/prompt-templates";
 import {
+  ErrorCode,
   HttpStatus,
   jsonError,
   jsonResponse,
@@ -40,6 +41,34 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
               return jsonError({
                 message: "detail, mode, and template are required",
                 status: HttpStatus.BadRequest,
+              },);
+            }
+
+            const VALID_DETAIL_LEVELS = ["instant", "balanced", "detailed",] as const;
+            const VALID_SD_GEN_MODES = [
+              "yourself",
+              "face",
+              "me",
+              "scene",
+              "last",
+              "raw_last",
+              "background",
+              "free",
+            ] as const;
+
+            if (!VALID_DETAIL_LEVELS.includes(body.detail as any,)) {
+              return jsonError({
+                message: "Invalid detail level",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.BadRequest,
+              },);
+            }
+
+            if (!VALID_SD_GEN_MODES.includes(body.mode as any,)) {
+              return jsonError({
+                message: "Invalid sd_gen mode",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.BadRequest,
               },);
             }
 

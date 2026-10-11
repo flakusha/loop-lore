@@ -143,6 +143,10 @@ export class ReputationService {
    * @param actorId
    */
   async deriveRumors(actorId: string,): Promise<string[]> {
+    const actor = await this.db.selectFrom("actors",).select("display_name",).where("id", "=", actorId,)
+      .executeTakeFirst();
+
+    const actorName = actor?.display_name ?? "someone";
     const rows = await getActiveEffects(this.db, actorId, { category: "reputation", },);
     const rumors: string[] = [];
     for (const row of rows) {
@@ -153,7 +157,7 @@ export class ReputationService {
       if (typeof meta.reason === "string") { reason = meta.reason; }
       if (axis === "public" || axis === "group" || Math.abs(row.magnitude,) >= 10) {
         const tone = row.magnitude >= 0 ? "fondly" : "darkly";
-        rumors.push(`They speak ${tone} of ${actorId} (${axis}, ${reason})`,);
+        rumors.push(`They speak ${tone} of ${actorName} (${axis}, ${reason})`,);
       }
     }
 
