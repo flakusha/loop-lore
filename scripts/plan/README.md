@@ -3,18 +3,43 @@
 
 # `scripts/plan` — plan-metadata normalizers
 
-Three idempotent scripts that converge `.plan/` header fields onto the spellings giwt
-actually reads. Neither derives a value; both only make an author-written value
-visible to the generators.
+Four CLIs that converge `.plan/` header fields onto the spellings giwt
+actually reads. None of them derives a value; they only make an author-written
+value visible to the generators.
 
 | Script                       | Command                                             | Owns                                                                          |
 | ---------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------- |
 | `normalize-plan-metadata.ts` | `bun run plan:metadata`                             | `**Tags**`, `**Epic**`, and the `index.json` projection of both               |
 | `normalize-statuses.ts`      | `bun run plan:status:normalize`                     | `**Status:**` (epic + ticket)                                                 |
 | `epic-owner-pick.ts`         | `bun run scripts/plan/epic-owner-pick.ts [--apply]` | multi-epic `**Epic:**` collapse (first-existing-wins + generated title table) |
+| `report-plan-metadata.ts`    | `bun run plan:report`                               | read-only index ↔ frontmatter reconciliation queries (never writes)           |
 
-Both accept `--dry-run` (report, touch nothing) and `--json` (machine-readable).
-Both are safe to re-run: a second run reports 0 changes.
+**The flags are not interchangeable — read them off `--help`, not off each
+other:**
+
+| CLI                       | Report-only mode              | Applies with              | `--json` |
+| ------------------------- | ----------------------------- | ------------------------- | -------- |
+| `normalize-plan-metadata` | `--dry-run`                   | (default)                 | yes      |
+| `normalize-statuses`      | `--check`                     | (default)                 | no       |
+| `epic-owner-pick`         | dry-run is the DEFAULT        | `--apply` (`--gen` exits) | no       |
+| `plan:report`             | always — it has no write path | never                     | yes      |
+
+The three writers are safe to re-run: a second run over an already-normalized
+tree reports 0 changes.
+
+## Module layout
+
+The logic lives in three shared modules so the header grammar is parsed one way
+everywhere; each CLI is a thin shell over them.
+
+| Module                     | Owns                                                                                                               | Used by                       |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------- |
+| `plan-markdown-fields.ts`  | the field grammar: `fieldLines`, `tagsOf`, `epicOf`, `normalizeEpicRef`, `planFile`/`applyRewrites`, `relatedRefs` | normalizer, `plan:report`     |
+| `plan-index-projection.ts` | `projectIndex` (`.md` fields → `index.json` entries) and `canonicalIndexOrder` (giwt's `localeCompare` key order)  | normalizer, `epic-owner-pick` |
+| `plan-report-queries.ts`   | the read-only queries: `aggregate`, `byTag`, `byEpic`, `orphanTags`, `orphanBindings`, `danglingRelated`           | `plan:report`                 |
+
+Alongside them: the four CLI files above, and `epic-titles.generated.ts` —
+**DO NOT EDIT**, `epic-owner-pick.ts --gen` owns it.
 
 ## Header-field vocabulary
 
@@ -85,6 +110,36 @@ post-merge on the target branch. This script honours that guard — it prints th
 counts and a `NOT WRITTEN` note instead. Re-run it in the main checkout to
 persist. The `.md` rewrites are unaffected; only the index write is gated.
 
+### The guard is fail-closed
+
+`plan:metadata` mostly runs in `tree/` worktrees, so a broken git environment is
+a routine condition here, not an edge case. The guard is therefore split so the
+DECISION is testable without git, and it refuses to guess:
+
+- `probeWorktree` — the only subprocess: `git -C <root> rev-parse --git-dir
+  --git-common-dir`. Two identical paths ⇒ main checkout; two different paths ⇒
+  linked worktree.
+- `decideIndexWrite` — turns the probe into the write decision. A probe that
+  cannot be run or exits non-zero (no git on `PATH`, a `safe.directory` refusal,
+  a spawn failure) resolves to `skip-probe-failed` and **never** to `write`.
+  The cause is named on stderr and in the report, so a held-back write can
+  never be mistaken for a clean `tags backfilled: N`.
+- The decision is always reported: the human line ends with it (`write`,
+  `skip-linked-worktree`, `skip-probe-failed`, …), and `--json` carries it as
+  `indexWrite`.
+
+### A malformed index aborts before anything is written
+
+`index.json` is parsed BEFORE the `.md` pass, so conflict markers left there by
+a ticket-branch merge fail fast with the tree untouched, instead of leaving some
+`.md` files rewritten and then dying on a raw `SyntaxError` — a half-applied
+state that looks exactly like a failed no-op at the terminal. A _missing_ index
+still degrades to the `.md` pass alone. Nothing else in the repo checks
+JSON well-formedness here: `scripts/check/parallel/gates.mjs` runs plan-sync,
+plan-validate and matrix freshness, none of which parse `index.json`, and
+`.githooks/pre-commit` has no `plan:` hook — so this fast-fail is the only
+guard, and it only runs when someone runs `plan:metadata`.
+
 ## `epic-owner-pick.ts` — multi-epic owner rule
 
 Tickets that name two or more epics in one `**Epic:**` header (separator
@@ -93,24 +148,46 @@ lists, `+`-joined pairs, or legacy prose titles) collapse to one owner:
 (a bare slug, or an exact hit in `epic-titles.generated.ts`, itself
 regenerated from epic H1s via `--gen`). Unresolvable values — numbered
 `Epic 26` aliases, `NPC/Actor System` prose, `proposed:epic-x` placeholders,
-dangling slugs — are reported, never guessed. Entries where the `.md`
-header and the index value pick different owners are held back too.
+dangling slugs — are reported, never guessed.
 
-Dry-run by default; `--apply` rewrites the 107 agreeing `.md` headers,
-projects onto `index.json` in `canonicalIndexOrder`, then `bun run
-plan:matrix` regenerates the matrix.
+Dry-run is the default. `--apply` rewrites the `.md` headers whose `.md` value
+and index value agree on the same owner, projects onto `index.json` in
+`canonicalIndexOrder` (canonically ordered, so the write is a byte-level no-op
+when nothing changed), then `bun run plan:matrix` regenerates the matrix.
+Entries where the `.md` header and the index value pick DIFFERENT owners are held
+back and listed under `remainder`, as are unresolvable values. `--gen` rewrites
+`epic-titles.generated.ts` from the epics' `# EPIC:` H1s and exits.
+
+Unlike `plan:metadata`, this script has no linked-worktree guard — `--apply`
+writes `index.json` wherever it is run.
+
+## `plan:report` — read-only reconciliation
+
+`plan:report` never writes. It ships here rather than as a `giwt plan report`
+subcommand because giwt is a pinned external dependency; the queries live in
+`plan-report-queries.ts` and share the normalizer's field parsing.
+
+| Invocation                      | Answers                                                                                                   |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `bun run plan:report`           | `aggregate` — ticket/tag/binding totals, top tags, top epics, orphan row count                            |
+| `bun run plan:report tags <t>`  | every index entry carrying that tag (case-insensitive)                                                    |
+| `bun run plan:report epic <id>` | every index entry bound to that epic (case-insensitive)                                                   |
+| `bun run plan:report orphans`   | (a) index tags no `.md` declares, (b) `epic` values naming no epic file, (c) dangling `**Related:**` refs |
+| any of the above `--json`       | the same result, machine-readable                                                                         |
+
+Orphans are advisory: nothing fails on them.
 
 ## What it deliberately does not do
 
 - **No inferred tags.** A tag is never derived from a ticket title, body, type
-  prefix, `src/` path, or bound epic. ~2100 tickets have no deterministic tag
-  source; they stay untagged. A wrong guessed tag is worse than no tag — it puts
-  the ticket in a bucket nobody chose.
-- **No epic resolution.** 57 epic references name an epic file that does not
+  prefix, `src/` path, or bound epic. A large share of tickets have no
+  deterministic tag source; they stay untagged. A wrong guessed tag is worse
+  than no tag — it puts the ticket in a bucket nobody chose.
+- **No epic resolution.** Some epic references name an epic file that does not
   exist. Reported, never auto-fixed.
 - **No `**Related:**` rewriting.** That field holds prose, not a parseable list.
   The script counts the refs it can resolve and lists the ones that dangle; it
-  does not impose a syntax on 600 legacy files.
+  does not impose a syntax on the legacy corpus.
 - **No `**Status:**` edits.** Owned by `normalize-statuses.ts`. The rewrites here
   are matched per line, so a status line cannot shift.
 
@@ -123,6 +200,7 @@ writing, use:
 ```
 bun run plan:metadata:check        # this script, dry-run
 bun run plan:status:normalize:check
+bun run plan:report                # read-only by construction — no write path
 bun run plan:matrix:check
 bun run plan:docs:check
 bun run plan:map:check
