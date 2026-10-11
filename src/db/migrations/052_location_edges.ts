@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 053_location_edges
+ * 052_location_edges
  *
  * First-class location adjacency graph
  * (TASK-location-travel-connected-fast-and-free-jump).
@@ -21,11 +21,15 @@
  * actor) visits in `discovered`. A `requires_discovery` edge becomes
  * travelable once BOTH endpoints are latched for the traveling actor.
  *
- * NOTE (merge-order): this file was authored as 051 on a base where
- * 051 was free. After rebasing onto dev, 051 and 052 are taken
- * (051_bdi_reflection_cadence_and_plan_visibility, 052_world_timescale),
- * so it lands as 053. Both are unshipped, so the append-only policy
- * permits the renumber.
+ * NOTE (merge-order): authored as 051 on a base where 051 was free.
+ * After rebasing onto dev, 051 is taken
+ * (051_bdi_reflection_cadence_and_plan_visibility), so this lands as
+ * 052. Numbering must stay gapless (migrations.test.ts), not merely
+ * unique (check-migration-ordering.ts) — 053 would leave a hole at 052.
+ *
+ * If epic-world-review's 052_world_timescale lands first, whichever
+ * branch finalizes second renumbers; both are unshipped, so the
+ * append-only policy permits the renumber.
  */
 import { type Kysely, sql, } from "kysely";
 
