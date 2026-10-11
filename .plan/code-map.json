@@ -3069,10 +3069,6 @@
       "source": ".plan/epics/epic-context-injection-correctness.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-hidden-carriage-context.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-giwt-abort-runs-unscoped-git-reset-hard-that-destroys-unrela.md"
     },
@@ -3175,6 +3171,18 @@
       "source": ".plan/tickets/TASK-bound-linked-travel-prompts.md"
     }
   ],
+  "src/assistant/prompt/carriage-isolation.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-hidden-carriage-context.md"
+    }
+  ],
+  "src/assistant/prompt/carriage-isolation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-hidden-carriage-context.md"
+    }
+  ],
   "src/assistant/prompt/keywords.ts": [
     {
       "kind": "ticket",
@@ -3211,6 +3219,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-gm-shadow-notes.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-hidden-carriage-context.md"
     },
     {
       "kind": "ticket",
@@ -3335,6 +3347,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md"
+    }
+  ],
+  "src/assistant/prompt/sections/carriage.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-hidden-carriage-context.md"
     }
   ],
   "src/assistant/prompt/sections/character-traits.ts": [
@@ -8467,10 +8485,6 @@
   ],
   "src/chat/service/carriage.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-hidden-carriage-context.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
     }
@@ -9621,6 +9635,12 @@
       "source": ".plan/epics/epic-worlds-extension.md"
     }
   ],
+  "src/chat/types/gm.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-hidden-carriage-context.md"
+    }
+  ],
   "src/chat/types/index.ts": [
     {
       "kind": "ticket",
@@ -10239,6 +10259,10 @@
       "source": ".plan/epics/epic-config-templates.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-hidden-carriage-context.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-settings-modal-invalid-mode.md"
     },
@@ -10363,6 +10387,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-shadow-notes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-story-notes-role-access-matrix.md"
     },
     {
       "kind": "ticket",
@@ -16816,7 +16844,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-shadow-note-trigger-condition-and-revealed-to-columns.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-shadow-notes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-whitenote-message-scoping.md"
     },
     {
       "kind": "ticket",
@@ -19409,6 +19445,10 @@
       "source": ".plan/epics/epic-chat-variants-taxonomy.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-hidden-carriage-context.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-settings-modal-invalid-mode.md"
     },
@@ -20149,6 +20189,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-shadow-notes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-story-notes-role-access-matrix.md"
     },
     {
       "kind": "ticket",
@@ -26655,6 +26699,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-spec-group-chat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-group-chat-turn-orchestration.md"
     },
     {
       "kind": "ticket",
@@ -35038,6 +35086,10 @@
     }
   ],
   "src/routes/gm-notes/shadow.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-gm-shadow-notes.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
@@ -45857,6 +45909,10 @@
   ],
   "src/utils.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-hidden-carriage-context.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-auth-session-hardening-batch-from-2026-10-04-review.md"
     },
@@ -46095,10 +46151,6 @@
   ],
   "src/utils/safe-json.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-hidden-carriage-context.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md"
     },
@@ -46141,6 +46193,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-evaluator-reliability-drift-detec.md"
+    }
+  ],
+  "src/utils/structured-output.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-hidden-carriage-context.md"
     }
   ],
   "src/utils/structured-output.ts": [

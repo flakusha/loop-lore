@@ -3,15 +3,16 @@
 
 # EPIC: Hidden Carriage — Chat-Includeable Structured Memory Context
 
-**Priority:** medium
+**Priority:** Medium
 **Effort:** Medium
-**Type:** epic
+**Type:** Feature Epic
 **Tags:** carriage, context-injection, toml, structured-output, dedup, shadow-notes, gm
 **Related:** epic-memory-knowledge-systems.md, epic-memory-profiling-budgets.md, epic-chat-context-optimization.md, epic-context-injection-templates.md, epic-context-injection-correctness.md, epic-gm-shadow-notes.md, epic-assistant-gm-flows.md, epic-quests-encounters.md
 **Overview:** Hidden dev/debug-visible carriage block (flat TOML, `[[characters]]` form) injected alongside the existing memory/context pipeline, with shared heal→validate→size-check→approve utils, single-assembly content-hash dedup, and server-side shadow isolation.
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** The pipeline core ships: `src/utils/structured-output.ts` (heal → validate → size-check → approve, JSON/TOML/YAML via `Bun.TOML.parse` — no extra dep), `src/utils/content-hash.ts` wired into `src/assistant/prompt/carriage-isolation.ts`, per-chat `carriageEnabled` opt-in end-to-end (config, settings UI, `carriageSection` in `src/assistant/prompt/sections/carriage.ts`, registered in `registry.ts`), and the isolation/dedup substrate (`filterVisible`/`assembleEntries`/`guardShadowWriteback`). Open: routing the live prompt assembly through `assembleEntries` (gm-notes still reads its tables directly), and LLM-authored carriage updates back into `carriage_records`.
 **Area:** Chat config + system-template injection + structured-output utils
 
 ## Scope
@@ -85,29 +86,43 @@ next_episode = 5
   invalid/oversize input cancels with a visible dev warning, never
   injects partial state.
 
-## Implementation Status (2026-10-08 — deferred, record only)
+## Implementation Status (2026-10-11 — core shipped, assembly wiring open)
 
-- No ticket work exists in `src/`: no structured-output/healing module
-  (`src/utils/content-hash.ts` added as the pure hash substrate only —
-  `contentHash` + `dedupeByHash`, no callers wired), no per-chat carriage
-  toggle, no single-assembly dedup, no `{ system, visibility }` shadow
-  isolation in the assembler.
-- Existing neighbours (reuse, do not re-implement):
-  `src/memory/injection/` (decide/select/privacy/relevance) +
-  `src/memory/provision.ts` + `src/memory/budget.ts` (dedup host +
-  budget accounting); `src/assistant/prompt-assembler.ts` +
-  `src/assistant/prompt/sections/gm-notes.ts` (section pipeline; shadow
-  notes already GM-role-gated server-side);
-  `src/chat/service/carriage.ts` (`carriage_records` persistence, admin
-  read path only — different carriage sense, not the TOML block);
-  `src/routes/gm-notes/` (shadow/whitenote CRUD);
-  `src/utils/safe-json.ts` (JSON half of the healing contract);
-  `js-yaml` (already a runtime dep); TOML has no runtime parser yet
-  (`smol-toml` is a transitive dev dep only — add one when the healing
-  util lands).
-- Full pipeline (toggle + healing utils + assembler wiring + isolation
-  enforcement) stays unchecked below; build it only when the tickets
-  are staffed.
+Shipped:
+
+- `src/utils/structured-output.ts` — `healStructuredOutput` + `healCarriage`: heal
+  (parseable-prefix salvage) → validate (`isCarriageDoc`, `[[characters]]`
+  array-of-tables enforced, flat list rejected with `CARRIAGE_REPAIR_HINT`) →
+  size-check (8 KiB default cap) → approve-or-cancel with machine-readable
+  cancel reasons. Formats: JSON (`safeJsonParse`), YAML (`js-yaml`), TOML
+  (`Bun.TOML.parse` — built-in, no added dependency). Tested in
+  `src/utils/structured-output.test.ts`.
+- `src/utils/content-hash.ts` — `contentHash` + `dedupeByHash`, no longer
+  substrate-only: wired via `src/utils.ts` re-export and consumed by
+  `src/assistant/prompt/carriage-isolation.ts` and the healing pipeline.
+- Per-chat carriage opt-in end-to-end — `carriageEnabled` in `gm_config`
+  (`src/chat/types/gm.ts`, presentation round-trip in
+  `src/chat/gm-config/`), settings toggle (`src/components/chat/chat-settings-modal.html`,
+  `src/frontend/alpine/chat-settings.ts`), and the prompt section
+  `src/assistant/prompt/sections/carriage.ts` (registered as `carriageSection`
+  in `src/assistant/prompt/registry.ts`; reads the latest `carriage_records`
+  payload through `healCarriage`, cancels with a logged warning on failure;
+  toggle-off stays byte-identical).
+- Isolation/dedup substrate — `src/assistant/prompt/carriage-isolation.ts`:
+  `filterVisible` (player/gm/debug role filter), `assembleEntries`
+  (visibility filter + content-hash dedup, first source wins),
+  `guardShadowWriteback` (shadow entries rejected for player-visible stores).
+  Tested in `src/assistant/prompt/carriage-isolation.test.ts`.
+
+Open:
+
+- The live prompt assembly does not yet route shared facts through
+  `assembleEntries` — `gm-notes` and other sections still read their tables
+  directly, so cross-system dedup/visibility holds inside the module and its
+  tests but not across the real assembled prompt.
+- No LLM-driven carriage authoring path yet: the section injects the latest
+  persisted `carriage_records` payload; nothing writes new carriage content
+  back through the healing gate.
 
 ## Integration Points
 

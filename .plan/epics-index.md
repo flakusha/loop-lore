@@ -206,7 +206,7 @@
 | Not Started | Guest Access — Unauthenticated Public Browsing (draft for new worktree) | High — public reach / demo-ability gap | Large | 7 | [epic-guest-access.md](/.plan/epics/epic-guest-access.md) |
 | Not Started | Headers & Navigation Management | Medium | Medium | 0 | [epic-frontend-headers-management.md](/.plan/epics/epic-frontend-headers-management.md) |
 | Not Started | Headless Mode & Alternative Frontends | Medium | High (split into 5 sub-epics) | 0 | [epic-headless-alternative-frontends.md](/.plan/epics/epic-headless-alternative-frontends.md) |
-| Not Started | Hidden Carriage — Chat-Includeable Structured Memory Context | medium | Medium | 0 | [epic-hidden-carriage-context.md](/.plan/epics/epic-hidden-carriage-context.md) |
+| In Progress | Hidden Carriage — Chat-Includeable Structured Memory Context | Medium | Medium | 0 | [epic-hidden-carriage-context.md](/.plan/epics/epic-hidden-carriage-context.md) |
 | Not Started | Housing & Base Building | Medium | Very High | 0 | [epic-housing-base-building.md](/.plan/epics/epic-housing-base-building.md) |
 | Done | Housing System | Medium | Very High | 6 | [epic-housing.md](/.plan/epics/epic-housing.md) |
 | Not Started | I/O Formats | Medium | Medium | 5 | [epic-io-formats.md](/.plan/epics/epic-io-formats.md) |
@@ -2206,10 +2206,10 @@ Group chat lets multiple characters participate in one conversation. The runtime
 
 ### Hidden Carriage — Chat-Includeable Structured Memory Context
 
-- **Status:** Not Started
-- **Priority:** medium
+- **Status:** In Progress
+- **Priority:** Medium
 - **Effort:** Medium
-- **Type:** epic
+- **Type:** Feature Epic
 - **Tags:** carriage, context-injection, toml, structured-output, dedup, shadow-notes, gm
 - **File:** `.plan/epics/epic-hidden-carriage-context.md`
 
