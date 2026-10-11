@@ -536,5 +536,9 @@ The `nsfwPolicy` purpose (`NSFW_POLICY_LEVELS_PROMPT`) is injected as a system s
 - No schema regeneration required (no DB migration).
 - `bun run check` gate: this task touches only `src/` + docs — expect same 15/17 baseline (lint-ts + size-strict remain pre-existing debt).
 
+<<<<<<< ours — heading `6. Risks / notes` (F, confidence: medium)
 **Closure evidence (reconciled against dev):** all four phases plus the LLM cleanup are shipped and wired. Phase 1 loader: `src/config/templates-loader/index.ts` with types and `TEMPLATES_DEFAULTS` in `src/config/sections/templates.ts` (empty `systemPrompts` per the LLM-cleanup design). Phase 2 SD templates: `src/generation/prompt-templates/profiles.ts` (`BUILTIN_PROFILES`). Phase 3 avatar templates: `src/config/template-expansion/index.ts` exporting `expandAvatarConfig`, `runTemplateExpansion`, `findMissingAvatars`, `validateExpansionConfig`, with the emotion-avatar prompt section at `src/assistant/prompt/sections/emotion-avatar.ts`. Wiring confirmed at `src/config/load/load.ts:132-138` (`loadTemplateConfig` + `runTemplateExpansion`). Note: paths are directories with barrels, not the flat module names the original epic text used.
+
+=======
+>>>>>>> theirs — heading `6. Risks / notes` (F, confidence: medium)
 **Resolved:** 2026-10-11 registry-driven close: git issue 8466dce (registry tip: f4ec72212 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-CONFIG-TEMPLATES done)
