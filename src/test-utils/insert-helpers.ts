@@ -1841,6 +1841,7 @@ export async function insertCharacterStats(
     conditions?: string;
     active_effects?: string;
     combat_alignment?: string;
+    pending_asi?: number;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
