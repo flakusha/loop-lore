@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Task
@@ -37,3 +37,5 @@ Alpine.js state management for world system.
 ## Files to Create
 
 - `src/frontend/alpine/world.ts`
+
+**Resolved:** 2026-10-11 registry-driven close: git issue 3e0c7b6 (registry tip: 643047480 Konstantin Fedotov Close issue)

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Small
 **Type:** Feature Task
@@ -38,3 +38,5 @@ Location details panel showing full location information.
 
 - `src/frontend/world/location-details.ts`
 - `src/frontend/world/location-actions.ts`
+
+**Resolved:** 2026-10-11 registry-driven close: git issue bf07e94 (registry tip: 49bd723dc Konstantin Fedotov Close issue)
