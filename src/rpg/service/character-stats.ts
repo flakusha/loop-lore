@@ -114,6 +114,7 @@ export async function getCharacterStats(
     characterState: CharacterState;
     conditions: string;
     activeEffects: string;
+    pendingAsi: number;
   } | null
 > {
   const { database, } = deps;
@@ -153,6 +154,7 @@ export async function getCharacterStats(
     characterState: row.character_state,
     conditions: row.conditions,
     activeEffects: row.active_effects,
+    pendingAsi: row.pending_asi,
   };
 }
 
