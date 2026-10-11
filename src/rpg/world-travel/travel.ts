@@ -179,7 +179,6 @@ export async function advancePartyTravel(
     // The next hop must be a location the world still has; a route that
     // names a deleted one is parked for good (see parkParty).
     const next = route[party.route_index + 1];
-    if (!next) { continue; }
     if (!alive.has(worldId + ":" + next,)) {
       await parkParty(db, party.id, currentTick, stamp,);
       continue;
