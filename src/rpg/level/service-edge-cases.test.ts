@@ -14,7 +14,7 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertCharacterStats, } from "../../test-utils/insert-helpers";
 import { asiRemaining, } from "../xp/levelup.js";
-import { awardXpToActor, LevelServiceError, } from "./index";
+import { awardXpToActor, } from "./index";
 
 let db: Kysely<DB>;
 let fixture: TestDb;
@@ -47,40 +47,36 @@ async function ledgerRows(actor: string,) {
 // ── Ledger dedupe collisions ─────────────────────────────
 
 describe("awardXpToActor dedupe collisions", () => {
-  test("BUG: concurrent-shaped re-entry (Promise.all) double-writes the ledger and the stats row", async () => {
-    // The dedupe pre-check races: both calls observe an empty xp_ledger
-    // before either logs, so both apply. The sheet is also duplicated because
-    // `character_stats.actor_id` carries no unique constraint. The docstring
-    // contract ("a replay resolves to the already-recorded state and applies
-    // nothing") only holds for sequential replays. Flip these assertions
-    // when the award becomes transactional / key-unique.
+  test("concurrent-shaped re-entry (Promise.all) applies exactly once", async () => {
+    // The (actor, source, reference_id) UNIQUE index plus the award
+    // transaction make the loser downgrade to a replay: one ledger row, one
+    // sheet, one applied grant.
     const grant = { actorId, amount: 300, source: "combat", referenceId: "race-1", };
     const [first, second,] = await Promise.all([
       awardXpToActor(db, grant,),
       awardXpToActor(db, grant,),
     ],);
 
-    expect(first.deduped,).toBe(false,);
-    expect(second.deduped,).toBe(false,);
+    // Exactly one call applies; the other replays as deduped.
+    expect(first.deduped,).not.toBe(second.deduped,);
+    expect([first.deduped, second.deduped,],).toContain(false,);
+    expect([first.deduped, second.deduped,],).toContain(true,);
 
     const ledger = await ledgerRows(actorId,);
-    expect(ledger,).toHaveLength(2,);
-    // The ledger now records 600 XP while the sheet shows 300: the two
-    // writes agree on absolute values, so the sheet self-corrects, but the
-    // audit trail double-counts.
-    expect(ledger.reduce((sum, row,) => sum + row.amount, 0,),).toBe(600,);
+    expect(ledger,).toHaveLength(1,);
+    expect(ledger.reduce((sum, row,) => sum + row.amount, 0,),).toBe(300,);
 
     const row = await statsRow(actorId,);
     expect(row.level,).toBe(2,);
     expect(row.xp,).toBe(300,);
-    expect(await statsRowCount(actorId,),).toBe(2,);
+    expect(await statsRowCount(actorId,),).toBe(1,);
   });
 
-  test("BUG: a ledger-only partial failure dedupes forever and never repairs the sheet", async () => {
+  test("a ledger-only partial failure reconciles the stale sheet on replay", async () => {
     // Simulates a crash that persisted the ledger row without applying the
-    // level-up (the reverse write order the pipeline cannot produce itself,
-    // but a manual/legacy row can). The replay resolves to "already
-    // recorded" and leaves the character at level 1 with 0 XP.
+    // level-up (a manual/legacy row). The replay detects the stale sheet
+    // (xp below the recorded amount) inside the transaction and re-applies
+    // the recorded grant — the ledger row stays untouched.
     await db.insertInto("xp_ledger",).values({
       id: "ledger-orphan",
       actor_id: actorId,
@@ -97,16 +93,14 @@ describe("awardXpToActor dedupe collisions", () => {
     },);
 
     expect(result.deduped,).toBe(true,);
-    expect(result.leveledUp,).toBe(false,);
-    // The dedupe path bootstraps the missing sheet and leaves it at the
-    // create defaults; the computed next-threshold (300) is never written.
-    expect(result.xpToNext,).toBe(300,);
+    expect(result.leveledUp,).toBe(true,);
+    expect(result.xpToNext,).toBe(600,); // level 2 → next threshold 900
 
     const row = await statsRow(actorId,);
-    expect(row.level,).toBe(1,);
-    expect(row.xp,).toBe(0,);
-    expect(row.xp_to_next,).toBe(0,); // bootstrap default, not the computed 300
-    expect(await ledgerRows(actorId,),).toHaveLength(1,);
+    expect(row.level,).toBe(2,);
+    expect(row.xp,).toBe(300,);
+    expect(row.xp_to_next,).toBe(600,); // the computed next-threshold
+    expect(await ledgerRows(actorId,),).toHaveLength(1,); // no double-write
   });
 
   test("empty-string referenceId is a real dedupe key; undefined never dedupes against it", async () => {
@@ -282,11 +276,10 @@ describe("awardXpToActor input fuzz", () => {
     expect(Object.is(ledger[0]!.amount, -0,),).toBe(false,);
   });
 
-  test("BUG (doc gap): MAX_SAFE_INTEGER + 1 is accepted and teleports to max level", async () => {
-    // The documented contract is only "finite, non-negative", so a
-    // precision-lost amount sails through validation and instantly grants
-    // level 20 with five ASIs. There is no upper bound; flagged as a
-    // validation-contract gap rather than rejected here.
+  test("an amount beyond MAX_SAFE_INTEGER is clamped to it", async () => {
+    // Contract: integer amounts above the safe-integer ceiling are clamped
+    // (precision is already lost past it; integer columns could not hold
+    // the raw value anyway). Max level is still reached.
     const overMax = Number.MAX_SAFE_INTEGER + 1;
     const result = await awardXpToActor(db, { actorId, amount: overMax, source: "fuzz", },);
 
@@ -294,26 +287,22 @@ describe("awardXpToActor input fuzz", () => {
     expect(result.levelsGained,).toBe(19,);
     expect(result.asiGranted,).toBe(5,);
     expect(result.hpGained,).toBe(95,); // 19 × (avg d8 5 + CON 0)
-    expect(result.xp,).toBe(overMax,);
+    expect(result.xp,).toBe(Number.MAX_SAFE_INTEGER,);
     expect(result.xpToNext,).toBeNull();
     expect((await statsRow(actorId,)).xp_to_next,).toBe(-1,);
+    expect((await ledgerRows(actorId,))[0]!.amount,).toBe(Number.MAX_SAFE_INTEGER,);
   });
 
-  test("BUG (doc gap): fractional XP is accepted and persisted as a float", async () => {
-    // `AwardXpInput.amount` is typed `number` and only requires finite and
-    // non-negative, so 150.5 applies and xp / xp_to_next become fractional —
-    // despite integer-affinity columns and integer XP thresholds. Pinned.
-    const result = await awardXpToActor(db, { actorId, amount: 150.5, source: "fuzz", },);
+  test.each([150.5, 0.5, Number.EPSILON,],)(
+    "fractional XP %p is rejected without rounding and writes nothing",
+    async (amount,) => {
+      // Contract: integer amounts only — the ledger and sheet columns are
+      // integer-affinity and the threshold math is integral.
+      await expect(awardXpToActor(db, { actorId, amount, source: "fuzz", },),)
+        .rejects.toMatchObject({ code: "invalid_amount", name: "LevelServiceError", },);
 
-    expect(result.level,).toBe(1,);
-    expect(result.xp,).toBe(150.5,);
-    expect(result.xpToNext,).toBe(149.5,);
-
-    const row = await statsRow(actorId,);
-    expect(row.xp,).toBe(150.5,);
-    expect(row.xp_to_next,).toBe(149.5,);
-
-    const ledger = await ledgerRows(actorId,);
-    expect(ledger[0]!.amount,).toBe(150.5,);
-  });
+      expect(await statsRowCount(actorId,),).toBe(0,);
+      expect(await ledgerRows(actorId,),).toHaveLength(0,);
+    },
+  );
 });

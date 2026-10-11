@@ -1,9 +1,26 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { safeJsonStringify, } from "../../utils.js";
 import { xpForLevel, } from "./calculation.js";
 
 // ── XP Sources ───────────────────────────────────────────
+
+/** Minimum quest payout — a capped character still earns this per quest. */
+export const QUEST_XP_MINIMUM = 100;
+
+/**
+ * Collision-proof ledger reference for an id pair, e.g. (world, location).
+ * A plain `a:b` join is ambiguous when ids contain `:` — the JSON encoding
+ * is injective, so distinct pairs always map to distinct dedupe keys.
+ * @param first
+ * @param second
+ * @returns {string} Serialized `[first, second]`.
+ */
+export function encodeReferencePair(first: string, second: string | number,): string {
+  const encoded = safeJsonStringify([first, second,],);
+  return encoded.ok ? encoded.value : `${first}\u0000${second}`;
+}
 
 /** XP reward for defeating an enemy of a given CR (Challenge Rating) */
 export const XP_BY_CR: Record<number, number> = {
@@ -52,6 +69,12 @@ export function xpForEnemyDefeat(
 
 /**
  * XP reward for completing a quest.
+ *
+ * The award derives from the level thresholds around `questLevel`; at
+ * MAX_LEVEL both thresholds clamp to the same value, which would floor the
+ * payout to 0. A capped character instead earns `QUEST_XP_MINIMUM` (100,
+ * mirroring the flat CR fallback proxy) so completing content never pays
+ * nothing — and, upstream, never burns a dedupe key on a zero row.
  * @param questLevel
  * @param difficulty
  * @returns {number}
@@ -68,7 +91,8 @@ export function xpForQuest(
   };
 
   const baseXp = xpForLevel(questLevel + 1,) - xpForLevel(questLevel,);
-  return Math.floor(baseXp * (multipliers[difficulty] ?? 1),);
+  const raw = Math.floor(baseXp * (multipliers[difficulty] ?? 1),);
+  return Math.max(raw, QUEST_XP_MINIMUM,);
 }
 
 /**

@@ -13,6 +13,7 @@ import type { DB, } from "../../db/schema.js";
 import { updateCharacterStats, } from "../service/character-stats.js";
 import { type AbilityName, } from "../stats/types.js";
 import { ASI_MAX, } from "../xp/constants.js";
+import { readStats, } from "./award.js";
 import { LevelServiceError, } from "./types.js";
 
 /** Input for {@link allocateAsi}. */
@@ -46,13 +47,10 @@ async function readAllocationRow(db: Kysely<DB>, actorId: string,): Promise<
     pending_asi: number;
   } & Record<AbilityName, number> | null
 > {
-  const row = await db
-    .selectFrom("character_stats",)
-    .where("actor_id", "=", actorId,)
-    .select(["id", "pending_asi", "str", "dex", "con", "int", "wis", "cha",],)
-    .executeTakeFirst();
-
-  return row ?? null;
+  const row = await readStats(db, actorId,);
+  if (!row) { return null; }
+  const { id, pending_asi, str, dex, con, int, wis, cha, } = row;
+  return { id, pending_asi, str, dex, con, int, wis, cha, };
 }
 
 /**

@@ -14,7 +14,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema.js";
 import { getLogger, } from "../../logger";
 import { awardXpToActor, } from "../level/index.js";
-import { xpForDiscovery, } from "../xp/sources.js";
+import { encodeReferencePair, xpForDiscovery, } from "../xp/sources.js";
 
 /**
  * Grant the first-discovery XP award to an actor.
@@ -35,7 +35,9 @@ export async function applyDiscoveryXpLeg(
       actorId,
       amount: xpForDiscovery(),
       source: "discovery",
-      referenceId: `${worldId}:${locationId}`,
+      // JSON pair, not `${worldId}:${locationId}`: ids containing `:` would
+      // make ("w:1","boss") and ("w","1:boss") collide on one dedupe key.
+      referenceId: encodeReferencePair(worldId, locationId,),
       description: `Discovered location ${locationId}`,
     },);
   } catch (cause) {

@@ -26,9 +26,9 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { awardXpToActor, } from "../level/index.js";
-import { xpForTravelLeg, } from "../xp/sources.js";
+import { encodeReferencePair, xpForTravelLeg, } from "../xp/sources.js";
 import { ACTION_COST, chargeBudget, toSqlDate, } from "./budget";
-import { type TravelContext, travelDb, type TravelResult, } from "./types";
+import { type TravelContext, type TravelDb, travelDb, type TravelResult, } from "./types";
 
 /** A hop that shuttles back and forth. */
 const CONTINUOUS = "continuous";
@@ -39,6 +39,11 @@ const CONTINUOUS = "continuous";
  * Best-effort: a reward failure must not fail the tick. The ledger key pins
  * the migration row plus the arrival tick, so a replayed tick cannot
  * double-pay a continuous cadence's repeated hops.
+ * @param db
+ * @param actorId
+ * @param migrationId
+ * @param currentTick
+ * @param destination
  */
 async function awardArrivalXp(
   db: Kysely<DB>,
@@ -52,7 +57,8 @@ async function awardArrivalXp(
       actorId,
       amount: xpForTravelLeg(),
       source: "travel",
-      referenceId: `${migrationId}:${currentTick}`,
+      // JSON pair (see encodeReferencePair): `:`-joined ids could collide.
+      referenceId: encodeReferencePair(migrationId, currentTick,),
       description: `Arrived at ${destination ?? "destination"}`,
     },);
   } catch (cause) {
@@ -76,6 +82,38 @@ interface MigrationRow {
   last_depart_tick: number;
 }
 
+/**
+ * Advance every NPC migration in `worldId` by one tick.
+ *
+ * Transitions, all charged `ACTION_COST` against the world budget:
+ *   - `planned` + `depart_tick <= tick`  → `in_transit` (depart)
+ *   - `in_transit` + `arrive_tick <= tick` → `arrived` + `npc_states` move
+ * A refused charge stops the tick, so it never applies more than it funds.
+ * @param db database handle
+ * @param worldId world whose migrations advance
+ * @param currentTick the tick being simulated
+ * @param ctx per-tick context: `nowMs`, `rng`, `ceiling`, shared `claims`
+ * @returns the actions applied, in application order
+ */
+/**
+ * Stamp an NPC migration row with a terminal status.
+ * @param handle
+ * @param rowId
+ * @param stamp
+ * @param status
+ */
+async function markMigration(
+  handle: TravelDb,
+  rowId: string,
+  stamp: string,
+  status: string = "arrived",
+): Promise<void> {
+  await handle
+    .updateTable("npc_migrations",)
+    .set({ status, updated_at: stamp, },)
+    .where("id", "=", rowId,)
+    .execute();
+}
 /**
  * Advance every NPC migration in `worldId` by one tick.
  *
@@ -120,11 +158,7 @@ export async function migrateNpc(
       const destination = row.destination_location_id;
       if (!destination) {
         // Destination was deleted — complete silently rather than retry forever
-        await handle
-          .updateTable("npc_migrations",)
-          .set({ status: "arrived", updated_at: stamp, },)
-          .where("id", "=", row.id,)
-          .execute();
+        await markMigration(handle, row.id, stamp,);
 
         continue;
       }
