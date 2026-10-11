@@ -68,6 +68,7 @@ describe("projectIndex", () => {
     ".plan/tickets/BUG-002.md": "**Status:** Done\n",
     ".plan/tickets/BUG-003.md": "**Tags:** already\n**Epic:** epic-other\n",
     ".plan/tickets/BUG-006.md": "**Tags:** fresh-list\n**Epic:** epic-new\n",
+    ".plan/tickets/BUG-007.md": "**Status:** In Progress\n",
   };
   const read = (src: string,): string | null => files[src] ?? null;
   const index = {
@@ -81,6 +82,7 @@ describe("projectIndex", () => {
     "BUG-004": { source: ".plan/tickets/BUG-gone.md", tags: [], epic: "", },
     "BUG-005": { source: "", tags: [], epic: "", },
     "BUG-006": { source: ".plan/tickets/BUG-006.md", tags: ["stale",], epic: "epic-old", },
+    "BUG-007": { source: ".plan/tickets/BUG-007.md", tags: ["prior", "index", "tags",], epic: "", },
   };
 
   test("fills empty tags/epic from the .md, counting each", () => {
@@ -96,6 +98,18 @@ describe("projectIndex", () => {
   test("leaves a ticket with no tags in the .md untagged — nothing inferred", () => {
     const { next, } = projectIndex(index, read,);
     expect(next["BUG-002"],).toEqual(index["BUG-002"],);
+  });
+
+  test("retains an entry's tags when the .md's **Tags:** line is deleted — deletion never clears", () => {
+    // BUG-002 covers the empty-index side (no .md tags, nothing to fill).
+    // This is the opposite direction and the one that loses data: an entry
+    // that CARRIES tags whose .md no longer declares them must keep them.
+    // Deletion is not a retraction — an entry whose Tags line is gone reads
+    // as `tags: []`, and treating that as authoritative would wipe every tag
+    // on every ticket that drops the line.
+    const { next, tagsFilled, } = projectIndex(index, read,);
+    expect(next["BUG-007"],).toEqual(index["BUG-007"],);
+    expect(tagsFilled,).toBe(3,);
   });
 
   test("regression: prose-fragment tags scraped by a header-window parse are replaced by the .md list — frontmatter wins", () => {

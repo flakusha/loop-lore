@@ -75,6 +75,12 @@ unrelated to tracking: `src/prompts/task-clarification.ts` (a prompt template) a
   arrays (frontmatter wins); giwt itself stays a pinned external dependency.
 - giwt has no `plan report` subcommand, and giwt is pinned externally (never modified
   in-repo) — reconciliation reporting ships as a `plan:*` script under `scripts/plan/`.
+- Upstream filing exists: the giwt-side remainder landed in the giwt repo 2026-10-10
+  (commit `3d62c28`, six tickets), and giwt's own `.plan/tickets/index.json` carries
+  a live instance of the same parser corruption — the entry titled "plan validate:
+  scope ticket-format/link gates to the diff base" has
+  `**Tags:** plan,validate,finalize,parallel-sessions` in its `epic` field — evidence
+  the fix is needed upstream.
 
 ### Gap
 
