@@ -1524,6 +1524,7 @@ export const CharacterStatsSchema = t.Object({
   conditions: t.Optional(t.String(),),
   active_effects: t.Optional(t.String(),),
   combat_alignment: t.Optional(t.String(),),
+  pending_asi: t.Optional(t.Number(),),
 },);
 
 // ── character_world_setup ────────────────────────────────────────────
