@@ -76,11 +76,16 @@ export function classifyProbe(probe: { exitCode: number; stdout: string; stderr:
  * (`utils/worktree-probe.ts`). Never throws: an unrunnable probe comes back as
  * `{ ok: false, reason }` so the caller fails closed instead of reading the
  * absence of evidence as a clean bill of health.
+ *
+ * `gitBin` is a seam, not a feature: the CATCH is reachable only when the
+ * spawn itself fails, so a test needs a binary name that cannot resolve. Passing
+ * one rewrites which executable runs, which a test must never do by scrubbing
+ * `PATH` — that is a shared global, and it races every other test in the process.
  */
-export function probeWorktree(root: string,): WorktreeProbe {
+export function probeWorktree(root: string, gitBin = "git",): WorktreeProbe {
   try {
     const probe = Bun.spawnSync(
-      ["git", "-C", root, "rev-parse", "--git-dir", "--git-common-dir",],
+      [gitBin, "-C", root, "rev-parse", "--git-dir", "--git-common-dir",],
       // `spawnSync` is UNBOUNDED by default, so a hung `git` would wedge
       // `plan:metadata` — and with it `giwt finalize` — forever, reporting
       // nothing. A kill lands as `exitCode === null`, which `classifyProbe`
