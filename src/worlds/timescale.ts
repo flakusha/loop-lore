@@ -26,6 +26,7 @@ import type { Kysely, Selectable, } from "kysely";
 import type { DB, } from "../db/schema";
 import type { WorldTimescale, } from "../db/schema-story";
 import { getLogger, } from "../logger";
+import { findWorld, } from "./lookup";
 
 /** Epoch label used when a world's timescale row is first created. */
 export const DEFAULT_EPOCH = "first_age";
@@ -126,7 +127,7 @@ export function createTimescaleService(db: Kysely<DB>, options: TimescaleOptions
 
     if (existing) { return existing; }
 
-    const world = await db.selectFrom("worlds",).select("id",).where("id", "=", worldId,).executeTakeFirst();
+    const world = await findWorld(db, worldId,);
     if (world === undefined) {
       throw new TimescaleError(`world "${worldId}" does not exist`,);
     }
