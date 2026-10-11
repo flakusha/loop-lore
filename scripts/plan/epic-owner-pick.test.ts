@@ -10,6 +10,8 @@
  * guessed; an already-canonical slug passes through unchanged.
  */
 import { describe, expect, test, } from "bun:test";
+import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import path from "node:path";
 import { pickEpicOwner, scanEpicTitles, splitEpicCandidates, } from "./epic-owner-pick";
 
@@ -115,27 +117,81 @@ describe("pickEpicOwner", () => {
   });
 });
 
+/**
+ * Seed a private epic directory, scan it, and remove it. The scan result is
+ * computed BEFORE the `finally` cleanup, so a failing assertion — which runs
+ * after this helper returns — cannot leak a fixture either.
+ */
+function scanFixture(files: Record<string, string>,) {
+  const dir = mkdtempSync(path.join(tmpdir(), "epic-owner-pick-",),);
+  try {
+    for (const [name, body,] of Object.entries(files,)) {
+      writeFileSync(path.join(dir, name,), body,);
+    }
+    return scanEpicTitles(dir,);
+  } finally {
+    rmSync(dir, { recursive: true, force: true, },);
+  }
+}
+
 describe("scanEpicTitles", () => {
   test("reads both H1 dialects off disk", () => {
-    const { titles, } = scanEpicTitles(".plan/epics",);
+    const { titles, ambiguous, } = scanFixture({
+      "epic-character-core-system.md": "# EPIC: Character Core System\n",
+      // Legacy lowercase-`epic:` dialect.
+      "epic-nsfw-game-mechanics.md": "# Epic: AO NSFW Game Mechanics\n",
+      // No H1: skipped.
+      "epic-no-heading.md": "just prose\n",
+      // Not an epic file (name filter): never read.
+      "README.md": "# EPIC: Not An Epic\n",
+    },);
     expect(titles["Character Core System"],).toBe("epic-character-core-system",);
-    // Legacy lowercase-`epic:` dialect.
     expect(titles["AO NSFW Game Mechanics"],).toBe("epic-nsfw-game-mechanics",);
-    expect(Object.keys(titles,).length,).toBeGreaterThan(200,);
+    expect(Object.keys(titles,).length,).toBe(2,);
+    expect(ambiguous,).toEqual([],);
   });
 
   test("duplicate titles keep the first file and report the rest", () => {
-    const { titles, ambiguous, } = scanEpicTitles(".plan/epics",);
-    expect(ambiguous.length,).toBeGreaterThanOrEqual(1,);
-    expect(titles["Internationalization (i18n)"],).toBe("epic-frontend-internationalization",);
+    const { titles, ambiguous, } = scanFixture({
+      // Sorted order puts `epic-a…` first, so THAT slug is the one kept.
+      "epic-a-frontend-internationalization.md": "# EPIC: Internationalization (i18n)\n",
+      "epic-b-frontend-i18n.md": "# EPIC: Internationalization (i18n)\n",
+      "epic-c-unrelated.md": "# EPIC: Unrelated\n",
+    },);
+    expect(titles["Internationalization (i18n)"],).toBe("epic-a-frontend-internationalization",);
+    expect(titles["Unrelated"],).toBe("epic-c-unrelated",);
+    expect(ambiguous.length,).toBe(1,);
+    expect(ambiguous[0],).toContain("Internationalization (i18n)",);
+    expect(ambiguous[0],).toContain("epic-b-frontend-i18n",);
+  });
+
+  test("a duplicate spanning the two H1 dialects is reported once", () => {
+    const { titles, ambiguous, } = scanFixture({
+      "epic-a-dup.md": "# EPIC: Shared Title\n",
+      "epic-b-dup.md": "# Epic: Shared Title\n",
+    },);
+    expect(titles["Shared Title"],).toBe("epic-a-dup",);
+    expect(ambiguous.length,).toBe(1,);
+    expect(ambiguous[0],).toContain("epic-b-dup",);
   });
 });
 
 /**
  * CLI surface of `bun run scripts/plan/epic-owner-pick.ts`.
  *
- * Resource contract — why this suite is parallel-safe:
- * - DISK: only the DEFAULT (no-flag) report path is spawned, which reads
+ * Resource contract — what THIS FILE owns, and why the suite is parallel-safe:
+ * - DISK (fixtures): every `scanEpicTitles` case above owns ONE private
+ *   `mkdtempSync(path.join(tmpdir(), "epic-owner-pick-"))` root, seeded with
+ *   only the epic `.md` files that case needs. `mkdtemp` mints the random
+ *   suffix atomically, so concurrent cases — in this worker, a sibling worker
+ *   under `--parallel`, or another `bun test` process — cannot collide. The
+ *   root is removed in `finally` before the assertions run, so a FAILING case
+ *   leaks nothing into the next one. Nothing outside that root is written, and
+ *   the live `.plan/epics/` tree is never read by the unit cases: it is mutated
+ *   by `giwt sync`, `plan:sync`, `plan:docs` and `epic-owner-pick --apply`,
+ *   and `scanEpicTitles` walks it file-by-file with no snapshot, so asserting on
+ *   its contents made the suite a function of concurrent repo state.
+ * - DISK (CLI): only the DEFAULT (no-flag) report path is spawned, which reads
  *   `.plan/tickets/index.json` and the tickets it names and writes nothing.
  *   `--apply` rewrites ticket `.md` files and index.json, and `--gen`
  *   overwrites `epic-titles.generated.ts` — a checked-in source file. Neither
