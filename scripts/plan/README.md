@@ -122,6 +122,11 @@ DECISION is testable without git, and it refuses to guess:
   - `probeWorktree` — the only subprocess: `git -C <root> rev-parse --git-dir
     --git-common-dir`. Two identical paths ⇒ main checkout; two different paths
     ⇒ linked worktree.
+  - `classifyProbe` — pure, and the only place a probe result becomes a
+    verdict. Exactly two path lines is the ONLY shape that authorizes anything:
+    a non-zero exit, an empty answer, or any other line count resolves to
+    `skip-probe-failed` with the shape named, so a truncated pipe or a `git`
+    wrapper that prints usage cannot read as "main checkout".
   - `decideIndexWrite` — turns the probe into the write decision. A probe that
     cannot be run or exits non-zero (no git on `PATH`, a `safe.directory`
     refusal, a spawn failure) resolves to `skip-probe-failed` and **never** to

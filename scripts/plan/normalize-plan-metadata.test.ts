@@ -8,12 +8,13 @@
  * and rewritten with the author's value intact; status lines survive
  * untouched; nothing is invented; and a normalized file is a fixed point.
  */
-import { describe, expect, test, } from "bun:test";
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync, } from "node:fs";
+import { afterEach, describe, expect, test, } from "bun:test";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import path from "node:path";
 import { runPlanMetadata, } from "./normalize-plan-metadata";
 import {
+  classifyProbe,
   decideIndexWrite,
   isLinkedWorktreeFrom,
   probeWorktree,
@@ -358,12 +359,18 @@ describe("normalize-plan-metadata CLI", () => {
  * Every assertion here is about the DECISION (`decision`, the bytes on disk,
  * what the operator is told), never about a value merely being non-empty.
  *
- * Resource contract — why this suite is parallel-safe:
- * - DISK: every case builds its own `mkdtemp` root; the repo's real `.plan/` is
- *   never read or written, so this suite cannot race a sibling `bun test` or a
- *   sibling agent over the plan tree.
+ * Resource contract — what each case OWNS, and why it is parallel-safe:
+ * - DISK (unique): every case builds its own `mkdtemp` root under the OS temp
+ *   dir and owns it exclusively; no fixed-path fixture, and the repo's real
+ *   `.plan/` is never read or written, so this suite cannot race a sibling
+ *   `bun test` or a sibling agent over the plan tree.
+ * - DISK (teardown): each root is registered on creation and removed in the
+ *   `afterEach` below, which runs even when the case fails — a leaked root
+ *   cannot poison the next case or grow the tmpdir across a parallel run.
  * - PROCESS: `runPlanMetadata` is called in-process with the probe injected, so
- *   no git subprocess and no CLI/global state is shared between cases.
+ *   no git subprocess and no CLI/global state is shared between cases. The one
+ *   case that does spawn git passes a path that does not exist.
+ * - ORDER: no shared mutable state; every assertion reads only its own root.
  */
 describe("index.json write guard", () => {
   const TICKET = "# BUG-x\n\n**Labels:** alpha, beta\n**Epic**: epic-items\n";
@@ -376,8 +383,21 @@ describe("index.json write guard", () => {
   const mdPath = (root: string,): string => path.join(root, ".plan", "tickets", "BUG-x.md",);
   const indexPath = (root: string,): string => path.join(root, ".plan", "tickets", "index.json",);
 
+  const ownedRoots: string[] = [];
+  afterEach(() => {
+    for (const root of ownedRoots.splice(0,)) {
+      rmSync(root, { recursive: true, force: true, },);
+    }
+  },);
+
+  /** Register a temp root so the `afterEach` above reclaims it, pass or fail. */
+  function own(root: string,): string {
+    ownedRoots.push(root,);
+    return root;
+  }
+
   function fixture(index: string | null,): string {
-    const root = mkdtempSync(path.join(tmpdir(), "plan-meta-guard-",),);
+    const root = own(mkdtempSync(path.join(tmpdir(), "plan-meta-guard-",),),);
     mkdirSync(path.join(root, ".plan", "epics",), { recursive: true, },);
     mkdirSync(path.join(root, ".plan", "tickets",), { recursive: true, },);
     writeFileSync(mdPath(root,), TICKET,);
@@ -436,6 +456,38 @@ describe("index.json write guard", () => {
       expect(decideIndexWrite(probe, row.indexChanged, false,),).toBe(row.want,);
     });
   }
+
+  // ── the probe's own shape is a verdict, not a default ─────────────────────
+
+  test("classifyProbe: two paths is the only shape that authorizes anything", () => {
+    const main = classifyProbe({ exitCode: 0, stdout: ".git\n.git\n", stderr: "", },);
+    const linked = classifyProbe({ exitCode: 0, stdout: "/r/.git/worktrees/w\n/r/.git\n", stderr: "", },);
+    expect(main.ok,).toBe(true,);
+    expect(linked.ok,).toBe(true,);
+    expect(decideIndexWrite(main, true, false,),).toBe("write",);
+    expect(decideIndexWrite(linked, true, false,),).toBe("skip-linked-worktree",);
+  });
+
+  test("classifyProbe: a shape that is not two paths fails CLOSED", () => {
+    // A truncated pipe, a `git` wrapper that prints usage, or an empty answer
+    // would all read as "not a linked worktree" and authorize the write.
+    for (const stdout of ["", "\n", ".git\n", "a\nb\nc\n", "usage: git rev-parse\n",]) {
+      const probe = classifyProbe({ exitCode: 0, stdout, stderr: "", },);
+      expect(probe.ok,).toBe(false,);
+      if (probe.ok) { throw new Error("unreachable — the assertion above failed",); }
+      expect(probe.reason,).toContain("unexpected git rev-parse output",);
+      expect(decideIndexWrite(probe, true, false,),).toBe("skip-probe-failed",);
+    }
+  });
+
+  test("classifyProbe: a non-zero exit fails closed and names the exit and stderr", () => {
+    const probe = classifyProbe({ exitCode: 128, stdout: "", stderr: "detected dubious ownership", },);
+    expect(probe.ok,).toBe(false,);
+    if (probe.ok) { throw new Error("unreachable — the assertion above failed",); }
+    expect(probe.reason,).toContain("exited 128",);
+    expect(probe.reason,).toContain("dubious ownership",);
+    expect(decideIndexWrite(probe, true, false,),).toBe("skip-probe-failed",);
+  });
 
   test("a failed probe never authorizes the write, whatever the probe reason", () => {
     for (const reason of ["git could not be run: ENOENT", "git rev-parse exited 128: dubious ownership", "",]) {
@@ -511,7 +563,7 @@ describe("index.json write guard", () => {
   // ── the real subprocess, failing for real ────────────────────────────────
 
   test("probeWorktree reports a failure instead of a clean checkout", () => {
-    const missing = path.join(mkdtempSync(path.join(tmpdir(), "plan-meta-probe-",),), "no-such-dir",);
+    const missing = path.join(own(mkdtempSync(path.join(tmpdir(), "plan-meta-probe-",),),), "no-such-dir",);
     const probe = probeWorktree(missing,);
     expect(probe.ok,).toBe(false,);
     if (probe.ok) { throw new Error("unreachable — the assertion above failed",); }

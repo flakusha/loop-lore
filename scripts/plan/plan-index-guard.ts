@@ -17,10 +17,11 @@
  *   probeWorktree      impure — spawns git; the only subprocess in this module
  *   decideIndexWrite   pure  — the answer, from the probe's own output
  *
- * A probe that cannot run is NOT evidence of "main checkout": it resolves to
- * "do not write", loudly. `projectIndexOntoDisk` is the only caller-facing
- * entry point that performs the write, and `loadIndex` is split out so a caller
- * can parse the index BEFORE any other file is touched.
+ * A probe that cannot run, exits non-zero, or answers with anything other than
+ * the two paths it was asked for is NOT evidence of "main checkout": it
+ * resolves to "do not write", loudly. `projectIndexOntoDisk` is the only
+ * caller-facing entry point that performs the write, and `loadIndex` is split
+ * out so a caller can parse the index BEFORE any other file is touched.
  */
 import { existsSync, readFileSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
@@ -48,26 +49,48 @@ export function isLinkedWorktreeFrom(dirs: string[],): boolean {
 }
 
 /**
+ * Pure: turn a finished probe's raw output into a verdict, FAILING CLOSED.
+ *
+ * Three shapes are not "main checkout", and none of them may authorize a
+ * write: a non-zero exit, output that is not the two paths git was asked for
+ * (a truncated pipe, a wrapper that prints usage), and an empty answer. All
+ * three come back as `{ ok: false, reason }` naming which one it was.
+ */
+export function classifyProbe(probe: { exitCode: number; stdout: string; stderr: string },): WorktreeProbe {
+  if (probe.exitCode !== 0) {
+    const why = probe.stderr.trim() || "(no stderr)";
+    return { ok: false, reason: `git rev-parse exited ${probe.exitCode}: ${why}`, };
+  }
+  const dirs = probe.stdout.trim().split("\n",).map((line,) => line.trim());
+  if (dirs.length !== 2) {
+    return {
+      ok: false,
+      reason: `unexpected git rev-parse output: ${dirs.length} line(s), expected 2 (--git-dir, --git-common-dir)`,
+    };
+  }
+  return { ok: true, dirs, };
+}
+
+/**
  * Impure half of the guard, mirroring giwt's own probe
  * (`utils/worktree-probe.ts`). Never throws: an unrunnable probe comes back as
  * `{ ok: false, reason }` so the caller fails closed instead of reading the
  * absence of evidence as a clean bill of health.
  */
 export function probeWorktree(root: string,): WorktreeProbe {
-  let probe: { exitCode: number; stdout: Uint8Array; stderr: Uint8Array };
   try {
-    probe = Bun.spawnSync(
+    const probe = Bun.spawnSync(
       ["git", "-C", root, "rev-parse", "--git-dir", "--git-common-dir",],
       { stdout: "pipe", stderr: "pipe", },
     );
+    return classifyProbe({
+      exitCode: probe.exitCode,
+      stdout: probe.stdout.toString(),
+      stderr: probe.stderr.toString(),
+    },);
   } catch (err) {
     return { ok: false, reason: `git could not be run: ${err instanceof Error ? err.message : String(err,)}`, };
   }
-  if (probe.exitCode !== 0) {
-    const why = probe.stderr.toString().trim() || "(no stderr)";
-    return { ok: false, reason: `git rev-parse exited ${probe.exitCode}: ${why}`, };
-  }
-  return { ok: true, dirs: probe.stdout.toString().trim().split("\n",).map((line,) => line.trim()), };
 }
 
 /** The one decision this guard exists to make. */
