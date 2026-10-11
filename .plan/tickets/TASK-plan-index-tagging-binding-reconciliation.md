@@ -37,8 +37,10 @@ dependency.
 Shipped (this repo):
 - Frontmatter-wins projection in `normalize-plan-metadata.ts` — backfills empty tag
   arrays and repairs divergent ones (including the prose-fragment corruption this
-  entry once carried; regression-tested). The md→index direction is fully covered
-  by scripts/plan + post-merge regeneration; no giwt change is needed for it.
+  entry carried; repaired by the documented post-merge regeneration chain below
+  (index regenerated at 225828056); regression-tested). The md→index direction is
+  fully covered by scripts/plan + post-merge regeneration; no giwt change is
+  needed for it.
 - `bun run plan:report` (`scripts/plan/report-plan-metadata.ts`) — `tags <tag>`,
   `epic <epic-id>`, `orphans` (a/b/c sections), aggregate; reuses the shared
   parser (tagsOf/epicOf/relatedRefs, splitEpicCandidates); placeholder tag tokens
@@ -59,6 +61,20 @@ Still open (giwt-side, needs an upstream giwt change):
   second half; AC 8's tests for it).
 - The `tickets` gate reusing orphan-tag/orphan-binding detection (final AC).
 - `bun run check` green on giwt itself (final AC).
+
+Upstream: filed in the giwt repo 2026-10-10 (commit `3d62c28`) — the list above
+is waiting-on-upstream, not unowned:
+- sync re-read (AC 1+2) → `FEAT-SYNC-RE-READS-TAGS-EPIC-RELATED-FOR-ENTRIES-ALREADY-IN-THE-I` (`10d664b`)
+- index-edit rejection (AC 7b/8) → `FEAT-REJECT-MANUAL-EDITS-TO-PLAN-TICKETS-INDEX-JSON-WITH-A-FRONTM` (`44e34ba`)
+- `tickets` gate reuse → `FEAT-PLAN-VALIDATE-TICKETS-GATE-REUSES-ORPHAN-TAG-AND-ORPHAN-BIND` (`e3194ff`)
+- `bun run check` green: no dedicated extid; closes when the filed batch has landed
+
+Also filed with that commit: the parser root cause
+`FIX-SYNC-PARSE-FIRST-BOLD-COLON-MATCH-MIS-PARSES-WHEN-BODY-PROSE` (`7bc95f9`,
+high), and the two promotion migrations
+`FEAT-PLAN-REPORT-SUBCOMMAND-PROMOTE-LOOP-LORE-REPORT-PLAN-METADAT` (`b431d70`)
+and `FEAT-PLAN-METADATA-SUBCOMMAND-PROMOTE-FRONTMATTER-WINS-PROJECTION`
+(`1231504`).
 
 **PoC decomposition (task-management, 2026-10-10):** this ticket's repo-side work
 was decomposed via the `task-management` skill and driven through its real CLI
