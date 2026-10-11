@@ -474,7 +474,14 @@ export const RelationshipTypeSchema = t.UnionEnum([
 export const ResponseCompressionSchema = t.UnionEnum(["br", "gzip", "auto",],);
 export const RpgQuestionInputKindSchema = t.UnionEnum(["choice", "free_text", "numeric",],);
 export const RpgQuestionStatusSchema = t.UnionEnum(["open", "answered", "expired",],);
-export const RpgQuestionTypeSchema = t.UnionEnum(["dialogue", "action", "exploration", "combat", "custom",],);
+export const RpgQuestionTypeSchema = t.UnionEnum([
+  "dialogue",
+  "action",
+  "exploration",
+  "combat",
+  "custom",
+  "level_up",
+],);
 export const SdModelTypeSchema = t.UnionEnum(["checkpoint", "diffusion",],);
 export const SeductionSkillCategorySchema = t.UnionEnum([
   "foreplay",

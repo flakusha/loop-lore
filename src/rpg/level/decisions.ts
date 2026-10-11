@@ -81,11 +81,7 @@ export async function autoAllocateAsi(
     spends.push(await allocateAsi(db, { actorId, ability: target, points: 1, },),);
   }
 
-  const final = await db
-    .selectFrom("character_stats",)
-    .where("actor_id", "=", actorId,)
-    .select("pending_asi",)
-    .executeTakeFirst();
+  const final = await readPendingBudget(db, actorId,);
 
   return { spends, remaining: final?.pending_asi ?? 0, };
 }
@@ -253,4 +249,18 @@ function pickWeighted(
   }
 
   return best;
+}
+
+/**
+ * Read the actor's pending ASI budget (the shared projection for the
+ * allocation loop and its final reconcile read).
+ * @param db
+ * @param actorId
+ */
+async function readPendingBudget(db: Kysely<DB>, actorId: string,): Promise<{ pending_asi: number } | undefined> {
+  return db
+    .selectFrom("character_stats",)
+    .where("actor_id", "=", actorId,)
+    .select("pending_asi",)
+    .executeTakeFirst();
 }
