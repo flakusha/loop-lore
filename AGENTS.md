@@ -263,9 +263,10 @@ See `.agents/references/recommendations.md` — use these:
 
 ```bash
 bun run check        # parallel gate runner (check-parallel.mjs): typecheck ×4, lint (ts/css/html/html-scripts/chaining), dprint, md lint, db schema gate, conflict markers, size, context-weight, jscpd ratchet, unit + e2e tests
-#                     # the `jscpd ratchet` gate is BLOCKING: growing the clone count past
-#                     # scripts/check/jscpd-baseline.json fails the run; lower the baseline
-#                     # only intentionally via `bun run jscpd:ratchet --report <report> --update`
+#                     # `jscpd ratchet` is ADVISORY (see ADVISORY_GATES in
+#                     # scripts/check/parallel/gates.mjs): it runs and reports like any
+#                     # other gate, but a clone count past scripts/check/jscpd-baseline.json
+#                     # shows as ADVISORY in the summary without failing the run
 bun run check:report-ls  # aggregate check reports across all worktrees (flags stale)
 bun test src/        # unit tests
 E2E_SAFEGUARD=1 bun test tests/e2e/  # e2e (if affecting)
