@@ -180,3 +180,5 @@ scheduling) are unchanged and still Not Started: they are real autonomy-loop wor
 being implemented on this branch.
 
 **Closure evidence (reconciled against dev):** every exit criterion is met by committed code. Governor with kill-switch: `src/autonomy/governor/index.ts:150` checks `isKillSwitchEngaged()` before cap resolution; scheduler with restart-persistent state: `src/autonomy/scheduler/index.ts:78`; BDI + GM-beat dispatch targets registered on the production cron tick at `src/cron/jobs.ts:174-209`; movement executor `src/rpg/npc-navigation/tick-driver.ts` (`runNpcMovementTick`), jittered and gated on the governor's `perUserCap`. Tests cover denial-by-default, unlimited-mode gating, restart persistence and determinism: `src/autonomy/governor/index.test.ts`, `src/autonomy/scheduler/index.test.ts`, `src/autonomy/governor/kill-switch.test.ts`, `src/autonomy/governor/ledger.test.ts`.
+
+**Resolved:** 2026-10-11 registry-driven close: git issue 93e0928 (registry tip: 1da0c8982 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-ACTOR-AUTONOMY-STORY-DRIVE )

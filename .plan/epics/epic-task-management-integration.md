@@ -221,3 +221,5 @@ Bound to this epic via the `**Epic:** epic-task-management-integration` header o
 - `.agents/skills/sync-tickets/` — ticket ↔ git issue sync
 
 **Closure evidence (reconciled against dev):** all six acceptance criteria are met by `scripts/plan/` — `plan-index-guard`, the `normalize-*` family, and the `report-*` family are present and run. The epic's own status note describing it as "In Progress" was stale; this epic is research guidance plus the tooling that operationalises it, and that tooling has landed.
+
+**Resolved:** 2026-10-11 registry-driven close: git issue 4dc3f1a (registry tip: fca4dba35 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-TASK-MANAGEMENT-INTEGRATION)

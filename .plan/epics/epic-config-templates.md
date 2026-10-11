@@ -234,7 +234,7 @@ Reuses existing infrastructure:
 
 # Chat Template & Config Lifecycle — Research & Design
 
-**Status:** Design (research complete)
+**Status:** Done
 **Created:** 2026-08-02
 **Scope:** Chat setup templates (selectable at creation) + online-chat configuration policy
 **Preference (owner):** **Bound-chat migration to a new chat** over live mutation of key mechanics.
@@ -424,7 +424,7 @@ satisfies the preference: **you cannot change key mechanics in place — you for
 
 # Prompt Template Registry — Design
 
-**Status:** Design
+**Status:** Done
 **Created:** 2026-08-03
 **Scope:** Config-driven LLM text templates for assistant / gm / nsfw (+ vn + aux classifier) domains — single typed registry over the existing config-enhance machinery.
 **Related:** `FEAT-chat-template-config-lifecycle.md` (chat setup templates — distinct domain, same "templates bound at creation" philosophy), `src/prompts/registry.ts`, `src/config/templates-loader.ts`, `src/config/sections/templates.ts`.
@@ -537,3 +537,5 @@ The `nsfwPolicy` purpose (`NSFW_POLICY_LEVELS_PROMPT`) is injected as a system s
 - `bun run check` gate: this task touches only `src/` + docs — expect same 15/17 baseline (lint-ts + size-strict remain pre-existing debt).
 
 **Closure evidence (reconciled against dev):** all four phases plus the LLM cleanup are shipped and wired. Phase 1 loader: `src/config/templates-loader/index.ts` with types and `TEMPLATES_DEFAULTS` in `src/config/sections/templates.ts` (empty `systemPrompts` per the LLM-cleanup design). Phase 2 SD templates: `src/generation/prompt-templates/profiles.ts` (`BUILTIN_PROFILES`). Phase 3 avatar templates: `src/config/template-expansion/index.ts` exporting `expandAvatarConfig`, `runTemplateExpansion`, `findMissingAvatars`, `validateExpansionConfig`, with the emotion-avatar prompt section at `src/assistant/prompt/sections/emotion-avatar.ts`. Wiring confirmed at `src/config/load/load.ts:132-138` (`loadTemplateConfig` + `runTemplateExpansion`). Note: paths are directories with barrels, not the flat module names the original epic text used.
+
+**Resolved:** 2026-10-11 registry-driven close: git issue 8466dce (registry tip: f4ec72212 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-CONFIG-TEMPLATES done)
