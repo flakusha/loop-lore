@@ -81,7 +81,11 @@ export function probeWorktree(root: string,): WorktreeProbe {
   try {
     const probe = Bun.spawnSync(
       ["git", "-C", root, "rev-parse", "--git-dir", "--git-common-dir",],
-      { stdout: "pipe", stderr: "pipe", },
+      // `spawnSync` is UNBOUNDED by default, so a hung `git` would wedge
+      // `plan:metadata` — and with it `giwt finalize` — forever, reporting
+      // nothing. A kill lands as `exitCode === null`, which `classifyProbe`
+      // already fails closed on. 5s is ~50x a local `rev-parse`.
+      { stdout: "pipe", stderr: "pipe", timeout: 5_000, },
     );
     return classifyProbe({
       exitCode: probe.exitCode,
@@ -163,8 +167,12 @@ export function projectIndexOntoDisk(
   const held = tagsFilled + epicsFilled;
   let notice: string | null = null;
   let error: string | null = null;
-  if (!probe.ok) {
-    error = `plan:metadata: could NOT verify the worktree layout — ${probe.reason}. ` +
+  // Widened past `!probe.ok`: an `ok: true` probe carrying the WRONG shape also
+  // resolves to `skip-probe-failed` in `decideIndexWrite`, and a denial the
+  // operator cannot see is indistinguishable from a clean `tags backfilled: N`.
+  if (!probe.ok || decision === "skip-probe-failed") {
+    const why = probe.ok ? "the probe answered, but not with the two git dirs" : probe.reason;
+    error = `plan:metadata: could NOT verify the worktree layout — ${why}. ` +
       "index.json is left untouched on purpose: this script will not write the ticket index when it " +
       "cannot prove it is in the main checkout. Restore git (PATH / safe.directory) and re-run.";
     if (held > 0) {

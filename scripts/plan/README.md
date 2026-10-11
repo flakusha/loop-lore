@@ -32,12 +32,12 @@ tree reports 0 changes.
 The logic lives in four shared modules so the header grammar is parsed one way
 everywhere; each CLI is a thin shell over them.
 
-| Module                     | Owns                                                                                                                         | Used by                       |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| `plan-markdown-fields.ts`  | the field grammar: `fieldLines`, `tagsOf`, `epicOf`, `normalizeEpicRef`, `planFile`/`applyRewrites`, `relatedRefs`           | normalizer, `plan:report`     |
-| `plan-index-projection.ts` | `projectIndex` (`.md` fields → `index.json` entries) and `canonicalIndexOrder` (giwt's `localeCompare` key order)            | normalizer, `epic-owner-pick` |
-| `plan-index-guard.ts`      | the `index.json` write guard: `probeWorktree` (the only subprocess), `decideIndexWrite`, `projectIndexOntoDisk`, `loadIndex` | normalizer                    |
-| `plan-report-queries.ts`   | the read-only queries: `aggregate`, `byTag`, `byEpic`, `orphanTags`, `orphanBindings`, `danglingRelated`                     | `plan:report`                 |
+| Module                     | Owns                                                                                                                                                                                                             | Used by                       |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `plan-markdown-fields.ts`  | the field grammar: `fieldLines`, `tagsOf`, `epicOf`, `normalizeEpicRef`, `planFile`/`applyRewrites`, `relatedRefs`                                                                                               | normalizer, `plan:report`     |
+| `plan-index-projection.ts` | `projectIndex` (`.md` fields → `index.json` entries) and `canonicalIndexOrder` (giwt's `localeCompare` key order)                                                                                                | normalizer, `epic-owner-pick` |
+| `plan-index-guard.ts`      | the `index.json` write guard: `probeWorktree` (the only subprocess), `classifyProbe`, `isLinkedWorktreeFrom`, `decideIndexWrite`, `projectIndexOntoDisk`, `loadIndex`, and the `IndexWrite`/`IndexOutcome` types | normalizer                    |
+| `plan-report-queries.ts`   | the read-only queries: `aggregate`, `byTag`, `byEpic`, `orphanTags`, `orphanBindings`, `danglingRelated`                                                                                                         | `plan:report`                 |
 
 Alongside them: the four CLI files above, and `epic-titles.generated.ts` —
 **DO NOT EDIT**, `epic-owner-pick.ts --gen` owns it.

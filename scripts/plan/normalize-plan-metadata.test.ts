@@ -631,6 +631,35 @@ describe("index.json write guard", () => {
     expect(decideIndexWrite(probe, true, false,),).toBe("skip-probe-failed",);
   });
 
+  test("probeWorktree fails closed when git cannot be SPAWNED at all", () => {
+    // The case above only makes git exit 128 — `classifyProbe`'s non-zero
+    // branch. An UNRUNNABLE git is the catch, and the catch is the branch that
+    // once read as a clean main checkout. `spawnSync` resolves against the
+    // process's OWN environment, so the probe runs in a child bun whose PATH
+    // names a directory that does not exist; an EMPTY PATH is not enough,
+    // because Bun then falls back to a default search path.
+    const guard = path.join(import.meta.dir, "plan-index-guard.ts",);
+    const script = `import { probeWorktree, decideIndexWrite } from ${JSON.stringify(guard,)};\n` +
+      "const probe = probeWorktree(process.cwd());\n" +
+      "console.log(JSON.stringify({ probe, decision: decideIndexWrite(probe, true, false), }));";
+    const child = Bun.spawnSync([process.execPath, "--eval", script,], {
+      cwd: import.meta.dir,
+      env: { ...process.env, PATH: path.join(tmpdir(), "no-such-bin-dir-",), },
+      stdout: "pipe",
+      stderr: "pipe",
+      timeout: 15_000,
+    },);
+    expect(child.exitCode,).toBe(0,);
+    const { probe, decision, } = JSON.parse(child.stdout.toString(),) as {
+      probe: WorktreeProbe;
+      decision: string;
+    };
+    expect(probe.ok,).toBe(false,);
+    if (probe.ok) { throw new Error("unreachable — the assertion above failed",); }
+    expect(probe.reason,).toContain("git could not be run",);
+    expect(decision,).toBe("skip-probe-failed",);
+  });
+
   // ── write ordering: a malformed index must not half-mutate ───────────────
 
   test("a malformed index aborts the run with the .md files untouched", () => {
