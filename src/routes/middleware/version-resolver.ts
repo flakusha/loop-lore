@@ -54,9 +54,6 @@ export function resolveVersion(request: Request,): ApiVersion {
 
 /**
  * Elysia plugin that injects `apiVersion` into the context.
- * @example
- * app.use(versionResolver())
- * // ctx.apiVersion === "1"
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: { readonly apiVersion: "1"; }; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: ExtractErrorFromHandle<{ readonly apiVersion: "1"; }>; }, {}, { ...; }, { ...; }>}
  */
 export function versionResolver() {

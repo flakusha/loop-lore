@@ -16,9 +16,6 @@ export type NumberResult = { ok: true; value: number } | { ok: false; error: Err
  * Parse a base-10 integer strictly: the whole string must be a valid integer.
  * @param text - Raw input to parse.
  * @returns `{ ok: true, value }` or `{ ok: false, error }`.
- * @example
- * safeParseInt("42"); // { ok: true, value: 42 }
- * safeParseInt("12abc"); // { ok: false, error }
  */
 export function safeParseInt(text: string,): NumberResult {
   const trimmed = text.trim();
@@ -34,9 +31,6 @@ export function safeParseInt(text: string,): NumberResult {
  * Parse a float strictly: the whole string must be a valid finite number.
  * @param text - Raw input to parse.
  * @returns `{ ok: true, value }` or `{ ok: false, error }`.
- * @example
- * safeParseFloat("3.14"); // { ok: true, value: 3.14 }
- * safeParseFloat("abc"); // { ok: false, error }
  */
 export function safeParseFloat(text: string,): NumberResult {
   const trimmed = text.trim();
@@ -53,9 +47,6 @@ export function safeParseFloat(text: string,): NumberResult {
  * @param text - Raw input to parse.
  * @param fallback - Value returned when parsing fails.
  * @returns Parsed integer or `fallback`.
- * @example
- * parseIntOr("7", 0); // 7
- * parseIntOr("x", 0); // 0
  */
 export function parseIntOr(text: string, fallback: number,): number {
   const result = safeParseInt(text,);
@@ -67,9 +58,6 @@ export function parseIntOr(text: string, fallback: number,): number {
  * @param text - Raw input to parse.
  * @param fallback - Value returned when parsing fails.
  * @returns Parsed finite number or `fallback`.
- * @example
- * parseFloatOr("1.5", 0); // 1.5
- * parseFloatOr("x", 0); // 0
  */
 export function parseFloatOr(text: string, fallback: number,): number {
   const result = safeParseFloat(text,);

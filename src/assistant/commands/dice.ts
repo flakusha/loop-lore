@@ -58,9 +58,6 @@ interface DiceNotation {
  * Parse dice notation (NdS±M).
  * @param notation - Dice notation string (e.g., "2d6+3", "d20", "4d6-2")
  * @returns Parsed components, or null if invalid
- * @example
- * parseDiceNotation("2d6+3") → { count: 2, sides: 6, modifier: 3, notation: "2d6+3" }
- * parseDiceNotation("d20")   → { count: 1, sides: 20, modifier: 0, notation: "d20" }
  */
 export function parseDiceNotation(notation: string,): DiceNotation | null {
   const trimmed = notation.trim().toLowerCase();
@@ -90,9 +87,6 @@ export function rollDie(sides: number,): number {
  * Roll multiple dice and return the result.
  * @param notation - Dice notation string (e.g., "2d6+3")
  * @returns Complete roll result, or null if notation is invalid
- * @example
- * rollDice("2d6+3")
- * // → { count: 2, sides: 6, modifier: 3, rolls: [{value: 4}, {value: 5}], total: 12, notation: "2d6+3" }
  */
 export function rollDice(notation: string,): DiceResult | null {
   const parsed = parseDiceNotation(notation,);

@@ -176,9 +176,6 @@ export type BoundarySide = "character" | "world";
  * @returns `{ ok: true, value: null }` when the write stays inside the
  * boundary; `{ ok: false, error }` with a message naming every offending
  * field and the API that owns it otherwise. Never throws.
- * @example
- * assertNoCrossBoundaryWrite("character", ["displayName", "lore",])
- * // → { ok: false, error: Error('"lore" is world-owned …') }
  */
 export function assertNoCrossBoundaryWrite(
   kind: BoundarySide,

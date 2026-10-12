@@ -43,21 +43,6 @@ export interface TransportConfig {
  * @param config - Transport configuration
  * @returns ProtocolHandler with optional compression wrapper
  * @throws TransportError if protocol is unsupported
- * @example
- * ```ts
- * // HTTP/1.1 with zstd compression
- * const handler = createProtocol({
- *   protocol: "http/1.1",
- *   compression: "zstd",
- *   port: 3000,
- * });
- *
- * // WebSocket client
- * const ws = createProtocol({
- *   protocol: "websocket",
- *   compression: "br",
- * });
- * ```
  */
 export function createProtocol(config: TransportConfig,): ProtocolHandler {
   let handler: ProtocolHandler;

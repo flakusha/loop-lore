@@ -24,8 +24,6 @@ export interface EmitOptions {
  * @param data - Payload passed to each handler.
  * @param opts - Optional error reporter.
  * @returns Number of matching handlers invoked (including ones that threw).
- * @example
- * const n = await emitPluginEvent(registry.getAllEventHandlers(), "chat.created", chat);
  */
 export async function emitPluginEvent(
   handlers: EventHandlerDefinition[],

@@ -30,13 +30,6 @@ export function clamp(value: number, min: number, max: number,): number {
  * @param value - Number to clamp
  * @param fallback - Value to return when `value` is not finite (default `0.5`)
  * @returns `value` clamped to `[0, 1]`, or `fallback` for non-finite input
- *
- * @example
- * clampUnit(1.5);                       // 1
- * clampUnit(-0.5);                      // 0
- * clampUnit(NaN);                       // 0.5
- * clampUnit(Number.POSITIVE_INFINITY); // 0.5
- * clampUnit(Number.NaN, 0);             // 0
  */
 export function clampUnit(value: number, fallback: number = 0.5,): number {
   if (!Number.isFinite(value,)) { return fallback; }

@@ -19,9 +19,6 @@ export interface MeshClock {
 
 /**
  * @param now Wall-clock source (injectable for tests).
- * @example
- * const clock = createMeshClock();
- * const envelope = await sealContent({ ..., clock: clock.tick(), cipher, });
  * @returns {MeshClock}
  */
 export function createMeshClock(now: () => number = Date.now,): MeshClock {
