@@ -88,7 +88,7 @@ export interface CanonicalCharacter {
 - [ ] `identity_lore` feature flag gates identity-driven lore/memory (default off → no behavior change)
 - [ ] Strict-mode optional-field validation; relaxed mode skips; world `required_fields` honored
 - [ ] Migration auto-fills the new fields from traits or `extensions`; `migration-ready` preserved for optional-missing cards
-- [ ] `schemas/character-card.schema.json` (and its generator `src/config/generate-character-schema.ts`) includes the fields
+- [ ] `schemas/character-card.schema.json` (and its generator `src/config/generate-character-schema/index.ts`) includes the fields
 - [ ] Identity/trait immutability rule preserved (no silent post-creation identity rewrite)
 - [ ] Unit tests: field validation, import mapping, export round-trip, extensions→field migration, flag-gated injection, immutable-trait enforcement
 - [ ] `bun run check` + `bun test src/` pass
@@ -102,7 +102,7 @@ export interface CanonicalCharacter {
 - `src/characters/exporters/` — identity-field round-trip
 - `src/characters/services/personality-service.ts` — reconcile card writes to permanent traits (read-only reference; use existing write/immutable path)
 - `src/characters/seed.ts` — template identity fields
-- `schemas/character-card.schema.json` — JSON Schema update (generator: `src/config/generate-character-schema.ts`)
+- `schemas/character-card.schema.json` — JSON Schema update (generator: `src/config/generate-character-schema/index.ts`)
 - `docs/spec/character-spec.md` — document the fields, §1.2/§7.3 updates
 - `docs/spec/lore.md` — note the card⇄trait bridge
 
