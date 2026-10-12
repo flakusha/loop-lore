@@ -41,5 +41,5 @@ export const SKIP_PATTERNS = (() => {
   return base.filter((p,) => !re.test(p,));
 })();
 
-export const matchesSkip = (p,) => SKIP_PATTERNS.some((pat,) => p.includes(pat,));
+const matchesSkip = (p,) => SKIP_PATTERNS.some((pat,) => p.includes(pat,));
 export const filterPaths = (paths,) => paths.filter((p,) => !matchesSkip(p,));
