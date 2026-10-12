@@ -455,7 +455,7 @@ export default [
   // referencing non-existent rules (unicorn/name-replacements, etc.) don't cause
   // "Definition for rule not found" errors. Stub rules are no-ops.
   {
-    files: ["scripts/**/*.mjs", "scripts/worktree/**/*.mjs"],
+    files: ["scripts/**/*.mjs"],
     plugins: {
       unicorn: {
         rules: {
