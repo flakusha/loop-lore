@@ -215,9 +215,10 @@ checks["weave - damage scan"] = process.env.WEAVE_BASE
   ? "bun run scripts/check/weave-damage.mjs"
   : NOOP_OK;
 
-// Size gates use giwt's check-file-size (local scripts/check-file-size.ts deleted 2026-10-12)
-checks["size - check"] = "bun run node_modules/giwt/scripts/check-file-size.ts";
-checks["size - strict"] = "bun run node_modules/giwt/scripts/check-file-size.ts --strict";
+// Local check-file-size is KEPT (see its header): giwt's copy exempts nothing
+// but test files and exits 1 on generated DB-type modules (verified EXIT=1).
+checks["size - check"] = "bun run scripts/check-file-size.ts";
+checks["size - strict"] = "bun run scripts/check-file-size.ts --strict";
 
 // Narrow lint + md:lint to the diff when `--diff-base` is set. Before the
 // --gates filter, so the filter narrows the SCOPED table rather than the
