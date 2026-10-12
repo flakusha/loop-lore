@@ -6,9 +6,12 @@ import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import {
   actorLicensing,
   actorLicensingFactory,
-  type ActorLicensingState,
 } from "./actor-licensing";
-import { type CharacterLicensing, LICENSE_TYPES, } from "./actor-licensing-model";
+import {
+  type ActorLicensingState,
+  type CharacterLicensing,
+  LICENSE_TYPES,
+} from "./actor-licensing-model";
 
 // ── Mock ../htmx (must precede importing ./actor-licensing) ──
 type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
