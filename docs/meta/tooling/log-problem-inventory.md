@@ -7,7 +7,17 @@ Recurring failure signatures observed across the check-run artifacts left in
 `.tmp/`, classified by root cause, with the tooling controls that would have
 caught or removed each class.
 
-Per **AGENTS.md** (`docs-no-volatile-metrics`), the only numbers here are the
+**Where the fixes live.** Two entries below (the `chat-export.test.ts` directory
+require and the P9 lint rule) were fixed on the `fix-unhandled-test-json-parse`
+branch — commits `510ca11f` (static import) and `d02582f7` (the rule) — and are
+not yet on `dev`. This doc landed on `docs-tooling-reports` independently of
+that branch, so a reader on `dev` sees the unfixed call site and a missing
+`src/eslint-rules/no-extensionless-require.mjs`. The `gates-scope.mjs` feature
+described in [finalize-speedup.md](./finalize-speedup.md) ships on
+`finalize-perf` and is likewise not on `dev`.
+
+Per **AGENTS.md** (`AGENTS.md:109`, "Docs: Avoid quantitative metrics in
+documents"), the only numbers here are the
 integers in the table's "Runs" column, and they are **distinct run counts over
 a retention window**, not rates or totals. Everything else is qualitative.
 Regenerate the column with the scripts in
@@ -15,6 +25,26 @@ Regenerate the column with the scripts in
 number copied from here goes stale.
 
 ## How to recompute
+
+**Read this before running anything below.** The `mine-*.ts` scripts are
+uncommitted scratch in `.tmp/` — they were never in git, so a fresh clone, a
+`giwt clean --apply`, or any scratch prune leaves you with nothing to run. The
+corpus underneath them is *actively* retention-windowed and disappears without
+anyone deleting it by hand: `scripts/check/parallel/retention.mjs` prunes
+`.tmp/run-*/` dirs and old `.tmp/check-report-*.json` on every check run
+(`REPORT_RETENTION_COUNT`, wired at `scripts/check/parallel/report.mjs:240-241`),
+and `giwt clean`'s `check-report` class keeps only the newest
+`checkReportKeep` reports. So **these commands reproduce this page only while a
+comparable corpus happens to still be on disk.** Once it is gone the numbers
+cannot be re-derived from the tree — that is the condition the table's "Verified
+in" column encodes, and a row whose artifact is missing is unverified by
+definition, not approximately right.
+
+Durable replacement: **not shipped.** Cross-run gate-frequency mining — what
+step 1 below does by hand — is being generalized into `giwt report --profile`
+in the giwt repo (proposal in
+[tooling-unification.md](./tooling-unification.md) §4.2). Until that lands, the
+scratch scripts are the interim and this section is the record of what they did.
 
 ```bash
 # 1. Gate outcome table: one row per gate, pass/fail/skip/timeout per report.
@@ -53,7 +83,7 @@ Categories: **product bug**, **test-infra flake**, **gate/tooling defect**,
 | Signature | Category | Runs | Gate | Verified in |
 | --- | --- | --- | --- | --- |
 | Unhandled JSON parse error, one per test file | test-infra flake | 1 | `coverage - per-module line %` | `.tmp/run-803973-mv4q9jdu/check-fail-coverage-per-module-line.log` (one block at log lines 1034-1044 carries a stack; the rest do not) |
-| Directory-`require()` in a test falls through to Bun's JSON loader | product bug | 1 | `coverage - per-module line %` | `src/routes/chat-export.test.ts:7` (`require("./chat-export")`) — **fixed**; the class is now blocked by the `local/no-extensionless-require` lint rule (see P9) |
+| Directory-`require()` in a test falls through to Bun's JSON loader | product bug | 1 | `coverage - per-module line %` | `src/routes/chat-export.test.ts:7` (`require("./chat-export")`) — **fixed on `fix-unhandled-test-json-parse`** (`510ca11f`); the class is now blocked by the `local/no-extensionless-require` lint rule there (see P9) |
 | knip reports unused `src/` files | gate/tooling defect | 1 | `dead - code (src files)` | `.tmp/run-1488199-mv4sis10/check-fail-dead-code-src-files.log` |
 | Plan validator orphan-epic-binding advisory storm | gate/tooling defect | 2 | `plan - validate` | `.tmp/run-634984-mv4p6425/`, `.tmp/run-746078-mv4pxrh5/check-fail-plan-validate.log`, `.tmp/ewr-final-check.log` |
 | Plan ticket index out of sync | gate/tooling defect | 4 | `plan - ticket index (sync)` | `.tmp/run-628188-mv271rgk/`, `.tmp/run-691190-mv28empt/`, `.tmp/run-691937-mv28fh08/`, `.tmp/run-759936-mv29d0k5/check-fail-plan-ticket-index-sync.log` |
@@ -92,15 +122,22 @@ carries a source frame — log lines 1034-1044 — and it points at
 `src/routes/chat-export.test.ts:7`, where `require("./chat-export")` names a
 path that is a *directory*. Bun's CJS resolver can fall through to its JSON
 loader and hand the resolved absolute path (a string starting with `/`) to the
-JSON parser, producing exactly `Unrecognized token '/'`. That call is fixed and
-the class is now blocked by the `local/no-extensionless-require` rule (P9).
+JSON parser, producing exactly `Unrecognized token '/'`. That call is fixed on
+`fix-unhandled-test-json-parse` and the class is there blocked by the
+`local/no-extensionless-require` rule (P9).
 
 The remaining ~260 blocks are **not reproduced and not explained**. A
 comparable coverage run of the same tree exits `0 fail` with zero unhandled
 blocks, and it executed a materially larger test set (19022 tests / 1537 files)
 than the failing run (16600 tests / 1538 files) — so the two runs are **not
-comparable**, and the cascade cannot be attributed to the proved cause. Tracked
-in the `test - unhandled json cascade unexplained` ticket. Do not read the fix
+comparable**, and the cascade cannot be attributed to the proved cause. The
+failing run's log survives at the `.tmp/` path above (stack at lines 1034-1044,
+run summary `Ran 16600 tests across 1538 files`); no retained
+`.tmp/check-report-*.json` carries the clean run's figures, which survive only
+in that ticket's text — so the two counts are not re-derivable from the tree
+today. Tracked in
+`.plan/tickets/BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi.md`
+on `fix-unhandled-test-json-parse` (not yet on `dev`). Do not read the fix
 above as closing this signature.
 
 **knip reports unused `src/` files** is the one gate in the window that failed
@@ -204,14 +241,20 @@ concurrent `dev` merge lands plan changes. The gates are correct; the
   ESLint gap. Those heuristics (page-lifetime listener registration,
   `storage-no-try`, `fetch-no-catch`, `void-fire-forget`) are expressible as
   oxlint correctness rules.
-- **Where:** `.oxlintrc.json` (does not exist yet; `bun run lint:oxlint`
-  currently runs on defaults, skips `**/*.test.ts` and `tests/`, and is absent
-  from the gate registry). Add a `lint - oxlint (banned patterns)` entry to
-  `scripts/check/parallel/gate-table.mjs` and place it in `ADVISORY_GATES`
-  initially.
+- **Where:** `oxlint.config.ts` already exists at the repo root (it enables
+  `typescript`, `unicorn`, `import`, `oxc`, with `correctness` as error), and
+  `bun run lint:oxlint` (`package.json:40`) reads it while additionally passing
+  `--ignore-pattern '**/*.test.ts' --ignore-pattern tests`. So the config slot
+  is taken and the rules are simply not written yet. What is missing is the
+  *gate*: `lint - oxlint (banned patterns)` does not exist in
+  `scripts/check/parallel/gate-table.mjs`, which is why the run is invisible to
+  `bun run check` and is described as "manual; the canonical runner does not
+  report it as correctness evidence" (`gate-table.mjs:29`). Add a `rules` block
+  carrying those four findings to `oxlint.config.ts` and register the gate in
+  `scripts/check/parallel/gate-table.mjs`, in `ADVISORY_GATES` initially.
 - **Not a duplicate:** `lint - eslint` carries no such rules, and the advisory
-  report says so itself. oxlint is already a devDependency; this adds no
-  install.
+  report says so itself. oxlint is already a devDependency and already wired to
+  a script; this adds no install and no new process.
 - **Failure mode it introduces:** a new lint ruleset blocks merges on patterns
   that are correct in some contexts, and the advisory report's own suppression
   count shows exactly that (page-lifetime listeners are suppressed as
@@ -286,7 +329,10 @@ concurrent `dev` merge lands plan changes. The gates are correct; the
 - **Where:** `src/eslint-rules/no-extensionless-require.mjs`, registered in the
   existing inline `localPlugin` in `eslint.config.mjs` beside
   `local/options-object-params` and enabled as `"error"` in the same rules
-  block. Unit tests: `src/eslint-rules/no-extensionless-require.test.ts`.
+  block. Unit tests: `src/eslint-rules/no-extensionless-require.test.ts`. Both
+  ship on `fix-unhandled-test-json-parse` (`d02582f7`) and are absent from
+  `dev`, so this entry is a record of landed work on another branch, not of the
+  tree you are reading.
 - **Why ESLint and not oxlint:** the repo is mid-migration to oxlint (P5), but
   oxlint's rule set is fixed — it has no mechanism for a project-local AST rule,
   and `oxlint.config.ts` cannot host one. ESLint already carries the repo's
@@ -298,7 +344,8 @@ concurrent `dev` merge lands plan changes. The gates are correct; the
   scoped to `.test.`/`.spec.` files and self-guards on the filename, so
   production `require("htmx.org/dist/ext/alpine-morph.js")` calls and the
   `require` that merely shadows the global as a function parameter
-  (`src/routes/worlds/location-edges.ts:113`) are untouched.
+  (`src/routes/worlds/location-edges.ts:110`, the shadowing parameter, called at
+  `:113`) are untouched.
 - **Failure mode it introduces:** **false positives on legitimate extensionless
   requires.** A test that genuinely wants the package entrypoint resolved for it
   — or a directory require that works today and is renamed later — is now a lint
@@ -309,8 +356,9 @@ concurrent `dev` merge lands plan changes. The gates are correct; the
   have written anyway, so the fix is cheaper than the violation. The residual
   cost is that a legitimately extensionless *relative* require now needs an
   inline `eslint-disable`; at time of writing the rule flagged exactly one
-  pre-existing call (`src/personas/service.coverage.test.ts:6`), which was
-  converted to a static import.
+  pre-existing call (`src/personas/service.coverage.test.ts:6`, still the
+  `require("./service")` form on `dev`), which was converted to a static import
+  on `fix-unhandled-test-json-parse`.
 - **Effort:** S (done).
 
 ## Rejected proposals
@@ -331,8 +379,9 @@ Three things this inventory deliberately does **not** claim:
 
 - **The root cause of the ~260-block cascade is still unknown.** One block
   does carry a stack — `src/routes/chat-export.test.ts:7` — and that call site
-  is fixed and now lint-blocked (P9). But a comparable run of the same tree
-  reproduces none of the cascade, so the remaining blocks are unexplained; the
+  is fixed and now lint-blocked on `fix-unhandled-test-json-parse` (P9). But a
+  comparable run of the same tree reproduces none of the cascade, so the
+  remaining blocks are unexplained; the
   only shape-level observation is that they begin immediately after
   `src/async/offload-daemon.test.ts` logs `[ERROR] [async-offload] offload spill
   failed` and recur under nearly every subsequent file header, which is
