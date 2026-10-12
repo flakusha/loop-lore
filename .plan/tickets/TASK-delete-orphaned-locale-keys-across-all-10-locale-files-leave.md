@@ -9,14 +9,14 @@
 
 **Summary:**
 
-Remove locale keys with no t() call site, atomically across every locale file, without touching the harness namespace enforced by admin-harness-locale.test.ts. Research: .tmp/simplification/frontend.md.
+Remove locale keys with no t() call site, atomically across every locale file, without touching the harness namespace enforced by admin-harness-locale.test.ts. Research: the frontend slice of the over-engineering audit (scratch, not on disk).
 
 **Context:**
 
 Server-side i18n is genuinely well wired (`I18N_TEMPLATE_RE` resolves at render time, `applyI18n`
 runs on every partial). The problem is orphan *content*, not a hand-rolled formatter: a large set of
 keys exists in `src/public/locales/en.json` and its siblings with no `t("…")` call site anywhere.
-Source: `.tmp/simplification/frontend.md` — finding "`delete:` 270 orphaned locale keys present in all
+Source: the frontend slice of the over-engineering audit (scratch, not on disk) — finding "`delete:` 270 orphaned locale keys present in all
 10 locale files" (representative line anchors 43, 299, 314, 651, 701, 948, 1371, 1497). Re-derive the
 candidate list by flattening `en.json` and grepping each dotted key against templates and non-test
 `src/`. Do not paste the audit's key count into the PR description — recompute it.

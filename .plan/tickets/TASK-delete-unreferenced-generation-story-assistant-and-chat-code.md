@@ -9,14 +9,14 @@
 
 **Summary:**
 
-Remove the commented-out policy-detector examples, the story back-compat shims, the unwired assistant prompt sections and assorted test-only exports. The nsfw-context section needs an owner call, not a blind delete. Research: .tmp/simplification/generation.md.
+Remove the commented-out policy-detector examples, the story back-compat shims, the unwired assistant prompt sections and assorted test-only exports. The nsfw-context section needs an owner call, not a blind delete. Research: the generation slice of the over-engineering audit (scratch, not on disk).
 
 **Context:**
 
 `bunx knip` reports zero issues on this repo but does **not** resolve `from "./foo.js"` specifiers to
 `foo.ts`, which this codebase uses heavily — absence of a knip finding is not evidence a symbol is
 used. Every item below was verified by direct grep across `src/`, `tests/`, `scripts/`, `plugins/`.
-Source: `.tmp/simplification/generation.md`. Re-derive with `bun run dead:code:src`.
+Source: the generation slice of the over-engineering audit (scratch, not on disk). Re-derive with `bun run dead:code:src`.
 
 **Scope — deletions:**
 

@@ -9,7 +9,7 @@
 
 **Summary:**
 
-Delete the unreferenced integration-registry tree, the dead regex tier, test-only rpg services and shim barrels. Must update scripts/check/test-gaps-baseline.json in the same change. Research: .tmp/simplification/rpg.md. Re-derive with 'bun run dead:code:src'.
+Delete the unreferenced integration-registry tree, the dead regex tier, test-only rpg services and shim barrels. Must update scripts/check/test-gaps-baseline.json in the same change. Research: the rpg slice of the over-engineering audit (scratch, not on disk). Re-derive with 'bun run dead:code:src'.
 
 **Context:**
 
@@ -17,7 +17,7 @@ Four gameplay-adjacent subtrees are unreachable from any real entrypoint; the re
 exports and per-module shim barrels with a single importer each. Every finding below was verified by
 explicit grep — **knip is not evidence on this repo**: it does not resolve `from "./foo.js"` specifiers to
 `foo.ts`, and `.js` specifiers are the dominant convention here. Source:
-`.tmp/simplification/rpg.md`. Re-derive with `bun run dead:code:src`.
+the rpg slice of the over-engineering audit (scratch, not on disk). Re-derive with `bun run dead:code:src`.
 
 **Scope — whole-file deletions:**
 

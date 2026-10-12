@@ -9,7 +9,7 @@
 
 **Summary:**
 
-Remove three zero-importer type/interface declarations from the routes and validation layers. These `shrink:` findings from `.tmp/simplification/routes.md` (findings 17, 21, 23) are not explicitly scoped in the existing routes cleanup ticket (`TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md`), which covers the modules they live in but not these specific within-file dead types.
+Remove three zero-importer type/interface declarations from the routes and validation layers. These `shrink:` findings from the routes slice of the over-engineering audit (scratch, not on disk) (findings 17, 21, 23) are not explicitly scoped in the existing routes cleanup ticket (`TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md`), which covers the modules they live in but not these specific within-file dead types.
 
 **Context:**
 
