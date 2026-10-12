@@ -80,7 +80,8 @@
     "fuzz:check": "bun run scripts/generate-schema-fuzz.ts --check",
     "test:gaps": "bun run scripts/check/test-gaps.mjs",
     "test:gaps:update": "bun run scripts/check/test-gaps.mjs --write-baseline",
-    "size:check": "bun run ../giwt/scripts/check-file-size.ts --strict",
+    // TODO: replace with giwt public API import once TASK-expose-file-size-check-via-public-api lands
+    "size:check": "bun run node_modules/giwt/scripts/check-file-size.ts --strict",
     "wiring:check": "bun run scripts/check-wiring.ts",
     "changelog:check": "bun run scripts/check-changelog.ts",
     "dead:code": "knip && knip --no-gitignore --include dependencies,unlisted,binaries",
