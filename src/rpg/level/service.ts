@@ -18,7 +18,7 @@
  * cannot represent the overflow, and precision is already lost).
  *
  * Idempotency & races: the (actor, source, referenceId) key is backed by a
- * UNIQUE index (`055_xp_ledger_dedupe_unique`) and the sheet update + ledger
+ * UNIQUE index (`056_xp_ledger_dedupe_unique`) and the sheet update + ledger
  * write run in ONE transaction, so concurrent re-entry resolves to a single
  * applied grant — the loser downgrades to a replay, which re-applies the
  * recorded amount only when the sheet is stale (crash between the writes).
