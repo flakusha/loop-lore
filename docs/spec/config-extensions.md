@@ -17,7 +17,7 @@ Configuration extensions support closed-but-extensible value sets: a default val
 
 ## Technical Design
 
-- **Schema source:** `src/config/generate-schema.ts` + `src/config/generate-character-schema.ts` + `src/config/generate-toml-schema.ts` emit JSON Schema definitions.
+- **Schema source:** `src/config/generate-schema.ts` + `src/config/generate-character-schema/index.ts` + `src/config/generate-toml-schema.ts` emit JSON Schema definitions.
 - **Validation:** `src/config/schema-class.ts` validates incoming config against the schema; failures surface as schema-validator errors.
 - **Extension path:** plugins can extend config schemas via `src/plugins/` `extends: { config: ... }`.
 
