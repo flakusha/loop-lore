@@ -47597,6 +47597,19 @@
     "title": "Show assets, scenes, worlds, items to character via chat-context injection",
     "type": "TASK"
   },
+  "TASK-SHRINK-UNREFERENCED-TYPES-AND-HELPERS-IN-ROUTES-VALIDATION": {
+    "hash": "2187ca0",
+    "git_issue": "2187ca0",
+    "extid": "TASK-SHRINK-UNREFERENCED-TYPES-AND-HELPERS-IN-ROUTES-VALIDATION",
+    "type": "TASK",
+    "title": "Shrink unreferenced types and helpers in routes/validation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-shrink-unreferenced-types-and-helpers-in-routes-validation.md",
+    "status": "Not Started"
+  },
   "TASK-SIGNED-URLS-FOR-ASSET-DOWNLOADS": {
     "epic": "epic-asset-support-expansion",
     "extid": "TASK-SIGNED-URLS-FOR-ASSET-DOWNLOADS",
