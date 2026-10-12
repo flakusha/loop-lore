@@ -15,7 +15,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { jsonParseOr, } from "../../utils/safe-json";
+import { jsonParseOr, } from "../../utils";
 import { wrapSection, } from "../xml-utils";
 import { findPersonalityPreset, isPersonalityPresetKey, } from "./presets";
 import type {

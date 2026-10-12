@@ -11,8 +11,7 @@
  * display via {@link parseLoreKeys}.
  */
 import { Type, } from "@sinclair/typebox";
-import { jsonStringifyOr, } from "../../utils";
-import { parseJsonList, } from "../../utils/safe-json";
+import { jsonStringifyOr, parseJsonList, } from "../../utils";
 import { apiFetch, } from "./htmx";
 import { parseOr, } from "./validation";
 import { fetchWorldJson, } from "./world-fetch";

@@ -8,8 +8,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
-import { uid, } from "../../../utils";
-import { safeJsonStringify, } from "../../../utils/safe-json";
+import { safeJsonStringify, uid, } from "../../../utils";
 import type { MergeDraftMessage, } from "./merge-criteria";
 import type { MergeHunk, } from "./merge-diff";
 

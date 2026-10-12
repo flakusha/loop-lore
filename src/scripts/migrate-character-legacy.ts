@@ -26,7 +26,7 @@ import { loadConfig, } from "../config/load";
 import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { getChildLogger, type Logger, } from "../logger";
-import { safeJsonParse, safeJsonStringify, } from "../utils/safe-json";
+import { safeJsonParse, safeJsonStringify, } from "../utils";
 
 /**
  * Module logger accessor — null until the CLI guard calls `createLogger()`.

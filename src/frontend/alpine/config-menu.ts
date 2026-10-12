@@ -10,7 +10,7 @@
  * coercion/validation/grouping rules are unit-testable without a DOM.
  */
 import type { ConfigMenuField, ConfigMenuSection, } from "../../config/sections/menu";
-import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";

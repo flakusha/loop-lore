@@ -17,7 +17,7 @@ import type { Kysely, } from "kysely";
 import { applyDurabilityDamage, toEquipmentItem, } from "../../battle";
 import { EquipState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { jsonParseOr, } from "../../utils/safe-json";
+import { jsonParseOr, } from "../../utils";
 import { ErrorResponse, Id, } from "../../validation/schemas";
 import { resolveActorAccess, } from "../actor-access";
 import { jsonResponse, } from "../http-utils";

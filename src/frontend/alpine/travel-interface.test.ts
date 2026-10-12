@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { parseJsonList, } from "../../utils/safe-json";
+import { parseJsonList, } from "../../utils";
 import { travelInterface, } from "./travel-interface";
 import type { PartyStatus, WorldEdgeLink, WorldLocationLite, WorldPageState, } from "./world-types";
 

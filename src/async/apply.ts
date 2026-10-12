@@ -13,7 +13,7 @@
 
 import type { Kysely, UpdateQueryBuilder, } from "kysely";
 import type { DB, } from "../db/schema";
-import { jsonStringifyOr, } from "../utils/safe-json";
+import { jsonStringifyOr, } from "../utils";
 import { spill, } from "./offload";
 import type { AsyncStoreConfig, } from "./store";
 

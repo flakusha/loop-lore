@@ -34,7 +34,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { jsonParseOr, } from "../../utils/safe-json";
+import { jsonParseOr, } from "../../utils";
 import { ACTION_COST, chargeBudget, toSqlDate, } from "./budget";
 import { type TravelContext, travelDb, type TravelResult, } from "./types";
 import { type Walk, walk, } from "./walk";

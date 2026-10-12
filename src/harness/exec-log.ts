@@ -15,7 +15,7 @@
 import { appendFileSync, mkdirSync, } from "node:fs";
 import { dirname, } from "node:path";
 import { getLogger, } from "../logger";
-import { safeJsonStringify, } from "../utils/safe-json";
+import { safeJsonStringify, } from "../utils";
 import { runGit, } from "./run-context";
 import { type HarnessRunRecord, serializeRun, } from "./types";
 

@@ -17,7 +17,7 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
-import { jsonStringifyOr, } from "../../../utils/safe-json";
+import { jsonStringifyOr, } from "../../../utils";
 import type { CharacterArc, UpsertArcInput, } from "../../spec/growth";
 import type { CharacterArcRow, } from "./types";
 

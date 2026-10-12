@@ -19,7 +19,7 @@
  */
 import { listCarriage, } from "../../../chat/service/carriage";
 import { getLogger, } from "../../../logger";
-import { safeJsonParse, } from "../../../utils/safe-json";
+import { safeJsonParse, } from "../../../utils";
 import { healCarriage, } from "../../../utils/structured-output";
 import type { CarriageDoc, } from "../../../utils/structured-output";
 import { wrapSection, } from "../../xml-utils";

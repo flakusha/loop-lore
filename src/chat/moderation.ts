@@ -30,8 +30,8 @@ import { type DB, } from "../db/schema";
 import { ModerationHook, } from "../generation/hooks/moderation-hook";
 import { getLogger, } from "../logger";
 import { can, } from "../users/permissions";
+import { jsonStringifyOr, } from "../utils";
 import { parseExpiryMs, } from "../utils/date";
-import { jsonStringifyOr, } from "../utils/safe-json";
 import type {
   ApplyOptions,
   ApplyResult,

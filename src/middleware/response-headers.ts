@@ -17,7 +17,7 @@
  */
 
 import type { HeadersConfig, } from "../config/schema";
-import { jsonStringifyOr, } from "../utils/safe-json";
+import { jsonStringifyOr, } from "../utils";
 import { getNonce, } from "./csp-nonce";
 
 /** Canonical header names for case-insensitive comparison. */

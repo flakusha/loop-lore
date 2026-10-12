@@ -19,8 +19,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { resolveProvider, } from "../../generation/providers/registry";
-import { uid, } from "../../utils";
-import { safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonStringify, uid, } from "../../utils";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonResponse, requireUserId, } from "../http-utils";
 

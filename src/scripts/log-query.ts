@@ -22,7 +22,7 @@ import { loadConfig, } from "../config/load";
 import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { createLogger, getChildLogger, type Logger, } from "../logger";
-import { jsonStringifyOr, } from "../utils/safe-json";
+import { jsonStringifyOr, } from "../utils";
 import { formatTable, } from "./log-query-format";
 
 // Re-exported so `formatTable` keeps its public import path; the renderer

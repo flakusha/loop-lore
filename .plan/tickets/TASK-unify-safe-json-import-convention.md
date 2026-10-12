@@ -3,13 +3,13 @@
 
 # TASK: Unify safe-json import convention
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
 **Summary:**
 
-Two import conventions for the safeJson helpers coexist: ~135 files import them via the src/utils.ts barrel while ~75 import utils/safe-json directly (counts approximate at filing time - recompute). Pick one convention (barrel-only or direct-only), enforce it with an eslint no-restricted-imports rule, and migrate the losing call sites. Matches the keep-vs-wire-vs-remove triage directive in docs/meta/code-practices-improvements/knip-jscpd-research-2026-09-03.md.
+Two import conventions for the safeJson helpers coexisted. Decision: the src/utils.ts barrel is the convention (AGENTS.md: index.ts/src.ts barrels are the public API surface; the majority of call sites already imported via the barrel). An eslint no-restricted-imports rule now bans direct utils/safe-json imports (src/utils.ts's own re-export is exempt), and all direct-import call sites were migrated to the barrel (was 271 barrel / 74 direct at migration time).
 
 **Context:**
 
@@ -17,6 +17,6 @@ Two import conventions for the safeJson helpers coexist: ~135 files import them 
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

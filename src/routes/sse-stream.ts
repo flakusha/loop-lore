@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { safeJsonStringify, } from "../utils/safe-json";
+import { safeJsonStringify, } from "../utils";
 
 /** Callback used by a stream body to enqueue one SSE event. */
 export type SseSend = (event: string, data: unknown,) => void;

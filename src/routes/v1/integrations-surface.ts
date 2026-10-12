@@ -26,7 +26,7 @@ import type { AdapterMessage, MessageBridge, } from "../../integrations";
 import { resolveCredential, } from "../../integrations";
 import type { RateLimitConfig, RateLimiter, } from "../../middleware/rate-limit";
 import { createRateLimiter, rateLimitHeaders, } from "../../middleware/rate-limit";
-import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { HttpStatus, type HttpStatusCode, jsonError, jsonResponse, } from "../http-utils";
 
 /** Signature header carrying the hex HMAC-SHA256 over the raw body. */

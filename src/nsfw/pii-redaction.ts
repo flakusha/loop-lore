@@ -25,8 +25,8 @@
  * `audit.ts` (per ticket), not here.
  */
 import { resolveNsfwPiiSecret, } from "../config/load/pii-safety";
+import { jsonStringifyOr, } from "../utils";
 import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
-import { jsonStringifyOr, } from "../utils/safe-json";
 
 /**
  * Closed enum of NSFW gate decision reasons. Replaces the free-form

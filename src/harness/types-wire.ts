@@ -17,7 +17,7 @@
  * exported is re-exported from `types.ts`, so existing `from "./types"`
  * imports keep working.
  */
-import { safeJsonParse, } from "../utils/safe-json";
+import { safeJsonParse, } from "../utils";
 import type { HarnessResult, HarnessRunRecord, } from "./types";
 
 /**

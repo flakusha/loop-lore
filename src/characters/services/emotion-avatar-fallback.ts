@@ -13,7 +13,7 @@ import type { Kysely, } from "kysely";
 import { getAsset, } from "../../assets/service";
 import type { EmotionType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { safeJsonParse, } from "../../utils/safe-json";
+import { safeJsonParse, } from "../../utils";
 
 /**
  * Metadata extracted from an avatar image for prompt construction.

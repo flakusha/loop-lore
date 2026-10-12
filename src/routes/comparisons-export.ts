@@ -15,7 +15,7 @@
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
-import { jsonParseOr, safeJsonStringify, } from "../utils/safe-json";
+import { jsonParseOr, safeJsonStringify, } from "../utils";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
