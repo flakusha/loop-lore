@@ -71,13 +71,27 @@ every knob is a `giwt.toml` setting (`src/utils/settings.ts`,
 
 ### 1.2 Defects found in the generic layer
 
-**`giwt report` cannot read loop-lore's report.** `src/commands/report.ts:47-53`
-throws unless the payload has a `gates` map, and the renderer reads
-`reportData.timestamp` (line 62). loop-lore's runner emits `schemaVersion: 2`
-with `checks[]` / `generatedAt` and no `gates` map, no `timestamp`
-(`scripts/check/parallel/report.mjs:164-206`). Every row prints "malformed
-report". The command is generic in shape and broken by a schema drift nobody
-pinned.
+**`giwt report` could not read loop-lore's report — FIXED upstream, shipped in
+ec7425ee.** *(Was: `src/commands/report.ts:47-53` threw unless the payload had a
+`gates` map, and the renderer read `reportData.timestamp`; loop-lore's runner
+emits `schemaVersion: 2` with `checks[]` / `generatedAt` and no `gates` map, no
+`timestamp` (`scripts/check/parallel/report.mjs:164-206`), so every row printed
+"malformed report".)*
+
+The parse now lives in `src/commands/report-parse.ts` and accepts both shapes:
+v2 `checks[]` first, legacy `gates` map as fallback, with v2 `generatedAt`
+standing in for the legacy `timestamp`. Non-pass states are distinguished
+rather than collapsed — `checkStatus()` maps `skipped` > `timedOut` > `passed` >
+`advisory` > `failed`, in that precedence, so a skipped gate is not rendered as
+a pass and an advisory failure is not rendered as a red gate. Verified against
+the pinned build: every worktree row renders with `advisory` and `skipped` shown
+distinctly.
+
+Two edge cases the fix does NOT cover, both benign: a v2 report whose `checks`
+is `[]` parses but reports `passed=false` with zero gate rows, and a payload
+carrying an EMPTY `gates` map alongside a populated `checks[]` takes the legacy
+branch (the `gates` check runs first) and shows no gate rows. Neither throws;
+none is reachable from loop-lore's runner.
 
 **`giwt clean` prunes four fixed classes and nothing else.**
 `src/utils/scratch.ts:53` types `ScratchClass.name` as
@@ -190,7 +204,7 @@ and which encode a reusable capability that currently has no home.
 
 | Script | Verdict | Reason |
 | --- | --- | --- |
-| `mine-gates.ts` | **PROMOTE-TO-GIWT** | Cross-run gate-failure-frequency mining over `.tmp/check-report-*.json` schema v2; generalizes `giwt report`, which cannot read that schema (§1.2). |
+| `mine-gates.ts` | **OBSOLETE — superseded by `giwt report --profile`** | Cross-run gate-failure-frequency mining over `.tmp/check-report-*.json` schema v2. It existed only because `giwt report` could not read that schema (§1.2); upstream `ec7425ee` shipped `--profile`, which profiles every per-run report in the worktree (not just the latest) with fail/timeout/advisory/skipped counts and median/p90/max duration. The reason this row existed is gone; the scratch script should not be promoted. |
 | `verify.ts` | **PROMOTE-TO-GIWT** | Import-graph + non-test-importer census for a target dir; answers "what breaks if I delete this" with no dependency on loop-lore. |
 | `fmt.mjs` | **DELETE** | A scratch copy of the committed `scripts/check/co-author-trailers.mjs`; the repo already owns it. |
 | `fmt.test.mjs` | **DELETE** | Same, for the committed `scripts/check/co-author-trailers.test.mjs`. |
@@ -232,15 +246,23 @@ prune step**, not a new pruner — see §4.1.
 
 Each proposal generalizes an existing command. None adds a new top-level verb.
 
-### 4.1 `giwt finalize` runs the prune it already documents
+### 4.1 `giwt finalize` runs the prune it already documents — SHIPPED (ec7425ee)
 
-**Target:** `giwt/src/commands/finalize.ts`, in the cleanup phase that already
-removes the worktree.
+**Status: delivered upstream and installed here.** Implemented as Step 6a in
+`src/commands/finalize/scratch-prune.ts`, called from
+`src/commands/finalize/teardown.ts` immediately before the worktree is removed.
+It reuses the same `scanScratch` (`giwt/src/utils/scratch.ts`) that `giwt clean`
+and `doctor scratchpad` use — no second pruner, no new scratch class, no new
+config key — and records bytes freed in the run record. `giwt finalize
+--dry-run` reports the plan and deletes nothing.
 
-**Interface:** after the merge lands and before the worktree directory is
-removed, call `scanScratch` (`giwt/src/utils/scratch.ts`) on the worktree's own
-scratch root and apply its plan. Report bytes freed in the run record; keep the
-dry-run default when `--dry-run` was passed.
+Safety properties, all verified against the pinned build: the prune runs AFTER
+Step 2 gates (so it cannot destroy the report a gate just wrote) and before
+worktree removal; a missing scratch root is a no-op, not an error; the walker skips
+symlinks inside the root and `pruneWorktreeScratch` refuses outright when the
+scratch ROOT itself is a symlink; deletion failures are collected and never fail
+the finalize; and bytes outside the four scratch classes are reported as
+unclassified rather than silently widened.
 
 **Why universal:** every repo that uses `giwt clean` wants the scratchpad gone
 when its worktree disappears, and every repo that does not have the command does
@@ -250,24 +272,33 @@ enforced one.
 **Rejected variant:** a new `giwt scratch prune` command. `giwt clean` already
 owns this (`src/cli-registry.ts:84-87`); a second verb would split the surface.
 
-### 4.2 `giwt report` learns the schema, gains `--profile`
+### 4.2 `giwt report` learns the schema, gains `--profile` — SHIPPED (ec7425ee)
 
-**Target:** `giwt/src/commands/report.ts` (parse at lines 42-57, render at
-59-72, per-worktree walk at 104-127).
-
-**Interface:**
+**Status: delivered upstream and installed here.** This section was a proposal;
+it is now the implemented behaviour, recorded here as the reference. Do not
+re-derive it. What shipped:
 
 ```
 giwt report                    # per-worktree status, schema-adapted (unchanged shape)
-giwt report --profile          # cross-worktree gate-failure frequency table
-giwt report --profile --since <iso> --json
+giwt report --profile          # cross-worktree gate failure + duration table
+giwt report --profile --since <iso> [--json|--toml|--emoji]
 ```
 
-Schema handling: accept `checks[]` (schema v2) and fall back to the `gates` map
-for older writers; render `skipped` / `advisory` / `timedOut` distinctly rather
-than collapsing them to pass/fail. `--profile` groups by `checks[].command`
-across every worktree's report, sorted by fail count — exactly what
-`.tmp/mine-gates.ts` does today, in the tool that already walks those files.
+Parsing moved out of `report.ts` into `src/commands/report-parse.ts` (rendering
+stayed in `report.ts`). v2 `checks[]` is accepted with the legacy `gates` map as
+fallback; `skipped` / `advisory` / `timedOut` render distinctly. `--profile`
+groups by `checks[].command` across every worktree's PER-RUN reports (not just
+the latest) and reports fail/timeout/advisory/skipped counts alongside median,
+p90 and max duration — the analysis `.tmp/mine-gates.ts` was written to do by
+hand, now in the tool that already walks those files.
+
+Two behaviours worth keeping in mind, both verified against the pinned build:
+`--profile` reads every `check-report*.json` under each worktree's scratchpad,
+so `--since` is what bounds the window (all-time otherwise), and a malformed
+`--since` exits 1 with a usage message rather than silently profiling
+everything. Note that `--profile` was silently IGNORED before `ec7425ee` — it
+exited 0 and printed the plain listing, so a run that "succeeded" proved
+nothing; the flag's absence from the output, not its exit code, is the signal.
 
 **Why universal:** report shape and gate names are the project's, not loop-lore's.
 The walk and the grouping are not.
@@ -426,15 +457,25 @@ let the runner accept the memory figure its caller already computed.
 
 ### 5.3 Smallest set of changes that make the harness useful
 
-1. **Finalize-time scratch prune** (§4.1) — turns a documented rule into an
-   enforced one and retires the `.tmp` accumulation.
-2. **`giwt report --profile`** (§4.2) — reads data the runner already writes;
-   answers "which gate is actually costing us" without a scratch script.
-3. **Advisory gates into the receipt** (§5.2) — closes the post-merge loop with
-   the existing `[[issue]]` primitive instead of printed instructions.
-4. **Runner joins the slot it was admitted under** (§5.2) — one function in
-   `scripts/check-parallel.mjs` reading the memory figure giwt already
-   computed; the OOM lesson stops being tribal knowledge.
+1. ~~**Finalize-time scratch prune** (§4.1)~~ — **DONE**, shipped upstream in
+   `ec7425ee` as Step 6a; turns a documented rule into an enforced one and
+   retires the `.tmp` accumulation.
+2. ~~**`giwt report --profile`** (§4.2)~~ — **DONE**, shipped upstream in
+   `ec7425ee`; reads data the runner already writes and answers "which gate is
+   actually costing us" without a scratch script.
+3. **Advisory gates into the receipt** (§5.2) — still a PROPOSAL. Closes the
+   post-merge loop with the existing `[[issue]]` primitive instead of printed
+   instructions. Not shipped.
+4. **Runner joins the slot it was admitted under** (§5.2) — still a PROPOSAL, and
+   it is loop-lore-side: one function in `scripts/check-parallel.mjs` reading the
+   memory figure giwt already computed, so the OOM lesson stops being tribal
+   knowledge. Not shipped.
+
+Items 3 and 4 are unrelated to the `report`/`--profile` work above and were NOT
+delivered by it; do not read them as covered by `ec7425ee`. The remaining
+giwt-side proposal in §4.3 (`[scratch.extra_dirs]`, a config-driven fifth
+scratch class) is likewise still a proposal — `ec7425ee` shipped the finalize
+prune in §4.1 but did not add a new class or a new config key.
 
 ---
 
