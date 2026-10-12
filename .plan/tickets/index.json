@@ -7611,6 +7611,22 @@
     "title": "Signal bridge activation trigger undefined",
     "type": "BUG"
   },
+  "BUG-SIMPLIFICATION-AUDIT-ARTIFACTS-LOST-TO-A-TMP-CLEANUP-13-TICK": {
+    "hash": "dd8e139",
+    "git_issue": "dd8e139",
+    "extid": "BUG-SIMPLIFICATION-AUDIT-ARTIFACTS-LOST-TO-A-TMP-CLEANUP-13-TICK",
+    "type": "BUG",
+    "title": "Simplification audit artifacts lost to a .tmp/ cleanup: 13 tickets cite deleted scratch",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "dead-code",
+      "plan-bookkeeping"
+    ],
+    "source": ".plan/tickets/BUG-simplification-audit-artifacts-lost-to-a-tmp-cleanup-13-tick.md",
+    "status": "Not Started"
+  },
   "BUG-SINGLE-CHAT-PAUSE-NOT-GATING-AUTOREPLY": {
     "epic": "epic-generation-flow-control",
     "extid": "BUG-SINGLE-CHAT-PAUSE-NOT-GATING-AUTOREPLY",
