@@ -9,14 +9,14 @@
 
 **Summary:**
 
-Remove the three Go-era templates under src/views/partials, the orphan load-more partial, and the dead gallery/app/vn/keynav/theme-no-icons CSS blocks. Research: .tmp/simplification/frontend.md.
+Remove the three Go-era templates under src/views/partials, the orphan load-more partial, and the dead gallery/app/vn/keynav/theme-no-icons CSS blocks. Research: the frontend slice of the over-engineering audit (scratch, not on disk).
 
 **Context:**
 
 Four templates are unreachable through either resolution path, one partial has no include site, and
 several CSS class families have no markup reference. knip is not evidence here — it does not analyse
 CSS or locale JSON, and it does not resolve `from "./foo.js"` → `foo.ts`. Source:
-`.tmp/simplification/frontend.md`. Recompute class reachability with the documented grep in each bullet
+the frontend slice of the over-engineering audit (scratch, not on disk). Recompute class reachability with the documented grep in each bullet
 before cutting.
 
 **Scope — templates:**

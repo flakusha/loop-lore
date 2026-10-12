@@ -9,14 +9,14 @@
 
 **Summary:**
 
-Remove the built-but-never-wired X3DH double-ratchet and E2E session subsystem, plus the uncalled ActivityPub actor-key module. Research: .tmp/simplification/platform.md. Re-derive with 'bun run dead:code:src'.
+Remove the built-but-never-wired X3DH double-ratchet and E2E session subsystem, plus the uncalled ActivityPub actor-key module. Research: the platform slice of the over-engineering audit (scratch, not on disk). Re-derive with 'bun run dead:code:src'.
 
 **Context:**
 
 A second, unwired ratchet implementation sits next to the live one. The browser E2E flow uses
 `key-pairs.ts` + `ratchet.ts`; the server uses `server-registry.ts` — a *different* symmetric-key
 ratchet. The DH-ratchet cluster (X3DH-style double ratchet) and its session store were built but
-never wired into any production path. Source: `.tmp/simplification/platform.md` — findings
+never wired into any production path. Source: the platform slice of the over-engineering audit (scratch, not on disk) — findings
 "`delete:` the DH-ratchet / ephemeral-ratchet / E2E-session subsystem under `src/crypto/e2e/`"
 and "`delete:` `src/crypto/activitypub-keys.ts`". Re-derive the list with `bun run dead:code:src`.
 
