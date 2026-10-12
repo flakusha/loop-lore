@@ -16,6 +16,8 @@
  * shapes cheaply. Complex patterns should be pre-validated by config authors.
  */
 
+import { getChildLogger, } from "../logger";
+
 export const MAX_SAFE_PATTERN_LENGTH = 512;
 /** Default maximum accepted pattern length. */
 const GROUP_BODY_QUANTIFIER = /[+*]|\{\d+,?\d*\}/;
@@ -39,7 +41,14 @@ export function compileSafeRegExp(
   if (!hasSafeShape(pattern,)) { return null; }
   try {
     return new RegExp(pattern, flags,);
-  } catch {
+  } catch (error) {
+    // Invalid pattern is expected input (config/authors); log at debug, never throw.
+    getChildLogger("utils/safe-regexp",)?.debug("compileSafeRegExp: pattern failed to compile", {
+      patternLength: pattern.length,
+      flags,
+      err: error,
+    },);
+
     return null;
   }
 }

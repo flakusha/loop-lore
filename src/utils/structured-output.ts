@@ -69,6 +69,9 @@ function tryParse(raw: string, format: StructuredFormat,): unknown | null {
     if (format === "yaml") { return yamlLoad(text,) as unknown; }
     return Bun.TOML.parse(text,) as unknown;
   } catch {
+    // probe: intentionally silent because tryParse doubles as the salvage
+    // loop's parse probe — every trimmed prefix is expected to fail here, so
+    // logging each miss would fire once per line of unparseable output.
     return null;
   }
 }

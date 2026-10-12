@@ -11,6 +11,7 @@
 
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
+import { getChildLogger, } from "../logger";
 
 /**
  * Detect if cwd is a git worktree and return the main repo root.
@@ -28,7 +29,9 @@ export function findMainRepoRoot(cwd: string,): string | null {
 
   try {
     if (statSync(gitPath,).isDirectory()) { return null; }
-  } catch {
+  } catch (error) {
+    // Rare race: `.git` removed between existsSync and statSync, or unreadable.
+    getChildLogger("utils/git-worktree",)?.debug("findMainRepoRoot: stat on .git failed", { cwd, err: error, },);
     return null;
   }
 
@@ -45,7 +48,11 @@ export function findMainRepoRoot(cwd: string,): string | null {
   if (existsSync(mainGitPath,)) {
     try {
       if (statSync(mainGitPath,).isDirectory()) { return mainRoot; }
-    } catch {
+    } catch (error) {
+      getChildLogger("utils/git-worktree",)?.debug("findMainRepoRoot: stat on main .git failed, not a worktree", {
+        mainRoot,
+        err: error,
+      },);
       // fall through
     }
   }
