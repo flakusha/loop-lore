@@ -20,3 +20,5 @@ Two import conventions for the safeJson helpers coexisted. Decision: the src/uti
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-10-12 registry-driven close: git issue 8fa9c2f (registry tip: db4afb1eb Konstantin Fedotov Auto-closed: appended .md marker marks TASK-UNIFY-SAFE-JSON-IMPORT-CONV)
