@@ -30,11 +30,13 @@ import { deriveChatKeyForChat, getSmk, } from "../crypto";
 import { AssetAlphaStatus, AssetVisibility, TransformContext, } from "../db/enums";
 import type { AssetLinkEntity, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger";
 import {
   badRequestResponse,
   conflictResponse,
   forbiddenResponse,
   HttpStatus,
+  internalErrorResponse,
   jsonCreated,
   jsonNoContent,
   jsonPaginated,
@@ -71,7 +73,24 @@ import {
 } from "./service";
 import type { AssetRecord, } from "./service";
 import type { TransformValues, } from "./service/transforms";
+import { InvalidTransformError, } from "./service/transforms";
 import { isSignedUrlAction, resolveSignedUrlSecret, signAssetUrl, } from "./signed-url";
+
+/**
+ * Classify a transform-upsert failure. Validation failures keep their
+ * message; anything else is a server invariant the caller cannot fix —
+ * sanitized 500, internals logged. Split out of the PUT handler so the
+ * unexpected path (and its no-leak contract) is unit-testable.
+ * @param err - Thrown value from the transform upsert
+ */
+export function transformErrorResponse(err: unknown,): Response {
+  if (err instanceof InvalidTransformError) { return badRequestResponse(err.message,); }
+  getLogger()
+    .child({ module: "assets.controller", },)
+    .error("Asset transform upsert failed", err instanceof Error ? err : new Error(String(err,),),);
+
+  return internalErrorResponse("Transform could not be saved",);
+}
 
 /** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
 export interface UploadOpts {
@@ -263,7 +282,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           const row = await upsertAssetTransform(database, ctx.params.id, context as TransformContext, values,);
           return jsonResponse(row,);
         } catch (err) {
-          return badRequestResponse(err instanceof Error ? err.message : "Invalid transform",);
+          return transformErrorResponse(err,);
         }
       },)
       // ── File serving routes ──────────────────────────

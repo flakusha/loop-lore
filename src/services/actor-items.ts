@@ -24,6 +24,12 @@ import {
   type EquipResult,
   slotForCategory,
 } from "./actor-items/equip";
+import {
+  AffordanceDeniedError,
+  ItemNotEquipableError,
+  ItemNotFoundError,
+  SlotConflictError,
+} from "./actor-items/errors";
 import { transferItems, } from "./actor-items/transfer";
 import type { TransferResult, } from "./actor-items/transfer";
 export {
@@ -146,18 +152,18 @@ export class ActorItemsService {
     },
   ): Promise<EquipResult> {
     const item = await this.getItem(actorId, itemId,);
-    if (!item) { return { ok: false, reason: "Item not found", }; }
+    if (!item) { throw new ItemNotFoundError(itemId,); }
 
     const slot = slotForCategory(item.item_type,);
-    if (!slot) { return { ok: false, itemId, reason: "Item cannot be equipped", }; }
+    if (!slot) { throw new ItemNotEquipableError(itemId,); }
 
     // Affordance lookup (TASK-affordance-lookup-table): thread a rich
-    // `reason` into the denial when the actor lacks a capability or
+    // denial into the tagged error when the actor lacks a capability or
     // the context disallows the action.
     if (opts?.actorCaps && opts?.context) {
       const { checkEquipAffordance, } = await import("./actor-items/affordance");
       const denial = await checkEquipAffordance(itemId, slot, opts.actorCaps, opts.context,);
-      if (denial) { return { ok: false, itemId, reason: `affordance: ${denial}`, }; }
+      if (denial) { throw new AffordanceDeniedError(denial,); }
     }
 
     // Reject a second item in the same slot (allow multiple accessories
@@ -171,9 +177,7 @@ export class ActorItemsService {
       .where("item_type", "=", item.item_type,)
       .executeTakeFirst();
 
-    if (conflict) {
-      return { ok: false, itemId, reason: `Another ${slot} is already equipped`, };
-    }
+    if (conflict) { throw new SlotConflictError(slot,); }
 
     await this.db
       .updateTable("actor_items",)
@@ -191,7 +195,7 @@ export class ActorItemsService {
    */
   async unequip(actorId: string, itemId: string,): Promise<EquipResult> {
     const item = await this.getItem(actorId, itemId,);
-    if (!item) { return { ok: false, reason: "Item not found", }; }
+    if (!item) { throw new ItemNotFoundError(itemId,); }
     await this.db
       .updateTable("actor_items",)
       .set({ equipped: EquipState.Unequipped, },)
