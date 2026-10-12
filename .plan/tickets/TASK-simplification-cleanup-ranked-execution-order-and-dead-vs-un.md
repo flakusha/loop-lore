@@ -35,8 +35,25 @@ Re-derived independently on `dev` after the follow-up audits. Full ledger in
 `.tmp/simplification/targets.md`; the two corrections that would actively mislead an implementer are
 recorded inline in `platform.md`:
 
-- **`src/transport/` dead-list** — CONFIRMED. Two live survivors must not be swept: `negotiation-parsers.ts`
-  (`src/middleware/dynamic-response.ts:36`) and `peer-table.ts` (`src/federation/gossip.ts:20`).
+- **`src/transport/` dead-list** — reachability CONFIRMED (nothing imports the handler half), but the
+  "low-risk delete" framing is REFUTED. `TASK-transport-layer-expansion` is **In Progress / "Built"** and
+  `epic-transport-expansion.md` tracks `src/transport/{http1,h2,ws,negotiation,upgrade,compression,factory,index}.ts`
+  as **✅ Built** deliverables. Five further epics name `src/transport/ws.ts` as a load-bearing dependency
+  (`epic-embeddable-backend`, `epic-embeddable-engine-game-frontend`, `epic-game-frontend-scenes`,
+  `epic-game-engine-sdks`, `epic-desktop-app`). Deleting the tree is therefore a **product decision that
+  contradicts open planning**, not mechanical cleanup — same shape as the crypto cluster.
+  Two live survivors must never be swept: `negotiation-parsers.ts` (`src/middleware/dynamic-response.ts:36`)
+  and `peer-table.ts` (`src/federation/gossip.ts:20`).
+
+- **`src/config/schema-class/` "safe standalone delete"** — REFUTED. The re-export shim layer is only
+  *partly* mechanical. Measured on `dev`: of the section-level files, 19 are pure `../sections/*` re-exports
+  but `federation.ts`, `frontend.ts`, `hooks.ts`, `idempotency.ts`, `observability.ts` and `seeding.ts`
+  declare their own defaults (`seeding.ts` holds a literal `SEEDING_DEFAULTS`), and in `json-schema/`
+  21 files are one-line `X = XMeta` aliases while `federation.ts`, `frontend.ts`, `hooks.ts`,
+  `idempotency.ts`, `observability.ts`, `seeding.ts` and `templates.ts` carry real schema content.
+  Deleting the directory wholesale destroys live schema. Fold only the true re-exports into `index.ts`.
+  Re-derive the split with the `grep -L 'from "../sections/'` / `grep -L '= \w*Meta;$'` probes above
+  rather than trusting any file count.
 
 - **`src/rpg/integration-registry/`** — CONFIRMED dead; only non-import references are a prose comment and a
   coverage-baseline index list.
@@ -66,13 +83,18 @@ recorded inline in `platform.md`:
 Ranked DEAD targets, highest risk-adjusted value first:
 
 1. `src/rpg/integration-registry/` — delete (low)
-2. `src/transport/` protocol-handler half, minus the two live survivors — delete (low)
-3. `src/regex/index.ts` + its exclusive modules — delete (low-med)
+2. `src/regex/index.ts` + its exclusive modules — delete (low-med)
+3. `src/transport/` protocol-handler half, minus the two live survivors — CONTESTED, not low-risk.
+   See the transport correction under Claim reconciliation before touching it.
 4. Dead `src/rpg/` and `src/regex/` re-export barrels, incl. root `src/rpg/index.ts` — delete (low)
 5. `src/rpg/reputation.ts` + `src/rpg/chemistry.ts` — delete (low)
 6. `src/crypto/activitypub-keys.ts` — delete (low)
 7. Test-only-but-production-unreachable service/util modules — delete (low)
-8. Dead route/validation modules and helpers, incl. 7 unreferenced `characters/errors.ts` classes — delete (low)
+8. Dead route/validation modules and helpers, incl. 7 unreferenced `characters/errors.ts` classes — delete (low).
+   Ownership note: the three zero-importer types (`PaginatedResponse<T>`, `RouteHandler`,
+   `DeprecationHeadersOptions`) are scoped by `TASK-shrink-unreferenced-types-and-helpers-in-routes-validation`,
+   NOT by the routes deletion ticket; `withUserAuth` and `getHttpStatusFromErrorCode` are `shrink:` items in
+   `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`. Do not double-scope them.
 9. Dead `src/i18n/index.ts` + `src/config/sections/index.ts` barrels — delete (low)
 10. Four dead `src/frontend/alpine/` modules (`chat-movement`, `keynav-help`, `locale-picker`,
     `mobile-composer`) — delete (low). The same-named HTML partials are separate, live markup — keep those.
@@ -96,7 +118,15 @@ UNWIRED targets, each needing a named owner before any code moves:
   serialized back with no effect.
 
 - `src/config/schema/` mirror — owner: platform. **Invert then delete**, in two revertable steps.
-- `src/config/schema-class/` shims — safe standalone delete (no inbound imports by path).
+- `src/config/schema-class/` shims — owner: platform. Only the **true re-exports** fold into `index.ts`;
+  `seeding.ts`, `frontend.ts`, `hooks.ts`, `federation.ts`, `idempotency.ts`, `observability.ts` and
+  `templates.ts` carry real defaults/schema and must survive. See the refutation above.
+
+- `src/transport/` protocol-handler half — owner: platform, jointly with `epic-transport-expansion` and
+  `TASK-transport-layer-expansion` (In Progress). If it stays unwired the repo advertises an HTTP/2 +
+  WebSocket + negotiation stack that no request ever traverses, and `epic-transport-expansion.md` will
+  keep reporting those handlers as shipped. Either wire it behind `Bun.serve`, or close the epic before
+  deleting — not both half-done.
 - `src/assistant/prompt/sections/nsfw-context.ts` — owner: assistant/NSFW. The absence may itself be the bug.
 - `src/plugins/bundles.ts` character requirements — owner: plugins. Declared-but-unenforced; the frontend
   keeps a drifting literal copy.
@@ -112,8 +142,10 @@ UNWIRED targets, each needing a named owner before any code moves:
 Each wave is independently revertable and each wave's gates can run without waiting on the next. Do not
 start a wave until the previous one has merged and `bun run check` is green on `dev`.
 
-- **Wave 1 — free deletions, zero decisions.** DEAD 1–9, 13 plus the `schema-class` shims and the autonomy
-  config trio. One commit per subsystem so a bad revert touches one area.
+- **Wave 1 — free deletions, zero decisions.** DEAD 1–2 and 4–13 (skip DEAD 3, the contested transport tree)
+  plus the dead config emitters. One commit per subsystem so a bad revert touches one area. The
+  `schema-class` shims are NOT in this wave — they are an UNWIRED owner decision (only the true
+  re-exports are mechanical, and picking which files is the decision).
 
 - **Wave 2 — template/locale/CSS.** DEAD 10–12. The locale cut must be one commit touching every locale
   file; a partial commit fails the `harness.*` parity test.
@@ -124,7 +156,7 @@ start a wave until the previous one has merged and `bun run check` is green on `
 
 - **Wave 4 — image probing + shrink sweep.** Behaviour-preserving; run last so the noise floor is low.
 - **Wave 5 — owner decisions.** The UNWIRED list. The crypto and frontend-e2e decisions are coupled —
-  settle them once.
+  settle them once. `epic-transport-expansion` is a third coupled decision: it gates DEAD 3.
 
 Cross-cutting, any time: flip `dead - code (src files)` from advisory to blocking once the enumerated files
 are actually gone, so the backlog cannot silently regrow.
