@@ -216,7 +216,12 @@
     // and it emits the full surface by construction. Excluding the files (not
     // their consumers) is the narrow form — nothing hand-written is gaged.
     "src/db/schema.ts",
-    "src/db/schema-*.ts", // src/db/schema-{domain}.ts, one per domain (generate-db-types.ts:628)
+    // src/db/schema-{domain}.ts, one per domain (generate-db-types.ts:323). The
+    // trailing `!` negation keeps the HAND-WRITTEN schema-sync.test.ts out: the
+    // generator writes `schema-${domain}.ts`, never a `.test.ts`, but the bare
+    // `schema-*.ts` glob swallowed the test and kept it unanalysed.
+    "src/db/schema-*.ts",
+    "!src/db/schema-sync.test.ts",
     "src/db/schema-manifest.ts", // generate-schema-manifest.ts: parses migrations/ into a table manifest
     "src/validation/db-schemas.ts", // generate-db-types.ts:603 — TypeBox schema per DB table
     "src/test-utils/insert-helpers.ts", // generate-db-types.ts:479 — typed insert fn per table
