@@ -3753,6 +3753,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-generation-story-assistant-and-chat-code.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
     }
   ],
   "src/assistant/prompt/sections/nsfw-policy.test.ts": [
@@ -12057,6 +12061,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-observability-config-section.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
     }
   ],
   "src/config/sections/integrations.ts": [
@@ -12707,6 +12715,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
     }
   ],
   "src/crypto/actor-keys.test.ts": [
@@ -18203,6 +18215,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mesh-peer-discovery-gossip.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
     },
     {
       "kind": "spec",
@@ -26791,6 +26807,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-platform-service-util-modules-dead-barre.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
     }
   ],
   "src/i18n/locale-loader.ts": [
@@ -28937,6 +28957,10 @@
       "source": ".plan/tickets/TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/headers-management.md"
     }
@@ -30409,6 +30433,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
     }
   ],
   "src/plugins/comfyui/plugin.ts": [
@@ -31925,6 +31953,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-regex-extraction-tests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
     }
   ],
   "src/regex/intent": [
@@ -39168,6 +39200,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
@@ -39953,6 +39989,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
     },
     {
       "kind": "ticket",
@@ -41085,6 +41125,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
     },
     {
       "kind": "ticket",
