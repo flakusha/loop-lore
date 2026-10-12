@@ -28,6 +28,7 @@ import {
 } from "./context.mjs";
 import { applyGateFilter, } from "./filter.mjs";
 import { ADVISORY_GATES, checks, } from "./gate-table.mjs";
+import { applyDiffScopedStaticGates, } from "./gates-scope.mjs";
 import { filterPaths, SKIP_PATTERNS, } from "./test-skip.mjs";
 
 // Re-exported so `runner.mjs` keeps one import site for the assembled table.
@@ -214,4 +215,8 @@ checks["weave - damage scan"] = process.env.WEAVE_BASE
   ? "bun run scripts/check/weave-damage.mjs"
   : NOOP_OK;
 
+// Narrow lint + md:lint to the diff when `--diff-base` is set. Before the
+// --gates filter, so the filter narrows the SCOPED table rather than the
+// static one.
+applyDiffScopedStaticGates(checks,);
 applyGateFilter(checks,);

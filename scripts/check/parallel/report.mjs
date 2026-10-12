@@ -190,6 +190,12 @@ export function buildReport({ exitCode, checks, nonBlocking, gpgPrecheck, },) {
       durationMs,
     },
     checks: checks.map((check,) => ({
+      // The gate NAME, not just its command. Every consumer that has to group
+      // per-gate numbers (the profiler in .tmp/finalize-profile.ts, `giwt
+      // report`) had to re-infer it from the command string, which is lossy:
+      // two gates can share a tool invocation and a scoped gate embeds a
+      // per-run path list. Cheap to persist, impossible to recover later.
+      name: check.name,
       command: check.command,
       passed: check.passed,
       skipped: check.skipped === true,
