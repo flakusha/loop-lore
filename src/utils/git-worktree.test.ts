@@ -1,11 +1,34 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { describe, expect, test, } from "bun:test";
+import { beforeAll, describe, expect, mock, test, } from "bun:test";
+import * as realFs from "node:fs";
 import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import { findMainRepoRoot, } from "./git-worktree.ts";
+
+// Captured before the mock registers; the double delegates to this, so a
+// namespace re-patch can never make it call itself.
+const realStatSync = realFs.statSync;
+
+// ISOLATED-gated node:fs double — pure pass-through except an injectable
+// statSync failure, reaching the two stat-failure catch paths added by the
+// cause-logging commit. mock.module is process-global: the double pins
+// nothing (every other call hits the real fs). The gated suite below imports
+// the module under a cache-busting specifier so it evaluates WITH the double;
+// the shared-process describe above keeps the plain static import.
+let failStat: ((p: string,) => boolean) | null = null;
+if (ISOLATED) {
+  mock.module("node:fs", () => ({
+    ...realFs,
+    statSync: (p: string, opts?: object,): unknown => {
+      if (failStat?.(String(p,),)) { throw new Error("injected stat failure",); }
+      return realStatSync(p, opts as never,);
+    },
+  }),);
+}
 
 describe("findMainRepoRoot", () => {
   test("returns null when not in a git directory", () => {
@@ -73,3 +96,48 @@ describe("findMainRepoRoot", () => {
     }
   });
 });
+
+describeOrSkip("findMainRepoRoot stat-failure paths", () => {
+  let findWithFail: (cwd: string,) => string | null;
+
+  beforeAll(async () => {
+    // Cache-buster: a distinct specifier evaluates git-worktree.ts fresh, so
+    // its node:fs import binds to the double installed above. Kept a dynamic
+    // (non-literal) specifier so tsc does not try to resolve the query form.
+    const bust = "./git-worktree.ts" + "?stat-fail";
+    const mod = (await import(bust)) as typeof import("./git-worktree.ts");
+    findWithFail = mod.findMainRepoRoot;
+  },);
+
+  test("logs and returns null when stat on the worktree .git throws", () => {
+    const mainDir = join(tmpdir(), `test-main-${Date.now()}-${Math.random()}`,);
+    const worktreeDir = join(tmpdir(), `test-wt-${Date.now()}-${Math.random()}`,);
+    mkdirSync(join(mainDir, ".git",), { recursive: true, },);
+    mkdirSync(worktreeDir, { recursive: true, },);
+    writeFileSync(join(worktreeDir, ".git",), `gitdir: ${join(mainDir, ".git", "worktrees", "br",)}\n`,);
+    failStat = () => true;
+    try {
+      expect(findWithFail(worktreeDir,),).toBeNull();
+    } finally {
+      failStat = null;
+      rmSync(mainDir, { recursive: true, force: true, },);
+      rmSync(worktreeDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("logs and returns null when stat on the main .git throws", () => {
+    const mainDir = join(tmpdir(), `test-main-${Date.now()}-${Math.random()}`,);
+    const worktreeDir = join(tmpdir(), `test-wt-${Date.now()}-${Math.random()}`,);
+    mkdirSync(join(mainDir, ".git",), { recursive: true, },);
+    mkdirSync(worktreeDir, { recursive: true, },);
+    writeFileSync(join(worktreeDir, ".git",), `gitdir: ${join(mainDir, ".git", "worktrees", "br",)}\n`,);
+    failStat = (p,) => p === join(mainDir, ".git",);
+    try {
+      expect(findWithFail(worktreeDir,),).toBeNull();
+    } finally {
+      failStat = null;
+      rmSync(mainDir, { recursive: true, force: true, },);
+      rmSync(worktreeDir, { recursive: true, force: true, },);
+    }
+  });
+},);
