@@ -4,6 +4,9 @@
 // src/config/schema-class/validate.ts — config validation
 import type { Config, } from "../schema";
 
+/**
+ * @throws {Error} If any config value fails schema validation.
+ */
 export const validate = (config: Config,): void => {
   if (!["sqlite", "postgres",].includes(config.db.type,)) {
     throw new Error(`Invalid db.type: "${config.db.type}"`,);

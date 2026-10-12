@@ -40,6 +40,7 @@ export interface AllocateAsiResult {
  * Read the actor's allocation-relevant stats row.
  * @param db
  * @param actorId
+ * @throws {LevelServiceError} `stats_unavailable` when the stats row is missing.
  */
 async function readAllocationRow(db: Kysely<DB>, actorId: string,): Promise<
   {

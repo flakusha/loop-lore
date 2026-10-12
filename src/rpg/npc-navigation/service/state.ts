@@ -64,7 +64,7 @@ export async function getMovementState(
  * @param worldId
  * @param updates
  * @param nowMs Injected clock for `updated_at`. Defaults to Date.now.
- * @throws {Error}
+ * @throws {Error} When the NPC movement state does not exist.
  * @returns {Promise<void>}
  */
 export async function updateMovementState(

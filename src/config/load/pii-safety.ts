@@ -40,7 +40,7 @@ function firstSet(...candidates: Array<string | undefined>): string | undefined 
  * @param {string[]} envNames
  * @param {string} devFallback
  * @param {string} missingMessage
- * @throws {Error}
+ * @throws {Error} If no secret is configured outside dev environments.
  * @returns {string}
  */
 export function resolvePiiSecret(
@@ -116,6 +116,7 @@ export function resolveTelemetryPiiSecret(config?: { piiSecret?: string },): str
  * Short-secret guard shared by all three PII secrets (prod only).
  * @param name
  * @param secret
+ * @throws {Error} If the secret is shorter than the production minimum length.
  */
 function assertPiiLength(name: string, secret: string,): void {
   if (secret.length < MIN_PII_SECRET_LENGTH) {

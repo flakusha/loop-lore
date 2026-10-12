@@ -23,8 +23,7 @@ import { BattleStatus, } from "./types.js";
 /**
  * @param deps
  * @param params
- * @throws {Error}
- * @throws {Error}
+ * @throws {Error} When attacker or target is not in this battle.
  * @returns {Promise<ResolvedAttack>}
  */
 export async function performAttack(
@@ -107,6 +106,7 @@ export async function performAttack(
  * @param deps - Service dependencies
  * @param params - Heal resolution parameters
  * @returns The healed combatant + updated roster + amount healed
+ * @throws {Error} When the target is not in this battle.
  */
 export async function performHeal(
   deps: RpgServiceDeps,

@@ -63,6 +63,9 @@ export class TravelRouteService {
     return id;
   }
 
+  /**
+   * @throws {Error} If the route or location is missing or cross-world.
+   */
   async addStop(input: AddStopInput,): Promise<string> {
     // Validate route scope: the location must be in the same world as the route.
     const route = await this.db
@@ -110,6 +113,9 @@ export class TravelRouteService {
       .execute();
   }
 
+  /**
+   * @throws {Error} If the route/location is missing, cross-world, or the location is not a moving transport.
+   */
   async attachTransport(locationId: string, routeId: string,): Promise<void> {
     const route = await this.db
       .selectFrom("travel_routes",)

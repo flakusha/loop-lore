@@ -17,7 +17,7 @@ import { deepMerge, parseFileContent, } from "./parse";
  * @param directory - The directory to search for domain configs
  * @param baseConfig - The base config to merge domain configs into
  * @returns Merged config with domain overrides applied
- * @throws {Error}
+ * @throws {Error} If a domain config file fails to parse.
  */
 export function loadDomainConfigs(directory: string, baseConfig: Config,): Config {
   const configsDir = path.join(directory, "configs",);
@@ -52,6 +52,7 @@ export function loadDomainConfigs(directory: string, baseConfig: Config,): Confi
  * @param domain - The domain name (e.g., "server", "database")
  * @param parsed - The parsed config object
  * @param filePath - The file path for error messages
+ * @throws {Error} If server.port is not a number in 0-65535.
  */
 function validateServerDomain(parsed: Record<string, unknown>, filePath: string,): void {
   const server = parsed.server as Record<string, unknown> | undefined;
@@ -67,6 +68,7 @@ function validateServerDomain(parsed: Record<string, unknown>, filePath: string,
  * @param parsed
  * @param filePath
  * @returns void
+ * @throws {Error} If db.type is not sqlite/postgres or db.url is missing for postgres.
  */
 function validateDatabaseDomain(parsed: Record<string, unknown>, filePath: string,): void {
   const db = parsed.db as Record<string, unknown> | undefined;
@@ -87,6 +89,7 @@ function validateDatabaseDomain(parsed: Record<string, unknown>, filePath: strin
  * @param parsed
  * @param filePath
  * @returns void
+ * @throws {Error} If logging.level is not a known level name.
  */
 function validateLoggingDomain(parsed: Record<string, unknown>, filePath: string,): void {
   const logging = parsed.logging as Record<string, unknown> | undefined;
@@ -106,7 +109,7 @@ function validateLoggingDomain(parsed: Record<string, unknown>, filePath: string
  * @param parsed
  * @param filePath
  * @returns void
- * @throws {Error}
+ * @throws {Error} If a domain config value is invalid.
  */
 export function validateDomainConfig(domain: string, parsed: Record<string, unknown>, filePath: string,): void {
   // Validate domain-specific constraints

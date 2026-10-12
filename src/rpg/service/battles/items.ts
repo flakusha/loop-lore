@@ -142,6 +142,7 @@ export async function listUsableBattleItems(
  * @param deps - Service dependencies
  * @param params - Battle, actor, target and item resolution
  * @returns The consumed item + updated roster
+ * @throws {Error} When the actor/target/item is unusable in this battle or the stock was concurrently modified.
  */
 export async function useBattleItem(
   deps: RpgServiceDeps,
@@ -226,6 +227,7 @@ export async function useBattleItem(
  * @param itemId
  * @param current
  * @returns The remaining quantity (0 when the row was deleted)
+ * @throws {Error} When the item row was concurrently modified.
  */
 async function consumeInventoryUnit(
   deps: RpgServiceDeps,

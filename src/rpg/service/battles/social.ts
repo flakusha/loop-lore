@@ -37,6 +37,7 @@ import {
  * @param deps - Service dependencies
  * @param params - Battle, verb, acting combatant and target
  * @returns The surfaced calculator output (plus surrender chance when applicable)
+ * @throws {Error} When actor or target is not in this battle or is already defeated.
  */
 export async function performSocialAction(
   deps: RpgServiceDeps,

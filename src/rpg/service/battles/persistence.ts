@@ -60,6 +60,7 @@ export async function getBattle(
  * @param params - Attack resolution parameters
  * @param battleId
  * @returns The resolved attack + updated roster + end-of-battle state
+ * @throws {Error} When the battle is missing or not active.
  */
 export async function requireActiveBattle(
   deps: RpgServiceDeps,
@@ -85,8 +86,7 @@ export async function requireActiveBattle(
  * @param combatants
  * @param logEntries
  * @param status
- * @throws {Error}
- * @throws {Error}
+ * @throws {Error} When roster/log serialization fails or the battle was concurrently modified.
  * @returns {Promise<void>}
  */
 export async function persistBattle(

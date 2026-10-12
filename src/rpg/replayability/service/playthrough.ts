@@ -175,7 +175,7 @@ export async function recordChoice(db: Kysely<DB>, playthroughId: string,): Prom
  * @param db
  * @param playthroughId
  * @param secretId
- * @throws {Error}
+ * @throws {Error} When the playthrough is missing or was modified concurrently.
  * @returns {Promise<void>}
  */
 export async function recordSecretFound(
