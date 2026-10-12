@@ -9,13 +9,13 @@
 
 **Summary:**
 
-Remove the dead A/B comparison store, the unused RPG handler wrapper, the unwired deprecation-header pair and several unused helpers, plus 7 unreferenced error classes in src/characters/errors.ts. Research: .tmp/simplification/routes.md and .tmp/simplification/characters-assets.md.
+Remove the dead A/B comparison store, the unused RPG handler wrapper, the unwired deprecation-header pair and several unused helpers, plus 7 unreferenced error classes in src/characters/errors.ts. Research: the routes and characters-assets slices of the over-engineering audit (scratch, not on disk).
 
 **Context:**
 
 Whole modules and whole error classes that nothing constructs, plus a handful of helpers whose only
-caller is their own test. Source: `.tmp/simplification/routes.md` (findings 1-11) and
-`.tmp/simplification/characters-assets.md` (finding 2). Re-derive with `bun run dead:code:src`.
+caller is their own test. Source: the routes slice of the over-engineering audit (scratch, not on disk) (findings 1-11) and
+the characters-assets slice (scratch, not on disk) (finding 2). Re-derive with `bun run dead:code:src`.
 
 **Scope — whole modules to delete:**
 

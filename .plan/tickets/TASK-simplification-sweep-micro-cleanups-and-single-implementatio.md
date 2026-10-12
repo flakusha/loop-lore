@@ -9,13 +9,13 @@
 
 **Summary:**
 
-One low-priority pass over every shrink/yagni/stdlib/native finding in the simplification audit: duplicated formatters, switch-ladder-to-Record, single-implementation base classes, hand-rolled modals and hand-rolled base64 codecs. Research: .tmp/simplification/{frontend,platform,rpg,routes,characters-assets}.md.
+One low-priority pass over every shrink/yagni/stdlib/native finding in the simplification audit: duplicated formatters, switch-ladder-to-Record, single-implementation base classes, hand-rolled modals and hand-rolled base64 codecs. Research: the over-engineering audit's per-area findings (scratch, not on disk) (frontend, platform, rpg, routes, characters-assets).
 
 **Context:**
 
 One deliberately low-priority pass over every `shrink:` / `yagni:` / `stdlib:` / `native:`
 (non-deletion) finding from the over-engineering audit. Nothing here is dead code — each item is a
-behaviour-preserving reduction in surface area. Sources: `.tmp/simplification/{frontend,platform,rpg,routes,characters-assets}.md`.
+behaviour-preserving reduction in surface area. Sources: the over-engineering audit's per-area findings (scratch, not on disk).
 Pick the items that are safe in one sitting; every group below is independent.
 
 **A. Duplicated formatters / markup (frontend.md)**

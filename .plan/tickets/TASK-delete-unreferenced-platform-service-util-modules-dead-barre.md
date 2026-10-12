@@ -9,13 +9,13 @@
 
 **Summary:**
 
-Remove the test-only-but-production-unreachable service and util modules, the dead i18n and config/sections barrels, and drop blessed-contrib plus htmx-ext-alpine-morph. Research: .tmp/simplification/platform.md. Re-derive with 'bun run dead:code:src'.
+Remove the test-only-but-production-unreachable service and util modules, the dead i18n and config/sections barrels, and drop blessed-contrib plus htmx-ext-alpine-morph. Research: the platform slice of the over-engineering audit (scratch, not on disk). Re-derive with 'bun run dead:code:src'.
 
 **Context:**
 
 Four modules are exercised by their own tests and by nothing else — the tests pin behaviour no
 caller can reach. Two barrels have no production importer. Two runtime dependencies have no importer
-whatsoever. Source: `.tmp/simplification/platform.md`. Re-derive with `bun run dead:code:src`.
+whatsoever. Source: the platform slice of the over-engineering audit (scratch, not on disk). Re-derive with `bun run dead:code:src`.
 
 **Scope — modules to delete (with their test files):**
 

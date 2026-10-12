@@ -9,13 +9,13 @@
 
 **Summary:**
 
-Swap the hand-written PNG/JPEG/WebP/GIF header parsers for the already-installed sharp dependency behind a try/catch wrapper that keeps the format-unknown fallback. Research: .tmp/simplification/characters-assets.md.
+Swap the hand-written PNG/JPEG/WebP/GIF header parsers for the already-installed sharp dependency behind a try/catch wrapper that keeps the format-unknown fallback. Research: the characters-assets slice of the over-engineering audit (scratch, not on disk).
 
 **Context:**
 
 `src/assets/` hand-rolls PNG/JPEG/WebP/GIF header probing — magic-byte sniffing plus chunk walks — to
 answer exactly what `sharp(buf).metadata()` answers (`format`, `width`, `height`, `hasAlpha`). `sharp`
-is already a hard runtime dependency. Source: `.tmp/simplification/characters-assets.md` — finding
+is already a hard runtime dependency. Source: the characters-assets slice of the over-engineering audit (scratch, not on disk) — finding
 "`native:` hand-rolled image-header probing layer".
 
 **Scope:**

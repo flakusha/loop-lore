@@ -9,13 +9,13 @@
 
 **Summary:**
 
-Delete the unwired HTTP/1.1 / H2 / WS / upgrade protocol-handler half of src/transport/ plus the write-only config.transport section. Research: .tmp/simplification/platform.md finding 'delete: the entire protocol-handler half of src/transport/'. Re-derive the list with 'bun run dead:code:src'.
+Delete the unwired HTTP/1.1 / H2 / WS / upgrade protocol-handler half of src/transport/ plus the write-only config.transport section. Research: the platform slice of the over-engineering audit (scratch, not on disk), finding 'delete: the entire protocol-handler half of src/transport/'. Re-derive the list with 'bun run dead:code:src'.
 
 **Context:**
 
 `Bun.serve` already owns HTTP/1.1, H2, WebSocket and TLS. `src/server/start.ts:4` imports `serve`
 from `bun` and never touches this tree. Nothing outside `src/transport/` imports any of it.
-Source: `.tmp/simplification/platform.md`.
+Source: the platform slice of the over-engineering audit (scratch, not on disk).
 
 **Scope — files to delete:**
 
@@ -36,7 +36,7 @@ Source: `.tmp/simplification/platform.md`.
   `enableWebSocket`, `enableWebTransport`, `defaultProtocol`;
   `src/config/schema-class/env-map.ts:133-137`; `configs/config.transport.toml:4-9`
 
-**MUST RETAIN — correction carried over from the routes audit.** `.tmp/simplification/routes.md`
+**MUST RETAIN — correction carried over from the routes audit** (scratch, not on disk).
 proved two files in this directory are live, so this ticket must NOT sweep the whole directory:
 
 - `src/transport/negotiation-parsers.ts` — imported at `src/middleware/dynamic-response.ts:36`

@@ -32,7 +32,7 @@ rule in AGENTS.md.
 ## Claim reconciliation — what survived
 
 Re-derived independently on `dev` after the follow-up audits. Full ledger in
-`.tmp/simplification/targets.md`; the two corrections that would actively mislead an implementer are
+the audit's ranked `targets.md` (scratch, not on disk); the two corrections that would actively mislead an implementer are
 recorded inline in `platform.md`:
 
 - **`src/transport/` dead-list** — reachability CONFIRMED (nothing imports the handler half), but the

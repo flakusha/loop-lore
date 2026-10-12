@@ -9,7 +9,7 @@
 **Effort:** High
 **Type:** Feature Epic
 **Tags:** locations, hierarchy, transport, travel, world-modeling, recursion
-**Source:** `.tmp/fractal-locations-research.md`, `.tmp/fractal-locations-patterns.md`
+**Source:** two-part location research pass (code-grounded gap analysis + pattern catalog). Written to `.tmp/` scratch, now deleted — see [Research artifacts](#research-artifacts).
 **Spec:** `docs/spec/locations.md`, `docs/spec/worlds.md`, `docs/spec/exploration-discovery.md`
 
 **Overview:** Extend the existing `locations` table (no fork) with kind/mobility/path/coords and add a transport + route system so a ship can contain sub-locations and travel between ports while actors inside move with it. Includes a new `013_locations_fractal.ts` migration, three new tables (travel_routes, travel_route_stops, actor_locations), five DB triggers (cycle/depth/cross-world/path-set/path-rewrite), a recursive-CTE service layer, a scheduler tick, API endpoints, a recursive location-explorer UI with transport badge, and a comprehensive invariants test suite.
@@ -156,10 +156,22 @@ fake it with one-shot events and ad-hoc chat backgrounds, which breaks the
 
 ## Research artifacts
 
-- `.tmp/fractal-locations-research.md` — code-grounded map of what exists and
-  what's missing (12 gaps, 5 invariants).
-- `.tmp/fractal-locations-patterns.md` — 12-pattern catalog with citations +
-  concrete `013_locations_fractal.ts` migration sketch.
+Both research docs were written to `.tmp/` scratch and have since been deleted
+(`AGENTS.md` §Scratchpad: ".tmp/ is auto-ignored by git; delete before merge").
+Neither can be opened — do not go looking for them.
+
+- *fractal-locations-research* — code-grounded map of what exists and what's
+  missing (12 gaps, 5 invariants).
+- *fractal-locations-patterns* — 12-pattern catalog with citations + concrete
+  `013_locations_fractal.ts` migration sketch.
+
+The distilled content of both survives in this epic: the gaps and invariants
+are the Core systems list and the locked Decisions table, and pattern #12 (the
+adjacency-list + materialized-path hybrid) is the locked Hierarchy-model
+decision. **Re-derive before implementing** by reading `docs/spec/locations.md`,
+`docs/spec/worlds.md`, `src/db/migrations/` and `src/rpg/npc-navigation/`
+against the Tasks table — the Tasks table, not the deleted audit, is the
+authority on what still needs building.
 
 ## Linked Tasks
 
