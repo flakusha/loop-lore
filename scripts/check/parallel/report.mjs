@@ -57,6 +57,32 @@ function clipOutput(text, limit,) {
   }`;
 }
 
+// A non-passing gate — failed or advisory — gets the same treatment: a clipped
+// excerpt on stdout, then the untruncated output persisted so a red gate stays
+// diagnosable without a re-run. The excerpt drops the middle of the output,
+// which for a long gate run is exactly where the failing assertion lives.
+function printFailureExcerpt(result,) {
+  const outputLines = result.output.split("\n",),
+    head = outputLines.slice(0, 5,),
+    tail = outputLines.slice(-20,);
+  console.log(
+    `  Output: ${[...new Set([...head, ...(outputLines.length > 25 ? ["...",] : []), ...tail,],),].join("\n  ",)}`,
+  );
+  const slug = result.name.replace(/[^a-z0-9]+/gi, "-",).replace(/^-|-$/g, "",).toLowerCase();
+  const logPath = path.join(RUN_TMP_DIR, `check-fail-${slug}.log`,);
+  try {
+    mkdirSync(RUN_TMP_DIR, { recursive: true, },);
+    writeFileSync(logPath, result.output,);
+    console.log(`  Full output: ${logPath}`,);
+  } catch (error) {
+    console.log(
+      `  Full output unavailable (${String(error,)}). Re-run \`bun run ${
+        result.command.replace(/^bun run /, "",)
+      }\` directly.`,
+    );
+  }
+}
+
 export function reportResults(results,) {
   let passed = 0;
   let failed = 0;
@@ -88,53 +114,13 @@ export function reportResults(results,) {
       // Advisory gates run and report but do not fail the run. Print as
       // ADVISORY so the signal is visible without blocking finalization.
       console.log(`ADVISORY: ${result.name}${result.timedOut ? " (timed out, killed)" : ""}`,);
-      const outputLines = result.output.split("\n",),
-        head = outputLines.slice(0, 5,),
-        tail = outputLines.slice(-20,);
-      console.log(
-        `  Output: ${[...new Set([...head, ...(outputLines.length > 25 ? ["...",] : []), ...tail,],),].join("\n  ",)}`,
-      );
-      const slug = result.name.replace(/[^a-z0-9]+/gi, "-",).replace(/^-|-$/g, "",).toLowerCase();
-      const logPath = path.join(RUN_TMP_DIR, `check-fail-${slug}.log`,);
-      try {
-        mkdirSync(RUN_TMP_DIR, { recursive: true, },);
-        writeFileSync(logPath, result.output,);
-        console.log(`  Full output: ${logPath}`,);
-      } catch (error) {
-        console.log(
-          `  Full output unavailable (${String(error,)}). Re-run \`bun run ${
-            result.command.replace(/^bun run /, "",)
-          }\` directly.`,
-        );
-      }
+      printFailureExcerpt(result,);
       advisory++;
     } else {
       // A timeout is a distinct failure mode from "the gate ran and said no":
       // the gate never got to render a verdict, so say so on the summary line.
       console.log(`FAIL: ${result.name}${result.timedOut ? " (timed out, killed)" : ""}`,);
-      // Head for context, tail for the actual failure (see clipOutput).
-      const outputLines = result.output.split("\n",),
-        head = outputLines.slice(0, 5,),
-        tail = outputLines.slice(-20,);
-      console.log(
-        `  Output: ${[...new Set([...head, ...(outputLines.length > 25 ? ["...",] : []), ...tail,],),].join("\n  ",)}`,
-      );
-      // The excerpt above drops the middle of the output, which for a long
-      // gate run is exactly where the failing assertion lives. Persist the
-      // untruncated output so a red gate stays diagnosable without a re-run.
-      const slug = result.name.replace(/[^a-z0-9]+/gi, "-",).replace(/^-|-$/g, "",).toLowerCase();
-      const logPath = path.join(RUN_TMP_DIR, `check-fail-${slug}.log`,);
-      try {
-        mkdirSync(RUN_TMP_DIR, { recursive: true, },);
-        writeFileSync(logPath, result.output,);
-        console.log(`  Full output: ${logPath}`,);
-      } catch (error) {
-        console.log(
-          `  Full output unavailable (${String(error,)}). Re-run \`bun run ${
-            result.command.replace(/^bun run /, "",)
-          }\` directly.`,
-        );
-      }
+      printFailureExcerpt(result,);
       failed++;
     }
   }
@@ -156,7 +142,7 @@ export function reportResults(results,) {
     console.log(
       "!!! These gates exited non-zero. They do not block, but the run is NOT green;",
     );
-    console.log("!!! re-run each `ADVISORY:` command above and report its real status.");
+    console.log("!!! re-run each `ADVISORY:` command above and report its real status.",);
   }
 
   return failed;
