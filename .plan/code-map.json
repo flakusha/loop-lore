@@ -41085,6 +41085,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-raise-rpg-battle-social-skills-progression-and-replayability.md"
     }
   ],
   "src/rpg/reproduction-birth.ts": [
@@ -41469,6 +41473,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-raise-rpg-battle-social-skills-progression-and-replayability.md"
     }
   ],
   "src/rpg/service/character-stats.test.ts": [
@@ -41833,6 +41841,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-040.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-raise-rpg-battle-social-skills-progression-and-replayability.md"
     },
     {
       "kind": "ticket",
