@@ -9,6 +9,14 @@ Where the time and the memory go in `bun run check` (and therefore in
 Every number below cites the artifact it came from. Anything not measured on
 this host is marked **UNMEASURED** and is a proposal, not a result.
 
+**Where the implemented scopes live.** The diff-scoped `lint - eslint` and
+`md - lint` described in §4 and §8 are shipped code on the `finalize-perf`
+branch (commit `9318f1d0`, which adds `scripts/check/parallel/gates-scope.mjs`
+and its test and calls `applyDiffScopedStaticGates(checks)` from `gates.mjs`).
+This doc landed on `docs-tooling-reports` off `dev`, so `gates-scope.mjs` is
+**not in the tree you are reading** until `finalize-perf` merges. Everything else
+in the doc describes shipped `dev` behaviour.
+
 ---
 
 ## 1. How to reproduce
@@ -30,7 +38,8 @@ bunx eslint --concurrency=8 <the five files below>     # 5.8s / 2137 MB
 #   .plan/feature-matrix.md
 #   .plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md
 
-# The scoping guard rails, no gate spawned
+# The scoping guard rails, no gate spawned.
+# NB: this file ships on `finalize-perf` only — see the header note before running it.
 bun test scripts/check/parallel/gates-scope.test.mjs
 ```
 
@@ -40,11 +49,32 @@ finalize would narrow to for that commit range.
 
 Host: 32 cores, 61 GiB RAM, 3 GiB swap (`free -g`, measured 2026-10-12).
 
-`.tmp/` is git-ignored scratch, so `.tmp/finalize-profile.ts` and
-`.tmp/prof-table.md` live only on this host — the script is ~180 lines of
-`readdirSync` + a percentile, and re-deriving it from this section is cheaper
-than versioning it. The doc quotes its output so the numbers stay checkable
-against a fresh run.
+**`.tmp/finalize-profile.ts` and `.tmp/prof-table.md` are git-ignored scratch
+and may be gone.** They were never committed, so a fresh clone, a
+`giwt clean --apply`, or any scratch prune turns the first three commands above
+into `file not found` — and the same prune takes the corpus they mine:
+`scripts/check/parallel/retention.mjs` prunes `.tmp/run-*/` and old
+`check-report-*.json` on every check run, and `giwt clean` keeps only the newest
+`checkReportKeep` reports. **Treat every duration in §2 as unreproducible once
+that corpus is gone**, not as a number you can re-derive.
+
+What to do instead, in order of preference:
+
+1. **Re-measure from scratch** — the per-gate wall clock and peak RSS do not
+   depend on any retained artifact. Time each gate the way the runner runs it:
+   `/usr/bin/time -v bash -c '<the gate command from gate-table.mjs>'`, which
+   covers the whole process tree. Rebuild the §2 table from those runs.
+2. **Re-derive from retained reports** *if any survive* — every report carries
+   `checks[].durationMs` (`scripts/check/parallel/report.mjs:201`), so a partial
+   corpus still gives partial medians. A rebuilt table over a smaller corpus is
+   not comparable to the one quoted here; say so rather than splicing it in.
+3. **Do not** trust the quoted figures to still describe this host. They were
+   measured 2026-10-12 on the host described below; a reader in a later session
+   must re-measure before reusing them.
+
+The profile script was never versioned because it is ~180 lines of
+`readdirSync` + a percentile and this section documents it. That trade is fine;
+promising the reader a fresh run against a pruned corpus was not.
 
 ---
 
@@ -123,9 +153,13 @@ Two findings that contradict the current docs:
    three agents finalizing concurrently — this is the first *measured* support
    for the AGENTS.md "co-scheduled gates OOM this host" rule rather than an
    inference from footprint.
-2. **`lint - eslint` cannot fail today.** It exits 0 with 2352 warnings and 0
-   errors (`--max-warnings` is not set in `package.json` `lint:eslint`). The gate
-   costs 18.4s and 19.4 GB to report nothing actionable.
+2. **`lint - eslint` could not fail on the measured tree.** It exits 0 with 2352
+   warnings and 0 errors (`--max-warnings` is not set in `package.json`
+   `lint:eslint`, `package.json:41`). The gate costs 18.4s and 19.4 GB to report
+   nothing actionable. That is a property of the rule set on that tree, not of
+   the script: `fix-unhandled-test-json-parse` registers a local rule at `"error"`
+   (`local/no-extensionless-require`), so the gate is failable once that branch
+   lands.
 
 ---
 
@@ -150,7 +184,7 @@ wall-clock and 25x memory difference, on the same tree, same host.
   ESLint rule; it has no plugin API for one. This is a project convention
   (`.agents/references/recommendations.md`) with no oxlint equivalent.
 - **Markdown code blocks.** `eslint-plugin-markdown` (`eslint.config.mjs:16`,
-  160-165) lints TS/JS fenced blocks inside `.md`. oxlint has no equivalent, and
+  158-169) lints TS/JS fenced blocks inside `.md`. oxlint has no equivalent, and
   `lint:oxlint` additionally ignores `**/*.test.ts` and `tests` entirely, so
   `tests/**` would stop being linted at all.
 - **jsdoc + sonarjs.** `jsdoc/require-{param,returns,throws}`
@@ -185,7 +219,7 @@ Everything else is the static registry in `gate-table.mjs`, unchanged.
 | lint - eslint | yes | append the changed `ts/js/md` paths to the same `bunx eslint --concurrency=8` invocation | typed rules read the whole program (`parserOptions.project`), so a changed shared type can newly violate a rule in an UNTOUCHED file. Implemented with a full-run fallback on any config change. |
 | md - lint | yes | `markdownlint-cli2 <changed .md>` | markdownlint has no cross-file rule; every configured rule is per-file. Implemented, same fallback. The scoped invocation still auto-discovers `.markdownlint.json`: that file only DISABLES rules (MD013, MD033, MD041, …) and this doc has 34 lines over 80 chars, so a run that missed the config would have failed MD013. It passed, which is the proof. |
 | format - dprint | yes | `dprint check <paths>` | per-file formatter. **Not implemented**: 0.2s median, nothing to win. |
-| mermaid - lint | yes | `mmdlint <changed .md>` | per-file parser. **Not implemented**: 0.7s median. |
+| mermaid - lint (mmdlint) | yes | `mmdlint <changed .md>` | per-file parser. **Not implemented**: 0.7s median. |
 | typecheck x4 | **no** | — | `tsgo --noEmit -p <tsconfig>` is whole-program by construction; `type-coverage` computes a ratio over the whole project, and a `--files=` subset would change the denominator, i.e. the FLOOR would silently move. |
 | dead - code (knip) | **no** | — | knip resolves an import graph: a deleted file changes the reachability of every importer. |
 | jscpd ratchet | **no** | — | clone detection compares pairs ACROSS files; the baseline is a project-wide count. |
@@ -317,10 +351,10 @@ and the ones still on `dev` after the merge are the ones that CANNOT move.
 
 | # | change | measured saving | risk | rollback |
 | --- | --- | --- | --- | --- |
-| 1 | **IMPLEMENTED** — diff-scope `lint - eslint` and `md - lint` (`scripts/check/parallel/gates-scope.mjs`, `--diff-base` only) | measured on this host, same worktree and same two gates: **28.23s / 21.1 GB full → 3.53s / 1.6 GB scoped** (§2) | low: plain runs untouched (asserted at module load); full-run fallbacks on config change / deleted path / unsafe path / empty set / >200 files | delete the `applyDiffScopedStaticGates(checks)` call in `gates.mjs` + `gates-scope.mjs` + its test |
+| 1 | **IMPLEMENTED** — diff-scope `lint - eslint` and `md - lint` (`scripts/check/parallel/gates-scope.mjs`, `--diff-base` only) | measured on this host, same worktree and same two gates: **28.23s / 21.1 GB full → 3.53s / 1.6 GB scoped** (§2) | low: plain runs untouched (`applyDiffScopedStaticGates` throws if a plain-mode command was altered); full-run fallbacks on config change / deleted path / unsafe path / empty set / >200 files | delete the `applyDiffScopedStaticGates(checks)` call in `gates.mjs` + `gates-scope.mjs` + its test |
 | 2 | `name` persisted per check in the report (`report.mjs`) | 0s — it is what made this table possible; without it every consumer re-infers the gate from its command string | none: additive field, `schemaVersion` unchanged | revert one line |
 | 3 | Drop the scoped `lint - eslint` from `HEAVY_NAMES` (2.1 GB scoped vs 19.4 GB full) | 0s at the default `JOBS=1`; only pays off under `--jobs 2` or higher | **UNMEASURED** under `--jobs 2`; do not touch without that measurement | move the name back into the set |
-| 4 | eslint to oxlint swap | 17.9s and 18.6 GB per run, if it worked | migration, see §3 | n/a — documentation only this round |
+| 4 | eslint to oxlint swap | 18.2s (corpus median 18.7s − oxlint's measured 0.5s) and 18.6 GB (19 395 − 788 MB), if it worked | migration, see §3 | n/a — documentation only this round |
 | 5 | parallel unit tests | up to the 33.3s `typecheck - coverage` analogue in test time; **UNMEASURED** | hazards 1-4 in §5 are open | n/a — documentation only this round |
 
 `format - dprint` (0.2s) and `mermaid - lint` (0.7s) are scopeable by the same

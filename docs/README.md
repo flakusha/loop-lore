@@ -73,6 +73,7 @@ docs/
 │   ├── analysis/            Migration & refactoring analysis
 │   ├── assessments/         Feature evaluation & recommendations
 │   ├── research/            Research docs (use cases, RPG mechanics)
+│   ├── tooling/             Check-run failure inventory, profiling, tooling audit
 │   └── code-practices-improvements/  Coding standards improvement plans
 └── public/                  Static assets (SVGs, images)
 ```
@@ -316,6 +317,14 @@ Project planning, reviews, analysis, and research.
 | [`meta/research/rpg-mechanics-flexible-system.md`](./meta/research/rpg-mechanics-flexible-system.md) | RPG mechanics flexible system research |
 | [`meta/research/rpg-systems-comparison.md`](./meta/research/rpg-systems-comparison.md)               | RPG systems comparison                 |
 | [`meta/research/flexible-rpg-patterns.md`](./meta/research/flexible-rpg-patterns.md)                 | Flexible RPG patterns                  |
+
+### Tooling (`meta/tooling/`)
+
+| Document                                                                          | Topics                                                                    |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [`meta/tooling/log-problem-inventory.md`](./meta/tooling/log-problem-inventory.md) | Failure signatures seen in check artifacts, plus proposed controls        |
+| [`meta/tooling/finalize-speedup.md`](./meta/tooling/finalize-speedup.md)           | Where `bun run check` spends its time and memory; scoping options         |
+| [`meta/tooling/tooling-unification.md`](./meta/tooling/tooling-unification.md)     | Audit of loop-lore / giwt / omp-plugins tooling overlap and gaps          |
 
 ### Code Practices (`meta/code-practices-improvements/`)
 
