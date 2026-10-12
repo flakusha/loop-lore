@@ -11,7 +11,7 @@ const LEGAL_ENTITY_GATES: readonly string[] = ENTITY_QUALITY_GATES;
 /**
  * Validate the raw entityTypes domain (workflows/entity-types.yaml).
  * @param {Record<string, unknown>} raw
- * @throws {Error}
+ * @throws {Error} If the entityTypes domain config is invalid.
  * @returns {void}
  */
 export function validateEntityTypeConfig(raw: Record<string, unknown>,): void {
@@ -29,6 +29,9 @@ export function validateEntityTypeConfig(raw: Record<string, unknown>,): void {
   }
 }
 
+/**
+ * @throws {Error|TypeError} If the entity-type preset entry shape is invalid.
+ */
 function validateEntityTypePresetEntry(kind: string, value: unknown,): void {
   if (typeof value !== "object" || value === null || Array.isArray(value,)) {
     throw new Error(`entityTypes.${kind} must be an object`,);
@@ -69,9 +72,7 @@ function validateEntityTypePresetEntry(kind: string, value: unknown,): void {
 /**
  * Cross-validate merged entity-type presets against merged workflows.
  * @param {WorkflowTemplateConfig} config
- * @throws {Error}
- * @throws {Error}
- * @throws {Error}
+ * @throws {Error} If a preset references an unknown workflow or an invalid required step.
  * @returns {void}
  */
 export function validateEntityTypePresets(config: WorkflowTemplateConfig,): void {

@@ -11,6 +11,7 @@ const LEGAL_CONTENT_RATINGS = ["sfw", "questionable", "explicit",] as const;
 
 /**
  * Validate one character template entry.
+ * @throws {Error|TypeError} If the template entry shape is invalid.
  * @param entry
  * @param index
  * @returns number
@@ -43,7 +44,7 @@ function validateCharacterTemplateEntry(entry: unknown, index: number,): void {
  * Validate the `character` domain raw config before merging.
  * @param raw
  * @returns void
- * @throws {Error}
+ * @throws {Error|TypeError} If the character domain config is invalid.
  */
 export function validateCharacterConfig(raw: Record<string, unknown>,): void {
   if (raw.templates !== undefined) {
@@ -61,6 +62,7 @@ const LEGAL_WORKFLOW_STEP_TYPES = ["text", "choice", "multi",] as const;
 
 /**
  * Validate one workflow step entry.
+ * @throws {Error|TypeError} If the step entry shape is invalid.
  * @param entry
  * @param workflowId
  * @param index
@@ -118,7 +120,7 @@ function validateWorkflowStepEntry(entry: unknown, workflowId: string, index: nu
  * bare `{ [id]: workflow }` map (multi-file workflows/*.yaml shape).
  * @param raw
  * @returns workflow }` map (multi-file workflows/*.yaml shape).
- * @throws {Error}
+ * @throws {Error} If the workflows domain config is invalid.
  */
 export function validateWorkflowConfig(raw: Record<string, unknown>,): void {
   const table = (
@@ -137,6 +139,7 @@ export function validateWorkflowConfig(raw: Record<string, unknown>,): void {
 
 /**
  * Validate the `intent: { type, target }` block on one workflow.
+ * @throws {TypeError} If intent is not an object or type/target are missing.
  * @param intent
  * @param workflowId
  */
@@ -157,6 +160,7 @@ function validateWorkflowIntentEntry(intent: unknown, workflowId: string,): void
 
 /**
  * Validate one workflow definition in the `workflows` domain.
+ * @throws {Error|TypeError} If the workflow definition shape is invalid.
  * @param id
  * @param value
  */

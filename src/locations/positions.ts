@@ -36,8 +36,7 @@ export class ActorPositionService {
    * @param {string} actorId
    * @param {string} physicalLocationId
    * @param {string} spatialLocationId
-   * @throws {Error}
-   * @throws {Error}
+   * @throws {Error} If a location is missing or physical/spatial worlds differ.
    * @returns {Promise<void>}
    */
   async setPosition(
@@ -127,6 +126,7 @@ export class ActorPositionService {
    * @param actorId
    * @param transportLocationId
    * @param routeId
+   * @throws {Error} If the transport is missing, not moving, or has no route/stops.
    */
   async deriveForTransport(
     actorId: string,

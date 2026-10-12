@@ -13,7 +13,7 @@ import { ProficiencyLevel, } from "./types";
  * @param db
  * @param skillId
  * @param xpAmount
- * @throws {Error}
+ * @throws {Error} When the skill is missing.
  * @returns {Promise<XpGainResult>}
  */
 export async function addXp(db: Kysely<DB>, skillId: string, xpAmount: number,): Promise<XpGainResult> {
@@ -74,8 +74,7 @@ export async function addXp(db: Kysely<DB>, skillId: string, xpAmount: number,):
  * @param db
  * @param skillId
  * @param specialization
- * @throws {Error}
- * @throws {Error}
+ * @throws {Error} When the skill is missing or not at Expert level.
  * @returns {Promise<Skill>}
  */
 export async function specializeSkill(db: Kysely<DB>, skillId: string, specialization: string,): Promise<Skill> {

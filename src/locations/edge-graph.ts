@@ -120,7 +120,7 @@ export class LocationEdgeService {
    * @param edgeId edge to update
    * @param patch partial attributes; endpoints are immutable
    * @returns {Promise<EdgeRow>} the updated row
-   * @throws {LocationEdgeError} "not-found" or "duplicate"
+   * @throws {LocationEdgeError} "not-found", "duplicate", or "bad-mode"
    */
   async updateEdge(worldId: string, edgeId: string, patch: EdgePatch,): Promise<EdgeRow> {
     const existing = await this.edgeById(worldId, edgeId,);

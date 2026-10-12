@@ -31,7 +31,7 @@ export function nowAndId(): { id: string; now: string } {
  * Assert that at least one row was updated
  * @param numRows
  * @param label
- * @throws {Error}
+ * @throws {Error} When no row was updated for the labeled table.
  * @returns {void}
  */
 export function assertRowUpdated(numRows: number, label: string,): void {
@@ -44,7 +44,7 @@ export function assertRowUpdated(numRows: number, label: string,): void {
  * Assert that at least one row was deleted
  * @param numRows
  * @param label
- * @throws {Error}
+ * @throws {Error} When no row was deleted for the labeled table.
  * @returns {void}
  */
 export function assertRowDeleted(numRows: number, label: string,): void {

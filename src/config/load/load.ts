@@ -29,10 +29,7 @@ export function validateConfig(config: Config,): void {
 /**
  * @param cwd
  * @returns void
- * @throws {Error}
- * @throws {Error}
- * @throws {Error}
- * @throws {Error}
+ * @throws {Error} If any config file (default/main/local/env) fails to parse or validation fails.
  */
 export function loadConfig(cwd?: string,): Config {
   const directory = cwd ?? process.cwd();
