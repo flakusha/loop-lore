@@ -83,19 +83,6 @@ interface MigrationRow {
 }
 
 /**
- * Advance every NPC migration in `worldId` by one tick.
- *
- * Transitions, all charged `ACTION_COST` against the world budget:
- *   - `planned` + `depart_tick <= tick`  → `in_transit` (depart)
- *   - `in_transit` + `arrive_tick <= tick` → `arrived` + `npc_states` move
- * A refused charge stops the tick, so it never applies more than it funds.
- * @param db database handle
- * @param worldId world whose migrations advance
- * @param currentTick the tick being simulated
- * @param ctx per-tick context: `nowMs`, `rng`, `ceiling`, shared `claims`
- * @returns the actions applied, in application order
- */
-/**
  * Stamp an NPC migration row with a terminal status.
  * @param handle
  * @param rowId
