@@ -161,6 +161,8 @@ export function isEncryptedAsset(buffer: Buffer,): boolean {
     return typeof parsed.value === "object" && parsed.value !== null && "enc" in parsed.value &&
       "nonce" in parsed.value;
   } catch {
+    // probe: intentionally silent because the guarded body cannot throw —
+    // Buffer.toString("utf8") never throws and safeJsonParse returns a Result.
     return false;
   }
 }
