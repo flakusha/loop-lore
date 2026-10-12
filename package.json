@@ -30,7 +30,7 @@
     "schemas:check:fix": "bun run scripts/fix-schemas.ts",
     "check:templates": "bun run scripts/check-frontend-templates.ts",
     "config:generate-schema": "bun run src/config/generate-schema.ts",
-    "config:generate-character-schema": "bun run src/config/generate-character-schema.ts",
+    "config:generate-character-schema": "bun run src/config/generate-character-schema/index.ts",
     "config:generate-toml-schema": "bun run src/config/generate-toml-schema.ts",
     "config:generate-env-schema": "bun run src/config/generate-env-schema.ts",
     "docs:dev": "bun run scripts/docs/sync-plan.mjs && bunx vitepress dev docs",

@@ -7,7 +7,7 @@
  * Generates JSON Schema from the CanonicalCharacter type definition
  * for LSP/IDE support and validation.
  *
- * Usage: bun run src/config/generate-character-schema.ts
+ * Usage: bun run config:generate-character-schema
  * Outputs: schemas/character-card.schema.json
  */
 

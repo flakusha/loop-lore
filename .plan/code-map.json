@@ -11047,7 +11047,11 @@
       "source": ".plan/tickets/TASK-insert-log-fatal-and-log-trace-calls-at-key-sites.md"
     }
   ],
-  "src/config/generate-character-schema.ts": [
+  "src/config/generate-character-schema/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-spec.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-spec-inclusion-race-origin-culture.md"
@@ -11055,12 +11059,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/config-extensions.md"
-    }
-  ],
-  "src/config/generate-character-schema/index.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-spec.md"
     }
   ],
   "src/config/generate-domain-schemas.ts": [
