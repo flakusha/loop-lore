@@ -28,7 +28,6 @@ export default defineConfig({
     ".github/templates/**",
     ".agents/**",
     "coverage/**",
-    "scripts/worktree/**",
     "src/frontend/vendor/**",
   ],
   "env": {

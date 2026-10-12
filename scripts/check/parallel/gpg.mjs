@@ -14,11 +14,33 @@ import { existsSync, readFileSync, } from "node:fs";
 import path from "node:path";
 import {
   effectiveCacheTtl,
-  passphraseSource,
   probeCachedPassphrase,
   warmCacheViaPassphrase,
-  warmCacheViaPinentry,
-} from "../../gpg-unlock.mjs";
+} from "../../../node_modules/giwt/src/gpg-unlock";
+
+// giwt's warmCacheViaPinentry and passphraseSource are not exported;
+// inline equivalents matching the deleted scripts/gpg-unlock.mjs behavior.
+
+function warmCacheViaPinentry(keyId,) {
+  const { spawnSync, } = require("bun",);
+  const r = spawnSync(
+    ["gpg", "--batch", "--yes", "--local-user", keyId, "--output", "/dev/null", "--detach-sign", "/dev/null",],
+    { stdout: "pipe", stderr: "pipe", },
+  );
+  return { ok: r.exitCode === 0, sigCreated: r.exitCode === 0, stderrOut: r.stderr?.toString() ?? "", };
+}
+
+function passphraseSource() {
+  if (process.env.GIT_GPG_PASSPHRASE) { return process.env.GIT_GPG_PASSPHRASE; }
+  const homeRoot = process.env.HOME ?? process.env.USERPROFILE;
+  if (!homeRoot) { return null; }
+  try {
+    const pw = readFileSync(join(homeRoot, ".gpg-passphrase",), "utf8",).trim();
+    return pw || null;
+  } catch {
+    return null;
+  }
+}
 import { MODE, PROJECT_ROOT, } from "./config.mjs";
 
 // ── GPG pre-flight ──────────────────────────────────────────────
@@ -95,7 +117,7 @@ export async function ensureGpgWarm() {
 
   console.error("hint: gpg-cold-cache",);
   console.error(`GPG agent does not have ${keyId} unlocked.`,);
-  console.error(`Run: bun run scripts/gpg-unlock.mjs`,);
+  console.error(`Run: giwt gpg-unlock`,);
   gpgPrecheck.state = { state: "cold", reason: "cache-cold", };
   process.exit(1,);
 }
