@@ -44662,6 +44662,19 @@
     "title": "raise 12 below-floor src modules to the 80% coverage gate",
     "type": "TASK"
   },
+  "TASK-RAISE-RPG-BATTLE-SOCIAL-SKILLS-PROGRESSION-AND-REPLAYABILITY": {
+    "hash": "3a0255f",
+    "git_issue": "3a0255f",
+    "extid": "TASK-RAISE-RPG-BATTLE-SOCIAL-SKILLS-PROGRESSION-AND-REPLAYABILITY",
+    "type": "TASK",
+    "title": "Raise rpg battle-social, skills-progression and replayability-playthrough coverage to the 80 percent floor",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-raise-rpg-battle-social-skills-progression-and-replayability.md",
+    "status": "Not Started"
+  },
   "TASK-RANDOM-ENCOUNTERS-EVENTS": {
     "epic": "epic-world-event-system",
     "extid": "TASK-RANDOM-ENCOUNTERS-EVENTS",
