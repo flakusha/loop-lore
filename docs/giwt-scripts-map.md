@@ -107,9 +107,17 @@ implementation detail that callers stop invoking directly.
     165). Either preserve the needed helpers under `scripts/lib/` or import
     from the pinned `node_modules/giwt`. Same change must remove or repoint
     `tests/worktree-flow.test.ts`.
-  - `check:report-ls` → `giwt report` rewrite is still REJECTED on the
-    schema-drift grounds from try-2; revisit if upstream `giwt report`
-    gains the `gates` section.
+  - ~~`check:report-ls` → `giwt report` rewrite is still REJECTED on the
+    schema-drift grounds from try-2~~ — **BLOCKER CLEARED.** The re-visit
+    condition is met: upstream `ec7425ee` taught `giwt report` to read the
+    loop-lore `schemaVersion: 2` shape (`checks[]` / `generatedAt`, no `gates`
+    map) with the legacy map kept as fallback, and to render `skipped` /
+    `advisory` / `timedOut` distinctly. Verified against the pinned build: every
+    worktree row now renders with its gate statuses instead of "malformed
+    report". Upstream also added `--profile`, which covers the cross-worktree
+    gate-failure mining no in-repo script provided. The remaining question is
+    no longer schema drift but whether to retire `check:report-ls` in favour of
+    the pinned `giwt report` — an owner call, not a parity blocker.
   - `scripts/gpg-unlock.mjs` → `giwt gpg-unlock` rewrite is unblocked by
     try-5 (no worktree-shim dependency); lands when owner authorizes.
 

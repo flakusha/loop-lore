@@ -120,6 +120,16 @@ Agents must not scatter temporary files across the repo (`src/`, `tests/`,
 - **Location**: `.tmp/` (repo root) or `worktree/.tmp/` (per-worktree)
 - **Use**: Debug test files, research notes, API specs, interim findings, probe scripts — anything not meant for the committed tree
 - **Rules**: Auto-ignored by git (no `.gitignore` edit needed); delete before finalize/merge; never import from `@/` aliases outside the repo root (module resolution breaks) — run debug scripts from inside `.tmp/` with relative imports or `bun --cwd`
+- **Enforcement**: `giwt finalize` now prunes a worktree's scratchpad at Step 6a,
+  immediately before removing the worktree, so "delete before finalize" is no
+  longer advisory. It only prunes the four scanner classes (`*.tmp` spills,
+  `lcov.*.tmp` + aged `cov-*` dirs, aged `jscpd-report.json`, and root-level
+  `check-report*.json` past the newest 20) — research notes, probe scripts and
+  anything else are unclassified and preserved. Two consequences for handoff:
+  do not rely on `cov-*` or `check-report*.json` under a worktree `.tmp/`
+  surviving the finalize of that worktree, and note that `giwt finalize
+  --dry-run` reports the prune plan without deleting anything (the merge,
+  worktree removal and branch delete still run).
 - **Handoff**: Include `.tmp/` paths in `ctx_handoff(paths=[...])`; cleanup after merge
 
 ### Default cache for tooling
@@ -391,6 +401,7 @@ giwt cleanup                              # prune worktrees of deleted branches
 giwt create feature-name                  # worktree for existing branch
 giwt prs                                  # worktrees for open PRs
 giwt report        # aggregate check reports (same as bun run check:report-ls)
+giwt report --profile [--since <iso>] [--json]  # cross-worktree gate failure + duration table
 giwt runs [triage <run> | diff <a> <b>]   # run records + failure triage
 giwt ledger [--last N] [--json]           # shared agent ledger
 giwt gripe --at <branch> <message>        # flag a failure at another branch
