@@ -7,9 +7,13 @@
  * unimplemented — giwt's `checkSpdx` at src/plan/validate/content-gates.ts
  * walks only `.plan/*.md` and substring-tests a single `SPDX-License-Identifier`
  * token: no `SPDX-FileCopyrightText`, no files outside `.plan/`, no `--fix`, and
- * it is not in FIXABLE_GATES). AGENTS.md mandates a header on EVERY tracked
- * file. When the ticket lands, repoint `spdx:check`/`spdx:fix` and delete this
- * file plus scripts/lib/{spdx-discovery,spdx-fix,reuse-toml}.ts.
+ * it is not in FIXABLE_GATES). REUSE.toml is the repo's own policy source:
+ * 7 [[annotations]] blocks whose path globs cover src/**, data/**, scripts/**,
+ * tests/**, docs/**, .plan/** and the root config files, each requiring BOTH
+ * SPDX-FileCopyrightText and SPDX-License-Identifier. giwt's check would miss
+ * every one of those outside .plan/. When the ticket lands, repoint
+ * `spdx:check`/`spdx:fix` and delete this file plus
+ * scripts/lib/{spdx-discovery,spdx-fix,reuse-toml}.ts.
  *
  * SPDX license header guard — reads REUSE.toml for per-directory rules.
  *
