@@ -127,7 +127,6 @@
     "vitepress-plugin-mermaid"
   ],
   "ignoreBinaries": [
-    "abort", // worktree CLI subcommand literal in finalize-signal-safety.test.ts spawnSync; knip mistakes it for a binary
     "scancode", // license compliance gate (scripts/check-licenses.ts)
     "fossa", // license compliance gate (scripts/check-licenses.ts)
     "tail", // changelog gate (scripts/check-changelog.ts git-tag query)
@@ -142,7 +141,7 @@
 
     // Native benchmarks
     // Standalone bench entrypoints (run directly, never imported) --
-    // same class as scripts/worktree leftovers above.
+    // same class as the standalone gate CLIs listed further down.
     "tests/benchmarks/blake3.bench.ts",
     "tests/benchmarks/zstd.bench.ts",
 
@@ -187,10 +186,6 @@
     // `bun run dead:code:src` report diff-mode.mjs / lcov.mjs / waivers.mjs as
     // unused files. Measured, then reverted.
     "scripts/check/coverage/**",
-    // Generated epic title lookup: produced by epic-owner-pick.ts --gen
-    // (run manually, not import-wired); consumed by the epic-owner rule
-    // through in-process scanEpicTitles(), never via an import edge.
-    "scripts/plan/epic-titles.generated.ts",
 
     // The six src/ ignore entries below exist for the --no-gitignore passes
     // only. A plain knip run resolves zero src/ files and therefore reports

@@ -64,8 +64,7 @@ function isolatedGitEnv() {
     // inject config straight from the environment, so a hostile
     // `core.hooksPath` or `commit.gpgsign` rides past the
     // GIT_CONFIG_GLOBAL=/dev/null below and breaks the fixture commit for
-    // reasons unrelated to the gate. Mirrors
-    // scripts/worktree/utils/git.ts.
+    // reasons unrelated to the gate. Mirrors giwt's own isolated-git env.
     if (key.startsWith("GIT_",)) { continue; }
     env[key] = value;
   }

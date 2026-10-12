@@ -96,9 +96,8 @@ if (GATES_FILTER && SKIP_GATES_FILTER) {
  *   it: a typo'd ref killed the whole sweep with a Bun stack trace and NO check
  *   report. The wrapped call rethrows an Error naming the offending ref and
  *   what a valid ref looks like, which the entry prints as a one-line message.
- *   `resolveDiffBase` in `scripts/worktree/commands/finalize.ts` still
- *   validates the ref first, so the finalize path fails early with its own
- *   message.
+ *   `giwt rebase` still validates the ref first, so the rebase flow fails
+ *   early with its own message.
  */
 export function changedFiles(base, cwd = DIFF_ROOT,) {
   if (!base) { return []; }
