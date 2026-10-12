@@ -22,6 +22,7 @@ import type { Config, } from "./config/schema";
 import { startAppScheduler, } from "./cron";
 import type { Db, } from "./db";
 import type { TranslatorFn, } from "./i18n/types";
+import { getLogger, } from "./logger";
 import { authenticate, } from "./middleware/auth";
 import {
   CSRF_EXEMPT_ROUTES,
@@ -211,7 +212,10 @@ export function createApp(deps: AppDeps,): Elysia {
   // validation handler) — see the ordering note there.
   // ── Graceful shutdown: flush pending async-store writes + stop scheduler
   app.onStop(() => {
-    void asyncStore.flush();
+    void asyncStore.flush().catch((err,) => {
+      getLogger().child({ module: "async", },).warn("async store flush failed on stop", { error: String(err,), },);
+    },);
+
     scheduler.stop();
   },);
 

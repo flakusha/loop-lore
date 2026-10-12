@@ -63,6 +63,10 @@ export function createRequestHandler(
       response,
       requestId,
       startMs,
+    },).catch((err,) => {
+      // Access logging is best-effort; never let its rejection (e.g. the
+      // handle resolver's cache miss path) surface as an unhandled rejection.
+      logger.warn("access log failed", { error: String(err,), },);
     },);
 
     return response;
