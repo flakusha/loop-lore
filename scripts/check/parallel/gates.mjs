@@ -220,3 +220,5 @@ checks["weave - damage scan"] = process.env.WEAVE_BASE
 // static one.
 applyDiffScopedStaticGates(checks,);
 applyGateFilter(checks,);
+
+// Resolved: deletion commit (dynamic assignments) + dev's giwt size gate paths

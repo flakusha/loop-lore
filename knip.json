@@ -28,13 +28,10 @@
     "plugins/core/*/plugin.ts",
     "plugins/core/*/index.ts",
     "plugins/community/*/plugin.ts",
-    "scripts/worktree/index.mjs",
     "scripts/backup-sqlite.ts",
     "scripts/validate-backup-restore.ts",
     "scripts/check-no-shell-refs.ts",
-    "scripts/check-migration-ordering.ts",
-    "scripts/lib/assertions.ts",
-    "scripts/lib/colors.ts"
+    "scripts/check-migration-ordering.ts"
   ],
   "project": [
     // src/ is INVISIBLE to a gitignore-respecting knip run: src/.gitignore is a
@@ -178,10 +175,6 @@
     // Sub-modules of the harmonization gate: statically imported only by the
     // ignored standalone CLI above, so unreachable from knip entrypoints.
     "scripts/fe-be-harmonization/**",
-    // Finalize-lock child-process fixture: spawned by
-    // scripts/worktree/finalize-lock-cleanup.test.ts via path (not a static
-    // import knip can trace).
-    "scripts/worktree/finalize-lock-fixture.ts",
 
     // Coverage gate script: run via check-parallel.mjs shell string
     // (bun run test:coverage && bun run scripts/check/coverage.mjs --floor=80),
