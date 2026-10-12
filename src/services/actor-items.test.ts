@@ -78,6 +78,11 @@ describe("ActorItemsService", () => {
   });
 
   test("equip rejects a second item in the same slot", async () => {
+    // Reset equipped state — earlier tests in this shared-db file leave a
+    // weapon equipped, which would conflict before this test's own pair.
+    await db.updateTable("actor_items",).set({ equipped: EquipState.Unequipped, },)
+      .where("equipped", "=", EquipState.Equipped,).execute();
+
     await insertActorItems(db, actorId, "Sword A", "weapon", { weight: 3, },);
     await insertActorItems(db, actorId, "Sword B", "weapon", { weight: 3, },);
     const weapons = await db.selectFrom("actor_items",).where("item_type", "=", "weapon",).selectAll().execute();
@@ -85,15 +90,15 @@ describe("ActorItemsService", () => {
     const b = weapons[weapons.length - 1]!;
 
     await svc().equip(actorId, a.id,);
-    const res = await svc().equip(actorId, b.id,);
-    expect(res.ok,).toBe(false,);
-    expect(res.reason,).toMatch(/already equipped/,);
+    await expect(svc().equip(actorId, b.id,),).rejects.toMatchObject({
+      tag: "actor-item-slot-conflict",
+    },);
   });
 
-  test("equip returns error for unknown item", async () => {
-    const res = await svc().equip(actorId, "missing",);
-    expect(res.ok,).toBe(false,);
-    expect(res.reason,).toBe("Item not found",);
+  test("equip throws for unknown item", async () => {
+    await expect(svc().equip(actorId, "missing",),).rejects.toMatchObject({
+      tag: "actor-item-not-found",
+    },);
   });
 
   test("unequip clears equipped state", async () => {
@@ -232,18 +237,18 @@ describe("ActorItemsService", () => {
     const items = await db.selectFrom("actor_items",).where("name", "=", "Lump",).selectAll().execute();
     const item = items[items.length - 1]!;
 
-    const res = await svc().transfer(actorId, target, item.id, 5,);
-    expect(res.ok,).toBe(false,);
-    expect(res.reason,).toMatch(/Insufficient/,);
+    await expect(svc().transfer(actorId, target, item.id, 5,),).rejects.toMatchObject({
+      tag: "actor-item-insufficient-quantity",
+    },);
   });
 
   test("transfer with same source and target refuses", async () => {
     await insertActorItems(db, actorId, "Trinket", "misc", { quantity: 1, } as never,);
     const items = await db.selectFrom("actor_items",).where("name", "=", "Trinket",).selectAll().execute();
     const item = items[items.length - 1]!;
-    const res = await svc().transfer(actorId, actorId, item.id, 1,);
-    expect(res.ok,).toBe(false,);
-    expect(res.reason,).toMatch(/same/,);
+    await expect(svc().transfer(actorId, actorId, item.id, 1,),).rejects.toMatchObject({
+      tag: "actor-item-self-transfer",
+    },);
   });
 
   test("ENCUMBRANCE exposed", () => {
