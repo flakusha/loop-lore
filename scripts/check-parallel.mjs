@@ -98,12 +98,12 @@ async function main() {
   // with failed === 0. Printing "All checks passed" then is the blind spot: an
   // auditor skims the terminal line and concludes the suite is green. Exit code
   // is deliberately unchanged — advisory gates must not fail the run.
-  const advisoryFailed = results.filter((r,) => r.advisory && !r.passed && !r.skipped,).length;
+  const advisoryFailed = results.filter((r,) => r.advisory && !r.passed && !r.skipped).length;
   if (advisoryFailed > 0) {
     console.log(
       `\n=== All blocking checks passed, but ${advisoryFailed} ADVISORY gate(s) failed ===`,
     );
-    console.log("!!! This run is NOT green. See the ADVISORY entries above.");
+    console.log("!!! This run is NOT green. See the ADVISORY entries above.",);
   } else {
     console.log("\n=== All checks passed ===",);
   }
