@@ -91,10 +91,10 @@ const onDisk = (f,) => existsSync(path.resolve(PROJECT_ROOT, f,),);
 export function applyDiffScopedStaticGates(checks,) {
   if (DIFF_BASE) {
     const scopedLint = pickScopedFiles(CHANGED_FILES, /\.(ts|tsx|js|jsx|mjs|cjs|md)$/, onDisk,);
-    // `--concurrency=8` mirrors package.json's `lint:eslint`; the file list is
+    // `--concurrency=4` mirrors package.json's `lint:eslint`; the file list is
     // appended to the same invocation, so the config is identical either way.
     if (scopedLint) {
-      checks["lint - eslint"] = `bunx eslint --concurrency=8 ${scopedLint.join(" ",)}`;
+      checks["lint - eslint"] = `bunx eslint --concurrency=4 ${scopedLint.join(" ",)}`;
     }
     const scopedMd = pickScopedFiles(CHANGED_FILES, /\.md$/, onDisk,);
     if (scopedMd) {
