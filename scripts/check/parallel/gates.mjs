@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 340
 
 /**
- * The gate table and its command builders: every named check the runner can
- * execute plus the coverage/jscpd/weave command assembly. Module init builds
- * the table, applies the --gates/--skip-gates filter via filter.mjs, and
+ * Gate command assembly. The static registry (`checks`, `ADVISORY_GATES`) lives
+ * in `gate-table.mjs`; this module replaces its NOOP placeholders with the real
+ * per-RUN commands, applies the --gates/--skip-gates filter via filter.mjs, and
  * leaves `checks` ready to run.
  */
 
@@ -28,185 +27,18 @@ import {
   SCOPED_DIFF_SRC_FILES,
 } from "./context.mjs";
 import { applyGateFilter, } from "./filter.mjs";
-import { filterPaths, matchesSkip, SKIP_PATTERNS, } from "./test-skip.mjs";
+import { ADVISORY_GATES, checks, } from "./gate-table.mjs";
+import { filterPaths, SKIP_PATTERNS, } from "./test-skip.mjs";
 
-// oxlint-disable-next-line sort-keys
-export const checks = {
-  // Type checking
-  "typecheck - backend": "bun run typecheck",
-  "typecheck - frontend": "bun run typecheck:frontend",
-  "typecheck - coverage": "bun run typecheck:coverage",
-  "typecheck - coverage - frontend": "bun run typecheck:coverage:frontend", // 95% floor each (re-enabled after TS5.9 unblock; type-coverage-core uses ts.SyntaxKind.Unknown, TS7-incompatible)
-  // BUG-typecheck-scripts-worktree-referenceerror-class-bugs-ship-gr:
-  // scripts/worktree CLI ships outside tsconfig.backend.json (src/** only).
-  // Scoped tsconfig.scripts.json relaxes strict debt but keeps name
-  // resolution so unimported identifiers (TS2304/TS2552 ReferenceError
-  // class) fail the gate instead of crashing at runtime.
-  "typecheck - scripts": "bunx tsgo --noEmit -p tsconfig.scripts.json",
-  // ESLint (single canonical entry — duplicate "lint - ts (eslint)" removed;
-  // running ESLint twice doubled its 1.5GB RSS peak with no new signal.)
-  "lint - eslint": "bun run lint:eslint",
-  // oxlint remains manual; the canonical runner does not report it as correctness evidence.
-
-  // Formatting
-  "format - dprint": "bun run format",
-  "md - lint": "bun run md:lint",
-  // Mermaid block lint — every ```mermaid fence in docs/ and .plan/ must parse.
-  // mmdlint is headless (jsdom-backed), no browser, bun-native, <30s on the whole tree.
-  "mermaid - lint (mmdlint)": "bun run mermaid:lint",
-
-  // Dead-code analysis (knip)
-  "dead - code (knip)": "bun run dead:code",
-
-  // src-covered dead-code gate. `knip.json` `project` covers `src/**/*.ts`,
-  // but `src/.gitignore` is a blanket `.` (it keeps untracked scratch out of
-  // git), and knip honors gitignore -- so without `--no-gitignore` every src
-  // file is invisible and the scan cannot report anything under src/. This gate
-  // is the enforcement point for that: it re-runs knip with the gitignore layer
-  // lifted, so the src coverage declared in knip.json is actually live and
-  // cannot silently regress to a no-op.
-  //
-  // Scoped to `--include files` (unused MODULES, not unused exports): the
-  // export-level analysis of src/ is a separate and much larger sweep tracked
-  // by its own ticket, and gating on it here would block every branch until
-  // that bulk cleanup lands. The unused-file list is the reviewable slice -- a
-  // whole unreferenced file can be deleted outright.
-  "dead - code (src files)": "bun run dead:code:src",
-
-  // Circular-import check remains manual; current debt is non-blocking.
-
-  // Wiring + dead-code check gate (routes mounted, services wired, plugins registered)
-  "wiring - check": "bun run scripts/check-wiring.ts",
-  "fe-be - harmony": "bun run scripts/check-fe-be-harmonization.ts",
-
-  // API reference drift: docs/reference/api.md vs the generated spec.
-  // BLOCKING, not advisory: the gate regenerates the spec itself (~1s) from
-  // tracked sources only, so unlike the .plan/ freshness checks it cannot drift
-  // from a concurrent dev merge — api.md and the route modules both move in the
-  // same commit that would have to touch them.
-  "api - doc drift": "bun run scripts/check/api-doc-drift.mjs",
-
-  // Changelog gate (Keep-a-Changelog structure; latest tag must have a section)
-  "changelog - gate": "bun run scripts/check-changelog.ts",
-
-  // DB schema staleness (regenerates into temp dir, diffs vs committed)
-  "db - schema gate": "bun run scripts/check-db-schemas.ts",
-
-  // Migration ordering: numeric-prefix uniqueness + localeCompare-free sort.
-  // BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.
-  "migrations - ordering": "bun run scripts/check-migration-ordering.ts",
-
-  // Conflict markers: no merge/rebase markers may land or linger in tracked
-  // files — observed twice on dev in one window (82124d0b5 entities.ts,
-  // ab4fc259a locales/UI), both survived typecheck + lint; only the unit
-  // suite noticed.
-  "conflict - markers": "bun run scripts/check/conflict-markers.mjs",
-
-  // Backlog index reconciliation (file-map rows ↔ tier files; orphans/phantoms)
-  "backlog - index": "bun run plan:backlog:sync",
-
-  // Reverse code→plan index freshness (code-map.json matches a fresh rebuild)
-  "code-map - freshness": "bun run plan:map:check",
-
-  // Ticket index reconciliation (index.json ↔ .md ↔ git issues)
-  "plan - ticket index (sync)": "bun run plan:sync",
-
-  // Comprehensive .plan/ validation (format, linkage, backlog, tickets,
-  // code-map, links, spdx, naming, epics-doc, status-vocab, matrix)
-  "plan - validate": "bun run plan:validate",
-
-  // Feature matrix freshness (.plan/feature-matrix.md vs a fresh rebuild)
-  "plan - matrix": "bun run plan:matrix:check",
-
-  // Size check
-  "size - check": "bun run scripts/check-file-size.ts",
-  // size - strict: re-enabled — files over 250L need splitting (recent additions)
-  "size - strict": "bun run scripts/check-file-size.ts --strict",
-  // Context weight
-  "context - weight": "bun run scripts/check-context-weight.ts",
-
-  // Shell reference guard (no .sh references in docs)
-  "no - shell - refs": "bun run scripts/check-no-shell-refs.ts",
-
-  // Generated fuzz-test freshness: the committed
-  // src/validation/schema-fuzz.generated.test.ts must match what
-  // scripts/generate-schema-fuzz.ts emits from the schema modules on disk.
-  "fuzz - generated tests": "bun run scripts/generate-schema-fuzz.ts --check",
-
-  // Locale catalog reconciliation: every public/public/locales/*.json must
-  // match en.json (missing keys get the English fallback, extras are stale).
-  // BLOCKING, not advisory: the check is deterministic over tracked files and
-  // cannot drift from a concurrent dev merge. `bun run i18n:fix` repairs.
-  "i18n - reconcile": "bun run scripts/i18n-reconcile.ts --ci",
-
-  // Test-gap ratchet: runtime exports no test file names, vs a committed
-  // baseline. BLOCKING, not advisory: the matcher requires a real import
-  // edge (not an incidental token), so the signal is trustworthy enough to
-  // enforce. Adding the gate to ADVISORY_GATES is the escape hatch if it is
-  // ever found to drift like jscpd does.
-  "tests - coverage gaps": "bun run scripts/check/test-gaps.mjs",
-
-  // Coverage gate: per-module line % vs 80% floor (see AGENTS.md Verification Gates).
-  // Bun writes lcov into the per-RUN coverage dir so concurrent and
-  // successive runs do not clobber each other. `coverage.mjs` is told
-  // where to read from via `--coverage-dir=<COVERAGE_DIR_RELATIVE>`.
-  // The actual command is built lazily in `coverageCommand()` below so
-  // it can reference the per-RUN constants (declared after this block).
-  "coverage - per-module line %": NOOP_OK, // placeholder; replaced before run
-  // Blocking: resolve every physical view through production includes/icons.
-  "frontend - template preflight": "bun run scripts/check-frontend-templates.ts",
-  // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
-  "frontend - innerHTML xss": "bun run scripts/check-frontend-innerhtml-xss.ts",
-  // Browser baseline: one serial gate runs the complete Playwright surface.
-  // Built lazily in `e2eBrowserCommand()` below, like the coverage gate, so
-  // it can narrow to the specs `--diff-base` touched.
-  "e2e - browser (baseline)": NOOP_OK, // placeholder; replaced before run
-  // Banned-pattern findings are collected in the non-blocking report below.
-  // Epic coverage remains manual; current planning debt is non-blocking.
-};
-
-// Advisory gates: these RUN and REPORT like any other gate, but a failure
-// does not fail the run. They are all generated-artifact freshness checks
-// that drift from concurrent dev-side merges and are reconciled post-merge
-// anyway — blocking a worktree finalize on them is pure friction.
-//
-// ponytail: the set is open-ended; add a gate here when it is proven to
-// drift from concurrent merges faster than the branch can finalize. The
-// failure is still visible in the report as ADVISORY, so the signal is
-// not lost — it just does not block.
-export const ADVISORY_GATES = new Set([
-  // .plan/ validation: format, linkage, backlog, tickets, code-map, links,
-  // spdx, naming, epics-doc, status-vocab, matrix — all drift when dev merges
-  // plan changes concurrently.
-  "plan - validate",
-  // Ticket index reconciliation: index.json ↔ .md ↔ git issues — drifts when
-  // dev merges ticket changes concurrently.
-  "plan - ticket index (sync)",
-  // Code-map freshness: code-map.json matches a fresh rebuild — drifts when
-  // dev merges code changes concurrently.
-  "code-map - freshness",
-  // Feature matrix freshness: .plan/feature-matrix.md vs a fresh rebuild —
-  // drifts when dev merges plan changes concurrently.
-  "plan - matrix",
-  // jscpd ratchet: clone count vs committed baseline — drifts when dev
-  // merges add or remove clones concurrently.
-  "jscpd ratchet",
-  // src dead-file scan: the src tree currently carries confirmed-unreachable
-  // modules, enumerated by path in the cleanup ticket. ADVISORY while that
-  // debt is outstanding — the gate still RUNS, so a reopened blindspot (knip
-  // silently skipping src/ again) is visible in the report instead of being
-  // invisible. Flip to blocking once the enumerated files are deleted and
-  // `bun run dead:code:src` exits 0.
-  "dead - code (src files)",
-],);
+// Re-exported so `runner.mjs` keeps one import site for the assembled table.
+export { ADVISORY_GATES, checks, };
 
 /**
- * Build the coverage gate command. Lives here — after the multi-declarator
- * `const` above — because it reads both the diff-scope results (`SCOPED_*`,
- * declared above the checks table) and the per-RUN scratch paths
- * (`COVERAGE_DIR_RELATIVE`, initialized inside that statement). The checks
- * table carries a NOOP placeholder at parse time; this assignment is the
- * "replaced before run" step promised there.
+ * Build the coverage gate command. Reads both the diff-scope results
+ * (`SCOPED_*`, from context.mjs) and the per-RUN scratch paths
+ * (`COVERAGE_DIR_RELATIVE`, from config.mjs), so it cannot live in the static
+ * registry. `gate-table.mjs` carries a NOOP placeholder for this gate; the
+ * assignment below is the "replaced before run" step promised there.
  *
  * Both modes write lcov into the per-RUN coverage dir so concurrent and
  * successive runs never clobber each other, and so the stdout contract can
@@ -297,8 +129,8 @@ const BROWSER_SPEC_DIR = "tests/e2e/flows/browser/";
 
 /**
  * Build the browser baseline command. Beside `coverageCommand()` because it
- * reads the same diff-scope inputs; the checks table carries a NOOP
- * placeholder and this assignment is the "replaced before run" step.
+ * reads the same diff-scope inputs; `gate-table.mjs` carries a NOOP
+ * placeholder and the assignment below is the "replaced before run" step.
  *
  * Plain mode delegates to the package script it replaces (`test:e2e:browser`
  * = `E2E_SAFEGUARD=1 bun run scripts/run-browser-tests.ts`), so it inherits the
