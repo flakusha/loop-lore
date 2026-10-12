@@ -4,7 +4,7 @@ Pilot migration base (try 1). Source of truth for which `package.json` scripts s
 
 ## Install
 
-- Dependency: `"giwt": "github:flakusha/giwt#c53ffb5c9e09a6242b4a0cc60e27c05155b9811f"` (commit-pinned to giwt master HEAD; bumps per try-4/6/7 as the owner merges upstream). Owner installs manually with SSH keys (agent shells have no ssh by design); requires keys in every install env incl. CI, else `bun install` exits 1.
+- Dependency: `"giwt": "github:flakusha/giwt"` in `package.json` — a **floating** spec with no branch, tag or sha, so a resolve takes whatever the remote's default branch (`master`) points at. The resolved commit lives only in `bun.lock` (`giwt@github:flakusha/giwt#<sha>`), which is what actually pins the build; advance it with `bun update giwt`. Because the spec is floating, `bun.lock` — not `package.json` — is what to read when asking "which giwt is this?", and it can only name a commit that is already on the remote: a lock entry for an unpushed sha does not resolve (bun 404s on `codeload`). CI still needs a key or token for the git fetch.
 - `plan:sync` / `plan:sync:fix` → `giwt sync [--fix]` (parity proven try 1 from source: both green).
 - Binary link (user-owned, outside repo — not committed): `ln -s /home/flak/git-ai/giwt/bin/giwt ~/.local/bin/giwt`.
 
@@ -202,8 +202,9 @@ gaps between the repo's wiring and what the pinned giwt actually provides.
 ### Pin enforcement
 
 `~/.local/bin/giwt` is a symlink to a *mutable local checkout*, so a bare
-`giwt` can run a different commit than `bun.lock` pins — today they happen to
-agree (`51fddd5`), which is coincidence, not enforcement.
+`giwt` can run a different commit than `bun.lock` pins — when they agreed that
+was coincidence, not enforcement, and they drift as soon as the local
+giwt checkout moves. Read the sha off `bun.lock`, not off the symlink.
 
 - **`package.json` scripts need no change.** `bun run <script>` prepends
   `node_modules/.bin` ahead of `~/.local/bin`, verified by probe: every
