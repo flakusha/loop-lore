@@ -9,14 +9,14 @@
 
 **Summary:**
 
-Collapse the parallel config type/shim layers onto src/config/sections, delete the superseded one-shot schema emitters and the finished config.toml migration, and drop the write-only config keys. Research: .tmp/simplification/platform.md. Re-derive with 'bun run dead:code:src'.
+Collapse the parallel config type/shim layers onto src/config/sections, delete the superseded one-shot schema emitters and the finished config.toml migration, and drop the write-only config keys. Research: the platform slice of the over-engineering audit (scratch, not on disk). Re-derive with 'bun run dead:code:src'.
 
 **Context:**
 
 `src/config/sections/` is already the single source of truth — `src/config/schema-class/index.ts:1-15`
 says so in its own header ("Single source of truth … Replaces hand-duplicated …"). Three parallel
 layers sit on top of it and duplicate what the `*Section` classes already declare. Source:
-`.tmp/simplification/platform.md` — findings "`delete:` `src/config/schema/`", "`yagni:` the parallel
+the platform slice of the over-engineering audit (scratch, not on disk) — findings "`delete:` `src/config/schema/`", "`yagni:` the parallel
 `src/config/schema-class/` shim layer", "`delete:` the four config generators", "`delete:`
 `src/config/migrate-config.ts`", plus the three write-only-key findings. Re-derive with
 `bun run dead:code:src`.
