@@ -232,12 +232,24 @@ export async function start() {
     process.exit(0,);
   };
 
-  process.on("SIGTERM", () => void shutdown("SIGTERM",),);
-  process.on("SIGINT", () => void shutdown("SIGINT",),);
+  /** Run the graceful shutdown, guaranteeing a rejected shutdown step (a
+   *  stuck store flush or plugin unload) still exits the process instead of
+   *  surfacing an unhandled rejection from inside the signal / fatal-error
+   * @param signal
+   *  handlers below. */
+  function runShutdown(signal: string,): void {
+    shutdown(signal,).catch((err,) => {
+      process.stderr.write(`[shutdown] ${signal} failed: ${String(err,)}\n`,);
+      process.exit(1,);
+    },);
+  }
+
+  process.on("SIGTERM", () => runShutdown("SIGTERM",),);
+  process.on("SIGINT", () => runShutdown("SIGINT",),);
   // SIGHUP is unsupported on Windows — registering a handler there throws at
   // boot. Windows never delivers SIGHUP, so omitting the handler is safe.
   if (process.platform !== "win32") {
-    process.on("SIGHUP", () => void shutdown("SIGHUP",),);
+    process.on("SIGHUP", () => runShutdown("SIGHUP",),);
   }
 
   process.on("uncaughtException", (err,) => {
@@ -249,7 +261,7 @@ export async function start() {
       /* last resort */
     }
 
-    void shutdown("uncaughtException",);
+    runShutdown("uncaughtException",);
   },);
 
   process.on("unhandledRejection", (reason,) => {
@@ -260,6 +272,6 @@ export async function start() {
       /* last resort */
     }
 
-    void shutdown("unhandledRejection",);
+    runShutdown("unhandledRejection",);
   },);
 }
