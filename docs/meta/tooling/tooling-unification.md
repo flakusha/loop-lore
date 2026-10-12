@@ -11,8 +11,13 @@ Everything below cites a file actually read. Where a claim rests on a subagent
 transcript rather than a direct read, the path is still given so it can be checked.
 
 **Revision scope.** Citations into A (this repo) are live. Citations into B
-(`giwt/src/**`) were verified against the pinned dependency in `bun.lock`
-(`flakusha-giwt-b4d1928`) and will drift when giwt moves; re-check them there.
+(`giwt/src/**`) were verified against the dependency resolved in `bun.lock`
+(`flakusha-giwt-b4d1928`) and re-verified when this doc was rebased onto `dev`
+at `bc2f3f405` — the pin was unchanged at that point. Note that `package.json`
+specifies giwt as a floating `github:flakusha/giwt`, not a pinned commit, so the
+next `bun install` can move the resolution and these line numbers with it; giwt's
+`master` has moved since, and the lock has not followed yet. Re-check them
+against whatever `bun.lock` resolves when you read this.
 Citations into C (`omp-plugins`) could not be verified here at all — that
 checkout is not available in this repo — and are carried as written from the
 session that read them.

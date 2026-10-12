@@ -10,12 +10,11 @@ Every number below cites the artifact it came from. Anything not measured on
 this host is marked **UNMEASURED** and is a proposal, not a result.
 
 **Where the implemented scopes live.** The diff-scoped `lint - eslint` and
-`md - lint` described in §4 and §8 are shipped code on the `finalize-perf`
-branch (commit `9318f1d0`, which adds `scripts/check/parallel/gates-scope.mjs`
-and its test and calls `applyDiffScopedStaticGates(checks)` from `gates.mjs`).
-This doc landed on `docs-tooling-reports` off `dev`, so `gates-scope.mjs` is
-**not in the tree you are reading** until `finalize-perf` merges. Everything else
-in the doc describes shipped `dev` behaviour.
+`md - lint` described in §4 and §8 are shipped code: `bc2f3f405` (from
+`finalize-perf`, where it was `9318f1d0`) adds
+`scripts/check/parallel/gates-scope.mjs` and its test and calls
+`applyDiffScopedStaticGates(checks)` from `gates.mjs`. It is on `dev`, so every
+command in §1 runs in the tree you are reading.
 
 ---
 
@@ -38,8 +37,7 @@ bunx eslint --concurrency=8 <the five files below>     # 5.8s / 2137 MB
 #   .plan/feature-matrix.md
 #   .plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md
 
-# The scoping guard rails, no gate spawned.
-# NB: this file ships on `finalize-perf` only — see the header note before running it.
+# The scoping guard rails, no gate spawned
 bun test scripts/check/parallel/gates-scope.test.mjs
 ```
 
@@ -156,10 +154,9 @@ Two findings that contradict the current docs:
 2. **`lint - eslint` could not fail on the measured tree.** It exits 0 with 2352
    warnings and 0 errors (`--max-warnings` is not set in `package.json`
    `lint:eslint`, `package.json:41`). The gate costs 18.4s and 19.4 GB to report
-   nothing actionable. That is a property of the rule set on that tree, not of
-   the script: `fix-unhandled-test-json-parse` registers a local rule at `"error"`
-   (`local/no-extensionless-require`), so the gate is failable once that branch
-   lands.
+   nothing actionable. That was a property of the rule set on the tree measured,
+   not of the script: `local/no-extensionless-require` has since been registered
+   at `"error"` (`5a9e80a3a`), so the gate is failable today.
 
 ---
 
