@@ -33330,6 +33330,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-map-battle-equipment.md"
     },
     {
@@ -34663,6 +34667,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-companion-pet-mount.md"
+    }
+  ],
+  "src/routes/comparisons-export.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-.md"
     }
   ],
   "src/routes/config-menu.ts": [
