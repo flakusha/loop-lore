@@ -11,7 +11,7 @@
 
 **Summary:**
 
-When a checkpoint has no usable **metadata**, infer identity/hyperparameters from tensor names and shapes alone: depth/dims/model_type/arch per config class. Fallback tier behind the tensor-key-prefix classifier.
+When a checkpoint has no usable `__metadata__`, infer identity/hyperparameters from tensor names and shapes alone: depth/dims/model_type/arch per config class. Fallback tier behind the tensor-key-prefix classifier.
 
 Reference: stable-diffusion.cpp XxxConfig::detect_from_weights(tensor_map, prefix) in src/model/diffusion/{flux,wan,z_image,unet}.hpp; ModelLoader::get_sd_version (src/model_loader.cpp:438); ComfyUI comfy/model_detection.py detect_unet_config state-dict heuristics.
 
