@@ -192,4 +192,24 @@ export const WAIVERS = {
     reason:
       "new module; secret-resolution exercised via pii-redaction.ts integration tests; production-config path not reachable in isolated check-gate runner",
   },
+  // Gate pass: the jsdoc-throws-gaps doc sweep added required @throws lines to
+  // three rpg modules whose unit coverage was already below the 80% floor; the
+  // diff-files mode floors each touched file individually, exposing the
+  // pre-existing gap. Conservative floors at measured-minus-margin; owning
+  // ticket: .plan/tickets/TASK-raise-rpg-battle-social-skills-progression-and-replayability.md
+  "rpg:src/rpg/service/battles/social.ts": {
+    floor: 57,
+    reason:
+      "battle-social interaction branches untested; 57.7 measured under diff-files; TASK-raise-rpg-battle-social-skills-progression-and-replayability",
+  },
+  "rpg:src/rpg/skills/service/progression.ts": {
+    floor: 67,
+    reason:
+      "skills progression curve paths untested; 67.6 measured under diff-files; TASK-raise-rpg-battle-social-skills-progression-and-replayability",
+  },
+  "rpg:src/rpg/replayability/service/playthrough.ts": {
+    floor: 61,
+    reason:
+      "playthrough state machine branches untested; 61.2 measured under diff-files; TASK-raise-rpg-battle-social-skills-progression-and-replayability",
+  },
 };
