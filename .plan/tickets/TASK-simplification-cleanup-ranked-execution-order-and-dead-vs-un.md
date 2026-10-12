@@ -33,7 +33,7 @@ rule in AGENTS.md.
 
 Re-derived independently on `dev` after the follow-up audits. Full ledger in
 the audit's ranked `targets.md` (scratch, not on disk); the two corrections that would actively mislead an implementer are
-recorded inline in `platform.md`:
+recorded inline below:
 
 - **`src/transport/` dead-list** — reachability CONFIRMED (nothing imports the handler half), but the
   "low-risk delete" framing is REFUTED. `TASK-transport-layer-expansion` is **In Progress / "Built"** and
@@ -59,7 +59,7 @@ recorded inline in `platform.md`:
   coverage-baseline index list.
 
 - **Locale `harness.*`** — CONFIRMED excluded from any orphan-key deletion; bidirectional parity test.
-- **Crypto keep-list** — the original claim was WRONG and is CORRECTED in `platform.md`. Only
+- **Crypto keep-list** — the original claim was WRONG; the corrected keep-list is this bullet, not a scratch file. Only
   `server-registry.ts` is production-live. `key-pairs.ts` / `ratchet.ts` are imported only by
   `src/frontend/e2e/**`, which is itself unwired and unbundled, so they are not production-live; and
   `TASK-e2ee-double-ratchet` is OPEN, making the cluster contested future work rather than settled dead code.
