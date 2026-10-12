@@ -212,4 +212,19 @@ export const WAIVERS = {
     reason:
       "playthrough state machine branches untested; 61.2 measured under diff-files; TASK-raise-rpg-battle-social-skills-progression-and-replayability",
   },
+  // Gate pass: the safe-json barrel sweep touched two route handlers whose
+  // coverage lives in the browser e2e suite, not unit tests; diff-files mode
+  // floors each touched file individually at 80%, exposing the gap.
+  // integration-only category. Owning ticket:
+  // .plan/tickets/TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-.md
+  "routes:src/routes/battle/equipment.ts": {
+    floor: 62,
+    reason:
+      "battle-equipment route exercised by browser e2e, not unit; 62.1 measured under diff-files; TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-",
+  },
+  "routes:src/routes/comparisons-export.ts": {
+    floor: 66,
+    reason:
+      "comparisons-export route exercised by browser e2e, not unit; 66.9 measured under diff-files; TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-",
+  },
 };
