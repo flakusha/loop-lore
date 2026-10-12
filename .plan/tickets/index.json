@@ -30560,6 +30560,19 @@
     "title": "Cover frontend VN pages: new-chat, quests, worlds",
     "type": "TASK"
   },
+  "TASK-COVER-ROUTES-BATTLE-EQUIPMENT-AND-COMPARISONS-EXPORT-TO-THE-": {
+    "hash": "5f09a48",
+    "git_issue": "5f09a48",
+    "extid": "TASK-COVER-ROUTES-BATTLE-EQUIPMENT-AND-COMPARISONS-EXPORT-TO-THE-",
+    "type": "TASK",
+    "title": "Cover routes battle-equipment and comparisons-export to the 80 percent unit floor",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-.md",
+    "status": "Not Started"
+  },
   "TASK-COVERAGE-GATE-TRUE-MULTI-WORKER-FANOUT-INVESTIGATION": {
     "epic": "",
     "extid": "TASK-COVERAGE-GATE-TRUE-MULTI-WORKER-FANOUT-INVESTIGATION",
@@ -50296,7 +50309,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-unify-safe-json-import-convention.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-UNIT-TESTS-UNTESTED-BATCH": {
     "epic": "epic-testing-qa",
