@@ -29143,6 +29143,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shrink-unreferenced-types-and-helpers-in-routes-validation.md"
     }
   ],
   "src/middleware/license-gate.ts": [
@@ -29581,6 +29585,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shrink-unreferenced-types-and-helpers-in-routes-validation.md"
     }
   ],
   "src/migrations/character-world-split.ts": [
@@ -35281,6 +35289,12 @@
       "source": ".plan/tickets/TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md"
     }
   ],
+  "src/routes/http-utils/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shrink-unreferenced-types-and-helpers-in-routes-validation.md"
+    }
+  ],
   "src/routes/i18n.ts": [
     {
       "kind": "ticket",
@@ -36467,6 +36481,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-headers-additional-useful-response-headers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shrink-unreferenced-types-and-helpers-in-routes-validation.md"
     }
   ],
   "src/routes/middleware/version-redirect.test.ts": [
