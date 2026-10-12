@@ -37,8 +37,20 @@ and "`delete:` `src/crypto/activitypub-keys.ts`". Re-derive the list with `bun r
 - `src/crypto/activitypub-keys.ts:1-170`
 - the `*.test.ts` files that exist only to test the above (the DH-ratchet regression suites included)
 
-**MUST RETAIN in `src/crypto/e2e/`:** `key-pairs.ts` (3 production importers), `ratchet.ts` (4),
-`server-registry.ts` (1: `src/routes/actor-e2e-pubkeys.ts:25`).
+**MUST RETAIN — the keep-list is TWO CASES, not one:**
+
+- **server-live** — `src/crypto/e2e/server-registry.ts` (1 production importer:
+  `src/routes/actor-e2e-pubkeys.ts:25`). Live today; do not touch.
+- **frontend-e2e-only** — `src/crypto/e2e/key-pairs.ts`, `src/crypto/e2e/ratchet.ts`, and the
+  `src/frontend/e2e/` tree itself. Their only importers are `src/frontend/e2e/{encrypt-message,
+  decrypt-message,key-store}.ts`, and that subtree is neither wired nor bundled (see the
+  Evidence section). **`key-pairs.ts` and `ratchet.ts` MUST be retained until
+  `src/frontend/e2e/e2e-roundtrip.test.ts` has a verified replacement** — they are the only
+  consumers those tests exercise, so deleting them would silently gut a passing suite.
+- `src/frontend/e2e/**` is therefore IN SCOPE for the *decision* this ticket makes, but it is not
+  a delete list: resolve it explicitly (wire it into a bundle, or retire it with its own ticket)
+  rather than leaving it as an unexamined island. Do not delete it as a side effect of the
+  `src/crypto/e2e/` cleanup.
 
 **Evidence:**
 
@@ -49,15 +61,30 @@ and "`delete:` `src/crypto/activitypub-keys.ts`". Re-derive the list with `bun r
 - For the ActivityPub module: `grep -rn "activitypub-keys|ActivityPubActorKey|generateActivityPubKey|rotateActivityPubKey|getActiveActivityPubKey"
   src tests scripts` → only self-references plus a prose comment at
   `src/characters/services/federation-consent.ts:84` that names the file as *not* the path used.
+- CORRECTION (adversarial verification, 2026-10-12) — the keep-list this ticket previously gave was
+  wrong for two of its three entries. `key-pairs.ts` and `ratchet.ts` have **no production
+  importer**; the counts quoted for them were raw import statements inside `src/frontend/e2e/`,
+  a subtree that is itself unwired and not bundled:
+  - `grep -rn "frontend/e2e" .` outside `src/frontend/e2e/` returns only
+    `scripts/check/test-gaps-baseline.json:665-666` (a coverage-baseline symbol list, not an
+    import edge) and `src/crypto/e2e/e2e-session.integration.test.ts:35,39` (a test).
+  - `scripts/build-frontend.mjs:22-59` bundles exactly alpine-init, pages, chat-vendor,
+    chat-list, locale-init, wasm-loader and the two workers. No `knip` entry, no build script
+    and no CI reference reaches `src/frontend/e2e/`.
+  - `bun test src/frontend/e2e/e2e-roundtrip.test.ts` → 3 pass / 0 fail, so both modules are
+    **test-live** and must not be deleted without a verified replacement.
+- `server-registry.ts` is the only genuinely server-live member of the cluster:
+  `src/routes/actor-e2e-pubkeys.ts:25`.
 
 **Caveats / constraints:**
 
-- OWNER DECISION REQUIRED before deleting the ratchet cluster. Open ticket
-  `TASK-e2ee-double-ratchet` ("Client-Side E2E — Phase F Signal-grade double ratchet", epic
-  `epic-crypto`, High risk) asks for X3DH + skipped-key retention + async ratchet state — exactly
-  what this subtree already implements but never wires. Either that ticket is the plan and this code
-  should be *wired* rather than deleted, or the ticket is stale and this subtree is dead weight.
-  Do not delete it unilaterally; record the decision on both tickets.
+- OWNER DECISION REQUIRED before deleting the ratchet cluster. `TASK-e2ee-double-ratchet`
+  ("Client-Side E2E — Phase F Signal-grade double ratchet", epic `epic-crypto`, High risk) is
+  **OPEN** and asks for X3DH + skipped-key retention + async ratchet state — exactly what this
+  subtree already implements but never wires. This cluster is therefore **contested future work,
+  not settled dead code**. Either that ticket is the plan and this code should be *wired* rather
+  than deleted, or the ticket is stale and this subtree is dead weight. Do not delete it
+  unilaterally; record the decision on both tickets.
 - Related open/closed tickets that lose their subject with the delete (the DH-ratchet regression
   suites, `BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard`,
   `BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery`, and
