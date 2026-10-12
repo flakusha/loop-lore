@@ -42,8 +42,8 @@ applies colours only when stdout is a TTY, and exits with `errorExitCode` (defau
 parsing fails. Callers narrow the result with TypeScript inference — there is nothing to annotate.
 
 Imports use no file extension. From `scripts/*.ts` the path is `../src/cli/parser`; from
-`scripts/check/*.mjs` and `scripts/plan/*.ts` it is `../../src/cli/parser`. A `.mjs` script may
-import this `.ts` module directly under Bun.
+`scripts/check/*.mjs` it is `../../src/cli/parser`. A `.mjs` script may import this `.ts`
+module directly under Bun.
 
 ## API
 
