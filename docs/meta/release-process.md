@@ -69,17 +69,13 @@ and stops). Tags use the **bare version format** (`0.1.0`, **no `v` prefix**).
 Tag `HEAD` on `dev` with the agent GPG key (`AGENT_GPG_KEY_ID` from `.credentials.env`):
 
 ```bash
-eval "$(bun run scripts/worktree/utils/credentials.mjs)"
+set -a && source .credentials.env && set +a
 git -c user.signingkey="$AGENT_GPG_KEY_ID" tag -s 0.2.0 -m "loop-lore 0.2.0"
 ```
 
-> **Note:** `scripts/worktree/utils/credentials.mjs` is still the
-> canonical way to load agent signing credentials into the shell
-> environment. `giwt` does not expose a credentials loader — its
-> signing flows read `.credentials.env` directly from inside the
-> worktree where they're invoked. For ad-hoc shell commands (e.g.
-> signing a release tag from the dev checkout), source the helper
-> explicitly as shown above.
+> **Note:** `giwt` reads `.credentials.env` directly from the worktree where
+> it's invoked. For ad-hoc shell commands (e.g. signing a release tag
+> from the dev checkout), source the env file explicitly as shown above.
 
 Annotated + signed only. Never lightweight tags. `version:bump` never tags
 unless the explicit `--tag` flag is passed — and agents must never run it with
