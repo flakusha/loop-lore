@@ -11,12 +11,17 @@
 import type { Kysely, Transaction, } from "kysely";
 import { EquipState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import {
+  InsufficientQuantityError,
+  InvalidQuantityError,
+  ItemNotFoundError,
+  SelfTransferError,
+} from "./errors";
 
-/** */
+/** Transfer success — denials throw the tagged errors in `./errors`. */
 export interface TransferResult {
-  ok: boolean;
-  transferred?: number;
-  reason?: string;
+  ok: true;
+  transferred: number;
 }
 
 /**
@@ -37,10 +42,8 @@ export async function transferItems(
   quantity: number,
   trx?: Transaction<DB>,
 ): Promise<TransferResult> {
-  if (fromActorId === toActorId) { return { ok: false, reason: "Source and target are the same", }; }
-  if (!Number.isInteger(quantity,) || quantity <= 0) {
-    return { ok: false, reason: "Quantity must be a positive integer", };
-  }
+  if (fromActorId === toActorId) { throw new SelfTransferError(); }
+  if (!Number.isInteger(quantity,) || quantity <= 0) { throw new InvalidQuantityError(); }
 
   const run = async (db: Kysely<DB>,): Promise<TransferResult> => {
     const source = await db
@@ -61,8 +64,8 @@ export async function transferItems(
       .where("id", "=", itemId,)
       .executeTakeFirst();
 
-    if (!source) { return { ok: false, reason: "Source item not found", }; }
-    if (source.quantity < quantity) { return { ok: false, reason: "Insufficient quantity", }; }
+    if (!source) { throw new ItemNotFoundError(itemId,); }
+    if (source.quantity < quantity) { throw new InsufficientQuantityError(source.quantity,); }
 
     const remaining = source.quantity - quantity;
     if (remaining === 0) {

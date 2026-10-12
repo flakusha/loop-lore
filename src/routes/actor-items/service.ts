@@ -18,10 +18,13 @@ import type { Kysely, } from "kysely";
 import type { Db, } from "../../db";
 import type { DB, } from "../../db/schema";
 import { ActorItemsService, } from "../../services/actor-items";
+import { type ActorItemError, } from "../../services/actor-items/errors";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, Id, } from "../../validation/schemas";
-import { badRequestResponse, jsonError, jsonResponse, notFoundResponse, } from "../http-utils";
+import { HttpStatus, jsonError, jsonResponse, notFoundResponse, } from "../http-utils";
 import { withOwnerAuth, } from "../http-utils/auth-narrowing";
+import { taggedErrorBoundary, } from "../http-utils/tagged-boundary";
+import type { ErrorStatusMap, } from "../http-utils/tagged-boundary";
 
 const carryResponse = t.Object({
   carried: t.Number(),
@@ -37,6 +40,22 @@ const actionResponse = t.Object({
 },);
 
 const transferBody = t.Object({ toActorId: Id, quantity: t.Number(), },);
+
+/**
+ * HTTP status per tag — the routes-layer mapping. Exhaustive over the union:
+ * a new variant without an entry here is a compile error, which is the
+ * exhaustiveness guarantee the tagged family in
+ * `src/services/actor-items/errors.ts` exists to provide.
+ */
+const ACTOR_ITEM_ERROR_STATUS: ErrorStatusMap<ActorItemError> = {
+  "actor-item-not-found": HttpStatus.NotFound,
+  "actor-item-not-equipable": HttpStatus.BadRequest,
+  "actor-item-slot-conflict": HttpStatus.Conflict,
+  "actor-item-affordance-denied": HttpStatus.Forbidden,
+  "actor-item-self-transfer": HttpStatus.BadRequest,
+  "actor-item-invalid-quantity": HttpStatus.BadRequest,
+  "actor-item-insufficient-quantity": HttpStatus.BadRequest,
+};
 
 /**
  * Resolve the actor's owner; returns a denial Response or null when allowed.
@@ -89,99 +108,110 @@ function actorOwnerCheck(
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function actorItemsGameplayRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
-  return new Elysia({ name: "actor-items-gameplay", },)
-    .post(`${prefix}/actors/:actorId/items/:itemId/equip`, async (ctx: any,) => {
-      return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
-        const res = await new ActorItemsService(database,).equip(ctx.params.actorId, ctx.params.itemId,);
-        if (!res.ok) { return badRequestResponse(res.reason ?? "Cannot equip",); }
-        return jsonResponse(res,);
-      },);
-    }, {
-      params: t.Object({ actorId: Id, itemId: Id, },),
-      response: {
-        200: actionResponse,
-        400: ErrorResponse,
-        401: ErrorResponse,
-        403: ErrorResponse,
-        404: ErrorResponse,
-      },
-      detail: {
-        summary: "Equip actor item",
-        description: "Equip an actor item, validating slot conflicts.",
-        tags: ["Actor Items",],
-      },
-    },)
-    .post(`${prefix}/actors/:actorId/items/:itemId/unequip`, async (ctx: any,) => {
-      return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
-        const res = await new ActorItemsService(database,).unequip(ctx.params.actorId, ctx.params.itemId,);
-        if (!res.ok) { return badRequestResponse(res.reason ?? "Cannot unequip",); }
-        return jsonResponse(res,);
-      },);
-    }, {
-      params: t.Object({ actorId: Id, itemId: Id, },),
-      response: {
-        200: actionResponse,
-        400: ErrorResponse,
-        401: ErrorResponse,
-        403: ErrorResponse,
-        404: ErrorResponse,
-      },
-      detail: { summary: "Unequip actor item", description: "Unequip an actor item.", tags: ["Actor Items",], },
-    },)
-    .get(`${prefix}/actors/:actorId/items/equipped`, async (ctx: any,) => {
-      return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
-        const items = await new ActorItemsService(database,).getEquipped(ctx.params.actorId,);
-        return jsonResponse(items,);
-      },);
-    }, {
-      params: t.Object({ actorId: Id, },),
-      detail: {
-        summary: "List equipped items",
-        description: "List all items currently equipped by an actor.",
-        tags: ["Actor Items",],
-      },
-    },)
-    .get(`${prefix}/actors/:actorId/items/carry`, async (ctx: any,) => {
-      return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
-        const status = await new ActorItemsService(database,).getCarryStatus(ctx.params.actorId,);
-        return jsonResponse(status,);
-      },);
-    }, {
-      params: t.Object({ actorId: Id, },),
-      response: { 200: carryResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
-      detail: {
-        summary: "Actor carry status",
-        description: "Current carried weight, capacity, and encumbrance for an actor.",
-        tags: ["Actor Items",],
-      },
-    },)
-    .post(`${prefix}/actors/:actorId/items/:itemId/transfer`, async (ctx: any,) => {
-      return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
-        const { toActorId, quantity, } = ctx.body as { toActorId: string; quantity: number };
-        const res = await new ActorItemsService(database,).transfer(
-          ctx.params.actorId,
-          toActorId,
-          ctx.params.itemId,
-          quantity,
-        );
+  return (
+    new Elysia({ name: "actor-items-gameplay", },)
+      // Expected business denials arrive as thrown tagged errors (see
+      // src/services/actor-items/errors.ts); this boundary maps each tag to
+      // its HTTP status in one place and answers every other throw with a
+      // logged, sanitized 500. Registered on the family instance, so it
+      // scopes to the routes below and never swallows other families' errors.
+      .onError(({ error, }: any,) =>
+        taggedErrorBoundary<ActorItemError>({
+          module: "routes.actor-items",
+          statusByTag: ACTOR_ITEM_ERROR_STATUS,
+        },)(error,)
+      )
+      .post(`${prefix}/actors/:actorId/items/:itemId/equip`, async (ctx: any,) => {
+        return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
+          const res = await new ActorItemsService(database,).equip(ctx.params.actorId, ctx.params.itemId,);
+          return jsonResponse(res,);
+        },);
+      }, {
+        params: t.Object({ actorId: Id, itemId: Id, },),
+        response: {
+          200: actionResponse,
+          400: ErrorResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+          409: ErrorResponse,
+        },
+        detail: {
+          summary: "Equip actor item",
+          description: "Equip an actor item, validating slot conflicts.",
+          tags: ["Actor Items",],
+        },
+      },)
+      .post(`${prefix}/actors/:actorId/items/:itemId/unequip`, async (ctx: any,) => {
+        return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
+          const res = await new ActorItemsService(database,).unequip(ctx.params.actorId, ctx.params.itemId,);
+          return jsonResponse(res,);
+        },);
+      }, {
+        params: t.Object({ actorId: Id, itemId: Id, },),
+        response: {
+          200: actionResponse,
+          400: ErrorResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: { summary: "Unequip actor item", description: "Unequip an actor item.", tags: ["Actor Items",], },
+      },)
+      .get(`${prefix}/actors/:actorId/items/equipped`, async (ctx: any,) => {
+        return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
+          const items = await new ActorItemsService(database,).getEquipped(ctx.params.actorId,);
+          return jsonResponse(items,);
+        },);
+      }, {
+        params: t.Object({ actorId: Id, },),
+        detail: {
+          summary: "List equipped items",
+          description: "List all items currently equipped by an actor.",
+          tags: ["Actor Items",],
+        },
+      },)
+      .get(`${prefix}/actors/:actorId/items/carry`, async (ctx: any,) => {
+        return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
+          const status = await new ActorItemsService(database,).getCarryStatus(ctx.params.actorId,);
+          return jsonResponse(status,);
+        },);
+      }, {
+        params: t.Object({ actorId: Id, },),
+        response: { 200: carryResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        detail: {
+          summary: "Actor carry status",
+          description: "Current carried weight, capacity, and encumbrance for an actor.",
+          tags: ["Actor Items",],
+        },
+      },)
+      .post(`${prefix}/actors/:actorId/items/:itemId/transfer`, async (ctx: any,) => {
+        return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
+          const { toActorId, quantity, } = ctx.body as { toActorId: string; quantity: number };
+          const res = await new ActorItemsService(database,).transfer(
+            ctx.params.actorId,
+            toActorId,
+            ctx.params.itemId,
+            quantity,
+          );
 
-        if (!res.ok) { return badRequestResponse(res.reason ?? "Cannot transfer",); }
-        return jsonResponse(res,);
-      },);
-    }, {
-      params: t.Object({ actorId: Id, itemId: Id, },),
-      body: transferBody,
-      response: {
-        200: actionResponse,
-        400: ErrorResponse,
-        401: ErrorResponse,
-        403: ErrorResponse,
-        404: ErrorResponse,
-      },
-      detail: {
-        summary: "Transfer actor item",
-        description: "Transfer an item between two actors.",
-        tags: ["Actor Items",],
-      },
-    },);
+          return jsonResponse(res,);
+        },);
+      }, {
+        params: t.Object({ actorId: Id, itemId: Id, },),
+        body: transferBody,
+        response: {
+          200: actionResponse,
+          400: ErrorResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Transfer actor item",
+          description: "Transfer an item between two actors.",
+          tags: ["Actor Items",],
+        },
+      },)
+  ) as unknown as Elysia;
 }

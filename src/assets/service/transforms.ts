@@ -8,14 +8,25 @@
  * Resolution precedence: explicit `context` row → `default` row → undefined
  * (caller falls back to CSS defaults). One source image serves every render
  * context; `sprite` context feeds VN stage compositing.
+ *
+ * Validation failures throw the tagged {@link InvalidTransformError} so the
+ * controller can classify them (400 with the validation message) without
+ * leaking unexpected internal error text (DB failures, invariant violations
+ * → sanitized 500). See `src/errors/tagged.ts` for the carrier convention.
  */
 import type { Kysely, } from "kysely";
 import { TransformContext, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { AssetTransforms, } from "../../db/schema-core";
 import { upsertByUnique, } from "../../db/upsert-helpers";
+import { TaggedError, } from "../../errors/tagged";
 
 export type { AssetTransforms, };
+
+/** A transform value failed range validation — see {@link assertValidTransform}. */
+export class InvalidTransformError extends TaggedError<"assets-invalid-transform"> {
+  readonly tag = "assets-invalid-transform" as const;
+}
 
 /** Normalized framing values: crop/focal in 0..1, zoom > 0, rotation degrees. */
 export interface TransformValues {
@@ -39,15 +50,15 @@ export const SEED_FOCAL_POINT = { x: 0.5, y: 0.35, } as const;
 
 /**
  * @param values
- * @throws Error when a finite transform value is out of range.
+ * @throws {InvalidTransformError} when a finite transform value is out of range.
  */
 function assertValidTransform(values: TransformValues,): void {
   for (const [key, value,] of Object.entries(values,)) {
     if (value === undefined || value === null) { continue; }
-    if (!Number.isFinite(value,)) { throw new Error(`Invalid transform: ${key} must be finite`,); }
-    if (key === "zoom" && value <= 0) { throw new Error("Invalid transform: zoom must be > 0",); }
+    if (!Number.isFinite(value,)) { throw new InvalidTransformError(`${key} must be finite`,); }
+    if (key === "zoom" && value <= 0) { throw new InvalidTransformError("zoom must be > 0",); }
     if (key !== "zoom" && key !== "rotation" && (value < 0 || value > 1)) {
-      throw new Error(`Invalid transform: ${key} must be within 0..1`,);
+      throw new InvalidTransformError(`${key} must be within 0..1`,);
     }
   }
 }

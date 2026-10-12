@@ -138,27 +138,14 @@ describe("handleImportExportError", () => {
     expect(result.response.status,).toBe(500,);
   });
 
-  test("maps every remaining error code to its HTTP status", () => {
-    const cases: [ErrorCode, number,][] = [
-      [ErrorCode.Unauthorized, 401,],
-      [ErrorCode.Forbidden, 403,],
-      [ErrorCode.TooManyRequests, 429,],
-      [ErrorCode.NotImplemented, 501,],
-    ];
-
-    for (const [code, status,] of cases) {
-      const result = handleImportExportError(new ImportError("m", code,),);
-      expect(result.handled,).toBe(true,);
-      if (!result.handled) { throw new Error("unreachable",); }
-      expect(result.response.status,).toBe(status,);
-    }
-  });
-
-  test("falls back to 500 for an unknown error code", () => {
-    const result = handleImportExportError(new ImportError("m", "NOPE" as ErrorCode,),);
+  test("base ImportError instances map by tag, not code", () => {
+    // The exhaustive tag map decides the status; `code` only rides along in
+    // the response body. A base-class instance (no subclass tag) resolves to
+    // the base tag's status regardless of the code it carries.
+    const result = handleImportExportError(new ImportError("m", ErrorCode.Unauthorized,),);
     expect(result.handled,).toBe(true,);
     if (!result.handled) { throw new Error("unreachable",); }
-    expect(result.response.status,).toBe(500,);
+    expect(result.response.status,).toBe(400,);
   });
 
   test("leaves non-import/export errors unhandled", () => {
