@@ -2,6 +2,15 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
+ * KEEP LOCAL. Superseded by upstream giwt ticket
+ * FEAT-repo-wide-spdx-header-check-… (filed at giwt b4d1928; still
+ * unimplemented — giwt's `checkSpdx` at src/plan/validate/content-gates.ts
+ * walks only `.plan/*.md` and substring-tests a single `SPDX-License-Identifier`
+ * token: no `SPDX-FileCopyrightText`, no files outside `.plan/`, no `--fix`, and
+ * it is not in FIXABLE_GATES). AGENTS.md mandates a header on EVERY tracked
+ * file. When the ticket lands, repoint `spdx:check`/`spdx:fix` and delete this
+ * file plus scripts/lib/{spdx-discovery,spdx-fix,reuse-toml}.ts.
+ *
  * SPDX license header guard — reads REUSE.toml for per-directory rules.
  *
  * Parses [[annotations]] blocks from REUSE.toml, converts path globs to

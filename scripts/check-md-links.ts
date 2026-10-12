@@ -3,6 +3,13 @@
 // size-allow: 300
 
 /**
+ * KEEP LOCAL. Superseded by upstream giwt ticket
+ * FEAT-plan-check-links-fix-to-auto-repair-… (filed at giwt b4d1928; still
+ * unimplemented — `giwt plan check-links --fix` exits 1, `--fix` rejected as
+ * an unknown arg). The no-flag `giwt plan check-links` DOES work, but it has
+ * no repair mode, so `md:links:fix` must keep resolving here. When the
+ * ticket lands, repoint `md:links:fix` and delete this file.
+ *
  * Markdown stale-link guard.
  *
  * Scans Markdown files and flags intra-repo links whose target does not

@@ -4,6 +4,12 @@
 // size-allow: 280
 
 /**
+ * KEEP LOCAL. Superseded by upstream giwt ticket
+ * FEAT-plan-normalize-statuses-subcommand-… (filed at giwt b4d1928; still
+ * unimplemented — `giwt plan normalize-statuses` exits 1, "unknown plan
+ * subcommand"). When it lands, repoint `plan:status:normalize{,:check}` at
+ * it and delete this file plus its test.
+ *
  * Normalize `.plan` status values onto their closed vocabularies.
  *
  * `.plan/` has two status vocabularies that were never reconciled:

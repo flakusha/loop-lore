@@ -2,6 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
+ * KEEP LOCAL (not one of the four provider gaps, but the same principle).
+ * giwt ships this check at node_modules/giwt/scripts/ and is expected to
+ * export it once TASK-expose-file-size-check-via-public-api lands. It is NOT
+ * a drop-in yet: its scan covers only src glob TS and exempts nothing but
+ * test files, so against this repo it exits 1 on 7 generated DB-type modules
+ * and src/db/migrations entries that this script exempts via the generated
+ * banner and the migrations rule. Verified: giwt copy EXIT=1, this EXIT=0.
+ *
  * Line-count guard for source files.
  *
  * Surfaces source files exceeding the 250L soft ceiling so agents can split
