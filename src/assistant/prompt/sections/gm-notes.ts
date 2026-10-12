@@ -198,9 +198,11 @@ function gmNoteRenderLines(
 
   return lines;
 }
+
 export const gmNotesSection: SectionBuilder = {
   name: "gmNotes",
   enabled: () => true,
+
   build: async (ctx,) => {
     // Shadow notes are GM-only narrative metadata (foreshadowing, world
     // secrets, player motivations). Only expose them when the chat's
