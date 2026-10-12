@@ -118,7 +118,7 @@ function toCraftAttempt(r: {
 /**
  * Consume each recipe material from the actor's inventory inside the craft
  * transaction, deleting rows that reach zero.
- * @throws when an item definition or the stocked quantity is missing
+ * @throws {Error} when an item definition or the stocked quantity is missing
  */
 async function consumeRecipeMaterials(
   trx: Kysely<DB>,
@@ -157,7 +157,7 @@ async function consumeRecipeMaterials(
  * EPIC-036 discovery gate: a recipe not flagged `discovered_by_default` must
  * be discovered first; an experimentation attempt bypasses the gate.
  * @returns true when this attempt experiments on an undiscovered recipe
- * @throws when the recipe is undiscovered and not an experiment
+ * @throws {Error} when the recipe is undiscovered and not an experiment
  */
 async function requireDiscovery(
   db: Kysely<DB>,
@@ -199,6 +199,7 @@ export class CraftingProcessService {
   }
   /**
    * @param opts
+   * @throws {Error} When the recipe, materials, or station are missing/invalid.
    */
   async attemptCraft(opts: CraftAttemptOpts,): Promise<CraftResult> {
     const recipe = await this.db.selectFrom("crafting_recipes",).selectAll()

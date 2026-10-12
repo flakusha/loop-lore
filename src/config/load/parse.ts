@@ -85,7 +85,7 @@ export function getTypeOfPath(object: Record<string, unknown>, configPath: strin
 /**
  * @param content
  * @param extension
- * @throws {Error}
+ * @throws {Error} If the file extension is unknown.
  * @returns {Record<string, unknown>}
  */
 export function parseFileContent(content: string, extension: string,): Record<string, unknown> {

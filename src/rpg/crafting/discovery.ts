@@ -199,6 +199,7 @@ export class DiscoveryService {
    * already-known recipe returns the existing row with `created: false` and
    * emits no event.
    * @param opts
+   * @throws {Error} When the discovery record vanished before read-back.
    */
   async recordDiscovery(
     opts: RecordDiscoveryOpts,

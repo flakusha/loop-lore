@@ -30,8 +30,7 @@ export * from "./battles/types.js";
 /**
  * @param deps
  * @param params
- * @throws {Error}
- * @throws {Error}
+ * @throws {Error} When an active battle already exists in the chat or the roster cannot be serialized.
  * @returns {Promise<BattleWithRoster>}
  */
 export async function startBattle(
@@ -94,6 +93,7 @@ export async function startBattle(
  * @param battleId
  * @param status
  * @returns The active battle roster, or null when none active
+ * @throws {Error} When the battle is missing or not active.
  */
 export async function endBattle(
   deps: RpgServiceDeps,
