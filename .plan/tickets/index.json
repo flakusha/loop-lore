@@ -47623,6 +47623,21 @@
     "title": "Signed URLs for Asset Downloads",
     "type": "TASK"
   },
+  "TASK-SIMPLIFICATION-CLEANUP-RANKED-EXECUTION-ORDER-AND-DEAD-VS-UN": {
+    "hash": "6357cb3",
+    "git_issue": "6357cb3",
+    "extid": "TASK-SIMPLIFICATION-CLEANUP-RANKED-EXECUTION-ORDER-AND-DEAD-VS-UN",
+    "type": "TASK",
+    "title": "Simplification cleanup ranked execution order and dead-vs-unwired decisions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "dead-code"
+    ],
+    "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md",
+    "status": "Not Started"
+  },
   "TASK-SIMPLIFICATION-SWEEP-MICRO-CLEANUPS-AND-SINGLE-IMPLEMENTATIO": {
     "hash": "f22f183",
     "git_issue": "f22f183",
