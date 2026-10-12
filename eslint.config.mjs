@@ -19,6 +19,7 @@ import unicorn from "eslint-plugin-unicorn";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import { optionsObjectParamsRule } from "./src/eslint-rules/options-object-params.mjs";
+import { noExtensionlessRequireRule } from "./src/eslint-rules/no-extensionless-require.mjs";
 
 const projectRoot = import.meta.dirname;
 
@@ -82,6 +83,12 @@ const customRestrictedSyntax = [
 const localPlugin = {
   rules: {
     "options-object-params": optionsObjectParamsRule,
+    // require() in a test must name an explicit extension: a bare relative
+    // specifier that resolves to a directory can fall through to Bun's JSON
+    // loader, which parses the resolved path and throws
+    // `JSON Parse error: Unrecognized token '/'`.
+    // Implementation + unit tests: src/eslint-rules/no-extensionless-require.mjs.
+    "no-extensionless-require": noExtensionlessRequireRule,
   },
 };
 
@@ -188,6 +195,10 @@ export default [
       ...tsRules,
       // Local convention rule (see .agents/references/recommendations.md).
       "local/options-object-params": "warn",
+      // Reject extensionless require() in tests (directory-require -> JSON
+      // loader -> `JSON Parse error: Unrecognized token '/'`). Self-guards on
+      // the .test/.spec filename, so enabling it globally is safe.
+      "local/no-extensionless-require": "error",
       "unicorn/prefer-node-protocol": "off",
       "unicorn/no-process-exit": "off",
       "unicorn/no-uint8array-base64": "off",
