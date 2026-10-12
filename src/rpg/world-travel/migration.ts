@@ -67,6 +67,7 @@ async function awardArrivalXp(
     },);
   }
 }
+
 /** Migration row as this module needs it. */
 interface MigrationRow {
   id: string;
@@ -101,6 +102,7 @@ async function markMigration(
     .where("id", "=", rowId,)
     .execute();
 }
+
 /**
  * Advance every NPC migration in `worldId` by one tick.
  *
