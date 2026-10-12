@@ -171,6 +171,10 @@
   ],
   "src/admin/model-capabilities.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-model-file-discovery.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-multimodal-input-image-voice-character-reacts.md"
     },
@@ -4449,6 +4453,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi.md"
     },
     {
       "kind": "ticket",
@@ -10807,6 +10815,12 @@
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
     }
   ],
+  "src/components/model/ModelDetailsTab.svelte": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-model-cards-with-metadata-panels-and-size-vram-surfacing.md"
+    }
+  ],
   "src/components/mood-meter.html": [
     {
       "kind": "ticket",
@@ -11641,6 +11655,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-model-file-discovery.md"
     },
     {
       "kind": "ticket",
@@ -20175,6 +20193,20 @@
       "source": ".plan/tickets/TASK-mini-games-framework.md"
     }
   ],
+  "src/frontend/alpine/gguf-probe.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-model-metadata-read.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-gguf-kv-typed-reader-with-arch-templated-key-registry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-browser-side-gguf-kv-extraction-for-local-byok-models.md"
+    }
+  ],
   "src/frontend/alpine/gm-guidance.ts": [
     {
       "kind": "epic",
@@ -20608,6 +20640,10 @@
   "src/frontend/alpine/model-catalog.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-browser-side-gguf-kv-extraction-for-local-byok-models.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
     }
   ],
@@ -20618,6 +20654,14 @@
     }
   ],
   "src/frontend/alpine/model-manager.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-model-info-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-model-cards-with-metadata-panels-and-size-vram-surfacing.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
@@ -26763,6 +26807,12 @@
       "source": "docs/spec/integrations-architecture.md"
     }
   ],
+  "src/harness/read-models.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sse-live-model-status-and-in-flight-tracking.md"
+    }
+  ],
   "src/hash/record-hash.test.ts": [
     {
       "kind": "ticket",
@@ -27727,6 +27777,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-thinking-block-render.md"
+    }
+  ],
+  "src/lib/modelLoad.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sse-live-model-status-and-in-flight-tracking.md"
     }
   ],
   "src/llm": [
@@ -29619,7 +29675,33 @@
       "source": ".plan/tickets/TASK-031.md"
     }
   ],
+  "src/model/model.h": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-tensor-key-prefix-model-classifier.md"
+    }
+  ],
+  "src/model_io/safetensors_io": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-model-metadata-read.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-header-only-safetensors-metadata-parser.md"
+    }
+  ],
+  "src/model_loader.cpp": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-model-weight-sniffing-fallback-detect-from-weights.md"
+    }
+  ],
   "src/native/blake3.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-model-hash-blake3-and-sha256-with-cross-model-dedup.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
@@ -30385,6 +30467,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-briefingscript-linter-pre-agent-t.md"
+    }
+  ],
+  "src/plan/epics/epic-lora-discovery-application.md": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-lora-base-model-lineage-via-checkpoint-metadata.md"
     }
   ],
   "src/plan/reconcile-conflicts.ts": [
@@ -33887,6 +33975,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi.md"
     }
   ],
   "src/routes/chat-export.ts": [
@@ -37489,6 +37581,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-social-interaction.md"
+    }
+  ],
+  "src/routes/sse-stream.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sse-live-model-status-and-in-flight-tracking.md"
     }
   ],
   "src/routes/state.ts": [
@@ -43685,6 +43783,16 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-math-ledger.md"
+    }
+  ],
+  "src/services/sd-discovery.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-model-file-discovery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llama-swap-style-on-demand-load-unload-lifecycle-with-health.md"
     }
   ],
   "src/services/server-external-manager/lifecycle.ts": [

@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 317 epics
+**Total:** 320 epics
 
 ## Summary
 
@@ -225,6 +225,7 @@
 | Not Started | llama-swap Hub (lifecycle, config, rotation/exclusion, bench) | medium | Large | 5 | [epic-llama-swap.md](/.plan/epics/epic-llama-swap.md) |
 | Not Started | LLM Request Scheduler — Complexity, Resources, Model Rotation | high | Large | 0 | [epic-llm-request-scheduler.md](/.plan/epics/epic-llm-request-scheduler.md) |
 | Not Started | LLM Request Throughput & Message Scheduling | Medium | Large | 13 | [epic-llm-queue.md](/.plan/epics/epic-llm-queue.md) |
+| Not Started | Local Model File Discovery | Medium | Large | 4 | [epic-local-model-file-discovery.md](/.plan/epics/epic-local-model-file-discovery.md) |
 | Not Started | Local Process Swarm (Bun-Managed Multi-Process Decomposition) | Medium | Very High | 0 | [epic-local-process-swarm.md](/.plan/epics/epic-local-process-swarm.md) |
 | In Progress | Logging & Structured Logging | Medium | Medium | 2 | [epic-logging.md](/.plan/epics/epic-logging.md) |
 | In Progress | Logging & Telemetry — Complete Level Set + Canonical JSONL | High | Medium | 5 | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md) |
@@ -244,6 +245,8 @@
 | Not Started | Mini-Games: Design Document | medium | Medium | 0 | [epic-mini-games-design.md](/.plan/epics/epic-mini-games-design.md) |
 | Not Started | Mini-Games: Expanded Design — UI/UX, Flow, & Deep Mechanics | medium | Medium | 0 | [epic-mini-games-expanded.md](/.plan/epics/epic-mini-games-expanded.md) |
 | Not Started | Mini-Games: UI Components & API Contracts | medium | Medium | 0 | [epic-mini-games-ui-api.md](/.plan/epics/epic-mini-games-ui-api.md) |
+| Not Started | Model Info Frontend (Cards, Tags, Filters) | Medium | Medium | 3 | [epic-model-info-frontend.md](/.plan/epics/epic-model-info-frontend.md) |
+| Not Started | Model Metadata Read (Headers, Hashing, Classification) | High | Large | 4 | [epic-model-metadata-read.md](/.plan/epics/epic-model-metadata-read.md) |
 | Not Started | Multi-Session Support | Medium | Med | 6 | [epic-multi-session.md](/.plan/epics/epic-multi-session.md) |
 | Not Started | Narration / Actor Separation | High | Medium–Large | 9 | [epic-narration-actor-separation.md](/.plan/epics/epic-narration-actor-separation.md) |
 | In Progress | Native/WASM Module Performance Benchmarks | High | High | 10 | [epic-native-module-benchmarks.md](/.plan/epics/epic-native-module-benchmarks.md) |
@@ -2379,6 +2382,15 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-llm-queue.md`
 
+### Local Model File Discovery
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** models, discovery, scanning, safetensors, gguf, sd, llama, file-indexing
+- **File:** `.plan/epics/epic-local-model-file-discovery.md`
+
 ### Local Process Swarm (Bun-Managed Multi-Process Decomposition)
 
 - **Status:** Not Started
@@ -2555,6 +2567,24 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Type:** epic
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-mini-games-ui-api.md`
+
+### Model Info Frontend (Cards, Tags, Filters)
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** frontend, models, cards, tags, search, alpine, admin
+- **File:** `.plan/epics/epic-model-info-frontend.md`
+
+### Model Metadata Read (Headers, Hashing, Classification)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** models, metadata, safetensors, gguf, hashing, blake3, classification, dedup
+- **File:** `.plan/epics/epic-model-metadata-read.md`
 
 ### Multi-Session Support
 

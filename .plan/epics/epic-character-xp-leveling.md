@@ -115,3 +115,6 @@ Two-way connections beyond the boundaries above:
 - [ ] Integrate skill progression with LevelService as one guarded award pipeline — `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md` (Not Started)
 - [ ] Gate XP and skill XP awards behind the per-world rpg_xp opt-in — `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md` (Not Started)
 - [ ] Per-world skills mechanic flag and world-creation opt-in UI — `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md` (Not Started)
+
+
+git issue: 3b5fc7b
