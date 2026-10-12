@@ -26702,10 +26702,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-group-chat-turn-orchestration.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-subagent-delegation.md"
     },
     {

@@ -35913,6 +35913,19 @@
     "title": "GM: shadow-note steering into workflow dispatch prompts",
     "type": "TASK"
   },
+  "TASK-GM-SHADOW-NOTE-TRIGGER-CONDITION-AND-REVEALED-TO-COLUMNS": {
+    "hash": "6e48de1",
+    "git_issue": "6e48de1",
+    "extid": "TASK-GM-SHADOW-NOTE-TRIGGER-CONDITION-AND-REVEALED-TO-COLUMNS",
+    "type": "TASK",
+    "title": "GM shadow note trigger_condition and revealed_to columns",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-gm-shadow-notes",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gm-shadow-note-trigger-condition-and-revealed-to-columns.md",
+    "status": "Not Started"
+  },
   "TASK-GM-SHADOW-NOTES": {
     "epic": "epic-gm-shadow-notes",
     "extid": "TASK-GM-SHADOW-NOTES",
@@ -35932,6 +35945,19 @@
     ],
     "title": "GM/Assistant Shadow Notes System",
     "type": "TASK"
+  },
+  "TASK-GM-STORY-NOTES-ROLE-ACCESS-MATRIX": {
+    "hash": "6fe3638",
+    "git_issue": "6fe3638",
+    "extid": "TASK-GM-STORY-NOTES-ROLE-ACCESS-MATRIX",
+    "type": "TASK",
+    "title": "GM story-notes role access matrix",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-gm-shadow-notes",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gm-story-notes-role-access-matrix.md",
+    "status": "Not Started"
   },
   "TASK-GM-TOOL-AUX-TASK-HAS-NO-PRODUCTION-CONSUMER-WIRE-OR-REMOVE": {
     "hash": "ecde333",
@@ -35962,6 +35988,19 @@
     ],
     "title": "GM Trigger And Timeline Backfill Propagation",
     "type": "TASK"
+  },
+  "TASK-GM-WHITENOTE-MESSAGE-SCOPING": {
+    "hash": "457e416",
+    "git_issue": "457e416",
+    "extid": "TASK-GM-WHITENOTE-MESSAGE-SCOPING",
+    "type": "TASK",
+    "title": "GM whitenote message scoping",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-gm-shadow-notes",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gm-whitenote-message-scoping.md",
+    "status": "Not Started"
   },
   "TASK-GM-WHITENOTES": {
     "epic": "epic-gm-shadow-notes",
@@ -36012,6 +36051,19 @@
     ],
     "title": "Graph view of plan links to chats, stories, RAG items, assets",
     "type": "TASK"
+  },
+  "TASK-GROUP-CHAT-FRONTEND-VIEWER": {
+    "hash": "8e3fdc1",
+    "git_issue": "8e3fdc1",
+    "extid": "TASK-GROUP-CHAT-FRONTEND-VIEWER",
+    "type": "TASK",
+    "title": "Group chat frontend viewer",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-group-chat",
+    "tags": [],
+    "source": ".plan/tickets/TASK-group-chat-frontend-viewer.md",
+    "status": "Not Started"
   },
   "TASK-GROUP-CHAT-MENTION-AUTOCOMPLETE-DROPDOWN-ACCEPTANCE": {
     "epic": "epic-group-chat",
