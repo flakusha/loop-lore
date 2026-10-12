@@ -80,8 +80,8 @@ a normal fix per `loop-lore-tasks` — not this skill.
 
 **Always** spin up a dedicated worktree from `dev` for each bucket. The
 mutating operations rule from `AGENTS.md` (`git commit`, `git merge`,
-`giwt commit-wt`, `bun run scripts/worktree/
-finalize`) only run inside `tree/<worktree-name>/`. **Never** commit
+`giwt commit-wt`, `giwt finalize`) only run inside `tree/<worktree-name>/`.
+**Never** commit
 bookkeeping directly on `dev` even though `AGENTS.md` allowed one exception
 in the original session — that exception was for the user's explicit
 single-file TASK-ticket filing case, not for batch bookkeeping.
@@ -161,8 +161,8 @@ bun run plan:sync
 ```
 
 Expected: zero actionable issues. Advisory count is fine. **Do NOT** run
-`bun run plan:sync:fix` immediately after filing new tickets via `bun run
-scripts/worktree/ ticket` in a parallel-session environment — see the
+`bun run plan:sync:fix` immediately after filing new tickets via
+`giwt ticket` in a parallel-session environment — see the
 race-condition note below.
 
 ## Step 7 — Done Markers
@@ -193,6 +193,7 @@ that have no ticket, file them. Pattern from Bucket D (2026-09-03):
    `plan:sync:fix` from a parallel session can wipe the `.md` between your
    write and your commit, leaving orphan git issues.
 2. Workflow that survived the race in Bucket D:
+
    ```bash
    # 1. Write ticket .md files manually via `write` tool:
    write(path=".plan/tickets/BUG-<slug>.md", content=...)
@@ -209,6 +210,7 @@ that have no ticket, file them. Pattern from Bucket D (2026-09-03):
    git commit --no-verify --gpg-sign \
      -m "chore(plan): file N BUG tickets for <reason>"
    ```
+
 3. **Use `git commit --no-verify`** to bypass the stale-check pre-commit
    hook for plan-only changes. The hook exists to enforce `bun run check`
    freshness; ticket bookkeeping doesn't affect runtime.

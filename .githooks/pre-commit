@@ -171,10 +171,22 @@ echo ""
 echo "--- Step 3: SPDX headers ---"
 STAGED_SOURCE=$(echo "$STAGED_TS $STAGED_CSS $STAGED_HTML $STAGED_SH" | tr ' ' '\n' | grep -v '^$' || true)
 if [[ -n "$STAGED_SOURCE" ]]; then
-  if echo "$STAGED_SOURCE" | xargs bun run scripts/check-spdx.ts 2>/dev/null; then
-    green "  ✓ SPDX headers OK"
+  # NO 2>/dev/null. The script is advisory (exit 0) unless SPDX_CHECK=1, so
+  # swallowing its stderr printed "✓ SPDX headers OK" while hiding every
+  # violation it had just reported — and, once the script was deleted, the
+  # same green line covered a checker that could not run at all. Capture the
+  # report, show it, and branch on the exit code AND the advisory marker. A
+  # missing script exits non-zero, so it lands in the blocking branch.
+  SPDX_OUT=$(echo "$STAGED_SOURCE" | xargs bun run scripts/check-spdx.ts 2>&1)
+  if [ $? -ne 0 ]; then
+    red "  ✗ SPDX checker failed to run — headers NOT verified:"
+    echo "$SPDX_OUT"
+    failures=$((failures + 1))
+  elif printf '%s' "$SPDX_OUT" | grep -q "Non-blocking - set SPDX_CHECK=1"; then
+    yellow "  ⚠ SPDX header violations (non-blocking; SPDX_CHECK=1 enforces) — report:"
+    echo "$SPDX_OUT"
   else
-    yellow "  ⚠ SPDX header warnings (non-blocking)"
+    green "  ✓ SPDX headers OK"
   fi
 fi
 
