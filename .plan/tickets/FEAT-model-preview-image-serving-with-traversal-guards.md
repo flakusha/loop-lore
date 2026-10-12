@@ -11,7 +11,7 @@
 
 **Summary:**
 
-Serve model preview images: (1) sibling images with the same basename or `<name>`.preview.* next to the model file, (2) base64 covers embedded in the safetensors header **metadata**.ssmd_cover_images (kohya-style). Preview endpoint must guard against path traversal and symlink escapes (is_within_directory check) and is keyed by category + path index + filename.
+Serve model preview images: (1) sibling images with the same basename or `<name>`.preview.* next to the model file, (2) base64 covers embedded in the safetensors header `__metadata__.ssmd_cover_images` (kohya-style). Preview endpoint must guard against path traversal and symlink escapes (is_within_directory check) and is keyed by category + path index + filename.
 
 Reference: ComfyUI app/model_manager.py get_model_previews + /experiment/models/preview/{folder}/{path_index}/{filename} route; Stability Matrix LocalModelFile.PreviewImageRelativePath.
 
