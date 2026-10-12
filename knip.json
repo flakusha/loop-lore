@@ -28,9 +28,13 @@
     "scripts/lib/colors.ts"
   ],
   "project": [
-    // src/** is only scanned when knip runs with --no-gitignore (see the
-    // dead:code scripts in package.json): src/.gitignore contains `.` to keep
-    // untracked junk out of git, which otherwise makes knip skip every src/ file.
+    // src/** is only scanned by the --no-gitignore scripts (dead:code:src*):
+    // src/.gitignore contains `.` to keep untracked junk out of git, which
+    // otherwise makes knip skip every src/ file. The BLOCKING gate
+    // `dead - code (knip)` is plain `knip` (gitignore-respecting), so it never
+    // sees src/ at all — which is why deps imported only from src/ must stay in
+    // ignoreDependencies below. Proof: `bun run dead:code:src:full` (same
+    // config + --no-gitignore) reports zero unused dependencies.
     "src/**/*.ts",
     "scripts/**/*.ts",
     "scripts/**/*.mjs",
@@ -47,6 +51,39 @@
     "blessed-contrib",
     "htmx-ext-alpine-morph",
     "bun-plugin-html",
+    // SRC-ONLY IMPORTERS. This gate is plain `knip`, which honours
+    // src/.gitignore (a blanket `.`), so it never scans src/ — every dep below
+    // is really imported there (cited) and shows up unused here. The
+    // --no-gitignore script `dead:code:src:full` reports ZERO unused deps.
+    // Imported by src/content/minify.ts: frontend asset minifier pipeline.
+    "clean-css",
+    "html-minifier-terser",
+    "terser",
+    "@types/clean-css", // ambient types for clean-css above
+    "@types/html-minifier-terser",
+    // Imported by src/characters/charx.ts and src/routes/{export,export-sse,export-shared}/.
+    "jszip",
+    // Imported by src/profanity/service.ts (TextCensor / RegExpMatcher NSFW gate).
+    "obscenity",
+    // Imported by src/native/fallback/blake3.ts as the SUBPATH
+    // "@noble/hashes/blake3.js", which knip does not map back to the package.
+    "@noble/hashes",
+    // Imported by src/cli/parser.ts as SUBPATHs ("@optique/core/parser",
+    // "@optique/core/valueparser") plus the bare roots.
+    "@optique/core",
+    "@optique/run",
+    // Imported by src/assets/service/thumbnail.ts (sharp image transform).
+    "sharp",
+    // Imported by src/generation/providers/retry.ts + src/llm/concurrency-limiter.ts
+    // (Effect/Schedule/Semaphore); provider subdirs are reached through a
+    // dynamic "./anthropic" / "./ollama-native" index chain knip does not follow.
+    "effect",
+    // Imported by src/test-utils/schema-arbitrary*.ts (TypeBox -> Arbitrary
+    // mapper); the property tests consuming it live under src/ too.
+    "fast-check",
+    // Imported by src/routes/v1/openapi.ts; the OpenAPI document is attached
+    // to the app via Elysia's plugin chain, not a static edge from src/server.
+    "@elysia/openapi",
     "@markuplint/html-spec",
     "@markuplint/mustache-parser", // referenced by .markuplintrc.json (config), not imported in code
     "@types/dompurify",
