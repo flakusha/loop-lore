@@ -84,9 +84,8 @@ giwt issues
 
 Extended identifiers: `BUG-2025-001`, `FEA-2025-042`, `EPIC-16`, etc.
 
-See [AGENTS.md](AGENTS.md) for full issue tracking documentation and the
-giwt ↔ legacy `scripts/worktree/` migration map at
-[docs/giwt-scripts-map.md](docs/giwt-scripts-map.md).
+See [AGENTS.md](AGENTS.md) for full issue tracking documentation.
+The `scripts/worktree/` CLI has been deleted; `giwt` is the canonical worktree CLI.
 
 ## Documentation
 
